@@ -1,0 +1,646 @@
+{
+  "schema": "legacy_evidence_boundary_reconciliation_v1",
+  "audit_type": "provenance_and_correspondence_only_no_model_math",
+  "current_repo": {
+    "name": "kiojuvr/ds41f-mlx",
+    "path": "/Volumes/SDXC-512/ds41f-mlx",
+    "head": "559201eb8fefb839b3c8a734ecd59eb4e144a150"
+  },
+  "legacy_repo": {
+    "name": "kiojuvr/deepseek-v41-flash-mlx",
+    "path": "/Volumes/SDXC-512/deepseek-v41-flash-mlx",
+    "current_head": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+    "notable_evidence_commits": [
+      "a961c22edaeabcb4ef9bc9e23acf5b26aa5bffd7",
+      "1b266485f9a11cd80d23210cc40389bd1b4fe24a",
+      "40ddbb6",
+      "1b802f2",
+      "c5321ca",
+      "3878755"
+    ],
+    "worktree_note": "legacy repo has pre-existing modified/untracked artifacts; audit did not edit legacy files"
+  },
+  "authority_classes": {
+    "A": "official model-data authority",
+    "B": "official semantic authority",
+    "C": "legacy implementation-equivalence evidence",
+    "D": "engineering/lifecycle evidence",
+    "E": "compatibility/performance only",
+    "F": "tainted/superseded for correctness"
+  },
+  "ds41f_boundaries": [
+    {
+      "id": "primitive semantic boundaries",
+      "scope": "official-source-derived primitive contracts: linear, RMSNorm, rotary/YaRN, FP8/BF16, embedding/head, sparse_attn, sampling arithmetic"
+    },
+    {
+      "id": "Attention/window",
+      "scope": "window KV publication, rotary positions, ring/top-k, sparse attention prelude/output projection"
+    },
+    {
+      "id": "compressed KV",
+      "scope": "Compressor latent, partial-state, main compressed KV publication"
+    },
+    {
+      "id": "Indexer",
+      "scope": "index K/Q, score, top-k, publication"
+    },
+    {
+      "id": "candidate",
+      "scope": "layer20 candidate block mask and regeneration"
+    },
+    {
+      "id": "sparse_attn",
+      "scope": "kernel sparse attention over window and compressed candidates"
+    },
+    {
+      "id": "output projection",
+      "scope": "inverse rotary plus grouped wo_a/wo_b"
+    },
+    {
+      "id": "HC",
+      "scope": "Hyper-Connection pre/post mixing"
+    },
+    {
+      "id": "MoE",
+      "scope": "gate/expert/reduction/shared merge"
+    },
+    {
+      "id": "connected prefill",
+      "scope": "Transformer entry through connected layers/persistent state for bounded prefill"
+    },
+    {
+      "id": "Engram",
+      "scope": "NgramHashState plus Engram embedding/gate/residual at layers 1/14"
+    },
+    {
+      "id": "main_hidden",
+      "scope": "target-layer hidden aggregation / Transformer return member"
+    },
+    {
+      "id": "logits",
+      "scope": "final collapse/RMSNorm/head logits"
+    },
+    {
+      "id": "sampling",
+      "scope": "temperature=0 and supplied-noise/nonzero-temperature formula; RNG separated"
+    },
+    {
+      "id": "Transformer return",
+      "scope": "output ids/logits/main_hidden/session lifecycle return packaging"
+    },
+    {
+      "id": "Boundary13",
+      "scope": "decode/incremental-state official source audit only"
+    },
+    {
+      "id": "Boundary13a",
+      "scope": "prefill-end persistent-state snapshot contract"
+    },
+    {
+      "id": "Boundary13b",
+      "scope": "first incremental NgramHashState numerical update"
+    },
+    {
+      "id": "Boundary13c",
+      "scope": "first incremental position/rotary/layer0 window-KV through sparse_attn prelude"
+    },
+    {
+      "id": "Boundary13d",
+      "scope": "first incremental Block0 completion and Engram@1 handoff"
+    },
+    {
+      "id": "Boundary13e",
+      "scope": "first incremental Block1 completion, layer2 entry, ratio2 partial slot0 and top-k reconstruction; STOP before layer2 sparse_attn"
+    }
+  ],
+  "correspondence_table": [
+    {
+      "ds41f_boundary": "Attention/window; Boundary13c",
+      "semantic_claim": "window ring, absolute position progression, 128->129 wrap, chunk/tokenwise equality, continuation, fork/reset, invalid-input atomicity, Q/KV projection, attention integration",
+      "ds41f_current_authority": "B for official window/rotary source spans and Boundary13c numeric first-decode slot2; A for official checkpoint-backed fixtures",
+      "legacy_repo_evidence": "docs/swa-reference.md; artifacts/swa/projection-check.json; artifacts/swa/layer-check.json; SWA tests",
+      "legacy_commit_artifact": "legacy current HEAD plus saved artifact source/binary hashes; checkpoint summary a031e177... in identities where present",
+      "legacy_evidence_class": [
+        "C",
+        "D",
+        "A-partial"
+      ],
+      "same_semantics": "partial: local reference implements official-style ring/QKV but notes official CUDA/prefill schedule not fully compared",
+      "same_state_transition": "yes for local tokenwise decode/wrap/continuation/fork/reset/invalid-input atomicity",
+      "same_input_regime": "broader for wrap (1..1025, 128->129), synthetic/short real weights; ds41f Boundary13c is first decode pos2",
+      "provenance_clean": "clean for raw checkpoint/source identity and local state claims; not clean as official CUDA oracle",
+      "can_reuse_without_rerun": "yes for engineering/state-equivalence and wrap evidence; compose with ds41f B for window state discipline, but not as official numeric sparse_attn oracle",
+      "reuse_conditions": "label C/D, retain non-claim about official CUDA bit exactness",
+      "remaining_gap": "official decode beyond layer0/window-only remains ds41f-specific where math output is needed",
+      "recommended_action": "reuse; do not rerun SWA wrap solely for Boundary13f",
+      "local_imported_evidence": [
+        "artifacts/legacy-import/evidence/swa/layer-check.json"
+      ]
+    },
+    {
+      "ds41f_boundary": "compressed KV; Indexer; Boundary13e and proposed Boundary13f/13g",
+      "semantic_claim": "ratio2 partial compressor state, pending kv/score, group completion/publication, packed main/index KV, one-token Indexer query, top-k offset, layer2 Attention integration, SharedAttention publication and layer3-7 consumers",
+      "ds41f_current_authority": "B source audit; Boundary13e proves pos2 partial slot0 write/group_complete=false/top-k recompute and no new key; primitive compressed/indexer contracts validated separately",
+      "legacy_repo_evidence": "docs/compressed-attention.md; artifacts/global-kv/attention-check.json; consumer-check.json; consumer-range-check.json",
+      "legacy_commit_artifact": "legacy current HEAD; older artifact hashes; reviewed docs dated 2026-09-13",
+      "legacy_evidence_class": [
+        "C",
+        "D"
+      ],
+      "same_semantics": "mostly yes for source-level state machine; legacy explicitly says no independent official CUDA oracle and no full Block connection for some consumer checks",
+      "same_state_transition": "yes for 3-token->4-token continuation (partial slot0 at pos2 read at pos3 with slot1 completing a ratio2 group) and 5-token->6-token publication (completed group becomes new main/index cache row and pending clears)",
+      "same_input_regime": "legacy uses 3/4 and 5/6 tokens with real layer2 weights; ds41f uses [[0,3]] then token15 first decode at pos2",
+      "provenance_clean": "clean as native local equivalence/lifecycle; not official semantic oracle alone",
+      "can_reuse_without_rerun": "yes for ratio2 cross-call state-machine publication when combined with ds41f B and primitive math; no for asserting ds41f exact digest at token15 pos3 without execution",
+      "reuse_conditions": "require ds41f official Compressor/Indexer semantics, equivalent ratio2 source layer, and no changed data layout semantics",
+      "remaining_gap": "token15-specific second decode numerical digest of layer2 sparse/output is not present; usually not needed if only state-machine claim is required",
+      "recommended_action": "cancel broad Boundary13f if its only purpose is group completion lifecycle; define optional minimal pos3 publication boundary only if token15-specific numeric digest is demanded",
+      "local_imported_evidence": [
+        "artifacts/legacy-import/evidence/global-kv/attention-check.json",
+        "artifacts/legacy-import/evidence/global-kv/consumer-check.json",
+        "artifacts/legacy-import/evidence/global-kv/consumer-range-check.json"
+      ]
+    },
+    {
+      "ds41f_boundary": "HC; MoE; Block; Boundary13d/e",
+      "semantic_claim": "HC pre/post, MoE gate/expert/reduction/shared, Block local chunk/tokenwise, optimized parity and known backend differences",
+      "ds41f_current_authority": "B/A primitive contracts and connected first-incremental Block0/Block1 official-source-derived validations",
+      "legacy_repo_evidence": "docs/mhc.md; docs/moe-block.md; artifacts/mhc/native-verify.json; artifacts/block/reviewed-result.json; CPU/reference artifacts",
+      "legacy_commit_artifact": "legacy current HEAD; block reviewed-result exit 0",
+      "legacy_evidence_class": [
+        "C",
+        "D",
+        "F-partial"
+      ],
+      "same_semantics": "HC/MoE formulas source-aligned but legacy mHC CPU coefficient mismatch and Engram/gate backend differences are explicitly non-qualified",
+      "same_state_transition": "yes for local Block chunk/tokenwise, reset, position rejection; not a cross-repo official oracle",
+      "same_input_regime": "legacy layer0 synthetic/short chunks; ds41f Boundary13d/e first incremental token15 layers0-1",
+      "provenance_clean": "clean for local equivalence; polluted only if treated as official correctness oracle",
+      "can_reuse_without_rerun": "yes as implementation-equivalence regression context; no to replace ds41f official numeric boundaries already run",
+      "reuse_conditions": "keep known cross-backend differences and tie policy caveats",
+      "remaining_gap": "official CUDA tie/reduction portability for MoE/HC remains source/policy review, not solved by legacy",
+      "recommended_action": "reuse as C/D; do not supersede or discard",
+      "local_imported_evidence": [
+        "artifacts/legacy-import/evidence/block/reviewed-result.json"
+      ]
+    },
+    {
+      "ds41f_boundary": "connected prefill; main_hidden; logits; Transformer return",
+      "semantic_claim": "40-layer connected prefill/full backbone per-token hidden/pre_mix/logits/public state exact, continuation, fork/reset, invalid input atomicity, routing decisions",
+      "ds41f_current_authority": "Boundaries7-12 and connected prefill/logits/main_hidden docs in ds41f, official-source-derived",
+      "legacy_repo_evidence": "docs/text-decoder-validation.md; artifacts/text-backbone/reviewed-result*.json; reviewed-prefill-129-*; artifacts/text-decoder/reviewed-result.json",
+      "legacy_commit_artifact": "a961c22edaeabcb4ef9bc9e23acf5b26aa5bffd7 for 129-token runs; reviewed route-ties artifact",
+      "legacy_evidence_class": [
+        "C",
+        "D",
+        "E-partial"
+      ],
+      "same_semantics": "same native runtime semantics with local schedule; not official minimal inference oracle; oMLX comparisons are E only",
+      "same_state_transition": "yes for chunk vs tokenwise, continuation, fork/reset, invalid-input atomicity and routing record equality within native paths",
+      "same_input_regime": "legacy prefill 3-token, 129 repeated/diverse; not ds41f first decode token15 beyond Boundary13e",
+      "provenance_clean": "clean for native local exactness; oMLX/DwarfStar agreement not correctness authority",
+      "can_reuse_without_rerun": "yes to establish connected native state/lifecycle robustness and avoid reauditing all 40 layers solely for local exactness",
+      "reuse_conditions": "compose only with ds41f official semantic anchors for corresponding operations",
+      "remaining_gap": "decode connected logits after first incremental still lacks ds41f official-source-derived numeric digest",
+      "recommended_action": "use for PROVEN_BY_COMPOSITION where primitives and source spans are closed; reserve numerical rerun for true token15 decode gaps",
+      "local_imported_evidence": [
+        "artifacts/legacy-import/evidence/text-backbone/prefill-129-route-ties.json"
+      ]
+    },
+    {
+      "ds41f_boundary": "production attention / optimized path",
+      "semantic_claim": "optimized fixed-tile/current production path bit parity: layers0-39, final persistent state, 2x128 hidden/pre_mix/logits, state/publication/hash, continuation, invalid-token atomicity",
+      "ds41f_current_authority": "not a ds41f semantic oracle; performance/optimized parity evidence only unless code lineage imported and source-reviewed",
+      "legacy_repo_evidence": "docs/attention-reject-reaudit-40ddbb6.md; artifacts/attention/fixed-tile-backbone-20260919-203130-89172/test.log; context-ladder 2K run",
+      "legacy_commit_artifact": "40ddbb6; 1b266485f9a11cd80d23210cc40389bd1b4fe24a",
+      "legacy_evidence_class": [
+        "C",
+        "D",
+        "E"
+      ],
+      "same_semantics": "local reference vs optimized candidate parity; official source is not the compared endpoint",
+      "same_state_transition": "yes within legacy production gate",
+      "same_input_regime": "2x128 and 2K observation, not ds41f first decode pos2/3",
+      "provenance_clean": "clean as optimized-vs-reference parity; performance only for throughput claims",
+      "can_reuse_without_rerun": "yes for compatibility/performance and implementation parity; no to upgrade ds41f official correctness without source/code correspondence",
+      "reuse_conditions": "mark E for performance, C/D for parity/lifecycle",
+      "remaining_gap": "cross-repo code lineage/source equivalence not established",
+      "recommended_action": "do not rerun rejected candidates; retain production gate as legacy optimized parity evidence",
+      "local_imported_evidence": [
+        "artifacts/legacy-import/evidence/attention/fixed-tile-backbone-20260919-203130-test.log"
+      ]
+    },
+    {
+      "ds41f_boundary": "Engram; Boundary13b/d and future layer14",
+      "semantic_claim": "Ngram history/cache, Engram embedding/gate/residual, connected state",
+      "ds41f_current_authority": "Boundary13b Ngram; Boundary13d Engram@1; ds41f Engram layer1/layer14 connected validations",
+      "legacy_repo_evidence": "docs/engram-forward.md; artifacts/engram/*; artifacts/engram-layer/*; connected backbone evidence",
+      "legacy_commit_artifact": "legacy current HEAD and engram-layer diagnostic artifacts",
+      "legacy_evidence_class": [
+        "C",
+        "D",
+        "F-partial"
+      ],
+      "same_semantics": "Ngram/cache lifecycle is reusable; legacy Engram forward has explicit CPU oracle mismatch and oMLX agreement is not official authority",
+      "same_state_transition": "yes for Ngram/cache/local connected state; Engram has no temporal cache",
+      "same_input_regime": "legacy synthetic hidden/rows and full backbone; ds41f first decode token15 layer1 proved, layer14 decode not yet",
+      "provenance_clean": "clean for Ngram and lifecycle; not clean if oMLX/CPU mismatch is used to claim official numeric exactness",
+      "can_reuse_without_rerun": "yes for history/cache composition; no for official layer14 Engram decode numeric digest without ds41f execution/source-bound proof",
+      "reuse_conditions": "separate Ngram B/D from Engram gate arithmetic mismatch",
+      "remaining_gap": "first-decode Engram@14 connected numeric value in ds41f if needed",
+      "recommended_action": "source/provenance review before any layer14 rerun; do not use old native RNG/oMLX as oracle"
+    },
+    {
+      "ds41f_boundary": "sampling; generation lifecycle; Transformer return",
+      "semantic_claim": "multi-token decode continuity, next_position, generation lifecycle, greedy, nonzero-temperature formula, RNG",
+      "ds41f_current_authority": "ds41f sampling contracts: temperature=0, supplied noise/nonzero formula; MLX stochastic contract separated from official RNG",
+      "legacy_repo_evidence": "docs/sampling-reference.md; artifacts/text-generate/*; artifacts/generation-lifecycle/*; native model API parity artifacts",
+      "legacy_commit_artifact": "a961c22edaeabcb4ef9bc9e23acf5b26aa5bffd7 for lifecycle runs",
+      "legacy_evidence_class": [
+        "C",
+        "D",
+        "E-partial"
+      ],
+      "same_semantics": "greedy and supplied Exp formula align; legacy splitmix64 RNG is explicitly not official torch RNG",
+      "same_state_transition": "yes for native lifecycle/callback/cancel/fresh request and next_position",
+      "same_input_regime": "short generation, 4-token and API parity; not full ds41f decode logits proof",
+      "provenance_clean": "clean only with RNG separation retained",
+      "can_reuse_without_rerun": "yes for lifecycle and greedy/native reproducibility; no for official RNG exactness",
+      "reuse_conditions": "never promote old native RNG to official RNG",
+      "remaining_gap": "official stochastic RNG/token sequence remains unproven unless supplied-noise formulation is sufficient",
+      "recommended_action": "reuse lifecycle D; keep RNG as non-authority",
+      "local_imported_evidence": [
+        "artifacts/legacy-import/evidence/generation-lifecycle/reviewed-temperature-result.json"
+      ]
+    }
+  ],
+  "proof_composition": [
+    {
+      "claim": "ratio2 cross-call completion at layer2",
+      "ds41f_premise": "Boundary13 source spans + Boundary13e proves pos2 slot0 partial write, no group complete; primitive Compressor/Indexer semantics reviewed",
+      "legacy_premise": "3-token->4-token continuation reads previous partial slot0, writes current slot1, completes group; 5-token->6-token publication proves new compressed latent and packed main/index cache publication timing",
+      "composition_result": "sufficient for state-machine/lifecycle claim without rerun; insufficient only for token15-specific digest at pos3",
+      "classification": "PROVEN_BY_COMPOSITION"
+    },
+    {
+      "claim": "layer2 sparse_attn + Block2 completion as a broad Boundary13f",
+      "ds41f_premise": "official sparse_attn/Attention/Block primitive contracts and Boundary13e connected entry",
+      "legacy_premise": "layer2 compressed attention local chunk/tokenwise, continuation, consumer publication and later full-backbone local exactness",
+      "composition_result": "enough to avoid rerunning merely to prove local lifecycle; not enough if authority requires exact ds41f token15 layer2 output digest",
+      "classification": "NEEDS_SOURCE_OR_MINIMAL_NUMERIC_ONLY_IF_DIGEST_REQUIRED"
+    },
+    {
+      "claim": "layers3-7 shared-state consumers",
+      "ds41f_premise": "official SharedAttention/consumer source spans and primitive Attention semantics",
+      "legacy_premise": "consumer-check and consumer-range-check prove publication position checks, immutable cache sharing, layer3-7 rejection/acceptance, reset/fork local exactness",
+      "composition_result": "sufficient for lifecycle/ownership; numerical connected decode outputs need ds41f only if token-specific official digest is demanded",
+      "classification": "PROVEN_BY_COMPOSITION"
+    },
+    {
+      "claim": "layer20 decode candidate regeneration",
+      "ds41f_premise": "prefill candidate math and Boundary13 source audit identify layer20 ratio1 source READ_THEN_UPDATE/current-call candidates",
+      "legacy_premise": "full decoder/backbone local evidence includes candidate source, later index sources, routing/state/publication exactness, but primarily in prefill/chunk-tokenwise regime",
+      "composition_result": "source/provenance review currently more important than numerical rerun; first-decode candidate regeneration digest remains genuinely unproven if required",
+      "classification": "NEEDS_SOURCE_REVIEW_ONLY unless exact decode candidate digest becomes a release gate"
+    }
+  ],
+  "final_classification": {
+    "PROVEN": [
+      "ds41f primitive official data/source anchors already closed",
+      "Boundary13 source/lifetime audit",
+      "Boundary13b Ngram first incremental update",
+      "Boundary13c layer0 window/rotary prelude",
+      "Boundary13d Block0+Engram@1",
+      "Boundary13e Block1->layer2 entry plus pos2 partial slot0/no-publication"
+    ],
+    "PROVEN_BY_COMPOSITION": [
+      "SWA ring wrap/fork/reset/invalid-input lifecycle",
+      "ratio2 compressor cross-call state-machine completion/publication",
+      "SharedAttention publication and layer3-7 consumer position checks",
+      "connected native lifecycle: chunk/tokenwise, continuation, fork/reset, invalid-input atomicity",
+      "generation lifecycle and request-local native RNG reproducibility (not official RNG)"
+    ],
+    "NEEDS_SOURCE_PROVENANCE_REVIEW_ONLY": [
+      "mapping legacy optimized attention fixed-tile code lineage to ds41f, if performance evidence is to be cited",
+      "layer20 decode candidate regeneration source/dataflow review",
+      "Engram@14 decode source/gate arithmetic provenance",
+      "Transformer return/main_hidden packaging for first decode"
+    ],
+    "GENUINELY_UNPROVEN": [
+      "token15-specific position3 ratio2 compressed latent/key/cache digest if exact ds41f numerical digest is required",
+      "first-decode layer2 sparse_attn output and Block2 digest if not accepted by composition",
+      "first-decode layer20 candidate regeneration/current-call topk/candidate publication exact digest",
+      "first-decode full logits/main_hidden/return after Boundary13e",
+      "official stochastic RNG sequence (legacy splitmix64 is not official)"
+    ]
+  },
+  "counts": {
+    "PROVEN": 6,
+    "PROVEN_BY_COMPOSITION": 5,
+    "SOURCE_REVIEW_ONLY": 4,
+    "GENUINELY_UNPROVEN": 5
+  },
+  "recommended_cancellations": [
+    "Cancel broad Boundary13f as a sequential reimplementation task if intended to re-prove layer2 lifecycle/state publication already covered by composition",
+    "Cancel broad Boundary13g if intended only to re-prove layer3-7 consumer publication/position checks",
+    "Do not rerun legacy rejected optimized attention candidates from attention-reject-reaudit-40ddbb6.md"
+  ],
+  "recommended_single_next_task": "Source/provenance-only review of layer2 pos3 and layer20 decode candidate regeneration to decide whether a minimal numerical boundary is actually required; do not implement Boundary13f yet",
+  "proof_obligation_necessity_review": {
+    "schema": "proof_obligation_necessity_review_v1",
+    "previous_genuinely_unproven_count": 5,
+    "review_method": "source/artifact/docs/code inspection only; no model math, no numerical runner, no benchmark",
+    "items": [
+      {
+        "proof_obligation": "token15-specific pos3 ratio2 compressed latent/key/cache digest",
+        "current_classification": "GENUINELY_UNPROVEN",
+        "existing_ds41f_evidence": [
+          "Boundary13 source audit: Compressor slot/completion derived from start_pos",
+          "Boundary13e: actual pos2 layer2 input, Q/KV/window/compressed prefix/current topk, partial slot0 written, group_complete=false, future_first_read_position=3",
+          "official Compressor/compressed-KV/Indexer primitive semantics and publication contracts"
+        ],
+        "existing_legacy_evidence": [
+          "docs/compressed-attention.md",
+          "artifacts/global-kv/attention-check.json",
+          "ratio2 pending state",
+          "3-token->4-token continuation",
+          "5-token->6-token publication",
+          "chunk/tokenwise pending-state bit equality",
+          "fork/reset"
+        ],
+        "proof_composition": "official Compressor transition semantics + Boundary13e actual pos2 partial state + legacy cross-call ratio2 state-machine evidence + official compressed-KV/Indexer publication semantics prove that pos3 reads prior partial slot0, contributes slot1, completes the group, emits a latent, and publishes compress_kv/index key according to source timing.",
+        "requirement_source": "regression convenience only for token15 concrete digest; official model semantics and session-state contract need the transition/publication property, not a specific digest unless a release gate names it",
+        "why_required": "The state-machine behavior is required; the token15-specific latent/key digest is not independently required for correctness once the transition semantics and state evidence are composed.",
+        "observable_claim": "pos3 completes ratio2 group and publishes the completed compressed/index row exactly when source semantics require it.",
+        "failure_if_missing": "Without the composition, cross-call group completion/publication could be ambiguous. Without the token15 digest specifically, no release claim fails unless the digest is chosen as a regression fixture.",
+        "remaining_semantic_gap": "none for lifecycle/publication; concrete token15 values are not recorded",
+        "numerical_digest_missing": true,
+        "numerical_digest_required": false,
+        "final_classification": "PROVEN_BY_COMPOSITION",
+        "reason": "The missing digest would only add a concrete fixture value, not a new semantic proof obligation.",
+        "recommended_action": "Do not create Boundary13f for this. Optionally collect a tiny pos3 regression fixture later if regression coverage is desired."
+      },
+      {
+        "proof_obligation": "first-decode layer2 sparse_attn + Block2 exact digest",
+        "current_classification": "GENUINELY_UNPROVEN",
+        "existing_ds41f_evidence": [
+          "official window KV, compressed KV, Indexer/top-k, assembly, sparse_attn, inverse rotary, output projection, HC, MoE, Block contracts",
+          "Boundary13e: actual token15 layer2 Attention input, Q/KV, window state, persistent compressed state, current-call topk"
+        ],
+        "existing_legacy_evidence": [
+          "docs/compressed-attention.md layer2 CompressedLayerReference",
+          "window + global attention",
+          "chunk/tokenwise output/state exact",
+          "continuation",
+          "Block/text connected path",
+          "full-backbone tokenwise execution"
+        ],
+        "proof_composition": "Boundary13e supplies the actual connected layer2 inputs/state/topk; ds41f official primitive contracts supply operation semantics; legacy layer2/full-backbone tokenwise evidence supplies connected/stateful implementation-equivalence and continuation evidence.",
+        "requirement_source": "regression convenience only for exact token15 Block2 digest; official model semantics require correct operations/state transitions, already covered by contracts plus composition",
+        "why_required": "A digest would be useful to catch future regressions but does not establish a new semantic/property claim beyond the composed operation and state evidence.",
+        "observable_claim": "Layer2 sparse attention and Block2 follow the already-reviewed official operation contracts from the actual Boundary13e state.",
+        "failure_if_missing": "No correctness/release claim fails solely because a token15 Block2 digest is absent. A future regression test would be less concrete.",
+        "remaining_semantic_gap": "no named unconnected operation boundary found; exact output digest is absent",
+        "numerical_digest_missing": true,
+        "numerical_digest_required": false,
+        "final_classification": "OPTIONAL_REGRESSION_FIXTURE",
+        "reason": "The broad Boundary13f would only add a concrete fixture digest for this exact token/state, not necessary correctness authority.",
+        "recommended_action": "Do not revive broad Boundary13f. If desired later, make a narrow regression fixture, not a proof-obligation Boundary."
+      },
+      {
+        "proof_obligation": "layer20 decode candidate regeneration / current-call topk/candidate publication digest",
+        "current_classification": "GENUINELY_UNPROVEN",
+        "existing_ds41f_evidence": [
+          "official candidate-block semantics",
+          "official candidate-consumer semantics",
+          "official Indexer semantics",
+          "official compressed-KV semantics",
+          "Boundary13 decode state lifetime audit: prefill topk/candidates are call-local, layer20 ratio1 is READ_THEN_UPDATE/current-call",
+          "Boundary7/8/12 prefill connected candidate generation authorities"
+        ],
+        "existing_legacy_evidence": [
+          "docs/text-decoder-validation.md",
+          "legacy TextDecoderReference layer20 candidate_source",
+          "legacy full-backbone chunk/tokenwise/tokenwise state exactness",
+          "generation@20 compressed/index/candidate state evidence",
+          "layers21+ candidate consumer wiring in local path"
+        ],
+        "proof_composition": "Official source already says prefill candidate/topk values are not persistent and layer20 regenerates candidates/topk in each forward call from current compressed/index state. Legacy tokenwise decoder/full-backbone evidence supports that the implementation path executes layer20 source and candidate consumers every token with state continuation exactness.",
+        "requirement_source": "official model semantics and session-state contract for regeneration; source/provenance review for mapping legacy layer20 execution order to ds41f contracts; concrete digest only regression convenience",
+        "why_required": "Regeneration ordering is required, but a layer20 first-decode digest is not required unless release qualification explicitly demands candidate-mask bytes for token15.",
+        "observable_claim": "decode call regenerates layer20 compressed KV, index K, current-call candidate mask/topk, and layers21+ consume current-call values rather than prefill tensors.",
+        "failure_if_missing": "If source/provenance mapping were absent, candidate reuse across calls could be suspected. Missing numeric digest alone does not fail correctness.",
+        "remaining_semantic_gap": "confirm legacy tokenwise decoder records/executes actual per-token layer20 candidate_source order and that ds41f release claim does not require token15 candidate-mask bytes",
+        "numerical_digest_missing": true,
+        "numerical_digest_required": false,
+        "final_classification": "SOURCE_PROVENANCE_ONLY",
+        "reason": "The open work is source/dataflow identity and claim scoping, not model arithmetic. No broad layer20 decode numerical boundary is justified.",
+        "recommended_action": "Perform a source/provenance-only mapping of layer20 candidate_source and layers21+ consumers. If a gap remains, shrink to one non-heavy boundary: candidate mask publication identity only, not layer20 decode."
+      },
+      {
+        "proof_obligation": "full first-decode logits/main_hidden/Transformer return after Boundary13e",
+        "current_classification": "GENUINELY_UNPROVEN",
+        "existing_ds41f_evidence": [
+          "Boundary12b4 Engram-connected deterministic logits for prefill",
+          "Boundary12c main_hidden capture/mean/concat authority",
+          "Boundary12d integrated deterministic Transformer.forward return packaging",
+          "Boundary12e target-MLX stochastic integrated return",
+          "Boundary13 source audit: decode recreates h/pre_mix/main_hiddens per call and main_hidden shape [B,1,15360] for S=1",
+          "Boundary13b-e first-decode connected prefix through layer2 entry"
+        ],
+        "existing_legacy_evidence": [
+          "docs/text-decoder-validation.md full backbone tokenwise execution",
+          "legacy generation/logits/state continuation evidence",
+          "reviewed-prefill-129 chunk/tokenwise state/logits evidence",
+          "legacy main_hidden evidence not found by source/artifact search"
+        ],
+        "proof_composition": "Legacy tokenwise full-backbone/generation evidence covers connected decode continuation and logits lifecycle; ds41f official return boundaries cover logits/head, main_hidden assembly semantics, sampling/rebind and return packaging. Boundary13 source audit establishes that decode call-local return assembly has the same source operations with S=1. Legacy does not appear to implement/check main_hidden, so main_hidden-specific confidence comes from ds41f source/Boundary12c rather than legacy.",
+        "requirement_source": "official model semantics if ds41f claims Transformer.forward return; runtime API contract does not expose main_hidden in current M0 API; release qualification must state whether decode main_hidden is observable",
+        "why_required": "A full decode return digest is not automatically required. If main_hidden becomes an observable API/release claim, the minimal obligation is decode-specific final return assembly/main_hidden capture scoping, not Blocks3-39/logits rerun.",
+        "observable_claim": "first-decode return tuple ordering and call-local main_hidden capture/concat follow official source; logits/generation continuity is supported by legacy tokenwise evidence and ds41f primitive return authorities.",
+        "failure_if_missing": "If ds41f releases a core Transformer.forward API with decode main_hidden, missing decode-specific return assembly review could leave that observable underspecified. Current chat/generation API correctness does not fail solely from absent main_hidden digest.",
+        "remaining_semantic_gap": "requirement scoping: whether decode main_hidden/return is release-observable; legacy main_hidden evidence not found",
+        "numerical_digest_missing": true,
+        "numerical_digest_required": false,
+        "final_classification": "SOURCE_PROVENANCE_ONLY",
+        "reason": "The broad full-decode numerical claim should be decomposed. Only release-scope/source review of decode return/main_hidden remains; exact logits/main_hidden digest is optional unless the release claim requires it.",
+        "recommended_action": "Do not run full decode. Decide release/API exposure of main_hidden; if required, plan a minimal decode return assembly review/fixture, not a 40-layer numerical Boundary."
+      },
+      {
+        "proof_obligation": "official stochastic RNG sequence",
+        "current_classification": "GENUINELY_UNPROVEN",
+        "existing_ds41f_evidence": [
+          "Boundary10 temperature-zero and supplied-noise sampling arithmetic",
+          "Boundary11/12e target MLX stochastic sampling, explicit session-key transition, integrated stochastic return",
+          "Boundary13 source audit classifies target MLX RNG as target-runtime-owned session state, not official-model persistent state"
+        ],
+        "existing_legacy_evidence": [
+          "docs/sampling-reference.md: splitmix64 native RNG explicitly not official torch RNG",
+          "generation lifecycle/API parity for target-native reproducibility"
+        ],
+        "proof_composition": "Correct sampling distribution/arithmetic and deterministic target-runtime RNG lifecycle are already validated separately from official PyTorch RNG bitstream identity. Official model semantics require sampling arithmetic, not bit-identical torch RNG sequence, unless a separate compatibility requirement is declared.",
+        "requirement_source": "NON_GOAL for ds41f correctness; optional compatibility only if future release explicitly promises PyTorch RNG bitstream parity",
+        "why_required": "No current correctness/release requirement demands bit-identical official torch RNG. The explicit authority split forbids treating target runtime RNG as official-model state.",
+        "observable_claim": "target runtime produces reproducible stochastic sampling under its documented MLX key/noise policy and source-defined arithmetic.",
+        "failure_if_missing": "No ds41f correctness claim fails. Only a hypothetical PyTorch-seed compatibility promise would fail.",
+        "remaining_semantic_gap": "none for current requirements",
+        "numerical_digest_missing": true,
+        "numerical_digest_required": false,
+        "final_classification": "NON_GOAL",
+        "reason": "Bit-identical official torch RNG is outside the documented ds41f authority and release scope.",
+        "recommended_action": "Do not create official RNG comparison. Preserve supplied-noise and target-runtime RNG lifecycle authorities."
+      }
+    ],
+    "summary": {
+      "REQUIRED_NUMERICAL_PROOF": [],
+      "PROVEN_BY_COMPOSITION": [
+        "token15-specific pos3 ratio2 compressed latent/key/cache digest (semantic transition; digest optional)"
+      ],
+      "SOURCE_PROVENANCE_ONLY": [
+        "layer20 decode candidate regeneration/current-call topk/candidate publication",
+        "full first-decode logits/main_hidden/Transformer return requirement scoping"
+      ],
+      "OPTIONAL_REGRESSION_FIXTURE": [
+        "first-decode layer2 sparse_attn + Block2 exact digest"
+      ],
+      "NON_GOAL": [
+        "official stochastic RNG sequence"
+      ],
+      "cancelled_numerical_boundaries": [
+        "broad Boundary13f",
+        "broad Boundary13g",
+        "layer20 decode-all boundary",
+        "full first-decode 40-layer logits/return boundary",
+        "official PyTorch RNG bitstream boundary"
+      ],
+      "single_next_task": "No numerical Boundary. Perform source/provenance-only requirement scoping for layer20 candidate regeneration and decode return/main_hidden exposure; then switch to planning how to reuse/port legacy proven implementation evidence into ds41f runtime."
+    }
+  },
+  "necessity_review_counts": {
+    "previous_genuinely_unproven_count": 5,
+    "REQUIRED_NUMERICAL_PROOF": 0,
+    "PROVEN_BY_COMPOSITION": 1,
+    "SOURCE_PROVENANCE_ONLY": 2,
+    "OPTIONAL_REGRESSION_FIXTURE": 1,
+    "NON_GOAL": 1
+  },
+  "local_legacy_import_resolution": {
+    "schema": "local_legacy_import_resolution_v1",
+    "manifest": "artifacts/provenance/legacy-import.json",
+    "source_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+    "destination_commit_before_import": "1e5062b613a8eb33bf0e84323e5ff41b649b8ee6",
+    "status": "reviewed legacy evidence claims can be audited from local imported files without mounting the legacy repository",
+    "entries": [
+      {
+        "legacy_path": "artifacts/swa/layer-check.json",
+        "local_path": "artifacts/legacy-import/evidence/swa/layer-check.json",
+        "sha256": "08af07f49d27accbaafe4ff15897e1eeded1ae52caf11de017ebea0eec4b734e",
+        "evidence_class": [
+          "C",
+          "D"
+        ],
+        "claim_supported": "SWA/window state lifecycle: layer-connected chunk/tokenwise output and KV state equality, continuation, fork/reset, invalid position/NaN rejection, 128->129 wrap evidence.",
+        "historical_path_only": true,
+        "live_dependency_on_legacy_repo": false
+      },
+      {
+        "legacy_path": "artifacts/global-kv/attention-check.json",
+        "local_path": "artifacts/legacy-import/evidence/global-kv/attention-check.json",
+        "sha256": "cb61dbde67b53813b5afe33d01b94c1c2c0e5b9c726252e1fe0d5319e393fb40",
+        "evidence_class": [
+          "C",
+          "D"
+        ],
+        "claim_supported": "Layer2 compressed attention state lifecycle: window+global output/state chunk/tokenwise equality, continuation and ratio2 producer state behavior.",
+        "historical_path_only": true,
+        "live_dependency_on_legacy_repo": false
+      },
+      {
+        "legacy_path": "artifacts/global-kv/consumer-check.json",
+        "local_path": "artifacts/legacy-import/evidence/global-kv/consumer-check.json",
+        "sha256": "388c72be133a17e5c5eb04257aafbaa367d7ec7c0154bcb86e79c058fa590e80",
+        "evidence_class": [
+          "C",
+          "D"
+        ],
+        "claim_supported": "Layer3 SharedAttention consumer publication/position checks and producer immutability evidence not covered by layer4-7 range artifact.",
+        "historical_path_only": true,
+        "live_dependency_on_legacy_repo": false
+      },
+      {
+        "legacy_path": "artifacts/global-kv/consumer-range-check.json",
+        "local_path": "artifacts/legacy-import/evidence/global-kv/consumer-range-check.json",
+        "sha256": "587285c07d367393d7a2031fd0294fc2f4570340ab0ee691a1b3899ff1dce94a",
+        "evidence_class": [
+          "C",
+          "D"
+        ],
+        "claim_supported": "Layer4-7 SharedAttention consumer generalization, rejection of invalid producer/consumer layers, and consumer state equality.",
+        "historical_path_only": true,
+        "live_dependency_on_legacy_repo": false
+      },
+      {
+        "legacy_path": "artifacts/block/reviewed-result.json",
+        "local_path": "artifacts/legacy-import/evidence/block/reviewed-result.json",
+        "sha256": "c904c54a54c0fd0b0992ec826c60cd39a818cc5a6f03568d2c2d3bee6d11ba92",
+        "evidence_class": [
+          "C",
+          "D"
+        ],
+        "claim_supported": "Layer0 Block local connected HC/MoE/SWA chunk/tokenwise hidden/pre_mix/KV state equality, reset and position rejection.",
+        "historical_path_only": true,
+        "live_dependency_on_legacy_repo": false
+      },
+      {
+        "legacy_path": "artifacts/text-backbone/reviewed-prefill-129-route-ties-20260915.json",
+        "local_path": "artifacts/legacy-import/evidence/text-backbone/prefill-129-route-ties.json",
+        "sha256": "6fac8507c4a3c85ee3706013359a8c68d8a66739b959647e22eb25c7c92478b2",
+        "evidence_class": [
+          "C",
+          "D"
+        ],
+        "claim_supported": "129-token full-backbone local chunk/tokenwise hidden/pre_mix/logits/public-state exactness and route-tie record equality.",
+        "historical_path_only": true,
+        "live_dependency_on_legacy_repo": false
+      },
+      {
+        "legacy_path": "artifacts/attention/fixed-tile-backbone-20260919-203130-89172/test.log",
+        "local_path": "artifacts/legacy-import/evidence/attention/fixed-tile-backbone-20260919-203130-test.log",
+        "sha256": "2be4a0be98818b953ca0212d7809b9a22a6ae8f41b1340a930a965927c954963",
+        "evidence_class": [
+          "C",
+          "D",
+          "E"
+        ],
+        "claim_supported": "Fixed-tile production attention optimized-vs-reference gate: 2x128 layers0-39 hidden/pre_mix/logits/state/publication/hash/continuation/invalid-token atomicity exact.",
+        "historical_path_only": true,
+        "live_dependency_on_legacy_repo": false
+      },
+      {
+        "legacy_path": "artifacts/generation-lifecycle/reviewed-temperature-result-20260915.json",
+        "local_path": "artifacts/legacy-import/evidence/generation-lifecycle/reviewed-temperature-result.json",
+        "sha256": "e4d7bd3b9edd1ff3c35135dbabaebf3f92c702ecf7cb43ff55cee78b3e4789df",
+        "evidence_class": [
+          "C",
+          "D"
+        ],
+        "claim_supported": "Generation lifecycle with nonzero temperature target-native RNG: callback/no-callback equality, cancel, fresh request, next_position; RNG remains non-official.",
+        "historical_path_only": true,
+        "live_dependency_on_legacy_repo": false
+      }
+    ],
+    "old_repo_dependency_after_import": {
+      "runtime": true,
+      "tests": true,
+      "correctness": false,
+      "canonical_docs": true,
+      "notes": {
+        "runtime": "Phase1 intentionally does not import runtime implementation; conceptual runtime reuse dependency remains until Phase2.",
+        "tests": "Legacy tests are not imported in Phase1.",
+        "correctness": "The reviewed legacy evidence claims used by reconciliation are now locally resolvable from artifacts/legacy-import/evidence plus this manifest; some historical docs still mention old repo as archive path.",
+        "canonical_docs": "Canonical docs are not rewritten in Phase1 and still need consolidation."
+      }
+    }
+  }
+}

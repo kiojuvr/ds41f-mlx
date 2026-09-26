@@ -1,0 +1,139 @@
+{
+  "authorities": {
+    "candidate_model_semantics": "docs/official-semantics-authority.md",
+    "execution_architecture": "https://github.com/antirez/ds4.git@0aaea5a238fb41a35106a551e73c8409dfb751ac",
+    "model_data": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+    "omlx_role": "compatibility/performance/implementation donor only"
+  },
+  "forbidden_promotions": [
+    "matches_oMLX_forward_to_official_correctness",
+    "matches_oMLX_logits_to_official_logits_oracle",
+    "matches_oMLX_cache_state_to_official_semantics",
+    "dwarfstar_topology_to_model_math_correctness"
+  ],
+  "model_math_status": "frozen_until_official_semantics_review",
+  "ok": true,
+  "purpose": "metadata plan for replacing oMLX-derived correctness evidence with official-reference-derived fixtures",
+  "required_fixture_metadata": [
+    "classification",
+    "not_omlx_derived",
+    "checkpoint_tensor_or_reference_file_identity",
+    "operation_contract",
+    "input_digests",
+    "expected_provider",
+    "non_claims"
+  ],
+  "schema": "ds41f.semantic-oracle-plan.v1",
+  "stages": [
+    {
+      "authority": {
+        "doc": "docs/official-semantics-authority.md",
+        "kernel_py_sha256": "1236c3507019ed176f5dba5e04bcea58867cf654818c6cf138ed4845398c2455",
+        "model_py_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65"
+      },
+      "classification": "CLEAN_PROVENANCE_ONLY_NOT_NUMERICAL_VALIDATION",
+      "name": "official_reference_review",
+      "next_action": "verify local reference snapshot and M1 HF revision against official DeepSeek release material",
+      "non_claims": [
+        "does not generate logits",
+        "does not authorize model-math expansion by itself"
+      ],
+      "status": "pending_review"
+    },
+    {
+      "authority": {
+        "artifact": "artifacts/m2/dwarfstar-prefill/native-official-embedding.json",
+        "tensor": "embed.weight"
+      },
+      "classification": "CLEAN_OFFICIAL_CHECKPOINT_RAW_BITS",
+      "name": "raw_embedding_gather",
+      "next_action": "keep as model-data primitive; do not widen to embedding semantics without reference review",
+      "non_claims": [
+        "no full-model semantics",
+        "no attention/MoE/HC semantics"
+      ],
+      "status": "available"
+    },
+    {
+      "authority": {
+        "artifact": "artifacts/m2/dwarfstar-prefill/native-official-projection.json",
+        "tensor": "layers.0.ffn.gate.weight"
+      },
+      "classification": "CLEAN_INDEPENDENT_ARITHMETIC_CONTRACT",
+      "name": "bf16_dense_linear_primitive",
+      "next_action": "keep as isolated primitive; define official full-layer dtype behavior separately",
+      "non_claims": [
+        "no quantized expert semantics",
+        "no official full-layer correctness"
+      ],
+      "status": "available"
+    },
+    {
+      "authority": {
+        "class": "ParallelEmbedding.forward",
+        "file": "inference/model.py",
+        "sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65"
+      },
+      "classification": "PLANNED_OFFICIAL_REFERENCE_DERIVED",
+      "name": "parallel_embedding_semantics",
+      "next_action": "review tensor-parallel masking/all_reduce behavior and define bounded fixture",
+      "non_claims": [
+        "must not use oMLX processor/model output as expected value"
+      ],
+      "status": "blocked_until_reference_review"
+    },
+    {
+      "authority": {
+        "file": "inference/model.py",
+        "functions": [
+          "linear",
+          "Linear.forward"
+        ],
+        "sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65"
+      },
+      "classification": "PLANNED_OFFICIAL_REFERENCE_DERIVED",
+      "name": "bf16_linear_reference_semantics",
+      "next_action": "review non-quantized BF16/F.linear path and dtype behavior",
+      "non_claims": [
+        "current NumPy primitive is arithmetic evidence, not full official layer semantics"
+      ],
+      "status": "blocked_until_reference_review"
+    },
+    {
+      "authority": {
+        "class": "RMSNorm.forward",
+        "file": "inference/model.py",
+        "sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65"
+      },
+      "classification": "PLANNED_OFFICIAL_REFERENCE_DERIVED",
+      "name": "rmsnorm_semantics",
+      "next_action": "define F32 variance/rsqrt and output cast contract from official reference",
+      "non_claims": [
+        "do not compare to oMLX RMSNorm output as oracle"
+      ],
+      "status": "blocked_until_reference_review"
+    },
+    {
+      "authority": {
+        "files": [
+          {
+            "path": "inference/model.py",
+            "sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65"
+          },
+          {
+            "path": "inference/kernel.py",
+            "sha256": "1236c3507019ed176f5dba5e04bcea58867cf654818c6cf138ed4845398c2455"
+          }
+        ]
+      },
+      "classification": "PLANNED_COMPLEX_REVIEW_REQUIRED",
+      "name": "attention_moe_hc_dspark",
+      "next_action": "split into separate review plans before any native implementation",
+      "non_claims": [
+        "no cache/logits/state oracle from oMLX",
+        "no broad full-model claim"
+      ],
+      "status": "blocked"
+    }
+  ]
+}

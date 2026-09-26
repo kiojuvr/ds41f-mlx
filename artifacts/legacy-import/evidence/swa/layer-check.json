@@ -1,0 +1,38 @@
+{
+  "date": "2026-09-13",
+  "command": "build-mlx/dsv41-swa-attention-test /Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash artifacts/checkpoint/summary.json",
+  "exit_code": 0,
+  "checks": [
+    "masked sink analytic: 1,63,64,65,127,128 live slots",
+    "real layer 0: 2-token chunk/tokenwise BF16 bits for output and state",
+    "continuation, fork, reset, invalid position and NaN rejection",
+    "128 to 129 tokens: bounded state, oldest eviction, newest projected KV"
+  ],
+  "cpu_ctest": {
+    "passed": 4,
+    "failed": 0
+  },
+  "schedule": "token-serial with decode ordered slots",
+  "official_cuda_executed": false,
+  "full_attention_connected": true,
+  "full_block_connected": false,
+  "full_model_qualified": false,
+  "sha256": {
+    "CMakeLists.txt": "090106f3700059ae2253ebedb78629db0c785cb7bf9700a36b6312a30061a8fa",
+    "include/dsv41/swa_layer.hpp": "8ae8d88327caca02708a1369fa90aec2006bb859956eb84e3caf9ff332ad1ea0",
+    "src/attention/swa_layer.cpp": "956877abe098a336051f0b8a5d77a116858433959b127c731ed137b44879722a",
+    "src/attention/swa_attention.cpp": "d592a460ea1465b6de341ee9f6664008c4eefcba02e1fa52e55f727f9aaa31ea",
+    "src/attention/swa_projection.cpp": "cfb51e86f8e6ece8b8bb1dea072de4cc68df96e14ff58ad7c3462008ffc29eee",
+    "src/model/linear.cpp": "3d9e7afdaaae2e2c916bfba7357ea41835cd18affbf73a6a72ccbea5e854ca03",
+    "src/model/entry.cpp": "dbb31418acc225a4f6aeb2f4528eebedd71a778413b9d29028f9d4b48eec490b",
+    "src/engram/store.cpp": "f9b107266ef4615fe17d9dd03a046d3254de78a4cfaa9ab074d15756241789ab",
+    "tests/attention/test_attention.cpp": "b0a6f7f4ca69d040cee7ca012cbd7056d5964e531c4869116a401407597f4587",
+    "build-mlx/dsv41-swa-attention-test": "a7e2219a87450107c382c930353612802bcf469150fcb5a46e86ac834e85e987",
+    "artifacts/checkpoint/summary.json": "a031e177105d53c404ff573bac9072a72a0c99ba3537e23728bd7890c00de028"
+  },
+  "reference_sha256": {
+    "inference/model.py": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+    "inference/kernel.py": "1236c3507019ed176f5dba5e04bcea58867cf654818c6cf138ed4845398c2455",
+    "inference/convert.py": "035028340479145594a81d6084a8424e57363adf83c0d5983914783d95614d76"
+  }
+}

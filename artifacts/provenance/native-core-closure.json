@@ -1,0 +1,1407 @@
+{
+  "schema": "ds41f.native_core_closure.v1",
+  "phase": "3A/3 FULL_MODEL production native runtime closure imported",
+  "legacy_source": {
+    "repo": "kiojuvr/deepseek-v41-flash-mlx",
+    "commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+    "branch": "main",
+    "url": "https://github.com/kiojuvr/deepseek-v41-flash-mlx.git"
+  },
+  "entry_points": [
+    "TextBackbone",
+    "TextEncoder",
+    "TextDecoder",
+    "TextGeneration",
+    "Block",
+    "CompressedBlock",
+    "ReusedBlock",
+    "SWA layer",
+    "Compressed producer layer",
+    "Reused consumer layer"
+  ],
+  "target_layout": {
+    "root": "native/",
+    "include": "native/include/dsv41 initially retaining dsv41 namespace",
+    "src": "native/src",
+    "metal": "native/metal",
+    "tests": "native/tests"
+  },
+  "namespace_decision": {
+    "phase2": "retain dsv41 internally",
+    "later": "optional ds41f wrapper or mechanical rename after build/test parity",
+    "reason": "minimize semantic-neutral churn during import"
+  },
+  "build_targets_classification": {
+    "CORE_REQUIRED": [
+      "dsv41_checkpoint",
+      "dsv41_storage",
+      "dsv41_engram_mlx",
+      "dsv41_model_mlx",
+      "dsv41_text_pair_mlx",
+      "dsv41_runtime_bridge_mlx"
+    ],
+    "TEST_REQUIRED": [
+      "dsv41-swa-attention-test",
+      "dsv41-test-swa",
+      "dsv41-block-test",
+      "dsv41-text-encoder-test",
+      "dsv41-text-decoder-test",
+      "dsv41-text-backbone-test",
+      "dsv41-sampling-test",
+      "dsv41-generation-loop-test",
+      "dsv41-route-policy-test",
+      "dsv41-test-engram",
+      "dsv41-bridge-lifecycle-test"
+    ],
+    "DIAGNOSTIC": [
+      "trace/probe targets",
+      "fixed-tile diagnostics in source guarded by runtime flags"
+    ],
+    "BENCHMARK": [
+      "context-ladder",
+      "measurement/probe binaries"
+    ],
+    "OBSOLETE_OR_ARCHIVE": [
+      "rejected attention candidate benchmark targets and old repair probes"
+    ]
+  },
+  "files": {
+    "headers": [
+      {
+        "legacy_path": "include/dsv41/attention_telemetry.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "7e0f170fa6eb10a96530598bc8ee331f330c6f06dbfc5c934b863466e3e18c70",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/block.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "dc5029234f345f886e3a2fa9239c721ba4522133a47858f8e5a5046246aa2650",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/checkpoint_atlas.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "3864c8f319f514d21a11d6689b68ca8ed71b78f24a02124d2b65308d3295ded0",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FOUNDATION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/compressed_block.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "da18873ed129226dae9812770a28c76d11831bcc498dd14f8cba55f456d5a068",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/compressed_layer.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "28b31622e8f3e2e2cbf43696d03873a028f9b03ce104ef9d49b9c01e20932643",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/compressed_rope.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "f892833d8b278b8c70012198ef12c9e6eadb5e0b77c36f0043f0e0ea5bb57f7a",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/compressor.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "8cd10f4bee030aa55aa6414f3563c2c60e2c80509173f2406faf4feea3ee1279",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/deferred_decoder_plan.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "c6587730786a5ba07774db218024ab08a3edc35e0964914086bb3a4f106c76e4",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/engram.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "5a40cf03845ba87bcef6d3e33c3226e13a10fec55e41b76dcf906c7641a53351",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FOUNDATION",
+        "production_reachable": false
+      },
+      {
+        "legacy_path": "include/dsv41/engram_layer.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "7f896729bbf55fdba610a10b275067978f2e8570c63dc9289bd93b4ad9272a0e",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/engram_mlx.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "6ff7ca14182e172f7e04a49d2970fafd2d76398c739dc52046abab521a071f73",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/execution_policy.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "cac4fb3527fada5d3f7dbb8b68e06b31cb9fbdcfb9755c34da0c333972058ff7",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/expert_backing.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "fbde9092abcfce18ac09e52d38fc9f87cad98cc93e37db117d5bd538b68ef004",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/generation_loop.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "5f958575f932b0537f57378afa9bd7c06bba621a53b60d2417b0c656c3589c99",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/global_kv.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "402b53a8dea86f57f40d285c2024e989e4d66e0a35e51c14d978c5f01b159079",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/index_key.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "3f8a6a9e4634f9914c74f159110b5021c34bb4867abfd04601c590bf87332633",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/index_query.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "b478f0efecd09af58a4ef76c2481544936b709d27807befedb659c953448ca3f",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/kv_quant.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "e0cb047c5549676ea96ab5eee7abd054183dd441b7f55b8ef7e677bc15c6a3b7",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/layer_owner.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "0f24ca145aaf847ff527d74ea65b35c82a66335e0edb6a25a2d28cf09fd3d42d",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/linear.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "f8ee76c32a05428528aae7900fdf3236ce714db14803e3bb0233f9b728530991",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/mhc.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "843135dd28e8fc01cceb8582138be66c18fdfdf28df9ffe62f81049289f3cbe0",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/model_entry.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "c8a105fb91ba3a438c6f6f38062bf86bf71aa54876870e2be54d8c338ab48167",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/moe.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "2ba5a173032b7622fc3fb14adfb1f7e4441e6b358ea2c21bfe811b97e2e7c9db",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/moe_pipeline.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "2c70608f983dd0877a9af5452d68e74014700fddd9fe8069b06e0ee77489ede4",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/reused_block.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "9de72b31b746aa94becb67230793568205081588d872a42be982336fd2259bbd",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/reused_layer.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "c4759c7d65bd3c8fcd83520f6b3a3869390254bd146a2222996d9646a74fd419",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/runtime_profile.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "b51d379661695756e52d5058c5d71ad787f091abf39c32552f67dd0a5e2470a2",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/runtime_residency.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "1745cad29f6eabb369ea7f21cf9e3c747c32fb1ea0191ff687deeffae202758d",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/sampling.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "8cd9c4beb7d07e2848b9f26673bffc6ce60756625a505804543bbd55bf582055",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/shared_attention.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "34e6f8c4f3a040e770b375ce7199ed3700743be19ff383af0e05701afe549cab",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/swa_attention.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "d89197a04a4dbcc966348af5a85d43ccc48edf8fc6e29a8d69235f8986ba7199",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/swa_layer.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "d079b025cf513c57a9ea523dd3de386c20f401d43773d0463db3bc5feb27e797",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/swa_projection.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "36fd7578f625b7d6801a8e4949c04d95749adf066959e172e162f2bd9e107bf0",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/swa_state.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "86ec01f6a45ddc255dacf3944fa80d87199ce011a77b03c5eb181a304a6a19e9",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FOUNDATION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/sweep_telemetry.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "c2ee22de20aa1e9eae7a4a696b3c68e23b028ce29c75edda633558ec92c62930",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/text_backbone.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "f33ed32dd47086a5a2907d3a7d2b96479cf3195fbfcd0f199e592959c477b0e3",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/text_decoder.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "7b2d5a7b10203b701e673bcf349d2a8efb69c31198328ebcf13426c922026f56",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/text_encoder.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "a7fc47fb8d53398fdaa552147ad3d50764dc49008795a2d4621b66cefc3b1625",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/text_front.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "24f1b1f9234b823b21579ae5856b243a18620a153989603a7bfb4e92869e2228",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/text_generate.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "d2e5daaab533f9bfd85a7bf43590516e26ff0e5b213d53a932285c8c8fa4bdb5",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/text_octet.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "df2b99df84802e8760aaf337692e68b22f98500b1bc81b004a7fc4182626366c",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/text_pair.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "a21f3a37398dfcac709a6c49ff4ab0f5f77e0657dc826827250f06dfa37cdc3d",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/text_quad.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "a00678a37459b9952208c18e1a465fa14697827735051212818aade4ade37886",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/text_triple.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "4cd8154b51eb1ee90b1754a71cf64f2ba09a78a4f4432890bf4537fcd37004c3",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/trace.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "ee070118af91e1eca75d55f7b5fb5d7b0e119d109a8e60117f85a25fc0246fd3",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/weights.hpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "9697bfafe385d2d1a749c66789261ad2a05801faacec9775a98022ca106bd5a9",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FOUNDATION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "include/dsv41/runtime_bridge.h",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "549fbb1e632f7d02363f23bab2bf2214b122c64e6fe2187ee4663e9b16fa3c53",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      }
+    ],
+    "sources": [
+      {
+        "legacy_path": "src/model/checkpoint_atlas.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "45c446652b66984f3d4bc57bb2d189ab824ed7460719bb0204ff72332c5f1cb9",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FOUNDATION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/model/weights.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "da6684267a80f14631bcd6af1c3b9f3e3bdd341618aee58139660b37302111ad",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FOUNDATION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/model/linear.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "ce30711969adef07ce1caab45813785a61a39eda0704bb43083f359ba60ebf22",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/model/entry.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "1635ec531be8af4ef99a53b48ccd30eec52b6b4a967b484a658fdf5cc0186525",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/model/block.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "2dd7cf41962364c8627cbe6673c64ef345d0df2e682b6e38077b2e6e0c8b1350",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/model/compressed_block.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "26d30bce29224956e6c61e6abd0f01e5d3c9bfd0eb1a307a0414f3c12d5b4ffe",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/model/reused_block.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "a323e6ca3183eceaed3a45531aa772981bfb3945618b46415dd1e79c6ba1f3ff",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/model/text_front.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "729894b9d354dff522223f10ee83498a72ce4c0bf478f5d99cb4f8a28cd05251",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/model/text_pair.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "b268723f7ad4052302c8076c32ff6403b5fb304eae310c83235e7f298283b93b",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/model/text_triple.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "0d688da671665a2c3e7c64ebc9fcfadffdb6731e7ccc78a49e3bf546e9131adb",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/model/text_quad.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "19b9215dd187462d8eec5208d77cfa261897dbac7fec816064eedb6329173402",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/model/text_octet.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "6ad8e90a83cba170f52b947729a52044c2fe31dd793d4837105416a9021f1dd9",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/model/text_encoder.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "39319a5ebc227959fb4c9f472df70ec3dc49cdbf75f13e97816149858465eb42",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/model/text_decoder.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "57550c137af2eb18956c7f0459c2e9b9c9f13ecb0a429261f2bb5b3628611dff",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/model/text_backbone.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "bd3b22af29a03fdf1d80a812926998a3c7f851f67b088f2ceece32588589ee27",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/model/text_generate.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "254ca87b5550561f80640382ac38dd86b559f7faee3671e1958c92967ea1b76b",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/model/sampling.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "7c36cb2f0761d1dbc6c1c024594e000e936345c6980e9ae9ae20ab447a824994",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/model/trace.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "8f7c8f9122754adb1cd9e7db4cb90ab7cfb5ece0b16bd30486d2d1c611b4f40e",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/attention/swa_state.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "093fc4958a1ceda6548020a2a22168da9fc437a27ef179f618b3fa07f6bc0638",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FOUNDATION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/attention/swa_projection.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "305236612118567620ca3124584558fe9b8b30c6f95bb5c5ecc95be66248176e",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/attention/swa_layer.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "d54a40743ff87ec02ecbae6d74aa7b714d3bcb1536e981c0c9d9b1c9043e63ff",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/attention/swa_attention.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "a53bd8177da8446e276468353fb4ef07f3313023d57a8141d954d1d8cf663f66",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/attention/compressor.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "dc7db9ae46419dd3a666dc48a4ff0b84fd93ca4bf2a91e8d2c9fc3fdabbe2653",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/attention/compressed_rope.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "b998133a6e41b09871eeb2f6eadef1fb25e600f5ca99f82eaed9a0858729acb5",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/attention/index_key.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "c6fe9036d0e49e6bd51957110849050c2cffdbf88fb85785d2fba98a365126bb",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/attention/kv_quant.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "ef9f9b9cacfa10cf35e2c71cc287ce66ef14b5c4fcd71e7fd6bd479f1dd18de0",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/attention/index_query.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "827c93ee9d65d733e6883756881ad7a7e5298b12f046b6ade1a30c345b2d91e5",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/attention/compressed_layer.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "d7c3e814fcf95287e524800b5ddfe29560f387a3dc30a4612ccb14beef56c1c7",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/attention/shared_attention.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "6e2319c711c1f84a61b6b2eb6fe954237d3dd55b62c7c947a6f01e0979e90e14",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/cache/global_kv.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "308e8e7ccb4f1707f1ee76b6367593ab9c4e28f0152fe20b6a94749b03dc0519",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/mhc/reference.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "a62e9d32475ea933bc165f36a363ba6f1d091dce1debbaf0116545bc4edab7e5",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/moe/reference.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "40cfff3efe825d11ef536df13c92dda2c727ec7fa7bf3ddf60897c15bb566301",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/moe/expert_bank.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "9a16b2b3622bff34f250d96b118115cdeed2da962e7b747c9658f37e177ad291",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/moe/expert_backing.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "ecf7e176fd8f61fb8133524deb2fb948b5ff0c826acf446d9c401cf546895c09",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/moe/grouped_expert_pipeline.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "49932a5796cad7ffc32c958c33ba2fbd0b1f37a0e3cd4624f7e9697431dc4f99",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/engram/index.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "46b7af76584b1b1c9c778501aa7edd744163baab26a5427d9c81dac7db3cc9c7",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FOUNDATION",
+        "production_reachable": false
+      },
+      {
+        "legacy_path": "src/engram/store.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "f9b107266ef4615fe17d9dd03a046d3254de78a4cfaa9ab074d15756241789ab",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FOUNDATION",
+        "production_reachable": false
+      },
+      {
+        "legacy_path": "src/engram/mlx.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "b185fbf3c884ef6dd1432c2e8543a0b73028851f4c7aa476b616aa1d3b8e0be1",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/engram/layer.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "72973824bc0e1f38cc4f7e5775414035954eaa899244733e63e771eb1f497b13",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/runtime/bridge_stub.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "b73155915ae75b02f309e312b3047255235820b09af8e683334e69a889846713",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/runtime/bridge_mlx.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "f84f25172eb9282b3eee7f19b18366ca650315eac46c9bb2bbaac349204b8d9c",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/runtime/residency.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "e292c5764fe1562d8028ad595bd4417153b81c15dcd2daee1900f7c979bbf143",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      }
+    ],
+    "metal": [
+      {
+        "legacy_path": "metal/attention/kv_quant.metal",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "b1c671c0a1b7fea35e68fa5c9e77254ac10d0401bfda6dfc65757025d6b21f79",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "metal/attention/batched_splitk_qk.metal",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "fb48e609488832fd40abe115953ffaf42a128bc8bf5e7f9a528c60db7116fa30",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "metal/attention/batched_splitk_accum.metal",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "64746c1a5511b225f5d56e6f7b467b83412a41f3bcabe76334976afa48467132",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "metal/attention/ragged_tail_qk.metal",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "a7b33721495ea4dd8d342df76c4ca24b5f94068ed66a925b38a9bdfd474cc514",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "metal/attention/ragged_tail_accum.metal",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "97fd03a7f503c7b6e650e990471af4bec4cbd20d97b0dab52c1ace819a19effc",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "metal/attention/ragged_width_one_qk.metal",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "5f657f1ca9d898129f36df7ca673f7b2beb81064c2c2b56676d35cc19684f577",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "metal/attention/gemv_header.metal",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "6f4062878270a3afcfd0b72d317ee9832fef0b02d62cbfdb0f44f92572051073",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "metal/attention/ragged_tail_av.metal",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "8c963aaeb8d1d817b9b083725f91698c09e995d757f75788dee342d9e8675de4",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "metal/attention/steel_gemm_header.metal",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "c08b8db3061e6b4fe2230f6929c2716feb1b4a888365e756c0ad8d0fa13954d7",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "metal/attention/steel_attention_header.metal",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "5827f27ea7b882dfa595cb3582dfcc80165ba898ee1110bcae0ba28664312bc5",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "metal/attention/packed_attention_worklist.metal",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "10a033eccdee0111b79657f27200f2ee0b7e422cf7d42edf22f759568d222946",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "metal/attention/packed_chunk_attention.metal",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "5651233b40e435f3955de7f5e14c19f24043b13a997ecee412bbb0676b82e4d0",
+        "classification": "DIAGNOSTIC_OPTIONAL_OR_REJECTED_SOURCE_DEPENDENCY",
+        "required_for_final_runtime": false,
+        "import_phase": "DIAGNOSTIC_ONLY",
+        "production_reachable": false
+      },
+      {
+        "legacy_path": "metal/attention/wide_chunk_attention.metal",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "f00227a43264321e85938a2fe3a171ccbb3c2393a0a239aa13c66eac8a9e7a1b",
+        "classification": "DIAGNOSTIC_OPTIONAL_OR_REJECTED_SOURCE_DEPENDENCY",
+        "required_for_final_runtime": false,
+        "import_phase": "DIAGNOSTIC_ONLY",
+        "production_reachable": false
+      },
+      {
+        "legacy_path": "metal/moe/route_select.metal",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "62766a5abcaf234e05eaa88444d2b7df5ef80fb8abf8af33056ef65a70a8a2c1",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "metal/moe/route_reduce.metal",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "2d1a05c9f2678ac12ef8cc5036f8af1b502851723c19ed3c9162b4c92fa8f663",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "metal/mhc/split_sinkhorn.metal",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "5cc889666bc8087fa3ab725ea095419306dd06f7c03cc2786e2a892436be9565",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "metal/engram/dequantize.metal",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "678a0fd48e22c0e3fc63554da1300978284bb0b4cde9fa07aceedd642b0a0305",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "metal/engram/fp8_header.metal",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "b9ac17408fb6e4750b7190b4e6870e75d9c3ac9e524db56736875483d7f92c13",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "metal/engram/activation_quant.metal",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "d84b275b68562f00b737c91bcdbcea50dab32b0e619e7d80394bba1ee79c13e5",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "metal/engram/projection.metal",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "326215e1edfea647e9b5ede73fb969c2aeb128198a360fd8fa155e8a50733894",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      }
+    ],
+    "templates": [
+      {
+        "legacy_path": "src/attention/kv_quant.hpp.in",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "ea639905a443d96e610e1be0dbcabca57a993f8b098652649676d2eed5952ff0",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/attention/batched_splitk_qk.hpp.in",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "d37700c4b9922d9faf28127274727a60fd3005ede92ce8a2dbf4471ad0a20b8f",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/attention/ragged_tail_qk.hpp.in",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "0ff9e2e94439a91ee69b78c5c403f6f60b058fced48723d3b61fe8f04b507263",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/attention/ragged_width_one_qk.hpp.in",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "3a676624824de95a75bf41252fd29cacb4a323f82308468494043ee4ba1422a9",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/attention/ragged_tail_av.hpp.in",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "6941e8f5a74a16f94fc62835352ffcbf816545c1749eb4cd52b6fb79c21bbced",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/attention/packed_attention_worklist.hpp.in",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "05238d9548a431649353fe0ec1b8dc5fd01279eca5f3f2bdd82d64cb95460353",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/attention/packed_chunk_attention.hpp.in",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "dafb8d75071f35a42037091d6881ea39e6eed95b978a7826d918fc11f64374b4",
+        "classification": "DIAGNOSTIC_OPTIONAL_OR_REJECTED_SOURCE_DEPENDENCY",
+        "required_for_final_runtime": false,
+        "import_phase": "DIAGNOSTIC_ONLY",
+        "production_reachable": false
+      },
+      {
+        "legacy_path": "src/attention/wide_chunk_attention.hpp.in",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "4da67d9f6d103d9aea9d4a9791dfc6f2c6da15aeecba1c51ab3eab4a8991b1c8",
+        "classification": "DIAGNOSTIC_OPTIONAL_OR_REJECTED_SOURCE_DEPENDENCY",
+        "required_for_final_runtime": false,
+        "import_phase": "DIAGNOSTIC_ONLY",
+        "production_reachable": false
+      },
+      {
+        "legacy_path": "src/moe/route_select.hpp.in",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "4c8f272ecbdaad2c07d25b4a3a523cbc400a4dd40fc12e199cb22720519464b5",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/moe/route_reduce.hpp.in",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "859de871021dbc4322ba03422b716ffe21a4f8d9f7cd12c329c7c47120f8cc51",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/mhc/split_sinkhorn.hpp.in",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "48f31814cd5ce714d2da2b2fe4c8c4c3929b042a6d57cfc8eb60b599ea6f2012",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/engram/kernel_source.hpp.in",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "c0817a4418b2219c94f7a8e19afc02678203e02fb400c269b42bdd9100ea51bb",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "src/engram/layer_kernels.hpp.in",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "b6c2fb5d17ce7656288f9c834db498dc9345b059b4b567330f07083ca1675e72",
+        "classification": "PRODUCTION_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      }
+    ],
+    "tests": [
+      {
+        "legacy_path": "tests/attention/test_swa.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "f6306f9a1acfc978e56cf85616e52574536aeab46939c523ba0c40f0736e6e6f",
+        "classification": "TEST_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "tests/attention/test_attention.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "f5475c5c153fff7a10abd057ca06b95a948fd90871c3b7957c84151b455b74bd",
+        "classification": "TEST_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "tests/attention/test_block.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "97c729cfc74a4b56449228c5d668d5618f69aab49cddc3c05fb0973437ba54b3",
+        "classification": "TEST_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "tests/attention/test_text_encoder.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "81b8fe69f25b041dc663fe3e19f66702513b6a35ed2a6fd9aa4c85456cc4a1fc",
+        "classification": "TEST_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "tests/attention/test_text_decoder.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "cc383f5526ec87f20be7f0a3ae1d4efaf37f2fb46dd9748e0e2b8ef1606b9ffd",
+        "classification": "TEST_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "tests/attention/test_text_backbone.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "42472d9ff49993ced9985cb76cf9f1b073495d1217739289c010c863843a0f6d",
+        "classification": "TEST_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "tests/attention/test_sampling.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "0f826098243206a6823e09f9fde91b69f5a5d7c6684afec5b0d78626d836b0ef",
+        "classification": "TEST_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "tests/attention/test_generation_loop.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "ccdc7d53e17117dfa728cbc512cb5b12ddedad9e6852b72241004be2bf4f5adf",
+        "classification": "TEST_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "tests/attention/test_route_policy.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "8f3df22a185f353723b5c138ac1ec20fa18056cb9a53a2aa73e237ce119eeb13",
+        "classification": "TEST_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "ATTENTION_SESSION",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "tests/runtime/test_bridge.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "d16eabda4bcacc44688b842092fd685bbf8333820826f1082e0f58b15dbe9aa9",
+        "classification": "TEST_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      },
+      {
+        "legacy_path": "tests/engram/test_engram.cpp",
+        "legacy_commit": "1b7d0a2c7d33602437dffd44e26a33f39f189661",
+        "sha256": "9c6dfbbcfacd0249c1369243db7d9bd5a1197fb778ff1ace940e6eedf8f30930",
+        "classification": "TEST_REQUIRED",
+        "required_for_final_runtime": true,
+        "import_phase": "FULL_MODEL",
+        "production_reachable": true
+      }
+    ]
+  },
+  "attention_region_classification": {
+    "src/attention/compressed_layer.cpp": "mixed: production token/chunk path plus fixed-tile accepted path plus diagnostics and rejected wide/packed switches. Import must either preserve file with rejected runtime flags disabled/unreachable or split diagnostic/rejected branches in a dedicated adaptation commit.",
+    "src/attention/swa_attention.cpp": "mixed: accepted batched split-K/ragged/fixed-tile work-list plus older packed/wide entry points needed for current compile unless adapted. Wide path must not be production selectable.",
+    "metal/attention/wide_chunk_attention.metal": "REJECTED/ARCHIVE_ONLY unless compile dependency remains; must not be reachable from production.",
+    "metal/attention/packed_chunk_attention.metal": "DIAGNOSTIC_OR_SUPERSEDED; only import if required by unmodified compile, not as production default."
+  },
+  "state_mapping": [
+    {
+      "legacy_owner": "SwaLayerState/SwaReferenceState",
+      "legacy_representation": "position plus bounded window KV ring/arrays",
+      "ds41f_semantic_owner": "per-layer window_kv_cache",
+      "classification": "persistent",
+      "decision": "preserve/adapt"
+    },
+    {
+      "legacy_owner": "CompressorState inside GlobalKVState/CompressedLayerState",
+      "legacy_representation": "pending kv_state and score_state slots plus position",
+      "ds41f_semantic_owner": "Compressor.kv_state/score_state",
+      "classification": "persistent for ratio>1 source layers",
+      "decision": "preserve/adapt"
+    },
+    {
+      "legacy_owner": "GlobalKVState",
+      "legacy_representation": "packed main/index KV bytes/scales plus compressor pending",
+      "ds41f_semantic_owner": "compress_kv_cache and Indexer.k_cache",
+      "classification": "persistent source-layer state",
+      "decision": "preserve/adapt"
+    },
+    {
+      "legacy_owner": "SharedAttentionReference/publications",
+      "legacy_representation": "cache pointers, relative topk/candidates, position/source metadata",
+      "ds41f_semantic_owner": "shared_attn.compress_kv/index_k/topk_idxs/candidates current-call publication",
+      "classification": "call-local publication over persistent caches",
+      "decision": "preserve/adapt"
+    },
+    {
+      "legacy_owner": "TextBackboneState",
+      "legacy_representation": "encoder/decoder state, hash, window/compressed/reuse states, revision",
+      "ds41f_semantic_owner": "session model state plus runtime session container",
+      "classification": "persistent session state",
+      "decision": "preserve/adapt"
+    },
+    {
+      "legacy_owner": "sampling/generation RNG state",
+      "legacy_representation": "native target runtime seed/state",
+      "ds41f_semantic_owner": "target-runtime RNG session state, not official model state",
+      "classification": "runtime-owned persistent session state",
+      "decision": "preserve/adapt with authority split"
+    }
+  ],
+  "existing_ds41f_scaffold_classification": {
+    "ds41f_mlx/native/ds41f_prefill_native.c": "ARCHITECTURE_DONOR_ONLY or SUPERSEDED_BY_IMPORTED_CORE after native import; not deleted in Phase2A",
+    "ds41f_mlx/native/ds41f_prefill_kernels.metal": "ARCHITECTURE_DONOR_ONLY; compare with imported Metal core later",
+    "ds41f_mlx/native_prefill.py": "INTEGRATE_LATER as Python binding/prototype or SUPERSEDED_BY_IMPORTED_CORE",
+    "ds41f_mlx/m2_layer_major.py and dwarfstar_*": "ARCHITECTURE_DONOR_ONLY / historical compatibility diagnostics, not canonical runtime"
+  },
+  "active_old_repo_dependency_check_policy": [
+    "no imported source/build/test may include /Volumes/SDXC-512/deepseek-v41-flash-mlx",
+    "no include/build path may point at legacy tree",
+    "historical provenance artifacts may retain old strings"
+  ],
+  "next_import_commits": [
+    "Import legacy native core foundation",
+    "Import proven attention and session-state runtime",
+    "Adapt imported native core to ds41f repository paths"
+  ],
+  "notes": "Closure intentionally includes some mixed files as needing adaptation because production and rejected/diagnostic branches are intertwined. Do not make wide/old packed candidates production selectable.",
+  "phase_allocation_refined_at": "Phase2B/2C import",
+  "phase_allocation_fields": [
+    "required_for_final_runtime",
+    "import_phase",
+    "production_reachable"
+  ],
+  "phase3_status": {
+    "families_tracked": [
+      "mHC",
+      "MoE gate/routing",
+      "shared expert",
+      "routed experts",
+      "resident expert atlas",
+      "expert backing",
+      "grouped expert pipeline",
+      "Engram index/store",
+      "Engram MLX",
+      "Engram layer",
+      "Ngram/hash integration",
+      "Block",
+      "CompressedBlock",
+      "ReusedBlock",
+      "Text front",
+      "Text encoder",
+      "Text decoder",
+      "Text backbone",
+      "sampling",
+      "generation loop",
+      "TextGeneration",
+      "runtime residency/session infrastructure"
+    ],
+    "remaining_production_implementation_in_old_repo": [],
+    "old_repo_production_source_dependency": 0,
+    "old_repo_native_build_dependency": 0,
+    "old_repo_imported_test_dependency": 0,
+    "canonical_session_state": "Imported TextBackboneState/TextEncoder/TextDecoder/TextGeneration state machinery owns production runtime/session state; tools/native_decode_session_state.py remains validation/evidence inventory only.",
+    "selector_audit": {
+      "canonical_production": [
+        "reference mHC split-sinkhorn path",
+        "MoE route_select/route_reduce + shared/routed merge order",
+        "SSD-backed Engram store with MLX projection/dequantization",
+        "TextBackbone/TextGeneration loop"
+      ],
+      "default_off_accepted_experiment": [
+        "file-backed expert residency candidate (archive/non-default only if reintroduced later)"
+      ],
+      "diagnostic_only": [
+        "bridge lifecycle stubs/tests",
+        "legacy traces/probes not added to ds41f CMake"
+      ],
+      "rejected_unavailable": [
+        "fused mHC decode candidate",
+        "wide/packed rejected attention candidates from Phase 2",
+        "experimental decode graph"
+      ]
+    }
+  },
+  "ds41f_old_scaffold_classification": {
+    "ds41f_mlx/native/*": "SUPERSEDED by imported native core source; keep until Phase 4 removal audit",
+    "ds41f_mlx/native_prefill.py": "ARCHITECTURE_DONOR_ONLY / validation harness; superseded for production runtime",
+    "ds41f_mlx/m2_layer_major.py": "ARCHITECTURE_DONOR_ONLY; not canonical production runtime",
+    "ds41f_mlx/dwarfstar_*": "ARCHITECTURE_DONOR_ONLY or KEEP_AS_TOOL where scripts still produce evidence; not production native core"
+  }
+}

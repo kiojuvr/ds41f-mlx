@@ -1,0 +1,37 @@
+{
+  "scope": "Native nonzero-temperature generation callback parity and cooperative cancellation; not official RNG, API, M2, or 256K qualification",
+  "run": "run-20260915-144620-49901",
+  "revision": "a961c22edaeabcb4ef9bc9e23acf5b26aa5bffd7",
+  "working_tree_changes": true,
+  "exit_code": 0,
+  "prompt_tokens": [0, 42, 1000, 42],
+  "temperature": 0.7,
+  "seed": 7,
+  "max_new_tokens": 4,
+  "generated_tokens": [20, 49, 271, 2107],
+  "next_position": 8,
+  "stopped": false,
+  "checks": {
+    "callback_tokens_equal_batch": true,
+    "cancel_before_prefill": true,
+    "cancel_after_first_committed_token": true,
+    "fresh_request_after_cancel_matches_batch": true,
+    "all_ten_recorded_sha256_match_current_files": true
+  },
+  "sha256": {
+    "build.log": "91040ede7dd773d41711baf0d14abaef544bb0989e45e18a7d362864336da042",
+    "command.txt": "2da266b52d8ed03a155ff8101197ea047c19caa9afd1c6eea1eb484702ce2e82",
+    "identity.txt": "0f11514bf098cfc4a64ebf2d5adece263b7690bd766854b9556966e4e2a6743a",
+    "test.log": "f416ac19c086c4c2936d9dd0ed45bf7a4a39145b972618ce75ec796f39f04770",
+    "tracked.patch": "704bc478b26fe7819456a5489752fc9fb46ceb3f75d495f10b211be58adb1e00"
+  },
+  "not_verified": [
+    "official torch/CUDA RNG token equality",
+    "official logits or probability bit equality",
+    "cross-thread cancellation during an active GPU operation",
+    "HTTP/SSE nonzero-temperature propagation",
+    "M2 correctness threshold",
+    "full-path performance and peak memory",
+    "256K qualification"
+  ]
+}
