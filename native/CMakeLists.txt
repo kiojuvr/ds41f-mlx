@@ -44,8 +44,48 @@ add_test(NAME bridge_lifecycle COMMAND dsv41-bridge-lifecycle-test)
 add_test(NAME generation_loop COMMAND dsv41-generation-loop-test)
 
 option(DSV41_ENABLE_MLX "Build imported native MLX/Metal attention/session components" OFF)
+set(DSV41_MLX_ROOT "" CACHE PATH "MLX install root or Python package root (contains include/, lib/, share/cmake/MLX)")
 if(DSV41_ENABLE_MLX)
-  find_package(MLX 0.32.2 EXACT CONFIG REQUIRED)
+  set(DSV41_MLX_HINTS)
+  if(DSV41_MLX_ROOT)
+    list(APPEND DSV41_MLX_HINTS
+      "${DSV41_MLX_ROOT}"
+      "${DSV41_MLX_ROOT}/share/cmake/MLX")
+  endif()
+  if(DEFINED ENV{DSV41_MLX_ROOT})
+    list(APPEND DSV41_MLX_HINTS
+      "$ENV{DSV41_MLX_ROOT}"
+      "$ENV{DSV41_MLX_ROOT}/share/cmake/MLX")
+  endif()
+  if(NOT MLX_DIR)
+    file(GLOB DSV41_LOCAL_MLX_PACKAGES CONFIGURE_DEPENDS
+      "${CMAKE_CURRENT_SOURCE_DIR}/../.venv/lib/python*/site-packages/mlx")
+    foreach(DSV41_LOCAL_MLX_PACKAGE IN LISTS DSV41_LOCAL_MLX_PACKAGES)
+      list(APPEND DSV41_MLX_HINTS
+        "${DSV41_LOCAL_MLX_PACKAGE}"
+        "${DSV41_LOCAL_MLX_PACKAGE}/share/cmake/MLX")
+    endforeach()
+    find_package(Python3 COMPONENTS Interpreter QUIET)
+    if(Python3_Interpreter_FOUND)
+      execute_process(
+        COMMAND "${Python3_EXECUTABLE}" -c "import importlib, pathlib; m=importlib.import_module('mlx.core'); print(pathlib.Path(m.__file__).resolve().parent)"
+        RESULT_VARIABLE DSV41_PYTHON_MLX_RESULT
+        OUTPUT_VARIABLE DSV41_PYTHON_MLX_ROOT
+        ERROR_QUIET
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+      if(DSV41_PYTHON_MLX_RESULT EQUAL 0 AND EXISTS "${DSV41_PYTHON_MLX_ROOT}/share/cmake/MLX/MLXConfig.cmake")
+        list(APPEND DSV41_MLX_HINTS
+          "${DSV41_PYTHON_MLX_ROOT}"
+          "${DSV41_PYTHON_MLX_ROOT}/share/cmake/MLX")
+      endif()
+    endif()
+  endif()
+  if(DSV41_MLX_HINTS)
+    list(REMOVE_DUPLICATES DSV41_MLX_HINTS)
+  endif()
+  find_package(MLX 0.32.2 EXACT CONFIG REQUIRED HINTS ${DSV41_MLX_HINTS})
+  message(STATUS "DSV41 MLX include dirs: ${MLX_INCLUDE_DIRS}")
+  message(STATUS "DSV41 MLX library: ${MLX_LIBRARY}")
   file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/generated)
 
   file(READ ${CMAKE_CURRENT_SOURCE_DIR}/metal/engram/dequantize.metal DSV41_ENGRAM_KERNEL_SOURCE)

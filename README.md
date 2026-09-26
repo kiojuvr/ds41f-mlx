@@ -23,7 +23,7 @@ Local native source includes:
 - sampling and `TextGeneration`
 - runtime bridge and lifecycle tests
 
-Source closure is complete for the native model core.  Checkpoint-free native build/tests pass.  MLX-enabled build was not validated in the current environment because no `MLXConfig.cmake` / `mlx-config.cmake` package was available, so full native checkpoint execution remains a qualification gap.
+Source closure is complete for the native model core.  Checkpoint-free native build/tests pass.  MLX-enabled imported-core build/tests now pass against the local MLX 0.32.2 Python wheel CMake package.  Full native checkpoint execution remains a qualification gap.
 
 ## Architecture summary
 
@@ -74,9 +74,10 @@ MLX-enabled native build, on a machine with MLX CMake package installed:
 ```bash
 cmake -S native -B native/build-mlx -DDSV41_ENABLE_MLX=ON
 cmake --build native/build-mlx
+ctest --test-dir native/build-mlx --output-on-failure
 ```
 
-The MLX-enabled build is expected to require `MLXConfig.cmake` or `mlx-config.cmake` discoverable via `CMAKE_PREFIX_PATH`/`MLX_DIR`.
+MLX discovery supports `CMAKE_PREFIX_PATH`/`MLX_DIR`, explicit `DSV41_MLX_ROOT`, `DSV41_MLX_ROOT` in the environment, and Python-wheel MLX layouts such as `.venv/lib/python*/site-packages/mlx`.
 
 ## Tests and static gates
 
@@ -117,11 +118,10 @@ DwarfStar and oMLX are donors only, not correctness authorities.  The historical
 
 ## Qualification status
 
-Qualified/source-verified areas include checkpoint provenance, official primitive validators, imported legacy source integrity, native source closure, and checkpoint-free native build/tests.
+Qualified/source-verified areas include checkpoint provenance, official primitive validators, imported legacy source integrity, native source closure, checkpoint-free native build/tests, and MLX-enabled imported-core build/tests.
 
 Not yet validated in the current imported environment:
 
-- MLX-enabled imported-core build
 - full native checkpoint execution
 - native HTTP/API integration
 - current post-import performance qualification

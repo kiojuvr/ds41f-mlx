@@ -20,8 +20,8 @@ Status vocabulary:
 | Legacy implementation import integrity | QUALIFIED | `check_legacy_import_integrity.py` passes. |
 | Native source closure | SOURCE-VERIFIED | `check_native_import_dependencies.py` reports old source/build/test dependency 0. |
 | Checkpoint-free native build/tests | QUALIFIED | CMake build and 5 checkpoint-free tests pass. |
-| MLX-enabled imported core build | NOT YET VALIDATED | Current environment lacks MLX CMake package. |
-| Full native checkpoint execution | NOT YET VALIDATED | Requires MLX-enabled build and checkpoint run. |
+| MLX-enabled imported core build | QUALIFIED | MLX 0.32.2 Python wheel CMake package discovered; `cmake -S native -B native/build-mlx -DDSV41_ENABLE_MLX=ON`, build, and 8 registered tests pass. |
+| Full native checkpoint execution | NOT YET VALIDATED | MLX-enabled checkpoint-free tests pass; full checkpoint run not attempted. |
 | API integration | NOT YET VALIDATED | Native HTTP path not claimed connected. |
 | Short-context performance | NOT YET VALIDATED | No current post-import benchmark qualification. |
 | Long-context qualification | NOT YET VALIDATED | Explicitly open. |
