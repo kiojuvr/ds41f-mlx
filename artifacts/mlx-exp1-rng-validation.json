@@ -1,0 +1,370 @@
+{
+  "authority_relationship_after_pass": {
+    "Boundary10": "source-defined sampling arithmetic branch authority",
+    "Boundary11a": "target MLX runtime Exp(1) RNG distribution/reproducibility authority",
+    "Boundary9": "integrated deterministic model-forward authority through logits"
+  },
+  "base_commit": "c9c8ab1de87c69e1af7e8cb74b2bdff528ec75a1",
+  "boundary": "Boundary 11a: target MLX runtime Exp(1) RNG semantic qualification",
+  "classification": "target_runtime_distributional_reproducibility_rng_semantic_qualification",
+  "does_not_prove": [
+    "actual sampled token correctness",
+    "PyTorch RNG parity",
+    "official backend bitstream parity",
+    "full Transformer.forward correctness"
+  ],
+  "exp1_construction": {
+    "case": "B: no native mx.random.exponential present; inverse-CDF over MLX uniform",
+    "device_semantics": "generated on target Metal GPU via stream=mx.gpu",
+    "discretization_semantics": "tiny lower truncation of U by 2^-24; maximum CDF perturbation is below the predeclared DKW gate for N=1,048,576",
+    "endpoint_policy_predeclared": "use low=2^-24 and high=1 to avoid U=0 and U=1; output is finite and strictly >0 in FP32",
+    "formula": "U ~ uniform(low=2^-24, high=1, dtype=float32, key=draw_key); E=-log1p(-U); E cast/kept as FP32",
+    "output_dtype": "FP32",
+    "output_shape": "same shape as probs/noise request",
+    "rate_vs_scale": "Exp(rate=1) has CDF 1-exp(-x), mean 1, variance 1; inverse CDF is -log1p(-U)",
+    "uniform_api_interval": "documented half-open [low, high)"
+  },
+  "future_compatibility_boundary": "Boundary 11p / compatibility-only if PyTorch exact parity is ever pursued",
+  "gates": {
+    "all_samples_finite": true,
+    "all_samples_strictly_positive": true,
+    "authority_source_guards_pass": true,
+    "boundary10_closeout_remains_pass": true,
+    "boundary9_closeout_remains_pass": true,
+    "different_key_changes_output": true,
+    "explicit_key_api_present": true,
+    "fp32_output_contract": true,
+    "ks_all_runs_pass_dkw": true,
+    "mean_all_runs_pass": true,
+    "mlx_runtime_version_recorded": true,
+    "native_exponential_absent_inverse_transform_used": true,
+    "no_model_logit_or_sampling_connection": true,
+    "no_pytorch_bitstream_parity_requirement": true,
+    "production_shape_fixture_generated": true,
+    "random_api_inventory_recorded": true,
+    "same_key_reproducibility_exact": true,
+    "statistical_n_gte_primary": true
+  },
+  "no_token_comparison_reason": "DeepSeek source specifies Exp(1) distribution semantics, not a backend-independent RNG bitstream.",
+  "non_claims": [
+    "no PyTorch/MLX RNG bitwise parity",
+    "no CPU/GPU RNG sequence parity",
+    "no cross-version RNG sequence guarantee",
+    "no actual sampled-token authority",
+    "no sampling distribution qualification beyond tested MLX runtime/version/device",
+    "no main_hidden assembly",
+    "no full Transformer.forward return",
+    "no decode/cache qualification",
+    "no full-model correctness",
+    "no performance/production qualification"
+  ],
+  "not_omlx_derived": true,
+  "not_semantic_requirement": "same bit sequence as PyTorch exponential_(1)",
+  "official_source_semantics": {
+    "distribution": "Exp(rate=1) positive noise",
+    "pytorch_bitstream_reproduction_required": false,
+    "source_expression": "torch.empty_like(probs).exponential_(1)"
+  },
+  "ok": true,
+  "optional_compatibility_goal": "reproduce a pinned PyTorch version/device/seed draw stream",
+  "optional_pytorch_reference": null,
+  "predeclared_statistical_contract": {
+    "N": 1048576,
+    "alpha": 1e-06,
+    "dkw_epsilon": 0.0026302598969264743,
+    "keys": {
+      "A": 289513473,
+      "B": 289517570
+    },
+    "ks_pass_condition": "empirical KS distance <= DKW epsilon",
+    "mean_gate": "abs(sample_mean - 1) <= 6/sqrt(N)",
+    "mean_gate_abs_error_lte": 0.005859375
+  },
+  "production_shape_fixture": {
+    "all_finite": true,
+    "all_positive": true,
+    "digest": "38211ff282e405ad5d57f7203a09f80745c382373c755fb8e0d9c4c9187a3cb4",
+    "draw_key": {
+      "digest": "4cc9141bec4c30b22659a725d59ca69b5dd50e83deb9bdfde53c177f079e15c1",
+      "dtype": "mlx.core.uint32",
+      "shape": [
+        2
+      ],
+      "values": [
+        2308264947,
+        2363689365
+      ]
+    },
+    "dtype": "mlx.core.float32",
+    "key_after": {
+      "digest": "175f65a6ffece3dbac3719d14f5ab4678412d4187c967463dae2fc4688bc50f4",
+      "dtype": "mlx.core.uint32",
+      "shape": [
+        2
+      ],
+      "values": [
+        613528892,
+        572711044
+      ]
+    },
+    "key_before": {
+      "digest": "39adfde986a1ad94318c84e5edd0f8a45a729445c6b0e1ca8912e74958a07630",
+      "dtype": "mlx.core.uint32",
+      "shape": [
+        2
+      ],
+      "values": [
+        0,
+        289513473
+      ]
+    },
+    "max": 13.234334945678711,
+    "mean": 0.9979646651521974,
+    "min": 8.482521479891147e-06,
+    "quantiles": {
+      "0.001": 0.0009403026062063871,
+      "0.01": 0.010076061012223362,
+      "0.1": 0.10513000711798674,
+      "0.5": 0.6888391375541687,
+      "0.9": 2.306561756134033,
+      "0.99": 4.61095501422881,
+      "0.999": 6.810935238361371
+    },
+    "seed": 289513473,
+    "shape": [
+      1,
+      129280
+    ],
+    "variance": 1.0002871265658217
+  },
+  "reproducibility": {
+    "different_key_different_output": true,
+    "digest_A_first": "2bb6add942f187c44c29a22d8bff7ba250478ca8e7f249decabad95e38a34dda",
+    "digest_A_second": "2bb6add942f187c44c29a22d8bff7ba250478ca8e7f249decabad95e38a34dda",
+    "digest_B": "66b592f6d43abf6cf373cd7fd14b9a096afa5d34976825bcb8654305cdec583e",
+    "non_claims": [
+      "no cross-version reproducibility",
+      "no CPU/GPU identical sequence",
+      "no PyTorch/MLX identical sequence"
+    ],
+    "same_key_same_shape_exact_same_next_key": true,
+    "same_key_same_shape_exact_same_output": true,
+    "seed_key_A": 289513473,
+    "seed_key_B": 289517570,
+    "shape": [
+      4096
+    ]
+  },
+  "rng_state_policy": {
+    "global_seed_policy": "mx.random.seed is inventoried but is not the production contract when explicit keys are available",
+    "production_contract": "sampling session owns an explicit MLX PRNG key/state; each sample splits it explicitly into draw_key and next_session_key",
+    "split_order": "mx.random.split(session_key, 2) -> [draw_key, next_session_key]; draw_key is consumed by mx.random.uniform for the requested shape"
+  },
+  "runtime_inventory": {
+    "apis": {
+      "exponential": {
+        "doc": "The type of the None singleton.",
+        "present": false,
+        "repr": "None"
+      },
+      "key": {
+        "doc": "key(seed: int) -> mlx.core.array\n\n        Get a PRNG key from a seed.\n\n        Args:\n            seed (int): Seed for the PRNG.\n\n        Returns:\n            array: The PRNG key array.\n      ",
+        "present": true,
+        "repr": "<nanobind.nb_func object at 0x1064bfe20>"
+      },
+      "randint": {
+        "doc": "randint(low: scalar | array, high: scalar | array, shape: Sequence[int] = [], dtype: Dtype | None = int32, key: array | None = None, stream: StreamOrDevice = None) -> array\n\n        Generate random integers from the given interval.\n\n        The values are sampled with equal probability from the integers in\n        half-open interval ``[low, high)``. The lower and upper bound can be\n        scalars or arrays and must be broadcastable to ``shape``.\n\n        .. note::\n           The samples are drawn from a ``float32`` uniform and clamped to\n           ``[low, high - 1]``, so not every integer in the range is reachable\n           once the bounds or the width of the interval go beyond the\n           ``2**24`` integer resolution of ``float32``.\n\n        Args:\n            low (scalar or array): Lower bound of the interval.\n            high (scalar or array): Upper bound of the interval.\n            shape (list(int), optional): Shape of the output. Default: ``()``.\n            dtype (Dtype, optional): Type of the output. Default: ``int32``.\n            key (array, optional): A PRNG key. Default: ``None``.\n\n        Returns:\n            array: The array of random integers.\n      ",
+        "present": true,
+        "repr": "<nanobind.nb_func object at 0x1064c04c0>"
+      },
+      "seed": {
+        "doc": "seed(seed: int) -> None\n\n        Seed the global PRNG.\n\n        Args:\n            seed (int): Seed for the global PRNG.\n      ",
+        "present": true,
+        "repr": "<nanobind.nb_func object at 0x1064bfd00>"
+      },
+      "split": {
+        "doc": "split(key: array, num: int = 2, stream: StreamOrDevice = None) -> array\n\n        Split a PRNG key into sub keys.\n\n        Args:\n            key (array): Input key to split.\n            num (int, optional): Number of sub keys. Default: ``2``.\n\n        Returns:\n            array: The array of sub keys with ``num`` as its first dimension.\n      ",
+        "present": true,
+        "repr": "<nanobind.nb_func object at 0x1064c0040>"
+      },
+      "uniform": {
+        "doc": "uniform(low: scalar | array = 0, high: scalar | array = 1, shape: Sequence[int] = [], dtype: Dtype | None = float32, key: array | None = None, stream: StreamOrDevice = None) -> array\n\n        Generate uniformly distributed random numbers.\n\n        The values are sampled uniformly in the half-open interval ``[low, high)``.\n        The lower and upper bound can be scalars or arrays and must be\n        broadcastable to ``shape``.\n\n        Args:\n            low (scalar or array, optional): Lower bound of the distribution.\n              Default: ``0``.\n            high (scalar or array, optional): Upper bound of the distribution.\n              Default: ``1``.\n            shape (list(int), optional): Shape of the output. Default:``()``.\n            dtype (Dtype, optional): Type of the output. Default: ``float32``.\n            key (array, optional): A PRNG key. Default: ``None``.\n\n        Returns:\n            array: The output array random values.\n      ",
+        "present": true,
+        "repr": "<nanobind.nb_func object at 0x1064c0160>"
+      }
+    },
+    "default_device": "Device(gpu, 0)",
+    "macos_version": "26.5.2",
+    "metal_available": true,
+    "mlx_version": "0.32.2",
+    "mx_gpu_repr": "DeviceType.gpu",
+    "native_exponential_present": false,
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "python_version": "3.13.15 (main, Aug  5 2026, 12:25:43) [Clang 21.0.0 (clang-2100.1.1.101)]",
+    "random_api_names": [
+      "bernoulli",
+      "categorical",
+      "gumbel",
+      "key",
+      "laplace",
+      "multivariate_normal",
+      "normal",
+      "permutation",
+      "randint",
+      "seed",
+      "split",
+      "truncated_normal",
+      "uniform"
+    ],
+    "target_stream_device": "Metal GPU / mx.gpu"
+  },
+  "safe_claim_on_pass": "For the pinned target MLX runtime and device, the native sampling-noise generator is qualified for the DeepSeek sampling contract as an FP32, strictly-positive Exp(rate=1) generator under a predeclared distributional and reproducibility test suite. Its empirical CDF, mean, positivity, finiteness, and same-key reproducibility satisfy the declared bounds. This is a target-runtime distributional/reproducibility qualification. It does not claim bitwise equivalence with PyTorch exponential_(1), cross-backend RNG parity, or equality of sampled tokens for equal numeric seeds.",
+  "schema": "ds41f.boundary11a.mlx-exp1-rng-validation.v1",
+  "semantic_requirement": "positive independent/pseudorandom samples from Exp(rate=1) suitable for the source-defined sampling arithmetic",
+  "statistical_fixture": {
+    "runs": [
+      {
+        "all_finite": true,
+        "all_positive": true,
+        "digest": "182c448c46ace8d02986dc132227cd579aa498cf059f40d5f26844e5557bc361",
+        "dkw_alpha": 1e-06,
+        "dkw_epsilon": 0.0026302598969264743,
+        "draw_key": {
+          "digest": "4cc9141bec4c30b22659a725d59ca69b5dd50e83deb9bdfde53c177f079e15c1",
+          "dtype": "mlx.core.uint32",
+          "shape": [
+            2
+          ],
+          "values": [
+            2308264947,
+            2363689365
+          ]
+        },
+        "dtype": "mlx.core.float32",
+        "key_after": {
+          "digest": "175f65a6ffece3dbac3719d14f5ab4678412d4187c967463dae2fc4688bc50f4",
+          "dtype": "mlx.core.uint32",
+          "shape": [
+            2
+          ],
+          "values": [
+            613528892,
+            572711044
+          ]
+        },
+        "key_before": {
+          "digest": "39adfde986a1ad94318c84e5edd0f8a45a729445c6b0e1ca8912e74958a07630",
+          "dtype": "mlx.core.uint32",
+          "shape": [
+            2
+          ],
+          "values": [
+            0,
+            289513473
+          ]
+        },
+        "ks": 0.0005064618640895358,
+        "ks_pass": true,
+        "label": "A",
+        "max": 14.689621925354004,
+        "mean": 1.0003840149697363,
+        "mean_gate_abs_error_lte": 0.005859375,
+        "mean_gate_pass": true,
+        "min": 2.6340162548876833e-06,
+        "quantiles": {
+          "0.001": 0.0009662695345468821,
+          "0.01": 0.009951889282092452,
+          "0.1": 0.10520376265048981,
+          "0.5": 0.6934958696365356,
+          "0.9": 2.304172158241272,
+          "0.99": 4.6131720542907715,
+          "0.999": 6.901125073433008
+        },
+        "seed": 289513473,
+        "shape": [
+          1048576
+        ],
+        "variance": 1.0011172490328388
+      },
+      {
+        "all_finite": true,
+        "all_positive": true,
+        "digest": "2bb51752880012b367774b870bab7318f340202d8661fbb9bad25cdf9f75cf40",
+        "dkw_alpha": 1e-06,
+        "dkw_epsilon": 0.0026302598969264743,
+        "draw_key": {
+          "digest": "2a5dbca468868c1e2a4a7b7f478b935dbb00f746acd3a7cd6b32527b18805663",
+          "dtype": "mlx.core.uint32",
+          "shape": [
+            2
+          ],
+          "values": [
+            354271098,
+            630335488
+          ]
+        },
+        "dtype": "mlx.core.float32",
+        "key_after": {
+          "digest": "8100f6c4e0ece1526b40f49dc9d7f65e52388539f250b5b9473fe33a0c13ec77",
+          "dtype": "mlx.core.uint32",
+          "shape": [
+            2
+          ],
+          "values": [
+            1540067337,
+            1507024866
+          ]
+        },
+        "key_before": {
+          "digest": "34d6f44f5ba820338af8b5ac3351f4bf1d815d89ae348b88df89cc12b09e39cf",
+          "dtype": "mlx.core.uint32",
+          "shape": [
+            2
+          ],
+          "values": [
+            0,
+            289517570
+          ]
+        },
+        "ks": 0.0010346903184289546,
+        "ks_pass": true,
+        "label": "B",
+        "max": 14.150625228881836,
+        "mean": 0.9999476762247645,
+        "mean_gate_abs_error_lte": 0.005859375,
+        "mean_gate_pass": true,
+        "min": 1.0170045925406157e-06,
+        "quantiles": {
+          "0.001": 0.0009978351881727576,
+          "0.01": 0.0098757219966501,
+          "0.1": 0.10486861690878868,
+          "0.5": 0.6923149228096008,
+          "0.9": 2.2981033325195312,
+          "0.99": 4.605570316314697,
+          "0.999": 6.935118889808706
+        },
+        "seed": 289517570,
+        "shape": [
+          1048576
+        ],
+        "variance": 1.0032118197697908
+      }
+    ]
+  },
+  "theoretical_authority": {
+    "cdf": "F(x)=1-exp(-x), x>=0",
+    "distribution": "Exp(rate=1)",
+    "mean": 1.0,
+    "quantile": "Q(p)=-log(1-p)",
+    "quantiles": {
+      "0.001": 0.0010005003335835335,
+      "0.01": 0.010050335853501442,
+      "0.1": 0.10536051565782631,
+      "0.5": 0.6931471805599453,
+      "0.9": 2.302585092994046,
+      "0.99": 4.605170185988091,
+      "0.999": 6.907755278982136
+    },
+    "variance": 1.0
+  }
+}

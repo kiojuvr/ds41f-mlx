@@ -1,0 +1,1087 @@
+{
+  "boundary6e_digest_gates": {
+    "layer24_ffn_pre_matches_6e_returned_ffn_pre": true,
+    "layer24_x_out_matches_6e_final_block_x": true
+  },
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "official_reference_derived_native_connected_validation",
+  "digests": {
+    "carry": {
+      "ffn_pre24_equals_layer25_incoming_pre_mix": true,
+      "layer25_incoming_pre_mix": "8fcc739b02187a2a805bc06ab26e8c66d5cec632520cab47f7ade518bd0b0d2d",
+      "layer25_input_x": "a596b0585c9702257b730d81ccc9bd8eac03df53404d64d8be83c2dd8625ae63",
+      "x24_out_equals_layer25_x": true
+    },
+    "initial_synthetic_pre_mix": "c4a9b0e568a1fae40750696c6e213b4dca41550d000d4aca6e9e50d016d45f1c",
+    "initial_x_hc": "9b84710eb3107f0da3bcc1770ede41513af4b8fb6df9850819203e1fa06da02c",
+    "layer24": {
+      "attention_input": "a62cd4e24301eaa15774f537e08dc760be7fa0c2cb9c5351137d125fb44a656a",
+      "ffn_pre24": "8fcc739b02187a2a805bc06ab26e8c66d5cec632520cab47f7ade518bd0b0d2d",
+      "moe_input": "b764483ec5db9323f97ad9ad3a6ca8a16d4e3f3dba9547ee6e83e7a789b9992f",
+      "x24_out": "a596b0585c9702257b730d81ccc9bd8eac03df53404d64d8be83c2dd8625ae63",
+      "x_after_attn": "f035fcb163910857b8be269a899ddc48ac48080cfe98643a07e9469a3041ba8f"
+    },
+    "layer25": {
+      "attention_input": "e44da41161f2298df30c333d8b59d2d6c0ba433bc0115e7d7bf7cecb955c0b80",
+      "attention_output": "7ffc06f69241802ea9a64caf519a0f57c2cf788d6edd0f995a276a80b779285d",
+      "ffn_pre25": "f4efaa2df89d7f61febc1166d44ad04e425c8f8a3390a4783cbe825e227d3d9a",
+      "full_moe_output": "0e74d7e06d22489330c94854d481fc7938dd48ec0607ab21eb17b0cf20869101",
+      "moe_input": "d3b054dfa8382a5b9ec1e2bd0f43e813dc742a075cd0e13fc811cf23a04ad676",
+      "routed_sum": "b7c667fe37220fb77bb42b3420dd16bf427023d1f96a9a98acf1bc2dc47175ba",
+      "shared_expert": "b2768a682a1f502c4848a91514ce69bb5e835f78ca99ea7cab4f5929f1ef79a7",
+      "x25_out": "628aaa78c458fd316e069589d58fa89319cf7bd5076060899a2485ccec5206ea",
+      "x_after_attn": "ae79a19517bf414d54cb49d1739c7c3abdf3d1f3a008fbf8eaf8418d530aebe9"
+    }
+  },
+  "gates": {
+    "ffn_pre24_to_layer25_incoming_pre_mix_exact": true,
+    "final_x25_out_ffn_pre25_validated": true,
+    "layer24_25_config_state_roles_reviewed": true,
+    "layer25_attention_path_pass": true,
+    "layer25_ffn_moe_path_pass": true,
+    "layer_local_state_distinguished_from_cross_layer_state": true,
+    "no_block24_output_artifact_injection_into_block25": true,
+    "same_logical_shared_state_persists_across_blocks": true,
+    "single_connected_execution_starts_before_layer24": true,
+    "source_backed_layer24_publication_to_layer25_consumption_exact": true,
+    "source_identity_authority_checks_pass": true,
+    "x24_out_to_layer25_x_exact": true
+  },
+  "layer25_routing": {
+    "full_moe_output_digest": "0e74d7e06d22489330c94854d481fc7938dd48ec0607ab21eb17b0cf20869101",
+    "routed_sum_digest": "b7c667fe37220fb77bb42b3420dd16bf427023d1f96a9a98acf1bc2dc47175ba",
+    "scaled_routing_weights": [
+      [
+        0.2600627541542053,
+        0.26093292236328125,
+        0.2524365186691284,
+        0.24946783483028412,
+        0.24207043647766113,
+        0.2350294291973114
+      ],
+      [
+        0.28775036334991455,
+        0.25621944665908813,
+        0.24558202922344208,
+        0.2382613867521286,
+        0.23769128322601318,
+        0.23449547588825226
+      ]
+    ],
+    "selected_expert_set": [
+      14,
+      20,
+      38,
+      142,
+      148,
+      153,
+      162,
+      187,
+      226,
+      241,
+      252,
+      318
+    ],
+    "shared_expert_digest": "b2768a682a1f502c4848a91514ce69bb5e835f78ca99ea7cab4f5929f1ef79a7",
+    "topk_expert_indices": [
+      [
+        318,
+        142,
+        241,
+        252,
+        20,
+        153
+      ],
+      [
+        187,
+        148,
+        38,
+        162,
+        14,
+        226
+      ]
+    ]
+  },
+  "layer_roles": {
+    "24": {
+      "candidate_block_size": 8,
+      "candidate_consumer_status": "consumer only if an Indexer exists and candidate_source_layer < layer",
+      "candidate_source_layer_id": 20,
+      "candidate_topk_blocks": 2048,
+      "compress_ratio": 1,
+      "has_indexer": true,
+      "index_topk": 512,
+      "is_candidate_consumer": true,
+      "is_candidate_source": false,
+      "is_index_source_layer": true,
+      "is_kv_source_layer": false,
+      "layer": 24,
+      "source_branch_uses_candidates": true
+    },
+    "25": {
+      "candidate_block_size": 8,
+      "candidate_consumer_status": "consumer only if an Indexer exists and candidate_source_layer < layer",
+      "candidate_source_layer_id": 20,
+      "candidate_topk_blocks": 2048,
+      "compress_ratio": 1,
+      "has_indexer": false,
+      "index_topk": 512,
+      "is_candidate_consumer": false,
+      "is_candidate_source": false,
+      "is_index_source_layer": false,
+      "is_kv_source_layer": false,
+      "layer": 25,
+      "source_branch_uses_candidates": true
+    },
+    "interpretation": {
+      "layer24": "compress_ratio=1, index source, not kv source, not candidate source; consumes bounded external compress_kv/index_k/candidates and publishes topk_idxs",
+      "layer25": "compress_ratio=1, not index/kv/candidate source; consumes shared_attn.topk_idxs published by previous index source and reads bounded external compress_kv"
+    }
+  },
+  "non_claims": [
+    "no production provenance for the synthetic incoming pre_mix entering layer24",
+    "no layers 0-23 execution",
+    "no candidate/state production before the bounded initial shared state unless executed here",
+    "no production-scale candidate pruning",
+    "no decode / ring / partial compression group",
+    "no world_size > 1 expert parallelism",
+    "no Transformer final norm / logits",
+    "no full-model correctness",
+    "no performance/fusion claim"
+  ],
+  "not_omlx_derived": true,
+  "ok": true,
+  "provenance": {
+    "layer24": {
+      "attn_norm.weight": "fbe422ff45b1ae170d20384117c33c1de21e1dd97eec95a2175638c96c42fe01",
+      "ffn_norm.weight": "46be99e76bd329eb7d9ef93de3708bbd3c310da3c1ab644ea4a21c7af93721f4",
+      "gate.bias": "a6ca2f8590d487a907e32723858ad00bc8ce0a40a73a06f341cdcdbac059fda8",
+      "gate.weight": "52cf11707abacdb93585b49a9889a657485a64f01af51a74cec0dd9d33c89288",
+      "hc_attn_base": "2f677979fa9c0ad34e75275e28eec3932a7ab954758e316184cf709c270cff3e",
+      "hc_attn_fn": "af0305cfd81e288453433f9dae59275038fec24b2ffd59398abc257fcd8b877c",
+      "hc_attn_scale": "5e9834cdddb5b5b90ad22a0181d5b63cdee38e1d7e11f6ccec0773e7b5bb2fa9",
+      "hc_ffn_base": "15846da45456379323c8e537444136038937ac848b1a38120a9adf98b7ff80c2",
+      "hc_ffn_fn": "504c5e1ce91ddd52b128c4affd584d3157106b48b8e53bdc458e657baaf4b6a5",
+      "hc_ffn_scale": "334cfc6792c91f626fb40d864497db5133f025fdde490100758c1938441ca20c",
+      "selected_experts": {
+        "125": {
+          "w1.scale": {
+            "digest": "05dc6e678d46b0c25cb10f5273feefd9d80d89b996cf72776f6f599927b37444",
+            "name": "layers.24.ffn.experts.125.w1.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w1.weight": {
+            "digest": "88657124d5229e4b17f5900b3233ef0649853bcbcf2a2c7c5baa3a49befcfa16",
+            "name": "layers.24.ffn.experts.125.w1.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w2.scale": {
+            "digest": "c086b6ae718a9a3423057999a58e9ad2d64429bbb05b4ede09b86800f747086d",
+            "name": "layers.24.ffn.experts.125.w2.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w2.weight": {
+            "digest": "f86929fa6db1f38db9e359e8dfad62f97b54024bb7fba0eabb71373b72ae9e77",
+            "name": "layers.24.ffn.experts.125.w2.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w3.scale": {
+            "digest": "609254fd3c64d5f8a3552d10a2818daf8c905c5336c1273ae01a523a1f5fdcf4",
+            "name": "layers.24.ffn.experts.125.w3.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w3.weight": {
+            "digest": "bb1294babf587335e6211b58bc7472d2b6cd8c3ee41801a52af603457dc01d0f",
+            "name": "layers.24.ffn.experts.125.w3.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          }
+        },
+        "144": {
+          "w1.scale": {
+            "digest": "d16e41129362398504c4531a59384d5028d30681ff0614f2f766e973c9bd986c",
+            "name": "layers.24.ffn.experts.144.w1.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w1.weight": {
+            "digest": "d0cbe957f1cba8ff525d5ee3c42035053ce90a116c17561bcce9702c3b22d1c3",
+            "name": "layers.24.ffn.experts.144.w1.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w2.scale": {
+            "digest": "e2a5fe42691937d791ac0390261df6b13d06c31ecb82b5c3aad4a6958e12fc2f",
+            "name": "layers.24.ffn.experts.144.w2.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w2.weight": {
+            "digest": "e13eea196e277156284d10aac6c5c8343f4812dc128700b9fcf79b8aa2a09469",
+            "name": "layers.24.ffn.experts.144.w2.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w3.scale": {
+            "digest": "89259a42fb4f3b30b19db7c17bed296fa639b4e263f43639a2b37a3db0acaca9",
+            "name": "layers.24.ffn.experts.144.w3.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w3.weight": {
+            "digest": "70850caaffeeb8b6d42333310fa0d57ff3e9442e5d4d5e7ff377929d6df3f1c0",
+            "name": "layers.24.ffn.experts.144.w3.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          }
+        },
+        "184": {
+          "w1.scale": {
+            "digest": "aea3d9a719508995dc432acf858e84b49631b4f5775f48032bfeaf44ae53db32",
+            "name": "layers.24.ffn.experts.184.w1.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w1.weight": {
+            "digest": "01f5631256cd358a73774314ddfc1c270f50b20298cf70134489398ffedfec33",
+            "name": "layers.24.ffn.experts.184.w1.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w2.scale": {
+            "digest": "31fb41edba743da271df581fc6896a613b83b827b3dd5d15a0d7d07fc507ceb4",
+            "name": "layers.24.ffn.experts.184.w2.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w2.weight": {
+            "digest": "0cc609e7333f6e1de536e785872d99962e1482c160bf89fb00284a6f60d469ff",
+            "name": "layers.24.ffn.experts.184.w2.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w3.scale": {
+            "digest": "2ae3aee78aa7376d151ccd15a12e88b624121126f4b2e570f6781dc91b2f58a4",
+            "name": "layers.24.ffn.experts.184.w3.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w3.weight": {
+            "digest": "8248db46b54813149848078307f2b856273758c45fea91a999022ddd7df14a65",
+            "name": "layers.24.ffn.experts.184.w3.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          }
+        },
+        "221": {
+          "w1.scale": {
+            "digest": "9aee3bed31f5268bd982ea5abc248116f9dc6de9b5e43b7ba4c5b72c82cb8af1",
+            "name": "layers.24.ffn.experts.221.w1.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w1.weight": {
+            "digest": "354fa09387c08c64453c10620bdd0b0bc220bc9bbbaa9ec9fe8117c768c1e5b4",
+            "name": "layers.24.ffn.experts.221.w1.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w2.scale": {
+            "digest": "cb93b0e33c629147d6567aad4f6b7d140cac06538083309a4e774ccefd77cd86",
+            "name": "layers.24.ffn.experts.221.w2.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w2.weight": {
+            "digest": "31e718a2aab50f187f91f19f866c26f707ab0c6799b0a214696cae20d627089d",
+            "name": "layers.24.ffn.experts.221.w2.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w3.scale": {
+            "digest": "b2531352b6d1ae32e9dc3f157c760c5e3948d7b5daaae6338f800a6210ddfd30",
+            "name": "layers.24.ffn.experts.221.w3.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w3.weight": {
+            "digest": "76a63bea0ac90135195fa3cea4785571a4964f0e6e31ae59a910db5fec3293eb",
+            "name": "layers.24.ffn.experts.221.w3.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          }
+        },
+        "228": {
+          "w1.scale": {
+            "digest": "826706844bc5387ad2e79d9f5641d15eccfe12ba4e619940568895d04df7a3ef",
+            "name": "layers.24.ffn.experts.228.w1.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w1.weight": {
+            "digest": "5d570a2396866f45abff530bb2f5019d51aec25d3f96470ca03e13a8b894b872",
+            "name": "layers.24.ffn.experts.228.w1.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w2.scale": {
+            "digest": "268b5e414bdf2209f654b85f238ae9695c226ae414ec8256ca73e5f1bb85011f",
+            "name": "layers.24.ffn.experts.228.w2.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w2.weight": {
+            "digest": "370b77008d8c4298ca94138ffa0cfc815b81eb9f57f762e9d160ba0498bfffc1",
+            "name": "layers.24.ffn.experts.228.w2.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w3.scale": {
+            "digest": "156aac00d278c271114b7b0603b35eff2d0ebada3e9603912c8d78cd2be7a2f0",
+            "name": "layers.24.ffn.experts.228.w3.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w3.weight": {
+            "digest": "1d802bb8cae84edcd4cb632ffad876b8536f0aef5fbc65dd4f1d440370ab6661",
+            "name": "layers.24.ffn.experts.228.w3.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          }
+        },
+        "243": {
+          "w1.scale": {
+            "digest": "5576f04792d5cb0f5a7faca13c3648b03055e66a7fa28fcd9930a37f9c3eeb0f",
+            "name": "layers.24.ffn.experts.243.w1.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w1.weight": {
+            "digest": "3c8e4152f3493dfe161f21d1fc5976cdce679a3f0953083a38b558c7072f2562",
+            "name": "layers.24.ffn.experts.243.w1.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w2.scale": {
+            "digest": "79c1b66c256c0288d8e3c070457465feb9f59f04fe2f0bdf8dc25a41373419f5",
+            "name": "layers.24.ffn.experts.243.w2.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w2.weight": {
+            "digest": "bc79381526dc1dcad81a6d7ab7708c917589eb77f3b46c58b785cbdac7ebd59e",
+            "name": "layers.24.ffn.experts.243.w2.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w3.scale": {
+            "digest": "2f8e883f209e95a640e31379a32e14940909dde1ac488a8379f5893df96c275c",
+            "name": "layers.24.ffn.experts.243.w3.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w3.weight": {
+            "digest": "572b8211cf3d8b508845e47f421d0789bfefa86636dacada7c45f33ebdb4827f",
+            "name": "layers.24.ffn.experts.243.w3.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          }
+        },
+        "249": {
+          "w1.scale": {
+            "digest": "3c36af5aad2ff9c4df259d45245e7228afdb65e14d0875c0c421e367a1fc4135",
+            "name": "layers.24.ffn.experts.249.w1.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w1.weight": {
+            "digest": "5f0548f24850a821661afffb52c69bf73e45137c7271fd31ca3612b0a7754b09",
+            "name": "layers.24.ffn.experts.249.w1.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w2.scale": {
+            "digest": "82fe394560fbfb47483e926c51e6f6e3b5e5eee4350ac7581bdc91dfc32adeb5",
+            "name": "layers.24.ffn.experts.249.w2.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w2.weight": {
+            "digest": "4e24d130dae1073b54b67b1c1e698295d3e8033720d7b1fd7b380a418b70c919",
+            "name": "layers.24.ffn.experts.249.w2.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w3.scale": {
+            "digest": "391e6fff9ed1c8665a1d07a734d002373ee75e0466a61ce9841a394e2997d244",
+            "name": "layers.24.ffn.experts.249.w3.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w3.weight": {
+            "digest": "0393ace1979cf27ae9d4fecbd5c389ba1462a64fcbaaa07421f5665230057aba",
+            "name": "layers.24.ffn.experts.249.w3.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          }
+        },
+        "254": {
+          "w1.scale": {
+            "digest": "1b7fde89ce9a587dae61c172bee27d2a6f3cbcfe462111bf297bc5811dfe89d4",
+            "name": "layers.24.ffn.experts.254.w1.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w1.weight": {
+            "digest": "bb7d05240765167c56e92d84dd21eae86774fa83d9802acd7081d474bd899df5",
+            "name": "layers.24.ffn.experts.254.w1.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w2.scale": {
+            "digest": "4e395352ebfca1605cf1af0c71374a891bf3c2a35a6a363f61a26c5bbf608ce6",
+            "name": "layers.24.ffn.experts.254.w2.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w2.weight": {
+            "digest": "1a25684cfb21b9d9e2f28a02803368a0f8d5cfc16b8b83c7d88ee317b40fed9a",
+            "name": "layers.24.ffn.experts.254.w2.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w3.scale": {
+            "digest": "45bb661cb1645640e5c9c691e9e235df1b927b48a908b2ae85ea6adbb53069c5",
+            "name": "layers.24.ffn.experts.254.w3.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w3.weight": {
+            "digest": "b31ecda61e3d305efad71b298edf9a6816623de7597fc3cde30c4c1a24b4a260",
+            "name": "layers.24.ffn.experts.254.w3.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          }
+        },
+        "265": {
+          "w1.scale": {
+            "digest": "90412f81bdaaa98b51c0c78cf1516e3629255fa1f103d81e25d2544e19cc6a04",
+            "name": "layers.24.ffn.experts.265.w1.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w1.weight": {
+            "digest": "3eb70c47d98f1ff2b16838d9f7fcc2174dc804e1ed1d7749206788f6589d9a68",
+            "name": "layers.24.ffn.experts.265.w1.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w2.scale": {
+            "digest": "a9ecc28309c134ee9c3a424fe7a5e0e2350158976239f7da0d3a848fda9cb187",
+            "name": "layers.24.ffn.experts.265.w2.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w2.weight": {
+            "digest": "4f4d2b405ff9fc33435e6e8e1e18364feefe271351f2c54fbb51aea3c3d55371",
+            "name": "layers.24.ffn.experts.265.w2.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w3.scale": {
+            "digest": "2d0bfec63defc6ea12473efc188ec3d3cd914dda684d5c007f229e2ccb22c7b5",
+            "name": "layers.24.ffn.experts.265.w3.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w3.weight": {
+            "digest": "1ef461df5396bf17041681f9833c803d840d85c1cff62da13a1aa422a4184def",
+            "name": "layers.24.ffn.experts.265.w3.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          }
+        },
+        "40": {
+          "w1.scale": {
+            "digest": "c85d15fce5fdc07394392044798d5e41736dde556cb4b919ed0e3bd67e5f43ba",
+            "name": "layers.24.ffn.experts.40.w1.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w1.weight": {
+            "digest": "01c249e39ef868266f06ad8af66fec5d9d06accb9a396872ce8fddabe944127f",
+            "name": "layers.24.ffn.experts.40.w1.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w2.scale": {
+            "digest": "d5bcef991b2fc414a99127aa8b05d8bae824186985bd23040bb3a8098ee91b02",
+            "name": "layers.24.ffn.experts.40.w2.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w2.weight": {
+            "digest": "c947ac2289618e559d399846c6721da132440e556f7dd477dddd12ed8c12d61a",
+            "name": "layers.24.ffn.experts.40.w2.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w3.scale": {
+            "digest": "4edfaa5320b75f523b11b4aaea3f1531c184d23d5ebf58760d395883ca290f98",
+            "name": "layers.24.ffn.experts.40.w3.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w3.weight": {
+            "digest": "e83af64b7290191ae9aa06cd5c9fae9f9d376583159e5f3c29273db9b047e866",
+            "name": "layers.24.ffn.experts.40.w3.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          }
+        },
+        "8": {
+          "w1.scale": {
+            "digest": "5be55d64edeeb5eb64adbc186730a924b6908755f952c91781750fe53947ec7f",
+            "name": "layers.24.ffn.experts.8.w1.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w1.weight": {
+            "digest": "0335be1dc8db4389794322b6556182c5040df85f7030a9669cb51f6c23287228",
+            "name": "layers.24.ffn.experts.8.w1.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w2.scale": {
+            "digest": "1d49deefe7728789883794cb308c0c5bcde1a16ab35eefae19ff51201ca83b94",
+            "name": "layers.24.ffn.experts.8.w2.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w2.weight": {
+            "digest": "17b82946afc1851473050ddefa63c6c97e705dd07836528cc3bd8ed7051da2b7",
+            "name": "layers.24.ffn.experts.8.w2.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w3.scale": {
+            "digest": "50cb7d8415e32902ac297aa4b128573d705efef5c14fb562965045226ea978f1",
+            "name": "layers.24.ffn.experts.8.w3.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w3.weight": {
+            "digest": "476eb3139f52edf8b70bed1a691c3a04e1ebe448a2d127e7e5019c38fdb59670",
+            "name": "layers.24.ffn.experts.8.w3.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          }
+        },
+        "85": {
+          "w1.scale": {
+            "digest": "70e4a57b28760787f7c3866e3a82b85dfc73c22bc38db691dd8cb87977d59b8a",
+            "name": "layers.24.ffn.experts.85.w1.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w1.weight": {
+            "digest": "31a29af0d63e105a6ffd43ce03cc7f7d57e7bbc66c47dba4224cc4f11267a799",
+            "name": "layers.24.ffn.experts.85.w1.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w2.scale": {
+            "digest": "33d2350f4f1eadaaac06db28e4594a2638f8cdae8909ab28d9a0469249db4243",
+            "name": "layers.24.ffn.experts.85.w2.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w2.weight": {
+            "digest": "fa6151a299cec6cc2a72bcb6537628e9c43b2339821ed81731689debf371748a",
+            "name": "layers.24.ffn.experts.85.w2.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w3.scale": {
+            "digest": "f48c9c3637bbb499e0e400d4fa34d4c5510e0e8bd1ec685f996c44a4325de6f8",
+            "name": "layers.24.ffn.experts.85.w3.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          },
+          "w3.weight": {
+            "digest": "671117e1f3b0d42a6a1c3caad66613541956d677010416ff7eae676b70785f40",
+            "name": "layers.24.ffn.experts.85.w3.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+          }
+        }
+      }
+    },
+    "layer25": {
+      "attn_norm.weight": "d1d7735b8c28363a4242018969c4c22ca0b7f90c04504d191ea9c33ab34a2c60",
+      "ffn_norm.weight": "b89d289c4318eb826d83a3ef03cc85d83583c73f94055ca86e646372d651e68e",
+      "gate.bias": "8d46a685856268177285f130ebdec6d1fdc247f735ed458504805e7d5160ae0f",
+      "gate.weight": "03298364bd5f07e2efa1a35588a62f4ab82aa0869f05c9da3732c16421534cc6",
+      "hc_attn_base": "cc7a5aa172be532dccacfe5b1ead039af372052f25c76dcd4e42110d6dbb04ad",
+      "hc_attn_fn": "78278184ba0e353b10102d7c31218f6d28a28112a37bafb9fca5623f7191ce01",
+      "hc_attn_scale": "13e5744d0f56a1352820cfeb816138639227e765ab091d8ff8255428bc0586c1",
+      "hc_ffn_base": "6bdf4c8c5490cbf6372bdf1f4f60f084dfe202393bf6ce53b1b1d50e6c25a458",
+      "hc_ffn_fn": "68baf36ef3d83bac873ae7763f3cc34cf5d8f653f596e767d028f48d4ee3a1b2",
+      "hc_ffn_scale": "c4e1a59bda7abd320622940c0a176ebfd2759ebe0df4d5c768657d1752ba66e3",
+      "selected_experts": {
+        "14": {
+          "w1.scale": {
+            "digest": "6f46e14e38ec4fc90e3e59f246ed35f37bf9d3e1108de81069d6960656bdc13e",
+            "name": "layers.25.ffn.experts.14.w1.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w1.weight": {
+            "digest": "91bfba760b1e622686953a69ef4ea2134b72225a334a5939d997045df4e3964c",
+            "name": "layers.25.ffn.experts.14.w1.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w2.scale": {
+            "digest": "882339f2c82ad3bcb0466df92c37ac4830e14bf4c0f97105e892d7df90569954",
+            "name": "layers.25.ffn.experts.14.w2.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w2.weight": {
+            "digest": "fdb7fe2af97ff203a82756b32b3c5efb07eedefb8f286f3ca6872bbe44a8b410",
+            "name": "layers.25.ffn.experts.14.w2.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w3.scale": {
+            "digest": "261c6c69183bd26a3879170cf707c6874ea3eb59d749534b0272a2f87bb974ce",
+            "name": "layers.25.ffn.experts.14.w3.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w3.weight": {
+            "digest": "6c342155b4a56d18b7d61e9631c9e91d9b84d737a0008705907364ba8b91ba35",
+            "name": "layers.25.ffn.experts.14.w3.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          }
+        },
+        "142": {
+          "w1.scale": {
+            "digest": "75feb5becfadfd12d73c87907ac81bc646913661d6ab93b349946144665d3be2",
+            "name": "layers.25.ffn.experts.142.w1.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w1.weight": {
+            "digest": "9938c85cfcf4f47959178cce6b7ff2ac0546849f3cee8edd8a62ea2f76291aa5",
+            "name": "layers.25.ffn.experts.142.w1.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w2.scale": {
+            "digest": "db9657941e68d95776ea05a7a74bba005a18c97aced12e0ddac41f79412234e3",
+            "name": "layers.25.ffn.experts.142.w2.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w2.weight": {
+            "digest": "6b75b375eeb45c0749949a2e3e8ab456e268784361ccc26be605aae347b89b59",
+            "name": "layers.25.ffn.experts.142.w2.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w3.scale": {
+            "digest": "48fe28bbecc66d581fcc9108af0da8132c1ca46310eb1dd77a393a4d54a75d0e",
+            "name": "layers.25.ffn.experts.142.w3.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w3.weight": {
+            "digest": "1cac6e6b8fab046f39696b42cb35df7a8b79a8af6c8193b46834a95bbfbc71e3",
+            "name": "layers.25.ffn.experts.142.w3.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          }
+        },
+        "148": {
+          "w1.scale": {
+            "digest": "1d45ad42177ada3358f4ff63e8e2e05afdbc1fc4918df73880b6505c1db9d394",
+            "name": "layers.25.ffn.experts.148.w1.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w1.weight": {
+            "digest": "0de4c929ced1c8d6b067bbbfda2a9747def4511f481fafa5fab9a4f31178cee0",
+            "name": "layers.25.ffn.experts.148.w1.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w2.scale": {
+            "digest": "41c82f38626434071673aa4942b3eab7fab151e81671a8c4aca4dcbd27580ddb",
+            "name": "layers.25.ffn.experts.148.w2.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w2.weight": {
+            "digest": "e29aacdf3a504ee93b095c0184695829c0b6ed808bbcc6e7ed23b4d00cb16998",
+            "name": "layers.25.ffn.experts.148.w2.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w3.scale": {
+            "digest": "3d7f1e8933a63ef746ebb63ebe5d04ae7a1d57a8566b9c298f26bf7b52704fb7",
+            "name": "layers.25.ffn.experts.148.w3.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w3.weight": {
+            "digest": "e4fa822663bff809307375b8462883027ae7c8f060c73cdee7faaa79e07e427d",
+            "name": "layers.25.ffn.experts.148.w3.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          }
+        },
+        "153": {
+          "w1.scale": {
+            "digest": "4f31283c00b7428034d0c062aecbedb18059c0d0213063dd4c97e4e72e239d73",
+            "name": "layers.25.ffn.experts.153.w1.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w1.weight": {
+            "digest": "89cb7ef3488132e7daef1be48ac93a57781d35d402377e3f6b424a338a63f150",
+            "name": "layers.25.ffn.experts.153.w1.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w2.scale": {
+            "digest": "33f92ce0c675b11e3c95d5cb3442d51af5e24275f15ab8b619b258ca7baa2d71",
+            "name": "layers.25.ffn.experts.153.w2.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w2.weight": {
+            "digest": "2a43b3d3b9fb8c9a859f9e07f218027ea832654063dbb206f41d76eb336ee589",
+            "name": "layers.25.ffn.experts.153.w2.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w3.scale": {
+            "digest": "dad8e98a51d07c3df4582b2044de6eeb58a05a7a16975e8199fb81fb0bca754d",
+            "name": "layers.25.ffn.experts.153.w3.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w3.weight": {
+            "digest": "be6cf86696d102d89db3ef3e5e6a21a3091222eabbf0b65744737e5d88028ba4",
+            "name": "layers.25.ffn.experts.153.w3.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          }
+        },
+        "162": {
+          "w1.scale": {
+            "digest": "f37f55e7b976344de6c1cb73ac6bdc23cff9cb44a0502227570818e024355c3e",
+            "name": "layers.25.ffn.experts.162.w1.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w1.weight": {
+            "digest": "29c0b1ca95f414651bb65b85b94f55eb812abd3774ee39f457e45de348532fd1",
+            "name": "layers.25.ffn.experts.162.w1.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w2.scale": {
+            "digest": "3cdd8bcb949379b9c6edb1d351779db233944e1473b40de1e95cf67f3c37f0de",
+            "name": "layers.25.ffn.experts.162.w2.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w2.weight": {
+            "digest": "172c6bd80ea6ced83f45262b10d19e401b1c98d62b488dc5b4f9faf370bfe0a9",
+            "name": "layers.25.ffn.experts.162.w2.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w3.scale": {
+            "digest": "e6456a4730672ac82ab6dc5a2624167ff1083fae5065138e4f396fde6ab1e39c",
+            "name": "layers.25.ffn.experts.162.w3.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w3.weight": {
+            "digest": "acf4b74e6bfffe36a7c318a5d532187f26eefcd1b4d061568002514b4038c536",
+            "name": "layers.25.ffn.experts.162.w3.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          }
+        },
+        "187": {
+          "w1.scale": {
+            "digest": "c256faa9a5ef0006a273f697b4222b32ed49eda494b1463a9366a3a16b54ce78",
+            "name": "layers.25.ffn.experts.187.w1.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w1.weight": {
+            "digest": "833f81adba081e0a822bf57fa4a10c50b871e1a01abc3cdc37eb8cd05effc3ae",
+            "name": "layers.25.ffn.experts.187.w1.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w2.scale": {
+            "digest": "b30f7f35b02504393f6fa0b2c3a813a887cb3877c529555e4a42acad50b681ac",
+            "name": "layers.25.ffn.experts.187.w2.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w2.weight": {
+            "digest": "4632a1891d585579f7b45af80921e8f96fff3d96657333c4ad02dc02ec0fdcfb",
+            "name": "layers.25.ffn.experts.187.w2.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w3.scale": {
+            "digest": "259e3c9e7ba6f3aeedcd8c0a9b5b71a27979bf17a7ebabccc5178a06a0e36261",
+            "name": "layers.25.ffn.experts.187.w3.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w3.weight": {
+            "digest": "647189d5592a8a0d644e118ca5d7082789e2caa89f842466efbf9baba9005522",
+            "name": "layers.25.ffn.experts.187.w3.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          }
+        },
+        "20": {
+          "w1.scale": {
+            "digest": "38035771fa7999ebbb6716e009815d63e4201660e005fec32bdcdb22d4e73b88",
+            "name": "layers.25.ffn.experts.20.w1.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w1.weight": {
+            "digest": "b9a2c620ba45dc86647e0a2c78355d95b29a6db5515b128039a6a1b930db5cf9",
+            "name": "layers.25.ffn.experts.20.w1.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w2.scale": {
+            "digest": "67025ad8d03e5280405b18d23eb74a3649998846f7a05d2c34a4df7bb9daccc2",
+            "name": "layers.25.ffn.experts.20.w2.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w2.weight": {
+            "digest": "34bc51f46a00794d87f00633bd1aaed8b99cf586a40396095c501c024176bc16",
+            "name": "layers.25.ffn.experts.20.w2.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w3.scale": {
+            "digest": "5bc069ce1c9308c4dea9a601fedb4631635dd49e31a9b2e73337ef5740bb8022",
+            "name": "layers.25.ffn.experts.20.w3.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w3.weight": {
+            "digest": "cdee7160e312c69875ffba7d9aea8f511489014b371c457856917375994e307c",
+            "name": "layers.25.ffn.experts.20.w3.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          }
+        },
+        "226": {
+          "w1.scale": {
+            "digest": "b1980cbe3a78d381cdf3afc511ca64c2886133b6dacb79870d74276e948ba892",
+            "name": "layers.25.ffn.experts.226.w1.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w1.weight": {
+            "digest": "c146cd747d0ae62ef321a69b572e81b5fdd8099c9060df0b101533026e0f1f6b",
+            "name": "layers.25.ffn.experts.226.w1.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w2.scale": {
+            "digest": "4127c71102d523ca3c6dfed0946305ef65f9ee9890165640337af1b3e943a267",
+            "name": "layers.25.ffn.experts.226.w2.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w2.weight": {
+            "digest": "35c3a2b438c807b6734007803a82f01765977f01f8600a0f8a6f547d19304abd",
+            "name": "layers.25.ffn.experts.226.w2.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w3.scale": {
+            "digest": "8699fbe39e73d90521e76031aabe4b18f1e3ce2dc0c6e9a94ab4470d9afb206e",
+            "name": "layers.25.ffn.experts.226.w3.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w3.weight": {
+            "digest": "991a47daa5d2bb8458eb3b8ad0b140f4a01fef1ef82c93440688192747738ec5",
+            "name": "layers.25.ffn.experts.226.w3.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          }
+        },
+        "241": {
+          "w1.scale": {
+            "digest": "109b9f1cb67db14a6d920efcf7a937f48bf648666f96b9aea64e4727fe439c48",
+            "name": "layers.25.ffn.experts.241.w1.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w1.weight": {
+            "digest": "76a3bf4a91a145d3593137db13fbdd6d108ef5a30dd5aa51e793096088708e5f",
+            "name": "layers.25.ffn.experts.241.w1.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w2.scale": {
+            "digest": "4bfcada8752f914d3ae24e45fbf07ea67ed8efa97846045851e5268deb701791",
+            "name": "layers.25.ffn.experts.241.w2.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w2.weight": {
+            "digest": "b5311363b99e768ed3ba45d7a7c39d08ef71686460a2cd6b90e55b60968394ff",
+            "name": "layers.25.ffn.experts.241.w2.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w3.scale": {
+            "digest": "77ac72a5e2e8355ebb6a133c3f917d78061339f13fc371e15c05bd4d75240321",
+            "name": "layers.25.ffn.experts.241.w3.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w3.weight": {
+            "digest": "18b4dc7ad6adb8ccf866caad5daf0ca1a7a32ca0c7705a3f11b2467ce77b0161",
+            "name": "layers.25.ffn.experts.241.w3.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          }
+        },
+        "252": {
+          "w1.scale": {
+            "digest": "68bf565a2df9456c1363768ed4e1b29fcc326865f4a3d7f179495f4d7d9047e7",
+            "name": "layers.25.ffn.experts.252.w1.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w1.weight": {
+            "digest": "aef407d605ca68e493f83bd6785df101af68268ba49d33696f07241be57aab53",
+            "name": "layers.25.ffn.experts.252.w1.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w2.scale": {
+            "digest": "2328978b6b07bd98f4929e7177312f72177cb5f617fad6be14c50703ab881f9c",
+            "name": "layers.25.ffn.experts.252.w2.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w2.weight": {
+            "digest": "c12a937c3b1a79c4afda5373bdbc0d6dc0242610a39f7ac0d28a8da5c62f6901",
+            "name": "layers.25.ffn.experts.252.w2.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w3.scale": {
+            "digest": "86062c8fcdf0971c36ea093a25c301cf46ee55ace7a2018c95fa42661ebd347a",
+            "name": "layers.25.ffn.experts.252.w3.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w3.weight": {
+            "digest": "e4f60515955ebd1d41a9a2bed97eead96fc36bc6cc9ef82e79d6ec50b29589a7",
+            "name": "layers.25.ffn.experts.252.w3.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          }
+        },
+        "318": {
+          "w1.scale": {
+            "digest": "a4f510876996513777ef095ba701f6d6138eb86498d81c804d65a9c3480f9e4a",
+            "name": "layers.25.ffn.experts.318.w1.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w1.weight": {
+            "digest": "b1a53464c016f16df889594ddf1e2e963064a1ccfb9af36e731979d2b82cfe62",
+            "name": "layers.25.ffn.experts.318.w1.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w2.scale": {
+            "digest": "abcef9ec7eef4df509f844389d112601dae00a353cb41dd337a8e9a71c200225",
+            "name": "layers.25.ffn.experts.318.w2.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w2.weight": {
+            "digest": "fe9d3008e1abc1c631f22625248b66eaf3933a0b2888539cfa91eaaa60d82a4e",
+            "name": "layers.25.ffn.experts.318.w2.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w3.scale": {
+            "digest": "7ec6cf2d37974ab43c2f4e0671f4217004053a33abce515a3d53776215f1768d",
+            "name": "layers.25.ffn.experts.318.w3.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w3.weight": {
+            "digest": "97111f3f92d6ccd62fd4bfb046b87569ae4df44a908f32c8a2afec16984d522e",
+            "name": "layers.25.ffn.experts.318.w3.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          }
+        },
+        "38": {
+          "w1.scale": {
+            "digest": "06d46ae2d7b669e86185a6524849ab1d3427fc1e045c491d872f39d0dd535f5b",
+            "name": "layers.25.ffn.experts.38.w1.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w1.weight": {
+            "digest": "ec4eaa70ce8c60bf2058136a44c8bb3d6f264370e9dda7c3a92d6297944d38a3",
+            "name": "layers.25.ffn.experts.38.w1.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w2.scale": {
+            "digest": "34c5b20c3d128aeaf2becd9f7144e3f361a5ceed67b2a3d4bd80f5a76db574a5",
+            "name": "layers.25.ffn.experts.38.w2.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w2.weight": {
+            "digest": "5294bf392a7f1c5916592acbe793601d249d35df2ef8e9666077ae886212695c",
+            "name": "layers.25.ffn.experts.38.w2.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w3.scale": {
+            "digest": "684331776816ff82329a1ed1c130160e77141fbe15fd61e61a63c5c9e150affa",
+            "name": "layers.25.ffn.experts.38.w3.scale",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          },
+          "w3.weight": {
+            "digest": "d7005288b2face4c02b1e676f6b880515d927ce3a90974753a7b21ab508f7957",
+            "name": "layers.25.ffn.experts.38.w3.weight",
+            "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00028-of-00048.safetensors"
+          }
+        }
+      }
+    }
+  },
+  "purpose": "Boundary 7a adjacent layer-24 -> layer-25 HC carry plus shared-attention state producer/consumer integration; no decode/logits",
+  "safe_claim": "For the bounded layer-24 -> layer-25 prefill fixture, layer-24 Block outputs and HC carry are consumed directly by layer 25 in one connected execution, and the declared shared-attention state persists across the two Blocks according to the reviewed official source semantics.",
+  "schema": "ds41f.native-layer24-25-connected-validation.v1",
+  "scope": {
+    "batch": 1,
+    "hc": 4,
+    "layers": [
+      24,
+      25
+    ],
+    "prefill": true,
+    "sequence": 2,
+    "start_pos": 0,
+    "world_size": 1
+  },
+  "source_review": {
+    "model_py": {
+      "file": "inference/model.py",
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "functions": [
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Attention",
+          "reviewed_state": "window_kv_cache is layer-local; compress_kv shared cache read when not kv source; index source publishes shared_attn.topk_idxs; non-index source consumes shared_attn.topk_idxs",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            613,
+            789
+          ],
+          "source_sha256": "86d80f5cdaa6435cacd56ce5be796c3f0155a7f92cebdb12ffe6743ac974d110"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Indexer",
+          "reviewed_candidate": "candidate source writes shared_attn.candidates; later index sources mask with shared_attn.candidates",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            492,
+            589
+          ],
+          "source_sha256": "21dee1c5be8112e941a12cc943e90bfd0d44f06dcb3a3d7fa0168666e788e310"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Block.forward",
+          "reviewed_carry": "return x, ffn_pre; next Block attention hc_pre consumes incoming pre_mix",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            971,
+            994
+          ],
+          "source_sha256": "813b4dc3231349cb17190876e25f6c39da4a88fdec9d23e9cb0c5b6fcd8318f6"
+        }
+      ]
+    }
+  },
+  "state_transition_table": [
+    {
+      "after_layer24_digest": "df65999ef08ace0a5a3d223d81fa97c687d112199ab5d687bf8dfe0fee4357d8",
+      "after_layer25_digest": "df65999ef08ace0a5a3d223d81fa97c687d112199ab5d687bf8dfe0fee4357d8",
+      "classification": [
+        "external_initial_input",
+        "unchanged/read-only"
+      ],
+      "consumer": [
+        "layer24 Attention._compress_kv reads shared_attn.compress_kv",
+        "layer25 Attention._compress_kv reads shared_attn.compress_kv"
+      ],
+      "field": "compress_kv",
+      "initial_digest": "df65999ef08ace0a5a3d223d81fa97c687d112199ab5d687bf8dfe0fee4357d8",
+      "layer24_publication_equals_layer25_consumption": null,
+      "layer25_consumed_digest": "df65999ef08ace0a5a3d223d81fa97c687d112199ab5d687bf8dfe0fee4357d8",
+      "producer": "bounded external initializer"
+    },
+    {
+      "after_layer24_digest": "6d6a7f8649e1e721aa82910d0e90fcee0189d1454c136589c6b68d82dbb11c4d",
+      "after_layer25_digest": "6d6a7f8649e1e721aa82910d0e90fcee0189d1454c136589c6b68d82dbb11c4d",
+      "classification": [
+        "external_initial_input",
+        "unchanged/read-only"
+      ],
+      "consumer": [
+        "layer24 Indexer reads shared_attn.index_k"
+      ],
+      "field": "index_k",
+      "initial_digest": "6d6a7f8649e1e721aa82910d0e90fcee0189d1454c136589c6b68d82dbb11c4d",
+      "layer24_publication_equals_layer25_consumption": null,
+      "layer25_consumed_digest": null,
+      "producer": "bounded external initializer"
+    },
+    {
+      "after_layer24_digest": "27ecd0a598e76f8a2fd264d427df0a119903e8eae384e478902541756f089dd1",
+      "after_layer25_digest": "27ecd0a598e76f8a2fd264d427df0a119903e8eae384e478902541756f089dd1",
+      "classification": [
+        "external_initial_input",
+        "unchanged/read-only"
+      ],
+      "consumer": [
+        "layer24 Indexer masks with shared_attn.candidates"
+      ],
+      "field": "candidates",
+      "initial_digest": "27ecd0a598e76f8a2fd264d427df0a119903e8eae384e478902541756f089dd1",
+      "layer24_publication_equals_layer25_consumption": null,
+      "layer25_consumed_digest": null,
+      "producer": "bounded external initializer"
+    },
+    {
+      "after_layer24_digest": "f177d4feea916de5753fda9e1abf2c19559139141e361c81b77ec24d783a306f",
+      "after_layer25_digest": "f177d4feea916de5753fda9e1abf2c19559139141e361c81b77ec24d783a306f",
+      "classification": [
+        "produced_or_updated_by_layer24",
+        "consumed_by_layer25"
+      ],
+      "consumer": [
+        "layer25 Attention._compress_topk_idxs returns shared_attn.topk_idxs"
+      ],
+      "field": "topk_idxs",
+      "initial_digest": null,
+      "layer24_publication_equals_layer25_consumption": true,
+      "layer25_consumed_digest": "f177d4feea916de5753fda9e1abf2c19559139141e361c81b77ec24d783a306f",
+      "producer": "layer24 Attention._compress_topk_idxs publishes shared_attn.topk_idxs"
+    }
+  ],
+  "state_validation": {
+    "layer24_topk_publication_equals_layer25_consumed_topk": true,
+    "same_state_instance_lifetime": "initialized once before Block24; mutated by Block24 topk_idxs publication; same dictionary object passed to Block25; observed after Block25",
+    "window_kv_layer_local": {
+      "classification": "layer-local publication/update, not cross-layer shared-attention carry",
+      "layer24_window_kv_digest": "4cbb9869feb221baaffc33095d46afb29f21f5f206684d1377667d47c261500c",
+      "layer25_window_kv_digest": "73177ebbfb244683834167345ab1c6e538f93578ba0d973a0a279ca68254780b"
+    }
+  }
+}

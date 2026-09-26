@@ -1,0 +1,1093 @@
+{
+  "artifact_gates": {
+    "attention_side_matches_6b": true,
+    "ffn_side_matches_6d": true,
+    "moe_routing_matches_6d": true
+  },
+  "authority": {
+    "boundary6b_expected_digest_gate": "artifacts/hc-attention-subblock-official-reference-fixture.json",
+    "boundary6d_expected_digest_gate": "artifacts/hc-ffn-moe-subblock-official-reference-fixture.json",
+    "native_validation_provider": "single Python-orchestrated connected dataflow from initial x_hc + incoming pre_mix; no 6b/6d intermediate tensor injection",
+    "official_checkpoint_raw_bits": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash"
+  },
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "official_reference_derived_native_connected_validation",
+  "digests": {
+    "attention_hc_pre_sha256": "9b434d04c5fcf254a222b804ff8c04c45fcc3c351d85bc9f3a91f98d064b6271",
+    "attention_input_sha256": "a62cd4e24301eaa15774f537e08dc760be7fa0c2cb9c5351137d125fb44a656a",
+    "attn_comb_sha256": "6068d8b0845ed2ae8e390a37e9122aa8ccedb5e393fd3579e5861397fdf83418",
+    "attn_mix_projection_sha256": "f009a07107ee4a1b13280a1fd08adf8ccea5069ee2498917f4c7a988e7c5ceda",
+    "attn_post_sha256": "e655860a7303671111ba77b936bac0d1bc4ce877cae39b4506354e88ff3146ff",
+    "attn_pre_sha256": "6886b55057faf848f6239f58719d7e57ac51e9bf6e865481f6dff66637fc25b7",
+    "ffn_comb_sha256": "3ac077d8869f1ef33152010208fac27fc761db2c03d4db094b22cc0e91e8d8cf",
+    "ffn_hc_pre_sha256": "6b4d96355d24921d79f9f85d2f62eec4311693506c24c082c94a689bd6977225",
+    "ffn_mix_projection_sha256": "f67600f785061bc09327c87231fb379da330c74538cb88388bb99b5fbf763966",
+    "ffn_norm_moe_input_sha256": "b764483ec5db9323f97ad9ad3a6ca8a16d4e3f3dba9547ee6e83e7a789b9992f",
+    "ffn_post_sha256": "58bf48aa495ccf98b97b7784fc857bfe939b66e9b4b4540ae0d803d0ec86293f",
+    "ffn_pre_sha256": "8fcc739b02187a2a805bc06ab26e8c66d5cec632520cab47f7ade518bd0b0d2d",
+    "final_attention_output_sha256": "2783edf7810d63aee1ba04a99554b533105f950b1f3d75eb44c244235beeaee7",
+    "full_moe_output_sha256": "79cdaa8d0b616a2de45d4ea648670f88884542eec08242255597cbe5f8eab34e",
+    "gate_topk_ids_sha256": "7adb30b7a87005b726ac5fe94cc007d7d3b2d9f0a50bc803287fcdbe274ce38c",
+    "gate_weights_sha256": "8517460e5390444fd2c2f99ce1c51168b14c9ea6a942662de71d675c2cba58fa",
+    "incoming_pre_mix_sha256": "c4a9b0e568a1fae40750696c6e213b4dca41550d000d4aca6e9e50d016d45f1c",
+    "initial_x_hc_sha256": "9b84710eb3107f0da3bcc1770ede41513af4b8fb6df9850819203e1fa06da02c",
+    "returned_ffn_pre_sha256": "8fcc739b02187a2a805bc06ab26e8c66d5cec632520cab47f7ade518bd0b0d2d",
+    "routed_expert_sum_sha256": "fd8150e9a003861b913f050b6994b2c934d4955dd20fb893ca9f48b8e6ebd7af",
+    "shared_expert_output_sha256": "5bcc4bd558d96f4473566e6ef760dc647c89020f82c8d849daffa6c64da2eedc",
+    "x_after_attn_sha256": "f035fcb163910857b8be269a899ddc48ac48080cfe98643a07e9469a3041ba8f",
+    "x_after_ffn_sha256": "a596b0585c9702257b730d81ccc9bd8eac03df53404d64d8be83c2dd8625ae63"
+  },
+  "ds4_authority": {
+    "commit": "0aaea5a238fb41a35106a551e73c8409dfb751ac",
+    "remote": "https://github.com/antirez/ds4.git"
+  },
+  "expected_digest_gates": {
+    "attention_input": {
+      "actual_sha256": "a62cd4e24301eaa15774f537e08dc760be7fa0c2cb9c5351137d125fb44a656a",
+      "expected_sha256": "a62cd4e24301eaa15774f537e08dc760be7fa0c2cb9c5351137d125fb44a656a",
+      "matches": true,
+      "name": "attention_input"
+    },
+    "ffn_norm_moe_input": {
+      "actual_sha256": "b764483ec5db9323f97ad9ad3a6ca8a16d4e3f3dba9547ee6e83e7a789b9992f",
+      "expected_sha256": "b764483ec5db9323f97ad9ad3a6ca8a16d4e3f3dba9547ee6e83e7a789b9992f",
+      "matches": true,
+      "name": "ffn_norm_moe_input"
+    },
+    "final_block_x": {
+      "actual_sha256": "a596b0585c9702257b730d81ccc9bd8eac03df53404d64d8be83c2dd8625ae63",
+      "expected_sha256": "a596b0585c9702257b730d81ccc9bd8eac03df53404d64d8be83c2dd8625ae63",
+      "matches": true,
+      "name": "final_block_x"
+    },
+    "full_moe_output": {
+      "actual_sha256": "79cdaa8d0b616a2de45d4ea648670f88884542eec08242255597cbe5f8eab34e",
+      "expected_sha256": "79cdaa8d0b616a2de45d4ea648670f88884542eec08242255597cbe5f8eab34e",
+      "matches": true,
+      "name": "full_moe_output"
+    },
+    "returned_ffn_pre": {
+      "actual_sha256": "8fcc739b02187a2a805bc06ab26e8c66d5cec632520cab47f7ade518bd0b0d2d",
+      "expected_sha256": "8fcc739b02187a2a805bc06ab26e8c66d5cec632520cab47f7ade518bd0b0d2d",
+      "matches": true,
+      "name": "returned_ffn_pre"
+    },
+    "x_after_attn": {
+      "actual_sha256": "f035fcb163910857b8be269a899ddc48ac48080cfe98643a07e9469a3041ba8f",
+      "expected_sha256": "f035fcb163910857b8be269a899ddc48ac48080cfe98643a07e9469a3041ba8f",
+      "matches": true,
+      "name": "x_after_attn"
+    }
+  },
+  "gates": {
+    "attention_side_matches_6b": true,
+    "authority_chain_recorded": true,
+    "block_forward_full_order_reviewed": true,
+    "ffn_side_matches_6d": true,
+    "final_x_after_ffn_matches": true,
+    "moe_routing_matches_6d": true,
+    "no_intermediate_tensor_injection": true,
+    "returned_ffn_pre_matches": true,
+    "single_connected_execution_from_initial_inputs": true,
+    "source_identity_authority_checks_pass": true,
+    "state_effects_classified_validated": true,
+    "stop_before_next_block": true
+  },
+  "non_claims": [
+    "no previous-layer production pre_mix carry correctness",
+    "no next-layer consumption of returned ffn_pre",
+    "no multi-layer execution",
+    "no production-scale candidate pruning",
+    "no decode / ring / partial compression group",
+    "no world_size > 1 expert parallelism",
+    "no Transformer final norm / logits",
+    "no full-model correctness",
+    "no performance/fusion claim"
+  ],
+  "not_omlx_derived": true,
+  "official_reference": {
+    "model_py": {
+      "file": "inference/model.py",
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "functions": [
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Block.forward",
+          "reviewed_full_order": "attention hc_mixes -> attention hc_pre(incoming pre_mix) -> attn_norm -> Attention -> attention hc_post -> ffn hc_mixes -> ffn hc_pre(attn_pre) -> ffn_norm -> MoE -> ffn hc_post -> return x, ffn_pre",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            971,
+            994
+          ],
+          "source_sha256": "813b4dc3231349cb17190876e25f6c39da4a88fdec9d23e9cb0c5b6fcd8318f6"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Block.hc_mixes",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            950,
+            958
+          ],
+          "source_sha256": "92fd3b129ad62c76cb37f4cc21d337456f376ddb367be51d3a93c86582894f18"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Block.hc_pre",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            960,
+            963
+          ],
+          "source_sha256": "103935a48b2cba8d9e34507bafa52db0f21e2a84448a1a83cdd4f3c5a7e727a4"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Block.hc_post",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            965,
+            969
+          ],
+          "source_sha256": "eaaa69a5e29927bd1dd1eba613786fcd8a97d7974df79a509442ef43f41d218f"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Attention",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            613,
+            789
+          ],
+          "source_sha256": "86d80f5cdaa6435cacd56ce5be796c3f0155a7f92cebdb12ffe6743ac974d110"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Gate/Expert/MoE",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            807,
+            904
+          ],
+          "source_sha256": "94a00493b8986c3cbfd51c66ae53f94ff9e6c05a9bc20de04f0ae718126c6125"
+        }
+      ]
+    }
+  },
+  "ok": true,
+  "operation_contract": "attention hc_mixes -> attention hc_pre(incoming pre_mix) -> attn_norm -> Attention -> attention hc_post -> ffn hc_mixes -> ffn hc_pre(attn_pre) -> ffn_norm -> MoE -> ffn hc_post -> return x, ffn_pre",
+  "purpose": "Boundary 6e connected layer-24 Block.forward execution using Boundary 6a-6d validated math; stop before next Block",
+  "routing_summary": {
+    "scaled_routing_weights": [
+      [
+        0.30666792392730713,
+        0.26518163084983826,
+        0.23444253206253052,
+        0.2384490668773651,
+        0.227377787232399,
+        0.22788098454475403
+      ],
+      [
+        0.2756555676460266,
+        0.2622893452644348,
+        0.25022250413894653,
+        0.24365878105163574,
+        0.24334122240543365,
+        0.2248324602842331
+      ]
+    ],
+    "selected_expert_set": [
+      8,
+      40,
+      85,
+      125,
+      144,
+      184,
+      221,
+      228,
+      243,
+      249,
+      254,
+      265
+    ],
+    "topk_expert_indices": [
+      [
+        125,
+        221,
+        249,
+        243,
+        265,
+        184
+      ],
+      [
+        228,
+        85,
+        254,
+        144,
+        8,
+        40
+      ]
+    ]
+  },
+  "safe_closeout_claim": "For layer 24, B=1, S=2, start_pos=0, prefill, world_size=1, with the declared bounded external shared-attention state and deterministic synthetic incoming pre_mix, the connected native Block dataflow from Block input through Attention HC, Attention, FFN HC, MoE, and final Block output matches the validated official-reference-derived contracts.",
+  "schema": "ds41f.native-block-layer24-integration-validation.v1",
+  "scope": {
+    "batch": 1,
+    "claim": "layer-24 Block semantics under bounded external shared state and synthetic incoming pre_mix",
+    "hc": 4,
+    "layer": 24,
+    "prefill": true,
+    "sequence": 2,
+    "start_pos": 0,
+    "world_size": 1
+  },
+  "semantic_status": {
+    "attention_side_intermediates_match_6b_gates": true,
+    "boundary6a_to_6e_authority_chain_recorded": true,
+    "ffn_side_intermediates_match_6d_gates": true,
+    "final_x_after_ffn_matches": true,
+    "model_semantics_validated": false,
+    "moe_routing_ids_weights_match_6d": true,
+    "next_block_entered": false,
+    "no_boundary6b_or_6d_intermediate_tensor_injection": true,
+    "pinned_block_forward_full_order_reviewed": true,
+    "relevant_shared_cache_state_effects_classified_and_validated": true,
+    "returned_ffn_pre_matches": true,
+    "single_connected_execution_starts_from_initial_x_hc_and_incoming_pre_mix": true,
+    "source_identity_authority_checks_pass": true
+  },
+  "source_tensors": {
+    "attn_norm.weight": {
+      "digest": "fbe422ff45b1ae170d20384117c33c1de21e1dd97eec95a2175638c96c42fe01",
+      "name": "layers.24.attn_norm.weight"
+    },
+    "ffn_norm.weight": {
+      "digest": "46be99e76bd329eb7d9ef93de3708bbd3c310da3c1ab644ea4a21c7af93721f4",
+      "name": "layers.24.ffn_norm.weight"
+    },
+    "hc_attn_base": {
+      "digest": "2f677979fa9c0ad34e75275e28eec3932a7ab954758e316184cf709c270cff3e",
+      "name": "layers.24.hc_attn_base"
+    },
+    "hc_attn_fn": {
+      "digest": "af0305cfd81e288453433f9dae59275038fec24b2ffd59398abc257fcd8b877c",
+      "name": "layers.24.hc_attn_fn"
+    },
+    "hc_attn_scale": {
+      "digest": "5e9834cdddb5b5b90ad22a0181d5b63cdee38e1d7e11f6ccec0773e7b5bb2fa9",
+      "name": "layers.24.hc_attn_scale"
+    },
+    "hc_ffn_base": {
+      "digest": "15846da45456379323c8e537444136038937ac848b1a38120a9adf98b7ff80c2",
+      "name": "layers.24.hc_ffn_base"
+    },
+    "hc_ffn_fn": {
+      "digest": "504c5e1ce91ddd52b128c4affd584d3157106b48b8e53bdc458e657baaf4b6a5",
+      "name": "layers.24.hc_ffn_fn"
+    },
+    "hc_ffn_scale": {
+      "digest": "334cfc6792c91f626fb40d864497db5133f025fdde490100758c1938441ca20c",
+      "name": "layers.24.hc_ffn_scale"
+    },
+    "selected_experts": {
+      "125": {
+        "w1.scale": {
+          "digest": "05dc6e678d46b0c25cb10f5273feefd9d80d89b996cf72776f6f599927b37444",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.125.w1.scale",
+          "shape": [
+            2304,
+            160
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w1.weight": {
+          "digest": "88657124d5229e4b17f5900b3233ef0649853bcbcf2a2c7c5baa3a49befcfa16",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.125.w1.weight",
+          "shape": [
+            2304,
+            2560
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w2.scale": {
+          "digest": "c086b6ae718a9a3423057999a58e9ad2d64429bbb05b4ede09b86800f747086d",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.125.w2.scale",
+          "shape": [
+            5120,
+            72
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w2.weight": {
+          "digest": "f86929fa6db1f38db9e359e8dfad62f97b54024bb7fba0eabb71373b72ae9e77",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.125.w2.weight",
+          "shape": [
+            5120,
+            1152
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w3.scale": {
+          "digest": "609254fd3c64d5f8a3552d10a2818daf8c905c5336c1273ae01a523a1f5fdcf4",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.125.w3.scale",
+          "shape": [
+            2304,
+            160
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w3.weight": {
+          "digest": "bb1294babf587335e6211b58bc7472d2b6cd8c3ee41801a52af603457dc01d0f",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.125.w3.weight",
+          "shape": [
+            2304,
+            2560
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        }
+      },
+      "144": {
+        "w1.scale": {
+          "digest": "d16e41129362398504c4531a59384d5028d30681ff0614f2f766e973c9bd986c",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.144.w1.scale",
+          "shape": [
+            2304,
+            160
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w1.weight": {
+          "digest": "d0cbe957f1cba8ff525d5ee3c42035053ce90a116c17561bcce9702c3b22d1c3",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.144.w1.weight",
+          "shape": [
+            2304,
+            2560
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w2.scale": {
+          "digest": "e2a5fe42691937d791ac0390261df6b13d06c31ecb82b5c3aad4a6958e12fc2f",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.144.w2.scale",
+          "shape": [
+            5120,
+            72
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w2.weight": {
+          "digest": "e13eea196e277156284d10aac6c5c8343f4812dc128700b9fcf79b8aa2a09469",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.144.w2.weight",
+          "shape": [
+            5120,
+            1152
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w3.scale": {
+          "digest": "89259a42fb4f3b30b19db7c17bed296fa639b4e263f43639a2b37a3db0acaca9",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.144.w3.scale",
+          "shape": [
+            2304,
+            160
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w3.weight": {
+          "digest": "70850caaffeeb8b6d42333310fa0d57ff3e9442e5d4d5e7ff377929d6df3f1c0",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.144.w3.weight",
+          "shape": [
+            2304,
+            2560
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        }
+      },
+      "184": {
+        "w1.scale": {
+          "digest": "aea3d9a719508995dc432acf858e84b49631b4f5775f48032bfeaf44ae53db32",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.184.w1.scale",
+          "shape": [
+            2304,
+            160
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w1.weight": {
+          "digest": "01f5631256cd358a73774314ddfc1c270f50b20298cf70134489398ffedfec33",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.184.w1.weight",
+          "shape": [
+            2304,
+            2560
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w2.scale": {
+          "digest": "31fb41edba743da271df581fc6896a613b83b827b3dd5d15a0d7d07fc507ceb4",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.184.w2.scale",
+          "shape": [
+            5120,
+            72
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w2.weight": {
+          "digest": "0cc609e7333f6e1de536e785872d99962e1482c160bf89fb00284a6f60d469ff",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.184.w2.weight",
+          "shape": [
+            5120,
+            1152
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w3.scale": {
+          "digest": "2ae3aee78aa7376d151ccd15a12e88b624121126f4b2e570f6781dc91b2f58a4",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.184.w3.scale",
+          "shape": [
+            2304,
+            160
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w3.weight": {
+          "digest": "8248db46b54813149848078307f2b856273758c45fea91a999022ddd7df14a65",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.184.w3.weight",
+          "shape": [
+            2304,
+            2560
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        }
+      },
+      "221": {
+        "w1.scale": {
+          "digest": "9aee3bed31f5268bd982ea5abc248116f9dc6de9b5e43b7ba4c5b72c82cb8af1",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.221.w1.scale",
+          "shape": [
+            2304,
+            160
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w1.weight": {
+          "digest": "354fa09387c08c64453c10620bdd0b0bc220bc9bbbaa9ec9fe8117c768c1e5b4",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.221.w1.weight",
+          "shape": [
+            2304,
+            2560
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w2.scale": {
+          "digest": "cb93b0e33c629147d6567aad4f6b7d140cac06538083309a4e774ccefd77cd86",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.221.w2.scale",
+          "shape": [
+            5120,
+            72
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w2.weight": {
+          "digest": "31e718a2aab50f187f91f19f866c26f707ab0c6799b0a214696cae20d627089d",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.221.w2.weight",
+          "shape": [
+            5120,
+            1152
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w3.scale": {
+          "digest": "b2531352b6d1ae32e9dc3f157c760c5e3948d7b5daaae6338f800a6210ddfd30",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.221.w3.scale",
+          "shape": [
+            2304,
+            160
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w3.weight": {
+          "digest": "76a63bea0ac90135195fa3cea4785571a4964f0e6e31ae59a910db5fec3293eb",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.221.w3.weight",
+          "shape": [
+            2304,
+            2560
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        }
+      },
+      "228": {
+        "w1.scale": {
+          "digest": "826706844bc5387ad2e79d9f5641d15eccfe12ba4e619940568895d04df7a3ef",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.228.w1.scale",
+          "shape": [
+            2304,
+            160
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w1.weight": {
+          "digest": "5d570a2396866f45abff530bb2f5019d51aec25d3f96470ca03e13a8b894b872",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.228.w1.weight",
+          "shape": [
+            2304,
+            2560
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w2.scale": {
+          "digest": "268b5e414bdf2209f654b85f238ae9695c226ae414ec8256ca73e5f1bb85011f",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.228.w2.scale",
+          "shape": [
+            5120,
+            72
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w2.weight": {
+          "digest": "370b77008d8c4298ca94138ffa0cfc815b81eb9f57f762e9d160ba0498bfffc1",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.228.w2.weight",
+          "shape": [
+            5120,
+            1152
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w3.scale": {
+          "digest": "156aac00d278c271114b7b0603b35eff2d0ebada3e9603912c8d78cd2be7a2f0",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.228.w3.scale",
+          "shape": [
+            2304,
+            160
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w3.weight": {
+          "digest": "1d802bb8cae84edcd4cb632ffad876b8536f0aef5fbc65dd4f1d440370ab6661",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.228.w3.weight",
+          "shape": [
+            2304,
+            2560
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        }
+      },
+      "243": {
+        "w1.scale": {
+          "digest": "5576f04792d5cb0f5a7faca13c3648b03055e66a7fa28fcd9930a37f9c3eeb0f",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.243.w1.scale",
+          "shape": [
+            2304,
+            160
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w1.weight": {
+          "digest": "3c8e4152f3493dfe161f21d1fc5976cdce679a3f0953083a38b558c7072f2562",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.243.w1.weight",
+          "shape": [
+            2304,
+            2560
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w2.scale": {
+          "digest": "79c1b66c256c0288d8e3c070457465feb9f59f04fe2f0bdf8dc25a41373419f5",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.243.w2.scale",
+          "shape": [
+            5120,
+            72
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w2.weight": {
+          "digest": "bc79381526dc1dcad81a6d7ab7708c917589eb77f3b46c58b785cbdac7ebd59e",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.243.w2.weight",
+          "shape": [
+            5120,
+            1152
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w3.scale": {
+          "digest": "2f8e883f209e95a640e31379a32e14940909dde1ac488a8379f5893df96c275c",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.243.w3.scale",
+          "shape": [
+            2304,
+            160
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w3.weight": {
+          "digest": "572b8211cf3d8b508845e47f421d0789bfefa86636dacada7c45f33ebdb4827f",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.243.w3.weight",
+          "shape": [
+            2304,
+            2560
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        }
+      },
+      "249": {
+        "w1.scale": {
+          "digest": "3c36af5aad2ff9c4df259d45245e7228afdb65e14d0875c0c421e367a1fc4135",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.249.w1.scale",
+          "shape": [
+            2304,
+            160
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w1.weight": {
+          "digest": "5f0548f24850a821661afffb52c69bf73e45137c7271fd31ca3612b0a7754b09",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.249.w1.weight",
+          "shape": [
+            2304,
+            2560
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w2.scale": {
+          "digest": "82fe394560fbfb47483e926c51e6f6e3b5e5eee4350ac7581bdc91dfc32adeb5",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.249.w2.scale",
+          "shape": [
+            5120,
+            72
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w2.weight": {
+          "digest": "4e24d130dae1073b54b67b1c1e698295d3e8033720d7b1fd7b380a418b70c919",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.249.w2.weight",
+          "shape": [
+            5120,
+            1152
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w3.scale": {
+          "digest": "391e6fff9ed1c8665a1d07a734d002373ee75e0466a61ce9841a394e2997d244",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.249.w3.scale",
+          "shape": [
+            2304,
+            160
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w3.weight": {
+          "digest": "0393ace1979cf27ae9d4fecbd5c389ba1462a64fcbaaa07421f5665230057aba",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.249.w3.weight",
+          "shape": [
+            2304,
+            2560
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        }
+      },
+      "254": {
+        "w1.scale": {
+          "digest": "1b7fde89ce9a587dae61c172bee27d2a6f3cbcfe462111bf297bc5811dfe89d4",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.254.w1.scale",
+          "shape": [
+            2304,
+            160
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w1.weight": {
+          "digest": "bb7d05240765167c56e92d84dd21eae86774fa83d9802acd7081d474bd899df5",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.254.w1.weight",
+          "shape": [
+            2304,
+            2560
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w2.scale": {
+          "digest": "4e395352ebfca1605cf1af0c71374a891bf3c2a35a6a363f61a26c5bbf608ce6",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.254.w2.scale",
+          "shape": [
+            5120,
+            72
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w2.weight": {
+          "digest": "1a25684cfb21b9d9e2f28a02803368a0f8d5cfc16b8b83c7d88ee317b40fed9a",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.254.w2.weight",
+          "shape": [
+            5120,
+            1152
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w3.scale": {
+          "digest": "45bb661cb1645640e5c9c691e9e235df1b927b48a908b2ae85ea6adbb53069c5",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.254.w3.scale",
+          "shape": [
+            2304,
+            160
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w3.weight": {
+          "digest": "b31ecda61e3d305efad71b298edf9a6816623de7597fc3cde30c4c1a24b4a260",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.254.w3.weight",
+          "shape": [
+            2304,
+            2560
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        }
+      },
+      "265": {
+        "w1.scale": {
+          "digest": "90412f81bdaaa98b51c0c78cf1516e3629255fa1f103d81e25d2544e19cc6a04",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.265.w1.scale",
+          "shape": [
+            2304,
+            160
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w1.weight": {
+          "digest": "3eb70c47d98f1ff2b16838d9f7fcc2174dc804e1ed1d7749206788f6589d9a68",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.265.w1.weight",
+          "shape": [
+            2304,
+            2560
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w2.scale": {
+          "digest": "a9ecc28309c134ee9c3a424fe7a5e0e2350158976239f7da0d3a848fda9cb187",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.265.w2.scale",
+          "shape": [
+            5120,
+            72
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w2.weight": {
+          "digest": "4f4d2b405ff9fc33435e6e8e1e18364feefe271351f2c54fbb51aea3c3d55371",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.265.w2.weight",
+          "shape": [
+            5120,
+            1152
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w3.scale": {
+          "digest": "2d0bfec63defc6ea12473efc188ec3d3cd914dda684d5c007f229e2ccb22c7b5",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.265.w3.scale",
+          "shape": [
+            2304,
+            160
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w3.weight": {
+          "digest": "1ef461df5396bf17041681f9833c803d840d85c1cff62da13a1aa422a4184def",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.265.w3.weight",
+          "shape": [
+            2304,
+            2560
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        }
+      },
+      "40": {
+        "w1.scale": {
+          "digest": "c85d15fce5fdc07394392044798d5e41736dde556cb4b919ed0e3bd67e5f43ba",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.40.w1.scale",
+          "shape": [
+            2304,
+            160
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w1.weight": {
+          "digest": "01c249e39ef868266f06ad8af66fec5d9d06accb9a396872ce8fddabe944127f",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.40.w1.weight",
+          "shape": [
+            2304,
+            2560
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w2.scale": {
+          "digest": "d5bcef991b2fc414a99127aa8b05d8bae824186985bd23040bb3a8098ee91b02",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.40.w2.scale",
+          "shape": [
+            5120,
+            72
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w2.weight": {
+          "digest": "c947ac2289618e559d399846c6721da132440e556f7dd477dddd12ed8c12d61a",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.40.w2.weight",
+          "shape": [
+            5120,
+            1152
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w3.scale": {
+          "digest": "4edfaa5320b75f523b11b4aaea3f1531c184d23d5ebf58760d395883ca290f98",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.40.w3.scale",
+          "shape": [
+            2304,
+            160
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w3.weight": {
+          "digest": "e83af64b7290191ae9aa06cd5c9fae9f9d376583159e5f3c29273db9b047e866",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.40.w3.weight",
+          "shape": [
+            2304,
+            2560
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        }
+      },
+      "8": {
+        "w1.scale": {
+          "digest": "5be55d64edeeb5eb64adbc186730a924b6908755f952c91781750fe53947ec7f",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.8.w1.scale",
+          "shape": [
+            2304,
+            160
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w1.weight": {
+          "digest": "0335be1dc8db4389794322b6556182c5040df85f7030a9669cb51f6c23287228",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.8.w1.weight",
+          "shape": [
+            2304,
+            2560
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w2.scale": {
+          "digest": "1d49deefe7728789883794cb308c0c5bcde1a16ab35eefae19ff51201ca83b94",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.8.w2.scale",
+          "shape": [
+            5120,
+            72
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w2.weight": {
+          "digest": "17b82946afc1851473050ddefa63c6c97e705dd07836528cc3bd8ed7051da2b7",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.8.w2.weight",
+          "shape": [
+            5120,
+            1152
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w3.scale": {
+          "digest": "50cb7d8415e32902ac297aa4b128573d705efef5c14fb562965045226ea978f1",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.8.w3.scale",
+          "shape": [
+            2304,
+            160
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w3.weight": {
+          "digest": "476eb3139f52edf8b70bed1a691c3a04e1ebe448a2d127e7e5019c38fdb59670",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.8.w3.weight",
+          "shape": [
+            2304,
+            2560
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        }
+      },
+      "85": {
+        "w1.scale": {
+          "digest": "70e4a57b28760787f7c3866e3a82b85dfc73c22bc38db691dd8cb87977d59b8a",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.85.w1.scale",
+          "shape": [
+            2304,
+            160
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w1.weight": {
+          "digest": "31a29af0d63e105a6ffd43ce03cc7f7d57e7bbc66c47dba4224cc4f11267a799",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.85.w1.weight",
+          "shape": [
+            2304,
+            2560
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w2.scale": {
+          "digest": "33d2350f4f1eadaaac06db28e4594a2638f8cdae8909ab28d9a0469249db4243",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.85.w2.scale",
+          "shape": [
+            5120,
+            72
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w2.weight": {
+          "digest": "fa6151a299cec6cc2a72bcb6537628e9c43b2339821ed81731689debf371748a",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.85.w2.weight",
+          "shape": [
+            5120,
+            1152
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w3.scale": {
+          "digest": "f48c9c3637bbb499e0e400d4fa34d4c5510e0e8bd1ec685f996c44a4325de6f8",
+          "dtype": "F8_E8M0",
+          "name": "layers.24.ffn.experts.85.w3.scale",
+          "shape": [
+            2304,
+            160
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        },
+        "w3.weight": {
+          "digest": "671117e1f3b0d42a6a1c3caad66613541956d677010416ff7eae676b70785f40",
+          "dtype": "I8_PACKED_FP4_E2M1",
+          "name": "layers.24.ffn.experts.85.w3.weight",
+          "shape": [
+            2304,
+            2560
+          ],
+          "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00027-of-00048.safetensors"
+        }
+      }
+    }
+  },
+  "state_side_validation": {
+    "external_inputs": {
+      "candidate_mask": {
+        "classification": "bounded external shared-attention input; read-only for this layer-24 Block fixture",
+        "sha256": "27ecd0a598e76f8a2fd264d427df0a119903e8eae384e478902541756f089dd1"
+      },
+      "compressed_kv": {
+        "classification": "bounded external shared-attention input; read-only for this layer-24 Block fixture",
+        "sha256": "df65999ef08ace0a5a3d223d81fa97c687d112199ab5d687bf8dfe0fee4357d8"
+      },
+      "external_x_for_shared_attn": {
+        "classification": "bounded external shared-attention input; read-only for this layer-24 Block fixture",
+        "sha256": "e785817ca379b27e5a5d1c905c6261b46c6158815b55a29ecfaf7850b5925ef1"
+      },
+      "index_k": {
+        "classification": "bounded external shared-attention input; read-only for this layer-24 Block fixture",
+        "sha256": "6d6a7f8649e1e721aa82910d0e90fcee0189d1454c136589c6b68d82dbb11c4d"
+      }
+    },
+    "layer24_publication_update": {
+      "assembled_kv_for_sparse_attention": {
+        "classification": "layer-24 attention-side publication/update computed during connected execution",
+        "sha256": "f74f8beed964aa33822bacd0bc7fc537c1531436fdb5ce8e160034d69bd6237f"
+      },
+      "assembled_topk_for_sparse_attention": {
+        "classification": "layer-24 attention-side publication/update computed during connected execution",
+        "sha256": "34cd8ff72153b96dbeb1fa10f07cf545ae1c6ef2ce005facbd67a66e2454ac60"
+      },
+      "compressed_topk_after_offset": {
+        "classification": "layer-24 attention-side publication/update computed during connected execution",
+        "sha256": "f177d4feea916de5753fda9e1abf2c19559139141e361c81b77ec24d783a306f"
+      },
+      "compressed_topk_before_offset": {
+        "classification": "layer-24 attention-side publication/update computed during connected execution",
+        "sha256": "db9497531f0a39d8aadfd0cc228a5d4a798a6884d668a66afbfa7cd31d0b3bad"
+      },
+      "window_kv": {
+        "classification": "layer-24 attention-side publication/update computed during connected execution",
+        "sha256": "4cbb9869feb221baaffc33095d46afb29f21f5f206684d1377667d47c261500c"
+      }
+    },
+    "validation": {
+      "candidate_consumer_topk_matches_6b": true,
+      "compressed_index_candidate_external_inputs_match_6b": true,
+      "external_inputs_unchanged_by_runner": true,
+      "window_kv_matches_6b_publication": true
+    }
+  }
+}

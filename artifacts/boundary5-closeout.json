@@ -1,0 +1,75 @@
+{
+  "authority_chain": {
+    "5a_compressor_compressed_kv": {
+      "classification": "official_reference_derived_native_validation",
+      "ok": true,
+      "path": "artifacts/native-compressed-kv-official-reference-validation.json",
+      "schema": "ds41f.native-compressed-kv-official-reference-validation.v1"
+    },
+    "5b_indexer_topk": {
+      "classification": "official_reference_derived_native_validation",
+      "ok": true,
+      "path": "artifacts/native-indexer-topk-official-reference-validation.json",
+      "schema": "ds41f.native-indexer-topk-official-reference-validation.v1"
+    },
+    "5c_candidate_publication": {
+      "classification": "official_reference_derived_native_validation",
+      "ok": true,
+      "path": "artifacts/native-candidate-block-official-reference-validation.json",
+      "schema": "ds41f.native-candidate-block-official-reference-validation.v1"
+    },
+    "5d_candidate_consumer": {
+      "classification": "official_reference_derived_native_validation",
+      "ok": true,
+      "path": "artifacts/native-candidate-consumer-official-reference-validation.json",
+      "schema": "ds41f.native-candidate-consumer-official-reference-validation.v1"
+    },
+    "5e_compressed_sparse_attn": {
+      "classification": "official_reference_derived_native_validation",
+      "ok": true,
+      "path": "artifacts/native-compressed-sparse-attn-validation.json",
+      "schema": "ds41f.native-compressed-sparse-attn-validation.v1"
+    },
+    "5f_output_projection": {
+      "classification": "official_reference_derived_native_validation",
+      "ok": true,
+      "path": "artifacts/native-compressed-attention-integration-validation.json",
+      "schema": "ds41f.native-compressed-attention-integration-validation.v1"
+    }
+  },
+  "candidate_pruning_status": "short fixture candidate mask retains all reachable positions; candidate machinery wiring validated, production pruning effect not validated",
+  "classification": "official_reference_derived_closeout_no_new_model_math",
+  "final_attention_output_digest": "998305d9e51d2bb3200f0a83675d3cd9aa184961ff6f6d444f97be1935298163",
+  "non_claims": [
+    "decode / ring-buffer / partial compression group",
+    "production-scale candidate pruning",
+    "Block / Hyper-Connections",
+    "MoE",
+    "full layer / logits / full model correctness",
+    "performance / fusion"
+  ],
+  "not_omlx_derived": true,
+  "ok": true,
+  "purpose": "Boundary 5 compressed Attention bounded prefill path closeout through Attention output; stop before Block/HC",
+  "schema": "ds41f.boundary5-closeout.v1",
+  "scope": {
+    "batch": 1,
+    "compress_ratio": 1,
+    "layer": 24,
+    "prefill": true,
+    "sequence": 2,
+    "start_pos": 0,
+    "world_size": 1
+  },
+  "validated_scope": [
+    "Compressor",
+    "Indexer",
+    "candidate publication/consumer wiring",
+    "window + compressed KV/index assembly",
+    "sparse_attn",
+    "inverse rotary",
+    "grouped wo_a",
+    "wo_b",
+    "Attention output"
+  ]
+}

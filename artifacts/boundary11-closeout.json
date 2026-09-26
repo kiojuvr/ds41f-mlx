@@ -1,0 +1,347 @@
+{
+  "authority_contamination_guard": {
+    "boundary10_remains_sampling_arithmetic_semantics_authority": true,
+    "boundary11a_remains_rng_distribution_reproducibility_authority": true,
+    "boundary11b_does_not_transform_runtime_specific_rng_output_into_backend_independent_model_semantic_authority": true,
+    "boundary11b_only_connected_target_runtime_sampling_authority_for_pinned_fixture_runtime_key": true,
+    "boundary9_remains_deterministic_model_forward_authority_through_logits": true,
+    "omlx_old_evidence_excluded_from_semantic_correctness_authority": true
+  },
+  "authority_hierarchy": {
+    "Boundary10": {
+      "artifact": "artifacts/boundary10-closeout.json",
+      "authority": "source-defined sampling arithmetic branch authority",
+      "commit": "c9c8ab1de87c69e1af7e8cb74b2bdff528ec75a1",
+      "superseded_by_boundary11": false
+    },
+    "Boundary11a": {
+      "artifact": "artifacts/mlx-exp1-rng-validation.json",
+      "authority": "pinned target-MLX RNG distribution/reproducibility authority",
+      "commit": "cb286d836d910d256c8b76a2d04f0e1fcc415586",
+      "superseded_by_boundary11_closeout": false
+    },
+    "Boundary11b": {
+      "artifact": "artifacts/native-connected-mlx-stochastic-sampling-validation.json",
+      "authority": "connected target-MLX-runtime stochastic sampling authority for the pinned fixture + temperature + explicit RNG state",
+      "commit": "f05144ea1911ee999d4502cdd90e092a09c725d2",
+      "supersedes_prior_boundaries": false
+    },
+    "Boundary9": {
+      "artifact": "artifacts/boundary9-closeout.json",
+      "authority": "current integrated deterministic model-forward authority through final-position logits",
+      "commit": "73f7d66d1e373605825fc77a4a29e184e6bef85b",
+      "not_stochastic_model_forward_authority": true,
+      "superseded_by_boundary11": false
+    }
+  },
+  "base_commit": "f05144ea1911ee999d4502cdd90e092a09c725d2",
+  "boundary10b_separation": {
+    "boundary10b_token": 795,
+    "not_expected_value_for_boundary11b": true,
+    "reason": "Boundary10b used a different deterministic supplied-noise fixture. Boundary11b uses actual Boundary11a MLX-generated noise. Common authority is sampling arithmetic semantics only; noise realization and sampled token are not shared."
+  },
+  "boundary11a": {
+    "artifact": "artifacts/mlx-exp1-rng-validation.json",
+    "classification": "FP32 endpoint-policy Exp(1)-compatible target-runtime sampling-noise generator",
+    "commit": "cb286d836d910d256c8b76a2d04f0e1fcc415586",
+    "generator": {
+      "noise": "-log1p(-U)",
+      "uniform": "U ~ uniform(low=2^-24, high=1, dtype=float32, key=draw_key)"
+    },
+    "not_strengthened_to": "mathematically exact continuous Exp(1)",
+    "ok": true,
+    "reproducibility_authority": {
+      "different_key_different_output": true,
+      "same_key_exact_same_next_key": true,
+      "same_key_same_shape_exact_same_output": true
+    },
+    "rng_policy": "session_key -> mx.random.split(session_key, 2) -> [draw_key, next_session_key]",
+    "runtime": {
+      "device": "Metal GPU / mx.gpu",
+      "mlx_version": "0.32.2"
+    },
+    "statistical_authority": {
+      "N": 1048576,
+      "alpha": 1e-06,
+      "dkw_epsilon": 0.0026302598969264743,
+      "runs": {
+        "A": {
+          "KS": 0.0005064618640895358,
+          "mean": 1.0003840149697363,
+          "pass": true,
+          "variance": 1.0011172490328388
+        },
+        "B": {
+          "KS": 0.0010346903184289546,
+          "mean": 0.9999476762247645,
+          "pass": true,
+          "variance": 1.0032118197697908
+        }
+      }
+    }
+  },
+  "boundary11b": {
+    "actual_mlx_noise": {
+      "all_finite": true,
+      "all_positive": true,
+      "classification": "target-runtime Exp(1)-compatible sampling noise under the Boundary11a FP32 endpoint policy",
+      "digest": "38211ff282e405ad5d57f7203a09f80745c382373c755fb8e0d9c4c9187a3cb4",
+      "dtype": "FP32",
+      "max": 13.234334945678711,
+      "mean": 0.9979646651521974,
+      "min": 8.482521479891147e-06,
+      "shape": [
+        1,
+        129280
+      ]
+    },
+    "artifact": "artifacts/native-connected-mlx-stochastic-sampling-validation.json",
+    "boundary9_regression": {
+      "artifact_tensor_injection": false,
+      "dtype": "FP32",
+      "logits_digest": "b2e6eb3755b4cea2f11211cc557fbd93ef0988af8deee8888a36f69d9473989d",
+      "logits_shape": [
+        1,
+        129280
+      ]
+    },
+    "commit": "f05144ea1911ee999d4502cdd90e092a09c725d2",
+    "connected_path": "tokens -> embedding -> Blocks0..39 -> post-loop HC collapse -> final RMSNorm -> ParallelHead -> final-position logits -> host/native FP32 -> MLX FP32 -> MLX softmax -> Boundary11a MLX sampling noise -> probs / noise -> argmax",
+    "host_to_mlx_logits_seam": {
+      "exact_fp32_bytes_preserved": true,
+      "mlx_dtype": "mlx.core.float32",
+      "mlx_roundtrip_digest": "b2e6eb3755b4cea2f11211cc557fbd93ef0988af8deee8888a36f69d9473989d",
+      "mlx_shape": [
+        1,
+        129280
+      ],
+      "native_logits_digest": "b2e6eb3755b4cea2f11211cc557fbd93ef0988af8deee8888a36f69d9473989d"
+    },
+    "mlx_sampling_arithmetic": {
+      "softmax": {
+        "api": "mx.softmax(scaled_logits, axis=-1, stream=mx.gpu)",
+        "bit_exact_claim": false,
+        "digest": "e08896fb5461b28e4019cdf978f6e91db521b94fee3b91e757fdf25bb8366ea6",
+        "max": 0.0354914627969265,
+        "max_abs_vs_independent": 1.924732130620388e-09,
+        "min": 4.329862172741585e-15,
+        "pass": true,
+        "predeclared_contract": {
+          "max_abs_lte": 1e-06,
+          "sum_abs_error_lte": 1e-06
+        },
+        "sum": 1.000000051814112,
+        "sum_abs_error_vs_independent": 5.1814111667880525e-08
+      }
+    },
+    "ok": true,
+    "primary_rng_state": {
+      "draw_key": {
+        "digest": "4cc9141bec4c30b22659a725d59ca69b5dd50e83deb9bdfde53c177f079e15c1",
+        "dtype": "mlx.core.uint32",
+        "shape": [
+          2
+        ],
+        "values": [
+          2308264947,
+          2363689365
+        ]
+      },
+      "next_session_key": {
+        "digest": "175f65a6ffece3dbac3719d14f5ab4678412d4187c967463dae2fc4688bc50f4",
+        "dtype": "mlx.core.uint32",
+        "shape": [
+          2
+        ],
+        "values": [
+          613528892,
+          572711044
+        ]
+      },
+      "next_session_key_is_part_of_result_state_transition": true,
+      "seed": 289513473,
+      "session_key": {
+        "digest": "39adfde986a1ad94318c84e5edd0f8a45a729445c6b0e1ca8912e74958a07630",
+        "dtype": "mlx.core.uint32",
+        "shape": [
+          2
+        ],
+        "values": [
+          0,
+          289513473
+        ]
+      }
+    },
+    "runtime_sampled_token_authority": {
+      "classification": "pinned target-MLX-runtime sampled token",
+      "forbidden_classifications_absent": true,
+      "independent_log_domain": {
+        "log_score_gap": 1.5600784310689448,
+        "tie_count": 1,
+        "top1_log_score": 17.925053292457022,
+        "top1_token": 9468,
+        "top2_log_score": 16.364974861388077,
+        "top2_token": 1610
+      },
+      "independent_log_domain_token": 9468,
+      "runtime_score_domain": {
+        "score_gap": 4.0855735540390015,
+        "tie_count": 1,
+        "top1_noise": 3.877706330968067e-05,
+        "top1_prob": 0.00020057029905728996,
+        "top1_prob_over_noise_score": 5.1723952293396,
+        "top1_token": 9468,
+        "top2_noise": 1.6502006474183872e-05,
+        "top2_prob": 1.7934738934854977e-05,
+        "top2_prob_over_noise_score": 1.0868216753005981,
+        "top2_token": 1610
+      },
+      "target_mlx_sampled_token_id": 9468,
+      "tie_count": 1,
+      "winner_agreement": true
+    },
+    "scope": {
+      "B": 1,
+      "S": 2,
+      "device": "Metal GPU / mx.gpu",
+      "full_logits": false,
+      "mlx_version": "0.32.2",
+      "prefill": true,
+      "session_seed": 289513473,
+      "start_pos": 0,
+      "temperature": 1.0,
+      "tokens": [
+        [
+          0,
+          3
+        ]
+      ],
+      "world_size": 1
+    }
+  },
+  "classification": "authority_chain_closeout_for_boundary11_target_mlx_runtime_stochastic_sampling",
+  "closed_claims": [
+    "target MLX sampling-noise construction contract",
+    "explicit session-key state transition",
+    "same-key pinned-runtime reproducibility",
+    "declared distributional qualification",
+    "connected Boundary9 logits -> MLX FP32 seam",
+    "connected MLX nonzero-temperature sampling arithmetic",
+    "actual MLX noise consumption",
+    "runtime sampled-token result for the exact pinned fixture/key/runtime",
+    "independent log-domain winner agreement"
+  ],
+  "forbidden_wording": [
+    "official sampled token is 9468",
+    "DeepSeek canonical token is 9468",
+    "PyTorch sampling matched",
+    "full stochastic model validated",
+    "full Transformer.forward validated",
+    "full model validated"
+  ],
+  "gates": {
+    "authority_source_guards_pass": true,
+    "boundary10_closeout_pass": true,
+    "boundary10b_token_not_expected": true,
+    "boundary11a_artifact_pass": true,
+    "boundary11b_artifact_pass": true,
+    "boundary9_closeout_pass": true,
+    "boundary9_logits_digest_exact": true,
+    "forbidden_broad_claims_absent": true,
+    "host_mlx_roundtrip_digest_exact": true,
+    "independent_token_9468": true,
+    "main_hidden_open": true,
+    "mlx_version_0322": true,
+    "noise_positive_finite": true,
+    "not_omlx_derived": true,
+    "primary_keys_exact": true,
+    "primary_noise_digest_exact": true,
+    "pytorch_parity_requirements_false": true,
+    "same_key_reproducibility": true,
+    "secondary_key_noise_differs": true,
+    "softmax_comparison_within_bounds": true,
+    "softmax_digest_exact": true,
+    "target_device_metal_gpu": true,
+    "target_token_9468": true,
+    "tie_count_1": true,
+    "transformer_forward_return_open": true,
+    "winner_agreement": true
+  },
+  "non_claims": [
+    "no PyTorch/MLX RNG bitwise parity",
+    "no cross-backend sampled-token parity",
+    "no CPU/GPU RNG sequence parity",
+    "no cross-version RNG guarantee",
+    "no exact continuous Exp(1) claim beyond Boundary11a contract",
+    "no main_hidden assembly",
+    "no Transformer.forward return correctness",
+    "no second-step/decode semantics",
+    "no cache persistence qualification",
+    "no full-model correctness",
+    "no performance/production qualification"
+  ],
+  "not_omlx_derived": true,
+  "ok": true,
+  "purpose": "Close Boundary11a and Boundary11b as an authority chain; no new model math, RNG, or sampling implementation.",
+  "pytorch_compatibility_classification": {
+    "pytorch_noise_bitstream_used": false,
+    "pytorch_sampled_token_parity_required": false,
+    "pytorch_seed_parity_required": false,
+    "reason": "Boundary11 validates target-runtime semantic/reproducibility behavior, not PyTorch RNG bitstream compatibility. Optional future exact PyTorch parity remains compatibility-only and outside Boundary11 semantic authority."
+  },
+  "reproducibility_authority": {
+    "primary_same_key_rerun": {
+      "same_generated_noise": true,
+      "same_logits": true,
+      "same_next_session_key": true,
+      "same_sampled_token": true
+    },
+    "secondary_seed": {
+      "different_token_is_diagnostic_only": true,
+      "noise_differs": true,
+      "noise_digest": "245a54e0bd3bef90f644457cf32d137dd7d804febbe233ac44eaf8aaf7d91265",
+      "required_gate": "different noise, not different token",
+      "sampled_token": 74294,
+      "seed": 289517570
+    }
+  },
+  "runtime": {
+    "mlx_version": "0.32.2",
+    "target_device": "Metal GPU / mx.gpu"
+  },
+  "safe_closeout_claim": "Boundary 11 closes the target-MLX-runtime stochastic sampling layer for the pinned MLX 0.32.2 / Metal GPU environment. Boundary11a qualifies the explicit-key FP32 sampling-noise generator under its declared endpoint, distributional, and reproducibility contract. Boundary11b connects that qualified generator to the exact Boundary9 final-position logits through the Boundary10 sampling arithmetic at temperature=1.0. For token fixture [[0,3]] and session seed 289513473, the pinned runtime produces target-MLX sampled token 9468 and advances the explicit session state to the recorded next key. An independent FP64 log-domain reconstruction using the exact generated noise selects the same token. This is a pinned target-runtime result, not a PyTorch bitstream-parity or backend-independent token claim. Boundary11 stops before main_hidden assembly and Transformer.forward return packaging.",
+  "schema": "ds41f.boundary11-closeout.v1",
+  "still_open": [
+    "PyTorch/MLX RNG bitwise parity",
+    "cross-backend sampled-token parity",
+    "CPU/GPU RNG sequence parity",
+    "cross-version RNG sequence guarantee",
+    "mathematically exact continuous Exp(1) beyond the declared Boundary11a endpoint policy",
+    "main_hidden assembly",
+    "Transformer.forward return packaging",
+    "second model-token step",
+    "decode start_pos>0",
+    "cache persistence",
+    "window/ring decode semantics",
+    "compressed decode partial-group semantics",
+    "distributed semantics",
+    "Engram",
+    "MTP/DSpark",
+    "long-context qualification",
+    "full Transformer.forward correctness",
+    "full-model correctness",
+    "performance/production qualification"
+  ],
+  "stop_boundary": {
+    "main_hidden_assembly": "not executed",
+    "next_source_operation": "main_hidden = torch.cat(main_hiddens, dim=-1) if main_hiddens else None",
+    "stopped_after": {
+      "next_session_key": [
+        613528892,
+        572711044
+      ],
+      "target_mlx_sampled_token_id": 9468
+    },
+    "transformer_forward_return": "not executed"
+  }
+}

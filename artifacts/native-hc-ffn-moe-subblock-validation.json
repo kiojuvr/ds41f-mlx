@@ -1,0 +1,299 @@
+{
+  "authority": {
+    "native_validation_provider": "single Python-orchestrated connected dataflow",
+    "official_checkpoint_raw_bits": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+    "reference_fixture": "artifacts/hc-ffn-moe-subblock-official-reference-fixture.json"
+  },
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "official_reference_derived_native_validation",
+  "comparison": {
+    "all_selected_expert_invocations": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "boundary6b_attn_pre": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "boundary6b_x_after_attn": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "ffn_comb": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "ffn_hc_pre_output": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "ffn_mix_projection": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "ffn_norm_moe_input": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "ffn_post": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "ffn_pre": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "full_moe_output": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "gate_raw_logits": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "returned_ffn_pre": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "routed_expert_sum": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "scaled_routing_weights": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "shared_expert_output": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "topk_expert_indices": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "x_after_ffn": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    }
+  },
+  "digests": {
+    "boundary6b_x_after_attn_sha256": "f035fcb163910857b8be269a899ddc48ac48080cfe98643a07e9469a3041ba8f",
+    "ffn_hc_pre_output_sha256": "6b4d96355d24921d79f9f85d2f62eec4311693506c24c082c94a689bd6977225",
+    "ffn_norm_moe_input_sha256": "b764483ec5db9323f97ad9ad3a6ca8a16d4e3f3dba9547ee6e83e7a789b9992f",
+    "full_moe_output_sha256": "79cdaa8d0b616a2de45d4ea648670f88884542eec08242255597cbe5f8eab34e",
+    "returned_ffn_pre_sha256": "8fcc739b02187a2a805bc06ab26e8c66d5cec632520cab47f7ade518bd0b0d2d",
+    "routed_expert_sum_sha256": "fd8150e9a003861b913f050b6994b2c934d4955dd20fb893ca9f48b8e6ebd7af",
+    "shared_expert_output_sha256": "5bcc4bd558d96f4473566e6ef760dc647c89020f82c8d849daffa6c64da2eedc",
+    "x_after_ffn_sha256": "a596b0585c9702257b730d81ccc9bd8eac03df53404d64d8be83c2dd8625ae63"
+  },
+  "ds4_authority": {
+    "commit": "0aaea5a238fb41a35106a551e73c8409dfb751ac",
+    "remote": "https://github.com/antirez/ds4.git"
+  },
+  "gates": {
+    "actual_ffn_hc_ffn_norm_provenance_recorded": true,
+    "all_new_selected_routed_experts_pass": true,
+    "block_forward_ffn_order_reviewed": true,
+    "boundary6b_input_digests_verified": true,
+    "ffn_hc_mixes_pass": true,
+    "ffn_hc_post_pass": true,
+    "ffn_norm_pass": true,
+    "full_model_semantics_not_claimed": true,
+    "gate_rerun_pass": true,
+    "hc_pre_pass": true,
+    "next_block_not_entered": true,
+    "returned_ffn_pre_exact": true,
+    "routed_reduction_pass": true,
+    "shared_expert_full_moe_pass": true,
+    "source_identity_authority_checks_pass": true
+  },
+  "non_claims": [
+    "no previous-layer incoming pre_mix correctness beyond Boundary 6b synthetic fixture",
+    "no next-layer use of returned ffn_pre",
+    "no layer-to-layer execution",
+    "no logits / Transformer output",
+    "no full-model correctness",
+    "no performance claim",
+    "no expert-parallel behavior beyond world_size=1"
+  ],
+  "not_omlx_derived": true,
+  "official_reference": {
+    "model_py": {
+      "file": "inference/model.py",
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "functions": [
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Block.forward",
+          "reviewed_ffn_order": "residual=x_after_attn; ffn hc_mixes(x_after_attn); hc_pre(x_after_attn, attn_pre); ffn_norm; ffn/MoE rerun on normalized h; hc_post(moe_output,residual,ffn_post,ffn_comb); return x, ffn_pre",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            971,
+            994
+          ],
+          "source_sha256": "813b4dc3231349cb17190876e25f6c39da4a88fdec9d23e9cb0c5b6fcd8318f6"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Block.hc_mixes",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            950,
+            958
+          ],
+          "source_sha256": "92fd3b129ad62c76cb37f4cc21d337456f376ddb367be51d3a93c86582894f18"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Block.hc_pre",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            960,
+            963
+          ],
+          "source_sha256": "103935a48b2cba8d9e34507bafa52db0f21e2a84448a1a83cdd4f3c5a7e727a4"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Block.hc_post",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            965,
+            969
+          ],
+          "source_sha256": "eaaa69a5e29927bd1dd1eba613786fcd8a97d7974df79a509442ef43f41d218f"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Gate/Expert/MoE",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            807,
+            904
+          ],
+          "source_sha256": "94a00493b8986c3cbfd51c66ae53f94ff9e6c05a9bc20de04f0ae718126c6125"
+        }
+      ]
+    }
+  },
+  "ok": true,
+  "operation_contract": {
+    "order": "Boundary 6b x_after_attn,attn_pre -> ffn hc_mixes -> hc_pre(x_after_attn,attn_pre) -> ffn_norm -> Gate(h) -> selected routed Experts(h) -> routed FP32 reduction -> shared expert(h) -> full MoE output -> hc_post(full_moe_output,x_after_attn,ffn_post,ffn_comb) -> return x_after_ffn, ffn_pre",
+    "predeclared_tolerance": {
+      "bf16_max_ulp_lte": 1,
+      "f32_max_abs_lte": 0.001,
+      "indices_exact": true
+    }
+  },
+  "purpose": "validate Boundary 6d FFN HC + ffn_norm + rerun MoE + FFN HC post; stop before next Block",
+  "reference_fixture": "artifacts/hc-ffn-moe-subblock-official-reference-fixture.json",
+  "routing_summary": {
+    "scaled_routing_weights": [
+      [
+        0.30666792392730713,
+        0.26518163084983826,
+        0.23444253206253052,
+        0.2384490668773651,
+        0.227377787232399,
+        0.22788098454475403
+      ],
+      [
+        0.2756555676460266,
+        0.2622893452644348,
+        0.25022250413894653,
+        0.24365878105163574,
+        0.24334122240543365,
+        0.2248324602842331
+      ]
+    ],
+    "selected_expert_set": [
+      8,
+      40,
+      85,
+      125,
+      144,
+      184,
+      221,
+      228,
+      243,
+      249,
+      254,
+      265
+    ],
+    "topk_expert_indices": [
+      [
+        125,
+        221,
+        249,
+        243,
+        265,
+        184
+      ],
+      [
+        228,
+        85,
+        254,
+        144,
+        8,
+        40
+      ]
+    ]
+  },
+  "schema": "ds41f.native-hc-ffn-moe-subblock-validation.v1",
+  "semantic_status": {
+    "actual_ffn_hc_ffn_norm_provenance_recorded": true,
+    "all_new_selected_routed_experts_validated": true,
+    "block_forward_ffn_order_reviewed": true,
+    "boundary6b_input_digests_verified": true,
+    "ffn_hc_mixes_validated": true,
+    "ffn_hc_post_validated": true,
+    "ffn_norm_validated": true,
+    "gate_rerun_on_new_moe_input_validated": true,
+    "hc_pre_validated": true,
+    "model_semantics_validated": false,
+    "next_block_entered": false,
+    "returned_ffn_pre_exact": true,
+    "routed_reduction_validated": true,
+    "shared_and_full_moe_validated": true,
+    "source_identity_authority_checks_pass": true
+  }
+}

@@ -1,0 +1,606 @@
+{
+  "authority_contamination_guard": {
+    "boundary8_remains_closed_all_block_subscope_authority": true,
+    "boundary9a_9b_remain_exact_subscope_authorities": true,
+    "boundary9c_current_integrated_numerical_authority": true,
+    "no_historical_regional_artifact_may_override_current_connected_values": true,
+    "omlx_old_mlx_evidence_excluded_from_semantic_correctness_authority": true
+  },
+  "boundary": "9",
+  "boundary9_authority_chain": [
+    {
+      "artifact": "artifacts/native-post-loop-hc-collapse-validation.json",
+      "boundary": "9a",
+      "classification": "closed exact subscope authority through post-loop HC collapse",
+      "commit": "ccedd09360aa3dce48e98a2861e588a0b5652ab2",
+      "does_not_prove": "final RMSNorm, ParallelHead, logits, sampling, full Transformer.forward",
+      "proves": "Block39-returned ffn_pre consumed by source-defined hc_pre to produce post_loop_h",
+      "scope": "Transformer entry -> all 40 Blocks -> post-loop HC collapse; STOP before final RMSNorm"
+    },
+    {
+      "artifact": "artifacts/native-final-rmsnorm-validation.json",
+      "boundary": "9b",
+      "classification": "closed exact subscope authority through final RMSNorm",
+      "commit": "caec1425b26edad090e5415b3dd65c43951eecb4",
+      "does_not_prove": "ParallelHead, logits, sampling, full Transformer.forward",
+      "proves": "actual post_loop_h consumed by final RMSNorm to produce normalized_h",
+      "scope": "Boundary9a -> final RMSNorm; STOP before ParallelHead"
+    },
+    {
+      "artifact": "artifacts/native-parallel-head-logits-validation.json",
+      "boundary": "9c",
+      "classification": "current integrated numerical authority through final-position logits",
+      "commit": "acf587776f7b9b98ccc6a60b4b34eafeb1ce744e",
+      "does_not_prove": "sampling, output_ids, full-sequence logits, world_size>1 all_gather, full Transformer.forward",
+      "proves": "default full_logits=False world_size=1 ParallelHead path and final-position FP32 logits under bounded comparison contract",
+      "scope": "Boundary9b -> ParallelHead -> final-position generation logits; STOP before sampling"
+    }
+  ],
+  "boundary9_source_identities": {
+    "Block.hc_pre": {
+      "file": "inference/model.py",
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "name": "Block.hc_pre canonical authority span requested by Boundary9a",
+      "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+      "source_lines": [
+        960,
+        963
+      ],
+      "source_sha256": "103935a48b2cba8d9e34507bafa52db0f21e2a84448a1a83cdd4f3c5a7e727a4"
+    },
+    "ParallelHead.__init__/forward": {
+      "contract": "part_vocab_size=vocab_size//world_size; weight fp32 [part_vocab_size,dim]; default full_logits=False slices x[:, -1]; F.linear(x.float(), weight); gather only if world_size>1; return logits",
+      "file": "inference/model.py",
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "name": "ParallelHead.__init__/forward",
+      "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+      "source_lines": [
+        997,
+        1031
+      ],
+      "source_sha256": "673f828a099975e80e8524b8a13ababd456151fe9f588a4f14b45c8ece1b74df"
+    },
+    "RMSNorm": {
+      "file": "inference/model.py",
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "name": "RMSNorm implementation",
+      "semantics": "dtype=x.dtype; x=x.float(); var=x.square().mean(-1, keepdim=True); x=x*torch.rsqrt(var+self.eps); return (self.weight*x).to(dtype)",
+      "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+      "source_lines": [
+        281,
+        293
+      ],
+      "source_sha256": "ac829397ad0c5f99412def7adb54ba0334397baa5c2ab795d4531f072fc47ecc"
+    },
+    "Transformer final norm/head/sample order": {
+      "file": "inference/model.py",
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "name": "Transformer.forward post-norm/head/sample order",
+      "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+      "source_lines": [
+        1268,
+        1270
+      ],
+      "source_sha256": "bbdcbbf784a2f261ec02408f90c0b97be0d6a1054e2ec83eca63819efe25f1b7"
+    }
+  },
+  "boundary9a_facts": {
+    "ffn_pre39": "8b20fab6cfdec82baf94938ec3e56428cae42a0997bcb0f3aa9afa5e7115f1dc",
+    "hc_collapse_arithmetic": "BF16 x + FP32 pre_mix -> FP32 weighted reduction across HC=4 -> BF16 collapsed hidden",
+    "native_vs_independent": {
+      "collapsed_bf16_exact": true,
+      "collapsed_f32_exact_bytes": true,
+      "independent_collapsed_bf16_digest": "6b99fb26048a577ce78756397101be15441d1ddb7fa9c7aa205007e10869061a",
+      "independent_collapsed_f32_digest": "a23f51b81ae67bd7a0ee0d8d834f46bc65f961d60bb2a76745d496051ea452fd",
+      "max_abs_f32": 0.0,
+      "native_collapsed_bf16_digest": "6b99fb26048a577ce78756397101be15441d1ddb7fa9c7aa205007e10869061a",
+      "native_collapsed_f32_digest": "a23f51b81ae67bd7a0ee0d8d834f46bc65f961d60bb2a76745d496051ea452fd"
+    },
+    "native_vs_independent_exact": true,
+    "post_loop_h": {
+      "digest": "6b99fb26048a577ce78756397101be15441d1ddb7fa9c7aa205007e10869061a",
+      "dtype": "BF16",
+      "shape": [
+        1,
+        2,
+        5120
+      ]
+    },
+    "x39_out": "c705421c2422458f36a570338c51e70d50967f028da424abf38ef4bb30bf86d3"
+  },
+  "boundary9b_facts": {
+    "comparison": {
+      "final_output_bf16_exact": true,
+      "independent_output_digest": "00186e76a7a7bd78ce40de4a9a912025c9d6724b1600a30f171eca9a2cb65eb5",
+      "mean_square_max_abs": 0.0,
+      "native_output_digest": "00186e76a7a7bd78ce40de4a9a912025c9d6724b1600a30f171eca9a2cb65eb5",
+      "pre_weight_normalized_max_abs": 0.0,
+      "rsqrt_max_abs": 0.0,
+      "weighted_output_f32_max_abs": 0.0
+    },
+    "independent_arithmetic_exact": true,
+    "norm_weight": {
+      "dtype": "BF16",
+      "raw_digest": "9cd3b57cd9513541b9771bf66c9b356bf1a7b20ff050ed69f7e97cff9fedd428",
+      "shape": [
+        5120
+      ]
+    },
+    "normalized_h": {
+      "digest": "00186e76a7a7bd78ce40de4a9a912025c9d6724b1600a30f171eca9a2cb65eb5",
+      "dtype": "BF16",
+      "shape": [
+        1,
+        2,
+        5120
+      ]
+    },
+    "rmsnorm_source_semantics": [
+      "x.float()",
+      "square",
+      "mean(-1)",
+      "rsqrt(var + eps)",
+      "multiply x",
+      "multiply norm weight",
+      "cast to original dtype"
+    ]
+  },
+  "boundary9c_facts": {
+    "comparison": {
+      "anchor_max_abs": 1.1920928955078125e-05,
+      "anchor_rows": [
+        {
+          "abs_diff": 9.5367431640625e-07,
+          "explicit_independent_dot_fp32": -9.10213565826416,
+          "native_logit": -9.102134704589844,
+          "pass": true,
+          "row": 0,
+          "weight_row_digest_bf16": "604a47426b95a736f950781f8ffdc6795cba3310eff3396ff186488243fd0b00"
+        },
+        {
+          "abs_diff": 2.1457672119140625e-06,
+          "explicit_independent_dot_fp32": 3.229365825653076,
+          "native_logit": 3.229367971420288,
+          "pass": true,
+          "row": 1,
+          "weight_row_digest_bf16": "11d46ec23e9923e99aadf0b6186d930c4bd1d51303f2ba075869a6cc6c0e50b7"
+        },
+        {
+          "abs_diff": 4.76837158203125e-07,
+          "explicit_independent_dot_fp32": -2.080425977706909,
+          "native_logit": -2.080425500869751,
+          "pass": true,
+          "row": 2,
+          "weight_row_digest_bf16": "6e55f2f93cdf9b25755f7d60c0a72ccd503442726fdf251068c7f8df61edfae2"
+        },
+        {
+          "abs_diff": 1.1920928955078125e-05,
+          "explicit_independent_dot_fp32": 6.567266941070557,
+          "native_logit": 6.567255020141602,
+          "pass": true,
+          "row": 3,
+          "weight_row_digest_bf16": "c97e48216086102fdd42c3ea75b56ead157f7b5bded93ba62a56741914ee3afa"
+        },
+        {
+          "abs_diff": 3.5762786865234375e-07,
+          "explicit_independent_dot_fp32": 0.4663259983062744,
+          "native_logit": 0.46632635593414307,
+          "pass": true,
+          "row": 4096,
+          "weight_row_digest_bf16": "30afe3dfa2a6a9cc5507834ee0cd16f966ac86ead0b66ceac12cf2a46624b176"
+        },
+        {
+          "abs_diff": 5.245208740234375e-06,
+          "explicit_independent_dot_fp32": 6.041495323181152,
+          "native_logit": 6.041490077972412,
+          "pass": true,
+          "row": 8192,
+          "weight_row_digest_bf16": "f586092f6a6dddb47c0a31ca22686abd83d728982c3706561ebc849437ed77b8"
+        },
+        {
+          "abs_diff": 9.5367431640625e-07,
+          "explicit_independent_dot_fp32": 3.2974891662597656,
+          "native_logit": 3.297490119934082,
+          "pass": true,
+          "row": 16384,
+          "weight_row_digest_bf16": "1af9818b4cf66e99b69383e0da4db582acc08213b6e0b51be276f3b4edcc6bd3"
+        },
+        {
+          "abs_diff": 1.1920928955078125e-07,
+          "explicit_independent_dot_fp32": -0.37975752353668213,
+          "native_logit": -0.3797576427459717,
+          "pass": true,
+          "row": 32768,
+          "weight_row_digest_bf16": "eed0f250035df82d69b63ce9df92bc39271b738b7483910040acacbac7353220"
+        },
+        {
+          "abs_diff": 7.62939453125e-06,
+          "explicit_independent_dot_fp32": -1.0866644382476807,
+          "native_logit": -1.0866568088531494,
+          "pass": true,
+          "row": 65536,
+          "weight_row_digest_bf16": "1991bfc6115ff071246b9a1ec08aa05f19bd1c309aaa1ac8feb7a2354c32f508"
+        },
+        {
+          "abs_diff": 4.76837158203125e-07,
+          "explicit_independent_dot_fp32": -1.2964500188827515,
+          "native_logit": -1.2964504957199097,
+          "pass": true,
+          "row": 98304,
+          "weight_row_digest_bf16": "9c6249cd8b999c2f3cd927e52c6ecf78737cd5b3122eabe464403fee4d1edb41"
+        },
+        {
+          "abs_diff": 1.1324882507324219e-06,
+          "explicit_independent_dot_fp32": -0.6474848389625549,
+          "native_logit": -0.6474859714508057,
+          "pass": true,
+          "row": 123456,
+          "weight_row_digest_bf16": "4e1495cdd24c5f26c53312daa109c1090a5a551682af7af6a03b9978a3b08859"
+        },
+        {
+          "abs_diff": 2.384185791015625e-07,
+          "explicit_independent_dot_fp32": -2.1626274585723877,
+          "native_logit": -2.1626272201538086,
+          "pass": true,
+          "row": 129279,
+          "weight_row_digest_bf16": "0f8121f0e001a2eb50409a3ef062f13671b7fe29b1c1b8341d6cdee7ed02d504"
+        }
+      ],
+      "contract": {
+        "anchor_max_abs_lte": 0.005,
+        "declared_before_execution": true,
+        "full_vocab_max_abs_lte": 0.005,
+        "full_vocab_max_rel_lte_where_abs_independent_gte_1": 0.0001,
+        "reason": "Official ParallelHead uses FP32 F.linear over 5120-term reductions. Native path uses chunked FP32 matrix-vector multiplication; independent path uses separate chunked elementwise multiply plus FP32 sum and anchor rows use explicit FP32 accumulation. Reduction-order differences are bounded rather than bitwise-authoritative.",
+        "relative_error_denominator_floor": "relative error is only authority-gated for |independent logit| >= 1.0; near-zero logits are governed by max_abs"
+      },
+      "full_vocab_pass": true,
+      "independent_digest": "e07b54a797f9affe2388a7f4c5e6c2bfeb54c65dddbb18c9ca518babefdf5336",
+      "independent_worst_value": 9.245988845825195,
+      "max_abs": 1.9073486328125e-06,
+      "max_rel_all_tokens_diagnostic": 0.07526881992816925,
+      "max_rel_where_abs_independent_gte_1": 1.2064747352269478e-06,
+      "native_digest": "b2e6eb3755b4cea2f11211cc557fbd93ef0988af8deee8888a36f69d9473989d",
+      "native_worst_value": 9.245986938476562,
+      "relative_error_meaningful_token_count": 100174,
+      "worst_token_index": 4
+    },
+    "head_weight": {
+      "checkpoint_dtype": "BF16",
+      "raw_bf16_digest": "68f446ddda4243d5c8d57d2a9729c125f7fb8b2ee050c78ac6ff5e0cacde6789",
+      "runtime_fp32_digest": "ea729fc899cda136019ea91bbd85502ccddcf58bab8c7482029d8834415eb8cd",
+      "shape": [
+        129280,
+        5120
+      ],
+      "tensor_name": "head.weight",
+      "tied_to_embedding": false
+    },
+    "input_selection": {
+      "normalized_h_digest": "00186e76a7a7bd78ce40de4a9a912025c9d6724b1600a30f171eca9a2cb65eb5",
+      "normalized_h_position0_not_projected": true,
+      "selected_final_position_hidden_digest": "79999590fe7867d7f398be3cce6cd4bda7dac7e2fcdf8c1571019175ffb9d746"
+    },
+    "logits": {
+      "argmax_is_sampling_result": false,
+      "argmax_logit_diagnostic": 12.943254470825195,
+      "argmax_token_diagnostic": 372,
+      "digest": "b2e6eb3755b4cea2f11211cc557fbd93ef0988af8deee8888a36f69d9473989d",
+      "dtype": "FP32",
+      "shape": [
+        1,
+        129280
+      ]
+    },
+    "parallelhead_contract": {
+      "all_gather_executed": false,
+      "all_gather_reviewed_not_validated": true,
+      "full_logits_default": false,
+      "last_position_selection": "x = x[:, -1]",
+      "projection": "F.linear(x.float(), self.weight)",
+      "world_size": 1
+    }
+  },
+  "checks": {
+    "actual_comparison_pass": true,
+    "anchor_validation_recorded": true,
+    "authority_contamination_guard_recorded": true,
+    "boundary0_8_dependencies_recorded": true,
+    "boundary9a_c_authority_chain_recorded": true,
+    "boundary9c_fixed_current_integrated_numerical_authority": true,
+    "bounded_comparison_policy_recorded": true,
+    "check_authority_labels_pass": true,
+    "check_boundary8_closeout_remains_pass": true,
+    "closed_open_claim_matrices_recorded": true,
+    "deterministic_forward_scope_recorded": true,
+    "exact_sampling_stop_recorded": true,
+    "fp32_runtime_head_semantics_recorded": true,
+    "hc_collapse_evidence_recorded": true,
+    "last_position_selection_recorded": true,
+    "logits_evidence_recorded": true,
+    "not_omlx_derived": true,
+    "parallelhead_provenance_recorded": true,
+    "rmsnorm_evidence_recorded": true,
+    "source_identity_guard_pass": true
+  },
+  "classification": "boundary_closeout",
+  "closed_claims": {
+    "claims": [
+      "Transformer entry",
+      "all 40 Blocks connected",
+      "post-loop HC collapse",
+      "final RMSNorm",
+      "ParallelHead default full_logits=False path",
+      "last-position hidden selection",
+      "world_size=1 no-gather head path",
+      "checkpoint BF16 -> runtime FP32 head parameter semantics",
+      "final-position full-vocabulary logits",
+      "bounded numerical agreement of ParallelHead under the predeclared comparison contract"
+    ],
+    "scope": {
+      "B": 1,
+      "S": 2,
+      "full_logits": false,
+      "prefill": true,
+      "start_pos": 0,
+      "tokens": [
+        [
+          0,
+          3
+        ]
+      ],
+      "world_size": 1
+    }
+  },
+  "connected_deterministic_forward_claim": {
+    "closed_path": [
+      "token IDs",
+      "embedding",
+      "initial HC state",
+      "all 40 Blocks",
+      "post-loop HC collapse",
+      "final RMSNorm",
+      "default ParallelHead",
+      "final-position FP32 logits"
+    ],
+    "not_wording": [
+      "full model execution",
+      "complete Transformer.forward",
+      "generation correctness"
+    ],
+    "wording": "sampling\u524d\u307e\u3067\u306edeterministic forward path"
+  },
+  "current_integrated_numerical_authority": {
+    "artifact": "artifacts/native-parallel-head-logits-validation.json",
+    "classification": "current integrated numerical authority through final-position logits",
+    "commit": "acf587776f7b9b98ccc6a60b4b34eafeb1ce744e",
+    "ok": true,
+    "scope": "Transformer entry -> all 40 Blocks -> post-loop HC collapse -> final RMSNorm -> ParallelHead -> final-position generation logits; STOP before sampling"
+  },
+  "non_claims": [
+    "no sampling correctness",
+    "no output_ids generation",
+    "no RNG correctness",
+    "no temperature sampling semantics",
+    "no full-sequence logits",
+    "no world_size > 1 ParallelHead/all_gather semantics",
+    "no production-scale candidate pruning",
+    "no decode/cache/ring/partial compression-group semantics",
+    "no multi-call cache persistence",
+    "no distributed semantics",
+    "no Engram",
+    "no MTP/DSpark",
+    "no long-context qualification",
+    "no full Transformer.forward correctness",
+    "no full-model correctness",
+    "no performance/fusion/production qualification"
+  ],
+  "not_omlx_derived": true,
+  "ok": true,
+  "parallelhead_numerical_comparison_policy": {
+    "actual": {
+      "anchor_max_abs": 1.1920928955078125e-05,
+      "max_abs": 1.9073486328125e-06,
+      "max_rel_meaningful": 1.2064747352269478e-06
+    },
+    "native_logits_digest_equals_independent_logits_digest": false,
+    "note": "Different FP32 reduction orders over 5120 terms are accepted only within the predeclared bounded contract; logits are not claimed bit-exact across independent implementations.",
+    "policy": {
+      "anchor_max_abs_lte": 0.005,
+      "bit_exact_claimed": false,
+      "full_vocab_max_abs_lte": 0.005,
+      "full_vocab_max_rel_lte_where_abs_independent_gte_1": 0.0001
+    }
+  },
+  "predeclared_anchor_authority": {
+    "all_pass": true,
+    "anchor_rows": [
+      0,
+      1,
+      2,
+      3,
+      4096,
+      8192,
+      16384,
+      32768,
+      65536,
+      98304,
+      123456,
+      129279
+    ],
+    "anchor_rows_detail": [
+      {
+        "abs_diff": 9.5367431640625e-07,
+        "explicit_independent_dot_fp32": -9.10213565826416,
+        "native_logit": -9.102134704589844,
+        "pass": true,
+        "row": 0,
+        "weight_row_digest_bf16": "604a47426b95a736f950781f8ffdc6795cba3310eff3396ff186488243fd0b00"
+      },
+      {
+        "abs_diff": 2.1457672119140625e-06,
+        "explicit_independent_dot_fp32": 3.229365825653076,
+        "native_logit": 3.229367971420288,
+        "pass": true,
+        "row": 1,
+        "weight_row_digest_bf16": "11d46ec23e9923e99aadf0b6186d930c4bd1d51303f2ba075869a6cc6c0e50b7"
+      },
+      {
+        "abs_diff": 4.76837158203125e-07,
+        "explicit_independent_dot_fp32": -2.080425977706909,
+        "native_logit": -2.080425500869751,
+        "pass": true,
+        "row": 2,
+        "weight_row_digest_bf16": "6e55f2f93cdf9b25755f7d60c0a72ccd503442726fdf251068c7f8df61edfae2"
+      },
+      {
+        "abs_diff": 1.1920928955078125e-05,
+        "explicit_independent_dot_fp32": 6.567266941070557,
+        "native_logit": 6.567255020141602,
+        "pass": true,
+        "row": 3,
+        "weight_row_digest_bf16": "c97e48216086102fdd42c3ea75b56ead157f7b5bded93ba62a56741914ee3afa"
+      },
+      {
+        "abs_diff": 3.5762786865234375e-07,
+        "explicit_independent_dot_fp32": 0.4663259983062744,
+        "native_logit": 0.46632635593414307,
+        "pass": true,
+        "row": 4096,
+        "weight_row_digest_bf16": "30afe3dfa2a6a9cc5507834ee0cd16f966ac86ead0b66ceac12cf2a46624b176"
+      },
+      {
+        "abs_diff": 5.245208740234375e-06,
+        "explicit_independent_dot_fp32": 6.041495323181152,
+        "native_logit": 6.041490077972412,
+        "pass": true,
+        "row": 8192,
+        "weight_row_digest_bf16": "f586092f6a6dddb47c0a31ca22686abd83d728982c3706561ebc849437ed77b8"
+      },
+      {
+        "abs_diff": 9.5367431640625e-07,
+        "explicit_independent_dot_fp32": 3.2974891662597656,
+        "native_logit": 3.297490119934082,
+        "pass": true,
+        "row": 16384,
+        "weight_row_digest_bf16": "1af9818b4cf66e99b69383e0da4db582acc08213b6e0b51be276f3b4edcc6bd3"
+      },
+      {
+        "abs_diff": 1.1920928955078125e-07,
+        "explicit_independent_dot_fp32": -0.37975752353668213,
+        "native_logit": -0.3797576427459717,
+        "pass": true,
+        "row": 32768,
+        "weight_row_digest_bf16": "eed0f250035df82d69b63ce9df92bc39271b738b7483910040acacbac7353220"
+      },
+      {
+        "abs_diff": 7.62939453125e-06,
+        "explicit_independent_dot_fp32": -1.0866644382476807,
+        "native_logit": -1.0866568088531494,
+        "pass": true,
+        "row": 65536,
+        "weight_row_digest_bf16": "1991bfc6115ff071246b9a1ec08aa05f19bd1c309aaa1ac8feb7a2354c32f508"
+      },
+      {
+        "abs_diff": 4.76837158203125e-07,
+        "explicit_independent_dot_fp32": -1.2964500188827515,
+        "native_logit": -1.2964504957199097,
+        "pass": true,
+        "row": 98304,
+        "weight_row_digest_bf16": "9c6249cd8b999c2f3cd927e52c6ecf78737cd5b3122eabe464403fee4d1edb41"
+      },
+      {
+        "abs_diff": 1.1324882507324219e-06,
+        "explicit_independent_dot_fp32": -0.6474848389625549,
+        "native_logit": -0.6474859714508057,
+        "pass": true,
+        "row": 123456,
+        "weight_row_digest_bf16": "4e1495cdd24c5f26c53312daa109c1090a5a551682af7af6a03b9978a3b08859"
+      },
+      {
+        "abs_diff": 2.384185791015625e-07,
+        "explicit_independent_dot_fp32": -2.1626274585723877,
+        "native_logit": -2.1626272201538086,
+        "pass": true,
+        "row": 129279,
+        "weight_row_digest_bf16": "0f8121f0e001a2eb50409a3ef062f13671b7fe29b1c1b8341d6cdee7ed02d504"
+      }
+    ],
+    "comparison": "explicit independent FP32 dot vs native logit",
+    "fixed_before_execution_results": true
+  },
+  "purpose": "Close Boundary 9 deterministic connected pre-sampling forward authority through final-position generation logits.",
+  "safe_closeout_claim": "For B=1, S=2, start_pos=0, world_size=1, full_logits=False and token fixture [[0,3]], the official-reference-derived connected native deterministic pre-sampling forward path from Transformer entry through all 40 Blocks, post-loop Hyper-Connection collapse, final RMSNorm, and ParallelHead final-position full-vocabulary logits is closed as one bounded validation. ParallelHead numerical agreement is bounded by the predeclared FP32 comparison contract rather than claimed bit-exact across independent reduction implementations. This closeout stops before sample() and does not validate output_ids generation, RNG/temperature semantics, decode, full-sequence logits, distributed vocabulary gathering, or full model behavior.",
+  "schema": "ds41f.boundary9-closeout.v1",
+  "scope": {
+    "B": 1,
+    "S": 2,
+    "full_logits": false,
+    "output": "final-position generation logits only",
+    "prefill": true,
+    "start_pos": 0,
+    "tokens": [
+      [
+        0,
+        3
+      ]
+    ],
+    "world_size": 1
+  },
+  "source_authority": {
+    "kernel_py_sha256": "1236c3507019ed176f5dba5e04bcea58867cf654818c6cf138ed4845398c2455",
+    "model_py_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+    "official_files": [
+      "inference/model.py",
+      "inference/kernel.py",
+      "config.json",
+      "model.safetensors.index.json"
+    ],
+    "source_identity_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1"
+  },
+  "still_open": [
+    "sampling()",
+    "temperature semantics",
+    "random draw / RNG semantics",
+    "output_ids generation",
+    "full_logits=True / full-sequence logits",
+    "world_size > 1 ParallelHead all_gather",
+    "production-scale candidate pruning",
+    "decode start_pos>0",
+    "window-KV ring/wrap semantics",
+    "compressed decode partial-group accumulation/publication",
+    "multi-call cache persistence",
+    "world_size > 1 distributed Block/MoE semantics",
+    "Engram",
+    "MTP / DSpark",
+    "main_hidden assembly semantics if not separately validated",
+    "long-context qualification",
+    "full Transformer.forward correctness",
+    "full-model correctness",
+    "performance/fusion/production qualification"
+  ],
+  "stop_boundary": {
+    "next_source_operation": "output_ids = sample(logits, self.temperature)",
+    "not_executed": [
+      "sample()",
+      "temperature transform",
+      "random draw",
+      "output_ids"
+    ],
+    "stopped_after": "logits = self.head(self.norm(h))"
+  },
+  "upstream_authority_relationship": {
+    "boundary8_closeout": {
+      "artifact": "artifacts/boundary8-closeout.json",
+      "classification": "closed all-Block subscope authority through Block39 return",
+      "ok": true
+    },
+    "boundary9_additions": [
+      "Boundary9a post-loop HC collapse",
+      "Boundary9b final RMSNorm",
+      "Boundary9c ParallelHead final-position logits"
+    ],
+    "foundation": "Boundary0-8 semantic/dataflow authority remains foundation",
+    "non_invalidation": "Boundary9c does not invalidate Boundary8, Boundary9a, or Boundary9b; they remain closed subscope authorities."
+  }
+}

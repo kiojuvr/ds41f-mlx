@@ -1,0 +1,223 @@
+{
+  "authority": {
+    "native_validation_provider": "single Python-orchestrated dataflow using validated Boundary 5/6a arithmetic primitives",
+    "official_checkpoint_raw_bits": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+    "reference_fixture": "artifacts/hc-attention-subblock-official-reference-fixture.json"
+  },
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "official_reference_derived_native_validation",
+  "comparison": {
+    "assembled_kv": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "assembled_topk": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "attn_comb": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "attn_norm_output": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "attn_post": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "attn_pre": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "compressed_topk_after": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "compressed_topk_before": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "final_attention_output": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "hc_post_output": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "hc_pre_output": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "incoming_pre_mix": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "returned_attn_pre": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "sparse_attn_output": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "window_kv": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    }
+  },
+  "digests": {
+    "attention_input_sha256": "a62cd4e24301eaa15774f537e08dc760be7fa0c2cb9c5351137d125fb44a656a",
+    "final_attention_output_sha256": "2783edf7810d63aee1ba04a99554b533105f950b1f3d75eb44c244235beeaee7",
+    "hc_post_output_sha256": "f035fcb163910857b8be269a899ddc48ac48080cfe98643a07e9469a3041ba8f"
+  },
+  "ds4_authority": {
+    "commit": "0aaea5a238fb41a35106a551e73c8409dfb751ac",
+    "remote": "https://github.com/antirez/ds4.git"
+  },
+  "gates": {
+    "actual_layer24_attn_norm_hc_tensor_provenance_recorded": true,
+    "attention_path_pass_under_hc_input": true,
+    "attn_norm_pass": true,
+    "block_forward_attention_order_reviewed": true,
+    "ffn_not_entered": true,
+    "final_attention_output_pass": true,
+    "full_model_semantics_not_claimed": true,
+    "hc_post_pass": true,
+    "hc_pre_pass": true,
+    "non_trivial_incoming_pre_mix_exercised": true,
+    "returned_attn_pre_exact": true
+  },
+  "non_claims": [
+    "no previous-layer pre_mix carry correctness",
+    "no FFN hc_pre",
+    "no ffn_norm",
+    "no MoE",
+    "no full Block",
+    "no layer-to-layer execution",
+    "no logits/full model",
+    "no performance claim"
+  ],
+  "not_omlx_derived": true,
+  "official_reference": {
+    "model_py": {
+      "file": "inference/model.py",
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "functions": [
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Block.forward",
+          "reviewed_attention_order": "hc_mixes -> hc_pre(incoming pre_mix) -> attn_norm -> attn -> hc_post; returns ffn_pre only after FFN, not entered here",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            971,
+            994
+          ],
+          "source_sha256": "813b4dc3231349cb17190876e25f6c39da4a88fdec9d23e9cb0c5b6fcd8318f6"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Block.hc_mixes",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            950,
+            958
+          ],
+          "source_sha256": "92fd3b129ad62c76cb37f4cc21d337456f376ddb367be51d3a93c86582894f18"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Block.hc_pre",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            960,
+            963
+          ],
+          "source_sha256": "103935a48b2cba8d9e34507bafa52db0f21e2a84448a1a83cdd4f3c5a7e727a4"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Block.hc_post",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            965,
+            969
+          ],
+          "source_sha256": "eaaa69a5e29927bd1dd1eba613786fcd8a97d7974df79a509442ef43f41d218f"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Attention",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            613,
+            789
+          ],
+          "source_sha256": "86d80f5cdaa6435cacd56ce5be796c3f0155a7f92cebdb12ffe6743ac974d110"
+        }
+      ]
+    }
+  },
+  "ok": true,
+  "operation_contract": {
+    "order": "x_hc + incoming pre_mix -> hc_mixes(attn) -> hc_pre -> attn_norm -> full layer-24 Attention under HC-derived input -> hc_post(attention_output,residual x_hc,attn_post,attn_comb); STOP before FFN",
+    "predeclared_tolerance": {
+      "bf16_max_ulp_lte": 1,
+      "f32_max_abs_lte": 0.0001,
+      "int32_exact": true
+    }
+  },
+  "purpose": "validate Boundary 6b HC + Attention sub-block integration; stop before FFN/MoE",
+  "reference_fixture": "artifacts/hc-attention-subblock-official-reference-fixture.json",
+  "schema": "ds41f.native-hc-attention-subblock-validation.v1",
+  "semantic_status": {
+    "actual_attn_norm_hc_tensor_provenance_recorded": true,
+    "attention_path_under_hc_input_validated": true,
+    "attn_norm_validated": true,
+    "block_forward_attention_order_reviewed": true,
+    "ffn_entered": false,
+    "final_attention_output_validated": true,
+    "hc_post_validated": true,
+    "hc_pre_validated": true,
+    "model_semantics_validated": false,
+    "non_trivial_incoming_pre_mix_exercised": true,
+    "returned_attn_pre_exact": true
+  }
+}

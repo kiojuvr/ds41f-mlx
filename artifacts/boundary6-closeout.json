@@ -1,0 +1,187 @@
+{
+  "authority_chain": [
+    {
+      "artifact": "artifacts/hyper-connections-official-reference-fixture.json",
+      "boundary": "6a",
+      "name": "HC primitive semantics"
+    },
+    {
+      "artifact": "artifacts/hc-attention-subblock-official-reference-fixture.json",
+      "boundary": "6b",
+      "name": "HC + Attention sub-block",
+      "validation": "artifacts/native-hc-attention-subblock-validation.json"
+    },
+    {
+      "artifact": "artifacts/moe-gate-expert-official-reference-fixture.json",
+      "boundary": "6c0",
+      "name": "Gate + Expert primitive",
+      "validation": "artifacts/native-moe-gate-expert-validation.json"
+    },
+    {
+      "artifact": "artifacts/moe-routed-reduction-official-reference-fixture.json",
+      "boundary": "6c1",
+      "name": "routed reduction",
+      "validation": "artifacts/native-moe-routed-reduction-validation.json"
+    },
+    {
+      "artifact": "artifacts/moe-shared-merge-official-reference-fixture.json",
+      "boundary": "6c2",
+      "name": "shared merge / full MoE",
+      "validation": "artifacts/native-moe-shared-merge-validation.json"
+    },
+    {
+      "artifact": "artifacts/hc-ffn-moe-subblock-official-reference-fixture.json",
+      "boundary": "6d",
+      "name": "FFN HC + full MoE integration",
+      "validation": "artifacts/native-hc-ffn-moe-subblock-validation.json"
+    },
+    {
+      "boundary": "6e",
+      "name": "connected Block execution",
+      "validation": "artifacts/native-block-layer24-integration-validation.json"
+    }
+  ],
+  "boundary": "6",
+  "classification": "official_reference_derived_boundary_closeout",
+  "commit_at_generation": "746180cb9ebddec43b0a7e7579cb2caeddb9477d",
+  "connected_execution_summary": {
+    "expected_digest_gates": {
+      "attention_input": {
+        "actual_sha256": "a62cd4e24301eaa15774f537e08dc760be7fa0c2cb9c5351137d125fb44a656a",
+        "expected_sha256": "a62cd4e24301eaa15774f537e08dc760be7fa0c2cb9c5351137d125fb44a656a",
+        "matches": true,
+        "name": "attention_input"
+      },
+      "ffn_norm_moe_input": {
+        "actual_sha256": "b764483ec5db9323f97ad9ad3a6ca8a16d4e3f3dba9547ee6e83e7a789b9992f",
+        "expected_sha256": "b764483ec5db9323f97ad9ad3a6ca8a16d4e3f3dba9547ee6e83e7a789b9992f",
+        "matches": true,
+        "name": "ffn_norm_moe_input"
+      },
+      "final_block_x": {
+        "actual_sha256": "a596b0585c9702257b730d81ccc9bd8eac03df53404d64d8be83c2dd8625ae63",
+        "expected_sha256": "a596b0585c9702257b730d81ccc9bd8eac03df53404d64d8be83c2dd8625ae63",
+        "matches": true,
+        "name": "final_block_x"
+      },
+      "full_moe_output": {
+        "actual_sha256": "79cdaa8d0b616a2de45d4ea648670f88884542eec08242255597cbe5f8eab34e",
+        "expected_sha256": "79cdaa8d0b616a2de45d4ea648670f88884542eec08242255597cbe5f8eab34e",
+        "matches": true,
+        "name": "full_moe_output"
+      },
+      "returned_ffn_pre": {
+        "actual_sha256": "8fcc739b02187a2a805bc06ab26e8c66d5cec632520cab47f7ade518bd0b0d2d",
+        "expected_sha256": "8fcc739b02187a2a805bc06ab26e8c66d5cec632520cab47f7ade518bd0b0d2d",
+        "matches": true,
+        "name": "returned_ffn_pre"
+      },
+      "x_after_attn": {
+        "actual_sha256": "f035fcb163910857b8be269a899ddc48ac48080cfe98643a07e9469a3041ba8f",
+        "expected_sha256": "f035fcb163910857b8be269a899ddc48ac48080cfe98643a07e9469a3041ba8f",
+        "matches": true,
+        "name": "x_after_attn"
+      }
+    },
+    "no_boundary6b_or_6d_intermediate_tensor_injection": true,
+    "routing_summary": {
+      "scaled_routing_weights": [
+        [
+          0.30666792392730713,
+          0.26518163084983826,
+          0.23444253206253052,
+          0.2384490668773651,
+          0.227377787232399,
+          0.22788098454475403
+        ],
+        [
+          0.2756555676460266,
+          0.2622893452644348,
+          0.25022250413894653,
+          0.24365878105163574,
+          0.24334122240543365,
+          0.2248324602842331
+        ]
+      ],
+      "selected_expert_set": [
+        8,
+        40,
+        85,
+        125,
+        144,
+        184,
+        221,
+        228,
+        243,
+        249,
+        254,
+        265
+      ],
+      "topk_expert_indices": [
+        [
+          125,
+          221,
+          249,
+          243,
+          265,
+          184
+        ],
+        [
+          228,
+          85,
+          254,
+          144,
+          8,
+          40
+        ]
+      ]
+    },
+    "scope": {
+      "batch": 1,
+      "claim": "layer-24 Block semantics under bounded external shared state and synthetic incoming pre_mix",
+      "hc": 4,
+      "layer": 24,
+      "prefill": true,
+      "sequence": 2,
+      "start_pos": 0,
+      "world_size": 1
+    },
+    "single_connected_execution_from_initial_inputs": true,
+    "state_side_validation": {
+      "candidate_consumer_topk_matches_6b": true,
+      "compressed_index_candidate_external_inputs_match_6b": true,
+      "external_inputs_unchanged_by_runner": true,
+      "window_kv_matches_6b_publication": true
+    }
+  },
+  "non_claims": [
+    "no previous-layer production pre_mix carry correctness",
+    "no next-layer consumption of returned ffn_pre",
+    "no multi-layer execution",
+    "no production-scale candidate pruning",
+    "no decode / ring / partial compression group",
+    "no world_size > 1 expert parallelism",
+    "no Transformer final norm / logits",
+    "no full-model correctness",
+    "no performance/fusion claim"
+  ],
+  "not_omlx_derived": true,
+  "ok": true,
+  "pass_conditions": {
+    "attention_side_matches_6b": true,
+    "authority_chain_recorded": true,
+    "block_forward_full_order_reviewed": true,
+    "ffn_side_matches_6d": true,
+    "final_x_after_ffn_matches": true,
+    "moe_routing_matches_6d": true,
+    "no_intermediate_tensor_injection": true,
+    "returned_ffn_pre_matches": true,
+    "single_connected_execution_from_initial_inputs": true,
+    "source_identity_authority_checks_pass": true,
+    "state_effects_classified_validated": true,
+    "stop_before_next_block": true
+  },
+  "safe_closeout_claim": "For layer 24, B=1, S=2, start_pos=0, prefill, world_size=1, with the declared bounded external shared-attention state and deterministic synthetic incoming pre_mix, the connected native Block dataflow from Block input through Attention HC, Attention, FFN HC, MoE, and final Block output matches the validated official-reference-derived contracts.",
+  "schema": "ds41f.boundary6-closeout.v1",
+  "status": "PASS"
+}

@@ -1,0 +1,302 @@
+{
+  "authority_dependencies": {
+    "Boundary10": {
+      "artifact": "artifacts/boundary10-closeout.json",
+      "authority": "source-defined sampling arithmetic branch semantics",
+      "commit": "c9c8ab1de87c69e1af7e8cb74b2bdff528ec75a1",
+      "superseded": false
+    },
+    "Boundary11a": {
+      "artifact": "artifacts/mlx-exp1-rng-validation.json",
+      "authority": "pinned MLX 0.32.2 / Metal GPU sampling-noise distribution + reproducibility semantics",
+      "commit": "cb286d836d910d256c8b76a2d04f0e1fcc415586",
+      "superseded": false
+    },
+    "Boundary9": {
+      "artifact": "artifacts/boundary9-closeout.json",
+      "authority": "deterministic connected model forward through final-position logits",
+      "commit": "73f7d66d1e373605825fc77a4a29e184e6bef85b",
+      "superseded": false
+    }
+  },
+  "authority_relationship_after_pass": {
+    "Boundary10": "source-defined sampling arithmetic branch authority",
+    "Boundary11a": "pinned target-MLX RNG distribution/reproducibility authority",
+    "Boundary11b": "connected target-MLX-runtime stochastic sampling authority for the pinned fixture + temperature + explicit RNG key/state",
+    "Boundary9": "integrated deterministic model-forward authority through logits",
+    "supersedes_prior_boundaries": false
+  },
+  "base_commit": "cb286d836d910d256c8b76a2d04f0e1fcc415586",
+  "boundary": "Boundary 11b: connected target-MLX-runtime stochastic sampling with Boundary11a generator",
+  "boundary11a_checker": {
+    "returncode": 0,
+    "stderr": "",
+    "stdout": "Boundary11a RNG check PASS: /Volumes/SDXC-512/ds41f-mlx/artifacts/mlx-exp1-rng-validation.json\n"
+  },
+  "classification": "connected_target_mlx_runtime_stochastic_sampling_authority_for_pinned_fixture_temperature_and_explicit_rng_state",
+  "gates": {
+    "actual_mlx_noise_regenerated": true,
+    "authority_source_guards_pass": true,
+    "boundary10_closeout_pass": true,
+    "boundary11a_explicit_key_split_policy_used": true,
+    "boundary11a_rng_checker_pass": true,
+    "boundary9_logits_digest_exact": true,
+    "draw_key_exact": true,
+    "independent_fp64_log_domain_token_computed": true,
+    "initial_session_key_exact": true,
+    "latest_boundary9_closeout_pass": true,
+    "main_hidden_not_executed": true,
+    "mlx_fp32_softmax_independently_validated": true,
+    "mlx_noise_digest_exact_to_boundary11a_production_fixture": true,
+    "mlx_probs_noise_division_executed": true,
+    "mlx_sampled_token_computed": true,
+    "mlx_sampling_arithmetic_executed": true,
+    "native_host_logits_to_mlx_fp32_seam_exact": true,
+    "next_session_key_exact": true,
+    "no_logits_artifact_injection": true,
+    "no_requirement_secondary_token_differs": true,
+    "noise_all_finite": true,
+    "noise_all_positive": true,
+    "noise_fp32": true,
+    "predeclared_softmax_tolerance_pass": true,
+    "pytorch_parity_explicitly_not_required": true,
+    "same_key_next_session_key_reproducible": true,
+    "same_key_whole_sampling_result_reproducible": true,
+    "sampled_token_exact_between_mlx_and_independent_oracle": true,
+    "secondary_key_generates_different_noise": true,
+    "single_model_execution_starts_from_token_ids": true,
+    "temperature_equals_1": true,
+    "tie_count_eq_1": true,
+    "winner_margins_recorded": true
+  },
+  "logits_host_to_mlx_seam": {
+    "exact_fp32_bytes_preserved": true,
+    "mlx_consumer_tensor": {
+      "dtype": "mlx.core.float32",
+      "shape": [
+        1,
+        129280
+      ]
+    },
+    "mlx_to_host_roundtrip_digest": "b2e6eb3755b4cea2f11211cc557fbd93ef0988af8deee8888a36f69d9473989d",
+    "producer_dtype": "FP32",
+    "producer_native_logits_digest": "b2e6eb3755b4cea2f11211cc557fbd93ef0988af8deee8888a36f69d9473989d",
+    "producer_shape": [
+      1,
+      129280
+    ]
+  },
+  "model_execution": {
+    "logits": {
+      "digest": "b2e6eb3755b4cea2f11211cc557fbd93ef0988af8deee8888a36f69d9473989d",
+      "dtype": "FP32",
+      "max": 12.943254470825195,
+      "mean": -0.3248088437867337,
+      "min": -16.791522979736328,
+      "shape": [
+        1,
+        129280
+      ]
+    },
+    "scope": {
+      "embedding_output_digest": "e785817ca379b27e5a5d1c905c6261b46c6158815b55a29ecfaf7850b5925ef1",
+      "execution_path": "tokens -> embedding -> Blocks0..39 -> post-loop HC collapse -> final RMSNorm -> ParallelHead -> final-position logits",
+      "head_weight_checkpoint_dtype": "BF16",
+      "head_weight_shape": [
+        129280,
+        5120
+      ],
+      "head_weight_shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00043-of-00048.safetensors",
+      "layer39_ffn_pre_digest": "8b20fab6cfdec82baf94938ec3e56428cae42a0997bcb0f3aa9afa5e7115f1dc",
+      "layer39_x_out_digest": "c705421c2422458f36a570338c51e70d50967f028da424abf38ef4bb30bf86d3",
+      "no_logits_artifact_injection": true,
+      "normalized_h_digest": "00186e76a7a7bd78ce40de4a9a912025c9d6724b1600a30f171eca9a2cb65eb5",
+      "post_loop_h_digest": "6b99fb26048a577ce78756397101be15441d1ddb7fa9c7aa205007e10869061a",
+      "selected_final_position_digest": "79999590fe7867d7f398be3cce6cd4bda7dac7e2fcdf8c1571019175ffb9d746",
+      "tokens": [
+        [
+          0,
+          3
+        ]
+      ]
+    }
+  },
+  "noise": {
+    "all_finite": true,
+    "all_positive": true,
+    "classification": "target-runtime Exp(1)-compatible sampling noise with the Boundary11a predeclared FP32 endpoint policy",
+    "digest": "38211ff282e405ad5d57f7203a09f80745c382373c755fb8e0d9c4c9187a3cb4",
+    "dtype": "float32",
+    "max": 13.234334945678711,
+    "mean": 0.9979646651521974,
+    "min": 8.482521479891147e-06,
+    "not_strengthened_claim": "not a mathematically exact continuous Exp(1) claim beyond Boundary11a declared FP32 endpoint/distribution contract",
+    "shape": [
+      1,
+      129280
+    ]
+  },
+  "non_claims": [
+    "no PyTorch/MLX RNG bitwise parity",
+    "no cross-backend sampled-token parity",
+    "no CPU/GPU RNG stream parity",
+    "no cross-version RNG stream guarantee",
+    "no mathematical claim of an exact continuous Exp(1) beyond the Boundary11a declared FP32 endpoint/distribution contract",
+    "no main_hidden assembly",
+    "no Transformer.forward return correctness",
+    "no second-step/decode semantics",
+    "no cache persistence qualification",
+    "no full model correctness",
+    "no performance/production qualification"
+  ],
+  "not_omlx_derived": true,
+  "ok": true,
+  "pytorch_parity": {
+    "pytorch_noise_bitstream_used": false,
+    "pytorch_sampled_token_parity_required": false,
+    "pytorch_seed_parity_required": false,
+    "reason": "Boundary11b validates target-runtime sampling semantics under the qualified MLX RNG contract, not backend bitstream compatibility."
+  },
+  "reproducibility": {
+    "same_key_whole_path": {
+      "same_generated_noise": true,
+      "same_logits": true,
+      "same_next_session_key": true,
+      "same_sampled_token": true,
+      "second_next_session_key": {
+        "digest": "175f65a6ffece3dbac3719d14f5ab4678412d4187c967463dae2fc4688bc50f4",
+        "dtype": "mlx.core.uint32",
+        "shape": [
+          2
+        ],
+        "values": [
+          613528892,
+          572711044
+        ]
+      },
+      "second_noise_digest": "38211ff282e405ad5d57f7203a09f80745c382373c755fb8e0d9c4c9187a3cb4",
+      "second_sampled_token": 9468
+    },
+    "secondary_key": {
+      "noise_differs_from_primary": true,
+      "noise_digest": "245a54e0bd3bef90f644457cf32d137dd7d804febbe233ac44eaf8aaf7d91265",
+      "sampled_token": 74294,
+      "seed": 289517570,
+      "token_difference_not_required": true
+    }
+  },
+  "rng": {
+    "draw_key": {
+      "digest": "4cc9141bec4c30b22659a725d59ca69b5dd50e83deb9bdfde53c177f079e15c1",
+      "dtype": "mlx.core.uint32",
+      "shape": [
+        2
+      ],
+      "values": [
+        2308264947,
+        2363689365
+      ]
+    },
+    "next_session_key": {
+      "digest": "175f65a6ffece3dbac3719d14f5ab4678412d4187c967463dae2fc4688bc50f4",
+      "dtype": "mlx.core.uint32",
+      "shape": [
+        2
+      ],
+      "values": [
+        613528892,
+        572711044
+      ]
+    },
+    "policy": "session_key -> mx.random.split(session_key, 2) -> [draw_key, next_session_key]; draw_key used once for [1,129280] noise; next_session_key returned with sampling result",
+    "seed": 289513473,
+    "session_key_before": {
+      "digest": "39adfde986a1ad94318c84e5edd0f8a45a729445c6b0e1ca8912e74958a07630",
+      "dtype": "mlx.core.uint32",
+      "shape": [
+        2
+      ],
+      "values": [
+        0,
+        289513473
+      ]
+    }
+  },
+  "runtime": {
+    "default_device": "Device(gpu, 0)",
+    "mlx_version": "0.32.2",
+    "mx_gpu_repr": "DeviceType.gpu",
+    "softmax_api_used": "mx.softmax(scaled_logits, axis=-1, stream=mx.gpu)",
+    "softmax_doc": "softmax(a: array, /, axis: None | int | Sequence[int] = None, *, precise: bool = False, stream: StreamOrDevice = None) -> array\n\n        Perform the softmax along the given axis.\n\n        This operation is a numerically stable version of:\n\n        .. code-block::\n\n          exp(a) / sum(exp(a), axis, keepdims=True)\n\n        Args:\n            a (array): Input array.\n            axis (int or list(int), optional): Optional axis or axes to compute\n             the softmax over. If unspecified this performs the softmax over\n             the full array.\n            precise (bool, optional): Accumulate in ``float32`` for inputs of\n              lower precision. Otherwise the accumulation type matches the\n              input, which can lose precision over long reduction axes.\n              Default: ``False``.\n\n        Returns:\n            array: The output of the softmax.\n      ",
+    "target_stream_device": "Metal GPU / mx.gpu"
+  },
+  "safe_claim_on_pass": "For B=1, S=2, start_pos=0, world_size=1, full_logits=False, token fixture [[0,3]], temperature=1.0, and the pinned explicit MLX session key derived from seed 289513473, the connected deterministic Boundary9 logits are consumed by the Boundary10 source-defined sampling arithmetic using the Boundary11a-qualified MLX sampling-noise generator. The resulting target-MLX-runtime sampled token agrees with an independent FP64 log-domain winner reconstruction using the exact generated MLX noise, and the explicit RNG state advances to the recorded next session key. This is a pinned target-MLX-runtime sampling result. It does not claim PyTorch RNG bitstream parity, equal sampled tokens for equal numeric seeds across backends, or backend-independent canonical token identity.",
+  "sampling_arithmetic": {
+    "boundary10b_separation": {
+      "boundary10b_conditional_token": 795,
+      "not_expected_value_for_boundary11b": true,
+      "reason": "Boundary10b used a different deterministic supplied-noise fixture; common authority is sampling arithmetic semantics only, not noise realization or token."
+    },
+    "independent_log_domain_token": 9468,
+    "probs": {
+      "digest": "e08896fb5461b28e4019cdf978f6e91db521b94fee3b91e757fdf25bb8366ea6",
+      "dtype": "float32",
+      "max": 0.0354914627969265,
+      "max_abs_vs_independent": 1.924732130620388e-09,
+      "min": 4.329862172741585e-15,
+      "predeclared_tolerance": {
+        "softmax_max_abs_lte": 1e-06,
+        "softmax_sum_abs_error_lte": 1e-06
+      },
+      "shape": [
+        1,
+        129280
+      ],
+      "sum": 1.000000051814112,
+      "sum_abs_error_vs_independent": 5.1814111667880525e-08
+    },
+    "scores_digest": "870674194d8375149a81aa6be42eb73fc153c7275495b197565b1738807d9ac8",
+    "source_defined_formula": "scores = softmax(logits / temperature) / noise; sampled_token = argmax(scores, axis=-1)",
+    "target_mlx_sampled_token_id": 9468,
+    "temperature": 1.0,
+    "winner_evidence": {
+      "independent_log_domain": {
+        "log_score_gap": 1.5600784310689448,
+        "tie_count": 1,
+        "top1_log_score": 17.925053292457022,
+        "top1_token": 9468,
+        "top2_log_score": 16.364974861388077,
+        "top2_token": 1610
+      },
+      "runtime_score_domain": {
+        "score_gap": 4.0855735540390015,
+        "tie_count": 1,
+        "top1_noise": 3.877706330968067e-05,
+        "top1_prob": 0.00020057029905728996,
+        "top1_prob_over_noise_score": 5.1723952293396,
+        "top1_token": 9468,
+        "top2_noise": 1.6502006474183872e-05,
+        "top2_prob": 1.7934738934854977e-05,
+        "top2_prob_over_noise_score": 1.0868216753005981,
+        "top2_token": 1610
+      }
+    }
+  },
+  "schema": "ds41f.boundary11b.connected-mlx-stochastic-sampling-validation.v1",
+  "stop_boundary": {
+    "next_source_operation_recorded_not_executed": "main_hidden = torch.cat(main_hiddens, dim=-1) if main_hiddens else None",
+    "not_executed": [
+      "main_hidden assembly",
+      "Transformer.forward return packaging",
+      "decode",
+      "second model token step"
+    ],
+    "stopped_after": "target_mlx_sampled_token_id and next_session_key"
+  },
+  "temperature": {
+    "effective_temperature": 1.0,
+    "temperature": 1.0,
+    "temperature_floor_exercised": false,
+    "temperature_floor_reviewed": true
+  }
+}

@@ -1,0 +1,229 @@
+{
+  "authority": {
+    "native_validation_provider": "Metal-backed ds41f_official_sparse_attn_bf16 over official-reference assembled tensors",
+    "official_checkpoint_raw_bits": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+    "reference_fixture": "artifacts/compressed-sparse-attn-official-reference-fixture.json"
+  },
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "official_reference_derived_native_validation",
+  "comparison": {
+    "compressed_kv_digest_matches": true,
+    "compressed_topk_after_offset_exact": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "compressed_topk_before_offset_exact": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "concatenated_kv_digest_matches": true,
+    "concatenated_topk_exact": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "sparse_attn_output": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "window_kv_digest_matches": true,
+    "window_topk_exact": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    }
+  },
+  "digests": {
+    "native_sparse_output_bf16_sha256": "52e35fdb3ad3804ad7d6667487755f1b81b5d7ccf6671dd2b3d0567931522715",
+    "reference_sparse_output_bf16_sha256": "52e35fdb3ad3804ad7d6667487755f1b81b5d7ccf6671dd2b3d0567931522715"
+  },
+  "ds4_authority": {
+    "commit": "0aaea5a238fb41a35106a551e73c8409dfb751ac",
+    "remote": "https://github.com/antirez/ds4.git"
+  },
+  "gates": {
+    "explicit_stop_after_sparse_attn": true,
+    "full_model_semantics_not_claimed": true,
+    "index_concat_order_offset_int32_exact": true,
+    "index_to_kv_address_mapping_exact": true,
+    "local_pinned_concat_offset_source_reviewed": true,
+    "minus_one_semantics_preserved": true,
+    "native_metal_sparse_attn_path_executed": true,
+    "ratio1_compressor_semantics_validated": true,
+    "reference_classification_expected": true,
+    "reference_not_omlx_derived": true,
+    "sparse_attn_output_within_tolerance": true,
+    "window_compressed_kv_concat_exact": true
+  },
+  "native_result": {
+    "in_dim": 512,
+    "metal_command_buffers": 1,
+    "metal_completion_waits": 1,
+    "metal_compute_encoders": 1,
+    "metal_enabled": true,
+    "out_dim": 512,
+    "output_checksum": 1693616377479946286,
+    "rows": 128
+  },
+  "native_version": "ds41f-prefill-native-official-sparse-attn-v11",
+  "non_claims": [
+    "does not execute oMLX",
+    "does not validate inverse rotary, wo_a, wo_b, full Attention output, decode cache/ring behavior, Block/HC, logits, full model correctness, performance, or fusion",
+    "does not execute inverse rotary / wo_a / wo_b in native validation"
+  ],
+  "not_omlx_derived": true,
+  "official_reference": {
+    "kernel_py": {
+      "file": "inference/kernel.py",
+      "file_sha256": "1236c3507019ed176f5dba5e04bcea58867cf654818c6cf138ed4845398c2455",
+      "functions": [
+        {
+          "name": "sparse_attn_kernel",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            311,
+            389
+          ],
+          "source_sha256": "5438750533acb517260b1da40a9a033e5068eaef4a0c57b2c769f2de4e686266"
+        },
+        {
+          "name": "sparse_attn",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            392,
+            403
+          ],
+          "source_sha256": "42208bc5467f5a29efd18020b62162fa3177614293f3669d3d0b8800d6e5d704"
+        }
+      ]
+    },
+    "model_py": {
+      "file": "inference/model.py",
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "functions": [
+        {
+          "name": "Attention",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            613,
+            789
+          ],
+          "source_sha256": "86d80f5cdaa6435cacd56ce5be796c3f0155a7f92cebdb12ffe6743ac974d110"
+        },
+        {
+          "name": "Attention._window_kv",
+          "reviewed": "window topk generation",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            700,
+            720
+          ],
+          "source_sha256": "8752c908e579c697f069faffa970b148b437fb5615743c5d45c430bab97254b2"
+        },
+        {
+          "name": "Attention._compress_topk_idxs",
+          "reviewed": "compressed topk generation/publication",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            722,
+            737
+          ],
+          "source_sha256": "60ceca3a943abcf4c79bf0eeb544469548e4df754520c38d9e8d2788511339f1"
+        },
+        {
+          "name": "Attention._compress_kv",
+          "reviewed": "prefill compressed offset and ratio=1 compress_len",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            739,
+            763
+          ],
+          "source_sha256": "cf185e9832854ebe927c80eb619ad90b1b6b2603422f12100d6e46cab31a202b"
+        },
+        {
+          "name": "Attention.forward",
+          "reviewed": "kv cat [window, compressed]; topk cat [window, compressed+offset]; sparse_attn call",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            765,
+            789
+          ],
+          "source_sha256": "ab629ceb31ddb9359393b13490d5ac1dd58abc3260f7edd0ad8ea13d8a0d9e22"
+        },
+        {
+          "name": "Compressor",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            429,
+            485
+          ],
+          "source_sha256": "dcd32a8debcf46c4d19d0347a3bc982e7aa70bba9746845d0b1555a7a73c8d67"
+        },
+        {
+          "name": "Compressor.forward",
+          "reviewed": "ratio=1 singleton group softmax/pooling",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            458,
+            485
+          ],
+          "source_sha256": "cd864ce74af1194d0a30178035efa2af92b8f7d27666724b3c63cd1ca6e5a092"
+        },
+        {
+          "name": "Indexer",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            488,
+            580
+          ],
+          "source_sha256": "cb9d882d1701f3e62892e7730fe6901658e39886c55af65ece1b830858ca0a75"
+        },
+        {
+          "name": "Indexer.forward",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            527,
+            580
+          ],
+          "source_sha256": "32c3de30aeb0e78df5271e28dc9b2873feade877987048137a590f6f58ba110d"
+        }
+      ]
+    }
+  },
+  "ok": true,
+  "operation_contract": {
+    "index_assembly": "topk_idxs = cat([window_topk_idxs, compressed_topk_idxs_after_offset], dim=-1), where compressed offset is window_kv length",
+    "kv_assembly": "kv = cat([window_kv, compressed_kv], dim=1)",
+    "predeclared_tolerance": {
+      "assembly_int32_exact": true,
+      "kv_concat_exact": true,
+      "sparse_output_max_bf16_ulp_lte": 2
+    },
+    "ratio1_compressor": "compress_ratio=1 forms singleton groups; softmax over group dimension is exactly 1 and each token yields one compressed latent/KV row",
+    "sparse_attn": "Boundary 3 sparse_attn over concatenated KV/topk; STOP before inverse rotary / output projection"
+  },
+  "purpose": "validate Boundary 5e concatenated window/compressed KV and topk sparse_attn output; stop after sparse_attn",
+  "reference_fixture": "artifacts/compressed-sparse-attn-official-reference-fixture.json",
+  "schema": "ds41f.native-compressed-sparse-attn-validation.v1",
+  "semantic_status": {
+    "compress_ratio": 1,
+    "explicit_stop_after_sparse_attn": true,
+    "index_concat_order_offset_int32_exact": true,
+    "index_to_kv_mapping_exact": true,
+    "layer": 24,
+    "minus_one_preserved": true,
+    "model_semantics_validated": false,
+    "native_metal_sparse_attn_executed": true,
+    "official_reference_fixture_used": true,
+    "sparse_attn_output_within_tolerance": true,
+    "window_compressed_kv_concat_exact": true
+  }
+}

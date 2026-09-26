@@ -1,0 +1,156 @@
+{
+  "authority": {
+    "native_validation_provider": "Python-orchestrated arithmetic over actual checkpoint tensors using Boundary 6c0 Expert contract",
+    "official_checkpoint_raw_bits": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+    "reference_fixture": "artifacts/moe-routed-reduction-official-reference-fixture.json"
+  },
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "official_reference_derived_native_validation",
+  "comparison": {
+    "all_12_expert_invocations": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "final_routed_sum": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "scaled_routing_weights": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "selected_raw_scores": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "tiny_accum": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "tiny_final": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "tiny_weighted_bf16": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "topk_expert_indices": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    }
+  },
+  "digests": {
+    "final_routed_sum_f32_sha256": "7be6df78d34a4adf469eb8fb52ea151ca662714f7de61428bc03a7382e7d4178",
+    "reference_final_routed_sum_f32_sha256": "7be6df78d34a4adf469eb8fb52ea151ca662714f7de61428bc03a7382e7d4178"
+  },
+  "ds4_authority": {
+    "commit": "0aaea5a238fb41a35106a551e73c8409dfb751ac",
+    "remote": "https://github.com/antirez/ds4.git"
+  },
+  "gates": {
+    "all_12_expert_invocations_pass": true,
+    "all_selected_expert_tensor_provenance_recorded": true,
+    "full_model_semantics_not_claimed": true,
+    "gate_rerun_matches_6c0": true,
+    "independent_reduction_fixture_pass": true,
+    "moe_forward_routed_reduction_order_reviewed": true,
+    "per_token_routed_sum_pass": true,
+    "routing_weight_application_pass": true,
+    "shared_expert_not_entered": true
+  },
+  "non_claims": [
+    "no shared expert",
+    "no final MoE output",
+    "no FFN HC integration",
+    "no expert parallel / all-to-all beyond reviewed world_size=1 semantics",
+    "no full Block",
+    "no logits/full model",
+    "no performance claim"
+  ],
+  "not_omlx_derived": true,
+  "official_reference": {
+    "model_py": {
+      "file": "inference/model.py",
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "functions": [
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "MoE.forward",
+          "reviewed_routed_reduction": "y zeros_like x dtype float32; loop experts in ascending local expert order; expert(x[idx], weights[idx,top,None]); y[idx] += returned expert output; world_size=1 no all_reduce; STOP before shared_experts add",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            883,
+            904
+          ],
+          "source_sha256": "602da77af23beb068ac04beab5b226c834391da5b9edb359cdd7099506f6b5ec"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Expert.forward",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            843,
+            851
+          ],
+          "source_sha256": "b2d6d5742033c7b3b8b1202fe153269614fa8492b8ecb921405b8cfbf1097f51"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Gate.forward",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            807,
+            827
+          ],
+          "source_sha256": "b4f3e90e95d44aa084062a38c41b9270c94da637e6775dcca37330f2841419b3"
+        }
+      ]
+    }
+  },
+  "ok": true,
+  "operation_contract": {
+    "accumulation_dtype": "MoE.forward accumulates into y=torch.zeros_like(x,dtype=float32); returned expert outputs are added to f32 y",
+    "accumulation_order": "expert-major ascending expert id over local range; token/top positions for each expert from torch.where; with world_size=1 no all_reduce. This differs from token-major topk order and can affect non-associative sums",
+    "expert_contribution_dtype": "Expert.forward returns BF16 output for BF16 input",
+    "predeclared_tolerance": {
+      "bf16_max_ulp_lte": 1,
+      "f32_max_abs_lte": 0.001,
+      "indices_exact": true
+    },
+    "routing_weight_application": "Expert.forward receives f32 weights; after silu(gate)*up in f32, weights multiply the f32 intermediate before x.to(input dtype) and w2 down projection"
+  },
+  "purpose": "validate Boundary 6c1 routed expert weighted reduction; stop before shared expert contribution",
+  "reference_fixture": "artifacts/moe-routed-reduction-official-reference-fixture.json",
+  "schema": "ds41f.native-moe-routed-reduction-validation.v1",
+  "semantic_status": {
+    "all_12_expert_invocations_validated": true,
+    "all_selected_expert_tensor_provenance_recorded": true,
+    "gate_rerun_matches_6c0": true,
+    "independent_reduction_fixture_validated": true,
+    "model_semantics_validated": false,
+    "moe_forward_routed_reduction_order_reviewed": true,
+    "per_token_routed_sum_validated": true,
+    "routing_weight_application_validated": true,
+    "shared_expert_entered": false
+  }
+}

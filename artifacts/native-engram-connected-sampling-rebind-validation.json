@@ -1,0 +1,279 @@
+{
+  "authority_transition": {
+    "Boundary11a": "still RNG qualification authority",
+    "Boundary12b4": "current Engram-connected deterministic authority through final-position logits",
+    "Boundary12b5_A": "current Engram-connected explicit-temperature-zero sampling result authority",
+    "Boundary12b5_B": "current Engram-connected nonzero sampling arithmetic authority conditional on fixed supplied-noise fixture",
+    "Boundary12b5_C": "current pinned target-MLX-runtime stochastic sampling authority for Engram-connected logits + explicit RNG state"
+  },
+  "base_head": "3b22edba773485d0e1c34799f8b9bdea555b5c74",
+  "branch_A_temperature_zero": {
+    "branch": "argmax",
+    "classification": "current Engram-connected explicit-temperature-zero sampling result",
+    "dtype": "int64",
+    "independent_token": 15,
+    "max_logit": 13.22089958190918,
+    "native_token": 15,
+    "output_ids": [
+      15
+    ],
+    "shape": [
+      1
+    ],
+    "temperature": 0.0,
+    "tie_count": 1
+  },
+  "branch_B_supplied_noise": {
+    "conditional_output_id": 795,
+    "independent_token": 795,
+    "independent_top1": {
+      "log_score": 16.32493905915898,
+      "token": 795
+    },
+    "independent_top2": {
+      "log_score": 16.264160925094693,
+      "token": 45039
+    },
+    "log_score_gap": 0.060778134064285894,
+    "probs": {
+      "comparison": {
+        "max_abs": 2.823976864851918e-09,
+        "pass": true,
+        "sum_abs_error": 5.031359329166207e-08
+      },
+      "digest": "4262dddbd4432beb9aeaab953b6b8435f5ccbfd34d345028ddd611f181d43e4d",
+      "max": 0.050725895911455154,
+      "min": 4.363851487332532e-15,
+      "sum": 0.9999999496863812
+    },
+    "rng_guard": {
+      "official_rng_call_executed": false,
+      "rng_draw_replaced_by_supplied_fixture_for_arithmetic_validation": true,
+      "supplied_noise_is_not_claimed_as_official_rng_output": true
+    },
+    "scaled_logits_digest": "7be45bd57cf7b2763a9f91e6a070c285e5b7d02a58953f0f1b5634779584b6fd",
+    "score_gap": 0.06666707992553711,
+    "scores_digest": "d1074afac6bd4d3d4769c070c894ff5f963e3961250725d9e8a97c2cb6f9c32a",
+    "source_top1": {
+      "score": 1.1305686235427856,
+      "token": 795
+    },
+    "source_top2": {
+      "score": 1.0639015436172485,
+      "token": 45039
+    },
+    "supplied_noise": {
+      "all_finite": true,
+      "all_positive": true,
+      "digest": "fe4cf22185a06020968728fcd88706683ac8c16a6f1b0b4f1f561893ee5a629f",
+      "dtype": "FP32",
+      "max": 12.462882995605469,
+      "mean": 0.9999973190020374,
+      "min": 3.8675816540489905e-06,
+      "shape": [
+        1,
+        129280
+      ]
+    },
+    "temperature": 1.0,
+    "tie_count": 1
+  },
+  "branch_C_target_mlx": {
+    "device": "Metal GPU / mx.gpu",
+    "host_to_mlx": {
+      "host_logits_digest": "7be45bd57cf7b2763a9f91e6a070c285e5b7d02a58953f0f1b5634779584b6fd",
+      "mlx_dtype": "float32",
+      "mlx_shape": [
+        1,
+        129280
+      ],
+      "roundtrip_digest": "7be45bd57cf7b2763a9f91e6a070c285e5b7d02a58953f0f1b5634779584b6fd"
+    },
+    "independent_token": 9468,
+    "independent_top1": {
+      "log_score": 17.49402063483373,
+      "token": 9468
+    },
+    "independent_top2": {
+      "log_score": 15.754302387480609,
+      "token": 1610
+    },
+    "log_score_gap": 1.7397182473531227,
+    "mlx_version": "0.32.2",
+    "noise": {
+      "all_finite": true,
+      "all_positive": true,
+      "digest": "38211ff282e405ad5d57f7203a09f80745c382373c755fb8e0d9c4c9187a3cb4",
+      "dtype": "float32",
+      "max": 13.234334945678711,
+      "mean": 0.9979646651521974,
+      "min": 8.482521479891147e-06,
+      "shape": [
+        1,
+        129280
+      ]
+    },
+    "primary_rng": {
+      "draw_key": {
+        "digest": "4cc9141bec4c30b22659a725d59ca69b5dd50e83deb9bdfde53c177f079e15c1",
+        "dtype": "mlx.core.uint32",
+        "shape": [
+          2
+        ],
+        "values": [
+          2308264947,
+          2363689365
+        ]
+      },
+      "next_key": {
+        "digest": "175f65a6ffece3dbac3719d14f5ab4678412d4187c967463dae2fc4688bc50f4",
+        "dtype": "mlx.core.uint32",
+        "shape": [
+          2
+        ],
+        "values": [
+          613528892,
+          572711044
+        ]
+      },
+      "seed": 289513473,
+      "session_key": {
+        "digest": "39adfde986a1ad94318c84e5edd0f8a45a729445c6b0e1ca8912e74958a07630",
+        "dtype": "mlx.core.uint32",
+        "shape": [
+          2
+        ],
+        "values": [
+          0,
+          289513473
+        ]
+      }
+    },
+    "probs": {
+      "comparison": {
+        "max_abs": 6.186357273674226e-09,
+        "pass": true,
+        "sum_abs_error": 3.004667514794335e-08
+      },
+      "digest": "722acab2f31289fc2d2de5cc8ed588a94efd7a45bae12879a4b0ed08df3072f0",
+      "max": 0.050725892186164856,
+      "min": 4.3638578400796366e-15,
+      "sum": 0.9999999699532996
+    },
+    "same_key_repeat": {
+      "same_logits": true,
+      "same_next_session_key": true,
+      "same_noise": true,
+      "same_sampled_token": true
+    },
+    "score_gap": 3.0003824830055237,
+    "secondary_key": {
+      "noise_differs": true,
+      "noise_digest": "245a54e0bd3bef90f644457cf32d137dd7d804febbe233ac44eaf8aaf7d91265",
+      "sampled_token": 74294,
+      "seed": 289517570
+    },
+    "source_top1": {
+      "noise": 3.877706330968067e-05,
+      "prob": 0.00014112294593360275,
+      "score": 3.63934063911438,
+      "token": 9468
+    },
+    "source_top2": {
+      "noise": 1.6502006474183872e-05,
+      "prob": 1.054409131029388e-05,
+      "score": 0.6389581561088562,
+      "token": 1610
+    },
+    "target_mlx_sampled_token": 9468,
+    "tie_count": 1
+  },
+  "classification": "current Engram-connected sampling contracts rebound to Boundary12b4 logits",
+  "gates": {
+    "A temperature zero pass": true,
+    "B supplied noise pass": true,
+    "Boundary10 sampling source identity exact": true,
+    "Boundary11a RNG checker PASS": true,
+    "Boundary12b4 checker PASS": true,
+    "C MLX pass": true,
+    "Engram-connected logits regenerated": true,
+    "Transformer.forward return not executed": true,
+    "authority/source guards PASS": true,
+    "main_hidden concat not executed": true,
+    "new logits digest exact": true,
+    "no logits artifact injection": true,
+    "not_omlx_derived == true": true,
+    "old tokens not used as expected": true,
+    "single execution begins from tokens [[0,3]]": true
+  },
+  "historical_token_non_use_guard": {
+    "historical_tokens": {
+      "Boundary10a": 372,
+      "Boundary10b": 795,
+      "Boundary11b_primary": 9468,
+      "Boundary11b_secondary": 74294
+    },
+    "old_no_engram_sampling_outputs_used_as_expected": false
+  },
+  "logits_regression": {
+    "current_engram_connected_logits_regenerated": true,
+    "expected_digest": "7be45bd57cf7b2763a9f91e6a070c285e5b7d02a58953f0f1b5634779584b6fd",
+    "ffn_pre13": "950063b739a1c4bb0e75c14850d1cb4921ce27cc366878ebe0b9d1d92e9c1bec",
+    "full_hash": "f5a64799492bea90bc6d87f0cb8a67bb983441e1cd9c12ec2e7b8df6cbcfee1d",
+    "layer14_hash": "33e046238287e6e8b7c3466bdb4b7b47182ad19f9115afac8a1983ede219ba80",
+    "layer1_hash": "8e0187ea859a7db65517a540eb5210457ec907fd0b2f44042d830366cbedbda5",
+    "logits_artifact_tensor_injection": false,
+    "logits_digest": "7be45bd57cf7b2763a9f91e6a070c285e5b7d02a58953f0f1b5634779584b6fd",
+    "logits_dtype": "FP32",
+    "logits_shape": [
+      1,
+      129280
+    ],
+    "max": 13.22089958190918,
+    "mean": -0.41598315219790216,
+    "min": -16.863203048706055,
+    "post_engram14_h": "ed3756f2dbe69901a166f86358f2245c97c37d6de75a5cb2dd88fffeb170cedd",
+    "post_engram1_h": "3d4e54860845a8cb3269a75fba39f85b3bedf31e1a30edb9bc3cc801ceb435e9"
+  },
+  "non_claims": [
+    "no PyTorch/MLX RNG bitwise parity",
+    "no backend-independent sampled-token identity",
+    "no main_hidden concat authority",
+    "no Transformer.forward return correctness",
+    "no incremental/decode NgramHashState correctness",
+    "no False/image-mask DEAD crossing authority",
+    "no distributed/world_size>1 correctness",
+    "no long-context qualification",
+    "no full-model correctness",
+    "no performance/production qualification"
+  ],
+  "not_omlx_derived": true,
+  "ok": true,
+  "safe_claim": "For the pinned DeepSeek-V4.1-Flash Engram-connected [[0,3]] prefill fixture, the previously validated sampling contracts have been rebound to the current Boundary12b4 final-position logits. The explicit temperature=0 branch selects token 15. At temperature=1, the supplied-noise conditional path agrees with an independent FP64 log-domain winner reconstruction, and the target MLX runtime path using the Boundary11a-qualified explicit RNG state likewise agrees with an independent reconstruction while advancing to the recorded next session key. The supplied-noise result is conditional arithmetic evidence, not an official RNG draw. The target-MLX sampled result is runtime/key specific, not a PyTorch-bitstream or backend-independent canonical token claim. Historical no-Engram sampling token IDs are not expected values for this Engram-connected trajectory.",
+  "schema": "ds41f.native-engram-connected-sampling-rebind-validation.v1",
+  "scope": {
+    "B": 1,
+    "S": 2,
+    "engram_mask": null,
+    "full_logits": false,
+    "prefill": true,
+    "start_pos": 0,
+    "tokens": [
+      [
+        0,
+        3
+      ]
+    ],
+    "world_size": 1
+  },
+  "source_identity": {
+    "expected": "da6030c7ebf858d615fcdf6b7efb88b5a98f53849b98ffc0815b4eccd467955a",
+    "sample_lines_1285_1292_sha256": "da6030c7ebf858d615fcdf6b7efb88b5a98f53849b98ffc0815b4eccd467955a"
+  },
+  "stop_boundary": {
+    "Transformer_forward_return_executed": false,
+    "main_hidden_concat_executed": false,
+    "next_source_operation": "main_hidden = torch.cat(main_hiddens, dim=-1) if main_hiddens else None",
+    "stopped_after": "target_mlx_sampled_token and next_session_key"
+  }
+}

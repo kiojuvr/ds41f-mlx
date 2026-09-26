@@ -1,0 +1,2311 @@
+{
+  "base_head": "2a0eefcb6d4d0d512759a24672ee383ca06c9db0",
+  "classification": "current official-source-derived bounded prefill-end persistent-state snapshot authority",
+  "completeness_against_Boundary13": {
+    "bidirectional_completeness_PASS": true,
+    "every_snapshotted_field_source_proven_persistent": true,
+    "every_source_persistent_field_classified": true,
+    "source_proven_persistent_fields": {
+      "Attention.compress_kv_cache layers2,8,14,20": "SNAPSHOTTED_VISIBLE_VALUE",
+      "Attention.window_kv_cache layers0-39": "SNAPSHOTTED_VISIBLE_VALUE",
+      "Compressor.kv_state ratio>1 layers2,8,14": "PERSISTENT_BUT_OVERWRITTEN_BEFORE_FIRST_READ",
+      "Compressor.score_state ratio>1 layers2,8,14": "PERSISTENT_BUT_OVERWRITTEN_BEFORE_FIRST_READ",
+      "Indexer.k_cache owner layers2,8,14,20": "SNAPSHOTTED_VISIBLE_VALUE",
+      "NgramHashState.cache": "SNAPSHOTTED_VISIBLE_VALUE",
+      "static weights/config/freqs": "STATIC_CONFIGURATION_OR_WEIGHT"
+    }
+  },
+  "decode_forward_executed": false,
+  "decode_step0_input_constructed": {
+    "input_ids": [
+      [
+        15
+      ]
+    ],
+    "start_pos": 2,
+    "state_identity_same_object": true
+  },
+  "gates": {
+    "Boundary12d checker PASS": true,
+    "Boundary13 canonical spans exact": true,
+    "Boundary13 checker PASS": true,
+    "Compressor partial states classified by first-read semantics": true,
+    "Ngram cache visible prefix exact": true,
+    "Ngram unused capacity excluded": true,
+    "all 40 window KV visible slots captured": true,
+    "authority/source guards PASS": true,
+    "bidirectional completeness against Boundary13 ownership matrix PASS": true,
+    "candidates excluded from persistent state": true,
+    "compressed KV owner topology exact": true,
+    "compressed KV visible prefixes exact": true,
+    "deterministic output token remains 15": true,
+    "full Ngram hash unchanged exact": true,
+    "generation_loop next_input_ids == [[15]]": true,
+    "generation_loop next_start_pos == 2": true,
+    "h/pre_mix/main_hiddens excluded": true,
+    "indexer k_cache owner topology exact": true,
+    "indexer visible prefixes exact": true,
+    "no first-decode forward executed": true,
+    "no meaningless overwrite-before-read bytes promoted": true,
+    "not_omlx_derived == true": true,
+    "persistent-state tensor artifact injection false": true,
+    "post_engram14_h unchanged exact": true,
+    "post_engram1_h unchanged exact": true,
+    "prefill logits unchanged exact": true,
+    "shared_attn call-local values excluded from semantic persistent state": true,
+    "single prefill begins from tokens [[0,3]]": true,
+    "snapshot manifest complete": true,
+    "snapshot manifest has canonical digest": true,
+    "source identities exact": true,
+    "target-runtime RNG partition remains out-of-band": true,
+    "topk_idxs excluded from persistent state": true,
+    "window KV slot placement source-exact": true,
+    "window KV values match current Engram-connected prefill producers": true
+  },
+  "manifest": {
+    "decode_forward_executed": false,
+    "excluded_call_local_fields": {
+      "call_local_values_excluded_from_persistent_snapshot": true,
+      "candidates": "excluded regenerated current-call value",
+      "candidates_in_persistent_state": false,
+      "h": "excluded per-forward-call local",
+      "main_hiddens": "excluded per-forward-call local/return value",
+      "pre_mix": "excluded per-forward-call local",
+      "shared_attn.candidates": {
+        "physical_attribute_may_exist_after_prefill": true,
+        "semantic_cross_call_value_required": false
+      },
+      "shared_attn.compress_kv": {
+        "physical_attribute_may_exist_after_prefill": true,
+        "semantic_cross_call_value_required": false
+      },
+      "shared_attn.index_k": {
+        "physical_attribute_may_exist_after_prefill": true,
+        "semantic_cross_call_value_required": false
+      },
+      "shared_attn.topk_idxs": {
+        "physical_attribute_may_exist_after_prefill": true,
+        "semantic_cross_call_value_required": false
+      },
+      "topk_idxs": "excluded regenerated current-call value",
+      "topk_idxs_in_persistent_state": false
+    },
+    "fixture": {
+      "B": 1,
+      "S": 2,
+      "engram_mask": null,
+      "start_pos": 0,
+      "tokens": [
+        [
+          0,
+          3
+        ]
+      ],
+      "world_size": 1
+    },
+    "generation_loop_control": {
+      "classification": "generation-loop control state, not model cache state",
+      "current_prompt": [
+        [
+          0,
+          3
+        ]
+      ],
+      "next_input_ids": [
+        [
+          15
+        ]
+      ],
+      "next_sequence_length": 1,
+      "next_start_pos": 2,
+      "prefill_output_token": 15,
+      "prefill_sequence_length": 2,
+      "prefill_start_pos": 0,
+      "temperature": 0
+    },
+    "official_model_persistent_state": {
+      "kv_source_compress_kv_cache": {
+        "14": {
+          "allocated_shape": [
+            4,
+            2048,
+            512
+          ],
+          "dtype": "BF16(uint16)",
+          "layer": 14,
+          "owner": "layers.14.attn.compress_kv_cache",
+          "ratio": 2,
+          "source_publication_digest": "e2c045f500a5776d647fc22ebc99faf2bb2f7131ba2e332e256fed3aadfa5edb",
+          "unused_capacity": "zero initialized allocation; positions beyond valid prefix are source-invisible for first decode and excluded from digest",
+          "valid_compressed_index_range": [
+            0,
+            1
+          ],
+          "visible_prefix_digest": "e2c045f500a5776d647fc22ebc99faf2bb2f7131ba2e332e256fed3aadfa5edb",
+          "visible_prefix_shape": [
+            1,
+            1,
+            512
+          ]
+        },
+        "2": {
+          "allocated_shape": [
+            4,
+            2048,
+            512
+          ],
+          "dtype": "BF16(uint16)",
+          "layer": 2,
+          "owner": "layers.2.attn.compress_kv_cache",
+          "ratio": 2,
+          "source_publication_digest": "838e6e26d9889ef668bc6be7d345be10542466bb86a8c656f3aa5665376143ae",
+          "unused_capacity": "zero initialized allocation; positions beyond valid prefix are source-invisible for first decode and excluded from digest",
+          "valid_compressed_index_range": [
+            0,
+            1
+          ],
+          "visible_prefix_digest": "838e6e26d9889ef668bc6be7d345be10542466bb86a8c656f3aa5665376143ae",
+          "visible_prefix_shape": [
+            1,
+            1,
+            512
+          ]
+        },
+        "20": {
+          "allocated_shape": [
+            4,
+            4096,
+            512
+          ],
+          "dtype": "BF16(uint16)",
+          "layer": 20,
+          "owner": "layers.20.attn.compress_kv_cache",
+          "ratio": 1,
+          "source_publication_digest": "17eacfb671aa2a37c302b5e6f097346b7951f7bd3ff23bd0ed5193c00695900d",
+          "unused_capacity": "zero initialized allocation; positions beyond valid prefix are source-invisible for first decode and excluded from digest",
+          "valid_compressed_index_range": [
+            0,
+            2
+          ],
+          "visible_prefix_digest": "17eacfb671aa2a37c302b5e6f097346b7951f7bd3ff23bd0ed5193c00695900d",
+          "visible_prefix_shape": [
+            1,
+            2,
+            512
+          ]
+        },
+        "8": {
+          "allocated_shape": [
+            4,
+            2048,
+            512
+          ],
+          "dtype": "BF16(uint16)",
+          "layer": 8,
+          "owner": "layers.8.attn.compress_kv_cache",
+          "ratio": 2,
+          "source_publication_digest": "29f479332ce47e4429d7c46d4fc1a952efa16f74ca110b1a9a025f032a9e2213",
+          "unused_capacity": "zero initialized allocation; positions beyond valid prefix are source-invisible for first decode and excluded from digest",
+          "valid_compressed_index_range": [
+            0,
+            1
+          ],
+          "visible_prefix_digest": "29f479332ce47e4429d7c46d4fc1a952efa16f74ca110b1a9a025f032a9e2213",
+          "visible_prefix_shape": [
+            1,
+            1,
+            512
+          ]
+        }
+      },
+      "ngram_cache": {
+        "allocated_shape": [
+          4,
+          4096
+        ],
+        "dtype": "int64",
+        "future_decode_step0_dependency": {
+          "history_reads": [
+            "pos1",
+            "pos0",
+            "sequence_beginning_pad"
+          ],
+          "incremental_hash_values_computed": false,
+          "position_2_write": true
+        },
+        "owner": "Transformer.engram_hash.cache / NgramHashState.cache",
+        "unused_capacity": "unspecified for torch.empty allocation; excluded from hash",
+        "valid_absolute_position_range": [
+          0,
+          2
+        ],
+        "valid_batch_range": [
+          0,
+          1
+        ],
+        "visible_slice_digest": "96fb5e4a2704b410bbf097c41e40ff8118ef0bc819ccf4344f31f694d12d536a",
+        "visible_slice_shape": [
+          1,
+          2
+        ],
+        "visible_slice_values": [
+          [
+            0,
+            3
+          ]
+        ]
+      },
+      "owner_indexer_k_cache": {
+        "14": {
+          "allocated_shape": [
+            4,
+            2048,
+            128
+          ],
+          "dtype": "BF16(uint16)",
+          "object_identity": "Transformer.layers[14].attn.indexer",
+          "owner": "layers.14.attn.indexer.k_cache",
+          "owner_layer": 14,
+          "ratio": 2,
+          "source_publication_digest": "82f4b94a61be422936f51e142f786be31a37df14412ac700ef804a98f56f5c85",
+          "unused_capacity": "zero initialized allocation; positions beyond valid prefix are source-invisible for first decode and excluded from digest",
+          "valid_compressed_index_range": [
+            0,
+            1
+          ],
+          "visible_prefix_digest": "82f4b94a61be422936f51e142f786be31a37df14412ac700ef804a98f56f5c85",
+          "visible_prefix_shape": [
+            1,
+            1,
+            128
+          ]
+        },
+        "2": {
+          "allocated_shape": [
+            4,
+            2048,
+            128
+          ],
+          "dtype": "BF16(uint16)",
+          "object_identity": "Transformer.layers[2].attn.indexer",
+          "owner": "layers.2.attn.indexer.k_cache",
+          "owner_layer": 2,
+          "ratio": 2,
+          "source_publication_digest": "0a02a69899257836865cacec8a1a6d0d1bfb590cf07b8a3f602300e02ee7875d",
+          "unused_capacity": "zero initialized allocation; positions beyond valid prefix are source-invisible for first decode and excluded from digest",
+          "valid_compressed_index_range": [
+            0,
+            1
+          ],
+          "visible_prefix_digest": "0a02a69899257836865cacec8a1a6d0d1bfb590cf07b8a3f602300e02ee7875d",
+          "visible_prefix_shape": [
+            1,
+            1,
+            128
+          ]
+        },
+        "20": {
+          "allocated_shape": [
+            4,
+            4096,
+            128
+          ],
+          "dtype": "BF16(uint16)",
+          "object_identity": "Transformer.layers[20].attn.indexer",
+          "owner": "layers.20.attn.indexer.k_cache",
+          "owner_layer": 20,
+          "ratio": 1,
+          "source_publication_digest": "a2ec36dab41f04ef5f7ab63fabcaa823a22232b9a2fdb3d28d990dfa75e4a896",
+          "unused_capacity": "zero initialized allocation; positions beyond valid prefix are source-invisible for first decode and excluded from digest",
+          "valid_compressed_index_range": [
+            0,
+            2
+          ],
+          "visible_prefix_digest": "a2ec36dab41f04ef5f7ab63fabcaa823a22232b9a2fdb3d28d990dfa75e4a896",
+          "visible_prefix_shape": [
+            1,
+            2,
+            128
+          ]
+        },
+        "8": {
+          "allocated_shape": [
+            4,
+            2048,
+            128
+          ],
+          "dtype": "BF16(uint16)",
+          "object_identity": "Transformer.layers[8].attn.indexer",
+          "owner": "layers.8.attn.indexer.k_cache",
+          "owner_layer": 8,
+          "ratio": 2,
+          "source_publication_digest": "cd1c51ca26f6404bde0eb2230908af462e9440a923885236f35ba92df6542d87",
+          "unused_capacity": "zero initialized allocation; positions beyond valid prefix are source-invisible for first decode and excluded from digest",
+          "valid_compressed_index_range": [
+            0,
+            1
+          ],
+          "visible_prefix_digest": "cd1c51ca26f6404bde0eb2230908af462e9440a923885236f35ba92df6542d87",
+          "visible_prefix_shape": [
+            1,
+            1,
+            128
+          ]
+        }
+      },
+      "per_layer_window_kv_cache": {
+        "0": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 0,
+          "owner": "layers.0.attn.window_kv_cache",
+          "producer_window_kv_digest": "11432f637842b3698f05ce050c563a38130fe9ae6ba822755ca0e8eeb1e50592",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "11432f637842b3698f05ce050c563a38130fe9ae6ba822755ca0e8eeb1e50592",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "1": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 1,
+          "owner": "layers.1.attn.window_kv_cache",
+          "producer_window_kv_digest": "430b99e5512788d19936aa6f5d5aea7eed31514de83b5a679c8a7b5193472112",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "430b99e5512788d19936aa6f5d5aea7eed31514de83b5a679c8a7b5193472112",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "10": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 10,
+          "owner": "layers.10.attn.window_kv_cache",
+          "producer_window_kv_digest": "05fd1b489e69223364f2fb1152401e2d19c802b3d064b5708d0464ee10b9ad32",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "05fd1b489e69223364f2fb1152401e2d19c802b3d064b5708d0464ee10b9ad32",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "11": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 11,
+          "owner": "layers.11.attn.window_kv_cache",
+          "producer_window_kv_digest": "5c72cdc99f62c4cbf1af26828a0b480932deed265fa8089c5fcee0f4ce37e7c5",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "5c72cdc99f62c4cbf1af26828a0b480932deed265fa8089c5fcee0f4ce37e7c5",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "12": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 12,
+          "owner": "layers.12.attn.window_kv_cache",
+          "producer_window_kv_digest": "c29cfc6f0f3accd249cbbe9df46e4712bc67966d3cb6170cf2c6b4e0eaec2c9c",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "c29cfc6f0f3accd249cbbe9df46e4712bc67966d3cb6170cf2c6b4e0eaec2c9c",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "13": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 13,
+          "owner": "layers.13.attn.window_kv_cache",
+          "producer_window_kv_digest": "ee4a7c75b37190a32b367af71a58cdc360cd7ebe4b9f675e65b23b621b89c707",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "ee4a7c75b37190a32b367af71a58cdc360cd7ebe4b9f675e65b23b621b89c707",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "14": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 14,
+          "owner": "layers.14.attn.window_kv_cache",
+          "producer_window_kv_digest": "91b0778f7eca0dc0022d27e812e093b553fd323eae9f9f3bab82edf3539362b0",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "91b0778f7eca0dc0022d27e812e093b553fd323eae9f9f3bab82edf3539362b0",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "15": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 15,
+          "owner": "layers.15.attn.window_kv_cache",
+          "producer_window_kv_digest": "82b4db2bfdf32bbc11118b6fd6edaffb518f1b165a7871829ba3196f3490f663",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "82b4db2bfdf32bbc11118b6fd6edaffb518f1b165a7871829ba3196f3490f663",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "16": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 16,
+          "owner": "layers.16.attn.window_kv_cache",
+          "producer_window_kv_digest": "4fdc53151dd6dc4a9eac56f62f4537a7b32c5b53b130dd7190b6adff19bbd31b",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "4fdc53151dd6dc4a9eac56f62f4537a7b32c5b53b130dd7190b6adff19bbd31b",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "17": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 17,
+          "owner": "layers.17.attn.window_kv_cache",
+          "producer_window_kv_digest": "161267c7789399f51ee22b5c02bb044c1003783544b257e00917ad3c81dbe396",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "161267c7789399f51ee22b5c02bb044c1003783544b257e00917ad3c81dbe396",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "18": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 18,
+          "owner": "layers.18.attn.window_kv_cache",
+          "producer_window_kv_digest": "7fdff19f1ddd48c3d5f629cf7289452ce17bb7b79d7c3608a79d2976f7b4d191",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "7fdff19f1ddd48c3d5f629cf7289452ce17bb7b79d7c3608a79d2976f7b4d191",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "19": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 19,
+          "owner": "layers.19.attn.window_kv_cache",
+          "producer_window_kv_digest": "bec5763f1f8cc669e7471240572875ecb49da3f4f750df62632fec18225e4cb9",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "bec5763f1f8cc669e7471240572875ecb49da3f4f750df62632fec18225e4cb9",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "2": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 2,
+          "owner": "layers.2.attn.window_kv_cache",
+          "producer_window_kv_digest": "cef55da199aee4fc91782d07dbddbeb6badf17749c824ab3e3cde6213a608b4e",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "cef55da199aee4fc91782d07dbddbeb6badf17749c824ab3e3cde6213a608b4e",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "20": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 20,
+          "owner": "layers.20.attn.window_kv_cache",
+          "producer_window_kv_digest": "3cc6b219444f96dd4dd37b499ba0086749dffba1a6d0e4c6428383ce6c02d913",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "3cc6b219444f96dd4dd37b499ba0086749dffba1a6d0e4c6428383ce6c02d913",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "21": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 21,
+          "owner": "layers.21.attn.window_kv_cache",
+          "producer_window_kv_digest": "88f1481d98401aa5a54ee28da1cce203532e4e3ab0e1468147ba414339b7df2a",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "88f1481d98401aa5a54ee28da1cce203532e4e3ab0e1468147ba414339b7df2a",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "22": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 22,
+          "owner": "layers.22.attn.window_kv_cache",
+          "producer_window_kv_digest": "8f476268b1cfe337184a611f2f1a5b94b43a58ef1e06861b957289dbd2f80e3f",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "8f476268b1cfe337184a611f2f1a5b94b43a58ef1e06861b957289dbd2f80e3f",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "23": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 23,
+          "owner": "layers.23.attn.window_kv_cache",
+          "producer_window_kv_digest": "ee6de136394352af0d65393fcc2d1adc444576c36affd779ef9c8f0d123621b1",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "ee6de136394352af0d65393fcc2d1adc444576c36affd779ef9c8f0d123621b1",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "24": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 24,
+          "owner": "layers.24.attn.window_kv_cache",
+          "producer_window_kv_digest": "85fb6cd1538d0220e396be2af1d180a0f736591a3c0727d2078e78bc3ddac159",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "85fb6cd1538d0220e396be2af1d180a0f736591a3c0727d2078e78bc3ddac159",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "25": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 25,
+          "owner": "layers.25.attn.window_kv_cache",
+          "producer_window_kv_digest": "3151dbaf32826646babf74f2d316d287b436e00a74d694658ef6f7407f4b2902",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "3151dbaf32826646babf74f2d316d287b436e00a74d694658ef6f7407f4b2902",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "26": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 26,
+          "owner": "layers.26.attn.window_kv_cache",
+          "producer_window_kv_digest": "8f97a3b8b61b84ac246a7df717241ffcfdf7f590eb5f33b4b923dc06adf2bfe5",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "8f97a3b8b61b84ac246a7df717241ffcfdf7f590eb5f33b4b923dc06adf2bfe5",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "27": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 27,
+          "owner": "layers.27.attn.window_kv_cache",
+          "producer_window_kv_digest": "53e699c58c2acb61ed27fa418d5cd2393668cad197d18401444db5fb11786c5c",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "53e699c58c2acb61ed27fa418d5cd2393668cad197d18401444db5fb11786c5c",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "28": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 28,
+          "owner": "layers.28.attn.window_kv_cache",
+          "producer_window_kv_digest": "91259ad6a4be7342827f19399f58aea67a5f0f6086ba28a503082f92fc15616a",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "91259ad6a4be7342827f19399f58aea67a5f0f6086ba28a503082f92fc15616a",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "29": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 29,
+          "owner": "layers.29.attn.window_kv_cache",
+          "producer_window_kv_digest": "f647e0960bd408fd574889531ac2766b368022a160e8b2e3ee139373e14a6bd1",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "f647e0960bd408fd574889531ac2766b368022a160e8b2e3ee139373e14a6bd1",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "3": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 3,
+          "owner": "layers.3.attn.window_kv_cache",
+          "producer_window_kv_digest": "06dc64294b0128af4023d1ddf42485b636ef0526fcf9864326bd951511eb77c7",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "06dc64294b0128af4023d1ddf42485b636ef0526fcf9864326bd951511eb77c7",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "30": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 30,
+          "owner": "layers.30.attn.window_kv_cache",
+          "producer_window_kv_digest": "9f85a223fbd44bd62bc094201aae3ae13012ac9c2ad6cd6e548a18661a1cd637",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "9f85a223fbd44bd62bc094201aae3ae13012ac9c2ad6cd6e548a18661a1cd637",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "31": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 31,
+          "owner": "layers.31.attn.window_kv_cache",
+          "producer_window_kv_digest": "8d6bee822bddd62b03c64258d5a25c8724f9f10f65a708fa7a575298dc8490ff",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "8d6bee822bddd62b03c64258d5a25c8724f9f10f65a708fa7a575298dc8490ff",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "32": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 32,
+          "owner": "layers.32.attn.window_kv_cache",
+          "producer_window_kv_digest": "2f064ec7a3cbc0c71818cd30ebe8e2290957f878803185407c7472bdc06cbdf3",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "2f064ec7a3cbc0c71818cd30ebe8e2290957f878803185407c7472bdc06cbdf3",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "33": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 33,
+          "owner": "layers.33.attn.window_kv_cache",
+          "producer_window_kv_digest": "e029c9054ccee6cd56238ba53ed016dbee7b0b8f71cdbe3375f3e926d8b6693c",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "e029c9054ccee6cd56238ba53ed016dbee7b0b8f71cdbe3375f3e926d8b6693c",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "34": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 34,
+          "owner": "layers.34.attn.window_kv_cache",
+          "producer_window_kv_digest": "433517a7bf17a9043e2ec06f38a7c00c5cf2cebc54c3167c0b4834c835316108",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "433517a7bf17a9043e2ec06f38a7c00c5cf2cebc54c3167c0b4834c835316108",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "35": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 35,
+          "owner": "layers.35.attn.window_kv_cache",
+          "producer_window_kv_digest": "c1969931737eb020e8d1cc8f339f215481047892300990ea97bdfca462fbd33d",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "c1969931737eb020e8d1cc8f339f215481047892300990ea97bdfca462fbd33d",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "36": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 36,
+          "owner": "layers.36.attn.window_kv_cache",
+          "producer_window_kv_digest": "f880366fab659ab8cdc4d7c52d31497b9dab6b8aeeca5334a19a3865082ed767",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "f880366fab659ab8cdc4d7c52d31497b9dab6b8aeeca5334a19a3865082ed767",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "37": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 37,
+          "owner": "layers.37.attn.window_kv_cache",
+          "producer_window_kv_digest": "17d207d962223776ddac0897079190491c1c598245d80f56f448096292abb6f6",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "17d207d962223776ddac0897079190491c1c598245d80f56f448096292abb6f6",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "38": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 38,
+          "owner": "layers.38.attn.window_kv_cache",
+          "producer_window_kv_digest": "ec6181438f6171c233c0dc82a4a082e9cf6529f104a1f2f9bb126a8d5e21d67b",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "ec6181438f6171c233c0dc82a4a082e9cf6529f104a1f2f9bb126a8d5e21d67b",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "39": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 39,
+          "owner": "layers.39.attn.window_kv_cache",
+          "producer_window_kv_digest": "970aa899395c06f3bdc8a23e4f73dc74e8d21576db0ec809816ac92fe6009e0c",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "970aa899395c06f3bdc8a23e4f73dc74e8d21576db0ec809816ac92fe6009e0c",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "4": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 4,
+          "owner": "layers.4.attn.window_kv_cache",
+          "producer_window_kv_digest": "985cda4016ce178e23001b6b451e2fd2c82ed1cfa02eb53b64015e874509abe4",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "985cda4016ce178e23001b6b451e2fd2c82ed1cfa02eb53b64015e874509abe4",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "5": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 5,
+          "owner": "layers.5.attn.window_kv_cache",
+          "producer_window_kv_digest": "3fa7b26f2a459c473821d99dc4d6cbdf703dbc3b206cc752a3ea5007c0d3bf2f",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "3fa7b26f2a459c473821d99dc4d6cbdf703dbc3b206cc752a3ea5007c0d3bf2f",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "6": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 6,
+          "owner": "layers.6.attn.window_kv_cache",
+          "producer_window_kv_digest": "9dee35c08ffe83bbb83b17d00404b9b6112fae925d1dfe399f089e8a7971340d",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "9dee35c08ffe83bbb83b17d00404b9b6112fae925d1dfe399f089e8a7971340d",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "7": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 7,
+          "owner": "layers.7.attn.window_kv_cache",
+          "producer_window_kv_digest": "34a56ea257d79c6df49038db2461cc4a09e5452831fafec47ef291fd217b58ac",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "34a56ea257d79c6df49038db2461cc4a09e5452831fafec47ef291fd217b58ac",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "8": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 8,
+          "owner": "layers.8.attn.window_kv_cache",
+          "producer_window_kv_digest": "70d9635ae8dbe3c82b619f2936f0d03de4cd9774301026b4cacf9c7a96fea6d3",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "70d9635ae8dbe3c82b619f2936f0d03de4cd9774301026b4cacf9c7a96fea6d3",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        },
+        "9": {
+          "allocated_shape": [
+            4,
+            128,
+            512
+          ],
+          "cache_visible_slots_equal_producer_window_kv": true,
+          "dtype": "BF16(uint16)",
+          "layer": 9,
+          "owner": "layers.9.attn.window_kv_cache",
+          "producer_window_kv_digest": "0383eda342343ec9cd0c9e5a2d93a3c1ccf48fac11d42b94aff285d8dec679ca",
+          "ring_slots": [
+            0,
+            1
+          ],
+          "unused_capacity": "zero initialized at model construction but source-invisible/stale beyond visible slots; excluded from digest",
+          "valid_absolute_positions": [
+            0,
+            1
+          ],
+          "visible_region": {
+            "batch": [
+              0,
+              1
+            ],
+            "slots": [
+              0,
+              2
+            ],
+            "source_absolute_positions": [
+              0,
+              2
+            ]
+          },
+          "visible_slice_digest": "0383eda342343ec9cd0c9e5a2d93a3c1ccf48fac11d42b94aff285d8dec679ca",
+          "visible_slice_shape": [
+            1,
+            2,
+            512
+          ],
+          "window_size": 128
+        }
+      },
+      "ratio_gt1_compressor_partial_state": {
+        "14": {
+          "allocated_shape": [
+            4,
+            2,
+            512
+          ],
+          "classification": "persistent allocation; no prefill-end bytes are promoted because decode step0 overwrites slot0 before completing/reading a new ratio2 group",
+          "decode_step0_slot": 2,
+          "decode_step0_slot_mod_ratio": 0,
+          "kv_state_dtype": "float32",
+          "owner": "layers.14.attn.compressor.kv_state/score_state",
+          "prefill_remainder": 0,
+          "ratio": 2,
+          "read_by_decode_step0_bytes": 0,
+          "score_state_dtype": "float32",
+          "slot_classification": {
+            "0": "OVERWRITTEN_BEFORE_READ",
+            "1": "UNOBSERVED"
+          },
+          "visible_digest_recorded": false
+        },
+        "2": {
+          "allocated_shape": [
+            4,
+            2,
+            512
+          ],
+          "classification": "persistent allocation; no prefill-end bytes are promoted because decode step0 overwrites slot0 before completing/reading a new ratio2 group",
+          "decode_step0_slot": 2,
+          "decode_step0_slot_mod_ratio": 0,
+          "kv_state_dtype": "float32",
+          "owner": "layers.2.attn.compressor.kv_state/score_state",
+          "prefill_remainder": 0,
+          "ratio": 2,
+          "read_by_decode_step0_bytes": 0,
+          "score_state_dtype": "float32",
+          "slot_classification": {
+            "0": "OVERWRITTEN_BEFORE_READ",
+            "1": "UNOBSERVED"
+          },
+          "visible_digest_recorded": false
+        },
+        "8": {
+          "allocated_shape": [
+            4,
+            2,
+            512
+          ],
+          "classification": "persistent allocation; no prefill-end bytes are promoted because decode step0 overwrites slot0 before completing/reading a new ratio2 group",
+          "decode_step0_slot": 2,
+          "decode_step0_slot_mod_ratio": 0,
+          "kv_state_dtype": "float32",
+          "owner": "layers.8.attn.compressor.kv_state/score_state",
+          "prefill_remainder": 0,
+          "ratio": 2,
+          "read_by_decode_step0_bytes": 0,
+          "score_state_dtype": "float32",
+          "slot_classification": {
+            "0": "OVERWRITTEN_BEFORE_READ",
+            "1": "UNOBSERVED"
+          },
+          "visible_digest_recorded": false
+        }
+      }
+    },
+    "persistent_state_tensor_artifact_injection": false,
+    "schema": "ds41f.boundary13a.prefill-end-persistent-state-manifest.v1",
+    "snapshot_manifest_digest": "311d0b3f02dc0bf6b61a8a19a73ef9ff325979992656a1cafcb5da3b12269301",
+    "source_identities": {
+      "Boundary13_spans": {
+        "Attention": {
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "line_end": 788,
+          "line_start": 613,
+          "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/model.py",
+          "relative_path": "inference/model.py",
+          "span_sha256": "6922d64f9accc5af89f8e5f23c21870beaac5d2a8793ab9ca09dfb2599021b82"
+        },
+        "Compressor": {
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "line_end": 486,
+          "line_start": 429,
+          "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/model.py",
+          "relative_path": "inference/model.py",
+          "span_sha256": "f8f76a2dad907c2468a82fb0dc07550cbc696fbc17ede4c24ad9a5cf58c3410c"
+        },
+        "Indexer": {
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "line_end": 581,
+          "line_start": 488,
+          "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/model.py",
+          "relative_path": "inference/model.py",
+          "span_sha256": "e59d197a495bb2af96d44190ad4b8664d24f7460f36db1ea24b29807b050ac07"
+        },
+        "NgramHashState": {
+          "file_sha256": "11f35ecbead8150c35aa002b3d180ef290b05a25afe883a11884f94d476d3897",
+          "hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "line_end": 184,
+          "line_start": 118,
+          "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/engram.py",
+          "relative_path": "inference/engram.py",
+          "span_sha256": "4948807de7a25944b0c3dfaf09ea0d8fc9c9e77cc8a9efaddc2226a3e5413bbe"
+        },
+        "SharedAttentionRuntime": {
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "line_end": 1179,
+          "line_start": 1166,
+          "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/model.py",
+          "relative_path": "inference/model.py",
+          "span_sha256": "4e20039aaeb433f9d3ecbd569bc3da0bdee45e09f5f5eac2cb541f6ab86b4748"
+        },
+        "Transformer_forward": {
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "line_end": 1273,
+          "line_start": 1183,
+          "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/model.py",
+          "relative_path": "inference/model.py",
+          "span_sha256": "3503e2aca986abba129ded558eb3db80d5045900f0c2cbe78cec768827f5c02c"
+        },
+        "generate_loop": {
+          "file_sha256": "8668d67f7d108e32b90d50cb0d8606889ceb2219bfe95741d84e22f70768e9f0",
+          "hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "line_end": 70,
+          "line_start": 55,
+          "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/generate.py",
+          "relative_path": "inference/generate.py",
+          "span_sha256": "109c68796bf2265de649cd8a7a10953d920dc79a0985002d1346a4870a402425"
+        }
+      },
+      "config_json": {
+        "bytes": 1982,
+        "lines": 66,
+        "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/config.json",
+        "sha256": "2e84f45cf1dac8c7fcbb200e96667d4b913275690668ed496f24c7747207a809"
+      },
+      "engram_py": {
+        "bytes": 8138,
+        "lines": 184,
+        "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/engram.py",
+        "sha256": "11f35ecbead8150c35aa002b3d180ef290b05a25afe883a11884f94d476d3897"
+      },
+      "generate_py": {
+        "bytes": 8722,
+        "lines": 218,
+        "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/generate.py",
+        "sha256": "8668d67f7d108e32b90d50cb0d8606889ceb2219bfe95741d84e22f70768e9f0"
+      },
+      "model_py": {
+        "bytes": 61549,
+        "lines": 1309,
+        "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/model.py",
+        "sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65"
+      }
+    },
+    "target_runtime_session_state": {
+      "classification": "out-of-band target-runtime session state",
+      "new_rng_draw_generated": false,
+      "not_a_Transformer_forward_return_member": true,
+      "not_part_of_deterministic_decode_fixture_requirements": true,
+      "not_part_of_official_model_persistent_state": true,
+      "stochastic_boundary12e_next_session_key_digest": "175f65a6ffece3dbac3719d14f5ab4678412d4187c967463dae2fc4688bc50f4"
+    }
+  },
+  "next_boundary": "Boundary13b: NgramHashState first incremental update",
+  "non_claims": [
+    "no first-decode numerical execution",
+    "no incremental Ngram hash authority",
+    "no decode window KV update authority",
+    "no decode compressed/index authority",
+    "no decode Engram authority",
+    "no first-decode logits authority",
+    "no first-decode sampled-token authority",
+    "no decode main_hidden authority",
+    "no wraparound/capacity qualification",
+    "no long-context correctness",
+    "no world_size>1 correctness",
+    "no production/performance qualification"
+  ],
+  "not_omlx_derived": true,
+  "ok": true,
+  "prefill_call_local_diagnostics": {
+    "final_shared_attn": {
+      "candidates": {
+        "digest": "27ecd0a598e76f8a2fd264d427df0a119903e8eae384e478902541756f089dd1",
+        "dtype": "bool",
+        "shape": [
+          1,
+          2,
+          2
+        ]
+      },
+      "compress_kv": {
+        "digest": "17eacfb671aa2a37c302b5e6f097346b7951f7bd3ff23bd0ed5193c00695900d",
+        "dtype": "uint16",
+        "shape": [
+          1,
+          2,
+          512
+        ]
+      },
+      "index_k": {
+        "digest": "a2ec36dab41f04ef5f7ab63fabcaa823a22232b9a2fdb3d28d990dfa75e4a896",
+        "dtype": "uint16",
+        "shape": [
+          1,
+          2,
+          128
+        ]
+      },
+      "topk_idxs": {
+        "digest": "f177d4feea916de5753fda9e1abf2c19559139141e361c81b77ec24d783a306f",
+        "dtype": "int32",
+        "shape": [
+          1,
+          2,
+          2
+        ]
+      }
+    }
+  },
+  "safe_claim": "For the bounded Engram-connected [[0,3]] prefill fixture, Boundary13a constructs a source-lifetime-equivalent native persistent-state container from the same connected execution that produces the current prefill logits. Every official-model state field required across Transformer.forward calls is either represented by its source-visible prefill-end value or explicitly classified as persistent storage whose previous bytes are overwritten before the first decode read. Per-call h, pre_mix, main_hiddens, candidates, topk indices, and shared-attention handoff values are not promoted into cross-call semantic state. The resulting bounded snapshot is sufficient to define, but does not execute, the deterministic first incremental input [[15]] at start_pos=2.",
+  "schema": "ds41f.native-prefill-end-persistent-state-validation.v1",
+  "scope": {
+    "B": 1,
+    "S": 2,
+    "engram_mask": null,
+    "start_pos": 0,
+    "tokens": [
+      [
+        0,
+        3
+      ]
+    ],
+    "world_size": 1
+  },
+  "snapshot_manifest_digest": "311d0b3f02dc0bf6b61a8a19a73ef9ff325979992656a1cafcb5da3b12269301",
+  "state_container_structure": {
+    "class": "NativeDecodeSessionState",
+    "partitions": [
+      "official_model_persistent_state",
+      "generation_loop_control",
+      "target_runtime_session_state"
+    ],
+    "validation_only_not_production_api": true
+  },
+  "upstream_regressions": {
+    "Ngram_cache_visible_prefix": "96fb5e4a2704b410bbf097c41e40ff8118ef0bc819ccf4344f31f694d12d536a",
+    "compress_kv": {
+      "14": "e2c045f500a5776d647fc22ebc99faf2bb2f7131ba2e332e256fed3aadfa5edb",
+      "2": "838e6e26d9889ef668bc6be7d345be10542466bb86a8c656f3aa5665376143ae",
+      "20": "17eacfb671aa2a37c302b5e6f097346b7951f7bd3ff23bd0ed5193c00695900d",
+      "8": "29f479332ce47e4429d7c46d4fc1a952efa16f74ca110b1a9a025f032a9e2213"
+    },
+    "final_logits": "7be45bd57cf7b2763a9f91e6a070c285e5b7d02a58953f0f1b5634779584b6fd",
+    "full_Ngram_hash": "f5a64799492bea90bc6d87f0cb8a67bb983441e1cd9c12ec2e7b8df6cbcfee1d",
+    "index_k": {
+      "14": "82f4b94a61be422936f51e142f786be31a37df14412ac700ef804a98f56f5c85",
+      "2": "0a02a69899257836865cacec8a1a6d0d1bfb590cf07b8a3f602300e02ee7875d",
+      "20": "a2ec36dab41f04ef5f7ab63fabcaa823a22232b9a2fdb3d28d990dfa75e4a896",
+      "8": "cd1c51ca26f6404bde0eb2230908af462e9440a923885236f35ba92df6542d87"
+    },
+    "output_ids": [
+      15
+    ],
+    "post_engram14_h": "ed3756f2dbe69901a166f86358f2245c97c37d6de75a5cb2dd88fffeb170cedd",
+    "post_engram1_h": "3d4e54860845a8cb3269a75fba39f85b3bedf31e1a30edb9bc3cc801ceb435e9"
+  }
+}

@@ -1,0 +1,185 @@
+{
+  "authority": {
+    "native_validation_provider": "Python-orchestrated arithmetic over actual checkpoint tensors",
+    "official_checkpoint_raw_bits": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+    "reference_fixture": "artifacts/moe-shared-merge-official-reference-fixture.json"
+  },
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "official_reference_derived_native_validation",
+  "comparison": {
+    "boundary6c1_routed_sum": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "final_moe_output": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "merge_before_final_cast": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "shared_activation_silu": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "shared_expert_output": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "shared_gated_product": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "shared_gated_product_bf16": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "shared_w1_projection": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "shared_w3_projection": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "tiny_final": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "tiny_merge": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    }
+  },
+  "digests": {
+    "final_moe_output_sha256": "5b5ff9f14e1617992b2d3baf973bc9f3dc87258053ff90719bbe6d2e0fdff5cc",
+    "reference_final_moe_output_sha256": "5b5ff9f14e1617992b2d3baf973bc9f3dc87258053ff90719bbe6d2e0fdff5cc",
+    "reference_shared_expert_output_sha256": "7591e065f9c1374b2dad3c75cbcf7c23e4895e2d8e989fc7863cf89235f44644",
+    "shared_expert_output_sha256": "7591e065f9c1374b2dad3c75cbcf7c23e4895e2d8e989fc7863cf89235f44644"
+  },
+  "ds4_authority": {
+    "commit": "0aaea5a238fb41a35106a551e73c8409dfb751ac",
+    "remote": "https://github.com/antirez/ds4.git"
+  },
+  "gates": {
+    "actual_shared_expert_tensor_provenance_recorded": true,
+    "boundary6c1_routed_sum_digest_verified": true,
+    "final_moe_output_pass": true,
+    "full_model_semantics_not_claimed": true,
+    "independent_merge_fixture_pass": true,
+    "merge_dtype_order_explicit": true,
+    "shared_expert_primitive_pass": true,
+    "shared_expert_source_path_reviewed": true
+  },
+  "non_claims": [
+    "no FFN hc_pre",
+    "no ffn_norm",
+    "no FFN hc_post",
+    "no returned ffn_pre",
+    "no full Block",
+    "no layer-to-layer carry",
+    "no logits/full model",
+    "no performance claim",
+    "no expert-parallel behavior beyond reviewed world_size=1"
+  ],
+  "not_omlx_derived": true,
+  "official_reference": {
+    "model_py": {
+      "file": "inference/model.py",
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "functions": [
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "MoE.__init__",
+          "reviewed_shared_expert": "assert n_shared_experts == 1; self.shared_experts = Expert(args.dim,args.moe_inter_dim,swiglu_limit=args.swiglu_limit)",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            854,
+            881
+          ],
+          "source_sha256": "9ae12758fc7a16b86e0fa772a10bd8f53e2e576fa26e61dc3416fbddfa937781"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "MoE.forward",
+          "reviewed_merge": "after routed y and optional all_reduce, y += self.shared_experts(x); return y.type_as(x).view(shape)",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            883,
+            904
+          ],
+          "source_sha256": "602da77af23beb068ac04beab5b226c834391da5b9edb359cdd7099506f6b5ec"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Expert",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            830,
+            851
+          ],
+          "source_sha256": "1822da2bf8c5d6341d7fc73ab01de32fa9be032843ef746801cfc058a97aabef"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Expert.forward",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            843,
+            851
+          ],
+          "source_sha256": "b2d6d5742033c7b3b8b1202fe153269614fa8492b8ecb921405b8cfbf1097f51"
+        }
+      ]
+    }
+  },
+  "ok": true,
+  "operation_contract": {
+    "merge": "routed y is FP32; shared_experts(x) returns BF16; y += shared promotes shared BF16 to FP32; final return casts y.type_as(x) to BF16 and reshapes to original shape",
+    "predeclared_tolerance": {
+      "bf16_max_ulp_lte": 1,
+      "f32_max_abs_lte": 0.001
+    },
+    "shared_forward": "same Expert.forward source path, but shared_experts tensors are FP8 Linear weights/scales from checkpoint, not routed FP4 expert tensors"
+  },
+  "purpose": "validate Boundary 6c2 shared expert + routed/shared merge -> full MoE output; stop before FFN HC integration",
+  "reference_fixture": "artifacts/moe-shared-merge-official-reference-fixture.json",
+  "schema": "ds41f.native-moe-shared-merge-validation.v1",
+  "semantic_status": {
+    "actual_shared_expert_tensor_provenance_recorded": true,
+    "boundary6c1_routed_sum_digest_verified": true,
+    "final_moe_output_validated": true,
+    "independent_merge_fixture_validated": true,
+    "model_semantics_validated": false,
+    "routed_shared_merge_dtype_order_validated": true,
+    "shared_expert_primitive_validated": true,
+    "shared_expert_source_path_reviewed": true
+  }
+}

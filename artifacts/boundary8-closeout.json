@@ -1,0 +1,357 @@
+{
+  "all_block_carry_summary": {
+    "adjacent_seams": "0->1 ... 38->39",
+    "all_pre_mix_carries_exact": true,
+    "all_x_carries_exact": true,
+    "count": 39,
+    "does_not_support": "full Transformer output connected",
+    "supports": "all 40 Blocks are connected in one bounded execution"
+  },
+  "authority_chain": [
+    {
+      "artifact": "artifacts/m0/source-identity.json",
+      "boundary": "0",
+      "classification": "foundation/source identity",
+      "does_not_prove": "Block or Transformer execution",
+      "proves": "source and checkpoint provenance baseline",
+      "scope": "official local source/checkpoint identity"
+    },
+    {
+      "artifact": "artifacts/attention-q-prelude-official-reference-fixture.json; artifacts/window-kv-prelude-official-reference-fixture.json; artifacts/sparse-attn-official-reference-fixture.json; artifacts/attention-output-projection-official-reference-fixture.json",
+      "boundary": "1-4",
+      "classification": "primitive Attention semantic authorities",
+      "does_not_prove": "connected Block or multi-layer execution",
+      "proves": "Q prelude, window KV, sparse attention, output projection primitive semantics",
+      "scope": "bounded primitive fixtures"
+    },
+    {
+      "artifact": "artifacts/boundary5-closeout.json",
+      "boundary": "5",
+      "classification": "compressed-state semantic authorities",
+      "does_not_prove": "connected Transformer execution",
+      "proves": "compressed-attention state primitive semantics",
+      "scope": "compressed KV / Indexer / candidate / compressed sparse attention"
+    },
+    {
+      "artifact": "artifacts/boundary6-closeout.json",
+      "boundary": "6",
+      "classification": "HC + MoE + single Block semantics",
+      "does_not_prove": "Transformer entry or all-layer carry",
+      "proves": "Hyper-Connections, MoE, and layer24 Block bounded semantics",
+      "scope": "single connected Block and HC/MoE primitives"
+    },
+    {
+      "artifact": "artifacts/native-layer0-25-transformer-entry-validation.json; artifacts/boundary7-closeout.json",
+      "boundary": "7g/7-closeout",
+      "classification": "closed subscope authority 0..25",
+      "does_not_prove": "layers26+, all Blocks, post-loop, final norm, logits",
+      "proves": "Transformer entry through Blocks0..25 connected dataflow",
+      "scope": "tokens [[0,3]], B=1,S=2,start_pos=0,prefill,world_size=1, Transformer entry through Blocks0..25"
+    },
+    {
+      "artifact": "artifacts/native-layer0-28-connected-prefill-validation.json",
+      "boundary": "8a",
+      "classification": "closed subscope/regression authority 0..28",
+      "does_not_prove": "Blocks29+, all Blocks, post-loop, final norm, logits",
+      "proves": "post-layer25 consumer region and topk@28 source publication connected",
+      "scope": "Transformer entry through Blocks0..28"
+    },
+    {
+      "artifact": "artifacts/native-layer0-32-connected-prefill-validation.json",
+      "boundary": "8b",
+      "classification": "closed subscope/regression authority 0..32",
+      "does_not_prove": "Blocks33+, all Blocks, post-loop, final norm, logits",
+      "proves": "topk@28 consumers and topk@32 source publication connected",
+      "scope": "Transformer entry through Blocks0..32"
+    },
+    {
+      "artifact": "artifacts/native-layer0-36-connected-prefill-validation.json",
+      "boundary": "8c",
+      "classification": "closed subscope/regression authority 0..36",
+      "does_not_prove": "Blocks37-39, all Blocks, post-loop, final norm, logits",
+      "proves": "topk@32 consumers and final configured index source topk@36 connected",
+      "scope": "Transformer entry through Blocks0..36"
+    },
+    {
+      "artifact": "artifacts/native-layer0-39-all-blocks-connected-prefill-validation.json",
+      "boundary": "8d",
+      "classification": "current integrated numerical authority 0..39 all Blocks",
+      "does_not_prove": "Transformer post-loop HC collapse, final RMSNorm, ParallelHead/logits, sampling, full Transformer output",
+      "proves": "all 40 Blocks connected in one bounded prefill execution; topk@36 consumers; final Block boundary",
+      "scope": "Transformer entry through Blocks0..39; stop after Block39 return before post-loop HC collapse"
+    }
+  ],
+  "authority_contamination_guard": {
+    "not_omlx_derived": true,
+    "policy": "Boundary8d is the current integrated numerical authority for Transformer entry -> Blocks0..39. Boundary8a-8c remain exact subscope/regression evidence. Boundary7g remains exact subscope evidence through Block25. No older regional fixture may override Boundary8d outputs for the current identical token fixture and execution scope. Semantic contracts remain reusable only within reviewed authority scopes. oMLX / old deepseek-v41-flash-mlx evidence must not enter semantic correctness authority chain."
+  },
+  "boundary": "8",
+  "checks": {
+    "all_39_pre_mix_carries_exact": true,
+    "all_39_x_carries_exact": true,
+    "all_40_blocks_scope_recorded": true,
+    "authority_contamination_guard_recorded": true,
+    "boundary0_7_dependencies_recorded": true,
+    "boundary8a_d_authority_chain_recorded": true,
+    "boundary8c_regression_pass": true,
+    "boundary8d_fixed_current_integrated_numerical_authority": true,
+    "boundary8d_ok": true,
+    "closed_open_claim_matrices_recorded": true,
+    "final_block_digests_recorded": true,
+    "late_shared_state_lifecycle_recorded": true,
+    "not_omlx_derived": true,
+    "post_loop_source_order_recorded": true,
+    "post_loop_stop_boundary_exact": true,
+    "source_identity_guard_pass": true
+  },
+  "classification": "boundary_closeout",
+  "closed_claims": {
+    "claims": [
+      "Transformer token embedding entry",
+      "initial HC residual expansion",
+      "initial identity pre_mix",
+      "all 40 Blocks 0..39 execute in one connected dataflow",
+      "all 39 adjacent residual x carries exact",
+      "all 39 adjacent HC pre_mix carries exact",
+      "all bounded Attention paths 0..39",
+      "all bounded FFN/MoE paths 0..39",
+      "compressed-attention state generation lifecycle: 2 -> 8 -> 14 -> 20",
+      "candidate publication at 20",
+      "index/topk generations: 24 -> 28 -> 32 -> 36",
+      "generation@20 compressed/index/candidate state lifetime through final Block",
+      "generation@36 topk consumption by 37/38/39",
+      "final Block39 x_out and ffn_pre39"
+    ],
+    "scope": {
+      "B": 1,
+      "S": 2,
+      "prefill": true,
+      "start_pos": 0,
+      "tokens": [
+        [
+          0,
+          3
+        ]
+      ],
+      "world_size": 1
+    }
+  },
+  "current_integrated_numerical_authority": {
+    "artifact": "artifacts/native-layer0-39-all-blocks-connected-prefill-validation.json",
+    "commit": "dae92ab0d9b7cbc6c77d8dac878d3e81b22492ab",
+    "ok": true,
+    "scope": {
+      "batch": 1,
+      "layers": "0..39",
+      "prefill": true,
+      "sequence": 2,
+      "start_pos": 0,
+      "stop": "after Block39.forward returns x39_out, ffn_pre39; before h = layer.hc_pre(h, pre_mix)",
+      "tokens": [
+        [
+          0,
+          3
+        ]
+      ],
+      "world_size": 1
+    }
+  },
+  "historical_boundary8_artifacts": [
+    {
+      "artifact": "artifacts/native-layer0-28-connected-prefill-validation.json",
+      "boundary": "8a",
+      "classification": "closed subscope/regression authority 0..28"
+    },
+    {
+      "artifact": "artifacts/native-layer0-32-connected-prefill-validation.json",
+      "boundary": "8b",
+      "classification": "closed subscope/regression authority 0..32"
+    },
+    {
+      "artifact": "artifacts/native-layer0-36-connected-prefill-validation.json",
+      "boundary": "8c",
+      "classification": "closed subscope/regression authority 0..36"
+    },
+    {
+      "artifact": "artifacts/native-layer0-39-all-blocks-connected-prefill-validation.json",
+      "boundary": "8d",
+      "classification": "current integrated numerical authority 0..39"
+    }
+  ],
+  "late_shared_state_lifecycle": {
+    "candidates@20": {
+      "actual_later_consumers": [
+        24,
+        28,
+        32,
+        36
+      ],
+      "publication_digest": "27ecd0a598e76f8a2fd264d427df0a119903e8eae384e478902541756f089dd1"
+    },
+    "compress_kv@20": {
+      "persists_through": "Block39",
+      "publication_digest": "fdb027edf978cebd05926802259c639f106f673c997da85129dbaa5ce3f0df41"
+    },
+    "generation_identity_policy": "digest equality between topk generations does not collapse generation identity",
+    "index_k@20": {
+      "actual_later_consumers": [
+        24,
+        28,
+        32,
+        36
+      ],
+      "publication_digest": "70b8711d0fdf54876d56ff9bd993b7504f5c78463b1bf912634803c194bff1f5"
+    },
+    "topk@24": {
+      "consumers": [
+        25,
+        26,
+        27
+      ],
+      "publication_digest": "f177d4feea916de5753fda9e1abf2c19559139141e361c81b77ec24d783a306f"
+    },
+    "topk@28": {
+      "consumers": [
+        29,
+        30,
+        31
+      ],
+      "publication_digest": "f177d4feea916de5753fda9e1abf2c19559139141e361c81b77ec24d783a306f"
+    },
+    "topk@32": {
+      "consumers": [
+        33,
+        34,
+        35
+      ],
+      "publication_digest": "f177d4feea916de5753fda9e1abf2c19559139141e361c81b77ec24d783a306f"
+    },
+    "topk@36": {
+      "consumers": [
+        37,
+        38,
+        39
+      ],
+      "publication_digest": "f177d4feea916de5753fda9e1abf2c19559139141e361c81b77ec24d783a306f"
+    }
+  },
+  "next_boundary_candidate": "Boundary 9a: Block39 x_out + ffn_pre39 -> official h = layer.hc_pre(h, pre_mix); STOP before self.norm",
+  "non_claims": [
+    "no Transformer post-loop HC collapse",
+    "no final RMSNorm",
+    "no connected ParallelHead/logits",
+    "no sampling correctness",
+    "no production-scale candidate pruning",
+    "no decode / ring / partial compression-group semantics",
+    "no multi-call cache persistence",
+    "no world_size > 1 distributed semantics",
+    "no Engram",
+    "no MTP/DSpark",
+    "no long-context qualification",
+    "no full Transformer-output correctness",
+    "no full-model correctness",
+    "no performance/fusion/production qualification"
+  ],
+  "not_omlx_derived": true,
+  "ok": true,
+  "post_loop_boundary": {
+    "not_executed": [
+      "Transformer post-loop HC collapse",
+      "final RMSNorm",
+      "ParallelHead",
+      "logits",
+      "sampling"
+    ],
+    "source_reviewed_order": [
+      "last Block returns h, pre_mix",
+      "h = layer.hc_pre(h, pre_mix)",
+      "logits = self.head(self.norm(h))",
+      "output_ids = sample(logits, self.temperature)",
+      "main_hidden assembly",
+      "return"
+    ],
+    "stop": {
+      "after": "Block39.forward returns x39_out, ffn_pre39",
+      "before": "h = layer.hc_pre(h, pre_mix)"
+    }
+  },
+  "safe_closeout_claim": "For B=1, S=2, start_pos=0, world_size=1 and token fixture [[0,3]], the official-reference-derived native execution from Transformer entry through all 40 Blocks (0\u201339) is closed as one connected bounded prefill validation. Every adjacent residual/Hyper-Connection carry between Blocks is connected directly, and the reviewed compressed-attention shared-state lifecycle persists through the final Block. This closeout stops at the Block39 return boundary and does not validate the Transformer post-loop Hyper-Connection collapse, final RMSNorm, ParallelHead, logits, sampling, or full Transformer output.",
+  "schema": "ds41f.boundary8-closeout.v1",
+  "scope": {
+    "batch": 1,
+    "layers": "0..39",
+    "prefill": true,
+    "sequence": 2,
+    "start_pos": 0,
+    "stop": "after Block39.forward returns x39_out, ffn_pre39; before h = layer.hc_pre(h, pre_mix)",
+    "tokens": [
+      [
+        0,
+        3
+      ]
+    ],
+    "world_size": 1
+  },
+  "source_authority": {
+    "authority_discipline": "official local source + official checkpoint raw bits + independent/native arithmetic contracts",
+    "kernel_py_sha256": "1236c3507019ed176f5dba5e04bcea58867cf654818c6cf138ed4845398c2455",
+    "model_py_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+    "semantic_correctness_authority": "official-reference-derived native arithmetic; not oMLX-derived",
+    "source_identity_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1"
+  },
+  "source_topology": {
+    "candidate_source_layer_id": 20,
+    "index_source_layer_ids": [
+      2,
+      8,
+      14,
+      20,
+      24,
+      28,
+      32,
+      36
+    ],
+    "kv_source_layer_ids": [
+      2,
+      8,
+      14,
+      20
+    ],
+    "num_hidden_layers": 40
+  },
+  "status": "PASS",
+  "still_open": [
+    "Transformer post-loop HC collapse: h = layer.hc_pre(h, pre_mix)",
+    "final RMSNorm",
+    "ParallelHead",
+    "connected logits",
+    "sampling",
+    "production-scale candidate pruning",
+    "decode start_pos > 0",
+    "window-KV ring/wrap semantics",
+    "compressed decode partial-group accumulation/publication",
+    "multi-call cache persistence",
+    "world_size > 1",
+    "expert parallel / all-reduce",
+    "Engram",
+    "MTP / DSpark",
+    "long-context numerical qualification",
+    "full Transformer output correctness",
+    "full-model correctness",
+    "performance/fusion/production qualification"
+  ],
+  "top_level_digest_summary": {
+    "digest_gates": {
+      "ffn_pre36": "cb4af2a88e07151442d5fb92ccdebac977b8223f3e80a8a47200af64f0593170",
+      "ffn_pre39": "8b20fab6cfdec82baf94938ec3e56428cae42a0997bcb0f3aa9afa5e7115f1dc",
+      "x36_out": "499ab386c1c3a547619c1fec569b74712dcc68804148975ba8439bcc35377c05",
+      "x39_out": "c705421c2422458f36a570338c51e70d50967f028da424abf38ef4bb30bf86d3"
+    },
+    "final_shared_state_snapshot": {
+      "candidates": "27ecd0a598e76f8a2fd264d427df0a119903e8eae384e478902541756f089dd1",
+      "compress_kv": "fdb027edf978cebd05926802259c639f106f673c997da85129dbaa5ce3f0df41",
+      "index_k": "70b8711d0fdf54876d56ff9bd993b7504f5c78463b1bf912634803c194bff1f5",
+      "topk_idxs": "f177d4feea916de5753fda9e1abf2c19559139141e361c81b77ec24d783a306f"
+    }
+  }
+}

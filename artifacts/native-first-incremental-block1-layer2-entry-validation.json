@@ -1,0 +1,347 @@
+{
+  "Block1": {
+    "attention_input": {
+      "digest": "18aacab2745ee7ae9ae471b4e44e480b12e9ba5ba55ff3d76fb5d2e5cff894cf",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        1,
+        5120
+      ]
+    },
+    "attention_output": {
+      "digest": "31355e39b300c0040c73f682f8d09243577e308a35226d410b0c26d56251e142",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        1,
+        5120
+      ]
+    },
+    "ffn_pre": {
+      "digest": "27df7d1f2ec08036253e5317b759a27ccd7f038843263143e529ca0fbe3b4549",
+      "dtype": "float32",
+      "shape": [
+        1,
+        1,
+        4
+      ]
+    },
+    "kv_rotary": {
+      "digest": "dcd9dcb91809d4642c7760d123dfcaa03475c7a45c4018ebec98a5dae8dd0908",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        1,
+        512
+      ]
+    },
+    "moe_output": {
+      "digest": "c87c74223d08e3fc664b5df1720ccb743fac49365db984bf1036cdca9b56a7cb",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        1,
+        5120
+      ]
+    },
+    "moe_routing_indices": [
+      [
+        382,
+        172,
+        340,
+        228,
+        372,
+        343
+      ]
+    ],
+    "moe_routing_weights": [
+      [
+        0.643766462802887,
+        0.18276028335094452,
+        0.17666292190551758,
+        0.1738632321357727,
+        0.16977179050445557,
+        0.15317535400390625
+      ]
+    ],
+    "q_rotary": {
+      "digest": "55d7d660ed14947c532b335e58d50a5d75e7767c53aba33cd8cb7412cafeeaf8",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        1,
+        64,
+        512
+      ]
+    },
+    "selected_expert_set": [
+      172,
+      228,
+      340,
+      343,
+      372,
+      382
+    ],
+    "sparse_attn": {
+      "digest": "1f12ab38c201683c95d165ff32826fbd6a1f0c3c73a58ed853e18f9347e0c2aa",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        1,
+        64,
+        512
+      ]
+    },
+    "window_slot2": {
+      "digest": "3d228d39da6765c963f23452577f92d3183d29c8b7e972016f02dce73db6c270",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        1,
+        512
+      ]
+    },
+    "window_visible": {
+      "digest": "9cb5e36038c87b179bfb218f2a11a9e3c67d51f10d8e0bcb32b42b7400f8487c",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        3,
+        512
+      ]
+    },
+    "x_after_attn": {
+      "digest": "d1234776f9431b1bd1528e1f843d7d59108a9df393cb4124e9657f291b13a3b9",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        1,
+        4,
+        5120
+      ]
+    },
+    "x_out": {
+      "digest": "52292729411f7435c93fc6fcca5ff37acc2a063d504d14498f587949e3e76aa9",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        1,
+        4,
+        5120
+      ]
+    }
+  },
+  "Boundary13d_handoff": {
+    "Block0_ffn_pre": "036a63ede630537263cbe5125569fc36680270c7bd35e841bc789705d992cf74",
+    "Block0_x_out": "ecbf76fb8c272dc20399cf4e9dc839e291adeac096d05556891fc30c3169740f",
+    "layer1_hash": "4eb8fc730c0e52176b64a388dcfcb7bb29c5ac6ee619c93efd218eef5a6df373",
+    "post_Engram1": "b651ee96bcf7b1f82a5ea5f18678efc85668b4766a69c2fc2b117ee75be0794b"
+  },
+  "Layer2_entry": {
+    "attention_input": {
+      "digest": "671eb57c53277fd649783ab3268a7d9082df33c167bd74bf22f8fc4b3c56abd8",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        1,
+        5120
+      ]
+    },
+    "compress_kv_cache": {
+      "after_digest": "838e6e26d9889ef668bc6be7d345be10542466bb86a8c656f3aa5665376143ae",
+      "before_digest": "838e6e26d9889ef668bc6be7d345be10542466bb86a8c656f3aa5665376143ae",
+      "compress_len": 1,
+      "new_cache_write": false
+    },
+    "compressor_partial": {
+      "future_first_read_position": 3,
+      "group_complete": false,
+      "kv_state_slot0": {
+        "digest": "63689a837034bf7baf329cd9cedf2f3b89d1966b2fa455e741159008d39e71b9",
+        "dtype": "float32",
+        "shape": [
+          1,
+          512
+        ]
+      },
+      "new_latent_produced": false,
+      "owner": "layers.2.attn.compressor.kv_state/score_state",
+      "ratio": 2,
+      "score_state_slot0": {
+        "digest": "5aef9d58018e2c0dcb45c9342f76b4bffdbac9a3b267e34922ad140ce8fa6792",
+        "dtype": "float32",
+        "shape": [
+          1,
+          512
+        ]
+      },
+      "start_pos": 2,
+      "valid_partial_slots": [
+        0
+      ],
+      "written_slot": 0
+    },
+    "indexer": {
+      "index_k_read_digest": "0a02a69899257836865cacec8a1a6d0d1bfb590cf07b8a3f602300e02ee7875d",
+      "index_score_digest": "982294faf132e2b868861915c6551d47e4c4651e86ffd839a4889de1197ce3a3",
+      "k_cache_after_digest": "0a02a69899257836865cacec8a1a6d0d1bfb590cf07b8a3f602300e02ee7875d",
+      "k_cache_before_digest": "0a02a69899257836865cacec8a1a6d0d1bfb590cf07b8a3f602300e02ee7875d",
+      "new_key_publication": false,
+      "prefill_topk_reused": false,
+      "query_digest": "7c22372541e7bc0b3787d89f39a6ca43698f8324caf71bfa91e914b4f3eb44c4",
+      "query_rotary_absolute_position": 2,
+      "topk": {
+        "digest": "50c8ba3a6170f0a2fb6736ece8a603576ef6309a35e810911599bc6211b554a9",
+        "dtype": "int32",
+        "shape": [
+          1,
+          1,
+          1
+        ],
+        "values": [
+          [
+            [
+              128
+            ]
+          ]
+        ]
+      },
+      "topk_digest": "50c8ba3a6170f0a2fb6736ece8a603576ef6309a35e810911599bc6211b554a9"
+    },
+    "kv_rotary": {
+      "digest": "abb75ba331a32fa275a07a22788ba9a1e870c3b3931c72b28a3bc8018b4122fb",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        1,
+        512
+      ]
+    },
+    "q_rotary": {
+      "digest": "47f1c92be599832c3b9b689489e219191057c277f49f452e85e0b5bf7d81a42d",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        1,
+        64,
+        512
+      ]
+    },
+    "window_slot2": {
+      "digest": "99c6ec24f7a8b12bda774381a4dccc3ce0938adab97825f790ad4820e6b39da2",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        1,
+        512
+      ]
+    },
+    "window_visible": {
+      "digest": "3ff90635bf6889c0e870fca1782b34021bb575f2061cd17572dfb447355617ff",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        3,
+        512
+      ]
+    }
+  },
+  "STOP_flags": {
+    "Block2_completion_executed": false,
+    "Engram14_executed": false,
+    "candidate_lifecycle_executed": false,
+    "generation_loop_advanced": false,
+    "layer2_sparse_attn_executed": false,
+    "layer8_plus_executed": false,
+    "logits_executed": false,
+    "main_hidden_executed": false,
+    "sampling_executed": false
+  },
+  "base_head": "8d6d957bca064f67afdf7d914e2454763e1c2f1b",
+  "classification": "first incremental Block1 completion to layer2 compressed/index lifecycle entry authority",
+  "gates": {
+    "13a->13b->13c->13d replayed in memory": true,
+    "Block1 absolute position2/window slot2": true,
+    "Block1 connected completion": true,
+    "Block1 valid window history [0,1,2]": true,
+    "Boundary13 checker PASS": true,
+    "Boundary13a checker PASS": true,
+    "Boundary13b checker PASS": true,
+    "Boundary13c checker PASS": true,
+    "Boundary13d checker PASS": true,
+    "Boundary13d handoff exact": true,
+    "Compressor slot0 persistent partial promoted": true,
+    "Indexer k_cache no new publication": true,
+    "Indexer topk recomputed current-call": true,
+    "STOP before layer2 sparse_attn": true,
+    "compress_kv_cache READ_ONLY no write": true,
+    "current ancestry includes 8d6d957": true,
+    "layer2 absolute position2/window slot2": true,
+    "layer2 connected entry from Block1 outputs": true,
+    "no tensor artifact injection": true,
+    "not_omlx_derived == true": true,
+    "persistent non-mutation PASS": true
+  },
+  "next_boundary": "Boundary13f: first incremental layer2 sparse_attn + Block2 completion",
+  "non_claims": [
+    "no layer2 sparse_attn",
+    "no Block2 completion",
+    "no candidate lifecycle/layer8+",
+    "no Engram14/logits/sampling/main_hidden",
+    "no generation-loop advancement",
+    "no world_size>1 correctness",
+    "no production/performance qualification"
+  ],
+  "not_omlx_derived": true,
+  "ok": true,
+  "persistent_state_nonmutation": {
+    "Indexer_k_cache_read_only": true,
+    "Ngram_cache_unchanged": true,
+    "RNG_unchanged": true,
+    "compressed_KV_cache_read_only": true,
+    "generation_loop_control_unchanged": true,
+    "layer0_window_cache_unchanged_from_13c": true
+  },
+  "schema": "ds41f.native-first-incremental-block1-layer2-entry-validation.v1",
+  "source_identities": {
+    "Attention": {
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+      "line_end": 788,
+      "line_start": 613,
+      "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/model.py",
+      "relative_path": "inference/model.py",
+      "span_sha256": "6922d64f9accc5af89f8e5f23c21870beaac5d2a8793ab9ca09dfb2599021b82"
+    },
+    "Compressor": {
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+      "line_end": 486,
+      "line_start": 429,
+      "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/model.py",
+      "relative_path": "inference/model.py",
+      "span_sha256": "f8f76a2dad907c2468a82fb0dc07550cbc696fbc17ede4c24ad9a5cf58c3410c"
+    },
+    "Indexer": {
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+      "line_end": 581,
+      "line_start": 488,
+      "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/model.py",
+      "relative_path": "inference/model.py",
+      "span_sha256": "e59d197a495bb2af96d44190ad4b8664d24f7460f36db1ea24b29807b050ac07"
+    },
+    "model_py": {
+      "bytes": 61549,
+      "lines": 1309,
+      "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/model.py",
+      "relative_path": "inference/model.py",
+      "sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65"
+    }
+  },
+  "upstream_reconstruction": {
+    "artifact_tensor_injection": false,
+    "replayed_in_memory": true
+  }
+}

@@ -1,0 +1,360 @@
+{
+  "authority_relationship": "Boundary9 is current integrated deterministic model-forward authority through final-position logits. Boundary10a validates only a parameterized temperature=0 sampling branch connected to Boundary9 logits; it is not default full Transformer.forward authority.",
+  "boundary9_regression": {
+    "ffn_pre39": {
+      "expected": "8b20fab6cfdec82baf94938ec3e56428cae42a0997bcb0f3aa9afa5e7115f1dc",
+      "got": "8b20fab6cfdec82baf94938ec3e56428cae42a0997bcb0f3aa9afa5e7115f1dc",
+      "pass": true
+    },
+    "logits": {
+      "dtype": "FP32",
+      "expected": "b2e6eb3755b4cea2f11211cc557fbd93ef0988af8deee8888a36f69d9473989d",
+      "got": "b2e6eb3755b4cea2f11211cc557fbd93ef0988af8deee8888a36f69d9473989d",
+      "pass": true,
+      "shape": [
+        1,
+        129280
+      ]
+    },
+    "native_vs_prior_boundary9_artifact_digest": {
+      "expected": "b2e6eb3755b4cea2f11211cc557fbd93ef0988af8deee8888a36f69d9473989d",
+      "got": "b2e6eb3755b4cea2f11211cc557fbd93ef0988af8deee8888a36f69d9473989d",
+      "pass": true
+    },
+    "normalized_h": {
+      "expected": "00186e76a7a7bd78ce40de4a9a912025c9d6724b1600a30f171eca9a2cb65eb5",
+      "got": "00186e76a7a7bd78ce40de4a9a912025c9d6724b1600a30f171eca9a2cb65eb5",
+      "pass": true
+    },
+    "post_loop_h": {
+      "expected": "6b99fb26048a577ce78756397101be15441d1ddb7fa9c7aa205007e10869061a",
+      "got": "6b99fb26048a577ce78756397101be15441d1ddb7fa9c7aa205007e10869061a",
+      "pass": true
+    },
+    "x39": {
+      "expected": "c705421c2422458f36a570338c51e70d50967f028da424abf38ef4bb30bf86d3",
+      "got": "c705421c2422458f36a570338c51e70d50967f028da424abf38ef4bb30bf86d3",
+      "pass": true
+    }
+  },
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "official_reference_derived_native_connected_validation",
+  "gates": {
+    "actual_default_temperature_distinguished_from_explicit_fixture_temperature": true,
+    "authority_labels_pass": true,
+    "boundary8_closeout_checker_remains_pass": true,
+    "boundary9_closeout_checker_remains_pass": true,
+    "boundary9_logits_regression_exact": true,
+    "independent_argmax_scan_computed": true,
+    "maximum_value_index_exact": true,
+    "native_argmax_result_computed": true,
+    "no_logits_artifact_injection": true,
+    "official_argmax_branch_selected": true,
+    "output_ids_shape_dtype_exact": true,
+    "producer_logits_to_sample_consumer_seam_exact": true,
+    "rng_authority_explicitly_left_open": true,
+    "sample_source_identity_recorded": true,
+    "sample_source_reviewed": true,
+    "single_execution_starts_from_token_ids": true,
+    "source_identity_guard_pass": true,
+    "stochastic_branch_reviewed_but_not_claimed": true,
+    "temperature_exactly_zero_for_executed_branch": true,
+    "temperature_provenance_reviewed": true
+  },
+  "independent_argmax_validation": {
+    "global_maximum_value": 12.943254470825195,
+    "independent_parallelhead_arithmetic_max_value_diagnostic": 12.943254470825195,
+    "independent_parallelhead_arithmetic_scan_argmax_diagnostic": 372,
+    "independent_parallelhead_arithmetic_tie_count_diagnostic": 1,
+    "independent_scan_argmax": 372,
+    "independent_scan_max_value": 12.943254470825195,
+    "independent_scan_tie_count": 1,
+    "maximum_index": 372,
+    "number_of_entries_exactly_equal_to_maximum": 1,
+    "runner_native_argmax": 372,
+    "tie_semantics": "fixture has tie_count=1; no general tie branch authority is claimed"
+  },
+  "inputs": {
+    "logits": {
+      "digest": "b2e6eb3755b4cea2f11211cc557fbd93ef0988af8deee8888a36f69d9473989d",
+      "dtype": "FP32",
+      "shape": [
+        1,
+        129280
+      ]
+    }
+  },
+  "next_recommendation": "Boundary 10b: temperature>0 sampling arithmetic conditional on explicit exponential noise; keep RNG generator authority separate from arithmetic given supplied noise.",
+  "non_claims": [
+    "no temperature>0 sampling correctness",
+    "no exponential RNG correctness",
+    "no cross-backend RNG parity",
+    "no distributional sampling qualification",
+    "no default-temperature sampling claim unless default==0 is source-proven",
+    "no main_hidden assembly",
+    "no full-sequence logits",
+    "no world_size>1 head/all_gather",
+    "no decode/cache/ring/partial compression-group semantics",
+    "no multi-call cache persistence",
+    "no distributed Block/MoE semantics",
+    "no Engram",
+    "no MTP/DSpark",
+    "no long-context qualification",
+    "no full Transformer.forward correctness",
+    "no full-model correctness",
+    "no performance/production qualification"
+  ],
+  "not_omlx_derived": true,
+  "ok": true,
+  "producer_consumer_seam": {
+    "artifact_tensor_injection": false,
+    "consumer": "sample(logits, temperature=0)",
+    "producer": "Boundary9 connected logits",
+    "producer_logits_digest": "b2e6eb3755b4cea2f11211cc557fbd93ef0988af8deee8888a36f69d9473989d",
+    "same_tensor_dataflow": true,
+    "sample_consumer_observed_logits_digest": "b2e6eb3755b4cea2f11211cc557fbd93ef0988af8deee8888a36f69d9473989d"
+  },
+  "purpose": "Boundary 10a official sampling contract review plus connected deterministic temperature==0 branch validation; stop immediately after output_ids = sample(logits, temperature=0).",
+  "rng_authority_guard": {
+    "argmax_branch_pass_does_not_imply_stochastic_sample_pass": true,
+    "native_runtime_rng_not_authority_for_official_rng": true,
+    "native_runtime_rng_not_used": true,
+    "unverified": [
+      "torch RNG state",
+      "manual_seed interaction",
+      "CUDA vs CPU RNG algorithm",
+      "MLX RNG equivalence",
+      "exact exponential draws",
+      "cross-backend sampled-token equality",
+      "distributional equivalence",
+      "reproducibility across devices"
+    ]
+  },
+  "safe_claim": "For the existing B=1, S=2, start_pos=0, world_size=1, full_logits=False token fixture [[0,3]], the connected Boundary9 final-position logits are validated through the official temperature==0 sampling branch. The actual connected logits are consumed directly by the source-defined argmax path to produce one output token. output token id = 372. This validates only the explicit temperature=0 deterministic sampling branch. It does not validate the model's nonzero-temperature stochastic sampling path, exponential RNG generation, cross-backend RNG parity, main_hidden assembly, decode, or full Transformer.forward behavior.",
+  "sampling_branch_contract": {
+    "argmax_axis": "dim=-1",
+    "random_distribution": "in-place exponential_(1) on empty_like(probs)",
+    "random_tensor_dtype_device": "torch.empty_like(probs): same dtype/device/layout as probs (therefore FP32 and same device as softmax result in official runtime)",
+    "return_dtype": "torch argmax returns integer tensor; native validation observed np.int64 equivalent for this branch",
+    "return_shape": "input logits [B,V] -> output [B] for executed [1,129280] logits",
+    "softmax_dtype": "torch.float32",
+    "temperature_clamp_floor": "max(temperature, 1e-5) in nonzero branch only",
+    "temperature_eq_0_branch": "if temperature == 0: return logits.argmax(dim=-1)",
+    "temperature_gt_0_branch": "logits = logits / max(temperature, 1e-5); probs = torch.softmax(logits, dim=-1, dtype=torch.float32); return probs.div_(torch.empty_like(probs).exponential_(1)).argmax(dim=-1)"
+  },
+  "schema": "ds41f.native-sampling-temperature-zero-validation.v1",
+  "scope": {
+    "batch": 1,
+    "consumer": "official sample() temperature==0 argmax branch only",
+    "full_logits": false,
+    "prefill": true,
+    "producer": "Boundary9 Transformer entry through final-position logits",
+    "sequence": 2,
+    "start_pos": 0,
+    "stop": "after output_ids = sample(logits, temperature=0); before main_hidden assembly",
+    "tokens": [
+      [
+        0,
+        3
+      ]
+    ],
+    "world_size": 1
+  },
+  "source_review": {
+    "generate_py": {
+      "file": "inference/generate.py",
+      "file_sha256": "8668d67f7d108e32b90d50cb0d8606889ceb2219bfe95741d84e22f70768e9f0",
+      "spans": [
+        {
+          "file": "inference/generate.py",
+          "file_sha256": "8668d67f7d108e32b90d50cb0d8606889ceb2219bfe95741d84e22f70768e9f0",
+          "name": "load config and override args.temperature from main parameter",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            105,
+            123
+          ],
+          "source_sha256": "7bb85f4fc58aaea4d1acec2f78f592472f62756fd852a3d77e7ee16090a30fe9"
+        },
+        {
+          "file": "inference/generate.py",
+          "file_sha256": "8668d67f7d108e32b90d50cb0d8606889ceb2219bfe95741d84e22f70768e9f0",
+          "name": "CLI --temperature default and main call",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            205,
+            216
+          ],
+          "source_sha256": "6ad035e65d3adf322839cbef91c21fefcafd2c0368bc030df2a6a1d90083283a"
+        }
+      ]
+    },
+    "hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+    "inference_config_json": {
+      "contains_temperature_key": false,
+      "file": "inference/config.json",
+      "file_sha256": "2e84f45cf1dac8c7fcbb200e96667d4b913275690668ed496f24c7747207a809"
+    },
+    "model_py": {
+      "file": "inference/model.py",
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "spans": [
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "ModelArgs temperature default",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            45,
+            54
+          ],
+          "source_sha256": "4ec99aba20c3ceb13e4ad5a8a5c6cad7e89930237dfdb73179df3a87f9be2fd8"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Transformer.__init__ assigns self.temperature",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            1187,
+            1195
+          ],
+          "source_sha256": "fa7046a56f703828fe98e5f7d3ab00b291e508b912f2eeabe4bca286aa386bae"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Transformer.forward logits -> sample -> main_hidden order",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            1242,
+            1272
+          ],
+          "source_sha256": "6f309bf24d79649472588cb0fda651646f9d8ee46c5b5f0dc5de482cd6f94a0c"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "sample() contract",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            1285,
+            1292
+          ],
+          "source_sha256": "da6030c7ebf858d615fcdf6b7efb88b5a98f53849b98ffc0815b4eccd467955a"
+        }
+      ]
+    },
+    "source_identity_expected_sha256": {
+      "generate_cli_temperature": "6ad035e65d3adf322839cbef91c21fefcafd2c0368bc030df2a6a1d90083283a",
+      "generate_load_temperature": "7bb85f4fc58aaea4d1acec2f78f592472f62756fd852a3d77e7ee16090a30fe9",
+      "modelargs": "4ec99aba20c3ceb13e4ad5a8a5c6cad7e89930237dfdb73179df3a87f9be2fd8",
+      "sample": "da6030c7ebf858d615fcdf6b7efb88b5a98f53849b98ffc0815b4eccd467955a",
+      "transformer_forward_sample": "6f309bf24d79649472588cb0fda651646f9d8ee46c5b5f0dc5de482cd6f94a0c",
+      "transformer_init_temperature": "fa7046a56f703828fe98e5f7d3ab00b291e508b912f2eeabe4bca286aa386bae"
+    },
+    "top_config_json": {
+      "contains_temperature_key": false,
+      "file": "config.json",
+      "file_sha256": "8be45ce0476004a3f529fd896115a4a2e800a129ad2d3ec05b16050f52e21879"
+    }
+  },
+  "stochastic_branch_review_only": {
+    "argmax": "argmax(dim=-1)",
+    "correctness_claim": false,
+    "deterministic_arithmetic": [
+      "temperature scaling",
+      "softmax",
+      "division conditional on a supplied noise tensor",
+      "argmax"
+    ],
+    "executed": false,
+    "fp32_softmax": "torch.softmax(..., dtype=torch.float32)",
+    "in_place_probability_division": "probs.div_(noise)",
+    "rng": "torch.empty_like(probs).exponential_(1)",
+    "stochastic_authority": [
+      "exponential RNG generation",
+      "seed/state/device/backend behavior"
+    ],
+    "temperature_floor": "1e-5",
+    "temperature_scaling": "logits / max(temperature, 1e-5)"
+  },
+  "stop_boundary": {
+    "exact_next_source_operation": "main_hidden = torch.cat(main_hiddens, dim=-1) if main_hiddens else None",
+    "next_source_span": {
+      "file": "inference/model.py",
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "name": "sample then main_hidden then return",
+      "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+      "source_lines": [
+        1270,
+        1272
+      ],
+      "source_sha256": "3a2ea0d6a329dec5dd0bb1efe2b500a933582dfa4c872f3e86df5e7c9be2dc94"
+    },
+    "not_executed": [
+      "main_hidden assembly",
+      "Transformer.forward return",
+      "decode",
+      "temperature>0 branch",
+      "RNG"
+    ],
+    "stopped_after": "output_ids = sample(logits, self.temperature) with explicit temperature=0 fixture"
+  },
+  "temperature_provenance": {
+    "checkpoint_config_supplied_temperature": null,
+    "checkpoint_config_temperature_key_present": false,
+    "classification": "explicit parameterized deterministic branch fixture; not default Transformer.forward sampling validated",
+    "executed_fixture_temperature": 0.0,
+    "generate_cli_override_path": "argparse --temperature default 1.0 -> main(..., args.temperature) -> args = ModelArgs(**json.load(f)); args.temperature = temperature -> Transformer(args).self.temperature",
+    "generate_main_parameter_default": 1.0,
+    "source_dataclass_default_temperature": 1,
+    "transformer_instance_actual_temperature_under_generate_default": 1.0
+  },
+  "temperature_zero_execution": {
+    "argmax_index": 372,
+    "argmax_max_value": 12.943254470825195,
+    "branch_selected": "temperature==0 argmax(dim=-1)",
+    "output_ids": {
+      "dtype": "int64",
+      "shape": [
+        1
+      ],
+      "values": [
+        372
+      ]
+    },
+    "temperature_input": 0.0,
+    "tie_count": 1
+  },
+  "tests": {
+    "authority_labels": {
+      "command": "tools/check_authority_labels.py",
+      "pass": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "source-identity hash check passed\nauthority-label check passed"
+    },
+    "boundary8_closeout_checker": {
+      "command": "tools/check_boundary8_closeout.py",
+      "pass": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "boundary7 closeout PASS\nboundary8 closeout PASS"
+    },
+    "boundary9_closeout_checker": {
+      "command": "tools/check_boundary9_closeout.py",
+      "pass": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "boundary7 closeout PASS\nboundary8 closeout PASS\nsource-identity hash check passed\nauthority-label check passed\nboundary9 closeout PASS"
+    },
+    "source_identity_hashes": {
+      "command": "tools/check_source_identity_hashes.py",
+      "pass": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "source-identity hash check passed"
+    }
+  }
+}

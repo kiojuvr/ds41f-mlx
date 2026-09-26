@@ -1,0 +1,689 @@
+{
+  "Block0_attention_prelude": {
+    "attention_input": {
+      "digest": "9f3d5433e680798d5f32fe10b8384476664078668b234c0780c7bce20ef775be",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        1,
+        5120
+      ]
+    },
+    "attn_pre_digest": "0760bf37514fb6ef60fc1cd2fae5862ec322c7f8dbe21f74dbdff130a3ad3138",
+    "hc_pre_attention_digest": "75fc2a390b761925546540151bdf4735e79289d75e8a4d234d1ac0dc2ae7ba06"
+  },
+  "Boundary13a_manifest_digest": "311d0b3f02dc0bf6b61a8a19a73ef9ff325979992656a1cafcb5da3b12269301",
+  "Boundary13b_handoff": {
+    "full_incremental_hash_digest": "09c32d336e7a23d61ff9ac94674cb30039857eeeb3df82cf475157685d76c530",
+    "layer14_hash_digest": "5d93f09bfecb5b8a3a722603bb5e1cd44710849cc4729223df92953386bf3ad7",
+    "layer1_hash_digest": "4eb8fc730c0e52176b64a388dcfcb7bb29c5ac6ee619c93efd218eef5a6df373",
+    "post_ngram_cache_digest": "04a3a0772a3b03dd471d3ab889112d78bd7661e05aa2073c16017fa43198983c",
+    "recomputed_in_memory": true,
+    "tensor_artifact_injection": false
+  },
+  "STOP_flags": {
+    "Attention_output_projection_executed": false,
+    "Block0_completion_executed": false,
+    "Compressor_executed": false,
+    "Engram_forward_executed": false,
+    "Indexer_executed": false,
+    "MoE_executed": false,
+    "candidate_selection_executed": false,
+    "compressed_KV_path_executed": false,
+    "compressed_topk_executed": false,
+    "final_RMSNorm_executed": false,
+    "generation_loop_advanced": false,
+    "layer1_plus_executed": false,
+    "logits_executed": false,
+    "main_hidden_executed": false,
+    "sampling_executed": false,
+    "sparse_attn_executed": false
+  },
+  "Transformer_entry": {
+    "embedding": {
+      "digest": "75fc2a390b761925546540151bdf4735e79289d75e8a4d234d1ac0dc2ae7ba06",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        1,
+        5120
+      ]
+    },
+    "hc_expanded_h": {
+      "digest": "adee2ce1d27eec498813c1bf20fe84c9b7e86eb97665d98415a349faa586dabf",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        1,
+        4,
+        5120
+      ]
+    },
+    "identity_pre_mix": {
+      "digest": "ccaf6f183579497e8bfcd71045c04286fd3c2e60f3641e3eea164b761a4494b7",
+      "dtype": "float32",
+      "shape": [
+        1,
+        1,
+        4
+      ]
+    },
+    "prefill_h_pre_mix_main_hidden_reused": false
+  },
+  "absolute_rotary_position_evidence": {
+    "S": 1,
+    "cos_pos0_control_digest": "b638277a8690e175a9137feff1e43c067f9faf4e2f600caf468fb05b0403b717",
+    "cos_pos2_digest": "08014ebec49df6b660eef9154f73ef63d91cb5d75f860f64523aecd0289e0a45",
+    "end_pos": 3,
+    "freqs_slice": "freqs_cis[2:3]",
+    "kv_position0_control_differs": true,
+    "original_seq_len": 0,
+    "q_position0_control_differs": true,
+    "rope_theta": 10000.0,
+    "sin_pos0_control_digest": "38723a2e5e8a17aa7950dc008209944e898f69a7bd10a23c839d341e935fd5ca",
+    "sin_pos2_digest": "1665e30c199582ec502e76320ff61d1c628212766584b38afd060cf2585fe62f",
+    "start_pos": 2
+  },
+  "base_head": "850c14139195f17908132fe988722c25bca38936",
+  "classification": "current official-source-derived bounded first-incremental positional/rotary/layer0-window-KV authority",
+  "decode_call": {
+    "B": 1,
+    "S": 1,
+    "input_ids": [
+      [
+        15
+      ]
+    ],
+    "start_pos": 2,
+    "token_mask": null,
+    "world_size": 1
+  },
+  "event_order": [
+    "regenerate Boundary13a prefill state",
+    "recompute Boundary13b Ngram transition in memory",
+    "Transformer embedding for [[15]]",
+    "HC expansion and identity pre_mix",
+    "Block0 attention HC prelude and attn_norm",
+    "layer0 Q projection and rotary at absolute position 2",
+    "layer0 WKV/KV norm and rotary at absolute position 2",
+    "act_quant new window KV",
+    "publish layer0 window_kv_cache slot2",
+    "construct window topk for start_pos=2",
+    "STOP before sparse_attn"
+  ],
+  "gates": {
+    "Boundary13 source audit PASS": true,
+    "Boundary13a checker PASS": true,
+    "Boundary13a manifest digest exact": true,
+    "Boundary13b Ngram state unchanged through 13c": true,
+    "Boundary13b checker PASS": true,
+    "Boundary13b full hash digest exact": true,
+    "Boundary13b post-Ngram cache digest exact": true,
+    "Boundary13b state regenerated/replayed in memory": true,
+    "Engram.forward not executed": true,
+    "KV rotary uses absolute position 2": true,
+    "Q rotary uses absolute position 2": true,
+    "RNG state unchanged": true,
+    "S == 1": true,
+    "all source identities/spans exact": true,
+    "cache slot0 unchanged exact": true,
+    "cache slot1 unchanged exact": true,
+    "cache slot2 publication exact": true,
+    "compressed attention not executed": true,
+    "compressed/index/partial states unchanged": true,
+    "current HEAD ancestry includes 850c141": true,
+    "current-call Transformer entry regenerated": true,
+    "decode input exactly [[15]]": true,
+    "generation-loop state unchanged": true,
+    "layer0 Attention input source-derived": true,
+    "layers1-39 window state unchanged": true,
+    "logits/sample/main_hidden not executed": true,
+    "new decode window KV numerically validated": true,
+    "no Boundary13b tensor artifact injection": true,
+    "no position-0 substitution": true,
+    "no uninitialized/future slot read": true,
+    "not_omlx_derived == true": true,
+    "prefill h/pre_mix/main_hidden not reused": true,
+    "source-vs-independent positional/index arithmetic exact": true,
+    "sparse_attn not executed": true,
+    "start_pos == 2": true,
+    "tensor artifact injection false": true,
+    "visible ring positions exactly [0,1,2]": true,
+    "window index/top-k source semantics exact": true
+  },
+  "layer0_KV_path": {
+    "independent_post_rotary_digest": "eb0d334e615e729d6e9e5765e1ca352f5072067048dcfc32f6384484b4f3afd1",
+    "kv_norm": {
+      "digest": "89665e7bce4ce52079e6f8002b7872637e7df73e38c22ffe5afe44ddbb01091a",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        1,
+        512
+      ]
+    },
+    "new_window_kv": {
+      "digest": "636e9636e288fd3bac5e8cf5aa3095187f715dc0c71195d72283c086be00c12b",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        1,
+        512
+      ]
+    },
+    "position0_control_digest": "89665e7bce4ce52079e6f8002b7872637e7df73e38c22ffe5afe44ddbb01091a",
+    "post_rotary": {
+      "digest": "eb0d334e615e729d6e9e5765e1ca352f5072067048dcfc32f6384484b4f3afd1",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        1,
+        512
+      ]
+    },
+    "wkv_out": {
+      "digest": "a53253b1b4b482ce5e51496c1c653e812953e6db557c37f40ce817982aa36a5c",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        1,
+        512
+      ]
+    }
+  },
+  "layer0_Q_path": {
+    "independent_post_rotary_digest": "7ba5035746cd43e25016dd0069c2bb5b4bc64ccb229e35e89741e8d88cd6cab9",
+    "position0_control_digest": "34e3e66d9c742b45a8508b568aca772fbd7f4111523e78faae1315a9e22a5538",
+    "post_rotary": {
+      "digest": "7ba5035746cd43e25016dd0069c2bb5b4bc64ccb229e35e89741e8d88cd6cab9",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        1,
+        64,
+        512
+      ]
+    },
+    "pre_rotary": {
+      "digest": "34e3e66d9c742b45a8508b568aca772fbd7f4111523e78faae1315a9e22a5538",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        1,
+        64,
+        512
+      ]
+    },
+    "qr": {
+      "digest": "cd4e774bc8de5c41848fc308ae9b8b2b6e867176c1c4346a6bc09c121dda5c23",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        1280
+      ]
+    }
+  },
+  "mutation_table": {
+    "Compressor.partial_state_classification": "unchanged",
+    "Indexer.k_cache": "unchanged",
+    "NgramHashState.cache": "unchanged from recomputed Boundary13b post-state during Boundary13c",
+    "compress_kv_cache": "unchanged",
+    "generation_loop_control": "unchanged",
+    "layer0.window_kv_cache": "slot2 overwritten/published; slots0/1 preserved",
+    "layers1-39.window_kv_cache": "unchanged",
+    "target_runtime_rng_state": "unchanged"
+  },
+  "next_boundary": "Boundary13d: compressed/index/candidate/top-k first incremental lifecycle",
+  "non_claims": [
+    "no compressed KV path",
+    "no Compressor/Indexer/candidate/compressed-topk authority",
+    "no Engram.forward authority",
+    "no sparse_attn numerical output authority",
+    "no Attention output projection authority",
+    "no Block0 completion authority",
+    "no MoE/layer1+/logits/sampling/main_hidden authority",
+    "no generation-loop advancement",
+    "no world_size>1 correctness",
+    "no production/performance qualification"
+  ],
+  "non_mutation_table": {
+    "Boundary13b_full_hash_unchanged": true,
+    "Boundary13b_post_Ngram_cache_unchanged": true,
+    "Compressor_partial_state_classifications_unchanged": true,
+    "Indexer_k_cache_visible_prefixes_unchanged": true,
+    "compressed_KV_visible_prefixes_unchanged": true,
+    "generation_loop_control_unchanged": true,
+    "layers1_39_window_state_unchanged": true,
+    "target_runtime_RNG_state_unchanged": true
+  },
+  "not_omlx_derived": true,
+  "ok": true,
+  "safe_claim": "Boundary13c validates the first-incremental absolute-position-2 rotary selection and layer0 window-KV ring publication through sparse_attn prelude only.",
+  "schema": "ds41f.native-first-incremental-window-kv-rotary-validation.v1",
+  "source_identities": {
+    "Attention_forward_q_window": {
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+      "line_end": 780,
+      "line_start": 765,
+      "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/model.py",
+      "relative_path": "inference/model.py",
+      "span_sha256": "3db617863c8838676e1aa57cbb6ddd6fc182ad588e9765ec402d8cdf9ed32259"
+    },
+    "Attention_window_kv": {
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+      "line_end": 721,
+      "line_start": 700,
+      "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/model.py",
+      "relative_path": "inference/model.py",
+      "span_sha256": "1361c5743bb67565029539d01668c6071e35d819321907da6c93d180e7f6f664"
+    },
+    "Block_forward_attention_prelude": {
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+      "line_end": 986,
+      "line_start": 957,
+      "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/model.py",
+      "relative_path": "inference/model.py",
+      "span_sha256": "ecd6c573295c5c4dbf30c2b627c418e50fec7d1ea69d30cec5a86d32f1dd8295"
+    },
+    "Transformer_forward": {
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+      "line_end": 1267,
+      "line_start": 1242,
+      "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/model.py",
+      "relative_path": "inference/model.py",
+      "span_sha256": "b63c6a5afb2a8b5a91e249e08c6272a94c6772a0dc8df9095261c6fda751bbeb"
+    },
+    "apply_rotary_emb": {
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+      "line_end": 406,
+      "line_start": 390,
+      "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/model.py",
+      "relative_path": "inference/model.py",
+      "span_sha256": "b29090f12c23f30254d4f0f5b3f966a61c1d1e7e5f590b52b1a2777bbcab5a61"
+    },
+    "get_window_topk_idxs": {
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+      "line_end": 427,
+      "line_start": 409,
+      "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/model.py",
+      "relative_path": "inference/model.py",
+      "span_sha256": "6f29e174995e5f5d3f194b335d17d68a8f65fdca5ed35c2f4ec9576f2099e03f"
+    },
+    "model_py": {
+      "bytes": 61549,
+      "lines": 1309,
+      "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/model.py",
+      "relative_path": "inference/model.py",
+      "sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65"
+    }
+  },
+  "tensor_artifact_injection": false,
+  "window_cache_transition": {
+    "post_visible_cache": {
+      "digest": "9a39b3b26a0b352b067fd5fbac0487911478f335078041d84ce3ef47a309920a",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        3,
+        512
+      ]
+    },
+    "ring_slots": [
+      0,
+      1,
+      2
+    ],
+    "slot0_after": {
+      "digest": "1c6a13138e16d4abcf19c1c93313ce8da7f41adac3a31035f83132f2b2edf524",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        1,
+        512
+      ]
+    },
+    "slot0_before": {
+      "digest": "1c6a13138e16d4abcf19c1c93313ce8da7f41adac3a31035f83132f2b2edf524",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        1,
+        512
+      ]
+    },
+    "slot1_after": {
+      "digest": "5cdf50ce91d245204f50db483466d8aee56795efc1313da868c4ea4c4f204e30",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        1,
+        512
+      ]
+    },
+    "slot1_before": {
+      "digest": "5cdf50ce91d245204f50db483466d8aee56795efc1313da868c4ea4c4f204e30",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        1,
+        512
+      ]
+    },
+    "slot2_after": {
+      "digest": "636e9636e288fd3bac5e8cf5aa3095187f715dc0c71195d72283c086be00c12b",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        1,
+        512
+      ]
+    },
+    "unused_capacity_promoted": false,
+    "valid_absolute_positions": [
+      0,
+      1,
+      2
+    ]
+  },
+  "window_topk": {
+    "absolute_position_interpretation": "valid non-negative entries are ring slots/absolute positions 0,1,2; -1 marks future/unfilled slots",
+    "independent": {
+      "digest": "fae2c9f0a421368ce686c681d9d7c1ec97be4c343b8cc03c92df7d3e70fb2bc0",
+      "dtype": "int32",
+      "shape": [
+        1,
+        1,
+        128
+      ],
+      "values": [
+        [
+          [
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            0,
+            1,
+            2
+          ]
+        ]
+      ]
+    },
+    "source": {
+      "digest": "fae2c9f0a421368ce686c681d9d7c1ec97be4c343b8cc03c92df7d3e70fb2bc0",
+      "dtype": "int32",
+      "shape": [
+        1,
+        1,
+        128
+      ],
+      "values": [
+        [
+          [
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            0,
+            1,
+            2
+          ]
+        ]
+      ]
+    },
+    "source_vs_independent_exact": true,
+    "valid_slots": [
+      0,
+      1,
+      2
+    ]
+  }
+}

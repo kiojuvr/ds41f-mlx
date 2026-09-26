@@ -1,0 +1,228 @@
+{
+  "authority": {
+    "native_validation_provider": "Python-orchestrated arithmetic over actual checkpoint tensors; no new performance kernel",
+    "official_checkpoint_raw_bits": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+    "reference_fixture": "artifacts/moe-gate-expert-official-reference-fixture.json"
+  },
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "official_reference_derived_native_validation",
+  "comparison": {
+    "bias_applied_score": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "expert_activation_silu": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "expert_gated_product": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "expert_gated_product_bf16": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "expert_w1_projection": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "expert_w2_projection": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "expert_w3_projection": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "final_expert_output": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "normalized_routing_weights": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "raw_gate_logits": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "scaled_routing_weights": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "score_transform": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "selected_raw_scores": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "topk_expert_indices": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    }
+  },
+  "digests": {
+    "final_expert_output_sha256": "de83ae0d4869aec4199eae4696a97fc14a5c7a18ed61f00bda234366d1340917",
+    "reference_final_expert_output_sha256": "de83ae0d4869aec4199eae4696a97fc14a5c7a18ed61f00bda234366d1340917"
+  },
+  "ds4_authority": {
+    "commit": "0aaea5a238fb41a35106a551e73c8409dfb751ac",
+    "remote": "https://github.com/antirez/ds4.git"
+  },
+  "gates": {
+    "actual_layer24_moe_config_recorded": true,
+    "expert_intermediates_validated": true,
+    "final_single_expert_output_validated": true,
+    "full_model_semantics_not_claimed": true,
+    "gate_tensor_provenance_recorded": true,
+    "routing_indices_exact": true,
+    "routing_weight_not_applied": true,
+    "routing_weights_validated": true,
+    "selected_expert_tensor_provenance_recorded": true,
+    "source_reviewed": true
+  },
+  "non_claims": [
+    "no multi-expert weighted sum",
+    "no shared experts",
+    "no all-to-all / expert parallel",
+    "no FFN HC integration",
+    "no full MoE",
+    "no full Block",
+    "no logits/full model",
+    "no performance claim"
+  ],
+  "not_omlx_derived": true,
+  "official_reference": {
+    "model_py": {
+      "file": "inference/model.py",
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "functions": [
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Gate",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            792,
+            827
+          ],
+          "source_sha256": "bf29f6084e04bc1e0f2e8daf40014565e342686acb62ea99759180387b28e6a5"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Gate.forward",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            807,
+            827
+          ],
+          "source_sha256": "b4f3e90e95d44aa084062a38c41b9270c94da637e6775dcca37330f2841419b3"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Expert",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            830,
+            851
+          ],
+          "source_sha256": "1822da2bf8c5d6341d7fc73ab01de32fa9be032843ef746801cfc058a97aabef"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Expert.forward",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            843,
+            851
+          ],
+          "source_sha256": "b2d6d5742033c7b3b8b1202fe153269614fa8492b8ecb921405b8cfbf1097f51"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "MoE.__init__",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            854,
+            881
+          ],
+          "source_sha256": "9ae12758fc7a16b86e0fa772a10bd8f53e2e576fa26e61dc3416fbddfa937781"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "MoE.forward",
+          "reviewed_only": "routing/reduction order reviewed; reduction/shared experts not executed",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            883,
+            904
+          ],
+          "source_sha256": "602da77af23beb068ac04beab5b226c834391da5b9edb359cdd7099506f6b5ec"
+        }
+      ]
+    }
+  },
+  "ok": true,
+  "operation_contract": {
+    "expert_order": "w1 gate projection and w3 up projection; clamp up to [-limit,limit], clamp gate max=limit; silu(gate)*up; STOP weight application; w2 down projection returns single expert output",
+    "fp4_weight_contract": "I8 stores two FP4 E2M1 nibbles, low then high, scaled per 32 input values by E8M0 scale",
+    "gate_order": "raw=linear(x.float, weight.float)/gate_temp; scores=sqrt(softplus(raw)); indices=topk(scores+bias); weights=gather(unbiased scores); normalize selected scores; multiply route_scale",
+    "predeclared_tolerance": {
+      "bf16_max_ulp_lte": 1,
+      "f32_max_abs_lte": 0.001,
+      "indices_exact": true
+    },
+    "topk_ties": "fixture avoids ties; numpy stable descending argsort used only where scores are non-tied"
+  },
+  "purpose": "validate Boundary 6c0 MoE Gate routing + single routed Expert primitive; stop before reduction/shared experts",
+  "reference_fixture": "artifacts/moe-gate-expert-official-reference-fixture.json",
+  "schema": "ds41f.native-moe-gate-expert-validation.v1",
+  "semantic_status": {
+    "actual_layer24_moe_config_recorded": true,
+    "expert_intermediates_validated": true,
+    "final_single_expert_output_validated": true,
+    "gate_expert_moe_source_reviewed": true,
+    "gate_tensor_provenance_recorded": true,
+    "model_semantics_validated": false,
+    "routing_indices_exact": true,
+    "routing_weight_applied_to_expert_output": false,
+    "routing_weights_validated": true,
+    "selected_expert_tensor_provenance_recorded": true
+  }
+}

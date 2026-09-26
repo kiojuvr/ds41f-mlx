@@ -1,0 +1,322 @@
+{
+  "authority": {
+    "boundary_fixtures": [
+      "artifacts/attention-q-prelude-official-reference-fixture.json",
+      "artifacts/window-kv-prelude-official-reference-fixture.json",
+      "artifacts/sparse-attn-official-reference-fixture.json",
+      "artifacts/attention-output-projection-official-reference-fixture.json"
+    ],
+    "native_validation_provider": "single Python-orchestrated native primitive dataflow",
+    "official_checkpoint_raw_bits": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash"
+  },
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "official_reference_derived_native_validation",
+  "comparison": {
+    "final_attention_output": {
+      "bit_exact": true,
+      "max_error": 0,
+      "max_error_lte": 1,
+      "name": "final_attention_output",
+      "native_sha256": "49afde916b9fb6eb507f9e56159312f5e813ff9da99897ba6b72720e884c9820",
+      "reference_sha256": "49afde916b9fb6eb507f9e56159312f5e813ff9da99897ba6b72720e884c9820",
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "grouped_wo_a": {
+      "bit_exact": true,
+      "max_error": 0,
+      "max_error_lte": 1,
+      "name": "grouped_wo_a",
+      "native_sha256": "ca3d7a22de4ba82cf9a319871d0bcd4ec9a941352ea7bf72930986c3e5c14ffd",
+      "reference_sha256": "ca3d7a22de4ba82cf9a319871d0bcd4ec9a941352ea7bf72930986c3e5c14ffd",
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "inverse_rotary": {
+      "bit_exact": true,
+      "max_error": 0,
+      "max_error_lte": 1,
+      "name": "inverse_rotary",
+      "native_sha256": "e67ad5cc78645bbeef81f5b28b5a496ca567504383db1f9fef88f446a2278007",
+      "reference_sha256": "e67ad5cc78645bbeef81f5b28b5a496ca567504383db1f9fef88f446a2278007",
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "q_rotary_output": {
+      "bit_exact": true,
+      "max_error": 0,
+      "max_error_lte": 1,
+      "name": "q_rotary_output",
+      "native_sha256": "a864128199748b3c06b412f87f2e7f98397c4c483263ead1ce22d5e1af3de652",
+      "reference_sha256": "a864128199748b3c06b412f87f2e7f98397c4c483263ead1ce22d5e1af3de652",
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "sparse_attn_output": {
+      "bit_exact": true,
+      "max_error": 0,
+      "max_error_lte": 2,
+      "name": "sparse_attn_output",
+      "native_sha256": "40adc9d7e9df0744fcb341c0ae8c667b3fa0821bc358c594ebd90636b43a432f",
+      "reference_sha256": "40adc9d7e9df0744fcb341c0ae8c667b3fa0821bc358c594ebd90636b43a432f",
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "topk_idxs": {
+      "bit_exact": true,
+      "max_error": 0,
+      "max_error_lte": 0,
+      "name": "topk_idxs",
+      "native_sha256": "db9497531f0a39d8aadfd0cc228a5d4a798a6884d668a66afbfa7cd31d0b3bad",
+      "reference_sha256": "db9497531f0a39d8aadfd0cc228a5d4a798a6884d668a66afbfa7cd31d0b3bad",
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "window_kv": {
+      "bit_exact": true,
+      "max_error": 0,
+      "max_error_lte": 0,
+      "name": "window_kv",
+      "native_sha256": "d9cbf6644af5f6337924c81a1901e8432241bc1889db63720d082d4c0db7d222",
+      "reference_sha256": "d9cbf6644af5f6337924c81a1901e8432241bc1889db63720d082d4c0db7d222",
+      "shape_matches": true,
+      "within_tolerance": true
+    }
+  },
+  "digests": {
+    "final_attention_output_bf16_sha256": "49afde916b9fb6eb507f9e56159312f5e813ff9da99897ba6b72720e884c9820",
+    "reference_final_attention_output_bf16_sha256": "49afde916b9fb6eb507f9e56159312f5e813ff9da99897ba6b72720e884c9820"
+  },
+  "gates": {
+    "all_boundary_intermediates_match": true,
+    "block_hc_not_entered": true,
+    "compressed_kv_not_entered": true,
+    "final_attention_output_within_tolerance": true,
+    "full_model_semantics_not_claimed": true,
+    "native_integrated_path_executed": true,
+    "native_metal_executed": true
+  },
+  "native_result": {
+    "q_prelude": [
+      {
+        "in_dim": 5120,
+        "metal_command_buffers": 1,
+        "metal_completion_waits": 1,
+        "metal_compute_encoders": 1,
+        "metal_enabled": true,
+        "out_dim": 1280,
+        "output_checksum": 10554502561738824234,
+        "rows": 2
+      },
+      {
+        "dim": 1280,
+        "metal_command_buffers": 1,
+        "metal_completion_waits": 1,
+        "metal_compute_encoders": 1,
+        "metal_enabled": true,
+        "output_checksum": 165207256878288648,
+        "rows": 2
+      },
+      {
+        "in_dim": 1280,
+        "metal_command_buffers": 1,
+        "metal_completion_waits": 1,
+        "metal_compute_encoders": 1,
+        "metal_enabled": true,
+        "out_dim": 32768,
+        "output_checksum": 14748003717933847453,
+        "rows": 2
+      },
+      {
+        "batch": 1,
+        "dim": 64,
+        "freqs_checksum": 3895363985965987009,
+        "heads": 64,
+        "inverse_checksum": 1061873394007166324,
+        "metal_command_buffers": 1,
+        "metal_completion_waits": 1,
+        "metal_compute_encoders": 3,
+        "metal_enabled": true,
+        "original_seq_len": 0,
+        "rotated_checksum": 1061873394007166324,
+        "seqlen": 2
+      }
+    ],
+    "sparse_attn": {
+      "in_dim": 512,
+      "metal_command_buffers": 1,
+      "metal_completion_waits": 1,
+      "metal_compute_encoders": 1,
+      "metal_enabled": true,
+      "out_dim": 512,
+      "output_checksum": 10112952462660555177,
+      "rows": 128
+    },
+    "window_kv_prelude": [
+      {
+        "in_dim": 5120,
+        "metal_command_buffers": 1,
+        "metal_completion_waits": 1,
+        "metal_compute_encoders": 1,
+        "metal_enabled": true,
+        "out_dim": 512,
+        "output_checksum": 16263933600416509236,
+        "rows": 2
+      },
+      {
+        "dim": 512,
+        "metal_command_buffers": 1,
+        "metal_completion_waits": 1,
+        "metal_compute_encoders": 1,
+        "metal_enabled": true,
+        "output_checksum": 14414817905417569804,
+        "rows": 2
+      },
+      {
+        "batch": 1,
+        "dim": 64,
+        "freqs_checksum": 3895363985965987009,
+        "heads": 1,
+        "inverse_checksum": 10800207556972874856,
+        "metal_command_buffers": 1,
+        "metal_completion_waits": 1,
+        "metal_compute_encoders": 3,
+        "metal_enabled": true,
+        "original_seq_len": 0,
+        "rotated_checksum": 8582229650984262566,
+        "seqlen": 2
+      },
+      {
+        "in_dim": 512,
+        "metal_command_buffers": 1,
+        "metal_completion_waits": 1,
+        "metal_compute_encoders": 1,
+        "metal_enabled": true,
+        "out_dim": 512,
+        "output_checksum": 14444399197222293641,
+        "rows": 2
+      }
+    ],
+    "wo_a_group_linears": [
+      {
+        "in_dim": 4096,
+        "metal_command_buffers": 1,
+        "metal_completion_waits": 1,
+        "metal_compute_encoders": 1,
+        "metal_enabled": true,
+        "out_dim": 1024,
+        "output_checksum": 10635906786211791793,
+        "rows": 2
+      },
+      {
+        "in_dim": 4096,
+        "metal_command_buffers": 1,
+        "metal_completion_waits": 1,
+        "metal_compute_encoders": 1,
+        "metal_enabled": true,
+        "out_dim": 1024,
+        "output_checksum": 7654959612118402427,
+        "rows": 2
+      },
+      {
+        "in_dim": 4096,
+        "metal_command_buffers": 1,
+        "metal_completion_waits": 1,
+        "metal_compute_encoders": 1,
+        "metal_enabled": true,
+        "out_dim": 1024,
+        "output_checksum": 13010844508890149714,
+        "rows": 2
+      },
+      {
+        "in_dim": 4096,
+        "metal_command_buffers": 1,
+        "metal_completion_waits": 1,
+        "metal_compute_encoders": 1,
+        "metal_enabled": true,
+        "out_dim": 1024,
+        "output_checksum": 7011280580617953984,
+        "rows": 2
+      },
+      {
+        "in_dim": 4096,
+        "metal_command_buffers": 1,
+        "metal_completion_waits": 1,
+        "metal_compute_encoders": 1,
+        "metal_enabled": true,
+        "out_dim": 1024,
+        "output_checksum": 15285260219873736495,
+        "rows": 2
+      },
+      {
+        "in_dim": 4096,
+        "metal_command_buffers": 1,
+        "metal_completion_waits": 1,
+        "metal_compute_encoders": 1,
+        "metal_enabled": true,
+        "out_dim": 1024,
+        "output_checksum": 889104008312015394,
+        "rows": 2
+      },
+      {
+        "in_dim": 4096,
+        "metal_command_buffers": 1,
+        "metal_completion_waits": 1,
+        "metal_compute_encoders": 1,
+        "metal_enabled": true,
+        "out_dim": 1024,
+        "output_checksum": 17682132435963744202,
+        "rows": 2
+      },
+      {
+        "in_dim": 4096,
+        "metal_command_buffers": 1,
+        "metal_completion_waits": 1,
+        "metal_compute_encoders": 1,
+        "metal_enabled": true,
+        "out_dim": 1024,
+        "output_checksum": 13533762627356719635,
+        "rows": 2
+      }
+    ],
+    "wo_b": {
+      "in_dim": 8192,
+      "metal_command_buffers": 1,
+      "metal_completion_waits": 1,
+      "metal_compute_encoders": 1,
+      "metal_enabled": true,
+      "out_dim": 5120,
+      "output_checksum": 4376115312567882451,
+      "rows": 2
+    }
+  },
+  "non_claims": [
+    "does not execute compressed KV, Compressor, Indexer, candidate selection",
+    "does not execute Block or HC residual integration",
+    "does not validate MoE, logits, full layer, full prefill, or full model correctness",
+    "does not benchmark performance"
+  ],
+  "not_omlx_derived": true,
+  "ok": true,
+  "purpose": "layer-0 window-only Attention integrated native dataflow validation; stop before Block/HC",
+  "schema": "ds41f.native-attention-window-only-integration-validation.v1",
+  "scope": {
+    "batch": 1,
+    "compress_ratio": 0,
+    "layer": 0,
+    "sequence": 2,
+    "start_pos": 0,
+    "tokens": [
+      0,
+      3
+    ],
+    "world_size": 1
+  },
+  "semantic_status": {
+    "block_hc_entered": false,
+    "compressed_kv_entered": false,
+    "model_semantics_validated": false,
+    "native_integrated_path_executed": true,
+    "validated_stage": "layer-0 window-only Attention dataflow only"
+  }
+}

@@ -1,0 +1,262 @@
+{
+  "authority_contamination_guard": {
+    "boundary10a_and_boundary10b_are_branch_specific_sampling_authorities_layered_on_boundary9": true,
+    "boundary10b_conditional_token_never_official_sampled_token": true,
+    "boundary10b_supplied_noise_evidence_never_official_rng_evidence": true,
+    "boundary9_remains_current_integrated_deterministic_model_forward_numerical_authority_through_logits": true,
+    "omlx_old_evidence_excluded_from_semantic_correctness_authority": true
+  },
+  "authority_hierarchy": {
+    "boundary10": {
+      "does_not_supersede_boundary9": true,
+      "relationship": "sampling branch semantics authority layered on Boundary9 logits"
+    },
+    "boundary10a": {
+      "artifact": "artifacts/native-sampling-temperature-zero-validation.json",
+      "chain": "Boundary9 logits -> explicit temperature=0 argmax branch",
+      "commit": "e2f88cb2c9cc78765c6084a589b5da741e31a3ca"
+    },
+    "boundary10b": {
+      "artifact": "artifacts/native-sampling-supplied-noise-validation.json",
+      "chain": "Boundary9 logits -> temperature=1 arithmetic -> supplied-noise conditional result",
+      "commit": "a05d8bacc4017b2b836a30055408c9dd13cd2b92"
+    },
+    "boundary9": {
+      "artifact": "artifacts/boundary9-closeout.json",
+      "chain": "token IDs -> model deterministic forward -> final-position logits",
+      "commit": "73f7d66d1e373605825fc77a4a29e184e6bef85b",
+      "relationship": "current integrated deterministic model-forward authority through final-position logits"
+    }
+  },
+  "boundary10a": {
+    "argmax": 372,
+    "artifact": "artifacts/native-sampling-temperature-zero-validation.json",
+    "artifact_ok": true,
+    "classification": "validated explicit parameterized deterministic sampling branch",
+    "generate_py_default_temperature": 1.0,
+    "input_logits_digest": "b2e6eb3755b4cea2f11211cc557fbd93ef0988af8deee8888a36f69d9473989d",
+    "max_logit": 12.943254470825195,
+    "native_argmax_equals_independent_scan": true,
+    "not_default_transformer_forward_sampling_authority": true,
+    "output_ids": [
+      372
+    ],
+    "output_ids_dtype": "int64",
+    "output_ids_shape": [
+      1
+    ],
+    "source_default_temperature": 1,
+    "temperature": 0.0,
+    "tie_count": 1
+  },
+  "boundary10b": {
+    "arithmetic": {
+      "conditional_output_id": 795,
+      "output_name": "conditional_output_id",
+      "scaled_logits_digest": "b2e6eb3755b4cea2f11211cc557fbd93ef0988af8deee8888a36f69d9473989d",
+      "scores_digest": "5bdcb0b61b5a72eba6ed429b091e4144356b0b335a4f3df3d5f0fc48f451c564",
+      "softmax": {
+        "digest": "be8593220e2e73092a1a129875f8d331fea446af127b1ef6704aee607f2cca26",
+        "dtype": "FP32",
+        "max": 0.0354914627969265,
+        "min": 4.329862596258059e-15,
+        "shape": [
+          1,
+          129280
+        ],
+        "sum": 0.9999999429814543
+      }
+    },
+    "artifact": "artifacts/native-sampling-supplied-noise-validation.json",
+    "artifact_ok": true,
+    "classification": "official-reference-derived sampling arithmetic conditional on supplied deterministic positive noise",
+    "independent_winner": {
+      "general_tie_semantics": "not closed",
+      "independent_log_domain_formula": "argmax(float64(logit_i)/T - log(float64(noise_i)))",
+      "independent_log_domain_token": 795,
+      "independent_log_score_gap": 0.3678696085973687,
+      "independent_top1_log_score": 16.328405665299115,
+      "independent_top1_token": 795,
+      "independent_top2_log_score": 15.960536056701747,
+      "independent_top2_token": 45039,
+      "source_order_gap": 0.3225035071372986,
+      "source_order_token": 795,
+      "source_order_top1_score": 1.047795057296753,
+      "source_order_top1_token": 795,
+      "source_order_top2_score": 0.7252915501594543,
+      "source_order_top2_token": 45039,
+      "tie_count": 1,
+      "tokens_agree": true
+    },
+    "input_logits_digest": "b2e6eb3755b4cea2f11211cc557fbd93ef0988af8deee8888a36f69d9473989d",
+    "is_default_sampled_token_authority": false,
+    "is_official_rng_authority": false,
+    "softmax_comparison": {
+      "actual": {
+        "max_abs": 1.9247323179705234e-09,
+        "pass": true,
+        "sum_abs_error": 5.701854566275699e-08
+      },
+      "not_bit_exact_claim": true,
+      "policy": {
+        "predeclared_before_execution": true,
+        "softmax_max_abs_lte": 1e-06,
+        "softmax_sum_abs_error_lte": 1e-06
+      }
+    },
+    "supplied_noise": {
+      "all_finite": true,
+      "all_positive": true,
+      "classification": {
+        "arithmetic_fixture": true,
+        "deterministic_permutation_of_exp1_quantile_representatives": true,
+        "not_distributional_qualification": true,
+        "not_rng_output": true
+      },
+      "digest": "fe4cf22185a06020968728fcd88706683ac8c16a6f1b0b4f1f561893ee5a629f",
+      "dtype": "FP32",
+      "formula": "V=129280; j_i=(65537*i+17) mod V; u_i=(j_i+0.5)/V computed in float64; noise_i=float32(-log1p(-u_i))",
+      "max": 12.462882995605469,
+      "mean": 0.9999973190020374,
+      "min": 3.8675816540489905e-06,
+      "shape": [
+        1,
+        129280
+      ]
+    },
+    "temperature": {
+      "effective": 1.0,
+      "floor_exercised": false,
+      "floor_reviewed": true,
+      "input": 1.0
+    }
+  },
+  "boundary9_regression_relationship": {
+    "artifact_injection": false,
+    "boundary10a_logits_digest": "b2e6eb3755b4cea2f11211cc557fbd93ef0988af8deee8888a36f69d9473989d",
+    "boundary10b_logits_digest": "b2e6eb3755b4cea2f11211cc557fbd93ef0988af8deee8888a36f69d9473989d",
+    "same_connected_producer": "Boundary9 logits"
+  },
+  "checks": {
+    "authority_labels_pass": true,
+    "boundary8_closeout_pass": true,
+    "boundary9_closeout_pass": true,
+    "forbidden_broad_claims_absent": true,
+    "source_identity_guard_pass": true
+  },
+  "closed_claims": [
+    "sample() source contract review",
+    "temperature==0 branch arithmetic",
+    "temperature==0 connected argmax result for explicit temperature=0 fixture",
+    "nonzero temperature scaling at T=1",
+    "FP32 softmax arithmetic",
+    "probability/noise division arithmetic",
+    "conditional argmax semantics",
+    "supplied-noise producer/consumer arithmetic contract",
+    "independent log-domain winner equivalence for the supplied-noise fixture"
+  ],
+  "closeout_type": "sampling_branch_semantics_closeout_no_new_model_math_no_rng_implementation",
+  "explicitly_not_closed": [
+    "official RNG generation",
+    "actual default stochastic sampled token",
+    "full default sample() execution",
+    "sampling distribution correctness",
+    "temperature floor exercised behavior",
+    "RNG seed/reproducibility",
+    "cross-backend RNG equivalence",
+    "main_hidden assembly",
+    "Transformer.forward return",
+    "decode"
+  ],
+  "next_recommendation": "official exponential RNG generation may be a candidate, but first separate bitwise PyTorch exponential_(1) reproduction for a specific seed from MLX/runtime Exp(1) distribution semantics.",
+  "non_claims": [
+    "no official exponential RNG correctness",
+    "no torch RNG state validation",
+    "no manual_seed semantics",
+    "no cross-backend RNG parity",
+    "no actual default stochastic sampled-token equality",
+    "no sampling distribution qualification",
+    "no temperature-floor execution qualification",
+    "no main_hidden assembly",
+    "no Transformer.forward return correctness",
+    "no full-sequence logits",
+    "no world_size>1 head/all_gather",
+    "no decode/cache/ring/partial compression-group semantics",
+    "no multi-call cache persistence",
+    "no distributed semantics",
+    "no Engram",
+    "no MTP/DSpark",
+    "no long-context qualification",
+    "no full Transformer.forward correctness",
+    "no full-model correctness",
+    "no performance/production qualification"
+  ],
+  "not_omlx_derived": true,
+  "ok": true,
+  "rng_boundary": {
+    "official_rng_call_executed": false,
+    "official_rng_call_in_source": "torch.empty_like(probs).exponential_(1)",
+    "rng_draw_replaced_by_supplied_fixture_for_arithmetic_validation": true,
+    "still_open": [
+      "torch exponential_(1) implementation",
+      "RNG state",
+      "seed semantics",
+      "manual_seed interaction",
+      "device/backend RNG algorithm",
+      "CPU/CUDA differences",
+      "MLX RNG algorithm",
+      "PyTorch/MLX RNG parity",
+      "exact draw sequence",
+      "cross-backend sampled-token equality",
+      "distributional qualification",
+      "reproducibility across devices"
+    ],
+    "supplied_noise_is_not_claimed_as_official_rng_output": true
+  },
+  "safe_closeout_claim": "Boundary 10 closes two source-defined sampling arithmetic branches on top of the existing Boundary9 connected logits authority: (1) an explicit temperature=0 deterministic argmax fixture, producing token 372; and (2) the temperature=1.0 nonzero sampling arithmetic conditional on a predeclared deterministic positive-noise fixture, for which the source-order FP32 softmax/division path and an independent FP64 log-domain reconstruction both select conditional token 795. Boundary 10 does not validate torch exponential RNG generation, RNG state/seed/device/backend behavior, MLX/PyTorch RNG parity, the actual default stochastic sampled token, or sampling distribution correctness. Boundary9 remains the integrated deterministic model-forward authority through logits; Boundary10a/10b are branch-specific sampling authorities.",
+  "sample_contract": {
+    "temperature_eq_0": "argmax(logits)",
+    "temperature_nonzero": [
+      "logits / max(temperature, 1e-5)",
+      "FP32 softmax",
+      "Exp(1) noise in official source",
+      "probs / noise",
+      "argmax"
+    ]
+  },
+  "schema": "ds41f.boundary10-closeout.v1",
+  "scope": {
+    "B": 1,
+    "S": 2,
+    "boundary10b_supplied_noise_digest": "fe4cf22185a06020968728fcd88706683ac8c16a6f1b0b4f1f561893ee5a629f",
+    "boundary10b_temperature": 1.0,
+    "full_logits": false,
+    "prefill": true,
+    "start_pos": 0,
+    "tokens": [
+      [
+        0,
+        3
+      ]
+    ],
+    "world_size": 1
+  },
+  "source_identity": {
+    "sample": {
+      "file": "inference/model.py",
+      "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+      "source_lines": [
+        1285,
+        1292
+      ],
+      "source_sha256": "da6030c7ebf858d615fcdf6b7efb88b5a98f53849b98ffc0815b4eccd467955a"
+    }
+  },
+  "stop_boundary": {
+    "boundary10b_note": "official RNG is replaced by supplied noise, so this is not a literal source execution reaching main_hidden",
+    "main_hidden_assembly": "not executed",
+    "next_source_operation": "main_hidden = torch.cat(main_hiddens, dim=-1) if main_hiddens else None",
+    "sampling_stop": "after branch-specific sampling arithmetic result",
+    "transformer_forward_return": "not executed"
+  }
+}

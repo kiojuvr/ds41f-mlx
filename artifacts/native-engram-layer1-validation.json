@@ -1,0 +1,1824 @@
+{
+  "authority_source_guards": {
+    "Block1_not_executed": true,
+    "Engram14_not_executed": true,
+    "local_pinned_authority_only": true,
+    "no_full_giant_embedding_table_scan": true,
+    "no_omlx_fp8_or_engram_semantic_donor": true,
+    "not_omlx_derived": true
+  },
+  "base_head": "4a9dce24bd263ede0f41cabfbbf819c729ffc4a2",
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "checkpoint_header_regression": {
+    "headers_match_boundary12b0": true,
+    "layer1_tensors": {
+      "layers.1.engram.embed.scale": {
+        "checkpoint_dtype": "F8_E8M0",
+        "data_offsets_absolute_file": [
+          98305579672,
+          101377629016
+        ],
+        "data_offsets_relative_to_safetensors_data": [
+          98305579008,
+          101377628352
+        ],
+        "layer": 1,
+        "logical_nbytes": 3072049344,
+        "semantic_role": "ParallelEngramEmbedding per-row/per-32 scale table",
+        "shape": [
+          384006168,
+          8
+        ],
+        "shard": "model-00047-of-00048.safetensors",
+        "suffix": "embed.scale",
+        "tensor": "layers.1.engram.embed.scale"
+      },
+      "layers.1.engram.embed.weight": {
+        "checkpoint_dtype": "F8_E4M3",
+        "data_offsets_absolute_file": [
+          664,
+          98305579672
+        ],
+        "data_offsets_relative_to_safetensors_data": [
+          0,
+          98305579008
+        ],
+        "layer": 1,
+        "logical_nbytes": 98305579008,
+        "semantic_role": "ParallelEngramEmbedding fp8 lookup table rows before scale dequantization",
+        "shape": [
+          384006168,
+          256
+        ],
+        "shard": "model-00047-of-00048.safetensors",
+        "suffix": "embed.weight",
+        "tensor": "layers.1.engram.embed.weight"
+      },
+      "layers.1.engram.k_weight": {
+        "checkpoint_dtype": "BF16",
+        "data_offsets_absolute_file": [
+          101377669976,
+          101377710936
+        ],
+        "data_offsets_relative_to_safetensors_data": [
+          101377669312,
+          101377710272
+        ],
+        "layer": 1,
+        "logical_nbytes": 40960,
+        "semantic_role": "Engram gate key per-HC weight factor",
+        "shape": [
+          4,
+          5120
+        ],
+        "shard": "model-00047-of-00048.safetensors",
+        "suffix": "k_weight",
+        "tensor": "layers.1.engram.k_weight"
+      },
+      "layers.1.engram.q_weight": {
+        "checkpoint_dtype": "BF16",
+        "data_offsets_absolute_file": [
+          101377629016,
+          101377669976
+        ],
+        "data_offsets_relative_to_safetensors_data": [
+          101377628352,
+          101377669312
+        ],
+        "layer": 1,
+        "logical_nbytes": 40960,
+        "semantic_role": "Engram gate query per-HC weight factor",
+        "shape": [
+          4,
+          5120
+        ],
+        "shard": "model-00047-of-00048.safetensors",
+        "suffix": "q_weight",
+        "tensor": "layers.1.engram.q_weight"
+      },
+      "layers.1.engram.wkv.scale": {
+        "checkpoint_dtype": "F8_E8M0",
+        "data_offsets_absolute_file": [
+          101534997336,
+          101535150936
+        ],
+        "data_offsets_relative_to_safetensors_data": [
+          101534996672,
+          101535150272
+        ],
+        "layer": 1,
+        "logical_nbytes": 153600,
+        "semantic_role": "Engram Linear fp8 block scales",
+        "shape": [
+          800,
+          192
+        ],
+        "shard": "model-00047-of-00048.safetensors",
+        "suffix": "wkv.scale",
+        "tensor": "layers.1.engram.wkv.scale"
+      },
+      "layers.1.engram.wkv.weight": {
+        "checkpoint_dtype": "F8_E4M3",
+        "data_offsets_absolute_file": [
+          101377710936,
+          101534997336
+        ],
+        "data_offsets_relative_to_safetensors_data": [
+          101377710272,
+          101534996672
+        ],
+        "layer": 1,
+        "logical_nbytes": 157286400,
+        "semantic_role": "Engram Linear projection from flattened hash embeddings to key/value",
+        "shape": [
+          25600,
+          6144
+        ],
+        "shard": "model-00047-of-00048.safetensors",
+        "suffix": "wkv.weight",
+        "tensor": "layers.1.engram.wkv.weight"
+      }
+    }
+  },
+  "classification": "official-reference-derived bounded connected Engram@layer1 numerical authority",
+  "connected_seams": {
+    "Block0_output_to_Engram1_x": true,
+    "embedding_output_to_flatten_wkv_input": true,
+    "layer1_hashes_to_ParallelEngramEmbedding_indices": true,
+    "no_tensor_artifact_injection": true,
+    "tokens_to_regenerated_layer1_hashes": true,
+    "wkv_key_value_to_gate_residual": true
+  },
+  "flatten_seam": {
+    "byte_preserving": true,
+    "embedding_output_digest": "7a203d55dd97c4d0398bb81b70409d299a246289f60e8a2ecb209305cc180ed4",
+    "flatten_digest": "7a203d55dd97c4d0398bb81b70409d299a246289f60e8a2ecb209305cc180ed4",
+    "flatten_shape": [
+      1,
+      2,
+      6144
+    ],
+    "independent_reshape_digest": "7a203d55dd97c4d0398bb81b70409d299a246289f60e8a2ecb209305cc180ed4"
+  },
+  "gate": {
+    "dot_max_abs_diff": 0.0,
+    "dot_max_abs_lte": 2e-05,
+    "gate_digest": "abff33cf9b25619b7a9079f1fba3f5724448ab5058ef107401c216fc300fca2c",
+    "gate_max_abs_diff": 0.0,
+    "gate_max_abs_lte": 1e-05,
+    "gate_shape": [
+      1,
+      2,
+      4
+    ],
+    "independent_gate_digest": "abff33cf9b25619b7a9079f1fba3f5724448ab5058ef107401c216fc300fca2c",
+    "independent_records": [
+      {
+        "b": 0,
+        "gate": 0.05954467132687569,
+        "h_norm_component": 1.506129503250122,
+        "hc": 0,
+        "key_norm_component": 0.16671650111675262,
+        "normalized_dot": -7.615598201751709,
+        "raw_weighted_dot": -273.0608825683594,
+        "s": 0,
+        "signed_sqrt": -2.7596373558044434
+      },
+      {
+        "b": 0,
+        "gate": 0.21287468075752258,
+        "h_norm_component": 0.13555628061294556,
+        "hc": 1,
+        "key_norm_component": 0.9774001836776733,
+        "normalized_dot": -1.7100369930267334,
+        "raw_weighted_dot": -44.538597106933594,
+        "s": 0,
+        "signed_sqrt": -1.3076838254928589
+      },
+      {
+        "b": 0,
+        "gate": 6.160220073070377e-05,
+        "h_norm_component": 0.05965647101402283,
+        "hc": 2,
+        "key_norm_component": 0.003678311360999942,
+        "normalized_dot": -93.98820495605469,
+        "raw_weighted_dot": -99.62340545654297,
+        "s": 0,
+        "signed_sqrt": -9.694751739501953
+      },
+      {
+        "b": 0,
+        "gate": 0.0004043331719003618,
+        "h_norm_component": 4.485306739807129,
+        "hc": 3,
+        "key_norm_component": 0.001333174528554082,
+        "normalized_dot": -61.040889739990234,
+        "raw_weighted_dot": -337.7500305175781,
+        "s": 0,
+        "signed_sqrt": -7.812867164611816
+      },
+      {
+        "b": 0,
+        "gate": 0.04238242283463478,
+        "h_norm_component": 0.00595388887450099,
+        "hc": 0,
+        "key_norm_component": 0.4572296142578125,
+        "normalized_dot": -9.720145225524902,
+        "raw_weighted_dot": -36.289024353027344,
+        "s": 1,
+        "signed_sqrt": -3.1177146434783936
+      },
+      {
+        "b": 0,
+        "gate": 0.11459225416183472,
+        "h_norm_component": 0.002511501545086503,
+        "hc": 1,
+        "key_norm_component": 2.674513339996338,
+        "normalized_dot": -4.180667400360107,
+        "raw_weighted_dot": -24.517135620117188,
+        "s": 1,
+        "signed_sqrt": -2.044667959213257
+      },
+      {
+        "b": 0,
+        "gate": 5.7149227359332144e-06,
+        "h_norm_component": 0.00224977801553905,
+        "hc": 2,
+        "key_norm_component": 0.14593222737312317,
+        "normalized_dot": -145.74342346191406,
+        "raw_weighted_dot": -188.9597930908203,
+        "s": 1,
+        "signed_sqrt": -12.072423934936523
+      },
+      {
+        "b": 0,
+        "gate": 0.002170887542888522,
+        "h_norm_component": 0.011116914451122284,
+        "hc": 3,
+        "key_norm_component": 0.1869882494211197,
+        "normalized_dot": -37.582366943359375,
+        "raw_weighted_dot": -122.6078872680664,
+        "s": 1,
+        "signed_sqrt": -6.130445957183838
+      }
+    ],
+    "source_records": [
+      {
+        "b": 0,
+        "gate": 0.05954467132687569,
+        "h_norm_component": 1.506129503250122,
+        "hc": 0,
+        "key_norm_component": 0.16671650111675262,
+        "normalized_dot": -7.615598201751709,
+        "raw_weighted_dot": -273.0608825683594,
+        "s": 0,
+        "signed_sqrt": -2.7596373558044434
+      },
+      {
+        "b": 0,
+        "gate": 0.21287468075752258,
+        "h_norm_component": 0.13555628061294556,
+        "hc": 1,
+        "key_norm_component": 0.9774001836776733,
+        "normalized_dot": -1.7100369930267334,
+        "raw_weighted_dot": -44.538597106933594,
+        "s": 0,
+        "signed_sqrt": -1.3076838254928589
+      },
+      {
+        "b": 0,
+        "gate": 6.160220073070377e-05,
+        "h_norm_component": 0.05965647101402283,
+        "hc": 2,
+        "key_norm_component": 0.003678311360999942,
+        "normalized_dot": -93.98820495605469,
+        "raw_weighted_dot": -99.62340545654297,
+        "s": 0,
+        "signed_sqrt": -9.694751739501953
+      },
+      {
+        "b": 0,
+        "gate": 0.0004043331719003618,
+        "h_norm_component": 4.485306739807129,
+        "hc": 3,
+        "key_norm_component": 0.001333174528554082,
+        "normalized_dot": -61.040889739990234,
+        "raw_weighted_dot": -337.7500305175781,
+        "s": 0,
+        "signed_sqrt": -7.812867164611816
+      },
+      {
+        "b": 0,
+        "gate": 0.04238242283463478,
+        "h_norm_component": 0.00595388887450099,
+        "hc": 0,
+        "key_norm_component": 0.4572296142578125,
+        "normalized_dot": -9.720145225524902,
+        "raw_weighted_dot": -36.289024353027344,
+        "s": 1,
+        "signed_sqrt": -3.1177146434783936
+      },
+      {
+        "b": 0,
+        "gate": 0.11459225416183472,
+        "h_norm_component": 0.002511501545086503,
+        "hc": 1,
+        "key_norm_component": 2.674513339996338,
+        "normalized_dot": -4.180667400360107,
+        "raw_weighted_dot": -24.517135620117188,
+        "s": 1,
+        "signed_sqrt": -2.044667959213257
+      },
+      {
+        "b": 0,
+        "gate": 5.7149227359332144e-06,
+        "h_norm_component": 0.00224977801553905,
+        "hc": 2,
+        "key_norm_component": 0.14593222737312317,
+        "normalized_dot": -145.74342346191406,
+        "raw_weighted_dot": -188.9597930908203,
+        "s": 1,
+        "signed_sqrt": -12.072423934936523
+      },
+      {
+        "b": 0,
+        "gate": 0.002170887542888522,
+        "h_norm_component": 0.011116914451122284,
+        "hc": 3,
+        "key_norm_component": 0.1869882494211197,
+        "normalized_dot": -37.582366943359375,
+        "raw_weighted_dot": -122.6078872680664,
+        "s": 1,
+        "signed_sqrt": -6.130445957183838
+      }
+    ],
+    "token_mask": null
+  },
+  "gates": {
+    "Block1 not executed": true,
+    "Boundary11 closeout remains PASS": true,
+    "Boundary12b0 checker PASS": true,
+    "Boundary12b1 checker PASS": true,
+    "Engram@14 not executed": true,
+    "FP8 source identities exact": true,
+    "ParallelEngramEmbedding BF16 output shape exact": true,
+    "ParallelEngramEmbedding source vs independent byte-exact": true,
+    "all predeclared wkv anchor rows BF16 ULP 0": true,
+    "all producer/consumer seams connected": true,
+    "authority/source guards PASS": true,
+    "dot within predeclared tolerance": true,
+    "existing FP8 primitive reference artifact PASS": true,
+    "existing native FP8 primitive artifact PASS": true,
+    "fixture starts from tokens [[0,3]]": true,
+    "fresh hash state": true,
+    "gate source arithmetic executed": true,
+    "gate within predeclared tolerance": true,
+    "independent gate arithmetic executed": true,
+    "key/value split exact": true,
+    "layer1 hash digest exact": true,
+    "no full giant embed table read": true,
+    "no hash artifact tensor injection": true,
+    "no tensor artifact injection": true,
+    "not_omlx_derived == true": true,
+    "post_engram1_h BF16 byte-exact against independent reconstruction": true,
+    "post_engram1_h shape exact": true,
+    "pre-Engram1 path embedding -> Block0 only no prior Engram": true,
+    "q/k BF16 tensor provenance exact": true,
+    "raw sparse row provenance recorded": true,
+    "sparse embedding rows only": true,
+    "wkv full output generated by validated FP8 primitive": true,
+    "wkv provenance exact": true
+  },
+  "hash_regression": {
+    "full_digest": "f5a64799492bea90bc6d87f0cb8a67bb983441e1cd9c12ec2e7b8df6cbcfee1d",
+    "full_engram_hashes_shape": [
+      1,
+      2,
+      2,
+      24
+    ],
+    "full_expected_digest": "f5a64799492bea90bc6d87f0cb8a67bb983441e1cd9c12ec2e7b8df6cbcfee1d",
+    "layer1_digest": "8e0187ea859a7db65517a540eb5210457ec907fd0b2f44042d830366cbedbda5",
+    "layer1_expected_digest": "8e0187ea859a7db65517a540eb5210457ec907fd0b2f44042d830366cbedbda5",
+    "layer1_shape": [
+      1,
+      2,
+      24
+    ],
+    "no_hash_artifact_tensor_injection": true,
+    "regenerated_from_tokens_in_runner": true
+  },
+  "io_accounting": {
+    "embedding_logical_rows": 48,
+    "embedding_scale_bytes_read": 384,
+    "embedding_unique_rows_requested": 48,
+    "embedding_weight_bytes_read": 12288,
+    "k_weight_bytes_read": 40960,
+    "no_full_giant_embedding_table_scan": true,
+    "q_weight_bytes_read": 40960,
+    "total_checkpoint_bytes_read": 157534592,
+    "wkv_scale_bytes_read": 153600,
+    "wkv_weight_bytes_read": 157286400
+  },
+  "key_value_split": {
+    "key_digest": "a38eeaf361caf47b12802f77d2932c1c5f800421ace0cef810fae69eff0dfb0a",
+    "key_reshape_byte_preserving": true,
+    "key_reshaped_digest": "a38eeaf361caf47b12802f77d2932c1c5f800421ace0cef810fae69eff0dfb0a",
+    "key_reshaped_shape": [
+      1,
+      2,
+      4,
+      5120
+    ],
+    "key_shape": [
+      1,
+      2,
+      20480
+    ],
+    "split_boundary": 20480,
+    "value_digest": "3d0617311e3dec2726b699741e812f6271fb641e76259131c394d580baa945e6",
+    "value_shape": [
+      1,
+      2,
+      5120
+    ]
+  },
+  "next_boundary": "Boundary 12b3: Engram@layer14 with upstream connected Engram@1 state",
+  "non_claims": [
+    "no Engram@layer14 numeric authority",
+    "no Block1-and-later Engram-connected authority",
+    "no main_hidden numeric authority",
+    "no Transformer.forward return correctness",
+    "no incremental/decode NgramHashState correctness",
+    "no False/image-mask DEAD crossing numeric authority",
+    "no distributed Engram correctness",
+    "no SSD/offload semantic qualification",
+    "no full-model correctness",
+    "no performance/production qualification"
+  ],
+  "not_omlx_derived": true,
+  "ok": true,
+  "pre_engram1_h": {
+    "digest": "ba2e6acdac3178115513c81e871f0106541cba2810f7dbc5c4a0c8c309dbf938",
+    "dtype": "BF16(uint16)",
+    "max": 9.375,
+    "mean": -0.006265745590280858,
+    "min": -7.53125,
+    "producer": "tokens -> embedding -> HC repeat -> Block0; no prior Engram",
+    "shape": [
+      1,
+      2,
+      4,
+      5120
+    ]
+  },
+  "qk_weights": {
+    "k_weight_digest": "61152efdabab20ca8c29fe2e087d7de9c5c1684bfef930fa00541efe58fff422",
+    "k_weight_fp32_digest": "b83db7fad90fb3abb4465e27db59544948a6283a4a42784aa1811e94be567bf6",
+    "q_weight_digest": "0aca22a679f1a2479e8065a7b3c64e035b13fe1fa63189644e3556b0a333da56",
+    "q_weight_fp32_digest": "bb04afedce4c262626a58ed3e91fc0ac06d1d2b0d11832210265c01a2857b08b",
+    "qk_weight_fp32_digest": "1d4fc69975b8640916e280e449a5e800c2c42d02fdad38fe43a35cb919116dca"
+  },
+  "residual_update": {
+    "delta_digest": "6053caf38360638981814d1ffa171990df6f1a4a8356cd6ce4681a6392259378",
+    "delta_shape": [
+      1,
+      2,
+      4,
+      5120
+    ],
+    "independent_post_digest": "3d4e54860845a8cb3269a75fba39f85b3bedf31e1a30edb9bc3cc801ceb435e9",
+    "post_bf16_max_ulp": 0,
+    "post_bf16_ulp_lte": 0,
+    "post_byte_exact": true,
+    "post_engram1_h": {
+      "digest": "3d4e54860845a8cb3269a75fba39f85b3bedf31e1a30edb9bc3cc801ceb435e9",
+      "dtype": "BF16(uint16)",
+      "max": 9.375,
+      "mean": -0.006391036355489632,
+      "min": -7.53125,
+      "shape": [
+        1,
+        2,
+        4,
+        5120
+      ]
+    },
+    "value_digest": "3d0617311e3dec2726b699741e812f6271fb641e76259131c394d580baa945e6"
+  },
+  "safe_claim": "For the pinned DeepSeek-V4.1-Flash source/checkpoint/tokenizer and the bounded text fixture [[0,3]], the connected path from token IDs through fresh-prefill NgramHashState, embedding, Block0, sparse ParallelEngramEmbedding lookup, layer1 FP8 wkv projection, source-defined gate arithmetic, and the Engram@layer1 residual update agrees with the independent bounded arithmetic contracts through the final BF16 post-Engram1 residual stream. This closes Engram@layer1 only. It does not validate Engram@layer14, Block1-and-later connected replay with Engram state, main_hidden, incremental/decode hashing, distributed Engram, or full Transformer.forward behavior.",
+  "schema": "ds41f.native-engram-layer1-validation.v1",
+  "scope": {
+    "B": 1,
+    "S": 2,
+    "engram_mask": null,
+    "next_operation_not_executed": "Block1.forward",
+    "prefill": true,
+    "start_pos": 0,
+    "stop": "post_engram1_h",
+    "tokens": [
+      [
+        0,
+        3
+      ]
+    ],
+    "world_size": 1
+  },
+  "source_identities": {
+    "Engram.forward": {
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+      "line_end": 373,
+      "line_start": 325,
+      "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/model.py",
+      "relative_path": "inference/model.py",
+      "span_sha256": "ff04df4f5312b4d5170b844364ff3e0e823a51f94b7c527656d4e5b08beecaf9"
+    },
+    "ParallelEngramEmbedding": {
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+      "line_end": 323,
+      "line_start": 288,
+      "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/model.py",
+      "relative_path": "inference/model.py",
+      "span_sha256": "23f3b61ac17a7fe38947171365138fb294d61ee73a41973aff322a45a655b23d"
+    },
+    "act_quant": {
+      "file_sha256": "1236c3507019ed176f5dba5e04bcea58867cf654818c6cf138ed4845398c2455",
+      "hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+      "line_end": 124,
+      "line_start": 98,
+      "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/kernel.py",
+      "relative_path": "inference/kernel.py",
+      "span_sha256": "563a82836450bfefe3f5f176636dec0e1f4d126c76d8007b42bb7abb877d30cb"
+    },
+    "fp8_gemm": {
+      "file_sha256": "1236c3507019ed176f5dba5e04bcea58867cf654818c6cf138ed4845398c2455",
+      "hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+      "line_end": 307,
+      "line_start": 277,
+      "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/kernel.py",
+      "relative_path": "inference/kernel.py",
+      "span_sha256": "cfd550d8b02ee127760ac26b39accae603302be6bf8e97c0cce29d8993af0657"
+    },
+    "kernel_py": {
+      "bytes": 23790,
+      "lines": 591,
+      "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/kernel.py",
+      "sha256": "1236c3507019ed176f5dba5e04bcea58867cf654818c6cf138ed4845398c2455"
+    },
+    "linear": {
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+      "line_end": 207,
+      "line_start": 181,
+      "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/model.py",
+      "relative_path": "inference/model.py",
+      "span_sha256": "c0c1edd8e542d2004472766686fb445859775ee0b51346979cd9ca573c1c7ada"
+    },
+    "model_py": {
+      "bytes": 61549,
+      "lines": 1309,
+      "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/model.py",
+      "sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65"
+    }
+  },
+  "sparse_embedding": {
+    "duplicate_mapping": {},
+    "full_engram_embedding_table_read": false,
+    "independent_output_digest": "7a203d55dd97c4d0398bb81b70409d299a246289f60e8a2ecb209305cc180ed4",
+    "ordered_row_ids": [
+      5702652,
+      24393184,
+      39183301,
+      61503783,
+      78984481,
+      90144770,
+      103724983,
+      121476532,
+      131476717,
+      152385926,
+      164143652,
+      191599181,
+      198145581,
+      217419202,
+      238329687,
+      247482304,
+      257520185,
+      283540304,
+      288689443,
+      315264704,
+      322314652,
+      348890037,
+      367865216,
+      380066193,
+      13136173,
+      17031479,
+      36294826,
+      62401242,
+      69561560,
+      82615312,
+      105142365,
+      122730833,
+      143666100,
+      156931932,
+      165213353,
+      180168542,
+      197858374,
+      222703855,
+      235972003,
+      240958518,
+      270063682,
+      283921719,
+      297024305,
+      319576009,
+      329277020,
+      351828750,
+      355986352,
+      378790237
+    ],
+    "ordered_rows_raw_payload_digest": "13274474cc2cc860c598b6f238e3b2c4c84a9263378d916ed1be9d89879d4fdf",
+    "per_position_digests": [
+      [
+        "fe455a61f23ad3fa0df4f37e91820e27f0b49146fe82b1dcd7dee13985392dc2",
+        "76cac1cee817d2243ffaa4997877df5a54bebcb59f562dd4415c081240011d1a",
+        "d14b10378ceaa8bbf39b8cde21b5fb3d8f6a16b84f849659335d4d1f160bbd50",
+        "a12a928864c2ff3526a852e20bf96102234e2f4081ac2899558d3d1f72e38f20",
+        "311ed6665e3c8281ffe9c5ab5c9f8085a55ae281b8d28e5defd75291e1059b0b",
+        "95298420ec736fb70248ea47d56e4042f26bcc3efbcc3d2bc7748bea86eab385",
+        "a62eb97456687dca62beb4fd2f18dfb85fe2248d870baef3694e69f73bb6c193",
+        "2370359cd90e581c0d0da3eafeac11210c5f01592733cb0855fcf4fa75573a6f",
+        "b26c5969b0b838518990aadb7bd3b9fb316fef425ff1d3169b3470438c92f664",
+        "0a02f72e326041ba385dc8f9193824c95a7d69f92f2c21af87adffe633f40187",
+        "2853c4c37515523b032ccb863100a4e89b3362511f92910ed0d623aae8832f91",
+        "eb52d717952bdb5ffc3000cb8952722eff7853c45ca925ea08290df73075fcd1",
+        "0a8e1726ec9e3155226532bb23e700c8ba0c5e77810817553fe90ab1800f81ae",
+        "d410bdb2bfe2112a776f19ffc41549e32344c3036d1bde98143647c9f493a586",
+        "5ae5684468f022ad02e11c51ac04168a893c3406370b0f1370fdfd92ab7b90ae",
+        "c53c4df46c6fa2bde9d8e18349889a08b1276a5b9f8cce6346f34adb0e9b4a47",
+        "38ac3afa3bed5ce575a64d1bd026a43d8d5d22c0c722086596f022bb86ceafa0",
+        "82a902105a827d07eac6082b2b8ffc539a247aa55b26998f03aaf69a7427c245",
+        "44913ef7d89bc84e753dfd9a6e47e20425cf62b47e15a5ba01abc41e3ae618d1",
+        "76ec6aeeab15869a61e61f57766e2cf4606e18fa64966878dfbfd4d8b47ef9e5",
+        "37e2eed727890dbe0c2f191e1188e999f98704ff8086b1d174f48c63ae397d66",
+        "0989bb8fb230477b269f99212126c941650113d7a71af5c48f5b38978e69b1a4",
+        "2da2beab5e7e06c0e7503826963bdb0c53217cbcfd9d43fa806277b60ef2a779",
+        "5f2538f3fd7d8da445555dcaac7477756680bdd7dfa012f979af92c425b43e9f"
+      ],
+      [
+        "c8ef5ab2258f50f6f8dfda5287608ddfa1392a3471e23706f8cf1122f1ff594a",
+        "acba16aab542832bdbcfa8f2a43b9b35397c5d86096dddc5409c7f2b3c61d028",
+        "87d9e6dda1533cc638fb2745947d8095d10619c4d09b3a97fc25f397b6ddde0b",
+        "f7ca54a04c0ecaa41a3489264a4b2d9dd9f827116456e997ff0c5f0bbe600d9c",
+        "865e7fcfbd93c04fb4c531f2c312dc0e7d065bee58009dd71df10e9468948add",
+        "5efe3ff3a93e7eba01b805a2f7c6866405c1dfc5b9767f72741a56bf37216d53",
+        "4ec91e79b670bb26e75e9e6bf6cc53538a8254f090c434e8b05039e0aa071b6b",
+        "6748e66012ded0bfe3849135063a17ab4273a34332224afcd3b78c80f05048b8",
+        "274533f6da9a47e9d2aa33b789d6a90aba47bc5c4a012e621f38cadfd964eeeb",
+        "63d2edc54f003a1c234359a473f6f90b0861590b2e00723f7519c02f6d63a657",
+        "00a750f4c707f25d04f0351b89210ef55d133481c41e24b96ed9110a9226b797",
+        "9b8c0e543741700350b8a267b6602e146d9241ed30efa1540c6c44d8b5afdf19",
+        "5694329baacf77b4c768caf65cde56767c5c29cd02d3fcc3df056976bfdf7007",
+        "f1457e5d2d0488ec9131c18ebd42b0bcad2894dcccf7aba800770a7c638fddfe",
+        "b4fb291a0b63e15070ae7d626fc61b56653317b29a455a1a925660a7d9fcc488",
+        "5a64e80fd89ee90d95de08a787a1cf0f5205769c3be21bcc080eb9fc0e08dce1",
+        "8f0492a49d4ca78ba75d2afc3c1b75cc4acb8e80a28ab5deb3dcd4fa28c0beaf",
+        "e9ae91b74688023ace8644ad5ab8816c4a29d45cf7cfe5578bf703205dfeca2f",
+        "8a65ac8f38097379f5bf5a8e1773926f63d4814b5470876b98ea620554e85b22",
+        "c46914591666b3c3413a1485ddd2e9a0cc884658d1adec726f3dbeb5ed9babb2",
+        "c10602e0d3e4f50981fc572b57a96bcd35771c8ae4e69c4183c9b6cdb83779d2",
+        "11ed3bae6da0335f761efcdc94dd53f8d4ea59cd3ead2f29c85304b895ae1823",
+        "2f17476f8c7d57f58f49a6013da75ea7987b9da4999b747b3586948beaca43bd",
+        "13b5bc6e0da73cb2b7e9db0ef9df28f73f650313e9a5cd7db4f10b1303c6b957"
+      ]
+    ],
+    "scale_bytes_read": 384,
+    "scale_row_provenance": [
+      {
+        "absolute_byte_range": [
+          98351200888,
+          98351200896
+        ],
+        "raw_digest": "03e6e6496acd8de8ad52b6aba8a3aa54a81762b3e4861b933884931832e42d65",
+        "row_id": 5702652
+      },
+      {
+        "absolute_byte_range": [
+          98410669056,
+          98410669064
+        ],
+        "raw_digest": "4a2e9057b1184fddb8dc832844809c249c2c2cff7b1521c54945617ad2563b7f",
+        "row_id": 13136173
+      },
+      {
+        "absolute_byte_range": [
+          98441831504,
+          98441831512
+        ],
+        "raw_digest": "8874f158470035aa5ecef0df80bc0a1fc93724a96b8fed05ce5cc6d56d2dd475",
+        "row_id": 17031479
+      },
+      {
+        "absolute_byte_range": [
+          98500725144,
+          98500725152
+        ],
+        "raw_digest": "67b55d55dddfbbeb5d8e1ae4dac71dea37b3e67e1639e56b8046c2fa6543e1c6",
+        "row_id": 24393184
+      },
+      {
+        "absolute_byte_range": [
+          98595938280,
+          98595938288
+        ],
+        "raw_digest": "dfb257867960692d6b8ede74c6ef4b59c044706c138fbf3405597156f2290e0a",
+        "row_id": 36294826
+      },
+      {
+        "absolute_byte_range": [
+          98619046080,
+          98619046088
+        ],
+        "raw_digest": "5614995b9077581bad4827ec020cbfd22e8e946a297ca56fd500aa61cb110543",
+        "row_id": 39183301
+      },
+      {
+        "absolute_byte_range": [
+          98797609936,
+          98797609944
+        ],
+        "raw_digest": "0a27deca11245ed872dbfbc6a91b248001f0266d9cfe27b81728797a86990b20",
+        "row_id": 61503783
+      },
+      {
+        "absolute_byte_range": [
+          98804789608,
+          98804789616
+        ],
+        "raw_digest": "7755ff70258212d369bb6c4ba3358a931d1ee97fae4f5812cc130cfdcd19c800",
+        "row_id": 62401242
+      },
+      {
+        "absolute_byte_range": [
+          98862072152,
+          98862072160
+        ],
+        "raw_digest": "97fe79aeec239982df5b07e0d98f5f5d98cdfb86975af06c269763c02df9c3a0",
+        "row_id": 69561560
+      },
+      {
+        "absolute_byte_range": [
+          98937455520,
+          98937455528
+        ],
+        "raw_digest": "67b55d55dddfbbeb5d8e1ae4dac71dea37b3e67e1639e56b8046c2fa6543e1c6",
+        "row_id": 78984481
+      },
+      {
+        "absolute_byte_range": [
+          98966502168,
+          98966502176
+        ],
+        "raw_digest": "ca0f0fd2e99742afc52a1d46836b2609c74076110553b2a90a084cb3bf3620a6",
+        "row_id": 82615312
+      },
+      {
+        "absolute_byte_range": [
+          99026737832,
+          99026737840
+        ],
+        "raw_digest": "dfb257867960692d6b8ede74c6ef4b59c044706c138fbf3405597156f2290e0a",
+        "row_id": 90144770
+      },
+      {
+        "absolute_byte_range": [
+          99135379536,
+          99135379544
+        ],
+        "raw_digest": "0cb083d6d27d0da7107e4b9de50fa6bf3e326347335a3639ad8704f66e68d8ce",
+        "row_id": 103724983
+      },
+      {
+        "absolute_byte_range": [
+          99146718592,
+          99146718600
+        ],
+        "raw_digest": "7755ff70258212d369bb6c4ba3358a931d1ee97fae4f5812cc130cfdcd19c800",
+        "row_id": 105142365
+      },
+      {
+        "absolute_byte_range": [
+          99277391928,
+          99277391936
+        ],
+        "raw_digest": "f54d937516bed458a3f6a18076b3e2b43812846ebf5d2f3dfbf2459d2584e0fa",
+        "row_id": 121476532
+      },
+      {
+        "absolute_byte_range": [
+          99287426336,
+          99287426344
+        ],
+        "raw_digest": "b0026bc0cc8b889ff2b70047048652de288b6dee73da918d37929dd1d1f43817",
+        "row_id": 122730833
+      },
+      {
+        "absolute_byte_range": [
+          99357393408,
+          99357393416
+        ],
+        "raw_digest": "081d98cb650ffdf0abde49cee1f2709f84986f7f8a2c7fab61a270ac23f8b439",
+        "row_id": 131476717
+      },
+      {
+        "absolute_byte_range": [
+          99454908472,
+          99454908480
+        ],
+        "raw_digest": "0f9b5b5631d55bc4ff711a7a47553540393946a3a7b6adfbba4862d675b92a1a",
+        "row_id": 143666100
+      },
+      {
+        "absolute_byte_range": [
+          99524667080,
+          99524667088
+        ],
+        "raw_digest": "575403864da01746c97b1d5aa99c88fadb57e37339b3ba43337ea4b7e1aa5991",
+        "row_id": 152385926
+      },
+      {
+        "absolute_byte_range": [
+          99561035128,
+          99561035136
+        ],
+        "raw_digest": "50a4fe65dbefaeffea3983e9c2f718950c2b2fd7a97a5362e560ccca5a40f8c7",
+        "row_id": 156931932
+      },
+      {
+        "absolute_byte_range": [
+          99618728888,
+          99618728896
+        ],
+        "raw_digest": "8d15b5b8af18f64010a8b380ed5d41c820ab681d232b758e518dda821c5116dc",
+        "row_id": 164143652
+      },
+      {
+        "absolute_byte_range": [
+          99627286496,
+          99627286504
+        ],
+        "raw_digest": "13a9e663e77083048e4fc1d996f34dd2d20e2e7214db35faafd765655ef683ff",
+        "row_id": 165213353
+      },
+      {
+        "absolute_byte_range": [
+          99746928008,
+          99746928016
+        ],
+        "raw_digest": "1935aaba97d01a93069341d937412846d43930a0cad3b3f4143ffc15f7551e77",
+        "row_id": 180168542
+      },
+      {
+        "absolute_byte_range": [
+          99838373120,
+          99838373128
+        ],
+        "raw_digest": "0828978c79dc2d0db6b8f622ba5d13bdb7c36d972a1bffd0e145d18eb3b0d1bd",
+        "row_id": 191599181
+      },
+      {
+        "absolute_byte_range": [
+          99888446664,
+          99888446672
+        ],
+        "raw_digest": "b0f4ede64b6530d13e7106e5f7d0bbae5fdcf0580df46ac29368341e9cc7f6b2",
+        "row_id": 197858374
+      },
+      {
+        "absolute_byte_range": [
+          99890744320,
+          99890744328
+        ],
+        "raw_digest": "67b55d55dddfbbeb5d8e1ae4dac71dea37b3e67e1639e56b8046c2fa6543e1c6",
+        "row_id": 198145581
+      },
+      {
+        "absolute_byte_range": [
+          100044933288,
+          100044933296
+        ],
+        "raw_digest": "4a2233e1cdc3a67726fa0e5a3cd0a863234973b50d707958a4f4d95f35057a2a",
+        "row_id": 217419202
+      },
+      {
+        "absolute_byte_range": [
+          100087210512,
+          100087210520
+        ],
+        "raw_digest": "3bf8d0c69b82c90c9a4c2518f5b2b4c785a11e4249e7acd19490ac7b01e5b291",
+        "row_id": 222703855
+      },
+      {
+        "absolute_byte_range": [
+          100193355696,
+          100193355704
+        ],
+        "raw_digest": "7d60dc308d3b32779d270bc1388d6cc6a0e1cd4cafd5a14f027c653e14cf3dd3",
+        "row_id": 235972003
+      },
+      {
+        "absolute_byte_range": [
+          100212217168,
+          100212217176
+        ],
+        "raw_digest": "ac00a5e65eba90542d322428ce74402a5fbe5f56826c15f87bab356f718c1901",
+        "row_id": 238329687
+      },
+      {
+        "absolute_byte_range": [
+          100233247816,
+          100233247824
+        ],
+        "raw_digest": "37f8b89f5fbd6f75f6be466c17f1d0eb8633540bd5dc6da4cc4899adf08460e4",
+        "row_id": 240958518
+      },
+      {
+        "absolute_byte_range": [
+          100285438104,
+          100285438112
+        ],
+        "raw_digest": "67b55d55dddfbbeb5d8e1ae4dac71dea37b3e67e1639e56b8046c2fa6543e1c6",
+        "row_id": 247482304
+      },
+      {
+        "absolute_byte_range": [
+          100365741152,
+          100365741160
+        ],
+        "raw_digest": "7b94bb93f6a699b9ad59a7391891ad572aa6c78dcee1b26e012bf95f103c218b",
+        "row_id": 257520185
+      },
+      {
+        "absolute_byte_range": [
+          100466089128,
+          100466089136
+        ],
+        "raw_digest": "0616d1649de2e844c091d0caae5f9033b2e4bf507a60d755c1305ac1826b7080",
+        "row_id": 270063682
+      },
+      {
+        "absolute_byte_range": [
+          100573902104,
+          100573902112
+        ],
+        "raw_digest": "355a7039efaba977208ff0935513611698bf4d44c6bdad831cf9ba02747fd961",
+        "row_id": 283540304
+      },
+      {
+        "absolute_byte_range": [
+          100576953424,
+          100576953432
+        ],
+        "raw_digest": "5614995b9077581bad4827ec020cbfd22e8e946a297ca56fd500aa61cb110543",
+        "row_id": 283921719
+      },
+      {
+        "absolute_byte_range": [
+          100615095216,
+          100615095224
+        ],
+        "raw_digest": "b81b2dd5f346aa92bca5f7f421cf9b2a7ebbd51fc393aa0a3b98fdbbf268d867",
+        "row_id": 288689443
+      },
+      {
+        "absolute_byte_range": [
+          100681774112,
+          100681774120
+        ],
+        "raw_digest": "83b33d49403a01dd6d1de5bd50537ac0cf821ce1dc21a796abb2fde6f203db61",
+        "row_id": 297024305
+      },
+      {
+        "absolute_byte_range": [
+          100827697304,
+          100827697312
+        ],
+        "raw_digest": "8aeeacbe5c7713997b8fe07cd29a1fd0fe8eb05323e9b9684c11384c2fc1cdc2",
+        "row_id": 315264704
+      },
+      {
+        "absolute_byte_range": [
+          100862187744,
+          100862187752
+        ],
+        "raw_digest": "ae6a45b5e70357ebd652aea13babd458fc52fc410c1b38bb56fa94389b2c3393",
+        "row_id": 319576009
+      },
+      {
+        "absolute_byte_range": [
+          100884096888,
+          100884096896
+        ],
+        "raw_digest": "67b55d55dddfbbeb5d8e1ae4dac71dea37b3e67e1639e56b8046c2fa6543e1c6",
+        "row_id": 322314652
+      },
+      {
+        "absolute_byte_range": [
+          100939795832,
+          100939795840
+        ],
+        "raw_digest": "24c3f2ffa3c55d8bd8a309c9a82e792372165615fe7db47521eb4dc58f0f261c",
+        "row_id": 329277020
+      },
+      {
+        "absolute_byte_range": [
+          101096699968,
+          101096699976
+        ],
+        "raw_digest": "b81b2dd5f346aa92bca5f7f421cf9b2a7ebbd51fc393aa0a3b98fdbbf268d867",
+        "row_id": 348890037
+      },
+      {
+        "absolute_byte_range": [
+          101120209672,
+          101120209680
+        ],
+        "raw_digest": "01436bc5b33d75c902006978126e09ee37e290bc1cc6161c3be5774e2f4f85be",
+        "row_id": 351828750
+      },
+      {
+        "absolute_byte_range": [
+          101153470488,
+          101153470496
+        ],
+        "raw_digest": "539556da8c576a8122cf07b4a0015c6f5709fda6845ce8ed31ae6af07bfb3d92",
+        "row_id": 355986352
+      },
+      {
+        "absolute_byte_range": [
+          101248501400,
+          101248501408
+        ],
+        "raw_digest": "27a6ed966612d0f99d7bfc13a36f6cd50eee23fb787d2b34582a352baa825174",
+        "row_id": 367865216
+      },
+      {
+        "absolute_byte_range": [
+          101335901568,
+          101335901576
+        ],
+        "raw_digest": "59c2bfb05ab0d6076a25194509a04e1b4b02d9cb0c1f224247b6cd8be803d658",
+        "row_id": 378790237
+      },
+      {
+        "absolute_byte_range": [
+          101346109216,
+          101346109224
+        ],
+        "raw_digest": "c760f413e25dd27eb03b73844407efe4d00a04db3cf062871a4b53a35378823e",
+        "row_id": 380066193
+      }
+    ],
+    "source_output": {
+      "digest": "7a203d55dd97c4d0398bb81b70409d299a246289f60e8a2ecb209305cc180ed4",
+      "dtype": "BF16(uint16)",
+      "shape": [
+        1,
+        2,
+        24,
+        256
+      ]
+    },
+    "source_vs_independent_byte_exact": true,
+    "sparse_random_access_rows_only": true,
+    "unique_row_count": 48,
+    "unique_row_ids": [
+      5702652,
+      13136173,
+      17031479,
+      24393184,
+      36294826,
+      39183301,
+      61503783,
+      62401242,
+      69561560,
+      78984481,
+      82615312,
+      90144770,
+      103724983,
+      105142365,
+      121476532,
+      122730833,
+      131476717,
+      143666100,
+      152385926,
+      156931932,
+      164143652,
+      165213353,
+      180168542,
+      191599181,
+      197858374,
+      198145581,
+      217419202,
+      222703855,
+      235972003,
+      238329687,
+      240958518,
+      247482304,
+      257520185,
+      270063682,
+      283540304,
+      283921719,
+      288689443,
+      297024305,
+      315264704,
+      319576009,
+      322314652,
+      329277020,
+      348890037,
+      351828750,
+      355986352,
+      367865216,
+      378790237,
+      380066193
+    ],
+    "weight_bytes_read": 12288,
+    "weight_row_provenance": [
+      {
+        "absolute_byte_range": [
+          1459879576,
+          1459879832
+        ],
+        "raw_digest": "1e513ee656e587703488785797cca2399d88b4057bec7fa6dabefdec92b3be8e",
+        "row_id": 5702652
+      },
+      {
+        "absolute_byte_range": [
+          3362860952,
+          3362861208
+        ],
+        "raw_digest": "9d2626bf3f0fffea46bb47b8620cedfc1940b6226a9db9c98689e54ca3b975ab",
+        "row_id": 13136173
+      },
+      {
+        "absolute_byte_range": [
+          4360059288,
+          4360059544
+        ],
+        "raw_digest": "39172ca1bd3df53eb21fd0b2f014c284707c7b28fca6a19110a7a7bd3e895e5e",
+        "row_id": 17031479
+      },
+      {
+        "absolute_byte_range": [
+          6244655768,
+          6244656024
+        ],
+        "raw_digest": "a8065fb3d3caef545f7569bf3f70c3154d7a54c1abe8a65e0847315232b5f139",
+        "row_id": 24393184
+      },
+      {
+        "absolute_byte_range": [
+          9291476120,
+          9291476376
+        ],
+        "raw_digest": "07906af8d9d49063ad880834b5a2d275f715077223fa5f8f2e928a3411c4fc0e",
+        "row_id": 36294826
+      },
+      {
+        "absolute_byte_range": [
+          10030925720,
+          10030925976
+        ],
+        "raw_digest": "b8b0c6611bda27dbfd3bb05663c89fea3b8ad092756821b59d10b86267cfd86c",
+        "row_id": 39183301
+      },
+      {
+        "absolute_byte_range": [
+          15744969112,
+          15744969368
+        ],
+        "raw_digest": "a992aa5a4395c49dbda8166539d2eae955f5f3c814b53b2714f9c13c8747d85a",
+        "row_id": 61503783
+      },
+      {
+        "absolute_byte_range": [
+          15974718616,
+          15974718872
+        ],
+        "raw_digest": "06fb9d08c3b7cc5674b21ef4434432dd31fa8ca22e158583aee9b47c39f3accf",
+        "row_id": 62401242
+      },
+      {
+        "absolute_byte_range": [
+          17807760024,
+          17807760280
+        ],
+        "raw_digest": "8b0330e533255902454dbd676945c6e65940b61283ab7079e5509ba40011a8d6",
+        "row_id": 69561560
+      },
+      {
+        "absolute_byte_range": [
+          20220027800,
+          20220028056
+        ],
+        "raw_digest": "dfadf2138806f49917a4bcdd0a0f64161579aec2a16c1ee1afa20bd261307bf0",
+        "row_id": 78984481
+      },
+      {
+        "absolute_byte_range": [
+          21149520536,
+          21149520792
+        ],
+        "raw_digest": "5311a714a102916b8d31d906c0f44ebcac0d252d4b89c16c939659c35dcdd489",
+        "row_id": 82615312
+      },
+      {
+        "absolute_byte_range": [
+          23077061784,
+          23077062040
+        ],
+        "raw_digest": "29dc348a018158b5143874ea28373f283e0e9331a80b9606379d426bba2e5071",
+        "row_id": 90144770
+      },
+      {
+        "absolute_byte_range": [
+          26553596312,
+          26553596568
+        ],
+        "raw_digest": "ceb78bf653362e7be857008c7ab2d229063d5f253b739ba2d523504a75abe122",
+        "row_id": 103724983
+      },
+      {
+        "absolute_byte_range": [
+          26916446104,
+          26916446360
+        ],
+        "raw_digest": "f91e7e8f169bcb860d70e17f357d01cadcdc47952a066193c4a219497aad8eb0",
+        "row_id": 105142365
+      },
+      {
+        "absolute_byte_range": [
+          31097992856,
+          31097993112
+        ],
+        "raw_digest": "15e91d9e2ed777cd6ca7fe805f2f311434df6f668e019f9c27d5a09d4b1471b6",
+        "row_id": 121476532
+      },
+      {
+        "absolute_byte_range": [
+          31419093912,
+          31419094168
+        ],
+        "raw_digest": "2364b140036e975e11e68f43e1d69401339fb7defda2727bfd6e678bc8f4a61e",
+        "row_id": 122730833
+      },
+      {
+        "absolute_byte_range": [
+          33658040216,
+          33658040472
+        ],
+        "raw_digest": "6c18d8e55e4e5d9e3ccdd05b870109845084fb9cb324163a31caaf960c9d9aaf",
+        "row_id": 131476717
+      },
+      {
+        "absolute_byte_range": [
+          36778522264,
+          36778522520
+        ],
+        "raw_digest": "677d4951f0b3640f226c5c35bd47b4b1d6c2b946d9956d94ac9c5522533b5db7",
+        "row_id": 143666100
+      },
+      {
+        "absolute_byte_range": [
+          39010797720,
+          39010797976
+        ],
+        "raw_digest": "fa2dc390f0e104fba355b103e09b59d20d2bf531a992573e5f62b7c51a0f7e07",
+        "row_id": 152385926
+      },
+      {
+        "absolute_byte_range": [
+          40174575256,
+          40174575512
+        ],
+        "raw_digest": "b8fb98798c9de80dc862a32fd4eb8a85b61cb4391a4a2198f35d79a324d33931",
+        "row_id": 156931932
+      },
+      {
+        "absolute_byte_range": [
+          42020775576,
+          42020775832
+        ],
+        "raw_digest": "3f63f1687328031ae792098f90c3be3071626660fe36eadc3d7fb25979159553",
+        "row_id": 164143652
+      },
+      {
+        "absolute_byte_range": [
+          42294619032,
+          42294619288
+        ],
+        "raw_digest": "bcbcb030837ebb224eac607e6443348b9144fbd7624b423118c89d1f171dd93c",
+        "row_id": 165213353
+      },
+      {
+        "absolute_byte_range": [
+          46123147416,
+          46123147672
+        ],
+        "raw_digest": "0311d833e9d1b3a867c26bc65c82f4df347aed36541eb43fbc92a3d12fbac185",
+        "row_id": 180168542
+      },
+      {
+        "absolute_byte_range": [
+          49049391000,
+          49049391256
+        ],
+        "raw_digest": "9067fd08015b078391e015237e044fa5d86f66370ff9089191633d1c72bbf27b",
+        "row_id": 191599181
+      },
+      {
+        "absolute_byte_range": [
+          50651744408,
+          50651744664
+        ],
+        "raw_digest": "0ff6abe733bbfff2e975908c498a81d8f865a248a08129dcc0a1d6c218890fc3",
+        "row_id": 197858374
+      },
+      {
+        "absolute_byte_range": [
+          50725269400,
+          50725269656
+        ],
+        "raw_digest": "8c5043502f1352c73bfd31b7c5aff6e04c4beebc6ba790afd7ad957bd0811887",
+        "row_id": 198145581
+      },
+      {
+        "absolute_byte_range": [
+          55659316376,
+          55659316632
+        ],
+        "raw_digest": "6501f0851d5ab73103c69e5c0191c46ccb5e8ca0edb9b2e27f33556b45164112",
+        "row_id": 217419202
+      },
+      {
+        "absolute_byte_range": [
+          57012187544,
+          57012187800
+        ],
+        "raw_digest": "d10b0a1047dcb85650cee8bae5f46467e3d5abda1edd1ea467520eb6703ac3d4",
+        "row_id": 222703855
+      },
+      {
+        "absolute_byte_range": [
+          60408833432,
+          60408833688
+        ],
+        "raw_digest": "d6d0c747333a36c2e84e668deb907d774cc410e8a5a33a8344991510eb7ba1bd",
+        "row_id": 235972003
+      },
+      {
+        "absolute_byte_range": [
+          61012400536,
+          61012400792
+        ],
+        "raw_digest": "518a4f165f507bee807f62b9509cdeb161d3f18373fa0cb55df99ba0ac91459c",
+        "row_id": 238329687
+      },
+      {
+        "absolute_byte_range": [
+          61685381272,
+          61685381528
+        ],
+        "raw_digest": "30b2898fdeaa8d7658f8effb968833f3cf95ea9d68e79fa6ae7f19171d099952",
+        "row_id": 240958518
+      },
+      {
+        "absolute_byte_range": [
+          63355470488,
+          63355470744
+        ],
+        "raw_digest": "f380113bac28606d899595d5de55494fad4090c32b987fc51262460df2d76529",
+        "row_id": 247482304
+      },
+      {
+        "absolute_byte_range": [
+          65925168024,
+          65925168280
+        ],
+        "raw_digest": "c6e1213398da4f2e9cc336eee67c902af184d1853c0d5e2ce81e7e1fb41330b4",
+        "row_id": 257520185
+      },
+      {
+        "absolute_byte_range": [
+          69136303256,
+          69136303512
+        ],
+        "raw_digest": "18f3079de12f724e588f0896bd8646d89c209eaed294e143a0f03bc5e8ea1cd1",
+        "row_id": 270063682
+      },
+      {
+        "absolute_byte_range": [
+          72586318488,
+          72586318744
+        ],
+        "raw_digest": "6d9433aa44eedd8855ce430a20adef8d49c90e5e081a5c000683168b986ea992",
+        "row_id": 283540304
+      },
+      {
+        "absolute_byte_range": [
+          72683960728,
+          72683960984
+        ],
+        "raw_digest": "9771c42706102888e433b9e16fc44ec55686ac3efc9340ca4b8bf6af797601a1",
+        "row_id": 283921719
+      },
+      {
+        "absolute_byte_range": [
+          73904498072,
+          73904498328
+        ],
+        "raw_digest": "ba12b185a047d4abc11cc603f84061881c7b628c6d89edc7d75a21844a02b7fb",
+        "row_id": 288689443
+      },
+      {
+        "absolute_byte_range": [
+          76038222744,
+          76038223000
+        ],
+        "raw_digest": "35797b3c30d3d4b9b57fe1cb7feb1d297d57ba0573937740e86f6738d4b28fc9",
+        "row_id": 297024305
+      },
+      {
+        "absolute_byte_range": [
+          80707764888,
+          80707765144
+        ],
+        "raw_digest": "e9923f7c6d56b5c74c048af27f5b54a6bb74dfaea9c4528bf3543ddd09943926",
+        "row_id": 315264704
+      },
+      {
+        "absolute_byte_range": [
+          81811458968,
+          81811459224
+        ],
+        "raw_digest": "14134e5d1c89b9ed0b93f20dbbb7a2a7fb20791ab27446c8637baef5bcaf290b",
+        "row_id": 319576009
+      },
+      {
+        "absolute_byte_range": [
+          82512551576,
+          82512551832
+        ],
+        "raw_digest": "2a9113b1ee5aff09e98cab8184b504bd6728b87e9a39a4366c20fc01ac4f6ff8",
+        "row_id": 322314652
+      },
+      {
+        "absolute_byte_range": [
+          84294917784,
+          84294918040
+        ],
+        "raw_digest": "5c5c56565066e37192084f07ffaae135d210f912d683ec12522460ed4037edbe",
+        "row_id": 329277020
+      },
+      {
+        "absolute_byte_range": [
+          89315850136,
+          89315850392
+        ],
+        "raw_digest": "1f6bbe011f0815b6b2fe94881cdbff29b1c347debbe3666ba9c044f33f2a315b",
+        "row_id": 348890037
+      },
+      {
+        "absolute_byte_range": [
+          90068160664,
+          90068160920
+        ],
+        "raw_digest": "b35b76fc8dfe702485ead7bfb8763ce0eecc4879ff1af926d4c7419f1952f6af",
+        "row_id": 351828750
+      },
+      {
+        "absolute_byte_range": [
+          91132506776,
+          91132507032
+        ],
+        "raw_digest": "0a66ccc51eb3bdf59878006626f5d0ae1c095895adc15e1795ecae0dca101bb0",
+        "row_id": 355986352
+      },
+      {
+        "absolute_byte_range": [
+          94173495960,
+          94173496216
+        ],
+        "raw_digest": "8025545bcd1a1c477f3648a3d56b49617a36ebc382c2a93f8bd0b97194e8073d",
+        "row_id": 367865216
+      },
+      {
+        "absolute_byte_range": [
+          96970301336,
+          96970301592
+        ],
+        "raw_digest": "7e0626968eff7a78a8752709763b0feca211c6cc5f2fc7e4aa450a976585a896",
+        "row_id": 378790237
+      },
+      {
+        "absolute_byte_range": [
+          97296946072,
+          97296946328
+        ],
+        "raw_digest": "32f3ba934d2dac62ba02932ca644f2990a2f4e782a6c0944d149e526e85930c7",
+        "row_id": 380066193
+      }
+    ]
+  },
+  "stop_boundary": {
+    "Block1_executed": false,
+    "Engram14_executed": false,
+    "main_hidden_executed": false,
+    "next_operation": "Block1.forward",
+    "stopped_after": "post_engram1_h"
+  },
+  "upstream_regression": {
+    "block0_x_out_pass": true,
+    "block0_x_out_prior_artifact_digest": "ba2e6acdac3178115513c81e871f0106541cba2810f7dbc5c4a0c8c309dbf938",
+    "boundary12b0_checker_pass": true,
+    "boundary12b1_checker_pass": true,
+    "embedding_digest": "e785817ca379b27e5a5d1c905c6261b46c6158815b55a29ecfaf7850b5925ef1",
+    "embedding_expected": "e785817ca379b27e5a5d1c905c6261b46c6158815b55a29ecfaf7850b5925ef1",
+    "embedding_pass": true,
+    "fp8_reference_artifact_ok": true,
+    "native_fp8_max_bf16_ulp": 0,
+    "native_fp8_validation_ok": true
+  },
+  "wkv": {
+    "activation_e8m0_scale_digest": "ec3abae604bf0f0888638de597a70b8dd7e6eea88e883523bda23c28023c8136",
+    "activation_fp8_quantized_digest": "b6279f2d20dab04c953cc8ed88aeafafaa0fa83bc645515169e3b0d5443517d7",
+    "anchor_comparisons": [
+      {
+        "bf16_ulp": 0,
+        "independent_bf16_uint16": 48746,
+        "native_bf16_uint16": 48746,
+        "output_row": 0,
+        "sequence_row": 0
+      },
+      {
+        "bf16_ulp": 0,
+        "independent_bf16_uint16": 16023,
+        "native_bf16_uint16": 16023,
+        "output_row": 31,
+        "sequence_row": 0
+      },
+      {
+        "bf16_ulp": 0,
+        "independent_bf16_uint16": 15497,
+        "native_bf16_uint16": 15497,
+        "output_row": 32,
+        "sequence_row": 0
+      },
+      {
+        "bf16_ulp": 0,
+        "independent_bf16_uint16": 16030,
+        "native_bf16_uint16": 16030,
+        "output_row": 5119,
+        "sequence_row": 0
+      },
+      {
+        "bf16_ulp": 0,
+        "independent_bf16_uint16": 15875,
+        "native_bf16_uint16": 15875,
+        "output_row": 5120,
+        "sequence_row": 0
+      },
+      {
+        "bf16_ulp": 0,
+        "independent_bf16_uint16": 48819,
+        "native_bf16_uint16": 48819,
+        "output_row": 10239,
+        "sequence_row": 0
+      },
+      {
+        "bf16_ulp": 0,
+        "independent_bf16_uint16": 47364,
+        "native_bf16_uint16": 47364,
+        "output_row": 10240,
+        "sequence_row": 0
+      },
+      {
+        "bf16_ulp": 0,
+        "independent_bf16_uint16": 15158,
+        "native_bf16_uint16": 15158,
+        "output_row": 15359,
+        "sequence_row": 0
+      },
+      {
+        "bf16_ulp": 0,
+        "independent_bf16_uint16": 15182,
+        "native_bf16_uint16": 15182,
+        "output_row": 15360,
+        "sequence_row": 0
+      },
+      {
+        "bf16_ulp": 0,
+        "independent_bf16_uint16": 15030,
+        "native_bf16_uint16": 15030,
+        "output_row": 20447,
+        "sequence_row": 0
+      },
+      {
+        "bf16_ulp": 0,
+        "independent_bf16_uint16": 47799,
+        "native_bf16_uint16": 47799,
+        "output_row": 20448,
+        "sequence_row": 0
+      },
+      {
+        "bf16_ulp": 0,
+        "independent_bf16_uint16": 15268,
+        "native_bf16_uint16": 15268,
+        "output_row": 20479,
+        "sequence_row": 0
+      },
+      {
+        "bf16_ulp": 0,
+        "independent_bf16_uint16": 49032,
+        "native_bf16_uint16": 49032,
+        "output_row": 20480,
+        "sequence_row": 0
+      },
+      {
+        "bf16_ulp": 0,
+        "independent_bf16_uint16": 16323,
+        "native_bf16_uint16": 16323,
+        "output_row": 20511,
+        "sequence_row": 0
+      },
+      {
+        "bf16_ulp": 0,
+        "independent_bf16_uint16": 16343,
+        "native_bf16_uint16": 16343,
+        "output_row": 25568,
+        "sequence_row": 0
+      },
+      {
+        "bf16_ulp": 0,
+        "independent_bf16_uint16": 16085,
+        "native_bf16_uint16": 16085,
+        "output_row": 25599,
+        "sequence_row": 0
+      },
+      {
+        "bf16_ulp": 0,
+        "independent_bf16_uint16": 16169,
+        "native_bf16_uint16": 16169,
+        "output_row": 0,
+        "sequence_row": 1
+      },
+      {
+        "bf16_ulp": 0,
+        "independent_bf16_uint16": 48749,
+        "native_bf16_uint16": 48749,
+        "output_row": 31,
+        "sequence_row": 1
+      },
+      {
+        "bf16_ulp": 0,
+        "independent_bf16_uint16": 15886,
+        "native_bf16_uint16": 15886,
+        "output_row": 32,
+        "sequence_row": 1
+      },
+      {
+        "bf16_ulp": 0,
+        "independent_bf16_uint16": 15781,
+        "native_bf16_uint16": 15781,
+        "output_row": 5119,
+        "sequence_row": 1
+      },
+      {
+        "bf16_ulp": 0,
+        "independent_bf16_uint16": 15810,
+        "native_bf16_uint16": 15810,
+        "output_row": 5120,
+        "sequence_row": 1
+      },
+      {
+        "bf16_ulp": 0,
+        "independent_bf16_uint16": 49040,
+        "native_bf16_uint16": 49040,
+        "output_row": 10239,
+        "sequence_row": 1
+      },
+      {
+        "bf16_ulp": 0,
+        "independent_bf16_uint16": 48139,
+        "native_bf16_uint16": 48139,
+        "output_row": 10240,
+        "sequence_row": 1
+      },
+      {
+        "bf16_ulp": 0,
+        "independent_bf16_uint16": 15523,
+        "native_bf16_uint16": 15523,
+        "output_row": 15359,
+        "sequence_row": 1
+      },
+      {
+        "bf16_ulp": 0,
+        "independent_bf16_uint16": 48419,
+        "native_bf16_uint16": 48419,
+        "output_row": 15360,
+        "sequence_row": 1
+      },
+      {
+        "bf16_ulp": 0,
+        "independent_bf16_uint16": 15747,
+        "native_bf16_uint16": 15747,
+        "output_row": 20447,
+        "sequence_row": 1
+      },
+      {
+        "bf16_ulp": 0,
+        "independent_bf16_uint16": 15835,
+        "native_bf16_uint16": 15835,
+        "output_row": 20448,
+        "sequence_row": 1
+      },
+      {
+        "bf16_ulp": 0,
+        "independent_bf16_uint16": 48170,
+        "native_bf16_uint16": 48170,
+        "output_row": 20479,
+        "sequence_row": 1
+      },
+      {
+        "bf16_ulp": 0,
+        "independent_bf16_uint16": 49164,
+        "native_bf16_uint16": 49164,
+        "output_row": 20480,
+        "sequence_row": 1
+      },
+      {
+        "bf16_ulp": 0,
+        "independent_bf16_uint16": 15755,
+        "native_bf16_uint16": 15755,
+        "output_row": 20511,
+        "sequence_row": 1
+      },
+      {
+        "bf16_ulp": 0,
+        "independent_bf16_uint16": 49164,
+        "native_bf16_uint16": 49164,
+        "output_row": 25568,
+        "sequence_row": 1
+      },
+      {
+        "bf16_ulp": 0,
+        "independent_bf16_uint16": 16212,
+        "native_bf16_uint16": 16212,
+        "output_row": 25599,
+        "sequence_row": 1
+      }
+    ],
+    "anchor_max_bf16_ulp": 0,
+    "anchor_max_bf16_ulp_lte": 0,
+    "anchor_rows": [
+      0,
+      31,
+      32,
+      5119,
+      5120,
+      10239,
+      10240,
+      15359,
+      15360,
+      20447,
+      20448,
+      20479,
+      20480,
+      20511,
+      25568,
+      25599
+    ],
+    "flattened_input_digest": "7a203d55dd97c4d0398bb81b70409d299a246289f60e8a2ecb209305cc180ed4",
+    "native_result": {
+      "in_dim": 6144,
+      "metal_command_buffers": 1,
+      "metal_completion_waits": 1,
+      "metal_compute_encoders": 1,
+      "metal_enabled": true,
+      "out_dim": 25600,
+      "output_checksum": 3740448922868791308,
+      "rows": 2
+    },
+    "output_digest": "0d2fb1ad830f2c0e9c8ee6407bc22dc06fc172a361665ea833880efaacb7907d",
+    "output_dtype": "BF16(uint16)",
+    "output_shape": [
+      2,
+      25600
+    ],
+    "raw_scale_digest": "2c395fc76e65fad2f33e5a3d8f532f40dc232754a0e637e42ca89a674e3b44e0",
+    "raw_weight_digest": "44d799d6444a3f728ae96c873c8199bdff49cafbc0b5d703a0bf07be948d0447",
+    "scale_bytes_read": 153600,
+    "validated_fp8_primitive_used": true,
+    "weight_bytes_read": 157286400
+  }
+}

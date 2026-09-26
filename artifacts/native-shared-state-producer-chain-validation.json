@@ -1,0 +1,466 @@
+{
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "official_reference_derived_native_connected_validation",
+  "config_roles": {
+    "2": {
+      "candidate_block_size": 8,
+      "candidate_consumer_status": "consumer only if an Indexer exists and candidate_source_layer < layer",
+      "candidate_source_layer_id": 20,
+      "candidate_topk_blocks": 2048,
+      "compress_ratio": 2,
+      "has_indexer": true,
+      "index_topk": 512,
+      "is_candidate_consumer": false,
+      "is_candidate_source": false,
+      "is_index_source_layer": true,
+      "is_kv_source_layer": true,
+      "layer": 2,
+      "source_branch_uses_candidates": false
+    },
+    "20": {
+      "candidate_block_size": 8,
+      "candidate_consumer_status": "consumer only if an Indexer exists and candidate_source_layer < layer",
+      "candidate_source_layer_id": 20,
+      "candidate_topk_blocks": 2048,
+      "compress_ratio": 1,
+      "has_indexer": true,
+      "index_topk": 512,
+      "is_candidate_consumer": false,
+      "is_candidate_source": true,
+      "is_index_source_layer": true,
+      "is_kv_source_layer": true,
+      "layer": 20,
+      "source_branch_uses_candidates": false
+    },
+    "24": {
+      "candidate_block_size": 8,
+      "candidate_consumer_status": "consumer only if an Indexer exists and candidate_source_layer < layer",
+      "candidate_source_layer_id": 20,
+      "candidate_topk_blocks": 2048,
+      "compress_ratio": 1,
+      "has_indexer": true,
+      "index_topk": 512,
+      "is_candidate_consumer": true,
+      "is_candidate_source": false,
+      "is_index_source_layer": true,
+      "is_kv_source_layer": false,
+      "layer": 24,
+      "source_branch_uses_candidates": true
+    },
+    "25": {
+      "candidate_block_size": 8,
+      "candidate_consumer_status": "consumer only if an Indexer exists and candidate_source_layer < layer",
+      "candidate_source_layer_id": 20,
+      "candidate_topk_blocks": 2048,
+      "compress_ratio": 1,
+      "has_indexer": false,
+      "index_topk": 512,
+      "is_candidate_consumer": false,
+      "is_candidate_source": false,
+      "is_index_source_layer": false,
+      "is_kv_source_layer": false,
+      "layer": 25,
+      "source_branch_uses_candidates": true
+    }
+  },
+  "digests": {
+    "carry": {
+      "ffn_pre24_equals_layer25_pre_mix": true,
+      "layer25_incoming_pre_mix": "8fcc739b02187a2a805bc06ab26e8c66d5cec632520cab47f7ade518bd0b0d2d",
+      "layer25_input_x": "a596b0585c9702257b730d81ccc9bd8eac03df53404d64d8be83c2dd8625ae63",
+      "x24_out_equals_layer25_x": true
+    },
+    "layer24": {
+      "attention_input": "a62cd4e24301eaa15774f537e08dc760be7fa0c2cb9c5351137d125fb44a656a",
+      "ffn_pre24": "8fcc739b02187a2a805bc06ab26e8c66d5cec632520cab47f7ade518bd0b0d2d",
+      "moe_input": "b764483ec5db9323f97ad9ad3a6ca8a16d4e3f3dba9547ee6e83e7a789b9992f",
+      "x24_out": "a596b0585c9702257b730d81ccc9bd8eac03df53404d64d8be83c2dd8625ae63",
+      "x_after_attn": "f035fcb163910857b8be269a899ddc48ac48080cfe98643a07e9469a3041ba8f"
+    },
+    "layer25": {
+      "attention_input": "e44da41161f2298df30c333d8b59d2d6c0ba433bc0115e7d7bf7cecb955c0b80",
+      "attention_output": "7ffc06f69241802ea9a64caf519a0f57c2cf788d6edd0f995a276a80b779285d",
+      "ffn_pre25": "f4efaa2df89d7f61febc1166d44ad04e425c8f8a3390a4783cbe825e227d3d9a",
+      "full_moe_output": "0e74d7e06d22489330c94854d481fc7938dd48ec0607ab21eb17b0cf20869101",
+      "moe_input": "d3b054dfa8382a5b9ec1e2bd0f43e813dc742a075cd0e13fc811cf23a04ad676",
+      "routed_sum": "b7c667fe37220fb77bb42b3420dd16bf427023d1f96a9a98acf1bc2dc47175ba",
+      "shared_expert": "b2768a682a1f502c4848a91514ce69bb5e835f78ca99ea7cab4f5929f1ef79a7",
+      "x25_out": "628aaa78c458fd316e069589d58fa89319cf7bd5076060899a2485ccec5206ea",
+      "x_after_attn": "ae79a19517bf414d54cb49d1739c7c3abdf3d1f3a008fbf8eaf8418d530aebe9"
+    },
+    "producer_stage": {
+      "layer20_causal_masked_score": "a7387dad09d18d4ea684c353aea6572bd3da95492b831e15ba444c46c161b14e",
+      "layer20_index_score": "663df9b8c9f8dbb606e343d873ddd985f4d2e0e17b9a823b7321001cc657d679",
+      "layer20_input": "e785817ca379b27e5a5d1c905c6261b46c6158815b55a29ecfaf7850b5925ef1",
+      "layer20_latent": "e8fe1e9fc1a83fc5709910365bf523c421dd70bfac094ab66ee5e9e70d3b1fcd",
+      "layer20_published_candidates": "27ecd0a598e76f8a2fd264d427df0a119903e8eae384e478902541756f089dd1",
+      "layer20_published_compress_kv": "df65999ef08ace0a5a3d223d81fa97c687d112199ab5d687bf8dfe0fee4357d8",
+      "layer20_published_index_k": "6d6a7f8649e1e721aa82910d0e90fcee0189d1454c136589c6b68d82dbb11c4d",
+      "layer20_published_topk_idxs": "f177d4feea916de5753fda9e1abf2c19559139141e361c81b77ec24d783a306f",
+      "layer2_preliminary_compress_kv": "e0899d58fc66b28b1c05eaf2745a3b295c9ec6987020186e7800e6467b7a098d",
+      "layer2_preliminary_index_k": "ca13932db7170fe9b6898b0a38b40123dde451c20ebbb7a857b5d52d7fadc270"
+    }
+  },
+  "gates": {
+    "actual_compress_kv_producer_pass": true,
+    "actual_index_k_producer_pass": true,
+    "actual_layer20_candidate_publication_pass": true,
+    "actual_layer20_indexer_scoring_pass": true,
+    "block24_25_execute_successfully_under_produced_state": true,
+    "block24_25_hc_carry_exact": true,
+    "layer_local_window_state_distinguished": true,
+    "no_7a_external_candidates_injection": true,
+    "no_7a_external_compress_kv_injection": true,
+    "no_7a_external_index_k_injection": true,
+    "one_logical_shared_state_lifetime": true,
+    "producer_ownership_source_reviewed": true,
+    "producer_to_consumer_identity_gates_pass": true,
+    "source_identity_authority_checks_pass": true
+  },
+  "layer24_routing": {
+    "scaled_routing_weights": [
+      [
+        0.30666792392730713,
+        0.26518163084983826,
+        0.23444253206253052,
+        0.2384490668773651,
+        0.227377787232399,
+        0.22788098454475403
+      ],
+      [
+        0.2756555676460266,
+        0.2622893452644348,
+        0.25022250413894653,
+        0.24365878105163574,
+        0.24334122240543365,
+        0.2248324602842331
+      ]
+    ],
+    "selected_expert_set": [
+      8,
+      40,
+      85,
+      125,
+      144,
+      184,
+      221,
+      228,
+      243,
+      249,
+      254,
+      265
+    ],
+    "topk_expert_indices": [
+      [
+        125,
+        221,
+        249,
+        243,
+        265,
+        184
+      ],
+      [
+        228,
+        85,
+        254,
+        144,
+        8,
+        40
+      ]
+    ]
+  },
+  "layer25_routing": {
+    "scaled_routing_weights": [
+      [
+        0.2600627541542053,
+        0.26093292236328125,
+        0.2524365186691284,
+        0.24946783483028412,
+        0.24207043647766113,
+        0.2350294291973114
+      ],
+      [
+        0.28775036334991455,
+        0.25621944665908813,
+        0.24558202922344208,
+        0.2382613867521286,
+        0.23769128322601318,
+        0.23449547588825226
+      ]
+    ],
+    "selected_expert_set": [
+      14,
+      20,
+      38,
+      142,
+      148,
+      153,
+      162,
+      187,
+      226,
+      241,
+      252,
+      318
+    ],
+    "topk_expert_indices": [
+      [
+        318,
+        142,
+        241,
+        252,
+        20,
+        153
+      ],
+      [
+        187,
+        148,
+        38,
+        162,
+        14,
+        226
+      ]
+    ]
+  },
+  "non_claims": [
+    "no layers0-19 residual-stream execution",
+    "no production provenance for bounded producer-layer activations",
+    "no production provenance for synthetic incoming pre_mix entering layer24",
+    "no production-scale candidate pruning",
+    "no decode / ring / partial compression group",
+    "no world_size > 1 expert parallelism",
+    "no Transformer final norm / logits",
+    "no full-model correctness",
+    "no performance/fusion claim"
+  ],
+  "not_omlx_derived": true,
+  "ok": true,
+  "producer_details": {
+    "candidates": {
+      "candidate_block_size": 8,
+      "candidate_mask_digest": "27ecd0a598e76f8a2fd264d427df0a119903e8eae384e478902541756f089dd1",
+      "candidate_topk_blocks": 2048,
+      "causal_masked_score_digest": "a7387dad09d18d4ea684c353aea6572bd3da95492b831e15ba444c46c161b14e",
+      "index_score_digest": "663df9b8c9f8dbb606e343d873ddd985f4d2e0e17b9a823b7321001cc657d679",
+      "layer20_indexer_input_digest": "e785817ca379b27e5a5d1c905c6261b46c6158815b55a29ecfaf7850b5925ef1",
+      "per_head_score_digest": "d31f0196dc4d08439e01da882ceb9cbe0770b044f3bf5946125b5dddbf451ac4",
+      "qr_digest": "4e2cb55b9975000240fc379d2cb51ce662a79446dbd78b09e408b424fc3defe6",
+      "query_projection_digest": "432f12b4985737a21fc184ba9be3a64baa5e263732e01a506b645907fe187d6b",
+      "weights_projection_digest": "3670b2353242df78908d30f9791e120966ec85a2991049690d5827c5cdd24809"
+    },
+    "compress_kv": {
+      "dtype": "BF16 uint16 dequantized cache",
+      "latent_digest": "e8fe1e9fc1a83fc5709910365bf523c421dd70bfac094ab66ee5e9e70d3b1fcd",
+      "producer_input_digest": "e785817ca379b27e5a5d1c905c6261b46c6158815b55a29ecfaf7850b5925ef1",
+      "published_digest": "df65999ef08ace0a5a3d223d81fa97c687d112199ab5d687bf8dfe0fee4357d8",
+      "quantized_bytes_digest": "8ed6976b967454c05ddcab6c69b637a32c46bb82a708f2f727d8212601a51fee",
+      "quantized_scales_digest": "963e80f3ab8ef49f7587ef44e09d23347f7f80f8213fe33ed422cd066d1ca87a",
+      "shape": [
+        1,
+        2,
+        512
+      ]
+    },
+    "index_k": {
+      "fp4_bytes_digest": "20ccae99ea047a36604fe67fba88799f9f3dd21a1a806ffc185eb7cc3577ed13",
+      "fp4_scales_digest": "74455972166d4ead1cd22a6afcf5bd04228f27f8851258dbdce375b92fa084c8",
+      "k_norm_digest": "ddefc55bb252456c3f1ff7510e4a189c80da04dba9ea3190f73067e284ca8735",
+      "published_digest": "6d6a7f8649e1e721aa82910d0e90fcee0189d1454c136589c6b68d82dbb11c4d",
+      "rotary_digest": "ff9805de6cbffdab1a9d47e7e40005397fb6df5649a2e131f5954bff20b91c10",
+      "source_latent_digest": "e8fe1e9fc1a83fc5709910365bf523c421dd70bfac094ab66ee5e9e70d3b1fcd",
+      "wk_output_digest": "7aab617f46c8fc87e8c199acde6e398de68bcd3ad1de137156d4c34e9ef3af46"
+    }
+  },
+  "producer_input_classification": {
+    "layer20_input": "checkpoint embedding-derived bounded activation fixture; not actual layer19 Block output",
+    "layer24_incoming_pre_mix": "deterministic synthetic pre_mix; not production previous-layer carry",
+    "layer24_input": "Boundary 6/7 deterministic bounded fixture",
+    "layer2_input": "checkpoint embedding-derived bounded activation fixture; not actual layer1 Block output"
+  },
+  "purpose": "Boundary 7b shared-attention state producer chain -> layer24/25 consumers; no layers0-19 residual stream, decode, or logits",
+  "safe_claim": "For the bounded prefill fixture, the shared-attention compress_kv, index_k, and candidates consumed by layer 24/25 are generated by their reviewed source-backed producer paths rather than externally injected state, and the resulting state is carried through the connected layer-24 -> layer-25 execution.",
+  "schema": "ds41f.native-shared-state-producer-chain-validation.v1",
+  "scope": {
+    "batch": 1,
+    "consumer_layers": [
+      24,
+      25
+    ],
+    "hc": 4,
+    "prefill": true,
+    "producer_layers_executed": [
+      2,
+      20
+    ],
+    "sequence": 2,
+    "start_pos": 0,
+    "world_size": 1
+  },
+  "source_review": {
+    "model_py": {
+      "file": "inference/model.py",
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "functions": [
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Attention._compress_kv",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            739,
+            763
+          ],
+          "source_sha256": "cf185e9832854ebe927c80eb619ad90b1b6b2603422f12100d6e46cab31a202b"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Indexer.forward",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            524,
+            589
+          ],
+          "source_sha256": "f83d35eafc24d380ac74f3c75b0967610d49ab39090bb21a1940261e150c4c34"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "select_candidate_blocks call / topk publication",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            570,
+            589
+          ],
+          "source_sha256": "1fd7252e921382c90d90b0498b94088c9fea4de0678ce779ad1bdc9e11a78424"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Block.forward",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            971,
+            994
+          ],
+          "source_sha256": "813b4dc3231349cb17190876e25f6c39da4a88fdec9d23e9cb0c5b6fcd8318f6"
+        }
+      ]
+    },
+    "producer_ownership": {
+      "candidates": "candidate_source_layer_id=20 publishes shared_attn.candidates",
+      "compress_kv": "KV source layers publish; for layer24/25 relevant latest producer is layer20, not layer2, because layer20 is a later kv_source and overwrites shared_attn.compress_kv",
+      "index_k": "Indexers on kv_source owners publish; for layer24 relevant latest producer is layer20 owns_k path, not layer2"
+    }
+  },
+  "state_lifetime": {
+    "after_layer20_actual_relevant_publish": {
+      "candidates": "27ecd0a598e76f8a2fd264d427df0a119903e8eae384e478902541756f089dd1",
+      "compress_kv": "df65999ef08ace0a5a3d223d81fa97c687d112199ab5d687bf8dfe0fee4357d8",
+      "compress_kv_pre_write_object_digest": null,
+      "index_k": "6d6a7f8649e1e721aa82910d0e90fcee0189d1454c136589c6b68d82dbb11c4d",
+      "topk_idxs": "f177d4feea916de5753fda9e1abf2c19559139141e361c81b77ec24d783a306f"
+    },
+    "after_layer24": {
+      "candidates": "27ecd0a598e76f8a2fd264d427df0a119903e8eae384e478902541756f089dd1",
+      "compress_kv": "df65999ef08ace0a5a3d223d81fa97c687d112199ab5d687bf8dfe0fee4357d8",
+      "compress_kv_pre_write_object_digest": null,
+      "index_k": "6d6a7f8649e1e721aa82910d0e90fcee0189d1454c136589c6b68d82dbb11c4d",
+      "topk_idxs": "f177d4feea916de5753fda9e1abf2c19559139141e361c81b77ec24d783a306f"
+    },
+    "after_layer25": {
+      "candidates": "27ecd0a598e76f8a2fd264d427df0a119903e8eae384e478902541756f089dd1",
+      "compress_kv": "df65999ef08ace0a5a3d223d81fa97c687d112199ab5d687bf8dfe0fee4357d8",
+      "compress_kv_pre_write_object_digest": null,
+      "index_k": "6d6a7f8649e1e721aa82910d0e90fcee0189d1454c136589c6b68d82dbb11c4d",
+      "topk_idxs": "f177d4feea916de5753fda9e1abf2c19559139141e361c81b77ec24d783a306f"
+    },
+    "after_layer2_preliminary_publish": {
+      "candidates": "b413f47d13ee2fe6c845b2ee141af81de858df4ec549a58b7970bb96645bc8d2",
+      "compress_kv": "e0899d58fc66b28b1c05eaf2745a3b295c9ec6987020186e7800e6467b7a098d",
+      "compress_kv_pre_write_object_digest": null,
+      "index_k": "ca13932db7170fe9b6898b0a38b40123dde451c20ebbb7a857b5d52d7fadc270",
+      "topk_idxs": "baa856a945932888a0ab188dede7e3f62f1c4cbdf3277ef9c8bf6dea9c43f424"
+    },
+    "initial": {
+      "candidates": null,
+      "compress_kv": null,
+      "index_k": null,
+      "topk_idxs": null
+    },
+    "same_logical_state_object": "single shared dictionary initialized once and passed through producer stages, Block24, and Block25"
+  },
+  "state_transition_table": [
+    {
+      "classification": [
+        "produced_or_updated_by_layer20",
+        "consumed_by_layer24",
+        "consumed_by_layer25"
+      ],
+      "field": "compress_kv",
+      "identity_gate": true,
+      "layer20_consumed_digest": null,
+      "layer24_consumed_digest": "df65999ef08ace0a5a3d223d81fa97c687d112199ab5d687bf8dfe0fee4357d8",
+      "layer24_post_state_digest": "df65999ef08ace0a5a3d223d81fa97c687d112199ab5d687bf8dfe0fee4357d8",
+      "layer25_consumed_digest": "df65999ef08ace0a5a3d223d81fa97c687d112199ab5d687bf8dfe0fee4357d8",
+      "layer25_post_state_digest": "df65999ef08ace0a5a3d223d81fa97c687d112199ab5d687bf8dfe0fee4357d8",
+      "producer_layer": 20,
+      "producer_publication_digest": "df65999ef08ace0a5a3d223d81fa97c687d112199ab5d687bf8dfe0fee4357d8",
+      "producer_source_branch": "Attention._compress_kv: is_kv_source sets shared_attn.compress_kv to layer20 compress_kv_cache; after Indexer writes RoPE+FP4 compressed latent"
+    },
+    {
+      "classification": [
+        "produced_or_updated_by_layer20",
+        "consumed_by_layer20_candidate_scoring",
+        "consumed_by_layer24"
+      ],
+      "field": "index_k",
+      "identity_gate": true,
+      "layer20_consumed_digest": "6d6a7f8649e1e721aa82910d0e90fcee0189d1454c136589c6b68d82dbb11c4d",
+      "layer24_consumed_digest": "6d6a7f8649e1e721aa82910d0e90fcee0189d1454c136589c6b68d82dbb11c4d",
+      "layer24_post_state_digest": "6d6a7f8649e1e721aa82910d0e90fcee0189d1454c136589c6b68d82dbb11c4d",
+      "layer25_consumed_digest": null,
+      "layer25_post_state_digest": "6d6a7f8649e1e721aa82910d0e90fcee0189d1454c136589c6b68d82dbb11c4d",
+      "producer_layer": 20,
+      "producer_publication_digest": "6d6a7f8649e1e721aa82910d0e90fcee0189d1454c136589c6b68d82dbb11c4d",
+      "producer_source_branch": "Indexer.forward: owns_k path wk -> k_norm -> RoPE -> FP4 publishes shared_attn.index_k"
+    },
+    {
+      "classification": [
+        "produced_or_updated_by_layer20",
+        "consumed_by_layer24"
+      ],
+      "field": "candidates",
+      "identity_gate": true,
+      "layer20_consumed_digest": null,
+      "layer24_consumed_digest": "27ecd0a598e76f8a2fd264d427df0a119903e8eae384e478902541756f089dd1",
+      "layer24_post_state_digest": "27ecd0a598e76f8a2fd264d427df0a119903e8eae384e478902541756f089dd1",
+      "layer25_consumed_digest": null,
+      "layer25_post_state_digest": "27ecd0a598e76f8a2fd264d427df0a119903e8eae384e478902541756f089dd1",
+      "producer_layer": 20,
+      "producer_publication_digest": "27ecd0a598e76f8a2fd264d427df0a119903e8eae384e478902541756f089dd1",
+      "producer_source_branch": "Indexer.forward candidate-source branch: select_candidate_blocks(index_score, compress_lens, candidate_topk_blocks, candidate_block_size) -> shared_attn.candidates"
+    },
+    {
+      "classification": [
+        "produced_or_updated_by_layer20_preliminary",
+        "overwritten_by_layer24",
+        "consumed_by_layer25"
+      ],
+      "field": "topk_idxs",
+      "identity_gate": true,
+      "layer20_consumed_digest": null,
+      "layer24_consumed_digest": "f177d4feea916de5753fda9e1abf2c19559139141e361c81b77ec24d783a306f",
+      "layer24_post_state_digest": "f177d4feea916de5753fda9e1abf2c19559139141e361c81b77ec24d783a306f",
+      "layer25_consumed_digest": "f177d4feea916de5753fda9e1abf2c19559139141e361c81b77ec24d783a306f",
+      "layer25_post_state_digest": "f177d4feea916de5753fda9e1abf2c19559139141e361c81b77ec24d783a306f",
+      "producer_layer": 24,
+      "producer_publication_digest": "f177d4feea916de5753fda9e1abf2c19559139141e361c81b77ec24d783a306f",
+      "producer_source_branch": "Layer20 also publishes preliminary topk_idxs, but layer24 index-source branch overwrites shared_attn.topk_idxs; layer25 consumes layer24 publication"
+    }
+  ],
+  "window_kv_layer_local": {
+    "classification": "layer-local state, not shared cross-layer producer chain",
+    "layer24_window_kv_digest": "4cbb9869feb221baaffc33095d46afb29f21f5f206684d1377667d47c261500c",
+    "layer25_window_kv_digest": "73177ebbfb244683834167345ab1c6e538f93578ba0d973a0a279ca68254780b"
+  }
+}

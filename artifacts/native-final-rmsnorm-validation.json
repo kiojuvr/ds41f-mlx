@@ -1,0 +1,303 @@
+{
+  "authority_relationship": "Boundary9b is current integrated numerical authority for Transformer entry -> all 40 Blocks -> post-loop HC collapse -> final RMSNorm, stopping before ParallelHead. Boundary9a remains closed exact subscope authority through post-loop HC collapse.",
+  "block39_return": {
+    "ffn_pre39": {
+      "digest": "8b20fab6cfdec82baf94938ec3e56428cae42a0997bcb0f3aa9afa5e7115f1dc",
+      "dtype": "FP32",
+      "shape": [
+        1,
+        2,
+        4
+      ],
+      "values": [
+        [
+          [
+            0.002104304963722825,
+            0.016481313854455948,
+            0.2737025320529938,
+            0.9301267862319946
+          ],
+          [
+            0.00011369008279871196,
+            0.013762916438281536,
+            0.18904991447925568,
+            0.317568838596344
+          ]
+        ]
+      ]
+    },
+    "x39_out": {
+      "digest": "c705421c2422458f36a570338c51e70d50967f028da424abf38ef4bb30bf86d3",
+      "dtype": "BF16",
+      "shape": [
+        1,
+        2,
+        4,
+        5120
+      ]
+    }
+  },
+  "boundary9a_regression": {
+    "boundary9a_artifact_ok": true,
+    "boundary9a_authority_commit": true,
+    "ffn_pre39_literal": {
+      "expected": "8b20fab6cfdec82baf94938ec3e56428cae42a0997bcb0f3aa9afa5e7115f1dc",
+      "got": "8b20fab6cfdec82baf94938ec3e56428cae42a0997bcb0f3aa9afa5e7115f1dc",
+      "pass": true
+    },
+    "post_loop_h_boundary9a_artifact": {
+      "expected": "6b99fb26048a577ce78756397101be15441d1ddb7fa9c7aa205007e10869061a",
+      "got": "6b99fb26048a577ce78756397101be15441d1ddb7fa9c7aa205007e10869061a",
+      "pass": true
+    },
+    "post_loop_h_literal": {
+      "expected": "6b99fb26048a577ce78756397101be15441d1ddb7fa9c7aa205007e10869061a",
+      "got": "6b99fb26048a577ce78756397101be15441d1ddb7fa9c7aa205007e10869061a",
+      "pass": true
+    },
+    "x39_literal": {
+      "expected": "c705421c2422458f36a570338c51e70d50967f028da424abf38ef4bb30bf86d3",
+      "got": "c705421c2422458f36a570338c51e70d50967f028da424abf38ef4bb30bf86d3",
+      "pass": true
+    }
+  },
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "official_reference_derived_native_connected_validation",
+  "comparison": {
+    "final_output_bf16_exact": true,
+    "independent_output_digest": "00186e76a7a7bd78ce40de4a9a912025c9d6724b1600a30f171eca9a2cb65eb5",
+    "mean_square_max_abs": 0.0,
+    "native_output_digest": "00186e76a7a7bd78ce40de4a9a912025c9d6724b1600a30f171eca9a2cb65eb5",
+    "pre_weight_normalized_max_abs": 0.0,
+    "rsqrt_max_abs": 0.0,
+    "weighted_output_f32_max_abs": 0.0
+  },
+  "dimension_crosscheck": {
+    "checkpoint_weight_dim": 5120,
+    "config_hidden_size": 5120,
+    "native_constant_DIM": 5120,
+    "pass": true,
+    "source": "args.dim passed to RMSNorm(args.dim, self.norm_eps); config hidden_size=5120"
+  },
+  "final_norm_weight_provenance": {
+    "checkpoint_header_dtype": "BF16",
+    "raw_digest": "9cd3b57cd9513541b9771bf66c9b356bf1a7b20ff050ed69f7e97cff9fedd428",
+    "runtime_storage_dtype": "BF16 uint16",
+    "shape": [
+      5120
+    ],
+    "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00043-of-00048.safetensors",
+    "tensor_name": "norm.weight"
+  },
+  "gates": {
+    "authority_label_guard_pass": true,
+    "boundary8_closeout_checker_remains_pass": true,
+    "boundary9a_regression_exact": true,
+    "epsilon_placement_validated": true,
+    "final_norm_checkpoint_tensor_provenance_exact": "9cd3b57cd9513541b9771bf66c9b356bf1a7b20ff050ed69f7e97cff9fedd428",
+    "final_norm_source_identity_recorded": true,
+    "final_normalized_output_exact_under_predeclared_contract": true,
+    "final_rmsnorm_source_implementation_reviewed": true,
+    "hidden_dimension_source_config_checkpoint_match": true,
+    "independent_rmsnorm_arithmetic_executed": true,
+    "mean_square_semantics_validated": true,
+    "native_rmsnorm_executed": true,
+    "no_post_loop_h_artifact_injection": true,
+    "output_shape_dtype_exact": true,
+    "post_loop_h_producer_to_norm_consumer_seam_exact": true,
+    "rsqrt_semantics_validated": true,
+    "single_execution_starts_from_token_ids": true,
+    "source_identity_guard_pass": true,
+    "stop_before_self_head_exact": true,
+    "weight_application_cast_order_validated": true
+  },
+  "intermediate_evidence": {
+    "digests": {
+      "input_x_f32": "66b00af8ec78bcf0768c72ffc27291560b5035fd95aa57eb1741b404ebd0725e",
+      "mean_square_f32": "25d8a258a8e7afe61ae4b1902952ecf4a508305398fd5fbd7ac6f6c28c090829",
+      "normalized_pre_weight_f32": "0bfc8736236d88e7f80e32d50b1f0d9d885a0799fe31f937aff1651d72f131fb",
+      "output_bf16": "00186e76a7a7bd78ce40de4a9a912025c9d6724b1600a30f171eca9a2cb65eb5",
+      "rsqrt_f32": "677866e6c1814ecbd5112699bf85d505548e41d7a37f5c8ccb9b1ea584df099a",
+      "square_f32": "a5e6fbe06939115283857f99cbbebd1365772ea3f759889b42b89b3722b7b9bb",
+      "weight_f32": "aa8c04c15c0ddbf38955fa17af68fb632229ddc01d25fd76d9d9d222eb9b88d1",
+      "weighted_output_f32": "da0b5e19bae98cea3e46aa7a5c2530a61fc1f3b9993a47ae178c00d2ec002eda"
+    },
+    "independent_digests": {
+      "input_x_f32": "66b00af8ec78bcf0768c72ffc27291560b5035fd95aa57eb1741b404ebd0725e",
+      "mean_square_f32": "25d8a258a8e7afe61ae4b1902952ecf4a508305398fd5fbd7ac6f6c28c090829",
+      "normalized_pre_weight_f32": "0bfc8736236d88e7f80e32d50b1f0d9d885a0799fe31f937aff1651d72f131fb",
+      "output_bf16": "00186e76a7a7bd78ce40de4a9a912025c9d6724b1600a30f171eca9a2cb65eb5",
+      "rsqrt_f32": "677866e6c1814ecbd5112699bf85d505548e41d7a37f5c8ccb9b1ea584df099a",
+      "square_f32": "a5e6fbe06939115283857f99cbbebd1365772ea3f759889b42b89b3722b7b9bb",
+      "weight_f32": "aa8c04c15c0ddbf38955fa17af68fb632229ddc01d25fd76d9d9d222eb9b88d1",
+      "weighted_output_f32": "da0b5e19bae98cea3e46aa7a5c2530a61fc1f3b9993a47ae178c00d2ec002eda"
+    },
+    "mean_square_values": [
+      [
+        278891360.0,
+        6045037.0
+      ]
+    ],
+    "rsqrt_values": [
+      [
+        5.988009070279077e-05,
+        0.00040672466275282204
+      ]
+    ]
+  },
+  "next_boundary": "Boundary 9c: ParallelHead / logits candidate only after reviewing official ParallelHead.forward source/checkpoint; do not mix sampling.",
+  "non_claims": [
+    "no ParallelHead",
+    "no connected logits",
+    "no sampling correctness",
+    "no production-scale candidate pruning",
+    "no decode / ring / partial compression-group semantics",
+    "no multi-call cache persistence",
+    "no world_size > 1 distributed semantics",
+    "no Engram",
+    "no MTP/DSpark",
+    "no long-context qualification",
+    "no full Transformer-output correctness",
+    "no full-model correctness",
+    "no performance/fusion/production qualification"
+  ],
+  "not_omlx_derived": true,
+  "ok": true,
+  "output": {
+    "normalized_h": {
+      "digest": "00186e76a7a7bd78ce40de4a9a912025c9d6724b1600a30f171eca9a2cb65eb5",
+      "dtype": "BF16",
+      "shape": [
+        1,
+        2,
+        5120
+      ]
+    }
+  },
+  "post_loop_h": {
+    "digest": "6b99fb26048a577ce78756397101be15441d1ddb7fa9c7aa205007e10869061a",
+    "dtype": "BF16",
+    "shape": [
+      1,
+      2,
+      5120
+    ]
+  },
+  "producer_consumer_seam": {
+    "artifact_tensor_injection": false,
+    "consumer": "Transformer self.norm consumption inside this runner",
+    "consumer_observed_digest": "6b99fb26048a577ce78756397101be15441d1ddb7fa9c7aa205007e10869061a",
+    "producer": "Boundary9a post_loop_h publication inside this runner",
+    "producer_digest": "6b99fb26048a577ce78756397101be15441d1ddb7fa9c7aa205007e10869061a",
+    "same_tensor_dataflow": true
+  },
+  "purpose": "Boundary 9b Transformer entry -> all 40 Blocks -> post-loop HC collapse -> final RMSNorm; stop before ParallelHead",
+  "rmsnorm_contract": {
+    "axis": "hidden dimension -1",
+    "dtype_transition": {
+      "input": "BF16",
+      "return": "to original input dtype BF16",
+      "square_mean_rsqrt": "FP32",
+      "weight": "checkpoint BF16 loaded and used as self.weight; multiplication promoted with FP32 normalized tensor",
+      "x_float": "FP32 via x.float()"
+    },
+    "epsilon": 1e-20,
+    "epsilon_placement": "var + self.eps before torch.rsqrt",
+    "predeclared_tolerance": {
+      "final_bf16_exact": true,
+      "mean_square_max_abs_lte": 0.0,
+      "pre_weight_normalized_max_abs_lte": 0.0,
+      "rsqrt_max_abs_lte": 0.0,
+      "weighted_fp32_max_abs_lte": 0.0
+    }
+  },
+  "safe_claim": "For B=1, S=2, start_pos=0, world_size=1 and token fixture [[0,3]], the official-reference-derived connected native prefill execution from Transformer entry through all 40 Blocks, the post-loop Hyper-Connection collapse, and the final RMSNorm is validated as one bounded dataflow. The actual collapsed hidden state is consumed directly by the reviewed final normalization operation. This stops before ParallelHead and does not validate connected logits, sampling, decode, or full Transformer output.",
+  "schema": "ds41f.native-final-rmsnorm-validation.v1",
+  "scope": {
+    "batch": 1,
+    "executes": "embedding, Blocks0..39, post-loop hc_pre, final self.norm",
+    "prefill": true,
+    "sequence": 2,
+    "start_pos": 0,
+    "starts_from": "token IDs",
+    "stop": "after normalized_h = self.norm(post_loop_h); before self.head(normalized_h)",
+    "tokens": [
+      [
+        0,
+        3
+      ]
+    ],
+    "world_size": 1
+  },
+  "source_review": {
+    "config_json": {
+      "hidden_size": 5120,
+      "num_hidden_layers": 40,
+      "rms_norm_eps": 1e-20
+    },
+    "model_py": {
+      "file": "inference/model.py",
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "functions": [
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "RMSNorm implementation",
+          "semantics": "dtype=x.dtype; x=x.float(); var=x.square().mean(-1, keepdim=True); x=x*torch.rsqrt(var+self.eps); return (self.weight*x).to(dtype)",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            281,
+            293
+          ],
+          "source_sha256": "ac829397ad0c5f99412def7adb54ba0334397baa5c2ab795d4531f072fc47ecc"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "hidden_dimension": "args.dim",
+          "name": "Transformer.__init__ final norm construction",
+          "norm_type": "RMSNorm",
+          "parameter_name": "norm.weight",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            1201,
+            1206
+          ],
+          "source_sha256": "61744fe50e430431914908fe4196f57aa267edfa0725ba8d94f49a93cd9466a5"
+        },
+        {
+          "file": "inference/model.py",
+          "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+          "name": "Transformer.forward post-loop order",
+          "order": [
+            "h = layer.hc_pre(h, pre_mix)",
+            "logits = self.head(self.norm(h))"
+          ],
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            1268,
+            1270
+          ],
+          "source_sha256": "bbdcbbf784a2f261ec02408f90c0b97be0d6a1054e2ec83eca63819efe25f1b7"
+        }
+      ],
+      "hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1"
+    },
+    "model_safetensors_index_json": {
+      "norm_weight_entry": {
+        "norm.weight": "model-00043-of-00048.safetensors"
+      }
+    }
+  },
+  "stop_boundary": {
+    "next_source_operation": "self.head(...)",
+    "not_executed": [
+      "ParallelHead",
+      "head projection",
+      "logits",
+      "sampling",
+      "decode"
+    ],
+    "stopped_after": "normalized_h = self.norm(post_loop_h)"
+  }
+}

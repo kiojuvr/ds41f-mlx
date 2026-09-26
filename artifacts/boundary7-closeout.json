@@ -1,0 +1,311 @@
+{
+  "artifact_authority_contamination_guard": {
+    "forbidden": "Do not mix old deepseek-v41-flash-mlx or oMLX-derived evidence into the semantic correctness chain. oMLX may be implementation target only, not correctness authority.",
+    "not_omlx_derived": true
+  },
+  "authority_chain": [
+    {
+      "artifact": "artifacts/m0/source-identity.json",
+      "boundary": "0",
+      "classification": "foundation/source identity and primitive baseline",
+      "does_not_prove": "connected Block or model execution",
+      "proves": "baseline source/checkpoint identity used by later official-reference-derived fixtures",
+      "purpose": "primitive semantics",
+      "scope": "primitive/source authority"
+    },
+    {
+      "artifact": "artifacts/attention-q-prelude-official-reference-fixture.json",
+      "boundary": "1",
+      "classification": "official_reference_derived_independent_arithmetic_contract",
+      "does_not_prove": "full Attention or Block",
+      "proves": "Q low-rank/FP8 projection prelude semantics",
+      "purpose": "Q prelude / FP8 projection path",
+      "scope": "bounded primitive fixture"
+    },
+    {
+      "artifact": "artifacts/window-kv-prelude-official-reference-fixture.json",
+      "boundary": "2",
+      "classification": "official_reference_derived_independent_arithmetic_contract",
+      "does_not_prove": "compressed attention or full Block",
+      "proves": "window KV publication/prelude semantics",
+      "purpose": "window-KV prelude",
+      "scope": "bounded primitive fixture"
+    },
+    {
+      "artifact": "artifacts/sparse-attn-official-reference-fixture.json",
+      "boundary": "3",
+      "classification": "official_reference_derived_independent_arithmetic_contract",
+      "does_not_prove": "projection/Block integration",
+      "proves": "sparse attention arithmetic semantics",
+      "purpose": "sparse attention",
+      "scope": "bounded primitive fixture"
+    },
+    {
+      "artifact": "artifacts/attention-output-projection-official-reference-fixture.json",
+      "boundary": "4",
+      "classification": "official_reference_derived_independent_arithmetic_contract",
+      "does_not_prove": "full Attention state lifecycle",
+      "proves": "post-attention projection semantics",
+      "purpose": "attention output projection",
+      "scope": "bounded primitive fixture"
+    },
+    {
+      "artifact": "artifacts/boundary5-closeout.json",
+      "boundary": "5",
+      "classification": "boundary_closeout",
+      "does_not_prove": "multi-layer residual/HC carry",
+      "proves": "compress_kv, index_k, candidate and compressed sparse attention semantics",
+      "purpose": "compressed KV / Indexer / candidate semantics",
+      "scope": "compressed-attention primitive/state semantics"
+    },
+    {
+      "artifact": "artifacts/hyper-connections-official-reference-fixture.json",
+      "boundary": "6a",
+      "classification": "official_reference_derived_independent_arithmetic_contract",
+      "does_not_prove": "full Block",
+      "proves": "hc_mixes/hc_pre/hc_post primitive semantics",
+      "purpose": "Hyper-Connections primitive",
+      "scope": "HC primitive"
+    },
+    {
+      "artifact": "artifacts/hc-attention-subblock-official-reference-fixture.json",
+      "boundary": "6b",
+      "classification": "sub-block integration",
+      "does_not_prove": "FFN or next-layer carry",
+      "proves": "attention-side HC integration",
+      "purpose": "HC + Attention sub-block",
+      "scope": "layer24 bounded fixture"
+    },
+    {
+      "artifact": "artifacts/moe-gate-expert-official-reference-fixture.json",
+      "boundary": "6c0",
+      "classification": "MoE primitive",
+      "does_not_prove": "full MoE reduction",
+      "proves": "Gate and single expert semantics",
+      "purpose": "Gate + single Expert",
+      "scope": "bounded layer24 primitive"
+    },
+    {
+      "artifact": "artifacts/moe-routed-reduction-official-reference-fixture.json",
+      "boundary": "6c1",
+      "classification": "MoE reduction",
+      "does_not_prove": "shared expert merge",
+      "proves": "routed expert weighted FP32 reduction",
+      "purpose": "routed reduction",
+      "scope": "bounded layer24 primitive"
+    },
+    {
+      "artifact": "artifacts/moe-shared-merge-official-reference-fixture.json",
+      "boundary": "6c2",
+      "classification": "MoE merge",
+      "does_not_prove": "FFN HC integration",
+      "proves": "shared expert and full MoE output semantics",
+      "purpose": "shared expert merge / full MoE",
+      "scope": "bounded layer24 primitive"
+    },
+    {
+      "artifact": "artifacts/hc-ffn-moe-subblock-official-reference-fixture.json",
+      "boundary": "6d",
+      "classification": "sub-block integration",
+      "does_not_prove": "next-layer carry",
+      "proves": "FFN HC, ffn_norm, MoE rerun, HC post",
+      "purpose": "FFN HC + MoE integration",
+      "scope": "layer24 bounded fixture"
+    },
+    {
+      "artifact": "artifacts/boundary6-closeout.json",
+      "boundary": "6e",
+      "classification": "boundary_closeout",
+      "does_not_prove": "multi-layer production carry",
+      "proves": "connected layer24 Block dataflow",
+      "purpose": "single connected Block",
+      "scope": "layer24 bounded external state fixture"
+    },
+    {
+      "artifact": "artifacts/native-layer24-25-connected-validation.json",
+      "boundary": "7a",
+      "classification": "regional connected validation",
+      "does_not_prove": "upstream producer provenance",
+      "proves": "direct HC carry and topk producer/consumer seam",
+      "purpose": "adjacent layer24->25 carry/shared-state seam evidence",
+      "scope": "layers24-25 bounded fixture"
+    },
+    {
+      "artifact": "artifacts/native-shared-state-producer-chain-validation.json",
+      "boundary": "7b",
+      "classification": "producer provenance integration",
+      "does_not_prove": "producer residual-stream provenance",
+      "proves": "compress_kv/index_k/candidates generated by reviewed producers",
+      "purpose": "source-backed shared-state producer-chain evidence",
+      "scope": "producer stages -> layers24-25"
+    },
+    {
+      "artifact": "artifacts/native-layer20-25-connected-chain-validation.json",
+      "boundary": "7c",
+      "classification": "regional connected validation",
+      "does_not_prove": "layers0-19 provenance",
+      "proves": "layer20 producer integrated inside Block chain",
+      "purpose": "layer20->25 connected regional evidence",
+      "scope": "layers20-25"
+    },
+    {
+      "artifact": "artifacts/native-layer14-25-connected-chain-validation.json",
+      "boundary": "7d",
+      "classification": "regional connected validation",
+      "does_not_prove": "layers0-13 provenance",
+      "proves": "layer14/20 generation and carry chain",
+      "purpose": "layer14->25 connected regional evidence",
+      "scope": "layers14-25"
+    },
+    {
+      "artifact": "artifacts/native-layer8-25-connected-chain-validation.json",
+      "boundary": "7e",
+      "classification": "regional connected validation",
+      "does_not_prove": "layers0-7 provenance",
+      "proves": "layer8/14/20 generation and carry chain",
+      "purpose": "layer8->25 connected regional evidence",
+      "scope": "layers8-25"
+    },
+    {
+      "artifact": "artifacts/native-layer2-25-connected-chain-validation.json",
+      "boundary": "7f",
+      "classification": "regional connected validation",
+      "does_not_prove": "Transformer entry/layers0-1 provenance",
+      "proves": "layer2 onward shared state lifecycle and carry chain",
+      "purpose": "layer2->25 connected regional evidence",
+      "scope": "layers2-25"
+    },
+    {
+      "artifact": "artifacts/native-layer0-25-transformer-entry-validation.json",
+      "boundary": "7g",
+      "classification": "current integrated numerical authority",
+      "does_not_prove": "layer26+, final norm, logits, decode, full model",
+      "proves": "official Transformer entry through Blocks0-25 connected dataflow",
+      "purpose": "Transformer entry -> layer25 current full connected evidence",
+      "scope": "tokens [[0,3]], B=1,S=2,start_pos=0,prefill,world_size=1,layers0-25"
+    }
+  ],
+  "boundary": "7",
+  "checks": {
+    "all_25_adjacent_carry_gates_acknowledged_from_7g": true,
+    "authority_contamination_guard_recorded": true,
+    "closed_open_claim_matrices_recorded": true,
+    "shared_state_generation_chronology_recorded": true
+  },
+  "classification": "boundary_closeout",
+  "closed_claims": {
+    "claims": [
+      "Transformer token embedding entry",
+      "initial HC residual expansion",
+      "identity initial pre_mix",
+      "layers0/1 no-compress window-only path",
+      "all Blocks 0..25 connected residual stream",
+      "all adjacent HC pre_mix carries 0->1 ... 24->25",
+      "all bounded Attention paths 0..25",
+      "all bounded FFN/MoE paths 0..25",
+      "shared state initially empty",
+      "generation@2 publication",
+      "generation@8 overwrite",
+      "generation@14 overwrite",
+      "generation@20 overwrite + candidates",
+      "generation@24 topk overwrite",
+      "producer->consumer shared-state lifecycle through layer25",
+      "layer-local window KV distinguished from cross-layer shared state"
+    ],
+    "scope": "bounded B=1,S=2,start_pos=0,prefill,world_size=1,token fixture [[0,3]], Transformer entry through layer25 only"
+  },
+  "current_integrated_numerical_authority": {
+    "artifact": "artifacts/native-layer0-25-transformer-entry-validation.json",
+    "commit": "4accce4b1c11cd38e5a9f60e948decff99d69b6b",
+    "ok": true,
+    "scope": {
+      "batch": 1,
+      "layers": "0..25",
+      "prefill": true,
+      "sequence": 2,
+      "start_pos": 0,
+      "stop": "before layer26",
+      "tokens": [
+        [
+          0,
+          3
+        ]
+      ],
+      "world_size": 1
+    }
+  },
+  "historical_authority_policy": {
+    "current_integrated_numerical_authority": "Boundary 7g",
+    "historical_regional_numerical_fixtures": "Boundary 7a-7f",
+    "policy": "Historical 7a-7f intermediate/output digests must not override or constrain 7g outputs when upstream input provenance differs. Reuse only semantic contracts, producer/consumer ownership, carry semantics, state-lifetime semantics, and source-backed branch identification within their scopes."
+  },
+  "non_claims": [
+    "no layer26+",
+    "no Transformer final norm",
+    "no connected ParallelHead/logits",
+    "no production-scale candidate pruning",
+    "no decode / ring / partial compression-group semantics",
+    "no multi-call cache persistence",
+    "no world_size > 1 distributed semantics",
+    "no Engram",
+    "no MTP/DSpark",
+    "no long-context qualification",
+    "no full-model correctness",
+    "no performance/fusion/production qualification"
+  ],
+  "not_omlx_derived": true,
+  "ok": true,
+  "safe_closeout_claim": "For B=1, S=2, start_pos=0, world_size=1 and token fixture [[0,3]], the official-reference-derived native execution from Transformer token embedding and initial Hyper-Connection state through Blocks 0\u201325 is closed as one connected bounded prefill validation. Residual/HC carry and the reviewed compressed-attention shared-state lifecycle are connected across the validated scope.",
+  "schema": "ds41f.boundary7-closeout.v1",
+  "source_authority": {
+    "authority_discipline": "official-reference-derived native arithmetic; oMLX is not promoted to semantic authority",
+    "kernel_py_sha256": "1236c3507019ed176f5dba5e04bcea58867cf654818c6cf138ed4845398c2455",
+    "model_py_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+    "source_identity_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1"
+  },
+  "status": "PASS",
+  "still_open": [
+    "layer26+",
+    "Transformer final norm",
+    "ParallelHead / logits connected end-to-end",
+    "production-scale candidate pruning",
+    "decode start_pos>0",
+    "window KV ring / wrap semantics",
+    "compressed decode partial-group accumulation/publication",
+    "multi-step cache persistence across calls",
+    "world_size > 1",
+    "expert parallel / all-reduce / distributed behavior",
+    "Engram",
+    "MTP / DSpark",
+    "long-context numerical behavior",
+    "performance / fusion / production runtime qualification",
+    "full-model correctness"
+  ],
+  "top_level_digest_summary": {
+    "digest_gates": {
+      "candidates_20": "27ecd0a598e76f8a2fd264d427df0a119903e8eae384e478902541756f089dd1",
+      "compress_kv_14": "a582748a87b83769b08b0ec08fcd40c4a72407ffb2ce794830e65ab9c0eac5ed",
+      "compress_kv_2": "b0344a39d07f2603a5c05828987655cd23a1d5173c7373d1a7522825c2c96d44",
+      "compress_kv_20": "fdb027edf978cebd05926802259c639f106f673c997da85129dbaa5ce3f0df41",
+      "compress_kv_8": "9b94dcb8f668c171fcbff6fbe62ec04f53289a800aa10909db1ea9df0ff181dd",
+      "embedding_output": "e785817ca379b27e5a5d1c905c6261b46c6158815b55a29ecfaf7850b5925ef1",
+      "ffn_pre25": "41cd033507e0dcc64e47d1375d3c6c5dea7a90abce1515de4c6ef05bcac33504",
+      "index_k_14": "51ccd331ca8f5e2bd92471d9c8cc24de087d1623307b192441ba20a0b95a23db",
+      "index_k_2": "e619fe853544e92679d9705aa2cef4c3199d02d84c2d946e924f2365fc76fcaf",
+      "index_k_20": "70b8711d0fdf54876d56ff9bd993b7504f5c78463b1bf912634803c194bff1f5",
+      "index_k_8": "e14360a0265915b6b292ffca18d678e034f0dbf9de05b1fb59e20b2b871fc725",
+      "initial_hc_x": "5d0d812064ce2fc25ea149ef428b80354094b902d0212b9077e33d8c3ff087cb",
+      "initial_pre_mix": "56e94d4f8d9e543d1260250ae1fdc346aea6fc5468f1a7865e77534e2fce98a1",
+      "pre_mix1_to_2": "393d4e5fd0d9209d0374f1896d2504e008d806ede1ec4b23b4260fba3816b4b3",
+      "topk_24": "f177d4feea916de5753fda9e1abf2c19559139141e361c81b77ec24d783a306f",
+      "x1_to_x2": "a9abb13060e3b5986de38d653b16d9e91189f68c8815bbaeba6d8cd647fca8a9",
+      "x25_out": "703ad30300805df5266836a8a57427409853deb3402973bab703977fab1cea4b"
+    },
+    "tokens": [
+      [
+        0,
+        3
+      ]
+    ]
+  }
+}
