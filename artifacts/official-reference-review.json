@@ -1,0 +1,284 @@
+{
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "CLEAN_PROVENANCE_REVIEW_METADATA_NOT_NUMERICAL_VALIDATION",
+  "files": [
+    {
+      "bytes": 61549,
+      "exists": true,
+      "path": "inference/model.py",
+      "sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "targets": [
+        {
+          "docstring_present": true,
+          "end_lineno": 178,
+          "exists": true,
+          "kind": "ClassDef",
+          "lineno": 152,
+          "name": "ParallelEmbedding",
+          "signature": null,
+          "source_sha256": "1b8428b4e639bed65674a7e6e3a0387181dc31d110b5c45542d111f54e0b81f4"
+        },
+        {
+          "docstring_present": false,
+          "end_lineno": 178,
+          "exists": true,
+          "kind": "FunctionDef",
+          "lineno": 168,
+          "name": "ParallelEmbedding.forward",
+          "signature": "forward(self, x)",
+          "source_sha256": "fc448dd2ac5f8a483c1ed42264e8ac1e0ba12e3bac3a073c12aae28db406f4bb"
+        },
+        {
+          "docstring_present": true,
+          "end_lineno": 207,
+          "exists": true,
+          "kind": "FunctionDef",
+          "lineno": 181,
+          "name": "linear",
+          "signature": "linear(x, weight, bias)",
+          "source_sha256": "c0c1edd8e542d2004472766686fb445859775ee0b51346979cd9ca573c1c7ada"
+        },
+        {
+          "docstring_present": true,
+          "end_lineno": 243,
+          "exists": true,
+          "kind": "ClassDef",
+          "lineno": 210,
+          "name": "Linear",
+          "signature": null,
+          "source_sha256": "17db4055aa5da720a192342ed27960111883712bd19a6dca956048644dad909c"
+        },
+        {
+          "docstring_present": false,
+          "end_lineno": 243,
+          "exists": true,
+          "kind": "FunctionDef",
+          "lineno": 242,
+          "name": "Linear.forward",
+          "signature": "forward(self, x)",
+          "source_sha256": "2b53749a0c9c5bd1c3ec1553ec4f107378f3050a8f585c3c773dd0b2a728404e"
+        },
+        {
+          "docstring_present": false,
+          "end_lineno": 293,
+          "exists": true,
+          "kind": "ClassDef",
+          "lineno": 281,
+          "name": "RMSNorm",
+          "signature": null,
+          "source_sha256": "ac829397ad0c5f99412def7adb54ba0334397baa5c2ab795d4531f072fc47ecc"
+        },
+        {
+          "docstring_present": false,
+          "end_lineno": 293,
+          "exists": true,
+          "kind": "FunctionDef",
+          "lineno": 288,
+          "name": "RMSNorm.forward",
+          "signature": "forward(self, x)",
+          "source_sha256": "adb7c70ed245e8830f6692b8c026fd7f2d17518cd98b68bf973e75524a921c85"
+        },
+        {
+          "docstring_present": true,
+          "end_lineno": 389,
+          "exists": true,
+          "kind": "FunctionDef",
+          "lineno": 369,
+          "name": "precompute_freqs_cis",
+          "signature": "precompute_freqs_cis(dim, seqlen, original_seq_len, base, factor, beta_fast, beta_slow)",
+          "source_sha256": "19cf7246ca3e6c479158e68d4ab7825d078aa788d3ce494b0c90649bb40117fc"
+        },
+        {
+          "docstring_present": true,
+          "end_lineno": 406,
+          "exists": true,
+          "kind": "FunctionDef",
+          "lineno": 392,
+          "name": "apply_rotary_emb",
+          "signature": "apply_rotary_emb(x, freqs_cis, inverse)",
+          "source_sha256": "1c47da553d29f41c798a2eda82b72476473913d1201e32283de0e4977aa30b1a"
+        },
+        {
+          "docstring_present": true,
+          "end_lineno": 485,
+          "exists": true,
+          "kind": "ClassDef",
+          "lineno": 429,
+          "name": "Compressor",
+          "signature": null,
+          "source_sha256": "dcd32a8debcf46c4d19d0347a3bc982e7aa70bba9746845d0b1555a7a73c8d67"
+        },
+        {
+          "docstring_present": true,
+          "end_lineno": 580,
+          "exists": true,
+          "kind": "ClassDef",
+          "lineno": 488,
+          "name": "Indexer",
+          "signature": null,
+          "source_sha256": "cb9d882d1701f3e62892e7730fe6901658e39886c55af65ece1b830858ca0a75"
+        },
+        {
+          "docstring_present": true,
+          "end_lineno": 789,
+          "exists": true,
+          "kind": "ClassDef",
+          "lineno": 613,
+          "name": "Attention",
+          "signature": null,
+          "source_sha256": "86d80f5cdaa6435cacd56ce5be796c3f0155a7f92cebdb12ffe6743ac974d110"
+        },
+        {
+          "docstring_present": true,
+          "end_lineno": 827,
+          "exists": true,
+          "kind": "ClassDef",
+          "lineno": 792,
+          "name": "Gate",
+          "signature": null,
+          "source_sha256": "bf29f6084e04bc1e0f2e8daf40014565e342686acb62ea99759180387b28e6a5"
+        },
+        {
+          "docstring_present": true,
+          "end_lineno": 851,
+          "exists": true,
+          "kind": "ClassDef",
+          "lineno": 830,
+          "name": "Expert",
+          "signature": null,
+          "source_sha256": "1822da2bf8c5d6341d7fc73ab01de32fa9be032843ef746801cfc058a97aabef"
+        },
+        {
+          "docstring_present": true,
+          "end_lineno": 904,
+          "exists": true,
+          "kind": "ClassDef",
+          "lineno": 854,
+          "name": "MoE",
+          "signature": null,
+          "source_sha256": "7ed04bb2f693414aea4b844373a2c2cab569b6043a40fb154abd254db074bb47"
+        },
+        {
+          "docstring_present": true,
+          "end_lineno": 994,
+          "exists": true,
+          "kind": "ClassDef",
+          "lineno": 907,
+          "name": "Block",
+          "signature": null,
+          "source_sha256": "8aefb2ca0236a730aa76ff8efe496817d6a5dc75a92060c316c04a2b400d9dda"
+        },
+        {
+          "docstring_present": false,
+          "end_lineno": 1017,
+          "exists": true,
+          "kind": "ClassDef",
+          "lineno": 997,
+          "name": "ParallelHead",
+          "signature": null,
+          "source_sha256": "6247ecdd05c6a9abae3c53eb58bb1154a88e56caa1d149ec71554c405b18afa0"
+        },
+        {
+          "docstring_present": true,
+          "end_lineno": 1017,
+          "exists": true,
+          "kind": "FunctionDef",
+          "lineno": 1008,
+          "name": "ParallelHead.forward",
+          "signature": "forward(self, x, full_logits)",
+          "source_sha256": "2537fe7c5c90707fb39100f54ef9559efed9979513f5f0f0939e063742ceaa52"
+        },
+        {
+          "docstring_present": true,
+          "end_lineno": 1282,
+          "exists": true,
+          "kind": "ClassDef",
+          "lineno": 1183,
+          "name": "Transformer",
+          "signature": null,
+          "source_sha256": "fe83d02eaed05bd7c37291b1a878d7147982605abb6cad2c960d4236b9c51abd"
+        }
+      ]
+    },
+    {
+      "bytes": 23790,
+      "exists": true,
+      "path": "inference/kernel.py",
+      "sha256": "1236c3507019ed176f5dba5e04bcea58867cf654818c6cf138ed4845398c2455",
+      "targets": [
+        {
+          "docstring_present": true,
+          "end_lineno": 124,
+          "exists": true,
+          "kind": "FunctionDef",
+          "lineno": 98,
+          "name": "act_quant",
+          "signature": "act_quant(x, block_size, scale_fmt, scale_dtype, inplace)",
+          "source_sha256": "563a82836450bfefe3f5f176636dec0e1f4d126c76d8007b42bb7abb877d30cb"
+        },
+        {
+          "docstring_present": true,
+          "end_lineno": 204,
+          "exists": true,
+          "kind": "FunctionDef",
+          "lineno": 184,
+          "name": "fp4_act_quant",
+          "signature": "fp4_act_quant(x, block_size, inplace, scale_dtype)",
+          "source_sha256": "1066960c1da76f484a12ae2b456daa4734eabe618f77fd781f3c98d80b05db99"
+        },
+        {
+          "docstring_present": true,
+          "end_lineno": 307,
+          "exists": true,
+          "kind": "FunctionDef",
+          "lineno": 277,
+          "name": "fp8_gemm",
+          "signature": "fp8_gemm(a, a_s, b, b_s, scale_dtype, block_size)",
+          "source_sha256": "cfd550d8b02ee127760ac26b39accae603302be6bf8e97c0cce29d8993af0657"
+        },
+        {
+          "docstring_present": true,
+          "end_lineno": 591,
+          "exists": true,
+          "kind": "FunctionDef",
+          "lineno": 562,
+          "name": "fp4_gemm",
+          "signature": "fp4_gemm(a, a_s, b, b_s, scale_dtype, act_block_size)",
+          "source_sha256": "56d44fa84e31e8f8a0299dbb62a22f85318e6dbc4efc79916002cf4eedf8a054"
+        },
+        {
+          "docstring_present": false,
+          "end_lineno": 403,
+          "exists": true,
+          "kind": "FunctionDef",
+          "lineno": 392,
+          "name": "sparse_attn",
+          "signature": "sparse_attn(q, kv, attn_sink, topk_idxs, softmax_scale)",
+          "source_sha256": "42208bc5467f5a29efd18020b62162fa3177614293f3669d3d0b8800d6e5d704"
+        },
+        {
+          "docstring_present": false,
+          "end_lineno": 474,
+          "exists": true,
+          "kind": "FunctionDef",
+          "lineno": 465,
+          "name": "hc_split_sinkhorn",
+          "signature": "hc_split_sinkhorn(mixes, hc_scale, hc_base, hc_mult, sinkhorn_iters, eps)",
+          "source_sha256": "95b3d90ef20ec990defa5d6a4baa772ce883b2d889d32db8ccd46d94ef7f3306"
+        }
+      ]
+    }
+  ],
+  "missing_targets": [],
+  "next_allowed_step": "manual review of selected source spans and dtype/arithmetic contracts before generating official-reference-derived fixtures",
+  "non_claims": [
+    "does not execute model math",
+    "does not validate logits/cache/state",
+    "does not make oMLX authoritative",
+    "does not authorize native model-math expansion by itself"
+  ],
+  "ok": true,
+  "purpose": "function-level source identity for candidate official DeepSeek reference; no model math executed",
+  "review_status": "source_identity_recorded_manual_semantics_review_required",
+  "schema": "ds41f.official-reference-review.v1"
+}

@@ -1,0 +1,86 @@
+{
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "official_reference_derived_native_validation",
+  "comparison": {
+    "bit_exact": true,
+    "mismatch_count": 0
+  },
+  "digests": {
+    "native_output_bf16_bits_sha256": "9284d0cbd07f860309b3f19b322fafa29f5b8b44a79daa9dc1c9ef3ccd0fe913",
+    "reference_expected_output_bf16_bits_sha256": "9284d0cbd07f860309b3f19b322fafa29f5b8b44a79daa9dc1c9ef3ccd0fe913"
+  },
+  "ds4_authority": {
+    "commit": "0aaea5a238fb41a35106a551e73c8409dfb751ac",
+    "remote": "https://github.com/antirez/ds4.git"
+  },
+  "gates": {
+    "full_model_semantics_not_claimed": true,
+    "native_matches_official_reference_fixture": true,
+    "native_metal_executed": true,
+    "reference_is_official_reference_derived": true,
+    "reference_not_omlx_derived": true,
+    "shape_exact": true
+  },
+  "inputs": {
+    "tokens": [
+      0,
+      3,
+      16159,
+      16160,
+      32319,
+      32320,
+      129279
+    ],
+    "tokens_sha256": "bfef2ef472dbe2c2bd994b77810ed64a905c17090ebd3bb5e571e1c7dd56f553"
+  },
+  "native_result": {
+    "dim": 128,
+    "metal_command_buffers": 1,
+    "metal_completion_waits": 1,
+    "metal_compute_encoders": 1,
+    "metal_enabled": true,
+    "n_tokens": 7,
+    "output_checksum": 12694473159555129526,
+    "vocab_rows": 129280
+  },
+  "native_version": "ds41f-prefill-native-official-linear-v5",
+  "non_claims": [
+    "does not execute oMLX",
+    "does not validate tokenizer behavior",
+    "does not validate HC repeat/pre-mask, attention, MoE, Engram, DSpark/MTP, logits, cache, or full prefill",
+    "does not add or modify native Metal code"
+  ],
+  "not_omlx_derived": true,
+  "official_reference": {
+    "file": "inference/model.py",
+    "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+    "function_or_class": "ParallelEmbedding.forward",
+    "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+    "source_lines": [
+      168,
+      178
+    ],
+    "source_sha256": "fc448dd2ac5f8a483c1ed42264e8ac1e0ba12e3bac3a073c12aae28db406f4bb"
+  },
+  "ok": true,
+  "purpose": "validate existing native BF16 embedding gather against independently derived official ParallelEmbedding.forward fixture",
+  "reference_fixture": "artifacts/parallel-embedding-official-reference-fixture.json",
+  "schema": "ds41f.native-embedding-official-reference-validation.v1",
+  "semantic_status": {
+    "model_semantics_validated": false,
+    "native_embedding_validated_against_parallel_embedding_contract": true,
+    "official_reference_fixture_used": true,
+    "validated_stage": "ParallelEmbedding.forward BF16 gather/all_reduce-equivalent output for bounded tokens/dim only"
+  },
+  "source_tensor": {
+    "bounded_dim": 128,
+    "bounded_weight_bf16_bits_sha256": "c1b1bbe26fe819901745c649144ff165036acb00951f492906466b7526a81622",
+    "dtype": "BF16 raw uint16 bits",
+    "name": "embed.weight",
+    "shape": [
+      129280,
+      5120
+    ],
+    "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00002-of-00048.safetensors"
+  }
+}

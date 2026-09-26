@@ -1,0 +1,219 @@
+{
+  "authority": {
+    "native_validation_provider": "Metal-backed BF16 grouped wo_a linears and FP8 wo_b linear",
+    "official_checkpoint_raw_bits": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+    "reference_fixture": "artifacts/attention-output-projection-official-reference-fixture.json"
+  },
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "official_reference_derived_native_validation",
+  "comparison": {
+    "final_wo_b_output": {
+      "bit_exact": true,
+      "max_bf16_ulp_error": 0,
+      "max_bf16_ulp_lte": 1,
+      "mismatch_count": 0,
+      "native_sha256": "49afde916b9fb6eb507f9e56159312f5e813ff9da99897ba6b72720e884c9820",
+      "reference_sha256": "49afde916b9fb6eb507f9e56159312f5e813ff9da99897ba6b72720e884c9820",
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "flattened_wo_a_output": {
+      "bit_exact": true,
+      "max_bf16_ulp_error": 0,
+      "max_bf16_ulp_lte": 1,
+      "mismatch_count": 0,
+      "native_sha256": "ca3d7a22de4ba82cf9a319871d0bcd4ec9a941352ea7bf72930986c3e5c14ffd",
+      "reference_sha256": "ca3d7a22de4ba82cf9a319871d0bcd4ec9a941352ea7bf72930986c3e5c14ffd",
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "grouped_reshape": {
+      "bit_exact": true,
+      "max_bf16_ulp_error": 0,
+      "max_bf16_ulp_lte": 0,
+      "mismatch_count": 0,
+      "native_sha256": "e67ad5cc78645bbeef81f5b28b5a496ca567504383db1f9fef88f446a2278007",
+      "reference_sha256": "e67ad5cc78645bbeef81f5b28b5a496ca567504383db1f9fef88f446a2278007",
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "grouped_wo_a_output": {
+      "bit_exact": true,
+      "max_bf16_ulp_error": 0,
+      "max_bf16_ulp_lte": 1,
+      "mismatch_count": 0,
+      "native_sha256": "ca3d7a22de4ba82cf9a319871d0bcd4ec9a941352ea7bf72930986c3e5c14ffd",
+      "reference_sha256": "ca3d7a22de4ba82cf9a319871d0bcd4ec9a941352ea7bf72930986c3e5c14ffd",
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "inverse_rotary_output": {
+      "bit_exact": true,
+      "max_bf16_ulp_error": 0,
+      "max_bf16_ulp_lte": 1,
+      "mismatch_count": 0,
+      "native_sha256": "e67ad5cc78645bbeef81f5b28b5a496ca567504383db1f9fef88f446a2278007",
+      "reference_sha256": "e67ad5cc78645bbeef81f5b28b5a496ca567504383db1f9fef88f446a2278007",
+      "shape_matches": true,
+      "within_tolerance": true
+    }
+  },
+  "ds4_authority": {
+    "commit": "0aaea5a238fb41a35106a551e73c8409dfb751ac",
+    "remote": "https://github.com/antirez/ds4.git"
+  },
+  "gates": {
+    "explicit_stop_before_block_hc": true,
+    "full_model_semantics_not_claimed": true,
+    "grouped_wo_a_validation_passed": true,
+    "inverse_rotary_validation_passed": true,
+    "native_metal_executed_where_applicable": true,
+    "reference_classification_expected": true,
+    "reference_not_omlx_derived": true,
+    "wo_b_projection_passed": true
+  },
+  "native_result": {
+    "wo_a_group_linears": [
+      {
+        "in_dim": 4096,
+        "metal_command_buffers": 1,
+        "metal_completion_waits": 1,
+        "metal_compute_encoders": 1,
+        "metal_enabled": true,
+        "out_dim": 1024,
+        "output_checksum": 10635906786211791793,
+        "rows": 2
+      },
+      {
+        "in_dim": 4096,
+        "metal_command_buffers": 1,
+        "metal_completion_waits": 1,
+        "metal_compute_encoders": 1,
+        "metal_enabled": true,
+        "out_dim": 1024,
+        "output_checksum": 7654959612118402427,
+        "rows": 2
+      },
+      {
+        "in_dim": 4096,
+        "metal_command_buffers": 1,
+        "metal_completion_waits": 1,
+        "metal_compute_encoders": 1,
+        "metal_enabled": true,
+        "out_dim": 1024,
+        "output_checksum": 13010844508890149714,
+        "rows": 2
+      },
+      {
+        "in_dim": 4096,
+        "metal_command_buffers": 1,
+        "metal_completion_waits": 1,
+        "metal_compute_encoders": 1,
+        "metal_enabled": true,
+        "out_dim": 1024,
+        "output_checksum": 7011280580617953984,
+        "rows": 2
+      },
+      {
+        "in_dim": 4096,
+        "metal_command_buffers": 1,
+        "metal_completion_waits": 1,
+        "metal_compute_encoders": 1,
+        "metal_enabled": true,
+        "out_dim": 1024,
+        "output_checksum": 15285260219873736495,
+        "rows": 2
+      },
+      {
+        "in_dim": 4096,
+        "metal_command_buffers": 1,
+        "metal_completion_waits": 1,
+        "metal_compute_encoders": 1,
+        "metal_enabled": true,
+        "out_dim": 1024,
+        "output_checksum": 889104008312015394,
+        "rows": 2
+      },
+      {
+        "in_dim": 4096,
+        "metal_command_buffers": 1,
+        "metal_completion_waits": 1,
+        "metal_compute_encoders": 1,
+        "metal_enabled": true,
+        "out_dim": 1024,
+        "output_checksum": 17682132435963744202,
+        "rows": 2
+      },
+      {
+        "in_dim": 4096,
+        "metal_command_buffers": 1,
+        "metal_completion_waits": 1,
+        "metal_compute_encoders": 1,
+        "metal_enabled": true,
+        "out_dim": 1024,
+        "output_checksum": 13533762627356719635,
+        "rows": 2
+      }
+    ],
+    "wo_b_fp8_linear": {
+      "in_dim": 8192,
+      "metal_command_buffers": 1,
+      "metal_completion_waits": 1,
+      "metal_compute_encoders": 1,
+      "metal_enabled": true,
+      "out_dim": 5120,
+      "output_checksum": 4376115312567882451,
+      "rows": 2
+    }
+  },
+  "native_version": "ds41f-prefill-native-official-sparse-attn-v11",
+  "non_claims": [
+    "does not execute oMLX",
+    "does not validate Block, HC residual integration, MoE, Compressor/Indexer, logits, full layer, or full model correctness",
+    "does not validate tensor-parallel all-reduce",
+    "does not benchmark performance",
+    "does not execute Block or HC residual integration"
+  ],
+  "not_omlx_derived": true,
+  "official_reference": {
+    "model_py": {
+      "file": "inference/model.py",
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "functions": [
+        {
+          "name": "Attention",
+          "reviewed_lines": "apply_rotary_emb inverse, grouped wo_a einsum, wo_b projection",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            613,
+            789
+          ],
+          "source_sha256": "86d80f5cdaa6435cacd56ce5be796c3f0155a7f92cebdb12ffe6743ac974d110"
+        }
+      ]
+    }
+  },
+  "ok": true,
+  "operation_contract": {
+    "order": "apply_rotary_emb(o[..., -64:], inverse=True); o.view(B,S,8,-1); wo_a.weight.view(8,1024,-1); einsum bsgd,grd->bsgr; flatten; wo_b projection; STOP before Block/HC",
+    "predeclared_tolerance": {
+      "final_max_bf16_ulp_lte": 1,
+      "intermediate_max_bf16_ulp_lte": 1
+    },
+    "tp_all_reduce": "world_size=1 executed; TP all-reduce not validated",
+    "wo_a_contract": "actual checkpoint is FP8; dequantize with F8_E8M0 32x32 scales to BF16, then grouped F32-accum einsum and BF16 output",
+    "wo_b_contract": "validated FP8 linear/GEMM contract over flattened wo_a output"
+  },
+  "purpose": "validate Boundary 4 attention output projection and stop before Block/HC",
+  "reference_fixture": "artifacts/attention-output-projection-official-reference-fixture.json",
+  "schema": "ds41f.native-attention-output-projection-official-reference-validation.v1",
+  "semantic_status": {
+    "explicit_stop_before_block_hc": true,
+    "grouped_wo_a_validated": true,
+    "inverse_rotary_validated": true,
+    "model_semantics_validated": false,
+    "official_reference_fixture_used": true,
+    "validated_stage": "attention output projection only",
+    "wo_b_validated": true
+  }
+}

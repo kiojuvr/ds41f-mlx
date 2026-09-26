@@ -1,0 +1,130 @@
+{
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "official_reference_derived_native_validation",
+  "comparison": {
+    "freqs_imag": {
+      "bit_exact": false,
+      "expected_sha256": "d3aae836fc6f4785ddbeb181a19a3fd8230f1da39a404c8eaa7a6e8febf01ea6",
+      "max_abs_error": 5.960464477539063e-08,
+      "max_f32_ulp_error": 2,
+      "mismatch_count": 8,
+      "native_sha256": "2ad16252d05f3a56da9791fd0bd4553c2625498252f4097c279aee6d79282a7c",
+      "shape_exact": true
+    },
+    "freqs_real": {
+      "bit_exact": false,
+      "expected_sha256": "eb7890d5b207f232b7f278a237d913d1ebc955ebed4b3b13e02250e96511b590",
+      "max_abs_error": 5.960464477539063e-08,
+      "max_f32_ulp_error": 1,
+      "mismatch_count": 2,
+      "native_sha256": "4c6a55d81e76e715675b950ff50ee880e45940052548e5ad854836503a610c60",
+      "shape_exact": true
+    },
+    "inverse_after_forward": {
+      "bit_exact": false,
+      "expected_sha256": "5bf07237cbfeabfd905cded3a7f286a33561ba954861916d541d2716ac2e524c",
+      "max_abs_error": 5.960464477539063e-08,
+      "max_f32_ulp_error": 2,
+      "mismatch_count": 9,
+      "native_sha256": "e57af39da727539af968f71f98c301def669fdb2d11885e7026ef31c484a0055",
+      "shape_exact": true
+    },
+    "rotated": {
+      "bit_exact": false,
+      "expected_sha256": "947ffdf4a5a31d59ed2c3a441cc69f9aa2dcf3fde0b23e9dd9cb402d79b4abdd",
+      "max_abs_error": 2.9802322387695312e-08,
+      "max_f32_ulp_error": 2,
+      "mismatch_count": 6,
+      "native_sha256": "e5030e2308315bde94678f6327485267b360e7055c86951e5c98be20b857d495",
+      "shape_exact": true
+    }
+  },
+  "digests": {
+    "reference": {
+      "freqs_cis_complex64_hex_sha256": "9f45f0e4bd93051876b63a632ac15ec470c2d4ece01319763328a4c22d72c8b0",
+      "input_f32_hex_sha256": "d6a6abc468abfd7ce2969f30ec79fea9c78421a12c14c4e2ca1666311e89eba1",
+      "inverse_after_forward_f32_hex_sha256": "1cdd3a47a1ea3de67e322a8641c77d7d81a79f1a4cd281e47f5bb42831d2b995",
+      "rotated_f32_hex_sha256": "8cd096d6dde283f5a518fc92223cafc6aea288872f03b0d0f19b10dbf1666160"
+    }
+  },
+  "ds4_authority": {
+    "commit": "0aaea5a238fb41a35106a551e73c8409dfb751ac",
+    "remote": "https://github.com/antirez/ds4.git"
+  },
+  "gates": {
+    "fixture_scope_explicit": true,
+    "full_model_semantics_not_claimed": true,
+    "native_metal_executed": true,
+    "native_within_reference_tolerance": true,
+    "reference_classification_expected": true,
+    "reference_not_omlx_derived": true,
+    "shape_exact": true
+  },
+  "native_result": {
+    "batch": 1,
+    "dim": 8,
+    "freqs_checksum": 2590569938432768199,
+    "heads": 1,
+    "inverse_checksum": 16675351565733164486,
+    "metal_command_buffers": 1,
+    "metal_completion_waits": 1,
+    "metal_compute_encoders": 3,
+    "metal_enabled": true,
+    "original_seq_len": 16,
+    "rotated_checksum": 3866284142026207560,
+    "seqlen": 4
+  },
+  "native_version": "ds41f-prefill-native-official-rotary-v7",
+  "non_claims": [
+    "does not execute oMLX",
+    "validates YaRN only when original_seq_len > 0 in the reference fixture params",
+    "does not validate attention, cache publication, logits, layers, or full-model correctness"
+  ],
+  "not_omlx_derived": true,
+  "official_reference": {
+    "file": "inference/model.py",
+    "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+    "targets": [
+      {
+        "name": "precompute_freqs_cis",
+        "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+        "source_lines": [
+          369,
+          389
+        ],
+        "source_sha256": "19cf7246ca3e6c479158e68d4ab7825d078aa788d3ce494b0c90649bb40117fc"
+      },
+      {
+        "name": "apply_rotary_emb",
+        "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+        "source_lines": [
+          392,
+          406
+        ],
+        "source_sha256": "1c47da553d29f41c798a2eda82b72476473913d1201e32283de0e4977aa30b1a"
+      }
+    ]
+  },
+  "ok": true,
+  "operation_contract": {
+    "apply": "view adjacent f32 element pairs as complex, multiply by per-position freqs_cis, optionally conjugating for inverse, view_as_real and flatten back to f32",
+    "expected_provider": "pure-Python independent arithmetic implementation with explicit f32 rounding at stored fixture boundaries; no torch/MLX/oMLX/native execution",
+    "fixture_scope": "shape [batch=1,seqlen=4,heads=1,dim=8], original_seq_len=16",
+    "precompute": "freqs=1/(base**(arange(0,dim,2,float32)/dim)); optional YaRN branch omitted by original_seq_len=0; freqs=outer(arange(seqlen),freqs); polar(ones_like(freqs),freqs) as complex64-compatible f32 real/imag bits"
+  },
+  "purpose": "validate native precompute_freqs_cis/apply_rotary_emb data path against official-reference-derived fixture",
+  "reference_fixture": "artifacts/rotary-yarn-official-reference-fixture.json",
+  "schema": "ds41f.native-rotary-official-reference-validation.v1",
+  "semantic_status": {
+    "model_semantics_validated": false,
+    "native_rotary_validated_against_contract": true,
+    "official_reference_fixture_used": true,
+    "validated_stage": "rotary frequency/application helpers for the reference fixture scope"
+  },
+  "tolerance_contract": {
+    "bit_exact_not_required": true,
+    "max_abs_error_lte": 1e-06,
+    "max_f32_ulp_error_lte": 64,
+    "reason": "Metal trigonometric implementations may differ from the pure-Python fixture while preserving the reviewed f32 rotary contract within a bounded tolerance"
+  }
+}

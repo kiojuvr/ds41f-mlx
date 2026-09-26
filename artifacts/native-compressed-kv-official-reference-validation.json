@@ -1,0 +1,252 @@
+{
+  "authority": {
+    "native_validation_provider": "Metal-backed BF16 linears/RMSNorm/rotary plus exact FP4/cache checks",
+    "official_checkpoint_raw_bits": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+    "reference_fixture": "artifacts/compressed-kv-official-reference-fixture.json"
+  },
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "official_reference_derived_native_validation",
+  "comparison": {
+    "cache_publication": {
+      "bit_exact": true,
+      "max_error": 0,
+      "max_error_lte": 0,
+      "mismatch_count": 0,
+      "native_sha256": "e0899d58fc66b28b1c05eaf2745a3b295c9ec6987020186e7800e6467b7a098d",
+      "reference_sha256": "e0899d58fc66b28b1c05eaf2745a3b295c9ec6987020186e7800e6467b7a098d",
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "compressed_rotary": {
+      "bit_exact": true,
+      "max_error": 0,
+      "max_error_lte": 1,
+      "mismatch_count": 0,
+      "native_sha256": "c09d99c9ea48722485a8b3000f618ab7e203e01d53d1d5b6161457735e4da6de",
+      "reference_sha256": "c09d99c9ea48722485a8b3000f618ab7e203e01d53d1d5b6161457735e4da6de",
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "compressor_rmsnorm": {
+      "bit_exact": true,
+      "max_error": 0,
+      "max_error_lte": 1,
+      "mismatch_count": 0,
+      "native_sha256": "c09d99c9ea48722485a8b3000f618ab7e203e01d53d1d5b6161457735e4da6de",
+      "reference_sha256": "c09d99c9ea48722485a8b3000f618ab7e203e01d53d1d5b6161457735e4da6de",
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "compressor_score": {
+      "bit_exact": true,
+      "max_error": 0.0,
+      "max_error_lte": 0.0001,
+      "mismatch_count": 0,
+      "native_sha256": "4f3bc9d5e96ceb67fbdae43c10c1da36af21bca7c0e0b1f6d9437047b591ab71",
+      "reference_sha256": "4f3bc9d5e96ceb67fbdae43c10c1da36af21bca7c0e0b1f6d9437047b591ab71",
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "dequantized_compressed_kv": {
+      "bit_exact": true,
+      "max_error": 0,
+      "max_error_lte": 0,
+      "mismatch_count": 0,
+      "native_sha256": "e0899d58fc66b28b1c05eaf2745a3b295c9ec6987020186e7800e6467b7a098d",
+      "reference_sha256": "e0899d58fc66b28b1c05eaf2745a3b295c9ec6987020186e7800e6467b7a098d",
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "fp4_quantized_bytes": {
+      "bit_exact": true,
+      "max_error": 0,
+      "max_error_lte": 0,
+      "mismatch_count": 0,
+      "native_sha256": "737c6a2d2d22acd889d770b0582c42dfcb7dfe8cdda13ee7eb0802b0a63869f0",
+      "reference_sha256": "737c6a2d2d22acd889d770b0582c42dfcb7dfe8cdda13ee7eb0802b0a63869f0",
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "fp4_scales": {
+      "bit_exact": true,
+      "max_error": 0,
+      "max_error_lte": 0,
+      "mismatch_count": 0,
+      "native_sha256": "bd9dbe09f8b8e84d396853be8df5391b44a867245f5cd3e9eda5f897c46445c0",
+      "reference_sha256": "bd9dbe09f8b8e84d396853be8df5391b44a867245f5cd3e9eda5f897c46445c0",
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "pooled_latent": {
+      "bit_exact": true,
+      "max_error": 0.0,
+      "max_error_lte": 0.0001,
+      "mismatch_count": 0,
+      "native_sha256": "4a2aa2cc3091be73511e2098679ec9fdb1266396d9e9305f5b783c0f674d1486",
+      "reference_sha256": "4a2aa2cc3091be73511e2098679ec9fdb1266396d9e9305f5b783c0f674d1486",
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "softmax_pooling_weights": {
+      "bit_exact": true,
+      "max_error": 0.0,
+      "max_error_lte": 0.0001,
+      "mismatch_count": 0,
+      "native_sha256": "ca5b22a3dc427dfea1911a34b13306df342d49d7c2d875cd875c64b1ac6c06d0",
+      "reference_sha256": "ca5b22a3dc427dfea1911a34b13306df342d49d7c2d875cd875c64b1ac6c06d0",
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "wkv_output": {
+      "bit_exact": true,
+      "max_error": 0.0,
+      "max_error_lte": 0.0001,
+      "mismatch_count": 0,
+      "native_sha256": "75856adab1bcffc7b46e496b81e3e74e69789660fb5092d8f9a26ac91368bf14",
+      "reference_sha256": "75856adab1bcffc7b46e496b81e3e74e69789660fb5092d8f9a26ac91368bf14",
+      "shape_matches": true,
+      "within_tolerance": true
+    }
+  },
+  "ds4_authority": {
+    "commit": "0aaea5a238fb41a35106a551e73c8409dfb751ac",
+    "remote": "https://github.com/antirez/ds4.git"
+  },
+  "gates": {
+    "cache_publication_exact": true,
+    "compressed_rope_validated": true,
+    "fp4_bytes_scales_validated": true,
+    "full_model_semantics_not_claimed": true,
+    "indexer_not_entered": true,
+    "native_metal_executed_where_applicable": true,
+    "pooling_weights_latent_validated": true,
+    "reference_classification_expected": true,
+    "reference_not_omlx_derived": true
+  },
+  "native_result": {
+    "compressed_rotary": {
+      "batch": 1,
+      "dim": 64,
+      "freqs_checksum": 8197136428677538048,
+      "heads": 1,
+      "inverse_checksum": 149720732063914283,
+      "metal_command_buffers": 1,
+      "metal_completion_waits": 1,
+      "metal_compute_encoders": 3,
+      "metal_enabled": true,
+      "original_seq_len": 0,
+      "rotated_checksum": 149720732063914283,
+      "seqlen": 1
+    },
+    "compressor_rmsnorm": {
+      "dim": 512,
+      "metal_command_buffers": 1,
+      "metal_completion_waits": 1,
+      "metal_compute_encoders": 1,
+      "metal_enabled": true,
+      "output_checksum": 15530832442921953330,
+      "rows": 1
+    },
+    "wgate_linear": {
+      "in_dim": 5120,
+      "metal_command_buffers": 1,
+      "metal_completion_waits": 1,
+      "metal_compute_encoders": 1,
+      "metal_enabled": true,
+      "out_dim": 512,
+      "output_checksum": 4427914773112726124,
+      "rows": 2
+    },
+    "wkv_linear": {
+      "in_dim": 5120,
+      "metal_command_buffers": 1,
+      "metal_completion_waits": 1,
+      "metal_compute_encoders": 1,
+      "metal_enabled": true,
+      "out_dim": 512,
+      "output_checksum": 2146406110748132832,
+      "rows": 2
+    }
+  },
+  "native_version": "ds41f-prefill-native-official-sparse-attn-v11",
+  "non_claims": [
+    "does not execute oMLX",
+    "does not validate Indexer, candidate selection, decode partial-group state, sparse-attn integration with compressed KV, Block/HC, logits, full layer, or full model correctness",
+    "does not benchmark performance",
+    "does not execute Indexer or candidate selection"
+  ],
+  "not_omlx_derived": true,
+  "official_reference": {
+    "kernel_py": {
+      "file": "inference/kernel.py",
+      "file_sha256": "1236c3507019ed176f5dba5e04bcea58867cf654818c6cf138ed4845398c2455",
+      "functions": [
+        {
+          "name": "fp4_act_quant",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            184,
+            204
+          ],
+          "source_sha256": "1066960c1da76f484a12ae2b456daa4734eabe618f77fd781f3c98d80b05db99"
+        }
+      ]
+    },
+    "model_py": {
+      "file": "inference/model.py",
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "functions": [
+        {
+          "name": "Compressor",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            429,
+            485
+          ],
+          "source_sha256": "dcd32a8debcf46c4d19d0347a3bc982e7aa70bba9746845d0b1555a7a73c8d67"
+        },
+        {
+          "name": "Compressor.forward",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            458,
+            485
+          ],
+          "source_sha256": "cd864ce74af1194d0a30178035efa2af92b8f7d27666724b3c63cd1ca6e5a092"
+        },
+        {
+          "name": "Attention._compress_kv",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            739,
+            763
+          ],
+          "source_sha256": "cf185e9832854ebe927c80eb619ad90b1b6b2603422f12100d6e46cab31a202b"
+        }
+      ]
+    }
+  },
+  "ok": true,
+  "operation_contract": {
+    "cache_publication": "prefill start_pos=0 publishes first compressed slot exactly",
+    "fp4": "block=16, scale dtype E4M3, scale=E4M3_RNE(max(abs(block),6*2^-9)/6), fp4 E2M1 nearest over {0,.5,1,1.5,2,3,4,6} with sign, dequantized BF16 cache value",
+    "order": "Compressor.forward: wkv/wgate fp32 linears, softmax over ratio, weighted pool, RMSNorm; _compress_kv: compressed-position rotary, fp4_act_quant inplace, publish compress_kv_cache; STOP before Indexer",
+    "predeclared_tolerance": {
+      "bf16_max_ulp_lte": 1,
+      "cache_exact": true,
+      "f32_max_abs_lte": 0.0001,
+      "fp4_bytes_exact": true
+    }
+  },
+  "purpose": "validate Boundary 5a Compressor + compressed-KV publication; stop before Indexer",
+  "reference_fixture": "artifacts/compressed-kv-official-reference-fixture.json",
+  "schema": "ds41f.native-compressed-kv-official-reference-validation.v1",
+  "semantic_status": {
+    "actual_compressing_layer": 2,
+    "cache_publication_exact": true,
+    "compress_ratio": 2,
+    "indexer_entered": false,
+    "model_semantics_validated": false,
+    "official_reference_fixture_used": true
+  }
+}

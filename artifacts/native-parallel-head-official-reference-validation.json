@@ -1,0 +1,143 @@
+{
+  "authority": {
+    "native_validation_provider": "Metal-backed ds41f_official_f32_linear_f32",
+    "official_checkpoint_raw_bits": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+    "reference_fixture": "artifacts/parallel-head-official-reference-fixture.json"
+  },
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "official_reference_derived_native_validation",
+  "comparison": {
+    "false_output_equals_true_last_position": {
+      "bit_exact": true,
+      "max_abs_error": 0.0,
+      "max_abs_error_lte": 0.0,
+      "max_relative_error": 0.0,
+      "max_relative_error_lte": 0.0,
+      "mismatch_count": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "full_logits_false": {
+      "bit_exact": true,
+      "max_abs_error": 0.0,
+      "max_abs_error_lte": 0.0001,
+      "max_relative_error": 0.0,
+      "max_relative_error_lte": 1e-06,
+      "mismatch_count": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "full_logits_true": {
+      "bit_exact": true,
+      "max_abs_error": 0.0,
+      "max_abs_error_lte": 0.0001,
+      "max_relative_error": 0.0,
+      "max_relative_error_lte": 1e-06,
+      "mismatch_count": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    }
+  },
+  "digests": {
+    "native_full_logits_false_f32_sha256": "fab5be3a8a72c7d76304fe24a1b24824c044f833a93a9f516e2b31f2389b90ab",
+    "native_full_logits_true_f32_sha256": "7d8ab29bd64ff7181789fe21531906a9ee60addb94367282ba4ff73fed9a6384",
+    "reference_expected_full_logits_false_f32_sha256": "fab5be3a8a72c7d76304fe24a1b24824c044f833a93a9f516e2b31f2389b90ab",
+    "reference_expected_full_logits_true_f32_sha256": "7d8ab29bd64ff7181789fe21531906a9ee60addb94367282ba4ff73fed9a6384"
+  },
+  "ds4_authority": {
+    "commit": "0aaea5a238fb41a35106a551e73c8409dfb751ac",
+    "remote": "https://github.com/antirez/ds4.git"
+  },
+  "gates": {
+    "full_logits_false_within_tolerance": true,
+    "full_logits_true_within_tolerance": true,
+    "full_model_logits_not_claimed": true,
+    "last_position_equivalence_passed": true,
+    "native_metal_executed": true,
+    "reference_classification_expected": true,
+    "reference_not_omlx_derived": true
+  },
+  "native_result": {
+    "full_logits_false": {
+      "in_dim": 5120,
+      "metal_command_buffers": 1,
+      "metal_completion_waits": 1,
+      "metal_compute_encoders": 1,
+      "metal_enabled": true,
+      "out_dim": 8,
+      "output_checksum": 1458099710428691219,
+      "rows": 1
+    },
+    "full_logits_true": {
+      "in_dim": 5120,
+      "metal_command_buffers": 1,
+      "metal_completion_waits": 1,
+      "metal_compute_encoders": 1,
+      "metal_enabled": true,
+      "out_dim": 8,
+      "output_checksum": 2333676760868582317,
+      "rows": 3
+    }
+  },
+  "native_version": "ds41f-prefill-native-official-parallel-head-v8",
+  "non_claims": [
+    "does not execute oMLX",
+    "does not claim full-model logits correctness",
+    "does not validate Transformer hidden-state production",
+    "does not validate full vocabulary output, only selected head.weight rows",
+    "does not execute or validate tensor-parallel gather/concat beyond documenting the contract",
+    "does not validate attention, MoE, Hyper-Connections, cache, sampling, DSpark/MTP, FP8, or FP4",
+    "does not validate native full-vocabulary logits allocation/readback"
+  ],
+  "not_omlx_derived": true,
+  "official_reference": {
+    "file": "inference/model.py",
+    "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+    "functions": [
+      {
+        "name": "ParallelHead",
+        "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+        "source_lines": [
+          997,
+          1017
+        ],
+        "source_sha256": "6247ecdd05c6a9abae3c53eb58bb1154a88e56caa1d149ec71554c405b18afa0"
+      },
+      {
+        "name": "ParallelHead.forward",
+        "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+        "source_lines": [
+          1008,
+          1017
+        ],
+        "source_sha256": "2537fe7c5c90707fb39100f54ef9559efed9979513f5f0f0939e063742ceaa52"
+      }
+    ]
+  },
+  "ok": true,
+  "operation_contract": {
+    "accumulation_contract": "F32 accumulation over k=0..5119 in increasing k order for this fixture",
+    "checkpoint_weight_loading": "official ParallelHead parameter is FP32; BF16 checkpoint head.weight bits are represented exactly as FP32 values before forward",
+    "expected_provider": "independent arithmetic over official BF16 checkpoint input/weight bits; no oMLX/PyTorch/MLX/native execution",
+    "fixture_operation": "selected_expected = input_f32 @ selected_head_weight_f32.T",
+    "full_logits_false": "select x[:, -1] before F.linear; fixture output shape [1, selected_vocab_rows]",
+    "full_logits_true": "apply F.linear to every sequence position; fixture output shape [1, sequence, selected_vocab_rows]",
+    "output_dtype": "F32",
+    "predeclared_tolerance": {
+      "max_abs_error_lte": 0.0001,
+      "max_relative_error_lte": 1e-06
+    },
+    "tp_gather_concat_contract": "if world_size > 1, all_gather per-rank logits and torch.cat along last dimension; not executed by this fixture",
+    "world_size": 1,
+    "x_cast": "x.float() before F.linear"
+  },
+  "purpose": "validate native bounded FP32 ParallelHead/F.linear seam against official-reference-derived fixture",
+  "reference_fixture": "artifacts/parallel-head-official-reference-fixture.json",
+  "schema": "ds41f.native-parallel-head-official-reference-validation.v1",
+  "semantic_status": {
+    "full_model_logits_correctness_claimed": false,
+    "native_parallel_head_selected_rows_validated_against_contract": true,
+    "official_reference_fixture_used": true,
+    "validated_stage": "ParallelHead.forward selected-vocabulary output-head primitive only"
+  }
+}

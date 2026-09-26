@@ -1,0 +1,77 @@
+{
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "OFFICIAL_REFERENCE_SEMANTICS_CONTRACT_METADATA_NOT_NUMERICAL_VALIDATION",
+  "existing_clean_artifacts": [
+    {
+      "classification": "CLEAN_OFFICIAL_CHECKPOINT_RAW_BITS",
+      "coverage": "single-rank bounded raw BF16 gather subset",
+      "path": "artifacts/m2/dwarfstar-prefill/native-official-embedding.json"
+    }
+  ],
+  "future_fixture_required_metadata": [
+    "classification",
+    "not_omlx_derived",
+    "source_tensor_name_shard_dtype_shape_digest",
+    "ParallelEmbedding.forward source span identity",
+    "world_size_rank_part_vocab_size",
+    "input_ids_digest",
+    "expected_provider",
+    "non_claims"
+  ],
+  "non_claims": [
+    "does not validate tokenizer behavior",
+    "does not validate HC repeat/pre-mask behavior",
+    "does not validate attention/Engram/MoE/DSpark/MTP",
+    "does not validate full prefill logits/cache/state",
+    "does not authorize native model-math expansion by itself"
+  ],
+  "not_omlx_derived": true,
+  "official_reference": {
+    "file": "inference/model.py",
+    "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+    "targets": [
+      {
+        "end_lineno": 178,
+        "lineno": 152,
+        "name": "ParallelEmbedding",
+        "source_sha256": "1b8428b4e639bed65674a7e6e3a0387181dc31d110b5c45542d111f54e0b81f4"
+      },
+      {
+        "end_lineno": 178,
+        "lineno": 168,
+        "name": "ParallelEmbedding.forward",
+        "source_sha256": "fc448dd2ac5f8a483c1ed42264e8ac1e0ba12e3bac3a073c12aae28db406f4bb"
+      }
+    ]
+  },
+  "ok": true,
+  "operation_contracts": {
+    "multi_rank": {
+      "expected_provider": "independent sharded gather/all_reduce implementation over official checkpoint slices; no oMLX execution",
+      "fixture_classification": "official_reference_derived",
+      "global_output": "sum(local_output over ranks)",
+      "local_ids": "ids - rank * part_vocab_size; masked ids replaced with 0 before lookup",
+      "local_output": "weight_rank[local_ids]; masked output rows zeroed after lookup",
+      "mask": "(ids < rank * part_vocab_size) | (ids >= (rank + 1) * part_vocab_size)",
+      "operation": "rank-local masked embedding gather followed by sum all_reduce over ranks",
+      "preconditions": [
+        "vocab_size % world_size == 0",
+        "one rank-local weight slice per rank"
+      ]
+    },
+    "single_rank": {
+      "dtype_contract": "output dtype/bits are exactly selected embedding weight dtype/bits",
+      "expected_provider": "direct raw checkpoint tensor gather; no oMLX execution",
+      "fixture_classification": "official_checkpoint_raw_bits",
+      "operation": "output = weight[input_ids]",
+      "output_shape": "input_ids.shape + [dim]",
+      "preconditions": [
+        "world_size == 1",
+        "rank == 0",
+        "all input ids are valid rows in weight"
+      ]
+    }
+  },
+  "purpose": "manual operation contract for official DeepSeek ParallelEmbedding semantics; no numerical fixture generated",
+  "schema": "ds41f.parallel-embedding-semantics-contract.v1"
+}

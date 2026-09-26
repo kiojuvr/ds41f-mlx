@@ -1,0 +1,192 @@
+{
+  "authority": {
+    "expected_value_provider": "independent_arithmetic_contract over official checkpoint tensors",
+    "official_checkpoint_raw_bits": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+    "official_reference_source": "inference/model.py"
+  },
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "official_reference_derived_independent_arithmetic_contract",
+  "comparison": {
+    "false_output_equals_true_last_position": true,
+    "self_consistent": true
+  },
+  "digests": {
+    "expected_full_logits_false_f32_sha256": "fab5be3a8a72c7d76304fe24a1b24824c044f833a93a9f516e2b31f2389b90ab",
+    "expected_full_logits_true_f32_sha256": "7d8ab29bd64ff7181789fe21531906a9ee60addb94367282ba4ff73fed9a6384"
+  },
+  "expected": {
+    "full_logits_false_selected_f32": [
+      [
+        -0.22966644167900085,
+        0.24016602337360382,
+        0.00012344960123300552,
+        0.08603838086128235,
+        -0.5300893783569336,
+        -0.48087185621261597,
+        0.00773723516613245,
+        0.028639690950512886
+      ]
+    ],
+    "full_logits_false_shape": [
+      1,
+      8
+    ],
+    "full_logits_true_selected_f32": [
+      [
+        [
+          0.2149409055709839,
+          0.2445441633462906,
+          -0.3742835819721222,
+          0.07448606193065643,
+          0.7210113406181335,
+          0.37167853116989136,
+          -0.34741106629371643,
+          -0.2563345432281494
+        ],
+        [
+          0.8453037142753601,
+          1.030032753944397,
+          -0.1036626398563385,
+          -1.0758122205734253,
+          0.13349299132823944,
+          -0.7692261934280396,
+          -0.107667937874794,
+          -0.1592121124267578
+        ],
+        [
+          -0.22966644167900085,
+          0.24016602337360382,
+          0.00012344960123300552,
+          0.08603838086128235,
+          -0.5300893783569336,
+          -0.48087185621261597,
+          0.00773723516613245,
+          0.028639690950512886
+        ]
+      ]
+    ],
+    "full_logits_true_shape": [
+      1,
+      3,
+      8
+    ]
+  },
+  "inputs": {
+    "selected_head_weight_f32": {
+      "digest": "5128a0f38ccba93110e9afb7e5489e164b79ee83b8004f9d36c9e50186866f30",
+      "dtype": "F32 representation of BF16 checkpoint head.weight rows",
+      "shape": [
+        8,
+        5120
+      ]
+    },
+    "x_f32": {
+      "digest": "2ef1f6c09b05c37b9c599b7716e02e122f88151febe084ddd306ea7990a797ad",
+      "dtype": "F32 converted from BF16 raw bits",
+      "shape": [
+        1,
+        3,
+        5120
+      ]
+    }
+  },
+  "non_claims": [
+    "does not execute oMLX",
+    "does not claim full-model logits correctness",
+    "does not validate Transformer hidden-state production",
+    "does not validate full vocabulary output, only selected head.weight rows",
+    "does not execute or validate tensor-parallel gather/concat beyond documenting the contract",
+    "does not validate attention, MoE, Hyper-Connections, cache, sampling, DSpark/MTP, FP8, or FP4"
+  ],
+  "not_omlx_derived": true,
+  "official_reference": {
+    "file": "inference/model.py",
+    "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+    "functions": [
+      {
+        "name": "ParallelHead",
+        "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+        "source_lines": [
+          997,
+          1017
+        ],
+        "source_sha256": "6247ecdd05c6a9abae3c53eb58bb1154a88e56caa1d149ec71554c405b18afa0"
+      },
+      {
+        "name": "ParallelHead.forward",
+        "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+        "source_lines": [
+          1008,
+          1017
+        ],
+        "source_sha256": "2537fe7c5c90707fb39100f54ef9559efed9979513f5f0f0939e063742ceaa52"
+      }
+    ]
+  },
+  "ok": true,
+  "operation_contract": {
+    "accumulation_contract": "F32 accumulation over k=0..5119 in increasing k order for this fixture",
+    "checkpoint_weight_loading": "official ParallelHead parameter is FP32; BF16 checkpoint head.weight bits are represented exactly as FP32 values before forward",
+    "expected_provider": "independent arithmetic over official BF16 checkpoint input/weight bits; no oMLX/PyTorch/MLX/native execution",
+    "fixture_operation": "selected_expected = input_f32 @ selected_head_weight_f32.T",
+    "full_logits_false": "select x[:, -1] before F.linear; fixture output shape [1, selected_vocab_rows]",
+    "full_logits_true": "apply F.linear to every sequence position; fixture output shape [1, sequence, selected_vocab_rows]",
+    "output_dtype": "F32",
+    "predeclared_tolerance": {
+      "max_abs_error_lte": 0.0001,
+      "max_relative_error_lte": 1e-06
+    },
+    "tp_gather_concat_contract": "if world_size > 1, all_gather per-rank logits and torch.cat along last dimension; not executed by this fixture",
+    "world_size": 1,
+    "x_cast": "x.float() before F.linear"
+  },
+  "purpose": "bounded selected-vocabulary ParallelHead.forward fixture over official checkpoint head.weight bits",
+  "schema": "ds41f.parallel-head-official-reference-fixture.v1",
+  "source_tensors": {
+    "checkpoint_head_weight": {
+      "checkpoint_dtype": "BF16",
+      "checkpoint_shape": [
+        129280,
+        5120
+      ],
+      "name": "head.weight",
+      "provenance": "official checkpoint raw safetensors bits",
+      "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00043-of-00048.safetensors"
+    },
+    "input": {
+      "checkpoint_dtype": "BF16 raw uint16 bits",
+      "f32_digest": "2ef1f6c09b05c37b9c599b7716e02e122f88151febe084ddd306ea7990a797ad",
+      "shape": [
+        1,
+        3,
+        5120
+      ],
+      "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00002-of-00048.safetensors",
+      "source": "embed.weight gathered rows used as bounded input tensor",
+      "tokens": [
+        0,
+        3,
+        42
+      ]
+    },
+    "weight_slice": {
+      "checkpoint_dtype": "BF16 raw uint16 bits",
+      "f32_digest": "5128a0f38ccba93110e9afb7e5489e164b79ee83b8004f9d36c9e50186866f30",
+      "name": "head.weight selected rows",
+      "shape": [
+        8,
+        5120
+      ],
+      "vocab_rows": [
+        0,
+        1,
+        2,
+        3,
+        42,
+        128799,
+        129264,
+        129279
+      ]
+    }
+  }
+}

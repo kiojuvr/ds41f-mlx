@@ -1,0 +1,275 @@
+{
+  "authority": {
+    "native_validation_provider": "Metal-backed FP8 linear/RMSNorm/rotary/act_quant plus exact cache/topk checks",
+    "official_checkpoint_raw_bits": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+    "reference_fixture": "artifacts/window-kv-prelude-official-reference-fixture.json"
+  },
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "official_reference_derived_native_validation",
+  "comparison": {
+    "cache_after_publication": {
+      "bit_exact": true,
+      "max_error": 0,
+      "max_error_lte": 0,
+      "mismatch_count": 0,
+      "native_sha256": "48b7913820c1cece7c350d06e082b86ca2315dc98d6c40d131773f19dce27e0c",
+      "reference_sha256": "48b7913820c1cece7c350d06e082b86ca2315dc98d6c40d131773f19dce27e0c",
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "input": {
+      "bit_exact": true,
+      "max_error": 0,
+      "max_error_lte": 0,
+      "mismatch_count": 0,
+      "native_sha256": "e785817ca379b27e5a5d1c905c6261b46c6158815b55a29ecfaf7850b5925ef1",
+      "reference_sha256": "e785817ca379b27e5a5d1c905c6261b46c6158815b55a29ecfaf7850b5925ef1",
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "kv_norm_output": {
+      "bit_exact": true,
+      "max_error": 0,
+      "max_error_lte": 1,
+      "mismatch_count": 0,
+      "native_sha256": "3ba713a33420056b002993f3a2a06bb0168421a88d852f600f8f1e9a09156136",
+      "reference_sha256": "3ba713a33420056b002993f3a2a06bb0168421a88d852f600f8f1e9a09156136",
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "quantized_window_kv_fp8": {
+      "bit_exact": true,
+      "max_error": 0,
+      "max_error_lte": 0,
+      "mismatch_count": 0,
+      "native_sha256": "3704c803f0b40e4ac6ac9d41f111b61b2dbec5ddddc5b2e96163cad772670944",
+      "reference_sha256": "3704c803f0b40e4ac6ac9d41f111b61b2dbec5ddddc5b2e96163cad772670944",
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "quantized_window_kv_scale": {
+      "bit_exact": true,
+      "max_error": 0,
+      "max_error_lte": 0,
+      "mismatch_count": 0,
+      "native_sha256": "c6aaf137e48988a80eb82f632996760f0a0cbff7080a9af4e99f9109a0ed0a48",
+      "reference_sha256": "c6aaf137e48988a80eb82f632996760f0a0cbff7080a9af4e99f9109a0ed0a48",
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "rotary_kv": {
+      "bit_exact": true,
+      "max_error": 0,
+      "max_error_lte": 1,
+      "mismatch_count": 0,
+      "native_sha256": "df465898429c8f772c745f9d2f0e41f9213064273b209bdcb089e90afdeb37ba",
+      "reference_sha256": "df465898429c8f772c745f9d2f0e41f9213064273b209bdcb089e90afdeb37ba",
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "topk_idxs": {
+      "bit_exact": true,
+      "max_error": 0,
+      "max_error_lte": 0,
+      "mismatch_count": 0,
+      "native_sha256": "db9497531f0a39d8aadfd0cc228a5d4a798a6884d668a66afbfa7cd31d0b3bad",
+      "reference_sha256": "db9497531f0a39d8aadfd0cc228a5d4a798a6884d668a66afbfa7cd31d0b3bad",
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "window_kv": {
+      "bit_exact": true,
+      "max_error": 0,
+      "max_error_lte": 0,
+      "mismatch_count": 0,
+      "native_sha256": "d9cbf6644af5f6337924c81a1901e8432241bc1889db63720d082d4c0db7d222",
+      "reference_sha256": "d9cbf6644af5f6337924c81a1901e8432241bc1889db63720d082d4c0db7d222",
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "wkv_output": {
+      "bit_exact": true,
+      "max_error": 0,
+      "max_error_lte": 1,
+      "mismatch_count": 0,
+      "native_sha256": "e8de7b28304e900e6d7595628776e70e4bfde91e3b8f66b6bdae5a30ff61ab31",
+      "reference_sha256": "e8de7b28304e900e6d7595628776e70e4bfde91e3b8f66b6bdae5a30ff61ab31",
+      "shape_matches": true,
+      "within_tolerance": true
+    }
+  },
+  "ds4_authority": {
+    "commit": "0aaea5a238fb41a35106a551e73c8409dfb751ac",
+    "remote": "https://github.com/antirez/ds4.git"
+  },
+  "gates": {
+    "cache_publication_exact": true,
+    "explicit_stop_before_sparse_attn": true,
+    "full_model_semantics_not_claimed": true,
+    "kv_rotary_act_quant_validated": true,
+    "native_metal_executed": true,
+    "real_shape_wkv_path_validated": true,
+    "reference_classification_expected": true,
+    "reference_not_omlx_derived": true,
+    "topk_int32_exact": true
+  },
+  "native_result": {
+    "act_quant_window_kv": {
+      "in_dim": 512,
+      "metal_command_buffers": 1,
+      "metal_completion_waits": 1,
+      "metal_compute_encoders": 1,
+      "metal_enabled": true,
+      "out_dim": 512,
+      "output_checksum": 14444399197222293641,
+      "rows": 2
+    },
+    "kv_norm_rmsnorm": {
+      "dim": 512,
+      "metal_command_buffers": 1,
+      "metal_completion_waits": 1,
+      "metal_compute_encoders": 1,
+      "metal_enabled": true,
+      "output_checksum": 14414817905417569804,
+      "rows": 2
+    },
+    "rotary_tail": {
+      "batch": 1,
+      "dim": 64,
+      "freqs_checksum": 3895363985965987009,
+      "heads": 1,
+      "inverse_checksum": 10800207556972874856,
+      "metal_command_buffers": 1,
+      "metal_completion_waits": 1,
+      "metal_compute_encoders": 3,
+      "metal_enabled": true,
+      "original_seq_len": 0,
+      "rotated_checksum": 8582229650984262566,
+      "seqlen": 2
+    },
+    "wkv_fp8_linear": {
+      "in_dim": 5120,
+      "metal_command_buffers": 1,
+      "metal_completion_waits": 1,
+      "metal_compute_encoders": 1,
+      "metal_enabled": true,
+      "out_dim": 512,
+      "output_checksum": 16263933600416509236,
+      "rows": 2
+    }
+  },
+  "native_version": "ds41f-prefill-native-official-window-kv-v10",
+  "non_claims": [
+    "does not execute oMLX",
+    "does not enter sparse_attn",
+    "does not validate compressed KV, Compressor/Indexer, decode ring-wrap, output projection, HC, MoE, logits, full layer, or full model correctness",
+    "does not benchmark performance",
+    "does not execute sparse_attn"
+  ],
+  "not_omlx_derived": true,
+  "official_reference": {
+    "kernel_py": {
+      "file": "inference/kernel.py",
+      "file_sha256": "1236c3507019ed176f5dba5e04bcea58867cf654818c6cf138ed4845398c2455",
+      "functions": [
+        {
+          "name": "act_quant",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            98,
+            124
+          ],
+          "source_sha256": "563a82836450bfefe3f5f176636dec0e1f4d126c76d8007b42bb7abb877d30cb"
+        },
+        {
+          "name": "fp8_gemm",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            277,
+            307
+          ],
+          "source_sha256": "cfd550d8b02ee127760ac26b39accae603302be6bf8e97c0cce29d8993af0657"
+        }
+      ]
+    },
+    "model_py": {
+      "file": "inference/model.py",
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "functions": [
+        {
+          "name": "Attention._window_kv",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            700,
+            720
+          ],
+          "source_sha256": "8752c908e579c697f069faffa970b148b437fb5615743c5d45c430bab97254b2"
+        },
+        {
+          "name": "get_window_topk_idxs",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            410,
+            426
+          ],
+          "source_sha256": "4018811d87356050320b5e5abd87c6aa85eec78862cc75260d28fd105bbd442c"
+        },
+        {
+          "name": "linear",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            181,
+            207
+          ],
+          "source_sha256": "c0c1edd8e542d2004472766686fb445859775ee0b51346979cd9ca573c1c7ada"
+        },
+        {
+          "name": "RMSNorm.forward",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            288,
+            293
+          ],
+          "source_sha256": "adb7c70ed245e8830f6692b8c026fd7f2d17518cd98b68bf973e75524a921c85"
+        },
+        {
+          "name": "apply_rotary_emb",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            392,
+            406
+          ],
+          "source_sha256": "1c47da553d29f41c798a2eda82b72476473913d1201e32283de0e4977aa30b1a"
+        }
+      ]
+    }
+  },
+  "ok": true,
+  "operation_contract": {
+    "act_quant_inplace": "records E4M3 bytes/scales and BF16 dequantized in-place KV",
+    "cache_publication": "prefill start_pos=0 and S<=window writes first S slots exactly",
+    "fp8_block_size": 32,
+    "order": "kv=kv_norm(wkv(x)); apply_rotary_emb(kv[..., -64:], freqs_cis); act_quant(kv, block=32, inplace=True); publish cache[:bsz,:seqlen]=kv; return kv and get_window_topk_idxs; STOP before sparse_attn",
+    "predeclared_tolerance": {
+      "act_quant_max_bf16_ulp_lte": 0,
+      "cache_exact": true,
+      "intermediate_max_bf16_ulp_lte": 1,
+      "topk_exact": true
+    },
+    "topk_contract": "int32 exact causal prefill rows from get_window_topk_idxs",
+    "wkv_full_shape_used": true
+  },
+  "purpose": "validate native layer-0 window-KV prelude and stop before sparse_attn",
+  "reference_fixture": "artifacts/window-kv-prelude-official-reference-fixture.json",
+  "schema": "ds41f.native-window-kv-prelude-official-reference-validation.v1",
+  "semantic_status": {
+    "cache_publication_exact": true,
+    "explicit_stop_before_sparse_attn": true,
+    "kv_rotary_and_act_quant_validated": true,
+    "model_semantics_validated": false,
+    "official_reference_fixture_used": true,
+    "real_shape_wkv_used": true,
+    "topk_int32_exact": true,
+    "validated_stage": "window-KV prelude only"
+  }
+}

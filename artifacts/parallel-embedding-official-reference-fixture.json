@@ -1,0 +1,256 @@
+{
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "official_reference_derived",
+  "comparison": {
+    "bit_exact": true,
+    "direct_raw_gather_crosscheck_matches": true
+  },
+  "digests": {
+    "direct_raw_gather_crosscheck_sha256": "9284d0cbd07f860309b3f19b322fafa29f5b8b44a79daa9dc1c9ef3ccd0fe913",
+    "expected_output_bf16_bits_sha256": "9284d0cbd07f860309b3f19b322fafa29f5b8b44a79daa9dc1c9ef3ccd0fe913",
+    "source_bounded_weight_bf16_bits_sha256": "c1b1bbe26fe819901745c649144ff165036acb00951f492906466b7526a81622"
+  },
+  "inputs": {
+    "tokens": [
+      0,
+      3,
+      16159,
+      16160,
+      32319,
+      32320,
+      129279
+    ],
+    "tokens_sha256": "bfef2ef472dbe2c2bd994b77810ed64a905c17090ebd3bb5e571e1c7dd56f553"
+  },
+  "non_claims": [
+    "does not execute oMLX",
+    "does not execute PyTorch distributed runtime",
+    "does not validate tokenizer behavior",
+    "does not validate HC repeat/pre-mask, attention, MoE, Engram, DSpark/MTP, logits, cache, or full prefill",
+    "does not implement or validate native model math"
+  ],
+  "not_omlx_derived": true,
+  "official_reference": {
+    "file": "inference/model.py",
+    "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+    "function_or_class": "ParallelEmbedding.forward",
+    "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+    "source_lines": [
+      168,
+      178
+    ],
+    "source_sha256": "fc448dd2ac5f8a483c1ed42264e8ac1e0ba12e3bac3a073c12aae28db406f4bb"
+  },
+  "ok": true,
+  "operation_contract": {
+    "expected_provider": "independent NumPy implementation of reviewed ParallelEmbedding.forward masking/all_reduce contract over official checkpoint bits",
+    "operation": "rank-local masked BF16 gather followed by all_reduce sum; exactly one rank contributes each token row",
+    "output_dtype": "BF16 raw uint16 bits",
+    "output_shape": [
+      7,
+      128
+    ],
+    "part_vocab_size": 16160,
+    "rank_count_modeled": 8,
+    "world_size": 8
+  },
+  "purpose": "bounded official ParallelEmbedding.forward sharded gather/all_reduce fixture from raw checkpoint BF16 bits",
+  "rank_records": [
+    {
+      "local_ids_after_mask": [
+        0,
+        3,
+        16159,
+        0,
+        0,
+        0,
+        0
+      ],
+      "local_output_bf16_bits_sha256": "15d599596c0ca031474aa4aae2cc3d4844354d5df9d5f45d5c3c12a5bd3385ba",
+      "masked_positions": [
+        3,
+        4,
+        5,
+        6
+      ],
+      "rank": 0,
+      "vocab_end_idx": 16160,
+      "vocab_start_idx": 0
+    },
+    {
+      "local_ids_after_mask": [
+        0,
+        0,
+        0,
+        0,
+        16159,
+        0,
+        0
+      ],
+      "local_output_bf16_bits_sha256": "caf8dafb2c06b9651c2eabf83d2e156b2715e823850a65cd46929538f0fd9e49",
+      "masked_positions": [
+        0,
+        1,
+        2,
+        5,
+        6
+      ],
+      "rank": 1,
+      "vocab_end_idx": 32320,
+      "vocab_start_idx": 16160
+    },
+    {
+      "local_ids_after_mask": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "local_output_bf16_bits_sha256": "e33c8d5a1c6d1ae5b5ef1575030e50d9c5063edff9711fb357a8cdba634fe884",
+      "masked_positions": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6
+      ],
+      "rank": 2,
+      "vocab_end_idx": 48480,
+      "vocab_start_idx": 32320
+    },
+    {
+      "local_ids_after_mask": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "local_output_bf16_bits_sha256": "7b4fc1a8dbe6b6121f16ada516e2ac27e02964716bacea5fb7d07cf30595948e",
+      "masked_positions": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "rank": 3,
+      "vocab_end_idx": 64640,
+      "vocab_start_idx": 48480
+    },
+    {
+      "local_ids_after_mask": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "local_output_bf16_bits_sha256": "7b4fc1a8dbe6b6121f16ada516e2ac27e02964716bacea5fb7d07cf30595948e",
+      "masked_positions": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "rank": 4,
+      "vocab_end_idx": 80800,
+      "vocab_start_idx": 64640
+    },
+    {
+      "local_ids_after_mask": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "local_output_bf16_bits_sha256": "7b4fc1a8dbe6b6121f16ada516e2ac27e02964716bacea5fb7d07cf30595948e",
+      "masked_positions": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "rank": 5,
+      "vocab_end_idx": 96960,
+      "vocab_start_idx": 80800
+    },
+    {
+      "local_ids_after_mask": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "local_output_bf16_bits_sha256": "7b4fc1a8dbe6b6121f16ada516e2ac27e02964716bacea5fb7d07cf30595948e",
+      "masked_positions": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "rank": 6,
+      "vocab_end_idx": 113120,
+      "vocab_start_idx": 96960
+    },
+    {
+      "local_ids_after_mask": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        16159
+      ],
+      "local_output_bf16_bits_sha256": "05f2612ff47ac4c2df40cefa4b81e8627227d2bf141f04b74f9a6849c2f702bb",
+      "masked_positions": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "rank": 7,
+      "vocab_end_idx": 129280,
+      "vocab_start_idx": 113120
+    }
+  ],
+  "schema": "ds41f.parallel-embedding-official-reference-fixture.v1",
+  "source_tensor": {
+    "bounded_dim": 128,
+    "dtype": "BF16 raw uint16 bits",
+    "name": "embed.weight",
+    "shape": [
+      129280,
+      5120
+    ],
+    "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00002-of-00048.safetensors"
+  }
+}

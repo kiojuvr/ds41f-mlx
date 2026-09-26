@@ -1,0 +1,83 @@
+{
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "official_reference_derived_independent_arithmetic_contract",
+  "comparison": {
+    "self_consistent": true
+  },
+  "digests": {
+    "expected_output_f32_sha256": "56227eb9cafee086b7fc6f403d895e0ecf418f7d45d12eb2e7822f1c0829bb70"
+  },
+  "non_claims": [
+    "does not execute oMLX",
+    "does not execute PyTorch backend F.linear",
+    "does not validate PyTorch backend-specific BF16 accumulation beyond the declared F32 arithmetic contract",
+    "does not validate activation, RMSNorm, MoE, attention, logits, cache, or full layer correctness",
+    "does not implement or validate additional native model math"
+  ],
+  "not_omlx_derived": true,
+  "official_reference": {
+    "file": "inference/model.py",
+    "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+    "functions": [
+      {
+        "name": "linear",
+        "reviewed_branch": "else: return F.linear(x, weight)",
+        "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+        "source_lines": [
+          181,
+          207
+        ],
+        "source_sha256": "c0c1edd8e542d2004472766686fb445859775ee0b51346979cd9ca573c1c7ada"
+      },
+      {
+        "name": "Linear.forward",
+        "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+        "source_lines": [
+          242,
+          243
+        ],
+        "source_sha256": "2b53749a0c9c5bd1c3ec1553ec4f107378f3050a8f585c3c773dd0b2a728404e"
+      }
+    ]
+  },
+  "ok": true,
+  "operation_contract": {
+    "accumulation_contract": "F32 accumulation over k=0..5119",
+    "expected_provider": "independent NumPy F32 matmul over official BF16 input/weight values; no oMLX/PyTorch/MLX/native execution",
+    "fixture_operation": "output = input_bf16_as_f32 @ weight_bf16_as_f32.T",
+    "official_reference_branch": "non-quantized weight path calls torch.nn.functional.linear(x, weight)",
+    "output_dtype": "F32",
+    "output_shape": [
+      2,
+      384
+    ]
+  },
+  "purpose": "bounded BF16 linear fixture for reviewed official non-quantized linear/F.linear branch over official checkpoint tensors",
+  "schema": "ds41f.bf16-linear-official-reference-fixture.v1",
+  "source_tensors": {
+    "input": {
+      "digest": "e785817ca379b27e5a5d1c905c6261b46c6158815b55a29ecfaf7850b5925ef1",
+      "dtype": "BF16 raw uint16 bits",
+      "shape": [
+        2,
+        5120
+      ],
+      "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00002-of-00048.safetensors",
+      "source": "embed.weight gathered rows",
+      "tokens": [
+        0,
+        3
+      ]
+    },
+    "weight": {
+      "digest": "1ec40d2dac31f17224554bfc47108ecbd4c8d6f748e4043276444cdef8a2a085",
+      "dtype": "BF16 raw uint16 bits",
+      "name": "layers.0.ffn.gate.weight",
+      "shape": [
+        384,
+        5120
+      ],
+      "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00003-of-00048.safetensors"
+    }
+  }
+}

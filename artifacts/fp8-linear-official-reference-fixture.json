@@ -1,0 +1,382 @@
+{
+  "authority": {
+    "expected_value_provider": "independent arithmetic reconstruction over official checkpoint tensors",
+    "official_checkpoint_raw_bits": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+    "official_reference_source": [
+      "inference/model.py",
+      "inference/kernel.py"
+    ]
+  },
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "official_reference_derived_independent_arithmetic_contract",
+  "comparison": {
+    "self_consistent": true,
+    "tolerance_predeclared": true
+  },
+  "digests": {
+    "activation_quantized_fp8_sha256": "cd8415c34d1adcef8cce83be6c9f9e3db25bca0c919ebde16e604a428f0b220f",
+    "expected_output_bf16_sha256": "c719ffa7ee439f7d126820cdcba9aeef2a30caa264f44129ab7dbcd6ae74769f",
+    "expected_output_f32_sha256": "0579f028a9c71806c28ee9da3cdc4ba233ba157cc2931ca24c6c4969e81cc70e"
+  },
+  "expected": {
+    "activation_quantized_fp8": [
+      [
+        115,
+        115,
+        239,
+        244,
+        247,
+        250,
+        239,
+        228,
+        106,
+        228,
+        252,
+        232,
+        95,
+        109,
+        122,
+        118,
+        229,
+        96,
+        88,
+        105,
+        241,
+        108,
+        105,
+        235,
+        110,
+        113,
+        244,
+        195,
+        247,
+        231,
+        105,
+        248
+      ],
+      [
+        116,
+        95,
+        101,
+        121,
+        235,
+        244,
+        235,
+        237,
+        250,
+        114,
+        227,
+        225,
+        96,
+        222,
+        97,
+        112,
+        111,
+        106,
+        93,
+        227,
+        236,
+        248,
+        116,
+        239,
+        236,
+        110,
+        241,
+        108,
+        120,
+        113,
+        236,
+        230
+      ]
+    ],
+    "activation_scale_e8m0": [
+      [
+        117
+      ],
+      [
+        115
+      ]
+    ],
+    "output_bf16_uint16": [
+      [
+        15439,
+        15553,
+        48157,
+        48265,
+        47681,
+        48096,
+        15313,
+        15540,
+        48035,
+        47786,
+        48230,
+        15674,
+        48308,
+        15253,
+        48156,
+        47887,
+        48190,
+        47926,
+        47824,
+        48284,
+        48201,
+        48174,
+        15559,
+        15610,
+        48137,
+        15265,
+        48254,
+        15087,
+        15254,
+        47987,
+        48028,
+        15481
+      ],
+      [
+        15327,
+        48099,
+        48131,
+        47872,
+        47530,
+        15129,
+        15292,
+        15231,
+        15240,
+        47908,
+        48033,
+        47966,
+        47724,
+        15085,
+        48057,
+        48010,
+        48076,
+        15112,
+        15136,
+        15102,
+        15051,
+        15040,
+        48063,
+        15158,
+        47969,
+        15031,
+        47967,
+        15257,
+        14986,
+        47628,
+        47883,
+        15148
+      ]
+    ],
+    "output_f32_before_bf16_round": [
+      [
+        0.012646675109863281,
+        0.02358245849609375,
+        -0.009608745574951172,
+        -0.016701936721801758,
+        -0.0007357597351074219,
+        -0.006847858428955078,
+        0.006389141082763672,
+        0.02195298671722412,
+        -0.004984349012374878,
+        -0.0012969970703125,
+        -0.014044046401977539,
+        0.04541325569152832,
+        -0.02199840545654297,
+        0.004537105560302734,
+        -0.009495735168457031,
+        -0.0021882057189941406,
+        -0.011578679084777832,
+        -0.0027844905853271484,
+        -0.001590728759765625,
+        -0.019003601744771004,
+        -0.012264251708984375,
+        -0.010644197463989258,
+        0.02430737018585205,
+        0.030508995056152344,
+        -0.008383750915527344,
+        0.004922151565551758,
+        -0.015493273735046387,
+        0.0018239021301269531,
+        0.004568077623844147,
+        -0.003703594207763672,
+        -0.004747435450553894,
+        0.01521068811416626
+      ],
+      [
+        0.006802082061767578,
+        -0.0069162845611572266,
+        -0.008018255233764648,
+        -0.001950085163116455,
+        -0.00032520294189453125,
+        0.0023328065872192383,
+        0.005738735198974609,
+        0.0038941316306591034,
+        0.0041540637612342834,
+        -0.0025086402893066406,
+        -0.0049173831939697266,
+        -0.0033865943551063538,
+        -0.0008989572525024414,
+        0.0018057823181152344,
+        -0.005655646324157715,
+        -0.004197061061859131,
+        -0.006214499473571777,
+        0.002076864242553711,
+        0.0024423599243164062,
+        0.0019358992576599121,
+        0.0015480518341064453,
+        0.0014624595642089844,
+        -0.005820095539093018,
+        0.0027740001678466797,
+        -0.003439664840698242,
+        0.0013953447341918945,
+        -0.003407001495361328,
+        0.004672616720199585,
+        0.0010496750473976135,
+        -0.0005354881286621094,
+        -0.0021140575408935547,
+        0.0026300549507141113
+      ]
+    ],
+    "output_shape": [
+      2,
+      32
+    ]
+  },
+  "inputs": {
+    "input_bf16_digest": "70dfe6cb3452ec6b8e123f30c93d8ff79dbcc8efccb71fdf8781b2b1a85f6b39",
+    "weight_fp8_digest": "8316c33b2acb5c0264e3d627c85e1ac9c1484bd07ed952005300c8a40de9d956",
+    "weight_scale_e8m0_digest": "043a718774c572bd8a25adbeb1bfcd5c0256ae11cecf9f9c3f925d0e52beaf89"
+  },
+  "non_claims": [
+    "does not execute oMLX",
+    "does not validate Attention Q-prelude integration",
+    "does not validate RMSNorm, rotary, sparse_attn, KV/cache, Compressor/Indexer, FP4, MoE, HC, DSpark/MTP, logits, layer, or full model correctness",
+    "does not benchmark performance"
+  ],
+  "not_omlx_derived": true,
+  "official_reference": {
+    "kernel_py": {
+      "file": "inference/kernel.py",
+      "file_sha256": "1236c3507019ed176f5dba5e04bcea58867cf654818c6cf138ed4845398c2455",
+      "functions": [
+        {
+          "name": "act_quant",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            98,
+            124
+          ],
+          "source_sha256": "563a82836450bfefe3f5f176636dec0e1f4d126c76d8007b42bb7abb877d30cb"
+        },
+        {
+          "name": "fp8_gemm",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            277,
+            307
+          ],
+          "source_sha256": "cfd550d8b02ee127760ac26b39accae603302be6bf8e97c0cce29d8993af0657"
+        }
+      ]
+    },
+    "model_py": {
+      "file": "inference/model.py",
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "functions": [
+        {
+          "name": "linear",
+          "reviewed_branch": "weight.dtype == torch.float8_e4m3fn",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            181,
+            207
+          ],
+          "source_sha256": "c0c1edd8e542d2004472766686fb445859775ee0b51346979cd9ca573c1c7ada"
+        }
+      ]
+    }
+  },
+  "ok": true,
+  "operation_contract": {
+    "accumulation_dtype": "F32, increasing k order within each 32-element block",
+    "activation_quantization": "per row and 32-element K block: amax=max(max(abs(x)),1e-4); scale=2^ceil(log2(amax/448)); q=round-to-nearest-even E4M3FN(clamp(x/scale,-448,448))",
+    "block_size": 32,
+    "dequantization_order": "sum_k (decode(act_q[k])*act_scale[k_block]) * (decode(weight_fp8[k])*weight_scale[out_block,k_block])",
+    "fp8_weight_encoding": "torch float8_e4m3fn / safetensors F8_E4M3 byte encoding; decoded to finite E4M3 values before applying scale",
+    "linear_branch": "FP8 branch: act_quant(x, fp8_block_size=32, scale_fmt='ue8m0', scale_dtype=float8_e8m0fnu), then fp8_gemm(..., block_size=32)",
+    "output_dtype": "BF16 round-to-nearest-even, matching torch default BF16 inference output for fp8_gemm",
+    "predeclared_tolerance": {
+      "max_bf16_ulp_lte": 0
+    },
+    "scale_encoding": "torch float8_e8m0fnu / safetensors F8_E8M0; byte e decodes as 2^(e-127)",
+    "weight_scale_layout": "weight_scale[out_block, k_block] where out_block=floor(output_row/32)"
+  },
+  "purpose": "bounded Stage 1a FP8 linear/GEMM fixture for layer 0 attention wq_a projection",
+  "schema": "ds41f.fp8-linear-official-reference-fixture.v1",
+  "source_tensors": {
+    "input": {
+      "digest": "70dfe6cb3452ec6b8e123f30c93d8ff79dbcc8efccb71fdf8781b2b1a85f6b39",
+      "dtype": "BF16 raw uint16 bits",
+      "shape": [
+        2,
+        32
+      ],
+      "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00002-of-00048.safetensors",
+      "source": "embed.weight gathered rows, first 32 dims",
+      "tokens": [
+        0,
+        3
+      ]
+    },
+    "weight": {
+      "checkpoint_dtype": "F8_E4M3",
+      "checkpoint_shape": [
+        1280,
+        5120
+      ],
+      "digest": "8316c33b2acb5c0264e3d627c85e1ac9c1484bd07ed952005300c8a40de9d956",
+      "name": "layers.0.attn.wq_a.weight",
+      "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00003-of-00048.safetensors",
+      "slice_cols": [
+        0,
+        32
+      ],
+      "slice_rows": [
+        0,
+        32
+      ],
+      "slice_shape": [
+        32,
+        32
+      ]
+    },
+    "weight_scale": {
+      "checkpoint_dtype": "F8_E8M0",
+      "checkpoint_shape": [
+        40,
+        160
+      ],
+      "digest": "043a718774c572bd8a25adbeb1bfcd5c0256ae11cecf9f9c3f925d0e52beaf89",
+      "name": "layers.0.attn.wq_a.scale",
+      "raw_values": [
+        [
+          115
+        ]
+      ],
+      "scale_layout": "[ceil(out_dim/32), ceil(in_dim/32)] for 32x32 weight blocks",
+      "shard": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/model-00003-of-00048.safetensors",
+      "slice_cols": [
+        0,
+        1
+      ],
+      "slice_rows": [
+        0,
+        1
+      ],
+      "slice_shape": [
+        1,
+        1
+      ]
+    }
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "official_reference_derived_native_validation",
+  "comparison": {
+    "bit_exact": false,
+    "max_bf16_ulp_error": 1,
+    "mismatch_count": 3,
+    "within_predeclared_tolerance": true
+  },
+  "digests": {
+    "native_output_bf16_bits_sha256": "d75615e3a0f185fe4d38f69a90a8419ab2dec37d8853bd2635ed20663ab618c3",
+    "recomputed_expected_output_bf16_bits_sha256": "055ee38bab468da2470854d34f70b857b873abed595fbe0d57f8880e74abd231",
+    "reference_expected_output_bf16_bits_sha256": "055ee38bab468da2470854d34f70b857b873abed595fbe0d57f8880e74abd231"
+  },
+  "ds4_authority": {
+    "commit": "0aaea5a238fb41a35106a551e73c8409dfb751ac",
+    "remote": "https://github.com/antirez/ds4.git"
+  },
+  "gates": {
+    "full_model_semantics_not_claimed": true,
+    "native_metal_executed": true,
+    "native_within_reference_tolerance": true,
+    "reference_classification_expected": true,
+    "reference_not_omlx_derived": true,
+    "shape_exact": true
+  },
+  "native_result": {
+    "dim": 5120,
+    "metal_command_buffers": 1,
+    "metal_completion_waits": 1,
+    "metal_compute_encoders": 1,
+    "metal_enabled": true,
+    "output_checksum": 5711296609476958431,
+    "rows": 2
+  },
+  "native_version": "ds41f-prefill-native-official-rmsnorm-v6",
+  "non_claims": [
+    "does not execute oMLX",
+    "does not validate backend-specific PyTorch rsqrt beyond declared fixture contract",
+    "does not validate HC repeat/pre-mask, attention, MoE, Engram, DSpark/MTP, logits, cache, or full layer correctness"
+  ],
+  "not_omlx_derived": true,
+  "official_reference": {
+    "file": "inference/model.py",
+    "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+    "targets": [
+      {
+        "name": "RMSNorm",
+        "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+        "source_lines": [
+          281,
+          293
+        ],
+        "source_sha256": "ac829397ad0c5f99412def7adb54ba0334397baa5c2ab795d4531f072fc47ecc"
+      },
+      {
+        "name": "RMSNorm.forward",
+        "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+        "source_lines": [
+          288,
+          293
+        ],
+        "source_sha256": "adb7c70ed245e8830f6692b8c026fd7f2d17518cd98b68bf973e75524a921c85"
+      }
+    ]
+  },
+  "ok": true,
+  "operation_contract": {
+    "eps": 1e-06,
+    "expected_provider": "independent NumPy implementation of reviewed RMSNorm.forward arithmetic contract over official checkpoint bits; no oMLX/PyTorch/MLX/native execution",
+    "fixture_operation": "F32 variance/rsqrt/multiply over BF16 input and weight converted to F32, then BF16 round-to-nearest-even output",
+    "official_reference_operation": "dtype=x.dtype; x=x.float(); var=x.square().mean(-1, keepdim=True); x=x*torch.rsqrt(var+eps); return (weight*x).to(dtype)",
+    "output_dtype": "BF16 raw uint16 bits",
+    "output_shape": [
+      2,
+      5120
+    ],
+    "reduction_dim": 5120
+  },
+  "purpose": "validate native BF16 RMSNorm primitive against official-reference-derived fixture",
+  "reference_fixture": "artifacts/rmsnorm-official-reference-fixture.json",
+  "schema": "ds41f.native-rmsnorm-official-reference-validation.v1",
+  "semantic_status": {
+    "model_semantics_validated": false,
+    "native_rmsnorm_validated_against_contract": true,
+    "official_reference_fixture_used": true,
+    "validated_stage": "BF16 RMSNorm primitive only"
+  },
+  "tolerance_contract": {
+    "max_bf16_ulp_lte": 1,
+    "mismatch_count_allowed": "nonzero allowed when max_bf16_ulp_lte passes"
+  }
+}

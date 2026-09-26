@@ -1,0 +1,102 @@
+{
+  "schema": "ds41f.correctness-authority-classification.v1",
+  "audit_head": "f068bb893ce4819ef02f98576520e8219a1ab5a6",
+  "policy": "agreement with oMLX is not official DeepSeek correctness",
+  "status": "repair_metadata",
+  "historical_handling": {
+    "delete_artifacts": false,
+    "rewrite_history": false,
+    "labels": [
+      "historical_only",
+      "omlx_compatibility_reference",
+      "not_official_qualification",
+      "superseded"
+    ]
+  },
+  "authorities": {
+    "model_data": {
+      "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+      "role": "official checkpoint/config/tokenizer/raw tensors"
+    },
+    "model_semantics": {
+      "status": "must_pin_before_future_model_math",
+      "candidate_local_file": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/model.py",
+      "candidate_local_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65"
+    },
+    "execution_architecture": {
+      "remote": "https://github.com/antirez/ds4.git",
+      "commit": "0aaea5a238fb41a35106a551e73c8409dfb751ac",
+      "scope": "architecture/scheduling/ownership/lifetime only"
+    },
+    "omlx": {
+      "local_path": "$HOME/omlx-0.7.0.dev2",
+      "upstream_commit": "b390b31e0c6831225fed0f24d278eb1db7fcb68b",
+      "allowed_roles": ["implementation donor", "runtime compatibility reference", "performance baseline"],
+      "forbidden_roles": ["official semantic authority", "official logits oracle", "official cache/state oracle"]
+    }
+  },
+  "classifications": [
+    {
+      "path": "artifacts/m0/oracle-compare/direct-vs-server.json",
+      "classification": "VALID_COMPATIBILITY_ONLY",
+      "labels": ["omlx_compatibility_reference", "not_official_qualification"],
+      "reason": "compares server bridge against direct oMLX execution"
+    },
+    {
+      "path": "artifacts/m1/checkpoint-provenance.json",
+      "classification": "CLEAN",
+      "reason": "official checkpoint hashes/counts and provenance"
+    },
+    {
+      "path": "artifacts/m1/runtime-identity.json",
+      "classification": "VALID_COMPATIBILITY_ONLY",
+      "labels": ["omlx_compatibility_reference"],
+      "reason": "oMLX/runtime identity, not model semantics"
+    },
+    {
+      "path": "artifacts/m1/summary.json",
+      "classification": "MIXED",
+      "labels": ["not_official_qualification"],
+      "reason": "checkpoint/API parts valid; bounded direct/server oracle is oMLX-derived"
+    },
+    {
+      "path": "artifacts/m2/dwarfstar-prefill/official-semantics-contract.json",
+      "classification": "TAINTED_OMLX_DERIVED_CORRECTNESS",
+      "labels": ["historical_only", "superseded", "not_official_qualification"],
+      "reason": "binds DwarfStar graph steps to oMLX providers as official semantics"
+    },
+    {
+      "path": "artifacts/m2/state-publication/*.json",
+      "classification": "TAINTED_OMLX_DERIVED_CORRECTNESS",
+      "labels": ["historical_only", "omlx_compatibility_reference", "not_official_qualification"],
+      "reason": "logits/cache/frontier expected results are accepted oMLX _forward or oMLX replay"
+    },
+    {
+      "path": "artifacts/m2/layer-major-correctness/*.json",
+      "classification": "TAINTED_OMLX_DERIVED_CORRECTNESS",
+      "labels": ["historical_only", "omlx_compatibility_reference", "not_official_qualification"],
+      "reason": "exactness is against accepted oMLX _forward"
+    },
+    {
+      "path": "artifacts/m2/dwarfstar-prefill/smoke-32tok-4chunk*.json",
+      "classification": "MIXED_ARCHITECTURE_CLEAN_SEMANTICS_TAINTED",
+      "labels": ["historical_only", "omlx_compatibility_reference", "not_official_qualification"],
+      "reason": "DwarfStar architecture plan valid; logits/cache gates are oMLX-derived"
+    },
+    {
+      "path": "artifacts/m2/dwarfstar-prefill/ds41-sweep-plan-*.json",
+      "classification": "CLEAN_ARCHITECTURE_ONLY",
+      "reason": "pinned DwarfStar sweep topology"
+    },
+    {
+      "path": "artifacts/m2/dwarfstar-prefill/native-official-embedding.json",
+      "classification": "CLEAN",
+      "reason": "reference is direct raw BF16 checkpoint gather"
+    },
+    {
+      "path": "artifacts/m2/dwarfstar-prefill/native-official-projection.json",
+      "classification": "CLEAN",
+      "reason": "reference is independent NumPy F32 matmul from official BF16 checkpoint tensors"
+    }
+  ]
+}

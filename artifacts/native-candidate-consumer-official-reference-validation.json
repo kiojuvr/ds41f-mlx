@@ -1,0 +1,187 @@
+{
+  "authority": {
+    "native_validation_provider": "Python-orchestrated native arithmetic path over official checkpoint tensors for layer-24 consumer wiring",
+    "official_checkpoint_raw_bits": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+    "reference_fixture": "artifacts/candidate-consumer-official-reference-fixture.json"
+  },
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "official_reference_derived_native_validation",
+  "comparison": {
+    "actual_candidate_masked_score": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "actual_layer20_index_k_cache": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "actual_layer24_qr": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "actual_layer24_query_dequant": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "actual_layer24_weights_proj": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "actual_reduced_index_score": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "actual_shared_candidate_mask": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "actual_shared_topk_publication": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "actual_topk_idxs": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "semantic_candidate_mask": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "semantic_masked_scores": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "semantic_shared_publication": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "semantic_topk_idxs": {
+      "bit_exact": true,
+      "max_abs_diff": 0,
+      "shape_matches": true,
+      "within_tolerance": true
+    }
+  },
+  "digests": {
+    "native_actual_topk_idxs_sha256": "ebcca8a99005905d352d187e38023107b7bfc6611dd69499ad2b88288c594f00",
+    "reference_actual_topk_idxs_sha256": "ebcca8a99005905d352d187e38023107b7bfc6611dd69499ad2b88288c594f00"
+  },
+  "ds4_authority": {
+    "commit": "0aaea5a238fb41a35106a551e73c8409dfb751ac",
+    "remote": "https://github.com/antirez/ds4.git"
+  },
+  "gates": {
+    "actual_wiring_publication_exact": true,
+    "explicit_stop_before_attention_kv_concat_sparse_attn": true,
+    "full_model_semantics_not_claimed": true,
+    "local_pinned_consumer_branch_reviewed": true,
+    "masked_scores_exact": true,
+    "real_tensor_provenance_recorded": true,
+    "reference_classification_expected": true,
+    "reference_not_omlx_derived": true,
+    "semantic_masking_effect_validated": true,
+    "topk_sort_minus_one_offset_int32_exact": true
+  },
+  "native_version": null,
+  "non_claims": [
+    "does not execute oMLX",
+    "does not execute window/compressed KV concatenation or sparse_attn",
+    "does not validate Attention output projection, decode path, Block/HC, MoE, logits, full layer, or full model correctness",
+    "actual layer-24 short production candidate mask retains all reachable positions; this validates wiring/publication only and does not claim production pruning effect",
+    "native validation does not claim production pruning effect because the short production mask retains all reachable positions"
+  ],
+  "not_omlx_derived": true,
+  "official_reference": {
+    "model_py": {
+      "file": "inference/model.py",
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "functions": [
+        {
+          "name": "Indexer",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            488,
+            580
+          ],
+          "source_sha256": "cb9d882d1701f3e62892e7730fe6901658e39886c55af65ece1b830858ca0a75"
+        },
+        {
+          "name": "Indexer.__init__",
+          "reviewed_semantic": "self.uses_candidates = 0 <= args.candidate_source_layer < layer_id",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            496,
+            525
+          ],
+          "source_sha256": "a043fb3fb3a0dfd386b732f18483b7e321af313e58173e3cf591a074ccbd36a5"
+        },
+        {
+          "name": "Indexer.forward",
+          "reviewed_branch": "elif self.uses_candidates: index_score = index_score.masked_fill(~shared_attn.candidates, -torch.inf); then top-k, position sort, -1/offset int32",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            527,
+            580
+          ],
+          "source_sha256": "32c3de30aeb0e78df5271e28dc9b2873feade877987048137a590f6f58ba110d"
+        }
+      ]
+    }
+  },
+  "ok": true,
+  "operation_contract": {
+    "consumer_mask": "index_score.masked_fill(~shared_attn.candidates, -inf), after causal compressed-position masking",
+    "minus_one_offset": "torch.where(idxs < compress_lens, idxs + offset, -1).int()",
+    "predeclared_tolerance": {
+      "actual_f32_max_abs_lte": 0.0001,
+      "bf16_max_ulp_lte": 1,
+      "bool_exact": true,
+      "int32_exact": true,
+      "semantic_float_exact": true
+    },
+    "publication": "Attention._compress_topk_idxs publishes returned int32 idxs as shared_attn.topk_idxs",
+    "topk": "top-k by masked score, indices sorted into position order"
+  },
+  "purpose": "validate Boundary 5d candidate consumer masking + top-k publication; stop before Attention KV concatenation / sparse_attn",
+  "reference_fixture": "artifacts/candidate-consumer-official-reference-fixture.json",
+  "schema": "ds41f.native-candidate-consumer-official-reference-validation.v1",
+  "semantic_status": {
+    "actual_consumer_layer": 24,
+    "actual_layer24_real_indexer_score_validated": true,
+    "actual_shared_candidate_mask_applied": true,
+    "actual_shared_publication_exact": true,
+    "actual_topk_idxs_int32_exact": true,
+    "candidate_source_layer": 20,
+    "explicit_stop_before_attention_kv_concat_sparse_attn": true,
+    "model_semantics_validated": false,
+    "non_trivial_semantic_masking_effect_validated": true,
+    "official_reference_fixture_used": true,
+    "production_mask_all_reachable_positions_retained": true,
+    "production_pruning_effect_claimed": false,
+    "uses_candidates": true
+  }
+}

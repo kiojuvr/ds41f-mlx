@@ -1,0 +1,236 @@
+{
+  "authority": {
+    "native_validation_provider": "Metal-backed validated FP8 linear/RMSNorm/rotary primitive composition",
+    "official_checkpoint_raw_bits": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+    "reference_fixture": "artifacts/attention-q-prelude-official-reference-fixture.json"
+  },
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "official_reference_derived_native_validation",
+  "comparison": {
+    "input": {
+      "bit_exact": true,
+      "max_bf16_ulp_error": 0,
+      "max_bf16_ulp_lte": 0,
+      "mismatch_count": 0,
+      "native_sha256": "e785817ca379b27e5a5d1c905c6261b46c6158815b55a29ecfaf7850b5925ef1",
+      "reference_sha256": "e785817ca379b27e5a5d1c905c6261b46c6158815b55a29ecfaf7850b5925ef1",
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "q_norm_output": {
+      "bit_exact": true,
+      "max_bf16_ulp_error": 0,
+      "max_bf16_ulp_lte": 1,
+      "mismatch_count": 0,
+      "native_sha256": "2af86a0e045ffcc5d7f62375909eeb364d53ad37c7977b1bc95c41b6023ea076",
+      "reference_sha256": "2af86a0e045ffcc5d7f62375909eeb364d53ad37c7977b1bc95c41b6023ea076",
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "reshaped_q": {
+      "bit_exact": true,
+      "max_bf16_ulp_error": 0,
+      "max_bf16_ulp_lte": 1,
+      "mismatch_count": 0,
+      "native_sha256": "b9c8397ab732c41f5e54be99b5eae626a9adf1dfca6662010417a43c4a529892",
+      "reference_sha256": "b9c8397ab732c41f5e54be99b5eae626a9adf1dfca6662010417a43c4a529892",
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "rotary_applied_q": {
+      "bit_exact": true,
+      "max_bf16_ulp_error": 0,
+      "max_bf16_ulp_lte": 1,
+      "mismatch_count": 0,
+      "native_sha256": "a864128199748b3c06b412f87f2e7f98397c4c483263ead1ce22d5e1af3de652",
+      "reference_sha256": "a864128199748b3c06b412f87f2e7f98397c4c483263ead1ce22d5e1af3de652",
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "wq_a_output": {
+      "bit_exact": true,
+      "max_bf16_ulp_error": 0,
+      "max_bf16_ulp_lte": 1,
+      "mismatch_count": 0,
+      "native_sha256": "1d8bf8a3a33da01b062472c8ea9e4b5a919d4ba74d2a8617271a9f9e17f13452",
+      "reference_sha256": "1d8bf8a3a33da01b062472c8ea9e4b5a919d4ba74d2a8617271a9f9e17f13452",
+      "shape_matches": true,
+      "within_tolerance": true
+    },
+    "wq_b_output": {
+      "bit_exact": true,
+      "max_bf16_ulp_error": 0,
+      "max_bf16_ulp_lte": 1,
+      "mismatch_count": 0,
+      "native_sha256": "b9c8397ab732c41f5e54be99b5eae626a9adf1dfca6662010417a43c4a529892",
+      "reference_sha256": "b9c8397ab732c41f5e54be99b5eae626a9adf1dfca6662010417a43c4a529892",
+      "shape_matches": true,
+      "within_tolerance": true
+    }
+  },
+  "ds4_authority": {
+    "commit": "0aaea5a238fb41a35106a551e73c8409dfb751ac",
+    "remote": "https://github.com/antirez/ds4.git"
+  },
+  "gates": {
+    "all_intermediates_within_tolerance": true,
+    "explicit_stop_before_sparse_attn": true,
+    "full_model_semantics_not_claimed": true,
+    "multi_block_scale_indexing_exercised": true,
+    "native_metal_executed": true,
+    "real_shape_wq_a_used": true,
+    "real_shape_wq_b_used": true,
+    "reference_classification_expected": true,
+    "reference_not_omlx_derived": true
+  },
+  "native_result": {
+    "q_norm_rmsnorm": {
+      "dim": 1280,
+      "metal_command_buffers": 1,
+      "metal_completion_waits": 1,
+      "metal_compute_encoders": 1,
+      "metal_enabled": true,
+      "output_checksum": 165207256878288648,
+      "rows": 2
+    },
+    "rotary_tail": {
+      "batch": 1,
+      "dim": 64,
+      "freqs_checksum": 3895363985965987009,
+      "heads": 64,
+      "inverse_checksum": 1061873394007166324,
+      "metal_command_buffers": 1,
+      "metal_completion_waits": 1,
+      "metal_compute_encoders": 3,
+      "metal_enabled": true,
+      "original_seq_len": 0,
+      "rotated_checksum": 1061873394007166324,
+      "seqlen": 2
+    },
+    "wq_a_fp8_linear": {
+      "in_dim": 5120,
+      "metal_command_buffers": 1,
+      "metal_completion_waits": 1,
+      "metal_compute_encoders": 1,
+      "metal_enabled": true,
+      "out_dim": 1280,
+      "output_checksum": 10554502561738824234,
+      "rows": 2
+    },
+    "wq_b_fp8_linear": {
+      "in_dim": 1280,
+      "metal_command_buffers": 1,
+      "metal_completion_waits": 1,
+      "metal_compute_encoders": 1,
+      "metal_enabled": true,
+      "out_dim": 32768,
+      "output_checksum": 14748003717933847453,
+      "rows": 2
+    }
+  },
+  "native_version": "ds41f-prefill-native-official-fp8-linear-v9",
+  "non_claims": [
+    "does not execute oMLX",
+    "does not enter sparse_attn",
+    "does not validate K/V, cache, window-KV, Compressor/Indexer, output projection, HC, MoE, logits, full layer, or full model correctness",
+    "does not benchmark performance",
+    "does not execute sparse_attn or any K/V/cache path"
+  ],
+  "not_omlx_derived": true,
+  "official_reference": {
+    "kernel_py": {
+      "file": "inference/kernel.py",
+      "file_sha256": "1236c3507019ed176f5dba5e04bcea58867cf654818c6cf138ed4845398c2455",
+      "functions": [
+        {
+          "name": "act_quant",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            98,
+            124
+          ],
+          "source_sha256": "563a82836450bfefe3f5f176636dec0e1f4d126c76d8007b42bb7abb877d30cb"
+        },
+        {
+          "name": "fp8_gemm",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            277,
+            307
+          ],
+          "source_sha256": "cfd550d8b02ee127760ac26b39accae603302be6bf8e97c0cce29d8993af0657"
+        }
+      ]
+    },
+    "model_py": {
+      "file": "inference/model.py",
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "functions": [
+        {
+          "name": "Attention",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            613,
+            789
+          ],
+          "source_sha256": "86d80f5cdaa6435cacd56ce5be796c3f0155a7f92cebdb12ffe6743ac974d110"
+        },
+        {
+          "name": "linear",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            181,
+            207
+          ],
+          "source_sha256": "c0c1edd8e542d2004472766686fb445859775ee0b51346979cd9ca573c1c7ada"
+        },
+        {
+          "name": "RMSNorm.forward",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            288,
+            293
+          ],
+          "source_sha256": "adb7c70ed245e8830f6692b8c026fd7f2d17518cd98b68bf973e75524a921c85"
+        },
+        {
+          "name": "apply_rotary_emb",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            392,
+            406
+          ],
+          "source_sha256": "1c47da553d29f41c798a2eda82b72476473913d1201e32283de0e4977aa30b1a"
+        }
+      ]
+    }
+  },
+  "ok": true,
+  "operation_contract": {
+    "fp8_block_size": 32,
+    "multi_block_scale_indexing_exercised": true,
+    "order": "qr = q_norm(wq_a(x)); q = wq_b(qr).unflatten(-1,(64,512)); apply_rotary_emb(q[..., -64:], freqs_cis); STOP before _window_kv/sparse_attn",
+    "output_dtype": "BF16 at FP8/RMSNorm outputs and after in-place rotary copy",
+    "predeclared_tolerance": {
+      "final_rotary_max_bf16_ulp_lte": 1,
+      "intermediate_max_bf16_ulp_lte": 1
+    },
+    "reshape_layout": "[B,S,32768] -> [B,S,n_local_heads=64,head_dim=512] row-major unflatten of last dimension",
+    "rotary": "no-YaRN layer 0 compress_ratio=0, base=10000, rope_dim=64, positions 0..S-1",
+    "wq_a_full_shape_used": true,
+    "wq_b_full_shape_used": true
+  },
+  "purpose": "validate native layer-0 Attention Q-prelude through rotary and stop before sparse_attn",
+  "reference_fixture": "artifacts/attention-q-prelude-official-reference-fixture.json",
+  "schema": "ds41f.native-attention-q-prelude-official-reference-validation.v1",
+  "semantic_status": {
+    "explicit_stop_before_sparse_attn": true,
+    "model_semantics_validated": false,
+    "multi_block_fp8_scale_indexing_exercised": true,
+    "native_attention_q_prelude_validated_against_contract": true,
+    "official_reference_fixture_used": true,
+    "real_shape_wq_a_used": true,
+    "real_shape_wq_b_used": true,
+    "validated_stage": "Attention Q-prelude through rotary only"
+  }
+}

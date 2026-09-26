@@ -1,0 +1,88 @@
+{
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "official_reference_derived_native_validation",
+  "comparison": {
+    "bit_exact": true,
+    "mismatch_count": 0
+  },
+  "digests": {
+    "native_output_f32_sha256": "56227eb9cafee086b7fc6f403d895e0ecf418f7d45d12eb2e7822f1c0829bb70",
+    "reference_expected_output_f32_sha256": "56227eb9cafee086b7fc6f403d895e0ecf418f7d45d12eb2e7822f1c0829bb70"
+  },
+  "ds4_authority": {
+    "commit": "0aaea5a238fb41a35106a551e73c8409dfb751ac",
+    "remote": "https://github.com/antirez/ds4.git"
+  },
+  "gates": {
+    "full_model_semantics_not_claimed": true,
+    "native_matches_reference_fixture": true,
+    "native_metal_executed": true,
+    "reference_classification_expected": true,
+    "reference_not_omlx_derived": true,
+    "shape_exact": true
+  },
+  "native_result": {
+    "in_dim": 5120,
+    "metal_command_buffers": 1,
+    "metal_completion_waits": 1,
+    "metal_compute_encoders": 1,
+    "metal_enabled": true,
+    "out_dim": 384,
+    "output_checksum": 7010311916396932408,
+    "rows": 2
+  },
+  "native_version": "ds41f-prefill-native-official-linear-v5",
+  "non_claims": [
+    "does not execute oMLX",
+    "does not validate PyTorch backend-specific BF16 accumulation beyond declared F32 arithmetic contract",
+    "does not validate activation, RMSNorm, MoE, attention, logits, cache, or full layer correctness",
+    "does not add or modify native Metal code"
+  ],
+  "not_omlx_derived": true,
+  "official_reference": {
+    "file": "inference/model.py",
+    "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+    "functions": [
+      {
+        "name": "linear",
+        "reviewed_branch": "else: return F.linear(x, weight)",
+        "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+        "source_lines": [
+          181,
+          207
+        ],
+        "source_sha256": "c0c1edd8e542d2004472766686fb445859775ee0b51346979cd9ca573c1c7ada"
+      },
+      {
+        "name": "Linear.forward",
+        "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+        "source_lines": [
+          242,
+          243
+        ],
+        "source_sha256": "2b53749a0c9c5bd1c3ec1553ec4f107378f3050a8f585c3c773dd0b2a728404e"
+      }
+    ]
+  },
+  "ok": true,
+  "operation_contract": {
+    "accumulation_contract": "F32 accumulation over k=0..5119",
+    "expected_provider": "independent NumPy F32 matmul over official BF16 input/weight values; no oMLX/PyTorch/MLX/native execution",
+    "fixture_operation": "output = input_bf16_as_f32 @ weight_bf16_as_f32.T",
+    "official_reference_branch": "non-quantized weight path calls torch.nn.functional.linear(x, weight)",
+    "output_dtype": "F32",
+    "output_shape": [
+      2,
+      384
+    ]
+  },
+  "purpose": "validate existing native BF16 linear primitive against official-reference-scoped independent arithmetic fixture",
+  "reference_fixture": "artifacts/bf16-linear-official-reference-fixture.json",
+  "schema": "ds41f.native-linear-official-reference-validation.v1",
+  "semantic_status": {
+    "model_semantics_validated": false,
+    "native_linear_validated_against_contract": true,
+    "official_reference_fixture_used": true,
+    "validated_stage": "BF16 dense linear primitive only"
+  }
+}

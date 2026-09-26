@@ -1,0 +1,120 @@
+{
+  "authority": {
+    "native_validation_provider": "Metal-backed ds41f_official_fp8_linear_bf16",
+    "official_checkpoint_raw_bits": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+    "reference_fixture": "artifacts/fp8-linear-official-reference-fixture.json"
+  },
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "official_reference_derived_native_validation",
+  "comparison": {
+    "bit_exact": true,
+    "max_bf16_ulp_error": 0,
+    "max_bf16_ulp_lte": 0,
+    "mismatch_count": 0,
+    "shape_matches": true,
+    "within_tolerance": true
+  },
+  "digests": {
+    "native_output_bf16_sha256": "c719ffa7ee439f7d126820cdcba9aeef2a30caa264f44129ab7dbcd6ae74769f",
+    "reference_expected_output_bf16_sha256": "c719ffa7ee439f7d126820cdcba9aeef2a30caa264f44129ab7dbcd6ae74769f"
+  },
+  "ds4_authority": {
+    "commit": "0aaea5a238fb41a35106a551e73c8409dfb751ac",
+    "remote": "https://github.com/antirez/ds4.git"
+  },
+  "gates": {
+    "attention_integration_not_claimed": true,
+    "full_model_semantics_not_claimed": true,
+    "native_metal_executed": true,
+    "native_within_predeclared_tolerance": true,
+    "reference_classification_expected": true,
+    "reference_not_omlx_derived": true,
+    "shape_exact": true
+  },
+  "native_result": {
+    "in_dim": 32,
+    "metal_command_buffers": 1,
+    "metal_completion_waits": 1,
+    "metal_compute_encoders": 1,
+    "metal_enabled": true,
+    "out_dim": 32,
+    "output_checksum": 12138316333250182670,
+    "rows": 2
+  },
+  "native_version": "ds41f-prefill-native-official-fp8-linear-v9",
+  "non_claims": [
+    "does not execute oMLX",
+    "does not validate Attention Q-prelude integration",
+    "does not validate RMSNorm, rotary, sparse_attn, KV/cache, Compressor/Indexer, FP4, MoE, HC, DSpark/MTP, logits, layer, or full model correctness",
+    "does not benchmark performance",
+    "does not validate native full attention integration"
+  ],
+  "not_omlx_derived": true,
+  "official_reference": {
+    "kernel_py": {
+      "file": "inference/kernel.py",
+      "file_sha256": "1236c3507019ed176f5dba5e04bcea58867cf654818c6cf138ed4845398c2455",
+      "functions": [
+        {
+          "name": "act_quant",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            98,
+            124
+          ],
+          "source_sha256": "563a82836450bfefe3f5f176636dec0e1f4d126c76d8007b42bb7abb877d30cb"
+        },
+        {
+          "name": "fp8_gemm",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            277,
+            307
+          ],
+          "source_sha256": "cfd550d8b02ee127760ac26b39accae603302be6bf8e97c0cce29d8993af0657"
+        }
+      ]
+    },
+    "model_py": {
+      "file": "inference/model.py",
+      "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+      "functions": [
+        {
+          "name": "linear",
+          "reviewed_branch": "weight.dtype == torch.float8_e4m3fn",
+          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+          "source_lines": [
+            181,
+            207
+          ],
+          "source_sha256": "c0c1edd8e542d2004472766686fb445859775ee0b51346979cd9ca573c1c7ada"
+        }
+      ]
+    }
+  },
+  "ok": true,
+  "operation_contract": {
+    "accumulation_dtype": "F32, increasing k order within each 32-element block",
+    "activation_quantization": "per row and 32-element K block: amax=max(max(abs(x)),1e-4); scale=2^ceil(log2(amax/448)); q=round-to-nearest-even E4M3FN(clamp(x/scale,-448,448))",
+    "block_size": 32,
+    "dequantization_order": "sum_k (decode(act_q[k])*act_scale[k_block]) * (decode(weight_fp8[k])*weight_scale[out_block,k_block])",
+    "fp8_weight_encoding": "torch float8_e4m3fn / safetensors F8_E4M3 byte encoding; decoded to finite E4M3 values before applying scale",
+    "linear_branch": "FP8 branch: act_quant(x, fp8_block_size=32, scale_fmt='ue8m0', scale_dtype=float8_e8m0fnu), then fp8_gemm(..., block_size=32)",
+    "output_dtype": "BF16 round-to-nearest-even, matching torch default BF16 inference output for fp8_gemm",
+    "predeclared_tolerance": {
+      "max_bf16_ulp_lte": 0
+    },
+    "scale_encoding": "torch float8_e8m0fnu / safetensors F8_E8M0; byte e decodes as 2^(e-127)",
+    "weight_scale_layout": "weight_scale[out_block, k_block] where out_block=floor(output_row/32)"
+  },
+  "purpose": "validate native Metal FP8 linear primitive against bounded official-checkpoint Stage 1a fixture",
+  "reference_fixture": "artifacts/fp8-linear-official-reference-fixture.json",
+  "schema": "ds41f.native-fp8-linear-official-reference-validation.v1",
+  "semantic_status": {
+    "attention_q_prelude_integrated": false,
+    "model_semantics_validated": false,
+    "native_fp8_linear_validated_against_contract": true,
+    "official_reference_fixture_used": true,
+    "validated_stage": "FP8 linear/GEMM primitive only"
+  }
+}

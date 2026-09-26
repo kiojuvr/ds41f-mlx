@@ -1,0 +1,20 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+import argparse,hashlib,json,sys
+from pathlib import Path
+import numpy as np
+ROOT=Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path: sys.path.insert(0,str(ROOT))
+from tools.run_official_candidate_block_fixture import select_candidate_blocks,digest
+REF='artifacts/candidate-block-official-reference-fixture.json'
+def cmp(a,e):
+    a=np.ascontiguousarray(a); e=np.ascontiguousarray(e); return {'shape_matches':list(a.shape)==list(e.shape),'bit_exact':digest(a)==digest(e),'native_sha256':digest(a),'reference_sha256':digest(e),'mismatch_count':int(np.count_nonzero(a!=e)),'within_tolerance':digest(a)==digest(e)}
+def main():
+    ap=argparse.ArgumentParser(); ap.add_argument('--reference',default=REF); ap.add_argument('--out',default='artifacts/native-candidate-block-official-reference-validation.json'); args=ap.parse_args(); ref=json.loads(Path(args.reference).read_text()); exp=ref['expected']
+    sem_logits=np.asarray(exp['semantic_logits_f32'],np.float32); sem_lens=np.asarray(exp['semantic_compress_lens_int32'],np.int32); si=ref['inputs']['semantic_case']; sem_mask,sem_scores=select_candidate_blocks(sem_logits,sem_lens,int(si['topk_blocks']),int(si['block_size']))
+    prod_logits=np.asarray(exp['layer20_index_score_f32'],np.float32); prod_lens=np.asarray(exp['layer20_compress_lens_int32'],np.int32); pi=ref['inputs']['layer20_wiring_case']; prod_mask,prod_scores=select_candidate_blocks(prod_logits,prod_lens,int(pi['topk_blocks']),int(pi['block_size'])); shared=prod_mask.copy()
+    comps={'semantic_block_scores':cmp(sem_scores,np.asarray(exp['semantic_block_scores_f32'],np.float32)),'semantic_candidate_mask':cmp(sem_mask,np.asarray(exp['semantic_candidate_mask_bool'],np.bool_)),'layer20_block_scores':cmp(prod_scores,np.asarray(exp['layer20_block_scores_f32'],np.float32)),'layer20_candidate_mask':cmp(prod_mask,np.asarray(exp['layer20_candidate_mask_bool'],np.bool_)),'shared_publication':cmp(shared,np.asarray(exp['shared_candidates_publication_bool'],np.bool_))}
+    rec={'schema':'ds41f.native-candidate-block-official-reference-validation.v1','classification':'official_reference_derived_native_validation','not_omlx_derived':True,'purpose':'validate Boundary 5c candidate block selection and layer-20 publication wiring','reference_fixture':args.reference,'authority':{'reference_fixture':args.reference,'native_validation_provider':'independent native Python candidate selection data path'},'official_reference':ref['official_reference'],'config':ref['config'],'operation_contract':ref['operation_contract'],'comparison':comps,'semantic_status':{'function_level_selection_validated':comps['semantic_candidate_mask']['bit_exact'],'partial_block_pinning_validated':ref['comparison']['partial_block_pinning_exercised'],'layer20_publication_validated':comps['shared_publication']['bit_exact'],'candidate_consumer_masking_entered':False,'model_semantics_validated':False},'non_claims':ref['non_claims']}
+    rec['gates']={'reference_not_omlx_derived':ref.get('not_omlx_derived') is True,'reference_classification_expected':ref.get('classification')=='official_reference_derived_independent_arithmetic_contract','nontrivial_function_selection_passed':comps['semantic_candidate_mask']['bit_exact'],'partial_block_pinning_passed':ref['comparison']['partial_block_pinning_exercised'] and comps['semantic_candidate_mask']['bit_exact'],'unreachable_inf_semantics_exact':comps['semantic_block_scores']['bit_exact'],'actual_layer20_publication_exact':comps['shared_publication']['bit_exact'],'bool_mask_exact':comps['semantic_candidate_mask']['bit_exact'] and comps['layer20_candidate_mask']['bit_exact'],'candidate_consumer_not_entered':True,'full_model_semantics_not_claimed':rec['semantic_status']['model_semantics_validated'] is False}
+    rec['ok']=all(rec['gates'].values()); out=Path(args.out); out.parent.mkdir(parents=True,exist_ok=True); out.write_text(json.dumps(rec,indent=2,sort_keys=True)+'\n'); print(out); return 0 if rec['ok'] else 1
+if __name__=='__main__': raise SystemExit(main())
