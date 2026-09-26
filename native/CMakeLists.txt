@@ -238,6 +238,10 @@ if(DSV41_ENABLE_MLX)
   target_link_libraries(dsv41-full-checkpoint-smoke PRIVATE dsv41_text_pair_mlx)
   target_compile_options(dsv41-full-checkpoint-smoke PRIVATE -Wall -Wextra -Wpedantic)
 
+  add_executable(dsv41-native-perf tests/qualification/native_perf.cpp)
+  target_link_libraries(dsv41-native-perf PRIVATE dsv41_text_pair_mlx)
+  target_compile_options(dsv41-native-perf PRIVATE -Wall -Wextra -Wpedantic -Wno-deprecated-declarations)
+
   add_test(NAME route_policy COMMAND dsv41-route-policy-test)
   add_test(NAME runtime_residency COMMAND dsv41-residency-test)
   add_test(NAME sampling_reference COMMAND dsv41-sampling-test)
