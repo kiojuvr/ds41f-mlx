@@ -23,7 +23,7 @@ Local native source includes:
 - sampling and `TextGeneration`
 - runtime bridge and lifecycle tests
 
-Source closure is complete for the native model core.  Checkpoint-free native build/tests pass.  MLX-enabled imported-core build/tests now pass against the local MLX 0.32.2 Python wheel CMake package.  Full native checkpoint execution remains a qualification gap.
+Source closure is complete for the native model core.  Checkpoint-free native build/tests pass.  MLX-enabled imported-core build/tests pass against the local MLX 0.32.2 Python wheel CMake package.  A bounded full-checkpoint native smoke opens the official checkpoint plus Engram metadata and produces one greedy token through `TextGenerationReference`.
 
 ## Architecture summary
 
@@ -79,6 +79,17 @@ ctest --test-dir native/build-mlx --output-on-failure
 
 MLX discovery supports `CMAKE_PREFIX_PATH`/`MLX_DIR`, explicit `DSV41_MLX_ROOT`, `DSV41_MLX_ROOT` in the environment, and Python-wheel MLX layouts such as `.venv/lib/python*/site-packages/mlx`.
 
+Bounded full-checkpoint smoke, with explicit local data paths:
+
+```bash
+native/build-mlx/dsv41-full-checkpoint-smoke \
+  --checkpoint /path/to/DeepSeek-V4.1-Flash \
+  --m1-summary artifacts/checkpoint/summary.json \
+  --engram-metadata artifacts/engram/metadata.json
+```
+
+The smoke uses the existing small token fixture `[0, 3]`, `max_new_tokens=1`, and `temperature=0`. It is not a benchmark.
+
 ## Tests and static gates
 
 Cheap gates:
@@ -118,11 +129,10 @@ DwarfStar and oMLX are donors only, not correctness authorities.  The historical
 
 ## Qualification status
 
-Qualified/source-verified areas include checkpoint provenance, official primitive validators, imported legacy source integrity, native source closure, checkpoint-free native build/tests, and MLX-enabled imported-core build/tests.
+Qualified/source-verified areas include checkpoint provenance, official primitive validators, imported legacy source integrity, native source closure, checkpoint-free native build/tests, MLX-enabled imported-core build/tests, and bounded full-checkpoint native execution.
 
 Not yet validated in the current imported environment:
 
-- full native checkpoint execution
 - native HTTP/API integration
 - current post-import performance qualification
 - long-context qualification

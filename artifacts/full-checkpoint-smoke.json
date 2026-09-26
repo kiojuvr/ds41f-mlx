@@ -1,0 +1,44 @@
+{
+  "schema": "ds41f.full-checkpoint-smoke.v1",
+  "status": "PASS",
+  "classification": "bounded_native_full_checkpoint_execution",
+  "checkpoint": {
+    "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+    "revision": "dba1be0a40aa45a94ad051997016db3960a90277",
+    "index_sha256": "74b0686a3d2891980d5e303251b075a3bccae2c2ff650747db2620a649b98fa8",
+    "shard_count": 48,
+    "tensor_count": 96085
+  },
+  "runtime_data": {
+    "m1_summary": "artifacts/checkpoint/summary.json",
+    "m1_summary_sha256": "a031e177105d53c404ff573bac9072a72a0c99ba3537e23728bd7890c00de028",
+    "engram_metadata": "artifacts/engram/metadata.json",
+    "engram_metadata_sha256": "dec64db3cd1dcce2a49291111f73bfc890240d4a3c58015dbc4b22e6ce311210",
+    "engram_identity": "eb5fda8a36c96aa827fba636bc8d6db4e32edb467071e6571ff55d0ba0d80d09"
+  },
+  "executable": "native/tests/qualification/full_checkpoint_smoke.cpp",
+  "target": "dsv41-full-checkpoint-smoke",
+  "input_tokens": [0, 3],
+  "input_token_fixture_rationale": "Existing bounded Engram-connected validation fixture used by native-target-MLX stochastic integrated return validation; valid text token IDs, no image token, small prompt.",
+  "generation": {
+    "max_new_tokens": 1,
+    "temperature": 0,
+    "output_token_id": 11992,
+    "output_token_count": 1,
+    "final_model_position": 3
+  },
+  "assertions": {
+    "model_construction": "PASS",
+    "full_prefill": "PASS",
+    "one_token_generation": "PASS",
+    "output_token_lt_vocab_size": true,
+    "checkpoint_files_unchanged": true,
+    "process_exited_normally": true
+  },
+  "non_claims": [
+    "no API integration qualification",
+    "no performance benchmark",
+    "no long-context qualification",
+    "no release qualification"
+  ]
+}
