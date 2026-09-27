@@ -93,8 +93,8 @@
     }
   },
   "digests": {
-    "final_expert_output_sha256": "de83ae0d4869aec4199eae4696a97fc14a5c7a18ed61f00bda234366d1340917",
-    "reference_final_expert_output_sha256": "de83ae0d4869aec4199eae4696a97fc14a5c7a18ed61f00bda234366d1340917"
+    "final_expert_output_sha256": "13a95bc8688de3da66088d32f15bf56e53df9220f94cd10716203f5163aacf10",
+    "reference_final_expert_output_sha256": "13a95bc8688de3da66088d32f15bf56e53df9220f94cd10716203f5163aacf10"
   },
   "ds4_authority": {
     "commit": "0aaea5a238fb41a35106a551e73c8409dfb751ac",
@@ -201,7 +201,7 @@
   "ok": true,
   "operation_contract": {
     "expert_order": "w1 gate projection and w3 up projection; clamp up to [-limit,limit], clamp gate max=limit; silu(gate)*up; STOP weight application; w2 down projection returns single expert output",
-    "fp4_weight_contract": "I8 stores two FP4 E2M1 nibbles, low then high, scaled per 32 input values by E8M0 scale",
+    "fp4_linear_contract": "quantized Linear first FP8-quantizes/dequantizes the BF16 activation with block size 32, then applies I8-packed FP4 E2M1 weights (low nibble then high nibble) scaled per 32 input values by E8M0 scale; projection output is BF16",
     "gate_order": "raw=linear(x.float, weight.float)/gate_temp; scores=sqrt(softplus(raw)); indices=topk(scores+bias); weights=gather(unbiased scores); normalize selected scores; multiply route_scale",
     "predeclared_tolerance": {
       "bf16_max_ulp_lte": 1,

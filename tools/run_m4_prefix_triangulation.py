@@ -24,7 +24,7 @@ def diff(a,b):
 def hist_logits(hist:Path, ck:Path, outdir:Path):
  with tempfile.TemporaryDirectory() as td:
   tmp=Path(td); tok=tmp/'tokens.txt'; log=tmp/'logits.bin'; tok.write_text('0 3\n')
-  env=os.environ.copy(); env.update({"TOKENS_FILE":str(tok),"CHECKPOINT":str(ck),"DSV41_ORACLE_LOGITS_OUT":str(log)})
+  env=os.environ.copy(); env.update({"TOKENS_FILE":str(tok),"CHECKPOINT":str(ck),"DSV41_ORACLE_LOGITS_OUT":str(log),"DSV41_RUNTIME_PACKED_EXPERT_BANK":"0","DSV41_RUNTIME_RESIDENT_EXPERT_ATLAS":"0","DSV41_RUNTIME_GROUP_SELECTED_EXPERTS":"0"})
   t=time.perf_counter(); p=subprocess.run(['bash','tools/benchmark/run_text_backbone_reference.sh'],cwd=hist,env=env,text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,timeout=1800)
   if p.returncode!=0: raise RuntimeError(p.stdout[-4000:])
   arr=np.frombuffer(log.read_bytes(),np.float32).reshape(1,1,-1).copy()
@@ -38,7 +38,12 @@ def main():
  R,rrec=hist_logits(Path(args.historical),ck,outdir); rec['R0_historical']=rrec
  rt=OmlxRuntime(OmlxRuntimeConfig(omlx_path=omlx,checkpoint_path=ck,engram_ssd_offload=True,preserve_mtp=False))
  try:
-  model,_=rt.load_model(); lm=model.language_model; c=lm.make_cache(); Olog=lm._forward(mx.array([[0,3]],mx.int64),cache=c); mx.eval(Olog); mx.synchronize(); O=np.asarray(Olog[:, -1:, :],dtype=np.float32); rec['O0_ordinary_omlx']={"array":save(outdir,'O0_ordinary_omlx_prefix_logits',O)}
+  try:
+   model,_=rt.load_model(); lm=model.language_model; c=lm.make_cache(); Olog=lm._forward(mx.array([[0,3]],mx.int64),cache=c); mx.eval(Olog); mx.synchronize(); O=np.asarray(Olog[:, -1:, :],dtype=np.float32); rec['O0_ordinary_omlx']={"array":save(outdir,'O0_ordinary_omlx_prefix_logits',O)}
+  except ModuleNotFoundError as e:
+   cached=outdir/'O0_ordinary_omlx_prefix_logits.npy'
+   if not cached.exists(): raise
+   O=np.load(cached); rec['O0_ordinary_omlx']={"array":meta(O)|{"npy":str(cached),"cached_due_to":repr(e)}}
  finally: rt.close()
  pref=build_prefill_state(ck,outdir/'native',[0,3],require_ok=False); D=np.asarray(pref.final_logits,dtype=np.float32).reshape(1,1,-1); rec['D0_dwarfstar_prefill']={"prefill_ok":bool(pref.ok),"prefill_false_gates":[k for k,v in pref.artifact.get('gates',{}).items() if not v],"artifact_digest":pref.artifact.get('final_output',{}).get('logits_digest'),"array":save(outdir,'D0_dwarfstar_prefix_logits',D)}
  arrs={'R0':R,'O0':O,'D0':D}; rec['pairwise_prefix_logits']={f'{a}_vs_{b}':diff(arrs[a],arrs[b]) for a,b in [('R0','O0'),('R0','D0'),('O0','D0')]}

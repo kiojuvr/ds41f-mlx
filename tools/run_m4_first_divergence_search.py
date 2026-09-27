@@ -22,7 +22,7 @@ def arr(entries,k):
  return np.fromfile(e['path'],dt).reshape(e['shape'])
 def run_hist(hist,ck,outdir):
  td=tempfile.mkdtemp(prefix='ds41f-hist-trace-'); tok=Path(td)/'tokens.txt'; trace=Path(td)/'trace'; tok.write_text('0 3\n')
- env=os.environ.copy(); env.update({'TOKENS_FILE':str(tok),'CHECKPOINT':str(ck),'DSV41_SEMANTIC_TRACE_DIR':str(trace)})
+ env=os.environ.copy(); env.update({'TOKENS_FILE':str(tok),'CHECKPOINT':str(ck),'DSV41_SEMANTIC_TRACE_DIR':str(trace),'DSV41_RUNTIME_PACKED_EXPERT_BANK':'0','DSV41_RUNTIME_RESIDENT_EXPERT_ATLAS':'0','DSV41_RUNTIME_GROUP_SELECTED_EXPERTS':'0'})
  p=subprocess.run(['bash','tools/benchmark/run_text_backbone_reference.sh'],cwd=hist,env=env,text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,timeout=1800)
  if p.returncode: raise RuntimeError(p.stdout[-4000:])
  entries=[]; outdir.mkdir(parents=True,exist_ok=True)
