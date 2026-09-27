@@ -37,24 +37,21 @@ The completed bounded path demonstrates:
 - downstream consumers through layer 39 validated against the correct per-field producer identity, not merely digest equality;
 - final Hyper-Connection collapse, final RMSNorm, official output head, and final-position logits;
 - transaction invalid during sweep, final output private until complete, and commit only after final output/session handoff is ready;
-- architecture-neutral prefill-to-session/decode handoff in `PrefillSessionHandoff` without selecting DwarfStar or oMLX decode;
+- architecture-neutral executable prefill-to-session/decode handoff via live `PrefillContinuationState` plus digest/provenance `PrefillSessionHandoff` artifact view, without selecting DwarfStar or oMLX decode;
 - exact connected official-source-derived comparison from official tokens through final logits.
 
 This is a bounded structural/correctness proof for the production-prefill path, not long-context performance qualification.
 
 ## Handoff contract
 
-`ds41f_mlx/prefill_session.py` defines the neutral Milestone-3 starting contract. The committed handoff records at minimum:
+`ds41f_mlx/prefill_session.py` defines the neutral Milestone-3 starting contract. It separates live executable state from artifact evidence:
 
-- token frontier and token digest;
-- final logits digest;
-- committed shared attention publication state;
-- current HC residual digest and pre-mix digest;
-- Engram hash/history digests;
-- `decode_architecture_selected = false`;
-- `requires_no_prefill_recompute = true`.
+- `PrefillContinuationState` is the actual committed continuation state. It owns/detaches live arrays for token history, regenerated Engram hash history, all per-layer window KV states, source compressed KV generations, source index K generations, candidate state, top-k generations including index refreshes, shared publications, field ownership, and compressor-pending state classifications.
+- `PrefillSessionHandoff` is the artifact/evidence view. It records token frontier, final logits digest, committed shared state digests, HC/pre-mix evidence digests, Engram history digests, per-category inventory, ownership/provenance, `decode_architecture_selected = false`, and `requires_no_prefill_recompute = true`.
 
-Milestone 3 must choose/evaluate a decode architecture against this explicit prefill state contract.
+The no-recompute handoff validation is recorded in `artifacts/m2/dwarfstar-prefill/prefill-continuation-state-validation.json`. It runs one bounded full prefill, discards executor scratch, and verifies required persistent state categories exclusively from the committed live continuation state.
+
+Milestone 3 must choose/evaluate a decode architecture against this explicit live state contract.
 
 ## Remaining non-Milestone-2 work
 
@@ -76,7 +73,7 @@ Milestone 2 is **complete** for the bounded official-checkpoint production-prefi
 - official checkpoint data path preserved: **implemented**;
 - executor-owned carry/state/publication/transaction ownership: **implemented**;
 - real full-model prefill path through all 40 layers and final logits: **implemented**;
-- correct state handoff into a neutral decode boundary: **implemented**;
+- correct executable state handoff into a neutral decode boundary without prompt recomputation: **implemented and no-recompute validated**;
 - implementation-scoped correctness gates: **available and passing**.
 
 Exact Milestone 3 starting point: decode architecture selection against `PrefillSessionHandoff`, comparing DwarfStar decode, oMLX decode, or a documented composition without recomputing prefill.

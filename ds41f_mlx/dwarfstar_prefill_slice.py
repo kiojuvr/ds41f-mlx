@@ -24,7 +24,7 @@ from ds41f_mlx.native_prefill import (
 )
 from ds41f_mlx.dwarfstar_v41_sweep import DS4_AUTHORITY_REMOTE, DS4_AUTHORITY_SHA
 from ds41f_mlx.official_model_math import OfficialModelMath
-from ds41f_mlx.prefill_session import PrefillSessionHandoff
+from ds41f_mlx.prefill_session import PrefillContinuationState, PrefillSessionHandoff
 
 
 @dataclass
@@ -92,6 +92,7 @@ class TypedSweepStorage:
 @dataclass
 class VerticalSliceResult:
     artifact: dict[str, Any]
+    continuation_state: PrefillContinuationState | None = None
 
     @property
     def ok(self) -> bool:
@@ -150,6 +151,14 @@ class DwarfStarPrefillVerticalSliceExecutor:
         layer_records: dict[str, Any] = {}
         final_output: dict[str, Any] | None = None
         session_handoff: dict[str, Any] | None = None
+        continuation_state: PrefillContinuationState | None = None
+        actual_window_kv: dict[int, np.ndarray] = {}
+        actual_compressed_kv: dict[int, np.ndarray] = {}
+        actual_index_k: dict[int, np.ndarray] = {}
+        actual_candidates: dict[int, np.ndarray] = {}
+        actual_topk: dict[int, np.ndarray] = {}
+        actual_field_owner: dict[str, int] = {}
+        actual_generation_order: list[str] = []
         t0 = perf_counter()
         tx.begin()
         try:
@@ -186,6 +195,22 @@ class DwarfStarPrefillVerticalSliceExecutor:
                 storage.next_hc_bf16[...] = out["x_out"]
                 storage.current_hc_bf16, storage.next_hc_bf16 = storage.next_hc_bf16, storage.current_hc_bf16
                 storage.pre_f32 = out["ffn_pre"]
+                actual_window_kv[int(layer)] = np.array(out["attn_path"]["window_kv"], copy=True)
+                producer_actual = {k: np.array(v, copy=True) for k, v in (out["attn_path"].get("producer") or {}).items() if isinstance(v, np.ndarray)}
+                if producer_actual:
+                    actual_generation_order.append(("index-refresh" if set(producer_actual) == {"topk_idxs"} else "source") + f"@{int(layer)}")
+                    if "compress_kv" in producer_actual:
+                        actual_compressed_kv[int(layer)] = producer_actual["compress_kv"]
+                        actual_field_owner["compress_kv"] = int(layer)
+                    if "index_k" in producer_actual:
+                        actual_index_k[int(layer)] = producer_actual["index_k"]
+                        actual_field_owner["index_k"] = int(layer)
+                    if "candidates" in producer_actual:
+                        actual_candidates[int(layer)] = producer_actual["candidates"]
+                        actual_field_owner["candidates"] = int(layer)
+                    if "topk_idxs" in producer_actual:
+                        actual_topk[int(layer)] = producer_actual["topk_idxs"]
+                        actual_field_owner["topk_idxs"] = int(layer)
                 publication = storage.publish(int(layer), self.math)
                 tx.publish(int(layer), publication["frontier"])
                 after = storage.frontier_digest(self.math)
@@ -216,16 +241,36 @@ class DwarfStarPrefillVerticalSliceExecutor:
                 final_raw = self.math.final_logits(storage.current_hc_bf16, storage.pre_f32)
                 final_output = {k: v for k, v in final_raw.items() if k != "logits"}
                 tx.final_output_ready(final_output["logits_digest"])
+                continuation_state = PrefillContinuationState(
+                    token_ids=storage.tokens,
+                    token_frontier=int(token_arr.size),
+                    ngram_hashes={
+                        "full_hash": storage.engram_hashes["full_hash"],
+                        "layer1_hash": storage.engram_hashes["layer1_hash"],
+                        "layer14_hash": storage.engram_hashes["layer14_hash"],
+                    },
+                    engram_store={"checkpoint": str(self.checkpoint), "storage_policy": "SSD-backed model-static Engram tables"},
+                    window_kv_by_layer=actual_window_kv,
+                    compressed_kv_by_source=actual_compressed_kv,
+                    index_k_by_source=actual_index_k,
+                    candidates_by_source=actual_candidates,
+                    topk_by_generation=actual_topk,
+                    field_ownership=actual_field_owner,
+                    compressor_pending={source: {} for source in actual_compressed_kv},
+                    shared_publications={k: (None if v is None else np.array(v, copy=True)) for k, v in storage.shared.items()},
+                    source_generation_order=actual_generation_order,
+                ).commit()
                 session_handoff = PrefillSessionHandoff(
                     schema="ds41f.prefill-session-handoff.v1",
                     token_frontier=int(token_arr.size),
                     tokens_digest=self.math.digest(storage.tokens),
                     last_logits_digest=final_output["logits_digest"],
                     committed_shared_state=storage.frontier_digest(self.math),
+                    continuation_state=continuation_state,
                     current_hc_digest=self.math.digest(storage.current_hc_bf16),
                     pre_mix_digest=self.math.digest(storage.pre_f32),
                     engram_history={"full_hash_digest": storage.engram_hashes.get("full_hash_digest"), "layer1_hash_digest": storage.engram_hashes.get("layer1_hash_digest"), "layer14_hash_digest": storage.engram_hashes.get("layer14_hash_digest")},
-                ).to_json()
+                ).to_artifact(self.math.digest)
             tx.commit()
         except BaseException as exc:
             tx.fail(exc)
@@ -480,7 +525,7 @@ class DwarfStarPrefillVerticalSliceExecutor:
             "checkpoint": str(self.checkpoint),
             "ds4_authority": {"remote": DS4_AUTHORITY_REMOTE, "commit": DS4_AUTHORITY_SHA},
             "native_version": self.native.version(),
-            "scope": {"tokens": token_arr.reshape(-1).tolist(), "layers": list(range(layers)), "full_model_prefill": False, "engram_enabled": enable_engram},
+            "scope": {"tokens": token_arr.reshape(-1).tolist(), "layers": list(range(layers)), "full_model_prefill": layers >= 40, "engram_enabled": enable_engram},
             "native_sweep_plan_summary": {k: plan[k] for k in ["count", "prefill_cap", "encoder_chunk", "wide", "decoder_suffix", "checkpoint_valid_during_sweep", "checkpoint_valid_after_sweep", "command_counts"]},
             "embedding_native_result": embedding_native,
             "typed_storage": {
@@ -514,4 +559,4 @@ class DwarfStarPrefillVerticalSliceExecutor:
                 "does not call TextBackboneReference/TextEncoderReference/TextDecoderReference",
             ],
         }
-        return VerticalSliceResult(artifact)
+        return VerticalSliceResult(artifact, continuation_state=continuation_state)

@@ -8657,7 +8657,7 @@
   "schema": "ds41f.dwarfstar-prefill-vertical-slice.v1",
   "scope": {
     "engram_enabled": true,
-    "full_model_prefill": false,
+    "full_model_prefill": true,
     "layers": [
       0,
       1,
@@ -8705,7 +8705,7 @@
       3
     ]
   },
-  "seconds": 117.60776066599647,
+  "seconds": 117.58169341599569,
   "session_handoff": {
     "classification": "architecture_neutral_prefill_to_decode_contract",
     "committed_shared_state": {
@@ -8713,6 +8713,888 @@
       "compress_kv": "17eacfb671aa2a37c302b5e6f097346b7951f7bd3ff23bd0ed5193c00695900d",
       "index_k": "a2ec36dab41f04ef5f7ab63fabcaa823a22232b9a2fdb3d28d990dfa75e4a896",
       "topk_idxs": "f177d4feea916de5753fda9e1abf2c19559139141e361c81b77ec24d783a306f"
+    },
+    "continuation_state_inventory": {
+      "committed": true,
+      "entries": [
+        {
+          "digest": "96fb5e4a2704b410bbf097c41e40ff8118ef0bc819ccf4344f31f694d12d536a",
+          "dtype": "int64",
+          "name": "token/ngram history",
+          "owner": "PrefillContinuationState.token_ids/ngram_hashes",
+          "position": 2,
+          "provenance": "prefill input tokens plus regenerated Engram hashes",
+          "shape": [
+            1,
+            2
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "name": "Engram SSD-backed store",
+          "note": "session stores history/hash state; static table backing is not duplicated",
+          "owner": "model/checkpoint Engram store handles",
+          "position": 2,
+          "provenance": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+          "status": "STATIC_MODEL_STATE"
+        },
+        {
+          "digest": "11432f637842b3698f05ce050c563a38130fe9ae6ba822755ca0e8eeb1e50592",
+          "dtype": "uint16",
+          "name": "layer-0 window KV",
+          "owner": "window_kv_by_layer[0]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "430b99e5512788d19936aa6f5d5aea7eed31514de83b5a679c8a7b5193472112",
+          "dtype": "uint16",
+          "name": "layer-1 window KV",
+          "owner": "window_kv_by_layer[1]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "cef55da199aee4fc91782d07dbddbeb6badf17749c824ab3e3cde6213a608b4e",
+          "dtype": "uint16",
+          "name": "layer-2 window KV",
+          "owner": "window_kv_by_layer[2]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "06dc64294b0128af4023d1ddf42485b636ef0526fcf9864326bd951511eb77c7",
+          "dtype": "uint16",
+          "name": "layer-3 window KV",
+          "owner": "window_kv_by_layer[3]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "985cda4016ce178e23001b6b451e2fd2c82ed1cfa02eb53b64015e874509abe4",
+          "dtype": "uint16",
+          "name": "layer-4 window KV",
+          "owner": "window_kv_by_layer[4]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "3fa7b26f2a459c473821d99dc4d6cbdf703dbc3b206cc752a3ea5007c0d3bf2f",
+          "dtype": "uint16",
+          "name": "layer-5 window KV",
+          "owner": "window_kv_by_layer[5]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "9dee35c08ffe83bbb83b17d00404b9b6112fae925d1dfe399f089e8a7971340d",
+          "dtype": "uint16",
+          "name": "layer-6 window KV",
+          "owner": "window_kv_by_layer[6]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "34a56ea257d79c6df49038db2461cc4a09e5452831fafec47ef291fd217b58ac",
+          "dtype": "uint16",
+          "name": "layer-7 window KV",
+          "owner": "window_kv_by_layer[7]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "70d9635ae8dbe3c82b619f2936f0d03de4cd9774301026b4cacf9c7a96fea6d3",
+          "dtype": "uint16",
+          "name": "layer-8 window KV",
+          "owner": "window_kv_by_layer[8]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "0383eda342343ec9cd0c9e5a2d93a3c1ccf48fac11d42b94aff285d8dec679ca",
+          "dtype": "uint16",
+          "name": "layer-9 window KV",
+          "owner": "window_kv_by_layer[9]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "05fd1b489e69223364f2fb1152401e2d19c802b3d064b5708d0464ee10b9ad32",
+          "dtype": "uint16",
+          "name": "layer-10 window KV",
+          "owner": "window_kv_by_layer[10]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "5c72cdc99f62c4cbf1af26828a0b480932deed265fa8089c5fcee0f4ce37e7c5",
+          "dtype": "uint16",
+          "name": "layer-11 window KV",
+          "owner": "window_kv_by_layer[11]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "c29cfc6f0f3accd249cbbe9df46e4712bc67966d3cb6170cf2c6b4e0eaec2c9c",
+          "dtype": "uint16",
+          "name": "layer-12 window KV",
+          "owner": "window_kv_by_layer[12]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "ee4a7c75b37190a32b367af71a58cdc360cd7ebe4b9f675e65b23b621b89c707",
+          "dtype": "uint16",
+          "name": "layer-13 window KV",
+          "owner": "window_kv_by_layer[13]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "91b0778f7eca0dc0022d27e812e093b553fd323eae9f9f3bab82edf3539362b0",
+          "dtype": "uint16",
+          "name": "layer-14 window KV",
+          "owner": "window_kv_by_layer[14]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "82b4db2bfdf32bbc11118b6fd6edaffb518f1b165a7871829ba3196f3490f663",
+          "dtype": "uint16",
+          "name": "layer-15 window KV",
+          "owner": "window_kv_by_layer[15]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "4fdc53151dd6dc4a9eac56f62f4537a7b32c5b53b130dd7190b6adff19bbd31b",
+          "dtype": "uint16",
+          "name": "layer-16 window KV",
+          "owner": "window_kv_by_layer[16]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "161267c7789399f51ee22b5c02bb044c1003783544b257e00917ad3c81dbe396",
+          "dtype": "uint16",
+          "name": "layer-17 window KV",
+          "owner": "window_kv_by_layer[17]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "7fdff19f1ddd48c3d5f629cf7289452ce17bb7b79d7c3608a79d2976f7b4d191",
+          "dtype": "uint16",
+          "name": "layer-18 window KV",
+          "owner": "window_kv_by_layer[18]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "bec5763f1f8cc669e7471240572875ecb49da3f4f750df62632fec18225e4cb9",
+          "dtype": "uint16",
+          "name": "layer-19 window KV",
+          "owner": "window_kv_by_layer[19]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "3cc6b219444f96dd4dd37b499ba0086749dffba1a6d0e4c6428383ce6c02d913",
+          "dtype": "uint16",
+          "name": "layer-20 window KV",
+          "owner": "window_kv_by_layer[20]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "88f1481d98401aa5a54ee28da1cce203532e4e3ab0e1468147ba414339b7df2a",
+          "dtype": "uint16",
+          "name": "layer-21 window KV",
+          "owner": "window_kv_by_layer[21]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "8f476268b1cfe337184a611f2f1a5b94b43a58ef1e06861b957289dbd2f80e3f",
+          "dtype": "uint16",
+          "name": "layer-22 window KV",
+          "owner": "window_kv_by_layer[22]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "ee6de136394352af0d65393fcc2d1adc444576c36affd779ef9c8f0d123621b1",
+          "dtype": "uint16",
+          "name": "layer-23 window KV",
+          "owner": "window_kv_by_layer[23]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "85fb6cd1538d0220e396be2af1d180a0f736591a3c0727d2078e78bc3ddac159",
+          "dtype": "uint16",
+          "name": "layer-24 window KV",
+          "owner": "window_kv_by_layer[24]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "3151dbaf32826646babf74f2d316d287b436e00a74d694658ef6f7407f4b2902",
+          "dtype": "uint16",
+          "name": "layer-25 window KV",
+          "owner": "window_kv_by_layer[25]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "8f97a3b8b61b84ac246a7df717241ffcfdf7f590eb5f33b4b923dc06adf2bfe5",
+          "dtype": "uint16",
+          "name": "layer-26 window KV",
+          "owner": "window_kv_by_layer[26]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "53e699c58c2acb61ed27fa418d5cd2393668cad197d18401444db5fb11786c5c",
+          "dtype": "uint16",
+          "name": "layer-27 window KV",
+          "owner": "window_kv_by_layer[27]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "91259ad6a4be7342827f19399f58aea67a5f0f6086ba28a503082f92fc15616a",
+          "dtype": "uint16",
+          "name": "layer-28 window KV",
+          "owner": "window_kv_by_layer[28]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "f647e0960bd408fd574889531ac2766b368022a160e8b2e3ee139373e14a6bd1",
+          "dtype": "uint16",
+          "name": "layer-29 window KV",
+          "owner": "window_kv_by_layer[29]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "9f85a223fbd44bd62bc094201aae3ae13012ac9c2ad6cd6e548a18661a1cd637",
+          "dtype": "uint16",
+          "name": "layer-30 window KV",
+          "owner": "window_kv_by_layer[30]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "8d6bee822bddd62b03c64258d5a25c8724f9f10f65a708fa7a575298dc8490ff",
+          "dtype": "uint16",
+          "name": "layer-31 window KV",
+          "owner": "window_kv_by_layer[31]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "2f064ec7a3cbc0c71818cd30ebe8e2290957f878803185407c7472bdc06cbdf3",
+          "dtype": "uint16",
+          "name": "layer-32 window KV",
+          "owner": "window_kv_by_layer[32]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "e029c9054ccee6cd56238ba53ed016dbee7b0b8f71cdbe3375f3e926d8b6693c",
+          "dtype": "uint16",
+          "name": "layer-33 window KV",
+          "owner": "window_kv_by_layer[33]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "433517a7bf17a9043e2ec06f38a7c00c5cf2cebc54c3167c0b4834c835316108",
+          "dtype": "uint16",
+          "name": "layer-34 window KV",
+          "owner": "window_kv_by_layer[34]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "c1969931737eb020e8d1cc8f339f215481047892300990ea97bdfca462fbd33d",
+          "dtype": "uint16",
+          "name": "layer-35 window KV",
+          "owner": "window_kv_by_layer[35]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "f880366fab659ab8cdc4d7c52d31497b9dab6b8aeeca5334a19a3865082ed767",
+          "dtype": "uint16",
+          "name": "layer-36 window KV",
+          "owner": "window_kv_by_layer[36]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "17d207d962223776ddac0897079190491c1c598245d80f56f448096292abb6f6",
+          "dtype": "uint16",
+          "name": "layer-37 window KV",
+          "owner": "window_kv_by_layer[37]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "ec6181438f6171c233c0dc82a4a082e9cf6529f104a1f2f9bb126a8d5e21d67b",
+          "dtype": "uint16",
+          "name": "layer-38 window KV",
+          "owner": "window_kv_by_layer[38]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "970aa899395c06f3bdc8a23e4f73dc74e8d21576db0ec809816ac92fe6009e0c",
+          "dtype": "uint16",
+          "name": "layer-39 window KV",
+          "owner": "window_kv_by_layer[39]",
+          "position": 2,
+          "provenance": "Block attention window publication",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "838e6e26d9889ef668bc6be7d345be10542466bb86a8c656f3aa5665376143ae",
+          "dtype": "uint16",
+          "name": "source@2 compressed KV",
+          "owner": "compressed_kv_by_source[2]",
+          "position": 2,
+          "provenance": "full source generation @2",
+          "shape": [
+            1,
+            1,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "0a02a69899257836865cacec8a1a6d0d1bfb590cf07b8a3f602300e02ee7875d",
+          "dtype": "uint16",
+          "name": "source@2 index K",
+          "owner": "index_k_by_source[2]",
+          "position": 2,
+          "provenance": "full source generation @2",
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "name": "source@2 compressor pending KV/score",
+          "note": "empty means no partial compression group remains to carry",
+          "owner": "compressor_pending[2]",
+          "position": 2,
+          "provenance": "compress ratio group completed for bounded prefill source@2",
+          "status": "NOT_REQUIRED_ACROSS_DECODE"
+        },
+        {
+          "digest": "29f479332ce47e4429d7c46d4fc1a952efa16f74ca110b1a9a025f032a9e2213",
+          "dtype": "uint16",
+          "name": "source@8 compressed KV",
+          "owner": "compressed_kv_by_source[8]",
+          "position": 2,
+          "provenance": "full source generation @8",
+          "shape": [
+            1,
+            1,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "cd1c51ca26f6404bde0eb2230908af462e9440a923885236f35ba92df6542d87",
+          "dtype": "uint16",
+          "name": "source@8 index K",
+          "owner": "index_k_by_source[8]",
+          "position": 2,
+          "provenance": "full source generation @8",
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "name": "source@8 compressor pending KV/score",
+          "note": "empty means no partial compression group remains to carry",
+          "owner": "compressor_pending[8]",
+          "position": 2,
+          "provenance": "compress ratio group completed for bounded prefill source@8",
+          "status": "NOT_REQUIRED_ACROSS_DECODE"
+        },
+        {
+          "digest": "e2c045f500a5776d647fc22ebc99faf2bb2f7131ba2e332e256fed3aadfa5edb",
+          "dtype": "uint16",
+          "name": "source@14 compressed KV",
+          "owner": "compressed_kv_by_source[14]",
+          "position": 2,
+          "provenance": "full source generation @14",
+          "shape": [
+            1,
+            1,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "82f4b94a61be422936f51e142f786be31a37df14412ac700ef804a98f56f5c85",
+          "dtype": "uint16",
+          "name": "source@14 index K",
+          "owner": "index_k_by_source[14]",
+          "position": 2,
+          "provenance": "full source generation @14",
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "name": "source@14 compressor pending KV/score",
+          "note": "empty means no partial compression group remains to carry",
+          "owner": "compressor_pending[14]",
+          "position": 2,
+          "provenance": "compress ratio group completed for bounded prefill source@14",
+          "status": "NOT_REQUIRED_ACROSS_DECODE"
+        },
+        {
+          "digest": "17eacfb671aa2a37c302b5e6f097346b7951f7bd3ff23bd0ed5193c00695900d",
+          "dtype": "uint16",
+          "name": "source@20 compressed KV",
+          "owner": "compressed_kv_by_source[20]",
+          "position": 2,
+          "provenance": "full source generation @20",
+          "shape": [
+            1,
+            2,
+            512
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "a2ec36dab41f04ef5f7ab63fabcaa823a22232b9a2fdb3d28d990dfa75e4a896",
+          "dtype": "uint16",
+          "name": "source@20 index K",
+          "owner": "index_k_by_source[20]",
+          "position": 2,
+          "provenance": "full source generation @20",
+          "shape": [
+            1,
+            2,
+            128
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "name": "source@20 compressor pending KV/score",
+          "note": "empty means no partial compression group remains to carry",
+          "owner": "compressor_pending[20]",
+          "position": 2,
+          "provenance": "compress ratio group completed for bounded prefill source@20",
+          "status": "NOT_REQUIRED_ACROSS_DECODE"
+        },
+        {
+          "digest": "27ecd0a598e76f8a2fd264d427df0a119903e8eae384e478902541756f089dd1",
+          "dtype": "bool",
+          "name": "candidate state source@20",
+          "owner": "candidates_by_source[20]",
+          "position": 2,
+          "provenance": "candidate source layer 20",
+          "shape": [
+            1,
+            2,
+            2
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "baa856a945932888a0ab188dede7e3f62f1c4cbdf3277ef9c8bf6dea9c43f424",
+          "dtype": "int32",
+          "name": "top-k/index generation@2",
+          "owner": "topk_by_generation[2]",
+          "position": 2,
+          "provenance": "full source or index-refresh generation",
+          "shape": [
+            1,
+            2,
+            1
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "baa856a945932888a0ab188dede7e3f62f1c4cbdf3277ef9c8bf6dea9c43f424",
+          "dtype": "int32",
+          "name": "top-k/index generation@8",
+          "owner": "topk_by_generation[8]",
+          "position": 2,
+          "provenance": "full source or index-refresh generation",
+          "shape": [
+            1,
+            2,
+            1
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "baa856a945932888a0ab188dede7e3f62f1c4cbdf3277ef9c8bf6dea9c43f424",
+          "dtype": "int32",
+          "name": "top-k/index generation@14",
+          "owner": "topk_by_generation[14]",
+          "position": 2,
+          "provenance": "full source or index-refresh generation",
+          "shape": [
+            1,
+            2,
+            1
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "f177d4feea916de5753fda9e1abf2c19559139141e361c81b77ec24d783a306f",
+          "dtype": "int32",
+          "name": "top-k/index generation@20",
+          "owner": "topk_by_generation[20]",
+          "position": 2,
+          "provenance": "full source or index-refresh generation",
+          "shape": [
+            1,
+            2,
+            2
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "f177d4feea916de5753fda9e1abf2c19559139141e361c81b77ec24d783a306f",
+          "dtype": "int32",
+          "name": "top-k/index generation@24",
+          "owner": "topk_by_generation[24]",
+          "position": 2,
+          "provenance": "full source or index-refresh generation",
+          "shape": [
+            1,
+            2,
+            2
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "f177d4feea916de5753fda9e1abf2c19559139141e361c81b77ec24d783a306f",
+          "dtype": "int32",
+          "name": "top-k/index generation@28",
+          "owner": "topk_by_generation[28]",
+          "position": 2,
+          "provenance": "full source or index-refresh generation",
+          "shape": [
+            1,
+            2,
+            2
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "f177d4feea916de5753fda9e1abf2c19559139141e361c81b77ec24d783a306f",
+          "dtype": "int32",
+          "name": "top-k/index generation@32",
+          "owner": "topk_by_generation[32]",
+          "position": 2,
+          "provenance": "full source or index-refresh generation",
+          "shape": [
+            1,
+            2,
+            2
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "digest": "f177d4feea916de5753fda9e1abf2c19559139141e361c81b77ec24d783a306f",
+          "dtype": "int32",
+          "name": "top-k/index generation@36",
+          "owner": "topk_by_generation[36]",
+          "position": 2,
+          "provenance": "full source or index-refresh generation",
+          "shape": [
+            1,
+            2,
+            2
+          ],
+          "status": "PRESENT"
+        },
+        {
+          "name": "HC residual/pre-mix",
+          "note": "HC pre_mix is call-local across block/subblock boundaries; final residual/pre_mix digests remain artifact evidence, not decoder state",
+          "owner": "qualification evidence only",
+          "position": 2,
+          "status": "NOT_REQUIRED_ACROSS_DECODE"
+        }
+      ],
+      "field_ownership": {
+        "candidates": 20,
+        "compress_kv": 20,
+        "index_k": 20,
+        "topk_idxs": 36
+      },
+      "missing": [],
+      "schema": "ds41f.prefill-continuation-inventory.v1",
+      "source_generation_order": [
+        "source@2",
+        "source@8",
+        "source@14",
+        "source@20",
+        "index-refresh@24",
+        "index-refresh@28",
+        "index-refresh@32",
+        "index-refresh@36"
+      ],
+      "token_frontier": 2
     },
     "current_hc_digest": "691569afdbde87a410893559805d72e031f5b8f91a321711e733af0ad1018777",
     "decode_architecture_selected": false,
@@ -8739,7 +9621,9 @@
         "index-refresh@36"
       ]
     },
+    "hc_pre_mix_classification": "qualification_evidence_not_persistent_decode_state",
     "last_logits_digest": "7be45bd57cf7b2763a9f91e6a070c285e5b7d02a58953f0f1b5634779584b6fd",
+    "live_state_available": true,
     "pre_mix_digest": "786c17ed3cf248105f4456b28e693ded5912973d73b11b154501cd1a66a384e7",
     "requires_no_prefill_recompute": true,
     "schema": "ds41f.prefill-session-handoff.v1",

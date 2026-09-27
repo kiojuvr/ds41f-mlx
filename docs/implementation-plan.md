@@ -23,7 +23,7 @@ Rules:
 
 ## Milestone 2 — Restore DwarfStar-derived prefill production path
 
-Status: **complete**. See `docs/milestone-2-prefill-restoration-status.md` for the bounded official-checkpoint DwarfStar-derived production-prefill path through all 40 transformer layers, final logits, transaction commit, and neutral prefill-to-session/decode handoff.
+Status: **complete**. See `docs/milestone-2-prefill-restoration-status.md` for the bounded official-checkpoint DwarfStar-derived production-prefill path through all 40 transformer layers, final logits, transaction commit, and executable neutral prefill continuation-state handoff.
 
 Continue from the furthest real implementation point already present. Do not restart from a blank implementation.
 
