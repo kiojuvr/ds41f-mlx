@@ -32,7 +32,15 @@ Prefill populates token/ngram history, window KV, source-layer compressed KV, in
 
 The Milestone 2 DwarfStar-derived prefill path commits an architecture-neutral live state represented by `ds41f_mlx.prefill_session.PrefillContinuationState`, with artifact/evidence views represented by `PrefillSessionHandoff`.  The live state contains actual runtime arrays/handles for token history, Engram hash history, per-layer window KV, source compressed KV, source index K, candidate state, top-k generations, shared publications, ownership, and empty/non-empty compressor-pending state.  The artifact handoff records digests, provenance, inventory, and ownership without pretending those digests are executable state.  HC residual/pre-mix digests remain final-output qualification evidence unless a future official continuation contract requires them across token boundaries.  Milestone 3 selected oMLX target decode; Milestone 4 introduces `OMLXDecodeSession` / `OMLXDecodeStateAdapter` as the production decode admission/session seam. After successful admission, `OMLXDecodeSession.cache` (`DeepseekV41Cache[40]`) is the active decode state authority; `PrefillContinuationState` is immutable input/evidence, not a second synchronized live authority. `OMLXDecodeSession` keeps CPU token history in append-only chunks for rollback/fork/reset bookkeeping; full concatenation is an explicit observation/export operation, not per-token hot-path work.
 
-M4 native-kernel-backed controls showed that ordinary oMLX `BatchGenerator` MTP-OFF decode can be much faster than direct one-token `_forward`, even from the same model core. That fast scheduler path does not make DSpark priming part of base target correctness, but future practical speculative decode must either export or recreate the oMLX prefill-created priming contract: target-layer hidden history for `dspark_target_layer_ids`, per-MTP-layer `DSparkContextCache`, and `expected_target_offset` alignment consumed by `take_primed()`.
+M4 native-kernel-backed controls showed that ordinary oMLX `BatchGenerator` MTP-OFF decode can be much faster than direct one-token `_forward`, even from the same model core. P5 additionally proves the existing mlx-lm admission seam can consume an already-populated cache without prompt replay:
+
+```python
+BatchGenerator.insert(prompts=[[15]], caches=[admitted_cache], all_tokens=[[0, 3]])
+```
+
+At that seam the cache authority before decode is state after `[0,3]`; token `15` is the first GenerationBatch backbone input and is appended to token history by the GenerationBatch bootstrap; subsequent responses represent the distribution after `15`.  The current artifact records zero prompt-processing forwards from `[0,3]`.  This fast path is not yet the production authority because the DwarfStar-prefill state is not correctness-qualified against ordinary oMLX.
+
+That fast scheduler path does not make DSpark priming part of base target correctness, but future practical speculative decode must either export or recreate the oMLX prefill-created priming contract: target-layer hidden history for `dspark_target_layer_ids`, per-MTP-layer `DSparkContextCache`, and `expected_target_offset` alignment consumed by `take_primed()`.
 
 ## Ratio-2 and cross-call behavior
 

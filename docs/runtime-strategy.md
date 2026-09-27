@@ -44,7 +44,7 @@ Do not call the existing planners or bounded primitives a completed production r
 
 Decode architecture is selected by Milestone 3. See `docs/milestone-3-decode-architecture-decision.md`.
 
-The selected base practical decode architecture is oMLX `0.7.0.dev2` DeepSeek-V4.1 target decode architecture: request-local `DeepseekV41Cache` ownership plus `LanguageModel._forward` target execution, adapted to consume `PrefillContinuationState` without prompt recomputation. DSpark/MTP is selected as an optional staged acceleration after base decode admission and correctness qualification.
+The selected base practical decode architecture is oMLX `0.7.0.dev2` DeepSeek-V4.1 target decode architecture: request-local `DeepseekV41Cache` ownership admitted without prompt recomputation, then standard mlx-lm/oMLX `GenerationBatch` lifecycle for target execution. Milestone 4 controls showed direct one-token `LanguageModel._forward`/`__call__` is a diagnostic primitive, not the practical production substrate; no-replay `BatchGenerator.insert(caches=..., all_tokens=...)` preserves the single cache authority and reaches ordinary oMLX MTP-OFF speed. DSpark/MTP is selected as an optional staged acceleration after base decode admission and correctness qualification.
 
 DwarfStar decode is rejected as the Milestone 4 base because its real decode state is private to `ds41_gpu_graph` C/Metal tensors and the inspected source exposes no public no-replay admission ABI from the Milestone 2 neutral continuation arrays. Composition is rejected because no clean state/lifetime/interface boundary avoids duplicate execution, cache conversion, conflicting graph ownership, and rollback ambiguity.
 

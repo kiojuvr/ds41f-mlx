@@ -1,6 +1,6 @@
 # Milestone 4 base decode implementation status
 
-Status: **INCOMPLETE — real oMLX admission/session lifecycle and hot-path cleanup are present; native oMLX custom kernels are now built and available, but Gate A fails against the independent oracle and Gate B shows standard BatchGenerator MTP-OFF is fast while direct `_forward` B/C/D remain slow.**
+Status: **INCOMPLETE — R/O/D logits triangulation and P0-P5 controls are now recorded.  Ordinary oMLX (O) itself is not bit-exact to the historical reference (R), so the exactness contract remains undecided; DwarfStar-admitted state (D) is also not equivalent to O.  No-replay `BatchGenerator.insert(caches=..., all_tokens=...)` reaches the standard oMLX base-target performance class, but it is not yet correctness-qualified because the prefill-state semantic divergence remains open.**
 
 ## Implemented
 
@@ -85,8 +85,61 @@ Still disabled. Future DSpark integration should attach at:
 - MTP cache owner: oMLX DSpark stage cache (`make_mtp_cache()`);
 - rollback: current session transaction boundary plus oMLX `mtp_partial_rollback` for accepted/rejected verify blocks.
 
+## M4 R/O/D triangulation update (2026-09-27)
+
+Artifact: `artifacts/m4/rod-triangulation/result.json` plus full float32 logits arrays under the same directory.
+
+Incremental fixture: prefill `[0, 3]`, next backbone input `[15]`.
+
+| Path | Digest | Argmax |
+| --- | --- | --- |
+| R historical independent reference | `f1eb4a1c4f158d70887a376f1a8494a88d6f4c83fb5eb9a2c98fc85af46bc3cd` | 266 |
+| O ordinary oMLX prefill + incremental | `11de8c224cea3d9462531f125495760f33fffccbe2139f60915396a4d3f3b634` | 266 |
+| D DwarfStar prefill + admitted oMLX incremental | `bbc86311483405ba433a11c3b77eddc9161aed5f74bc3667a3b67929c701c7ce` | 963 |
+
+Pairwise numerical comparisons are in the artifact.  Notably, R vs O is not bit-exact (`max_abs_diff ~= 1.17195`, `mean_abs_diff ~= 0.19281`, same argmax).  Therefore the previous bit-exact SHA gate cannot be silently relaxed, but exact equality is also not established as the cross-implementation contract.  The tolerance remains **UNDECIDED** until the official-output tests and reviewed oMLX numerical boundaries are inspected and documented.
+
+Layer0 slot1 packed-window analysis is recorded in the same artifact.  Using oMLX `unpack_activation(bits=8, group_size=32)`, the first true difference is semantic, not merely adapter packing:
+
+- ordinary semantic/unpacked layer0 window KV vs `PrefillContinuationState.window_kv_by_layer[0]`: `max_abs_diff = 0.091796875`, `mean_abs_diff ~= 8.56e-4`;
+- DwarfStar semantic state vs adapter pack+unpack: exact (`max_abs_diff = 0`);
+- ordinary packed bytes vs adapter packed bytes differ as expected after semantic divergence.
+
+Current classification: **A. DwarfStar prefill computes a different semantic layer0 window KV** (or, more precisely, a different value at the oMLX consumed semantic boundary).  The adapter packing is not the first divergence.
+
+## P0-P5 GenerationBatch controls (2026-09-27)
+
+Artifact: `artifacts/m4/generationbatch-controls/result.json`.
+
+All timed decode steps synchronize the exact mlx-lm generation stream (`BatchGenerator.stream` / `generation_stream`) before stopping timers, so the measurement is completed work rather than enqueue latency.
+
+| Control | Median tok/s | Median step |
+| --- | ---: | ---: |
+| P0 raw `lm._forward()` singleton cache | 0.361 | 2.770 s |
+| P1 `lm(...)` singleton cache | 0.363 | 2.752 s |
+| P2 `lm(...)` after `DeepseekV41Cache.merge([cache])` | 0.362 | 2.766 s |
+| P3 direct `GenerationBatch` over equivalent cache | 22.47 | 0.0445 s |
+| P4 standard `BatchGenerator` | 22.31 | 0.0448 s |
+| P5 `BatchGenerator.insert()` seeded with DwarfStar-admitted cache, no replay | 22.37 | 0.0447 s |
+
+This localizes the practical performance boundary to the `GenerationBatch` lifecycle/pipeline (`mx.async_eval` overlap and generation stream ownership), not singleton cache merge or the `__call__` wrapper.
+
+No-replay seam proven by the artifact:
+
+```python
+BatchGenerator.insert(
+    prompts=[[15]],
+    caches=[admitted_cache],
+    all_tokens=[[0, 3]],
+    max_tokens=[...],
+    samplers=[greedy],
+)
+```
+
+The admitted cache offsets are all `2` before insert; prompt-processing forwarded zero tokens from `[0,3]`.  `15` is consumed as the first GenerationBatch backbone input and appended to token history; subsequent GenerationBatch responses begin with the distribution after `15`.
+
 ## Completion decision
 
-Milestone 4 base target correctness is **INCOMPLETE**. The historical independent native/reference oracle now exports logits for the genuine token-serial lifecycle `0 -> 3 -> 15`; digest `f1eb4a1c4f158d70887a376f1a8494a88d6f4c83fb5eb9a2c98fc85af46bc3cd`, argmax `266`. The admitted production first-token digest remains `bbc86311483405ba433a11c3b77eddc9161aed5f74bc3667a3b67929c701c7ce`. They do not match, so Gate A remains open and the next correctness task is divergence localization/fix.
+Milestone 4 base target correctness is **INCOMPLETE**.  The D path is not equivalent to O, and R vs O exactness/tolerance has not yet been justified by reviewed evidence.
 
-Base target practical performance is **INCOMPLETE**. Native kernels are active and real BatchGenerator MTP-OFF is fast, but the current no-replay production D path still uses the slow direct `_forward` substrate. Raw-path parity is useful evidence that wrapper tax was removed; it is not the practical oMLX execution substrate.
+Base target practical performance is **PARTIALLY QUALIFIED BUT NOT COMPLETE**.  P5 proves that no-replay BatchGenerator admission can reach ordinary oMLX MTP-OFF performance, but production decode must not be switched to this substrate until the semantic prefill-state divergence is fixed and the final logits gate passes.
