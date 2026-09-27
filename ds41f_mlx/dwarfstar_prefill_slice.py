@@ -24,6 +24,7 @@ from ds41f_mlx.native_prefill import (
 )
 from ds41f_mlx.dwarfstar_v41_sweep import DS4_AUTHORITY_REMOTE, DS4_AUTHORITY_SHA
 from ds41f_mlx.official_model_math import OfficialModelMath
+from ds41f_mlx.prefill_session import PrefillSessionHandoff
 
 
 @dataclass
@@ -47,6 +48,11 @@ class SweepTransaction:
         if self.valid or not self.begun or self.committed:
             raise RuntimeError("publication outside invalid sweep transaction")
         self.events.append({"event": "publish_state_frontier", "layer": layer, "frontier": frontier, "valid": self.valid})
+
+    def final_output_ready(self, logits_digest: str) -> None:
+        if self.valid or not self.begun or self.committed:
+            raise RuntimeError("final output outside invalid sweep transaction")
+        self.events.append({"event": "final_output_ready_private", "logits_digest": logits_digest, "valid": self.valid})
 
     def commit(self) -> None:
         if self.valid or not self.begun or self.failed:
@@ -129,7 +135,7 @@ class DwarfStarPrefillVerticalSliceExecutor:
         )
         return storage, native_result
 
-    def run(self, *, tokens: list[int] | None = None, layers: int = 14, ctx: int = 32768, enable_engram: bool = True) -> VerticalSliceResult:
+    def run(self, *, tokens: list[int] | None = None, layers: int = 40, ctx: int = 32768, enable_engram: bool = True) -> VerticalSliceResult:
         if layers < 1:
             raise ValueError("vertical slice must execute at least one layer")
         token_arr = np.array([tokens or [0, 3]], dtype=np.int64)
@@ -142,6 +148,8 @@ class DwarfStarPrefillVerticalSliceExecutor:
         scheduling_events: list[dict[str, Any]] = []
         engram_events: list[dict[str, Any]] = []
         layer_records: dict[str, Any] = {}
+        final_output: dict[str, Any] | None = None
+        session_handoff: dict[str, Any] | None = None
         t0 = perf_counter()
         tx.begin()
         try:
@@ -204,13 +212,30 @@ class DwarfStarPrefillVerticalSliceExecutor:
                 executed.append(command)
             if len(executed) != layers:
                 raise RuntimeError(f"expected {layers} executed layers, got {len(executed)}")
+            if layers >= 40:
+                final_raw = self.math.final_logits(storage.current_hc_bf16, storage.pre_f32)
+                final_output = {k: v for k, v in final_raw.items() if k != "logits"}
+                tx.final_output_ready(final_output["logits_digest"])
+                session_handoff = PrefillSessionHandoff(
+                    schema="ds41f.prefill-session-handoff.v1",
+                    token_frontier=int(token_arr.size),
+                    tokens_digest=self.math.digest(storage.tokens),
+                    last_logits_digest=final_output["logits_digest"],
+                    committed_shared_state=storage.frontier_digest(self.math),
+                    current_hc_digest=self.math.digest(storage.current_hc_bf16),
+                    pre_mix_digest=self.math.digest(storage.pre_f32),
+                    engram_history={"full_hash_digest": storage.engram_hashes.get("full_hash_digest"), "layer1_hash_digest": storage.engram_hashes.get("layer1_hash_digest"), "layer14_hash_digest": storage.engram_hashes.get("layer14_hash_digest")},
+                ).to_json()
             tx.commit()
         except BaseException as exc:
             tx.fail(exc)
             raise
         seconds = perf_counter() - t0
 
-        if enable_engram and layers >= 28:
+        if enable_engram and layers >= 40:
+            reference_path = Path("artifacts/native-engram-connected-deterministic-logits-validation.json")
+            reference_kind = "engram_aware_connected_full_logits_scope"
+        elif enable_engram and layers >= 28:
             reference_path = Path("artifacts/native-engram-layer20-27-validation.json")
             reference_kind = "engram_aware_connected_candidate27_scope"
         elif enable_engram and layers >= 20:
@@ -253,13 +278,14 @@ class DwarfStarPrefillVerticalSliceExecutor:
                 for layer_cmp in reference_comparison["layers"].values()
             )
             if enable_engram:
-                reference_comparison["engram1_post_digest"] = ref.get("post_engram1_regression", {}).get("digest", ref.get("engram", {}).get("1", {}).get("output_digest"))
-                reference_comparison["engram14_post_digest"] = ref.get("residual_update", {}).get("post_engram14_h", {}).get("digest", ref.get("engram", {}).get("14", {}).get("output_digest"))
+                reference_comparison["engram1_post_digest"] = ref.get("post_engram1_regression", {}).get("digest", ref.get("engram", {}).get("1", {}).get("output_digest", ref.get("upstream_regressions", {}).get("post_engram1_h")))
+                reference_comparison["engram14_post_digest"] = ref.get("residual_update", {}).get("post_engram14_h", {}).get("digest", ref.get("engram", {}).get("14", {}).get("output_digest", ref.get("upstream_regressions", {}).get("post_engram14_h")))
                 reference_comparison["generation2"] = ref.get("shared_attention_state", {}).get("generation2", ref.get("source_generations", {}).get("2", {}).get("source_publication"))
                 reference_comparison["generation8"] = ref.get("shared_attention_state", {}).get("generation8", ref.get("source_generations", {}).get("8", {}).get("source_publication"))
                 reference_comparison["generation14"] = ref.get("source_generations", {}).get("14", {}).get("source_publication")
                 reference_comparison["generation20"] = ref.get("source_generations", {}).get("20", {}).get("source_publication")
                 reference_comparison["generation24"] = ref.get("source_generations", {}).get("24", {}).get("source_publication")
+                reference_comparison["logits_digest"] = ref.get("parallel_head", {}).get("logits", {}).get("digest")
         else:
             reference_comparison["all_compared_exact"] = False
 
@@ -383,11 +409,21 @@ class DwarfStarPrefillVerticalSliceExecutor:
             obs = consumer_observations.get(str(layer), {}).get("observed_fields", {})
             return all(not obs.get(field, {}).get("stale_owner_matches") for field in fields)
 
+        if session_handoff is not None:
+            latest_ownership = publication_events[-1]["field_ownership_after"] if publication_events else {}
+            session_handoff["extra_state"] = {
+                "committed_field_ownership": latest_ownership,
+                "publication_generations": [event["generation_id"] for event in publication_events],
+            }
+
         layer20_event = next((event for event in publication_events if event["layer"] == 20), None)
         layer24_event = next((event for event in publication_events if event["layer"] == 24), None)
         generation20_consumers = source_generations.get("20", {}).get("consumer_layers", [])
         generation24_consumers = source_generations.get("24", {}).get("consumer_layers", [])
         mixed_after24 = {"compress_kv": 20, "index_k": 20, "candidates": 20, "topk_idxs": 24}
+        mixed_after28 = {"compress_kv": 20, "index_k": 20, "candidates": 20, "topk_idxs": 28}
+        mixed_after32 = {"compress_kv": 20, "index_k": 20, "candidates": 20, "topk_idxs": 32}
+        mixed_after36 = {"compress_kv": 20, "index_k": 20, "candidates": 20, "topk_idxs": 36}
 
         gates = {
             "native_sweep_plan_used": plan["source_authority"]["commit"] == DS4_AUTHORITY_SHA,
@@ -423,9 +459,19 @@ class DwarfStarPrefillVerticalSliceExecutor:
             "layer24_refreshes_topk_owner": layers < 25 or layer24_event["field_ownership_after"].get("topk_idxs") == 24,
             "consumers_after24_use_mixed_generation": layers < 28 or (generation24_consumers == [25, 26, 27] and all(observation_matches(layer, mixed_after24) for layer in generation24_consumers)),
             "consumers_after24_reject_stale_topk20_and_pre20": layers < 28 or all(observation_has_no_stale(layer, ("compress_kv", "index_k", "topk_idxs", "candidates")) and not consumer_observations[str(layer)]["consumer_recomputed_producer_state"] for layer in generation24_consumers),
-            "candidate_lifecycle_scoped_before_next_source": layers <= 28 and all(layer_records[str(i)]["state_after"].get("candidates") is not None for i in range(20, layers)),
-            "sweep_command_order_exact": [int(c["layer"]) for c in executed] == list(range(layers)),
-            "engram_aware_reference_connected_scope_exact": reference_comparison["all_compared_exact"] and reference_comparison["reference_kind"] in {"engram_aware_connected_scope", "engram_aware_connected_block19_scope", "engram_aware_connected_candidate27_scope"},
+            "layer28_index_only_refresh_present": layers < 29 or (source_generations.get("28", {}).get("kind") == "index_only_topk_refresh_generation" and source_generations["28"]["changed_fields"] == ["topk_idxs"]),
+            "consumers_after28_use_mixed_generation": layers < 32 or all(observation_matches(layer, mixed_after28) for layer in source_generations.get("28", {}).get("consumer_layers", [])),
+            "layer32_index_only_refresh_present": layers < 33 or (source_generations.get("32", {}).get("kind") == "index_only_topk_refresh_generation" and source_generations["32"]["changed_fields"] == ["topk_idxs"]),
+            "consumers_after32_use_mixed_generation": layers < 36 or all(observation_matches(layer, mixed_after32) for layer in source_generations.get("32", {}).get("consumer_layers", [])),
+            "layer36_index_only_refresh_present": layers < 37 or (source_generations.get("36", {}).get("kind") == "index_only_topk_refresh_generation" and source_generations["36"]["changed_fields"] == ["topk_idxs"]),
+            "consumers_after36_use_mixed_generation": layers < 40 or all(observation_matches(layer, mixed_after36) for layer in source_generations.get("36", {}).get("consumer_layers", [])),
+            "candidate_lifecycle_scoped_before_next_source": layers <= 40 and all(layer_records[str(i)]["state_after"].get("candidates") is not None for i in range(20, layers)),
+            "final_logits_present": layers < 40 or bool(final_output and final_output.get("logits_digest")),
+            "final_logits_match_reference": layers < 40 or (final_output is not None and final_output.get("logits_digest") == reference_comparison.get("logits_digest")),
+            "session_handoff_present_after_final_output": layers < 40 or bool(session_handoff and session_handoff.get("last_logits_digest") == final_output.get("logits_digest")),
+            "transaction_commit_after_final_output": layers < 40 or any(e["event"] == "final_output_ready_private" for e in tx.events),
+            "sweep_command_order_exact": [int(c["layer"]) for c in executed] == list(range(layers),),
+            "engram_aware_reference_connected_scope_exact": reference_comparison["all_compared_exact"] and reference_comparison["reference_kind"] in {"engram_aware_connected_scope", "engram_aware_connected_block19_scope", "engram_aware_connected_candidate27_scope", "engram_aware_connected_full_logits_scope"},
         }
         artifact = {
             "schema": "ds41f.dwarfstar-prefill-vertical-slice.v1",
@@ -452,6 +498,8 @@ class DwarfStarPrefillVerticalSliceExecutor:
             "layer_roles": role_table,
             "source_reuse_group": source_group,
             "layers": layer_records,
+            "final_output": final_output,
+            "session_handoff": session_handoff,
             "reference_comparison": reference_comparison,
             "transaction_events": tx.events,
             "publications": storage.publications,

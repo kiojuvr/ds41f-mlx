@@ -27,7 +27,9 @@ The current native session owner is `TextBackboneState` together with `TextEncod
 
 ## Prefill to first decode
 
-Prefill populates token/ngram history, window KV, source-layer compressed KV, indexer K, and shared publications according to the layer topology.  The first decode step consumes those states rather than recomputing a fresh prompt-only session.  Engram insertion points consume current token/ngram context through the backbone and preserve SSD-backed lookup semantics.
+Prefill populates token/ngram history, window KV, source-layer compressed KV, indexer K, candidate/top-k publications, final logits, and shared publications according to the layer topology.  The first decode step consumes those states rather than recomputing a fresh prompt-only session.  Engram insertion points consume current token/ngram context through the backbone and preserve SSD-backed lookup semantics.
+
+The Milestone 2 DwarfStar-derived prefill path commits an architecture-neutral handoff represented by `ds41f_mlx.prefill_session.PrefillSessionHandoff`.  The handoff records the token frontier, final logits digest, committed shared attention state, HC residual/pre-mix digests, and Engram history digests, while explicitly leaving decode architecture unselected.  Milestone 3 decode candidates must accept this contract without forcing prefill recomputation or depending on `TextBackboneReference` state ownership.
 
 ## Ratio-2 and cross-call behavior
 

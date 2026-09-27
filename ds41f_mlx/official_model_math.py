@@ -28,6 +28,8 @@ from tools.run_native_layer0_25_transformer_entry_validation import (  # type: i
 from tools.run_native_layer24_25_connected_validation import roles as layer_roles  # type: ignore
 from tools.run_native_engram_layer1_validation import layer1_hashes_regenerate  # type: ignore
 from tools.run_native_engram_layer14_validation import apply_engram_layer, regen_hashes  # type: ignore
+from tools.run_native_engram_connected_deterministic_logits_validation import hc_pre_source, rmsnorm_source  # type: ignore
+from tools.run_native_parallel_head_logits_validation import native_parallel_head_logits, independent_parallel_head_logits  # type: ignore
 
 
 class OfficialModelMath:
@@ -97,6 +99,38 @@ class OfficialModelMath:
             import json
             self._engram_contract_cache = json.loads(Path("artifacts/engram-semantic-foundation-contract.json").read_text())
         return self._engram_contract_cache
+
+    def final_logits(self, x_hc_bf16: np.ndarray, pre_f32: np.ndarray) -> dict[str, Any]:
+        import json
+        from tools.run_official_hyper_connections_fixture import header  # type: ignore
+        from tools.run_native_engram_layer1_validation import arrdig  # type: ignore
+        coll_f32, collapsed_bf16 = hc_pre_source(x_hc_bf16, pre_f32)
+        index = json.loads((self.checkpoint / "model.safetensors.index.json").read_text())["weight_map"]
+        norm_w = np.ascontiguousarray(mmap(self.checkpoint / index["norm.weight"], "norm.weight", np.uint16, (DIM,)))
+        norm = rmsnorm_source(collapsed_bf16, norm_w, 1e-20)
+        normalized = norm["bf16"]
+        head_name = "head.weight"
+        head_shard = self.checkpoint / index[head_name]
+        hinfo, _ = header(head_shard)
+        head_weight = mmap(head_shard, head_name, np.uint16, (VOCAB, DIM))
+        selected = normalized[:, -1, :].copy()
+        logits = native_parallel_head_logits(selected, head_weight, 1024)
+        independent = independent_parallel_head_logits(selected, head_weight, 1024)
+        diff = np.abs(logits - independent).astype(np.float32)
+        return {
+            "collapsed_fp32_digest": arrdig(coll_f32),
+            "post_loop_h_digest": arrdig(collapsed_bf16),
+            "norm_weight_digest": arrdig(norm_w),
+            "normalized_digest": arrdig(normalized),
+            "selected_final_position_hidden_digest": arrdig(selected),
+            "head_weight_shape": hinfo[head_name]["shape"],
+            "logits": logits,
+            "logits_digest": arrdig(logits),
+            "independent_logits_digest": arrdig(independent),
+            "logits_max_abs_diff": float(np.max(diff)),
+            "argmax_token": int(np.argmax(logits.reshape(-1))),
+            "argmax_logit": float(np.max(logits)),
+        }
 
     def apply_engram(self, layer: int, x_hc_bf16: np.ndarray, layer_hash: np.ndarray) -> tuple[np.ndarray, dict[str, Any]]:
         post, sparse, flatten, wkv, kv, qk, gate, residual, io = apply_engram_layer(
