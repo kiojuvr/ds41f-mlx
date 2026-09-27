@@ -26,6 +26,8 @@ from tools.run_native_layer0_25_transformer_entry_validation import (  # type: i
     snap,
 )
 from tools.run_native_layer24_25_connected_validation import roles as layer_roles  # type: ignore
+from tools.run_native_engram_layer1_validation import layer1_hashes_regenerate  # type: ignore
+from tools.run_native_engram_layer14_validation import apply_engram_layer  # type: ignore
 
 
 class OfficialModelMath:
@@ -34,6 +36,7 @@ class OfficialModelMath:
     def __init__(self, checkpoint: Path):
         self.checkpoint = Path(checkpoint)
         self.config = load_text_config(self.checkpoint)
+        self._engram_contract_cache: dict[str, Any] | None = None
 
     @property
     def dim(self) -> int:
@@ -63,3 +66,44 @@ class OfficialModelMath:
 
     def layer_roles(self, layer: int) -> dict[str, Any]:
         return layer_roles(self.config, layer)
+
+    def engram_hashes_for_tokens(self, tokens: np.ndarray) -> dict[str, Any]:
+        # Current bounded implementation is for the official text fixture used by
+        # existing official-source-derived Engram contracts.
+        if tokens.reshape(-1).tolist() != [0, 3]:
+            raise ValueError("bounded Engram seam currently supports token fixture [0, 3]")
+        full_hash, layer1_hash, provenance = layer1_hashes_regenerate()
+        return {
+            "full_hash": full_hash,
+            "layer1_hash": layer1_hash,
+            "provenance": provenance,
+            "full_hash_digest": digest(full_hash),
+            "layer1_hash_digest": digest(layer1_hash),
+        }
+
+    def _engram_contract(self) -> dict[str, Any]:
+        if self._engram_contract_cache is None:
+            import json
+            self._engram_contract_cache = json.loads(Path("artifacts/engram-semantic-foundation-contract.json").read_text())
+        return self._engram_contract_cache
+
+    def apply_engram(self, layer: int, x_hc_bf16: np.ndarray, layer_hash: np.ndarray) -> tuple[np.ndarray, dict[str, Any]]:
+        post, sparse, flatten, wkv, kv, qk, gate, residual, io = apply_engram_layer(
+            self.checkpoint, layer, x_hc_bf16, layer_hash, self._engram_contract()
+        )
+        evidence = {
+            "layer": layer,
+            "input_digest": digest(x_hc_bf16),
+            "hash_digest": digest(layer_hash),
+            "output_digest": digest(post),
+            "sparse_embedding": sparse,
+            "flatten_seam": flatten,
+            "wkv": wkv,
+            "key_value_split": kv,
+            "qk_weights": qk,
+            "gate": gate,
+            "residual_update": residual,
+            "io_accounting": io,
+            "ssd_backed_sparse_rows_only": bool(sparse.get("sparse_random_access_rows_only")),
+        }
+        return post, evidence
