@@ -1,8 +1,8 @@
 # Milestone 2 prefill restoration status
 
-Status: **INCOMPLETE — BLOCKED ON INTEGRATED PRODUCTION PREFILL EXECUTOR**.
+Status: **INCOMPLETE — FIRST VERTICAL EXECUTOR SLICE IMPLEMENTED**.
 
-This document records the result of attempting to proceed from Milestone 1 into Milestone 2. It is not a development diary and it does not change the runtime architecture decision. Milestone 2 remains the next implementation milestone.
+This document records the current Milestone 2 state. It does not change the runtime architecture decision. Milestone 2 remains open until full-model official-checkpoint prefill executes through the DwarfStar-derived topology.
 
 ## Governing constraint
 
@@ -10,11 +10,33 @@ Milestone 2 requires a real full-model prefill path for the official DeepSeek-V4
 
 Correctness authority remains official checkpoint/data, reviewed official DeepSeek semantics, official-source-derived `ds41f` validators/contracts, and implementation-scoped regression evidence. DwarfStar and oMLX remain architecture/implementation sources, not semantic authorities.
 
-## Implementation attempt result
+## Implemented vertical slice
 
-The repository does not yet contain an integrated executor that can compose the already validated native primitives and reusable native/reference components behind the DwarfStar-derived sweep ABI without reverting execution control to the current native reference topology.
+The repository now contains a first vertically integrated DwarfStar-derived production-prefill executor slice:
 
-Two available paths were rechecked:
+```text
+ds41f_mlx/dwarfstar_prefill_slice.py
+tools/run_m2_dwarfstar_prefill_vertical_slice.py
+artifacts/m2/dwarfstar-prefill/vertical-slice-layer0-2.json
+```
+
+The slice demonstrates:
+
+- native DwarfStar-derived sweep plan ownership;
+- executor-owned typed token, embedding, HC carry, pre-mix, and shared publication storage;
+- official checkpoint embedding gather through the native prefill library;
+- complete real model execution for layers 0, 1, and 2 using official-source-derived model-math helpers, without calling `TextBackboneReference`, `TextEncoderReference`, or `TextDecoderReference`;
+- layer-2 compressed/index/top-k publication owned by the new executor state;
+- invalid-during-sweep and commit-after-publication transaction events;
+- exact comparison against the existing official-source-derived connected native validation scope for layers 0..2.
+
+This is an implementation-scoped slice, not full-model prefill.
+
+## Remaining implementation gap
+
+The repository does not yet contain a full integrated executor that composes all layers and final output behind the DwarfStar-derived sweep ABI without reverting execution control to the current native reference topology.
+
+Two broader available paths remain classified as follows:
 
 1. **DwarfStar-derived native prefill line**
    - Has the right planner/lifetime/submission frontier.
@@ -59,11 +81,11 @@ The blocker is the absence of an integrated production executor that, under the 
 9. hand committed prefill state to a neutral production session/decode boundary without selecting the final Milestone 3 decode architecture;
 10. pass implementation-scoped correctness gates for this new path.
 
-## Why this is a genuine blocker
+## Why full Milestone 2 remains incomplete
 
-The missing work is not a small selector change, documentation update, or local optimization. It is the central Milestone 2 implementation: integrating complete official model computation behind the DwarfStar-derived sweep executor.
+The remaining work is not a small selector change, documentation update, or local optimization. It is the rest of the central Milestone 2 implementation: widening the vertically integrated slice into complete official model computation behind the DwarfStar-derived sweep executor.
 
-The repository has enough evidence to define the work precisely, but not enough implemented code to claim completion responsibly. The available alternatives are invalid shortcuts:
+The available shortcuts remain invalid:
 
 - calling current native `TextBackboneReference` prefill would execute the reference topology, not the DwarfStar-derived production topology;
 - calling the oMLX layer-major adapter would reproduce diagnostic/prototype behavior, not the native DwarfStar sweep executor;
@@ -72,14 +94,14 @@ The repository has enough evidence to define the work precisely, but not enough 
 
 ## Required next implementation slice
 
-Milestone 2 should remain open and proceed with a first integrated production-executor slice, not another audit. The next slice should connect one real layer span through the existing native sweep ABI while preserving DwarfStar lifetime and official semantics:
+Milestone 2 should remain open and proceed by widening the implemented vertical slice, not by starting another audit. The next slice should:
 
-1. extend `ds41f_prefill_native` from command/buffer submission into typed sweep row/carry buffers for official model data;
-2. bind official embedding/carry initialization to the sweep arena;
-3. integrate the minimum complete layer-0 path behind `DS41F_SWEEP_ENCODE_ROWS` using existing validated primitive code where possible;
-4. publish/commit state through the sweep plan rather than `TextBackboneReference` control flow;
-5. gate the slice against official-source-derived fixtures and native/reference regression evidence;
-6. only then widen to Engram/source/reuse groups and finally all 40 layers.
+1. move more typed row/carry ownership into the native C sweep executor where needed;
+2. replace Python-orchestrated official-source-derived helper calls with production-facing native seams stage by stage;
+3. widen from layers 0..2 to the first source/reuse group, then Engram layer 1/14 handling, then decoder/source groups;
+4. keep publication/commit state owned by the DwarfStar sweep executor rather than `TextBackboneReference` control flow;
+5. gate each widening step against official-source-derived fixtures and connected validation evidence;
+6. only then execute all 40 layers plus final collapse/norm/head/logits.
 
 This is still Milestone 2 work. It should not be recast as Milestone 3 decode selection or current native optimization.
 
@@ -87,12 +109,13 @@ This is still Milestone 2 work. It should not be recast as Milestone 3 decode se
 
 Milestone 2 is **not complete**.
 
-The milestone completion criteria are unmet:
+Current completion criteria:
 
+- first real vertical DwarfStar-topology executor slice: **implemented and validated for layers 0..2**;
 - real full-model DwarfStar-topology prefill: **not implemented**;
 - official checkpoint through the DwarfStar-derived full prefill path: **not implemented**;
-- production state handoff from that path: **not implemented**;
-- implementation-scoped qualification of that path: **not available**;
-- bounded performance observation of the real production path: **not available**.
+- production state handoff from full prefill: **not implemented**;
+- implementation-scoped qualification of full path: **not available**;
+- bounded performance observation of the full production path: **not available**.
 
 No runtime code was changed for this status update, because any small change that merely routes through the current native reference runtime would create the architecture drift the strategy was written to prevent.

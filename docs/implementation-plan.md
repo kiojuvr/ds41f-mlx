@@ -23,7 +23,7 @@ Rules:
 
 ## Milestone 2 — Restore DwarfStar-derived prefill production path
 
-Status: **incomplete / blocked on integrated production prefill executor**. See `docs/milestone-2-prefill-restoration-status.md` for the current implementation frontier, blocker, and required next implementation slice.
+Status: **incomplete / first vertical executor slice implemented**. See `docs/milestone-2-prefill-restoration-status.md` for the validated layers 0..2 slice, remaining full-prefill gap, and required next widening slice.
 
 Continue from the furthest real implementation point already present. Do not restart from a blank implementation.
 

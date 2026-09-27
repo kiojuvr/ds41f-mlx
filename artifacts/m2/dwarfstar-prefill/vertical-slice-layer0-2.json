@@ -1,0 +1,383 @@
+{
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "implementation_scoped_dwarfstar_prefill_slice_validation",
+  "ds4_authority": {
+    "commit": "0aaea5a238fb41a35106a551e73c8409dfb751ac",
+    "remote": "https://github.com/antirez/ds4.git"
+  },
+  "embedding_native_result": {
+    "dim": 5120,
+    "metal_command_buffers": 1,
+    "metal_completion_waits": 1,
+    "metal_compute_encoders": 1,
+    "metal_enabled": true,
+    "n_tokens": 2,
+    "output_checksum": 8575807350353877964,
+    "vocab_rows": 16
+  },
+  "executed_commands": [
+    {
+      "checkpoint_valid": false,
+      "kind": 106,
+      "kind_name": "encode_rows",
+      "layer": 0,
+      "offset": 0,
+      "phase": "encoder",
+      "rows": 2
+    },
+    {
+      "checkpoint_valid": false,
+      "kind": 106,
+      "kind_name": "encode_rows",
+      "layer": 1,
+      "offset": 0,
+      "phase": "encoder",
+      "rows": 2
+    },
+    {
+      "checkpoint_valid": false,
+      "kind": 106,
+      "kind_name": "encode_rows",
+      "layer": 2,
+      "offset": 0,
+      "phase": "encoder",
+      "rows": 2
+    }
+  ],
+  "gates": {
+    "checkpoint_committed_after_publication": true,
+    "checkpoint_invalid_during_execution": true,
+    "executor_owned_typed_storage": true,
+    "layer0_complete_path_executed": true,
+    "layer2_state_publication_present": true,
+    "native_sweep_plan_used": true,
+    "no_reference_text_runtime_called": true,
+    "official_embedding_native_executed": true,
+    "publication_owned_by_executor": true,
+    "reference_connected_scope_exact": true
+  },
+  "layers": {
+    "0": {
+      "attention_input_digest": "055ee38bab468da2470854d34f70b857b873abed595fbe0d57f8880e74abd231",
+      "attention_output_digest": "7e444d1435a5607c7037325f4c7bc7e44b2bf5f7f1b9410eb307a030e1a3df1f",
+      "command": {
+        "checkpoint_valid": false,
+        "kind": 106,
+        "kind_name": "encode_rows",
+        "layer": 0,
+        "offset": 0,
+        "phase": "encoder",
+        "rows": 2
+      },
+      "consumed": {},
+      "input_hc_digest": "5d0d812064ce2fc25ea149ef428b80354094b902d0212b9077e33d8c3ff087cb",
+      "input_pre_digest": "56e94d4f8d9e543d1260250ae1fdc346aea6fc5468f1a7865e77534e2fce98a1",
+      "moe_input_digest": "a43db9811941c00db82c639862b5c50d8bba1fa438f29516aff095f2f0a5d7ab",
+      "moe_output_digest": "f0d8f20ccce8a36c3bcee625998d0b44a856ca7fc7cc6c5d9946f6d54aa915ae",
+      "output_hc_digest": "ba2e6acdac3178115513c81e871f0106541cba2810f7dbc5c4a0c8c309dbf938",
+      "output_pre_digest": "44c4d2aa90451df19a44e79788b72ca65d296b55e46129a8e944ee2e08406cc1",
+      "producer": {},
+      "publication": {
+        "frontier": {
+          "candidates": null,
+          "compress_kv": null,
+          "index_k": null,
+          "topk_idxs": null
+        },
+        "layer": 0
+      },
+      "state_after": {
+        "candidates": null,
+        "compress_kv": null,
+        "index_k": null,
+        "topk_idxs": null
+      },
+      "state_before": {
+        "candidates": null,
+        "compress_kv": null,
+        "index_k": null,
+        "topk_idxs": null
+      },
+      "window_kv_digest": "11432f637842b3698f05ce050c563a38130fe9ae6ba822755ca0e8eeb1e50592",
+      "x_after_attn_digest": "276f545306f53df5858590958b5e9c16875c2dd90f34004d92a7d598f9b4e1aa"
+    },
+    "1": {
+      "attention_input_digest": "d4e311d2180b8076789ba6b066df9f6142422ccc7683b6a12666cb0b40a7b8a1",
+      "attention_output_digest": "4682cfe562a8161262e69f87cc7b22216fcc6138104393f0dca768cbd91d622f",
+      "command": {
+        "checkpoint_valid": false,
+        "kind": 106,
+        "kind_name": "encode_rows",
+        "layer": 1,
+        "offset": 0,
+        "phase": "encoder",
+        "rows": 2
+      },
+      "consumed": {},
+      "input_hc_digest": "ba2e6acdac3178115513c81e871f0106541cba2810f7dbc5c4a0c8c309dbf938",
+      "input_pre_digest": "44c4d2aa90451df19a44e79788b72ca65d296b55e46129a8e944ee2e08406cc1",
+      "moe_input_digest": "bd0b8dcaac925883dc46630e6164b63c47baa842aeb9b5c8b63f049118f9ed6a",
+      "moe_output_digest": "01809b35a2091a2019388e157de358c0de84749afd48a5998b220c31bf560900",
+      "output_hc_digest": "a9abb13060e3b5986de38d653b16d9e91189f68c8815bbaeba6d8cd647fca8a9",
+      "output_pre_digest": "393d4e5fd0d9209d0374f1896d2504e008d806ede1ec4b23b4260fba3816b4b3",
+      "producer": {},
+      "publication": {
+        "frontier": {
+          "candidates": null,
+          "compress_kv": null,
+          "index_k": null,
+          "topk_idxs": null
+        },
+        "layer": 1
+      },
+      "state_after": {
+        "candidates": null,
+        "compress_kv": null,
+        "index_k": null,
+        "topk_idxs": null
+      },
+      "state_before": {
+        "candidates": null,
+        "compress_kv": null,
+        "index_k": null,
+        "topk_idxs": null
+      },
+      "window_kv_digest": "0df5b8794e928b4befbd9c4afc1f6652a251ef719e86809e117ea6d3450e966d",
+      "x_after_attn_digest": "f5e50d0be1ec7e14cd4d83d22e6d2ec4bf2d367d92e8754fca87a5af8ce9b388"
+    },
+    "2": {
+      "attention_input_digest": "1ba0219f5bdf7dc18d27728ec131c02dcd2a106e94aec6494a821453ef0bce7f",
+      "attention_output_digest": "1804770f0ffcd24a22782df632828fee5d7b25549d482dd5fbf25d82fefc36d5",
+      "command": {
+        "checkpoint_valid": false,
+        "kind": 106,
+        "kind_name": "encode_rows",
+        "layer": 2,
+        "offset": 0,
+        "phase": "encoder",
+        "rows": 2
+      },
+      "consumed": {
+        "compress_kv": "b0344a39d07f2603a5c05828987655cd23a1d5173c7373d1a7522825c2c96d44"
+      },
+      "input_hc_digest": "a9abb13060e3b5986de38d653b16d9e91189f68c8815bbaeba6d8cd647fca8a9",
+      "input_pre_digest": "393d4e5fd0d9209d0374f1896d2504e008d806ede1ec4b23b4260fba3816b4b3",
+      "moe_input_digest": "3501871dee59a1140e350f89614ba4bf667b2c8dc018833080a13af39859cb4e",
+      "moe_output_digest": "cef3d0c83a55aa72728f7d7144723853168f95254d30b99d55212f8ffdadaffc",
+      "output_hc_digest": "e36631f9c7598be837cccf913b5c436616f6d02593ea43ce9af63ed3e672ada9",
+      "output_pre_digest": "f5b01dcf107cfb96a61252d6f8d9cc6f60d9f5ea1bc1f049e124fbb3901abc38",
+      "producer": {
+        "compress_bytes": "4f4d895974b280f99fc6fdd06e18d92cae7868187af31d19ea648e2116e89d25",
+        "compress_kv": "b0344a39d07f2603a5c05828987655cd23a1d5173c7373d1a7522825c2c96d44",
+        "compress_scales": "e615f5ca606a462304974af5bd8eb785005a62bbef6cb6f04e1e74f15b89e8b4",
+        "index_k": "e619fe853544e92679d9705aa2cef4c3199d02d84c2d946e924f2365fc76fcaf",
+        "index_k_norm": "9741f29624449f3e07b5cfcdb95e77ebde922aa0d4e11b610a70ebd4c7b79134",
+        "index_score": "476860a30407ec430255f18cc7e6d15e7434bae34b2cf6752a3f984ffb22e3a9",
+        "index_wk_output": "49e33fe788dc2e88d1aa63b0ae2ce3ed1245fd1fc776e2bbdd70ff3289b0e808",
+        "latent": "856223d401907f21bc4f3173320a72122afba77548ce8e0749f9cd96d5053484",
+        "masked_score": "3f6dd98043df07d0345c81e8a031167159c0d30e0853bab113f60a8edec8a1dc",
+        "topk_idxs": "baa856a945932888a0ab188dede7e3f62f1c4cbdf3277ef9c8bf6dea9c43f424"
+      },
+      "publication": {
+        "frontier": {
+          "candidates": null,
+          "compress_kv": "b0344a39d07f2603a5c05828987655cd23a1d5173c7373d1a7522825c2c96d44",
+          "index_k": "e619fe853544e92679d9705aa2cef4c3199d02d84c2d946e924f2365fc76fcaf",
+          "topk_idxs": "baa856a945932888a0ab188dede7e3f62f1c4cbdf3277ef9c8bf6dea9c43f424"
+        },
+        "layer": 2
+      },
+      "state_after": {
+        "candidates": null,
+        "compress_kv": "b0344a39d07f2603a5c05828987655cd23a1d5173c7373d1a7522825c2c96d44",
+        "index_k": "e619fe853544e92679d9705aa2cef4c3199d02d84c2d946e924f2365fc76fcaf",
+        "topk_idxs": "baa856a945932888a0ab188dede7e3f62f1c4cbdf3277ef9c8bf6dea9c43f424"
+      },
+      "state_before": {
+        "candidates": null,
+        "compress_kv": null,
+        "index_k": null,
+        "topk_idxs": null
+      },
+      "window_kv_digest": "e84fa6ed00f44649b4938e95c7509e1a8fb0632119ce865ce99c23871f870afd",
+      "x_after_attn_digest": "6bd4d604f8b487d4dd171e0a38f4185c316457cc979075b6a0106710336d74d6"
+    }
+  },
+  "native_sweep_plan_summary": {
+    "checkpoint_valid_after_sweep": true,
+    "checkpoint_valid_during_sweep": false,
+    "command_counts": {
+      "begin_layer": 40,
+      "begin_sweep_checkpoint_invalid": 1,
+      "checkpoint_may_commit": 1,
+      "encode_output_head": 1,
+      "encode_rows": 40,
+      "end_layer": 40,
+      "prefetch_engram_table0": 1,
+      "prefetch_engram_table1": 1,
+      "publish_state_frontier": 40,
+      "read_logits": 1,
+      "ssd_read_ahead": 39,
+      "swap_hc_after_layer": 40
+    },
+    "count": 2,
+    "decoder_suffix": false,
+    "encoder_chunk": 2048,
+    "prefill_cap": 8192,
+    "wide": false
+  },
+  "native_version": "ds41f-prefill-native-official-sparse-attn-v11",
+  "non_claims": [
+    "not full-model prefill",
+    "not decode architecture selection",
+    "not long-context qualification",
+    "not performance qualification",
+    "does not call TextBackboneReference/TextEncoderReference/TextDecoderReference"
+  ],
+  "ok": true,
+  "publications": [
+    {
+      "frontier": {
+        "candidates": null,
+        "compress_kv": null,
+        "index_k": null,
+        "topk_idxs": null
+      },
+      "layer": 0
+    },
+    {
+      "frontier": {
+        "candidates": null,
+        "compress_kv": null,
+        "index_k": null,
+        "topk_idxs": null
+      },
+      "layer": 1
+    },
+    {
+      "frontier": {
+        "candidates": null,
+        "compress_kv": "b0344a39d07f2603a5c05828987655cd23a1d5173c7373d1a7522825c2c96d44",
+        "index_k": "e619fe853544e92679d9705aa2cef4c3199d02d84c2d946e924f2365fc76fcaf",
+        "topk_idxs": "baa856a945932888a0ab188dede7e3f62f1c4cbdf3277ef9c8bf6dea9c43f424"
+      },
+      "layer": 2
+    }
+  ],
+  "purpose": "first vertically integrated DwarfStar-derived production-prefill executor slice: official embedding -> typed sweep carry -> complete real layers -> executor publication/commit",
+  "reference_comparison": {
+    "all_compared_exact": true,
+    "available": true,
+    "layers": {
+      "0": {
+        "attention_input": true,
+        "attention_output": true,
+        "ffn_pre": true,
+        "moe_input": true,
+        "moe_output": true,
+        "x_after_attn": true,
+        "x_out": true
+      },
+      "1": {
+        "attention_input": true,
+        "attention_output": true,
+        "ffn_pre": true,
+        "moe_input": true,
+        "moe_output": true,
+        "x_after_attn": true,
+        "x_out": true
+      },
+      "2": {
+        "attention_input": true,
+        "attention_output": true,
+        "ffn_pre": true,
+        "moe_input": true,
+        "moe_output": true,
+        "x_after_attn": true,
+        "x_out": true
+      }
+    },
+    "reference_path": "artifacts/native-layer0-25-transformer-entry-validation.json"
+  },
+  "schema": "ds41f.dwarfstar-prefill-vertical-slice.v1",
+  "scope": {
+    "full_model_prefill": false,
+    "layers": [
+      0,
+      1,
+      2
+    ],
+    "tokens": [
+      0,
+      3
+    ]
+  },
+  "seconds": 8.723637833027169,
+  "transaction_events": [
+    {
+      "event": "begin_sweep_checkpoint_invalid",
+      "valid": false
+    },
+    {
+      "event": "publish_state_frontier",
+      "frontier": {
+        "candidates": null,
+        "compress_kv": null,
+        "index_k": null,
+        "topk_idxs": null
+      },
+      "layer": 0,
+      "valid": false
+    },
+    {
+      "event": "publish_state_frontier",
+      "frontier": {
+        "candidates": null,
+        "compress_kv": null,
+        "index_k": null,
+        "topk_idxs": null
+      },
+      "layer": 1,
+      "valid": false
+    },
+    {
+      "event": "publish_state_frontier",
+      "frontier": {
+        "candidates": null,
+        "compress_kv": "b0344a39d07f2603a5c05828987655cd23a1d5173c7373d1a7522825c2c96d44",
+        "index_k": "e619fe853544e92679d9705aa2cef4c3199d02d84c2d946e924f2365fc76fcaf",
+        "topk_idxs": "baa856a945932888a0ab188dede7e3f62f1c4cbdf3277ef9c8bf6dea9c43f424"
+      },
+      "layer": 2,
+      "valid": false
+    },
+    {
+      "event": "checkpoint_may_commit",
+      "valid": true
+    }
+  ],
+  "typed_storage": {
+    "current_hc_digest": "e36631f9c7598be837cccf913b5c436616f6d02593ea43ce9af63ed3e672ada9",
+    "current_hc_shape": [
+      1,
+      2,
+      4,
+      5120
+    ],
+    "embedding_shape": [
+      1,
+      2,
+      5120
+    ],
+    "pre_digest": "f5b01dcf107cfb96a61252d6f8d9cc6f60d9f5ea1bc1f049e124fbb3901abc38",
+    "pre_shape": [
+      1,
+      2,
+      4
+    ],
+    "tokens_shape": [
+      1,
+      2
+    ]
+  }
+}
