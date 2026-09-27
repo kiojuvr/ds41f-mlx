@@ -2,11 +2,11 @@
 
 This document records current performance-relevant conclusions without preserving the full benchmark diary.
 
-## Accepted implementation lineage
+## Architecture interpretation
 
-The native attention runtime keeps the accepted fixed-tile lineage with split-K/ragged/width-one support and request-boundary compact topology. This lineage is the production direction for current native attention source.
+The current native attention, MoE, Engram, state, and generation paths are measured as the current correctness/reference runtime. Their components may be reused in production where architecturally justified, but this document does not promote the current native execution topology as final production architecture.
 
-MoE keeps the current gate/routing/shared-routed merge arithmetic and grouped expert pipeline. Engram keeps SSD-backed storage to avoid impractical resident-buffer memory use.
+The intended production prefill direction is DwarfStar-derived DeepSeek-V4.1 architecture. Decode architecture remains to be selected by comparing DwarfStar and oMLX architecture evidence before implementation.
 
 ## Current native baseline
 
@@ -55,11 +55,15 @@ Engram-specific read/page counters are not currently exposed through a non-invas
 
 MLX-enabled native build/tests are now qualified in the current environment. Bounded full-checkpoint native execution is also qualified for the smoke scope: the official checkpoint opens, full prefill executes for the bounded fixture, and one-token generation executes.
 
-The current short-context performance state is **measured but unqualified**. The baseline is trustworthy enough to guide the next optimization task, but it does not demonstrate practical decode performance. The dominant observed bottleneck for the current production path is **DECODE**.
+The current short-context performance state is **measured but unqualified as practical production performance**. The baseline is trustworthy enough to show that the current native reference topology is not an acceptable production decode starting point. It should guide architecture restoration and selection, not another sequence of local decode optimizations.
 
-## Historical baselines
+## Historical and external baselines
 
-Historical measurements remain useful only as archive/provenance context. They are not current native production qualification by themselves and are kept separate from the baseline above.
+Historical measurements remain useful only as scoped archive/provenance context. They are not current native production qualification by themselves and are kept separate from the baseline above.
+
+The supplied oMLX `0.7.0.dev2` official-checkpoint baseline on the target machine records about 176-194 tok/s prefill and 29-37 tok/s decode across 32K-200K contexts with about 292.8-293.0 GB peak memory. This is a production architecture comparison baseline, not a correctness authority.
+
+Historical DwarfStar Q4 resident and ds41f DwarfStar-derived prototype measurements are scaling-shape and architecture evidence only unless their fixture, checkpoint representation, and semantics match the official runtime scope.
 
 ## Rejected optimization measurements
 

@@ -7,6 +7,7 @@ Status vocabulary:
 - `SOURCE-VERIFIED` — source/provenance closure verified, not full execution qualification.
 - `IMPORTED/UNREVALIDATED` — implementation imported locally but not revalidated in the current environment.
 - `NOT YET VALIDATED` — no current pass for this scope.
+- `MEASURED / NOT QUALIFIED AS PRACTICAL` — measured with provenance, but does not meet or claim practical production performance.
 - `NON-GOAL` — outside current project scope.
 
 | Area | Status | Notes |
@@ -23,10 +24,10 @@ Status vocabulary:
 | MLX-enabled imported core build | QUALIFIED | MLX 0.32.2 Python wheel CMake package discovered; `cmake -S native -B native/build-mlx -DDSV41_ENABLE_MLX=ON`, build, and 8 registered tests pass. |
 | Full native checkpoint execution | BOUNDED | `dsv41-full-checkpoint-smoke` opened the official checkpoint and localized Engram metadata, constructed `TextGenerationReference`, executed prompt `[0,3]`, and produced one greedy token. See `artifacts/full-checkpoint-smoke.json`. |
 | API integration | NOT YET VALIDATED | Native HTTP path not claimed connected. |
-| Short-context performance | NOT YET VALIDATED | No current post-import benchmark qualification. |
+| Short-context performance | MEASURED / NOT QUALIFIED AS PRACTICAL | Current native reference baseline is recorded in `artifacts/performance/native-short-context-baseline.json`; decode is about 0.31 tok/s and is not acceptable production performance. |
 | Long-context qualification | NOT YET VALIDATED | Explicitly open. |
 | Vision | NON-GOAL | Not claimed. |
 | DSpark/MTP | NON-GOAL | Not claimed for current native production runtime. |
 | Release | NOT YET VALIDATED | Qualification gaps remain. |
 
-The matrix must not infer a pass from adjacent historical evidence.  Each status is scoped to the current repository state.
+The matrix must not infer a pass from adjacent historical evidence. Each status is scoped to the current repository state and to the implementation that produced it. Future DwarfStar- or oMLX-derived production runtime paths must be qualified separately.

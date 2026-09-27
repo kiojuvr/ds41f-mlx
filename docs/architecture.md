@@ -1,6 +1,6 @@
 # Architecture
 
-The current runtime is a native Apple Silicon/MLX model-core for DeepSeek-V4.1-Flash.  The C++ implementation keeps the internal `dsv41` namespace for source continuity, but the repository ownership is local to `ds41f-mlx`.
+This document describes the current executable native model core at HEAD. It is the current correctness/reference implementation and contains reusable production components, but `docs/runtime-strategy.md` and `docs/implementation-plan.md` govern final production architecture selection. The C++ implementation keeps the internal `dsv41` namespace for source continuity, but the repository ownership is local to `ds41f-mlx`.
 
 ## Runtime pipeline
 
@@ -22,7 +22,7 @@ final collapse / norm / head
 sampling / TextGeneration
 ```
 
-`WeightCatalog` and checkpoint atlas code provide read-only model-data discovery.  `TextFront` prepares token input and request state.  `TextEncoder` and `TextDecoder` own chunk/tokenwise execution and continuation behavior.  `TextBackboneState` is the canonical production session state container.  `TextGeneration` drives decode, sampling, token commit, stop/cancel handling, and continuation.
+`WeightCatalog` and checkpoint atlas code provide read-only model-data discovery.  `TextFront` prepares token input and request state.  `TextEncoder` and `TextDecoder` own chunk/tokenwise execution and continuation behavior for the current native implementation.  `TextBackboneState` is the current native session state container and a qualification reference for future production architecture.  `TextGeneration` drives decode, sampling, token commit, stop/cancel handling, and continuation in this implementation.
 
 ## Native source layout
 
@@ -75,4 +75,4 @@ The actual model hierarchy uses source layers that publish compressed/global sta
 
 ## Current qualification boundary
 
-Source closure is local and checkpoint-free native build/tests pass.  MLX-enabled build and full checkpoint execution still require validation in an environment with MLX CMake support.
+Source closure is local. Checkpoint-free native build/tests, MLX-enabled native build/tests, and bounded full-checkpoint native smoke have passed for their stated scopes. These results qualify the implementation that produced them; they do not automatically qualify a future DwarfStar- or oMLX-derived production runtime.

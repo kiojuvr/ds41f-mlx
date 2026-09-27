@@ -61,6 +61,8 @@ Likewise, a fast runtime that changes required model behavior or state semantics
 
 ## Current implementation status
 
+The current native implementation is the executable correctness/reference runtime at HEAD. It is valuable and retained, but it is not automatically the final production execution topology for prefill or decode. Production architecture restoration is governed by `docs/runtime-strategy.md` and `docs/implementation-plan.md`.
+
 Local native source includes:
 
 - `WeightCatalog` / checkpoint atlas / storage foundation
@@ -107,7 +109,7 @@ Transformer layers use `Block`, `CompressedBlock`, and `ReusedBlock` forms. Atte
 - `docs/` — canonical current-state documentation
 - `docs/archive/` — non-normative development history and absorbed validation prose
 - `tools/` — validation, provenance, and self-containment checkers
-- `ds41f_mlx/` — Python tooling scaffold; not the canonical native runtime architecture
+- `ds41f_mlx/` — Python tooling, DwarfStar-derived prefill architecture scaffolds, and oMLX bridge code; not a selector for production status by itself
 
 ## Build
 
@@ -156,11 +158,7 @@ These do not run benchmarks or full checkpoint qualification.
 
 ## Runtime/API status
 
-The intended local serving surface is OpenAI-compatible:
-
-- `GET /health`
-- `GET /v1/models`
-- `POST /v1/chat/completions`
+The eventual serving layer should use official DeepSeek `deepseek-recipe` for protocol, prompt, response, tool-call, thinking, and streaming behavior, with a narrow `ds41f` backend interface below it.
 
 A fully connected native HTTP serving path is not yet claimed until API integration is validated.
 
@@ -195,6 +193,8 @@ Start with `docs/README.md`.
 
 Key documents:
 
+- `docs/runtime-strategy.md`
+- `docs/implementation-plan.md`
 - `docs/architecture.md`
 - `docs/correctness.md`
 - `docs/session-state.md`

@@ -1,10 +1,12 @@
 # ds41f-mlx documentation
 
-This directory is the canonical current-state documentation for the runtime at HEAD.  It is organized by subsystem, not by development chronology.
+This directory is the canonical current-state documentation for the runtime at HEAD.  It is organized by strategy and subsystem, not by development chronology.
 
 ## Canonical current-state docs
 
-- [Architecture](architecture.md) — runtime structure and source layout
+- [Runtime strategy](runtime-strategy.md) — architecture-governance strategy and selection rules
+- [Implementation plan](implementation-plan.md) — milestone roadmap for restoring production runtime architecture
+- [Architecture](architecture.md) — current implementation structure and source layout
 - [Correctness](correctness.md) — authority hierarchy and non-claims
 - [Session state](session-state.md) — persistent, runtime-owned, and call-local state contract
 - [Attention](attention.md) — SWA, compressed producer, reuse consumers, indexing, and production kernels

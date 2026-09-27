@@ -1,6 +1,6 @@
 # Session state contract
 
-The production session owner is `TextBackboneState` together with `TextEncoder`, `TextDecoder`, and `TextGeneration` state machinery.  Validation inventory helpers are not independent production session implementations.
+The current native session owner is `TextBackboneState` together with `TextEncoder`, `TextDecoder`, and `TextGeneration` state machinery. It is the reference state contract for future production architecture unless a documented architecture decision replaces or wraps it. Validation inventory helpers are not independent production session implementations.
 
 ## State classification
 

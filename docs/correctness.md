@@ -10,10 +10,11 @@ The current correctness contract is a hierarchy, not a chronology.
 4. **Imported implementation regression evidence** — historical native evidence is retained locally to protect lifecycle and integration behavior.
 5. **Optimized production implementation** — production kernels and runtime code must conform to the higher authorities and regression evidence.
 
-## Donor roles
+## Donor and implementation roles
 
-- DwarfStar: architecture/design donor only.
-- oMLX: compatibility, implementation, and performance donor only.
+- DwarfStar: production architecture source for the intended prefill direction and a decode candidate; not a correctness authority.
+- oMLX: production architecture candidate for decode, compatibility/performance baseline, and implementation donor; not a correctness authority.
+- Current `native/` implementation: correctness/reference runtime and source of reusable components; not automatically the final production execution architecture.
 - Historical native repository: implementation origin only.  Required source and evidence are imported locally; it is not used for current qualification or as a dependency.
 
 ## Validated domains
@@ -26,7 +27,7 @@ The repository does not currently claim:
 
 - PyTorch RNG bitstream parity for native stochastic sampling.
 - Full MLX-enabled imported-core build validation in this environment.
-- Full native checkpoint execution qualification.
+- Full production-architecture checkpoint execution qualification.
 - Native HTTP serving path qualification.
 - Long-context production qualification.
 - Vision, DSpark/MTP production support, or release readiness unless explicitly added to `qualification.md`.

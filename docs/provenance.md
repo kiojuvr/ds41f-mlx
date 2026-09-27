@@ -40,10 +40,10 @@ test dependency: none
 - `tools/check_native_import_dependencies.py` verifies native source/build/test independence from the historical source repository.
 - `tools/check_repository_self_containment.py` verifies canonical docs, links, provenance paths, and self-containment.
 
-## External donors
+## External architecture and implementation sources
 
-- DwarfStar: architecture/design donor only.
-- oMLX: compatibility/performance/implementation donor only.
+- DwarfStar: production architecture source for intended prefill restoration and a decode candidate; not a correctness authority.
+- oMLX: decode architecture candidate, compatibility/performance baseline, and implementation donor; not a correctness authority.
 - Historical native source: implementation origin and imported regression evidence only.
 
 No donor supersedes the official checkpoint and reviewed official-source semantics.
