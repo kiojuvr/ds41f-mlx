@@ -73,7 +73,7 @@ M2 evidence is classified as follows:
 - **Accepted numerical-boundary evidence**: BF16/FP8/FP4/FP32 tensor boundaries governed by reviewed precision contracts and predeclared ULP/absolute primitive tolerances. These boundaries do not require SHA equality when the contract permits bounded BF16 drift.
 - **Shared-helper-only evidence**: remaining production-facing `OfficialModelMath` seams that reuse reviewed helper arithmetic. These are implementation-scoped evidence and must not be promoted to independent semantic authority without an exact or accepted numerical contract.
 
-The M2 architecture remains unchanged by M4 numerical requalification: harmless bounded numerical drift is not model logic, and bit identity is not required where the reviewed precision contract allows bounded BF16 differences.
+The M2 architecture remains unchanged by M4 numerical requalification: harmless bounded numerical drift is not model logic, and bit identity is not required where the reviewed precision contract allows bounded BF16 differences. Current M4 layer2 review supersedes stale compressed-source evidence that shared the old compressed-KV RMS epsilon or reused compressed-KV block16/E4M3 quantization for Indexer q/k; those records are classified as shared-helper-only/stale until regenerated with independent block32/E8M0 Indexer evidence.
 
 ## Milestone 2 completion determination
 

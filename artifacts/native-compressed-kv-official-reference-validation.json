@@ -183,7 +183,6 @@
       "functions": [
         {
           "name": "fp4_act_quant",
-          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
           "source_lines": [
             184,
             204
@@ -198,7 +197,6 @@
       "functions": [
         {
           "name": "Compressor",
-          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
           "source_lines": [
             429,
             485
@@ -207,7 +205,6 @@
         },
         {
           "name": "Compressor.forward",
-          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
           "source_lines": [
             458,
             485
@@ -216,12 +213,11 @@
         },
         {
           "name": "Attention._compress_kv",
-          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
           "source_lines": [
             739,
             763
           ],
-          "source_sha256": "cf185e9832854ebe927c80eb619ad90b1b6b2603422f12100d6e46cab31a202b"
+          "source_sha256": "fa0b8a602b8d6e200131396219685902c525c48bfb1943740446c242352ea2d9"
         }
       ]
     }
@@ -229,14 +225,15 @@
   "ok": true,
   "operation_contract": {
     "cache_publication": "prefill start_pos=0 publishes first compressed slot exactly",
-    "fp4": "block=16, scale dtype E4M3, scale=E4M3_RNE(max(abs(block),6*2^-9)/6), fp4 E2M1 nearest over {0,.5,1,1.5,2,3,4,6} with sign, dequantized BF16 cache value",
-    "order": "Compressor.forward: wkv/wgate fp32 linears, softmax over ratio, weighted pool, RMSNorm; _compress_kv: compressed-position rotary, fp4_act_quant inplace, publish compress_kv_cache; STOP before Indexer",
+    "fp4": "compressed-KV contract: block=16, scale dtype E4M3, scale=E4M3_RNE(max(abs(block),6*2^-9)/6), fp4 E2M1 nearest over {0,.5,1,1.5,2,3,4,6} with sign, dequantized BF16 cache value",
+    "order": "Compressor.forward: wkv/wgate fp32 linears, softmax over ratio, weighted pool, RMSNorm(norm_eps=1e-20); _compress_kv: compressed-position rotary, fp4_act_quant inplace, publish compress_kv_cache; STOP before Indexer",
     "predeclared_tolerance": {
       "bf16_max_ulp_lte": 1,
       "cache_exact": true,
       "f32_max_abs_lte": 0.0001,
       "fp4_bytes_exact": true
-    }
+    },
+    "rms_norm_eps": 1e-20
   },
   "purpose": "validate Boundary 5a Compressor + compressed-KV publication; stop before Indexer",
   "reference_fixture": "artifacts/compressed-kv-official-reference-fixture.json",

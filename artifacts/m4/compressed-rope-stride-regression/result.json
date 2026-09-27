@@ -1,0 +1,34 @@
+{
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "compress_ratio": 2,
+  "covers": [
+    "compressed KV RoPE",
+    "index K RoPE group positions"
+  ],
+  "digests": {
+    "correct_compressed_rope": "36bcc4facb727d9d537687dd13db763e761195ba34f6f4b9604deffa72ea80f6",
+    "input": "86e6b71558b94203c73cd6950e03547d50397a1b3280d93c04d16b85655fd388",
+    "legacy_wrong_compressed_rope": "04a2659163de95632fd1d19ac1237bd51462935b653dfdcd4c52064bcfd71eb3"
+  },
+  "distinguishes": true,
+  "groups": 4,
+  "layer": 2,
+  "official_contract": "compressed group j uses source token position j*compress_ratio; freqs_cis[:seqlen-seqlen%ratio:ratio], not co[:groups]",
+  "ok": true,
+  "positions": {
+    "correct": [
+      0,
+      2,
+      4,
+      6
+    ],
+    "legacy_wrong": [
+      0,
+      1,
+      2,
+      3
+    ]
+  },
+  "schema": "ds41f.m4.compressed-rope-stride-regression.v1",
+  "sequence": 8
+}
