@@ -7,6 +7,7 @@ This directory is the canonical current-state documentation for the runtime at H
 - [Runtime strategy](runtime-strategy.md) — architecture-governance strategy and selection rules
 - [Implementation plan](implementation-plan.md) — milestone roadmap for restoring production runtime architecture
 - [Milestone 1 architecture audit](milestone-1-architecture-audit.md) — completed architecture restoration inventory
+- [Milestone 2 prefill restoration status](milestone-2-prefill-restoration-status.md) — current DwarfStar-derived prefill implementation blocker and frontier
 - [Architecture](architecture.md) — current implementation structure and source layout
 - [Correctness](correctness.md) — authority hierarchy and non-claims
 - [Session state](session-state.md) — persistent, runtime-owned, and call-local state contract
