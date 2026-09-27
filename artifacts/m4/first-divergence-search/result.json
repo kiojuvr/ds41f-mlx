@@ -1,0 +1,3989 @@
+{
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": {
+    "current_blocker": "layer0 MoE output still differs materially; requires primitive MoE route/shared/routed export to isolate next defect",
+    "current_first_material_boundary": "encoder.layer0.moe_out",
+    "first_confirmed_bug_1": "RMSNorm epsilon mismatch: D helper used 1e-6 from stale fixture; official config/source use 1e-20; fixed in run_native_layer0_25_transformer_entry_validation.rms_model",
+    "first_confirmed_bug_2": "HC post comb axis mismatch: D helper reduced destination axis; official Block.hc_post sums dim=2/source axis; fixed in run_official_hyper_connections_fixture.hc_post"
+  },
+  "comparisons": {
+    "encoder.layer0.attn_in": {
+      "dtype_pair": [
+        "uint16",
+        "uint16"
+      ],
+      "max_abs_diff": 0.0,
+      "mean_abs_diff": 0.0,
+      "mismatched_elements": 0,
+      "sha_equal": true,
+      "shape_pair": [
+        [
+          2,
+          5120
+        ],
+        [
+          2,
+          5120
+        ]
+      ]
+    },
+    "encoder.layer0.attn_kv_quant": {
+      "dtype_pair": [
+        "uint16",
+        "uint16"
+      ],
+      "max_abs_diff": 0.0,
+      "mean_abs_diff": 0.0,
+      "mismatched_elements": 0,
+      "sha_equal": true,
+      "shape_pair": [
+        [
+          2,
+          512
+        ],
+        [
+          2,
+          512
+        ]
+      ]
+    },
+    "encoder.layer0.attn_out": {
+      "dtype_pair": [
+        "uint16",
+        "uint16"
+      ],
+      "max_abs_diff": 0.0,
+      "mean_abs_diff": 0.0,
+      "mismatched_elements": 0,
+      "sha_equal": true,
+      "shape_pair": [
+        [
+          2,
+          5120
+        ],
+        [
+          2,
+          5120
+        ]
+      ]
+    },
+    "encoder.layer0.ffn_in": {
+      "dtype_pair": [
+        "uint16",
+        "uint16"
+      ],
+      "max_abs_diff": 6.103515625e-05,
+      "mean_abs_diff": 1.7881394143159923e-08,
+      "mismatched_elements": 3,
+      "sha_equal": false,
+      "shape_pair": [
+        [
+          2,
+          5120
+        ],
+        [
+          2,
+          5120
+        ]
+      ]
+    },
+    "encoder.layer0.hidden": {
+      "dtype_pair": [
+        "uint16",
+        "uint16"
+      ],
+      "max_abs_diff": 2.03125,
+      "mean_abs_diff": 0.03680700808763504,
+      "mismatched_elements": 37553,
+      "sha_equal": false,
+      "shape_pair": [
+        [
+          2,
+          4,
+          5120
+        ],
+        [
+          2,
+          4,
+          5120
+        ]
+      ]
+    },
+    "encoder.layer0.moe_out": {
+      "dtype_pair": [
+        "uint16",
+        "uint16"
+      ],
+      "max_abs_diff": 0.234375,
+      "mean_abs_diff": 0.02538231573998928,
+      "mismatched_elements": 9612,
+      "sha_equal": false,
+      "shape_pair": [
+        [
+          2,
+          5120
+        ],
+        [
+          2,
+          5120
+        ]
+      ]
+    },
+    "encoder.layer0.post_attn": {
+      "dtype_pair": [
+        "uint16",
+        "uint16"
+      ],
+      "max_abs_diff": 3.0517578125e-05,
+      "mean_abs_diff": 2.2351742678949904e-09,
+      "mismatched_elements": 3,
+      "sha_equal": false,
+      "shape_pair": [
+        [
+          2,
+          4,
+          5120
+        ],
+        [
+          2,
+          4,
+          5120
+        ]
+      ]
+    },
+    "encoder.layer0.pre_mix": {
+      "dtype_pair": [
+        "float32",
+        "float32"
+      ],
+      "max_abs_diff": 2.980232238769531e-07,
+      "mean_abs_diff": 1.2014061212539673e-07,
+      "mismatched_elements": 8,
+      "sha_equal": false,
+      "shape_pair": [
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          4
+        ]
+      ]
+    }
+  },
+  "first_bitwise_difference": "encoder.layer0.post_attn",
+  "first_material_difference_threshold_gt_1e-4": "encoder.layer0.moe_out",
+  "historical_export": {
+    "entries": [
+      {
+        "boundary": "decoder.layer20.attn_core",
+        "bytes": 131072,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer20.attn_core.bin",
+        "raw_sha256": "e1be1aed86e7b0131cac5f646ec27ea1020d6fd383babaa85a2151119d39fd09",
+        "shape": [
+          2,
+          64,
+          512
+        ]
+      },
+      {
+        "boundary": "decoder.layer20.attn_grouped",
+        "bytes": 32768,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer20.attn_grouped.bin",
+        "raw_sha256": "58092d5162f2f18ec15b6cd44ccfd7b3acd50710449b7c618db35558def60c9e",
+        "shape": [
+          2,
+          8192
+        ]
+      },
+      {
+        "boundary": "decoder.layer20.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer20.attn_in.bin",
+        "raw_sha256": "8deca89199a62f3352d827bfe1515f8a15e4a72464b324e6ca89f659c4ef3981",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer20.attn_inverse_rope",
+        "bytes": 131072,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer20.attn_inverse_rope.bin",
+        "raw_sha256": "4217cebb5f4b56bd761efb774072e393477920c81ff2c8595b86e11d13d82cee",
+        "shape": [
+          2,
+          64,
+          512
+        ]
+      },
+      {
+        "boundary": "decoder.layer20.attn_kv",
+        "bytes": 2048,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer20.attn_kv.bin",
+        "raw_sha256": "225ea519a63053dc1966cc60a3caa99265a6c408c9fb35e88488173013f6a4fe",
+        "shape": [
+          2,
+          512
+        ]
+      },
+      {
+        "boundary": "decoder.layer20.attn_linear",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer20.attn_linear.bin",
+        "raw_sha256": "5b937277dbabd3caf537434204cb71450078da8d7b8d78b25917fcca6427d3da",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer20.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer20.attn_out.bin",
+        "raw_sha256": "5b937277dbabd3caf537434204cb71450078da8d7b8d78b25917fcca6427d3da",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer20.attn_q",
+        "bytes": 131072,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer20.attn_q.bin",
+        "raw_sha256": "c1a5df48003fc19fc5317902f14adf107df771a6e30eb89b3d67a06bfdd39baa",
+        "shape": [
+          2,
+          64,
+          512
+        ]
+      },
+      {
+        "boundary": "decoder.layer20.attn_qr",
+        "bytes": 5120,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer20.attn_qr.bin",
+        "raw_sha256": "e3b8cf25cb40f6fa772aa84e539ab7a5ef614662ab1238199d59195cabcace32",
+        "shape": [
+          2,
+          1280
+        ]
+      },
+      {
+        "boundary": "decoder.layer20.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer20.ffn_in.bin",
+        "raw_sha256": "f063368b3275be5cfd67a3dcbca267f20f506f43fa2b1163f069bacba10706e3",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer20.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer20.hidden.bin",
+        "raw_sha256": "663a7e98989b22df85284140edff7bf5840204ac2276554e4e09075841a02566",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer20.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer20.moe_out.bin",
+        "raw_sha256": "1cfd98950bd3fa5ef62288b823a836122b9d726cf40b109c6aa690049a5c098c",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer20.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer20.post_attn.bin",
+        "raw_sha256": "bca44ef6660b3d4d2b0fd35e5280364f5eb545a46ea573e4a8e77dd6f0b6ca52",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer20.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer20.pre_mix.bin",
+        "raw_sha256": "6de7f2eb358c46e816205dec3e62a633b066cdc34fc61ee2916db60bbb659c30",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "decoder.layer21.attn_core",
+        "bytes": 131072,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer21.attn_core.bin",
+        "raw_sha256": "51cc2b100f9dbc58ab420f2ff4356aab2a38c459e339d624e5a7bacffe12d023",
+        "shape": [
+          2,
+          64,
+          512
+        ]
+      },
+      {
+        "boundary": "decoder.layer21.attn_grouped",
+        "bytes": 32768,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer21.attn_grouped.bin",
+        "raw_sha256": "c598ff26f5ca105d5c9d7d5bee00642b591d5fee9a7545519b03f42691555066",
+        "shape": [
+          2,
+          8192
+        ]
+      },
+      {
+        "boundary": "decoder.layer21.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer21.attn_in.bin",
+        "raw_sha256": "c446abaf5221a76e81bf369bdbc092c914022ef11f1688ec37633891f3a534b7",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer21.attn_inverse_rope",
+        "bytes": 131072,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer21.attn_inverse_rope.bin",
+        "raw_sha256": "a73fba2bc7de87dc4bd058f9b73cda9bec6ad398a63670af22a78de8f6656398",
+        "shape": [
+          2,
+          64,
+          512
+        ]
+      },
+      {
+        "boundary": "decoder.layer21.attn_kv",
+        "bytes": 2048,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer21.attn_kv.bin",
+        "raw_sha256": "e2be960403df8a4bb0c215bc1995c688876b2a017fa8f0315af95eaf29a9c638",
+        "shape": [
+          2,
+          512
+        ]
+      },
+      {
+        "boundary": "decoder.layer21.attn_linear",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer21.attn_linear.bin",
+        "raw_sha256": "dd4de16b425043a49ceaf35a625c374abbb45a357fe8d0f294a591ba03290ecf",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer21.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer21.attn_out.bin",
+        "raw_sha256": "dd4de16b425043a49ceaf35a625c374abbb45a357fe8d0f294a591ba03290ecf",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer21.attn_q",
+        "bytes": 131072,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer21.attn_q.bin",
+        "raw_sha256": "9702aad1cc30b275e09a14bfce6ff14bd773ebe777b77ab555ea48e680134602",
+        "shape": [
+          2,
+          64,
+          512
+        ]
+      },
+      {
+        "boundary": "decoder.layer21.attn_qr",
+        "bytes": 5120,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer21.attn_qr.bin",
+        "raw_sha256": "b190b8cbc4adcd0ce9900386db302b8a7050b54b8605167d9771bcc5a33b6e6c",
+        "shape": [
+          2,
+          1280
+        ]
+      },
+      {
+        "boundary": "decoder.layer21.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer21.ffn_in.bin",
+        "raw_sha256": "c302b5dab64b260fa1eb753391106d56725a22164d7ac32e273ef23d871b463a",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer21.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer21.hidden.bin",
+        "raw_sha256": "57ddf70ca0d9ccd24de4a164151a6771c2f4d031147bb217d5ecc56876551c1f",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer21.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer21.moe_out.bin",
+        "raw_sha256": "70d2dd3b13c2dd375a526fad16a72dd40d03749bc0a5daea12ee439f1fd21f5b",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer21.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer21.post_attn.bin",
+        "raw_sha256": "688fe03b38830c84b728c7de7e082d00a798ca795c6567a349292756df863088",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer21.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer21.pre_mix.bin",
+        "raw_sha256": "e1fb889a9c5d2cc7bc3e59192d06d1e51105d75d3713f50d4506eebbec353520",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "decoder.layer22.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer22.attn_in.bin",
+        "raw_sha256": "bc43d2fa347f1bbc93167aa83050011a3c64642090ff3dcaf1e98469710caeb5",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer22.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer22.attn_out.bin",
+        "raw_sha256": "bf91f8da3e0f463634cdad1839b6a811a15f38f68e72f3abdf55a79a69ff30c7",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer22.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer22.ffn_in.bin",
+        "raw_sha256": "7735e6015b1efc8e3823bd8d8a03c73a4ea522e5e1fe623886e0786a9ae0ee16",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer22.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer22.hidden.bin",
+        "raw_sha256": "77abdb7e941f2202f489dcef2a00c48758ed3363d513e8dafff697e626da2ba8",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer22.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer22.moe_out.bin",
+        "raw_sha256": "83a77c6f8de20d446f96fc4ff0aa3c4031d2af44b190014d85ee447580ba9d0d",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer22.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer22.post_attn.bin",
+        "raw_sha256": "f07b423c939aeb2267f70f53b8a5362dce548ddeaaf39e71888319ba099c0a02",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer22.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer22.pre_mix.bin",
+        "raw_sha256": "d1ed2e85e11e96f8ab926e5470134d1da80bf20f218f3a3cc2e652e16fa08de2",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "decoder.layer23.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer23.attn_in.bin",
+        "raw_sha256": "bdaa253526e3da744e89bfb63e4653096bee1735e9e4cf5c6fde3d7d400e00dc",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer23.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer23.attn_out.bin",
+        "raw_sha256": "5be0c1450875cab337049ff55b3b85f74e82279de44842232fdfe3338c8d4f05",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer23.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer23.ffn_in.bin",
+        "raw_sha256": "62f5a6588ff42b53b904550cb68e6fef625282b4e5139666470f2437f168ea8f",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer23.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer23.hidden.bin",
+        "raw_sha256": "ef161b6595c57aee7b75f4b225ce8c08956cebfc8dff98a9b9113066c11e1bcc",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer23.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer23.moe_out.bin",
+        "raw_sha256": "2d9ceaff13e2178b512240da3f6824b7a70ff75fb5d552c553dcb3f5142f33db",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer23.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer23.post_attn.bin",
+        "raw_sha256": "457adbf85c1b621f1a0ab889483627913969f8b35c315e7fd9896853c3353014",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer23.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer23.pre_mix.bin",
+        "raw_sha256": "0f0230617972115ab81a9d243a552754b97d15c597f5c602289ae21ceb0302fc",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "decoder.layer24.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer24.attn_in.bin",
+        "raw_sha256": "d41846a986dde065993419b8217cc546ab3d0ddb0d23f7753cd51eea5553f90d",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer24.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer24.attn_out.bin",
+        "raw_sha256": "8bcc0a2b9d2e2d5be09037146adc22097f7e9d12087860a74422e72b502eed62",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer24.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer24.ffn_in.bin",
+        "raw_sha256": "ee886a3f1e03be22a1c92bd6813555d35d9a2eeb65259b6dd85ee087078285b8",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer24.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer24.hidden.bin",
+        "raw_sha256": "317b73d8c10a6535381cf52f60715978e537c9967667e249640411dc4c9ed38e",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer24.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer24.moe_out.bin",
+        "raw_sha256": "acbbecc4ccb0bfe8e278fdd653ab13d55d896a3219b5981c25ce025577410474",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer24.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer24.post_attn.bin",
+        "raw_sha256": "e11a9d53fac16ba64f03632c0ac569fb813fb65436b72e8b5035f8faa9545774",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer24.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer24.pre_mix.bin",
+        "raw_sha256": "f1932ee02ce411edeb73dbb842aeb6dfc9e4f7bdb0728fa1826c80ddc8d45706",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "decoder.layer25.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer25.attn_in.bin",
+        "raw_sha256": "405652220170b587ed393ffd9ba67d8c01a5b9313a19411f9eef6e37da151b11",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer25.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer25.attn_out.bin",
+        "raw_sha256": "b2c1fd63eec6a7c4eccb3cebfb0a4c9eabd3478fd981c21738a183075e32896e",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer25.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer25.ffn_in.bin",
+        "raw_sha256": "a8eb5d35c371ed44bd628e76937a26296da8fd7e503c7ffb9a26bf4a82f8b577",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer25.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer25.hidden.bin",
+        "raw_sha256": "23978102ff082e5c55c527c5c1b071c0dadff1e6a5925b748ee65b9dc7778b1b",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer25.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer25.moe_out.bin",
+        "raw_sha256": "0d5ce82677974894c0bb190e8e2ca3c730ac8ea149bd0b72658d18c89d3f9f06",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer25.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer25.post_attn.bin",
+        "raw_sha256": "682342fad095b8565f8e7b48d638c9e894e3405013ea24ae848965348504d2df",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer25.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer25.pre_mix.bin",
+        "raw_sha256": "e5bf64b01c1a86c40772ae8a8411ad1726520007587e747257bf5e73bb78e9fb",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "decoder.layer26.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer26.attn_in.bin",
+        "raw_sha256": "c01843fed1ba1d1abd07f31056985fad77f1ab82b55835781df006261481bf32",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer26.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer26.attn_out.bin",
+        "raw_sha256": "88a9f523baf14b7cc453e0097386e0b54b6f3eb57c1503b065b36d8fb8284a56",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer26.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer26.ffn_in.bin",
+        "raw_sha256": "e4a5bcdd767f9fcedc81fa1e9cbb7b9d2bef10ab5638917dd5e054040041829e",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer26.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer26.hidden.bin",
+        "raw_sha256": "c01550764f6cc107dcb78500fbb90b1f90403f7663cc7dfbb46fe663a590940c",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer26.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer26.moe_out.bin",
+        "raw_sha256": "a51ef07a1eb2ef083ebc65d651221ff6b9750e4d77016ba76dfdb99b3ec25401",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer26.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer26.post_attn.bin",
+        "raw_sha256": "3ae4f03dcf852e875519bdd34fc8e4075d81e60812d7e2aa6094e495dbd80424",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer26.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer26.pre_mix.bin",
+        "raw_sha256": "9b0843f6af37d059e69bbf9add86206cb58d229d48f0c0a2fcfb9fb4ce68ed15",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "decoder.layer27.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer27.attn_in.bin",
+        "raw_sha256": "e7a5575ab1d64771bd55e4a1c2fe9dd85f53208ef964b0dceb131193c0373a39",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer27.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer27.attn_out.bin",
+        "raw_sha256": "a8682ef8aab6f41f64ea3bcf89613bbe117b8e88db8c67f57e8dc4ee418919df",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer27.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer27.ffn_in.bin",
+        "raw_sha256": "4d35f4d40d7ab55c95e8c72431865b46a544edfb0e7cc4b01ed7e1dc20281595",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer27.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer27.hidden.bin",
+        "raw_sha256": "02cb884d2880657eaca09e57b6545726d9f56ab3555834916f504ded586fa6d2",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer27.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer27.moe_out.bin",
+        "raw_sha256": "38e4475d220a20248dff0cc7a50c587799fc4fdd470d69f93f9bbd83daa02367",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer27.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer27.post_attn.bin",
+        "raw_sha256": "f0d33a39913cc302984455809e537084574a45c86d141a829cfd522ef74cf468",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer27.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer27.pre_mix.bin",
+        "raw_sha256": "dac9fcd324949ece82b275e1ab0f24745312183e03947fb56409e9b5f6f2b71b",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "decoder.layer28.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer28.attn_in.bin",
+        "raw_sha256": "b40a739503dec1efcc43e8adc3d29f4d0b31c510335bfa8ee67cf1b58a4b6b0d",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer28.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer28.attn_out.bin",
+        "raw_sha256": "10bc68d7619d9e79109ab3b21eb4a7bbb1ddd6f135e2567670a1ccffb72971f8",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer28.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer28.ffn_in.bin",
+        "raw_sha256": "65e739b2243524900f822ae3292d1e3283d02d7ff007e6ad0708310f9d85c930",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer28.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer28.hidden.bin",
+        "raw_sha256": "fe217f80cbe6858b5d45f3576783069b9de0df72b816bbd4e09718bade6031ee",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer28.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer28.moe_out.bin",
+        "raw_sha256": "3a2a2b19267ff224ce6e29c0332ae625249f8f31fb29b411106bf72c54ade8dd",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer28.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer28.post_attn.bin",
+        "raw_sha256": "52fb9a0fd537ba611f16799a5fa513da5fe6abd50df84b87b75ee7810160e434",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer28.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer28.pre_mix.bin",
+        "raw_sha256": "2c1d9bc8c1067104e3b2622c7962e1501b6414309dc3c2e3ec85455441f87402",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "decoder.layer29.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer29.attn_in.bin",
+        "raw_sha256": "956eb5ce06540e6377e9373678c9da616e112a9f5907988e68e7480eb274af24",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer29.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer29.attn_out.bin",
+        "raw_sha256": "44170b83bb52a78b220227da5eef0beea90e06d0f79f760682f83d50f2398a71",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer29.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer29.ffn_in.bin",
+        "raw_sha256": "09ae361dc563649091de8cc1ad5e1b62c7cd2b81b1a74c325f2faa7c2506fcbb",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer29.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer29.hidden.bin",
+        "raw_sha256": "4615e5862ec9a839281f421f71af2748126e280793bc4f7d9d684cc7ea9a43e2",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer29.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer29.moe_out.bin",
+        "raw_sha256": "49412373bb6bcbacc0176ebd4eebb237916d04066113b1c2ffbded2843724688",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer29.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer29.post_attn.bin",
+        "raw_sha256": "3cfc8ed12a3fd05e28c6f58a52e4158b419c3725da772dc876e647b149f9dec2",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer29.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer29.pre_mix.bin",
+        "raw_sha256": "24e588b497b8716413d17eefcc45dc08d017db6510e2f2b1531eb55b0b7800bb",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "decoder.layer30.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer30.attn_in.bin",
+        "raw_sha256": "6a8cb62ab32e44a4f362d09866b214bc3ce56e22b5c0b703ebd0fd4410c14b9c",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer30.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer30.attn_out.bin",
+        "raw_sha256": "b9c547e1d4872fc8ec32a1dfc13927b98785da406b24b68bef6481e02597b34d",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer30.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer30.ffn_in.bin",
+        "raw_sha256": "cc8383e1e5c46ed903c5d0520d2a4d69aeac508cb17dd9b785bca4961862cb0c",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer30.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer30.hidden.bin",
+        "raw_sha256": "51023011a1a5adcd6fcff66744d16aa27ff4ccd27509a515d1354174b0168f78",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer30.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer30.moe_out.bin",
+        "raw_sha256": "7ddf13cdb2a94e4cfc9472faa44d6140293db4c538f4cd69dacbbd9d382b95d1",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer30.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer30.post_attn.bin",
+        "raw_sha256": "0991b5dac4a43ff5bf0dae5d916ed6c2b04b8d7ee88e0d85c31f3cbd8c71bc6d",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer30.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer30.pre_mix.bin",
+        "raw_sha256": "ebb699cc43043cabb675d46d240a013daeb7e293fb1daccdeb2d7f6ac581d66a",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "decoder.layer31.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer31.attn_in.bin",
+        "raw_sha256": "f519b2383e5e91dab040aa05aa140a55890617710038605b7115f496cd53105f",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer31.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer31.attn_out.bin",
+        "raw_sha256": "3f6adda6e938f024ab2669a6096618bad454544c5030f11bb8ac4d811779bf92",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer31.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer31.ffn_in.bin",
+        "raw_sha256": "fa63fad7ce50e4cad954bf111ae614f6a914e878315e9836d8387fd4bac5cb74",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer31.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer31.hidden.bin",
+        "raw_sha256": "5d9341acedf1455e44573e98e7c95c35206456e5c4a4128baba5d3248e7b0817",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer31.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer31.moe_out.bin",
+        "raw_sha256": "dbeadbd9db9dd498add7892dc4fdb2026296ee382c4d9bcb4d6406042ddc8056",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer31.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer31.post_attn.bin",
+        "raw_sha256": "1db67618db236e9cb30917e12391ae9a588e578fc46b8a1e2cc727a05409fa77",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer31.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer31.pre_mix.bin",
+        "raw_sha256": "00d4373bf6495a0e22c7ceea8fa8d955dbbdef28b6cf912211b5ec213c9f053d",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "decoder.layer32.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer32.attn_in.bin",
+        "raw_sha256": "51849cd8734f7f159d7ac3179de4e164f5ec1a5666bbcab72942b8f845893eda",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer32.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer32.attn_out.bin",
+        "raw_sha256": "48ca0d814f4ccab5f2531054fd4695eb6fa791840f8a67f4ed935c48dc6e3d63",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer32.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer32.ffn_in.bin",
+        "raw_sha256": "ab04aefa939a19613b86aed3b6dedf884f43bab7b53cb9b76e423d88b7877724",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer32.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer32.hidden.bin",
+        "raw_sha256": "fc0bd69da5ac6ec4b9a3bb996165aff9e7c17b44bb06d6ec9292b1385c15a24a",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer32.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer32.moe_out.bin",
+        "raw_sha256": "e6dfdc6a62b56fb0f2cec5a276d604c1db998a7c04cacc7ae861a95ae9a83b26",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer32.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer32.post_attn.bin",
+        "raw_sha256": "3796ca1723a94c536c4792da9a003a56ba1fa2eabf8f5a1485aa818f27ce1aaa",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer32.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer32.pre_mix.bin",
+        "raw_sha256": "a47a402b4f41dfe733b374f060c3933af3c75b7dc873bd2ca196f06026ae50bd",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "decoder.layer33.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer33.attn_in.bin",
+        "raw_sha256": "17bcc05890e8750b9fd0cad7116b8c8f39004e50476578b50ddb4606817b842f",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer33.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer33.attn_out.bin",
+        "raw_sha256": "60fe95fc0de9febcbc2e95e76521335f46d39a655333334fb009eab86e31502d",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer33.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer33.ffn_in.bin",
+        "raw_sha256": "2fcdab2a4f742441f117d96f0afff37b9dc5f93829885586554c5561016bcf9f",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer33.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer33.hidden.bin",
+        "raw_sha256": "926be3baf022b18235e9bedd49e838acb0b294391af01e83366279fc787720ca",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer33.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer33.moe_out.bin",
+        "raw_sha256": "de8f779909cab33a8bbb7e359e474cb248e2019812a76627435e92ed0db2c83a",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer33.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer33.post_attn.bin",
+        "raw_sha256": "1fbf1c973a3a4eb3757d35538d21daa15b352334325e9bf25256c0909b9db4eb",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer33.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer33.pre_mix.bin",
+        "raw_sha256": "349295b4e9030330b4bb09cc6b1b490bc7ab4b41dc1258857964a61dcc64d36d",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "decoder.layer34.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer34.attn_in.bin",
+        "raw_sha256": "6fd509aa468fe37a9ec651111ad2542ef08c0acefbca3320f1c4bd2e3c22e6ec",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer34.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer34.attn_out.bin",
+        "raw_sha256": "105bf49375969658691033913f714602f316ca234ada4b6e64a14d85fcc64188",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer34.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer34.ffn_in.bin",
+        "raw_sha256": "872354889eb31dc420fda69ea245a07cd2700861a1b1b7ee85f5192e6396e9fe",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer34.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer34.hidden.bin",
+        "raw_sha256": "2334d14e3d625be3f8aee178e0eb593ff183b76703f7d0504f200e52fed7aa61",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer34.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer34.moe_out.bin",
+        "raw_sha256": "b997810ccd4534546737ab76ecffaaff37f9f64ee35a79fdf089799c52b1c5b9",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer34.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer34.post_attn.bin",
+        "raw_sha256": "08d3bbc0bde123e9d154bd6eb6d8ce279840388d6e8a0c9ab0f3b872c2e03c4c",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer34.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer34.pre_mix.bin",
+        "raw_sha256": "3a4f6a63171dd1d3e51ab8d39d3eaa035199372196515734b3ca79b497bca55a",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "decoder.layer35.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer35.attn_in.bin",
+        "raw_sha256": "f59b144afe95b4457b4dd4b90fb2c5c522cbdda4507988f92612926c47863e24",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer35.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer35.attn_out.bin",
+        "raw_sha256": "ccb9818f1e27a75ac68b7e03a175989a75012375f3fa551d62cba0730c3f58e1",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer35.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer35.ffn_in.bin",
+        "raw_sha256": "2e155451f3537cbb7953b00304576bf6e921dcdbe693422248cf8584054a15a4",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer35.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer35.hidden.bin",
+        "raw_sha256": "296618ae7c113757302c0588df9cefe760864962f60b2b773f60190b33e665c2",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer35.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer35.moe_out.bin",
+        "raw_sha256": "ae13a9a0e17aad9d62d0408b9fac757669d63bbed09c9cd28d008402e5084391",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer35.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer35.post_attn.bin",
+        "raw_sha256": "58c71aa482bc7535ca6ad9fe304c60576a091103068ec85ace4cd29966bcc8a3",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer35.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer35.pre_mix.bin",
+        "raw_sha256": "c2c367110968f5cce2b59b3e2384b4a2ff19be8e367bede04e608e440a96ca75",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "decoder.layer36.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer36.attn_in.bin",
+        "raw_sha256": "c28a5107391a6f1a9c322637ea8a29667b6e7e25196ea12b79f502c4abc66c79",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer36.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer36.attn_out.bin",
+        "raw_sha256": "ef7a661fc7056d0b307988505202e41a70a49f9051e4a6ffdf2cddebac841cde",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer36.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer36.ffn_in.bin",
+        "raw_sha256": "fc74885977bab6bc5eda4a36ebbf89ef0ff3d21c2b4e6efc79d9768ab5fecdb0",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer36.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer36.hidden.bin",
+        "raw_sha256": "6f7e7905d85ddb096b0ba3a0c85a203a5b003f8eb019051af0463b7e105e5ab0",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer36.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer36.moe_out.bin",
+        "raw_sha256": "1fd73518faab9cb2fac8f289191b9e7ca22e2a132ef850a6cd797ada4ea518a9",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer36.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer36.post_attn.bin",
+        "raw_sha256": "8c827a4d7947099ee4b9694e3cd541a6fc04564e6f16b4d60755e9fabe2c3e21",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer36.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer36.pre_mix.bin",
+        "raw_sha256": "0661e6e6deec38c1394c0fa83fcee6eace89b18bbfd08e109eaad822599da7fe",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "decoder.layer37.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer37.attn_in.bin",
+        "raw_sha256": "da8faae06881d0572550f84dff658d8c3a1613e2c176048c4d360aacdd29fe61",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer37.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer37.attn_out.bin",
+        "raw_sha256": "4288bbd5ec3e254d9fac011273887750543b90b360bbc821cda7637be9c07b42",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer37.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer37.ffn_in.bin",
+        "raw_sha256": "2fe4237caea21872d3aa8fde6a23447bb5b2cb256b3a9f46b57482bdfbfa2093",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer37.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer37.hidden.bin",
+        "raw_sha256": "ade4bb30566e7010527b0425b712260b4f4b57887f32e56c6d0a4ad9fd718a38",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer37.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer37.moe_out.bin",
+        "raw_sha256": "e0539cd99e5bc1f956bfa3ae9bf2f1337eb749aa5fe4b20c98c6df16ee219644",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer37.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer37.post_attn.bin",
+        "raw_sha256": "916ba25e6b9604f3d107b82884e215bdefb561247c53971543375451e0dc6ee4",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer37.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer37.pre_mix.bin",
+        "raw_sha256": "b8280962dcc738252894e909fb24ac29f27565f993578ec5e6ffd3cd12f7afc0",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "decoder.layer38.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer38.attn_in.bin",
+        "raw_sha256": "ea7691b3d412d9dc18c936ae9030df3d37bdc27533de4de9161c40a7dbb774b1",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer38.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer38.attn_out.bin",
+        "raw_sha256": "ba0539e669e1ec34eea5009488760a6f57ef0ba0af810d52805d7d00c9975fc4",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer38.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer38.ffn_in.bin",
+        "raw_sha256": "4686e13e9fdb01f8732ed5bbd5c1948a23a898597d0a313ca6446cd3b5a862ab",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer38.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer38.hidden.bin",
+        "raw_sha256": "3e4c10481f7da9c6046a2923750613afd3862e3a0671dac9e9da9aac05a3a1d4",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer38.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer38.moe_out.bin",
+        "raw_sha256": "c5a4aea81682fdd8f1a35b261941b7c6718e83c85f357f857f444dad2ad06d57",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer38.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer38.post_attn.bin",
+        "raw_sha256": "1b914e07a1144e99b31c360419415732bc6e21733172cf5c033d6dd0ef786d79",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer38.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer38.pre_mix.bin",
+        "raw_sha256": "e8ecca53e1e818f7b4135a7131655c4aebda156f9ea1da830a9e00ddebb3acdc",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "decoder.layer39.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer39.attn_in.bin",
+        "raw_sha256": "699c36d9f7de2be656e5a4327f2038ef457ce228948e11c6a7e384be4abeecea",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer39.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer39.attn_out.bin",
+        "raw_sha256": "adb7d2a3c93c9abec360ceee3d8ec4b497079ca084a274d3274c295c1a3032bb",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer39.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer39.ffn_in.bin",
+        "raw_sha256": "7081e644ebf2d598c8fc72c4ab3eeda08fb68783a9dc9e8922474ce889d31070",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer39.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer39.hidden.bin",
+        "raw_sha256": "87c8c03fc2c1b98e85181436a05e00dcd88af06cb6305de2f5bcbb1702ef2228",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer39.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer39.moe_out.bin",
+        "raw_sha256": "882a537f38f2699a18668cf0b1bd859e0e2a4fdeee044152d885d8e5c94f0ae4",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer39.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer39.post_attn.bin",
+        "raw_sha256": "ea2bd1b6c57b8cd7ffb8772ca149c0149d2c1a9e8a77e50a129925f22bb236e1",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.layer39.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.layer39.pre_mix.bin",
+        "raw_sha256": "947e79b6e593e9d5dc4ccd20988fd947918179878d94029ba0f86269c6e84e2b",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "decoder.out.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.out.hidden.bin",
+        "raw_sha256": "87c8c03fc2c1b98e85181436a05e00dcd88af06cb6305de2f5bcbb1702ef2228",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "decoder.out.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/decoder.out.pre_mix.bin",
+        "raw_sha256": "947e79b6e593e9d5dc4ccd20988fd947918179878d94029ba0f86269c6e84e2b",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "encoder.entry.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.entry.hidden.bin",
+        "raw_sha256": "5d0d812064ce2fc25ea149ef428b80354094b902d0212b9077e33d8c3ff087cb",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.entry.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.entry.pre_mix.bin",
+        "raw_sha256": "56e94d4f8d9e543d1260250ae1fdc346aea6fc5468f1a7865e77534e2fce98a1",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "encoder.layer0.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer0.attn_in.bin",
+        "raw_sha256": "19687bf62a8be883721e8661edf0b2328973a9da180d108e37f6db4b97aa81c1",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer0.attn_kv",
+        "bytes": 2048,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer0.attn_kv.bin",
+        "raw_sha256": "e0be81f46ab3f5408ee6fc4cd8e8474001fc04f3c19b8290ecbc8b6b473c416d",
+        "shape": [
+          2,
+          512
+        ]
+      },
+      {
+        "boundary": "encoder.layer0.attn_kv_norm",
+        "bytes": 2048,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer0.attn_kv_norm.bin",
+        "raw_sha256": "0c71dafae86a1a2dd88441c21bcdb1e9ea2a9ca123ef4e794c8dd3e2153be8cc",
+        "shape": [
+          2,
+          512
+        ]
+      },
+      {
+        "boundary": "encoder.layer0.attn_kv_quant",
+        "bytes": 2048,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer0.attn_kv_quant.bin",
+        "raw_sha256": "ab223327bdf97b4ec6081cc4df1ffc45dfd8a87f1e4d23bf79f2a49e75b8b38c",
+        "shape": [
+          2,
+          512
+        ]
+      },
+      {
+        "boundary": "encoder.layer0.attn_o",
+        "bytes": 131072,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer0.attn_o.bin",
+        "raw_sha256": "e8488223fae5041f8cef8402f89c439d837858e18ada4b8336c221f283301d3b",
+        "shape": [
+          2,
+          64,
+          512
+        ]
+      },
+      {
+        "boundary": "encoder.layer0.attn_o_raw",
+        "bytes": 131072,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer0.attn_o_raw.bin",
+        "raw_sha256": "f647d21d13ed07c1f96e331110146a8377de42240c0593272d687c88f560f877",
+        "shape": [
+          2,
+          64,
+          512
+        ]
+      },
+      {
+        "boundary": "encoder.layer0.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer0.attn_out.bin",
+        "raw_sha256": "9b5d407507c73db442921f69ebb200435de7d6fe6537b2107a3db265c97cecbe",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer0.attn_q",
+        "bytes": 131072,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer0.attn_q.bin",
+        "raw_sha256": "1b79300924a9fc983a01f46f14ebdf0577e4d238d1fef2c394381e7690132710",
+        "shape": [
+          2,
+          64,
+          512
+        ]
+      },
+      {
+        "boundary": "encoder.layer0.attn_qb",
+        "bytes": 131072,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer0.attn_qb.bin",
+        "raw_sha256": "c94f1bcd6e4e3f5e7e732d3b59f104061da638a42649474e2898bca4bd577307",
+        "shape": [
+          2,
+          32768
+        ]
+      },
+      {
+        "boundary": "encoder.layer0.attn_qr",
+        "bytes": 5120,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer0.attn_qr.bin",
+        "raw_sha256": "a45805dbb80ff2f7ae0d0dc727cf707724a3e6595db3af043b6bb2a6c18f6571",
+        "shape": [
+          2,
+          1280
+        ]
+      },
+      {
+        "boundary": "encoder.layer0.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer0.ffn_in.bin",
+        "raw_sha256": "91b27d6c4e1c7bea0dfafe0f5758fbe10a1db2515017dc8aad9d278a58442d1a",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer0.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer0.hidden.bin",
+        "raw_sha256": "74bf9fdf2eb4eb4b8fc3702e11a15f7fc069f07a6b91aa0c1ba8c4f4e4ef5169",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer0.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer0.moe_out.bin",
+        "raw_sha256": "2b0188ef74ef563e0af7c65deb7488ec4d10629307f573e413508731ee2646d9",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer0.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer0.post_attn.bin",
+        "raw_sha256": "d9879e5d16649f228f704255777bf1ae9fda3ade0d25f043816ce900b7353bc7",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer0.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer0.pre_mix.bin",
+        "raw_sha256": "2f0fd89ee9394fb27095178e194ec6ae586695c680573bcf8ff80fa0748c045b",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "encoder.layer1.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer1.attn_in.bin",
+        "raw_sha256": "f5c9fdd84bd5837961913f97cd3d3fd72b1461b55bee438c4467d009d8900fcd",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer1.attn_kv",
+        "bytes": 2048,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer1.attn_kv.bin",
+        "raw_sha256": "7f341d19ce0c65aae3d68a1945e5f7e616bb77c9351a8078d3e30e668877b926",
+        "shape": [
+          2,
+          512
+        ]
+      },
+      {
+        "boundary": "encoder.layer1.attn_kv_norm",
+        "bytes": 2048,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer1.attn_kv_norm.bin",
+        "raw_sha256": "f3a130623531d4cdd6d32585f5affbfd905a7092e8d6f5925145aa4774d39414",
+        "shape": [
+          2,
+          512
+        ]
+      },
+      {
+        "boundary": "encoder.layer1.attn_kv_quant",
+        "bytes": 2048,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer1.attn_kv_quant.bin",
+        "raw_sha256": "b00ad01a3bca200c6be43e01deb2c4928f92bed6eea68a54dedf1ec54467b054",
+        "shape": [
+          2,
+          512
+        ]
+      },
+      {
+        "boundary": "encoder.layer1.attn_o",
+        "bytes": 131072,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer1.attn_o.bin",
+        "raw_sha256": "1b21e35c2043441f263efd500e3970a78850af74cd515931e23221738b2de4d8",
+        "shape": [
+          2,
+          64,
+          512
+        ]
+      },
+      {
+        "boundary": "encoder.layer1.attn_o_raw",
+        "bytes": 131072,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer1.attn_o_raw.bin",
+        "raw_sha256": "a9f7b6d885106a57dae9280ed1d03bf393d195d27e42136ba10a144cf138810b",
+        "shape": [
+          2,
+          64,
+          512
+        ]
+      },
+      {
+        "boundary": "encoder.layer1.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer1.attn_out.bin",
+        "raw_sha256": "2ccd4a0cf31adf0099e68614edc19f085f23df19b0c04d64d8ec86fd1d63ae75",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer1.attn_q",
+        "bytes": 131072,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer1.attn_q.bin",
+        "raw_sha256": "233e87b773a9d3a7b500fbd7223b98ef5e2434971a0b9642155d9e9ecbdf581c",
+        "shape": [
+          2,
+          64,
+          512
+        ]
+      },
+      {
+        "boundary": "encoder.layer1.attn_qb",
+        "bytes": 131072,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer1.attn_qb.bin",
+        "raw_sha256": "0146ac08bee104544758b0094dd6ba6caa1c6135ad3c66788ac690094a6f2b81",
+        "shape": [
+          2,
+          32768
+        ]
+      },
+      {
+        "boundary": "encoder.layer1.attn_qr",
+        "bytes": 5120,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer1.attn_qr.bin",
+        "raw_sha256": "2cb15ac5ab9550e6fb4e471b364b700c0e7288c16658fa2586d1d9a0b7e95745",
+        "shape": [
+          2,
+          1280
+        ]
+      },
+      {
+        "boundary": "encoder.layer1.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer1.ffn_in.bin",
+        "raw_sha256": "4ac2940b637f4dd6191e1b4ad9af581387ff95de0710c32c7831437e1f5880fa",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer1.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer1.hidden.bin",
+        "raw_sha256": "6db74e95e1b54e1f90fc6e91d01ff0cd693929530aba759c115a95035693de2b",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer1.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer1.moe_out.bin",
+        "raw_sha256": "191d0a4df298e5899ba95d300e36135b5c0c5010b46a2551e12ae907060d4a2c",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer1.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer1.post_attn.bin",
+        "raw_sha256": "d599ecd7c4928dd5bb01c617721508bcc6b05ca54f13034733058ada0bb86bdd",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer1.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer1.pre_mix.bin",
+        "raw_sha256": "8786881d0915385cc37af7435abeaebbc8400f989a764cde986d7d5109e202a1",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "encoder.layer10.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer10.attn_in.bin",
+        "raw_sha256": "c2305e511ac13a7ad8279f3db5690f0963894128414af68c01cc85e57533a0a7",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer10.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer10.attn_out.bin",
+        "raw_sha256": "53eee533745ea713bc41c442344a2839a0a13b583b96f8736d1113ddebe7e936",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer10.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer10.ffn_in.bin",
+        "raw_sha256": "5c5af7caeb6cd039c8762f5ab8f506d6a213650cbeceda7867605c46bb1ec86d",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer10.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer10.hidden.bin",
+        "raw_sha256": "686c2f3952f2795c3b281122268a275a7728942d80e93f6b52d5aaaa72798ccf",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer10.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer10.moe_out.bin",
+        "raw_sha256": "a5a818ceb9718f364dcd18a80b2536dadcc651b07c33a27c7de2af48f2523f9f",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer10.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer10.post_attn.bin",
+        "raw_sha256": "ba012f4802e12826a7bb1927edefa4aa7be7312de1b1b8bbe8a5ef96d1aa18d0",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer10.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer10.pre_mix.bin",
+        "raw_sha256": "a570d430fc47e23617ab7048e4d3cd32377562ded25b691223d8c73cd955d763",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "encoder.layer11.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer11.attn_in.bin",
+        "raw_sha256": "1ef2a204d6e335381916a468fd49e7cfe88dcee80c17d0fee76a4a83cdaf6e39",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer11.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer11.attn_out.bin",
+        "raw_sha256": "0b3053173bdf1160261e941ea35f25ab1b34d7f313564a0506fff0b0f02644b5",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer11.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer11.ffn_in.bin",
+        "raw_sha256": "2d9e71cf074f6fa8d72fed6e4ab705cb4bad09266608d7dfd2786ee1ca318a35",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer11.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer11.hidden.bin",
+        "raw_sha256": "0344ead4966a9b23ee7e14fb6de9ffc17e26f32e29a894d10801ffbb6244cf4a",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer11.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer11.moe_out.bin",
+        "raw_sha256": "c09a6201bb6eebbd364aab411124f8f947b0a34edf8e8255b9862214d561a4b6",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer11.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer11.post_attn.bin",
+        "raw_sha256": "31280acbcbb21124884ccdbec437b6d28b868edda985a342e27c2c2152ffe850",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer11.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer11.pre_mix.bin",
+        "raw_sha256": "d499836bdc91463fe6ba25a2ff694688d1c4ba3d3e93bce83e4cbfd01f9a210a",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "encoder.layer12.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer12.attn_in.bin",
+        "raw_sha256": "a98524b079e90fc46dd145130efcfec98d79e452ba7fbd0071cb14fc6d16521b",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer12.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer12.attn_out.bin",
+        "raw_sha256": "3dbe01ca21500caaddb18abd2b3632e0d571bea9a955b4de128edf2e7f11cb05",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer12.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer12.ffn_in.bin",
+        "raw_sha256": "3df0ac9dac9b1878570aa1bf2b8a04c271de8c3357e3f6855833f5f6f4f5842b",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer12.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer12.hidden.bin",
+        "raw_sha256": "38fe4d9a974b7f873f746e8efc36932e8d21ddbf2908d04685a449e6bf929ae9",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer12.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer12.moe_out.bin",
+        "raw_sha256": "c374fcc3996bcc055b537110ead67e20a669b81bdcf4a5e650230481f25477a5",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer12.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer12.post_attn.bin",
+        "raw_sha256": "599ec72349921d3120e910652c7e5d91034891150f16b544c5c9aa90c0bf4306",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer12.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer12.pre_mix.bin",
+        "raw_sha256": "07264625881d7578c5cbf0f04105a51daf0e43498cce5d56f4ad002a22c3c9ee",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "encoder.layer13.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer13.attn_in.bin",
+        "raw_sha256": "b80eae4c60e9da38e1df504c0d75f60fc80eb05e6e2b2d00ab20a527d06532be",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer13.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer13.attn_out.bin",
+        "raw_sha256": "97b148dbfaec095f62694538f83677ad681cc390513dc0b7fed26bcee9bf699e",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer13.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer13.ffn_in.bin",
+        "raw_sha256": "905d33f604c1e2f64e35f6f6ac786423d139ae51044b5e293d90547f6ea00f23",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer13.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer13.hidden.bin",
+        "raw_sha256": "a64f65eb8edde941ba0f9abbff178eea5ee9a5e4e698aab362aa435d5336ceec",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer13.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer13.moe_out.bin",
+        "raw_sha256": "5a1652a6a2105c0e5de4ba5fbe98ccac278c48b8b6a06ff3f241a65df07dfe13",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer13.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer13.post_attn.bin",
+        "raw_sha256": "1674b32a095768f6efa1dc313a69a4389dffb02eb2b07f712ab63e7cf9b0b577",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer13.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer13.pre_mix.bin",
+        "raw_sha256": "50e997dc70a7d5d57fbd33151ec795463fe6161a18ce2b85dadfc41aca26e4c5",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "encoder.layer14.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer14.attn_in.bin",
+        "raw_sha256": "c987ef1641067ade375dba70ff0f835839c4348f480125919880c10f2d1d7ae2",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer14.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer14.attn_out.bin",
+        "raw_sha256": "6231321f8cbfead6fafb8c9f7ae222a809d19fb6198bacc929744b046f4e3b11",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer14.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer14.ffn_in.bin",
+        "raw_sha256": "a310e16f22b82a500ade9846afdac0b03295610a5168c63cf686d7c401e3a1cd",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer14.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer14.hidden.bin",
+        "raw_sha256": "d6235e9594a526f4a9c5eb2c0f92e332ee771c159c165616a686954949ea5b5e",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer14.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer14.moe_out.bin",
+        "raw_sha256": "3571d355961ad28e3a0997542bbfcb9e701fd5dddbec4d9dd012daa2c1c394aa",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer14.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer14.post_attn.bin",
+        "raw_sha256": "5adfe871899d3e26ce7a272c54d3d9c772d58c43209b8bfecb7ab6fff470debc",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer14.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer14.pre_mix.bin",
+        "raw_sha256": "64c5c9f2c198b8f0d002b43cede6b743adabe2ec194ee32dfecd68e8a5db620d",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "encoder.layer15.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer15.attn_in.bin",
+        "raw_sha256": "176574da2cab4f60712e68a721d9193f5ce627fd6ce3aa9dc531688d5428f75d",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer15.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer15.attn_out.bin",
+        "raw_sha256": "b1fff78fd8c39b4fb7aad88a2267b7f2f8fc5b45f95a763402893069117f18f4",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer15.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer15.ffn_in.bin",
+        "raw_sha256": "e56ef1d8b1d08b877d7bada6b8fd6737521b3452579cca7ecf9a75d0ac04dd81",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer15.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer15.hidden.bin",
+        "raw_sha256": "ba27dc468a6c505a6ef627d7049457289c10af5e1513a07ed28c838854686a71",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer15.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer15.moe_out.bin",
+        "raw_sha256": "d82aeaeb9e5398eab18dd0ab455da64780d3ba6d2072653d2abbf7b5e009f3c5",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer15.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer15.post_attn.bin",
+        "raw_sha256": "a6d9b2275652431105393ef52441b8e63c116652558eab971ce87734d7c75048",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer15.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer15.pre_mix.bin",
+        "raw_sha256": "6f80e707b3b3691a198694a7a07ac0faa318b3629473aa84c73b74347ba51796",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "encoder.layer16.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer16.attn_in.bin",
+        "raw_sha256": "76b196f312adcebc0da74fd949d97f176d878f78686c2c5621eb759f5c9df7c9",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer16.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer16.attn_out.bin",
+        "raw_sha256": "68a32a061a97865ecdf7c121844cc45ba3e3a4776bf3a946991e01eda800d698",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer16.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer16.ffn_in.bin",
+        "raw_sha256": "6ccdd1dcbbb07f9a8ada54264d1e59bb8bac11f6e548f9d0db776c70f1dd9981",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer16.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer16.hidden.bin",
+        "raw_sha256": "06012a163bb81cc33962c6eff6214943aedafa16fc3f7280461b99ff32e1d005",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer16.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer16.moe_out.bin",
+        "raw_sha256": "98416498290c39589703444e66d0adad4d66ae39ae54924d147addd63b7789e2",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer16.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer16.post_attn.bin",
+        "raw_sha256": "4c5e0de1f2e2631566ca22136cd28881362fe94e0d993fb5879940fa644a6965",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer16.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer16.pre_mix.bin",
+        "raw_sha256": "dd8d73b643f4b1612feac159e54335e7697184fe3a78a1914528def0fa687f87",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "encoder.layer17.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer17.attn_in.bin",
+        "raw_sha256": "bb28ff393bfb26a1c4cf95a37b6023ba86f3dacd664786421ffbd176aaed63bc",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer17.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer17.attn_out.bin",
+        "raw_sha256": "9ca3e789c5779b0850f118022432f3591886bd9ffadf8ccfe1857344193ed1f3",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer17.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer17.ffn_in.bin",
+        "raw_sha256": "e059f93fc40ae72934f86403d703102e616a31cc8207649ebb616086547457ea",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer17.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer17.hidden.bin",
+        "raw_sha256": "4944f2cf285d2d5f19674628c71e7f504711a9cd94d9459bfc97a0ba9b42a2cd",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer17.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer17.moe_out.bin",
+        "raw_sha256": "9516d0a578ffabcaa4592f3cb740106449b323b0923875e8a8c1a11a53c11f50",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer17.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer17.post_attn.bin",
+        "raw_sha256": "09d7ac58181dd31fdc68370611e53454c11413d85d9029629959057049aaebee",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer17.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer17.pre_mix.bin",
+        "raw_sha256": "9e84bdcb2e6eb7fbf14438cef72e2d333f60f361b7118a732bb4e7b8194f0a8c",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "encoder.layer18.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer18.attn_in.bin",
+        "raw_sha256": "556d43c539d889b8df66f369af7eb291287fbbffe074ed8f9f06d4254cfa39d3",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer18.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer18.attn_out.bin",
+        "raw_sha256": "1a61c34ed17f09632d612036b2df94c509bc1b097a6441e73f7d261255638a32",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer18.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer18.ffn_in.bin",
+        "raw_sha256": "f143b8be9f4c2c78d33bf0b420a71b4ee940419095bcabca09ebdb635157da55",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer18.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer18.hidden.bin",
+        "raw_sha256": "e43522da9d259760f6723e9a2920980ffe382a1c36b86fbced56af2d1ef03a77",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer18.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer18.moe_out.bin",
+        "raw_sha256": "a9e5a1dce3522723c233a0fb9509c14eefe799ac1de57abcb6d35882acceb08f",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer18.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer18.post_attn.bin",
+        "raw_sha256": "0207901897820ea1add3649ecc08c600ead4a540df2e6e505b6c5bc0e1e9191f",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer18.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer18.pre_mix.bin",
+        "raw_sha256": "72cfd0f006e5ee115bf1845bcf408071f6fcca7cdce9d2e5a87f137dc8120b55",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "encoder.layer19.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer19.attn_in.bin",
+        "raw_sha256": "c635afcd794d1f22ea2de0bc719f9593d57edb3658a01ca68796fe66108a8f8b",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer19.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer19.attn_out.bin",
+        "raw_sha256": "3cd46c6cbfe64d73f292a1b8cfefe5f238096905a8d76c60714776f1db61fb12",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer19.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer19.ffn_in.bin",
+        "raw_sha256": "be810e4d74237eec6717fd03b4569e5caf50c916f60f6043918f499dbd5fb8a2",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer19.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer19.hidden.bin",
+        "raw_sha256": "d73f08b50dc056c70438eac75c9a02a14650dab5488fc6df29aeda8a7ac357a0",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer19.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer19.moe_out.bin",
+        "raw_sha256": "1de960246f9be722ce9d7158795556892dbe9ee3e8970c7ccff013c72be3ef25",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer19.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer19.post_attn.bin",
+        "raw_sha256": "37895982932eedfb4411c4a4053d21479302a3ad90d477cb1e034c2feab4fdca",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer19.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer19.pre_mix.bin",
+        "raw_sha256": "10f08639b50e1f25d6d4bce9d723e1ed1ce2d6a8a0e027451bef64175bb911dd",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "encoder.layer2.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer2.attn_in.bin",
+        "raw_sha256": "33418cce17a7d23b27640fe1415513b77d359322e5d68b4262592b83e3271201",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer2.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer2.attn_out.bin",
+        "raw_sha256": "8ef63968960339f5cf83280ac83bd7161ae90321eb014388738fd9318e4c8901",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer2.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer2.ffn_in.bin",
+        "raw_sha256": "a572eb8e6e9050b9c880bcafc84568dcdfc31864ed93a2805107f58de165fc57",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer2.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer2.hidden.bin",
+        "raw_sha256": "e8fab8c20da2e877f76f5abaf345152ba0f7b43ac05a422c2d99bb051d4a3249",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer2.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer2.moe_out.bin",
+        "raw_sha256": "c7f6ac74684a77066832f5e07bef5c8393650b6e2b4bf8bea035c5831339b6e5",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer2.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer2.post_attn.bin",
+        "raw_sha256": "c04b2f81b1eb114775247262daa39269547a1d365d20c5363c33f2eca2aba1d0",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer2.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer2.pre_mix.bin",
+        "raw_sha256": "2e8084061a4451cd47d104e3aa3f024a1cc7b7cc8718e18c624651360a190aec",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "encoder.layer3.attn_core",
+        "bytes": 131072,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer3.attn_core.bin",
+        "raw_sha256": "071da3186d7417bdf30d0b7394b6f18d57566fd128d16411e8e11d76f831010a",
+        "shape": [
+          2,
+          64,
+          512
+        ]
+      },
+      {
+        "boundary": "encoder.layer3.attn_grouped",
+        "bytes": 32768,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer3.attn_grouped.bin",
+        "raw_sha256": "0359376cd5eecf3ff1668adc461b982e5931ccb0ddbbd05093d7a69d7ce6b620",
+        "shape": [
+          2,
+          8192
+        ]
+      },
+      {
+        "boundary": "encoder.layer3.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer3.attn_in.bin",
+        "raw_sha256": "57478873188cb97b56170e71a4f9c0e63b243aa0fff0f59a240b1245372521b9",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer3.attn_inverse_rope",
+        "bytes": 131072,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer3.attn_inverse_rope.bin",
+        "raw_sha256": "dbcd34167698fc59d4b99e1593707bb92a8985f8fafc3f742065c1d619d003dd",
+        "shape": [
+          2,
+          64,
+          512
+        ]
+      },
+      {
+        "boundary": "encoder.layer3.attn_kv",
+        "bytes": 2048,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer3.attn_kv.bin",
+        "raw_sha256": "20ee6de8676fbfc4cc76c3154118c09aeff6af2b275b330d97ad49b36be296e1",
+        "shape": [
+          2,
+          512
+        ]
+      },
+      {
+        "boundary": "encoder.layer3.attn_linear",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer3.attn_linear.bin",
+        "raw_sha256": "f506dc94fac9caeb32a00deb6844387078dc16bc47618b4ed9383f0662b18ca9",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer3.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer3.attn_out.bin",
+        "raw_sha256": "f506dc94fac9caeb32a00deb6844387078dc16bc47618b4ed9383f0662b18ca9",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer3.attn_q",
+        "bytes": 131072,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer3.attn_q.bin",
+        "raw_sha256": "feeae1fd302302438d763f8ec62a149f3aa571169d538cdc7b9ac1037686f382",
+        "shape": [
+          2,
+          64,
+          512
+        ]
+      },
+      {
+        "boundary": "encoder.layer3.attn_qr",
+        "bytes": 5120,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer3.attn_qr.bin",
+        "raw_sha256": "2159d0eba13dcc7c9fc97de44488e51122b703f3ae8284cf3c2bddc0ae842421",
+        "shape": [
+          2,
+          1280
+        ]
+      },
+      {
+        "boundary": "encoder.layer3.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer3.ffn_in.bin",
+        "raw_sha256": "eaea0525d0575e7de2a8a6f54e6bd74817e3b6e9daf736847ea8bead2ad8c308",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer3.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer3.hidden.bin",
+        "raw_sha256": "e9ad8480ae51f62f1cdfed84275dfe13871cb307cd9e46e607bf0d4fb6fa3bd4",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer3.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer3.moe_out.bin",
+        "raw_sha256": "afeab41d6b979ff630c81768a8f45348ef4bbe0356f6f7cebf4ee0957cadfc7b",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer3.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer3.post_attn.bin",
+        "raw_sha256": "99e8ed95d7f9a0314663d3703f69e5b7e5b4f1401b615d974facb2ea4d625773",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer3.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer3.pre_mix.bin",
+        "raw_sha256": "7692ff527ad80cb28e4f7a5f36fdba8e47bb2e71e26de1bd87523b3620c0fe87",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "encoder.layer4.attn_core",
+        "bytes": 131072,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer4.attn_core.bin",
+        "raw_sha256": "c3c5c10c0a6b13ca29ce6a597839320e2a981afddb18414c0fe67e15f5ce9cd9",
+        "shape": [
+          2,
+          64,
+          512
+        ]
+      },
+      {
+        "boundary": "encoder.layer4.attn_grouped",
+        "bytes": 32768,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer4.attn_grouped.bin",
+        "raw_sha256": "d9335502109a41fa8087d5f8f8a4bb28e0c16f949263f15e29d73c0fd6ca5e63",
+        "shape": [
+          2,
+          8192
+        ]
+      },
+      {
+        "boundary": "encoder.layer4.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer4.attn_in.bin",
+        "raw_sha256": "a2d5770a7cb714f7935435fa6a7c15ddbb45500b619fbbc8bf42aa920f57bb63",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer4.attn_inverse_rope",
+        "bytes": 131072,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer4.attn_inverse_rope.bin",
+        "raw_sha256": "5c7ee20a63baec1d79223558e9e8166931d10791ac08dc0191d9f098700517ed",
+        "shape": [
+          2,
+          64,
+          512
+        ]
+      },
+      {
+        "boundary": "encoder.layer4.attn_kv",
+        "bytes": 2048,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer4.attn_kv.bin",
+        "raw_sha256": "51c73a84dd8b70f895d4e86bca344b21e5961d5cdede4814c55c7fa139d3b705",
+        "shape": [
+          2,
+          512
+        ]
+      },
+      {
+        "boundary": "encoder.layer4.attn_linear",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer4.attn_linear.bin",
+        "raw_sha256": "b717e71c10ce1eebd5fb40279aa032aca39dec645d67eadb008ef600c08d1e80",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer4.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer4.attn_out.bin",
+        "raw_sha256": "b717e71c10ce1eebd5fb40279aa032aca39dec645d67eadb008ef600c08d1e80",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer4.attn_q",
+        "bytes": 131072,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer4.attn_q.bin",
+        "raw_sha256": "39e13200aa21869e7a82075a1fded0b3ff1602559a7b5724cc4b65e46afb9705",
+        "shape": [
+          2,
+          64,
+          512
+        ]
+      },
+      {
+        "boundary": "encoder.layer4.attn_qr",
+        "bytes": 5120,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer4.attn_qr.bin",
+        "raw_sha256": "c6e67f8afc6ce0c16fe240308815f34e7797cf381ed4c1cfe931a22fce14d01a",
+        "shape": [
+          2,
+          1280
+        ]
+      },
+      {
+        "boundary": "encoder.layer4.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer4.ffn_in.bin",
+        "raw_sha256": "177db109b515b34de052cb48fad50fda087d05239988742a0e9345f963752aee",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer4.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer4.hidden.bin",
+        "raw_sha256": "d133eece3cd0e3bf75dd8cd32dbae4fcea657d9bad936adb43d7bbf438f83a44",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer4.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer4.moe_out.bin",
+        "raw_sha256": "b419a081303322c0bad90fac16f5a201ade0bae21d6a24fcfba3b7128929c75b",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer4.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer4.post_attn.bin",
+        "raw_sha256": "c21e3c694297ad7408e7072cacfd0940d604d5747649213c472623270a302591",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer4.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer4.pre_mix.bin",
+        "raw_sha256": "284413262e92e95ef4b5c29c7c0fa863499f8f2c20fa14db6e6768dd65a1c8ae",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "encoder.layer5.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer5.attn_in.bin",
+        "raw_sha256": "1a8575b1b42d11818f42ce3b236dae0423585dab662d610a10ac28b0bc944540",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer5.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer5.attn_out.bin",
+        "raw_sha256": "23d360a9df3ce42b5ec81f99ab5394f332cfe63f73de937832f59b861d5adb29",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer5.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer5.ffn_in.bin",
+        "raw_sha256": "a630d3f855a47b0e97f25f532ba1ff177d072d520a465e632d6520b643cfd706",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer5.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer5.hidden.bin",
+        "raw_sha256": "23535725cfd97a578a7299b473d80cf1eed093f8cb9ba4038aca81dad4f2b704",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer5.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer5.moe_out.bin",
+        "raw_sha256": "a4f6c6ecf0fb9f284557ab7e028617ff74816c64bbd147df3abbd59b17935810",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer5.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer5.post_attn.bin",
+        "raw_sha256": "29d85df145d589e8386e4dd30c0e303f00071587a6af90b0d7a129cdb27d1849",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer5.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer5.pre_mix.bin",
+        "raw_sha256": "0a9ded3721cb26d8a0c21aad5aa8adbd1db6cc352dc06e3c743413ec01782c3b",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "encoder.layer6.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer6.attn_in.bin",
+        "raw_sha256": "8029f694e73c3e2c693ff6ee7d8c2ec73ac8b971e0ae9099c96b0819a38bd1fb",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer6.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer6.attn_out.bin",
+        "raw_sha256": "a2a1ec4bbb2bf38541d747928fc274a4c074ad248fa53e1023c101a9d4ccaabe",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer6.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer6.ffn_in.bin",
+        "raw_sha256": "d88660d887743e0ba50dc8d831f460e1864d41a4241207d98574d3b3773e63ef",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer6.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer6.hidden.bin",
+        "raw_sha256": "552279ea399996dc37fb9008151d567ff423bc8fb50380bb89878b430b1ed5dc",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer6.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer6.moe_out.bin",
+        "raw_sha256": "ed99701f0ffce31363a3cbb8462c0aa2ab8bb81c232e231b169edadb5c8081e2",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer6.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer6.post_attn.bin",
+        "raw_sha256": "10eb58e2464357262a05ac47d140b97acf3ba0345d2adf655ec2f4296e647568",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer6.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer6.pre_mix.bin",
+        "raw_sha256": "a4d3fc98385ce37fcda49dfb3811dfa852137f44130e33aee2dbf9eaead69c3d",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "encoder.layer7.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer7.attn_in.bin",
+        "raw_sha256": "03d9e1a11828275c2749157ebf9eca653c352a1af8c3e2ed3383bfd78ba9c885",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer7.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer7.attn_out.bin",
+        "raw_sha256": "7e7461153518230cb3b7ab226c79a596f0d0987a4c2a8904b7436cbf21b7f4e1",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer7.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer7.ffn_in.bin",
+        "raw_sha256": "1968bb0daf1b021919852df7c12493fb959c3d473010f4870af6b3e7a8bb2c96",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer7.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer7.hidden.bin",
+        "raw_sha256": "865e57f2da66986d2f24d756c33a47a0a5b892c87884047dd28ecaca76737735",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer7.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer7.moe_out.bin",
+        "raw_sha256": "97ea5e934483555305f1b35032b22ba0261dd497af36ac52a04ac19abc3ab399",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer7.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer7.post_attn.bin",
+        "raw_sha256": "dbf7d4e5b0f123764d1b28ad94ad95a009448a45c8818caf10bdf79675d3c7fe",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer7.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer7.pre_mix.bin",
+        "raw_sha256": "3508c03fc4c57b5ff164afd3383ae261b8bd39edb6e47a1b01d43af3c7daebf8",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "encoder.layer8.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer8.attn_in.bin",
+        "raw_sha256": "751813b45f7cbade341b85a381685d6b56e0c8df13e1eb3a8680170528bf2546",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer8.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer8.attn_out.bin",
+        "raw_sha256": "96824ea8f66fe1ad1bf0819312437d1f459479aed74d390ac2299b8ad6770207",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer8.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer8.ffn_in.bin",
+        "raw_sha256": "a2c9d57fdd73b66bcf3aa79e67013abde8089f5c29b499da959ed30742f70849",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer8.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer8.hidden.bin",
+        "raw_sha256": "8dd910e0b1b1e7050e4a32cf0b8e8243b0b7de3c299318ed124eda50a31b9797",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer8.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer8.moe_out.bin",
+        "raw_sha256": "1932b3c2f55d714fbb9d129fb0fb7cab3fe43a26d4f03695991c2551a211edd8",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer8.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer8.post_attn.bin",
+        "raw_sha256": "3ade2ad5e282db6fa0ddcec895474bccbb12e301a8775f649593239408975a55",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer8.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer8.pre_mix.bin",
+        "raw_sha256": "5b0f9c78037edc1a2a152e0134ae5117af4635bdc67555e7dc137ce120c5556a",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "encoder.layer9.attn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer9.attn_in.bin",
+        "raw_sha256": "cf4ca0890d735b88c6cdbaaae5378eff1704d7b446861b50a358ffa7b4a5261b",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer9.attn_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer9.attn_out.bin",
+        "raw_sha256": "b124df9a6be2357ce8e561389d99f3a4cf4eb339503f89c78c6955effb61b79b",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer9.ffn_in",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer9.ffn_in.bin",
+        "raw_sha256": "91f59c94263bab6cf07e7df7504bd444cea4b89ac5d62cafcb5848e90404da55",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer9.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer9.hidden.bin",
+        "raw_sha256": "222a9f31b810ded8193de8b84d3b982d89eb1b31d62e30a25e8313dbaa3f8aef",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer9.moe_out",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer9.moe_out.bin",
+        "raw_sha256": "584e6bbd9d9781d47aaaaa8bedb3b016cedf3fddc50a7e57bba5f2fd7722d4b3",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer9.post_attn",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer9.post_attn.bin",
+        "raw_sha256": "75341c5031ad534a09685e002e3b5b7d34091312b2808b0b4a2839febeedf51c",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.layer9.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.layer9.pre_mix.bin",
+        "raw_sha256": "303144814573c9c79f7590ccc90b8cc8e2b3c131b5a79dc572ada14c522e61d1",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "encoder.out.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.out.hidden.bin",
+        "raw_sha256": "d73f08b50dc056c70438eac75c9a02a14650dab5488fc6df29aeda8a7ac357a0",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "encoder.out.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/encoder.out.pre_mix.bin",
+        "raw_sha256": "10f08639b50e1f25d6d4bce9d723e1ed1ce2d6a8a0e027451bef64175bb911dd",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "final.collapsed",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/final.collapsed.bin",
+        "raw_sha256": "7f9c32b0e2a52ef579de03412afa717598fce26ac2d696252d0e3ef511e203a6",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "final.norm",
+        "bytes": 20480,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/final.norm.bin",
+        "raw_sha256": "064f4c7ee4876f58629ecb6c32ae4c56a8636cdd7e279ad807925e625af56bd7",
+        "shape": [
+          2,
+          5120
+        ]
+      },
+      {
+        "boundary": "logits",
+        "bytes": 1034240,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/logits.bin",
+        "raw_sha256": "57ce194c581eb9f50599f3fb77408dc3d55797d4935056601652bb87388ccb54",
+        "shape": [
+          2,
+          129280
+        ]
+      },
+      {
+        "boundary": "result.hidden",
+        "bytes": 81920,
+        "dtype": "bfloat16",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/result.hidden.bin",
+        "raw_sha256": "87c8c03fc2c1b98e85181436a05e00dcd88af06cb6305de2f5bcbb1702ef2228",
+        "shape": [
+          2,
+          4,
+          5120
+        ]
+      },
+      {
+        "boundary": "result.pre_mix",
+        "bytes": 32,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/result.pre_mix.bin",
+        "raw_sha256": "947e79b6e593e9d5dc4ccd20988fd947918179878d94029ba0f86269c6e84e2b",
+        "shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "boundary": "result.logits",
+        "bytes": 1034240,
+        "dtype": "float32",
+        "path_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace/result.logits.bin",
+        "raw_sha256": "57ce194c581eb9f50599f3fb77408dc3d55797d4935056601652bb87388ccb54",
+        "shape": [
+          2,
+          129280
+        ]
+      }
+    ],
+    "repository": "/Volumes/SDXC-512/deepseek-v41-flash-mlx",
+    "stdout_tail": "Logs: artifacts/text-backbone/run-20260927-231410-48900\nLoading full backbone layers 0..39 on-demand experts and Engram 1/14 mmap backing\nSEMANTIC_TRACE_EXPORT dir=/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace entries=336\nroute_tie: layer=36 token=0 sixth_id=186 seventh_id=239 sixth_score_bits=1107496437 seventh_score_bits=1107496437\nPASS: 2 token IDs -> encoder 0..19 -> decoder 20..39 -> logits; <=128 chunk/token bits, state, continuation, fork, reset, invalid token rejection; route tie records exact across schedules = 1 (lowest-ID policy remains an external-oracle gap); external oracle/256K NOT qualified.\nCompleted. Chunk/token tensor and state results require review; external oracle and 256K remain unqualified.\n",
+    "trace_dir_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-4c1g0ymg/trace"
+  },
+  "independent_frontier_before_task": "layer0 published local window KV from isolated official fixture; connected Block0 not qualified",
+  "official_source_evidence": {
+    "hc_post": "inference/model.py Block.hc_post lines 963-968: torch.sum(comb.unsqueeze(-1) * residual.unsqueeze(-2), dim=2)",
+    "rms_norm": "inference/model.py ModelArgs norm_eps=1e-20 and Block/RMSNorm use args.norm_eps"
+  },
+  "ok": false,
+  "schema": "ds41f.m4.first-divergence-search.v1"
+}

@@ -46,7 +46,9 @@ def hc_pre(x_bf16,pre):
 
 def hc_post(x_bf16,residual_bf16,post,comb):
     x=bf16_to_f32(x_bf16); residual=bf16_to_f32(residual_bf16)
-    y=post[...,None]*x[:,:,None,:]+np.sum(comb[...,None]*residual[:,:,None,:,:],axis=3,dtype=np.float32)
+    # Official Block.hc_post: comb [source,destination], residual.unsqueeze(-2), sum dim=2.
+    # The output HC axis is the destination axis.
+    y=post[...,None]*x[:,:,None,:]+np.sum(comb[...,None]*residual[:,:,None,:,:],axis=2,dtype=np.float32)
     return f32_to_bf16(y)
 
 def main():

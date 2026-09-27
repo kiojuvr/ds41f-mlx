@@ -192,8 +192,31 @@ Branch classification: **PREFILL MODEL-SEMANTIC DIVERGENCE**.  D is already wron
 
 Quantized physical-state contract artifact: `artifacts/m4/quantized-state-contract/result.json`.  Official source shows compressed KV and index K both call `fp4_act_quant(..., inplace=True)` and then persist the mutated/dequantized tensor in `compress_kv_cache` / `k_cache`.  Therefore their durable cache authority is semantic BF16/dequantized state after the FP4 precision boundary, not physical FP4 bytes+scales; `PrefillContinuationState` does not need to retain codes/scales for these fields based on current source evidence.
 
+## Independent connected Block0 divergence search (2026-09-27)
+
+Artifact: `artifacts/m4/first-divergence-search/result.json`.
+
+A qualification-only historical semantic trace export was added locally to `/Volumes/SDXC-512/deepseek-v41-flash-mlx` behind `DSV41_SEMANTIC_TRACE_DIR`.  It records existing `TraceSink` tensors as binary files plus a JSONL manifest; normal historical behavior is unchanged when the variable is absent.  Raw trace binaries remain untracked; the ds41f artifact records digest/provenance.
+
+Starting frontier was corrected: the prior independent evidence covered isolated layer0 local-window KV publication, not the connected Block0 path.  Comparing historical R against corrected D at connected Block0 coarse boundaries found:
+
+- `encoder.layer0.attn_in`: exact after fixing model RMSNorm eps;
+- `encoder.layer0.attn_kv_quant`: exact;
+- `encoder.layer0.attn_out`: exact;
+- `encoder.layer0.post_attn`: first bitwise difference only, max abs `3.05e-05` (BF16-scale boundary);
+- `encoder.layer0.moe_out`: first material divergence, max abs `0.234375`, mean abs `0.02538`.
+
+Confirmed fixes in this pass:
+
+1. **RMSNorm epsilon**: D helper used stale fixture eps `1e-6`; official config/source use `1e-20`.  Fixed `tools/run_native_layer0_25_transformer_entry_validation.py` to use `rms_norm_eps` for model RMSNorms.
+2. **HC post comb axis**: D helper reduced the destination axis; official `Block.hc_post` uses `torch.sum(..., dim=2)` over the source axis.  Fixed `tools/run_official_hyper_connections_fixture.py::hc_post`.
+
+The current independent frontier is connected Block0 through attention output exactly, with HC post/FFN input only showing tiny BF16-boundary differences.  The next material blocker is layer0 MoE output.  Historical MoE sub-boundary export was started locally, but serial `MoEReference::forward_components` still needs route/shared/routed tensor export to isolate whether the next primitive defect is routing, routed expert execution/reduction, or shared expert execution.
+
+Post-fix prefix triangulation artifact: `artifacts/m4/prefix-triangulation-after-block0-fixes/result.json`.  D0 changed but remains wrong: R0 argmax `11992`, O0 argmax `11992`, D0 argmax `7373`; R0 vs D0 max abs `16.321125`, mean abs `3.017328`.
+
 ## Completion decision
 
-Milestone 4 base target correctness is **INCOMPLETE**.  The confirmed RoPE helper bug is fixed and layer0/layer1 are independently requalified, but prefix-end R0/O0/D0 proves D prefill logits are still materially wrong before handoff.  Phase B must add/use independent per-layer historical/reference checkpoints after layer1 and localize the first divergent layer/operation.
+Milestone 4 base target correctness is **INCOMPLETE**.  The RoPE, RMSNorm-eps, and HC-post helper bugs are fixed, and connected Block0 is independently exact through attention output.  Prefix-end R0/O0/D0 still proves D prefill logits are materially wrong before handoff.  Phase B must continue inside layer0 MoE and export the serial historical route/shared/routed sub-boundaries.
 
 Base target practical performance is **PARTIALLY QUALIFIED BUT NOT COMPLETE**.  P5 proves that no-replay BatchGenerator admission can reach ordinary oMLX MTP-OFF performance, but production decode must not be promoted to this substrate until corrected state satisfies the reviewed correctness contract.

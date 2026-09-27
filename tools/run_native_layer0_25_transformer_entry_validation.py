@@ -21,6 +21,12 @@ ID=128; IH=32; QR=1280
 def cfg(ck): return json.load(open(ck/'config.json'))['text_config']
 def snap(s): return {k:(None if v is None else digest(v)) for k,v in s.items()}
 
+def rms_model(x_bf16, w_bf16, c):
+    from tools.run_official_window_kv_prelude_fixture import bf16_to_f32, f32_to_bf16_rne
+    x=bf16_to_f32(x_bf16); w=bf16_to_f32(w_bf16); eps=np.float32(c.get('rms_norm_eps', 1e-20))
+    var=np.mean(np.square(x,dtype=np.float32),axis=-1,keepdims=True,dtype=np.float32)
+    return f32_to_bf16_rne((x*(1/np.sqrt(var+eps,dtype=np.float32))*w).astype(np.float32))
+
 def rope_params_for_attention(c, layer):
     ratio = int(c['compress_ratios'][layer])
     if ratio:
@@ -41,10 +47,10 @@ def publish_kv_index_candidates(ck,c,layer,x_bf16,qr,shared):
         score=np.zeros_like(kv,np.float32); weights=np.ones((1,groups,1,D),np.float32); pooled=kv.astype(np.float32)
     else:
         wg=np.ascontiguousarray(mmap(shc,f'layers.{layer}.attn.compressor.wgate.weight',np.uint16,(D,DIM))); score=linear_f32(x2,wg); kg=kv.reshape(1,groups,ratio,D); sg=score.reshape(1,groups,ratio,D); ex=np.exp(sg-np.max(sg,axis=2,keepdims=True)); weights=(ex/np.sum(ex,axis=2,keepdims=True)).astype(np.float32); pooled=np.sum(kg*weights,axis=2).reshape(groups,D).astype(np.float32)
-    latent=rms(f32_to_bf16(pooled),nw).reshape(1,groups,D)
+    latent=rms_model(f32_to_bf16(pooled),nw,c).reshape(1,groups,D)
     # index key owner path before compress_kv write
     shi=shard(ck,f'layers.{layer}.attn.indexer.wk.weight'); wk=np.ascontiguousarray(mmap(shi,f'layers.{layer}.attn.indexer.wk.weight',np.uint16,(ID,D))); knw=np.ascontiguousarray(mmap(shi,f'layers.{layer}.attn.indexer.k_norm.weight',np.uint16,(ID,)))
-    wk_out=f32_to_bf16(linear_f32(latent.reshape(groups,D),wk)).reshape(1,groups,ID); kn=rms(wk_out.reshape(groups,ID),knw).reshape(1,groups,ID); krot=rotary_any(kn.reshape(1,groups,1,ID),co[:groups],si[:groups]).reshape(1,groups,ID); kb,ks,index_k=fp4_quant_inplace(krot.reshape(groups,ID)); index_k=index_k.reshape(1,groups,ID); shared['index_k']=index_k
+    wk_out=f32_to_bf16(linear_f32(latent.reshape(groups,D),wk)).reshape(1,groups,ID); kn=rms_model(wk_out.reshape(groups,ID),knw,c).reshape(1,groups,ID); krot=rotary_any(kn.reshape(1,groups,1,ID),co[:groups],si[:groups]).reshape(1,groups,ID); kb,ks,index_k=fp4_quant_inplace(krot.reshape(groups,ID)); index_k=index_k.reshape(1,groups,ID); shared['index_k']=index_k
     # candidate/topk scoring using same qr semantic
     sha=shard(ck,f'layers.{layer}.attn.wq_a.weight'); iwqb=np.ascontiguousarray(mmap(sha,f'layers.{layer}.attn.indexer.wq_b.weight',np.uint8,(IH*ID,QR))); iwqbs=np.ascontiguousarray(mmap(sha,f'layers.{layer}.attn.indexer.wq_b.scale',np.uint8,((IH*ID)//32,QR//32)))
     iq=fp8_linear(qr,iwqb,iwqbs).reshape(1,S,IH,ID); iq=rotary_any(iq,co,si); _,_,iqd=fp4_quant_inplace(iq.reshape(S*IH,ID)); iqd=iqd.reshape(1,S,IH,ID)
@@ -62,9 +68,9 @@ def publish_kv_index_candidates(ck,c,layer,x_bf16,qr,shared):
 def attn(ck,c,layer,h,shared):
     S=h.shape[1]; co,si=attention_freqs(c,layer,S)
     sh=shard(ck,f'layers.{layer}.attn.wq_a.weight'); x2=h.reshape(S,DIM)
-    wqa=np.ascontiguousarray(mmap(sh,f'layers.{layer}.attn.wq_a.weight',np.uint8,(QR,DIM))); wqas=np.ascontiguousarray(mmap(sh,f'layers.{layer}.attn.wq_a.scale',np.uint8,(QR//32,DIM//32))); qnw=np.ascontiguousarray(mmap(sh,f'layers.{layer}.attn.q_norm.weight',np.uint16,(QR,))); qr=rms(fp8_linear(x2,wqa,wqas),qnw)
+    wqa=np.ascontiguousarray(mmap(sh,f'layers.{layer}.attn.wq_a.weight',np.uint8,(QR,DIM))); wqas=np.ascontiguousarray(mmap(sh,f'layers.{layer}.attn.wq_a.scale',np.uint8,(QR//32,DIM//32))); qnw=np.ascontiguousarray(mmap(sh,f'layers.{layer}.attn.q_norm.weight',np.uint16,(QR,))); qr=rms_model(fp8_linear(x2,wqa,wqas),qnw,c)
     wqb=np.ascontiguousarray(mmap(sh,f'layers.{layer}.attn.wq_b.weight',np.uint8,(H*D,QR))); wqbs=np.ascontiguousarray(mmap(sh,f'layers.{layer}.attn.wq_b.scale',np.uint8,((H*D)//32,QR//32))); q=rotary_any(fp8_linear(qr,wqb,wqbs).reshape(1,S,H,D),co,si)
-    wkv=np.ascontiguousarray(mmap(sh,f'layers.{layer}.attn.wkv.weight',np.uint8,(D,DIM))); wkvs=np.ascontiguousarray(mmap(sh,f'layers.{layer}.attn.wkv.scale',np.uint8,(D//32,DIM//32))); kvnw=np.ascontiguousarray(mmap(sh,f'layers.{layer}.attn.kv_norm.weight',np.uint16,(D,))); wkv_out=fp8_linear(x2,wkv,wkvs); wn=rms(wkv_out,kvnw); wrot=rotary_any(wn.reshape(1,S,D),co,si); wq,wsc,wf=act_quant(wrot.reshape(S,D)); window_kv=wf.reshape(1,S,D); wtopk=window_topk(S)
+    wkv=np.ascontiguousarray(mmap(sh,f'layers.{layer}.attn.wkv.weight',np.uint8,(D,DIM))); wkvs=np.ascontiguousarray(mmap(sh,f'layers.{layer}.attn.wkv.scale',np.uint8,(D//32,DIM//32))); kvnw=np.ascontiguousarray(mmap(sh,f'layers.{layer}.attn.kv_norm.weight',np.uint16,(D,))); wkv_out=fp8_linear(x2,wkv,wkvs); wn=rms_model(wkv_out,kvnw,c); wrot=rotary_any(wn.reshape(1,S,D),co,si); wq,wsc,wf=act_quant(wrot.reshape(S,D)); window_kv=wf.reshape(1,S,D); wtopk=window_topk(S)
     prod=None; consumed={}
     if c['compress_ratios'][layer]:
         ratio=c['compress_ratios'][layer]; clen=S//ratio
@@ -89,10 +95,10 @@ def attn(ck,c,layer,h,shared):
 
 def block(ck,c,layer,x,pre,shared):
     S=x.shape[1]; sh=shard(ck,f'layers.{layer}.hc_attn_fn'); afn=np.ascontiguousarray(mmap(sh,f'layers.{layer}.hc_attn_fn',np.float32,(MIX,HCD))); abase=np.ascontiguousarray(mmap(sh,f'layers.{layer}.hc_attn_base',np.float32,(MIX,))); ascale=np.ascontiguousarray(mmap(sh,f'layers.{layer}.hc_attn_scale',np.float32,(3,)))
-    _,_,_,_,attn_pre,attn_post,attn_comb=hc_mixes(x,afn,ascale,abase,float(c['rms_norm_eps']),int(c['hc_sinkhorn_iters']),float(c['hc_eps'])); ah=hc_pre(x,pre); anw=np.ascontiguousarray(mmap(shard(ck,f'layers.{layer}.attn_norm.weight'),f'layers.{layer}.attn_norm.weight',np.uint16,(DIM,))); attn_in=rms(ah.reshape(S,DIM),anw).reshape(1,S,DIM)
+    _,_,_,_,attn_pre,attn_post,attn_comb=hc_mixes(x,afn,ascale,abase,float(c['rms_norm_eps']),int(c['hc_sinkhorn_iters']),float(c['hc_eps'])); ah=hc_pre(x,pre); anw=np.ascontiguousarray(mmap(shard(ck,f'layers.{layer}.attn_norm.weight'),f'layers.{layer}.attn_norm.weight',np.uint16,(DIM,))); attn_in=rms_model(ah.reshape(S,DIM),anw,c).reshape(1,S,DIM)
     ap=attn(ck,c,layer,attn_in,shared); x_attn=hc_post(ap['attention_output'],x,attn_post,attn_comb)
     fsh=shard(ck,f'layers.{layer}.hc_ffn_fn'); ffn=np.ascontiguousarray(mmap(fsh,f'layers.{layer}.hc_ffn_fn',np.float32,(MIX,HCD))); fbase=np.ascontiguousarray(mmap(fsh,f'layers.{layer}.hc_ffn_base',np.float32,(MIX,))); fscale=np.ascontiguousarray(mmap(fsh,f'layers.{layer}.hc_ffn_scale',np.float32,(3,)))
-    _,_,_,_,ffn_pre,ffn_post,ffn_comb=hc_mixes(x_attn,ffn,fscale,fbase,float(c['rms_norm_eps']),int(c['hc_sinkhorn_iters']),float(c['hc_eps'])); fh=hc_pre(x_attn,attn_pre); fnw=np.ascontiguousarray(mmap(shard(ck,f'layers.{layer}.ffn_norm.weight'),f'layers.{layer}.ffn_norm.weight',np.uint16,(DIM,))); moe_in=rms(fh.reshape(S,DIM),fnw).reshape(1,S,DIM); moe=moe_layer(ck,c,layer,moe_in); xout=hc_post(moe['final'],x_attn,ffn_post,ffn_comb)
+    _,_,_,_,ffn_pre,ffn_post,ffn_comb=hc_mixes(x_attn,ffn,fscale,fbase,float(c['rms_norm_eps']),int(c['hc_sinkhorn_iters']),float(c['hc_eps'])); fh=hc_pre(x_attn,attn_pre); fnw=np.ascontiguousarray(mmap(shard(ck,f'layers.{layer}.ffn_norm.weight'),f'layers.{layer}.ffn_norm.weight',np.uint16,(DIM,))); moe_in=rms_model(fh.reshape(S,DIM),fnw,c).reshape(1,S,DIM); moe=moe_layer(ck,c,layer,moe_in); xout=hc_post(moe['final'],x_attn,ffn_post,ffn_comb)
     return {'attention_input':attn_in,'attention_output':ap['attention_output'],'x_after_attn':x_attn,'moe_input':moe_in,'moe':moe,'full_moe_output':moe['final'],'x_out':xout,'ffn_pre':ffn_pre,'attn_path':ap,'window_kv_prelude':ap.get('window_kv_prelude')}
 
 def main():

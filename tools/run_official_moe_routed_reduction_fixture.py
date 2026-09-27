@@ -12,8 +12,10 @@ def expert_parts(x_bf16,w1,s1,w2,s2,w3,s3,limit,weight=None):
     gate=fp4_linear(x_bf16,w1,s1,DIM); up=fp4_linear(x_bf16,w3,s3,DIM)
     gate_cl=np.minimum(gate,np.float32(limit)).astype(np.float32); up_cl=np.clip(up,-np.float32(limit),np.float32(limit)).astype(np.float32)
     act=silu(gate_cl); prod=(act*up_cl).astype(np.float32)
-    weighted=prod if weight is None else (prod*np.float32(weight)).astype(np.float32)
-    mid=f32_to_bf16(weighted); out=f32_to_bf16(fp4_linear(mid,w2,s2,INTER))
+    mid=f32_to_bf16(prod); out_f32=fp4_linear(mid,w2,s2,INTER)
+    if weight is not None:
+        out_f32=(out_f32*np.float32(weight)).astype(np.float32)
+    out=f32_to_bf16(out_f32)
     return gate,up,act,prod,mid,out
 
 def build(ck:Path):
