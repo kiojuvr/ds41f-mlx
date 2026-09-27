@@ -7,16 +7,15 @@ used only as a qualification oracle because it executes token-serial/chunk,
 continuation, fork, reset, state, Engram, compressor/index lifecycle checks on
 real official-checkpoint tokens.
 
-Current limitation: the retained historical CLI reports PASS/FAIL and lifecycle
-coverage but does not export the final logits bytes/digest.  Therefore this tool
-records usable independent lifecycle evidence for [0,3,15] and deliberately
-leaves the M4 full-logits digest gate incomplete until a digest-exporting oracle
-entry point is added.
+The historical test has an opt-in `DSV41_ORACLE_LOGITS_OUT` export hook for
+this qualification task.  Normal historical test behavior is unchanged unless
+that environment variable is set.
 """
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import subprocess
@@ -57,35 +56,56 @@ def main() -> int:
         "oracle_logits_digest": None,
         "digest_gate_complete": False,
         "match": None,
-        "limitation": "historical retained CLI does not export final logits bytes/digest; it only proves independent token-serial/chunk continuation/state exactness for the supplied token sequence",
+        "oracle_export_policy": "opt-in DSV41_ORACLE_LOGITS_OUT binary float32 logits export; historical runtime remains qualification-only",
     }
     if not args.skip_run:
-        with tempfile.NamedTemporaryFile("w", delete=False) as f:
-            f.write("0 3 15\n")
-            token_file = f.name
-        env = os.environ.copy()
-        env.update({"TOKENS_FILE": token_file, "CHECKPOINT": args.checkpoint})
-        start = time.perf_counter()
-        proc = subprocess.run(
-            ["bash", "tools/benchmark/run_text_backbone_reference.sh"],
-            cwd=hist,
-            env=env,
-            text=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            timeout=1800,
-        )
-        rec["historical_run"] = {
-            "returncode": proc.returncode,
-            "elapsed_s": time.perf_counter() - start,
-            "stdout_tail": proc.stdout[-4000:],
-            "pass_lifecycle": proc.returncode == 0 and "PASS: 3 token IDs -> encoder 0..19 -> decoder 20..39 -> logits" in proc.stdout,
-        }
-        # Extract run dir from first line: Logs: artifacts/text-backbone/run-...
-        for line in proc.stdout.splitlines():
-            if line.startswith("Logs: "):
-                rec["historical_run"]["artifact_dir"] = str(hist / line.split("Logs: ", 1)[1])
-                break
+        with tempfile.TemporaryDirectory() as td:
+            tmpdir = Path(td)
+            token_path = tmpdir / "tokens.txt"
+            logits_path = tmpdir / "logits.bin"
+            token_path.write_text("0 3 15\n")
+            env = os.environ.copy()
+            env.update({"TOKENS_FILE": str(token_path), "CHECKPOINT": args.checkpoint, "DSV41_ORACLE_LOGITS_OUT": str(logits_path)})
+            start = time.perf_counter()
+            proc = subprocess.run(
+                ["bash", "tools/benchmark/run_text_backbone_reference.sh"],
+                cwd=hist,
+                env=env,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                timeout=1800,
+            )
+            logits_bytes = logits_path.read_bytes() if logits_path.exists() else b""
+            rec["historical_run"] = {
+                "returncode": proc.returncode,
+                "elapsed_s": time.perf_counter() - start,
+                "stdout_tail": proc.stdout[-4000:],
+                "pass_lifecycle": proc.returncode == 0 and "PASS: 3 token IDs -> encoder 0..19 -> decoder 20..39 -> logits" in proc.stdout,
+            }
+            if logits_bytes:
+                import numpy as np
+                arr = np.frombuffer(logits_bytes, dtype=np.float32)
+                rec["oracle_logits_digest"] = hashlib.sha256(logits_bytes).hexdigest()
+                rec["oracle_logits"] = {
+                    "shape": [1, int(arr.size)],
+                    "dtype": "float32",
+                    "bytes": len(logits_bytes),
+                    "argmax": int(arr.argmax()),
+                    "max": float(arr.max()),
+                    "anchors": {str(i): float(arr[i]) for i in [0, 1, 15, 266, 11992] if i < arr.size},
+                    "export_source": "DSV41_ORACLE_LOGITS_OUT opt-in instrumentation in historical tests/attention/test_text_backbone.cpp",
+                }
+                rec["digest_gate_complete"] = True
+                rec["match"] = rec["oracle_logits_digest"] == rec["production_digest_to_qualify"]
+            # Extract run dir from first line: Logs: artifacts/text-backbone/run-...
+            for line in proc.stdout.splitlines():
+                if line.startswith("Logs: "):
+                    rec["historical_run"]["artifact_dir"] = str(hist / line.split("Logs: ", 1)[1])
+                    break
+            out.write_text(json.dumps(rec, indent=2, sort_keys=True) + "\n")
+            print(out)
+            return 0 if proc.returncode == 0 else 1
     out.write_text(json.dumps(rec, indent=2, sort_keys=True) + "\n")
     print(out)
     return 0 if rec.get("historical_run", {}).get("returncode", 0) == 0 else 1

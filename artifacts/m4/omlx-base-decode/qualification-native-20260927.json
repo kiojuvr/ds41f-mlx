@@ -1,0 +1,3320 @@
+{
+  "admission": {
+    "cache_layers": 40,
+    "dtype_layout_conversions": [
+      "Engram slot6 history regenerated from committed token_ids using oMLX NgramHash only; no model/prompt forward replay",
+      "layer0.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer0.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer1.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer1.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer2.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer2.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "source2.compressed_kv: uint16 BF16 bits -> mx.bfloat16",
+      "source2.compressed_kv: pack_activation(bits=4, group_size=16, e4m3_scale=True)",
+      "source2.index_k: uint16 BF16 bits -> mx.bfloat16",
+      "source2.index_k: pack_activation(bits=4, group_size=32, e4m3_scale=False)",
+      "layer3.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer3.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer4.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer4.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer5.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer5.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer6.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer6.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer7.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer7.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer8.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer8.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "source8.compressed_kv: uint16 BF16 bits -> mx.bfloat16",
+      "source8.compressed_kv: pack_activation(bits=4, group_size=16, e4m3_scale=True)",
+      "source8.index_k: uint16 BF16 bits -> mx.bfloat16",
+      "source8.index_k: pack_activation(bits=4, group_size=32, e4m3_scale=False)",
+      "layer9.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer9.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer10.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer10.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer11.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer11.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer12.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer12.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer13.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer13.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer14.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer14.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "source14.compressed_kv: uint16 BF16 bits -> mx.bfloat16",
+      "source14.compressed_kv: pack_activation(bits=4, group_size=16, e4m3_scale=True)",
+      "source14.index_k: uint16 BF16 bits -> mx.bfloat16",
+      "source14.index_k: pack_activation(bits=4, group_size=32, e4m3_scale=False)",
+      "layer15.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer15.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer16.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer16.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer17.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer17.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer18.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer18.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer19.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer19.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer20.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer20.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "source20.compressed_kv: uint16 BF16 bits -> mx.bfloat16",
+      "source20.compressed_kv: pack_activation(bits=4, group_size=16, e4m3_scale=True)",
+      "source20.index_k: uint16 BF16 bits -> mx.bfloat16",
+      "source20.index_k: pack_activation(bits=4, group_size=32, e4m3_scale=False)",
+      "layer21.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer21.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer22.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer22.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer23.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer23.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer24.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer24.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer25.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer25.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer26.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer26.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer27.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer27.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer28.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer28.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer29.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer29.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer30.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer30.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer31.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer31.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer32.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer32.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer33.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer33.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer34.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer34.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer35.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer35.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer36.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer36.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer37.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer37.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer38.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer38.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)",
+      "layer39.window_kv: uint16 BF16 bits -> mx.bfloat16",
+      "layer39.window_kv: pack_activation(bits=8, group_size=32, e4m3_scale=False)"
+    ],
+    "engram_history_shape": [
+      1,
+      3
+    ],
+    "no_prompt_replay": true,
+    "schema": "ds41f.m4.omlx-admission.v1",
+    "slot_summaries": [
+      {
+        "compress_ratio": 0,
+        "layer": 0,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            3
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 1,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 2,
+        "layer": 2,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            1,
+            288
+          ],
+          "3": [
+            1,
+            1,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 3,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 4,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 5,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 6,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 7,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 2,
+        "layer": 8,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            1,
+            288
+          ],
+          "3": [
+            1,
+            1,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 9,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 10,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 11,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 12,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 13,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 2,
+        "layer": 14,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            1,
+            288
+          ],
+          "3": [
+            1,
+            1,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 15,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 16,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 17,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 18,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 19,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 1,
+        "layer": 20,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            2,
+            288
+          ],
+          "3": [
+            1,
+            2,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 21,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 22,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 23,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 24,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 25,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 26,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 27,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 28,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 29,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 30,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 31,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 32,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 33,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 34,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 35,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 36,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 37,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 38,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "compress_ratio": 0,
+        "layer": 39,
+        "offset": 2,
+        "slot_dtypes": {
+          "0": "mlx.core.int32",
+          "1": "mlx.core.uint8",
+          "2": "mlx.core.uint8",
+          "3": "mlx.core.uint8",
+          "4": "mlx.core.bfloat16",
+          "5": "mlx.core.bfloat16",
+          "6": "mlx.core.int64"
+        },
+        "slot_shapes": {
+          "0": [
+            1
+          ],
+          "1": [
+            1,
+            2,
+            528
+          ],
+          "2": [
+            1,
+            0,
+            288
+          ],
+          "3": [
+            1,
+            0,
+            68
+          ],
+          "4": [
+            1,
+            0,
+            512
+          ],
+          "5": [
+            1,
+            0,
+            512
+          ],
+          "6": [
+            1,
+            0
+          ]
+        }
+      }
+    ],
+    "token_frontier": 2,
+    "transient_state_policy": {
+      "candidates_by_source[20]": "validated-present; oMLX regenerates candidates transiently inside Attention/Indexer target forward from admitted source@20 index state",
+      "field_ownership/source_generation_order": "validated at admission; layer/source order is fixed by oMLX model config",
+      "shared_publications": "not persisted as cache authority; per-forward oMLX shared dict is rebuilt from admitted cache slots",
+      "topk_by_generation": "validated-present for M2 handoff; oMLX regenerates top-k/index selections transiently from admitted compressed/index state"
+    }
+  },
+  "all_gates_passed": false,
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "continuation": {
+    "final_frontier": 6,
+    "monotonic_offsets": true,
+    "reports": [
+      {
+        "cache_offsets": null,
+        "committed": true,
+        "elapsed_s": 2.630205208028201,
+        "frontier_after": 4,
+        "frontier_before": 3,
+        "hot_path_synchronizing_offset_reads": 0,
+        "logits_dtype": "mlx.core.float32",
+        "logits_shape": [
+          1,
+          1,
+          129280
+        ],
+        "state_changed": {},
+        "token": 16
+      },
+      {
+        "cache_offsets": null,
+        "committed": true,
+        "elapsed_s": 2.6290640420047566,
+        "frontier_after": 5,
+        "frontier_before": 4,
+        "hot_path_synchronizing_offset_reads": 0,
+        "logits_dtype": "mlx.core.float32",
+        "logits_shape": [
+          1,
+          1,
+          129280
+        ],
+        "state_changed": {},
+        "token": 17
+      },
+      {
+        "cache_offsets": null,
+        "committed": true,
+        "elapsed_s": 2.6937872919952497,
+        "frontier_after": 6,
+        "frontier_before": 5,
+        "hot_path_synchronizing_offset_reads": 0,
+        "logits_dtype": "mlx.core.float32",
+        "logits_shape": [
+          1,
+          1,
+          129280
+        ],
+        "state_changed": {},
+        "token": 18
+      }
+    ],
+    "same_session_cache_objects": true,
+    "state_inspection": {
+      "all_offsets_match_cpu_frontier": true,
+      "cache_offsets": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "cpu_frontier": 6,
+      "engram_history_shape": [
+        1,
+        3
+      ],
+      "schema": "ds41f.m4.omlx-state-inspection.v1",
+      "source_state_shapes": {
+        "14": {
+          "compressed": [
+            1,
+            3,
+            288
+          ],
+          "index": [
+            1,
+            3,
+            68
+          ],
+          "offset": 6,
+          "pending_gate": [
+            1,
+            0,
+            512
+          ],
+          "pending_kv": [
+            1,
+            0,
+            512
+          ]
+        },
+        "2": {
+          "compressed": [
+            1,
+            3,
+            288
+          ],
+          "index": [
+            1,
+            3,
+            68
+          ],
+          "offset": 6,
+          "pending_gate": [
+            1,
+            0,
+            512
+          ],
+          "pending_kv": [
+            1,
+            0,
+            512
+          ]
+        },
+        "20": {
+          "compressed": [
+            1,
+            6,
+            288
+          ],
+          "index": [
+            1,
+            6,
+            68
+          ],
+          "offset": 6,
+          "pending_gate": [
+            1,
+            0,
+            512
+          ],
+          "pending_kv": [
+            1,
+            0,
+            512
+          ]
+        },
+        "8": {
+          "compressed": [
+            1,
+            3,
+            288
+          ],
+          "index": [
+            1,
+            3,
+            68
+          ],
+          "offset": 6,
+          "pending_gate": [
+            1,
+            0,
+            512
+          ],
+          "pending_kv": [
+            1,
+            0,
+            512
+          ]
+        }
+      },
+      "synchronizing_offset_reads": 40
+    }
+  },
+  "decode_tokens": [
+    15,
+    16,
+    17,
+    18
+  ],
+  "dspark_mtp_attachment_boundary": {
+    "enabled_now": false,
+    "mtp_cache_owner_future": "language_model.make_mtp_cache()/DSpark stage cache",
+    "rollback_boundary_future": "same cache reference/frontier transaction plus oMLX mtp_partial_rollback for verify blocks",
+    "target_cache_authority": "OMLXDecodeSession.cache DeepseekV41Cache[40]",
+    "target_hidden_needed": "LanguageModel._forward(return_dspark_hidden=True) after base gates"
+  },
+  "elapsed_total_s": 267.68021600000793,
+  "engram": {
+    "history_shape_after_admission": [
+      1,
+      3
+    ],
+    "history_shape_after_decode": [
+      1,
+      3
+    ],
+    "prompt_model_replay_used": false,
+    "ssd_backed_required": true,
+    "store_identity": {
+      "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+      "storage_policy": "SSD-backed model-static Engram tables"
+    }
+  },
+  "failure_atomicity": {
+    "after": {
+      "frontier": 6,
+      "history_shape": [
+        1,
+        3
+      ],
+      "inspection": {
+        "all_offsets_match_cpu_frontier": true,
+        "cache_offsets": [
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6
+        ],
+        "cpu_frontier": 6,
+        "engram_history_shape": [
+          1,
+          3
+        ],
+        "schema": "ds41f.m4.omlx-state-inspection.v1",
+        "source_state_shapes": {
+          "14": {
+            "compressed": [
+              1,
+              3,
+              288
+            ],
+            "index": [
+              1,
+              3,
+              68
+            ],
+            "offset": 6,
+            "pending_gate": [
+              1,
+              0,
+              512
+            ],
+            "pending_kv": [
+              1,
+              0,
+              512
+            ]
+          },
+          "2": {
+            "compressed": [
+              1,
+              3,
+              288
+            ],
+            "index": [
+              1,
+              3,
+              68
+            ],
+            "offset": 6,
+            "pending_gate": [
+              1,
+              0,
+              512
+            ],
+            "pending_kv": [
+              1,
+              0,
+              512
+            ]
+          },
+          "20": {
+            "compressed": [
+              1,
+              6,
+              288
+            ],
+            "index": [
+              1,
+              6,
+              68
+            ],
+            "offset": 6,
+            "pending_gate": [
+              1,
+              0,
+              512
+            ],
+            "pending_kv": [
+              1,
+              0,
+              512
+            ]
+          },
+          "8": {
+            "compressed": [
+              1,
+              3,
+              288
+            ],
+            "index": [
+              1,
+              3,
+              68
+            ],
+            "offset": 6,
+            "pending_gate": [
+              1,
+              0,
+              512
+            ],
+            "pending_kv": [
+              1,
+              0,
+              512
+            ]
+          }
+        },
+        "synchronizing_offset_reads": 40
+      }
+    },
+    "before": {
+      "frontier": 6,
+      "history_shape": [
+        1,
+        3
+      ],
+      "inspection": {
+        "all_offsets_match_cpu_frontier": true,
+        "cache_offsets": [
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6
+        ],
+        "cpu_frontier": 6,
+        "engram_history_shape": [
+          1,
+          3
+        ],
+        "schema": "ds41f.m4.omlx-state-inspection.v1",
+        "source_state_shapes": {
+          "14": {
+            "compressed": [
+              1,
+              3,
+              288
+            ],
+            "index": [
+              1,
+              3,
+              68
+            ],
+            "offset": 6,
+            "pending_gate": [
+              1,
+              0,
+              512
+            ],
+            "pending_kv": [
+              1,
+              0,
+              512
+            ]
+          },
+          "2": {
+            "compressed": [
+              1,
+              3,
+              288
+            ],
+            "index": [
+              1,
+              3,
+              68
+            ],
+            "offset": 6,
+            "pending_gate": [
+              1,
+              0,
+              512
+            ],
+            "pending_kv": [
+              1,
+              0,
+              512
+            ]
+          },
+          "20": {
+            "compressed": [
+              1,
+              6,
+              288
+            ],
+            "index": [
+              1,
+              6,
+              68
+            ],
+            "offset": 6,
+            "pending_gate": [
+              1,
+              0,
+              512
+            ],
+            "pending_kv": [
+              1,
+              0,
+              512
+            ]
+          },
+          "8": {
+            "compressed": [
+              1,
+              3,
+              288
+            ],
+            "index": [
+              1,
+              3,
+              68
+            ],
+            "offset": 6,
+            "pending_gate": [
+              1,
+              0,
+              512
+            ],
+            "pending_kv": [
+              1,
+              0,
+              512
+            ]
+          }
+        },
+        "synchronizing_offset_reads": 40
+      }
+    },
+    "passed": true
+  },
+  "first_token": {
+    "logits_digest": "bbc86311483405ba433a11c3b77eddc9161aed5f74bc3667a3b67929c701c7ce",
+    "matches_reference_digest": null,
+    "qualification_status": "NOT_QUALIFIED: independent first-token continuation logits oracle skipped",
+    "reference_full_trajectory_logits_digest": null,
+    "state_inspection": {
+      "all_offsets_match_cpu_frontier": true,
+      "cache_offsets": [
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3
+      ],
+      "cpu_frontier": 3,
+      "engram_history_shape": [
+        1,
+        3
+      ],
+      "schema": "ds41f.m4.omlx-state-inspection.v1",
+      "source_state_shapes": {
+        "14": {
+          "compressed": [
+            1,
+            1,
+            288
+          ],
+          "index": [
+            1,
+            1,
+            68
+          ],
+          "offset": 3,
+          "pending_gate": [
+            1,
+            1,
+            512
+          ],
+          "pending_kv": [
+            1,
+            1,
+            512
+          ]
+        },
+        "2": {
+          "compressed": [
+            1,
+            1,
+            288
+          ],
+          "index": [
+            1,
+            1,
+            68
+          ],
+          "offset": 3,
+          "pending_gate": [
+            1,
+            1,
+            512
+          ],
+          "pending_kv": [
+            1,
+            1,
+            512
+          ]
+        },
+        "20": {
+          "compressed": [
+            1,
+            3,
+            288
+          ],
+          "index": [
+            1,
+            3,
+            68
+          ],
+          "offset": 3,
+          "pending_gate": [
+            1,
+            0,
+            512
+          ],
+          "pending_kv": [
+            1,
+            0,
+            512
+          ]
+        },
+        "8": {
+          "compressed": [
+            1,
+            1,
+            288
+          ],
+          "index": [
+            1,
+            1,
+            68
+          ],
+          "offset": 3,
+          "pending_gate": [
+            1,
+            1,
+            512
+          ],
+          "pending_kv": [
+            1,
+            1,
+            512
+          ]
+        }
+      },
+      "synchronizing_offset_reads": 40
+    },
+    "step": {
+      "cache_offsets": null,
+      "committed": true,
+      "elapsed_s": 2.2123017499689013,
+      "frontier_after": 3,
+      "frontier_before": 2,
+      "hot_path_synchronizing_offset_reads": 0,
+      "logits_dtype": "mlx.core.float32",
+      "logits_shape": [
+        1,
+        1,
+        129280
+      ],
+      "state_changed": {},
+      "token": 15
+    }
+  },
+  "first_token_fixture": {
+    "policy": "explicit decode token fixture; default equals documented M2 argmax token 15",
+    "token": 15
+  },
+  "fork": {
+    "child_step": {
+      "cache_offsets": null,
+      "committed": true,
+      "elapsed_s": 1.7361185839981772,
+      "frontier_after": 7,
+      "frontier_before": 6,
+      "hot_path_synchronizing_offset_reads": 0,
+      "logits_dtype": "mlx.core.float32",
+      "logits_shape": [
+        1,
+        1,
+        129280
+      ],
+      "state_changed": {},
+      "token": 19
+    },
+    "parent_after_child": {
+      "frontier": 6,
+      "inspection": {
+        "all_offsets_match_cpu_frontier": true,
+        "cache_offsets": [
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6
+        ],
+        "cpu_frontier": 6,
+        "engram_history_shape": [
+          1,
+          3
+        ],
+        "schema": "ds41f.m4.omlx-state-inspection.v1",
+        "source_state_shapes": {
+          "14": {
+            "compressed": [
+              1,
+              3,
+              288
+            ],
+            "index": [
+              1,
+              3,
+              68
+            ],
+            "offset": 6,
+            "pending_gate": [
+              1,
+              0,
+              512
+            ],
+            "pending_kv": [
+              1,
+              0,
+              512
+            ]
+          },
+          "2": {
+            "compressed": [
+              1,
+              3,
+              288
+            ],
+            "index": [
+              1,
+              3,
+              68
+            ],
+            "offset": 6,
+            "pending_gate": [
+              1,
+              0,
+              512
+            ],
+            "pending_kv": [
+              1,
+              0,
+              512
+            ]
+          },
+          "20": {
+            "compressed": [
+              1,
+              6,
+              288
+            ],
+            "index": [
+              1,
+              6,
+              68
+            ],
+            "offset": 6,
+            "pending_gate": [
+              1,
+              0,
+              512
+            ],
+            "pending_kv": [
+              1,
+              0,
+              512
+            ]
+          },
+          "8": {
+            "compressed": [
+              1,
+              3,
+              288
+            ],
+            "index": [
+              1,
+              3,
+              68
+            ],
+            "offset": 6,
+            "pending_gate": [
+              1,
+              0,
+              512
+            ],
+            "pending_kv": [
+              1,
+              0,
+              512
+            ]
+          }
+        },
+        "synchronizing_offset_reads": 40
+      }
+    },
+    "parent_before_child": {
+      "frontier": 6,
+      "inspection": {
+        "all_offsets_match_cpu_frontier": true,
+        "cache_offsets": [
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6
+        ],
+        "cpu_frontier": 6,
+        "engram_history_shape": [
+          1,
+          3
+        ],
+        "schema": "ds41f.m4.omlx-state-inspection.v1",
+        "source_state_shapes": {
+          "14": {
+            "compressed": [
+              1,
+              3,
+              288
+            ],
+            "index": [
+              1,
+              3,
+              68
+            ],
+            "offset": 6,
+            "pending_gate": [
+              1,
+              0,
+              512
+            ],
+            "pending_kv": [
+              1,
+              0,
+              512
+            ]
+          },
+          "2": {
+            "compressed": [
+              1,
+              3,
+              288
+            ],
+            "index": [
+              1,
+              3,
+              68
+            ],
+            "offset": 6,
+            "pending_gate": [
+              1,
+              0,
+              512
+            ],
+            "pending_kv": [
+              1,
+              0,
+              512
+            ]
+          },
+          "20": {
+            "compressed": [
+              1,
+              6,
+              288
+            ],
+            "index": [
+              1,
+              6,
+              68
+            ],
+            "offset": 6,
+            "pending_gate": [
+              1,
+              0,
+              512
+            ],
+            "pending_kv": [
+              1,
+              0,
+              512
+            ]
+          },
+          "8": {
+            "compressed": [
+              1,
+              3,
+              288
+            ],
+            "index": [
+              1,
+              3,
+              68
+            ],
+            "offset": 6,
+            "pending_gate": [
+              1,
+              0,
+              512
+            ],
+            "pending_kv": [
+              1,
+              0,
+              512
+            ]
+          }
+        },
+        "synchronizing_offset_reads": 40
+      }
+    },
+    "parent_step_afterward": {
+      "cache_offsets": null,
+      "committed": true,
+      "elapsed_s": 2.581693166983314,
+      "frontier_after": 7,
+      "frontier_before": 6,
+      "hot_path_synchronizing_offset_reads": 0,
+      "logits_dtype": "mlx.core.float32",
+      "logits_shape": [
+        1,
+        1,
+        129280
+      ],
+      "state_changed": {},
+      "token": 20
+    },
+    "parent_unchanged_by_child": true
+  },
+  "gates": {
+    "engram_continuation": true,
+    "failure_atomicity": true,
+    "first_token_logits": false,
+    "first_token_state": true,
+    "fork": true,
+    "multi_token_continuation": true,
+    "practical_base_execution": false,
+    "raw_forward_wrapper_parity": true,
+    "real_no_replay_admission": true,
+    "reset": true
+  },
+  "omlx_path": "/Users/kioju/omlx-0.7.0.dev2",
+  "performance": {
+    "control_A_ordinary_omlx_cache_replay_prefill_diagnostic": {
+      "latencies_s": [
+        2.684172542009037,
+        2.6182072090450674,
+        2.6096684159711003,
+        2.6356758330366574,
+        2.623702166019939,
+        2.6173840839765035
+      ],
+      "mean_s": 2.6314683750097174,
+      "measured_steps": 6,
+      "median_s": 2.620954687532503,
+      "tok_per_s_mean": 0.3800159673195036,
+      "tok_per_s_median": 0.3815403618982248,
+      "warmup_latencies_s": [
+        2.730455750017427,
+        2.602244332956616
+      ],
+      "warmup_steps": 2
+    },
+    "control_B_raw_forward_ordinary_omlx_cache": {
+      "latencies_s": [
+        2.684172542009037,
+        2.6182072090450674,
+        2.6096684159711003,
+        2.6356758330366574,
+        2.623702166019939,
+        2.6173840839765035
+      ],
+      "mean_s": 2.6314683750097174,
+      "measured_steps": 6,
+      "median_s": 2.620954687532503,
+      "tok_per_s_mean": 0.3800159673195036,
+      "tok_per_s_median": 0.3815403618982248,
+      "warmup_latencies_s": [
+        2.730455750017427,
+        2.602244332956616
+      ],
+      "warmup_steps": 2
+    },
+    "control_C_raw_forward_admitted_m2_cache": {
+      "latencies_s": [
+        2.6116802080068737,
+        2.5635474160080776,
+        2.564567207999062,
+        2.6204799999832176,
+        2.605771458009258,
+        2.688912167039234
+      ],
+      "mean_s": 2.6091597428409536,
+      "measured_steps": 6,
+      "median_s": 2.608725833008066,
+      "tok_per_s_mean": 0.38326514991801974,
+      "tok_per_s_median": 0.38332889847873414,
+      "warmup_latencies_s": [
+        2.673766915977467,
+        2.5476532080210745
+      ],
+      "warmup_steps": 2
+    },
+    "control_D_production_session_wrapper": {
+      "latencies_s": [
+        2.6840347499819472,
+        2.6222020829445682,
+        2.7169034999678843,
+        2.6216807090095244,
+        2.691292124975007,
+        2.6510699169593863
+      ],
+      "mean_s": 2.664530513973053,
+      "measured_steps": 6,
+      "median_s": 2.667552333470667,
+      "tok_per_s_mean": 0.37530063730023144,
+      "tok_per_s_median": 0.37487549445709734,
+      "warmup_latencies_s": [
+        2.625251041026786,
+        2.5822258749976754
+      ],
+      "warmup_steps": 2
+    },
+    "frontier_start": 2,
+    "hot_path_instrumentation": {
+      "after_fix_offset_item_reads_per_token": 0,
+      "before_fix_estimated_offset_item_reads_per_token": 84,
+      "inspection_method": "explicit inspect_state() only at qualification checkpoints"
+    },
+    "native_kernel_status": {
+      "has_deepseek_v41_grouped_expert": true,
+      "has_deepseek_v41_packed_attention": true,
+      "import_error": "None",
+      "is_native_available": true,
+      "native_symbols": [
+        "dsa_decode_scores",
+        "dsa_indexer_scores",
+        "qwen4_qsa_indexer_scores",
+        "qwen4_qsa_topk_indices",
+        "qwen4_qsa_sparse_gqa_attention",
+        "dsa_topk_indices",
+        "dspark_fp32_topk_indices",
+        "dspark_exact_mxfp8_qmv_pair",
+        "glm_dsa_sparse_mla_attention",
+        "glm_dsa_exact_block_attention",
+        "deepseek_v4_sparse_attention",
+        "deepseek_v41_packed_attention",
+        "deepseek_v41_grouped_expert",
+        "dspark_ring_gemm",
+        "dspark_rowwise_gemm",
+        "glm_dsa_q8_vup_flat",
+        "glm_moe_weighted_sum",
+        "deepseek_mxfp4_gather_qmm_blocks",
+        "deepseek_mxfp4_gather_qmm_pair_blocks",
+        "deepseek_mxfp4_gather_qmm_pair_concat_blocks",
+        "deepseek_mxfp4_gather_qmm_expert",
+        "deepseek_affine_gather_qmm_blocks",
+        "deepseek_affine_gather_qmm_pair_concat_blocks"
+      ]
+    },
+    "policy": "bounded M4 base-target diagnostic, MTP/DSpark OFF; raw parity is not practical closure unless native substrate is available and standard oMLX generation path is also checked",
+    "practical_base_execution_reason": "INCOMPLETE: native kernels are available but standard oMLX GenerationBatch MTP-OFF control is still required",
+    "speculation_enabled": false,
+    "standard_generation_batch_control": "not run by this runner",
+    "state_came_from_dwarfstar_prefill_admission": true
+  },
+  "prefill": {
+    "argmax_token": 15,
+    "committed": true,
+    "last_logits_digest": "7be45bd57cf7b2763a9f91e6a070c285e5b7d02a58953f0f1b5634779584b6fd",
+    "ok": true,
+    "source": "DwarfStarPrefillVerticalSliceExecutor; live PrefillContinuationState, not artifact digest admission",
+    "token_frontier": 2
+  },
+  "prefill_tokens": [
+    0,
+    3
+  ],
+  "reset": {
+    "cache_layers": 40,
+    "frontier": 0,
+    "inspection": {
+      "all_offsets_match_cpu_frontier": true,
+      "cache_offsets": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cpu_frontier": 0,
+      "engram_history_shape": [],
+      "schema": "ds41f.m4.omlx-state-inspection.v1",
+      "source_state_shapes": {
+        "14": {
+          "compressed": null,
+          "index": null,
+          "offset": 0,
+          "pending_gate": null,
+          "pending_kv": null
+        },
+        "2": {
+          "compressed": null,
+          "index": null,
+          "offset": 0,
+          "pending_gate": null,
+          "pending_kv": null
+        },
+        "20": {
+          "compressed": null,
+          "index": null,
+          "offset": 0,
+          "pending_gate": null,
+          "pending_kv": null
+        },
+        "8": {
+          "compressed": null,
+          "index": null,
+          "offset": 0,
+          "pending_gate": null,
+          "pending_kv": null
+        }
+      },
+      "synchronizing_offset_reads": 40
+    }
+  },
+  "schema": "ds41f.m4.omlx-base-decode-qualification.v1",
+  "speculation_enabled": false
+}

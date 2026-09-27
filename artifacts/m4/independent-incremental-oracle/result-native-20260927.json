@@ -1,0 +1,54 @@
+{
+  "authority_source": {
+    "binary_sha256": "2f26e06bd71bdd5954e0e7229fd9fae10e9652a269b6c04b435b1b4b89f8be6f",
+    "repository": "/Volumes/SDXC-512/deepseek-v41-flash-mlx",
+    "role": "qualification_oracle_only_not_production_topology",
+    "runner": "tools/benchmark/run_text_backbone_reference.sh with TOKENS_FILE='0 3 15'",
+    "test_source_sha256": "7ae301e31229f66e8c4f4c82abc2458fbb02af0297efcc6cd784508a38ba64f1"
+  },
+  "digest_gate_complete": true,
+  "fixture": {
+    "full_token_sequence_for_historical_cli": [
+      0,
+      3,
+      15
+    ],
+    "incremental_input": [
+      15
+    ],
+    "prefill_tokens": [
+      0,
+      3
+    ]
+  },
+  "historical_run": {
+    "artifact_dir": "/Volumes/SDXC-512/deepseek-v41-flash-mlx/artifacts/text-backbone/run-20260927-203749-46954",
+    "elapsed_s": 71.51529387495248,
+    "pass_lifecycle": true,
+    "returncode": 0,
+    "stdout_tail": "Logs: artifacts/text-backbone/run-20260927-203749-46954\nLoading full backbone layers 0..39 on-demand experts and Engram 1/14 mmap backing\nORACLE_LOGITS_EXPORT path=/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/tmpcu68g554/logits.bin shape=1x129280 dtype=float32 bytes=517120\nroute_tie: layer=36 token=0 sixth_id=186 seventh_id=239 sixth_score_bits=1107496437 seventh_score_bits=1107496437\nPASS: 3 token IDs -> encoder 0..19 -> decoder 20..39 -> logits; <=128 chunk/token bits, state, continuation, fork, reset, invalid token rejection; route tie records exact across schedules = 1 (lowest-ID policy remains an external-oracle gap); external oracle/256K NOT qualified.\nCompleted. Chunk/token tensor and state results require review; external oracle and 256K remain unqualified.\n"
+  },
+  "match": false,
+  "oracle_export_policy": "opt-in DSV41_ORACLE_LOGITS_OUT binary float32 logits export; historical runtime remains qualification-only",
+  "oracle_logits": {
+    "anchors": {
+      "0": -4.25880765914917,
+      "1": 4.510491371154785,
+      "11992": 9.105157852172852,
+      "15": 3.5326757431030273,
+      "266": 17.297571182250977
+    },
+    "argmax": 266,
+    "bytes": 517120,
+    "dtype": "float32",
+    "export_source": "DSV41_ORACLE_LOGITS_OUT opt-in instrumentation in historical tests/attention/test_text_backbone.cpp",
+    "max": 17.297571182250977,
+    "shape": [
+      1,
+      129280
+    ]
+  },
+  "oracle_logits_digest": "f1eb4a1c4f158d70887a376f1a8494a88d6f4c83fb5eb9a2c98fc85af46bc3cd",
+  "production_digest_to_qualify": "bbc86311483405ba433a11c3b77eddc9161aed5f74bc3667a3b67929c701c7ce",
+  "schema": "ds41f.m4.independent-incremental-oracle.v1"
+}

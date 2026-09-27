@@ -1,0 +1,21 @@
+{
+  "build_command": "MACOSX_DEPLOYMENT_TARGET=15.0 OMLX_CUSTOM_KERNEL_DEPLOYMENT_TARGET=15.0 $HOME/.venvs/omlx-0.7.0.dev2/bin/python setup.py build_ext --inplace --force --with-custom-kernel",
+  "environment": {
+    "CMAKE_ARGS_effective": "-DCMAKE_OSX_DEPLOYMENT_TARGET=15.0 -DPython_EXECUTABLE=$HOME/.venvs/omlx-0.7.0.dev2/bin/python -DPython3_EXECUTABLE=$HOME/.venvs/omlx-0.7.0.dev2/bin/python",
+    "MACOSX_DEPLOYMENT_TARGET": "15.0",
+    "OMLX_CUSTOM_KERNEL_DEPLOYMENT_TARGET": "15.0"
+  },
+  "extension_exists": true,
+  "extension_path": "/Users/kioju/omlx-0.7.0.dev2/omlx/custom_kernels/glm_moe_dsa/_ext.cpython-313-darwin.so",
+  "extension_sha256": "820300a3ff37fd38cf77fd01a953ee26204d4d74a31a8a07e12b7c4cbe2a5695",
+  "omlx_git": "b390b31e0c6831225fed0f24d278eb1db7fcb68b",
+  "omlx_path": "/Users/kioju/omlx-0.7.0.dev2",
+  "python": "/Users/kioju/.venvs/omlx-0.7.0.dev2/bin/python",
+  "schema": "ds41f.m4.omlx-native-kernel-build-provenance.v1",
+  "setup_py_guards": [
+    "sets MACOSX_DEPLOYMENT_TARGET from OMLX_CUSTOM_KERNEL_DEPLOYMENT_TARGET/default 15.0",
+    "sets CMAKE_OSX_DEPLOYMENT_TARGET",
+    "pins Python_EXECUTABLE/Python3_EXECUTABLE to active interpreter",
+    "uses mlx.extension.CMakeExtension/CMakeBuild"
+  ]
+}

@@ -61,7 +61,7 @@ Rejected:
 
 Status: **in progress / incomplete**. See `docs/milestone-4-base-decode-status.md`.
 
-Implemented so far: real oMLX `DeepseekV41Cache` admission from live `PrefillContinuationState`, `OMLXDecodeSession`, base target execution, continuation, Engram state update, reset, fork, injected-failure rollback, and removal of diagnostic cache scalar reads from the production token loop. Same-process controls show production wrapper throughput now matches raw MTP-off oMLX `_forward`, but this is not a practical-performance closure. Remaining gates: independent/reference first-incremental full-logits qualification, and reproduction of the genuine practical oMLX execution substrate (native/custom kernels plus standard BatchGenerator/scheduler MTP-OFF control).
+Implemented so far: real oMLX `DeepseekV41Cache` admission from live `PrefillContinuationState`, `OMLXDecodeSession`, base target execution, continuation, Engram state update, reset, fork, injected-failure rollback, removal of diagnostic cache scalar reads from the production token loop, native oMLX custom-kernel build/provenance, standard BatchGenerator MTP-OFF diagnostic control, post-prefill state comparison, and independent historical oracle logits export. Current result: independent oracle digest does not match production first-token digest; standard BatchGenerator MTP-OFF is fast (~20.9 tok/s) while direct `_forward` B/C/D remain slow (~0.37-0.38 tok/s). Remaining gates: correctness divergence localization/fix, and adapting the production no-replay handoff to the genuine practical oMLX scheduler/model-core substrate without DSpark/MTP production integration yet.
 
 Starting boundary from Milestone 3:
 

@@ -17,6 +17,7 @@ The current native session owner is `TextBackboneState` together with `TextEncod
 | `main_hidden` | call-local handoff | generation step output used for commit/logit-associated bookkeeping |
 | Runtime RNG | runtime-owned state | generation/sampler session; deterministic supplied-noise tests qualify arithmetic, not PyTorch bitstream parity |
 | Checkpoint weights, Engram rows, expert backing | static model data / storage-backed data | read-only catalog/store/backing; not session state |
+| DSpark/MTP priming context | speculative decode session state, not base target state | oMLX MTP-enabled prefill can create `_omlx_mtp_prime_ctx` containing `DSparkContextCache`, target-layer hidden history, and `expected_target_offset`; absent from current `PrefillContinuationState` and not required while MTP is OFF |
 
 ## Reset, fork, and continuation
 
@@ -30,6 +31,8 @@ The current native session owner is `TextBackboneState` together with `TextEncod
 Prefill populates token/ngram history, window KV, source-layer compressed KV, indexer K, candidate/top-k publications, final logits, and shared publications according to the layer topology.  The first decode step consumes those states rather than recomputing a fresh prompt-only session.  Engram insertion points consume current token/ngram context through the backbone and preserve SSD-backed lookup semantics.
 
 The Milestone 2 DwarfStar-derived prefill path commits an architecture-neutral live state represented by `ds41f_mlx.prefill_session.PrefillContinuationState`, with artifact/evidence views represented by `PrefillSessionHandoff`.  The live state contains actual runtime arrays/handles for token history, Engram hash history, per-layer window KV, source compressed KV, source index K, candidate state, top-k generations, shared publications, ownership, and empty/non-empty compressor-pending state.  The artifact handoff records digests, provenance, inventory, and ownership without pretending those digests are executable state.  HC residual/pre-mix digests remain final-output qualification evidence unless a future official continuation contract requires them across token boundaries.  Milestone 3 selected oMLX target decode; Milestone 4 introduces `OMLXDecodeSession` / `OMLXDecodeStateAdapter` as the production decode admission/session seam. After successful admission, `OMLXDecodeSession.cache` (`DeepseekV41Cache[40]`) is the active decode state authority; `PrefillContinuationState` is immutable input/evidence, not a second synchronized live authority. `OMLXDecodeSession` keeps CPU token history in append-only chunks for rollback/fork/reset bookkeeping; full concatenation is an explicit observation/export operation, not per-token hot-path work.
+
+M4 native-kernel-backed controls showed that ordinary oMLX `BatchGenerator` MTP-OFF decode can be much faster than direct one-token `_forward`, even from the same model core. That fast scheduler path does not make DSpark priming part of base target correctness, but future practical speculative decode must either export or recreate the oMLX prefill-created priming contract: target-layer hidden history for `dspark_target_layer_ids`, per-MTP-layer `DSparkContextCache`, and `expected_target_offset` alignment consumed by `take_primed()`.
 
 ## Ratio-2 and cross-call behavior
 

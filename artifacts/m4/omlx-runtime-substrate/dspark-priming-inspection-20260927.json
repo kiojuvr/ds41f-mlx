@@ -1,0 +1,245 @@
+{
+  "answer": "Prefill-created DSpark priming state exists in oMLX MTP-enabled lifecycle. It is not required for MTP-OFF base target correctness, but is likely required to reproduce the historical practical speculative decode topology without prompt replay.",
+  "findings": {
+    "dwarfstar_prefill_relevance": "DwarfStar/native prefill already computes per-layer h/pre through all layers; to support practical speculative decode without replay it must export oMLX-compatible target-layer hidden for dspark_target_layer_ids and offset metadata, or production must run an equivalent capture path.",
+    "logical_state_missing_from_current_prefill_continuation": [
+      "DSparkContextCache per MTP layer",
+      "target-layer hidden history over prompt suffix",
+      "expected_target_offset/main-token alignment metadata"
+    ],
+    "normal_mtp_prefill_constructs": [
+      "DSparkContextCache list",
+      "target-layer hidden history captured via return_dspark_hidden",
+      "expected_target_offset advanced with prompt offsets"
+    ],
+    "prefill_prime_context_attr": "_omlx_mtp_prime_ctx",
+    "take_primed_contract": "take_primed(host, cache, main_token/target_offset) transfers primed DSparkContextCache into generation when offsets align; otherwise drops/degrades to unprimed"
+  },
+  "inspection_type": "static source review only; no production DSpark/MTP integration",
+  "mtp_enabled_in_production_now": false,
+  "omlx_path": "/Users/kioju/omlx-0.7.0.dev2",
+  "schema": "ds41f.m4.prefill-created-dspark-priming-inspection.v1",
+  "source_review": {
+    "omlx/patches/deepseek_v41/dspark.py": {
+      "matches": [
+        {
+          "line": 13,
+          "text": "from ..mlx_lm_mtp.deepseek_v4_dspark import DSparkContextCache"
+        },
+        {
+          "line": 104,
+          "text": "c.dim * len(c.dspark_target_layer_ids), c.dim, bias=False"
+        },
+        {
+          "line": 125,
+          "text": "if c.dspark_block_size <= 0 or c.n_mtp_layers <= 0 or not c.dspark_target_layer_ids:"
+        },
+        {
+          "line": 127,
+          "text": "if any(i < 0 or i >= c.n_layers for i in c.dspark_target_layer_ids):"
+        },
+        {
+          "line": 137,
+          "text": "return [DSparkContextCache(c.window_size) for _ in range(c.n_mtp_layers)]"
+        },
+        {
+          "line": 157,
+          "text": "or main_hidden.shape[-1] != c.dim * len(c.dspark_target_layer_ids)"
+        }
+      ],
+      "sha256": "bb1eb7c859d0855acd76415a02b4f1857b0e3e8699390bda2462567063e01aad"
+    },
+    "omlx/patches/deepseek_v41/language.py": {
+      "matches": [
+        {
+          "line": 851,
+          "text": "capture = bool(kwargs.get(\"return_dspark_hidden\", False))"
+        },
+        {
+          "line": 914,
+          "text": "if capture and i in c.dspark_target_layer_ids:"
+        },
+        {
+          "line": 946,
+          "text": "if not c.dspark_target_layer_ids or set(captured) != set("
+        },
+        {
+          "line": 947,
+          "text": "c.dspark_target_layer_ids"
+        },
+        {
+          "line": 951,
+          "text": "[captured[i] for i in c.dspark_target_layer_ids], axis=-1"
+        }
+      ],
+      "sha256": "2c64bef36c9fc4a6007cd34e7b120142ced072a8d491cf1f83f2c5b1a956763f"
+    },
+    "omlx/patches/deepseek_v41/mtp.py": {
+      "matches": [
+        {
+          "line": 77,
+          "text": "def mtp_take_primed(self, cache, main_token):"
+        },
+        {
+          "line": 78,
+          "text": "from ..mlx_lm_mtp.deepseek_v4_dspark import take_primed"
+        },
+        {
+          "line": 80,
+          "text": "return take_primed(self, cache, main_token)"
+        },
+        {
+          "line": 140,
+          "text": "capture_dspark = kwargs.pop(\"return_dspark_hidden\", False)"
+        },
+        {
+          "line": 142,
+          "text": "prime = active and not capture and not verify and input_ids.shape[0] == 1"
+        },
+        {
+          "line": 155,
+          "text": "return_dspark_hidden=capture or prime,"
+        },
+        {
+          "line": 161,
+          "text": "if prime:"
+        }
+      ],
+      "sha256": "2fe5dffa0d2c0b9780c07a7a9d1db072a5795127181f350a6011c0278a1a786e"
+    },
+    "omlx/patches/mlx_lm_mtp/batch_generator.py": {
+      "matches": [
+        {
+          "line": 917,
+          "text": "that hop or activation always sees an unprimed cache. The context is"
+        },
+        {
+          "line": 918,
+          "text": "released at activation (``take_primed``), on real multi-row merges"
+        },
+        {
+          "line": 1228,
+          "text": "\"MTP path activated for uid=%s (model has mtp_forward, batch=1, primed=%d)\","
+        },
+        {
+          "line": 1687,
+          "text": "# variant or the primed history would be inconsistent with the chained one."
+        },
+        {
+          "line": 2518,
+          "text": "primed = _prompt_priming.take_primed("
+        },
+        {
+          "line": 2521,
+          "text": "if primed is not None:"
+        },
+        {
+          "line": 2522,
+          "text": "state.mtp_cache, state.hist_offset = primed"
+        },
+        {
+          "line": 2543,
+          "text": "# consumes a primed cache; release any capture leftovers."
+        }
+      ],
+      "sha256": "185deb577353daa9c85d44a6d0514ea598172bd411b88b5b69ae749b61360cc6"
+    },
+    "omlx/patches/mlx_lm_mtp/deepseek_v4_dspark.py": {
+      "matches": [
+        {
+          "line": 25,
+          "text": "_PRIME_CTX_ATTR = \"_omlx_mtp_prime_ctx\""
+        },
+        {
+          "line": 31,
+          "text": "target_ids = tuple(getattr(config, \"dspark_target_layer_ids\", ()) or ())"
+        },
+        {
+          "line": 37,
+          "text": "target_ids = tuple(getattr(config, \"dspark_target_layer_ids\", ()) or ())"
+        },
+        {
+          "line": 45,
+          "text": "class DSparkContextCache:"
+        },
+        {
+          "line": 114,
+          "text": "caches: list[DSparkContextCache]"
+        },
+        {
+          "line": 115,
+          "text": "expected_target_offset: int"
+        },
+        {
+          "line": 144,
+          "text": "def drop_primed(host: Any) -> None:"
+        },
+        {
+          "line": 167,
+          "text": "ctx.expected_target_offset != start_offset"
+        },
+        {
+          "line": 169,
+          "text": "drop_primed(host)"
+        },
+        {
+          "line": 172,
+          "text": "expected_target_offset=start_offset,"
+        },
+        {
+          "line": 182,
+          "text": "drop_primed(host)"
+        },
+        {
+          "line": 185,
+          "text": "ctx.expected_target_offset = offset_after"
+        },
+        {
+          "line": 194,
+          "text": "def take_primed("
+        },
+        {
+          "line": 198,
+          "text": ") -> Optional[tuple[list[DSparkContextCache], int]]:"
+        },
+        {
+          "line": 201,
+          "text": "drop_primed(host)"
+        },
+        {
+          "line": 206,
+          "text": "if target_offset is None or ctx.expected_target_offset != target_offset - 1:"
+        },
+        {
+          "line": 230,
+          "text": "cache: DSparkContextCache,"
+        },
+        {
+          "line": 243,
+          "text": "cache: DSparkContextCache,"
+        },
+        {
+          "line": 319,
+          "text": "fused_width = config.hidden_size * len(config.dspark_target_layer_ids)"
+        },
+        {
+          "line": 332,
+          "text": "cache: DSparkContextCache,"
+        },
+        {
+          "line": 354,
+          "text": "dsv4.DSparkContextCache = DSparkContextCache"
+        },
+        {
+          "line": 359,
+          "text": "\"DSparkContextCache\","
+        },
+        {
+          "line": 364,
+          "text": "\"take_primed\","
+        }
+      ],
+      "sha256": "8df3536b9592b8ccfdcdb77cb19ad9e69eac76d84b8f230ba3800da4cf5d5a7f"
+    }
+  }
+}
