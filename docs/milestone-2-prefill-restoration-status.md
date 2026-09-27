@@ -65,6 +65,16 @@ Milestone 2 does not claim:
 
 `OfficialModelMath` remains an intermediate production-facing seam over reviewed official-source-derived helper arithmetic. This is an implementation dependency to continue reducing where it materially affects production ownership, but it no longer blocks the bounded full-model prefill path.
 
+## M2 correctness evidence classification
+
+M2 evidence is classified as follows:
+
+- **Exact independent evidence**: source-defined discrete state (IDs, indices, masks, route IDs where applicable), ownership/provenance tables, Engram hash publications, exact handoff inventory, and primitive/artifact fixtures whose official boundary is exact.
+- **Accepted numerical-boundary evidence**: BF16/FP8/FP4/FP32 tensor boundaries governed by reviewed precision contracts and predeclared ULP/absolute primitive tolerances. These boundaries do not require SHA equality when the contract permits bounded BF16 drift.
+- **Shared-helper-only evidence**: remaining production-facing `OfficialModelMath` seams that reuse reviewed helper arithmetic. These are implementation-scoped evidence and must not be promoted to independent semantic authority without an exact or accepted numerical contract.
+
+The M2 architecture remains unchanged by M4 numerical requalification: harmless bounded numerical drift is not model logic, and bit identity is not required where the reviewed precision contract allows bounded BF16 differences.
+
 ## Milestone 2 completion determination
 
 Milestone 2 is **complete** for the bounded official-checkpoint production-prefill restoration gate:

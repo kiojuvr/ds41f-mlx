@@ -1,0 +1,524 @@
+{
+  "attention_sub_boundary_comparisons": {
+    "attention tensor after inverse RoPE": {
+      "dtype_pair": [
+        "uint16",
+        "uint16"
+      ],
+      "max_abs_diff": 0.0009765625,
+      "max_bf16_ulp": 1,
+      "max_bf16_ulp_lte": 1,
+      "mean_abs_diff": 2.544838935136795e-07,
+      "mismatched_elements": 58,
+      "sha_equal": false,
+      "sha_pair": [
+        "2a1b3abe3e5ef3a46422d70c731a60ff921b130393acddb0c5173eb145120404",
+        "518487877a69c66fc5af6e77eae517761bef74fd4f8f1d34dc6bb6e7ec532aca"
+      ],
+      "shape_pair": [
+        [
+          2,
+          64,
+          512
+        ],
+        [
+          2,
+          64,
+          512
+        ]
+      ],
+      "ulp_counts": {
+        "ulp0": 65478,
+        "ulp1": 58,
+        "ulp_gt1": 0
+      },
+      "within_contract": true
+    },
+    "kv post-RoPE": {
+      "dtype_pair": [
+        "uint16",
+        "uint16"
+      ],
+      "max_abs_diff": 0.0,
+      "max_bf16_ulp": 0,
+      "max_bf16_ulp_lte": 1,
+      "mean_abs_diff": 0.0,
+      "mismatched_elements": 0,
+      "sha_equal": true,
+      "sha_pair": [
+        "05636313fa7f74735e0bb6df0d7ff954de8dba841eafc5c742d11cafeb4fc823",
+        "05636313fa7f74735e0bb6df0d7ff954de8dba841eafc5c742d11cafeb4fc823"
+      ],
+      "shape_pair": [
+        [
+          2,
+          512
+        ],
+        [
+          2,
+          512
+        ]
+      ],
+      "ulp_counts": {
+        "ulp0": 1024,
+        "ulp1": 0,
+        "ulp_gt1": 0
+      },
+      "within_contract": true
+    },
+    "kv_norm output": {
+      "dtype_pair": [
+        "uint16",
+        "uint16"
+      ],
+      "max_abs_diff": 0.0,
+      "max_bf16_ulp": 0,
+      "max_bf16_ulp_lte": 1,
+      "mean_abs_diff": 0.0,
+      "mismatched_elements": 0,
+      "sha_equal": true,
+      "sha_pair": [
+        "99c43a981ee078e0bdab4ecad8cce16197eab37a9e7cc42cf3acc9da5d90a027",
+        "99c43a981ee078e0bdab4ecad8cce16197eab37a9e7cc42cf3acc9da5d90a027"
+      ],
+      "shape_pair": [
+        [
+          2,
+          512
+        ],
+        [
+          2,
+          512
+        ]
+      ],
+      "ulp_counts": {
+        "ulp0": 1024,
+        "ulp1": 0,
+        "ulp_gt1": 0
+      },
+      "within_contract": true
+    },
+    "projection exact historical inverse-RoPE input -> final attn_out": {
+      "dtype_pair": [
+        "uint16",
+        "uint16"
+      ],
+      "max_abs_diff": 0.0,
+      "max_bf16_ulp": 0,
+      "max_bf16_ulp_lte": 1,
+      "mean_abs_diff": 0.0,
+      "mismatched_elements": 0,
+      "sha_equal": true,
+      "sha_pair": [
+        "baa15a8a09206902155803703ce5ac1d2d94a0c1ab0455ec7068c642e4683dbc",
+        "baa15a8a09206902155803703ce5ac1d2d94a0c1ab0455ec7068c642e4683dbc"
+      ],
+      "shape_pair": [
+        [
+          2,
+          5120
+        ],
+        [
+          2,
+          5120
+        ]
+      ],
+      "ulp_counts": {
+        "ulp0": 10240,
+        "ulp1": 0,
+        "ulp_gt1": 0
+      },
+      "within_contract": true
+    },
+    "q post-RoPE": {
+      "dtype_pair": [
+        "uint16",
+        "uint16"
+      ],
+      "max_abs_diff": 0.0078125,
+      "max_bf16_ulp": 1,
+      "max_bf16_ulp_lte": 1,
+      "mean_abs_diff": 1.1921019904548302e-07,
+      "mismatched_elements": 2,
+      "sha_equal": false,
+      "sha_pair": [
+        "bc7d3d6be5d476f87156220d060a1ec8faf7adbefd8b3963acd60087cff73817",
+        "04606d1093cdda69a1590176566f3dad43aeae6faac6131232967b72dcd555be"
+      ],
+      "shape_pair": [
+        [
+          2,
+          64,
+          512
+        ],
+        [
+          2,
+          64,
+          512
+        ]
+      ],
+      "ulp_counts": {
+        "ulp0": 65534,
+        "ulp1": 2,
+        "ulp_gt1": 0
+      },
+      "within_contract": true
+    },
+    "q_b pre-RoPE": {
+      "dtype_pair": [
+        "uint16",
+        "uint16"
+      ],
+      "max_abs_diff": 0.0078125,
+      "max_bf16_ulp": 1,
+      "max_bf16_ulp_lte": 1,
+      "mean_abs_diff": 1.1921019904548302e-07,
+      "mismatched_elements": 2,
+      "sha_equal": false,
+      "sha_pair": [
+        "d22cb66cf1571c008f4051335cad1180a2579a7f965e3163e2a19a493b4e9c14",
+        "37be0517a31131b44fe7b8f88cd656e3f11e0a19996dd7ddcab9613b641ac92a"
+      ],
+      "shape_pair": [
+        [
+          2,
+          64,
+          512
+        ],
+        [
+          2,
+          64,
+          512
+        ]
+      ],
+      "ulp_counts": {
+        "ulp0": 65534,
+        "ulp1": 2,
+        "ulp_gt1": 0
+      },
+      "within_contract": true
+    },
+    "q_norm output": {
+      "dtype_pair": [
+        "uint16",
+        "uint16"
+      ],
+      "max_abs_diff": 0.0,
+      "max_bf16_ulp": 0,
+      "max_bf16_ulp_lte": 1,
+      "mean_abs_diff": 0.0,
+      "mismatched_elements": 0,
+      "sha_equal": true,
+      "sha_pair": [
+        "9c0d00f1bfd42b6efaf2ba81d908bb78ef6fccd90ed3ed1095e0e9c57f46951b",
+        "9c0d00f1bfd42b6efaf2ba81d908bb78ef6fccd90ed3ed1095e0e9c57f46951b"
+      ],
+      "shape_pair": [
+        [
+          2,
+          1280
+        ],
+        [
+          2,
+          1280
+        ]
+      ],
+      "ulp_counts": {
+        "ulp0": 2560,
+        "ulp1": 0,
+        "ulp_gt1": 0
+      },
+      "within_contract": true
+    },
+    "sparse_attn output before inverse RoPE": {
+      "dtype_pair": [
+        "uint16",
+        "uint16"
+      ],
+      "max_abs_diff": 0.0009765625,
+      "max_bf16_ulp": 1,
+      "max_bf16_ulp_lte": 2,
+      "mean_abs_diff": 2.544838935136795e-07,
+      "mismatched_elements": 58,
+      "sha_equal": false,
+      "sha_pair": [
+        "a946e13d87c2d2002d3c32d2261ec162f7fa3d78cba1141ce004552f54c3857f",
+        "3ab3c52219f591feb25d16879b314e2379e285de1a4f750c684a8780062add70"
+      ],
+      "shape_pair": [
+        [
+          2,
+          64,
+          512
+        ],
+        [
+          2,
+          64,
+          512
+        ]
+      ],
+      "ulp_counts": {
+        "ulp0": 65478,
+        "ulp1": 58,
+        "ulp_gt1": 0
+      },
+      "within_contract": true
+    },
+    "window KV after act_quant": {
+      "dtype_pair": [
+        "uint16",
+        "uint16"
+      ],
+      "max_abs_diff": 0.0,
+      "max_bf16_ulp": 0,
+      "max_bf16_ulp_lte": 0,
+      "mean_abs_diff": 0.0,
+      "mismatched_elements": 0,
+      "sha_equal": true,
+      "sha_pair": [
+        "7e1c82d143162110bdeff21340a000c72a39b3f7ad1fbf3e613fd75445f01a7a",
+        "7e1c82d143162110bdeff21340a000c72a39b3f7ad1fbf3e613fd75445f01a7a"
+      ],
+      "shape_pair": [
+        [
+          2,
+          512
+        ],
+        [
+          2,
+          512
+        ]
+      ],
+      "ulp_counts": {
+        "ulp0": 1024,
+        "ulp1": 0,
+        "ulp_gt1": 0
+      },
+      "within_contract": true
+    },
+    "window top-k indices": {
+      "exact": true,
+      "sha_pair": [
+        "db9497531f0a39d8aadfd0cc228a5d4a798a6884d668a66afbfa7cd31d0b3bad",
+        "db9497531f0a39d8aadfd0cc228a5d4a798a6884d668a66afbfa7cd31d0b3bad"
+      ],
+      "shape_pair": [
+        [
+          1,
+          2,
+          2
+        ],
+        [
+          1,
+          2,
+          2
+        ]
+      ]
+    },
+    "wo_b/final attention output": {
+      "dtype_pair": [
+        "uint16",
+        "uint16"
+      ],
+      "max_abs_diff": 0.0078125,
+      "max_bf16_ulp": 29599,
+      "max_bf16_ulp_lte": 1,
+      "mean_abs_diff": 0.0001620776893105358,
+      "mismatched_elements": 1471,
+      "sha_equal": false,
+      "sha_pair": [
+        "baa15a8a09206902155803703ce5ac1d2d94a0c1ab0455ec7068c642e4683dbc",
+        "d939fda0b6fa4ab5f767adbd4a7e5ae156476666cf9b3da04ba6bfc77939aff2"
+      ],
+      "shape_pair": [
+        [
+          2,
+          5120
+        ],
+        [
+          2,
+          5120
+        ]
+      ],
+      "ulp_counts": {
+        "ulp0": 8769,
+        "ulp1": 1120,
+        "ulp_gt1": 351
+      },
+      "within_contract": false
+    }
+  },
+  "block1_attention_status": "locally correct under exact historical input",
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "UPSTREAM NUMERICAL PROPAGATION",
+  "comparisons": {
+    "encoder.layer1.attn_in_R_vs_D_native": {
+      "dtype_pair": [
+        "uint16",
+        "uint16"
+      ],
+      "max_abs_diff": 0.000244140625,
+      "max_bf16_ulp": 3,
+      "mean_abs_diff": 9.723007821094143e-08,
+      "mismatched_elements": 12,
+      "sha_equal": false,
+      "sha_pair": [
+        "cce126df950c23b8c17c71dffc41ebde2fa8b1d822cf8944392e9e7e7ddbd286",
+        "976259975c036ec1e97a619a34c9a5ce41e649090b72ba031a057b2def0c5d05"
+      ],
+      "shape_pair": [
+        [
+          2,
+          5120
+        ],
+        [
+          2,
+          5120
+        ]
+      ],
+      "ulp_counts": {
+        "ulp0": 10228,
+        "ulp1": 10,
+        "ulp_gt1": 2
+      }
+    },
+    "encoder.layer1.attn_out_R_vs_D_native": {
+      "dtype_pair": [
+        "uint16",
+        "uint16"
+      ],
+      "max_abs_diff": 0.017578125,
+      "max_bf16_ulp": 30534,
+      "mean_abs_diff": 0.001990014687180519,
+      "mismatched_elements": 5499,
+      "sha_equal": false,
+      "sha_pair": [
+        "baa15a8a09206902155803703ce5ac1d2d94a0c1ab0455ec7068c642e4683dbc",
+        "c2fab9725bada214f03a03547b4a784bc75deb25849616ba372ce5f9603e39d0"
+      ],
+      "shape_pair": [
+        [
+          2,
+          5120
+        ],
+        [
+          2,
+          5120
+        ]
+      ],
+      "ulp_counts": {
+        "ulp0": 4741,
+        "ulp1": 2684,
+        "ulp_gt1": 2815
+      }
+    },
+    "encoder.layer1.attn_out_R_vs_D_on_R_exact_input": {
+      "dtype_pair": [
+        "uint16",
+        "uint16"
+      ],
+      "max_abs_diff": 0.0078125,
+      "max_bf16_ulp": 29599,
+      "mean_abs_diff": 0.0001620776893105358,
+      "mismatched_elements": 1471,
+      "sha_equal": false,
+      "sha_pair": [
+        "baa15a8a09206902155803703ce5ac1d2d94a0c1ab0455ec7068c642e4683dbc",
+        "d939fda0b6fa4ab5f767adbd4a7e5ae156476666cf9b3da04ba6bfc77939aff2"
+      ],
+      "shape_pair": [
+        [
+          2,
+          5120
+        ],
+        [
+          2,
+          5120
+        ]
+      ],
+      "ulp_counts": {
+        "ulp0": 8769,
+        "ulp1": 1120,
+        "ulp_gt1": 351
+      }
+    },
+    "post_engram1_hc_stream_D_actual": {
+      "dtype": "BF16(uint16)",
+      "sha256": "7b410e0c31f2e4f17f1be90afec10f91ea94eccebbe1d217c8ec2325eb6fbcf7",
+      "shape": [
+        1,
+        2,
+        4,
+        5120
+      ]
+    }
+  },
+  "contracts": {
+    "attn_in_bf16_max_ulp_lte": 1,
+    "exact_input_attention_output_max_bf16_ulp_lte": 1,
+    "no_global_1e_4_correctness_gate": true
+  },
+  "first_failing_attention_sub_boundary": "no semantic sub-boundary failure; final D-on-R mismatch is projection amplification of accepted <=1 ULP q/sparse/inverse differences",
+  "historical_trace_dir": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-trace-65stmx6w/trace",
+  "inputs": {
+    "D1_native": "ds41f connected post-Engram1 Block1 attention input -> ds41f attention output",
+    "D1_on_R": "historical exact encoder.layer1.attn_in -> ds41f layer1 attn() diagnostic only",
+    "R1": "historical encoder.layer1.attn_in -> historical encoder.layer1.attn_out"
+  },
+  "layer1_semantics": {
+    "compress_ratio": 0,
+    "pure_sliding_window_attention": true
+  },
+  "next_frontier": "Block1 post-attention/FFN boundary propagation",
+  "ok": true,
+  "production_path_changed": false,
+  "qualification_only": true,
+  "schema": "ds41f.m4.layer1-exact-input-substitution.v1",
+  "tensor_info": {
+    "D_native_attn_in": {
+      "dtype": "BF16(uint16)",
+      "sha256": "976259975c036ec1e97a619a34c9a5ce41e649090b72ba031a057b2def0c5d05",
+      "shape": [
+        1,
+        2,
+        5120
+      ]
+    },
+    "D_native_attn_out": {
+      "dtype": "BF16(uint16)",
+      "sha256": "c2fab9725bada214f03a03547b4a784bc75deb25849616ba372ce5f9603e39d0",
+      "shape": [
+        1,
+        2,
+        5120
+      ]
+    },
+    "D_on_R_attn_out": {
+      "dtype": "BF16(uint16)",
+      "sha256": "d939fda0b6fa4ab5f767adbd4a7e5ae156476666cf9b3da04ba6bfc77939aff2",
+      "shape": [
+        1,
+        2,
+        5120
+      ]
+    },
+    "R_attn_in": {
+      "dtype": "BF16(uint16)",
+      "sha256": "cce126df950c23b8c17c71dffc41ebde2fa8b1d822cf8944392e9e7e7ddbd286",
+      "shape": [
+        1,
+        2,
+        5120
+      ]
+    },
+    "R_attn_out": {
+      "dtype": "BF16(uint16)",
+      "sha256": "baa15a8a09206902155803703ce5ac1d2d94a0c1ab0455ec7068c642e4683dbc",
+      "shape": [
+        1,
+        2,
+        5120
+      ]
+    }
+  }
+}
