@@ -1,0 +1,218 @@
+{
+  "classification": "independent_scalar_loop_regression",
+  "comparison": {
+    "einsum_vs_scalar_loop_f32": {
+      "bit_exact": false,
+      "max_abs_diff": 2.384185791015625e-07,
+      "mean_abs_diff": 5.960464477539063e-08,
+      "mismatched_elements": 3
+    },
+    "helper_vs_scalar_loop_bf16": {
+      "bit_exact": true,
+      "max_abs_diff": 0.0,
+      "mean_abs_diff": 0.0,
+      "mismatched_elements": 0
+    },
+    "old_wrong_vs_scalar_loop_f32": {
+      "bit_exact": false,
+      "max_abs_diff": 4.800000190734863,
+      "mean_abs_diff": 2.7562501430511475,
+      "mismatched_elements": 12
+    }
+  },
+  "digests": {
+    "expected_bf16_sha256": "caaa2c2c4b73d3668c9ece2237d0c289695c6ba7063ae68123b050591aeb86eb",
+    "got_bf16_sha256": "caaa2c2c4b73d3668c9ece2237d0c289695c6ba7063ae68123b050591aeb86eb"
+  },
+  "expected_bf16_uint16": [
+    [
+      [
+        [
+          49080,
+          49262,
+          16490,
+          49090
+        ],
+        [
+          16390,
+          16502,
+          49298,
+          16421
+        ],
+        [
+          49125,
+          16471,
+          16394,
+          16296
+        ]
+      ]
+    ]
+  ],
+  "expected_einsum_f32": [
+    [
+      [
+        [
+          -1.4375,
+          -3.7124998569488525,
+          3.6500000953674316,
+          -1.5125000476837158
+        ],
+        [
+          2.0999999046325684,
+          3.8500001430511475,
+          -4.550000190734863,
+          2.575000047683716
+        ],
+        [
+          -1.7875001430511475,
+          3.3625001907348633,
+          2.1500000953674316,
+          1.3124998807907104
+        ]
+      ]
+    ]
+  ],
+  "expected_scalar_loop_f32": [
+    [
+      [
+        [
+          -1.4375,
+          -3.7125000953674316,
+          3.6499998569488525,
+          -1.5125000476837158
+        ],
+        [
+          2.0999999046325684,
+          3.8499999046325684,
+          -4.550000190734863,
+          2.575000047683716
+        ],
+        [
+          -1.7875001430511475,
+          3.3625001907348633,
+          2.1500000953674316,
+          1.3124998807907104
+        ]
+      ]
+    ]
+  ],
+  "failure_mode_explanation": "At Block0 attention HC post, all initial residual HC copies originate from repeated token embeddings, so broadcasting residual against the wrong HC axis is masked or only BF16-scale. After attention HC post the HC copies differ; at FFN HC post the same wrong broadcast produces the observed large hidden divergence (~2.015625).",
+  "got_bf16_uint16": [
+    [
+      [
+        [
+          49080,
+          49262,
+          16490,
+          49090
+        ],
+        [
+          16390,
+          16502,
+          49298,
+          16421
+        ],
+        [
+          49125,
+          16471,
+          16394,
+          16296
+        ]
+      ]
+    ]
+  ],
+  "inputs": {
+    "comb_f32": [
+      [
+        [
+          [
+            0.10000000149011612,
+            0.20000000298023224,
+            -0.30000001192092896
+          ],
+          [
+            0.4000000059604645,
+            -0.5,
+            0.6000000238418579
+          ],
+          [
+            -0.699999988079071,
+            0.800000011920929,
+            0.8999999761581421
+          ]
+        ]
+      ]
+    ],
+    "post_f32": [
+      [
+        [
+          0.25,
+          -0.5,
+          1.75
+        ]
+      ]
+    ],
+    "residual_f32": [
+      [
+        [
+          [
+            1.25,
+            -2.0,
+            0.5,
+            3.0
+          ],
+          [
+            -4.0,
+            0.75,
+            2.5,
+            -1.5
+          ],
+          [
+            0.125,
+            5.0,
+            -3.0,
+            2.0
+          ]
+        ]
+      ]
+    ],
+    "x_f32": [
+      [
+        [
+          0.5,
+          -1.25,
+          2.0,
+          0.75
+        ]
+      ]
+    ]
+  },
+  "official_semantics": "destination j = post[j] * x + sum_i comb[i,j] * residual[i]; do not transpose comb",
+  "ok": true,
+  "old_wrong_broadcast_f32": [
+    [
+      [
+        [
+          -0.125,
+          0.08749997615814209,
+          0.4000000059604645,
+          -0.41249990463256836
+        ],
+        [
+          -2.25,
+          1.0,
+          0.25,
+          -1.125
+        ],
+        [
+          1.024999976158142,
+          3.8125,
+          -0.09999990463256836,
+          3.7125000953674316
+        ]
+      ]
+    ]
+  ],
+  "purpose": "Catch residual source/destination HC axis swaps in Block.hc_post with non-identical residual HC rows",
+  "schema": "ds41f.hc-post-independent-regression.v1"
+}

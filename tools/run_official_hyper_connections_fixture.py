@@ -47,8 +47,9 @@ def hc_pre(x_bf16,pre):
 def hc_post(x_bf16,residual_bf16,post,comb):
     x=bf16_to_f32(x_bf16); residual=bf16_to_f32(residual_bf16)
     # Official Block.hc_post: comb [source,destination], residual.unsqueeze(-2), sum dim=2.
-    # The output HC axis is the destination axis.
-    y=post[...,None]*x[:,:,None,:]+np.sum(comb[...,None]*residual[:,:,None,:,:],axis=2,dtype=np.float32)
+    # Output destination HC j = post[j] * x + sum_i comb[i,j] * residual[i].
+    mixed=np.einsum('...ij,...id->...jd',comb,residual,dtype=np.float32).astype(np.float32)
+    y=(post[...,None]*x[:,:,None,:]+mixed).astype(np.float32)
     return f32_to_bf16(y)
 
 def main():
@@ -89,7 +90,7 @@ def main():
         'input':{'name':'embed.weight','shard':str(ck/'model-00002-of-00048.safetensors'),'tokens':toks,'dtype':'BF16','shape':[1,2,HC,DIM],'digest':digest(x)},
       },
       'config':{'layer':layer,'hc_mult':HC,'hc_sinkhorn_iters':iters,'hc_eps':eps,'norm_eps':norm_eps},
-      'operation_contract':{'hc_split_sinkhorn_order':'pre=sigmoid(mix[:hc]*scale[0]+base[:hc])+eps; post=2*sigmoid(mix[hc:2hc]*scale[1]+base[hc:2hc]); comb affine; row softmax + eps; column normalize by col_sum+eps; repeat sinkhorn_iters-1 times: row normalize by row_sum+eps then column normalize by col_sum+eps','hc_mixes':'flatten [B,S,hc,d] to [B,S,hc*d] f32; rsqrt over flattened stream; F.linear with F32 hc_fn times rsqrt; split_sinkhorn','hc_pre':'sum over hc copies using pre_mix, return input dtype','hc_post':'post*x plus comb-weighted residual copies, return sublayer output dtype','predeclared_tolerance':{'f32_max_abs_lte':1e-4,'bf16_max_ulp_lte':1}},
+      'operation_contract':{'hc_split_sinkhorn_order':'pre=sigmoid(mix[:hc]*scale[0]+base[:hc])+eps; post=2*sigmoid(mix[hc:2hc]*scale[1]+base[hc:2hc]); comb affine; row softmax + eps; column normalize by col_sum+eps; repeat sinkhorn_iters-1 times: row normalize by row_sum+eps then column normalize by col_sum+eps','hc_mixes':'flatten [B,S,hc,d] to [B,S,hc*d] f32; rsqrt over flattened stream; F.linear with F32 hc_fn times rsqrt; split_sinkhorn','hc_pre':'sum over hc copies using pre_mix, return input dtype','hc_post':'destination HC j = post[j]*x + sum over source i comb[i,j]*residual[i], implemented as einsum("...ij,...id->...jd", comb, residual); return sublayer output dtype','predeclared_tolerance':{'f32_max_abs_lte':1e-4,'bf16_max_ulp_lte':1}},
       'expected':expected,'digests':dig,
       'comparison':{'self_consistent':True,'explicit_stop_before_attention_ffn_moe':True},
       'non_claims':['does not execute Attention, FFN, or MoE','does not validate full Block','does not validate layer-to-layer pre_mix carry beyond the reviewed Block.forward source flow','does not validate logits or full model','does not benchmark performance'],
