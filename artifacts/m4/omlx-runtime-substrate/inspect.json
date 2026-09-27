@@ -1,0 +1,1137 @@
+{
+  "direct_loader_vs_engine_initialization": {
+    "direct_loader_used_by_ds41f": "omlx.patches.deepseek_v41.loading.load(checkpoint, engram_ssd_offload, preserve_mtp, moe_expert_offload_resident_fraction)",
+    "native_extension_availability_is_material": true,
+    "no_static_evidence_of_extra_model_math_patch_required_for_mtp_off_raw_forward": true,
+    "normal_engine_additional_work_observed_by_static_inspection": [
+      "scheduler/GenerationBatch orchestration and prompt replay/prefill chunking",
+      "MTP/DSpark batch-generator path when enabled/preserve_mtp permits it",
+      "scheduler warning/check for missing native deepseek_v41_grouped_expert",
+      "prompt boundary/cache-store logic not relevant to no-replay admitted production C/D"
+    ]
+  },
+  "glm_moe_dsa_fast": {
+    "diagnosis": "extension_not_built_or_not_installed_into_this_tree",
+    "extension_files": [],
+    "import_error": "ImportError(\"cannot import name '_ext' from partially initialized module 'omlx.custom_kernels.glm_moe_dsa' (most likely due to a circular import) (/Users/kioju/omlx-0.7.0.dev2/omlx/custom_kernels/glm_moe_dsa/__init__.py)\")",
+    "is_native_available": false,
+    "material_one_token_symbols": {
+      "deepseek_affine_gather_qmm_blocks": false,
+      "deepseek_affine_gather_qmm_pair_concat_blocks": false,
+      "deepseek_mxfp4_gather_qmm_pair_concat_blocks": false,
+      "deepseek_v41_grouped_expert": false,
+      "deepseek_v41_packed_attention": false
+    },
+    "native_symbols": []
+  },
+  "mlx_version": "0.32.2",
+  "mtp_off_scope": true,
+  "mx_fast_deepseek_symbols": [],
+  "native_required_for_practical_base_claim": true,
+  "omlx_git_revision": "b390b31e0c6831225fed0f24d278eb1db7fcb68b",
+  "omlx_path": "/Users/kioju/omlx-0.7.0.dev2",
+  "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+  "python": "/Users/kioju/.venvs/omlx-0.7.0.dev2/bin/python",
+  "python_version": "3.13.15 (main, Aug  5 2026, 12:25:43) [Clang 21.0.0 (clang-2100.1.1.101)]",
+  "schema": "ds41f.m4.omlx-runtime-substrate-inspection.v1",
+  "source_review": {
+    "omlx/engine/batched.py": {
+      "matches": [
+        {
+          "line": 276,
+          "text": "maybe_apply_pre_load_patches,"
+        },
+        {
+          "line": 286,
+          "text": "# Apply pre-load patches that need to register modules into"
+        },
+        {
+          "line": 288,
+          "text": "# native MTP PR 990 / PR 15). Gated on model_type and per-model"
+        },
+        {
+          "line": 290,
+          "text": "maybe_apply_pre_load_patches("
+        },
+        {
+          "line": 342,
+          "text": "from ..patches.moe_expert_offload import ("
+        },
+        {
+          "line": 395,
+          "text": "from ..patches.qwen35_moe_gate_up import ("
+        },
+        {
+          "line": 411,
+          "text": "from ..patches.qwen35_moe_router import ("
+        },
+        {
+          "line": 412,
+          "text": "apply_qwen35_moe_router_patch,"
+        },
+        {
+          "line": 415,
+          "text": "apply_qwen35_moe_router_patch()"
+        },
+        {
+          "line": 417,
+          "text": "logger.debug(\"Qwen MoE router patch not applied\", exc_info=True)"
+        },
+        {
+          "line": 419,
+          "text": "# TurboQuant KV cache: patch attention and set kv_bits on scheduler"
+        },
+        {
+          "line": 423,
+          "text": "from ..patches.turboquant_attention import ("
+        },
+        {
+          "line": 424,
+          "text": "apply_turboquant_attention_patch,"
+        },
+        {
+          "line": 427,
+          "text": "apply_turboquant_attention_patch()"
+        },
+        {
+          "line": 444,
+          "text": "from ..patches.sdpa256_attention import ("
+        },
+        {
+          "line": 445,
+          "text": "apply_sdpa256_attention_patch,"
+        },
+        {
+          "line": 448,
+          "text": "apply_sdpa256_attention_patch()"
+        },
+        {
+          "line": 450,
+          "text": "logger.debug(\"sdpa256 attention patch not applied\", exc_info=True)"
+        },
+        {
+          "line": 452,
+          "text": "# Qwen3.5/3.6 head_dim=256 causal prefill -> native steel FA kernel."
+        },
+        {
+          "line": 460,
+          "text": "from ..patches.qwen35_fa256_attention import ("
+        },
+        {
+          "line": 461,
+          "text": "apply_qwen35_fa256_attention_patch,"
+        },
+        {
+          "line": 464,
+          "text": "apply_qwen35_fa256_attention_patch()"
+        },
+        {
+          "line": 466,
+          "text": "logger.debug(\"Qwen FA-256 steel patch not applied\", exc_info=True)"
+        },
+        {
+          "line": 468,
+          "text": "# Qwen3.5/3.6 q4 prefill linears -> native qmm tile tuned for long"
+        },
+        {
+          "line": 469,
+          "text": "# batches. Strictly gated in the patch; decode and unsupported linears"
+        },
+        {
+          "line": 476,
+          "text": "from ..patches.qwen35_q4_mlp import ("
+        },
+        {
+          "line": 477,
+          "text": "apply_qwen35_q4_lm_prefill_linear_patch,"
+        },
+        {
+          "line": 478,
+          "text": "apply_qwen35_q4_mlp_patch,"
+        },
+        {
+          "line": 479,
+          "text": "apply_qwen35_q4_prefill_linear_patch,"
+        },
+        {
+          "line": 482,
+          "text": "apply_qwen35_q4_mlp_patch()"
+        },
+        {
+          "line": 483,
+          "text": "apply_qwen35_q4_prefill_linear_patch()"
+        },
+        {
+          "line": 484,
+          "text": "apply_qwen35_q4_lm_prefill_linear_patch()"
+        },
+        {
+          "line": 486,
+          "text": "logger.debug(\"Qwen q4 MLP prefill patch not applied\", exc_info=True)"
+        },
+        {
+          "line": 490,
+          "text": "# the patch itself falls through for anything it cannot route."
+        },
+        {
+          "line": 493,
+          "text": "from ..patches.qwen35_oq_a8 import apply_qwen35_oq_a8_patch"
+        },
+        {
+          "line": 495,
+          "text": "# The model itself is what gets opted in: the patch tags its"
+        },
+        {
+          "line": 498,
+          "text": "apply_qwen35_oq_a8_patch("
+        },
+        {
+          "line": 505,
+          "text": "logger.debug(\"oQ A8 prefill patch not applied\", exc_info=True)"
+        },
+        {
+          "line": 515,
+          "text": "from ..patches.k2_horizon.ane_prefill import enable_ane_prefill"
+        },
+        {
+          "line": 530,
+          "text": "from ..patches.qwen35_ane_prefill import enable_qwen35_ane_prefill"
+        },
+        {
+          "line": 648,
+          "text": "# Qwen3.5/3.6 sparse MoE prefill -> native weighted-sum after sorted"
+        },
+        {
+          "line": 656,
+          "text": "from ..patches.qwen35_moe_weighted_sum import ("
+        },
+        {
+          "line": 657,
+          "text": "apply_qwen35_moe_weighted_sum_patch,"
+        },
+        {
+          "line": 660,
+          "text": "apply_qwen35_moe_weighted_sum_patch()"
+        },
+        {
+          "line": 662,
+          "text": "logger.debug(\"Qwen MoE weighted-sum patch not applied\", exc_info=True)"
+        },
+        {
+          "line": 669,
+          "text": "from ..patches.qwen35_ragged_decode import ("
+        },
+        {
+          "line": 670,
+          "text": "apply_qwen35_ragged_decode_patch,"
+        },
+        {
+          "line": 673,
+          "text": "apply_qwen35_ragged_decode_patch()"
+        },
+        {
+          "line": 675,
+          "text": "logger.debug(\"qwen3_5 ragged decode patch not applied\", exc_info=True)"
+        },
+        {
+          "line": 707,
+          "text": "from ..patches.qwen35_ane_prefill import ("
+        },
+        {
+          "line": 738,
+          "text": "from ..patches.mlx_lm_mtp import set_mtp_active"
+        },
+        {
+          "line": 742,
+          "text": "from ..patches.mlx_lm_mtp import is_mtp_active"
+        },
+        {
+          "line": 853,
+          "text": "from ..patches.k2_horizon import validate_chat_template_kwargs"
+        },
+        {
+          "line": 854,
+          "text": "from ..patches.k2_horizon.tool_grammar import validate_tool_prefix"
+        },
+        {
+          "line": 974,
+          "text": "from ..patches.k2_horizon.tool_grammar import compile_tool_grammar"
+        }
+      ],
+      "sha256": "2d79ea9966830f406a48c972a1c6749065d10b4030b3751aab246920b2a68029"
+    },
+    "omlx/engine_core.py": {
+      "matches": [
+        {
+          "line": 1157,
+          "text": "# stream is bound to the engine's executor thread, so dispatch both"
+        }
+      ],
+      "sha256": "5b3ab48bc0f1b536d0d2c88ce065656f94d882615b47f41875d734d7eeb4b2e9"
+    },
+    "omlx/patches/deepseek_v41/activation.py": {
+      "matches": [],
+      "sha256": "a63e22498e8273551f7188e580383726981ae2eca47d09f0ed119055ceea8271"
+    },
+    "omlx/patches/deepseek_v41/hyper_connection.py": {
+      "matches": [
+        {
+          "line": 36,
+          "text": "name=\"deepseek_v41_sinkhorn\","
+        },
+        {
+          "line": 92,
+          "text": "name=\"deepseek_v41_hc_post\","
+        },
+        {
+          "line": 151,
+          "text": "name=\"deepseek_v41_hc_pre_norm\","
+        },
+        {
+          "line": 233,
+          "text": "\"deepseek_v41_hc_projection_warp\" if warp else \"deepseek_v41_hc_projection\""
+        }
+      ],
+      "sha256": "9b1043dc8a85caaa6feebe90ae2f962b544ce709a281cad59358c588cf14086b"
+    },
+    "omlx/patches/deepseek_v41/kernels.py": {
+      "matches": [
+        {
+          "line": 8,
+          "text": "compiled extension is required; compilation/dispatch errors propagate."
+        },
+        {
+          "line": 337,
+          "text": "name=\"deepseek_v41_packed_\" + kind,"
+        },
+        {
+          "line": 364,
+          "text": "# Each query owns its causal indices while all rows share one dispatch."
+        },
+        {
+          "line": 535,
+          "text": "name=\"deepseek_v41_tile_topk\","
+        },
+        {
+          "line": 607,
+          "text": "name=\"deepseek_v41_sorted_topk_merge\","
+        }
+      ],
+      "sha256": "9f76d46359282c5fb23b0979dd8e550c9c1e355b9aca46a71fe97c842c376882"
+    },
+    "omlx/patches/deepseek_v41/language.py": {
+      "matches": [
+        {
+          "line": 17,
+          "text": "from omlx.custom_kernels.glm_moe_dsa import fast as glm_fast"
+        },
+        {
+          "line": 330,
+          "text": "and glm_fast.has_symbol(\"deepseek_v41_packed_attention\")"
+        },
+        {
+          "line": 332,
+          "text": "out = glm_fast.deepseek_v41_packed_attention("
+        },
+        {
+          "line": 415,
+          "text": "and glm_fast.has_symbol(\"deepseek_v41_grouped_expert\")"
+        },
+        {
+          "line": 439,
+          "text": "# Keep these nodes unevaluated for one native execution pipeline."
+        },
+        {
+          "line": 446,
+          "text": "return glm_fast.deepseek_v41_grouped_expert(gate, up, y, down).reshape("
+        },
+        {
+          "line": 454,
+          "text": "p._native_block_kind(x, True)"
+        },
+        {
+          "line": 480,
+          "text": "and glm_fast.has_symbol(\"deepseek_mxfp4_gather_qmm_pair_concat_blocks\")"
+        },
+        {
+          "line": 487,
+          "text": "pair = glm_fast.deepseek_mxfp4_gather_qmm_pair_concat_blocks("
+        },
+        {
+          "line": 503,
+          "text": "and glm_fast.has_symbol(\"deepseek_affine_gather_qmm_pair_concat_blocks\")"
+        },
+        {
+          "line": 511,
+          "text": "pair = glm_fast.deepseek_affine_gather_qmm_pair_concat_blocks("
+        },
+        {
+          "line": 794,
+          "text": "if config.preserve_mtp:"
+        },
+        {
+          "line": 795,
+          "text": "from .dspark import make_stages"
+        },
+        {
+          "line": 801,
+          "text": "self.configure_mtp(config.preserve_mtp and is_mtp_active(), get_mtp_depth())"
+        },
+        {
+          "line": 803,
+          "text": "def make_dspark_cache(self):"
+        },
+        {
+          "line": 804,
+          "text": "from .dspark import make_cache"
+        },
+        {
+          "line": 809,
+          "text": "from .dspark import forward_spec"
+        },
+        {
+          "line": 851,
+          "text": "capture = bool(kwargs.get(\"return_dspark_hidden\", False))"
+        },
+        {
+          "line": 914,
+          "text": "if capture and i in c.dspark_target_layer_ids:"
+        },
+        {
+          "line": 946,
+          "text": "if not c.dspark_target_layer_ids or set(captured) != set("
+        },
+        {
+          "line": 947,
+          "text": "c.dspark_target_layer_ids"
+        },
+        {
+          "line": 951,
+          "text": "[captured[i] for i in c.dspark_target_layer_ids], axis=-1"
+        }
+      ],
+      "sha256": "2c64bef36c9fc4a6007cd34e7b120142ced072a8d491cf1f83f2c5b1a956763f"
+    },
+    "omlx/patches/deepseek_v41/loading.py": {
+      "matches": [
+        {
+          "line": 62,
+          "text": "preserve_mtp=None,"
+        },
+        {
+          "line": 81,
+          "text": "if source_checkpoint and preserve_mtp is None:"
+        },
+        {
+          "line": 84,
+          "text": "preserve_mtp = is_mtp_active()"
+        },
+        {
+          "line": 85,
+          "text": "if preserve_mtp is not None:"
+        },
+        {
+          "line": 86,
+          "text": "if not source_checkpoint and preserve_mtp != config.preserve_mtp:"
+        },
+        {
+          "line": 88,
+          "text": "config.preserve_mtp = bool(preserve_mtp)"
+        },
+        {
+          "line": 90,
+          "text": "if preserve_mtp is True:"
+        },
+        {
+          "line": 93,
+          "text": "config.preserve_mtp = False"
+        },
+        {
+          "line": 175,
+          "text": "preserve_mtp=config.preserve_mtp,"
+        }
+      ],
+      "sha256": "490e5e6b135d2959ef138f9436a93f083d04387aae7750dc9ff3e61017ec5ec4"
+    },
+    "omlx/patches/deepseek_v41/packed_attention.py": {
+      "matches": [
+        {
+          "line": 356,
+          "text": "name=\"deepseek_v41_online_\" + stage,"
+        },
+        {
+          "line": 370,
+          "text": "that capacity use separate dispatches with the same prefix maxima."
+        }
+      ],
+      "sha256": "77974fe61e28ba3a83f042cf1e9abbea4443f7508ae91d3c6b7db92a0f5745e5"
+    },
+    "omlx/patches/deepseek_v41/quantization.py": {
+      "matches": [
+        {
+          "line": 11,
+          "text": "from omlx.custom_kernels.glm_moe_dsa import fast as glm_fast"
+        },
+        {
+          "line": 188,
+          "text": "and glm_fast.has_symbol(\"deepseek_affine_gather_qmm_blocks\")"
+        },
+        {
+          "line": 191,
+          "text": "def _native_block_kind(self, x, sorted_indices, dtype=None):"
+        },
+        {
+          "line": 194,
+          "text": "return super()._native_block_kind(x, sorted_indices, dtype=dtype)"
+        }
+      ],
+      "sha256": "02e42848d40c8b0ef6a665d6d169abd0df38042b5bba6f55b631df92b5821950"
+    },
+    "omlx/patches/mlx_lm_mtp/batch_generator.py": {
+      "matches": [
+        {
+          "line": 2,
+          "text": "\"\"\"Conditional MTP dispatch inside ``mlx_lm.generate.GenerationBatch``."
+        },
+        {
+          "line": 6,
+          "text": "of those layers. ``GenerationBatch`` is mlx-lm's per-step decoder for the"
+        },
+        {
+          "line": 7,
+          "text": "active set of sequences in continuous batching. We patch:"
+        },
+        {
+          "line": 9,
+          "text": "- ``GenerationBatch.__init__`` \u2014 leave the standard mlx-lm initialization"
+        },
+        {
+          "line": 13,
+          "text": "- ``GenerationBatch.next`` \u2014 when the batch holds exactly one MTP-capable"
+        },
+        {
+          "line": 20,
+          "text": "- ``GenerationBatch.extend`` / ``filter`` \u2014 drop MTP state whenever continuous"
+        },
+        {
+          "line": 40,
+          "text": "Greedy identity (sampler is None): the patched dispatch produces the same"
+        },
+        {
+          "line": 43,
+          "text": "``tests/test_mlx_lm_mtp_patch.py``."
+        },
+        {
+          "line": 54,
+          "text": "holds ``(conv_snap, ssm_snap)`` snapshots produced by the patched"
+        },
+        {
+          "line": 62,
+          "text": "``GenerationBatch._token_context[0]`` is a ``TokenBuffer`` accumulating"
+        },
+        {
+          "line": 103,
+          "text": "def _set_dspark_target_verify(model: Any, flag: bool) -> None:"
+        },
+        {
+          "line": 107,
+          "text": "host = _dspark_host(model)"
+        },
+        {
+          "line": 111,
+          "text": "setter = getattr(module, \"set_dspark_verify_armed\", None)"
+        },
+        {
+          "line": 124,
+          "text": "\"\"\"Wrap ``GenerationBatch`` and ``BatchGenerator`` MTP hooks."
+        },
+        {
+          "line": 127,
+          "text": "re-applying would chain wraps and double-init. ``GenerationBatch`` is"
+        },
+        {
+          "line": 128,
+          "text": "not touched by dflash so the leftover-class-patch risk that motivates"
+        },
+        {
+          "line": 132,
+          "text": "from mlx_lm.generate import BatchGenerator, GenerationBatch"
+        },
+        {
+          "line": 134,
+          "text": "logger.debug(\"mlx_lm.generate GenerationBatch/BatchGenerator not importable\")"
+        },
+        {
+          "line": 137,
+          "text": "if not hasattr(GenerationBatch, \"_omlx_mtp_patched\"):"
+        },
+        {
+          "line": 138,
+          "text": "original_init = GenerationBatch.__init__"
+        },
+        {
+          "line": 139,
+          "text": "original_next = GenerationBatch.next"
+        },
+        {
+          "line": 140,
+          "text": "original_filter = GenerationBatch.filter"
+        },
+        {
+          "line": 141,
+          "text": "original_extend = GenerationBatch.extend"
+        },
+        {
+          "line": 143,
+          "text": "def patched_init(self, *args, **kwargs):"
+        },
+        {
+          "line": 148,
+          "text": "# later standard batched path. Activation is lazy in patched_next()."
+        },
+        {
+          "line": 155,
+          "text": "def patched_next(self, *args, **kwargs):"
+        },
+        {
+          "line": 219,
+          "text": "def patched_extend(self, batch, *args, **kwargs):"
+        },
+        {
+          "line": 249,
+          "text": "def patched_filter(self, keep, *args, **kwargs):"
+        },
+        {
+          "line": 262,
+          "text": "GenerationBatch.__init__ = patched_init"
+        },
+        {
+          "line": 263,
+          "text": "GenerationBatch.next = patched_next"
+        },
+        {
+          "line": 264,
+          "text": "GenerationBatch.filter = patched_filter"
+        },
+        {
+          "line": 265,
+          "text": "GenerationBatch.extend = patched_extend"
+        },
+        {
+          "line": 266,
+          "text": "GenerationBatch._omlx_mtp_patched = True"
+        },
+        {
+          "line": 268,
+          "text": "if not hasattr(BatchGenerator, \"_omlx_mtp_patched\"):"
+        },
+        {
+          "line": 271,
+          "text": "def patched_bg_next(self, *args, **kwargs):"
+        },
+        {
+          "line": 274,
+          "text": "# Reconcile runs on GenerationBatch, which upstream creates"
+        },
+        {
+          "line": 301,
+          "text": "BatchGenerator._next = patched_bg_next"
+        },
+        {
+          "line": 302,
+          "text": "BatchGenerator._omlx_mtp_patched = True"
+        },
+        {
+          "line": 310,
+          "text": "the patch, but the per-instance ``mtp`` module is only attached when"
+        },
+        {
+          "line": 311,
+          "text": "``mtp_enabled`` was True at load time (see qwen35_model._patch_model"
+        },
+        {
+          "line": 312,
+          "text": "and deepseek_v4_model._patch_model). Without the inner module the"
+        },
+        {
+          "line": 324,
+          "text": "before each model load so patched ``__init__`` methods know whether to"
+        },
+        {
+          "line": 355,
+          "text": "pending prompt work into the same ``GenerationBatch`` via ``extend()``. That"
+        },
+        {
+          "line": 382,
+          "text": "(near-)zero cost, so ``patched_bg_next`` skips the completion pin and"
+        },
+        {
+          "line": 383,
+          "text": "``patched_next`` performs the handoff in the same call. Deep queues keep"
+        },
+        {
+          "line": 562,
+          "text": "runtime patches, which need it for weight-load matching even when"
+        },
+        {
+          "line": 613,
+          "text": "Only used for debug logging \u2014 the patched_init / patched_next paths"
+        },
+        {
+          "line": 617,
+          "text": "return \"GenerationBatch has no .model attribute\""
+        },
+        {
+          "line": 621,
+          "text": "\"has no mtp_forward (qwen35 patch may not have applied to this class)\""
+        },
+        {
+          "line": 632,
+          "text": "return \"GenerationBatch has no uids\""
+        },
+        {
+          "line": 647,
+          "text": "return \"grammar-constrained decoding uses GenerationBatch._step hooks\""
+        },
+        {
+          "line": 693,
+          "text": "\"\"\"Per-batch MTP state stashed on the GenerationBatch instance.\"\"\""
+        },
+        {
+          "line": 768,
+          "text": "\"\"\"Experimental row-wise MTP state for a multi-sequence GenerationBatch.\"\"\""
+        },
+        {
+          "line": 786,
+          "text": "a later MTP probe. It is keyed by uid because GenerationBatch objects are"
+        },
+        {
+          "line": 863,
+          "text": "\"\"\"Match ``GenerationBatch._step``'s per-sequence sampler resolution (batch=1).\"\"\""
+        },
+        {
+          "line": 919,
+          "text": "(``patched_extend``), or with the cache itself at request end."
+        },
+        {
+          "line": 1450,
+          "text": "patched ``GatedDeltaNet.__call__``; we restore that snapshot. Standard"
+        },
+        {
+          "line": 1495,
+          "text": "Two mechanisms are supported, dispatched on the model's capability:"
+        },
+        {
+          "line": 1506,
+          "text": "written by the patched ``GatedDeltaNet.__call__`` during the"
+        },
+        {
+          "line": 1547,
+          "text": "dspark_verify = bool(n_confirmed and _dspark_host(model) is not None)"
+        },
+        {
+          "line": 1550,
+          "text": "# DeepSeek target on its architecture-native quantized linear path."
+        },
+        {
+          "line": 1551,
+          "text": "_set_verify_qmm_armed(not dspark_verify)"
+        },
+        {
+          "line": 1552,
+          "text": "_set_dspark_target_verify(model, dspark_verify)"
+        },
+        {
+          "line": 1556,
+          "text": "if dspark_verify:"
+        },
+        {
+          "line": 1557,
+          "text": "_set_dspark_target_verify(model, False)"
+        },
+        {
+          "line": 1876,
+          "text": "code/predictable text climbs. Rejected alternatives (interleaved"
+        },
+        {
+          "line": 2214,
+          "text": "def _dspark_host(model: Any) -> Optional[Any]:"
+        },
+        {
+          "line": 2222,
+          "text": "if getattr(candidate, \"_omlx_dspark_decode_enabled\", False):"
+        },
+        {
+          "line": 2227,
+          "text": "def _dspark_next_drafts("
+        },
+        {
+          "line": 2242,
+          "text": "host = _dspark_host(gen_batch.model)"
+        },
+        {
+          "line": 2247,
+          "text": "depth = min(int(depth), int(getattr(host.args, \"dspark_block_size\", depth)))"
+        },
+        {
+          "line": 2250,
+          "text": "host.dspark_append_context(hidden_rows, state.mtp_cache)"
+        },
+        {
+          "line": 2258,
+          "text": "logits, _ = host.dspark_forward("
+        },
+        {
+          "line": 2280,
+          "text": "bias, _ = host.dspark_markov(previous)"
+        },
+        {
+          "line": 2314,
+          "text": "final trunk norm is applied here), or the model's native 4D raw hidden"
+        },
+        {
+          "line": 2325,
+          "text": "advances ``state.hist_offset`` by n. All arrays are dispatched with"
+        },
+        {
+          "line": 2332,
+          "text": "if _dspark_host(model) is not None:"
+        },
+        {
+          "line": 2333,
+          "text": "return _dspark_next_drafts("
+        },
+        {
+          "line": 2394,
+          "text": "# Speculative draft shaping \u2014 see _dspark_next_drafts."
+        },
+        {
+          "line": 2424,
+          "text": "# Fire-and-forget dispatch: the GPU evaluates the chain while the"
+        }
+      ],
+      "sha256": "185deb577353daa9c85d44a6d0514ea598172bd411b88b5b69ae749b61360cc6"
+    },
+    "omlx/scheduler.py": {
+      "matches": [
+        {
+          "line": 35,
+          "text": "GenerationBatch,"
+        },
+        {
+          "line": 53,
+          "text": "from .cache.deepseek_v41_delta import compact_snapshot as compact_deepseek_v41_snapshot"
+        },
+        {
+          "line": 64,
+          "text": "from .patches.sdpa256_attention import set_unfused_headroom_provider"
+        },
+        {
+          "line": 107,
+          "text": "compact_deepseek_v41_snapshot(value[1], token_count, block_size)"
+        },
+        {
+          "line": 530,
+          "text": "# Monkey-patch GenerationBatch._step to feed grammar processors the token"
+        },
+        {
+          "line": 711,
+          "text": "Doing it here rather than immediately after the previous dispatch is"
+        },
+        {
+          "line": 713,
+          "text": "``mx.eval`` on the freshly dispatched samples, so every bit of host work"
+        },
+        {
+          "line": 745,
+          "text": "_original_generation_batch_step = GenerationBatch._step"
+        },
+        {
+          "line": 748,
+          "text": "def _patched_generation_batch_step(self):"
+        },
+        {
+          "line": 760,
+          "text": "# Defensive: mlx-lm's GenerationBatch._step does `any(self.logits_processors)`"
+        },
+        {
+          "line": 768,
+          "text": "# mlx-lm's GenerationBatch.extend() re-introduces None slots via"
+        },
+        {
+          "line": 786,
+          "text": "GenerationBatch._omlx_realign_rows = _omlx_realign_generation_batch_rows"
+        },
+        {
+          "line": 787,
+          "text": "GenerationBatch._step = _patched_generation_batch_step"
+        },
+        {
+          "line": 791,
+          "text": "# Monkey-patch GenerationBatch.filter to keep logits_processors aligned with"
+        },
+        {
+          "line": 807,
+          "text": "# for the sibling None-slot collapse handled in _patched_generation_batch_step."
+        },
+        {
+          "line": 808,
+          "text": "_original_generation_batch_filter = GenerationBatch.filter"
+        },
+        {
+          "line": 811,
+          "text": "def _patched_generation_batch_filter(self, keep):"
+        },
+        {
+          "line": 824,
+          "text": "GenerationBatch.filter = _patched_generation_batch_filter"
+        },
+        {
+          "line": 829,
+          "text": "# Monkey-patch TurboQuantKVCache.merge so _merge_caches() works"
+        },
+        {
+          "line": 846,
+          "text": "# _patched_extend_cache converts them back to batched caches before a second"
+        },
+        {
+          "line": 948,
+          "text": "def _patched_make_cache(model, left_padding, max_kv_size):"
+        },
+        {
+          "line": 1012,
+          "text": "# conversion via to_batch, which _patched_make_cache honors at creation;"
+        },
+        {
+          "line": 1036,
+          "text": "def _patched_merge_caches(caches):"
+        },
+        {
+          "line": 1054,
+          "text": "def _patched_extend_cache(cache_a, cache_b):"
+        },
+        {
+          "line": 1062,
+          "text": "def _patched_ppb_split(self, indices):"
+        },
+        {
+          "line": 1094,
+          "text": "_mlx_lm_generate_module._make_cache = _patched_make_cache"
+        },
+        {
+          "line": 1095,
+          "text": "_mlx_lm_generate_module._merge_caches = _patched_merge_caches"
+        },
+        {
+          "line": 1096,
+          "text": "_mlx_lm_generate_module._extend_cache = _patched_extend_cache"
+        },
+        {
+          "line": 1097,
+          "text": "PromptProcessingBatch.split = _patched_ppb_split"
+        },
+        {
+          "line": 1100,
+          "text": "# Monkey-patch ChunkedKVCache for Llama-4 (Scout / Maverick): mlx_lm's"
+        },
+        {
+          "line": 1108,
+          "text": "# this patch installs batch=1 pass-throughs so serialized requests work."
+        },
+        {
+          "line": 1196,
+          "text": "# to operators without diffing the patch against installed mlx_lm."
+        },
+        {
+          "line": 1198,
+          "text": "\"ChunkedKVCache patch: methods already present upstream, \" \"skipped: %s\","
+        },
+        {
+          "line": 1206,
+          "text": "# Monkey-patch PromptProcessingBatch.prompt to set mRoPE deltas before the"
+        },
+        {
+          "line": 1226,
+          "text": "def _patched_ppb_prompt(self, tokens):"
+        },
+        {
+          "line": 1228,
+          "text": "# Late-bound so model patches can swap the loop under this wrapper."
+        },
+        {
+          "line": 1234,
+          "text": "PromptProcessingBatch._omlx_prompt_wrapper = _patched_ppb_prompt"
+        },
+        {
+          "line": 1235,
+          "text": "PromptProcessingBatch.prompt = _patched_ppb_prompt"
+        },
+        {
+          "line": 1239,
+          "text": "# ChunkedKVCache is included once the batch=1 patch above installs its"
+        },
+        {
+          "line": 1546,
+          "text": "# Contended chunks stay on the 64-token grid: the DSv4 native indexer only"
+        },
+        {
+          "line": 1882,
+          "text": "from .patches.glm_moe_dsa.generate_patch import ("
+        },
+        {
+          "line": 1901,
+          "text": "from .patches.minimax_m3.generate_patch import ("
+        },
+        {
+          "line": 2499,
+          "text": "_extract_tensor_bytes (bf16 -> uint16 view) would re-dispatch the"
+        },
+        {
+          "line": 2744,
+          "text": "# Prefill chunks are clamped to the block boundary, and the native"
+        },
+        {
+          "line": 2826,
+          "text": "if not fast.is_native_available() or not fast.has_symbol("
+        },
+        {
+          "line": 2835,
+          "text": "# Qwen4 needs its sparse native path before wider chunks"
+        },
+        {
+          "line": 3300,
+          "text": "unless the attention patch falls back to dequantized sink-aware SDPA."
+        },
+        {
+          "line": 3353,
+          "text": "native form while adjacent full-attention KVCache layers are converted."
+        },
+        {
+          "line": 3386,
+          "text": "# runtime, but the prefix/SSD store paths dispatch on the"
+        },
+        {
+          "line": 3554,
+          "text": "# BatchTurboQuantKVCache (via the monkey-patched merge), so the"
+        },
+        {
+          "line": 3575,
+          "text": "# decode. Rotating/sliding-window layers remain native pass-through"
+        },
+        {
+          "line": 5344,
+          "text": "from .patches.glm_moe_dsa.generate_patch import ("
+        },
+        {
+          "line": 5362,
+          "text": "from .patches.minimax_m3.generate_patch import ("
+        },
+        {
+          "line": 6676,
+          "text": "re-dispatch to this thread's stream index, which does not exist on the"
+        },
+        {
+          "line": 6921,
+          "text": "so the async store-cache worker never re-dispatches a lazy op to"
+        },
+        {
+          "line": 7201,
+          "text": "# the capturing thread; otherwise the worker re-dispatches a lazy op"
+        },
+        {
+          "line": 8589,
+          "text": "# its handler stores sub-class names and re-dispatches per name."
+        },
+        {
+          "line": 8820,
+          "text": "from .patches.mlx_lm_mtp import prompt_priming"
+        },
+        {
+          "line": 9205,
+          "text": "# (logits, hidden, gdn_states) MTP runtime patch returns."
+        },
+        {
+          "line": 9341,
+          "text": "``GenerationBatch.Response``-shaped object per active uid."
+        },
+        {
+          "line": 9437,
+          "text": "from .patches.specprefill import DEFAULT_KEEP_RATE, DEFAULT_THRESHOLD"
+        },
+        {
+          "line": 9469,
+          "text": "\"\"\"Clean up SpecPrefill RoPE patches when a request finishes.\"\"\""
+        },
+        {
+          "line": 9471,
+          "text": "from .patches.specprefill import cleanup_rope"
+        },
+        {
+          "line": 9956,
+          "text": "The engine wrapper dispatches this method to the owning MLX executor;"
+        },
+        {
+          "line": 10136,
+          "text": "Mirrors MLX SDPA dispatch closely enough that unsupported prefill"
+        },
+        {
+          "line": 10566,
+          "text": "# Track SpecPrefill: these requests must be alone (RoPE patching affects whole model)"
+        },
+        {
+          "line": 10732,
+          "text": "# SpecPrefill requests must be alone in the batch (RoPE patching"
+        },
+        {
+          "line": 10967,
+          "text": "from .patches.specprefill import cleanup_rope"
+        },
+        {
+          "line": 10976,
+          "text": "from .patches.specprefill import cleanup_rope"
+        },
+        {
+          "line": 11274,
+          "text": "# GenerationBatch._step does ``for p in self.logits_processors[e]``"
+        },
+        {
+          "line": 11280,
+          "text": "# See vllm-mlx-patched commit 8d4052b for the same root cause"
+        },
+        {
+          "line": 11734,
+          "text": "# three sub-phases (boundary / collect / dispatch)"
+        },
+        {
+          "line": 11736,
+          "text": "# The dispatch phase does a FULL mx.eval (not"
+        },
+        {
+          "line": 11740,
+          "text": "# for the worker to materialize re-dispatches to this"
+        },
+        {
+          "line": 11742,
+          "text": "# -> SIGABRT. See the dispatch-phase comment below."
+        },
+        {
+          "line": 11818,
+          "text": "with self._phase_timer(\"store_cache_main_dispatch\"):"
+        },
+        {
+          "line": 11829,
+          "text": "# re-dispatches to self._stream's index,"
+        },
+        {
+          "line": 12405,
+          "text": "# Clear any SpecPrefill RoPE patch tied to this request so the retry"
+        },
+        {
+          "line": 12564,
+          "text": "# Use next_generated() which returns only GenerationBatch.Response"
+        }
+      ],
+      "sha256": "f241c18c3738ef2c478e8926ec98e34c9b3837608e3c3b4e063e163c282e04a1"
+    }
+  }
+}

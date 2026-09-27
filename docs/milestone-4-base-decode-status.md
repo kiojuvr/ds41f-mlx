@@ -1,6 +1,6 @@
 # Milestone 4 base decode implementation status
 
-Status: **INCOMPLETE — real oMLX admission/session lifecycle and hot-path cleanup are present; production wrapper performance now matches same-process raw oMLX base target controls, but the independent first-incremental logits oracle is still missing.**
+Status: **INCOMPLETE — real oMLX admission/session lifecycle and hot-path cleanup are present, but both M4 gates remain open: (A) no exported independent first-incremental full-logits digest yet; (B) same-process raw `_forward` parity is not proof of practical oMLX execution substrate.**
 
 ## Implemented
 
@@ -8,7 +8,8 @@ Status: **INCOMPLETE — real oMLX admission/session lifecycle and hot-path clea
 - Added `OMLXDecodeStateAdapter` for real `PrefillContinuationState` admission into real oMLX `DeepseekV41Cache` objects.
 - Added `OMLXDecodeSession` owning the active decode cache state after admission.
 - Added qualification runner: `tools/run_m4_omlx_base_decode_qualification.py`.
-- Recorded real-run artifact: `artifacts/m4/omlx-base-decode/qualification.json`.
+- Added bounded oracle/substrate diagnostics: `tools/run_m4_independent_incremental_oracle.py` and `tools/inspect_omlx_runtime_substrate.py`.
+- Recorded real-run artifact: `artifacts/m4/omlx-base-decode/qualification.json` plus diagnostic artifacts under `artifacts/m4/independent-incremental-oracle/` and `artifacts/m4/omlx-runtime-substrate/`.
 
 ## Actual oMLX cache slot mapping
 
@@ -57,11 +58,14 @@ Open gates:
 
 - `first_token_logits`: **not qualified** in the recorded run because no independent official/reference first-incremental full-logits oracle exists yet for `[0, 3] -> [15]`; the runner records the oMLX logits digest but does not use oMLX as its own oracle.
 
-Performance closure result:
+Performance diagnostic result (not closure):
 
 - The previous production wrapper performed diagnostic offset scalar reads on every token: about 40 `DeepseekV41Cache.size().item()` reads before target forward, 40 after, plus source-layer reads in the state report.
 - `OMLXDecodeSession.decode_one()` no longer performs per-token cache offset inspection or O(context) `np.concatenate` token-history copies. Detailed offset/state inspection is explicit via `inspect_state()` and used only at qualification checkpoints.
-- Same-process controls in `artifacts/m4/omlx-base-decode/qualification.json` show the wrapper is no longer the regression boundary: raw `_forward` with an oMLX-native cache, raw `_forward` with an admitted M2 cache, and `OMLXDecodeSession.decode_one()` all measure in the same ~0.37-0.39 tok/s MTP-off base-target class on this short fixture. The known 29-37 tok/s documented oMLX behavior is therefore not reproduced by ordinary MTP-off single-token `_forward` in this bounded control and should not be attributed to wrapper diagnostics after this change.
+- Same-process controls in `artifacts/m4/omlx-base-decode/qualification.json` show the wrapper is no longer the local regression boundary: raw `_forward` with an oMLX-native cache, raw `_forward` with an admitted M2 cache, and `OMLXDecodeSession.decode_one()` all measure in the same ~0.37-0.39 tok/s MTP-off base-target class on this short fixture.
+- This does **not** close the practical-performance gate. `artifacts/m4/omlx-runtime-substrate/inspect.json` shows `omlx.custom_kernels.glm_moe_dsa.fast.is_native_available() == false`, `native_symbols == []`, and both `deepseek_v41_grouped_expert` and `deepseek_v41_packed_attention` unavailable. The inspected tree has no `omlx/custom_kernels/glm_moe_dsa/_ext*.so`, so the current measurement is a slow-path benchmark, not a qualified selected practical oMLX substrate.
+- A real oMLX `BatchGenerator`/scheduler MTP-OFF throughput control has not yet been run. Static inspection shows scheduler/GenerationBatch patching and prompt/cache orchestration in normal engine startup; direct loader has no extra MTP-OFF model-math patch beyond the DeepSeek loader path, but native extension availability is material.
+- The known-good local oMLX baseline remains `docs/archive/reference/omlx-known-baseline.md` (official checkpoint, long-context server/admin production runs, 29-37 tok/s decode at 32K-200K, ~293 GB peak). Current raw `_forward` controls differ materially: MTP/DSpark OFF, no native `glm_moe_dsa` extension, short fixture, no standard scheduler control. Therefore they are not a reproduction of the known-good practical configuration.
 
 ## Transaction/lifecycle behavior
 
@@ -80,4 +84,6 @@ Still disabled. Future DSpark integration should attach at:
 
 ## Completion decision
 
-Milestone 4 base target is **INCOMPLETE** until a bounded independent/reference first-incremental full-logits validator is added and the admitted oMLX first-token logits pass it. A generic three-token full-prefill substitute was investigated but the existing official-source-derived helper stack has sequence-length-2 assumptions in Engram and compressor paths, and in any case would not by itself exercise the incremental lifecycle required by the M4 gate.
+Milestone 4 base target correctness is **INCOMPLETE** until a bounded independent/reference first-incremental full-logits validator exports the `[0,3] -> [15]` logits digest and the admitted oMLX first-token logits pass it. `tools/run_m4_independent_incremental_oracle.py` now exercises the historical independent native/reference full-backbone lifecycle for tokens `0 3 15` as qualification-oracle evidence, but the retained CLI does not export logits bytes/digest, so it cannot close Gate A yet.
+
+Practical Milestone 4 decode is also **INCOMPLETE**. Raw-path parity is useful evidence that the wrapper tax was removed, but current oMLX native/custom symbols are absent, and the standard oMLX BatchGenerator MTP-OFF control remains to be measured after fixing/building the native extension state.

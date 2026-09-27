@@ -245,8 +245,23 @@ def main() -> int:
     perf_session = OMLXDecodeSession.from_prefill_state(session.model, state, cfg)
     production_wrapper = time_steps(lambda tok: perf_session.decode_one(tok)[0], perf_tokens, warmup=args.performance_warmup, measured=args.performance_steps)
 
+    native_kernel_status: dict[str, Any] = {}
+    try:
+        glm_fast = __import__("omlx.custom_kernels.glm_moe_dsa.fast", fromlist=["fast"])
+        native_kernel_status = {
+            "is_native_available": bool(glm_fast.is_native_available()),
+            "import_error": repr(glm_fast.import_error()),
+            "native_symbols": list(glm_fast.native_symbols()),
+            "has_deepseek_v41_grouped_expert": bool(glm_fast.has_symbol("deepseek_v41_grouped_expert")),
+            "has_deepseek_v41_packed_attention": bool(glm_fast.has_symbol("deepseek_v41_packed_attention")),
+        }
+    except Exception as exc:
+        native_kernel_status = {"inspection_error": repr(exc), "is_native_available": False}
+
     record["performance"] = {
-        "policy": "bounded M4 base-target diagnostic, MTP/DSpark OFF",
+        "policy": "bounded M4 base-target diagnostic, MTP/DSpark OFF; raw parity is not practical closure unless native substrate is available and standard oMLX generation path is also checked",
+        "native_kernel_status": native_kernel_status,
+        "standard_generation_batch_control": "not run by this runner",
         "frontier_start": state.token_frontier,
         "state_came_from_dwarfstar_prefill_admission": True,
         "speculation_enabled": False,
@@ -260,10 +275,22 @@ def main() -> int:
         "control_C_raw_forward_admitted_m2_cache": control_admitted_raw,
         "control_D_production_session_wrapper": production_wrapper,
     }
-    # Practicality is judged against same-process raw _forward controls, not an arbitrary low threshold.
+    # Wrapper parity is necessary but not sufficient for the practical M4 gate.
     native_tps = control_native["tok_per_s_median"]
     prod_tps = production_wrapper["tok_per_s_median"]
-    record["gates"]["practical_base_execution"] = bool(native_tps > 0 and prod_tps >= 0.75 * native_tps)
+    wrapper_parity = bool(native_tps > 0 and prod_tps >= 0.75 * native_tps)
+    required_native = bool(
+        native_kernel_status.get("is_native_available")
+        and native_kernel_status.get("has_deepseek_v41_grouped_expert")
+        and native_kernel_status.get("has_deepseek_v41_packed_attention")
+    )
+    record["gates"]["raw_forward_wrapper_parity"] = wrapper_parity
+    record["gates"]["practical_base_execution"] = False
+    record["performance"]["practical_base_execution_reason"] = (
+        "INCOMPLETE: raw _forward parity is present but native DeepSeek V4.1 kernels and standard oMLX GenerationBatch MTP-OFF control are required"
+        if not required_native
+        else "INCOMPLETE: native kernels are available but standard oMLX GenerationBatch MTP-OFF control is still required"
+    )
 
     record["dspark_mtp_attachment_boundary"] = {
         "enabled_now": False,

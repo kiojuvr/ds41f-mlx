@@ -61,7 +61,7 @@ Rejected:
 
 Status: **in progress / incomplete**. See `docs/milestone-4-base-decode-status.md`.
 
-Implemented so far: real oMLX `DeepseekV41Cache` admission from live `PrefillContinuationState`, `OMLXDecodeSession`, base target execution, continuation, Engram state update, reset, fork, injected-failure rollback, and removal of diagnostic cache scalar reads from the production token loop. Same-process controls show production wrapper throughput now matches raw MTP-off oMLX `_forward`; remaining gate: independent/reference first-incremental full-logits qualification.
+Implemented so far: real oMLX `DeepseekV41Cache` admission from live `PrefillContinuationState`, `OMLXDecodeSession`, base target execution, continuation, Engram state update, reset, fork, injected-failure rollback, and removal of diagnostic cache scalar reads from the production token loop. Same-process controls show production wrapper throughput now matches raw MTP-off oMLX `_forward`, but this is not a practical-performance closure. Remaining gates: independent/reference first-incremental full-logits qualification, and reproduction of the genuine practical oMLX execution substrate (native/custom kernels plus standard BatchGenerator/scheduler MTP-OFF control).
 
 Starting boundary from Milestone 3:
 
@@ -77,7 +77,7 @@ Deliverables:
 
 - selected oMLX-derived decode topology connected to the same production session/state boundary as prefill;
 - official-semantics qualification gates preserved;
-- practical single-stream decode restored before optional speculative acceleration;
+- practical single-stream decode restored before optional speculative acceleration, unless evidence from the genuine standard oMLX MTP-OFF path proves practical speed structurally starts at DSpark/MTP;
 - MTP/speculative decoding evaluated only as a staged part of the selected architecture;
 - reset, fork, continuation, and failure atomicity preserved.
 

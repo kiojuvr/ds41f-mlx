@@ -1,0 +1,36 @@
+{
+  "authority_source": {
+    "binary_sha256": "571d4040aec8d49dcc751d4a27635fe060cb4943b4d7f60fb6d01f720d544716",
+    "repository": "/Volumes/SDXC-512/deepseek-v41-flash-mlx",
+    "role": "qualification_oracle_only_not_production_topology",
+    "runner": "tools/benchmark/run_text_backbone_reference.sh with TOKENS_FILE='0 3 15'",
+    "test_source_sha256": "42472d9ff49993ced9985cb76cf9f1b073495d1217739289c010c863843a0f6d"
+  },
+  "digest_gate_complete": false,
+  "fixture": {
+    "full_token_sequence_for_historical_cli": [
+      0,
+      3,
+      15
+    ],
+    "incremental_input": [
+      15
+    ],
+    "prefill_tokens": [
+      0,
+      3
+    ]
+  },
+  "historical_run": {
+    "artifact_dir": "/Volumes/SDXC-512/deepseek-v41-flash-mlx/artifacts/text-backbone/run-20260927-175654-44703",
+    "elapsed_s": 67.25789745897055,
+    "pass_lifecycle": true,
+    "returncode": 0,
+    "stdout_tail": "Logs: artifacts/text-backbone/run-20260927-175654-44703\nLoading full backbone layers 0..39 on-demand experts and Engram 1/14 mmap backing\nroute_tie: layer=36 token=0 sixth_id=186 seventh_id=239 sixth_score_bits=1107496437 seventh_score_bits=1107496437\nPASS: 3 token IDs -> encoder 0..19 -> decoder 20..39 -> logits; <=128 chunk/token bits, state, continuation, fork, reset, invalid token rejection; route tie records exact across schedules = 1 (lowest-ID policy remains an external-oracle gap); external oracle/256K NOT qualified.\nCompleted. Chunk/token tensor and state results require review; external oracle and 256K remain unqualified.\n"
+  },
+  "limitation": "historical retained CLI does not export final logits bytes/digest; it only proves independent token-serial/chunk continuation/state exactness for the supplied token sequence",
+  "match": null,
+  "oracle_logits_digest": null,
+  "production_digest_to_qualify": "bbc86311483405ba433a11c3b77eddc9161aed5f74bc3667a3b67929c701c7ce",
+  "schema": "ds41f.m4.independent-incremental-oracle.v1"
+}
