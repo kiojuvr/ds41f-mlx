@@ -27,7 +27,7 @@ from tools.run_native_layer0_25_transformer_entry_validation import (  # type: i
 )
 from tools.run_native_layer24_25_connected_validation import roles as layer_roles  # type: ignore
 from tools.run_native_engram_layer1_validation import layer1_hashes_regenerate  # type: ignore
-from tools.run_native_engram_layer14_validation import apply_engram_layer  # type: ignore
+from tools.run_native_engram_layer14_validation import apply_engram_layer, regen_hashes  # type: ignore
 
 
 class OfficialModelMath:
@@ -73,12 +73,23 @@ class OfficialModelMath:
         if tokens.reshape(-1).tolist() != [0, 3]:
             raise ValueError("bounded Engram seam currently supports token fixture [0, 3]")
         full_hash, layer1_hash, provenance = layer1_hashes_regenerate()
+        try:
+            import json
+            contract = self._engram_contract()
+            cfg_infer = json.loads((self.checkpoint / "inference/config.json").read_text())
+            regen_full, regen_layer1, layer14_hash = regen_hashes(self.checkpoint, cfg_infer, contract)
+            if digest(regen_full) != digest(full_hash) or digest(regen_layer1) != digest(layer1_hash):
+                raise RuntimeError("layer14 hash regeneration disagrees with layer1 Engram contract")
+        except Exception:
+            raise
         return {
             "full_hash": full_hash,
             "layer1_hash": layer1_hash,
-            "provenance": provenance,
+            "layer14_hash": layer14_hash,
+            "provenance": {**provenance, "layer14_regenerated_from_same_full_hash": True},
             "full_hash_digest": digest(full_hash),
             "layer1_hash_digest": digest(layer1_hash),
+            "layer14_hash_digest": digest(layer14_hash),
         }
 
     def _engram_contract(self) -> dict[str, Any]:

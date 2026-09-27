@@ -1,6 +1,6 @@
 # Milestone 2 prefill restoration status
 
-Status: **INCOMPLETE — ENGRAM@1 AND SECOND SOURCE/REUSE EXECUTOR GROUP IMPLEMENTED**.
+Status: **INCOMPLETE — ENGRAM@1, ENGRAM@14, AND THIRD SOURCE/REUSE EXECUTOR GROUP IMPLEMENTED**.
 
 This document records the current Milestone 2 state. It does not change the runtime architecture decision. Milestone 2 remains open until full-model official-checkpoint prefill executes through the DwarfStar-derived topology.
 
@@ -12,13 +12,13 @@ Correctness authority remains official checkpoint/data, reviewed official DeepSe
 
 ## Implemented vertical slice
 
-The repository now contains a vertically integrated DwarfStar-derived production-prefill executor slice through Engram@1 and the first two complete source/reuse dependency groups:
+The repository now contains a vertically integrated DwarfStar-derived production-prefill executor slice through Engram@1, Engram@14, and the first three complete source/reuse dependency groups:
 
 ```text
 ds41f_mlx/dwarfstar_prefill_slice.py
 ds41f_mlx/official_model_math.py
 tools/run_m2_dwarfstar_prefill_vertical_slice.py
-artifacts/m2/dwarfstar-prefill/vertical-slice-layer0-13-engram1-source8-reuse.json
+artifacts/m2/dwarfstar-prefill/vertical-slice-layer0-19-engram1-engram14-source14-reuse.json
 ```
 
 The slice demonstrates:
@@ -26,15 +26,18 @@ The slice demonstrates:
 - native DwarfStar-derived sweep plan ownership;
 - executor-owned typed token, embedding, HC carry, pre-mix, and shared publication storage;
 - official checkpoint embedding gather through the native prefill library;
-- complete real model execution for layers 0..13 using narrow production-facing official model-math and Engram seams, without calling `TextBackboneReference`, `TextEncoderReference`, or `TextDecoderReference`;
+- complete real model execution for layers 0..19 using narrow production-facing official model-math and Engram seams, without calling `TextBackboneReference`, `TextEncoderReference`, or `TextDecoderReference`;
 - real Engram@1 execution using regenerated token/ngram hashes, sparse SSD-backed Engram row reads, FP8 WKV projection, source-defined gate arithmetic, and residual update;
 - layer-2 compressed/index/top-k source publication owned by the executor;
 - layer-3..7 reuse/consumer attention reading the executor-owned layer-2 publication rather than recomputing producer state;
 - layer-8 compressed/index/top-k source publication as a distinct generation;
 - layer-9..13 reuse/consumer attention reading the executor-owned layer-8 publication and not the stale layer-2 generation;
+- real Engram@14 execution using regenerated layer-14 hashes, sparse SSD-backed Engram row reads, FP8 WKV projection, source-defined gate arithmetic, residual update, and preserved pre-mix/shared publication state;
+- layer-14 compressed/index/top-k source publication as a distinct generation after Engram@14 and Block14;
+- layer-15..19 reuse/consumer attention reading the executor-owned layer-14 publication and not stale layer-2 or layer-8 generations;
 - candidate lifecycle explicitly scoped as not-applicable before candidate source layer 20;
 - invalid-during-sweep and commit-after-publication transaction events;
-- exact Engram-aware comparison against existing official-source-derived connected validation evidence for layers 0..13.
+- exact Engram-aware comparison against official-source-derived connected validation evidence for layers 0..19, including the newly added Engram@14→Block14→consumers15..19 reference fixture.
 
 This is an implementation-scoped Engram-aware two-generation source/reuse slice, not full-model prefill.
 
@@ -117,7 +120,7 @@ Milestone 2 is **not complete**.
 
 Current completion criteria:
 
-- Engram-aware DwarfStar-topology source→publication→reuse executor slice: **implemented and validated for layers 0..13, including Engram@1 and source generations at 2 and 8**;
+- Engram-aware DwarfStar-topology source→publication→reuse executor slice: **implemented and validated for layers 0..19, including Engram@1, Engram@14, and source generations at 2, 8, and 14**;
 - real full-model DwarfStar-topology prefill: **not implemented**;
 - official checkpoint through the DwarfStar-derived full prefill path: **not implemented**;
 - production state handoff from full prefill: **not implemented**;

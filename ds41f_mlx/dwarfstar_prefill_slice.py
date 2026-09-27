@@ -156,13 +156,20 @@ class DwarfStarPrefillVerticalSliceExecutor:
                     # The first bounded slice supports the first full row span only.
                     continue
                 engram_before = None
-                if enable_engram and int(layer) == 1:
+                if enable_engram and int(layer) in {1, 14}:
+                    engram_layer = int(layer)
+                    hash_key = "layer1_hash" if engram_layer == 1 else "layer14_hash"
                     pre_engram = self.math.digest(storage.current_hc_bf16)
-                    post, evidence = self.math.apply_engram(1, storage.current_hc_bf16, storage.engram_hashes["layer1_hash"])
+                    pre_mix_before = self.math.digest(storage.pre_f32)
+                    shared_before = storage.frontier_digest(self.math)
+                    post, evidence = self.math.apply_engram(engram_layer, storage.current_hc_bf16, storage.engram_hashes[hash_key])
                     storage.current_hc_bf16 = post
                     engram_before = pre_engram
                     evidence["command_context"] = command
-                    evidence["pre_mix_digest_unchanged"] = self.math.digest(storage.pre_f32)
+                    evidence["pre_mix_digest_unchanged"] = pre_mix_before
+                    evidence["shared_state_before"] = shared_before
+                    evidence["shared_state_after"] = storage.frontier_digest(self.math)
+                    evidence["shared_state_unchanged"] = evidence["shared_state_before"] == evidence["shared_state_after"]
                     engram_events.append(evidence)
                 before = storage.frontier_digest(self.math)
                 x_in = self.math.digest(storage.current_hc_bf16)
@@ -203,7 +210,10 @@ class DwarfStarPrefillVerticalSliceExecutor:
             raise
         seconds = perf_counter() - t0
 
-        if enable_engram:
+        if enable_engram and layers >= 20:
+            reference_path = Path("artifacts/native-engram-layer14-block19-validation.json")
+            reference_kind = "engram_aware_connected_block19_scope"
+        elif enable_engram:
             reference_path = Path("artifacts/native-engram-layer14-validation.json")
             reference_kind = "engram_aware_connected_scope"
         else:
@@ -213,12 +223,12 @@ class DwarfStarPrefillVerticalSliceExecutor:
         if reference_path.exists():
             import json
             ref = json.loads(reference_path.read_text())
-            ref_layers = ref.get("blocks1_13", {}).get("layers", {}) if enable_engram else ref.get("layers", {})
+            ref_layers = ref.get("layers", ref.get("blocks1_13", {}).get("layers", {})) if enable_engram else ref.get("layers", {})
             for layer in range(layers):
                 ours = layer_records[str(layer)]
                 theirs = ref_layers.get(str(layer), {})
                 checks: dict[str, bool] = {}
-                if layer == 0 and enable_engram:
+                if layer == 0 and enable_engram and reference_kind == "engram_aware_connected_scope":
                     checks = {
                         "x_out": ours["output_hc_digest"] == theirs.get("x_out"),
                         "ffn_pre": ours["output_pre_digest"] == theirs.get("ffn_pre"),
@@ -240,38 +250,50 @@ class DwarfStarPrefillVerticalSliceExecutor:
                 for layer_cmp in reference_comparison["layers"].values()
             )
             if enable_engram:
-                reference_comparison["engram_post_digest"] = ref.get("post_engram1_regression", {}).get("digest")
-                reference_comparison["generation2"] = ref.get("shared_attention_state", {}).get("generation2")
-                reference_comparison["generation8"] = ref.get("shared_attention_state", {}).get("generation8")
+                reference_comparison["engram1_post_digest"] = ref.get("post_engram1_regression", {}).get("digest", ref.get("engram", {}).get("1", {}).get("output_digest"))
+                reference_comparison["engram14_post_digest"] = ref.get("residual_update", {}).get("post_engram14_h", {}).get("digest", ref.get("engram", {}).get("14", {}).get("output_digest"))
+                reference_comparison["generation2"] = ref.get("shared_attention_state", {}).get("generation2", ref.get("source_generations", {}).get("2", {}).get("source_publication"))
+                reference_comparison["generation8"] = ref.get("shared_attention_state", {}).get("generation8", ref.get("source_generations", {}).get("8", {}).get("source_publication"))
+                reference_comparison["generation14"] = ref.get("source_generations", {}).get("14", {}).get("source_publication")
         else:
             reference_comparison["all_compared_exact"] = False
 
         role_table = {str(layer): self.math.layer_roles(layer) for layer in range(layers)}
+        source_layers = [layer for layer in range(layers) if layer_records[str(layer)]["producer"]]
         source_generations: dict[str, Any] = {}
-        for source, consumers in {2: range(3, 8), 8: range(9, 14)}.items():
-            if layers <= source:
-                continue
-            source_rec = layer_records.get(str(source))
-            frontier = source_rec["state_after"] if source_rec else {}
+        for idx, source in enumerate(source_layers):
+            next_source = source_layers[idx + 1] if idx + 1 < len(source_layers) else layers
+            consumers = range(source + 1, next_source)
+            source_rec = layer_records[str(source)]
+            frontier = source_rec["state_after"]
+            stale_frontiers = {str(prev): layer_records[str(prev)]["state_after"] for prev in source_layers[:idx]}
             reads: dict[str, Any] = {}
             for consumer in consumers:
-                if consumer >= layers:
-                    continue
                 consumed = layer_records[str(consumer)]["consumed"]
+                stale_matches = {
+                    prev: consumed.get("compress_kv") == prev_frontier.get("compress_kv")
+                    for prev, prev_frontier in stale_frontiers.items()
+                    if prev_frontier.get("compress_kv") is not None
+                }
                 reads[str(consumer)] = {
+                    "observed_generation_layer": source,
                     "compress_kv_matches_source": consumed.get("compress_kv") == frontier.get("compress_kv"),
+                    "index_k_matches_source": consumed.get("index_k") == frontier.get("index_k"),
                     "topk_idxs_matches_source": consumed.get("topk_idxs") == frontier.get("topk_idxs"),
                     "consumer_recomputed_producer_state": bool(layer_records[str(consumer)]["producer"]),
-                    "stale_generation2_read": source == 8 and consumed.get("compress_kv") == layer_records.get("2", {}).get("state_after", {}).get("compress_kv"),
+                    "stale_generation_reads": stale_matches,
+                    "stale_generation_read": any(stale_matches.values()),
                     "candidate_lifecycle": "not_applicable_before_candidate_source_layer20",
                 }
             source_generations[str(source)] = {
+                "generation_id": f"source@{source}",
                 "source_layer": source,
-                "consumer_layers": [c for c in consumers if c < layers],
+                "publication_frontier_layer": source,
+                "consumer_layers": list(consumers),
                 "source_publication": frontier,
-                "producer": source_rec["producer"] if source_rec else {},
+                "producer": source_rec["producer"],
                 "consumer_reads": reads,
-                "complete": all(c < layers for c in consumers),
+                "complete": bool(reads) and all(str(c) in reads for c in consumers),
                 "candidate_lifecycle": "candidate state is not produced before candidate source layer 20",
             }
         source_group = {
@@ -289,20 +311,30 @@ class DwarfStarPrefillVerticalSliceExecutor:
             "all_span_layers_have_hc_attention_moe": all(bool(layer_records[str(i)]["attention_output_digest"]) and bool(layer_records[str(i)]["moe_output_digest"]) for i in range(layers)),
             "no_reference_text_runtime_called": True,
             "publication_owned_by_executor": len(storage.publications) == layers and len([e for e in tx.events if e["event"] == "publish_state_frontier"]) == layers,
-            "engram1_executed": enable_engram and len(engram_events) == 1 and engram_events[0]["layer"] == 1,
-            "engram1_ssd_sparse_rows_only": enable_engram and bool(engram_events and engram_events[0].get("ssd_backed_sparse_rows_only")),
+            "engram1_executed": enable_engram and any(e["layer"] == 1 for e in engram_events),
+            "engram14_executed": (layers <= 14) or (enable_engram and any(e["layer"] == 14 for e in engram_events)),
+            "engram1_ssd_sparse_rows_only": enable_engram and any(e["layer"] == 1 and e.get("ssd_backed_sparse_rows_only") for e in engram_events),
+            "engram1_matches_reference": (not enable_engram) or any(e["layer"] == 1 and e["output_digest"] == reference_comparison.get("engram1_post_digest") for e in engram_events),
+            "engram14_ssd_sparse_rows_only": (layers <= 14) or (enable_engram and any(e["layer"] == 14 and e.get("ssd_backed_sparse_rows_only") for e in engram_events)),
+            "engram14_matches_reference": (layers <= 14) or any(e["layer"] == 14 and e["output_digest"] == reference_comparison.get("engram14_post_digest") for e in engram_events),
+            "engram14_preserves_shared_state": (layers <= 14) or any(e["layer"] == 14 and e.get("shared_state_unchanged") for e in engram_events),
             "layer2_state_publication_present": layers < 3 or all(source_generations.get("2", {}).get("source_publication", {}).get(k) is not None for k in ("compress_kv", "index_k", "topk_idxs")),
             "layer8_state_publication_present": layers < 9 or all(source_generations.get("8", {}).get("source_publication", {}).get(k) is not None for k in ("compress_kv", "index_k", "topk_idxs")),
+            "layer14_state_publication_present": layers < 15 or all(source_generations.get("14", {}).get("source_publication", {}).get(k) is not None for k in ("compress_kv", "index_k", "topk_idxs")),
             "source2_reuse_group_complete": source_generations.get("2", {}).get("complete") is True,
             "source8_reuse_group_complete": layers < 14 or source_generations.get("8", {}).get("complete") is True,
+            "source14_reuse_group_complete": layers < 20 or source_generations.get("14", {}).get("complete") is True,
             "consumer_reads_match_source_publications": bool(source_generations) and all(
                 all(v["compress_kv_matches_source"] and v["topk_idxs_matches_source"] and not v["consumer_recomputed_producer_state"] for v in gen["consumer_reads"].values())
                 for gen in source_generations.values() if gen["consumer_reads"]
             ),
-            "layer8_consumers_do_not_read_stale_layer2_generation": layers < 14 or all(not v["stale_generation2_read"] for v in source_generations.get("8", {}).get("consumer_reads", {}).values()),
-            "candidate_lifecycle_scoped_before_layer20": layers <= 14 and all(layer_records[str(i)]["state_after"].get("candidates") is None for i in range(layers)),
+            "consumers_do_not_read_stale_generations": all(
+                all(not v["stale_generation_read"] for v in gen["consumer_reads"].values())
+                for gen in source_generations.values() if gen["consumer_reads"]
+            ),
+            "candidate_lifecycle_scoped_before_layer20": layers <= 20 and all(layer_records[str(i)]["state_after"].get("candidates") is None for i in range(layers)),
             "sweep_command_order_exact": [int(c["layer"]) for c in executed] == list(range(layers)),
-            "engram_aware_reference_connected_scope_exact": reference_comparison["all_compared_exact"] and reference_comparison["reference_kind"] == "engram_aware_connected_scope",
+            "engram_aware_reference_connected_scope_exact": reference_comparison["all_compared_exact"] and reference_comparison["reference_kind"] in {"engram_aware_connected_scope", "engram_aware_connected_block19_scope"},
         }
         artifact = {
             "schema": "ds41f.dwarfstar-prefill-vertical-slice.v1",
@@ -321,7 +353,7 @@ class DwarfStarPrefillVerticalSliceExecutor:
                 "pre_shape": list(storage.pre_f32.shape),
                 "current_hc_digest": self.math.digest(storage.current_hc_bf16),
                 "pre_digest": self.math.digest(storage.pre_f32),
-                "engram_hashes": {"full_hash_digest": storage.engram_hashes.get("full_hash_digest"), "layer1_hash_digest": storage.engram_hashes.get("layer1_hash_digest")},
+                "engram_hashes": {"full_hash_digest": storage.engram_hashes.get("full_hash_digest"), "layer1_hash_digest": storage.engram_hashes.get("layer1_hash_digest"), "layer14_hash_digest": storage.engram_hashes.get("layer14_hash_digest")},
             },
             "executed_commands": executed,
             "scheduling_events": scheduling_events,
