@@ -1,7 +1,7 @@
 {
   "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
-  "classification": "SOFTMAX NUMERICAL PROPAGATION",
-  "classification_rationale": "row0 (one real KV + sink) is exact; row1 diverges. The qualification trace one-shot/topk-width-3 reconstruction matches current source-derived arithmetic but not historical attn_core, placing the difference in historical tiled online-softmax/value reduction topology rather than selected-KV mapping, scale, sink inclusion, or final dtype semantics.",
+  "classification": "HISTORICAL TOPOLOGY-SPECIFIC NUMERICAL DIFFERENCE",
+  "classification_rationale": "OFS equals D exactly; the historical-topology emulator equals actual historical attn_core exactly; OFS/D differ from H/HRE only for row1 because historical token-serial layer2 executes a padded width-129 ordered KV with three block64 online-softmax tiles, while pinned official sparse_attn executes compact topk width=3 in one tile. This is topology-specific numerical behavior, not a local semantic bug and not a fitted cross-backend tolerance.",
   "comparisons": {
     "bf16_weights": {
       "actual_sha256": "d941ca7ef9dd95e596151b31b9e25f0cf5259d6fd341ddd852f367cc47e42f00",
@@ -276,6 +276,20 @@
   "historical_export": {
     "trace_dir_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-block1-h2rgx0_c/trace"
   },
+  "historical_trace_provenance": {
+    "attn_core": "A: captured actual historical sparse path return from swa_attention_masked_reference",
+    "bf16_weights": "C: recomputed/cast by qualification trace hook",
+    "denominator_without_sink": "C: recomputed by qualification trace hook",
+    "exp_weights": "C: recomputed by qualification trace hook",
+    "final_denominator": "C: recomputed by qualification trace hook",
+    "numerator": "C: recomputed by qualification trace hook via one-shot matmul",
+    "output_bf16": "C: recomputed by qualification trace hook; it is not the historical attn_core output",
+    "output_f32": "C: recomputed by qualification trace hook",
+    "raw_scores": "C: recomputed by qualification trace hook from token_q/ordered/valid, not captured from real kernel accumulator",
+    "row_max": "C: recomputed by qualification trace hook using one-shot max over full ordered width",
+    "scaled_scores": "C: recomputed by qualification trace hook",
+    "sink_term": "C: recomputed by qualification trace hook"
+  },
   "inputs": {
     "known_visibility": {
       "row0": [
@@ -318,9 +332,11 @@
       2
     ]
   },
+  "observability_gap_from_previous_artifact": "The recomputed trace_output_formula_vs_historical_core has the same mismatch as current_sparse_output_vs_historical_core; therefore those exported intermediate tensors are historical-input reconstructions, not native kernel internal state.",
   "official_sparse_kernel_source": {
     "file_sha256": "1236c3507019ed176f5dba5e04bcea58867cf654818c6cf138ed4845398c2455",
     "kernel_block": 64,
+    "official_compact_width": 3,
     "one_online_softmax_tile": true,
     "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/kernel.py",
     "sparse_attn_kernel_lines": [
@@ -334,6 +350,148 @@
     "topk_width": 3
   },
   "ok": true,
+  "path_comparisons": {
+    "D_vs_H": {
+      "actual_sha256": "67f04db9df6ce14e74ec429e7ff150e8af2113d6d3ee19582dcffd7f0bcc5a02",
+      "dtype": "BF16(uint16)",
+      "max_abs_diff": 0.00390625,
+      "max_bf16_ulp": 29193,
+      "max_bf16_ulp_lte": 1,
+      "mean_abs_diff": 2.612087882880587e-05,
+      "mismatched_elements": 5572,
+      "reference_sha256": "f161cfb539a721fe14bca0936be6e665a545f4290e8ff14d06205af17ab67542",
+      "sha256": "f161cfb539a721fe14bca0936be6e665a545f4290e8ff14d06205af17ab67542",
+      "sha_equal": false,
+      "shape": [
+        2,
+        64,
+        512
+      ],
+      "shape_pair": [
+        [
+          2,
+          64,
+          512
+        ],
+        [
+          2,
+          64,
+          512
+        ]
+      ],
+      "ulp_counts": {
+        "ulp0": 59964,
+        "ulp1": 4338,
+        "ulp_gt1": 1234
+      },
+      "within_contract": false
+    },
+    "HRE_vs_H": {
+      "actual_sha256": "f161cfb539a721fe14bca0936be6e665a545f4290e8ff14d06205af17ab67542",
+      "dtype": "BF16(uint16)",
+      "max_abs_diff": 0.0,
+      "max_bf16_ulp": 0,
+      "max_bf16_ulp_lte": 0,
+      "mean_abs_diff": 0.0,
+      "mismatched_elements": 0,
+      "reference_sha256": "f161cfb539a721fe14bca0936be6e665a545f4290e8ff14d06205af17ab67542",
+      "sha256": "f161cfb539a721fe14bca0936be6e665a545f4290e8ff14d06205af17ab67542",
+      "sha_equal": true,
+      "shape": [
+        2,
+        64,
+        512
+      ],
+      "shape_pair": [
+        [
+          2,
+          64,
+          512
+        ],
+        [
+          2,
+          64,
+          512
+        ]
+      ],
+      "ulp_counts": {
+        "ulp0": 65536,
+        "ulp1": 0,
+        "ulp_gt1": 0
+      },
+      "within_contract": true
+    },
+    "OFS_vs_D": {
+      "actual_sha256": "67f04db9df6ce14e74ec429e7ff150e8af2113d6d3ee19582dcffd7f0bcc5a02",
+      "dtype": "BF16(uint16)",
+      "max_abs_diff": 0.0,
+      "max_bf16_ulp": 0,
+      "max_bf16_ulp_lte": 0,
+      "mean_abs_diff": 0.0,
+      "mismatched_elements": 0,
+      "reference_sha256": "67f04db9df6ce14e74ec429e7ff150e8af2113d6d3ee19582dcffd7f0bcc5a02",
+      "sha256": "67f04db9df6ce14e74ec429e7ff150e8af2113d6d3ee19582dcffd7f0bcc5a02",
+      "sha_equal": true,
+      "shape": [
+        2,
+        64,
+        512
+      ],
+      "shape_pair": [
+        [
+          2,
+          64,
+          512
+        ],
+        [
+          2,
+          64,
+          512
+        ]
+      ],
+      "ulp_counts": {
+        "ulp0": 65536,
+        "ulp1": 0,
+        "ulp_gt1": 0
+      },
+      "within_contract": true
+    },
+    "OFS_vs_HRE": {
+      "actual_sha256": "67f04db9df6ce14e74ec429e7ff150e8af2113d6d3ee19582dcffd7f0bcc5a02",
+      "dtype": "BF16(uint16)",
+      "max_abs_diff": 0.00390625,
+      "max_bf16_ulp": 29193,
+      "max_bf16_ulp_lte": 1,
+      "mean_abs_diff": 2.612087882880587e-05,
+      "mismatched_elements": 5572,
+      "reference_sha256": "f161cfb539a721fe14bca0936be6e665a545f4290e8ff14d06205af17ab67542",
+      "sha256": "f161cfb539a721fe14bca0936be6e665a545f4290e8ff14d06205af17ab67542",
+      "sha_equal": false,
+      "shape": [
+        2,
+        64,
+        512
+      ],
+      "shape_pair": [
+        [
+          2,
+          64,
+          512
+        ],
+        [
+          2,
+          64,
+          512
+        ]
+      ],
+      "ulp_counts": {
+        "ulp0": 59964,
+        "ulp1": 4338,
+        "ulp_gt1": 1234
+      },
+      "within_contract": false
+    }
+  },
   "production_path_changed": false,
   "qualification_only": true,
   "row0_vs_row1": {
@@ -415,7 +573,8 @@
     "historical_bits": "0xc05512d4"
   },
   "schema": "ds41f.m4.layer2-sparse-core-diagnostic.v1",
-  "sparse_numerical_contract": "INCOMPLETE: source fixes BF16 input, FP32 accumulation, BF16 weight cast, sink denominator-only, and BF16 output; no independent cross-backend bound is yet established for different BF16 GEMM/reduction and online-softmax tile associations.",
+  "sparse_core_status": "QUALIFIED \u2014 OFFICIAL SEMANTICS",
+  "sparse_numerical_contract": "No fitted H-vs-D tolerance is defined. Historical attn_core is topology-specific regression evidence; official authority is pinned compact sparse source plus independent compact reconstruction and source-defined dtype/mask/sink/cast contracts.",
   "stale_compressed_sparse_fixture_disposition": "tools/run_official_compressed_sparse_attn_fixture.py imports fp4_quant_inplace for Indexer q/k and is marked stale/superseded; not used as sparse-core authority here.",
   "substitutions": {
     "current_numerator_historical_denominator": {
@@ -557,6 +716,75 @@
         "ulp_gt1": 1234
       },
       "within_contract": false
+    }
+  },
+  "tolerance_required_now": false,
+  "topology": {
+    "historical": {
+      "implementation": "token-serial CompressedLayerReference::forward -> swa_attention_masked_reference over padded ordered KV",
+      "row0_online_softmax_tiles": 1,
+      "row0_reduction_width": 1,
+      "row1_masked_slots_iterated": 126,
+      "row1_online_softmax_tiles": 3,
+      "row1_reduction_width": 129,
+      "row1_semantically_valid_positions": [
+        126,
+        127,
+        128
+      ],
+      "rows": [
+        {
+          "masked_count": 0,
+          "ordered_width": 1,
+          "row": 0,
+          "tile_count": 1,
+          "tiles": [
+            {
+              "first": 0,
+              "last": 1,
+              "valid_count": 1
+            }
+          ],
+          "trace_suffix": "0_n1",
+          "valid_count": 1
+        },
+        {
+          "masked_count": 126,
+          "ordered_width": 129,
+          "row": 1,
+          "tile_count": 3,
+          "tiles": [
+            {
+              "first": 0,
+              "last": 64,
+              "valid_count": 0
+            },
+            {
+              "first": 64,
+              "last": 128,
+              "valid_count": 2
+            },
+            {
+              "first": 128,
+              "last": 129,
+              "valid_count": 1
+            }
+          ],
+          "trace_suffix": "0_n129",
+          "valid_count": 3
+        }
+      ],
+      "uses_padded_masked_slots": true
+    },
+    "official": {
+      "block_width": 64,
+      "compact_selected_kv_width": 3,
+      "online_softmax_tiles": 1,
+      "topk_shape": [
+        1,
+        2,
+        3
+      ]
     }
   }
 }
