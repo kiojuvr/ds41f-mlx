@@ -174,8 +174,26 @@ Quantized continuation-state finding so far: official `_window_kv` applies `act_
 
 Post-fix P5 artifact: `artifacts/m4/generationbatch-controls-post-rope-fix/result.json`.  P5 remains in the ordinary GenerationBatch performance class: standard P4 median `20.90 tok/s`, DwarfStar no-replay P5 median `20.81 tok/s`, zero prompt replay, first backbone input `15`.
 
+## Prefix branch decision (2026-09-27)
+
+Artifact: `artifacts/m4/prefix-triangulation/result.json` plus full float32 arrays.
+
+R0/O0/D0 after prefix `[0,3]`:
+
+| Path | Digest | Argmax |
+| --- | --- | ---: |
+| R0 historical independent reference | `b275484f7fbc36f20c1fee9a5e86cd43d07f09aaae25cc4937026128db975150` | 11992 |
+| O0 ordinary oMLX | `73471d68546e955388dd23ac5edb3c4c127d8e9feb16e0f8d6662705f4b1289d` | 11992 |
+| D0 corrected DwarfStar prefill | `247da14c1b45ac2fe47bcf79418b3e45f199756e07f346359676736332ad4fca` | 15 |
+
+Pairwise diagnostics: R0 vs O0 max abs `0.442365`, mean abs `0.074695`; R0 vs D0 max abs `15.140087`, mean abs `2.817323`; O0 vs D0 max abs `15.162146`, mean abs `2.799455`.
+
+Branch classification: **PREFILL MODEL-SEMANTIC DIVERGENCE**.  D is already wrong at the end of prefill `[0,3]`; the immediate remaining task is not continuation-state/handoff debugging.  Layers 0 and 1 remain independently qualified, so first-divergence localization should start after that frontier, with layer2 as the first likely source boundary but not assumed until independently proven.
+
+Quantized physical-state contract artifact: `artifacts/m4/quantized-state-contract/result.json`.  Official source shows compressed KV and index K both call `fp4_act_quant(..., inplace=True)` and then persist the mutated/dequantized tensor in `compress_kv_cache` / `k_cache`.  Therefore their durable cache authority is semantic BF16/dequantized state after the FP4 precision boundary, not physical FP4 bytes+scales; `PrefillContinuationState` does not need to retain codes/scales for these fields based on current source evidence.
+
 ## Completion decision
 
-Milestone 4 base target correctness is **INCOMPLETE**.  The confirmed RoPE helper bug is fixed and layer0 is independently requalified, but full R/O/D correctness still fails and R-vs-O tolerance is not established.
+Milestone 4 base target correctness is **INCOMPLETE**.  The confirmed RoPE helper bug is fixed and layer0/layer1 are independently requalified, but prefix-end R0/O0/D0 proves D prefill logits are still materially wrong before handoff.  Phase B must add/use independent per-layer historical/reference checkpoints after layer1 and localize the first divergent layer/operation.
 
 Base target practical performance is **PARTIALLY QUALIFIED BUT NOT COMPLETE**.  P5 proves that no-replay BatchGenerator admission can reach ordinary oMLX MTP-OFF performance, but production decode must not be promoted to this substrate until corrected state satisfies the reviewed correctness contract.

@@ -1,0 +1,47 @@
+{
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "compressed_kv": {
+    "official_source_lines": [
+      745,
+      764
+    ],
+    "persistent_authority": "semantic BF16/dequantized tensor after in-place FP4 quantization",
+    "physical_codes_scales_required_in_prefill_continuation_state": false,
+    "reason": "official cache stores the mutated/dequantized latent tensor, not returned FP4 bytes/scales",
+    "sequence": "latent = compressor(...); apply_rotary_emb(latent); fp4_act_quant(latent, 16, True, scale_dtype=torch.float8_e4m3fn); self.compress_kv_cache[...] = latent; later reads shared_attn.compress_kv cache slice"
+  },
+  "index_k": {
+    "official_source_lines": [
+      536,
+      548
+    ],
+    "persistent_authority": "semantic BF16/dequantized tensor after in-place FP4 quantization",
+    "physical_codes_scales_required_in_prefill_continuation_state": false,
+    "reason": "official cache stores the mutated/dequantized k tensor, not returned FP4 bytes/scales",
+    "sequence": "k = k_norm(wk(latent)); apply_rotary_emb(k); fp4_act_quant(k, fp4_block_size, True); self.k_cache[...] = k; shared_attn.index_k = self.k_cache"
+  },
+  "kernel_contract": {
+    "fp4_act_quant": {
+      "doc": "inplace=True writes the dequantized values back to x",
+      "return_semantics": "if inplace, x.copy_(y); return x",
+      "source_lines": [
+        184,
+        204
+      ]
+    }
+  },
+  "ok": true,
+  "prefill_continuation_state_change_required": false,
+  "schema": "ds41f.m4.quantized-state-contract.v1",
+  "source_authority": {
+    "kernel_py": {
+      "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/kernel.py",
+      "sha256": "1236c3507019ed176f5dba5e04bcea58867cf654818c6cf138ed4845398c2455"
+    },
+    "model_py": {
+      "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/model.py",
+      "sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65"
+    }
+  },
+  "window_kv_reference": "same pattern was already established for act_quant(..., inplace=True) in Attention._window_kv"
+}

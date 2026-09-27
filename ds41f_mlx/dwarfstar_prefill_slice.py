@@ -93,6 +93,7 @@ class TypedSweepStorage:
 class VerticalSliceResult:
     artifact: dict[str, Any]
     continuation_state: PrefillContinuationState | None = None
+    final_logits: np.ndarray | None = None
 
     @property
     def ok(self) -> bool:
@@ -150,6 +151,7 @@ class DwarfStarPrefillVerticalSliceExecutor:
         engram_events: list[dict[str, Any]] = []
         layer_records: dict[str, Any] = {}
         final_output: dict[str, Any] | None = None
+        final_raw: dict[str, Any] | None = None
         session_handoff: dict[str, Any] | None = None
         continuation_state: PrefillContinuationState | None = None
         actual_window_kv: dict[int, np.ndarray] = {}
@@ -559,4 +561,4 @@ class DwarfStarPrefillVerticalSliceExecutor:
                 "does not call TextBackboneReference/TextEncoderReference/TextDecoderReference",
             ],
         }
-        return VerticalSliceResult(artifact, continuation_state=continuation_state)
+        return VerticalSliceResult(artifact, continuation_state=continuation_state, final_logits=None if final_raw is None else final_raw.get("logits"))
