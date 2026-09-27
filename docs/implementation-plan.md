@@ -4,6 +4,8 @@ This roadmap converts the runtime strategy into a finite sequence of milestones.
 
 ## Milestone 1 — Architecture restoration audit
 
+Status: **complete**. See `docs/milestone-1-architecture-audit.md` for the concrete inventory, source evidence, component classifications, missing seams, and Milestone 2 starting frontier.
+
 Deliverables:
 
 - current component classification across `native/*`, DwarfStar-derived files, oMLX bindings, and validators;
