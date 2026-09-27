@@ -59,6 +59,10 @@ Rejected:
 
 ## Milestone 4 — Implement selected decode architecture
 
+Status: **in progress / incomplete**. See `docs/milestone-4-base-decode-status.md`.
+
+Implemented so far: real oMLX `DeepseekV41Cache` admission from live `PrefillContinuationState`, `OMLXDecodeSession`, base target execution, continuation, Engram state update, reset, fork, and injected-failure rollback scaffolding. Remaining gates: independent/reference first-incremental full-logits qualification and practical base-target performance diagnosis.
+
 Starting boundary from Milestone 3:
 
 - implement a production oMLX-derived decode session type, e.g. under `ds41f_mlx/runtime/`;
