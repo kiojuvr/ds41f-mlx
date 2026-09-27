@@ -1,6 +1,6 @@
 # Milestone 4 base decode implementation status
 
-Status: **INCOMPLETE — R/O/D logits triangulation and P0-P5 controls are now recorded.  Ordinary oMLX (O) itself is not bit-exact to the historical reference (R), so the exactness contract remains undecided; DwarfStar-admitted state (D) is also not equivalent to O.  No-replay `BatchGenerator.insert(caches=..., all_tokens=...)` reaches the standard oMLX base-target performance class, but it is not yet correctness-qualified because the prefill-state semantic divergence remains open.**
+Status: **INCOMPLETE — Block0, Engram@1, Block1, Layer2, the Layer3-7 consumer segment, and Layer8 source generation are complete for the bounded `[0,3]` prefix qualification frontier. Ordinary oMLX (O) itself is not bit-exact to the historical reference (R), so historical bit identity is not used as the correctness contract. No-replay `BatchGenerator.insert(caches=..., all_tokens=...)` reaches the standard oMLX base-target performance class, but it is not yet correctness-qualified beyond the current prefix frontier.**
 
 ## Implemented
 
@@ -215,8 +215,20 @@ Superseded: the paragraph above was an intermediate frontier.  Current independe
 
 Current prefix triangulation artifact: `artifacts/m4/prefix-triangulation-after-block0-fixes/result.json`.  R0 argmax `11992`, O0 argmax `11992`, D0 argmax `11992`; R0 vs D0 max abs `0.2688555717`, mean abs `0.0403789878`.  Argmax equality is evidence only, not the acceptance rule; whole-prefix correctness must be justified compositionally from exact/discrete contracts and reviewed numerical-boundary contracts.
 
+## Layer3-7 consumer segment and Layer8 source generation update (2026-09-27)
+
+Artifact: `artifacts/m4/consumer-segment-3-7-layer8/result.json`.
+
+The homogeneous compressed-state consumer segment was qualified as one architectural unit: layers 3-7 all have `compress_ratio=2`, no Indexer, no KV/index source role, and no candidate publication. They consume source@2 compressed KV and top-k, while `index_k` remains resident but unconsumed. Exact-entry local checks use each layer's historical hidden/pre-mix plus the qualified source@2 state; connected R-vs-D statistics are recorded separately as propagation diagnostics, not local semantic gates.
+
+The segment reuses the Layer2 sparse-topology decision. For S=2, ratio=2, source inspection and the Layer2 diagnostic establish the same official compact selected-KV semantic topology and the same historical token-serial padded mechanism; historical sparse bits remain topology-specific regression evidence.
+
+Layer8 was then qualified as the next source boundary. Exact-entry ordinary attention, Compressor (`norm_eps=1e-20`, FP4 block16/E4M3, compressed group position `j*ratio`), Indexer (q/k FP4 block32/E8M0, index group position `j*ratio`), publication, sparse authority, and FFN/MoE/HC remainder are complete. Ownership transitions from source@2 to source@8 for compressed KV, index K, and top-k.
+
+M2 evidence classification is updated accordingly: Layer3-7 shared source-generation ownership has independent exact discrete owner/digest evidence; local model operations have exact or accepted numerical-boundary evidence; historical sparse output is topology-specific regression evidence; official compact sparse reconstruction remains independent semantic authority; Layer8 adds explicit source-generation evidence.
+
 ## Completion decision
 
-Milestone 4 base target correctness is **INCOMPLETE**.  The RoPE, RMSNorm-eps, HC-post helper bugs, compressed-KV fixture RMS epsilon, Indexer FP4 q/k quantization contract, and compressed group-position RoPE stride have been corrected in the qualification helpers.  Block0, Engram@1, and Block1 are complete.  The active Phase B frontier is `encoder.layer2.attn_core` / sparse-attention output before inverse RoPE under exact historical Block2 entry.  Do not use SHA equality or the old global `>1e-4` heuristic as correctness gates where reviewed BF16/FP8/FP4/FP32 contracts permit bounded numerical drift.
+Milestone 4 base target correctness is **INCOMPLETE**.  The RoPE, RMSNorm-eps, HC-post helper bugs, compressed-KV fixture RMS epsilon, Indexer FP4 q/k quantization contract, and compressed group-position RoPE stride have been corrected in the qualification helpers.  Block0, Engram@1, Block1, Layer2, the Layer3-7 consumer segment, and Layer8 source generation are complete.  The active frontier is Layer9 consuming source@8.  Do not use SHA equality, argmax equality, historical sparse bit identity, or the old global `>1e-4` heuristic as correctness gates where reviewed BF16/FP8/FP4/FP32 contracts permit bounded numerical drift.
 
 Base target practical performance is **PARTIALLY QUALIFIED BUT NOT COMPLETE**.  P5 proves that no-replay BatchGenerator admission can reach ordinary oMLX MTP-OFF performance, but production decode must not be promoted to this substrate until corrected state satisfies the reviewed correctness contract.
