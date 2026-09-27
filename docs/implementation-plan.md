@@ -23,7 +23,7 @@ Rules:
 
 ## Milestone 2 — Restore DwarfStar-derived prefill production path
 
-Status: **incomplete / Engram@1 plus second source-reuse executor group implemented**. See `docs/milestone-2-prefill-restoration-status.md` for the validated layers 0..13 Engram-aware source/publication/reuse slice, remaining full-prefill gap, and required next widening slice.
+Status: **incomplete / Engram@1, Engram@14, candidate source@20, and first index-refresh@24 executor groups implemented**. See `docs/milestone-2-prefill-restoration-status.md` for the validated layers 0..27 Engram-aware source/publication/reuse/candidate/index-refresh slice, remaining full-prefill gap, and required next widening slice.
 
 Continue from the furthest real implementation point already present. Do not restart from a blank implementation.
 

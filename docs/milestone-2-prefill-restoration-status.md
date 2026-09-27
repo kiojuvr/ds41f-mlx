@@ -1,6 +1,6 @@
 # Milestone 2 prefill restoration status
 
-Status: **INCOMPLETE — ENGRAM@1, ENGRAM@14, AND THIRD SOURCE/REUSE EXECUTOR GROUP IMPLEMENTED**.
+Status: **INCOMPLETE — ENGRAM@1, ENGRAM@14, CANDIDATE SOURCE@20, AND FIRST INDEX-REFRESH@24 IMPLEMENTED**.
 
 This document records the current Milestone 2 state. It does not change the runtime architecture decision. Milestone 2 remains open until full-model official-checkpoint prefill executes through the DwarfStar-derived topology.
 
@@ -12,13 +12,13 @@ Correctness authority remains official checkpoint/data, reviewed official DeepSe
 
 ## Implemented vertical slice
 
-The repository now contains a vertically integrated DwarfStar-derived production-prefill executor slice through Engram@1, Engram@14, and the first three complete source/reuse dependency groups:
+The repository now contains a vertically integrated DwarfStar-derived production-prefill executor slice through Engram@1, Engram@14, the first four full source/reuse dependency groups, and the first candidate-backed index-only refresh:
 
 ```text
 ds41f_mlx/dwarfstar_prefill_slice.py
 ds41f_mlx/official_model_math.py
 tools/run_m2_dwarfstar_prefill_vertical_slice.py
-artifacts/m2/dwarfstar-prefill/vertical-slice-layer0-19-engram1-engram14-source14-reuse.json
+artifacts/m2/dwarfstar-prefill/vertical-slice-layer0-27-candidate20-indexrefresh24.json
 ```
 
 The slice demonstrates:
@@ -26,7 +26,7 @@ The slice demonstrates:
 - native DwarfStar-derived sweep plan ownership;
 - executor-owned typed token, embedding, HC carry, pre-mix, and shared publication storage;
 - official checkpoint embedding gather through the native prefill library;
-- complete real model execution for layers 0..19 using narrow production-facing official model-math and Engram seams, without calling `TextBackboneReference`, `TextEncoderReference`, or `TextDecoderReference`;
+- complete real model execution for layers 0..27 using narrow production-facing official model-math and Engram seams, without calling `TextBackboneReference`, `TextEncoderReference`, or `TextDecoderReference`;
 - real Engram@1 execution using regenerated token/ngram hashes, sparse SSD-backed Engram row reads, FP8 WKV projection, source-defined gate arithmetic, and residual update;
 - layer-2 compressed/index/top-k source publication owned by the executor;
 - layer-3..7 reuse/consumer attention reading the executor-owned layer-2 publication rather than recomputing producer state;
@@ -35,9 +35,13 @@ The slice demonstrates:
 - real Engram@14 execution using regenerated layer-14 hashes, sparse SSD-backed Engram row reads, FP8 WKV projection, source-defined gate arithmetic, residual update, and preserved pre-mix/shared publication state;
 - layer-14 compressed/index/top-k source publication as a distinct generation after Engram@14 and Block14;
 - layer-15..19 reuse/consumer attention reading the executor-owned layer-14 publication and not stale layer-2 or layer-8 generations;
+- layer-20 full source/candidate-source publication producing compressed KV, index K, top-k indices, and the first real candidate state on the connected trajectory;
+- layer-21..23 consumers reading generation @20 without recomputing source state or synthesizing candidates;
+- layer-24 represented as an index-only/top-k refresh generation that consumes layer-20 compressed/index/candidate state, preserves those field owners, and refreshes only top-k ownership;
+- layer-25..27 consumers reading mixed ownership: compressed KV/index/candidates from source @20 and top-k from index-refresh @24;
 - candidate lifecycle explicitly scoped as not-applicable before candidate source layer 20;
 - invalid-during-sweep and commit-after-publication transaction events;
-- exact Engram-aware comparison against official-source-derived connected validation evidence for layers 0..19, including the newly added Engram@14→Block14→consumers15..19 reference fixture.
+- exact Engram-aware comparison against official-source-derived connected validation evidence for layers 0..27, including the newly added candidate@20→index-refresh@24→consumers25..27 reference fixture.
 
 This is an implementation-scoped Engram-aware two-generation source/reuse slice, not full-model prefill.
 
@@ -120,7 +124,7 @@ Milestone 2 is **not complete**.
 
 Current completion criteria:
 
-- Engram-aware DwarfStar-topology source→publication→reuse executor slice: **implemented and validated for layers 0..19, including Engram@1, Engram@14, and source generations at 2, 8, and 14**;
+- Engram-aware DwarfStar-topology source→publication→reuse executor slice: **implemented and validated for layers 0..27, including Engram@1, Engram@14, full source generations at 2, 8, 14, and 20, candidate publication at 20, and index-only top-k refresh at 24**;
 - real full-model DwarfStar-topology prefill: **not implemented**;
 - official checkpoint through the DwarfStar-derived full prefill path: **not implemented**;
 - production state handoff from full prefill: **not implemented**;

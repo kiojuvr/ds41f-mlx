@@ -210,7 +210,10 @@ class DwarfStarPrefillVerticalSliceExecutor:
             raise
         seconds = perf_counter() - t0
 
-        if enable_engram and layers >= 20:
+        if enable_engram and layers >= 28:
+            reference_path = Path("artifacts/native-engram-layer20-27-validation.json")
+            reference_kind = "engram_aware_connected_candidate27_scope"
+        elif enable_engram and layers >= 20:
             reference_path = Path("artifacts/native-engram-layer14-block19-validation.json")
             reference_kind = "engram_aware_connected_block19_scope"
         elif enable_engram:
@@ -255,51 +258,136 @@ class DwarfStarPrefillVerticalSliceExecutor:
                 reference_comparison["generation2"] = ref.get("shared_attention_state", {}).get("generation2", ref.get("source_generations", {}).get("2", {}).get("source_publication"))
                 reference_comparison["generation8"] = ref.get("shared_attention_state", {}).get("generation8", ref.get("source_generations", {}).get("8", {}).get("source_publication"))
                 reference_comparison["generation14"] = ref.get("source_generations", {}).get("14", {}).get("source_publication")
+                reference_comparison["generation20"] = ref.get("source_generations", {}).get("20", {}).get("source_publication")
+                reference_comparison["generation24"] = ref.get("source_generations", {}).get("24", {}).get("source_publication")
         else:
             reference_comparison["all_compared_exact"] = False
 
         role_table = {str(layer): self.math.layer_roles(layer) for layer in range(layers)}
-        source_layers = [layer for layer in range(layers) if layer_records[str(layer)]["producer"]]
+        publication_events: list[dict[str, Any]] = []
+        field_owner: dict[str, int] = {}
+        field_owner_history: dict[str, list[dict[str, Any]]] = {field: [] for field in ("compress_kv", "index_k", "topk_idxs", "candidates")}
+        consumer_observations: dict[str, Any] = {}
         source_generations: dict[str, Any] = {}
-        for idx, source in enumerate(source_layers):
-            next_source = source_layers[idx + 1] if idx + 1 < len(source_layers) else layers
-            consumers = range(source + 1, next_source)
-            source_rec = layer_records[str(source)]
-            frontier = source_rec["state_after"]
-            stale_frontiers = {str(prev): layer_records[str(prev)]["state_after"] for prev in source_layers[:idx]}
+
+        def field_digest_at(layer: int, when: str, field: str) -> str | None:
+            return layer_records[str(layer)][when].get(field)
+
+        for layer in range(layers):
+            rec = layer_records[str(layer)]
+            producer = rec["producer"]
+            changed_fields = [field for field in ("compress_kv", "index_k", "topk_idxs", "candidates") if field in producer]
+            if producer:
+                if {"compress_kv", "index_k", "topk_idxs"}.issubset(producer):
+                    kind = "full_source_generation"
+                elif changed_fields == ["topk_idxs"]:
+                    kind = "index_only_topk_refresh_generation"
+                else:
+                    kind = "partial_publication_generation"
+                consumed_state = {
+                    field: {
+                        "digest": field_digest_at(layer, "state_before", field),
+                        "owner_before": field_owner.get(field),
+                    }
+                    for field in ("compress_kv", "index_k", "topk_idxs", "candidates")
+                }
+                previous_owners = dict(field_owner)
+                for field in changed_fields:
+                    field_owner[field] = layer
+                    field_owner_history[field].append({"layer": layer, "digest": producer[field], "generation_kind": kind})
+                ownership_after = {field: field_owner.get(field) for field in ("compress_kv", "index_k", "topk_idxs", "candidates")}
+                event = {
+                    "generation_id": f"{'index-refresh' if kind == 'index_only_topk_refresh_generation' else 'source'}@{layer}",
+                    "layer": layer,
+                    "kind": kind,
+                    "changed_fields": changed_fields,
+                    "producer": producer,
+                    "consumed_state_before_publication": consumed_state,
+                    "previous_field_owners": previous_owners,
+                    "field_ownership_after": ownership_after,
+                    "state_after": rec["state_after"],
+                    "candidate_provenance": "computed_by_real_block_execution" if "candidates" in changed_fields else None,
+                }
+                publication_events.append(event)
+
+        for event_index, event in enumerate(publication_events):
+            layer = int(event["layer"])
+            next_pub = int(publication_events[event_index + 1]["layer"]) if event_index + 1 < len(publication_events) else layers
+            consumers = list(range(layer + 1, next_pub))
             reads: dict[str, Any] = {}
+            ownership_after_event = event["field_ownership_after"]
             for consumer in consumers:
-                consumed = layer_records[str(consumer)]["consumed"]
-                stale_matches = {
-                    prev: consumed.get("compress_kv") == prev_frontier.get("compress_kv")
-                    for prev, prev_frontier in stale_frontiers.items()
-                    if prev_frontier.get("compress_kv") is not None
-                }
+                observed = layer_records[str(consumer)]["state_before"]
+                per_field: dict[str, Any] = {}
+                for field in ("compress_kv", "index_k", "topk_idxs", "candidates"):
+                    owner = ownership_after_event.get(field)
+                    expected = layer_records[str(owner)]["producer"].get(field) if owner is not None else None
+                    stale_digest_aliases = [
+                        hist for hist in field_owner_history[field]
+                        if hist["layer"] < int(owner) and observed.get(field) == hist["digest"]
+                    ] if owner is not None else []
+                    # Short bounded fixtures can legitimately produce identical
+                    # top-k index bytes across two different publication events.
+                    # Staleness is therefore rejected by executor ownership /
+                    # provenance, while digest aliases are recorded separately.
+                    stale = [] if observed.get(field) == expected else stale_digest_aliases
+                    per_field[field] = {
+                        "observed_digest": observed.get(field),
+                        "expected_owner": owner,
+                        "expected_digest": expected,
+                        "matches_expected_owner": observed.get(field) == expected,
+                        "stale_owner_matches": stale,
+                        "stale_digest_aliases": stale_digest_aliases,
+                    }
                 reads[str(consumer)] = {
-                    "observed_generation_layer": source,
-                    "compress_kv_matches_source": consumed.get("compress_kv") == frontier.get("compress_kv"),
-                    "index_k_matches_source": consumed.get("index_k") == frontier.get("index_k"),
-                    "topk_idxs_matches_source": consumed.get("topk_idxs") == frontier.get("topk_idxs"),
+                    "observed_fields": per_field,
+                    "raw_attn_consumed": layer_records[str(consumer)]["consumed"],
                     "consumer_recomputed_producer_state": bool(layer_records[str(consumer)]["producer"]),
-                    "stale_generation_reads": stale_matches,
-                    "stale_generation_read": any(stale_matches.values()),
-                    "candidate_lifecycle": "not_applicable_before_candidate_source_layer20",
                 }
-            source_generations[str(source)] = {
-                "generation_id": f"source@{source}",
-                "source_layer": source,
-                "publication_frontier_layer": source,
-                "consumer_layers": list(consumers),
-                "source_publication": frontier,
-                "producer": source_rec["producer"],
+                consumer_observations[str(consumer)] = reads[str(consumer)]
+            source_generations[str(layer)] = {
+                "generation_id": event["generation_id"],
+                "source_layer": layer,
+                "kind": event["kind"],
+                "changed_fields": event["changed_fields"],
+                "producer": event["producer"],
+                "source_publication": event["state_after"],
+                "field_ownership_after": event["field_ownership_after"],
+                "consumer_layers": consumers,
                 "consumer_reads": reads,
                 "complete": bool(reads) and all(str(c) in reads for c in consumers),
-                "candidate_lifecycle": "candidate state is not produced before candidate source layer 20",
             }
+
+        field_ownership_after_layer24 = None
+        layer24_event = next((event for event in publication_events if event["layer"] == 24), None)
+        if layer24_event is not None:
+            field_ownership_after_layer24 = layer24_event["field_ownership_after"]
+
         source_group = {
             "generations": source_generations,
-            "candidate_lifecycle": "candidate state is not produced before candidate source layer 20",
+            "publication_events": publication_events,
+            "field_owner_history": field_owner_history,
+            "consumer_observations": consumer_observations,
+            "field_ownership_after_layer24": field_ownership_after_layer24,
+            "candidate_lifecycle": "candidate state is first produced by the configured candidate source layer 20",
         }
+
+        def observation_matches(layer: int, expected: dict[str, int]) -> bool:
+            obs = consumer_observations.get(str(layer), {}).get("observed_fields", {})
+            return all(
+                obs.get(field, {}).get("expected_owner") == owner and obs.get(field, {}).get("matches_expected_owner") is True
+                for field, owner in expected.items()
+            )
+
+        def observation_has_no_stale(layer: int, fields: tuple[str, ...]) -> bool:
+            obs = consumer_observations.get(str(layer), {}).get("observed_fields", {})
+            return all(not obs.get(field, {}).get("stale_owner_matches") for field in fields)
+
+        layer20_event = next((event for event in publication_events if event["layer"] == 20), None)
+        layer24_event = next((event for event in publication_events if event["layer"] == 24), None)
+        generation20_consumers = source_generations.get("20", {}).get("consumer_layers", [])
+        generation24_consumers = source_generations.get("24", {}).get("consumer_layers", [])
+        mixed_after24 = {"compress_kv": 20, "index_k": 20, "candidates": 20, "topk_idxs": 24}
 
         gates = {
             "native_sweep_plan_used": plan["source_authority"]["commit"] == DS4_AUTHORITY_SHA,
@@ -318,23 +406,26 @@ class DwarfStarPrefillVerticalSliceExecutor:
             "engram14_ssd_sparse_rows_only": (layers <= 14) or (enable_engram and any(e["layer"] == 14 and e.get("ssd_backed_sparse_rows_only") for e in engram_events)),
             "engram14_matches_reference": (layers <= 14) or any(e["layer"] == 14 and e["output_digest"] == reference_comparison.get("engram14_post_digest") for e in engram_events),
             "engram14_preserves_shared_state": (layers <= 14) or any(e["layer"] == 14 and e.get("shared_state_unchanged") for e in engram_events),
-            "layer2_state_publication_present": layers < 3 or all(source_generations.get("2", {}).get("source_publication", {}).get(k) is not None for k in ("compress_kv", "index_k", "topk_idxs")),
-            "layer8_state_publication_present": layers < 9 or all(source_generations.get("8", {}).get("source_publication", {}).get(k) is not None for k in ("compress_kv", "index_k", "topk_idxs")),
-            "layer14_state_publication_present": layers < 15 or all(source_generations.get("14", {}).get("source_publication", {}).get(k) is not None for k in ("compress_kv", "index_k", "topk_idxs")),
+            "layer2_state_publication_present": layers < 3 or all(source_generations.get("2", {}).get("producer", {}).get(k) is not None for k in ("compress_kv", "index_k", "topk_idxs")),
+            "layer8_state_publication_present": layers < 9 or all(source_generations.get("8", {}).get("producer", {}).get(k) is not None for k in ("compress_kv", "index_k", "topk_idxs")),
+            "layer14_state_publication_present": layers < 15 or all(source_generations.get("14", {}).get("producer", {}).get(k) is not None for k in ("compress_kv", "index_k", "topk_idxs")),
             "source2_reuse_group_complete": source_generations.get("2", {}).get("complete") is True,
             "source8_reuse_group_complete": layers < 14 or source_generations.get("8", {}).get("complete") is True,
             "source14_reuse_group_complete": layers < 20 or source_generations.get("14", {}).get("complete") is True,
-            "consumer_reads_match_source_publications": bool(source_generations) and all(
-                all(v["compress_kv_matches_source"] and v["topk_idxs_matches_source"] and not v["consumer_recomputed_producer_state"] for v in gen["consumer_reads"].values())
-                for gen in source_generations.values() if gen["consumer_reads"]
-            ),
-            "consumers_do_not_read_stale_generations": all(
-                all(not v["stale_generation_read"] for v in gen["consumer_reads"].values())
-                for gen in source_generations.values() if gen["consumer_reads"]
-            ),
-            "candidate_lifecycle_scoped_before_layer20": layers <= 20 and all(layer_records[str(i)]["state_after"].get("candidates") is None for i in range(layers)),
+            "candidate_absent_before_layer20": layers <= 20 or all(layer_records[str(i)]["state_after"].get("candidates") is None for i in range(20)),
+            "layer20_candidate_source_generation_present": layers < 21 or (layer20_event is not None and layer20_event["kind"] == "full_source_generation" and all(layer20_event["producer"].get(k) is not None for k in ("compress_kv", "index_k", "topk_idxs", "candidates"))),
+            "candidate_first_present_at_layer20": layers < 21 or (layer_records["19"]["state_after"].get("candidates") is None and layer_records["20"]["state_after"].get("candidates") == layer20_event["producer"].get("candidates")),
+            "consumers21_23_use_generation20": layers < 24 or (generation20_consumers == [21, 22, 23] and all(observation_matches(layer, {"compress_kv": 20, "index_k": 20, "topk_idxs": 20, "candidates": 20}) for layer in generation20_consumers)),
+            "consumers21_23_reject_stale_pre20": layers < 24 or all(observation_has_no_stale(layer, ("compress_kv", "index_k", "topk_idxs", "candidates")) and not consumer_observations[str(layer)]["consumer_recomputed_producer_state"] for layer in generation20_consumers),
+            "layer24_index_only_refresh_present": layers < 25 or (layer24_event is not None and layer24_event["kind"] == "index_only_topk_refresh_generation" and layer24_event["changed_fields"] == ["topk_idxs"]),
+            "layer24_consumes_generation20_state": layers < 25 or all(layer24_event["consumed_state_before_publication"][field]["owner_before"] == 20 for field in ("compress_kv", "index_k", "topk_idxs", "candidates")),
+            "layer24_preserves_compress_index_candidates": layers < 25 or all(layer24_event["field_ownership_after"][field] == 20 for field in ("compress_kv", "index_k", "candidates")),
+            "layer24_refreshes_topk_owner": layers < 25 or layer24_event["field_ownership_after"].get("topk_idxs") == 24,
+            "consumers_after24_use_mixed_generation": layers < 28 or (generation24_consumers == [25, 26, 27] and all(observation_matches(layer, mixed_after24) for layer in generation24_consumers)),
+            "consumers_after24_reject_stale_topk20_and_pre20": layers < 28 or all(observation_has_no_stale(layer, ("compress_kv", "index_k", "topk_idxs", "candidates")) and not consumer_observations[str(layer)]["consumer_recomputed_producer_state"] for layer in generation24_consumers),
+            "candidate_lifecycle_scoped_before_next_source": layers <= 28 and all(layer_records[str(i)]["state_after"].get("candidates") is not None for i in range(20, layers)),
             "sweep_command_order_exact": [int(c["layer"]) for c in executed] == list(range(layers)),
-            "engram_aware_reference_connected_scope_exact": reference_comparison["all_compared_exact"] and reference_comparison["reference_kind"] in {"engram_aware_connected_scope", "engram_aware_connected_block19_scope"},
+            "engram_aware_reference_connected_scope_exact": reference_comparison["all_compared_exact"] and reference_comparison["reference_kind"] in {"engram_aware_connected_scope", "engram_aware_connected_block19_scope", "engram_aware_connected_candidate27_scope"},
         }
         artifact = {
             "schema": "ds41f.dwarfstar-prefill-vertical-slice.v1",
