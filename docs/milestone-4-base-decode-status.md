@@ -211,12 +211,12 @@ Confirmed fixes in this pass:
 1. **RMSNorm epsilon**: D helper used stale fixture eps `1e-6`; official config/source use `1e-20`.  Fixed `tools/run_native_layer0_25_transformer_entry_validation.py` to use `rms_norm_eps` for model RMSNorms.
 2. **HC post comb axis**: D helper reduced the destination axis; official `Block.hc_post` uses `torch.sum(..., dim=2)` over the source axis.  Fixed `tools/run_official_hyper_connections_fixture.py::hc_post`.
 
-The current independent frontier is connected Block0 through attention output exactly, with HC post/FFN input only showing tiny BF16-boundary differences.  The next material blocker is layer0 MoE output.  Historical MoE sub-boundary export was started locally, but serial `MoEReference::forward_components` still needs route/shared/routed tensor export to isolate whether the next primitive defect is routing, routed expert execution/reduction, or shared expert execution.
+Superseded: the paragraph above was an intermediate frontier.  Current independently established state is: Block0 COMPLETE; Engram@1 COMPLETE; layer1 Attention LOCAL SEMANTICS QUALIFIED with classification `UPSTREAM NUMERICAL PROPAGATION`; connected Block1 remainder is being closed by exact-boundary substitution; layer2 is the first compressed-source layer and is treated separately.
 
-Post-fix prefix triangulation artifact: `artifacts/m4/prefix-triangulation-after-block0-fixes/result.json`.  D0 changed but remains wrong: R0 argmax `11992`, O0 argmax `11992`, D0 argmax `7373`; R0 vs D0 max abs `16.321125`, mean abs `3.017328`.
+Current prefix triangulation artifact: `artifacts/m4/prefix-triangulation-after-block0-fixes/result.json`.  R0 argmax `11992`, O0 argmax `11992`, D0 argmax `11992`; R0 vs D0 max abs `0.2688555717`, mean abs `0.0403789878`.  Argmax equality is evidence only, not the acceptance rule; whole-prefix correctness must be justified compositionally from exact/discrete contracts and reviewed numerical-boundary contracts.
 
 ## Completion decision
 
-Milestone 4 base target correctness is **INCOMPLETE**.  The RoPE, RMSNorm-eps, and HC-post helper bugs are fixed, and connected Block0 is independently exact through attention output.  Prefix-end R0/O0/D0 still proves D prefill logits are materially wrong before handoff.  Phase B must continue inside layer0 MoE and export the serial historical route/shared/routed sub-boundaries.
+Milestone 4 base target correctness is **INCOMPLETE**.  The RoPE, RMSNorm-eps, and HC-post helper bugs are fixed.  Block0 and Engram@1 are complete, layer1 Attention is locally qualified as numerical propagation, and the active Phase B frontier is Block1 remainder / layer2 compressed-source exact-entry qualification.  Do not use SHA equality or the old global `>1e-4` heuristic as correctness gates where reviewed BF16/FP8/FP4/FP32 contracts permit bounded numerical drift.
 
 Base target practical performance is **PARTIALLY QUALIFIED BUT NOT COMPLETE**.  P5 proves that no-replay BatchGenerator admission can reach ordinary oMLX MTP-OFF performance, but production decode must not be promoted to this substrate until corrected state satisfies the reviewed correctness contract.
