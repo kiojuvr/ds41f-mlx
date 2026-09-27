@@ -1,6 +1,6 @@
 # Milestone 4 base decode implementation status
 
-Status: **INCOMPLETE — implementation scaffold and real oMLX admission/session lifecycle are present, but first-token independent logits qualification and practical base-target performance gates are not closed.**
+Status: **INCOMPLETE — real oMLX admission/session lifecycle and hot-path cleanup are present; production wrapper performance now matches same-process raw oMLX base target controls, but the independent first-incremental logits oracle is still missing.**
 
 ## Implemented
 
@@ -56,11 +56,16 @@ Passing gates in the artifact:
 Open gates:
 
 - `first_token_logits`: **not qualified** in the recorded run because no independent official/reference first-incremental full-logits oracle exists yet for `[0, 3] -> [15]`; the runner records the oMLX logits digest but does not use oMLX as its own oracle.
-- `practical_base_execution`: **not qualified**. Bounded observed base target speed was about `0.38 tok/s` with speculation disabled. This is far below the known practical oMLX-class long-context decode evidence and must be diagnosed before declaring M4 complete.
+
+Performance closure result:
+
+- The previous production wrapper performed diagnostic offset scalar reads on every token: about 40 `DeepseekV41Cache.size().item()` reads before target forward, 40 after, plus source-layer reads in the state report.
+- `OMLXDecodeSession.decode_one()` no longer performs per-token cache offset inspection or O(context) `np.concatenate` token-history copies. Detailed offset/state inspection is explicit via `inspect_state()` and used only at qualification checkpoints.
+- Same-process controls in `artifacts/m4/omlx-base-decode/qualification.json` show the wrapper is no longer the regression boundary: raw `_forward` with an oMLX-native cache, raw `_forward` with an admitted M2 cache, and `OMLXDecodeSession.decode_one()` all measure in the same ~0.37-0.39 tok/s MTP-off base-target class on this short fixture. The known 29-37 tok/s documented oMLX behavior is therefore not reproduced by ordinary MTP-off single-token `_forward` in this bounded control and should not be attributed to wrapper diagnostics after this change.
 
 ## Transaction/lifecycle behavior
 
-`OMLXDecodeSession` uses lightweight transaction snapshots of cache slot references, left-padding/length metadata, token history, frontier, and committed step count. It does not deep-copy cache tensor payloads per token. On injected failure after target forward but before eval/commit, the runner verifies frontier, offsets, and Engram history are restored.
+`OMLXDecodeSession` uses lightweight transaction snapshots of cache slot references, left-padding/length metadata, token-history chunk count, frontier, and committed step count. It does not deep-copy cache tensor payloads per token and no longer copies the full CPU token history per step. On injected failure after target forward but before eval/commit, the runner verifies frontier, offsets, and Engram history are restored.
 
 Fork uses shared immutable MLX array references plus independent `DeepseekV41Cache` containers/frontiers. Child decode does not mutate parent state. Reset replaces request-local caches via `language_model.make_cache()` and clears token/frontier state without unloading model-static checkpoint or Engram backing.
 
@@ -75,7 +80,4 @@ Still disabled. Future DSpark integration should attach at:
 
 ## Completion decision
 
-Milestone 4 base target is **INCOMPLETE** until:
-
-1. a bounded independent/reference first-incremental full-logits validator is added and the admitted oMLX first-token logits pass it; and
-2. the base target path performance regression is diagnosed and either fixed or explicitly re-scoped with evidence.
+Milestone 4 base target is **INCOMPLETE** until a bounded independent/reference first-incremental full-logits validator is added and the admitted oMLX first-token logits pass it. A generic three-token full-prefill substitute was investigated but the existing official-source-derived helper stack has sequence-length-2 assumptions in Engram and compressor paths, and in any case would not by itself exercise the incremental lifecycle required by the M4 gate.

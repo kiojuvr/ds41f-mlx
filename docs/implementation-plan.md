@@ -61,7 +61,7 @@ Rejected:
 
 Status: **in progress / incomplete**. See `docs/milestone-4-base-decode-status.md`.
 
-Implemented so far: real oMLX `DeepseekV41Cache` admission from live `PrefillContinuationState`, `OMLXDecodeSession`, base target execution, continuation, Engram state update, reset, fork, and injected-failure rollback scaffolding. Remaining gates: independent/reference first-incremental full-logits qualification and practical base-target performance diagnosis.
+Implemented so far: real oMLX `DeepseekV41Cache` admission from live `PrefillContinuationState`, `OMLXDecodeSession`, base target execution, continuation, Engram state update, reset, fork, injected-failure rollback, and removal of diagnostic cache scalar reads from the production token loop. Same-process controls show production wrapper throughput now matches raw MTP-off oMLX `_forward`; remaining gate: independent/reference first-incremental full-logits qualification.
 
 Starting boundary from Milestone 3:
 

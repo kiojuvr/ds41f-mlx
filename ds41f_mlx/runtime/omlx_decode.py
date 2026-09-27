@@ -98,9 +98,9 @@ class DecodeStepReport:
     logits_shape: tuple[int, ...]
     logits_dtype: str
     elapsed_s: float
-    cache_offsets: tuple[int, ...]
-    state_changed: dict[str, Any]
     committed: bool
+    cache_offsets: tuple[int, ...] | None = None
+    state_changed: dict[str, Any] | None = None
 
     def to_json(self) -> dict[str, Any]:
         return {
@@ -110,9 +110,31 @@ class DecodeStepReport:
             "logits_shape": list(self.logits_shape),
             "logits_dtype": self.logits_dtype,
             "elapsed_s": self.elapsed_s,
-            "cache_offsets": list(self.cache_offsets),
-            "state_changed": self.state_changed,
+            "cache_offsets": None if self.cache_offsets is None else list(self.cache_offsets),
+            "state_changed": self.state_changed or {},
             "committed": self.committed,
+            "hot_path_synchronizing_offset_reads": 0,
+        }
+
+
+@dataclass(frozen=True)
+class OMLXStateInspection:
+    schema: str
+    cpu_frontier: int
+    cache_offsets: tuple[int, ...]
+    all_offsets_match_cpu_frontier: bool
+    source_state_shapes: dict[str, Any]
+    engram_history_shape: tuple[int, ...]
+
+    def to_json(self) -> dict[str, Any]:
+        return {
+            "schema": self.schema,
+            "cpu_frontier": self.cpu_frontier,
+            "cache_offsets": list(self.cache_offsets),
+            "all_offsets_match_cpu_frontier": self.all_offsets_match_cpu_frontier,
+            "source_state_shapes": self.source_state_shapes,
+            "engram_history_shape": list(self.engram_history_shape),
+            "synchronizing_offset_reads": len(self.cache_offsets),
         }
 
 
@@ -121,7 +143,7 @@ class _TransactionSnapshot:
     cache_refs: list[list[Any]]
     left_padding: list[Any]
     lengths: list[Any]
-    token_ids: np.ndarray
+    token_chunk_count: int
     token_frontier: int
     committed_steps: int
 
@@ -336,8 +358,9 @@ class OMLXDecodeSession:
         self.cache = cache
         self.config = config or OMLXDecodeConfig()
         self.admission_report = admission_report
-        self.token_ids = np.asarray(token_ids, dtype=np.int64).copy()
-        self.token_frontier = int(self.token_ids.shape[-1])
+        initial_tokens = np.asarray(token_ids, dtype=np.int64).reshape(1, -1).copy()
+        self._token_chunks: list[np.ndarray] = [initial_tokens] if initial_tokens.shape[1] else []
+        self.token_frontier = int(initial_tokens.shape[-1])
         self.committed_steps = 0
         self.speculation_enabled = False
         if hasattr(self.language_model, "configure_mtp"):
@@ -366,11 +389,17 @@ class OMLXDecodeSession:
         return session
 
     def decode_one(self, token: int, *, inject_failure: str | None = None) -> tuple[Any, DecodeStepReport]:
+        """Execute one production target token without diagnostic cache reads.
+
+        The hot path intentionally does not call DeepseekV41Cache.size() for all
+        layers.  Cache/frontier validation belongs to `inspect_state()` and M4
+        qualification tooling, not every production token.
+        """
         if self.speculation_enabled:
             raise RuntimeError("base Milestone 4 decode requires speculation disabled")
         mx = importlib.import_module("mlx.core")
         before = self._snapshot()
-        before_offsets = self.cache_offsets()
+        frontier_before = self.token_frontier
         t0 = perf_counter()
         try:
             if inject_failure == "before_forward":
@@ -386,19 +415,16 @@ class OMLXDecodeSession:
             if inject_failure == "after_eval_before_commit":
                 raise RuntimeError("injected failure after logits eval before commit")
             elapsed = perf_counter() - t0
-            self.token_ids = np.concatenate([self.token_ids, np.array([[int(token)]], dtype=np.int64)], axis=1)
-            self.token_frontier += 1
+            self._token_chunks.append(np.array([[int(token)]], dtype=np.int64))
+            self.token_frontier = frontier_before + 1
             self.committed_steps += 1
-            offsets = self.cache_offsets()
             report = DecodeStepReport(
                 token=int(token),
-                frontier_before=before.token_frontier,
+                frontier_before=frontier_before,
                 frontier_after=self.token_frontier,
                 logits_shape=tuple(logits.shape),
                 logits_dtype=str(logits.dtype),
                 elapsed_s=elapsed,
-                cache_offsets=offsets,
-                state_changed=self._state_change_summary(before_offsets, offsets),
                 committed=True,
             )
             return logits, report
@@ -421,14 +447,15 @@ class OMLXDecodeSession:
             other.left_padding = item.left_padding
             other.lengths = item.lengths
             cloned_cache.append(other)
-        child = OMLXDecodeSession(self.model, cloned_cache, self.token_ids.copy(), self.config, self.admission_report)
+        child = OMLXDecodeSession(self.model, cloned_cache, self.token_ids, self.config, self.admission_report)
+        child._token_chunks = list(self._token_chunks)
         child.token_frontier = self.token_frontier
         child.committed_steps = self.committed_steps
         return child
 
     def reset(self) -> None:
         self.cache = self.language_model.make_cache()
-        self.token_ids = np.empty((1, 0), dtype=np.int64)
+        self._token_chunks = []
         self.token_frontier = 0
         self.committed_steps = 0
         self.speculation_enabled = False
@@ -438,15 +465,45 @@ class OMLXDecodeSession:
         if runtime is not None:
             runtime.close()
 
+    @property
+    def token_ids(self) -> np.ndarray:
+        if not self._token_chunks:
+            return np.empty((1, 0), dtype=np.int64)
+        if len(self._token_chunks) == 1:
+            return self._token_chunks[0].copy()
+        return np.concatenate(self._token_chunks, axis=1)
+
     def cache_offsets(self) -> tuple[int, ...]:
+        """Slow diagnostic: synchronizes by reading each layer offset scalar."""
         return tuple(int(item.size()) for item in self.cache)
+
+    def inspect_state(self) -> OMLXStateInspection:
+        offsets = self.cache_offsets()
+        source_shapes = {}
+        for source in SOURCE_LAYERS:
+            item = self.cache[source]
+            source_shapes[str(source)] = {
+                "offset": offsets[source],
+                "compressed": None if item.cache[2] is None else list(item.cache[2].shape),
+                "index": None if item.cache[3] is None else list(item.cache[3].shape),
+                "pending_kv": None if item.cache[4] is None else list(item.cache[4].shape),
+                "pending_gate": None if item.cache[5] is None else list(item.cache[5].shape),
+            }
+        return OMLXStateInspection(
+            schema="ds41f.m4.omlx-state-inspection.v1",
+            cpu_frontier=self.token_frontier,
+            cache_offsets=offsets,
+            all_offsets_match_cpu_frontier=all(offset == self.token_frontier for offset in offsets),
+            source_state_shapes=source_shapes,
+            engram_history_shape=tuple(() if self.cache[0].cache[6] is None else self.cache[0].cache[6].shape),
+        )
 
     def _snapshot(self) -> _TransactionSnapshot:
         return _TransactionSnapshot(
             cache_refs=[list(item.cache) for item in self.cache],
             left_padding=[item.left_padding for item in self.cache],
             lengths=[item.lengths for item in self.cache],
-            token_ids=self.token_ids.copy(),
+            token_chunk_count=len(self._token_chunks),
             token_frontier=self.token_frontier,
             committed_steps=self.committed_steps,
         )
@@ -456,26 +513,6 @@ class OMLXDecodeSession:
             item.cache = list(refs)
             item.left_padding = left_padding
             item.lengths = lengths
-        self.token_ids = snap.token_ids.copy()
+        del self._token_chunks[snap.token_chunk_count:]
         self.token_frontier = snap.token_frontier
         self.committed_steps = snap.committed_steps
-
-    def _state_change_summary(self, before: tuple[int, ...], after: tuple[int, ...]) -> dict[str, Any]:
-        changed = [i for i, (a, b) in enumerate(zip(before, after)) if a != b]
-        source_shapes = {}
-        for source in SOURCE_LAYERS:
-            item = self.cache[source]
-            source_shapes[str(source)] = {
-                "offset": int(item.size()),
-                "compressed": list(item.cache[2].shape),
-                "index": list(item.cache[3].shape),
-                "pending_kv": list(item.cache[4].shape),
-                "pending_gate": list(item.cache[5].shape),
-            }
-        return {
-            "all_layer_offsets_advanced_by_one": all((b - a) == 1 for a, b in zip(before, after)),
-            "changed_layers": changed,
-            "source_state_shapes": source_shapes,
-            "engram_history_shape": list(self.cache[0].cache[6].shape),
-            "transient_candidate_topk_regenerated_by_forward": True,
-        }
