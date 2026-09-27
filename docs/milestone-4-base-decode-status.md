@@ -138,8 +138,44 @@ BatchGenerator.insert(
 
 The admitted cache offsets are all `2` before insert; prompt-processing forwarded zero tokens from `[0,3]`.  `15` is consumed as the first GenerationBatch backbone input and appended to token history; subsequent GenerationBatch responses begin with the distribution after `15`.
 
+## RoPE semantic correction update (2026-09-27)
+
+Artifact: `artifacts/m4/rope-semantic-audit/result.json`.
+
+The unconditional `compress_rope_theta` use in `tools/run_native_layer0_25_transformer_entry_validation.py::attn()` was confirmed as a shared-helper bug.  Official checkpoint source `/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/model.py` SHA-256 `4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65`, lines 681-687, selects:
+
+```text
+compress_ratio != 0: original_seq_len=args.original_seq_len, rope_theta=args.compress_rope_theta
+compress_ratio == 0: original_seq_len=0, rope_theta=args.rope_theta
+```
+
+The checkpoint records `rope_theta=10000`, `compress_rope_theta=160000`, and `compress_ratios[0:2]=[0,0]`; layers 0 and 1 therefore use base sliding-window RoPE.  Pre-fix comparison against the independent layer0 `tools/run_official_window_kv_prelude_fixture.py` fixture found the first divergence at `rotary_kv`; `wkv_output` and `kv_norm_output` were exact.  After the helper correction, layer0 input, wkv, kv_norm, rotary KV, act-quant codes, act-quant scales, and window KV all match the independent fixture exactly.  Layer1 evidence is in `artifacts/m4/layer1-rope-check/result.json`: after Engram@1, layer1 still observes `original_seq_len=0` and `rope_theta=10000`.
+
+This is documented as **shared implementation / validator coupling**: `OfficialModelMath.execute_block()` and the DwarfStar production-prefill path both delegated to the same helper, so prior M2 connected/reference exactness could not detect this helper-level semantic bug.  Milestone 2 architecture remains selected; affected M2 correctness evidence needs requalification from regenerated artifacts, not architecture reopening.
+
+Post-fix full prefill evidence:
+
+- `artifacts/m4/post-rope-fix/full-prefill-40.json`: final prefill digest `247da14c1b45ac2fe47bcf79418b3e45f199756e07f346359676736332ad4fca`, argmax `15`.
+- `artifacts/m4/post-rope-fix/prefill-continuation-state-validation.json`: continuation-state inventory/commit validation passed.
+
+Post-fix R/O/D incremental artifact: `artifacts/m4/rod-triangulation-post-rope-fix/result.json`.
+
+| Path | Digest | Argmax |
+| --- | --- | --- |
+| R historical independent reference | `f1eb4a1c4f158d70887a376f1a8494a88d6f4c83fb5eb9a2c98fc85af46bc3cd` | 266 |
+| O ordinary oMLX | `11de8c224cea3d9462531f125495760f33fffccbe2139f60915396a4d3f3b634` | 266 |
+| D corrected DwarfStar admitted | `dda1055a9be67398981ae665f685352753550032d8bcfe211d17fca177b0f686` | 35854 |
+
+The fix moved D but did not close the base-target correctness gate.  Layer0 O-vs-D semantic window-KV max abs difference dropped from `0.091796875` to `0.03125`, while D now matches the independent official fixture at the exact layer0 publication boundary.  Therefore D must not be changed to imitate O without reviewing whether oMLX's difference is an accepted implementation approximation.
+
+R-vs-O exactness remains unresolved.  Reviewed historical policy (`deepseek-v41-flash-mlx/docs/mlx-numerical-acceptance.md` and `docs/gate-tolerance-policy.md`) explicitly warns not to derive a tolerance from observed logits and not to absorb semantic/state differences into broad tolerances.  No defensible full-logits R-vs-O tolerance has been established yet.
+
+Quantized continuation-state finding so far: official `_window_kv` applies `act_quant(..., inplace=True)` and persists the resulting BF16/dequantized KV tensor in `window_kv_cache`; the independent fixture exposes codes/scales as evidence, but the semantic published state is BF16 window KV.  Adapter pack+unpack remains exact against D's semantic state for layer0.  No evidence yet requires adding physical act-quant codes/scales to `PrefillContinuationState` for window KV; compressed KV/index K still need the same targeted check before final closure.
+
+Post-fix P5 artifact: `artifacts/m4/generationbatch-controls-post-rope-fix/result.json`.  P5 remains in the ordinary GenerationBatch performance class: standard P4 median `20.90 tok/s`, DwarfStar no-replay P5 median `20.81 tok/s`, zero prompt replay, first backbone input `15`.
+
 ## Completion decision
 
-Milestone 4 base target correctness is **INCOMPLETE**.  The D path is not equivalent to O, and R vs O exactness/tolerance has not yet been justified by reviewed evidence.
+Milestone 4 base target correctness is **INCOMPLETE**.  The confirmed RoPE helper bug is fixed and layer0 is independently requalified, but full R/O/D correctness still fails and R-vs-O tolerance is not established.
 
-Base target practical performance is **PARTIALLY QUALIFIED BUT NOT COMPLETE**.  P5 proves that no-replay BatchGenerator admission can reach ordinary oMLX MTP-OFF performance, but production decode must not be switched to this substrate until the semantic prefill-state divergence is fixed and the final logits gate passes.
+Base target practical performance is **PARTIALLY QUALIFIED BUT NOT COMPLETE**.  P5 proves that no-replay BatchGenerator admission can reach ordinary oMLX MTP-OFF performance, but production decode must not be promoted to this substrate until corrected state satisfies the reviewed correctness contract.

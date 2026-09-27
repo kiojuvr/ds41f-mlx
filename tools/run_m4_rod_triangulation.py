@@ -91,10 +91,10 @@ def main() -> int:
         t0=time.perf_counter(); Olog=lm._forward(mx.array([[15]], mx.int64), cache=ocache); mx.eval(Olog); mx.synchronize(); oinc_s=time.perf_counter()-t0
         O=np.asarray(Olog, dtype=np.float32); rec['O_ordinary_omlx']={"prefill_elapsed_s":opref_s,"incremental_elapsed_s":oinc_s,"array":save_array(outdir,"O_ordinary_omlx_incremental_logits",O)}
         # D DwarfStar admitted path
-        prefill=build_prefill_state(ck, outdir/'native', [0,3]); state=prefill.continuation_state
+        prefill=build_prefill_state(ck, outdir/'native', [0,3], require_ok=False); state=prefill.continuation_state
         sess=OMLXDecodeSession.from_prefill_state(model, state, OMLXDecodeConfig(omlx_path=omlx, checkpoint_path=ck, preserve_mtp=False))
         t0=time.perf_counter(); Dlog, dstep=sess.decode_one(15); mx.synchronize(); dinc_s=time.perf_counter()-t0
-        D=np.asarray(Dlog, dtype=np.float32); rec['D_dwarfstar_admitted']={"prefill_artifact_logits_digest": prefill.artifact.get('final_output',{}).get('logits_digest'), "incremental_elapsed_s":dinc_s,"decode_step":dstep.to_json(),"array":save_array(outdir,"D_dwarfstar_admitted_incremental_logits",D)}
+        D=np.asarray(Dlog, dtype=np.float32); rec['D_dwarfstar_admitted']={"prefill_artifact_ok": bool(prefill.ok), "prefill_false_gates": [k for k,v in prefill.artifact.get('gates',{}).items() if not v], "prefill_artifact_logits_digest": prefill.artifact.get('final_output',{}).get('logits_digest'), "incremental_elapsed_s":dinc_s,"decode_step":dstep.to_json(),"array":save_array(outdir,"D_dwarfstar_admitted_incremental_logits",D)}
         arrays={"O":O,"D":D};
         if R is not None: arrays['R']=R
         pairs={}

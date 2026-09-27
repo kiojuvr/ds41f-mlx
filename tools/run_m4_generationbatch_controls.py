@@ -27,7 +27,7 @@ def main():
     def greedy(logits): return mx.argmax(logits, axis=-1)
     def make_o_cache():
         c=lm.make_cache(); mx.eval(lm._forward(mx.array([[0,3]],mx.int64), cache=c)); mx.synchronize(); return c
-    prefill=build_prefill_state(ck, Path('artifacts/m4/generationbatch-controls/native'), [0,3]); state=prefill.continuation_state
+    prefill=build_prefill_state(ck, Path('artifacts/m4/generationbatch-controls/native'), [0,3], require_ok=False); state=prefill.continuation_state
     def make_d_cache(): return OMLXDecodeSession.from_prefill_state(model,state,OMLXDecodeConfig(omlx_path=omlx,checkpoint_path=ck,preserve_mtp=False)).cache
     def token(i): return 15+i%4
     try:

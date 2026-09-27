@@ -48,10 +48,10 @@ def clean(value: Any) -> Any:
     return value
 
 
-def build_prefill_state(checkpoint: Path, native_out_dir: Path, tokens: list[int]):
+def build_prefill_state(checkpoint: Path, native_out_dir: Path, tokens: list[int], *, require_ok: bool = True):
     executor = DwarfStarPrefillVerticalSliceExecutor.with_compiled_native(checkpoint, native_out_dir)
     result = executor.run(tokens=tokens, layers=40)
-    if not result.ok or result.continuation_state is None:
+    if result.continuation_state is None or (require_ok and not result.ok):
         raise RuntimeError("M2 DwarfStar prefill did not produce committed continuation state")
     return result
 
