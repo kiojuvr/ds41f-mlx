@@ -47,42 +47,34 @@ correct state handoff into decode
 
 ## Milestone 3 — Decode architecture selection
 
-Perform a bounded architecture comparison before implementing decode.
+Status: **complete**. See `docs/milestone-3-decode-architecture-decision.md`.
 
-Candidates:
+Decision: select oMLX `0.7.0.dev2` DeepSeek-V4.1 target decode architecture as the base production decode architecture, adapted to consume `PrefillContinuationState` without prompt recomputation. The selected topology is request-local `DeepseekV41Cache` ownership plus `LanguageModel._forward` target execution. DSpark/MTP speculative acceleration is staged after the base target decode adapter and correctness gates pass.
 
-- DwarfStar DeepSeek-V4.1 decode architecture;
-- oMLX `0.7.0.dev2` DeepSeek-V4.1-Flash decode architecture;
-- a composition only if state/lifetime/interface boundaries are explicit.
+Rejected:
 
-Compare at minimum:
-
-- token execution topology;
-- layer scheduling;
-- graph ownership/lifetime;
-- MLX/Metal evaluation and synchronization boundaries;
-- attention decode path;
-- KV/state ownership and update strategy;
-- MoE routing and routed expert scheduling;
-- resident/streamed expert strategy;
-- MTP/speculative decoding architecture;
-- state publication and transaction semantics;
-- long-context behavior;
-- memory residency;
-- batch/concurrency implications;
-- ability to preserve official DeepSeek semantics;
-- difficulty of integrating existing `ds41f` correctness contracts.
-
-Deliverable: an architecture decision document or an update to this plan. Do not begin decode implementation before this decision unless repository evidence already makes the decision conclusive.
+- DwarfStar decode as Milestone 4 base, because the inspected real decode state is private to `ds41_gpu_graph` C/Metal tensors and no public no-replay state-admission ABI exists for the M2 neutral handoff.
+- Composition, because no clean state/lifetime/interface boundary avoids duplicate execution, cache conversion, conflicting graph ownership, and rollback ambiguity.
+- Current native reference decode, which remains correctness/reference evidence only.
 
 ## Milestone 4 — Implement selected decode architecture
 
+Starting boundary from Milestone 3:
+
+- implement a production oMLX-derived decode session type, e.g. under `ds41f_mlx/runtime/`;
+- implement a no-prompt-replay adapter from `PrefillContinuationState` to 40 `DeepseekV41Cache` objects: slot 0 offsets, slot 1 window KV, slots 2/3 compressed/index state, slots 4/5 pending compressor state, slot 6 Engram history, plus validation for candidates/top-k/ownership/source order;
+- model/cache owner is oMLX `LanguageModel` plus request-local cache list;
+- first-token entry point is one-token `LanguageModel._forward`/`__call__` against admitted cache;
+- preserve reset, fork, continuation commit, failure rollback, logits, Engram store identity, and qualification hooks;
+- implement base target decode first; enable DSpark/MTP only after base decode gates pass;
+- keep current native decode reference-only and leave DwarfStar-derived prefill unchanged.
+
 Deliverables:
 
-- selected decode topology connected to the same production session/state boundary as prefill;
+- selected oMLX-derived decode topology connected to the same production session/state boundary as prefill;
 - official-semantics qualification gates preserved;
 - practical single-stream decode restored before optional speculative acceleration;
-- MTP/speculative decoding evaluated only as part of the selected architecture where applicable;
+- MTP/speculative decoding evaluated only as a staged part of the selected architecture;
 - reset, fork, continuation, and failure atomicity preserved.
 
 Success is not defined as merely exceeding the current `0.31 tok/s` reference baseline. The target is practical local operation comparable to known oMLX-class behavior.

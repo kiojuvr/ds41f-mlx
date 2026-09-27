@@ -1,0 +1,114 @@
+{
+  "dwarfstar": {
+    "graph_state_terms_present": true,
+    "no_prompt_replay_admission": false,
+    "public_import_abi_present": false,
+    "reason": "DwarfStar owns decode state inside ds41_gpu_graph C/Metal tensors; source has no external ABI to populate all V4.1 graph caches from neutral arrays.",
+    "status": "NO_PUBLIC_STATE_ADMISSION_ABI"
+  },
+  "omlx": {
+    "all_offsets_match": true,
+    "cache_layers": 40,
+    "engram_history_shape_layer0": [
+      1,
+      3
+    ],
+    "import_mode": "shape-only-fallback: ModuleNotFoundError: No module named 'mlx_lm'",
+    "offsets_sample": [
+      7,
+      7,
+      7,
+      7,
+      7
+    ],
+    "source_slots": {
+      "14": {
+        "compressed_shape": [
+          1,
+          3,
+          8
+        ],
+        "index_shape": [
+          1,
+          3,
+          8
+        ],
+        "pending_kv_shape": [
+          1,
+          1,
+          16
+        ]
+      },
+      "2": {
+        "compressed_shape": [
+          1,
+          3,
+          8
+        ],
+        "index_shape": [
+          1,
+          3,
+          8
+        ],
+        "pending_kv_shape": [
+          1,
+          1,
+          16
+        ]
+      },
+      "20": {
+        "compressed_shape": [
+          1,
+          3,
+          8
+        ],
+        "index_shape": [
+          1,
+          3,
+          8
+        ],
+        "pending_kv_shape": [
+          1,
+          1,
+          16
+        ]
+      },
+      "8": {
+        "compressed_shape": [
+          1,
+          3,
+          8
+        ],
+        "index_shape": [
+          1,
+          3,
+          8
+        ],
+        "pending_kv_shape": [
+          1,
+          1,
+          16
+        ]
+      }
+    },
+    "status": "ADMITTED_SYNTHETIC_NO_PROMPT_REPLAY"
+  },
+  "required_fields": [
+    "candidates_by_source",
+    "committed",
+    "compressed_kv_by_source",
+    "compressor_pending",
+    "engram_store",
+    "field_ownership",
+    "index_k_by_source",
+    "ngram_hashes",
+    "shared_publications",
+    "source_generation_order",
+    "token_frontier",
+    "token_ids",
+    "topk_by_generation",
+    "window_kv_by_layer"
+  ],
+  "schema": "ds41f.m3.state-admission-probe.v1",
+  "state_frontier": 7
+}

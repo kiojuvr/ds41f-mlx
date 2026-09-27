@@ -42,16 +42,13 @@ Do not call the existing planners or bounded primitives a completed production r
 
 ### Decode
 
-Decode architecture is not selected. The current native decode path is correctness/reference evidence, not the architecture to optimize by default.
+Decode architecture is selected by Milestone 3. See `docs/milestone-3-decode-architecture-decision.md`.
 
-A dedicated comparison must be performed between:
+The selected base practical decode architecture is oMLX `0.7.0.dev2` DeepSeek-V4.1 target decode architecture: request-local `DeepseekV41Cache` ownership plus `LanguageModel._forward` target execution, adapted to consume `PrefillContinuationState` without prompt recomputation. DSpark/MTP is selected as an optional staged acceleration after base decode admission and correctness qualification.
 
-- DwarfStar DeepSeek-V4.1 decode architecture;
-- oMLX `0.7.0.dev2` DeepSeek-V4.1-Flash decode architecture.
+DwarfStar decode is rejected as the Milestone 4 base because its real decode state is private to `ds41_gpu_graph` C/Metal tensors and the inspected source exposes no public no-replay admission ABI from the Milestone 2 neutral continuation arrays. Composition is rejected because no clean state/lifetime/interface boundary avoids duplicate execution, cache conversion, conflicting graph ownership, and rollback ambiguity.
 
-The comparison must examine token execution topology, layer scheduling, graph ownership/lifetime, MLX/Metal synchronization, attention decode, KV/state updates, MoE routing, resident/streamed expert strategy, MTP/speculative design, state publication/transaction semantics, long-context behavior, memory residency, batch/concurrency implications, official-semantics preservation, and cost of integrating existing `ds41f` correctness contracts.
-
-Possible outcomes are DwarfStar decode, oMLX decode, or a documented composition with explicit state/lifetime/interface boundaries. A hybrid is not acceptable merely because individual pieces look useful.
+The current native decode path remains correctness/reference evidence, not the architecture to optimize by default.
 
 ### State/session ownership
 
