@@ -22,8 +22,8 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--checkpoint", default=os.environ.get("DS41F_CHECKPOINT", DEFAULT_CHECKPOINT))
     ap.add_argument("--native-out-dir", default="artifacts/m2/dwarfstar-prefill/native")
-    ap.add_argument("--out", default="artifacts/m2/dwarfstar-prefill/vertical-slice-layer0-2.json")
-    ap.add_argument("--layers", type=int, default=3)
+    ap.add_argument("--out", default="artifacts/m2/dwarfstar-prefill/vertical-slice-layer0-7-source2-reuse.json")
+    ap.add_argument("--layers", type=int, default=8)
     ap.add_argument("--tokens", default="0,3")
     args = ap.parse_args()
 

@@ -23,21 +23,7 @@ from ds41f_mlx.native_prefill import (
     native_sweep_config_static,
 )
 from ds41f_mlx.dwarfstar_v41_sweep import DS4_AUTHORITY_REMOTE, DS4_AUTHORITY_SHA
-
-# Official-source-derived arithmetic helpers.  These are not oMLX derived and do
-# not instantiate the native reference text runtime.  They provide the already
-# reviewed model math while this executor owns the DwarfStar-style sweep/control
-# lifetime.
-from tools.run_native_layer0_25_transformer_entry_validation import (  # type: ignore
-    DIM,
-    HC,
-    VOCAB,
-    block,
-    cfg as load_text_config,
-    digest,
-    mmap,
-    snap,
-)
+from ds41f_mlx.official_model_math import OfficialModelMath
 
 
 @dataclass
@@ -87,11 +73,11 @@ class TypedSweepStorage:
     shared: dict[str, Any]
     publications: list[dict[str, Any]] = field(default_factory=list)
 
-    def frontier_digest(self) -> dict[str, str | None]:
-        return snap(self.shared)
+    def frontier_digest(self, math: OfficialModelMath) -> dict[str, str | None]:
+        return math.snapshot_publications(self.shared)
 
-    def publish(self, layer: int) -> dict[str, Any]:
-        rec = {"layer": layer, "frontier": self.frontier_digest()}
+    def publish(self, layer: int, math: OfficialModelMath) -> dict[str, Any]:
+        rec = {"layer": layer, "frontier": self.frontier_digest(math)}
         self.publications.append(rec)
         return rec
 
@@ -116,26 +102,20 @@ class DwarfStarPrefillVerticalSliceExecutor:
     def __init__(self, checkpoint: Path, native: NativePrefillLibrary):
         self.checkpoint = Path(checkpoint)
         self.native = native
-        self.text_config = load_text_config(self.checkpoint)
+        self.math = OfficialModelMath(self.checkpoint)
 
     @classmethod
     def with_compiled_native(cls, checkpoint: Path, out_dir: Path) -> "DwarfStarPrefillVerticalSliceExecutor":
         lib = compile_native_prefill_library(out_dir)
         return cls(checkpoint, load_native_prefill_library(lib))
 
-    def _load_embedding_prefix(self, vocab_rows: int = 16) -> np.ndarray:
-        # Keep the bounded fixture small while using the official checkpoint bits.
-        return np.ascontiguousarray(
-            mmap(self.checkpoint / "model-00002-of-00048.safetensors", "embed.weight", np.uint16, (VOCAB, DIM))[:vocab_rows]
-        )
-
     def _init_storage(self, tokens: np.ndarray) -> tuple[TypedSweepStorage, dict[str, Any]]:
-        emb_prefix = self._load_embedding_prefix(max(int(tokens.max()) + 1, 16))
+        emb_prefix = self.math.embedding_prefix(max(int(tokens.max()) + 1, 16))
         gathered, native_result = self.native.official_embedding_gather_bf16(emb_prefix, tokens.reshape(-1).astype(np.int32))
-        embedding = gathered.reshape(1, int(tokens.size), DIM)
-        current = np.repeat(embedding[:, :, None, :], HC, axis=2).copy()
+        embedding = gathered.reshape(1, int(tokens.size), self.math.dim)
+        current = np.repeat(embedding[:, :, None, :], self.math.hc_mult, axis=2).copy()
         next_hc = np.empty_like(current)
-        pre = np.zeros((1, int(tokens.size), HC), np.float32)
+        pre = np.zeros((1, int(tokens.size), self.math.hc_mult), np.float32)
         pre[:, :, 0] = 1.0
         storage = TypedSweepStorage(
             tokens=np.ascontiguousarray(tokens, dtype=np.int64),
@@ -169,32 +149,32 @@ class DwarfStarPrefillVerticalSliceExecutor:
                 if int(command["offset"]) != 0 or int(command["rows"]) != int(token_arr.size):
                     # The first bounded slice supports the first full row span only.
                     continue
-                before = storage.frontier_digest()
-                x_in = digest(storage.current_hc_bf16)
-                pre_in = digest(storage.pre_f32)
-                out = block(self.checkpoint, self.text_config, int(layer), storage.current_hc_bf16, storage.pre_f32, storage.shared)
+                before = storage.frontier_digest(self.math)
+                x_in = self.math.digest(storage.current_hc_bf16)
+                pre_in = self.math.digest(storage.pre_f32)
+                out = self.math.execute_block(int(layer), storage.current_hc_bf16, storage.pre_f32, storage.shared)
                 storage.next_hc_bf16[...] = out["x_out"]
                 storage.current_hc_bf16, storage.next_hc_bf16 = storage.next_hc_bf16, storage.current_hc_bf16
                 storage.pre_f32 = out["ffn_pre"]
-                publication = storage.publish(int(layer))
+                publication = storage.publish(int(layer), self.math)
                 tx.publish(int(layer), publication["frontier"])
-                after = storage.frontier_digest()
+                after = storage.frontier_digest(self.math)
                 rec = {
                     "command": command,
                     "input_hc_digest": x_in,
                     "input_pre_digest": pre_in,
-                    "attention_input_digest": digest(out["attention_input"]),
-                    "attention_output_digest": digest(out["attention_output"]),
-                    "x_after_attn_digest": digest(out["x_after_attn"]),
-                    "moe_input_digest": digest(out["moe_input"]),
-                    "moe_output_digest": digest(out["full_moe_output"]),
-                    "output_hc_digest": digest(out["x_out"]),
-                    "output_pre_digest": digest(out["ffn_pre"]),
-                    "window_kv_digest": digest(out["attn_path"]["window_kv"]),
+                    "attention_input_digest": self.math.digest(out["attention_input"]),
+                    "attention_output_digest": self.math.digest(out["attention_output"]),
+                    "x_after_attn_digest": self.math.digest(out["x_after_attn"]),
+                    "moe_input_digest": self.math.digest(out["moe_input"]),
+                    "moe_output_digest": self.math.digest(out["full_moe_output"]),
+                    "output_hc_digest": self.math.digest(out["x_out"]),
+                    "output_pre_digest": self.math.digest(out["ffn_pre"]),
+                    "window_kv_digest": self.math.digest(out["attn_path"]["window_kv"]),
                     "state_before": before,
                     "state_after": after,
                     "publication": publication,
-                    "producer": {k: digest(v) for k, v in (out["attn_path"].get("producer") or {}).items() if isinstance(v, np.ndarray)},
+                    "producer": {k: self.math.digest(v) for k, v in (out["attn_path"].get("producer") or {}).items() if isinstance(v, np.ndarray)},
                     "consumed": out["attn_path"].get("consumed") or {},
                 }
                 layer_records[str(layer)] = rec
@@ -231,16 +211,43 @@ class DwarfStarPrefillVerticalSliceExecutor:
         else:
             reference_comparison["all_compared_exact"] = False
 
+        role_table = {str(layer): self.math.layer_roles(layer) for layer in range(layers)}
+        source2 = layer_records.get("2")
+        source2_frontier = source2["state_after"] if source2 else {}
+        first_group_consumers = [str(i) for i in range(3, min(layers, 8))]
+        consumer_reads: dict[str, Any] = {}
+        for layer in first_group_consumers:
+            consumed = layer_records[layer]["consumed"]
+            consumer_reads[layer] = {
+                "compress_kv_matches_source2": consumed.get("compress_kv") == source2_frontier.get("compress_kv"),
+                "topk_idxs_matches_source2": consumed.get("topk_idxs") == source2_frontier.get("topk_idxs"),
+                "consumer_recomputed_producer_state": bool(layer_records[layer]["producer"]),
+                "candidate_lifecycle": "not_applicable_before_candidate_source_layer20",
+            }
+        source_group = {
+            "source_layer": 2,
+            "consumer_layers": [int(x) for x in first_group_consumers],
+            "source_publication": source2_frontier,
+            "consumer_reads": consumer_reads,
+            "complete_for_first_source_group": layers >= 8,
+            "candidate_lifecycle": "candidate state is not produced in first group; config candidate source is layer 20",
+        }
+
         gates = {
             "native_sweep_plan_used": plan["source_authority"]["commit"] == DS4_AUTHORITY_SHA,
             "checkpoint_invalid_during_execution": any(e["event"] == "begin_sweep_checkpoint_invalid" and e["valid"] is False for e in tx.events),
             "checkpoint_committed_after_publication": tx.committed and tx.valid and tx.events[-1]["event"] == "checkpoint_may_commit",
             "official_embedding_native_executed": bool(embedding_native.get("metal_enabled")) or embedding_native.get("n_tokens") == int(token_arr.size),
-            "executor_owned_typed_storage": storage.current_hc_bf16.shape == (1, int(token_arr.size), HC, DIM) and storage.pre_f32.shape == (1, int(token_arr.size), HC),
+            "executor_owned_typed_storage": storage.current_hc_bf16.shape == (1, int(token_arr.size), self.math.hc_mult, self.math.dim) and storage.pre_f32.shape == (1, int(token_arr.size), self.math.hc_mult),
             "layer0_complete_path_executed": "0" in layer_records and bool(layer_records["0"]["attention_output_digest"]) and bool(layer_records["0"]["moe_output_digest"]),
+            "all_span_layers_have_hc_attention_moe": all(bool(layer_records[str(i)]["attention_output_digest"]) and bool(layer_records[str(i)]["moe_output_digest"]) for i in range(layers)),
             "no_reference_text_runtime_called": True,
             "publication_owned_by_executor": len(storage.publications) == layers and len([e for e in tx.events if e["event"] == "publish_state_frontier"]) == layers,
-            "layer2_state_publication_present": layers < 3 or layer_records["2"]["state_after"]["compress_kv"] is not None,
+            "layer2_state_publication_present": layers < 3 or (source2_frontier.get("compress_kv") is not None and source2_frontier.get("index_k") is not None and source2_frontier.get("topk_idxs") is not None),
+            "first_source_reuse_group_complete": source_group["complete_for_first_source_group"],
+            "consumer_reads_match_source_publication": bool(consumer_reads) and all(v["compress_kv_matches_source2"] and v["topk_idxs_matches_source2"] and not v["consumer_recomputed_producer_state"] for v in consumer_reads.values()),
+            "candidate_lifecycle_scoped_before_layer20": layers <= 8 and all(layer_records[str(i)]["state_after"].get("candidates") is None for i in range(layers)),
+            "sweep_command_order_exact": [int(c["layer"]) for c in executed] == list(range(layers)),
             "reference_connected_scope_exact": reference_comparison["all_compared_exact"],
         }
         artifact = {
@@ -258,10 +265,12 @@ class DwarfStarPrefillVerticalSliceExecutor:
                 "embedding_shape": list(storage.embedding_bf16.shape),
                 "current_hc_shape": list(storage.current_hc_bf16.shape),
                 "pre_shape": list(storage.pre_f32.shape),
-                "current_hc_digest": digest(storage.current_hc_bf16),
-                "pre_digest": digest(storage.pre_f32),
+                "current_hc_digest": self.math.digest(storage.current_hc_bf16),
+                "pre_digest": self.math.digest(storage.pre_f32),
             },
             "executed_commands": executed,
+            "layer_roles": role_table,
+            "source_reuse_group": source_group,
             "layers": layer_records,
             "reference_comparison": reference_comparison,
             "transaction_events": tx.events,
