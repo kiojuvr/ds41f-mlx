@@ -1,0 +1,562 @@
+{
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "SOFTMAX NUMERICAL PROPAGATION",
+  "classification_rationale": "row0 (one real KV + sink) is exact; row1 diverges. The qualification trace one-shot/topk-width-3 reconstruction matches current source-derived arithmetic but not historical attn_core, placing the difference in historical tiled online-softmax/value reduction topology rather than selected-KV mapping, scale, sink inclusion, or final dtype semantics.",
+  "comparisons": {
+    "bf16_weights": {
+      "actual_sha256": "d941ca7ef9dd95e596151b31b9e25f0cf5259d6fd341ddd852f367cc47e42f00",
+      "max_abs_diff": 0.0,
+      "max_rel_diff": 0.0,
+      "mean_abs_diff": 0.0,
+      "mismatched_elements": 0,
+      "reference_sha256": "d941ca7ef9dd95e596151b31b9e25f0cf5259d6fd341ddd852f367cc47e42f00",
+      "sha_equal": true,
+      "shape_pair": [
+        [
+          1,
+          2,
+          64,
+          3
+        ],
+        [
+          1,
+          2,
+          64,
+          3
+        ]
+      ]
+    },
+    "current_sparse_output_vs_historical_core": {
+      "actual_sha256": "67f04db9df6ce14e74ec429e7ff150e8af2113d6d3ee19582dcffd7f0bcc5a02",
+      "dtype": "BF16(uint16)",
+      "max_abs_diff": 0.00390625,
+      "max_bf16_ulp": 29193,
+      "max_bf16_ulp_lte": 1,
+      "mean_abs_diff": 2.612087882880587e-05,
+      "mismatched_elements": 5572,
+      "reference_sha256": "f161cfb539a721fe14bca0936be6e665a545f4290e8ff14d06205af17ab67542",
+      "sha256": "f161cfb539a721fe14bca0936be6e665a545f4290e8ff14d06205af17ab67542",
+      "sha_equal": false,
+      "shape": [
+        2,
+        64,
+        512
+      ],
+      "shape_pair": [
+        [
+          2,
+          64,
+          512
+        ],
+        [
+          2,
+          64,
+          512
+        ]
+      ],
+      "ulp_counts": {
+        "ulp0": 59964,
+        "ulp1": 4338,
+        "ulp_gt1": 1234
+      },
+      "within_contract": false
+    },
+    "denominator_without_sink": {
+      "actual_sha256": "7b1d7188131b5d35a872457473e7de1f5e068c119ad465083df803cbee199fd3",
+      "max_abs_diff": 2.384185791015625e-07,
+      "max_rel_diff": 1.112286582838351e-07,
+      "mean_abs_diff": 1.7695128917694092e-08,
+      "mismatched_elements": 14,
+      "reference_sha256": "64fa08693677c9d0bde39edd3cca7f2f43e656fe7dc66381fc66a9c7d3de42f4",
+      "sha_equal": false,
+      "shape_pair": [
+        [
+          1,
+          2,
+          64
+        ],
+        [
+          1,
+          2,
+          64
+        ]
+      ]
+    },
+    "exp_weights_fp32": {
+      "actual_sha256": "92358c3febd383d9993f1e8f8ae63fe9ec233b3e15e7e8af521dc19d022b7b2b",
+      "max_abs_diff": 5.960464477539063e-08,
+      "max_rel_diff": 1.149056032545559e-07,
+      "mean_abs_diff": 5.005858838558197e-09,
+      "mismatched_elements": 45,
+      "reference_sha256": "3798dba0315c4bbfb01340f1ad3529d203166e8e3572dafc017c1305d5d445d2",
+      "sha_equal": false,
+      "shape_pair": [
+        [
+          1,
+          2,
+          64,
+          3
+        ],
+        [
+          1,
+          2,
+          64,
+          3
+        ]
+      ]
+    },
+    "final_denominator": {
+      "actual_sha256": "40042ef3f949cf34aa7551ab9046ff9d5fe360a405bfb239f1d95d14cebf018d",
+      "max_abs_diff": 1.9073486328125e-06,
+      "max_rel_diff": 1.9377603166503832e-07,
+      "mean_abs_diff": 8.847564458847046e-08,
+      "mismatched_elements": 33,
+      "reference_sha256": "81dc2b525d390d51efbd743f087fc96039fedecadd4d0c7229388a99ca9f8904",
+      "sha_equal": false,
+      "shape_pair": [
+        [
+          1,
+          2,
+          64
+        ],
+        [
+          1,
+          2,
+          64
+        ]
+      ]
+    },
+    "numerator": {
+      "actual_sha256": "0b74de3494c905e47580da76882209dd725a0b8edcb030d1c412e435e339c247",
+      "max_abs_diff": 0.0,
+      "max_rel_diff": 0.0,
+      "mean_abs_diff": 0.0,
+      "mismatched_elements": 0,
+      "reference_sha256": "0b74de3494c905e47580da76882209dd725a0b8edcb030d1c412e435e339c247",
+      "sha_equal": true,
+      "shape_pair": [
+        [
+          1,
+          2,
+          64,
+          512
+        ],
+        [
+          1,
+          2,
+          64,
+          512
+        ]
+      ]
+    },
+    "raw_scores": {
+      "actual_sha256": "5275bb07f133879f0330450aee99f9837dd3b7fbcbff198c2c8be5e2017e26a3",
+      "max_abs_diff": 7.62939453125e-06,
+      "max_rel_diff": 1.6372489426430548e-06,
+      "mean_abs_diff": 4.600733518600464e-07,
+      "mismatched_elements": 217,
+      "reference_sha256": "06237f2fddac144c212c6907e51b9d3b93dfbe544cfcad1b1cd81c7db6143513",
+      "sha_equal": false,
+      "shape_pair": [
+        [
+          1,
+          2,
+          64,
+          3
+        ],
+        [
+          1,
+          2,
+          64,
+          3
+        ]
+      ]
+    },
+    "row_max": {
+      "actual_sha256": "3d527d00ac610f89b23c3794686e86651a6d9dba1fdd0f2c58a5ed16b3f3c25b",
+      "max_abs_diff": 2.384185791015625e-07,
+      "max_rel_diff": 1.0359119642089354e-06,
+      "mean_abs_diff": 3.0442606657743454e-08,
+      "mismatched_elements": 45,
+      "reference_sha256": "4ecb643d921389737c53a14e3322bdc15117b8f0928b86c40f76578956db5db1",
+      "sha_equal": false,
+      "shape_pair": [
+        [
+          1,
+          2,
+          64
+        ],
+        [
+          1,
+          2,
+          64
+        ]
+      ]
+    },
+    "scaled_scores": {
+      "actual_sha256": "0c18138305d66604b8133a6b3ad92127943fd617ea2ff130932471d0eb46d55e",
+      "max_abs_diff": 2.384185791015625e-07,
+      "max_rel_diff": 1.6400890672230162e-06,
+      "mean_abs_diff": 2.0649167709052563e-08,
+      "mismatched_elements": 206,
+      "reference_sha256": "f0f9a15d48d26c016c14a943bd7a9ad56596c6595df8b694b7adc547d5a57b3a",
+      "sha_equal": false,
+      "shape_pair": [
+        [
+          1,
+          2,
+          64,
+          3
+        ],
+        [
+          1,
+          2,
+          64,
+          3
+        ]
+      ]
+    },
+    "sink_term": {
+      "actual_sha256": "2cb422696d752279f48681293b3150f65ed5f2f28abd031dd22b1b1697ae1763",
+      "max_abs_diff": 1.9073486328125e-06,
+      "max_rel_diff": 1.1783695441636155e-07,
+      "mean_abs_diff": 6.711343303322792e-08,
+      "mismatched_elements": 45,
+      "reference_sha256": "67fe731340993bd47bd7f5c6b7a44b3f5eab503a7c4e352dd799a21723bcdcae",
+      "sha_equal": false,
+      "shape_pair": [
+        [
+          1,
+          2,
+          64
+        ],
+        [
+          1,
+          2,
+          64
+        ]
+      ]
+    },
+    "trace_output_formula_vs_historical_core": {
+      "actual_sha256": "f161cfb539a721fe14bca0936be6e665a545f4290e8ff14d06205af17ab67542",
+      "dtype": "BF16(uint16)",
+      "max_abs_diff": 0.00390625,
+      "max_bf16_ulp": 29193,
+      "max_bf16_ulp_lte": 1,
+      "mean_abs_diff": 2.612087882880587e-05,
+      "mismatched_elements": 5572,
+      "reference_sha256": "67f04db9df6ce14e74ec429e7ff150e8af2113d6d3ee19582dcffd7f0bcc5a02",
+      "sha256": "67f04db9df6ce14e74ec429e7ff150e8af2113d6d3ee19582dcffd7f0bcc5a02",
+      "sha_equal": false,
+      "shape": [
+        2,
+        64,
+        512
+      ],
+      "shape_pair": [
+        [
+          2,
+          64,
+          512
+        ],
+        [
+          2,
+          64,
+          512
+        ]
+      ],
+      "ulp_counts": {
+        "ulp0": 59964,
+        "ulp1": 4338,
+        "ulp_gt1": 1234
+      },
+      "within_contract": false
+    }
+  },
+  "historical_export": {
+    "trace_dir_untracked": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-hist-block1-h2rgx0_c/trace"
+  },
+  "inputs": {
+    "known_visibility": {
+      "row0": [
+        0,
+        -1,
+        -1
+      ],
+      "row1": [
+        0,
+        1,
+        2
+      ]
+    },
+    "kv_digest": "0d430305669ae9f352907df4c69707ca7b6fdf777b67676fdb7883a004e37901",
+    "q_digest": "dfabc4eaeb88b6efb63ad9713265f09433a1c4e2c30b5e0b80ba62bdae11f5f2",
+    "sink_digest": "fcf433c9435a3484908b9a4b9b76f6eb3f87c32e02df227fa9ab0c3157fdfdae",
+    "topk": [
+      [
+        [
+          0,
+          -1,
+          -1
+        ],
+        [
+          0,
+          1,
+          2
+        ]
+      ]
+    ]
+  },
+  "max_divergent_element": {
+    "abs_diff": 0.00390625,
+    "dim": 446,
+    "head": 9,
+    "row": 1,
+    "selected_kv_positions": [
+      0,
+      1,
+      2
+    ]
+  },
+  "official_sparse_kernel_source": {
+    "file_sha256": "1236c3507019ed176f5dba5e04bcea58867cf654818c6cf138ed4845398c2455",
+    "kernel_block": 64,
+    "one_online_softmax_tile": true,
+    "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/kernel.py",
+    "sparse_attn_kernel_lines": [
+      311,
+      389
+    ],
+    "sparse_attn_lines": [
+      392,
+      403
+    ],
+    "topk_width": 3
+  },
+  "ok": true,
+  "production_path_changed": false,
+  "qualification_only": true,
+  "row0_vs_row1": {
+    "row0_sparse_output": {
+      "actual_sha256": "d39e070a7be12474addd440b00a7cedd1920a81b4a23c334f1a945e74f5a28db",
+      "dtype": "BF16(uint16)",
+      "max_abs_diff": 0.0,
+      "max_bf16_ulp": 0,
+      "max_bf16_ulp_lte": 1,
+      "mean_abs_diff": 0.0,
+      "mismatched_elements": 0,
+      "reference_sha256": "d39e070a7be12474addd440b00a7cedd1920a81b4a23c334f1a945e74f5a28db",
+      "sha256": "d39e070a7be12474addd440b00a7cedd1920a81b4a23c334f1a945e74f5a28db",
+      "sha_equal": true,
+      "shape": [
+        1,
+        64,
+        512
+      ],
+      "shape_pair": [
+        [
+          1,
+          64,
+          512
+        ],
+        [
+          1,
+          64,
+          512
+        ]
+      ],
+      "ulp_counts": {
+        "ulp0": 32768,
+        "ulp1": 0,
+        "ulp_gt1": 0
+      },
+      "within_contract": true
+    },
+    "row1_sparse_output": {
+      "actual_sha256": "62e5f1727a041337230e3ec57020ed077906e89378605fdffe74ff212c82871b",
+      "dtype": "BF16(uint16)",
+      "max_abs_diff": 0.00390625,
+      "max_bf16_ulp": 29193,
+      "max_bf16_ulp_lte": 1,
+      "mean_abs_diff": 5.224175765761174e-05,
+      "mismatched_elements": 5572,
+      "reference_sha256": "c5d84dcf98ad90a1ca52c3c7b45cccae599afdebdab7797c20f2fdbb617ad525",
+      "sha256": "c5d84dcf98ad90a1ca52c3c7b45cccae599afdebdab7797c20f2fdbb617ad525",
+      "sha_equal": false,
+      "shape": [
+        1,
+        64,
+        512
+      ],
+      "shape_pair": [
+        [
+          1,
+          64,
+          512
+        ],
+        [
+          1,
+          64,
+          512
+        ]
+      ],
+      "ulp_counts": {
+        "ulp0": 27196,
+        "ulp1": 4338,
+        "ulp_gt1": 1234
+      },
+      "within_contract": false
+    }
+  },
+  "sample_max_raw": {
+    "current": -3.3292741775512695,
+    "current_bits": "0xc05512d4",
+    "historical": -3.3292741775512695,
+    "historical_bits": "0xc05512d4"
+  },
+  "schema": "ds41f.m4.layer2-sparse-core-diagnostic.v1",
+  "sparse_numerical_contract": "INCOMPLETE: source fixes BF16 input, FP32 accumulation, BF16 weight cast, sink denominator-only, and BF16 output; no independent cross-backend bound is yet established for different BF16 GEMM/reduction and online-softmax tile associations.",
+  "stale_compressed_sparse_fixture_disposition": "tools/run_official_compressed_sparse_attn_fixture.py imports fp4_quant_inplace for Indexer q/k and is marked stale/superseded; not used as sparse-core authority here.",
+  "substitutions": {
+    "current_numerator_historical_denominator": {
+      "actual_sha256": "67f04db9df6ce14e74ec429e7ff150e8af2113d6d3ee19582dcffd7f0bcc5a02",
+      "dtype": "BF16(uint16)",
+      "max_abs_diff": 0.00390625,
+      "max_bf16_ulp": 29193,
+      "max_bf16_ulp_lte": 1,
+      "mean_abs_diff": 2.612087882880587e-05,
+      "mismatched_elements": 5572,
+      "reference_sha256": "f161cfb539a721fe14bca0936be6e665a545f4290e8ff14d06205af17ab67542",
+      "sha256": "f161cfb539a721fe14bca0936be6e665a545f4290e8ff14d06205af17ab67542",
+      "sha_equal": false,
+      "shape": [
+        2,
+        64,
+        512
+      ],
+      "shape_pair": [
+        [
+          2,
+          64,
+          512
+        ],
+        [
+          2,
+          64,
+          512
+        ]
+      ],
+      "ulp_counts": {
+        "ulp0": 59964,
+        "ulp1": 4338,
+        "ulp_gt1": 1234
+      },
+      "within_contract": false
+    },
+    "exact_bf16_weights": {
+      "actual_sha256": "67f04db9df6ce14e74ec429e7ff150e8af2113d6d3ee19582dcffd7f0bcc5a02",
+      "dtype": "BF16(uint16)",
+      "max_abs_diff": 0.00390625,
+      "max_bf16_ulp": 29193,
+      "max_bf16_ulp_lte": 1,
+      "mean_abs_diff": 2.612087882880587e-05,
+      "mismatched_elements": 5572,
+      "reference_sha256": "f161cfb539a721fe14bca0936be6e665a545f4290e8ff14d06205af17ab67542",
+      "sha256": "f161cfb539a721fe14bca0936be6e665a545f4290e8ff14d06205af17ab67542",
+      "sha_equal": false,
+      "shape": [
+        2,
+        64,
+        512
+      ],
+      "shape_pair": [
+        [
+          2,
+          64,
+          512
+        ],
+        [
+          2,
+          64,
+          512
+        ]
+      ],
+      "ulp_counts": {
+        "ulp0": 59964,
+        "ulp1": 4338,
+        "ulp_gt1": 1234
+      },
+      "within_contract": false
+    },
+    "exact_scaled_scores": {
+      "actual_sha256": "67f04db9df6ce14e74ec429e7ff150e8af2113d6d3ee19582dcffd7f0bcc5a02",
+      "dtype": "BF16(uint16)",
+      "max_abs_diff": 0.00390625,
+      "max_bf16_ulp": 29193,
+      "max_bf16_ulp_lte": 1,
+      "mean_abs_diff": 2.612087882880587e-05,
+      "mismatched_elements": 5572,
+      "reference_sha256": "f161cfb539a721fe14bca0936be6e665a545f4290e8ff14d06205af17ab67542",
+      "sha256": "f161cfb539a721fe14bca0936be6e665a545f4290e8ff14d06205af17ab67542",
+      "sha_equal": false,
+      "shape": [
+        2,
+        64,
+        512
+      ],
+      "shape_pair": [
+        [
+          2,
+          64,
+          512
+        ],
+        [
+          2,
+          64,
+          512
+        ]
+      ],
+      "ulp_counts": {
+        "ulp0": 59964,
+        "ulp1": 4338,
+        "ulp_gt1": 1234
+      },
+      "within_contract": false
+    },
+    "historical_numerator_current_denominator": {
+      "actual_sha256": "67f04db9df6ce14e74ec429e7ff150e8af2113d6d3ee19582dcffd7f0bcc5a02",
+      "dtype": "BF16(uint16)",
+      "max_abs_diff": 0.00390625,
+      "max_bf16_ulp": 29193,
+      "max_bf16_ulp_lte": 1,
+      "mean_abs_diff": 2.612087882880587e-05,
+      "mismatched_elements": 5572,
+      "reference_sha256": "f161cfb539a721fe14bca0936be6e665a545f4290e8ff14d06205af17ab67542",
+      "sha256": "f161cfb539a721fe14bca0936be6e665a545f4290e8ff14d06205af17ab67542",
+      "sha_equal": false,
+      "shape": [
+        2,
+        64,
+        512
+      ],
+      "shape_pair": [
+        [
+          2,
+          64,
+          512
+        ],
+        [
+          2,
+          64,
+          512
+        ]
+      ],
+      "ulp_counts": {
+        "ulp0": 59964,
+        "ulp1": 4338,
+        "ulp_gt1": 1234
+      },
+      "within_contract": false
+    }
+  }
+}

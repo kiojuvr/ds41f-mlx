@@ -1,0 +1,9 @@
+{
+  "schema": "ds41f.m4.compressed-sparse-fixture-disposition.v1",
+  "fixture": "tools/run_official_compressed_sparse_attn_fixture.py",
+  "disposition": "stale/superseded",
+  "reason": "fixture still imports/uses compressed-KV fp4_quant_inplace() for Indexer q/k; corrected Indexer contract is block32/E8M0 via independent Indexer FP4 helper",
+  "used_as_sparse_core_authority": false,
+  "replacement_for_current_task": "direct exact-input Layer2 sparse-core diagnostic in artifacts/m4/layer2-sparse-core-diagnostic/result.json",
+  "ok": true
+}
