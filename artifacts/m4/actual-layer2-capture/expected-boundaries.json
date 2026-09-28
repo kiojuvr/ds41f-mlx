@@ -81,6 +81,17 @@
         5120
       ]
     },
+    "pre_inverse_rope": {
+      "dtype": "uint16",
+      "nbytes": 65536,
+      "sha256": "bd5222080a7a0b5fff25cfe1c935ef20f04ab8c329ea6b702c1827e648814f45",
+      "shape": [
+        1,
+        1,
+        64,
+        512
+      ]
+    },
     "returned_pre": {
       "dtype": "float32",
       "nbytes": 16,
@@ -108,6 +119,71 @@
         1,
         6
       ]
+    },
+    "sparse_ci": {
+      "dtype": "int32",
+      "nbytes": 4,
+      "sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119",
+      "shape": [
+        1,
+        1,
+        1
+      ]
+    },
+    "sparse_packed_compressed_kv": {
+      "dtype": "uint8",
+      "nbytes": 288,
+      "sha256": "cc08eecab870f54a3cfcab148288afe32362d2fbca10f4900c0b8809dac241e7",
+      "shape": [
+        1,
+        1,
+        288
+      ]
+    },
+    "sparse_packed_window_kv": {
+      "dtype": "uint8",
+      "nbytes": 1584,
+      "sha256": "0f3f3182b4d6e9d81e2cf5bf865d369dadaf536c1ed34827aa6373dce8cdf8ef",
+      "shape": [
+        1,
+        3,
+        528
+      ]
+    },
+    "sparse_q": {
+      "dtype": "uint16",
+      "nbytes": 65536,
+      "sha256": "c25371a8a636b6b8d9bee99399eb10784afaff47e3701add99ecf923e2b4a4b1",
+      "shape": [
+        1,
+        1,
+        64,
+        512
+      ]
+    },
+    "sparse_scale": {
+      "dtype": "float32",
+      "nbytes": 4,
+      "sha256": "ac323a75d829e1f63333e184ab139f292dfb82c7f60e9af329b69c8326cae855",
+      "shape": []
+    },
+    "sparse_sink": {
+      "dtype": "float32",
+      "nbytes": 256,
+      "sha256": "fcf433c9435a3484908b9a4b9b76f6eb3f87c32e02df227fa9ab0c3157fdfdae",
+      "shape": [
+        64
+      ]
+    },
+    "sparse_wi": {
+      "dtype": "int32",
+      "nbytes": 512,
+      "sha256": "fae2c9f0a421368ce686c681d9d7c1ec97be4c343b8cc03c92df7d3e70fb2bc0",
+      "shape": [
+        1,
+        1,
+        128
+      ]
     }
   },
   "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
@@ -115,5 +191,24 @@
   "contains_expert_weight_tensors": false,
   "omlx_path": "/Users/kioju/omlx-0.7.0.dev2",
   "process_isolation": "Phase E source-derived reconstruction only; process exits before Phase A model load",
-  "schema": "ds41f.m4.layer2-expected-boundaries.v1"
+  "rope": {
+    "absolute_position": 2,
+    "layer": 2,
+    "params": {
+      "beta_fast": 32,
+      "beta_slow": 1,
+      "compress_rope_theta": 160000.0,
+      "compressed": true,
+      "effective_theta": 160000.0,
+      "original_seq_len": 65536,
+      "rope_factor": 16.0,
+      "rope_head_dim": 64,
+      "rope_theta": 10000.0
+    },
+    "positions": [
+      2
+    ]
+  },
+  "schema": "ds41f.m4.layer2-expected-boundaries.v1",
+  "sparse_topology_artifact": "artifacts/m4/layer2-sparse-topology/result.json"
 }

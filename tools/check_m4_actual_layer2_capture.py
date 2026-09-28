@@ -19,7 +19,8 @@ def main():
         assert r["schema"] == "ds41f.m4.actual-layer2-capture.v2"
         assert r["attempt_status"] == "COMPLETE"
         assert r["historical_failed_attempt_preserved"] is True
-        for k in ["inverse_rope", "attention_return", "post_attention_hc", "moe_input", "route_ids", "route_weights", "moe_output", "block_output_h", "block_returned_pre"]:
+        assert r["classification"] in {"SPARSE_OUTPUT_DIVERGENCE", "INVERSE_ROPE_DIVERGENCE", "INVERSE_ROPE_COMPLETE / NEXT PROJECTION FRONTIER"}
+        for k in ["pre_inverse_rope", "inverse_rope", "attention_return", "post_attention_hc", "moe_input", "route_ids", "route_weights", "moe_output", "block_output_h", "block_returned_pre"]:
             assert k in r["comparisons"], k
             assert r["comparisons"][k]["actual"] is not None, k
         assert all(r["post_layer2_state"].values())

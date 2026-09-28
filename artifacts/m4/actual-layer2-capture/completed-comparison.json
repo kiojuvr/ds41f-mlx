@@ -1,5 +1,6 @@
 {
   "attempt_status": "COMPLETE",
+  "classification": "SPARSE_OUTPUT_DIVERGENCE",
   "comparison_phase": "C lightweight process",
   "comparisons": {
     "attention_return": {
@@ -197,6 +198,35 @@
       "max_bf16_ulp_lte": 1,
       "within_contract": false
     },
+    "pre_inverse_rope": {
+      "actual": {
+        "dtype": "uint16",
+        "nbytes": 65536,
+        "sha256": "97c0b7be14fc7df664333bb40bd16fda5f6d9c1eec2bfacf28e68160e26fa79b",
+        "shape": [
+          1,
+          1,
+          64,
+          512
+        ]
+      },
+      "contract": "qualified Layer2 padded sparse BF16 output max ULP <= 1",
+      "exact": false,
+      "expected": {
+        "dtype": "uint16",
+        "nbytes": 65536,
+        "sha256": "bd5222080a7a0b5fff25cfe1c935ef20f04ab8c329ea6b702c1827e648814f45",
+        "shape": [
+          1,
+          1,
+          64,
+          512
+        ]
+      },
+      "max_bf16_ulp": 30752,
+      "max_bf16_ulp_lte": 1,
+      "within_contract": false
+    },
     "route_ids": {
       "actual": {
         "dtype": "uint32",
@@ -243,7 +273,7 @@
     }
   },
   "failed_attempt_artifact": "/Volumes/SDXC-512/ds41f-mlx/artifacts/m4/actual-layer2-capture/result.json",
-  "first_unresolved_boundary": "inverse_rope",
+  "first_unresolved_boundary": "pre_inverse_rope",
   "historical_failed_attempt_preserved": true,
   "layer2_incremental_block": "INCOMPLETE",
   "ok": false,
@@ -257,5 +287,228 @@
     "source2_slot3_digest_recorded": true,
     "window_cache_includes_token15": true
   },
-  "schema": "ds41f.m4.actual-layer2-capture.v2"
+  "rope": {
+    "actual": {
+      "compressed": true,
+      "inverse": true,
+      "params": {
+        "beta_fast": 32,
+        "beta_slow": 1,
+        "compress_rope_theta": 160000.0,
+        "compressed": true,
+        "effective_theta": 160000.0,
+        "original_seq_len": 65536,
+        "rope_factor": 16.0,
+        "rope_head_dim": 64,
+        "rope_theta": 10000.0
+      },
+      "positions": {
+        "dtype": "int32",
+        "nbytes": 4,
+        "sha256": "26b25d457597a7b0463f9620f666dd10aa2c4373a505967c7c8d70922a2d6ece",
+        "shape": [
+          1
+        ]
+      },
+      "positions_values": [
+        2
+      ]
+    },
+    "expected": {
+      "absolute_position": 2,
+      "layer": 2,
+      "params": {
+        "beta_fast": 32,
+        "beta_slow": 1,
+        "compress_rope_theta": 160000.0,
+        "compressed": true,
+        "effective_theta": 160000.0,
+        "original_seq_len": 65536,
+        "rope_factor": 16.0,
+        "rope_head_dim": 64,
+        "rope_theta": 10000.0
+      },
+      "positions": [
+        2
+      ]
+    }
+  },
+  "schema": "ds41f.m4.actual-layer2-capture.v2",
+  "sparse_input_comparisons": {
+    "sparse_ci": {
+      "actual": {
+        "dtype": "int32",
+        "nbytes": 4,
+        "sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119",
+        "shape": [
+          1,
+          1,
+          1
+        ]
+      },
+      "contract": "exact",
+      "exact": true,
+      "expected": {
+        "dtype": "int32",
+        "nbytes": 4,
+        "sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119",
+        "shape": [
+          1,
+          1,
+          1
+        ]
+      },
+      "within_contract": true
+    },
+    "sparse_packed_compressed_kv": {
+      "actual": {
+        "dtype": "uint8",
+        "nbytes": 288,
+        "sha256": "cc08eecab870f54a3cfcab148288afe32362d2fbca10f4900c0b8809dac241e7",
+        "shape": [
+          1,
+          1,
+          288
+        ]
+      },
+      "contract": "exact",
+      "exact": true,
+      "expected": {
+        "dtype": "uint8",
+        "nbytes": 288,
+        "sha256": "cc08eecab870f54a3cfcab148288afe32362d2fbca10f4900c0b8809dac241e7",
+        "shape": [
+          1,
+          1,
+          288
+        ]
+      },
+      "within_contract": true
+    },
+    "sparse_packed_window_kv": {
+      "actual": {
+        "dtype": "uint8",
+        "nbytes": 1584,
+        "sha256": "255a9e29923912b522ba4bcc0bce28229f28cf262076b883ba3a166b3b250676",
+        "shape": [
+          1,
+          3,
+          528
+        ]
+      },
+      "contract": "exact",
+      "exact": false,
+      "expected": {
+        "dtype": "uint8",
+        "nbytes": 1584,
+        "sha256": "0f3f3182b4d6e9d81e2cf5bf865d369dadaf536c1ed34827aa6373dce8cdf8ef",
+        "shape": [
+          1,
+          3,
+          528
+        ]
+      },
+      "within_contract": false
+    },
+    "sparse_q": {
+      "actual": {
+        "dtype": "uint16",
+        "nbytes": 65536,
+        "sha256": "cbc671fdc8bcbdf098f7c365890b34ad3863f2637b88291f989f5ba10b7a25a9",
+        "shape": [
+          1,
+          1,
+          64,
+          512
+        ]
+      },
+      "contract": "sparse_q: BF16 sparse-input boundary max ULP <= 1",
+      "exact": false,
+      "expected": {
+        "dtype": "uint16",
+        "nbytes": 65536,
+        "sha256": "c25371a8a636b6b8d9bee99399eb10784afaff47e3701add99ecf923e2b4a4b1",
+        "shape": [
+          1,
+          1,
+          64,
+          512
+        ]
+      },
+      "max_bf16_ulp": 31483,
+      "max_bf16_ulp_lte": 1,
+      "within_contract": false
+    },
+    "sparse_scale": {
+      "actual": {
+        "dtype": "float32",
+        "nbytes": 4,
+        "sha256": "ac323a75d829e1f63333e184ab139f292dfb82c7f60e9af329b69c8326cae855",
+        "shape": [
+          1
+        ]
+      },
+      "contract": "sparse_scale: exact float sparse scalar/weight boundary",
+      "exact": true,
+      "expected": {
+        "dtype": "float32",
+        "nbytes": 4,
+        "sha256": "ac323a75d829e1f63333e184ab139f292dfb82c7f60e9af329b69c8326cae855",
+        "shape": [
+          1
+        ]
+      },
+      "max_abs_diff": 0.0,
+      "max_abs_lte": 0.0,
+      "within_contract": true
+    },
+    "sparse_sink": {
+      "actual": {
+        "dtype": "float32",
+        "nbytes": 256,
+        "sha256": "fcf433c9435a3484908b9a4b9b76f6eb3f87c32e02df227fa9ab0c3157fdfdae",
+        "shape": [
+          64
+        ]
+      },
+      "contract": "sparse_sink: exact float sparse scalar/weight boundary",
+      "exact": true,
+      "expected": {
+        "dtype": "float32",
+        "nbytes": 256,
+        "sha256": "fcf433c9435a3484908b9a4b9b76f6eb3f87c32e02df227fa9ab0c3157fdfdae",
+        "shape": [
+          64
+        ]
+      },
+      "max_abs_diff": 0.0,
+      "max_abs_lte": 0.0,
+      "within_contract": true
+    },
+    "sparse_wi": {
+      "actual": {
+        "dtype": "int32",
+        "nbytes": 512,
+        "sha256": "fae2c9f0a421368ce686c681d9d7c1ec97be4c343b8cc03c92df7d3e70fb2bc0",
+        "shape": [
+          1,
+          1,
+          128
+        ]
+      },
+      "contract": "exact",
+      "exact": true,
+      "expected": {
+        "dtype": "int32",
+        "nbytes": 512,
+        "sha256": "fae2c9f0a421368ce686c681d9d7c1ec97be4c343b8cc03c92df7d3e70fb2bc0",
+        "shape": [
+          1,
+          1,
+          128
+        ]
+      },
+      "within_contract": true
+    }
+  }
 }
