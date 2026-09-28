@@ -338,7 +338,19 @@ Artifact: `artifacts/m4/layer2-projection-block2/result.json`.
 
 A follow-up runner recreated the qualified actual padded oMLX sparse OP output from admitted physical sparse inputs and propagated it through independent official-source-derived Layer2 inverse RoPE, grouped `wo_a`, `wo_b`, post-attention HC, FFN entry, MoE routing/arithmetic, and final HC. This provides exact-entry source-derived evidence and records Layer2 token15 route IDs/weights, but it does **not** yet capture the corresponding internal projection/HC/MoE tensors from the real loaded oMLX module. Therefore it is supporting evidence only; `LAYER2 INCREMENTAL BLOCK` remains INCOMPLETE. The first unresolved boundary is actual oMLX Layer2 inverse-RoPE/projection capture after the qualified OP sparse output.
 
-A real-loaded oMLX monkeypatch capture runner was added: `tools/run_m4_actual_layer2_capture.py`, with attempt artifact `artifacts/m4/actual-layer2-capture/result.json`. It installs process-local wrappers around the pinned `Block`, `Attention`, `rope`, `hc_pre_norm`, `hc_post`, `MoE`, and `Gate` methods and restores them in `finally`; it does not edit the oMLX checkout. The attempted command was killed with exit code 137 before any Layer2 tensors were emitted, so no actual target comparison was established. This is a capture-execution/resource blocker, not a correctness result and not a reason to change production arithmetic.
+A real-loaded oMLX monkeypatch capture runner was added: `tools/run_m4_actual_layer2_capture.py`, with historical failed-attempt artifact `artifacts/m4/actual-layer2-capture/result.json`. Commit `f855ebe29f9ca5c72076d86c7fe7da462e343711` records that first attempt exiting with code 137 before any Layer2 tensors were emitted. That evidence is preserved as a failed-attempt diagnostic and is classified as capture-harness/resource failure, not model correctness failure.
+
+The runner has been repaired into three isolated phases:
+
+```text
+Phase E: source-derived expected Layer2 boundary arrays -> small NPZ/JSON, then exit
+Phase A: build qualified PrefillContinuationState [0,3], release prefill scaffolding, load real oMLX, admit state, install wrappers, run LanguageModel._forward(token15), write actual NPZ/JSON, then exit
+Phase C: lightweight expected-vs-actual comparison using boundary-specific existing contracts
+```
+
+Phase A no longer imports or executes the independent Layer2 source reconstruction. It writes `artifacts/m4/actual-layer2-capture/phase-a-progress.jsonl` and flushes/fsyncs stage markers including process start, prefill-state begin/complete, prefill scaffolding release, runtime/model-load begin/complete, admission, wrapper install, forward, Layer0/1/2 entry/exit, Layer2 attention/MoE, capture write, and runtime close. Each marker records process RSS/maxRSS plus MLX active/cache/peak memory where the pinned MLX 0.32.2 API exposes those metrics; unavailable metrics are represented as null rather than failing capture.
+
+The corrected bounded attempt produced `artifacts/m4/actual-layer2-capture/expected-boundaries.npz` and `.json` in Phase E, then Phase A was killed again with exit code 137. The last durable marker is `model_load_begin`; `model_load_complete`, `admission_complete`, `forward_begin`, and `layer2_enter` are absent. The corresponding diagnostic is `artifacts/m4/actual-layer2-capture/corrected-attempt-diagnostic.json`, classified as **REAL MODEL LOAD MEMORY PRESSURE**. Because the killed process did not reach actual Layer2 capture, no actual inverse-RoPE/projection/HC/MoE comparison is promoted. The checker `tools/check_m4_actual_layer2_capture.py` now distinguishes `attempt_status: KILLED` diagnostics from a future `attempt_status: COMPLETE` successful capture, and a successful capture must include actual boundary evidence and pass the boundary-specific contracts.
 
 ## Completion decision
 
