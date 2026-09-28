@@ -215,14 +215,23 @@ class OMLXDecodeStateAdapter:
                 expected_unpacked_width=int(c.head_dim),
             )
             if layer in c.kv_source_layers:
-                item.cache[2] = self._pack_cache_array(
-                    state.compressed_kv_by_source[layer],
-                    role=f"source{layer}.compressed_kv",
-                    bits=4,
-                    group_size=16,
-                    e4m3_scale=True,
-                    expected_unpacked_width=int(c.head_dim),
-                )
+                physical = state.compressed_kv_physical_by_source.get(layer, {})
+                if physical:
+                    item.cache[2] = self._pack_compressed_kv_physical(
+                        physical,
+                        role=f"source{layer}.compressed_kv_physical",
+                        expected_rows=int(state.compressed_kv_by_source[layer].shape[1]),
+                        expected_unpacked_width=int(c.head_dim),
+                    )
+                else:
+                    item.cache[2] = self._pack_cache_array(
+                        state.compressed_kv_by_source[layer],
+                        role=f"source{layer}.compressed_kv",
+                        bits=4,
+                        group_size=16,
+                        e4m3_scale=True,
+                        expected_unpacked_width=int(c.head_dim),
+                    )
                 item.cache[3] = self._pack_cache_array(
                     state.index_k_by_source[layer],
                     role=f"source{layer}.index_k",
@@ -287,6 +296,24 @@ class OMLXDecodeStateAdapter:
         value_bytes = width if bits == 8 else width // 2
         scale_bytes = width // group_size
         return value_bytes + scale_bytes
+
+    def _pack_compressed_kv_physical(self, payload: dict[str, np.ndarray], *, role: str, expected_rows: int, expected_unpacked_width: int):
+        codes = np.asarray(payload.get("codes"), dtype=np.uint8)
+        scales = np.asarray(payload.get("scales"), dtype=np.uint8)
+        if codes.shape == (expected_rows, expected_unpacked_width // 2):
+            codes3 = codes.reshape(1, expected_rows, expected_unpacked_width // 2)
+        elif codes.shape == (1, expected_rows, expected_unpacked_width // 2):
+            codes3 = codes
+        else:
+            raise OMLXDecodeAdmissionError(f"{role} invalid FP4 code shape {codes.shape}")
+        if scales.shape == (expected_rows, expected_unpacked_width // 16):
+            scales3 = scales.reshape(1, expected_rows, expected_unpacked_width // 16)
+        elif scales.shape == (1, expected_rows, expected_unpacked_width // 16):
+            scales3 = scales
+        else:
+            raise OMLXDecodeAdmissionError(f"{role} invalid E4M3 scale shape {scales.shape}")
+        self._conversions.append(f"{role}: model-semantic FP4 codes + E4M3 scales -> oMLX slot layout (values then scales), no numeric requantization")
+        return self._mx.array(np.concatenate([codes3, scales3], axis=-1).astype(np.uint8, copy=False))
 
     def _pack_cache_array(self, arr: np.ndarray, *, role: str, bits: int, group_size: int, e4m3_scale: bool, expected_unpacked_width: int):
         a = np.asarray(arr)

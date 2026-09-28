@@ -156,6 +156,7 @@ class DwarfStarPrefillVerticalSliceExecutor:
         continuation_state: PrefillContinuationState | None = None
         actual_window_kv: dict[int, np.ndarray] = {}
         actual_compressed_kv: dict[int, np.ndarray] = {}
+        actual_compressed_kv_physical: dict[int, dict[str, np.ndarray]] = {}
         actual_index_k: dict[int, np.ndarray] = {}
         actual_candidates: dict[int, np.ndarray] = {}
         actual_topk: dict[int, np.ndarray] = {}
@@ -203,6 +204,11 @@ class DwarfStarPrefillVerticalSliceExecutor:
                     actual_generation_order.append(("index-refresh" if set(producer_actual) == {"topk_idxs"} else "source") + f"@{int(layer)}")
                     if "compress_kv" in producer_actual:
                         actual_compressed_kv[int(layer)] = producer_actual["compress_kv"]
+                        if "compress_bytes" in producer_actual and "compress_scales" in producer_actual:
+                            actual_compressed_kv_physical[int(layer)] = {
+                                "codes": producer_actual["compress_bytes"],
+                                "scales": producer_actual["compress_scales"],
+                            }
                         actual_field_owner["compress_kv"] = int(layer)
                     if "index_k" in producer_actual:
                         actual_index_k[int(layer)] = producer_actual["index_k"]
@@ -254,6 +260,7 @@ class DwarfStarPrefillVerticalSliceExecutor:
                     engram_store={"checkpoint": str(self.checkpoint), "storage_policy": "SSD-backed model-static Engram tables"},
                     window_kv_by_layer=actual_window_kv,
                     compressed_kv_by_source=actual_compressed_kv,
+                    compressed_kv_physical_by_source=actual_compressed_kv_physical,
                     index_k_by_source=actual_index_k,
                     candidates_by_source=actual_candidates,
                     topk_by_generation=actual_topk,

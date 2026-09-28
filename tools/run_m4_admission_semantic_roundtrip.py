@@ -36,7 +36,7 @@ def main():
     ck=Path(a.checkpoint); omlx=Path(a.omlx_path)
     if str(omlx) not in sys.path: sys.path.insert(0,str(omlx))
     import mlx.core as mx
-    from omlx.patches.deepseek_v41.quantization import unpack_activation
+    from omlx.patches.deepseek_v41.quantization import pack_activation, unpack_activation
     rt=OmlxRuntime(OmlxRuntimeConfig(omlx_path=omlx,checkpoint_path=ck,engram_ssd_offload=True,preserve_mtp=False)); model,_=rt.load_model()
     try:
         prefill=build_prefill_state(ck,Path('artifacts/m4/admission-semantic-roundtrip/native'),[0,3],require_ok=True); st=prefill.continuation_state
@@ -45,11 +45,28 @@ def main():
         for l in range(40):
             sem=unpack_activation(cache[l].cache[1],bits=8,group_size=32,e4m3_scale=False,dtype=mx.bfloat16)
             got=u16_from_mx_bf16(mx,sem); windows[str(l)]=cmp_bf16(st.window_kv_by_layer[l],got)
-        sources={}
+        sources={}; physical_analysis={}
         for s in [2,8,14,20]:
             sem2=unpack_activation(cache[s].cache[2],bits=4,group_size=16,e4m3_scale=True,dtype=mx.bfloat16)
             sem3=unpack_activation(cache[s].cache[3],bits=4,group_size=32,e4m3_scale=False,dtype=mx.bfloat16)
             sources[str(s)]={'compressed_kv':cmp_bf16(st.compressed_kv_by_source[s],u16_from_mx_bf16(mx,sem2)),'index_k':cmp_bf16(st.index_k_by_source[s],u16_from_mx_bf16(mx,sem3))}
+            src_bf16=mx.array(st.compressed_kv_by_source[s]).view(mx.bfloat16)
+            repacked=pack_activation(src_bf16,bits=4,group_size=16,e4m3_scale=True)
+            repacked_sem=unpack_activation(repacked,bits=4,group_size=16,e4m3_scale=True,dtype=mx.bfloat16)
+            repacked_cmp=cmp_bf16(st.compressed_kv_by_source[s],u16_from_mx_bf16(mx,repacked_sem))
+            orig_packed=np.asarray(cache[s].cache[2]).astype(np.uint8)
+            repacked_np=np.asarray(repacked).astype(np.uint8)
+            nbytes=st.compressed_kv_by_source[s].shape[-1]//2
+            differing=[]
+            if not repacked_cmp['exact']:
+                orig_sem=st.compressed_kv_by_source[s].reshape(-1,st.compressed_kv_by_source[s].shape[-1])
+                rep_sem=u16_from_mx_bf16(mx,repacked_sem).reshape(orig_sem.shape)
+                diff=np.abs(bf16_to_f32(orig_sem)-bf16_to_f32(rep_sem))
+                coords=np.argwhere(diff>0)[:16]
+                for row,col in coords:
+                    block=int(col//16); byte=int(col//2); code_shift=int((col%2)*4)
+                    differing.append({'row':int(row),'col':int(col),'block16':block,'orig_bf16':int(orig_sem[row,col]),'repacked_bf16':int(rep_sem[row,col]),'abs_diff':float(diff[row,col]),'orig_code':int((orig_packed.reshape(-1,orig_packed.shape[-1])[row,byte]>>code_shift)&15),'repacked_code':int((repacked_np.reshape(-1,repacked_np.shape[-1])[row,byte]>>code_shift)&15),'orig_scale_e4m3':int(orig_packed.reshape(-1,orig_packed.shape[-1])[row,nbytes+block]),'repacked_scale_e4m3':int(repacked_np.reshape(-1,repacked_np.shape[-1])[row,nbytes+block])})
+            physical_analysis[str(s)]={'original_physical_vs_committed_semantic':sources[str(s)]['compressed_kv'],'semantic_requantize_vs_committed_semantic':repacked_cmp,'original_packed_sha256':sha(orig_packed),'semantic_repacked_sha256':sha(repacked_np),'packed_bytes_exact':bool(np.array_equal(orig_packed,repacked_np)),'differing_elements_sample':differing,'classification':'physical-preserving path' if sources[str(s)]['compressed_kv']['exact'] else 'physical-preserving path failed'}
         pending={}
         for s in [2,8,14,20]:
             p=st.compressor_pending.get(s,{})
@@ -65,7 +82,7 @@ def main():
             for field,cmp in vals.items():
                 if not cmp['within_contract']:
                     source_failures.append({'source':int(src),'field':field,'max_abs_diff':cmp['max_abs_diff'],'mean_abs_diff':cmp['mean_abs_diff'],'classification':'ADMISSION REPRESENTATION DEFECT: semantic committed state is not idempotent across adapter pack/unpack under existing exact post-quantized BF16 cache contract'})
-        rec={'schema':'ds41f.m4.admission-semantic-roundtrip.v1','checkpoint':str(ck),'omlx_path':str(omlx),'prefill_artifact_ok':prefill.ok,'windows':windows,'sources':sources,'pending':pending,'engram_history':engram,'offsets':offsets,'all_offsets_2':all(x==2 for x in offsets),'summary':{'window_ok':all(v['within_contract'] for v in windows.values()),'sources_ok':all(v['compressed_kv']['within_contract'] and v['index_k']['within_contract'] for v in sources.values()),'pending_ok':all(v['empty_lifecycle_ok'] for v in pending.values()),'engram_ok':engram['exact'],'source_failures':source_failures},'first_independent_correctness_frontier':source_failures[0] if source_failures else None,'ok':False}
+        rec={'schema':'ds41f.m4.admission-semantic-roundtrip.v2','checkpoint':str(ck),'omlx_path':str(omlx),'prefill_artifact_ok':prefill.ok,'windows':windows,'sources':sources,'compressed_kv_physical_analysis':physical_analysis,'slot2_layout':{'packed_layout':'values bytes followed by one scale byte per block16 per row','fp4_nibble_order':'low nibble is even element, high nibble is odd element','scale_region':'after width/2 value bytes; one E4M3 byte per 16-value block','source':'/Users/kioju/omlx-0.7.0.dev2/omlx/patches/deepseek_v41/quantization.py pack_activation/unpack_activation'},'pending':pending,'engram_history':engram,'offsets':offsets,'all_offsets_2':all(x==2 for x in offsets),'summary':{'window_ok':all(v['within_contract'] for v in windows.values()),'sources_ok':all(v['compressed_kv']['within_contract'] and v['index_k']['within_contract'] for v in sources.values()),'pending_ok':all(v['empty_lifecycle_ok'] for v in pending.values()),'engram_ok':engram['exact'],'source_failures':source_failures},'state_contract_decision':{'compressed_kv':'physical FP4/E4M3 payload is required for lossless backend handoff; semantic BF16 alone is not assumed idempotent under re-quantization','index_k':'semantic-only retained; block32/E8M0 round-trip is exact for all sources in this gate, no physical extension made','window_kv':'semantic-only retained; FP8 window round-trip is exact for all 40 layers in this gate'},'first_independent_correctness_frontier':source_failures[0] if source_failures else None,'ok':False}
         rec['ok']=bool(rec['summary']['window_ok'] and rec['summary']['sources_ok'] and rec['summary']['pending_ok'] and rec['summary']['engram_ok'] and rec['all_offsets_2'])
     finally:
         rt.close()

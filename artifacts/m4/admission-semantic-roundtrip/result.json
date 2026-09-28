@@ -1,6 +1,265 @@
 {
   "all_offsets_2": true,
   "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "compressed_kv_physical_analysis": {
+    "14": {
+      "classification": "physical-preserving path",
+      "differing_elements_sample": [
+        {
+          "abs_diff": 0.00390625,
+          "block16": 28,
+          "col": 452,
+          "orig_bf16": 48256,
+          "orig_code": 14,
+          "orig_scale_e4m3": 2,
+          "repacked_bf16": 48192,
+          "repacked_code": 15,
+          "repacked_scale_e4m3": 1,
+          "row": 0
+        },
+        {
+          "abs_diff": 0.00390625,
+          "block16": 28,
+          "col": 460,
+          "orig_bf16": 15488,
+          "orig_code": 6,
+          "orig_scale_e4m3": 2,
+          "repacked_bf16": 15424,
+          "repacked_code": 7,
+          "repacked_scale_e4m3": 1,
+          "row": 0
+        },
+        {
+          "abs_diff": 0.00390625,
+          "block16": 28,
+          "col": 461,
+          "orig_bf16": 48256,
+          "orig_code": 14,
+          "orig_scale_e4m3": 2,
+          "repacked_bf16": 48192,
+          "repacked_code": 15,
+          "repacked_scale_e4m3": 1,
+          "row": 0
+        }
+      ],
+      "original_packed_sha256": "55bd0fe65d240129ea3a8d15051ded87304f8bf754575fdff1083dac317ad96d",
+      "original_physical_vs_committed_semantic": {
+        "actual_sha256": "c8fd3f66fff58a2ef7a10f2543ac1506a7f2e57d47946c6bbe0fe63b5a964b75",
+        "dtype_pair": [
+          "uint16",
+          "uint16"
+        ],
+        "exact": true,
+        "max_abs_diff": 0.0,
+        "mean_abs_diff": 0.0,
+        "reference_sha256": "c8fd3f66fff58a2ef7a10f2543ac1506a7f2e57d47946c6bbe0fe63b5a964b75",
+        "shape_pair": [
+          [
+            1,
+            1,
+            512
+          ],
+          [
+            1,
+            1,
+            512
+          ]
+        ],
+        "within_contract": true
+      },
+      "packed_bytes_exact": false,
+      "semantic_repacked_sha256": "f0e7f4d6c652285b1a0fa0111fd8fdb6c9a92119a0400c11ddea3c196cd176b9",
+      "semantic_requantize_vs_committed_semantic": {
+        "actual_sha256": "7f9ceb18c49cc054b25e6b08572dd12c4207164657b52ad26fdd77d1d3ad8913",
+        "dtype_pair": [
+          "uint16",
+          "uint16"
+        ],
+        "exact": false,
+        "max_abs_diff": 0.00390625,
+        "mean_abs_diff": 2.288818359375e-05,
+        "reference_sha256": "c8fd3f66fff58a2ef7a10f2543ac1506a7f2e57d47946c6bbe0fe63b5a964b75",
+        "shape_pair": [
+          [
+            1,
+            1,
+            512
+          ],
+          [
+            1,
+            1,
+            512
+          ]
+        ],
+        "within_contract": false
+      }
+    },
+    "2": {
+      "classification": "physical-preserving path",
+      "differing_elements_sample": [],
+      "original_packed_sha256": "cc08eecab870f54a3cfcab148288afe32362d2fbca10f4900c0b8809dac241e7",
+      "original_physical_vs_committed_semantic": {
+        "actual_sha256": "7265001df868c42af926ec37c9c5fced8c44c79d249ed9cf7870e8801aa0798c",
+        "dtype_pair": [
+          "uint16",
+          "uint16"
+        ],
+        "exact": true,
+        "max_abs_diff": 0.0,
+        "mean_abs_diff": 0.0,
+        "reference_sha256": "7265001df868c42af926ec37c9c5fced8c44c79d249ed9cf7870e8801aa0798c",
+        "shape_pair": [
+          [
+            1,
+            1,
+            512
+          ],
+          [
+            1,
+            1,
+            512
+          ]
+        ],
+        "within_contract": true
+      },
+      "packed_bytes_exact": true,
+      "semantic_repacked_sha256": "cc08eecab870f54a3cfcab148288afe32362d2fbca10f4900c0b8809dac241e7",
+      "semantic_requantize_vs_committed_semantic": {
+        "actual_sha256": "7265001df868c42af926ec37c9c5fced8c44c79d249ed9cf7870e8801aa0798c",
+        "dtype_pair": [
+          "uint16",
+          "uint16"
+        ],
+        "exact": true,
+        "max_abs_diff": 0.0,
+        "mean_abs_diff": 0.0,
+        "reference_sha256": "7265001df868c42af926ec37c9c5fced8c44c79d249ed9cf7870e8801aa0798c",
+        "shape_pair": [
+          [
+            1,
+            1,
+            512
+          ],
+          [
+            1,
+            1,
+            512
+          ]
+        ],
+        "within_contract": true
+      }
+    },
+    "20": {
+      "classification": "physical-preserving path",
+      "differing_elements_sample": [],
+      "original_packed_sha256": "3a7a8333bdd2ba2f5fa058f1b7b3a5870702c6aca4faa097f85a52911bb3aef6",
+      "original_physical_vs_committed_semantic": {
+        "actual_sha256": "a996e837c6ced1a2f00de06a538dc4fe5ad5f0f09084780d7b48e5292031b646",
+        "dtype_pair": [
+          "uint16",
+          "uint16"
+        ],
+        "exact": true,
+        "max_abs_diff": 0.0,
+        "mean_abs_diff": 0.0,
+        "reference_sha256": "a996e837c6ced1a2f00de06a538dc4fe5ad5f0f09084780d7b48e5292031b646",
+        "shape_pair": [
+          [
+            1,
+            2,
+            512
+          ],
+          [
+            1,
+            2,
+            512
+          ]
+        ],
+        "within_contract": true
+      },
+      "packed_bytes_exact": true,
+      "semantic_repacked_sha256": "3a7a8333bdd2ba2f5fa058f1b7b3a5870702c6aca4faa097f85a52911bb3aef6",
+      "semantic_requantize_vs_committed_semantic": {
+        "actual_sha256": "a996e837c6ced1a2f00de06a538dc4fe5ad5f0f09084780d7b48e5292031b646",
+        "dtype_pair": [
+          "uint16",
+          "uint16"
+        ],
+        "exact": true,
+        "max_abs_diff": 0.0,
+        "mean_abs_diff": 0.0,
+        "reference_sha256": "a996e837c6ced1a2f00de06a538dc4fe5ad5f0f09084780d7b48e5292031b646",
+        "shape_pair": [
+          [
+            1,
+            2,
+            512
+          ],
+          [
+            1,
+            2,
+            512
+          ]
+        ],
+        "within_contract": true
+      }
+    },
+    "8": {
+      "classification": "physical-preserving path",
+      "differing_elements_sample": [],
+      "original_packed_sha256": "bf914321b08bc0f87f1fd6a62adee52d400c456d2aad1c19d0b059a00292b529",
+      "original_physical_vs_committed_semantic": {
+        "actual_sha256": "16cbf973245ea85bcfc8328aaef87c8d7348488c2d8675aec343487e9a4d19ae",
+        "dtype_pair": [
+          "uint16",
+          "uint16"
+        ],
+        "exact": true,
+        "max_abs_diff": 0.0,
+        "mean_abs_diff": 0.0,
+        "reference_sha256": "16cbf973245ea85bcfc8328aaef87c8d7348488c2d8675aec343487e9a4d19ae",
+        "shape_pair": [
+          [
+            1,
+            1,
+            512
+          ],
+          [
+            1,
+            1,
+            512
+          ]
+        ],
+        "within_contract": true
+      },
+      "packed_bytes_exact": true,
+      "semantic_repacked_sha256": "bf914321b08bc0f87f1fd6a62adee52d400c456d2aad1c19d0b059a00292b529",
+      "semantic_requantize_vs_committed_semantic": {
+        "actual_sha256": "16cbf973245ea85bcfc8328aaef87c8d7348488c2d8675aec343487e9a4d19ae",
+        "dtype_pair": [
+          "uint16",
+          "uint16"
+        ],
+        "exact": true,
+        "max_abs_diff": 0.0,
+        "mean_abs_diff": 0.0,
+        "reference_sha256": "16cbf973245ea85bcfc8328aaef87c8d7348488c2d8675aec343487e9a4d19ae",
+        "shape_pair": [
+          [
+            1,
+            1,
+            512
+          ],
+          [
+            1,
+            1,
+            512
+          ]
+        ],
+        "within_contract": true
+      }
+    }
+  },
   "engram_history": {
     "committed_ngram_hash_digests": {
       "full_hash": "f5a64799492bea90bc6d87f0cb8a67bb983441e1cd9c12ec2e7b8df6cbcfee1d",
@@ -21,13 +280,7 @@
       3
     ]
   },
-  "first_independent_correctness_frontier": {
-    "classification": "ADMISSION REPRESENTATION DEFECT: semantic committed state is not idempotent across adapter pack/unpack under existing exact post-quantized BF16 cache contract",
-    "field": "compressed_kv",
-    "max_abs_diff": 0.00390625,
-    "mean_abs_diff": 2.288818359375e-05,
-    "source": 14
-  },
+  "first_independent_correctness_frontier": null,
   "offsets": [
     2,
     2,
@@ -70,7 +323,7 @@
     2,
     2
   ],
-  "ok": false,
+  "ok": true,
   "omlx_path": "/Users/kioju/omlx-0.7.0.dev2",
   "pending": {
     "14": {
@@ -139,18 +392,24 @@
     }
   },
   "prefill_artifact_ok": true,
-  "schema": "ds41f.m4.admission-semantic-roundtrip.v1",
+  "schema": "ds41f.m4.admission-semantic-roundtrip.v2",
+  "slot2_layout": {
+    "fp4_nibble_order": "low nibble is even element, high nibble is odd element",
+    "packed_layout": "values bytes followed by one scale byte per block16 per row",
+    "scale_region": "after width/2 value bytes; one E4M3 byte per 16-value block",
+    "source": "/Users/kioju/omlx-0.7.0.dev2/omlx/patches/deepseek_v41/quantization.py pack_activation/unpack_activation"
+  },
   "sources": {
     "14": {
       "compressed_kv": {
-        "actual_sha256": "7f9ceb18c49cc054b25e6b08572dd12c4207164657b52ad26fdd77d1d3ad8913",
+        "actual_sha256": "c8fd3f66fff58a2ef7a10f2543ac1506a7f2e57d47946c6bbe0fe63b5a964b75",
         "dtype_pair": [
           "uint16",
           "uint16"
         ],
-        "exact": false,
-        "max_abs_diff": 0.00390625,
-        "mean_abs_diff": 2.288818359375e-05,
+        "exact": true,
+        "max_abs_diff": 0.0,
+        "mean_abs_diff": 0.0,
         "reference_sha256": "c8fd3f66fff58a2ef7a10f2543ac1506a7f2e57d47946c6bbe0fe63b5a964b75",
         "shape_pair": [
           [
@@ -164,7 +423,7 @@
             512
           ]
         ],
-        "within_contract": false
+        "within_contract": true
       },
       "index_k": {
         "actual_sha256": "01ee4a1b6d04685225b27b1317b2d7f4661c69866ec68a2606ff0474e050590b",
@@ -342,19 +601,16 @@
       }
     }
   },
+  "state_contract_decision": {
+    "compressed_kv": "physical FP4/E4M3 payload is required for lossless backend handoff; semantic BF16 alone is not assumed idempotent under re-quantization",
+    "index_k": "semantic-only retained; block32/E8M0 round-trip is exact for all sources in this gate, no physical extension made",
+    "window_kv": "semantic-only retained; FP8 window round-trip is exact for all 40 layers in this gate"
+  },
   "summary": {
     "engram_ok": true,
     "pending_ok": true,
-    "source_failures": [
-      {
-        "classification": "ADMISSION REPRESENTATION DEFECT: semantic committed state is not idempotent across adapter pack/unpack under existing exact post-quantized BF16 cache contract",
-        "field": "compressed_kv",
-        "max_abs_diff": 0.00390625,
-        "mean_abs_diff": 2.288818359375e-05,
-        "source": 14
-      }
-    ],
-    "sources_ok": false,
+    "source_failures": [],
+    "sources_ok": true,
     "window_ok": true
   },
   "windows": {

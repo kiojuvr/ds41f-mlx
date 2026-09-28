@@ -62,6 +62,7 @@ class PrefillContinuationState:
     candidates_by_source: dict[int, np.ndarray]
     topk_by_generation: dict[int, np.ndarray]
     field_ownership: dict[str, int]
+    compressed_kv_physical_by_source: dict[int, dict[str, np.ndarray]] = field(default_factory=dict)
     compressor_pending: dict[int, dict[str, np.ndarray]] = field(default_factory=dict)
     shared_publications: dict[str, np.ndarray | None] = field(default_factory=dict)
     source_generation_order: list[str] = field(default_factory=list)
@@ -75,6 +76,10 @@ class PrefillContinuationState:
         self.ngram_hashes = {k: np.array(v, copy=True) for k, v in self.ngram_hashes.items()}
         self.window_kv_by_layer = {k: np.array(v, copy=True) for k, v in self.window_kv_by_layer.items()}
         self.compressed_kv_by_source = {k: np.array(v, copy=True) for k, v in self.compressed_kv_by_source.items()}
+        self.compressed_kv_physical_by_source = {
+            k: {name: np.array(value, copy=True) for name, value in payload.items()}
+            for k, payload in self.compressed_kv_physical_by_source.items()
+        }
         self.index_k_by_source = {k: np.array(v, copy=True) for k, v in self.index_k_by_source.items()}
         self.candidates_by_source = {k: np.array(v, copy=True) for k, v in self.candidates_by_source.items()}
         self.topk_by_generation = {k: np.array(v, copy=True) for k, v in self.topk_by_generation.items()}
@@ -95,6 +100,7 @@ class PrefillContinuationState:
             engram_store=dict(self.engram_store),
             window_kv_by_layer={k: np.array(v, copy=True) for k, v in self.window_kv_by_layer.items()},
             compressed_kv_by_source={k: np.array(v, copy=True) for k, v in self.compressed_kv_by_source.items()},
+            compressed_kv_physical_by_source={k: {n: np.array(v, copy=True) for n, v in p.items()} for k, p in self.compressed_kv_physical_by_source.items()},
             index_k_by_source={k: np.array(v, copy=True) for k, v in self.index_k_by_source.items()},
             candidates_by_source={k: np.array(v, copy=True) for k, v in self.candidates_by_source.items()},
             topk_by_generation={k: np.array(v, copy=True) for k, v in self.topk_by_generation.items()},
@@ -111,6 +117,7 @@ class PrefillContinuationState:
         self.ngram_hashes.clear()
         self.window_kv_by_layer.clear()
         self.compressed_kv_by_source.clear()
+        self.compressed_kv_physical_by_source.clear()
         self.index_k_by_source.clear()
         self.candidates_by_source.clear()
         self.topk_by_generation.clear()
@@ -131,6 +138,11 @@ class PrefillContinuationState:
             ckv = self.compressed_kv_by_source.get(source)
             idx = self.index_k_by_source.get(source)
             entries.append(StateInventoryEntry(f"source@{source} compressed KV", "PRESENT" if ckv is not None else "MISSING", f"compressed_kv_by_source[{source}]", self.token_frontier, None if ckv is None else list(ckv.shape), None if ckv is None else str(ckv.dtype), f"full source generation @{source}", None if ckv is None else digest_fn(ckv)))
+            phys = self.compressed_kv_physical_by_source.get(source, {})
+            codes = phys.get("codes")
+            scales = phys.get("scales")
+            entries.append(StateInventoryEntry(f"source@{source} compressed KV physical FP4 codes", "PRESENT" if codes is not None else "MISSING", f"compressed_kv_physical_by_source[{source}].codes", self.token_frontier, None if codes is None else list(codes.shape), None if codes is None else str(codes.dtype), f"full source generation @{source}; FP4 E2M1 block16 value nibbles", None if codes is None else digest_fn(codes), note="model-semantic physical payload for lossless backend handoff"))
+            entries.append(StateInventoryEntry(f"source@{source} compressed KV physical E4M3 scales", "PRESENT" if scales is not None else "MISSING", f"compressed_kv_physical_by_source[{source}].scales", self.token_frontier, None if scales is None else list(scales.shape), None if scales is None else str(scales.dtype), f"full source generation @{source}; E4M3 scale per block16", None if scales is None else digest_fn(scales), note="model-semantic physical payload for lossless backend handoff"))
             entries.append(StateInventoryEntry(f"source@{source} index K", "PRESENT" if idx is not None else "MISSING", f"index_k_by_source[{source}]", self.token_frontier, None if idx is None else list(idx.shape), None if idx is None else str(idx.dtype), f"full source generation @{source}", None if idx is None else digest_fn(idx)))
             pending = self.compressor_pending.get(source, {})
             entries.append(StateInventoryEntry(f"source@{source} compressor pending KV/score", "PRESENT" if pending else "NOT_REQUIRED_ACROSS_DECODE", f"compressor_pending[{source}]", self.token_frontier, provenance=f"compress ratio group completed for bounded prefill source@{source}", note="empty means no partial compression group remains to carry"))
