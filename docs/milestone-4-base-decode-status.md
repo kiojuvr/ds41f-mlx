@@ -332,6 +332,12 @@ Actual admitted production bytes are used for OP: admitted source@2 slot2 physic
 
 Invalid padding is not a semantic selection bug: the 125 padded window entries are all `wi=-1`, and the target sparse path masks negative sparse indices rather than selecting value rows. The earlier compact-vs-padded failure is reclassified as **OFFICIAL DECODE TOPOLOGY-SPECIFIC NUMERICAL DIFFERENCE**; Layer2 actual sparse target is COMPLETE. Layer2 projection/Block2 remain the next frontier.
 
+## Layer2 projection/Block2 exact-entry attempt (2026-09-28)
+
+Artifact: `artifacts/m4/layer2-projection-block2/result.json`.
+
+A follow-up runner recreated the qualified actual padded oMLX sparse OP output from admitted physical sparse inputs and propagated it through independent official-source-derived Layer2 inverse RoPE, grouped `wo_a`, `wo_b`, post-attention HC, FFN entry, MoE routing/arithmetic, and final HC. This provides exact-entry source-derived evidence and records Layer2 token15 route IDs/weights, but it does **not** yet capture the corresponding internal projection/HC/MoE tensors from the real loaded oMLX module. Therefore it is supporting evidence only; `LAYER2 INCREMENTAL BLOCK` remains INCOMPLETE. The first unresolved boundary is actual oMLX Layer2 inverse-RoPE/projection capture after the qualified OP sparse output.
+
 ## Completion decision
 
 Milestone 4 base target correctness is **INCOMPLETE**.  M2 correctness requalification, continuation-state correctness, no-replay corrected-state admission, and full admission semantic round-trip remain complete.  The active M4 frontier has advanced to Layer2 projection / Block2 completion after the repaired Layer2 entry and official 129-slot actual sparse target qualified.  Do not use SHA equality, argmax equality, historical sparse bit identity, or the old global `>1e-4` heuristic as correctness gates where reviewed BF16/FP8/FP4/FP32 contracts permit bounded numerical drift.
