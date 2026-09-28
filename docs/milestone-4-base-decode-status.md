@@ -1,6 +1,6 @@
 # Milestone 4 base decode implementation status
 
-Status: **INCOMPLETE — Layers0-39, final HC collapse, final RMSNorm, ParallelHead, and bounded prefix `[0,3]` compositional correctness are complete. The current open gate is committed continuation-state requalification: the inventory is present, but the production prefill artifact gate `prefill_artifact_ok` is false in the rerun artifact. Ordinary oMLX (O) itself is not bit-exact to the historical reference (R), so historical bit identity is not used as the correctness contract. No-replay `BatchGenerator.insert(caches=..., all_tokens=...)` reaches the standard oMLX base-target performance class, but it is not yet corrected-state correctness-qualified beyond the continuation-state frontier.**
+Status: **INCOMPLETE — Layers0-39, final HC collapse, final RMSNorm, ParallelHead, bounded prefix `[0,3]` compositional correctness, committed continuation-state correctness, and no-replay corrected-state admission are complete. The current open gate is incremental `[15]` base-target correctness: R/O/D triangulation now has matching argmax but remains diagnostic only, and the first independent incremental semantic boundary has not yet been localized. Ordinary oMLX (O) itself is not bit-exact to the historical reference (R), so historical bit identity is not used as the correctness contract.**
 
 ## Implemented
 
@@ -259,10 +259,18 @@ Layers26-27 consume source@20 with topk@24. Layer28, Layer32, and Layer36 are qu
 
 The final block boundary records x39/pre39 without using stale hardcoded constants as authority. Final HC collapse (`hc_pre(x39, pre39)`), final RMSNorm (`eps=1e-20`), and ParallelHead are locally qualified. The existing ParallelHead predeclared contract is reused; no whole-logits R-vs-D tolerance is fitted and no argmax rule is used. The compositional prefix decision for `[0,3]` is COMPLETE.
 
-Continuation-state rerun artifact: `artifacts/m4/tail26-39-final-closeout/prefill-continuation-state-validation.json`. Inventory/ownership gates are present, but `prefill_artifact_ok` is false, so continuation-state correctness remains INCOMPLETE and no-replay corrected-state admission/incremental `[15]` were not reached.
+Continuation-state rerun artifact: `artifacts/m4/tail26-39-final-closeout/prefill-continuation-state-validation.json`. It captured the old `prefill_artifact_ok` failure before authority repair.
+
+## Prefill artifact authority repair / committed state update (2026-09-28)
+
+Artifacts: `artifacts/m4/prefill-authority-repair/after-vertical-slice.json`, `artifacts/m4/prefill-authority-repair/continuation-state-validation.json`, `artifacts/m4/prefill-authority-repair/no-replay-admission.json`, and `artifacts/m4/prefill-authority-repair/rod-incremental/result.json`.
+
+The parent DwarfStar prefill artifact was false only because stale exact connected-regression gates (`engram1_matches_reference`, `engram14_matches_reference`, `final_logits_match_reference`, and `engram_aware_reference_connected_scope_exact`) still participated in `ok`. These gates compared against `artifacts/native-engram-connected-deterministic-logits-validation.json`, an old connected exact-output artifact with digest `247da14c...` / argmax 15, and are no longer authoritative after M4 switched from whole-prefix bit identity to compositional reviewed-boundary evidence. Structural/lifecycle/state gates remain authoritative. Historical connected layer/logits comparisons are preserved as regression diagnostics.
+
+After the split, the vertical-slice authoritative gates pass, continuation-state validation passes, and no-replay corrected-state admission passes: all 40 cache frontiers are admitted at prefix length 2, `[0,3]` is not replayed, and 15 is the first backbone input. R/O/D incremental triangulation was rerun as a diagnostic; R/O/D all argmax 266, but SHA equality is still not a correctness rule and no full-logits tolerance was fitted.
 
 ## Completion decision
 
-Milestone 4 base target correctness is **INCOMPLETE**.  The RoPE, RMSNorm-eps, HC-post helper bugs, compressed-KV fixture RMS epsilon, Indexer FP4 q/k quantization contract, and compressed group-position RoPE stride have been corrected in the qualification helpers.  Layers0-39, final HC collapse, final RMSNorm, ParallelHead, and bounded prefix `[0,3]` compositional correctness are complete.  The active frontier is committed continuation-state requalification at `prefill_artifact_ok`.  Do not use SHA equality, argmax equality, historical sparse bit identity, or the old global `>1e-4` heuristic as correctness gates where reviewed BF16/FP8/FP4/FP32 contracts permit bounded numerical drift.
+Milestone 4 base target correctness is **INCOMPLETE**.  The RoPE, RMSNorm-eps, HC-post helper bugs, compressed-KV fixture RMS epsilon, Indexer FP4 q/k quantization contract, and compressed group-position RoPE stride have been corrected in the qualification helpers.  Layers0-39, final HC collapse, final RMSNorm, ParallelHead, bounded prefix `[0,3]`, committed continuation state, and no-replay corrected-state admission are complete.  The active frontier is incremental `[15]` first independent semantic boundary localization.  Do not use SHA equality, argmax equality, historical sparse bit identity, or the old global `>1e-4` heuristic as correctness gates where reviewed BF16/FP8/FP4/FP32 contracts permit bounded numerical drift.
 
 Base target practical performance is **PARTIALLY QUALIFIED BUT NOT COMPLETE**.  P5 proves that no-replay BatchGenerator admission can reach ordinary oMLX MTP-OFF performance, but production decode must not be promoted to this substrate until corrected state satisfies the reviewed correctness contract.

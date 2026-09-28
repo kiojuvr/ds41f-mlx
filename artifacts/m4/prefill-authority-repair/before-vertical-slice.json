@@ -1,48 +1,4 @@
 {
-  "authoritative_gates": {
-    "all_span_layers_have_hc_attention_moe": true,
-    "candidate_absent_before_layer20": true,
-    "candidate_first_present_at_layer20": true,
-    "candidate_lifecycle_scoped_before_next_source": true,
-    "checkpoint_committed_after_publication": true,
-    "checkpoint_invalid_during_execution": true,
-    "consumers21_23_reject_stale_pre20": true,
-    "consumers21_23_use_generation20": true,
-    "consumers_after24_reject_stale_topk20_and_pre20": true,
-    "consumers_after24_use_mixed_generation": true,
-    "consumers_after28_use_mixed_generation": true,
-    "consumers_after32_use_mixed_generation": true,
-    "consumers_after36_use_mixed_generation": true,
-    "engram14_executed": true,
-    "engram14_preserves_shared_state": true,
-    "engram14_ssd_sparse_rows_only": true,
-    "engram1_executed": true,
-    "engram1_ssd_sparse_rows_only": true,
-    "executor_owned_typed_storage": true,
-    "final_logits_present": true,
-    "layer0_complete_path_executed": true,
-    "layer14_state_publication_present": true,
-    "layer20_candidate_source_generation_present": true,
-    "layer24_consumes_generation20_state": true,
-    "layer24_index_only_refresh_present": true,
-    "layer24_preserves_compress_index_candidates": true,
-    "layer24_refreshes_topk_owner": true,
-    "layer28_index_only_refresh_present": true,
-    "layer2_state_publication_present": true,
-    "layer32_index_only_refresh_present": true,
-    "layer36_index_only_refresh_present": true,
-    "layer8_state_publication_present": true,
-    "native_sweep_plan_used": true,
-    "no_reference_text_runtime_called": true,
-    "official_embedding_native_executed": true,
-    "publication_owned_by_executor": true,
-    "session_handoff_present_after_final_output": true,
-    "source14_reuse_group_complete": true,
-    "source2_reuse_group_complete": true,
-    "source8_reuse_group_complete": true,
-    "sweep_command_order_exact": true,
-    "transaction_commit_after_final_output": true
-  },
   "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
   "classification": "implementation_scoped_dwarfstar_prefill_slice_validation",
   "ds4_authority": {
@@ -3497,13 +3453,6 @@
     "post_loop_h_digest": "96665b77589c6a8429f29d3263a669be01d5eedfcbf5688c2c19be0e91d58538",
     "selected_final_position_hidden_digest": "a2d41d6e7c9eaa497e18d49974624ebb325d44222e06f0cfcfc4701644fbaf1f"
   },
-  "gate_classification": {
-    "engram14_matches_reference": "E: stale/superseded in this parent artifact because full connected reference source is not the independent Engram@14 boundary authority for current corrected prefix trajectory",
-    "engram1_matches_reference": "E: stale/superseded in this parent artifact because full connected reference source is not the independent Engram@1 boundary authority for current corrected prefix trajectory",
-    "engram_aware_reference_connected_scope_exact": "D: historical connected per-layer SHA regression diagnostic only; no longer an authoritative whole-prefix gate",
-    "final_logits_match_reference": "D: historical connected logits digest diagnostic only; ParallelHead local arithmetic is qualified separately under its predeclared contract, not by R-vs-D digest identity",
-    "reference_comparison.all_compared_exact": "D: historical regression diagnostic only; superseded as authoritative correctness by M4 compositional reviewed-boundary ledger"
-  },
   "gates": {
     "all_span_layers_have_hc_attention_moe": true,
     "candidate_absent_before_layer20": true,
@@ -6154,7 +6103,7 @@
     "not performance qualification",
     "does not call TextBackboneReference/TextEncoderReference/TextDecoderReference"
   ],
-  "ok": true,
+  "ok": false,
   "publications": [
     {
       "frontier": {
@@ -6893,22 +6842,6 @@
     "logits_digest": "247da14c1b45ac2fe47bcf79418b3e45f199756e07f346359676736332ad4fca",
     "reference_kind": "engram_aware_connected_full_logits_scope",
     "reference_path": "artifacts/native-engram-connected-deterministic-logits-validation.json"
-  },
-  "reference_comparison_authority": "historical regression diagnostic only; not part of authoritative ok after M4 compositional correctness closeout",
-  "regression_diagnostics": {
-    "classification": "diagnostic_only_not_authoritative_for_ok",
-    "current_logits_digest": "6bba06315548e2777dacb3a38eaeee8bf3d32a1628917e36d412306cab910946",
-    "diagnostic_gates": {
-      "engram14_matches_reference": false,
-      "engram1_matches_reference": false,
-      "engram_aware_reference_connected_scope_exact": false,
-      "final_logits_match_reference": false
-    },
-    "historical_logits_digest": "247da14c1b45ac2fe47bcf79418b3e45f199756e07f346359676736332ad4fca",
-    "historical_per_layer_exact": false,
-    "historical_reference_available": true,
-    "historical_reference_kind": "engram_aware_connected_full_logits_scope",
-    "historical_reference_path": "artifacts/native-engram-connected-deterministic-logits-validation.json"
   },
   "scheduling_events": [
     {
@@ -8721,7 +8654,7 @@
       "rows": 2
     }
   ],
-  "schema": "ds41f.dwarfstar-prefill-vertical-slice.v2",
+  "schema": "ds41f.dwarfstar-prefill-vertical-slice.v1",
   "scope": {
     "engram_enabled": true,
     "full_model_prefill": true,
@@ -8772,7 +8705,7 @@
       3
     ]
   },
-  "seconds": 195.4109086660319,
+  "seconds": 194.8363411250175,
   "session_handoff": {
     "classification": "architecture_neutral_prefill_to_decode_contract",
     "committed_shared_state": {

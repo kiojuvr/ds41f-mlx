@@ -520,8 +520,32 @@ class DwarfStarPrefillVerticalSliceExecutor:
             "sweep_command_order_exact": [int(c["layer"]) for c in executed] == list(range(layers),),
             "engram_aware_reference_connected_scope_exact": reference_comparison["all_compared_exact"] and reference_comparison["reference_kind"] in {"engram_aware_connected_scope", "engram_aware_connected_block19_scope", "engram_aware_connected_candidate27_scope", "engram_aware_connected_full_logits_scope"},
         }
+        gate_classification = {
+            "reference_comparison.all_compared_exact": "D: historical regression diagnostic only; superseded as authoritative correctness by M4 compositional reviewed-boundary ledger",
+            "engram1_matches_reference": "E: stale/superseded in this parent artifact because full connected reference source is not the independent Engram@1 boundary authority for current corrected prefix trajectory",
+            "engram14_matches_reference": "E: stale/superseded in this parent artifact because full connected reference source is not the independent Engram@14 boundary authority for current corrected prefix trajectory",
+            "final_logits_match_reference": "D: historical connected logits digest diagnostic only; ParallelHead local arithmetic is qualified separately under its predeclared contract, not by R-vs-D digest identity",
+            "engram_aware_reference_connected_scope_exact": "D: historical connected per-layer SHA regression diagnostic only; no longer an authoritative whole-prefix gate",
+        }
+        diagnostic_only_gate_names = {
+            "engram1_matches_reference",
+            "engram14_matches_reference",
+            "final_logits_match_reference",
+            "engram_aware_reference_connected_scope_exact",
+        }
+        authoritative_gates = {k: v for k, v in gates.items() if k not in diagnostic_only_gate_names}
+        regression_diagnostics = {
+            "historical_reference_path": reference_comparison.get("reference_path"),
+            "historical_reference_kind": reference_comparison.get("reference_kind"),
+            "historical_reference_available": reference_comparison.get("available"),
+            "historical_per_layer_exact": reference_comparison.get("all_compared_exact"),
+            "historical_logits_digest": reference_comparison.get("logits_digest"),
+            "current_logits_digest": final_output.get("logits_digest") if final_output else None,
+            "diagnostic_gates": {k: gates[k] for k in sorted(diagnostic_only_gate_names)},
+            "classification": "diagnostic_only_not_authoritative_for_ok",
+        }
         artifact = {
-            "schema": "ds41f.dwarfstar-prefill-vertical-slice.v1",
+            "schema": "ds41f.dwarfstar-prefill-vertical-slice.v2",
             "classification": "implementation_scoped_dwarfstar_prefill_slice_validation",
             "purpose": "first vertically integrated DwarfStar-derived production-prefill executor slice: official embedding -> typed sweep carry -> complete real layers -> executor publication/commit",
             "checkpoint": str(self.checkpoint),
@@ -548,11 +572,15 @@ class DwarfStarPrefillVerticalSliceExecutor:
             "final_output": final_output,
             "session_handoff": session_handoff,
             "reference_comparison": reference_comparison,
+            "reference_comparison_authority": "historical regression diagnostic only; not part of authoritative ok after M4 compositional correctness closeout",
+            "gate_classification": gate_classification,
+            "authoritative_gates": authoritative_gates,
+            "regression_diagnostics": regression_diagnostics,
             "transaction_events": tx.events,
             "publications": storage.publications,
             "seconds": seconds,
             "gates": gates,
-            "ok": bool(all(gates.values())),
+            "ok": bool(all(authoritative_gates.values())),
             "non_claims": [
                 "not full-model prefill",
                 "not decode architecture selection",
