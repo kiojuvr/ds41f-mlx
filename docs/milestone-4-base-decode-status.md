@@ -289,6 +289,45 @@ Incremental token15 entry through Engram@1/Block1 is COMPLETE under official-sou
 
 Repaired Boundary13e proves Layer1 still uses base RoPE, while Layer2 uses compressed RoPE at absolute position 2 (`original_seq_len=65536`, `theta=160000`). Layer2 Indexer q now uses the reviewed block32/E8M0 FP4 contract and records pre-quant q, FP4 codes, E8M0 scales, and dequantized BF16 q. Layer2 reaches the first novel ratio2 one-token lifecycle: with `start=2`, `compress_ratio=2`, one new token does not complete a group. The Compressor writes pending `kv_state` and pending `score/gate` slot0 as `float32` arrays of shape `[1,512]`, produces no latent row, leaves compressed KV and index K persistent rows unchanged, and recomputes current-call Indexer query/top-k from existing index K without reusing prefill top-k bytes. Coordinate spaces are recorded separately: compressed-local top-k `[[[0]]]`, oMLX `ci` `[[[0]]]`, and NumPy concatenated `[window|compressed]` sparse index `[[[3]]]`. This closes the repaired token15 Layer2 entry and ratio2 partial-group lifecycle up to, but not including, actual admitted-oMLX Layer2 sparse attention / Block2 completion.
 
+## Layer2 actual BF16 sparse target topology update (2026-09-28)
+
+Artifact: `artifacts/m4/layer2-sparse-topology/result.json`; checker: `tools/check_m4_layer2_sparse_topology.py`.
+
+The real token15 Layer2 sparse target topology has been isolated without modifying the oMLX checkout. Actual captured sparse inputs:
+
+```text
+q dtype: BF16
+q shape: [1,1,64,512]
+packed window: [1,3,528]
+packed compressed: [1,1,288]
+wi: [1,1,128], 125 entries are -1, valid positions [125,126,127] -> values [0,1,2]
+ci: [[[0]]]
+```
+
+Pinned local target dispatch is confirmed as:
+
+```text
+rounded_packed_attention
+  -> _fused_attention
+wi width = 128
+ci width = 1
+total sparse slots = 129
+chunk = 32
+blocks = 5
+```
+
+The coordinate spaces are kept distinct: Indexer compressed-local / oMLX `ci` is `[[[0]]]`, while the independent compact semantic KV uses `[window0, window1, window2, compressed0]` and indices `[[[0,1,2,3]]]`.
+
+Three-path comparison result:
+
+```text
+S vs OC: within existing sparse BF16 contract (max 1 BF16 ULP)
+OC vs OP: fails existing contract (max_abs 0.0078125, max BF16 ULP 46362)
+S vs OP: fails existing contract with the same padded-topology signature
+```
+
+Invalid padding is not classified as a semantic selection bug: the 125 padded window entries are all `wi=-1`, and the target sparse path masks negative sparse indices rather than selecting value rows. The unresolved boundary is therefore classified as **PADDED FUSED REDUCTION NUMERICAL DIFFERENCE exceeds existing sparse contract**. No tolerance was fitted, Layer2 projection/Block2 were not advanced, and Layers3-7/Layer8 remain not reached.
+
 ## Completion decision
 
 Milestone 4 base target correctness is **INCOMPLETE**.  M2 correctness requalification, continuation-state correctness, no-replay corrected-state admission, and full admission semantic round-trip remain complete.  The active M4 frontier is actual admitted-oMLX first-incremental Layer2 sparse attention / Block2 completion after the repaired, source-proven Layer2 entry, ratio2 partial Compressor, and Indexer coordinate transition.  Do not use SHA equality, argmax equality, historical sparse bit identity, or the old global `>1e-4` heuristic as correctness gates where reviewed BF16/FP8/FP4/FP32 contracts permit bounded numerical drift.

@@ -5,7 +5,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 ART=ROOT/'artifacts/native-first-incremental-block1-layer2-entry-validation.json'
 DOC=ROOT/'docs/first-incremental-block1-layer2-entry-validation.md'
-ALLOWED={'tools/run_native_first_incremental_block1_layer2_entry_validation.py','tools/check_boundary13e_block1_layer2_entry.py','docs/first-incremental-block1-layer2-entry-validation.md','docs/implementation-plan.md','docs/milestone-4-base-decode-status.md','artifacts/native-first-incremental-block1-layer2-entry-validation.json'}
+ALLOWED={'tools/run_native_first_incremental_block1_layer2_entry_validation.py','tools/check_boundary13e_block1_layer2_entry.py','tools/run_m4_layer2_sparse_topology.py','tools/check_m4_layer2_sparse_topology.py','docs/first-incremental-block1-layer2-entry-validation.md','docs/implementation-plan.md','docs/milestone-4-base-decode-status.md','artifacts/native-first-incremental-block1-layer2-entry-validation.json'}
 def dirty(): return {line[3:] for line in subprocess.run(['git','status','--short'],cwd=ROOT,text=True,capture_output=True,check=True).stdout.splitlines()}
 def main():
  assert ART.exists() and DOC.exists()
