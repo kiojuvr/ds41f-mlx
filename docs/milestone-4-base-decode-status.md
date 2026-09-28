@@ -1,6 +1,6 @@
 # Milestone 4 base decode implementation status
 
-Status: **INCOMPLETE — Block0, Engram@1, Block1, Layer2, the Layer3-7 consumer segment, and Layer8 source generation are complete for the bounded `[0,3]` prefix qualification frontier. Ordinary oMLX (O) itself is not bit-exact to the historical reference (R), so historical bit identity is not used as the correctness contract. No-replay `BatchGenerator.insert(caches=..., all_tokens=...)` reaches the standard oMLX base-target performance class, but it is not yet correctness-qualified beyond the current prefix frontier.**
+Status: **INCOMPLETE — Block0, Engram@1, Block1, Layer2, the Layer3-7 consumer segment, Layer8 source generation, the Layer9-13 consumer segment, Engram@14, and Layer14 source generation are complete for the bounded `[0,3]` prefix qualification frontier. Ordinary oMLX (O) itself is not bit-exact to the historical reference (R), so historical bit identity is not used as the correctness contract. No-replay `BatchGenerator.insert(caches=..., all_tokens=...)` reaches the standard oMLX base-target performance class, but it is not yet correctness-qualified beyond the current prefix frontier.**
 
 ## Implemented
 
@@ -227,8 +227,20 @@ Layer8 was then qualified as the next source boundary. Exact-entry ordinary atte
 
 M2 evidence classification is updated accordingly: Layer3-7 shared source-generation ownership has independent exact discrete owner/digest evidence; local model operations have exact or accepted numerical-boundary evidence; historical sparse output is topology-specific regression evidence; official compact sparse reconstruction remains independent semantic authority; Layer8 adds explicit source-generation evidence.
 
+## Layer9-13 consumer segment, Engram@14, and Layer14 source generation update (2026-09-28)
+
+Artifact: `artifacts/m4/consumer-segment-9-13-engram14-layer14/result.json`.
+
+Layers9-13 were qualified as one homogeneous source@8 consumer segment. Each layer preserves `compress_kv`, `index_k`, and `topk` ownership at source@8 with no candidate publication; `index_k` remains resident and unconsumed. Exact-entry local layer checks are separated from connected propagation diagnostics.
+
+Engram@14 was reconnected at the newly qualified Layer13 boundary and explicitly occurs before Block14. Exact historical Layer13 hidden feeds Engram@14 with regenerated `layer14_hash`; Layer13 `pre_mix` and compressed-attention shared state remain unchanged. Sparse row selection, Engram embedding dequantization, flatten seam, FP8 WKV projection, key/value split, q/k weighting, gate arithmetic, residual update, and post-Engram hidden are qualified under the existing Engram contracts.
+
+Layer14 was then qualified with post-Engram14 hidden and Layer13 `pre_mix`. The source-generation contracts from Layer2/8 are reused, and ownership transitions from source@8 to source@14 for compressed KV, index K, and top-k while candidates remain none. Layer14 sparse attention remains under official compact sparse authority; historical padded sparse output remains topology-specific regression evidence.
+
+M2 evidence classification is updated: Layers9-13 have owner/discrete and local numerical evidence; Engram@14 has reconnected semantic and state-isolation evidence; Layer14 has source@8 -> source@14 publication evidence.
+
 ## Completion decision
 
-Milestone 4 base target correctness is **INCOMPLETE**.  The RoPE, RMSNorm-eps, HC-post helper bugs, compressed-KV fixture RMS epsilon, Indexer FP4 q/k quantization contract, and compressed group-position RoPE stride have been corrected in the qualification helpers.  Block0, Engram@1, Block1, Layer2, the Layer3-7 consumer segment, and Layer8 source generation are complete.  The active frontier is Layer9 consuming source@8.  Do not use SHA equality, argmax equality, historical sparse bit identity, or the old global `>1e-4` heuristic as correctness gates where reviewed BF16/FP8/FP4/FP32 contracts permit bounded numerical drift.
+Milestone 4 base target correctness is **INCOMPLETE**.  The RoPE, RMSNorm-eps, HC-post helper bugs, compressed-KV fixture RMS epsilon, Indexer FP4 q/k quantization contract, and compressed group-position RoPE stride have been corrected in the qualification helpers.  Block0, Engram@1, Block1, Layer2, Layers3-7, Layer8, Layers9-13, Engram@14, and Layer14 are complete.  The active frontier is Layer15 consuming source@14.  Do not use SHA equality, argmax equality, historical sparse bit identity, or the old global `>1e-4` heuristic as correctness gates where reviewed BF16/FP8/FP4/FP32 contracts permit bounded numerical drift.
 
 Base target practical performance is **PARTIALLY QUALIFIED BUT NOT COMPLETE**.  P5 proves that no-replay BatchGenerator admission can reach ordinary oMLX MTP-OFF performance, but production decode must not be promoted to this substrate until corrected state satisfies the reviewed correctness contract.
