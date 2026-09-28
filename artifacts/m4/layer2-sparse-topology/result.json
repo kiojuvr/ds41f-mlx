@@ -45,6 +45,80 @@
       ]
     }
   },
+  "OP_fused_partial_states": {
+    "blocks": [
+      {
+        "block": 0,
+        "denominator_digest": "5341e6b2646979a70e57653007a1f310169421ec9bdd9f1a5648f75ade005af1",
+        "maximum_digest": "4eaf0f565485df37034ac8a8ab2b44c37f2cb4ad92eb823c1f92293b9c4c4c27",
+        "numerator_digest": "fa43239bcee7b97ca62f007cc68487560a39e19f74f3dde7486db3f98df8e471"
+      },
+      {
+        "block": 1,
+        "denominator_digest": "5341e6b2646979a70e57653007a1f310169421ec9bdd9f1a5648f75ade005af1",
+        "maximum_digest": "4eaf0f565485df37034ac8a8ab2b44c37f2cb4ad92eb823c1f92293b9c4c4c27",
+        "numerator_digest": "fa43239bcee7b97ca62f007cc68487560a39e19f74f3dde7486db3f98df8e471"
+      },
+      {
+        "block": 2,
+        "denominator_digest": "5341e6b2646979a70e57653007a1f310169421ec9bdd9f1a5648f75ade005af1",
+        "maximum_digest": "17cc42a52313346ed8c71bf6c84b252ff4f0557c1a9d026472bb08eb4ee45a1b",
+        "numerator_digest": "fa43239bcee7b97ca62f007cc68487560a39e19f74f3dde7486db3f98df8e471"
+      },
+      {
+        "block": 3,
+        "denominator_digest": "d0c4f47faaad42ca6f6e5b90923a6f758a39067eb4bba3bf8e06a5a782adbe29",
+        "maximum_digest": "17cc42a52313346ed8c71bf6c84b252ff4f0557c1a9d026472bb08eb4ee45a1b",
+        "numerator_digest": "43bb63c6be3224545bb1dc56897c6c12ee533ff323b154f87fa2283ebc70d77d"
+      },
+      {
+        "block": 4,
+        "denominator_digest": "9c7603f133f599142ad58957d8c3971448b9a13b26559ce01c9e86c10087e5e8",
+        "maximum_digest": "16e5f4544c1d6f7561be75268d4754ff30a8be4a7f5c0aa0216f7ceeffcf7713",
+        "numerator_digest": "626467748b53b1d49b8d887afa200926f59675375799d6347c627264b1713e8a"
+      }
+    ],
+    "mapped_64key_tiles": [
+      {
+        "blocks": "0+1",
+        "state": {
+          "end_block": 1,
+          "mapped_official_tile": 0,
+          "running_denominator_digest": "5341e6b2646979a70e57653007a1f310169421ec9bdd9f1a5648f75ade005af1",
+          "running_max_digest": "4eaf0f565485df37034ac8a8ab2b44c37f2cb4ad92eb823c1f92293b9c4c4c27",
+          "running_numerator_digest": "fa43239bcee7b97ca62f007cc68487560a39e19f74f3dde7486db3f98df8e471"
+        }
+      },
+      {
+        "blocks": "2+3",
+        "state": {
+          "end_block": 3,
+          "mapped_official_tile": 1,
+          "running_denominator_digest": "d0c4f47faaad42ca6f6e5b90923a6f758a39067eb4bba3bf8e06a5a782adbe29",
+          "running_max_digest": "17cc42a52313346ed8c71bf6c84b252ff4f0557c1a9d026472bb08eb4ee45a1b",
+          "running_numerator_digest": "43bb63c6be3224545bb1dc56897c6c12ee533ff323b154f87fa2283ebc70d77d"
+        }
+      },
+      {
+        "blocks": "4",
+        "state": {
+          "end_block": 4,
+          "mapped_official_tile": 2,
+          "running_denominator_digest": "261644d42e0b3f48810db5f73763c7299fe4c8cade621a15e2ed33726fba1d46",
+          "running_max_digest": "16e5f4544c1d6f7561be75268d4754ff30a8be4a7f5c0aa0216f7ceeffcf7713",
+          "running_numerator_digest": "0caa064fd40616f89c3b417c4121004eb50cbf22b3e507007b711f7ccc5b76b2"
+        }
+      }
+    ],
+    "partial_digest": "258fcd3d4a6c9e81974e756b58e1ba2826aff9ba0746681356cecc796e38eee9",
+    "partial_shape": [
+      1,
+      1,
+      64,
+      5,
+      514
+    ]
+  },
   "OP_padded_omlx": {
     "ci": {
       "dtype": "int32",
@@ -82,7 +156,87 @@
       ]
     }
   },
-  "S_official_semantic": {
+  "OSP_official_padded_semantic": {
+    "bf16_pv_boundary": true,
+    "bf16_result": {
+      "dtype": "uint16",
+      "sha256": "a3802b54f3a22145df10260450ce7cc365ac9b099333137d88d49b10671406c0",
+      "shape": [
+        1,
+        1,
+        64,
+        512
+      ]
+    },
+    "block_size": 64,
+    "combined_topk": {
+      "count_minus_one": 125,
+      "sha256": "ea4bc0391823b8effbe68c80613e6bc1467a91056f6c523ded5b5f55ea0772ed",
+      "shape": [
+        1,
+        1,
+        129
+      ],
+      "valid_suffix": [
+        0,
+        1,
+        2,
+        128
+      ],
+      "width": 129
+    },
+    "final_pre_sink": {
+      "denominator_digest": "a23594fb4f4e91d3ef69c35816db90210ffcff251ca96d47ca89aa591620d6e8",
+      "max_digest": "9d79621342bc4a0bd29ac9041e9a8b3159ba97733e631e1508303027d0ac4ff1",
+      "numerator_digest": "7ecad17af3e8a80490a82a00f94c748af2837757b2d5456639381dba1007667f"
+    },
+    "tile_count": 3,
+    "tile_states": [
+      {
+        "bf16_probability_digest": "9f1dcbc35c350d6027f98be0f5c8b43b42ca52b7604459c0c42be3aa88913d47",
+        "running_denominator_digest": "5341e6b2646979a70e57653007a1f310169421ec9bdd9f1a5648f75ade005af1",
+        "running_max_digest": "4eaf0f565485df37034ac8a8ab2b44c37f2cb4ad92eb823c1f92293b9c4c4c27",
+        "running_numerator_digest": "fa43239bcee7b97ca62f007cc68487560a39e19f74f3dde7486db3f98df8e471",
+        "scores_scale_digest": "2f20cd03c9cd392a406c56232b0ff93a15f6d6d7da79086bfa14f55d4a4031b0",
+        "sparse_positions": [
+          0,
+          63
+        ],
+        "tile": 0,
+        "tile_denominator_digest": "5341e6b2646979a70e57653007a1f310169421ec9bdd9f1a5648f75ade005af1",
+        "tile_pv_numerator_digest": "fa43239bcee7b97ca62f007cc68487560a39e19f74f3dde7486db3f98df8e471"
+      },
+      {
+        "bf16_probability_digest": "b2d87784086bb746ee6da9a67f11b245b5d43101d8fb495d9c8ef4fe64e31a73",
+        "running_denominator_digest": "c32366b34fae5df476827c2071c44656f0517339521fae93be4bdd02d3b6f52f",
+        "running_max_digest": "0f8a4dcd32634298c34191596a446de659e629cf734fcad032caaa074ba415e5",
+        "running_numerator_digest": "43bb63c6be3224545bb1dc56897c6c12ee533ff323b154f87fa2283ebc70d77d",
+        "scores_scale_digest": "5341e6b2646979a70e57653007a1f310169421ec9bdd9f1a5648f75ade005af1",
+        "sparse_positions": [
+          64,
+          127
+        ],
+        "tile": 1,
+        "tile_denominator_digest": "c32366b34fae5df476827c2071c44656f0517339521fae93be4bdd02d3b6f52f",
+        "tile_pv_numerator_digest": "43bb63c6be3224545bb1dc56897c6c12ee533ff323b154f87fa2283ebc70d77d"
+      },
+      {
+        "bf16_probability_digest": "b62511018dc68228523a878affde31a006a99b7545d18977447140a0664d680d",
+        "running_denominator_digest": "a23594fb4f4e91d3ef69c35816db90210ffcff251ca96d47ca89aa591620d6e8",
+        "running_max_digest": "9d79621342bc4a0bd29ac9041e9a8b3159ba97733e631e1508303027d0ac4ff1",
+        "running_numerator_digest": "7ecad17af3e8a80490a82a00f94c748af2837757b2d5456639381dba1007667f",
+        "scores_scale_digest": "8c57875ddfe435ba6d2a77ef1a4751b2cb2eb161899e71c81a00084fb40cff4a",
+        "sparse_positions": [
+          128,
+          128
+        ],
+        "tile": 2,
+        "tile_denominator_digest": "26724047e04a98ac102d9d364b4d5a6c43bda3f3fb1efdf4166c24cac56c63e4",
+        "tile_pv_numerator_digest": "626467748b53b1d49b8d887afa200926f59675375799d6347c627264b1713e8a"
+      }
+    ]
+  },
+  "SC_compact_semantic_diagnostic": {
     "bf16_result": {
       "dtype": "uint16",
       "sha256": "58f814b5dd4180529b985df9470794bbf1f8b80f3f136fb0953f20ce9f238bbe",
@@ -93,6 +247,7 @@
         512
       ]
     },
+    "classification": "compact semantic diagnostic only; not official decode topology",
     "denominator_without_sink": {
       "dtype": "float32",
       "sha256": "ac6e378786904b32b699a114c42b263efb3c1459d001414a1d442fba31dfde4d",
@@ -158,6 +313,66 @@
         1,
         64
       ]
+    }
+  },
+  "actual_admitted_physical_identity": {
+    "slot1_admitted_prefix": {
+      "dtype": "uint8",
+      "sha256": "72b97fc71efb0ffba6e992c946a1505f0cefc8b813bd43443b5ae5b7bcd112a2",
+      "shape": [
+        1,
+        2,
+        528
+      ]
+    },
+    "slot1_unpacked_matches_boundary13e_window": {
+      "a_sha256": "b48c4366dec85f55a5d419257036821c3b56f455f8dc08519e0fd111721f7f3b",
+      "b_sha256": "b48c4366dec85f55a5d419257036821c3b56f455f8dc08519e0fd111721f7f3b",
+      "exact": true,
+      "max_abs_diff": 0.0,
+      "max_bf16_ulp": 0,
+      "mean_abs_diff": 0.0,
+      "mean_bf16_ulp": 0.0,
+      "shape": [
+        1,
+        3,
+        512
+      ],
+      "within_contract": true
+    },
+    "slot2_admitted_original_physical": {
+      "dtype": "uint8",
+      "sha256": "cc08eecab870f54a3cfcab148288afe32362d2fbca10f4900c0b8809dac241e7",
+      "shape": [
+        1,
+        1,
+        288
+      ]
+    },
+    "slot2_original_vs_semantic_repacked_bytes_exact": true,
+    "slot2_semantic_repacked_diagnostic": {
+      "dtype": "uint8",
+      "sha256": "cc08eecab870f54a3cfcab148288afe32362d2fbca10f4900c0b8809dac241e7",
+      "shape": [
+        1,
+        1,
+        288
+      ]
+    },
+    "slot2_unpacked_matches_source2_compressed": {
+      "a_sha256": "7265001df868c42af926ec37c9c5fced8c44c79d249ed9cf7870e8801aa0798c",
+      "b_sha256": "7265001df868c42af926ec37c9c5fced8c44c79d249ed9cf7870e8801aa0798c",
+      "exact": true,
+      "max_abs_diff": 0.0,
+      "max_bf16_ulp": 0,
+      "mean_abs_diff": 0.0,
+      "mean_bf16_ulp": 0.0,
+      "shape": [
+        1,
+        1,
+        512
+      ],
+      "within_contract": true
     }
   },
   "actual_layer2_inputs": {
@@ -254,9 +469,9 @@
     }
   },
   "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
-  "classification": "PADDED FUSED REDUCTION NUMERICAL DIFFERENCE exceeds existing sparse contract",
+  "classification": "official 129-slot padded decode topology qualifies; compact-vs-padded is topology-specific diagnostic",
   "comparisons": {
-    "OC_vs_OP": {
+    "OC_vs_OP_compact_vs_padded_diagnostic": {
       "a_sha256": "ae3d07cc1bff960acb24a4ada4d992f72daca57622344ea5338d4b337b62811f",
       "b_sha256": "bd5222080a7a0b5fff25cfe1c935ef20f04ab8c329ea6b702c1827e648814f45",
       "exact": false,
@@ -272,7 +487,51 @@
       ],
       "within_contract": false
     },
-    "S_vs_OC": {
+    "OSP_tile0_vs_OP_blocks0_1": {
+      "max": {
+        "a_sha256": "96a296d224f285c67bee93c30f8a309157f0daa35dc5b87e410b78630a09cfc7",
+        "b_sha256": "96a296d224f285c67bee93c30f8a309157f0daa35dc5b87e410b78630a09cfc7",
+        "exact": true,
+        "max_abs_diff": 0.0,
+        "max_bf16_ulp": 0,
+        "mean_abs_diff": 0.0,
+        "mean_bf16_ulp": 0.0,
+        "shape": [
+          1
+        ],
+        "within_contract": true
+      },
+      "running_denominator_abs": 0.0,
+      "running_max_abs": 0.0,
+      "running_numerator_abs": 0.0
+    },
+    "OSP_tile1_vs_OP_blocks0_3": {
+      "running_denominator_abs": 4.76837158203125e-07,
+      "running_max_abs": 4.76837158203125e-07,
+      "running_numerator_abs": 0.0
+    },
+    "OSP_tile2_vs_OP_block4": {
+      "running_denominator_abs": 7.152557373046875e-07,
+      "running_max_abs": 4.76837158203125e-07,
+      "running_numerator_abs": 9.5367431640625e-07
+    },
+    "OSP_vs_OP_final": {
+      "a_sha256": "a3802b54f3a22145df10260450ce7cc365ac9b099333137d88d49b10671406c0",
+      "b_sha256": "bd5222080a7a0b5fff25cfe1c935ef20f04ab8c329ea6b702c1827e648814f45",
+      "exact": false,
+      "max_abs_diff": 2.384185791015625e-07,
+      "max_bf16_ulp": 1,
+      "mean_abs_diff": 7.275957614183426e-12,
+      "mean_bf16_ulp": 3.0517578125e-05,
+      "shape": [
+        1,
+        1,
+        64,
+        512
+      ],
+      "within_contract": true
+    },
+    "SC_vs_OC_diagnostic": {
       "a_sha256": "58f814b5dd4180529b985df9470794bbf1f8b80f3f136fb0953f20ce9f238bbe",
       "b_sha256": "ae3d07cc1bff960acb24a4ada4d992f72daca57622344ea5338d4b337b62811f",
       "exact": false,
@@ -288,7 +547,7 @@
       ],
       "within_contract": true
     },
-    "S_vs_OP": {
+    "SC_vs_OP_diagnostic": {
       "a_sha256": "58f814b5dd4180529b985df9470794bbf1f8b80f3f136fb0953f20ce9f238bbe",
       "b_sha256": "bd5222080a7a0b5fff25cfe1c935ef20f04ab8c329ea6b702c1827e648814f45",
       "exact": false,
@@ -352,10 +611,35 @@
     "invalid_wi_count": 125,
     "valid_suffix_exact": true
   },
-  "layer2_sparse_status": "INCOMPLETE",
-  "ok": false,
+  "layer2_sparse_status": "COMPLETE",
+  "official_decode_index_derivation": {
+    "combined_entries_summary": "[-1 x125, 0, 1, 2, 128]",
+    "combined_width": 129,
+    "official_block_size": 64,
+    "official_tile_count": 3,
+    "source": "inference/model.py get_window_topk_idxs, inference/kernel.py sparse_attn_kernel",
+    "window_entries_summary": "positions 0..124=-1; positions 125..127=0,1,2",
+    "window_topk_width": 128
+  },
+  "ok": true,
   "omlx_path": "/Users/kioju/omlx-0.7.0.dev2",
   "production_path_changed": false,
+  "qk_score_comparison": {
+    "classification": "per-key QK scores are not directly observable from the fused partial without changing target kernel; OSP-vs-OP running maxima agree within <=4.768e-7 at tile boundaries",
+    "official_compact_raw_scores_digest": "42e5ada303f6067cd9286d8746df3f267f625da3041d38480ccf6577a6bb97ae",
+    "official_padded_tile_max_digests": [
+      "4eaf0f565485df37034ac8a8ab2b44c37f2cb4ad92eb823c1f92293b9c4c4c27",
+      "0f8a4dcd32634298c34191596a446de659e629cf734fcad032caaa074ba415e5",
+      "9d79621342bc4a0bd29ac9041e9a8b3159ba97733e631e1508303027d0ac4ff1"
+    ],
+    "omlx_observable_boundary": "_kernel(\"fused\") partial exposes per-block maximum/denominator/numerator, not per-key score vector; nearest comparison is tile/block running maximum and downstream online state",
+    "valid_semantic_rows": [
+      "window0",
+      "window1",
+      "window2",
+      "compressed0"
+    ]
+  },
   "qualification_only": true,
   "rounded_target_dispatch": {
     "bf16_probability_boundary": "source docstring: official 64-key BF16 PV boundary; fused kernel emits FP32 partials merged to BF16 output",

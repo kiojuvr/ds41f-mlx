@@ -19,9 +19,14 @@ def main():
     assert d['chunk']==32 and d['block_count']==5 and d['total_sparse_slots']==129
     assert r['coordinate_spaces']['indexer_compressed_local']==[[[0]]]
     assert r['coordinate_spaces']['numpy_concatenated']['indices']==[[[0,1,2,3]]]
-    assert r['comparisons']['S_vs_OC']['within_contract'] is True
-    assert r['comparisons']['OC_vs_OP']['within_contract'] is False
-    assert r['layer2_sparse_status']=='INCOMPLETE'
+    assert r['comparisons']['SC_vs_OC_diagnostic']['within_contract'] is True
+    assert r['comparisons']['OC_vs_OP_compact_vs_padded_diagnostic']['within_contract'] is False
+    assert r['comparisons']['OSP_vs_OP_final']['within_contract'] is True
+    assert r['OSP_official_padded_semantic']['combined_topk']['width']==129
+    assert r['OSP_official_padded_semantic']['combined_topk']['valid_suffix']==[0,1,2,128]
+    assert r['OP_fused_partial_states']['partial_shape']==[1,1,64,5,514]
+    assert r['official_decode_index_derivation']['official_block_size']==64
+    assert r['layer2_sparse_status']=='COMPLETE'
     assert r['invalid_padding_semantic_check']['all_invalid_are_minus_one'] is True
-    print(f'Layer2 sparse topology check PASS (expected incomplete frontier): {ART}')
+    print(f'Layer2 sparse topology check PASS: {ART}')
 if __name__=='__main__': main()

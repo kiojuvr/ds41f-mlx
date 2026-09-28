@@ -316,20 +316,24 @@ chunk = 32
 blocks = 5
 ```
 
-The coordinate spaces are kept distinct: Indexer compressed-local / oMLX `ci` is `[[[0]]]`, while the independent compact semantic KV uses `[window0, window1, window2, compressed0]` and indices `[[[0,1,2,3]]]`.
+The coordinate spaces are kept distinct: Indexer compressed-local / oMLX `ci` is `[[[0]]]`; compact diagnostics use `[window0, window1, window2, compressed0]` and indices `[[[0,1,2,3]]]`; official decode topology uses fixed-width window indices plus compressed offset: combined width `129`, entries `[-1 x125, 0, 1, 2, 128]`.
 
-Three-path comparison result:
+Official padded-source reconstruction (`OSP`) now follows pinned `sparse_attn_kernel`: block size `64`, tile count `3`, running online-softmax state, BF16 probability cast before PV, and sink as denominator-only contribution. The private oMLX `_kernel("fused")` partial was captured directly with shape `[1,1,64,5,514]` and mapped as blocks `(0,1)`, `(2,3)`, `(4)` onto the three official 64-key tiles.
+
+Comparison result:
 
 ```text
-S vs OC: within existing sparse BF16 contract (max 1 BF16 ULP)
-OC vs OP: fails existing contract (max_abs 0.0078125, max BF16 ULP 46362)
-S vs OP: fails existing contract with the same padded-topology signature
+SC vs OC compact diagnostic: within existing sparse BF16 contract (max 1 BF16 ULP)
+OC vs OP compact-vs-official-padded diagnostic: differs (max_abs 0.0078125, max BF16 ULP 46362)
+OSP vs OP decisive padded-topology comparison: within existing sparse BF16 contract (max 1 BF16 ULP)
 ```
 
-Invalid padding is not classified as a semantic selection bug: the 125 padded window entries are all `wi=-1`, and the target sparse path masks negative sparse indices rather than selecting value rows. The unresolved boundary is therefore classified as **PADDED FUSED REDUCTION NUMERICAL DIFFERENCE exceeds existing sparse contract**. No tolerance was fitted, Layer2 projection/Block2 were not advanced, and Layers3-7/Layer8 remain not reached.
+Actual admitted production bytes are used for OP: admitted source@2 slot2 physical FP4/E4M3 bytes are preserved and unpack to the qualified source@2 compressed state; slot1 old admitted rows plus the token15 packed row unpack to the qualified Boundary13e window state. The semantic-repacked source@2 slot2 remains a separate diagnostic.
+
+Invalid padding is not a semantic selection bug: the 125 padded window entries are all `wi=-1`, and the target sparse path masks negative sparse indices rather than selecting value rows. The earlier compact-vs-padded failure is reclassified as **OFFICIAL DECODE TOPOLOGY-SPECIFIC NUMERICAL DIFFERENCE**; Layer2 actual sparse target is COMPLETE. Layer2 projection/Block2 remain the next frontier.
 
 ## Completion decision
 
-Milestone 4 base target correctness is **INCOMPLETE**.  M2 correctness requalification, continuation-state correctness, no-replay corrected-state admission, and full admission semantic round-trip remain complete.  The active M4 frontier is actual admitted-oMLX first-incremental Layer2 sparse attention / Block2 completion after the repaired, source-proven Layer2 entry, ratio2 partial Compressor, and Indexer coordinate transition.  Do not use SHA equality, argmax equality, historical sparse bit identity, or the old global `>1e-4` heuristic as correctness gates where reviewed BF16/FP8/FP4/FP32 contracts permit bounded numerical drift.
+Milestone 4 base target correctness is **INCOMPLETE**.  M2 correctness requalification, continuation-state correctness, no-replay corrected-state admission, and full admission semantic round-trip remain complete.  The active M4 frontier has advanced to Layer2 projection / Block2 completion after the repaired Layer2 entry and official 129-slot actual sparse target qualified.  Do not use SHA equality, argmax equality, historical sparse bit identity, or the old global `>1e-4` heuristic as correctness gates where reviewed BF16/FP8/FP4/FP32 contracts permit bounded numerical drift.
 
 Base target practical performance is **PARTIALLY QUALIFIED BUT NOT COMPLETE** and unchanged.  P5 proves that no-replay BatchGenerator admission can reach ordinary oMLX MTP-OFF performance, but production decode must not be promoted to this substrate until corrected state satisfies the reviewed correctness contract.
