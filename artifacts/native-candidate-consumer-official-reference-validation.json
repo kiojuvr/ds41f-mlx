@@ -122,7 +122,6 @@
       "functions": [
         {
           "name": "Indexer",
-          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
           "source_lines": [
             488,
             580
@@ -132,7 +131,6 @@
         {
           "name": "Indexer.__init__",
           "reviewed_semantic": "self.uses_candidates = 0 <= args.candidate_source_layer < layer_id",
-          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
           "source_lines": [
             496,
             525
@@ -142,7 +140,6 @@
         {
           "name": "Indexer.forward",
           "reviewed_branch": "elif self.uses_candidates: index_score = index_score.masked_fill(~shared_attn.candidates, -torch.inf); then top-k, position sort, -1/offset int32",
-          "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
           "source_lines": [
             527,
             580
@@ -155,6 +152,7 @@
   "ok": true,
   "operation_contract": {
     "consumer_mask": "index_score.masked_fill(~shared_attn.candidates, -inf), after causal compressed-position masking",
+    "indexer_qk_precision": "FP4 E2M1 block32 with E8M0 scales for both source index K and consumer query; this supersedes stale compressed-KV FP4 helpers",
     "minus_one_offset": "torch.where(idxs < compress_lens, idxs + offset, -1).int()",
     "predeclared_tolerance": {
       "actual_f32_max_abs_lte": 0.0001,
