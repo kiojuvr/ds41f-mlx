@@ -1,6 +1,6 @@
 # Milestone 4 base decode implementation status
 
-Status: **INCOMPLETE — Block0, Engram@1, Block1, Layer2, the Layer3-7 consumer segment, Layer8 source generation, the Layer9-13 consumer segment, Engram@14, Layer14 source generation, Layers15-19, Layer20 source/candidate generation, Layers21-23, Layer24 candidate consumer/index refresh, and Layer25 refreshed-topk consumption are complete for the bounded `[0,3]` prefix qualification frontier. Ordinary oMLX (O) itself is not bit-exact to the historical reference (R), so historical bit identity is not used as the correctness contract. No-replay `BatchGenerator.insert(caches=..., all_tokens=...)` reaches the standard oMLX base-target performance class, but it is not yet correctness-qualified beyond the current prefix frontier.**
+Status: **INCOMPLETE — Layers0-39, final HC collapse, final RMSNorm, ParallelHead, and bounded prefix `[0,3]` compositional correctness are complete. The current open gate is committed continuation-state requalification: the inventory is present, but the production prefill artifact gate `prefill_artifact_ok` is false in the rerun artifact. Ordinary oMLX (O) itself is not bit-exact to the historical reference (R), so historical bit identity is not used as the correctness contract. No-replay `BatchGenerator.insert(caches=..., all_tokens=...)` reaches the standard oMLX base-target performance class, but it is not yet corrected-state correctness-qualified beyond the continuation-state frontier.**
 
 ## Implemented
 
@@ -251,8 +251,18 @@ Layers21-23 preserve source@20, candidate@20, and topk@20. Layer24 is qualified 
 
 M2 evidence classification is updated: Layers15-19 provide source@14 consumer evidence; Layer20 provides ratio1 source-generation and candidate-source publication evidence; Layers21-23 provide source@20/candidate@20 preservation evidence; Layer24 provides candidate-consumer and index-refresh evidence; Layer25 provides refreshed-topk consumption evidence.
 
+## Tail26-39/final-output prefix closeout update (2026-09-28)
+
+Artifact: `artifacts/m4/tail26-39-final-closeout/result.json`.
+
+Layers26-27 consume source@20 with topk@24. Layer28, Layer32, and Layer36 are qualified as index-refresh layers: they consume index_k@20 and candidates@20, preserve compress_kv/index_k/candidates@20, and publish topk@28/@32/@36 respectively. Layer29, Layer33, and Layer37 prove downstream consumption of the refreshed top-k generations, and the homogeneous consumer segments continue through Layer39. Final owners after Layer39 are `compress_kv@20`, `index_k@20`, `candidates@20`, and `topk@36`.
+
+The final block boundary records x39/pre39 without using stale hardcoded constants as authority. Final HC collapse (`hc_pre(x39, pre39)`), final RMSNorm (`eps=1e-20`), and ParallelHead are locally qualified. The existing ParallelHead predeclared contract is reused; no whole-logits R-vs-D tolerance is fitted and no argmax rule is used. The compositional prefix decision for `[0,3]` is COMPLETE.
+
+Continuation-state rerun artifact: `artifacts/m4/tail26-39-final-closeout/prefill-continuation-state-validation.json`. Inventory/ownership gates are present, but `prefill_artifact_ok` is false, so continuation-state correctness remains INCOMPLETE and no-replay corrected-state admission/incremental `[15]` were not reached.
+
 ## Completion decision
 
-Milestone 4 base target correctness is **INCOMPLETE**.  The RoPE, RMSNorm-eps, HC-post helper bugs, compressed-KV fixture RMS epsilon, Indexer FP4 q/k quantization contract, and compressed group-position RoPE stride have been corrected in the qualification helpers.  Block0, Engram@1, Block1, Layer2, Layers3-7, Layer8, Layers9-13, Engram@14, Layer14, Layers15-19, Layer20, Layers21-23, Layer24, and Layer25 are complete.  The active frontier is Layer26 consuming source@20 with topk@24.  Do not use SHA equality, argmax equality, historical sparse bit identity, or the old global `>1e-4` heuristic as correctness gates where reviewed BF16/FP8/FP4/FP32 contracts permit bounded numerical drift.
+Milestone 4 base target correctness is **INCOMPLETE**.  The RoPE, RMSNorm-eps, HC-post helper bugs, compressed-KV fixture RMS epsilon, Indexer FP4 q/k quantization contract, and compressed group-position RoPE stride have been corrected in the qualification helpers.  Layers0-39, final HC collapse, final RMSNorm, ParallelHead, and bounded prefix `[0,3]` compositional correctness are complete.  The active frontier is committed continuation-state requalification at `prefill_artifact_ok`.  Do not use SHA equality, argmax equality, historical sparse bit identity, or the old global `>1e-4` heuristic as correctness gates where reviewed BF16/FP8/FP4/FP32 contracts permit bounded numerical drift.
 
 Base target practical performance is **PARTIALLY QUALIFIED BUT NOT COMPLETE**.  P5 proves that no-replay BatchGenerator admission can reach ordinary oMLX MTP-OFF performance, but production decode must not be promoted to this substrate until corrected state satisfies the reviewed correctness contract.
