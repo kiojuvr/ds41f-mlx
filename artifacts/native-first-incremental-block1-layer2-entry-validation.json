@@ -75,6 +75,12 @@
         512
       ]
     },
+    "rope": {
+      "absolute_position": 2,
+      "original_seq_len": 0,
+      "ratio": 0,
+      "theta": 10000.0
+    },
     "selected_expert_set": [
       172,
       228,
@@ -183,16 +189,25 @@
       "written_slot": 0
     },
     "indexer": {
+      "coordinate_mapping": {
+        "compressed_local": "Indexer key row id into source compressed/index K",
+        "numpy_concat": "compressed-local id plus visible window row count when KV=[window|compressed]",
+        "omlx_ci": "same compressed-local id passed to packed_sparse_attention separately from window idx"
+      },
+      "fp4_contract": "block32/E8M0",
       "index_k_read_digest": "91ae9b0c26d5506138f7cccfdcbeef1e8fb4dab73f9ee6762113800f817b42ba",
-      "index_score_digest": "dfe5fa2f424755998f2e5d51fc3c19aa8885da4eb9a6a8ba67b619001757c800",
+      "index_score_digest": "cef5472d444115b1d94b4cc26c070e59175e3cae70f5b57409b5c886a3bb76e0",
       "k_cache_after_digest": "91ae9b0c26d5506138f7cccfdcbeef1e8fb4dab73f9ee6762113800f817b42ba",
       "k_cache_before_digest": "91ae9b0c26d5506138f7cccfdcbeef1e8fb4dab73f9ee6762113800f817b42ba",
       "new_key_publication": false,
       "prefill_topk_reused": false,
-      "query_digest": "0a35a81acdfe9e94087a93071814145273f21a1fd01b53b97909c1f76360cd3e",
+      "query_digest": "7b08fcf756f77641ab9b51a7e0fdd309c0dc987e1c9832af2609540623136dc5",
+      "query_e8m0_scales_digest": "caafbb50fec6a996981599aadb5a84cadf9256cfb2e3e76cdbf04d3cb1a9fb91",
+      "query_fp4_codes_digest": "4e4194fe550c618532abcd76628b64c57f43178a0ddc3a003413aefd508b32e7",
+      "query_pre_quant_digest": "2cd4bad9c98cf9862e1f357441e2dd1be2559a5e9f4b9d38ad02625dbe4ccdbc",
       "query_rotary_absolute_position": 2,
-      "topk": {
-        "digest": "50c8ba3a6170f0a2fb6736ece8a603576ef6309a35e810911599bc6211b554a9",
+      "topk_compressed_local": {
+        "digest": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119",
         "dtype": "int32",
         "shape": [
           1,
@@ -202,15 +217,47 @@
         "values": [
           [
             [
-              128
+              0
             ]
           ]
         ]
       },
-      "topk_digest": "50c8ba3a6170f0a2fb6736ece8a603576ef6309a35e810911599bc6211b554a9"
+      "topk_concat_kv": {
+        "digest": "9d9f290527a6be626a8f5985b26e19b237b44872b03631811df4416fc1713178",
+        "dtype": "int32",
+        "shape": [
+          1,
+          1,
+          1
+        ],
+        "values": [
+          [
+            [
+              3
+            ]
+          ]
+        ]
+      },
+      "topk_digest": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119",
+      "topk_omlx_ci": {
+        "digest": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119",
+        "dtype": "int32",
+        "shape": [
+          1,
+          1,
+          1
+        ],
+        "values": [
+          [
+            [
+              0
+            ]
+          ]
+        ]
+      }
     },
     "kv_rotary": {
-      "digest": "de836b8c1aa0a9008c58fc063bf682b8789f319b4062e189f3d1cc00655e9b8f",
+      "digest": "8339b3037a5c04dbd260d2e8097fbd019677c7f60365c0a1690841db4a4d5127",
       "dtype": "uint16",
       "shape": [
         1,
@@ -218,8 +265,8 @@
         512
       ]
     },
-    "q_rotary": {
-      "digest": "5716d046a14fae0823f87fe14b03425b34b4f25adb3f584cc72c376918609d25",
+    "q_pre_rope": {
+      "digest": "61ada1eceaa6974e0710fce17ee4f3effa8fffd25bda610bf68f41417fd0124e",
       "dtype": "uint16",
       "shape": [
         1,
@@ -228,8 +275,33 @@
         512
       ]
     },
+    "q_rotary": {
+      "digest": "c25371a8a636b6b8d9bee99399eb10784afaff47e3701add99ecf923e2b4a4b1",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        1,
+        64,
+        512
+      ]
+    },
+    "rope": {
+      "absolute_position": 2,
+      "original_seq_len": 65536,
+      "ratio": 2,
+      "theta": 160000.0
+    },
+    "window_kv_norm": {
+      "digest": "49bb235488f5a520f2cdda47c72321e8a439227595b44ddf32203de724e46855",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        1,
+        512
+      ]
+    },
     "window_slot2": {
-      "digest": "94cdfe6cee13a937131819764c4a5265628b6957275720e9702944d29a041b1d",
+      "digest": "34541a938a433f7d38076cbd23e2e326ca6b38910b23d386f037e2e80941bbed",
       "dtype": "uint16",
       "shape": [
         1,
@@ -238,7 +310,7 @@
       ]
     },
     "window_visible": {
-      "digest": "927502863f100228b75f4fe9c4e7077a2028886308369715b24c0de352d69800",
+      "digest": "b48c4366dec85f55a5d419257036821c3b56f455f8dc08519e0fd111721f7f3b",
       "dtype": "uint16",
       "shape": [
         1,
@@ -258,7 +330,7 @@
     "main_hidden_executed": false,
     "sampling_executed": false
   },
-  "base_head": "811447f2d8413c396afb4e02aa4c9f46c6437101",
+  "base_head": "cd7791090cc3ec0684c1c419c232071e6b221d87",
   "classification": "first incremental Block1 completion to layer2 compressed/index lifecycle entry authority",
   "gates": {
     "13a->13b->13c->13d replayed in memory": true,
@@ -274,14 +346,18 @@
     "Compressor slot0 persistent partial promoted": true,
     "Indexer k_cache no new publication": true,
     "Indexer topk recomputed current-call": true,
+    "Layer1 uses base RoPE": true,
+    "Layer2 Indexer q uses block32/E8M0": true,
+    "Layer2 uses compressed RoPE": true,
     "STOP before layer2 sparse_attn": true,
     "compress_kv_cache READ_ONLY no write": true,
-    "current head is requested continuation base": true,
+    "current ancestry includes requested continuation base": true,
     "layer2 absolute position2/window slot2": true,
     "layer2 connected entry from Block1 outputs": true,
     "no tensor artifact injection": true,
     "not_omlx_derived == true": true,
-    "persistent non-mutation PASS": true
+    "persistent non-mutation PASS": true,
+    "top-k coordinate-space mapping is source-derived": true
   },
   "next_boundary": "Boundary13f: first incremental layer2 sparse_attn + Block2 completion",
   "non_claims": [
