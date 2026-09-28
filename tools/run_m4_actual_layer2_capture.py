@@ -104,7 +104,7 @@ def to_np(mx: Any, a: Any) -> np.ndarray | None:
         return None
     mx.eval(a)
     try:
-        if str(a.dtype) == "bfloat16":
+        if "bfloat16" in str(a.dtype):
             return np.asarray(a.view(mx.uint16)).astype(np.uint16, copy=False)
     except Exception:
         pass
@@ -363,12 +363,24 @@ def phase_actual(args: argparse.Namespace) -> int:
         progress.close()
 
 
+def align_boundary_shape(actual: np.ndarray | None, expected: np.ndarray | None) -> tuple[np.ndarray | None, np.ndarray | None]:
+    if actual is None or expected is None or actual.shape == expected.shape:
+        return actual, expected
+    a = np.squeeze(actual)
+    e = np.squeeze(expected)
+    if a.shape == e.shape:
+        return a, e
+    return actual, expected
+
+
 def cmp_exact(actual: np.ndarray | None, expected: np.ndarray | None) -> dict[str, Any]:
+    actual, expected = align_boundary_shape(actual, expected)
     ok = actual is not None and expected is not None and actual.shape == expected.shape and np.array_equal(actual, expected)
     return {"contract": "exact", "actual": arr_info(actual), "expected": arr_info(expected), "within_contract": bool(ok), "exact": bool(ok)}
 
 
 def cmp_bf16(actual: np.ndarray | None, expected: np.ndarray | None, tol: int, contract: str) -> dict[str, Any]:
+    actual, expected = align_boundary_shape(actual, expected)
     if actual is None or expected is None or actual.shape != expected.shape or actual.dtype != np.uint16 or expected.dtype != np.uint16:
         return {"contract": contract, "actual": arr_info(actual), "expected": arr_info(expected), "within_contract": False}
     u = np.abs(ordered_bf16(actual) - ordered_bf16(expected))
@@ -376,6 +388,7 @@ def cmp_bf16(actual: np.ndarray | None, expected: np.ndarray | None, tol: int, c
 
 
 def cmp_f32(actual: np.ndarray | None, expected: np.ndarray | None, tol: float, contract: str) -> dict[str, Any]:
+    actual, expected = align_boundary_shape(actual, expected)
     if actual is None or expected is None or actual.shape != expected.shape:
         return {"contract": contract, "actual": arr_info(actual), "expected": arr_info(expected), "within_contract": False}
     d = np.abs(actual.astype(np.float32) - expected.astype(np.float32))

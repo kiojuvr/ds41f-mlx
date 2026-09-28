@@ -1,0 +1,261 @@
+{
+  "attempt_status": "COMPLETE",
+  "comparison_phase": "C lightweight process",
+  "comparisons": {
+    "attention_return": {
+      "actual": {
+        "dtype": "uint16",
+        "nbytes": 10240,
+        "sha256": "78aed25bf419518afebc264ee37152280c5370937d4fa21cbf05bf4854d3d91f",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "contract": "attention output projection final BF16 max ULP <= 1",
+      "exact": false,
+      "expected": {
+        "dtype": "uint16",
+        "nbytes": 10240,
+        "sha256": "216dfec5d55269f4ef3ac9a2690e7742b8c8e738f54ce45da80e6ab07e47e398",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "max_bf16_ulp": 31170,
+      "max_bf16_ulp_lte": 1,
+      "within_contract": false
+    },
+    "block_output_h": {
+      "actual": {
+        "dtype": "uint16",
+        "nbytes": 40960,
+        "sha256": "5e1dd7343c929b77a0ab274c4162bcd4918f7cd89738fb341244a04a25359964",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "contract": "HC FFN post Block output BF16 max ULP <= 1",
+      "exact": false,
+      "expected": {
+        "dtype": "uint16",
+        "nbytes": 40960,
+        "sha256": "2d62c5940e5db8e2f8b58289f056833a5cfd481951904c8526a4b26a2a64575b",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "max_bf16_ulp": 30515,
+      "max_bf16_ulp_lte": 1,
+      "within_contract": false
+    },
+    "block_returned_pre": {
+      "actual": {
+        "dtype": "float32",
+        "nbytes": 16,
+        "sha256": "dc0152e4fd141783f1c9a3942e2162006a0db19275294e6d7d0eeef752d6b4c1",
+        "shape": [
+          1,
+          1,
+          4
+        ]
+      },
+      "contract": "returned HC pre-mix FP32 exact/HC f32 max abs <= 1e-4",
+      "exact": false,
+      "expected": {
+        "dtype": "float32",
+        "nbytes": 16,
+        "sha256": "2e6275ad12d45651ba7ae816fb09e0790729aceb255773cc82b879e415823386",
+        "shape": [
+          1,
+          1,
+          4
+        ]
+      },
+      "max_abs_diff": 0.0011517144739627838,
+      "max_abs_lte": 0.0001,
+      "within_contract": false
+    },
+    "inverse_rope": {
+      "actual": {
+        "dtype": "uint16",
+        "nbytes": 65536,
+        "sha256": "422025fc7f487c037d9098e39242e1103f746ddbf437327bfc7f7e4136bc9882",
+        "shape": [
+          1,
+          1,
+          64,
+          512
+        ]
+      },
+      "contract": "attention output projection inverse rotary BF16 max ULP <= 1",
+      "exact": false,
+      "expected": {
+        "dtype": "uint16",
+        "nbytes": 65536,
+        "sha256": "a3a62a6f7c2b5fbfe7d4a6f343cde10ff45957ec173d79cec21b70dd08f01be9",
+        "shape": [
+          1,
+          1,
+          64,
+          512
+        ]
+      },
+      "max_bf16_ulp": 30752,
+      "max_bf16_ulp_lte": 1,
+      "within_contract": false
+    },
+    "moe_input": {
+      "actual": {
+        "dtype": "uint16",
+        "nbytes": 10240,
+        "sha256": "29ef2d78a670a44c3a60b8d9920541f180befffce6877d9372b637d3ad6d2bc4",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "contract": "HC FFN/MoE subblock norm BF16 max ULP <= 1",
+      "exact": false,
+      "expected": {
+        "dtype": "uint16",
+        "nbytes": 10240,
+        "sha256": "9782c8f20941fa7df040447d58ebc42bab3153de949fbf7462adebb50e83e673",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "max_bf16_ulp": 30356,
+      "max_bf16_ulp_lte": 1,
+      "within_contract": false
+    },
+    "moe_output": {
+      "actual": {
+        "dtype": "uint16",
+        "nbytes": 10240,
+        "sha256": "4df69906dcccb04c487876ac2ab3d5bc5e60c0beca93ed363cab77593acc7e76",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "contract": "full MoE output BF16 max ULP <= 1",
+      "exact": false,
+      "expected": {
+        "dtype": "uint16",
+        "nbytes": 10240,
+        "sha256": "2e782ae927d2050e4fa710ec13b69654ea91fabdf1aab31e48713b48ae016ed7",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "max_bf16_ulp": 30344,
+      "max_bf16_ulp_lte": 1,
+      "within_contract": false
+    },
+    "post_attention_hc": {
+      "actual": {
+        "dtype": "uint16",
+        "nbytes": 40960,
+        "sha256": "f289b11740bc5fca6b06d451c6c558b75ebec4f8a187020dd7d82eafc0c939cf",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "contract": "HC attention post BF16 max ULP <= 1",
+      "exact": false,
+      "expected": {
+        "dtype": "uint16",
+        "nbytes": 40960,
+        "sha256": "5dfbf84cd5534fb8695d154b3f12292120931b0a817b138cdfbdbee97dfdd0a4",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "max_bf16_ulp": 30548,
+      "max_bf16_ulp_lte": 1,
+      "within_contract": false
+    },
+    "route_ids": {
+      "actual": {
+        "dtype": "uint32",
+        "nbytes": 24,
+        "sha256": "b28c2218e11700a8fc3d75dae2cc4cb96477cdd90801454045294f0badd1c7f0",
+        "shape": [
+          6
+        ]
+      },
+      "contract": "exact",
+      "exact": true,
+      "expected": {
+        "dtype": "int64",
+        "nbytes": 48,
+        "sha256": "9b0450597244203c714fde50022c74026df31cdc68b8cc79c4f546b01a00d499",
+        "shape": [
+          6
+        ]
+      },
+      "within_contract": true
+    },
+    "route_weights": {
+      "actual": {
+        "dtype": "float32",
+        "nbytes": 24,
+        "sha256": "4599f3f9d7e429a7662bbb9e2424cd8d736f3bc654842baa8970c1caaba0ea06",
+        "shape": [
+          6
+        ]
+      },
+      "contract": "MoE gate scaled routing weights FP32 max abs <= 1e-3",
+      "exact": false,
+      "expected": {
+        "dtype": "float32",
+        "nbytes": 24,
+        "sha256": "10c3b319efe70a30361dad03dc0ef60e8b14caf808676de961f4a21b6ca5528a",
+        "shape": [
+          6
+        ]
+      },
+      "max_abs_diff": 0.00164872407913208,
+      "max_abs_lte": 0.001,
+      "within_contract": false
+    }
+  },
+  "failed_attempt_artifact": "/Volumes/SDXC-512/ds41f-mlx/artifacts/m4/actual-layer2-capture/result.json",
+  "first_unresolved_boundary": "inverse_rope",
+  "historical_failed_attempt_preserved": true,
+  "layer2_incremental_block": "INCOMPLETE",
+  "ok": false,
+  "post_layer2_state": {
+    "final_merged_layer2_frontier_eq_3": true,
+    "pending_gate_row_recorded": true,
+    "pending_kv_row_recorded": true,
+    "shared_idx_full_recorded": true,
+    "shared_kv_digest_recorded": true,
+    "source2_slot2_digest_recorded": true,
+    "source2_slot3_digest_recorded": true,
+    "window_cache_includes_token15": true
+  },
+  "schema": "ds41f.m4.actual-layer2-capture.v2"
+}
