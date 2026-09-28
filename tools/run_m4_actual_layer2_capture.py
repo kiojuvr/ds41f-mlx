@@ -158,11 +158,33 @@ def phase_expected(args: argparse.Namespace) -> int:
     from omlx.patches.deepseek_v41.quantization import pack_activation
     from omlx.patches.deepseek_v41.packed_attention import rounded_packed_attention
     from tools.run_m4_layer2_sparse_topology import build_repaired_entry, u16_from_mx
-    from tools.run_native_first_incremental_block1_layer2_entry_validation import project, cfg, DIM, D, MIX, HCD, rms_eps
+    from tools.run_native_first_incremental_block1_layer2_entry_validation import project, cfg, DIM, D, MIX, HCD, rms_eps, block1, layer2_entry
+    from tools.run_native_first_incremental_window_kv_rotary_validation import build_layer0_incremental
+    from tools.run_native_first_incremental_block0_engram1_validation import continue_block0
+    from tools.run_native_first_incremental_ngram_hash_validation import run_once as run_ngram_once
+    from tools.run_native_ngram_hash_state_validation import source_token_map
+    from tools.native_decode_session_state import build_prefill_state as build_native_prefill_state
+    from tokenizers import Tokenizer
     from tools.run_native_layer24_25_connected_validation import moe_layer
     from tools.run_official_hyper_connections_fixture import mmap, shard, hc_mixes, hc_pre, hc_post
 
     c, prefill, b1, l2 = build_repaired_entry(ck)
+    # Reconstruct the already-qualified Boundary13d/13e upstream chain in Phase E,
+    # without loading the oMLX model.
+    prefill_native, _ = build_native_prefill_state()
+    b12 = json.loads((ROOT / "artifacts/engram-semantic-foundation-contract.json").read_text())
+    cfgj = json.loads((ck / "inference/config.json").read_text())
+    tok = Tokenizer.from_file(str(ck / "tokenizer.json"))
+    tmap, _ = source_token_map(tok)
+    comp15 = int(tmap[15]); pad = int(tmap[cfgj["engram_pad_id"]])
+    mult = np.asarray(b12["ngram_hash_state_contract"]["hash_coefficients"]["values"], np.int64)
+    primes = np.asarray(b12["engram_layout_contract"]["derived_fields"]["primes"], np.int64)
+    offsets = np.asarray(b12["engram_layout_contract"]["per_layer_offsets"], np.int64)
+    _, _, _, nhash, _ = run_ngram_once(np.asarray([[0, 3]], np.int64), comp15, pad, (mult, primes, offsets), token_mask=None)
+    l0 = build_layer0_incremental(prefill_native)
+    d13 = continue_block0(l0, nhash)
+    b1_full = block1(d13["engram1"]["post"], d13["block0"]["ffn_pre"], prefill_native)
+    l2_full = layer2_entry(b1_full["x_out"], b1_full["ffn_pre"], prefill_native)
     q = mx.array(np.ascontiguousarray(l2["attn_path"]["q"])).view(mx.bfloat16)
     win = mx.array(np.ascontiguousarray(l2["attn_path"]["window_post"])).view(mx.bfloat16)
     comp = mx.array(np.ascontiguousarray(prefill.visible_value_arrays["compress_kv.2.visible"][:, :1, :])).view(mx.bfloat16)
@@ -195,6 +217,19 @@ def phase_expected(args: argparse.Namespace) -> int:
     xout = hc_post(moe["final"], post_attn, ffn_post, ffn_comb)
 
     arrays = {
+        "block0_entry_h": np.ascontiguousarray(l0["hc_h"]),
+        "block0_entry_pre": np.ascontiguousarray(l0["identity_pre_mix"]),
+        "block0_exit_h": np.ascontiguousarray(d13["block0"]["x_out"]),
+        "block0_exit_pre": np.ascontiguousarray(d13["block0"]["ffn_pre"]),
+        "engram1_input_h": np.ascontiguousarray(d13["block0"]["x_out"]),
+        "engram1_hash_ids": np.ascontiguousarray(nhash[:, :, 0, :]),
+        "engram1_output_h": np.ascontiguousarray(d13["engram1"]["post"]),
+        "block1_entry_h": np.ascontiguousarray(d13["engram1"]["post"]),
+        "block1_entry_pre": np.ascontiguousarray(d13["block0"]["ffn_pre"]),
+        "block1_exit_h": np.ascontiguousarray(b1_full["x_out"]),
+        "block1_exit_pre": np.ascontiguousarray(b1_full["ffn_pre"]),
+        "layer2_entry_h": np.ascontiguousarray(b1["x_out"]),
+        "layer2_entry_pre": np.ascontiguousarray(b1["ffn_pre"]),
         "pre_inverse_rope": pre_inverse_rope,
         "sparse_q": np.ascontiguousarray(l2["attn_path"]["q"]),
         "sparse_packed_window_kv": to_np(mx, packed_win),
@@ -219,6 +254,10 @@ def phase_expected(args: argparse.Namespace) -> int:
     meta = {
         "schema": "ds41f.m4.layer2-expected-boundaries.v1",
         "checkpoint": str(ck), "omlx_path": str(omlx),
+        "provenance": {
+            "Boundary13d": "tools/run_native_first_incremental_block0_engram1_validation.py official-source-derived Block0 + Engram@1 authority",
+            "Boundary13e": "tools/run_native_first_incremental_block1_layer2_entry_validation.py official-source-derived Block1 completion / Layer2 entry authority",
+        },
         "process_isolation": "Phase E source-derived reconstruction only; process exits before Phase A model load",
         "arrays": {k: arr_info(v) for k, v in arrays.items()},
         "rope": {"params": rope_params_from_dict(c, True), "positions": [2], "absolute_position": 2, "layer": 2},
@@ -276,7 +315,9 @@ def phase_actual(args: argparse.Namespace) -> int:
         cap: dict[str, Any] = {"arrays": {}, "summaries": {}, "events": []}
         active = {"block2": False, "attn2": False}
         target_block = lm.layers[2]; target_attn = target_block.attn; target_moe = target_block.ffn; target_gate = target_moe.gate
-        orig_block = lang.Block.__call__; orig_attn = lang.Attention.__call__; orig_moe = lang.MoE.__call__; orig_gate = lang.Gate.__call__; orig_rope = lang.rope; orig_hp = lang.hc_post; orig_sparse = lang.packed_sparse_attention
+        target_engram1 = getattr(lm.layers[1], "engram", None)
+        engram_mod = importlib.import_module("omlx.patches.deepseek_v41.engram")
+        orig_block = lang.Block.__call__; orig_attn = lang.Attention.__call__; orig_moe = lang.MoE.__call__; orig_gate = lang.Gate.__call__; orig_rope = lang.rope; orig_hp = lang.hc_post; orig_sparse = lang.packed_sparse_attention; orig_engram = engram_mod.Engram.__call__
 
         def layer_idx(self: Any) -> int | None:
             for i, b in enumerate(lm.layers):
@@ -301,11 +342,27 @@ def phase_actual(args: argparse.Namespace) -> int:
         def block_call(self, h, pre, cache, shared, start, image_mask):
             li = layer_idx(self)
             if li in (0, 1, 2): progress.mark(f"layer{li}_enter")
-            if self is target_block:
+            if li == 0:
+                cap["arrays"]["block0_entry_h"] = to_np(mx, h)
+                cap["arrays"]["block0_entry_pre"] = to_np(mx, pre)
+                out = orig_block(self, h, pre, cache, shared, start, image_mask)
+                mx.eval(out[0], out[1])
+                cap["arrays"]["block0_exit_h"] = to_np(mx, out[0])
+                cap["arrays"]["block0_exit_pre"] = to_np(mx, out[1])
+            elif li == 1:
+                cap["arrays"]["block1_entry_h"] = to_np(mx, h)
+                cap["arrays"]["block1_entry_pre"] = to_np(mx, pre)
+                out = orig_block(self, h, pre, cache, shared, start, image_mask)
+                mx.eval(out[0], out[1])
+                cap["arrays"]["block1_exit_h"] = to_np(mx, out[0])
+                cap["arrays"]["block1_exit_pre"] = to_np(mx, out[1])
+            elif self is target_block:
                 progress.mark("layer2_enter")
                 active["block2"] = True
                 cap["arrays"]["block_input_h"] = to_np(mx, h)
                 cap["arrays"]["block_input_pre"] = to_np(mx, pre)
+                cap["arrays"]["layer2_entry_h"] = cap["arrays"]["block_input_h"]
+                cap["arrays"]["layer2_entry_pre"] = cap["arrays"]["block_input_pre"]
                 cap["summaries"]["block_entry_cache"] = cache_digest_summary(cache, include_pending_rows=True)
                 out = orig_block(self, h, pre, cache, shared, start, image_mask)
                 mx.eval(out[0], out[1])
@@ -319,6 +376,18 @@ def phase_actual(args: argparse.Namespace) -> int:
                 out = orig_block(self, h, pre, cache, shared, start, image_mask)
             if li in (0, 1, 2): progress.mark(f"layer{li}_exit")
             return out
+
+        def engram_call(self, h, ids, image_mask=None):
+            if self is target_engram1:
+                progress.mark("engram1_enter")
+                cap["arrays"]["engram1_input_h"] = to_np(mx, h)
+                cap["arrays"]["engram1_hash_ids"] = np.asarray(ids, dtype=np.int64)
+                out = orig_engram(self, h, ids, image_mask)
+                mx.eval(out)
+                cap["arrays"]["engram1_output_h"] = to_np(mx, out)
+                progress.mark("engram1_exit")
+                return out
+            return orig_engram(self, h, ids, image_mask)
 
         def attn_call(self, x, cache, shared, start):
             if self is target_attn:
@@ -397,14 +466,14 @@ def phase_actual(args: argparse.Namespace) -> int:
 
         try:
             progress.mark("wrapper_install_begin")
-            lang.Block.__call__ = block_call; lang.Attention.__call__ = attn_call; lang.packed_sparse_attention = sparse_wrap; lang.rope = rope_wrap; lang.hc_post = hp_wrap; lang.MoE.__call__ = moe_call; lang.Gate.__call__ = gate_call
+            lang.Block.__call__ = block_call; lang.Attention.__call__ = attn_call; lang.packed_sparse_attention = sparse_wrap; lang.rope = rope_wrap; lang.hc_post = hp_wrap; lang.MoE.__call__ = moe_call; lang.Gate.__call__ = gate_call; engram_mod.Engram.__call__ = engram_call
             progress.mark("wrapper_install_complete")
             progress.mark("forward_begin")
             logits = lm._forward(mx.array([[15]], mx.int64), cache=sess.cache)
             mx.eval(logits)
             progress.mark("forward_complete")
         finally:
-            lang.Block.__call__ = orig_block; lang.Attention.__call__ = orig_attn; lang.packed_sparse_attention = orig_sparse; lang.rope = orig_rope; lang.hc_post = orig_hp; lang.MoE.__call__ = orig_moe; lang.Gate.__call__ = orig_gate
+            lang.Block.__call__ = orig_block; lang.Attention.__call__ = orig_attn; lang.packed_sparse_attention = orig_sparse; lang.rope = orig_rope; lang.hc_post = orig_hp; lang.MoE.__call__ = orig_moe; lang.Gate.__call__ = orig_gate; engram_mod.Engram.__call__ = orig_engram
 
         final_offsets = [int(c.size()) for c in sess.cache]
         arrays = {k: v for k, v in cap["arrays"].items() if isinstance(v, np.ndarray)}
@@ -470,10 +539,66 @@ def cmp_sparse_input(name: str, actual: np.ndarray | None, expected: np.ndarray 
     return cmp_exact(actual, expected)
 
 
+def reconstruct_expected_upstream_npz(ck: Path) -> dict[str, np.ndarray]:
+    from tools.run_native_first_incremental_block1_layer2_entry_validation import block1, layer2_entry
+    from tools.run_native_first_incremental_window_kv_rotary_validation import build_layer0_incremental
+    from tools.run_native_first_incremental_block0_engram1_validation import continue_block0
+    from tools.run_native_first_incremental_ngram_hash_validation import run_once as run_ngram_once
+    from tools.run_native_ngram_hash_state_validation import source_token_map
+    from tools.native_decode_session_state import build_prefill_state as build_native_prefill_state
+    from tokenizers import Tokenizer
+    prefill_native, _ = build_native_prefill_state()
+    b12 = json.loads((ROOT / "artifacts/engram-semantic-foundation-contract.json").read_text())
+    cfgj = json.loads((ck / "inference/config.json").read_text())
+    tok = Tokenizer.from_file(str(ck / "tokenizer.json"))
+    tmap, _ = source_token_map(tok)
+    comp15 = int(tmap[15]); pad = int(tmap[cfgj["engram_pad_id"]])
+    mult = np.asarray(b12["ngram_hash_state_contract"]["hash_coefficients"]["values"], np.int64)
+    primes = np.asarray(b12["engram_layout_contract"]["derived_fields"]["primes"], np.int64)
+    offsets = np.asarray(b12["engram_layout_contract"]["per_layer_offsets"], np.int64)
+    _, _, _, nhash, _ = run_ngram_once(np.asarray([[0, 3]], np.int64), comp15, pad, (mult, primes, offsets), token_mask=None)
+    l0 = build_layer0_incremental(prefill_native)
+    d13 = continue_block0(l0, nhash)
+    b1_full = block1(d13["engram1"]["post"], d13["block0"]["ffn_pre"], prefill_native)
+    _l2_full = layer2_entry(b1_full["x_out"], b1_full["ffn_pre"], prefill_native)
+    return {
+        "block0_entry_h": np.ascontiguousarray(l0["hc_h"]),
+        "block0_entry_pre": np.ascontiguousarray(l0["identity_pre_mix"]),
+        "block0_exit_h": np.ascontiguousarray(d13["block0"]["x_out"]),
+        "block0_exit_pre": np.ascontiguousarray(d13["block0"]["ffn_pre"]),
+        "engram1_input_h": np.ascontiguousarray(d13["block0"]["x_out"]),
+        "engram1_hash_ids": np.ascontiguousarray(nhash[:, :, 0, :]),
+        "engram1_output_h": np.ascontiguousarray(d13["engram1"]["post"]),
+        "block1_entry_h": np.ascontiguousarray(d13["engram1"]["post"]),
+        "block1_entry_pre": np.ascontiguousarray(d13["block0"]["ffn_pre"]),
+        "block1_exit_h": np.ascontiguousarray(b1_full["x_out"]),
+        "block1_exit_pre": np.ascontiguousarray(b1_full["ffn_pre"]),
+        "layer2_entry_h": np.ascontiguousarray(b1_full["x_out"]),
+        "layer2_entry_pre": np.ascontiguousarray(b1_full["ffn_pre"]),
+    }
+
+
 def phase_compare(args: argparse.Namespace) -> int:
     exp = load_npz(Path(args.expected_npz)); act = load_npz(Path(args.actual_npz))
+    if "layer2_entry_h" not in exp:
+        exp.update(reconstruct_expected_upstream_npz(Path(args.checkpoint)))
     actual_meta = json.loads(Path(args.actual_json).read_text())
     expected_meta = json.loads(Path(args.expected_json).read_text()) if Path(args.expected_json).exists() else {}
+    upstream_comps = {
+        "block0_entry_h": cmp_bf16(act.get("block0_entry_h"), exp.get("block0_entry_h"), 1, "Boundary13c token15 embedding/HC Block0 entry BF16 max ULP <= 1"),
+        "block0_entry_pre": cmp_f32(act.get("block0_entry_pre"), exp.get("block0_entry_pre"), 0.0, "Block0 entry pre FP32 exact"),
+        "block0_exit_h": cmp_bf16(act.get("block0_exit_h"), exp.get("block0_exit_h"), 1, "Boundary13d Block0 output BF16 max ULP <= 1"),
+        "block0_exit_pre": cmp_f32(act.get("block0_exit_pre"), exp.get("block0_exit_pre"), 1e-4, "Boundary13d Block0 returned pre FP32 max abs <= 1e-4"),
+        "engram1_input_h": cmp_bf16(act.get("engram1_input_h"), exp.get("engram1_input_h"), 1, "Engram@1 input equals Block0 output BF16 max ULP <= 1"),
+        "engram1_hash_ids": cmp_exact(act.get("engram1_hash_ids"), exp.get("engram1_hash_ids")),
+        "engram1_output_h": cmp_bf16(act.get("engram1_output_h"), exp.get("engram1_output_h"), 1, "Boundary13d Engram@1 output BF16 max ULP <= 1"),
+        "block1_entry_h": cmp_bf16(act.get("block1_entry_h"), exp.get("block1_entry_h"), 1, "Boundary13e Block1 entry h BF16 max ULP <= 1"),
+        "block1_entry_pre": cmp_f32(act.get("block1_entry_pre"), exp.get("block1_entry_pre"), 1e-4, "Boundary13e Block1 entry pre FP32 max abs <= 1e-4"),
+        "block1_exit_h": cmp_bf16(act.get("block1_exit_h"), exp.get("block1_exit_h"), 1, "Boundary13e Block1 output BF16 max ULP <= 1"),
+        "block1_exit_pre": cmp_f32(act.get("block1_exit_pre"), exp.get("block1_exit_pre"), 1e-4, "Boundary13e Block1 returned pre FP32 max abs <= 1e-4"),
+        "layer2_entry_h": cmp_bf16(act.get("block_input_h", act.get("layer2_entry_h")), exp.get("layer2_entry_h"), 1, "Boundary13e Layer2 entry h BF16 max ULP <= 1"),
+        "layer2_entry_pre": cmp_f32(act.get("block_input_pre", act.get("layer2_entry_pre")), exp.get("layer2_entry_pre"), 1e-4, "Boundary13e Layer2 entry pre FP32 max abs <= 1e-4"),
+    }
     comps = {
         "pre_inverse_rope": cmp_bf16(act.get("pre_inverse_rope"), exp.get("pre_inverse_rope"), 1, "qualified Layer2 padded sparse BF16 output max ULP <= 1"),
         "inverse_rope": cmp_bf16(act.get("inverse_rope"), exp.get("inverse_rope"), 1, "attention output projection inverse rotary BF16 max ULP <= 1"),
@@ -490,7 +615,35 @@ def phase_compare(args: argparse.Namespace) -> int:
     if not comps["pre_inverse_rope"].get("within_contract", False):
         for name in ["sparse_q", "sparse_packed_window_kv", "sparse_packed_compressed_kv", "sparse_wi", "sparse_ci", "sparse_sink", "sparse_scale"]:
             sparse_input_comparisons[name] = cmp_sparse_input(name, act.get(name), exp.get(name))
-    ok = all(v.get("within_contract", False) for v in comps.values())
+    upstream_order = [
+        (["block0_entry_h", "block0_entry_pre"], "BLOCK0_ENTRY_DIVERGENCE", "block0_entry"),
+        (["block0_exit_h", "block0_exit_pre"], "BLOCK0_EXECUTION_DIVERGENCE", "block0_exit"),
+        (["engram1_input_h"], "BLOCK0_EXECUTION_DIVERGENCE", "engram1_input"),
+        (["engram1_hash_ids"], "ENGRAM1_HASH_DIVERGENCE", "engram1_hash_ids"),
+        (["engram1_output_h"], "ENGRAM1_EXECUTION_DIVERGENCE", "engram1_output"),
+        (["block1_entry_h", "block1_entry_pre"], "BLOCK1_ENTRY_DIVERGENCE", "block1_entry"),
+        (["block1_exit_h", "block1_exit_pre"], "BLOCK1_EXECUTION_DIVERGENCE", "block1_exit"),
+        (["layer2_entry_h", "layer2_entry_pre"], "LAYER2_ENTRY_DIVERGENCE", "layer2_entry"),
+    ]
+    first_upstream = None
+    classification_upstream = None
+    # If Phase A has not yet been rerun with upstream probes, only the already-captured Layer2 entry
+    # is mechanically decidable; do not classify missing upstream captures as earlier failures.
+    if "block0_entry_h" not in act and "block_input_h" in act:
+        for k in ["layer2_entry_h", "layer2_entry_pre"]:
+            if not upstream_comps[k].get("within_contract", False):
+                first_upstream = k; classification_upstream = "LAYER2_ENTRY_DIVERGENCE"; break
+    else:
+        for keys, cls, boundary in upstream_order:
+            bad = [k for k in keys if not upstream_comps[k].get("within_contract", False)]
+            if bad:
+                first_upstream = bad[0]; classification_upstream = cls; break
+    internal_identity = {
+        "actual_block1_exit_h_eq_layer2_entry_h": bool(act.get("block1_exit_h") is not None and act.get("block_input_h") is not None and np.array_equal(act.get("block1_exit_h"), act.get("block_input_h"))),
+        "actual_block1_exit_pre_eq_layer2_entry_pre": bool(act.get("block1_exit_pre") is not None and act.get("block_input_pre") is not None and np.array_equal(act.get("block1_exit_pre"), act.get("block_input_pre"))),
+        "applicable": bool(act.get("block1_exit_h") is not None and act.get("block_input_h") is not None),
+    }
+    ok = (first_upstream is None) and all(v.get("within_contract", False) for v in comps.values())
     state_ok = {
         "final_merged_layer2_frontier_eq_3": bool(actual_meta.get("final_offsets", [None, None, None])[2] == 3),
         "window_cache_includes_token15": bool(actual_meta.get("final_offsets", [None, None, None])[2] == 3),
@@ -502,13 +655,15 @@ def phase_compare(args: argparse.Namespace) -> int:
         "shared_idx_full_recorded": bool(actual_meta.get("summaries", {}).get("attention_exit_shared", {}).get("idx", {}).get("values") is not None),
     }
     ok = ok and all(state_ok.values())
-    first = None if ok else next((k for k, v in comps.items() if not v.get("within_contract", False)), None) or next((k for k, v in state_ok.items() if not v), "unknown")
-    if not comps["pre_inverse_rope"].get("within_contract", False):
+    first = first_upstream or (None if ok else next((k for k, v in comps.items() if not v.get("within_contract", False)), None) or next((k for k, v in state_ok.items() if not v), "unknown"))
+    if classification_upstream:
+        classification = classification_upstream
+    elif not comps["pre_inverse_rope"].get("within_contract", False):
         classification = "SPARSE_OUTPUT_DIVERGENCE"
     elif not comps["inverse_rope"].get("within_contract", False):
         classification = "INVERSE_ROPE_DIVERGENCE"
     elif comps["pre_inverse_rope"].get("within_contract", False) and comps["inverse_rope"].get("within_contract", False):
-        classification = "INVERSE_ROPE_COMPLETE / NEXT PROJECTION FRONTIER"
+        classification = "UPSTREAM_PREFIX_COMPLETE"
     else:
         classification = "NUMERICAL CONTRACT INCOMPLETE"
     rec = {
@@ -516,7 +671,15 @@ def phase_compare(args: argparse.Namespace) -> int:
         "historical_failed_attempt_preserved": FAILED_V1.exists(), "comparison_phase": "C lightweight process",
         "classification": classification,
         "rope": {"actual": actual_meta.get("summaries", {}).get("inverse_rope_call"), "expected": expected_meta.get("rope")},
+        "expected_provenance": expected_meta.get("provenance") or {
+            "Boundary13d": "tools/run_native_first_incremental_block0_engram1_validation.py official-source-derived Block0 + Engram@1 authority (reconstructed in Phase C because older expected NPZ lacked upstream arrays)",
+            "Boundary13e": "tools/run_native_first_incremental_block1_layer2_entry_validation.py official-source-derived Block1 completion / Layer2 entry authority (reconstructed in Phase C because older expected NPZ lacked upstream arrays)",
+        },
+        "actual_loaded_omlx_source_identity": {"checkpoint": actual_meta.get("checkpoint"), "omlx_path": actual_meta.get("omlx_path"), "real_loaded_omlx": actual_meta.get("real_loaded_omlx")},
+        "upstream_comparisons": upstream_comps,
         "comparisons": comps, "sparse_input_comparisons": sparse_input_comparisons, "post_layer2_state": state_ok,
+        "internal_identity_actual_block1_exit_eq_layer2_entry": internal_identity,
+        "execution_order_classification": classification,
         "layer2_incremental_block": "COMPLETE" if ok else "INCOMPLETE", "ok": bool(ok), "first_unresolved_boundary": first,
     }
     out = Path(args.out); out.parent.mkdir(parents=True, exist_ok=True); out.write_text(json.dumps(rec, indent=2, sort_keys=True) + "\n")

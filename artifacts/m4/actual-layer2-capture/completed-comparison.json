@@ -1,6 +1,11 @@
 {
+  "actual_loaded_omlx_source_identity": {
+    "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+    "omlx_path": "/Users/kioju/omlx-0.7.0.dev2",
+    "real_loaded_omlx": true
+  },
   "attempt_status": "COMPLETE",
-  "classification": "SPARSE_OUTPUT_DIVERGENCE",
+  "classification": "BLOCK0_EXECUTION_DIVERGENCE",
   "comparison_phase": "C lightweight process",
   "comparisons": {
     "attention_return": {
@@ -272,9 +277,19 @@
       "within_contract": false
     }
   },
+  "execution_order_classification": "BLOCK0_EXECUTION_DIVERGENCE",
+  "expected_provenance": {
+    "Boundary13d": "tools/run_native_first_incremental_block0_engram1_validation.py official-source-derived Block0 + Engram@1 authority",
+    "Boundary13e": "tools/run_native_first_incremental_block1_layer2_entry_validation.py official-source-derived Block1 completion / Layer2 entry authority"
+  },
   "failed_attempt_artifact": "/Volumes/SDXC-512/ds41f-mlx/artifacts/m4/actual-layer2-capture/result.json",
-  "first_unresolved_boundary": "pre_inverse_rope",
+  "first_unresolved_boundary": "block0_exit_h",
   "historical_failed_attempt_preserved": true,
+  "internal_identity_actual_block1_exit_eq_layer2_entry": {
+    "actual_block1_exit_h_eq_layer2_entry_h": true,
+    "actual_block1_exit_pre_eq_layer2_entry_pre": true,
+    "applicable": true
+  },
   "layer2_incremental_block": "INCOMPLETE",
   "ok": false,
   "post_layer2_state": {
@@ -509,6 +524,371 @@
         ]
       },
       "within_contract": true
+    }
+  },
+  "upstream_comparisons": {
+    "block0_entry_h": {
+      "actual": {
+        "dtype": "uint16",
+        "nbytes": 40960,
+        "sha256": "adee2ce1d27eec498813c1bf20fe84c9b7e86eb97665d98415a349faa586dabf",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "contract": "Boundary13c token15 embedding/HC Block0 entry BF16 max ULP <= 1",
+      "exact": true,
+      "expected": {
+        "dtype": "uint16",
+        "nbytes": 40960,
+        "sha256": "adee2ce1d27eec498813c1bf20fe84c9b7e86eb97665d98415a349faa586dabf",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "max_bf16_ulp": 0,
+      "max_bf16_ulp_lte": 1,
+      "within_contract": true
+    },
+    "block0_entry_pre": {
+      "actual": {
+        "dtype": "float32",
+        "nbytes": 16,
+        "sha256": "ccaf6f183579497e8bfcd71045c04286fd3c2e60f3641e3eea164b761a4494b7",
+        "shape": [
+          1,
+          1,
+          4
+        ]
+      },
+      "contract": "Block0 entry pre FP32 exact",
+      "exact": true,
+      "expected": {
+        "dtype": "float32",
+        "nbytes": 16,
+        "sha256": "ccaf6f183579497e8bfcd71045c04286fd3c2e60f3641e3eea164b761a4494b7",
+        "shape": [
+          1,
+          1,
+          4
+        ]
+      },
+      "max_abs_diff": 0.0,
+      "max_abs_lte": 0.0,
+      "within_contract": true
+    },
+    "block0_exit_h": {
+      "actual": {
+        "dtype": "uint16",
+        "nbytes": 40960,
+        "sha256": "e11fd85cced22528ed2a3f45b772e6836b67ec36c11cc1fc538e95604084df10",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "contract": "Boundary13d Block0 output BF16 max ULP <= 1",
+      "exact": false,
+      "expected": {
+        "dtype": "uint16",
+        "nbytes": 40960,
+        "sha256": "16d4b63f79e11cff28dd7b7cfbbfff735d08a5e65db878401eec18fa4a80a1ef",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "max_bf16_ulp": 196,
+      "max_bf16_ulp_lte": 1,
+      "within_contract": false
+    },
+    "block0_exit_pre": {
+      "actual": {
+        "dtype": "float32",
+        "nbytes": 16,
+        "sha256": "3c2d32eb7ddf0a8bcb820a4b9042d0e6ea984073aff6ab2faad0126737876d69",
+        "shape": [
+          1,
+          1,
+          4
+        ]
+      },
+      "contract": "Boundary13d Block0 returned pre FP32 max abs <= 1e-4",
+      "exact": false,
+      "expected": {
+        "dtype": "float32",
+        "nbytes": 16,
+        "sha256": "c224d1f429ecc8bc907f605595deadcf6c63c9047431720d9d7b06ca368b7a9f",
+        "shape": [
+          1,
+          1,
+          4
+        ]
+      },
+      "max_abs_diff": 2.86102294921875e-06,
+      "max_abs_lte": 0.0001,
+      "within_contract": true
+    },
+    "block1_entry_h": {
+      "actual": {
+        "dtype": "uint16",
+        "nbytes": 40960,
+        "sha256": "59eb70a1b59e28299ee76b1d157550c495a42526f62e7998817158229a1342ab",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "contract": "Boundary13e Block1 entry h BF16 max ULP <= 1",
+      "exact": false,
+      "expected": {
+        "dtype": "uint16",
+        "nbytes": 40960,
+        "sha256": "62dbe881182cbf21716d9d9bd3bc5d5ea86cc47f78077927372a0f2d0e0d5f21",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "max_bf16_ulp": 48,
+      "max_bf16_ulp_lte": 1,
+      "within_contract": false
+    },
+    "block1_entry_pre": {
+      "actual": {
+        "dtype": "float32",
+        "nbytes": 16,
+        "sha256": "3c2d32eb7ddf0a8bcb820a4b9042d0e6ea984073aff6ab2faad0126737876d69",
+        "shape": [
+          1,
+          1,
+          4
+        ]
+      },
+      "contract": "Boundary13e Block1 entry pre FP32 max abs <= 1e-4",
+      "exact": false,
+      "expected": {
+        "dtype": "float32",
+        "nbytes": 16,
+        "sha256": "c224d1f429ecc8bc907f605595deadcf6c63c9047431720d9d7b06ca368b7a9f",
+        "shape": [
+          1,
+          1,
+          4
+        ]
+      },
+      "max_abs_diff": 2.86102294921875e-06,
+      "max_abs_lte": 0.0001,
+      "within_contract": true
+    },
+    "block1_exit_h": {
+      "actual": {
+        "dtype": "uint16",
+        "nbytes": 40960,
+        "sha256": "2a6917f4d59d927da3b3bf1e70d706eeafc5c649702d948c8a3b08abc18592f0",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "contract": "Boundary13e Block1 output BF16 max ULP <= 1",
+      "exact": false,
+      "expected": {
+        "dtype": "uint16",
+        "nbytes": 40960,
+        "sha256": "a79482e34bb10dc0c84dae3e895a258813695a7a417b30c6a5da7e6fc24347e7",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "max_bf16_ulp": 30260,
+      "max_bf16_ulp_lte": 1,
+      "within_contract": false
+    },
+    "block1_exit_pre": {
+      "actual": {
+        "dtype": "float32",
+        "nbytes": 16,
+        "sha256": "1c73330c6add057b085e50781ae648e9d6ddc27ea5f1ebacc9f7c7c501af7af1",
+        "shape": [
+          1,
+          1,
+          4
+        ]
+      },
+      "contract": "Boundary13e Block1 returned pre FP32 max abs <= 1e-4",
+      "exact": false,
+      "expected": {
+        "dtype": "float32",
+        "nbytes": 16,
+        "sha256": "ff497e98143f3ca187100c31618c004cc734ffbb5c2ce697100f2618cd6bd7fa",
+        "shape": [
+          1,
+          1,
+          4
+        ]
+      },
+      "max_abs_diff": 0.0007171034812927246,
+      "max_abs_lte": 0.0001,
+      "within_contract": false
+    },
+    "engram1_hash_ids": {
+      "actual": {
+        "dtype": "int64",
+        "nbytes": 192,
+        "sha256": "4eb8fc730c0e52176b64a388dcfcb7bb29c5ac6ee619c93efd218eef5a6df373",
+        "shape": [
+          1,
+          1,
+          24
+        ]
+      },
+      "contract": "exact",
+      "exact": true,
+      "expected": {
+        "dtype": "int64",
+        "nbytes": 192,
+        "sha256": "4eb8fc730c0e52176b64a388dcfcb7bb29c5ac6ee619c93efd218eef5a6df373",
+        "shape": [
+          1,
+          1,
+          24
+        ]
+      },
+      "within_contract": true
+    },
+    "engram1_input_h": {
+      "actual": {
+        "dtype": "uint16",
+        "nbytes": 40960,
+        "sha256": "e11fd85cced22528ed2a3f45b772e6836b67ec36c11cc1fc538e95604084df10",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "contract": "Engram@1 input equals Block0 output BF16 max ULP <= 1",
+      "exact": false,
+      "expected": {
+        "dtype": "uint16",
+        "nbytes": 40960,
+        "sha256": "16d4b63f79e11cff28dd7b7cfbbfff735d08a5e65db878401eec18fa4a80a1ef",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "max_bf16_ulp": 196,
+      "max_bf16_ulp_lte": 1,
+      "within_contract": false
+    },
+    "engram1_output_h": {
+      "actual": {
+        "dtype": "uint16",
+        "nbytes": 40960,
+        "sha256": "59eb70a1b59e28299ee76b1d157550c495a42526f62e7998817158229a1342ab",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "contract": "Boundary13d Engram@1 output BF16 max ULP <= 1",
+      "exact": false,
+      "expected": {
+        "dtype": "uint16",
+        "nbytes": 40960,
+        "sha256": "62dbe881182cbf21716d9d9bd3bc5d5ea86cc47f78077927372a0f2d0e0d5f21",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "max_bf16_ulp": 48,
+      "max_bf16_ulp_lte": 1,
+      "within_contract": false
+    },
+    "layer2_entry_h": {
+      "actual": {
+        "dtype": "uint16",
+        "nbytes": 40960,
+        "sha256": "2a6917f4d59d927da3b3bf1e70d706eeafc5c649702d948c8a3b08abc18592f0",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "contract": "Boundary13e Layer2 entry h BF16 max ULP <= 1",
+      "exact": false,
+      "expected": {
+        "dtype": "uint16",
+        "nbytes": 40960,
+        "sha256": "a79482e34bb10dc0c84dae3e895a258813695a7a417b30c6a5da7e6fc24347e7",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "max_bf16_ulp": 30260,
+      "max_bf16_ulp_lte": 1,
+      "within_contract": false
+    },
+    "layer2_entry_pre": {
+      "actual": {
+        "dtype": "float32",
+        "nbytes": 16,
+        "sha256": "1c73330c6add057b085e50781ae648e9d6ddc27ea5f1ebacc9f7c7c501af7af1",
+        "shape": [
+          1,
+          1,
+          4
+        ]
+      },
+      "contract": "Boundary13e Layer2 entry pre FP32 max abs <= 1e-4",
+      "exact": false,
+      "expected": {
+        "dtype": "float32",
+        "nbytes": 16,
+        "sha256": "ff497e98143f3ca187100c31618c004cc734ffbb5c2ce697100f2618cd6bd7fa",
+        "shape": [
+          1,
+          1,
+          4
+        ]
+      },
+      "max_abs_diff": 0.0007171034812927246,
+      "max_abs_lte": 0.0001,
+      "within_contract": false
     }
   }
 }

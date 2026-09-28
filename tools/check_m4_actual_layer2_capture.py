@@ -19,7 +19,10 @@ def main():
         assert r["schema"] == "ds41f.m4.actual-layer2-capture.v2"
         assert r["attempt_status"] == "COMPLETE"
         assert r["historical_failed_attempt_preserved"] is True
-        assert r["classification"] in {"SPARSE_OUTPUT_DIVERGENCE", "INVERSE_ROPE_DIVERGENCE", "INVERSE_ROPE_COMPLETE / NEXT PROJECTION FRONTIER"}
+        assert r["classification"] in {"LAYER2_ENTRY_DIVERGENCE", "BLOCK0_ENTRY_DIVERGENCE", "BLOCK0_EXECUTION_DIVERGENCE", "ENGRAM1_HASH_DIVERGENCE", "ENGRAM1_EXECUTION_DIVERGENCE", "BLOCK1_ENTRY_DIVERGENCE", "BLOCK1_EXECUTION_DIVERGENCE", "UPSTREAM_PREFIX_COMPLETE", "SPARSE_OUTPUT_DIVERGENCE", "INVERSE_ROPE_DIVERGENCE", "INVERSE_ROPE_COMPLETE / NEXT PROJECTION FRONTIER"}
+        assert r.get("execution_order_classification") == r["classification"]
+        assert "upstream_comparisons" in r
+        assert "internal_identity_actual_block1_exit_eq_layer2_entry" in r
         for k in ["pre_inverse_rope", "inverse_rope", "attention_return", "post_attention_hc", "moe_input", "route_ids", "route_weights", "moe_output", "block_output_h", "block_returned_pre"]:
             assert k in r["comparisons"], k
             assert r["comparisons"][k]["actual"] is not None, k
@@ -31,6 +34,8 @@ def main():
         else:
             assert r["layer2_incremental_block"] == "INCOMPLETE"
             assert r["first_unresolved_boundary"]
+            if r["classification"] == "LAYER2_ENTRY_DIVERGENCE":
+                assert r["first_unresolved_boundary"] in {"layer2_entry_h", "layer2_entry_pre"}
             print(f"Completed actual Layer2 capture recorded with mismatch: {COMPLETE}")
         return
     assert DIAG.exists(), "neither completed capture nor corrected-attempt diagnostic exists"
