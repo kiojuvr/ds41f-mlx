@@ -1,6 +1,6 @@
 # Milestone 4 base decode implementation status
 
-Status: **INCOMPLETE — Layers0-39, final HC collapse, final RMSNorm, ParallelHead, bounded prefix `[0,3]` compositional correctness, committed continuation-state correctness, and no-replay corrected-state admission are complete. The current open gate is incremental `[15]` base-target correctness: R/O/D triangulation now has matching argmax but remains diagnostic only, and the first independent incremental semantic boundary has not yet been localized. Ordinary oMLX (O) itself is not bit-exact to the historical reference (R), so historical bit identity is not used as the correctness contract.**
+Status: **INCOMPLETE — M2 correctness requalification is complete: Layers0-39, final HC collapse, final RMSNorm, ParallelHead, bounded prefix `[0,3]` compositional correctness, committed continuation-state correctness, and no-replay corrected-state admission are complete. The current M4 open gate is full oMLX admission semantic round-trip: all 40 window KV caches, pending slots, offsets, and Engram slot6 qualify, but source@14 compressed KV is not idempotent across adapter pack/unpack. Token15 execution is therefore not yet an authoritative correctness gate. Ordinary oMLX (O) itself is not bit-exact to the historical reference (R), so historical bit identity is not used as the correctness contract.**
 
 ## Implemented
 
@@ -269,8 +269,14 @@ The parent DwarfStar prefill artifact was false only because stale exact connect
 
 After the split, the vertical-slice authoritative gates pass, continuation-state validation passes, and no-replay corrected-state admission passes: all 40 cache frontiers are admitted at prefix length 2, `[0,3]` is not replayed, and 15 is the first backbone input. R/O/D incremental triangulation was rerun as a diagnostic; R/O/D all argmax 266, but SHA equality is still not a correctness rule and no full-logits tolerance was fitted.
 
+## Full admission semantic round-trip update (2026-09-28)
+
+Artifact: `artifacts/m4/admission-semantic-roundtrip/result.json`.
+
+The admitted oMLX cache was unpacked back to semantic tensors before token15. All 40 window KV slot1 tensors round-trip exactly. Source@2/@8/@20 compressed KV and all source index K tensors round-trip exactly. Pending slots 4/5 are correctly empty for sources 2/8/14/20, all offsets are 2, and Engram slot6 history is exact against oMLX NgramHash regeneration from committed token IDs. The first failed admission semantic boundary is source@14 compressed KV: committed semantic BF16 -> adapter pack -> independent unpack differs (`max_abs=0.00390625`, `mean_abs=2.2888e-05`). Under the current post-quantized BF16 cache contract this is classified as an ADMISSION REPRESENTATION DEFECT, so token15 layer execution was not promoted.
+
 ## Completion decision
 
-Milestone 4 base target correctness is **INCOMPLETE**.  The RoPE, RMSNorm-eps, HC-post helper bugs, compressed-KV fixture RMS epsilon, Indexer FP4 q/k quantization contract, and compressed group-position RoPE stride have been corrected in the qualification helpers.  Layers0-39, final HC collapse, final RMSNorm, ParallelHead, bounded prefix `[0,3]`, committed continuation state, and no-replay corrected-state admission are complete.  The active frontier is incremental `[15]` first independent semantic boundary localization.  Do not use SHA equality, argmax equality, historical sparse bit identity, or the old global `>1e-4` heuristic as correctness gates where reviewed BF16/FP8/FP4/FP32 contracts permit bounded numerical drift.
+Milestone 4 base target correctness is **INCOMPLETE**.  The RoPE, RMSNorm-eps, HC-post helper bugs, compressed-KV fixture RMS epsilon, Indexer FP4 q/k quantization contract, and compressed group-position RoPE stride have been corrected in the qualification helpers.  M2 correctness requalification is complete: Layers0-39, final HC collapse, final RMSNorm, ParallelHead, bounded prefix `[0,3]`, committed continuation state, and no-replay corrected-state admission are complete.  The active M4 frontier is admission representation for source@14 compressed KV.  Do not use SHA equality, argmax equality, historical sparse bit identity, or the old global `>1e-4` heuristic as correctness gates where reviewed BF16/FP8/FP4/FP32 contracts permit bounded numerical drift.
 
 Base target practical performance is **PARTIALLY QUALIFIED BUT NOT COMPLETE**.  P5 proves that no-replay BatchGenerator admission can reach ordinary oMLX MTP-OFF performance, but production decode must not be promoted to this substrate until corrected state satisfies the reviewed correctness contract.
