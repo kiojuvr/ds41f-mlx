@@ -1,0 +1,303 @@
+{
+  "candidate_exact_alternative": {
+    "cost_class": "major / diagnostic-only",
+    "length1_topology_preserved": false,
+    "name": "official-source-derived/reference FP8 wq_b projection for the single-token q path",
+    "preserves_official_checkpoint_semantics": true,
+    "result": "would restore q_b_pre_rope to official bits but is diagnostic/reference, not production topology",
+    "tested": true
+  },
+  "causal_element_3758": {
+    "actual_bits": "0x3f6d",
+    "actual_value": 0.92578125,
+    "official_bits": "0x3f6c",
+    "official_value": 0.921875
+  },
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "determinism": {
+    "deterministic": true,
+    "digests": [
+      "364c6a2e08bdd079d2f6690b3eeec5eb72b07e389fbd57d6ba6bb8567d7f192f",
+      "364c6a2e08bdd079d2f6690b3eeec5eb72b07e389fbd57d6ba6bb8567d7f192f",
+      "364c6a2e08bdd079d2f6690b3eeec5eb72b07e389fbd57d6ba6bb8567d7f192f",
+      "364c6a2e08bdd079d2f6690b3eeec5eb72b07e389fbd57d6ba6bb8567d7f192f",
+      "364c6a2e08bdd079d2f6690b3eeec5eb72b07e389fbd57d6ba6bb8567d7f192f"
+    ],
+    "repeat_count": 5,
+    "values_3758": [
+      "0x3f6d",
+      "0x3f6d",
+      "0x3f6d",
+      "0x3f6d",
+      "0x3f6d"
+    ]
+  },
+  "final_classification": "BLOCK0_SEED_WQ_B_QMM_DIFFERENCE",
+  "first_nonexact_boundary": "q_b_pre_rope",
+  "first_nonexact_boundary_details": [
+    {
+      "abs": 0.000244140625,
+      "actual_bits": "0x3d45",
+      "actual_value": 0.048095703125,
+      "expected_bits": "0x3d46",
+      "expected_value": 0.04833984375,
+      "index": [
+        0,
+        0,
+        9,
+        228
+      ],
+      "ulp": 1
+    }
+  ],
+  "fp8_activation_custom_vs_compiled_reference": {
+    "shared_input": {
+      "actual_digest": "d5ada2395642613f081a09e66ca91e1e5ee7fe11d5be2f9153cbb04d0f58e767",
+      "differing_count": 0,
+      "expected_digest": "d5ada2395642613f081a09e66ca91e1e5ee7fe11d5be2f9153cbb04d0f58e767",
+      "max_abs": 0.0,
+      "max_bf16_ulp": 0,
+      "mean_abs": 0.0
+    },
+    "wo_b_input": {
+      "actual_digest": "60c0260284fc6f865ef6db1fb2c3bf596a91741b131d6f8020c741b8ccc60c82",
+      "differing_count": 0,
+      "expected_digest": "60c0260284fc6f865ef6db1fb2c3bf596a91741b131d6f8020c741b8ccc60c82",
+      "max_abs": 0.0,
+      "max_bf16_ulp": 0,
+      "mean_abs": 0.0
+    },
+    "wq_b_input_qr": {
+      "actual_digest": "77a11ca1010c489e947c38f95d5205500d04da329bf339c5ef52e3d006f8543f",
+      "differing_count": 0,
+      "expected_digest": "77a11ca1010c489e947c38f95d5205500d04da329bf339c5ef52e3d006f8543f",
+      "max_abs": 0.0,
+      "max_bf16_ulp": 0,
+      "mean_abs": 0.0
+    }
+  },
+  "isolated_replay": {
+    "attempted": true,
+    "captured_actual_digest": "364c6a2e08bdd079d2f6690b3eeec5eb72b07e389fbd57d6ba6bb8567d7f192f",
+    "endpoint_digest": "364c6a2e08bdd079d2f6690b3eeec5eb72b07e389fbd57d6ba6bb8567d7f192f",
+    "endpoint_reproduced_actual_capture_exact": true,
+    "value_3758": "0x3f6d"
+  },
+  "next_frontier": "bounded candidate canonical MLX/QMM alternative for wq_b that preserves official FP8 weights/scales and decode topology, then verify final seed removal",
+  "ordered_internal_boundary_comparisons": [
+    {
+      "comparison": {
+        "actual_digest": "9f3d5433e680798d5f32fe10b8384476664078668b234c0780c7bce20ef775be",
+        "differing_count": 0,
+        "expected_digest": "9f3d5433e680798d5f32fe10b8384476664078668b234c0780c7bce20ef775be",
+        "max_abs": 0.0,
+        "max_bf16_ulp": 0,
+        "mean_abs": 0.0
+      },
+      "stage": "attention_input",
+      "status": "EXACT"
+    },
+    {
+      "comparison": {
+        "actual_digest": "d5ada2395642613f081a09e66ca91e1e5ee7fe11d5be2f9153cbb04d0f58e767",
+        "differing_count": 0,
+        "expected_digest": "d5ada2395642613f081a09e66ca91e1e5ee7fe11d5be2f9153cbb04d0f58e767",
+        "max_abs": 0.0,
+        "max_bf16_ulp": 0,
+        "mean_abs": 0.0
+      },
+      "stage": "shared_act_quant_deq",
+      "status": "EXACT"
+    },
+    {
+      "comparison": {
+        "actual_digest": "4442bd1c24ce0159bbf7c0a8c3622130d3531aafefbf4eda790a08f9c754e856",
+        "differing_count": 0,
+        "expected_digest": "4442bd1c24ce0159bbf7c0a8c3622130d3531aafefbf4eda790a08f9c754e856",
+        "max_abs": 0.0,
+        "max_bf16_ulp": 0,
+        "mean_abs": 0.0
+      },
+      "stage": "wq_a_output",
+      "status": "EXACT"
+    },
+    {
+      "comparison": {
+        "actual_digest": "cd4e774bc8de5c41848fc308ae9b8b2b6e867176c1c4346a6bc09c121dda5c23",
+        "differing_count": 0,
+        "expected_digest": "cd4e774bc8de5c41848fc308ae9b8b2b6e867176c1c4346a6bc09c121dda5c23",
+        "max_abs": 0.0,
+        "max_bf16_ulp": 0,
+        "mean_abs": 0.0
+      },
+      "stage": "q_norm_output",
+      "status": "EXACT"
+    },
+    {
+      "comparison": {
+        "actual_digest": "77a11ca1010c489e947c38f95d5205500d04da329bf339c5ef52e3d006f8543f",
+        "differing_count": 0,
+        "expected_digest": "77a11ca1010c489e947c38f95d5205500d04da329bf339c5ef52e3d006f8543f",
+        "max_abs": 0.0,
+        "max_bf16_ulp": 0,
+        "mean_abs": 0.0
+      },
+      "stage": "wq_b_act_quant_deq",
+      "status": "EXACT"
+    },
+    {
+      "comparison": {
+        "actual_digest": "bef0b53add3781140aa16b12419f1fe6eb8d6b07b3c3cd511d2cf5693827bc0f",
+        "differing_count": 1,
+        "expected_digest": "34e3e66d9c742b45a8508b568aca772fbd7f4111523e78faae1315a9e22a5538",
+        "max_abs": 0.000244140625,
+        "max_bf16_ulp": 1,
+        "mean_abs": 7.450580596923828e-09
+      },
+      "differing_elements": [
+        {
+          "abs": 0.000244140625,
+          "actual_bits": "0x3d45",
+          "actual_value": 0.048095703125,
+          "expected_bits": "0x3d46",
+          "expected_value": 0.04833984375,
+          "index": [
+            0,
+            0,
+            9,
+            228
+          ],
+          "ulp": 1
+        }
+      ],
+      "stage": "q_b_pre_rope",
+      "status": "FIRST_NONEXACT"
+    },
+    {
+      "comparison": {
+        "actual_digest": "a76ca6a83ebd02edad2aa40a4c215e604b23c31d4e110f1868e4520b9dbab20e",
+        "differing_count": 1,
+        "expected_digest": "7ba5035746cd43e25016dd0069c2bb5b4bc64ccb229e35e89741e8d88cd6cab9",
+        "max_abs": 0.000244140625,
+        "max_bf16_ulp": 1,
+        "mean_abs": 7.450580596923828e-09
+      },
+      "stage": "q_rotary",
+      "status": "DOWNSTREAM_OF_FIRST_NONEXACT"
+    },
+    {
+      "comparison": {
+        "actual_digest": "a53253b1b4b482ce5e51496c1c653e812953e6db557c37f40ce817982aa36a5c",
+        "differing_count": 0,
+        "expected_digest": "a53253b1b4b482ce5e51496c1c653e812953e6db557c37f40ce817982aa36a5c",
+        "max_abs": 0.0,
+        "max_bf16_ulp": 0,
+        "mean_abs": 0.0
+      },
+      "stage": "wkv_output",
+      "status": "EXACT"
+    },
+    {
+      "comparison": {
+        "actual_digest": "89665e7bce4ce52079e6f8002b7872637e7df73e38c22ffe5afe44ddbb01091a",
+        "differing_count": 0,
+        "expected_digest": "89665e7bce4ce52079e6f8002b7872637e7df73e38c22ffe5afe44ddbb01091a",
+        "max_abs": 0.0,
+        "max_bf16_ulp": 0,
+        "mean_abs": 0.0
+      },
+      "stage": "kv_norm",
+      "status": "EXACT"
+    },
+    {
+      "comparison": {
+        "actual_digest": "eb0d334e615e729d6e9e5765e1ca352f5072067048dcfc32f6384484b4f3afd1",
+        "differing_count": 0,
+        "expected_digest": "eb0d334e615e729d6e9e5765e1ca352f5072067048dcfc32f6384484b4f3afd1",
+        "max_abs": 0.0,
+        "max_bf16_ulp": 0,
+        "mean_abs": 0.0
+      },
+      "stage": "kv_rotary",
+      "status": "EXACT"
+    },
+    {
+      "comparison": {
+        "actual_digest": "15e85d2b045ed14089c6e465b264435ae44699ccbe54fba7305d413b93d19315",
+        "differing_count": 0,
+        "expected_digest": "15e85d2b045ed14089c6e465b264435ae44699ccbe54fba7305d413b93d19315",
+        "max_abs": 0.0,
+        "max_bf16_ulp": 0,
+        "mean_abs": 0.0
+      },
+      "stage": "sparse_output",
+      "status": "EXACT"
+    },
+    {
+      "comparison": {
+        "actual_digest": "8637a6998f860d389aec313a5178e4f69481e20e6878a9fe88b8a03043c43892",
+        "differing_count": 0,
+        "expected_digest": "8637a6998f860d389aec313a5178e4f69481e20e6878a9fe88b8a03043c43892",
+        "max_abs": 0.0,
+        "max_bf16_ulp": 0,
+        "mean_abs": 0.0
+      },
+      "stage": "inverse_rope",
+      "status": "EXACT"
+    },
+    {
+      "comparison": {
+        "actual_digest": "8637a6998f860d389aec313a5178e4f69481e20e6878a9fe88b8a03043c43892",
+        "differing_count": 0,
+        "expected_digest": "8637a6998f860d389aec313a5178e4f69481e20e6878a9fe88b8a03043c43892",
+        "max_abs": 0.0,
+        "max_bf16_ulp": 0,
+        "mean_abs": 0.0
+      },
+      "stage": "wo_a_grouped_input",
+      "status": "EXACT"
+    },
+    {
+      "comparison": {
+        "actual_digest": "2abb715cf9a2b85f194a951a2d58e20ef5bb950a77f647a1b4858edc797be048",
+        "differing_count": 1,
+        "expected_digest": "6a87c9301d38d8afd93b0bbf61cbbcc2ba0303e41ec17bbca8c6e2d95aa2de8e",
+        "max_abs": 9.5367431640625e-07,
+        "max_bf16_ulp": 1,
+        "mean_abs": 1.1641532182693481e-10
+      },
+      "stage": "wo_a_output",
+      "status": "DOWNSTREAM_OF_FIRST_NONEXACT"
+    },
+    {
+      "comparison": {
+        "actual_digest": "60c0260284fc6f865ef6db1fb2c3bf596a91741b131d6f8020c741b8ccc60c82",
+        "differing_count": 0,
+        "expected_digest": "60c0260284fc6f865ef6db1fb2c3bf596a91741b131d6f8020c741b8ccc60c82",
+        "max_abs": 0.0,
+        "max_bf16_ulp": 0,
+        "mean_abs": 0.0
+      },
+      "stage": "wo_b_act_quant_deq",
+      "status": "EXACT"
+    },
+    {
+      "comparison": {
+        "actual_digest": "364c6a2e08bdd079d2f6690b3eeec5eb72b07e389fbd57d6ba6bb8567d7f192f",
+        "differing_count": 1,
+        "expected_digest": "10c042342f715b36399920d65b811bb24e7f8f2d03cba672c70dfbd083f0c2d0",
+        "max_abs": 0.00390625,
+        "max_bf16_ulp": 1,
+        "mean_abs": 7.629394644936838e-07
+      },
+      "stage": "attention_output",
+      "status": "DOWNSTREAM_OF_FIRST_NONEXACT"
+    }
+  ],
+  "production_source_identity": {
+    "git": "b390b31e0c6831225fed0f24d278eb1db7fcb68b",
+    "omlx_path": "/Users/kioju/omlx-0.7.0.dev2"
+  },
+  "root_cause_classification": "wq_b mx.quantized_matmul output differs by 1 BF16 ULP even though wq_b activation-quantized input is exact; custom FP8 activation equals compiled/reference on this input",
+  "schema": "ds41f.m4.block0_attention_production_internals.v1"
+}
