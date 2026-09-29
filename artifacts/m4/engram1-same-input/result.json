@@ -1,0 +1,1617 @@
+{
+  "actual_loaded_omlx_source_identity": {
+    "dirty": true,
+    "git_head": "b390b31e0c6831225fed0f24d278eb1db7fcb68b",
+    "language_py_sha256": "2c64bef36c9fc4a6007cd34e7b120142ced072a8d491cf1f83f2c5b1a956763f",
+    "path": "/Users/kioju/omlx-0.7.0.dev2"
+  },
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "ENGRAM1_COMPOSITIONAL_UPSTREAM_NUMERICAL_DRIFT",
+  "connected_trajectory_diagnostic": {
+    "AA_vs_EE": {
+      "a": {
+        "dtype": "uint16",
+        "sha256": "59eb70a1b59e28299ee76b1d157550c495a42526f62e7998817158229a1342ab",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "b": {
+        "dtype": "uint16",
+        "sha256": "62dbe881182cbf21716d9d9bd3bc5d5ea86cc47f78077927372a0f2d0e0d5f21",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "contract": "BF16 max ULP <= 1",
+      "exact": false,
+      "max_abs_diff": 0.0009765625,
+      "max_bf16_ulp": 48,
+      "mean_abs_diff": 3.8130979191919323e-06,
+      "num_differing": 435,
+      "num_elements": 20480,
+      "num_gt_1_ulp": 97,
+      "ulp_histogram": {
+        "0": 20045,
+        "1": 338,
+        "10": 1,
+        "12": 1,
+        "13": 1,
+        "15": 1,
+        "16": 2,
+        "2": 48,
+        "28": 1,
+        "3": 11,
+        "31": 1,
+        "4": 13,
+        "44": 1,
+        "48": 1,
+        "5": 2,
+        "6": 1,
+        "7": 3,
+        "8": 8,
+        "9": 1
+      },
+      "ulp_histogram_bins": {
+        "0": 20045,
+        "1": 338,
+        "2": 48,
+        ">2": 49
+      },
+      "within_contract": false
+    },
+    "actual_capture_vs_expected_capture": {
+      "a": {
+        "dtype": "uint16",
+        "sha256": "59eb70a1b59e28299ee76b1d157550c495a42526f62e7998817158229a1342ab",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "b": {
+        "dtype": "uint16",
+        "sha256": "62dbe881182cbf21716d9d9bd3bc5d5ea86cc47f78077927372a0f2d0e0d5f21",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "contract": "BF16 max ULP <= 1",
+      "exact": false,
+      "max_abs_diff": 0.0009765625,
+      "max_bf16_ulp": 48,
+      "mean_abs_diff": 3.8130979191919323e-06,
+      "num_differing": 435,
+      "num_elements": 20480,
+      "num_gt_1_ulp": 97,
+      "ulp_histogram": {
+        "0": 20045,
+        "1": 338,
+        "10": 1,
+        "12": 1,
+        "13": 1,
+        "15": 1,
+        "16": 2,
+        "2": 48,
+        "28": 1,
+        "3": 11,
+        "31": 1,
+        "4": 13,
+        "44": 1,
+        "48": 1,
+        "5": 2,
+        "6": 1,
+        "7": 3,
+        "8": 8,
+        "9": 1
+      },
+      "ulp_histogram_bins": {
+        "0": 20045,
+        "1": 338,
+        "2": 48,
+        ">2": 49
+      },
+      "within_contract": false
+    },
+    "incoming_block0_output_max_bf16_ulp": 196,
+    "max_distance_effect": "attenuates",
+    "note": "incoming/outgoing max-distance effect is descriptive only and not a correctness gate",
+    "outgoing_engram1_output_max_bf16_ulp": 48
+  },
+  "downstream_risk_context": {
+    "block0_connected_output_max_ulp": 196,
+    "block1_connected_output_max_ulp": 30260,
+    "block1_returned_pre_max_abs": 0.0007171035,
+    "engram1_connected_output_max_ulp": 48,
+    "note": "large growth currently appears after entering Block1; inspect Block1 with same-input methodology next if Engram@1 qualifies"
+  },
+  "endpoints": {
+    "AA": {
+      "dtype": "uint16",
+      "sha256": "59eb70a1b59e28299ee76b1d157550c495a42526f62e7998817158229a1342ab",
+      "shape": [
+        1,
+        1,
+        4,
+        5120
+      ]
+    },
+    "AA_vs_actual_production": {
+      "comparison": {
+        "a": {
+          "dtype": "uint16",
+          "sha256": "59eb70a1b59e28299ee76b1d157550c495a42526f62e7998817158229a1342ab",
+          "shape": [
+            1,
+            1,
+            4,
+            5120
+          ]
+        },
+        "b": {
+          "dtype": "uint16",
+          "sha256": "59eb70a1b59e28299ee76b1d157550c495a42526f62e7998817158229a1342ab",
+          "shape": [
+            1,
+            1,
+            4,
+            5120
+          ]
+        },
+        "contract": "BF16 max ULP <= 1",
+        "exact": true,
+        "max_abs_diff": 0.0,
+        "max_bf16_ulp": 0,
+        "mean_abs_diff": 0.0,
+        "num_differing": 0,
+        "num_elements": 20480,
+        "num_gt_1_ulp": 0,
+        "ulp_histogram": {
+          "0": 20480
+        },
+        "ulp_histogram_bins": {
+          "0": 20480,
+          "1": 0,
+          "2": 0,
+          ">2": 0
+        },
+        "within_contract": true
+      },
+      "name": "AA_vs_actual_oMLX_Engram1_output",
+      "output": {
+        "dtype": "uint16",
+        "sha256": "59eb70a1b59e28299ee76b1d157550c495a42526f62e7998817158229a1342ab",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "target": {
+        "dtype": "uint16",
+        "sha256": "59eb70a1b59e28299ee76b1d157550c495a42526f62e7998817158229a1342ab",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      }
+    },
+    "EE": {
+      "dtype": "uint16",
+      "sha256": "62dbe881182cbf21716d9d9bd3bc5d5ea86cc47f78077927372a0f2d0e0d5f21",
+      "shape": [
+        1,
+        1,
+        4,
+        5120
+      ]
+    },
+    "EE_vs_Boundary13d": {
+      "comparison": {
+        "a": {
+          "dtype": "uint16",
+          "sha256": "62dbe881182cbf21716d9d9bd3bc5d5ea86cc47f78077927372a0f2d0e0d5f21",
+          "shape": [
+            1,
+            1,
+            4,
+            5120
+          ]
+        },
+        "b": {
+          "dtype": "uint16",
+          "sha256": "62dbe881182cbf21716d9d9bd3bc5d5ea86cc47f78077927372a0f2d0e0d5f21",
+          "shape": [
+            1,
+            1,
+            4,
+            5120
+          ]
+        },
+        "contract": "BF16 max ULP <= 1",
+        "exact": true,
+        "max_abs_diff": 0.0,
+        "max_bf16_ulp": 0,
+        "mean_abs_diff": 0.0,
+        "num_differing": 0,
+        "num_elements": 20480,
+        "num_gt_1_ulp": 0,
+        "ulp_histogram": {
+          "0": 20480
+        },
+        "ulp_histogram_bins": {
+          "0": 20480,
+          "1": 0,
+          "2": 0,
+          ">2": 0
+        },
+        "within_contract": true
+      },
+      "name": "EE_vs_Boundary13d_Engram1_output",
+      "output": {
+        "dtype": "uint16",
+        "sha256": "62dbe881182cbf21716d9d9bd3bc5d5ea86cc47f78077927372a0f2d0e0d5f21",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "target": {
+        "dtype": "uint16",
+        "sha256": "62dbe881182cbf21716d9d9bd3bc5d5ea86cc47f78077927372a0f2d0e0d5f21",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      }
+    }
+  },
+  "engram1_is_operation_defect": false,
+  "engram1_same_input_complete": true,
+  "engram1_same_input_correctness": "COMPLETE",
+  "inputs": {
+    "actual_engram_input_h": {
+      "dtype": "uint16",
+      "sha256": "e11fd85cced22528ed2a3f45b772e6836b67ec36c11cc1fc538e95604084df10",
+      "shape": [
+        1,
+        1,
+        4,
+        5120
+      ]
+    },
+    "actual_hash_ids": {
+      "dtype": "int64",
+      "sha256": "4eb8fc730c0e52176b64a388dcfcb7bb29c5ac6ee619c93efd218eef5a6df373",
+      "shape": [
+        1,
+        1,
+        24
+      ],
+      "values": [
+        [
+          [
+            10394440,
+            25597646,
+            41525500,
+            56949077,
+            72088738,
+            87803199,
+            103660714,
+            117890322,
+            133679554,
+            149048834,
+            164909235,
+            179450177,
+            194623690,
+            210212541,
+            225598121,
+            241122337,
+            264857356,
+            275121728,
+            291772318,
+            316098564,
+            326982803,
+            351309675,
+            366718203,
+            378263177
+          ]
+        ]
+      ]
+    },
+    "expected_engram_input_h": {
+      "dtype": "uint16",
+      "sha256": "16d4b63f79e11cff28dd7b7cfbbfff735d08a5e65db878401eec18fa4a80a1ef",
+      "shape": [
+        1,
+        1,
+        4,
+        5120
+      ]
+    },
+    "expected_hash_ids": {
+      "dtype": "int64",
+      "sha256": "4eb8fc730c0e52176b64a388dcfcb7bb29c5ac6ee619c93efd218eef5a6df373",
+      "shape": [
+        1,
+        1,
+        24
+      ],
+      "values": [
+        [
+          [
+            10394440,
+            25597646,
+            41525500,
+            56949077,
+            72088738,
+            87803199,
+            103660714,
+            117890322,
+            133679554,
+            149048834,
+            164909235,
+            179450177,
+            194623690,
+            210212541,
+            225598121,
+            241122337,
+            264857356,
+            275121728,
+            291772318,
+            316098564,
+            326982803,
+            351309675,
+            366718203,
+            378263177
+          ]
+        ]
+      ]
+    },
+    "hash_id_comparison": {
+      "actual": {
+        "dtype": "int64",
+        "sha256": "4eb8fc730c0e52176b64a388dcfcb7bb29c5ac6ee619c93efd218eef5a6df373",
+        "shape": [
+          1,
+          1,
+          24
+        ],
+        "values": [
+          [
+            [
+              10394440,
+              25597646,
+              41525500,
+              56949077,
+              72088738,
+              87803199,
+              103660714,
+              117890322,
+              133679554,
+              149048834,
+              164909235,
+              179450177,
+              194623690,
+              210212541,
+              225598121,
+              241122337,
+              264857356,
+              275121728,
+              291772318,
+              316098564,
+              326982803,
+              351309675,
+              366718203,
+              378263177
+            ]
+          ]
+        ]
+      },
+      "contract": "Engram hash IDs exact",
+      "exact": true,
+      "expected": {
+        "dtype": "int64",
+        "sha256": "4eb8fc730c0e52176b64a388dcfcb7bb29c5ac6ee619c93efd218eef5a6df373",
+        "shape": [
+          1,
+          1,
+          24
+        ],
+        "values": [
+          [
+            [
+              10394440,
+              25597646,
+              41525500,
+              56949077,
+              72088738,
+              87803199,
+              103660714,
+              117890322,
+              133679554,
+              149048834,
+              164909235,
+              179450177,
+              194623690,
+              210212541,
+              225598121,
+              241122337,
+              264857356,
+              275121728,
+              291772318,
+              316098564,
+              326982803,
+              351309675,
+              366718203,
+              378263177
+            ]
+          ]
+        ]
+      },
+      "within_contract": true
+    },
+    "incoming_connected_drift_actual_vs_expected": {
+      "a": {
+        "dtype": "uint16",
+        "sha256": "e11fd85cced22528ed2a3f45b772e6836b67ec36c11cc1fc538e95604084df10",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "b": {
+        "dtype": "uint16",
+        "sha256": "16d4b63f79e11cff28dd7b7cfbbfff735d08a5e65db878401eec18fa4a80a1ef",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "contract": "BF16 max ULP <= 1",
+      "exact": false,
+      "max_abs_diff": 0.0009765625,
+      "max_bf16_ulp": 196,
+      "mean_abs_diff": 2.67440486823034e-06,
+      "num_differing": 317,
+      "num_elements": 20480,
+      "num_gt_1_ulp": 94,
+      "ulp_histogram": {
+        "0": 20163,
+        "1": 223,
+        "12": 1,
+        "13": 3,
+        "14": 1,
+        "17": 1,
+        "18": 1,
+        "196": 1,
+        "2": 51,
+        "26": 2,
+        "3": 13,
+        "4": 8,
+        "5": 4,
+        "6": 1,
+        "7": 3,
+        "8": 2,
+        "9": 2
+      },
+      "ulp_histogram_bins": {
+        "0": 20163,
+        "1": 223,
+        "2": 51,
+        ">2": 43
+      },
+      "within_contract": false
+    }
+  },
+  "internal_summaries": {
+    "AA_gate": {
+      "gate_digest": "5cf45f601192fc226a262f2f735008f9853465b671efb79b6ab786fdded1f9b8",
+      "record_count": 4
+    },
+    "AA_residual": {
+      "delta_digest": "c264b4609aeb4bb29fde174c5275c230e8855cc657b380a4b08b807f9bfb2e68",
+      "independent_post_digest": "59eb70a1b59e28299ee76b1d157550c495a42526f62e7998817158229a1342ab",
+      "post_bf16_max_ulp": 0,
+      "post_byte_exact": true,
+      "post_engram1_h": {
+        "digest": "59eb70a1b59e28299ee76b1d157550c495a42526f62e7998817158229a1342ab",
+        "dtype": "BF16(uint16)",
+        "max": 0.6953125,
+        "mean": 0.00020652017556130887,
+        "min": -0.53515625,
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "value_digest": "8b6da1325ee3d68e38f16f6098c978309a33b004eee9acfe8978504a1c5d6471"
+    },
+    "AA_sparse_embedding": {
+      "embedding_byte_exact": true,
+      "embedding_output": {
+        "digest": "14b30d25f1417a168d01e828d006995788dfc67ac0a05114b9068eebed971f26",
+        "dtype": "uint16",
+        "shape": [
+          1,
+          1,
+          24,
+          256
+        ]
+      },
+      "independent_embedding_digest": "14b30d25f1417a168d01e828d006995788dfc67ac0a05114b9068eebed971f26",
+      "ordered_row_ids": [
+        10394440,
+        25597646,
+        41525500,
+        56949077,
+        72088738,
+        87803199,
+        103660714,
+        117890322,
+        133679554,
+        149048834,
+        164909235,
+        179450177,
+        194623690,
+        210212541,
+        225598121,
+        241122337,
+        264857356,
+        275121728,
+        291772318,
+        316098564,
+        326982803,
+        351309675,
+        366718203,
+        378263177
+      ],
+      "scale_bytes_read": 192,
+      "scale_row_provenance": [
+        {
+          "absolute_byte_range": [
+            98388735192,
+            98388735200
+          ],
+          "raw_digest": "0dd61e861307219aeb71519d96f5c952505271d17cebea122ffd65a00ec9552c",
+          "row_id": 10394440
+        },
+        {
+          "absolute_byte_range": [
+            98510360840,
+            98510360848
+          ],
+          "raw_digest": "458a4d33f85985162f0f15fdcbbeda8619099fcc24ebfde715b3ab52291e6719",
+          "row_id": 25597646
+        },
+        {
+          "absolute_byte_range": [
+            98637783672,
+            98637783680
+          ],
+          "raw_digest": "a5565a149352a6ddd18aabf6006bbc6f057afa519cc03984328fc701d15631b2",
+          "row_id": 41525500
+        },
+        {
+          "absolute_byte_range": [
+            98761172288,
+            98761172296
+          ],
+          "raw_digest": "73611fcf9de27e06f551dff49d3ffb0b262e0f35d9f974b6893102d7abc5215d",
+          "row_id": 56949077
+        },
+        {
+          "absolute_byte_range": [
+            98882289576,
+            98882289584
+          ],
+          "raw_digest": "19366eda9ba1660e3eeded9569afebc3bbee054e6a6b032af2c93e11390063fa",
+          "row_id": 72088738
+        },
+        {
+          "absolute_byte_range": [
+            99008005264,
+            99008005272
+          ],
+          "raw_digest": "2484ab877836b1c2969b6e9566555436e55b8d2e2ec99cecb27cb476e46ed5e0",
+          "row_id": 87803199
+        },
+        {
+          "absolute_byte_range": [
+            99134865384,
+            99134865392
+          ],
+          "raw_digest": "88a857c5ea370ad8020adffc84c70c1f4f068bca68acd07eb001df72c656c530",
+          "row_id": 103660714
+        },
+        {
+          "absolute_byte_range": [
+            99248702248,
+            99248702256
+          ],
+          "raw_digest": "a14d53890736c4778bb38bc9d76ddb2be4de816a919ca25adc8156d5f0954d83",
+          "row_id": 117890322
+        },
+        {
+          "absolute_byte_range": [
+            99375016104,
+            99375016112
+          ],
+          "raw_digest": "bd9655b77917fa877e4bfe18285b7d7486e843d27d58ea43700aad54e56d9ce6",
+          "row_id": 133679554
+        },
+        {
+          "absolute_byte_range": [
+            99497970344,
+            99497970352
+          ],
+          "raw_digest": "f8c57e48d1516d80009919593a10f4af2eae6ef696c5a4959704a37cb717903a",
+          "row_id": 149048834
+        },
+        {
+          "absolute_byte_range": [
+            99624853552,
+            99624853560
+          ],
+          "raw_digest": "7755ff70258212d369bb6c4ba3358a931d1ee97fae4f5812cc130cfdcd19c800",
+          "row_id": 164909235
+        },
+        {
+          "absolute_byte_range": [
+            99741181088,
+            99741181096
+          ],
+          "raw_digest": "f7a230f00602aa3cf4688e9f3d0d274bba19f1d686b05b81d49e6f9ef624e695",
+          "row_id": 179450177
+        },
+        {
+          "absolute_byte_range": [
+            99862569192,
+            99862569200
+          ],
+          "raw_digest": "ca0f0fd2e99742afc52a1d46836b2609c74076110553b2a90a084cb3bf3620a6",
+          "row_id": 194623690
+        },
+        {
+          "absolute_byte_range": [
+            99987280000,
+            99987280008
+          ],
+          "raw_digest": "c291a595506b5ae63caa6e5dcd63f6242eb6cac39357c2cea76fb5f75c8a59ab",
+          "row_id": 210212541
+        },
+        {
+          "absolute_byte_range": [
+            100110364640,
+            100110364648
+          ],
+          "raw_digest": "c5b1b3052ca7c1e3783ae39be3666a709888f5e2a6102cea7ccd1c6f74de7762",
+          "row_id": 225598121
+        },
+        {
+          "absolute_byte_range": [
+            100234558368,
+            100234558376
+          ],
+          "raw_digest": "4cf0c1012276f46af31e44d2fbb03ae7af56f03c9996eb9452b99b3e6273698e",
+          "row_id": 241122337
+        },
+        {
+          "absolute_byte_range": [
+            100424438520,
+            100424438528
+          ],
+          "raw_digest": "dfaa5303fb9d381ca234eabdc4bc75685ca4bf628fe3872cd584854389894afa",
+          "row_id": 264857356
+        },
+        {
+          "absolute_byte_range": [
+            100506553496,
+            100506553504
+          ],
+          "raw_digest": "563671b66f8cd81b421c217a7da3fa93e30d684ce417d392bd1fad2b991e62df",
+          "row_id": 275121728
+        },
+        {
+          "absolute_byte_range": [
+            100639758216,
+            100639758224
+          ],
+          "raw_digest": "592710877cbe944877f42ccb8c7786ed79e8b991158f3ef3b9fd7aa672687b5e",
+          "row_id": 291772318
+        },
+        {
+          "absolute_byte_range": [
+            100834368184,
+            100834368192
+          ],
+          "raw_digest": "97fe79aeec239982df5b07e0d98f5f5d98cdfb86975af06c269763c02df9c3a0",
+          "row_id": 316098564
+        },
+        {
+          "absolute_byte_range": [
+            100921442096,
+            100921442104
+          ],
+          "raw_digest": "d8294165f0e6549087c194f659b218f7ec566146196dde05f787c4c362d8a16e",
+          "row_id": 326982803
+        },
+        {
+          "absolute_byte_range": [
+            101116057072,
+            101116057080
+          ],
+          "raw_digest": "b6b494bb9cb8dd056de9cfd0f88b872d453f2935b7127f74246d53be4cacd406",
+          "row_id": 351309675
+        },
+        {
+          "absolute_byte_range": [
+            101239325296,
+            101239325304
+          ],
+          "raw_digest": "7d60dc308d3b32779d270bc1388d6cc6a0e1cd4cafd5a14f027c653e14cf3dd3",
+          "row_id": 366718203
+        },
+        {
+          "absolute_byte_range": [
+            101331685088,
+            101331685096
+          ],
+          "raw_digest": "e3e68adf1f348c789a4ebae0f1cafd84218414652814a2647107e1522212fce3",
+          "row_id": 378263177
+        }
+      ],
+      "unique_row_count": 24,
+      "unique_row_ids": [
+        10394440,
+        25597646,
+        41525500,
+        56949077,
+        72088738,
+        87803199,
+        103660714,
+        117890322,
+        133679554,
+        149048834,
+        164909235,
+        179450177,
+        194623690,
+        210212541,
+        225598121,
+        241122337,
+        264857356,
+        275121728,
+        291772318,
+        316098564,
+        326982803,
+        351309675,
+        366718203,
+        378263177
+      ],
+      "weight_bytes_read": 6144,
+      "weight_row_provenance": [
+        {
+          "absolute_byte_range": [
+            2660977304,
+            2660977560
+          ],
+          "raw_digest": "d881879d635860226d07337be5480d7603d1c4efa93258a097774ca45fec6660",
+          "row_id": 10394440
+        },
+        {
+          "absolute_byte_range": [
+            6552998040,
+            6552998296
+          ],
+          "raw_digest": "166055cad1e77162337a876c63fd658c8bb6874b12bbf1c9b988e2353cd43ae9",
+          "row_id": 25597646
+        },
+        {
+          "absolute_byte_range": [
+            10630528664,
+            10630528920
+          ],
+          "raw_digest": "7ba836d485fbe7a9079c805548534511f015f962fffe359151cfb9a0f80eea1f",
+          "row_id": 41525500
+        },
+        {
+          "absolute_byte_range": [
+            14578964376,
+            14578964632
+          ],
+          "raw_digest": "be0ef132749bc0eaab67336f2628380bd4d86503a1cc417f7d46438b6dd6a939",
+          "row_id": 56949077
+        },
+        {
+          "absolute_byte_range": [
+            18454717592,
+            18454717848
+          ],
+          "raw_digest": "a5aaaf66a181b160c6d7664c87c19b5220f30703ea169782997cf2ebb5e2fec9",
+          "row_id": 72088738
+        },
+        {
+          "absolute_byte_range": [
+            22477619608,
+            22477619864
+          ],
+          "raw_digest": "a82aa381f82a65abfd2c86d023e8ad1cefbd9baf46f9c14ce96171d4cff39d4c",
+          "row_id": 87803199
+        },
+        {
+          "absolute_byte_range": [
+            26537143448,
+            26537143704
+          ],
+          "raw_digest": "5368d4e356048383ab71ab37ae45a58dd20c90f496afd718cdfb37a469417692",
+          "row_id": 103660714
+        },
+        {
+          "absolute_byte_range": [
+            30179923096,
+            30179923352
+          ],
+          "raw_digest": "bcf587329a72bb8e155e86b5d3926f1ca101aebeed691b3941e1ad7122490406",
+          "row_id": 117890322
+        },
+        {
+          "absolute_byte_range": [
+            34221966488,
+            34221966744
+          ],
+          "raw_digest": "7eccff1b3856b6b1217e967fdcf127683d3d1fffbf4f2ed51eeac3f0b511aac2",
+          "row_id": 133679554
+        },
+        {
+          "absolute_byte_range": [
+            38156502168,
+            38156502424
+          ],
+          "raw_digest": "65f71364d2e665e7548071baa6866540d48b736b687a76a61b62326090b6aa59",
+          "row_id": 149048834
+        },
+        {
+          "absolute_byte_range": [
+            42216764824,
+            42216765080
+          ],
+          "raw_digest": "277b05ef3014321cd62937f98a7a7bd96a20f78a86556ce2b5f267ce880af80c",
+          "row_id": 164909235
+        },
+        {
+          "absolute_byte_range": [
+            45939245976,
+            45939246232
+          ],
+          "raw_digest": "1007756119441187ec205accf7382a65d92266649a8ef58decf61d678bd0b9ce",
+          "row_id": 179450177
+        },
+        {
+          "absolute_byte_range": [
+            49823665304,
+            49823665560
+          ],
+          "raw_digest": "6801043f4af77ff12a995960c785be249d1e8e8e5950d0aa463c113048528815",
+          "row_id": 194623690
+        },
+        {
+          "absolute_byte_range": [
+            53814411160,
+            53814411416
+          ],
+          "raw_digest": "ef67e485ce883cb179dea248c2a81e3d5a01c7314d57c41d7ed04f6d6e576918",
+          "row_id": 210212541
+        },
+        {
+          "absolute_byte_range": [
+            57753119640,
+            57753119896
+          ],
+          "raw_digest": "73ad631bf1f996e4c4276276aae740ff8ca80ab66bca807b78d859325831bdfd",
+          "row_id": 225598121
+        },
+        {
+          "absolute_byte_range": [
+            61727318936,
+            61727319192
+          ],
+          "raw_digest": "49fd97659c5ab94c97ede3f766753c9205ca3425b5b64a9a258ad0d1fa27d075",
+          "row_id": 241122337
+        },
+        {
+          "absolute_byte_range": [
+            67803483800,
+            67803484056
+          ],
+          "raw_digest": "74943506f414e6c8da0e519899401319386b7c9a071bd13a3ad210157b46c399",
+          "row_id": 264857356
+        },
+        {
+          "absolute_byte_range": [
+            70431163032,
+            70431163288
+          ],
+          "raw_digest": "f4fb273dfeb4d11d078df807d09715a19d9c40fb2939a6760bb633c8e35c5a07",
+          "row_id": 275121728
+        },
+        {
+          "absolute_byte_range": [
+            74693714072,
+            74693714328
+          ],
+          "raw_digest": "707281351f97664f7f2c98fb2d2f64ea6d69a323e097c1cbea0feb3d7ccfc042",
+          "row_id": 291772318
+        },
+        {
+          "absolute_byte_range": [
+            80921233048,
+            80921233304
+          ],
+          "raw_digest": "b642a6378602d36cfa2df92bafe43572fbcab03fa8aa660e0fe1ee953685b2d6",
+          "row_id": 316098564
+        },
+        {
+          "absolute_byte_range": [
+            83707598232,
+            83707598488
+          ],
+          "raw_digest": "5a74d38bc3adf6e41f7f29892bb86a13c223c010bb7b1512e5c2e6a62a3b7ae9",
+          "row_id": 326982803
+        },
+        {
+          "absolute_byte_range": [
+            89935277464,
+            89935277720
+          ],
+          "raw_digest": "1df9c66568339ecc7ec2faa61e7221b8cf92dcbe6d5e348bfc8824165e61f8e9",
+          "row_id": 351309675
+        },
+        {
+          "absolute_byte_range": [
+            93879860632,
+            93879860888
+          ],
+          "raw_digest": "4ae49356b41c6ba0a4e57840d37aa8b824153b0dfa2a9b04c4db777f140cd230",
+          "row_id": 366718203
+        },
+        {
+          "absolute_byte_range": [
+            96835373976,
+            96835374232
+          ],
+          "raw_digest": "b7143d9ca071f9b97d75dbade1c33c19d7a63e5478b0ebccba4d363874efaa9e",
+          "row_id": 378263177
+        }
+      ]
+    },
+    "AA_wkv": {
+      "flatten_digest": "14b30d25f1417a168d01e828d006995788dfc67ac0a05114b9068eebed971f26",
+      "key_digest": "9e5b6c7e6d351298ce4ea2e7be7bad5d2d397f290bd46ebdc075e532918f1d03",
+      "value_digest": "8b6da1325ee3d68e38f16f6098c978309a33b004eee9acfe8978504a1c5d6471",
+      "wkv_output": {
+        "digest": "0e24f2073be3718df36945185fc2f9e1475f805f3c4a71db706943309128a972",
+        "dtype": "uint16",
+        "shape": [
+          1,
+          1,
+          25600
+        ]
+      }
+    },
+    "EE_gate": {
+      "gate_digest": "69c324dbd27db4b0ab3a82573e1ba8d3165f20f567a262d49717ce931b23f8dc",
+      "record_count": 4
+    },
+    "EE_residual": {
+      "delta_digest": "cc8de94ea6c288b1b8056c1f82ce79f606de0370286540120becdcbf1516f7e5",
+      "independent_post_digest": "62dbe881182cbf21716d9d9bd3bc5d5ea86cc47f78077927372a0f2d0e0d5f21",
+      "post_bf16_max_ulp": 0,
+      "post_byte_exact": true,
+      "post_engram1_h": {
+        "digest": "62dbe881182cbf21716d9d9bd3bc5d5ea86cc47f78077927372a0f2d0e0d5f21",
+        "dtype": "BF16(uint16)",
+        "max": 0.6953125,
+        "mean": 0.00020596546091837807,
+        "min": -0.53515625,
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "value_digest": "8b6da1325ee3d68e38f16f6098c978309a33b004eee9acfe8978504a1c5d6471"
+    },
+    "EE_sparse_embedding": {
+      "embedding_byte_exact": true,
+      "embedding_output": {
+        "digest": "14b30d25f1417a168d01e828d006995788dfc67ac0a05114b9068eebed971f26",
+        "dtype": "uint16",
+        "shape": [
+          1,
+          1,
+          24,
+          256
+        ]
+      },
+      "independent_embedding_digest": "14b30d25f1417a168d01e828d006995788dfc67ac0a05114b9068eebed971f26",
+      "ordered_row_ids": [
+        10394440,
+        25597646,
+        41525500,
+        56949077,
+        72088738,
+        87803199,
+        103660714,
+        117890322,
+        133679554,
+        149048834,
+        164909235,
+        179450177,
+        194623690,
+        210212541,
+        225598121,
+        241122337,
+        264857356,
+        275121728,
+        291772318,
+        316098564,
+        326982803,
+        351309675,
+        366718203,
+        378263177
+      ],
+      "scale_bytes_read": 192,
+      "scale_row_provenance": [
+        {
+          "absolute_byte_range": [
+            98388735192,
+            98388735200
+          ],
+          "raw_digest": "0dd61e861307219aeb71519d96f5c952505271d17cebea122ffd65a00ec9552c",
+          "row_id": 10394440
+        },
+        {
+          "absolute_byte_range": [
+            98510360840,
+            98510360848
+          ],
+          "raw_digest": "458a4d33f85985162f0f15fdcbbeda8619099fcc24ebfde715b3ab52291e6719",
+          "row_id": 25597646
+        },
+        {
+          "absolute_byte_range": [
+            98637783672,
+            98637783680
+          ],
+          "raw_digest": "a5565a149352a6ddd18aabf6006bbc6f057afa519cc03984328fc701d15631b2",
+          "row_id": 41525500
+        },
+        {
+          "absolute_byte_range": [
+            98761172288,
+            98761172296
+          ],
+          "raw_digest": "73611fcf9de27e06f551dff49d3ffb0b262e0f35d9f974b6893102d7abc5215d",
+          "row_id": 56949077
+        },
+        {
+          "absolute_byte_range": [
+            98882289576,
+            98882289584
+          ],
+          "raw_digest": "19366eda9ba1660e3eeded9569afebc3bbee054e6a6b032af2c93e11390063fa",
+          "row_id": 72088738
+        },
+        {
+          "absolute_byte_range": [
+            99008005264,
+            99008005272
+          ],
+          "raw_digest": "2484ab877836b1c2969b6e9566555436e55b8d2e2ec99cecb27cb476e46ed5e0",
+          "row_id": 87803199
+        },
+        {
+          "absolute_byte_range": [
+            99134865384,
+            99134865392
+          ],
+          "raw_digest": "88a857c5ea370ad8020adffc84c70c1f4f068bca68acd07eb001df72c656c530",
+          "row_id": 103660714
+        },
+        {
+          "absolute_byte_range": [
+            99248702248,
+            99248702256
+          ],
+          "raw_digest": "a14d53890736c4778bb38bc9d76ddb2be4de816a919ca25adc8156d5f0954d83",
+          "row_id": 117890322
+        },
+        {
+          "absolute_byte_range": [
+            99375016104,
+            99375016112
+          ],
+          "raw_digest": "bd9655b77917fa877e4bfe18285b7d7486e843d27d58ea43700aad54e56d9ce6",
+          "row_id": 133679554
+        },
+        {
+          "absolute_byte_range": [
+            99497970344,
+            99497970352
+          ],
+          "raw_digest": "f8c57e48d1516d80009919593a10f4af2eae6ef696c5a4959704a37cb717903a",
+          "row_id": 149048834
+        },
+        {
+          "absolute_byte_range": [
+            99624853552,
+            99624853560
+          ],
+          "raw_digest": "7755ff70258212d369bb6c4ba3358a931d1ee97fae4f5812cc130cfdcd19c800",
+          "row_id": 164909235
+        },
+        {
+          "absolute_byte_range": [
+            99741181088,
+            99741181096
+          ],
+          "raw_digest": "f7a230f00602aa3cf4688e9f3d0d274bba19f1d686b05b81d49e6f9ef624e695",
+          "row_id": 179450177
+        },
+        {
+          "absolute_byte_range": [
+            99862569192,
+            99862569200
+          ],
+          "raw_digest": "ca0f0fd2e99742afc52a1d46836b2609c74076110553b2a90a084cb3bf3620a6",
+          "row_id": 194623690
+        },
+        {
+          "absolute_byte_range": [
+            99987280000,
+            99987280008
+          ],
+          "raw_digest": "c291a595506b5ae63caa6e5dcd63f6242eb6cac39357c2cea76fb5f75c8a59ab",
+          "row_id": 210212541
+        },
+        {
+          "absolute_byte_range": [
+            100110364640,
+            100110364648
+          ],
+          "raw_digest": "c5b1b3052ca7c1e3783ae39be3666a709888f5e2a6102cea7ccd1c6f74de7762",
+          "row_id": 225598121
+        },
+        {
+          "absolute_byte_range": [
+            100234558368,
+            100234558376
+          ],
+          "raw_digest": "4cf0c1012276f46af31e44d2fbb03ae7af56f03c9996eb9452b99b3e6273698e",
+          "row_id": 241122337
+        },
+        {
+          "absolute_byte_range": [
+            100424438520,
+            100424438528
+          ],
+          "raw_digest": "dfaa5303fb9d381ca234eabdc4bc75685ca4bf628fe3872cd584854389894afa",
+          "row_id": 264857356
+        },
+        {
+          "absolute_byte_range": [
+            100506553496,
+            100506553504
+          ],
+          "raw_digest": "563671b66f8cd81b421c217a7da3fa93e30d684ce417d392bd1fad2b991e62df",
+          "row_id": 275121728
+        },
+        {
+          "absolute_byte_range": [
+            100639758216,
+            100639758224
+          ],
+          "raw_digest": "592710877cbe944877f42ccb8c7786ed79e8b991158f3ef3b9fd7aa672687b5e",
+          "row_id": 291772318
+        },
+        {
+          "absolute_byte_range": [
+            100834368184,
+            100834368192
+          ],
+          "raw_digest": "97fe79aeec239982df5b07e0d98f5f5d98cdfb86975af06c269763c02df9c3a0",
+          "row_id": 316098564
+        },
+        {
+          "absolute_byte_range": [
+            100921442096,
+            100921442104
+          ],
+          "raw_digest": "d8294165f0e6549087c194f659b218f7ec566146196dde05f787c4c362d8a16e",
+          "row_id": 326982803
+        },
+        {
+          "absolute_byte_range": [
+            101116057072,
+            101116057080
+          ],
+          "raw_digest": "b6b494bb9cb8dd056de9cfd0f88b872d453f2935b7127f74246d53be4cacd406",
+          "row_id": 351309675
+        },
+        {
+          "absolute_byte_range": [
+            101239325296,
+            101239325304
+          ],
+          "raw_digest": "7d60dc308d3b32779d270bc1388d6cc6a0e1cd4cafd5a14f027c653e14cf3dd3",
+          "row_id": 366718203
+        },
+        {
+          "absolute_byte_range": [
+            101331685088,
+            101331685096
+          ],
+          "raw_digest": "e3e68adf1f348c789a4ebae0f1cafd84218414652814a2647107e1522212fce3",
+          "row_id": 378263177
+        }
+      ],
+      "unique_row_count": 24,
+      "unique_row_ids": [
+        10394440,
+        25597646,
+        41525500,
+        56949077,
+        72088738,
+        87803199,
+        103660714,
+        117890322,
+        133679554,
+        149048834,
+        164909235,
+        179450177,
+        194623690,
+        210212541,
+        225598121,
+        241122337,
+        264857356,
+        275121728,
+        291772318,
+        316098564,
+        326982803,
+        351309675,
+        366718203,
+        378263177
+      ],
+      "weight_bytes_read": 6144,
+      "weight_row_provenance": [
+        {
+          "absolute_byte_range": [
+            2660977304,
+            2660977560
+          ],
+          "raw_digest": "d881879d635860226d07337be5480d7603d1c4efa93258a097774ca45fec6660",
+          "row_id": 10394440
+        },
+        {
+          "absolute_byte_range": [
+            6552998040,
+            6552998296
+          ],
+          "raw_digest": "166055cad1e77162337a876c63fd658c8bb6874b12bbf1c9b988e2353cd43ae9",
+          "row_id": 25597646
+        },
+        {
+          "absolute_byte_range": [
+            10630528664,
+            10630528920
+          ],
+          "raw_digest": "7ba836d485fbe7a9079c805548534511f015f962fffe359151cfb9a0f80eea1f",
+          "row_id": 41525500
+        },
+        {
+          "absolute_byte_range": [
+            14578964376,
+            14578964632
+          ],
+          "raw_digest": "be0ef132749bc0eaab67336f2628380bd4d86503a1cc417f7d46438b6dd6a939",
+          "row_id": 56949077
+        },
+        {
+          "absolute_byte_range": [
+            18454717592,
+            18454717848
+          ],
+          "raw_digest": "a5aaaf66a181b160c6d7664c87c19b5220f30703ea169782997cf2ebb5e2fec9",
+          "row_id": 72088738
+        },
+        {
+          "absolute_byte_range": [
+            22477619608,
+            22477619864
+          ],
+          "raw_digest": "a82aa381f82a65abfd2c86d023e8ad1cefbd9baf46f9c14ce96171d4cff39d4c",
+          "row_id": 87803199
+        },
+        {
+          "absolute_byte_range": [
+            26537143448,
+            26537143704
+          ],
+          "raw_digest": "5368d4e356048383ab71ab37ae45a58dd20c90f496afd718cdfb37a469417692",
+          "row_id": 103660714
+        },
+        {
+          "absolute_byte_range": [
+            30179923096,
+            30179923352
+          ],
+          "raw_digest": "bcf587329a72bb8e155e86b5d3926f1ca101aebeed691b3941e1ad7122490406",
+          "row_id": 117890322
+        },
+        {
+          "absolute_byte_range": [
+            34221966488,
+            34221966744
+          ],
+          "raw_digest": "7eccff1b3856b6b1217e967fdcf127683d3d1fffbf4f2ed51eeac3f0b511aac2",
+          "row_id": 133679554
+        },
+        {
+          "absolute_byte_range": [
+            38156502168,
+            38156502424
+          ],
+          "raw_digest": "65f71364d2e665e7548071baa6866540d48b736b687a76a61b62326090b6aa59",
+          "row_id": 149048834
+        },
+        {
+          "absolute_byte_range": [
+            42216764824,
+            42216765080
+          ],
+          "raw_digest": "277b05ef3014321cd62937f98a7a7bd96a20f78a86556ce2b5f267ce880af80c",
+          "row_id": 164909235
+        },
+        {
+          "absolute_byte_range": [
+            45939245976,
+            45939246232
+          ],
+          "raw_digest": "1007756119441187ec205accf7382a65d92266649a8ef58decf61d678bd0b9ce",
+          "row_id": 179450177
+        },
+        {
+          "absolute_byte_range": [
+            49823665304,
+            49823665560
+          ],
+          "raw_digest": "6801043f4af77ff12a995960c785be249d1e8e8e5950d0aa463c113048528815",
+          "row_id": 194623690
+        },
+        {
+          "absolute_byte_range": [
+            53814411160,
+            53814411416
+          ],
+          "raw_digest": "ef67e485ce883cb179dea248c2a81e3d5a01c7314d57c41d7ed04f6d6e576918",
+          "row_id": 210212541
+        },
+        {
+          "absolute_byte_range": [
+            57753119640,
+            57753119896
+          ],
+          "raw_digest": "73ad631bf1f996e4c4276276aae740ff8ca80ab66bca807b78d859325831bdfd",
+          "row_id": 225598121
+        },
+        {
+          "absolute_byte_range": [
+            61727318936,
+            61727319192
+          ],
+          "raw_digest": "49fd97659c5ab94c97ede3f766753c9205ca3425b5b64a9a258ad0d1fa27d075",
+          "row_id": 241122337
+        },
+        {
+          "absolute_byte_range": [
+            67803483800,
+            67803484056
+          ],
+          "raw_digest": "74943506f414e6c8da0e519899401319386b7c9a071bd13a3ad210157b46c399",
+          "row_id": 264857356
+        },
+        {
+          "absolute_byte_range": [
+            70431163032,
+            70431163288
+          ],
+          "raw_digest": "f4fb273dfeb4d11d078df807d09715a19d9c40fb2939a6760bb633c8e35c5a07",
+          "row_id": 275121728
+        },
+        {
+          "absolute_byte_range": [
+            74693714072,
+            74693714328
+          ],
+          "raw_digest": "707281351f97664f7f2c98fb2d2f64ea6d69a323e097c1cbea0feb3d7ccfc042",
+          "row_id": 291772318
+        },
+        {
+          "absolute_byte_range": [
+            80921233048,
+            80921233304
+          ],
+          "raw_digest": "b642a6378602d36cfa2df92bafe43572fbcab03fa8aa660e0fe1ee953685b2d6",
+          "row_id": 316098564
+        },
+        {
+          "absolute_byte_range": [
+            83707598232,
+            83707598488
+          ],
+          "raw_digest": "5a74d38bc3adf6e41f7f29892bb86a13c223c010bb7b1512e5c2e6a62a3b7ae9",
+          "row_id": 326982803
+        },
+        {
+          "absolute_byte_range": [
+            89935277464,
+            89935277720
+          ],
+          "raw_digest": "1df9c66568339ecc7ec2faa61e7221b8cf92dcbe6d5e348bfc8824165e61f8e9",
+          "row_id": 351309675
+        },
+        {
+          "absolute_byte_range": [
+            93879860632,
+            93879860888
+          ],
+          "raw_digest": "4ae49356b41c6ba0a4e57840d37aa8b824153b0dfa2a9b04c4db777f140cd230",
+          "row_id": 366718203
+        },
+        {
+          "absolute_byte_range": [
+            96835373976,
+            96835374232
+          ],
+          "raw_digest": "b7143d9ca071f9b97d75dbade1c33c19d7a63e5478b0ebccba4d363874efaa9e",
+          "row_id": 378263177
+        }
+      ]
+    },
+    "EE_wkv": {
+      "flatten_digest": "14b30d25f1417a168d01e828d006995788dfc67ac0a05114b9068eebed971f26",
+      "key_digest": "9e5b6c7e6d351298ce4ea2e7be7bad5d2d397f290bd46ebdc075e532918f1d03",
+      "value_digest": "8b6da1325ee3d68e38f16f6098c978309a33b004eee9acfe8978504a1c5d6471",
+      "wkv_output": {
+        "digest": "0e24f2073be3718df36945185fc2f9e1475f805f3c4a71db706943309128a972",
+        "dtype": "uint16",
+        "shape": [
+          1,
+          1,
+          25600
+        ]
+      }
+    }
+  },
+  "methodology": {
+    "connected_ideal_trajectory_comparison": "diagnostic only after upstream drift is established",
+    "same_input_operator_qualification": "primary correctness question for Engram@1",
+    "tolerance_changed": false
+  },
+  "next_frontier": "Block1 actual-input same-input qualification",
+  "ok": true,
+  "omlx_path": "/Users/kioju/omlx-0.7.0.dev2",
+  "phase_a_rerun_required": false,
+  "same_input_qualification": {
+    "bf16_contract_changed": false,
+    "hash_ids_exact": true,
+    "official_engram1_reproduces_actual_output": true,
+    "same_input_bf16_result": {
+      "a": {
+        "dtype": "uint16",
+        "sha256": "59eb70a1b59e28299ee76b1d157550c495a42526f62e7998817158229a1342ab",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "b": {
+        "dtype": "uint16",
+        "sha256": "59eb70a1b59e28299ee76b1d157550c495a42526f62e7998817158229a1342ab",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "contract": "BF16 max ULP <= 1",
+      "exact": true,
+      "max_abs_diff": 0.0,
+      "max_bf16_ulp": 0,
+      "mean_abs_diff": 0.0,
+      "num_differing": 0,
+      "num_elements": 20480,
+      "num_gt_1_ulp": 0,
+      "ulp_histogram": {
+        "0": 20480
+      },
+      "ulp_histogram_bins": {
+        "0": 20480,
+        "1": 0,
+        "2": 0,
+        ">2": 0
+      },
+      "within_contract": true
+    }
+  },
+  "schema": "ds41f.m4.engram1-same-input.v1",
+  "source_checkpoint_provenance": {
+    "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+    "covered_path": [
+      "hash IDs",
+      "sparse embedding rows",
+      "embedding dequantization",
+      "flatten",
+      "FP8 WKV projection",
+      "key/value split",
+      "q_weight/k_weight",
+      "normalized weighted dot",
+      "signed sqrt gate",
+      "sigmoid",
+      "residual update",
+      "BF16 output"
+    ],
+    "helper": "tools.run_native_first_incremental_block0_engram1_validation.apply_engram1_dynamic",
+    "official_source": {
+      "model_py_Engram_forward": {
+        "file": "inference/model.py",
+        "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+        "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+        "source_lines": [
+          328,
+          366
+        ],
+        "source_sha256": "fc6a29957b1912fb15ed010460a881bef0f98e1f58a7b37bdc02cb49004d368b"
+      },
+      "model_py_ParallelEngramEmbedding": {
+        "file": "inference/model.py",
+        "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+        "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+        "source_lines": [
+          288,
+          323
+        ],
+        "source_sha256": "23f3b61ac17a7fe38947171365138fb294d61ee73a41973aff322a45a655b23d"
+      }
+    },
+    "weights_not_stored_in_artifact": true
+  }
+}
