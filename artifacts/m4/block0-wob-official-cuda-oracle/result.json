@@ -1,0 +1,150 @@
+{
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "cuda_oracle": {
+    "comparisons": null,
+    "executed": false,
+    "gpu_environment": null,
+    "official_kernel_available": null,
+    "oracle_A": null,
+    "oracle_B": null
+  },
+  "final_classification": "CUDA_ORACLE_PENDING_EXTERNAL_EXECUTION",
+  "fixture": {
+    "npz_sha256": "4bc7ab067127decc22c28cdfa25814882f7314d59e320cc5c6cadc998e806cd2",
+    "path": "/Volumes/SDXC-512/ds41f-mlx/artifacts/m4/block0-wob-official-cuda-oracle/block0_wob_cuda_fixture.npz",
+    "portable_size_bytes": 34696624,
+    "tensors": {
+      "act_deq_bf16_u16": {
+        "dtype": "uint16",
+        "sha256": "60c0260284fc6f865ef6db1fb2c3bf596a91741b131d6f8020c741b8ccc60c82",
+        "shape": [
+          1,
+          8192
+        ]
+      },
+      "act_fp8_u8": {
+        "dtype": "uint8",
+        "sha256": "c5754f4c209b50239efa2d74d76c1eecb47352f049187cb1c0c92729c4c3d5b3",
+        "shape": [
+          1,
+          8192
+        ]
+      },
+      "act_scale_e8m0_u8": {
+        "dtype": "uint8",
+        "sha256": "b5908352534694550b7c50f565e74ce06b444906a39381b63846343656a748e4",
+        "shape": [
+          1,
+          256
+        ]
+      },
+      "mlx_m1_output_bf16_u16": {
+        "dtype": "uint16",
+        "sha256": "364c6a2e08bdd079d2f6690b3eeec5eb72b07e389fbd57d6ba6bb8567d7f192f",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "prequant_bf16_u16": {
+        "dtype": "uint16",
+        "sha256": "2abb715cf9a2b85f194a951a2d58e20ef5bb950a77f647a1b4858edc797be048",
+        "shape": [
+          1,
+          8192
+        ]
+      },
+      "prequant_reference_bf16_u16": {
+        "dtype": "uint16",
+        "sha256": "6a87c9301d38d8afd93b0bbf61cbbcc2ba0303e41ec17bbca8c6e2d95aa2de8e",
+        "shape": [
+          1,
+          8192
+        ]
+      },
+      "reference_output_bf16_u16": {
+        "dtype": "uint16",
+        "sha256": "10c042342f715b36399920d65b811bb24e7f8f2d03cba672c70dfbd083f0c2d0",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "wob_scale_e8m0_u8": {
+        "dtype": "uint8",
+        "sha256": "08628f0bc3f528ba01dab4a80a1a3cd3851d596aae289f4a34e99386a2e46e05",
+        "shape": [
+          160,
+          256
+        ]
+      },
+      "wob_weight_f8e4m3_u8": {
+        "dtype": "uint8",
+        "sha256": "fca947ddeba2433859869eb6a2c27c95d1454d7c0f0d9e348eb46b487b933a86",
+        "shape": [
+          5120,
+          8192
+        ]
+      }
+    }
+  },
+  "fixture_verification": {
+    "expected_digest_prefix": "60c026",
+    "mlx_3758": {
+      "bits": "0x3f6d",
+      "index": [
+        0,
+        0,
+        3758
+      ],
+      "value": 0.92578125
+    },
+    "mlx_vs_reference": {
+      "actual_digest": "364c6a2e08bdd079d2f6690b3eeec5eb72b07e389fbd57d6ba6bb8567d7f192f",
+      "count_gt_1_ulp": 0,
+      "differing_count": 1,
+      "expected_digest": "10c042342f715b36399920d65b811bb24e7f8f2d03cba672c70dfbd083f0c2d0",
+      "max_abs": 0.00390625,
+      "max_bf16_ulp": 1,
+      "mean_abs": 7.629394644936838e-07
+    },
+    "production_reference_prequant_codes_equal": true,
+    "production_reference_prequant_scales_equal": true,
+    "reference_3758": {
+      "bits": "0x3f6c",
+      "index": [
+        0,
+        0,
+        3758
+      ],
+      "value": 0.921875
+    },
+    "wo_b_act_quant_deq_digest": "60c0260284fc6f865ef6db1fb2c3bf596a91741b131d6f8020c741b8ccc60c82"
+  },
+  "local_environment": {
+    "cuda_available": false,
+    "reason": "current harness is Apple/MLX host; CUDA/TileLang oracle must be run on the RTX 4090 host using tools/run_m4_block0_wob_cuda_oracle.py"
+  },
+  "next_frontier": "Copy the fixture NPZ plus tools/run_m4_block0_wob_cuda_oracle.py to the CUDA host and execute the official TileLang act_quant/fp8_gemm oracle.",
+  "official_fp8_gemm_structure": {
+    "accum_dtype": "FP32",
+    "block_K": 32,
+    "block_M": 32,
+    "block_N": 128,
+    "out_dtype": "BF16",
+    "per_K_block": "T.gemm(A_shared, B_shared, C_local, transpose_B=True); C_local_accum += C_local * activation_scale * weight_scale"
+  },
+  "official_linear_semantics": "x,s = act_quant(x, fp8_block_size, scale_fmt, scale_dtype); return fp8_gemm(x, s, weight, weight.scale, scale_dtype, block_size=fp8_block_size)",
+  "official_source_identities": {
+    "kernel_py_path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/kernel.py",
+    "kernel_py_sha256": "1236c3507019ed176f5dba5e04bcea58867cf654818c6cf138ed4845398c2455",
+    "model_py_path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash/inference/model.py",
+    "model_py_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65"
+  },
+  "ok": false,
+  "precision_policy_consequence": "NO_DECISION: do not promote HIGH_SENSITIVITY_EXACT_BOUNDARY and do not implement a custom Metal kernel until official CUDA/TileLang result is recorded.",
+  "schema": "ds41f.m4.block0_wob_official_cuda_oracle.v1",
+  "status": "PORTABLE_FIXTURE_EXPORTED_CUDA_ORACLE_NOT_RUN_LOCALLY"
+}
