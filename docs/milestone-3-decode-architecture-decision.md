@@ -172,3 +172,9 @@ Milestone 4 starts with implementation, not another topology decision:
 7. Reuse: `PrefillContinuationState`, oMLX model/cache architecture, existing ds41f validators, artifact/probe tooling. Reference-only: current native decode loop and any prompt-recompute bridge.
 
 Milestone 3 is complete when this document and plan updates are committed.
+
+## 19. M4 numerical-trajectory re-evaluation note
+
+M4 Block1 same-input evidence (`artifacts/m4/block1-same-input/result.json`) does not rewrite the historical Milestone 3 rejection of DwarfStar decode. That rejection was based on architecture/state-admission constraints: real DwarfStar decode state is private to `ds41_gpu_graph` C/Metal tensors, and no public no-replay state-admission ABI exists for the M2 neutral handoff.
+
+New M4 evidence introduces a separate concern: oMLX Block1 reproduces its own production same-input endpoint, but the connected token15 trajectory relative to the official-source-derived path is classified as `CONNECTED_TRAJECTORY_COLLAPSE_CANDIDATE`. Therefore DwarfStar decode may be re-evaluated as a diagnostic/architecture comparison before further Layer2-downstream oMLX qualification. Such a comparison must initially answer whether DwarfStar stays materially closer from the same semantic prefix/state; it is not an automatic replacement production runtime and does not by itself solve the no-replay admission ABI constraint.
