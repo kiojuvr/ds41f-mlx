@@ -1,0 +1,743 @@
+{
+  "actual_loaded_omlx_source_identity": {
+    "dirty": true,
+    "git_head": "b390b31e0c6831225fed0f24d278eb1db7fcb68b",
+    "language_py_sha256": "2c64bef36c9fc4a6007cd34e7b120142ced072a8d491cf1f83f2c5b1a956763f",
+    "path": "/Users/kioju/omlx-0.7.0.dev2",
+    "supporting_existing_evidence": "completed-comparison shows fused_hc_post(actual inputs) equals oMLX _hc_post_reference(actual inputs) at 0 BF16 ULP"
+  },
+  "block0_same_input_complete": true,
+  "block0_same_input_correctness": "COMPLETE",
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "FINAL_HC_POST_COMPOSITIONAL_UPSTREAM_NUMERICAL_DRIFT",
+  "connected_trajectory_diagnostic": {
+    "AA_vs_EE": {
+      "a": {
+        "dtype": "uint16",
+        "sha256": "e11fd85cced22528ed2a3f45b772e6836b67ec36c11cc1fc538e95604084df10",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "b": {
+        "dtype": "uint16",
+        "sha256": "16d4b63f79e11cff28dd7b7cfbbfff735d08a5e65db878401eec18fa4a80a1ef",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "contract": "BF16 max ULP <= 1",
+      "exact": false,
+      "max_abs_diff": 0.0009765625,
+      "max_bf16_ulp": 196,
+      "mean_abs_diff": 2.67440486823034e-06,
+      "num_differing": 317,
+      "num_elements": 20480,
+      "num_gt_1_ulp": 94,
+      "ulp_histogram": {
+        "0": 20163,
+        "1": 223,
+        "12": 1,
+        "13": 3,
+        "14": 1,
+        "17": 1,
+        "18": 1,
+        "196": 1,
+        "2": 51,
+        "26": 2,
+        "3": 13,
+        "4": 8,
+        "5": 4,
+        "6": 1,
+        "7": 3,
+        "8": 2,
+        "9": 2
+      },
+      "ulp_histogram_bins": {
+        "0": 20163,
+        "1": 223,
+        "2": 51,
+        ">2": 43
+      },
+      "within_contract": false
+    },
+    "classification": "diagnostic only; not used to widen tolerance or declare same-input final HC-post defect"
+  },
+  "endpoints": {
+    "AA": {
+      "dtype": "uint16",
+      "sha256": "e11fd85cced22528ed2a3f45b772e6836b67ec36c11cc1fc538e95604084df10",
+      "shape": [
+        1,
+        1,
+        4,
+        5120
+      ]
+    },
+    "AA_vs_actual_production": {
+      "comparison": {
+        "a": {
+          "dtype": "uint16",
+          "sha256": "e11fd85cced22528ed2a3f45b772e6836b67ec36c11cc1fc538e95604084df10",
+          "shape": [
+            1,
+            1,
+            4,
+            5120
+          ]
+        },
+        "b": {
+          "dtype": "uint16",
+          "sha256": "e11fd85cced22528ed2a3f45b772e6836b67ec36c11cc1fc538e95604084df10",
+          "shape": [
+            1,
+            1,
+            4,
+            5120
+          ]
+        },
+        "contract": "BF16 max ULP <= 1",
+        "exact": true,
+        "max_abs_diff": 0.0,
+        "max_bf16_ulp": 0,
+        "mean_abs_diff": 0.0,
+        "num_differing": 0,
+        "num_elements": 20480,
+        "num_gt_1_ulp": 0,
+        "ulp_histogram": {
+          "0": 20480
+        },
+        "ulp_histogram_bins": {
+          "0": 20480,
+          "1": 0,
+          "2": 0,
+          ">2": 0
+        },
+        "within_contract": true
+      },
+      "name": "AA_vs_captured_actual_block0_x_out",
+      "output": {
+        "dtype": "uint16",
+        "sha256": "e11fd85cced22528ed2a3f45b772e6836b67ec36c11cc1fc538e95604084df10",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "target": {
+        "dtype": "uint16",
+        "sha256": "e11fd85cced22528ed2a3f45b772e6836b67ec36c11cc1fc538e95604084df10",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      }
+    },
+    "EE": {
+      "dtype": "uint16",
+      "sha256": "16d4b63f79e11cff28dd7b7cfbbfff735d08a5e65db878401eec18fa4a80a1ef",
+      "shape": [
+        1,
+        1,
+        4,
+        5120
+      ]
+    },
+    "EE_vs_Boundary13d": {
+      "comparison": {
+        "a": {
+          "dtype": "uint16",
+          "sha256": "16d4b63f79e11cff28dd7b7cfbbfff735d08a5e65db878401eec18fa4a80a1ef",
+          "shape": [
+            1,
+            1,
+            4,
+            5120
+          ]
+        },
+        "b": {
+          "dtype": "uint16",
+          "sha256": "16d4b63f79e11cff28dd7b7cfbbfff735d08a5e65db878401eec18fa4a80a1ef",
+          "shape": [
+            1,
+            1,
+            4,
+            5120
+          ]
+        },
+        "contract": "BF16 max ULP <= 1",
+        "exact": true,
+        "max_abs_diff": 0.0,
+        "max_bf16_ulp": 0,
+        "mean_abs_diff": 0.0,
+        "num_differing": 0,
+        "num_elements": 20480,
+        "num_gt_1_ulp": 0,
+        "ulp_histogram": {
+          "0": 20480
+        },
+        "ulp_histogram_bins": {
+          "0": 20480,
+          "1": 0,
+          "2": 0,
+          ">2": 0
+        },
+        "within_contract": true
+      },
+      "name": "EE_vs_Boundary13d_block0_x_out",
+      "output": {
+        "dtype": "uint16",
+        "sha256": "16d4b63f79e11cff28dd7b7cfbbfff735d08a5e65db878401eec18fa4a80a1ef",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "target": {
+        "dtype": "uint16",
+        "sha256": "16d4b63f79e11cff28dd7b7cfbbfff735d08a5e65db878401eec18fa4a80a1ef",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      }
+    }
+  },
+  "final_hc_post_is_operation_defect": false,
+  "inputs": {
+    "actual": {
+      "fc": {
+        "dtype": "float32",
+        "sha256": "57b535679589a99baa9e62697f7e894b974978505fae9f506bdc25df94cc0b57",
+        "shape": [
+          1,
+          1,
+          4,
+          4
+        ]
+      },
+      "fo": {
+        "dtype": "float32",
+        "sha256": "0bc980d3565dd577ba3a9275ce2e4dfad49d9ff8a38e4c4365ec1d9beaf9b10b",
+        "shape": [
+          1,
+          1,
+          4
+        ]
+      },
+      "moe": {
+        "dtype": "uint16",
+        "sha256": "9019d252fedd51bbc909bf84ca65ccd64d09adbb9cde713a62e9a4e5bd064549",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "residual": {
+        "dtype": "uint16",
+        "sha256": "b64c86af478d9c7371f1ba0f3b5b40c4a193ac5f77e1c0a62ba310dfaf8ccdc3",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "xout": {
+        "dtype": "uint16",
+        "sha256": "e11fd85cced22528ed2a3f45b772e6836b67ec36c11cc1fc538e95604084df10",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      }
+    },
+    "actual_vs_expected_parent_comparisons": {
+      "ffn_fc_comb": {
+        "actual": {
+          "dtype": "float32",
+          "sha256": "57b535679589a99baa9e62697f7e894b974978505fae9f506bdc25df94cc0b57",
+          "shape": [
+            1,
+            1,
+            4,
+            4
+          ]
+        },
+        "expected": {
+          "dtype": "float32",
+          "sha256": "6595a230ae80ccf2c860a4887312a69a75e420c38a64fb3773f0351446f6079f",
+          "shape": [
+            1,
+            1,
+            4,
+            4
+          ]
+        },
+        "note": "FP32 parent previously qualified in actual-layer2-capture completed-comparison"
+      },
+      "ffn_fo_post": {
+        "actual": {
+          "dtype": "float32",
+          "sha256": "0bc980d3565dd577ba3a9275ce2e4dfad49d9ff8a38e4c4365ec1d9beaf9b10b",
+          "shape": [
+            1,
+            1,
+            4
+          ]
+        },
+        "expected": {
+          "dtype": "float32",
+          "sha256": "cd63c56544ac5613d92a0dfe97aaf0d03bfdb1a01f94fb872294fda35c59934a",
+          "shape": [
+            1,
+            1,
+            4
+          ]
+        },
+        "note": "FP32 parent previously qualified in actual-layer2-capture completed-comparison"
+      },
+      "moe_output": {
+        "a": {
+          "dtype": "uint16",
+          "sha256": "9019d252fedd51bbc909bf84ca65ccd64d09adbb9cde713a62e9a4e5bd064549",
+          "shape": [
+            1,
+            1,
+            5120
+          ]
+        },
+        "b": {
+          "dtype": "uint16",
+          "sha256": "243e10cb2f79e16a1eacf1e798ad82634f33ebe48b814c601df4a80c6672c808",
+          "shape": [
+            1,
+            1,
+            5120
+          ]
+        },
+        "contract": "BF16 max ULP <= 1",
+        "exact": false,
+        "max_abs_diff": 0.001953125,
+        "max_bf16_ulp": 32,
+        "mean_abs_diff": 1.2831389540224336e-05,
+        "num_differing": 156,
+        "num_elements": 5120,
+        "num_gt_1_ulp": 40,
+        "ulp_histogram": {
+          "0": 4964,
+          "1": 116,
+          "16": 1,
+          "2": 20,
+          "28": 1,
+          "32": 1,
+          "4": 11,
+          "8": 6
+        },
+        "ulp_histogram_bins": {
+          "0": 4964,
+          "1": 116,
+          "2": 20,
+          ">2": 20
+        },
+        "within_contract": false
+      },
+      "post_attention_h_residual": {
+        "a": {
+          "dtype": "uint16",
+          "sha256": "b64c86af478d9c7371f1ba0f3b5b40c4a193ac5f77e1c0a62ba310dfaf8ccdc3",
+          "shape": [
+            1,
+            1,
+            4,
+            5120
+          ]
+        },
+        "b": {
+          "dtype": "uint16",
+          "sha256": "a3adf1fd4e78d547fe06b310051f6d515473609eb2716056dde15acee249ec7d",
+          "shape": [
+            1,
+            1,
+            4,
+            5120
+          ]
+        },
+        "contract": "BF16 max ULP <= 1",
+        "exact": false,
+        "max_abs_diff": 0.00048828125,
+        "max_bf16_ulp": 1,
+        "mean_abs_diff": 2.3841858265427618e-08,
+        "num_differing": 1,
+        "num_elements": 20480,
+        "num_gt_1_ulp": 0,
+        "ulp_histogram": {
+          "0": 20479,
+          "1": 1
+        },
+        "ulp_histogram_bins": {
+          "0": 20479,
+          "1": 1,
+          "2": 0,
+          ">2": 0
+        },
+        "within_contract": true
+      }
+    },
+    "expected": {
+      "fc": {
+        "dtype": "float32",
+        "sha256": "6595a230ae80ccf2c860a4887312a69a75e420c38a64fb3773f0351446f6079f",
+        "shape": [
+          1,
+          1,
+          4,
+          4
+        ]
+      },
+      "fo": {
+        "dtype": "float32",
+        "sha256": "cd63c56544ac5613d92a0dfe97aaf0d03bfdb1a01f94fb872294fda35c59934a",
+        "shape": [
+          1,
+          1,
+          4
+        ]
+      },
+      "moe": {
+        "dtype": "uint16",
+        "sha256": "243e10cb2f79e16a1eacf1e798ad82634f33ebe48b814c601df4a80c6672c808",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "residual": {
+        "dtype": "uint16",
+        "sha256": "a3adf1fd4e78d547fe06b310051f6d515473609eb2716056dde15acee249ec7d",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "xout": {
+        "dtype": "uint16",
+        "sha256": "16d4b63f79e11cff28dd7b7cfbbfff735d08a5e65db878401eec18fa4a80a1ef",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      }
+    }
+  },
+  "methodology": {
+    "connected_ideal_trajectory_comparison": "diagnostic only after upstream drift is established",
+    "same_input_operator_qualification": "primary correctness question for final HC post",
+    "tolerance_changed": false
+  },
+  "next_frontier": "Engram@1 actual-input same-input qualification",
+  "ok": true,
+  "omlx_path": "/Users/kioju/omlx-0.7.0.dev2",
+  "parent_contribution_diagnostics": {
+    "EEEC_actual_comb_only_vs_EE": {
+      "a": {
+        "dtype": "uint16",
+        "sha256": "3d3380dee62f6887a3360b13314c0da58c0adaf3674bb52b4329e91cc6aff8a5",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "b": {
+        "dtype": "uint16",
+        "sha256": "16d4b63f79e11cff28dd7b7cfbbfff735d08a5e65db878401eec18fa4a80a1ef",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "contract": "BF16 max ULP <= 1",
+      "exact": false,
+      "max_abs_diff": 0.0001220703125,
+      "max_bf16_ulp": 1,
+      "mean_abs_diff": 2.5972259010131893e-08,
+      "num_differing": 15,
+      "num_elements": 20480,
+      "num_gt_1_ulp": 0,
+      "ulp_histogram": {
+        "0": 20465,
+        "1": 15
+      },
+      "ulp_histogram_bins": {
+        "0": 20465,
+        "1": 15,
+        "2": 0,
+        ">2": 0
+      },
+      "within_contract": true
+    },
+    "EEPE_actual_post_only_vs_EE": {
+      "a": {
+        "dtype": "uint16",
+        "sha256": "700b4b90e67ee736d667bde84e2f5eba677e8e3e24aec693f6fdfdf61115eae5",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "b": {
+        "dtype": "uint16",
+        "sha256": "16d4b63f79e11cff28dd7b7cfbbfff735d08a5e65db878401eec18fa4a80a1ef",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "contract": "BF16 max ULP <= 1",
+      "exact": false,
+      "max_abs_diff": 0.0009765625,
+      "max_bf16_ulp": 5,
+      "mean_abs_diff": 1.4809920401148702e-07,
+      "num_differing": 38,
+      "num_elements": 20480,
+      "num_gt_1_ulp": 2,
+      "ulp_histogram": {
+        "0": 20442,
+        "1": 36,
+        "2": 1,
+        "5": 1
+      },
+      "ulp_histogram_bins": {
+        "0": 20442,
+        "1": 36,
+        "2": 1,
+        ">2": 1
+      },
+      "within_contract": false
+    },
+    "EREE_actual_residual_only_vs_EE": {
+      "a": {
+        "dtype": "uint16",
+        "sha256": "a198ebdfab0278c68425f84f8f35dcb828d051c0e2725d3e4100f093da172aa0",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "b": {
+        "dtype": "uint16",
+        "sha256": "16d4b63f79e11cff28dd7b7cfbbfff735d08a5e65db878401eec18fa4a80a1ef",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "contract": "BF16 max ULP <= 1",
+      "exact": false,
+      "max_abs_diff": 0.00048828125,
+      "max_bf16_ulp": 1,
+      "mean_abs_diff": 2.9802322387695312e-08,
+      "num_differing": 2,
+      "num_elements": 20480,
+      "num_gt_1_ulp": 0,
+      "ulp_histogram": {
+        "0": 20478,
+        "1": 2
+      },
+      "ulp_histogram_bins": {
+        "0": 20478,
+        "1": 2,
+        "2": 0,
+        ">2": 0
+      },
+      "within_contract": true
+    },
+    "MEEE_actual_moe_only_vs_EE": {
+      "a": {
+        "dtype": "uint16",
+        "sha256": "61fbc7e1d370795736d219093c949dac0124175afb9a7b69e1e36845a7cb05f3",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "b": {
+        "dtype": "uint16",
+        "sha256": "16d4b63f79e11cff28dd7b7cfbbfff735d08a5e65db878401eec18fa4a80a1ef",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "contract": "BF16 max ULP <= 1",
+      "exact": false,
+      "max_abs_diff": 0.0009765625,
+      "max_bf16_ulp": 196,
+      "mean_abs_diff": 2.4959444999694824e-06,
+      "num_differing": 269,
+      "num_elements": 20480,
+      "num_gt_1_ulp": 92,
+      "ulp_histogram": {
+        "0": 20211,
+        "1": 177,
+        "12": 1,
+        "13": 3,
+        "14": 1,
+        "17": 1,
+        "18": 1,
+        "196": 1,
+        "2": 50,
+        "26": 2,
+        "3": 13,
+        "4": 8,
+        "5": 3,
+        "6": 1,
+        "7": 3,
+        "8": 2,
+        "9": 2
+      },
+      "ulp_histogram_bins": {
+        "0": 20211,
+        "1": 177,
+        "2": 50,
+        ">2": 42
+      },
+      "within_contract": false
+    },
+    "dominant_one_parent_by_max_ulp": [
+      [
+        "MEEE_actual_moe_only_vs_EE",
+        196,
+        92
+      ],
+      [
+        "EEPE_actual_post_only_vs_EE",
+        5,
+        2
+      ],
+      [
+        "EREE_actual_residual_only_vs_EE",
+        1,
+        0
+      ],
+      [
+        "EEEC_actual_comb_only_vs_EE",
+        1,
+        0
+      ]
+    ],
+    "interpretation": "One-parent substitutions are connected-trajectory diagnostics only; they do not assign semantic fault to a parent."
+  },
+  "phase_a_rerun_required": false,
+  "same_input_qualification": {
+    "bf16_contract_changed": false,
+    "official_hc_post_reproduces_actual_block0_output": true,
+    "same_input_bf16_result": {
+      "a": {
+        "dtype": "uint16",
+        "sha256": "e11fd85cced22528ed2a3f45b772e6836b67ec36c11cc1fc538e95604084df10",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "b": {
+        "dtype": "uint16",
+        "sha256": "e11fd85cced22528ed2a3f45b772e6836b67ec36c11cc1fc538e95604084df10",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "contract": "BF16 max ULP <= 1",
+      "exact": true,
+      "max_abs_diff": 0.0,
+      "max_bf16_ulp": 0,
+      "mean_abs_diff": 0.0,
+      "num_differing": 0,
+      "num_elements": 20480,
+      "num_gt_1_ulp": 0,
+      "ulp_histogram": {
+        "0": 20480
+      },
+      "ulp_histogram_bins": {
+        "0": 20480,
+        "1": 0,
+        "2": 0,
+        ">2": 0
+      },
+      "within_contract": true
+    }
+  },
+  "schema": "ds41f.m4.block0-final-hc-post-same-input.v1",
+  "source_checkpoint_provenance": {
+    "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+    "helper": "tools.run_official_hyper_connections_fixture.hc_post",
+    "official_source": {
+      "model_py_Block_forward": {
+        "file": "inference/model.py",
+        "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+        "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+        "source_lines": [
+          971,
+          994
+        ],
+        "source_sha256": "813b4dc3231349cb17190876e25f6c39da4a88fdec9d23e9cb0c5b6fcd8318f6"
+      },
+      "model_py_Block_hc_post": {
+        "file": "inference/model.py",
+        "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+        "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+        "source_lines": [
+          965,
+          969
+        ],
+        "source_sha256": "eaaa69a5e29927bd1dd1eba613786fcd8a97d7974df79a509442ef43f41d218f"
+      }
+    },
+    "operator": "BF16(post[...,None] * x[...,None,:] + einsum('...ij,...id->...jd', comb, residual_as_f32))",
+    "weights_not_stored_in_artifact": true
+  }
+}
