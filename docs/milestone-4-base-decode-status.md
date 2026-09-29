@@ -9,8 +9,9 @@ Status: **INCOMPLETE — M2 correctness requalification is complete: Layers0-39,
   - Logits digests: E `ad459d373bcca45204492a0a59740635a3f6c7dc93b3092a4ed49541ba2d208d`; C `bcc123d168b54be0b5da56fdbfcb3d30001e24578a2110691cc26daf44a24918`; M `01ec4e4d11957b280bb436e89408b92f25b5388e1af1d0f2bbfea7a180279422`.
   - Greedy argmax tokens: E/C/M all `104113`; first-token classification: `FIRST_TOKEN_BEHAVIOR_STABLE_ACROSS_REDUCTION_TRAJECTORIES`.
   - First checked discrete divergence across branch computations: `layer3.moe_route_ids`; persistent branch state after token15 has no recorded continuous or semantic/discrete divergence because the executor does not yet commit computed per-token KV/compressor/Engram/Ngram lifecycle state into the branch object.
-- Generic multi-token source-derived executor: **INCOMPLETE**. The current API is explicitly token15/position2 only, uses token15-specific Ngram compression, hardcoded first-position RoPE/index offsets, and does not append token15 to `token_history` or persist all token16-consumed state. Continuation readiness: `FIRST_INCREMENTAL_ONLY_CONTINUATION_GENERALIZATION_REQUIRED`.
-- Interim three-trajectory classification: `THREE_TRAJECTORY_BEHAVIORAL_STABILITY_INCOMPLETE_CONTINUATION_PENDING`.
+- Generic source-derived continuation lifecycle: **COMPLETE for the bounded two-step E/source-derived path** in `artifacts/m4/source-derived-generic-incremental-lifecycle/result.json`. The generalized executor runs `decode_one(15, state)` at position 2, commits token history/window KV/pending compressor state, then runs `decode_one(104113, same_state)` at position 3. Step2 logits digest is `e6af152cea54850c4978cc44efc421d99665f8d4c48bf851fc030acab969d4ef`, argmax `104113`. Classification: `SOURCE_DERIVED_GENERIC_INCREMENTAL_LIFECYCLE_QUALIFIED_TWO_STEP`.
+- Continuation readiness for bounded E/C/M lockstep is now `READY_FOR_BOUNDED_ECM_LOCKSTEP`, but multi-token E/C/M behavioral stability remains **PENDING**; the 8-token E/C/M continuation has not been run.
+- Interim three-trajectory classification remains: `THREE_TRAJECTORY_BEHAVIORAL_STABILITY_INCOMPLETE_CONTINUATION_PENDING`.
 
 ## Implemented
 
