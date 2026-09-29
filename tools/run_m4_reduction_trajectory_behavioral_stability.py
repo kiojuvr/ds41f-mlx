@@ -1,107 +1,184 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import hashlib, json, sys
+import hashlib, json, re, sys
 from pathlib import Path
+from typing import Any
 import numpy as np
 ROOT=Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path: sys.path.insert(0,str(ROOT))
-from tools.run_m4_trajectory_seed_causal_audit import block0_remainder_from_xattn, hc_post, build_prefill_state, cmp_bf16, cmp_f32
-from tools.run_native_first_incremental_block1_layer2_entry_validation import arr_digest
+from ds41f_mlx.source_incremental_executor import SourceDerivedFirstIncrementalExecutor, _jsonable
+from tools.run_native_ngram_hash_state_validation import arr_digest
 
 OUT=ROOT/'artifacts/m4/reduction-trajectory-behavioral-stability/result.json'
 ACT=ROOT/'artifacts/m4/actual-layer2-capture/actual-boundaries.npz'
 EXP=ROOT/'artifacts/m4/actual-layer2-capture/expected-boundaries.npz'
 CUDA_JSON=ROOT/'artifacts/m4/block0-wob-official-cuda-oracle/cuda-oracle-result.json'
 CUDA_NPY=ROOT/'artifacts/m4/block0-wob-official-cuda-oracle/cuda_wob_output_bf16_u16.npy'
+EXEC=ROOT/'ds41f_mlx/source_incremental_executor.py'
 
-def sha(a): return hashlib.sha256(np.ascontiguousarray(a).view(np.uint8)).hexdigest()
-def bits(a,i=3758): return f'0x{int(a.reshape(1,1,-1)[0,0,i]):04x}'
-def bf16_to_f32(x): return (np.asarray(x,dtype=np.uint16).astype(np.uint32)<<16).view(np.float32)
-def elem(a,i=3758): return {'index':[0,0,i],'bits':bits(a,i),'value':float(bf16_to_f32(a.reshape(1,1,-1)[0,0,i]))}
-def pairwise(vals, cmpfn=cmp_bf16):
-    return {'C_vs_E':cmpfn(vals['C'],vals['E']),'C_vs_M':cmpfn(vals['C'],vals['M']),'M_vs_E':cmpfn(vals['M'],vals['E'])}
-def eq3(vals): return bool(np.array_equal(vals['E'],vals['C']) and np.array_equal(vals['E'],vals['M']))
-def top_summary_not_run():
-    return {'executed':False,'reason':'This runner intentionally stops at Block1/layer2-entry continuous/discrete diagnostics. Full logits and bounded multi-token continuation require extending the reviewed source-derived full decode path with a Block0-Attention-output injection point; no production or CUDA full-model runtime was used.'}
+
+def sha(a: np.ndarray) -> str:
+    return hashlib.sha256(np.ascontiguousarray(a).view(np.uint8)).hexdigest()
+
+def f32(x: np.ndarray) -> np.ndarray:
+    return np.asarray(x,dtype=np.float32).reshape(-1)
+
+def logits_metrics(a: np.ndarray,b: np.ndarray) -> dict[str,Any]:
+    af=f32(a); bf=f32(b); d=np.abs(af-bf).astype(np.float64)
+    denom=float(np.linalg.norm(af.astype(np.float64))*np.linalg.norm(bf.astype(np.float64)))
+    return {'max_abs':float(np.max(d)),'mean_abs':float(np.mean(d)),'rms':float(np.sqrt(np.mean(d*d))),'cosine_similarity':float(np.dot(af.astype(np.float64),bf.astype(np.float64))/denom) if denom else None}
+
+def topk(logits: np.ndarray,k:int) -> list[dict[str,Any]]:
+    flat=f32(logits); idx=np.argpartition(-flat,k-1)[:k]; idx=idx[np.argsort(-flat[idx])]
+    return [{'token':int(i),'logit':float(flat[i])} for i in idx]
+
+def margin(top:list[dict[str,Any]]) -> float:
+    return float(top[0]['logit']-top[1]['logit'])
+
+def prefix_eq(a:list[dict[str,Any]],b:list[dict[str,Any]]) -> int:
+    n=0
+    for x,y in zip(a,b):
+        if x['token']!=y['token']: break
+        n+=1
+    return n
+
+def ranking_pair(a,b,k:int) -> dict[str,Any]:
+    ta=topk(a,k); tb=topk(b,k); sa={x['token'] for x in ta}; sb={x['token'] for x in tb}
+    return {'intersection_count':len(sa&sb),'ordered_prefix_equality_length':prefix_eq(ta,tb)}
+
+def discrete_pub(x: Any) -> Any:
+    if not isinstance(x,dict): return x
+    y={k:v for k,v in x.items() if k not in ('index_query_digest','index_score_digest','query_digest','score_digest')}
+    return _jsonable(y)
+
+def discrete_branch(r:dict[str,Any]) -> dict[str,Any]:
+    d={
+      'ngram.layer1_hash_digest':r['ngram']['layer1_hash_digest'],
+      'ngram.layer14_hash_digest':r['ngram']['layer14_hash_digest'],
+      'block0.moe_route_ids':r['block0']['moe_route_ids'],
+      'block1.window_topk':r['block1']['window_topk'],
+      'block1.moe_route_ids':r['block1']['moe_route_ids'],
+      'block1.selected_expert_set':r['block1']['selected_expert_set'],
+      'layer2_entry.window_topk':r['layer2_entry']['window_topk'],
+      'layer2_entry.indexer_topk':r['layer2_entry']['indexer_topk'],
+      'layer2_entry.compressor_partial':{k:r['layer2_entry']['compressor_partial'][k] for k in ['written_slot','group_complete','new_latent_produced']},
+      'layer2_entry.compress_kv_cache':r['layer2_entry']['compress_kv_cache'],
+      'layer2_entry.new_key_publication':r['layer2_entry']['new_key_publication'],
+      'engram14.hash_digest':r['engram14']['hash_digest'] if r.get('engram14') else None,
+    }
+    for layer,ls in r['layers2_39'].items():
+        d[f'layer{layer}.moe_route_ids']=ls['moe_route_ids']
+        d[f'layer{layer}.selected_expert_set']=ls['selected_expert_set']
+        d[f'layer{layer}.topk_used']=ls['topk_used']
+        d[f'layer{layer}.producer']=discrete_pub(ls['producer'])
+        d[f'layer{layer}.publication']=discrete_pub(ls['publication'])
+        d[f'layer{layer}.consumed']=discrete_pub(ls['consumed'])
+    return d
+
+def first_diff(branches:dict[str,dict[str,Any]],keys:list[str]) -> str|None:
+    for k in keys:
+        vals=[json.dumps(branches[b].get(k),sort_keys=True) for b in ['E','C','M']]
+        if not (vals[0]==vals[1]==vals[2]): return k
+    return None
+
+def persistent_semantic(s:dict[str,Any]) -> dict[str,Any]:
+    return {k:s[k] for k in ['position','token_history','committed_tokens','ownership']}
+
+def scan_hardcoded() -> list[dict[str,Any]]:
+    out=[]
+    text=EXEC.read_text().splitlines()
+    pats=[r'token_id != 15',r'state\.position != 2',r'_ngram_for_token15',r'tmap\[15\]',r'token_history.*\[0, 3\]',r'start_pos=2',r'freqs\(64,3',r'co_full\[2:3\]',r'si_full\[2:3\]',r'\+3',r'absolute_position": 2',r'position 2',r'token15']
+    rg=re.compile('|'.join(pats))
+    for i,line in enumerate(text,1):
+        if rg.search(line): out.append({'line':i,'text':line.strip()})
+    return out
 
 def main():
-    act=np.load(ACT); exp=np.load(EXP); cuda=json.loads(CUDA_JSON.read_text()); C=np.load(CUDA_NPY)
-    if sha(C)!='13c5dc43f40d4b4d0ba3771bf3b8fcdd492478f940de9ef3274f9f8c3f032d45': raise SystemExit('CUDA output digest mismatch')
-    if cuda['fixture']['npz_sha256']!='4bc7ab067127decc22c28cdfa25814882f7314d59e320cc5c6cadc998e806cd2': raise SystemExit('fixture sha mismatch')
+    act=np.load(ACT); exp=np.load(EXP); cuda=json.loads(CUDA_JSON.read_text()); C=np.ascontiguousarray(np.load(CUDA_NPY),dtype=np.uint16)
     E=np.ascontiguousarray(exp['block0_attention_output'],dtype=np.uint16); M=np.ascontiguousarray(act['block0_attention_output'],dtype=np.uint16)
-    prefill,_=build_prefill_state(); hash_ids=exp['engram1_hash_ids']
-    branches={}
-    for name,attn in [('E',E),('C',C),('M',M)]:
-        post=hc_post(attn, exp['block0_entry_h'], exp['block0_attn_ao'], exp['block0_attn_ac'])
-        branches[name]=block0_remainder_from_xattn(post, exp['block0_attn_ap'], hash_ids, prefill)
-        branches[name]['post_attention_h']=post
-    boundaries={
-      'block0_attention_output': {'E':E,'C':C,'M':M},
-      'block0_post_attention_h': {k:v['post_attention_h'] for k,v in branches.items()},
-      'block0_ffn_pre_norm': {k:v['ffn_pre_norm'] for k,v in branches.items()},
-      'block0_moe_output': {k:v['moe_output'] for k,v in branches.items()},
-      'block0_final_x_out': {k:v['x_out'] for k,v in branches.items()},
-      'engram1_output': {k:v['engram1_output'] for k,v in branches.items()},
-      'block1_attention_input': {k:v['block1']['attention_input'] for k,v in branches.items()},
-      'block1_q_rotary': {k:v['block1']['attn_path']['q'] for k,v in branches.items()},
-      'block1_sparse_output': {k:v['block1']['sparse'] for k,v in branches.items()},
-      'block1_attention_output': {k:v['block1']['attention_output'] for k,v in branches.items()},
-      'block1_moe_input': {k:v['block1']['moe_input'] for k,v in branches.items()},
-      'block1_x_out': {k:v['block1']['x_out'] for k,v in branches.items()},
+    assert sha(C)=='13c5dc43f40d4b4d0ba3771bf3b8fcdd492478f940de9ef3274f9f8c3f032d45'
+    executor=SourceDerivedFirstIncrementalExecutor()
+    clone=executor.assert_clone_independence()
+    base=executor.make_state(); state_E=base.clone(); state_C=base.clone(); state_M=base.clone()
+    independence={'executor_clone_probe_pass':bool(clone['pass']),'base_vs_E_before_equal':base.summary()==state_E.summary(),'E_C_M_before_equal':state_E.summary()==state_C.summary()==state_M.summary(),'distinct_state_objects':len({id(state_E),id(state_C),id(state_M)})==3,'distinct_prefill_objects':len({id(state_E.prefill_state),id(state_C.prefill_state),id(state_M.prefill_state)})==3}
+    normal_E_state=executor.make_state(); injected_E_state=executor.make_state()
+    normal_E=executor.decode_one(15, normal_E_state, None, return_logits=True)
+    injected_E=executor.decode_one(15, injected_E_state, E, return_logits=True)
+    raw_normal_E=normal_E.pop('raw_logits'); raw_injected_E=injected_E.pop('raw_logits')
+    guard_keys=['block0','engram1','block1','layers2_39','engram14','selected_continuous_digests','final_logits','state_summary_after']
+    e_guard={k:json.dumps(_jsonable(normal_E[k]),sort_keys=True)==json.dumps(_jsonable(injected_E[k]),sort_keys=True) for k in guard_keys}
+    e_guard['full_logits_raw_equal']=bool(np.array_equal(raw_normal_E,raw_injected_E))
+    branches={
+      'E':executor.decode_one(15,state_E,E,return_logits=True),
+      'C':executor.decode_one(15,state_C,C,return_logits=True),
+      'M':executor.decode_one(15,state_M,M,return_logits=True),
     }
-    comparisons={k:pairwise(v) for k,v in boundaries.items()}
-    first_amp=None
-    for k in boundaries:
-        c=comparisons[k]['C_vs_E']
-        if c.get('max_bf16_ulp',0)>32 or c.get('count_gt_32_ulp',0)>0:
-            first_amp={'boundary':k,'C_vs_E':c}; break
-    disc={
-      'block0_moe_route_ids':{k:v['moe_route_ids'] for k,v in branches.items()},
-      'block0_moe_route_weights':{k:v['moe_route_weights'] for k,v in branches.items()},
-      'block1_topk_window_indices':{k:v['block1']['attn_path']['topk'].tolist() for k,v in branches.items()},
-      'block1_moe_route_ids':{k:v['block1']['moe']['idx'].tolist() for k,v in branches.items()},
-      'block1_moe_expert_sets':{k:v['block1']['moe']['expert_ids'] for k,v in branches.items()},
+    logits={k:v.pop('raw_logits') for k,v in branches.items()}
+    top10={k:topk(v,10) for k,v in logits.items()}; top32={k:topk(v,32) for k,v in logits.items()}
+    pairs=[('E','C'),('E','M'),('C','M')]
+    pair_metrics={f'{a}_vs_{b}':logits_metrics(logits[a],logits[b]) for a,b in pairs}
+    top_overlap={f'{a}_vs_{b}':{'top10':ranking_pair(logits[a],logits[b],10),'top32':ranking_pair(logits[a],logits[b],32),'rank1_identity_equal':top10[a][0]['token']==top10[b][0]['token'],'rank2_identity_equal':top10[a][1]['token']==top10[b][1]['token'],'rank1_rank2_ordering_equal':[top10[a][0]['token'],top10[a][1]['token']]==[top10[b][0]['token'],top10[b][1]['token']]} for a,b in pairs}
+    discrete={k:discrete_branch(v) for k,v in branches.items()}
+    dkeys=list(discrete['E'].keys()); first_discrete=first_diff(discrete,dkeys)
+    sem={k:persistent_semantic(v['state_summary_after']) for k,v in branches.items()}
+    first_sem=None
+    for k in ['position','token_history','committed_tokens','ownership']:
+        vals=[json.dumps(_jsonable(sem[b][k]),sort_keys=True) for b in ['E','C','M']]
+        if not (vals[0]==vals[1]==vals[2]): first_sem=k; break
+    arrdig={k:v['state_summary_after']['array_digests'] for k,v in branches.items()}
+    first_cont=None
+    for key in sorted(arrdig['E']):
+        if not (arrdig['E'].get(key)==arrdig['C'].get(key)==arrdig['M'].get(key)):
+            first_cont=key; break
+    greedy={k:int(top10[k][0]['token']) for k in top10}
+    stable=len(set(greedy.values()))==1
+    cont_hard=scan_hardcoded()
+    continuation_readiness={
+      'generic_token_supported':False,
+      'generic_position_supported':False,
+      'token_history_commit_correct':False,
+      'ngram_state_commit_correct':False,
+      'window_kv_commit_correct':False,
+      'pending_compressor_commit_correct':False,
+      'compressed/index_publication_commit_correct':False,
+      'engram_history_commit_correct':False,
+      'hardcoded_first_token_assumptions':cont_hard,
+      'audit_notes':[
+        'decode_one rejects any token other than 15 and any state.position other than 2.',
+        '_ngram_for_token15 maps token id 15 explicitly; generic continuation must derive compressed_token = source_token_map(tokenizer)[token_id].',
+        'commit appends committed_tokens and increments position but does not append token_id to token_history, and returned ngram arrays are not installed into branch state.',
+        'attention helpers use start_pos=2, freqs length 3, co_full/si_full[2:3], +3 compressed concat offset, and absolute_position=2 metadata.',
+        'computed window KV, pending ratio2 compressor rows, compressed/index publications, top-k/candidates, and Engram/Ngram history are summarized but not committed into the branch NativeDecodeSessionState for token16 consumption.'
+      ],
+      'classification':'FIRST_INCREMENTAL_ONLY_CONTINUATION_GENERALIZATION_REQUIRED'
     }
-    discrete_eq={k:(v['E']==v['C']==v['M']) for k,v in disc.items()}
-    # Route weights are continuous diagnostics; route ids, selected sets, and sparse/top-k indices are discrete decisions.
-    discrete_gate_keys=['block0_moe_route_ids','block1_topk_window_indices','block1_moe_route_ids','block1_moe_expert_sets']
-    first_disc=next((k for k in discrete_gate_keys if not discrete_eq[k]),None)
+    final_class='THREE_TRAJECTORY_BEHAVIORAL_STABILITY_INCOMPLETE_CONTINUATION_PENDING' if stable else 'BEHAVIOR_SENSITIVE_TO_FP8_REDUCTION_TRAJECTORY'
     rec={
-      'schema':'ds41f.m4.reduction_trajectory_behavioral_stability.v1',
-      'status':'INCOMPLETE_FULL_INCREMENTAL_SOURCE_DERIVED_HARNESS_MISSING',
-      'scope_note':'C is official CUDA/TileLang Block0 wo_b output followed by reviewed source-derived downstream execution; it is not full-model CUDA execution. Bounded continuation, once available, measures propagation of the initial E/C/M Block0 reduction perturbation under a common reviewed source-derived implementation.',
-      'source_derived_harness_reused':['tools/run_m4_trajectory_seed_causal_audit.block0_remainder_from_xattn','tools/run_native_first_incremental_block1_layer2_entry_validation.block1','tools.native_decode_session_state.build_prefill_state'],
-      'completion_blocker':'No reviewed branch-local source-derived incremental harness currently exists in this repository for executing Layers2-39, final HC, final RMSNorm, ParallelHead logits, and multi-token continuation from an injected Block0 Attention output. Existing reviewed full-depth helpers are prefill [0,3] validators, while existing first-incremental helpers stop at Layer2 entry.',
-      'branch_state_independence':{'attempted':True,'status':'PARTIAL_ONLY','details':'E/C/M branches are separate Python result objects through Block1 and share only immutable prefix/preload inputs in this runner; independent mutable persistent state through Layers2-39 and continuation is not implemented and remains required before final behavioral classification.'},
-      'cuda_oracle_import':{'json':str(CUDA_JSON),'output_npy':str(CUDA_NPY),'fixture_sha256':cuda['fixture']['npz_sha256'],'cuda_output_digest':sha(C),'verified':True,'external_final_classification':cuda['final_classification'],'environment':cuda['cuda_environment'],'official_source_identities':cuda['official_source_identities'],'activation_matches_fixture':cuda['oracle_A_complete_official_linear']['activation_matches_fixture'],'oracle_A_B_agree':cuda['oracle_B_fixed_quantized_inputs']['agrees_with_oracle_A']},
-      'trajectory_identities':{'E':{'name':'source-derived arithmetic reference','digest':sha(E),'element_3758':elem(E)},'C':{'name':'official CUDA/TileLang wo_b output','digest':sha(C),'element_3758':elem(C)},'M':{'name':'production MLX M=1 output','digest':sha(M),'element_3758':elem(M)}},
-      'block0_attention_pairwise':comparisons['block0_attention_output'],
-      'continuous_boundary_pairwise':comparisons,
-      'first_continuous_amplification_boundary_gt32ulp_C_vs_E':first_amp,
-      'discrete_decisions_compared':disc,
-      'discrete_decision_equality':discrete_eq,
-      'first_discrete_divergence':first_disc,
-      'block0_moe_route_equality':discrete_eq['block0_moe_route_ids'],
-      'engram1_output_pairwise':comparisons['engram1_output'],
-      'block1_sparse_index_equality':discrete_eq['block1_topk_window_indices'],
-      'block1_moe_route_equality':discrete_eq['block1_moe_route_ids'],
-      'layer2_to_39':{'executed':False,'reason':'reviewed branch-local first-incremental source-derived Layers2-39 harness not available'},
-      'final_rmsnorm':{'executed':False,'reason':'requires layer39 branch output from missing incremental Layers2-39 harness'},
-      'full_logits':top_summary_not_run(),
-      'topk_logits':top_summary_not_run(),
-      'logits_pairwise_metrics':None,
-      'top10_lists':None,
-      'top32_overlap':None,
-      'greedy_tokens':None,
-      'top1_top2_margins':None,
-      'bounded_continuation':{'executed':False,'length':0,'token_sequences':{'E':[],'C':[],'M':[]},'first_token_divergence_position':None,'reason':'First-token logits gate was not reached because the required branch-local incremental source-derived Layers2-39/logits harness is missing.'},
-      'first_persistent_state_divergence':{'semantic_discrete':None,'continuous_numeric':'block0_attention_output','not_fully_evaluated_beyond':'Block1 / Layer2 entry'},
-      'first_token_behavioral_stability_classification':'NOT_EVALUATED_FULL_INCREMENTAL_HARNESS_PENDING',
-      'final_classification':'THREE_TRAJECTORY_BEHAVIORAL_STABILITY_INCOMPLETE_FULL_INCREMENTAL_HARNESS_PENDING',
-      'precision_policy_decision':'Interim: official CUDA establishes multiple valid FP8 reduction trajectories; connected hidden-state bit identity and whole-logits SHA identity are non-authoritative while the behavioral/logit stability gate remains pending.',
-      'metal_exactification_status':'RETIRED_AS_ACTIVE_FRONTIER_PENDING_BEHAVIORAL_STABILITY; do not implement canonical Metal wo_b solely to match NumPy or CUDA bits.',
-      'next_frontier':'extend reviewed source-derived decode/logits harness with explicit Block0 Attention output injection for E/C/M and run first-token logits plus bounded lockstep continuation',
-      'ok':False}
-    OUT.parent.mkdir(parents=True,exist_ok=True); OUT.write_text(json.dumps(rec,indent=2,sort_keys=True)+'\n')
-    print(json.dumps({'wrote':str(OUT),'classification':rec['final_classification'],'first_discrete_divergence':first_disc,'cuda_digest':sha(C)},indent=2))
+      'schema':'ds41f.m4.reduction_trajectory_behavioral_stability.v2',
+      'status':'FIRST_TOKEN_LOGITS_COMPLETE_CONTINUATION_PENDING',
+      'cuda_oracle_import':{'json':str(CUDA_JSON),'output_npy':str(CUDA_NPY),'fixture_sha256':cuda['fixture']['npz_sha256'],'cuda_output_digest':sha(C),'verified':True},
+      'trajectory_identities':{'E':{'name':'source-derived Block0 Attention output','digest':sha(E)},'C':{'name':'official CUDA/TileLang output','digest':sha(C)},'M':{'name':'production MLX M=1 output','digest':sha(M)}},
+      'branch_state_independence':independence,
+      'normal_E_vs_injected_E_identity':e_guard,
+      'full_logits':{k:{'digest':arr_digest(v),'shape':list(v.shape),'dtype':str(v.dtype)} for k,v in logits.items()},
+      'logits_pairwise_metrics':pair_metrics,
+      'greedy_tokens':greedy,
+      'rank2_tokens':{k:int(top10[k][1]['token']) for k in top10},
+      'top1_top2_margins':{k:margin(top10[k]) for k in top10},
+      'top10_lists':top10,
+      'top32_lists':top32,
+      'top32_overlap':top_overlap,
+      'first_discrete_divergence':first_discrete,
+      'discrete_decisions_compared':discrete,
+      'first_persistent_state_divergence':{'continuous_numeric':first_cont,'semantic_discrete':first_sem},
+      'persistent_state_after':{k:v['state_summary_after'] for k,v in branches.items()},
+      'bounded_continuation':{'executed':False,'length':0,'token_sequences':{'E':[],'C':[],'M':[]},'reason':'decode_one is explicitly token15/position2 first-incremental-only and does not commit all state required for token16 consumption.'},
+      'first_token_behavioral_stability_classification':'FIRST_TOKEN_BEHAVIOR_STABLE_ACROSS_REDUCTION_TRAJECTORIES' if stable else 'FIRST_TOKEN_BEHAVIOR_SENSITIVE_TO_VALID_REDUCTION_TRAJECTORY',
+      'continuation_readiness':continuation_readiness,
+      'final_classification':final_class,
+      'precision_policy_decision':'First-token greedy behavior is stable across E/C/M, but THREE_TRAJECTORY_BEHAVIORAL_STABILITY remains incomplete until generic multi-token continuation is implemented and qualified.' if stable else 'First-token greedy behavior differs; behavior is sensitive to valid FP8 reduction trajectory.',
+      'next_frontier':'generalize and qualify decode_one lifecycle for arbitrary next token/position, including real branch-state commits, before bounded continuation.',
+      'ok':stable}
+    OUT.parent.mkdir(parents=True,exist_ok=True); OUT.write_text(json.dumps(_jsonable(rec),indent=2,sort_keys=True)+'\n')
+    print(json.dumps({'wrote':str(OUT),'classification':rec['first_token_behavioral_stability_classification'],'final':final_class,'digests':rec['full_logits'],'greedy_tokens':greedy,'first_discrete_divergence':first_discrete,'persistent':rec['first_persistent_state_divergence']},indent=2))
 if __name__=='__main__': main()

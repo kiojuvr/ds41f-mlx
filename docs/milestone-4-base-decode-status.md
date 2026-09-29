@@ -2,6 +2,16 @@
 
 Status: **INCOMPLETE — M2 correctness requalification is complete: Layers0-39, final HC collapse, final RMSNorm, ParallelHead, bounded prefix `[0,3]` compositional correctness, committed continuation-state correctness, no-replay corrected-state admission, and full admission semantic round-trip are complete. The source@14 admission defect proved semantic-only compressed KV was lossy for cross-runtime handoff; preserving original model-semantic FP4/E4M3 physical payloads closes admission. The current M4 open gate is incremental `[15]` first independent oMLX target boundary localization. Ordinary oMLX (O) itself is not bit-exact to the historical reference (R), so historical bit identity is not used as the correctness contract.**
 
+## Current M4 source-derived first-incremental status
+
+- First-incremental full-depth executor: **COMPLETE** for token15 at absolute position 2 (`SourceDerivedFirstIncrementalExecutor`), including Block0 Attention injection, Layers0-39, Engram@1/@14, final HC, final RMSNorm, and ParallelHead logits.
+- E/C/M token15 behavioral gate: **COMPLETE** in `artifacts/m4/reduction-trajectory-behavioral-stability/result.json`.
+  - Logits digests: E `ad459d373bcca45204492a0a59740635a3f6c7dc93b3092a4ed49541ba2d208d`; C `bcc123d168b54be0b5da56fdbfcb3d30001e24578a2110691cc26daf44a24918`; M `01ec4e4d11957b280bb436e89408b92f25b5388e1af1d0f2bbfea7a180279422`.
+  - Greedy argmax tokens: E/C/M all `104113`; first-token classification: `FIRST_TOKEN_BEHAVIOR_STABLE_ACROSS_REDUCTION_TRAJECTORIES`.
+  - First checked discrete divergence across branch computations: `layer3.moe_route_ids`; persistent branch state after token15 has no recorded continuous or semantic/discrete divergence because the executor does not yet commit computed per-token KV/compressor/Engram/Ngram lifecycle state into the branch object.
+- Generic multi-token source-derived executor: **INCOMPLETE**. The current API is explicitly token15/position2 only, uses token15-specific Ngram compression, hardcoded first-position RoPE/index offsets, and does not append token15 to `token_history` or persist all token16-consumed state. Continuation readiness: `FIRST_INCREMENTAL_ONLY_CONTINUATION_GENERALIZATION_REQUIRED`.
+- Interim three-trajectory classification: `THREE_TRAJECTORY_BEHAVIORAL_STABILITY_INCOMPLETE_CONTINUATION_PENDING`.
+
 ## Implemented
 
 - Added production model-core decode seam: `ds41f_mlx/runtime/omlx_decode.py`.

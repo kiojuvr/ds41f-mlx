@@ -225,7 +225,7 @@ class SourceDerivedFirstIncrementalExecutor:
         after_b = b.summary()
         return {"pass": before_b == after_b, "before_b": before_b, "after_b": after_b, "mutated_clone_a_summary": a.summary()}
 
-    def decode_one(self, token_id: int, state: SourceDerivedIncrementalState, injected_block0_attention: np.ndarray | None = None) -> dict[str, Any]:
+    def decode_one(self, token_id: int, state: SourceDerivedIncrementalState, injected_block0_attention: np.ndarray | None = None, return_logits: bool = False) -> dict[str, Any]:
         if token_id != 15 or state.position != 2:
             raise ValueError("This qualification executor currently supports only token15 at absolute position 2")
         ngram = _ngram_for_token15(state, self.checkpoint)
@@ -276,7 +276,7 @@ class SourceDerivedFirstIncrementalExecutor:
         state.committed_tokens.append(token_id)
         state.position += 1
         state.ownership["last_executed"] = "final_logits"
-        return {
+        result = {
             "token_id": token_id,
             "absolute_position": 2,
             "injection": injection,
@@ -293,3 +293,6 @@ class SourceDerivedFirstIncrementalExecutor:
             "stop": {"layer2_sparse_attn_executed": True, "layers2_39_executed": True, "final_logits_executed": True},
             "unsupported_next_seam": None,
         }
+        if return_logits:
+            result["raw_logits"] = logits["logits"]
+        return result
