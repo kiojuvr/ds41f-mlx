@@ -5,7 +5,506 @@
     "real_loaded_omlx": true
   },
   "attempt_status": "COMPLETE",
-  "classification": "BLOCK0_EXECUTION_DIVERGENCE",
+  "block0_branch_facts": {
+    "attention": "packed_sparse_attention path for length 1 (GLM fast branch requires length > 8)",
+    "hc_mixes": "reference _hc_mixes path for decode length 1 (fused_hc_projection requires x.shape[1] >= 256)",
+    "hc_post": "production fused_hc_post eligible for captured BF16 GPU shape",
+    "hc_pre_norm": "production fused_hc_pre_norm eligible for captured BF16 GPU shape"
+  },
+  "block0_exit_pre_remains_qualified": true,
+  "block0_fused_reference_comparisons": {
+    "attn_hc_post_fused_vs_reference": {
+      "actual": {
+        "dtype": "uint16",
+        "nbytes": 40960,
+        "sha256": "b64c86af478d9c7371f1ba0f3b5b40c4a193ac5f77e1c0a62ba310dfaf8ccdc3",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "contract": "actual fused_hc_post vs _hc_post_reference BF16 max ULP <= 1",
+      "exact": true,
+      "expected": {
+        "dtype": "uint16",
+        "nbytes": 40960,
+        "sha256": "b64c86af478d9c7371f1ba0f3b5b40c4a193ac5f77e1c0a62ba310dfaf8ccdc3",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "max_bf16_ulp": 0,
+      "max_bf16_ulp_lte": 1,
+      "within_contract": true
+    },
+    "attn_pre_norm_fused_vs_reference": {
+      "actual": {
+        "dtype": "uint16",
+        "nbytes": 10240,
+        "sha256": "9f3d5433e680798d5f32fe10b8384476664078668b234c0780c7bce20ef775be",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "contract": "actual fused_hc_pre_norm vs norm(hc_pre(...)) BF16 max ULP <= 1",
+      "exact": true,
+      "expected": {
+        "dtype": "uint16",
+        "nbytes": 10240,
+        "sha256": "9f3d5433e680798d5f32fe10b8384476664078668b234c0780c7bce20ef775be",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "max_bf16_ulp": 0,
+      "max_bf16_ulp_lte": 1,
+      "within_contract": true
+    },
+    "ffn_pre_norm_fused_vs_reference": {
+      "actual": {
+        "dtype": "uint16",
+        "nbytes": 10240,
+        "sha256": "99db2e1487f6e985ea0711698d772b77b40625eb220fd5e9606a6d07a63a1bbd",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "contract": "actual fused_hc_pre_norm vs norm(hc_pre(...)) BF16 max ULP <= 1",
+      "exact": true,
+      "expected": {
+        "dtype": "uint16",
+        "nbytes": 10240,
+        "sha256": "99db2e1487f6e985ea0711698d772b77b40625eb220fd5e9606a6d07a63a1bbd",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "max_bf16_ulp": 0,
+      "max_bf16_ulp_lte": 1,
+      "within_contract": true
+    },
+    "final_hc_post_fused_vs_reference": {
+      "actual": {
+        "dtype": "uint16",
+        "nbytes": 40960,
+        "sha256": "e11fd85cced22528ed2a3f45b772e6836b67ec36c11cc1fc538e95604084df10",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "contract": "actual fused_hc_post vs _hc_post_reference BF16 max ULP <= 1",
+      "exact": true,
+      "expected": {
+        "dtype": "uint16",
+        "nbytes": 40960,
+        "sha256": "e11fd85cced22528ed2a3f45b772e6836b67ec36c11cc1fc538e95604084df10",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "max_bf16_ulp": 0,
+      "max_bf16_ulp_lte": 1,
+      "within_contract": true
+    }
+  },
+  "block0_internal_comparisons": {
+    "attention_output": {
+      "actual": {
+        "dtype": "uint16",
+        "nbytes": 10240,
+        "sha256": "364c6a2e08bdd079d2f6690b3eeec5eb72b07e389fbd57d6ba6bb8567d7f192f",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "contract": "Block0 Attention output BF16 max ULP <= 1",
+      "exact": false,
+      "expected": {
+        "dtype": "uint16",
+        "nbytes": 10240,
+        "sha256": "10c042342f715b36399920d65b811bb24e7f8f2d03cba672c70dfbd083f0c2d0",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "max_bf16_ulp": 1,
+      "max_bf16_ulp_lte": 1,
+      "within_contract": true
+    },
+    "attn_ac": {
+      "actual": {
+        "dtype": "float32",
+        "nbytes": 64,
+        "sha256": "be7c9c00f4251bc4e5b25e0f47b288bb1595e7961325241c3cfa386832a96814",
+        "shape": [
+          1,
+          1,
+          4,
+          4
+        ]
+      },
+      "contract": "Block0 attention HC comb FP32 max abs <= 1e-4",
+      "exact": false,
+      "expected": {
+        "dtype": "float32",
+        "nbytes": 64,
+        "sha256": "93dab9ee82ec53773fa888bad1247204472d4b6f17d5677f5ab62ec103665ea6",
+        "shape": [
+          1,
+          1,
+          4,
+          4
+        ]
+      },
+      "max_abs_diff": 5.960464477539063e-08,
+      "max_abs_lte": 0.0001,
+      "within_contract": true
+    },
+    "attn_ao": {
+      "actual": {
+        "dtype": "float32",
+        "nbytes": 16,
+        "sha256": "066289730a14373245a3781bda74bce304b19f0bf0d8f88290bbeaf9d965f321",
+        "shape": [
+          1,
+          1,
+          4
+        ]
+      },
+      "contract": "Block0 attention HC post mix FP32 max abs <= 1e-4",
+      "exact": false,
+      "expected": {
+        "dtype": "float32",
+        "nbytes": 16,
+        "sha256": "ddb9a4d0f122b782a819591f6d1a6f5bb04894628bf7006fb72b5a1bd66e600b",
+        "shape": [
+          1,
+          1,
+          4
+        ]
+      },
+      "max_abs_diff": 7.450580596923828e-09,
+      "max_abs_lte": 0.0001,
+      "within_contract": true
+    },
+    "attn_ap": {
+      "actual": {
+        "dtype": "float32",
+        "nbytes": 16,
+        "sha256": "595ee489d9d05cf3e88bc8a0755013e6dc188e6ca780d808fbe4d1a4db6cf745",
+        "shape": [
+          1,
+          1,
+          4
+        ]
+      },
+      "contract": "Block0 attention HC pre mix FP32 max abs <= 1e-4",
+      "exact": false,
+      "expected": {
+        "dtype": "float32",
+        "nbytes": 16,
+        "sha256": "0760bf37514fb6ef60fc1cd2fae5862ec322c7f8dbe21f74dbdff130a3ad3138",
+        "shape": [
+          1,
+          1,
+          4
+        ]
+      },
+      "max_abs_diff": 1.0913936421275139e-11,
+      "max_abs_lte": 0.0001,
+      "within_contract": true
+    },
+    "attn_pre_norm": {
+      "actual": {
+        "dtype": "uint16",
+        "nbytes": 10240,
+        "sha256": "9f3d5433e680798d5f32fe10b8384476664078668b234c0780c7bce20ef775be",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "contract": "Block0 attention hc_pre_norm BF16 max ULP <= 1",
+      "exact": true,
+      "expected": {
+        "dtype": "uint16",
+        "nbytes": 10240,
+        "sha256": "9f3d5433e680798d5f32fe10b8384476664078668b234c0780c7bce20ef775be",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "max_bf16_ulp": 0,
+      "max_bf16_ulp_lte": 1,
+      "within_contract": true
+    },
+    "ffn_fc": {
+      "actual": {
+        "dtype": "float32",
+        "nbytes": 64,
+        "sha256": "57b535679589a99baa9e62697f7e894b974978505fae9f506bdc25df94cc0b57",
+        "shape": [
+          1,
+          1,
+          4,
+          4
+        ]
+      },
+      "contract": "Block0 FFN HC comb FP32 max abs <= 1e-4",
+      "exact": false,
+      "expected": {
+        "dtype": "float32",
+        "nbytes": 64,
+        "sha256": "6595a230ae80ccf2c860a4887312a69a75e420c38a64fb3773f0351446f6079f",
+        "shape": [
+          1,
+          1,
+          4,
+          4
+        ]
+      },
+      "max_abs_diff": 2.8759241104125977e-06,
+      "max_abs_lte": 0.0001,
+      "within_contract": true
+    },
+    "ffn_fo": {
+      "actual": {
+        "dtype": "float32",
+        "nbytes": 16,
+        "sha256": "0bc980d3565dd577ba3a9275ce2e4dfad49d9ff8a38e4c4365ec1d9beaf9b10b",
+        "shape": [
+          1,
+          1,
+          4
+        ]
+      },
+      "contract": "Block0 FFN HC post mix FP32 max abs <= 1e-4",
+      "exact": false,
+      "expected": {
+        "dtype": "float32",
+        "nbytes": 16,
+        "sha256": "cd63c56544ac5613d92a0dfe97aaf0d03bfdb1a01f94fb872294fda35c59934a",
+        "shape": [
+          1,
+          1,
+          4
+        ]
+      },
+      "max_abs_diff": 1.4603137969970703e-06,
+      "max_abs_lte": 0.0001,
+      "within_contract": true
+    },
+    "ffn_fp": {
+      "actual": {
+        "dtype": "float32",
+        "nbytes": 16,
+        "sha256": "3c2d32eb7ddf0a8bcb820a4b9042d0e6ea984073aff6ab2faad0126737876d69",
+        "shape": [
+          1,
+          1,
+          4
+        ]
+      },
+      "contract": "Block0 FFN HC returned pre/fp FP32 max abs <= 1e-4",
+      "exact": false,
+      "expected": {
+        "dtype": "float32",
+        "nbytes": 16,
+        "sha256": "c224d1f429ecc8bc907f605595deadcf6c63c9047431720d9d7b06ca368b7a9f",
+        "shape": [
+          1,
+          1,
+          4
+        ]
+      },
+      "max_abs_diff": 2.86102294921875e-06,
+      "max_abs_lte": 0.0001,
+      "within_contract": true
+    },
+    "ffn_pre_norm": {
+      "actual": {
+        "dtype": "uint16",
+        "nbytes": 10240,
+        "sha256": "99db2e1487f6e985ea0711698d772b77b40625eb220fd5e9606a6d07a63a1bbd",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "contract": "Block0 FFN hc_pre_norm/MoE input BF16 max ULP <= 1",
+      "exact": false,
+      "expected": {
+        "dtype": "uint16",
+        "nbytes": 10240,
+        "sha256": "b1a419ba9c7c793f8fb3a55663de63320fb2927a98d074a98ae09d5a8984646d",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "max_bf16_ulp": 2,
+      "max_bf16_ulp_lte": 1,
+      "within_contract": false
+    },
+    "final_hc_post": {
+      "actual": {
+        "dtype": "uint16",
+        "nbytes": 40960,
+        "sha256": "e11fd85cced22528ed2a3f45b772e6836b67ec36c11cc1fc538e95604084df10",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "contract": "Block0 final hc_post output BF16 max ULP <= 1",
+      "exact": false,
+      "expected": {
+        "dtype": "uint16",
+        "nbytes": 40960,
+        "sha256": "16d4b63f79e11cff28dd7b7cfbbfff735d08a5e65db878401eec18fa4a80a1ef",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "max_bf16_ulp": 196,
+      "max_bf16_ulp_lte": 1,
+      "within_contract": false
+    },
+    "moe_output": {
+      "actual": {
+        "dtype": "uint16",
+        "nbytes": 10240,
+        "sha256": "9019d252fedd51bbc909bf84ca65ccd64d09adbb9cde713a62e9a4e5bd064549",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "contract": "Block0 MoE output BF16 max ULP <= 1",
+      "exact": false,
+      "expected": {
+        "dtype": "uint16",
+        "nbytes": 10240,
+        "sha256": "243e10cb2f79e16a1eacf1e798ad82634f33ebe48b814c601df4a80c6672c808",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "max_bf16_ulp": 32,
+      "max_bf16_ulp_lte": 1,
+      "within_contract": false
+    },
+    "post_attention_h": {
+      "actual": {
+        "dtype": "uint16",
+        "nbytes": 40960,
+        "sha256": "b64c86af478d9c7371f1ba0f3b5b40c4a193ac5f77e1c0a62ba310dfaf8ccdc3",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "contract": "Block0 attention hc_post output BF16 max ULP <= 1",
+      "exact": false,
+      "expected": {
+        "dtype": "uint16",
+        "nbytes": 40960,
+        "sha256": "a3adf1fd4e78d547fe06b310051f6d515473609eb2716056dde15acee249ec7d",
+        "shape": [
+          1,
+          1,
+          4,
+          5120
+        ]
+      },
+      "max_bf16_ulp": 1,
+      "max_bf16_ulp_lte": 1,
+      "within_contract": true
+    },
+    "route_ids": {
+      "actual": {
+        "dtype": "uint32",
+        "nbytes": 24,
+        "sha256": "53c03f13f9efcc3b98a8ea446adb698553ef2bf5a7fe8406761266f04ecda1c7",
+        "shape": [
+          6
+        ]
+      },
+      "contract": "exact",
+      "exact": true,
+      "expected": {
+        "dtype": "int64",
+        "nbytes": 48,
+        "sha256": "733ef3bd608f65079cd4645ceb46f81e5be7ba0c5313bd2256c606674444b564",
+        "shape": [
+          6
+        ]
+      },
+      "within_contract": true
+    },
+    "route_weights": {
+      "actual": {
+        "dtype": "float32",
+        "nbytes": 24,
+        "sha256": "ab130474199b3e68051fba25f6457b8712eff384012e734c07790e5d3479034d",
+        "shape": [
+          6
+        ]
+      },
+      "contract": "Block0 MoE route weights FP32 max abs <= 1e-3",
+      "exact": false,
+      "expected": {
+        "dtype": "float32",
+        "nbytes": 24,
+        "sha256": "2feaa5b51b54af510f887d2f1e7faa71a77f5634e4bb2441961578cac95afc6a",
+        "shape": [
+          6
+        ]
+      },
+      "max_abs_diff": 1.8894672393798828e-05,
+      "max_abs_lte": 0.001,
+      "within_contract": true
+    }
+  },
+  "classification": "BLOCK0_FFN_PRE_NORM_DIVERGENCE",
   "comparison_phase": "C lightweight process",
   "comparisons": {
     "attention_return": {
@@ -277,19 +776,22 @@
       "within_contract": false
     }
   },
-  "execution_order_classification": "BLOCK0_EXECUTION_DIVERGENCE",
+  "execution_order_classification": "BLOCK0_FFN_PRE_NORM_DIVERGENCE",
   "expected_provenance": {
     "Boundary13d": "tools/run_native_first_incremental_block0_engram1_validation.py official-source-derived Block0 + Engram@1 authority",
     "Boundary13e": "tools/run_native_first_incremental_block1_layer2_entry_validation.py official-source-derived Block1 completion / Layer2 entry authority"
   },
   "failed_attempt_artifact": "/Volumes/SDXC-512/ds41f-mlx/artifacts/m4/actual-layer2-capture/result.json",
-  "first_unresolved_boundary": "block0_exit_h",
+  "first_failing_block0_boundary": "ffn_hc_pre_norm",
+  "first_passing_block0_boundary": "ffn_hc_mixes",
+  "first_unresolved_boundary": "ffn_pre_norm",
   "historical_failed_attempt_preserved": true,
   "internal_identity_actual_block1_exit_eq_layer2_entry": {
     "actual_block1_exit_h_eq_layer2_entry_h": true,
     "actual_block1_exit_pre_eq_layer2_entry_pre": true,
     "applicable": true
   },
+  "later_block0_mismatches_are_propagation": true,
   "layer2_incremental_block": "INCOMPLETE",
   "ok": false,
   "post_layer2_state": {

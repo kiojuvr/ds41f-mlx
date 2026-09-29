@@ -219,6 +219,20 @@ def phase_expected(args: argparse.Namespace) -> int:
     arrays = {
         "block0_entry_h": np.ascontiguousarray(l0["hc_h"]),
         "block0_entry_pre": np.ascontiguousarray(l0["identity_pre_mix"]),
+        "block0_attn_ap": np.ascontiguousarray(l0["attn_pre"]),
+        "block0_attn_ao": np.ascontiguousarray(l0["attn_post"]),
+        "block0_attn_ac": np.ascontiguousarray(l0["attn_comb"]),
+        "block0_attn_pre_norm_output": np.ascontiguousarray(l0["attention_input"]),
+        "block0_attention_output": np.ascontiguousarray(d13["projection"]["attention_output"]),
+        "block0_post_attention_h": np.ascontiguousarray(d13["block0"]["x_after_attn"]),
+        "block0_ffn_fp": np.ascontiguousarray(d13["block0"]["ffn_pre"]),
+        "block0_ffn_fo": np.ascontiguousarray(d13["block0"]["ffn_post"]),
+        "block0_ffn_fc": np.ascontiguousarray(d13["block0"]["ffn_comb"]),
+        "block0_ffn_pre_norm_output": np.ascontiguousarray(d13["block0"]["moe_input"]),
+        "block0_moe_input": np.ascontiguousarray(d13["block0"]["moe_input"]),
+        "block0_route_ids": np.ascontiguousarray(d13["block0"]["moe"]["idx"]),
+        "block0_route_weights": np.ascontiguousarray(d13["block0"]["moe"]["weights"]),
+        "block0_moe_output": np.ascontiguousarray(d13["block0"]["moe"]["final"]),
         "block0_exit_h": np.ascontiguousarray(d13["block0"]["x_out"]),
         "block0_exit_pre": np.ascontiguousarray(d13["block0"]["ffn_pre"]),
         "engram1_input_h": np.ascontiguousarray(d13["block0"]["x_out"]),
@@ -313,11 +327,12 @@ def phase_actual(args: argparse.Namespace) -> int:
         gc.collect()
 
         cap: dict[str, Any] = {"arrays": {}, "summaries": {}, "events": []}
-        active = {"block2": False, "attn2": False}
+        active = {"block0": False, "block2": False, "attn2": False, "block0_hc_mix_count": 0, "block0_pre_norm_count": 0, "block0_hc_post_count": 0}
+        target_block0 = lm.layers[0]; target_attn0 = target_block0.attn; target_moe0 = target_block0.ffn; target_gate0 = target_moe0.gate
         target_block = lm.layers[2]; target_attn = target_block.attn; target_moe = target_block.ffn; target_gate = target_moe.gate
         target_engram1 = getattr(lm.layers[1], "engram", None)
         engram_mod = importlib.import_module("omlx.patches.deepseek_v41.engram")
-        orig_block = lang.Block.__call__; orig_attn = lang.Attention.__call__; orig_moe = lang.MoE.__call__; orig_gate = lang.Gate.__call__; orig_rope = lang.rope; orig_hp = lang.hc_post; orig_sparse = lang.packed_sparse_attention; orig_engram = engram_mod.Engram.__call__
+        orig_block = lang.Block.__call__; orig_attn = lang.Attention.__call__; orig_moe = lang.MoE.__call__; orig_gate = lang.Gate.__call__; orig_rope = lang.rope; orig_hp = lang.hc_post; orig_sparse = lang.packed_sparse_attention; orig_engram = engram_mod.Engram.__call__; orig_hc_mixes = lang.hc_mixes; orig_hpn = lang.hc_pre_norm
 
         def layer_idx(self: Any) -> int | None:
             for i, b in enumerate(lm.layers):
@@ -345,7 +360,12 @@ def phase_actual(args: argparse.Namespace) -> int:
             if li == 0:
                 cap["arrays"]["block0_entry_h"] = to_np(mx, h)
                 cap["arrays"]["block0_entry_pre"] = to_np(mx, pre)
+                active["block0"] = True
+                active["block0_hc_mix_count"] = 0
+                active["block0_pre_norm_count"] = 0
+                active["block0_hc_post_count"] = 0
                 out = orig_block(self, h, pre, cache, shared, start, image_mask)
+                active["block0"] = False
                 mx.eval(out[0], out[1])
                 cap["arrays"]["block0_exit_h"] = to_np(mx, out[0])
                 cap["arrays"]["block0_exit_pre"] = to_np(mx, out[1])
@@ -377,6 +397,37 @@ def phase_actual(args: argparse.Namespace) -> int:
             if li in (0, 1, 2): progress.mark(f"layer{li}_exit")
             return out
 
+        def hc_mixes_wrap(x, fn, scale, base, c):
+            out = orig_hc_mixes(x, fn, scale, base, c)
+            if active["block0"]:
+                active["block0_hc_mix_count"] += 1
+                prefix = "block0_attn" if active["block0_hc_mix_count"] == 1 else "block0_ffn"
+                mx.eval(out[0], out[1], out[2])
+                if prefix == "block0_attn":
+                    cap["arrays"]["block0_attn_ap"] = to_np(mx, out[0])
+                    cap["arrays"]["block0_attn_ao"] = to_np(mx, out[1])
+                    cap["arrays"]["block0_attn_ac"] = to_np(mx, out[2])
+                elif prefix == "block0_ffn":
+                    cap["arrays"]["block0_ffn_fp"] = to_np(mx, out[0])
+                    cap["arrays"]["block0_ffn_fo"] = to_np(mx, out[1])
+                    cap["arrays"]["block0_ffn_fc"] = to_np(mx, out[2])
+            return out
+
+        def hc_pre_norm_wrap(x, pre, weight, eps):
+            if active["block0"]:
+                active["block0_pre_norm_count"] += 1
+                prefix = "block0_attn" if active["block0_pre_norm_count"] == 1 else "block0_ffn"
+                cap["arrays"][f"{prefix}_pre_norm_input_h"] = to_np(mx, x)
+                cap["arrays"][f"{prefix}_pre_norm_input_pre"] = to_np(mx, pre)
+            out = orig_hpn(x, pre, weight, eps)
+            if active["block0"]:
+                ref = lang.norm(lang.hc_pre(x, pre), weight, eps)
+                mx.eval(out, ref)
+                cap["arrays"][f"{prefix}_pre_norm_output"] = to_np(mx, out)
+                cap["arrays"][f"{prefix}_pre_norm_reference_output"] = to_np(mx, ref)
+                cap["summaries"][f"{prefix}_pre_norm_branch"] = {"production": "fused_hc_pre_norm", "reference": "norm(hc_pre(...))"}
+            return out
+
         def engram_call(self, h, ids, image_mask=None):
             if self is target_engram1:
                 progress.mark("engram1_enter")
@@ -390,6 +441,14 @@ def phase_actual(args: argparse.Namespace) -> int:
             return orig_engram(self, h, ids, image_mask)
 
         def attn_call(self, x, cache, shared, start):
+            if self is target_attn0:
+                progress.mark("layer0_attention_enter")
+                cap["arrays"]["block0_attention_input"] = to_np(mx, x)
+                out = orig_attn(self, x, cache, shared, start)
+                mx.eval(out)
+                cap["arrays"]["block0_attention_output"] = to_np(mx, out)
+                progress.mark("layer0_attention_exit")
+                return out
             if self is target_attn:
                 progress.mark("layer2_attention_enter")
                 active["attn2"] = True
@@ -436,6 +495,22 @@ def phase_actual(args: argparse.Namespace) -> int:
 
         def hp_wrap(x, residual, post, comb):
             out = orig_hp(x, residual, post, comb)
+            if active["block0"]:
+                active["block0_hc_post_count"] += 1
+                prefix = "block0_attn" if active["block0_hc_post_count"] == 1 else "block0_final"
+                cap["arrays"][f"{prefix}_hc_post_input_x"] = to_np(mx, x)
+                cap["arrays"][f"{prefix}_hc_post_input_residual"] = to_np(mx, residual)
+                cap["arrays"][f"{prefix}_hc_post_input_post"] = to_np(mx, post)
+                cap["arrays"][f"{prefix}_hc_post_input_comb"] = to_np(mx, comb)
+                ref = lang._hc_post_reference(x, residual, post, comb)
+                mx.eval(out, ref)
+                cap["arrays"][f"{prefix}_hc_post_output"] = to_np(mx, out)
+                cap["arrays"][f"{prefix}_hc_post_reference_output"] = to_np(mx, ref)
+                cap["summaries"][f"{prefix}_hc_post_branch"] = {"production": "fused_hc_post", "reference": "_hc_post_reference"}
+                if prefix == "block0_attn":
+                    cap["arrays"]["block0_post_attention_h"] = cap["arrays"][f"{prefix}_hc_post_output"]
+                else:
+                    cap["arrays"]["block0_exit_h_from_final_hc_post"] = cap["arrays"][f"{prefix}_hc_post_output"]
             if active["block2"]:
                 mx.eval(out)
                 arr = to_np(mx, out)
@@ -446,6 +521,13 @@ def phase_actual(args: argparse.Namespace) -> int:
             return out
 
         def moe_call(self, x, image_mask):
+            if self is target_moe0:
+                progress.mark("layer0_moe_enter")
+                cap["arrays"]["block0_moe_input"] = to_np(mx, x)
+                out = orig_moe(self, x, image_mask)
+                mx.eval(out); cap["arrays"]["block0_moe_output"] = to_np(mx, out)
+                progress.mark("layer0_moe_exit")
+                return out
             if self is target_moe:
                 progress.mark("layer2_moe_enter")
                 cap["arrays"]["moe_input"] = to_np(mx, x)
@@ -456,6 +538,12 @@ def phase_actual(args: argparse.Namespace) -> int:
             return orig_moe(self, x, image_mask)
 
         def gate_call(self, x, image_mask):
+            if self is target_gate0:
+                out = orig_gate(self, x, image_mask)
+                mx.eval(out[0], out[1])
+                cap["arrays"]["block0_route_ids"] = to_np(mx, out[0])
+                cap["arrays"]["block0_route_weights"] = to_np(mx, out[1])
+                return out
             if self is target_gate:
                 out = orig_gate(self, x, image_mask)
                 mx.eval(out[0], out[1])
@@ -466,14 +554,14 @@ def phase_actual(args: argparse.Namespace) -> int:
 
         try:
             progress.mark("wrapper_install_begin")
-            lang.Block.__call__ = block_call; lang.Attention.__call__ = attn_call; lang.packed_sparse_attention = sparse_wrap; lang.rope = rope_wrap; lang.hc_post = hp_wrap; lang.MoE.__call__ = moe_call; lang.Gate.__call__ = gate_call; engram_mod.Engram.__call__ = engram_call
+            lang.Block.__call__ = block_call; lang.Attention.__call__ = attn_call; lang.packed_sparse_attention = sparse_wrap; lang.rope = rope_wrap; lang.hc_post = hp_wrap; lang.hc_mixes = hc_mixes_wrap; lang.hc_pre_norm = hc_pre_norm_wrap; lang.MoE.__call__ = moe_call; lang.Gate.__call__ = gate_call; engram_mod.Engram.__call__ = engram_call
             progress.mark("wrapper_install_complete")
             progress.mark("forward_begin")
             logits = lm._forward(mx.array([[15]], mx.int64), cache=sess.cache)
             mx.eval(logits)
             progress.mark("forward_complete")
         finally:
-            lang.Block.__call__ = orig_block; lang.Attention.__call__ = orig_attn; lang.packed_sparse_attention = orig_sparse; lang.rope = orig_rope; lang.hc_post = orig_hp; lang.MoE.__call__ = orig_moe; lang.Gate.__call__ = orig_gate; engram_mod.Engram.__call__ = orig_engram
+            lang.Block.__call__ = orig_block; lang.Attention.__call__ = orig_attn; lang.packed_sparse_attention = orig_sparse; lang.rope = orig_rope; lang.hc_post = orig_hp; lang.hc_mixes = orig_hc_mixes; lang.hc_pre_norm = orig_hpn; lang.MoE.__call__ = orig_moe; lang.Gate.__call__ = orig_gate; engram_mod.Engram.__call__ = orig_engram
 
         final_offsets = [int(c.size()) for c in sess.cache]
         arrays = {k: v for k, v in cap["arrays"].items() if isinstance(v, np.ndarray)}
@@ -564,6 +652,20 @@ def reconstruct_expected_upstream_npz(ck: Path) -> dict[str, np.ndarray]:
     return {
         "block0_entry_h": np.ascontiguousarray(l0["hc_h"]),
         "block0_entry_pre": np.ascontiguousarray(l0["identity_pre_mix"]),
+        "block0_attn_ap": np.ascontiguousarray(l0["attn_pre"]),
+        "block0_attn_ao": np.ascontiguousarray(l0["attn_post"]),
+        "block0_attn_ac": np.ascontiguousarray(l0["attn_comb"]),
+        "block0_attn_pre_norm_output": np.ascontiguousarray(l0["attention_input"]),
+        "block0_attention_output": np.ascontiguousarray(d13["projection"]["attention_output"]),
+        "block0_post_attention_h": np.ascontiguousarray(d13["block0"]["x_after_attn"]),
+        "block0_ffn_fp": np.ascontiguousarray(d13["block0"]["ffn_pre"]),
+        "block0_ffn_fo": np.ascontiguousarray(d13["block0"]["ffn_post"]),
+        "block0_ffn_fc": np.ascontiguousarray(d13["block0"]["ffn_comb"]),
+        "block0_ffn_pre_norm_output": np.ascontiguousarray(d13["block0"]["moe_input"]),
+        "block0_moe_input": np.ascontiguousarray(d13["block0"]["moe_input"]),
+        "block0_route_ids": np.ascontiguousarray(d13["block0"]["moe"]["idx"]),
+        "block0_route_weights": np.ascontiguousarray(d13["block0"]["moe"]["weights"]),
+        "block0_moe_output": np.ascontiguousarray(d13["block0"]["moe"]["final"]),
         "block0_exit_h": np.ascontiguousarray(d13["block0"]["x_out"]),
         "block0_exit_pre": np.ascontiguousarray(d13["block0"]["ffn_pre"]),
         "engram1_input_h": np.ascontiguousarray(d13["block0"]["x_out"]),
@@ -599,6 +701,28 @@ def phase_compare(args: argparse.Namespace) -> int:
         "layer2_entry_h": cmp_bf16(act.get("block_input_h", act.get("layer2_entry_h")), exp.get("layer2_entry_h"), 1, "Boundary13e Layer2 entry h BF16 max ULP <= 1"),
         "layer2_entry_pre": cmp_f32(act.get("block_input_pre", act.get("layer2_entry_pre")), exp.get("layer2_entry_pre"), 1e-4, "Boundary13e Layer2 entry pre FP32 max abs <= 1e-4"),
     }
+    block0_internal = {
+        "attn_ap": cmp_f32(act.get("block0_attn_ap"), exp.get("block0_attn_ap"), 1e-4, "Block0 attention HC pre mix FP32 max abs <= 1e-4"),
+        "attn_ao": cmp_f32(act.get("block0_attn_ao"), exp.get("block0_attn_ao"), 1e-4, "Block0 attention HC post mix FP32 max abs <= 1e-4"),
+        "attn_ac": cmp_f32(act.get("block0_attn_ac"), exp.get("block0_attn_ac"), 1e-4, "Block0 attention HC comb FP32 max abs <= 1e-4"),
+        "attn_pre_norm": cmp_bf16(act.get("block0_attn_pre_norm_output"), exp.get("block0_attn_pre_norm_output"), 1, "Block0 attention hc_pre_norm BF16 max ULP <= 1"),
+        "attention_output": cmp_bf16(act.get("block0_attention_output"), exp.get("block0_attention_output"), 1, "Block0 Attention output BF16 max ULP <= 1"),
+        "post_attention_h": cmp_bf16(act.get("block0_post_attention_h"), exp.get("block0_post_attention_h"), 1, "Block0 attention hc_post output BF16 max ULP <= 1"),
+        "ffn_fp": cmp_f32(act.get("block0_ffn_fp"), exp.get("block0_ffn_fp"), 1e-4, "Block0 FFN HC returned pre/fp FP32 max abs <= 1e-4"),
+        "ffn_fo": cmp_f32(act.get("block0_ffn_fo"), exp.get("block0_ffn_fo"), 1e-4, "Block0 FFN HC post mix FP32 max abs <= 1e-4"),
+        "ffn_fc": cmp_f32(act.get("block0_ffn_fc"), exp.get("block0_ffn_fc"), 1e-4, "Block0 FFN HC comb FP32 max abs <= 1e-4"),
+        "ffn_pre_norm": cmp_bf16(act.get("block0_ffn_pre_norm_output"), exp.get("block0_ffn_pre_norm_output"), 1, "Block0 FFN hc_pre_norm/MoE input BF16 max ULP <= 1"),
+        "route_ids": cmp_exact(act.get("block0_route_ids"), exp.get("block0_route_ids")),
+        "route_weights": cmp_f32(act.get("block0_route_weights"), exp.get("block0_route_weights"), 1e-3, "Block0 MoE route weights FP32 max abs <= 1e-3"),
+        "moe_output": cmp_bf16(act.get("block0_moe_output"), exp.get("block0_moe_output"), 1, "Block0 MoE output BF16 max ULP <= 1"),
+        "final_hc_post": cmp_bf16(act.get("block0_exit_h_from_final_hc_post", act.get("block0_exit_h")), exp.get("block0_exit_h"), 1, "Block0 final hc_post output BF16 max ULP <= 1"),
+    }
+    fused_reference = {
+        "attn_pre_norm_fused_vs_reference": cmp_bf16(act.get("block0_attn_pre_norm_output"), act.get("block0_attn_pre_norm_reference_output"), 1, "actual fused_hc_pre_norm vs norm(hc_pre(...)) BF16 max ULP <= 1"),
+        "attn_hc_post_fused_vs_reference": cmp_bf16(act.get("block0_attn_hc_post_output"), act.get("block0_attn_hc_post_reference_output"), 1, "actual fused_hc_post vs _hc_post_reference BF16 max ULP <= 1"),
+        "ffn_pre_norm_fused_vs_reference": cmp_bf16(act.get("block0_ffn_pre_norm_output"), act.get("block0_ffn_pre_norm_reference_output"), 1, "actual fused_hc_pre_norm vs norm(hc_pre(...)) BF16 max ULP <= 1"),
+        "final_hc_post_fused_vs_reference": cmp_bf16(act.get("block0_final_hc_post_output"), act.get("block0_final_hc_post_reference_output"), 1, "actual fused_hc_post vs _hc_post_reference BF16 max ULP <= 1"),
+    }
     comps = {
         "pre_inverse_rope": cmp_bf16(act.get("pre_inverse_rope"), exp.get("pre_inverse_rope"), 1, "qualified Layer2 padded sparse BF16 output max ULP <= 1"),
         "inverse_rope": cmp_bf16(act.get("inverse_rope"), exp.get("inverse_rope"), 1, "attention output projection inverse rotary BF16 max ULP <= 1"),
@@ -615,6 +739,17 @@ def phase_compare(args: argparse.Namespace) -> int:
     if not comps["pre_inverse_rope"].get("within_contract", False):
         for name in ["sparse_q", "sparse_packed_window_kv", "sparse_packed_compressed_kv", "sparse_wi", "sparse_ci", "sparse_sink", "sparse_scale"]:
             sparse_input_comparisons[name] = cmp_sparse_input(name, act.get(name), exp.get(name))
+    block0_internal_order = [
+        (["attn_ap", "attn_ao", "attn_ac"], "BLOCK0_ATTN_HC_MIX_DIVERGENCE"),
+        (["attn_pre_norm"], "BLOCK0_ATTN_PRE_NORM_DIVERGENCE"),
+        (["attention_output"], "BLOCK0_ATTENTION_DIVERGENCE"),
+        (["post_attention_h"], "BLOCK0_ATTN_HC_POST_DIVERGENCE"),
+        (["ffn_fp", "ffn_fo", "ffn_fc"], "BLOCK0_FFN_HC_MIX_DIVERGENCE"),
+        (["ffn_pre_norm"], "BLOCK0_FFN_PRE_NORM_DIVERGENCE"),
+        (["route_ids", "route_weights"], "BLOCK0_MOE_ROUTING_DIVERGENCE"),
+        (["moe_output"], "BLOCK0_MOE_DIVERGENCE"),
+        (["final_hc_post"], "BLOCK0_FINAL_HC_POST_DIVERGENCE"),
+    ]
     upstream_order = [
         (["block0_entry_h", "block0_entry_pre"], "BLOCK0_ENTRY_DIVERGENCE", "block0_entry"),
         (["block0_exit_h", "block0_exit_pre"], "BLOCK0_EXECUTION_DIVERGENCE", "block0_exit"),
@@ -634,15 +769,42 @@ def phase_compare(args: argparse.Namespace) -> int:
             if not upstream_comps[k].get("within_contract", False):
                 first_upstream = k; classification_upstream = "LAYER2_ENTRY_DIVERGENCE"; break
     else:
-        for keys, cls, boundary in upstream_order:
-            bad = [k for k in keys if not upstream_comps[k].get("within_contract", False)]
-            if bad:
-                first_upstream = bad[0]; classification_upstream = cls; break
+        entry_ok = upstream_comps["block0_entry_h"].get("within_contract", False) and upstream_comps["block0_entry_pre"].get("within_contract", False)
+        if entry_ok and "block0_attn_ap" in act:
+            for keys, cls in block0_internal_order:
+                bad = [k for k in keys if not block0_internal[k].get("within_contract", False)]
+                if bad:
+                    first_upstream = bad[0]; classification_upstream = cls; break
+        if first_upstream is None:
+            for keys, cls, boundary in upstream_order:
+                bad = [k for k in keys if not upstream_comps[k].get("within_contract", False)]
+                if bad:
+                    first_upstream = bad[0]; classification_upstream = cls; break
     internal_identity = {
         "actual_block1_exit_h_eq_layer2_entry_h": bool(act.get("block1_exit_h") is not None and act.get("block_input_h") is not None and np.array_equal(act.get("block1_exit_h"), act.get("block_input_h"))),
         "actual_block1_exit_pre_eq_layer2_entry_pre": bool(act.get("block1_exit_pre") is not None and act.get("block_input_pre") is not None and np.array_equal(act.get("block1_exit_pre"), act.get("block_input_pre"))),
         "applicable": bool(act.get("block1_exit_h") is not None and act.get("block_input_h") is not None),
     }
+    block0_boundary_labels = [
+        ("block0_entry", ["block0_entry_h", "block0_entry_pre"], upstream_comps),
+        ("attn_hc_mixes", ["attn_ap", "attn_ao", "attn_ac"], block0_internal),
+        ("attn_hc_pre_norm", ["attn_pre_norm"], block0_internal),
+        ("attention_output", ["attention_output"], block0_internal),
+        ("attn_hc_post", ["post_attention_h"], block0_internal),
+        ("ffn_hc_mixes", ["ffn_fp", "ffn_fo", "ffn_fc"], block0_internal),
+        ("ffn_hc_pre_norm", ["ffn_pre_norm"], block0_internal),
+        ("moe_routing", ["route_ids", "route_weights"], block0_internal),
+        ("moe_output", ["moe_output"], block0_internal),
+        ("final_hc_post", ["final_hc_post"], block0_internal),
+    ]
+    first_passing_block0_boundary = None
+    first_failing_block0_boundary = None
+    for label, keys, table in block0_boundary_labels:
+        if all(table[k].get("within_contract", False) for k in keys):
+            first_passing_block0_boundary = label
+        else:
+            first_failing_block0_boundary = label
+            break
     ok = (first_upstream is None) and all(v.get("within_contract", False) for v in comps.values())
     state_ok = {
         "final_merged_layer2_frontier_eq_3": bool(actual_meta.get("final_offsets", [None, None, None])[2] == 3),
@@ -676,6 +838,18 @@ def phase_compare(args: argparse.Namespace) -> int:
             "Boundary13e": "tools/run_native_first_incremental_block1_layer2_entry_validation.py official-source-derived Block1 completion / Layer2 entry authority (reconstructed in Phase C because older expected NPZ lacked upstream arrays)",
         },
         "actual_loaded_omlx_source_identity": {"checkpoint": actual_meta.get("checkpoint"), "omlx_path": actual_meta.get("omlx_path"), "real_loaded_omlx": actual_meta.get("real_loaded_omlx")},
+        "block0_internal_comparisons": block0_internal,
+        "block0_fused_reference_comparisons": fused_reference,
+        "block0_branch_facts": {
+            "hc_mixes": "reference _hc_mixes path for decode length 1 (fused_hc_projection requires x.shape[1] >= 256)",
+            "hc_pre_norm": "production fused_hc_pre_norm eligible for captured BF16 GPU shape",
+            "hc_post": "production fused_hc_post eligible for captured BF16 GPU shape",
+            "attention": "packed_sparse_attention path for length 1 (GLM fast branch requires length > 8)",
+        },
+        "first_passing_block0_boundary": first_passing_block0_boundary,
+        "first_failing_block0_boundary": first_failing_block0_boundary,
+        "later_block0_mismatches_are_propagation": bool(classification_upstream and classification_upstream.startswith("BLOCK0_") and classification_upstream != "BLOCK0_FINAL_HC_POST_DIVERGENCE"),
+        "block0_exit_pre_remains_qualified": bool(upstream_comps["block0_exit_pre"].get("within_contract", False)),
         "upstream_comparisons": upstream_comps,
         "comparisons": comps, "sparse_input_comparisons": sparse_input_comparisons, "post_layer2_state": state_ok,
         "internal_identity_actual_block1_exit_eq_layer2_entry": internal_identity,

@@ -99,7 +99,7 @@ def continue_block0(layer0, nhash):
     fh=hc_pre(x_attn, layer0['attn_pre']); fnw=np.ascontiguousarray(mmap(shard(ck,'layers.0.ffn_norm.weight'),'layers.0.ffn_norm.weight',np.uint16,(DIM,)))
     moe_in=rms_eps(fh.reshape(1,DIM),fnw,eps).reshape(1,1,DIM); moe=moe_layer(ck,c,0,moe_in); xout=hc_post(moe['final'],x_attn,ffn_post,ffn_comb)
     post,sp,eng_wkv,eng_gate,eng_res=apply_engram1_dynamic(ck,xout,nhash[:,:,0,:])
-    return {'sparse':{'raw_scores':raw,'scaled_scores':scaled,'rowmax':rowmax,'denominator':den,'denominator_no_sink':den0,'sink_term':sterm,'all_invalid':allinv,'out_f32':outf,'output':sparse_out,'attn_sink':sink,'softmax_scale':scale},'projection':{'inverse_rotary':inv,'woa_out':woa_out,'attention_output':attn_out},'block0':{'x_after_attn':x_attn,'ffn_pre':ffn_pre,'moe_input':moe_in,'moe':moe,'x_out':xout},'engram1':{'post':post,'sparse_embedding':sp,'wkv':eng_wkv,'gate':eng_gate,'residual':eng_res}}
+    return {'sparse':{'raw_scores':raw,'scaled_scores':scaled,'rowmax':rowmax,'denominator':den,'denominator_no_sink':den0,'sink_term':sterm,'all_invalid':allinv,'out_f32':outf,'output':sparse_out,'attn_sink':sink,'softmax_scale':scale},'projection':{'inverse_rotary':inv,'woa_out':woa_out,'attention_output':attn_out},'block0':{'x_after_attn':x_attn,'ffn_pre':ffn_pre,'ffn_post':ffn_post,'ffn_comb':ffn_comb,'moe_input':moe_in,'moe':moe,'x_out':xout},'engram1':{'post':post,'sparse_embedding':sp,'wkv':eng_wkv,'gate':eng_gate,'residual':eng_res}}
 
 def main():
     prefill_state,_=build_prefill_state(); b12b0=json.loads((ROOT/'artifacts/engram-semantic-foundation-contract.json').read_text()); cfgj=json.loads((CKPT/'inference/config.json').read_text())
