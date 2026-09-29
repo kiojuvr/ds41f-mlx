@@ -1,0 +1,205 @@
+{
+  "checkpoint": "official",
+  "comparisons": {
+    "C_vs_E_reference": {
+      "actual_digest": "13c5dc43f40d4b4d0ba3771bf3b8fcdd492478f940de9ef3274f9f8c3f032d45",
+      "count_gt_1_ulp": 6,
+      "differing_count": 112,
+      "expected_digest": "10c042342f715b36399920d65b811bb24e7f8f2d03cba672c70dfbd083f0c2d0",
+      "max_abs": 0.0078125,
+      "max_bf16_ulp": 5,
+      "mean_abs": 2.5817007553996518e-05
+    },
+    "C_vs_M_mlx": {
+      "actual_digest": "13c5dc43f40d4b4d0ba3771bf3b8fcdd492478f940de9ef3274f9f8c3f032d45",
+      "count_gt_1_ulp": 6,
+      "differing_count": 113,
+      "expected_digest": "364c6a2e08bdd079d2f6690b3eeec5eb72b07e389fbd57d6ba6bb8567d7f192f",
+      "max_abs": 0.0078125,
+      "max_bf16_ulp": 5,
+      "mean_abs": 2.6579946279525757e-05
+    },
+    "M_vs_E_reference": {
+      "actual_digest": "364c6a2e08bdd079d2f6690b3eeec5eb72b07e389fbd57d6ba6bb8567d7f192f",
+      "count_gt_1_ulp": 0,
+      "differing_count": 1,
+      "expected_digest": "10c042342f715b36399920d65b811bb24e7f8f2d03cba672c70dfbd083f0c2d0",
+      "max_abs": 0.00390625,
+      "max_bf16_ulp": 1,
+      "mean_abs": 7.629394644936838e-07
+    },
+    "index_3758": {
+      "cuda": {
+        "bits": "0x3f6c",
+        "index": [
+          0,
+          0,
+          3758
+        ],
+        "value": 0.921875
+      },
+      "mlx": {
+        "bits": "0x3f6d",
+        "index": [
+          0,
+          0,
+          3758
+        ],
+        "value": 0.92578125
+      },
+      "reference": {
+        "bits": "0x3f6c",
+        "index": [
+          0,
+          0,
+          3758
+        ],
+        "value": 0.921875
+      }
+    }
+  },
+  "cuda_environment": {
+    "compute_capability": [
+      8,
+      9
+    ],
+    "cuda_available": true,
+    "cuda_runtime": "12.8",
+    "gpu_model": "NVIDIA GeForce RTX 4090",
+    "nvidia_driver": "571.96",
+    "nvidia_smi": "GPU 0: NVIDIA GeForce RTX 4090 (UUID: GPU-b2e3da67-6860-1252-e0b9-35315f8a87ff)",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.0 (tags/v3.12.0:0fb18b0, Oct  2 2023, 13:03:39) [MSC v.1935 64 bit (AMD64)]",
+    "pytorch_version": "2.9.1+cu128",
+    "tilelang_version": "0.1.14"
+  },
+  "final_classification": "MULTIPLE_VALID_FP8_REDUCTION_TRAJECTORIES",
+  "fixture": {
+    "npz_sha256": "4bc7ab067127decc22c28cdfa25814882f7314d59e320cc5c6cadc998e806cd2",
+    "path": "block0_wob_cuda_fixture.npz",
+    "tensors": {
+      "act_deq_bf16_u16": {
+        "dtype": "uint16",
+        "sha256": "60c0260284fc6f865ef6db1fb2c3bf596a91741b131d6f8020c741b8ccc60c82",
+        "shape": [
+          1,
+          8192
+        ]
+      },
+      "act_fp8_u8": {
+        "dtype": "uint8",
+        "sha256": "c5754f4c209b50239efa2d74d76c1eecb47352f049187cb1c0c92729c4c3d5b3",
+        "shape": [
+          1,
+          8192
+        ]
+      },
+      "act_scale_e8m0_u8": {
+        "dtype": "uint8",
+        "sha256": "b5908352534694550b7c50f565e74ce06b444906a39381b63846343656a748e4",
+        "shape": [
+          1,
+          256
+        ]
+      },
+      "mlx_m1_output_bf16_u16": {
+        "dtype": "uint16",
+        "sha256": "364c6a2e08bdd079d2f6690b3eeec5eb72b07e389fbd57d6ba6bb8567d7f192f",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "prequant_bf16_u16": {
+        "dtype": "uint16",
+        "sha256": "2abb715cf9a2b85f194a951a2d58e20ef5bb950a77f647a1b4858edc797be048",
+        "shape": [
+          1,
+          8192
+        ]
+      },
+      "prequant_reference_bf16_u16": {
+        "dtype": "uint16",
+        "sha256": "6a87c9301d38d8afd93b0bbf61cbbcc2ba0303e41ec17bbca8c6e2d95aa2de8e",
+        "shape": [
+          1,
+          8192
+        ]
+      },
+      "reference_output_bf16_u16": {
+        "dtype": "uint16",
+        "sha256": "10c042342f715b36399920d65b811bb24e7f8f2d03cba672c70dfbd083f0c2d0",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "wob_scale_e8m0_u8": {
+        "dtype": "uint8",
+        "sha256": "08628f0bc3f528ba01dab4a80a1a3cd3851d596aae289f4a34e99386a2e46e05",
+        "shape": [
+          160,
+          256
+        ]
+      },
+      "wob_weight_f8e4m3_u8": {
+        "dtype": "uint8",
+        "sha256": "fca947ddeba2433859869eb6a2c27c95d1454d7c0f0d9e348eb46b487b933a86",
+        "shape": [
+          5120,
+          8192
+        ]
+      }
+    }
+  },
+  "next_frontier": "global behavioral stability across valid trajectories",
+  "official_kernel_available": true,
+  "official_source_identities": {
+    "kernel_py_path": "official\\inference\\kernel.py",
+    "kernel_py_sha256": "1236c3507019ed176f5dba5e04bcea58867cf654818c6cf138ed4845398c2455",
+    "model_py_path": "official\\inference\\model.py",
+    "model_py_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65"
+  },
+  "ok": true,
+  "oracle_A_complete_official_linear": {
+    "activation_fp8_digest": "c5754f4c209b50239efa2d74d76c1eecb47352f049187cb1c0c92729c4c3d5b3",
+    "activation_matches_fixture": true,
+    "activation_scale_digest": "b5908352534694550b7c50f565e74ce06b444906a39381b63846343656a748e4",
+    "output_3758": {
+      "bits": "0x3f6c",
+      "index": [
+        0,
+        0,
+        3758
+      ],
+      "value": 0.921875
+    },
+    "output_digest": "13c5dc43f40d4b4d0ba3771bf3b8fcdd492478f940de9ef3274f9f8c3f032d45"
+  },
+  "oracle_B_fixed_quantized_inputs": {
+    "B_vs_A": {
+      "actual_digest": "13c5dc43f40d4b4d0ba3771bf3b8fcdd492478f940de9ef3274f9f8c3f032d45",
+      "count_gt_1_ulp": 0,
+      "differing_count": 0,
+      "expected_digest": "13c5dc43f40d4b4d0ba3771bf3b8fcdd492478f940de9ef3274f9f8c3f032d45",
+      "max_abs": 0.0,
+      "max_bf16_ulp": 0,
+      "mean_abs": 0.0
+    },
+    "agrees_with_oracle_A": true,
+    "output_3758": {
+      "bits": "0x3f6c",
+      "index": [
+        0,
+        0,
+        3758
+      ],
+      "value": 0.921875
+    },
+    "output_digest": "13c5dc43f40d4b4d0ba3771bf3b8fcdd492478f940de9ef3274f9f8c3f032d45"
+  },
+  "precision_policy_consequence": "Do not select a target by closeness; exact NumPy boundary remains unpromoted.",
+  "schema": "ds41f.m4.block0_wob_official_cuda_oracle.v1"
+}

@@ -20,6 +20,7 @@ def main():
     ap.add_argument('--fixture',required=True)
     ap.add_argument('--checkpoint',required=True)
     ap.add_argument('--out',required=True)
+    ap.add_argument('--cuda-output-npy',default=None,help='Optional path to write CUDA BF16 output row as uint16 .npy')
     args=ap.parse_args()
     fixture=Path(args.fixture); ck=Path(args.checkpoint); out=Path(args.out)
     out.parent.mkdir(parents=True,exist_ok=True)
@@ -75,6 +76,9 @@ def main():
         else:
             rec['oracle_B_fixed_quantized_inputs']={'skipped':True,'reason':'Oracle A activation quantization did not match fixture; attribution stops before GEMM'}
         C=outB_u16 if outB_u16 is not None else outA_u16
+        cuda_output_path=args.cuda_output_npy or str(Path(args.out).with_name('cuda_wob_output_bf16_u16.npy'))
+        np.save(cuda_output_path, np.ascontiguousarray(C,dtype=np.uint16))
+        rec['cuda_output_tensor']={'path':cuda_output_path,'shape':list(C.shape),'dtype':'uint16','sha256':sha(C)}
         rec['comparisons']={'C_vs_E_reference':cmp(C,ref),'C_vs_M_mlx':cmp(C,mlx),'M_vs_E_reference':cmp(mlx,ref),'index_3758':{'cuda':elem(C),'reference':elem(ref),'mlx':elem(mlx)}}
         if np.array_equal(C,mlx):
             cls='OFFICIAL_CUDA_SUPPORTS_CURRENT_MLX_TRAJECTORY'; policy='Current 0x3f6d seed is official-CUDA-compatible; do not force Metal to NumPy 0x3f6c.'; nextf='behavioral stability across valid official-compatible numerical trajectories'
