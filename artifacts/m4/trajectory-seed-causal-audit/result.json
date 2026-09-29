@@ -1,0 +1,605 @@
+{
+  "correctness_policy_implication": "Local same-input contracts and global trajectory identity are separate properties; a contract-valid BF16 perturbation can be amplified by reviewed official-source-derived nonlinear/quantized operations.",
+  "dwarfstar_implication": "Do not build an official-FP8 DwarfStar Q path merely to find closeness to one E trajectory unless this causal audit fails to explain actual production; DwarfStar remains blocked as an architecture-fidelity comparator by checkpoint/precision representation.",
+  "earliest_non_exact_bf16_boundary": "block0_attention_output",
+  "earliest_seed_differing_elements": [
+    {
+      "absolute_difference": 0.00390625,
+      "actual_raw_bits": "0x3f6d",
+      "actual_value": 0.92578125,
+      "expected_raw_bits": "0x3f6c",
+      "expected_value": 0.921875,
+      "index": [
+        0,
+        0,
+        3758
+      ],
+      "ulp": 1
+    }
+  ],
+  "earliest_seed_summary": {
+    "count_gt_1_ulp": 0,
+    "count_gt_256_ulp": 0,
+    "count_gt_32_ulp": 0,
+    "count_gt_4096_ulp": 0,
+    "count_gt_8_ulp": 0,
+    "differing_count": 1,
+    "digest": "364c6a2e08bdd079d2f6690b3eeec5eb72b07e389fbd57d6ba6bb8567d7f192f",
+    "max_abs": 0.00390625,
+    "max_bf16_ulp": 1,
+    "mean_abs": 7.629394644936838e-07,
+    "reference_digest": "10c042342f715b36399920d65b811bb24e7f8f2d03cba672c70dfbd083f0c2d0",
+    "sign_change_count": 0
+  },
+  "final_causal_classification": "OFFICIAL_PATH_AMPLIFICATION_OF_QUALIFIED_NUMERICAL_SEED",
+  "hc_post_seed_substitutions": {
+    "AEAA": {
+      "vs_actual": {
+        "count_gt_1_ulp": 0,
+        "count_gt_256_ulp": 0,
+        "count_gt_32_ulp": 0,
+        "count_gt_4096_ulp": 0,
+        "count_gt_8_ulp": 0,
+        "differing_count": 0,
+        "digest": "b64c86af478d9c7371f1ba0f3b5b40c4a193ac5f77e1c0a62ba310dfaf8ccdc3",
+        "max_abs": 0.0,
+        "max_bf16_ulp": 0,
+        "mean_abs": 0.0,
+        "reference_digest": "b64c86af478d9c7371f1ba0f3b5b40c4a193ac5f77e1c0a62ba310dfaf8ccdc3",
+        "sign_change_count": 0
+      },
+      "vs_expected": {
+        "count_gt_1_ulp": 0,
+        "count_gt_256_ulp": 0,
+        "count_gt_32_ulp": 0,
+        "count_gt_4096_ulp": 0,
+        "count_gt_8_ulp": 0,
+        "differing_count": 1,
+        "digest": "b64c86af478d9c7371f1ba0f3b5b40c4a193ac5f77e1c0a62ba310dfaf8ccdc3",
+        "max_abs": 0.00048828125,
+        "max_bf16_ulp": 1,
+        "mean_abs": 2.3841858265427618e-08,
+        "reference_digest": "a3adf1fd4e78d547fe06b310051f6d515473609eb2716056dde15acee249ec7d",
+        "sign_change_count": 0
+      }
+    },
+    "AEEE": {
+      "vs_actual": {
+        "count_gt_1_ulp": 0,
+        "count_gt_256_ulp": 0,
+        "count_gt_32_ulp": 0,
+        "count_gt_4096_ulp": 0,
+        "count_gt_8_ulp": 0,
+        "differing_count": 0,
+        "digest": "b64c86af478d9c7371f1ba0f3b5b40c4a193ac5f77e1c0a62ba310dfaf8ccdc3",
+        "max_abs": 0.0,
+        "max_bf16_ulp": 0,
+        "mean_abs": 0.0,
+        "reference_digest": "b64c86af478d9c7371f1ba0f3b5b40c4a193ac5f77e1c0a62ba310dfaf8ccdc3",
+        "sign_change_count": 0
+      },
+      "vs_expected": {
+        "count_gt_1_ulp": 0,
+        "count_gt_256_ulp": 0,
+        "count_gt_32_ulp": 0,
+        "count_gt_4096_ulp": 0,
+        "count_gt_8_ulp": 0,
+        "differing_count": 1,
+        "digest": "b64c86af478d9c7371f1ba0f3b5b40c4a193ac5f77e1c0a62ba310dfaf8ccdc3",
+        "max_abs": 0.00048828125,
+        "max_bf16_ulp": 1,
+        "mean_abs": 2.3841858265427618e-08,
+        "reference_digest": "a3adf1fd4e78d547fe06b310051f6d515473609eb2716056dde15acee249ec7d",
+        "sign_change_count": 0
+      }
+    },
+    "EEAE": {
+      "vs_actual": {
+        "count_gt_1_ulp": 0,
+        "count_gt_256_ulp": 0,
+        "count_gt_32_ulp": 0,
+        "count_gt_4096_ulp": 0,
+        "count_gt_8_ulp": 0,
+        "differing_count": 1,
+        "digest": "a3adf1fd4e78d547fe06b310051f6d515473609eb2716056dde15acee249ec7d",
+        "max_abs": 0.00048828125,
+        "max_bf16_ulp": 1,
+        "mean_abs": 2.3841858265427618e-08,
+        "reference_digest": "b64c86af478d9c7371f1ba0f3b5b40c4a193ac5f77e1c0a62ba310dfaf8ccdc3",
+        "sign_change_count": 0
+      },
+      "vs_expected": {
+        "count_gt_1_ulp": 0,
+        "count_gt_256_ulp": 0,
+        "count_gt_32_ulp": 0,
+        "count_gt_4096_ulp": 0,
+        "count_gt_8_ulp": 0,
+        "differing_count": 0,
+        "digest": "a3adf1fd4e78d547fe06b310051f6d515473609eb2716056dde15acee249ec7d",
+        "max_abs": 0.0,
+        "max_bf16_ulp": 0,
+        "mean_abs": 0.0,
+        "reference_digest": "a3adf1fd4e78d547fe06b310051f6d515473609eb2716056dde15acee249ec7d",
+        "sign_change_count": 0
+      }
+    },
+    "EEEA": {
+      "vs_actual": {
+        "count_gt_1_ulp": 0,
+        "count_gt_256_ulp": 0,
+        "count_gt_32_ulp": 0,
+        "count_gt_4096_ulp": 0,
+        "count_gt_8_ulp": 0,
+        "differing_count": 1,
+        "digest": "a3adf1fd4e78d547fe06b310051f6d515473609eb2716056dde15acee249ec7d",
+        "max_abs": 0.00048828125,
+        "max_bf16_ulp": 1,
+        "mean_abs": 2.3841858265427618e-08,
+        "reference_digest": "b64c86af478d9c7371f1ba0f3b5b40c4a193ac5f77e1c0a62ba310dfaf8ccdc3",
+        "sign_change_count": 0
+      },
+      "vs_expected": {
+        "count_gt_1_ulp": 0,
+        "count_gt_256_ulp": 0,
+        "count_gt_32_ulp": 0,
+        "count_gt_4096_ulp": 0,
+        "count_gt_8_ulp": 0,
+        "differing_count": 0,
+        "digest": "a3adf1fd4e78d547fe06b310051f6d515473609eb2716056dde15acee249ec7d",
+        "max_abs": 0.0,
+        "max_bf16_ulp": 0,
+        "mean_abs": 0.0,
+        "reference_digest": "a3adf1fd4e78d547fe06b310051f6d515473609eb2716056dde15acee249ec7d",
+        "sign_change_count": 0
+      }
+    },
+    "EEEE": {
+      "vs_actual": {
+        "count_gt_1_ulp": 0,
+        "count_gt_256_ulp": 0,
+        "count_gt_32_ulp": 0,
+        "count_gt_4096_ulp": 0,
+        "count_gt_8_ulp": 0,
+        "differing_count": 1,
+        "digest": "a3adf1fd4e78d547fe06b310051f6d515473609eb2716056dde15acee249ec7d",
+        "max_abs": 0.00048828125,
+        "max_bf16_ulp": 1,
+        "mean_abs": 2.3841858265427618e-08,
+        "reference_digest": "b64c86af478d9c7371f1ba0f3b5b40c4a193ac5f77e1c0a62ba310dfaf8ccdc3",
+        "sign_change_count": 0
+      },
+      "vs_expected": {
+        "count_gt_1_ulp": 0,
+        "count_gt_256_ulp": 0,
+        "count_gt_32_ulp": 0,
+        "count_gt_4096_ulp": 0,
+        "count_gt_8_ulp": 0,
+        "differing_count": 0,
+        "digest": "a3adf1fd4e78d547fe06b310051f6d515473609eb2716056dde15acee249ec7d",
+        "max_abs": 0.0,
+        "max_bf16_ulp": 0,
+        "mean_abs": 0.0,
+        "reference_digest": "a3adf1fd4e78d547fe06b310051f6d515473609eb2716056dde15acee249ec7d",
+        "sign_change_count": 0
+      }
+    }
+  },
+  "minimum_seed_set_tested": {
+    "chosen": "AEEE",
+    "description": "actual Block0 attention_output only; expected residual, expected attention ao/ac, expected attn_pre for downstream FFN carry"
+  },
+  "next_frontier": "global numerical/behavioral stability policy for official-compatible decode",
+  "one_le_1ulp_seed_explains_downstream_actual": true,
+  "phase_a_run_required": false,
+  "preceding_fp32_hc_mix_differences": {
+    "block0_attn_ac": {
+      "differing_count": 8,
+      "digest": "be7c9c00f4251bc4e5b25e0f47b288bb1595e7961325241c3cfa386832a96814",
+      "max_abs": 5.960464477539063e-08,
+      "mean_abs": 4.445645629402861e-09,
+      "reference_digest": "93dab9ee82ec53773fa888bad1247204472d4b6f17d5677f5ab62ec103665ea6"
+    },
+    "block0_attn_ao": {
+      "differing_count": 4,
+      "digest": "066289730a14373245a3781bda74bce304b19f0bf0d8f88290bbeaf9d965f321",
+      "max_abs": 7.450580596923828e-09,
+      "mean_abs": 1.9736035028472543e-09,
+      "reference_digest": "ddb9a4d0f122b782a819591f6d1a6f5bb04894628bf7006fb72b5a1bd66e600b"
+    },
+    "block0_attn_ap": {
+      "differing_count": 3,
+      "digest": "595ee489d9d05cf3e88bc8a0755013e6dc188e6ca780d808fbe4d1a4db6cf745",
+      "max_abs": 1.0913936421275139e-11,
+      "mean_abs": 3.893774191965349e-12,
+      "reference_digest": "0760bf37514fb6ef60fc1cd2fae5862ec322c7f8dbe21f74dbdff130a3ad3138"
+    }
+  },
+  "schema": "ds41f.m4.trajectory_seed_causal_audit.v1",
+  "seeded_progression": [
+    {
+      "S_vs_E": {
+        "count_gt_1_ulp": 0,
+        "count_gt_256_ulp": 0,
+        "count_gt_32_ulp": 0,
+        "count_gt_4096_ulp": 0,
+        "count_gt_8_ulp": 0,
+        "differing_count": 1,
+        "digest": "b64c86af478d9c7371f1ba0f3b5b40c4a193ac5f77e1c0a62ba310dfaf8ccdc3",
+        "max_abs": 0.00048828125,
+        "max_bf16_ulp": 1,
+        "mean_abs": 2.3841858265427618e-08,
+        "reference_digest": "a3adf1fd4e78d547fe06b310051f6d515473609eb2716056dde15acee249ec7d",
+        "sign_change_count": 0
+      },
+      "S_vs_actual": {
+        "count_gt_1_ulp": 0,
+        "count_gt_256_ulp": 0,
+        "count_gt_32_ulp": 0,
+        "count_gt_4096_ulp": 0,
+        "count_gt_8_ulp": 0,
+        "differing_count": 0,
+        "digest": "b64c86af478d9c7371f1ba0f3b5b40c4a193ac5f77e1c0a62ba310dfaf8ccdc3",
+        "max_abs": 0.0,
+        "max_bf16_ulp": 0,
+        "mean_abs": 0.0,
+        "reference_digest": "b64c86af478d9c7371f1ba0f3b5b40c4a193ac5f77e1c0a62ba310dfaf8ccdc3",
+        "sign_change_count": 0
+      },
+      "actual_vs_E": {
+        "count_gt_1_ulp": 0,
+        "count_gt_256_ulp": 0,
+        "count_gt_32_ulp": 0,
+        "count_gt_4096_ulp": 0,
+        "count_gt_8_ulp": 0,
+        "differing_count": 1,
+        "digest": "b64c86af478d9c7371f1ba0f3b5b40c4a193ac5f77e1c0a62ba310dfaf8ccdc3",
+        "max_abs": 0.00048828125,
+        "max_bf16_ulp": 1,
+        "mean_abs": 2.3841858265427618e-08,
+        "reference_digest": "a3adf1fd4e78d547fe06b310051f6d515473609eb2716056dde15acee249ec7d",
+        "sign_change_count": 0
+      },
+      "name": "Block0 post_attention_h"
+    },
+    {
+      "S_vs_E": {
+        "count_gt_1_ulp": 1,
+        "count_gt_256_ulp": 0,
+        "count_gt_32_ulp": 0,
+        "count_gt_4096_ulp": 0,
+        "count_gt_8_ulp": 0,
+        "differing_count": 2,
+        "digest": "99db2e1487f6e985ea0711698d772b77b40625eb220fd5e9606a6d07a63a1bbd",
+        "max_abs": 0.001953125,
+        "max_bf16_ulp": 2,
+        "mean_abs": 4.0531159584134e-07,
+        "reference_digest": "b1a419ba9c7c793f8fb3a55663de63320fb2927a98d074a98ae09d5a8984646d",
+        "sign_change_count": 0
+      },
+      "S_vs_actual": {
+        "count_gt_1_ulp": 0,
+        "count_gt_256_ulp": 0,
+        "count_gt_32_ulp": 0,
+        "count_gt_4096_ulp": 0,
+        "count_gt_8_ulp": 0,
+        "differing_count": 0,
+        "digest": "99db2e1487f6e985ea0711698d772b77b40625eb220fd5e9606a6d07a63a1bbd",
+        "max_abs": 0.0,
+        "max_bf16_ulp": 0,
+        "mean_abs": 0.0,
+        "reference_digest": "99db2e1487f6e985ea0711698d772b77b40625eb220fd5e9606a6d07a63a1bbd",
+        "sign_change_count": 0
+      },
+      "actual_vs_E": {
+        "count_gt_1_ulp": 1,
+        "count_gt_256_ulp": 0,
+        "count_gt_32_ulp": 0,
+        "count_gt_4096_ulp": 0,
+        "count_gt_8_ulp": 0,
+        "differing_count": 2,
+        "digest": "99db2e1487f6e985ea0711698d772b77b40625eb220fd5e9606a6d07a63a1bbd",
+        "max_abs": 0.001953125,
+        "max_bf16_ulp": 2,
+        "mean_abs": 4.0531159584134e-07,
+        "reference_digest": "b1a419ba9c7c793f8fb3a55663de63320fb2927a98d074a98ae09d5a8984646d",
+        "sign_change_count": 0
+      },
+      "name": "Block0 FFN pre-norm / MoE input"
+    },
+    {
+      "S_vs_E": {
+        "count_gt_1_ulp": 40,
+        "count_gt_256_ulp": 0,
+        "count_gt_32_ulp": 0,
+        "count_gt_4096_ulp": 0,
+        "count_gt_8_ulp": 3,
+        "differing_count": 156,
+        "digest": "9019d252fedd51bbc909bf84ca65ccd64d09adbb9cde713a62e9a4e5bd064549",
+        "max_abs": 0.001953125,
+        "max_bf16_ulp": 32,
+        "mean_abs": 1.2831389540224336e-05,
+        "reference_digest": "243e10cb2f79e16a1eacf1e798ad82634f33ebe48b814c601df4a80c6672c808",
+        "sign_change_count": 0
+      },
+      "S_vs_actual": {
+        "count_gt_1_ulp": 0,
+        "count_gt_256_ulp": 0,
+        "count_gt_32_ulp": 0,
+        "count_gt_4096_ulp": 0,
+        "count_gt_8_ulp": 0,
+        "differing_count": 0,
+        "digest": "9019d252fedd51bbc909bf84ca65ccd64d09adbb9cde713a62e9a4e5bd064549",
+        "max_abs": 0.0,
+        "max_bf16_ulp": 0,
+        "mean_abs": 0.0,
+        "reference_digest": "9019d252fedd51bbc909bf84ca65ccd64d09adbb9cde713a62e9a4e5bd064549",
+        "sign_change_count": 0
+      },
+      "actual_vs_E": {
+        "count_gt_1_ulp": 40,
+        "count_gt_256_ulp": 0,
+        "count_gt_32_ulp": 0,
+        "count_gt_4096_ulp": 0,
+        "count_gt_8_ulp": 3,
+        "differing_count": 156,
+        "digest": "9019d252fedd51bbc909bf84ca65ccd64d09adbb9cde713a62e9a4e5bd064549",
+        "max_abs": 0.001953125,
+        "max_bf16_ulp": 32,
+        "mean_abs": 1.2831389540224336e-05,
+        "reference_digest": "243e10cb2f79e16a1eacf1e798ad82634f33ebe48b814c601df4a80c6672c808",
+        "sign_change_count": 0
+      },
+      "name": "Block0 MoE output"
+    },
+    {
+      "S_vs_E": {
+        "count_gt_1_ulp": 94,
+        "count_gt_256_ulp": 0,
+        "count_gt_32_ulp": 1,
+        "count_gt_4096_ulp": 0,
+        "count_gt_8_ulp": 12,
+        "differing_count": 316,
+        "digest": "f44b2fea114bb2e12d87eef7e2aba23dd43a826916c2aabb1713713b48919c4d",
+        "max_abs": 0.0009765625,
+        "max_bf16_ulp": 196,
+        "mean_abs": 2.6736597646959126e-06,
+        "reference_digest": "16d4b63f79e11cff28dd7b7cfbbfff735d08a5e65db878401eec18fa4a80a1ef",
+        "sign_change_count": 0
+      },
+      "S_vs_actual": {
+        "count_gt_1_ulp": 0,
+        "count_gt_256_ulp": 0,
+        "count_gt_32_ulp": 0,
+        "count_gt_4096_ulp": 0,
+        "count_gt_8_ulp": 0,
+        "differing_count": 1,
+        "digest": "f44b2fea114bb2e12d87eef7e2aba23dd43a826916c2aabb1713713b48919c4d",
+        "max_abs": 1.52587890625e-05,
+        "max_bf16_ulp": 1,
+        "mean_abs": 7.450580707946131e-10,
+        "reference_digest": "e11fd85cced22528ed2a3f45b772e6836b67ec36c11cc1fc538e95604084df10",
+        "sign_change_count": 0
+      },
+      "actual_vs_E": {
+        "count_gt_1_ulp": 94,
+        "count_gt_256_ulp": 0,
+        "count_gt_32_ulp": 1,
+        "count_gt_4096_ulp": 0,
+        "count_gt_8_ulp": 12,
+        "differing_count": 317,
+        "digest": "e11fd85cced22528ed2a3f45b772e6836b67ec36c11cc1fc538e95604084df10",
+        "max_abs": 0.0009765625,
+        "max_bf16_ulp": 196,
+        "mean_abs": 2.67440486823034e-06,
+        "reference_digest": "16d4b63f79e11cff28dd7b7cfbbfff735d08a5e65db878401eec18fa4a80a1ef",
+        "sign_change_count": 0
+      },
+      "name": "Block0 final x_out"
+    },
+    {
+      "S_vs_E": {
+        "count_gt_1_ulp": 97,
+        "count_gt_256_ulp": 0,
+        "count_gt_32_ulp": 2,
+        "count_gt_4096_ulp": 0,
+        "count_gt_8_ulp": 11,
+        "differing_count": 434,
+        "digest": "e57c02a50230d502086191a493a623f60823eca6eec08acd54f8b8ed828c4c36",
+        "max_abs": 0.0009765625,
+        "max_bf16_ulp": 48,
+        "mean_abs": 3.8123530430311803e-06,
+        "reference_digest": "62dbe881182cbf21716d9d9bd3bc5d5ea86cc47f78077927372a0f2d0e0d5f21",
+        "sign_change_count": 0
+      },
+      "S_vs_actual": {
+        "count_gt_1_ulp": 0,
+        "count_gt_256_ulp": 0,
+        "count_gt_32_ulp": 0,
+        "count_gt_4096_ulp": 0,
+        "count_gt_8_ulp": 0,
+        "differing_count": 1,
+        "digest": "e57c02a50230d502086191a493a623f60823eca6eec08acd54f8b8ed828c4c36",
+        "max_abs": 1.52587890625e-05,
+        "max_bf16_ulp": 1,
+        "mean_abs": 7.450580707946131e-10,
+        "reference_digest": "59eb70a1b59e28299ee76b1d157550c495a42526f62e7998817158229a1342ab",
+        "sign_change_count": 0
+      },
+      "actual_vs_E": {
+        "count_gt_1_ulp": 97,
+        "count_gt_256_ulp": 0,
+        "count_gt_32_ulp": 2,
+        "count_gt_4096_ulp": 0,
+        "count_gt_8_ulp": 11,
+        "differing_count": 435,
+        "digest": "59eb70a1b59e28299ee76b1d157550c495a42526f62e7998817158229a1342ab",
+        "max_abs": 0.0009765625,
+        "max_bf16_ulp": 48,
+        "mean_abs": 3.8130979191919323e-06,
+        "reference_digest": "62dbe881182cbf21716d9d9bd3bc5d5ea86cc47f78077927372a0f2d0e0d5f21",
+        "sign_change_count": 0
+      },
+      "name": "Engram@1 output"
+    },
+    {
+      "S_vs_E": {
+        "count_gt_1_ulp": 66,
+        "count_gt_256_ulp": 0,
+        "count_gt_32_ulp": 1,
+        "count_gt_4096_ulp": 0,
+        "count_gt_8_ulp": 9,
+        "differing_count": 199,
+        "digest": "3566d520f97f78f64907f05e84d38bdfd01fc1765e62855399176a5f3d0ab791",
+        "max_abs": 0.00048828125,
+        "max_bf16_ulp": 77,
+        "mean_abs": 2.286001063112053e-06,
+        "reference_digest": "c39cc5caba229d96eb67848cf900ccec7e94f7b00c6aaba6d00f095f4c05d853",
+        "sign_change_count": 0
+      },
+      "S_vs_actual": {
+        "count_gt_1_ulp": 0,
+        "count_gt_256_ulp": 0,
+        "count_gt_32_ulp": 0,
+        "count_gt_4096_ulp": 0,
+        "count_gt_8_ulp": 0,
+        "differing_count": 0,
+        "digest": "3566d520f97f78f64907f05e84d38bdfd01fc1765e62855399176a5f3d0ab791",
+        "max_abs": 0.0,
+        "max_bf16_ulp": 0,
+        "mean_abs": 0.0,
+        "reference_digest": "3566d520f97f78f64907f05e84d38bdfd01fc1765e62855399176a5f3d0ab791",
+        "sign_change_count": 0
+      },
+      "actual_vs_E": {
+        "count_gt_1_ulp": 66,
+        "count_gt_256_ulp": 0,
+        "count_gt_32_ulp": 1,
+        "count_gt_4096_ulp": 0,
+        "count_gt_8_ulp": 9,
+        "differing_count": 199,
+        "digest": "3566d520f97f78f64907f05e84d38bdfd01fc1765e62855399176a5f3d0ab791",
+        "max_abs": 0.00048828125,
+        "max_bf16_ulp": 77,
+        "mean_abs": 2.286001063112053e-06,
+        "reference_digest": "c39cc5caba229d96eb67848cf900ccec7e94f7b00c6aaba6d00f095f4c05d853",
+        "sign_change_count": 0
+      },
+      "name": "Block1 attention_input"
+    },
+    {
+      "S_vs_E": {
+        "count_gt_1_ulp": 11933,
+        "count_gt_256_ulp": 98,
+        "count_gt_32_ulp": 649,
+        "count_gt_4096_ulp": 56,
+        "count_gt_8_ulp": 2324,
+        "differing_count": 22764,
+        "digest": "34b8214b370023d487ed2aae9fd39ff166259698f63c545c40bcf3b7420d3d36",
+        "max_abs": 0.125,
+        "max_bf16_ulp": 31050,
+        "mean_abs": 0.006577175110578537,
+        "reference_digest": "9fc8fdbcd2ac439ca1c21330d745f88d9baf417296d7fb208c2751097f25232b",
+        "sign_change_count": 56
+      },
+      "S_vs_actual": {
+        "count_gt_1_ulp": 0,
+        "count_gt_256_ulp": 0,
+        "count_gt_32_ulp": 0,
+        "count_gt_4096_ulp": 0,
+        "count_gt_8_ulp": 0,
+        "differing_count": 0,
+        "digest": "34b8214b370023d487ed2aae9fd39ff166259698f63c545c40bcf3b7420d3d36",
+        "max_abs": 0.0,
+        "max_bf16_ulp": 0,
+        "mean_abs": 0.0,
+        "reference_digest": "34b8214b370023d487ed2aae9fd39ff166259698f63c545c40bcf3b7420d3d36",
+        "sign_change_count": 0
+      },
+      "actual_vs_E": {
+        "count_gt_1_ulp": 11933,
+        "count_gt_256_ulp": 98,
+        "count_gt_32_ulp": 649,
+        "count_gt_4096_ulp": 56,
+        "count_gt_8_ulp": 2324,
+        "differing_count": 22764,
+        "digest": "34b8214b370023d487ed2aae9fd39ff166259698f63c545c40bcf3b7420d3d36",
+        "max_abs": 0.125,
+        "max_bf16_ulp": 31050,
+        "mean_abs": 0.006577175110578537,
+        "reference_digest": "9fc8fdbcd2ac439ca1c21330d745f88d9baf417296d7fb208c2751097f25232b",
+        "sign_change_count": 56
+      },
+      "name": "Block1 q_rotary"
+    },
+    {
+      "S_vs_E": {
+        "count_gt_1_ulp": 6242,
+        "count_gt_256_ulp": 60,
+        "count_gt_32_ulp": 414,
+        "count_gt_4096_ulp": 37,
+        "count_gt_8_ulp": 1532,
+        "differing_count": 10971,
+        "digest": "832d131534b22e26532a54df44dbb671e990e3d53b687d443b4d0cd10bc902d9",
+        "max_abs": 0.01171875,
+        "max_bf16_ulp": 30260,
+        "mean_abs": 0.0006976136355660856,
+        "reference_digest": "a79482e34bb10dc0c84dae3e895a258813695a7a417b30c6a5da7e6fc24347e7",
+        "sign_change_count": 37
+      },
+      "S_vs_actual": {
+        "count_gt_1_ulp": 0,
+        "count_gt_256_ulp": 0,
+        "count_gt_32_ulp": 0,
+        "count_gt_4096_ulp": 0,
+        "count_gt_8_ulp": 0,
+        "differing_count": 3,
+        "digest": "832d131534b22e26532a54df44dbb671e990e3d53b687d443b4d0cd10bc902d9",
+        "max_abs": 6.103515625e-05,
+        "max_bf16_ulp": 1,
+        "mean_abs": 3.3760443329811096e-09,
+        "reference_digest": "2a6917f4d59d927da3b3bf1e70d706eeafc5c649702d948c8a3b08abc18592f0",
+        "sign_change_count": 0
+      },
+      "actual_vs_E": {
+        "count_gt_1_ulp": 6241,
+        "count_gt_256_ulp": 60,
+        "count_gt_32_ulp": 414,
+        "count_gt_4096_ulp": 37,
+        "count_gt_8_ulp": 1532,
+        "differing_count": 10973,
+        "digest": "2a6917f4d59d927da3b3bf1e70d706eeafc5c649702d948c8a3b08abc18592f0",
+        "max_abs": 0.01171875,
+        "max_bf16_ulp": 30260,
+        "mean_abs": 0.0006976169534027576,
+        "reference_digest": "a79482e34bb10dc0c84dae3e895a258813695a7a417b30c6a5da7e6fc24347e7",
+        "sign_change_count": 37
+      },
+      "name": "Block1 x_out"
+    },
+    {
+      "S_vs_E": {
+        "differing_count": 4,
+        "digest": "b0950b954d3f95622aae4e98bf85ab9c43336103b2fd86f86b0d2a72c1988646",
+        "max_abs": 0.0007171928882598877,
+        "mean_abs": 0.0003140516928397119,
+        "reference_digest": "ff497e98143f3ca187100c31618c004cc734ffbb5c2ce697100f2618cd6bd7fa"
+      },
+      "S_vs_actual": {
+        "differing_count": 4,
+        "digest": "b0950b954d3f95622aae4e98bf85ab9c43336103b2fd86f86b0d2a72c1988646",
+        "max_abs": 8.940696716308594e-08,
+        "mean_abs": 4.866160452365875e-08,
+        "reference_digest": "1c73330c6add057b085e50781ae648e9d6ddc27ea5f1ebacc9f7c7c501af7af1"
+      },
+      "actual_vs_E": {
+        "differing_count": 4,
+        "digest": "1c73330c6add057b085e50781ae648e9d6ddc27ea5f1ebacc9f7c7c501af7af1",
+        "max_abs": 0.0007171034812927246,
+        "mean_abs": 0.0003140258486382663,
+        "reference_digest": "ff497e98143f3ca187100c31618c004cc734ffbb5c2ce697100f2618cd6bd7fa"
+      },
+      "name": "Block1 ffn_pre"
+    }
+  ],
+  "seeded_trajectory_construction": "Expected official path through Block0 attention output, inject only actual Block0 attention_output into official hc_post, then execute Block0 FFN/MoE/final HC, Engram@1, and Block1 entirely with official-source-derived operators; no later actual tensors are injected."
+}
