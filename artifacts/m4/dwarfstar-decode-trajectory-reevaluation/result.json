@@ -1,0 +1,348 @@
+{
+  "checkpoint_compatibility": {
+    "classification": "C_DWARFSTAR_REQUIRES_CONVERTED_OR_DIFFERENTLY_QUANTIZED_GGUF_CHECKPOINT",
+    "direct_official_safetensors_supported": false,
+    "dwarfstar_dense_projection_weight_types_accepted": [
+      "BF16",
+      "Q8_0",
+      "Q4_K",
+      "Q4_0"
+    ],
+    "dwarfstar_loader_format": "GGUF mmap-backed model; downloader targets antirez/deepseek-v4.1-flash-gguf DeepSeek-V4.1-Flash-Q2.gguf / Q4.gguf",
+    "official_block1_q_tensors": {
+      "layers.1.attn.q_norm.weight": {
+        "dtype": "BF16",
+        "shape": [
+          1280
+        ]
+      },
+      "layers.1.attn.wq_a.scale": {
+        "dtype": "F8_E8M0",
+        "shape": [
+          40,
+          160
+        ]
+      },
+      "layers.1.attn.wq_a.weight": {
+        "dtype": "F8_E4M3",
+        "shape": [
+          1280,
+          5120
+        ]
+      },
+      "layers.1.attn.wq_b.scale": {
+        "dtype": "F8_E8M0",
+        "shape": [
+          1024,
+          40
+        ]
+      },
+      "layers.1.attn.wq_b.weight": {
+        "dtype": "F8_E4M3",
+        "shape": [
+          32768,
+          1280
+        ]
+      }
+    },
+    "official_checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+    "official_precision_preserving_import_available_in_pinned_source": false,
+    "reason": "Pinned decode path validates GGUF dense projection tensors as BF16/Q8_0/Q4_K/Q4_0. Official Flash safetensors Block1 q_a/q_b are F8_E4M3 weights plus F8_E8M0 scales. No pinned public path was found that consumes the official safetensors FP8 tensors directly or imports them into GGUF while preserving the official FP8 activation/weight precision boundary."
+  },
+  "dwarfstar_block1_q_path_source_mapping": [
+    {
+      "dwarfstar_implementation": "ds41_norm/ds41_hc_pre path feeding g->norm before ds41_attention_project",
+      "dwarfstar_precision": "float GPU buffer with explicit DS4_V41_BF16 quantization at block/norm boundaries",
+      "equivalence": "unresolved_without_valid_probe",
+      "official_precision_boundary": "BF16 hidden input to FP8 linears",
+      "official_semantic_operation": "Block attention hc_pre + RMSNorm before Attention.forward",
+      "omlx_implementation": "oMLX fused/reference HC pre-norm path already qualified in actual-loaded capture",
+      "stage": "attention_input"
+    },
+    {
+      "dwarfstar_implementation": "ds41_attention_project -> ds41_matmul(g->qr, l->attn_q_a, g->norm, round=true)",
+      "dwarfstar_precision": "metal_graph_matmul_plain_tensor over GGUF BF16/Q8_0/Q4_K/Q4_0, then DS4_V41_BF16",
+      "equivalence": "non_equivalent_for_official_safetensors_fp8_checkpoint",
+      "official_precision_boundary": "F8_E4M3 weights with F8_E8M0 scales; activation quantization block32; BF16 output",
+      "official_semantic_operation": "qr = q_norm(wq_a(x)) first projection input side uses official fp8_linear semantics",
+      "omlx_implementation": "official oMLX Linear over packed FP8 checkpoint weights",
+      "stage": "q_a"
+    },
+    {
+      "dwarfstar_implementation": "ds41_norm(g->qr, g->qr, l->attn_q_a_norm)",
+      "dwarfstar_precision": "ds4_gpu_rms_norm_weight_tensor then DS4_V41_BF16",
+      "equivalence": "potentially_equivalent_math_but_unverified_same_input",
+      "official_precision_boundary": "FP32 reduction, BF16 output",
+      "official_semantic_operation": "RMSNorm(qr, q_norm.weight, rms_norm_eps)",
+      "omlx_implementation": "RMSNorm module over qr",
+      "stage": "q_norm"
+    },
+    {
+      "dwarfstar_implementation": "ds41_matmul_rows(g->q, l->attn_q_b, g->qr, slice)",
+      "dwarfstar_precision": "GGUF dense projection type, then DS4_V41_BF16",
+      "equivalence": "non_equivalent_for_official_safetensors_fp8_checkpoint",
+      "official_precision_boundary": "F8_E4M3 weights with F8_E8M0 scales; activation quantization block32; BF16 output",
+      "official_semantic_operation": "q = wq_b(qr_norm).reshape(heads, head_dim)",
+      "omlx_implementation": "official oMLX Linear over packed FP8 checkpoint weights",
+      "stage": "q_b pre-RoPE"
+    },
+    {
+      "dwarfstar_implementation": "ds41_rope(g->q, heads, DS4_N_HEAD_DIM, il, pos, false) -> ds4_gpu_dsv41_rope(compressed=false)",
+      "dwarfstar_precision": "Metal FP32 float buffer, unit-magnitude RoPE with hard-coded V4.1 base/compressed frequencies; output remains float unless later quantized",
+      "equivalence": "unresolved; cannot isolate from non-equivalent q_a/q_b checkpoint path",
+      "official_precision_boundary": "FP32 sin/cos arithmetic on BF16 q tail, BF16 output in ds41f validators",
+      "official_semantic_operation": "base RoPE for layer1 compress_ratio=0, position 2",
+      "omlx_implementation": "oMLX apply_rotary_emb",
+      "stage": "RoPE / q_rotary"
+    }
+  ],
+  "dwarfstar_deeper_decode_reevaluation_supported": false,
+  "existing_omlx_official_q_path_trajectory_evidence": {
+    "attention_input_A_vs_E": {
+      "count_gt_256_ulp": 0,
+      "count_gt_32_ulp": 1,
+      "count_gt_4096_ulp": 0,
+      "differing_elements": 199,
+      "max_absolute_difference": 0.00048828125,
+      "max_bf16_ulp": 77,
+      "mean_absolute_difference": 2.286001063112053e-06,
+      "name": "attention_input"
+    },
+    "earliest_amplification_boundary": "attention_input -> q_a/q_norm/q_b/RoPE -> q_rotary",
+    "q_rotary_A_vs_E": {
+      "count_gt_256_ulp": 98,
+      "count_gt_32_ulp": 649,
+      "count_gt_4096_ulp": 56,
+      "differing_elements": 22764,
+      "max_absolute_difference": 0.125,
+      "max_bf16_ulp": 31050,
+      "mean_absolute_difference": 0.006577175110578537,
+      "name": "q_rotary"
+    },
+    "quantization_boundary_analysis": "Official/oMLX Q path includes FP8 linear activation quantization in wq_a and wq_b. Existing aggregate evidence localizes amplification to this combined Q path, but current captures do not split q_a vs q_norm vs q_b vs RoPE or expose per-block activation codes/scales at the discontinuity."
+  },
+  "final_classification": "DWARFSTAR_DIRECT_TRAJECTORY_COMPARISON_BLOCKED",
+  "full_no_replay_admission_abi_needed_next": false,
+  "minimum_missing_seam_if_blocked": "A bounded DwarfStar diagnostic harness that either (1) imports official safetensors F8_E4M3/F8_E8M0 Block1 q_a/q_b and BF16 q_norm tensors without changing precision semantics and invokes the real DwarfStar q projection/RoPE kernels on supplied attention_input tensors, or (2) adds an officially-equivalent FP8 projection path to the DwarfStar kernel layer for this isolated probe. Full no-replay PrefillContinuationState admission is not required for the next seam; private graph state only becomes necessary if extending beyond the isolated Q path to connected Block0/Engram/Block1 decode.",
+  "next_frontier": "Build the smallest official-FP8-compatible DwarfStar Block1 Q-path diagnostic seam, or conclude DwarfStar cannot be used for this numerical-trajectory comparison without a checkpoint/precision import project. Keep Layer2 oMLX qualification paused.",
+  "official_omlx_dwarfstar_same_input_results": {
+    "dwarfstar_A_vs_E_trajectory": "NOT_EXECUTED_BLOCKED",
+    "dwarfstar_vs_official_same_input": "NOT_EXECUTED_BLOCKED",
+    "official_vs_omlx_same_input": "oMLX Block1 same-input PASS from previous artifact; q_path substage same-input not separately captured here"
+  },
+  "ok": true,
+  "pinned_dwarfstar_source_identity": {
+    "actual_git": "0aaea5a238fb41a35106a551e73c8409dfb751ac",
+    "expected_git": "0aaea5a238fb41a35106a551e73c8409dfb751ac",
+    "files": {
+      "download_model.sh_sha256": "e92124dec46c7af4b5f97f17161c0881a2970597f46fddb206b45058f40d3857",
+      "ds4.c_sha256": "8f546837c0032a24b381052253244a34e10b7eea2647e97862cb4967b8604b89",
+      "ds4_metal.m_sha256": "8fe598fa01d82abe9a191964434bae27af6d77d9ab7e3cda57fe05622c2721ff"
+    },
+    "git_status_short": "",
+    "path": "/Users/kioju/ds4",
+    "verified": true
+  },
+  "precision_audit": {
+    "RMSNorm_precision": "DwarfStar ds4_gpu_rms_norm_weight_tensor then BF16 quantization; official validator uses FP32 mean/sqrt and BF16 output.",
+    "RoPE_precision": "DwarfStar Metal FP32 frequency table and float buffer RoPE; official validator returns BF16 q_rotary.",
+    "accumulator_precision": "DwarfStar Metal matmul path unresolved from source without kernel-specific reduction audit; official-source validators use FP32 accumulation over dequantized FP8 blocks.",
+    "activation_dtype": "DwarfStar GPU tensors are float buffers with explicit DS4_V41_BF16 / FP8 / FP4 quantization kernels at selected boundaries.",
+    "activation_quantization": "Q path q_a/q_b/norm applies DS4_V41_BF16 rounding after projections/norm; no official fp8_linear activation quantization boundary is preserved for q_a/q_b when using Q8/Q4 GGUF.",
+    "checkpoint_format": "DwarfStar pinned path is GGUF, not official safetensors",
+    "output_storage_dtype": "DwarfStar q remains graph float buffer after RoPE; official/oMLX comparable artifact is BF16 q_rotary.",
+    "q_a_precision": "DwarfStar GGUF dense projection, not official FP8 weight+scale path.",
+    "q_b_precision": "DwarfStar GGUF dense projection, not official FP8 weight+scale path.",
+    "q_norm_precision": "F32 weight, BF16 output.",
+    "weight_dtype_quantization": "Dense GLM projections accept BF16/Q8_0/Q4_K/Q4_0; routed experts separately accept additional GGUF quantizers. Official q_a/q_b are FP8 E4M3 plus E8M0 scales."
+  },
+  "probe_used": {
+    "classification": "Probe C \u2014 comparison currently impossible",
+    "real_dwarfstar_q_path_executed": false,
+    "reason": "A meaningful architecture-fidelity probe requires the real DwarfStar Q path with official-compatible Block1 FP8/BF16 checkpoint semantics. The pinned implementation is coupled to GGUF dense projection tensors and private ds41_gpu_graph buffers; a NumPy reimplementation or Q4/Q8 GGUF run would confound runtime architecture with model representation."
+  },
+  "schema": "ds41f.m4.dwarfstar_decode_trajectory_reevaluation.v1",
+  "source_evidence": {
+    "download_model_lines": [
+      {
+        "line": 11,
+        "text": "DS41_REPO=\"antirez/deepseek-v4.1-flash-gguf\""
+      },
+      {
+        "line": 12,
+        "text": "DS41_Q2_FILE=\"DeepSeek-V4.1-Flash-Q2.gguf\""
+      },
+      {
+        "line": 13,
+        "text": "DS41_Q4_FILE=\"DeepSeek-V4.1-Flash-Q4.gguf\""
+      },
+      {
+        "line": 290,
+        "text": "REPO=$DS41_REPO"
+      },
+      {
+        "line": 291,
+        "text": "MODEL_FILE=$DS41_Q2_FILE"
+      },
+      {
+        "line": 295,
+        "text": "REPO=$DS41_REPO"
+      },
+      {
+        "line": 296,
+        "text": "MODEL_FILE=$DS41_Q4_FILE"
+      },
+      {
+        "line": 300,
+        "text": "REPO=$DS41_REPO"
+      },
+      {
+        "line": 460,
+        "text": "\"$DS41_Q2_FILE\")"
+      },
+      {
+        "line": 464,
+        "text": "\"$DS41_Q4_FILE\")"
+      },
+      {
+        "line": 468,
+        "text": "\"$DS41_Q4_FILE.part1\")"
+      },
+      {
+        "line": 472,
+        "text": "\"$DS41_Q4_FILE.part2\")"
+      },
+      {
+        "line": 596,
+        "text": "q4_out=\"$OUT_DIR/$DS41_Q4_FILE\""
+      },
+      {
+        "line": 598,
+        "text": "verify_download \"$DS41_Q4_FILE\" \"$q4_out\""
+      },
+      {
+        "line": 607,
+        "text": "download_one_hf \"$DS41_Q4_FILE.part1\""
+      },
+      {
+        "line": 609,
+        "text": "download_one_hf \"$DS41_Q4_FILE.part2\""
+      },
+      {
+        "line": 610,
+        "text": "artifact_identity \"$DS41_Q4_FILE\""
+      },
+      {
+        "line": 613,
+        "text": "artifact_identity \"$DS41_Q4_FILE.part1\""
+      }
+    ],
+    "ds4_layout_lines": [
+      {
+        "line": 4890,
+        "text": "static bool tensor_type_is_glm_dense_quant(uint32_t type) {"
+      },
+      {
+        "line": 4910,
+        "text": "if (!tensor_type_is_glm_dense_quant(t->type)) {"
+      },
+      {
+        "line": 4912,
+        "text": "\"ds4: tensor %.*s has type %s, expected bf16, q8_0, q4_K, or q4_0\\n\","
+      },
+      {
+        "line": 5812,
+        "text": "tensor_expect_glm_dense_quant_layout(l->attn_q_a, 2,"
+      },
+      {
+        "line": 5816,
+        "text": "tensor_expect_glm_dense_quant_layout(l->attn_q_b, 2,"
+      },
+      {
+        "line": 46074,
+        "text": "if (!t || !tensor_type_is_glm_dense_quant(t->type) || t->ndim != ndim) return false;"
+      },
+      {
+        "line": 46530,
+        "text": "!tensor_type_is_glm_dense_quant(l->attn_kv_a_mqa->type) ||"
+      },
+      {
+        "line": 47774,
+        "text": "!tensor_type_is_glm_dense_quant(weight->type)) {"
+      },
+      {
+        "line": 47807,
+        "text": "!tensor_type_is_glm_dense_quant(weight->type)) {"
+      }
+    ],
+    "ds4_q_path_lines": [
+      {
+        "line": 40700,
+        "text": "static bool ds41_attention_project(ds41_gpu_graph *g, const ds4_model *m,"
+      },
+      {
+        "line": 40703,
+        "text": "return ds41_matmul(g->qr, m, l->attn_q_a, g->norm, true) &&"
+      },
+      {
+        "line": 40704,
+        "text": "ds41_norm(g->qr, g->qr, m, l->attn_q_a_norm) &&"
+      },
+      {
+        "line": 40705,
+        "text": "ds41_matmul_rows(g->q, m, l->attn_q_b, g->qr,"
+      },
+      {
+        "line": 40718,
+        "text": "if (!projected && !ds41_attention_project(g, m, l)) return false;"
+      },
+      {
+        "line": 40719,
+        "text": "if (!ds41_rope(g->q, heads, DS4_N_HEAD_DIM, il, pos, false) ||"
+      },
+      {
+        "line": 40925,
+        "text": "static bool ds41_attention_project_batch(ds41_gpu_graph *g, const ds4_model *m,"
+      },
+      {
+        "line": 41162,
+        "text": "ds41_graph_before_attention(g, m, l, il) && ds41_attention_project(g, m, l) :"
+      },
+      {
+        "line": 41863,
+        "text": "ok = ds41_attention_project_batch(g, m, l, count);"
+      },
+      {
+        "line": 42091,
+        "text": "ds41_attention_project_batch(g, model, l, rows);"
+      }
+    ],
+    "ds4_quant_rope_lines": [
+      {
+        "line": 26153,
+        "text": "ok = ds4_gpu_dsv41_quantize(low, (uint32_t)low_dim, n_tokens, DS4_V41_BF16);"
+      },
+      {
+        "line": 47759,
+        "text": "int ds4_gpu_dsv41_rope_stride(ds4_gpu_tensor *x, uint32_t width, uint32_t heads,"
+      },
+      {
+        "line": 47789,
+        "text": "id<MTLComputePipelineState> pipeline = ds4_gpu_get_pipeline(\"kernel_dsv41_rope\");"
+      },
+      {
+        "line": 47813,
+        "text": "return ds4_gpu_dsv41_rope_stride(x, width, heads, rows, start, 1, compressed, inverse);"
+      },
+      {
+        "line": 47816,
+        "text": "int ds4_gpu_dsv41_quantize(ds4_gpu_tensor *x, uint32_t width, uint32_t rows,"
+      },
+      {
+        "line": 47829,
+        "text": "\"kernel_dsv41_bf16_linear\" : \"kernel_dsv41_quantize\");"
+      }
+    ]
+  },
+  "valid_numerical_probe_possible": false
+}
