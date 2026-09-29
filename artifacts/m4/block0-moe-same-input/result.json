@@ -1,0 +1,648 @@
+{
+  "AA_endpoint_official_actual_input": {
+    "final_output_vs_actual_omlx_capture": {
+      "a": {
+        "dtype": "uint16",
+        "sha256": "9019d252fedd51bbc909bf84ca65ccd64d09adbb9cde713a62e9a4e5bd064549",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "b": {
+        "dtype": "uint16",
+        "sha256": "9019d252fedd51bbc909bf84ca65ccd64d09adbb9cde713a62e9a4e5bd064549",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "contract": "BF16 max ULP <= 1",
+      "exact": true,
+      "max_abs_diff": 0.0,
+      "max_bf16_ulp": 0,
+      "mean_abs_diff": 0.0,
+      "num_differing": 0,
+      "num_elements": 5120,
+      "num_gt_1_ulp": 0,
+      "ulp_histogram": {
+        "0": 5120
+      },
+      "ulp_histogram_bins": {
+        "0": 5120,
+        "1": 0,
+        "2": 0,
+        ">2": 0
+      },
+      "within_contract": true
+    },
+    "reproduces_actual_omlx": true,
+    "routing_vs_actual_omlx_capture": {
+      "route_ids": {
+        "a": {
+          "dtype": "int64",
+          "sha256": "733ef3bd608f65079cd4645ceb46f81e5be7ba0c5313bd2256c606674444b564",
+          "shape": [
+            1,
+            1,
+            6
+          ],
+          "values": [
+            [
+              [
+                206,
+                278,
+                208,
+                105,
+                307,
+                38
+              ]
+            ]
+          ]
+        },
+        "b": {
+          "dtype": "uint32",
+          "sha256": "53c03f13f9efcc3b98a8ea446adb698553ef2bf5a7fe8406761266f04ecda1c7",
+          "shape": [
+            1,
+            1,
+            6
+          ],
+          "values": [
+            [
+              [
+                206,
+                278,
+                208,
+                105,
+                307,
+                38
+              ]
+            ]
+          ]
+        },
+        "contract": "route IDs exact",
+        "exact": true,
+        "within_contract": true
+      },
+      "route_weights": {
+        "a": {
+          "dtype": "float32",
+          "sha256": "ae6b4218553534322e93a3b1edbfd4b2db999f0825b6ee80ed406cdaf66d98d7",
+          "shape": [
+            1,
+            1,
+            6
+          ]
+        },
+        "b": {
+          "dtype": "float32",
+          "sha256": "ab130474199b3e68051fba25f6457b8712eff384012e734c07790e5d3479034d",
+          "shape": [
+            1,
+            1,
+            6
+          ]
+        },
+        "contract": "FP32 max abs <= 0.001",
+        "exact": false,
+        "max_abs_diff": 5.960464477539063e-08,
+        "mean_abs_diff": 2.7318796114172983e-08,
+        "within_contract": true
+      }
+    },
+    "summary": {
+      "final_moe_output": {
+        "dtype": "uint16",
+        "sha256": "9019d252fedd51bbc909bf84ca65ccd64d09adbb9cde713a62e9a4e5bd064549",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "raw_gate_projection": {
+        "dtype": "float32",
+        "sha256": "17e5a0a1c3b7f7222cf24fcbaf2c7f1c18a56c6f39ffa9b1b94596ab0cfe4000",
+        "shape": [
+          1,
+          384
+        ]
+      },
+      "route_ids": {
+        "dtype": "int64",
+        "sha256": "733ef3bd608f65079cd4645ceb46f81e5be7ba0c5313bd2256c606674444b564",
+        "shape": [
+          1,
+          6
+        ],
+        "values": [
+          [
+            206,
+            278,
+            208,
+            105,
+            307,
+            38
+          ]
+        ]
+      },
+      "route_weights": {
+        "dtype": "float32",
+        "sha256": "ae6b4218553534322e93a3b1edbfd4b2db999f0825b6ee80ed406cdaf66d98d7",
+        "shape": [
+          1,
+          6
+        ],
+        "values": [
+          [
+            0.464693546295166,
+            0.31402453780174255,
+            0.21581639349460602,
+            0.18733885884284973,
+            0.17905473709106445,
+            0.1390717625617981
+          ]
+        ]
+      },
+      "routed_sum": {
+        "dtype": "float32",
+        "sha256": "e36056ae5b5bbc56fdccf6ff98a0b185f14650f38f6aa9557446e9b5c2eb668a",
+        "shape": [
+          1,
+          5120
+        ]
+      },
+      "selected_expert_contributions": [
+        {
+          "expert_id": 38,
+          "expert_output_before_weight_digest": "e96315e3b25299c00f86af0af66201bd2fbaaad5beaeba8d9f524c6ac42cd4a3",
+          "routing_weight_f32": 0.1390717625617981,
+          "token": 0,
+          "topk_slot": 5,
+          "weighted_expert_contribution_digest": "4d27c45f7fc179d9d7ad6553a7ec8e67b3a9853d602013068dda54da44e7deee"
+        },
+        {
+          "expert_id": 105,
+          "expert_output_before_weight_digest": "6a44a0cb3c877246cd4f5a80750b1a2a03e62e0d2bf32b63091bfc21f2e809d0",
+          "routing_weight_f32": 0.18733885884284973,
+          "token": 0,
+          "topk_slot": 3,
+          "weighted_expert_contribution_digest": "e7d33ca176b1ec379ee51295198aeb162f1410d692c67f264a0610f83135a4e8"
+        },
+        {
+          "expert_id": 206,
+          "expert_output_before_weight_digest": "07034823aee3be8b9b52550742bb12a26e9bcfc6c7f16af0a8b44d5dce7f73af",
+          "routing_weight_f32": 0.464693546295166,
+          "token": 0,
+          "topk_slot": 0,
+          "weighted_expert_contribution_digest": "a8521114e10cad2e687f86b3070f7bb41b79550b2a1508b7435ac577c0a3d004"
+        },
+        {
+          "expert_id": 208,
+          "expert_output_before_weight_digest": "2efdc8016f09dd2e6680ccfd65a69c5e61a13aafd26ebc20af5d72e046e3257a",
+          "routing_weight_f32": 0.21581639349460602,
+          "token": 0,
+          "topk_slot": 2,
+          "weighted_expert_contribution_digest": "0dc299e1e38ce7585f4c5ac6ac08137f3d5ccd9caf3d759c0a6dc254a9790c33"
+        },
+        {
+          "expert_id": 278,
+          "expert_output_before_weight_digest": "18378f709cbd5205a35f916e399a31949d18daa25055d213bb4b3b0e22597115",
+          "routing_weight_f32": 0.31402453780174255,
+          "token": 0,
+          "topk_slot": 1,
+          "weighted_expert_contribution_digest": "523256bdcaea3dd19b3d0455f8285186e60e0418361fe4126d358a356299ac24"
+        },
+        {
+          "expert_id": 307,
+          "expert_output_before_weight_digest": "16680091eb9afde7d0c400b76a8124a16971c1733d94573d1625626885747c65",
+          "routing_weight_f32": 0.17905473709106445,
+          "token": 0,
+          "topk_slot": 4,
+          "weighted_expert_contribution_digest": "174b3395601edf95e9d845e90952f4e56331552caa2dc0b8ed8cf93d8d1231fe"
+        }
+      ],
+      "selected_expert_count": 6,
+      "selected_expert_set": [
+        38,
+        105,
+        206,
+        208,
+        278,
+        307
+      ],
+      "shared_expert_output": {
+        "dtype": "uint16",
+        "sha256": "60488ed0e74aff68fd9454dedbd08e92c755c1b3a4ba5cf7794e51670963e45d",
+        "shape": [
+          1,
+          5120
+        ]
+      }
+    }
+  },
+  "EE_endpoint_official_expected_input": {
+    "final_output_vs_boundary13d": {
+      "a": {
+        "dtype": "uint16",
+        "sha256": "243e10cb2f79e16a1eacf1e798ad82634f33ebe48b814c601df4a80c6672c808",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "b": {
+        "dtype": "uint16",
+        "sha256": "243e10cb2f79e16a1eacf1e798ad82634f33ebe48b814c601df4a80c6672c808",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "contract": "BF16 max ULP <= 1",
+      "exact": true,
+      "max_abs_diff": 0.0,
+      "max_bf16_ulp": 0,
+      "mean_abs_diff": 0.0,
+      "num_differing": 0,
+      "num_elements": 5120,
+      "num_gt_1_ulp": 0,
+      "ulp_histogram": {
+        "0": 5120
+      },
+      "ulp_histogram_bins": {
+        "0": 5120,
+        "1": 0,
+        "2": 0,
+        ">2": 0
+      },
+      "within_contract": true
+    },
+    "reproduces_boundary13d": true,
+    "routing_vs_boundary13d": {
+      "route_ids": {
+        "a": {
+          "dtype": "int64",
+          "sha256": "733ef3bd608f65079cd4645ceb46f81e5be7ba0c5313bd2256c606674444b564",
+          "shape": [
+            1,
+            6
+          ],
+          "values": [
+            [
+              206,
+              278,
+              208,
+              105,
+              307,
+              38
+            ]
+          ]
+        },
+        "b": {
+          "dtype": "int64",
+          "sha256": "733ef3bd608f65079cd4645ceb46f81e5be7ba0c5313bd2256c606674444b564",
+          "shape": [
+            1,
+            6
+          ],
+          "values": [
+            [
+              206,
+              278,
+              208,
+              105,
+              307,
+              38
+            ]
+          ]
+        },
+        "contract": "route IDs exact",
+        "exact": true,
+        "within_contract": true
+      },
+      "route_weights": {
+        "a": {
+          "dtype": "float32",
+          "sha256": "2feaa5b51b54af510f887d2f1e7faa71a77f5634e4bb2441961578cac95afc6a",
+          "shape": [
+            1,
+            6
+          ]
+        },
+        "b": {
+          "dtype": "float32",
+          "sha256": "2feaa5b51b54af510f887d2f1e7faa71a77f5634e4bb2441961578cac95afc6a",
+          "shape": [
+            1,
+            6
+          ]
+        },
+        "contract": "FP32 max abs <= 0.001",
+        "exact": true,
+        "max_abs_diff": 0.0,
+        "mean_abs_diff": 0.0,
+        "within_contract": true
+      }
+    },
+    "summary": {
+      "final_moe_output": {
+        "dtype": "uint16",
+        "sha256": "243e10cb2f79e16a1eacf1e798ad82634f33ebe48b814c601df4a80c6672c808",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "raw_gate_projection": {
+        "dtype": "float32",
+        "sha256": "025537e8e0f3053f0c3e036415a417110605de3303228bbcfd9ca0bfe9eeb817",
+        "shape": [
+          1,
+          384
+        ]
+      },
+      "route_ids": {
+        "dtype": "int64",
+        "sha256": "733ef3bd608f65079cd4645ceb46f81e5be7ba0c5313bd2256c606674444b564",
+        "shape": [
+          1,
+          6
+        ],
+        "values": [
+          [
+            206,
+            278,
+            208,
+            105,
+            307,
+            38
+          ]
+        ]
+      },
+      "route_weights": {
+        "dtype": "float32",
+        "sha256": "2feaa5b51b54af510f887d2f1e7faa71a77f5634e4bb2441961578cac95afc6a",
+        "shape": [
+          1,
+          6
+        ],
+        "values": [
+          [
+            0.464674711227417,
+            0.31403496861457825,
+            0.21581827104091644,
+            0.18734391033649445,
+            0.17905473709106445,
+            0.1390734761953354
+          ]
+        ]
+      },
+      "routed_sum": {
+        "dtype": "float32",
+        "sha256": "e2d2a5d33a204cb87e6d1689532da9920986b0dd2d9cb45774f72e2f96b28b97",
+        "shape": [
+          1,
+          5120
+        ]
+      },
+      "selected_expert_contributions": [
+        {
+          "expert_id": 38,
+          "expert_output_before_weight_digest": "e96315e3b25299c00f86af0af66201bd2fbaaad5beaeba8d9f524c6ac42cd4a3",
+          "routing_weight_f32": 0.1390734761953354,
+          "token": 0,
+          "topk_slot": 5,
+          "weighted_expert_contribution_digest": "4d27c45f7fc179d9d7ad6553a7ec8e67b3a9853d602013068dda54da44e7deee"
+        },
+        {
+          "expert_id": 105,
+          "expert_output_before_weight_digest": "6a44a0cb3c877246cd4f5a80750b1a2a03e62e0d2bf32b63091bfc21f2e809d0",
+          "routing_weight_f32": 0.18734391033649445,
+          "token": 0,
+          "topk_slot": 3,
+          "weighted_expert_contribution_digest": "e7d33ca176b1ec379ee51295198aeb162f1410d692c67f264a0610f83135a4e8"
+        },
+        {
+          "expert_id": 206,
+          "expert_output_before_weight_digest": "07034823aee3be8b9b52550742bb12a26e9bcfc6c7f16af0a8b44d5dce7f73af",
+          "routing_weight_f32": 0.464674711227417,
+          "token": 0,
+          "topk_slot": 0,
+          "weighted_expert_contribution_digest": "8164a7cbcc17dc5f00bbfcbf46546c47cdcbe6f60c1113a8904f342c3f31d18c"
+        },
+        {
+          "expert_id": 208,
+          "expert_output_before_weight_digest": "2efdc8016f09dd2e6680ccfd65a69c5e61a13aafd26ebc20af5d72e046e3257a",
+          "routing_weight_f32": 0.21581827104091644,
+          "token": 0,
+          "topk_slot": 2,
+          "weighted_expert_contribution_digest": "0dc299e1e38ce7585f4c5ac6ac08137f3d5ccd9caf3d759c0a6dc254a9790c33"
+        },
+        {
+          "expert_id": 278,
+          "expert_output_before_weight_digest": "18378f709cbd5205a35f916e399a31949d18daa25055d213bb4b3b0e22597115",
+          "routing_weight_f32": 0.31403496861457825,
+          "token": 0,
+          "topk_slot": 1,
+          "weighted_expert_contribution_digest": "523256bdcaea3dd19b3d0455f8285186e60e0418361fe4126d358a356299ac24"
+        },
+        {
+          "expert_id": 307,
+          "expert_output_before_weight_digest": "16680091eb9afde7d0c400b76a8124a16971c1733d94573d1625626885747c65",
+          "routing_weight_f32": 0.17905473709106445,
+          "token": 0,
+          "topk_slot": 4,
+          "weighted_expert_contribution_digest": "174b3395601edf95e9d845e90952f4e56331552caa2dc0b8ed8cf93d8d1231fe"
+        }
+      ],
+      "selected_expert_count": 6,
+      "selected_expert_set": [
+        38,
+        105,
+        206,
+        208,
+        278,
+        307
+      ],
+      "shared_expert_output": {
+        "dtype": "uint16",
+        "sha256": "60488ed0e74aff68fd9454dedbd08e92c755c1b3a4ba5cf7794e51670963e45d",
+        "shape": [
+          1,
+          5120
+        ]
+      }
+    }
+  },
+  "actual_loaded_omlx_source_identity": {
+    "decode_topology": "sequence length 1: unsorted routed experts branch, row-local quantization if projections quantize input; not x.shape[1] >= 32 / idx.size >= 64 sorted branch",
+    "dirty": true,
+    "git_head": "b390b31e0c6831225fed0f24d278eb1db7fcb68b",
+    "language_py_sha256": "2c64bef36c9fc4a6007cd34e7b120142ced072a8d491cf1f83f2c5b1a956763f",
+    "path": "/Users/kioju/omlx-0.7.0.dev2"
+  },
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "MOE_COMPOSITIONAL_UPSTREAM_NUMERICAL_DRIFT",
+  "connected_trajectory_diagnostic": {
+    "AA_official_actual_input_vs_EE_official_expected_input": {
+      "a": {
+        "dtype": "uint16",
+        "sha256": "9019d252fedd51bbc909bf84ca65ccd64d09adbb9cde713a62e9a4e5bd064549",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "b": {
+        "dtype": "uint16",
+        "sha256": "243e10cb2f79e16a1eacf1e798ad82634f33ebe48b814c601df4a80c6672c808",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "contract": "BF16 max ULP <= 1",
+      "exact": false,
+      "max_abs_diff": 0.001953125,
+      "max_bf16_ulp": 32,
+      "mean_abs_diff": 1.2831389540224336e-05,
+      "num_differing": 156,
+      "num_elements": 5120,
+      "num_gt_1_ulp": 40,
+      "ulp_histogram": {
+        "0": 4964,
+        "1": 116,
+        "16": 1,
+        "2": 20,
+        "28": 1,
+        "32": 1,
+        "4": 11,
+        "8": 6
+      },
+      "ulp_histogram_bins": {
+        "0": 4964,
+        "1": 116,
+        "2": 20,
+        ">2": 20
+      },
+      "within_contract": false
+    },
+    "classification": "trajectory drift only; not used to widen tolerance or declare same-input MoE defect"
+  },
+  "current_32ulp_difference_is_moe_defect": false,
+  "inputs": {
+    "actual_captured_moe_input": {
+      "dtype": "uint16",
+      "sha256": "99db2e1487f6e985ea0711698d772b77b40625eb220fd5e9606a6d07a63a1bbd",
+      "shape": [
+        1,
+        1,
+        5120
+      ]
+    },
+    "actual_vs_expected_moe_input": {
+      "a": {
+        "dtype": "uint16",
+        "sha256": "99db2e1487f6e985ea0711698d772b77b40625eb220fd5e9606a6d07a63a1bbd",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "b": {
+        "dtype": "uint16",
+        "sha256": "b1a419ba9c7c793f8fb3a55663de63320fb2927a98d074a98ae09d5a8984646d",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "contract": "BF16 max ULP <= 1",
+      "exact": false,
+      "max_abs_diff": 0.001953125,
+      "max_bf16_ulp": 2,
+      "mean_abs_diff": 4.0531159584134e-07,
+      "num_differing": 2,
+      "num_elements": 5120,
+      "num_gt_1_ulp": 1,
+      "ulp_histogram": {
+        "0": 5118,
+        "1": 1,
+        "2": 1
+      },
+      "ulp_histogram_bins": {
+        "0": 5118,
+        "1": 1,
+        "2": 1,
+        ">2": 0
+      },
+      "within_contract": false
+    },
+    "expected_boundary13d_moe_input": {
+      "dtype": "uint16",
+      "sha256": "b1a419ba9c7c793f8fb3a55663de63320fb2927a98d074a98ae09d5a8984646d",
+      "shape": [
+        1,
+        1,
+        5120
+      ]
+    }
+  },
+  "methodology": {
+    "connected_ideal_trajectory_comparison": "diagnostic only after upstream drift is established",
+    "same_input_operator_qualification": "primary correctness question for MoE",
+    "tolerance_changed": false
+  },
+  "next_frontier": "Block0 final hc_post same-input qualification",
+  "ok": true,
+  "omlx_path": "/Users/kioju/omlx-0.7.0.dev2",
+  "phase_a_rerun_required": false,
+  "same_input_qualification": {
+    "final_moe_within_contract": true,
+    "note": "Existing capture records actual route IDs/weights/final MoE output, not separate actual routed/shared tensors. Because official same-input final output reproduces actual production exactly with matching routing, routed/shared/merge are qualified as a composed same-input MoE boundary without another Phase A run.",
+    "route_ids_exact": true,
+    "route_weights_within_contract": true,
+    "routed_experts_covered_by_final_exact_reproduction": true,
+    "shared_expert_covered_by_final_exact_reproduction": true
+  },
+  "schema": "ds41f.m4.block0-moe-same-input.v1",
+  "source_checkpoint_provenance": {
+    "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+    "helper": "tools.run_native_layer24_25_connected_validation.moe_layer reused for layer=0 same-input reconstruction",
+    "official_source": {
+      "model_py_Expert": {
+        "file": "inference/model.py",
+        "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+        "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+        "source_lines": [
+          790,
+          826
+        ],
+        "source_sha256": "2f754fc7baa75be35b7a69b6fb5c65a24e1dc068241bedd505ab72ac52c2cde5"
+      },
+      "model_py_Gate_MoE": {
+        "file": "inference/model.py",
+        "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+        "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+        "source_lines": [
+          827,
+          912
+        ],
+        "source_sha256": "4f6374edbeb19277712b4b46a24199851dd99fbf3168171b401bcccf1e0ddd69"
+      }
+    },
+    "selection_semantics": "route IDs selected from scores + bias; returned route weights gathered from un-biased scores, normalized, then route-scaled",
+    "weights_not_stored_in_artifact": true
+  }
+}
