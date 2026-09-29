@@ -1,0 +1,661 @@
+{
+  "activation_quantization_involved": "POSSIBLE_BUT_NOT_LOCALIZED; QuantizedProjection quantizes shared input for wq_a/wkv and quantizes wq_b/wo_b inputs, but no actual codes/scales were captured for Block0",
+  "block0_attention_input": {
+    "actual_digest": "9f3d5433e680798d5f32fe10b8384476664078668b234c0780c7bce20ef775be",
+    "comparison": {
+      "actual_sha256": "9f3d5433e680798d5f32fe10b8384476664078668b234c0780c7bce20ef775be",
+      "count_gt_1_ulp": 0,
+      "differing_count": 0,
+      "expected_sha256": "9f3d5433e680798d5f32fe10b8384476664078668b234c0780c7bce20ef775be",
+      "max_abs": 0.0,
+      "max_bf16_ulp": 0,
+      "mean_abs": 0.0
+    },
+    "equality_confirmed": true,
+    "expected_digest": "9f3d5433e680798d5f32fe10b8384476664078668b234c0780c7bce20ef775be"
+  },
+  "deterministic_reproduction": {
+    "available_repetitions": 1,
+    "same_existing_capture_value": "0x3f6d",
+    "status": "SINGLE_CAPTURE_DETERMINISTIC_WITHIN_RECORDED_RUN; additional production reruns not performed in this task"
+  },
+  "exact_path_candidates": [
+    {
+      "bounded_performance_implication": "major/diagnostic-only; not a practical production path as-is",
+      "changes_seed_to_expected": true,
+      "name": "official-source-derived NumPy/reference Block0 Attention path",
+      "output_at_3758": "0x3f6c",
+      "preserves_official_semantics": true,
+      "production_topology_preserved": false
+    },
+    {
+      "changes_seed_to_expected": "unknown",
+      "name": "future production-internal exact/canonical MLX path",
+      "preserves_official_semantics": "unknown until first actual internal mismatch is captured",
+      "production_topology_preserved": "unknown"
+    }
+  ],
+  "final_classification": "BLOCK0_ATTENTION_EXACTNESS_LOCALIZATION_INCOMPLETE",
+  "final_seed": {
+    "abs": 0.00390625,
+    "actual_bits": "0x3f6d",
+    "actual_value": 0.92578125,
+    "expected_bits": "0x3f6c",
+    "expected_value": 0.921875,
+    "index": [
+      0,
+      0,
+      3758
+    ],
+    "ulp": 1
+  },
+  "first_nonexact_internal_boundary": "first observed non-exact production-vs-official boundary is final Block0 Attention output; earlier requested production internals were not present in the existing capture and were not re-captured here",
+  "high_sensitivity_exact_boundary_recommendation": "CANDIDATE_HIGH_SENSITIVITY_EXACT_BOUNDARY, but promotion requires a real production-internal exact alternative that preserves topology or an explicit performance tradeoff decision",
+  "internal_boundary_sequence": [
+    {
+      "comparison": {
+        "actual_sha256": "9f3d5433e680798d5f32fe10b8384476664078668b234c0780c7bce20ef775be",
+        "count_gt_1_ulp": 0,
+        "differing_count": 0,
+        "expected_sha256": "9f3d5433e680798d5f32fe10b8384476664078668b234c0780c7bce20ef775be",
+        "max_abs": 0.0,
+        "max_bf16_ulp": 0,
+        "mean_abs": 0.0
+      },
+      "official_boundary": "expected block0_attn_pre_norm_output",
+      "production_boundary": "captured actual block0_attention_input",
+      "stage": "input h / attention_input",
+      "status": "EXACT"
+    },
+    {
+      "classification": "UNRESOLVED",
+      "official_boundary": "reviewed fp8_linear actq over the same BF16 attention_input",
+      "production_boundary": "oMLX Attention._input_projections quantize_activation(x) when wq_a and wkv are QuantizedProjection(quantize_input=True)",
+      "stage": "shared input activation quantization for wq_a/wkv",
+      "status": "NOT_CAPTURED_PRODUCTION_INTERNAL"
+    },
+    {
+      "classification": "UNRESOLVED",
+      "stage": "wq_a output",
+      "status": "NOT_CAPTURED_PRODUCTION_INTERNAL"
+    },
+    {
+      "classification": "UNRESOLVED",
+      "stage": "q_norm output",
+      "status": "NOT_CAPTURED_PRODUCTION_INTERNAL"
+    },
+    {
+      "classification": "UNRESOLVED",
+      "stage": "wq_b input activation quantization",
+      "status": "NOT_CAPTURED_PRODUCTION_INTERNAL"
+    },
+    {
+      "classification": "UNRESOLVED",
+      "stage": "q_b pre-RoPE output",
+      "status": "NOT_CAPTURED_PRODUCTION_INTERNAL"
+    },
+    {
+      "classification": "UNRESOLVED",
+      "stage": "q_rotary",
+      "status": "NOT_CAPTURED_PRODUCTION_INTERNAL"
+    },
+    {
+      "classification": "UNRESOLVED",
+      "stage": "wkv projection output",
+      "status": "NOT_CAPTURED_PRODUCTION_INTERNAL"
+    },
+    {
+      "classification": "UNRESOLVED",
+      "stage": "kv_norm / kv_rotary / packed window KV",
+      "status": "NOT_CAPTURED_PRODUCTION_INTERNAL"
+    },
+    {
+      "classification": "UNRESOLVED",
+      "stage": "sparse attention output",
+      "status": "NOT_CAPTURED_FOR_BLOCK0_PRODUCTION_INTERNAL"
+    },
+    {
+      "classification": "UNRESOLVED",
+      "stage": "inverse RoPE output",
+      "status": "NOT_CAPTURED_FOR_BLOCK0_PRODUCTION_INTERNAL"
+    },
+    {
+      "classification": "UNRESOLVED",
+      "stage": "wo_a grouped projection input/output",
+      "status": "NOT_CAPTURED_FOR_BLOCK0_PRODUCTION_INTERNAL"
+    },
+    {
+      "classification": "FIRST_OBSERVED_CAUSAL_NONEXACT_BOUNDARY",
+      "comparison": {
+        "actual_sha256": "364c6a2e08bdd079d2f6690b3eeec5eb72b07e389fbd57d6ba6bb8567d7f192f",
+        "count_gt_1_ulp": 0,
+        "differing_count": 1,
+        "expected_sha256": "10c042342f715b36399920d65b811bb24e7f8f2d03cba672c70dfbd083f0c2d0",
+        "max_abs": 0.00390625,
+        "max_bf16_ulp": 1,
+        "mean_abs": 7.629394644936838e-07
+      },
+      "element": {
+        "abs": 0.00390625,
+        "actual_bits": "0x3f6d",
+        "actual_value": 0.92578125,
+        "expected_bits": "0x3f6c",
+        "expected_value": 0.921875,
+        "index": [
+          0,
+          0,
+          3758
+        ],
+        "ulp": 1
+      },
+      "stage": "wo_b activation quantization / quantized matmul / final BF16 Attention output",
+      "status": "DIFF_WITHIN_CURRENT_CONTRACT"
+    }
+  ],
+  "next_frontier": "bounded Block0 Attention production-internal capture for length=1: quantize_activation codes/scales, q/wkv/q_norm/q_b/RoPE/window/sparse/inverse_rope/wo_a/wo_b intermediates, then test a real MLX exact/canonical alternative if localized",
+  "non_claims": [
+    "does not widen tolerance",
+    "does not resume Layer2",
+    "does not implement DwarfStar",
+    "does not prove root cause",
+    "does not provide a production exact fallback"
+  ],
+  "official_source_identity": {
+    "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+    "model_py_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65"
+  },
+  "production_source_identity": {
+    "expected_git": "b390b31e0c6831225fed0f24d278eb1db7fcb68b",
+    "git": "b390b31e0c6831225fed0f24d278eb1db7fcb68b",
+    "kernels_py_sha256": "9f76d46359282c5fb23b0979dd8e550c9c1e355b9aca46a71fe97c842c376882",
+    "language_py_sha256": "2c64bef36c9fc4a6007cd34e7b120142ced072a8d491cf1f83f2c5b1a956763f",
+    "omlx_path": "/Users/kioju/omlx-0.7.0.dev2",
+    "quantization_py_sha256": "02e42848d40c8b0ef6a665d6d169abd0df38042b5bba6f55b631df92b5821950"
+  },
+  "reduction_fma_cast_involved": "POSSIBLE_BUT_NOT_LOCALIZED; sparse attention, mx.einsum, quantized_matmul reduction order, and final BF16 cast all remain candidate causes until a production-internal capture is added",
+  "root_cause_classification": "UNRESOLVED_ACTUAL_ATTENTION_INTERNALS_NOT_CAPTURED; known to arise inside Block0 Attention between exact input and final output, with production path using QuantizedProjection/quantize_activation, packed_sparse_attention, inverse rope, grouped mx.einsum, wo_b QuantizedProjection and BF16 output",
+  "schema": "ds41f.m4.block0_attention_seed_exactness.v1",
+  "seed_removal_downstream_trajectory_result": {
+    "actual_seeded_progression_from_prior_artifact": [
+      {
+        "S_vs_E": {
+          "count_gt_1_ulp": 0,
+          "count_gt_256_ulp": 0,
+          "count_gt_32_ulp": 0,
+          "count_gt_4096_ulp": 0,
+          "count_gt_8_ulp": 0,
+          "differing_count": 1,
+          "digest": "b64c86af478d9c7371f1ba0f3b5b40c4a193ac5f77e1c0a62ba310dfaf8ccdc3",
+          "max_abs": 0.00048828125,
+          "max_bf16_ulp": 1,
+          "mean_abs": 2.3841858265427618e-08,
+          "reference_digest": "a3adf1fd4e78d547fe06b310051f6d515473609eb2716056dde15acee249ec7d",
+          "sign_change_count": 0
+        },
+        "S_vs_actual": {
+          "count_gt_1_ulp": 0,
+          "count_gt_256_ulp": 0,
+          "count_gt_32_ulp": 0,
+          "count_gt_4096_ulp": 0,
+          "count_gt_8_ulp": 0,
+          "differing_count": 0,
+          "digest": "b64c86af478d9c7371f1ba0f3b5b40c4a193ac5f77e1c0a62ba310dfaf8ccdc3",
+          "max_abs": 0.0,
+          "max_bf16_ulp": 0,
+          "mean_abs": 0.0,
+          "reference_digest": "b64c86af478d9c7371f1ba0f3b5b40c4a193ac5f77e1c0a62ba310dfaf8ccdc3",
+          "sign_change_count": 0
+        },
+        "actual_vs_E": {
+          "count_gt_1_ulp": 0,
+          "count_gt_256_ulp": 0,
+          "count_gt_32_ulp": 0,
+          "count_gt_4096_ulp": 0,
+          "count_gt_8_ulp": 0,
+          "differing_count": 1,
+          "digest": "b64c86af478d9c7371f1ba0f3b5b40c4a193ac5f77e1c0a62ba310dfaf8ccdc3",
+          "max_abs": 0.00048828125,
+          "max_bf16_ulp": 1,
+          "mean_abs": 2.3841858265427618e-08,
+          "reference_digest": "a3adf1fd4e78d547fe06b310051f6d515473609eb2716056dde15acee249ec7d",
+          "sign_change_count": 0
+        },
+        "name": "Block0 post_attention_h"
+      },
+      {
+        "S_vs_E": {
+          "count_gt_1_ulp": 1,
+          "count_gt_256_ulp": 0,
+          "count_gt_32_ulp": 0,
+          "count_gt_4096_ulp": 0,
+          "count_gt_8_ulp": 0,
+          "differing_count": 2,
+          "digest": "99db2e1487f6e985ea0711698d772b77b40625eb220fd5e9606a6d07a63a1bbd",
+          "max_abs": 0.001953125,
+          "max_bf16_ulp": 2,
+          "mean_abs": 4.0531159584134e-07,
+          "reference_digest": "b1a419ba9c7c793f8fb3a55663de63320fb2927a98d074a98ae09d5a8984646d",
+          "sign_change_count": 0
+        },
+        "S_vs_actual": {
+          "count_gt_1_ulp": 0,
+          "count_gt_256_ulp": 0,
+          "count_gt_32_ulp": 0,
+          "count_gt_4096_ulp": 0,
+          "count_gt_8_ulp": 0,
+          "differing_count": 0,
+          "digest": "99db2e1487f6e985ea0711698d772b77b40625eb220fd5e9606a6d07a63a1bbd",
+          "max_abs": 0.0,
+          "max_bf16_ulp": 0,
+          "mean_abs": 0.0,
+          "reference_digest": "99db2e1487f6e985ea0711698d772b77b40625eb220fd5e9606a6d07a63a1bbd",
+          "sign_change_count": 0
+        },
+        "actual_vs_E": {
+          "count_gt_1_ulp": 1,
+          "count_gt_256_ulp": 0,
+          "count_gt_32_ulp": 0,
+          "count_gt_4096_ulp": 0,
+          "count_gt_8_ulp": 0,
+          "differing_count": 2,
+          "digest": "99db2e1487f6e985ea0711698d772b77b40625eb220fd5e9606a6d07a63a1bbd",
+          "max_abs": 0.001953125,
+          "max_bf16_ulp": 2,
+          "mean_abs": 4.0531159584134e-07,
+          "reference_digest": "b1a419ba9c7c793f8fb3a55663de63320fb2927a98d074a98ae09d5a8984646d",
+          "sign_change_count": 0
+        },
+        "name": "Block0 FFN pre-norm / MoE input"
+      },
+      {
+        "S_vs_E": {
+          "count_gt_1_ulp": 40,
+          "count_gt_256_ulp": 0,
+          "count_gt_32_ulp": 0,
+          "count_gt_4096_ulp": 0,
+          "count_gt_8_ulp": 3,
+          "differing_count": 156,
+          "digest": "9019d252fedd51bbc909bf84ca65ccd64d09adbb9cde713a62e9a4e5bd064549",
+          "max_abs": 0.001953125,
+          "max_bf16_ulp": 32,
+          "mean_abs": 1.2831389540224336e-05,
+          "reference_digest": "243e10cb2f79e16a1eacf1e798ad82634f33ebe48b814c601df4a80c6672c808",
+          "sign_change_count": 0
+        },
+        "S_vs_actual": {
+          "count_gt_1_ulp": 0,
+          "count_gt_256_ulp": 0,
+          "count_gt_32_ulp": 0,
+          "count_gt_4096_ulp": 0,
+          "count_gt_8_ulp": 0,
+          "differing_count": 0,
+          "digest": "9019d252fedd51bbc909bf84ca65ccd64d09adbb9cde713a62e9a4e5bd064549",
+          "max_abs": 0.0,
+          "max_bf16_ulp": 0,
+          "mean_abs": 0.0,
+          "reference_digest": "9019d252fedd51bbc909bf84ca65ccd64d09adbb9cde713a62e9a4e5bd064549",
+          "sign_change_count": 0
+        },
+        "actual_vs_E": {
+          "count_gt_1_ulp": 40,
+          "count_gt_256_ulp": 0,
+          "count_gt_32_ulp": 0,
+          "count_gt_4096_ulp": 0,
+          "count_gt_8_ulp": 3,
+          "differing_count": 156,
+          "digest": "9019d252fedd51bbc909bf84ca65ccd64d09adbb9cde713a62e9a4e5bd064549",
+          "max_abs": 0.001953125,
+          "max_bf16_ulp": 32,
+          "mean_abs": 1.2831389540224336e-05,
+          "reference_digest": "243e10cb2f79e16a1eacf1e798ad82634f33ebe48b814c601df4a80c6672c808",
+          "sign_change_count": 0
+        },
+        "name": "Block0 MoE output"
+      },
+      {
+        "S_vs_E": {
+          "count_gt_1_ulp": 94,
+          "count_gt_256_ulp": 0,
+          "count_gt_32_ulp": 1,
+          "count_gt_4096_ulp": 0,
+          "count_gt_8_ulp": 12,
+          "differing_count": 316,
+          "digest": "f44b2fea114bb2e12d87eef7e2aba23dd43a826916c2aabb1713713b48919c4d",
+          "max_abs": 0.0009765625,
+          "max_bf16_ulp": 196,
+          "mean_abs": 2.6736597646959126e-06,
+          "reference_digest": "16d4b63f79e11cff28dd7b7cfbbfff735d08a5e65db878401eec18fa4a80a1ef",
+          "sign_change_count": 0
+        },
+        "S_vs_actual": {
+          "count_gt_1_ulp": 0,
+          "count_gt_256_ulp": 0,
+          "count_gt_32_ulp": 0,
+          "count_gt_4096_ulp": 0,
+          "count_gt_8_ulp": 0,
+          "differing_count": 1,
+          "digest": "f44b2fea114bb2e12d87eef7e2aba23dd43a826916c2aabb1713713b48919c4d",
+          "max_abs": 1.52587890625e-05,
+          "max_bf16_ulp": 1,
+          "mean_abs": 7.450580707946131e-10,
+          "reference_digest": "e11fd85cced22528ed2a3f45b772e6836b67ec36c11cc1fc538e95604084df10",
+          "sign_change_count": 0
+        },
+        "actual_vs_E": {
+          "count_gt_1_ulp": 94,
+          "count_gt_256_ulp": 0,
+          "count_gt_32_ulp": 1,
+          "count_gt_4096_ulp": 0,
+          "count_gt_8_ulp": 12,
+          "differing_count": 317,
+          "digest": "e11fd85cced22528ed2a3f45b772e6836b67ec36c11cc1fc538e95604084df10",
+          "max_abs": 0.0009765625,
+          "max_bf16_ulp": 196,
+          "mean_abs": 2.67440486823034e-06,
+          "reference_digest": "16d4b63f79e11cff28dd7b7cfbbfff735d08a5e65db878401eec18fa4a80a1ef",
+          "sign_change_count": 0
+        },
+        "name": "Block0 final x_out"
+      },
+      {
+        "S_vs_E": {
+          "count_gt_1_ulp": 97,
+          "count_gt_256_ulp": 0,
+          "count_gt_32_ulp": 2,
+          "count_gt_4096_ulp": 0,
+          "count_gt_8_ulp": 11,
+          "differing_count": 434,
+          "digest": "e57c02a50230d502086191a493a623f60823eca6eec08acd54f8b8ed828c4c36",
+          "max_abs": 0.0009765625,
+          "max_bf16_ulp": 48,
+          "mean_abs": 3.8123530430311803e-06,
+          "reference_digest": "62dbe881182cbf21716d9d9bd3bc5d5ea86cc47f78077927372a0f2d0e0d5f21",
+          "sign_change_count": 0
+        },
+        "S_vs_actual": {
+          "count_gt_1_ulp": 0,
+          "count_gt_256_ulp": 0,
+          "count_gt_32_ulp": 0,
+          "count_gt_4096_ulp": 0,
+          "count_gt_8_ulp": 0,
+          "differing_count": 1,
+          "digest": "e57c02a50230d502086191a493a623f60823eca6eec08acd54f8b8ed828c4c36",
+          "max_abs": 1.52587890625e-05,
+          "max_bf16_ulp": 1,
+          "mean_abs": 7.450580707946131e-10,
+          "reference_digest": "59eb70a1b59e28299ee76b1d157550c495a42526f62e7998817158229a1342ab",
+          "sign_change_count": 0
+        },
+        "actual_vs_E": {
+          "count_gt_1_ulp": 97,
+          "count_gt_256_ulp": 0,
+          "count_gt_32_ulp": 2,
+          "count_gt_4096_ulp": 0,
+          "count_gt_8_ulp": 11,
+          "differing_count": 435,
+          "digest": "59eb70a1b59e28299ee76b1d157550c495a42526f62e7998817158229a1342ab",
+          "max_abs": 0.0009765625,
+          "max_bf16_ulp": 48,
+          "mean_abs": 3.8130979191919323e-06,
+          "reference_digest": "62dbe881182cbf21716d9d9bd3bc5d5ea86cc47f78077927372a0f2d0e0d5f21",
+          "sign_change_count": 0
+        },
+        "name": "Engram@1 output"
+      },
+      {
+        "S_vs_E": {
+          "count_gt_1_ulp": 66,
+          "count_gt_256_ulp": 0,
+          "count_gt_32_ulp": 1,
+          "count_gt_4096_ulp": 0,
+          "count_gt_8_ulp": 9,
+          "differing_count": 199,
+          "digest": "3566d520f97f78f64907f05e84d38bdfd01fc1765e62855399176a5f3d0ab791",
+          "max_abs": 0.00048828125,
+          "max_bf16_ulp": 77,
+          "mean_abs": 2.286001063112053e-06,
+          "reference_digest": "c39cc5caba229d96eb67848cf900ccec7e94f7b00c6aaba6d00f095f4c05d853",
+          "sign_change_count": 0
+        },
+        "S_vs_actual": {
+          "count_gt_1_ulp": 0,
+          "count_gt_256_ulp": 0,
+          "count_gt_32_ulp": 0,
+          "count_gt_4096_ulp": 0,
+          "count_gt_8_ulp": 0,
+          "differing_count": 0,
+          "digest": "3566d520f97f78f64907f05e84d38bdfd01fc1765e62855399176a5f3d0ab791",
+          "max_abs": 0.0,
+          "max_bf16_ulp": 0,
+          "mean_abs": 0.0,
+          "reference_digest": "3566d520f97f78f64907f05e84d38bdfd01fc1765e62855399176a5f3d0ab791",
+          "sign_change_count": 0
+        },
+        "actual_vs_E": {
+          "count_gt_1_ulp": 66,
+          "count_gt_256_ulp": 0,
+          "count_gt_32_ulp": 1,
+          "count_gt_4096_ulp": 0,
+          "count_gt_8_ulp": 9,
+          "differing_count": 199,
+          "digest": "3566d520f97f78f64907f05e84d38bdfd01fc1765e62855399176a5f3d0ab791",
+          "max_abs": 0.00048828125,
+          "max_bf16_ulp": 77,
+          "mean_abs": 2.286001063112053e-06,
+          "reference_digest": "c39cc5caba229d96eb67848cf900ccec7e94f7b00c6aaba6d00f095f4c05d853",
+          "sign_change_count": 0
+        },
+        "name": "Block1 attention_input"
+      },
+      {
+        "S_vs_E": {
+          "count_gt_1_ulp": 11933,
+          "count_gt_256_ulp": 98,
+          "count_gt_32_ulp": 649,
+          "count_gt_4096_ulp": 56,
+          "count_gt_8_ulp": 2324,
+          "differing_count": 22764,
+          "digest": "34b8214b370023d487ed2aae9fd39ff166259698f63c545c40bcf3b7420d3d36",
+          "max_abs": 0.125,
+          "max_bf16_ulp": 31050,
+          "mean_abs": 0.006577175110578537,
+          "reference_digest": "9fc8fdbcd2ac439ca1c21330d745f88d9baf417296d7fb208c2751097f25232b",
+          "sign_change_count": 56
+        },
+        "S_vs_actual": {
+          "count_gt_1_ulp": 0,
+          "count_gt_256_ulp": 0,
+          "count_gt_32_ulp": 0,
+          "count_gt_4096_ulp": 0,
+          "count_gt_8_ulp": 0,
+          "differing_count": 0,
+          "digest": "34b8214b370023d487ed2aae9fd39ff166259698f63c545c40bcf3b7420d3d36",
+          "max_abs": 0.0,
+          "max_bf16_ulp": 0,
+          "mean_abs": 0.0,
+          "reference_digest": "34b8214b370023d487ed2aae9fd39ff166259698f63c545c40bcf3b7420d3d36",
+          "sign_change_count": 0
+        },
+        "actual_vs_E": {
+          "count_gt_1_ulp": 11933,
+          "count_gt_256_ulp": 98,
+          "count_gt_32_ulp": 649,
+          "count_gt_4096_ulp": 56,
+          "count_gt_8_ulp": 2324,
+          "differing_count": 22764,
+          "digest": "34b8214b370023d487ed2aae9fd39ff166259698f63c545c40bcf3b7420d3d36",
+          "max_abs": 0.125,
+          "max_bf16_ulp": 31050,
+          "mean_abs": 0.006577175110578537,
+          "reference_digest": "9fc8fdbcd2ac439ca1c21330d745f88d9baf417296d7fb208c2751097f25232b",
+          "sign_change_count": 56
+        },
+        "name": "Block1 q_rotary"
+      },
+      {
+        "S_vs_E": {
+          "count_gt_1_ulp": 6242,
+          "count_gt_256_ulp": 60,
+          "count_gt_32_ulp": 414,
+          "count_gt_4096_ulp": 37,
+          "count_gt_8_ulp": 1532,
+          "differing_count": 10971,
+          "digest": "832d131534b22e26532a54df44dbb671e990e3d53b687d443b4d0cd10bc902d9",
+          "max_abs": 0.01171875,
+          "max_bf16_ulp": 30260,
+          "mean_abs": 0.0006976136355660856,
+          "reference_digest": "a79482e34bb10dc0c84dae3e895a258813695a7a417b30c6a5da7e6fc24347e7",
+          "sign_change_count": 37
+        },
+        "S_vs_actual": {
+          "count_gt_1_ulp": 0,
+          "count_gt_256_ulp": 0,
+          "count_gt_32_ulp": 0,
+          "count_gt_4096_ulp": 0,
+          "count_gt_8_ulp": 0,
+          "differing_count": 3,
+          "digest": "832d131534b22e26532a54df44dbb671e990e3d53b687d443b4d0cd10bc902d9",
+          "max_abs": 6.103515625e-05,
+          "max_bf16_ulp": 1,
+          "mean_abs": 3.3760443329811096e-09,
+          "reference_digest": "2a6917f4d59d927da3b3bf1e70d706eeafc5c649702d948c8a3b08abc18592f0",
+          "sign_change_count": 0
+        },
+        "actual_vs_E": {
+          "count_gt_1_ulp": 6241,
+          "count_gt_256_ulp": 60,
+          "count_gt_32_ulp": 414,
+          "count_gt_4096_ulp": 37,
+          "count_gt_8_ulp": 1532,
+          "differing_count": 10973,
+          "digest": "2a6917f4d59d927da3b3bf1e70d706eeafc5c649702d948c8a3b08abc18592f0",
+          "max_abs": 0.01171875,
+          "max_bf16_ulp": 30260,
+          "mean_abs": 0.0006976169534027576,
+          "reference_digest": "a79482e34bb10dc0c84dae3e895a258813695a7a417b30c6a5da7e6fc24347e7",
+          "sign_change_count": 37
+        },
+        "name": "Block1 x_out"
+      },
+      {
+        "S_vs_E": {
+          "differing_count": 4,
+          "digest": "b0950b954d3f95622aae4e98bf85ab9c43336103b2fd86f86b0d2a72c1988646",
+          "max_abs": 0.0007171928882598877,
+          "mean_abs": 0.0003140516928397119,
+          "reference_digest": "ff497e98143f3ca187100c31618c004cc734ffbb5c2ce697100f2618cd6bd7fa"
+        },
+        "S_vs_actual": {
+          "differing_count": 4,
+          "digest": "b0950b954d3f95622aae4e98bf85ab9c43336103b2fd86f86b0d2a72c1988646",
+          "max_abs": 8.940696716308594e-08,
+          "mean_abs": 4.866160452365875e-08,
+          "reference_digest": "1c73330c6add057b085e50781ae648e9d6ddc27ea5f1ebacc9f7c7c501af7af1"
+        },
+        "actual_vs_E": {
+          "differing_count": 4,
+          "digest": "1c73330c6add057b085e50781ae648e9d6ddc27ea5f1ebacc9f7c7c501af7af1",
+          "max_abs": 0.0007171034812927246,
+          "mean_abs": 0.0003140258486382663,
+          "reference_digest": "ff497e98143f3ca187100c31618c004cc734ffbb5c2ce697100f2618cd6bd7fa"
+        },
+        "name": "Block1 ffn_pre"
+      }
+    ],
+    "attention_output_3758_after_removal": "0x3f6c",
+    "downstream_30k_branch_eliminated_relative_to_E": true,
+    "evidence": "The causal audit proved AEEE (only actual attention_output) recreates actual downstream trajectory. Therefore removing that one A seed returns to E; direct production exact fallback not implemented.",
+    "experiment": "Use exact official Attention output (expected path / EEEE) instead of actual 1-ULP seed; compare with prior causal S and actual trajectory",
+    "seed_removed": true
+  },
+  "upstream_mlx_runtime_evidence": {
+    "external_issue_pr_search": "not performed; no internet/tooling available in this harness",
+    "relevant_source_lines": {
+      "attention": [
+        {
+          "line": 30,
+          "text": "from .kernels import packed_index_scores, packed_index_topk, packed_sparse_attention"
+        },
+        {
+          "line": 123,
+          "text": "mx.einsum(\"bshd,bskd->bshk\", q.astype(mx.float32), selected.astype(mx.float32))"
+        },
+        {
+          "line": 129,
+          "text": "return mx.einsum(\"bshk,bskd->bshd\", weights, selected.astype(mx.float32)).astype("
+        },
+        {
+          "line": 251,
+          "text": "self.wo_b = nn.Linear(c.o_groups * c.o_lora_rank, c.dim, bias=False)"
+        },
+        {
+          "line": 257,
+          "text": "def _input_projections(self, x):"
+        },
+        {
+          "line": 262,
+          "text": "quantized = quantize_activation(x)"
+        },
+        {
+          "line": 344,
+          "text": "out = packed_sparse_attention("
+        },
+        {
+          "line": 350,
+          "text": "return self.wo_b(mx.einsum(\"bsgd,grd->bsgr\", grouped, weight).flatten(-2))"
+        },
+        {
+          "line": 419,
+          "text": "inp = (x if input_quantized else quantize_activation(x)).reshape("
+        },
+        {
+          "line": 483,
+          "text": "quantize_activation(x)"
+        },
+        {
+          "line": 506,
+          "text": "quantize_activation(x)"
+        },
+        {
+          "line": 533,
+          "text": "quantize_activation(x)"
+        },
+        {
+          "line": 614,
+          "text": "quantize_activation(x) if routed_quantized or shared_quantized else x"
+        },
+        {
+          "line": 718,
+          "text": "+ mx.einsum(\"bsij,bsid->bsjd\", comb, residual.astype(mx.float32))"
+        }
+      ],
+      "quantization": [
+        {
+          "line": 69,
+          "text": "def quantize_activation(x, bits=8, group_size=32, e4m3_scale=False):"
+        },
+        {
+          "line": 152,
+          "text": "class QuantizedProjection(QuantizedSwitchLinear):"
+        },
+        {
+          "line": 199,
+          "text": "return self.project_quantized(x, indices, sorted_indices, block_plan)"
+        },
+        {
+          "line": 201,
+          "text": "def project_quantized(self, x, indices=None, sorted_indices=False, block_plan=None):"
+        },
+        {
+          "line": 204,
+          "text": "return mx.quantized_matmul("
+        }
+      ]
+    },
+    "searched_local_runtime_files": [
+      "language.py",
+      "quantization.py",
+      "kernels.py"
+    ]
+  }
+}
