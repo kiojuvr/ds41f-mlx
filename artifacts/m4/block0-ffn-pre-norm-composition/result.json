@@ -1,0 +1,523 @@
+{
+  "actual_loaded_omlx_source_identity": {
+    "dirty": true,
+    "git_head": "b390b31e0c6831225fed0f24d278eb1db7fcb68b",
+    "language_py_sha256": "2c64bef36c9fc4a6007cd34e7b120142ced072a8d491cf1f83f2c5b1a956763f",
+    "path": "/Users/kioju/omlx-0.7.0.dev2"
+  },
+  "block0_ffn_pre_norm_divergence_remains_valid": false,
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "classification": "COMPOSITIONAL_UPSTREAM_NUMERICAL_DRIFT",
+  "contribution_diagnostic": {
+    "attn_ap_only_EA_vs_EE": {
+      "a": {
+        "dtype": "uint16",
+        "sha256": "b1a419ba9c7c793f8fb3a55663de63320fb2927a98d074a98ae09d5a8984646d",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "b": {
+        "dtype": "uint16",
+        "sha256": "b1a419ba9c7c793f8fb3a55663de63320fb2927a98d074a98ae09d5a8984646d",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "contract": "BF16 max ULP <= 1",
+      "exact": true,
+      "max_abs_diff": 0.0,
+      "max_bf16_ulp": 0,
+      "mean_abs_diff": 0.0,
+      "num_differing": 0,
+      "num_elements": 5120,
+      "num_gt_1_ulp": 0,
+      "ulp_histogram": {
+        "0": 5120
+      },
+      "ulp_histogram_bins": {
+        "0": 5120,
+        "1": 0,
+        "2": 0,
+        ">2": 0
+      },
+      "within_contract": true
+    },
+    "combined_AA_vs_EE": {
+      "a": {
+        "dtype": "uint16",
+        "sha256": "99db2e1487f6e985ea0711698d772b77b40625eb220fd5e9606a6d07a63a1bbd",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "b": {
+        "dtype": "uint16",
+        "sha256": "b1a419ba9c7c793f8fb3a55663de63320fb2927a98d074a98ae09d5a8984646d",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "contract": "BF16 max ULP <= 1",
+      "exact": false,
+      "max_abs_diff": 0.001953125,
+      "max_bf16_ulp": 2,
+      "mean_abs_diff": 4.0531159584134e-07,
+      "num_differing": 2,
+      "num_elements": 5120,
+      "num_gt_1_ulp": 1,
+      "ulp_histogram": {
+        "0": 5118,
+        "1": 1,
+        "2": 1
+      },
+      "ulp_histogram_bins": {
+        "0": 5118,
+        "1": 1,
+        "2": 1,
+        ">2": 0
+      },
+      "within_contract": false
+    },
+    "dominant_gt1_source": "post_attention_h",
+    "interpretation": "AE isolates actual post_attention_h with expected attn_ap; EA isolates actual attn_ap with expected post_attention_h. These are diagnostics only and do not assign fault.",
+    "post_attention_h_only_AE_vs_EE": {
+      "a": {
+        "dtype": "uint16",
+        "sha256": "99db2e1487f6e985ea0711698d772b77b40625eb220fd5e9606a6d07a63a1bbd",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "b": {
+        "dtype": "uint16",
+        "sha256": "b1a419ba9c7c793f8fb3a55663de63320fb2927a98d074a98ae09d5a8984646d",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "contract": "BF16 max ULP <= 1",
+      "exact": false,
+      "max_abs_diff": 0.001953125,
+      "max_bf16_ulp": 2,
+      "mean_abs_diff": 4.0531159584134e-07,
+      "num_differing": 2,
+      "num_elements": 5120,
+      "num_gt_1_ulp": 1,
+      "ulp_histogram": {
+        "0": 5118,
+        "1": 1,
+        "2": 1
+      },
+      "ulp_histogram_bins": {
+        "0": 5118,
+        "1": 1,
+        "2": 1,
+        ">2": 0
+      },
+      "within_contract": false
+    }
+  },
+  "counterfactual_comparisons": {
+    "AA_vs_EE": {
+      "a": {
+        "dtype": "uint16",
+        "sha256": "99db2e1487f6e985ea0711698d772b77b40625eb220fd5e9606a6d07a63a1bbd",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "b": {
+        "dtype": "uint16",
+        "sha256": "b1a419ba9c7c793f8fb3a55663de63320fb2927a98d074a98ae09d5a8984646d",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "contract": "BF16 max ULP <= 1",
+      "exact": false,
+      "max_abs_diff": 0.001953125,
+      "max_bf16_ulp": 2,
+      "mean_abs_diff": 4.0531159584134e-07,
+      "num_differing": 2,
+      "num_elements": 5120,
+      "num_gt_1_ulp": 1,
+      "ulp_histogram": {
+        "0": 5118,
+        "1": 1,
+        "2": 1
+      },
+      "ulp_histogram_bins": {
+        "0": 5118,
+        "1": 1,
+        "2": 1,
+        ">2": 0
+      },
+      "within_contract": false
+    },
+    "AE_vs_EE": {
+      "a": {
+        "dtype": "uint16",
+        "sha256": "99db2e1487f6e985ea0711698d772b77b40625eb220fd5e9606a6d07a63a1bbd",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "b": {
+        "dtype": "uint16",
+        "sha256": "b1a419ba9c7c793f8fb3a55663de63320fb2927a98d074a98ae09d5a8984646d",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "contract": "BF16 max ULP <= 1",
+      "exact": false,
+      "max_abs_diff": 0.001953125,
+      "max_bf16_ulp": 2,
+      "mean_abs_diff": 4.0531159584134e-07,
+      "num_differing": 2,
+      "num_elements": 5120,
+      "num_gt_1_ulp": 1,
+      "ulp_histogram": {
+        "0": 5118,
+        "1": 1,
+        "2": 1
+      },
+      "ulp_histogram_bins": {
+        "0": 5118,
+        "1": 1,
+        "2": 1,
+        ">2": 0
+      },
+      "within_contract": false
+    },
+    "EA_vs_EE": {
+      "a": {
+        "dtype": "uint16",
+        "sha256": "b1a419ba9c7c793f8fb3a55663de63320fb2927a98d074a98ae09d5a8984646d",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "b": {
+        "dtype": "uint16",
+        "sha256": "b1a419ba9c7c793f8fb3a55663de63320fb2927a98d074a98ae09d5a8984646d",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "contract": "BF16 max ULP <= 1",
+      "exact": true,
+      "max_abs_diff": 0.0,
+      "max_bf16_ulp": 0,
+      "mean_abs_diff": 0.0,
+      "num_differing": 0,
+      "num_elements": 5120,
+      "num_gt_1_ulp": 0,
+      "ulp_histogram": {
+        "0": 5120
+      },
+      "ulp_histogram_bins": {
+        "0": 5120,
+        "1": 0,
+        "2": 0,
+        ">2": 0
+      },
+      "within_contract": true
+    }
+  },
+  "decisive_checks": {
+    "AA_vs_captured_actual_production": {
+      "a": {
+        "dtype": "uint16",
+        "sha256": "99db2e1487f6e985ea0711698d772b77b40625eb220fd5e9606a6d07a63a1bbd",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "b": {
+        "dtype": "uint16",
+        "sha256": "99db2e1487f6e985ea0711698d772b77b40625eb220fd5e9606a6d07a63a1bbd",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "contract": "BF16 max ULP <= 1",
+      "exact": true,
+      "max_abs_diff": 0.0,
+      "max_bf16_ulp": 0,
+      "mean_abs_diff": 0.0,
+      "num_differing": 0,
+      "num_elements": 5120,
+      "num_gt_1_ulp": 0,
+      "ulp_histogram": {
+        "0": 5120
+      },
+      "ulp_histogram_bins": {
+        "0": 5120,
+        "1": 0,
+        "2": 0,
+        ">2": 0
+      },
+      "within_contract": true
+    },
+    "EE_vs_current_boundary13d_expected": {
+      "a": {
+        "dtype": "uint16",
+        "sha256": "b1a419ba9c7c793f8fb3a55663de63320fb2927a98d074a98ae09d5a8984646d",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "b": {
+        "dtype": "uint16",
+        "sha256": "b1a419ba9c7c793f8fb3a55663de63320fb2927a98d074a98ae09d5a8984646d",
+        "shape": [
+          1,
+          1,
+          5120
+        ]
+      },
+      "contract": "BF16 max ULP <= 1",
+      "exact": true,
+      "max_abs_diff": 0.0,
+      "max_bf16_ulp": 0,
+      "mean_abs_diff": 0.0,
+      "num_differing": 0,
+      "num_elements": 5120,
+      "num_gt_1_ulp": 0,
+      "ulp_histogram": {
+        "0": 5120
+      },
+      "ulp_histogram_bins": {
+        "0": 5120,
+        "1": 0,
+        "2": 0,
+        ">2": 0
+      },
+      "within_contract": true
+    }
+  },
+  "inputs": {
+    "actual_attn_ap_captured": {
+      "dtype": "float32",
+      "sha256": "595ee489d9d05cf3e88bc8a0755013e6dc188e6ca780d808fbe4d1a4db6cf745",
+      "shape": [
+        1,
+        1,
+        4
+      ]
+    },
+    "actual_h_captured_post_attention_h": {
+      "dtype": "uint16",
+      "sha256": "b64c86af478d9c7371f1ba0f3b5b40c4a193ac5f77e1c0a62ba310dfaf8ccdc3",
+      "shape": [
+        1,
+        1,
+        4,
+        5120
+      ]
+    },
+    "direct_parent_comparisons": {
+      "attn_ap_actual_vs_expected": {
+        "a": {
+          "dtype": "float32",
+          "sha256": "595ee489d9d05cf3e88bc8a0755013e6dc188e6ca780d808fbe4d1a4db6cf745",
+          "shape": [
+            1,
+            1,
+            4
+          ]
+        },
+        "b": {
+          "dtype": "float32",
+          "sha256": "0760bf37514fb6ef60fc1cd2fae5862ec322c7f8dbe21f74dbdff130a3ad3138",
+          "shape": [
+            1,
+            1,
+            4
+          ]
+        },
+        "contract": "FP32 max abs <= 0.0001",
+        "exact": false,
+        "max_abs_diff": 1.0913936421275139e-11,
+        "mean_abs_diff": 3.893774191965349e-12,
+        "within_contract": true
+      },
+      "post_attention_h_actual_vs_expected": {
+        "a": {
+          "dtype": "uint16",
+          "sha256": "b64c86af478d9c7371f1ba0f3b5b40c4a193ac5f77e1c0a62ba310dfaf8ccdc3",
+          "shape": [
+            1,
+            1,
+            4,
+            5120
+          ]
+        },
+        "b": {
+          "dtype": "uint16",
+          "sha256": "a3adf1fd4e78d547fe06b310051f6d515473609eb2716056dde15acee249ec7d",
+          "shape": [
+            1,
+            1,
+            4,
+            5120
+          ]
+        },
+        "contract": "BF16 max ULP <= 1",
+        "exact": false,
+        "max_abs_diff": 0.00048828125,
+        "max_bf16_ulp": 1,
+        "mean_abs_diff": 2.3841858265427618e-08,
+        "num_differing": 1,
+        "num_elements": 20480,
+        "num_gt_1_ulp": 0,
+        "ulp_histogram": {
+          "0": 20479,
+          "1": 1
+        },
+        "ulp_histogram_bins": {
+          "0": 20479,
+          "1": 1,
+          "2": 0,
+          ">2": 0
+        },
+        "within_contract": true
+      }
+    },
+    "expected_attn_ap_boundary13d": {
+      "dtype": "float32",
+      "sha256": "0760bf37514fb6ef60fc1cd2fae5862ec322c7f8dbe21f74dbdff130a3ad3138",
+      "shape": [
+        1,
+        1,
+        4
+      ]
+    },
+    "expected_h_boundary13d_post_attention_h": {
+      "dtype": "uint16",
+      "sha256": "a3adf1fd4e78d547fe06b310051f6d515473609eb2716056dde15acee249ec7d",
+      "shape": [
+        1,
+        1,
+        4,
+        5120
+      ]
+    }
+  },
+  "methodology": {
+    "bf16_contract_remains": "max ULP <= 1 for same-input/operator boundaries",
+    "bf16_tolerance_changed": false,
+    "connected_trajectory_comparison": "After prior qualified numerical operations, actual trajectory drift vs ideal trajectory is diagnostic and is not by itself a new operation defect if same-input semantics reproduce both endpoints.",
+    "same_input_operator_qualification": "Given the same semantically valid inputs, compare operator output to production/reference output under the existing reviewed contract."
+  },
+  "next_frontier": "actual-input MoE same-input qualification",
+  "ok": true,
+  "omlx_path": "/Users/kioju/omlx-0.7.0.dev2",
+  "operator_defect": false,
+  "outputs": {
+    "AA": {
+      "dtype": "uint16",
+      "sha256": "99db2e1487f6e985ea0711698d772b77b40625eb220fd5e9606a6d07a63a1bbd",
+      "shape": [
+        1,
+        1,
+        5120
+      ]
+    },
+    "AE": {
+      "dtype": "uint16",
+      "sha256": "99db2e1487f6e985ea0711698d772b77b40625eb220fd5e9606a6d07a63a1bbd",
+      "shape": [
+        1,
+        1,
+        5120
+      ]
+    },
+    "EA": {
+      "dtype": "uint16",
+      "sha256": "b1a419ba9c7c793f8fb3a55663de63320fb2927a98d074a98ae09d5a8984646d",
+      "shape": [
+        1,
+        1,
+        5120
+      ]
+    },
+    "EE": {
+      "dtype": "uint16",
+      "sha256": "b1a419ba9c7c793f8fb3a55663de63320fb2927a98d074a98ae09d5a8984646d",
+      "shape": [
+        1,
+        1,
+        5120
+      ]
+    }
+  },
+  "schema": "ds41f.m4.block0-ffn-pre-norm-composition.v1",
+  "source_checkpoint_provenance": {
+    "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+    "ffn_norm_weight": {
+      "dtype": "uint16",
+      "sha256": "b6eeb8f9cc1dcb2807e2d6f029a17d626cd608f998ab76bfcb32896d3558334e",
+      "shape": [
+        5120
+      ]
+    },
+    "official_source": {
+      "model_py_Block_forward": {
+        "file": "inference/model.py",
+        "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+        "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+        "source_lines": [
+          971,
+          994
+        ],
+        "source_sha256": "813b4dc3231349cb17190876e25f6c39da4a88fdec9d23e9cb0c5b6fcd8318f6"
+      },
+      "model_py_RMSNorm": {
+        "file": "inference/model.py",
+        "file_sha256": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65",
+        "source_hash_method": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+        "source_lines": [
+          215,
+          224
+        ],
+        "source_sha256": "968588aedfbd420c5215335457e081b97567b86928be21eb811996a220a9acb6"
+      }
+    },
+    "operator": "N(h, pre) = RMSNorm(hc_pre(h, pre), layers.0.ffn_norm.weight, rms_norm_eps)",
+    "precision": "BF16 h, FP32 HC pre weights/accumulation via existing official helper hc_pre, RMSNorm in FP32, BF16 RNE output",
+    "rms_norm_eps": 1e-20
+  }
+}
