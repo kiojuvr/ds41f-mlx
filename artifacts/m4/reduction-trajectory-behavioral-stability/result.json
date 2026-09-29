@@ -62,7 +62,7 @@
     "details": "E/C/M branches are separate Python result objects through Block1 and share only immutable prefix/preload inputs in this runner; independent mutable persistent state through Layers2-39 and continuation is not implemented and remains required before final behavioral classification.",
     "status": "PARTIAL_ONLY"
   },
-  "completion_blocker": "No reviewed branch-local source-derived incremental harness currently exists in this repository for executing Layers2-39, final HC, final RMSNorm, ParallelHead logits, and multi-token continuation from an injected Block0 Attention output. Existing reviewed full-depth helpers are prefill [0,3] validators, while existing first-incremental helpers stop at Layer2 entry.",
+  "completion_blocker": "RESOLVED_BY artifacts/m4/source-derived-first-incremental-full-depth/result.json; branch-local source-derived token15 executor now reaches full logits.",
   "continuous_boundary_pairwise": {
     "block0_attention_output": {
       "C_vs_E": {
@@ -1203,7 +1203,7 @@
       "sign_change_count": 0
     }
   },
-  "final_classification": "THREE_TRAJECTORY_BEHAVIORAL_STABILITY_INCOMPLETE_FULL_INCREMENTAL_HARNESS_PENDING",
+  "final_classification": "THREE_TRAJECTORY_BEHAVIORAL_STABILITY_INCOMPLETE_ECM_LOGITS_PENDING",
   "final_rmsnorm": {
     "executed": false,
     "reason": "requires layer39 branch output from missing incremental Layers2-39 harness"
@@ -1243,17 +1243,22 @@
   },
   "logits_pairwise_metrics": null,
   "metal_exactification_status": "RETIRED_AS_ACTIVE_FRONTIER_PENDING_BEHAVIORAL_STABILITY; do not implement canonical Metal wo_b solely to match NumPy or CUDA bits.",
-  "next_frontier": "extend reviewed source-derived decode/logits harness with explicit Block0 Attention output injection for E/C/M and run first-token logits plus bounded lockstep continuation",
+  "next_frontier": "run E/C/M Block0 Attention injections through SourceDerivedFirstIncrementalExecutor for first-token full logits/top-k/greedy comparison, then bounded lockstep continuation",
   "ok": false,
   "precision_policy_decision": "Interim: official CUDA establishes multiple valid FP8 reduction trajectories; connected hidden-state bit identity and whole-logits SHA identity are non-authoritative while the behavioral/logit stability gate remains pending.",
   "schema": "ds41f.m4.reduction_trajectory_behavioral_stability.v1",
   "scope_note": "C is official CUDA/TileLang Block0 wo_b output followed by reviewed source-derived downstream execution; it is not full-model CUDA execution. Bounded continuation, once available, measures propagation of the initial E/C/M Block0 reduction perturbation under a common reviewed source-derived implementation.",
+  "source_derived_full_depth_executor": {
+    "artifact": "artifacts/m4/source-derived-first-incremental-full-depth/result.json",
+    "classification": "SOURCE_DERIVED_FIRST_INCREMENTAL_FULL_DEPTH_HARNESS_COMPLETE",
+    "implementation": "ds41f_mlx/source_incremental_executor.py"
+  },
   "source_derived_harness_reused": [
     "tools/run_m4_trajectory_seed_causal_audit.block0_remainder_from_xattn",
     "tools/run_native_first_incremental_block1_layer2_entry_validation.block1",
     "tools.native_decode_session_state.build_prefill_state"
   ],
-  "status": "INCOMPLETE_FULL_INCREMENTAL_SOURCE_DERIVED_HARNESS_MISSING",
+  "status": "INCOMPLETE_ECM_FULL_LOGITS_PENDING_EXECUTOR_NOW_AVAILABLE",
   "top10_lists": null,
   "top1_top2_margins": null,
   "top32_overlap": null,
