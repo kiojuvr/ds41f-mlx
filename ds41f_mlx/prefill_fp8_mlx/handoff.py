@@ -1,0 +1,199 @@
+"""P5: validate and transfer the committed live cache once, without repacking.
+
+Terminal-token contract (request ownership, not the last sweep's arena):
+    full_prompt = complete_prefix_token_ids + [terminal_prompt_token]
+Only the prefix was prefilled. Its length must equal all 40 cache frontiers.
+The held-out terminal token is forwarded once by GenerationBatch bootstrap;
+it is not prompt replay. No final-prefix logits are needed. Never pass an
+already-prefilled terminal token to start() again.
+
+No cache creation, tensor copy/conversion, merge, continuation-state export,
+or reconstruction from publication records occurs here. After transfer the
+prefill runner is revoked; after bootstrap the scheduler is decode authority.
+External diagnostic aliases are passive references, not executable authorities.
+"""
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Any, Sequence, TYPE_CHECKING
+
+from .executor import PrefillExecutionSetup
+
+if TYPE_CHECKING:
+    from ds41f_mlx.runtime.omlx_generation import OMLXGenerationSession
+
+
+class LiveCacheHandoffError(RuntimeError):
+    """Uncommitted, malformed, or already-consumed live-cache admission."""
+
+
+def _shape(value: Any, *, layer: int, slot: int) -> tuple[int, ...]:
+    if value is None or not hasattr(value, 'shape') or not hasattr(value, 'dtype'):
+        raise LiveCacheHandoffError(f'layer {layer} slot {slot}: missing qualified array object')
+    return tuple(int(x) for x in value.shape)
+
+
+def _dtype(value: Any) -> str:
+    return str(value.dtype).rsplit('.', 1)[-1]
+
+
+def validate_committed_cache(setup: PrefillExecutionSetup, prefix_token_ids: Sequence[int]) -> int:
+    """Scalar frontiers and array metadata only; never inspect tensor contents."""
+    arena, runner, manager = setup.arena, setup.block_runner, setup.publication_manager
+    tx = arena.transaction
+    if not tx.begun or not tx.committed or not tx.valid or tx.failed or manager.failed:
+        raise LiveCacheHandoffError('prefill/publication transaction is not successfully committed')
+    if manager.pending_cumulative_by_layer or manager.pending_spans_by_layer or arena.publications.pending_events:
+        raise LiveCacheHandoffError('publication transaction still has pending sources')
+    if runner.prefill_continuation_exported or arena.prefill_continuation_exported:
+        raise LiveCacheHandoffError('PrefillContinuationState export is forbidden for live handoff')
+    if runner.full_cache_repack_count != 0:
+        raise LiveCacheHandoffError('cache repack occurred before live handoff')
+    if runner.logits_policy.compute_final_prefix_logits or not runner.final_logits_suppressed or runner.final_logits is not None:
+        raise LiveCacheHandoffError('serving prefix logits must be suppressed')
+    cache = runner.working_cache
+    if cache is None or not isinstance(cache, list) or len(cache) != 40:
+        raise LiveCacheHandoffError('handoff requires the existing 40-layer live cache list')
+    c = runner.language_model._config
+    frontier = len(prefix_token_ids)
+    if frontier <= 0 or frontier != int(arena.base_frontier) + int(arena.plan.count):
+        raise LiveCacheHandoffError('complete prefix history length does not match committed frontier')
+    kv_sources = set(c.kv_source_layers)
+    index_sources = set(c.index_source_layers)
+    for layer, item in enumerate(cache):
+        if item is None:
+            raise LiveCacheHandoffError(f'layer {layer}: missing cache')
+        try:
+            slots = [item[i] for i in range(7)]  # references only, not a cache container
+            if _shape(slots[0], layer=layer, slot=0) != (1,) or _dtype(slots[0]) != 'int32':
+                raise LiveCacheHandoffError(f'layer {layer}: invalid singleton frontier slot')
+            offset = int(item.size())
+        except (AttributeError, TypeError, IndexError) as exc:
+            raise LiveCacheHandoffError(f'layer {layer}: unsupported cache representation') from exc
+        if offset != frontier:
+            raise LiveCacheHandoffError(f'layer {layer} frontier {offset} != complete prefix length {frontier}')
+        ratio = int(c.compress_ratios[layer]) if layer in kv_sources else 0
+        if getattr(item, 'compress_ratio', None) != ratio:
+            raise LiveCacheHandoffError(f'layer {layer}: cache compression layout mismatch')
+        widths = {1: c.head_dim + c.head_dim // 32,
+                  2: c.head_dim // 2 + c.head_dim // 16,
+                  3: c.index_head_dim // 2 + c.index_head_dim // 32}
+        for slot in (1, 2, 3):
+            shape = _shape(slots[slot], layer=layer, slot=slot)
+            if len(shape) != 3 or shape[0] != 1 or shape[2] != widths[slot] or _dtype(slots[slot]) != 'uint8':
+                raise LiveCacheHandoffError(f'layer {layer} slot {slot}: invalid packed geometry/dtype')
+            expected = None
+            if slot == 1:
+                expected = min(frontier, c.window_size)
+            elif layer in kv_sources and (slot == 2 or layer in index_sources):
+                expected = frontier // ratio
+            if expected is not None and shape[1] != expected:
+                raise LiveCacheHandoffError(f'layer {layer} slot {slot}: rows {shape[1]} != {expected}')
+        pending = frontier % ratio if ratio > 1 else 0
+        for slot in (4, 5):
+            if _shape(slots[slot], layer=layer, slot=slot) != (1, pending, c.head_dim) or _dtype(slots[slot]) not in ('float32', 'bfloat16'):
+                raise LiveCacheHandoffError(f'layer {layer} slot {slot}: invalid compressor pending state')
+        if slots[4].dtype != slots[5].dtype:
+            raise LiveCacheHandoffError(f'layer {layer}: pending KV/gate dtypes differ')
+        if layer == 0 and c.engram_layer_ids:
+            shape = _shape(slots[6], layer=layer, slot=6)
+            # Official tokenizer-derived history may already be a host int64
+            # array. Preserve that qualified object; do not translate it here.
+            if shape != (1, c.engram_max_ngram_size - 1) or _dtype(slots[6]) != 'int64':
+                raise LiveCacheHandoffError('layer0 Engram history is absent or malformed')
+    return frontier
+
+
+@dataclass(init=False)
+class LivePrefillResult:
+    """One-shot owner of the exact cache list produced by a committed setup."""
+    prefix_token_ids: tuple[int, ...]
+    frontier: int
+    _setup: PrefillExecutionSetup
+    _live_cache: list[Any] | None
+    _state: str
+    handoff_count: int
+
+    @classmethod
+    def from_committed(cls, setup: PrefillExecutionSetup, *, prefix_token_ids: Sequence[int]) -> 'LivePrefillResult':
+        if setup.handoff_claimed or setup.block_runner.handoff_transferred:
+            raise LiveCacheHandoffError('live cache handoff already claimed')
+        # Copy request-owned Python token metadata only; never cache tensors.
+        ids = tuple(int(t) for t in prefix_token_ids)
+        frontier = validate_committed_cache(setup, ids)
+        result = cls()
+        result.prefix_token_ids, result.frontier = ids, frontier
+        result._setup, result._live_cache = setup, setup.block_runner.working_cache
+        result._state, result.handoff_count = 'ready', 0
+        setup.handoff_claimed = True
+        setup.block_runner.handoff_reserved = True
+        return result
+
+    @property
+    def live_cache(self) -> list[Any]:
+        if self._state != 'ready' or self._live_cache is None:
+            raise LiveCacheHandoffError('live cache authority has been transferred or invalidated')
+        return self._live_cache
+
+    @property
+    def cache_authority_owner(self) -> str:
+        return {'ready': 'LivePrefillResult', 'transferring': 'OMLXGenerationSession',
+                'started': 'BatchGenerator/GenerationBatch', 'failed': 'invalidated'}[self._state]
+
+
+def _generation_session_type():
+    # Avoid loading the older compatibility admission path at package import.
+    from ds41f_mlx.runtime.omlx_generation import OMLXGenerationSession
+    return OMLXGenerationSession
+
+
+def handoff_to_generation(result: LivePrefillResult, model: Any, *, terminal_prompt_token: int,
+                          config: Any = None, max_tokens: int = 128, sampler: Any = None) -> 'OMLXGenerationSession':
+    """Transfer once and bootstrap only the held-out terminal prompt token.
+
+    Admission and start are one operation. Even a failed transfer/start attempt
+    cannot be retried with this result: the potentially mutated cache is burned.
+    No attempt is made to infer complete token history from the last sweep.
+    """
+    cache = result.live_cache
+    setup = result._setup
+    if getattr(model, 'language_model', model) is not setup.block_runner.language_model:
+        raise LiveCacheHandoffError('live cache belongs to a different loaded model')
+    validate_committed_cache(setup, result.prefix_token_ids)
+    terminal = int(terminal_prompt_token)
+    if terminal < 0 or terminal >= setup.block_runner.language_model._config.vocab_size or max_tokens < 1:
+        raise LiveCacheHandoffError('invalid terminal token or decode bound')
+    result._state = 'transferring'
+    result.handoff_count = 1
+    session = None
+    try:
+        session = _generation_session_type().from_prefilled_cache(
+            model, cache, result.prefix_token_ids, config, max_tokens=max_tokens, sampler=sampler)
+        if session.initial_cache is not cache:
+            raise LiveCacheHandoffError('generation admission replaced the live cache list')
+        if tuple(session.prefix_tokens) != result.prefix_token_ids:
+            raise LiveCacheHandoffError('generation prefix seed differs from request-owned history')
+        # Revoke the old executable authority before the scheduler can mutate it.
+        setup.block_runner.working_cache = None
+        setup.block_runner.handoff_transferred = True
+        setup.continuation = None
+        result._live_cache = None
+        session.start(terminal)
+        if session.prompt_replay_count != 0:
+            raise LiveCacheHandoffError('prefix prompt replay during terminal bootstrap')
+        offsets = session.active_cache_offsets()
+        if offsets is None or len(offsets) != 40 or any(x != result.frontier + 1 for x in offsets):
+            raise LiveCacheHandoffError('scheduler cache frontiers did not advance by one terminal token')
+        if session.initial_cache:
+            raise LiveCacheHandoffError('admitted singleton remains an active authority after bootstrap')
+        result._state = 'started'
+        return session
+    except Exception:
+        result._state = 'failed'
+        result._live_cache = None
+        setup.block_runner.working_cache = None
+        setup.block_runner.handoff_transferred = True
+        setup.continuation = None
+        if session is not None:
+            session.close()
+        raise

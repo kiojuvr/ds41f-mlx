@@ -49,6 +49,7 @@ class PrefillExecutionSetup:
     publication_manager: PublicationManager
     block_runner: OfficialFP8MLXBlockRunner
     continuation: LivePrefillContinuation | None = None
+    handoff_claimed: bool = False
 
 
 class DwarfStarFP8MLXPrefillExecutorSetup:

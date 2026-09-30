@@ -1,9 +1,8 @@
 """DwarfStar V4.1 prefill architecture package for official FP8/MLX.
 
-P0-P4 exports guards, planner normalization, request-arena ownership,
-command-driven block execution seams, publication management, and structural
-telemetry.  It does not implement final decode handoff and does not alter the
-production serving selector.
+P0-P5 exports guards, planner normalization, request-arena ownership,
+command-driven block execution, publication management, and one-shot live-cache
+handoff. It does not alter the production serving selector.
 """
 
 from ds41f_mlx.prefill_fp8_mlx.arena import (
@@ -32,6 +31,12 @@ from ds41f_mlx.prefill_fp8_mlx.executor import (
     LivePrefillContinuation,
     PrefillExecutionSetup,
     PrefillSetupError,
+)
+from ds41f_mlx.prefill_fp8_mlx.handoff import (
+    LiveCacheHandoffError,
+    LivePrefillResult,
+    handoff_to_generation,
+    validate_committed_cache,
 )
 from ds41f_mlx.prefill_fp8_mlx.guards import (
     FORBIDDEN_HOT_PATH_MODULES,
@@ -84,6 +89,10 @@ __all__ = [
     "FORBIDDEN_HOT_PATH_MODULES",
     "GuardReport",
     "LivePrefillContinuation",
+    "LiveCacheHandoffError",
+    "LivePrefillResult",
+    "handoff_to_generation",
+    "validate_committed_cache",
     "MlxEvaluationPolicy",
     "OfficialFP8MLXBlockRunner",
     "OmlxV41SuffixMath",

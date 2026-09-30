@@ -12,6 +12,11 @@ The production path is intentionally the pinned oMLX/mlx-lm lifecycle:
       -> BatchGenerator.insert(caches=..., all_tokens=...)
       -> GenerationBatch target decode
 
+The new P5 prefill package enters directly through ``from_prefilled_cache``:
+its committed cache list is already authoritative, so the compatibility
+state/adapter admission shown above is not used. The terminal prompt token is
+held out of prefill and supplied once to ``start()``.
+
 For an admitted prefix ``[0, 3]`` at frontier 2, ``start(first_input_token=15)``
 passes ``prompts=[[15]]`` and ``all_tokens=[[0, 3]]``.  The bootstrap
 ``BatchGenerator.next()`` constructs a ``GenerationBatch`` and its constructor
@@ -124,6 +129,8 @@ class OMLXGenerationSession:
         self.first_input_token: int | None = None
         self.prompt_replay_count = 0
         self._inserted = False
+        self._start_attempted = False
+        self.bootstrap_inserted_prompt: tuple[int, ...] = ()
         self._started = False
         self._stopped = False
         self.stop_reason: str | None = None
@@ -203,8 +210,10 @@ class OMLXGenerationSession:
 
     def start(self, first_input_token: int, *, max_tokens: int | None = None) -> None:
         """Attach admitted cache to BatchGenerator without replaying prefix tokens."""
-        if self._inserted:
-            raise RuntimeError("generation session already started")
+        if self._start_attempted or self._inserted:
+            raise RuntimeError("generation session start already attempted")
+        # A failed bootstrap may have mutated scheduler state; never retry it.
+        self._start_attempted = True
         if self.admission_report is not None and self.admission_report.token_frontier != self.admitted_frontier:
             raise RuntimeError("admission frontier/token history mismatch")
         before = self.cache_offsets(self.initial_cache)
@@ -212,6 +221,7 @@ class OMLXGenerationSession:
             raise RuntimeError(f"admitted cache offsets {before[:4]} do not match frontier {self.admitted_frontier}")
         self.first_input_token = int(first_input_token)
         self.max_tokens = int(max_tokens or self.max_tokens)
+        self.bootstrap_inserted_prompt = (self.first_input_token,)
         uids = self._bg.insert(
             [[self.first_input_token]],
             max_tokens=[self.max_tokens],
@@ -232,7 +242,11 @@ class OMLXGenerationSession:
         self.prompt_replay_count = self._count_replayed_prefix_tokens(prompt_responses)
         if self.prompt_replay_count != 0:
             raise RuntimeError(f"prompt replay detected: {self.prompt_replay_count} prefix tokens")
-        self.token_frontier = self.admitted_frontier + 1
+        offsets = self.active_cache_offsets()
+        expected = self.admitted_frontier + 1
+        if offsets is None or len(offsets) != len(before) or any(offset != expected for offset in offsets):
+            raise RuntimeError(f"terminal bootstrap scheduler frontiers {offsets} != {expected}")
+        self.token_frontier = expected
         self._started = True
         # The original admitted singleton cache has been handed off; scheduler cache is authority now.
         self.initial_cache = []

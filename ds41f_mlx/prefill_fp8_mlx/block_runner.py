@@ -96,6 +96,8 @@ class OfficialFP8MLXBlockRunner:
     final_logits: Any = None
     prefill_continuation_exported: bool = False
     full_cache_repack_count: int = 0
+    handoff_reserved: bool = False
+    handoff_transferred: bool = False
 
     def __post_init__(self) -> None:
         if self.suffix_math is None:
@@ -114,6 +116,8 @@ class OfficialFP8MLXBlockRunner:
             assert_no_reference_hot_path()
 
     def execute_command(self, command: SweepCommand, arena: RequestArena) -> Any | None:
+        if self.handoff_reserved or self.handoff_transferred:
+            raise BlockExecutionError('prefill cache authority reserved/transferred to generation')
         assert_no_reference_hot_path()
         record = CommandExecutionRecord(command.index, command.kind.value, command.layer, command.offset, command.rows)
         self.records.append(record)

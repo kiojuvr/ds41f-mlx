@@ -71,9 +71,9 @@ OfficialFP8MLXBlockRunner: oMLX layer/Engram/block modules over official FP8 che
   ↓
 PublicationManager: kv/index/candidate/top-k/source ownership commits
   ↓
-CachePublisher: fill request-local DeepseekV41Cache slots
+P5 live-cache admission: validate committed cache; transfer the existing list once
   ↓
-PrefillResult(live_cache, token_ids, structural telemetry)
+LivePrefillResult(live_cache, complete prefix token IDs, frontier)
   ↓
 OMLXGenerationSession.from_prefilled_cache(...)
 ```
@@ -143,9 +143,12 @@ The runner may introduce chunked row execution only where oMLX cache semantics c
 
 ### P5 — live-cache handoff
 
-- Publish arena/cache rows into a fresh request-local `DeepseekV41Cache` list.
-- Validate only structural invariants on hot path: equal offsets, expected slot geometry, no prompt replay, Engram history present when required.
-- Hand to `OMLXGenerationSession.from_prefilled_cache` without `PrefillContinuationState` export/repack.
+- P3/P4 maintain the request-local live `DeepseekV41Cache` directly; P5 validates and transfers that same cache list once to decode. Do not create a fresh cache, merge/repack, translate tensors, or reconstruct state from arena/publication records.
+- Require complete request-owned `prefix_token_ids` explicitly; the last sweep arena owns only that sweep's tokens. Validate committed prefill/publication transactions, equal offsets matching complete prefix length, expected packed/pending slot geometry, and required Engram history without tensor-content inspection.
+- Hand the same cache to `OMLXGenerationSession.from_prefilled_cache` without `PrefillContinuationState` export or adapter re-admission. Revoke prefill execution authority; after bootstrap the `BatchGenerator`/`GenerationBatch` scheduler is the sole active decode authority. Repeated handoff/start fails closed.
+- Terminal-token holdout contract: `full_prompt = prefix_token_ids + [terminal_prompt_token]`. P3/P4 cache only the prefix and suppress final prefix logits. P5 calls `session.start(terminal_prompt_token)` exactly once: pre-start frontiers equal `len(prefix_token_ids)`, post-bootstrap frontiers equal `len(prefix_token_ids)+1`, and prefix replay is zero. Never prefill the terminal token and then pass it again to `start()`.
+
+Implementation/real P5 qualification: [live-cache handoff closeout](p5-live-cache-handoff.md). Production selection, P6 and P7 remain separate tasks.
 
 ### P6 — deferred decoder / long-context sweep
 

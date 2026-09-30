@@ -1,0 +1,61 @@
+{
+  "starting_commit": "3115674",
+  "scope": "P5 only, new connected path; production selector unchanged",
+  "api": {
+    "result": "LivePrefillResult.from_committed(setup, prefix_token_ids=complete_request_prefix)",
+    "handoff": "handoff_to_generation(result, model, terminal_prompt_token=held_out_terminal, config=..., max_tokens=...)",
+    "bootstrap": "handoff calls existing OMLXGenerationSession.from_prefilled_cache and start(terminal) once"
+  },
+  "terminal_contract": "full_prompt = complete prefix + [terminal]; only prefix was prefilled",
+  "short_real_smoke": {
+    "status": "PASS", "full_prompt_length": 2049,
+    "pre_handoff_frontiers": "40 x 2048", "post_bootstrap_frontiers": "40 x 2049",
+    "generated_frontiers": [2050, 2051], "generated_tokens": [305, 270],
+    "evidence": "short.json"
+  },
+  "wide_real_suffix_smoke": {
+    "status": "PASS", "full_prompt_length": 8193,
+    "pre_handoff_frontiers": "40 x 8192", "post_bootstrap_frontiers": "40 x 8193",
+    "generated_frontiers": [8194, 8195], "generated_tokens": [305, 270],
+    "full_source_generation_count": 1,
+    "evidence": "wide.json"
+  },
+  "both_smokes": {
+    "same_list_identity_at_admission": true,
+    "representative_layer_and_tensor_identities_preserved": true,
+    "handoff_count": 1,
+    "held_out_terminal_forward_calls_during_bootstrap": 1,
+    "bootstrap_forward_input": [[3]],
+    "BatchGenerator_inserted_prompt": [3],
+    "prefix_all_tokens_seed_matches_complete_request_history": true,
+    "prompt_replay_count": 0,
+    "full_cache_repack_count": 0,
+    "PrefillContinuationState_export_count": 0,
+    "final_prefix_logits_suppressed": true,
+    "old_prefill_execution_authority_revoked": true,
+    "decode_authority": "BatchGenerator/GenerationBatch"
+  },
+  "bounded_direct_incremental_comparison": "not performed (optional); observed greedy bootstrap/decode only",
+  "semantic_or_admission_blocker": null,
+  "regression_tests": "51 passed, including the existing 34",
+  "qualified_within_new_path": {
+    "sweep_planner_owns_order": true,
+    "whole_prefix_layer_loop_absent": true,
+    "dwarfstar_carry_lifetime": false,
+    "deferred_decoder_suffix_lifetime": false,
+    "frontiers_drive_execution": true,
+    "scheduling_hooks_effective": false,
+    "materialization_boundaries_explicit": true,
+    "no_cpu_hot_path_roundtrip": false,
+    "no_intermediate_cache_repack": true,
+    "one_live_cache_handoff_no_replay": true
+  },
+  "production_completion_flags_promoted": false,
+  "complete_structural_gate": false,
+  "remaining_new_path_blockers": ["full carry lifetime gate", "P6 deferred/resume lifetime", "P7 scheduling", "global no-CPU-hot-path qualification"],
+  "P6_started": false,
+  "P7_started": false,
+  "runtime_selector_changed": false,
+  "benchmark_or_optimization_performed": false,
+  "stop": "P5 complete within bounded new-path scope; stop here"
+}
