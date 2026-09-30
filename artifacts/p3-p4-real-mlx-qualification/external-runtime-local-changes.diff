@@ -1,0 +1,52 @@
+diff --git a/omlx/patches/deepseek_v41/encoding.py b/omlx/patches/deepseek_v41/encoding.py
+index 359bdf5..d7a5816 100644
+--- a/omlx/patches/deepseek_v41/encoding.py
++++ b/omlx/patches/deepseek_v41/encoding.py
+@@ -42,6 +42,25 @@ LATEST_REMINDER_SP_TOKEN = "<｜latest_reminder｜>"
+ IMAGE_PLACEHOLDER = "<｜deepseek_image｜>"
+ IMAGE_TAG_PATTERN = re.compile(r"<image>(.*?)</image>", re.DOTALL)
+ 
++
++def escape_literal_image_tokens(value: Any) -> Any:
++    """Escape quoted image tokens before the reference encoder sees API input.
++
++    ASCII pipes keep the spelling readable without producing an image token ID.
++    Real image blocks (including their URLs/base64 data) are left untouched;
++    their placeholders are inserted later by process_image_messages.
++    Return fresh containers so request/history objects are never modified.
++    """
++    if isinstance(value, str):
++        return value.replace(IMAGE_PLACEHOLDER, "<|deepseek_image|>")
++    if isinstance(value, list):
++        return [escape_literal_image_tokens(item) for item in value]
++    if isinstance(value, dict):
++        if value.get("type") in ("image", "image_url", "input_image"):
++            return copy.deepcopy(value)
++        return {key: escape_literal_image_tokens(item) for key, item in value.items()}
++    return value
++
+ # Task special tokens for internal classification tasks
+ DS_TASK_SP_TOKENS = {
+     "action": "<｜action｜>",
+diff --git a/omlx/patches/deepseek_v41/processing.py b/omlx/patches/deepseek_v41/processing.py
+index 27f65fa..1bec94d 100644
+--- a/omlx/patches/deepseek_v41/processing.py
++++ b/omlx/patches/deepseek_v41/processing.py
+@@ -133,13 +133,16 @@ class Processor:
+     ):
+         from copy import deepcopy
+ 
+-        from .encoding import encode_messages
++        from .encoding import encode_messages, escape_literal_image_tokens
+ 
+         messages = deepcopy(messages)
+         if tools:
+             if not messages or messages[0]["role"] != "system":
+                 messages.insert(0, {"role": "system", "content": ""})
+             messages[0]["tools"] = tools
++        # API text may quote a token (e.g. in logs or tool results). Only
++        # structured image blocks may introduce actual image placeholders.
++        messages = escape_literal_image_tokens(messages)
+         mode = thinking_mode or ("thinking" if enable_thinking else "chat")
+         prompt = encode_messages(
+             messages, thinking_mode=mode, reasoning_effort=reasoning_effort

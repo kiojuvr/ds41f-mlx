@@ -1,0 +1,47 @@
+{
+  "python": "3.13.15 (main, Aug  5 2026, 12:25:43) [Clang 21.0.0 (clang-2100.1.1.101)]",
+  "executable": "/Users/kioju/.venvs/omlx-0.7.0.dev2/bin/python3",
+  "omlx_distribution_version": "0.7.0.dev2",
+  "omlx_exposed_version": "0.7.0.dev2",
+  "mlx_distribution_version": "0.32.2",
+  "language_path": "/Users/kioju/omlx-0.7.0.dev2/omlx/patches/deepseek_v41/language.py",
+  "language_sha256": "2c64bef36c9fc4a6007cd34e7b120142ced072a8d491cf1f83f2c5b1a956763f",
+  "git_root": "/Users/kioju/omlx-0.7.0.dev2",
+  "git_revision": "b390b31e0c6831225fed0f24d278eb1db7fcb68b",
+  "git_status": "M omlx/patches/deepseek_v41/encoding.py\n M omlx/patches/deepseek_v41/processing.py\n?? tests/test_deepseek_v41_literal_image_token.py",
+  "required_operation_checks": {
+    "hc_mixes": true,
+    "hc_pre_norm": true,
+    "hc_post": true,
+    "rope": true,
+    "pack_activation": true,
+    "quantize_activation": true,
+    "packed_index_topk": true,
+    "packed_index_scores": true,
+    "packed_sparse_attention": true,
+    "Attention._input_projections": true,
+    "Attention.__call__": true,
+    "Block.__call__": true,
+    "Compressor.__call__": true,
+    "Indexer.__call__": true
+  },
+  "signatures": {
+    "hc_mixes": "(x, fn, scale, base, c)",
+    "hc_pre_norm": "(x, pre, weight, eps)",
+    "hc_post": "(x, residual, post, comb)",
+    "rope": "(x, positions, config, compressed, inverse=False)",
+    "pack_activation": "(x, bits=8, group_size=32, e4m3_scale=False)",
+    "quantize_activation": "(x, bits=8, group_size=32, e4m3_scale=False)",
+    "packed_index_topk": "(q, keys, weights, start, ratio, count, *, block_count=0, block_size=0, chunk_size=None, query_chunk_size=None)",
+    "packed_index_scores": "(q, keys, weights, start, ratio, candidates=None, *, key_start=0)",
+    "packed_sparse_attention": "(q, window, pooled, wi, ci, sink, scale)"
+  },
+  "class_signatures": {
+    "Block": "(self, h, pre, cache, shared, start, image_mask)",
+    "Attention": "(self, x, cache, shared, start)",
+    "Indexer": "(self, x, qr, latent, cache, shared, start, ratio)",
+    "Compressor": "(self, x, cache, start)"
+  },
+  "structurally_compatible_operations": true,
+  "metal_available": true
+}

@@ -1,5 +1,7 @@
 # Command-local oMLX suffix math closeout (after 004734e)
 
+Historical implementation closeout. Real-smoke status and connected-path completion evidence are superseded by [P3/P4 real MLX qualification](p3-p4-real-mlx-qualification.md) from `05da536`.
+
 ## Authorities and scope
 
 - Execution topology: `antirez/ds4@0aaea5a238fb41a35106a551e73c8409dfb751ac`, specifically `ds41_decoder_prepare` and the surrounding command/dependency-cone execution. The full layer20 source prepare and the immediately preceding 127 local dependency rows remain distinct planner commands.

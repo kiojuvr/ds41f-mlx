@@ -1,0 +1,50 @@
+{
+  "starting_commit": "05da536",
+  "minimal_loading_fix_commit": "a2b06a5",
+  "qualification_scope": "P3/P4 new connected path, fixed repeated-token fixture; not production serving",
+  "short_smoke": {"initial": "FAIL", "classification": "environment/dependency", "boundary": "official loader: resident Engram allocation", "after_minimal_fix": "PASS", "frontiers": "40 x 2048", "evidence": "short-ssd-engram.log"},
+  "wide_smoke": {"status": "PASS", "frontiers": "40 x 8192", "evidence": "wide-initial.log"},
+  "numerical_qualification": {
+    "status": "PASS",
+    "evidence": "bounded-numerical.json",
+    "comparison": "same-input loaded ordinary Attention source path vs explicit source adapter",
+    "layer20_compressed_kv_mismatched_bytes": 0,
+    "layer20_index_k_mismatched_bytes": 0,
+    "local_window_checks": "20 real stale-seeded prepares, each 127 rows, zero mismatched packed bytes",
+    "actual_command_layer20_compressor_calls": 1,
+    "actual_command_layer20_index_wk_calls": 1,
+    "ordinary_decoder_block_calls": 0,
+    "final_hidden_or_logits_comparison": "not performed; replay topology equality is not a valid by-construction gate",
+    "first_proven_semantic_divergence": null
+  },
+  "qualified_within_new_path": {
+    "sweep_planner_owns_order": true,
+    "whole_prefix_layer_loop_absent": true,
+    "dwarfstar_carry_lifetime": false,
+    "deferred_decoder_suffix_lifetime": false,
+    "frontiers_drive_execution": true,
+    "scheduling_hooks_effective": false,
+    "materialization_boundaries_explicit": true,
+    "no_cpu_hot_path_roundtrip": false,
+    "no_intermediate_cache_repack": true,
+    "one_live_cache_handoff_no_replay": false
+  },
+  "qualification_limits": {
+    "dwarfstar_carry_lifetime": "partial request arena/ping-pong execution evidence, not full lifetime gate",
+    "deferred_decoder_suffix_lifetime": "full-sized carry still retained; P6 deferred/resume unavailable",
+    "materialization_boundaries_explicit": "explicit diagnostic command and numerical materialization only; not P7 production grouping",
+    "no_cpu_hot_path_roundtrip": "not qualified; scalar frontier reads and official Engram host/disk handling remain to scope",
+    "one_live_cache_handoff_no_replay": "P5 not begun",
+    "scheduling_hooks_effective": "P7 remains a known blocker",
+    "production_completion_flags": "not promoted: new package is not production-selected",
+    "real_multi_sweep_continuation": "not claimed in this task",
+    "broad_model_numerical_qualification": "not claimed"
+  },
+  "complete_structural_gate": false,
+  "runtime_selector_changed": false,
+  "benchmark_performed": false,
+  "P5_now_unblocked_as_separate_task": true,
+  "P5_implemented": false,
+  "regression_tests": "34 passed in target Python environment",
+  "stop_condition": "reached; no further model changes"
+}
