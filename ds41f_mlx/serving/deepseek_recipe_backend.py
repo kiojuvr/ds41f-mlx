@@ -9,6 +9,7 @@ from time import perf_counter
 from typing import Any, AsyncIterator
 from uuid import uuid4
 import importlib
+import os
 import subprocess
 import sys
 
@@ -17,11 +18,31 @@ import numpy as np
 from ds41f_mlx.runtime.omlx_core import DEFAULT_CHECKPOINT, DEFAULT_OMLX, OmlxRuntime, OmlxRuntimeConfig
 from ds41f_mlx.runtime.omlx_decode import OMLXDecodeConfig
 from ds41f_mlx.runtime.omlx_generation import OMLXGenerationSession
-from tools.run_m4_omlx_base_decode_qualification import build_prefill_state
 
 DEFAULT_RECIPE = Path('/Volumes/SDXC-512/deepseek-v41-flash-mlx/third_party/deepseek-recipe')
 DEFAULT_MODEL_ID = 'deepseek-v4.1-flash'
 MODEL_ALIASES = {DEFAULT_MODEL_ID, 'deepseek-v41-flash', 'deepseek-flash'}
+REFERENCE_VERTICAL_SLICE_CLASSIFICATION = 'PRODUCTION_PREFILL_REGRESSED_TO_REFERENCE_VERTICAL_SLICE'
+
+
+def build_production_prefill_state_guarded(checkpoint: Path, native_out_dir: Path, tokens: list[int]):
+    """Reject the bounded validation vertical slice on the serving hot path.
+
+    The DwarfStarPrefillVerticalSliceExecutor currently enters
+    OfficialModelMath.execute_block(), which is an official-source-derived
+    NumPy/reference validation helper.  It is useful for correctness fixtures but
+    must not silently act as production prefill for recipe serving.
+    """
+
+    if os.environ.get('DS41F_ALLOW_REFERENCE_VERTICAL_SLICE_SERVING') != '1':
+        raise RuntimeError(
+            f'{REFERENCE_VERTICAL_SLICE_CLASSIFICATION}: serving prefill is still bound to '
+            'DwarfStarPrefillVerticalSliceExecutor -> OfficialModelMath.execute_block() -> '
+            'official-source-derived validation helper block(); refusing production request. '
+            'Set DS41F_ALLOW_REFERENCE_VERTICAL_SLICE_SERVING=1 only for bounded diagnostics.'
+        )
+    from tools.run_m4_omlx_base_decode_qualification import build_prefill_state
+    return build_prefill_state(checkpoint, native_out_dir, tokens)
 
 
 @dataclass
@@ -163,7 +184,7 @@ class DeepSeekRecipeRuntimeBackend:
             await self._call(self.load)
             sampler = self.make_sampler(request.inference_options)
             max_tokens = self.max_tokens(request.inference_options)
-            prefill_result = await self._call(build_prefill_state, self.checkpoint, self.native_out_dir / trace.request_id, prefix)
+            prefill_result = await self._call(build_production_prefill_state_guarded, self.checkpoint, self.native_out_dir / trace.request_id, prefix)
             state = prefill_result.continuation_state
             if state is None or not state.committed:
                 raise RuntimeError('DwarfStar prefill did not produce a committed PrefillContinuationState')
