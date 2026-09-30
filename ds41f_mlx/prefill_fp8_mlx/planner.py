@@ -262,16 +262,58 @@ class SweepPlan:
         return tuple(c for c in self.commands if c.kind is kind)
 
     def assert_v41_plan_shape(self) -> None:
-        layers = {c.layer for c in self.commands if c.layer is not None and c.kind is SweepCommandKind.BEGIN_LAYER}
-        if layers and (min(layers) != 0 or max(layers) > DEEPSEEK_V41_N_LAYERS - 1):
-            raise SweepTopologyError(f"native sweep emitted non-V4.1 layer range: {sorted(layers)[:3]}..{sorted(layers)[-3:]}")
-        if not self.encoder_only and DEEPSEEK_V41_N_LAYERS - 1 not in layers:
-            raise SweepTopologyError("native sweep did not reach V4.1 final layer 39")
-        if self.encoder_only and max(layers, default=-1) != 19:
-            raise SweepTopologyError("encoder-only V4.1 sweep must stop after layer 19")
+        begin_layers = {c.layer for c in self.commands if c.layer is not None and c.kind is SweepCommandKind.BEGIN_LAYER}
+        expected_layers = set(range(20 if self.encoder_only else DEEPSEEK_V41_N_LAYERS))
+        if begin_layers != expected_layers:
+            raise SweepTopologyError(f"native sweep emitted non-V4.1 layer set: got {sorted(begin_layers)}, expected {sorted(expected_layers)}")
         unknown = [c.to_json() for c in self.commands if c.kind is SweepCommandKind.UNKNOWN or c.phase is SweepPhase.UNKNOWN]
         if unknown:
             raise SweepTopologyError(f"native sweep contains unknown command/phase: {unknown[:3]}")
+        self._assert_per_layer_command_skeleton(expected_layers)
+
+    def _assert_per_layer_command_skeleton(self, expected_layers: set[int]) -> None:
+        for layer in sorted(expected_layers):
+            layer_commands = [c for c in self.commands if c.layer == layer and c.kind in {
+                SweepCommandKind.BEGIN_LAYER,
+                SweepCommandKind.ENCODE_ROWS,
+                SweepCommandKind.SWAP_HC_AFTER_LAYER,
+                SweepCommandKind.PUBLISH_FRONTIER,
+                SweepCommandKind.END_LAYER,
+            }]
+            kinds = [c.kind for c in layer_commands]
+            required = [
+                SweepCommandKind.BEGIN_LAYER,
+                SweepCommandKind.SWAP_HC_AFTER_LAYER,
+                SweepCommandKind.PUBLISH_FRONTIER,
+                SweepCommandKind.END_LAYER,
+            ]
+            for kind in required:
+                if kinds.count(kind) != 1:
+                    raise SweepTopologyError(f"layer {layer} malformed native skeleton: expected exactly one {kind.value}, got {kinds.count(kind)}")
+            encode_count = kinds.count(SweepCommandKind.ENCODE_ROWS)
+            if encode_count < 1:
+                raise SweepTopologyError(f"layer {layer} malformed native skeleton: missing encode_rows")
+            b = kinds.index(SweepCommandKind.BEGIN_LAYER)
+            first_encode = kinds.index(SweepCommandKind.ENCODE_ROWS)
+            last_encode = len(kinds) - 1 - list(reversed(kinds)).index(SweepCommandKind.ENCODE_ROWS)
+            s = kinds.index(SweepCommandKind.SWAP_HC_AFTER_LAYER)
+            p = kinds.index(SweepCommandKind.PUBLISH_FRONTIER)
+            e = kinds.index(SweepCommandKind.END_LAYER)
+            if not (b < first_encode <= last_encode < s < p < e):
+                raise SweepTopologyError(f"layer {layer} malformed native skeleton order: {[k.value for k in kinds]}")
+            begin = layer_commands[b]
+            encodes = layer_commands[first_encode:last_encode + 1]
+            off = begin.offset
+            for encode in encodes:
+                if encode.offset != off:
+                    raise SweepTopologyError(f"layer {layer} encode_rows are not contiguous at command {encode.index}")
+                off += encode.rows
+            if off != begin.offset + begin.rows:
+                raise SweepTopologyError(f"layer {layer} encode_rows do not cover begin_layer row span")
+            for tail_kind in (SweepCommandKind.SWAP_HC_AFTER_LAYER, SweepCommandKind.PUBLISH_FRONTIER, SweepCommandKind.END_LAYER):
+                cmd = layer_commands[kinds.index(tail_kind)]
+                if cmd.offset != begin.offset or cmd.rows != begin.rows:
+                    raise SweepTopologyError(f"layer {layer} {tail_kind.value} row span does not match begin_layer")
 
     def to_json(self) -> dict[str, object]:
         return {
@@ -378,8 +420,8 @@ def assert_deepseek_v41_topology(language_model: Any) -> None:
     if hc_mult != DEEPSEEK_V41_HC_MULT:
         raise UnsupportedTopologyError(f"DwarfStar V4.1 sweep planner requires hc_mult=4, got {hc_mult}")
     engram_layers = tuple(int(x) for x in getattr(cfg, "engram_layer_ids", ()))
-    if engram_layers and engram_layers != DEEPSEEK_V41_ENGRAM_LAYERS:
-        raise UnsupportedTopologyError(f"unexpected V4.1 Engram layer topology: {engram_layers}")
+    if engram_layers != DEEPSEEK_V41_ENGRAM_LAYERS:
+        raise UnsupportedTopologyError(f"unexpected V4.1 Engram layer topology: {engram_layers}; expected {DEEPSEEK_V41_ENGRAM_LAYERS}")
     for attr in ("kv_source_layers", "index_source_layers", "compress_ratios", "vocab_size", "dim"):
         if not hasattr(cfg, attr):
             raise UnsupportedTopologyError(f"language model config missing required V4.1 field {attr!r}")

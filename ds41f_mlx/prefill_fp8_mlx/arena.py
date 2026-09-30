@@ -81,7 +81,7 @@ class ArenaView:
 class AllocationState:
     allocation: SweepAllocation
     slot: TensorSlot
-    active: bool = True
+    active: bool = False
 
     @classmethod
     def from_allocation(cls, allocation: SweepAllocation) -> "AllocationState":
@@ -94,6 +94,14 @@ class AllocationState:
                 allocation=allocation,
             ),
         )
+
+    def update_for_command(self, command_index: int) -> None:
+        self.active = self.allocation.first_use_step <= command_index <= self.allocation.last_use_step
+        if command_index > self.allocation.last_use_step and self.allocation.persistence_class in {"layer-persistent", "stage-local reusable scratch"}:
+            # Drop transient tensor handles when their native lifetime ends so
+            # real MLX graph references will not be retained accidentally.
+            self.slot.value = None
+            self.slot.ownership = TensorOwnership.UNBOUND
 
     def to_json(self) -> dict[str, object]:
         return {"allocation": self.allocation.to_json(), "slot": self.slot.to_json(), "active": self.active}
@@ -254,6 +262,7 @@ class RequestArena:
     transaction: TransactionState = field(default_factory=TransactionState)
     suffix_views: list[ArenaView] = field(default_factory=list)
     active_chunk_views: list[ArenaView] = field(default_factory=list)
+    retired_chunk_view_count: int = 0
     command_history: list[dict[str, object]] = field(default_factory=list)
     cache_materialized: bool = False
     prefill_continuation_exported: bool = False
@@ -295,20 +304,41 @@ class RequestArena:
         arena.engram.hashes.ownership = TensorOwnership.OWNED if engram_hashes is not None else TensorOwnership.UNBOUND
         arena.engram.history.value = engram_history
         arena.engram.history.ownership = TensorOwnership.OWNED if engram_history is not None else TensorOwnership.UNBOUND
+        arena.update_allocation_lifetimes(0)
         return arena
+
+    def update_allocation_lifetimes(self, command_index: int) -> None:
+        for state in self.allocations.values():
+            state.update_for_command(command_index)
+
+    def active_allocation_roles(self) -> tuple[str, ...]:
+        return tuple(sorted(role for role, state in self.allocations.items() if state.active))
+
+    def _retire_transient_views(self) -> None:
+        if self.active_chunk_views:
+            self.retired_chunk_view_count += len(self.active_chunk_views)
+            self.active_chunk_views.clear()
 
     def bind_slot(self, role: str, value: Any, *, ownership: TensorOwnership = TensorOwnership.OWNED) -> None:
         self.allocations[role].slot.value = value
         self.allocations[role].slot.ownership = ownership
 
     def apply_command(self, command: SweepCommand) -> None:
-        self.command_history.append({"index": command.index, "kind": command.kind.value, "semantic_boundary": command.semantic_boundary.value})
+        self._retire_transient_views()
+        self.update_allocation_lifetimes(command.index)
+        self.command_history.append({
+            "index": command.index,
+            "kind": command.kind.value,
+            "semantic_boundary": command.semantic_boundary.value,
+            "active_allocation_roles": list(self.active_allocation_roles()),
+        })
         if command.kind is SweepCommandKind.BEGIN_INVALIDATE:
             self.transaction.begin_invalid()
         elif command.kind is SweepCommandKind.ENCODE_ROWS:
             self.active_chunk_views.append(self.carry.chunk_view(command))
         elif command.kind is SweepCommandKind.DECODER_PREPARE_SUFFIX:
-            self.suffix_views.append(ArenaView("decoder_suffix", self.carry.current.role, command.offset, command.rows, command.index, command.layer))
+            if self._allocation_survives_deferred("decoder_suffix_rows"):
+                self.suffix_views.append(ArenaView("decoder_suffix", self.carry.current.role, command.offset, command.rows, command.index, command.layer))
         elif command.kind is SweepCommandKind.SWAP_HC_AFTER_LAYER:
             self.carry.swap()
         elif command.kind is SweepCommandKind.PUBLISH_FRONTIER:
@@ -317,7 +347,6 @@ class RequestArena:
             self.publications.publish(PublicationEvent(command.layer, command.offset, command.rows, command.index, command.checkpoint_valid))
         elif command.kind is SweepCommandKind.CHECKPOINT_MAY_COMMIT:
             self.transaction.commit()
-            self.publications.commit()
         elif command.kind is SweepCommandKind.ENCODER_ONLY_COMPLETE_INVALID:
             if self.transaction.valid:
                 raise ArenaTransactionError("encoder-only boundary must remain checkpoint-invalid")
@@ -345,11 +374,17 @@ class RequestArena:
             "compressor_pending": self.compressor_pending.to_json(),
             "suffix_views": [view.to_json() for view in self.suffix_views],
             "active_chunk_views": [view.to_json() for view in self.active_chunk_views],
+            "retired_chunk_view_count": self.retired_chunk_view_count,
             "allocation_roles": sorted(self.allocations),
+            "active_allocation_roles": list(self.active_allocation_roles()),
             "cache_materialized": self.cache_materialized,
             "prefill_continuation_exported": self.prefill_continuation_exported,
             "command_count_applied": len(self.command_history),
         }
+
+    def _allocation_survives_deferred(self, role: str) -> bool:
+        state = self.allocations.get(role)
+        return bool(state and state.allocation.survives_deferred_decoder)
 
 
 def _slot_for_role(allocations: dict[str, AllocationState], role: str, *, fallback_value: Any = None) -> TensorSlot:

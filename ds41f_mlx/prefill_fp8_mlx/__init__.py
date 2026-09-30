@@ -1,8 +1,9 @@
 """DwarfStar V4.1 prefill architecture package for official FP8/MLX.
 
-P0-P2 exports guards, planner normalization, request-arena ownership, and
-structural telemetry.  It does not implement runtime block execution and does
-not alter the production serving selector.
+P0-P4 exports guards, planner normalization, request-arena ownership,
+command-driven block execution seams, publication management, and structural
+telemetry.  It does not implement final decode handoff and does not alter the
+production serving selector.
 """
 
 from ds41f_mlx.prefill_fp8_mlx.arena import (
@@ -18,6 +19,13 @@ from ds41f_mlx.prefill_fp8_mlx.arena import (
     TensorOwnership,
     TensorSlot,
     TransactionState,
+)
+from ds41f_mlx.prefill_fp8_mlx.block_runner import (
+    BlockExecutionError,
+    CommandExecutionRecord,
+    MlxEvaluationPolicy,
+    OfficialFP8MLXBlockRunner,
+    ServingLogitsPolicy,
 )
 from ds41f_mlx.prefill_fp8_mlx.guards import (
     FORBIDDEN_HOT_PATH_MODULES,
@@ -41,6 +49,11 @@ from ds41f_mlx.prefill_fp8_mlx.planner import (
     iter_command_batches,
     iter_command_windows,
 )
+from ds41f_mlx.prefill_fp8_mlx.publications import (
+    PublicationError,
+    PublicationManager,
+    SourceGeneration,
+)
 from ds41f_mlx.prefill_fp8_mlx.telemetry import (
     ArchitectureCompletion,
     PrefillStructuralTelemetry,
@@ -51,18 +64,26 @@ __all__ = [
     "ArchitectureCompletion",
     "ArenaTransactionError",
     "ArenaView",
+    "BlockExecutionError",
     "CarryState",
+    "CommandExecutionRecord",
     "CompressorPendingState",
     "EngramState",
     "FORBIDDEN_HOT_PATH_MODULES",
     "GuardReport",
+    "MlxEvaluationPolicy",
+    "OfficialFP8MLXBlockRunner",
     "PrefillStructuralTelemetry",
+    "PublicationError",
     "PublicationEvent",
+    "PublicationManager",
     "PublicationState",
     "REFERENCE_VERTICAL_SLICE_CLASSIFICATION",
     "RequestArena",
     "ResumeUnavailableError",
     "SemanticBoundary",
+    "ServingLogitsPolicy",
+    "SourceGeneration",
     "SweepAllocation",
     "SweepCommand",
     "SweepCommandKind",
