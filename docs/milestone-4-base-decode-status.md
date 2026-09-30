@@ -1,6 +1,6 @@
 # Milestone 4 base decode implementation status
 
-Status: **INCOMPLETE — M2 correctness requalification is complete: Layers0-39, final HC collapse, final RMSNorm, ParallelHead, bounded prefix `[0,3]` compositional correctness, committed continuation-state correctness, no-replay corrected-state admission, and full admission semantic round-trip are complete. The source@14 admission defect proved semantic-only compressed KV was lossy for cross-runtime handoff; preserving original model-semantic FP4/E4M3 physical payloads closes admission. The current M4 open gate is incremental `[15]` first independent oMLX target boundary localization. Ordinary oMLX (O) itself is not bit-exact to the historical reference (R), so historical bit identity is not used as the correctness contract.**
+Status: **M4_CORRECTNESS_COMPLETE_BACKEND_LOCAL_FIDELITY_POLICY — M4 established the model/runtime correctness boundary, not universal numerical identity or release readiness. Official semantics, precision/storage boundaries, and persistent-state lifecycle are sufficiently qualified for the current production correctness contract. Investigation of valid FP8 reduction trajectories established that cross-backend hidden-state, logits, and greedy-token identity are not universal fidelity requirements. Future optimized implementations are qualified against backend-local official semantics and lifecycle correctness, not against one canonical connected numerical trajectory.**
 
 ## Current M4 source-derived first-incremental status
 
@@ -8,12 +8,26 @@ Status: **INCOMPLETE — M2 correctness requalification is complete: Layers0-39,
 - E/C/M token15 behavioral gate: **COMPLETE** in `artifacts/m4/reduction-trajectory-behavioral-stability/result.json`.
   - Logits digests: E `ad459d373bcca45204492a0a59740635a3f6c7dc93b3092a4ed49541ba2d208d`; C `bcc123d168b54be0b5da56fdbfcb3d30001e24578a2110691cc26daf44a24918`; M `01ec4e4d11957b280bb436e89408b92f25b5388e1af1d0f2bbfea7a180279422`.
   - Greedy argmax tokens: E/C/M all `104113`; first-token classification: `FIRST_TOKEN_BEHAVIOR_STABLE_ACROSS_REDUCTION_TRAJECTORIES`.
-  - First checked discrete divergence across branch computations: `layer3.moe_route_ids`; persistent branch state after token15 has no recorded continuous or semantic/discrete divergence because the executor does not yet commit computed per-token KV/compressor/Engram/Ngram lifecycle state into the branch object.
+  - First checked discrete divergence across branch computations: `layer3.moe_route_ids`; later generic-lifecycle work qualified the actual committed state path.
 - Generic source-derived continuation lifecycle: **COMPLETE for the bounded two-step E/source-derived path** in `artifacts/m4/source-derived-generic-incremental-lifecycle/result.json`. The generalized executor runs `decode_one(15, state)` at position 2, commits token history/window KV/pending compressor state, then runs `decode_one(104113, same_state)` at position 3. Step2 logits digest is `e6af152cea54850c4978cc44efc421d99665f8d4c48bf851fc030acab969d4ef`, argmax `104113`. Classification: `SOURCE_DERIVED_GENERIC_INCREMENTAL_LIFECYCLE_QUALIFIED_TWO_STEP`.
 - Bounded E/C/M lockstep continuation has now been run from the three transaction0 Block0 Attention seeds. Scope: only transaction0 injects E/C/M tensors; later transactions are source-derived execution on each branch's committed state, so this measures propagation of one known valid backend reduction perturbation rather than full CUDA/MLX multi-token backend equivalence.
 - Result: token15 and the next two continuation transactions remain greedy-token stable, then transaction3 at absolute position 5 diverges: E selects `122385`, C selects `13394`, and M selects `48926`. Completed length before stop: 4 of target 8. Final classification: `BEHAVIOR_SENSITIVE_TO_FP8_REDUCTION_TRAJECTORY`.
 - Internal discrete trajectories diverged earlier: first discrete divergence remains transaction0/layer3/MoE route IDs, first continuous persistent divergence is transaction0 `window_kv.1.visible`, first compressed-KV divergence is transaction1 `compress_kv.14.codes.visible`, and Engram hash IDs stayed equal through lockstep because token histories stayed equal until token divergence.
 - Causal state-transplant audit for the first divergent transaction is recorded in `artifacts/m4/first-behavioral-divergence-causal-state-transplant/result.json`. Full pre-tx3 persistent-state transplants are donor-exact, so the harness state is complete for tx3. Pre-tx3 token/Ngram/Engram/candidate/top-k topology is equal; window and pending/compressed numerical state differ. Window-state rescue flips C and M to the E token, and W+P+C rescue reproduces E logits exactly; Index-K pre-state is equal and non-causal for this tx3 decision. Causal classification: `WINDOW_STATE_ACCUMULATION_DOMINATES_FIRST_BEHAVIORAL_DIVERGENCE` with compressed-state interaction also measured.
+
+## M4 completion boundary
+
+M4 COMPLETE means:
+
+- official model semantics are sufficiently qualified for the current runtime correctness boundary;
+- precision/storage semantics are qualified over the recorded bounded domains;
+- persistent state lifecycle is qualified across bounded prefill and incremental continuation;
+- known backend numerical differences have been investigated far enough to show that cross-backend trajectory identity is not a valid correctness oracle;
+- no hidden state was required to explain the observed bounded behavioral divergence.
+
+M4 does **not** prove long-session robustness, KV save/restore reliability, thought-loop absence, tool-call boundary robustness, all-prompt cross-backend output equivalence, release readiness, API readiness, or performance targets. Those move to later production/robustness qualification work.
+
+Next active frontier: validate/finish the practical production MLX/oMLX-derived decode path against the finalized backend-local correctness policy.
 
 ## Implemented
 
@@ -110,7 +124,7 @@ Incremental fixture: prefill `[0, 3]`, next backbone input `[15]`.
 | O ordinary oMLX prefill + incremental | `11de8c224cea3d9462531f125495760f33fffccbe2139f60915396a4d3f3b634` | 266 |
 | D DwarfStar prefill + admitted oMLX incremental | `bbc86311483405ba433a11c3b77eddc9161aed5f74bc3667a3b67929c701c7ce` | 963 |
 
-Pairwise numerical comparisons are in the artifact.  Notably, R vs O is not bit-exact (`max_abs_diff ~= 1.17195`, `mean_abs_diff ~= 0.19281`, same argmax).  Therefore the previous bit-exact SHA gate cannot be silently relaxed, but exact equality is also not established as the cross-implementation contract.  The tolerance remains **UNDECIDED** until the official-output tests and reviewed oMLX numerical boundaries are inspected and documented.
+Pairwise numerical comparisons are in the artifact.  Notably, R vs O is not bit-exact (`max_abs_diff ~= 1.17195`, `mean_abs_diff ~= 0.19281`, same argmax).  Therefore the previous bit-exact SHA gate could not be silently relaxed, but exact equality was also not established as the cross-implementation contract. This intermediate `UNDECIDED` tolerance state is superseded by the final M4 backend-local fidelity policy: cross-backend hidden/logit/token identity is not a correctness requirement under official-compatible floating-point semantics.
 
 Layer0 slot1 packed-window analysis is recorded in the same artifact.  Using oMLX `unpack_activation(bits=8, group_size=32)`, the first true difference is semantic, not merely adapter packing:
 

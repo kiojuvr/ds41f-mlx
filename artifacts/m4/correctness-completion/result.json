@@ -1,0 +1,65 @@
+{
+  "schema": "ds41f.m4.correctness_completion.v1",
+  "classification": "M4_CORRECTNESS_COMPLETE_BACKEND_LOCAL_FIDELITY_POLICY",
+  "correctness_stopping_rule": "A runtime implementation is correct for this milestone when it executes the official checkpoint with required model/operator semantics, precision and storage contracts, layer behavior, persistent-state lifecycle, generation-state semantics, backend-local deterministic behavior for the qualified deterministic configuration, and correct discrete algorithms on values produced by that valid backend trajectory.",
+  "authority_hierarchy": [
+    "official checkpoint/data",
+    "reviewed official model semantics",
+    "precision/storage boundaries",
+    "persistent-state lifecycle",
+    "correct discrete algorithms",
+    "backend-local deterministic behavior"
+  ],
+  "required_fidelity_properties": [
+    "official checkpoint identity and tensor authority",
+    "official operator/model semantics",
+    "precision and storage contracts including physical compressed/index payloads where required",
+    "prefill and incremental persistent-state lifecycle",
+    "state ownership/publication/generation semantics",
+    "backend-local deterministic execution for fixed checkpoint/runtime/build/config/input/session state",
+    "correct discrete algorithms on backend-produced values"
+  ],
+  "explicit_non_requirements": [
+    "cross-backend connected hidden-state bit identity",
+    "cross-backend full-logits identity",
+    "cross-backend greedy-token identity",
+    "cross-backend long reasoning trajectory identity",
+    "canonical CUDA/NumPy/Metal reduction ordering to force token identity"
+  ],
+  "evidence_artifacts": {
+    "source_derived_first_incremental_full_depth": "artifacts/m4/source-derived-first-incremental-full-depth/result.json",
+    "generic_incremental_lifecycle": "artifacts/m4/source-derived-generic-incremental-lifecycle/result.json",
+    "reduction_trajectory_behavioral_stability": "artifacts/m4/reduction-trajectory-behavioral-stability/result.json",
+    "first_behavioral_divergence_causal_state_transplant": "artifacts/m4/first-behavioral-divergence-causal-state-transplant/result.json",
+    "full_admission_semantic_roundtrip": "artifacts/m4/admission-semantic-roundtrip/result.json"
+  },
+  "key_evidence_classifications": [
+    "MULTIPLE_VALID_FP8_REDUCTION_TRAJECTORIES",
+    "SOURCE_DERIVED_FIRST_INCREMENTAL_FULL_DEPTH_HARNESS_COMPLETE",
+    "SOURCE_DERIVED_GENERIC_INCREMENTAL_LIFECYCLE_QUALIFIED_TWO_STEP",
+    "BEHAVIOR_SENSITIVE_TO_FP8_REDUCTION_TRAJECTORY",
+    "WINDOW_STATE_ACCUMULATION_DOMINATES_FIRST_BEHAVIORAL_DIVERGENCE"
+  ],
+  "metal_exactification_status": "RETIRED_AS_CORRECTNESS_FRONTIER",
+  "deferred_qualification_areas": [
+    "production implementation qualification under backend-local policy",
+    "long-session robustness",
+    "very long context operation",
+    "thought-loop/no-progress recurrence",
+    "tool-call boundary integrity",
+    "session persistence",
+    "KV/cache save-restore-resume",
+    "failure/recovery over long sessions",
+    "performance and release readiness"
+  ],
+  "m4_does_not_prove": [
+    "release readiness",
+    "API readiness",
+    "performance targets",
+    "long-session robustness",
+    "KV restore/resume correctness",
+    "equivalent outputs across all prompts/backends"
+  ],
+  "next_frontier": "validate/finish the practical production MLX/oMLX-derived decode path against the finalized backend-local correctness policy",
+  "ok": true
+}

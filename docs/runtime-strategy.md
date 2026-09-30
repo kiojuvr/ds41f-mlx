@@ -18,8 +18,13 @@ Correctness authority is, in order:
 
 1. official DeepSeek-V4.1-Flash checkpoint/data;
 2. reviewed official DeepSeek semantics;
-3. official-source-derived `ds41f` validators/contracts;
-4. implementation-scoped regression evidence.
+3. required precision/storage contracts;
+4. persistent-state lifecycle and generation-state contracts;
+5. correct discrete algorithms on backend-produced values;
+6. official-source-derived `ds41f` validators/contracts;
+7. implementation-scoped regression evidence.
+
+Milestone 4 closes the model/runtime correctness investigation with `M4_CORRECTNESS_COMPLETE_BACKEND_LOCAL_FIDELITY_POLICY`. Backend-local determinism is required for a fixed checkpoint/runtime/backend/build/deterministic configuration/input/session state. Cross-backend connected hidden-state identity, full-logits identity, and greedy-token identity are not fidelity requirements under otherwise official-compatible floating-point semantics.
 
 DwarfStar and oMLX are not correctness authorities. They are production architecture and implementation sources. Adopting an architecture from them means adopting its execution topology, ownership model, graph/lifetime structure, and scheduling intent where appropriate. It does not mean adopting conflicting checkpoint formats, quantization, prompt semantics, or model behavior.
 
@@ -78,7 +83,7 @@ The historical-native-derived runtime under `native/` has accumulated substantia
 
 Its future role is primarily `REFERENCE / QUALIFICATION` plus `REUSABLE PRODUCTION COMPONENT` where architectural fit is documented. It is not automatically the final `PRODUCTION ARCHITECTURE` for prefill or decode.
 
-Qualification results are implementation-scoped. Passing native tests does not qualify a future DwarfStar- or oMLX-derived production runtime until that runtime passes the same relevant gates.
+Qualification results are implementation-scoped. Passing native tests does not qualify a future DwarfStar- or oMLX-derived production runtime until that runtime passes the relevant gates under the finalized backend-local fidelity policy. A future production backend does not need to reproduce source-derived/CUDA hidden tensors, logits, or token streams solely to force cross-backend identity.
 
 ## Role of DwarfStar-derived code
 
@@ -91,6 +96,28 @@ DwarfStar is not a correctness authority and its GGUF/quantization assumptions a
 oMLX remains a production architecture candidate for decode and a strong performance baseline. It also provides compatibility and implementation evidence around official checkpoint loading, V4.1 execution, MTP/DSpark behavior, Engram SSD operation, and long-context performance.
 
 oMLX is not a correctness authority. Its prompt/protocol layer should eventually be superseded by official `deepseek-recipe` integration.
+
+## Robustness and restore/resume ordering
+
+Long-session robustness and KV/cache save-restore-resume are important finished-runtime goals, but they are not part of the M4 correctness closure. They move to later qualification after practical runtime operation is established.
+
+Deferred robustness work includes long-lived agent sessions, thought-loop/no-progress recurrence, tool-call boundary integrity, very long context operation, session persistence, KV/cache save and restore, resume-after-restore correctness, failure/recovery behavior over long sessions, and long-lived memory behavior.
+
+Preferred ordering:
+
+```text
+M4 correctness closure
+  ↓
+practical production runtime
+  ↓
+serving/API usability
+  ↓
+performance/practical operation
+  ↓
+real-world usage feedback
+  ↓
+long-session robustness and KV restore/resume qualification
+```
 
 ## API direction
 

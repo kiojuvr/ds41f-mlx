@@ -8,14 +8,14 @@ The project exists to make the full official model practically usable as a local
 
 That requires both preserving the model semantics, precision boundaries, persistent state, and generation behavior required by DeepSeek-V4.1-Flash, and achieving practical inference performance across prefill, incremental decoding, and long-running agent sessions.
 
-Correctness and performance are therefore not separate end goals. Correctness defines the boundary within which performance must be achieved.
+Correctness and performance are therefore not separate end goals. Correctness defines the boundary within which performance must be achieved. Milestone 4 has closed the current model/runtime correctness investigation with a backend-local fidelity policy; long-session robustness and production performance remain overall project success criteria, not blockers for that correctness milestone.
 
 ## Project definition
 
 A valid `ds41f-mlx` runtime is defined by these requirements:
 
 - **Official checkpoint:** execute the official DeepSeek-V4.1-Flash checkpoint directly. The project is not redefined around a converted, reduced, or approximate model.
-- **Model fidelity:** preserve the numerical/model semantics, required precision boundaries, layer behavior, and persistent-state lifecycle needed by the checkpoint.
+- **Model fidelity:** preserve the numerical/model semantics, required precision boundaries, layer behavior, and persistent-state lifecycle needed by the checkpoint. This is backend-local fidelity: cross-backend hidden-state, logits, or greedy-token identity is not required under otherwise official-compatible floating-point semantics.
 - **Native Apple Silicon execution:** use Apple Silicon, MLX, Metal, unified memory, and target-hardware-specific design where needed to obtain useful performance. Generic portability is not more important than practical execution on the target system.
 - **Practical performance:** provide usable prefill, decode, and long-session behavior for real interactive and agent workloads. Performance is part of project completion, not an optional later concern.
 - **Long-lived state correctness:** maintain correct operation across prefill, incremental decode, continuation, reset, fork/ownership, compressed KV publication, index state, candidate state, and generation state.
@@ -60,6 +60,10 @@ Likewise, a fast runtime that changes required model behavior or state semantics
 - Internal C++ namespace: `dsv41`.
 
 ## Current implementation status
+
+Milestone 4 correctness is complete under `M4_CORRECTNESS_COMPLETE_BACKEND_LOCAL_FIDELITY_POLICY`. The project has established the correctness boundary for official semantics, precision/storage contracts, and persistent-state lifecycle, and has rejected cross-backend trajectory identity as a universal fidelity requirement after measured FP8 reduction and behavioral-sensitivity evidence.
+
+This does not mean the finished runtime is complete. Production implementation qualification, practical performance, API/serving integration, long-session robustness, and KV/cache restore-resume remain future work.
 
 The current native implementation is the executable correctness/reference runtime at HEAD. It is valuable and retained, but it is not automatically the final production execution topology for prefill or decode. Production architecture restoration is governed by `docs/runtime-strategy.md` and `docs/implementation-plan.md`.
 
@@ -176,15 +180,17 @@ Historical provenance is recorded in provenance/archive documentation and is not
 
 ## Qualification status
 
-Qualified/source-verified areas include checkpoint provenance, official primitive validators, source integrity, native source closure, checkpoint-free native build/tests, MLX-enabled native build/tests, and bounded full-checkpoint native execution.
+Qualified/source-verified areas include checkpoint provenance, official primitive validators, source integrity, native source closure, checkpoint-free native build/tests, MLX-enabled native build/tests, bounded full-checkpoint native execution, M4 backend-local correctness policy, and bounded persistent-state lifecycle evidence.
 
-The bounded full-checkpoint smoke has verified that the native runtime can open the official checkpoint, execute full prefill for the small fixture, and perform one-token generation. It is not broad model qualification, performance qualification, long-context qualification, or release qualification.
+The bounded full-checkpoint smoke has verified that the native runtime can open the official checkpoint, execute full prefill for the small fixture, and perform one-token generation. It is not broad release qualification or performance qualification.
 
-Remaining qualification gaps:
+Remaining qualification gaps for the finished project include:
 
+- production MLX/oMLX-derived decode qualification under the finalized backend-local policy
 - native HTTP/API integration
 - post-import performance qualification
-- long-context qualification
+- long-context and long-session robustness
+- KV/cache save-restore-resume qualification
 - release qualification
 
 ## Canonical documentation
