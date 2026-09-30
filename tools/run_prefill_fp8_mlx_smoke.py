@@ -44,7 +44,9 @@ def main(argv=None):
         return 2
     model = None
     try:
-        model, _processor = load(args.checkpoint, preserve_mtp=False)
+        # Match the reviewed target runtime's SSD-backed Engram configuration.
+        # Resident tables exhaust Metal memory before this smoke can execute.
+        model, _processor = load(args.checkpoint, preserve_mtp=False, engram_ssd_offload=True)
         lm = model.language_model
         if len(lm.layers) != 40 or lm._config.compress_ratios[20] != 1:
             raise RuntimeError('expected DeepSeek-V4.1 Flash, 40 layers, layer20 ratio=1')
