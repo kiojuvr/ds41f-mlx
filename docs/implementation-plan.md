@@ -123,6 +123,8 @@ Compare with the recorded oMLX baseline. Do not define success as merely faster 
 
 ## Milestone 7 — Serving integration
 
+Status: **integration seam implemented, not qualified**. See `docs/milestone-7-deepseek-recipe-serving-status.md` and `artifacts/m7/deepseek-recipe-serving/result.json`.
+
 Use official DeepSeek `deepseek-recipe` as the protocol/prompt/response layer.
 
 Target shape:
@@ -137,7 +139,7 @@ ds41f backend interface
 production runtime
 ```
 
-The project should not independently reinvent Chat Completions conversion, Responses conversion, DeepSeek V4.1 prompt encoding, tool-call parsing, thinking parsing, or stream response formatting.
+The project should not independently reinvent Chat Completions conversion, Responses conversion, DeepSeek V4.1 prompt encoding, tool-call parsing, thinking parsing, or stream response formatting.  The current blocker is not recipe integration or GenerationBatch decode; it is arbitrary-length real DwarfStar-derived `PrefillContinuationState` production prefill for recipe prompts (~30+ tokens for minimal text requests) without falling back to oMLX prompt replay.
 
 ## Later goals
 

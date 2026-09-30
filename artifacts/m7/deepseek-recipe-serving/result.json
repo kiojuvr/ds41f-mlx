@@ -1,0 +1,118 @@
+{
+  "cancellation": {
+    "implemented": "backend async generator finally calls OMLXGenerationSession.stop()/close(); InferenceStreamingResponse.aclose on disconnect",
+    "runtime_smoke": "NOT_RUN_TO_COMPLETION"
+  },
+  "classification": "DEEPSEEK_RECIPE_TEXT_SERVING_PATH_NOT_QUALIFIED_PREFILL_GENERALIZATION_BLOCKED",
+  "deepseek_recipe": {
+    "path": "/Volumes/SDXC-512/deepseek-v41-flash-mlx/third_party/deepseek-recipe",
+    "python_build": "pypi wheel installed in qualification venv",
+    "revision": "8cadfede7063c896b944e7bae05daa3549ae97ea",
+    "version": "0.1.1"
+  },
+  "generation_options": {
+    "sampler": "mlx_lm.sample_utils.make_sampler",
+    "supported": [
+      "max_tokens/max_output_tokens",
+      "temperature",
+      "top_p"
+    ],
+    "unsupported_policy": "reject invalid/unrepresentable options rather than silently ignoring"
+  },
+  "next_frontier": "generalize/accelerate real DwarfStar PrefillContinuationState production prefill for arbitrary recipe-encoded prompt lengths, preserving no replay",
+  "no_replay_gate": {
+    "implemented_in_backend": true,
+    "prompt_replay_count": null,
+    "requires_runtime_completion": true
+  },
+  "parser_ownership_gate": {
+    "body": {
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "Recipe parsed answer",
+            "reasoning_content": "",
+            "role": "assistant"
+          }
+        }
+      ],
+      "created": 0,
+      "id": "parser-gate",
+      "model": "deepseek-v4.1-flash",
+      "object": "chat.completion",
+      "system_fingerprint": null,
+      "usage": {
+        "completion_tokens": 4,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 0,
+        "prompt_tokens": 0,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 4
+      }
+    },
+    "passed": true,
+    "token_chunks_used": true
+  },
+  "prompt_split_gate": {
+    "chat_first_decode_input": 128821,
+    "chat_prefill_tokens": 30,
+    "chat_prompt_tokens": 31,
+    "invariant_prefill_plus_one": true,
+    "responses_prefill_tokens": 30,
+    "responses_prompt_tokens": 31,
+    "rule": "prefill=tokens[:-1], first_input=tokens[-1]"
+  },
+  "real_http_smoke": {
+    "chat_completions_non_stream": "NOT_RUN_TO_COMPLETION",
+    "chat_completions_stream": "NOT_RUN_TO_COMPLETION",
+    "messages": "PREPARE_SUPPORTED_NOT_MODEL_SMOKED",
+    "reason": "real recipe prompt encodes ~30+ tokens; current DwarfStar PrefillContinuationState builder timed out on 30-token prefix (>900s) and odd 29-token prefix exposes existing ratio-2 reshape limitation; no oMLX prompt replay fallback was used",
+    "responses_non_stream": "NOT_RUN_TO_COMPLETION",
+    "responses_stream": "NOT_RUN_TO_COMPLETION"
+  },
+  "recipe_tokenizer": {
+    "direct_conversation_encode": true,
+    "no_double_template": true,
+    "source": "/Volumes/SDXC-512/deepseek-v41-flash-mlx/third_party/deepseek-recipe/static/tokenizers/v41/tokenizer.json"
+  },
+  "runtime": {
+    "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+    "mlx_version": "0.32.2",
+    "omlx_path": "/Users/kioju/omlx-0.7.0.dev2",
+    "omlx_revision": "b390b31e0c6831225fed0f24d278eb1db7fcb68b"
+  },
+  "schema": "ds41f.m7.deepseek-recipe-serving.v1",
+  "serving": {
+    "default_bind": "127.0.0.1",
+    "model_identifier": "deepseek-v4.1-flash",
+    "modules": [
+      "ds41f_mlx/serving/deepseek_recipe_backend.py",
+      "ds41f_mlx/serving/server.py"
+    ],
+    "server_entrypoint": "tools/run_ds41f_recipe_server.py",
+    "single_flight": true,
+    "supported_endpoints": [
+      "/v1/chat/completions",
+      "/v1/responses",
+      "/v1/messages"
+    ],
+    "text_only": true
+  },
+  "streaming_gate": {
+    "implemented": "StreamingResponse yields recipe StreamProcessor chunks as backend tokens arrive",
+    "incremental_real_model_observation": "NOT_RUN_TO_COMPLETION"
+  },
+  "unsupported_features": [
+    "multimodal/images rejected before image fetch/preprocess",
+    "MTP/DSpark",
+    "multi-request batching",
+    "tool execution",
+    "KV restore/resume",
+    "long-session persistence"
+  ]
+}
