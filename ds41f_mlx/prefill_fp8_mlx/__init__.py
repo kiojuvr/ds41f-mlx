@@ -27,6 +27,10 @@ from ds41f_mlx.prefill_fp8_mlx.block_runner import (
     OfficialFP8MLXBlockRunner,
     ServingLogitsPolicy,
 )
+from ds41f_mlx.prefill_fp8_mlx.executor import (
+    DwarfStarFP8MLXPrefillExecutorSetup,
+    PrefillExecutionSetup,
+)
 from ds41f_mlx.prefill_fp8_mlx.guards import (
     FORBIDDEN_HOT_PATH_MODULES,
     REFERENCE_VERTICAL_SLICE_CLASSIFICATION,
@@ -68,11 +72,13 @@ __all__ = [
     "CarryState",
     "CommandExecutionRecord",
     "CompressorPendingState",
+    "DwarfStarFP8MLXPrefillExecutorSetup",
     "EngramState",
     "FORBIDDEN_HOT_PATH_MODULES",
     "GuardReport",
     "MlxEvaluationPolicy",
     "OfficialFP8MLXBlockRunner",
+    "PrefillExecutionSetup",
     "PrefillStructuralTelemetry",
     "PublicationError",
     "PublicationEvent",

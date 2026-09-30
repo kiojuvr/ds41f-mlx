@@ -9,6 +9,7 @@ from types import SimpleNamespace
 from ds41f_mlx.native_prefill import compile_native_prefill_library, load_native_prefill_library
 from ds41f_mlx.prefill_fp8_mlx import (
     FORBIDDEN_HOT_PATH_MODULES,
+    DwarfStarFP8MLXPrefillExecutorSetup,
     OfficialFP8MLXBlockRunner,
     PublicationError,
     PublicationManager,
@@ -222,7 +223,9 @@ class PrefillFP8MLXP1P2Tests(unittest.TestCase):
         plan = self.planner.build_static(ctx=32768, remaining=2048)
         arena = RequestArena.from_plan(plan, token_ids=[0, 3], h_current=FakeTensor("h"), h_next=FakeTensor("n"), pre=FakeTensor("p"))
         manager = PublicationManager(arena)
-        runner = OfficialFP8MLXBlockRunner(FakeLanguageModel(), manager)
+        lm = FakeLanguageModel()
+        runner = OfficialFP8MLXBlockRunner(lm, manager)
+        runner.working_cache = full_ready_cache()
         commands = [plan.commands_by_kind(SweepCommandKind.BEGIN_INVALIDATE)[0]]
         commands.append([c for c in plan.encode_commands if c.layer == 2][0])
         commands.append([c for c in plan.publication_commands if c.layer == 2][0])
@@ -235,6 +238,97 @@ class PrefillFP8MLXP1P2Tests(unittest.TestCase):
         self.assertIn("kv", manager.committed_visible)
         self.assertTrue(any(r.skipped_final_logits for r in runner.records))
 
+    def test_two_chunk_row_span_idx_and_candidates_publication(self):
+        plan = self.planner.build_static(ctx=32768, remaining=8192)
+        arena = RequestArena.from_plan(plan, token_ids=[0, 3])
+        manager = PublicationManager(arena)
+        manager.begin_transaction()
+        manager.capture_layer_outputs(20, {"kv": "kv0", "index_k": "ik0", "idx": FakeRowTensor("idx0", 0, 4096), "candidates": FakeRowTensor("cand0", 0, 4096)}, command_index=1, offset=0, rows=4096)
+        manager.capture_layer_outputs(20, {"kv": "kv1", "index_k": "ik1", "idx": FakeRowTensor("idx1", 4096, 4096), "candidates": FakeRowTensor("cand1", 4096, 4096)}, command_index=2, offset=4096, rows=4096)
+        publish = [c for c in plan.publication_commands if c.layer == 20][0]
+        arena.apply_command(publish)
+        manager.publish_frontier(publish)
+        self.assertEqual(manager.consume_span("idx", layer=24, offset=0, rows=4096).name, "idx0")
+        self.assertEqual(manager.consume_span("candidates", layer=24, offset=4096, rows=4096).name, "cand1")
+        both = manager.consume_span("idx", layer=24, offset=0, rows=8192)
+        self.assertEqual([x.name for x in both.parts], ["idx0", "idx1"])
+        self.assertEqual(manager.consume("kv", layer=24), "kv1")
+        with self.assertRaises(Exception):
+            manager.consume_span("candidates", layer=24, offset=8192, rows=1)
+
+    def test_block_runner_preserves_two_chunk_row_span_publication(self):
+        plan = self.planner.build_static(ctx=32768, remaining=8192)
+        arena = RequestArena.from_plan(plan, token_ids=[0, 3], h_current=FakeTensor("h", rows=8192), h_next=FakeTensor("n", rows=8192), pre=FakeTensor("p", rows=8192))
+        manager = PublicationManager(arena)
+        runner = OfficialFP8MLXBlockRunner(FakeLanguageModel(), manager)
+        runner.execute_command(plan.commands_by_kind(SweepCommandKind.BEGIN_INVALIDATE)[0], arena)
+        for command in [c for c in plan.encode_commands if c.layer == 2][:2]:
+            runner.execute_command(command, arena)
+        publish = [c for c in plan.publication_commands if c.layer == 2][0]
+        arena.apply_command(publish)
+        manager.publish_frontier(publish)
+        self.assertEqual(manager.consume_span("idx", layer=3, offset=0, rows=4096).name, "idx@0")
+        self.assertEqual(manager.consume_span("idx", layer=3, offset=4096, rows=4096).name, "idx@4096")
+        self.assertEqual(manager.consume("kv", layer=3), "kv@4096")
+
+    def test_base_frontier_absolute_start_reaches_layer(self):
+        plan = self.planner.build_static(ctx=32768, remaining=8192)
+        arena = RequestArena.from_plan(plan, token_ids=[0, 3], h_current=FakeTensor("h", rows=8192), h_next=FakeTensor("n", rows=8192), pre=FakeTensor("p", rows=8192), base_frontier=100)
+        manager = PublicationManager(arena)
+        lm = FakeLanguageModel()
+        runner = OfficialFP8MLXBlockRunner(lm, manager)
+        runner.execute_command(plan.commands_by_kind(SweepCommandKind.BEGIN_INVALIDATE)[0], arena)
+        encodes = [c for c in plan.encode_commands if c.layer == 0]
+        runner.execute_command(encodes[0], arena)
+        runner.execute_command(encodes[1], arena)
+        self.assertEqual(lm.layers[0].calls[0][0], 100)
+        self.assertEqual(lm.layers[0].calls[1][0], 4196)
+
+    def test_working_cache_frontier_and_engram_history_progress(self):
+        plan = self.planner.build_static(ctx=32768, remaining=2048)
+        arena = RequestArena.from_plan(plan, token_ids=[0, 3], h_current=FakeTensor("h", rows=2048), h_next=FakeTensor("n", rows=2048), pre=FakeTensor("p", rows=2048), engram_history="history", base_frontier=7)
+        manager = PublicationManager(arena)
+        runner = OfficialFP8MLXBlockRunner(FakeLanguageModel(), manager)
+        runner.execute_command(plan.commands_by_kind(SweepCommandKind.BEGIN_INVALIDATE)[0], arena)
+        encode = [c for c in plan.encode_commands if c.layer == 0][0]
+        runner.execute_command(encode, arena)
+        cache0 = runner.working_cache[0]
+        self.assertEqual(cache0[0], 7 + encode.rows)
+        self.assertEqual(cache0[6], "history")
+        self.assertTrue(all(cache0[i] is not None for i in range(7)))
+
+    def test_carry_writes_preserve_multiple_chunks_and_fail_closed(self):
+        plan = self.planner.build_static(ctx=32768, remaining=8192)
+        arena = RequestArena.from_plan(plan, token_ids=[0, 3], h_current=FakeTensor("h", rows=8192), h_next=FakeTensor("n", rows=8192), pre=FakeTensor("p", rows=8192))
+        manager = PublicationManager(arena)
+        runner = OfficialFP8MLXBlockRunner(FakeLanguageModel(), manager)
+        runner.execute_command(plan.commands_by_kind(SweepCommandKind.BEGIN_INVALIDATE)[0], arena)
+        for command in [c for c in plan.encode_commands if c.layer == 0][:2]:
+            runner.execute_command(command, arena)
+        self.assertEqual(arena.carry.next.value.shape[1], 8192)
+        self.assertEqual([w[0] for w in arena.carry.next.value.writes], [0, 4096])
+        bad = RequestArena.from_plan(plan, token_ids=[0, 3], h_current=FakeTensor("h", rows=1), h_next=FakeTensor("n", rows=1), pre=FakeTensor("p", rows=1))
+        with self.assertRaises(Exception):
+            runner.execute_command([c for c in plan.encode_commands if c.layer == 0][0], bad)
+
+    def test_executor_setup_owns_base_frontier_cache_and_components(self):
+        plan = self.planner.build_static(ctx=32768, remaining=2048)
+        setup = DwarfStarFP8MLXPrefillExecutorSetup(FakeLanguageModel()).prepare(plan, [0, 3], base_frontier=55)
+        self.assertEqual(setup.arena.base_frontier, 55)
+        self.assertIs(setup.block_runner.working_cache[0][6], None)
+        self.assertIs(setup.block_runner.publication_manager, setup.publication_manager)
+        self.assertIs(setup.publication_manager.arena, setup.arena)
+
+    def test_no_independent_whole_model_layer_loop_or_intermediate_export(self):
+        import inspect
+        import ds41f_mlx.prefill_fp8_mlx.block_runner as br
+        source = inspect.getsource(br.OfficialFP8MLXBlockRunner)
+        self.assertNotIn("for layer in self.language_model.layers", source)
+        self.assertNotIn("for layer in lm.layers", source)
+        runner = OfficialFP8MLXBlockRunner(FakeLanguageModel(), PublicationManager(RequestArena.from_plan(self.planner.build_static(ctx=32768, remaining=2048), token_ids=[0, 3])))
+        self.assertFalse(runner.prefill_continuation_exported)
+        self.assertEqual(runner.full_cache_repack_count, 0)
+
     def test_import_does_not_load_forbidden_reference_modules(self):
         loaded = [name for name in FORBIDDEN_HOT_PATH_MODULES if name in sys.modules]
         self.assertEqual(loaded, [])
@@ -242,22 +336,66 @@ class PrefillFP8MLXP1P2Tests(unittest.TestCase):
 
 
 class FakeTensor:
-    def __init__(self, name):
+    def __init__(self, name, rows=2048):
         self.name = name
+        self.shape = (1, rows, 4, 8)
         self.last_slice = None
+        self.writes = []
 
     def __getitem__(self, item):
         if isinstance(item, tuple) and len(item) > 1 and isinstance(item[1], slice):
             sl = item[1]
             start = 0 if sl.start is None else int(sl.start)
             stop = start if sl.stop is None else int(sl.stop)
-            out = FakeTensor(f"{self.name}[{start}:{stop}]")
+            if stop > self.shape[1]:
+                raise IndexError("slice out of range")
+            out = FakeTensor(f"{self.name}[{start}:{stop}]", rows=stop - start)
             out.last_slice = (start, stop - start)
             return out
         return self
 
     def __setitem__(self, item, value):
-        return None
+        if isinstance(item, tuple) and len(item) > 1 and isinstance(item[1], slice):
+            sl = item[1]
+            start = 0 if sl.start is None else int(sl.start)
+            stop = start if sl.stop is None else int(sl.stop)
+            if stop > self.shape[1]:
+                raise IndexError("write out of range")
+            self.writes.append((start, stop - start, value))
+            return None
+        raise IndexError("unsupported write")
+
+    def assign_rows(self, offset, rows, update):
+        if offset + rows > self.shape[1]:
+            raise IndexError("write out of range")
+        self.writes.append((offset, rows, update))
+
+
+class FakeRowTensor:
+    def __init__(self, name, offset, rows):
+        self.name = name
+        self.offset = offset
+        self.rows = rows
+        self.shape = (1, rows, 1)
+
+    def concat_rows(self, values):
+        return FakeConcatTensor(values)
+
+
+class FakeConcatTensor:
+    def __init__(self, parts):
+        self.parts = parts
+
+
+class FakeCache:
+    def __init__(self):
+        self.cache = [None] * 7
+
+    def __getitem__(self, item):
+        return self.cache[item]
+
+    def __setitem__(self, item, value):
+        self.cache[item] = value
 
 
 class FakeLayer:
@@ -269,20 +407,31 @@ class FakeLayer:
         if getattr(h, "last_slice", None) is not None:
             _offset, rows = h.last_slice
         self.calls.append((start, rows, start))
-        shared["kv"] = "kv"
-        shared["index_k"] = "ik"
-        shared["idx"] = "idx"
-        shared["candidates"] = "cand"
+        shared["kv"] = f"kv@{start}"
+        shared["index_k"] = f"ik@{start}"
+        shared["idx"] = FakeRowTensor(f"idx@{start}", start, rows)
+        shared["candidates"] = FakeRowTensor(f"cand@{start}", start, rows)
         return h, pre
 
 
 class FakeLanguageModel:
     def __init__(self):
         self.layers = [FakeLayer() for _ in range(40)]
-        self._config = SimpleNamespace(engram_layer_ids=(1, 14))
+        self._config = SimpleNamespace(engram_layer_ids=(1, 14), compress_ratios={}, kv_source_layers=(), candidate_source_layer=-1)
 
     def make_cache(self):
-        return [{} for _ in range(40)]
+        return [FakeCache() for _ in range(40)]
+
+    def empty_cache_slot(self, slot):
+        return []
+
+
+def full_ready_cache():
+    caches = [FakeCache() for _ in range(40)]
+    for cache in caches:
+        for i in range(7):
+            cache[i] = 0 if i == 0 else []
+    return caches
 
 
 if __name__ == "__main__":

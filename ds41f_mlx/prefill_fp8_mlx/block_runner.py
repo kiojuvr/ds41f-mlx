@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from typing import Any, Iterable
+import importlib
 
 from ds41f_mlx.prefill_fp8_mlx.arena import RequestArena
 from ds41f_mlx.prefill_fp8_mlx.guards import assert_no_reference_hot_path
@@ -30,12 +31,7 @@ class ServingLogitsPolicy:
 
 @dataclass(frozen=True)
 class MlxEvaluationPolicy:
-    """Executor-owned MLX materialization policy over command batches.
-
-    The default records no forced materialization.  Future executors may provide
-    an `mx` module and choose explicit batch boundaries without tying sync to
-    semantic publication/checkpoint boundaries.
-    """
+    """Executor-owned MLX materialization policy over command batches."""
 
     evaluate_after_batch: bool = False
     synchronize_after_batch: bool = False
@@ -60,6 +56,7 @@ class CommandExecutionRecord:
     layer: int | None
     offset: int
     rows: int
+    absolute_start: int | None = None
     skipped_final_logits: bool = False
     invoked_block: bool = False
     invoked_engram: bool = False
@@ -71,6 +68,7 @@ class CommandExecutionRecord:
             "layer": self.layer,
             "offset": self.offset,
             "rows": self.rows,
+            "absolute_start": self.absolute_start,
             "skipped_final_logits": self.skipped_final_logits,
             "invoked_block": self.invoked_block,
             "invoked_engram": self.invoked_engram,
@@ -114,16 +112,12 @@ class OfficialFP8MLXBlockRunner:
             self.publication_manager.begin_transaction()
             return None
         if command.kind is SweepCommandKind.ENCODE_ROWS:
-            result = self._execute_encode_rows(command, arena, record)
-            return result
+            return self._execute_encode_rows(command, arena, record)
         if command.kind is SweepCommandKind.PUBLISH_FRONTIER:
             arena.apply_command(command)
             self.publication_manager.publish_frontier(command)
             return None
-        if command.kind is SweepCommandKind.SWAP_HC_AFTER_LAYER:
-            arena.apply_command(command)
-            return None
-        if command.kind is SweepCommandKind.DECODER_PREPARE_SUFFIX:
+        if command.kind in {SweepCommandKind.SWAP_HC_AFTER_LAYER, SweepCommandKind.DECODER_PREPARE_SUFFIX}:
             arena.apply_command(command)
             return None
         if command.kind is SweepCommandKind.ENCODE_OUTPUT_HEAD:
@@ -132,6 +126,7 @@ class OfficialFP8MLXBlockRunner:
             return self._handle_read_logits(command, arena, record)
         if command.kind is SweepCommandKind.CHECKPOINT_MAY_COMMIT:
             self._assert_commit_ready()
+            self._assert_cache_slots_ready(arena)
             arena.apply_command(command)
             self.publication_manager.commit()
             return None
@@ -143,27 +138,48 @@ class OfficialFP8MLXBlockRunner:
             raise BlockExecutionError("encode_rows command requires a layer")
         arena.apply_command(command)
         lm = self.language_model
-        layer = lm.layers[int(command.layer)]
-        h_chunk = _slice_rows(arena.carry.current.value, command.offset, command.rows)
-        pre_chunk = _slice_rows(arena.carry.pre.value, command.offset, command.rows)
-        shared = self.publication_manager.shared_for_layer(int(command.layer))
-        cache = self._cache_for_layer(int(command.layer))
-        start = int(command.offset)
+        layer_id = int(command.layer)
+        layer = lm.layers[layer_id]
+        absolute_start = int(arena.base_frontier) + int(command.offset)
+        record.absolute_start = absolute_start
+        h_chunk = _slice_rows(arena.carry.current.value, command.offset, command.rows, role=arena.carry.current.role)
+        pre_chunk = _slice_rows(arena.carry.pre.value, command.offset, command.rows, role=arena.carry.pre.role)
+        shared = self.publication_manager.shared_for_span(layer_id, command.offset, command.rows, require_keys=self._required_publication_keys(layer_id))
+        cache = self._cache_for_layer(layer_id)
         invoked_engram = False
         if _layer_has_engram(layer):
-            hashes = _slice_engram_hashes(arena.engram.hashes.value, command.offset, command.rows, int(command.layer), lm)
+            hashes = _slice_engram_hashes(arena.engram.hashes.value, command.offset, command.rows, layer_id, lm)
             if hashes is not None:
                 h_chunk = layer.engram(h_chunk, hashes, self.image_mask)
                 invoked_engram = True
         if not callable(layer):
             raise BlockExecutionError(f"layer {command.layer} is not callable")
-        h_out, pre_out = layer(h_chunk, pre_chunk, cache, shared, start, self.image_mask)
-        arena.carry.next.value = _write_rows(arena.carry.next.value, command.offset, command.rows, h_out)
-        arena.carry.pre.value = _write_rows(arena.carry.pre.value, command.offset, command.rows, pre_out)
-        self.publication_manager.capture_layer_outputs(int(command.layer), shared, command_index=command.index)
+        h_out, pre_out = layer(h_chunk, pre_chunk, cache, shared, absolute_start, self.image_mask)
+        arena.carry.next.value = _write_rows(arena.carry.next.value, command.offset, command.rows, h_out, role=arena.carry.next.role)
+        arena.carry.pre.value = _write_rows(arena.carry.pre.value, command.offset, command.rows, pre_out, role=arena.carry.pre.role)
+        self._advance_cache_layer(cache, absolute_start + command.rows, arena=arena, layer=layer_id)
+        self.publication_manager.capture_layer_outputs(layer_id, shared, command_index=command.index, offset=command.offset, rows=command.rows)
         record.invoked_block = True
         record.invoked_engram = invoked_engram
         return h_out
+
+    def _required_publication_keys(self, layer: int) -> tuple[str, ...]:
+        cfg = getattr(self.language_model, "_config", None)
+        if cfg is None:
+            return ()
+        compress = getattr(cfg, "compress_ratios", {})
+        try:
+            ratio = int(compress[layer])
+        except Exception:
+            ratio = int(compress.get(layer, 0)) if hasattr(compress, "get") else 0
+        required: list[str] = []
+        kv_sources = set(int(x) for x in getattr(cfg, "kv_source_layers", ()))
+        if ratio and layer not in kv_sources:
+            required.extend(["kv", "idx"])
+        candidate_source = int(getattr(cfg, "candidate_source_layer", -1))
+        if candidate_source >= 0 and layer > candidate_source:
+            required.append("candidates")
+        return tuple(required)
 
     def _cache_for_layer(self, layer: int) -> Any:
         if self.working_cache is None:
@@ -173,6 +189,21 @@ class OfficialFP8MLXBlockRunner:
             else:
                 self.working_cache = make_cache()
         return self.working_cache[layer]
+
+    def _advance_cache_layer(self, cache: Any, absolute_end: int, *, arena: RequestArena, layer: int) -> None:
+        if cache is None:
+            return
+        _set_cache_slot(cache, 0, _make_cache_offset(absolute_end))
+        if layer == 0 and arena.engram.history.value is not None:
+            _set_cache_slot(cache, 6, arena.engram.history.value)
+        self._fill_empty_slots(cache, layer)
+
+    def _fill_empty_slots(self, cache: Any, layer: int) -> None:
+        if cache is None:
+            return
+        for slot in range(1, 7):
+            if _get_cache_slot(cache, slot) is None:
+                _set_cache_slot(cache, slot, _empty_cache_slot(self.language_model, slot))
 
     def _handle_output_head(self, command: SweepCommand, arena: RequestArena, record: CommandExecutionRecord) -> Any | None:
         arena.apply_command(command)
@@ -193,7 +224,18 @@ class OfficialFP8MLXBlockRunner:
     def _assert_commit_ready(self) -> None:
         if self.logits_policy.compute_final_prefix_logits and self.final_logits is None:
             raise BlockExecutionError("cannot commit diagnostic logits path before final logits are ready")
-        # Serving path deliberately suppresses logits; commit readiness is state/publication based.
+
+    def _assert_cache_slots_ready(self, arena: RequestArena) -> None:
+        if self.working_cache is None:
+            raise BlockExecutionError("cannot commit before working cache is initialized")
+        for i, cache in enumerate(self.working_cache):
+            if cache is None:
+                raise BlockExecutionError(f"working cache layer {i} is missing")
+            if _get_cache_slot(cache, 0) is None:
+                raise BlockExecutionError(f"working cache layer {i} frontier slot is missing")
+            for slot in range(1, 7):
+                if _get_cache_slot(cache, slot) is None:
+                    raise BlockExecutionError(f"working cache layer {i} slot {slot} is missing")
 
     def to_json(self) -> dict[str, object]:
         return {
@@ -213,34 +255,99 @@ def _layer_has_engram(layer: Any) -> bool:
     return hasattr(layer, "engram")
 
 
-def _slice_rows(value: Any, offset: int, rows: int) -> Any:
+def _slice_rows(value: Any, offset: int, rows: int, *, role: str) -> Any:
     if value is None:
-        return None
+        raise BlockExecutionError(f"cannot slice unbound arena slot {role}")
+    end = int(offset) + int(rows)
+    shape = getattr(value, "shape", None)
+    if shape is not None and len(shape) > 1 and int(shape[1]) < end:
+        raise BlockExecutionError(f"arena slot {role} has only {shape[1]} rows; requested {offset}:{end}")
     try:
-        return value[:, offset:offset + rows]
-    except Exception:
-        return value
+        return value[:, offset:end]
+    except Exception as exc:
+        raise BlockExecutionError(f"failed to slice arena slot {role} rows {offset}:{end}") from exc
 
 
-def _write_rows(base: Any, offset: int, rows: int, update: Any) -> Any:
+def _write_rows(base: Any, offset: int, rows: int, update: Any, *, role: str) -> Any:
     if base is None:
-        return update
-    try:
-        base[:, offset:offset + rows] = update
+        raise BlockExecutionError(f"cannot write rows into unallocated arena slot {role}")
+    end = int(offset) + int(rows)
+    shape = getattr(base, "shape", None)
+    if shape is not None and len(shape) > 1 and int(shape[1]) < end:
+        raise BlockExecutionError(f"arena slot {role} has only {shape[1]} rows; cannot write {offset}:{end}")
+    update_shape = getattr(update, "shape", None)
+    if update_shape is not None and len(update_shape) > 1 and int(update_shape[1]) != int(rows):
+        raise BlockExecutionError(f"update for {role} has {update_shape[1]} rows; expected {rows}")
+    assign = getattr(base, "assign_rows", None)
+    if assign is not None:
+        assign(offset, rows, update)
         return base
-    except Exception:
-        return update if offset == 0 else base
+    try:
+        base[:, offset:end] = update
+        return base
+    except Exception as exc:
+        raise BlockExecutionError(f"failed to write arena slot {role} rows {offset}:{end}") from exc
 
 
 def _slice_engram_hashes(hashes: Any, offset: int, rows: int, layer: int, language_model: Any) -> Any:
     if hashes is None:
         return None
+    end = offset + rows
     try:
         layer_ids = list(language_model._config.engram_layer_ids)
         ix = layer_ids.index(layer)
-        return hashes[:, offset:offset + rows, ix]
+        return hashes[:, offset:end, ix]
+    except ValueError:
+        return None
+    except Exception as exc:
+        raise BlockExecutionError(f"failed to slice Engram hashes for layer {layer} rows {offset}:{end}") from exc
+
+
+def _get_cache_slot(cache: Any, slot: int) -> Any:
+    try:
+        return cache[slot]
     except Exception:
-        try:
-            return hashes[:, offset:offset + rows]
-        except Exception:
-            return hashes
+        return getattr(cache, "cache", [None] * 7)[slot]
+
+
+def _set_cache_slot(cache: Any, slot: int, value: Any) -> None:
+    try:
+        cache[slot] = value
+        return
+    except Exception:
+        pass
+    if not hasattr(cache, "cache"):
+        raise BlockExecutionError("cache object does not support slot assignment")
+    cache.cache[slot] = value
+
+
+def _make_cache_offset(value: int) -> Any:
+    try:
+        mx = importlib.import_module("mlx.core")
+        return mx.array([int(value)], mx.int32)
+    except Exception:
+        return int(value)
+
+
+def _empty_cache_slot(language_model: Any, slot: int) -> Any:
+    factory = getattr(language_model, "empty_cache_slot", None)
+    if factory is not None:
+        return factory(slot)
+    try:
+        mx = importlib.import_module("mlx.core")
+        c = language_model._config
+        width = c.index_head_dim if slot == 3 else c.head_dim
+        empty = mx.zeros((1, 0, width), mx.bfloat16)
+        if slot == 6:
+            return mx.zeros((1, 0), mx.int64)
+        if slot in {1, 2, 3}:
+            lang = importlib.import_module(type(language_model).__module__)
+            pack_activation = lang.pack_activation
+            if slot == 1:
+                return pack_activation(empty)
+            if slot == 2:
+                return pack_activation(empty, 4, 16, True)
+            return pack_activation(empty, 4)
+        return empty
+    except Exception:
+        return [] if slot != 6 else []

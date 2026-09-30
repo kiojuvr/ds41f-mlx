@@ -253,6 +253,7 @@ class RequestArena:
 
     plan: SweepPlan
     tokens: tuple[int, ...]
+    base_frontier: int
     input_ids: TensorSlot
     allocations: dict[str, AllocationState]
     carry: CarryState
@@ -279,6 +280,7 @@ class RequestArena:
         pre: Any = None,
         engram_hashes: Any = None,
         engram_history: Any = None,
+        base_frontier: int = 0,
     ) -> "RequestArena":
         allocations = {a.semantic_role: AllocationState.from_allocation(a) for a in plan.allocations}
         input_slot = TensorSlot("tokens.input_ids", TensorOwnership.OWNED, input_ids)
@@ -296,6 +298,7 @@ class RequestArena:
         arena = cls(
             plan=plan,
             tokens=tuple(int(t) for t in token_ids),
+            base_frontier=int(base_frontier),
             input_ids=input_slot,
             allocations=allocations,
             carry=carry,
@@ -366,6 +369,7 @@ class RequestArena:
     def to_json(self) -> dict[str, object]:
         return {
             "token_count": len(self.tokens),
+            "base_frontier": self.base_frontier,
             "input_ids": self.input_ids.to_json(),
             "transaction": self.transaction.to_json(),
             "carry": self.carry.to_json(),

@@ -27,7 +27,9 @@ V41_PUBLISHES_BY_LAYER: dict[int, tuple[str, ...]] = {
     36: ("index_k", "idx"),
 }
 
-SHARED_KEYS = ("kv", "index_k", "idx", "candidates", "topk", "engram")
+CUMULATIVE_KEYS = frozenset({"kv", "index_k", "engram"})
+ROW_SPAN_KEYS = frozenset({"idx", "candidates"})
+SHARED_KEYS = tuple(sorted(CUMULATIVE_KEYS | ROW_SPAN_KEYS | {"topk"}))
 
 
 class PublicationError(RuntimeError):
@@ -40,8 +42,14 @@ class SourceGeneration:
     layer: int
     value: Any
     command_index: int
+    offset: int | None = None
+    rows: int | None = None
     published: bool = False
     committed: bool = False
+
+    @property
+    def end(self) -> int | None:
+        return None if self.offset is None or self.rows is None else self.offset + self.rows
 
     def visible_copy(self, *, published: bool | None = None, committed: bool | None = None) -> "SourceGeneration":
         return SourceGeneration(
@@ -49,6 +57,8 @@ class SourceGeneration:
             layer=self.layer,
             value=self.value,
             command_index=self.command_index,
+            offset=self.offset,
+            rows=self.rows,
             published=self.published if published is None else published,
             committed=self.committed if committed is None else committed,
         )
@@ -58,6 +68,8 @@ class SourceGeneration:
             "key": self.key,
             "layer": self.layer,
             "command_index": self.command_index,
+            "offset": self.offset,
+            "rows": self.rows,
             "published": self.published,
             "committed": self.committed,
             "has_value": self.value is not None,
@@ -66,64 +78,163 @@ class SourceGeneration:
 
 @dataclass
 class PublicationManager:
-    """DwarfStar source/consumer visibility controller."""
+    """DwarfStar source/consumer visibility controller.
+
+    Cumulative state (`kv`, `index_k`, Engram) is represented by the latest
+    cumulative generation because the oMLX cache/shared value already contains
+    preceding rows.  Row-span state (`idx`, `candidates`) is stored by exact row
+    coverage so later chunks cannot overwrite earlier query-row-aligned tensors.
+    """
 
     arena: RequestArena
-    pending_by_layer: dict[int, dict[str, SourceGeneration]] = field(default_factory=dict)
-    transaction_visible: dict[str, SourceGeneration] = field(default_factory=dict)
-    committed_visible: dict[str, SourceGeneration] = field(default_factory=dict)
+    pending_cumulative_by_layer: dict[int, dict[str, SourceGeneration]] = field(default_factory=dict)
+    pending_spans_by_layer: dict[int, dict[str, list[SourceGeneration]]] = field(default_factory=dict)
+    visible_cumulative: dict[str, SourceGeneration] = field(default_factory=dict)
+    visible_spans: dict[str, list[SourceGeneration]] = field(default_factory=dict)
+    committed_cumulative: dict[str, SourceGeneration] = field(default_factory=dict)
+    committed_spans: dict[str, list[SourceGeneration]] = field(default_factory=dict)
     failed: bool = False
 
     def begin_transaction(self) -> None:
-        self.pending_by_layer.clear()
-        self.transaction_visible.clear()
+        self.pending_cumulative_by_layer.clear()
+        self.pending_spans_by_layer.clear()
+        self.visible_cumulative.clear()
+        self.visible_spans.clear()
         self.failed = False
 
-    def shared_for_layer(self, layer: int) -> dict[str, Any]:
-        shared = {key: gen.value for key, gen in self.transaction_visible.items() if key in SHARED_KEYS}
-        # Ensure oMLX blocks may write expected keys without seeing unpublished generations.
-        for key in SHARED_KEYS:
+    def shared_for_span(self, layer: int, offset: int, rows: int, *, require_keys: tuple[str, ...] = ()) -> dict[str, Any]:
+        shared: dict[str, Any] = {key: gen.value for key, gen in self.visible_cumulative.items() if key in CUMULATIVE_KEYS}
+        for key in ROW_SPAN_KEYS:
+            if key in require_keys or self.visible_spans.get(key):
+                shared[key] = self._row_value_for_span(key, offset, rows, consumer_layer=layer)
+            else:
+                shared[key] = None
+        for key in CUMULATIVE_KEYS:
+            if key in require_keys and key not in shared:
+                raise PublicationError(f"layer {layer} attempted to consume unpublished cumulative source {key!r}")
             shared.setdefault(key, None)
+        shared.setdefault("topk", None)
         return shared
 
-    def capture_layer_outputs(self, layer: int, shared_after: dict[str, Any], *, command_index: int) -> None:
+    def shared_for_layer(self, layer: int) -> dict[str, Any]:
+        return self.shared_for_span(layer, 0, 0)
+
+    def capture_layer_outputs(self, layer: int, shared_after: dict[str, Any], *, command_index: int, offset: int = 0, rows: int = 0) -> None:
         keys = V41_PUBLISHES_BY_LAYER.get(int(layer), ())
         if not keys:
             return
-        bucket = self.pending_by_layer.setdefault(int(layer), {})
         for key in keys:
-            bucket[key] = SourceGeneration(key=key, layer=int(layer), value=shared_after.get(key), command_index=command_index)
+            gen = SourceGeneration(key=key, layer=int(layer), value=shared_after.get(key), command_index=command_index, offset=offset, rows=rows)
+            if key in ROW_SPAN_KEYS:
+                self.pending_spans_by_layer.setdefault(int(layer), {}).setdefault(key, []).append(gen)
+            elif key in CUMULATIVE_KEYS:
+                self.pending_cumulative_by_layer.setdefault(int(layer), {})[key] = gen
+            else:
+                self.pending_cumulative_by_layer.setdefault(int(layer), {})[key] = gen
 
     def publish_frontier(self, command: SweepCommand) -> None:
         if command.kind is not SweepCommandKind.PUBLISH_FRONTIER or command.layer is None:
             raise PublicationError("publish_frontier requires a layer publication command")
         layer = int(command.layer)
-        for key, gen in self.pending_by_layer.pop(layer, {}).items():
+        for key, gen in self.pending_cumulative_by_layer.pop(layer, {}).items():
             published = gen.visible_copy(published=True, committed=False)
-            self.transaction_visible[key] = published
+            self.visible_cumulative[key] = published
             self.arena.publications.shared[key] = published.value
+        for key, spans in self.pending_spans_by_layer.pop(layer, {}).items():
+            visible = self.visible_spans.setdefault(key, [])
+            for gen in spans:
+                published = gen.visible_copy(published=True, committed=False)
+                visible.append(published)
+            visible.sort(key=lambda g: (g.offset if g.offset is not None else -1, g.rows if g.rows is not None else -1))
+            # The arena shared dictionary exposes the latest object for compatibility only;
+            # span selection remains authoritative here.
+            if visible:
+                self.arena.publications.shared[key] = visible[-1].value
 
     def consume(self, key: str, *, layer: int) -> Any:
-        if key not in self.transaction_visible:
-            raise PublicationError(f"layer {layer} attempted to consume unpublished source {key!r}")
-        return self.transaction_visible[key].value
+        if key in CUMULATIVE_KEYS:
+            if key not in self.visible_cumulative:
+                raise PublicationError(f"layer {layer} attempted to consume unpublished cumulative source {key!r}")
+            return self.visible_cumulative[key].value
+        raise PublicationError(f"row-span source {key!r} requires consume_span")
+
+    def consume_span(self, key: str, *, layer: int, offset: int, rows: int) -> Any:
+        if key not in ROW_SPAN_KEYS:
+            return self.consume(key, layer=layer)
+        return self._row_value_for_span(key, offset, rows, consumer_layer=layer)
 
     def commit(self) -> None:
         if self.failed:
             raise PublicationError("cannot commit failed publication transaction")
-        self.committed_visible = {key: gen.visible_copy(committed=True) for key, gen in self.transaction_visible.items()}
+        self.committed_cumulative = {key: gen.visible_copy(committed=True) for key, gen in self.visible_cumulative.items()}
+        self.committed_spans = {key: [gen.visible_copy(committed=True) for gen in spans] for key, spans in self.visible_spans.items()}
         self.arena.publications.commit()
 
     def fail(self) -> None:
         self.failed = True
-        self.pending_by_layer.clear()
-        self.transaction_visible.clear()
-        # Deliberately leave committed_visible untouched; pending invalid sweep is not exposed.
+        self.pending_cumulative_by_layer.clear()
+        self.pending_spans_by_layer.clear()
+        self.visible_cumulative.clear()
+        self.visible_spans.clear()
+        # Deliberately leave committed_* untouched; pending invalid sweep is not exposed.
+
+    @property
+    def transaction_visible(self) -> dict[str, SourceGeneration]:
+        """Compatibility view for cumulative latest generations."""
+        return self.visible_cumulative
+
+    @property
+    def committed_visible(self) -> dict[str, SourceGeneration]:
+        """Compatibility view for cumulative committed generations."""
+        return self.committed_cumulative
+
+    def _row_value_for_span(self, key: str, offset: int, rows: int, *, consumer_layer: int) -> Any:
+        if rows <= 0:
+            return None
+        spans = self.visible_spans.get(key, [])
+        selected: list[SourceGeneration] = []
+        pos = int(offset)
+        end = int(offset) + int(rows)
+        for gen in sorted(spans, key=lambda g: int(g.offset if g.offset is not None else -1)):
+            if gen.offset is None or gen.rows is None or gen.end is None:
+                continue
+            if gen.offset <= pos < gen.end:
+                selected.append(gen)
+                pos = gen.end
+                if pos >= end:
+                    break
+        if pos < end:
+            raise PublicationError(f"layer {consumer_layer} attempted to consume unpublished/incomplete {key!r} span {offset}:{end}")
+        if len(selected) == 1 and selected[0].offset == offset and selected[0].rows == rows:
+            return selected[0].value
+        return _concat_row_values([gen.value for gen in selected], key=key)
 
     def to_json(self) -> dict[str, object]:
         return {
-            "pending_by_layer": {str(layer): {k: v.to_json() for k, v in gens.items()} for layer, gens in self.pending_by_layer.items()},
-            "transaction_visible": {k: v.to_json() for k, v in self.transaction_visible.items()},
-            "committed_visible": {k: v.to_json() for k, v in self.committed_visible.items()},
+            "pending_cumulative_by_layer": {str(layer): {k: v.to_json() for k, v in gens.items()} for layer, gens in self.pending_cumulative_by_layer.items()},
+            "pending_spans_by_layer": {str(layer): {k: [v.to_json() for v in spans] for k, spans in gens.items()} for layer, gens in self.pending_spans_by_layer.items()},
+            "visible_cumulative": {k: v.to_json() for k, v in self.visible_cumulative.items()},
+            "visible_spans": {k: [v.to_json() for v in spans] for k, spans in self.visible_spans.items()},
+            "committed_cumulative": {k: v.to_json() for k, v in self.committed_cumulative.items()},
+            "committed_spans": {k: [v.to_json() for v in spans] for k, spans in self.committed_spans.items()},
             "failed": self.failed,
         }
+
+
+def _concat_row_values(values: list[Any], *, key: str) -> Any:
+    if not values:
+        raise PublicationError(f"cannot concatenate empty row-span values for {key}")
+    first = values[0]
+    concat = getattr(first, "concat_rows", None)
+    if concat is not None:
+        return concat(values)
+    try:
+        import mlx.core as mx  # type: ignore
+        return mx.concatenate(values, axis=1)
+    except Exception as exc:
+        if all(isinstance(v, list) for v in values):
+            out: list[Any] = []
+            for v in values:
+                out.extend(v)
+            return out
+        raise PublicationError(f"cannot concatenate row-span values for {key}; provide MLX tensors or concat_rows") from exc
