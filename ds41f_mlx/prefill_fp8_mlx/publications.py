@@ -15,7 +15,7 @@ from typing import Any
 from ds41f_mlx.prefill_fp8_mlx.arena import RequestArena
 from ds41f_mlx.prefill_fp8_mlx.planner import SweepCommand, SweepCommandKind
 
-V41_PUBLISHES_BY_LAYER: dict[int, tuple[str, ...]] = {
+EXPECTED_V41_PUBLISHES_BY_LAYER: dict[int, tuple[str, ...]] = {
     1: ("engram",),
     2: ("kv", "index_k", "idx"),
     8: ("kv", "index_k", "idx"),
@@ -76,6 +76,54 @@ class SourceGeneration:
         }
 
 
+@dataclass(frozen=True)
+class PublicationTopology:
+    publishes_by_layer: dict[int, tuple[str, ...]]
+    consumes_by_layer: dict[int, tuple[str, ...]]
+
+    @classmethod
+    def from_model_config(cls, config: Any) -> "PublicationTopology":
+        publishes: dict[int, set[str]] = {}
+        for layer in tuple(int(x) for x in getattr(config, "engram_layer_ids")):
+            publishes.setdefault(layer, set()).add("engram")
+        for layer in tuple(int(x) for x in getattr(config, "kv_source_layers")):
+            publishes.setdefault(layer, set()).update(("kv", "index_k", "idx"))
+        for layer in tuple(int(x) for x in getattr(config, "index_source_layers")):
+            publishes.setdefault(layer, set()).update(("index_k", "idx"))
+        cand = int(getattr(config, "candidate_source_layer"))
+        if cand >= 0:
+            publishes.setdefault(cand, set()).add("candidates")
+        normalized = {k: tuple(x for x in ("engram", "kv", "index_k", "idx", "candidates") if x in v) for k, v in publishes.items()}
+        if normalized != EXPECTED_V41_PUBLISHES_BY_LAYER:
+            raise PublicationError(f"model-derived publication topology mismatch: {normalized}")
+        consumes: dict[int, tuple[str, ...]] = {}
+        compress = getattr(config, "compress_ratios")
+        kv_sources = set(int(x) for x in getattr(config, "kv_source_layers"))
+        for layer in range(40):
+            try:
+                ratio = int(compress[layer])
+            except Exception:
+                ratio = int(compress.get(layer, 0)) if hasattr(compress, "get") else 0
+            req: list[str] = []
+            if ratio and layer not in kv_sources:
+                req.extend(["kv", "idx"])
+            if cand >= 0 and layer > cand:
+                req.append("candidates")
+            consumes[layer] = tuple(req)
+        return cls({k: tuple(v) for k, v in normalized.items()}, consumes)
+
+    @classmethod
+    def v41_expected(cls) -> "PublicationTopology":
+        cfg = type("Cfg", (), {
+            "engram_layer_ids": (1, 14),
+            "kv_source_layers": (2, 8, 14, 20),
+            "index_source_layers": (24, 28, 32, 36),
+            "candidate_source_layer": 20,
+            "compress_ratios": {i: (4 if i >= 2 else 0) for i in range(40)},
+        })()
+        return cls.from_model_config(cfg)
+
+
 @dataclass
 class PublicationManager:
     """DwarfStar source/consumer visibility controller.
@@ -87,6 +135,7 @@ class PublicationManager:
     """
 
     arena: RequestArena
+    topology: PublicationTopology = field(default_factory=PublicationTopology.v41_expected)
     pending_cumulative_by_layer: dict[int, dict[str, SourceGeneration]] = field(default_factory=dict)
     pending_spans_by_layer: dict[int, dict[str, list[SourceGeneration]]] = field(default_factory=dict)
     visible_cumulative: dict[str, SourceGeneration] = field(default_factory=dict)
@@ -120,7 +169,7 @@ class PublicationManager:
         return self.shared_for_span(layer, 0, 0)
 
     def capture_layer_outputs(self, layer: int, shared_after: dict[str, Any], *, command_index: int, offset: int = 0, rows: int = 0) -> None:
-        keys = V41_PUBLISHES_BY_LAYER.get(int(layer), ())
+        keys = self.topology.publishes_by_layer.get(int(layer), ())
         if not keys:
             return
         for key in keys:

@@ -10,9 +10,12 @@ from ds41f_mlx.native_prefill import compile_native_prefill_library, load_native
 from ds41f_mlx.prefill_fp8_mlx import (
     FORBIDDEN_HOT_PATH_MODULES,
     DwarfStarFP8MLXPrefillExecutorSetup,
+    LivePrefillContinuation,
     OfficialFP8MLXBlockRunner,
     PublicationError,
     PublicationManager,
+    PublicationTopology,
+    PrefillSetupError,
     RequestArena,
     ResumeUnavailableError,
     SemanticBoundary,
@@ -284,6 +287,34 @@ class PrefillFP8MLXP1P2Tests(unittest.TestCase):
         self.assertEqual(lm.layers[0].calls[0][0], 100)
         self.assertEqual(lm.layers[0].calls[1][0], 4196)
 
+    def test_decoder_prepare_has_effect_and_suffix_cone_is_exact(self):
+        plan = self.planner.build_static(ctx=32768, remaining=8192)
+        arena = RequestArena.from_plan(plan, token_ids=[0, 3], h_current=FakeTensor("h", rows=8192), h_next=FakeTensor("n", rows=8192), pre=FakeTensor("p", rows=8192))
+        manager = PublicationManager(arena)
+        lm = FakeLanguageModel()
+        runner = OfficialFP8MLXBlockRunner(lm, manager)
+        runner.execute_command(plan.commands_by_kind(SweepCommandKind.BEGIN_INVALIDATE)[0], arena)
+        arena.encoder_final_source_state = "full_encoder_final"
+        layer20_prepare = [c for c in plan.commands_by_kind(SweepCommandKind.DECODER_PREPARE_SUFFIX) if c.layer == 20][0]
+        runner.execute_command(layer20_prepare, arena)
+        self.assertIn(20, arena.decoder_prepared_by_layer)
+        enc20s = [c for c in plan.encode_commands if c.layer == 20]
+        enc20 = enc20s[0]
+        self.assertEqual(sum(c.rows for c in enc20s), 1 + (39 - 20) * 127)
+        runner.execute_command(enc20, arena)
+        self.assertIs(lm.layers[20].shared_seen[-1].get("__full_encoder_final_source_state__"), arena.encoder_final_source_state)
+        for layer in range(21, 40):
+            encs = [c for c in plan.encode_commands if c.layer == layer]
+            self.assertEqual(sum(c.rows for c in encs), 1 + (39 - layer) * 127)
+
+    def test_suffix_encode_without_prepare_fails(self):
+        plan = self.planner.build_static(ctx=32768, remaining=8192)
+        arena = RequestArena.from_plan(plan, token_ids=[0, 3], h_current=FakeTensor("h", rows=8192), h_next=FakeTensor("n", rows=8192), pre=FakeTensor("p", rows=8192))
+        runner = OfficialFP8MLXBlockRunner(FakeLanguageModel(), PublicationManager(arena))
+        runner.execute_command(plan.commands_by_kind(SweepCommandKind.BEGIN_INVALIDATE)[0], arena)
+        with self.assertRaises(Exception):
+            runner.execute_command([c for c in plan.encode_commands if c.layer == 20][0], arena)
+
     def test_working_cache_frontier_and_engram_history_progress(self):
         plan = self.planner.build_static(ctx=32768, remaining=2048)
         arena = RequestArena.from_plan(plan, token_ids=[0, 3], h_current=FakeTensor("h", rows=2048), h_next=FakeTensor("n", rows=2048), pre=FakeTensor("p", rows=2048), engram_history="history", base_frontier=7)
@@ -311,13 +342,36 @@ class PrefillFP8MLXP1P2Tests(unittest.TestCase):
         with self.assertRaises(Exception):
             runner.execute_command([c for c in plan.encode_commands if c.layer == 0][0], bad)
 
-    def test_executor_setup_owns_base_frontier_cache_and_components(self):
+    def test_executor_setup_rejects_bad_frontier_and_token_count(self):
         plan = self.planner.build_static(ctx=32768, remaining=2048)
-        setup = DwarfStarFP8MLXPrefillExecutorSetup(FakeLanguageModel()).prepare(plan, [0, 3], base_frontier=55)
-        self.assertEqual(setup.arena.base_frontier, 55)
-        self.assertIs(setup.block_runner.working_cache[0][6], None)
-        self.assertIs(setup.block_runner.publication_manager, setup.publication_manager)
-        self.assertIs(setup.publication_manager.arena, setup.arena)
+        with self.assertRaises(PrefillSetupError):
+            DwarfStarFP8MLXPrefillExecutorSetup(FakeLanguageModel(), mx=FakeMx()).prepare(plan, [0, 3], base_frontier=55)
+        with self.assertRaises(PrefillSetupError):
+            DwarfStarFP8MLXPrefillExecutorSetup(FakeLanguageModel(), mx=FakeMx()).prepare(plan, [0, 3])
+
+    def test_live_continuation_derives_frontier_reuses_cache_and_hash_history(self):
+        plan = self.planner.build_static(ctx=32768, remaining=2048)
+        lm = FakeLanguageModel()
+        live = full_ready_cache(frontier=77)
+        live[0][6] = "prior_history"
+        setup = DwarfStarFP8MLXPrefillExecutorSetup(lm, mx=FakeMx()).prepare(plan, list(range(2048)), continuation=live)
+        self.assertEqual(setup.arena.base_frontier, 77)
+        self.assertIs(setup.block_runner.working_cache, live)
+        self.assertEqual(lm.hasher_calls[-1], "prior_history")
+        self.assertEqual(setup.block_runner.working_cache[0][6], "history_after_prior_history")
+        with self.assertRaises(PrefillSetupError):
+            DwarfStarFP8MLXPrefillExecutorSetup(FakeLanguageModel(), mx=FakeMx()).prepare(plan, list(range(2048)), continuation=live, base_frontier=78)
+        divergent = full_ready_cache(frontier=77)
+        divergent[3][0] = 76
+        with self.assertRaises(PrefillSetupError):
+            LivePrefillContinuation.from_cache(divergent)
+
+    def test_model_derived_publication_topology_and_mismatch(self):
+        topo = PublicationTopology.from_model_config(FakeLanguageModel()._config)
+        self.assertEqual(topo.publishes_by_layer[20], ("kv", "index_k", "idx", "candidates"))
+        bad = SimpleNamespace(engram_layer_ids=(1, 14), kv_source_layers=(2,), index_source_layers=(), candidate_source_layer=-1, compress_ratios={})
+        with self.assertRaises(PublicationError):
+            PublicationTopology.from_model_config(bad)
 
     def test_no_independent_whole_model_layer_loop_or_intermediate_export(self):
         import inspect
@@ -333,6 +387,49 @@ class PrefillFP8MLXP1P2Tests(unittest.TestCase):
         loaded = [name for name in FORBIDDEN_HOT_PATH_MODULES if name in sys.modules]
         self.assertEqual(loaded, [])
         self.assertTrue(check_no_reference_hot_path().ok)
+
+
+class FakeMx:
+    int64 = "int64"
+    float32 = "float32"
+
+    def array(self, ids, dtype=None):
+        return FakeInput(ids)
+
+    def repeat(self, value, repeats, axis):
+        rows = value.shape[1] if hasattr(value, "shape") else len(value[0])
+        return FakeTensor("hc", rows=rows)
+
+    def zeros_like(self, value):
+        return FakeTensor("zeros", rows=value.shape[1])
+
+    def arange(self, n):
+        return FakeArray(list(range(n)))
+
+    def broadcast_to(self, value, shape):
+        return FakeTensor("pre", rows=shape[1] if len(shape) > 1 else 1)
+
+
+class FakeInput:
+    def __init__(self, ids):
+        self.ids = list(ids)
+        self.shape = (1, len(self.ids))
+
+    def __getitem__(self, item):
+        if item is None:
+            return self
+        return self.ids[item]
+
+    def __len__(self):
+        return len(self.ids)
+
+
+class FakeArray(list):
+    def astype(self, dtype):
+        return self
+
+    def __eq__(self, other):
+        return FakeArray([x == other for x in self])
 
 
 class FakeTensor:
@@ -401,12 +498,14 @@ class FakeCache:
 class FakeLayer:
     def __init__(self):
         self.calls = []
+        self.shared_seen = []
 
     def __call__(self, h, pre, cache, shared, start, image_mask):
         rows = 0
         if getattr(h, "last_slice", None) is not None:
             _offset, rows = h.last_slice
         self.calls.append((start, rows, start))
+        self.shared_seen.append(dict(shared))
         shared["kv"] = f"kv@{start}"
         shared["index_k"] = f"ik@{start}"
         shared["idx"] = FakeRowTensor(f"idx@{start}", start, rows)
@@ -417,7 +516,23 @@ class FakeLayer:
 class FakeLanguageModel:
     def __init__(self):
         self.layers = [FakeLayer() for _ in range(40)]
-        self._config = SimpleNamespace(engram_layer_ids=(1, 14), compress_ratios={}, kv_source_layers=(), candidate_source_layer=-1)
+        self._config = SimpleNamespace(
+            engram_layer_ids=(1, 14),
+            kv_source_layers=(2, 8, 14, 20),
+            index_source_layers=(24, 28, 32, 36),
+            candidate_source_layer=20,
+            compress_ratios={i: (4 if i >= 2 else 0) for i in range(40)},
+            hc_mult=4,
+        )
+        self.hasher_calls = []
+        self._hasher = self._hash
+
+    def embed(self, input_ids):
+        return FakeTensor("emb", rows=input_ids.shape[1] if hasattr(input_ids, "shape") else 8192)
+
+    def _hash(self, input_ids, prior_history, image_mask):
+        self.hasher_calls.append(prior_history)
+        return FakeTensor("hash", rows=8192), f"history_after_{prior_history}"
 
     def make_cache(self):
         return [FakeCache() for _ in range(40)]
@@ -425,12 +540,15 @@ class FakeLanguageModel:
     def empty_cache_slot(self, slot):
         return []
 
+    def cache_offset(self, value):
+        return int(value)
 
-def full_ready_cache():
+
+def full_ready_cache(frontier=0):
     caches = [FakeCache() for _ in range(40)]
     for cache in caches:
         for i in range(7):
-            cache[i] = 0 if i == 0 else []
+            cache[i] = frontier if i == 0 else []
     return caches
 
 

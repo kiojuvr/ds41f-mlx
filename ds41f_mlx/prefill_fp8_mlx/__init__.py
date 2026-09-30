@@ -29,7 +29,9 @@ from ds41f_mlx.prefill_fp8_mlx.block_runner import (
 )
 from ds41f_mlx.prefill_fp8_mlx.executor import (
     DwarfStarFP8MLXPrefillExecutorSetup,
+    LivePrefillContinuation,
     PrefillExecutionSetup,
+    PrefillSetupError,
 )
 from ds41f_mlx.prefill_fp8_mlx.guards import (
     FORBIDDEN_HOT_PATH_MODULES,
@@ -56,6 +58,7 @@ from ds41f_mlx.prefill_fp8_mlx.planner import (
 from ds41f_mlx.prefill_fp8_mlx.publications import (
     PublicationError,
     PublicationManager,
+    PublicationTopology,
     SourceGeneration,
 )
 from ds41f_mlx.prefill_fp8_mlx.telemetry import (
@@ -76,14 +79,17 @@ __all__ = [
     "EngramState",
     "FORBIDDEN_HOT_PATH_MODULES",
     "GuardReport",
+    "LivePrefillContinuation",
     "MlxEvaluationPolicy",
     "OfficialFP8MLXBlockRunner",
     "PrefillExecutionSetup",
+    "PrefillSetupError",
     "PrefillStructuralTelemetry",
     "PublicationError",
     "PublicationEvent",
     "PublicationManager",
     "PublicationState",
+    "PublicationTopology",
     "REFERENCE_VERTICAL_SLICE_CLASSIFICATION",
     "RequestArena",
     "ResumeUnavailableError",

@@ -14,7 +14,7 @@ import importlib
 
 from ds41f_mlx.prefill_fp8_mlx.arena import RequestArena
 from ds41f_mlx.prefill_fp8_mlx.guards import assert_no_reference_hot_path
-from ds41f_mlx.prefill_fp8_mlx.planner import SweepCommand, SweepCommandKind
+from ds41f_mlx.prefill_fp8_mlx.planner import SweepCommand, SweepCommandKind, SweepPhase
 from ds41f_mlx.prefill_fp8_mlx.publications import PublicationManager
 
 
@@ -137,6 +137,7 @@ class OfficialFP8MLXBlockRunner:
         if command.layer is None:
             raise BlockExecutionError("encode_rows command requires a layer")
         arena.apply_command(command)
+        arena.require_decoder_prepared(command)
         lm = self.language_model
         layer_id = int(command.layer)
         layer = lm.layers[layer_id]
@@ -145,6 +146,8 @@ class OfficialFP8MLXBlockRunner:
         h_chunk = _slice_rows(arena.carry.current.value, command.offset, command.rows, role=arena.carry.current.role)
         pre_chunk = _slice_rows(arena.carry.pre.value, command.offset, command.rows, role=arena.carry.pre.role)
         shared = self.publication_manager.shared_for_span(layer_id, command.offset, command.rows, require_keys=self._required_publication_keys(layer_id))
+        if command.phase is SweepPhase.DECODER_SUFFIX and layer_id == 20 and arena.encoder_final_source_state is not None:
+            shared["__full_encoder_final_source_state__"] = arena.encoder_final_source_state
         cache = self._cache_for_layer(layer_id)
         invoked_engram = False
         if _layer_has_engram(layer):
@@ -164,22 +167,7 @@ class OfficialFP8MLXBlockRunner:
         return h_out
 
     def _required_publication_keys(self, layer: int) -> tuple[str, ...]:
-        cfg = getattr(self.language_model, "_config", None)
-        if cfg is None:
-            return ()
-        compress = getattr(cfg, "compress_ratios", {})
-        try:
-            ratio = int(compress[layer])
-        except Exception:
-            ratio = int(compress.get(layer, 0)) if hasattr(compress, "get") else 0
-        required: list[str] = []
-        kv_sources = set(int(x) for x in getattr(cfg, "kv_source_layers", ()))
-        if ratio and layer not in kv_sources:
-            required.extend(["kv", "idx"])
-        candidate_source = int(getattr(cfg, "candidate_source_layer", -1))
-        if candidate_source >= 0 and layer > candidate_source:
-            required.append("candidates")
-        return tuple(required)
+        return self.publication_manager.topology.consumes_by_layer.get(int(layer), ())
 
     def _cache_for_layer(self, layer: int) -> Any:
         if self.working_cache is None:
@@ -193,7 +181,7 @@ class OfficialFP8MLXBlockRunner:
     def _advance_cache_layer(self, cache: Any, absolute_end: int, *, arena: RequestArena, layer: int) -> None:
         if cache is None:
             return
-        _set_cache_slot(cache, 0, _make_cache_offset(absolute_end))
+        _set_cache_slot(cache, 0, _make_cache_offset(absolute_end, self.language_model))
         if layer == 0 and arena.engram.history.value is not None:
             _set_cache_slot(cache, 6, arena.engram.history.value)
         self._fill_empty_slots(cache, layer)
@@ -321,12 +309,18 @@ def _set_cache_slot(cache: Any, slot: int, value: Any) -> None:
     cache.cache[slot] = value
 
 
-def _make_cache_offset(value: int) -> Any:
+def _make_cache_offset(value: int, language_model: Any) -> Any:
+    factory = getattr(language_model, "cache_offset", None)
+    if factory is not None:
+        return factory(int(value))
     try:
         mx = importlib.import_module("mlx.core")
+    except Exception as exc:
+        raise BlockExecutionError("production cache offset construction requires mlx.core") from exc
+    try:
         return mx.array([int(value)], mx.int32)
-    except Exception:
-        return int(value)
+    except Exception as exc:
+        raise BlockExecutionError("failed to construct MLX cache offset") from exc
 
 
 def _empty_cache_slot(language_model: Any, slot: int) -> Any:
@@ -349,5 +343,5 @@ def _empty_cache_slot(language_model: Any, slot: int) -> Any:
                 return pack_activation(empty, 4, 16, True)
             return pack_activation(empty, 4)
         return empty
-    except Exception:
-        return [] if slot != 6 else []
+    except Exception as exc:
+        raise BlockExecutionError(f"failed to construct packed empty cache slot {slot}") from exc
