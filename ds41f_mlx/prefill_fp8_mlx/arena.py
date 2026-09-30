@@ -263,7 +263,8 @@ class RequestArena:
     transaction: TransactionState = field(default_factory=TransactionState)
     suffix_views: list[ArenaView] = field(default_factory=list)
     decoder_prepared_by_layer: dict[int, ArenaView] = field(default_factory=dict)
-    encoder_final_source_state: Any = None
+    encoder_final_h: Any = None
+    encoder_final_pre: Any = None
     active_chunk_views: list[ArenaView] = field(default_factory=list)
     retired_chunk_view_count: int = 0
     command_history: list[dict[str, object]] = field(default_factory=list)
@@ -345,7 +346,8 @@ class RequestArena:
             self.prepare_decoder_suffix(command)
         elif command.kind is SweepCommandKind.SWAP_HC_AFTER_LAYER:
             if command.layer == 19:
-                self.encoder_final_source_state = self.carry.next.value
+                self.encoder_final_h = self.carry.next.value
+                self.encoder_final_pre = self.carry.pre.value
             self.carry.swap()
         elif command.kind is SweepCommandKind.PUBLISH_FRONTIER:
             if command.layer is None:
@@ -381,7 +383,8 @@ class RequestArena:
             "compressor_pending": self.compressor_pending.to_json(),
             "suffix_views": [view.to_json() for view in self.suffix_views],
             "decoder_prepared_by_layer": {str(k): v.to_json() for k, v in self.decoder_prepared_by_layer.items()},
-            "encoder_final_source_state_bound": self.encoder_final_source_state is not None,
+            "encoder_final_h_bound": self.encoder_final_h is not None,
+            "encoder_final_pre_bound": self.encoder_final_pre is not None,
             "active_chunk_views": [view.to_json() for view in self.active_chunk_views],
             "retired_chunk_view_count": self.retired_chunk_view_count,
             "allocation_roles": sorted(self.allocations),
@@ -396,13 +399,18 @@ class RequestArena:
             raise ArenaTransactionError("decoder suffix prepare requires a layer")
         if not self._allocation_survives_deferred("decoder_suffix_rows"):
             raise ArenaTransactionError("decoder suffix allocation is not available/survivable")
-        # DwarfStar ds4.c ds41_decoder_prepare warms decoder local-window state
-        # from carry rows before suffix query execution.  The planner supplies
-        # the exact dependency cone: needed(layer)=1+(39-layer)*127 and an
-        # optional preceding 127-row local-window prepare command.
-        view = ArenaView("decoder_suffix", self.carry.current.role, command.offset, command.rows, command.index, command.layer)
+        role = self.decoder_prepare_role(command)
+        view = ArenaView(role, self.carry.current.role, command.offset, command.rows, command.index, command.layer)
         self.suffix_views.append(view)
-        self.decoder_prepared_by_layer[int(command.layer)] = view
+        if role == "decoder_local_window_prepare":
+            self.decoder_prepared_by_layer[int(command.layer)] = view
+
+    def decoder_prepare_role(self, command: SweepCommand) -> str:
+        if command.layer == 20 and command.offset == 0 and command.rows == self.plan.count:
+            return "decoder_full_source_publish"
+        if command.rows == 127:
+            return "decoder_local_window_prepare"
+        raise ArenaTransactionError(f"invalid decoder_prepare_suffix shape layer={command.layer} offset={command.offset} rows={command.rows}")
 
     def require_decoder_prepared(self, command: SweepCommand) -> None:
         if command.phase is not SweepPhase.DECODER_SUFFIX or command.layer is None:
@@ -410,8 +418,9 @@ class RequestArena:
         view = self.decoder_prepared_by_layer.get(int(command.layer))
         if view is None:
             raise ArenaTransactionError(f"decoder suffix layer {command.layer} executed without prepare")
-        if not (view.offset <= command.offset and command.offset + command.rows <= view.offset + view.rows + 127):
-            raise ArenaTransactionError(f"decoder suffix layer {command.layer} rows {command.offset}:{command.offset + command.rows} not covered by prepare")
+        first_query = view.offset + view.rows
+        if command.offset < first_query:
+            raise ArenaTransactionError(f"decoder suffix layer {command.layer} rows {command.offset}:{command.offset + command.rows} precede prepared query cone {first_query}")
 
     def _allocation_survives_deferred(self, role: str) -> bool:
         state = self.allocations.get(role)

@@ -40,6 +40,10 @@ from ds41f_mlx.prefill_fp8_mlx.guards import (
     assert_no_reference_hot_path,
     check_no_reference_hot_path,
 )
+from ds41f_mlx.prefill_fp8_mlx.omlx_suffix_math import (
+    OmlxV41SuffixMath,
+    SuffixMathError,
+)
 from ds41f_mlx.prefill_fp8_mlx.planner import (
     ResumeUnavailableError,
     SemanticBoundary,
@@ -82,6 +86,7 @@ __all__ = [
     "LivePrefillContinuation",
     "MlxEvaluationPolicy",
     "OfficialFP8MLXBlockRunner",
+    "OmlxV41SuffixMath",
     "PrefillExecutionSetup",
     "PrefillSetupError",
     "PrefillStructuralTelemetry",
@@ -96,6 +101,7 @@ __all__ = [
     "SemanticBoundary",
     "ServingLogitsPolicy",
     "SourceGeneration",
+    "SuffixMathError",
     "SweepAllocation",
     "SweepCommand",
     "SweepCommandKind",

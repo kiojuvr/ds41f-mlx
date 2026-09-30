@@ -14,6 +14,7 @@ import importlib
 
 from ds41f_mlx.prefill_fp8_mlx.arena import RequestArena
 from ds41f_mlx.prefill_fp8_mlx.guards import assert_no_reference_hot_path
+from ds41f_mlx.prefill_fp8_mlx.omlx_suffix_math import OmlxV41SuffixMath
 from ds41f_mlx.prefill_fp8_mlx.planner import SweepCommand, SweepCommandKind, SweepPhase
 from ds41f_mlx.prefill_fp8_mlx.publications import PublicationManager
 
@@ -89,11 +90,16 @@ class OfficialFP8MLXBlockRunner:
     eval_policy: MlxEvaluationPolicy = field(default_factory=MlxEvaluationPolicy)
     image_mask: Any = None
     working_cache: list[Any] | None = None
+    suffix_math: OmlxV41SuffixMath | None = None
     records: list[CommandExecutionRecord] = field(default_factory=list)
     final_logits_suppressed: bool = False
     final_logits: Any = None
     prefill_continuation_exported: bool = False
     full_cache_repack_count: int = 0
+
+    def __post_init__(self) -> None:
+        if self.suffix_math is None:
+            self.suffix_math = OmlxV41SuffixMath(self.language_model)
 
     def execute_batch(self, commands: Iterable[SweepCommand], arena: RequestArena) -> None:
         assert_no_reference_hot_path()
@@ -155,8 +161,6 @@ class OfficialFP8MLXBlockRunner:
         pre_chunk = _slice_rows(arena.carry.pre.value, command.offset, command.rows, role=arena.carry.pre.role)
         shared = self.publication_manager.shared_for_span(layer_id, command.offset, command.rows, require_keys=self._required_publication_keys(layer_id))
         cache = self._cache_for_layer(layer_id)
-        if command.phase is SweepPhase.DECODER_SUFFIX and layer_id == 20:
-            self._publish_full_encoder_source(layer, cache, shared, arena, command, record)
         invoked_engram = False
         if _layer_has_engram(layer):
             hashes = _slice_engram_hashes(arena.engram.hashes.value, command.offset, command.rows, layer_id, lm)
@@ -165,11 +169,15 @@ class OfficialFP8MLXBlockRunner:
                 invoked_engram = True
         if not callable(layer):
             raise BlockExecutionError(f"layer {command.layer} is not callable")
-        h_out, pre_out = layer(h_chunk, pre_chunk, cache, shared, absolute_start, self.image_mask)
+        if command.phase is SweepPhase.DECODER_SUFFIX:
+            h_out, pre_out = self.suffix_math.execute_suffix_query(layer_id=layer_id, h_chunk=h_chunk, pre_chunk=pre_chunk, cache=cache, shared=shared, absolute_start=absolute_start, image_mask=self.image_mask)
+        else:
+            h_out, pre_out = layer(h_chunk, pre_chunk, cache, shared, absolute_start, self.image_mask)
         arena.carry.next.value = _write_rows(arena.carry.next.value, command.offset, command.rows, h_out, role=arena.carry.next.role)
         arena.carry.pre.value = _write_rows(arena.carry.pre.value, command.offset, command.rows, pre_out, role=arena.carry.pre.role)
         self._advance_cache_layer(cache, absolute_start + command.rows, arena=arena, layer=layer_id)
-        self.publication_manager.capture_layer_outputs(layer_id, shared, command_index=command.index, offset=command.offset, rows=command.rows)
+        capture_keys = ("idx", "candidates") if command.phase is SweepPhase.DECODER_SUFFIX and layer_id == 20 else None
+        self.publication_manager.capture_layer_outputs(layer_id, shared, command_index=command.index, offset=command.offset, rows=command.rows, keys=capture_keys)
         record.invoked_block = True
         record.invoked_engram = invoked_engram
         return h_out
@@ -180,30 +188,23 @@ class OfficialFP8MLXBlockRunner:
     def _prepare_decoder_local_window(self, command: SweepCommand, arena: RequestArena, record: CommandExecutionRecord) -> None:
         if command.layer is None:
             raise BlockExecutionError("decoder_prepare_suffix requires a layer")
-        layer = self.language_model.layers[int(command.layer)]
+        role = arena.decoder_prepare_role(command)
         cache = self._cache_for_layer(int(command.layer))
+        absolute_start = int(arena.base_frontier) + int(command.offset)
+        record.absolute_start = absolute_start
+        if role == "decoder_full_source_publish":
+            if arena.encoder_final_h is None or arena.encoder_final_pre is None:
+                raise BlockExecutionError("layer20 full-source publication requires immutable encoder-final h/pre")
+            shared = self.publication_manager.shared_for_span(int(command.layer), 0, command.rows)
+            self.suffix_math.publish_full_source(layer_id=int(command.layer), h_full=arena.encoder_final_h, pre_full=arena.encoder_final_pre, cache=cache, shared=shared, absolute_start=int(arena.base_frontier), rows=arena.plan.count)
+            self.publication_manager.capture_layer_outputs(int(command.layer), shared, command_index=command.index, offset=0, rows=arena.plan.count, keys=("kv", "index_k"))
+            self.publication_manager.expose_cumulative_for_layer(int(command.layer), keys=("kv", "index_k"))
+            record.invoked_full_source_publish = True
+            return
         rows = _slice_rows(arena.carry.current.value, command.offset, command.rows, role=arena.carry.current.role)
         pre = _slice_rows(arena.carry.pre.value, command.offset, command.rows, role=arena.carry.pre.role)
-        absolute_start = int(arena.base_frontier) + int(command.offset)
-        hook = getattr(layer, "prepare_decoder_local_window", None)
-        if hook is None:
-            hook = getattr(getattr(layer, "attn", None), "prepare_decoder_local_window", None)
-        if hook is None:
-            raise BlockExecutionError("decoder suffix local-window preparation requires an official/oMLX prepare hook")
-        hook(rows, pre, cache, absolute_start, command.rows)
-        record.absolute_start = absolute_start
+        self.suffix_math.prepare_local_window(layer_id=int(command.layer), h_rows=rows, pre_rows=pre, cache=cache, absolute_start=absolute_start, rows=command.rows)
         record.invoked_decoder_prepare = True
-
-    def _publish_full_encoder_source(self, layer: Any, cache: Any, shared: dict[str, Any], arena: RequestArena, command: SweepCommand, record: CommandExecutionRecord) -> None:
-        if arena.encoder_final_source_state is None:
-            raise BlockExecutionError("layer20 decoder suffix requires full encoder-final source state")
-        hook = getattr(layer, "publish_full_encoder_source", None)
-        if hook is None:
-            hook = getattr(getattr(layer, "attn", None), "publish_full_encoder_source", None)
-        if hook is None:
-            raise BlockExecutionError("layer20 full-source global KV publication requires an official/oMLX source-publication hook")
-        hook(arena.encoder_final_source_state, arena.carry.pre.value, cache, shared, int(arena.base_frontier), int(arena.plan.count))
-        record.invoked_full_source_publish = True
 
     def _cache_for_layer(self, layer: int) -> Any:
         if self.working_cache is None:

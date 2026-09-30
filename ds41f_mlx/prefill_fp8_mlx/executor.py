@@ -26,16 +26,21 @@ class LivePrefillContinuation:
     """Live request-local cache authority for multi-sweep continuation."""
 
     live_cache: list[Any]
-    frontier: int
 
     @classmethod
     def from_cache(cls, live_cache: list[Any]) -> "LivePrefillContinuation":
-        if not live_cache or len(live_cache) != 40:
+        obj = cls(live_cache=live_cache)
+        _ = obj.frontier
+        return obj
+
+    @property
+    def frontier(self) -> int:
+        if not self.live_cache or len(self.live_cache) != 40:
             raise PrefillSetupError("live continuation requires 40 layer caches")
-        frontiers = tuple(_cache_frontier(c) for c in live_cache)
+        frontiers = tuple(_cache_frontier(c) for c in self.live_cache)
         if any(v != frontiers[0] for v in frontiers):
             raise PrefillSetupError(f"live continuation cache frontiers diverge: {frontiers[:8]}")
-        return cls(live_cache=live_cache, frontier=frontiers[0])
+        return frontiers[0]
 
 
 @dataclass

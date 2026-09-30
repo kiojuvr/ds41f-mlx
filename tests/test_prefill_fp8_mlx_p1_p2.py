@@ -294,16 +294,21 @@ class PrefillFP8MLXP1P2Tests(unittest.TestCase):
         lm = FakeLanguageModel()
         runner = OfficialFP8MLXBlockRunner(lm, manager)
         runner.execute_command(plan.commands_by_kind(SweepCommandKind.BEGIN_INVALIDATE)[0], arena)
-        arena.encoder_final_source_state = "full_encoder_final"
-        layer20_prepare = [c for c in plan.commands_by_kind(SweepCommandKind.DECODER_PREPARE_SUFFIX) if c.layer == 20][0]
-        runner.execute_command(layer20_prepare, arena)
+        arena.encoder_final_h = "full_encoder_final"
+        arena.encoder_final_pre = "encoder_final_pre"
+        prepares20 = [c for c in plan.commands_by_kind(SweepCommandKind.DECODER_PREPARE_SUFFIX) if c.layer == 20]
+        runner.execute_command(prepares20[0], arena)
+        self.assertEqual(len(lm.layers[20].full_source_publishes), 1)
+        runner.execute_command(prepares20[1], arena)
         self.assertIn(20, arena.decoder_prepared_by_layer)
         self.assertTrue(lm.layers[20].prepared_windows)
         enc20s = [c for c in plan.encode_commands if c.layer == 20]
-        enc20 = enc20s[0]
         self.assertEqual(sum(c.rows for c in enc20s), 1 + (39 - 20) * 127)
-        runner.execute_command(enc20, arena)
+        for enc20 in enc20s:
+            runner.execute_command(enc20, arena)
+        self.assertEqual(len(lm.layers[20].full_source_publishes), 1)
         self.assertEqual(lm.layers[20].full_source_publishes[-1][0], "full_encoder_final")
+        self.assertEqual(lm.layers[20].full_source_publishes[-1][1], "encoder_final_pre")
         self.assertEqual(lm.layers[20].shared_seen[-1].get("kv"), "full_source_kv")
         for layer in range(21, 40):
             encs = [c for c in plan.encode_commands if c.layer == layer]
@@ -363,6 +368,15 @@ class PrefillFP8MLXP1P2Tests(unittest.TestCase):
         self.assertEqual(setup.block_runner.working_cache[0][6], "history_after_prior_history")
         with self.assertRaises(PrefillSetupError):
             DwarfStarFP8MLXPrefillExecutorSetup(FakeLanguageModel(), mx=FakeMx()).prepare(plan, list(range(2048)), continuation=live, base_frontier=78)
+        cont = LivePrefillContinuation.from_cache(live)
+        for cache in live:
+            cache[0] = 99
+        setup2 = DwarfStarFP8MLXPrefillExecutorSetup(lm, mx=FakeMx()).prepare(plan, list(range(2048)), continuation=cont)
+        self.assertEqual(setup2.arena.base_frontier, 99)
+        for cache in live:
+            cache[0] = 123
+        setup3 = DwarfStarFP8MLXPrefillExecutorSetup(lm, mx=FakeMx()).prepare(plan, list(range(2048)), continuation=cont)
+        self.assertEqual(setup3.arena.base_frontier, 123)
         divergent = full_ready_cache(frontier=77)
         divergent[3][0] = 76
         with self.assertRaises(PrefillSetupError):
@@ -503,15 +517,7 @@ class FakeLayer:
         self.shared_seen = []
         self.prepared_windows = []
         self.full_source_publishes = []
-
-    def prepare_decoder_local_window(self, rows, pre, cache, absolute_start, count):
-        self.prepared_windows.append((absolute_start, count, rows))
-        cache[1] = f"prepared_window@{absolute_start}:{count}"
-
-    def publish_full_encoder_source(self, full_source, pre, cache, shared, absolute_start, count):
-        self.full_source_publishes.append((full_source, absolute_start, count))
-        shared["kv"] = "full_source_kv"
-        shared["index_k"] = "full_source_index_k"
+        self.attn = FakeAttention(self)
 
     def __call__(self, h, pre, cache, shared, start, image_mask):
         rows = 0
@@ -528,13 +534,28 @@ class FakeLayer:
         return h, pre
 
 
+class FakeAttention:
+    def __init__(self, parent):
+        self.parent = parent
+        self.query_full_source_calls = 0
+
+    def prepare_decoder_local_window_math(self, rows, pre, cache, absolute_start, count):
+        self.parent.prepared_windows.append((absolute_start, count, rows))
+        cache[1] = f"prepared_window@{absolute_start}:{count}"
+
+    def publish_full_encoder_source_math(self, full_source, pre, cache, shared, absolute_start, count):
+        self.parent.full_source_publishes.append((full_source, pre, absolute_start, count))
+        shared["kv"] = "full_source_kv"
+        shared["index_k"] = "full_source_index_k"
+
+
 class FakeLanguageModel:
     def __init__(self):
         self.layers = [FakeLayer() for _ in range(40)]
         self._config = SimpleNamespace(
             engram_layer_ids=(1, 14),
             kv_source_layers=(2, 8, 14, 20),
-            index_source_layers=(24, 28, 32, 36),
+            index_source_layers=(2, 8, 14, 20, 24, 28, 32, 36),
             candidate_source_layer=20,
             compress_ratios={i: (4 if i >= 2 else 0) for i in range(40)},
             hc_mult=4,

@@ -87,7 +87,7 @@ class PublicationTopology:
         for layer in tuple(int(x) for x in getattr(config, "engram_layer_ids")):
             publishes.setdefault(layer, set()).add("engram")
         for layer in tuple(int(x) for x in getattr(config, "kv_source_layers")):
-            publishes.setdefault(layer, set()).update(("kv", "index_k", "idx"))
+            publishes.setdefault(layer, set()).add("kv")
         for layer in tuple(int(x) for x in getattr(config, "index_source_layers")):
             publishes.setdefault(layer, set()).update(("index_k", "idx"))
         cand = int(getattr(config, "candidate_source_layer"))
@@ -117,7 +117,7 @@ class PublicationTopology:
         cfg = type("Cfg", (), {
             "engram_layer_ids": (1, 14),
             "kv_source_layers": (2, 8, 14, 20),
-            "index_source_layers": (24, 28, 32, 36),
+            "index_source_layers": (2, 8, 14, 20, 24, 28, 32, 36),
             "candidate_source_layer": 20,
             "compress_ratios": {i: (4 if i >= 2 else 0) for i in range(40)},
         })()
@@ -168,8 +168,8 @@ class PublicationManager:
     def shared_for_layer(self, layer: int) -> dict[str, Any]:
         return self.shared_for_span(layer, 0, 0)
 
-    def capture_layer_outputs(self, layer: int, shared_after: dict[str, Any], *, command_index: int, offset: int = 0, rows: int = 0) -> None:
-        keys = self.topology.publishes_by_layer.get(int(layer), ())
+    def capture_layer_outputs(self, layer: int, shared_after: dict[str, Any], *, command_index: int, offset: int = 0, rows: int = 0, keys: tuple[str, ...] | None = None) -> None:
+        keys = self.topology.publishes_by_layer.get(int(layer), ()) if keys is None else keys
         if not keys:
             return
         for key in keys:
@@ -180,6 +180,15 @@ class PublicationManager:
                 self.pending_cumulative_by_layer.setdefault(int(layer), {})[key] = gen
             else:
                 self.pending_cumulative_by_layer.setdefault(int(layer), {})[key] = gen
+
+    def expose_cumulative_for_layer(self, layer: int, *, keys: tuple[str, ...]) -> None:
+        bucket = self.pending_cumulative_by_layer.get(int(layer), {})
+        for key in keys:
+            gen = bucket.get(key)
+            if gen is not None:
+                published = gen.visible_copy(published=True, committed=False)
+                self.visible_cumulative[key] = published
+                self.arena.publications.shared[key] = published.value
 
     def publish_frontier(self, command: SweepCommand) -> None:
         if command.kind is not SweepCommandKind.PUBLISH_FRONTIER or command.layer is None:
