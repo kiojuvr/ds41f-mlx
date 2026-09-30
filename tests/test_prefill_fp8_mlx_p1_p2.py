@@ -298,11 +298,13 @@ class PrefillFP8MLXP1P2Tests(unittest.TestCase):
         layer20_prepare = [c for c in plan.commands_by_kind(SweepCommandKind.DECODER_PREPARE_SUFFIX) if c.layer == 20][0]
         runner.execute_command(layer20_prepare, arena)
         self.assertIn(20, arena.decoder_prepared_by_layer)
+        self.assertTrue(lm.layers[20].prepared_windows)
         enc20s = [c for c in plan.encode_commands if c.layer == 20]
         enc20 = enc20s[0]
         self.assertEqual(sum(c.rows for c in enc20s), 1 + (39 - 20) * 127)
         runner.execute_command(enc20, arena)
-        self.assertIs(lm.layers[20].shared_seen[-1].get("__full_encoder_final_source_state__"), arena.encoder_final_source_state)
+        self.assertEqual(lm.layers[20].full_source_publishes[-1][0], "full_encoder_final")
+        self.assertEqual(lm.layers[20].shared_seen[-1].get("kv"), "full_source_kv")
         for layer in range(21, 40):
             encs = [c for c in plan.encode_commands if c.layer == layer]
             self.assertEqual(sum(c.rows for c in encs), 1 + (39 - layer) * 127)
@@ -499,6 +501,17 @@ class FakeLayer:
     def __init__(self):
         self.calls = []
         self.shared_seen = []
+        self.prepared_windows = []
+        self.full_source_publishes = []
+
+    def prepare_decoder_local_window(self, rows, pre, cache, absolute_start, count):
+        self.prepared_windows.append((absolute_start, count, rows))
+        cache[1] = f"prepared_window@{absolute_start}:{count}"
+
+    def publish_full_encoder_source(self, full_source, pre, cache, shared, absolute_start, count):
+        self.full_source_publishes.append((full_source, absolute_start, count))
+        shared["kv"] = "full_source_kv"
+        shared["index_k"] = "full_source_index_k"
 
     def __call__(self, h, pre, cache, shared, start, image_mask):
         rows = 0
@@ -506,8 +519,10 @@ class FakeLayer:
             _offset, rows = h.last_slice
         self.calls.append((start, rows, start))
         self.shared_seen.append(dict(shared))
-        shared["kv"] = f"kv@{start}"
-        shared["index_k"] = f"ik@{start}"
+        if shared.get("kv") is None:
+            shared["kv"] = f"kv@{start}"
+        if shared.get("index_k") is None:
+            shared["index_k"] = f"ik@{start}"
         shared["idx"] = FakeRowTensor(f"idx@{start}", start, rows)
         shared["candidates"] = FakeRowTensor(f"cand@{start}", start, rows)
         return h, pre
