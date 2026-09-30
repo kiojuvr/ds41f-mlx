@@ -93,20 +93,17 @@ Deliverables:
 
 Success is not defined as merely exceeding the current `0.31 tok/s` reference baseline. The target is practical local operation comparable to known oMLX-class behavior.
 
-## Milestone 5 — Unified production runtime qualification
+## Milestone 5 — Practical production decode substrate
 
-Verify the unified runtime for:
+Active frontier: promote the already-proven no-replay oMLX `BatchGenerator` / `GenerationBatch` substrate into the runtime path under the M4 backend-local correctness policy.
 
-- prefill to first decode;
-- continuation;
-- reset;
-- fork;
-- long-lived session state;
-- Engram;
-- long context;
-- memory behavior.
+Implemented seam: `ds41f_mlx/runtime/omlx_generation.py` adds `OMLXGenerationSession`, distinct from diagnostic `OMLXDecodeSession.decode_one()`.  It admits a real DwarfStar-derived `PrefillContinuationState` through `OMLXDecodeStateAdapter`, hands the request-local `DeepseekV41Cache` to `BatchGenerator.insert(prompts=[[first_input]], caches=[...], all_tokens=[prefix])`, bootstraps `GenerationBatch`, and keeps MTP/DSpark OFF.
 
-The historical native/reference implementation may be used as bounded evidence or oracle where appropriate, but it must not dictate execution topology. Qualification must be recorded as implementation-scoped.
+Status: **qualified**. See `docs/milestone-5-practical-base-decode-status.md`.
+
+Qualification artifact: `artifacts/m5/practical-omlx-base-decode/result.json` records provenance, no-replay evidence, bounded generated tokens, determinism, frontier/cache/Engram progression, cancel behavior, and the `>=15 tok/s` practical decode gate.
+
+Deferred from this base decode qualification: MTP/DSpark, long-session robustness, KV restore, HTTP/API serving, and live GenerationBatch fork/reset.  Reset/fork seams remain creation/forking before scheduler start rather than cloning a live scheduler state.
 
 ## Milestone 6 — Performance qualification
 
