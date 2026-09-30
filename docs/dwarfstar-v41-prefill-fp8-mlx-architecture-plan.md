@@ -17,7 +17,8 @@ Until the complete architecture package is connected end-to-end, performance obs
 3. official FP8/MLX block execution seam;
 4. publication/frontier ownership;
 5. live `DeepseekV41Cache` handoff to `OMLXGenerationSession`;
-6. no reference vertical-slice fallback.
+6. no reference vertical-slice fallback;
+7. the DwarfStar structural acceptance gate below is satisfied.
 
 ## Current-state analysis
 
@@ -79,7 +80,7 @@ OMLXGenerationSession.from_prefilled_cache(...)
 
 ### State authority
 
-`DeepseekV41Cache` is the only production decode handoff state.  The prefill package may maintain transient arena aliases, but by commit time every persistent item required for continuation must be in the live cache:
+`DeepseekV41Cache` is the only production decode handoff state.  The prefill package may maintain transient arena aliases during the sweep, and those aliases must not be forced into full cache materialization/repacking at intermediate sweep or chunk boundaries.  By final commit/handoff, every persistent item required for continuation must converge once into the live cache:
 
 - slot 0: layer frontier/offset;
 - slot 1: packed window KV;
@@ -126,9 +127,9 @@ The runner may introduce chunked row execution only where oMLX cache semantics c
 
 ### P3 — official FP8/MLX block runner
 
-- Lift the current loop from `DwarfStarMLXPrefillSession` into `OfficialFP8MLXBlockRunner`.
-- Replace sequential “for every whole layer over whole prefix” control with sweep-command-driven calls.
-- Preserve oMLX absolute-position semantics by passing correct `start` and cache slices for chunks.
+- Reuse the reviewed official oMLX/MLX mathematical operations and cache semantics from the current substrate.
+- Replace the current substrate's execution structure with DwarfStar sweep/lifetime topology; do not preserve or wrap a whole-prefix `for layer in layers` loop as production prefill.
+- Drive block/Engram/cache work from sweep commands and publication frontiers, passing correct absolute positions and cache/arena views for chunks.
 - Keep final logits optional/off by default for serving prefill.
 
 ### P4 — publication manager
@@ -155,12 +156,30 @@ The runner may introduce chunked row execution only where oMLX cache semantics c
 ### P7 — overlap and scheduling
 
 - Add Engram prefetch/read-ahead command handling using oMLX Engram prefetch hooks.
-- Add expert/weight residency scheduling hooks around layer commands.  These hooks may initially be no-ops but must be architecturally present before performance decisions.
-- Group `mx.eval`/`mx.async_eval` according to command batches rather than per validation layer.
+- Add expert/weight residency scheduling around layer commands.
+- A placeholder/no-op scheduling hook may exist during scaffolding, but it does not count toward architecture completion or performance-evaluation readiness.
+- Group `mx.eval`/`mx.async_eval` according to command batches and explicit materialization boundaries rather than per validation layer.
 
 ### P8 — graph/reuse optimization pass
 
-Only after P0-P7 are connected, evaluate whether to add MLX compile/custom-kernel graph reuse, command-buffer grouping, or native Metal kernels.  This phase may use performance to guide choices because the architecture package is then connected.
+Only after P0-P7 are connected and the DwarfStar structural acceptance gate passes, evaluate whether to add MLX compile/custom-kernel graph reuse, command-buffer grouping, or native Metal kernels.  This phase may use performance to guide choices because the architecture package is then structurally connected.
+
+## DwarfStar structural acceptance gate
+
+This gate prevents “P0-P7 connected” from being satisfied by wrapping the existing oMLX whole-prefix layer loop in DwarfStar-shaped abstractions.  Before any performance evaluation, all of the following must be true on the production prefill path:
+
+- The sweep planner actually owns execution order: command iteration, chunk offsets, layer phases, publication points, deferred-decoder transitions, and commit/rollback are driven from the DwarfStar sweep plan, not from an independent model loop.
+- The current whole-prefix `for layer in layers` execution structure is absent from production prefill.  A diagnostic or compatibility path may retain it, but it must not be the implementation selected by production serving or performance qualification.
+- Request carry (`h`, `pre`, suffix rows, compressor pending state, and publication state) follows the DwarfStar lifetime/alias model.  Carry may be viewed/sliced for chunk execution, but it must not be reconstructed from scratch or copied into validation-style per-layer records between chunks.
+- Deferred-decoder mode actually avoids retaining unnecessary full-prefix decoder intermediates.  When the sweep selects suffix/deferred execution, only required suffix rows and persistent continuation/publication state may survive.
+- Source/consumer publication frontiers drive execution and visibility.  They must determine when compressed KV, index K, candidates, top-k refreshes, and consumers are produced/visible; they are not merely telemetry metadata.
+- Engram prefetch, expert/weight residency, and read-ahead scheduling hooks perform their intended lifetime/scheduling role.  A no-op hook does not count as architecture-complete.
+- `mx.eval`, `mx.async_eval`, synchronization, and materialization occur only at explicitly defined DwarfStar command/materialization boundaries: setup, command batch, publication, deferred boundary, final handoff, or explicit diagnostics outside the hot path.
+- No CPU round-trip exists on the production hot path.  Tensor-to-NumPy/list/digest conversion is allowed only for explicitly gated diagnostics, not for production execution or qualification timing.
+- `DeepseekV41Cache` remains the final decode-handoff authority, but it must not force the in-flight DwarfStar arena into full cache materialization or repacking at intermediate sweep/chunk boundaries.
+- Final handoff converges once into a live request-local `DeepseekV41Cache` and enters `OMLXGenerationSession.from_prefilled_cache(...)` without prompt replay.
+
+Passing correctness smoke without this structural gate is not performance-evaluation readiness.
 
 ## Correctness and qualification gates
 
@@ -177,6 +196,7 @@ These checks must not classify performance success/failure.
 
 ### Promotion gates after package connection
 
+- DwarfStar structural acceptance gate passed.
 - Backend-local determinism for fixed model/build/input.
 - Structural parity with current live-cache prefill: cache slot shapes, offsets, compressor pending slots, Engram history, publication metadata.
 - No reference vertical-slice calls.
