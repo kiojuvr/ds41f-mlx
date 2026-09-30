@@ -106,7 +106,7 @@ class PublicationTopology:
                 ratio = int(compress.get(layer, 0)) if hasattr(compress, "get") else 0
             req: list[str] = []
             if ratio and layer not in kv_sources:
-                req.extend(["kv", "idx"])
+                req.extend(["kv", "index_k" if layer in config.index_source_layers else "idx"])
             if cand >= 0 and layer > cand:
                 req.append("candidates")
             consumes[layer] = tuple(req)
@@ -154,12 +154,12 @@ class PublicationManager:
     def shared_for_span(self, layer: int, offset: int, rows: int, *, require_keys: tuple[str, ...] = ()) -> dict[str, Any]:
         shared: dict[str, Any] = {key: gen.value for key, gen in self.visible_cumulative.items() if key in CUMULATIVE_KEYS}
         for key in ROW_SPAN_KEYS:
-            if key in require_keys or self.visible_spans.get(key):
+            if key in require_keys:
                 shared[key] = self._row_value_for_span(key, offset, rows, consumer_layer=layer)
             else:
                 shared[key] = None
         for key in CUMULATIVE_KEYS:
-            if key in require_keys and key not in shared:
+            if key in require_keys and shared.get(key) is None:
                 raise PublicationError(f"layer {layer} attempted to consume unpublished cumulative source {key!r}")
             shared.setdefault(key, None)
         shared.setdefault("topk", None)
@@ -181,14 +181,12 @@ class PublicationManager:
             else:
                 self.pending_cumulative_by_layer.setdefault(int(layer), {})[key] = gen
 
-    def expose_cumulative_for_layer(self, layer: int, *, keys: tuple[str, ...]) -> None:
-        bucket = self.pending_cumulative_by_layer.get(int(layer), {})
-        for key in keys:
-            gen = bucket.get(key)
-            if gen is not None:
-                published = gen.visible_copy(published=True, committed=False)
-                self.visible_cumulative[key] = published
-                self.arena.publications.shared[key] = published.value
+    def producer_shared_for_span(self, layer: int, offset: int, rows: int, *, require_keys: tuple[str, ...] = ()) -> dict[str, Any]:
+        """Only the executing producer may read its un-published cumulative state."""
+        shared = self.shared_for_span(layer, offset, rows, require_keys=require_keys)
+        for key, gen in self.pending_cumulative_by_layer.get(int(layer), {}).items():
+            shared[key] = gen.value
+        return shared
 
     def publish_frontier(self, command: SweepCommand) -> None:
         if command.kind is not SweepCommandKind.PUBLISH_FRONTIER or command.layer is None:
@@ -199,7 +197,8 @@ class PublicationManager:
             self.visible_cumulative[key] = published
             self.arena.publications.shared[key] = published.value
         for key, spans in self.pending_spans_by_layer.pop(layer, {}).items():
-            visible = self.visible_spans.setdefault(key, [])
+            # A refresh supersedes the prior producer, not just matching offsets.
+            visible = self.visible_spans[key] = []
             for gen in spans:
                 published = gen.visible_copy(published=True, committed=False)
                 visible.append(published)
@@ -211,7 +210,7 @@ class PublicationManager:
 
     def consume(self, key: str, *, layer: int) -> Any:
         if key in CUMULATIVE_KEYS:
-            if key not in self.visible_cumulative:
+            if key not in self.visible_cumulative or self.visible_cumulative[key].value is None:
                 raise PublicationError(f"layer {layer} attempted to consume unpublished cumulative source {key!r}")
             return self.visible_cumulative[key].value
         raise PublicationError(f"row-span source {key!r} requires consume_span")
@@ -265,7 +264,18 @@ class PublicationManager:
             raise PublicationError(f"layer {consumer_layer} attempted to consume unpublished/incomplete {key!r} span {offset}:{end}")
         if len(selected) == 1 and selected[0].offset == offset and selected[0].rows == rows:
             return selected[0].value
-        return _concat_row_values([gen.value for gen in selected], key=key)
+        values = []
+        for gen in selected:
+            left = max(offset, int(gen.offset)) - int(gen.offset)
+            right = min(end, int(gen.end)) - int(gen.offset)
+            if left == 0 and right == gen.rows:
+                values.append(gen.value)
+            else:
+                try:
+                    values.append(gen.value[:, left:right])
+                except Exception as exc:
+                    raise PublicationError(f"cannot slice {key} row span") from exc
+        return _concat_row_values(values, key=key)
 
     def to_json(self) -> dict[str, object]:
         return {

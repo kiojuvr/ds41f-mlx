@@ -23,7 +23,8 @@ Wide-prefill decoder path:
 - `RequestArena.prepare_decoder_suffix(...)` records a distinct prepare state, separate from query spans and source rows.
 - `RequestArena.require_decoder_prepared(...)` fails decoder-suffix query execution if prepare state is absent.
 - `OfficialFP8MLXBlockRunner` uses `absolute_start = arena.base_frontier + command.offset` for query execution.
-- Layer-20 suffix execution exposes the full encoder-final source state to the block runner path; this is a structural seam for official/oMLX source-publication math and is not a claim of numerical equivalence.
+- Layer20 full-source prepare produces producer-private cumulative KV/index K. Only the actual planner `PUBLISH_FRONTIER` makes it consumer-visible. Suffix queries use explicit adapter math, never ordinary Block fallback.
+- See [oMLX suffix math closeout](omlx-suffix-math-closeout.md) for the CED mathematical audit, stale-window correction, regression results, and bounded smoke status.
 - `PublicationTopology.from_model_config(...)` derives publication/consumer topology from official/oMLX config and validates it against expected V4.1 topology.
 
 This is still pre-P5/P6 architecture work. It does not claim full real-checkpoint numerical qualification or final decode handoff readiness.

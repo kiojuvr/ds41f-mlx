@@ -159,7 +159,8 @@ class OfficialFP8MLXBlockRunner:
         record.absolute_start = absolute_start
         h_chunk = _slice_rows(arena.carry.current.value, command.offset, command.rows, role=arena.carry.current.role)
         pre_chunk = _slice_rows(arena.carry.pre.value, command.offset, command.rows, role=arena.carry.pre.role)
-        shared = self.publication_manager.shared_for_span(layer_id, command.offset, command.rows, require_keys=self._required_publication_keys(layer_id))
+        shared_fn = self.publication_manager.producer_shared_for_span if command.phase is SweepPhase.DECODER_SUFFIX and layer_id == 20 else self.publication_manager.shared_for_span
+        shared = shared_fn(layer_id, command.offset, command.rows, require_keys=self._required_publication_keys(layer_id))
         cache = self._cache_for_layer(layer_id)
         invoked_engram = False
         if _layer_has_engram(layer):
@@ -198,7 +199,6 @@ class OfficialFP8MLXBlockRunner:
             shared = self.publication_manager.shared_for_span(int(command.layer), 0, command.rows)
             self.suffix_math.publish_full_source(layer_id=int(command.layer), h_full=arena.encoder_final_h, pre_full=arena.encoder_final_pre, cache=cache, shared=shared, absolute_start=int(arena.base_frontier), rows=arena.plan.count)
             self.publication_manager.capture_layer_outputs(int(command.layer), shared, command_index=command.index, offset=0, rows=arena.plan.count, keys=("kv", "index_k"))
-            self.publication_manager.expose_cumulative_for_layer(int(command.layer), keys=("kv", "index_k"))
             record.invoked_full_source_publish = True
             return
         rows = _slice_rows(arena.carry.current.value, command.offset, command.rows, role=arena.carry.current.role)
@@ -256,8 +256,13 @@ class OfficialFP8MLXBlockRunner:
         for i, cache in enumerate(self.working_cache):
             if cache is None:
                 raise BlockExecutionError(f"working cache layer {i} is missing")
-            if _get_cache_slot(cache, 0) is None:
+            frontier = _get_cache_slot(cache, 0)
+            if frontier is None:
                 raise BlockExecutionError(f"working cache layer {i} frontier slot is missing")
+            expected = int(arena.base_frontier) + int(arena.plan.count)
+            actual = int(frontier[0]) if hasattr(frontier, "__getitem__") else int(frontier)
+            if actual != expected:
+                raise BlockExecutionError(f"layer {i} logical frontier {actual} != {expected}")
             for slot in range(1, 7):
                 if _get_cache_slot(cache, slot) is None:
                     raise BlockExecutionError(f"working cache layer {i} slot {slot} is missing")

@@ -228,7 +228,7 @@ class PrefillFP8MLXP1P2Tests(unittest.TestCase):
         manager = PublicationManager(arena)
         lm = FakeLanguageModel()
         runner = OfficialFP8MLXBlockRunner(lm, manager)
-        runner.working_cache = full_ready_cache()
+        runner.working_cache = full_ready_cache(frontier=plan.count)
         commands = [plan.commands_by_kind(SweepCommandKind.BEGIN_INVALIDATE)[0]]
         commands.append([c for c in plan.encode_commands if c.layer == 2][0])
         commands.append([c for c in plan.publication_commands if c.layer == 2][0])
@@ -491,8 +491,13 @@ class FakeRowTensor:
         self.rows = rows
         self.shape = (1, rows, 1)
 
+    def __getitem__(self, key):
+        span = key[1]
+        start, stop, _ = span.indices(self.rows)
+        return FakeRowTensor(self.name, self.offset + start, stop - start)
+
     def concat_rows(self, values):
-        return FakeConcatTensor(values)
+        return values[0] if len(values) == 1 else FakeConcatTensor(values)
 
 
 class FakeConcatTensor:
@@ -532,6 +537,11 @@ class FakeLayer:
         shared["idx"] = FakeRowTensor(f"idx@{start}", start, rows)
         shared["candidates"] = FakeRowTensor(f"cand@{start}", start, rows)
         return h, pre
+
+
+    # Explicit test-only math hook; production must never fall back to __call__.
+    def execute_suffix_query_math(self, h, pre, cache, shared, start, image_mask):
+        return self(h, pre, cache, shared, start, image_mask)
 
 
 class FakeAttention:
