@@ -154,6 +154,32 @@ class OMLXGenerationSession:
         return cls(model, cache, state.token_ids, cfg, report, sampler, max_tokens)
 
     @classmethod
+    def from_prefilled_cache(
+        cls,
+        model: Any,
+        cache: list[Any],
+        token_ids: Any,
+        config: OMLXDecodeConfig | None = None,
+        *,
+        max_tokens: int = 128,
+        sampler: Callable[[Any], Any] | None = None,
+    ) -> "OMLXGenerationSession":
+        """Create a GenerationBatch session from a live same-backend cache.
+
+        This is the production zero-repack handoff.  The cache must already be a
+        real request-local DeepseekV41Cache list populated by the loaded oMLX
+        LanguageModel.  Unlike ``from_prefill_state`` this does not export to or
+        re-admit from ``PrefillContinuationState``.
+        """
+        cfg = config or OMLXDecodeConfig()
+        ids = np.asarray(token_ids, dtype=np.int64).reshape(1, -1)
+        frontier = ids.shape[1]
+        offsets = cls.cache_offsets(cache)
+        if any(offset != frontier for offset in offsets):
+            raise RuntimeError(f"prefilled live cache offsets {offsets[:4]} do not match frontier {frontier}")
+        return cls(model, cache, ids, cfg, None, sampler, max_tokens)
+
+    @classmethod
     def load_model_and_admit(
         cls,
         state: PrefillContinuationState,

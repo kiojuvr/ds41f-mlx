@@ -15,6 +15,7 @@ import sys
 
 import numpy as np
 
+from ds41f_mlx.runtime.dwarfstar_prefill import DwarfStarMLXPrefillSession
 from ds41f_mlx.runtime.omlx_core import DEFAULT_CHECKPOINT, DEFAULT_OMLX, OmlxRuntime, OmlxRuntimeConfig
 from ds41f_mlx.runtime.omlx_decode import OMLXDecodeConfig
 from ds41f_mlx.runtime.omlx_generation import OMLXGenerationSession
@@ -78,6 +79,8 @@ class RequestTrace:
     initial_admitted_frontier: int | None = None
     frontier_after_first_input: int | None = None
     prompt_replay_count: int | None = None
+    prefill_seconds: float | None = None
+    prefill_phase_timings_s: dict[str, float] | None = None
     generated_tokens: list[int] = field(default_factory=list)
     decode_latencies_s: list[float] = field(default_factory=list)
     cleanup_called: bool = False
@@ -98,6 +101,8 @@ class RequestTrace:
             'initial_admitted_frontier': self.initial_admitted_frontier,
             'frontier_after_first_input': self.frontier_after_first_input,
             'prompt_replay_count': self.prompt_replay_count,
+            'prefill_seconds': self.prefill_seconds,
+            'prefill_phase_timings_s': self.prefill_phase_timings_s,
             'generated_tokens': list(self.generated_tokens),
             'completion_tokens': len(self.generated_tokens),
             'median_decode_tok_s': None if med is None else 1.0 / med,
@@ -184,14 +189,14 @@ class DeepSeekRecipeRuntimeBackend:
             await self._call(self.load)
             sampler = self.make_sampler(request.inference_options)
             max_tokens = self.max_tokens(request.inference_options)
-            prefill_result = await self._call(build_production_prefill_state_guarded, self.checkpoint, self.native_out_dir / trace.request_id, prefix)
-            state = prefill_result.continuation_state
-            if state is None or not state.committed:
-                raise RuntimeError('DwarfStar prefill did not produce a committed PrefillContinuationState')
+            prefill_session = DwarfStarMLXPrefillSession(self._model, omlx_path=self.omlx_path)
+            prefill_result = await self._call(prefill_session.prefill, prefix)
+            trace.prefill_seconds = float(prefill_result.seconds)
+            trace.prefill_phase_timings_s = {k: float(v) for k, v in prefill_result.phase_timings_s.items()}
             cfg = OMLXDecodeConfig(omlx_path=self.omlx_path, checkpoint_path=self.checkpoint, engram_ssd_offload=True, preserve_mtp=False, speculation_enabled=False)
-            session = await self._call(OMLXGenerationSession.from_prefill_state, self._model, state, cfg, max_tokens=max_tokens, sampler=sampler)
+            session = await self._call(lambda: OMLXGenerationSession.from_prefilled_cache(self._model, prefill_result.live_cache, prefill_result.token_ids, cfg, max_tokens=max_tokens, sampler=sampler))
             trace.initial_admitted_frontier = session.admitted_frontier
-            await self._call(session.start, first, max_tokens)
+            await self._call(lambda: session.start(first, max_tokens=max_tokens))
             trace.frontier_after_first_input = session.token_frontier
             trace.prompt_replay_count = session.prompt_replay_count
             if trace.prompt_replay_count != 0 or trace.initial_admitted_frontier != len(prefix):
