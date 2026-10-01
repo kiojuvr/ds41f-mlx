@@ -296,31 +296,31 @@ def _slice_sequence(value: Any, offset: int, rows: int) -> Any:
         return value
 
 
-def _concat_sequence(values: list[Any], *, like: Any, p8_optimizer: Any | None = None) -> Any:
+def _concat_sequence(values: list[Any], *, like: Any, p8_optimizer: Any | None = None, command: SweepCommand | None = None) -> Any:
     if not values:
         return like
     if len(values) == 1:
         result = values[0]
         if p8_optimizer is not None and getattr(p8_optimizer, "enabled", False):
-            p8_optimizer.shape_registry.record_microtile_concat(outputs=values, result=result, references_released=True)
+            p8_optimizer.shape_registry.record_microtile_concat(outputs=values, result=result, references_released=True, command=command)
         return result
     concat_rows = getattr(values[0], "concat_rows", None)
     if concat_rows is not None:
         result = concat_rows(values)
         if p8_optimizer is not None and getattr(p8_optimizer, "enabled", False):
-            p8_optimizer.shape_registry.record_microtile_concat(outputs=values, result=result, references_released=True)
+            p8_optimizer.shape_registry.record_microtile_concat(outputs=values, result=result, references_released=True, command=command)
         return result
     try:
         import mlx.core as mx  # type: ignore
         result = mx.concatenate(values, axis=1)
         if p8_optimizer is not None and getattr(p8_optimizer, "enabled", False):
-            p8_optimizer.shape_registry.record_microtile_concat(outputs=values, result=result, references_released=True)
+            p8_optimizer.shape_registry.record_microtile_concat(outputs=values, result=result, references_released=True, command=command)
         return result
     except Exception as exc:
         if all(hasattr(v, "shape") for v in values):
             result = _MicrotileConcat(values)
             if p8_optimizer is not None and getattr(p8_optimizer, "enabled", False):
-                p8_optimizer.shape_registry.record_microtile_concat(outputs=values, result=result, references_released=False)
+                p8_optimizer.shape_registry.record_microtile_concat(outputs=values, result=result, references_released=False, command=command)
             return result
         raise P7SchedulingError("cannot reassemble Engram microtiles") from exc
 
@@ -414,7 +414,7 @@ class SchedulingCoordinator:
             self.materialization.after_engram_incorporated(h_after, pre_micro)
             outputs.append(h_after)
             self.engram.after_microtarget(target, arena, hash_slice_fn)
-        return _concat_sequence(outputs, like=h_chunk, p8_optimizer=self.p8_optimizer)
+        return _concat_sequence(outputs, like=h_chunk, p8_optimizer=self.p8_optimizer, command=command)
 
     def seal_success(self) -> None:
         self.engram.drain()

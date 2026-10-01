@@ -12,6 +12,7 @@ from collections import defaultdict
 from contextlib import ExitStack, contextmanager
 from dataclasses import dataclass, field
 import importlib
+import math
 import os
 import time
 from typing import Any, Callable, Iterator
@@ -45,6 +46,32 @@ def _rows(value: Any) -> int | None:
 def _dtype(value: Any) -> str | None:
     d = getattr(value, "dtype", None)
     return None if d is None else str(d)
+
+
+def _dtype_nbytes(dtype: str | None) -> int | None:
+    if dtype is None:
+        return None
+    d = str(dtype).lower()
+    if "bool" in d or "int8" in d or "uint8" in d or "float8" in d:
+        return 1
+    if "bfloat16" in d or "float16" in d or "int16" in d or "uint16" in d:
+        return 2
+    if "float32" in d or "int32" in d or "uint32" in d:
+        return 4
+    if "float64" in d or "int64" in d or "uint64" in d:
+        return 8
+    return None
+
+
+def _logical_bytes(value: Any) -> int | None:
+    shape = _shape(value)
+    nbytes = _dtype_nbytes(_dtype(value))
+    if shape is None or nbytes is None:
+        return None
+    try:
+        return int(math.prod(int(x) for x in shape) * nbytes)
+    except Exception:
+        return None
 
 
 def _device(value: Any) -> str | None:
@@ -125,6 +152,8 @@ class ShapeClassRegistry:
         self._entries: dict[tuple[Any, ...], ShapeClassEntry] = {}
         self.write_rows: list[dict[str, Any]] = []
         self.microtile_concat: list[dict[str, Any]] = []
+        self.lineage_events: list[dict[str, Any]] = []
+        self._next_event_id = 1
 
     def record_command(self, *, region: str, command: Any, value: Any = None, pre: Any = None, layer_obj: Any = None,
                        cache: Any = None, shared: Any = None, absolute_start: int | None = None, hc_multiplicity: int | None = None) -> None:
@@ -171,25 +200,77 @@ class ShapeClassRegistry:
         if rows is not None:
             entry.row_counts.add(int(rows))
 
-    def record_write_rows(self, *, role: str, offset: int, rows: int, base: Any, update: Any, branch: str) -> None:
-        self.write_rows.append({
+    def record_lineage_event(self, producer_class: str, **metadata: Any) -> int:
+        event_id = self._next_event_id
+        self._next_event_id += 1
+        self.lineage_events.append({"event_id": event_id, "producer_class": str(producer_class), **metadata})
+        return event_id
+
+    def record_write_rows(self, *, role: str, offset: int, rows: int, base: Any, update: Any, branch: str,
+                          command: Any | None = None, base_id_before: int | None = None, base_id_after: int | None = None,
+                          producer_event_id: int | None = None) -> int:
+        rec = {
             "role": str(role), "offset": int(offset), "rows": int(rows),
             "base_shape": _shape(base), "update_shape": _shape(update), "implementation_branch": branch,
-        })
+            "base_python_id_before": base_id_before, "base_python_id_after": base_id_after,
+            "descriptor_identity_note": "Python object id only; MLX descriptor pointer not retained/inspected",
+            "source_layer": int(getattr(command, "layer", -1)) if getattr(command, "layer", None) is not None else None,
+            "phase": getattr(getattr(command, "phase", None), "name", None) or str(getattr(command, "phase", "")) or None,
+            "command_index": int(getattr(command, "index", -1)) if command is not None else None,
+            "producer_event_id": producer_event_id,
+        }
+        event_id = self.record_lineage_event("SLICE_UPDATE_WRITE", role=rec["role"], offset=rec["offset"], rows=rec["rows"], source_event_id=producer_event_id)
+        rec["event_id"] = event_id
+        self.write_rows.append(rec)
+        return event_id
 
-    def record_microtile_concat(self, *, outputs: list[Any], result: Any, references_released: bool | None) -> None:
+    def record_microtile_concat(self, *, outputs: list[Any], result: Any, references_released: bool | None, command: Any | None = None) -> int:
+        output_rows = _rows(result)
+        event_id = self.record_lineage_event(
+            "ENGRAM_CONCAT",
+            layer=int(getattr(command, "layer", -1)) if getattr(command, "layer", None) is not None else None,
+            transformer_command_rows=int(getattr(command, "rows", 0)) if command is not None else None,
+            output_rows=output_rows,
+        )
         self.microtile_concat.append({
-            "number_of_microtile_outputs": len(outputs),
+            "event_id": event_id,
+            "layer": int(getattr(command, "layer", -1)) if getattr(command, "layer", None) is not None else None,
+            "transformer_command_rows": int(getattr(command, "rows", 0)) if command is not None else None,
+            "number_of_inputs": len(outputs),
+            "input_row_counts": [_rows(v) for v in outputs],
             "input_shapes": [_shape(v) for v in outputs],
-            "concat_output_shape": _shape(result),
+            "output_rows": output_rows,
+            "output_dtype": _dtype(result),
+            "output_shape": _shape(result),
+            "next_consumer": "BLOCK_OUTPUT_THEN_WRITE_ROWS",
+            "subsequent_write_rows_before_detach": None,
             "microtile_python_references_released_after_reassembly": references_released,
+            "underlying_mlx_graph_ancestry_released": "NOT_PROVEN",
         })
+        return event_id
 
     def report(self) -> list[dict[str, Any]]:
         return [e.to_json() for e in sorted(self._entries.values(), key=lambda x: (x.signature.region, x.signature.layer or -1, x.signature.rows or -1))]
 
+    def write_chain_summary(self) -> dict[str, Any]:
+        by_role: dict[str, list[dict[str, Any]]] = defaultdict(list)
+        for rec in self.write_rows:
+            by_role[str(rec.get("role"))].append(rec)
+        roles = {}
+        for role, recs in by_role.items():
+            recs = sorted(recs, key=lambda r: (r.get("command_index") if r.get("command_index") is not None else -1, r.get("offset", -1)))
+            roles[role] = {
+                "write_count": len(recs),
+                "offsets": [r.get("offset") for r in recs],
+                "rows_per_update": [r.get("rows") for r in recs],
+                "source_layers": [r.get("source_layer") for r in recs],
+                "phases": [r.get("phase") for r in recs],
+                "max_consecutive_descriptor_writes_proxy": len(recs),
+            }
+        return roles
+
     def to_json(self) -> dict[str, Any]:
-        return {"shape_classes": self.report(), "write_rows": list(self.write_rows), "microtile_concat": list(self.microtile_concat), "tensor_free": True}
+        return {"shape_classes": self.report(), "write_rows": list(self.write_rows), "write_chain_summary": self.write_chain_summary(), "microtile_concat": list(self.microtile_concat), "lineage_events": list(self.lineage_events), "tensor_free": True}
 
 
 def _weight_identity_class(obj: Any) -> str:
@@ -345,6 +426,9 @@ class PerformanceTelemetry:
         self.events: list[TimingEvent] = []
         self.materialization_boundaries: list[dict[str, Any]] = []
         self.graph_retention_proxies: list[dict[str, Any]] = []
+        self.owned_row_copies: list[dict[str, Any]] = []
+        self.persistent_eval_inventory: list[dict[str, Any]] = []
+        self.diagnostic_probes: list[dict[str, Any]] = []
 
     @contextmanager
     def time_region(self, name: str, *, nesting: tuple[str, ...] = (), inclusive_overlapping: bool = True, **metadata: Any) -> Iterator[None]:
@@ -372,8 +456,18 @@ class PerformanceTelemetry:
     def record_graph_retention_proxy(self, point: str, *, live: dict[str, bool] | None = None) -> None:
         self.graph_retention_proxies.append({"point": point, **self.memory_snapshot(), "logical_live_references": dict(live or {})})
 
+    def record_owned_row_copy(self, **metadata: Any) -> None:
+        self.owned_row_copies.append(dict(metadata))
+
+    def record_persistent_eval_inventory(self, values: list[dict[str, Any]], *, elapsed_s: float | None = None, memory_before: dict[str, Any] | None = None, memory_after: dict[str, Any] | None = None) -> None:
+        total = sum(int(v.get("logical_bytes") or 0) for v in values)
+        self.persistent_eval_inventory.append({"values": list(values), "value_count": len(values), "total_logical_bytes_known": total, "elapsed_s": elapsed_s, "before": dict(memory_before or {}), "after": dict(memory_after or {})})
+
+    def record_diagnostic_probe(self, name: str, **metadata: Any) -> None:
+        self.diagnostic_probes.append({"probe": name, "classification": "NON_QUALIFYING_ATTRIBUTION_PROBE", **metadata})
+
     def to_json(self) -> dict[str, Any]:
-        return {"timing_events": [e.to_json() for e in self.events], "materialization_boundaries": list(self.materialization_boundaries), "graph_retention_proxies": list(self.graph_retention_proxies), "overlap_warning": "ENCODE_ROWS and Engram micro-pipeline are inclusive/overlapping; do not sum percentages."}
+        return {"timing_events": [e.to_json() for e in self.events], "materialization_boundaries": list(self.materialization_boundaries), "graph_retention_proxies": list(self.graph_retention_proxies), "owned_row_copies": list(self.owned_row_copies), "persistent_eval_inventory": list(self.persistent_eval_inventory), "diagnostic_probes": list(self.diagnostic_probes), "overlap_warning": "ENCODE_ROWS and Engram micro-pipeline are inclusive/overlapping; do not sum percentages."}
 
 
 class GraphReusePolicy:
@@ -396,6 +490,7 @@ class P8ExecutionOptimizer:
         self.telemetry = PerformanceTelemetry(mx=mx)
         self.graph_reuse_policy = GraphReusePolicy()
         self.materialization_optimizer = MaterializationOptimizer()
+        self.diagnostic_barrier = os.environ.get("DS41F_P8_DIAGNOSTIC_BARRIER", "off").lower()
 
     @classmethod
     def from_env(cls, *, mx: Any | None = None) -> "P8ExecutionOptimizer | None":
@@ -410,4 +505,4 @@ class P8ExecutionOptimizer:
             yield self
 
     def to_json(self) -> dict[str, Any]:
-        return {"enabled": self.enabled, "shape_registry": self.shape_registry.to_json(), "fast_path_verifier": self.fast_path_verifier.to_json(), "performance_telemetry": self.telemetry.to_json(), "graph_reuse_policy": {"implemented": False, "reason": GraphReusePolicy.reason}, "materialization_optimizer": {"implemented": False, "reason": MaterializationOptimizer.reason}}
+        return {"enabled": self.enabled, "diagnostic_barrier": self.diagnostic_barrier, "shape_registry": self.shape_registry.to_json(), "fast_path_verifier": self.fast_path_verifier.to_json(), "performance_telemetry": self.telemetry.to_json(), "graph_reuse_policy": {"implemented": False, "reason": GraphReusePolicy.reason}, "materialization_optimizer": {"implemented": False, "reason": MaterializationOptimizer.reason}}

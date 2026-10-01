@@ -322,3 +322,28 @@ Concrete next-unit specification (evidence-only, not an optimization):
 - promotion threshold for any future candidate: repeatable absolute and percentage improvement outside warm run-to-run noise, no correctness regression, no meaningful memory regression, and no hidden first-request catastrophe.
 - rollback mechanism: package-level P8 flag; any candidate must have a separate rollback switch and default disabled state.
 - stop conditions: foreground Engram fallback > 0, P5 replay, command/frontier mismatch, new tensor-to-NumPy/list conversion, new `mx.eval`/`mx.synchronize` in measured internal path, abnormal memory growth, or failure to isolate a non-required boundary.
+
+
+## 18. P8 detach-source attribution instrumentation update (2026-10-01)
+
+This update is evidence-only. It does not change the production selector, does not add `mx.compile`, custom Metal, or production materialization boundaries, and does not alter P6 detach or P7 Engram microtiling.
+
+Pinned MLX 0.32.2 slice-assignment authority: `ml-explore/mlx` v0.32.2 `python/src/indexing.cpp` routes simple Python slice assignment such as `base[:, start:end] = update` through `mlx_compute_slice_update_args(...)`, `slice_update(src, update, starts, stops, strides)`, and `src.overwrite_descriptor(...)`. Therefore the observed `_write_rows` real branch is classified as `MLX_SLICE_UPDATE_DESCRIPTOR`, not conventional eager mutable in-place assignment. Source inspection alone is not evidence that this is slow; it is only the primary hypothesis to measure.
+
+Telemetry additions:
+
+- `_p6_materialize_and_detach()` now records existing mandatory substeps separately: `persistent_source_eval`, `owned_h_copy`, `owned_next_copy`, `owned_pre_copy`, `arena_detach_rebind`, and `materialize_boundary_bookkeeping`.
+- `_p6_eval_persistent_source_state()` records metadata for values passed to its mandatory `mx.eval(*values)`: layer, slot, slot class (`window_KV`, `source_compressed_KV`, `index_K`, pending slots), shape, dtype, logical producer class, and known logical bytes.
+- `_owned_row_copy()` records the actual branch (`detach_rows`, `.copy()`, `mx.copy()`, `mx.array()`, or fake adapter), role, input/slice/output shape, rows, elapsed wall time, and memory before/after. A bounded real-MLX probe on MLX 0.32.2 found MLX arrays do not expose `.copy()` at this seam and the current fallback branch is `mx.array()`.
+- `_write_rows()` records Python object id before/after and classifies real slice assignment as `MLX_SLICE_UPDATE_DESCRIPTOR`. Descriptor identity is not inspected through private pointers and arrays are not retained.
+- P8 lineage telemetry adds scalar event IDs for `ENGRAM_CONCAT`, `BLOCK_OUTPUT`, and `SLICE_UPDATE_WRITE`; records contain only metadata and producer/consumer IDs.
+- Engram microtile concat telemetry records layer, transformer command rows, number of inputs, input row counts, output rows/dtype/shape, and the next-consumer class. `microtile_python_references_released_after_reassembly=True` remains only Python-list evidence; underlying MLX graph ancestry release is explicitly `NOT_PROVEN`.
+- Diagnostic-only barrier mode is available via `DS41F_P8_DIAGNOSTIC_BARRIER=carry` or `persistent`. These runs are labeled `NON_QUALIFYING_ATTRIBUTION_PROBE` and default OFF.
+
+Structural suite: `PYTHONPATH=tests /Users/kioju/.venvs/omlx-0.7.0.dev2/bin/python3 -m unittest discover -s tests -v` passed 87 tests OK. Added tests prove detach substep telemetry preserves execution, lineage telemetry retains no fake tensors, write-chain accounting is coherent, diagnostic barriers default OFF, and no extra production eval is inserted by default.
+
+Synthetic MLX structural probes: `tools/p8_synthetic_mlx_graph_probes.py` writes `artifacts/p8/synthetic_mlx_graph_probes.json`. The reduced probe used MLX 0.32.2, shape `[1, 1024, 128]`, rows/update 64. Slice-update graph-build time rose from ~0.000015s at 1 write to ~0.000034s at 32 writes; final eval after the first warmup stayed ~0.0007-0.0010s in this small case. Concat/update probes cover 2-way and 4-way concat feeding 1/4/16 slice updates. These are synthetic structural evidence only, not model-performance equivalence.
+
+Real 8192/16384 cold+warm attribution runs with the new substep telemetry have not been completed in this commit; therefore no optimization target is selected. Required next evidence remains: baseline 8192, baseline 16384 cold + 3 warm with P7 foreground fallback 0, detach substep median/min/max/range, then non-qualifying carry and persistent-cache prepayment probes.
+
+Current target-selection result: **NO_TARGET_YET**. The evidence is sufficient to correct terminology and to collect the required attribution, but not sufficient to choose among `WRITE_ROWS_SLICE_UPDATE_CHAIN`, `ENGRAM_CONCAT_GRAPH`, `PERSISTENT_CACHE_GRAPH_RETENTION`, `OWNED_CONE_COPY`, or another measured source.

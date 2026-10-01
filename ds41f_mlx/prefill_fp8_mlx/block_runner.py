@@ -19,7 +19,7 @@ from ds41f_mlx.prefill_fp8_mlx.omlx_suffix_math import OmlxV41SuffixMath
 from ds41f_mlx.prefill_fp8_mlx.planner import SweepCommand, SweepCommandKind, SweepPhase
 from ds41f_mlx.prefill_fp8_mlx.publications import PublicationManager
 from ds41f_mlx.prefill_fp8_mlx.p7_scheduling import SchedulingCoordinator
-from ds41f_mlx.prefill_fp8_mlx.p8_optimizer import P8ExecutionOptimizer
+from ds41f_mlx.prefill_fp8_mlx.p8_optimizer import P8ExecutionOptimizer, _dtype, _logical_bytes, _shape
 
 
 class BlockExecutionError(RuntimeError):
@@ -218,8 +218,9 @@ class OfficialFP8MLXBlockRunner:
             h_out, pre_out = self.suffix_math.execute_suffix_query(layer_id=layer_id, h_chunk=h_chunk, pre_chunk=pre_chunk, cache=cache, shared=shared, absolute_start=absolute_start, image_mask=self.image_mask)
         else:
             h_out, pre_out = layer(h_chunk, pre_chunk, cache, shared, absolute_start, self.image_mask)
-        arena.carry.next.value = _write_rows(arena.carry.next.value, command.offset, command.rows, h_out, role=arena.carry.next.role, row_origin=arena.carry.next.row_origin, p8_optimizer=self.p8_optimizer)
-        arena.carry.pre.value = _write_rows(arena.carry.pre.value, command.offset, command.rows, pre_out, role=arena.carry.pre.role, row_origin=arena.carry.pre.row_origin, p8_optimizer=self.p8_optimizer)
+        block_event_id = self.p8_optimizer.shape_registry.record_lineage_event("BLOCK_OUTPUT", layer=layer_id, command_index=int(command.index), rows=int(command.rows)) if self.p8_optimizer is not None and self.p8_optimizer.enabled else None
+        arena.carry.next.value = _write_rows(arena.carry.next.value, command.offset, command.rows, h_out, role=arena.carry.next.role, row_origin=arena.carry.next.row_origin, p8_optimizer=self.p8_optimizer, command=command, producer_event_id=block_event_id)
+        arena.carry.pre.value = _write_rows(arena.carry.pre.value, command.offset, command.rows, pre_out, role=arena.carry.pre.role, row_origin=arena.carry.pre.row_origin, p8_optimizer=self.p8_optimizer, command=command, producer_event_id=block_event_id)
         self._advance_cache_layer(cache, absolute_start + command.rows, arena=arena, layer=layer_id)
         capture_keys = ("idx", "candidates") if command.phase is SweepPhase.DECODER_SUFFIX and layer_id == 20 else None
         self.publication_manager.capture_layer_outputs(layer_id, shared, command_index=command.index, offset=command.offset, rows=command.rows, keys=capture_keys)
@@ -302,6 +303,18 @@ class OfficialFP8MLXBlockRunner:
         if self.p8_optimizer is not None and self.p8_optimizer.enabled:
             self.p8_optimizer.shape_registry.record_command(region="P6_SOURCE_COMPLETE_AND_DETACH_CONE", command=command, value=arena.carry.current.value, pre=arena.carry.pre.value)
             self.p8_optimizer.telemetry.record_graph_retention_proxy("before_P6_detach", live={"h/current": arena.carry.current.value is not None, "h/next": arena.carry.next.value is not None, "pre": arena.carry.pre.value is not None, "Engram microtile parts": False, "publication_handles": bool(getattr(self.publication_manager, "pending_spans_by_layer", {}))})
+        if self.p8_optimizer is not None and self.p8_optimizer.enabled and self.p8_optimizer.diagnostic_barrier == "carry":
+            b = self.p8_optimizer.telemetry.memory_snapshot(); bt = time.perf_counter()
+            mx = self.mx or importlib.import_module("mlx.core")
+            mx.eval(arena.carry.current.value, arena.carry.next.value, arena.carry.pre.value)
+            self.p8_optimizer.telemetry.record_diagnostic_probe("pre_detach_carry_materialization", elapsed_s=time.perf_counter() - bt, before=b, after=self.p8_optimizer.telemetry.memory_snapshot())
+        if self.p8_optimizer is not None and self.p8_optimizer.enabled and self.p8_optimizer.diagnostic_barrier == "persistent":
+            values, _slots = self._p6_persistent_source_values(arena)
+            b = self.p8_optimizer.telemetry.memory_snapshot(); bt = time.perf_counter()
+            mx = self.mx or importlib.import_module("mlx.core")
+            if values:
+                mx.eval(*values)
+            self.p8_optimizer.telemetry.record_diagnostic_probe("persistent_cache_only_prepayment", elapsed_s=time.perf_counter() - bt, before=b, after=self.p8_optimizer.telemetry.memory_snapshot())
         evaluated = self._p6_eval_persistent_source_state(arena)
         if command.rows > 0:
             origin = int(command.offset)
@@ -310,41 +323,55 @@ class OfficialFP8MLXBlockRunner:
             h = self._owned_row_copy(arena.carry.current.value, origin, int(command.rows), role=arena.carry.current.role)
             nxt = self._owned_row_copy(arena.carry.next.value, q20_origin, 2414, role=arena.carry.next.role)
             pre = self._owned_row_copy(arena.carry.pre.value, origin, int(command.rows), role=arena.carry.pre.role)
+            if self.p8_optimizer is not None and self.p8_optimizer.enabled:
+                b = self.p8_optimizer.telemetry.memory_snapshot(); rt = time.perf_counter()
             arena.detach_final_decoder_cone(origin=private_start + origin, rows=int(command.rows), h_value=h, next_value=nxt, pre_value=pre, row_origin=origin, next_row_origin=q20_origin)
             arena.input_ids.value = None
             arena.engram.hashes.value = None
             arena.encoder_final_h = None
             arena.encoder_final_pre = None
             arena.active_chunk_views.clear()
+            if self.p8_optimizer is not None and self.p8_optimizer.enabled:
+                self.p8_optimizer.telemetry.record_materialization_boundary("arena_detach_rebind", b, self.p8_optimizer.telemetry.memory_snapshot(), time.perf_counter() - rt, command_index=command.index)
+        if self.p8_optimizer is not None and self.p8_optimizer.enabled:
+            b = self.p8_optimizer.telemetry.memory_snapshot(); bt = time.perf_counter()
         arena.materialize_p6_source_boundary(command_index=command.index, frontier=frontier, evaluated_slots=evaluated)
+        if self.p8_optimizer is not None and self.p8_optimizer.enabled:
+            self.p8_optimizer.telemetry.record_materialization_boundary("materialize_boundary_bookkeeping", b, self.p8_optimizer.telemetry.memory_snapshot(), time.perf_counter() - bt, command_index=command.index)
         if self.p8_optimizer is not None and self.p8_optimizer.enabled:
             after = self.p8_optimizer.telemetry.memory_snapshot()
             self.p8_optimizer.telemetry.record_materialization_boundary("P6_SOURCE_COMPLETE_AND_DETACH_CONE", before or {}, after, time.perf_counter() - t0, evaluated_slots=evaluated, command_index=command.index)
             self.p8_optimizer.telemetry.record_graph_retention_proxy("after_P6_detach", live={"h/current": arena.carry.current.value is not None, "h/next": arena.carry.next.value is not None, "pre": arena.carry.pre.value is not None, "Engram microtile parts": False, "publication_handles": bool(getattr(self.publication_manager, "pending_spans_by_layer", {}))})
 
-    def _p6_eval_persistent_source_state(self, arena: RequestArena) -> list[dict[str, int]]:
+    def _p6_persistent_source_values(self, arena: RequestArena) -> tuple[list[Any], list[dict[str, Any]]]:
         if self.working_cache is None:
             raise BlockExecutionError("P6 source materialization requires a live cache")
+        values: list[Any] = []
+        slots: list[dict[str, Any]] = []
+        cfg = getattr(self.language_model, "_config", None)
+        source_layers = set(int(x) for x in getattr(cfg, "kv_source_layers", (2, 8, 14, 20))) | set(int(x) for x in getattr(cfg, "index_source_layers", (2, 8, 14, 20)))
+        for layer in range(20):
+            v = _get_cache_slot(self.working_cache[layer], 1)
+            if _p6_materializable_value(v):
+                values.append(v); slots.append(_p6_slot_inventory(layer, 1, v))
+        for layer in sorted(source_layers):
+            if 0 <= layer < len(self.working_cache):
+                for slot in (2, 3, 4, 5):
+                    v = _get_cache_slot(self.working_cache[layer], slot)
+                    if _p6_materializable_value(v):
+                        values.append(v); slots.append(_p6_slot_inventory(layer, slot, v))
+        return values, slots
+
+    def _p6_eval_persistent_source_state(self, arena: RequestArena) -> list[dict[str, Any]]:
         mx = self.mx
         if mx is None:
             try:
                 mx = importlib.import_module("mlx.core")
             except Exception:
                 mx = None
-        values: list[Any] = []
-        slots: list[dict[str, int]] = []
-        cfg = getattr(self.language_model, "_config", None)
-        source_layers = set(int(x) for x in getattr(cfg, "kv_source_layers", (2, 8, 14, 20))) | set(int(x) for x in getattr(cfg, "index_source_layers", (2, 8, 14, 20)))
-        for layer in range(20):
-            v = _get_cache_slot(self.working_cache[layer], 1)
-            if _p6_materializable_value(v):
-                values.append(v); slots.append({"layer": layer, "slot": 1})
-        for layer in sorted(source_layers):
-            if 0 <= layer < len(self.working_cache):
-                for slot in (2, 3, 4, 5):
-                    v = _get_cache_slot(self.working_cache[layer], slot)
-                    if _p6_materializable_value(v):
-                        values.append(v); slots.append({"layer": layer, "slot": slot})
+        values, slots = self._p6_persistent_source_values(arena)
+        before = self.p8_optimizer.telemetry.memory_snapshot() if self.p8_optimizer is not None and self.p8_optimizer.enabled else None
+        t0 = time.perf_counter()
         if values:
             if mx is None or not hasattr(mx, "eval"):
                 if not all(getattr(v, "allow_fake_eval", False) for v in values):
@@ -354,10 +381,15 @@ class OfficialFP8MLXBlockRunner:
                     fake_eval(values)
             else:
                 mx.eval(*values)
+        elapsed = time.perf_counter() - t0
+        if self.p8_optimizer is not None and self.p8_optimizer.enabled:
+            after = self.p8_optimizer.telemetry.memory_snapshot()
+            self.p8_optimizer.telemetry.record_materialization_boundary("persistent_source_eval", before or {}, after, elapsed, evaluated_slots=slots)
+            self.p8_optimizer.telemetry.record_persistent_eval_inventory(slots, elapsed_s=elapsed, memory_before=before, memory_after=after)
         return slots
 
     def _owned_row_copy(self, value: Any, offset: int, rows: int, *, role: str) -> Any:
-        return _owned_row_copy(value, offset, rows, role=role, mx=self.mx)
+        return _owned_row_copy(value, offset, rows, role=role, mx=self.mx, p8_optimizer=self.p8_optimizer)
 
     def _fill_empty_slots(self, cache: Any, layer: int) -> None:
         if cache is None:
@@ -420,6 +452,26 @@ def _p6_materializable_value(value: Any) -> bool:
     return True
 
 
+def _p6_slot_inventory(layer: int, slot: int, value: Any) -> dict[str, Any]:
+    slot_class = {
+        1: "window_KV",
+        2: "source_compressed_KV",
+        3: "index_K",
+        4: "compressor_pending_input",
+        5: "indexer_pending_input",
+    }.get(int(slot), "unknown")
+    producer = "layer_0_19_window_kv" if int(slot) == 1 else "source_layer_persistent_publication"
+    return {
+        "layer": int(layer),
+        "slot": int(slot),
+        "slot_class": slot_class,
+        "shape": _shape(value),
+        "dtype": _dtype(value),
+        "logical_producer_class": producer,
+        "logical_bytes": _logical_bytes(value),
+    }
+
+
 def _layer_has_engram(layer: Any) -> bool:
     try:
         if "engram" in layer:
@@ -445,36 +497,54 @@ def _slice_rows(value: Any, offset: int, rows: int, *, role: str, row_origin: in
         raise BlockExecutionError(f"failed to slice arena slot {role} rows {offset}:{end}") from exc
 
 
-def _owned_row_copy(value: Any, offset: int, rows: int, *, role: str, mx: Any | None = None) -> Any:
+def _owned_row_copy(value: Any, offset: int, rows: int, *, role: str, mx: Any | None = None, p8_optimizer: P8ExecutionOptimizer | None = None) -> Any:
+    t0 = time.perf_counter()
+    before = p8_optimizer.telemetry.memory_snapshot() if p8_optimizer is not None and p8_optimizer.enabled else None
     sliced = _slice_rows(value, offset, rows, role=role)
+    branch = "unresolved"
+    out = None
     detach = getattr(sliced, "detach_rows", None)
     if detach is not None:
-        return detach()
-    copy = getattr(sliced, "copy", None)
-    if copy is not None:
-        try:
-            return copy()
-        except Exception:
-            pass
-    if mx is not None:
-        try:
-            copier = getattr(mx, "copy", None)
-            array_ctor = getattr(mx, "array", None)
-            if copier is not None:
-                out = copier(sliced)
-            elif array_ctor is not None:
-                out = array_ctor(sliced)
-            else:
-                raise BlockExecutionError("MLX module does not expose a compact copy primitive")
-            mx.eval(out)
-            return out
-        except BlockExecutionError:
-            raise
-        except Exception as exc:
-            raise BlockExecutionError(f"failed to create owned compact MLX rows for {role}") from exc
-    if getattr(sliced, "allow_fake_compact", False):
-        return _CompactRows(sliced, rows)
-    raise BlockExecutionError(f"cannot prove owned compact rows for {role} without MLX copy or fake adapter capability")
+        branch = "detach_rows"
+        out = detach()
+    else:
+        copy = getattr(sliced, "copy", None)
+        if copy is not None:
+            try:
+                branch = ".copy()"
+                out = copy()
+            except Exception:
+                out = None
+        if out is None and mx is not None:
+            try:
+                copier = getattr(mx, "copy", None)
+                array_ctor = getattr(mx, "array", None)
+                if copier is not None:
+                    branch = "mx.copy()"
+                    out = copier(sliced)
+                elif array_ctor is not None:
+                    branch = "mx.array()"
+                    out = array_ctor(sliced)
+                else:
+                    raise BlockExecutionError("MLX module does not expose a compact copy primitive")
+                mx.eval(out)
+            except BlockExecutionError:
+                raise
+            except Exception as exc:
+                raise BlockExecutionError(f"failed to create owned compact MLX rows for {role}") from exc
+        if out is None and getattr(sliced, "allow_fake_compact", False):
+            branch = "fake adapter"
+            out = _CompactRows(sliced, rows)
+    if out is None:
+        raise BlockExecutionError(f"cannot prove owned compact rows for {role} without MLX copy or fake adapter capability")
+    elapsed = time.perf_counter() - t0
+    if p8_optimizer is not None and p8_optimizer.enabled:
+        after = p8_optimizer.telemetry.memory_snapshot()
+        meta = {"role": role, "branch": branch, "input_shape": _shape(value), "slice_shape": _shape(sliced), "output_shape": _shape(out), "rows": int(rows), "elapsed_s": elapsed, "before": before or {}, "after": after}
+        p8_optimizer.telemetry.record_owned_row_copy(**meta)
+        role_name = "owned_pre_copy" if "pre" in str(role) else ("owned_next_copy" if "next" in str(role) else "owned_h_copy")
+        p8_optimizer.telemetry.record_materialization_boundary(role_name, before or {}, after, elapsed, branch=branch, role=role, rows=int(rows), input_shape=_shape(value), slice_shape=_shape(sliced), output_shape=_shape(out))
+    return out
 
 
 class _CompactRows:
@@ -494,7 +564,7 @@ class _CompactRows:
         self._value[:, offset:offset + rows] = update
 
 
-def _write_rows(base: Any, offset: int, rows: int, update: Any, *, role: str, row_origin: int = 0, p8_optimizer: P8ExecutionOptimizer | None = None) -> Any:
+def _write_rows(base: Any, offset: int, rows: int, update: Any, *, role: str, row_origin: int = 0, p8_optimizer: P8ExecutionOptimizer | None = None, command: SweepCommand | None = None, producer_event_id: int | None = None) -> Any:
     if base is None:
         raise BlockExecutionError(f"cannot write rows into unallocated arena slot {role}")
     offset = int(offset) - int(row_origin)
@@ -508,15 +578,16 @@ def _write_rows(base: Any, offset: int, rows: int, update: Any, *, role: str, ro
     if update_shape is not None and len(update_shape) > 1 and int(update_shape[1]) != int(rows):
         raise BlockExecutionError(f"update for {role} has {update_shape[1]} rows; expected {rows}")
     assign = getattr(base, "assign_rows", None)
+    base_id_before = id(base)
     if assign is not None:
-        if p8_optimizer is not None and p8_optimizer.enabled:
-            p8_optimizer.shape_registry.record_write_rows(role=role, offset=offset, rows=rows, base=base, update=update, branch="assign_rows hook")
         assign(offset, rows, update)
+        if p8_optimizer is not None and p8_optimizer.enabled:
+            p8_optimizer.shape_registry.record_write_rows(role=role, offset=offset, rows=rows, base=base, update=update, branch="assign_rows hook", command=command, base_id_before=base_id_before, base_id_after=id(base), producer_event_id=producer_event_id)
         return base
     try:
-        if p8_optimizer is not None and p8_optimizer.enabled:
-            p8_optimizer.shape_registry.record_write_rows(role=role, offset=offset, rows=rows, base=base, update=update, branch="MLX slice assignment")
         base[:, offset:end] = update
+        if p8_optimizer is not None and p8_optimizer.enabled:
+            p8_optimizer.shape_registry.record_write_rows(role=role, offset=offset, rows=rows, base=base, update=update, branch="MLX_SLICE_UPDATE_DESCRIPTOR", command=command, base_id_before=base_id_before, base_id_after=id(base), producer_event_id=producer_event_id)
         return base
     except Exception as exc:
         raise BlockExecutionError(f"failed to write arena slot {role} rows {offset}:{end}") from exc
