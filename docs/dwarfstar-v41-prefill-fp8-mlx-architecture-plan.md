@@ -152,6 +152,8 @@ Implementation/real P5 qualification: [live-cache handoff closeout](p5-live-cach
 
 ### P6 — deferred decoder / long-context sweep
 
+**Authority clarification (design only):** the local `encoder_only/resume_encoder` scaffolding does not implement the pinned deferred-decoder mechanism. The controlling package-level design is [P6 deferred-decoder authority and architecture](p6-deferred-decoder-architecture.md): a request-level append transaction, true encoder/source-only sweeps, and final new-range decoder completion with a 2541-row input cone. The original phase shorthand below is not permission to enable current flags; `ResumeUnavailableError` remains in place.
+
 - Enable encoder-only and resume/deferred-decoder phases from the native sweep plan.
 - Retain only DwarfStar-required suffix rows for decoder layers rather than full prompt rows when the plan selects suffix mode.
 - Preserve compressor pending state and publication frontiers across encoder/resume boundary.
