@@ -105,21 +105,20 @@ Qualification artifact: `artifacts/m5/practical-omlx-base-decode/result.json` re
 
 Deferred from this base decode qualification: MTP/DSpark, long-session robustness, KV restore, HTTP/API serving, and live GenerationBatch fork/reset.  Reset/fork seams remain creation/forking before scheduler start rather than cloning a live scheduler state.
 
-## Milestone 6 — Performance qualification
+## Milestone 6 — End-to-end performance qualification
 
-Measure end-to-end performance with exact runtime/checkpoint/build/hardware provenance:
+Status: **qualified through 200K** (`M6_PERFORMANCE_QUALIFIED_200K`). See `docs/milestone-6-performance-qualification-status.md` and `artifacts/m6/performance-qualification/result.json`.
 
-- short context;
-- 32K;
-- 64K;
-- 128K;
-- 200K or another documented practical upper target;
-- prefill;
-- decode;
-- TTFT;
-- memory.
+Measure the existing dense P0-P7 path as the production candidate:
 
-Compare with the recorded oMLX baseline. Do not define success as merely faster than the current native reference decode rate.
+- `P7 FULL_RESIDENT_BACKBONE_SSD_ENGRAM` with `P7_ENGRAM_TILE=2048`;
+- oMLX `GenerationBatch` MTP-OFF decode;
+- Python 3.13.15 / MLX 0.32.2 / NumPy 2.3.5 / oMLX 0.7.0.dev2 `b390b31e...`;
+- `preserve_mtp=False`, `engram_ssd_offload=True`, `moe_expert_offload_resident_fraction=None`.
+
+P8 is closed: `TILE_NATIVE_CARRY_REJECTED_NO_E2E_GAIN`. Do not use `DS41F_P8_TILE_NATIVE_CARRY=1`, do not enable `mx.compile`, do not add custom Metal, and do not reopen Attention/MoE/HC optimization during M6.
+
+M6 ladder completed: 2048, 8192, 16384, 32768, 65536, 131072, and 200000. The dense P0-P7 path preserved committed live `DeepseekV41Cache` handoff, P5 zero replay/repack/export, P7 foreground fallback 0, correct final frontiers, bounded memory, and decode above the `>=15 tok/s` practical gate. Success is practical/stable/correct/memory-safe long-context operation, not winning every baseline cell.
 
 ## Milestone 7 — Serving integration
 

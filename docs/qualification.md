@@ -31,12 +31,14 @@ Status vocabulary:
 | Checkpoint-free native build/tests | QUALIFIED | CMake build and checkpoint-free tests pass in recorded evidence. |
 | MLX-enabled imported core build | QUALIFIED | MLX 0.32.2 Python wheel CMake package discovered; build and registered tests pass in recorded evidence. |
 | Full native checkpoint execution | BOUNDED | `dsv41-full-checkpoint-smoke` opened the official checkpoint and ran the small fixture; not broad model/release qualification. |
-| Production MLX/oMLX decode under finalized policy | NOT YET VALIDATED | Next production-facing frontier: validate/finish practical production decode against backend-local fidelity policy. |
+| Production MLX/oMLX decode under finalized policy | QUALIFIED FOR BASE SUBSTRATE | M5 qualified oMLX `BatchGenerator`/`GenerationBatch` MTP-OFF no-replay decode with the `>=15 tok/s` practical gate. Milestone 6 remeasures decode after long dense P0-P7 prefill. |
 | API integration | NOT YET VALIDATED | Native HTTP/API path not claimed connected. |
-| Short-context performance | MEASURED / NOT QUALIFIED AS PRACTICAL | Current native reference decode is not acceptable production performance. |
-| P6 deferred-decoder long-context new path | QUALIFIED | Real MLX/oMLX qualification on Python 3.13.15 / MLX 0.32.2 / NumPy 2.3.5 / oMLX 0.7.0.dev2 `b390b31e...`: complete-16384, pending-16384, tiny-16385, A-24577, matched non-deferred control, B-fresh-49155, B-continued C24578->T49155, failure/rebuild, and P5 bootstrap/decode. Same-cache handoff; prompt replay/export/repack zero. Not production-selected and not a performance gate. |
-| Long-context qualification outside P6 new path | NOT YET VALIDATED | Long-session robustness, P7 scheduling, P8 graph reuse, save/restore/resume, and production selector remain open. |
-| Long-session robustness | NOT YET VALIDATED | Includes long-lived agent sessions, no-progress/thought-loop recurrence, failure/recovery, memory behavior. Not an M4 blocker. |
+| Short-context dense P0-P7 production performance | QUALIFIED | M6 short ladder 2048/8192/16384 passed with serving-path prefill, TTFT, decode >=15 tok/s, P5 zero replay, P7 fg fallback 0, and bounded memory. 16384 measured 16.537 s / 990.73 tok/s, consistent with P8-era dense ~1000 tok/s class. |
+| P6 deferred-decoder long-context new path | QUALIFIED | Real MLX/oMLX qualification on Python 3.13.15 / MLX 0.32.2 / NumPy 2.3.5 / oMLX 0.7.0.dev2 `b390b31e...`: complete-16384, pending-16384, tiny-16385, A-24577, matched non-deferred control, B-fresh-49155, B-continued C24578->T49155, failure/rebuild, and P5 bootstrap/decode. Same-cache handoff; prompt replay/export/repack zero. |
+| P7 dense path scheduling backend | QUALIFIED | `P7 FULL_RESIDENT_BACKBONE_SSD_ENGRAM`, `P7_ENGRAM_TILE=2048`, foreground Engram fallback 0 in scoped cases. |
+| P8 optimization search | COMPLETE | `TILE_NATIVE_CARRY_REJECTED_NO_E2E_GAIN`; tile-native implementation retained experimental/default OFF/not production-selected. Attention/MoE/HC further optimization not pursued and not required for M6. |
+| Milestone 6 end-to-end production performance | QUALIFIED THROUGH 200K | `M6_PERFORMANCE_QUALIFIED_200K`; see `artifacts/m6/performance-qualification/result.json` and `docs/milestone-6-performance-qualification-status.md`. Dense P0-P7 path passed 2048, 8192, 16384, 32768, 65536, 131072, and 200000 with P5 zero replay/repack/export, P7 foreground fallback 0, final frontiers correct, memory bounded, and decode >=15 tok/s. |
+| Long-session robustness | NOT YET VALIDATED | Includes long-lived agent sessions, no-progress/thought-loop recurrence, failure/recovery, memory behavior. Not an M6 blocker. |
 | KV/cache save-restore-resume | NOT YET VALIDATED | Deferred workstream after practical runtime operation; no new restoration format is claimed. |
 | Tool-call boundary robustness | NOT YET VALIDATED | Later serving/runtime robustness work. |
 | Vision | NON-GOAL | Not claimed. |

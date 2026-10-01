@@ -1,6 +1,6 @@
 # DwarfStar V4.1 prefill on official FP8/MLX — architecture plan
 
-Status: **P0-P7 implemented/qualified within the new path; P8 design is open and production selection remains unchanged.**  This document started as an architecture plan; current status notes distinguish implemented package evidence from remaining design work.
+Status: **P0-P7 implemented/qualified within the new path; P8 optimization search is complete; Milestone 6 performance is qualified through 200K.**  This document started as an architecture plan; current status notes distinguish implemented package evidence from remaining serving/finalization work.
 
 ## Decision
 
@@ -170,7 +170,11 @@ ArchitectureCompletion status local to the new path: `deferred_decoder_suffix_li
 
 ### P8 — graph/reuse optimization pass
 
-Only after P0-P7 are connected and the DwarfStar structural acceptance gate passes, evaluate whether to add MLX compile/custom-kernel graph reuse, command-buffer grouping, or native Metal kernels.  This phase may use performance to guide choices because the architecture package is then structurally connected.
+**Complete.** P8 optimization search is closed with decision `TILE_NATIVE_CARRY_REJECTED_NO_E2E_GAIN`.
+
+Tile-native carry remains implemented as experimental code behind disabled switch `DS41F_P8_TILE_NATIVE_CARRY=1`; default is OFF and it is not production-selected.  The candidate eliminated dense source/encoder `_write_rows` and dense layer-transport slices for the 16384 A/B case, but warm median improvement was only ~0.092659 s (~0.57%), inside same-revision dense run-to-run noise, while the sampled final-boundary cache proxy was ~+1.5 GB.  Correctness/P5/P6/P7 evidence passed.
+
+Do not pursue another P8 optimization for this milestone: no Attention/MoE/HC profiling, no `mx.compile`, no custom Metal, and no tile-native default enablement.  Milestone 6 qualified the existing dense P0-P7 path through 200K.
 
 ## DwarfStar structural acceptance gate
 
@@ -204,7 +208,7 @@ Passing correctness smoke without this structural gate is not performance-evalua
 | DeepseekV41Cache remains final authority | Live cache created by oMLX `make_cache`, mutated in runner, validated by `validate_committed_cache`; no `PrefillContinuationState` export. | P5/P6/P7 artifacts: frontiers equal prefix length, `full_cache_repack_count=0`, `exported=false`. | PASS | Cache internals remain owned by pinned oMLX. |
 | P5 same-cache handoff with zero prompt replay | `LivePrefillResult.from_committed`, `handoff_to_generation`, `OMLXGenerationSession.from_prefilled_cache`. | P5 checks in P7 2K/8K/16K/A: `prompt_replay_count=0`, same frontiers advance from prefix+terminal through decode. | PASS | Production selector not promoted. |
 
-Gate result: **P0-P7 structural gate = QUALIFIED** for the new path and scoped P7 backend. No gate item failed; P8 profiling/design may proceed without changing production selection.
+Gate result: **P0-P7 structural gate = QUALIFIED** for the new path and scoped P7 backend. No gate item failed. P8 completed without selecting an optimization; Milestone 6 measured and qualified the existing dense P0-P7 path without changing production selection.
 
 ## Correctness and qualification gates
 

@@ -6,9 +6,9 @@ This document records current performance-relevant conclusions without preservin
 
 The current native attention, MoE, Engram, state, and generation paths are measured as the current correctness/reference runtime. Their components may be reused in production where architecturally justified, but this document does not promote the current native execution topology as final production architecture.
 
-The intended production prefill direction is DwarfStar-derived DeepSeek-V4.1 architecture. Decode architecture remains to be selected by comparing DwarfStar and oMLX architecture evidence before implementation.
+The current production-prefill candidate for Milestone 6 is the existing **dense P0-P7 DwarfStar-derived FP8/MLX path** with `P7 FULL_RESIDENT_BACKBONE_SSD_ENGRAM`, `P7_ENGRAM_TILE=2048`, and oMLX `GenerationBatch` MTP-OFF decode. P8 optimization search is complete: `TILE_NATIVE_CARRY_REJECTED_NO_E2E_GAIN`; the tile-native implementation is retained as experimental/default OFF and is not production-selected.
 
-## Current native baseline
+## Historical native reference baseline
 
 The first current post-import native performance baseline is recorded in:
 
@@ -53,9 +53,11 @@ Engram-specific read/page counters are not currently exposed through a non-invas
 
 ## Current qualification interpretation
 
-MLX-enabled native build/tests are now qualified in the current environment. Bounded full-checkpoint native execution is also qualified for the smoke scope: the official checkpoint opens, full prefill executes for the bounded fixture, and one-token generation executes.
+MLX-enabled native build/tests remain qualified as reference evidence. The old native ~51 tok/s prefill / ~0.31 tok/s decode path is preserved historically as a **native reference runtime**, not the current practical production candidate.
 
-The current short-context performance state is **measured but unqualified as practical production performance**. The baseline is trustworthy enough to show that the current native reference topology is not an acceptable production decode starting point. It should guide architecture restoration and selection, not another sequence of local decode optimizations.
+Current production-candidate performance qualification is Milestone 6 and is now **qualified through 200K** for the dense P0-P7 FP8/MLX path. The measurement includes serving-path prefill to a committed live `DeepseekV41Cache`, P5 same-cache terminal bootstrap, first generated token, bounded decode throughput, memory, P6/P7/P5 evidence, and comparison to the recorded oMLX baseline.
+
+M6 canonical result: `artifacts/m6/performance-qualification/result.json`. Decision: `M6_PERFORMANCE_QUALIFIED_200K`.
 
 ## Historical and external baselines
 
@@ -67,12 +69,11 @@ Historical DwarfStar Q4 resident and ds41f DwarfStar-derived prototype measureme
 
 ## Rejected optimization measurements
 
-Rejected/deferred candidates include wide/rectangular attention alternatives, fused mHC decode candidate, performance-only decode graphs, and non-promoted late residency variants. These are not selectable as canonical production implementations.
+Rejected/deferred candidates include wide/rectangular attention alternatives, fused mHC decode candidate, performance-only decode graphs, non-promoted late residency variants, and P8 `TILE_NATIVE_CARRY_REJECTED_NO_E2E_GAIN`. Tile-native carry structurally eliminated source/encoder dense carry writes/slices at 16384, but the ~0.57% warm median difference was inside run-to-run noise and the final-boundary cache proxy regressed by ~1.5 GB. These are not selectable as canonical production implementations.
 
 ## Unqualified areas
 
-- short-context production latency/throughput: measured but not qualified as practical
-- long-context behavior
+- long-session robustness beyond one long request
 - native HTTP serving performance
 - release performance qualification
 

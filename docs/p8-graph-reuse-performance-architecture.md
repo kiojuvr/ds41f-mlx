@@ -1,10 +1,10 @@
 # P8 graph-reuse/performance architecture
 
-Status: **design review only; no P8 optimization implemented or selected**.  P8 begins only after the scoped P0-P7 structural gate closure recorded in `docs/dwarfstar-v41-prefill-fp8-mlx-architecture-plan.md`.
+Status: **P8 optimization search complete**.  The scoped P0-P7 structural gate is closed; P8 evidence, implementation, and A/B evaluation are recorded here. Final decision: `TILE_NATIVE_CARRY_REJECTED_NO_E2E_GAIN`.
 
 ## 1. Frozen P0-P7 authority
 
-P8 is an optimization phase, not a correctness architecture. It must preserve:
+P8 was an optimization phase, not a correctness architecture. It preserved:
 
 - DwarfStar sweep/segment/command order as execution authority.
 - Request-owned arena/carry lifetime and P6 deferred-decoder suffix lifetime.
@@ -169,7 +169,7 @@ Engram math has a stable 2048-token shape, but compile boundaries must not seria
 | PublicationManager mutation | NOT_COMPILE_SUITABLE | Python dict/shared-state side effects |
 | donor scheduling | NOT_COMPILE_SUITABLE | host/SSD/threadpool side effects |
 
-## 11. P8 optimization package design
+## 11. P8 optimization package design (historical design)
 
 Conceptual package:
 
@@ -194,7 +194,7 @@ Responsibilities:
 
 Feature flags/rollback should be package-level (for example `P8ExecutionOptimizer.enabled` plus per-component rollback switches), not unrelated isolated flags.
 
-## 12. Candidate implementation order
+## 12. Candidate implementation order (superseded by final P8 decision)
 
 1. **Telemetry/verification hardening**: keep aggregate command-family timing, add fast-path predicate reports for Attention/MoE/HC/quantized projection/packed activation, and add graph/materialization labels. No semantic change.
 2. **ShapeClassRegistry + verifier**: record actual 8K/16K/A shape classes and whether oMLX fused paths are reached. This is the recommended first P8 implementation unit.
@@ -213,7 +213,7 @@ Feature flags/rollback should be package-level (for example `P8ExecutionOptimize
 - Removing P6 source detach: rejected; correctness/lifetime boundary.
 - P7-off architecture: rejected as production baseline; attribution control only.
 
-## 14. Benchmark methodology and promotion rules
+## 14. Benchmark methodology and promotion rules (used for P8 closure)
 
 Benchmarks must separate:
 
@@ -228,7 +228,7 @@ All long measurements remain under `tools/qualification_supervisor.py` with the 
 
 Each optimization must have: baseline, candidate, correctness comparison, memory comparison, performance comparison, and rollback switch. Promotion requires unchanged P0-P7 invariants, P5 zero replay, valid cache/publication state, no new CPU fallback, no abnormal memory growth, and repeatable performance gain. P8 may reject a candidate because it is slower.
 
-## 15. Promotion/rollback criteria
+## 15. Promotion/rollback criteria (used for P8 closure)
 
 Rollback immediately if any candidate:
 
@@ -592,4 +592,4 @@ Interpretation: tile-native eliminated the intended source carry writes/slices, 
 
 Decision: **TILE_NATIVE_CARRY_REJECTED_NO_E2E_GAIN**.
 
-Because the coherent structural candidate removed the intended operations but did not produce repeatable E2E value outside observed noise, P8 is considered complete for this optimization line. Per P8 stop rule, do not continue into Engram concat tweaks, Attention/MoE/HC profiling, `mx.compile`, or custom kernels under this task. Attention/MoE/HC remain deferred unless a future explicit product/runtime requirement reopens component optimization.
+Because the coherent structural candidate removed the intended operations but did not produce repeatable E2E value outside observed noise, P8 optimization search is **COMPLETE**. The qualified production candidate for Milestone 6 is the existing dense P0-P7 path. Tile-native carry remains retained experimental code, default OFF, and not production-selected. Per P8 stop rule, do not continue into Engram concat tweaks, Attention/MoE/HC profiling, `mx.compile`, or custom kernels under this task. Attention/MoE/HC further optimization is not pursued / not required for M6 unless a future explicit product/runtime requirement reopens component optimization.

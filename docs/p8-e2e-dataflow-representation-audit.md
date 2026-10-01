@@ -1,6 +1,6 @@
 # P8 E2E dataflow and representation lifecycle audit
 
-Status: **architecture/audit only**. P0-P7 are frozen and qualified. This document deliberately does not add `mx.eval`, synchronization, component barriers, kernel probes, or production semantic changes.
+Status: **P8 optimization search complete**. P0-P7 are frozen and qualified. This document records the E2E representation audit and the implemented A/B candidate result. It deliberately does not add production `mx.eval`, synchronization, component barriers, kernel probes, or production semantic changes.
 
 ## 1. Frozen P8 attribution conclusion
 
@@ -255,7 +255,7 @@ Eliminated boundaries: repeated dense carry writes, repeated dense-parent slices
 
 ## 16. Selected architecture-level candidate
 
-Decision: **TILE_NATIVE_CARRY**.
+Historical candidate decision: **TILE_NATIVE_CARRY**. Final P8 result after implementation/A-B is **TILE_NATIVE_CARRY_REJECTED_NO_E2E_GAIN**; see section 24. The candidate code is retained experimental/default OFF and is not production-selected.
 
 Reasons:
 
@@ -347,9 +347,9 @@ Exact comparison remains required where current backend-local policy already req
 - `PACKING_REUSE`: deferred. No identical-input duplicate pack was found at the orchestration seam.
 - `Attention/MoE/HC/kernel work`: explicitly deferred until tile-native carry is implemented and qualified, or proven not viable/no operation elimination.
 
-## 23. Promotion rule
+## 23. Promotion rule and closure
 
-Promote only if P0-P7 correctness is preserved, structural operations are measurably eliminated, E2E improvement is repeatable outside noise, memory does not meaningfully regress, cold first-request is not hidden by warm results, P7 foreground Engram fallback remains zero, and no new CPU fallback appears. Structural cleanliness alone is insufficient.
+Promotion required P0-P7 correctness preservation, structural operation elimination, repeatable E2E improvement outside noise, no meaningful memory regression, no hidden cold first-request problem, P7 foreground Engram fallback zero, and no new CPU fallback. The implemented tile-native candidate failed the repeatable E2E gain/memory selection requirement, so it was rejected and P8 optimization search is complete.
 
 ## 24. TILE_NATIVE_CARRY implementation and A/B result (2026-10-01)
 
@@ -411,4 +411,4 @@ Interpretation: tile-native eliminated the intended source carry writes/slices, 
 
 Decision: **TILE_NATIVE_CARRY_REJECTED_NO_E2E_GAIN**.
 
-Because the coherent structural candidate removed the intended operations but did not produce repeatable E2E value outside observed noise, P8 is considered complete for this optimization line. Per P8 stop rule, do not continue into Engram concat tweaks, Attention/MoE/HC profiling, `mx.compile`, or custom kernels under this task. Attention/MoE/HC remain deferred unless a future explicit product/runtime requirement reopens component optimization.
+Because the coherent structural candidate removed the intended operations but did not produce repeatable E2E value outside observed noise, P8 optimization search is **COMPLETE**. The qualified production candidate for Milestone 6 is the existing dense P0-P7 path. Tile-native carry remains retained experimental code, default OFF, and not production-selected. Per P8 stop rule, do not continue into Engram concat tweaks, Attention/MoE/HC profiling, `mx.compile`, or custom kernels under this task. Attention/MoE/HC further optimization is not pursued / not required for M6 unless a future explicit product/runtime requirement reopens component optimization.
