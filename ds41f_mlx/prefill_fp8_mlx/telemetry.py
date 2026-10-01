@@ -7,7 +7,7 @@ performance success/failure gate before the structural acceptance gate passes.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Iterable, Mapping
 
 
 @dataclass(frozen=True)
@@ -44,6 +44,24 @@ class ArchitectureCompletion:
             "p7_full_resident_backbone_ssd_engram": self.p7_full_resident_backbone_ssd_engram,
             "p0_p7_structural_gate": self.p0_p7_structural_gate,
         }
+
+
+def summarize_p7_engram_events(events: Iterable[Mapping[str, Any]]) -> dict[str, int]:
+    """M6-authoritative scalar P7 Engram evidence from scheduling events.
+
+    Foreground fallback is an Engram consume without a logical donor match.
+    Background donor evidence is counted from explicit prefetch submissions.
+    No tensor data is inspected.
+    """
+
+    materialized = list(events)
+    return {
+        "foreground_engram_fallback": sum(1 for e in materialized if e.get("event") == "engram_consume" and not e.get("logical_match")),
+        "prefetch_submissions": sum(1 for e in materialized if e.get("event") == "engram_prefetch_submit"),
+        "consume_events": sum(1 for e in materialized if e.get("event") == "engram_consume"),
+        "logical_match_consumptions": sum(1 for e in materialized if e.get("event") == "engram_consume" and bool(e.get("logical_match"))),
+        "donor_observed_consumptions": sum(1 for e in materialized if e.get("event") == "engram_consume" and bool(e.get("donor_issue_observed"))),
+    }
 
 
 @dataclass

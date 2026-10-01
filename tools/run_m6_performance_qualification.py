@@ -28,6 +28,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from ds41f_mlx.prefill_fp8_mlx import DeferredPrefillAppend, LivePrefillResult, validate_committed_cache
+from ds41f_mlx.prefill_fp8_mlx.telemetry import summarize_p7_engram_events
 from ds41f_mlx.prefill_fp8_mlx.handoff import LiveCacheHandoffError
 from ds41f_mlx.runtime.omlx_decode import OMLXDecodeConfig
 from ds41f_mlx.runtime.omlx_generation import OMLXGenerationSession
@@ -110,12 +111,9 @@ def engram_event_counts(app: Any) -> dict[str, int]:
         coord = getattr(app.final_execution.runner, "scheduling_coordinator", None)
         tel = getattr(coord, "telemetry", None) if coord is not None else None
         events.extend(list(getattr(tel, "events", []) or []))
-    return {
-        "background_engram_reads": sum(1 for e in events if e.get("event") == "engram_prefetch_submit" and e.get("donor_issue_observed")),
-        "foreground_engram_fallback": sum(1 for e in events if e.get("event") == "engram_consume" and not e.get("logical_match")),
-        "prefetch_submissions": sum(1 for e in events if e.get("event") == "engram_prefetch_submit"),
-        "consume_events": sum(1 for e in events if e.get("event") == "engram_consume"),
-    }
+    out = summarize_p7_engram_events(events)
+    out["background_engram_reads"] = out["prefetch_submissions"]
+    return out
 
 
 def state_evidence(app: Any, ids: list[int]) -> dict[str, Any]:

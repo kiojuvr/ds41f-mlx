@@ -150,6 +150,7 @@ class DeepSeekRecipeRuntimeBackend:
         self.traces: deque[RequestTrace] = deque(maxlen=int(os.environ.get('DS41F_TRACE_HISTORY_LIMIT', '32')))
         self.last_trace: RequestTrace | None = None
         self.fatal_error: str | None = None
+        self.active_generation_sessions = 0
 
     def load(self) -> None:
         if self._runtime is not None:
@@ -216,6 +217,7 @@ class DeepSeekRecipeRuntimeBackend:
                 raise RuntimeError('production DENSE_P0_P7 prefill selector/frontier gate failed')
             cfg = OMLXDecodeConfig(omlx_path=self.omlx_path, checkpoint_path=self.checkpoint, engram_ssd_offload=True, preserve_mtp=False, speculation_enabled=False)
             session = await self._call(lambda: handoff_to_generation(prefill_result.live_result, self._model, terminal_prompt_token=first, config=cfg, max_tokens=max_tokens, sampler=sampler))
+            self.active_generation_sessions += 1
             trace.initial_admitted_frontier = session.admitted_frontier
             trace.frontier_after_first_input = session.token_frontier
             trace.frontier_after_terminal = session.token_frontier
@@ -249,6 +251,7 @@ class DeepSeekRecipeRuntimeBackend:
                 if session is not None:
                     await self._call(session.stop, 'request_cleanup')
                     await self._call(session.close)
+                    self.active_generation_sessions = max(0, self.active_generation_sessions - 1)
             finally:
                 trace.cleanup_called = True
                 self._lock.release()

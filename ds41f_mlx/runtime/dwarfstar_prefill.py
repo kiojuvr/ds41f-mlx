@@ -25,6 +25,7 @@ import numpy as np
 from ds41f_mlx.runtime.omlx_core import DEFAULT_OMLX
 from ds41f_mlx.prefill_fp8_mlx import DeferredPrefillAppend, LivePrefillResult
 from ds41f_mlx.prefill_fp8_mlx.p7_scheduling import P7_ENGRAM_TILE
+from ds41f_mlx.prefill_fp8_mlx.telemetry import summarize_p7_engram_events
 
 PRODUCTION_PREFILL_SELECTOR = "DENSE_P0_P7"
 ONE_CHUNK_SUBSTRATE = "DIAGNOSTIC_LEGACY"
@@ -363,15 +364,8 @@ class DenseP0P7PrefillSession:
             }
             for record in app.segment_records
         )
-        foreground_fallback = 0
-        background_reads = 0
-        for record in app.segment_records:
-            for event in record.scheduling_events:
-                name = str(event.get("event", ""))
-                if "foreground" in name and "fallback" in name:
-                    foreground_fallback += 1
-                if "engram" in name.lower() and ("submit" in name or "background" in name):
-                    background_reads += 1
+        p7_events = [event for record in app.segment_records for event in record.scheduling_events]
+        p7_summary = summarize_p7_engram_events(p7_events)
         return DenseP0P7PrefillResult(
             prefix_token_ids=ids,
             frontier=live.frontier,
@@ -383,8 +377,9 @@ class DenseP0P7PrefillSession:
                 "enabled": bool(getattr(self.language_model, "_p7_enable_overlap", False)),
                 "policy": "FULL_RESIDENT_BACKBONE_SSD_ENGRAM",
                 "p7_engram_tile": int(P7_ENGRAM_TILE),
-                "foreground_fallback": int(foreground_fallback),
-                "background_reads": int(background_reads),
+                "foreground_fallback": int(p7_summary["foreground_engram_fallback"]),
+                "background_reads": int(p7_summary["prefetch_submissions"]),
+                **p7_summary,
             },
         )
 

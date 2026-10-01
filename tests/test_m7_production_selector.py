@@ -4,6 +4,7 @@ from types import SimpleNamespace
 from unittest.mock import patch
 
 import ds41f_mlx.runtime.dwarfstar_prefill as dp
+from ds41f_mlx.prefill_fp8_mlx.telemetry import summarize_p7_engram_events
 from ds41f_mlx.serving.deepseek_recipe_backend import DeepSeekRecipeRuntimeBackend, RequestTrace
 
 
@@ -80,6 +81,16 @@ class ProductionSelectorTests(unittest.TestCase):
                 os.environ.pop("DS41F_P8_TILE_NATIVE_CARRY", None)
             else:
                 os.environ["DS41F_P8_TILE_NATIVE_CARRY"] = old
+
+    def test_p7_engram_fallback_uses_m6_logical_match_definition(self):
+        summary = summarize_p7_engram_events([
+            {"event": "engram_consume", "logical_match": True, "donor_issue_observed": True},
+            {"event": "engram_consume", "logical_match": False, "donor_issue_observed": False},
+            {"event": "engram_prefetch_submit"},
+        ])
+        self.assertEqual(summary["foreground_engram_fallback"], 1)
+        self.assertEqual(summary["logical_match_consumptions"], 1)
+        self.assertEqual(summary["prefetch_submissions"], 1)
 
     def test_trace_retention_is_bounded_deque(self):
         with patch.dict(os.environ, {"DS41F_TRACE_HISTORY_LIMIT": "2"}):

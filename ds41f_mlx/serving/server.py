@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterator, Awaitable, Callable
 from dataclasses import dataclass
+import os
 from pathlib import Path
 from time import time
 from uuid import uuid4
@@ -156,6 +157,21 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
     @app.get('/v1/models')
     async def models() -> Response:
         return JSONResponse(content={'object': 'list', 'data': [{'id': model_id, 'object': 'model', 'owned_by': 'ds41f', 'aliases': sorted(MODEL_ALIASES)}]})
+
+    if os.environ.get('DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS') == '1':
+        @app.get('/_ds41f/diagnostics')
+        async def diagnostics() -> Response:
+            traces = [t.to_json() for t in getattr(backend, 'traces', [])]
+            return JSONResponse(content={
+                'trace_count': len(traces),
+                'trace_limit': getattr(getattr(backend, 'traces', None), 'maxlen', None),
+                'traces': traces,
+                'last_trace': None if getattr(backend, 'last_trace', None) is None else backend.last_trace.to_json(),
+                'lock_locked': backend._lock.locked(),
+                'active_generation_sessions': getattr(backend, 'active_generation_sessions', None),
+                'model_ready': getattr(backend, '_model', None) is not None,
+                'fatal_error': getattr(backend, 'fatal_error', None),
+            })
 
     for path, protocol in (('/v1/chat/completions','chat_completions'),('/v1/responses','responses'),('/v1/messages','messages')):
         app.add_api_route(path, api_handler(protocol), methods=['POST'], name=protocol)
