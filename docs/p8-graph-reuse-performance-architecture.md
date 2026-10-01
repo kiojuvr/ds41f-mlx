@@ -489,3 +489,45 @@ Decision: **NO_TARGET_YET**.
 Reason: the staircase was complete enough to reduce final residual persistent eval to ~0.0086s warm median, but its materialization sum is materially larger than the original ~4.42s boundary. Therefore the barrier-induced split is not reliable enough to select `COMMON_ENCODER_BLOCK_COMPUTE`, `ENGRAM_SPECIALIZED_COMPUTE`, `SOURCE_LAYER_PERSISTENT_COMPUTE`, or `LAYER20_SOURCE_PUBLICATION`. It does not justify returning to arena bookkeeping; those paths remain excluded as primary 4-second contributors.
 
 Next diagnostic contract if this is revisited: design a less-perturbing upstream compute attribution method before component-level profiling. If a future low-perturbation pass points to ordinary encoder math, select one non-Engram/non-source layer such as layer 17 and decompose using the pinned-oMLX Block order only: attn HC mixes, attn pre-norm, Attention, attn HC post, ffn HC mixes, ffn pre-norm, MoE, ffn HC post. Do not duplicate or rewrite the math in the diagnostic.
+
+## 19. Phase transition: E2E representation architecture audit (2026-10-01)
+
+Barrier-based attribution is complete. The current conclusion is frozen:
+
+- The ~4.42 s P6 `persistent_source_eval` is primarily a materialization point for upstream lazy computation.
+- It is not evidence that P6 detach bookkeeping or owned cone copies themselves cost ~4.42 s.
+- Carry/persistent prepayment only moves the same upstream lazy computation to an earlier `mx.eval`.
+- The five-cut materialization staircase is preserved as raw evidence, but is now classified as **coverage validation: useful** and **performance attribution: too perturbing** because it inflated materialization by ~1.85x.
+- Further `mx.eval` insertion is rejected as the primary P8 attribution method because it changes laziness, fusion, and overlap.
+
+The primary P8 question is no longer “which is slower: Attention, MoE, or HC?” It is now:
+
+```text
+Can the same correct model computation be expressed with fewer E2E representation boundaries?
+```
+
+New audit deliverable: `docs/p8-e2e-dataflow-representation-audit.md`.
+
+Selected architecture-level candidate: **TILE_NATIVE_CARRY**. This is not implemented in this task. The candidate preserves DwarfStar command geometry, publication visibility, DeepseekV41Cache semantics, SSD Engram donor behavior, P6 ownership/materialization, and P5 no-replay handoff, while targeting repeated implementation-only boundaries:
+
+```text
+Block h/pre output
+ -> dense carry write
+ -> layer swap
+ -> dense carry slice
+ -> next Block
+```
+
+Candidate shape:
+
+```text
+TileSpan / TileCarryState
+ -> unchanged oMLX Block on tile tensors
+ -> next-layer tile object directly
+ -> assemble once only at layer19->20 if full-source publication requires it
+ -> direct final-cone extraction from retained tiles
+```
+
+For the 16384 source path, the structural before/after target is 120 dense carry writes -> 0 dense writes, 158 carry slices -> near-zero for layer transport, full-range layer assembly every layer -> at most one layer19->20 assembly, while keeping P6 persistent materialization unchanged. 8192 and A-24577 counts are recorded in the audit.
+
+Kernel/component optimization is explicitly deferred: no Attention-specific, MoE-specific, HC-specific, custom Metal, or additional `mx.compile` work should become primary until tile-native carry is either implemented and qualified or proven not viable/no-op. Future performance experiments must use E2E 8192, 16384, and A-24577 cold/warm measurements, not new internal eval barriers.
