@@ -1,8 +1,47 @@
 # P6 deferred decoder: authority reconstruction and complete architecture plan
 
-**Status: design/audit only, from `5cea84d`. P6 is not implemented or qualified.**
+**Status: implemented and real-qualified in the ds41f P6 package.**
 
-P0–P5 real qualification remains scoped to the existing connected path. This document does not enable `resume_encoder`, remove `ResumeUnavailableError`, change P5 or runtime selection, implement P7, or measure performance. The pinned tests below were **read**, not executed in this task; their assertions are authority evidence, not a newly reported test pass.
+The authority reconstruction below remains the historical design/audit record from `5cea84d`. Since that audit, ds41f implemented P6 as `DeferredPrefillAppend` and qualified it on the target Mac MLX environment. This document still does **not** change production runtime selection, implement P7/P8, or make performance claims.
+
+Implemented/qualified scope:
+
+- package: `ds41f_mlx.prefill_fp8_mlx.p6_append` plus P5 same-cache handoff integration;
+- explicit sealed-commit continuation API: `DeferredPrefillAppend.continue_from_commit(...)`;
+- canonical public slot0: MLX int32 array shape `(1,)`, not Python int;
+- ordinary-only small append seal allowed for bounded rebuilds;
+- production selector remains unchanged.
+
+Real qualification environment:
+
+```text
+Python 3.13.15
+MLX 0.32.2
+NumPy 2.3.5
+oMLX 0.7.0.dev2
+oMLX revision b390b31e0c6831225fed0f24d278eb1db7fcb68b
+checkpoint /Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash
+preserve_mtp=False
+engram_ssd_offload=True
+```
+
+Successful evidence cases:
+
+```text
+complete-16384
+pending-16384
+tiny-16385
+A-24577
+matched-geometry non-deferred control
+B-fresh-49155
+B-continued C24578 -> T49155
+failure/rebuild
+P5 bootstrap/decode
+```
+
+Observed P5 handoff evidence across completed real cases: same live cache list, `prompt_replay_count = 0`, `full_cache_repack_count = 0`, `PrefillContinuationState` export count/equivalent exported flag = 0, bounded decode succeeded. P6 qualification supports the P6-local status `deferred_decoder_suffix_lifetime = qualified` and `dwarfstar_carry_lifetime = qualified`; it does **not** promote P7 overlap/scheduling, P8 graph reuse, production selector, performance gate, or global runtime completion.
+
+Watchdog truth correction: the completed matrix runner recorded post-segment coarse timings and enforced only the post-segment pathological `<10 effective tokens/sec after >=4096 tokens` guard. It did not enforce an in-segment 180-second no-progress watchdog, and the 4x normalized precursor guard was not active because no baselines were supplied. Evidence should therefore be read as: no observed pathological slowdown, no `<10 tok/s` segment abort, and no manually observed long stall—not as a full watchdog pass.
 
 ## 1. Pinned authority and production trace
 

@@ -1,6 +1,6 @@
 # DwarfStar V4.1 prefill on official FP8/MLX — architecture plan
 
-Status: **planned / architecture frozen for implementation start**.  This document is a design artifact only; it does not implement the runtime.
+Status: **P0-P6 implemented/qualified within the new path; P7/P8 and production selection remain open.**  This document started as an architecture plan; current status notes distinguish implemented package evidence from remaining design work.
 
 ## Decision
 
@@ -148,22 +148,21 @@ The runner may introduce chunked row execution only where oMLX cache semantics c
 - Hand the same cache to `OMLXGenerationSession.from_prefilled_cache` without `PrefillContinuationState` export or adapter re-admission. Revoke prefill execution authority; after bootstrap the `BatchGenerator`/`GenerationBatch` scheduler is the sole active decode authority. Repeated handoff/start fails closed.
 - Terminal-token holdout contract: `full_prompt = prefix_token_ids + [terminal_prompt_token]`. P3/P4 cache only the prefix and suppress final prefix logits. P5 calls `session.start(terminal_prompt_token)` exactly once: pre-start frontiers equal `len(prefix_token_ids)`, post-bootstrap frontiers equal `len(prefix_token_ids)+1`, and prefix replay is zero. Never prefill the terminal token and then pass it again to `start()`.
 
-Implementation/real P5 qualification: [live-cache handoff closeout](p5-live-cache-handoff.md). Production selection, P6 and P7 remain separate tasks.
+Implementation/real P5 qualification: [live-cache handoff closeout](p5-live-cache-handoff.md). Production selection and P7 remain separate tasks.
 
 ### P6 — deferred decoder / long-context sweep
 
-**Authority clarification (design only):** the local `encoder_only/resume_encoder` scaffolding does not implement the pinned deferred-decoder mechanism. The controlling package-level design is [P6 deferred-decoder authority and architecture](p6-deferred-decoder-architecture.md): a request-level append transaction, true encoder/source-only sweeps, and final new-range decoder completion with a 2541-row input cone. The original phase shorthand below is not permission to enable current flags; `ResumeUnavailableError` remains in place.
+**Implemented and real-qualified in the new path.** The controlling package-level record is [P6 deferred-decoder authority and architecture](p6-deferred-decoder-architecture.md). The implementation is request-owned `DeferredPrefillAppend`: true encoder/source-only sweeps, final new-range decoder completion with a 2541-row input cone, explicit sealed-commit continuation, canonical public slot0, failure/rebuild behavior, and same-cache P5 handoff.
 
-- Enable encoder-only and resume/deferred-decoder phases from the native sweep plan.
-- Retain only DwarfStar-required suffix rows for decoder layers rather than full prompt rows when the plan selects suffix mode.
-- Preserve compressor pending state and publication frontiers across encoder/resume boundary.
+Real qualification environment: Python 3.13.15, MLX 0.32.2, NumPy 2.3.5, oMLX 0.7.0.dev2 at `b390b31e0c6831225fed0f24d278eb1db7fcb68b`, official DeepSeek-V4.1-Flash checkpoint, `preserve_mtp=False`, `engram_ssd_offload=True`.
+
+Qualified cases: `complete-16384`, `pending-16384`, `tiny-16385`, `A-24577`, matched-geometry non-deferred control, `B-fresh-49155`, `B-continued C24578 -> T49155`, failure/rebuild, and P5 bootstrap/decode. Evidence records same live-cache handoff, `prompt_replay_count = 0`, `full_cache_repack_count = 0`, and no `PrefillContinuationState` export/repack path.
+
+ArchitectureCompletion status local to the new path: `deferred_decoder_suffix_lifetime = qualified`; `dwarfstar_carry_lifetime = qualified`. This does not promote P7, P8, production selector, performance gate, or global runtime completion.
 
 ### P7 — overlap and scheduling
 
-- Add Engram prefetch/read-ahead command handling using oMLX Engram prefetch hooks.
-- Add expert/weight residency scheduling around layer commands.
-- A placeholder/no-op scheduling hook may exist during scaffolding, but it does not count toward architecture completion or performance-evaluation readiness.
-- Group `mx.eval`/`mx.async_eval` according to command batches and explicit materialization boundaries rather than per validation layer.
+P7 is reconstructed but not implemented; see [P7 overlap/scheduling architecture](p7-overlap-scheduling-architecture.md). Required scope: Engram prefetch/read-ahead, expert/weight residency scheduling, and explicit `mx.eval`/`mx.async_eval` materialization boundaries. A placeholder/no-op scheduling hook does not count toward architecture completion or performance-evaluation readiness.
 
 ### P8 — graph/reuse optimization pass
 

@@ -34,7 +34,8 @@ Status vocabulary:
 | Production MLX/oMLX decode under finalized policy | NOT YET VALIDATED | Next production-facing frontier: validate/finish practical production decode against backend-local fidelity policy. |
 | API integration | NOT YET VALIDATED | Native HTTP/API path not claimed connected. |
 | Short-context performance | MEASURED / NOT QUALIFIED AS PRACTICAL | Current native reference decode is not acceptable production performance. |
-| Long-context qualification | NOT YET VALIDATED | Explicitly open and later than M4 correctness closure. |
+| P6 deferred-decoder long-context new path | QUALIFIED | Real MLX/oMLX qualification on Python 3.13.15 / MLX 0.32.2 / NumPy 2.3.5 / oMLX 0.7.0.dev2 `b390b31e...`: complete-16384, pending-16384, tiny-16385, A-24577, matched non-deferred control, B-fresh-49155, B-continued C24578->T49155, failure/rebuild, and P5 bootstrap/decode. Same-cache handoff; prompt replay/export/repack zero. Not production-selected and not a performance gate. |
+| Long-context qualification outside P6 new path | NOT YET VALIDATED | Long-session robustness, P7 scheduling, P8 graph reuse, save/restore/resume, and production selector remain open. |
 | Long-session robustness | NOT YET VALIDATED | Includes long-lived agent sessions, no-progress/thought-loop recurrence, failure/recovery, memory behavior. Not an M4 blocker. |
 | KV/cache save-restore-resume | NOT YET VALIDATED | Deferred workstream after practical runtime operation; no new restoration format is claimed. |
 | Tool-call boundary robustness | NOT YET VALIDATED | Later serving/runtime robustness work. |

@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Qualification-only real P6 long matrix runner; no benchmark promotion."""
+"""Qualification-only real P6 long matrix runner; no benchmark promotion.
+
+This runner records post-segment progress/timing and enforces only post-segment
+pathological low-throughput checks. It is not an in-segment no-progress watchdog;
+use tools/qualification_supervisor.py for future P7/P8 stuck-worker protection.
+"""
 from __future__ import annotations
 
 import argparse, hashlib, json, struct, sys, time, traceback
