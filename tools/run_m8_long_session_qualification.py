@@ -74,7 +74,7 @@ class RecipeCodec:
 
 def git_dirty(path: Path) -> bool | None:
     try:
-        status = subprocess.check_output(['git', '-C', str(path), 'status', '--short', '--', '.', ':(exclude)artifacts/m8/long-session-qualification.json'], text=True).strip()
+        status = subprocess.check_output(['git', '-C', str(path), 'status', '--short', '--', '.', ':(exclude)artifacts/m8/long-session-qualification.json', ':(exclude)artifacts/m9'], text=True).strip()
         return bool(status)
     except Exception:
         return None
