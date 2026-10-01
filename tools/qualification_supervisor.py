@@ -8,6 +8,7 @@ running segment to return.
 from __future__ import annotations
 
 import argparse, json, selectors, subprocess, sys, time
+from pathlib import Path
 from dataclasses import dataclass
 from typing import Any
 
@@ -97,6 +98,7 @@ def main(argv=None):
     ap.add_argument("--selftest", choices=("ok","stall"))
     ap.add_argument("--worker-selftest", choices=("ok","stall"))
     ap.add_argument("--timeout", type=float, default=180.0)
+    ap.add_argument("--baselines-json", type=Path, help="optional mode->seconds baseline JSON for normalized 4x guard")
     ap.add_argument("cmd", nargs=argparse.REMAINDER)
     args=ap.parse_args(argv)
     if args.worker_selftest:
@@ -108,7 +110,11 @@ def main(argv=None):
         return 0 if (args.selftest == "ok" and res.status == "PASS") or (args.selftest == "stall" and res.status == "ABORT") else 1
     if not args.cmd:
         ap.error("provide --selftest or worker command")
-    res=supervise(args.cmd, no_progress_timeout_s=args.timeout)
+    baselines = None
+    if args.baselines_json is not None:
+        data = json.loads(args.baselines_json.read_text())
+        baselines = {str(k): float(v) for k, v in data.items()}
+    res=supervise(args.cmd, no_progress_timeout_s=args.timeout, baselines=baselines)
     print(json.dumps({"supervisor":res.to_json()}, indent=2))
     return 0 if res.status == "PASS" else 1
 

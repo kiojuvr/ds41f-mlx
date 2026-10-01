@@ -67,12 +67,9 @@ class ResidencyPolicy:
 
     def _require_disk_engram(self, language_model: Any) -> None:
         for layer_id in getattr(getattr(language_model, "_config", object()), "engram_layer_ids", (1, 14)):
-            try:
-                engram = language_model.layers[int(layer_id)].engram
-            except Exception as exc:
-                raise P7SchedulingError(f"missing Engram layer {layer_id}") from exc
-            if type(engram).__name__ != "DiskEngramEmbedding" and not getattr(engram, "_p7_disk_engram", False):
-                raise P7SchedulingError(f"Engram layer {layer_id} is not DiskEngramEmbedding under SSD mode")
+            embed = _engram_storage_embed(language_model, int(layer_id))
+            if type(embed).__name__ != "DiskEngramEmbedding" and not getattr(embed, "_p7_disk_engram", False):
+                raise P7SchedulingError(f"Engram layer {layer_id} embed is not DiskEngramEmbedding under SSD mode")
 
     def verify_layer_ready(self, layer: int, telemetry: SchedulingTelemetry) -> str:
         if not self.admitted:
@@ -145,12 +142,14 @@ class MaterializationPolicy:
                 self.telemetry.record("mx_async_eval", boundary="after_engram")
 
 
-@dataclass
+@dataclass(frozen=True)
 class PendingEngramRequest:
     table: int
     layer: int
-    command_index: int
-    ids: Any
+    target_command_index: int
+    offset: int
+    rows: int
+    donor_issue_observed: bool
 
 
 class EngramPrefetchController:
@@ -191,9 +190,12 @@ class EngramPrefetchController:
             ids = hash_slice_fn(arena.engram.hashes.value, command.offset, command.rows, layer, self.language_model)
         if ids is None:
             return None
-        self.telemetry.record("engram_consume", layer=layer, offset=command.offset, rows=command.rows, command_index=command.index, exact_prefetch=self._ids_equal(self.pending.ids, ids) if self.pending is not None else False)
-        if self.pending is not None and not self._ids_equal(self.pending.ids, ids):
-            self.telemetry.record("engram_prefetch_mismatch", layer=layer, command_index=command.index)
+        pending = self.pending
+        logical_match = pending is not None and pending.target_command_index == command.index and pending.layer == layer and pending.offset == command.offset and pending.rows == command.rows
+        if pending is not None and not logical_match:
+            self.telemetry.record("engram_prefetch_mismatch", layer=layer, command_index=command.index, pending_command_index=pending.target_command_index)
+            raise P7SchedulingError("Engram consumer did not match scheduled prefetch target")
+        self.telemetry.record("engram_consume", layer=layer, offset=command.offset, rows=command.rows, command_index=command.index, logical_match=logical_match, donor_issue_observed=bool(pending.donor_issue_observed) if pending is not None else False)
         return ids
 
     def after_consumer(self, command: SweepCommand, arena: Any, hash_slice_fn: Callable[..., Any]) -> None:
@@ -223,11 +225,12 @@ class EngramPrefetchController:
         ids = hash_slice_fn(arena.engram.hashes.value, command.offset, command.rows, layer, self.language_model)
         if ids is None:
             return
-        engram = self.language_model.layers[layer].engram
-        self.donor.submit(engram, ids)
+        embed = _engram_storage_embed(self.language_model, layer)
+        self.donor.submit(embed, ids)
+        donor_issue_observed = _donor_issue_observed(self.donor, embed)
         table = 0 if layer == 1 else 1
-        self.pending = PendingEngramRequest(table, layer, command.index, ids)
-        self.telemetry.record("engram_prefetch_submit", table=table, layer=layer, offset=command.offset, rows=command.rows, command_index=command.index, ids=ids)
+        self.pending = PendingEngramRequest(table, layer, command.index, int(command.offset), int(command.rows), donor_issue_observed)
+        self.telemetry.record("engram_prefetch_submit", table=table, layer=layer, offset=command.offset, rows=command.rows, command_index=command.index, logical_consumer_command_index=command.index, donor_issue_observed=donor_issue_observed)
 
     def _next_consumer_after(self, index: int, layer: int) -> SweepCommand | None:
         for cmd in self.commands:
@@ -239,15 +242,24 @@ class EngramPrefetchController:
         if self.revoked:
             raise P7SchedulingError("stale P7 coordinator cannot schedule after revocation")
 
-    @staticmethod
-    def _ids_equal(a: Any, b: Any) -> bool:
-        if a is b:
-            return True
-        try:
-            import numpy as np  # type: ignore
-            return bool(np.array_equal(a, b))
-        except Exception:
-            return a == b
+
+
+def _engram_storage_embed(language_model: Any, layer: int) -> Any:
+    try:
+        engram = language_model.layers[int(layer)].engram
+    except Exception as exc:
+        raise P7SchedulingError(f"missing Engram wrapper for layer {layer}") from exc
+    if not hasattr(engram, "embed"):
+        raise P7SchedulingError(f"Engram layer {layer} has no storage embed")
+    return engram.embed
+
+
+def _donor_issue_observed(donor: Any, embed: Any) -> bool:
+    pending = getattr(donor, "_pending", None)
+    if isinstance(pending, tuple) and len(pending) >= 2 and pending[0] is embed:
+        return True
+    prefetched = getattr(embed, "_prefetched", None)
+    return isinstance(prefetched, tuple) and len(prefetched) >= 2
 
 
 class SchedulingCoordinator:
@@ -314,9 +326,23 @@ class RecordingDonor:
     """Test double with the same submit/drain surface as oMLX EngramPrefetch."""
 
     calls: list[tuple[str, Any, Any]] = field(default_factory=list)
+    _pending: tuple[Any, object] | None = None
 
     def submit(self, embed: Any, ids: Any) -> None:
         self.calls.append(("submit", embed, ids))
+        marker = object()
+        try:
+            embed._prefetched = (None, marker)
+        except Exception:
+            pass
+        self._pending = (embed, marker)
 
     def drain(self) -> None:
         self.calls.append(("drain", None, None))
+        if self._pending is not None:
+            embed, _marker = self._pending
+            try:
+                embed._prefetched = None
+            except Exception:
+                pass
+        self._pending = None
