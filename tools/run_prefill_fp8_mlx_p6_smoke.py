@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import argparse
+import importlib.metadata
 import json
 from pathlib import Path
+import subprocess
 import sys
 import traceback
 from unittest.mock import patch
@@ -21,6 +23,7 @@ def parser():
     p.add_argument('--case', choices=('complete-16384', 'pending-16384'), required=True)
     p.add_argument('--no-benchmark', action='store_true', required=True)
     p.add_argument('--checkpoint', type=Path, default=Path('/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash'))
+    p.add_argument('--allow-nonqualified-mlx', action='store_true', help='diagnostic only: run even when MLX is not the qualified 0.32.2 version')
     p.add_argument('--generated-tokens', type=int, default=2, choices=(1, 2, 3))
     p.add_argument('--out', type=Path)
     return p
@@ -32,6 +35,30 @@ def token(i: int) -> int:
 
 def identity(cache):
     return {'list': id(cache), 'layers': {str(i): {'object': id(cache[i]), 'slots': [id(cache[i][s]) for s in range(7)]} for i in (0, 20, 39)}}
+
+
+def _git(path: Path, *args: str) -> str | None:
+    result = subprocess.run(['git', '-C', str(path), *args], capture_output=True, text=True)
+    return result.stdout.strip() if result.returncode == 0 else None
+
+
+def qualification_preflight(lang, checkpoint: Path) -> dict:
+    import numpy as np
+    lang_path = Path(lang.__file__).resolve()
+    git_root = _git(lang_path.parent, 'rev-parse', '--show-toplevel')
+    try:
+        mlx_version = importlib.metadata.version('mlx')
+    except importlib.metadata.PackageNotFoundError:
+        mlx_version = None
+    return {
+        'python_executable': sys.executable,
+        'python_version': sys.version,
+        'mlx_version': mlx_version,
+        'numpy_version': np.__version__,
+        'omlx_language_path': str(lang_path),
+        'omlx_git_revision': _git(Path(git_root) if git_root else lang_path.parent, 'rev-parse', 'HEAD'),
+        'checkpoint_path': str(checkpoint),
+    }
 
 
 def main(argv=None):
@@ -49,6 +76,14 @@ def main(argv=None):
         from omlx.patches.deepseek_v41.loading import load
         from ds41f_mlx.runtime.omlx_decode import OMLXDecodeConfig
         from ds41f_mlx.runtime.omlx_generation import OMLXGenerationSession
+        report['environment_preflight'] = qualification_preflight(lang, args.checkpoint)
+        report['qualifying_environment'] = report['environment_preflight']['mlx_version'] == '0.32.2' and not args.allow_nonqualified_mlx
+        if report['environment_preflight']['mlx_version'] != '0.32.2' and not args.allow_nonqualified_mlx:
+            report.update(status='ENV_MISMATCH', stage='environment_preflight', reason=f"P6 qualification requires MLX 0.32.2, got {report['environment_preflight']['mlx_version']}")
+            print(json.dumps(report, indent=2))
+            return 2
+        if args.allow_nonqualified_mlx:
+            report['nonqualifying_diagnostic_override'] = True
         report['runtime_authority'] = runtime_authority(lang)
         if any(v != 'compatible' for v in report['runtime_authority']['operation_contracts'].values()):
             raise RuntimeError('imported runtime API incompatible with reviewed adapter')
