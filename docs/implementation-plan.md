@@ -122,9 +122,9 @@ M6 ladder completed: 2048, 8192, 16384, 32768, 65536, 131072, and 200000. The de
 
 ## Milestone 7 — Serving integration
 
-Status: **active qualification**. See `docs/milestone-7-deepseek-recipe-serving-status.md` and `artifacts/m7/deepseek-recipe-serving/result.json`.
+Status: **qualified for text-only single-flight serving** (`M7_TEXT_SERVING_QUALIFIED`). See `docs/milestone-7-deepseek-recipe-serving-status.md` and `artifacts/m7/deepseek-recipe-serving/result.json`.
 
-Selector decision entering M7: `PRODUCTION_PREFILL_SELECTOR = DENSE_P0_P7`. Runtime serving must bind recipe prompts to `DwarfStarMLXPrefillSession` as a compatibility facade over `DenseP0P7PrefillSession -> DeferredPrefillAppend -> LivePrefillResult`, then use the qualified P5 `handoff_to_generation()` helper. The reference vertical slice and the old one-chunk oMLX substrate are diagnostic only; `DS41F_ALLOW_REFERENCE_VERTICAL_SLICE_SERVING` must not alter production serving selection.
+Selector decision: `PRODUCTION_PREFILL_SELECTOR = DENSE_P0_P7`. Runtime serving binds recipe prompts to `DwarfStarMLXPrefillSession` as a compatibility facade over `DenseP0P7PrefillSession -> DeferredPrefillAppend -> LivePrefillResult`, then uses the qualified P5 `handoff_to_generation()` helper. The reference vertical slice and the old one-chunk oMLX substrate are diagnostic only; `DS41F_ALLOW_REFERENCE_VERTICAL_SLICE_SERVING` does not alter production serving selection.
 
 Use official DeepSeek `deepseek-recipe` as the protocol/prompt/response layer.
 
@@ -140,7 +140,7 @@ ds41f backend interface
 production runtime
 ```
 
-The project should not independently reinvent Chat Completions conversion, Responses conversion, DeepSeek V4.1 prompt encoding, tool-call parsing, thinking parsing, or stream response formatting. The first selector gate is arbitrary valid prefix length support on the dense P0-P7 path, including odd/even and ratio-2 pending states; no prompt replay fallback is allowed.
+The project should not independently reinvent Chat Completions conversion, Responses conversion, DeepSeek V4.1 prompt encoding, tool-call parsing, thinking parsing, or stream response formatting. M7 qualified arbitrary valid prefix length support over the bounded matrix, including odd/even and ratio-2 pending states; no prompt replay fallback is allowed or used.
 
 ## Later goals
 

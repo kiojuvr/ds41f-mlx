@@ -1,132 +1,4242 @@
 {
-  "arbitrary_length_matrix": {
-    "lengths": [
-      1,
-      2,
-      3,
-      15,
-      16,
-      17,
-      29,
-      30,
-      31,
-      32,
-      33,
-      63,
-      64,
-      65,
-      127,
-      128,
-      129,
-      255,
-      256,
-      257,
-      511,
-      512,
-      513,
-      2048
+  "direct_backend_minimal_recipe": {
+    "chunks": [
+      "InferenceChunk",
+      "InferenceChunk",
+      "InferenceChunk",
+      "InferenceChunk"
     ],
-    "reason": "implementation promoted; bounded raw-token real-model selector qualification still required before serving qualification",
-    "status": "NOT_RUN_REAL_MODEL"
+    "prefix_tokens": 30,
+    "prompt_tokens": 31,
+    "status": "PASS",
+    "terminal_token": 128821,
+    "trace": {
+      "cancelled": false,
+      "cleanup_called": true,
+      "completion_tokens": 2,
+      "decode_latencies_s": [
+        0.049896166994585656,
+        0.04884324999875389
+      ],
+      "exported": false,
+      "first_decode_input": 128821,
+      "frontier_after_first_input": 31,
+      "frontier_after_terminal": 31,
+      "full_cache_repack_count": 0,
+      "generated_tokens": [
+        2581,
+        1309
+      ],
+      "handoff_count": 1,
+      "initial_admitted_frontier": 30,
+      "median_decode_tok_s": 20.255335314922,
+      "prefill_frontier": 30,
+      "prefill_phase_timings_s": {
+        "dense_p0_p7_append": 0.08468620799249038
+      },
+      "prefill_seconds": 0.08468620799249038,
+      "prefill_segment_count": 1,
+      "prefill_tokens": 30,
+      "production_prefill_selector": "DENSE_P0_P7",
+      "prompt_replay_count": 0,
+      "prompt_tokens": 31,
+      "protocol": "chat_completions",
+      "request_id": "501c4343-4f3d-4ff1-8376-c19108e415e7",
+      "same_live_cache_handoff": true
+    }
   },
-  "cancellation_disconnect": "NOT_RUN_REAL_HTTP",
-  "classification": "M7_NOT_QUALIFIED",
-  "ds41f_git_commit": "247d55844d1807fc60ff20de1572f158a0b4953d",
-  "failed_surface": "Real-model arbitrary-length dense P0-P7 matrix and real loopback HTTP serving gates have not yet been run in this pass.",
-  "health_models": {
-    "health": "implemented: alive/model_ready/fatal_error without model forward",
-    "models": "implemented: exposes deepseek-v4.1-flash and aliases"
+  "historical_pre_selector_promotion_evidence": {
+    "classification": "HISTORICAL_PRE_SELECTOR_PROMOTION_EVIDENCE",
+    "old_29_token_ratio2": "reshape limitation",
+    "old_30_token_prefix": ">900s"
   },
-  "http_endpoint_results": {
-    "chat_completions_non_stream": "NOT_RUN",
-    "chat_completions_streaming": "NOT_RUN",
-    "messages": "NOT_RUN_SCOPE_DEPENDS_ON_PINNED_RECIPE",
-    "responses_non_stream": "NOT_RUN",
-    "responses_streaming": "NOT_RUN"
+  "http": {
+    "cancel_unblocks_waiter": {
+      "cancel": {
+        "cancelled_client": true,
+        "content_type": "text/event-stream; charset=utf-8",
+        "events": [
+          {
+            "frame": "data: {\"id\":\"75a5bb4f-eda4-42ee-8006-491b886f93ae\",\"object\":\"chat.completion.chunk\",\"created\":1790867880,\"model\":\"deepseek-v4.1-flash\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":null,\"reasoning_content\":\"\"},\"logprobs\":null,\"finish_reason\":null}]}",
+            "t": 109725.660369291
+          }
+        ],
+        "final_event": null,
+        "first_event": 109725.66036925,
+        "request_start": 109725.4160395,
+        "status": 200
+      },
+      "diagnostics": {
+        "active_generation_sessions": 0,
+        "fatal_error": null,
+        "last_trace": {
+          "cancelled": true,
+          "cleanup_called": true,
+          "completion_tokens": 2,
+          "decode_latencies_s": [
+            0.05184670900052879,
+            0.05395154199504759
+          ],
+          "exported": false,
+          "first_decode_input": 128821,
+          "frontier_after_first_input": 32,
+          "frontier_after_terminal": 32,
+          "full_cache_repack_count": 0,
+          "generated_tokens": [
+            2581,
+            1309
+          ],
+          "handoff_count": 1,
+          "initial_admitted_frontier": 31,
+          "median_decode_tok_s": 18.903904187259425,
+          "prefill_frontier": 31,
+          "prefill_phase_timings_s": {
+            "dense_p0_p7_append": 0.10987704100261908
+          },
+          "prefill_seconds": 0.10987704100261908,
+          "prefill_segment_count": 1,
+          "prefill_tokens": 31,
+          "production_prefill_selector": "DENSE_P0_P7",
+          "prompt_replay_count": 0,
+          "prompt_tokens": 32,
+          "protocol": "chat_completions",
+          "request_id": "89eee3ad-c99a-40ef-9151-ce9ddf1f4817",
+          "same_live_cache_handoff": true
+        },
+        "lock_locked": false,
+        "model_ready": true,
+        "trace_count": 12,
+        "trace_limit": 32,
+        "traces": [
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.05066716700093821,
+              0.048160500009544194
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 20.2372479336972,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.605339333997108
+            },
+            "prefill_seconds": 0.605339333997108,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "chat_completions",
+            "request_id": "33456516-a598-4374-9d89-471ec9c2cdff",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 3,
+            "decode_latencies_s": [
+              0.049339332996169105,
+              0.04831324999395292,
+              0.050028541998472065
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309,
+              3287
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 20.267805405428643,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07269200000155251
+            },
+            "prefill_seconds": 0.07269200000155251,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "chat_completions",
+            "request_id": "d97c3a49-8df9-4468-92c6-18491b505943",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.05504550000478048,
+              0.04837958299322054
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 19.337668793929378,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07729683398792986
+            },
+            "prefill_seconds": 0.07729683398792986,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "responses",
+            "request_id": "91bcd7df-2752-4509-9746-0d8444333bee",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 3,
+            "decode_latencies_s": [
+              0.04966395799419843,
+              0.0482104580005398,
+              0.04936095800076146
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309,
+              3287
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 20.258926092653503,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07658958301180974
+            },
+            "prefill_seconds": 0.07658958301180974,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "responses",
+            "request_id": "b5c22ee6-b327-4136-af46-9ab098d2d4ce",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.04965083301067352,
+              0.048087874994962476
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 20.462721891972137,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07421075001184363
+            },
+            "prefill_seconds": 0.07421075001184363,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "messages",
+            "request_id": "cc1687e0-fd69-4256-ad4f-9e8248fec886",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 0,
+            "decode_latencies_s": [],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": null,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07267795900406782
+            },
+            "prefill_seconds": 0.07267795900406782,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "chat_completions",
+            "request_id": "84726ba5-ba94-48d8-b33a-29a9e9f22340",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.052817417003097944,
+              0.051802999994833954
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 19.11672747432784,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.10996320900449064
+            },
+            "prefill_seconds": 0.10996320900449064,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "chat_completions",
+            "request_id": "26c28436-a75b-4d5b-b10f-42ffac64f2ac",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.05011004199332092,
+              0.04791700000350829
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 20.402533415878164,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.0777527089958312
+            },
+            "prefill_seconds": 0.0777527089958312,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "chat_completions",
+            "request_id": "b7171ee2-1a4c-4ce4-bbed-2f84c5aaf815",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.04871233399899211,
+              0.04918708300101571
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 32,
+            "frontier_after_terminal": 32,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 31,
+            "median_decode_tok_s": 20.42913084967442,
+            "prefill_frontier": 31,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.0798616249958286
+            },
+            "prefill_seconds": 0.0798616249958286,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 31,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 32,
+            "protocol": "chat_completions",
+            "request_id": "226b189f-7f9d-4a09-9b20-b27a47c16039",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.04864633300167043,
+              0.049585707994992845
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 32,
+            "frontier_after_terminal": 32,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 31,
+            "median_decode_tok_s": 20.35995566933131,
+            "prefill_frontier": 31,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07322162500349805
+            },
+            "prefill_seconds": 0.07322162500349805,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 31,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 32,
+            "protocol": "chat_completions",
+            "request_id": "fd5267db-373c-4f4b-8bf6-9fb56f815abb",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 0,
+            "decode_latencies_s": [],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": null,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.0714672499889275
+            },
+            "prefill_seconds": 0.0714672499889275,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "chat_completions",
+            "request_id": "4aa52f11-d1c4-4a71-a218-c5b88e6b6d27",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.05184670900052879,
+              0.05395154199504759
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 32,
+            "frontier_after_terminal": 32,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 31,
+            "median_decode_tok_s": 18.903904187259425,
+            "prefill_frontier": 31,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.10987704100261908
+            },
+            "prefill_seconds": 0.10987704100261908,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 31,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 32,
+            "protocol": "chat_completions",
+            "request_id": "89eee3ad-c99a-40ef-9151-ce9ddf1f4817",
+            "same_live_cache_handoff": true
+          }
+        ]
+      },
+      "waiter": {
+        "code": 200,
+        "end": 109726.333008458,
+        "start": 109725.926284125,
+        "tag": "waiter"
+      }
+    },
+    "cancellation": {
+      "cancelled_client": true,
+      "content_type": "text/event-stream; charset=utf-8",
+      "events": [
+        {
+          "frame": "data: {\"id\":\"d368dc9d-f4fb-4abb-a7ab-08d1e8a232df\",\"object\":\"chat.completion.chunk\",\"created\":1790867877,\"model\":\"deepseek-v4.1-flash\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":null,\"reasoning_content\":\"\"},\"logprobs\":null,\"finish_reason\":null}]}",
+          "t": 109722.939447166
+        }
+      ],
+      "final_event": null,
+      "first_event": 109722.939447083,
+      "request_start": 109722.69590775,
+      "status": 200
+    },
+    "chat_non_stream": {
+      "body_head": {
+        "choices": [
+          {
+            "finish_reason": "length",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "",
+              "reasoning_content": "We need",
+              "role": "assistant"
+            }
+          }
+        ],
+        "created": 1790867805,
+        "id": "c978915f-fb8d-4dd4-a3bb-9c6ab5e581c2",
+        "model": "deepseek-v4.1-flash",
+        "object": "chat.completion",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 2,
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 31,
+          "prompt_tokens": 31,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "total_tokens": 33
+        }
+      },
+      "code": 200,
+      "diagnostics": {
+        "active_generation_sessions": 0,
+        "fatal_error": null,
+        "last_trace": {
+          "cancelled": true,
+          "cleanup_called": true,
+          "completion_tokens": 2,
+          "decode_latencies_s": [
+            0.05066716700093821,
+            0.048160500009544194
+          ],
+          "exported": false,
+          "first_decode_input": 128821,
+          "frontier_after_first_input": 31,
+          "frontier_after_terminal": 31,
+          "full_cache_repack_count": 0,
+          "generated_tokens": [
+            2581,
+            1309
+          ],
+          "handoff_count": 1,
+          "initial_admitted_frontier": 30,
+          "median_decode_tok_s": 20.2372479336972,
+          "prefill_frontier": 30,
+          "prefill_phase_timings_s": {
+            "dense_p0_p7_append": 0.605339333997108
+          },
+          "prefill_seconds": 0.605339333997108,
+          "prefill_segment_count": 1,
+          "prefill_tokens": 30,
+          "production_prefill_selector": "DENSE_P0_P7",
+          "prompt_replay_count": 0,
+          "prompt_tokens": 31,
+          "protocol": "chat_completions",
+          "request_id": "33456516-a598-4374-9d89-471ec9c2cdff",
+          "same_live_cache_handoff": true
+        },
+        "lock_locked": false,
+        "model_ready": true,
+        "trace_count": 1,
+        "trace_limit": 32,
+        "traces": [
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.05066716700093821,
+              0.048160500009544194
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 20.2372479336972,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.605339333997108
+            },
+            "prefill_seconds": 0.605339333997108,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "chat_completions",
+            "request_id": "33456516-a598-4374-9d89-471ec9c2cdff",
+            "same_live_cache_handoff": true
+          }
+        ]
+      }
+    },
+    "chat_stream": {
+      "cancelled_client": false,
+      "content_type": "text/event-stream; charset=utf-8",
+      "events": [
+        {
+          "frame": "data: {\"id\":\"380d2b30-5c05-48ac-98c5-6473815f33ea\",\"object\":\"chat.completion.chunk\",\"created\":1790867876,\"model\":\"deepseek-v4.1-flash\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":null,\"reasoning_content\":\"\"},\"logprobs\":null,\"finish_reason\":null}]}",
+          "t": 109721.439550125
+        },
+        {
+          "frame": "data: {\"id\":\"380d2b30-5c05-48ac-98c5-6473815f33ea\",\"object\":\"chat.completion.chunk\",\"created\":1790867876,\"model\":\"deepseek-v4.1-flash\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"reasoning_content\":\"We\"},\"logprobs\":null,\"finish_reason\":null}]}",
+          "t": 109721.489052958
+        },
+        {
+          "frame": "data: {\"id\":\"380d2b30-5c05-48ac-98c5-6473815f33ea\",\"object\":\"chat.completion.chunk\",\"created\":1790867876,\"model\":\"deepseek-v4.1-flash\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"reasoning_content\":\" need\"},\"logprobs\":null,\"finish_reason\":null}]}",
+          "t": 109721.537569916
+        },
+        {
+          "frame": "data: {\"id\":\"380d2b30-5c05-48ac-98c5-6473815f33ea\",\"object\":\"chat.completion.chunk\",\"created\":1790867876,\"model\":\"deepseek-v4.1-flash\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"reasoning_content\":\" answer\"},\"logprobs\":null,\"finish_reason\":null}]}",
+          "t": 109721.587819291
+        },
+        {
+          "frame": "data: {\"id\":\"380d2b30-5c05-48ac-98c5-6473815f33ea\",\"object\":\"chat.completion.chunk\",\"created\":1790867876,\"model\":\"deepseek-v4.1-flash\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"delta\":{\"content\":\"\",\"reasoning_content\":null},\"logprobs\":null,\"finish_reason\":\"length\"}],\"usage\":{\"prompt_tokens\":31,\"completion_tokens\":3,\"total_tokens\":34,\"prompt_tokens_details\":{\"cached_tokens\":0},\"prompt_cache_hit_tokens\":0,\"prompt_cache_miss_tokens\":31}}",
+          "t": 109721.588213416
+        },
+        {
+          "frame": "data: [DONE]",
+          "t": 109721.588224541
+        }
+      ],
+      "final_event": 109721.588241125,
+      "first_event": 109721.439550041,
+      "request_start": 109721.195318333,
+      "status": 200
+    },
+    "chat_stream_diagnostics": {
+      "active_generation_sessions": 0,
+      "fatal_error": null,
+      "last_trace": {
+        "cancelled": true,
+        "cleanup_called": true,
+        "completion_tokens": 3,
+        "decode_latencies_s": [
+          0.049339332996169105,
+          0.04831324999395292,
+          0.050028541998472065
+        ],
+        "exported": false,
+        "first_decode_input": 128821,
+        "frontier_after_first_input": 31,
+        "frontier_after_terminal": 31,
+        "full_cache_repack_count": 0,
+        "generated_tokens": [
+          2581,
+          1309,
+          3287
+        ],
+        "handoff_count": 1,
+        "initial_admitted_frontier": 30,
+        "median_decode_tok_s": 20.267805405428643,
+        "prefill_frontier": 30,
+        "prefill_phase_timings_s": {
+          "dense_p0_p7_append": 0.07269200000155251
+        },
+        "prefill_seconds": 0.07269200000155251,
+        "prefill_segment_count": 1,
+        "prefill_tokens": 30,
+        "production_prefill_selector": "DENSE_P0_P7",
+        "prompt_replay_count": 0,
+        "prompt_tokens": 31,
+        "protocol": "chat_completions",
+        "request_id": "d97c3a49-8df9-4468-92c6-18491b505943",
+        "same_live_cache_handoff": true
+      },
+      "lock_locked": false,
+      "model_ready": true,
+      "trace_count": 2,
+      "trace_limit": 32,
+      "traces": [
+        {
+          "cancelled": true,
+          "cleanup_called": true,
+          "completion_tokens": 2,
+          "decode_latencies_s": [
+            0.05066716700093821,
+            0.048160500009544194
+          ],
+          "exported": false,
+          "first_decode_input": 128821,
+          "frontier_after_first_input": 31,
+          "frontier_after_terminal": 31,
+          "full_cache_repack_count": 0,
+          "generated_tokens": [
+            2581,
+            1309
+          ],
+          "handoff_count": 1,
+          "initial_admitted_frontier": 30,
+          "median_decode_tok_s": 20.2372479336972,
+          "prefill_frontier": 30,
+          "prefill_phase_timings_s": {
+            "dense_p0_p7_append": 0.605339333997108
+          },
+          "prefill_seconds": 0.605339333997108,
+          "prefill_segment_count": 1,
+          "prefill_tokens": 30,
+          "production_prefill_selector": "DENSE_P0_P7",
+          "prompt_replay_count": 0,
+          "prompt_tokens": 31,
+          "protocol": "chat_completions",
+          "request_id": "33456516-a598-4374-9d89-471ec9c2cdff",
+          "same_live_cache_handoff": true
+        },
+        {
+          "cancelled": true,
+          "cleanup_called": true,
+          "completion_tokens": 3,
+          "decode_latencies_s": [
+            0.049339332996169105,
+            0.04831324999395292,
+            0.050028541998472065
+          ],
+          "exported": false,
+          "first_decode_input": 128821,
+          "frontier_after_first_input": 31,
+          "frontier_after_terminal": 31,
+          "full_cache_repack_count": 0,
+          "generated_tokens": [
+            2581,
+            1309,
+            3287
+          ],
+          "handoff_count": 1,
+          "initial_admitted_frontier": 30,
+          "median_decode_tok_s": 20.267805405428643,
+          "prefill_frontier": 30,
+          "prefill_phase_timings_s": {
+            "dense_p0_p7_append": 0.07269200000155251
+          },
+          "prefill_seconds": 0.07269200000155251,
+          "prefill_segment_count": 1,
+          "prefill_tokens": 30,
+          "production_prefill_selector": "DENSE_P0_P7",
+          "prompt_replay_count": 0,
+          "prompt_tokens": 31,
+          "protocol": "chat_completions",
+          "request_id": "d97c3a49-8df9-4468-92c6-18491b505943",
+          "same_live_cache_handoff": true
+        }
+      ]
+    },
+    "health_after_model": [
+      200,
+      {
+        "fatal_error": null,
+        "model_ready": true,
+        "process_alive": true,
+        "status": "ready"
+      }
+    ],
+    "health_before_model": {
+      "body": {
+        "fatal_error": null,
+        "model_ready": false,
+        "process_alive": true,
+        "status": "alive"
+      },
+      "code": 200
+    },
+    "invalid_requests": {
+      "cases": {
+        "image_input": {
+          "body": {
+            "error": {
+              "code": "invalid_request_error",
+              "message": "multimodal/image input is not supported by current ds41f text-only serving backend",
+              "param": null,
+              "type": "invalid_request_error"
+            }
+          },
+          "code": 400,
+          "rejected": true
+        },
+        "max_tokens_bad": {
+          "body": {
+            "error": {
+              "code": "invalid_request_error",
+              "message": "max_tokens must be greater than zero",
+              "param": null,
+              "type": "invalid_request_error"
+            }
+          },
+          "code": 400,
+          "rejected": true
+        },
+        "temperature_negative": {
+          "body": {
+            "error": {
+              "code": "invalid_request_error",
+              "message": "temperature must be in [0, 2]",
+              "param": null,
+              "type": "invalid_request_error"
+            }
+          },
+          "code": 400,
+          "rejected": true
+        },
+        "top_p_bad": {
+          "body": {
+            "error": {
+              "code": "invalid_request_error",
+              "message": "top_p must be in (0, 1]",
+              "param": null,
+              "type": "invalid_request_error"
+            }
+          },
+          "code": 400,
+          "rejected": true
+        },
+        "unsupported_model": {
+          "body": {
+            "error": {
+              "code": "invalid_request_error",
+              "message": "unsupported model 'not-a-model'; supported aliases: ['deepseek-flash', 'deepseek-v4.1-flash', 'deepseek-v41-flash']",
+              "param": null,
+              "type": "invalid_request_error"
+            }
+          },
+          "code": 400,
+          "rejected": true
+        }
+      },
+      "diagnostics": {
+        "active_generation_sessions": 0,
+        "fatal_error": null,
+        "last_trace": {
+          "cancelled": true,
+          "cleanup_called": true,
+          "completion_tokens": 2,
+          "decode_latencies_s": [
+            0.05011004199332092,
+            0.04791700000350829
+          ],
+          "exported": false,
+          "first_decode_input": 128821,
+          "frontier_after_first_input": 31,
+          "frontier_after_terminal": 31,
+          "full_cache_repack_count": 0,
+          "generated_tokens": [
+            2581,
+            1309
+          ],
+          "handoff_count": 1,
+          "initial_admitted_frontier": 30,
+          "median_decode_tok_s": 20.402533415878164,
+          "prefill_frontier": 30,
+          "prefill_phase_timings_s": {
+            "dense_p0_p7_append": 0.0777527089958312
+          },
+          "prefill_seconds": 0.0777527089958312,
+          "prefill_segment_count": 1,
+          "prefill_tokens": 30,
+          "production_prefill_selector": "DENSE_P0_P7",
+          "prompt_replay_count": 0,
+          "prompt_tokens": 31,
+          "protocol": "chat_completions",
+          "request_id": "b7171ee2-1a4c-4ce4-bbed-2f84c5aaf815",
+          "same_live_cache_handoff": true
+        },
+        "lock_locked": false,
+        "model_ready": true,
+        "trace_count": 8,
+        "trace_limit": 32,
+        "traces": [
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.05066716700093821,
+              0.048160500009544194
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 20.2372479336972,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.605339333997108
+            },
+            "prefill_seconds": 0.605339333997108,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "chat_completions",
+            "request_id": "33456516-a598-4374-9d89-471ec9c2cdff",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 3,
+            "decode_latencies_s": [
+              0.049339332996169105,
+              0.04831324999395292,
+              0.050028541998472065
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309,
+              3287
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 20.267805405428643,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07269200000155251
+            },
+            "prefill_seconds": 0.07269200000155251,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "chat_completions",
+            "request_id": "d97c3a49-8df9-4468-92c6-18491b505943",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.05504550000478048,
+              0.04837958299322054
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 19.337668793929378,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07729683398792986
+            },
+            "prefill_seconds": 0.07729683398792986,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "responses",
+            "request_id": "91bcd7df-2752-4509-9746-0d8444333bee",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 3,
+            "decode_latencies_s": [
+              0.04966395799419843,
+              0.0482104580005398,
+              0.04936095800076146
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309,
+              3287
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 20.258926092653503,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07658958301180974
+            },
+            "prefill_seconds": 0.07658958301180974,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "responses",
+            "request_id": "b5c22ee6-b327-4136-af46-9ab098d2d4ce",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.04965083301067352,
+              0.048087874994962476
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 20.462721891972137,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07421075001184363
+            },
+            "prefill_seconds": 0.07421075001184363,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "messages",
+            "request_id": "cc1687e0-fd69-4256-ad4f-9e8248fec886",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 0,
+            "decode_latencies_s": [],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": null,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07267795900406782
+            },
+            "prefill_seconds": 0.07267795900406782,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "chat_completions",
+            "request_id": "84726ba5-ba94-48d8-b33a-29a9e9f22340",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.052817417003097944,
+              0.051802999994833954
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 19.11672747432784,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.10996320900449064
+            },
+            "prefill_seconds": 0.10996320900449064,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "chat_completions",
+            "request_id": "26c28436-a75b-4d5b-b10f-42ffac64f2ac",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.05011004199332092,
+              0.04791700000350829
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 20.402533415878164,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.0777527089958312
+            },
+            "prefill_seconds": 0.0777527089958312,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "chat_completions",
+            "request_id": "b7171ee2-1a4c-4ce4-bbed-2f84c5aaf815",
+            "same_live_cache_handoff": true
+          }
+        ]
+      },
+      "trace_count_after": 7,
+      "trace_count_before": 7,
+      "valid_recovery_code": 200,
+      "valid_recovery_ok": true
+    },
+    "messages": {
+      "body": {
+        "content": [
+          {
+            "signature": "a14b8264-f2cc-4ac9-9fbe-fb6fd6f1e0e8",
+            "thinking": "We need",
+            "type": "thinking"
+          }
+        ],
+        "id": "a14b8264-f2cc-4ac9-9fbe-fb6fd6f1e0e8",
+        "model": "deepseek-v4.1-flash",
+        "role": "assistant",
+        "stop_reason": "max_tokens",
+        "stop_sequence": null,
+        "type": "message",
+        "usage": {
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "input_tokens": 31,
+          "output_tokens": 2,
+          "service_tier": "standard"
+        }
+      },
+      "code": 200,
+      "scope": "PASS"
+    },
+    "models": {
+      "body": {
+        "data": [
+          {
+            "aliases": [
+              "deepseek-flash",
+              "deepseek-v4.1-flash",
+              "deepseek-v41-flash"
+            ],
+            "id": "deepseek-v4.1-flash",
+            "object": "model",
+            "owned_by": "ds41f"
+          }
+        ],
+        "object": "list"
+      },
+      "code": 200
+    },
+    "port": 53577,
+    "post_cancel_recovery": {
+      "code": 200,
+      "diagnostics": {
+        "active_generation_sessions": 0,
+        "fatal_error": null,
+        "last_trace": {
+          "cancelled": true,
+          "cleanup_called": true,
+          "completion_tokens": 2,
+          "decode_latencies_s": [
+            0.052817417003097944,
+            0.051802999994833954
+          ],
+          "exported": false,
+          "first_decode_input": 128821,
+          "frontier_after_first_input": 31,
+          "frontier_after_terminal": 31,
+          "full_cache_repack_count": 0,
+          "generated_tokens": [
+            2581,
+            1309
+          ],
+          "handoff_count": 1,
+          "initial_admitted_frontier": 30,
+          "median_decode_tok_s": 19.11672747432784,
+          "prefill_frontier": 30,
+          "prefill_phase_timings_s": {
+            "dense_p0_p7_append": 0.10996320900449064
+          },
+          "prefill_seconds": 0.10996320900449064,
+          "prefill_segment_count": 1,
+          "prefill_tokens": 30,
+          "production_prefill_selector": "DENSE_P0_P7",
+          "prompt_replay_count": 0,
+          "prompt_tokens": 31,
+          "protocol": "chat_completions",
+          "request_id": "26c28436-a75b-4d5b-b10f-42ffac64f2ac",
+          "same_live_cache_handoff": true
+        },
+        "lock_locked": false,
+        "model_ready": true,
+        "trace_count": 7,
+        "trace_limit": 32,
+        "traces": [
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.05066716700093821,
+              0.048160500009544194
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 20.2372479336972,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.605339333997108
+            },
+            "prefill_seconds": 0.605339333997108,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "chat_completions",
+            "request_id": "33456516-a598-4374-9d89-471ec9c2cdff",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 3,
+            "decode_latencies_s": [
+              0.049339332996169105,
+              0.04831324999395292,
+              0.050028541998472065
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309,
+              3287
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 20.267805405428643,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07269200000155251
+            },
+            "prefill_seconds": 0.07269200000155251,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "chat_completions",
+            "request_id": "d97c3a49-8df9-4468-92c6-18491b505943",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.05504550000478048,
+              0.04837958299322054
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 19.337668793929378,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07729683398792986
+            },
+            "prefill_seconds": 0.07729683398792986,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "responses",
+            "request_id": "91bcd7df-2752-4509-9746-0d8444333bee",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 3,
+            "decode_latencies_s": [
+              0.04966395799419843,
+              0.0482104580005398,
+              0.04936095800076146
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309,
+              3287
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 20.258926092653503,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07658958301180974
+            },
+            "prefill_seconds": 0.07658958301180974,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "responses",
+            "request_id": "b5c22ee6-b327-4136-af46-9ab098d2d4ce",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.04965083301067352,
+              0.048087874994962476
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 20.462721891972137,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07421075001184363
+            },
+            "prefill_seconds": 0.07421075001184363,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "messages",
+            "request_id": "cc1687e0-fd69-4256-ad4f-9e8248fec886",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 0,
+            "decode_latencies_s": [],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": null,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07267795900406782
+            },
+            "prefill_seconds": 0.07267795900406782,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "chat_completions",
+            "request_id": "84726ba5-ba94-48d8-b33a-29a9e9f22340",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.052817417003097944,
+              0.051802999994833954
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 19.11672747432784,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.10996320900449064
+            },
+            "prefill_seconds": 0.10996320900449064,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "chat_completions",
+            "request_id": "26c28436-a75b-4d5b-b10f-42ffac64f2ac",
+            "same_live_cache_handoff": true
+          }
+        ]
+      },
+      "ok": true
+    },
+    "responses_non_stream": {
+      "body_head": {
+        "completed_at": 1790867876,
+        "created_at": 1790867876,
+        "error": null,
+        "id": "d76955b9-c3c2-4af7-9945-16d65a29c7be",
+        "incomplete_details": {
+          "reason": "max_output_tokens"
+        },
+        "model": "deepseek-v4.1-flash",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "text": "We need",
+                "type": "reasoning_text"
+              }
+            ],
+            "id": "rs_d76955b9-c3c2-4af7-9945-16d65a29c7be_0",
+            "status": "incomplete",
+            "summary": [],
+            "type": "reasoning"
+          }
+        ],
+        "status": "incomplete",
+        "usage": {
+          "input_tokens": 31,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 2,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 33
+        }
+      },
+      "code": 200,
+      "diagnostics": {
+        "active_generation_sessions": 0,
+        "fatal_error": null,
+        "last_trace": {
+          "cancelled": true,
+          "cleanup_called": true,
+          "completion_tokens": 2,
+          "decode_latencies_s": [
+            0.05504550000478048,
+            0.04837958299322054
+          ],
+          "exported": false,
+          "first_decode_input": 128821,
+          "frontier_after_first_input": 31,
+          "frontier_after_terminal": 31,
+          "full_cache_repack_count": 0,
+          "generated_tokens": [
+            2581,
+            1309
+          ],
+          "handoff_count": 1,
+          "initial_admitted_frontier": 30,
+          "median_decode_tok_s": 19.337668793929378,
+          "prefill_frontier": 30,
+          "prefill_phase_timings_s": {
+            "dense_p0_p7_append": 0.07729683398792986
+          },
+          "prefill_seconds": 0.07729683398792986,
+          "prefill_segment_count": 1,
+          "prefill_tokens": 30,
+          "production_prefill_selector": "DENSE_P0_P7",
+          "prompt_replay_count": 0,
+          "prompt_tokens": 31,
+          "protocol": "responses",
+          "request_id": "91bcd7df-2752-4509-9746-0d8444333bee",
+          "same_live_cache_handoff": true
+        },
+        "lock_locked": false,
+        "model_ready": true,
+        "trace_count": 3,
+        "trace_limit": 32,
+        "traces": [
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.05066716700093821,
+              0.048160500009544194
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 20.2372479336972,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.605339333997108
+            },
+            "prefill_seconds": 0.605339333997108,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "chat_completions",
+            "request_id": "33456516-a598-4374-9d89-471ec9c2cdff",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 3,
+            "decode_latencies_s": [
+              0.049339332996169105,
+              0.04831324999395292,
+              0.050028541998472065
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309,
+              3287
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 20.267805405428643,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07269200000155251
+            },
+            "prefill_seconds": 0.07269200000155251,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "chat_completions",
+            "request_id": "d97c3a49-8df9-4468-92c6-18491b505943",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.05504550000478048,
+              0.04837958299322054
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 19.337668793929378,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07729683398792986
+            },
+            "prefill_seconds": 0.07729683398792986,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "responses",
+            "request_id": "91bcd7df-2752-4509-9746-0d8444333bee",
+            "same_live_cache_handoff": true
+          }
+        ]
+      }
+    },
+    "responses_stream": {
+      "cancelled_client": false,
+      "content_type": "text/event-stream; charset=utf-8",
+      "events": [
+        {
+          "frame": "event: response.created\ndata: {\"type\":\"response.created\",\"response\":{\"id\":\"49be3df6-3c76-4263-a2f0-206b18b33336\",\"object\":\"response\",\"created_at\":1790867876,\"model\":\"deepseek-v4.1-flash\",\"status\":\"in_progress\",\"completed_at\":null,\"error\":null,\"incomplete_details\":null,\"output\":[],\"usage\":null},\"sequence_number\":0}",
+          "t": 109722.197959041
+        },
+        {
+          "frame": "event: response.in_progress\ndata: {\"type\":\"response.in_progress\",\"response\":{\"id\":\"49be3df6-3c76-4263-a2f0-206b18b33336\",\"object\":\"response\",\"created_at\":1790867876,\"model\":\"deepseek-v4.1-flash\",\"status\":\"in_progress\",\"completed_at\":null,\"error\":null,\"incomplete_details\":null,\"output\":[],\"usage\":null},\"sequence_number\":1}",
+          "t": 109722.198219666
+        },
+        {
+          "frame": "event: response.output_item.added\ndata: {\"type\":\"response.output_item.added\",\"item\":{\"type\":\"reasoning\",\"id\":\"rs_49be3df6-3c76-4263-a2f0-206b18b33336_0\",\"status\":\"in_progress\",\"content\":[],\"summary\":[]},\"output_index\":0,\"sequence_number\":2}",
+          "t": 109722.247769708
+        },
+        {
+          "frame": "event: response.content_part.added\ndata: {\"type\":\"response.content_part.added\",\"content_index\":0,\"item_id\":\"rs_49be3df6-3c76-4263-a2f0-206b18b33336_0\",\"output_index\":0,\"part\":{\"type\":\"reasoning_text\",\"text\":\"\"},\"sequence_number\":3}",
+          "t": 109722.247933416
+        },
+        {
+          "frame": "event: response.reasoning_text.delta\ndata: {\"type\":\"response.reasoning_text.delta\",\"content_index\":0,\"delta\":\"We\",\"item_id\":\"rs_49be3df6-3c76-4263-a2f0-206b18b33336_0\",\"output_index\":0,\"sequence_number\":4}",
+          "t": 109722.248072458
+        },
+        {
+          "frame": "event: response.reasoning_text.delta\ndata: {\"type\":\"response.reasoning_text.delta\",\"content_index\":0,\"delta\":\" need\",\"item_id\":\"rs_49be3df6-3c76-4263-a2f0-206b18b33336_0\",\"output_index\":0,\"sequence_number\":5}",
+          "t": 109722.296156125
+        },
+        {
+          "frame": "event: response.reasoning_text.delta\ndata: {\"type\":\"response.reasoning_text.delta\",\"content_index\":0,\"delta\":\" answer\",\"item_id\":\"rs_49be3df6-3c76-4263-a2f0-206b18b33336_0\",\"output_index\":0,\"sequence_number\":6}",
+          "t": 109722.3457485
+        },
+        {
+          "frame": "event: response.reasoning_text.done\ndata: {\"type\":\"response.reasoning_text.done\",\"content_index\":0,\"item_id\":\"rs_49be3df6-3c76-4263-a2f0-206b18b33336_0\",\"output_index\":0,\"sequence_number\":7,\"text\":\"We need answer\"}",
+          "t": 109722.345921125
+        },
+        {
+          "frame": "event: response.content_part.done\ndata: {\"type\":\"response.content_part.done\",\"content_index\":0,\"item_id\":\"rs_49be3df6-3c76-4263-a2f0-206b18b33336_0\",\"output_index\":0,\"part\":{\"type\":\"reasoning_text\",\"text\":\"We need answer\"},\"sequence_number\":8}",
+          "t": 109722.346108291
+        },
+        {
+          "frame": "event: response.output_item.done\ndata: {\"type\":\"response.output_item.done\",\"item\":{\"type\":\"reasoning\",\"id\":\"rs_49be3df6-3c76-4263-a2f0-206b18b33336_0\",\"status\":\"incomplete\",\"content\":[{\"type\":\"reasoning_text\",\"text\":\"We need answer\"}],\"summary\":[]},\"output_index\":0,\"sequence_number\":9}",
+          "t": 109722.346336541
+        },
+        {
+          "frame": "event: response.incomplete\ndata: {\"type\":\"response.incomplete\",\"response\":{\"id\":\"49be3df6-3c76-4263-a2f0-206b18b33336\",\"object\":\"response\",\"created_at\":1790867876,\"model\":\"deepseek-v4.1-flash\",\"status\":\"incomplete\",\"completed_at\":1790867877,\"error\":null,\"incomplete_details\":{\"reason\":\"max_output_tokens\"},\"output\":[{\"type\":\"reasoning\",\"id\":\"rs_49be3df6-3c76-4263-a2f0-206b18b33336_0\",\"status\":\"incomplete\",\"content\":[{\"type\":\"reasoning_text\",\"text\":\"We need answer\"}],\"summary\":[]}],\"usage\":{\"input_",
+          "t": 109722.346954958
+        }
+      ],
+      "final_event": 109722.346980541,
+      "first_event": 109722.197959,
+      "request_start": 109721.946948125,
+      "status": 200
+    },
+    "responses_stream_diagnostics": {
+      "active_generation_sessions": 0,
+      "fatal_error": null,
+      "last_trace": {
+        "cancelled": true,
+        "cleanup_called": true,
+        "completion_tokens": 3,
+        "decode_latencies_s": [
+          0.04966395799419843,
+          0.0482104580005398,
+          0.04936095800076146
+        ],
+        "exported": false,
+        "first_decode_input": 128821,
+        "frontier_after_first_input": 31,
+        "frontier_after_terminal": 31,
+        "full_cache_repack_count": 0,
+        "generated_tokens": [
+          2581,
+          1309,
+          3287
+        ],
+        "handoff_count": 1,
+        "initial_admitted_frontier": 30,
+        "median_decode_tok_s": 20.258926092653503,
+        "prefill_frontier": 30,
+        "prefill_phase_timings_s": {
+          "dense_p0_p7_append": 0.07658958301180974
+        },
+        "prefill_seconds": 0.07658958301180974,
+        "prefill_segment_count": 1,
+        "prefill_tokens": 30,
+        "production_prefill_selector": "DENSE_P0_P7",
+        "prompt_replay_count": 0,
+        "prompt_tokens": 31,
+        "protocol": "responses",
+        "request_id": "b5c22ee6-b327-4136-af46-9ab098d2d4ce",
+        "same_live_cache_handoff": true
+      },
+      "lock_locked": false,
+      "model_ready": true,
+      "trace_count": 4,
+      "trace_limit": 32,
+      "traces": [
+        {
+          "cancelled": true,
+          "cleanup_called": true,
+          "completion_tokens": 2,
+          "decode_latencies_s": [
+            0.05066716700093821,
+            0.048160500009544194
+          ],
+          "exported": false,
+          "first_decode_input": 128821,
+          "frontier_after_first_input": 31,
+          "frontier_after_terminal": 31,
+          "full_cache_repack_count": 0,
+          "generated_tokens": [
+            2581,
+            1309
+          ],
+          "handoff_count": 1,
+          "initial_admitted_frontier": 30,
+          "median_decode_tok_s": 20.2372479336972,
+          "prefill_frontier": 30,
+          "prefill_phase_timings_s": {
+            "dense_p0_p7_append": 0.605339333997108
+          },
+          "prefill_seconds": 0.605339333997108,
+          "prefill_segment_count": 1,
+          "prefill_tokens": 30,
+          "production_prefill_selector": "DENSE_P0_P7",
+          "prompt_replay_count": 0,
+          "prompt_tokens": 31,
+          "protocol": "chat_completions",
+          "request_id": "33456516-a598-4374-9d89-471ec9c2cdff",
+          "same_live_cache_handoff": true
+        },
+        {
+          "cancelled": true,
+          "cleanup_called": true,
+          "completion_tokens": 3,
+          "decode_latencies_s": [
+            0.049339332996169105,
+            0.04831324999395292,
+            0.050028541998472065
+          ],
+          "exported": false,
+          "first_decode_input": 128821,
+          "frontier_after_first_input": 31,
+          "frontier_after_terminal": 31,
+          "full_cache_repack_count": 0,
+          "generated_tokens": [
+            2581,
+            1309,
+            3287
+          ],
+          "handoff_count": 1,
+          "initial_admitted_frontier": 30,
+          "median_decode_tok_s": 20.267805405428643,
+          "prefill_frontier": 30,
+          "prefill_phase_timings_s": {
+            "dense_p0_p7_append": 0.07269200000155251
+          },
+          "prefill_seconds": 0.07269200000155251,
+          "prefill_segment_count": 1,
+          "prefill_tokens": 30,
+          "production_prefill_selector": "DENSE_P0_P7",
+          "prompt_replay_count": 0,
+          "prompt_tokens": 31,
+          "protocol": "chat_completions",
+          "request_id": "d97c3a49-8df9-4468-92c6-18491b505943",
+          "same_live_cache_handoff": true
+        },
+        {
+          "cancelled": true,
+          "cleanup_called": true,
+          "completion_tokens": 2,
+          "decode_latencies_s": [
+            0.05504550000478048,
+            0.04837958299322054
+          ],
+          "exported": false,
+          "first_decode_input": 128821,
+          "frontier_after_first_input": 31,
+          "frontier_after_terminal": 31,
+          "full_cache_repack_count": 0,
+          "generated_tokens": [
+            2581,
+            1309
+          ],
+          "handoff_count": 1,
+          "initial_admitted_frontier": 30,
+          "median_decode_tok_s": 19.337668793929378,
+          "prefill_frontier": 30,
+          "prefill_phase_timings_s": {
+            "dense_p0_p7_append": 0.07729683398792986
+          },
+          "prefill_seconds": 0.07729683398792986,
+          "prefill_segment_count": 1,
+          "prefill_tokens": 30,
+          "production_prefill_selector": "DENSE_P0_P7",
+          "prompt_replay_count": 0,
+          "prompt_tokens": 31,
+          "protocol": "responses",
+          "request_id": "91bcd7df-2752-4509-9746-0d8444333bee",
+          "same_live_cache_handoff": true
+        },
+        {
+          "cancelled": true,
+          "cleanup_called": true,
+          "completion_tokens": 3,
+          "decode_latencies_s": [
+            0.04966395799419843,
+            0.0482104580005398,
+            0.04936095800076146
+          ],
+          "exported": false,
+          "first_decode_input": 128821,
+          "frontier_after_first_input": 31,
+          "frontier_after_terminal": 31,
+          "full_cache_repack_count": 0,
+          "generated_tokens": [
+            2581,
+            1309,
+            3287
+          ],
+          "handoff_count": 1,
+          "initial_admitted_frontier": 30,
+          "median_decode_tok_s": 20.258926092653503,
+          "prefill_frontier": 30,
+          "prefill_phase_timings_s": {
+            "dense_p0_p7_append": 0.07658958301180974
+          },
+          "prefill_seconds": 0.07658958301180974,
+          "prefill_segment_count": 1,
+          "prefill_tokens": 30,
+          "production_prefill_selector": "DENSE_P0_P7",
+          "prompt_replay_count": 0,
+          "prompt_tokens": 31,
+          "protocol": "responses",
+          "request_id": "b5c22ee6-b327-4136-af46-9ab098d2d4ce",
+          "same_live_cache_handoff": true
+        }
+      ]
+    },
+    "server_returncode": -15,
+    "single_flight": {
+      "diagnostics": {
+        "active_generation_sessions": 0,
+        "fatal_error": null,
+        "last_trace": {
+          "cancelled": true,
+          "cleanup_called": true,
+          "completion_tokens": 2,
+          "decode_latencies_s": [
+            0.04864633300167043,
+            0.049585707994992845
+          ],
+          "exported": false,
+          "first_decode_input": 128821,
+          "frontier_after_first_input": 32,
+          "frontier_after_terminal": 32,
+          "full_cache_repack_count": 0,
+          "generated_tokens": [
+            2581,
+            1309
+          ],
+          "handoff_count": 1,
+          "initial_admitted_frontier": 31,
+          "median_decode_tok_s": 20.35995566933131,
+          "prefill_frontier": 31,
+          "prefill_phase_timings_s": {
+            "dense_p0_p7_append": 0.07322162500349805
+          },
+          "prefill_seconds": 0.07322162500349805,
+          "prefill_segment_count": 1,
+          "prefill_tokens": 31,
+          "production_prefill_selector": "DENSE_P0_P7",
+          "prompt_replay_count": 0,
+          "prompt_tokens": 32,
+          "protocol": "chat_completions",
+          "request_id": "fd5267db-373c-4f4b-8bf6-9fb56f815abb",
+          "same_live_cache_handoff": true
+        },
+        "lock_locked": false,
+        "model_ready": true,
+        "trace_count": 10,
+        "trace_limit": 32,
+        "traces": [
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.05066716700093821,
+              0.048160500009544194
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 20.2372479336972,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.605339333997108
+            },
+            "prefill_seconds": 0.605339333997108,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "chat_completions",
+            "request_id": "33456516-a598-4374-9d89-471ec9c2cdff",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 3,
+            "decode_latencies_s": [
+              0.049339332996169105,
+              0.04831324999395292,
+              0.050028541998472065
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309,
+              3287
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 20.267805405428643,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07269200000155251
+            },
+            "prefill_seconds": 0.07269200000155251,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "chat_completions",
+            "request_id": "d97c3a49-8df9-4468-92c6-18491b505943",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.05504550000478048,
+              0.04837958299322054
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 19.337668793929378,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07729683398792986
+            },
+            "prefill_seconds": 0.07729683398792986,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "responses",
+            "request_id": "91bcd7df-2752-4509-9746-0d8444333bee",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 3,
+            "decode_latencies_s": [
+              0.04966395799419843,
+              0.0482104580005398,
+              0.04936095800076146
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309,
+              3287
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 20.258926092653503,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07658958301180974
+            },
+            "prefill_seconds": 0.07658958301180974,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "responses",
+            "request_id": "b5c22ee6-b327-4136-af46-9ab098d2d4ce",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.04965083301067352,
+              0.048087874994962476
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 20.462721891972137,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07421075001184363
+            },
+            "prefill_seconds": 0.07421075001184363,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "messages",
+            "request_id": "cc1687e0-fd69-4256-ad4f-9e8248fec886",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 0,
+            "decode_latencies_s": [],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": null,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07267795900406782
+            },
+            "prefill_seconds": 0.07267795900406782,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "chat_completions",
+            "request_id": "84726ba5-ba94-48d8-b33a-29a9e9f22340",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.052817417003097944,
+              0.051802999994833954
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 19.11672747432784,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.10996320900449064
+            },
+            "prefill_seconds": 0.10996320900449064,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "chat_completions",
+            "request_id": "26c28436-a75b-4d5b-b10f-42ffac64f2ac",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.05011004199332092,
+              0.04791700000350829
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 20.402533415878164,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.0777527089958312
+            },
+            "prefill_seconds": 0.0777527089958312,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "chat_completions",
+            "request_id": "b7171ee2-1a4c-4ce4-bbed-2f84c5aaf815",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.04871233399899211,
+              0.04918708300101571
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 32,
+            "frontier_after_terminal": 32,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 31,
+            "median_decode_tok_s": 20.42913084967442,
+            "prefill_frontier": 31,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.0798616249958286
+            },
+            "prefill_seconds": 0.0798616249958286,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 31,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 32,
+            "protocol": "chat_completions",
+            "request_id": "226b189f-7f9d-4a09-9b20-b27a47c16039",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.04864633300167043,
+              0.049585707994992845
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 32,
+            "frontier_after_terminal": 32,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 31,
+            "median_decode_tok_s": 20.35995566933131,
+            "prefill_frontier": 31,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07322162500349805
+            },
+            "prefill_seconds": 0.07322162500349805,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 31,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 32,
+            "protocol": "chat_completions",
+            "request_id": "fd5267db-373c-4f4b-8bf6-9fb56f815abb",
+            "same_live_cache_handoff": true
+          }
+        ]
+      },
+      "requests": [
+        {
+          "code": 200,
+          "end": 109725.065770708,
+          "start": 109724.706992125,
+          "tag": "A"
+        },
+        {
+          "code": 200,
+          "end": 109725.415051625,
+          "start": 109724.707413375,
+          "tag": "B"
+        }
+      ]
+    },
+    "status": "PASS",
+    "ten_sequential": {
+      "diagnostics": {
+        "active_generation_sessions": 0,
+        "fatal_error": null,
+        "last_trace": {
+          "cancelled": true,
+          "cleanup_called": true,
+          "completion_tokens": 1,
+          "decode_latencies_s": [
+            0.04996587500500027
+          ],
+          "exported": false,
+          "first_decode_input": 128821,
+          "frontier_after_first_input": 33,
+          "frontier_after_terminal": 33,
+          "full_cache_repack_count": 0,
+          "generated_tokens": [
+            2581
+          ],
+          "handoff_count": 1,
+          "initial_admitted_frontier": 32,
+          "median_decode_tok_s": 20.013659320484756,
+          "prefill_frontier": 32,
+          "prefill_phase_timings_s": {
+            "dense_p0_p7_append": 0.07431454199831933
+          },
+          "prefill_seconds": 0.07431454199831933,
+          "prefill_segment_count": 1,
+          "prefill_tokens": 32,
+          "production_prefill_selector": "DENSE_P0_P7",
+          "prompt_replay_count": 0,
+          "prompt_tokens": 33,
+          "protocol": "chat_completions",
+          "request_id": "a1a43c7a-bbbd-4fe4-af1c-7fd674f3c751",
+          "same_live_cache_handoff": true
+        },
+        "lock_locked": false,
+        "model_ready": true,
+        "trace_count": 22,
+        "trace_limit": 32,
+        "traces": [
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.05066716700093821,
+              0.048160500009544194
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 20.2372479336972,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.605339333997108
+            },
+            "prefill_seconds": 0.605339333997108,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "chat_completions",
+            "request_id": "33456516-a598-4374-9d89-471ec9c2cdff",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 3,
+            "decode_latencies_s": [
+              0.049339332996169105,
+              0.04831324999395292,
+              0.050028541998472065
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309,
+              3287
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 20.267805405428643,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07269200000155251
+            },
+            "prefill_seconds": 0.07269200000155251,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "chat_completions",
+            "request_id": "d97c3a49-8df9-4468-92c6-18491b505943",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.05504550000478048,
+              0.04837958299322054
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 19.337668793929378,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07729683398792986
+            },
+            "prefill_seconds": 0.07729683398792986,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "responses",
+            "request_id": "91bcd7df-2752-4509-9746-0d8444333bee",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 3,
+            "decode_latencies_s": [
+              0.04966395799419843,
+              0.0482104580005398,
+              0.04936095800076146
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309,
+              3287
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 20.258926092653503,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07658958301180974
+            },
+            "prefill_seconds": 0.07658958301180974,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "responses",
+            "request_id": "b5c22ee6-b327-4136-af46-9ab098d2d4ce",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.04965083301067352,
+              0.048087874994962476
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 20.462721891972137,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07421075001184363
+            },
+            "prefill_seconds": 0.07421075001184363,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "messages",
+            "request_id": "cc1687e0-fd69-4256-ad4f-9e8248fec886",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 0,
+            "decode_latencies_s": [],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": null,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07267795900406782
+            },
+            "prefill_seconds": 0.07267795900406782,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "chat_completions",
+            "request_id": "84726ba5-ba94-48d8-b33a-29a9e9f22340",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.052817417003097944,
+              0.051802999994833954
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 19.11672747432784,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.10996320900449064
+            },
+            "prefill_seconds": 0.10996320900449064,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "chat_completions",
+            "request_id": "26c28436-a75b-4d5b-b10f-42ffac64f2ac",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.05011004199332092,
+              0.04791700000350829
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": 20.402533415878164,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.0777527089958312
+            },
+            "prefill_seconds": 0.0777527089958312,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "chat_completions",
+            "request_id": "b7171ee2-1a4c-4ce4-bbed-2f84c5aaf815",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.04871233399899211,
+              0.04918708300101571
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 32,
+            "frontier_after_terminal": 32,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 31,
+            "median_decode_tok_s": 20.42913084967442,
+            "prefill_frontier": 31,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.0798616249958286
+            },
+            "prefill_seconds": 0.0798616249958286,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 31,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 32,
+            "protocol": "chat_completions",
+            "request_id": "226b189f-7f9d-4a09-9b20-b27a47c16039",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.04864633300167043,
+              0.049585707994992845
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 32,
+            "frontier_after_terminal": 32,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 31,
+            "median_decode_tok_s": 20.35995566933131,
+            "prefill_frontier": 31,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07322162500349805
+            },
+            "prefill_seconds": 0.07322162500349805,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 31,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 32,
+            "protocol": "chat_completions",
+            "request_id": "fd5267db-373c-4f4b-8bf6-9fb56f815abb",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 0,
+            "decode_latencies_s": [],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 31,
+            "frontier_after_terminal": 31,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 30,
+            "median_decode_tok_s": null,
+            "prefill_frontier": 30,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.0714672499889275
+            },
+            "prefill_seconds": 0.0714672499889275,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 30,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 31,
+            "protocol": "chat_completions",
+            "request_id": "4aa52f11-d1c4-4a71-a218-c5b88e6b6d27",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 2,
+            "decode_latencies_s": [
+              0.05184670900052879,
+              0.05395154199504759
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 32,
+            "frontier_after_terminal": 32,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581,
+              1309
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 31,
+            "median_decode_tok_s": 18.903904187259425,
+            "prefill_frontier": 31,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.10987704100261908
+            },
+            "prefill_seconds": 0.10987704100261908,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 31,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 32,
+            "protocol": "chat_completions",
+            "request_id": "89eee3ad-c99a-40ef-9151-ce9ddf1f4817",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 1,
+            "decode_latencies_s": [
+              0.04983237500709947
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 33,
+            "frontier_after_terminal": 33,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 32,
+            "median_decode_tok_s": 20.067275538393123,
+            "prefill_frontier": 32,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.08366287501121406
+            },
+            "prefill_seconds": 0.08366287501121406,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 32,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 33,
+            "protocol": "chat_completions",
+            "request_id": "954704c0-e1de-4d42-8849-e793fe22d8b6",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 1,
+            "decode_latencies_s": [
+              0.049900500001967885
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 33,
+            "frontier_after_terminal": 33,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 32,
+            "median_decode_tok_s": 20.039879359135956,
+            "prefill_frontier": 32,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07531783399463166
+            },
+            "prefill_seconds": 0.07531783399463166,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 32,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 33,
+            "protocol": "chat_completions",
+            "request_id": "d5505525-9e68-4a1c-9890-c44637a0da5c",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 1,
+            "decode_latencies_s": [
+              0.049872833988047205
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 33,
+            "frontier_after_terminal": 33,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 32,
+            "median_decode_tok_s": 20.050996104205055,
+            "prefill_frontier": 32,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07497466700442601
+            },
+            "prefill_seconds": 0.07497466700442601,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 32,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 33,
+            "protocol": "chat_completions",
+            "request_id": "a16a3b10-e602-4845-b98c-5dda2153d881",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 1,
+            "decode_latencies_s": [
+              0.04971979199035559
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 33,
+            "frontier_after_terminal": 33,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 32,
+            "median_decode_tok_s": 20.112714876079437,
+            "prefill_frontier": 32,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07538454099267256
+            },
+            "prefill_seconds": 0.07538454099267256,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 32,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 33,
+            "protocol": "chat_completions",
+            "request_id": "be45753f-f920-4888-a324-e4a636069e4d",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 1,
+            "decode_latencies_s": [
+              0.04996337500051595
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 33,
+            "frontier_after_terminal": 33,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 32,
+            "median_decode_tok_s": 20.014660738784627,
+            "prefill_frontier": 32,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07541154100908898
+            },
+            "prefill_seconds": 0.07541154100908898,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 32,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 33,
+            "protocol": "chat_completions",
+            "request_id": "d8cff696-6304-4a0b-bd11-25b4e89d579c",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 1,
+            "decode_latencies_s": [
+              0.04998104200058151
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 33,
+            "frontier_after_terminal": 33,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 32,
+            "median_decode_tok_s": 20.007586076103923,
+            "prefill_frontier": 32,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07521633300348185
+            },
+            "prefill_seconds": 0.07521633300348185,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 32,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 33,
+            "protocol": "chat_completions",
+            "request_id": "87206e37-1984-4185-8c34-3dc7db8ff43e",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 1,
+            "decode_latencies_s": [
+              0.04992079100338742
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 33,
+            "frontier_after_terminal": 33,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 32,
+            "median_decode_tok_s": 20.031733870806335,
+            "prefill_frontier": 32,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07537479200982489
+            },
+            "prefill_seconds": 0.07537479200982489,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 32,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 33,
+            "protocol": "chat_completions",
+            "request_id": "aef624be-621f-4656-8128-9cd183a80e7a",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 1,
+            "decode_latencies_s": [
+              0.049891000002389774
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 33,
+            "frontier_after_terminal": 33,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 32,
+            "median_decode_tok_s": 20.04369525469724,
+            "prefill_frontier": 32,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07554983299633022
+            },
+            "prefill_seconds": 0.07554983299633022,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 32,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 33,
+            "protocol": "chat_completions",
+            "request_id": "5a9ea2d4-1c86-481c-b0b5-a625e5f509aa",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 1,
+            "decode_latencies_s": [
+              0.050075292005203664
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 33,
+            "frontier_after_terminal": 33,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 32,
+            "median_decode_tok_s": 19.96992848081811,
+            "prefill_frontier": 32,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07455304099130444
+            },
+            "prefill_seconds": 0.07455304099130444,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 32,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 33,
+            "protocol": "chat_completions",
+            "request_id": "0b930377-8da9-488d-94fc-84d050c69b21",
+            "same_live_cache_handoff": true
+          },
+          {
+            "cancelled": true,
+            "cleanup_called": true,
+            "completion_tokens": 1,
+            "decode_latencies_s": [
+              0.04996587500500027
+            ],
+            "exported": false,
+            "first_decode_input": 128821,
+            "frontier_after_first_input": 33,
+            "frontier_after_terminal": 33,
+            "full_cache_repack_count": 0,
+            "generated_tokens": [
+              2581
+            ],
+            "handoff_count": 1,
+            "initial_admitted_frontier": 32,
+            "median_decode_tok_s": 20.013659320484756,
+            "prefill_frontier": 32,
+            "prefill_phase_timings_s": {
+              "dense_p0_p7_append": 0.07431454199831933
+            },
+            "prefill_seconds": 0.07431454199831933,
+            "prefill_segment_count": 1,
+            "prefill_tokens": 32,
+            "production_prefill_selector": "DENSE_P0_P7",
+            "prompt_replay_count": 0,
+            "prompt_tokens": 33,
+            "protocol": "chat_completions",
+            "request_id": "a1a43c7a-bbbd-4fe4-af1c-7fd674f3c751",
+            "same_live_cache_handoff": true
+          }
+        ]
+      },
+      "requests": [
+        {
+          "cleanup_called": true,
+          "code": 200,
+          "generated_count": 1,
+          "handoff_count": 1,
+          "i": 0,
+          "prefill_frontier": 32,
+          "prompt_replay_count": 0,
+          "request_id": "954704c0-e1de-4d42-8849-e793fe22d8b6",
+          "selector": "DENSE_P0_P7"
+        },
+        {
+          "cleanup_called": true,
+          "code": 200,
+          "generated_count": 1,
+          "handoff_count": 1,
+          "i": 1,
+          "prefill_frontier": 32,
+          "prompt_replay_count": 0,
+          "request_id": "d5505525-9e68-4a1c-9890-c44637a0da5c",
+          "selector": "DENSE_P0_P7"
+        },
+        {
+          "cleanup_called": true,
+          "code": 200,
+          "generated_count": 1,
+          "handoff_count": 1,
+          "i": 2,
+          "prefill_frontier": 32,
+          "prompt_replay_count": 0,
+          "request_id": "a16a3b10-e602-4845-b98c-5dda2153d881",
+          "selector": "DENSE_P0_P7"
+        },
+        {
+          "cleanup_called": true,
+          "code": 200,
+          "generated_count": 1,
+          "handoff_count": 1,
+          "i": 3,
+          "prefill_frontier": 32,
+          "prompt_replay_count": 0,
+          "request_id": "be45753f-f920-4888-a324-e4a636069e4d",
+          "selector": "DENSE_P0_P7"
+        },
+        {
+          "cleanup_called": true,
+          "code": 200,
+          "generated_count": 1,
+          "handoff_count": 1,
+          "i": 4,
+          "prefill_frontier": 32,
+          "prompt_replay_count": 0,
+          "request_id": "d8cff696-6304-4a0b-bd11-25b4e89d579c",
+          "selector": "DENSE_P0_P7"
+        },
+        {
+          "cleanup_called": true,
+          "code": 200,
+          "generated_count": 1,
+          "handoff_count": 1,
+          "i": 5,
+          "prefill_frontier": 32,
+          "prompt_replay_count": 0,
+          "request_id": "87206e37-1984-4185-8c34-3dc7db8ff43e",
+          "selector": "DENSE_P0_P7"
+        },
+        {
+          "cleanup_called": true,
+          "code": 200,
+          "generated_count": 1,
+          "handoff_count": 1,
+          "i": 6,
+          "prefill_frontier": 32,
+          "prompt_replay_count": 0,
+          "request_id": "aef624be-621f-4656-8128-9cd183a80e7a",
+          "selector": "DENSE_P0_P7"
+        },
+        {
+          "cleanup_called": true,
+          "code": 200,
+          "generated_count": 1,
+          "handoff_count": 1,
+          "i": 7,
+          "prefill_frontier": 32,
+          "prompt_replay_count": 0,
+          "request_id": "5a9ea2d4-1c86-481c-b0b5-a625e5f509aa",
+          "selector": "DENSE_P0_P7"
+        },
+        {
+          "cleanup_called": true,
+          "code": 200,
+          "generated_count": 1,
+          "handoff_count": 1,
+          "i": 8,
+          "prefill_frontier": 32,
+          "prompt_replay_count": 0,
+          "request_id": "0b930377-8da9-488d-94fc-84d050c69b21",
+          "selector": "DENSE_P0_P7"
+        },
+        {
+          "cleanup_called": true,
+          "code": 200,
+          "generated_count": 1,
+          "handoff_count": 1,
+          "i": 9,
+          "prefill_frontier": 32,
+          "prompt_replay_count": 0,
+          "request_id": "a1a43c7a-bbbd-4fe4-af1c-7fd674f3c751",
+          "selector": "DENSE_P0_P7"
+        }
+      ]
+    },
+    "trace_retention": {
+      "trace_count": 22,
+      "trace_limit": 32,
+      "within_limit": true
+    }
   },
-  "invalid_requests": "NOT_RUN_REAL_HTTP",
-  "live_cache_handoff": {
-    "implementation": "serving now calls handoff_to_generation(prefill_result.live_result, terminal_prompt_token=terminal)",
-    "prompt_replay_fallback": "FORBIDDEN_NOT_IMPLEMENTED",
-    "repack_export": "FORBIDDEN"
-  },
-  "prompt_split": {
-    "contract": "prefix=tokens[:-1], terminal=tokens[-1]",
-    "minimal_chat_prefill_tokens_previous_evidence": 30,
-    "minimal_chat_prompt_tokens_previous_evidence": 31
-  },
+  "implementation_commit": "a27d052ee9cb6b7ce20019ebd6eb7a95fc2e4ea8",
+  "m7_decision": "M7_TEXT_SERVING_QUALIFIED",
   "provenance": {
     "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
-    "mlx_version": null,
-    "mtp_dspark": "OFF",
+    "deepseek_recipe_path": "/Volumes/SDXC-512/deepseek-v41-flash-mlx/third_party/deepseek-recipe",
+    "deepseek_recipe_revision": "8cadfede7063c896b944e7bae05daa3549ae97ea",
+    "deepseek_recipe_version": "0.1.1",
+    "engram_ssd_offload": true,
+    "expert_offload": null,
+    "mlx_version": "0.32.2",
     "omlx_path": "/Users/kioju/omlx-0.7.0.dev2",
     "omlx_revision": "b390b31e0c6831225fed0f24d278eb1db7fcb68b",
     "p8_tile_native": "OFF",
+    "preserve_mtp": false,
     "single_flight": true,
     "text_only": true
   },
-  "ratio_2_29_30_31_regression": {
-    "required_fields": [
-      "pending slot4 geometry",
-      "pending slot5 geometry",
-      "compressed KV rows",
-      "index K rows",
-      "all40 frontier"
+  "raw_arbitrary_length_matrix": {
+    "cases": [
+      {
+        "all40_frontier": true,
+        "engram_history_position": 1,
+        "frontier": 1,
+        "full_cache_repack_count": 0,
+        "layer_coverage_reaches": true,
+        "p7_engram_evidence": {
+          "background_reads": 2,
+          "consume_events": 2,
+          "donor_observed_consumptions": 2,
+          "enabled": true,
+          "foreground_engram_fallback": 0,
+          "foreground_fallback": 0,
+          "logical_match_consumptions": 2,
+          "p7_engram_tile": 2048,
+          "policy": "FULL_RESIDENT_BACKBONE_SSD_ENGRAM",
+          "prefetch_submissions": 2
+        },
+        "portable_state_exported": false,
+        "prefix_length": 1,
+        "seconds": 0.50677941700269,
+        "segment_count": 1,
+        "source_coverage_reaches": true,
+        "status": "PASS"
+      },
+      {
+        "all40_frontier": true,
+        "engram_history_position": 2,
+        "frontier": 2,
+        "full_cache_repack_count": 0,
+        "layer_coverage_reaches": true,
+        "p7_engram_evidence": {
+          "background_reads": 4,
+          "consume_events": 4,
+          "donor_observed_consumptions": 4,
+          "enabled": true,
+          "foreground_engram_fallback": 0,
+          "foreground_fallback": 0,
+          "logical_match_consumptions": 4,
+          "p7_engram_tile": 2048,
+          "policy": "FULL_RESIDENT_BACKBONE_SSD_ENGRAM",
+          "prefetch_submissions": 4
+        },
+        "portable_state_exported": false,
+        "prefix_length": 2,
+        "seconds": 0.22186049999436364,
+        "segment_count": 2,
+        "source_coverage_reaches": true,
+        "status": "PASS"
+      },
+      {
+        "all40_frontier": true,
+        "engram_history_position": 3,
+        "frontier": 3,
+        "full_cache_repack_count": 0,
+        "layer_coverage_reaches": true,
+        "p7_engram_evidence": {
+          "background_reads": 6,
+          "consume_events": 6,
+          "donor_observed_consumptions": 6,
+          "enabled": true,
+          "foreground_engram_fallback": 0,
+          "foreground_fallback": 0,
+          "logical_match_consumptions": 6,
+          "p7_engram_tile": 2048,
+          "policy": "FULL_RESIDENT_BACKBONE_SSD_ENGRAM",
+          "prefetch_submissions": 6
+        },
+        "portable_state_exported": false,
+        "prefix_length": 3,
+        "seconds": 0.06437058400479145,
+        "segment_count": 3,
+        "source_coverage_reaches": true,
+        "status": "PASS"
+      },
+      {
+        "all40_frontier": true,
+        "engram_history_position": 15,
+        "frontier": 15,
+        "full_cache_repack_count": 0,
+        "layer_coverage_reaches": true,
+        "p7_engram_evidence": {
+          "background_reads": 2,
+          "consume_events": 2,
+          "donor_observed_consumptions": 2,
+          "enabled": true,
+          "foreground_engram_fallback": 0,
+          "foreground_fallback": 0,
+          "logical_match_consumptions": 2,
+          "p7_engram_tile": 2048,
+          "policy": "FULL_RESIDENT_BACKBONE_SSD_ENGRAM",
+          "prefetch_submissions": 2
+        },
+        "portable_state_exported": false,
+        "prefix_length": 15,
+        "seconds": 0.06422374999965541,
+        "segment_count": 1,
+        "source_coverage_reaches": true,
+        "status": "PASS"
+      },
+      {
+        "all40_frontier": true,
+        "engram_history_position": 16,
+        "frontier": 16,
+        "full_cache_repack_count": 0,
+        "layer_coverage_reaches": true,
+        "p7_engram_evidence": {
+          "background_reads": 2,
+          "consume_events": 2,
+          "donor_observed_consumptions": 2,
+          "enabled": true,
+          "foreground_engram_fallback": 0,
+          "foreground_fallback": 0,
+          "logical_match_consumptions": 2,
+          "p7_engram_tile": 2048,
+          "policy": "FULL_RESIDENT_BACKBONE_SSD_ENGRAM",
+          "prefetch_submissions": 2
+        },
+        "portable_state_exported": false,
+        "prefix_length": 16,
+        "seconds": 0.05932191699685063,
+        "segment_count": 1,
+        "source_coverage_reaches": true,
+        "status": "PASS"
+      },
+      {
+        "all40_frontier": true,
+        "engram_history_position": 17,
+        "frontier": 17,
+        "full_cache_repack_count": 0,
+        "layer_coverage_reaches": true,
+        "p7_engram_evidence": {
+          "background_reads": 2,
+          "consume_events": 2,
+          "donor_observed_consumptions": 2,
+          "enabled": true,
+          "foreground_engram_fallback": 0,
+          "foreground_fallback": 0,
+          "logical_match_consumptions": 2,
+          "p7_engram_tile": 2048,
+          "policy": "FULL_RESIDENT_BACKBONE_SSD_ENGRAM",
+          "prefetch_submissions": 2
+        },
+        "portable_state_exported": false,
+        "prefix_length": 17,
+        "seconds": 0.059586875009699725,
+        "segment_count": 1,
+        "source_coverage_reaches": true,
+        "status": "PASS"
+      },
+      {
+        "all40_frontier": true,
+        "engram_history_position": 29,
+        "frontier": 29,
+        "full_cache_repack_count": 0,
+        "layer_coverage_reaches": true,
+        "p7_engram_evidence": {
+          "background_reads": 2,
+          "consume_events": 2,
+          "donor_observed_consumptions": 2,
+          "enabled": true,
+          "foreground_engram_fallback": 0,
+          "foreground_fallback": 0,
+          "logical_match_consumptions": 2,
+          "p7_engram_tile": 2048,
+          "policy": "FULL_RESIDENT_BACKBONE_SSD_ENGRAM",
+          "prefetch_submissions": 2
+        },
+        "portable_state_exported": false,
+        "prefix_length": 29,
+        "seconds": 0.07827754100435413,
+        "segment_count": 1,
+        "source_coverage_reaches": true,
+        "status": "PASS"
+      },
+      {
+        "all40_frontier": true,
+        "engram_history_position": 30,
+        "frontier": 30,
+        "full_cache_repack_count": 0,
+        "layer_coverage_reaches": true,
+        "p7_engram_evidence": {
+          "background_reads": 2,
+          "consume_events": 2,
+          "donor_observed_consumptions": 2,
+          "enabled": true,
+          "foreground_engram_fallback": 0,
+          "foreground_fallback": 0,
+          "logical_match_consumptions": 2,
+          "p7_engram_tile": 2048,
+          "policy": "FULL_RESIDENT_BACKBONE_SSD_ENGRAM",
+          "prefetch_submissions": 2
+        },
+        "portable_state_exported": false,
+        "prefix_length": 30,
+        "seconds": 0.07225829100934789,
+        "segment_count": 1,
+        "source_coverage_reaches": true,
+        "status": "PASS"
+      },
+      {
+        "all40_frontier": true,
+        "engram_history_position": 31,
+        "frontier": 31,
+        "full_cache_repack_count": 0,
+        "layer_coverage_reaches": true,
+        "p7_engram_evidence": {
+          "background_reads": 2,
+          "consume_events": 2,
+          "donor_observed_consumptions": 2,
+          "enabled": true,
+          "foreground_engram_fallback": 0,
+          "foreground_fallback": 0,
+          "logical_match_consumptions": 2,
+          "p7_engram_tile": 2048,
+          "policy": "FULL_RESIDENT_BACKBONE_SSD_ENGRAM",
+          "prefetch_submissions": 2
+        },
+        "portable_state_exported": false,
+        "prefix_length": 31,
+        "seconds": 0.07319612499850336,
+        "segment_count": 1,
+        "source_coverage_reaches": true,
+        "status": "PASS"
+      },
+      {
+        "all40_frontier": true,
+        "engram_history_position": 32,
+        "frontier": 32,
+        "full_cache_repack_count": 0,
+        "layer_coverage_reaches": true,
+        "p7_engram_evidence": {
+          "background_reads": 2,
+          "consume_events": 2,
+          "donor_observed_consumptions": 2,
+          "enabled": true,
+          "foreground_engram_fallback": 0,
+          "foreground_fallback": 0,
+          "logical_match_consumptions": 2,
+          "p7_engram_tile": 2048,
+          "policy": "FULL_RESIDENT_BACKBONE_SSD_ENGRAM",
+          "prefetch_submissions": 2
+        },
+        "portable_state_exported": false,
+        "prefix_length": 32,
+        "seconds": 0.06811504100915045,
+        "segment_count": 1,
+        "source_coverage_reaches": true,
+        "status": "PASS"
+      },
+      {
+        "all40_frontier": true,
+        "engram_history_position": 33,
+        "frontier": 33,
+        "full_cache_repack_count": 0,
+        "layer_coverage_reaches": true,
+        "p7_engram_evidence": {
+          "background_reads": 2,
+          "consume_events": 2,
+          "donor_observed_consumptions": 2,
+          "enabled": true,
+          "foreground_engram_fallback": 0,
+          "foreground_fallback": 0,
+          "logical_match_consumptions": 2,
+          "p7_engram_tile": 2048,
+          "policy": "FULL_RESIDENT_BACKBONE_SSD_ENGRAM",
+          "prefetch_submissions": 2
+        },
+        "portable_state_exported": false,
+        "prefix_length": 33,
+        "seconds": 0.07340329200087581,
+        "segment_count": 1,
+        "source_coverage_reaches": true,
+        "status": "PASS"
+      },
+      {
+        "all40_frontier": true,
+        "engram_history_position": 63,
+        "frontier": 63,
+        "full_cache_repack_count": 0,
+        "layer_coverage_reaches": true,
+        "p7_engram_evidence": {
+          "background_reads": 2,
+          "consume_events": 2,
+          "donor_observed_consumptions": 2,
+          "enabled": true,
+          "foreground_engram_fallback": 0,
+          "foreground_fallback": 0,
+          "logical_match_consumptions": 2,
+          "p7_engram_tile": 2048,
+          "policy": "FULL_RESIDENT_BACKBONE_SSD_ENGRAM",
+          "prefetch_submissions": 2
+        },
+        "portable_state_exported": false,
+        "prefix_length": 63,
+        "seconds": 0.10288883300381713,
+        "segment_count": 1,
+        "source_coverage_reaches": true,
+        "status": "PASS"
+      },
+      {
+        "all40_frontier": true,
+        "engram_history_position": 64,
+        "frontier": 64,
+        "full_cache_repack_count": 0,
+        "layer_coverage_reaches": true,
+        "p7_engram_evidence": {
+          "background_reads": 2,
+          "consume_events": 2,
+          "donor_observed_consumptions": 2,
+          "enabled": true,
+          "foreground_engram_fallback": 0,
+          "foreground_fallback": 0,
+          "logical_match_consumptions": 2,
+          "p7_engram_tile": 2048,
+          "policy": "FULL_RESIDENT_BACKBONE_SSD_ENGRAM",
+          "prefetch_submissions": 2
+        },
+        "portable_state_exported": false,
+        "prefix_length": 64,
+        "seconds": 0.10330437500670087,
+        "segment_count": 1,
+        "source_coverage_reaches": true,
+        "status": "PASS"
+      },
+      {
+        "all40_frontier": true,
+        "engram_history_position": 65,
+        "frontier": 65,
+        "full_cache_repack_count": 0,
+        "layer_coverage_reaches": true,
+        "p7_engram_evidence": {
+          "background_reads": 2,
+          "consume_events": 2,
+          "donor_observed_consumptions": 2,
+          "enabled": true,
+          "foreground_engram_fallback": 0,
+          "foreground_fallback": 0,
+          "logical_match_consumptions": 2,
+          "p7_engram_tile": 2048,
+          "policy": "FULL_RESIDENT_BACKBONE_SSD_ENGRAM",
+          "prefetch_submissions": 2
+        },
+        "portable_state_exported": false,
+        "prefix_length": 65,
+        "seconds": 0.111791750008706,
+        "segment_count": 1,
+        "source_coverage_reaches": true,
+        "status": "PASS"
+      },
+      {
+        "all40_frontier": true,
+        "engram_history_position": 127,
+        "frontier": 127,
+        "full_cache_repack_count": 0,
+        "layer_coverage_reaches": true,
+        "p7_engram_evidence": {
+          "background_reads": 2,
+          "consume_events": 2,
+          "donor_observed_consumptions": 2,
+          "enabled": true,
+          "foreground_engram_fallback": 0,
+          "foreground_fallback": 0,
+          "logical_match_consumptions": 2,
+          "p7_engram_tile": 2048,
+          "policy": "FULL_RESIDENT_BACKBONE_SSD_ENGRAM",
+          "prefetch_submissions": 2
+        },
+        "portable_state_exported": false,
+        "prefix_length": 127,
+        "seconds": 0.18021762500575278,
+        "segment_count": 1,
+        "source_coverage_reaches": true,
+        "status": "PASS"
+      },
+      {
+        "all40_frontier": true,
+        "engram_history_position": 128,
+        "frontier": 128,
+        "full_cache_repack_count": 0,
+        "layer_coverage_reaches": true,
+        "p7_engram_evidence": {
+          "background_reads": 2,
+          "consume_events": 2,
+          "donor_observed_consumptions": 2,
+          "enabled": true,
+          "foreground_engram_fallback": 0,
+          "foreground_fallback": 0,
+          "logical_match_consumptions": 2,
+          "p7_engram_tile": 2048,
+          "policy": "FULL_RESIDENT_BACKBONE_SSD_ENGRAM",
+          "prefetch_submissions": 2
+        },
+        "portable_state_exported": false,
+        "prefix_length": 128,
+        "seconds": 0.14419620799890254,
+        "segment_count": 1,
+        "source_coverage_reaches": true,
+        "status": "PASS"
+      },
+      {
+        "all40_frontier": true,
+        "engram_history_position": 129,
+        "frontier": 129,
+        "full_cache_repack_count": 0,
+        "layer_coverage_reaches": true,
+        "p7_engram_evidence": {
+          "background_reads": 2,
+          "consume_events": 2,
+          "donor_observed_consumptions": 2,
+          "enabled": true,
+          "foreground_engram_fallback": 0,
+          "foreground_fallback": 0,
+          "logical_match_consumptions": 2,
+          "p7_engram_tile": 2048,
+          "policy": "FULL_RESIDENT_BACKBONE_SSD_ENGRAM",
+          "prefetch_submissions": 2
+        },
+        "portable_state_exported": false,
+        "prefix_length": 129,
+        "seconds": 0.15312316600466147,
+        "segment_count": 1,
+        "source_coverage_reaches": true,
+        "status": "PASS"
+      },
+      {
+        "all40_frontier": true,
+        "engram_history_position": 255,
+        "frontier": 255,
+        "full_cache_repack_count": 0,
+        "layer_coverage_reaches": true,
+        "p7_engram_evidence": {
+          "background_reads": 2,
+          "consume_events": 2,
+          "donor_observed_consumptions": 2,
+          "enabled": true,
+          "foreground_engram_fallback": 0,
+          "foreground_fallback": 0,
+          "logical_match_consumptions": 2,
+          "p7_engram_tile": 2048,
+          "policy": "FULL_RESIDENT_BACKBONE_SSD_ENGRAM",
+          "prefetch_submissions": 2
+        },
+        "portable_state_exported": false,
+        "prefix_length": 255,
+        "seconds": 0.2640934999944875,
+        "segment_count": 1,
+        "source_coverage_reaches": true,
+        "status": "PASS"
+      },
+      {
+        "all40_frontier": true,
+        "engram_history_position": 256,
+        "frontier": 256,
+        "full_cache_repack_count": 0,
+        "layer_coverage_reaches": true,
+        "p7_engram_evidence": {
+          "background_reads": 2,
+          "consume_events": 2,
+          "donor_observed_consumptions": 2,
+          "enabled": true,
+          "foreground_engram_fallback": 0,
+          "foreground_fallback": 0,
+          "logical_match_consumptions": 2,
+          "p7_engram_tile": 2048,
+          "policy": "FULL_RESIDENT_BACKBONE_SSD_ENGRAM",
+          "prefetch_submissions": 2
+        },
+        "portable_state_exported": false,
+        "prefix_length": 256,
+        "seconds": 0.2547267079935409,
+        "segment_count": 1,
+        "source_coverage_reaches": true,
+        "status": "PASS"
+      },
+      {
+        "all40_frontier": true,
+        "engram_history_position": 257,
+        "frontier": 257,
+        "full_cache_repack_count": 0,
+        "layer_coverage_reaches": true,
+        "p7_engram_evidence": {
+          "background_reads": 2,
+          "consume_events": 2,
+          "donor_observed_consumptions": 2,
+          "enabled": true,
+          "foreground_engram_fallback": 0,
+          "foreground_fallback": 0,
+          "logical_match_consumptions": 2,
+          "p7_engram_tile": 2048,
+          "policy": "FULL_RESIDENT_BACKBONE_SSD_ENGRAM",
+          "prefetch_submissions": 2
+        },
+        "portable_state_exported": false,
+        "prefix_length": 257,
+        "seconds": 0.26892645900079515,
+        "segment_count": 1,
+        "source_coverage_reaches": true,
+        "status": "PASS"
+      },
+      {
+        "all40_frontier": true,
+        "engram_history_position": 511,
+        "frontier": 511,
+        "full_cache_repack_count": 0,
+        "layer_coverage_reaches": true,
+        "p7_engram_evidence": {
+          "background_reads": 2,
+          "consume_events": 2,
+          "donor_observed_consumptions": 2,
+          "enabled": true,
+          "foreground_engram_fallback": 0,
+          "foreground_fallback": 0,
+          "logical_match_consumptions": 2,
+          "p7_engram_tile": 2048,
+          "policy": "FULL_RESIDENT_BACKBONE_SSD_ENGRAM",
+          "prefetch_submissions": 2
+        },
+        "portable_state_exported": false,
+        "prefix_length": 511,
+        "seconds": 0.4898635419958737,
+        "segment_count": 1,
+        "source_coverage_reaches": true,
+        "status": "PASS"
+      },
+      {
+        "all40_frontier": true,
+        "engram_history_position": 512,
+        "frontier": 512,
+        "full_cache_repack_count": 0,
+        "layer_coverage_reaches": true,
+        "p7_engram_evidence": {
+          "background_reads": 2,
+          "consume_events": 2,
+          "donor_observed_consumptions": 2,
+          "enabled": true,
+          "foreground_engram_fallback": 0,
+          "foreground_fallback": 0,
+          "logical_match_consumptions": 2,
+          "p7_engram_tile": 2048,
+          "policy": "FULL_RESIDENT_BACKBONE_SSD_ENGRAM",
+          "prefetch_submissions": 2
+        },
+        "portable_state_exported": false,
+        "prefix_length": 512,
+        "seconds": 0.4360171669977717,
+        "segment_count": 1,
+        "source_coverage_reaches": true,
+        "status": "PASS"
+      },
+      {
+        "all40_frontier": true,
+        "engram_history_position": 513,
+        "frontier": 513,
+        "full_cache_repack_count": 0,
+        "layer_coverage_reaches": true,
+        "p7_engram_evidence": {
+          "background_reads": 2,
+          "consume_events": 2,
+          "donor_observed_consumptions": 2,
+          "enabled": true,
+          "foreground_engram_fallback": 0,
+          "foreground_fallback": 0,
+          "logical_match_consumptions": 2,
+          "p7_engram_tile": 2048,
+          "policy": "FULL_RESIDENT_BACKBONE_SSD_ENGRAM",
+          "prefetch_submissions": 2
+        },
+        "portable_state_exported": false,
+        "prefix_length": 513,
+        "seconds": 0.6661458750022575,
+        "segment_count": 1,
+        "source_coverage_reaches": true,
+        "status": "PASS"
+      },
+      {
+        "all40_frontier": true,
+        "engram_history_position": 2048,
+        "frontier": 2048,
+        "full_cache_repack_count": 0,
+        "layer_coverage_reaches": true,
+        "p7_engram_evidence": {
+          "background_reads": 2,
+          "consume_events": 2,
+          "donor_observed_consumptions": 2,
+          "enabled": true,
+          "foreground_engram_fallback": 0,
+          "foreground_fallback": 0,
+          "logical_match_consumptions": 2,
+          "p7_engram_tile": 2048,
+          "policy": "FULL_RESIDENT_BACKBONE_SSD_ENGRAM",
+          "prefetch_submissions": 2
+        },
+        "portable_state_exported": false,
+        "prefix_length": 2048,
+        "seconds": 2.440066333001596,
+        "segment_count": 1,
+        "source_coverage_reaches": true,
+        "status": "PASS"
+      }
     ],
-    "status": "NOT_RUN_REAL_MODEL"
+    "p5_representative": {
+      "127": {
+        "bootstrap_frontier": 128,
+        "first_generated_latency_s": 0.048048084005131386,
+        "frontier_after_first_generated": 129,
+        "frontier_after_terminal": 128,
+        "frontier_before_terminal": 127,
+        "full_cache_repack_count": 0,
+        "generated_token": 99,
+        "handoff_count": 1,
+        "portable_state_exported": false,
+        "prompt_replay_count": 0,
+        "status": "PASS",
+        "wall_s": 0.3913167919963598
+      },
+      "128": {
+        "bootstrap_frontier": 129,
+        "first_generated_latency_s": 0.05012416699901223,
+        "frontier_after_first_generated": 130,
+        "frontier_after_terminal": 129,
+        "frontier_before_terminal": 128,
+        "full_cache_repack_count": 0,
+        "generated_token": 223,
+        "handoff_count": 1,
+        "portable_state_exported": false,
+        "prompt_replay_count": 0,
+        "status": "PASS",
+        "wall_s": 0.3950469169940334
+      },
+      "129": {
+        "bootstrap_frontier": 130,
+        "first_generated_latency_s": 0.048448333007399924,
+        "frontier_after_first_generated": 131,
+        "frontier_after_terminal": 130,
+        "frontier_before_terminal": 129,
+        "full_cache_repack_count": 0,
+        "generated_token": 223,
+        "handoff_count": 1,
+        "portable_state_exported": false,
+        "prompt_replay_count": 0,
+        "status": "PASS",
+        "wall_s": 0.41469424999377225
+      },
+      "2048": {
+        "bootstrap_frontier": 2049,
+        "first_generated_latency_s": 0.05161820800276473,
+        "frontier_after_first_generated": 2050,
+        "frontier_after_terminal": 2049,
+        "frontier_before_terminal": 2048,
+        "full_cache_repack_count": 0,
+        "generated_token": 223,
+        "handoff_count": 1,
+        "portable_state_exported": false,
+        "prompt_replay_count": 0,
+        "status": "PASS",
+        "wall_s": 2.1235076250013663
+      },
+      "29": {
+        "bootstrap_frontier": 30,
+        "first_generated_latency_s": 0.04813695799384732,
+        "frontier_after_first_generated": 31,
+        "frontier_after_terminal": 30,
+        "frontier_before_terminal": 29,
+        "full_cache_repack_count": 0,
+        "generated_token": 201,
+        "handoff_count": 1,
+        "portable_state_exported": false,
+        "prompt_replay_count": 0,
+        "status": "PASS",
+        "wall_s": 1.6655835419951472
+      },
+      "30": {
+        "bootstrap_frontier": 31,
+        "first_generated_latency_s": 0.04947512500802986,
+        "frontier_after_first_generated": 32,
+        "frontier_after_terminal": 31,
+        "frontier_before_terminal": 30,
+        "full_cache_repack_count": 0,
+        "generated_token": 201,
+        "handoff_count": 1,
+        "portable_state_exported": false,
+        "prompt_replay_count": 0,
+        "status": "PASS",
+        "wall_s": 0.212308791000396
+      },
+      "31": {
+        "bootstrap_frontier": 32,
+        "first_generated_latency_s": 0.048099542007548735,
+        "frontier_after_first_generated": 33,
+        "frontier_after_terminal": 32,
+        "frontier_before_terminal": 31,
+        "full_cache_repack_count": 0,
+        "generated_token": 201,
+        "handoff_count": 1,
+        "portable_state_exported": false,
+        "prompt_replay_count": 0,
+        "status": "PASS",
+        "wall_s": 0.2157049170054961
+      },
+      "32": {
+        "bootstrap_frontier": 33,
+        "first_generated_latency_s": 0.04954449999786448,
+        "frontier_after_first_generated": 34,
+        "frontier_after_terminal": 33,
+        "frontier_before_terminal": 32,
+        "full_cache_repack_count": 0,
+        "generated_token": 201,
+        "handoff_count": 1,
+        "portable_state_exported": false,
+        "prompt_replay_count": 0,
+        "status": "PASS",
+        "wall_s": 0.21956733299884945
+      },
+      "33": {
+        "bootstrap_frontier": 34,
+        "first_generated_latency_s": 0.04826912499265745,
+        "frontier_after_first_generated": 35,
+        "frontier_after_terminal": 34,
+        "frontier_before_terminal": 33,
+        "full_cache_repack_count": 0,
+        "generated_token": 201,
+        "handoff_count": 1,
+        "portable_state_exported": false,
+        "prompt_replay_count": 0,
+        "status": "PASS",
+        "wall_s": 0.23457912499725353
+      },
+      "513": {
+        "bootstrap_frontier": 514,
+        "first_generated_latency_s": 0.04960958300216589,
+        "frontier_after_first_generated": 515,
+        "frontier_after_terminal": 514,
+        "frontier_before_terminal": 513,
+        "full_cache_repack_count": 0,
+        "generated_token": 201,
+        "handoff_count": 1,
+        "portable_state_exported": false,
+        "prompt_replay_count": 0,
+        "status": "PASS",
+        "wall_s": 0.7274771250085905
+      }
+    },
+    "ratio_2_29_30_31": {
+      "29": [
+        {
+          "compress_ratio": 2,
+          "expected_pending_rows": 1,
+          "frontier": 29,
+          "layer": 2,
+          "slot2_compressed_kv_shape": [
+            1,
+            14,
+            288
+          ],
+          "slot3_index_k_shape": [
+            1,
+            14,
+            68
+          ],
+          "slot4_pending_shape": [
+            1,
+            1,
+            512
+          ],
+          "slot5_pending_shape": [
+            1,
+            1,
+            512
+          ]
+        },
+        {
+          "compress_ratio": 2,
+          "expected_pending_rows": 1,
+          "frontier": 29,
+          "layer": 8,
+          "slot2_compressed_kv_shape": [
+            1,
+            14,
+            288
+          ],
+          "slot3_index_k_shape": [
+            1,
+            14,
+            68
+          ],
+          "slot4_pending_shape": [
+            1,
+            1,
+            512
+          ],
+          "slot5_pending_shape": [
+            1,
+            1,
+            512
+          ]
+        },
+        {
+          "compress_ratio": 2,
+          "expected_pending_rows": 1,
+          "frontier": 29,
+          "layer": 14,
+          "slot2_compressed_kv_shape": [
+            1,
+            14,
+            288
+          ],
+          "slot3_index_k_shape": [
+            1,
+            14,
+            68
+          ],
+          "slot4_pending_shape": [
+            1,
+            1,
+            512
+          ],
+          "slot5_pending_shape": [
+            1,
+            1,
+            512
+          ]
+        }
+      ],
+      "30": [
+        {
+          "compress_ratio": 2,
+          "expected_pending_rows": 0,
+          "frontier": 30,
+          "layer": 2,
+          "slot2_compressed_kv_shape": [
+            1,
+            15,
+            288
+          ],
+          "slot3_index_k_shape": [
+            1,
+            15,
+            68
+          ],
+          "slot4_pending_shape": [
+            1,
+            0,
+            512
+          ],
+          "slot5_pending_shape": [
+            1,
+            0,
+            512
+          ]
+        },
+        {
+          "compress_ratio": 2,
+          "expected_pending_rows": 0,
+          "frontier": 30,
+          "layer": 8,
+          "slot2_compressed_kv_shape": [
+            1,
+            15,
+            288
+          ],
+          "slot3_index_k_shape": [
+            1,
+            15,
+            68
+          ],
+          "slot4_pending_shape": [
+            1,
+            0,
+            512
+          ],
+          "slot5_pending_shape": [
+            1,
+            0,
+            512
+          ]
+        },
+        {
+          "compress_ratio": 2,
+          "expected_pending_rows": 0,
+          "frontier": 30,
+          "layer": 14,
+          "slot2_compressed_kv_shape": [
+            1,
+            15,
+            288
+          ],
+          "slot3_index_k_shape": [
+            1,
+            15,
+            68
+          ],
+          "slot4_pending_shape": [
+            1,
+            0,
+            512
+          ],
+          "slot5_pending_shape": [
+            1,
+            0,
+            512
+          ]
+        }
+      ],
+      "31": [
+        {
+          "compress_ratio": 2,
+          "expected_pending_rows": 1,
+          "frontier": 31,
+          "layer": 2,
+          "slot2_compressed_kv_shape": [
+            1,
+            15,
+            288
+          ],
+          "slot3_index_k_shape": [
+            1,
+            15,
+            68
+          ],
+          "slot4_pending_shape": [
+            1,
+            1,
+            512
+          ],
+          "slot5_pending_shape": [
+            1,
+            1,
+            512
+          ]
+        },
+        {
+          "compress_ratio": 2,
+          "expected_pending_rows": 1,
+          "frontier": 31,
+          "layer": 8,
+          "slot2_compressed_kv_shape": [
+            1,
+            15,
+            288
+          ],
+          "slot3_index_k_shape": [
+            1,
+            15,
+            68
+          ],
+          "slot4_pending_shape": [
+            1,
+            1,
+            512
+          ],
+          "slot5_pending_shape": [
+            1,
+            1,
+            512
+          ]
+        },
+        {
+          "compress_ratio": 2,
+          "expected_pending_rows": 1,
+          "frontier": 31,
+          "layer": 14,
+          "slot2_compressed_kv_shape": [
+            1,
+            15,
+            288
+          ],
+          "slot3_index_k_shape": [
+            1,
+            15,
+            68
+          ],
+          "slot4_pending_shape": [
+            1,
+            1,
+            512
+          ],
+          "slot5_pending_shape": [
+            1,
+            1,
+            512
+          ]
+        }
+      ]
+    },
+    "status": "PASS"
   },
-  "recipe_tokenizer": {
-    "authority": "DeepseekV41Encoding.with_tokenizer(...).encode(conversation)",
-    "deepseek_recipe_version": null,
-    "path": "/Volumes/SDXC-512/deepseek-v41-flash-mlx/third_party/deepseek-recipe",
-    "revision": "8cadfede7063c896b944e7bae05daa3549ae97ea"
-  },
-  "recommended_next_phase_if_m7_qualifies": "long-session robustness (not started)",
-  "remaining_unqualified": [
-    "production selector real-model arbitrary-length matrix",
-    "29/30/31 ratio-2 regression",
-    "minimal recipe production prefill latency",
-    "Chat Completions real HTTP non-stream/stream",
-    "Responses real HTTP non-stream/stream",
-    "Messages scope smoke",
-    "cancellation/disconnect",
-    "invalid-request atomicity",
-    "single-flight overlap",
-    "10-request lifecycle",
-    "long-session robustness",
-    "KV restore/resume",
-    "multi-request batching",
-    "multimodal",
-    "MTP/DSpark"
-  ],
-  "schema": "ds41f.m7.deepseek-recipe-serving.v2",
-  "selector": {
-    "legacy_one_chunk": "DIAGNOSTIC_LEGACY_NOT_SELECTED",
-    "production_prefill_selector": "DENSE_P0_P7",
-    "reference_vertical_slice": "DIAGNOSTIC_ONLY_NOT_SELECTED_BY_PRODUCTION",
-    "scope": [
-      "DwarfStar facade",
-      "DenseP0P7PrefillSession",
-      "DeferredPrefillAppend",
-      "LivePrefillResult",
-      "P5 handoff_to_generation",
-      "P7 FULL_RESIDENT_BACKBONE_SSD_ENGRAM P7_ENGRAM_TILE=2048",
-      "P8 tile-native OFF"
-    ],
-    "status": "IMPLEMENTED_NOT_QUALIFIED"
-  },
-  "sequential_request_lifecycle": "NOT_RUN_REAL_HTTP",
-  "single_flight": "IMPLEMENTED_LOCK_AND_SINGLE_EXECUTOR_NOT_REAL_HTTP_QUALIFIED",
-  "streaming": "NOT_RUN_REAL_HTTP",
-  "structural_tests": {
-    "command": "PYTHONPATH=tests /Users/kioju/.venvs/omlx-0.7.0.dev2/bin/python3 -m unittest discover -s tests -v",
-    "status": "PASS",
-    "tests_run": 100
-  },
-  "trace_retention": {
-    "default_limit": 32,
-    "env": "DS41F_TRACE_HISTORY_LIMIT",
-    "policy": "bounded deque",
-    "unit_test": "PASS"
-  }
+  "schema": "ds41f.m7.deepseek-recipe-serving.v3",
+  "selector": "DENSE_P0_P7",
+  "tested_base_commit": "a27d052ee9cb6b7ce20019ebd6eb7a95fc2e4ea8"
 }
