@@ -7,7 +7,7 @@ use tools/qualification_supervisor.py for future P7/P8 stuck-worker protection.
 """
 from __future__ import annotations
 
-import argparse, hashlib, json, struct, sys, time, traceback
+import argparse, hashlib, json, resource, struct, sys, time, traceback
 from pathlib import Path
 from contextlib import contextmanager
 from unittest.mock import patch
@@ -31,6 +31,44 @@ def fronts(cache): return [int(c.size()) for c in cache]
 def geom(x): return None if x is None else {'shape': list(getattr(x,'shape',())), 'dtype': str(getattr(x,'dtype',None))}
 def cache_geom(cache):
     return {str(i): [geom(cache[i][s]) for s in range(7)] for i in (0,2,8,14,20,39)}
+
+def mlx_memory_snapshot(mx):
+    out={}
+    metal=getattr(mx,'metal',None)
+    if metal is not None:
+        for name in ('get_active_memory','get_cache_memory','get_peak_memory'):
+            fn=getattr(metal,name,None)
+            if fn is not None:
+                try: out[name.removeprefix('get_')]=int(fn())
+                except Exception as e: out[name.removeprefix('get_')]=type(e).__name__+': '+str(e)
+    try: out['process_maxrss_kb']=int(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+    except Exception: pass
+    return out
+
+class P8AggregateTimer:
+    def __init__(self): self.rows={}
+    def add(self, kind, phase, layer_range, elapsed, token_rows=0):
+        key=(str(kind),str(phase),str(layer_range)); r=self.rows.setdefault(key,{'command_kind':key[0],'phase':key[1],'layer_range':key[2],'call_count':0,'total_wall_s':0.0,'max_wall_s':0.0,'token_rows_processed':0})
+        r['call_count']+=1; r['total_wall_s']+=float(elapsed); r['max_wall_s']=max(r['max_wall_s'],float(elapsed)); r['token_rows_processed']+=int(token_rows or 0)
+    def to_json(self):
+        out=[]
+        for r in self.rows.values():
+            x=dict(r); x['mean_wall_s']=x['total_wall_s']/x['call_count'] if x['call_count'] else 0.0; out.append(x)
+        return sorted(out, key=lambda x:(x['phase'],x['layer_range'],x['command_kind']))
+
+def command_timing_class(command):
+    kind=getattr(command.kind,'value',str(command.kind)); phase=getattr(command.phase,'value',str(getattr(command,'phase',None)))
+    kind_l=str(kind).lower(); layer=command.layer
+    if kind_l=='encode_rows':
+        if layer is not None and int(layer) <= 19: lr='encoder layers 0..19'
+        elif layer is not None: lr='decoder suffix 20..39'
+        else: lr='unknown'
+    elif kind_l=='decoder_prepare_suffix': lr='decoder prepare suffix'
+    elif kind_l=='p6_source_complete_and_detach_cone': lr='P6 source detach cone'
+    elif kind_l in {'publish_frontier','publish_state_frontier'}: lr='PublicationManager work'
+    elif kind_l in {'checkpoint_may_commit'}: lr='commit/final seal'
+    else: lr='command-stream'
+    return kind, phase, lr
 
 def scan_type_name(root, name):
     stack=[root]; seen=set()
@@ -105,19 +143,31 @@ def segment_diag(app, seg, execn, elapsed):
 def execute_with_watchdog(app, report, *, baselines=None):
     if app.state.value == 'valid': app.begin()
     report['segments'] = []
+    report.setdefault('p8_command_family_timing', [])
+    agg=P8AggregateTimer()
     from ds41f_mlx.prefill_fp8_mlx.block_runner import OfficialFP8MLXBlockRunner
+    from ds41f_mlx.prefill_fp8_mlx.p7_scheduling import SchedulingCoordinator
     original_execute_command = OfficialFP8MLXBlockRunner.execute_command
+    original_micro = SchedulingCoordinator.apply_engram_micro_pipeline
     progress_kinds = {SweepCommandKind.ENCODE_ROWS, SweepCommandKind.END_LAYER, SweepCommandKind.P6_SOURCE_COMPLETE_AND_DETACH_CONE, SweepCommandKind.CHECKPOINT_MAY_COMMIT}
     for seg in app.plan.segments:
         def heartbeat_execute_command(runner, command, arena):
+            tcmd=time.monotonic()
             result = original_execute_command(runner, command, arena)
+            elapsed_cmd=time.monotonic()-tcmd
+            kind, phase, lr = command_timing_class(command)
+            agg.add(kind, phase, lr, elapsed_cmd, command.rows if str(kind).lower() in {'encode_rows','decoder_prepare_suffix','p6_source_complete_and_detach_cone'} else 0)
             if command.kind in progress_kinds:
                 rec = runner.records[-1] if runner.records else None
                 msg={'event':'progress','case':report.get('case'),'segment':seg.seq,'command_kind':command.kind.value,'layer':command.layer,'offset':command.offset,'rows':command.rows,'absolute_start':getattr(rec,'absolute_start',None),'C':app.C,'E':app.E,'D':app.D,'T':app.T,'monotonic':time.monotonic()}
                 print(json.dumps(msg), flush=True)
             return result
+        def timed_micro(coord, command, arena, h_chunk, pre_chunk, engram_call, image_mask, hash_slice_fn):
+            t=time.monotonic(); out=original_micro(coord, command, arena, h_chunk, pre_chunk, engram_call, image_mask, hash_slice_fn)
+            agg.add('Engram micro-pipeline', getattr(command.phase,'value',str(command.phase)), 'Engram 2048 microtiles', time.monotonic()-t, int(command.rows))
+            return out
         t0=time.monotonic()
-        with patch.object(OfficialFP8MLXBlockRunner, 'execute_command', heartbeat_execute_command):
+        with patch.object(OfficialFP8MLXBlockRunner, 'execute_command', heartbeat_execute_command), patch.object(SchedulingCoordinator, 'apply_engram_micro_pipeline', timed_micro):
             execn=app.execute_segment(seg)
         elapsed=time.monotonic()-t0
         d=segment_diag(app, seg, execn, elapsed); report['segments'].append(d); print(json.dumps({'segment': d}), flush=True)
@@ -127,10 +177,12 @@ def execute_with_watchdog(app, report, *, baselines=None):
             base = baselines.get(seg.mode.value)
             if base and elapsed > 4.0 * base * (seg.count / 16384.0):
                 raise RuntimeError(f"watchdog: segment {seg.seq} exceeded 4x normalized precursor")
-    app.final_seal()
+    t=time.monotonic(); app.final_seal(); agg.add('final seal','request','final seal',time.monotonic()-t,0)
+    report['p8_command_family_timing']=agg.to_json()
 
 
 def p5_check(lm, model, lang, checkpoint, app, ids, report, *, generated=2):
+    t_p5_total=time.monotonic()
     from ds41f_mlx.runtime.omlx_decode import OMLXDecodeConfig
     from ds41f_mlx.runtime.omlx_generation import OMLXGenerationSession
     T=len(ids); terminal=token(T)
@@ -154,7 +206,8 @@ def p5_check(lm, model, lang, checkpoint, app, ids, report, *, generated=2):
                 out.append(r.token); f.append(list(session.active_cache_offsets()))
                 assert f[-1] == [T+2+step]*40
                 if r.finish_reason is not None: break
-        report['p5']={'status':'PASS','prompt_replay_count':session.prompt_replay_count,'forward_count':len(forwarded),'generated_tokens':out,'generated_frontiers':f}
+        report['p5']={'status':'PASS','prompt_replay_count':session.prompt_replay_count,'forward_count':len(forwarded),'generated_tokens':out,'generated_frontiers':f,'wall_s':time.monotonic()-t_p5_total}
+        report.setdefault('p8_command_family_timing', []).append({'command_kind':'P5 handoff','phase':'handoff+bounded-decode','layer_range':'P5 handoff','call_count':1,'total_wall_s':report['p5']['wall_s'],'mean_wall_s':report['p5']['wall_s'],'max_wall_s':report['p5']['wall_s'],'token_rows_processed':generated})
     finally:
         if session is not None: session.close()
 
@@ -192,12 +245,12 @@ def compare_A(candidate, control, report):
 
 def main(argv=None):
     ap=argparse.ArgumentParser()
-    ap.add_argument('--case', required=True, choices=['tiny-16385','A-24577','A-control','B-fresh-49155','B-continued','failure-rebuild','p7-complete-2048','p7-complete-8192','p7-complete-16384','p7-pending-16384','p7-A-24577','p7-A-scheduling-control','p7-failure-drain'])
+    ap.add_argument('--case', required=True, choices=['tiny-16385','A-24577','A-control','B-fresh-49155','B-continued','failure-rebuild','p7-complete-2048','p7-complete-8192','p7-complete-16384','p7-pending-16384','p7-A-24577','p7-A-scheduling-control','p7-control-8192','p7-control-16384','p7-failure-drain'])
     ap.add_argument('--checkpoint', type=Path, default=Path('/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash'))
     ap.add_argument('--out', type=Path)
     ap.add_argument('--p7-overlap', action='store_true', help='qualification-only: enable P7 FULL_RESIDENT_BACKBONE_SSD_ENGRAM scheduling')
     args=ap.parse_args(argv)
-    report={'case':args.case,'status':'FAIL','checkpoint':str(args.checkpoint),'p7_overlap_enabled':bool(args.p7_overlap)}
+    report={'case':args.case,'status':'FAIL','checkpoint':str(args.checkpoint),'p7_overlap_enabled':bool(args.p7_overlap),'p8_timing_classification':'Qualification-only aggregate wall timings. ENCODE_ROWS durations include Python/graph construction, async submission, any implicit synchronization in oMLX/MLX, SSD host I/O for Engram, and command-side state mutation; they are not per-kernel GPU timings.'}
     model=None
     try:
         import mlx.core as mx
@@ -214,8 +267,12 @@ def main(argv=None):
             load_kwargs['moe_expert_offload_resident_fraction']=None
         report['loader_args']=dict(load_kwargs)
         model,_=load(args.checkpoint,**load_kwargs); lm=model.language_model
+        report['memory_after_load']=mlx_memory_snapshot(mx)
+        try:
+            if hasattr(mx, 'metal') and hasattr(mx.metal, 'reset_peak_memory'): mx.metal.reset_peak_memory()
+        except Exception: pass
         report['real_p7_preflight']=real_p7_preflight(model,lm,storage)
-        if args.p7_overlap or args.case.startswith('p7-') and args.case not in {'p7-A-scheduling-control'}:
+        if args.p7_overlap or args.case.startswith('p7-') and args.case not in {'p7-A-scheduling-control','p7-control-8192','p7-control-16384'}:
             lm._p7_enable_overlap = True
         def run_app(name, app, ids, *, p5=True):
             report['plan']=[(s.start,s.count,s.mode.value) for s in app.plan.segments]
@@ -223,7 +280,7 @@ def main(argv=None):
             with instrument_engram_reads(lm, storage, report):
                 execute_with_watchdog(app, report)
             report.setdefault('engram_read_runs', []).append({'name':name, **report.get('engram_read_instrumentation', {})})
-            report['frontiers_after_seal']=fronts(app.live_cache); report['cache_geom']=cache_geom(app.live_cache)
+            report['frontiers_after_seal']=fronts(app.live_cache); report['cache_geom']=cache_geom(app.live_cache); report['memory_after_prefill']=mlx_memory_snapshot(mx)
             validate_committed_cache(app.commit_certificate, ids)
             report['commit']={'C':app.C,'E':app.E,'D':app.D,'T':app.T,'history_position':app.engram_history_position,'source_coverage':dict(app.coverage.source_by_layer),'full_cache_repack_count':app.final_execution.runner.full_cache_repack_count,'exported':bool(app.final_execution.runner.prefill_continuation_exported)}
             if p5: p5_check(lm, model, lang, args.checkpoint, app, ids, report)
@@ -273,6 +330,12 @@ def main(argv=None):
             lm._p7_enable_overlap=True; cand=run_app('p7-on', make_app(lm,mx,ids), ids, p5=False)
             lm._p7_enable_overlap=False; control=run_app('p7-off', make_app(lm,mx,ids), ids, p5=False)
             compare_p7_control(cand, control, report); p5_check(lm, model, lang, args.checkpoint, cand, ids, report)
+        elif args.case=='p7-control-8192':
+            lm._p7_enable_overlap=False; ids=tokens(8192); app=make_app(lm,mx,ids); run_app(args.case,app,ids,p5=False)
+            assert report['frontiers_after_seal']==[8192]*40
+        elif args.case=='p7-control-16384':
+            lm._p7_enable_overlap=False; ids=tokens(16384); app=make_app(lm,mx,ids); run_app(args.case,app,ids,p5=False)
+            assert report['frontiers_after_seal']==[16384]*40
         elif args.case=='p7-failure-drain':
             lm._p7_enable_overlap=True; ids=tokens(24577); app=make_app(lm,mx,ids); app.begin(); first=app._make_segment_execution(app.plan.segments[0]); first.runner.scheduling_coordinator.set_command_stream(app.plan.segments[0].commands); first.runner.execute_command(app.plan.segments[0].commands[0], first.arena); first.runner.execute_command(app.plan.segments[0].commands[1], first.arena); app.active_execution=first; app.fail('qualification injected P7 in-flight failure')
             rejected={}

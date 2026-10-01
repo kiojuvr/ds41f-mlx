@@ -22,6 +22,8 @@ class ArchitectureCompletion:
     no_cpu_hot_path_roundtrip: bool = False
     no_intermediate_cache_repack: bool = False
     one_live_cache_handoff_no_replay: bool = False
+    p7_full_resident_backbone_ssd_engram: bool = False
+    p0_p7_structural_gate: bool = False
 
     @property
     def structural_gate_passed(self) -> bool:
@@ -39,6 +41,8 @@ class ArchitectureCompletion:
             "no_cpu_hot_path_roundtrip": self.no_cpu_hot_path_roundtrip,
             "no_intermediate_cache_repack": self.no_intermediate_cache_repack,
             "one_live_cache_handoff_no_replay": self.one_live_cache_handoff_no_replay,
+            "p7_full_resident_backbone_ssd_engram": self.p7_full_resident_backbone_ssd_engram,
+            "p0_p7_structural_gate": self.p0_p7_structural_gate,
         }
 
 

@@ -1,0 +1,1276 @@
+{
+  "case": "p7-A-24577",
+  "status": "PASS",
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "p7_overlap_enabled": false,
+  "p8_timing_classification": "Qualification-only aggregate wall timings. ENCODE_ROWS durations include Python/graph construction, async submission, any implicit synchronization in oMLX/MLX, SSD host I/O for Engram, and command-side state mutation; they are not per-kernel GPU timings.",
+  "environment_preflight": {
+    "python_executable": "/Users/kioju/.venvs/omlx-0.7.0.dev2/bin/python3",
+    "python_version": "3.13.15 (main, Aug  5 2026, 12:25:43) [Clang 21.0.0 (clang-2100.1.1.101)]",
+    "mlx_version": "0.32.2",
+    "numpy_version": "2.3.5",
+    "omlx_language_path": "/Users/kioju/omlx-0.7.0.dev2/omlx/patches/deepseek_v41/language.py",
+    "omlx_git_revision": "b390b31e0c6831225fed0f24d278eb1db7fcb68b",
+    "checkpoint_path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash"
+  },
+  "runtime_authority": {
+    "omlx_version": "0.7.0.dev2",
+    "distribution_version": "0.7.0.dev2",
+    "mlx_version": "0.32.2",
+    "python_executable": "/Users/kioju/.venvs/omlx-0.7.0.dev2/bin/python3",
+    "language_path": "/Users/kioju/omlx-0.7.0.dev2/omlx/patches/deepseek_v41/language.py",
+    "language_sha256": "2c64bef36c9fc4a6007cd34e7b120142ced072a8d491cf1f83f2c5b1a956763f",
+    "git_revision": "b390b31e0c6831225fed0f24d278eb1db7fcb68b",
+    "git_status": "M omlx/patches/deepseek_v41/encoding.py\n M omlx/patches/deepseek_v41/processing.py\n?? tests/test_deepseek_v41_literal_image_token.py",
+    "operation_contracts": {
+      "hc_mixes": "compatible",
+      "hc_pre_norm": "compatible",
+      "hc_post": "compatible",
+      "rope": "compatible",
+      "pack_activation": "compatible",
+      "quantize_activation": "compatible",
+      "packed_index_topk": "compatible",
+      "packed_index_scores": "compatible",
+      "packed_sparse_attention": "compatible"
+    }
+  },
+  "stage": "complete",
+  "loader_args": {
+    "preserve_mtp": false,
+    "engram_ssd_offload": true,
+    "moe_expert_offload_resident_fraction": null
+  },
+  "memory_after_load": {
+    "active_memory": 301103697864,
+    "cache_memory": 5458594316,
+    "peak_memory": 303509389780,
+    "process_maxrss_kb": 19151290368
+  },
+  "real_p7_preflight": {
+    "model_donor_class": "omlx.patches.deepseek_v41.storage.EngramPrefetch",
+    "layers": {
+      "1": {
+        "wrapper_class": "omlx.patches.deepseek_v41.engram.Engram",
+        "embed_class": "omlx.patches.deepseek_v41.storage.DiskEngramEmbedding",
+        "embed_is_disk": true,
+        "embed_resident_is_none": true
+      },
+      "14": {
+        "wrapper_class": "omlx.patches.deepseek_v41.engram.Engram",
+        "embed_class": "omlx.patches.deepseek_v41.storage.DiskEngramEmbedding",
+        "embed_is_disk": true,
+        "embed_resident_is_none": true
+      }
+    },
+    "outer_moe_offload_plan": null,
+    "offloaded_expert_present": false,
+    "coordinator_admission": "PASS"
+  },
+  "plan": [
+    [
+      0,
+      16384,
+      "ENCODER_SOURCE_ONLY"
+    ],
+    [
+      16384,
+      8192,
+      "FINAL_ENCODER_DECODER"
+    ],
+    [
+      24576,
+      1,
+      "ORDINARY_COMPLETE_RANGE"
+    ]
+  ],
+  "token_digest_sha256_int32le": "9805f80eb7f7f0248d85cc609b45a44c8c39bf2c66dc6ec4294f934ec49b87df",
+  "segments": [
+    {
+      "seq": 0,
+      "mode": "ENCODER_SOURCE_ONLY",
+      "start": 0,
+      "count": 16384,
+      "elapsed_wall_s": 17.534380375000183,
+      "effective_tokens_per_s": 934.3928698706486,
+      "C": 0,
+      "E": 16384,
+      "D": 0,
+      "T": 24577,
+      "last_completed_command": "encoder_only_complete_still_invalid",
+      "last_completed_layer": null,
+      "records": 147,
+      "p7": {
+        "enabled": true,
+        "prefetch_submissions": 16,
+        "logical_match_consumptions": 16,
+        "donor_observed_consumptions": 16,
+        "fallback_mismatches": 0,
+        "drains": 1,
+        "read_ahead_already_ready": 20
+      },
+      "source_generations": {
+        "20": 1
+      },
+      "public_frontiers_head": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "seq": 1,
+      "mode": "FINAL_ENCODER_DECODER",
+      "start": 16384,
+      "count": 8192,
+      "elapsed_wall_s": 8.635363082998083,
+      "effective_tokens_per_s": 948.6572737316619,
+      "C": 0,
+      "E": 24576,
+      "D": 24576,
+      "T": 24577,
+      "last_completed_command": "end_layer",
+      "last_completed_layer": 39,
+      "records": 266,
+      "p7": {
+        "enabled": true,
+        "prefetch_submissions": 8,
+        "logical_match_consumptions": 8,
+        "donor_observed_consumptions": 8,
+        "fallback_mismatches": 0,
+        "drains": 0,
+        "read_ahead_already_ready": 40
+      },
+      "source_generations": {
+        "20": 2
+      },
+      "public_frontiers_head": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "seq": 2,
+      "mode": "ORDINARY_COMPLETE_RANGE",
+      "start": 24576,
+      "count": 1,
+      "elapsed_wall_s": 0.5799960000003921,
+      "effective_tokens_per_s": 1.7241498217217428,
+      "C": 0,
+      "E": 24577,
+      "D": 24577,
+      "T": 24577,
+      "last_completed_command": "end_layer",
+      "last_completed_layer": 39,
+      "records": 243,
+      "p7": {
+        "enabled": true,
+        "prefetch_submissions": 2,
+        "logical_match_consumptions": 2,
+        "donor_observed_consumptions": 2,
+        "fallback_mismatches": 0,
+        "drains": 0,
+        "read_ahead_already_ready": 40
+      },
+      "source_generations": {
+        "20": 2
+      },
+      "public_frontiers_head": [
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "p8_command_family_timing": [
+    {
+      "command_kind": "Engram micro-pipeline",
+      "phase": "decoder_full",
+      "layer_range": "Engram 2048 microtiles",
+      "call_count": 2,
+      "total_wall_s": 0.5654743330087513,
+      "max_wall_s": 0.5589601660030894,
+      "token_rows_processed": 2,
+      "mean_wall_s": 0.28273716650437564
+    },
+    {
+      "command_kind": "publish_state_frontier",
+      "phase": "decoder_full",
+      "layer_range": "PublicationManager work",
+      "call_count": 40,
+      "total_wall_s": 0.0004496669862419367,
+      "max_wall_s": 2.066700835712254e-05,
+      "token_rows_processed": 0,
+      "mean_wall_s": 1.1241674656048417e-05
+    },
+    {
+      "command_kind": "begin_layer",
+      "phase": "decoder_full",
+      "layer_range": "command-stream",
+      "call_count": 40,
+      "total_wall_s": 0.00038058396603446454,
+      "max_wall_s": 1.320798764936626e-05,
+      "token_rows_processed": 0,
+      "mean_wall_s": 9.514599150861614e-06
+    },
+    {
+      "command_kind": "end_layer",
+      "phase": "decoder_full",
+      "layer_range": "command-stream",
+      "call_count": 40,
+      "total_wall_s": 0.0003636239416664466,
+      "max_wall_s": 1.1665993952192366e-05,
+      "token_rows_processed": 0,
+      "mean_wall_s": 9.090598541661166e-06
+    },
+    {
+      "command_kind": "prefetch_engram_table0",
+      "phase": "decoder_full",
+      "layer_range": "command-stream",
+      "call_count": 1,
+      "total_wall_s": 4.962499951943755e-05,
+      "max_wall_s": 4.962499951943755e-05,
+      "token_rows_processed": 0,
+      "mean_wall_s": 4.962499951943755e-05
+    },
+    {
+      "command_kind": "prefetch_engram_table1",
+      "phase": "decoder_full",
+      "layer_range": "command-stream",
+      "call_count": 1,
+      "total_wall_s": 4.804199852515012e-05,
+      "max_wall_s": 4.804199852515012e-05,
+      "token_rows_processed": 0,
+      "mean_wall_s": 4.804199852515012e-05
+    },
+    {
+      "command_kind": "ssd_read_ahead",
+      "phase": "decoder_full",
+      "layer_range": "command-stream",
+      "call_count": 40,
+      "total_wall_s": 0.0004158339725108817,
+      "max_wall_s": 1.3374999980442226e-05,
+      "token_rows_processed": 0,
+      "mean_wall_s": 1.0395849312772042e-05
+    },
+    {
+      "command_kind": "swap_hc_after_layer",
+      "phase": "decoder_full",
+      "layer_range": "command-stream",
+      "call_count": 40,
+      "total_wall_s": 0.0005488360184244812,
+      "max_wall_s": 3.3082993468269706e-05,
+      "token_rows_processed": 0,
+      "mean_wall_s": 1.3720900460612028e-05
+    },
+    {
+      "command_kind": "encode_rows",
+      "phase": "decoder_full",
+      "layer_range": "decoder suffix 20..39",
+      "call_count": 20,
+      "total_wall_s": 0.00477241599583067,
+      "max_wall_s": 0.0008950000046752393,
+      "token_rows_processed": 20,
+      "mean_wall_s": 0.0002386207997915335
+    },
+    {
+      "command_kind": "encode_rows",
+      "phase": "decoder_full",
+      "layer_range": "encoder layers 0..19",
+      "call_count": 20,
+      "total_wall_s": 0.57042887393618,
+      "max_wall_s": 0.5593950829934329,
+      "token_rows_processed": 20,
+      "mean_wall_s": 0.028521443696809
+    },
+    {
+      "command_kind": "publish_state_frontier",
+      "phase": "decoder_suffix",
+      "layer_range": "PublicationManager work",
+      "call_count": 20,
+      "total_wall_s": 0.00021579400345217437,
+      "max_wall_s": 1.9416998839005828e-05,
+      "token_rows_processed": 0,
+      "mean_wall_s": 1.0789700172608719e-05
+    },
+    {
+      "command_kind": "begin_layer",
+      "phase": "decoder_suffix",
+      "layer_range": "command-stream",
+      "call_count": 20,
+      "total_wall_s": 0.0001737919810693711,
+      "max_wall_s": 1.0957999620586634e-05,
+      "token_rows_processed": 0,
+      "mean_wall_s": 8.689599053468555e-06
+    },
+    {
+      "command_kind": "end_layer",
+      "phase": "decoder_suffix",
+      "layer_range": "command-stream",
+      "call_count": 20,
+      "total_wall_s": 0.00016891604172997177,
+      "max_wall_s": 1.0457995813339949e-05,
+      "token_rows_processed": 0,
+      "mean_wall_s": 8.445802086498588e-06
+    },
+    {
+      "command_kind": "ssd_read_ahead",
+      "phase": "decoder_suffix",
+      "layer_range": "command-stream",
+      "call_count": 20,
+      "total_wall_s": 0.00023558300745207816,
+      "max_wall_s": 4.0457991417497396e-05,
+      "token_rows_processed": 0,
+      "mean_wall_s": 1.1779150372603909e-05
+    },
+    {
+      "command_kind": "swap_hc_after_layer",
+      "phase": "decoder_suffix",
+      "layer_range": "command-stream",
+      "call_count": 20,
+      "total_wall_s": 0.0002787890116451308,
+      "max_wall_s": 3.3125004847534e-05,
+      "token_rows_processed": 0,
+      "mean_wall_s": 1.393945058225654e-05
+    },
+    {
+      "command_kind": "decoder_prepare_suffix",
+      "phase": "decoder_suffix",
+      "layer_range": "decoder prepare suffix",
+      "call_count": 20,
+      "total_wall_s": 0.0013241669948911294,
+      "max_wall_s": 0.00045783299719914794,
+      "token_rows_processed": 2540,
+      "mean_wall_s": 6.620834974455648e-05
+    },
+    {
+      "command_kind": "encode_rows",
+      "phase": "decoder_suffix",
+      "layer_range": "decoder suffix 20..39",
+      "call_count": 20,
+      "total_wall_s": 0.13182587703340687,
+      "max_wall_s": 0.11466824999661185,
+      "token_rows_processed": 24150,
+      "mean_wall_s": 0.006591293851670343
+    },
+    {
+      "command_kind": "p6_source_complete_and_detach_cone",
+      "phase": "deferred_decoder",
+      "layer_range": "P6 source detach cone",
+      "call_count": 2,
+      "total_wall_s": 6.787487458001124,
+      "max_wall_s": 4.465671583006042,
+      "token_rows_processed": 2541,
+      "mean_wall_s": 3.393743729000562
+    },
+    {
+      "command_kind": "encoder_only_complete_still_invalid",
+      "phase": "deferred_decoder",
+      "layer_range": "command-stream",
+      "call_count": 1,
+      "total_wall_s": 3.820800338871777e-05,
+      "max_wall_s": 3.820800338871777e-05,
+      "token_rows_processed": 0,
+      "mean_wall_s": 3.820800338871777e-05
+    },
+    {
+      "command_kind": "Engram micro-pipeline",
+      "phase": "encoder",
+      "layer_range": "Engram 2048 microtiles",
+      "call_count": 6,
+      "total_wall_s": 10.143600083014462,
+      "max_wall_s": 5.116544666001573,
+      "token_rows_processed": 49152,
+      "mean_wall_s": 1.6906000138357438
+    },
+    {
+      "command_kind": "publish_state_frontier",
+      "phase": "encoder",
+      "layer_range": "PublicationManager work",
+      "call_count": 42,
+      "total_wall_s": 0.0005213320400798693,
+      "max_wall_s": 2.4375010980293155e-05,
+      "token_rows_processed": 0,
+      "mean_wall_s": 1.241266762094927e-05
+    },
+    {
+      "command_kind": "begin_layer",
+      "phase": "encoder",
+      "layer_range": "command-stream",
+      "call_count": 40,
+      "total_wall_s": 0.00036879602703265846,
+      "max_wall_s": 1.09999964479357e-05,
+      "token_rows_processed": 0,
+      "mean_wall_s": 9.219900675816461e-06
+    },
+    {
+      "command_kind": "end_layer",
+      "phase": "encoder",
+      "layer_range": "command-stream",
+      "call_count": 40,
+      "total_wall_s": 0.00036258601176086813,
+      "max_wall_s": 1.2999997125007212e-05,
+      "token_rows_processed": 0,
+      "mean_wall_s": 9.064650294021704e-06
+    },
+    {
+      "command_kind": "prefetch_engram_table0",
+      "phase": "encoder",
+      "layer_range": "command-stream",
+      "call_count": 2,
+      "total_wall_s": 0.00030133299878798425,
+      "max_wall_s": 0.00022429099772125483,
+      "token_rows_processed": 0,
+      "mean_wall_s": 0.00015066649939399213
+    },
+    {
+      "command_kind": "prefetch_engram_table1",
+      "phase": "encoder",
+      "layer_range": "command-stream",
+      "call_count": 2,
+      "total_wall_s": 0.0007838330056983978,
+      "max_wall_s": 0.0004532919992925599,
+      "token_rows_processed": 0,
+      "mean_wall_s": 0.0003919165028491989
+    },
+    {
+      "command_kind": "ssd_read_ahead",
+      "phase": "encoder",
+      "layer_range": "command-stream",
+      "call_count": 40,
+      "total_wall_s": 0.0004470829735510051,
+      "max_wall_s": 1.6250007320195436e-05,
+      "token_rows_processed": 0,
+      "mean_wall_s": 1.1177074338775127e-05
+    },
+    {
+      "command_kind": "swap_hc_after_layer",
+      "phase": "encoder",
+      "layer_range": "command-stream",
+      "call_count": 40,
+      "total_wall_s": 0.0007434990402543917,
+      "max_wall_s": 6.020900036673993e-05,
+      "token_rows_processed": 0,
+      "mean_wall_s": 1.8587476006359793e-05
+    },
+    {
+      "command_kind": "decoder_prepare_suffix",
+      "phase": "encoder",
+      "layer_range": "decoder prepare suffix",
+      "call_count": 2,
+      "total_wall_s": 0.001519249999546446,
+      "max_wall_s": 0.0008397920028073713,
+      "token_rows_processed": 24576,
+      "mean_wall_s": 0.000759624999773223
+    },
+    {
+      "command_kind": "encode_rows",
+      "phase": "encoder",
+      "layer_range": "encoder layers 0..19",
+      "call_count": 60,
+      "total_wall_s": 19.231918960023904,
+      "max_wall_s": 5.168743333997554,
+      "token_rows_processed": 491520,
+      "mean_wall_s": 0.32053198266706506
+    },
+    {
+      "command_kind": "final seal",
+      "phase": "request",
+      "layer_range": "final seal",
+      "call_count": 1,
+      "total_wall_s": 0.00011341700155753642,
+      "max_wall_s": 0.00011341700155753642,
+      "token_rows_processed": 0,
+      "mean_wall_s": 0.00011341700155753642
+    },
+    {
+      "command_kind": "begin_sweep_checkpoint_invalid",
+      "phase": "sweep",
+      "layer_range": "command-stream",
+      "call_count": 3,
+      "total_wall_s": 5.720800254493952e-05,
+      "max_wall_s": 2.808299905154854e-05,
+      "token_rows_processed": 0,
+      "mean_wall_s": 1.9069334181646507e-05
+    },
+    {
+      "command_kind": "P5 handoff",
+      "phase": "handoff+bounded-decode",
+      "layer_range": "P5 handoff",
+      "call_count": 1,
+      "total_wall_s": 5.629228999998304,
+      "mean_wall_s": 5.629228999998304,
+      "max_wall_s": 5.629228999998304,
+      "token_rows_processed": 2
+    }
+  ],
+  "engram_read_instrumentation": {
+    "reads": [
+      {
+        "kind": "background_prefetch",
+        "layer": 1,
+        "rows": 49152
+      },
+      {
+        "kind": "background_prefetch",
+        "layer": 1,
+        "rows": 49152
+      },
+      {
+        "kind": "background_prefetch",
+        "layer": 1,
+        "rows": 49152
+      },
+      {
+        "kind": "background_prefetch",
+        "layer": 1,
+        "rows": 49152
+      },
+      {
+        "kind": "background_prefetch",
+        "layer": 1,
+        "rows": 49152
+      },
+      {
+        "kind": "background_prefetch",
+        "layer": 1,
+        "rows": 49152
+      },
+      {
+        "kind": "background_prefetch",
+        "layer": 1,
+        "rows": 49152
+      },
+      {
+        "kind": "background_prefetch",
+        "layer": 1,
+        "rows": 49152
+      },
+      {
+        "kind": "background_prefetch",
+        "layer": 14,
+        "rows": 49152
+      },
+      {
+        "kind": "background_prefetch",
+        "layer": 14,
+        "rows": 49152
+      },
+      {
+        "kind": "background_prefetch",
+        "layer": 14,
+        "rows": 49152
+      },
+      {
+        "kind": "background_prefetch",
+        "layer": 14,
+        "rows": 49152
+      },
+      {
+        "kind": "background_prefetch",
+        "layer": 14,
+        "rows": 49152
+      },
+      {
+        "kind": "background_prefetch",
+        "layer": 14,
+        "rows": 49152
+      },
+      {
+        "kind": "background_prefetch",
+        "layer": 14,
+        "rows": 49152
+      },
+      {
+        "kind": "background_prefetch",
+        "layer": 14,
+        "rows": 49152
+      },
+      {
+        "kind": "background_prefetch",
+        "layer": 1,
+        "rows": 49152
+      },
+      {
+        "kind": "background_prefetch",
+        "layer": 1,
+        "rows": 49152
+      },
+      {
+        "kind": "background_prefetch",
+        "layer": 1,
+        "rows": 49152
+      },
+      {
+        "kind": "background_prefetch",
+        "layer": 1,
+        "rows": 49152
+      },
+      {
+        "kind": "background_prefetch",
+        "layer": 14,
+        "rows": 49152
+      },
+      {
+        "kind": "background_prefetch",
+        "layer": 14,
+        "rows": 49152
+      },
+      {
+        "kind": "background_prefetch",
+        "layer": 14,
+        "rows": 49152
+      },
+      {
+        "kind": "background_prefetch",
+        "layer": 14,
+        "rows": 49152
+      },
+      {
+        "kind": "background_prefetch",
+        "layer": 1,
+        "rows": 24
+      },
+      {
+        "kind": "background_prefetch",
+        "layer": 14,
+        "rows": 24
+      }
+    ],
+    "background_prefetch_reads": 26,
+    "foreground_fallback_reads": 0
+  },
+  "engram_read_runs": [
+    {
+      "name": "p7-A-24577",
+      "reads": [
+        {
+          "kind": "background_prefetch",
+          "layer": 1,
+          "rows": 49152
+        },
+        {
+          "kind": "background_prefetch",
+          "layer": 1,
+          "rows": 49152
+        },
+        {
+          "kind": "background_prefetch",
+          "layer": 1,
+          "rows": 49152
+        },
+        {
+          "kind": "background_prefetch",
+          "layer": 1,
+          "rows": 49152
+        },
+        {
+          "kind": "background_prefetch",
+          "layer": 1,
+          "rows": 49152
+        },
+        {
+          "kind": "background_prefetch",
+          "layer": 1,
+          "rows": 49152
+        },
+        {
+          "kind": "background_prefetch",
+          "layer": 1,
+          "rows": 49152
+        },
+        {
+          "kind": "background_prefetch",
+          "layer": 1,
+          "rows": 49152
+        },
+        {
+          "kind": "background_prefetch",
+          "layer": 14,
+          "rows": 49152
+        },
+        {
+          "kind": "background_prefetch",
+          "layer": 14,
+          "rows": 49152
+        },
+        {
+          "kind": "background_prefetch",
+          "layer": 14,
+          "rows": 49152
+        },
+        {
+          "kind": "background_prefetch",
+          "layer": 14,
+          "rows": 49152
+        },
+        {
+          "kind": "background_prefetch",
+          "layer": 14,
+          "rows": 49152
+        },
+        {
+          "kind": "background_prefetch",
+          "layer": 14,
+          "rows": 49152
+        },
+        {
+          "kind": "background_prefetch",
+          "layer": 14,
+          "rows": 49152
+        },
+        {
+          "kind": "background_prefetch",
+          "layer": 14,
+          "rows": 49152
+        },
+        {
+          "kind": "background_prefetch",
+          "layer": 1,
+          "rows": 49152
+        },
+        {
+          "kind": "background_prefetch",
+          "layer": 1,
+          "rows": 49152
+        },
+        {
+          "kind": "background_prefetch",
+          "layer": 1,
+          "rows": 49152
+        },
+        {
+          "kind": "background_prefetch",
+          "layer": 1,
+          "rows": 49152
+        },
+        {
+          "kind": "background_prefetch",
+          "layer": 14,
+          "rows": 49152
+        },
+        {
+          "kind": "background_prefetch",
+          "layer": 14,
+          "rows": 49152
+        },
+        {
+          "kind": "background_prefetch",
+          "layer": 14,
+          "rows": 49152
+        },
+        {
+          "kind": "background_prefetch",
+          "layer": 14,
+          "rows": 49152
+        },
+        {
+          "kind": "background_prefetch",
+          "layer": 1,
+          "rows": 24
+        },
+        {
+          "kind": "background_prefetch",
+          "layer": 14,
+          "rows": 24
+        }
+      ],
+      "background_prefetch_reads": 26,
+      "foreground_fallback_reads": 0
+    }
+  ],
+  "frontiers_after_seal": [
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577,
+    24577
+  ],
+  "cache_geom": {
+    "0": [
+      {
+        "shape": [
+          1
+        ],
+        "dtype": "mlx.core.int32"
+      },
+      {
+        "shape": [
+          1,
+          128,
+          528
+        ],
+        "dtype": "mlx.core.uint8"
+      },
+      {
+        "shape": [
+          1,
+          0,
+          288
+        ],
+        "dtype": "mlx.core.uint8"
+      },
+      {
+        "shape": [
+          1,
+          0,
+          68
+        ],
+        "dtype": "mlx.core.uint8"
+      },
+      {
+        "shape": [
+          1,
+          0,
+          512
+        ],
+        "dtype": "mlx.core.bfloat16"
+      },
+      {
+        "shape": [
+          1,
+          0,
+          512
+        ],
+        "dtype": "mlx.core.bfloat16"
+      },
+      {
+        "shape": [
+          1,
+          3
+        ],
+        "dtype": "int64"
+      }
+    ],
+    "2": [
+      {
+        "shape": [
+          1
+        ],
+        "dtype": "mlx.core.int32"
+      },
+      {
+        "shape": [
+          1,
+          128,
+          528
+        ],
+        "dtype": "mlx.core.uint8"
+      },
+      {
+        "shape": [
+          1,
+          12288,
+          288
+        ],
+        "dtype": "mlx.core.uint8"
+      },
+      {
+        "shape": [
+          1,
+          12288,
+          68
+        ],
+        "dtype": "mlx.core.uint8"
+      },
+      {
+        "shape": [
+          1,
+          1,
+          512
+        ],
+        "dtype": "mlx.core.float32"
+      },
+      {
+        "shape": [
+          1,
+          1,
+          512
+        ],
+        "dtype": "mlx.core.float32"
+      },
+      {
+        "shape": [
+          1,
+          0
+        ],
+        "dtype": "mlx.core.int64"
+      }
+    ],
+    "8": [
+      {
+        "shape": [
+          1
+        ],
+        "dtype": "mlx.core.int32"
+      },
+      {
+        "shape": [
+          1,
+          128,
+          528
+        ],
+        "dtype": "mlx.core.uint8"
+      },
+      {
+        "shape": [
+          1,
+          12288,
+          288
+        ],
+        "dtype": "mlx.core.uint8"
+      },
+      {
+        "shape": [
+          1,
+          12288,
+          68
+        ],
+        "dtype": "mlx.core.uint8"
+      },
+      {
+        "shape": [
+          1,
+          1,
+          512
+        ],
+        "dtype": "mlx.core.float32"
+      },
+      {
+        "shape": [
+          1,
+          1,
+          512
+        ],
+        "dtype": "mlx.core.float32"
+      },
+      {
+        "shape": [
+          1,
+          0
+        ],
+        "dtype": "mlx.core.int64"
+      }
+    ],
+    "14": [
+      {
+        "shape": [
+          1
+        ],
+        "dtype": "mlx.core.int32"
+      },
+      {
+        "shape": [
+          1,
+          128,
+          528
+        ],
+        "dtype": "mlx.core.uint8"
+      },
+      {
+        "shape": [
+          1,
+          12288,
+          288
+        ],
+        "dtype": "mlx.core.uint8"
+      },
+      {
+        "shape": [
+          1,
+          12288,
+          68
+        ],
+        "dtype": "mlx.core.uint8"
+      },
+      {
+        "shape": [
+          1,
+          1,
+          512
+        ],
+        "dtype": "mlx.core.float32"
+      },
+      {
+        "shape": [
+          1,
+          1,
+          512
+        ],
+        "dtype": "mlx.core.float32"
+      },
+      {
+        "shape": [
+          1,
+          0
+        ],
+        "dtype": "mlx.core.int64"
+      }
+    ],
+    "20": [
+      {
+        "shape": [
+          1
+        ],
+        "dtype": "mlx.core.int32"
+      },
+      {
+        "shape": [
+          1,
+          128,
+          528
+        ],
+        "dtype": "mlx.core.uint8"
+      },
+      {
+        "shape": [
+          1,
+          24577,
+          288
+        ],
+        "dtype": "mlx.core.uint8"
+      },
+      {
+        "shape": [
+          1,
+          24577,
+          68
+        ],
+        "dtype": "mlx.core.uint8"
+      },
+      {
+        "shape": [
+          1,
+          0,
+          512
+        ],
+        "dtype": "mlx.core.bfloat16"
+      },
+      {
+        "shape": [
+          1,
+          0,
+          512
+        ],
+        "dtype": "mlx.core.bfloat16"
+      },
+      {
+        "shape": [
+          1,
+          0
+        ],
+        "dtype": "mlx.core.int64"
+      }
+    ],
+    "39": [
+      {
+        "shape": [
+          1
+        ],
+        "dtype": "mlx.core.int32"
+      },
+      {
+        "shape": [
+          1,
+          128,
+          528
+        ],
+        "dtype": "mlx.core.uint8"
+      },
+      {
+        "shape": [
+          1,
+          0,
+          288
+        ],
+        "dtype": "mlx.core.uint8"
+      },
+      {
+        "shape": [
+          1,
+          0,
+          68
+        ],
+        "dtype": "mlx.core.uint8"
+      },
+      {
+        "shape": [
+          1,
+          0,
+          512
+        ],
+        "dtype": "mlx.core.bfloat16"
+      },
+      {
+        "shape": [
+          1,
+          0,
+          512
+        ],
+        "dtype": "mlx.core.bfloat16"
+      },
+      {
+        "shape": [
+          1,
+          0
+        ],
+        "dtype": "mlx.core.int64"
+      }
+    ]
+  },
+  "memory_after_prefill": {
+    "active_memory": 301394575092,
+    "cache_memory": 31080071653,
+    "peak_memory": 319629252136,
+    "process_maxrss_kb": 19151290368
+  },
+  "commit": {
+    "C": 0,
+    "E": 24577,
+    "D": 24577,
+    "T": 24577,
+    "history_position": 24577,
+    "source_coverage": {
+      "2": 24577,
+      "8": 24577,
+      "14": 24577,
+      "20": 24577
+    },
+    "full_cache_repack_count": 0,
+    "exported": false
+  },
+  "p5": {
+    "status": "PASS",
+    "prompt_replay_count": 0,
+    "forward_count": 3,
+    "generated_tokens": [
+      90,
+      1
+    ],
+    "generated_frontiers": [
+      [
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579,
+        24579
+      ],
+      [
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580,
+        24580
+      ]
+    ],
+    "wall_s": 5.629228999998304
+  }
+}

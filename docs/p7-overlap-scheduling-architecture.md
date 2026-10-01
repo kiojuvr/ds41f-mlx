@@ -1,8 +1,22 @@
 # P7 overlap/scheduling architecture
 
-Status: **base implementation target defined for qualification**. P7 does not change the production selector, does not begin P8, and does not use throughput as an acceptance criterion.
+Status: **P7 FULL_RESIDENT_BACKBONE_SSD_ENGRAM = QUALIFIED**. P7 does not change the production selector, does not begin P8, and did not use throughput as an acceptance criterion.
 
 ## Qualified base backend
+
+Qualified environment:
+
+```text
+Python 3.13.15
+MLX 0.32.2
+NumPy 2.3.5
+oMLX 0.7.0.dev2
+oMLX b390b31e0c6831225fed0f24d278eb1db7fcb68b
+
+preserve_mtp=False
+engram_ssd_offload=True
+moe_expert_offload_resident_fraction=None
+```
 
 The qualified oMLX loader is invoked with:
 
@@ -45,6 +59,41 @@ status: NOT QUALIFIED / OUTSIDE BASE P7
 
 It changes weight storage, resident expert lifetime, materialization behavior, memory policy, and MoE execution. It must not be used to satisfy the base P7 residency criterion.
 
+## Qualification cases and Engram read evidence
+
+Real-qualified cases:
+
+```text
+P7 complete-2048
+P7 complete-8192
+P7 complete-16384
+P7 pending-16384
+P7 A-24577
+P7 scheduling-disabled control
+P7 failure/drain/reuse
+```
+
+Engram reads on qualifying P7-enabled complete paths:
+
+```text
+2048:
+  background Engram reads = 2
+  foreground fallback = 0
+
+8192:
+  background = 8
+  foreground = 0
+
+16384:
+  background = 16
+  foreground = 0
+
+qualifying P7-enabled paths:
+  foreground fallback = 0
+```
+
+The scheduling-disabled control remains attribution/control evidence only and is not a production candidate.
+
 ## Engram donor constraint
 
 The base P7 Engram scheduler borrows the model-owned donor:
@@ -55,7 +104,7 @@ language_model._engram_prefetch
 
 It must not create or close a second `EngramPrefetch`. Request completion drains/releases the borrowed scheduling capability; model close remains responsible for donor `.close()`.
 
-Pinned oMLX `EngramPrefetch.submit(embed, ids)` holds one exact pending request. `DiskEngramEmbedding.__call__(indices)` reuses it only when the later host IDs exactly match (`np.array_equal(requested, host)`). Therefore this is invalid for chunked ds41f execution:
+Pinned oMLX `EngramPrefetch.submit(embed, ids)` holds one exact pending request. `DiskEngramEmbedding.__call__(indices)` reuses it only when the later host IDs exactly match (`np.array_equal(requested, host)`).  `P7_ENGRAM_TILE = 2048` because pinned oMLX `EngramPrefetch` has a 16 MiB request limit; 8192-token full Engram requests are rejected, while 2048-token microrequests are donor-admissible. Therefore this is invalid for chunked ds41f execution:
 
 ```text
 submit full 16384 IDs
@@ -139,6 +188,6 @@ Forbidden on the production hot path: activation h/pre CPU round trips, KV/index
 
 Structural tests must prove command order, exact submitted IDs equal consumed IDs, donor exact-match behavior, mismatch fallback behavior, next-chunk submission after consumption, failure drain/revoke, stale coordinator rejection, resident admission fail-closed cases, and materialization boundaries.
 
-Real qualification must compare P7 enabled with a scheduling-disabled control for state/correctness only: frontiers, cache geometry, Engram history, justified compressed KV/index equality, and P5 zero-replay behavior. Qualification evidence must include donor-backed prefetch submissions, exact-match consumptions, fallback synchronous reads, and drains. A run where prefetched work is discarded because IDs do not match does not qualify.
+Real qualification compared P7 enabled with scheduling-disabled controls for state/correctness only: frontiers, cache geometry, Engram history, justified compressed KV/index equality, and P5 zero-replay behavior. Qualification evidence includes donor-backed prefetch submissions, exact-match consumptions, zero foreground fallback on P7-enabled paths, and drains. A run where prefetched work is discarded because IDs do not match does not qualify.
 
-P8 graph reuse, custom Metal kernels, command-buffer fusion, and performance-driven graph changes remain out of scope.
+P8 graph reuse, custom Metal kernels, command-buffer fusion, and performance-driven graph changes remain out of scope for P7 and are handled only in the P8 design document.

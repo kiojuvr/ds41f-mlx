@@ -1,6 +1,6 @@
 # DwarfStar V4.1 prefill on official FP8/MLX — architecture plan
 
-Status: **P0-P6 implemented/qualified within the new path; P7/P8 and production selection remain open.**  This document started as an architecture plan; current status notes distinguish implemented package evidence from remaining design work.
+Status: **P0-P7 implemented/qualified within the new path; P8 design is open and production selection remains unchanged.**  This document started as an architecture plan; current status notes distinguish implemented package evidence from remaining design work.
 
 ## Decision
 
@@ -148,7 +148,7 @@ The runner may introduce chunked row execution only where oMLX cache semantics c
 - Hand the same cache to `OMLXGenerationSession.from_prefilled_cache` without `PrefillContinuationState` export or adapter re-admission. Revoke prefill execution authority; after bootstrap the `BatchGenerator`/`GenerationBatch` scheduler is the sole active decode authority. Repeated handoff/start fails closed.
 - Terminal-token holdout contract: `full_prompt = prefix_token_ids + [terminal_prompt_token]`. P3/P4 cache only the prefix and suppress final prefix logits. P5 calls `session.start(terminal_prompt_token)` exactly once: pre-start frontiers equal `len(prefix_token_ids)`, post-bootstrap frontiers equal `len(prefix_token_ids)+1`, and prefix replay is zero. Never prefill the terminal token and then pass it again to `start()`.
 
-Implementation/real P5 qualification: [live-cache handoff closeout](p5-live-cache-handoff.md). Production selection and P7 remain separate tasks.
+Implementation/real P5 qualification: [live-cache handoff closeout](p5-live-cache-handoff.md). Production selection remains a separate task; P7 is now qualified for the scoped base backend below.
 
 ### P6 — deferred decoder / long-context sweep
 
@@ -158,11 +158,15 @@ Real qualification environment: Python 3.13.15, MLX 0.32.2, NumPy 2.3.5, oMLX 0.
 
 Qualified cases: `complete-16384`, `pending-16384`, `tiny-16385`, `A-24577`, matched-geometry non-deferred control, `B-fresh-49155`, `B-continued C24578 -> T49155`, failure/rebuild, and P5 bootstrap/decode. Evidence records same live-cache handoff, `prompt_replay_count = 0`, `full_cache_repack_count = 0`, and no `PrefillContinuationState` export/repack path.
 
-ArchitectureCompletion status local to the new path: `deferred_decoder_suffix_lifetime = qualified`; `dwarfstar_carry_lifetime = qualified`. This does not promote P7, P8, production selector, performance gate, or global runtime completion.
+ArchitectureCompletion status local to the new path: `deferred_decoder_suffix_lifetime = qualified`; `dwarfstar_carry_lifetime = qualified`.
 
 ### P7 — overlap and scheduling
 
-P7 is reconstructed but not implemented; see [P7 overlap/scheduling architecture](p7-overlap-scheduling-architecture.md). Required scope: Engram prefetch/read-ahead, expert/weight residency scheduling, and explicit `mx.eval`/`mx.async_eval` materialization boundaries. A placeholder/no-op scheduling hook does not count toward architecture completion or performance-evaluation readiness.
+**Qualified for scoped base backend:** `P7 FULL_RESIDENT_BACKBONE_SSD_ENGRAM = QUALIFIED`; see [P7 overlap/scheduling architecture](p7-overlap-scheduling-architecture.md).  Qualified environment: Python 3.13.15, MLX 0.32.2, NumPy 2.3.5, oMLX 0.7.0.dev2 at `b390b31e0c6831225fed0f24d278eb1db7fcb68b`; loader config `preserve_mtp=False`, `engram_ssd_offload=True`, `moe_expert_offload_resident_fraction=None`.  The qualification scope is not generalized to `EXPERT_OFFLOAD`.
+
+Qualified cases: `P7 complete-2048`, `P7 complete-8192`, `P7 complete-16384`, `P7 pending-16384`, `P7 A-24577`, `P7 scheduling-disabled control`, and `P7 failure/drain/reuse`.  Real Engram evidence: 2048 background reads = 2 / foreground fallback = 0; 8192 background = 8 / foreground = 0; 16384 background = 16 / foreground = 0; all qualifying P7-enabled paths have foreground fallback = 0.  `P7_ENGRAM_TILE = 2048` because pinned oMLX `EngramPrefetch` has a 16 MiB request limit: 8192-token full Engram requests are rejected, while 2048-token microrequests are donor-admissible.
+
+ArchitectureCompletion status local to the new path: `deferred_decoder_suffix_lifetime = qualified`; `dwarfstar_carry_lifetime = qualified`; `p7_full_resident_backbone_ssd_engram = qualified`; `p0_p7_structural_gate = qualified`. This does not promote P8, production selector, performance gate/global runtime completion, or expert offload.
 
 ### P8 — graph/reuse optimization pass
 
@@ -179,11 +183,28 @@ This gate prevents “P0-P7 connected” from being satisfied by wrapping the ex
 - Source/consumer publication frontiers drive execution and visibility.  They must determine when compressed KV, index K, candidates, top-k refreshes, and consumers are produced/visible; they are not merely telemetry metadata.
 - Engram prefetch, expert/weight residency, and read-ahead scheduling hooks perform their intended lifetime/scheduling role.  A no-op hook does not count as architecture-complete.
 - `mx.eval`, `mx.async_eval`, synchronization, and materialization occur only at explicitly defined DwarfStar command/materialization boundaries: setup, command batch, publication, deferred boundary, final handoff, or explicit diagnostics outside the hot path.
-- No CPU round-trip exists on the production hot path.  Tensor-to-NumPy/list/digest conversion is allowed only for explicitly gated diagnostics, not for production execution or qualification timing.
+- No forbidden CPU activation/cache fallback exists on the production hot path. Forbidden: h/pre activation CPU fallback; KV/index/cache CPU fallback; model-weight diagnostic conversion; hot-path tensor digest/list conversion. Allowed and qualified only as an explicit storage boundary for SSD Engram: Engram hash/index host representation, SSD/mmap selected-row I/O, and selected Engram rows returning to MLX. This exception is not a general CPU fallback.
 - `DeepseekV41Cache` remains the final decode-handoff authority, but it must not force the in-flight DwarfStar arena into full cache materialization or repacking at intermediate sweep/chunk boundaries.
 - Final handoff converges once into a live request-local `DeepseekV41Cache` and enters `OMLXGenerationSession.from_prefilled_cache(...)` without prompt replay.
 
 Passing correctness smoke without this structural gate is not performance-evaluation readiness.
+
+### P0-P7 structural-gate audit closure (real evidence)
+
+| gate item | implementation authority | real qualification evidence | status | remaining caveat |
+|---|---|---|---|---|
+| DwarfStar planner owns execution order | `P6AppendPlanner`, `SweepPlan`/`SweepCommand`, `DeferredPrefillAppend.execute_segment`, `OfficialFP8MLXBlockRunner.execute_batch` | P6/P7 long cases execute segment command streams with progress from command kinds, offsets, phases, deferred transitions, commit/rollback. | PASS | Production selector unchanged. |
+| no production whole-prefix independent layer loop | `OfficialFP8MLXBlockRunner.execute_command` only invokes one `ENCODE_ROWS` layer/chunk per sweep command; no runner-level `for layer in layers` hot loop. | P7 2K/8K/16K/A records contain command-indexed layer work; reference/vertical-slice paths are guarded out by `assert_no_reference_hot_path`. | PASS | Diagnostic tools may still contain loops outside production path. |
+| request carry follows bounded DwarfStar lifetime | `RequestArena`, `_write_rows`, `detach_final_decoder_cone`, P6 owner token and sealed/revoked cache capability. | P6 complete/pending/A/failure and P7 complete/A/failure runs validate frontiers, source coverage, failure rejection, rebuild/reuse. | PASS | P8 may optimize writes but must preserve ownership. |
+| deferred decoder actually skips unnecessary work | P6 source-only segments plus final decoder suffix commands and private/public frontier split. | `pending-16384`/`A-24577`: source-only segment has `D=0` and public frontiers at 0; final segment seals suffix and P5 handoff. | PASS | Suffix math remains oMLX-backed scoped implementation. |
+| publication frontiers drive visibility | `PublicationManager.shared_for_span`, `producer_shared_for_span`, `publish_frontier`, capture of source/index/candidate keys. | P6/P7 evidence validates source coverage, layer20 slot2/slot3 exact against controls, and pending raw-generation rejection before commit. | PASS | Python publication metadata is not optimized yet. |
+| Engram/residency/read-ahead policy active | `SchedulingCoordinator`, `ResidencyPolicy`, `ReadAheadPolicy`, `EngramPrefetchController`, `P7_ENGRAM_TILE=2048`. | P7 enabled cases show donor submissions/consumptions, resident read-ahead, drain/reuse; reads: 2K=2, 8K=8, 16K=16 background and 0 foreground fallback. | PASS_WITH_SCOPED_BACKEND | Scope is only `FULL_RESIDENT_BACKBONE_SSD_ENGRAM`; `EXPERT_OFFLOAD` is not qualified. |
+| materialization only at declared boundaries | `MlxEvaluationPolicy`, P6 source detach `mx.eval`, P7 Engram `mx.async_eval`, loader `mx.eval`, P5 handoff. | P7 qualification records async Engram boundaries; P6 detach materializes persistent source state; no general per-layer `mx.eval` added. | PASS_WITH_SCOPED_BACKEND | oMLX/MLX internals may synchronize internally; P8 audits/grouping only, no semantic weakening. |
+| no forbidden CPU activation/cache fallback | Runner does not convert h/pre, KV/index/cache, or weights to NumPy/list/digest on hot path; Engram storage boundary explicitly uses host IDs/SSD rows. | P7 foreground fallback count is 0 for enabled paths; qualification instrumentation only patches storage reads and metadata. | PASS_WITH_SCOPED_BACKEND | Allowed CPU use is scoped to SSD Engram storage boundary; not expert offload/general fallback. |
+| DeepseekV41Cache remains final authority | Live cache created by oMLX `make_cache`, mutated in runner, validated by `validate_committed_cache`; no `PrefillContinuationState` export. | P5/P6/P7 artifacts: frontiers equal prefix length, `full_cache_repack_count=0`, `exported=false`. | PASS | Cache internals remain owned by pinned oMLX. |
+| P5 same-cache handoff with zero prompt replay | `LivePrefillResult.from_committed`, `handoff_to_generation`, `OMLXGenerationSession.from_prefilled_cache`. | P5 checks in P7 2K/8K/16K/A: `prompt_replay_count=0`, same frontiers advance from prefix+terminal through decode. | PASS | Production selector not promoted. |
+
+Gate result: **P0-P7 structural gate = QUALIFIED** for the new path and scoped P7 backend. No gate item failed; P8 profiling/design may proceed without changing production selection.
 
 ## Correctness and qualification gates
 
