@@ -36,12 +36,16 @@ class RecipeCodec:
     def render_chat(self, messages: list[dict[str, str]]) -> str:
         # Official DeepSeek-recipe V4.1 text-only rendering, transcribed from
         # deepseek-recipe-encoding/src/v4 for the simple chat subset used here.
+        # Chat Completions default to thinking mode in the pinned M7 recipe path.
         bos = '<｜begin▁of▁sentence｜>'
         user = '<｜User｜>'
         assistant = '<｜Assistant｜>'
         eos = '<｜end▁of▁sentence｜>'
+        think = '<think>'
         endthink = '</think>'
         out = [bos]
+        if messages and messages[0]['role'] != 'system':
+            out.append('<｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\n')
         prev_role = None
         for msg in messages:
             role, content = msg['role'], msg['content']
@@ -50,11 +54,12 @@ class RecipeCodec:
             elif role == 'user':
                 out.append(('\n\n' if prev_role == 'user' else user) + content)
             elif role == 'assistant':
-                out.append(assistant + endthink + content + eos)
+                reasoning = msg.get('reasoning_content', '')
+                out.append(assistant + think + reasoning + endthink + content + eos)
             else:
                 raise ValueError(f'unsupported text-only role {role!r}')
             prev_role = role
-        out.append(assistant + endthink)
+        out.append(assistant + think)
         return ''.join(out)
 
     def encode_chat(self, messages: list[dict[str, str]]) -> list[int]:
@@ -65,6 +70,14 @@ class RecipeCodec:
 
     def decode(self, token_ids: list[int]) -> str:
         return self.tokenizer.decode([int(t) for t in token_ids], skip_special_tokens=False)
+
+
+def git_dirty(path: Path) -> bool | None:
+    try:
+        status = subprocess.check_output(['git', '-C', str(path), 'status', '--short', '--', '.', ':(exclude)artifacts/m8/long-session-qualification.json'], text=True).strip()
+        return bool(status)
+    except Exception:
+        return None
 
 
 def git_rev(path: Path) -> str | None:
@@ -122,6 +135,14 @@ def rss_mb() -> float:
     return raw / (1024.0 * 1024.0) if raw > 10_000_000 else raw / 1024.0
 
 
+def assistant_message_from_generated(text: str) -> dict[str, str]:
+    marker = '</think>'
+    if marker in text:
+        reasoning, content = text.split(marker, 1)
+        return {'role': 'assistant', 'reasoning_content': reasoning, 'content': content}
+    return {'role': 'assistant', 'reasoning_content': text, 'content': ''}
+
+
 def generate_until_boundary(sess: M8LiveContinuationSession, count: int, *, cancel_after_first: bool = False) -> tuple[list[int], float, bool]:
     generated: list[int] = []
     t0 = time.perf_counter()
@@ -174,6 +195,7 @@ def main() -> int:
     result: dict[str, Any] = {
         'schema': 'ds41f.m8.long-session-qualification.v2',
         'git': subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(),
+        'git_dirty': git_dirty(_REPO_ROOT),
         'checkpoint': str(args.checkpoint),
         'omlx_path': str(args.omlx_path),
         'omlx_revision': git_rev(args.omlx_path),
@@ -226,7 +248,7 @@ def main() -> int:
             sess.turn_records.append(M8TurnRecord(0, len(initial_tokens) - 1, 1, 0, initial_tokens[-1], (), sess.frontier, int(gen.prompt_replay_count), 0, 0.0, 0.0))
             initial_generated, initial_decode_s, _ = generate_until_boundary(sess, args.decode_tokens_per_turn)
             assistant_text = codec.decode(initial_generated)
-            messages.append({'role': 'assistant', 'content': assistant_text})
+            messages.append(assistant_message_from_generated(assistant_text))
             result['initial'] = {'mode': 'recipe', 'prompt_tokens': len(initial_tokens), 'terminal': initial_tokens[-1], 'generated': initial_generated, 'assistant_text_sample': assistant_text[:200], 'frontier_after': sess.frontier, 'decode_seconds': initial_decode_s, 'rss_mb': rss_mb()}
 
             # Invalid/non-extension gate before any valid next append.
@@ -254,7 +276,7 @@ def main() -> int:
                 sess.begin_turn_from_recipe_tokens(next_tokens, max_tokens=args.decode_tokens_per_turn + 16)
                 generated, decode_s, cancelled = generate_until_boundary(sess, args.decode_tokens_per_turn, cancel_after_first=(i == args.cancel_turn))
                 assistant_text = codec.decode(generated)
-                messages.append({'role': 'assistant', 'content': assistant_text})
+                messages.append(assistant_message_from_generated(assistant_text))
                 diag = sess.diagnostics()
                 result['turns'].append({'turn_index': i, 'mode': 'recipe', 'frontier_before': before, 'next_recipe_tokens': len(next_tokens), 'exact_prefix_extension': prefix_ok, 'mismatch': mismatch, 'new_suffix_len': len(next_tokens) - before, 'generated': generated, 'assistant_text_sample': assistant_text[:200], 'seconds': time.perf_counter() - t0, 'decode_seconds': decode_s, 'decode_tok_s': (len(generated) / decode_s) if decode_s > 0 else None, 'cancelled': cancelled, 'diagnostics': diag, 'rss_mb': rss_mb()})
                 if not prefix_ok:
