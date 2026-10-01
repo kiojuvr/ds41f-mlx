@@ -368,7 +368,12 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--out", type=Path, default=Path("artifacts/m7/deepseek-recipe-serving/result.json"))
     ap.add_argument("--skip-http", action="store_true")
     ap.add_argument("--skip-raw", action="store_true")
+    ap.add_argument("--skip-direct", action="store_true")
     args = ap.parse_args(argv)
+    existing: dict[str, Any] = {}
+    if args.out.exists():
+        with contextlib.suppress(Exception):
+            existing = json.loads(args.out.read_text())
     record: dict[str, Any] = {
         "schema": "ds41f.m7.deepseek-recipe-serving.v3",
         "implementation_commit": git_rev(ROOT),
@@ -382,12 +387,15 @@ def main(argv: list[str] | None = None) -> int:
         if not args.skip_raw:
             record["raw_arbitrary_length_matrix"] = run_raw_matrix(args.checkpoint, args.omlx_path)
         else:
-            record["raw_arbitrary_length_matrix"] = {"status": "SKIPPED"}
-        record["direct_backend_minimal_recipe"] = asyncio.run(run_direct_backend(args.checkpoint, args.omlx_path, args.recipe_path))
+            record["raw_arbitrary_length_matrix"] = existing.get("raw_arbitrary_length_matrix", {"status": "SKIPPED"})
+        if not args.skip_direct:
+            record["direct_backend_minimal_recipe"] = asyncio.run(run_direct_backend(args.checkpoint, args.omlx_path, args.recipe_path))
+        else:
+            record["direct_backend_minimal_recipe"] = existing.get("direct_backend_minimal_recipe", {"status": "SKIPPED"})
         if not args.skip_http:
             record["http"] = run_http(args.checkpoint, args.omlx_path, args.recipe_path)
         else:
-            record["http"] = {"status": "SKIPPED"}
+            record["http"] = existing.get("http", {"status": "SKIPPED"})
         if record["raw_arbitrary_length_matrix"].get("status") == "PASS" and record["direct_backend_minimal_recipe"].get("status") == "PASS" and record["http"].get("status") == "PASS":
             decision = "M7_TEXT_SERVING_QUALIFIED"
         else:
