@@ -21,6 +21,7 @@ This directory is the canonical current-state documentation for the runtime at H
 - [Qualification](qualification.md) — current qualification matrix
 - [Milestone 8 long-session architecture](milestone-8-long-session-architecture.md) — canonical repeated append/decode lifecycle and persistence seam
 - [Milestone 9 KV persistence architecture](milestone-9-kv-persistence-architecture.md) — M8 idle cache artifact format and restore contract
+- [Milestone 10 restored long-session qualification](milestone-10-restored-long-session-qualification.md) — repeated save/restore/context-growth lifecycle closeout
 
 ## Machine-readable classification
 

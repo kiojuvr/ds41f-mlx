@@ -61,7 +61,7 @@ Results:
 - tensor inventory: 280/280 tensors restored with shape/dtype validation;
 - checkpoint compatibility: safetensors index fingerprint validated;
 - process boundary: save and resume ran in separate Python processes;
-- resume decode: ~12.4 tok/s in the recorded short-context run.
+- resume decode: ~20.36 tok/s in the canonical recorded short-context run.
 
 ## Qualification contract
 
