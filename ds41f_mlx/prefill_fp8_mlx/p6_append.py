@@ -545,7 +545,11 @@ def _segment_commands(*, seq: int, count: int, mode: SegmentMode) -> tuple[Sweep
         commands.append(SweepCommand(len(commands), kind, 0, layer, int(offset), int(rows), phase, 0, valid))
     add(SweepCommandKind.BEGIN_INVALIDATE, None, 0, count, SweepPhase.SWEEP, False)
     if mode in (SegmentMode.ENCODER_SOURCE_ONLY, SegmentMode.FINAL_ENCODER_DECODER):
+        add(SweepCommandKind.PREFETCH_ENGRAM0, None, 0, count, SweepPhase.ENCODER, False)
         for layer in range(20):
+            if layer == 2:
+                add(SweepCommandKind.PREFETCH_ENGRAM1, None, 0, count, SweepPhase.ENCODER, False)
+            add(SweepCommandKind.SSD_READ_AHEAD, layer, 0, count, SweepPhase.ENCODER, False)
             _layer_commands(add, layer, count, SweepPhase.ENCODER)
         add(SweepCommandKind.DECODER_PREPARE_SUFFIX, 20, 0, count, SweepPhase.ENCODER, False)
         add(SweepCommandKind.PUBLISH_FRONTIER, 20, 0, count, SweepPhase.ENCODER, False)
@@ -556,6 +560,7 @@ def _segment_commands(*, seq: int, count: int, mode: SegmentMode) -> tuple[Sweep
         add(SweepCommandKind.P6_SOURCE_COMPLETE_AND_DETACH_CONE, None, count - P6_LAYER20_INPUT_CONE_ROWS, P6_LAYER20_INPUT_CONE_ROWS, SweepPhase.DEFERRED_DECODER, False)
         for layer in range(20, 40):
             q = 1 + (39 - layer) * P6_LOCAL_PREPARE_ROWS
+            add(SweepCommandKind.SSD_READ_AHEAD, layer, count - q, q, SweepPhase.DECODER_SUFFIX, False)
             r = q + P6_LOCAL_PREPARE_ROWS
             add(SweepCommandKind.BEGIN_LAYER, layer, count - q, q, SweepPhase.DECODER_SUFFIX, False)
             add(SweepCommandKind.DECODER_PREPARE_SUFFIX, layer, count - r, P6_LOCAL_PREPARE_ROWS, SweepPhase.DECODER_SUFFIX, False)
@@ -564,7 +569,11 @@ def _segment_commands(*, seq: int, count: int, mode: SegmentMode) -> tuple[Sweep
             add(SweepCommandKind.PUBLISH_FRONTIER, layer, count - q, q, SweepPhase.DECODER_SUFFIX, False)
             add(SweepCommandKind.END_LAYER, layer, count - q, q, SweepPhase.DECODER_SUFFIX, False)
         return tuple(commands)
+    add(SweepCommandKind.PREFETCH_ENGRAM0, None, 0, count, SweepPhase.DECODER_FULL, False)
     for layer in range(40):
+        if layer == 2:
+            add(SweepCommandKind.PREFETCH_ENGRAM1, None, 0, count, SweepPhase.DECODER_FULL, False)
+        add(SweepCommandKind.SSD_READ_AHEAD, layer, 0, count, SweepPhase.DECODER_FULL, False)
         _layer_commands(add, layer, count, SweepPhase.DECODER_FULL)
     return tuple(commands)
 

@@ -60,6 +60,14 @@ from ds41f_mlx.prefill_fp8_mlx.p6_append import (
     P6SegmentRecord,
     SegmentMode,
 )
+from ds41f_mlx.prefill_fp8_mlx.p7_scheduling import (
+    LoaderQualification,
+    P7BackendPolicy,
+    P7SchedulingError,
+    RecordingDonor,
+    SchedulingCoordinator,
+    SchedulingTelemetry,
+)
 from ds41f_mlx.prefill_fp8_mlx.planner import (
     ResumeUnavailableError,
     SemanticBoundary,
@@ -102,6 +110,7 @@ __all__ = [
     "LivePrefillContinuation",
     "LiveCacheHandoffError",
     "LivePrefillResult",
+    "LoaderQualification",
     "handoff_to_generation",
     "validate_committed_cache",
     "MlxEvaluationPolicy",
@@ -112,6 +121,8 @@ __all__ = [
     "P6AppendPlanner",
     "P6SegmentPlan",
     "P6SegmentRecord",
+    "P7BackendPolicy",
+    "P7SchedulingError",
     "PrefillExecutionSetup",
     "PrefillSetupError",
     "PrefillStructuralTelemetry",
@@ -122,8 +133,11 @@ __all__ = [
     "PublicationTopology",
     "REFERENCE_VERTICAL_SLICE_CLASSIFICATION",
     "RequestArena",
+    "RecordingDonor",
     "ResumeUnavailableError",
     "SemanticBoundary",
+    "SchedulingCoordinator",
+    "SchedulingTelemetry",
     "ServingLogitsPolicy",
     "SourceGeneration",
     "SuffixMathError",

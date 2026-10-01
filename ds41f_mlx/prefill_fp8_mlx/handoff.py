@@ -170,6 +170,8 @@ class LivePrefillResult:
         result._state, result.handoff_count = 'ready', 0
         actual_setup.handoff_claimed = True
         actual_setup.block_runner.handoff_reserved = True
+        if getattr(actual_setup.block_runner, "scheduling_coordinator", None) is not None:
+            actual_setup.block_runner.scheduling_coordinator.revoke()
         return result
 
     @property
@@ -219,6 +221,8 @@ def handoff_to_generation(result: LivePrefillResult, model: Any, *, terminal_pro
         # Revoke the old executable authority before the scheduler can mutate it.
         setup.block_runner.working_cache = None
         setup.block_runner.handoff_transferred = True
+        if getattr(setup.block_runner, "scheduling_coordinator", None) is not None:
+            setup.block_runner.scheduling_coordinator.revoke()
         setup.continuation = None
         result._live_cache = None
         session.start(terminal)

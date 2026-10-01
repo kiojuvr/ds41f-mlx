@@ -17,6 +17,7 @@ from ds41f_mlx.prefill_fp8_mlx.guards import assert_no_reference_hot_path
 from ds41f_mlx.prefill_fp8_mlx.omlx_suffix_math import OmlxV41SuffixMath
 from ds41f_mlx.prefill_fp8_mlx.planner import SweepCommand, SweepCommandKind, SweepPhase
 from ds41f_mlx.prefill_fp8_mlx.publications import PublicationManager
+from ds41f_mlx.prefill_fp8_mlx.p7_scheduling import SchedulingCoordinator
 
 
 class BlockExecutionError(RuntimeError):
@@ -102,16 +103,22 @@ class OfficialFP8MLXBlockRunner:
     p6_owner_token: int | None = None
     mx: Any | None = None
     execution_revoked: bool = False
+    scheduling_coordinator: SchedulingCoordinator | None = None
 
     def __post_init__(self) -> None:
         if self.suffix_math is None:
             self.suffix_math = OmlxV41SuffixMath(self.language_model)
+        if self.scheduling_coordinator is None and getattr(self.language_model, "_p7_enable_overlap", False):
+            self.scheduling_coordinator = SchedulingCoordinator(self.language_model, mx=self.mx)
 
     def execute_batch(self, commands: Iterable[SweepCommand], arena: RequestArena) -> None:
         assert_no_reference_hot_path()
+        command_list = tuple(commands)
+        if self.scheduling_coordinator is not None:
+            self.scheduling_coordinator.set_command_stream(command_list)
         batch_values: list[Any] = []
         try:
-            for command in commands:
+            for command in command_list:
                 result = self.execute_command(command, arena)
                 if result is not None:
                     batch_values.append(result)
@@ -128,6 +135,8 @@ class OfficialFP8MLXBlockRunner:
         assert_no_reference_hot_path()
         record = CommandExecutionRecord(command.index, command.kind.value, command.layer, command.offset, command.rows)
         self.records.append(record)
+        if self.scheduling_coordinator is not None:
+            self.scheduling_coordinator.handle_command(command, arena, _slice_engram_hashes)
         if command.kind is SweepCommandKind.BEGIN_INVALIDATE:
             arena.apply_command(command)
             self.publication_manager.begin_transaction()
@@ -154,6 +163,8 @@ class OfficialFP8MLXBlockRunner:
             self._assert_cache_slots_ready(arena)
             arena.apply_command(command)
             self.publication_manager.commit()
+            if self.scheduling_coordinator is not None:
+                self.scheduling_coordinator.seal_success()
             return None
         if command.kind is SweepCommandKind.P6_SOURCE_COMPLETE_AND_DETACH_CONE:
             arena.apply_command(command)
@@ -182,7 +193,11 @@ class OfficialFP8MLXBlockRunner:
         if _layer_has_engram(layer):
             hashes = _slice_engram_hashes(arena.engram.hashes.value, command.offset, command.rows, layer_id, lm)
             if hashes is not None:
+                if self.scheduling_coordinator is not None:
+                    self.scheduling_coordinator.before_engram_consumer(command, arena, h_chunk, pre_chunk, _slice_engram_hashes, ids=hashes)
                 h_chunk = layer.engram(h_chunk, hashes, self.image_mask)
+                if self.scheduling_coordinator is not None:
+                    self.scheduling_coordinator.after_engram_consumer(command, arena, h_chunk, pre_chunk, _slice_engram_hashes)
                 invoked_engram = True
         if not callable(layer):
             raise BlockExecutionError(f"layer {command.layer} is not callable")
@@ -246,6 +261,8 @@ class OfficialFP8MLXBlockRunner:
         self._fill_empty_slots(cache, layer)
 
     def close(self) -> None:
+        if self.scheduling_coordinator is not None:
+            self.scheduling_coordinator.revoke()
         self.closed = True
         self.working_cache = None
 
