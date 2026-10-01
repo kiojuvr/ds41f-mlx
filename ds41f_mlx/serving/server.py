@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterator, Awaitable, Callable
 from dataclasses import dataclass
+import json
 import os
 from pathlib import Path
 from time import time
@@ -115,6 +116,14 @@ async def response_body(request: RecipePreparedRequest, infer: Callable[[RecipeP
             processor.close()
 
 
+def _chat_sse_events(events: list[dict[str, Any]] | tuple[dict[str, Any], ...]) -> AsyncIterator[str]:
+    async def gen() -> AsyncIterator[str]:
+        for event in events:
+            yield sse_frame(None, json.dumps(event, separators=(',', ':')))
+        yield sse_frame(None, '[DONE]')
+    return gen()
+
+
 def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_path: Path = DEFAULT_RECIPE, options: ConversionOptions | None = None, model_id: str = DEFAULT_MODEL_ID) -> FastAPI:
     backend = backend or DeepSeekRecipeRuntimeBackend(recipe_path=recipe_path, model_id=model_id)
     tokenizer = load_v41_tokenizer(recipe_path)
@@ -158,6 +167,67 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
     async def models() -> Response:
         return JSONResponse(content={'object': 'list', 'data': [{'id': model_id, 'object': 'model', 'owned_by': 'ds41f', 'aliases': sorted(MODEL_ALIASES)}]})
 
+    @app.post('/v1/sessions')
+    async def create_session(request: Request) -> Response:
+        raw = await request.body()
+        body = json.loads(raw.decode()) if raw else {}
+        try:
+            rec = await backend.create_stateful_session(session_id=body.get('id'))
+        except RuntimeError as exc:
+            raise RequestError(str(exc), 409)
+        return JSONResponse(content=rec.to_json())
+
+    @app.get('/v1/sessions/{session_id}')
+    async def get_session(session_id: str) -> Response:
+        try:
+            return JSONResponse(content=backend.get_stateful_session(session_id).to_json())
+        except KeyError as exc:
+            raise RequestError(str(exc), 404)
+
+    @app.delete('/v1/sessions/{session_id}')
+    async def delete_session(session_id: str) -> Response:
+        try:
+            return JSONResponse(content=await backend.close_stateful_session(session_id))
+        except KeyError as exc:
+            raise RequestError(str(exc), 404)
+
+    @app.post('/v1/sessions/{session_id}/chat/completions')
+    async def session_chat(session_id: str, request: Request) -> Response:
+        body = await request.body()
+        prepared = await run_in_threadpool(prepare_request, 'chat_completions', body, tokenizer=tokenizer, recipe_path=recipe_path, options=options)
+        try:
+            turn = await backend.run_stateful_chat_turn(session_id, prepared, tokenizer=tokenizer)
+        except KeyError as exc:
+            raise RequestError(str(exc), 404)
+        except RuntimeError as exc:
+            status = 409 if 'active request' in str(exc) or 'maximum live session' in str(exc) else 400
+            raise RequestError(str(exc), status)
+        if prepared.stream:
+            return InferenceStreamingResponse(_chat_sse_events(turn.stream_events), media_type='text/event-stream')
+        if turn.response_json is None:
+            raise RequestError('stateful turn did not produce a protocol response', 500)
+        return JSONResponse(content=turn.response_json)
+
+    @app.post('/v1/sessions/{session_id}/persist')
+    async def persist_session(session_id: str, request: Request) -> Response:
+        raw = await request.body()
+        body = json.loads(raw.decode()) if raw else {}
+        try:
+            artifact = await backend.persist_stateful_session(session_id, artifact_root=Path(body['artifact_root']) if body.get('artifact_root') else None)
+        except KeyError as exc:
+            raise RequestError(str(exc), 404)
+        except RuntimeError as exc:
+            raise RequestError(str(exc), 409)
+        return JSONResponse(content={'session_id': session_id, 'artifact': artifact})
+
+    @app.post('/v1/sessions/restore')
+    async def restore_session(request: Request) -> Response:
+        body = await request.json()
+        if not body.get('artifact_path'):
+            raise RequestError('artifact_path is required')
+        rec = await backend.restore_stateful_session(artifact_path=Path(body['artifact_path']), tokenizer=tokenizer, session_id=body.get('id'))
+        return JSONResponse(content=rec.to_json())
+
     if os.environ.get('DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS') == '1':
         @app.get('/_ds41f/diagnostics')
         async def diagnostics() -> Response:
@@ -166,6 +236,8 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
                 'trace_count': len(traces),
                 'trace_limit': getattr(getattr(backend, 'traces', None), 'maxlen', None),
                 'traces': traces,
+                'session_traces': list(getattr(backend, 'session_traces', [])),
+                'sessions': {sid: rec.to_json() for sid, rec in getattr(backend, 'sessions', {}).items()},
                 'last_trace': None if getattr(backend, 'last_trace', None) is None else backend.last_trace.to_json(),
                 'lock_locked': backend._lock.locked(),
                 'active_generation_sessions': getattr(backend, 'active_generation_sessions', None),

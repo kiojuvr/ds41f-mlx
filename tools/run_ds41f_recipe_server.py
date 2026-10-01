@@ -1,8 +1,13 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 import argparse
+import sys
 import uvicorn
 from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 from ds41f_mlx.serving.deepseek_recipe_backend import DeepSeekRecipeRuntimeBackend, DEFAULT_RECIPE, DEFAULT_MODEL_ID
 from ds41f_mlx.serving.server import create_app
 from ds41f_mlx.runtime.omlx_core import DEFAULT_CHECKPOINT, DEFAULT_OMLX

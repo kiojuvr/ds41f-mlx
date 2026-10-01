@@ -6,7 +6,7 @@ from collections import deque
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
-from time import perf_counter
+from time import perf_counter, time
 from typing import Any, AsyncIterator
 from uuid import uuid4
 import importlib
@@ -19,6 +19,8 @@ from ds41f_mlx.prefill_fp8_mlx import handoff_to_generation
 from ds41f_mlx.runtime.omlx_core import DEFAULT_CHECKPOINT, DEFAULT_OMLX, OmlxRuntime, OmlxRuntimeConfig
 from ds41f_mlx.runtime.omlx_decode import OMLXDecodeConfig
 from ds41f_mlx.runtime.omlx_generation import OMLXGenerationSession
+from ds41f_mlx.runtime.tool_boundary_session import M11RecipeToolSession, M11AssistantTurn
+from ds41f_mlx.runtime.kv_persistence import DEFAULT_KV_ROOT
 
 DEFAULT_RECIPE = Path('/Volumes/SDXC-512/deepseek-v41-flash-mlx/third_party/deepseek-recipe')
 DEFAULT_MODEL_ID = 'deepseek-v4.1-flash'
@@ -132,6 +134,36 @@ def git_rev(path: Path) -> str | None:
         return None
 
 
+@dataclass
+class StatefulSessionRecord:
+    session_id: str
+    protocol: str = 'chat_completions'
+    m11: M11RecipeToolSession | None = None
+    created_at: float = field(default_factory=time)
+    updated_at: float = field(default_factory=time)
+    request_count: int = 0
+    busy: bool = False
+    closed: bool = False
+    last_turn: dict[str, Any] | None = None
+    last_error: str | None = None
+    persisted_artifact: dict[str, Any] | None = None
+
+    def to_json(self) -> dict[str, Any]:
+        diag = None if self.m11 is None else self.m11.diagnostics()
+        return {
+            'id': self.session_id,
+            'protocol': self.protocol,
+            'state': 'closed' if self.closed else ('busy' if self.busy else ('empty' if self.m11 is None else self.m11.m8.state)),
+            'created_at': self.created_at,
+            'updated_at': self.updated_at,
+            'request_count': self.request_count,
+            'last_error': self.last_error,
+            'last_turn': self.last_turn,
+            'persisted_artifact': self.persisted_artifact,
+            'diagnostics': diag,
+        }
+
+
 class DeepSeekRecipeRuntimeBackend:
     """Single-flight adapter from recipe prepared requests to token chunks."""
 
@@ -151,6 +183,9 @@ class DeepSeekRecipeRuntimeBackend:
         self.last_trace: RequestTrace | None = None
         self.fatal_error: str | None = None
         self.active_generation_sessions = 0
+        self.max_live_sessions = int(os.environ.get('DS41F_MAX_LIVE_SESSIONS', '4'))
+        self.sessions: dict[str, StatefulSessionRecord] = {}
+        self.session_traces: deque[dict[str, Any]] = deque(maxlen=int(os.environ.get('DS41F_TRACE_HISTORY_LIMIT', '32')))
 
     def load(self) -> None:
         if self._runtime is not None:
@@ -264,7 +299,132 @@ class DeepSeekRecipeRuntimeBackend:
                 trace.cleanup_called = True
                 self._lock.release()
 
+    async def create_stateful_session(self, *, session_id: str | None = None) -> StatefulSessionRecord:
+        sid = session_id or f"sess_{uuid4().hex}"
+        if sid in self.sessions and not self.sessions[sid].closed:
+            raise ValueError(f"session {sid!r} already exists")
+        if len([s for s in self.sessions.values() if not s.closed]) >= self.max_live_sessions:
+            raise RuntimeError("maximum live session count reached")
+        rec = StatefulSessionRecord(session_id=sid)
+        self.sessions[sid] = rec
+        return rec
+
+    def get_stateful_session(self, session_id: str) -> StatefulSessionRecord:
+        rec = self.sessions.get(session_id)
+        if rec is None or rec.closed:
+            raise KeyError(f"unknown or closed session {session_id!r}")
+        return rec
+
+    async def run_stateful_chat_turn(self, session_id: str, request: RecipePreparedRequest, *, tokenizer: Any) -> M11AssistantTurn:
+        if request.protocol != 'chat_completions':
+            raise ValueError('M12 stateful serving currently qualifies chat_completions only')
+        if request.model is not None and request.model not in MODEL_ALIASES:
+            raise ValueError(f"unsupported model {request.model!r}; supported aliases: {sorted(MODEL_ALIASES)}")
+        if request.image_sources:
+            raise ValueError('multimodal/image input is not supported by ds41f stateful serving')
+        rec = self.get_stateful_session(session_id)
+        if rec.busy:
+            raise RuntimeError(f"session {session_id!r} already has an active request")
+        rec.busy = True
+        rec.updated_at = time()
+        trace: dict[str, Any] = {'session_id': session_id, 'prompt_tokens': len(request.token_ids), 'stream': bool(request.stream), 'started_at': rec.updated_at}
+        self.session_traces.append(trace)
+        await self._lock.acquire()
+        try:
+            await self._call(self.load)
+            sampler = self.make_sampler(request.inference_options)
+            max_tokens = self.max_tokens(request.inference_options)
+            if rec.m11 is None:
+                turn = await self._call(lambda: self._start_and_run_m11(tokenizer, request, sampler, max_tokens))
+                rec.m11 = turn[0]
+                assistant_turn = turn[1]
+                trace['created_runtime_session'] = True
+            else:
+                def cont() -> M11AssistantTurn:
+                    assert rec.m11 is not None
+                    before = rec.m11.m8.frontier
+                    rec.m11.continue_from_prepared(request, max_tokens=max_tokens)
+                    out = rec.m11.run_current_assistant_turn(request)
+                    trace['frontier_before'] = before
+                    trace['frontier_after'] = rec.m11.m8.frontier
+                    trace['exact_prefix_extension'] = True
+                    return out
+                assistant_turn = await self._call(cont)
+                trace['created_runtime_session'] = False
+            rec.request_count += 1
+            rec.updated_at = time()
+            rec.last_turn = assistant_turn.to_json()
+            rec.last_error = None
+            diag = rec.m11.diagnostics() if rec.m11 is not None else {}
+            trace.update({'ok': True, 'finish_reason': assistant_turn.finish_reason, 'tool_call_count': len(assistant_turn.tool_calls), 'prompt_replay_count': diag.get('m8', {}).get('total_prompt_replay_count'), 'full_cache_repack_count': diag.get('m8', {}).get('total_full_cache_repack_count')})
+            return assistant_turn
+        except Exception as exc:
+            rec.last_error = str(exc)
+            trace.update({'ok': False, 'error': str(exc), 'error_type': type(exc).__name__})
+            raise
+        finally:
+            rec.busy = False
+            rec.updated_at = time()
+            self._lock.release()
+
+    def _start_and_run_m11(self, tokenizer: Any, request: RecipePreparedRequest, sampler: Any, max_tokens: int) -> tuple[M11RecipeToolSession, M11AssistantTurn]:
+        sess = M11RecipeToolSession.start_from_prepared(model=self._model, tokenizer=tokenizer, checkpoint=self.checkpoint, omlx_path=self.omlx_path, recipe_path=self.recipe_path, prepared=request, sampler=sampler, max_tokens=max_tokens)
+        return sess, sess.run_current_assistant_turn(request)
+
+    async def persist_stateful_session(self, session_id: str, *, artifact_root: Path | None = None) -> dict[str, Any]:
+        rec = self.get_stateful_session(session_id)
+        if rec.busy:
+            raise RuntimeError(f"session {session_id!r} already has an active request")
+        if rec.m11 is None:
+            raise ValueError('cannot persist an empty session')
+        rec.busy = True
+        await self._lock.acquire()
+        try:
+            info = await self._call(lambda: rec.m11.persist_idle(artifact_root=artifact_root or (DEFAULT_KV_ROOT / 'm12'), diagnostics={'m12_session_id': session_id}))
+            rec.persisted_artifact = info.to_json()
+            rec.updated_at = time()
+            return rec.persisted_artifact
+        finally:
+            rec.busy = False
+            self._lock.release()
+
+    async def restore_stateful_session(self, *, artifact_path: Path, tokenizer: Any, session_id: str | None = None) -> StatefulSessionRecord:
+        rec = await self.create_stateful_session(session_id=session_id)
+        rec.busy = True
+        await self._lock.acquire()
+        try:
+            await self._call(self.load)
+            def restore() -> M11RecipeToolSession:
+                return M11RecipeToolSession.restore(model=self._model, tokenizer=tokenizer, checkpoint=self.checkpoint, omlx_path=self.omlx_path, recipe_path=self.recipe_path, artifact_path=artifact_path, protocol='chat_completions', model_id=self.model_id)
+            rec.m11 = await self._call(restore)
+            rec.persisted_artifact = {'path': str(artifact_path)}
+            rec.updated_at = time()
+            return rec
+        except Exception:
+            rec.closed = True
+            raise
+        finally:
+            rec.busy = False
+            self._lock.release()
+
+    async def close_stateful_session(self, session_id: str) -> dict[str, Any]:
+        rec = self.get_stateful_session(session_id)
+        if rec.busy:
+            raise RuntimeError(f"session {session_id!r} already has an active request")
+        rec.closed = True
+        if rec.m11 is not None:
+            await self._call(rec.m11.m8.close)
+        rec.updated_at = time()
+        return rec.to_json()
+
     def close(self) -> None:
+        for rec in list(self.sessions.values()):
+            if rec.m11 is not None:
+                try:
+                    rec.m11.m8.close()
+                except Exception:
+                    pass
+            rec.closed = True
         if self._runtime is not None:
             self._runtime.close()
         self._executor.shutdown(wait=False, cancel_futures=True)
