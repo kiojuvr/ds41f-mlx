@@ -22,6 +22,10 @@ from ds41f_mlx.prefill_fp8_mlx.p6_append import _sweep_shell
 from test_prefill_fp8_mlx_p1_p2 import FakeCache, FakeLanguageModel, FakeTensor, full_ready_cache
 
 
+def fake_p6_app(lm, cache, tokens, *, committed_frontier=0, mx=None):
+    return DeferredPrefillAppend.create(lm, cache, tokens, committed_frontier=committed_frontier, mx=mx if mx is not None else RecordingMx())
+
+
 class P6DeferredAppendStructuralTests(unittest.TestCase):
     def modes(self, plan):
         return [(s.start, s.count, s.mode) for s in plan.segments]
@@ -62,7 +66,7 @@ class P6DeferredAppendStructuralTests(unittest.TestCase):
     def test_source_only_zero_decoder_work_public_slot_frozen_and_once_per_range(self):
         lm = FakeLanguageModel()
         cache = full_ready_cache(0)
-        app = DeferredPrefillAppend.create(lm, cache, list(range(24577)), committed_frontier=0)
+        app = fake_p6_app(lm, cache, list(range(24577)), committed_frontier=0)
         app.begin()
         first = app.execute_segment(app.plan.segments[0])
         self.assertEqual((app.E, app.D), (16384, 0))
@@ -73,6 +77,16 @@ class P6DeferredAppendStructuralTests(unittest.TestCase):
         self.assertEqual(sum(1 for r in recs if r.layer is not None and 21 <= r.layer <= 39 and r.invoked_block), 0)
         source_only_commands = app.plan.segments[0].commands
         self.assertFalse([c for c in source_only_commands if c.layer is not None and c.layer >= 20 and c.kind.value == 'encode_rows'])
+
+    def test_fake_p6_execution_uses_explicit_tensor_adapter(self):
+        lm = FakeLanguageModel()
+        cache = full_ready_cache(0)
+        mx = RecordingMx()
+        app = fake_p6_app(lm, cache, list(range(16384)), committed_frontier=0, mx=mx)
+        app.execute_all()
+        self.assertTrue(mx.repeat_calls)
+        self.assertIsInstance(app.final_execution.arena.carry.current.value, FakeTensor)
+        self.assertNotEqual(type(app.final_execution.arena.carry.current.value).__module__.split('.')[0], 'mlx')
 
     def test_source_boundary_eval_and_failure_are_real_boundaries(self):
         lm = FakeLanguageModel()
@@ -103,7 +117,7 @@ class P6DeferredAppendStructuralTests(unittest.TestCase):
     def test_decoder_cone_bounded_before_and_through_all_swaps(self):
         lm = FakeLanguageModel()
         cache = full_ready_cache(0)
-        app = DeferredPrefillAppend.create(lm, cache, list(range(24577)), committed_frontier=0)
+        app = fake_p6_app(lm, cache, list(range(24577)), committed_frontier=0)
         app.begin()
         app.execute_segment(app.plan.segments[0])
         segment = app.plan.segments[1]
@@ -132,14 +146,14 @@ class P6DeferredAppendStructuralTests(unittest.TestCase):
             app.execute_all()
         self.assertEqual(app.state.value, 'failed')
 
-        ok = DeferredPrefillAppend.create(lm, p6_ready_cache(lm, 0, shape_frontier=16384), list(range(16384)), committed_frontier=0)
+        ok = fake_p6_app(lm, p6_ready_cache(lm, 0, shape_frontier=16384), list(range(16384)), committed_frontier=0)
         ok.execute_all()
         self.assertTrue(ok.final_execution.arena.p6_final_cone_detached)
 
     def test_final_decoder_cone_is_bounded_and_not_full_parent_view(self):
         lm = FakeLanguageModel()
         cache = full_ready_cache(0)
-        app = DeferredPrefillAppend.create(lm, cache, list(range(24577)), committed_frontier=0)
+        app = fake_p6_app(lm, cache, list(range(24577)), committed_frontier=0)
         app.begin()
         app.execute_segment(app.plan.segments[0])
         app.execute_segment(app.plan.segments[1])
@@ -157,7 +171,7 @@ class P6DeferredAppendStructuralTests(unittest.TestCase):
         lm = FakeLanguageModel()
         cache = full_ready_cache(0)
         old = LivePrefillContinuation.from_cache(cache)
-        app = DeferredPrefillAppend.create(lm, cache, list(range(24577)), committed_frontier=0)
+        app = fake_p6_app(lm, cache, list(range(24577)), committed_frontier=0)
         app.begin()
         app.execute_segment(app.plan.segments[0])
         with self.assertRaises(Exception):
@@ -168,7 +182,7 @@ class P6DeferredAppendStructuralTests(unittest.TestCase):
             app.final_seal()
         self.assertEqual(app.state.value, 'failed')
         contract_lm = ContractFrontierLanguageModel()
-        fresh = DeferredPrefillAppend.create(contract_lm, p6_ready_cache(contract_lm, 0, shape_frontier=24577), list(range(24577)), committed_frontier=0)
+        fresh = fake_p6_app(contract_lm, p6_ready_cache(contract_lm, 0, shape_frontier=24577), list(range(24577)), committed_frontier=0)
         fresh.execute_all()
         for c in fresh.live_cache:
             self.assertEqual(offset_value(c[0]), 24577)
@@ -182,7 +196,7 @@ class P6DeferredAppendStructuralTests(unittest.TestCase):
         lm = FakeLanguageModel()
         cache = full_ready_cache(0)
         cache[0][6] = 'history_C'
-        app = DeferredPrefillAppend.create(lm, cache, list(range(49155)), committed_frontier=0)
+        app = fake_p6_app(lm, cache, list(range(49155)), committed_frontier=0)
         app.begin()
         app.execute_segment(app.plan.segments[0])
         cache[0][6] = 'polluted_public_history_C'
@@ -197,7 +211,7 @@ class P6DeferredAppendStructuralTests(unittest.TestCase):
         shell = _sweep_shell(1, (), encoder_only=False)
         pre_arena = RequestArena.from_plan(shell, token_ids=[0])
         pre_runner = OfficialFP8MLXBlockRunner(lm, PublicationManager(pre_arena), working_cache=cache)
-        app = DeferredPrefillAppend.create(lm, cache, list(range(24577)), committed_frontier=0)
+        app = fake_p6_app(lm, cache, list(range(24577)), committed_frontier=0)
         app.begin()
         with self.assertRaises(Exception):
             pre_runner.execute_command(app.plan.segments[0].commands[0], pre_arena)
@@ -214,7 +228,7 @@ class P6DeferredAppendStructuralTests(unittest.TestCase):
 
     def test_p5_accepts_real_p6_commit_without_fake_sweep_metadata(self):
         lm = FakeLanguageModel()
-        app = DeferredPrefillAppend.create(lm, p6_ready_cache(lm, 0, shape_frontier=16385), list(range(16385)), committed_frontier=0)
+        app = fake_p6_app(lm, p6_ready_cache(lm, 0, shape_frontier=16385), list(range(16385)), committed_frontier=0)
         app.execute_all()
         normalize_p6_fake_cache(lm, app.live_cache, 16385)
         self.assertEqual(app.live_setup.arena.plan.count, 1)
@@ -228,7 +242,7 @@ class P6DeferredAppendStructuralTests(unittest.TestCase):
     def test_p6_commit_uses_full_p5_cache_structure_validation(self):
         lm = FakeLanguageModel()
         def committed():
-            app = DeferredPrefillAppend.create(lm, p6_ready_cache(lm, 0, shape_frontier=16385), list(range(16385)), committed_frontier=0)
+            app = fake_p6_app(lm, p6_ready_cache(lm, 0, shape_frontier=16385), list(range(16385)), committed_frontier=0)
             app.execute_all()
             normalize_p6_fake_cache(lm, app.live_cache, 16385)
             return app
@@ -272,7 +286,7 @@ class P6DeferredAppendStructuralTests(unittest.TestCase):
         bad.compress_ratio = cache[3].compress_ratio
         bad.fail_slot0_install = True
         cache[3] = bad
-        app = DeferredPrefillAppend.create(lm, cache, list(range(16385)), committed_frontier=0)
+        app = fake_p6_app(lm, cache, list(range(16385)), committed_frontier=0)
         with self.assertRaises(Exception):
             app.execute_all()
         self.assertEqual(app.state.value, 'failed')
@@ -283,7 +297,7 @@ class P6DeferredAppendStructuralTests(unittest.TestCase):
     def test_failed_append_rebuilds_with_fresh_cache_not_rewind(self):
         lm = ContractFrontierLanguageModel()
         cache = full_ready_cache(0)
-        app = DeferredPrefillAppend.create(lm, cache, list(range(24577)), committed_frontier=0)
+        app = fake_p6_app(lm, cache, list(range(24577)), committed_frontier=0)
         app.begin()
         app.execute_segment(app.plan.segments[0])
         with self.assertRaises(P6AppendError):
@@ -371,11 +385,13 @@ class RecordingMx:
         self.fail_copy = fail_copy
         self.eval_calls = []
         self.copy_calls = []
+        self.repeat_calls = []
 
     def array(self, ids, dtype=None):
         return _FakeInput(ids)
 
     def repeat(self, value, repeats, axis):
+        self.repeat_calls.append((value, repeats, axis))
         return FakeTensor('hc', rows=value.shape[1])
 
     def zeros_like(self, value):
