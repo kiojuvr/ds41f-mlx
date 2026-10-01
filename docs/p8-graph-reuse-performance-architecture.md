@@ -347,3 +347,93 @@ Synthetic MLX structural probes: `tools/p8_synthetic_mlx_graph_probes.py` writes
 Real 8192/16384 cold+warm attribution runs with the new substep telemetry have not been completed in this commit; therefore no optimization target is selected. Required next evidence remains: baseline 8192, baseline 16384 cold + 3 warm with P7 foreground fallback 0, detach substep median/min/max/range, then non-qualifying carry and persistent-cache prepayment probes.
 
 Current target-selection result: **NO_TARGET_YET**. The evidence is sufficient to correct terminology and to collect the required attribution, but not sufficient to choose among `WRITE_ROWS_SLICE_UPDATE_CHAIN`, `ENGRAM_CONCAT_GRAPH`, `PERSISTENT_CACHE_GRAPH_RETENTION`, `OWNED_CONE_COPY`, or another measured source.
+
+## 17. Refreshed P8 attribution evidence (commit ecf3b1a, MLX 0.32.2)
+
+Artifacts: `artifacts/p8-attribution/p8-baseline-8192.json`, `p8-baseline-16384.json`, `p8-probe-carry-16384.json`, `p8-probe-persistent-16384.json`, and `summary.txt`. Structural gate: `PYTHONPATH=tests /Users/kioju/.venvs/omlx-0.7.0.dev2/bin/python3 -m unittest discover -s tests -v` => 87/87 PASS.
+
+### Qualifying baselines
+
+Both baselines used fresh cache per request, P8 verification on, diagnostic barrier off, correct final cache frontiers, and foreground Engram fallback 0.
+
+| tokens | cold prefill s | warm1 | warm2 | warm3 | warm median | warm range | bg Engram reads/run | diagnostic barrier |
+|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| 8192 | 8.898815 | 8.646203 | 8.667183 | 8.751718 | 8.667183 | 0.105515 | 8 | off |
+| 16384 | 16.312919 | 16.325394 | 16.294619 | 16.215167 | 16.294619 | 0.110226 | 32 | off |
+
+The refreshed 16384 detach reproduces the prior ~4.44s observation: cold 4.425615s, warm median 4.426134s.
+
+### 16384 detach substeps (qualifying baseline)
+
+| substep | cold | warm1 | warm2 | warm3 | warm median | warm min | warm max | warm range |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| persistent_source_eval | 4.413029 | 4.416260 | 4.451661 | 4.423165 | 4.423165 | 4.416260 | 4.451661 | 0.035401 |
+| owned_h_copy | 0.007766 | 0.004339 | 0.001220 | 0.001258 | 0.001258 | 0.001220 | 0.004339 | 0.003120 |
+| owned_next_copy | 0.004113 | 0.001170 | 0.001197 | 0.001169 | 0.001170 | 0.001169 | 0.001197 | 0.000028 |
+| owned_pre_copy | 0.000378 | 0.000223 | 0.000201 | 0.000367 | 0.000223 | 0.000201 | 0.000367 | 0.000166 |
+| arena_detach_rebind | 0.000017 | 0.000015 | 0.000012 | 0.000013 | 0.000013 | 0.000012 | 0.000015 | 0.000003 |
+| materialize_boundary_bookkeeping | 0.000003 | 0.000003 | 0.000002 | 0.000002 | 0.000002 | 0.000002 | 0.000003 | 0.000001 |
+| P6_SOURCE_COMPLETE_AND_DETACH_CONE | 4.425615 | 4.422223 | 4.454450 | 4.426134 | 4.426134 | 4.422223 | 4.454450 | 0.032227 |
+
+### Owned row copy branch (real 16384 baseline, cold)
+
+All three compact copies used the real `mx.array()` branch.
+
+| role | rows | input shape | output shape | elapsed s | memory before active/cache/peak | memory after active/cache/peak |
+|---|---:|---|---|---:|---|---|
+| batch_cur_hc | 2541 | `[1,16384,4,5120]` | `[1,2541,4,5120]` | 0.007766 | 316004324600 / 15666703066 / 319629252136 | 316108412152 / 15666703066 / 319629252136 |
+| batch_next_hc | 2414 | `[1,16384,4,5120]` | `[1,2414,4,5120]` | 0.004113 | 316108412152 / 15666703066 / 319629252136 | 316207289592 / 15666703066 / 319629252136 |
+| carry.pre | 2541 | `[1,16384,4]` | `[1,2541,4]` | 0.000378 | 316207289592 / 15666703066 / 319629252136 | 316207355128 / 15666637530 / 319629252136 |
+
+Owned copies are measured materializations but do not dominate the 4s-class detach.
+
+### Persistent-source eval inventory (real 16384 baseline, cold)
+
+Total: 34 values, 15,933,440 known logical bytes, wall 4.413029s. Memory before active/cache/peak: 312847817016 / 14647420570 / 315667354880. Memory after: 316163052796 / 15507974870 / 319629252136.
+
+| slot class | value count | known logical bytes | layers |
+|---|---:|---:|---|
+| window_KV | 20 | 1,351,680 | 0..19 |
+| source_compressed_KV | 4 | 11,796,480 | 2..20 |
+| index_K | 4 | 2,785,280 | 2..20 |
+| compressor_pending_input | 3 | 0 | 2..14 |
+| indexer_pending_input | 3 | 0 | 2..14 |
+
+### Slice-update chain proxy (real 16384 baseline, cold)
+
+This is a slice-update chain proxy only. `CarryState.swap()` swaps TensorSlot references; it does not itself materialize tensors, and write counts are not proven MLX graph depth.
+
+| physical arena role | write count | offset sequence summary | row sizes summary | layers contributing |
+|---|---:|---|---|---|
+| batch_cur_hc | 30 | first twenty alternate `0,8192`; then `254,508,...,2540` | first twenty `8192`; then `2287,2033,...,1` | odd 1..19 twice, then odd 21..39 |
+| batch_next_hc | 30 | first twenty alternate `0,8192`; then `0,254,508,...,2286` | first twenty `8192`; then `2414,2160,...,128` | even 0..18 twice, then even 20..38 |
+| carry.pre | 60 | first forty alternate `0,8192`; then `127,254,...,2540` | first forty `8192`; then `2414,2287,...,1` | layers 0..19 twice, then 20..39 |
+
+### Engram concat lineage (real 16384 baseline, cold)
+
+Four Engram concat events were recorded: layers 1 and 14, two events each. Each had four 2048-row microtile inputs, output rows 8192, next consumer `BLOCK_OUTPUT_THEN_WRITE_ROWS`, and no stronger `SLICE_UPDATE_WRITE` lineage than the following write-row proxy. Python references released = proven. MLX graph ancestry released = NOT_PROVEN.
+
+### Attribution probes (non-qualifying)
+
+Warm medians are used below. Diagnostic probes are attribution-only and are not production candidates.
+
+| component | baseline | carry-prepay | persistent-prepay |
+|---|---:|---:|---:|
+| diagnostic prepayment | 0.000000 | 4.414981 | 4.423886 |
+| persistent source eval | 4.423165 | 0.007855 | 0.000006 |
+| h copy | 0.001258 | 0.003368 | 0.002482 |
+| next copy | 0.001170 | 0.001153 | 0.001171 |
+| pre copy | 0.000223 | 0.000205 | 0.000207 |
+| rebind/bookkeeping | 0.000015 | 0.000016 | 0.000015 |
+| detach total | 4.426134 | 4.427812 | 4.428052 |
+| prepayment + detach | 4.426134 | 8.842794 | 8.851938 |
+
+Carry-prepayment run: `DS41F_P8_DIAGNOSTIC_BARRIER=carry`, 16384, cold+2 warm. It moved almost all subsequent `persistent_source_eval` to near-zero (~0.0079s) but total measured detach remained ~4.43s because the diagnostic prepayment is inside the P6 detach interval. This indicates the carry barrier materializes the same upstream work before the named persistent eval substep; it is not an optimization.
+
+Persistent-prepayment run: `DS41F_P8_DIAGNOSTIC_BARRIER=persistent`, 16384, cold+2 warm. The prepayment (~4.42s) matches baseline `persistent_source_eval`; subsequent `persistent_source_eval` becomes near-zero (~6 microseconds). This validates that the dominant mandatory materialization cost can be moved earlier by instrumentation, not removed.
+
+### Target decision
+
+Decision: **NO_TARGET_YET**.
+
+The refreshed evidence shows the P6 detach wall time is predominantly the required materialization point for upstream model computation producing persistent KV/index/cache state. The persistent prepayment cleanly moves the named eval cost earlier; owned copies, rebind/bookkeeping, slice-update write count alone, and Engram concat lineage do not account for a material portion after persistent state is already evaluated. No optimization target is selected from this evidence. The next P8 investigation should return to actual model hot regions that produce the persistent tensors, rather than arena bookkeeping or removing the mandatory `mx.eval` boundary.
