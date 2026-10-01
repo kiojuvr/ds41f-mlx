@@ -425,15 +425,67 @@ Warm medians are used below. Diagnostic probes are attribution-only and are not 
 | next copy | 0.001170 | 0.001153 | 0.001171 |
 | pre copy | 0.000223 | 0.000205 | 0.000207 |
 | rebind/bookkeeping | 0.000015 | 0.000016 | 0.000015 |
-| detach total | 4.426134 | 4.427812 | 4.428052 |
-| prepayment + detach | 4.426134 | 8.842794 | 8.851938 |
+| inclusive detach total | 4.426134 | 4.427812 | 4.428052 |
+| post-prepayment remainder | 4.426134 | 0.012831 | 0.004166 |
 
-Carry-prepayment run: `DS41F_P8_DIAGNOSTIC_BARRIER=carry`, 16384, cold+2 warm. It moved almost all subsequent `persistent_source_eval` to near-zero (~0.0079s) but total measured detach remained ~4.43s because the diagnostic prepayment is inside the P6 detach interval. This indicates the carry barrier materializes the same upstream work before the named persistent eval substep; it is not an optimization.
+Correction note: the previous derived row named `prepayment + detach` double-counted diagnostic prepayment, because total detach was already inclusive of diagnostic prepayment in the carry/persistent probe implementation. Raw measurements remain valid.
 
-Persistent-prepayment run: `DS41F_P8_DIAGNOSTIC_BARRIER=persistent`, 16384, cold+2 warm. The prepayment (~4.42s) matches baseline `persistent_source_eval`; subsequent `persistent_source_eval` becomes near-zero (~6 microseconds). This validates that the dominant mandatory materialization cost can be moved earlier by instrumentation, not removed.
+Carry-prepayment run: `DS41F_P8_DIAGNOSTIC_BARRIER=carry`, 16384, cold+2 warm. It moved almost all subsequent `persistent_source_eval` to near-zero (~0.0079s). The inclusive detach total remained ~4.43s because the diagnostic prepayment is inside the P6 detach interval; the post-prepayment remainder is ~0.0128s. This indicates the carry barrier materializes the same upstream work before the named persistent eval substep; it is not an optimization and it was not an 8.8s path.
+
+Persistent-prepayment run: `DS41F_P8_DIAGNOSTIC_BARRIER=persistent`, 16384, cold+2 warm. The prepayment (~4.42s) matches baseline `persistent_source_eval`; subsequent `persistent_source_eval` becomes near-zero (~6 microseconds). The inclusive detach total remained ~4.43s and the post-prepayment remainder is ~0.0042s. This validates that the dominant mandatory materialization cost can be moved earlier by instrumentation, not removed.
 
 ### Target decision
 
 Decision: **NO_TARGET_YET**.
 
 The refreshed evidence shows the P6 detach wall time is predominantly the required materialization point for upstream model computation producing persistent KV/index/cache state. The persistent prepayment cleanly moves the named eval cost earlier; owned copies, rebind/bookkeeping, slice-update write count alone, and Engram concat lineage do not account for a material portion after persistent state is already evaluated. No optimization target is selected from this evidence. The next P8 investigation should return to actual model hot regions that produce the persistent tensors, rather than arena bookkeeping or removing the mandatory `mx.eval` boundary.
+
+## 18. Upstream materialization staircase probe (non-qualifying)
+
+Implementation location: `tools/run_p8_same_process_cold_warm.py --p8-upstream-staircase`. The tool monkeypatches `OfficialFP8MLXBlockRunner.execute_command` only inside the diagnostic worker process. It does not add normal runtime barriers and does not change cache contents, write/repack tensors, export continuation state, add `mx.compile`, or alter the production selector.
+
+Artifact: `artifacts/p8-attribution/p8-upstream-staircase-16384.json`. Classification: `NON_QUALIFYING_ATTRIBUTION_PROBE`. Run shape: 16384, P7 enabled, P8 verification on, cold + 3 warm, fresh process.
+
+Total prefill context only: cold 16.644413s; warm1/2/3 16.582033 / 16.644607 / 16.635724s; warm median 16.635724s. This is not an optimization comparison because intermediate barriers intentionally perturb laziness/overlap. P7 evidence remained correct: foreground Engram fallback 0, background Engram reads 32 per run, final cache frontiers all 16384.
+
+### Staircase cut timings
+
+| cut | cold | warm1 | warm2 | warm3 | warm median | persistent values at cut | known logical bytes |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| CUT A layers 0..4 | 2.093937 | 2.104484 | 2.143912 | 2.127007 | 2.127007 | 9 | 3,254,272 |
+| CUT B layers 5..9 | 1.335398 | 1.335355 | 1.345423 | 1.335528 | 1.335528 | 18 | 6,508,544 |
+| CUT C layers 10..14 | 0.563182 | 0.564567 | 0.563399 | 0.563233 | 0.563399 | 27 | 9,762,816 |
+| CUT D layers 15..19 | 3.844412 | 3.842966 | 3.844719 | 3.842584 | 3.842966 | 32 | 10,100,736 |
+| CUT E layer20 source publication | 0.311084 | 0.299448 | 0.299260 | 0.303500 | 0.299448 | 36 | 15,933,440 |
+| final residual P6 persistent eval | 0.007778 | 0.009100 | 0.007806 | 0.008625 | 0.008625 | 34 | 15,933,440 |
+
+Warm-median staircase attribution shares within staircase materialization total only:
+
+| region | materialization wall | share of staircase materialization |
+|---|---:|---:|
+| layers 0..4 | 2.127007 | 26.01% |
+| layers 5..9 | 1.335528 | 16.33% |
+| layers 10..14 | 0.563399 | 6.89% |
+| layers 15..19 | 3.842966 | 47.00% |
+| layer20 source publication | 0.299448 | 3.66% |
+| final residual P6 eval | 0.008625 | 0.11% |
+
+Staircase warm-median sum `CUT A..E + final residual` = 8.176973s, versus baseline qualifying `persistent_source_eval` warm median = 4.423165s. This is materially larger (~1.85x), so the intermediate barriers perturb execution/fusion/overlap enough that the absolute split is suspect. The near-zero final residual validates that the bundle prepaid the relevant persistent graph, but the split should be used only as coarse qualitative evidence.
+
+### Staircase memory snapshots, cold run
+
+| cut | active before | cache before | peak before | active after | cache after | peak after | carry shapes |
+|---|---:|---:|---:|---:|---:|---:|---|
+| CUT A | 304333395528 | 14711498889 | 307085808837 | 305860219700 | 15275649949 | 309423871064 | current/next `[1,16384,4,5120]`, pre `[1,16384,4]` |
+| CUT B | 308389271092 | 14779410677 | 311416804621 | 309240615808 | 15280630697 | 312804267172 | current/next `[1,16384,4,5120]`, pre `[1,16384,4]` |
+| CUT C | 312814261792 | 14606657891 | 315600246016 | 312654566348 | 15458692023 | 316218217712 | current/next `[1,16384,4,5120]`, pre `[1,16384,4]` |
+| CUT D | 312621012484 | 15492245949 | 316218217712 | 315998491684 | 15492246429 | 319528588616 | current/next `[1,16384,4,5120]`, pre `[1,16384,4]` |
+| CUT E | 314812717356 | 17400637212 | 319528588616 | 314877073288 | 22500177768 | 319528588616 | current `[1,2414,4,5120]`, next `[1,2541,4,5120]`, pre `[1,2541,4]` |
+
+### Investigation target decision after staircase
+
+Decision: **NO_TARGET_YET**.
+
+Reason: the staircase was complete enough to reduce final residual persistent eval to ~0.0086s warm median, but its materialization sum is materially larger than the original ~4.42s boundary. Therefore the barrier-induced split is not reliable enough to select `COMMON_ENCODER_BLOCK_COMPUTE`, `ENGRAM_SPECIALIZED_COMPUTE`, `SOURCE_LAYER_PERSISTENT_COMPUTE`, or `LAYER20_SOURCE_PUBLICATION`. It does not justify returning to arena bookkeeping; those paths remain excluded as primary 4-second contributors.
+
+Next diagnostic contract if this is revisited: design a less-perturbing upstream compute attribution method before component-level profiling. If a future low-perturbation pass points to ordinary encoder math, select one non-Engram/non-source layer such as layer 17 and decompose using the pinned-oMLX Block order only: attn HC mixes, attn pre-norm, Attention, attn HC post, ffn HC mixes, ffn pre-norm, MoE, ffn HC post. Do not duplicate or rewrite the math in the diagnostic.

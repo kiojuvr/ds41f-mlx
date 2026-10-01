@@ -11,7 +11,8 @@ from ds41f_mlx.prefill_fp8_mlx.p8_optimizer import (
     PerformanceTelemetry,
     ShapeClassRegistry,
 )
-from tools.run_p8_same_process_cold_warm import deterministic_tokens
+from tools.run_p8_same_process_cold_warm import deterministic_tokens, _staircase_should_cut, _staircase_bundle_metadata
+from ds41f_mlx.prefill_fp8_mlx.planner import SweepCommandKind, SweepPhase
 
 
 class FakeTensor:
@@ -92,6 +93,36 @@ class P8OptimizerTests(unittest.TestCase):
         b = deterministic_tokens(5)
         self.assertEqual(a, b)
         self.assertIsNot(a, b)
+
+    def test_upstream_staircase_cut_matching_and_default_off(self):
+        opt = P8ExecutionOptimizer(enabled=True)
+        self.assertEqual(opt.diagnostic_barrier, os.environ.get("DS41F_P8_DIAGNOSTIC_BARRIER", "off").lower())
+        state = {"completed": set()}
+        cmd = types.SimpleNamespace(kind=SweepCommandKind.SWAP_HC_AFTER_LAYER, layer=4, phase=SweepPhase.ENCODER)
+        self.assertEqual(_staircase_should_cut(cmd, state), "CUT_A_layers_0_4")
+        state["completed"].add("CUT_A_layers_0_4")
+        self.assertIsNone(_staircase_should_cut(cmd, state))
+        e = types.SimpleNamespace(kind=SweepCommandKind.PUBLISH_FRONTIER, layer=20, phase=SweepPhase.DECODER_SUFFIX)
+        self.assertEqual(_staircase_should_cut(e, state), "CUT_E_layer20_source_publication")
+
+    def test_upstream_staircase_bundle_metadata_retains_no_tensors(self):
+        t = FakeTensor(shape=(1, 16, 4))
+        slot_value = FakeTensor(shape=(1, 2, 4), dtype="uint8")
+        carry = types.SimpleNamespace(
+            current=types.SimpleNamespace(value=t),
+            next=types.SimpleNamespace(value=t),
+            pre=types.SimpleNamespace(value=FakeTensor(shape=(1, 16, 4))),
+        )
+        arena = types.SimpleNamespace(carry=carry)
+        class Runner:
+            def _p6_persistent_source_values(self, arena):
+                return [slot_value], [{"slot_class": "window_KV", "logical_bytes": 8}]
+        values, meta = _staircase_bundle_metadata(Runner(), arena)
+        self.assertEqual(len(values), 3)  # current and next dedup by identity
+        self.assertEqual(meta["persistent_value_count"], 1)
+        self.assertEqual(meta["persistent_logical_bytes_known"], 8)
+        self.assertEqual(meta["carry_shapes"]["current"], (1, 16, 4))
+        self.assertNotIn("values", meta)
 
 
 if __name__ == "__main__":
