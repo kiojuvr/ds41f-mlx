@@ -199,6 +199,7 @@ class DeepSeekRecipeRuntimeBackend:
         self.last_trace = trace
         self.traces.append(trace)
         session: OMLXGenerationSession | None = None
+        session_counted = False
         await self._lock.acquire()
         try:
             await self._call(self.load)
@@ -218,6 +219,7 @@ class DeepSeekRecipeRuntimeBackend:
             cfg = OMLXDecodeConfig(omlx_path=self.omlx_path, checkpoint_path=self.checkpoint, engram_ssd_offload=True, preserve_mtp=False, speculation_enabled=False)
             session = await self._call(lambda: handoff_to_generation(prefill_result.live_result, self._model, terminal_prompt_token=first, config=cfg, max_tokens=max_tokens, sampler=sampler))
             self.active_generation_sessions += 1
+            session_counted = True
             trace.initial_admitted_frontier = session.admitted_frontier
             trace.frontier_after_first_input = session.token_frontier
             trace.frontier_after_terminal = session.token_frontier
@@ -249,9 +251,15 @@ class DeepSeekRecipeRuntimeBackend:
         finally:
             try:
                 if session is not None:
-                    await self._call(session.stop, 'request_cleanup')
-                    await self._call(session.close)
-                    self.active_generation_sessions = max(0, self.active_generation_sessions - 1)
+                    try:
+                        await self._call(session.stop, 'request_cleanup')
+                    finally:
+                        try:
+                            await self._call(session.close)
+                        finally:
+                            if session_counted:
+                                self.active_generation_sessions = max(0, self.active_generation_sessions - 1)
+                                session_counted = False
             finally:
                 trace.cleanup_called = True
                 self._lock.release()
