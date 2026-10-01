@@ -127,15 +127,15 @@ class P7SchedulingTests(unittest.TestCase):
         for c in cmds:
             coord.handle_command(c, arena, hash_slice)
             if c.kind is SweepCommandKind.ENCODE_ROWS and c.layer in (1, 14):
-                ids = coord.before_engram_consumer(c, arena, 'h', 'pre', hash_slice)
-                self.assertEqual(ids, (c.layer, c.offset, c.rows))
-                coord.after_engram_consumer(c, arena, 'h2', 'pre', hash_slice)
+                coord.apply_engram_micro_pipeline(c, arena, FakeTensor('h', rows=c.rows), FakeTensor('pre', rows=c.rows), lm.layers[c.layer].engram, None, hash_slice)
         submits = [call for call in lm._engram_prefetch.calls if call[0] == 'submit']
         self.assertIs(submits[0][1], lm.layers[1].engram.embed)
         self.assertIs(submits[-1][1], lm.layers[14].engram.embed)
         submit_ids = [call[2] for call in submits]
-        self.assertIn((1, 0, 4096), submit_ids)
-        self.assertIn((14, 0, 4096), submit_ids)
+        self.assertIn((1, 0, 2048), submit_ids)
+        self.assertIn((1, 2048, 2048), submit_ids)
+        self.assertIn((14, 0, 2048), submit_ids)
+        self.assertIn((14, 2048, 2048), submit_ids)
         consumes = [e for e in coord.telemetry.events if e['event'] == 'engram_consume']
         self.assertTrue(all(e['logical_match'] and e['donor_issue_observed'] for e in consumes))
         for event in coord.telemetry.events:
@@ -176,6 +176,28 @@ class P7SchedulingTests(unittest.TestCase):
         self.assertFalse(hasattr(lm._engram_prefetch, 'closed'))
         with self.assertRaises(P7SchedulingError):
             coord.handle_command(P6AppendPlanner().plan(C=0, T=2048).segments[0].commands[0], None, lambda *a: None)
+
+    def test_8192_and_16384_microtarget_ordering(self):
+        def run(total):
+            lm = p7_lm(); coord = SchedulingCoordinator(lm)
+            cmds = P6AppendPlanner().plan(C=0, T=total, deferral_enabled=False).segments[0].commands
+            arena = RequestArena.from_plan(SimpleNamespace(count=total, allocations=(), commands=cmds), token_ids=list(range(total)), h_current=FakeTensor('h', rows=8192), h_next=FakeTensor('n', rows=8192), pre=FakeTensor('p', rows=8192), engram_hashes='hashes')
+            def hash_slice(hashes, offset, rows, layer, language_model): return (layer, offset, rows)
+            coord.set_command_stream(cmds)
+            for c in cmds:
+                coord.handle_command(c, arena, hash_slice)
+                if c.kind is SweepCommandKind.ENCODE_ROWS and c.layer in (1,14):
+                    coord.apply_engram_micro_pipeline(c, arena, FakeTensor('h', rows=c.rows), FakeTensor('p', rows=c.rows), lm.layers[c.layer].engram, None, hash_slice)
+            return [call[2] for call in lm._engram_prefetch.calls if call[0] == 'submit']
+        ids8192 = run(8192)
+        self.assertEqual([x for x in ids8192 if x[0] == 1], [(1,0,2048),(1,2048,2048),(1,4096,2048),(1,6144,2048)])
+        self.assertEqual([x for x in ids8192 if x[0] == 14], [(14,0,2048),(14,2048,2048),(14,4096,2048),(14,6144,2048)])
+        ids16 = run(16384)
+        self.assertEqual(len([x for x in ids16 if x[0] == 1]), 8)
+        self.assertIn((1,8192,2048), ids16)
+        self.assertEqual(len([x for x in ids16 if x[0] == 14]), 8)
+        self.assertNotIn((1,0,8192), ids16)
+        self.assertNotIn((14,0,8192), ids16)
 
     def test_real_pinned_omlx_donor_exact_match_and_mismatch(self):
         try:

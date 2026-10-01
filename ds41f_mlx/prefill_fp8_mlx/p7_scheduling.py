@@ -13,6 +13,8 @@ from typing import Any, Callable, Iterable
 
 from ds41f_mlx.prefill_fp8_mlx.planner import SweepCommand, SweepCommandKind
 
+P7_ENGRAM_TILE = 2048
+
 
 class P7SchedulingError(RuntimeError):
     """P7 scheduling/admission failure."""
@@ -150,6 +152,21 @@ class PendingEngramRequest:
     offset: int
     rows: int
     donor_issue_observed: bool
+    micro_index: int = 0
+    command_offset: int = 0
+
+
+@dataclass(frozen=True)
+class EngramMicrotarget:
+    table: int
+    layer: int
+    command_index: int
+    command_offset: int
+    command_rows: int
+    micro_index: int
+    local_offset: int
+    offset: int
+    rows: int
 
 
 class EngramPrefetchController:
@@ -177,37 +194,39 @@ class EngramPrefetchController:
         self.active_table = int(table)
         self.active_layer = self.TABLE_TO_LAYER[int(table)]
         self.telemetry.record("engram_prefetch_activate", table=table, layer=self.active_layer, command_index=command.index)
-        nxt = self._next_consumer_after(command.index, self.active_layer)
+        target = self._next_microtarget_after(command.index, self.active_layer)
+        if target is not None:
+            self._submit_microtarget(target, arena, hash_slice_fn)
+
+    def before_microtarget(self, target: EngramMicrotarget) -> bool:
+        self._assert_live()
+        pending = self.pending
+        logical_match = pending is not None and pending.target_command_index == target.command_index and pending.layer == target.layer and pending.offset == target.offset and pending.rows == target.rows and pending.micro_index == target.micro_index
+        if pending is not None and not logical_match:
+            self.telemetry.record("engram_prefetch_mismatch", layer=target.layer, command_index=target.command_index, micro_index=target.micro_index, pending_command_index=pending.target_command_index)
+            raise P7SchedulingError("Engram microtarget did not match scheduled prefetch target")
+        self.telemetry.record("engram_consume", table=target.table, layer=target.layer, command_index=target.command_index, transformer_command_index=target.command_index, command_offset=target.command_offset, micro_index=target.micro_index, micro_offset=target.offset, rows=target.rows, logical_match=logical_match, donor_issue_observed=bool(pending.donor_issue_observed) if pending is not None else False, consume_observed=True)
+        return logical_match
+
+    def after_microtarget(self, target: EngramMicrotarget, arena: Any, hash_slice_fn: Callable[..., Any]) -> None:
+        nxt = self._next_microtarget_after(target.command_index, target.layer, after_target=target)
         if nxt is not None:
-            self._submit_for(nxt, arena, hash_slice_fn)
+            self._submit_microtarget(nxt, arena, hash_slice_fn)
+        else:
+            self.telemetry.record("engram_table_pipeline_complete", layer=target.layer)
+            self.pending = None
 
     def before_consumer(self, command: SweepCommand, arena: Any, hash_slice_fn: Callable[..., Any], ids: Any | None = None) -> Any | None:
-        self._assert_live()
-        layer = int(command.layer) if command.layer is not None else None
-        if layer not in self.TABLE_TO_LAYER.values():
-            return None
-        if ids is None:
-            ids = hash_slice_fn(arena.engram.hashes.value, command.offset, command.rows, layer, self.language_model)
-        if ids is None:
-            return None
-        pending = self.pending
-        logical_match = pending is not None and pending.target_command_index == command.index and pending.layer == layer and pending.offset == command.offset and pending.rows == command.rows
-        if pending is not None and not logical_match:
-            self.telemetry.record("engram_prefetch_mismatch", layer=layer, command_index=command.index, pending_command_index=pending.target_command_index)
-            raise P7SchedulingError("Engram consumer did not match scheduled prefetch target")
-        self.telemetry.record("engram_consume", layer=layer, offset=command.offset, rows=command.rows, command_index=command.index, logical_match=logical_match, donor_issue_observed=bool(pending.donor_issue_observed) if pending is not None else False)
+        targets = self.microtargets_for_command(command)
+        if not targets:
+            return ids
+        self.before_microtarget(targets[0])
         return ids
 
     def after_consumer(self, command: SweepCommand, arena: Any, hash_slice_fn: Callable[..., Any]) -> None:
-        layer = int(command.layer) if command.layer is not None else None
-        if layer not in self.TABLE_TO_LAYER.values():
-            return
-        nxt = self._next_consumer_after(command.index, layer)
-        if nxt is not None:
-            self._submit_for(nxt, arena, hash_slice_fn)
-        else:
-            self.telemetry.record("engram_table_pipeline_complete", layer=layer)
-            self.pending = None
+        targets = self.microtargets_for_command(command)
+        if targets:
+            self.after_microtarget(targets[-1], arena, hash_slice_fn)
 
     def drain(self) -> None:
         if self.donor is not None and hasattr(self.donor, "drain"):
@@ -219,29 +238,88 @@ class EngramPrefetchController:
         self.revoked = True
         self.drain()
 
-    def _submit_for(self, command: SweepCommand, arena: Any, hash_slice_fn: Callable[..., Any]) -> None:
+    def _submit_microtarget(self, target: EngramMicrotarget, arena: Any, hash_slice_fn: Callable[..., Any]) -> None:
         self._assert_live()
-        layer = int(command.layer)
-        ids = hash_slice_fn(arena.engram.hashes.value, command.offset, command.rows, layer, self.language_model)
+        ids = hash_slice_fn(arena.engram.hashes.value, target.offset, target.rows, target.layer, self.language_model)
         if ids is None:
             return
-        embed = _engram_storage_embed(self.language_model, layer)
+        embed = _engram_storage_embed(self.language_model, target.layer)
         self.donor.submit(embed, ids)
         donor_issue_observed = _donor_issue_observed(self.donor, embed)
-        table = 0 if layer == 1 else 1
-        self.pending = PendingEngramRequest(table, layer, command.index, int(command.offset), int(command.rows), donor_issue_observed)
-        self.telemetry.record("engram_prefetch_submit", table=table, layer=layer, offset=command.offset, rows=command.rows, command_index=command.index, logical_consumer_command_index=command.index, donor_issue_observed=donor_issue_observed)
+        self.pending = PendingEngramRequest(target.table, target.layer, target.command_index, target.offset, target.rows, donor_issue_observed, target.micro_index, target.command_offset)
+        self.telemetry.record("engram_prefetch_submit", table=target.table, layer=target.layer, transformer_command_index=target.command_index, command_index=target.command_index, command_offset=target.command_offset, micro_index=target.micro_index, micro_offset=target.offset, rows=target.rows, logical_consumer_command_index=target.command_index, donor_issue_observed=donor_issue_observed)
 
-    def _next_consumer_after(self, index: int, layer: int) -> SweepCommand | None:
+    def microtargets_for_command(self, command: SweepCommand) -> tuple[EngramMicrotarget, ...]:
+        layer = int(command.layer) if command.layer is not None else None
+        if layer not in self.TABLE_TO_LAYER.values() or command.kind is not SweepCommandKind.ENCODE_ROWS:
+            return ()
+        table = 0 if layer == 1 else 1
+        out = []
+        local = 0
+        micro_index = 0
+        while local < int(command.rows):
+            rows = min(P7_ENGRAM_TILE, int(command.rows) - local)
+            out.append(EngramMicrotarget(table, layer, int(command.index), int(command.offset), int(command.rows), micro_index, local, int(command.offset) + local, rows))
+            local += rows
+            micro_index += 1
+        return tuple(out)
+
+    def _next_microtarget_after(self, index: int, layer: int, after_target: EngramMicrotarget | None = None) -> EngramMicrotarget | None:
+        if after_target is not None:
+            targets = self.microtargets_for_command(self._command_by_index(after_target.command_index))
+            for target in targets:
+                if target.micro_index > after_target.micro_index:
+                    return target
+            index = after_target.command_index
         for cmd in self.commands:
             if cmd.index > index and cmd.kind is SweepCommandKind.ENCODE_ROWS and cmd.layer == layer:
-                return cmd
+                targets = self.microtargets_for_command(cmd)
+                return targets[0] if targets else None
         return None
+
+    def _command_by_index(self, index: int) -> SweepCommand:
+        for cmd in self.commands:
+            if cmd.index == index:
+                return cmd
+        raise P7SchedulingError(f"missing command {index} in P7 command stream")
 
     def _assert_live(self) -> None:
         if self.revoked:
             raise P7SchedulingError("stale P7 coordinator cannot schedule after revocation")
 
+
+
+def _slice_sequence(value: Any, offset: int, rows: int) -> Any:
+    try:
+        return value[:, int(offset):int(offset) + int(rows)]
+    except Exception:
+        return value
+
+
+def _concat_sequence(values: list[Any], *, like: Any) -> Any:
+    if not values:
+        return like
+    if len(values) == 1:
+        return values[0]
+    concat_rows = getattr(values[0], "concat_rows", None)
+    if concat_rows is not None:
+        return concat_rows(values)
+    try:
+        import mlx.core as mx  # type: ignore
+        return mx.concatenate(values, axis=1)
+    except Exception as exc:
+        if all(hasattr(v, "shape") for v in values):
+            return _MicrotileConcat(values)
+        raise P7SchedulingError("cannot reassemble Engram microtiles") from exc
+
+
+class _MicrotileConcat:
+    def __init__(self, values: list[Any]):
+        self.parts = tuple(values)
+        first_shape = getattr(values[0], "shape", ())
+        rows = sum(int(getattr(v, "shape", (0, 0))[1]) for v in values)
+        self.shape = (first_shape[0], rows, *first_shape[2:]) if len(first_shape) >= 2 else first_shape
+        self.last_slice = (0, rows)
 
 
 def _engram_storage_embed(language_model: Any, layer: int) -> Any:
@@ -304,6 +382,26 @@ class SchedulingCoordinator:
     def after_engram_consumer(self, command: SweepCommand, arena: Any, h_after: Any, pre_chunk: Any, hash_slice_fn: Callable[..., Any]) -> None:
         self.materialization.after_engram_incorporated(h_after, pre_chunk)
         self.engram.after_consumer(command, arena, hash_slice_fn)
+
+    def apply_engram_micro_pipeline(self, command: SweepCommand, arena: Any, h_chunk: Any, pre_chunk: Any, engram_call: Callable[..., Any], image_mask: Any, hash_slice_fn: Callable[..., Any]) -> Any:
+        targets = self.engram.microtargets_for_command(command)
+        if not targets:
+            return h_chunk
+        outputs = []
+        for target in targets:
+            h_micro = _slice_sequence(h_chunk, target.local_offset, target.rows)
+            pre_micro = _slice_sequence(pre_chunk, target.local_offset, target.rows)
+            mask_micro = None if image_mask is None else _slice_sequence(image_mask, target.local_offset, target.rows)
+            ids = hash_slice_fn(arena.engram.hashes.value, target.offset, target.rows, target.layer, self.language_model)
+            if ids is None:
+                continue
+            self.engram.before_microtarget(target)
+            self.materialization.before_engram_dependency(h_micro, pre_micro)
+            h_after = engram_call(h_micro, ids, mask_micro)
+            self.materialization.after_engram_incorporated(h_after, pre_micro)
+            outputs.append(h_after)
+            self.engram.after_microtarget(target, arena, hash_slice_fn)
+        return _concat_sequence(outputs, like=h_chunk)
 
     def seal_success(self) -> None:
         self.engram.drain()

@@ -194,10 +194,9 @@ class OfficialFP8MLXBlockRunner:
             hashes = _slice_engram_hashes(arena.engram.hashes.value, command.offset, command.rows, layer_id, lm)
             if hashes is not None:
                 if self.scheduling_coordinator is not None:
-                    self.scheduling_coordinator.before_engram_consumer(command, arena, h_chunk, pre_chunk, _slice_engram_hashes, ids=hashes)
-                h_chunk = layer.engram(h_chunk, hashes, self.image_mask)
-                if self.scheduling_coordinator is not None:
-                    self.scheduling_coordinator.after_engram_consumer(command, arena, h_chunk, pre_chunk, _slice_engram_hashes)
+                    h_chunk = self.scheduling_coordinator.apply_engram_micro_pipeline(command, arena, h_chunk, pre_chunk, layer.engram, self.image_mask, _slice_engram_hashes)
+                else:
+                    h_chunk = layer.engram(h_chunk, hashes, self.image_mask)
                 invoked_engram = True
         if not callable(layer):
             raise BlockExecutionError(f"layer {command.layer} is not callable")
