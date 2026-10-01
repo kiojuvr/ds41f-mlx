@@ -34,7 +34,7 @@ Accepts chat-completion requests for the target model path. Supported request op
 
 Runtime architecture selection is governed by `docs/runtime-strategy.md` and `docs/implementation-plan.md`. Current M7 serving selection is `PRODUCTION_PREFILL_SELECTOR = DENSE_P0_P7`: official recipe encoding supplies complete prompt tokens, serving holds out `tokens[-1]`, prefill commits `tokens[:-1]` through `DeferredPrefillAppend`, and P5 `handoff_to_generation()` supplies the held-out terminal token exactly once to oMLX `GenerationBatch` MTP-OFF. Prompt replay, cache repack/export, MTP/DSpark, multimodal input, reference vertical-slice serving, and the legacy one-chunk prefill substrate are not production API paths.
 
-M7 validates the DeepSeek-recipe HTTP path for text-only single-flight serving: `/v1/chat/completions`, `/v1/responses`, pinned-recipe `/v1/messages` text smoke, `/health`, and `/v1/models`. API behavior remains scoped to the qualified backend and does not imply multimodal, batching, MTP/DSpark, tool execution, KV restore/resume, or long-session robustness.
+M7 validates the DeepSeek-recipe HTTP path for text-only single-flight serving: `/v1/chat/completions`, `/v1/responses`, pinned-recipe `/v1/messages` text smoke, `/health`, and `/v1/models`. M8 validates the underlying single-session repeated text continuation lifecycle and exact recipe-token boundary. API behavior remains scoped to the qualified backend and does not imply multimodal, batching, MTP/DSpark, tool execution, or KV restore/resume.
 
 ## Error behavior
 
@@ -42,7 +42,7 @@ Invalid requests should fail atomically with respect to model/session state: no 
 
 ## Unsupported/unqualified options
 
-Do not assume support for vision, speculative decode, batching, tool execution, KV restore/resume, long-session robustness, or PyTorch RNG parity unless a current qualification entry states it. Streaming text for Chat Completions and Responses is qualified in M7 for the selected backend.
+Do not assume support for vision, speculative decode, batching, tool execution, KV restore/resume, or PyTorch RNG parity unless a current qualification entry states it. Streaming text for Chat Completions and Responses is qualified in M7 for the selected backend; single-session repeated text continuation is qualified in M8.
 
 ## Development guidance
 

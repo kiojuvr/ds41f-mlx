@@ -301,11 +301,11 @@ class OMLXGenerationSession:
         return reports
 
     def stop(self, reason: str = "cancelled") -> None:
-        """Best-effort cancellation before another token is committed."""
-        if self._stopped:
+        """Best-effort cancellation or turn-boundary cache extraction."""
+        if self._stopped and self._final_cache is not None and self._final_all_tokens is not None:
             return
         self._stopped = True
-        self.stop_reason = reason
+        self.stop_reason = self.stop_reason or reason
         if self.uid is not None:
             try:
                 extracted = self._bg.extract_cache([self.uid])
@@ -345,6 +345,12 @@ class OMLXGenerationSession:
 
     def close(self) -> None:
         self.stop("closed")
+        bg = getattr(self, "_bg", None)
+        if bg is not None:
+            try:
+                bg.close()
+            except Exception:
+                pass
         runtime = getattr(self, "_runtime", None)
         if runtime is not None:
             runtime.close()

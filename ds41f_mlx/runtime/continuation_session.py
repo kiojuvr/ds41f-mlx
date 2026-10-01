@@ -129,11 +129,15 @@ class M8LiveContinuationSession:
             raise M8ContinuationError("session is closed")
         if self.generation is None:
             return
-        cache, history = self.generation.extract_final_state(reason)
+        generation = self.generation
+        cache, history = generation.extract_final_state(reason)
         self.live_cache = cache
         self.token_history = [int(t) for t in history]
-        self.total_prompt_replay_count += int(self.generation.prompt_replay_count)
-        self.generation = None
+        self.total_prompt_replay_count += int(generation.prompt_replay_count)
+        try:
+            generation.close()
+        finally:
+            self.generation = None
         self._assert_cache_frontier()
 
     def begin_turn_from_recipe_tokens(self, full_recipe_token_ids: Sequence[int], *, max_tokens: int = 128) -> None:

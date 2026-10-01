@@ -1,6 +1,8 @@
 # Milestone 8 long-session architecture
 
-Status: **implemented architecture and bounded regression gates; real-checkpoint long-session qualification pending in `artifacts/m8/` for the local target run**.
+Status: **M8_LONG_SESSION_QUALIFIED** for text-only single-session repeated DeepSeek-recipe continuation on the official checkpoint.
+
+Primary evidence: `artifacts/m8/long-session-qualification.json` (`schema: ds41f.m8.long-session-qualification.v2`).
 
 ## Canonical production lifecycle
 
@@ -78,6 +80,30 @@ KV persistence is **deferred to the next milestone**. M8 defines the stable seam
 
 M8 deliberately does not introduce a second cache translation layer or portable state authority.
 
+## Qualification closeout
+
+The M8 real-checkpoint qualification rerendered each next complete conversation through the pinned DeepSeek-recipe V4.1 text prompt semantics, verified the completed GenerationBatch `all_tokens` were an exact prefix of the next encoding, appended only the new suffix minus its terminal token, consumed the terminal once through P5/GenerationBatch bootstrap, extracted the live cache and `all_tokens`, and repeated.
+
+Closeout run summary:
+
+- official checkpoint: `/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash`;
+- oMLX revision: `b390b31e0c6831225fed0f24d278eb1db7fcb68b`;
+- DeepSeek-recipe source revision: `8cadfede7063c896b944e7bae05daa3549ae97ea`;
+- production selector: `DENSE_P0_P7`;
+- turns: initial assistant turn plus 8 follow-up recipe turns;
+- frontier growth: 19-token pre-terminal initial prefix to final idle frontier 135;
+- exact-prefix-extension: true at every recipe turn;
+- prompt replay: 0;
+- full-cache repack/reconstruction: 0;
+- cache offsets: all 40 layers equal final frontier at every idle boundary;
+- cancellation: one follow-up turn cancelled after one generated token, returned to idle, and subsequent recipe turns continued successfully;
+- invalid non-extension input: rejected before cache mutation;
+- diagnostics: bounded scalar/token evidence; no hidden replay/fallback;
+- memory: process resident high-water after model load remained approximately 18.3 GiB over the repeated-turn run;
+- decode: per-turn measured decode throughput remained in the roughly 8.5-11.5 tok/s range for this short-context run, without progressive collapse.
+
+The environment lacked the `deepseek_recipe._native` Python extension after dependency repair, so the runner used a text-only renderer transcribed from the pinned official `deepseek-recipe-encoding/src/v4` source plus the pinned official tokenizer JSON. This is recorded in the artifact provenance. M7 remains the direct Python-binding serving qualification; M8's boundary evidence is source-derived for the simple text chat subset and uses the same tokenizer and prompt semantics.
+
 ## Unqualified scope
 
-M8 remains single-session/single-flight, text-only, MTP/DSpark OFF. It does not qualify multimodal, tool execution, batching, speculative decode, or cross-process KV restore.
+M8 remains single-session/single-flight, text-only, MTP/DSpark OFF. It does not qualify multimodal, tool execution, batching, speculative decode, length-finish cache extraction, or cross-process KV restore.
