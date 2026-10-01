@@ -52,6 +52,7 @@ class SweepCommandKind(str, Enum):
     ENCODE_OUTPUT_HEAD = "encode_output_head"
     READ_LOGITS = "read_logits"
     CHECKPOINT_MAY_COMMIT = "checkpoint_may_commit"
+    P6_SOURCE_COMPLETE_AND_DETACH_CONE = "p6_source_complete_and_detach_cone"
     END_LAYER = "end_layer"
     UNKNOWN = "unknown"
 

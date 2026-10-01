@@ -238,6 +238,12 @@ class PublicationManager:
         self.arena.publications.commit()
         self.append_transaction_active = False
 
+    def retire_row_spans(self) -> None:
+        self.pending_spans_by_layer.clear()
+        self.visible_spans.clear()
+        self.arena.publications.shared["idx"] = None
+        self.arena.publications.shared["candidates"] = None
+
     def fail(self) -> None:
         self.failed = True
         self.pending_cumulative_by_layer.clear()

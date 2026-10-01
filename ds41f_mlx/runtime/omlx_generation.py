@@ -179,6 +179,12 @@ class OMLXGenerationSession:
         re-admit from ``PrefillContinuationState``.
         """
         cfg = config or OMLXDecodeConfig()
+        for item in cache:
+            if (getattr(item, "_p6_append_invalid", False)
+                or getattr(item, "_p6_append_failed", False)
+                or getattr(item, "_p6_append_pending", False)
+                or (hasattr(item, "_p6_append_sealed") and not getattr(item, "_p6_append_sealed", False))):
+                raise RuntimeError("P6 cache is not sealed/admissible for generation")
         ids = np.asarray(token_ids, dtype=np.int64).reshape(1, -1)
         frontier = ids.shape[1]
         offsets = cls.cache_offsets(cache)

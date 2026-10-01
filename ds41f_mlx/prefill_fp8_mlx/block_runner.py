@@ -98,6 +98,8 @@ class OfficialFP8MLXBlockRunner:
     full_cache_repack_count: int = 0
     handoff_reserved: bool = False
     handoff_transferred: bool = False
+    closed: bool = False
+    p6_owner_token: int | None = None
 
     def __post_init__(self) -> None:
         if self.suffix_math is None:
@@ -116,6 +118,9 @@ class OfficialFP8MLXBlockRunner:
             assert_no_reference_hot_path()
 
     def execute_command(self, command: SweepCommand, arena: RequestArena) -> Any | None:
+        if self.closed:
+            raise BlockExecutionError('prefill runner capability is closed/revoked')
+        self._assert_p6_cache_capability()
         if self.handoff_reserved or self.handoff_transferred:
             raise BlockExecutionError('prefill cache authority reserved/transferred to generation')
         assert_no_reference_hot_path()
@@ -148,6 +153,10 @@ class OfficialFP8MLXBlockRunner:
             arena.apply_command(command)
             self.publication_manager.commit()
             return None
+        if command.kind is SweepCommandKind.P6_SOURCE_COMPLETE_AND_DETACH_CONE:
+            arena.apply_command(command)
+            self._p6_materialize_and_detach(command, arena, record)
+            return None
         arena.apply_command(command)
         return None
 
@@ -162,8 +171,8 @@ class OfficialFP8MLXBlockRunner:
         private_start = getattr(arena, "p6_private_start", None)
         absolute_start = int(arena.base_frontier if private_start is None else private_start) + int(command.offset)
         record.absolute_start = absolute_start
-        h_chunk = _slice_rows(arena.carry.current.value, command.offset, command.rows, role=arena.carry.current.role)
-        pre_chunk = _slice_rows(arena.carry.pre.value, command.offset, command.rows, role=arena.carry.pre.role)
+        h_chunk = _slice_rows(arena.carry.current.value, command.offset, command.rows, role=arena.carry.current.role, row_origin=arena.carry.current.row_origin)
+        pre_chunk = _slice_rows(arena.carry.pre.value, command.offset, command.rows, role=arena.carry.pre.role, row_origin=arena.carry.pre.row_origin)
         shared_fn = self.publication_manager.producer_shared_for_span if command.phase is SweepPhase.DECODER_SUFFIX and layer_id == 20 else self.publication_manager.shared_for_span
         shared = shared_fn(layer_id, command.offset, command.rows, require_keys=self._required_publication_keys(layer_id))
         cache = self._cache_for_layer(layer_id)
@@ -179,8 +188,8 @@ class OfficialFP8MLXBlockRunner:
             h_out, pre_out = self.suffix_math.execute_suffix_query(layer_id=layer_id, h_chunk=h_chunk, pre_chunk=pre_chunk, cache=cache, shared=shared, absolute_start=absolute_start, image_mask=self.image_mask)
         else:
             h_out, pre_out = layer(h_chunk, pre_chunk, cache, shared, absolute_start, self.image_mask)
-        arena.carry.next.value = _write_rows(arena.carry.next.value, command.offset, command.rows, h_out, role=arena.carry.next.role)
-        arena.carry.pre.value = _write_rows(arena.carry.pre.value, command.offset, command.rows, pre_out, role=arena.carry.pre.role)
+        arena.carry.next.value = _write_rows(arena.carry.next.value, command.offset, command.rows, h_out, role=arena.carry.next.role, row_origin=arena.carry.next.row_origin)
+        arena.carry.pre.value = _write_rows(arena.carry.pre.value, command.offset, command.rows, pre_out, role=arena.carry.pre.role, row_origin=arena.carry.pre.row_origin)
         self._advance_cache_layer(cache, absolute_start + command.rows, arena=arena, layer=layer_id)
         capture_keys = ("idx", "candidates") if command.phase is SweepPhase.DECODER_SUFFIX and layer_id == 20 else None
         self.publication_manager.capture_layer_outputs(layer_id, shared, command_index=command.index, offset=command.offset, rows=command.rows, keys=capture_keys)
@@ -209,8 +218,8 @@ class OfficialFP8MLXBlockRunner:
             self.publication_manager.capture_layer_outputs(int(command.layer), shared, command_index=command.index, offset=0, rows=arena.plan.count, keys=("kv", "index_k"))
             record.invoked_full_source_publish = True
             return
-        rows = _slice_rows(arena.carry.current.value, command.offset, command.rows, role=arena.carry.current.role)
-        pre = _slice_rows(arena.carry.pre.value, command.offset, command.rows, role=arena.carry.pre.role)
+        rows = _slice_rows(arena.carry.current.value, command.offset, command.rows, role=arena.carry.current.role, row_origin=arena.carry.current.row_origin)
+        pre = _slice_rows(arena.carry.pre.value, command.offset, command.rows, role=arena.carry.pre.role, row_origin=arena.carry.pre.row_origin)
         self.suffix_math.prepare_local_window(layer_id=int(command.layer), h_rows=rows, pre_rows=pre, cache=cache, absolute_start=absolute_start, rows=command.rows)
         record.invoked_decoder_prepare = True
 
@@ -233,6 +242,33 @@ class OfficialFP8MLXBlockRunner:
             if layer == 0 and arena.engram.history.value is not None:
                 _set_cache_slot(cache, 6, arena.engram.history.value)
         self._fill_empty_slots(cache, layer)
+
+    def close(self) -> None:
+        self.closed = True
+        self.working_cache = None
+
+    def _assert_p6_cache_capability(self) -> None:
+        cache = self.working_cache
+        if not cache:
+            return
+        invalid = any(getattr(c, "_p6_append_invalid", False) or getattr(c, "_p6_append_pending", False) for c in cache)
+        failed = any(getattr(c, "_p6_append_failed", False) for c in cache)
+        if failed:
+            raise BlockExecutionError("cache belongs to a failed P6 append")
+        if invalid:
+            tokens = {getattr(c, "_p6_owner_token", None) for c in cache}
+            if len(tokens) != 1 or self.p6_owner_token not in tokens:
+                raise BlockExecutionError("runner lacks current P6 append owner capability")
+
+    def _p6_materialize_and_detach(self, command: SweepCommand, arena: RequestArena, record: CommandExecutionRecord) -> None:
+        frontier = int(getattr(arena, "p6_private_start", arena.base_frontier) or arena.base_frontier) + int(arena.plan.count)
+        arena.materialize_p6_source_boundary(command_index=command.index, frontier=frontier)
+        if command.rows > 0:
+            origin = int(command.offset)
+            private_start = int(getattr(arena, "p6_private_start", arena.base_frontier) or arena.base_frontier)
+            h = _owned_row_copy(arena.carry.current.value, origin, int(command.rows), role=arena.carry.current.role)
+            pre = _owned_row_copy(arena.carry.pre.value, origin, int(command.rows), role=arena.carry.pre.role)
+            arena.detach_final_decoder_cone(origin=private_start + origin, rows=int(command.rows), h_value=h, pre_value=pre, row_origin=origin)
 
     def _fill_empty_slots(self, cache: Any, layer: int) -> None:
         if cache is None:
@@ -296,9 +332,12 @@ def _layer_has_engram(layer: Any) -> bool:
     return hasattr(layer, "engram")
 
 
-def _slice_rows(value: Any, offset: int, rows: int, *, role: str) -> Any:
+def _slice_rows(value: Any, offset: int, rows: int, *, role: str, row_origin: int = 0) -> Any:
     if value is None:
         raise BlockExecutionError(f"cannot slice unbound arena slot {role}")
+    offset = int(offset) - int(row_origin)
+    if offset < 0:
+        raise BlockExecutionError(f"arena slot {role} row origin {row_origin} cannot serve requested offset")
     end = int(offset) + int(rows)
     shape = getattr(value, "shape", None)
     if shape is not None and len(shape) > 1 and int(shape[1]) < end:
@@ -309,9 +348,50 @@ def _slice_rows(value: Any, offset: int, rows: int, *, role: str) -> Any:
         raise BlockExecutionError(f"failed to slice arena slot {role} rows {offset}:{end}") from exc
 
 
-def _write_rows(base: Any, offset: int, rows: int, update: Any, *, role: str) -> Any:
+def _owned_row_copy(value: Any, offset: int, rows: int, *, role: str) -> Any:
+    sliced = _slice_rows(value, offset, rows, role=role)
+    detach = getattr(sliced, "detach_rows", None)
+    if detach is not None:
+        return detach()
+    copy = getattr(sliced, "copy", None)
+    if copy is not None:
+        try:
+            return copy()
+        except Exception:
+            pass
+    try:
+        import mlx.core as mx  # type: ignore
+        copier = getattr(mx, "copy", None)
+        out = copier(sliced) if copier is not None else mx.array(sliced)
+        mx.eval(out)
+        return out
+    except Exception:
+        return _CompactRows(sliced, rows)
+
+
+class _CompactRows:
+    def __init__(self, value: Any, rows: int):
+        self._value = value
+        shape = getattr(value, "shape", (1, rows))
+        self.shape = tuple([shape[0], int(rows)] + list(shape[2:])) if len(shape) > 1 else (int(rows),)
+        self.detached_compact_rows = True
+
+    def __getitem__(self, item):
+        return self._value[item]
+
+    def assign_rows(self, offset, rows, update):
+        assign = getattr(self._value, "assign_rows", None)
+        if assign is not None:
+            return assign(offset, rows, update)
+        self._value[:, offset:offset + rows] = update
+
+
+def _write_rows(base: Any, offset: int, rows: int, update: Any, *, role: str, row_origin: int = 0) -> Any:
     if base is None:
         raise BlockExecutionError(f"cannot write rows into unallocated arena slot {role}")
+    offset = int(offset) - int(row_origin)
+    if offset < 0:
+        raise BlockExecutionError(f"arena slot {role} row origin {row_origin} cannot accept write")
     end = int(offset) + int(rows)
     shape = getattr(base, "shape", None)
     if shape is not None and len(shape) > 1 and int(shape[1]) < end:

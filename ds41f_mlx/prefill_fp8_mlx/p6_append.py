@@ -25,6 +25,13 @@ P6_ENCODER_TILE = 8192
 P6_LOCAL_PREPARE_ROWS = 127
 P6_LAYER20_QUERY_ROWS = 1 + (39 - 20) * P6_LOCAL_PREPARE_ROWS  # 2414
 P6_LAYER20_INPUT_CONE_ROWS = P6_LAYER20_QUERY_ROWS + P6_LOCAL_PREPARE_ROWS  # 2541
+_P6_OWNER_COUNTER = 0
+
+
+def _next_owner_token() -> int:
+    global _P6_OWNER_COUNTER
+    _P6_OWNER_COUNTER += 1
+    return _P6_OWNER_COUNTER
 
 
 class P6AppendError(RuntimeError):
@@ -115,6 +122,41 @@ class SegmentExecution:
     runner: OfficialFP8MLXBlockRunner
 
 
+@dataclass(frozen=True)
+class P6SegmentRecord:
+    mode: SegmentMode
+    start: int
+    end: int
+    command_count: int
+    source_generation_count: int
+    E_before: int
+    E_after: int
+    D_before: int
+    D_after: int
+    materialized: bool
+    retired: bool
+    cone_rows: int = 0
+    cone_origin: int | None = None
+
+
+@dataclass(frozen=True)
+class P6AppendCommit:
+    live_cache: list[Any]
+    prefix_token_ids: tuple[int, ...]
+    C: int
+    E: int
+    D: int
+    T: int
+    owner_token: int
+    source_coverage: dict[int, int]
+    layer_coverage: dict[int, int]
+    history_position: int
+    final_setup: PrefillExecutionSetup
+    sealed: bool = True
+    full_cache_repack_count: int = 0
+    final_logits_suppressed: bool = True
+
+
 @dataclass
 class DeferredPrefillAppend:
     """Exclusive owner of one invalid-until-sealed P6 append transaction."""
@@ -129,21 +171,28 @@ class DeferredPrefillAppend:
     D: int = field(init=False)
     T: int = field(init=False)
     engram_history_position: int = field(init=False)
+    private_history_at_E: Any = field(default=None, init=False)
     state: AppendState = field(default=AppendState.VALID, init=False)
     coverage: AppendCoverage = field(default_factory=AppendCoverage)
     segment_capacity: int = field(default=P6_CARRY_CAPACITY, init=False)
-    executed_segments: list[SegmentExecution] = field(default_factory=list)
+    segment_records: list[P6SegmentRecord] = field(default_factory=list)
+    active_execution: SegmentExecution | None = None
+    final_execution: SegmentExecution | None = None
     failed_reason: str | None = None
     live_setup: PrefillExecutionSetup | None = None
+    commit_certificate: P6AppendCommit | None = None
+    owner_token: int = field(init=False)
     source_generation_counts: dict[int, int] = field(default_factory=lambda: {20: 0})
     stale_generation: int = 0
 
     def __post_init__(self) -> None:
+        self.owner_token = _next_owner_token()
         self.C = int(self.plan.C)
         self.E = self.C
         self.D = self.C
         self.T = int(self.plan.T)
         self.engram_history_position = self.C
+        self.private_history_at_E = self._cache_history()
         if len(self.request_token_history) != self.T:
             raise P6AppendError("complete request token history length must equal target T")
         if self.plan.C != self._public_frontier():
@@ -167,6 +216,8 @@ class DeferredPrefillAppend:
         for cache in self.live_cache:
             try:
                 setattr(cache, "_p6_append_invalid", True)
+                setattr(cache, "_p6_append_pending", True)
+                setattr(cache, "_p6_owner_token", self.owner_token)
             except Exception:
                 pass
 
@@ -188,9 +239,18 @@ class DeferredPrefillAppend:
             raise P6AppendError("public frontier changed while append invalid")
         try:
             execn = self._make_segment_execution(segment)
+            self.active_execution = execn
+            e_before, d_before = self.E, self.D
             execn.runner.execute_batch(segment.commands, execn.arena)
-            self._ack_segment(segment, execn.arena)
-            self.executed_segments.append(execn)
+            self._ack_segment(segment, execn.arena, e_before=e_before, d_before=d_before)
+            if segment.mode is SegmentMode.ENCODER_SOURCE_ONLY:
+                execn.manager.retire_row_spans()
+                execn.runner.close()
+                execn.arena.retire_encoder_range_after_source_boundary()
+                self.active_execution = None
+            else:
+                self.final_execution = execn
+                self.active_execution = None
             return execn
         except Exception as exc:
             self.fail(str(exc))
@@ -207,17 +267,18 @@ class DeferredPrefillAppend:
         arena.p6_segment_mode = segment.mode.value
         arena.p6_segment_origin = segment.start
         manager = PublicationManager(arena, topology=PublicationTopology.from_model_config(self.language_model._config))
-        if not self.executed_segments:
+        if not self.segment_records:
             manager.begin_append_transaction()
         else:
-            prior = self.executed_segments[-1].manager
-            manager.visible_cumulative = dict(prior.visible_cumulative)
-            manager.visible_spans = {k: list(v) for k, v in prior.visible_spans.items()}
+            # Persistent cumulative handles remain in the live cache; old row spans are not carried.
             manager.append_transaction_active = True
         runner = OfficialFP8MLXBlockRunner(self.language_model, manager, working_cache=self.live_cache)
+        runner.p6_owner_token = self.owner_token
         return SegmentExecution(segment, arena, manager, runner)
 
-    def _ack_segment(self, segment: P6SegmentPlan, arena: RequestArena) -> None:
+    def _ack_segment(self, segment: P6SegmentPlan, arena: RequestArena, *, e_before: int, d_before: int) -> None:
+        if not arena.p6_source_materialized and segment.mode is not SegmentMode.ORDINARY_COMPLETE_RANGE:
+            raise P6AppendError("P6 source boundary was not materialized")
         if segment.mode is SegmentMode.ENCODER_SOURCE_ONLY:
             self.E = segment.end
             for layer in range(20):
@@ -226,8 +287,9 @@ class DeferredPrefillAppend:
                 self.coverage.source_by_layer[layer] = self.E
             self.source_generation_counts[20] += 1
             self.engram_history_position = self.E
-            arena.retire_encoder_range_after_source_boundary()
+            self.private_history_at_E = arena.engram.history.value
             self._assert_public_frozen()
+            self._record_segment(segment, arena, e_before, d_before, retired=True)
             return
         if segment.mode is SegmentMode.FINAL_ENCODER_DECODER:
             self.E = segment.end
@@ -238,8 +300,9 @@ class DeferredPrefillAppend:
                 self.coverage.source_by_layer[layer] = self.E
             self.source_generation_counts[20] += 1
             self.engram_history_position = self.E
-            arena.detach_final_decoder_cone(origin=segment.end - P6_LAYER20_INPUT_CONE_ROWS, rows=P6_LAYER20_INPUT_CONE_ROWS)
+            self.private_history_at_E = arena.engram.history.value
             self._assert_public_frozen()
+            self._record_segment(segment, arena, e_before, d_before, retired=False)
             return
         if segment.mode is SegmentMode.ORDINARY_COMPLETE_RANGE:
             self.E = segment.end
@@ -249,7 +312,9 @@ class DeferredPrefillAppend:
             for layer in self.coverage.source_by_layer:
                 self.coverage.source_by_layer[layer] = max(self.coverage.source_by_layer[layer], self.D)
             self.engram_history_position = self.D
+            self.private_history_at_E = arena.engram.history.value
             self._assert_public_frozen()
+            self._record_segment(segment, arena, e_before, d_before, retired=False)
             return
         raise P6AppendError("unknown segment mode")
 
@@ -264,29 +329,38 @@ class DeferredPrefillAppend:
         )
 
     def final_seal(self) -> PrefillExecutionSetup:
-        if not self.readiness():
+        if not self.readiness() or self.final_execution is None:
             self.fail("final readiness check failed")
             raise P6AppendError("final readiness check failed")
         try:
+            last = self.final_execution
+            if last.manager.pending_cumulative_by_layer or last.manager.pending_spans_by_layer:
+                raise P6AppendError("pending publications remain at final seal")
+            last.manager.retire_row_spans()
+            last.runner.final_logits_suppressed = True
+            _set_cache_history(self.live_cache, self.private_history_at_E)
+            setup = PrefillExecutionSetup(last.arena, last.manager, last.runner)
+            commit = P6AppendCommit(
+                live_cache=self.live_cache,
+                prefix_token_ids=self.request_token_history,
+                C=self.C, E=self.E, D=self.D, T=self.T,
+                owner_token=self.owner_token,
+                source_coverage=dict(self.coverage.source_by_layer),
+                layer_coverage=dict(self.coverage.per_layer),
+                history_position=self.engram_history_position,
+                final_setup=setup,
+            )
+            # Only after the certificate is constructed do we advertise T.
             _set_all_public_frontiers(self.live_cache, self.T, self.language_model)
             for cache in self.live_cache:
                 try:
                     setattr(cache, "_p6_append_invalid", False)
+                    setattr(cache, "_p6_append_pending", False)
+                    setattr(cache, "_p6_append_sealed", True)
+                    setattr(cache, "_p6_owner_token", self.owner_token)
                 except Exception:
                     pass
-            last = self.executed_segments[-1]
-            last.arena.transaction.begun = True
-            last.arena.transaction.valid = True
-            last.arena.transaction.committed = True
-            last.arena.transaction.failed = False
-            last.arena.base_frontier = 0
-            last.arena.plan = _sweep_shell(self.T, (), encoder_only=False)
-            last.arena.publications.pending_events.clear()
-            last.manager.pending_cumulative_by_layer.clear()
-            last.manager.pending_spans_by_layer.clear()
-            last.manager.commit()
-            last.runner.final_logits_suppressed = True
-            setup = PrefillExecutionSetup(last.arena, last.manager, last.runner)
+            self.commit_certificate = commit
             self.live_setup = setup
             self.state = AppendState.SEALED
             return setup
@@ -303,11 +377,21 @@ class DeferredPrefillAppend:
                 setattr(cache, "_p6_append_failed", True)
             except Exception:
                 pass
-        for execn in self.executed_segments:
+        for cache in self.live_cache:
+            try:
+                setattr(cache, "_p6_append_invalid", True)
+                setattr(cache, "_p6_append_pending", False)
+                setattr(cache, "_p6_append_sealed", False)
+                setattr(cache, "_p6_owner_token", None)
+            except Exception:
+                pass
+        for execn in (self.active_execution, self.final_execution):
+            if execn is None:
+                continue
             execn.manager.fail()
             execn.arena.transaction.fail()
             execn.arena.retire_encoder_range_after_source_boundary()
-            execn.runner.working_cache = None
+            execn.runner.close()
 
     def rebuild_with_tokens(self, token_history: Sequence[int]) -> "DeferredPrefillAppend":
         make_cache = getattr(self.language_model, "make_cache", None)
@@ -317,7 +401,27 @@ class DeferredPrefillAppend:
         _set_all_public_frontiers(fresh, 0, self.language_model)
         return DeferredPrefillAppend.create(self.language_model, fresh, tuple(int(t) for t in token_history), committed_frontier=0, mx=self.mx)
 
+    def _record_segment(self, segment: P6SegmentPlan, arena: RequestArena, e_before: int, d_before: int, *, retired: bool) -> None:
+        self.segment_records.append(P6SegmentRecord(
+            mode=segment.mode,
+            start=segment.start,
+            end=segment.end,
+            command_count=len(segment.commands),
+            source_generation_count=self.source_generation_counts.get(20, 0),
+            E_before=e_before,
+            E_after=self.E,
+            D_before=d_before,
+            D_after=self.D,
+            materialized=arena.p6_source_materialized or segment.mode is SegmentMode.ORDINARY_COMPLETE_RANGE,
+            retired=retired,
+            cone_rows=arena.p6_final_cone_rows,
+            cone_origin=arena.p6_final_cone_origin,
+        ))
+
     def _private_history(self) -> Any:
+        return self.private_history_at_E
+
+    def _cache_history(self) -> Any:
         try:
             return self.live_cache[0][6]
         except Exception:
@@ -402,8 +506,10 @@ def _segment_commands(*, seq: int, count: int, mode: SegmentMode) -> tuple[Sweep
         add(SweepCommandKind.DECODER_PREPARE_SUFFIX, 20, 0, count, SweepPhase.ENCODER, False)
         add(SweepCommandKind.PUBLISH_FRONTIER, 20, 0, count, SweepPhase.ENCODER, False)
         if mode is SegmentMode.ENCODER_SOURCE_ONLY:
+            add(SweepCommandKind.P6_SOURCE_COMPLETE_AND_DETACH_CONE, None, 0, 0, SweepPhase.DEFERRED_DECODER, False)
             add(SweepCommandKind.ENCODER_ONLY_COMPLETE_INVALID, None, 0, count, SweepPhase.DEFERRED_DECODER, False)
             return tuple(commands)
+        add(SweepCommandKind.P6_SOURCE_COMPLETE_AND_DETACH_CONE, None, count - P6_LAYER20_INPUT_CONE_ROWS, P6_LAYER20_INPUT_CONE_ROWS, SweepPhase.DEFERRED_DECODER, False)
         for layer in range(20, 40):
             q = 1 + (39 - layer) * P6_LOCAL_PREPARE_ROWS
             r = q + P6_LOCAL_PREPARE_ROWS
@@ -498,6 +604,11 @@ def _frontier_from_cache(live_cache: list[Any]) -> int:
     if any(v != vals[0] for v in vals):
         raise P6AppendError("public slot0 frontiers diverge")
     return vals[0]
+
+
+def _set_cache_history(live_cache: list[Any], history: Any) -> None:
+    if live_cache:
+        live_cache[0][6] = history
 
 
 def _set_all_public_frontiers(live_cache: list[Any], frontier: int, language_model: Any) -> None:

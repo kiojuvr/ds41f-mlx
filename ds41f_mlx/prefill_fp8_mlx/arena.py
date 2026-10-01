@@ -39,6 +39,8 @@ class TensorSlot:
     value: Any = None
     alias_reuse_class: str | None = None
     allocation: SweepAllocation | None = None
+    row_origin: int = 0
+    rows: int | None = None
 
     @property
     def bound(self) -> bool:
@@ -51,6 +53,8 @@ class TensorSlot:
             "bound": self.bound,
             "alias_reuse_class": self.alias_reuse_class,
             "allocation": None if self.allocation is None else self.allocation.to_json(),
+            "row_origin": self.row_origin,
+            "rows": self.rows,
         }
 
 
@@ -279,6 +283,8 @@ class RequestArena:
     p6_final_cone_origin: int | None = None
     p6_final_cone_rows: int = 0
     p6_final_cone_detached: bool = False
+    p6_source_materialized: bool = False
+    p6_source_materialization_events: list[dict[str, object]] = field(default_factory=list)
 
     @classmethod
     def from_plan(
@@ -409,24 +415,45 @@ class RequestArena:
             "p6_final_cone_origin": self.p6_final_cone_origin,
             "p6_final_cone_rows": self.p6_final_cone_rows,
             "p6_final_cone_detached": self.p6_final_cone_detached,
+            "p6_source_materialized": self.p6_source_materialized,
+            "p6_source_materialization_events": list(self.p6_source_materialization_events),
             "command_count_applied": len(self.command_history),
         }
 
     def retire_encoder_range_after_source_boundary(self) -> None:
         """Drop transient full-range HC/pre/hash/selection references at P6 boundaries."""
+        self.carry.current.value = None
+        self.carry.next.value = None
+        self.carry.pre.value = None
+        self.input_ids.value = None
         self.encoder_final_h = None
         self.encoder_final_pre = None
         self.active_chunk_views.clear()
         self.suffix_views.clear()
         self.decoder_prepared_by_layer.clear()
+        self.publications.shared["idx"] = None
+        self.publications.shared["candidates"] = None
         self.engram.hashes.value = None
         self.engram.hashes.ownership = TensorOwnership.UNBOUND
 
-    def detach_final_decoder_cone(self, *, origin: int, rows: int) -> None:
+    def materialize_p6_source_boundary(self, *, command_index: int, frontier: int) -> None:
+        self.p6_source_materialized = True
+        self.p6_source_materialization_events.append({"command_index": int(command_index), "frontier": int(frontier)})
+
+    def detach_final_decoder_cone(self, *, origin: int, rows: int, h_value: Any | None = None, pre_value: Any | None = None, row_origin: int | None = None) -> None:
         """Record an owned bounded final decoder cone and release full parents."""
         self.p6_final_cone_origin = int(origin)
         self.p6_final_cone_rows = int(rows)
         self.p6_final_cone_detached = True
+        local_origin = int(origin if row_origin is None else row_origin)
+        if h_value is not None:
+            self.carry.current.value = h_value
+            self.carry.current.row_origin = local_origin
+            self.carry.current.rows = int(rows)
+        if pre_value is not None:
+            self.carry.pre.value = pre_value
+            self.carry.pre.row_origin = local_origin
+            self.carry.pre.rows = int(rows)
         self.encoder_final_h = None
         self.encoder_final_pre = None
         self.active_chunk_views.clear()

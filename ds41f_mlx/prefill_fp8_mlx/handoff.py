@@ -39,6 +39,10 @@ def _dtype(value: Any) -> str:
 
 def validate_committed_cache(setup: PrefillExecutionSetup, prefix_token_ids: Sequence[int]) -> int:
     """Scalar frontiers and array metadata only; never inspect tensor contents."""
+    if hasattr(setup, "final_setup") and hasattr(setup, "sealed"):
+        return _validate_p6_append_commit(setup, prefix_token_ids)
+    if hasattr(setup, "p6_commit_authority"):
+        return _validate_p6_append_commit(setup.p6_commit_authority, prefix_token_ids)
     arena, runner, manager = setup.arena, setup.block_runner, setup.publication_manager
     tx = arena.transaction
     if not tx.begun or not tx.committed or not tx.valid or tx.failed or manager.failed:
@@ -104,6 +108,48 @@ def validate_committed_cache(setup: PrefillExecutionSetup, prefix_token_ids: Seq
     return frontier
 
 
+def _validate_p6_append_commit(commit: Any, prefix_token_ids: Sequence[int]) -> int:
+    if not getattr(commit, "sealed", False):
+        raise LiveCacheHandoffError("P6 append commit is not sealed")
+    T = int(commit.T)
+    if tuple(int(t) for t in prefix_token_ids) != tuple(commit.prefix_token_ids) or len(prefix_token_ids) != T:
+        raise LiveCacheHandoffError("P6 complete prefix history mismatch")
+    if not (int(commit.E) == int(commit.D) == T):
+        raise LiveCacheHandoffError("P6 physical frontiers are incomplete")
+    if int(commit.history_position) != T:
+        raise LiveCacheHandoffError("P6 Engram history is not committed at T")
+    if any(v < T for v in commit.source_coverage.values()) or any(v < T for v in commit.layer_coverage.values()):
+        raise LiveCacheHandoffError("P6 coverage does not reach T")
+    setup = commit.final_setup
+    runner, manager = setup.block_runner, setup.publication_manager
+    if manager.pending_cumulative_by_layer or manager.pending_spans_by_layer or manager.visible_spans:
+        raise LiveCacheHandoffError("P6 append commit has pending row-span publication")
+    if runner.full_cache_repack_count != 0 or runner.prefill_continuation_exported or setup.arena.prefill_continuation_exported:
+        raise LiveCacheHandoffError("P6 append commit used forbidden export/repack")
+    if runner.logits_policy.compute_final_prefix_logits or not runner.final_logits_suppressed or runner.final_logits is not None:
+        raise LiveCacheHandoffError("P6 serving prefix logits must be suppressed")
+    cache = commit.live_cache
+    if cache is not runner.working_cache or cache is None or len(cache) != 40:
+        raise LiveCacheHandoffError("P6 commit does not own the same live cache")
+    for item in cache:
+        if getattr(item, "_p6_append_failed", False) or getattr(item, "_p6_append_invalid", False) or getattr(item, "_p6_append_pending", False) or not getattr(item, "_p6_append_sealed", False):
+            raise LiveCacheHandoffError("P6 cache is not sealed/admissible")
+        if getattr(item, "_p6_owner_token", None) != commit.owner_token:
+            raise LiveCacheHandoffError("P6 owner token mismatch")
+    # Reuse the existing structural cache validator through the truthful final setup,
+    # but bypass its per-sweep transaction predicate which P6 replaces.
+    c = runner.language_model._config
+    for layer, item in enumerate(cache):
+        try:
+            offset = int(item.size())
+        except AttributeError:
+            raw = item[0]
+            offset = int(raw.item()) if hasattr(raw, "item") else int(raw)
+        if offset != T:
+            raise LiveCacheHandoffError(f"P6 layer {layer} frontier {offset} != {T}")
+    return T
+
+
 @dataclass(init=False)
 class LivePrefillResult:
     """One-shot owner of the exact cache list produced by a committed setup."""
@@ -116,17 +162,20 @@ class LivePrefillResult:
 
     @classmethod
     def from_committed(cls, setup: PrefillExecutionSetup, *, prefix_token_ids: Sequence[int]) -> 'LivePrefillResult':
-        if setup.handoff_claimed or setup.block_runner.handoff_transferred:
+        actual_setup = setup.final_setup if hasattr(setup, "final_setup") and hasattr(setup, "sealed") else setup
+        if actual_setup.handoff_claimed or actual_setup.block_runner.handoff_transferred:
             raise LiveCacheHandoffError('live cache handoff already claimed')
         # Copy request-owned Python token metadata only; never cache tensors.
         ids = tuple(int(t) for t in prefix_token_ids)
         frontier = validate_committed_cache(setup, ids)
         result = cls()
         result.prefix_token_ids, result.frontier = ids, frontier
-        result._setup, result._live_cache = setup, setup.block_runner.working_cache
+        if setup is not actual_setup:
+            setattr(actual_setup, "p6_commit_authority", setup)
+        result._setup, result._live_cache = actual_setup, actual_setup.block_runner.working_cache
         result._state, result.handoff_count = 'ready', 0
-        setup.handoff_claimed = True
-        setup.block_runner.handoff_reserved = True
+        actual_setup.handoff_claimed = True
+        actual_setup.block_runner.handoff_reserved = True
         return result
 
     @property

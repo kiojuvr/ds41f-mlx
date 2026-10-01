@@ -53,9 +53,11 @@ from ds41f_mlx.prefill_fp8_mlx.p6_append import (
     AppendPlan,
     AppendState,
     DeferredPrefillAppend,
+    P6AppendCommit,
     P6AppendError,
     P6AppendPlanner,
     P6SegmentPlan,
+    P6SegmentRecord,
     SegmentMode,
 )
 from ds41f_mlx.prefill_fp8_mlx.planner import (
@@ -105,9 +107,11 @@ __all__ = [
     "MlxEvaluationPolicy",
     "OfficialFP8MLXBlockRunner",
     "OmlxV41SuffixMath",
+    "P6AppendCommit",
     "P6AppendError",
     "P6AppendPlanner",
     "P6SegmentPlan",
+    "P6SegmentRecord",
     "PrefillExecutionSetup",
     "PrefillSetupError",
     "PrefillStructuralTelemetry",
