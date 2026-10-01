@@ -272,7 +272,7 @@ class DeferredPrefillAppend:
         else:
             # Persistent cumulative handles remain in the live cache; old row spans are not carried.
             manager.append_transaction_active = True
-        runner = OfficialFP8MLXBlockRunner(self.language_model, manager, working_cache=self.live_cache)
+        runner = OfficialFP8MLXBlockRunner(self.language_model, manager, working_cache=self.live_cache, mx=self.mx)
         runner.p6_owner_token = self.owner_token
         return SegmentExecution(segment, arena, manager, runner)
 
@@ -334,6 +334,10 @@ class DeferredPrefillAppend:
             raise P6AppendError("final readiness check failed")
         try:
             last = self.final_execution
+            if any((r.mode is not SegmentMode.ORDINARY_COMPLETE_RANGE and not r.materialized) for r in self.segment_records):
+                raise P6AppendError("P6 materialization record missing at final seal")
+            if not any(r.cone_rows == P6_LAYER20_INPUT_CONE_ROWS for r in self.segment_records):
+                raise P6AppendError("P6 compact decoder cone was not acknowledged")
             if last.manager.pending_cumulative_by_layer or last.manager.pending_spans_by_layer:
                 raise P6AppendError("pending publications remain at final seal")
             last.manager.retire_row_spans()
@@ -360,6 +364,7 @@ class DeferredPrefillAppend:
                     setattr(cache, "_p6_owner_token", self.owner_token)
                 except Exception:
                     pass
+            last.runner.execution_revoked = True
             self.commit_certificate = commit
             self.live_setup = setup
             self.state = AppendState.SEALED

@@ -436,11 +436,15 @@ class RequestArena:
         self.engram.hashes.value = None
         self.engram.hashes.ownership = TensorOwnership.UNBOUND
 
-    def materialize_p6_source_boundary(self, *, command_index: int, frontier: int) -> None:
+    def materialize_p6_source_boundary(self, *, command_index: int, frontier: int, evaluated_slots: list[dict[str, int]]) -> None:
         self.p6_source_materialized = True
-        self.p6_source_materialization_events.append({"command_index": int(command_index), "frontier": int(frontier)})
+        self.p6_source_materialization_events.append({
+            "command_index": int(command_index),
+            "frontier": int(frontier),
+            "evaluated_slots": list(evaluated_slots),
+        })
 
-    def detach_final_decoder_cone(self, *, origin: int, rows: int, h_value: Any | None = None, pre_value: Any | None = None, row_origin: int | None = None) -> None:
+    def detach_final_decoder_cone(self, *, origin: int, rows: int, h_value: Any | None = None, next_value: Any | None = None, pre_value: Any | None = None, row_origin: int | None = None, next_row_origin: int | None = None) -> None:
         """Record an owned bounded final decoder cone and release full parents."""
         self.p6_final_cone_origin = int(origin)
         self.p6_final_cone_rows = int(rows)
@@ -450,6 +454,10 @@ class RequestArena:
             self.carry.current.value = h_value
             self.carry.current.row_origin = local_origin
             self.carry.current.rows = int(rows)
+        if next_value is not None:
+            self.carry.next.value = next_value
+            self.carry.next.row_origin = local_origin if next_row_origin is None else int(next_row_origin)
+            self.carry.next.rows = _rows_of(next_value)
         if pre_value is not None:
             self.carry.pre.value = pre_value
             self.carry.pre.row_origin = local_origin
@@ -489,6 +497,13 @@ class RequestArena:
     def _allocation_survives_deferred(self, role: str) -> bool:
         state = self.allocations.get(role)
         return bool(state and state.allocation.survives_deferred_decoder)
+
+
+def _rows_of(value: Any) -> int | None:
+    shape = getattr(value, "shape", None)
+    if shape is not None and len(shape) > 1:
+        return int(shape[1])
+    return None
 
 
 def _slot_for_role(allocations: dict[str, AllocationState], role: str, *, fallback_value: Any = None) -> TensorSlot:

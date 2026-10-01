@@ -100,6 +100,8 @@ class OfficialFP8MLXBlockRunner:
     handoff_transferred: bool = False
     closed: bool = False
     p6_owner_token: int | None = None
+    mx: Any | None = None
+    execution_revoked: bool = False
 
     def __post_init__(self) -> None:
         if self.suffix_math is None:
@@ -113,12 +115,12 @@ class OfficialFP8MLXBlockRunner:
                 result = self.execute_command(command, arena)
                 if result is not None:
                     batch_values.append(result)
-            self.eval_policy.maybe_eval_batch(batch_values, mx=getattr(self, "mx", None))
+            self.eval_policy.maybe_eval_batch(batch_values, mx=self.mx)
         finally:
             assert_no_reference_hot_path()
 
     def execute_command(self, command: SweepCommand, arena: RequestArena) -> Any | None:
-        if self.closed:
+        if self.closed or self.execution_revoked:
             raise BlockExecutionError('prefill runner capability is closed/revoked')
         self._assert_p6_cache_capability()
         if self.handoff_reserved or self.handoff_transferred:
@@ -252,7 +254,10 @@ class OfficialFP8MLXBlockRunner:
         if not cache:
             return
         invalid = any(getattr(c, "_p6_append_invalid", False) or getattr(c, "_p6_append_pending", False) for c in cache)
+        sealed = any(getattr(c, "_p6_append_sealed", False) for c in cache)
         failed = any(getattr(c, "_p6_append_failed", False) for c in cache)
+        if sealed:
+            raise BlockExecutionError("cache is sealed; prefill execution is revoked")
         if failed:
             raise BlockExecutionError("cache belongs to a failed P6 append")
         if invalid:
@@ -262,13 +267,58 @@ class OfficialFP8MLXBlockRunner:
 
     def _p6_materialize_and_detach(self, command: SweepCommand, arena: RequestArena, record: CommandExecutionRecord) -> None:
         frontier = int(getattr(arena, "p6_private_start", arena.base_frontier) or arena.base_frontier) + int(arena.plan.count)
-        arena.materialize_p6_source_boundary(command_index=command.index, frontier=frontier)
+        evaluated = self._p6_eval_persistent_source_state(arena)
         if command.rows > 0:
             origin = int(command.offset)
             private_start = int(getattr(arena, "p6_private_start", arena.base_frontier) or arena.base_frontier)
-            h = _owned_row_copy(arena.carry.current.value, origin, int(command.rows), role=arena.carry.current.role)
-            pre = _owned_row_copy(arena.carry.pre.value, origin, int(command.rows), role=arena.carry.pre.role)
-            arena.detach_final_decoder_cone(origin=private_start + origin, rows=int(command.rows), h_value=h, pre_value=pre, row_origin=origin)
+            q20_origin = int(arena.plan.count) - 2414
+            h = self._owned_row_copy(arena.carry.current.value, origin, int(command.rows), role=arena.carry.current.role)
+            nxt = self._owned_row_copy(arena.carry.next.value, q20_origin, 2414, role=arena.carry.next.role)
+            pre = self._owned_row_copy(arena.carry.pre.value, origin, int(command.rows), role=arena.carry.pre.role)
+            arena.detach_final_decoder_cone(origin=private_start + origin, rows=int(command.rows), h_value=h, next_value=nxt, pre_value=pre, row_origin=origin, next_row_origin=q20_origin)
+            arena.input_ids.value = None
+            arena.engram.hashes.value = None
+            arena.encoder_final_h = None
+            arena.encoder_final_pre = None
+            arena.active_chunk_views.clear()
+        arena.materialize_p6_source_boundary(command_index=command.index, frontier=frontier, evaluated_slots=evaluated)
+
+    def _p6_eval_persistent_source_state(self, arena: RequestArena) -> list[dict[str, int]]:
+        if self.working_cache is None:
+            raise BlockExecutionError("P6 source materialization requires a live cache")
+        mx = self.mx
+        if mx is None:
+            try:
+                mx = importlib.import_module("mlx.core")
+            except Exception:
+                mx = None
+        values: list[Any] = []
+        slots: list[dict[str, int]] = []
+        cfg = getattr(self.language_model, "_config", None)
+        source_layers = set(int(x) for x in getattr(cfg, "kv_source_layers", (2, 8, 14, 20))) | set(int(x) for x in getattr(cfg, "index_source_layers", (2, 8, 14, 20)))
+        for layer in range(20):
+            v = _get_cache_slot(self.working_cache[layer], 1)
+            if _p6_materializable_value(v):
+                values.append(v); slots.append({"layer": layer, "slot": 1})
+        for layer in sorted(source_layers):
+            if 0 <= layer < len(self.working_cache):
+                for slot in (2, 3, 4, 5):
+                    v = _get_cache_slot(self.working_cache[layer], slot)
+                    if _p6_materializable_value(v):
+                        values.append(v); slots.append({"layer": layer, "slot": slot})
+        if values:
+            if mx is None or not hasattr(mx, "eval"):
+                if not all(getattr(v, "allow_fake_eval", False) for v in values):
+                    raise BlockExecutionError("P6 source materialization requires mx.eval for persistent arrays")
+                fake_eval = getattr(values[0], "fake_eval", None)
+                if fake_eval is not None:
+                    fake_eval(values)
+            else:
+                mx.eval(*values)
+        return slots
+
+    def _owned_row_copy(self, value: Any, offset: int, rows: int, *, role: str) -> Any:
+        return _owned_row_copy(value, offset, rows, role=role, mx=self.mx)
 
     def _fill_empty_slots(self, cache: Any, layer: int) -> None:
         if cache is None:
@@ -323,6 +373,14 @@ class OfficialFP8MLXBlockRunner:
         }
 
 
+def _p6_materializable_value(value: Any) -> bool:
+    if value is None:
+        return False
+    if isinstance(value, (list, tuple)) and not value:
+        return False
+    return True
+
+
 def _layer_has_engram(layer: Any) -> bool:
     try:
         if "engram" in layer:
@@ -348,7 +406,7 @@ def _slice_rows(value: Any, offset: int, rows: int, *, role: str, row_origin: in
         raise BlockExecutionError(f"failed to slice arena slot {role} rows {offset}:{end}") from exc
 
 
-def _owned_row_copy(value: Any, offset: int, rows: int, *, role: str) -> Any:
+def _owned_row_copy(value: Any, offset: int, rows: int, *, role: str, mx: Any | None = None) -> Any:
     sliced = _slice_rows(value, offset, rows, role=role)
     detach = getattr(sliced, "detach_rows", None)
     if detach is not None:
@@ -359,14 +417,25 @@ def _owned_row_copy(value: Any, offset: int, rows: int, *, role: str) -> Any:
             return copy()
         except Exception:
             pass
-    try:
-        import mlx.core as mx  # type: ignore
-        copier = getattr(mx, "copy", None)
-        out = copier(sliced) if copier is not None else mx.array(sliced)
-        mx.eval(out)
-        return out
-    except Exception:
+    if mx is not None:
+        try:
+            copier = getattr(mx, "copy", None)
+            array_ctor = getattr(mx, "array", None)
+            if copier is not None:
+                out = copier(sliced)
+            elif array_ctor is not None:
+                out = array_ctor(sliced)
+            else:
+                raise BlockExecutionError("MLX module does not expose a compact copy primitive")
+            mx.eval(out)
+            return out
+        except BlockExecutionError:
+            raise
+        except Exception as exc:
+            raise BlockExecutionError(f"failed to create owned compact MLX rows for {role}") from exc
+    if getattr(sliced, "allow_fake_compact", False):
         return _CompactRows(sliced, rows)
+    raise BlockExecutionError(f"cannot prove owned compact rows for {role} without MLX copy or fake adapter capability")
 
 
 class _CompactRows:

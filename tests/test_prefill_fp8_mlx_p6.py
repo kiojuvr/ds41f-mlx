@@ -13,9 +13,10 @@ from ds41f_mlx.prefill_fp8_mlx import (
     PublicationManager,
     RequestArena,
     SegmentMode,
+    SweepCommandKind,
 )
 from ds41f_mlx.prefill_fp8_mlx.p6_append import _sweep_shell
-from test_prefill_fp8_mlx_p1_p2 import FakeLanguageModel, full_ready_cache
+from test_prefill_fp8_mlx_p1_p2 import FakeLanguageModel, FakeTensor, full_ready_cache
 
 
 class P6DeferredAppendStructuralTests(unittest.TestCase):
@@ -69,6 +70,68 @@ class P6DeferredAppendStructuralTests(unittest.TestCase):
             self.assertEqual(lm.layers[layer].calls, [])
         source_only_commands = app.plan.segments[0].commands
         self.assertFalse([c for c in source_only_commands if c.layer is not None and c.layer >= 20 and c.kind.value == 'encode_rows'])
+
+    def test_source_boundary_eval_and_failure_are_real_boundaries(self):
+        lm = FakeLanguageModel()
+        cache = full_ready_cache(0)
+        for layer in range(20):
+            cache[layer][1] = FakeTensor(f'window{layer}', rows=128)
+        for layer in (2, 8, 14, 20):
+            for slot in (2, 3, 4, 5):
+                cache[layer][slot] = FakeTensor(f'L{layer}s{slot}', rows=4)
+        mx = RecordingMx()
+        app = DeferredPrefillAppend.create(lm, cache, list(range(24577)), committed_frontier=0, mx=mx)
+        app.begin()
+        self.assertFalse(app.segment_records)
+        app.execute_segment(app.plan.segments[0])
+        self.assertTrue(mx.eval_calls)
+        event = app.segment_records[0]
+        self.assertTrue(event.materialized)
+        self.assertTrue(app.segment_records[0].retired)
+
+        bad_cache = full_ready_cache(0)
+        bad_cache[0][1] = FakeTensor('must_eval', rows=128)
+        bad = DeferredPrefillAppend.create(lm, bad_cache, list(range(24577)), committed_frontier=0, mx=RecordingMx(fail_eval=True))
+        bad.begin()
+        with self.assertRaises(Exception):
+            bad.execute_segment(bad.plan.segments[0])
+        self.assertEqual(bad.state.value, 'failed')
+
+    def test_decoder_cone_bounded_before_and_through_all_swaps(self):
+        lm = FakeLanguageModel()
+        cache = full_ready_cache(0)
+        app = DeferredPrefillAppend.create(lm, cache, list(range(24577)), committed_frontier=0)
+        app.begin()
+        app.execute_segment(app.plan.segments[0])
+        segment = app.plan.segments[1]
+        execn = app._make_segment_execution(segment)
+        saw_detach = False
+        for command in segment.commands:
+            execn.runner.execute_command(command, execn.arena)
+            if command.kind is SweepCommandKind.P6_SOURCE_COMPLETE_AND_DETACH_CONE:
+                saw_detach = True
+                self.assertLessEqual(execn.arena.carry.current.rows, 2541)
+                self.assertLessEqual(execn.arena.carry.next.rows, 2541)
+                self.assertLessEqual(execn.arena.carry.pre.rows, 2541)
+                self.assertIsNone(execn.arena.encoder_final_h)
+                self.assertIsNone(execn.arena.encoder_final_pre)
+            if saw_detach and command.kind is SweepCommandKind.SWAP_HC_AFTER_LAYER and command.layer is not None and command.layer >= 20:
+                for slot in (execn.arena.carry.current, execn.arena.carry.next, execn.arena.carry.pre):
+                    self.assertIsNotNone(slot.rows)
+                    self.assertLessEqual(slot.rows, 2541)
+                    self.assertLessEqual(command.offset - slot.row_origin, 2541)
+        self.assertTrue(saw_detach)
+
+    def test_real_copy_fail_closed_but_fake_adapter_is_explicit(self):
+        lm = FakeLanguageModel()
+        app = DeferredPrefillAppend.create(lm, full_ready_cache(0), list(range(16385)), committed_frontier=0, mx=RecordingMx(fail_copy=True))
+        with self.assertRaises(Exception):
+            app.execute_all()
+        self.assertEqual(app.state.value, 'failed')
+
+        ok = DeferredPrefillAppend.create(lm, full_ready_cache(0), list(range(16384)), committed_frontier=0)
+        ok.execute_all()
+        self.assertTrue(ok.final_execution.arena.p6_final_cone_detached)
 
     def test_final_decoder_cone_is_bounded_and_not_full_parent_view(self):
         lm = FakeLanguageModel()
@@ -151,6 +214,8 @@ class P6DeferredAppendStructuralTests(unittest.TestCase):
         self.assertEqual(result.frontier, 16385)
         self.assertIs(result.live_cache, app.live_cache)
         self.assertEqual(validate_committed_cache(result._setup, list(range(16385))), 16385)
+        with self.assertRaises(Exception):
+            app.final_execution.runner.execute_command(app.plan.segments[-1].commands[0], app.final_execution.arena)
 
     def test_failed_final_seal_marks_cache_inadmissible(self):
         class BadFrontierCache(type(full_ready_cache(0)[0])):
@@ -185,6 +250,63 @@ class P6DeferredAppendStructuralTests(unittest.TestCase):
         rebuilt = app.rebuild_with_tokens(list(range(129)))
         self.assertIsNot(rebuilt.live_cache, cache)
         self.assertEqual((rebuilt.C, rebuilt.E, rebuilt.D, rebuilt.T), (0, 0, 0, 129))
+
+
+class RecordingMx:
+    int64 = 'int64'
+    float32 = 'float32'
+
+    def __init__(self, *, fail_eval=False, fail_copy=False):
+        self.fail_eval = fail_eval
+        self.fail_copy = fail_copy
+        self.eval_calls = []
+        self.copy_calls = []
+
+    def array(self, ids, dtype=None):
+        return _FakeInput(ids)
+
+    def repeat(self, value, repeats, axis):
+        return FakeTensor('hc', rows=value.shape[1])
+
+    def zeros_like(self, value):
+        return FakeTensor('zeros', rows=value.shape[1])
+
+    def arange(self, n):
+        return _FakeArray(range(n))
+
+    def broadcast_to(self, value, shape):
+        return FakeTensor('pre', rows=shape[1] if len(shape) > 1 else 1)
+
+    def copy(self, value):
+        if self.fail_copy:
+            raise RuntimeError('copy failed')
+        rows = value.shape[1] if hasattr(value, 'shape') and len(value.shape) > 1 else 1
+        out = FakeTensor('compact_copy', rows=rows)
+        out.allow_fake_compact = False
+        self.copy_calls.append(value)
+        return out
+
+    def eval(self, *values):
+        if self.fail_eval:
+            raise RuntimeError('eval failed')
+        self.eval_calls.append(values)
+
+
+class _FakeInput:
+    def __init__(self, ids):
+        self.ids = list(ids)
+        self.shape = (1, len(self.ids))
+    def __getitem__(self, item):
+        if item is None:
+            return self
+        return self.ids[item]
+
+
+class _FakeArray(list):
+    def astype(self, dtype):
+        return self
+    def __eq__(self, other):
+        return _FakeArray([x == other for x in self])
 
 
 if __name__ == '__main__':

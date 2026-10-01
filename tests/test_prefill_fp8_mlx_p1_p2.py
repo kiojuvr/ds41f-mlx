@@ -454,6 +454,8 @@ class FakeTensor:
         self.shape = (1, rows, 4, 8)
         self.last_slice = None
         self.writes = []
+        self.allow_fake_compact = True
+        self.allow_fake_eval = True
 
     def __getitem__(self, item):
         if isinstance(item, tuple) and len(item) > 1 and isinstance(item[1], slice):
@@ -463,6 +465,8 @@ class FakeTensor:
             if stop > self.shape[1]:
                 raise IndexError("slice out of range")
             out = FakeTensor(f"{self.name}[{start}:{stop}]", rows=stop - start)
+            out.allow_fake_compact = self.allow_fake_compact
+            out.allow_fake_eval = self.allow_fake_eval
             out.last_slice = (start, stop - start)
             return out
         return self
