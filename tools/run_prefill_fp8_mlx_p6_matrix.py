@@ -33,6 +33,9 @@ def cache_geom(cache):
 def segment_diag(app, seg, execn, elapsed):
     recs = execn.runner.records if execn is not None else []
     last = recs[-1] if recs else None
+    p7_events = []
+    if execn is not None and getattr(execn.runner, 'scheduling_coordinator', None) is not None:
+        p7_events = list(execn.runner.scheduling_coordinator.telemetry.events)
     return {
         'seq': seg.seq, 'mode': seg.mode.value, 'start': seg.start, 'count': seg.count,
         'elapsed_wall_s': elapsed, 'effective_tokens_per_s': (seg.count / elapsed if elapsed > 0 else None),
@@ -40,6 +43,14 @@ def segment_diag(app, seg, execn, elapsed):
         'last_completed_command': None if last is None else getattr(last.kind, 'value', str(last.kind)),
         'last_completed_layer': None if last is None else last.layer,
         'records': len(recs),
+        'p7': {
+            'enabled': bool(p7_events),
+            'prefetch_submissions': sum(1 for e in p7_events if e.get('event') == 'engram_prefetch_submit'),
+            'exact_match_consumptions': sum(1 for e in p7_events if e.get('event') == 'engram_consume' and e.get('exact_prefetch')),
+            'fallback_mismatches': sum(1 for e in p7_events if e.get('event') == 'engram_prefetch_mismatch'),
+            'drains': sum(1 for e in p7_events if e.get('event') == 'engram_prefetch_drain'),
+            'read_ahead_already_ready': sum(1 for e in p7_events if e.get('event') == 'ssd_read_ahead' and e.get('result') == 'ALREADY_READY'),
+        },
         'source_generations': dict(app.source_generation_counts),
         'public_frontiers_head': fronts(app.live_cache)[:4],
     }
@@ -112,8 +123,9 @@ def main(argv=None):
     ap.add_argument('--case', required=True, choices=['tiny-16385','A-24577','A-control','B-fresh-49155','B-continued','failure-rebuild'])
     ap.add_argument('--checkpoint', type=Path, default=Path('/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash'))
     ap.add_argument('--out', type=Path)
+    ap.add_argument('--p7-overlap', action='store_true', help='qualification-only: enable P7 FULL_RESIDENT_BACKBONE_SSD_ENGRAM scheduling')
     args=ap.parse_args(argv)
-    report={'case':args.case,'status':'FAIL','checkpoint':str(args.checkpoint)}
+    report={'case':args.case,'status':'FAIL','checkpoint':str(args.checkpoint),'p7_overlap_enabled':bool(args.p7_overlap)}
     model=None
     try:
         import mlx.core as mx
@@ -123,6 +135,8 @@ def main(argv=None):
         if report['environment_preflight']['mlx_version']!='0.32.2': raise RuntimeError('MLX qualification version mismatch')
         report['runtime_authority']=runtime_authority(lang)
         report['stage']='checkpoint_load'; model,_=load(args.checkpoint,preserve_mtp=False,engram_ssd_offload=True); lm=model.language_model
+        if args.p7_overlap:
+            lm._p7_enable_overlap = True
         def run_app(name, app, ids, *, p5=True):
             report['plan']=[(s.start,s.count,s.mode.value) for s in app.plan.segments]
             report['token_digest_sha256_int32le']=digest(ids)
