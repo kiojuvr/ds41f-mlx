@@ -230,17 +230,17 @@ def main(argv=None):
             return app
         if args.case=='p7-complete-2048':
             lm._p7_enable_overlap=True; ids=tokens(2048); app=make_app(lm,mx,ids); run_app(args.case,app,ids)
-            assert fronts(app.live_cache)==[2048]*40
+            assert report['frontiers_after_seal']==[2048]*40
             assert report['p5']['prompt_replay_count']==0 and report['commit']['full_cache_repack_count']==0 and not report['commit']['exported']
             if report['engram_read_instrumentation']['background_prefetch_reads'] <= 0: raise RuntimeError('P7 donor background reads not observed')
         elif args.case=='p7-complete-8192':
             lm._p7_enable_overlap=True; ids=tokens(8192); app=make_app(lm,mx,ids); run_app(args.case,app,ids)
-            assert fronts(app.live_cache)==[8192]*40
+            assert report['frontiers_after_seal']==[8192]*40
             if report['engram_read_instrumentation']['background_prefetch_reads'] < 2: raise RuntimeError('expected both Engram tables to prefetch')
             if report['engram_read_instrumentation']['foreground_fallback_reads'] != 0: raise RuntimeError('unexpected foreground Engram fallback')
         elif args.case=='p7-complete-16384':
             lm._p7_enable_overlap=True; ids=tokens(16384); app=make_app(lm,mx,ids); run_app(args.case,app,ids)
-            assert fronts(app.live_cache)==[16384]*40
+            assert report['frontiers_after_seal']==[16384]*40
             if report['engram_read_instrumentation']['background_prefetch_reads'] < 4: raise RuntimeError('expected two chunks for both Engram tables')
             if report['engram_read_instrumentation']['foreground_fallback_reads'] != 0: raise RuntimeError('unexpected foreground Engram fallback')
         elif args.case=='p7-pending-16384':
