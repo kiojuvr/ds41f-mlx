@@ -99,8 +99,8 @@ Closeout run summary:
 - cancellation: one follow-up turn cancelled after one generated token, returned to idle, and subsequent recipe turns continued successfully;
 - invalid non-extension input: rejected before cache mutation;
 - diagnostics: bounded scalar/token evidence; no hidden replay/fallback;
-- memory: process resident high-water after model load remained approximately 18.3 GiB over the repeated-turn run;
-- decode: per-turn measured decode throughput remained in the roughly 8.7-14.9 tok/s range for this short-context run, without progressive collapse.
+- memory: process resident high-water after model load remained approximately 16.9 GiB over the repeated-turn run;
+- decode: per-turn measured decode throughput remained in the roughly 19.9-20.3 tok/s range for this short-context run, without progressive collapse.
 
 The environment lacked the `deepseek_recipe._native` Python extension after dependency repair, so the runner used a text-only thinking-mode renderer transcribed from the pinned official `deepseek-recipe-encoding/src/v4` source plus the pinned official tokenizer JSON. The fallback reproduces the M7 minimal `hi` prompt length/terminal (`31`, terminal `<think>` token `128821`) and records its provenance in the artifact. M7 remains the direct Python-binding serving qualification; M8's boundary evidence is source-derived for the simple text chat subset and uses the same tokenizer and prompt semantics.
 
