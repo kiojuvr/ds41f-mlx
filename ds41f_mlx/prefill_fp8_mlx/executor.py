@@ -15,6 +15,7 @@ from ds41f_mlx.prefill_fp8_mlx.arena import RequestArena
 from ds41f_mlx.prefill_fp8_mlx.block_runner import OfficialFP8MLXBlockRunner
 from ds41f_mlx.prefill_fp8_mlx.planner import SweepPlan
 from ds41f_mlx.prefill_fp8_mlx.publications import PublicationManager, PublicationTopology
+from ds41f_mlx.prefill_fp8_mlx.p8_optimizer import P8ExecutionOptimizer
 
 
 class PrefillSetupError(RuntimeError):
@@ -114,7 +115,8 @@ class DwarfStarFP8MLXPrefillExecutorSetup:
         )
         topology = PublicationTopology.from_model_config(self.language_model._config)
         manager = PublicationManager(arena, topology=topology)
-        runner = OfficialFP8MLXBlockRunner(self.language_model, manager, image_mask=image_mask, working_cache=working_cache)
+        p8_optimizer = getattr(self.language_model, "_p8_optimizer", None) or P8ExecutionOptimizer.from_env(mx=self.mx)
+        runner = OfficialFP8MLXBlockRunner(self.language_model, manager, image_mask=image_mask, working_cache=working_cache, p8_optimizer=p8_optimizer)
         if history is not None and working_cache:
             _set_cache_slot(working_cache[0], 6, history)
         return PrefillExecutionSetup(arena=arena, publication_manager=manager, block_runner=runner, continuation=cont)

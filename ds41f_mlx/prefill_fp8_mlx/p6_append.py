@@ -17,6 +17,7 @@ from .block_runner import OfficialFP8MLXBlockRunner, _make_cache_offset
 from .executor import PrefillExecutionSetup, PrefillSetupError
 from .planner import SweepAllocation, SweepCommand, SweepCommandKind, SweepPhase, SweepPlan
 from .publications import PublicationManager, PublicationTopology
+from .p7_scheduling import SchedulingTelemetry
 
 P6_CARRY_CAPACITY = 16384
 P6_FINAL_TAIL_THRESHOLD = 8192
@@ -137,6 +138,7 @@ class P6SegmentRecord:
     retired: bool
     cone_rows: int = 0
     cone_origin: int | None = None
+    scheduling_events: tuple[dict[str, Any], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -311,7 +313,7 @@ class DeferredPrefillAppend:
         else:
             # Persistent cumulative handles remain in the live cache; old row spans are not carried.
             manager.append_transaction_active = True
-        runner = OfficialFP8MLXBlockRunner(self.language_model, manager, working_cache=self.live_cache, mx=self.mx)
+        runner = OfficialFP8MLXBlockRunner(self.language_model, manager, working_cache=self.live_cache, mx=self.mx, p8_optimizer=getattr(self.language_model, "_p8_optimizer", None))
         runner.p6_owner_token = self.owner_token
         return SegmentExecution(segment, arena, manager, runner)
 
@@ -460,6 +462,7 @@ class DeferredPrefillAppend:
             retired=retired,
             cone_rows=arena.p6_final_cone_rows,
             cone_origin=arena.p6_final_cone_origin,
+            scheduling_events=tuple(dict(e) for e in getattr(getattr(getattr(self.active_execution, "runner", None), "scheduling_coordinator", None), "telemetry", SchedulingTelemetry()).events),
         ))
 
     def _private_history(self) -> Any:

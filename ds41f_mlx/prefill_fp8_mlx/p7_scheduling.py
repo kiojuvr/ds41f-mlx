@@ -296,20 +296,32 @@ def _slice_sequence(value: Any, offset: int, rows: int) -> Any:
         return value
 
 
-def _concat_sequence(values: list[Any], *, like: Any) -> Any:
+def _concat_sequence(values: list[Any], *, like: Any, p8_optimizer: Any | None = None) -> Any:
     if not values:
         return like
     if len(values) == 1:
-        return values[0]
+        result = values[0]
+        if p8_optimizer is not None and getattr(p8_optimizer, "enabled", False):
+            p8_optimizer.shape_registry.record_microtile_concat(outputs=values, result=result, references_released=True)
+        return result
     concat_rows = getattr(values[0], "concat_rows", None)
     if concat_rows is not None:
-        return concat_rows(values)
+        result = concat_rows(values)
+        if p8_optimizer is not None and getattr(p8_optimizer, "enabled", False):
+            p8_optimizer.shape_registry.record_microtile_concat(outputs=values, result=result, references_released=True)
+        return result
     try:
         import mlx.core as mx  # type: ignore
-        return mx.concatenate(values, axis=1)
+        result = mx.concatenate(values, axis=1)
+        if p8_optimizer is not None and getattr(p8_optimizer, "enabled", False):
+            p8_optimizer.shape_registry.record_microtile_concat(outputs=values, result=result, references_released=True)
+        return result
     except Exception as exc:
         if all(hasattr(v, "shape") for v in values):
-            return _MicrotileConcat(values)
+            result = _MicrotileConcat(values)
+            if p8_optimizer is not None and getattr(p8_optimizer, "enabled", False):
+                p8_optimizer.shape_registry.record_microtile_concat(outputs=values, result=result, references_released=False)
+            return result
         raise P7SchedulingError("cannot reassemble Engram microtiles") from exc
 
 
@@ -341,7 +353,7 @@ def _donor_issue_observed(donor: Any, embed: Any) -> bool:
 
 
 class SchedulingCoordinator:
-    def __init__(self, language_model: Any, *, mx: Any | None = None, qualification: LoaderQualification | None = None, telemetry: SchedulingTelemetry | None = None):
+    def __init__(self, language_model: Any, *, mx: Any | None = None, qualification: LoaderQualification | None = None, telemetry: SchedulingTelemetry | None = None, p8_optimizer: Any | None = None):
         self.language_model = language_model
         self.telemetry = telemetry or SchedulingTelemetry()
         self.residency = ResidencyPolicy(qualification)
@@ -349,6 +361,7 @@ class SchedulingCoordinator:
         self.read_ahead = ReadAheadPolicy(self.residency)
         self.materialization = MaterializationPolicy(mx, self.telemetry)
         self.engram = EngramPrefetchController(language_model, self.telemetry)
+        self.p8_optimizer = p8_optimizer
         self.active = False
         self.revoked = False
 
@@ -401,7 +414,7 @@ class SchedulingCoordinator:
             self.materialization.after_engram_incorporated(h_after, pre_micro)
             outputs.append(h_after)
             self.engram.after_microtarget(target, arena, hash_slice_fn)
-        return _concat_sequence(outputs, like=h_chunk)
+        return _concat_sequence(outputs, like=h_chunk, p8_optimizer=self.p8_optimizer)
 
     def seal_success(self) -> None:
         self.engram.drain()

@@ -60,6 +60,14 @@ from ds41f_mlx.prefill_fp8_mlx.p6_append import (
     P6SegmentRecord,
     SegmentMode,
 )
+from ds41f_mlx.prefill_fp8_mlx.p8_optimizer import (
+    ExistingKernelFastPathVerifier,
+    GraphReusePolicy,
+    MaterializationOptimizer,
+    P8ExecutionOptimizer,
+    PerformanceTelemetry,
+    ShapeClassRegistry,
+)
 from ds41f_mlx.prefill_fp8_mlx.p7_scheduling import (
     LoaderQualification,
     P7BackendPolicy,
@@ -123,6 +131,12 @@ __all__ = [
     "P6SegmentRecord",
     "P7BackendPolicy",
     "P7SchedulingError",
+    "P8ExecutionOptimizer",
+    "ExistingKernelFastPathVerifier",
+    "GraphReusePolicy",
+    "MaterializationOptimizer",
+    "PerformanceTelemetry",
+    "ShapeClassRegistry",
     "PrefillExecutionSetup",
     "PrefillSetupError",
     "PrefillStructuralTelemetry",

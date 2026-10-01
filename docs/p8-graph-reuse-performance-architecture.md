@@ -241,3 +241,84 @@ Rollback immediately if any candidate:
 - fails cold first-request or warm same-shape methodology.
 
 Promotion is scoped per optimization and does not promote the production selector or global runtime completion.
+
+## 16. P8 evidence package implementation results (2026-10-01)
+
+Implemented package: `ds41f_mlx/prefill_fp8_mlx/p8_optimizer.py`.
+
+Components are opt-in only (`DS41F_P8_OPTIMIZER=1` or explicit `P8ExecutionOptimizer(enabled=True)`) and do not alter the production selector. `GraphReusePolicy` and `MaterializationOptimizer` remain planned interfaces only; they perform no production work. No custom kernels and no whole stateful layer compilation were introduced.
+
+Evidence artifacts:
+
+- `artifacts/p8-evidence/p8-coldwarm-8192.json`
+- `artifacts/p8-evidence/p8-coldwarm-8192.supervisor.log`
+- `artifacts/p8-evidence/p8-coldwarm-16384.json`
+- `artifacts/p8-evidence/p8-coldwarm-16384.supervisor.log`
+
+Structural regression: `PYTHONPATH=tests /Users/kioju/.venvs/omlx-0.7.0.dev2/bin/python3 -m unittest discover -s tests -v` passed: 84 tests OK.
+
+Same-process cold/warm results:
+
+| family | cold prefill s | warm1 s | warm2 s | warm3 s | warm median s | cold/warm |
+|---|---:|---:|---:|---:|---:|---:|
+| 8192 | 8.9079 | 8.8008 | 8.6887 | 8.7345 | 8.7345 | 1.0199 |
+| 16384 | 16.4453 | 16.3612 | 16.3126 | 16.4070 | 16.3612 | 1.0051 |
+
+Interpretation: outcome B from the P8 review taxonomy. First-request to warm improvement is small and within the same order as run-to-run noise; graph construction/cache warmup is not currently proven dominant.
+
+Observed shape classes:
+
+- 8192-family direct request: command geometry is two 4096 encoder command chunks per encoder layer, plus 2048 Engram microtiles, decoder suffix `Q(L)`, and ordinary 1-token tail. This is recorded as `encoder_short_final` command shape rather than a single `encoder8192` command, while the request family remains 8192.
+- 16384-family P6 request: source segment records actual `encoder8192` command shape classes (40 distinct layer/module signatures across two 8192 source commands), plus decoder suffix `Q(L)`, ordinary 1-token tail, and a final short/P6 boundary signature.
+- Shape registry stores scalar metadata only and separates shape identity from layer/module identity, weight identity class, and side-effect class.
+
+Fast-path observations from the cold requests:
+
+| component | 8192 fast/fallback calls | 16384 fast/fallback calls | notes |
+|---|---:|---:|---|
+| HC fused paths | 389 / 0 | 375 / 0 | `fused_hc_projection`, `fused_hc_pre_norm`, `fused_hc_post` directly observed. |
+| Attention | 0 / 23 | 0 / 20 | `packed_sparse_attention` directly observed. `mlx._glm.deepseek_v41_packed_attention` was `UNAVAILABLE` at the wrapped seam, so GLM fast-path absence is seam-limited evidence, not a kernel-failure claim. |
+| Index | 12 / 0 | 11 / 0 | `packed_index_topk` and `packed_index_scores` directly observed; source/publication geometry determines use. |
+| Quantized projection | 501 / 0 | 487 / 0 | `mx.quantized_matmul` directly observed. |
+| MoE | 62 / 0 | 59 / 0 | `combine_sorted_experts` observed. Grouped/gather QMM symbols wrapped in the attempted modules were `UNAVAILABLE`; classify as `UNAVAILABLE`, not fallback. |
+
+P7 donor evidence: foreground Engram fallback was 0 for all cold/warm repeats. Background microtile reads were 8 for each 8192-family request and 32 for each 16384-family request (two 8192 source segments, two Engram layers, four 2048 microtiles per layer per source segment).
+
+`_write_rows` audit: real MLX used the `MLX slice assignment` branch in all observed writes (126 calls in 8192 cold, 120 in 16384 cold). No `assign_rows` hook was observed.
+
+Engram concat/reassembly audit: 8192-family cold recorded four two-part concatenations to `[1, 4096, 4, 5120]`; 16384-family cold recorded four four-part concatenations to `[1, 8192, 4, 5120]`. Python microtile references are released after reassembly in the instrumentation scope. No artificial evaluation was inserted at concat.
+
+P6 detach materialization attribution: 16384 cold recorded `P6_SOURCE_COMPLETE_AND_DETACH_CONE` elapsed wall time 4.4411s. Memory proxy before/after was active 312,847,817,016 -> 314,864,784,632 bytes, cache 14,647,420,570 -> 17,009,208,026 bytes, peak 315,667,354,880 -> 319,629,252,136 bytes. This remains an inclusive boundary: upstream lazy graph materialization may be charged here.
+
+Limitations:
+
+- Wrapping `mlx._glm.deepseek_v41_packed_attention` and `mlx._glm.deepseek_v41_grouped_expert` reported `UNAVAILABLE`; pinned oMLX may expose GLM symbols through a different seam. These are not classified as fallbacks.
+- Activation quantization is recorded at a donor-level route (`quantize_activation`) plus `mx.quantized_matmul`; per-internal primitive branch remains partially caller-branch evidence.
+- P5/decode timing fields are reserved in the same-process harness output but not populated by this initial prefill-focused evidence run.
+- Aggregate regions are inclusive/overlapping: `ENCODE_ROWS` includes nested Engram micro-pipeline work, and P6 detach can materialize preceding lazy work. No percentages should be summed across overlapping regions.
+
+## 17. P8 first-target decision / next-unit contract
+
+Decision: **recommend no optimization yet**.
+
+Reason: none of the allowed target classes currently satisfies all selection criteria simultaneously.
+
+- Existing fast-path miss: not proven. HC, index, quantized matmul, and MoE combine routes are observed. Attention GLM/grouped symbols are unobservable at the attempted seam and must remain `UNAVAILABLE/UNKNOWN`, not a missed optimization.
+- Graph reuse / compile: cold-to-warm ratios are only 1.0199 (8192) and 1.0051 (16384), so compile/cache warmup is not proven material.
+- Engram concat/reassembly: concat shape and retention evidence exists, but materialized cost is not isolated from downstream lazy graph execution.
+- `_write_rows`: branch evidence exists (`MLX slice assignment`), but large impact is not yet measured.
+- P6 detach: large inclusive time is measured, but P6 detach is a required lifetime/correctness boundary and removal is explicitly out of scope. Attribution must be refined before proposing grouping or copy reduction.
+
+Concrete next-unit specification (evidence-only, not an optimization):
+
+- target: isolate materialization attribution for Engram concat and `_write_rows` graph retention feeding the existing `P6_SOURCE_COMPLETE_AND_DETACH_CONE` boundary.
+- measured reason: P6 detach is 4.4411s inclusive on 16384 and memory rises by ~2.02GB active / ~2.36GB cache, while concat and slice-write graph nodes remain plausible upstream contributors.
+- affected functions: `SchedulingCoordinator.apply_engram_micro_pipeline`, `_concat_sequence`, `_write_rows`, `OfficialFP8MLXBlockRunner._p6_materialize_and_detach`.
+- frozen invariants: DwarfStar command order, P6 deferred-decoder geometry, `P7_ENGRAM_TILE=2048`, PublicationManager ownership, DeepseekV41Cache authority, P5 zero replay, qualified boundaries, and zero foreground Engram fallback.
+- candidate change: none in the next unit; add only more precise telemetry around existing references/liveness and already-required materialization boundaries.
+- correctness comparison: identical P0-P7 structural tests, P7 donor reads, frontiers, cache slot structure, and no production selector change.
+- performance benchmark: same-process 8192 and 16384 cold + 3 warm, same deterministic tokens, fresh cache each request, separate shape-family process.
+- memory benchmark: active/cache/peak memory before encoder tile, after Engram reassembly, after layer19, before P6 detach, after P6 detach.
+- promotion threshold for any future candidate: repeatable absolute and percentage improvement outside warm run-to-run noise, no correctness regression, no meaningful memory regression, and no hidden first-request catastrophe.
+- rollback mechanism: package-level P8 flag; any candidate must have a separate rollback switch and default disabled state.
+- stop conditions: foreground Engram fallback > 0, P5 replay, command/frontier mismatch, new tensor-to-NumPy/list conversion, new `mx.eval`/`mx.synchronize` in measured internal path, abnormal memory growth, or failure to isolate a non-required boundary.
