@@ -287,6 +287,21 @@ class OMLXGenerationSession:
             self.stop_reason = finish_reason
             if response.prompt_cache is not None:
                 self._final_cache = response.prompt_cache
+                self._final_all_tokens = self.current_token_history()
+            elif self.uid is not None:
+                # M11 evidence showed that waiting until request cleanup after a
+                # natural stop can lose the scheduler-owned cache for a finished
+                # request.  Extract immediately at the same consumed-token
+                # boundary, before later cleanup/HTTP completion can remove it.
+                try:
+                    extracted = self._bg.extract_cache([self.uid])
+                    if self.uid in extracted:
+                        self._final_cache, all_tokens = extracted[self.uid]
+                        self._final_all_tokens = [int(t) for t in all_tokens]
+                        self.token_frontier = len(self._final_all_tokens)
+                except Exception:
+                    self._final_cache = None
+                    self._final_all_tokens = None
         return report
 
     def generate(self, count: int) -> list[OMLXGenerationStepReport]:
