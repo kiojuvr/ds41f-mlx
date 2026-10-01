@@ -1,118 +1,132 @@
 {
-  "cancellation": {
-    "implemented": "backend async generator finally calls OMLXGenerationSession.stop()/close(); InferenceStreamingResponse.aclose on disconnect",
-    "runtime_smoke": "NOT_RUN_TO_COMPLETION"
-  },
-  "classification": "DEEPSEEK_RECIPE_TEXT_SERVING_PATH_NOT_QUALIFIED_PREFILL_GENERALIZATION_BLOCKED",
-  "deepseek_recipe": {
-    "path": "/Volumes/SDXC-512/deepseek-v41-flash-mlx/third_party/deepseek-recipe",
-    "python_build": "pypi wheel installed in qualification venv",
-    "revision": "8cadfede7063c896b944e7bae05daa3549ae97ea",
-    "version": "0.1.1"
-  },
-  "generation_options": {
-    "sampler": "mlx_lm.sample_utils.make_sampler",
-    "supported": [
-      "max_tokens/max_output_tokens",
-      "temperature",
-      "top_p"
+  "arbitrary_length_matrix": {
+    "lengths": [
+      1,
+      2,
+      3,
+      15,
+      16,
+      17,
+      29,
+      30,
+      31,
+      32,
+      33,
+      63,
+      64,
+      65,
+      127,
+      128,
+      129,
+      255,
+      256,
+      257,
+      511,
+      512,
+      513,
+      2048
     ],
-    "unsupported_policy": "reject invalid/unrepresentable options rather than silently ignoring"
+    "reason": "implementation promoted; bounded raw-token real-model selector qualification still required before serving qualification",
+    "status": "NOT_RUN_REAL_MODEL"
   },
-  "next_frontier": "generalize/accelerate real DwarfStar PrefillContinuationState production prefill for arbitrary recipe-encoded prompt lengths, preserving no replay",
-  "no_replay_gate": {
-    "implemented_in_backend": true,
-    "prompt_replay_count": null,
-    "requires_runtime_completion": true
+  "cancellation_disconnect": "NOT_RUN_REAL_HTTP",
+  "classification": "M7_NOT_QUALIFIED",
+  "ds41f_git_commit": "247d55844d1807fc60ff20de1572f158a0b4953d",
+  "failed_surface": "Real-model arbitrary-length dense P0-P7 matrix and real loopback HTTP serving gates have not yet been run in this pass.",
+  "health_models": {
+    "health": "implemented: alive/model_ready/fatal_error without model forward",
+    "models": "implemented: exposes deepseek-v4.1-flash and aliases"
   },
-  "parser_ownership_gate": {
-    "body": {
-      "choices": [
-        {
-          "finish_reason": "stop",
-          "index": 0,
-          "logprobs": null,
-          "message": {
-            "content": "Recipe parsed answer",
-            "reasoning_content": "",
-            "role": "assistant"
-          }
-        }
-      ],
-      "created": 0,
-      "id": "parser-gate",
-      "model": "deepseek-v4.1-flash",
-      "object": "chat.completion",
-      "system_fingerprint": null,
-      "usage": {
-        "completion_tokens": 4,
-        "prompt_cache_hit_tokens": 0,
-        "prompt_cache_miss_tokens": 0,
-        "prompt_tokens": 0,
-        "prompt_tokens_details": {
-          "cached_tokens": 0
-        },
-        "total_tokens": 4
-      }
-    },
-    "passed": true,
-    "token_chunks_used": true
+  "http_endpoint_results": {
+    "chat_completions_non_stream": "NOT_RUN",
+    "chat_completions_streaming": "NOT_RUN",
+    "messages": "NOT_RUN_SCOPE_DEPENDS_ON_PINNED_RECIPE",
+    "responses_non_stream": "NOT_RUN",
+    "responses_streaming": "NOT_RUN"
   },
-  "prompt_split_gate": {
-    "chat_first_decode_input": 128821,
-    "chat_prefill_tokens": 30,
-    "chat_prompt_tokens": 31,
-    "invariant_prefill_plus_one": true,
-    "responses_prefill_tokens": 30,
-    "responses_prompt_tokens": 31,
-    "rule": "prefill=tokens[:-1], first_input=tokens[-1]"
+  "invalid_requests": "NOT_RUN_REAL_HTTP",
+  "live_cache_handoff": {
+    "implementation": "serving now calls handoff_to_generation(prefill_result.live_result, terminal_prompt_token=terminal)",
+    "prompt_replay_fallback": "FORBIDDEN_NOT_IMPLEMENTED",
+    "repack_export": "FORBIDDEN"
   },
-  "real_http_smoke": {
-    "chat_completions_non_stream": "NOT_RUN_TO_COMPLETION",
-    "chat_completions_stream": "NOT_RUN_TO_COMPLETION",
-    "messages": "PREPARE_SUPPORTED_NOT_MODEL_SMOKED",
-    "reason": "real recipe prompt encodes ~30+ tokens; current DwarfStar PrefillContinuationState builder timed out on 30-token prefix (>900s) and odd 29-token prefix exposes existing ratio-2 reshape limitation; no oMLX prompt replay fallback was used",
-    "responses_non_stream": "NOT_RUN_TO_COMPLETION",
-    "responses_stream": "NOT_RUN_TO_COMPLETION"
+  "prompt_split": {
+    "contract": "prefix=tokens[:-1], terminal=tokens[-1]",
+    "minimal_chat_prefill_tokens_previous_evidence": 30,
+    "minimal_chat_prompt_tokens_previous_evidence": 31
   },
-  "recipe_tokenizer": {
-    "direct_conversation_encode": true,
-    "no_double_template": true,
-    "source": "/Volumes/SDXC-512/deepseek-v41-flash-mlx/third_party/deepseek-recipe/static/tokenizers/v41/tokenizer.json"
-  },
-  "runtime": {
+  "provenance": {
     "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
-    "mlx_version": "0.32.2",
+    "mlx_version": null,
+    "mtp_dspark": "OFF",
     "omlx_path": "/Users/kioju/omlx-0.7.0.dev2",
-    "omlx_revision": "b390b31e0c6831225fed0f24d278eb1db7fcb68b"
-  },
-  "schema": "ds41f.m7.deepseek-recipe-serving.v1",
-  "serving": {
-    "default_bind": "127.0.0.1",
-    "model_identifier": "deepseek-v4.1-flash",
-    "modules": [
-      "ds41f_mlx/serving/deepseek_recipe_backend.py",
-      "ds41f_mlx/serving/server.py"
-    ],
-    "server_entrypoint": "tools/run_ds41f_recipe_server.py",
+    "omlx_revision": "b390b31e0c6831225fed0f24d278eb1db7fcb68b",
+    "p8_tile_native": "OFF",
     "single_flight": true,
-    "supported_endpoints": [
-      "/v1/chat/completions",
-      "/v1/responses",
-      "/v1/messages"
-    ],
     "text_only": true
   },
-  "streaming_gate": {
-    "implemented": "StreamingResponse yields recipe StreamProcessor chunks as backend tokens arrive",
-    "incremental_real_model_observation": "NOT_RUN_TO_COMPLETION"
+  "ratio_2_29_30_31_regression": {
+    "required_fields": [
+      "pending slot4 geometry",
+      "pending slot5 geometry",
+      "compressed KV rows",
+      "index K rows",
+      "all40 frontier"
+    ],
+    "status": "NOT_RUN_REAL_MODEL"
   },
-  "unsupported_features": [
-    "multimodal/images rejected before image fetch/preprocess",
-    "MTP/DSpark",
-    "multi-request batching",
-    "tool execution",
+  "recipe_tokenizer": {
+    "authority": "DeepseekV41Encoding.with_tokenizer(...).encode(conversation)",
+    "deepseek_recipe_version": null,
+    "path": "/Volumes/SDXC-512/deepseek-v41-flash-mlx/third_party/deepseek-recipe",
+    "revision": "8cadfede7063c896b944e7bae05daa3549ae97ea"
+  },
+  "recommended_next_phase_if_m7_qualifies": "long-session robustness (not started)",
+  "remaining_unqualified": [
+    "production selector real-model arbitrary-length matrix",
+    "29/30/31 ratio-2 regression",
+    "minimal recipe production prefill latency",
+    "Chat Completions real HTTP non-stream/stream",
+    "Responses real HTTP non-stream/stream",
+    "Messages scope smoke",
+    "cancellation/disconnect",
+    "invalid-request atomicity",
+    "single-flight overlap",
+    "10-request lifecycle",
+    "long-session robustness",
     "KV restore/resume",
-    "long-session persistence"
-  ]
+    "multi-request batching",
+    "multimodal",
+    "MTP/DSpark"
+  ],
+  "schema": "ds41f.m7.deepseek-recipe-serving.v2",
+  "selector": {
+    "legacy_one_chunk": "DIAGNOSTIC_LEGACY_NOT_SELECTED",
+    "production_prefill_selector": "DENSE_P0_P7",
+    "reference_vertical_slice": "DIAGNOSTIC_ONLY_NOT_SELECTED_BY_PRODUCTION",
+    "scope": [
+      "DwarfStar facade",
+      "DenseP0P7PrefillSession",
+      "DeferredPrefillAppend",
+      "LivePrefillResult",
+      "P5 handoff_to_generation",
+      "P7 FULL_RESIDENT_BACKBONE_SSD_ENGRAM P7_ENGRAM_TILE=2048",
+      "P8 tile-native OFF"
+    ],
+    "status": "IMPLEMENTED_NOT_QUALIFIED"
+  },
+  "sequential_request_lifecycle": "NOT_RUN_REAL_HTTP",
+  "single_flight": "IMPLEMENTED_LOCK_AND_SINGLE_EXECUTOR_NOT_REAL_HTTP_QUALIFIED",
+  "streaming": "NOT_RUN_REAL_HTTP",
+  "structural_tests": {
+    "command": "PYTHONPATH=tests /Users/kioju/.venvs/omlx-0.7.0.dev2/bin/python3 -m unittest discover -s tests -v",
+    "status": "PASS",
+    "tests_run": 100
+  },
+  "trace_retention": {
+    "default_limit": 32,
+    "env": "DS41F_TRACE_HISTORY_LIMIT",
+    "policy": "bounded deque",
+    "unit_test": "PASS"
+  }
 }

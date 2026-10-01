@@ -32,7 +32,7 @@ Accepts chat-completion requests for the target model path. Supported request op
 
 ## Backend/runtime ownership
 
-Runtime architecture selection is governed by `docs/runtime-strategy.md` and `docs/implementation-plan.md`. The current native implementation is the correctness/reference runtime and a source of reusable components; DwarfStar-derived prefill and the eventual selected decode architecture define the intended production path once qualified.
+Runtime architecture selection is governed by `docs/runtime-strategy.md` and `docs/implementation-plan.md`. Current M7 serving selection is `PRODUCTION_PREFILL_SELECTOR = DENSE_P0_P7`: official recipe encoding supplies complete prompt tokens, serving holds out `tokens[-1]`, prefill commits `tokens[:-1]` through `DeferredPrefillAppend`, and P5 `handoff_to_generation()` supplies the held-out terminal token exactly once to oMLX `GenerationBatch` MTP-OFF. Prompt replay, cache repack/export, MTP/DSpark, multimodal input, reference vertical-slice serving, and the legacy one-chunk prefill substrate are not production API paths.
 
 A fully connected native HTTP serving path is not claimed until explicitly validated. Until then, API behavior should be described per backend used by a deployment.
 

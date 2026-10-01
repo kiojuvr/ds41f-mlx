@@ -32,6 +32,12 @@ DwarfStar and oMLX are not correctness authorities. They are production architec
 
 ### Prefill
 
+**Decision:** `PRODUCTION_PREFILL = DENSE_P0_P7`.
+
+The runtime-facing DwarfStar prefill facade now selects the M6-qualified dense P0-P7 path: DwarfStar-derived command topology, P6 `DeferredPrefillAppend`, P7 `FULL_RESIDENT_BACKBONE_SSD_ENGRAM` with `P7_ENGRAM_TILE=2048`, live `DeepseekV41Cache`, and P5 zero-replay handoff to oMLX `GenerationBatch` MTP-OFF. P8 tile-native carry is OFF and fail-closed for production (`TILE_NATIVE_CARRY_REJECTED_NO_E2E_GAIN`). The old one-chunk oMLX layer-loop substrate is classified as `ONE_CHUNK_SUBSTRATE = DIAGNOSTIC / LEGACY` and is not selected by serving or performance qualification.
+
+This selection is justified by P0-P7 structural gate qualification, P8 structural optimization closure, and M6 performance qualification through 200K.
+
 The intended production prefill direction is DwarfStar-derived DeepSeek-V4.1 architecture unless a future documented audit finds stronger contrary evidence.
 
 The interrupted DwarfStar-derived line has real project value. It is not complete production runtime, but it is more than obsolete tooling. Repository evidence shows:

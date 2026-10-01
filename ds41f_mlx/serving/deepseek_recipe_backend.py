@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import asyncio
+from collections import deque
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -13,9 +14,8 @@ import os
 import subprocess
 import sys
 
-import numpy as np
-
-from ds41f_mlx.runtime.dwarfstar_prefill import DwarfStarMLXPrefillSession
+from ds41f_mlx.runtime.dwarfstar_prefill import DwarfStarMLXPrefillSession, PRODUCTION_PREFILL_SELECTOR
+from ds41f_mlx.prefill_fp8_mlx import handoff_to_generation
 from ds41f_mlx.runtime.omlx_core import DEFAULT_CHECKPOINT, DEFAULT_OMLX, OmlxRuntime, OmlxRuntimeConfig
 from ds41f_mlx.runtime.omlx_decode import OMLXDecodeConfig
 from ds41f_mlx.runtime.omlx_generation import OMLXGenerationSession
@@ -27,21 +27,18 @@ REFERENCE_VERTICAL_SLICE_CLASSIFICATION = 'PRODUCTION_PREFILL_REGRESSED_TO_REFER
 
 
 def build_production_prefill_state_guarded(checkpoint: Path, native_out_dir: Path, tokens: list[int]):
-    """Reject the bounded validation vertical slice on the serving hot path.
+    """Permanent guard: the reference vertical slice is not production serving."""
 
-    The DwarfStarPrefillVerticalSliceExecutor currently enters
-    OfficialModelMath.execute_block(), which is an official-source-derived
-    NumPy/reference validation helper.  It is useful for correctness fixtures but
-    must not silently act as production prefill for recipe serving.
-    """
+    raise RuntimeError(
+        f'{REFERENCE_VERTICAL_SLICE_CLASSIFICATION}: reference vertical slice serving is disabled. '
+        'Production serving uses PRODUCTION_PREFILL_SELECTOR=DENSE_P0_P7; '
+        'DS41F_ALLOW_REFERENCE_VERTICAL_SLICE_SERVING is ignored by the production path.'
+    )
 
-    if os.environ.get('DS41F_ALLOW_REFERENCE_VERTICAL_SLICE_SERVING') != '1':
-        raise RuntimeError(
-            f'{REFERENCE_VERTICAL_SLICE_CLASSIFICATION}: serving prefill is still bound to '
-            'DwarfStarPrefillVerticalSliceExecutor -> OfficialModelMath.execute_block() -> '
-            'official-source-derived validation helper block(); refusing production request. '
-            'Set DS41F_ALLOW_REFERENCE_VERTICAL_SLICE_SERVING=1 only for bounded diagnostics.'
-        )
+
+def build_diagnostic_reference_prefill_state(checkpoint: Path, native_out_dir: Path, tokens: list[int]):
+    """Explicit diagnostic-only access to the old reference vertical slice."""
+
     from tools.run_m4_omlx_base_decode_qualification import build_prefill_state
     return build_prefill_state(checkpoint, native_out_dir, tokens)
 
@@ -76,9 +73,17 @@ class RequestTrace:
     prompt_tokens: int
     prefill_tokens: int
     first_decode_input: int
+    production_prefill_selector: str | None = None
+    prefill_segment_count: int | None = None
+    prefill_frontier: int | None = None
+    same_live_cache_handoff: bool | None = None
+    handoff_count: int | None = None
+    prompt_replay_count: int | None = None
+    full_cache_repack_count: int | None = None
+    exported: bool | None = None
     initial_admitted_frontier: int | None = None
     frontier_after_first_input: int | None = None
-    prompt_replay_count: int | None = None
+    frontier_after_terminal: int | None = None
     prefill_seconds: float | None = None
     prefill_phase_timings_s: dict[str, float] | None = None
     generated_tokens: list[int] = field(default_factory=list)
@@ -98,9 +103,17 @@ class RequestTrace:
             'prompt_tokens': self.prompt_tokens,
             'prefill_tokens': self.prefill_tokens,
             'first_decode_input': self.first_decode_input,
+            'production_prefill_selector': self.production_prefill_selector,
+            'prefill_segment_count': self.prefill_segment_count,
+            'prefill_frontier': self.prefill_frontier,
+            'same_live_cache_handoff': self.same_live_cache_handoff,
+            'handoff_count': self.handoff_count,
+            'prompt_replay_count': self.prompt_replay_count,
+            'full_cache_repack_count': self.full_cache_repack_count,
+            'exported': self.exported,
             'initial_admitted_frontier': self.initial_admitted_frontier,
             'frontier_after_first_input': self.frontier_after_first_input,
-            'prompt_replay_count': self.prompt_replay_count,
+            'frontier_after_terminal': self.frontier_after_terminal,
             'prefill_seconds': self.prefill_seconds,
             'prefill_phase_timings_s': self.prefill_phase_timings_s,
             'generated_tokens': list(self.generated_tokens),
@@ -134,8 +147,9 @@ class DeepSeekRecipeRuntimeBackend:
         self._lock = asyncio.Lock()
         self._runtime: OmlxRuntime | None = None
         self._model = None
-        self.traces: list[RequestTrace] = []
+        self.traces: deque[RequestTrace] = deque(maxlen=int(os.environ.get('DS41F_TRACE_HISTORY_LIMIT', '32')))
         self.last_trace: RequestTrace | None = None
+        self.fatal_error: str | None = None
 
     def load(self) -> None:
         if self._runtime is not None:
@@ -191,16 +205,25 @@ class DeepSeekRecipeRuntimeBackend:
             max_tokens = self.max_tokens(request.inference_options)
             prefill_session = DwarfStarMLXPrefillSession(self._model, omlx_path=self.omlx_path)
             prefill_result = await self._call(prefill_session.prefill, prefix)
+            trace.production_prefill_selector = getattr(prefill_result, 'production_prefill_selector', PRODUCTION_PREFILL_SELECTOR)
             trace.prefill_seconds = float(prefill_result.seconds)
             trace.prefill_phase_timings_s = {k: float(v) for k, v in prefill_result.phase_timings_s.items()}
+            trace.prefill_segment_count = len(getattr(prefill_result, 'segment_metadata', ()))
+            trace.prefill_frontier = int(prefill_result.frontier)
+            trace.full_cache_repack_count = int(getattr(prefill_result, 'full_cache_repack_count', 0))
+            trace.exported = bool(getattr(prefill_result, 'portable_state_exported', False))
+            if trace.production_prefill_selector != PRODUCTION_PREFILL_SELECTOR or trace.prefill_frontier != len(prefix):
+                raise RuntimeError('production DENSE_P0_P7 prefill selector/frontier gate failed')
             cfg = OMLXDecodeConfig(omlx_path=self.omlx_path, checkpoint_path=self.checkpoint, engram_ssd_offload=True, preserve_mtp=False, speculation_enabled=False)
-            session = await self._call(lambda: OMLXGenerationSession.from_prefilled_cache(self._model, prefill_result.live_cache, prefill_result.token_ids, cfg, max_tokens=max_tokens, sampler=sampler))
+            session = await self._call(lambda: handoff_to_generation(prefill_result.live_result, self._model, terminal_prompt_token=first, config=cfg, max_tokens=max_tokens, sampler=sampler))
             trace.initial_admitted_frontier = session.admitted_frontier
-            await self._call(lambda: session.start(first, max_tokens=max_tokens))
             trace.frontier_after_first_input = session.token_frontier
+            trace.frontier_after_terminal = session.token_frontier
             trace.prompt_replay_count = session.prompt_replay_count
-            if trace.prompt_replay_count != 0 or trace.initial_admitted_frontier != len(prefix):
-                raise RuntimeError('no-replay/admission accounting gate failed')
+            trace.same_live_cache_handoff = True
+            trace.handoff_count = int(prefill_result.live_result.handoff_count)
+            if trace.prompt_replay_count != 0 or trace.initial_admitted_frontier != len(prefix) or trace.frontier_after_terminal != len(prefix) + 1:
+                raise RuntimeError('P5 no-replay terminal-holdout accounting gate failed')
             yield InferenceChunk.ready(prompt_usage=PromptUsage(prompt_tokens=len(request.token_ids), prompt_cache_hit_tokens=0))
             while len(trace.generated_tokens) < max_tokens:
                 report = await self._call(session.next_token)

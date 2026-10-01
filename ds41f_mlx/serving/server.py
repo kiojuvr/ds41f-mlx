@@ -19,7 +19,7 @@ from fastapi.responses import JSONResponse, Response, StreamingResponse
 from starlette.concurrency import run_in_threadpool
 from starlette.types import Receive, Scope, Send
 
-from ds41f_mlx.serving.deepseek_recipe_backend import DeepSeekRecipeRuntimeBackend, RecipePreparedRequest, DEFAULT_RECIPE, DEFAULT_MODEL_ID
+from ds41f_mlx.serving.deepseek_recipe_backend import DeepSeekRecipeRuntimeBackend, RecipePreparedRequest, DEFAULT_RECIPE, DEFAULT_MODEL_ID, MODEL_ALIASES
 
 PROTOCOL_TYPES = {
     'chat_completions': (ChatCompletionRequest, ChatCompletionResponse),
@@ -144,6 +144,18 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
             content = ''.join([part async for part in output])
             return Response(content, media_type='application/json')
         return handler
+
+    @app.get('/health')
+    async def health() -> Response:
+        fatal = getattr(backend, 'fatal_error', None)
+        ready = getattr(backend, '_model', None) is not None
+        status = 'unavailable' if fatal else ('ready' if ready else 'alive')
+        code = 503 if fatal else 200
+        return JSONResponse(status_code=code, content={'status': status, 'process_alive': True, 'model_ready': ready, 'fatal_error': fatal})
+
+    @app.get('/v1/models')
+    async def models() -> Response:
+        return JSONResponse(content={'object': 'list', 'data': [{'id': model_id, 'object': 'model', 'owned_by': 'ds41f', 'aliases': sorted(MODEL_ALIASES)}]})
 
     for path, protocol in (('/v1/chat/completions','chat_completions'),('/v1/responses','responses'),('/v1/messages','messages')):
         app.add_api_route(path, api_handler(protocol), methods=['POST'], name=protocol)
