@@ -336,6 +336,15 @@ class P6DeferredAppendStructuralTests(unittest.TestCase):
         with self.assertRaises(Exception):
             LivePrefillContinuation.from_cache(cache)
 
+    def test_small_ordinary_only_append_seals_without_compact_cone(self):
+        lm = ContractFrontierLanguageModel()
+        app = fake_p6_app(lm, p6_ready_cache(lm, 0, shape_frontier=129), list(range(129)), committed_frontier=0)
+        app.execute_all()
+        self.assertEqual((app.C, app.E, app.D, app.T), (0, 129, 129, 129))
+        self.assertTrue(all(offset_value(c[0]) == 129 for c in app.live_cache))
+        self.assertFalse(any(r.cone_rows == 2541 for r in app.segment_records))
+        self.assertEqual(validate_committed_cache(app.commit_certificate, list(range(129))), 129)
+
     def test_failed_append_rebuilds_with_fresh_cache_not_rewind(self):
         lm = ContractFrontierLanguageModel()
         cache = full_ready_cache(0)

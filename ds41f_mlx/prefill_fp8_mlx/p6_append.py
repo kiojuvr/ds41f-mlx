@@ -375,7 +375,7 @@ class DeferredPrefillAppend:
             last = self.final_execution
             if any((r.mode is not SegmentMode.ORDINARY_COMPLETE_RANGE and not r.materialized) for r in self.segment_records):
                 raise P6AppendError("P6 materialization record missing at final seal")
-            if not any(r.cone_rows == P6_LAYER20_INPUT_CONE_ROWS for r in self.segment_records):
+            if any(r.mode is not SegmentMode.ORDINARY_COMPLETE_RANGE for r in self.segment_records) and not any(r.cone_rows == P6_LAYER20_INPUT_CONE_ROWS for r in self.segment_records):
                 raise P6AppendError("P6 compact decoder cone was not acknowledged")
             if last.manager.pending_cumulative_by_layer or last.manager.pending_spans_by_layer:
                 raise P6AppendError("pending publications remain at final seal")
