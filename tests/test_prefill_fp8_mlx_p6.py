@@ -192,6 +192,48 @@ class P6DeferredAppendStructuralTests(unittest.TestCase):
         self.assertEqual(fresh.commit_certificate.T, 24577)
         self.assertEqual(tuple(fresh.live_setup.arena.tokens), tuple(range(24576, 24577)))
 
+    def test_continue_from_sealed_commit_transfers_pending_ownership(self):
+        lm = ContractFrontierLanguageModel()
+        seed = fake_p6_app(lm, p6_ready_cache(lm, 0, shape_frontier=16384), list(range(16384)), committed_frontier=0)
+        seed.execute_all()
+        prior = seed.commit_certificate
+        old_runner = seed.final_execution.runner
+        continued = DeferredPrefillAppend.continue_from_commit(lm, prior, list(range(16385)), mx=RecordingMx())
+        self.assertEqual((continued.C, continued.E, continued.D, continued.T), (16384, 16384, 16384, 16385))
+        self.assertIs(continued.live_cache, prior.live_cache)
+        with self.assertRaises(Exception):
+            old_runner.execute_command(seed.plan.segments[-1].commands[0], seed.final_execution.arena)
+        with self.assertRaises(Exception):
+            LivePrefillResult.from_committed(prior, prefix_token_ids=list(range(16384)))
+        self.assertTrue(all(getattr(c, '_p6_append_invalid', False) and getattr(c, '_p6_append_pending', False) and not getattr(c, '_p6_append_sealed', True) for c in continued.live_cache))
+        self.assertTrue(all(getattr(c, '_p6_owner_token', None) == continued.owner_token for c in continued.live_cache))
+        execn = continued.execute_segment(continued.plan.segments[0])
+        self.assertIsNotNone(execn)
+        self.assertEqual((continued.E, continued.D), (16385, 16385))
+        self.assertEqual(_frontiers(continued.live_cache), [16384] * 40)
+
+    def test_continue_from_commit_rejects_invalid_prior_authority(self):
+        def committed():
+            lm = ContractFrontierLanguageModel()
+            app = fake_p6_app(lm, p6_ready_cache(lm, 0, shape_frontier=16384), list(range(16384)), committed_frontier=0)
+            app.execute_all()
+            return lm, app.commit_certificate
+        mutations = {
+            'failed': lambda c: setattr(c.live_cache[0], '_p6_append_failed', True),
+            'pending': lambda c: setattr(c.live_cache[0], '_p6_append_pending', True),
+            'wrong_owner': lambda c: setattr(c.live_cache[0], '_p6_owner_token', -1),
+            'wrong_frontier': lambda c: c.live_cache[0].__setitem__(0, ArrayMetadata((1,), 'int32', 99)),
+            'p5_reserved': lambda c: setattr(c.final_setup, 'handoff_claimed', True),
+            'p5_transferred': lambda c: setattr(c.final_setup.block_runner, 'handoff_transferred', True),
+            'different_cache_identity': lambda c: setattr(c.final_setup.block_runner, 'working_cache', p6_ready_cache(ContractFrontierLanguageModel(), 16384)),
+        }
+        for name, mutate in mutations.items():
+            with self.subTest(name=name):
+                lm, commit = committed()
+                mutate(commit)
+                with self.assertRaises(P6AppendError):
+                    DeferredPrefillAppend.continue_from_commit(lm, commit, list(range(16385)), mx=RecordingMx())
+
     def test_private_engram_history_feeds_second_segment_and_not_public_slot6(self):
         lm = FakeLanguageModel()
         cache = full_ready_cache(0)
@@ -331,6 +373,10 @@ def offset_value(offset):
     if hasattr(offset, 'value'):
         return int(offset.value)
     return int(offset)
+
+
+def _frontiers(cache):
+    return [offset_value(c[0]) for c in cache]
 
 
 class P6Cache(FakeCache):

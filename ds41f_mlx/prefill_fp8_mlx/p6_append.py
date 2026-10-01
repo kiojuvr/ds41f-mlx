@@ -208,6 +208,45 @@ class DeferredPrefillAppend:
         plan = P6AppendPlanner(capacity=capacity).plan(C=C, T=len(request_token_history))
         return cls(language_model=language_model, live_cache=live_cache, request_token_history=tuple(int(t) for t in request_token_history), plan=plan, mx=mx)
 
+    @classmethod
+    def continue_from_commit(cls, language_model: Any, prior_commit: P6AppendCommit, request_token_history: Sequence[int], *, capacity: int = P6_CARRY_CAPACITY, mx: Any | None = None) -> "DeferredPrefillAppend":
+        if not getattr(prior_commit, "sealed", False):
+            raise P6AppendError("prior P6 commit is not sealed")
+        C, E, D, T = int(prior_commit.C), int(prior_commit.E), int(prior_commit.D), int(prior_commit.T)
+        if C > T or E != T or D != T or int(prior_commit.history_position) != T:
+            raise P6AppendError("prior P6 commit frontiers are not coherent")
+        if len(prior_commit.prefix_token_ids) != T:
+            raise P6AppendError("prior P6 commit token history length mismatch")
+        setup = prior_commit.final_setup
+        runner = setup.block_runner
+        cache = prior_commit.live_cache
+        if cache is not runner.working_cache or cache is None or len(cache) != 40:
+            raise P6AppendError("prior P6 commit does not own the same live cache")
+        if setup.handoff_claimed or runner.handoff_reserved or runner.handoff_transferred:
+            raise P6AppendError("prior P6 commit has been reserved/transferred for P5")
+        if any(v < T for v in prior_commit.source_coverage.values()) or any(v < T for v in prior_commit.layer_coverage.values()):
+            raise P6AppendError("prior P6 commit coverage does not reach T")
+        if _frontier_from_cache(cache) != T:
+            raise P6AppendError("prior P6 public frontier mismatch")
+        for item in cache:
+            if getattr(item, "_p6_append_failed", False) or getattr(item, "_p6_append_invalid", False) or getattr(item, "_p6_append_pending", False) or not getattr(item, "_p6_append_sealed", False):
+                raise P6AppendError("prior P6 cache is not sealed/admissible for continuation")
+            if getattr(item, "_p6_owner_token", None) != prior_commit.owner_token:
+                raise P6AppendError("prior P6 owner token mismatch")
+        plan = P6AppendPlanner(capacity=capacity).plan(C=T, T=len(request_token_history))
+        app = cls(language_model=language_model, live_cache=cache, request_token_history=tuple(int(t) for t in request_token_history), plan=plan, mx=mx)
+        app.state = AppendState.PENDING
+        app.stale_generation += 1
+        for item in cache:
+            try:
+                setattr(item, "_p6_append_sealed", False)
+                setattr(item, "_p6_append_invalid", True)
+                setattr(item, "_p6_append_pending", True)
+                setattr(item, "_p6_owner_token", app.owner_token)
+            except Exception:
+                pass
+        return app
+
     def begin(self) -> None:
         if self.state is not AppendState.VALID:
             raise P6AppendError("append already begun or not valid")
