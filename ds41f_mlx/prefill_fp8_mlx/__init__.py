@@ -49,6 +49,15 @@ from ds41f_mlx.prefill_fp8_mlx.omlx_suffix_math import (
     OmlxV41SuffixMath,
     SuffixMathError,
 )
+from ds41f_mlx.prefill_fp8_mlx.p6_append import (
+    AppendPlan,
+    AppendState,
+    DeferredPrefillAppend,
+    P6AppendError,
+    P6AppendPlanner,
+    P6SegmentPlan,
+    SegmentMode,
+)
 from ds41f_mlx.prefill_fp8_mlx.planner import (
     ResumeUnavailableError,
     SemanticBoundary,
@@ -96,6 +105,9 @@ __all__ = [
     "MlxEvaluationPolicy",
     "OfficialFP8MLXBlockRunner",
     "OmlxV41SuffixMath",
+    "P6AppendError",
+    "P6AppendPlanner",
+    "P6SegmentPlan",
     "PrefillExecutionSetup",
     "PrefillSetupError",
     "PrefillStructuralTelemetry",
@@ -121,6 +133,10 @@ __all__ = [
     "TensorOwnership",
     "TensorSlot",
     "TransactionState",
+    "AppendPlan",
+    "AppendState",
+    "DeferredPrefillAppend",
+    "SegmentMode",
     "UnsupportedTopologyError",
     "assert_deepseek_v41_topology",
     "assert_no_reference_hot_path",

@@ -159,7 +159,8 @@ class OfficialFP8MLXBlockRunner:
         lm = self.language_model
         layer_id = int(command.layer)
         layer = lm.layers[layer_id]
-        absolute_start = int(arena.base_frontier) + int(command.offset)
+        private_start = getattr(arena, "p6_private_start", None)
+        absolute_start = int(arena.base_frontier if private_start is None else private_start) + int(command.offset)
         record.absolute_start = absolute_start
         h_chunk = _slice_rows(arena.carry.current.value, command.offset, command.rows, role=arena.carry.current.role)
         pre_chunk = _slice_rows(arena.carry.pre.value, command.offset, command.rows, role=arena.carry.pre.role)
@@ -195,13 +196,16 @@ class OfficialFP8MLXBlockRunner:
             raise BlockExecutionError("decoder_prepare_suffix requires a layer")
         role = arena.decoder_prepare_role(command)
         cache = self._cache_for_layer(int(command.layer))
-        absolute_start = int(arena.base_frontier) + int(command.offset)
+        private_start = getattr(arena, "p6_private_start", None)
+        absolute_start = int(arena.base_frontier if private_start is None else private_start) + int(command.offset)
         record.absolute_start = absolute_start
         if role == "decoder_full_source_publish":
             if arena.encoder_final_h is None or arena.encoder_final_pre is None:
                 raise BlockExecutionError("layer20 full-source publication requires immutable encoder-final h/pre")
             shared = self.publication_manager.shared_for_span(int(command.layer), 0, command.rows)
-            self.suffix_math.publish_full_source(layer_id=int(command.layer), h_full=arena.encoder_final_h, pre_full=arena.encoder_final_pre, cache=cache, shared=shared, absolute_start=int(arena.base_frontier), rows=arena.plan.count)
+            private_start = getattr(arena, "p6_private_start", None)
+            source_start = int(arena.base_frontier if private_start is None else private_start)
+            self.suffix_math.publish_full_source(layer_id=int(command.layer), h_full=arena.encoder_final_h, pre_full=arena.encoder_final_pre, cache=cache, shared=shared, absolute_start=source_start, rows=arena.plan.count)
             self.publication_manager.capture_layer_outputs(int(command.layer), shared, command_index=command.index, offset=0, rows=arena.plan.count, keys=("kv", "index_k"))
             record.invoked_full_source_publish = True
             return
@@ -222,9 +226,12 @@ class OfficialFP8MLXBlockRunner:
     def _advance_cache_layer(self, cache: Any, absolute_end: int, *, arena: RequestArena, layer: int) -> None:
         if cache is None:
             return
-        _set_cache_slot(cache, 0, _make_cache_offset(absolute_end, self.language_model))
-        if layer == 0 and arena.engram.history.value is not None:
-            _set_cache_slot(cache, 6, arena.engram.history.value)
+        if getattr(arena, "p6_freeze_public_offsets", False):
+            arena.p6_private_layer_frontiers[int(layer)] = int(absolute_end)
+        else:
+            _set_cache_slot(cache, 0, _make_cache_offset(absolute_end, self.language_model))
+            if layer == 0 and arena.engram.history.value is not None:
+                _set_cache_slot(cache, 6, arena.engram.history.value)
         self._fill_empty_slots(cache, layer)
 
     def _fill_empty_slots(self, cache: Any, layer: int) -> None:

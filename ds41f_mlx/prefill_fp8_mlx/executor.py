@@ -37,6 +37,8 @@ class LivePrefillContinuation:
     def frontier(self) -> int:
         if not self.live_cache or len(self.live_cache) != 40:
             raise PrefillSetupError("live continuation requires 40 layer caches")
+        if any(getattr(c, "_p6_append_invalid", False) or getattr(c, "_p6_append_failed", False) for c in self.live_cache):
+            raise PrefillSetupError("live continuation cache is owned by an invalid/failed P6 append")
         frontiers = tuple(_cache_frontier(c) for c in self.live_cache)
         if any(v != frontiers[0] for v in frontiers):
             raise PrefillSetupError(f"live continuation cache frontiers diverge: {frontiers[:8]}")

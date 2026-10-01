@@ -270,6 +270,15 @@ class RequestArena:
     command_history: list[dict[str, object]] = field(default_factory=list)
     cache_materialized: bool = False
     prefill_continuation_exported: bool = False
+    p6_public_frontier: int | None = None
+    p6_private_start: int | None = None
+    p6_freeze_public_offsets: bool = False
+    p6_segment_mode: str | None = None
+    p6_segment_origin: int | None = None
+    p6_private_layer_frontiers: dict[int, int] = field(default_factory=dict)
+    p6_final_cone_origin: int | None = None
+    p6_final_cone_rows: int = 0
+    p6_final_cone_detached: bool = False
 
     @classmethod
     def from_plan(
@@ -391,8 +400,36 @@ class RequestArena:
             "active_allocation_roles": list(self.active_allocation_roles()),
             "cache_materialized": self.cache_materialized,
             "prefill_continuation_exported": self.prefill_continuation_exported,
+            "p6_public_frontier": self.p6_public_frontier,
+            "p6_private_start": self.p6_private_start,
+            "p6_freeze_public_offsets": self.p6_freeze_public_offsets,
+            "p6_segment_mode": self.p6_segment_mode,
+            "p6_segment_origin": self.p6_segment_origin,
+            "p6_private_layer_frontiers": dict(self.p6_private_layer_frontiers),
+            "p6_final_cone_origin": self.p6_final_cone_origin,
+            "p6_final_cone_rows": self.p6_final_cone_rows,
+            "p6_final_cone_detached": self.p6_final_cone_detached,
             "command_count_applied": len(self.command_history),
         }
+
+    def retire_encoder_range_after_source_boundary(self) -> None:
+        """Drop transient full-range HC/pre/hash/selection references at P6 boundaries."""
+        self.encoder_final_h = None
+        self.encoder_final_pre = None
+        self.active_chunk_views.clear()
+        self.suffix_views.clear()
+        self.decoder_prepared_by_layer.clear()
+        self.engram.hashes.value = None
+        self.engram.hashes.ownership = TensorOwnership.UNBOUND
+
+    def detach_final_decoder_cone(self, *, origin: int, rows: int) -> None:
+        """Record an owned bounded final decoder cone and release full parents."""
+        self.p6_final_cone_origin = int(origin)
+        self.p6_final_cone_rows = int(rows)
+        self.p6_final_cone_detached = True
+        self.encoder_final_h = None
+        self.encoder_final_pre = None
+        self.active_chunk_views.clear()
 
     def prepare_decoder_suffix(self, command: SweepCommand) -> None:
         if command.layer is None:

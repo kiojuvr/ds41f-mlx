@@ -143,12 +143,22 @@ class PublicationManager:
     committed_cumulative: dict[str, SourceGeneration] = field(default_factory=dict)
     committed_spans: dict[str, list[SourceGeneration]] = field(default_factory=dict)
     failed: bool = False
+    append_transaction_active: bool = False
 
-    def begin_transaction(self) -> None:
+    def begin_append_transaction(self) -> None:
+        self.append_transaction_active = True
         self.pending_cumulative_by_layer.clear()
         self.pending_spans_by_layer.clear()
         self.visible_cumulative.clear()
         self.visible_spans.clear()
+        self.failed = False
+
+    def begin_transaction(self) -> None:
+        self.pending_cumulative_by_layer.clear()
+        self.pending_spans_by_layer.clear()
+        if not self.append_transaction_active:
+            self.visible_cumulative.clear()
+            self.visible_spans.clear()
         self.failed = False
 
     def shared_for_span(self, layer: int, offset: int, rows: int, *, require_keys: tuple[str, ...] = ()) -> dict[str, Any]:
@@ -226,6 +236,7 @@ class PublicationManager:
         self.committed_cumulative = {key: gen.visible_copy(committed=True) for key, gen in self.visible_cumulative.items()}
         self.committed_spans = {key: [gen.visible_copy(committed=True) for gen in spans] for key, spans in self.visible_spans.items()}
         self.arena.publications.commit()
+        self.append_transaction_active = False
 
     def fail(self) -> None:
         self.failed = True
@@ -286,6 +297,7 @@ class PublicationManager:
             "committed_cumulative": {k: v.to_json() for k, v in self.committed_cumulative.items()},
             "committed_spans": {k: [v.to_json() for v in spans] for k, spans in self.committed_spans.items()},
             "failed": self.failed,
+            "append_transaction_active": self.append_transaction_active,
         }
 
 
