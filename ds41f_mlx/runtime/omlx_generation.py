@@ -135,6 +135,7 @@ class OMLXGenerationSession:
         self._stopped = False
         self.stop_reason: str | None = None
         self._final_cache: list[Any] | None = None
+        self._final_all_tokens: list[int] | None = None
         self._bg = self.BatchGenerator(
             self.language_model,
             max_tokens=self.max_tokens,
@@ -310,11 +311,37 @@ class OMLXGenerationSession:
                 extracted = self._bg.extract_cache([self.uid])
                 if self.uid in extracted:
                     self._final_cache, all_tokens = extracted[self.uid]
-                    self.token_frontier = len(all_tokens)
+                    self._final_all_tokens = [int(t) for t in all_tokens]
+                    self.token_frontier = len(self._final_all_tokens)
             except Exception:
                 self._final_cache = None
+                self._final_all_tokens = None
 
     cancel = stop
+
+    def extract_final_state(self, reason: str = "turn_boundary") -> tuple[list[Any], list[int]]:
+        """Stop if needed and return the scheduler-owned cache/history for continuation.
+
+        This is the M8 live-session seam: it observes the GenerationBatch state
+        through the pinned ``extract_cache`` API and does not rebuild or repack
+        cache tensors.  The returned cache is the only executable authority for
+        a subsequent append cycle.
+        """
+        if self._final_cache is None or self._final_all_tokens is None:
+            self.stop(reason)
+        if self._final_cache is None or self._final_all_tokens is None:
+            # A length/stop response may already have removed the request from
+            # the scheduler but left the active batch cache observable.
+            cache = self._generation_cache()
+            if cache is not None:
+                self._final_cache = cache
+                self._final_all_tokens = self.current_token_history()
+        if self._final_cache is None or self._final_all_tokens is None:
+            raise RuntimeError("GenerationBatch final cache/history is unavailable for continuation")
+        offsets = self.cache_offsets(self._final_cache)
+        if any(offset != len(self._final_all_tokens) for offset in offsets):
+            raise RuntimeError(f"final cache offsets {offsets[:4]} do not match token history {len(self._final_all_tokens)}")
+        return self._final_cache, list(self._final_all_tokens)
 
     def close(self) -> None:
         self.stop("closed")
@@ -352,6 +379,13 @@ class OMLXGenerationSession:
 
     def fork(self) -> "OMLXGenerationSession":
         raise NotImplementedError("GenerationBatch fork seam is deferred; fork from PrefillContinuationState before start()")
+
+    def current_token_history(self) -> list[int]:
+        tokens = list(self.prefix_tokens)
+        if self.first_input_token is not None and self.token_frontier >= self.admitted_frontier + 1:
+            tokens.append(int(self.first_input_token))
+        tokens.extend(int(t) for t in self.generated_tokens)
+        return tokens
 
     def active_cache_offsets(self) -> tuple[int, ...] | None:
         cache = self._final_cache or self._generation_cache()
