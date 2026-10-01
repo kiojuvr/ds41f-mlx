@@ -613,6 +613,9 @@ def _frontier_from_cache(live_cache: list[Any]) -> int:
 
 def _set_cache_history(live_cache: list[Any], history: Any) -> None:
     if live_cache:
+        current = live_cache[0][6]
+        if hasattr(current, "shape") and not hasattr(history, "shape"):
+            return
         live_cache[0][6] = history
 
 

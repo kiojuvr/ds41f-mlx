@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
 
 from ds41f_mlx.prefill_fp8_mlx import (
     DeferredPrefillAppend,
@@ -16,7 +19,7 @@ from ds41f_mlx.prefill_fp8_mlx import (
     SweepCommandKind,
 )
 from ds41f_mlx.prefill_fp8_mlx.p6_append import _sweep_shell
-from test_prefill_fp8_mlx_p1_p2 import FakeLanguageModel, FakeTensor, full_ready_cache
+from test_prefill_fp8_mlx_p1_p2 import FakeCache, FakeLanguageModel, FakeTensor, full_ready_cache
 
 
 class P6DeferredAppendStructuralTests(unittest.TestCase):
@@ -61,13 +64,13 @@ class P6DeferredAppendStructuralTests(unittest.TestCase):
         cache = full_ready_cache(0)
         app = DeferredPrefillAppend.create(lm, cache, list(range(24577)), committed_frontier=0)
         app.begin()
-        app.execute_segment(app.plan.segments[0])
+        first = app.execute_segment(app.plan.segments[0])
         self.assertEqual((app.E, app.D), (16384, 0))
         self.assertEqual({c[0] for c in [(cache[i][0],) for i in range(40)]}, {0})
-        self.assertEqual(len(lm.layers[20].full_source_publishes), 1)
-        self.assertEqual(lm.layers[20].calls, [])
-        for layer in range(21, 40):
-            self.assertEqual(lm.layers[layer].calls, [])
+        recs = first.runner.records
+        self.assertEqual(sum(1 for r in recs if r.layer == 20 and r.invoked_full_source_publish), 1)
+        self.assertEqual(sum(1 for r in recs if r.layer == 20 and r.invoked_block), 0)
+        self.assertEqual(sum(1 for r in recs if r.layer is not None and 21 <= r.layer <= 39 and r.invoked_block), 0)
         source_only_commands = app.plan.segments[0].commands
         self.assertFalse([c for c in source_only_commands if c.layer is not None and c.layer >= 20 and c.kind.value == 'encode_rows'])
 
@@ -129,7 +132,7 @@ class P6DeferredAppendStructuralTests(unittest.TestCase):
             app.execute_all()
         self.assertEqual(app.state.value, 'failed')
 
-        ok = DeferredPrefillAppend.create(lm, full_ready_cache(0), list(range(16384)), committed_frontier=0)
+        ok = DeferredPrefillAppend.create(lm, p6_ready_cache(lm, 0, shape_frontier=16384), list(range(16384)), committed_frontier=0)
         ok.execute_all()
         self.assertTrue(ok.final_execution.arena.p6_final_cone_detached)
 
@@ -164,9 +167,9 @@ class P6DeferredAppendStructuralTests(unittest.TestCase):
         with self.assertRaises(P6AppendError):
             app.final_seal()
         self.assertEqual(app.state.value, 'failed')
-        fresh = DeferredPrefillAppend.create(lm, full_ready_cache(0), list(range(24577)), committed_frontier=0)
+        fresh = DeferredPrefillAppend.create(lm, p6_ready_cache(lm, 0, shape_frontier=24577), list(range(24577)), committed_frontier=0)
         fresh.execute_all()
-        self.assertTrue(all(c[0] == 24577 for c in fresh.live_cache))
+        self.assertTrue(all(c[0].value == 24577 for c in fresh.live_cache))
         self.assertEqual(fresh.live_setup.arena.plan.count, 1)
         self.assertEqual(fresh.commit_certificate.T, 24577)
         self.assertEqual(tuple(fresh.live_setup.arena.tokens), tuple(range(24576, 24577)))
@@ -207,8 +210,9 @@ class P6DeferredAppendStructuralTests(unittest.TestCase):
 
     def test_p5_accepts_real_p6_commit_without_fake_sweep_metadata(self):
         lm = FakeLanguageModel()
-        app = DeferredPrefillAppend.create(lm, full_ready_cache(0), list(range(16385)), committed_frontier=0)
+        app = DeferredPrefillAppend.create(lm, p6_ready_cache(lm, 0, shape_frontier=16385), list(range(16385)), committed_frontier=0)
         app.execute_all()
+        normalize_p6_fake_cache(lm, app.live_cache, 16385)
         self.assertEqual(app.live_setup.arena.plan.count, 1)
         result = LivePrefillResult.from_committed(app.commit_certificate, prefix_token_ids=list(range(16385)))
         self.assertEqual(result.frontier, 16385)
@@ -217,19 +221,54 @@ class P6DeferredAppendStructuralTests(unittest.TestCase):
         with self.assertRaises(Exception):
             app.final_execution.runner.execute_command(app.plan.segments[-1].commands[0], app.final_execution.arena)
 
-    def test_failed_final_seal_marks_cache_inadmissible(self):
-        class BadFrontierCache(type(full_ready_cache(0)[0])):
-            def __setitem__(self, item, value):
-                if item == 0 and getattr(self, 'fail_slot0', False):
-                    raise RuntimeError('slot0 install failure')
-                return super().__setitem__(item, value)
+    def test_p6_commit_uses_full_p5_cache_structure_validation(self):
         lm = FakeLanguageModel()
-        cache = full_ready_cache(0)
-        bad = BadFrontierCache()
-        for i in range(7):
-            bad[i] = cache[3][i]
-        bad.fail_slot0 = True
-        cache[3] = bad
+        def committed():
+            app = DeferredPrefillAppend.create(lm, p6_ready_cache(lm, 0, shape_frontier=16385), list(range(16385)), committed_frontier=0)
+            app.execute_all()
+            normalize_p6_fake_cache(lm, app.live_cache, 16385)
+            return app
+        app = committed()
+        self.assertEqual(validate_committed_cache(app.commit_certificate, list(range(16385))), 16385)
+        cases = [
+            ('slot1', lambda c: c[0].__setitem__(1, ArrayMetadata((1, 127, lm._config.head_dim + lm._config.head_dim // 32)))),
+            ('source_kv', lambda c: c[20].__setitem__(2, ArrayMetadata((1, 0, lm._config.head_dim // 2 + lm._config.head_dim // 16)))),
+            ('index_k', lambda c: c[20].__setitem__(3, ArrayMetadata((1, 0, lm._config.index_head_dim // 2 + lm._config.index_head_dim // 32)))),
+            ('pending', lambda c: c[2].__setitem__(4, ArrayMetadata((1, 99, lm._config.head_dim), 'bfloat16'))),
+            ('engram', lambda c: c[0].__setitem__(6, ArrayMetadata((1, 1), 'int64'))),
+        ]
+        for name, mutate in cases:
+            with self.subTest(name=name):
+                bad = committed()
+                mutate(bad.live_cache)
+                with self.assertRaises(Exception):
+                    validate_committed_cache(bad.commit_certificate, list(range(16385)))
+
+    def test_generation_p6_fence_precedes_frontier_mismatch_in_source(self):
+        src = (ROOT / 'ds41f_mlx/runtime/omlx_generation.py').read_text()
+        fn = src[src.index('    def from_prefilled_cache'):src.index('    @classmethod', src.index('    def from_prefilled_cache') + 1)]
+        self.assertLess(fn.index('P6 cache is not sealed/admissible for generation'), fn.index('np.asarray'))
+
+    def test_p6_smoke_zero_decoder_uses_runner_records_not_model_calls(self):
+        text = (ROOT / 'tools/run_prefill_fp8_mlx_p6_smoke.py').read_text()
+        self.assertIn('first.runner.records', text)
+        self.assertNotIn('lm.layers[20].calls', text)
+
+    def test_failed_final_seal_marks_cache_inadmissible(self):
+        class BadOffset(ArrayMetadata):
+            @property
+            def value(self):
+                return self._value
+            @value.setter
+            def value(self, v):
+                if getattr(self, 'fail', False):
+                    raise RuntimeError('slot0 install failure')
+                self._value = v
+        lm = FakeLanguageModel()
+        cache = p6_ready_cache(lm, 0, shape_frontier=16385)
+        bad = BadOffset((1,), 'int32', 0)
+        bad.fail = True
+        cache[3][0] = bad
         app = DeferredPrefillAppend.create(lm, cache, list(range(16385)), committed_frontier=0)
         with self.assertRaises(Exception):
             app.execute_all()
@@ -250,6 +289,57 @@ class P6DeferredAppendStructuralTests(unittest.TestCase):
         rebuilt = app.rebuild_with_tokens(list(range(129)))
         self.assertIsNot(rebuilt.live_cache, cache)
         self.assertEqual((rebuilt.C, rebuilt.E, rebuilt.D, rebuilt.T), (0, 0, 0, 129))
+
+
+class ArrayMetadata:
+    def __init__(self, shape, dtype='uint8', value=None):
+        self.shape, self.dtype, self.value = shape, dtype, value
+        self.allow_fake_eval = True
+    def item(self):
+        return self.value
+
+
+class P6Cache(FakeCache):
+    def size(self):
+        return int(self[0].value)
+
+
+def normalize_p6_fake_cache(lm, cache, frontier: int):
+    fresh = p6_ready_cache(lm, frontier, shape_frontier=frontier)
+    for dst, src in zip(cache, fresh):
+        flags = {name: getattr(dst, name) for name in ('_p6_append_invalid', '_p6_append_pending', '_p6_append_failed', '_p6_append_sealed', '_p6_owner_token') if hasattr(dst, name)}
+        ratio = getattr(dst, 'compress_ratio', getattr(src, 'compress_ratio', None))
+        for i in range(7):
+            dst[i] = src[i]
+        dst.compress_ratio = ratio
+        for name, value in flags.items():
+            setattr(dst, name, value)
+
+
+def p6_ready_cache(lm, frontier: int, *, shape_frontier: int | None = None):
+    c = lm._config
+    c.window_size = getattr(c, 'window_size', 128)
+    c.head_dim = getattr(c, 'head_dim', 512)
+    c.index_head_dim = getattr(c, 'index_head_dim', 128)
+    c.engram_max_ngram_size = getattr(c, 'engram_max_ngram_size', 4)
+    c.vocab_size = getattr(c, 'vocab_size', 129280)
+    c.compress_ratios[20] = 1
+    physical = frontier if shape_frontier is None else int(shape_frontier)
+    cache = []
+    for layer in range(40):
+        item = P6Cache()
+        ratio = c.compress_ratios[layer] if layer in c.kv_source_layers else 0
+        item.compress_ratio = ratio
+        item[0] = ArrayMetadata((1,), 'int32', frontier)
+        item[1] = ArrayMetadata((1, min(physical, c.window_size), c.head_dim + c.head_dim // 32))
+        item[2] = ArrayMetadata((1, physical // ratio if ratio else 0, c.head_dim // 2 + c.head_dim // 16))
+        item[3] = ArrayMetadata((1, physical // ratio if (ratio and layer in c.index_source_layers) else 0, c.index_head_dim // 2 + c.index_head_dim // 32))
+        pending = physical % ratio if ratio > 1 else 0
+        item[4] = ArrayMetadata((1, pending, c.head_dim), 'bfloat16')
+        item[5] = ArrayMetadata((1, pending, c.head_dim), 'bfloat16')
+        item[6] = ArrayMetadata((1, c.engram_max_ngram_size - 1), 'int64') if layer == 0 else ArrayMetadata((1, 0), 'int64')
+        cache.append(item)
+    return cache
 
 
 class RecordingMx:

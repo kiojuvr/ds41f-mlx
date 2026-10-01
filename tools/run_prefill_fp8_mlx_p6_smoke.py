@@ -132,16 +132,26 @@ def main(argv=None):
             assert first.runner.closed
             assert first.arena.carry.current.value is None and first.arena.carry.pre.value is None and first.arena.input_ids.value is None
             assert first.arena.p6_source_materialized and first.arena.p6_source_materialization_events
-            assert not lm.layers[20].calls and all(not lm.layers[i].calls for i in range(21, 40))
+            records = first.runner.records
+            layer20_source_publishes = sum(1 for r in records if r.layer == 20 and r.invoked_full_source_publish)
+            layer20_decoder_queries = sum(1 for r in records if r.layer == 20 and r.invoked_block)
+            decoder_21_39_blocks = sum(1 for r in records if r.layer is not None and 21 <= r.layer <= 39 and r.invoked_block)
+            assert layer20_source_publishes == 1
+            assert layer20_decoder_queries == 0
+            assert decoder_21_39_blocks == 0
             raw_rejected = False
+            raw_reason = None
             try:
-                OMLXGenerationSession.from_prefilled_cache(model, pre_runner_cache, prefix_ids)
-            except Exception:
+                OMLXGenerationSession.from_prefilled_cache(model, pre_runner_cache, [])
+            except Exception as exc:
                 raw_rejected = True
-            assert raw_rejected, 'raw generation admission unexpectedly accepted pending P6 cache'
+                raw_reason = str(exc)
+            assert raw_rejected and raw_reason and 'P6 cache is not sealed/admissible for generation' in raw_reason, raw_reason
             report.update(status='PASS', stage='pending-boundary-complete', private_E=app.E, private_D=app.D,
                           layer20_source_coverage=app.coverage.source_by_layer[20], source_runner_closed=first.runner.closed,
-                          historical_records=len(app.segment_records))
+                          historical_records=len(app.segment_records), layer20_source_publishes=layer20_source_publishes,
+                          layer20_decoder_query_blocks=layer20_decoder_queries, decoder_21_39_blocks=decoder_21_39_blocks,
+                          raw_generation_rejection=raw_reason)
     except ImportError as exc:
         report.update(status='NOT RUN', reason=str(exc))
     except Exception as exc:
