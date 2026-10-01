@@ -279,6 +279,7 @@ def diagnostics(base: str) -> dict[str, Any]:
 def run_http(checkpoint: Path, omlx_path: Path, recipe_path: Path, max_tokens: int = 2) -> dict[str, Any]:
     port = free_port(); base = f"http://127.0.0.1:{port}"
     env = os.environ.copy(); env["DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS"] = "1"; env.setdefault("DS41F_TRACE_HISTORY_LIMIT", "32")
+    env["PYTHONPATH"] = str(ROOT) + (os.pathsep + env["PYTHONPATH"] if env.get("PYTHONPATH") else "")
     proc = subprocess.Popen([sys.executable, str(ROOT / "tools/run_ds41f_recipe_server.py"), "--host", "127.0.0.1", "--port", str(port), "--checkpoint", str(checkpoint), "--omlx-path", str(omlx_path), "--recipe-path", str(recipe_path)], cwd=str(ROOT), env=env)
     record: dict[str, Any] = {"port": port}
     try:
