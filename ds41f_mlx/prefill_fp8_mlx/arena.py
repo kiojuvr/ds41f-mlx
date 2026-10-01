@@ -285,6 +285,8 @@ class RequestArena:
     p6_final_cone_detached: bool = False
     p6_source_materialized: bool = False
     p6_source_materialization_events: list[dict[str, object]] = field(default_factory=list)
+    tile_carry: Any = None
+    tile_native_admission: dict[str, object] = field(default_factory=dict)
 
     @classmethod
     def from_plan(
@@ -417,6 +419,8 @@ class RequestArena:
             "p6_final_cone_detached": self.p6_final_cone_detached,
             "p6_source_materialized": self.p6_source_materialized,
             "p6_source_materialization_events": list(self.p6_source_materialization_events),
+            "tile_native_admission": dict(self.tile_native_admission),
+            "tile_carry": None if self.tile_carry is None else self.tile_carry.to_json(),
             "command_count_applied": len(self.command_history),
         }
 
@@ -435,6 +439,8 @@ class RequestArena:
         self.publications.shared["candidates"] = None
         self.engram.hashes.value = None
         self.engram.hashes.ownership = TensorOwnership.UNBOUND
+        if self.tile_carry is not None:
+            self.tile_carry.retire()
 
     def materialize_p6_source_boundary(self, *, command_index: int, frontier: int, evaluated_slots: list[dict[str, int]]) -> None:
         self.p6_source_materialized = True

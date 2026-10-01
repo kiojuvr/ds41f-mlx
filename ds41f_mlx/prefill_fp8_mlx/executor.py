@@ -16,6 +16,7 @@ from ds41f_mlx.prefill_fp8_mlx.block_runner import OfficialFP8MLXBlockRunner
 from ds41f_mlx.prefill_fp8_mlx.planner import SweepPlan
 from ds41f_mlx.prefill_fp8_mlx.publications import PublicationManager, PublicationTopology
 from ds41f_mlx.prefill_fp8_mlx.p8_optimizer import P8ExecutionOptimizer
+from ds41f_mlx.prefill_fp8_mlx.tile_carry import TileCarryState, admit_tile_native, tile_native_enabled
 
 
 class PrefillSetupError(RuntimeError):
@@ -113,6 +114,13 @@ class DwarfStarFP8MLXPrefillExecutorSetup:
             engram_history=history,
             base_frontier=base,
         )
+        if tile_native_enabled():
+            ok, reason = admit_tile_native(plan)
+            arena.tile_native_admission = {"requested": True, "admitted": bool(ok), "reason": reason}
+            if ok:
+                arena.tile_carry = TileCarryState.from_dense_initial(plan=plan, h_current=h_current, pre=pre, base_frontier=base)
+        else:
+            arena.tile_native_admission = {"requested": False, "admitted": False, "reason": "disabled"}
         topology = PublicationTopology.from_model_config(self.language_model._config)
         manager = PublicationManager(arena, topology=topology)
         p8_optimizer = getattr(self.language_model, "_p8_optimizer", None) or P8ExecutionOptimizer.from_env(mx=self.mx)

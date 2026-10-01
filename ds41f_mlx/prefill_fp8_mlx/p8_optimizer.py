@@ -152,6 +152,7 @@ class ShapeClassRegistry:
         self._entries: dict[tuple[Any, ...], ShapeClassEntry] = {}
         self.write_rows: list[dict[str, Any]] = []
         self.microtile_concat: list[dict[str, Any]] = []
+        self.tile_native_carry: list[dict[str, Any]] = []
         self.lineage_events: list[dict[str, Any]] = []
         self._next_event_id = 1
 
@@ -249,6 +250,12 @@ class ShapeClassRegistry:
         })
         return event_id
 
+    def record_tile_native_carry(self, *, telemetry: dict[str, Any], command_index: int | None = None, layer: int | None = None, event: str = "tile_native_carry") -> None:
+        rec = {"event": str(event), "command_index": command_index, "layer": layer}
+        for k, v in telemetry.items():
+            rec[str(k)] = int(v) if isinstance(v, int) and not isinstance(v, bool) else v
+        self.tile_native_carry.append(rec)
+
     def report(self) -> list[dict[str, Any]]:
         return [e.to_json() for e in sorted(self._entries.values(), key=lambda x: (x.signature.region, x.signature.layer or -1, x.signature.rows or -1))]
 
@@ -270,7 +277,7 @@ class ShapeClassRegistry:
         return roles
 
     def to_json(self) -> dict[str, Any]:
-        return {"shape_classes": self.report(), "write_rows": list(self.write_rows), "write_chain_summary": self.write_chain_summary(), "microtile_concat": list(self.microtile_concat), "lineage_events": list(self.lineage_events), "tensor_free": True}
+        return {"shape_classes": self.report(), "write_rows": list(self.write_rows), "write_chain_summary": self.write_chain_summary(), "microtile_concat": list(self.microtile_concat), "tile_native_carry": list(self.tile_native_carry), "lineage_events": list(self.lineage_events), "tensor_free": True}
 
 
 def _weight_identity_class(obj: Any) -> str:

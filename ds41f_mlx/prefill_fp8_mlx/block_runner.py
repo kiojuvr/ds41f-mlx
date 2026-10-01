@@ -151,6 +151,12 @@ class OfficialFP8MLXBlockRunner:
             self.publication_manager.publish_frontier(command)
             return None
         if command.kind is SweepCommandKind.SWAP_HC_AFTER_LAYER:
+            if arena.tile_carry is not None and command.phase in {SweepPhase.ENCODER, SweepPhase.DECODER_FULL}:
+                arena.apply_command(command)
+                arena.tile_carry.logical_swap()
+                if command.layer == 19:
+                    arena.encoder_final_h, arena.encoder_final_pre = arena.tile_carry.assemble_full_source(mx=self.mx)
+                return None
             arena.apply_command(command)
             return None
         if command.kind is SweepCommandKind.DECODER_PREPARE_SUFFIX:
@@ -185,10 +191,17 @@ class OfficialFP8MLXBlockRunner:
         layer_id = int(command.layer)
         layer = lm.layers[layer_id]
         private_start = getattr(arena, "p6_private_start", None)
-        absolute_start = int(arena.base_frontier if private_start is None else private_start) + int(command.offset)
+        base_start = int(arena.base_frontier if private_start is None else private_start)
+        absolute_start = base_start + int(command.offset)
         record.absolute_start = absolute_start
-        h_chunk = _slice_rows(arena.carry.current.value, command.offset, command.rows, role=arena.carry.current.role, row_origin=arena.carry.current.row_origin)
-        pre_chunk = _slice_rows(arena.carry.pre.value, command.offset, command.rows, role=arena.carry.pre.role, row_origin=arena.carry.pre.row_origin)
+        tile_native = arena.tile_carry is not None and command.phase in {SweepPhase.ENCODER, SweepPhase.DECODER_FULL}
+        if tile_native:
+            h_chunk, pre_chunk, tile_absolute_start = arena.tile_carry.input_for(command, base_frontier=base_start)
+            if int(tile_absolute_start) != int(absolute_start):
+                raise BlockExecutionError("tile-native absolute_start mismatch")
+        else:
+            h_chunk = _slice_rows(arena.carry.current.value, command.offset, command.rows, role=arena.carry.current.role, row_origin=arena.carry.current.row_origin)
+            pre_chunk = _slice_rows(arena.carry.pre.value, command.offset, command.rows, role=arena.carry.pre.role, row_origin=arena.carry.pre.row_origin)
         shared_fn = self.publication_manager.producer_shared_for_span if command.phase is SweepPhase.DECODER_SUFFIX and layer_id == 20 else self.publication_manager.shared_for_span
         shared = shared_fn(layer_id, command.offset, command.rows, require_keys=self._required_publication_keys(layer_id))
         cache = self._cache_for_layer(layer_id)
@@ -219,8 +232,11 @@ class OfficialFP8MLXBlockRunner:
         else:
             h_out, pre_out = layer(h_chunk, pre_chunk, cache, shared, absolute_start, self.image_mask)
         block_event_id = self.p8_optimizer.shape_registry.record_lineage_event("BLOCK_OUTPUT", layer=layer_id, command_index=int(command.index), rows=int(command.rows)) if self.p8_optimizer is not None and self.p8_optimizer.enabled else None
-        arena.carry.next.value = _write_rows(arena.carry.next.value, command.offset, command.rows, h_out, role=arena.carry.next.role, row_origin=arena.carry.next.row_origin, p8_optimizer=self.p8_optimizer, command=command, producer_event_id=block_event_id)
-        arena.carry.pre.value = _write_rows(arena.carry.pre.value, command.offset, command.rows, pre_out, role=arena.carry.pre.role, row_origin=arena.carry.pre.row_origin, p8_optimizer=self.p8_optimizer, command=command, producer_event_id=block_event_id)
+        if tile_native:
+            arena.tile_carry.bind_output(command, h_out, pre_out, base_frontier=base_start)
+        else:
+            arena.carry.next.value = _write_rows(arena.carry.next.value, command.offset, command.rows, h_out, role=arena.carry.next.role, row_origin=arena.carry.next.row_origin, p8_optimizer=self.p8_optimizer, command=command, producer_event_id=block_event_id)
+            arena.carry.pre.value = _write_rows(arena.carry.pre.value, command.offset, command.rows, pre_out, role=arena.carry.pre.role, row_origin=arena.carry.pre.row_origin, p8_optimizer=self.p8_optimizer, command=command, producer_event_id=block_event_id)
         self._advance_cache_layer(cache, absolute_start + command.rows, arena=arena, layer=layer_id)
         capture_keys = ("idx", "candidates") if command.phase is SweepPhase.DECODER_SUFFIX and layer_id == 20 else None
         self.publication_manager.capture_layer_outputs(layer_id, shared, command_index=command.index, offset=command.offset, rows=command.rows, keys=capture_keys)
@@ -320,9 +336,17 @@ class OfficialFP8MLXBlockRunner:
             origin = int(command.offset)
             private_start = int(getattr(arena, "p6_private_start", arena.base_frontier) or arena.base_frontier)
             q20_origin = int(arena.plan.count) - 2414
-            h = self._owned_row_copy(arena.carry.current.value, origin, int(command.rows), role=arena.carry.current.role)
-            nxt = self._owned_row_copy(arena.carry.next.value, q20_origin, 2414, role=arena.carry.next.role)
-            pre = self._owned_row_copy(arena.carry.pre.value, origin, int(command.rows), role=arena.carry.pre.role)
+            if arena.tile_carry is not None:
+                h_src = arena.tile_carry.cone_value("current", origin, int(command.rows), mx=self.mx)
+                nxt_src = arena.tile_carry.cone_value("next", q20_origin, 2414, mx=self.mx)
+                pre_src = arena.tile_carry.cone_value("pre", origin, int(command.rows), mx=self.mx)
+                h = self._owned_row_copy(h_src, 0, int(command.rows), role=arena.carry.current.role)
+                nxt = self._owned_row_copy(nxt_src, 0, 2414, role=arena.carry.next.role)
+                pre = self._owned_row_copy(pre_src, 0, int(command.rows), role=arena.carry.pre.role)
+            else:
+                h = self._owned_row_copy(arena.carry.current.value, origin, int(command.rows), role=arena.carry.current.role)
+                nxt = self._owned_row_copy(arena.carry.next.value, q20_origin, 2414, role=arena.carry.next.role)
+                pre = self._owned_row_copy(arena.carry.pre.value, origin, int(command.rows), role=arena.carry.pre.role)
             if self.p8_optimizer is not None and self.p8_optimizer.enabled:
                 b = self.p8_optimizer.telemetry.memory_snapshot(); rt = time.perf_counter()
             arena.detach_final_decoder_cone(origin=private_start + origin, rows=int(command.rows), h_value=h, next_value=nxt, pre_value=pre, row_origin=origin, next_row_origin=q20_origin)
@@ -331,11 +355,21 @@ class OfficialFP8MLXBlockRunner:
             arena.encoder_final_h = None
             arena.encoder_final_pre = None
             arena.active_chunk_views.clear()
+            if arena.tile_carry is not None:
+                if self.p8_optimizer is not None and self.p8_optimizer.enabled:
+                    self.p8_optimizer.shape_registry.record_tile_native_carry(telemetry=arena.tile_carry.telemetry.to_json(), command_index=command.index, layer=command.layer, event="p6_final_cone_detach")
+                arena.tile_carry.retire()
             if self.p8_optimizer is not None and self.p8_optimizer.enabled:
                 self.p8_optimizer.telemetry.record_materialization_boundary("arena_detach_rebind", b, self.p8_optimizer.telemetry.memory_snapshot(), time.perf_counter() - rt, command_index=command.index)
         if self.p8_optimizer is not None and self.p8_optimizer.enabled:
             b = self.p8_optimizer.telemetry.memory_snapshot(); bt = time.perf_counter()
         arena.materialize_p6_source_boundary(command_index=command.index, frontier=frontier, evaluated_slots=evaluated)
+        if command.rows <= 0 and arena.tile_carry is not None:
+            if self.p8_optimizer is not None and self.p8_optimizer.enabled:
+                self.p8_optimizer.shape_registry.record_tile_native_carry(telemetry=arena.tile_carry.telemetry.to_json(), command_index=command.index, layer=command.layer, event="p6_source_only_detach")
+            arena.tile_carry.retire()
+            arena.encoder_final_h = None
+            arena.encoder_final_pre = None
         if self.p8_optimizer is not None and self.p8_optimizer.enabled:
             self.p8_optimizer.telemetry.record_materialization_boundary("materialize_boundary_bookkeeping", b, self.p8_optimizer.telemetry.memory_snapshot(), time.perf_counter() - bt, command_index=command.index)
         if self.p8_optimizer is not None and self.p8_optimizer.enabled:

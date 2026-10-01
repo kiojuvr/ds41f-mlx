@@ -18,6 +18,7 @@ from .executor import PrefillExecutionSetup, PrefillSetupError
 from .planner import SweepAllocation, SweepCommand, SweepCommandKind, SweepPhase, SweepPlan
 from .publications import PublicationManager, PublicationTopology
 from .p7_scheduling import SchedulingTelemetry
+from .tile_carry import TileCarryState, admit_tile_native, tile_native_enabled
 
 P6_CARRY_CAPACITY = 16384
 P6_FINAL_TAIL_THRESHOLD = 8192
@@ -302,6 +303,13 @@ class DeferredPrefillAppend:
         plan = _sweep_shell(segment.count, segment.commands, encoder_only=segment.source_only)
         h_current, h_next, pre, input_ids, hashes, history = _make_segment_tensors(self.language_model, self.mx, token_slice, self._private_history(), None)
         arena = RequestArena.from_plan(plan, token_ids=token_slice, input_ids=input_ids, h_current=h_current, h_next=h_next, pre=pre, engram_hashes=hashes, engram_history=history, base_frontier=segment.start)
+        if tile_native_enabled() and segment.mode in (SegmentMode.ENCODER_SOURCE_ONLY, SegmentMode.FINAL_ENCODER_DECODER):
+            ok, reason = admit_tile_native(plan)
+            arena.tile_native_admission = {"requested": True, "admitted": bool(ok), "reason": reason, "segment_mode": segment.mode.value}
+            if ok:
+                arena.tile_carry = TileCarryState.from_dense_initial(plan=plan, h_current=h_current, pre=pre, base_frontier=segment.start)
+        else:
+            arena.tile_native_admission = {"requested": tile_native_enabled(), "admitted": False, "reason": "disabled_or_unsupported_segment", "segment_mode": segment.mode.value}
         arena.p6_public_frontier = self.C
         arena.p6_private_start = segment.start
         arena.p6_freeze_public_offsets = True

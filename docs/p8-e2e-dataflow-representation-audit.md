@@ -350,3 +350,65 @@ Exact comparison remains required where current backend-local policy already req
 ## 23. Promotion rule
 
 Promote only if P0-P7 correctness is preserved, structural operations are measurably eliminated, E2E improvement is repeatable outside noise, memory does not meaningfully regress, cold first-request is not hidden by warm results, P7 foreground Engram fallback remains zero, and no new CPU fallback appears. Structural cleanliness alone is insufficient.
+
+## 24. TILE_NATIVE_CARRY implementation and A/B result (2026-10-01)
+
+Implementation status: **implemented behind disabled A/B switch** `DS41F_P8_TILE_NATIVE_CARRY=1`. Default remains OFF and the production selector is unchanged.
+
+Implemented pieces:
+
+- `TileSpan`: immutable metadata plus tensor reference (`value`, `logical_offset`, `rows`, `role`, optional absolute-start metadata). Creating a span does not copy tensor content.
+- `TileCarryState`: request-local current/next/pre tile maps built from actual `ENCODE_ROWS` command spans. It follows planner offsets/row counts and does not define an independent tiling policy.
+- Tile-native source transport in `OfficialFP8MLXBlockRunner`: source/encoder `ENCODE_ROWS` obtains h/pre directly from tile maps, calls unchanged pinned oMLX Block, and binds `h_out`/`pre_out` as next-layer tiles instead of calling `_write_rows`.
+- Logical `SWAP_HC_AFTER_LAYER` remains in the command stream and command history; the tile bridge performs the physical tile-vector swap and preserves ping-pong spare semantics.
+- Layer19 full-source bridge: ordered source tiles are assembled exactly once for current `publish_full_source(h_full, pre_full, ...)`. Single-tile source can reuse the tile directly.
+- P6 final cone extraction: after unchanged `_p6_eval_persistent_source_state()`, the retained h/next/pre cones are extracted from tile spans and then copied through the same owned compact-copy proof path.
+- Candidate admission is request/segment-start only. If not admitted before execution, dense remains available. Once tile-native execution begins, invariant failure aborts the request rather than falling back mid-request.
+
+Structural tests: `PYTHONPATH=tests /Users/kioju/.venvs/omlx-0.7.0.dev2/bin/python3 -m unittest discover -s tests -v` passed **97 tests OK**. Added tests cover default-off switch, admission, exact lookup, two-tile transport, logical swap, missing tile fail-closed, gap/overlap rejection, ordered full-source assembly, single-tile no-op assembly, same-tile/cross-tile cone extraction, and retirement of tile parents.
+
+### 16384 same-revision A/B
+
+Artifacts:
+
+- dense control: `artifacts/p8-tile-native/dense-16384-v2.json`
+- tile candidate: `artifacts/p8-tile-native/tile-16384-v2.json`
+- P5 dense smoke: `artifacts/p8-tile-native/dense-p5-16384.json`
+- P5 tile smoke: `artifacts/p8-tile-native/tile-p5-16384.json`
+
+Both A/B runs used fresh process/model, deterministic 16384 tokens, P7 enabled, P8 verification, cold + 3 warm. No new eval barriers, no `mx.compile`, no custom Metal, no donor oMLX changes.
+
+| path | cold s | warm1 | warm2 | warm3 | warm median | warm range | warm tok/s | bg Engram reads/run | fg fallback | cold write_rows |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| dense | 16.365340 | 16.338032 | 16.349117 | 16.207646 | 16.338032 | 0.141471 | 1002.81 | 32 | 0 | 120 |
+| tile-native | 16.353992 | 16.245373 | 16.190254 | 16.248494 | 16.245373 | 0.058240 | 1008.53 | 32 | 0 | 40 |
+
+Structural operation result for cold 16384:
+
+- dense source+suffix `_write_rows`: 120 total.
+- tile-native `_write_rows`: 40 total, all decoder suffix; source/encoder dense carry writes were eliminated.
+- tile telemetry at P6 detach: `dense_carry_writes=0`, `dense_layer_transport_slices=0`, `logical_swaps=20`, `tile_input_bindings=80`, `tile_output_bindings=80`, `full_source_assemblies=1`, `final_cone_tile_slices=3`, `final_cone_minimal_concats=0`, `initial_tile_views=4`.
+
+State/P7/P5 evidence:
+
+- all 40 cache frontiers reached 16384 in both A/B runs;
+- P7 foreground fallback stayed 0 and expected background microtile reads were preserved;
+- cache slot shape/dtype inventory in P5 matrix remained valid for source layers and tail layers;
+- P6 C/E/D/T completed at 16384;
+- source coverage remained `{2:16384, 8:16384, 14:16384, 20:16384}`;
+- P5 tile smoke PASS: prompt replay `0`, full cache repack `0`, export `false`, generated tokens `[1, 0]`, decode frontiers advanced.
+
+Memory proxy from final P6 materialization boundary after-state:
+
+| path | active bytes cold | cache bytes cold | peak bytes cold | active bytes warm typical | cache bytes warm typical | peak bytes warm typical |
+|---|---:|---:|---:|---:|---:|---:|
+| dense | 314,864,784,632 | 17,004,751,578 | 319,629,252,136 | ~315,152,036,4xx | ~17.38-17.42B | 319,916,503,956 |
+| tile-native | 314,864,915,708 | 18,558,717,170 | 318,765,159,990 | ~315,152,167,5xx | ~18.93-18.98B | 319,052,411,806 |
+
+Interpretation: tile-native eliminated the intended source carry writes/slices, but warm median improvement was only ~0.092659 s (~0.57%), smaller than the same-revision dense warm run-to-run range (~0.141471 s). Candidate cache-memory proxy was also ~1.5 GB higher at the sampled final boundary, while peak proxy was lower. This is not a repeatable practical E2E gain.
+
+### P8 completion decision
+
+Decision: **TILE_NATIVE_CARRY_REJECTED_NO_E2E_GAIN**.
+
+Because the coherent structural candidate removed the intended operations but did not produce repeatable E2E value outside observed noise, P8 is considered complete for this optimization line. Per P8 stop rule, do not continue into Engram concat tweaks, Attention/MoE/HC profiling, `mx.compile`, or custom kernels under this task. Attention/MoE/HC remain deferred unless a future explicit product/runtime requirement reopens component optimization.
