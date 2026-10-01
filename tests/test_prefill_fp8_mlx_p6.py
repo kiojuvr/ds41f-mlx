@@ -167,9 +167,13 @@ class P6DeferredAppendStructuralTests(unittest.TestCase):
         with self.assertRaises(P6AppendError):
             app.final_seal()
         self.assertEqual(app.state.value, 'failed')
-        fresh = DeferredPrefillAppend.create(lm, p6_ready_cache(lm, 0, shape_frontier=24577), list(range(24577)), committed_frontier=0)
+        contract_lm = ContractFrontierLanguageModel()
+        fresh = DeferredPrefillAppend.create(contract_lm, p6_ready_cache(contract_lm, 0, shape_frontier=24577), list(range(24577)), committed_frontier=0)
         fresh.execute_all()
-        self.assertTrue(all(c[0].value == 24577 for c in fresh.live_cache))
+        for c in fresh.live_cache:
+            self.assertEqual(offset_value(c[0]), 24577)
+            self.assertEqual(tuple(c[0].shape), (1,))
+            self.assertIn(str(c[0].dtype), ('int32', 'mlx.core.int32'))
         self.assertEqual(fresh.live_setup.arena.plan.count, 1)
         self.assertEqual(fresh.commit_certificate.T, 24577)
         self.assertEqual(tuple(fresh.live_setup.arena.tokens), tuple(range(24576, 24577)))
@@ -255,20 +259,19 @@ class P6DeferredAppendStructuralTests(unittest.TestCase):
         self.assertNotIn('lm.layers[20].calls', text)
 
     def test_failed_final_seal_marks_cache_inadmissible(self):
-        class BadOffset(ArrayMetadata):
-            @property
-            def value(self):
-                return self._value
-            @value.setter
-            def value(self, v):
-                if getattr(self, 'fail', False):
+        class BadCache(P6Cache):
+            def __setitem__(self, key, value):
+                if key == 0 and getattr(self, 'fail_slot0_install', False):
                     raise RuntimeError('slot0 install failure')
-                self._value = v
+                return super().__setitem__(key, value)
         lm = FakeLanguageModel()
         cache = p6_ready_cache(lm, 0, shape_frontier=16385)
-        bad = BadOffset((1,), 'int32', 0)
-        bad.fail = True
-        cache[3][0] = bad
+        bad = BadCache()
+        for i in range(7):
+            bad[i] = cache[3][i]
+        bad.compress_ratio = cache[3].compress_ratio
+        bad.fail_slot0_install = True
+        cache[3] = bad
         app = DeferredPrefillAppend.create(lm, cache, list(range(16385)), committed_frontier=0)
         with self.assertRaises(Exception):
             app.execute_all()
@@ -278,7 +281,7 @@ class P6DeferredAppendStructuralTests(unittest.TestCase):
             LivePrefillContinuation.from_cache(cache)
 
     def test_failed_append_rebuilds_with_fresh_cache_not_rewind(self):
-        lm = FakeLanguageModel()
+        lm = ContractFrontierLanguageModel()
         cache = full_ready_cache(0)
         app = DeferredPrefillAppend.create(lm, cache, list(range(24577)), committed_frontier=0)
         app.begin()
@@ -289,6 +292,15 @@ class P6DeferredAppendStructuralTests(unittest.TestCase):
         rebuilt = app.rebuild_with_tokens(list(range(129)))
         self.assertIsNot(rebuilt.live_cache, cache)
         self.assertEqual((rebuilt.C, rebuilt.E, rebuilt.D, rebuilt.T), (0, 0, 0, 129))
+        for c in rebuilt.live_cache:
+            self.assertEqual(offset_value(c[0]), 0)
+            self.assertEqual(tuple(c[0].shape), (1,))
+            self.assertIn(str(c[0].dtype), ('int32', 'mlx.core.int32'))
+
+
+class ContractFrontierLanguageModel(FakeLanguageModel):
+    def cache_offset(self, value):
+        return ArrayMetadata((1,), 'int32', int(value))
 
 
 class ArrayMetadata:
@@ -299,9 +311,17 @@ class ArrayMetadata:
         return self.value
 
 
+def offset_value(offset):
+    if hasattr(offset, 'item'):
+        return int(offset.item())
+    if hasattr(offset, 'value'):
+        return int(offset.value)
+    return int(offset)
+
+
 class P6Cache(FakeCache):
     def size(self):
-        return int(self[0].value)
+        return offset_value(self[0])
 
 
 def normalize_p6_fake_cache(lm, cache, frontier: int):

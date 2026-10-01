@@ -13,7 +13,7 @@ from enum import Enum
 from typing import Any, Sequence
 
 from .arena import RequestArena, TensorOwnership
-from .block_runner import OfficialFP8MLXBlockRunner
+from .block_runner import OfficialFP8MLXBlockRunner, _make_cache_offset
 from .executor import PrefillExecutionSetup, PrefillSetupError
 from .planner import SweepAllocation, SweepCommand, SweepCommandKind, SweepPhase, SweepPlan
 from .publications import PublicationManager, PublicationTopology
@@ -619,14 +619,23 @@ def _set_cache_history(live_cache: list[Any], history: Any) -> None:
         live_cache[0][6] = history
 
 
+def _canonical_public_frontier(frontier: int, language_model: Any) -> Any:
+    value = _make_cache_offset(int(frontier), language_model)
+    # Some lightweight test doubles expose cache_offset() but return a Python
+    # scalar.  That is not the production DeepseekV41Cache slot0 contract: the
+    # real cache size() path expects an array-like offset with shape (1,), int32
+    # dtype and item() semantics.  Fall back to the same MLX construction used
+    # by _make_cache_offset when no model factory exists; do not mutate existing
+    # offset objects in place.
+    if isinstance(value, int) or not (hasattr(value, "shape") and hasattr(value, "dtype") and hasattr(value, "item")):
+        try:
+            import mlx.core as mx
+            value = mx.array([int(frontier)], mx.int32)
+        except Exception:
+            pass
+    return value
+
+
 def _set_all_public_frontiers(live_cache: list[Any], frontier: int, language_model: Any) -> None:
     for cache in live_cache:
-        current = cache[0]
-        if hasattr(current, "value"):
-            current.value = int(frontier)
-            continue
-        value = frontier
-        maker = getattr(language_model, "cache_offset", None)
-        if maker is not None:
-            value = maker(frontier)
-        cache[0] = value
+        cache[0] = _canonical_public_frontier(frontier, language_model)
