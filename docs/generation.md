@@ -1,43 +1,43 @@
 # Generation runtime
 
-Generation is implemented by the native text runtime and `TextGeneration` lifecycle code.
+## Qualified release path
 
-## Lifecycle
+The production text release uses dense P0-P7 prefill plus P5 zero-replay handoff into oMLX `GenerationBatch` with MTP, DSpark, and speculative decode OFF.
 
 ```text
-prompt input
+recipe-rendered prompt tokens
   ↓
-TextFront / prefill
+hold out terminal prompt token once
   ↓
-TextEncoder / TextDecoder
+DENSE_P0_P7 prefill commits tokens[:-1]
   ↓
-TextBackbone call
+P7 SSD-backed Engram / live DeepseekV41Cache[40]
   ↓
-logits and main_hidden
+P5 handoff supplies tokens[-1] exactly once
   ↓
-sampling
+oMLX GenerationBatch decode
   ↓
-token commit
+commit generated tokens/KV
   ↓
-stop/cancel or continuation
+DeepSeek EOS, length, cancel, or continuation
 ```
 
-Prefill initializes persistent session state.  Incremental decode consumes and extends that state.  Token commit updates token/ngram history and any generation-owned lifecycle state.  Stop/cancel terminates the loop without inventing a second model-session implementation.
+## Commit and continuation invariants
 
-## Sampling
+Prefill initializes persistent cache/token state. Incremental decode consumes and extends that state. Token commit updates all-token history and GenerationBatch-owned cache state. Continuation reuses the committed state; invalid inputs must fail before partial commit or cache mutation.
 
-The imported generation loop supplies lifecycle and integration behavior.  Current ds41f validators define sampling arithmetic seams such as supplied-noise and temperature-zero behavior.
+At idle committed boundaries there is one executable cache authority, prompt replay is zero, full-cache repack/reconstruction is zero, and all 40 cache offsets equal the committed frontier.
 
-Native stochastic RNG is a runtime provider seam.  The repository does not claim PyTorch RNG bitstream parity.  If the RNG provider is adapted, the generation loop should remain intact and only the provider seam should change.
+## Sampling and determinism
 
-## main_hidden
+The release deterministic policy is backend-local: for a fixed checkpoint/runtime/backend/build/config/input/session state, deterministic greedy behavior is required relative to backend-produced logits. PyTorch or cross-backend RNG/bitstream parity is not claimed.
 
-`main_hidden` is a call-local generation handoff associated with the current backbone/logits call.  It is not persistent session state beyond any explicit token-commit bookkeeping performed by the generation state.
+## Termination
 
-## Continuation
+DeepSeek V4.1 EOS token id `1` is configured as a GenerationBatch stop token. The EOS token is consumed into cache/all-token history exactly once, hidden from protocol text by the recipe layer, and reported as finish reason `stop`. Length termination reports `length`; cancellation must clean up ownership without creating a second authority.
 
-Continuation reuses the existing `TextBackboneState` and generation state.  Reset clears them; fork copies committed persistent state.  Invalid inputs must not partially commit tokens or mutate session state.
+Arbitrary detokenized request stop strings are not a stateful release feature. Stateful session endpoints reject non-empty/non-null `stop` before mutation; stateless endpoints retain official recipe behavior for their qualified scope.
 
-## Qualification status
+## Reference native generation
 
-Checkpoint-free generation-loop tests pass.  Full MLX-backed generation over the official checkpoint is not yet validated in the current import environment.
+The native `TextGeneration` lifecycle remains retained as reference/qualification evidence and as reusable code where architecturally justified. It is not the selected production decode topology for the release path.

@@ -8,7 +8,7 @@ The project exists to make the full official model practically usable as a local
 
 That requires both preserving the model semantics, precision boundaries, persistent state, and generation behavior required by DeepSeek-V4.1-Flash, and achieving practical inference performance across prefill, incremental decoding, and long-running agent sessions.
 
-Correctness and performance are therefore not separate end goals. Correctness defines the boundary within which performance must be achieved. Milestone 4 has closed the current model/runtime correctness investigation with a backend-local fidelity policy; long-session robustness and production performance remain overall project success criteria, not blockers for that correctness milestone.
+Correctness and performance are therefore not separate end goals. Correctness defines the boundary within which performance must be achieved. The text runtime now has a scoped release qualification for the target production path: dense P0-P7 prefill, P7 SSD-backed Engram, P5 zero-replay handoff, and oMLX GenerationBatch MTP-OFF decode behind local single-flight HTTP.
 
 ## Project definition
 
@@ -61,11 +61,20 @@ Likewise, a fast runtime that changes required model behavior or state semantics
 
 ## Current implementation status
 
-Milestone 4 correctness is complete under `M4_CORRECTNESS_COMPLETE_BACKEND_LOCAL_FIDELITY_POLICY`. The project has established the correctness boundary for official semantics, precision/storage contracts, and persistent-state lifecycle, and has rejected cross-backend trajectory identity as a universal fidelity requirement after measured FP8 reduction and behavioral-sensitivity evidence.
+The qualified release scope is a text-only local runtime for the official DeepSeek-V4.1-Flash checkpoint on the Mac Studio M3 Ultra 512 GB class target. The production path is:
 
-This does not mean the finished runtime is complete. Production implementation qualification, practical performance, API/serving integration, long-session robustness, and KV/cache restore-resume remain future work.
+```text
+official checkpoint
+  -> DENSE_P0_P7 production prefill
+  -> P7 FULL_RESIDENT_BACKBONE_SSD_ENGRAM
+  -> P5 zero-replay handoff
+  -> oMLX GenerationBatch decode, MTP/DSpark/speculation OFF
+  -> official deepseek-recipe local HTTP serving
+```
 
-The current native implementation is the executable correctness/reference runtime at HEAD. It is valuable and retained, but it is not automatically the final production execution topology for prefill or decode. Production architecture restoration is governed by `docs/runtime-strategy.md` and `docs/implementation-plan.md`.
+Stateless Chat Completions, Responses, and Messages are qualified for the documented text scope. Stateful Chat Completions sessions are qualified for single-flight multi-turn continuation, client function-tool/result loops, same-backend idle persistence/restore, and DeepSeek EOS token termination. See `docs/release-qualification.md` and `docs/api.md`.
+
+The native C++ implementation remains the executable correctness/reference runtime and a source of reusable components, but it is not the production prefill/decode selector for the scoped release.
 
 Local native source includes:
 
@@ -82,25 +91,7 @@ Source closure is complete for the native model core. Checkpoint-free native bui
 
 ## Architecture summary
 
-The runtime flow is:
-
-```text
-official checkpoint
-  ↓
-WeightCatalog / checkpoint infrastructure
-  ↓
-TextFront
-  ↓
-TextEncoder
-  ↓
-TextDecoder / TextBackboneState
-  ↓
-final collapse / norm / head
-  ↓
-sampling / TextGeneration
-```
-
-Transformer layers use `Block`, `CompressedBlock`, and `ReusedBlock` forms. Attention state is persisted in per-layer window KV, compressed source KV, indexer K, and shared publications. HC wraps attention and FFN/MoE subblocks. Engram remains SSD-backed and is integrated at the configured backbone layers.
+The release production architecture is described in `docs/runtime-strategy.md`: dense P0-P7 FP8/MLX prefill commits a live `DeepseekV41Cache[40]`; P5 hands the held-out terminal token to oMLX `GenerationBatch`; decode proceeds MTP-OFF with one executable cache authority. Transformer/session details from the native reference runtime remain documented because they define important state and correctness contracts.
 
 ## Repository layout
 
@@ -162,9 +153,7 @@ These do not run benchmarks or full checkpoint qualification.
 
 ## Runtime/API status
 
-The eventual serving layer should use official DeepSeek `deepseek-recipe` for protocol, prompt, response, tool-call, thinking, and streaming behavior, with a narrow `ds41f` backend interface below it.
-
-A fully connected native HTTP serving path is not yet claimed until API integration is validated.
+The supported serving layer uses official DeepSeek `deepseek-recipe` for protocol, prompt, response, tool-call, thinking, and streaming behavior, with a narrow `ds41f` backend interface below it. See `docs/api.md` for exact endpoint behavior, single-flight/max-session limits, persistence/restore, tool-loop behavior, streaming, and the stateful stop-string rejection policy.
 
 ## Correctness model
 
@@ -180,18 +169,9 @@ Historical provenance is recorded in provenance/archive documentation and is not
 
 ## Qualification status
 
-Qualified/source-verified areas include checkpoint provenance, official primitive validators, source integrity, native source closure, checkpoint-free native build/tests, MLX-enabled native build/tests, bounded full-checkpoint native execution, M4 backend-local correctness policy, and bounded persistent-state lifecycle evidence.
+Qualified/source-verified areas include checkpoint provenance, official primitive validators, source integrity, native source closure, checkpoint-free native build/tests, MLX-enabled native build/tests, bounded full-checkpoint native execution, backend-local correctness policy, dense production prefill through 200K, practical GenerationBatch decode, official recipe HTTP serving, long-session continuation, same-backend KV persistence/restore, repeated function-tool loops, and EOS termination.
 
-The bounded full-checkpoint smoke has verified that the native runtime can open the official checkpoint, execute full prefill for the small fixture, and perform one-token generation. It is not broad release qualification or performance qualification.
-
-Remaining qualification gaps for the finished project include:
-
-- production MLX/oMLX-derived decode qualification under the finalized backend-local policy
-- native HTTP/API integration
-- post-import performance qualification
-- long-context and long-session robustness
-- KV/cache save-restore-resume qualification
-- release qualification
+The release claim is intentionally scoped, not universal. Vision, batching, MTP, DSpark, speculative decode, distributed serving, authentication, server-side tool execution, sessionized Responses/Messages, cross-runtime KV portability, and arbitrary stateful stop strings remain unsupported or unqualified.
 
 ## Canonical documentation
 

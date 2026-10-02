@@ -1,75 +1,77 @@
-# API status
+# Public API contract
 
-The eventual external serving layer should use official DeepSeek `deepseek-recipe` for protocol, prompt, response, tool-call, thinking, and streaming behavior. The project should not independently reinvent those conversions.
+This is the release-scope API contract for the qualified text runtime. It is intentionally narrower than all fields that the upstream `deepseek-recipe` request classes can parse.
 
-Target shape:
+## Qualified release scope
 
-```text
-HTTP transport
-  ↓
-deepseek-recipe
-  ↓
-ds41f backend interface
-  ↓
-production runtime
-```
+Transport is local HTTP. Protocol conversion, prompt rendering, response parsing, tool-call parsing, thinking fields, and stream formatting are delegated to official DeepSeek `deepseek-recipe`; `ds41f-mlx` supplies the backend runtime below that layer.
 
-## Current endpoint surface
+Supported endpoints:
 
-The server exposes both stateless compatibility endpoints and local sessionized endpoints over the same official DeepSeek recipe conversion/parsing layer:
+- `GET /health` — process/model health. Returns `alive` before model load, `ready` after the backend has a model, or `unavailable` with `fatal_error`.
+- `GET /v1/models` — model id plus aliases. The release model id is `deepseek-v4.1-flash`; accepted aliases are `deepseek-v41-flash` and `deepseek-flash`.
+- `POST /v1/chat/completions` — stateless text Chat Completions.
+- `POST /v1/responses` — stateless text Responses smoke-qualified scope.
+- `POST /v1/messages` — stateless text Messages scope pinned to the qualified recipe revision.
+- `POST /v1/sessions` — create a local stateful Chat Completions session. Optional body field: `id`.
+- `GET /v1/sessions/{id}` — bounded metadata for a live session; not a cache/token authority.
+- `DELETE /v1/sessions/{id}` — close a live session and release its GenerationBatch/session ownership.
+- `POST /v1/sessions/{id}/chat/completions` — continue one local stateful Chat Completions session.
+- `POST /v1/sessions/{id}/persist` — persist an idle session artifact. Optional body field: `artifact_root`.
+- `POST /v1/sessions/restore` — restore an idle same-backend artifact into a local session. Required body field: `artifact_path`; optional `id`.
 
-### `GET /health`
+## Runtime contract behind the API
 
-Reports service health for the active backend.
+Production serving uses `PRODUCTION_PREFILL_SELECTOR = DENSE_P0_P7`: official recipe tokens are rendered, `tokens[-1]` is held out, `tokens[:-1]` are committed through `DeferredPrefillAppend` with P7 `FULL_RESIDENT_BACKBONE_SSD_ENGRAM`, and P5 hands the held-out terminal token exactly once to oMLX `GenerationBatch` with MTP, DSpark, and speculative decode OFF.
 
-### `GET /v1/models`
+Stateful sessions route to exactly one live recipe tool session/GenerationBatch authority. The HTTP layer never owns KV tensors, all-token history, prompt replay, cache repack/export, or tool execution.
 
-Returns the available model identifiers exposed by the server.
+## Stateful behavior
 
-### `POST /v1/chat/completions`
+- Scope: Chat Completions only.
+- Continuation: exact-prefix continuation from the committed conversation/cache frontier.
+- Prompt replay on stateful continuation: 0.
+- Full-cache repack/reconstruction on stateful continuation: 0.
+- Live authority: one executable cache authority per session.
+- Idle boundaries: all 40 cache offsets must equal the committed frontier.
+- Maximum live sessions: `DS41F_MAX_LIVE_SESSIONS`, default `4`.
+- Single-flight: one backend request at a time; overlapping requests fail with conflict instead of creating a second active authority.
+- Close: releases live session and GenerationBatch ownership.
 
-Stateless Chat Completions request-local inference path qualified in M7.
+## Persistence/restore
 
-### `POST /v1/responses`
+Persistence is qualified only for idle same-backend artifacts: manifest + safetensors + commit marker, with checkpoint/schema/shape/dtype/frontier/provenance validation. Restored artifacts are dormant storage until loaded; they are never a second live authority. Restore fails closed on mismatch/corruption and does not fall back to fresh prompt prefill.
 
-Stateless Responses request-local inference path qualified in M7 for text smoke coverage.
+Cross-runtime or cross-backend KV portability is outside the release claim.
 
-### `POST /v1/messages`
+## Function tools
 
-Stateless pinned-recipe Messages text smoke path qualified in M7.
+Ordinary client-side Chat Completions function tools are supported. The model may emit tool calls; the client executes tools and sends tool results in the next session turn. Repeated tool/result loops are qualified for this scope. The server does not execute arbitrary tools, plugins, MCP, shell commands, or web search.
 
-### `POST /v1/sessions`
+Invalid tool-result order, wrong ids, duplicate results, unknown sessions, and overlap conflicts fail before session mutation.
 
-Creates a local stateful session id for Chat Completions agent/tool loops.
+## Streaming
 
-### `GET /v1/sessions/{id}` / `DELETE /v1/sessions/{id}`
+Stateless streaming follows official recipe chunk formatting for text Chat Completions/Responses in the qualified scope. Stateful Chat Completions streaming replays official chunks only after a committed session boundary, so protocol-visible chunks never outrun the cache frontier. Cancellation triggers cleanup and must not leave an active GenerationBatch owner.
 
-Inspect or close a local stateful session. Diagnostics are bounded metadata only and are not a second cache/token authority.
+## Termination
 
-### `POST /v1/sessions/{id}/chat/completions`
+DeepSeek V4.1 EOS token semantics are qualified for the GenerationBatch path. EOS token id `1` is retained in cache/all-token history, hidden from protocol text by the recipe layer, and reported as finish reason `stop`. Length termination reports `length` according to the recipe response.
 
-Routes an official Chat Completions request through one `M11RecipeToolSession`, preserving M8/M9/M10/M11 cache/session invariants across tool-call and tool-result turns.
+## Stateful `stop` policy
 
-### `POST /v1/sessions/{id}/persist` and `POST /v1/sessions/restore`
+Arbitrary request stop strings are **not supported** on stateful session endpoints. A request body containing a non-empty/non-null `stop` field is rejected with `invalid_request_error` before recipe conversion can mutate session state. This avoids committing generated tokens/KV that the client protocol history would hide after detokenized stop-string truncation.
 
-Persist or restore an idle session through the existing M9 artifact model. Persisted artifacts are dormant storage, never a second live authority.
-
-## Backend/runtime ownership
-
-Runtime architecture selection is governed by `docs/runtime-strategy.md` and `docs/implementation-plan.md`. Current serving selection is `PRODUCTION_PREFILL_SELECTOR = DENSE_P0_P7`: official recipe encoding supplies complete prompt tokens, serving holds out `tokens[-1]`, prefill commits `tokens[:-1]` through `DeferredPrefillAppend`, and P5 supplies the held-out terminal token exactly once to oMLX `GenerationBatch` MTP-OFF.
-
-M7 validates the stateless DeepSeek-recipe HTTP path for text-only single-flight serving. M8 validates repeated exact-prefix continuation. M9 validates same-backend idle KV persistence/restore. M10 validates repeated restored long sessions. M11 validates official-recipe Chat Completions function-tool boundaries. M12 exposes the M11 session object through local `/v1/sessions` HTTP endpoints, including streaming committed-boundary replay, overlap/unknown-session fail-closed behavior, and persistence/restore re-entry. M13 validates repeated Chat Completions function-tool agent loops through the same sessionized HTTP surface. M14 restores/qualifies DeepSeek V4.1 EOS token termination for the direct GenerationBatch path: EOS is retained in cache/all_tokens for exact-prefix continuity, hidden from protocol text, and reported as stop.
-
-The HTTP/session layer does not own KV tensors, token history, prompt replay, or tool execution. A session id routes requests to exactly one live `M11RecipeToolSession` authority. Prompt replay, cache repack/export, MTP/DSpark, multimodal input, reference vertical-slice serving, and the legacy one-chunk prefill substrate are not production API paths.
+Stateless endpoints continue to use official recipe request behavior for fields the recipe supports. The qualified stateful termination mechanism is DeepSeek EOS token/length, not generic KV rollback.
 
 ## Error behavior
 
-Invalid requests should fail atomically with respect to model/session state: no partial token commit, KV mutation, publication, or generation-state advance should survive a rejected request.
+Rejected requests are atomic with respect to model/session state: no partial token commit, KV mutation, publication, or generation-state advance may survive. Unknown session returns not-found; active overlap/max-session conflicts return conflict; validation failures return invalid request errors.
 
-## Unsupported/unqualified options
+## Optional / experimental
 
-Do not assume support for vision, speculative decode, batching, general tool execution, distributed sessions, authentication, sessionized Responses/Messages, or PyTorch RNG parity unless a current qualification entry states it. Stateless streaming text for Chat Completions and Responses is qualified in M7; stateful Chat Completions streaming in M12 replays official chunks only after a committed M11 boundary to avoid exposing tokens beyond the cache frontier.
+Diagnostic endpoints exist only when `DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS=1`. Their output is bounded operational metadata and is not a public cache API.
 
-## Development guidance
+## Unqualified / unsupported
 
-Future API work should keep binding through the narrow backend interface rather than creating another production session-state implementation.
+Vision, arbitrary batching, sessionized Responses/Messages, MTP, DSpark, speculative decode, distributed sessions, authentication, server-side tool execution, MCP/plugins, web search, shell tools, cross-runtime KV portability, and arbitrary stateful stop strings are outside the release contract.

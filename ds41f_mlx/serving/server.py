@@ -22,6 +22,7 @@ from starlette.concurrency import run_in_threadpool
 from starlette.types import Receive, Scope, Send
 
 from ds41f_mlx.serving.deepseek_recipe_backend import DeepSeekRecipeRuntimeBackend, RecipePreparedRequest, DEFAULT_RECIPE, DEFAULT_MODEL_ID, MODEL_ALIASES
+from ds41f_mlx.serving.request_policy import validate_stateful_chat_request_policy
 
 PROTOCOL_TYPES = {
     'chat_completions': (ChatCompletionRequest, ChatCompletionResponse),
@@ -198,6 +199,10 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
     @app.post('/v1/sessions/{session_id}/chat/completions')
     async def session_chat(session_id: str, request: Request) -> Response:
         body = await request.body()
+        try:
+            validate_stateful_chat_request_policy(body)
+        except ValueError as exc:
+            raise RequestError(str(exc), 400)
         prepared = await run_in_threadpool(prepare_request, 'chat_completions', body, tokenizer=tokenizer, recipe_path=recipe_path, options=options)
         try:
             turn = await backend.run_stateful_chat_turn(session_id, prepared, tokenizer=tokenizer)

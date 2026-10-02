@@ -1,33 +1,17 @@
 # ds41f-mlx documentation
 
-This directory is the canonical current-state documentation for the runtime at HEAD.  It is organized by strategy and subsystem, not by development chronology.
+Canonical current-state documents:
 
-## Canonical current-state docs
-
-- [Runtime strategy](runtime-strategy.md) — architecture-governance strategy and selection rules
-- [Implementation plan](implementation-plan.md) — milestone roadmap for restoring production runtime architecture
-- [Milestone 1 architecture audit](milestone-1-architecture-audit.md) — completed architecture restoration inventory
-- [Milestone 2 prefill restoration status](milestone-2-prefill-restoration-status.md) — current DwarfStar-derived prefill implementation blocker and frontier
-- [Architecture](architecture.md) — current implementation structure and source layout
-- [Correctness](correctness.md) — M4 backend-local fidelity policy, authority hierarchy, stopping rule, and non-requirements
+- [Runtime strategy](runtime-strategy.md) — production architecture and non-selected paths
+- [Implementation plan](implementation-plan.md) — staged implementation status and current selector decisions
+- [Architecture](architecture.md) — runtime components and ownership boundaries
+- [Correctness](correctness.md) — backend-local fidelity policy and authority hierarchy
 - [Session state](session-state.md) — persistent, runtime-owned, and call-local state contract
-- [Attention](attention.md) — SWA, compressed producer, reuse consumers, indexing, and production kernels
-- [HC / MoE](moe-hc.md) — hyper-connections, routing, experts, and residency policy
-- [Engram](engram.md) — SSD-backed store, MLX projection, and backbone integration
-- [Generation](generation.md) — prompt, decode, logits, sampling, commit, stop/cancel lifecycle
-- [API](api.md) — current HTTP/runtime surface and bridge status
-- [Performance](performance.md) — current performance claims and unqualified areas
-- [Provenance](provenance.md) — checkpoint/source/import identity and dependency policy
-- [Qualification](qualification.md) — current qualification matrix
-- [Milestone 8 long-session architecture](milestone-8-long-session-architecture.md) — canonical repeated append/decode lifecycle and persistence seam
-- [Milestone 9 KV persistence architecture](milestone-9-kv-persistence-architecture.md) — M8 idle cache artifact format and restore contract
-- [Milestone 10 restored long-session qualification](milestone-10-restored-long-session-qualification.md) — repeated save/restore/context-growth lifecycle closeout
+- [Generation](generation.md) — prefill/decode/commit/termination lifecycle
+- [API](api.md) — release-scope public HTTP contract
+- [Performance](performance.md) — qualified performance class and baselines
+- [Provenance](provenance.md) — checkpoint/source/import/dependency identity
+- [Qualification](qualification.md) — current qualified, optional, unqualified, and non-goal areas
+- [Release qualification](release-qualification.md) — scoped release statement and regression matrix
 
-## Machine-readable classification
-
-- [Documentation classification map](doc-classification.json) records how old prose was archived or absorbed.
-- [Scaffold classification](scaffold-classification.md) records the current role of Python/native pre-import scaffold files.
-
-## Historical archive
-
-`docs/archive/` contains non-normative development history, validation closeouts, migration notes, and detailed historical references.  Archive documents preserve evidence context but are not required to understand current runtime behavior and must not override the canonical docs above.
+Historical milestone documents and diagnostic notes remain in `docs/` as evidence. They are not rewritten to make development appear linear; the documents above are authoritative for current release claims.

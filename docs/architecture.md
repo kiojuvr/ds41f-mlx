@@ -1,78 +1,44 @@
 # Architecture
 
-This document describes the current executable native model core at HEAD. It is the current correctness/reference implementation and contains reusable production components, but `docs/runtime-strategy.md` and `docs/implementation-plan.md` govern final production architecture selection. The C++ implementation keeps the internal `dsv41` namespace for source continuity, but the repository ownership is local to `ds41f-mlx`.
-
-## Runtime pipeline
+## Qualified production architecture
 
 ```text
-official checkpoint
+official DeepSeek-V4.1-Flash checkpoint
   ↓
-WeightCatalog / checkpoint atlas / storage infrastructure
+official deepseek-recipe protocol/rendering
   ↓
-TextFront
+DENSE_P0_P7 prefill facade
   ↓
-TextEncoder
+P7 FULL_RESIDENT_BACKBONE_SSD_ENGRAM
   ↓
-TextDecoder
+live DeepseekV41Cache[40] + all-token history
   ↓
-TextBackbone + TextBackboneState
+P5 terminal-token handoff exactly once
   ↓
-final collapse / norm / head
+oMLX GenerationBatch, MTP/DSpark/speculation OFF
   ↓
-sampling / TextGeneration
+recipe-formatted HTTP response/session boundary
 ```
 
-`WeightCatalog` and checkpoint atlas code provide read-only model-data discovery.  `TextFront` prepares token input and request state.  `TextEncoder` and `TextDecoder` own chunk/tokenwise execution and continuation behavior for the current native implementation.  `TextBackboneState` is the current native session state container and a qualification reference for future production architecture.  `TextGeneration` drives decode, sampling, token commit, stop/cancel handling, and continuation in this implementation.
+The release architecture has one executable cache authority. `PrefillContinuationState` and handoff artifacts are evidence/admission structures; after GenerationBatch bootstrap, scheduler-owned cache is authoritative. Persisted artifacts are dormant storage and never a second live authority.
 
-## Native source layout
+## Repository components
 
-- `native/include/dsv41/` — native runtime headers
-- `native/src/model/` — model blocks, text runtime, sampling/generation, weights/trace/entry
-- `native/src/attention/` — SWA, compressed producer, reused attention, indexer, compressor, KV quantization
-- `native/src/cache/` — GlobalKV cache
-- `native/src/engram/` — Engram index/store and MLX layer/projection
-- `native/src/mhc/` — HC implementation
-- `native/src/moe/` — MoE routing, experts, backing, grouped pipeline
-- `native/src/runtime/` — bridge and residency infrastructure
-- `native/metal/` — Metal kernels embedded into MLX-backed targets
-- `native/tests/` — native lifecycle and subsystem tests
+- `ds41f_mlx/prefill_fp8_mlx/` — dense FP8/MLX prefill, P7 Engram/SSD behavior, P5 handoff helpers, P8 experimental probes.
+- `ds41f_mlx/runtime/` — oMLX runtime loading, decode/session wrappers, long-session continuation, KV persistence, tool-boundary session logic.
+- `ds41f_mlx/serving/` — official recipe HTTP backend, session API, policy checks, diagnostics.
+- `native/` — local C++ reference model core and tests.
+- `artifacts/` — provenance, qualification, and performance evidence.
+- `tools/` — static gates, qualification runners, and diagnostic utilities.
 
-## Layer forms
+## Reference native architecture
 
-The imported model core provides three block forms:
+The native C++ core remains local and self-contained. It includes checkpoint/storage discovery, attention/session state, HC/MoE, Engram, blocks, text runtime, sampling/generation, and runtime bridge tests. This implementation is reference/qualification evidence and may supply reusable components, but it is not the selected production prefill/decode topology for the release path.
 
-```text
-Block
-  HC
-  SWA/attention
-  HC
-  MoE
+## State ownership
 
-CompressedBlock
-  HC
-  CompressedLayer producer attention
-  HC
-  MoE
+Persistent model/session state includes token history, per-layer window KV, compressed source KV, index K, shared publications, Engram hash/history state, candidate/top-k state, and GenerationBatch-owned cache state. Runtime-owned state includes request/session ownership, executor scheduling, RNG provider state, diagnostics, and persistence transaction state. Call-local hidden/logit tensors are not persistent session authority.
 
-ReusedBlock
-  HC
-  ReusedLayer / SharedAttention consumer
-  HC
-  MoE
-```
+## Non-selected paths
 
-The actual model hierarchy uses source layers that publish compressed/global state and consumer layers that reuse it through shared publications and candidate/indexer machinery.
-
-## Subsystem relationships
-
-- SWA stores per-layer window KV state.
-- Compressed producer layers create compressed KV and score/index state for later reuse.
-- Reused consumer layers read published source-layer state through `SharedAttention`.
-- HC owns pre/post subblock mixing around attention and MoE/FFN portions.
-- MoE owns gate/routing, shared expert, routed experts, and merge ordering.
-- Engram owns SSD-backed row lookup and MLX projection/dequantization at configured backbone insertion points.
-- Sampling and generation consume logits from the native text runtime but do not claim PyTorch RNG bitstream parity.
-
-## Current qualification boundary
-
-Source closure is local. Checkpoint-free native build/tests, MLX-enabled native build/tests, and bounded full-checkpoint native smoke have passed for their stated scopes. These results qualify the implementation that produced them; they do not automatically qualify a future DwarfStar- or oMLX-derived production runtime.
+The old one-chunk oMLX substrate, reference vertical-slice serving, P8 tile-native carry, MTP/DSpark/speculative decode, native HTTP serving, and diagnostic validators are not production-selected release paths unless a future qualification explicitly promotes them.

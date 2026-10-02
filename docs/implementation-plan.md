@@ -142,12 +142,18 @@ production runtime
 
 The project should not independently reinvent Chat Completions conversion, Responses conversion, DeepSeek V4.1 prompt encoding, tool-call parsing, thinking parsing, or stream response formatting. M7 qualified arbitrary valid prefix length support over the bounded matrix, including odd/even and ratio-2 pending states; no prompt replay fallback is allowed or used.
 
+## Milestone 15 — Release qualification and public contract closure
+
+Status: **qualified for scoped text runtime release** (`DS41F_TEXT_RUNTIME_RELEASE_QUALIFIED`). See `docs/release-qualification.md` and `artifacts/m15-release-qualification.json`.
+
+M15 reconciles canonical documentation with the qualified production state, closes the public API contract, rejects arbitrary stateful stop strings before mutation, records the bounded release regression matrix, documents startup/shutdown and dependency requirements, and preserves the release invariants without adding a new runtime architecture.
+
 ## Later goals
 
+- packaging/configuration cleanup and a one-command combined release qualification runner;
 - multimodal support;
-- broader serving qualification;
-- additional speculative execution;
-- release hardening.
+- broader serving qualification beyond local single-flight;
+- optional speculative execution after base release qualification.
 
 ## Component disposition matrix
 
@@ -168,4 +174,4 @@ The project should not independently reinvent Chat Completions conversion, Respo
 - Correctness fixes must preserve architecture intent or explicitly document structural consequences.
 - Performance evidence must be end-to-end and provenance-recorded.
 - Reference code may stay slow if it remains useful correctness evidence.
-- No API or multimodal work should begin before runtime architecture restoration reaches the serving milestone.
+- New API breadth, multimodal work, or speculative execution must not broaden the release claim until separately qualified.

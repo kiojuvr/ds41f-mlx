@@ -71,10 +71,18 @@ Historical DwarfStar Q4 resident and ds41f DwarfStar-derived prototype measureme
 
 Rejected/deferred candidates include wide/rectangular attention alternatives, fused mHC decode candidate, performance-only decode graphs, non-promoted late residency variants, and P8 `TILE_NATIVE_CARRY_REJECTED_NO_E2E_GAIN`. Tile-native carry structurally eliminated source/encoder dense carry writes/slices at 16384, but the ~0.57% warm median difference was inside run-to-run noise and the final-boundary cache proxy regressed by ~1.5 GB. These are not selectable as canonical production implementations.
 
+## Release performance sanity
+
+The scoped release relies on the dense P0-P7 performance class already qualified through 200K, practical GenerationBatch decode above the interactive floor, EOS termination avoiding unnecessary post-answer generation, and same-backend persistence/restore that is operationally small relative to model load/inference.
+
+Operator-facing performance claims are regression class claims, not a new benchmark competition. Do not broaden them beyond the recorded checkpoint/runtime/hardware/config provenance.
+
 ## Unqualified areas
 
-- long-session robustness beyond one long request
-- native HTTP serving performance
-- release performance qualification
+- batch throughput serving;
+- MTP/DSpark/speculative performance;
+- non-target hardware performance;
+- vision/multimodal performance;
+- cross-runtime KV portability costs.
 
 Do not run or cite benchmarks as release qualification unless the run records exact checkpoint, runtime, build, prompt/generation lengths, options, and hardware.

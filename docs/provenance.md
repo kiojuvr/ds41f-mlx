@@ -40,10 +40,21 @@ test dependency: none
 - `tools/check_native_import_dependencies.py` verifies native source/build/test independence from the historical source repository.
 - `tools/check_repository_self_containment.py` verifies canonical docs, links, provenance paths, and self-containment.
 
+## External runtime dependencies for the scoped release
+
+The current production path has explicit external requirements:
+
+- official DeepSeek-V4.1-Flash checkpoint at the documented local checkpoint path;
+- oMLX checkout used for GenerationBatch decode, pinned in qualification evidence to revision `b390b31e0c6831225fed0f24d278eb1db7fcb68b`;
+- MLX / mlx-lm versions recorded by the production artifacts for the target machine;
+- official `deepseek-recipe` checkout/tokenizer, pinned in session/tool/termination evidence to revision `8cadfede7063c896b944e7bae05daa3549ae97ea`.
+
+The release does not silently vendor those projects. If local checkout paths are used, they are operator requirements and are documented in `docs/release-qualification.md`.
+
 ## External architecture and implementation sources
 
-- DwarfStar: production architecture source for intended prefill restoration and a decode candidate; not a correctness authority.
-- oMLX: decode architecture candidate, compatibility/performance baseline, and implementation donor; not a correctness authority.
+- DwarfStar: production architecture source for the dense prefill topology; not a correctness authority.
+- oMLX: selected production decode implementation for the scoped release, compatibility/performance baseline, and implementation donor; not a correctness authority.
 - Historical native source: implementation origin and imported regression evidence only.
 
 No donor supersedes the official checkpoint and reviewed official-source semantics.

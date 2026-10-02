@@ -1,0 +1,52 @@
+{
+  "schema": "ds41f.m15.release-qualification.v1",
+  "status": "DS41F_TEXT_RUNTIME_RELEASE_QUALIFIED",
+  "git_commit_at_start": "77a2128650e64860c78986abe5d19cb67d4820bc",
+  "scope": {
+    "hardware": "Mac Studio M3 Ultra 512 GB class target",
+    "model": "official DeepSeek-V4.1-Flash checkpoint",
+    "input": "text",
+    "prefill": "DENSE_P0_P7 with P7 FULL_RESIDENT_BACKBONE_SSD_ENGRAM",
+    "decode": "oMLX GenerationBatch, MTP OFF, DSpark OFF, speculative decode OFF",
+    "serving": "local single-flight HTTP",
+    "stateless": ["chat_completions", "responses", "messages"],
+    "stateful": ["chat_completions_sessions"],
+    "persistence": "same-backend idle artifact restore",
+    "termination": "DeepSeek V4.1 EOS token semantics"
+  },
+  "stateful_stop_policy": {
+    "policy": "reject_non_empty_non_null_stop_before_mutation",
+    "implementation": "ds41f_mlx.serving.request_policy.validate_stateful_chat_request_policy",
+    "test": "tests/test_stateful_request_policy.py"
+  },
+  "evidence_artifacts": [
+    "artifacts/m6/performance-qualification/result.json",
+    "artifacts/m7/deepseek-recipe-serving/result.json",
+    "artifacts/m8/long-session-qualification.json",
+    "artifacts/m9/kv-persistence-qualification.json",
+    "artifacts/m10/restored-long-session-qualification.json",
+    "artifacts/m11/tool-boundary-qualification.json",
+    "artifacts/m12/sessionized-http-qualification.json",
+    "artifacts/m13/repeated-tool-agent-qualification.json",
+    "artifacts/m14/termination-qualification.json"
+  ],
+  "pinned_external_evidence": {
+    "omlx_revision": "b390b31e0c6831225fed0f24d278eb1db7fcb68b",
+    "deepseek_recipe_revision": "8cadfede7063c896b944e7bae05daa3549ae97ea",
+    "checkpoint_path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash"
+  },
+  "cheap_gates_run_in_m15": [
+    {"command": "python3 -m unittest tests/test_stateful_request_policy.py", "result": "PASS"},
+    {"command": "python3 tools/check_legacy_import_integrity.py", "result": "PASS"},
+    {"command": "python3 tools/check_native_import_dependencies.py", "result": "PASS"},
+    {"command": "python3 tools/check_repository_self_containment.py", "result": "PASS"},
+    {"command": "cmake -S native -B native/build", "result": "PASS"},
+    {"command": "cmake --build native/build", "result": "PASS"},
+    {"command": "ctest --test-dir native/build --output-on-failure", "result": "PASS"}
+  ],
+  "unsupported": [
+    "vision", "batching", "MTP", "DSpark", "speculative_decode", "sessionized_responses_messages",
+    "server_side_tool_execution", "MCP_plugins", "web_search", "shell_tools", "distributed_serving",
+    "authentication", "cross_runtime_kv_portability", "arbitrary_stateful_stop_strings"
+  ]
+}
