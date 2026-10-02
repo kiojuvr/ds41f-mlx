@@ -1,0 +1,189 @@
+{
+  "schema": "ds41f.m26.performance-gap-attribution.v1",
+  "qualification": "DIAGNOSTIC_ONLY_NOT_PRODUCTION",
+  "ds41f_commit_at_start": "ddde0e1b2bc8af2017d09a7ab2caad8cdb7fa237",
+  "omlx_revisions": {
+    "release_0_7_0": "4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40",
+    "dev2": "b390b31e0c6831225fed0f24d278eb1db7fcb68b"
+  },
+  "checkpoints": {
+    "official": {
+      "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+      "config_sha256": "8be45ce0476004a3f529fd896115a4a2e800a129ad2d3ec05b16050f52e21879"
+    },
+    "oq4e_mtp": {
+      "path": null,
+      "status": "NOT_AVAILABLE_LOCALLY; no local DeepSeek-V4.1-Flash-oQ4e-mtp checkpoint found under /Volumes, ~/.cache/mlx-lm, or ~/.omlx",
+      "published_reference": {
+        "4k_tok_s": 34.45,
+        "16k_tok_s": 35.42,
+        "32k_tok_s": 34.14,
+        "64k_tok_s": 36.0,
+        "mtp_off_tok_s": "approximately 19.6-20"
+      }
+    }
+  },
+  "benchmark_settings": {
+    "main_stock_runs": "Code/Python repeated prompt truncated to context; BatchGenerator direct; 128 generated tokens except release-official-off-4k used 32 tokens as a quick OFF check; temperature=1.0 categorical unless noted; top_p=1; top_k=0; prefix cache disabled; Engram SSD; sequential runs; model load excluded from decode tok/s",
+    "deviations": [
+      "The published oQ4e-mtp checkpoint was not locally available, so dev2 oQ4e reproduction was not run.",
+      "No 16K/32K expansion was needed after 4K and 64K stock official runs identified the dominant cause.",
+      "Warm-up was omitted in the recorded per-run files; the same loaded model was measured after prefill, and decode-only throughput is reported."
+    ]
+  },
+  "results": {
+    "current_ds41f_m25_terminal_only_priming": {
+      "source": "artifacts/m25/decision.json ordinary64",
+      "official_oMLX_0_7_0_DENSE_P0_P7_terminal_capture_only": {
+        "2048": {
+          "off_tok_s": 19.93,
+          "mtp_tok_s": 24.69,
+          "ratio": 1.239,
+          "acceptance_rate": 0.7059,
+          "accepted_per_cycle": 1.3846,
+          "cycles": 26,
+          "accepts": 36,
+          "rejects": 15,
+          "depth_drafted": [
+            26,
+            20,
+            5,
+            0,
+            0
+          ],
+          "target_backbone_ms": 2248.06,
+          "dspark_head_ms": 69.94,
+          "cache_ops_ms": 11.02
+        },
+        "200000": {
+          "off_tok_s": 19.08,
+          "mtp_tok_s": 19.98,
+          "ratio": 1.047,
+          "acceptance_rate": 0.4821,
+          "accepted_per_cycle": 0.7941,
+          "cycles": 34,
+          "accepts": 27,
+          "rejects": 29,
+          "depth_drafted": [
+            34,
+            22,
+            0,
+            0,
+            0
+          ],
+          "target_backbone_ms": 2716.22,
+          "dspark_head_ms": 109.97,
+          "cache_ops_ms": 18.8
+        }
+      }
+    },
+    "stock_release_official_full_prompt_priming": {
+      "4k_off": {
+        "artifact": "artifacts/m26/release-official-off-4k.json",
+        "tok_s": 19.94,
+        "first_token_ms": 49.09
+      },
+      "4k_on": {
+        "artifact": "artifacts/m26/release-official-on-4k.json",
+        "tok_s": 42.68,
+        "first_token_ms": 73.52,
+        "acceptance_rate": 0.94495,
+        "accepted_per_cycle": 4.4783,
+        "cycles": 23,
+        "accepts": 103,
+        "rejects": 6,
+        "depth_drafted": [
+          23,
+          23,
+          23,
+          23,
+          17
+        ]
+      },
+      "64k_off": {
+        "artifact": "artifacts/m26/release-official-off-64k.json",
+        "tok_s": 19.6,
+        "first_token_ms": 50.38
+      },
+      "64k_on": {
+        "artifact": "artifacts/m26/release-official-on-64k.json",
+        "tok_s": 41.51,
+        "first_token_ms": 75.21,
+        "acceptance_rate": 0.94495,
+        "accepted_per_cycle": 4.4783,
+        "cycles": 23,
+        "accepts": 103,
+        "rejects": 6,
+        "depth_drafted": [
+          23,
+          23,
+          23,
+          23,
+          17
+        ]
+      },
+      "4k_on_greedy": {
+        "artifact": "artifacts/m26/release-official-on-4k-greedy.json",
+        "tok_s": 39.96,
+        "first_token_ms": 73.58,
+        "acceptance_rate": 0.90909,
+        "accepted_per_cycle": 4.1667,
+        "cycles": 12,
+        "accepts": 50,
+        "rejects": 5,
+        "depth_drafted": [
+          12,
+          12,
+          12,
+          12,
+          7
+        ]
+      }
+    },
+    "stock_dev2_official_full_prompt_priming": {
+      "4k_off": {
+        "artifact": "artifacts/m26/dev2-official-off-4k.json",
+        "tok_s": 20.03,
+        "first_token_ms": 49.2,
+        "dirty_checkout": true
+      },
+      "4k_on": {
+        "artifact": "artifacts/m26/dev2-official-on-4k.json",
+        "tok_s": 43.99,
+        "first_token_ms": 68.4,
+        "acceptance_rate": 0.94495,
+        "accepted_per_cycle": 4.4783,
+        "cycles": 23,
+        "accepts": 103,
+        "rejects": 6,
+        "depth_drafted": [
+          23,
+          23,
+          23,
+          23,
+          17
+        ],
+        "dirty_checkout": true
+      }
+    }
+  },
+  "priming_findings": {
+    "upstream_contract": "When MTP is active, DeepSeek V4.1 __call__ asks _forward for DSpark target hidden during ordinary prompt prefill, capture_prompt appends selected target-layer hidden into DSparkContextCache and records expected_target_offset, and take_primed transfers those caches into the generation loop after the first main token.",
+    "m25_gap": "M25 intentionally ran ds41f DENSE_P0_P7 with MTP OFF during P7 and supplied only the terminal token to upstream BatchGenerator. The host prime context was absent at generation start in M25 artifacts.",
+    "effect": "At comparable OFF speed (~19.6-20 tok/s), restoring stock full prompt priming on the official checkpoint raised MTP to 41.5-42.7 tok/s with ~94.5% checked-draft acceptance, versus 20.0-24.7 tok/s and 48-71% in M25 terminal-only runs. This directly isolates missing prompt priming as the dominant measured cause."
+  },
+  "checkpoint_findings": {
+    "oq4e_status": "Not reproduced because the oQ4e-mtp checkpoint was unavailable locally.",
+    "inference_from_available_data": "Checkpoint representation is not required to exceed the published 34-36 tok/s: the official checkpoint with stock full prompt priming reached 41-44 tok/s on this machine. Therefore oQ4e cannot be the dominant explanation of why M25 was slow, although it may explain differences between the published 34-36 tok/s and this official-checkpoint stock diagnostic."
+  },
+  "revision_findings": {
+    "dev2_vs_release_official_4k": "No regression found in the measured path. dev2 official MTP 43.99 tok/s vs release official MTP 42.68 tok/s; dev2 OFF 20.03 vs release OFF 19.94. The small difference is not large enough to explain M25.",
+    "dev2_limitations": "The preserved dev2 checkout is dirty in encoding.py/processing.py plus an untracked test; those files are not the measured DSpark/MTP core, and the run is diagnostic-only."
+  },
+  "workload_sampling_findings": {
+    "release_4k_categorical_vs_greedy": "Stock full-primed greedy still reached 39.96 tok/s and 90.9% acceptance, close to categorical 42.68 tok/s and far above M25. Sampling/workload contributes but is secondary to priming.",
+    "m25_synthetic": "M25's deterministic synthetic fixture had lower acceptance under terminal-only priming, especially at 200K. The fixture likely amplified the priming problem but does not explain it alone."
+  },
+  "dominant_attribution": "P7 / missing full DSpark prompt priming is dominant for the large gap. OFF speed was already equivalent; native full prompt priming on the same official checkpoint and release oMLX produces large speculative gains.",
+  "decision": "A. MTP remains worth pursuing, but production remains MTP OFF and the M25 committed-idle/no-replay lifecycle rejection is unchanged. The next MTP milestone should address the no-replay committed-idle transition only after preserving/restoring the upstream DSpark prompt-priming state contract."
+}

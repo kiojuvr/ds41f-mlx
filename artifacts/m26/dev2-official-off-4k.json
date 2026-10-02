@@ -1,0 +1,732 @@
+{
+  "schema": "ds41f.m26.upstream-mtp-bench.v1",
+  "qualification": "DIAGNOSTIC_ONLY_NOT_PRODUCTION",
+  "ds41f_commit": "ddde0e1b2bc8af2017d09a7ab2caad8cdb7fa237",
+  "omlx_path": "/Users/kioju/omlx-0.7.0.dev2",
+  "omlx_revision": "b390b31e0c6831225fed0f24d278eb1db7fcb68b",
+  "omlx_dirty_status": [
+    "M omlx/patches/deepseek_v41/encoding.py",
+    " M omlx/patches/deepseek_v41/processing.py",
+    "?? tests/test_deepseek_v41_literal_image_token.py"
+  ],
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "checkpoint_config_sha256": "8be45ce0476004a3f529fd896115a4a2e800a129ad2d3ec05b16050f52e21879",
+  "python": "3.13.15 (main, Aug  5 2026, 12:25:43) [Clang 21.0.0 (clang-2100.1.1.101)]",
+  "executable": "/Users/kioju/.venvs/omlx-0.7.0.dev2/bin/python",
+  "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+  "packages": {
+    "omlx": "0.7.0.dev2",
+    "mlx": "0.32.2",
+    "mlx-lm": "0.31.3"
+  },
+  "environment": {},
+  "settings": {
+    "mtp": "OFF",
+    "depth": 5,
+    "max_tokens": 128,
+    "sampling": "categorical",
+    "temperature": 1.0,
+    "top_p": 1,
+    "top_k": 0,
+    "prefix_cache": false,
+    "engram_ssd_offload": true,
+    "priming_mode": "stock upstream BatchGenerator prompt prefill; full native DSpark prompt capture when MTP ON",
+    "warmup_context": 0
+  },
+  "source_sha256": {
+    "omlx/patches/deepseek_v41/mtp.py": "2fe5dffa0d2c0b9780c07a7a9d1db072a5795127181f350a6011c0278a1a786e",
+    "omlx/patches/deepseek_v41/dspark.py": "bb1eb7c859d0855acd76415a02b4f1857b0e3e8699390bda2462567063e01aad",
+    "omlx/patches/deepseek_v41/language.py": "2c64bef36c9fc4a6007cd34e7b120142ced072a8d491cf1f83f2c5b1a956763f",
+    "omlx/patches/deepseek_v41/loading.py": "490e5e6b135d2959ef138f9436a93f083d04387aae7750dc9ff3e61017ec5ec4"
+  },
+  "load": {
+    "seconds": 64.55752833301085,
+    "rss_bytes": 12008882176,
+    "mlx_active_bytes": 301103697864,
+    "mlx_peak_bytes": 303509389780,
+    "mlx_cache_bytes": 5458594316
+  },
+  "warmup": null,
+  "runs": [
+    {
+      "label": "measure",
+      "context": 4096,
+      "prompt_tokens": 4096,
+      "steps": [
+        {
+          "seconds": 0.04920108400983736,
+          "token": 682,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05026791599811986,
+          "token": 775,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04901975000393577,
+          "token": 7133,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05010029100230895,
+          "token": 7004,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04922987500322051,
+          "token": 223,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05009083298500627,
+          "token": 19,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.0492221669992432,
+          "token": 201,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05021941600716673,
+          "token": 775,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04926270802388899,
+          "token": 5448,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.050346250005532056,
+          "token": 201,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.049112083012005314,
+          "token": 528,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05044854199513793,
+          "token": 855,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04915304100723006,
+          "token": 17437,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05025804101023823,
+          "token": 1137,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04963100000168197,
+          "token": 775,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.050412041979143396,
+          "token": 8500,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.049316792021272704,
+          "token": 47948,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05048087498289533,
+          "token": 2292,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04920645902166143,
+          "token": 2852,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05036204098723829,
+          "token": 1780,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.049312999995891005,
+          "token": 118675,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.0505313329922501,
+          "token": 23277,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.049565875000553206,
+          "token": 100887,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05020987501484342,
+          "token": 754,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.049547834001714364,
+          "token": 2562,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.050521207973361015,
+          "token": 14,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04947254099533893,
+          "token": 7133,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.050438999984180555,
+          "token": 565,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.049259375024121255,
+          "token": 9080,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05065774999093264,
+          "token": 100887,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.049648707994492725,
+          "token": 5203,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05061083400505595,
+          "token": 775,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04926645802333951,
+          "token": 17437,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.050225374987348914,
+          "token": 52792,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04937012499431148,
+          "token": 3390,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05039491699426435,
+          "token": 528,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.049398250004742295,
+          "token": 855,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.050444916007108986,
+          "token": 537,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04943108299630694,
+          "token": 2606,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05054341701907106,
+          "token": 69697,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04955479199998081,
+          "token": 18616,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05058170799748041,
+          "token": 775,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04947012499906123,
+          "token": 2562,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05068795901024714,
+          "token": 7004,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04947183400508948,
+          "token": 223,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05031812499510124,
+          "token": 19,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.0491451250272803,
+          "token": 201,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.0503621659881901,
+          "token": 775,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04942058300366625,
+          "token": 7133,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.050324207986705005,
+          "token": 438,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.049528750008903444,
+          "token": 223,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05045158401480876,
+          "token": 19,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.049433958978625014,
+          "token": 201,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.050413208024110645,
+          "token": 528,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.049337125004967675,
+          "token": 19132,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05051708398968913,
+          "token": 554,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04943254200043157,
+          "token": 537,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05048154201358557,
+          "token": 16,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04948183297528885,
+          "token": 1151,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05067762499675155,
+          "token": 5790,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04943387501407415,
+          "token": 15536,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05063941699336283,
+          "token": 775,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04944854200584814,
+          "token": 8500,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.050701792002655566,
+          "token": 47948,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04951125002116896,
+          "token": 2292,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.050724249973427504,
+          "token": 82,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04948683298425749,
+          "token": 19789,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.050300292001338676,
+          "token": 1780,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04941154201515019,
+          "token": 537,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.050547833991004154,
+          "token": 14,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.049609458015765995,
+          "token": 2562,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05055654197349213,
+          "token": 14,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04937070800224319,
+          "token": 7133,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05045870898175053,
+          "token": 682,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.0494172909820918,
+          "token": 775,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05044600000837818,
+          "token": 7133,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04967720800777897,
+          "token": 7004,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05063458398217335,
+          "token": 223,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.049499499989906326,
+          "token": 19,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.050504959013778716,
+          "token": 201,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04937004199018702,
+          "token": 528,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05048850001185201,
+          "token": 3006,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.049482832982903346,
+          "token": 1137,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05041216700919904,
+          "token": 775,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04953604200272821,
+          "token": 7133,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05055645800894126,
+          "token": 7004,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04954558299505152,
+          "token": 223,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05049537500599399,
+          "token": 19,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.049407915998017415,
+          "token": 271,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.050499375007348135,
+          "token": 3465,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.0495906249852851,
+          "token": 27438,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.050509249995229766,
+          "token": 65,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04946341700269841,
+          "token": 47629,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.050250790984136984,
+          "token": 1310,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.049493958009406924,
+          "token": 4665,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05028749999473803,
+          "token": 58878,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.0492500830150675,
+          "token": 28,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05054395800107159,
+          "token": 44360,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.049404916993808,
+          "token": 679,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05066920799436048,
+          "token": 61,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04933329200139269,
+          "token": 14907,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05028791699442081,
+          "token": 8123,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.049380167009076104,
+          "token": 6248,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.0505577499861829,
+          "token": 15932,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04919791698921472,
+          "token": 54361,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.050260916992556304,
+          "token": 14,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.049098792020231485,
+          "token": 1691,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05047695798566565,
+          "token": 23902,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04952924998360686,
+          "token": 361,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05023095800424926,
+          "token": 798,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.049570958013646305,
+          "token": 28,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.050501958001405,
+          "token": 15932,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04950595798436552,
+          "token": 54361,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05054525000741705,
+          "token": 14,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04939520900370553,
+          "token": 1691,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05066008400171995,
+          "token": 63,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04944970799260773,
+          "token": 438,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.050330541998846456,
+          "token": 28257,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04958662498393096,
+          "token": 361,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05044712498784065,
+          "token": 36875,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.0492752910067793,
+          "token": 28,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.0506312090146821,
+          "token": 1691,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04971399999340065,
+          "token": 369,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05064070798107423,
+          "token": 9952,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.049639749980997294,
+          "token": 438,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.050728708010865375,
+          "token": 9952,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04935487499460578,
+          "token": 201,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.050235500006238,
+          "token": 361,
+          "finish_reason": "length"
+        }
+      ],
+      "memory_before": {
+        "rss_bytes": 12010110976,
+        "mlx_active_bytes": 301103697864,
+        "mlx_peak_bytes": 303509389780,
+        "mlx_cache_bytes": 5458594324
+      },
+      "prefill_responses": 3,
+      "prefill_seconds_including_scheduler": 9.361626041994896,
+      "decode_seconds": 6.391922624985455,
+      "generated_tokens": 128,
+      "decode_tok_s": 20.02527369459377,
+      "first_token_seconds": 0.04920108400983736,
+      "memory_after": {
+        "rss_bytes": 7036567552,
+        "mlx_active_bytes": 301111392524,
+        "mlx_peak_bytes": 303509389780,
+        "mlx_cache_bytes": 202295800
+      },
+      "acceptance_rate": null,
+      "accepted_per_cycle": null,
+      "primed_context_present_after_prefill": false,
+      "uid": 0
+    }
+  ],
+  "status": "COMPLETED_DIAGNOSTIC",
+  "model_config": {
+    "preserve_mtp": false,
+    "dspark_block_size": 5,
+    "dspark_target_layer_ids": [
+      37,
+      38,
+      39
+    ],
+    "n_mtp_layers": 3
+  }
+}

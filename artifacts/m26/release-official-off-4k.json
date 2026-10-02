@@ -1,0 +1,248 @@
+{
+  "schema": "ds41f.m26.upstream-mtp-bench.v1",
+  "qualification": "DIAGNOSTIC_ONLY_NOT_PRODUCTION",
+  "ds41f_commit": "ddde0e1b2bc8af2017d09a7ab2caad8cdb7fa237",
+  "omlx_path": "/Users/kioju/omlx-0.7.0.release",
+  "omlx_revision": "4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40",
+  "omlx_dirty_status": [],
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "checkpoint_config_sha256": "8be45ce0476004a3f529fd896115a4a2e800a129ad2d3ec05b16050f52e21879",
+  "python": "3.13.15 (main, Aug  5 2026, 12:25:43) [Clang 21.0.0 (clang-2100.1.1.101)]",
+  "executable": "/Users/kioju/.venvs/omlx-0.7.0.release/bin/python",
+  "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+  "packages": {
+    "omlx": "0.7.0",
+    "mlx": "0.32.2",
+    "mlx-lm": "0.31.4.dev132+g94cdcae13"
+  },
+  "environment": {},
+  "settings": {
+    "mtp": "OFF",
+    "depth": 5,
+    "max_tokens": 32,
+    "sampling": "categorical",
+    "temperature": 1.0,
+    "top_p": 1,
+    "top_k": 0,
+    "prefix_cache": false,
+    "engram_ssd_offload": true,
+    "priming_mode": "stock upstream BatchGenerator prompt prefill; full native DSpark prompt capture when MTP ON",
+    "warmup_context": 0
+  },
+  "source_sha256": {
+    "omlx/patches/deepseek_v41/mtp.py": "00074ee6b9b4b25d80a3def10b0c012bced88738d98c37161f0e98c4b564f5e5",
+    "omlx/patches/deepseek_v41/dspark.py": "bb1eb7c859d0855acd76415a02b4f1857b0e3e8699390bda2462567063e01aad",
+    "omlx/patches/deepseek_v41/language.py": "9377537e16b5978ed3aeddc998f772d8e27546d2444db95454df760f74572c43",
+    "omlx/patches/deepseek_v41/loading.py": "104408ea7dfa05b886bd0d8ecc0359c31317f581f4538b5860cd1951edc062a1"
+  },
+  "load": {
+    "seconds": 62.878140459011775,
+    "rss_bytes": 11989221376,
+    "mlx_active_bytes": 301103697864,
+    "mlx_peak_bytes": 303509389780,
+    "mlx_cache_bytes": 5458594316
+  },
+  "warmup": null,
+  "runs": [
+    {
+      "label": "measure",
+      "context": 4096,
+      "prompt_tokens": 4096,
+      "steps": [
+        {
+          "seconds": 0.0490907920175232,
+          "token": 682,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05086979200132191,
+          "token": 775,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.049663874990073964,
+          "token": 7133,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.050792167021427304,
+          "token": 7004,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.049564207991352305,
+          "token": 223,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.050694000005023554,
+          "token": 19,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04955408402020112,
+          "token": 201,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05082562498864718,
+          "token": 775,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.049676208989694715,
+          "token": 5448,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.050762166996719316,
+          "token": 201,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04967233299976215,
+          "token": 528,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.050661624991334975,
+          "token": 855,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.049618667020695284,
+          "token": 17437,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05047270798240788,
+          "token": 1137,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04948629200225696,
+          "token": 775,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05047920800279826,
+          "token": 8500,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.049632832990027964,
+          "token": 47948,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.050593583000591025,
+          "token": 2292,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04974495799979195,
+          "token": 2852,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.050833916990086436,
+          "token": 1780,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.049536374979652464,
+          "token": 118675,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05065445799846202,
+          "token": 23277,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04963066600612365,
+          "token": 100887,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05063495898502879,
+          "token": 754,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04964187499717809,
+          "token": 2562,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05054804100655019,
+          "token": 14,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.049606791988480836,
+          "token": 7133,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05072216602275148,
+          "token": 565,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04971483300323598,
+          "token": 9080,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.05088312498992309,
+          "token": 100887,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.04960316701908596,
+          "token": 5203,
+          "finish_reason": null
+        },
+        {
+          "seconds": 0.050834458001190796,
+          "token": 775,
+          "finish_reason": "length"
+        }
+      ],
+      "memory_before": {
+        "rss_bytes": 11990515712,
+        "mlx_active_bytes": 301103697864,
+        "mlx_peak_bytes": 303509389780,
+        "mlx_cache_bytes": 5458594324
+      },
+      "prefill_responses": 3,
+      "prefill_seconds_including_scheduler": 9.973874916991917,
+      "decode_seconds": 1.6048053330159746,
+      "generated_tokens": 32,
+      "decode_tok_s": 19.940113197319157,
+      "first_token_seconds": 0.0490907920175232,
+      "memory_after": {
+        "rss_bytes": 7010779136,
+        "mlx_active_bytes": 301111310604,
+        "mlx_peak_bytes": 303509389780,
+        "mlx_cache_bytes": 173452180
+      },
+      "acceptance_rate": null,
+      "accepted_per_cycle": null,
+      "primed_context_present_after_prefill": false,
+      "uid": 0
+    }
+  ],
+  "status": "COMPLETED_DIAGNOSTIC",
+  "model_config": {
+    "preserve_mtp": false,
+    "dspark_block_size": 5,
+    "dspark_target_layer_ids": [
+      37,
+      38,
+      39
+    ],
+    "n_mtp_layers": 3
+  }
+}
