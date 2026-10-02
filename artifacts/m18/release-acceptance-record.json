@@ -1,0 +1,143 @@
+{
+  "checkpoint_identity": {
+    "config.json": {
+      "sha256": "8be45ce0476004a3f529fd896115a4a2e800a129ad2d3ec05b16050f52e21879",
+      "size": 3311
+    },
+    "exists": true,
+    "model.safetensors.index.json": {
+      "sha256": "74b0686a3d2891980d5e303251b075a3bccae2c2ff650747db2620a649b98fa8",
+      "size": 7470294
+    },
+    "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+    "tokenizer.json": {
+      "sha256": "c90dfa01249db1be4245780a052ede752e1361c612ac6d08e2bdada7d599476b",
+      "size": 6367257
+    }
+  },
+  "created_at": 1790910524.622528,
+  "current_operational_gates": {
+    "canonical_server_acceptance_artifact": "artifacts/m18/canonical-server-acceptance-20261002-120647.json",
+    "canonical_server_acceptance_status": "PASS",
+    "quick_qualification_artifact": "artifacts/m18/unified-qualification-quick-20261002-120643.json",
+    "quick_status": "QUICK_RUNTIME_QUALIFIED"
+  },
+  "deepseek_recipe_identity": {
+    "base_revision": "8cadfede7063c896b944e7bae05daa3549ae97ea",
+    "dirty": false,
+    "dirty_entries": [],
+    "identity_model": "base revision plus exact approved local content/diff digests; unknown or mismatched executable differences warn and require review/requalification.",
+    "local_identity_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "path": "/Volumes/SDXC-512/deepseek-v41-flash-mlx/third_party/deepseek-recipe",
+    "revision": "8cadfede7063c896b944e7bae05daa3549ae97ea",
+    "status": "PASS"
+  },
+  "fresh_expensive_qualification_executed": false,
+  "historical_expensive_evidence": {
+    "artifact": "artifacts/m16/unified-qualification-full-20261002-110111.json",
+    "artifact_sha256": "8804ab6e33e1152daa94c7a2c51b949ded944efdb217453d701bf8421e676d23",
+    "migration_attestation": "artifacts/m18/m16-full-evidence-migration.json",
+    "migration_status": "M16_FULL_EVIDENCE_INHERITED_BY_RUNTIME_IDENTITY",
+    "original_status": "FULL_RELEASE_REQUALIFIED_WITH_PROVENANCE_WARNING",
+    "validity_check": {
+      "artifact": "artifacts/m18/m16-full-evidence-migration.json",
+      "differences": [],
+      "status": "INHERITED_EXPENSIVE_EVIDENCE_VALID"
+    }
+  },
+  "omlx_identity": {
+    "base_revision": "b390b31e0c6831225fed0f24d278eb1db7fcb68b",
+    "dirty": true,
+    "dirty_entries": [
+      {
+        "approval": "APPROVED",
+        "content_sha256": "889efbdc8abe8aa4d18538596a427ff874b01bf55887ac6981d8c4e8610301e2",
+        "diff_sha256": "2f4bbfccc21fbd1843cc316caf4d19e3d424dd05b436ba72804e89db655a211f",
+        "git_status": "M",
+        "kind": "modified",
+        "path": "omlx/patches/deepseek_v41/encoding.py",
+        "production_reachable": false,
+        "reason": "oMLX processor literal image-token escape; ds41f production path uses deepseek-recipe text rendering and GenerationBatch decode, not oMLX Processor chat encoding.",
+        "status": "PASS"
+      },
+      {
+        "approval": "APPROVED",
+        "content_sha256": "b920a47364a2af2d628fcd4fa0a62b104b6634a90a0719b67b954031ac4154e7",
+        "diff_sha256": "ca266be8be962673e3e340caabf941fa1cf4a0dd510f22a7298fab3469e62564",
+        "git_status": "M",
+        "kind": "modified",
+        "path": "omlx/patches/deepseek_v41/processing.py",
+        "production_reachable": false,
+        "reason": "oMLX Processor wiring for literal image-token escape; not used by ds41f production recipe serving path.",
+        "status": "PASS"
+      },
+      {
+        "approval": "APPROVED",
+        "content_sha256": "bec1010d13827be63168d04071534c4f306d7a58a5688c4e616e2f69f2617f72",
+        "git_status": "??",
+        "kind": "untracked",
+        "path": "tests/test_deepseek_v41_literal_image_token.py",
+        "production_reachable": false,
+        "reason": "oMLX local test file only; not imported by ds41f runtime.",
+        "status": "PASS"
+      }
+    ],
+    "identity_model": "base revision plus exact approved local content/diff digests; unknown or mismatched executable differences warn and require review/requalification.",
+    "local_identity_sha256": "f53fa43fd97e930c0f49ecc9f25b55ec5d334630b5ba9943a85e8c7751db73b2",
+    "path": "/Users/kioju/omlx-0.7.0.dev2",
+    "revision": "b390b31e0c6831225fed0f24d278eb1db7fcb68b",
+    "status": "PASS"
+  },
+  "production_selectors": {
+    "dspark": "OFF",
+    "mtp": "OFF",
+    "prefill_selector": "DENSE_P0_P7",
+    "speculative_decode": "OFF"
+  },
+  "schema": "ds41f.m18.release-acceptance.v1",
+  "status": "INHERITED_FULL_RELEASE_QUALIFIED",
+  "status_semantics": "Current runtime identity matches migrated M16 full-model evidence; current cheap gates and canonical server acceptance passed; no fresh full qualification was run.",
+  "tested_runtime_identity": {
+    "checkpoint_fingerprint": {
+      "config.json": {
+        "sha256": "8be45ce0476004a3f529fd896115a4a2e800a129ad2d3ec05b16050f52e21879",
+        "size": 3311
+      },
+      "exists": true,
+      "model.safetensors.index.json": {
+        "sha256": "74b0686a3d2891980d5e303251b075a3bccae2c2ff650747db2620a649b98fa8",
+        "size": 7470294
+      },
+      "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+      "tokenizer.json": {
+        "sha256": "c90dfa01249db1be4245780a052ede752e1361c612ac6d08e2bdada7d599476b",
+        "size": 6367257
+      }
+    },
+    "deepseek_recipe_local_identity_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "deepseek_recipe_revision": "8cadfede7063c896b944e7bae05daa3549ae97ea",
+    "ds41f_runtime_source_sha256": "8d77c25387c743fc3af1b265767631117199dca15b97131f544da5821e591518",
+    "omlx_local_identity_sha256": "f53fa43fd97e930c0f49ecc9f25b55ec5d334630b5ba9943a85e8c7751db73b2",
+    "omlx_revision": "b390b31e0c6831225fed0f24d278eb1db7fcb68b",
+    "production": {
+      "dspark": "OFF",
+      "mtp": "OFF",
+      "prefill_selector": "DENSE_P0_P7",
+      "speculative_decode": "OFF"
+    }
+  },
+  "unsupported_scope": [
+    "vision",
+    "batching",
+    "MTP",
+    "DSpark",
+    "speculative decoding",
+    "sessionized Responses/Messages",
+    "server-side tool execution",
+    "MCP/plugins",
+    "web search",
+    "distributed serving",
+    "authentication",
+    "cross-runtime KV portability"
+  ]
+}

@@ -1,0 +1,172 @@
+{
+  "created_at": 1790910500.030221,
+  "current_provenance_summary": {
+    "checkpoint_fingerprint": {
+      "config.json": {
+        "sha256": "8be45ce0476004a3f529fd896115a4a2e800a129ad2d3ec05b16050f52e21879",
+        "size": 3311
+      },
+      "exists": true,
+      "model.safetensors.index.json": {
+        "sha256": "74b0686a3d2891980d5e303251b075a3bccae2c2ff650747db2620a649b98fa8",
+        "size": 7470294
+      },
+      "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+      "tokenizer.json": {
+        "sha256": "c90dfa01249db1be4245780a052ede752e1361c612ac6d08e2bdada7d599476b",
+        "size": 6367257
+      }
+    },
+    "deepseek_recipe": {
+      "base_revision": "8cadfede7063c896b944e7bae05daa3549ae97ea",
+      "dirty": false,
+      "dirty_entries": [],
+      "identity_model": "base revision plus exact approved local content/diff digests; unknown or mismatched executable differences warn and require review/requalification.",
+      "local_identity_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "/Volumes/SDXC-512/deepseek-v41-flash-mlx/third_party/deepseek-recipe",
+      "revision": "8cadfede7063c896b944e7bae05daa3549ae97ea",
+      "status": "PASS"
+    },
+    "ds41f_commit": "58cc55c07c26631ffa1a30be9014b54482e9ec40",
+    "ds41f_runtime_source_identity": "8d77c25387c743fc3af1b265767631117199dca15b97131f544da5821e591518",
+    "omlx": {
+      "base_revision": "b390b31e0c6831225fed0f24d278eb1db7fcb68b",
+      "dirty": true,
+      "dirty_entries": [
+        {
+          "approval": "APPROVED",
+          "content_sha256": "889efbdc8abe8aa4d18538596a427ff874b01bf55887ac6981d8c4e8610301e2",
+          "diff_sha256": "2f4bbfccc21fbd1843cc316caf4d19e3d424dd05b436ba72804e89db655a211f",
+          "git_status": "M",
+          "kind": "modified",
+          "path": "omlx/patches/deepseek_v41/encoding.py",
+          "production_reachable": false,
+          "reason": "oMLX processor literal image-token escape; ds41f production path uses deepseek-recipe text rendering and GenerationBatch decode, not oMLX Processor chat encoding.",
+          "status": "PASS"
+        },
+        {
+          "approval": "APPROVED",
+          "content_sha256": "b920a47364a2af2d628fcd4fa0a62b104b6634a90a0719b67b954031ac4154e7",
+          "diff_sha256": "ca266be8be962673e3e340caabf941fa1cf4a0dd510f22a7298fab3469e62564",
+          "git_status": "M",
+          "kind": "modified",
+          "path": "omlx/patches/deepseek_v41/processing.py",
+          "production_reachable": false,
+          "reason": "oMLX Processor wiring for literal image-token escape; not used by ds41f production recipe serving path.",
+          "status": "PASS"
+        },
+        {
+          "approval": "APPROVED",
+          "content_sha256": "bec1010d13827be63168d04071534c4f306d7a58a5688c4e616e2f69f2617f72",
+          "git_status": "??",
+          "kind": "untracked",
+          "path": "tests/test_deepseek_v41_literal_image_token.py",
+          "production_reachable": false,
+          "reason": "oMLX local test file only; not imported by ds41f runtime.",
+          "status": "PASS"
+        }
+      ],
+      "identity_model": "base revision plus exact approved local content/diff digests; unknown or mismatched executable differences warn and require review/requalification.",
+      "local_identity_sha256": "f53fa43fd97e930c0f49ecc9f25b55ec5d334630b5ba9943a85e8c7751db73b2",
+      "path": "/Users/kioju/omlx-0.7.0.dev2",
+      "revision": "b390b31e0c6831225fed0f24d278eb1db7fcb68b",
+      "status": "PASS"
+    },
+    "production": {
+      "dspark": "OFF",
+      "mtp": "OFF",
+      "prefill_selector": "DENSE_P0_P7",
+      "speculative_decode": "OFF"
+    },
+    "status": "PASS"
+  },
+  "evidence_validity_check": "python -m ds41f_mlx.qualify --check-evidence artifacts/m18/m16-full-evidence-migration.json",
+  "expensive_qualification_freshly_executed": false,
+  "historical_artifact": {
+    "path": "artifacts/m16/unified-qualification-full-20261002-110111.json",
+    "schema": "ds41f.m16.unified-production-qualification.v1",
+    "sha256": "8804ab6e33e1152daa94c7a2c51b949ded944efdb217453d701bf8421e676d23",
+    "status": "FULL_RELEASE_REQUALIFIED_WITH_PROVENANCE_WARNING",
+    "tested_commit_recorded": "27448d6945c59b0cd281a28b592e223a2f636fcd",
+    "tested_dirty_recorded": false
+  },
+  "inherited_tested_runtime_identity": {
+    "checkpoint_fingerprint": {
+      "config.json": {
+        "sha256": "8be45ce0476004a3f529fd896115a4a2e800a129ad2d3ec05b16050f52e21879",
+        "size": 3311
+      },
+      "exists": true,
+      "model.safetensors.index.json": {
+        "sha256": "74b0686a3d2891980d5e303251b075a3bccae2c2ff650747db2620a649b98fa8",
+        "size": 7470294
+      },
+      "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+      "tokenizer.json": {
+        "sha256": "c90dfa01249db1be4245780a052ede752e1361c612ac6d08e2bdada7d599476b",
+        "size": 6367257
+      }
+    },
+    "deepseek_recipe_local_identity_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "deepseek_recipe_revision": "8cadfede7063c896b944e7bae05daa3549ae97ea",
+    "ds41f_runtime_source_sha256": "8d77c25387c743fc3af1b265767631117199dca15b97131f544da5821e591518",
+    "omlx_local_identity_sha256": "f53fa43fd97e930c0f49ecc9f25b55ec5d334630b5ba9943a85e8c7751db73b2",
+    "omlx_revision": "b390b31e0c6831225fed0f24d278eb1db7fcb68b",
+    "production": {
+      "dspark": "OFF",
+      "mtp": "OFF",
+      "prefill_selector": "DENSE_P0_P7",
+      "speculative_decode": "OFF"
+    }
+  },
+  "migration_boundary": {
+    "changed_paths": [
+      {
+        "category": "generated_or_documentation",
+        "path": "artifacts/m16/unified-qualification-full-20261002-110111.json",
+        "status": "M"
+      },
+      {
+        "category": "generated_or_documentation",
+        "path": "artifacts/m17/unified-qualification-quick-20261002-114244.json",
+        "status": "A"
+      },
+      {
+        "category": "generated_or_documentation",
+        "path": "docs/operations.md",
+        "status": "M"
+      },
+      {
+        "category": "generated_or_documentation",
+        "path": "docs/provenance.md",
+        "status": "M"
+      },
+      {
+        "category": "generated_or_documentation",
+        "path": "docs/release-qualification.md",
+        "status": "M"
+      },
+      {
+        "category": "qualification_tooling",
+        "path": "ds41f_mlx/acceptance.py",
+        "status": "A"
+      },
+      {
+        "category": "qualification_tooling",
+        "path": "ds41f_mlx/provenance.py",
+        "status": "M"
+      },
+      {
+        "category": "qualification_tooling",
+        "path": "ds41f_mlx/qualify.py",
+        "status": "M"
+      }
+    ],
+    "derivation": "git diff --name-status from historical tested commit to current commit, classified by M17/M18 runtime identity model; only docs/artifacts/qualification tooling changed.",
+    "from_commit": "27448d6945c59b0cd281a28b592e223a2f636fcd",
+    "runtime_affecting_changes": false,
+    "to_commit": "58cc55c07c26631ffa1a30be9014b54482e9ec40"
+  },
+  "schema": "ds41f.m18.expensive-evidence-migration.v1",
+  "status": "M16_FULL_EVIDENCE_INHERITED_BY_RUNTIME_IDENTITY"
+}
