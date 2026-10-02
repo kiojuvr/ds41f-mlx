@@ -19,7 +19,8 @@ PINNED_OMLX_REVISION = "b390b31e0c6831225fed0f24d278eb1db7fcb68b"
 PINNED_RECIPE_REVISION = "8cadfede7063c896b944e7bae05daa3549ae97ea"
 
 DS41F_RUNTIME_PATHS = ("ds41f_mlx", "native", "pyproject.toml")
-DS41F_QUALIFICATION_PATHS = ("tools", "tests")
+DS41F_RUNTIME_EXCLUDE = {"ds41f_mlx/provenance.py", "ds41f_mlx/qualify.py"}
+DS41F_QUALIFICATION_PATHS = ("tools", "tests", "ds41f_mlx/provenance.py", "ds41f_mlx/qualify.py")
 DS41F_NONRUNTIME_PREFIXES = ("artifacts/", "docs/")
 
 # Local oMLX changes present on the target machine during M16/M17. These are
@@ -132,6 +133,9 @@ def tree_digest(root: Path, include: tuple[str, ...]) -> dict[str, Any]:
                     continue
                 if "__pycache__" in rel_parts or child.name.endswith((".pyc", ".o")):
                     continue
+                rel = child.relative_to(root).as_posix()
+                if rel in DS41F_RUNTIME_EXCLUDE:
+                    continue
                 if rel_parts[0] == "native" and len(rel_parts) > 1 and rel_parts[1].startswith("build"):
                     continue
                 files.append(child)
@@ -162,7 +166,9 @@ def ds41f_dirty_classification(root: Path) -> dict[str, Any]:
         if " -> " in path:
             path = path.split(" -> ", 1)[1]
         category = "other_nonruntime"
-        if path.startswith("ds41f_mlx/") or path.startswith("native/") or path == "pyproject.toml":
+        if path in DS41F_RUNTIME_EXCLUDE:
+            category = "qualification_tooling"; qualification_affecting = True
+        elif path.startswith("ds41f_mlx/") or path.startswith("native/") or path == "pyproject.toml":
             category = "runtime_source"; runtime_affecting = True
         elif path.startswith("tools/") or path.startswith("tests/"):
             category = "qualification_tooling"; qualification_affecting = True
