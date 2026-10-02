@@ -7,7 +7,7 @@ executable cache authority remains ``M8LiveContinuationSession``.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from time import time
 from typing import Any, Callable, Sequence, TYPE_CHECKING
@@ -99,7 +99,7 @@ class M11RecipeToolSession:
             raise M11ToolBoundaryError("M11 is text/tool-only; multimodal image input is not supported")
         if len(prepared.token_ids) < 2:
             raise M11ToolBoundaryError("encoded prompt must contain prefix and held-out terminal")
-        cfg = OMLXDecodeConfig(omlx_path=omlx_path, checkpoint_path=checkpoint, engram_ssd_offload=True, preserve_mtp=False, speculation_enabled=False)
+        cfg = OMLXDecodeConfig(omlx_path=omlx_path, checkpoint_path=checkpoint, engram_ssd_offload=True, preserve_mtp=False, speculation_enabled=False, stop_token_ids=tuple(getattr(prepared, "stop_token_ids", ()) or ()))
         prefill = DwarfStarMLXPrefillSession(model, omlx_path=omlx_path).prefill(prepared.token_ids[:-1])
         if getattr(prefill, "production_prefill_selector", None) != PRODUCTION_PREFILL_SELECTOR:
             raise M11ToolBoundaryError("production prefill selector gate failed")
@@ -170,6 +170,9 @@ class M11RecipeToolSession:
         if prepared.protocol != self.protocol:
             raise M11ToolBoundaryError(f"protocol changed from {self.protocol} to {prepared.protocol}")
         before = self.m8.diagnostics()
+        stop_ids = tuple(getattr(prepared, "stop_token_ids", ()) or ())
+        if stop_ids != tuple(getattr(self.m8.config, "stop_token_ids", ()) or ()):
+            self.m8.config = replace(self.m8.config, stop_token_ids=stop_ids)
         try:
             self.m8.begin_turn_from_recipe_tokens(prepared.token_ids, max_tokens=max_tokens or _max_tokens(prepared))
         except Exception as exc:
@@ -204,8 +207,10 @@ class M11RecipeToolSession:
             if report is None:
                 break
             generated.append(int(report.token))
-            for out in processor.push(d.InferenceChunk.token(int(report.token))):
-                _record_protocol_output(out, response, events)
+            suppress_protocol_token = (report.finish_reason == "stop" and int(report.token) in set(getattr(prepared, "stop_token_ids", ()) or ()))
+            if not suppress_protocol_token:
+                for out in processor.push(d.InferenceChunk.token(int(report.token))):
+                    _record_protocol_output(out, response, events)
             # Official-parser early boundary: if a fresh official StreamProcessor
             # over the consumed token prefix would expose a completed tool call
             # on EOF/Stop, freeze the scheduler cache here instead of allowing

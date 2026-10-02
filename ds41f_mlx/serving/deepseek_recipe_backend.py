@@ -54,6 +54,7 @@ class RecipePreparedRequest:
     image_sources: list[Any]
     include_usage: bool = False
     custom_tool_names: frozenset[str] = frozenset()
+    stop_token_ids: tuple[int, ...] = ()
 
     @property
     def model(self) -> str | None:
@@ -251,7 +252,7 @@ class DeepSeekRecipeRuntimeBackend:
             trace.exported = bool(getattr(prefill_result, 'portable_state_exported', False))
             if trace.production_prefill_selector != PRODUCTION_PREFILL_SELECTOR or trace.prefill_frontier != len(prefix):
                 raise RuntimeError('production DENSE_P0_P7 prefill selector/frontier gate failed')
-            cfg = OMLXDecodeConfig(omlx_path=self.omlx_path, checkpoint_path=self.checkpoint, engram_ssd_offload=True, preserve_mtp=False, speculation_enabled=False)
+            cfg = OMLXDecodeConfig(omlx_path=self.omlx_path, checkpoint_path=self.checkpoint, engram_ssd_offload=True, preserve_mtp=False, speculation_enabled=False, stop_token_ids=tuple(request.stop_token_ids))
             session = await self._call(lambda: handoff_to_generation(prefill_result.live_result, self._model, terminal_prompt_token=first, config=cfg, max_tokens=max_tokens, sampler=sampler))
             self.active_generation_sessions += 1
             session_counted = True
@@ -270,7 +271,9 @@ class DeepSeekRecipeRuntimeBackend:
                     break
                 trace.generated_tokens.append(int(report.token))
                 trace.decode_latencies_s.append(float(report.latency_s))
-                yield InferenceChunk.token(int(report.token))
+                suppress_protocol_token = (report.finish_reason == 'stop' and int(report.token) in set(request.stop_token_ids))
+                if not suppress_protocol_token:
+                    yield InferenceChunk.token(int(report.token))
                 if report.finish_reason is not None:
                     reason = InferenceFinishReason.Length if report.finish_reason == 'length' else InferenceFinishReason.Stop
                     yield InferenceChunk.finish(reason)

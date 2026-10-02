@@ -136,9 +136,12 @@ class OMLXGenerationSession:
         self.stop_reason: str | None = None
         self._final_cache: list[Any] | None = None
         self._final_all_tokens: list[int] | None = None
+        stop_token_ids = tuple(int(t) for t in getattr(self.config, "stop_token_ids", ()) or ())
+        self.stop_token_ids = stop_token_ids
         self._bg = self.BatchGenerator(
             self.language_model,
             max_tokens=self.max_tokens,
+            stop_tokens=[[t] for t in stop_token_ids] if stop_token_ids else None,
             sampler=self.sampler,
             completion_batch_size=1,
             prefill_batch_size=1,

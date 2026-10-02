@@ -46,6 +46,7 @@ class OMLXDecodeConfig:
     moe_expert_offload_resident_fraction: float | None = None
     speculation_enabled: bool = False
     eval_logits: bool = True
+    stop_token_ids: tuple[int, ...] = ()
 
 
 @dataclass(frozen=True)

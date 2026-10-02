@@ -13,7 +13,7 @@ from typing import Any
 from anyio import CancelScope
 from deepseek_recipe import (
     ChatCompletionRequest, ChatCompletionResponse, ConversationRequest, ConversionError,
-    ConversionOptions, DeepseekV41Encoding, InferenceChunk, MessagesRequest, MessagesResponse,
+    ConversionOptions, DeepseekV41Encoding, EOS_TOKEN, InferenceChunk, MessagesRequest, MessagesResponse,
     ResponsesRequest, ResponsesResponse, StreamProcessor, Tokenizer,
 )
 from fastapi import FastAPI, Request
@@ -55,7 +55,11 @@ def prepare_request(protocol: str, body: bytes, *, tokenizer: Any, recipe_path: 
         raise RequestError('multimodal/image input is not supported by current ds41f text-only serving backend', 400)
     if len(token_ids) < 2:
         raise RequestError(f'encoded prompt must contain at least 2 tokens, got {len(token_ids)}', 400)
-    return RecipePreparedRequest(protocol, converted, converted, token_ids, list(rendered.image_sources), include_usage, custom_tool_names)
+    try:
+        stop_token_ids = tuple(int(t) for t in tokenizer.encode(EOS_TOKEN))
+    except Exception:
+        stop_token_ids = ()
+    return RecipePreparedRequest(protocol, converted, converted, token_ids, list(rendered.image_sources), include_usage, custom_tool_names, stop_token_ids)
 
 
 class InferenceStreamingResponse(StreamingResponse):
