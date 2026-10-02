@@ -1,6 +1,6 @@
 {
-  "created_at": 1790908928.154331,
-  "duration_s": 1.4564769268035889,
+  "created_at": 1790908964.284533,
+  "duration_s": 1.4590749740600586,
   "gates": {
     "cheap_static": [
       {
@@ -12,7 +12,7 @@
           "tests/test_runtime_config.py"
         ],
         "returncode": 0,
-        "seconds": 0.05378985404968262,
+        "seconds": 0.053354740142822266,
         "status": "PASS",
         "stderr_tail": "....\n----------------------------------------------------------------------\nRan 4 tests in 0.000s\n\nOK\n",
         "stdout_tail": ""
@@ -23,7 +23,7 @@
           "tools/check_legacy_import_integrity.py"
         ],
         "returncode": 0,
-        "seconds": 0.03645801544189453,
+        "seconds": 0.03627896308898926,
         "status": "PASS",
         "stderr_tail": "",
         "stdout_tail": "PASS legacy import integrity: 154 imports verified\n"
@@ -34,7 +34,7 @@
           "tools/check_native_import_dependencies.py"
         ],
         "returncode": 0,
-        "seconds": 0.026701927185058594,
+        "seconds": 0.02581501007080078,
         "status": "PASS",
         "stderr_tail": "",
         "stdout_tail": "PASS native import dependency check: 146 files scanned; old repo production source dependency=0; old repo native build dependency=0; old repo imported-test dependency=0\n"
@@ -45,7 +45,7 @@
           "tools/check_repository_self_containment.py"
         ],
         "returncode": 0,
-        "seconds": 0.02554011344909668,
+        "seconds": 0.026308298110961914,
         "status": "PASS",
         "stderr_tail": "",
         "stdout_tail": "PASS repository self-containment: canonical old-repo live dependencies=0; canonical chronology dependencies=0; links/provenance/archive policy verified\n"
@@ -59,10 +59,10 @@
           "native/build"
         ],
         "returncode": 0,
-        "seconds": 0.10241413116455078,
+        "seconds": 0.10386395454406738,
         "status": "PASS",
         "stderr_tail": "",
-        "stdout_tail": "-- Configuring done (0.0s)\n-- Generating done (0.1s)\n-- Build files have been written to: /Volumes/SDXC-512/ds41f-mlx/native/build\n"
+        "stdout_tail": "-- Configuring done (0.0s)\n-- Generating done (0.0s)\n-- Build files have been written to: /Volumes/SDXC-512/ds41f-mlx/native/build\n"
       },
       {
         "command": [
@@ -71,7 +71,7 @@
           "native/build"
         ],
         "returncode": 0,
-        "seconds": 0.3293030261993408,
+        "seconds": 0.33125805854797363,
         "status": "PASS",
         "stderr_tail": "",
         "stdout_tail": "[ 10%] Built target dsv41_checkpoint\n[ 36%] Built target dsv41_storage\n[ 47%] Built target dsv41_runtime_bridge\n[ 57%] Built target dsv41-test-swa\n[ 68%] Built target dsv41-test-engram\n[ 78%] Built target dsv41-execution-policy-test\n[ 89%] Built target dsv41-bridge-lifecycle-test\n[100%] Built target dsv41-generation-loop-test\n"
@@ -84,10 +84,10 @@
           "--output-on-failure"
         ],
         "returncode": 0,
-        "seconds": 0.061569929122924805,
+        "seconds": 0.06226086616516113,
         "status": "PASS",
         "stderr_tail": "",
-        "stdout_tail": "Test project /Volumes/SDXC-512/ds41f-mlx/native/build\n    Start 1: dsv41-test-swa\n1/5 Test #1: dsv41-test-swa ...................   Passed    0.04 sec\n    Start 2: dsv41-test-engram\n2/5 Test #2: dsv41-test-engram ................   Passed    0.01 sec\n    Start 3: execution_policy\n3/5 Test #3: execution_policy .................   Passed    0.00 sec\n    Start 4: bridge_lifecycle\n4/5 Test #4: bridge_lifecycle .................   Passed    0.00 sec\n    Start 5: generation_loop\n5/5 Test #5: generation_loop ..................   Passed    0.00 sec\n\n100% tests passed, 0 tests failed out of 5\n\nTotal Test time (real) =   0.05 sec\n"
+        "stdout_tail": "Test project /Volumes/SDXC-512/ds41f-mlx/native/build\n    Start 1: dsv41-test-swa\n1/5 Test #1: dsv41-test-swa ...................   Passed    0.04 sec\n    Start 2: dsv41-test-engram\n2/5 Test #2: dsv41-test-engram ................   Passed    0.01 sec\n    Start 3: execution_policy\n3/5 Test #3: execution_policy .................   Passed    0.00 sec\n    Start 4: bridge_lifecycle\n4/5 Test #4: bridge_lifecycle .................   Passed    0.00 sec\n    Start 5: generation_loop\n5/5 Test #5: generation_loop ..................   Passed    0.00 sec\n\n100% tests passed, 0 tests failed out of 5\n\nTotal Test time (real) =   0.06 sec\n"
       }
     ],
     "real_model": []
@@ -165,14 +165,14 @@
       "status": "PASS"
     },
     "ds41f": {
-      "commit": "66a7afbfa96df0a3a2a32923ea09f7d397f6b110",
+      "commit": "5aef086c780b9f5fa5bb99225dd6f52c0122b77b",
       "dirty": true,
       "dirty_classification": {
         "available": true,
         "entries": [
           {
             "category": "generated_or_documentation",
-            "path": "artifacts/m17/unified-qualification-quick-20261002-114145.json",
+            "path": "artifacts/m17/unified-qualification-quick-20261002-114208.json",
             "status": "D"
           }
         ],
@@ -182,8 +182,18 @@
       "identity_model": "runtime_source_identity excludes generated artifacts/docs, so committing a qualification artifact does not invalidate the tested runtime source.",
       "path": "/Volumes/SDXC-512/ds41f-mlx",
       "qualification_tooling_identity": {
-        "file_count": 234,
+        "file_count": 236,
         "files": [
+          {
+            "path": "ds41f_mlx/provenance.py",
+            "sha256": "799f90f7812677f8e1262e11c09c81955d1d1ed046e6ee33e5edab02d8dcb4dd",
+            "size": 13839
+          },
+          {
+            "path": "ds41f_mlx/qualify.py",
+            "sha256": "7664e5803050b8da28e17b3b6b0ae81b5d0fd800040ff38597eee8c0e910c1cd",
+            "size": 10500
+          },
           {
             "path": "tests/test_m11_tool_boundary_contract.py",
             "sha256": "f17be703776588d59fec05c464688621d99cbc255550fcc3c89dd5efdb8db8f9",
@@ -1355,10 +1365,10 @@
             "size": 2035
           }
         ],
-        "sha256": "7511a89c9429894de7193efdc9ac6dde30a250632a5990a91a437811a1374345"
+        "sha256": "4e1bab09052c3affb79202511aeea28ee6e6a477df06488df5236474574ab927"
       },
       "runtime_source_identity": {
-        "file_count": 197,
+        "file_count": 195,
         "files": [
           {
             "path": "ds41f_mlx/__init__.py",
@@ -1514,16 +1524,6 @@
             "path": "ds41f_mlx/prefill_session.py",
             "sha256": "00155aa0a583046e983510ff9866cf9b47e29fbce27e3836542fa34e62b02244",
             "size": 12726
-          },
-          {
-            "path": "ds41f_mlx/provenance.py",
-            "sha256": "b824eda900709890757c880c48e73ca910c3c07c8feb85fd7ce960d23b18a661",
-            "size": 13454
-          },
-          {
-            "path": "ds41f_mlx/qualify.py",
-            "sha256": "7664e5803050b8da28e17b3b6b0ae81b5d0fd800040ff38597eee8c0e910c1cd",
-            "size": 10500
           },
           {
             "path": "ds41f_mlx/runtime/__init__.py",
@@ -2346,7 +2346,7 @@
             "size": 745
           }
         ],
-        "sha256": "1f92e753c38ca3f43c58b8b1422e2a513d4ddecf8e7d879408ab8eb980a42acc"
+        "sha256": "8d77c25387c743fc3af1b265767631117199dca15b97131f544da5821e591518"
       }
     },
     "import_checks": [
@@ -2597,7 +2597,7 @@
     },
     "deepseek_recipe_local_identity_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "deepseek_recipe_revision": "8cadfede7063c896b944e7bae05daa3549ae97ea",
-    "ds41f_runtime_source_sha256": "1f92e753c38ca3f43c58b8b1422e2a513d4ddecf8e7d879408ab8eb980a42acc",
+    "ds41f_runtime_source_sha256": "8d77c25387c743fc3af1b265767631117199dca15b97131f544da5821e591518",
     "omlx_local_identity_sha256": "f53fa43fd97e930c0f49ecc9f25b55ec5d334630b5ba9943a85e8c7751db73b2",
     "omlx_revision": "b390b31e0c6831225fed0f24d278eb1db7fcb68b",
     "production": {
