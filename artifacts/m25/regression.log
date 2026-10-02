@@ -1,0 +1,86 @@
+FFFFF................................................................................................................... [ 84%]
+......................                                           [100%]
+=================================== FAILURES ===================================
+___________________ RunnerTest.test_existing_output_and_lock ___________________
+
+self = <test_runner.RunnerTest testMethod=test_existing_output_and_lock>
+
+    def test_existing_output_and_lock(self):
+>       self.run_script('--prepare-only')
+
+native/tests/engram/test_runner.py:91: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+native/tests/engram/test_runner.py:47: in run_script
+    self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+E   AssertionError: 2 != 0 : /opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python: can't open file '/Volumes/SDXC-512/ds41f-mlx/native/tools/benchmark/run_engram_cache.py': [Errno 2] No such file or directory
+_______________________ RunnerTest.test_failed_run_retry _______________________
+
+self = <test_runner.RunnerTest testMethod=test_failed_run_retry>
+
+        def test_failed_run_retry(self):
+            flag=self.root/'fail-once'
+            flag.touch()
+            body=self.binary.read_text().replace('runs=[]',f'''flag=Path({str(flag)!r})
+    if flag.exists():
+     flag.unlink()
+     sys.exit(7)
+    runs=[]''')
+            self.binary.write_text(body)
+            self.run_script(ok=False)
+            self.assertFalse(list(self.output.glob('*.done.json')))
+>           self.run_script('--resume')
+
+native/tests/engram/test_runner.py:87: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+native/tests/engram/test_runner.py:47: in run_script
+    self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+E   AssertionError: 2 != 0 : /opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python: can't open file '/Volumes/SDXC-512/ds41f-mlx/native/tools/benchmark/run_engram_cache.py': [Errno 2] No such file or directory
+_____________ RunnerTest.test_prepare_does_not_launch_then_resume ______________
+
+self = <test_runner.RunnerTest testMethod=test_prepare_does_not_launch_then_resume>
+
+    def test_prepare_does_not_launch_then_resume(self):
+>       self.run_script('--prepare-only')
+
+native/tests/engram/test_runner.py:53: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+native/tests/engram/test_runner.py:47: in run_script
+    self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+E   AssertionError: 2 != 0 : /opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python: can't open file '/Volumes/SDXC-512/ds41f-mlx/native/tools/benchmark/run_engram_cache.py': [Errno 2] No such file or directory
+__________________ RunnerTest.test_result_corruption_detected __________________
+
+self = <test_runner.RunnerTest testMethod=test_result_corruption_detected>
+
+    def test_result_corruption_detected(self):
+>       self.run_script()
+
+native/tests/engram/test_runner.py:72: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+native/tests/engram/test_runner.py:47: in run_script
+    self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+E   AssertionError: 2 != 0 : /opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python: can't open file '/Volumes/SDXC-512/ds41f-mlx/native/tools/benchmark/run_engram_cache.py': [Errno 2] No such file or directory
+________________ RunnerTest.test_resume_rejects_changed_binary _________________
+
+self = <test_runner.RunnerTest testMethod=test_resume_rejects_changed_binary>
+
+    def test_resume_rejects_changed_binary(self):
+>       self.run_script('--prepare-only')
+
+native/tests/engram/test_runner.py:65: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+native/tests/engram/test_runner.py:47: in run_script
+    self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+E   AssertionError: 2 != 0 : /opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python: can't open file '/Volumes/SDXC-512/ds41f-mlx/native/tools/benchmark/run_engram_cache.py': [Errno 2] No such file or directory
+=============================== warnings summary ===============================
+tests/test_m20_generation_dependency.py::test_zero_replay_cancel_removes_owner_and_continues
+  /Users/kioju/omlx-0.7.0.release/omlx/api/openai_models.py:269: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class ResponseFormatJsonSchema(BaseModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED native/tests/engram/test_runner.py::RunnerTest::test_existing_output_and_lock
+FAILED native/tests/engram/test_runner.py::RunnerTest::test_failed_run_retry
+FAILED native/tests/engram/test_runner.py::RunnerTest::test_prepare_does_not_launch_then_resume
+FAILED native/tests/engram/test_runner.py::RunnerTest::test_result_corruption_detected
+FAILED native/tests/engram/test_runner.py::RunnerTest::test_resume_rejects_changed_binary
+5 failed, 137 passed, 1 warning, 32 subtests passed in 4.15s

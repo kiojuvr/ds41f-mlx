@@ -91,8 +91,17 @@ def cache_inventory(cache: list[Any]) -> list[dict[str, Any]]:
     return inv
 
 
+def _require_mtp_off_artifact_model(model: Any) -> None:
+    """The M9 artifact has no speculative queue/head/priming representation."""
+    lm = getattr(model, "language_model", model)
+    if (getattr(getattr(lm, "_config", None), "preserve_mtp", False)
+        or getattr(lm, "_omlx_mtp_decode_enabled", False)):
+        raise M9PersistenceError("M9 persistence/restore requires MTP-OFF model; MTP state is unqualified")
+
+
 def save_m8_idle_state(*, artifact_root: Path = DEFAULT_KV_ROOT, model: Any, live_cache: list[Any], all_tokens: Sequence[int], checkpoint: Path, omlx_path: Path = DEFAULT_OMLX, diagnostics: dict[str, Any] | None = None) -> M9ArtifactInfo:
     """Atomically persist an M8 idle cache and token history."""
+    _require_mtp_off_artifact_model(model)
     import mlx.core as mx
 
     lm = getattr(model, "language_model", model)
@@ -145,6 +154,7 @@ def save_m8_idle_state(*, artifact_root: Path = DEFAULT_KV_ROOT, model: Any, liv
 
 def restore_m8_idle_state(*, artifact_path: Path, model: Any, checkpoint: Path, omlx_path: Path = DEFAULT_OMLX) -> tuple[list[Any], list[int], dict[str, Any]]:
     """Validate and restore one live request-local DeepseekV41Cache[40]."""
+    _require_mtp_off_artifact_model(model)
     import mlx.core as mx
 
     path = Path(artifact_path)

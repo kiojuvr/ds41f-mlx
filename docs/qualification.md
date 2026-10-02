@@ -9,6 +9,13 @@ recorded in `artifacts/m20/promotion.json`. Unchanged source/prefill ladder
 evidence is retained; old M18 whole-runtime inheritance is not valid for this
 new dependency. See [M20](m20-omlx-release-migration.md) for exact scopes.
 
+M25's [pinned upstream MTP decision](milestone-25-mtp-decision.md) is
+**REJECT/DEFER**, not optional qualification. Actual accepted/rejected speculative
+cycles and 200K diagnostics do not close idle extraction. Repeated MTP sessions,
+protocol/tool gates and MTP restart/restore remain blocked; OFF evidence does not
+transfer. M9 explicitly refuses preserved/active MTP models. New bounded OFF
+regression/soak evidence is separate under `artifacts/m25/`.
+
 ## Qualified release scope
 
 | Area | Status | Scope |

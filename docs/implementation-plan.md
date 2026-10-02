@@ -2,6 +2,23 @@
 
 This roadmap converts the runtime strategy into a finite sequence of milestones. It is not an optimization backlog. Runtime behavior, selectors, API integration, and multimodal work must not change until the relevant architecture milestone authorizes that work.
 
+## M25 — Pinned upstream MTP lifecycle decision
+
+Decision: **REJECT/DEFER MTP**. The exact upstream V4.1 loop was audited and
+exercised at short and 200K frontiers with real acceptance/rejection/rollback.
+Its ordinary extraction is not a committed arbitrary idle boundary; full-history
+reconciliation violates the no-replay contract. No serving switch or parallel
+production authority was added. M9 save/restore now explicitly fails closed for
+preserved/active MTP. See [M25](milestone-25-mtp-decision.md) and
+`artifacts/m25/decision.json` for diagnostic A/B, fresh OFF regression/soak and
+blocked MTP lifecycle gates. Long-session MTP benefit remains unmeasured, not
+inherited. Future acceleration work first needs a sound upstream idle commit API.
+
+## M24 — Bounded operational soak
+
+The OFF control is qualified for the bounded agent/tool workload in
+[M24](milestone-24-operational-soak-status.md); its architecture remains stable.
+
 ## M23 — Relocatable Release Bundle and Clean-Room Installation Qualification
 
 Status: **complete**. M23 adds a source build command (`python -m ds41f_mlx.build_release`) that creates a relocatable local tarball/directory bundle containing the Python runtime, release manifest, Rust boundary crate source, bundled Rust real-server acceptance binary, wrappers, config template, and bundle identity record. Clean-room qualification unpacked the bundle outside the development checkout, verified installed manifest/provenance, proved bad dependency failure, and passed real installed acceptance through `./bin/ds41f-accept`. See [M23](m23-relocatable-release.md) and `artifacts/m23/clean-install-acceptance.json`.

@@ -1,0 +1,2552 @@
+{
+  "schema": "ds41f.m25.mtp-boundary-probe.v1",
+  "qualification": "DIAGNOSTIC_ONLY",
+  "base_commit": "4202f5d90933613f9dc7af6336e7c67fd55f4b62",
+  "mtp": "OFF",
+  "depth": 5,
+  "omlx_revision": "4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40",
+  "omlx_path": "/Users/kioju/omlx-0.7.0.release",
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "checkpoint_config_sha256": "8be45ce0476004a3f529fd896115a4a2e800a129ad2d3ec05b16050f52e21879",
+  "python": "3.13.15 (main, Aug  5 2026, 12:25:43) [Clang 21.0.0 (clang-2100.1.1.101)]",
+  "executable": "/Users/kioju/.venvs/omlx-0.7.0.release/bin/python",
+  "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+  "packages": {
+    "omlx": "0.7.0",
+    "mlx": "0.32.2",
+    "mlx-lm": "0.31.4.dev132+g94cdcae13",
+    "deepseek-recipe": "0.1.1"
+  },
+  "environment": {},
+  "configuration": {
+    "prefill": "DENSE_P0_P7",
+    "engram_ssd_offload": true,
+    "moe_expert_offload_resident_fraction": null,
+    "sampler": "argmax",
+    "prompt_mtp_priming": "OFF during unchanged P7; terminal capture only",
+    "full_history_reconcile": "FORBIDDEN",
+    "fixture": "M6 deterministic valid token IDs",
+    "serving_enabled": false
+  },
+  "cases": [
+    {
+      "context": 2048,
+      "scenario": "length1",
+      "prefill_seconds": 2.8581249580020085,
+      "prefill_boundary": {
+        "history_tokens": 2048,
+        "all40_offsets": [
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048
+        ],
+        "coherent": true
+      },
+      "steps": [
+        {
+          "token": 235,
+          "seconds": 0.05144387498148717,
+          "finish_reason": "length"
+        }
+      ],
+      "memory_before": {
+        "rss_bytes": 15082029056,
+        "mlx_active_bytes": 301276568418,
+        "mlx_peak_bytes": 304111422833,
+        "mlx_cache_bytes": 9923148805
+      },
+      "bootstrap_seconds": 2.9467523749917746,
+      "bootstrap_boundary": {
+        "history_tokens": 2049,
+        "all40_offsets": [
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049
+        ],
+        "coherent": true
+      },
+      "prompt_responses": [
+        {
+          "end_of_prompt": true,
+          "progress": [
+            1,
+            1
+          ]
+        }
+      ],
+      "idle_boundary": {
+        "history_tokens": 2050,
+        "all40_offsets": [
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050
+        ],
+        "coherent": true
+      },
+      "decode_seconds": 0.05146879100357182,
+      "decode_tok_s": 19.429249852218252,
+      "first_token_seconds": 0.05144387498148717,
+      "memory_after": {
+        "rss_bytes": 15103393792,
+        "mlx_active_bytes": 301288840556,
+        "mlx_peak_bytes": 304111422833,
+        "mlx_cache_bytes": 10281017996
+      },
+      "acceptance_rate": null,
+      "accepted_per_cycle": null,
+      "cleanup_empty": true,
+      "host_prime_context_retained": false
+    },
+    {
+      "context": 2048,
+      "scenario": "length2",
+      "prefill_seconds": 2.8581249580020085,
+      "prefill_boundary": {
+        "history_tokens": 2048,
+        "all40_offsets": [
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048
+        ],
+        "coherent": true
+      },
+      "steps": [
+        {
+          "token": 235,
+          "seconds": 0.050040500005707145,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.04888170899357647,
+          "finish_reason": "length"
+        }
+      ],
+      "memory_before": {
+        "rss_bytes": 15103410176,
+        "mlx_active_bytes": 301288840552,
+        "mlx_peak_bytes": 304111422833,
+        "mlx_cache_bytes": 10281018000
+      },
+      "bootstrap_seconds": 0.04903274998650886,
+      "bootstrap_boundary": {
+        "history_tokens": 2049,
+        "all40_offsets": [
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049
+        ],
+        "coherent": true
+      },
+      "prompt_responses": [
+        {
+          "end_of_prompt": true,
+          "progress": [
+            1,
+            1
+          ]
+        }
+      ],
+      "idle_boundary": {
+        "history_tokens": 2051,
+        "all40_offsets": [
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051,
+          2051
+        ],
+        "coherent": true
+      },
+      "decode_seconds": 0.0990297090029344,
+      "decode_tok_s": 20.195959577551996,
+      "first_token_seconds": 0.050040500005707145,
+      "memory_after": {
+        "rss_bytes": 15105081344,
+        "mlx_active_bytes": 301288829292,
+        "mlx_peak_bytes": 304111422833,
+        "mlx_cache_bytes": 10286327948
+      },
+      "acceptance_rate": null,
+      "accepted_per_cycle": null,
+      "cleanup_empty": true,
+      "host_prime_context_retained": false
+    },
+    {
+      "context": 2048,
+      "scenario": "ordinary64",
+      "prefill_seconds": 2.8581249580020085,
+      "prefill_boundary": {
+        "history_tokens": 2048,
+        "all40_offsets": [
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048
+        ],
+        "coherent": true
+      },
+      "steps": [
+        {
+          "token": 235,
+          "seconds": 0.05304683299618773,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.05081283301115036,
+          "finish_reason": null
+        },
+        {
+          "token": 925,
+          "seconds": 0.05134170799283311,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.050297541019972414,
+          "finish_reason": null
+        },
+        {
+          "token": 2494,
+          "seconds": 0.05098724999697879,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.04994066699873656,
+          "finish_reason": null
+        },
+        {
+          "token": 301,
+          "seconds": 0.05073308301507495,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.04983124998398125,
+          "finish_reason": null
+        },
+        {
+          "token": 378,
+          "seconds": 0.05070341701502912,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.049694999994244426,
+          "finish_reason": null
+        },
+        {
+          "token": 1001,
+          "seconds": 0.05068687500897795,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.049755957996239886,
+          "finish_reason": null
+        },
+        {
+          "token": 751,
+          "seconds": 0.0505585840146523,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.0496565829962492,
+          "finish_reason": null
+        },
+        {
+          "token": 389,
+          "seconds": 0.05071416700957343,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.049933542002690956,
+          "finish_reason": null
+        },
+        {
+          "token": 1556,
+          "seconds": 0.05062799999723211,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.049568916991120204,
+          "finish_reason": null
+        },
+        {
+          "token": 1011,
+          "seconds": 0.05064762500114739,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.049687374994391575,
+          "finish_reason": null
+        },
+        {
+          "token": 1148,
+          "seconds": 0.050616207998245955,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.04911120899487287,
+          "finish_reason": null
+        },
+        {
+          "token": 556,
+          "seconds": 0.05001704100868665,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.04943108299630694,
+          "finish_reason": null
+        },
+        {
+          "token": 389,
+          "seconds": 0.050496583979111165,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.049392832996090874,
+          "finish_reason": null
+        },
+        {
+          "token": 378,
+          "seconds": 0.05040808400372043,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.04937662501470186,
+          "finish_reason": null
+        },
+        {
+          "token": 558,
+          "seconds": 0.05055650000576861,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.049788374977651983,
+          "finish_reason": null
+        },
+        {
+          "token": 1062,
+          "seconds": 0.050644374976400286,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.04979483300121501,
+          "finish_reason": null
+        },
+        {
+          "token": 766,
+          "seconds": 0.050571959000080824,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.04952354199485853,
+          "finish_reason": null
+        },
+        {
+          "token": 925,
+          "seconds": 0.05053329101065174,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.049613417009823024,
+          "finish_reason": null
+        },
+        {
+          "token": 2494,
+          "seconds": 0.05052091600373387,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.049558166007045656,
+          "finish_reason": null
+        },
+        {
+          "token": 301,
+          "seconds": 0.05042304200469516,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.049648749991320074,
+          "finish_reason": null
+        },
+        {
+          "token": 1413,
+          "seconds": 0.050590833008755,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.04945779201807454,
+          "finish_reason": null
+        },
+        {
+          "token": 1264,
+          "seconds": 0.05044520800583996,
+          "finish_reason": null
+        },
+        {
+          "token": 5309,
+          "seconds": 0.049504541006172076,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.050435957993613556,
+          "finish_reason": null
+        },
+        {
+          "token": 925,
+          "seconds": 0.049258791987085715,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.0503396250132937,
+          "finish_reason": null
+        },
+        {
+          "token": 2494,
+          "seconds": 0.04954654100583866,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.05063154100207612,
+          "finish_reason": null
+        },
+        {
+          "token": 389,
+          "seconds": 0.04955491700093262,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.0505902910081204,
+          "finish_reason": null
+        },
+        {
+          "token": 378,
+          "seconds": 0.04970262499409728,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.05081104199052788,
+          "finish_reason": null
+        },
+        {
+          "token": 558,
+          "seconds": 0.049703167023835704,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.050909249985124916,
+          "finish_reason": null
+        },
+        {
+          "token": 2243,
+          "seconds": 0.04978266701800749,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.05069091697805561,
+          "finish_reason": null
+        },
+        {
+          "token": 5301,
+          "seconds": 0.04960399999981746,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.05041858399636112,
+          "finish_reason": null
+        },
+        {
+          "token": 301,
+          "seconds": 0.04944016700028442,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.05059274999075569,
+          "finish_reason": null
+        },
+        {
+          "token": 1292,
+          "seconds": 0.04945129100815393,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.05049666698323563,
+          "finish_reason": null
+        },
+        {
+          "token": 1745,
+          "seconds": 0.04939158298657276,
+          "finish_reason": "length"
+        }
+      ],
+      "memory_before": {
+        "rss_bytes": 15105081344,
+        "mlx_active_bytes": 301288829288,
+        "mlx_peak_bytes": 304111422833,
+        "mlx_cache_bytes": 10286327952
+      },
+      "bootstrap_seconds": 0.05111795899574645,
+      "bootstrap_boundary": {
+        "history_tokens": 2049,
+        "all40_offsets": [
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049
+        ],
+        "coherent": true
+      },
+      "prompt_responses": [
+        {
+          "end_of_prompt": true,
+          "progress": [
+            1,
+            1
+          ]
+        }
+      ],
+      "idle_boundary": {
+        "history_tokens": 2113,
+        "all40_offsets": [
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113,
+          2113
+        ],
+        "coherent": true
+      },
+      "decode_seconds": 3.210925416991813,
+      "decode_tok_s": 19.931948484795086,
+      "first_token_seconds": 0.05304683299618773,
+      "memory_after": {
+        "rss_bytes": 15170224128,
+        "mlx_active_bytes": 301288845676,
+        "mlx_peak_bytes": 304111422833,
+        "mlx_cache_bytes": 10287639997
+      },
+      "acceptance_rate": null,
+      "accepted_per_cycle": null,
+      "cleanup_empty": true,
+      "host_prime_context_retained": false
+    },
+    {
+      "context": 2048,
+      "scenario": "cancel1",
+      "prefill_seconds": 2.8581249580020085,
+      "prefill_boundary": {
+        "history_tokens": 2048,
+        "all40_offsets": [
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048
+        ],
+        "coherent": true
+      },
+      "steps": [
+        {
+          "token": 235,
+          "seconds": 0.05077391699887812,
+          "finish_reason": null
+        }
+      ],
+      "memory_before": {
+        "rss_bytes": 15170240512,
+        "mlx_active_bytes": 301288845672,
+        "mlx_peak_bytes": 304111422833,
+        "mlx_cache_bytes": 10287640001
+      },
+      "bootstrap_seconds": 0.04939341699355282,
+      "bootstrap_boundary": {
+        "history_tokens": 2049,
+        "all40_offsets": [
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049
+        ],
+        "coherent": true
+      },
+      "prompt_responses": [
+        {
+          "end_of_prompt": true,
+          "progress": [
+            1,
+            1
+          ]
+        }
+      ],
+      "idle_boundary": {
+        "history_tokens": 2050,
+        "all40_offsets": [
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050,
+          2050
+        ],
+        "coherent": true
+      },
+      "decode_seconds": 0.05108195901266299,
+      "decode_tok_s": 19.57638311702385,
+      "first_token_seconds": 0.05077391699887812,
+      "memory_after": {
+        "rss_bytes": 15170240512,
+        "mlx_active_bytes": 301289372016,
+        "mlx_peak_bytes": 304111422833,
+        "mlx_cache_bytes": 10287113657
+      },
+      "acceptance_rate": null,
+      "accepted_per_cycle": null,
+      "cleanup_empty": true,
+      "host_prime_context_retained": false
+    },
+    {
+      "context": 2048,
+      "scenario": "cancel7",
+      "prefill_seconds": 2.8581249580020085,
+      "prefill_boundary": {
+        "history_tokens": 2048,
+        "all40_offsets": [
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048,
+          2048
+        ],
+        "coherent": true
+      },
+      "steps": [
+        {
+          "token": 235,
+          "seconds": 0.050722791987936944,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.04944845900172368,
+          "finish_reason": null
+        },
+        {
+          "token": 925,
+          "seconds": 0.050786917010555044,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.04970304199378006,
+          "finish_reason": null
+        },
+        {
+          "token": 2494,
+          "seconds": 0.05052329201134853,
+          "finish_reason": null
+        },
+        {
+          "token": 223,
+          "seconds": 0.04981983298785053,
+          "finish_reason": null
+        },
+        {
+          "token": 301,
+          "seconds": 0.05099850002443418,
+          "finish_reason": null
+        }
+      ],
+      "memory_before": {
+        "rss_bytes": 15170240512,
+        "mlx_active_bytes": 301288839528,
+        "mlx_peak_bytes": 304111422833,
+        "mlx_cache_bytes": 10287646145
+      },
+      "bootstrap_seconds": 0.04930900002364069,
+      "bootstrap_boundary": {
+        "history_tokens": 2049,
+        "all40_offsets": [
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049,
+          2049
+        ],
+        "coherent": true
+      },
+      "prompt_responses": [
+        {
+          "end_of_prompt": true,
+          "progress": [
+            1,
+            1
+          ]
+        }
+      ],
+      "idle_boundary": {
+        "history_tokens": 2056,
+        "all40_offsets": [
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056,
+          2056
+        ],
+        "coherent": true
+      },
+      "decode_seconds": 0.35234245800529607,
+      "decode_tok_s": 19.86703515559508,
+      "first_token_seconds": 0.050722791987936944,
+      "memory_after": {
+        "rss_bytes": 15170240512,
+        "mlx_active_bytes": 301289372016,
+        "mlx_peak_bytes": 304111422833,
+        "mlx_cache_bytes": 10288377785
+      },
+      "acceptance_rate": null,
+      "accepted_per_cycle": null,
+      "cleanup_empty": true,
+      "host_prime_context_retained": false
+    },
+    {
+      "context": 200000,
+      "scenario": "length1",
+      "prefill_seconds": 243.2192702080065,
+      "prefill_boundary": {
+        "history_tokens": 200000,
+        "all40_offsets": [
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000
+        ],
+        "coherent": true
+      },
+      "steps": [
+        {
+          "token": 2677,
+          "seconds": 0.05557041699648835,
+          "finish_reason": "length"
+        }
+      ],
+      "memory_before": {
+        "rss_bytes": 12580126720,
+        "mlx_active_bytes": 301819344096,
+        "mlx_peak_bytes": 319974792880,
+        "mlx_cache_bytes": 33876570621
+      },
+      "bootstrap_seconds": 7.6330998330086,
+      "bootstrap_boundary": {
+        "history_tokens": 200001,
+        "all40_offsets": [
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001
+        ],
+        "coherent": true
+      },
+      "prompt_responses": [
+        {
+          "end_of_prompt": true,
+          "progress": [
+            1,
+            1
+          ]
+        }
+      ],
+      "idle_boundary": {
+        "history_tokens": 200002,
+        "all40_offsets": [
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002
+        ],
+        "coherent": true
+      },
+      "decode_seconds": 0.05558787501649931,
+      "decode_tok_s": 17.98953458291372,
+      "first_token_seconds": 0.05557041699648835,
+      "memory_after": {
+        "rss_bytes": 12601442304,
+        "mlx_active_bytes": 301766062396,
+        "mlx_peak_bytes": 319974792880,
+        "mlx_cache_bytes": 90001672071
+      },
+      "acceptance_rate": null,
+      "accepted_per_cycle": null,
+      "cleanup_empty": true,
+      "host_prime_context_retained": false
+    },
+    {
+      "context": 200000,
+      "scenario": "length2",
+      "prefill_seconds": 243.2192702080065,
+      "prefill_boundary": {
+        "history_tokens": 200000,
+        "all40_offsets": [
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000
+        ],
+        "coherent": true
+      },
+      "steps": [
+        {
+          "token": 2677,
+          "seconds": 0.05475158302579075,
+          "finish_reason": null
+        },
+        {
+          "token": 2714,
+          "seconds": 0.05131891599739902,
+          "finish_reason": "length"
+        }
+      ],
+      "memory_before": {
+        "rss_bytes": 12602785792,
+        "mlx_active_bytes": 301766062392,
+        "mlx_peak_bytes": 319974792880,
+        "mlx_cache_bytes": 90001672075
+      },
+      "bootstrap_seconds": 0.05366200002026744,
+      "bootstrap_boundary": {
+        "history_tokens": 200001,
+        "all40_offsets": [
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001
+        ],
+        "coherent": true
+      },
+      "prompt_responses": [
+        {
+          "end_of_prompt": true,
+          "progress": [
+            1,
+            1
+          ]
+        }
+      ],
+      "idle_boundary": {
+        "history_tokens": 200003,
+        "all40_offsets": [
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003,
+          200003
+        ],
+        "coherent": true
+      },
+      "decode_seconds": 0.10644337499979883,
+      "decode_tok_s": 18.789332826056857,
+      "first_token_seconds": 0.05475158302579075,
+      "memory_after": {
+        "rss_bytes": 12604047360,
+        "mlx_active_bytes": 301766081340,
+        "mlx_peak_bytes": 319974792880,
+        "mlx_cache_bytes": 90179751303
+      },
+      "acceptance_rate": null,
+      "accepted_per_cycle": null,
+      "cleanup_empty": true,
+      "host_prime_context_retained": false
+    },
+    {
+      "context": 200000,
+      "scenario": "ordinary64",
+      "prefill_seconds": 243.2192702080065,
+      "prefill_boundary": {
+        "history_tokens": 200000,
+        "all40_offsets": [
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000
+        ],
+        "coherent": true
+      },
+      "steps": [
+        {
+          "token": 2677,
+          "seconds": 0.054178375023184344,
+          "finish_reason": null
+        },
+        {
+          "token": 2714,
+          "seconds": 0.05158733300049789,
+          "finish_reason": null
+        },
+        {
+          "token": 2751,
+          "seconds": 0.053570458985632285,
+          "finish_reason": null
+        },
+        {
+          "token": 2788,
+          "seconds": 0.05138583300868049,
+          "finish_reason": null
+        },
+        {
+          "token": 2825,
+          "seconds": 0.05330887500895187,
+          "finish_reason": null
+        },
+        {
+          "token": 2862,
+          "seconds": 0.05144245797418989,
+          "finish_reason": null
+        },
+        {
+          "token": 2899,
+          "seconds": 0.05348604198661633,
+          "finish_reason": null
+        },
+        {
+          "token": 2936,
+          "seconds": 0.05131091599469073,
+          "finish_reason": null
+        },
+        {
+          "token": 2973,
+          "seconds": 0.053608582995366305,
+          "finish_reason": null
+        },
+        {
+          "token": 3010,
+          "seconds": 0.05117283301660791,
+          "finish_reason": null
+        },
+        {
+          "token": 3047,
+          "seconds": 0.05385245900833979,
+          "finish_reason": null
+        },
+        {
+          "token": 3084,
+          "seconds": 0.051375667011598125,
+          "finish_reason": null
+        },
+        {
+          "token": 3121,
+          "seconds": 0.053730291983811185,
+          "finish_reason": null
+        },
+        {
+          "token": 3158,
+          "seconds": 0.05118891701567918,
+          "finish_reason": null
+        },
+        {
+          "token": 3195,
+          "seconds": 0.05344366599456407,
+          "finish_reason": null
+        },
+        {
+          "token": 3232,
+          "seconds": 0.051129667001077905,
+          "finish_reason": null
+        },
+        {
+          "token": 3269,
+          "seconds": 0.053330082999309525,
+          "finish_reason": null
+        },
+        {
+          "token": 3306,
+          "seconds": 0.051137875008862466,
+          "finish_reason": null
+        },
+        {
+          "token": 3343,
+          "seconds": 0.05343337499652989,
+          "finish_reason": null
+        },
+        {
+          "token": 3380,
+          "seconds": 0.051183917006710544,
+          "finish_reason": null
+        },
+        {
+          "token": 3417,
+          "seconds": 0.05413545802002773,
+          "finish_reason": null
+        },
+        {
+          "token": 3454,
+          "seconds": 0.05124608299229294,
+          "finish_reason": null
+        },
+        {
+          "token": 3491,
+          "seconds": 0.05372079199878499,
+          "finish_reason": null
+        },
+        {
+          "token": 3528,
+          "seconds": 0.050899333000415936,
+          "finish_reason": null
+        },
+        {
+          "token": 3565,
+          "seconds": 0.05356704202131368,
+          "finish_reason": null
+        },
+        {
+          "token": 3602,
+          "seconds": 0.05122866699821316,
+          "finish_reason": null
+        },
+        {
+          "token": 3639,
+          "seconds": 0.05365179097861983,
+          "finish_reason": null
+        },
+        {
+          "token": 3676,
+          "seconds": 0.051216791005572304,
+          "finish_reason": null
+        },
+        {
+          "token": 3713,
+          "seconds": 0.05354966700542718,
+          "finish_reason": null
+        },
+        {
+          "token": 3750,
+          "seconds": 0.051164583011996,
+          "finish_reason": null
+        },
+        {
+          "token": 3787,
+          "seconds": 0.05362595900078304,
+          "finish_reason": null
+        },
+        {
+          "token": 3824,
+          "seconds": 0.05130845899111591,
+          "finish_reason": null
+        },
+        {
+          "token": 3861,
+          "seconds": 0.05344683298608288,
+          "finish_reason": null
+        },
+        {
+          "token": 3898,
+          "seconds": 0.05148404199280776,
+          "finish_reason": null
+        },
+        {
+          "token": 3935,
+          "seconds": 0.0535343749797903,
+          "finish_reason": null
+        },
+        {
+          "token": 3972,
+          "seconds": 0.05106291698757559,
+          "finish_reason": null
+        },
+        {
+          "token": 4009,
+          "seconds": 0.05355862498981878,
+          "finish_reason": null
+        },
+        {
+          "token": 4046,
+          "seconds": 0.05127866700058803,
+          "finish_reason": null
+        },
+        {
+          "token": 4083,
+          "seconds": 0.0534883750078734,
+          "finish_reason": null
+        },
+        {
+          "token": 24,
+          "seconds": 0.05119537501013838,
+          "finish_reason": null
+        },
+        {
+          "token": 61,
+          "seconds": 0.053360958001576364,
+          "finish_reason": null
+        },
+        {
+          "token": 98,
+          "seconds": 0.051117499999236315,
+          "finish_reason": null
+        },
+        {
+          "token": 135,
+          "seconds": 0.053294834011467174,
+          "finish_reason": null
+        },
+        {
+          "token": 116,
+          "seconds": 0.0514341669913847,
+          "finish_reason": null
+        },
+        {
+          "token": 209,
+          "seconds": 0.05357449999428354,
+          "finish_reason": null
+        },
+        {
+          "token": 148,
+          "seconds": 0.05121870801667683,
+          "finish_reason": null
+        },
+        {
+          "token": 246,
+          "seconds": 0.053395875002024695,
+          "finish_reason": null
+        },
+        {
+          "token": 283,
+          "seconds": 0.05118270800448954,
+          "finish_reason": null
+        },
+        {
+          "token": 320,
+          "seconds": 0.05355562499607913,
+          "finish_reason": null
+        },
+        {
+          "token": 357,
+          "seconds": 0.051173541985917836,
+          "finish_reason": null
+        },
+        {
+          "token": 110,
+          "seconds": 0.05342708298121579,
+          "finish_reason": null
+        },
+        {
+          "token": 394,
+          "seconds": 0.05119904098683037,
+          "finish_reason": null
+        },
+        {
+          "token": 431,
+          "seconds": 0.05361508298665285,
+          "finish_reason": null
+        },
+        {
+          "token": 255,
+          "seconds": 0.051037333003478125,
+          "finish_reason": null
+        },
+        {
+          "token": 468,
+          "seconds": 0.05342499999096617,
+          "finish_reason": null
+        },
+        {
+          "token": 505,
+          "seconds": 0.051189292018534616,
+          "finish_reason": null
+        },
+        {
+          "token": 542,
+          "seconds": 0.05348825000692159,
+          "finish_reason": null
+        },
+        {
+          "token": 117,
+          "seconds": 0.051246499991975725,
+          "finish_reason": null
+        },
+        {
+          "token": 579,
+          "seconds": 0.053543958987575024,
+          "finish_reason": null
+        },
+        {
+          "token": 616,
+          "seconds": 0.05118679100996815,
+          "finish_reason": null
+        },
+        {
+          "token": 653,
+          "seconds": 0.05369075000635348,
+          "finish_reason": null
+        },
+        {
+          "token": 690,
+          "seconds": 0.05126066697994247,
+          "finish_reason": null
+        },
+        {
+          "token": 727,
+          "seconds": 0.05342345900135115,
+          "finish_reason": null
+        },
+        {
+          "token": 764,
+          "seconds": 0.05122724999091588,
+          "finish_reason": "length"
+        }
+      ],
+      "memory_before": {
+        "rss_bytes": 12604047360,
+        "mlx_active_bytes": 301766081336,
+        "mlx_peak_bytes": 319974792880,
+        "mlx_cache_bytes": 90179751307
+      },
+      "bootstrap_seconds": 0.053133665991481394,
+      "bootstrap_boundary": {
+        "history_tokens": 200001,
+        "all40_offsets": [
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001
+        ],
+        "coherent": true
+      },
+      "prompt_responses": [
+        {
+          "end_of_prompt": true,
+          "progress": [
+            1,
+            1
+          ]
+        }
+      ],
+      "idle_boundary": {
+        "history_tokens": 200065,
+        "all40_offsets": [
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065,
+          200065
+        ],
+        "coherent": true
+      },
+      "decode_seconds": 3.354099208023399,
+      "decode_tok_s": 19.081129099253978,
+      "first_token_seconds": 0.054178375023184344,
+      "memory_after": {
+        "rss_bytes": 12622381056,
+        "mlx_active_bytes": 301766143292,
+        "mlx_peak_bytes": 319974792880,
+        "mlx_cache_bytes": 90467851143
+      },
+      "acceptance_rate": null,
+      "accepted_per_cycle": null,
+      "cleanup_empty": true,
+      "host_prime_context_retained": false
+    },
+    {
+      "context": 200000,
+      "scenario": "cancel1",
+      "prefill_seconds": 243.2192702080065,
+      "prefill_boundary": {
+        "history_tokens": 200000,
+        "all40_offsets": [
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000
+        ],
+        "coherent": true
+      },
+      "steps": [
+        {
+          "token": 2677,
+          "seconds": 0.05368812501546927,
+          "finish_reason": null
+        }
+      ],
+      "memory_before": {
+        "rss_bytes": 12622381056,
+        "mlx_active_bytes": 301766143288,
+        "mlx_peak_bytes": 319974792880,
+        "mlx_cache_bytes": 90467851147
+      },
+      "bootstrap_seconds": 0.05312100000446662,
+      "bootstrap_boundary": {
+        "history_tokens": 200001,
+        "all40_offsets": [
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001
+        ],
+        "coherent": true
+      },
+      "prompt_responses": [
+        {
+          "end_of_prompt": true,
+          "progress": [
+            1,
+            1
+          ]
+        }
+      ],
+      "idle_boundary": {
+        "history_tokens": 200002,
+        "all40_offsets": [
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002,
+          200002
+        ],
+        "coherent": true
+      },
+      "decode_seconds": 0.05477779099601321,
+      "decode_tok_s": 18.255573688117163,
+      "first_token_seconds": 0.05368812501546927,
+      "memory_after": {
+        "rss_bytes": 12622397440,
+        "mlx_active_bytes": 301762137640,
+        "mlx_peak_bytes": 319974792880,
+        "mlx_cache_bytes": 90471856795
+      },
+      "acceptance_rate": null,
+      "accepted_per_cycle": null,
+      "cleanup_empty": true,
+      "host_prime_context_retained": false
+    },
+    {
+      "context": 200000,
+      "scenario": "cancel7",
+      "prefill_seconds": 243.2192702080065,
+      "prefill_boundary": {
+        "history_tokens": 200000,
+        "all40_offsets": [
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000,
+          200000
+        ],
+        "coherent": true
+      },
+      "steps": [
+        {
+          "token": 2677,
+          "seconds": 0.05396433302666992,
+          "finish_reason": null
+        },
+        {
+          "token": 2714,
+          "seconds": 0.05131837498629466,
+          "finish_reason": null
+        },
+        {
+          "token": 2751,
+          "seconds": 0.053862041007960215,
+          "finish_reason": null
+        },
+        {
+          "token": 2788,
+          "seconds": 0.05121929201413877,
+          "finish_reason": null
+        },
+        {
+          "token": 2825,
+          "seconds": 0.05365129199344665,
+          "finish_reason": null
+        },
+        {
+          "token": 2862,
+          "seconds": 0.05130608400213532,
+          "finish_reason": null
+        },
+        {
+          "token": 2899,
+          "seconds": 0.05368679200182669,
+          "finish_reason": null
+        }
+      ],
+      "memory_before": {
+        "rss_bytes": 12622397440,
+        "mlx_active_bytes": 301760810528,
+        "mlx_peak_bytes": 319974792880,
+        "mlx_cache_bytes": 90473183907
+      },
+      "bootstrap_seconds": 0.05311675000120886,
+      "bootstrap_boundary": {
+        "history_tokens": 200001,
+        "all40_offsets": [
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001,
+          200001
+        ],
+        "coherent": true
+      },
+      "prompt_responses": [
+        {
+          "end_of_prompt": true,
+          "progress": [
+            1,
+            1
+          ]
+        }
+      ],
+      "idle_boundary": {
+        "history_tokens": 200008,
+        "all40_offsets": [
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008,
+          200008
+        ],
+        "coherent": true
+      },
+      "decode_seconds": 0.36965220799902454,
+      "decode_tok_s": 18.936719025410156,
+      "first_token_seconds": 0.05396433302666992,
+      "memory_after": {
+        "rss_bytes": 12622446592,
+        "mlx_active_bytes": 301762186792,
+        "mlx_peak_bytes": 319974792880,
+        "mlx_cache_bytes": 90492254875
+      },
+      "acceptance_rate": null,
+      "accepted_per_cycle": null,
+      "cleanup_empty": true,
+      "host_prime_context_retained": false
+    }
+  ],
+  "events": [],
+  "status": "COMPLETED_DIAGNOSTIC",
+  "source_sha256": {
+    "/Users/kioju/omlx-0.7.0.release/omlx/patches/deepseek_v41/mtp.py": "00074ee6b9b4b25d80a3def10b0c012bced88738d98c37161f0e98c4b564f5e5",
+    "/Users/kioju/omlx-0.7.0.release/omlx/patches/deepseek_v41/cache.py": "d571a1bc2baec0df52ec4a651dc6627221950aefe9b471b5bce64ee19f08ad04",
+    "/Users/kioju/omlx-0.7.0.release/omlx/patches/deepseek_v41/loading.py": "104408ea7dfa05b886bd0d8ecc0359c31317f581f4538b5860cd1951edc062a1",
+    "/Users/kioju/omlx-0.7.0.release/omlx/patches/deepseek_v41/language.py": "9377537e16b5978ed3aeddc998f772d8e27546d2444db95454df760f74572c43",
+    "/Users/kioju/omlx-0.7.0.release/omlx/patches/deepseek_v41/dspark.py": "bb1eb7c859d0855acd76415a02b4f1857b0e3e8699390bda2462567063e01aad",
+    "/Users/kioju/omlx-0.7.0.release/omlx/patches/mlx_lm_mtp/batch_generator.py": "2cd7f61f148f250135a2dfaf48326679882ac81917e935658d6bda6ff1e5f0e2",
+    "/Users/kioju/.venvs/omlx-0.7.0.release/lib/python3.13/site-packages/mlx_lm/generate.py": "4a3bf57f5679dac73791f069268866ab5b9336e58582d436b31133984e4b6971",
+    "/Volumes/SDXC-512/ds41f-mlx/tools/run_m25_mtp_boundary_probe.py": "931d8eae0a472e41911801b48254c7252bb37a6a2ff2393005bb985556e83d82"
+  },
+  "load": {
+    "seconds": 75.50918112497311,
+    "rss_bytes": 11988779008,
+    "mlx_active_bytes": 301103697864,
+    "mlx_peak_bytes": 303509389780,
+    "mlx_cache_bytes": 5458594316
+  },
+  "model_config": {
+    "preserve_mtp": false,
+    "dspark_block_size": 5,
+    "dspark_target_layer_ids": [
+      37,
+      38,
+      39
+    ],
+    "n_mtp_layers": 3
+  }
+}

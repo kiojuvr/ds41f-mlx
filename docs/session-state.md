@@ -1,5 +1,11 @@
 # Session state contract
 
+M25 preserves the OFF-only idle artifact: save/restore reject models with
+preserved or active MTP before I/O. The pinned upstream MTP emission queue and
+target cache do not provide the required arbitrary committed frontier through
+ordinary extraction; see [M25](milestone-25-mtp-decision.md). No MTP session or
+restore qualification is implied by the contracts below.
+
 The current native session owner is `TextBackboneState` together with `TextEncoder`, `TextDecoder`, and `TextGeneration` state machinery. It is the reference state contract for future production architecture unless a documented architecture decision replaces or wraps it. Validation inventory helpers are not independent production session implementations.
 
 ## State classification

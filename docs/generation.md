@@ -28,6 +28,15 @@ Prefill initializes persistent cache/token state. Incremental decode consumes an
 
 At idle committed boundaries there is one executable cache authority, prompt replay is zero, full-cache repack/reconstruction is zero, and all 40 cache offsets equal the committed frontier.
 
+## Upstream MTP boundary (M25)
+
+The pinned V4.1 MTP loop owns a draft cache, pending anchors and an emission
+queue; its target frontier can lead or lag emitted history. Plain upstream row
+extraction is not a ds41f idle commit. [M25](milestone-25-mtp-decision.md) records
+real-model verification/rollback and the failed extraction prerequisite. MTP
+remains unsupported, not an optional qualified decode mode. Full-history
+upstream reconciliation is forbidden; no OFF evidence transfers to MTP.
+
 ## Sampling and determinism
 
 The release deterministic policy is backend-local: for a fixed checkpoint/runtime/backend/build/config/input/session state, deterministic greedy behavior is required relative to backend-produced logits. PyTorch or cross-backend RNG/bitstream parity is not claimed.

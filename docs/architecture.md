@@ -22,6 +22,15 @@ recipe-formatted HTTP response/session boundary
 
 The release architecture has one executable cache authority. `PrefillContinuationState` and handoff artifacts are evidence/admission structures; after GenerationBatch bootstrap, scheduler-owned cache is authoritative. Persisted artifacts are dormant storage and never a second live authority.
 
+## MTP lifecycle decision (M25)
+
+[M25](milestone-25-mtp-decision.md) rejects/defers the pinned upstream MTP
+integration: actual verification/rollback runs, but ordinary extraction does not
+produce a complete committed idle frontier, and upstream reconciliation can
+replay history. No optional serving path is qualified. M9 save/restore explicitly
+rejects MTP-preserved/active models; the production OFF architecture above remains
+unchanged. Diagnostic throughput is not agent-session qualification.
+
 ## Repository components
 
 - `ds41f_mlx/prefill_fp8_mlx/` — dense FP8/MLX prefill, P7 Engram/SSD behavior, P5 handoff helpers, P8 experimental probes.
