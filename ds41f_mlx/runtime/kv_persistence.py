@@ -20,9 +20,9 @@ import uuid
 
 from ds41f_mlx.prefill_fp8_mlx.handoff import _validate_live_cache_structure
 from ds41f_mlx.runtime.omlx_core import DEFAULT_OMLX
+from ds41f_mlx.config import DEFAULT_KV_ROOT
 
 SCHEMA = "ds41f.m9.deepseek-v41-kv-artifact.v1"
-DEFAULT_KV_ROOT = Path("/Volumes/USB-SSD-RAID-0/ds41f-mlx/kv")
 
 
 class M9PersistenceError(RuntimeError):

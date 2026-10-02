@@ -12,8 +12,7 @@ from pathlib import Path
 import importlib
 import sys
 
-DEFAULT_OMLX = Path.home() / "omlx-0.7.0.dev2"
-DEFAULT_CHECKPOINT = Path("/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash")
+from ds41f_mlx.config import DEFAULT_CHECKPOINT, DEFAULT_OMLX
 
 
 @dataclass(frozen=True)

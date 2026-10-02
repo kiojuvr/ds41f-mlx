@@ -4,7 +4,7 @@ This is the release-scope API contract for the qualified text runtime. It is int
 
 ## Qualified release scope
 
-Transport is local HTTP. Protocol conversion, prompt rendering, response parsing, tool-call parsing, thinking fields, and stream formatting are delegated to official DeepSeek `deepseek-recipe`; `ds41f-mlx` supplies the backend runtime below that layer.
+Transport is local HTTP. Protocol conversion, prompt rendering, response parsing, tool-call parsing, thinking fields, and stream formatting are delegated to official DeepSeek `deepseek-recipe`; `ds41f-mlx` supplies the backend runtime below that layer. Production paths and server settings are resolved through `ds41f_mlx.config.RuntimeConfig`; see `operations.md`.
 
 Supported endpoints:
 

@@ -14,16 +14,13 @@ import os
 import subprocess
 import sys
 
+from ds41f_mlx.config import DEFAULT_CHECKPOINT, DEFAULT_KV_ROOT, DEFAULT_MODEL_ID, DEFAULT_OMLX, DEFAULT_RECIPE, RuntimeConfig
 from ds41f_mlx.runtime.dwarfstar_prefill import DwarfStarMLXPrefillSession, PRODUCTION_PREFILL_SELECTOR
 from ds41f_mlx.prefill_fp8_mlx import handoff_to_generation
-from ds41f_mlx.runtime.omlx_core import DEFAULT_CHECKPOINT, DEFAULT_OMLX, OmlxRuntime, OmlxRuntimeConfig
+from ds41f_mlx.runtime.omlx_core import OmlxRuntime, OmlxRuntimeConfig
 from ds41f_mlx.runtime.omlx_decode import OMLXDecodeConfig
 from ds41f_mlx.runtime.omlx_generation import OMLXGenerationSession
 from ds41f_mlx.runtime.tool_boundary_session import M11RecipeToolSession, M11AssistantTurn
-from ds41f_mlx.runtime.kv_persistence import DEFAULT_KV_ROOT
-
-DEFAULT_RECIPE = Path('/Volumes/SDXC-512/deepseek-v41-flash-mlx/third_party/deepseek-recipe')
-DEFAULT_MODEL_ID = 'deepseek-v4.1-flash'
 MODEL_ALIASES = {DEFAULT_MODEL_ID, 'deepseek-v41-flash', 'deepseek-flash'}
 REFERENCE_VERTICAL_SLICE_CLASSIFICATION = 'PRODUCTION_PREFILL_REGRESSED_TO_REFERENCE_VERTICAL_SLICE'
 
@@ -168,7 +165,14 @@ class StatefulSessionRecord:
 class DeepSeekRecipeRuntimeBackend:
     """Single-flight adapter from recipe prepared requests to token chunks."""
 
-    def __init__(self, *, checkpoint: Path = DEFAULT_CHECKPOINT, omlx_path: Path = DEFAULT_OMLX, recipe_path: Path = DEFAULT_RECIPE, model_id: str = DEFAULT_MODEL_ID, native_out_dir: Path = Path('artifacts/m7/deepseek-recipe-serving/native')):
+    def __init__(self, *, checkpoint: Path = DEFAULT_CHECKPOINT, omlx_path: Path = DEFAULT_OMLX, recipe_path: Path = DEFAULT_RECIPE, model_id: str = DEFAULT_MODEL_ID, native_out_dir: Path = Path('artifacts/m7/deepseek-recipe-serving/native'), runtime_config: RuntimeConfig | None = None):
+        if runtime_config is not None:
+            checkpoint = runtime_config.checkpoint_path
+            omlx_path = runtime_config.omlx_path
+            recipe_path = runtime_config.recipe_path
+            model_id = runtime_config.model_id
+            runtime_config.apply_environment()
+        self.runtime_config = runtime_config
         self.checkpoint = Path(checkpoint)
         self.omlx_path = Path(omlx_path)
         self.recipe_path = Path(recipe_path)
@@ -383,7 +387,8 @@ class DeepSeekRecipeRuntimeBackend:
         rec.busy = True
         await self._lock.acquire()
         try:
-            info = await self._call(lambda: rec.m11.persist_idle(artifact_root=artifact_root or (DEFAULT_KV_ROOT / 'm12'), diagnostics={'m12_session_id': session_id}))
+            default_root = (self.runtime_config.kv_root if self.runtime_config is not None else DEFAULT_KV_ROOT) / 'm12'
+            info = await self._call(lambda: rec.m11.persist_idle(artifact_root=artifact_root or default_root, diagnostics={'m12_session_id': session_id}))
             rec.persisted_artifact = info.to_json()
             rec.updated_at = time()
             return rec.persisted_artifact
@@ -447,7 +452,11 @@ class DeepSeekRecipeRuntimeBackend:
             'omlx_revision': git_rev(self.omlx_path),
             'mlx_version': mlx_version,
             'checkpoint': str(self.checkpoint),
+            'kv_root': str(self.runtime_config.kv_root if self.runtime_config is not None else DEFAULT_KV_ROOT),
             'model_id': self.model_id,
             'single_flight': True,
-            'mtp_dspark': 'OFF',
+            'production_prefill_selector': PRODUCTION_PREFILL_SELECTOR,
+            'mtp': 'OFF',
+            'dspark': 'OFF',
+            'speculative_decode': 'OFF',
         }

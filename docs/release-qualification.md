@@ -33,18 +33,11 @@ See `docs/api.md`. Key release decisions:
 From a clean shell with documented local dependencies available:
 
 ```bash
-export PYTHONPATH=/Users/kioju/omlx-0.7.0.dev2:$PYTHONPATH
-export DS41F_MAX_LIVE_SESSIONS=4
-export DS41F_TRACE_HISTORY_LIMIT=32
-python3 -m uvicorn ds41f_mlx.serving.server:app --host 127.0.0.1 --port 8000
+python3 -m ds41f_mlx.provenance
+python3 -m ds41f_mlx.serve
 ```
 
-Required default paths in the current release build:
-
-- checkpoint: `/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash`;
-- oMLX checkout: `/Users/kioju/omlx-0.7.0.dev2`;
-- deepseek-recipe checkout/tokenizer: configured by `DEFAULT_RECIPE` in `ds41f_mlx.serving.deepseek_recipe_backend`;
-- persistence root default: `DEFAULT_KV_ROOT` in `ds41f_mlx.runtime.kv_persistence`.
+Machine-specific paths are configured through `DS41F_CHECKPOINT`, `DS41F_OMLX_PATH`, `DS41F_RECIPE_PATH`, and `DS41F_KV_ROOT`; host/port/session/diagnostic settings are documented in `docs/operations.md`. The launcher applies configured oMLX and recipe checkout paths before importing the FastAPI app, so manual `PYTHONPATH` setup is not the canonical path.
 
 Health lifecycle: `/health` returns `alive` before model load, `ready` after model load, and `unavailable` with `fatal_error` on fatal backend error. Graceful shutdown/close must release live sessions, GenerationBatch ownership, and the single-thread executor. Persisted artifacts remain on disk; live sessions do not remain active after shutdown.
 
@@ -90,7 +83,7 @@ Release evidence records:
 Canonical cheap gate command set:
 
 ```bash
-python3 -m unittest tests/test_stateful_request_policy.py
+python3 -m unittest tests/test_stateful_request_policy.py tests/test_runtime_config.py
 python3 tools/check_legacy_import_integrity.py
 python3 tools/check_native_import_dependencies.py
 python3 tools/check_repository_self_containment.py

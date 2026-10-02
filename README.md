@@ -151,6 +151,37 @@ ctest --test-dir native/build --output-on-failure
 
 These do not run benchmarks or full checkpoint qualification.
 
+## Operations
+
+Configure machine-specific paths with environment variables instead of editing source:
+
+```bash
+export DS41F_CHECKPOINT=/path/to/DeepSeek-V4.1-Flash
+export DS41F_OMLX_PATH=/path/to/omlx-0.7.0.dev2
+export DS41F_RECIPE_PATH=/path/to/deepseek-recipe
+export DS41F_KV_ROOT=/path/to/ds41f-kv
+```
+
+Inspect provenance without loading the model:
+
+```bash
+python3 -m ds41f_mlx.provenance
+```
+
+Launch the local server:
+
+```bash
+python3 -m ds41f_mlx.serve
+```
+
+Run unified qualification:
+
+```bash
+python3 -m ds41f_mlx.qualify --mode quick
+```
+
+See `docs/operations.md` for the full configuration contract, launch behavior, qualification modes, artifact policy, and status meanings.
+
 ## Runtime/API status
 
 The supported serving layer uses official DeepSeek `deepseek-recipe` for protocol, prompt, response, tool-call, thinking, and streaming behavior, with a narrow `ds41f` backend interface below it. See `docs/api.md` for exact endpoint behavior, single-flight/max-session limits, persistence/restore, tool-loop behavior, streaming, and the stateful stop-string rejection policy.

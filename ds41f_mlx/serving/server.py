@@ -21,6 +21,7 @@ from fastapi.responses import JSONResponse, Response, StreamingResponse
 from starlette.concurrency import run_in_threadpool
 from starlette.types import Receive, Scope, Send
 
+from ds41f_mlx.config import load_runtime_config
 from ds41f_mlx.serving.deepseek_recipe_backend import DeepSeekRecipeRuntimeBackend, RecipePreparedRequest, DEFAULT_RECIPE, DEFAULT_MODEL_ID, MODEL_ALIASES
 from ds41f_mlx.serving.request_policy import validate_stateful_chat_request_policy
 
@@ -129,8 +130,13 @@ def _chat_sse_events(events: list[dict[str, Any]] | tuple[dict[str, Any], ...]) 
     return gen()
 
 
-def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_path: Path = DEFAULT_RECIPE, options: ConversionOptions | None = None, model_id: str = DEFAULT_MODEL_ID) -> FastAPI:
-    backend = backend or DeepSeekRecipeRuntimeBackend(recipe_path=recipe_path, model_id=model_id)
+def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_path: Path | None = None, options: ConversionOptions | None = None, model_id: str | None = None) -> FastAPI:
+    runtime_config = load_runtime_config()
+    runtime_config.apply_environment()
+    runtime_config.apply_import_paths()
+    recipe_path = Path(recipe_path) if recipe_path is not None else runtime_config.recipe_path
+    model_id = model_id if model_id is not None else runtime_config.model_id
+    backend = backend or DeepSeekRecipeRuntimeBackend(recipe_path=recipe_path, model_id=model_id, runtime_config=runtime_config)
     tokenizer = load_v41_tokenizer(recipe_path)
     app = FastAPI(title='ds41f-deepseek-recipe', version='0.1.0')
     app.state.backend = backend

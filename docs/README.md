@@ -8,6 +8,7 @@ Canonical current-state documents:
 - [Correctness](correctness.md) — backend-local fidelity policy and authority hierarchy
 - [Session state](session-state.md) — persistent, runtime-owned, and call-local state contract
 - [Generation](generation.md) — prefill/decode/commit/termination lifecycle
+- [Operations](operations.md) — configuration, provenance inspection, launch, and unified qualification
 - [API](api.md) — release-scope public HTTP contract
 - [Performance](performance.md) — qualified performance class and baselines
 - [Provenance](provenance.md) — checkpoint/source/import/dependency identity
