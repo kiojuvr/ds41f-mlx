@@ -127,8 +127,14 @@ def tree_digest(root: Path, include: tuple[str, ...]) -> dict[str, Any]:
             files.append(p)
         else:
             for child in p.rglob("*"):
-                if child.is_file() and "__pycache__" not in child.parts and not child.name.endswith((".pyc", ".o")):
-                    files.append(child)
+                rel_parts = child.relative_to(root).parts
+                if not child.is_file():
+                    continue
+                if "__pycache__" in rel_parts or child.name.endswith((".pyc", ".o")):
+                    continue
+                if rel_parts[0] == "native" and len(rel_parts) > 1 and rel_parts[1].startswith("build"):
+                    continue
+                files.append(child)
     h = sha256()
     entries = []
     for path in sorted(files):
