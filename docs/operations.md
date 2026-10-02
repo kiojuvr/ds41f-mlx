@@ -44,7 +44,7 @@ This reports ds41f commit/dirty state, Python/platform, MLX and mlx-lm versions,
 Outcome meanings:
 
 - `PASS`: configured environment matches required paths and pinned release revisions.
-- `WARNING`: environment is usable enough to inspect, but a revision/path condition changed and requires requalification before claiming the same release evidence.
+- `WARNING`: environment is usable enough to inspect, but a revision/dirty-state/path condition changed and requires review or requalification before claiming the same release evidence.
 - `FAIL`: a required configured dependency/path is missing or invalid.
 
 ## Launch the server

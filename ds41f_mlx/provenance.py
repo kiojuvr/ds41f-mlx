@@ -103,9 +103,13 @@ def inspect_runtime(config: RuntimeConfig | None = None) -> dict[str, Any]:
     validation = validate_runtime_config(cfg)
     omlx_rev = git_rev(cfg.omlx_path)
     recipe_rev = git_rev(cfg.recipe_path)
+    omlx_dirty = git_dirty(cfg.omlx_path)
+    recipe_dirty = git_dirty(cfg.recipe_path)
     revision_checks = [
-        {"component": "oMLX", "expected": PINNED_OMLX_REVISION, "actual": omlx_rev, "status": "PASS" if omlx_rev == PINNED_OMLX_REVISION else "WARNING"},
-        {"component": "deepseek-recipe", "expected": PINNED_RECIPE_REVISION, "actual": recipe_rev, "status": "PASS" if recipe_rev == PINNED_RECIPE_REVISION else "WARNING"},
+        {"component": "oMLX", "check": "revision", "expected": PINNED_OMLX_REVISION, "actual": omlx_rev, "status": "PASS" if omlx_rev == PINNED_OMLX_REVISION else "WARNING"},
+        {"component": "oMLX", "check": "dirty", "expected": False, "actual": omlx_dirty, "status": "PASS" if omlx_dirty is False else "WARNING"},
+        {"component": "deepseek-recipe", "check": "revision", "expected": PINNED_RECIPE_REVISION, "actual": recipe_rev, "status": "PASS" if recipe_rev == PINNED_RECIPE_REVISION else "WARNING"},
+        {"component": "deepseek-recipe", "check": "dirty", "expected": False, "actual": recipe_dirty, "status": "PASS" if recipe_dirty is False else "WARNING"},
     ]
     import_checks = [import_check("omlx"), import_check("deepseek_recipe"), import_check("mlx"), import_check("mlx_lm")]
     statuses = [x["status"] for x in validation] + [x["status"] for x in revision_checks] + [x["status"] for x in import_checks]
@@ -121,8 +125,8 @@ def inspect_runtime(config: RuntimeConfig | None = None) -> dict[str, Any]:
         "config": cfg.to_json(),
         "validation": validation,
         "checkpoint_fingerprint": checkpoint_fingerprint(cfg.checkpoint_path),
-        "omlx": {"path": str(cfg.omlx_path), "revision": omlx_rev, "dirty": git_dirty(cfg.omlx_path)},
-        "deepseek_recipe": {"path": str(cfg.recipe_path), "revision": recipe_rev, "dirty": git_dirty(cfg.recipe_path)},
+        "omlx": {"path": str(cfg.omlx_path), "revision": omlx_rev, "dirty": omlx_dirty},
+        "deepseek_recipe": {"path": str(cfg.recipe_path), "revision": recipe_rev, "dirty": recipe_dirty},
         "revision_checks": revision_checks,
         "production": {"prefill_selector": cfg.production_prefill_selector, "mtp": cfg.mtp, "dspark": cfg.dspark, "speculative_decode": cfg.speculative_decode},
     }
