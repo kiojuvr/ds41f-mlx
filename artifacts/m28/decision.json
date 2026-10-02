@@ -1,0 +1,145 @@
+{
+  "schema": "ds41f.m28.quiesce-decision.v1",
+  "decision": "IMMEDIATE_ABORT_ONLY_BLOCKED",
+  "canonical_quiescence_viable": true,
+  "scope": "native singleton DeepSeek-V4.1 DSpark, depth<=5, commit_align=0, matcher-known token stops and max_tokens; NOT serving qualification",
+  "production_mtp": "OFF_UNCHANGED",
+  "base_commit": "06e5b673cdd301797235ee11b2a98f12db963db9",
+  "omlx_revision": "4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40",
+  "packages": {
+    "omlx": "0.7.0",
+    "mlx": "0.32.2",
+    "mlx-lm": "0.31.4.dev132+g94cdcae13"
+  },
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "config_sha256": "8be45ce0476004a3f529fd896115a4a2e800a129ad2d3ec05b16050f52e21879",
+  "checkpoint_index_sha256": "74b0686a3d2891980d5e303251b075a3bccae2c2ff650747db2620a649b98fa8",
+  "device": {
+    "device_name": "Apple M3 Ultra",
+    "max_recommended_working_set_size": 498216206336,
+    "memory_size": 549755813888,
+    "architecture": "applegpu_g15d",
+    "max_buffer_length": 373662154752,
+    "resource_limit": 499000
+  },
+  "window_size": 128,
+  "invariant": "At cycle commit B=H-1; verify retains 1+m input positions, T=H+m, Q=[accepted drafts[:m], final unforwarded correction/bonus]. After r emissions from that queue, T-H=m-r and len(Q)=T-H+1. First max(T-H,0) queued tokens equal actual target input ledger positions [H,T). DSpark offset equals T.",
+  "bound": {
+    "before_first_cycle_emission": "needed<=m<=configured_depth (5)",
+    "external_post_response_bound": "max(0,needed)<=depth-1 (4); post-init first response needs zero",
+    "observed_extra_tokens_max": 4
+  },
+  "algorithm": "Freeze verification/drafting. For T>=H, validate queue/frontier/matcher/ledger contract and emit exactly T-H existing queue entries via _emit_response (never _mtp_next). Discard final not-forwarded token. For T=H-1 and Q empty, forward last already-emitted token once with hidden capture and append to DSpark. Clear stashes/queues, native row extract before removing UID. No sampling or new speculative cycle.",
+  "results": {
+    "cases_passed": 62,
+    "cases_failed": 0,
+    "code_cases": 40,
+    "synthetic_cases": 22,
+    "initial_contexts": [
+      128,
+      2048,
+      4096,
+      65536
+    ],
+    "queue_lengths": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "needed_values": [
+      -1,
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "owning_cycle_acceptance_shapes": [
+      {
+        "depth": 1,
+        "accepted": 0,
+        "observations_including_repeated_runs": 59
+      },
+      {
+        "depth": 1,
+        "accepted": 1,
+        "observations_including_repeated_runs": 9
+      },
+      {
+        "depth": 2,
+        "accepted": 1,
+        "observations_including_repeated_runs": 10
+      },
+      {
+        "depth": 2,
+        "accepted": 2,
+        "observations_including_repeated_runs": 3
+      },
+      {
+        "depth": 3,
+        "accepted": 1,
+        "observations_including_repeated_runs": 2
+      },
+      {
+        "depth": 5,
+        "accepted": 0,
+        "observations_including_repeated_runs": 35
+      },
+      {
+        "depth": 5,
+        "accepted": 2,
+        "observations_including_repeated_runs": 1
+      },
+      {
+        "depth": 5,
+        "accepted": 3,
+        "observations_including_repeated_runs": 6
+      },
+      {
+        "depth": 5,
+        "accepted": 4,
+        "observations_including_repeated_runs": 6
+      },
+      {
+        "depth": 5,
+        "accepted": 5,
+        "observations_including_repeated_runs": 27
+      }
+    ],
+    "cache_ahead_new_verifies": 0,
+    "cache_ahead_target_forwards": 0,
+    "history_replay_tokens": 0,
+    "full_cache_repack": 0,
+    "ordinary_target_continuation_passed": 62,
+    "drain_quiescence_ms": {
+      "median": 1.0672500065993518,
+      "max": 4.132833011681214
+    },
+    "lagging_quiescence_ms": {
+      "median": 52.16262499743607,
+      "max": 55.63695798628032
+    }
+  },
+  "stop_safety": "Upstream clamps final m with min(remaining-1, first matcher-hit index) before target rollback and DSpark append. Stop-completing/length-final token remains unforwarded. Copied immutable-trie matcher and length checks independently guard draining; 1-token and 3-token stop sequences plus length 1/2/3/7/16 passed.",
+  "limitations": [
+    "Immediate token-exact abort remains M27-blocked for target-ahead states. Canonical recovery must report extra server-committed output separately from transport-delivered output.",
+    "Actual recipe EOS/tool generation not induced. Configured token matcher semantics exercised, including a three-token stop. Boundaries enforced only by external text parsers/tool detection are unsupported: fail closed before drain unless registered into the cycle matcher or equivalently clamped before target commit.",
+    "No P7/P6 priming seam, HTTP/Rust recovery API, MTP re-entry, processors/thinking budgets, batching, commit-alignment overrides, or persistence qualification. Ordinary target continuation only; integration deferred.",
+    "Execution ledger is diagnostic evidence, not a proposed second executable target authority. A future adapter must enforce the pinned state-machine contract and supported protocol before mutation.",
+    "Quiescence latency includes cleanup/extraction instrumentation, excludes subsequent continuation and model load. No broad throughput benchmark performed."
+  ],
+  "regressions": {
+    "production_unittest": "108 tests PASS; artifacts/m28/production-regression.log",
+    "production_runtime_changed": false,
+    "self_containment": "artifacts/m28/self-containment.log",
+    "syntax": "py_compile run_m28_mtp_quiesce.py / check_m28_quiesce.py"
+  },
+  "evidence_sha256": {
+    "artifacts/m28/code-boundaries.json": "5620ed78f0a57cf86fd7e8240fa2c39281c65cd12e6e9e77786f1026685725ac",
+    "artifacts/m28/synthetic-boundaries.json": "9d5b961cde785f34608d603a7c404ff3669b8f83d1890f22737144b7c7da41cb"
+  },
+  "next_milestone": "Integrate full-quality P7/P6 DSpark taps plus canonical-session MTP lifecycle and recovery, then operational qualification; no retained rollback snapshot project needed for this semantic model."
+}
