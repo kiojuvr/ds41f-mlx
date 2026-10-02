@@ -11,12 +11,41 @@ The model runtime remains the inference/session authority. `ds41f_mlx.web` is a 
 
 ## Launch
 
-Start the qualified runtime and the web client as separate processes:
+Start the qualified runtime and the web client as separate processes. Select the
+runtime interpreter from the existing runtime qualification, **not** automatically
+from the repository's development `.venv`. The runtime interpreter must contain
+an installed `deepseek-recipe` package with an importable native extension; the
+recipe source checkout alone is insufficient. The client may use a different
+interpreter (FastAPI/uvicorn and the client dependencies, no model/native package).
 
 ```bash
-python -m ds41f_mlx.serve --host 127.0.0.1 --port 8000
-python -m ds41f_mlx.web --host 127.0.0.1 --port 8080 --runtime-url http://127.0.0.1:8000
+# Set these to your qualified runtime and client interpreters.
+export DS41F_RUNTIME_PYTHON=/path/to/qualified/environment/bin/python
+export DS41F_CLIENT_PYTHON=/path/to/client/environment/bin/python
+
+# Run in the same environment/working directory as the launch below.
+"$DS41F_RUNTIME_PYTHON" - <<'PY'
+import sys, importlib.util
+from ds41f_mlx.config import load_runtime_config
+load_runtime_config().apply_import_paths()
+spec = importlib.util.find_spec("deepseek_recipe")
+print("Python:", sys.executable, flush=True)
+print("deepseek_recipe:", spec.origin if spec else "NOT FOUND", flush=True)
+import deepseek_recipe._native as native
+print("native:", native.__file__)
+PY
+# Stop here if the import fails; compare the interpreter to qualification evidence
+# before attempting a build or installing build-only dependencies.
+"$DS41F_RUNTIME_PYTHON" -m ds41f_mlx.serve --print-config
+"$DS41F_RUNTIME_PYTHON" -m ds41f_mlx.serve --host 127.0.0.1 --port 8000
+# In another terminal:
+"$DS41F_CLIENT_PYTHON" -m ds41f_mlx.web --host 127.0.0.1 --port 8080 --runtime-url http://127.0.0.1:8000
 ```
+
+`--print-config` includes the Python executable and resolved package origins.
+If an installed recipe package is absent, the launcher falls back to the source
+checkout's Python directory, which may lack `_native`. A successful path check
+or client unit test is not proof that this interpreter can run the model.
 
 Open <http://127.0.0.1:8080/>.
 
@@ -68,8 +97,45 @@ Initial tools:
 
 The UI exposes explicit save/restore actions mapped directly to the existing same-backend KV persistence API. Browser metadata and server-side KV artifacts remain distinct; restored sessions start with an empty browser presentation transcript unless the operator separately retained it.
 
+## Final real-model acceptance (2026-10-02)
+
+**PASS**: the canonical runtime and separate web client completed a real Exa
+hosted-MCP tool loop with DeepSeek-V4.1-Flash, then an ordinary following turn on
+`sess_3301fc00405a430a8f5e8a218dd9fa70`. The model generated
+`web_search({"query":"DeepSeek V4.1 Flash official announcement release date"})`
+(call id `call_6bb0829a-4557-4957-9a06-0d24dcddb647_0`). Exa returned the official
+announcement with a September 10, 2026 snippet; the model cited it, then repeated
+the date on the following turn without another tool call. Runtime request count
+advanced from 2 (search + tool continuation) to 3. Session close and SIGTERM
+shutdown of both services completed cleanly.
+
+Evidence:
+
+- [Environment reconciliation](../artifacts/m19/m19-environment-reconciliation.json)
+- [Final bounded real-model acceptance](../artifacts/m19/m19-real-model-acceptance.json)
+- [Earlier environment failure and independent provider checks](../artifacts/m19/m19-client-acceptance.json) (unchanged historical evidence)
+- [First qualified-runtime attempt](../artifacts/m19/m19-real-model-attempt-1.json): broad question exceeded the bounded tool-round limit after search/fetch calls.
+- [Second attempt](../artifacts/m19/m19-real-model-attempt-2.json): search loop passed; disabling tools on the following turn changed the recipe prompt and continuation was rejected. The final attempt kept declarations unchanged.
+
+The original `_native` failure used the repository `.venv/bin/python`, which had
+no installed recipe package and fell back to the recipe source checkout without
+its native extension. The M18-qualified interpreter still imported the installed
+package/native extension and started the real canonical server. The earlier
+maturin/OpenCV attempt was an unnecessary build attempt in the wrong/incomplete
+environment, not a blocker in the qualified runtime. No rebuild or system
+dependency installation was performed for final acceptance.
+
+M18 qualification remains valid: runtime-source digest, checkpoint fingerprint,
+oMLX identity, recipe identity, installed versions/origins, and production
+selectors match M18. Installed package RECORD hashes verify and file change times
+predate M18; there is no evidence of installed package/native changes. M18 did not
+capture a binary hash, so historical byte-for-byte verification is unavailable;
+the current native hash is now recorded. No expensive runtime requalification was
+rerun. Only documentation and acceptance artifacts changed.
+
 ## Current limitations
 
+- Keep tool declarations/settings unchanged within a live stateful session; disabling tools mid-session changes the recipe prefix and may reject continuation. Close/create a session to change settings. An ordinary conversational turn can leave tools enabled without using them.
 - UI token streaming is not implemented.
 - Parallel anonymous hosted MCP access was not observed; use `DS41F_PARALLEL_API_KEY` where needed.
 - No filesystem, coding, shell, multimodal, multi-user auth, batching, MTP, DSpark, or speculative decoding features are added.

@@ -1,0 +1,40 @@
+{
+  "failed_launch_command": ".venv/bin/python -m ds41f_mlx.serve --host 127.0.0.1 --port 18000",
+  "failed_launch_command_source": "Prior agent tool-call record in session 2026-10-02T03-16-17-944Z_01a0fa9c-d798-7116-ae5d-43165ed5a076; corroborated by /tmp/ds41f-runtime-m19.log (source-checkout import traceback).",
+  "failed_environment": {
+    "executable": "/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python",
+    "before_import_paths": "None",
+    "package_origin": "/Volumes/SDXC-512/deepseek-v41-flash-mlx/third_party/deepseek-recipe/deepseek-recipe-python/python/deepseek_recipe/__init__.py",
+    "native_status": "FAIL",
+    "error": "ModuleNotFoundError(\"No module named 'deepseek_recipe._native'\")"
+  },
+  "qualified_environment": {
+    "executable": "/Users/kioju/.venvs/omlx-0.7.0.dev2/bin/python",
+    "before_import_paths": "ModuleSpec(name='deepseek_recipe', loader=<_frozen_importlib_external.SourceFileLoader object at 0x10796d790>, origin='/Users/kioju/.venvs/omlx-0.7.0.dev2/lib/python3.13/site-packages/deepseek_recipe/__init__.py', submodule_search_locations=['/Users/kioju/.venvs/omlx-0.7.0.dev2/lib/python3.13/site-packages/deepseek_recipe'])",
+    "package_origin": "/Users/kioju/.venvs/omlx-0.7.0.dev2/lib/python3.13/site-packages/deepseek_recipe/__init__.py",
+    "native_status": "PASS",
+    "native_origin": "/Users/kioju/.venvs/omlx-0.7.0.dev2/lib/python3.13/site-packages/deepseek_recipe/_native.abi3.so",
+    "native_sha256": "a41596ca12503efa1b0a25b16d9d52293378528b3aec4f060c3814f488fdcd43",
+    "native_size": 14230096,
+    "native_mtime": 1790741422.97554,
+    "native_ctime": 1790741422.9768176,
+    "installed_record": {
+      "mismatches": [],
+      "latest_file_ctime": 1790741422.9891994,
+      "record_sha256": "b4272e3be34d95f74813ce044d25e6241967e3193ee77cf1246b339e3e5fc217"
+    }
+  },
+  "m18_created_at": 1790910626.5093691,
+  "m18_comparison": {
+    "packages": true,
+    "checkpoint_fingerprint": true,
+    "omlx": true,
+    "deepseek_recipe": true,
+    "production": true,
+    "import_checks": true
+  },
+  "runtime_source_identity": "8d77c25387c743fc3af1b265767631117199dca15b97131f544da5821e591518",
+  "m18_runtime_source_identity_equal": true,
+  "rebuild_or_system_install": false,
+  "conclusion": "Interpreter mismatch: repository .venv has no installed deepseek_recipe; config falls back to pure-Python recipe checkout lacking _native. Qualified installed package imports successfully. Installed RECORD hashes match, all installed-file ctimes predate M18, version/origin and external runtime identities match M18: no evidence of package/native modification since M18. M18 did not record a native binary digest, so a historical byte-for-byte comparison is not available; current digest is captured here."
+}

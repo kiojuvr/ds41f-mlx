@@ -1,0 +1,480 @@
+{
+  "started_at": 1790914173.7353458,
+  "provider": "exa",
+  "runtime_python": "/Users/kioju/.venvs/omlx-0.7.0.dev2/bin/python",
+  "client_python": "/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python",
+  "initial_status": {
+    "runtime_base_url": "http://127.0.0.1:18000",
+    "tools": [
+      "web_search",
+      "fetch_url"
+    ],
+    "runtime": {
+      "status": "ready",
+      "process_alive": true,
+      "model_ready": true,
+      "fatal_error": null
+    }
+  },
+  "create": {
+    "id": "sess_3301fc00405a430a8f5e8a218dd9fa70",
+    "protocol": "chat_completions",
+    "state": "empty",
+    "created_at": 1790914173.7471611,
+    "updated_at": 1790914173.7471611,
+    "request_count": 0,
+    "last_error": null,
+    "last_turn": null,
+    "persisted_artifact": null
+  },
+  "session_id": "sess_3301fc00405a430a8f5e8a218dd9fa70",
+  "search_turn": {
+    "session_id": "sess_3301fc00405a430a8f5e8a218dd9fa70",
+    "messages": [
+      {
+        "role": "user",
+        "content": "What date does the official DeepSeek V4.1 Flash announcement give? Use web_search exactly once to look up the official announcement, then answer using the search snippet and cite its URL. Do not use fetch_url or perform additional searches; if the date is absent from the snippet, say so."
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "id": "call_6bb0829a-4557-4957-9a06-0d24dcddb647_0",
+            "type": "function",
+            "function": {
+              "name": "web_search",
+              "arguments": "{\"query\": \"DeepSeek V4.1 Flash official announcement release date\"}"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "call_6bb0829a-4557-4957-9a06-0d24dcddb647_0",
+        "content": "{\"query\":\"DeepSeek V4.1 Flash official announcement release date\",\"provider\":\"exa\",\"selected_provider\":\"exa\",\"results\":[{\"title\":\"Introducing DeepSeek-V4.1-Flash: smarter, faster, more efficient.\",\"url\":\"https://www.deepseek.com/en/news/deepseek-v4-1-flash/\",\"snippet\":\"News September 10, 2026 ... ## V4.1-Flash is now live on the DeepSeek API with native multimodal support. ... - V4-Flash & V4-Flash-Vision-Exp are retired. For compatibility, deepseek-v4-flash and deepseek-v4-flash-vision-exp temporarily route to V4.1-Flash. - Tests by multiple parties put V4.1-Flash ahead of V4-Pro on performance, cost, speed & total runtime. We\u2019re phasing out V4-Pro. - Starting at 04:00 UTC on Sept 14, 2026, all deepseek-v4-pro requests will route to V4.1-Flash at V4.1-Flash rates. This will continue until V4.1-Pro launches. ... - Peak/off-peak pricing continues to balance demand. - Off-peak rates are 50% of peak rates. Schedule flexible workloads off-peak to save. - New pricing takes effect at 04:00 UTC on Sept 10, 2026.\",\"provider_metadata\":\"exa\"},{\"title\":\"\",\"url\":\"\",\"snippet\":\"---\",\"provider_metadata\":\"exa\"},{\"title\":\"DeepSeek | DeepSeek V4.1 Flash\uff1a\u66f4\u5f3a\u3001\u66f4\u5feb\u3001\u66f4\u666e\u60e0\",\"url\":\"https://www.deepseek.com/news/deepseek-v4-1-flash/\",\"snippet\":\"\u52a8\u6001 2026 \u5e74 9 \u6708 10 \u65e5 ... \u4eca\u5929\uff0c\u6211\u4eec\u6b63\u5f0f\u53d1\u5e03 DeepSeek V4.1 Flash \u6a21\u578b\u3002\u8fd9\u662f\u6211\u4eec\u5168\u65b0\u6a21\u578b\u7ed3\u6784\u7cfb\u5217\u4e2d\u7684\u6700\u5c0f\u5c3a\u5bf8\u7684\u6a21\u578b\uff0c\u5177\u5907\u539f\u751f\u591a\u6a21\u6001\u89c6\u89c9\u7406\u89e3\u80fd\u529b\u3002\u65b0\u6a21\u578b\u7ed3\u6784\u7684\u8bbe\u8ba1\u521d\u8877\u662f\uff1a\u80fd\u529b\u4e0a\u9650\u66f4\u9ad8\u3001\u63a8\u7406\u901f\u5ea6\u66f4\u5feb\u3001\u541e\u5410\u66f4\u5927\u3001\u53ef\u6269\u5c55\u5230\u66f4\u5927\u53c2\u6570\u6a21\u578b\u3002 ... \u5f97\u76ca\u4e8e\u6a21\u578b\u67b6\u6784\u7684\u521b\u65b0\uff0cDeepSeek V4.1 Flash \u80fd\u591f\u4ee5\u66f4\u4f4e\u7684\u6210\u672c\u670d\u52a1\u66f4\u591a\u7684\u7528\u6237\uff0c\u56e0\u6b64\u6211\u4eec\u76f8\u5e94\u4e0b\u8c03\u4e86 V4.1 Flash \u7684\u5b9a\u4ef7\u3002\u540c\u65f6\uff0c\u4e3a\u4e86\u66f4\u5408\u7406\u5730\u8c03\u914d\u8d44\u6e90\uff0c\u6211\u4eec\u4ecd\u7136\u91c7\u7528\u5cf0\u8c37\u5b9a\u4ef7\uff0c\u95f2\u65f6\u4ef7\u683c\u4e3a\u9ad8\u5cf0\u65f6\u6bb5\u4ef7\u683c\u7684\u4e00\u534a\uff0c\u9f13\u52b1\u7528\u6237\u6839\u636e\u5b9e\u9645\u4f7f\u7528\u60c5\u51b5\u8c03\u6574\u4efb\u52a1\u65f6\u95f4\u3002\u65b0\u4ef7\u683c\u4e8e 2026 \u5e74 9 \u6708 10 \u65e5 12:00 \u5f00\u59cb\u751f\u6548\u3002\",\"provider_metadata\":\"exa\"},{\"title\":\"\",\"url\":\"\",\"snippet\":\"---\",\"provider_metadata\":\"exa\"},{\"title\":\"DeepSeek-V4.1-Flash: Smarter, Faster, More Efficient | DeepSeek API Docs\",\"url\":\"https://api-docs.deepseek.com/news/news260910\",\"snippet\":\"DeepSeek API ... \ud83d\ude80 Introducing Deep ... ## \u26a1 V4.1-Flash is now live on the DeepSeek API with native multimodal support.\u200b ... \ud83d\udd39 Starting at 04:00 UTC on Sept 14, 2026, all `deepseek-v4-pro` requests will route to V4.1-Flash at V4.1-Flash rates. This will continue until V4.1-Pro launches.\",\"provider_metadata\":\"exa\"}],\"fallback_errors\":[]}"
+      },
+      {
+        "role": "assistant",
+        "content": "**Date given in the official announcement: September 10, 2026.**\n\nThe official DeepSeek news page is titled \"Introducing DeepSeek-V4.1-Flash: smarter, faster, more efficient,\" and its snippet opens with \"News September 10, 2026,\" stating that V4.1-Flash is live on the DeepSeek API with native multimodal support, and that \"New pricing takes effect at 04:00 UTC on Sept 10, 2026.\"\n\nSource: https://www.deepseek.com/en/news/deepseek-v4-1-flash/\n\n(For reference, the snippet also mentions a separate later date \u2014 Sept 14, 2026, 04:00 UTC \u2014 but that is when `deepseek-v4-pro` requests begin routing to V4.1-Flash, not the announcement date.)"
+      }
+    ],
+    "steps": [
+      {
+        "kind": "assistant",
+        "data": {
+          "finish_reason": "tool_calls",
+          "message": {
+            "role": "assistant",
+            "content": "",
+            "tool_calls": [
+              {
+                "id": "call_6bb0829a-4557-4957-9a06-0d24dcddb647_0",
+                "type": "function",
+                "function": {
+                  "name": "web_search",
+                  "arguments": "{\"query\": \"DeepSeek V4.1 Flash official announcement release date\"}"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "kind": "tools",
+        "data": {
+          "calls": [
+            {
+              "id": "call_6bb0829a-4557-4957-9a06-0d24dcddb647_0",
+              "type": "function",
+              "function": {
+                "name": "web_search",
+                "arguments": "{\"query\": \"DeepSeek V4.1 Flash official announcement release date\"}"
+              }
+            }
+          ],
+          "results": [
+            {
+              "id": "call_6bb0829a-4557-4957-9a06-0d24dcddb647_0",
+              "tool": "web_search",
+              "query": "DeepSeek V4.1 Flash official announcement release date",
+              "provider": "exa",
+              "selected_provider": "exa",
+              "results": [
+                {
+                  "title": "Introducing DeepSeek-V4.1-Flash: smarter, faster, more efficient.",
+                  "url": "https://www.deepseek.com/en/news/deepseek-v4-1-flash/",
+                  "snippet": "News September 10, 2026 ... ## V4.1-Flash is now live on the DeepSeek API with native multimodal support. ... - V4-Flash & V4-Flash-Vision-Exp are retired. For compatibility, deepseek-v4-flash and deepseek-v4-flash-vision-exp temporarily route to V4.1-Flash. - Tests by multiple parties put V4.1-Flash ahead of V4-Pro on performance, cost, speed & total runtime. We\u2019re phasing out V4-Pro. - Starting at 04:00 UTC on Sept 14, 2026, all deepseek-v4-pro requests will route to V4.1-Flash at V4.1-Flash rates. This will continue until V4.1-Pro launches. ... - Peak/off-peak pricing continues to balance demand. - Off-peak rates are 50% of peak rates. Schedule flexible workloads off-peak to save. - New pricing takes effect at 04:00 UTC on Sept 10, 2026.",
+                  "provider_metadata": "exa"
+                },
+                {
+                  "title": "",
+                  "url": "",
+                  "snippet": "---",
+                  "provider_metadata": "exa"
+                },
+                {
+                  "title": "DeepSeek | DeepSeek V4.1 Flash\uff1a\u66f4\u5f3a\u3001\u66f4\u5feb\u3001\u66f4\u666e\u60e0",
+                  "url": "https://www.deepseek.com/news/deepseek-v4-1-flash/",
+                  "snippet": "\u52a8\u6001 2026 \u5e74 9 \u6708 10 \u65e5 ... \u4eca\u5929\uff0c\u6211\u4eec\u6b63\u5f0f\u53d1\u5e03 DeepSeek V4.1 Flash \u6a21\u578b\u3002\u8fd9\u662f\u6211\u4eec\u5168\u65b0\u6a21\u578b\u7ed3\u6784\u7cfb\u5217\u4e2d\u7684\u6700\u5c0f\u5c3a\u5bf8\u7684\u6a21\u578b\uff0c\u5177\u5907\u539f\u751f\u591a\u6a21\u6001\u89c6\u89c9\u7406\u89e3\u80fd\u529b\u3002\u65b0\u6a21\u578b\u7ed3\u6784\u7684\u8bbe\u8ba1\u521d\u8877\u662f\uff1a\u80fd\u529b\u4e0a\u9650\u66f4\u9ad8\u3001\u63a8\u7406\u901f\u5ea6\u66f4\u5feb\u3001\u541e\u5410\u66f4\u5927\u3001\u53ef\u6269\u5c55\u5230\u66f4\u5927\u53c2\u6570\u6a21\u578b\u3002 ... \u5f97\u76ca\u4e8e\u6a21\u578b\u67b6\u6784\u7684\u521b\u65b0\uff0cDeepSeek V4.1 Flash \u80fd\u591f\u4ee5\u66f4\u4f4e\u7684\u6210\u672c\u670d\u52a1\u66f4\u591a\u7684\u7528\u6237\uff0c\u56e0\u6b64\u6211\u4eec\u76f8\u5e94\u4e0b\u8c03\u4e86 V4.1 Flash \u7684\u5b9a\u4ef7\u3002\u540c\u65f6\uff0c\u4e3a\u4e86\u66f4\u5408\u7406\u5730\u8c03\u914d\u8d44\u6e90\uff0c\u6211\u4eec\u4ecd\u7136\u91c7\u7528\u5cf0\u8c37\u5b9a\u4ef7\uff0c\u95f2\u65f6\u4ef7\u683c\u4e3a\u9ad8\u5cf0\u65f6\u6bb5\u4ef7\u683c\u7684\u4e00\u534a\uff0c\u9f13\u52b1\u7528\u6237\u6839\u636e\u5b9e\u9645\u4f7f\u7528\u60c5\u51b5\u8c03\u6574\u4efb\u52a1\u65f6\u95f4\u3002\u65b0\u4ef7\u683c\u4e8e 2026 \u5e74 9 \u6708 10 \u65e5 12:00 \u5f00\u59cb\u751f\u6548\u3002",
+                  "provider_metadata": "exa"
+                },
+                {
+                  "title": "",
+                  "url": "",
+                  "snippet": "---",
+                  "provider_metadata": "exa"
+                },
+                {
+                  "title": "DeepSeek-V4.1-Flash: Smarter, Faster, More Efficient | DeepSeek API Docs",
+                  "url": "https://api-docs.deepseek.com/news/news260910",
+                  "snippet": "DeepSeek API ... \ud83d\ude80 Introducing Deep ... ## \u26a1 V4.1-Flash is now live on the DeepSeek API with native multimodal support.\u200b ... \ud83d\udd39 Starting at 04:00 UTC on Sept 14, 2026, all `deepseek-v4-pro` requests will route to V4.1-Flash at V4.1-Flash rates. This will continue until V4.1-Pro launches.",
+                  "provider_metadata": "exa"
+                }
+              ],
+              "fallback_errors": []
+            }
+          ]
+        }
+      },
+      {
+        "kind": "assistant",
+        "data": {
+          "finish_reason": "stop",
+          "message": {
+            "role": "assistant",
+            "content": "**Date given in the official announcement: September 10, 2026.**\n\nThe official DeepSeek news page is titled \"Introducing DeepSeek-V4.1-Flash: smarter, faster, more efficient,\" and its snippet opens with \"News September 10, 2026,\" stating that V4.1-Flash is live on the DeepSeek API with native multimodal support, and that \"New pricing takes effect at 04:00 UTC on Sept 10, 2026.\"\n\nSource: https://www.deepseek.com/en/news/deepseek-v4-1-flash/\n\n(For reference, the snippet also mentions a separate later date \u2014 Sept 14, 2026, 04:00 UTC \u2014 but that is when `deepseek-v4-pro` requests begin routing to V4.1-Flash, not the announcement date.)"
+          }
+        }
+      }
+    ],
+    "final_response": {
+      "id": "2addda85-2cfc-4a34-96ef-e44ce70a15ac",
+      "object": "chat.completion",
+      "created": 1790914184,
+      "model": "deepseek-v4.1-flash",
+      "system_fingerprint": null,
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "**Date given in the official announcement: September 10, 2026.**\n\nThe official DeepSeek news page is titled \"Introducing DeepSeek-V4.1-Flash: smarter, faster, more efficient,\" and its snippet opens with \"News September 10, 2026,\" stating that V4.1-Flash is live on the DeepSeek API with native multimodal support, and that \"New pricing takes effect at 04:00 UTC on Sept 10, 2026.\"\n\nSource: https://www.deepseek.com/en/news/deepseek-v4-1-flash/\n\n(For reference, the snippet also mentions a separate later date \u2014 Sept 14, 2026, 04:00 UTC \u2014 but that is when `deepseek-v4-pro` requests begin routing to V4.1-Flash, not the announcement date.)"
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 1300,
+        "completion_tokens": 248,
+        "total_tokens": 1548,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1300
+      }
+    }
+  },
+  "after_search": {
+    "runtime_base_url": "http://127.0.0.1:18000",
+    "tools": [
+      "web_search",
+      "fetch_url"
+    ],
+    "runtime": {
+      "status": "ready",
+      "process_alive": true,
+      "model_ready": true,
+      "fatal_error": null
+    },
+    "session": {
+      "id": "sess_3301fc00405a430a8f5e8a218dd9fa70",
+      "protocol": "chat_completions",
+      "state": "idle",
+      "created_at": 1790914173.7471611,
+      "updated_at": 1790914197.314037,
+      "request_count": 2,
+      "last_error": null,
+      "last_turn": {
+        "finish_reason": "stop",
+        "frontier_after_commit": 1549,
+        "tool_calls": [],
+        "response_json": {
+          "id": "2addda85-2cfc-4a34-96ef-e44ce70a15ac",
+          "object": "chat.completion",
+          "created": 1790914184,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "**Date given in the official announcement: September 10, 2026.**\n\nThe official DeepSeek news page is titled \"Introducing DeepSeek-V4.1-Flash: smarter, faster, more efficient,\" and its snippet opens with \"News September 10, 2026,\" stating that V4.1-Flash is live on the DeepSeek API with native multimodal support, and that \"New pricing takes effect at 04:00 UTC on Sept 10, 2026.\"\n\nSource: https://www.deepseek.com/en/news/deepseek-v4-1-flash/\n\n(For reference, the snippet also mentions a separate later date \u2014 Sept 14, 2026, 04:00 UTC \u2014 but that is when `deepseek-v4-pro` requests begin routing to V4.1-Flash, not the announcement date.)"
+              },
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 1300,
+            "completion_tokens": 248,
+            "total_tokens": 1548,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 1300
+          }
+        },
+        "prompt_replay_count": 0,
+        "full_cache_repack_count": 0
+      },
+      "persisted_artifact": null
+    }
+  },
+  "following_turn": {
+    "session_id": "sess_3301fc00405a430a8f5e8a218dd9fa70",
+    "messages": [
+      {
+        "role": "user",
+        "content": "What date does the official DeepSeek V4.1 Flash announcement give? Use web_search exactly once to look up the official announcement, then answer using the search snippet and cite its URL. Do not use fetch_url or perform additional searches; if the date is absent from the snippet, say so."
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "id": "call_6bb0829a-4557-4957-9a06-0d24dcddb647_0",
+            "type": "function",
+            "function": {
+              "name": "web_search",
+              "arguments": "{\"query\": \"DeepSeek V4.1 Flash official announcement release date\"}"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "call_6bb0829a-4557-4957-9a06-0d24dcddb647_0",
+        "content": "{\"query\":\"DeepSeek V4.1 Flash official announcement release date\",\"provider\":\"exa\",\"selected_provider\":\"exa\",\"results\":[{\"title\":\"Introducing DeepSeek-V4.1-Flash: smarter, faster, more efficient.\",\"url\":\"https://www.deepseek.com/en/news/deepseek-v4-1-flash/\",\"snippet\":\"News September 10, 2026 ... ## V4.1-Flash is now live on the DeepSeek API with native multimodal support. ... - V4-Flash & V4-Flash-Vision-Exp are retired. For compatibility, deepseek-v4-flash and deepseek-v4-flash-vision-exp temporarily route to V4.1-Flash. - Tests by multiple parties put V4.1-Flash ahead of V4-Pro on performance, cost, speed & total runtime. We\u2019re phasing out V4-Pro. - Starting at 04:00 UTC on Sept 14, 2026, all deepseek-v4-pro requests will route to V4.1-Flash at V4.1-Flash rates. This will continue until V4.1-Pro launches. ... - Peak/off-peak pricing continues to balance demand. - Off-peak rates are 50% of peak rates. Schedule flexible workloads off-peak to save. - New pricing takes effect at 04:00 UTC on Sept 10, 2026.\",\"provider_metadata\":\"exa\"},{\"title\":\"\",\"url\":\"\",\"snippet\":\"---\",\"provider_metadata\":\"exa\"},{\"title\":\"DeepSeek | DeepSeek V4.1 Flash\uff1a\u66f4\u5f3a\u3001\u66f4\u5feb\u3001\u66f4\u666e\u60e0\",\"url\":\"https://www.deepseek.com/news/deepseek-v4-1-flash/\",\"snippet\":\"\u52a8\u6001 2026 \u5e74 9 \u6708 10 \u65e5 ... \u4eca\u5929\uff0c\u6211\u4eec\u6b63\u5f0f\u53d1\u5e03 DeepSeek V4.1 Flash \u6a21\u578b\u3002\u8fd9\u662f\u6211\u4eec\u5168\u65b0\u6a21\u578b\u7ed3\u6784\u7cfb\u5217\u4e2d\u7684\u6700\u5c0f\u5c3a\u5bf8\u7684\u6a21\u578b\uff0c\u5177\u5907\u539f\u751f\u591a\u6a21\u6001\u89c6\u89c9\u7406\u89e3\u80fd\u529b\u3002\u65b0\u6a21\u578b\u7ed3\u6784\u7684\u8bbe\u8ba1\u521d\u8877\u662f\uff1a\u80fd\u529b\u4e0a\u9650\u66f4\u9ad8\u3001\u63a8\u7406\u901f\u5ea6\u66f4\u5feb\u3001\u541e\u5410\u66f4\u5927\u3001\u53ef\u6269\u5c55\u5230\u66f4\u5927\u53c2\u6570\u6a21\u578b\u3002 ... \u5f97\u76ca\u4e8e\u6a21\u578b\u67b6\u6784\u7684\u521b\u65b0\uff0cDeepSeek V4.1 Flash \u80fd\u591f\u4ee5\u66f4\u4f4e\u7684\u6210\u672c\u670d\u52a1\u66f4\u591a\u7684\u7528\u6237\uff0c\u56e0\u6b64\u6211\u4eec\u76f8\u5e94\u4e0b\u8c03\u4e86 V4.1 Flash \u7684\u5b9a\u4ef7\u3002\u540c\u65f6\uff0c\u4e3a\u4e86\u66f4\u5408\u7406\u5730\u8c03\u914d\u8d44\u6e90\uff0c\u6211\u4eec\u4ecd\u7136\u91c7\u7528\u5cf0\u8c37\u5b9a\u4ef7\uff0c\u95f2\u65f6\u4ef7\u683c\u4e3a\u9ad8\u5cf0\u65f6\u6bb5\u4ef7\u683c\u7684\u4e00\u534a\uff0c\u9f13\u52b1\u7528\u6237\u6839\u636e\u5b9e\u9645\u4f7f\u7528\u60c5\u51b5\u8c03\u6574\u4efb\u52a1\u65f6\u95f4\u3002\u65b0\u4ef7\u683c\u4e8e 2026 \u5e74 9 \u6708 10 \u65e5 12:00 \u5f00\u59cb\u751f\u6548\u3002\",\"provider_metadata\":\"exa\"},{\"title\":\"\",\"url\":\"\",\"snippet\":\"---\",\"provider_metadata\":\"exa\"},{\"title\":\"DeepSeek-V4.1-Flash: Smarter, Faster, More Efficient | DeepSeek API Docs\",\"url\":\"https://api-docs.deepseek.com/news/news260910\",\"snippet\":\"DeepSeek API ... \ud83d\ude80 Introducing Deep ... ## \u26a1 V4.1-Flash is now live on the DeepSeek API with native multimodal support.\u200b ... \ud83d\udd39 Starting at 04:00 UTC on Sept 14, 2026, all `deepseek-v4-pro` requests will route to V4.1-Flash at V4.1-Flash rates. This will continue until V4.1-Pro launches.\",\"provider_metadata\":\"exa\"}],\"fallback_errors\":[]}"
+      },
+      {
+        "role": "assistant",
+        "content": "**Date given in the official announcement: September 10, 2026.**\n\nThe official DeepSeek news page is titled \"Introducing DeepSeek-V4.1-Flash: smarter, faster, more efficient,\" and its snippet opens with \"News September 10, 2026,\" stating that V4.1-Flash is live on the DeepSeek API with native multimodal support, and that \"New pricing takes effect at 04:00 UTC on Sept 10, 2026.\"\n\nSource: https://www.deepseek.com/en/news/deepseek-v4-1-flash/\n\n(For reference, the snippet also mentions a separate later date \u2014 Sept 14, 2026, 04:00 UTC \u2014 but that is when `deepseek-v4-pro` requests begin routing to V4.1-Flash, not the announcement date.)"
+      },
+      {
+        "role": "user",
+        "content": "Thanks. In one short sentence, repeat the announcement date you just found. No more searching."
+      },
+      {
+        "role": "assistant",
+        "content": "The official DeepSeek V4.1 Flash announcement is dated September 10, 2026 (https://www.deepseek.com/en/news/deepseek-v4-1-flash/)."
+      }
+    ],
+    "steps": [
+      {
+        "kind": "assistant",
+        "data": {
+          "finish_reason": "stop",
+          "message": {
+            "role": "assistant",
+            "content": "The official DeepSeek V4.1 Flash announcement is dated September 10, 2026 (https://www.deepseek.com/en/news/deepseek-v4-1-flash/)."
+          }
+        }
+      }
+    ],
+    "final_response": {
+      "id": "f1b088ed-0cdd-4620-8a8b-fb8b7d8216a6",
+      "object": "chat.completion",
+      "created": 1790914197,
+      "model": "deepseek-v4.1-flash",
+      "system_fingerprint": null,
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "The official DeepSeek V4.1 Flash announcement is dated September 10, 2026 (https://www.deepseek.com/en/news/deepseek-v4-1-flash/)."
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 1571,
+        "completion_tokens": 41,
+        "total_tokens": 1612,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1571
+      }
+    }
+  },
+  "after_following": {
+    "runtime_base_url": "http://127.0.0.1:18000",
+    "tools": [
+      "web_search",
+      "fetch_url"
+    ],
+    "runtime": {
+      "status": "ready",
+      "process_alive": true,
+      "model_ready": true,
+      "fatal_error": null
+    },
+    "session": {
+      "id": "sess_3301fc00405a430a8f5e8a218dd9fa70",
+      "protocol": "chat_completions",
+      "state": "idle",
+      "created_at": 1790914173.7471611,
+      "updated_at": 1790914199.898327,
+      "request_count": 3,
+      "last_error": null,
+      "last_turn": {
+        "finish_reason": "stop",
+        "frontier_after_commit": 1613,
+        "tool_calls": [],
+        "response_json": {
+          "id": "f1b088ed-0cdd-4620-8a8b-fb8b7d8216a6",
+          "object": "chat.completion",
+          "created": 1790914197,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "The official DeepSeek V4.1 Flash announcement is dated September 10, 2026 (https://www.deepseek.com/en/news/deepseek-v4-1-flash/)."
+              },
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 1571,
+            "completion_tokens": 41,
+            "total_tokens": 1612,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 1571
+          }
+        },
+        "prompt_replay_count": 0,
+        "full_cache_repack_count": 0
+      },
+      "persisted_artifact": null
+    }
+  },
+  "status": "PASS",
+  "close": {
+    "id": "sess_3301fc00405a430a8f5e8a218dd9fa70",
+    "protocol": "chat_completions",
+    "state": "closed",
+    "created_at": 1790914173.7471611,
+    "updated_at": 1790914199.905348,
+    "request_count": 3,
+    "last_error": null,
+    "last_turn": {
+      "finish_reason": "stop",
+      "frontier_after_commit": 1613,
+      "tool_calls": [],
+      "response_json": {
+        "id": "f1b088ed-0cdd-4620-8a8b-fb8b7d8216a6",
+        "object": "chat.completion",
+        "created": 1790914197,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "The official DeepSeek V4.1 Flash announcement is dated September 10, 2026 (https://www.deepseek.com/en/news/deepseek-v4-1-flash/)."
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 1571,
+          "completion_tokens": 41,
+          "total_tokens": 1612,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 1571
+        }
+      },
+      "prompt_replay_count": 0,
+      "full_cache_repack_count": 0
+    },
+    "persisted_artifact": null
+  },
+  "finished_at": 1790914199.907221,
+  "assertions": {
+    "real_web_search_tool_call": true,
+    "exa_provider_result_nonempty": true,
+    "matching_tool_result_ids": true,
+    "tool_continuation_session_id": "sess_3301fc00405a430a8f5e8a218dd9fa70",
+    "following_turn_session_id": "sess_3301fc00405a430a8f5e8a218dd9fa70",
+    "following_transcript_exact_extension": true,
+    "search_final_stop": true,
+    "following_final_stop_no_tool_call": true,
+    "request_count_after_search": 2,
+    "request_count_after_following": 3,
+    "closed_without_error": true
+  },
+  "environment_evidence": "m19-environment-reconciliation.json",
+  "launch_commands": {
+    "runtime": "/Users/kioju/.venvs/omlx-0.7.0.dev2/bin/python -m ds41f_mlx.serve --host 127.0.0.1 --port 18000",
+    "web": "DS41F_WEB_SEARCH_PROVIDER=exa .venv/bin/python -m ds41f_mlx.web --host 127.0.0.1 --port 18080 --runtime-url http://127.0.0.1:18000"
+  },
+  "shutdown": {
+    "runtime": {
+      "pid": 29548,
+      "signal": "SIGTERM",
+      "process_exited": true,
+      "port_closed": true,
+      "log": [
+        "INFO:     Shutting down",
+        "INFO:     Waiting for application shutdown.",
+        "INFO:     Application shutdown complete.",
+        "INFO:     Finished server process [29548]"
+      ]
+    },
+    "web": {
+      "pid": 29549,
+      "signal": "SIGTERM",
+      "process_exited": true,
+      "port_closed": true,
+      "log": [
+        "INFO:     Shutting down",
+        "INFO:     Waiting for application shutdown.",
+        "INFO:     Application shutdown complete.",
+        "INFO:     Finished server process [29549]"
+      ]
+    }
+  },
+  "runtime_http_evidence": [
+    "INFO:     127.0.0.1:58184 - \"POST /v1/sessions/sess_3301fc00405a430a8f5e8a218dd9fa70/chat/completions HTTP/1.1\" 200 OK",
+    "INFO:     127.0.0.1:58186 - \"POST /v1/sessions/sess_3301fc00405a430a8f5e8a218dd9fa70/chat/completions HTTP/1.1\" 200 OK",
+    "INFO:     127.0.0.1:58189 - \"GET /v1/sessions/sess_3301fc00405a430a8f5e8a218dd9fa70 HTTP/1.1\" 200 OK",
+    "INFO:     127.0.0.1:58191 - \"POST /v1/sessions/sess_3301fc00405a430a8f5e8a218dd9fa70/chat/completions HTTP/1.1\" 200 OK",
+    "INFO:     127.0.0.1:58194 - \"GET /v1/sessions/sess_3301fc00405a430a8f5e8a218dd9fa70 HTTP/1.1\" 200 OK",
+    "INFO:     127.0.0.1:58196 - \"DELETE /v1/sessions/sess_3301fc00405a430a8f5e8a218dd9fa70 HTTP/1.1\" 200 OK"
+  ],
+  "tests": {
+    "command": ".venv/bin/python -m pytest tests/test_m19_web_client.py tests/test_m11_tool_boundary_contract.py -q",
+    "result": "12 passed, 1 skipped"
+  },
+  "evidence_note": "Bounded HTTP evidence: token-level stream events, generated token arrays and model reasoning omitted. Original HTTP transcripts retained during execution; exact following-turn transcript extension asserted before reduction. Prior failed attempts preserved separately."
+}
