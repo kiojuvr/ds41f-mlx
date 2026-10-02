@@ -14,12 +14,16 @@ import sys
 from typing import Any
 
 from ds41f_mlx.config import RuntimeConfig, load_runtime_config, validate_runtime_config
+from ds41f_mlx.release import load_release_manifest
 
-PINNED_OMLX_REVISION = "4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40"
-PINNED_RECIPE_REVISION = "8cadfede7063c896b944e7bae05daa3549ae97ea"
+_RELEASE = load_release_manifest()
+PINNED_OMLX_REVISION = _RELEASE["dependencies"]["omlx"]["revision"]
+PINNED_RECIPE_REVISION = _RELEASE["dependencies"]["deepseek_recipe"]["revision"]
 
-DS41F_RUNTIME_PATHS = ("ds41f_mlx", "native", "pyproject.toml")
-DS41F_RUNTIME_EXCLUDE = {"ds41f_mlx/provenance.py", "ds41f_mlx/qualify.py", "ds41f_mlx/acceptance.py"}
+DS41F_RUNTIME_PATHS = ("ds41f_mlx", "native")
+DS41F_RUST_BOUNDARY_PATHS = ("Cargo.toml", "Cargo.lock", "rust/ds41f_api")
+DS41F_RELEASE_PATHS = ("release", "pyproject.toml", "Cargo.toml", "Cargo.lock", "rust/ds41f_api/Cargo.toml")
+DS41F_RUNTIME_EXCLUDE = {"ds41f_mlx/provenance.py", "ds41f_mlx/qualify.py", "ds41f_mlx/acceptance.py", "ds41f_mlx/release.py", "ds41f_mlx/release_acceptance.py", "ds41f_mlx/ops.py"}
 DS41F_RUNTIME_EXCLUDE_PREFIXES = ("ds41f_mlx/web",)
 DS41F_QUALIFICATION_PATHS = ("tools", "tests", "ds41f_mlx/provenance.py", "ds41f_mlx/qualify.py", "ds41f_mlx/acceptance.py")
 DS41F_NONRUNTIME_PREFIXES = ("artifacts/", "docs/")
@@ -168,10 +172,12 @@ def ds41f_dirty_classification(root: Path) -> dict[str, Any]:
             path = path.split(" -> ", 1)[1]
         category = "other_nonruntime"
         if path in DS41F_RUNTIME_EXCLUDE:
-            category = "qualification_tooling"; qualification_affecting = True
+            category = "release_or_qualification_tooling"; qualification_affecting = True
         elif path.startswith(DS41F_RUNTIME_EXCLUDE_PREFIXES):
             category = "client_nonruntime"
-        elif path.startswith("ds41f_mlx/") or path.startswith("native/") or path == "pyproject.toml":
+        elif path in {"pyproject.toml", "Cargo.toml", "Cargo.lock"} or path.startswith("release/") or path.startswith("rust/"):
+            category = "release_packaging_or_rust_boundary"
+        elif path.startswith("ds41f_mlx/") or path.startswith("native/"):
             category = "runtime_source"; runtime_affecting = True
         elif path.startswith("tools/") or path.startswith("tests/"):
             category = "qualification_tooling"; qualification_affecting = True
@@ -189,8 +195,10 @@ def ds41f_git() -> dict[str, Any]:
         "dirty": git_dirty(root),
         "dirty_classification": ds41f_dirty_classification(root),
         "runtime_source_identity": tree_digest(root, DS41F_RUNTIME_PATHS),
+        "rust_boundary_identity": tree_digest(root, DS41F_RUST_BOUNDARY_PATHS),
+        "release_packaging_identity": tree_digest(root, DS41F_RELEASE_PATHS),
         "qualification_tooling_identity": tree_digest(root, DS41F_QUALIFICATION_PATHS),
-        "identity_model": "runtime_source_identity excludes generated artifacts/docs and the separate ds41f_mlx.web local client, so client-only or qualification artifacts do not invalidate the tested model runtime source.",
+        "identity_model": "runtime_source_identity excludes generated artifacts/docs, release packaging metadata, Rust client boundary, and the separate ds41f_mlx.web local client. Runtime-affecting Python/native changes invalidate inherited model evidence; Rust/release packaging changes require boundary/acceptance qualification unless they alter a reachable model runtime path.",
     }
 
 
@@ -269,6 +277,38 @@ def omlx_decode_native_identity(root: Path) -> dict[str, Any]:
     return {"sha256": sha256(json.dumps(entries, sort_keys=True).encode()).hexdigest(), "files": entries}
 
 
+def package_version_checks() -> list[dict[str, Any]]:
+    deps = _RELEASE["dependencies"]
+    checks = []
+    for package, dep_key in (("mlx", "mlx"), ("mlx-lm", "mlx_lm"), ("deepseek-recipe", "deepseek_recipe"), ("omlx", "omlx")):
+        expected = deps[dep_key].get("version")
+        actual = package_version(package)
+        checks.append({"component": package, "check": "package_version", "expected": expected, "actual": actual, "status": "PASS" if actual == expected else "FAIL"})
+    return checks
+
+
+def release_manifest_checks() -> list[dict[str, Any]]:
+    root = Path(__file__).resolve().parents[1]
+    checks: list[dict[str, Any]] = []
+    try:
+        import tomllib
+        py = tomllib.loads((root / "pyproject.toml").read_text())
+        checks.append({"component": "pyproject", "check": "project.version", "expected": _RELEASE["release"]["version"], "actual": py["project"]["version"], "status": "PASS" if py["project"]["version"] == _RELEASE["release"]["version"] else "FAIL"})
+        checks.append({"component": "pyproject", "check": "tool.ds41f.omlx_upstream_baseline", "expected": PINNED_OMLX_REVISION, "actual": py["tool"]["ds41f"].get("omlx_upstream_baseline"), "status": "PASS" if py["tool"]["ds41f"].get("omlx_upstream_baseline") == PINNED_OMLX_REVISION else "FAIL"})
+    except Exception as exc:
+        checks.append({"component": "pyproject", "check": "parse", "status": "FAIL", "error": repr(exc)})
+    cargo = root / "rust" / "ds41f_api" / "Cargo.toml"
+    text = cargo.read_text() if cargo.exists() else ""
+    expected = _RELEASE["rust"]["version"]
+    actual = None
+    for line in text.splitlines():
+        if line.startswith("version = "):
+            actual = line.split("=", 1)[1].strip().strip('"')
+            break
+    checks.append({"component": "ds41f_api", "check": "crate.version", "expected": expected, "actual": actual, "status": "PASS" if actual == expected else "FAIL"})
+    return checks
+
+
 def inspect_runtime(config: RuntimeConfig | None = None) -> dict[str, Any]:
     cfg = config or load_runtime_config()
     cfg.apply_import_paths()
@@ -284,16 +324,21 @@ def inspect_runtime(config: RuntimeConfig | None = None) -> dict[str, Any]:
         {"component": "deepseek-recipe", "check": "local_differences", "expected": "clean or approved exact patches", "actual": recipe_identity["status"], "status": recipe_identity["status"]},
     ]
     import_checks = [import_check("omlx"), import_check("deepseek_recipe"), import_check("mlx"), import_check("mlx_lm")]
-    statuses = [x["status"] for x in validation] + [x["status"] for x in revision_checks] + [x["status"] for x in import_checks]
+    version_checks = package_version_checks()
+    manifest_checks = release_manifest_checks()
+    statuses = [x["status"] for x in validation] + [x["status"] for x in revision_checks] + [x["status"] for x in import_checks] + [x["status"] for x in version_checks] + [x["status"] for x in manifest_checks]
     final = "FAIL" if "FAIL" in statuses else ("WARNING" if "WARNING" in statuses else "PASS")
     return {
-        "schema": "ds41f.runtime-provenance.v1",
+        "schema": "ds41f.runtime-provenance.v2",
         "status": final,
         "ds41f": ds41f_git(),
         "python": {"version": sys.version, "executable": sys.executable},
         "platform": {"platform": platform.platform(), "machine": platform.machine(), "processor": platform.processor(), "mac_ver": platform.mac_ver()},
-        "packages": {"mlx": package_version("mlx"), "mlx-lm": package_version("mlx-lm"), "deepseek-recipe": package_version("deepseek-recipe")},
+        "release_manifest": _RELEASE,
+        "packages": {"mlx": package_version("mlx"), "mlx-lm": package_version("mlx-lm"), "deepseek-recipe": package_version("deepseek-recipe"), "omlx": package_version("omlx")},
         "import_checks": import_checks,
+        "package_version_checks": version_checks,
+        "release_manifest_checks": manifest_checks,
         "config": cfg.to_json(),
         "validation": validation,
         "checkpoint_fingerprint": checkpoint_fingerprint(cfg.checkpoint_path),

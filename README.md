@@ -162,16 +162,16 @@ export DS41F_RECIPE_PATH=/path/to/deepseek-recipe
 export DS41F_KV_ROOT=/path/to/ds41f-kv
 ```
 
-Inspect provenance without loading the model:
+Inspect release/provenance without loading the model:
 
 ```bash
-python3 -m ds41f_mlx.provenance
+~/.venvs/omlx-0.7.0.release/bin/python -m ds41f_mlx.ops inspect
 ```
 
 Launch the qualified local runtime server:
 
 ```bash
-python3 -m ds41f_mlx.serve
+~/.venvs/omlx-0.7.0.release/bin/python -m ds41f_mlx.ops start
 ```
 
 Launch the optional M19 browser client in a separate process:
@@ -195,15 +195,21 @@ DS41F_PYTHON=$HOME/.venvs/omlx-0.7.0.release/bin/python \
   cargo run --bin m21_real_acceptance
 ```
 
-Run unified qualification:
+Run quick qualification:
 
 ```bash
-python3 -m ds41f_mlx.qualify --mode quick
+~/.venvs/omlx-0.7.0.release/bin/python -m ds41f_mlx.ops quick
 ```
 
-Use the qualified Python 3.13 release environment (`~/.venvs/omlx-0.7.0.release/bin/python`). M20 pins upstream `v0.7.0` at `4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40`; directory names are not identities. The versioned release checkout is the qualification authority, dev2 is preserved for rollback, and `~/omlx` is reserved for a separately constructed operational checkout matching that identity.
+Run one-command release acceptance:
 
-See `docs/operations.md` and `docs/m20-omlx-release-migration.md` for configuration, qualification, and baseline evidence.
+```bash
+~/.venvs/omlx-0.7.0.release/bin/python -m ds41f_mlx.ops accept
+```
+
+Use the qualified Python 3.13 release environment (`~/.venvs/omlx-0.7.0.release/bin/python`). The M22 release manifest (`release/ds41f-release.json`) is the active machine-readable release/dependency authority. M20 pins upstream `v0.7.0` at `4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40`; directory names are not identities. The versioned release checkout is the qualification authority, dev2 is preserved for rollback, and `~/omlx` is reserved for a separately constructed operational checkout matching that identity.
+
+See `docs/operations.md`, `docs/m22-release-packaging.md`, and `docs/m20-omlx-release-migration.md` for configuration, packaging, qualification, and baseline evidence.
 
 ## Runtime/API status
 

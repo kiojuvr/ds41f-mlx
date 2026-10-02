@@ -8,6 +8,8 @@ M20 promotes exact upstream oMLX `v0.7.0` (`4d4f5a280bc1739ba2cf39c1cee44fd5cc89
 
 M21 adds the Rust-facing `ds41f_api` boundary over the unchanged local HTTP/SSE server. It does not alter model runtime bytes, prompt/protocol semantics, prefill/decode selectors, persistence format, or session ownership. Boundary-specific evidence is in `artifacts/m21/rust-boundary-qualification.json`; closeout real-server evidence is in `artifacts/m21/real-rust-boundary-acceptance.log`. Real-model endpoint behavior remains qualified by M20; M21 closeout only proves the Rust consumer boundary can drive that server with the qualified Python environment.
 
+M22 defines the release manifest and canonical operations/acceptance path. Active release metadata is `release/ds41f-release.json`; current qualification artifacts use `ds41f.release-qualification.v1` / `ds41f.release-acceptance.v1` schemas under `artifacts/release/` by default. M22 acceptance evidence is `artifacts/m22/release-acceptance.json`.
+
 ## Supported scope
 
 - Hardware: Mac Studio M3 Ultra 512 GB class target.
@@ -86,8 +88,8 @@ Release evidence records:
 ## Evidence validity commands
 
 ```bash
-python3 -m ds41f_mlx.qualify --check-artifact artifacts/m20/promotion.json
-python3 -m ds41f_mlx.acceptance
+~/.venvs/omlx-0.7.0.release/bin/python -m ds41f_mlx.ops inspect
+~/.venvs/omlx-0.7.0.release/bin/python -m ds41f_mlx.ops accept
 ```
 
 `--check-artifact` verifies the promoted content/dependency identity without rerunning expensive gates. Checking the old M18 attestation correctly reports stale evidence for the new dependency.
@@ -97,9 +99,9 @@ python3 -m ds41f_mlx.acceptance
 Canonical cheap gate command set:
 
 ```bash
-python3 -m unittest tests/test_stateful_request_policy.py tests/test_runtime_config.py
+~/.venvs/omlx-0.7.0.release/bin/python -m unittest tests/test_stateful_request_policy.py tests/test_runtime_config.py tests/test_m22_release_metadata.py
 cargo test
-python3 tools/check_legacy_import_integrity.py
+~/.venvs/omlx-0.7.0.release/bin/python tools/check_legacy_import_integrity.py
 python3 tools/check_native_import_dependencies.py
 python3 tools/check_repository_self_containment.py
 cmake -S native -B native/build

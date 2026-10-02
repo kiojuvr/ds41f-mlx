@@ -15,7 +15,8 @@ from ds41f_mlx.provenance import inspect_runtime
 ROOT = Path(__file__).resolve().parents[1]
 
 CHEAP_GATES = [
-    [sys.executable, "-m", "unittest", "tests/test_stateful_request_policy.py", "tests/test_runtime_config.py"],
+    [sys.executable, "-m", "unittest", "tests/test_stateful_request_policy.py", "tests/test_runtime_config.py", "tests/test_m22_release_metadata.py"],
+    ["cargo", "test"],
     [sys.executable, "tools/check_legacy_import_integrity.py"],
     [sys.executable, "tools/check_native_import_dependencies.py"],
     [sys.executable, "tools/check_repository_self_containment.py"],
@@ -68,7 +69,7 @@ def artifact_path(mode: str, output: Path | None) -> Path:
     if output is not None:
         return output
     stamp = time.strftime("%Y%m%d-%H%M%S")
-    return ROOT / "artifacts" / "m18" / f"unified-qualification-{mode}-{stamp}.json"
+    return ROOT / "artifacts" / "release" / f"qualification-{mode}-{stamp}.json"
 
 
 def load_json_if_present(path: Path) -> dict[str, Any] | None:
@@ -96,7 +97,10 @@ def summarize_existing_real_model_evidence() -> dict[str, Any]:
 
 def identity_projection(provenance: dict[str, Any]) -> dict[str, Any]:
     return {
+        "ds41f_release_version": provenance.get("release_manifest", {}).get("release", {}).get("version"),
         "ds41f_runtime_source_sha256": provenance.get("ds41f", {}).get("runtime_source_identity", {}).get("sha256"),
+        "ds41f_rust_boundary_sha256": provenance.get("ds41f", {}).get("rust_boundary_identity", {}).get("sha256"),
+        "ds41f_release_packaging_sha256": provenance.get("ds41f", {}).get("release_packaging_identity", {}).get("sha256"),
         "omlx_revision": provenance.get("omlx", {}).get("revision"),
         "omlx_local_identity_sha256": provenance.get("omlx", {}).get("local_identity_sha256"),
         "omlx_decode_native_sha256": provenance.get("omlx", {}).get("decode_native_identity", {}).get("sha256"),
@@ -186,7 +190,7 @@ def main(argv: list[str] | None = None) -> int:
 
     status = derive_status(args.mode, provenance, cheap_results, real_results)
     artifact = {
-        "schema": "ds41f.m18.unified-production-qualification.v1",
+        "schema": "ds41f.release-qualification.v1",
         "created_at": time.time(),
         "mode": args.mode,
         "status": status,
@@ -199,7 +203,7 @@ def main(argv: list[str] | None = None) -> int:
         "gates": {"cheap_static": cheap_results, "real_model": real_results},
         "real_model_evidence_summary": summarize_existing_real_model_evidence(),
         "historical_long_context_evidence": "artifacts/m6/performance-qualification/result.json",
-        "resource_policy": {"qualification_temp_artifacts": "retained under artifacts/m18 unless caller deletes them", "user_kv_artifacts": "retained when explicitly requested"},
+        "resource_policy": {"qualification_temp_artifacts": "retained under artifacts/release unless caller deletes them", "user_kv_artifacts": "retained when explicitly requested"},
         "invalidation_rules": {
             "expensive_real_model_qualification_stale_when": [
                 "ds41f runtime_source_identity sha256 changes",
@@ -208,6 +212,7 @@ def main(argv: list[str] | None = None) -> int:
                 "checkpoint fingerprint changes",
                 "production selector or MTP/DSpark/speculation state changes"
             ],
+            "rust_or_packaging_boundary_requalification_when": ["ds41f rust_boundary_identity sha256 changes", "release_packaging_identity sha256 changes"],
             "not_stale_when_only": ["generated artifacts change", "documentation changes", "unrelated non-runtime repository state changes"],
             "check_command": "python -m ds41f_mlx.qualify --check-artifact <artifact>",
             "inherited_evidence_check_command": "python -m ds41f_mlx.qualify --check-evidence <attestation>"

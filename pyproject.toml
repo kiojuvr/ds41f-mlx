@@ -1,12 +1,18 @@
 [project]
 name = "ds41f-mlx"
-version = "0.0.0"
+version = "0.22.0"
 description = "DeepSeek-V4.1-Flash Apple Silicon runtime project"
-requires-python = ">=3.11"
+requires-python = ">=3.13,<3.14"
 dependencies = []
 
+[project.scripts]
+ds41f = "ds41f_mlx.ops:main"
+ds41f-serve = "ds41f_mlx.serve:main"
+ds41f-accept = "ds41f_mlx.release_acceptance:main"
+
 [tool.ds41f]
-omlx_upstream_baseline = "b390b31e0c6831225fed0f24d278eb1db7fcb68b"
+release_manifest = "release/ds41f-release.json"
+omlx_upstream_baseline = "4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40"
 default_checkpoint = "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash"
 
 [tool.ds41f.authority]
@@ -14,4 +20,4 @@ model_math_status = "frozen_until_official_semantics_review"
 model_data_authority = "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash"
 model_semantics_candidate_doc = "docs/official-semantics-authority.md"
 execution_architecture_authority = "https://github.com/antirez/ds4.git@0aaea5a238fb41a35106a551e73c8409dfb751ac"
-omlx_role = "compatibility_performance_implementation_donor_only"
+omlx_role = "qualified_production_decode_dependency"

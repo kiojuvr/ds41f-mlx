@@ -1,6 +1,6 @@
 # Operations and configuration
 
-This is the operator-facing path for the scoped text runtime. Historical milestone documents are not required for normal startup.
+This is the operator-facing path for the scoped text runtime. Historical milestone documents are not required for normal startup. M22 defines `release/ds41f-release.json` as the active release/dependency manifest and `python -m ds41f_mlx.ops` as the canonical operator command surface.
 
 ## Dependencies
 
@@ -45,27 +45,34 @@ MLX 0.32.2 and mlx-lm `94cdcae13b266c337bcaca09b97b9c5a9c0e2cde`
 `~/omlx-0.7.0.release` remains the versioned qualification authority/default;
 `~/omlx-0.7.0.dev2` remains the unchanged historical rollback checkout.
 `~/omlx` is the intended normal operational/current path, but was not constructed
-as part of this promotion. Once separately constructed, select it with
-`DS41F_OMLX_PATH=$HOME/omlx` and verify against the M20 artifact:
+as part of the M20 promotion. Once separately constructed, select it with
+`DS41F_OMLX_PATH=$HOME/omlx` and run current release inspection/acceptance:
 
 ```bash
-python3 -m ds41f_mlx.qualify --check-artifact artifacts/m20/promotion.json
+~/.venvs/omlx-0.7.0.release/bin/python -m ds41f_mlx.ops inspect
+~/.venvs/omlx-0.7.0.release/bin/python -m ds41f_mlx.ops accept
 ```
 
-The check compares revision/local content, production GLM native binary hashes,
+The checks compare revision/local content, production GLM native binary hashes,
 package versions, ds41f runtime identity, recipe, checkpoint and selectors—not
 an oMLX directory name. Rebuilding kernels, advancing a release or adding local
 code does not silently inherit M20 qualification. Full build/package/native
 records are in `artifacts/m20/release-environment.json`; see the
 [M20 report](m20-omlx-release-migration.md) for evidence scope.
 
-## Inspect provenance without loading the model
+## Inspect release/provenance without loading the model
 
 ```bash
-python3 -m ds41f_mlx.provenance
+~/.venvs/omlx-0.7.0.release/bin/python -m ds41f_mlx.ops inspect
 ```
 
-This reports ds41f commit/dirty state, Python/platform, MLX and mlx-lm versions, configured paths, checkpoint fingerprint, oMLX and recipe revisions, pinned revision checks, production selector, and MTP/DSpark/speculation OFF state.
+Equivalent direct module:
+
+```bash
+~/.venvs/omlx-0.7.0.release/bin/python -m ds41f_mlx.provenance
+```
+
+This reports release manifest identity, ds41f commit/dirty state, Python/platform, MLX and mlx-lm versions, configured paths, checkpoint fingerprint, oMLX and recipe revisions, pinned revision checks, package version checks, production selector, and MTP/DSpark/speculation OFF state.
 
 Outcome meanings:
 
@@ -76,7 +83,7 @@ Outcome meanings:
 ## Launch the server
 
 ```bash
-python3 -m ds41f_mlx.serve
+~/.venvs/omlx-0.7.0.release/bin/python -m ds41f_mlx.ops start
 ```
 
 The launcher resolves configuration, adds the configured oMLX checkout to `sys.path`, validates paths, prints resolved production identity, imports the existing FastAPI app, and starts uvicorn. It prefers an installed `deepseek-recipe` package with its native extension; the configured recipe checkout remains the tokenizer/provenance source. No manual `PYTHONPATH` export is required for the configured oMLX checkout.
@@ -84,8 +91,8 @@ The launcher resolves configuration, adds the configured oMLX checkout to `sys.p
 Useful variants:
 
 ```bash
-python3 -m ds41f_mlx.serve --print-config
-python3 -m ds41f_mlx.serve --host 127.0.0.1 --port 8000
+~/.venvs/omlx-0.7.0.release/bin/python -m ds41f_mlx.ops start --print-config
+~/.venvs/omlx-0.7.0.release/bin/python -m ds41f_mlx.ops start --host 127.0.0.1 --port 8000
 ```
 
 Health check:
@@ -99,40 +106,36 @@ curl http://127.0.0.1:8000/health
 Inspect-only:
 
 ```bash
-python3 -m ds41f_mlx.qualify --mode inspect
+~/.venvs/omlx-0.7.0.release/bin/python -m ds41f_mlx.qualify --mode inspect
 ```
 
 Quick operational qualification:
 
 ```bash
-python3 -m ds41f_mlx.qualify --mode quick
+~/.venvs/omlx-0.7.0.release/bin/python -m ds41f_mlx.ops quick
 ```
 
-Full requalification mode, including the configured real-model gate:
+One-command release acceptance:
 
 ```bash
-python3 -m ds41f_mlx.qualify --mode full
+~/.venvs/omlx-0.7.0.release/bin/python -m ds41f_mlx.ops accept
 ```
 
-Generated artifacts are written under `artifacts/m18/` unless `--output` is supplied. The repository ignores generated artifacts by default; a release manager may force-add a specific artifact when it is intended to become canonical release evidence. Qualification artifacts contain a tested runtime identity, not just a Git HEAD, so committing the artifact does not by itself invalidate the run.
-
-Check whether current runtime contents still match a prior artifact without rerunning expensive model gates:
+Full requalification mode, including configured real-model gates, only when explicitly requested:
 
 ```bash
-python3 -m ds41f_mlx.qualify --check-artifact artifacts/m18/<artifact>.json
+~/.venvs/omlx-0.7.0.release/bin/python -m ds41f_mlx.ops full
 ```
 
-Check whether current runtime contents are still covered by a migrated historical expensive-evidence attestation:
+Generated current qualification artifacts are written under `artifacts/release/` unless `--output` is supplied. Historical artifacts under earlier milestone directories remain readable evidence but are not the current output location. The repository ignores generated artifacts by default; a release manager may force-add a specific artifact when it is intended to become canonical release evidence. Qualification artifacts contain a tested runtime identity, not just a Git HEAD, so committing the artifact does not by itself invalidate the run.
+
+Check whether current runtime contents still match a current release artifact without rerunning expensive model gates:
 
 ```bash
-python3 -m ds41f_mlx.qualify --check-evidence artifacts/m18/<attestation>.json
+~/.venvs/omlx-0.7.0.release/bin/python -m ds41f_mlx.qualify --check-artifact artifacts/release/<artifact>.json
 ```
 
-Canonical server acceptance through the documented launcher:
-
-```bash
-python3 -m ds41f_mlx.acceptance
-```
+Historical milestone artifacts and migrated expensive-evidence attestations remain readable for audit, but the current operator acceptance command is `ops accept`, not the older `ds41f_mlx.acceptance` path.
 
 Rust boundary build/test:
 
@@ -140,7 +143,7 @@ Rust boundary build/test:
 cargo test
 ```
 
-Rust clients should use `ds41f_api::Ds41fClient` to connect to the documented local server or `ds41f_api::RuntimeProcess` to spawn `python3 -m ds41f_mlx.serve`. Set `DS41F_PYTHON=$HOME/.venvs/omlx-0.7.0.release/bin/python` (or pass that path explicitly) for production use so the Rust-owned process uses the qualified M20 environment rather than system/Xcode Python. `RuntimeProcess::spawn*` waits only for process-alive `/health`; use `wait_model_ready()` when the application requires model-loaded inference readiness. `shutdown()` reports whether SIGTERM completed gracefully or a forced-kill fallback was needed. This does not change runtime ownership: model/session state remains in the server process.
+Rust clients should use `ds41f_api::Ds41fClient` to connect to the documented local server or `ds41f_api::RuntimeProcess` to spawn `python3 -m ds41f_mlx.serve`. Set `DS41F_PYTHON=$HOME/.venvs/omlx-0.7.0.release/bin/python` (or pass that path explicitly) for production use so the Rust-owned process uses the qualified M20 environment rather than system/Xcode Python. `RuntimeProcess::spawn*` waits only for process-alive `/health`; use `wait_model_ready()` when the application requires model-loaded inference readiness. `shutdown()` reports whether SIGTERM completed gracefully or a forced-kill fallback was needed. The canonical release acceptance command runs the same Rust real-server path. This does not change runtime ownership: model/session state remains in the server process.
 
 Runtime identity invalidation rules:
 
