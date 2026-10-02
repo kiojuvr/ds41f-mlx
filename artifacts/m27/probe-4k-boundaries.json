@@ -1,0 +1,377 @@
+{
+  "schema": "ds41f.m27.mtp-lifecycle-probe.v1",
+  "qualification": "DIAGNOSTIC_ONLY_NOT_PRODUCTION",
+  "ds41f_commit": "c228440d3b240430eb78ec8c5cf7ecec194d8efe",
+  "omlx_revision": "4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40",
+  "omlx_path": "/Users/kioju/omlx-0.7.0.release",
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "checkpoint_config_sha256": "8be45ce0476004a3f529fd896115a4a2e800a129ad2d3ec05b16050f52e21879",
+  "python": "3.13.15 (main, Aug  5 2026, 12:25:43) [Clang 21.0.0 (clang-2100.1.1.101)]",
+  "executable": "/Users/kioju/.venvs/omlx-0.7.0.release/bin/python",
+  "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+  "packages": {
+    "omlx": "0.7.0",
+    "mlx": "0.32.2",
+    "mlx-lm": "0.31.4.dev132+g94cdcae13"
+  },
+  "settings": {
+    "contexts": "4096",
+    "first_tokens": "1,2,7",
+    "second_tokens": 8,
+    "append_tokens": 4,
+    "depth": 5,
+    "engram_ssd_offload": true,
+    "sampler": "categorical temperature=1.0",
+    "prefix_cache": false
+  },
+  "state_model": {
+    "target_cache": "sole executable target authority; must equal committed history at idle",
+    "dspark": "bounded committed-only context ring derived from target hidden taps; no draft KV retained",
+    "idle_algorithm": "materialize any cache-behind emitted suffix with bounded one-token/short-suffix target forwards, append missing hidden taps to DSpark ring only if needed, reject cache-ahead, clear queues/stashes, retain DSpark ring as next priming context"
+  },
+  "runs": [
+    {
+      "context": 4096,
+      "first_count": 1,
+      "events": [],
+      "replay_repack_before": {
+        "replay": 0,
+        "repack": 0,
+        "forwarded_missing": 0
+      },
+      "initial_prefill_s": 10.112768375023734,
+      "first_decode_tok_s": 0.0,
+      "idle1": {
+        "ok": false,
+        "reason": "DIVERGENT_TARGET_CACHE_OFFSETS",
+        "before": {
+          "history_len": 4096,
+          "cache_offsets": [],
+          "queue_len": null,
+          "dspark_offsets": null,
+          "stats": null
+        }
+      },
+      "post_idle_cache_unavailable": {
+        "cache_len": 0
+      }
+    },
+    {
+      "context": 4096,
+      "first_count": 2,
+      "events": [],
+      "replay_repack_before": {
+        "replay": 0,
+        "repack": 0,
+        "forwarded_missing": 0
+      },
+      "initial_prefill_s": 10.624643416987965,
+      "first_decode_tok_s": 0.0,
+      "idle1": {
+        "ok": true,
+        "note": "after_first",
+        "before": {
+          "history_len": 4096,
+          "cache_offsets": [
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096
+          ],
+          "queue_len": null,
+          "dspark_offsets": null,
+          "stats": null
+        },
+        "after": {
+          "history_len": 4096,
+          "cache_offsets": [
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096
+          ],
+          "dspark_offsets": null,
+          "queue_present": false,
+          "rollback_stashes": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ]
+        },
+        "bounded_missing_forwards": 0
+      },
+      "post_idle_cache_unavailable": {
+        "cache_len": 0
+      }
+    },
+    {
+      "context": 4096,
+      "first_count": 7,
+      "events": [
+        {
+          "phase": "first_step",
+          "token": 4042,
+          "finish": null,
+          "queue_len": 1,
+          "cache_offsets": [
+            4097,
+            4097,
+            4097,
+            4097
+          ]
+        },
+        {
+          "phase": "first_step",
+          "token": 28,
+          "finish": null,
+          "queue_len": 0,
+          "cache_offsets": [
+            4097,
+            4097,
+            4097,
+            4097
+          ]
+        },
+        {
+          "phase": "first_step",
+          "token": 688,
+          "finish": null,
+          "queue_len": 4,
+          "cache_offsets": [
+            4102,
+            4102,
+            4102,
+            4102
+          ]
+        },
+        {
+          "phase": "first_step",
+          "token": 11,
+          "finish": null,
+          "queue_len": 3,
+          "cache_offsets": [
+            4102,
+            4102,
+            4102,
+            4102
+          ]
+        },
+        {
+          "phase": "first_step",
+          "token": 6248,
+          "finish": null,
+          "queue_len": 2,
+          "cache_offsets": [
+            4102,
+            4102,
+            4102,
+            4102
+          ]
+        }
+      ],
+      "replay_repack_before": {
+        "replay": 0,
+        "repack": 0,
+        "forwarded_missing": 0
+      },
+      "initial_prefill_s": 10.491072250006255,
+      "first_decode_tok_s": 1.037506822618233,
+      "idle1": {
+        "ok": false,
+        "reason": "CACHE_AHEAD_OF_COMMITTED_HISTORY",
+        "before": {
+          "history_len": 4101,
+          "cache_offsets": [
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102,
+            4102
+          ],
+          "queue_len": 2,
+          "dspark_offsets": [
+            4102,
+            4102,
+            4102
+          ],
+          "stats": {
+            "cycles": 1,
+            "accepts": 4,
+            "rejects": 1,
+            "init_emits": 2,
+            "draft_emits": 3,
+            "bonus_emits": 0,
+            "verify_emits": 0,
+            "depth_drafted": [
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            "depth_accepted": [
+              1,
+              1,
+              1,
+              1,
+              0
+            ],
+            "zero_cycles": 0,
+            "backbone_ms": 137.86879100371152,
+            "mtp_head_ms": 3.30400001257658,
+            "sample_ms": 0.059582991525530815,
+            "cache_ops_ms": 0.5142080190125853
+          }
+        }
+      },
+      "post_idle_cache_unavailable": {
+        "cache_len": 0
+      }
+    }
+  ],
+  "status": "COMPLETED_DIAGNOSTIC"
+}

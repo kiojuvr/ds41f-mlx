@@ -1,0 +1,54 @@
+{
+  "schema": "ds41f.m27.lifecycle-decision.v1",
+  "qualification": "DIAGNOSTIC_ONLY_NOT_PRODUCTION",
+  "ds41f_base_commit": "c228440d3b240430eb78ec8c5cf7ecec194d8efe",
+  "omlx_revision": "4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40",
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "decision": "LIFECYCLE_BLOCKED",
+  "production_mtp": "OFF_UNCHANGED",
+  "state_ownership_model": {
+    "target_cache": "sole executable target-model authority; ds41f idle requires all 40 layer frontiers exactly equal committed emitted history length",
+    "dspark_context": "bounded native DSparkContextCache ring derived from committed target hidden taps; not a target-cache authority; draft-only KV is not retained or persisted",
+    "transient_mtp_state": "upstream queue/drafts/next_main/rollback stash are scheduler-owned transient state and must not be required after ds41f idle"
+  },
+  "priming_architecture": {
+    "upstream_tap": "language._forward(return_dspark_hidden=True) captures mx.mean(h, axis=2) immediately before target layers in dspark_target_layer_ids and concatenates those hidden taps",
+    "p7_p6_narrow_seam": "P7/P6 could harvest the same h/pre state immediately before layers 37/38/39 during already-required target execution, concatenate per-row taps, and call language_model.dspark_append_context(..., start_offset=committed_frontier). This reuses upstream projection/ring append logic and keeps target cache as sole authority.",
+    "implementation_status": "not promoted/production-implemented in M27 because committed-idle remained blocked independently; no production P7/P6 semantics changed"
+  },
+  "committed_idle_findings": {
+    "cause_of_m25_skew": "The upstream MTP verify cycle rolls the target cache to a cycle commit point before all queued response tokens have been emitted. At arbitrary cancellation/turn boundaries, emitted history can be behind or ahead of the target cache. The per-cycle rollback snapshot used by mtp_partial_rollback is consumed/cleared at cycle commit, so ds41f cannot later roll the target cache back to the exact emitted frontier without replay/reconstruction.",
+    "representative_probe": {
+      "artifact": "artifacts/m27/probe-4k-boundaries.json",
+      "context": 4096,
+      "emitted_first_tokens": 7,
+      "committed_history_len": 4101,
+      "target_cache_offsets": 4102,
+      "queue_len": 2,
+      "dspark_offsets": [4102, 4102, 4102],
+      "reason": "CACHE_AHEAD_OF_COMMITTED_HISTORY"
+    },
+    "bounded_forward_when_cache_behind": "A small cache-behind suffix can be advanced by forwarding already emitted tokens and appending missing hidden taps to DSpark. This does not solve cache-ahead cancellation.",
+    "blocked_case": "Cache-ahead cannot be fixed by forwarding. Truncating committed client-visible history is forbidden, and trimming/repacking the target cache without an upstream-owned rollback snapshot would violate ds41f authority rules."
+  },
+  "zero_replay_repack": {
+    "forbidden_reconcile_patched": true,
+    "observed_forbidden_reconcile_calls": 0,
+    "full_cache_repack": 0,
+    "limitation": "The successful repeated P6/P5 re-entry path was not run because the first arbitrary idle transition failed in a cache-ahead state."
+  },
+  "performance_preservation": {
+    "m26_reference": "stock official full-primed MTP 41-43 tok/s, acceptance ~94.5%, accepted/cycle ~4.48",
+    "m27_status": "not rerun through ds41f P7/P6 because lifecycle idle is blocked before a valid repeated continuation can be qualified"
+  },
+  "persistence_implications": {
+    "target": "M25 fail-closed MTP persistence guard remains correct",
+    "future": "If upstream provides a committed-idle transition, DSpark persistence would need only bounded committed DSparkContextCache rings plus offset, not draft queues or target-cache reconstruction."
+  },
+  "required_upstream_or_adapter_capability": "A no-replay committed-frontier transition that either (a) drains/commits queued tokens before exposing them, or (b) retains rollback snapshots until every possible emitted boundary in the queue can be materialized, including DSpark ring correction to the same committed frontier, without full-history replay/repack.",
+  "regression_results": {
+    "production_code_changed": false,
+    "py_compile": "tools/run_m27_mtp_lifecycle_probe.py and tools/run_m26_upstream_mtp_bench.py passed",
+    "json_validation": "artifacts/m26/summary.json and artifacts/m27/probe-4k-boundaries.json passed json.tool"
+  }
+}
