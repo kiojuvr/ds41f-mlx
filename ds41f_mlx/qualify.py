@@ -68,7 +68,7 @@ def artifact_path(mode: str, output: Path | None) -> Path:
     if output is not None:
         return output
     stamp = time.strftime("%Y%m%d-%H%M%S")
-    return ROOT / "artifacts" / "m16" / f"unified-qualification-{mode}-{stamp}.json"
+    return ROOT / "artifacts" / "m17" / f"unified-qualification-{mode}-{stamp}.json"
 
 
 def load_json_if_present(path: Path) -> dict[str, Any] | None:
