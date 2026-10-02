@@ -4,7 +4,7 @@
 
 M21 selects a **Rust client/process-control boundary over the existing local HTTP server**.
 
-Rust-facing applications integrate through the crate `ds41f_api`.  The crate can either connect to an already running `ds41f_mlx.serve` instance or spawn it as a child process and wait for `/health`.  All generation, session, prompt/protocol conversion, persistence, streaming formatting, and tool-call semantics remain inside the already-qualified Python/deepseek-recipe/oMLX runtime.
+Rust-facing applications integrate through the crate `ds41f_api`.  The crate can either connect to an already running `ds41f_mlx.serve` instance or spawn it as a child process and wait for `/health`.  Spawn waits for process-alive health only; callers that require inference readiness must use `wait_model_ready()` after a model-loading request or after an operator has preloaded the backend. All generation, session, prompt/protocol conversion, persistence, streaming formatting, and tool-call semantics remain inside the already-qualified Python/deepseek-recipe/oMLX runtime.
 
 This is intentionally not a native Rust embedding layer, a C ABI, a Python-extension ABI, or a second model runtime.
 
@@ -57,17 +57,23 @@ The loopback HTTP boundary is already the qualified production seam.  A Rust cra
 
 ## Failure and cancellation
 
-Transport failures return `Ds41fError` and do not imply any Rust-owned session mutation.  HTTP 4xx/5xx responses are surfaced with status and body.  Dropping a streaming iterator closes the TCP connection; the server remains responsible for cleanup and for not exposing protocol chunks beyond committed session boundaries.  If `RuntimeProcess` owns a child process, `shutdown()` sends termination and waits; `Drop` is best-effort cleanup only and must not be used as the sole qualification signal.
+Transport failures return `Ds41fError` and do not imply any Rust-owned session mutation.  HTTP 4xx/5xx responses are surfaced with status and body.  Dropping a streaming iterator closes the TCP connection; the server remains responsible for cleanup and for not exposing protocol chunks beyond committed session boundaries.
+
+`RuntimeProcess` distinguishes lifecycle states:
+
+- `wait_process_alive()` accepts `/health` status `alive` or `ready` and proves only that the HTTP process is responding;
+- `wait_model_ready()` / `wait_ready()` require `/health` status `ready` and `model_ready=true`;
+- `shutdown()` first sends SIGTERM and reports `Graceful` only if the process exits before the graceful timeout; if not, it uses a forced kill and reports `Forced`. `Drop` remains best-effort cleanup only and must not be used as the sole qualification signal.
 
 ## M21 implementation scope
 
 Implemented in M21:
 
 - Rust crate `rust/ds41f_api` using only the Rust standard library;
-- startup/readiness helper for optionally spawned local server processes;
+- startup/readiness helpers for optionally spawned local server processes, with separate process-alive and model-ready waits;
 - synchronous request methods for health, models, stateless Chat Completions, stateful sessions, persistence/restore, and raw endpoint access;
 - SSE streaming iterator for stateless and stateful Chat Completions;
-- explicit error/status handling and timeout configuration;
+- explicit error/status handling, timeout configuration, and truthful graceful-versus-forced shutdown reports;
 - repository tests with mock HTTP/SSE servers proving request paths, cancellation/drop, chunked streaming, session lifecycle calls, and failure propagation.
 
 Explicitly outside M21:
@@ -80,4 +86,4 @@ Explicitly outside M21:
 
 ## Qualification summary
 
-M21 changes no Python/oMLX/deepseek-recipe runtime implementation.  Real-runtime M20 evidence therefore remains authoritative for model execution, P5 handoff, stateful continuation, streaming semantics, EOS/tool behavior, persistence, and performance.  M21 adds boundary-specific Rust tests and an inspect-only qualification artifact.  A bounded real-model acceptance run through the same HTTP endpoints is the correct operational gate when local model dependencies are available.
+M21 changes no Python/oMLX/deepseek-recipe runtime implementation.  Real-runtime M20 evidence therefore remains authoritative for model execution, P5 handoff, stateful continuation, streaming semantics, EOS/tool behavior, persistence, and performance.  M21 adds boundary-specific Rust tests plus bounded real-server acceptance through the qualified Python environment (`DS41F_PYTHON=$HOME/.venvs/omlx-0.7.0.release/bin/python cargo run --bin m21_real_acceptance`). The closeout run covered child-process startup, `alive` then post-inference `ready`, models, stateless Chat Completions, SSE cancellation/drop and recovery, stateful two-turn continuation on one server-owned session, session close, 404 propagation, and graceful SIGTERM shutdown. Tool/result loops remain inherited from M20 because the Rust boundary sends raw Chat Completions JSON and has no tool-specific implementation.

@@ -6,7 +6,7 @@
 
 M20 promotes exact upstream oMLX `v0.7.0` (`4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40`) after fresh bounded dependency-reachable gates, A/B, persistence, HTTP/tool/EOS, repeated-session and targeted 200K endpoint checks. See [M20](m20-omlx-release-migration.md) and `artifacts/m20/promotion.json`. The old M18 whole-runtime migration attestation is stale for this dependency; it is not reclassified to preserve inheritance. Unchanged source/prefill evidence is retained explicitly, not represented as fresh release timing.
 
-M21 adds the Rust-facing `ds41f_api` boundary over the unchanged local HTTP/SSE server. It does not alter model runtime bytes, prompt/protocol semantics, prefill/decode selectors, persistence format, or session ownership. Boundary-specific evidence is in `artifacts/m21/rust-boundary-qualification.json`; real-model endpoint behavior continues to be qualified by M20 unless rerun through `python3 -m ds41f_mlx.acceptance`.
+M21 adds the Rust-facing `ds41f_api` boundary over the unchanged local HTTP/SSE server. It does not alter model runtime bytes, prompt/protocol semantics, prefill/decode selectors, persistence format, or session ownership. Boundary-specific evidence is in `artifacts/m21/rust-boundary-qualification.json`; closeout real-server evidence is in `artifacts/m21/real-rust-boundary-acceptance.log`. Real-model endpoint behavior remains qualified by M20; M21 closeout only proves the Rust consumer boundary can drive that server with the qualified Python environment.
 
 ## Supported scope
 
@@ -43,7 +43,7 @@ python3 -m ds41f_mlx.serve
 
 Machine-specific paths are configured through `DS41F_CHECKPOINT`, `DS41F_OMLX_PATH`, `DS41F_RECIPE_PATH`, and `DS41F_KV_ROOT`; host/port/session/diagnostic settings are documented in `docs/operations.md`. The launcher applies configured oMLX and recipe checkout paths before importing the FastAPI app, so manual `PYTHONPATH` setup is not the canonical path.
 
-Health lifecycle: `/health` returns `alive` before model load, `ready` after model load, and `unavailable` with `fatal_error` on fatal backend error. Graceful shutdown/close must release live sessions, GenerationBatch ownership, and the single-thread executor. Persisted artifacts remain on disk; live sessions do not remain active after shutdown.
+Health lifecycle: `/health` returns `alive` before model load, `ready` after model load, and `unavailable` with `fatal_error` on fatal backend error. Rust `RuntimeProcess::spawn*` treats `alive` only as process startup; `wait_model_ready()` is required for inference readiness. Graceful shutdown/close must release live sessions, GenerationBatch ownership, and the single-thread executor. Rust `shutdown()` sends SIGTERM first and truthfully reports `Graceful`, `AlreadyExited`, or `Forced` if a kill fallback was required. Persisted artifacts remain on disk; live sessions do not remain active after shutdown.
 
 ## Regression matrix
 
@@ -59,7 +59,7 @@ The release matrix is bounded and composes the previously qualified production a
 | Repeated tool loop | `artifacts/m20/release-tool-eos.json` | PASS |
 | Persistence -> teardown -> restore -> continue | `artifacts/m20/release-persistence.json` | PASS |
 | Streaming committed boundary | `artifacts/m20/release-sessionized-http.json` | PASS |
-| Cancellation/recovery | `artifacts/m20/release-bounded-baseline.json`, cheap failure/ownership tests | PASS |
+| Cancellation/recovery | `artifacts/m20/release-bounded-baseline.json`, cheap failure/ownership tests; Rust SSE drop/recovery in `artifacts/m21/real-rust-boundary-acceptance.log` | PASS |
 | Invalid request before mutation | tool invalid-result evidence plus stateful stop policy unit test | PASS |
 | Overlap conflict | `artifacts/m20/release-sessionized-http.json` | PASS |
 | Long-context representative case | `artifacts/m20/release-200k-endpoint.json`; retained unchanged M6 ladder | PASS |

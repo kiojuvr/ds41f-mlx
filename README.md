@@ -188,6 +188,13 @@ Build and test the Rust boundary:
 cargo test
 ```
 
+Run bounded Rust-to-real-server acceptance with the qualified Python environment:
+
+```bash
+DS41F_PYTHON=$HOME/.venvs/omlx-0.7.0.release/bin/python \
+  cargo run --bin m21_real_acceptance
+```
+
 Run unified qualification:
 
 ```bash

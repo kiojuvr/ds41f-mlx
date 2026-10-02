@@ -6,7 +6,7 @@ This is the release-scope API contract for the qualified text runtime. It is int
 
 Transport is local HTTP. Protocol conversion, prompt rendering, response parsing, tool-call parsing, thinking fields, and stream formatting are delegated to official DeepSeek `deepseek-recipe`; `ds41f-mlx` supplies the backend runtime below that layer. Production paths and server settings are resolved through `ds41f_mlx.config.RuntimeConfig`; see `operations.md`.
 
-The stable Rust-facing API is the `ds41f_api` crate over this HTTP/SSE contract. It exposes startup/readiness helpers, raw JSON request methods, session lifecycle calls, streaming iterators, cancellation-by-drop, and process shutdown helpers without exposing KV tensors, oMLX objects, prompt-token replay, or recipe internals.
+The stable Rust-facing API is the `ds41f_api` crate over this HTTP/SSE contract. It exposes startup/readiness helpers, raw JSON request methods, session lifecycle calls, streaming iterators, cancellation-by-drop, and process shutdown helpers without exposing KV tensors, oMLX objects, prompt-token replay, or recipe internals. Rust process startup distinguishes process-alive `/health` from model-ready `/health`: `alive` is not inference readiness, while `ready` with `model_ready=true` is.
 
 Supported endpoints:
 

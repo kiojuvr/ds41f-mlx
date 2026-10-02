@@ -30,6 +30,7 @@ All machine-specific paths are overrideable without source edits:
 | Trace history limit | `DS41F_TRACE_HISTORY_LIMIT` | `32` |
 | Diagnostic endpoints | `DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS` | `0` |
 | Model id | `DS41F_MODEL_ID` | `deepseek-v4.1-flash` |
+| Python used by Rust-owned server spawn | `DS41F_PYTHON` (or legacy alias `DS41F_RUNTIME_PYTHON`) | caller's `python3` unless set |
 
 The single configuration authority is `ds41f_mlx.config.RuntimeConfig`. Server startup, provenance inspection, and unified qualification resolve settings through this seam.
 
@@ -139,7 +140,7 @@ Rust boundary build/test:
 cargo test
 ```
 
-Rust clients should use `ds41f_api::Ds41fClient` to connect to the documented local server or `ds41f_api::RuntimeProcess` to spawn `python3 -m ds41f_mlx.serve` and wait for `/health`. This does not change runtime ownership: model/session state remains in the server process.
+Rust clients should use `ds41f_api::Ds41fClient` to connect to the documented local server or `ds41f_api::RuntimeProcess` to spawn `python3 -m ds41f_mlx.serve`. Set `DS41F_PYTHON=$HOME/.venvs/omlx-0.7.0.release/bin/python` (or pass that path explicitly) for production use so the Rust-owned process uses the qualified M20 environment rather than system/Xcode Python. `RuntimeProcess::spawn*` waits only for process-alive `/health`; use `wait_model_ready()` when the application requires model-loaded inference readiness. `shutdown()` reports whether SIGTERM completed gracefully or a forced-kill fallback was needed. This does not change runtime ownership: model/session state remains in the server process.
 
 Runtime identity invalidation rules:
 

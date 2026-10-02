@@ -1,6 +1,7 @@
-use ds41f_api::{ClientConfig, Ds41fClient, Ds41fError};
+use ds41f_api::{ClientConfig, Ds41fClient, Ds41fError, RuntimeProcess, ShutdownKind};
 use std::io::{Read, Write};
 use std::net::TcpListener;
+use std::process::Command;
 use std::thread;
 use std::time::Duration;
 
@@ -111,4 +112,64 @@ fn chunked_body_is_decoded_for_json_endpoints() {
     })
     .unwrap();
     assert_eq!(client.models_raw().unwrap(), "{\"ok\":1}");
+}
+
+#[test]
+fn runtime_process_distinguishes_alive_from_model_ready_and_graceful_shutdown() {
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let port = listener.local_addr().unwrap().port();
+    drop(listener);
+    let script = r#"
+import sys
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+class H(BaseHTTPRequestHandler):
+    def log_message(self, *args): pass
+    def do_GET(self):
+        body = b'{"status":"alive","process_alive":true,"model_ready":false,"fatal_error":null}'
+        self.send_response(200); self.send_header('Content-Length', str(len(body))); self.end_headers(); self.wfile.write(body)
+server = ThreadingHTTPServer(('127.0.0.1', int(sys.argv[1])), H)
+server.serve_forever()
+"#;
+    let mut cmd = Command::new("python3");
+    cmd.args(["-c", script, &port.to_string()]);
+    let client = Ds41fClient::local(port);
+    let mut proc = RuntimeProcess::spawn(cmd, client, Duration::from_secs(10)).unwrap();
+    let alive = proc.wait_process_alive(Duration::from_secs(2)).unwrap();
+    assert_eq!(alive.status, "alive");
+    assert!(!alive.model_ready);
+    let ready = proc
+        .wait_model_ready(Duration::from_millis(600))
+        .unwrap_err()
+        .to_string();
+    assert!(ready.contains("model ready timeout"), "{ready}");
+    let report = proc
+        .shutdown(Duration::from_secs(5), Duration::from_secs(2))
+        .unwrap();
+    assert_eq!(report.kind, ShutdownKind::Graceful);
+}
+
+#[test]
+fn runtime_process_reports_forced_shutdown_fallback() {
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let port = listener.local_addr().unwrap().port();
+    drop(listener);
+    let script = r#"
+import signal, sys
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+signal.signal(signal.SIGTERM, signal.SIG_IGN)
+class H(BaseHTTPRequestHandler):
+    def log_message(self, *args): pass
+    def do_GET(self):
+        body = b'{"status":"alive","process_alive":true,"model_ready":false,"fatal_error":null}'
+        self.send_response(200); self.send_header('Content-Length', str(len(body))); self.end_headers(); self.wfile.write(body)
+ThreadingHTTPServer(('127.0.0.1', int(sys.argv[1])), H).serve_forever()
+"#;
+    let mut cmd = Command::new("python3");
+    cmd.args(["-c", script, &port.to_string()]);
+    let client = Ds41fClient::local(port);
+    let proc = RuntimeProcess::spawn(cmd, client, Duration::from_secs(10)).unwrap();
+    let report = proc
+        .shutdown(Duration::from_millis(200), Duration::from_secs(2))
+        .unwrap();
+    assert_eq!(report.kind, ShutdownKind::Forced);
 }

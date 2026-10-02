@@ -417,16 +417,29 @@ pub struct RuntimeProcess {
     client: Ds41fClient,
 }
 
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum ShutdownKind {
+    Graceful,
+    Forced,
+    AlreadyExited,
+}
+
+#[derive(Clone, Debug)]
+pub struct ShutdownReport {
+    pub kind: ShutdownKind,
+    pub exit_status: Option<String>,
+}
+
 impl RuntimeProcess {
     pub fn spawn(
         mut command: Command,
         client: Ds41fClient,
-        readiness_timeout: Duration,
+        process_alive_timeout: Duration,
     ) -> Result<Self> {
         command.stdout(Stdio::null()).stderr(Stdio::null());
         let child = command.spawn().map_err(Ds41fError::Io)?;
         let mut proc = Self { child, client };
-        proc.wait_ready(readiness_timeout)?;
+        proc.wait_process_alive(process_alive_timeout)?;
         Ok(proc)
     }
 
@@ -434,7 +447,7 @@ impl RuntimeProcess {
         python: &str,
         host: &str,
         port: u16,
-        readiness_timeout: Duration,
+        process_alive_timeout: Duration,
     ) -> Result<Self> {
         let mut cmd = Command::new(python);
         cmd.args([
@@ -445,53 +458,150 @@ impl RuntimeProcess {
             "--port",
             &port.to_string(),
         ]);
-        Self::spawn(cmd, Ds41fClient::local(port), readiness_timeout)
+        Self::spawn(cmd, Ds41fClient::local(port), process_alive_timeout)
+    }
+
+    pub fn spawn_python_module_from_env(
+        host: &str,
+        port: u16,
+        process_alive_timeout: Duration,
+    ) -> Result<Self> {
+        let python = std::env::var("DS41F_PYTHON")
+            .or_else(|_| std::env::var("DS41F_RUNTIME_PYTHON"))
+            .unwrap_or_else(|_| "python3".to_string());
+        Self::spawn_python_module(&python, host, port, process_alive_timeout)
     }
 
     pub fn client(&self) -> &Ds41fClient {
         &self.client
     }
 
+    pub fn child_id(&self) -> u32 {
+        self.child.id()
+    }
+
+    pub fn wait_process_alive(&mut self, timeout: Duration) -> Result<Health> {
+        self.wait_for_health(
+            timeout,
+            |h| h.status == "alive" || h.status == "ready",
+            "process alive",
+        )
+    }
+
+    pub fn wait_model_ready(&mut self, timeout: Duration) -> Result<Health> {
+        self.wait_for_health(
+            timeout,
+            |h| h.status == "ready" && h.model_ready,
+            "model ready",
+        )
+    }
+
     pub fn wait_ready(&mut self, timeout: Duration) -> Result<Health> {
+        self.wait_model_ready(timeout)
+    }
+
+    fn wait_for_health<F>(
+        &mut self,
+        timeout: Duration,
+        mut accept: F,
+        label: &str,
+    ) -> Result<Health>
+    where
+        F: FnMut(&Health) -> bool,
+    {
         let deadline = Instant::now() + timeout;
         let mut last = String::new();
         while Instant::now() < deadline {
             if let Some(status) = self.child.try_wait()? {
                 return Err(Ds41fError::Process(format!(
-                    "server exited before readiness: {status}"
+                    "server exited before {label}: {status}"
                 )));
             }
             match self.client.health() {
-                Ok(h) if h.status == "ready" || h.status == "alive" => return Ok(h),
+                Ok(h) if h.status == "unavailable" || h.fatal_error.is_some() => {
+                    return Err(Ds41fError::Process(format!(
+                        "server fatal health: {}",
+                        h.raw_json
+                    )));
+                }
+                Ok(h) if accept(&h) => return Ok(h),
                 Ok(h) => last = h.raw_json,
                 Err(e) => last = e.to_string(),
             }
             std::thread::sleep(Duration::from_millis(250));
         }
         Err(Ds41fError::Timeout(format!(
-            "server readiness timeout; last={last}"
+            "server {label} timeout; last={last}"
         )))
     }
 
-    pub fn shutdown(mut self, timeout: Duration) -> Result<()> {
-        self.child.kill().ok();
+    pub fn terminate_gracefully(&mut self, timeout: Duration) -> Result<Option<String>> {
+        if let Some(status) = self.child.try_wait()? {
+            return Ok(Some(status.to_string()));
+        }
+        send_sigterm(self.child.id())?;
         let deadline = Instant::now() + timeout;
         while Instant::now() < deadline {
-            if self.child.try_wait()?.is_some() {
-                return Ok(());
+            if let Some(status) = self.child.try_wait()? {
+                return Ok(Some(status.to_string()));
             }
             std::thread::sleep(Duration::from_millis(100));
         }
-        Err(Ds41fError::Timeout(
-            "server process shutdown timeout".into(),
-        ))
+        Ok(None)
+    }
+
+    pub fn shutdown(
+        mut self,
+        graceful_timeout: Duration,
+        forced_timeout: Duration,
+    ) -> Result<ShutdownReport> {
+        if let Some(status) = self.child.try_wait()? {
+            return Ok(ShutdownReport {
+                kind: ShutdownKind::AlreadyExited,
+                exit_status: Some(status.to_string()),
+            });
+        }
+        if let Some(status) = self.terminate_gracefully(graceful_timeout)? {
+            return Ok(ShutdownReport {
+                kind: ShutdownKind::Graceful,
+                exit_status: Some(status),
+            });
+        }
+        self.child.kill().ok();
+        let deadline = Instant::now() + forced_timeout;
+        while Instant::now() < deadline {
+            if let Some(status) = self.child.try_wait()? {
+                return Ok(ShutdownReport {
+                    kind: ShutdownKind::Forced,
+                    exit_status: Some(status.to_string()),
+                });
+            }
+            std::thread::sleep(Duration::from_millis(100));
+        }
+        Err(Ds41fError::Timeout("server forced shutdown timeout".into()))
     }
 }
 
 impl Drop for RuntimeProcess {
     fn drop(&mut self) {
-        let _ = self.child.kill();
-        let _ = self.child.wait();
+        let _ = self.terminate_gracefully(Duration::from_secs(2));
+        if self.child.try_wait().ok().flatten().is_none() {
+            let _ = self.child.kill();
+            let _ = self.child.wait();
+        }
+    }
+}
+
+fn send_sigterm(pid: u32) -> Result<()> {
+    let status = Command::new("/bin/kill")
+        .args(["-TERM", &pid.to_string()])
+        .status()?;
+    if status.success() {
+        Ok(())
+    } else {
+        Err(Ds41fError::Process(format!(
+            "failed to send SIGTERM to pid {pid}: {status}"
+        )))
     }
 }
 
