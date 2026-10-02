@@ -15,14 +15,14 @@ import time
 from pathlib import Path
 from typing import Any
 
-from .omlx_core import OmlxRuntime, OmlxRuntimeConfig
+from .omlx_core import DEFAULT_OMLX, OmlxRuntime, OmlxRuntimeConfig
 
 
 class Worker:
     def __init__(self) -> None:
         self.runtime = OmlxRuntime(
             OmlxRuntimeConfig(
-                omlx_path=Path(os.environ.get("DS41F_OMLX", str(Path.home() / "omlx-0.7.0.dev2"))),
+                omlx_path=Path(os.environ.get("DS41F_OMLX_PATH", os.environ.get("DS41F_OMLX", str(DEFAULT_OMLX)))),
                 checkpoint_path=Path(os.environ.get("DS41F_CHECKPOINT", "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash")),
                 engram_ssd_offload=os.environ.get("DS41F_ENGRAM_SSD_OFFLOAD", "1") != "0",
                 preserve_mtp=None,

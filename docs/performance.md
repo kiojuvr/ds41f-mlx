@@ -57,7 +57,7 @@ MLX-enabled native build/tests remain qualified as reference evidence. The old n
 
 Current production-candidate performance qualification is Milestone 6 and is now **qualified through 200K** for the dense P0-P7 FP8/MLX path. The measurement includes serving-path prefill to a committed live `DeepseekV41Cache`, P5 same-cache terminal bootstrap, first generated token, bounded decode throughput, memory, P6/P7/P5 evidence, and comparison to the recorded oMLX baseline.
 
-M6 canonical result: `artifacts/m6/performance-qualification/result.json`. Decision: `M6_PERFORMANCE_QUALIFIED_200K`.
+Historical M6 result: `artifacts/m6/performance-qualification/result.json`. Decision: `M6_PERFORMANCE_QUALIFIED_200K` against dev2. M20 retains the unchanged prefill/context-ladder scope and freshly confirms the endpoint against exact upstream 0.7.0: `artifacts/m20/release-200k-endpoint.json` reports 242.88 s prefill, 19.00 tok/s decode, 18.73 tok/s live continuation, 319.79 GB MLX peak, zero replay/repack and coherent all-layer frontiers. No intermediate ladder was rerun.
 
 ## Historical and external baselines
 
@@ -76,6 +76,16 @@ Rejected/deferred candidates include wide/rectangular attention alternatives, fu
 The scoped release relies on the dense P0-P7 performance class already qualified through 200K, practical GenerationBatch decode above the interactive floor, EOS termination avoiding unnecessary post-answer generation, and same-backend persistence/restore that is operationally small relative to model load/inference.
 
 Operator-facing performance claims are regression class claims, not a new benchmark competition. Do not broaden them beyond the recorded checkpoint/runtime/hardware/config provenance.
+
+## M20 dependency A/B
+
+Same MTP-OFF configuration on the target: dev2 median synchronized decode
+20.25 tok/s; release 19.65 tok/s initially and 20.17 tok/s on repeat. Load was
+63.22 s versus 69.02/62.69 s; median continuation bootstrap ~0.169 s on both.
+No reproducible meaningful regression was found. Current RSS grew ~0.28 GiB
+across 12 follow-ups on each side, with coherent state growth and empty retired
+generators. See [M20](m20-omlx-release-migration.md) for timing scope, per-turn
+trend, native/package identity and bounded-session limits.
 
 ## Unqualified areas
 

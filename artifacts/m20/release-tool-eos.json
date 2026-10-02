@@ -1,0 +1,127 @@
+{
+  "schema": "ds41f.m14.termination-qualification.v1",
+  "created_at": 1790922848.8606532,
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "omlx_path": "/Users/kioju/omlx-0.7.0.release",
+  "omlx_revision": "4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40",
+  "recipe_path": "/Volumes/SDXC-512/deepseek-v41-flash-mlx/third_party/deepseek-recipe",
+  "recipe_revision": "8cadfede7063c896b944e7bae05daa3549ae97ea",
+  "eos_identity": {
+    "eos_text": "<\uff5cend\u2581of\u2581sentence\uff5c>",
+    "token_ids": [
+      1
+    ],
+    "single_token": true,
+    "deepseek_recipe_revision": "8cadfede7063c896b944e7bae05daa3549ae97ea"
+  },
+  "flows": {
+    "plain_answer": {
+      "finish_reason": "stop",
+      "recipe_finish_reason": "stop",
+      "frontier": 25,
+      "generated_count": 8,
+      "tail_tokens": [
+        20,
+        13,
+        20,
+        9615,
+        223,
+        22,
+        16,
+        1
+      ],
+      "last_token_is_eos": true,
+      "eos_leaked_in_content": false,
+      "content_prefix": "2+2 equals 4.",
+      "content_len": 13,
+      "replay": 0,
+      "repack": 0,
+      "cache_ok": true,
+      "next_turn_status": 200,
+      "next_turn_ok": true,
+      "ok": true
+    },
+    "single_tool_final": {
+      "finish_reason": "stop",
+      "recipe_finish_reason": "stop",
+      "frontier": 376,
+      "generated_count": 10,
+      "tail_tokens": [
+        43905,
+        14,
+        223,
+        1602,
+        2614,
+        37,
+        16,
+        1
+      ],
+      "last_token_is_eos": true,
+      "eos_leaked_in_content": false,
+      "content_prefix": "Paris: sunny, 21\u00b0C.",
+      "content_len": 19,
+      "replay": 0,
+      "repack": 0,
+      "cache_ok": true,
+      "tool_call": {
+        "id": "call_9ce7e761-7d22-44a8-9195-e05f5622cd8d_0",
+        "name": "lookup_weather",
+        "arguments": "{\"city\": \"Paris\"}"
+      },
+      "ok": true
+    },
+    "repeated_tool_final": {
+      "finish_reason": "stop",
+      "recipe_finish_reason": "stop",
+      "frontier": 515,
+      "generated_count": 47,
+      "tail_tokens": [
+        17575,
+        344,
+        46265,
+        418,
+        9476,
+        4508,
+        16,
+        1
+      ],
+      "last_token_is_eos": true,
+      "eos_leaked_in_content": false,
+      "content_prefix": "Both results are in:\n\n- **Paris:** sunny, 21\u00b0C\n- **Berlin:** cloudy, 17\u00b0C\n\nParis is the warmer and sunnier of the two, while Berlin is cooler with cloud cover.",
+      "content_len": 159,
+      "replay": 0,
+      "repack": 0,
+      "cache_ok": true,
+      "tool_calls": [
+        {
+          "id": "call_0f23d17b-9e41-4ca4-8bc4-bdc3651cee5c_0",
+          "name": "lookup_weather",
+          "arguments": "{\"city\": \"Paris\"}"
+        },
+        {
+          "id": "call_c4c71ae3-4b95-40da-a377-1d4e8752efc1_0",
+          "name": "lookup_weather",
+          "arguments": "{\"city\": \"Berlin\"}"
+        }
+      ],
+      "tool_frontiers": [
+        336,
+        419
+      ],
+      "ok": true
+    },
+    "fresh_stateless_repeated_control": {
+      "status": 200,
+      "finish_reason": "stop",
+      "eos_leaked_in_content": false,
+      "content_prefix": "Both results are in:\n\n- **Paris:** sunny, 21\u00b0C\n- **Berlin:** cloudy, 17\u00b0C\n\nParis is the warmer and sunnier of the two, while Berlin is cooler with cloud cover.",
+      "content_len": 159,
+      "ok": true
+    }
+  },
+  "source_findings": {
+    "direct_batchgenerator_before_m14": "constructed without stop_tokens, so SequenceStateMachine was empty and EOS token id 1 was emitted as ordinary content until max_tokens",
+    "m14_bridge": "OMLXDecodeConfig.stop_token_ids -> BatchGenerator(stop_tokens=[[id]]) plus protocol suppression of the terminal EOS token while retaining it in all_tokens/cache"
+  },
+  "ok": true
+}

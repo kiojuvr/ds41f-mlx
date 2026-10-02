@@ -9,7 +9,7 @@ import sys
 from typing import Any
 
 DEFAULT_CHECKPOINT = Path("/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash")
-DEFAULT_OMLX = Path.home() / "omlx-0.7.0.dev2"
+DEFAULT_OMLX = Path.home() / "omlx-0.7.0.release"
 DEFAULT_RECIPE = Path("/Volumes/SDXC-512/deepseek-v41-flash-mlx/third_party/deepseek-recipe")
 DEFAULT_KV_ROOT = Path("/Volumes/USB-SSD-RAID-0/ds41f-mlx/kv")
 DEFAULT_HOST = "127.0.0.1"

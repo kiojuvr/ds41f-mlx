@@ -157,7 +157,7 @@ Configure machine-specific paths with environment variables instead of editing s
 
 ```bash
 export DS41F_CHECKPOINT=/path/to/DeepSeek-V4.1-Flash
-export DS41F_OMLX_PATH=/path/to/omlx-0.7.0.dev2
+export DS41F_OMLX_PATH=/path/to/omlx-0.7.0.release
 export DS41F_RECIPE_PATH=/path/to/deepseek-recipe
 export DS41F_KV_ROOT=/path/to/ds41f-kv
 ```
@@ -188,7 +188,9 @@ Run unified qualification:
 python3 -m ds41f_mlx.qualify --mode quick
 ```
 
-See `docs/operations.md` for the full configuration contract, launch behavior, qualification modes, artifact policy, and status meanings.
+Use the qualified Python 3.13 release environment (`~/.venvs/omlx-0.7.0.release/bin/python`). M20 pins upstream `v0.7.0` at `4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40`; directory names are not identities. The versioned release checkout is the qualification authority, dev2 is preserved for rollback, and `~/omlx` is reserved for a separately constructed operational checkout matching that identity.
+
+See `docs/operations.md` and `docs/m20-omlx-release-migration.md` for configuration, qualification, and baseline evidence.
 
 ## Runtime/API status
 

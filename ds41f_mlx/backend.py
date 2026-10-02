@@ -71,7 +71,7 @@ class OmlxWorkerBackend(RuntimeBackend):
         log_dir.mkdir(parents=True, exist_ok=True)
         self._log_path = log_dir / f"worker-{int(time.time())}.log"
         self._log = self._log_path.open("a", buffering=1)
-        default_venv_python = Path.home() / ".venvs" / "omlx-0.7.0.dev2" / "bin" / "python"
+        default_venv_python = Path.home() / ".venvs" / "omlx-0.7.0.release" / "bin" / "python"
         self._python = os.environ.get("DS41F_WORKER_PYTHON") or os.environ.get("DS41F_PYTHON") or (str(default_venv_python) if default_venv_python.exists() else sys.executable)
 
     def _start(self) -> None:

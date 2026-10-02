@@ -99,6 +99,8 @@ def identity_projection(provenance: dict[str, Any]) -> dict[str, Any]:
         "ds41f_runtime_source_sha256": provenance.get("ds41f", {}).get("runtime_source_identity", {}).get("sha256"),
         "omlx_revision": provenance.get("omlx", {}).get("revision"),
         "omlx_local_identity_sha256": provenance.get("omlx", {}).get("local_identity_sha256"),
+        "omlx_decode_native_sha256": provenance.get("omlx", {}).get("decode_native_identity", {}).get("sha256"),
+        "runtime_package_versions": provenance.get("packages"),
         "deepseek_recipe_revision": provenance.get("deepseek_recipe", {}).get("revision"),
         "deepseek_recipe_local_identity_sha256": provenance.get("deepseek_recipe", {}).get("local_identity_sha256"),
         "checkpoint_fingerprint": provenance.get("checkpoint_fingerprint"),

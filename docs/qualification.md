@@ -2,6 +2,13 @@
 
 This document records the current qualified state at HEAD. Historical milestone documents remain evidence, but this page is the canonical current-state summary.
 
+M20's promoted decode dependency is clean upstream oMLX `v0.7.0` at
+`4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40`. Fresh bounded lifecycle,
+persistence/HTTP/tool/EOS, A/B, repeated-session and 200K endpoint evidence is
+recorded in `artifacts/m20/promotion.json`. Unchanged source/prefill ladder
+evidence is retained; old M18 whole-runtime inheritance is not valid for this
+new dependency. See [M20](m20-omlx-release-migration.md) for exact scopes.
+
 ## Qualified release scope
 
 | Area | Status | Scope |
@@ -45,7 +52,9 @@ This document records the current qualified state at HEAD. Historical milestone 
 
 ## Historical / diagnostic evidence
 
-Canonical evidence artifacts include:
+Current dependency-migration authority: `artifacts/m20/promotion.json` and its
+hashed gate artifacts. Historical artifacts retained or refreshed as classified
+in M20 include:
 
 - `artifacts/m6/performance-qualification/result.json`
 - `artifacts/m7/deepseek-recipe-serving/result.json`

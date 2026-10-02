@@ -290,7 +290,11 @@ class OMLXGenerationSession:
             self.stop_reason = finish_reason
             if response.prompt_cache is not None:
                 self._final_cache = response.prompt_cache
-                self._final_all_tokens = self.current_token_history()
+                backend_tokens = getattr(response, "all_tokens", None)
+                self._final_all_tokens = (
+                    [int(t) for t in backend_tokens]
+                    if backend_tokens is not None else self.current_token_history()
+                )
             elif self.uid is not None:
                 # M11 evidence showed that waiting until request cleanup after a
                 # natural stop can lose the scheduler-owned cache for a finished
@@ -334,6 +338,10 @@ class OMLXGenerationSession:
             except Exception:
                 self._final_cache = None
                 self._final_all_tokens = None
+            finally:
+                # extract_cache observes state; it does not relinquish scheduler
+                # ownership. The extracted row is the continuation authority.
+                self._bg.remove([self.uid])
 
     cancel = stop
 
@@ -366,9 +374,18 @@ class OMLXGenerationSession:
         bg = getattr(self, "_bg", None)
         if bg is not None:
             try:
+                # A failed insert/bootstrap may not have assigned self.uid.
+                # This generator is request-local: drain every possible stage.
+                uids = set(getattr(getattr(bg, "_generation_batch", None), "uids", ()))
+                uids.update(getattr(getattr(bg, "_prompt_batch", None), "uids", ()))
+                uids.update(seq[0] for seq in getattr(bg, "_unprocessed_sequences", ()))
+                if uids:
+                    bg.remove(list(uids))
+            finally:
                 bg.close()
-            except Exception:
-                pass
+        self.initial_cache = []
+        self._final_cache = None
+        self._final_all_tokens = None
         runtime = getattr(self, "_runtime", None)
         if runtime is not None:
             runtime.close()
@@ -376,7 +393,7 @@ class OMLXGenerationSession:
     def metadata(self) -> OMLXGenerationMetadata:
         return OMLXGenerationMetadata(
             schema="ds41f.m5.omlx-generation-session.metadata.v1",
-            execution_substrate="mlx_lm.generate.BatchGenerator -> GenerationBatch (pinned oMLX 0.7.0.dev2 compatible)",
+            execution_substrate="mlx_lm.generate.BatchGenerator -> GenerationBatch (explicit configured oMLX dependency)",
             cache_authority_owner="BatchGenerator/GenerationBatch scheduler cache after start(); final cache via finish/extract_cache",
             admitted_frontier=self.admitted_frontier,
             prompt_replay_count=self.prompt_replay_count,

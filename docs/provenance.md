@@ -45,7 +45,7 @@ test dependency: none
 The current production path has explicit external requirements:
 
 - official DeepSeek-V4.1-Flash checkpoint at the documented local checkpoint path;
-- oMLX checkout used for GenerationBatch decode, pinned in qualification evidence to revision `b390b31e0c6831225fed0f24d278eb1db7fcb68b`;
+- oMLX GenerationBatch decode, promoted clean upstream `v0.7.0` at `4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40`, qualified in `~/omlx-0.7.0.release`; preserved dev2 rollback at `b390b31e0c6831225fed0f24d278eb1db7fcb68b`;
 - MLX / mlx-lm versions recorded by the production artifacts for the target machine;
 - official `deepseek-recipe` checkout/tokenizer, pinned in session/tool/termination evidence to revision `8cadfede7063c896b944e7bae05daa3549ae97ea`.
 
@@ -55,7 +55,9 @@ The release does not silently vendor those projects. Local checkout paths are op
 
 Qualification is tied to content that can affect execution, not to a self-referential final repository HEAD. The ds41f identity records separate digests for runtime source (`ds41f_mlx`, `native`, `pyproject.toml`, excluding qualification/provenance tooling) and qualification tooling (`tools`, `tests`, provenance/qualification/acceptance helpers). Generated artifacts and documentation are classified separately; committing a qualification artifact does not change the runtime-source digest and therefore does not invalidate the run.
 
-External dependencies are identified as pinned base revisions plus deterministic local-difference identities. Approved local changes record path, kind, diff/content SHA-256, production reachability, and rationale. Unknown or mismatched executable differences produce a provenance warning and require review/requalification.
+External dependencies are identified as pinned base revisions plus deterministic local-difference identities. Approved local changes record path, kind, diff/content SHA-256, production reachability, and rationale. Unknown or mismatched executable differences produce a provenance warning and require review/requalification. M20 additionally binds the existing artifact comparison to runtime package versions and production-reachable GLM native binary hashes, because ignored binaries are not represented by clean Git status. The comparison is independent of the oMLX pathname: a future operational `~/omlx` must match the versioned qualification identity. Advancing or rebuilding it is a new dependency identity, not inherited qualification.
+
+M20 fresh bounded runtime evidence is recorded in `artifacts/m20/promotion.json`; the prior M18 whole-runtime attestation is stale after the decode dependency/ownership change. Unchanged checkpoint/source and prefill ladder evidence is explicitly retained as scoped historical evidence, while decode/session/persistence/protocol/performance gates are refreshed.
 
 Older expensive evidence can be inherited only through an explicit migration attestation. The attestation preserves the original artifact and provenance, records the commit/runtime boundary it represented, classifies intervening changes, and binds the evidence to the modern runtime identity. `python3 -m ds41f_mlx.qualify --check-evidence <attestation>` performs the mechanical validity check without rerunning the model.
 

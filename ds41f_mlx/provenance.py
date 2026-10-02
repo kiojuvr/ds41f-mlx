@@ -15,7 +15,7 @@ from typing import Any
 
 from ds41f_mlx.config import RuntimeConfig, load_runtime_config, validate_runtime_config
 
-PINNED_OMLX_REVISION = "b390b31e0c6831225fed0f24d278eb1db7fcb68b"
+PINNED_OMLX_REVISION = "4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40"
 PINNED_RECIPE_REVISION = "8cadfede7063c896b944e7bae05daa3549ae97ea"
 
 DS41F_RUNTIME_PATHS = ("ds41f_mlx", "native", "pyproject.toml")
@@ -260,6 +260,15 @@ def external_worktree_identity(name: str, path: Path) -> dict[str, Any]:
     }
 
 
+def omlx_decode_native_identity(root: Path) -> dict[str, Any]:
+    """Identify ignored V4.1 GLM binaries independently of checkout pathname."""
+    entries = []
+    for path in sorted((root / "omlx/custom_kernels/glm_moe_dsa").glob("*")):
+        if path.is_file() and path.suffix in {".so", ".dylib", ".metallib"}:
+            entries.append({"path": path.relative_to(root).as_posix(), "sha256": file_sha256(path)})
+    return {"sha256": sha256(json.dumps(entries, sort_keys=True).encode()).hexdigest(), "files": entries}
+
+
 def inspect_runtime(config: RuntimeConfig | None = None) -> dict[str, Any]:
     cfg = config or load_runtime_config()
     cfg.apply_import_paths()
@@ -288,7 +297,8 @@ def inspect_runtime(config: RuntimeConfig | None = None) -> dict[str, Any]:
         "config": cfg.to_json(),
         "validation": validation,
         "checkpoint_fingerprint": checkpoint_fingerprint(cfg.checkpoint_path),
-        "omlx": {"path": str(cfg.omlx_path), "revision": omlx_rev, **omlx_identity},
+        "omlx": {"path": str(cfg.omlx_path), "revision": omlx_rev, **omlx_identity,
+                 "decode_native_identity": omlx_decode_native_identity(cfg.omlx_path)},
         "deepseek_recipe": {"path": str(cfg.recipe_path), "revision": recipe_rev, **recipe_identity},
         "revision_checks": revision_checks,
         "production": {"prefill_selector": cfg.production_prefill_selector, "mtp": cfg.mtp, "dspark": cfg.dspark, "speculative_decode": cfg.speculative_decode},

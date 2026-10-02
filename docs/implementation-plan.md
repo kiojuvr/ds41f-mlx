@@ -2,6 +2,16 @@
 
 This roadmap converts the runtime strategy into a finite sequence of milestones. It is not an optimization backlog. Runtime behavior, selectors, API integration, and multimodal work must not change until the relevant architecture milestone authorizes that work.
 
+## M20 — oMLX production dependency migration
+
+Status: **complete**. Exact clean upstream `v0.7.0`
+(`4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40`) is promoted after bounded
+compatibility/lifecycle, A/B, repeated-session, persistence, HTTP/tool/EOS and
+one targeted 200K endpoint gate. See [M20](m20-omlx-release-migration.md).
+The prefill/P5 architecture is unchanged; all optional accelerations remain OFF.
+Historical dev2 decisions below retain their original evidence scope. Next:
+Production Rust API Boundary against the stabilized release baseline; MTP deferred.
+
 ## Milestone 1 — Architecture restoration audit
 
 Status: **complete**. See `docs/milestone-1-architecture-audit.md` for the concrete inventory, source evidence, component classifications, missing seams, and Milestone 2 starting frontier.

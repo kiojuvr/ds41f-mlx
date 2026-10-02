@@ -21,7 +21,7 @@ All machine-specific paths are overrideable without source edits:
 | Setting | Environment variable | Default |
 | --- | --- | --- |
 | Checkpoint path | `DS41F_CHECKPOINT` | `/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash` |
-| oMLX checkout | `DS41F_OMLX_PATH` | `~/omlx-0.7.0.dev2` |
+| oMLX checkout | `DS41F_OMLX_PATH` | `~/omlx-0.7.0.release` |
 | deepseek-recipe checkout | `DS41F_RECIPE_PATH` | `/Volumes/SDXC-512/deepseek-v41-flash-mlx/third_party/deepseek-recipe` |
 | KV persistence root | `DS41F_KV_ROOT` | `/Volumes/USB-SSD-RAID-0/ds41f-mlx/kv` |
 | Host | `DS41F_HOST` | `127.0.0.1` |
@@ -32,6 +32,31 @@ All machine-specific paths are overrideable without source edits:
 | Model id | `DS41F_MODEL_ID` | `deepseek-v4.1-flash` |
 
 The single configuration authority is `ds41f_mlx.config.RuntimeConfig`. Server startup, provenance inspection, and unified qualification resolve settings through this seam.
+
+## Qualified dependency and operational checkout
+
+M20 promotes clean upstream `v0.7.0` at
+`4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40`, with Python 3.13.15,
+MLX 0.32.2 and mlx-lm `94cdcae13b266c337bcaca09b97b9c5a9c0e2cde`
+(distribution version `0.31.4.dev132+g94cdcae13`). Use
+`~/.venvs/omlx-0.7.0.release/bin/python` for the commands below.
+
+`~/omlx-0.7.0.release` remains the versioned qualification authority/default;
+`~/omlx-0.7.0.dev2` remains the unchanged historical rollback checkout.
+`~/omlx` is the intended normal operational/current path, but was not constructed
+as part of this promotion. Once separately constructed, select it with
+`DS41F_OMLX_PATH=$HOME/omlx` and verify against the M20 artifact:
+
+```bash
+python3 -m ds41f_mlx.qualify --check-artifact artifacts/m20/promotion.json
+```
+
+The check compares revision/local content, production GLM native binary hashes,
+package versions, ds41f runtime identity, recipe, checkpoint and selectors—not
+an oMLX directory name. Rebuilding kernels, advancing a release or adding local
+code does not silently inherit M20 qualification. Full build/package/native
+records are in `artifacts/m20/release-environment.json`; see the
+[M20 report](m20-omlx-release-migration.md) for evidence scope.
 
 ## Inspect provenance without loading the model
 
@@ -111,7 +136,7 @@ python3 -m ds41f_mlx.acceptance
 Runtime identity invalidation rules:
 
 - stale: ds41f runtime source digest changes;
-- stale: oMLX base revision or approved local patch/content identity changes;
+- stale: oMLX base revision, local patch/content identity, production GLM native hashes, or runtime package versions change;
 - stale: deepseek-recipe base revision or approved local patch/content identity changes;
 - stale: checkpoint fingerprint or production selector/MTP/DSpark/speculation state changes;
 - not stale by itself: generated qualification artifacts, documentation, or unrelated non-runtime repository state changes.

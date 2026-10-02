@@ -4,7 +4,7 @@
 
 `DS41F_TEXT_RUNTIME_RELEASE_QUALIFIED` for the scoped local text runtime below. This is not a universal project-complete claim.
 
-M18 release evidence status distinguishes fresh expensive qualification from inherited evidence. The current runtime may be accepted as `INHERITED_FULL_RELEASE_QUALIFIED` when its content-based runtime identity matches the M18 migration attestation for the M16 full-model evidence and current cheap/operator acceptance gates pass. This avoids rerunning full-model qualification merely because generated artifacts or documentation were committed.
+M20 promotes exact upstream oMLX `v0.7.0` (`4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40`) after fresh bounded dependency-reachable gates, A/B, persistence, HTTP/tool/EOS, repeated-session and targeted 200K endpoint checks. See [M20](m20-omlx-release-migration.md) and `artifacts/m20/promotion.json`. The old M18 whole-runtime migration attestation is stale for this dependency; it is not reclassified to preserve inheritance. Unchanged source/prefill evidence is retained explicitly, not represented as fresh release timing.
 
 ## Supported scope
 
@@ -49,18 +49,18 @@ The release matrix is bounded and composes the previously qualified production a
 
 | Case | Evidence | Result |
 | --- | --- | --- |
-| Plain stateless text | `artifacts/m7/deepseek-recipe-serving/result.json`, EOS recheck in `artifacts/m14/termination-qualification.json` | PASS |
-| Plain stateful text | `artifacts/m12/sessionized-http-qualification.json`, `artifacts/m14/termination-qualification.json` | PASS |
-| Natural EOS termination | `artifacts/m14/termination-qualification.json` | PASS |
-| Multi-turn continuation | `artifacts/m8/long-session-qualification.json`, restored evidence | PASS |
-| Tool call -> result -> final | `artifacts/m11/tool-boundary-qualification.json`, termination recheck | PASS |
-| Repeated tool loop | `artifacts/m13/repeated-tool-agent-qualification.json`, termination recheck | PASS |
-| Persistence -> teardown -> restore -> continue | `artifacts/m9/kv-persistence-qualification.json`, `artifacts/m10/restored-long-session-qualification.json` | PASS |
-| Streaming committed boundary | `artifacts/m12/sessionized-http-qualification.json` | PASS |
-| Cancellation/recovery | `artifacts/m7/deepseek-recipe-serving/result.json`, restored long-session evidence | PASS |
+| Plain stateless text | `artifacts/m20/release-tool-eos.json`; retained protocol/source evidence | PASS |
+| Plain stateful text | `artifacts/m20/release-tool-eos.json` | PASS |
+| Natural EOS termination | `artifacts/m20/release-tool-eos.json` | PASS |
+| Multi-turn continuation | `artifacts/m20/release-bounded-baseline.json`, repeat and persistence evidence | PASS |
+| Tool call -> result -> final | `artifacts/m20/release-sessionized-http.json`, tool/EOS recheck | PASS |
+| Repeated tool loop | `artifacts/m20/release-tool-eos.json` | PASS |
+| Persistence -> teardown -> restore -> continue | `artifacts/m20/release-persistence.json` | PASS |
+| Streaming committed boundary | `artifacts/m20/release-sessionized-http.json` | PASS |
+| Cancellation/recovery | `artifacts/m20/release-bounded-baseline.json`, cheap failure/ownership tests | PASS |
 | Invalid request before mutation | tool invalid-result evidence plus stateful stop policy unit test | PASS |
-| Overlap conflict | sessionized HTTP evidence | PASS |
-| Long-context representative case | `artifacts/m6/performance-qualification/result.json` through 200K | PASS |
+| Overlap conflict | `artifacts/m20/release-sessionized-http.json` | PASS |
+| Long-context representative case | `artifacts/m20/release-200k-endpoint.json`; retained unchanged M6 ladder | PASS |
 
 ## Invariants retained
 
@@ -75,7 +75,8 @@ Performance class remains the established dense P0-P7 class: practical prefill t
 Release evidence records:
 
 - ds41f commit(s) in artifact metadata; M15 documentation/code closure at current HEAD;
-- oMLX revision `b390b31e0c6831225fed0f24d278eb1db7fcb68b` in production qualification artifacts;
+- promoted oMLX `v0.7.0` revision `4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40`, clean upstream source, native/package identity in M20;
+- preserved dev2 rollback revision `b390b31e0c6831225fed0f24d278eb1db7fcb68b` and original local identity in historical artifacts;
 - deepseek-recipe revision `8cadfede7063c896b944e7bae05daa3549ae97ea` in session/tool/termination artifacts;
 - MLX/mlx-lm/Python/hardware versions where recorded by the individual artifacts;
 - target checkpoint path and checkpoint identity in performance/provenance artifacts.
@@ -83,11 +84,11 @@ Release evidence records:
 ## Evidence validity commands
 
 ```bash
-python3 -m ds41f_mlx.qualify --check-evidence artifacts/m18/m16-full-evidence-migration.json
+python3 -m ds41f_mlx.qualify --check-artifact artifacts/m20/promotion.json
 python3 -m ds41f_mlx.acceptance
 ```
 
-`--check-evidence` reports inherited expensive evidence as valid only when the current runtime identity matches the attested full-qualified identity. It does not claim fresh full requalification.
+`--check-artifact` verifies the promoted content/dependency identity without rerunning expensive gates. Checking the old M18 attestation correctly reports stale evidence for the new dependency.
 
 ## Cheap gates
 
@@ -109,4 +110,4 @@ Vision, batching, MTP, DSpark, speculative decode, sessionized Responses/Message
 
 ## Recommended next milestone
 
-Post-release operational hardening: packaging/configuration cleanup and a fresh one-command production qualification runner that records a single combined provenance artifact on the target machine.
+Production Rust API Boundary against the stabilized M20 oMLX 0.7.0 MTP-OFF baseline. MTP and other acceleration remain deferred.

@@ -83,7 +83,9 @@ def main() -> int:
                 old_live_count += 1
                 fail(f"live old-repo dependency wording in {doc}: {token}")
         for token in CHRONOLOGY_TOKENS:
-            if token in text:
+            # Milestone identifiers are tokens, not prefixes: M1 must not
+            # reject current M19/M20 evidence references.
+            if re.search(r"(?<![A-Za-z0-9])" + re.escape(token) + r"(?![A-Za-z0-9])", text):
                 chronology_count += 1
                 fail(f"chronological development token in canonical doc {doc}: {token}")
 
