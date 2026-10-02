@@ -10,6 +10,7 @@ Canonical current-state documents:
 - [Generation](generation.md) — prefill/decode/commit/termination lifecycle
 - [Operations](operations.md) — configuration, provenance inspection, launch, and unified qualification
 - [API](api.md) — release-scope public HTTP contract
+- [M19 local web client](m19-local-web-client.md) — browser client and client-side tool boundary
 - [Performance](performance.md) — qualified performance class and baselines
 - [Provenance](provenance.md) — checkpoint/source/import/dependency identity
 - [Qualification](qualification.md) — current qualified, optional, unqualified, and non-goal areas

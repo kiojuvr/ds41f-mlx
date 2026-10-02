@@ -168,11 +168,19 @@ Inspect provenance without loading the model:
 python3 -m ds41f_mlx.provenance
 ```
 
-Launch the local server:
+Launch the qualified local runtime server:
 
 ```bash
 python3 -m ds41f_mlx.serve
 ```
+
+Launch the optional M19 browser client in a separate process:
+
+```bash
+python3 -m ds41f_mlx.web --runtime-url http://127.0.0.1:8000
+```
+
+The web client is above the runtime API and executes client-side tools such as bounded web search outside the model server. See `docs/m19-local-web-client.md`.
 
 Run unified qualification:
 

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ds41f local client</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+  <h1>ds41f local client</h1>
+  <div id="status">starting…</div>
+  <div class="controls">
+    <button id="newSession">New</button>
+    <button id="resetSession">Reset/close</button>
+    <button id="saveSession">Save KV</button>
+    <button id="restoreSession">Restore KV</button>
+    <label><input type="checkbox" id="toolsEnabled" checked> tools</label>
+  </div>
+</header>
+<main id="messages"></main>
+<form id="composer">
+  <textarea id="input" placeholder="Message ds41f…" rows="3"></textarea>
+  <button id="send" type="submit">Send</button>
+</form>
+<script src="/static/app.js"></script>
+</body>
+</html>

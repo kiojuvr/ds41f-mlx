@@ -1,0 +1,23 @@
+const $ = (id) => document.getElementById(id);
+const state = {
+  sessionId: localStorage.getItem('ds41f.sessionId') || '',
+  transcript: JSON.parse(localStorage.getItem('ds41f.transcript') || '[]'),
+  busy: false,
+};
+function save(){ localStorage.setItem('ds41f.sessionId', state.sessionId||''); localStorage.setItem('ds41f.transcript', JSON.stringify(state.transcript)); }
+function esc(s){ return String(s ?? '').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+function add(role, html, cls=role){ const d=document.createElement('div'); d.className=`msg ${cls}`; d.innerHTML=`<div class="role">${esc(role)}</div>${html}`; $('messages').appendChild(d); window.scrollTo(0, document.body.scrollHeight); }
+function render(){ $('messages').innerHTML=''; for(const m of state.transcript){ if(m.role==='user') add('user', esc(m.content)); else if(m.role==='assistant'){ let h=''; if(m.reasoning_content) h+=`<div class="reasoning">${esc(m.reasoning_content)}</div>`; if(m.content) h+=esc(m.content); if(m.tool_calls) h+=`<div class="toolcall">requested ${m.tool_calls.length} tool call(s)</div>`; add('assistant', h||'<span class="small">(no text)</span>'); } else if(m.role==='tool') add('tool', `<span class="small">${esc(m.tool_call_id)}</span>\n${esc(m.content)}`); } }
+async function api(path, opts={}){ const r=await fetch(path,{headers:{'content-type':'application/json'},...opts}); const t=await r.text(); const j=t?JSON.parse(t):{}; if(!r.ok) throw new Error(j.error?.message || t || r.statusText); return j; }
+async function refreshStatus(){ let q=state.sessionId?`?session_id=${encodeURIComponent(state.sessionId)}`:''; try{ const s=await api('/api/status'+q); const rt=s.runtime?.status||'unknown'; const ss=s.session?`, session ${s.session.state}`:''; $('status').textContent=`runtime ${rt}${ss}; tools: ${(s.tools||[]).join(', ')}`; } catch(e){ $('status').textContent='web client error: '+e.message; } }
+async function ensureSession(){ if(state.sessionId){ return state.sessionId; } const rec=await api('/api/session',{method:'POST',body:'{}'}); state.sessionId=rec.id; state.transcript=[]; save(); render(); await refreshStatus(); return state.sessionId; }
+async function sendMessage(text){ state.busy=true; $('send').disabled=true; add('user', esc(text)); try{ const sid=await ensureSession(); const out=await api('/api/chat',{method:'POST',body:JSON.stringify({session_id:sid, transcript:state.transcript, message:text, tools_enabled:$('toolsEnabled').checked})}); for(const step of out.steps||[]){ if(step.kind==='tools'){ for(const r of step.data.results||[]){ let h=`<div class="small">${esc(r.tool)} ${esc(r.id||'')}</div>`; if(r.results){ h+='<ol class="sources">'+r.results.map(x=>`<li><a href="${esc(x.url)}" target="_blank" rel="noreferrer">${esc(x.title||x.url)}</a><br>${esc(x.snippet||'')}</li>`).join('')+'</ol>'; } else h+=`<pre>${esc(JSON.stringify(r,null,2))}</pre>`; add('tool activity', h, 'tool'); } } }
+    state.transcript=out.messages||state.transcript; save(); render();
+  }catch(e){ add('error', esc(e.message), 'error'); } finally{ state.busy=false; $('send').disabled=false; await refreshStatus(); }
+}
+$('composer').addEventListener('submit', async e=>{ e.preventDefault(); const text=$('input').value.trim(); if(!text||state.busy) return; $('input').value=''; await sendMessage(text); });
+$('newSession').onclick=async()=>{ if(state.busy) return; try{ const rec=await api('/api/session',{method:'POST',body:'{}'}); state.sessionId=rec.id; state.transcript=[]; save(); render(); refreshStatus(); }catch(e){ add('error', esc(e.message),'error'); } };
+$('resetSession').onclick=async()=>{ if(state.busy) return; try{ if(state.sessionId) await api('/api/session/'+encodeURIComponent(state.sessionId),{method:'DELETE'}); }catch(e){ add('error', esc(e.message),'error'); } state.sessionId=''; state.transcript=[]; save(); render(); refreshStatus(); };
+$('saveSession').onclick=async()=>{ if(!state.sessionId) return; try{ const r=await api(`/api/session/${encodeURIComponent(state.sessionId)}/persist`,{method:'POST',body:'{}'}); add('system', 'persisted: '+esc(JSON.stringify(r.artifact||r))); }catch(e){ add('error', esc(e.message),'error'); } };
+$('restoreSession').onclick=async()=>{ const p=prompt('KV artifact path to restore'); if(!p) return; try{ const r=await api('/api/session/restore',{method:'POST',body:JSON.stringify({artifact_path:p})}); state.sessionId=r.id; state.transcript=[]; save(); render(); refreshStatus(); add('system','restored session '+esc(r.id)); }catch(e){ add('error', esc(e.message),'error'); } };
+render(); refreshStatus(); setInterval(refreshStatus, 5000);

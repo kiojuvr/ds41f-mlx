@@ -20,6 +20,7 @@ PINNED_RECIPE_REVISION = "8cadfede7063c896b944e7bae05daa3549ae97ea"
 
 DS41F_RUNTIME_PATHS = ("ds41f_mlx", "native", "pyproject.toml")
 DS41F_RUNTIME_EXCLUDE = {"ds41f_mlx/provenance.py", "ds41f_mlx/qualify.py", "ds41f_mlx/acceptance.py"}
+DS41F_RUNTIME_EXCLUDE_PREFIXES = ("ds41f_mlx/web",)
 DS41F_QUALIFICATION_PATHS = ("tools", "tests", "ds41f_mlx/provenance.py", "ds41f_mlx/qualify.py", "ds41f_mlx/acceptance.py")
 DS41F_NONRUNTIME_PREFIXES = ("artifacts/", "docs/")
 
@@ -134,7 +135,7 @@ def tree_digest(root: Path, include: tuple[str, ...]) -> dict[str, Any]:
                 if "__pycache__" in rel_parts or child.name.endswith((".pyc", ".o")):
                     continue
                 rel = child.relative_to(root).as_posix()
-                if rel in DS41F_RUNTIME_EXCLUDE:
+                if rel in DS41F_RUNTIME_EXCLUDE or rel.startswith(DS41F_RUNTIME_EXCLUDE_PREFIXES):
                     continue
                 if rel_parts[0] == "native" and len(rel_parts) > 1 and rel_parts[1].startswith("build"):
                     continue
@@ -168,6 +169,8 @@ def ds41f_dirty_classification(root: Path) -> dict[str, Any]:
         category = "other_nonruntime"
         if path in DS41F_RUNTIME_EXCLUDE:
             category = "qualification_tooling"; qualification_affecting = True
+        elif path.startswith(DS41F_RUNTIME_EXCLUDE_PREFIXES):
+            category = "client_nonruntime"
         elif path.startswith("ds41f_mlx/") or path.startswith("native/") or path == "pyproject.toml":
             category = "runtime_source"; runtime_affecting = True
         elif path.startswith("tools/") or path.startswith("tests/"):
@@ -187,7 +190,7 @@ def ds41f_git() -> dict[str, Any]:
         "dirty_classification": ds41f_dirty_classification(root),
         "runtime_source_identity": tree_digest(root, DS41F_RUNTIME_PATHS),
         "qualification_tooling_identity": tree_digest(root, DS41F_QUALIFICATION_PATHS),
-        "identity_model": "runtime_source_identity excludes generated artifacts/docs, so committing a qualification artifact does not invalidate the tested runtime source.",
+        "identity_model": "runtime_source_identity excludes generated artifacts/docs and the separate ds41f_mlx.web local client, so client-only or qualification artifacts do not invalidate the tested model runtime source.",
     }
 
 
