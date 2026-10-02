@@ -1,0 +1,28 @@
+{
+  "status": "STARTING",
+  "config": {
+    "checkpoint_path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+    "omlx_path": "/Users/kioju/omlx-0.7.0.dev2",
+    "recipe_path": "/Volumes/SDXC-512/deepseek-v41-flash-mlx/third_party/deepseek-recipe",
+    "kv_root": "/Volumes/USB-SSD-RAID-0/ds41f-mlx/kv",
+    "host": "127.0.0.1",
+    "port": 57816,
+    "max_live_sessions": 4,
+    "trace_history_limit": 32,
+    "enable_diagnostics": false,
+    "model_id": "deepseek-v4.1-flash",
+    "production_prefill_selector": "DENSE_P0_P7",
+    "mtp": "OFF",
+    "dspark": "OFF",
+    "speculative_decode": "OFF"
+  },
+  "provenance_status": "PASS"
+}
+INFO:     127.0.0.1:57820 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57821 - "GET /v1/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57822 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57825 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57826 - "POST /v1/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57827 - "POST /v1/sessions/sess_60005504ffee4f189f940838810dea2b/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57828 - "POST /v1/sessions/sess_60005504ffee4f189f940838810dea2b/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57829 - "DELETE /v1/sessions/sess_60005504ffee4f189f940838810dea2b HTTP/1.1" 200 OK

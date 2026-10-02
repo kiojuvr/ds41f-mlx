@@ -1,7 +1,7 @@
 {
-  "base_url": "http://127.0.0.1:57798",
-  "created_at": 1790910407.430495,
-  "duration_s": 69.43392610549927,
+  "base_url": "http://127.0.0.1:57816",
+  "created_at": 1790910626.5093691,
+  "duration_s": 69.30336165428162,
   "provenance": {
     "checkpoint_fingerprint": {
       "config.json": {
@@ -46,11 +46,32 @@
       "status": "PASS"
     },
     "ds41f": {
-      "commit": "58cc55c07c26631ffa1a30be9014b54482e9ec40",
-      "dirty": false,
+      "commit": "bbd0614afaa06f835e87aa02a57430275bd05693",
+      "dirty": true,
       "dirty_classification": {
         "available": true,
-        "entries": [],
+        "entries": [
+          {
+            "category": "generated_or_documentation",
+            "path": "artifacts/m18/canonical-server-acceptance-20261002-120647.json",
+            "status": "D"
+          },
+          {
+            "category": "generated_or_documentation",
+            "path": "artifacts/m18/canonical-server-acceptance-20261002-120647.server.stderr.log",
+            "status": "D"
+          },
+          {
+            "category": "generated_or_documentation",
+            "path": "artifacts/m18/canonical-server-acceptance-20261002-120647.server.stdout.log",
+            "status": "D"
+          },
+          {
+            "category": "generated_or_documentation",
+            "path": "artifacts/m18/release-acceptance-record.json",
+            "status": "D"
+          }
+        ],
         "qualification_affecting_dirty": false,
         "runtime_affecting_dirty": false
       },
@@ -61,8 +82,8 @@
         "files": [
           {
             "path": "ds41f_mlx/acceptance.py",
-            "sha256": "2d2c6a8ac934fd5d2f96a9cb1caace54ddb1c532c9a41e4307d884a6aa92fefb",
-            "size": 7017
+            "sha256": "8456391f30f730b3bd034f1fbf679235c58e7bf38a7a3a1ce794b7a63fe6bbd2",
+            "size": 7290
           },
           {
             "path": "ds41f_mlx/provenance.py",
@@ -1245,7 +1266,7 @@
             "size": 2035
           }
         ],
-        "sha256": "ac2fcd76dfce488a9c6d01d7eface198cf9529acfc8e7fd9df7de1bf2634d39b"
+        "sha256": "18c63f3c9776748bbc15170e9df8dc74e8fdd96d1ac58b4bfecaa9e2f15f65ee"
       },
       "runtime_source_identity": {
         "file_count": 195,
@@ -2400,8 +2421,8 @@
   },
   "schema": "ds41f.m18.canonical-server-acceptance.v1",
   "server_logs": {
-    "stderr": "/Volumes/SDXC-512/ds41f-mlx/artifacts/m18/canonical-server-acceptance-20261002-120647.server.stderr.log",
-    "stdout": "/Volumes/SDXC-512/ds41f-mlx/artifacts/m18/canonical-server-acceptance-20261002-120647.server.stdout.log"
+    "stderr": "/Volumes/SDXC-512/ds41f-mlx/artifacts/m18/canonical-server-acceptance-20261002-121026.server.stderr.log",
+    "stdout": "/Volumes/SDXC-512/ds41f-mlx/artifacts/m18/canonical-server-acceptance-20261002-121026.server.stdout.log"
   },
   "status": "PASS",
   "steps": [
@@ -2445,8 +2466,19 @@
     },
     {
       "code": 200,
+      "data": {
+        "fatal_error": null,
+        "model_ready": true,
+        "process_alive": true,
+        "status": "ready"
+      },
+      "name": "health_after_model_request",
+      "status": "PASS"
+    },
+    {
+      "code": 200,
       "name": "create_session",
-      "session_id": "sess_50a8f1fc2cc04df594be7e28935e0341",
+      "session_id": "sess_60005504ffee4f189f940838810dea2b",
       "status": "PASS"
     },
     {
