@@ -9,7 +9,7 @@ contract across repeated turns.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from time import perf_counter
 from typing import Any, Callable, Sequence
 
@@ -36,9 +36,11 @@ class M8TurnRecord:
     full_cache_repack_count: int
     append_seconds: float
     decode_seconds: float
+    first_token_latency_s: float | None = None
     cancelled: bool = False
 
     def to_json(self) -> dict[str, Any]:
+        generated_count = len(self.generated_tokens)
         return {
             "turn_index": self.turn_index,
             "frontier_before": self.frontier_before,
@@ -51,6 +53,8 @@ class M8TurnRecord:
             "full_cache_repack_count": self.full_cache_repack_count,
             "append_seconds": self.append_seconds,
             "decode_seconds": self.decode_seconds,
+            "first_token_latency_s": self.first_token_latency_s,
+            "decode_tok_s": None if self.decode_seconds <= 0 or generated_count == 0 else generated_count / self.decode_seconds,
             "cancelled": self.cancelled,
         }
 
@@ -207,6 +211,7 @@ class M8LiveContinuationSession:
                 full_cache_repack_count=0,
                 append_seconds=append_seconds,
                 decode_seconds=0.0,
+                first_token_latency_s=None,
             ))
             return
         gen = handoff_to_generation(live, self.model, terminal_prompt_token=terminal, config=self.config, max_tokens=max_tokens, sampler=self.sampler)
@@ -226,6 +231,7 @@ class M8LiveContinuationSession:
             full_cache_repack_count=full_cache_repack_count,
             append_seconds=append_seconds,
             decode_seconds=0.0,
+            first_token_latency_s=None,
         ))
 
     def next_token(self) -> OMLXGenerationStepReport | None:
@@ -237,12 +243,13 @@ class M8LiveContinuationSession:
         if report is not None:
             self.token_history.append(int(report.token))
             last = self.turn_records[-1]
-            self.turn_records[-1] = M8TurnRecord(
-                **{**last.to_json(),
-                   "generated_tokens": tuple(list(last.generated_tokens) + [int(report.token)]),
-                   "frontier_after": len(self.token_history),
-                   "decode_seconds": float(last.decode_seconds + elapsed),
-                   "prompt_replay_count": int(self.generation.prompt_replay_count)},
+            self.turn_records[-1] = replace(
+                last,
+                generated_tokens=tuple(list(last.generated_tokens) + [int(report.token)]),
+                frontier_after=len(self.token_history),
+                decode_seconds=float(last.decode_seconds + elapsed),
+                first_token_latency_s=elapsed if not last.generated_tokens else last.first_token_latency_s,
+                prompt_replay_count=int(self.generation.prompt_replay_count),
             )
         return report
 
@@ -250,7 +257,7 @@ class M8LiveContinuationSession:
         self.ensure_idle(reason)
         if self.turn_records:
             last = self.turn_records[-1]
-            self.turn_records[-1] = M8TurnRecord(**{**last.to_json(), "cancelled": True})
+            self.turn_records[-1] = replace(last, cancelled=True)
 
     def close(self) -> None:
         if self.closed:
@@ -267,6 +274,8 @@ class M8LiveContinuationSession:
             "state": self.state,
             "frontier": self.frontier,
             "cache_offsets_head": list(offsets[:8]),
+            "cache_offsets_all": list(offsets),
+            "cache_layer_count": len(offsets),
             "all_cache_offsets_equal_frontier": (not offsets) or all(o == self.frontier for o in offsets),
             "turn_count": len(self.turn_records),
             "total_prompt_replay_count": self.total_prompt_replay_count,

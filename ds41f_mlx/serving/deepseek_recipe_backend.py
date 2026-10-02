@@ -335,6 +335,7 @@ class DeepSeekRecipeRuntimeBackend:
         rec.busy = True
         rec.updated_at = time()
         trace: dict[str, Any] = {'session_id': session_id, 'prompt_tokens': len(request.token_ids), 'stream': bool(request.stream), 'started_at': rec.updated_at}
+        turn_t0 = perf_counter()
         self.session_traces.append(trace)
         await self._lock.acquire()
         try:
@@ -363,7 +364,27 @@ class DeepSeekRecipeRuntimeBackend:
             rec.last_turn = assistant_turn.to_json()
             rec.last_error = None
             diag = rec.m11.diagnostics() if rec.m11 is not None else {}
-            trace.update({'ok': True, 'finish_reason': assistant_turn.finish_reason, 'tool_call_count': len(assistant_turn.tool_calls), 'prompt_replay_count': diag.get('m8', {}).get('total_prompt_replay_count'), 'full_cache_repack_count': diag.get('m8', {}).get('total_full_cache_repack_count')})
+            m8diag = diag.get('m8', {}) if isinstance(diag, dict) else {}
+            last_runtime_turn = (m8diag.get('turns') or [{}])[-1]
+            trace.update({
+                'ok': True,
+                'finish_reason': assistant_turn.finish_reason,
+                'tool_call_count': len(assistant_turn.tool_calls),
+                'generated_token_count': len(assistant_turn.generated_tokens),
+                'frontier': m8diag.get('frontier'),
+                'all_cache_offsets_equal_frontier': m8diag.get('all_cache_offsets_equal_frontier'),
+                'cache_layer_count': m8diag.get('cache_layer_count'),
+                'cache_offsets_all': m8diag.get('cache_offsets_all'),
+                'prompt_suffix_tokens': last_runtime_turn.get('prompt_suffix_tokens'),
+                'appended_prefill_tokens': last_runtime_turn.get('appended_prefill_tokens'),
+                'append_seconds': last_runtime_turn.get('append_seconds'),
+                'first_token_latency_s': last_runtime_turn.get('first_token_latency_s'),
+                'decode_seconds': last_runtime_turn.get('decode_seconds'),
+                'decode_tok_s': last_runtime_turn.get('decode_tok_s'),
+                'prompt_replay_count': m8diag.get('total_prompt_replay_count'),
+                'full_cache_repack_count': m8diag.get('total_full_cache_repack_count'),
+                'elapsed_seconds': perf_counter() - turn_t0,
+            })
             return assistant_turn
         except Exception as exc:
             rec.last_error = str(exc)

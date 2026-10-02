@@ -20,9 +20,9 @@ new dependency. See [M20](m20-omlx-release-migration.md) for exact scopes.
 | Decode | QUALIFIED | oMLX `BatchGenerator`/`GenerationBatch`, MTP OFF, DSpark OFF, speculative decode OFF, practical single-stream decode above the release floor. |
 | API serving | QUALIFIED | Local text-only single-flight HTTP: stateless Chat Completions, Responses, Messages; stateful Chat Completions sessions. |
 | Long context | QUALIFIED THROUGH 200K | Production prefill/decode performance and memory class verified through 200K-token contexts in the dense P0-P7 path. |
-| Long sessions | QUALIFIED FOR SINGLE-SESSION TEXT SCOPE | Repeated exact-prefix append/decode, cancellation recovery, bounded diagnostics, and stable memory/performance in the restored long-session evidence. |
+| Long sessions | QUALIFIED FOR SINGLE-SESSION TEXT/AGENT SCOPE | Repeated exact-prefix append/decode, bounded diagnostics, persistence/restore, client interruption recovery, and stable bounded memory/performance in restored long-session and M24 operational-soak evidence. |
 | Persistence/restore | QUALIFIED FOR SAME-BACKEND IDLE ARTIFACTS | Idle `DeepseekV41Cache[40]` plus exact all-token history saves and restores with provenance/schema/shape/dtype/frontier validation and fail-closed corruption handling. |
-| Tools/agent loops | QUALIFIED FOR CLIENT FUNCTION TOOLS | Chat Completions tool-call boundaries, tool results, repeated tool loops, invalid result rejection before mutation, persistence between tool steps. |
+| Tools/agent loops | QUALIFIED FOR CLIENT FUNCTION TOOLS | Chat Completions tool-call boundaries, tool results, repeated tool loops, invalid result rejection before mutation, persistence between tool steps, and M24 client-side coding-tool soak. |
 | Termination | QUALIFIED | DeepSeek V4.1 EOS token id `1` is retained in cache/history, hidden from protocol text, and maps to finish reason `stop`. |
 | Stateful stop strings | RELEASE POLICY CLOSED | Non-empty/non-null request `stop` on stateful Chat Completions is rejected before mutation. |
 
@@ -65,5 +65,6 @@ in M20 include:
 - `artifacts/m12/sessionized-http-qualification.json`
 - `artifacts/m13/repeated-tool-agent-qualification.json`
 - `artifacts/m14/termination-qualification.json`
+- `artifacts/m24/operational-soak.json`
 
 Those files preserve chronology and exact run details. New runtime paths or broadened API scope must be qualified separately rather than inferred from adjacent evidence.

@@ -12,6 +12,7 @@ Canonical current-state documents:
 - [API](api.md) — release-scope public HTTP contract
 - [M19 local web client](m19-local-web-client.md) — browser client and client-side tool boundary
 - [M20 oMLX release migration](m20-omlx-release-migration.md) — promoted exact upstream 0.7.0 MTP-OFF baseline and bounded qualification evidence
+- [M24 operational soak status](milestone-24-operational-soak-status.md) — bounded real-agent/client tool-loop soak, persistence/restore, interruption recovery, and observability evidence
 - [Performance](performance.md) — qualified performance class and baselines
 - [Provenance](provenance.md) — checkpoint/source/import/dependency identity
 - [Qualification](qualification.md) — current qualified, optional, unqualified, and non-goal areas
