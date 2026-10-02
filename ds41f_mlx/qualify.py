@@ -38,10 +38,24 @@ REAL_MODEL_ARTIFACTS = [
 ]
 
 
+def qualification_env() -> dict[str, str]:
+    import os
+    cfg = load_runtime_config()
+    paths = [str(ROOT), str(cfg.omlx_path)]
+    env = os.environ.copy()
+    existing = env.get("PYTHONPATH")
+    env["PYTHONPATH"] = ":".join(paths + ([existing] if existing else []))
+    env.setdefault("DS41F_CHECKPOINT", str(cfg.checkpoint_path))
+    env.setdefault("DS41F_OMLX_PATH", str(cfg.omlx_path))
+    env.setdefault("DS41F_RECIPE_PATH", str(cfg.recipe_path))
+    env.setdefault("DS41F_KV_ROOT", str(cfg.kv_root))
+    return env
+
+
 def run_command(cmd: list[str], *, timeout: int | None = None) -> dict[str, Any]:
     started = time.time()
     try:
-        proc = subprocess.run(cmd, cwd=ROOT, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=timeout)
+        proc = subprocess.run(cmd, cwd=ROOT, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=timeout, env=qualification_env())
         status = "PASS" if proc.returncode == 0 else "FAIL"
         return {"command": cmd, "status": status, "returncode": proc.returncode, "seconds": time.time() - started, "stdout_tail": proc.stdout[-4000:], "stderr_tail": proc.stderr[-4000:]}
     except subprocess.TimeoutExpired as exc:

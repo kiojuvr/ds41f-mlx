@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, asdict
 from pathlib import Path
+import importlib.util
 import os
 import sys
 from typing import Any
@@ -65,11 +66,11 @@ class RuntimeConfig:
         os.environ[ENV_VARS["enable_diagnostics"]] = "1" if self.enable_diagnostics else "0"
 
     def apply_import_paths(self) -> None:
-        candidates = [
-            self.omlx_path,
-            self.recipe_path,
-            self.recipe_path / "deepseek-recipe-python" / "python",
-        ]
+        candidates = [self.omlx_path]
+        # Prefer an installed deepseek-recipe wheel/native extension when present.
+        # A source checkout's pure Python directory is only added as a fallback.
+        if importlib.util.find_spec("deepseek_recipe") is None:
+            candidates.append(self.recipe_path / "deepseek-recipe-python" / "python")
         for path in candidates:
             s = str(path)
             if path.exists() and s not in sys.path:

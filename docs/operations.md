@@ -8,8 +8,8 @@ Required local components:
 
 - official DeepSeek-V4.1-Flash checkpoint;
 - oMLX checkout used by the qualified GenerationBatch decode path;
-- DeepSeek `deepseek-recipe` checkout containing the V4.1 tokenizer;
-- Python environment with FastAPI/uvicorn, MLX, mlx-lm, and recipe dependencies available;
+- DeepSeek `deepseek-recipe` checkout containing the V4.1 tokenizer and git revision evidence;
+- Python environment with FastAPI/uvicorn, MLX, mlx-lm, and an importable `deepseek-recipe` package/native extension available;
 - SSD-backed KV artifact location for persistence.
 
 The runtime does not fall back to another checkpoint, quantized model, recipe implementation, or backend if these are missing.
@@ -53,7 +53,7 @@ Outcome meanings:
 python3 -m ds41f_mlx.serve
 ```
 
-The launcher resolves configuration, adds the configured oMLX and recipe checkouts to `sys.path`, validates paths, prints resolved production identity, imports the existing FastAPI app, and starts uvicorn. No manual `PYTHONPATH` export is required for the configured checkouts.
+The launcher resolves configuration, adds the configured oMLX checkout to `sys.path`, validates paths, prints resolved production identity, imports the existing FastAPI app, and starts uvicorn. It prefers an installed `deepseek-recipe` package with its native extension; the configured recipe checkout remains the tokenizer/provenance source. No manual `PYTHONPATH` export is required for the configured oMLX checkout.
 
 Useful variants:
 

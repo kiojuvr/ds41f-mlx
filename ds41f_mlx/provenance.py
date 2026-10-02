@@ -88,7 +88,13 @@ def ds41f_git() -> dict[str, Any]:
 
 def import_check(module: str) -> dict[str, Any]:
     spec = importlib.util.find_spec(module)
-    return {"module": module, "status": "PASS" if spec is not None else "FAIL", "origin": None if spec is None else spec.origin}
+    if spec is None:
+        return {"module": module, "status": "FAIL", "origin": None, "error": "module spec not found"}
+    try:
+        imported = __import__(module)
+        return {"module": module, "status": "PASS", "origin": getattr(imported, "__file__", spec.origin)}
+    except Exception as exc:
+        return {"module": module, "status": "FAIL", "origin": spec.origin, "error": repr(exc)}
 
 
 def inspect_runtime(config: RuntimeConfig | None = None) -> dict[str, Any]:
