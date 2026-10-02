@@ -6,6 +6,8 @@
 
 M20 promotes exact upstream oMLX `v0.7.0` (`4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40`) after fresh bounded dependency-reachable gates, A/B, persistence, HTTP/tool/EOS, repeated-session and targeted 200K endpoint checks. See [M20](m20-omlx-release-migration.md) and `artifacts/m20/promotion.json`. The old M18 whole-runtime migration attestation is stale for this dependency; it is not reclassified to preserve inheritance. Unchanged source/prefill evidence is retained explicitly, not represented as fresh release timing.
 
+M21 adds the Rust-facing `ds41f_api` boundary over the unchanged local HTTP/SSE server. It does not alter model runtime bytes, prompt/protocol semantics, prefill/decode selectors, persistence format, or session ownership. Boundary-specific evidence is in `artifacts/m21/rust-boundary-qualification.json`; real-model endpoint behavior continues to be qualified by M20 unless rerun through `python3 -m ds41f_mlx.acceptance`.
+
 ## Supported scope
 
 - Hardware: Mac Studio M3 Ultra 512 GB class target.
@@ -96,6 +98,7 @@ Canonical cheap gate command set:
 
 ```bash
 python3 -m unittest tests/test_stateful_request_policy.py tests/test_runtime_config.py
+cargo test
 python3 tools/check_legacy_import_integrity.py
 python3 tools/check_native_import_dependencies.py
 python3 tools/check_repository_self_containment.py
@@ -110,4 +113,4 @@ Vision, batching, MTP, DSpark, speculative decode, sessionized Responses/Message
 
 ## Recommended next milestone
 
-Production Rust API Boundary against the stabilized M20 oMLX 0.7.0 MTP-OFF baseline. MTP and other acceleration remain deferred.
+Package/operational hardening for mixed Python/Rust local applications, including versioned release packaging and one-command acceptance orchestration. MTP and other acceleration remain deferred.

@@ -133,6 +133,14 @@ Canonical server acceptance through the documented launcher:
 python3 -m ds41f_mlx.acceptance
 ```
 
+Rust boundary build/test:
+
+```bash
+cargo test
+```
+
+Rust clients should use `ds41f_api::Ds41fClient` to connect to the documented local server or `ds41f_api::RuntimeProcess` to spawn `python3 -m ds41f_mlx.serve` and wait for `/health`. This does not change runtime ownership: model/session state remains in the server process.
+
 Runtime identity invalidation rules:
 
 - stale: ds41f runtime source digest changes;

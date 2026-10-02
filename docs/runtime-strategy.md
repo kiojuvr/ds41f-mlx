@@ -42,6 +42,8 @@ Stateful Chat Completions sessions preserve exact-prefix continuation, zero prom
 
 HTTP protocol compatibility is delegated to official `deepseek-recipe`; ds41f implements only the runtime backend. Stateless text Chat Completions, Responses, and Messages are in scope. Stateful sessions are Chat Completions only, including client-side function-tool/result loops. The server does not execute tools.
 
+M21's production Rust boundary is a Rust crate over this same loopback HTTP seam plus optional child-process startup/readiness/shutdown control. Rust clients do not receive executable cache handles, do not perform prompt replay, and do not duplicate DeepSeek protocol semantics; they submit JSON/SSE requests to the qualified server authority.
+
 Arbitrary stateful request stop strings are rejected before mutation. The qualified stateful stop mechanism is token-level DeepSeek EOS plus length/cancel handling.
 
 ## Optional / experimental

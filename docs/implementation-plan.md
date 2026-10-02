@@ -2,6 +2,14 @@
 
 This roadmap converts the runtime strategy into a finite sequence of milestones. It is not an optimization backlog. Runtime behavior, selectors, API integration, and multimodal work must not change until the relevant architecture milestone authorizes that work.
 
+## M21 — Production Rust API Boundary
+
+Status: **complete**. M21 selects a Rust client/process-control boundary over the already qualified local HTTP/SSE server rather than FFI, embedding, or a new IPC/model runtime. The `ds41f_api` crate exposes startup/readiness/shutdown helpers, raw JSON request execution, SSE streaming, cancellation by stream drop, stateless generation, stateful Chat Completions continuation, session lifecycle, persistence/restore calls, and failure/status propagation while leaving model execution, session state, persistence validation, and `deepseek-recipe` protocol semantics on the server side. See [M21](m21-rust-api-boundary.md) and `artifacts/m21/rust-boundary-qualification.json`.
+
+The M20 production path remains unchanged and authoritative: DENSE_P0_P7, P7 SSD Engram, P5 zero-replay handoff, upstream oMLX 0.7.0 `GenerationBatch`, MTP/DSpark/speculation OFF, deepseek-recipe semantics. Boundary-specific Rust tests pass with `cargo test`. Real-model endpoint evidence is inherited only because no reachable runtime implementation changed; rerun `python3 -m ds41f_mlx.acceptance` when validating an operational installation.
+
+Next: package/operations hardening for mixed Python/Rust local deployments; MTP remains deferred.
+
 ## M20 — oMLX production dependency migration
 
 Status: **complete**. Exact clean upstream `v0.7.0`
@@ -9,8 +17,7 @@ Status: **complete**. Exact clean upstream `v0.7.0`
 compatibility/lifecycle, A/B, repeated-session, persistence, HTTP/tool/EOS and
 one targeted 200K endpoint gate. See [M20](m20-omlx-release-migration.md).
 The prefill/P5 architecture is unchanged; all optional accelerations remain OFF.
-Historical dev2 decisions below retain their original evidence scope. Next:
-Production Rust API Boundary against the stabilized release baseline; MTP deferred.
+Historical dev2 decisions below retain their original evidence scope.
 
 ## Milestone 1 — Architecture restoration audit
 

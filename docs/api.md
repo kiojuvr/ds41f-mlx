@@ -6,6 +6,8 @@ This is the release-scope API contract for the qualified text runtime. It is int
 
 Transport is local HTTP. Protocol conversion, prompt rendering, response parsing, tool-call parsing, thinking fields, and stream formatting are delegated to official DeepSeek `deepseek-recipe`; `ds41f-mlx` supplies the backend runtime below that layer. Production paths and server settings are resolved through `ds41f_mlx.config.RuntimeConfig`; see `operations.md`.
 
+The stable Rust-facing API is the `ds41f_api` crate over this HTTP/SSE contract. It exposes startup/readiness helpers, raw JSON request methods, session lifecycle calls, streaming iterators, cancellation-by-drop, and process shutdown helpers without exposing KV tensors, oMLX objects, prompt-token replay, or recipe internals.
+
 Supported endpoints:
 
 - `GET /health` — process/model health. Returns `alive` before model load, `ready` after the backend has a model, or `unavailable` with `fatal_error`.
@@ -24,7 +26,7 @@ Supported endpoints:
 
 Production serving uses `PRODUCTION_PREFILL_SELECTOR = DENSE_P0_P7`: official recipe tokens are rendered, `tokens[-1]` is held out, `tokens[:-1]` are committed through `DeferredPrefillAppend` with P7 `FULL_RESIDENT_BACKBONE_SSD_ENGRAM`, and P5 hands the held-out terminal token exactly once to oMLX `GenerationBatch` with MTP, DSpark, and speculative decode OFF.
 
-Stateful sessions route to exactly one live recipe tool session/GenerationBatch authority. The HTTP layer never owns KV tensors, all-token history, prompt replay, cache repack/export, or tool execution.
+Stateful sessions route to exactly one live recipe tool session/GenerationBatch authority. The HTTP layer and Rust boundary never own KV tensors, all-token history, prompt replay, cache repack/export, or tool execution.
 
 ## Stateful behavior
 

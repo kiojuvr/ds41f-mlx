@@ -1,0 +1,47 @@
+{
+  "additional_gates": [
+    {
+      "command": "python3 -m unittest tests/test_stateful_request_policy.py tests/test_runtime_config.py",
+      "status": "PASS"
+    },
+    {
+      "command": "python3 tools/check_legacy_import_integrity.py",
+      "status": "PASS"
+    },
+    {
+      "command": "python3 tools/check_native_import_dependencies.py",
+      "status": "PASS"
+    },
+    {
+      "command": "python3 tools/check_repository_self_containment.py",
+      "status": "PASS"
+    },
+    {
+      "command": "cmake -S native -B native/build && cmake --build native/build && ctest --test-dir native/build --output-on-failure",
+      "status": "PASS",
+      "tests": "5/5 native checkpoint-free tests passed"
+    }
+  ],
+  "boundary": "loopback_http_rust_client_process_control",
+  "created_at": 1790933737.1735082,
+  "invariants": [
+    "no Rust KV/cache/session authority",
+    "no prompt replay fallback in Rust",
+    "deepseek-recipe protocol semantics retained",
+    "MTP/DSpark/speculation remain server-side OFF per M20"
+  ],
+  "model_state_authority": "server-side deepseek-recipe/ds41f/oMLX GenerationBatch only",
+  "provenance_inspect_tail": "ython/deepseek_recipe/__init__.py\",\n      \"status\": \"FAIL\"\n    },\n    {\n      \"error\": \"module spec not found\",\n      \"module\": \"mlx\",\n      \"origin\": null,\n      \"status\": \"FAIL\"\n    },\n    {\n      \"error\": \"module spec not found\",\n      \"module\": \"mlx_lm\",\n      \"origin\": null,\n      \"status\": \"FAIL\"\n    }\n  ],\n  \"omlx\": {\n    \"base_revision\": \"4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40\",\n    \"decode_native_identity\": {\n      \"files\": [\n        {\n          \"path\": \"omlx/custom_kernels/glm_moe_dsa/_ext.cpython-313-darwin.so\",\n          \"sha256\": \"0f656f7aecde1c136e351b4b96006085dc7f94764c5e62680f5accffa7a8d0ac\"\n        },\n        {\n          \"path\": \"omlx/custom_kernels/glm_moe_dsa/libomlx_glm_kernel_ops.dylib\",\n          \"sha256\": \"42769328361c0a18d95f3e873977ea710ccd138271347a4959cff90c941f391d\"\n        },\n        {\n          \"path\": \"omlx/custom_kernels/glm_moe_dsa/omlx_glm_kernels.metallib\",\n          \"sha256\": \"d6626be62d3edba1296c31ff9a954657a1a523ff1aff0fc76d7185561373923e\"\n        }\n      ],\n      \"sha256\": \"152acd55dfd2f89535898feb5fd07b6d0fb10ba739b0f42692b584807057cded\"\n    },\n    \"dirty\": false,\n    \"dirty_entries\": [],\n    \"identity_model\": \"base revision plus exact approved local content/diff digests; unknown or mismatched executable differences warn and require review/requalification.\",\n    \"local_identity_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\n    \"path\": \"/Users/kioju/omlx-0.7.0.release\",\n    \"revision\": \"4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40\",\n    \"status\": \"PASS\"\n  },\n  \"packages\": {\n    \"deepseek-recipe\": null,\n    \"mlx\": null,\n    \"mlx-lm\": null\n  },\n  \"platform\": {\n    \"mac_ver\": [\n      \"26.5.2\",\n      [\n        \"\",\n        \"\",\n        \"\"\n      ],\n      \"arm64\"\n    ],\n    \"machine\": \"arm64\",\n    \"platform\": \"macOS-26.5.2-arm64-arm-64bit\",\n    \"processor\": \"arm\"\n  },\n  \"production\": {\n    \"dspark\": \"OFF\",\n    \"mtp\": \"OFF\",\n    \"prefill_selector\": \"DENSE_P0_P7\",\n    \"speculative_decode\": \"OFF\"\n  },\n  \"python\": {\n    \"executable\": \"/Applications/Xcode.app/Contents/Developer/usr/bin/python3\",\n    \"version\": \"3.9.6 (default, May 22 2026, 11:13:45) \\n[Clang 21.0.0 (clang-2100.1.1.101)]\"\n  },\n  \"revision_checks\": [\n    {\n      \"actual\": \"4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40\",\n      \"check\": \"revision\",\n      \"component\": \"oMLX\",\n      \"expected\": \"4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40\",\n      \"status\": \"PASS\"\n    },\n    {\n      \"actual\": \"PASS\",\n      \"check\": \"local_differences\",\n      \"component\": \"oMLX\",\n      \"expected\": \"clean or approved exact patches\",\n      \"status\": \"PASS\"\n    },\n    {\n      \"actual\": \"8cadfede7063c896b944e7bae05daa3549ae97ea\",\n      \"check\": \"revision\",\n      \"component\": \"deepseek-recipe\",\n      \"expected\": \"8cadfede7063c896b944e7bae05daa3549ae97ea\",\n      \"status\": \"PASS\"\n    },\n    {\n      \"actual\": \"PASS\",\n      \"check\": \"local_differences\",\n      \"component\": \"deepseek-recipe\",\n      \"expected\": \"clean or approved exact patches\",\n      \"status\": \"PASS\"\n    }\n  ],\n  \"schema\": \"ds41f.runtime-provenance.v1\",\n  \"status\": \"FAIL\",\n  \"validation\": [\n    {\n      \"key\": \"checkpoint_path\",\n      \"message\": \"/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash\",\n      \"status\": \"PASS\"\n    },\n    {\n      \"key\": \"omlx_path\",\n      \"message\": \"/Users/kioju/omlx-0.7.0.release\",\n      \"status\": \"PASS\"\n    },\n    {\n      \"key\": \"recipe_path\",\n      \"message\": \"/Volumes/SDXC-512/deepseek-v41-flash-mlx/third_party/deepseek-recipe\",\n      \"status\": \"PASS\"\n    },\n    {\n      \"key\": \"kv_root\",\n      \"message\": \"/Volumes/USB-SSD-RAID-0/ds41f-mlx/kv\",\n      \"status\": \"PASS\"\n    },\n    {\n      \"key\": \"production_prefill_selector\",\n      \"message\": \"DENSE_P0_P7\",\n      \"status\": \"PASS\"\n    },\n    {\n      \"key\": \"mtp\",\n      \"message\": \"OFF\",\n      \"status\": \"PASS\"\n    },\n    {\n      \"key\": \"dspark\",\n      \"message\": \"OFF\",\n      \"status\": \"PASS\"\n    },\n    {\n      \"key\": \"speculative_decode\",\n      \"message\": \"OFF\",\n      \"status\": \"PASS\"\n    }\n  ]\n}\n",
+  "qualification_result": "M21 Rust boundary tests PASS; native/Python cheap gates PASS; no production runtime implementation changed.",
+  "real_runtime_gate": "not rerun in this environment by M21; use python3 -m ds41f_mlx.acceptance for bounded real-model HTTP acceptance when dependencies are available; M20 runtime path unchanged",
+  "runtime_implementation_changed": false,
+  "rust_tests": {
+    "command": "cargo test",
+    "returncode": 0,
+    "stderr_tail": "    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.00s\n     Running unittests src/lib.rs (target/debug/deps/ds41f_api-df488634b2cce06b)\n     Running tests/boundary.rs (target/debug/deps/boundary-e00260a99fd99348)\n   Doc-tests ds41f_api\n",
+    "stdout_tail": "\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 5 tests\ntest http_errors_propagate_without_fallback ... ok\ntest health_parses_readiness_without_owning_state ... ok\ntest chunked_body_is_decoded_for_json_endpoints ... ok\ntest stateful_session_paths_use_server_session_authority ... ok\ntest sse_stream_yields_events_and_drop_cancels_connection ... ok\n\ntest result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n"
+  },
+  "schema": "ds41f.m21.rust-boundary-qualification.v1",
+  "status": "PASS",
+  "updated_at": 1790933818.492188
+}

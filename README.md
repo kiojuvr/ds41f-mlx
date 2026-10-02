@@ -182,6 +182,12 @@ python3 -m ds41f_mlx.web --runtime-url http://127.0.0.1:8000
 
 The web client is above the runtime API and executes client-side tools such as bounded web search outside the model server. See `docs/m19-local-web-client.md`.
 
+Build and test the Rust boundary:
+
+```bash
+cargo test
+```
+
 Run unified qualification:
 
 ```bash
@@ -194,7 +200,7 @@ See `docs/operations.md` and `docs/m20-omlx-release-migration.md` for configurat
 
 ## Runtime/API status
 
-The supported serving layer uses official DeepSeek `deepseek-recipe` for protocol, prompt, response, tool-call, thinking, and streaming behavior, with a narrow `ds41f` backend interface below it. See `docs/api.md` for exact endpoint behavior, single-flight/max-session limits, persistence/restore, tool-loop behavior, streaming, and the stateful stop-string rejection policy.
+The supported serving layer uses official DeepSeek `deepseek-recipe` for protocol, prompt, response, tool-call, thinking, and streaming behavior, with a narrow `ds41f` backend interface below it. M21 adds the stable Rust-facing boundary as the `ds41f_api` crate over this same local HTTP/process-lifetime seam; Rust does not own KV/session state or reimplement recipe semantics. See `docs/api.md` and `docs/m21-rust-api-boundary.md` for endpoint behavior, single-flight/max-session limits, persistence/restore, tool-loop behavior, streaming, cancellation, and ownership contracts.
 
 ## Correctness model
 
