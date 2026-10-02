@@ -87,6 +87,9 @@ def run_acceptance(output: Path | None = None) -> dict[str, Any]:
             code, stateless = http_json("POST", base + "/v1/chat/completions", chat_body([{"role": "user", "content": "Answer with exactly one short sentence: 2+2?"}], max_tokens=32))
             result["steps"].append({"name": "stateless_chat", "status": "PASS" if code == 200 else "FAIL", "code": code, "finish_reason": (stateless.get("choices") or [{}])[0].get("finish_reason"), "content_prefix": assistant_content(stateless)[:120] if code == 200 else None})
 
+            code, ready_health = http_json("GET", base + "/health", timeout=30)
+            result["steps"].append({"name": "health_after_model_request", "status": "PASS" if code == 200 and ready_health.get("model_ready") else "FAIL", "code": code, "data": ready_health})
+
             code, session = http_json("POST", base + "/v1/sessions", {})
             sid = session.get("id")
             result["steps"].append({"name": "create_session", "status": "PASS" if code == 200 and sid else "FAIL", "code": code, "session_id": sid})
