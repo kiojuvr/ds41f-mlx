@@ -31,8 +31,9 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.cmd == "inspect":
         cfg = load_runtime_config(); cfg.apply_environment(); cfg.apply_import_paths()
-        print(json.dumps({"schema":"ds41f.ops.inspect.v1", "release_manifest": load_release_manifest(), "provenance": inspect_runtime(cfg)}, indent=2, sort_keys=True))
-        return 0
+        provenance = inspect_runtime(cfg)
+        print(json.dumps({"schema":"ds41f.ops.inspect.v1", "status": provenance.get("status"), "release_manifest": load_release_manifest(), "provenance": provenance}, indent=2, sort_keys=True))
+        return 0 if provenance.get("status") in {"PASS", "WARNING"} else 2
     if args.cmd == "start":
         return _run_module("ds41f_mlx.serve", rest)
     if args.cmd == "quick":

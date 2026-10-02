@@ -13,7 +13,7 @@ M20 remains the authority for model/runtime behavior. M21 remains the authority 
 
 ## Release identity model
 
-The active release version is `0.22.0`. The manifest records:
+The active release version is recorded in `release/ds41f-release.json` (advanced to `0.23.0` by M23). The manifest records:
 
 - ds41f release/version/scope;
 - Python compatibility (`>=3.13,<3.14`, qualified Python 3.13.15);

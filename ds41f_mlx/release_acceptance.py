@@ -24,26 +24,34 @@ def artifact_path(output: Path | None) -> Path:
     return ROOT / "artifacts" / "release" / f"acceptance-{time.strftime('%Y%m%d-%H%M%S')}.json"
 
 
-def run_cargo_acceptance(timeout: int | None = 1800) -> dict[str, Any]:
+def run_rust_acceptance(timeout: int | None = 1800, *, installed: bool = False) -> dict[str, Any]:
     env = os.environ.copy()
     env.setdefault("DS41F_PYTHON", sys.executable)
     started = time.time()
-    proc = subprocess.run(["cargo", "run", "--bin", "m21_real_acceptance"], cwd=ROOT, env=env, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=timeout)
-    return {"command":["cargo","run","--bin","m21_real_acceptance"], "status":"PASS" if proc.returncode == 0 else "FAIL", "returncode":proc.returncode, "seconds":time.time()-started, "stdout_tail":proc.stdout[-8000:], "stderr_tail":proc.stderr[-8000:]}
+    bundled = Path(env.get("DS41F_ACCEPTANCE_BIN", str(ROOT / "bin" / "m21_real_acceptance")))
+    if installed or bundled.exists():
+        cmd = [str(bundled)]
+        cwd = ROOT
+    else:
+        cmd = ["cargo", "run", "--bin", "m21_real_acceptance"]
+        cwd = ROOT
+    proc = subprocess.run(cmd, cwd=cwd, env=env, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=timeout)
+    return {"command":cmd, "status":"PASS" if proc.returncode == 0 else "FAIL", "returncode":proc.returncode, "seconds":time.time()-started, "stdout_tail":proc.stdout[-8000:], "stderr_tail":proc.stderr[-8000:]}
 
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="Run canonical ds41f release acceptance")
     ap.add_argument("--output", type=Path)
     ap.add_argument("--skip-cheap-gates", action="store_true", help="skip repository/native cheap gates; still run provenance and real Rust/server acceptance")
+    ap.add_argument("--installed", action="store_true", help="installed/bundled release mode: skip source-tree cheap gates and use bundled Rust acceptance binary")
     args = ap.parse_args(argv)
     started = time.time()
     cfg = load_runtime_config(); cfg.apply_environment(); cfg.apply_import_paths()
     provenance = inspect_runtime(cfg)
     gates: list[dict[str, Any]] = []
-    if not args.skip_cheap_gates:
+    if not args.skip_cheap_gates and not args.installed:
         gates.extend(run_command(cmd, timeout=300) for cmd in CHEAP_GATES)
-    real = run_cargo_acceptance()
+    real = run_rust_acceptance(installed=args.installed)
     status = "PASS" if provenance.get("status") == "PASS" and all(g.get("status") == "PASS" for g in gates) and real.get("status") == "PASS" else "FAILED"
     artifact = {
         "schema":"ds41f.release-acceptance.v1",
@@ -53,7 +61,7 @@ def main(argv: list[str] | None = None) -> int:
         "release_manifest":load_release_manifest(),
         "provenance":provenance,
         "tested_runtime_identity":identity_projection(provenance),
-        "gates":{"cheap":gates, "real_rust_http_server":real},
+        "gates":{"cheap":gates, "real_rust_http_server":real, "installed_mode": args.installed},
         "scope":"Current release acceptance: package/release identity, configured dependency provenance, Rust boundary build/test through cheap gates, real server startup/readiness/stateless/SSE-cancel/stateful/shutdown via m21_real_acceptance. Does not run long-context or historical exhaustive campaigns.",
     }
     out=artifact_path(args.output); out.parent.mkdir(parents=True, exist_ok=True); out.write_text(json.dumps(artifact, indent=2, sort_keys=True)+"\n")

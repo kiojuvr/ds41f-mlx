@@ -2,6 +2,12 @@
 
 This roadmap converts the runtime strategy into a finite sequence of milestones. It is not an optimization backlog. Runtime behavior, selectors, API integration, and multimodal work must not change until the relevant architecture milestone authorizes that work.
 
+## M23 — Relocatable Release Bundle and Clean-Room Installation Qualification
+
+Status: **complete**. M23 adds a source build command (`python -m ds41f_mlx.build_release`) that creates a relocatable local tarball/directory bundle containing the Python runtime, release manifest, Rust boundary crate source, bundled Rust real-server acceptance binary, wrappers, config template, and bundle identity record. Clean-room qualification unpacked the bundle outside the development checkout, verified installed manifest/provenance, proved bad dependency failure, and passed real installed acceptance through `./bin/ds41f-accept`. See [M23](m23-relocatable-release.md) and `artifacts/m23/clean-install-acceptance.json`.
+
+M23 does not change runtime architecture, M20 model evidence, M21 boundary semantics, or M22 manifest/operator authority. Next: installer ergonomics/signing/notarization or broader clean-machine docs; MTP remains deferred.
+
 ## M22 — Release Packaging and Operational Hardening
 
 Status: **complete**. M22 defines a versioned local-release model with `release/ds41f-release.json` as the active manifest/dependency authority, reconciles stale dev2-era metadata, adds provenance checks for package/manifest/Rust-boundary identities, moves current qualification output to `artifacts/release/`, and provides canonical operator commands through `python -m ds41f_mlx.ops`. One-command release acceptance (`ops accept`) composes cheap Python/Rust/native gates with the M21 real Rust→HTTP/SSE→server acceptance path. Evidence: `artifacts/m22/release-acceptance.json`; decision/status: [M22](m22-release-packaging.md).

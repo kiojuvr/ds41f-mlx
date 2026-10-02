@@ -206,10 +206,18 @@ Run one-command release acceptance:
 ```bash
 ~/.venvs/omlx-0.7.0.release/bin/python -m ds41f_mlx.ops accept
 ```
+Build a relocatable local release bundle:
+
+```bash
+~/.venvs/omlx-0.7.0.release/bin/python -m ds41f_mlx.build_release --output-dir dist
+```
+
+Unpack the bundle elsewhere, edit/source `config/ds41f.env`, then use `./bin/ds41f inspect`, `./bin/ds41f start`, and `./bin/ds41f-accept`.
+
 
 Use the qualified Python 3.13 release environment (`~/.venvs/omlx-0.7.0.release/bin/python`). The M22 release manifest (`release/ds41f-release.json`) is the active machine-readable release/dependency authority. M20 pins upstream `v0.7.0` at `4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40`; directory names are not identities. The versioned release checkout is the qualification authority, dev2 is preserved for rollback, and `~/omlx` is reserved for a separately constructed operational checkout matching that identity.
 
-See `docs/operations.md`, `docs/m22-release-packaging.md`, and `docs/m20-omlx-release-migration.md` for configuration, packaging, qualification, and baseline evidence.
+See `docs/operations.md`, `docs/m22-release-packaging.md`, `docs/m23-relocatable-release.md`, and `docs/m20-omlx-release-migration.md` for configuration, packaging, distribution, qualification, and baseline evidence.
 
 ## Runtime/API status
 

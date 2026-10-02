@@ -1,6 +1,6 @@
 # Operations and configuration
 
-This is the operator-facing path for the scoped text runtime. Historical milestone documents are not required for normal startup. M22 defines `release/ds41f-release.json` as the active release/dependency manifest and `python -m ds41f_mlx.ops` as the canonical operator command surface.
+This is the operator-facing path for the scoped text runtime. Historical milestone documents are not required for normal startup. M22 defines `release/ds41f-release.json` as the active release/dependency manifest and `python -m ds41f_mlx.ops` as the canonical source/operator command surface. M23 adds a relocatable local bundle with `./bin/ds41f` and `./bin/ds41f-accept` wrappers for installed operation outside the development checkout.
 
 ## Dependencies
 
@@ -159,6 +159,31 @@ Outcome meanings:
 - `QUICK_RUNTIME_QUALIFIED`: provenance plus cheap/static/runtime gates passed; this is not a fresh long-context benchmark.
 - `FULL_RELEASE_REQUALIFIED`: quick gates plus configured real-model qualification gates passed on this machine.
 - `FAILED`: one or more required gates failed.
+
+## Relocatable bundle operation
+
+Build from the source repository:
+
+```bash
+~/.venvs/omlx-0.7.0.release/bin/python -m ds41f_mlx.build_release --output-dir dist
+```
+
+Install/configure elsewhere:
+
+```bash
+mkdir -p /opt/ds41f
+cd /opt/ds41f
+tar -xzf /path/to/ds41f-mlx-0.23.0.tar.gz
+cd ds41f-mlx-0.23.0
+cp config/ds41f.env.example config/ds41f.env
+# edit paths, then:
+source config/ds41f.env
+./bin/ds41f inspect
+./bin/ds41f start
+./bin/ds41f-accept
+```
+
+Installed acceptance uses the bundled Rust acceptance binary and does not require Cargo/CMake or the original Git checkout. Source-tree quick/full qualification remains available through `python -m ds41f_mlx.ops quick/full`.
 
 ## Supported runtime behavior
 
