@@ -19,8 +19,8 @@ PINNED_OMLX_REVISION = "b390b31e0c6831225fed0f24d278eb1db7fcb68b"
 PINNED_RECIPE_REVISION = "8cadfede7063c896b944e7bae05daa3549ae97ea"
 
 DS41F_RUNTIME_PATHS = ("ds41f_mlx", "native", "pyproject.toml")
-DS41F_RUNTIME_EXCLUDE = {"ds41f_mlx/provenance.py", "ds41f_mlx/qualify.py"}
-DS41F_QUALIFICATION_PATHS = ("tools", "tests", "ds41f_mlx/provenance.py", "ds41f_mlx/qualify.py")
+DS41F_RUNTIME_EXCLUDE = {"ds41f_mlx/provenance.py", "ds41f_mlx/qualify.py", "ds41f_mlx/acceptance.py"}
+DS41F_QUALIFICATION_PATHS = ("tools", "tests", "ds41f_mlx/provenance.py", "ds41f_mlx/qualify.py", "ds41f_mlx/acceptance.py")
 DS41F_NONRUNTIME_PREFIXES = ("artifacts/", "docs/")
 
 # Local oMLX changes present on the target machine during M16/M17. These are

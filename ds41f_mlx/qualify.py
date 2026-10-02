@@ -68,7 +68,7 @@ def artifact_path(mode: str, output: Path | None) -> Path:
     if output is not None:
         return output
     stamp = time.strftime("%Y%m%d-%H%M%S")
-    return ROOT / "artifacts" / "m17" / f"unified-qualification-{mode}-{stamp}.json"
+    return ROOT / "artifacts" / "m18" / f"unified-qualification-{mode}-{stamp}.json"
 
 
 def load_json_if_present(path: Path) -> dict[str, Any] | None:
@@ -106,15 +106,31 @@ def identity_projection(provenance: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def compare_artifact_identity(artifact: Path, current: dict[str, Any]) -> dict[str, Any]:
-    previous = json.loads(artifact.read_text())
-    prev_proj = previous.get("tested_runtime_identity") or identity_projection(previous.get("provenance", {}))
+def compare_identity_projection(expected: dict[str, Any], current: dict[str, Any], *, artifact: Path) -> dict[str, Any]:
+    prev_proj = expected
     curr_proj = identity_projection(current)
     diffs = []
     for key in sorted(set(prev_proj) | set(curr_proj)):
         if prev_proj.get(key) != curr_proj.get(key):
             diffs.append({"key": key, "artifact": prev_proj.get(key), "current": curr_proj.get(key)})
     return {"status": "CURRENT_RUNTIME_MATCHES_ARTIFACT" if not diffs else "EXPENSIVE_QUALIFICATION_STALE", "differences": diffs, "artifact": str(artifact)}
+
+
+def compare_artifact_identity(artifact: Path, current: dict[str, Any]) -> dict[str, Any]:
+    previous = json.loads(artifact.read_text())
+    prev_proj = previous.get("tested_runtime_identity") or identity_projection(previous.get("provenance", {}))
+    return compare_identity_projection(prev_proj, current, artifact=artifact)
+
+
+def compare_evidence_attestation(attestation: Path, current: dict[str, Any]) -> dict[str, Any]:
+    data = json.loads(attestation.read_text())
+    expected = data.get("inherited_tested_runtime_identity") or data.get("tested_runtime_identity")
+    if not expected:
+        return {"status": "INVALID_ATTESTATION", "artifact": str(attestation), "differences": [{"key": "inherited_tested_runtime_identity", "artifact": None, "current": "required"}]}
+    result = compare_identity_projection(expected, current, artifact=attestation)
+    if result["status"] == "CURRENT_RUNTIME_MATCHES_ARTIFACT":
+        result["status"] = "INHERITED_EXPENSIVE_EVIDENCE_VALID"
+    return result
 
 
 def derive_status(mode: str, provenance: dict[str, Any], gates: list[dict[str, Any]], real_model: list[dict[str, Any]]) -> str:
@@ -138,6 +154,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--skip-cheap-gates", action="store_true", help="only inspect provenance/config")
     parser.add_argument("--real-model", action="store_true", help="run representative real-model qualification in quick mode")
     parser.add_argument("--check-artifact", type=Path, help="compare current runtime identity with an existing qualification artifact and exit")
+    parser.add_argument("--check-evidence", type=Path, help="compare current runtime identity with an expensive-evidence migration/attestation artifact and exit")
     args = parser.parse_args(argv)
 
     cfg = load_runtime_config()
@@ -149,6 +166,10 @@ def main(argv: list[str] | None = None) -> int:
         result = compare_artifact_identity(args.check_artifact, provenance)
         print(json.dumps(result, indent=2, sort_keys=True))
         return 0 if result["status"] == "CURRENT_RUNTIME_MATCHES_ARTIFACT" else 2
+    if args.check_evidence is not None:
+        result = compare_evidence_attestation(args.check_evidence, provenance)
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 0 if result["status"] == "INHERITED_EXPENSIVE_EVIDENCE_VALID" else 2
 
     cheap_results: list[dict[str, Any]] = []
     if args.mode in {"quick", "full"} and not args.skip_cheap_gates:
@@ -163,7 +184,7 @@ def main(argv: list[str] | None = None) -> int:
 
     status = derive_status(args.mode, provenance, cheap_results, real_results)
     artifact = {
-        "schema": "ds41f.m16.unified-production-qualification.v1",
+        "schema": "ds41f.m18.unified-production-qualification.v1",
         "created_at": time.time(),
         "mode": args.mode,
         "status": status,
@@ -176,7 +197,7 @@ def main(argv: list[str] | None = None) -> int:
         "gates": {"cheap_static": cheap_results, "real_model": real_results},
         "real_model_evidence_summary": summarize_existing_real_model_evidence(),
         "historical_long_context_evidence": "artifacts/m6/performance-qualification/result.json",
-        "resource_policy": {"qualification_temp_artifacts": "retained under artifacts/m16 unless caller deletes them", "user_kv_artifacts": "retained when explicitly requested"},
+        "resource_policy": {"qualification_temp_artifacts": "retained under artifacts/m18 unless caller deletes them", "user_kv_artifacts": "retained when explicitly requested"},
         "invalidation_rules": {
             "expensive_real_model_qualification_stale_when": [
                 "ds41f runtime_source_identity sha256 changes",
@@ -186,12 +207,14 @@ def main(argv: list[str] | None = None) -> int:
                 "production selector or MTP/DSpark/speculation state changes"
             ],
             "not_stale_when_only": ["generated artifacts change", "documentation changes", "unrelated non-runtime repository state changes"],
-            "check_command": "python -m ds41f_mlx.qualify --check-artifact <artifact>"
+            "check_command": "python -m ds41f_mlx.qualify --check-artifact <artifact>",
+            "inherited_evidence_check_command": "python -m ds41f_mlx.qualify --check-evidence <attestation>"
         },
         "outcome_semantics": {
             "ENVIRONMENT_VALID": "inspect-only config/provenance passed pinned checks",
             "QUICK_RUNTIME_QUALIFIED": "preflight and cheap/runtime gates passed; no fresh 200K claim",
             "FULL_RELEASE_REQUALIFIED": "quick gates plus configured real-model gates passed on this machine",
+            "INHERITED_FULL_RELEASE_QUALIFIED": "current runtime identity matches migrated historical full-model evidence and current cheap/operator gates passed",
             "FAILED": "one or more required gates failed",
         },
     }

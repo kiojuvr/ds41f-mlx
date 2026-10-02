@@ -4,6 +4,8 @@
 
 `DS41F_TEXT_RUNTIME_RELEASE_QUALIFIED` for the scoped local text runtime below. This is not a universal project-complete claim.
 
+M18 release evidence status distinguishes fresh expensive qualification from inherited evidence. The current runtime may be accepted as `INHERITED_FULL_RELEASE_QUALIFIED` when its content-based runtime identity matches the M18 migration attestation for the M16 full-model evidence and current cheap/operator acceptance gates pass. This avoids rerunning full-model qualification merely because generated artifacts or documentation were committed.
+
 ## Supported scope
 
 - Hardware: Mac Studio M3 Ultra 512 GB class target.
@@ -77,6 +79,15 @@ Release evidence records:
 - deepseek-recipe revision `8cadfede7063c896b944e7bae05daa3549ae97ea` in session/tool/termination artifacts;
 - MLX/mlx-lm/Python/hardware versions where recorded by the individual artifacts;
 - target checkpoint path and checkpoint identity in performance/provenance artifacts.
+
+## Evidence validity commands
+
+```bash
+python3 -m ds41f_mlx.qualify --check-evidence artifacts/m18/m16-full-evidence-migration.json
+python3 -m ds41f_mlx.acceptance
+```
+
+`--check-evidence` reports inherited expensive evidence as valid only when the current runtime identity matches the attested full-qualified identity. It does not claim fresh full requalification.
 
 ## Cheap gates
 

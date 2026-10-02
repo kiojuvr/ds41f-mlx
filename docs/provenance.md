@@ -53,9 +53,11 @@ The release does not silently vendor those projects. Local checkout paths are op
 
 ## Tested runtime identity model
 
-Qualification is tied to content that can affect execution, not to a self-referential final repository HEAD. The ds41f identity records separate digests for runtime source (`ds41f_mlx`, `native`, `pyproject.toml`) and qualification tooling (`tools`, `tests`). Generated artifacts and documentation are classified separately; committing a qualification artifact does not change the runtime-source digest and therefore does not invalidate the run.
+Qualification is tied to content that can affect execution, not to a self-referential final repository HEAD. The ds41f identity records separate digests for runtime source (`ds41f_mlx`, `native`, `pyproject.toml`, excluding qualification/provenance tooling) and qualification tooling (`tools`, `tests`, provenance/qualification/acceptance helpers). Generated artifacts and documentation are classified separately; committing a qualification artifact does not change the runtime-source digest and therefore does not invalidate the run.
 
 External dependencies are identified as pinned base revisions plus deterministic local-difference identities. Approved local changes record path, kind, diff/content SHA-256, production reachability, and rationale. Unknown or mismatched executable differences produce a provenance warning and require review/requalification.
+
+Older expensive evidence can be inherited only through an explicit migration attestation. The attestation preserves the original artifact and provenance, records the commit/runtime boundary it represented, classifies intervening changes, and binds the evidence to the modern runtime identity. `python3 -m ds41f_mlx.qualify --check-evidence <attestation>` performs the mechanical validity check without rerunning the model.
 
 ## External architecture and implementation sources
 
