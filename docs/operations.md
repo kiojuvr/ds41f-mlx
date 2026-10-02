@@ -88,7 +88,21 @@ Full requalification mode, including the configured real-model gate:
 python3 -m ds41f_mlx.qualify --mode full
 ```
 
-Generated artifacts are written under `artifacts/m16/` unless `--output` is supplied. The repository ignores generated artifacts by default; a release manager may force-add a specific artifact when it is intended to become canonical release evidence.
+Generated artifacts are written under `artifacts/m16/` unless `--output` is supplied. The repository ignores generated artifacts by default; a release manager may force-add a specific artifact when it is intended to become canonical release evidence. Qualification artifacts contain a tested runtime identity, not just a Git HEAD, so committing the artifact does not by itself invalidate the run.
+
+Check whether current runtime contents still match a prior artifact without rerunning expensive model gates:
+
+```bash
+python3 -m ds41f_mlx.qualify --check-artifact artifacts/m16/<artifact>.json
+```
+
+Runtime identity invalidation rules:
+
+- stale: ds41f runtime source digest changes;
+- stale: oMLX base revision or approved local patch/content identity changes;
+- stale: deepseek-recipe base revision or approved local patch/content identity changes;
+- stale: checkpoint fingerprint or production selector/MTP/DSpark/speculation state changes;
+- not stale by itself: generated qualification artifacts, documentation, or unrelated non-runtime repository state changes.
 
 Outcome meanings:
 

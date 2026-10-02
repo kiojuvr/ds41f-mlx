@@ -7,6 +7,7 @@ from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 import importlib.util
 import json
+import os
 import platform
 import subprocess
 import sys
@@ -16,6 +17,41 @@ from ds41f_mlx.config import RuntimeConfig, load_runtime_config, validate_runtim
 
 PINNED_OMLX_REVISION = "b390b31e0c6831225fed0f24d278eb1db7fcb68b"
 PINNED_RECIPE_REVISION = "8cadfede7063c896b944e7bae05daa3549ae97ea"
+
+DS41F_RUNTIME_PATHS = ("ds41f_mlx", "native", "pyproject.toml")
+DS41F_QUALIFICATION_PATHS = ("tools", "tests")
+DS41F_NONRUNTIME_PREFIXES = ("artifacts/", "docs/")
+
+# Local oMLX changes present on the target machine during M16/M17. These are
+# prompt/processor image-token handling changes. ds41f selected serving uses
+# deepseek-recipe rendering plus oMLX model load/GenerationBatch decode, not the
+# oMLX API processor. They are recorded exactly so the checkout is identified
+# without treating any dirty bit as unexplained runtime drift.
+APPROVED_EXTERNAL_PATCHES = {
+    "omlx": {
+        "omlx/patches/deepseek_v41/encoding.py": {
+            "kind": "modified",
+            "diff_sha256": "2f4bbfccc21fbd1843cc316caf4d19e3d424dd05b436ba72804e89db655a211f",
+            "content_sha256": "889efbdc8abe8aa4d18538596a427ff874b01bf55887ac6981d8c4e8610301e2",
+            "production_reachable": False,
+            "reason": "oMLX processor literal image-token escape; ds41f production path uses deepseek-recipe text rendering and GenerationBatch decode, not oMLX Processor chat encoding.",
+        },
+        "omlx/patches/deepseek_v41/processing.py": {
+            "kind": "modified",
+            "diff_sha256": "ca266be8be962673e3e340caabf941fa1cf4a0dd510f22a7298fab3469e62564",
+            "content_sha256": "b920a47364a2af2d628fcd4fa0a62b104b6634a90a0719b67b954031ac4154e7",
+            "production_reachable": False,
+            "reason": "oMLX Processor wiring for literal image-token escape; not used by ds41f production recipe serving path.",
+        },
+        "tests/test_deepseek_v41_literal_image_token.py": {
+            "kind": "untracked",
+            "content_sha256": "bec1010d13827be63168d04071534c4f306d7a58a5688c4e616e2f69f2617f72",
+            "production_reachable": False,
+            "reason": "oMLX local test file only; not imported by ds41f runtime.",
+        },
+    },
+    "deepseek-recipe": {},
+}
 
 
 def git_rev(path: Path) -> str | None:
@@ -81,9 +117,66 @@ def checkpoint_fingerprint(path: Path) -> dict[str, Any]:
     return out
 
 
+def tree_digest(root: Path, include: tuple[str, ...]) -> dict[str, Any]:
+    files: list[Path] = []
+    for item in include:
+        p = root / item
+        if not p.exists():
+            continue
+        if p.is_file():
+            files.append(p)
+        else:
+            for child in p.rglob("*"):
+                if child.is_file() and "__pycache__" not in child.parts and not child.name.endswith((".pyc", ".o")):
+                    files.append(child)
+    h = sha256()
+    entries = []
+    for path in sorted(files):
+        rel = path.relative_to(root).as_posix()
+        digest = file_sha256(path) or ""
+        size = path.stat().st_size
+        h.update(rel.encode()); h.update(b"\0"); h.update(digest.encode()); h.update(b"\0")
+        entries.append({"path": rel, "sha256": digest, "size": size})
+    return {"sha256": h.hexdigest(), "file_count": len(entries), "files": entries}
+
+
+def ds41f_dirty_classification(root: Path) -> dict[str, Any]:
+    try:
+        out = subprocess.check_output(["git", "-C", str(root), "status", "--porcelain"], text=True, stderr=subprocess.DEVNULL)
+    except Exception:
+        return {"available": False}
+    entries = []
+    runtime_affecting = False
+    qualification_affecting = False
+    for line in out.splitlines():
+        if not line:
+            continue
+        status = line[:2]
+        path = line[3:]
+        if " -> " in path:
+            path = path.split(" -> ", 1)[1]
+        category = "other_nonruntime"
+        if path.startswith("ds41f_mlx/") or path.startswith("native/") or path == "pyproject.toml":
+            category = "runtime_source"; runtime_affecting = True
+        elif path.startswith("tools/") or path.startswith("tests/"):
+            category = "qualification_tooling"; qualification_affecting = True
+        elif path.startswith(DS41F_NONRUNTIME_PREFIXES):
+            category = "generated_or_documentation"
+        entries.append({"status": status.strip(), "path": path, "category": category})
+    return {"available": True, "runtime_affecting_dirty": runtime_affecting, "qualification_affecting_dirty": qualification_affecting, "entries": entries}
+
+
 def ds41f_git() -> dict[str, Any]:
     root = Path(__file__).resolve().parents[1]
-    return {"path": str(root), "commit": git_rev(root), "dirty": git_dirty(root)}
+    return {
+        "path": str(root),
+        "commit": git_rev(root),
+        "dirty": git_dirty(root),
+        "dirty_classification": ds41f_dirty_classification(root),
+        "runtime_source_identity": tree_digest(root, DS41F_RUNTIME_PATHS),
+        "qualification_tooling_identity": tree_digest(root, DS41F_QUALIFICATION_PATHS),
+        "identity_model": "runtime_source_identity excludes generated artifacts/docs, so committing a qualification artifact does not invalidate the tested runtime source.",
+    }
 
 
 def import_check(module: str) -> dict[str, Any]:
@@ -97,19 +190,74 @@ def import_check(module: str) -> dict[str, Any]:
         return {"module": module, "status": "FAIL", "origin": spec.origin, "error": repr(exc)}
 
 
+def external_worktree_identity(name: str, path: Path) -> dict[str, Any]:
+    approved = APPROVED_EXTERNAL_PATCHES.get(name, {})
+    try:
+        raw = subprocess.check_output(["git", "-C", str(path), "status", "--porcelain"], text=True, stderr=subprocess.DEVNULL)
+    except Exception as exc:
+        return {"status": "FAIL", "error": repr(exc), "entries": []}
+    entries = []
+    statuses = []
+    h = sha256()
+    for line in raw.splitlines():
+        if not line:
+            continue
+        status_code = line[:2]
+        rel = line[3:]
+        if " -> " in rel:
+            rel = rel.split(" -> ", 1)[1]
+        full = path / rel
+        entry: dict[str, Any] = {"path": rel, "git_status": status_code.strip()}
+        if status_code.startswith("??"):
+            entry["kind"] = "untracked"
+            entry["content_sha256"] = file_sha256(full) if full.is_file() else None
+        else:
+            diff = subprocess.check_output(["git", "-C", str(path), "diff", "--", rel])
+            entry["kind"] = "modified"
+            entry["diff_sha256"] = sha256(diff).hexdigest()
+            entry["content_sha256"] = file_sha256(full) if full.exists() and full.is_file() else None
+        spec = approved.get(rel)
+        if spec is None:
+            entry["approval"] = "UNKNOWN"
+            entry["status"] = "WARNING"
+        else:
+            mismatches = []
+            for key in ("kind", "diff_sha256", "content_sha256"):
+                if key in spec and entry.get(key) != spec[key]:
+                    mismatches.append(key)
+            entry["approval"] = "APPROVED" if not mismatches else "MISMATCH"
+            entry["production_reachable"] = bool(spec.get("production_reachable"))
+            entry["reason"] = spec.get("reason")
+            entry["status"] = "PASS" if not mismatches else "WARNING"
+            if mismatches:
+                entry["mismatches"] = mismatches
+        statuses.append(entry["status"])
+        h.update(rel.encode()); h.update(b"\0"); h.update((entry.get("content_sha256") or entry.get("diff_sha256") or "").encode()); h.update(b"\0")
+        entries.append(entry)
+    final = "WARNING" if "WARNING" in statuses else "PASS"
+    return {
+        "status": final,
+        "base_revision": git_rev(path),
+        "dirty": bool(entries),
+        "dirty_entries": entries,
+        "local_identity_sha256": h.hexdigest(),
+        "identity_model": "base revision plus exact approved local content/diff digests; unknown or mismatched executable differences warn and require review/requalification.",
+    }
+
+
 def inspect_runtime(config: RuntimeConfig | None = None) -> dict[str, Any]:
     cfg = config or load_runtime_config()
     cfg.apply_import_paths()
     validation = validate_runtime_config(cfg)
     omlx_rev = git_rev(cfg.omlx_path)
     recipe_rev = git_rev(cfg.recipe_path)
-    omlx_dirty = git_dirty(cfg.omlx_path)
-    recipe_dirty = git_dirty(cfg.recipe_path)
+    omlx_identity = external_worktree_identity("omlx", cfg.omlx_path)
+    recipe_identity = external_worktree_identity("deepseek-recipe", cfg.recipe_path)
     revision_checks = [
         {"component": "oMLX", "check": "revision", "expected": PINNED_OMLX_REVISION, "actual": omlx_rev, "status": "PASS" if omlx_rev == PINNED_OMLX_REVISION else "WARNING"},
-        {"component": "oMLX", "check": "dirty", "expected": False, "actual": omlx_dirty, "status": "PASS" if omlx_dirty is False else "WARNING"},
+        {"component": "oMLX", "check": "local_differences", "expected": "clean or approved exact patches", "actual": omlx_identity["status"], "status": omlx_identity["status"]},
         {"component": "deepseek-recipe", "check": "revision", "expected": PINNED_RECIPE_REVISION, "actual": recipe_rev, "status": "PASS" if recipe_rev == PINNED_RECIPE_REVISION else "WARNING"},
-        {"component": "deepseek-recipe", "check": "dirty", "expected": False, "actual": recipe_dirty, "status": "PASS" if recipe_dirty is False else "WARNING"},
+        {"component": "deepseek-recipe", "check": "local_differences", "expected": "clean or approved exact patches", "actual": recipe_identity["status"], "status": recipe_identity["status"]},
     ]
     import_checks = [import_check("omlx"), import_check("deepseek_recipe"), import_check("mlx"), import_check("mlx_lm")]
     statuses = [x["status"] for x in validation] + [x["status"] for x in revision_checks] + [x["status"] for x in import_checks]
@@ -125,8 +273,8 @@ def inspect_runtime(config: RuntimeConfig | None = None) -> dict[str, Any]:
         "config": cfg.to_json(),
         "validation": validation,
         "checkpoint_fingerprint": checkpoint_fingerprint(cfg.checkpoint_path),
-        "omlx": {"path": str(cfg.omlx_path), "revision": omlx_rev, "dirty": omlx_dirty},
-        "deepseek_recipe": {"path": str(cfg.recipe_path), "revision": recipe_rev, "dirty": recipe_dirty},
+        "omlx": {"path": str(cfg.omlx_path), "revision": omlx_rev, **omlx_identity},
+        "deepseek_recipe": {"path": str(cfg.recipe_path), "revision": recipe_rev, **recipe_identity},
         "revision_checks": revision_checks,
         "production": {"prefill_selector": cfg.production_prefill_selector, "mtp": cfg.mtp, "dspark": cfg.dspark, "speculative_decode": cfg.speculative_decode},
     }

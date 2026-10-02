@@ -94,6 +94,29 @@ def summarize_existing_real_model_evidence() -> dict[str, Any]:
     return out
 
 
+def identity_projection(provenance: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "ds41f_runtime_source_sha256": provenance.get("ds41f", {}).get("runtime_source_identity", {}).get("sha256"),
+        "omlx_revision": provenance.get("omlx", {}).get("revision"),
+        "omlx_local_identity_sha256": provenance.get("omlx", {}).get("local_identity_sha256"),
+        "deepseek_recipe_revision": provenance.get("deepseek_recipe", {}).get("revision"),
+        "deepseek_recipe_local_identity_sha256": provenance.get("deepseek_recipe", {}).get("local_identity_sha256"),
+        "checkpoint_fingerprint": provenance.get("checkpoint_fingerprint"),
+        "production": provenance.get("production"),
+    }
+
+
+def compare_artifact_identity(artifact: Path, current: dict[str, Any]) -> dict[str, Any]:
+    previous = json.loads(artifact.read_text())
+    prev_proj = previous.get("tested_runtime_identity") or identity_projection(previous.get("provenance", {}))
+    curr_proj = identity_projection(current)
+    diffs = []
+    for key in sorted(set(prev_proj) | set(curr_proj)):
+        if prev_proj.get(key) != curr_proj.get(key):
+            diffs.append({"key": key, "artifact": prev_proj.get(key), "current": curr_proj.get(key)})
+    return {"status": "CURRENT_RUNTIME_MATCHES_ARTIFACT" if not diffs else "EXPENSIVE_QUALIFICATION_STALE", "differences": diffs, "artifact": str(artifact)}
+
+
 def derive_status(mode: str, provenance: dict[str, Any], gates: list[dict[str, Any]], real_model: list[dict[str, Any]]) -> str:
     if provenance.get("status") == "FAIL":
         return "FAILED"
@@ -114,6 +137,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--output", type=Path, help="artifact output path")
     parser.add_argument("--skip-cheap-gates", action="store_true", help="only inspect provenance/config")
     parser.add_argument("--real-model", action="store_true", help="run representative real-model qualification in quick mode")
+    parser.add_argument("--check-artifact", type=Path, help="compare current runtime identity with an existing qualification artifact and exit")
     args = parser.parse_args(argv)
 
     cfg = load_runtime_config()
@@ -121,6 +145,10 @@ def main(argv: list[str] | None = None) -> int:
     cfg.apply_import_paths()
     started = time.time()
     provenance = inspect_runtime(cfg)
+    if args.check_artifact is not None:
+        result = compare_artifact_identity(args.check_artifact, provenance)
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 0 if result["status"] == "CURRENT_RUNTIME_MATCHES_ARTIFACT" else 2
 
     cheap_results: list[dict[str, Any]] = []
     if args.mode in {"quick", "full"} and not args.skip_cheap_gates:
@@ -141,6 +169,7 @@ def main(argv: list[str] | None = None) -> int:
         "status": status,
         "duration_s": time.time() - started,
         "provenance": provenance,
+        "tested_runtime_identity": identity_projection(provenance),
         "resolved_runtime_config": cfg.to_json(),
         "production_selectors": provenance.get("production"),
         "termination_config": {"deepseek_v41_eos_token_id": 1, "stateful_stop_strings": "rejected_before_mutation"},
@@ -148,6 +177,17 @@ def main(argv: list[str] | None = None) -> int:
         "real_model_evidence_summary": summarize_existing_real_model_evidence(),
         "historical_long_context_evidence": "artifacts/m6/performance-qualification/result.json",
         "resource_policy": {"qualification_temp_artifacts": "retained under artifacts/m16 unless caller deletes them", "user_kv_artifacts": "retained when explicitly requested"},
+        "invalidation_rules": {
+            "expensive_real_model_qualification_stale_when": [
+                "ds41f runtime_source_identity sha256 changes",
+                "oMLX base revision or approved local identity sha256 changes",
+                "deepseek-recipe base revision or approved local identity sha256 changes",
+                "checkpoint fingerprint changes",
+                "production selector or MTP/DSpark/speculation state changes"
+            ],
+            "not_stale_when_only": ["generated artifacts change", "documentation changes", "unrelated non-runtime repository state changes"],
+            "check_command": "python -m ds41f_mlx.qualify --check-artifact <artifact>"
+        },
         "outcome_semantics": {
             "ENVIRONMENT_VALID": "inspect-only config/provenance passed pinned checks",
             "QUICK_RUNTIME_QUALIFIED": "preflight and cheap/runtime gates passed; no fresh 200K claim",

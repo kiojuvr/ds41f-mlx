@@ -49,7 +49,13 @@ The current production path has explicit external requirements:
 - MLX / mlx-lm versions recorded by the production artifacts for the target machine;
 - official `deepseek-recipe` checkout/tokenizer, pinned in session/tool/termination evidence to revision `8cadfede7063c896b944e7bae05daa3549ae97ea`.
 
-The release does not silently vendor those projects. Local checkout paths are operator requirements configured through `ds41f_mlx.config.RuntimeConfig` / environment variables and documented in `docs/operations.md`. `python3 -m ds41f_mlx.provenance` reports the resolved paths, checkpoint fingerprint, package versions, revisions, and pinned-revision checks without loading the model.
+The release does not silently vendor those projects. Local checkout paths are operator requirements configured through `ds41f_mlx.config.RuntimeConfig` / environment variables and documented in `docs/operations.md`. `python3 -m ds41f_mlx.provenance` reports the resolved paths, checkpoint fingerprint, package versions, revisions, tested-source digests, approved local patch identities, and pinned-revision checks without loading the model.
+
+## Tested runtime identity model
+
+Qualification is tied to content that can affect execution, not to a self-referential final repository HEAD. The ds41f identity records separate digests for runtime source (`ds41f_mlx`, `native`, `pyproject.toml`) and qualification tooling (`tools`, `tests`). Generated artifacts and documentation are classified separately; committing a qualification artifact does not change the runtime-source digest and therefore does not invalidate the run.
+
+External dependencies are identified as pinned base revisions plus deterministic local-difference identities. Approved local changes record path, kind, diff/content SHA-256, production reachability, and rationale. Unknown or mismatched executable differences produce a provenance warning and require review/requalification.
 
 ## External architecture and implementation sources
 
