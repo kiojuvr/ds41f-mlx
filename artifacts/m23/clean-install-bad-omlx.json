@@ -1,0 +1,706 @@
+{
+  "provenance": {
+    "checkpoint_fingerprint": {
+      "config.json": {
+        "sha256": "8be45ce0476004a3f529fd896115a4a2e800a129ad2d3ec05b16050f52e21879",
+        "size": 3311
+      },
+      "exists": true,
+      "model.safetensors.index.json": {
+        "sha256": "74b0686a3d2891980d5e303251b075a3bccae2c2ff650747db2620a649b98fa8",
+        "size": 7470294
+      },
+      "path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+      "tokenizer.json": {
+        "sha256": "c90dfa01249db1be4245780a052ede752e1361c612ac6d08e2bdada7d599476b",
+        "size": 6367257
+      }
+    },
+    "config": {
+      "checkpoint_path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+      "dspark": "OFF",
+      "enable_diagnostics": false,
+      "host": "127.0.0.1",
+      "kv_root": "/Volumes/USB-SSD-RAID-0/ds41f-mlx/kv",
+      "max_live_sessions": 4,
+      "model_id": "deepseek-v4.1-flash",
+      "mtp": "OFF",
+      "omlx_path": "/tmp/missing-omlx",
+      "port": 8000,
+      "production_prefill_selector": "DENSE_P0_P7",
+      "recipe_path": "/Volumes/SDXC-512/deepseek-v41-flash-mlx/third_party/deepseek-recipe",
+      "speculative_decode": "OFF",
+      "trace_history_limit": 32
+    },
+    "deepseek_recipe": {
+      "base_revision": "8cadfede7063c896b944e7bae05daa3549ae97ea",
+      "dirty": false,
+      "dirty_entries": [],
+      "identity_model": "base revision plus exact approved local content/diff digests; unknown or mismatched executable differences warn and require review/requalification.",
+      "local_identity_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "/Volumes/SDXC-512/deepseek-v41-flash-mlx/third_party/deepseek-recipe",
+      "revision": "8cadfede7063c896b944e7bae05daa3549ae97ea",
+      "status": "PASS"
+    },
+    "ds41f": {
+      "commit": null,
+      "dirty": null,
+      "dirty_classification": {
+        "available": false
+      },
+      "identity_model": "runtime_source_identity excludes generated artifacts/docs, release packaging metadata, Rust client boundary, and the separate ds41f_mlx.web local client. Runtime-affecting Python/native changes invalidate inherited model evidence; Rust/release packaging changes require boundary/acceptance qualification unless they alter a reachable model runtime path.",
+      "path": "/private/tmp/ds41f-m23-clean/ds41f-mlx-0.23.0",
+      "qualification_tooling_identity": {
+        "file_count": 3,
+        "files": [
+          {
+            "path": "ds41f_mlx/acceptance.py",
+            "sha256": "8456391f30f730b3bd034f1fbf679235c58e7bf38a7a3a1ce794b7a63fe6bbd2",
+            "size": 7290
+          },
+          {
+            "path": "ds41f_mlx/provenance.py",
+            "sha256": "070839386522a4f7d79185703a2f8928f713d46948bf005d02abee3c807acc1b",
+            "size": 17886
+          },
+          {
+            "path": "ds41f_mlx/qualify.py",
+            "sha256": "6bef1f9df7327817940a8aa4c24d63f987458fe29b3176d475f8dfdf9faaa6d6",
+            "size": 12827
+          }
+        ],
+        "sha256": "8f0900bf23f55643af4355d5354faa1326148abeefcb241a0831da57976f21be"
+      },
+      "release_packaging_identity": {
+        "file_count": 6,
+        "files": [
+          {
+            "path": "Cargo.lock",
+            "sha256": "495886631b141d1a1cc8493e72f6b738ceee9e23bbcf622e40d3af86f5a01eb5",
+            "size": 154
+          },
+          {
+            "path": "Cargo.toml",
+            "sha256": "b90a3143f88668fb433c6c66dc40f84e638d58460ae4026e5783a8dd705be26a",
+            "size": 56
+          },
+          {
+            "path": "pyproject.toml",
+            "sha256": "78bc695306442ea78ab3928e3d7dca908426ca9e685e4f298824de4acc0ee21a",
+            "size": 923
+          },
+          {
+            "path": "release/bundle-record.json",
+            "sha256": "596207f64b18efe439477219b100ef2cd45f4f5df36e1ac6683a90faaabaf357",
+            "size": 104553
+          },
+          {
+            "path": "release/ds41f-release.json",
+            "sha256": "9e129102d66d5c07de431a2bdc6ef7037c8d75110040f168dd5e14af23f9c412",
+            "size": 2103
+          },
+          {
+            "path": "rust/ds41f_api/Cargo.toml",
+            "sha256": "692882ecf65454eef626a87360e9d65a0d31afd23f71bd7eefa7166c92614bb2",
+            "size": 213
+          }
+        ],
+        "sha256": "1754cedfe78d12087cf37bad9da03cf77bdbe34af4a2176120954f777f05e245"
+      },
+      "runtime_source_identity": {
+        "file_count": 48,
+        "files": [
+          {
+            "path": "ds41f_mlx/__init__.py",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size": 0
+          },
+          {
+            "path": "ds41f_mlx/backend.py",
+            "sha256": "99b5450f17bfd41790b85c97545a0c79c757cb6157929c7900cd07ca11a7e57a",
+            "size": 6004
+          },
+          {
+            "path": "ds41f_mlx/build_release.py",
+            "sha256": "50e16cd184f7b2aa3883bca5388b928f70c637348653956f6234dfe35a530860",
+            "size": 6747
+          },
+          {
+            "path": "ds41f_mlx/config.py",
+            "sha256": "8d24bc00c067e958a3e45e900bb0dc211c8e6ce66ad718450658065a94d6fa7b",
+            "size": 6367
+          },
+          {
+            "path": "ds41f_mlx/dwarfstar_prefill.py",
+            "sha256": "615270311add5e083f008076cdc5436f547f402fd8385c1ac35a64a3aa618819",
+            "size": 8507
+          },
+          {
+            "path": "ds41f_mlx/dwarfstar_prefill_slice.py",
+            "sha256": "f999d14a059f7ba4b008be786e81c78eb337a8fcbc728fdd85fe755db2adb605",
+            "size": 41476
+          },
+          {
+            "path": "ds41f_mlx/dwarfstar_semantics.py",
+            "sha256": "9fd4142dc9404fc4147e03ddf9289936bb11e71fa2e52e4626e47c57f784b9b2",
+            "size": 7008
+          },
+          {
+            "path": "ds41f_mlx/dwarfstar_v41_sweep.py",
+            "sha256": "ffa80551acc7ddbaa46ec1dd6061b96a7faa2fca8bf82019afca2ed55d99a222",
+            "size": 8018
+          },
+          {
+            "path": "ds41f_mlx/m2_layer_major.py",
+            "sha256": "cbef65f7b0527121518178e33d51170561d24148d634f493aabde7713aae1b53",
+            "size": 8500
+          },
+          {
+            "path": "ds41f_mlx/m2_state_publication.py",
+            "sha256": "064557b1e88c255a68e48c8847e488932b169ef0c2733e4d78c6d15a767d7d3b",
+            "size": 6277
+          },
+          {
+            "path": "ds41f_mlx/native/ds41f_prefill_kernels.metal",
+            "sha256": "98c34ceac81c28bf62d26042db8759e76200927bf7d6984322ae0cb1547f1102",
+            "size": 859
+          },
+          {
+            "path": "ds41f_mlx/native/ds41f_prefill_native.c",
+            "sha256": "2fb444347bf43469684bcae5aefc3cf19848ad587635ed4a39c8c8ab0621e03e",
+            "size": 96686
+          },
+          {
+            "path": "ds41f_mlx/native/ds41f_prefill_native.h",
+            "sha256": "92c99c7995d31c303377f5e15cd4f1b74dcbd6ad8755ae98a0dca09090de284f",
+            "size": 14179
+          },
+          {
+            "path": "ds41f_mlx/native_prefill.py",
+            "sha256": "1373879196ad2e56bb4491c2f3a65c8ea8760885a3b46b6ffadcd62da1b66ccc",
+            "size": 40760
+          },
+          {
+            "path": "ds41f_mlx/official_model_math.py",
+            "sha256": "04c992cbc7e7a5b32ab8b540a2cabb661fb3d52da176af4a5c1a09bc593ff110",
+            "size": 15610
+          },
+          {
+            "path": "ds41f_mlx/oracle/__init__.py",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size": 0
+          },
+          {
+            "path": "ds41f_mlx/prefill_fp8_mlx/OMLX_MATH_LICENSE",
+            "sha256": "6e4c38e1172f42fdbff13edf9a7a017679fb82b0fde415a3e8b3c31c6ed4a4e4",
+            "size": 1065
+          },
+          {
+            "path": "ds41f_mlx/prefill_fp8_mlx/__init__.py",
+            "sha256": "fbe9846f1d9bcb19ff6f2218bb2e43758aa0a96ddb2dae7e4b134df5c13941e1",
+            "size": 4568
+          },
+          {
+            "path": "ds41f_mlx/prefill_fp8_mlx/arena.py",
+            "sha256": "d5536baf985ae958427e5cf83cc13a92e5f108afd4c59d6c8107550cee758ddb",
+            "size": 22412
+          },
+          {
+            "path": "ds41f_mlx/prefill_fp8_mlx/block_runner.py",
+            "sha256": "15220f5d22da0cdaa00a210cd7a7f77ff2584a8f27ecf806aa7fd2143be5fa91",
+            "size": 39030
+          },
+          {
+            "path": "ds41f_mlx/prefill_fp8_mlx/executor.py",
+            "sha256": "b91053ab5fcf355c4a86a402b2ef6da10305242b28cc0479ed5ff5a38c2365ea",
+            "size": 7853
+          },
+          {
+            "path": "ds41f_mlx/prefill_fp8_mlx/guards.py",
+            "sha256": "38e1098cff401dfaf2c8a819eaf5b0339ee08b64fdf98b45ebe13c00b9ad7366",
+            "size": 2177
+          },
+          {
+            "path": "ds41f_mlx/prefill_fp8_mlx/handoff.py",
+            "sha256": "158e9a25f17d556f5b1c92fb2853dab8e6fa7e6ffc987ec3245b744ed71524fb",
+            "size": 14050
+          },
+          {
+            "path": "ds41f_mlx/prefill_fp8_mlx/omlx_suffix_math.py",
+            "sha256": "aa4608480b45c4c5522ee182421e8d9ac887dc8fcc88382ff35a6661e67049e1",
+            "size": 10149
+          },
+          {
+            "path": "ds41f_mlx/prefill_fp8_mlx/p6_append.py",
+            "sha256": "0f0e9187023bfb3e4c47a08a9cb6e5b8dfa5243065083b72054549c34a753ffd",
+            "size": 33153
+          },
+          {
+            "path": "ds41f_mlx/prefill_fp8_mlx/p7_scheduling.py",
+            "sha256": "fe78eed3d23e3cc2699cae693ef911a8e7d3646766e5475011dd052d12b66d09",
+            "size": 21477
+          },
+          {
+            "path": "ds41f_mlx/prefill_fp8_mlx/p8_optimizer.py",
+            "sha256": "a3baa9ff166a13ce39959747268e5aff2ff29e690126f8ada6092a0f305ffadd",
+            "size": 24537
+          },
+          {
+            "path": "ds41f_mlx/prefill_fp8_mlx/planner.py",
+            "sha256": "ae7217e986a0a928a1f42a8db30acca5e30b4690adb0ea1efc48ce805380c68c",
+            "size": 21347
+          },
+          {
+            "path": "ds41f_mlx/prefill_fp8_mlx/publications.py",
+            "sha256": "f149b613b1173efca67475738f0870ba9d0a804d75e5e3c5265b78ea10fd410f",
+            "size": 15364
+          },
+          {
+            "path": "ds41f_mlx/prefill_fp8_mlx/telemetry.py",
+            "sha256": "fc4a78d7a0cd61fefa355937af395fd80380acc15cb653c600c995aaa3ac850b",
+            "size": 4028
+          },
+          {
+            "path": "ds41f_mlx/prefill_fp8_mlx/tile_carry.py",
+            "sha256": "19ed305807a49d2d330ef6743cab32b6fbaca8a4d2e56cce495f6d5fe8a888c6",
+            "size": 12295
+          },
+          {
+            "path": "ds41f_mlx/prefill_session.py",
+            "sha256": "00155aa0a583046e983510ff9866cf9b47e29fbce27e3836542fa34e62b02244",
+            "size": 12726
+          },
+          {
+            "path": "ds41f_mlx/runtime/__init__.py",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size": 0
+          },
+          {
+            "path": "ds41f_mlx/runtime/continuation_session.py",
+            "sha256": "4b1e2b19f779c82a6a247267f30213745d8abb9f5581c633138babbc14d9593b",
+            "size": 14079
+          },
+          {
+            "path": "ds41f_mlx/runtime/dwarfstar_prefill.py",
+            "sha256": "3b990687549c289290767ccb7fcc64add8f24acefb82881b679dc1d71578af31",
+            "size": 17621
+          },
+          {
+            "path": "ds41f_mlx/runtime/kv_persistence.py",
+            "sha256": "cb55d32bd6dc69fa606d21406f4ae9acfff5f1984232ecc8aed6fe5bc9e58f95",
+            "size": 8017
+          },
+          {
+            "path": "ds41f_mlx/runtime/omlx_core.py",
+            "sha256": "f2be6fd1d921007c6f226cf8d81ccdaf648505949cbc95452112a90b2ab3dd62",
+            "size": 2501
+          },
+          {
+            "path": "ds41f_mlx/runtime/omlx_decode.py",
+            "sha256": "0bb0a2b9d1cfe8621069cc0c748d9f4f11beb9b024cb1f047cc66b30aaf0d8aa",
+            "size": 25616
+          },
+          {
+            "path": "ds41f_mlx/runtime/omlx_generation.py",
+            "sha256": "59fecf77ba14041c2372adecfd4802f3ace2e73658784cfd04796063267f1ee2",
+            "size": 21420
+          },
+          {
+            "path": "ds41f_mlx/runtime/omlx_worker.py",
+            "sha256": "fb4945986f2a10c578d3cb05a7a8228d2e34a8bedee6c01aefe36d38f9e3f4ea",
+            "size": 4576
+          },
+          {
+            "path": "ds41f_mlx/runtime/tool_boundary_session.py",
+            "sha256": "5f2ad9ba076ff94e5a7776d1186027e249622bad034e391a39182e000f5dc805",
+            "size": 20082
+          },
+          {
+            "path": "ds41f_mlx/serve.py",
+            "sha256": "0f6b29ef76c2603762f86bca69ddcc051dc7a425344db502e89336019a4e04fd",
+            "size": 2190
+          },
+          {
+            "path": "ds41f_mlx/server.py",
+            "sha256": "9175afd50782d38e342a4395e1398860dbc1eb2cbdfdc038df725d34573243fd",
+            "size": 4685
+          },
+          {
+            "path": "ds41f_mlx/serving/__init__.py",
+            "sha256": "e9291b77a9a3a117a1728b6f4c746b5c449f78796abee21c15a399d59091a91b",
+            "size": 46
+          },
+          {
+            "path": "ds41f_mlx/serving/deepseek_recipe_backend.py",
+            "sha256": "15dd22cb22ab4b193894bf2ed56d6192775a8bb05c64e0b8ad4baa577f58003c",
+            "size": 22959
+          },
+          {
+            "path": "ds41f_mlx/serving/request_policy.py",
+            "sha256": "b7ed71c1aff93bf9e017e85494f96cd79b748d8253ae1278b4250b3920b1ce93",
+            "size": 1659
+          },
+          {
+            "path": "ds41f_mlx/serving/server.py",
+            "sha256": "5488f6ddb49b1f8a203bef4f17609ccf122712c03dbec48f7a1414ee40d664a8",
+            "size": 13370
+          },
+          {
+            "path": "ds41f_mlx/source_incremental_executor.py",
+            "sha256": "b5fd49e200fe9cf4042514ccf5b35c0f8e2243e10f802fff6b3d4d191b012596",
+            "size": 34254
+          }
+        ],
+        "sha256": "bb5cf6fc375f8486f1dd84c964aa0c7232159a25db37df65e0698e73d6cb504e"
+      },
+      "rust_boundary_identity": {
+        "file_count": 6,
+        "files": [
+          {
+            "path": "Cargo.lock",
+            "sha256": "495886631b141d1a1cc8493e72f6b738ceee9e23bbcf622e40d3af86f5a01eb5",
+            "size": 154
+          },
+          {
+            "path": "Cargo.toml",
+            "sha256": "b90a3143f88668fb433c6c66dc40f84e638d58460ae4026e5783a8dd705be26a",
+            "size": 56
+          },
+          {
+            "path": "rust/ds41f_api/Cargo.toml",
+            "sha256": "692882ecf65454eef626a87360e9d65a0d31afd23f71bd7eefa7166c92614bb2",
+            "size": 213
+          },
+          {
+            "path": "rust/ds41f_api/src/bin/m21_real_acceptance.rs",
+            "sha256": "ce1e7bb313dd16b670fed53d23094067c9779c03088384179951cd117682b1a8",
+            "size": 6074
+          },
+          {
+            "path": "rust/ds41f_api/src/lib.rs",
+            "sha256": "b11847720490b0258772b3678326fca126cc37f05161c7d4d04daeb6d072aa43",
+            "size": 23750
+          },
+          {
+            "path": "rust/ds41f_api/tests/boundary.rs",
+            "sha256": "1ad60106aaa181c64e30972d7bba913827746f05c4cc18182c6fd476dc56e0c7",
+            "size": 6833
+          }
+        ],
+        "sha256": "4efd375511754617b670ff509d0ca17ee811ba6b5986265c9f93ad11cc0496e2"
+      }
+    },
+    "import_checks": [
+      {
+        "module": "omlx",
+        "origin": "/Users/kioju/omlx-0.7.0.release/omlx/__init__.py",
+        "status": "PASS"
+      },
+      {
+        "module": "deepseek_recipe",
+        "origin": "/Users/kioju/.venvs/omlx-0.7.0.release/lib/python3.13/site-packages/deepseek_recipe/__init__.py",
+        "status": "PASS"
+      },
+      {
+        "module": "mlx",
+        "origin": null,
+        "status": "PASS"
+      },
+      {
+        "module": "mlx_lm",
+        "origin": "/Users/kioju/.venvs/omlx-0.7.0.release/lib/python3.13/site-packages/mlx_lm/__init__.py",
+        "status": "PASS"
+      }
+    ],
+    "omlx": {
+      "decode_native_identity": {
+        "files": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "entries": [],
+      "error": "CalledProcessError(128, ['git', '-C', '/tmp/missing-omlx', 'status', '--porcelain'])",
+      "path": "/tmp/missing-omlx",
+      "revision": null,
+      "status": "FAIL"
+    },
+    "package_version_checks": [
+      {
+        "actual": "0.32.2",
+        "check": "package_version",
+        "component": "mlx",
+        "expected": "0.32.2",
+        "status": "PASS"
+      },
+      {
+        "actual": "0.31.4.dev132+g94cdcae13",
+        "check": "package_version",
+        "component": "mlx-lm",
+        "expected": "0.31.4.dev132+g94cdcae13",
+        "status": "PASS"
+      },
+      {
+        "actual": "0.1.1",
+        "check": "package_version",
+        "component": "deepseek-recipe",
+        "expected": "0.1.1",
+        "status": "PASS"
+      },
+      {
+        "actual": "0.7.0",
+        "check": "package_version",
+        "component": "omlx",
+        "expected": "0.7.0",
+        "status": "PASS"
+      }
+    ],
+    "packages": {
+      "deepseek-recipe": "0.1.1",
+      "mlx": "0.32.2",
+      "mlx-lm": "0.31.4.dev132+g94cdcae13",
+      "omlx": "0.7.0"
+    },
+    "platform": {
+      "mac_ver": [
+        "26.5.2",
+        [
+          "",
+          "",
+          ""
+        ],
+        "arm64"
+      ],
+      "machine": "arm64",
+      "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+      "processor": "arm"
+    },
+    "production": {
+      "dspark": "OFF",
+      "mtp": "OFF",
+      "prefill_selector": "DENSE_P0_P7",
+      "speculative_decode": "OFF"
+    },
+    "python": {
+      "executable": "/Users/kioju/.venvs/omlx-0.7.0.release/bin/python",
+      "version": "3.13.15 (main, Aug  5 2026, 12:25:43) [Clang 21.0.0 (clang-2100.1.1.101)]"
+    },
+    "release_manifest": {
+      "checkpoint": {
+        "external": true,
+        "name": "DeepSeek-V4.1-Flash official checkpoint",
+        "required_files": {
+          "config.json": "8be45ce0476004a3f529fd896115a4a2e800a129ad2d3ec05b16050f52e21879",
+          "model.safetensors.index.json": "74b0686a3d2891980d5e303251b075a3bccae2c2ff650747db2620a649b98fa8",
+          "tokenizer.json": "c90dfa01249db1be4245780a052ede752e1361c612ac6d08e2bdada7d599476b"
+        }
+      },
+      "dependencies": {
+        "deepseek_recipe": {
+          "revision": "8cadfede7063c896b944e7bae05daa3549ae97ea",
+          "role": "protocol, prompt, response, tool, thinking and streaming authority",
+          "version": "0.1.1"
+        },
+        "mlx": {
+          "version": "0.32.2"
+        },
+        "mlx_lm": {
+          "revision": "94cdcae13b266c337bcaca09b97b9c5a9c0e2cde",
+          "version": "0.31.4.dev132+g94cdcae13"
+        },
+        "omlx": {
+          "checkout_role": "qualified production decode authority",
+          "revision": "4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40",
+          "version": "0.7.0"
+        }
+      },
+      "evidence_authority": {
+        "m20": "runtime dependency baseline and model behavior",
+        "m21": "Rust/API boundary",
+        "m22": "packaging, manifest, operational commands and release acceptance",
+        "m23": "relocatable bundle and clean-room installation qualification"
+      },
+      "release": {
+        "name": "ds41f-mlx",
+        "scope": "local text runtime for official DeepSeek-V4.1-Flash on Mac Studio M3 Ultra 512GB class systems",
+        "status": "M23_RELOCATABLE_RELEASE_BUNDLE_QUALIFIED",
+        "version": "0.23.0"
+      },
+      "runtime": {
+        "decode": "oMLX GenerationBatch",
+        "dspark": "OFF",
+        "engram_policy": "P7_FULL_RESIDENT_BACKBONE_SSD_ENGRAM",
+        "handoff": "P5_ZERO_REPLAY_TERMINAL_HOLDOUT",
+        "model_id": "deepseek-v4.1-flash",
+        "mtp": "OFF",
+        "production_prefill_selector": "DENSE_P0_P7",
+        "python_requires": ">=3.13,<3.14",
+        "qualified_python": "3.13.15",
+        "speculative_decode": "OFF"
+      },
+      "rust": {
+        "boundary": "loopback HTTP/SSE client plus optional process lifecycle control",
+        "crate": "ds41f_api",
+        "version": "0.23.0"
+      },
+      "schema": "ds41f.release-manifest.v1"
+    },
+    "release_manifest_checks": [
+      {
+        "actual": "0.23.0",
+        "check": "project.version",
+        "component": "pyproject",
+        "expected": "0.23.0",
+        "status": "PASS"
+      },
+      {
+        "actual": "4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40",
+        "check": "tool.ds41f.omlx_upstream_baseline",
+        "component": "pyproject",
+        "expected": "4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40",
+        "status": "PASS"
+      },
+      {
+        "actual": "0.23.0",
+        "check": "crate.version",
+        "component": "ds41f_api",
+        "expected": "0.23.0",
+        "status": "PASS"
+      }
+    ],
+    "revision_checks": [
+      {
+        "actual": null,
+        "check": "revision",
+        "component": "oMLX",
+        "expected": "4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40",
+        "status": "WARNING"
+      },
+      {
+        "actual": "FAIL",
+        "check": "local_differences",
+        "component": "oMLX",
+        "expected": "clean or approved exact patches",
+        "status": "FAIL"
+      },
+      {
+        "actual": "8cadfede7063c896b944e7bae05daa3549ae97ea",
+        "check": "revision",
+        "component": "deepseek-recipe",
+        "expected": "8cadfede7063c896b944e7bae05daa3549ae97ea",
+        "status": "PASS"
+      },
+      {
+        "actual": "PASS",
+        "check": "local_differences",
+        "component": "deepseek-recipe",
+        "expected": "clean or approved exact patches",
+        "status": "PASS"
+      }
+    ],
+    "schema": "ds41f.runtime-provenance.v2",
+    "status": "FAIL",
+    "validation": [
+      {
+        "key": "checkpoint_path",
+        "message": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+        "status": "PASS"
+      },
+      {
+        "key": "omlx_path",
+        "message": "oMLX path does not exist: /tmp/missing-omlx",
+        "status": "FAIL"
+      },
+      {
+        "key": "recipe_path",
+        "message": "/Volumes/SDXC-512/deepseek-v41-flash-mlx/third_party/deepseek-recipe",
+        "status": "PASS"
+      },
+      {
+        "key": "kv_root",
+        "message": "/Volumes/USB-SSD-RAID-0/ds41f-mlx/kv",
+        "status": "PASS"
+      },
+      {
+        "key": "production_prefill_selector",
+        "message": "DENSE_P0_P7",
+        "status": "PASS"
+      },
+      {
+        "key": "mtp",
+        "message": "OFF",
+        "status": "PASS"
+      },
+      {
+        "key": "dspark",
+        "message": "OFF",
+        "status": "PASS"
+      },
+      {
+        "key": "speculative_decode",
+        "message": "OFF",
+        "status": "PASS"
+      }
+    ]
+  },
+  "release_manifest": {
+    "checkpoint": {
+      "external": true,
+      "name": "DeepSeek-V4.1-Flash official checkpoint",
+      "required_files": {
+        "config.json": "8be45ce0476004a3f529fd896115a4a2e800a129ad2d3ec05b16050f52e21879",
+        "model.safetensors.index.json": "74b0686a3d2891980d5e303251b075a3bccae2c2ff650747db2620a649b98fa8",
+        "tokenizer.json": "c90dfa01249db1be4245780a052ede752e1361c612ac6d08e2bdada7d599476b"
+      }
+    },
+    "dependencies": {
+      "deepseek_recipe": {
+        "revision": "8cadfede7063c896b944e7bae05daa3549ae97ea",
+        "role": "protocol, prompt, response, tool, thinking and streaming authority",
+        "version": "0.1.1"
+      },
+      "mlx": {
+        "version": "0.32.2"
+      },
+      "mlx_lm": {
+        "revision": "94cdcae13b266c337bcaca09b97b9c5a9c0e2cde",
+        "version": "0.31.4.dev132+g94cdcae13"
+      },
+      "omlx": {
+        "checkout_role": "qualified production decode authority",
+        "revision": "4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40",
+        "version": "0.7.0"
+      }
+    },
+    "evidence_authority": {
+      "m20": "runtime dependency baseline and model behavior",
+      "m21": "Rust/API boundary",
+      "m22": "packaging, manifest, operational commands and release acceptance",
+      "m23": "relocatable bundle and clean-room installation qualification"
+    },
+    "release": {
+      "name": "ds41f-mlx",
+      "scope": "local text runtime for official DeepSeek-V4.1-Flash on Mac Studio M3 Ultra 512GB class systems",
+      "status": "M23_RELOCATABLE_RELEASE_BUNDLE_QUALIFIED",
+      "version": "0.23.0"
+    },
+    "runtime": {
+      "decode": "oMLX GenerationBatch",
+      "dspark": "OFF",
+      "engram_policy": "P7_FULL_RESIDENT_BACKBONE_SSD_ENGRAM",
+      "handoff": "P5_ZERO_REPLAY_TERMINAL_HOLDOUT",
+      "model_id": "deepseek-v4.1-flash",
+      "mtp": "OFF",
+      "production_prefill_selector": "DENSE_P0_P7",
+      "python_requires": ">=3.13,<3.14",
+      "qualified_python": "3.13.15",
+      "speculative_decode": "OFF"
+    },
+    "rust": {
+      "boundary": "loopback HTTP/SSE client plus optional process lifecycle control",
+      "crate": "ds41f_api",
+      "version": "0.23.0"
+    },
+    "schema": "ds41f.release-manifest.v1"
+  },
+  "schema": "ds41f.ops.inspect.v1",
+  "status": "FAIL"
+}
