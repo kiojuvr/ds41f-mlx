@@ -117,7 +117,7 @@ class StatefulToolChatClient:
                 raise ToolError("finish_reason=tool_calls but no tool_calls were present")
             if round_idx >= max_tool_rounds:
                 raise ToolError("maximum client tool rounds exceeded")
-            tool_messages, displays = self.registry.execute_calls(calls)
+            tool_messages, displays = self.registry.execute_calls(calls, session_id=session_id)
             messages.extend(tool_messages)
             result.steps.append(ChatStep("tools", {"calls": calls, "results": displays}))
         raise ToolError("unreachable tool loop exit")
