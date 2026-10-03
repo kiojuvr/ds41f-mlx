@@ -1,0 +1,39 @@
+{
+  "schema": "ds41f.m31.tests.v1",
+  "recipe_rust": {
+    "command": "CARGO_TARGET_DIR=/tmp/ds41f-m31-cargo cargo test --offline -p deepseek-recipe",
+    "result": "10 passed; 0 failed; 0 ignored; 0 doc tests",
+    "scope": "synchronous semantic session, provenance, nonmutation and processor tests"
+  },
+  "canonical_source_parity": {
+    "command": "PYTHONPATH=. /tmp/ds41f-m31-qual/bin/python tools/run_m31_recipe_source_parity.py",
+    "result": "64 comparisons across 22 cases passed",
+    "scope": "pristine vs patched Rust raw outputs and chat protocol events; only clock normalized"
+  },
+  "python_binding_typecheck": {
+    "command": "DOCS_RS=1 CARGO_TARGET_DIR=/tmp/ds41f-m31-cargo-check PYO3_PYTHON=/tmp/ds41f-m31-qual/bin/python cargo check --offline -p deepseek-recipe-python",
+    "result": "PASS",
+    "scope": "compile-only documentation bindings; NOT runnable native qualification"
+  },
+  "native_build": {
+    "exit_code": 1,
+    "result": "BLOCKED: missing OpenCV development headers/configuration",
+    "log": "native-build.log"
+  },
+  "python_binding_tests": {
+    "exit_code": 2,
+    "result": "Both existing and new suites blocked during collection: no newly built native module",
+    "log": "binding-tests.log",
+    "old_native_fallback_used": false
+  },
+  "ds41f_regressions": {
+    "command": "PYTHONPATH=. /tmp/ds41f-m31-qual/bin/python -m pytest -q tests/test_m31_recipe_extension_evidence.py tests/test_m29_mtp_lifecycle.py tests/test_m25_mtp_boundary.py tests/test_prefill_fp8_mlx_p5.py tests/test_prefill_fp8_mlx_p6.py",
+    "result": "51 passed, 24 subtests passed in 0.94s",
+    "skipped": 0,
+    "scope": "structural tests, including M28 primitive through M29; no live model"
+  },
+  "real_omlx_tool_calling_import": "PASS with jsonschema 4.26.0",
+  "patch_apply_check": "PASS against pristine pinned recipe worktree",
+  "repository_wide_pytest": "not run",
+  "operational_soak": "not run: protocol gate blocked"
+}

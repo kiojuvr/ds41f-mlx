@@ -1,0 +1,1347 @@
+From 066d2ef2ed0deb574a0e6b5e6136316d6f296d55 Mon Sep 17 00:00:00 2001
+From: kiojuvr <144526795+kiojuvr@users.noreply.github.com>
+Date: Sat, 3 Oct 2026 15:11:56 +0900
+Subject: [PATCH] Expose synchronous semantic session and non-mutating token
+ preview
+
+---
+ .../python/deepseek_recipe/__init__.py        |   4 +
+ .../python/deepseek_recipe/_native.pyi        |  41 +++
+ deepseek-recipe-python/src/lib.rs             |   5 +-
+ deepseek-recipe-python/src/response.rs        | 106 ++++++-
+ .../tests/test_semantic_preview.py            | 126 +++++++++
+ deepseek-recipe/src/stream/decoder.rs         |  42 ++-
+ deepseek-recipe/src/stream/mod.rs             |   6 +
+ deepseek-recipe/src/stream/processor.rs       |  46 +--
+ deepseek-recipe/src/stream/semantic.rs        | 205 ++++++++++++++
+ deepseek-recipe/src/stream/semantic_tests.rs  | 262 ++++++++++++++++++
+ deepseek-recipe/src/stream/state_machine.rs   |  73 ++++-
+ docs/semantic-preview.md                      |  74 +++++
+ 12 files changed, 956 insertions(+), 34 deletions(-)
+ create mode 100644 deepseek-recipe-python/tests/test_semantic_preview.py
+ create mode 100644 deepseek-recipe/src/stream/semantic.rs
+ create mode 100644 deepseek-recipe/src/stream/semantic_tests.rs
+ create mode 100644 docs/semantic-preview.md
+
+diff --git a/deepseek-recipe-python/python/deepseek_recipe/__init__.py b/deepseek-recipe-python/python/deepseek_recipe/__init__.py
+index 9c509c3..b1bf46f 100644
+--- a/deepseek-recipe-python/python/deepseek_recipe/__init__.py
++++ b/deepseek-recipe-python/python/deepseek_recipe/__init__.py
+@@ -53,6 +53,8 @@ from ._native import (
+     ResponsesResponse,
+     ResponsesStreamEvent,
+     StreamProcessor,
++    SemanticPreview,
++    SemanticTerminal,
+     SystemMessage,
+     Tokenizer,
+     ToolCall,
+@@ -117,6 +119,8 @@ __all__ = [
+     "ResponsesResponse",
+     "ResponsesStreamEvent",
+     "StreamProcessor",
++    "SemanticPreview",
++    "SemanticTerminal",
+     "SystemMessage",
+     "Tokenizer",
+     "ToolCall",
+diff --git a/deepseek-recipe-python/python/deepseek_recipe/_native.pyi b/deepseek-recipe-python/python/deepseek_recipe/_native.pyi
+index 64ab380..e816718 100644
+--- a/deepseek-recipe-python/python/deepseek_recipe/_native.pyi
++++ b/deepseek-recipe-python/python/deepseek_recipe/_native.pyi
+@@ -547,6 +547,32 @@ class Tokenizer:
+ 
+     def encode(self, text: str) -> list[int]: ...
+ 
++class SemanticTerminal:
++    @property
++    def kind(self) -> str: ...  # STOP_SEQUENCE | DSML_TOOL_CALL_BLOCK_END
++    @property
++    def source_start(self) -> int: ...
++    @property
++    def source_end(self) -> int: ...
++
++class SemanticPreview:
++    @property
++    def terminal_kind(self) -> str | None: ...
++    @property
++    def completing_token_index(self) -> int | None: ...
++    @property
++    def safe_token_count(self) -> int: ...
++    @property
++    def source_start(self) -> int | None: ...
++    @property
++    def source_end(self) -> int | None: ...
++    @property
++    def mapping_exact(self) -> bool: ...
++    @property
++    def candidate_ids_processed(self) -> int: ...
++    @property
++    def max_pending_ids(self) -> int: ...
++
+ class StreamProcessor:
+     """Adapt Python inference chunks to the Rust processor's input stream."""
+ 
+@@ -577,5 +603,20 @@ class StreamProcessor:
+         Calls after close or a decoding failure raise RuntimeError.
+         """
+ 
++    def preview_tokens(self, candidate_ids: list[int]) -> SemanticPreview:
++        """Read-only fork at the current canonical input boundary.
++
++        No history replay or protocol generator clone. Missing tokenizer or
++        closed/finished stream raises RuntimeError. Inexact mapping fails closed
++        with mapping_exact=False and safe_token_count=0.
++        """
++
++    @property
++    def semantic_terminal(self) -> SemanticTerminal | None:
++        """First canonical terminal transition; independent of finished.
++
++        Remains readable after normal completion; raises after close/error.
++        """
++
+     def close(self) -> None:
+         """Release processing state without producing successful completion."""
+diff --git a/deepseek-recipe-python/src/lib.rs b/deepseek-recipe-python/src/lib.rs
+index c39da36..804c7df 100644
+--- a/deepseek-recipe-python/src/lib.rs
++++ b/deepseek-recipe-python/src/lib.rs
+@@ -29,7 +29,8 @@ use crate::request::{
+ use crate::response::{
+     PyChatCompletionChunk, PyChatCompletionChunkGenerator, PyChatCompletionResponse,
+     PyMessagesChunkGenerator, PyMessagesResponse, PyMessagesStreamEvent, PyResponsesChunkGenerator,
+-    PyResponsesResponse, PyResponsesStreamEvent, PyStreamProcessor,
++    PyResponsesResponse, PyResponsesStreamEvent, PySemanticPreview, PySemanticTerminal,
++    PyStreamProcessor,
+ };
+ use crate::tokenizer::PyTokenizer;
+ 
+@@ -96,6 +97,8 @@ fn _native(m: &Bound<'_, PyModule>) -> PyResult<()> {
+     m.add_class::<PyMessagesResponse>()?;
+     m.add_class::<PyTokenizer>()?;
+     m.add_class::<PyStreamProcessor>()?;
++    m.add_class::<PySemanticPreview>()?;
++    m.add_class::<PySemanticTerminal>()?;
+     m.add_class::<PyConversation>()?;
+     m.add_class::<PyRenderedPrompt>()?;
+     m.add_class::<PyMessage>()?;
+diff --git a/deepseek-recipe-python/src/response.rs b/deepseek-recipe-python/src/response.rs
+index e678d5f..99654b5 100644
+--- a/deepseek-recipe-python/src/response.rs
++++ b/deepseek-recipe-python/src/response.rs
+@@ -17,7 +17,10 @@ use deepseek_recipe::openai::responses::response::{
+ };
+ use deepseek_recipe::response::ProtocolResponse;
+ use deepseek_recipe::stream::state_machine::ParsingOptions;
+-use deepseek_recipe::stream::{ChunkGenerator, InferenceChunk, StreamError, StreamProcessor};
++use deepseek_recipe::stream::{
++    ChunkGenerator, InferenceChunk, SemanticPreview, SemanticSessionHandle, SemanticTerminal,
++    SemanticTerminalKind, StreamError, StreamProcessor,
++};
+ use deepseek_recipe::util::append_delta::AppendDelta;
+ use futures::Stream;
+ use futures::channel::mpsc;
+@@ -266,7 +269,69 @@ impl ProtocolChunk {
+ 
+ type ChunkStream = Pin<Box<dyn Stream<Item = Result<ProtocolChunk, StreamError>> + Send>>;
+ 
++/// Stable semantic metadata, not private parser stages or protocol completion.
++#[pyclass(name = "SemanticTerminal", module = "deepseek_recipe._native", frozen)]
++pub(crate) struct PySemanticTerminal {
++    #[pyo3(get)]
++    pub kind: String,
++    #[pyo3(get)]
++    pub source_start: usize,
++    #[pyo3(get)]
++    pub source_end: usize,
++}
++
++impl From<SemanticTerminal> for PySemanticTerminal {
++    fn from(value: SemanticTerminal) -> Self {
++        Self {
++            kind: match value.kind {
++                SemanticTerminalKind::StopSequence => "STOP_SEQUENCE",
++                SemanticTerminalKind::DsmlToolCallBlockEnd => "DSML_TOOL_CALL_BLOCK_END",
++            }
++            .into(),
++            source_start: value.source_start,
++            source_end: value.source_end,
++        }
++    }
++}
++
++#[pyclass(name = "SemanticPreview", module = "deepseek_recipe._native", frozen)]
++pub(crate) struct PySemanticPreview {
++    #[pyo3(get)]
++    pub terminal_kind: Option<String>,
++    #[pyo3(get)]
++    pub completing_token_index: Option<usize>,
++    #[pyo3(get)]
++    pub safe_token_count: usize,
++    #[pyo3(get)]
++    pub source_start: Option<usize>,
++    #[pyo3(get)]
++    pub source_end: Option<usize>,
++    #[pyo3(get)]
++    pub mapping_exact: bool,
++    #[pyo3(get)]
++    pub candidate_ids_processed: usize,
++    #[pyo3(get)]
++    pub max_pending_ids: usize,
++}
++
++impl From<SemanticPreview> for PySemanticPreview {
++    fn from(value: SemanticPreview) -> Self {
++        let terminal = value.terminal.map(PySemanticTerminal::from);
++        Self {
++            terminal_kind: terminal.as_ref().map(|t| t.kind.clone()),
++            source_start: terminal.as_ref().map(|t| t.source_start),
++            source_end: terminal.as_ref().map(|t| t.source_end),
++            completing_token_index: value.completing_token_index,
++            safe_token_count: value.safe_token_count,
++            mapping_exact: value.mapping_exact,
++            candidate_ids_processed: value.candidate_ids_processed,
++            max_pending_ids: value.max_pending_ids,
++        }
++    }
++}
++
+ struct Processor {
++    semantic: SemanticSessionHandle,
+     input: Option<mpsc::Sender<InferenceChunk>>,
+     events: Option<ChunkStream>,
+     input_pending: Arc<AtomicBool>,
+@@ -310,10 +375,12 @@ impl PyStreamProcessor {
+             Some(tokenizer) => processor.with_tokenizer(tokenizer),
+             None => processor,
+         };
++        let semantic = processor.semantic_session();
+         let events =
+             futures::StreamExt::map(processor.process(input), move |event| event.map(wrap));
+         Self {
+             state: Mutex::new(Processor {
++                semantic,
+                 input: Some(sender),
+                 events: Some(Box::pin(events)),
+                 input_pending,
+@@ -390,6 +457,43 @@ impl PyStreamProcessor {
+             .collect()
+     }
+ 
++    /// Fork synchronous semantic state at exactly push's next-input boundary.
++    /// No input submission, protocol generation or canonical mutation occurs.
++    fn preview_tokens(
++        &self,
++        py: Python<'_>,
++        candidate_ids: Vec<u32>,
++    ) -> PyResult<PySemanticPreview> {
++        self.with_state(py, |state| {
++            if state.closed || state.finished {
++                return Err(PyRuntimeError::new_err(
++                    "stream processor is closed or finished",
++                ));
++            }
++            state
++                .semantic
++                .preview_tokens(&candidate_ids)
++                .map(PySemanticPreview::from)
++                .map_err(|error| PyRuntimeError::new_err(error.to_string()))
++        })
++    }
++
++    /// First canonical semantic transition, including after normal completion.
++    /// This is independent of the protocol stream's finished property.
++    #[getter]
++    fn semantic_terminal(&self, py: Python<'_>) -> PyResult<Option<PySemanticTerminal>> {
++        self.with_state(py, |state| {
++            if state.closed {
++                return Err(PyRuntimeError::new_err("stream processor is closed"));
++            }
++            state
++                .semantic
++                .terminal()
++                .map(|value| value.map(PySemanticTerminal::from))
++                .map_err(|error| PyRuntimeError::new_err(error.to_string()))
++        })
++    }
++
+     /// Close the input normally and process its buffered output.
+     /// Repeated calls after completion produce no chunks. Calls after close or
+     /// a decoding failure raise `RuntimeError`.
+diff --git a/deepseek-recipe-python/tests/test_semantic_preview.py b/deepseek-recipe-python/tests/test_semantic_preview.py
+new file mode 100644
+index 0000000..6a5b755
+--- /dev/null
++++ b/deepseek-recipe-python/tests/test_semantic_preview.py
+@@ -0,0 +1,126 @@
++"""Requires the preview-capable native build, never falls back to another parser."""
++import json
++from pathlib import Path
++
++import deepseek_recipe as d
++import pytest
++
++TOKENIZER = Path(__file__).resolve().parents[2] / "static/tokenizers/v41/tokenizer.json"
++CALL = ('<｜DSML｜ calls>\n<｜DSML｜ invoke name="lookup">\n'
++        '<｜DSML｜ parameter name="city" string="true">Paris</｜DSML｜ parameter>\n'
++        '</｜DSML｜ invoke>\n</｜DSML｜ calls>')
++
++
++def processor(stops=(), reasoning=False, json_mode=False):
++    t = d.Tokenizer.from_file(str(TOKENIZER))
++    options = d.ParsingOptions()
++    options.stop_sequences = list(stops)
++    options.parse_json_output = json_mode
++    if reasoning:
++        options.reasoning_initial_stage = d.ReasoningStage.Reasoning
++    p = d.StreamProcessor(d.ChatCompletionChunkGenerator("preview", "v41", True, reasoning), options, t)
++    assert hasattr(p, "preview_tokens"), "wrong native build: semantic API missing"
++    return t, p
++
++
++def fields(p):
++    return (p.terminal_kind, p.completing_token_index, p.safe_token_count,
++            p.source_start, p.source_end, p.mapping_exact, p.candidate_ids_processed, p.max_pending_ids)
++
++
++@pytest.mark.parametrize("text,stops,reasoning,json_mode", [
++    ("ordinary café🙂", (), False, False),
++    (CALL, (), False, False),
++    (CALL + "TAIL", (), False, False),
++    ("thoughts</think>" + CALL, (), True, False),
++    ("HALT NOT café🙂HALT NOWtail", ("HALT NOW",), False, False),
++    ('```json\n{"x":"STOPtail"}\n```', ("STOP",), False, True),
++])
++def test_preview_never_changes_canonical_events(text, stops, reasoning, json_mode):
++    t, p = processor(stops, reasoning, json_mode)
++    _, reference = processor(stops, reasoning, json_mode)
++    tokens = t.encode(text)
++    actual_events, reference_events = [], []
++    for index, token in enumerate(tokens):
++        if p.finished:
++            break
++        before = p.semantic_terminal
++        if before is None:
++            first = p.preview_tokens(tokens[index:])
++            assert fields(first) == fields(p.preview_tokens(tokens[index:]))
++            assert first.mapping_exact
++            assert p.semantic_terminal is None
++        for out in p.push(d.InferenceChunk.token(token)):
++            value = json.loads(out.to_json())
++            value["created"] = 0
++            actual_events.append(value)
++        for out in reference.push(d.InferenceChunk.token(token)):
++            value = json.loads(out.to_json())
++            value["created"] = 0
++            reference_events.append(value)
++    for target, events in [(p, actual_events), (reference, reference_events)]:
++        if not target.finished:
++            for out in target.push(d.InferenceChunk.finish(d.InferenceFinishReason.Stop)):
++                value = json.loads(out.to_json())
++                value["created"] = 0
++                events.append(value)
++    assert actual_events == reference_events
++
++
++def test_exact_dsml_terminal_is_not_stream_finished():
++    t, p = processor()
++    tokens = t.encode(CALL)
++    for split in range(len(tokens)):
++        _, fork = processor()
++        for token in tokens[:split]:
++            fork.push(d.InferenceChunk.token(token))
++        result = fork.preview_tokens(tokens[split:])
++        assert result.terminal_kind == "DSML_TOOL_CALL_BLOCK_END"
++        assert result.safe_token_count == len(tokens) - split - 1
++        assert result.completing_token_index == result.safe_token_count
++        assert CALL.encode()[result.source_start:result.source_end] == '</｜DSML｜ calls>'.encode()
++        assert fork.semantic_terminal is None
++        for token in tokens[split:]:
++            fork.push(d.InferenceChunk.token(token))
++        assert fork.semantic_terminal.kind == result.terminal_kind
++        assert not fork.finished
++        fork.close()
++    p.close()
++
++
++def test_pending_canonical_unicode_ids_are_snapshotted():
++    t, p = processor(("🙂",))
++    tokens = t.encode("🙂")
++    assert len(tokens) > 1
++    p.push(d.InferenceChunk.token(tokens[0]))
++    result = p.preview_tokens(tokens[1:])
++    assert result.terminal_kind == "STOP_SEQUENCE"
++    assert result.completing_token_index == len(tokens) - 2
++    assert p.semantic_terminal is None
++    for token in tokens[1:]:
++        p.push(d.InferenceChunk.token(token))
++    assert p.semantic_terminal.kind == result.terminal_kind
++    assert p.finished
++
++
++def test_eof_probe_is_still_not_dsml_completion():
++    t, p = processor()
++    text = CALL[:CALL.rfind('</｜DSML｜ calls>')]
++    result = p.preview_tokens(t.encode(text))
++    assert result.terminal_kind is None
++    for token in t.encode(text):
++        p.push(d.InferenceChunk.token(token))
++    assert p.semantic_terminal is None
++    p.push(d.InferenceChunk.finish(d.InferenceFinishReason.Stop))
++    assert p.semantic_terminal is None
++
++
++def test_missing_tokenizer_and_closed_input_fail_closed():
++    p = d.StreamProcessor(d.ChatCompletionChunkGenerator("x", "v41", False, False), d.ParsingOptions())
++    with pytest.raises(RuntimeError):
++        p.preview_tokens([1])
++    p.close()
++    with pytest.raises(RuntimeError):
++        p.preview_tokens([1])
++    with pytest.raises(RuntimeError):
++        _ = p.semantic_terminal
+diff --git a/deepseek-recipe/src/stream/decoder.rs b/deepseek-recipe/src/stream/decoder.rs
+index 8c694f6..84ada43 100644
+--- a/deepseek-recipe/src/stream/decoder.rs
++++ b/deepseek-recipe/src/stream/decoder.rs
+@@ -1,6 +1,6 @@
+ //! Decode token ids into text for the stream processor.
+ 
+-use std::sync::Arc;
++use std::sync::{Arc, Mutex};
+ 
+ use tokenizers::Tokenizer;
+ 
+@@ -16,9 +16,19 @@ const REPLACEMENT_CHARACTER: char = '\u{FFFD}';
+ pub trait TokenizerDecoder: Send {
+     /// Decode `ids` into text, skipping special tokens when requested.
+     fn decode_ids(&self, ids: &[u32], skip_special_tokens: bool) -> Result<String, String>;
++
++    /// Opt in only for immutable, deterministic decoding. Preview reuses this
++    /// decoder; stateful custom decoders must not opt in.
++    fn supports_semantic_preview(&self) -> bool {
++        false
++    }
+ }
+ 
+ impl TokenizerDecoder for Tokenizer {
++    fn supports_semantic_preview(&self) -> bool {
++        true
++    }
++
+     fn decode_ids(&self, ids: &[u32], skip_special_tokens: bool) -> Result<String, String> {
+         self.decode(ids, skip_special_tokens)
+             .map_err(|error| error.to_string())
+@@ -32,11 +42,17 @@ where
+     fn decode_ids(&self, ids: &[u32], skip_special_tokens: bool) -> Result<String, String> {
+         (**self).decode_ids(ids, skip_special_tokens)
+     }
++
++    fn supports_semantic_preview(&self) -> bool {
++        (**self).supports_semantic_preview()
++    }
+ }
+ 
+ /// Buffer token ids until they decode into text.
++#[derive(Clone)]
+ pub struct StreamDecoder {
+-    decoder: Box<dyn TokenizerDecoder>,
++    // Shared immutable decode implementation; never copy tokenizer/model data.
++    decoder: Arc<Mutex<Box<dyn TokenizerDecoder>>>,
+     ids: Vec<u32>,
+     pending: usize,
+ }
+@@ -44,12 +60,28 @@ pub struct StreamDecoder {
+ impl StreamDecoder {
+     pub fn new(decoder: Box<dyn TokenizerDecoder>) -> Self {
+         Self {
+-            decoder,
++            decoder: Arc::new(Mutex::new(decoder)),
+             ids: Vec::new(),
+             pending: 0,
+         }
+     }
+ 
++    pub fn pending_ids(&self) -> &[u32] {
++        &self.ids
++    }
++
++    #[cfg(test)]
++    pub(crate) fn test_state(&self) -> (&[u32], usize) {
++        (&self.ids, self.pending)
++    }
++
++    pub fn supports_semantic_preview(&self) -> bool {
++        self.decoder
++            .lock()
++            .map(|d| d.supports_semantic_preview())
++            .unwrap_or(false)
++    }
++
+     /// Return the text contributed by the buffered token ids and the number of
+     /// ids it accounts for, or `None` while no text is available yet.
+     ///
+@@ -60,6 +92,10 @@ impl StreamDecoder {
+         self.ids.push(token_id);
+         let content = self
+             .decoder
++            .lock()
++            .map_err(|_| StreamError::Decode {
++                detail: "decoder lock poisoned".into(),
++            })?
+             .decode_ids(&self.ids, false)
+             .map_err(|detail| StreamError::Decode { detail })?;
+         if content.is_empty() || content.ends_with(REPLACEMENT_CHARACTER) {
+diff --git a/deepseek-recipe/src/stream/mod.rs b/deepseek-recipe/src/stream/mod.rs
+index 403ec7e..469c629 100644
+--- a/deepseek-recipe/src/stream/mod.rs
++++ b/deepseek-recipe/src/stream/mod.rs
+@@ -5,12 +5,18 @@ pub use inference::{
+     CompletionUsage, FinishReason, InferenceChunk, InferenceFinishReason, PromptUsage,
+ };
+ pub use processor::StreamProcessor;
++pub use semantic::{SemanticPreview, SemanticSession, SemanticSessionHandle};
++pub use state_machine::{SemanticTerminal, SemanticTerminalKind};
+ 
+ mod decoder;
+ mod inference;
+ mod processor;
++mod semantic;
+ pub mod state_machine;
+ 
++#[cfg(test)]
++mod semantic_tests;
++
+ /// An error that ends stream processing before normal completion.
+ #[derive(Debug, Clone, PartialEq, Eq)]
+ pub enum StreamError {
+diff --git a/deepseek-recipe/src/stream/processor.rs b/deepseek-recipe/src/stream/processor.rs
+index 40fc4f5..e8f3774 100644
+--- a/deepseek-recipe/src/stream/processor.rs
++++ b/deepseek-recipe/src/stream/processor.rs
+@@ -4,18 +4,18 @@ use std::pin::pin;
+ use async_stream::stream;
+ use tokio_stream::{Stream, StreamExt};
+ 
+-use super::decoder::{StreamDecoder, TokenizerDecoder};
++use super::decoder::TokenizerDecoder;
+ use super::inference::{
+     CompletionUsage, FinishReason, InferenceChunk, InferenceFinishReason, PromptUsage,
+ };
+-use super::state_machine::{OutputAction, OutputActionSegment, ParsingOptions, StateMachine};
++use super::semantic::SemanticSessionHandle;
++use super::state_machine::{OutputAction, OutputActionSegment, ParsingOptions};
+ use super::{ChunkGenerator, OutputChunk, StreamError};
+ 
+ /// Parse backend inference chunks and produce protocol response events.
+ pub struct StreamProcessor<G> {
+     generator: G,
+-    options: ParsingOptions,
+-    decoder: Option<StreamDecoder>,
++    semantic: SemanticSessionHandle,
+ }
+ 
+ impl<G> StreamProcessor<G>
+@@ -26,8 +26,7 @@ where
+     pub fn new(generator: G, options: ParsingOptions) -> Self {
+         Self {
+             generator,
+-            options,
+-            decoder: None,
++            semantic: SemanticSessionHandle::new(options),
+         }
+     }
+ 
+@@ -38,11 +37,16 @@ where
+     /// at the end of input contribute neither text nor completion usage.
+     /// Without a decoder, a token chunk fails the stream with
+     /// [`StreamError::MissingTokenizer`].
+-    pub fn with_tokenizer(mut self, decoder: impl TokenizerDecoder + 'static) -> Self {
+-        self.decoder = Some(StreamDecoder::new(Box::new(decoder)));
++    pub fn with_tokenizer(self, decoder: impl TokenizerDecoder + 'static) -> Self {
++        self.semantic.set_tokenizer(decoder);
+         self
+     }
+ 
++    /// Retain access to synchronous semantic state before process consumes self.
++    pub fn semantic_session(&self) -> SemanticSessionHandle {
++        self.semantic.clone()
++    }
++
+     /// Consume inference chunks until a finish chunk, matched stop sequence, or EOF.
+     ///
+     /// A ready chunk received before output starts supplies the initial prompt
+@@ -60,11 +64,9 @@ where
+         G::Chunk: Send,
+     {
+         let mut generator = self.generator;
+-        let options = self.options;
+-        let mut decoder = self.decoder;
++        let semantic = self.semantic;
+         stream! {
+             let mut inference = pin!(inference);
+-            let mut state_machine = StateMachine::new(options);
+             let mut stashed = StashedChunks::new();
+ 
+             let mut started = false;
+@@ -74,7 +76,7 @@ where
+             let mut stop_sequence = None;
+ 
+             while let Some(chunk) = inference.next().await {
+-                let (content, content_tokens) = match chunk {
++                let (content, content_tokens, actions) = match chunk {
+                     InferenceChunk::Ready {
+                         system_fingerprint,
+                         prompt_usage: ready_usage,
+@@ -101,13 +103,15 @@ where
+                     InferenceChunk::Text {
+                         content,
+                         content_tokens,
+-                    } => (content, content_tokens),
+-                    InferenceChunk::Token { token_id } => {
+-                        let Some(decoder) = decoder.as_mut() else {
+-                            yield Err(StreamError::MissingTokenizer);
+-                            return;
++                    } => {
++                        let actions = match semantic.text(&content) {
++                            Ok(actions) => actions,
++                            Err(error) => { yield Err(error); return; }
+                         };
+-                        match decoder.decode(token_id) {
++                        (content, content_tokens, actions)
++                    },
++                    InferenceChunk::Token { token_id } => {
++                        match semantic.token(token_id) {
+                             Ok(Some(decoded)) => decoded,
+                             Ok(None) => continue,
+                             Err(error) => {
+@@ -124,7 +128,6 @@ where
+                     started = true;
+                 }
+                 completion_usage.completion_tokens += content_tokens;
+-                let actions = state_machine.feed(&content);
+                 stashed.push(Some(content));
+                 for out in stashed.apply_actions(actions, &mut generator).await {
+                     yield Ok(out);
+@@ -140,7 +143,10 @@ where
+                     yield Ok(out);
+                 }
+             }
+-            let actions = state_machine.finish();
++            let actions = match semantic.finish() {
++                Ok(actions) => actions,
++                Err(error) => { yield Err(error); return; }
++            };
+             for out in stashed.apply_actions(actions, &mut generator).await {
+                 yield Ok(out);
+             }
+diff --git a/deepseek-recipe/src/stream/semantic.rs b/deepseek-recipe/src/stream/semantic.rs
+new file mode 100644
+index 0000000..7dd7ae8
+--- /dev/null
++++ b/deepseek-recipe/src/stream/semantic.rs
+@@ -0,0 +1,205 @@
++//! Synchronous semantic state shared by canonical parsing and read-only preview.
++
++use std::sync::{Arc, Mutex};
++
++use super::StreamError;
++use super::decoder::{StreamDecoder, TokenizerDecoder};
++use super::state_machine::{OutputActionSegment, ParsingOptions, SemanticTerminal, StateMachine};
++
++/// Earliest terminal in candidate IDs. Count excludes its completing token.
++/// Source spans are absolute decoded-source bytes, not tokenization offsets.
++#[derive(Debug, Clone, PartialEq, Eq)]
++pub struct SemanticPreview {
++    pub terminal: Option<SemanticTerminal>,
++    pub completing_token_index: Option<usize>,
++    pub safe_token_count: usize,
++    pub mapping_exact: bool,
++    pub candidate_ids_processed: usize,
++    pub max_pending_ids: usize,
++}
++
++/// Contains only incremental parser/decoder state, never output history or a
++/// protocol generator. Clone copies pending IDs and KMP/stage state and shares
++/// the immutable decoding implementation.
++#[derive(Clone)]
++pub struct SemanticSession {
++    machine: StateMachine,
++    decoder: Option<StreamDecoder>,
++    ended: bool,
++}
++
++impl SemanticSession {
++    pub fn new(options: ParsingOptions) -> Self {
++        Self {
++            machine: StateMachine::new(options),
++            decoder: None,
++            ended: false,
++        }
++    }
++
++    pub fn with_tokenizer(mut self, decoder: impl TokenizerDecoder + 'static) -> Self {
++        self.decoder = Some(StreamDecoder::new(Box::new(decoder)));
++        self
++    }
++
++    #[cfg(test)]
++    pub(crate) fn test_fingerprint(&self) -> String {
++        format!(
++            "{:?}|{:?}|{}",
++            self.machine,
++            self.decoder.as_ref().map(|d| d.test_state()),
++            self.ended
++        )
++    }
++
++    pub fn terminal(&self) -> Option<&SemanticTerminal> {
++        self.machine.terminal()
++    }
++    pub fn source_bytes(&self) -> usize {
++        self.machine.source_bytes()
++    }
++    pub fn pending_ids(&self) -> &[u32] {
++        self.decoder
++            .as_ref()
++            .map(|d| d.pending_ids())
++            .unwrap_or(&[])
++    }
++
++    /// Decode and feed as one atomic synchronous step. The returned source and
++    /// actions are consumed by the existing canonical protocol stashing code.
++    pub fn token(
++        &mut self,
++        id: u32,
++    ) -> Result<Option<(String, usize, Vec<OutputActionSegment>)>, StreamError> {
++        if self.ended {
++            return Err(StreamError::Decode {
++                detail: "semantic input ended".into(),
++            });
++        }
++        let decoder = self.decoder.as_mut().ok_or(StreamError::MissingTokenizer)?;
++        let Some((content, tokens)) = decoder.decode(id)? else {
++            return Ok(None);
++        };
++        let actions = self.machine.feed(&content);
++        Ok(Some((content, tokens, actions)))
++    }
++
++    pub fn text(&mut self, content: &str) -> Result<Vec<OutputActionSegment>, StreamError> {
++        if self.ended {
++            return Err(StreamError::Decode {
++                detail: "semantic input ended".into(),
++            });
++        }
++        Ok(self.machine.feed(content))
++    }
++
++    pub fn finish(&mut self) -> Vec<OutputActionSegment> {
++        if self.ended {
++            return Vec::new();
++        }
++        self.ended = true;
++        // Original finish consumes the parser. Leave its last terminal/span
++        // accessible after normal stream completion, without a history replay.
++        self.machine.clone().finish()
++    }
++
++    pub fn preview_tokens(&self, ids: &[u32]) -> Result<SemanticPreview, StreamError> {
++        let decoder = self.decoder.as_ref().ok_or(StreamError::MissingTokenizer)?;
++        let mut result = SemanticPreview {
++            terminal: self.terminal().cloned(),
++            completing_token_index: None,
++            safe_token_count: 0,
++            mapping_exact: false,
++            candidate_ids_processed: 0,
++            max_pending_ids: decoder.pending_ids().len(),
++        };
++        // No meaningful candidate-relative map after canonical terminal/EOF.
++        if self.ended || self.terminal().is_some() || !decoder.supports_semantic_preview() {
++            return Ok(result);
++        }
++        let mut fork = self.clone();
++        result.mapping_exact = true;
++        for (index, id) in ids.iter().enumerate() {
++            result.max_pending_ids = result.max_pending_ids.max(fork.pending_ids().len() + 1);
++            fork.token(*id)?;
++            result.candidate_ids_processed += 1;
++            if let Some(terminal) = fork.terminal() {
++                result.terminal = Some(terminal.clone());
++                result.completing_token_index = Some(index);
++                result.safe_token_count = index;
++                return Ok(result);
++            }
++        }
++        result.safe_token_count = ids.len();
++        Ok(result)
++    }
++}
++
++/// A processor retains this handle before consuming itself into its async
++/// stream. Python serializes preview with push/drain at the next-input boundary.
++/// Rust callers must likewise invoke preview only at their canonical input
++/// boundary, not while another task is feeding input.
++#[derive(Clone)]
++pub struct SemanticSessionHandle(pub(crate) Arc<Mutex<SemanticSession>>);
++
++impl SemanticSessionHandle {
++    pub(crate) fn new(options: ParsingOptions) -> Self {
++        Self(Arc::new(Mutex::new(SemanticSession::new(options))))
++    }
++
++    pub(crate) fn set_tokenizer(&self, decoder: impl TokenizerDecoder + 'static) {
++        self.0.lock().expect("semantic lock poisoned").decoder =
++            Some(StreamDecoder::new(Box::new(decoder)));
++    }
++
++    pub(crate) fn token(
++        &self,
++        id: u32,
++    ) -> Result<Option<(String, usize, Vec<OutputActionSegment>)>, StreamError> {
++        self.0
++            .lock()
++            .map_err(|_| StreamError::Decode {
++                detail: "semantic lock poisoned".into(),
++            })?
++            .token(id)
++    }
++
++    pub(crate) fn text(&self, content: &str) -> Result<Vec<OutputActionSegment>, StreamError> {
++        self.0
++            .lock()
++            .map_err(|_| StreamError::Decode {
++                detail: "semantic lock poisoned".into(),
++            })?
++            .text(content)
++    }
++
++    pub(crate) fn finish(&self) -> Result<Vec<OutputActionSegment>, StreamError> {
++        Ok(self
++            .0
++            .lock()
++            .map_err(|_| StreamError::Decode {
++                detail: "semantic lock poisoned".into(),
++            })?
++            .finish())
++    }
++
++    pub fn preview_tokens(&self, ids: &[u32]) -> Result<SemanticPreview, StreamError> {
++        self.0
++            .lock()
++            .map_err(|_| StreamError::Decode {
++                detail: "semantic lock poisoned".into(),
++            })?
++            .preview_tokens(ids)
++    }
++
++    pub fn terminal(&self) -> Result<Option<SemanticTerminal>, StreamError> {
++        Ok(self
++            .0
++            .lock()
++            .map_err(|_| StreamError::Decode {
++                detail: "semantic lock poisoned".into(),
++            })?
++            .terminal()
++            .cloned())
++    }
++}
+diff --git a/deepseek-recipe/src/stream/semantic_tests.rs b/deepseek-recipe/src/stream/semantic_tests.rs
+new file mode 100644
+index 0000000..00a1124
+--- /dev/null
++++ b/deepseek-recipe/src/stream/semantic_tests.rs
+@@ -0,0 +1,262 @@
++use super::semantic::SemanticSession;
++use super::state_machine::{ParsingOptions, ReasoningStage, SemanticTerminalKind};
++use super::{
++    ChunkGenerator, InferenceChunk, InferenceFinishReason, OutputChunk, StreamProcessor,
++    TokenizerDecoder,
++};
++use std::sync::Arc;
++use tokenizers::Tokenizer;
++use tokio_stream::StreamExt;
++
++fn tokenizer() -> Arc<Tokenizer> {
++    let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
++        .parent()
++        .unwrap()
++        .join("static/tokenizers/v41/tokenizer.json");
++    Arc::new(Tokenizer::from_file(path).unwrap())
++}
++
++fn ids(t: &Tokenizer, text: &str) -> Vec<u32> {
++    t.encode(text, false).unwrap().get_ids().to_vec()
++}
++
++fn options(stops: &[&str]) -> ParsingOptions {
++    ParsingOptions {
++        stop_sequences: stops.iter().map(|s| s.to_string()).collect(),
++        ..Default::default()
++    }
++}
++
++fn feed(session: &mut SemanticSession, tokens: &[u32]) {
++    for id in tokens {
++        session.token(*id).unwrap();
++    }
++}
++
++const CALL: &str = "<｜DSML｜ calls>\n<｜DSML｜ invoke name=\"lookup\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>";
++
++#[test]
++fn every_dsml_token_split_is_an_exact_nonmutating_preview() {
++    let t = tokenizer();
++    let tokens = ids(&t, CALL);
++    for split in 0..tokens.len() {
++        let mut canonical = SemanticSession::new(options(&[])).with_tokenizer(t.clone());
++        feed(&mut canonical, &tokens[..split]);
++        assert!(canonical.terminal().is_none());
++        let before = canonical.test_fingerprint();
++        let result = canonical.preview_tokens(&tokens[split..]).unwrap();
++        assert_eq!(before, canonical.test_fingerprint());
++        assert_eq!(result, canonical.preview_tokens(&tokens[split..]).unwrap());
++        assert!(result.mapping_exact);
++        assert_eq!(
++            result.completing_token_index,
++            Some(tokens.len() - split - 1)
++        );
++        assert_eq!(result.safe_token_count, tokens.len() - split - 1);
++        let terminal = result.terminal.unwrap();
++        assert_eq!(terminal.kind, SemanticTerminalKind::DsmlToolCallBlockEnd);
++        assert_eq!(
++            &CALL.as_bytes()[terminal.source_start..terminal.source_end],
++            "</｜DSML｜ calls>".as_bytes()
++        );
++        feed(&mut canonical, &tokens[split..]);
++        assert_eq!(canonical.terminal(), Some(&terminal));
++    }
++}
++
++#[test]
++fn pending_canonical_utf8_ids_and_candidate_group() {
++    let t = tokenizer();
++    let tokens = ids(&t, "🙂");
++    assert!(tokens.len() > 1);
++    let mut canonical = SemanticSession::new(options(&["🙂"])).with_tokenizer(t);
++    feed(&mut canonical, &tokens[..1]);
++    assert_eq!(canonical.source_bytes(), 0);
++    assert_eq!(canonical.pending_ids(), &tokens[..1]);
++    let before = canonical.test_fingerprint();
++    let p = canonical.preview_tokens(&tokens[1..]).unwrap();
++    assert_eq!(p.completing_token_index, Some(tokens.len() - 2));
++    assert_eq!(p.safe_token_count, tokens.len() - 2);
++    assert_eq!(p.max_pending_ids, tokens.len());
++    assert_eq!(p.terminal.unwrap().source_end, "🙂".len());
++    assert_eq!(before, canonical.test_fingerprint());
++}
++
++#[test]
++fn stops_across_every_token_boundary_with_shared_prefix_and_unicode() {
++    let t = tokenizer();
++    let text = "café🙂HALT NOT yet HALT NOW";
++    let tokens = ids(&t, text);
++    for split in 0..tokens.len() {
++        let mut canonical =
++            SemanticSession::new(options(&["HALT NOW", "HALT NEVER"])).with_tokenizer(t.clone());
++        feed(&mut canonical, &tokens[..split]);
++        let p = canonical.preview_tokens(&tokens[split..]).unwrap();
++        let terminal = p.terminal.unwrap();
++        assert!(p.mapping_exact);
++        assert_eq!(p.completing_token_index, Some(tokens.len() - split - 1));
++        assert_eq!(terminal.kind, SemanticTerminalKind::StopSequence);
++        assert_eq!(terminal.source_start, text.len() - "HALT NOW".len());
++        assert_eq!(terminal.source_end, text.len());
++    }
++}
++
++#[test]
++fn simulated_rejection_and_partial_emission_never_repair_parser() {
++    let t = tokenizer();
++    let tokens = ids(&t, CALL);
++    for emitted in [0, 1, tokens.len() / 2, tokens.len() - 1, tokens.len()] {
++        let mut canonical = SemanticSession::new(options(&[])).with_tokenizer(t.clone());
++        let mut reference = canonical.clone();
++        let before = canonical.test_fingerprint();
++        canonical.preview_tokens(&tokens).unwrap();
++        assert_eq!(before, canonical.test_fingerprint());
++        feed(&mut canonical, &tokens[..emitted]);
++        feed(&mut reference, &tokens[..emitted]);
++        assert_eq!(canonical.test_fingerprint(), reference.test_fingerprint());
++    }
++}
++
++#[test]
++fn opening_invocation_close_and_json_fence_are_not_terminal() {
++    let t = tokenizer();
++    for text in [
++        "<｜DSML｜ calls>",
++        &CALL[..CALL.rfind("</｜DSML｜ calls>").unwrap()],
++    ] {
++        let session = SemanticSession::new(options(&[])).with_tokenizer(t.clone());
++        assert!(
++            session
++                .preview_tokens(&ids(&t, text))
++                .unwrap()
++                .terminal
++                .is_none()
++        );
++    }
++    let mut json_options = options(&[]);
++    json_options.parse_json_output = true;
++    let session = SemanticSession::new(json_options).with_tokenizer(t.clone());
++    assert!(
++        session
++            .preview_tokens(&ids(&t, "```json\n{}\n``` tail"))
++            .unwrap()
++            .terminal
++            .is_none()
++    );
++}
++
++#[test]
++fn reasoning_excludes_user_stops_until_content() {
++    let t = tokenizer();
++    let mut o = options(&["STOP"]);
++    o.reasoning_initial_stage = Some(ReasoningStage::Reasoning);
++    let mut session = SemanticSession::new(o).with_tokenizer(t.clone());
++    let reasoning = ids(&t, "STOP thoughts");
++    assert!(
++        session
++            .preview_tokens(&reasoning)
++            .unwrap()
++            .terminal
++            .is_none()
++    );
++    feed(&mut session, &reasoning);
++    assert!(
++        session
++            .preview_tokens(&ids(&t, "</think>STOP"))
++            .unwrap()
++            .terminal
++            .is_some()
++    );
++}
++
++#[test]
++fn terminal_tail_earliest_span_and_ended_input_fail_closed() {
++    let t = tokenizer();
++    let mut session = SemanticSession::new(options(&[])).with_tokenizer(t.clone());
++    let p = session
++        .preview_tokens(&ids(&t, &(CALL.to_string() + "TAIL")))
++        .unwrap();
++    assert_eq!(p.terminal.as_ref().unwrap().source_end, CALL.len());
++    feed(&mut session, &ids(&t, CALL));
++    let p = session.preview_tokens(&ids(&t, "TAIL")).unwrap();
++    assert!(!p.mapping_exact);
++    assert_eq!(p.safe_token_count, 0);
++    session.finish();
++    assert!(!session.preview_tokens(&[]).unwrap().mapping_exact);
++    assert!(session.token(1).is_err());
++}
++
++struct UnsupportedDecoder;
++impl TokenizerDecoder for UnsupportedDecoder {
++    fn decode_ids(&self, _: &[u32], _: bool) -> Result<String, String> {
++        panic!("must not preview untrusted decoder")
++    }
++}
++
++#[test]
++fn custom_decoder_does_not_implicitly_claim_exactness() {
++    let session = SemanticSession::new(options(&[])).with_tokenizer(UnsupportedDecoder);
++    let p = session.preview_tokens(&[1, 2]).unwrap();
++    assert!(!p.mapping_exact);
++    assert_eq!(p.safe_token_count, 0);
++    assert_eq!(p.candidate_ids_processed, 0);
++}
++
++struct FailingDecoder;
++impl TokenizerDecoder for FailingDecoder {
++    fn supports_semantic_preview(&self) -> bool {
++        true
++    }
++    fn decode_ids(&self, _: &[u32], skip: bool) -> Result<String, String> {
++        assert!(!skip);
++        Err("test error".into())
++    }
++}
++
++#[test]
++fn decode_error_leaves_canonical_state_unchanged() {
++    let session = SemanticSession::new(options(&[])).with_tokenizer(FailingDecoder);
++    let before = session.test_fingerprint();
++    assert!(session.preview_tokens(&[1]).is_err());
++    assert_eq!(before, session.test_fingerprint());
++}
++
++struct Echo;
++impl ChunkGenerator for Echo {
++    type Chunk = OutputChunk;
++    async fn generate(&mut self, chunk: OutputChunk) -> Vec<OutputChunk> {
++        vec![chunk]
++    }
++}
++
++#[tokio::test]
++async fn canonical_processor_uses_retained_session_but_keeps_finish_behavior() {
++    let t = tokenizer();
++    let processor = StreamProcessor::new(Echo, options(&[])).with_tokenizer(t.clone());
++    let handle = processor.semantic_session();
++    let p = handle.preview_tokens(&ids(&t, CALL)).unwrap();
++    assert!(p.mapping_exact);
++    assert!(handle.terminal().unwrap().is_none());
++    let mut input = ids(&t, CALL)
++        .into_iter()
++        .map(|id| InferenceChunk::Token { token_id: id })
++        .collect::<Vec<_>>();
++    input.push(InferenceChunk::Finish {
++        finish_reason: InferenceFinishReason::Stop,
++    });
++    let stream = processor.process(tokio_stream::iter(input));
++    tokio::pin!(stream);
++    let mut chunks = Vec::new();
++    while let Some(chunk) = stream.next().await {
++        chunks.push(chunk.unwrap());
++    }
++    assert_eq!(handle.terminal().unwrap(), p.terminal);
++    assert!(matches!(
++        chunks.last(),
++        Some(OutputChunk::Finish {
++            reason: super::FinishReason::ToolCalls,
++            ..
++        })
++    ));
++    assert!(!handle.preview_tokens(&[]).unwrap().mapping_exact);
++}
+diff --git a/deepseek-recipe/src/stream/state_machine.rs b/deepseek-recipe/src/stream/state_machine.rs
+index e4bb0f4..2517825 100644
+--- a/deepseek-recipe/src/stream/state_machine.rs
++++ b/deepseek-recipe/src/stream/state_machine.rs
+@@ -59,9 +59,27 @@ impl Default for ParsingOptions {
+ }
+ 
+ /// An incremental parser whose output segments refer to input byte lengths.
++#[derive(Debug, Clone)]
+ pub struct StateMachine {
+     options: ParsingOptions,
+     state: State,
++    source_bytes: usize,
++    terminal: Option<SemanticTerminal>,
++}
++
++/// Additional observation; does not change the parser's output actions.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub enum SemanticTerminalKind {
++    StopSequence,
++    DsmlToolCallBlockEnd,
++}
++
++/// Absolute half-open byte span in the decoded source stream.
++#[derive(Debug, Clone, PartialEq, Eq)]
++pub struct SemanticTerminal {
++    pub kind: SemanticTerminalKind,
++    pub source_start: usize,
++    pub source_end: usize,
+ }
+ 
+ impl StateMachine {
+@@ -81,12 +99,31 @@ impl StateMachine {
+             Stage::Common { is_leading: true }
+         };
+         let state = State::new(stage, &options);
+-        Self { options, state }
++        Self {
++            options,
++            state,
++            source_bytes: 0,
++            terminal: None,
++        }
+     }
+ 
+     /// Parse the next source chunk, retaining incomplete markers for later input.
+     pub fn feed(&mut self, content: &str) -> Vec<OutputActionSegment> {
+-        self.state.feed(content, &self.options)
++        let (actions, terminal) = self.state.feed(content, &self.options, self.source_bytes);
++        self.source_bytes += content.len();
++        if self.terminal.is_none() {
++            self.terminal = terminal;
++        }
++        actions
++    }
++
++    /// First actual transition to semantic Finished, never an EOF inference.
++    pub fn terminal(&self) -> Option<&SemanticTerminal> {
++        self.terminal.as_ref()
++    }
++
++    pub fn source_bytes(&self) -> usize {
++        self.source_bytes
+     }
+ 
+     /// Process buffered input when the source ends.
+@@ -145,14 +182,14 @@ enum Stage {
+     Finished,
+ }
+ 
+-#[derive(Debug)]
++#[derive(Debug, Clone)]
+ struct MatchBranch {
+     pub state: MatchState,
+     pub next_stage: Stage,
+     pub action_on_matched: ActionOnMatched,
+ }
+ 
+-#[derive(Debug)]
++#[derive(Debug, Clone)]
+ struct MatchBranches(Vec<MatchBranch>);
+ 
+ impl MatchBranches {
+@@ -202,7 +239,7 @@ impl MatchBranches {
+     }
+ }
+ 
+-#[derive(Debug)]
++#[derive(Debug, Clone)]
+ struct State {
+     stage: Stage,
+     match_branches: MatchBranches,
+@@ -384,9 +421,15 @@ impl State {
+         }
+     }
+ 
+-    fn feed(&mut self, content: &str, options: &ParsingOptions) -> Vec<OutputActionSegment> {
++    fn feed(
++        &mut self,
++        content: &str,
++        options: &ParsingOptions,
++        source_bytes: usize,
++    ) -> (Vec<OutputActionSegment>, Option<SemanticTerminal>) {
+         let mut output_actions = Vec::new();
+-        for byte in content.bytes() {
++        let mut terminal = None;
++        for (index, byte) in content.bytes().enumerate() {
+             self.stashed_size += 1;
+             let mut matched_branch = None;
+             for branch in self.match_branches.0.iter_mut() {
+@@ -409,6 +452,18 @@ impl State {
+                 if matching_len > 0 {
+                     output_actions.push(OutputActionSegment::new(action_on_matched, matching_len));
+                 }
++                if matches!(next_stage, Stage::Finished) && terminal.is_none() {
++                    let source_end = source_bytes + index + 1;
++                    terminal = Some(SemanticTerminal {
++                        kind: if action_on_matched == OutputAction::StopSequence {
++                            SemanticTerminalKind::StopSequence
++                        } else {
++                            SemanticTerminalKind::DsmlToolCallBlockEnd
++                        },
++                        source_start: source_end - matching_len,
++                        source_end,
++                    });
++                }
+                 *self = State::new(next_stage, options);
+             }
+         }
+@@ -426,7 +481,7 @@ impl State {
+             ));
+             self.stashed_size = matching_len;
+         }
+-        output_actions
++        (output_actions, terminal)
+     }
+ 
+     fn finish(self) -> (Stage, Vec<OutputActionSegment>) {
+@@ -497,7 +552,7 @@ fn kmp_table(pattern: &[u8]) -> KMPTable {
+     table
+ }
+ 
+-#[derive(Debug)]
++#[derive(Debug, Clone)]
+ enum MatchState {
+     String {
+         s: String,
+diff --git a/docs/semantic-preview.md b/docs/semantic-preview.md
+new file mode 100644
+index 0000000..7da9be7
+--- /dev/null
++++ b/docs/semantic-preview.md
+@@ -0,0 +1,74 @@
++# Candidate incremental semantic preview API
++
++This local candidate change is based on 8cadfede7063c896b944e7bae05daa3549ae97ea.
++It adds observations without changing protocol output/finish behavior.
++
++`StreamProcessor` now owns a `SemanticSessionHandle` pointing to an explicit
++synchronous `SemanticSession`. Canonical token decode + parser feed is one
++synchronous step. No mutex guard spans a protocol generator await. The Python
++binding retains the handle before consuming the processor into its async stream;
++its existing mutex serializes push/drain and preview at the next-input boundary.
++Rust callers must likewise serialize input and preview at an input boundary.
++
++`SemanticSession` forks only StateMachine and decoder mutable state: parser stage,
++KMP prefixes/tables, stashed byte count, reasoning/newline/JSON state, pending
++IDs/count, absolute decoded byte offset and first terminal observation. No
++protocol generator, stashed protocol chunks, async input channel or generated
++history is cloned. Protocol stashing still consumes the exact original actions.
++
++The decode implementation is shared using Arc<Mutex<Box<dyn TokenizerDecoder>>>;
++the mutex preserves the existing Send-only trait bound. The tokenizer itself is
++not copied. Decode still calls decode_ids(pending_ids, false), holds empty text or
++text ending in U+FFFD, and resets pending state only on a successful text flush.
++Custom decoders opt in to preview only if immutable and deterministic; the default
++supports_semantic_preview is false. The standard Tokenizer and its Arc delegate
++opt in. Unsupported custom decoding returns inexact mapping and zero safe count,
++without calling that decoder. Missing tokenizer/decode errors return an error.
++
++The StateMachine records the actual matched transition into Finished. The
++additional semantic observation distinguishes STOP_SEQUENCE from
++DSML_TOOL_CALL_BLOCK_END, and records an absolute half-open decoded-byte span.
++DSML opening or invocation closure is not terminal; JSON fence closure is not
++terminal. `finished` retains its original protocol stream meaning. DSML terminal
++metadata does not close the stream or invent a backend finish reason.
++
++Python:
++
++```python
++result = processor.preview_tokens(candidate_ids)
++result.terminal_kind             # None, STOP_SEQUENCE, DSML_TOOL_CALL_BLOCK_END
++result.completing_token_index    # None or zero-based candidate index
++result.safe_token_count          # candidate IDs before completing token
++result.source_start              # None or absolute decoded-source byte position
++result.source_end                # None or exclusive end
++result.mapping_exact             # false => caller must fail closed
++result.candidate_ids_processed
++result.max_pending_ids
++processor.semantic_terminal      # actual canonical observation, not preview
++```
++
++A flush caused by candidate j can include IDs pending before preview. Its first
++terminal transition maps exactly to j under the canonical decoder contract.
++Earlier candidate IDs that produced no text remain in the safe prefix. Span start
++can precede this call. The result never re-tokenizes decoded text or rounds byte
++positions forward. No terminal yields safe count equal to candidate count.
++Already-terminal/ended session yields mapping_exact=false and safe count zero;
++closed/finished Python streams reject preview. Canonical semantic metadata is
++readable after normal protocol completion, but not after close/error.
++
++The fork stops after the first terminal-producing flush. The authoritative feed
++may consume the entire flush including an invalid tail, exactly as canonical feed
++does; the returned span remains the first terminal byte span and the completing
++candidate must remain outside any speculative target-committed drained prefix.
++
++State-copy cost is independent of generated history length, but proportional to
++configured matcher patterns and pending IDs. The existing decoder contract can
++retain an arbitrarily long group if decoding never produces a usable flush; this
++change does not promise a fixed maximum pending size. Callers may impose separate
++eligibility/resource bounds, not change detokenization.
++
++Tests: `cargo test -p deepseek-recipe`, plus
++`deepseek-recipe-python/tests/test_semantic_preview.py` after a real native build.
++The consuming ds41f M31 source driver compares raw outputs and chat events against
++the pristine pinned source. Python/native and live MTP qualification are separate
++prerequisites; this extension alone does not authorize speculative serving.
+-- 
+2.50.1
+

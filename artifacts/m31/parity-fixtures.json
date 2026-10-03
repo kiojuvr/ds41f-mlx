@@ -1,0 +1,166 @@
+[
+  {
+    "name": "ordinary",
+    "text": "Ordinary café 🙂 text.",
+    "stops": []
+  },
+  {
+    "name": "reasoning",
+    "text": "Consider café🙂.\n</think>\nAnswer.",
+    "stops": [],
+    "reasoning": true
+  },
+  {
+    "name": "one_call",
+    "text": "<｜DSML｜ calls>\n<｜DSML｜ invoke name=\"lookup_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "stops": []
+  },
+  {
+    "name": "multiple_calls_string_and_json",
+    "text": "<｜DSML｜ calls>\n<｜DSML｜ invoke name=\"lookup_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n<｜DSML｜ invoke name=\"store\">\n<｜DSML｜ parameter name=\"city\" string=\"false\">{\"count\":2,\"ok\":true}</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "stops": []
+  },
+  {
+    "name": "thinking_to_tool",
+    "text": "Think.\n</think>\n<｜DSML｜ calls>\n<｜DSML｜ invoke name=\"lookup_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "stops": [],
+    "reasoning": true
+  },
+  {
+    "name": "json_fence",
+    "text": "before ```json\n{\"ok\":true}\n``` after",
+    "stops": [],
+    "json": true
+  },
+  {
+    "name": "json_raw",
+    "text": "[1,true,\"🙂\"]",
+    "stops": [],
+    "json": true
+  },
+  {
+    "name": "json_stop",
+    "text": "```json\n{\"text\":\"HALT NOW tail\"}\n```",
+    "stops": [
+      "HALT NOW"
+    ],
+    "json": true
+  },
+  {
+    "name": "backend_stop",
+    "text": "text",
+    "stops": []
+  },
+  {
+    "name": "backend_length",
+    "text": "text",
+    "stops": [],
+    "finish": "length"
+  },
+  {
+    "name": "backend_eof",
+    "text": "text",
+    "stops": [],
+    "finish": "eof"
+  },
+  {
+    "name": "eos_literal_backend_stop",
+    "text": "text<｜end▁of▁sentence｜>",
+    "stops": []
+  },
+  {
+    "name": "one_token_stop",
+    "text": "abcSTOPtail",
+    "stops": [
+      "STOP"
+    ]
+  },
+  {
+    "name": "multi_token_stop",
+    "text": "alpha HALT NOW omega",
+    "stops": [
+      "HALT NOW"
+    ]
+  },
+  {
+    "name": "shared_prefix_stop",
+    "text": "HALT NOT yet HALT NOWtail",
+    "stops": [
+      "HALT NOW",
+      "HALT NEVER"
+    ]
+  },
+  {
+    "name": "unicode_stop",
+    "text": "café🙂HALT NOWtail",
+    "stops": [
+      "HALT NOW"
+    ]
+  },
+  {
+    "name": "unicode_stop_itself",
+    "text": "café🙂tail",
+    "stops": [
+      "🙂"
+    ]
+  },
+  {
+    "name": "stop_in_reasoning_excluded",
+    "text": "STOP thought</think>answer STOP tail",
+    "stops": [
+      "STOP"
+    ],
+    "reasoning": true
+  },
+  {
+    "name": "incomplete_dsml",
+    "text": "<｜DSML｜ calls>\n<｜DSML｜ invoke name=\"lookup_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n",
+    "stops": []
+  },
+  {
+    "name": "complete_dsml_invalid_tail",
+    "text": "<｜DSML｜ calls>\n<｜DSML｜ invoke name=\"lookup_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>INVALID TAIL",
+    "stops": []
+  },
+  {
+    "name": "multi_tool_length",
+    "text": "<｜DSML｜ calls>\n<｜DSML｜ invoke name=\"lookup_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n<｜DSML｜ invoke name=\"store\">\n<｜DSML｜ parameter name=\"city\" string=\"false\">{\"count\":2,\"ok\":true}</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "stops": [],
+    "finish": "length"
+  },
+  {
+    "name": "historical_actual_m11_off_tokens",
+    "tokens": [
+      30,
+      128825,
+      34756,
+      2329,
+      1281,
+      12533,
+      1425,
+      65,
+      50219,
+      3816,
+      30,
+      128825,
+      10767,
+      2329,
+      1281,
+      37399,
+      4,
+      3418,
+      1281,
+      11476,
+      3320,
+      51119,
+      1718,
+      128825,
+      10767,
+      1018,
+      1718,
+      128825
+    ],
+    "stops": [],
+    "origin": "historical, not fresh M31 generation"
+  }
+]

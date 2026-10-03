@@ -1,0 +1,322 @@
+Using Python 3.13.14 environment at: /tmp/ds41f-m31-qual
+Resolved 1 package in 12ms
+   Building deepseek-recipe @ file:///tmp/ds41f-m31-recipe/deepseek-recipe-python
+  × Failed to build `deepseek-recipe @
+  │ file:///tmp/ds41f-m31-recipe/deepseek-recipe-python`
+  ├─▶ The build backend returned an error
+  ╰─▶ Call to `maturin.build_wheel` failed (exit status: 1)
+
+      [stdout]
+      Running `maturin pep517 build-wheel -i /tmp/ds41f-m31-qual/bin/python
+      --compatibility off`
+
+      [stderr]
+      🍹 Building a mixed python/rust project
+      🐍 Found CPython 3.13 at /tmp/ds41f-m31-qual/bin/python
+      🔗 Found pyo3 bindings with abi3-py3.10 support
+      📡 Using build options features from pyproject.toml
+      💻 Using `MACOSX_DEPLOYMENT_TARGET=11.0` for aarch64-apple-darwin by
+      default
+         Compiling pyo3-build-config v0.27.2
+         Compiling zerovec v0.11.8
+         Compiling zerotrie v0.2.5
+         Compiling opencv v0.93.7
+         Compiling tokio-rustls v0.26.5
+         Compiling deepseek-recipe-python v0.1.0
+      (/private/tmp/ds41f-m31-recipe/deepseek-recipe-python)
+         Compiling hyper-rustls v0.27.9
+         Compiling pyo3-macros-backend v0.27.2
+         Compiling pyo3-ffi v0.27.2
+         Compiling pyo3 v0.27.2
+      error: failed to run custom build command for `opencv v0.93.7`
+
+      Caused by:
+        process didn't exit successfully:
+      `/tmp/ds41f-m31-cargo/release/build/opencv-a0107792b4ef37ef/build-script-build`
+      (exit status: 1)
+        --- stdout
+        cargo:rustc-check-cfg=cfg(ocvrs_opencv_branch_4)
+        cargo:rustc-check-cfg=cfg(ocvrs_opencv_branch_34)
+        cargo:rustc-check-cfg=cfg(ocvrs_opencv_branch_32)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_alphamat)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_aruco)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_aruco_detector)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_barcode)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_bgsegm)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_bioinspired)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_calib3d)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_ccalib)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_core)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_cudaarithm)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_cudabgsegm)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_cudacodec)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_cudafeatures2d)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_cudafilters)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_cudaimgproc)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_cudaobjdetect)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_cudaoptflow)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_cudastereo)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_cudawarping)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_cvv)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_dnn)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_dnn_superres)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_dpm)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_face)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_features2d)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_flann)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_freetype)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_fuzzy)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_gapi)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_hdf)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_hfs)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_highgui)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_img_hash)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_imgcodecs)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_imgproc)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_intensity_transform)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_line_descriptor)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_mcc)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_ml)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_objdetect)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_optflow)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_ovis)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_phase_unwrapping)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_photo)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_plot)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_quality)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_rapid)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_rgbd)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_saliency)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_sfm)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_shape)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_signal)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_stereo)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_stitching)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_structured_light)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_superres)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_surface_matching)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_text)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_tracking)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_video)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_videoio)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_videostab)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_viz)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_wechat_qrcode)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_xfeatures2d)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_ximgproc)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_xobjdetect)
+        cargo:rustc-check-cfg=cfg(ocvrs_has_module_xphoto)
+        cargo:rerun-if-env-changed=OPENCV4_NO_PKG_CONFIG
+        cargo:rerun-if-env-changed=PKG_CONFIG_aarch64-apple-darwin
+        cargo:rerun-if-env-changed=PKG_CONFIG_aarch64_apple_darwin
+        cargo:rerun-if-env-changed=HOST_PKG_CONFIG
+        cargo:rerun-if-env-changed=PKG_CONFIG
+        cargo:rerun-if-env-changed=OPENCV4_STATIC
+        cargo:rerun-if-env-changed=OPENCV4_DYNAMIC
+        cargo:rerun-if-env-changed=PKG_CONFIG_ALL_STATIC
+        cargo:rerun-if-env-changed=PKG_CONFIG_ALL_DYNAMIC
+        cargo:rerun-if-env-changed=PKG_CONFIG_PATH_aarch64-apple-darwin
+        cargo:rerun-if-env-changed=PKG_CONFIG_PATH_aarch64_apple_darwin
+        cargo:rerun-if-env-changed=HOST_PKG_CONFIG_PATH
+        cargo:rerun-if-env-changed=PKG_CONFIG_PATH
+        cargo:rerun-if-env-changed=PKG_CONFIG_LIBDIR_aarch64-apple-darwin
+        cargo:rerun-if-env-changed=PKG_CONFIG_LIBDIR_aarch64_apple_darwin
+        cargo:rerun-if-env-changed=HOST_PKG_CONFIG_LIBDIR
+        cargo:rerun-if-env-changed=PKG_CONFIG_LIBDIR
+        cargo:rerun-if-env-changed=PKG_CONFIG_SYSROOT_DIR_aarch64-apple-darwin
+        cargo:rerun-if-env-changed=PKG_CONFIG_SYSROOT_DIR_aarch64_apple_darwin
+        cargo:rerun-if-env-changed=HOST_PKG_CONFIG_SYSROOT_DIR
+        cargo:rerun-if-env-changed=PKG_CONFIG_SYSROOT_DIR
+        cargo:rerun-if-env-changed=OPENCV_NO_PKG_CONFIG
+        cargo:rerun-if-env-changed=PKG_CONFIG_aarch64-apple-darwin
+        cargo:rerun-if-env-changed=PKG_CONFIG_aarch64_apple_darwin
+        cargo:rerun-if-env-changed=HOST_PKG_CONFIG
+        cargo:rerun-if-env-changed=PKG_CONFIG
+        cargo:rerun-if-env-changed=OPENCV_STATIC
+        cargo:rerun-if-env-changed=OPENCV_DYNAMIC
+        cargo:rerun-if-env-changed=PKG_CONFIG_ALL_STATIC
+        cargo:rerun-if-env-changed=PKG_CONFIG_ALL_DYNAMIC
+        cargo:rerun-if-env-changed=PKG_CONFIG_PATH_aarch64-apple-darwin
+        cargo:rerun-if-env-changed=PKG_CONFIG_PATH_aarch64_apple_darwin
+        cargo:rerun-if-env-changed=HOST_PKG_CONFIG_PATH
+        cargo:rerun-if-env-changed=PKG_CONFIG_PATH
+        cargo:rerun-if-env-changed=PKG_CONFIG_LIBDIR_aarch64-apple-darwin
+        cargo:rerun-if-env-changed=PKG_CONFIG_LIBDIR_aarch64_apple_darwin
+        cargo:rerun-if-env-changed=HOST_PKG_CONFIG_LIBDIR
+        cargo:rerun-if-env-changed=PKG_CONFIG_LIBDIR
+        cargo:rerun-if-env-changed=PKG_CONFIG_SYSROOT_DIR_aarch64-apple-darwin
+        cargo:rerun-if-env-changed=PKG_CONFIG_SYSROOT_DIR_aarch64_apple_darwin
+        cargo:rerun-if-env-changed=HOST_PKG_CONFIG_SYSROOT_DIR
+        cargo:rerun-if-env-changed=PKG_CONFIG_SYSROOT_DIR
+
+        --- stderr
+        === Crate version: 0.93.7
+        === Environment configuration:
+        ===   OPENCV_PACKAGE_NAME = None
+        ===   OPENCV_PKGCONFIG_NAME = None
+        ===   OPENCV_CMAKE_NAME = None
+        ===   OPENCV_CMAKE_BIN = None
+        ===   OPENCV_VCPKG_NAME = None
+        ===   OPENCV_LINK_LIBS = None
+        ===   OPENCV_LINK_PATHS = None
+        ===   OPENCV_INCLUDE_PATHS = None
+        ===   OPENCV_DISABLE_PROBES = None
+        ===   OPENCV_MSVC_CRT = None
+        ===   CMAKE_PREFIX_PATH = None
+        ===   OpenCV_DIR = None
+        ===   PKG_CONFIG_PATH = None
+        ===   VCPKG_ROOT = None
+        ===   VCPKGRS_DYNAMIC = None
+        ===   VCPKGRS_TRIPLET = None
+        ===   OCVRS_DOCS_GENERATE_DIR = None
+        ===   DOCS_RS = None
+        ===   PATH =
+      Some("/tmp/ds41f-m31-qual/bin:/Users/kioju/.pi/agent/bin:/Users/kioju/.local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/kioju/.lmstudio/bin")
+        === Enabled features:
+        ===   CLANG_RUNTIME
+        ===   IMGCODECS
+        ===   IMGPROC
+        === Detected probe priority boost based on environment vars:
+      pkg_config: false, cmake: false, vcpkg: false
+        === Probing the OpenCV library in the following order: environment,
+      pkg_config, cmake, vcpkg_cmake, vcpkg
+        === Can't probe using: environment, continuing with other methods
+      because: Some environment variables are missing
+        === Probing OpenCV library using pkg_config
+        === Can't probe using: pkg_config, continuing with other methods
+      because:
+        pkg-config exited with status code 1
+        > PKG_CONFIG_ALLOW_SYSTEM_LIBS=1 PKG_CONFIG_ALLOW_SYSTEM_CFLAGS=1
+      pkg-config --libs --cflags opencv4
+
+        pkg-config output:
+          Package opencv4 was not found in the pkg-config search path.
+          Perhaps you should add the directory containing `opencv4.pc'
+          to the PKG_CONFIG_PATH environment variable
+          Package 'opencv4' not found
+
+        The system library `opencv4` required by crate `opencv` was not found.
+        The file `opencv4.pc` needs to be installed and the PKG_CONFIG_PATH
+      environment variable must contain its parent directory.
+        The PKG_CONFIG_PATH environment variable is not set.
+
+        HINT: if you have installed the library, try setting PKG_CONFIG_PATH
+      to the directory containing `opencv4.pc`.
+        ,
+        pkg-config exited with status code 1
+        > PKG_CONFIG_ALLOW_SYSTEM_LIBS=1 PKG_CONFIG_ALLOW_SYSTEM_CFLAGS=1
+      pkg-config --libs --cflags opencv
+
+        pkg-config output:
+          Package opencv was not found in the pkg-config search path.
+          Perhaps you should add the directory containing `opencv.pc'
+          to the PKG_CONFIG_PATH environment variable
+          Package 'opencv' not found
+
+        The system library `opencv` required by crate `opencv` was not found.
+        The file `opencv.pc` needs to be installed and the PKG_CONFIG_PATH
+      environment variable must contain its parent directory.
+        The PKG_CONFIG_PATH environment variable is not set.
+
+        HINT: if you have installed the library, try setting PKG_CONFIG_PATH
+      to the directory containing `opencv.pc`.
+
+        === Probing OpenCV library using cmake
+        === cmake ninja probe command: cd
+      "/tmp/ds41f-m31-cargo/release/build/opencv-3fc2c45feb0110bd/out/cmake_probe_build"
+      && "cmake" "-S"
+      "/Users/kioju/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/opencv-0.93.7/cmake"
+      "-DOCVRS_PACKAGE_NAME=OpenCV" "-DCMAKE_BUILD_TYPE=Release" "-G" "Ninja"
+        === Probing with cmake ninja generator failed, will try Makefile
+      generator, error: cmake returned an error
+            stdout: "-- Configuring incomplete, errors occurred!\n"
+            stderr: "CMake Deprecation Warning at CMakeLists.txt:1
+      (cmake_minimum_required):\n  Compatibility with CMake < 3.10 will be
+      removed from a future version of\n  CMake.\n\n  Update the VERSION
+      argument <min> value.  Or, use the <min>...<max> syntax\n  to tell
+      CMake that the project requires at least <min> but has been updated\n
+      to work with policies introduced by <max> or earlier.\n\n\nCMake
+      Error: CMake was unable to find a build program corresponding to
+      \"Ninja\".  CMAKE_MAKE_PROGRAM is not set.  You probably need to
+      select a different build tool.\nCMake Error: CMAKE_C_COMPILER not set,
+      after EnableLanguage\nCMake Error: CMAKE_CXX_COMPILER not set, after
+      EnableLanguage\n"
+        === cmake makefiles probe command: cd
+      "/tmp/ds41f-m31-cargo/release/build/opencv-3fc2c45feb0110bd/out/cmake_probe_build"
+      && "cmake" "-S"
+      "/Users/kioju/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/opencv-0.93.7/cmake"
+      "-DOCVRS_PACKAGE_NAME=OpenCV" "-DCMAKE_BUILD_TYPE=Release" "-G" "Unix
+      Makefiles"
+        === Probing with cmake Makefile generator failed, will try deprecated
+      find_package, error: cmake returned an error
+            stdout: "-- The C compiler identification is AppleClang
+      21.0.0.21000101\n-- The CXX compiler identification is AppleClang
+      21.0.0.21000101\n-- Detecting C compiler ABI info\n-- Detecting C
+      compiler ABI info - done\n-- Check for working C compiler: /usr/bin/cc
+      - skipped\n-- Detecting C compile features\n-- Detecting C compile
+      features - done\n-- Detecting CXX compiler ABI info\n-- Detecting
+      CXX compiler ABI info - done\n-- Check for working CXX compiler:
+      /usr/bin/c++ - skipped\n-- Detecting CXX compile features\n-- Detecting
+      CXX compile features - done\n-- Configuring incomplete, errors
+      occurred!\n"
+            stderr: "CMake Deprecation Warning at CMakeLists.txt:1
+      (cmake_minimum_required):\n  Compatibility with CMake < 3.10 will be
+      removed from a future version of\n  CMake.\n\n  Update the VERSION
+      argument <min> value.  Or, use the <min>...<max> syntax\n  to tell
+      CMake that the project requires at least <min> but has been updated\n
+      to work with policies introduced by <max> or earlier.\n\n\nCMake
+      Error at CMakeLists.txt:5 (find_package):\n  By not providing
+      \"FindOpenCV.cmake\" in CMAKE_MODULE_PATH this project has\n  asked
+      CMake to find a package configuration file provided by \"OpenCV\",
+      but\n  CMake did not find one.\n\n  Could not find a package
+      configuration file provided by \"OpenCV\" with any\n  of the following
+      names:\n\n    OpenCV.cps\n    opencv.cps\n    OpenCVConfig.cmake\n
+      opencv-config.cmake\n\n  Add the installation prefix of \"OpenCV\" to
+      CMAKE_PREFIX_PATH or set\n  \"OpenCV_DIR\" to a directory containing one
+      of the above files.  If \"OpenCV\"\n  provides a separate development
+      package or SDK, be sure it has been\n  installed.\n\n\n"
+        === cmake find-package compile probe command: cd
+      "/tmp/ds41f-m31-cargo/release/build/opencv-3fc2c45feb0110bd/out/cmake_probe_build"
+      && "cmake" "-S"
+      "/Users/kioju/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/opencv-0.93.7/cmake"
+      "-DOCVRS_PACKAGE_NAME=OpenCV" "-DCMAKE_BUILD_TYPE=Release"
+      "--find-package" "-DCOMPILER_ID=GNU" "-DLANGUAGE=CXX" "-DMODE=COMPILE"
+      "-DNAME=OpenCV"
+        === Can't probe using: cmake, continuing with other methods because:
+      cmake returned an error
+            stdout: "OpenCV not found.\n"
+            stderr: "CMake Error: Run 'cmake --help' for all supported
+      options.\n"
+        === Probing OpenCV library using vcpkg_cmake
+        === Can't probe using: vcpkg_cmake, continuing with other methods
+      because: Could not find Vcpkg tree: No vcpkg installation found. Set the
+      VCPKG_ROOT environment variable or run 'vcpkg integrate install'
+        === Probing OpenCV library using vcpkg
+        === Can't probe using: vcpkg, continuing with other methods because:
+      Could not find Vcpkg tree: No vcpkg installation found. Set the
+      VCPKG_ROOT environment variable or run 'vcpkg integrate install', Could
+      not find Vcpkg tree: No vcpkg installation found. Set the VCPKG_ROOT
+      environment variable or run 'vcpkg integrate install'
+        Error: "Failed to find installed OpenCV package using probes:
+      environment, pkg_config, cmake, vcpkg_cmake, vcpkg, refer to
+      https://github.com/twistedfall/opencv-rust#getting-opencv for help"
+      warning: build failed, waiting for other jobs to finish...
+      💥 maturin failed
+        Caused by: Failed to build a native library through cargo
+        Caused by: Cargo build finished with "exit status: 101": `env -u CARGO
+      CARGO_ENCODED_RUSTFLAGS="-C\u{1f}link-arg=-undefined\u{1f}-C\u{1f}link-arg=dynamic_lookup"
+      MACOSX_DEPLOYMENT_TARGET="11.0" PYO3_BUILD_EXTENSION_MODULE="1"
+      PYO3_ENVIRONMENT_SIGNATURE="cpython-3.13-64bit"
+      PYO3_PYTHON="/tmp/ds41f-m31-qual/bin/python"
+      PYTHON_SYS_EXECUTABLE="/tmp/ds41f-m31-qual/bin/python" "cargo"
+      "rustc" "--profile" "release" "--features" "pyo3/extension-module"
+      "--message-format" "json-render-diagnostics" "--manifest-path"
+      "/private/tmp/ds41f-m31-recipe/deepseek-recipe-python/Cargo.toml"
+      "--lib" "--" "-C"
+      "link-args=-Wl,-install_name,@rpath/deepseek_recipe._native.abi3.so"`
+      Error: command ['maturin', 'pep517', 'build-wheel', '-i',
+      '/tmp/ds41f-m31-qual/bin/python', '--compatibility', 'off'] returned
+      non-zero exit status 1
+
+
+hint: Build failures usually indicate a problem with the package or the build environment
