@@ -1,0 +1,42 @@
+{
+  "decision": "BLOCKED_CANONICAL_PROTOCOL_REPRESENTABILITY",
+  "blocker": {
+    "canonical_frontier": 310,
+    "reconstructed_message": {
+      "role": "assistant",
+      "content": "",
+      "tool_calls": [
+        {
+          "id": "call_2630eecff0bf40d4a450fde92b8e87cd_0",
+          "type": "function",
+          "function": {
+            "name": "lookup_weather",
+            "arguments": "{\"city\""
+          }
+        }
+      ]
+    },
+    "ordinary_conversion": {
+      "succeeded": true,
+      "canonical_length": 310,
+      "exact_prefix": false,
+      "first_mismatch": 308
+    },
+    "explanation": "native idle coherence does not imply an ordinary reconstructable/executable assistant result; incomplete canonical DSML re-encodes non-prefix"
+  },
+  "gates": {
+    "logs": [
+      "runtime-regressions.log",
+      "horizon-regressions.log",
+      "off-policy-regressions.log",
+      "release-off-regressions.log",
+      "rust-regressions.log",
+      "prior-evidence-regressions.log"
+    ],
+    "real_m35_http_turns": 18,
+    "real_native_interruption_cases": 16,
+    "identities": "PASS",
+    "matched_m35_http_direct_model_phase_ratio": 0.9971413253409134,
+    "historical_m35_head_hash_gate": "one identity_and_sources test deselected: unchanged M35 artifact hashes describe its historical source; fresh M36 source/evidence hashes are gated instead"
+  }
+}

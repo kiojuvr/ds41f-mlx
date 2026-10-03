@@ -1,0 +1,20 @@
+{
+  "schema": "ds41f.m36.commands.v1",
+  "working_directory": "/Volumes/SDXC-512/ds41f-mlx",
+  "qualification_python": "/tmp/ds41f-m32-qual/bin/python",
+  "qualification_environment": {"DS41F_OMLX_PATH": "/tmp/ds41f-m33-omlx"},
+  "probe": "python -m tools.run_m36_recovery_probe",
+  "m35_http_rerun": "python -c \"import asyncio; from tools import run_m35_http_qualification as q; q.OUT=q.ROOT/'artifacts/m36/m35-http.json'; asyncio.run(q.main())\"",
+  "native_interruptions": "python -c \"from pathlib import Path; p=Path('tools/run_m35_native_interruptions.py'); code=p.read_text().replace('artifacts/m35/native-interruptions.json','artifacts/m36/native-interruptions.json'); exec(compile(code,str(p),'exec'),{'__file__':str(p.resolve()),'__name__':'__main__'})\"",
+  "runtime_regressions": "python -m pytest -q tests/test_m36_recovery_boundary.py tests/test_m35_transport_lease.py tests/test_m34_cache_release.py tests/test_m29_mtp_lifecycle.py tests/test_m25_mtp_boundary.py tests/test_prefill_fp8_mlx_p5.py tests/test_prefill_fp8_mlx_p6.py tests/test_prefill_fp8_mlx_p7.py",
+  "horizon_regressions": "python -m pytest -q tools/m33_semantic_tests.py tools/m33_semantic_extra_tests.py",
+  "off_policy": "python -m pytest -q tests/test_stateful_request_policy.py tests/test_runtime_config.py tests/test_m25_mtp_boundary.py",
+  "prior_evidence": "python -m pytest -q tests/test_m33_protocol_evidence.py tests/test_m34_operational_evidence.py tests/test_m35_http_evidence.py -k 'not identity_and_sources'",
+  "prior_evidence_caveat": "Historical M35 HEAD-source hashes describe M35, not the M36 correction; one test explicitly deselected. M36 checks current source and evidence hashes instead.",
+  "release_off": "env -u DS41F_OMLX_PATH -u DS41F_RECIPE_PATH /Users/kioju/.venvs/omlx-0.7.0.release/bin/python -m pytest -q tests/test_m20_generation_dependency.py",
+  "identities": "python tools/check_m34_identities.py",
+  "identities_caveat": "This checker writes artifacts/m34/identities.json; its bytes remained unchanged. Fresh output is preserved in M36 identities.log.",
+  "rust": "cargo test",
+  "record": "python tools/record_m36_evidence.py",
+  "evidence_gate": "python -m pytest -q tests/test_m36_evidence.py"
+}

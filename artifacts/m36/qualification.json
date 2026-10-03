@@ -1,0 +1,323 @@
+{
+  "schema": "ds41f.m36.qualification.v1",
+  "decision": "BLOCKED_CANONICAL_PROTOCOL_REPRESENTABILITY",
+  "base_commit": "9de575072e0b3a6a32d7a8744d50e5e2c1cb994b",
+  "final_commit_resolver": "git log -1 --format=%H -- artifacts/m36/qualification.json",
+  "identities": {
+    "schema": "ds41f.m34.identities.v1",
+    "status": "PASS",
+    "checks": {
+      "performance_primitive_unchanged": true,
+      "narrow_correction": true,
+      "native": true,
+      "checkpoint_config": true,
+      "tokenizer": true,
+      "recipe_commit": true,
+      "recipe_clean": true,
+      "omlx_commit": true,
+      "omlx_clean": true,
+      "actual_import": true,
+      "full_native_build": true,
+      "packages": true,
+      "runtime_sources": true,
+      "candidate_sources": true,
+      "release_native": true,
+      "release_recipe_native": true,
+      "historical_m25_m33_unchanged": true
+    },
+    "python": "3.13.15 (main, Aug  5 2026, 12:25:43) [Clang 21.0.0 (clang-2100.1.1.101)]",
+    "executable": "/private/tmp/ds41f-m32-qual/bin/python",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "native_path": "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/deepseek_recipe/_native.abi3.so",
+    "tool_api": "/tmp/ds41f-m33-omlx/omlx/api/tool_calling.py",
+    "packages": {
+      "deepseek-recipe": "0.1.1",
+      "tokenizers": "0.23.2",
+      "mlx": "0.32.2",
+      "mlx-lm": "0.31.4.dev132+g94cdcae13",
+      "omlx": "0.7.0",
+      "jsonschema": "4.26.0",
+      "pytest": "9.1.1"
+    },
+    "m33_identity_sha256": "9589ffa695641e327f3ab88dc7ac838b2504e286d7dc018e131d23b6e13a27d2",
+    "current_runtime_sources": {
+      "ds41f_mlx/runtime/recipe_semantic_guard.py": "6397801995cb1285a0f87c2455d6423160964be54e70889b390aa379e06e808d",
+      "ds41f_mlx/runtime/mtp_lifecycle.py": "a05744364d5440a16774905d9d60a5266ccc4528f1ca871f20db715d8c5fcde6",
+      "ds41f_mlx/prefill_fp8_mlx/handoff.py": "94cd3364ae023607e8b5b4e2b65685b885b3f7b6a78654ee6c335c66c82f37c3",
+      "tools/m33_semantic_tests.py": "77127f303c3171d82fabc262c06afd76ab5ef45fd801ac83ed85aff923aced39",
+      "tools/m33_semantic_extra_tests.py": "6584e1246b278fb3abed63a5089aecacc9f27c89703ef5198d0822b06ae588d9",
+      "tools/m33_recipe_clone_driver.rs": "9c2630a9f6fb083ccc131fc5d68da7a8010dacf1551fc94e9a3882b025aa8a6b",
+      "tools/run_m33_live_semantics.py": "37afed36c55e416d2892b0c7b75367cf664f9976c679a4da07a21bab02f102c8",
+      "tools/run_m33_interruptions.py": "045f071950d8e7e289c67d091522ef0086e90f80fe0a0ad97655f1afce77367e",
+      "tools/run_m33_tool_reentry.py": "1d149e088525ae7f6b7a90c748be41ef73d8e5e4c2e576dad010da1c388ae13f",
+      "tools/run_m33_guard_bench.py": "9057ca5a84e05ff0912df9159a28f32e630456d86632fb052c7261c889b7a01e",
+      "tools/record_m33_evidence.py": "4cb4c24d99825535315dbe42d77dda0965f80aefb15ffcdf0617fe4b8fce698b",
+      "tests/test_m33_protocol_evidence.py": "51af57b8a7152574fe3aab534d6c4063d456036ad3ea8b36d370576b379f6c71",
+      "docs/milestone-33-semantic-horizon.md": "9c2fc81dd64c26b20908ffbc1ad99ab48985c21f71eb27edf83cef95499533d3",
+      "docs/milestone-33-protocol-qualification.md": "20f6b26d9478f236d91165ef3c1034e0877e7e5590239892685e3c260e5fffad"
+    },
+    "runtime_correction": {
+      "schema": "ds41f.m34.narrow-correction.v1",
+      "path": "ds41f_mlx/runtime/mtp_lifecycle.py",
+      "m33_sha256": "a5c6f379582d3fed683d7cf763d3689a6f9a7c0ad1a9f32223cd401e1f39d7d6",
+      "m34_sha256": "a05744364d5440a16774905d9d60a5266ccc4528f1ca871f20db715d8c5fcde6",
+      "patch": "artifacts/m34/cache-release.patch",
+      "patch_sha256": "b6f3b04610c1db38aa6d506f8cabb522694495fbc3ccdad3300226a94816e070",
+      "cause": "Active cancellation lacked the completed-response native ownership transfer: filter([]) cleared the returned list; shallow retention also kept old P6 sealed capability on active cache objects.",
+      "fix": "Use existing GenerationBatch.extract_cache(0) native singleton row-view transfer for active cancellation before owner removal. Completed-response transfer unchanged; old P6 capabilities not cleared, no arrays repacked or history replayed.",
+      "upstream_candidates_unchanged": true
+    }
+  },
+  "transport": {
+    "uvicorn": "0.54.0",
+    "http": "h11",
+    "listener_sndbuf": 8192
+  },
+  "runtime_correction": {
+    "path": "ds41f_mlx/serving/internal_mtp.py",
+    "base_sha256": "6a6169aaa54f635c3e5334e3f64307fcca76db6cf9d84d3d623f64c84dc1687b",
+    "current_sha256": "f642c3aeccbc3ebb56f80e5f513c3ee3fd2775b3c26ee5b50e4cefeca59e516b",
+    "patch": "runtime-correction.patch"
+  },
+  "blocker": {
+    "canonical_frontier": 310,
+    "reconstructed_message": {
+      "role": "assistant",
+      "content": "",
+      "tool_calls": [
+        {
+          "id": "call_2630eecff0bf40d4a450fde92b8e87cd_0",
+          "type": "function",
+          "function": {
+            "name": "lookup_weather",
+            "arguments": "{\"city\""
+          }
+        }
+      ]
+    },
+    "ordinary_conversion": {
+      "succeeded": true,
+      "canonical_length": 310,
+      "exact_prefix": false,
+      "first_mismatch": 308
+    },
+    "explanation": "native idle coherence does not imply an ordinary reconstructable/executable assistant result; incomplete canonical DSML re-encodes non-prefix"
+  },
+  "contract": {
+    "established": false,
+    "public_api_added": false,
+    "rust_api_changed": false,
+    "positive": "discard local partial transport bytes; use settled canonical recipe response; exact-prefix continuation in exercised text case",
+    "fail_closed": "unfinished canonical tool deltas poison; busy remains visible until lease retirement completes",
+    "unqualified": [
+      "four-way request identity/outcome fence",
+      "never-committed ambiguous request discovery",
+      "arbitrary decoder/parser-pending ordinary reconstruction",
+      "complete M36 client tool execution ledger"
+    ]
+  },
+  "partial_delivery": {
+    "utf8_byte_prefix": true,
+    "incomplete_json_sse_event": true,
+    "canonical_incomplete_dsml_tool": true,
+    "arbitrary_pending_recipe_recovery_qualified": false
+  },
+  "tools": {
+    "negative_probe_executions": 0,
+    "incomplete_tool_is_execution_permission": false,
+    "completed_tool_m35_gate_rerun": true,
+    "exactly_once_agent_qualification": false
+  },
+  "reconciliation": {
+    "text_exact_prefix": true,
+    "text_frontiers": [
+      21,
+      42
+    ],
+    "tool_exact_prefix": false,
+    "tool_poisoned": true,
+    "repeated_observation_idempotent": true,
+    "original_request_retry_mutation_atomic": true
+  },
+  "backpressure": {
+    "workload": "256 KiB valid SSE comment per frame, real uvicorn h11, no body reads during 30 x 100 ms samples",
+    "qualification_only_wrapper": true,
+    "padding_bytes": 262144,
+    "sample_wall_s": 3.546601540991105,
+    "max_send_wait_s": 3.276227666006889,
+    "plateau_responses": 2,
+    "settled_responses": 3,
+    "disconnect_to_settled_observation_s": 1.9699572499957867,
+    "response_limit": 768,
+    "total_token_limit": 8192,
+    "resource_observations": {
+      "rss_kib": {
+        "min": 7584608,
+        "max": 7587120,
+        "final": 7587120
+      },
+      "mlx_active_bytes": {
+        "min": 309188712130,
+        "max": 309416547561,
+        "final": 309190793044
+      },
+      "mlx_cache_bytes": {
+        "min": 107967481,
+        "max": 360152883,
+        "final": 360152883
+      },
+      "generated": {
+        "min": 0,
+        "max": 2,
+        "final": 2
+      }
+    },
+    "bounds": "pull-based single-flight; one protected in-flight phase; admitted response/event history bounded per request; comments not canonical or retained",
+    "limits": "finite socket restriction only, not unbounded safety; diagnostic trace/closed-session lifetime retention not qualified for indefinite service"
+  },
+  "replay_repack": {
+    "probe": {
+      "replay": 0,
+      "repack": 0,
+      "verify": 8,
+      "proposal": 12,
+      "fresh_target_allocations": 3
+    },
+    "m35_rerun": {
+      "replay": 0,
+      "repack": 0,
+      "verify": 870,
+      "proposal": 888,
+      "fresh_target_allocations": 11
+    }
+  },
+  "performance": [
+    {
+      "case": "partial-tool",
+      "model_load_s": 66.85271566698793,
+      "prefill_handoff_s": 4.348084000055678,
+      "canonical_model_phase_s": 0.4823845390928909,
+      "formatting_s": 3.1580100767314434e-05,
+      "cleanup_s": 0.0018146249931305647,
+      "response_elapsed_s": 71.79020970902639,
+      "recovery_poll_observation_s": 0.03544737497577444,
+      "recovery_timing_scope": "client poll-to-settled observation, not a pure lookup microbenchmark"
+    },
+    {
+      "case": "utf8-byte",
+      "model_load_s": 2.707995008677244e-06,
+      "prefill_handoff_s": 0.21528829203452915,
+      "canonical_model_phase_s": 0.1530847100657411,
+      "formatting_s": 2.4667009711265564e-05,
+      "cleanup_s": 0.0016110000433400273,
+      "response_elapsed_s": 0.48001187498448417,
+      "recovery_poll_observation_s": 0.0029679579893127084,
+      "recovery_timing_scope": "client poll-to-settled observation, not a pure lookup microbenchmark"
+    },
+    {
+      "case": "socket-pressure",
+      "model_load_s": 1.125037670135498e-06,
+      "prefill_handoff_s": 0.3311707499669865,
+      "canonical_model_phase_s": 2.0338926259428263,
+      "formatting_s": 1.3999990187585354e-05,
+      "cleanup_s": 0.001153959019575268,
+      "response_elapsed_s": 5.644253792008385,
+      "recovery_poll_observation_s": 1.9697442500037141,
+      "recovery_timing_scope": "client poll-to-settled observation, not a pure lookup microbenchmark"
+    }
+  ],
+  "text_next_turn": {
+    "prefill_handoff_s": 0.22255975002190098,
+    "first_canonical_s": 0.28419916704297066,
+    "decode_s": 0.253460832987912,
+    "formatting_s": 2.383411629125476e-05,
+    "cleanup_s": 0.05240195896476507,
+    "elapsed_s": 0.6638726670062169
+  },
+  "defects": [
+    {
+      "name": "unfinished tool incorrectly advertised idle",
+      "evidence": "pre-pressure-harness-fix.json",
+      "fix": "authoritative guard finish is required; unfinished tool settlement poisons instead of inventing a complete canonical call"
+    },
+    {
+      "name": "poison visible before response retirement settled",
+      "evidence": [
+        "poison-get-defect.log",
+        "early-poison-observation.json"
+      ],
+      "fix": "busy precedes poisoned until exact lease release"
+    }
+  ],
+  "attempts": {
+    "pre_pressure_harness_fix": "real pre-containment tool/Unicode observations preserved; pressure failure was SSE padding applied to JSON Content-Length, excluded",
+    "poison_get_defect": "first containment run observed poison before cleanup completion; excluded from final stable observation",
+    "boundary_regressions": "initial text-only native fixture lacked guard.finished; condition evaluates tool presence first; superseded by passing runtime-regressions.log"
+  },
+  "gates": {
+    "logs": [
+      "runtime-regressions.log",
+      "horizon-regressions.log",
+      "off-policy-regressions.log",
+      "release-off-regressions.log",
+      "rust-regressions.log",
+      "prior-evidence-regressions.log"
+    ],
+    "real_m35_http_turns": 18,
+    "real_native_interruption_cases": 16,
+    "identities": "PASS",
+    "matched_m35_http_direct_model_phase_ratio": 0.9971413253409134,
+    "historical_m35_head_hash_gate": "one identity_and_sources test deselected: unchanged M35 artifact hashes describe its historical source; fresh M36 source/evidence hashes are gated instead"
+  },
+  "unsupported": [
+    "public/default/release MTP",
+    "persistence/process restart",
+    "immediate token-exact abort",
+    "concurrent/shared execution",
+    "batching",
+    "distributed recovery",
+    "200K HTTP MTP",
+    "unbounded backpressure",
+    "portable native wheels"
+  ],
+  "next_milestone": "M36R canonical protocol representability and recovery admission design; not release promotion or longer-context qualification",
+  "source_hashes": {
+    "tools/run_m36_recovery_probe.py": "aa71f6fefc4c902a5e8dc2300d1a0bd313259ba388d9259a8ee2378f25f0ce4e",
+    "ds41f_mlx/serving/internal_mtp.py": "f642c3aeccbc3ebb56f80e5f513c3ee3fd2775b3c26ee5b50e4cefeca59e516b",
+    "ds41f_mlx/serving/server.py": "38409603d7cad32178653e1034469ef3538bd0462b833ff88291a950475d55d5",
+    "tools/record_m36_evidence.py": "d5de36bbbe68fb1a5bc82e218ed04eb5921d4711d4d5cc3eb12619dab9785164",
+    "tests/test_m36_recovery_boundary.py": "79e9ec92d2ab9711256616a0a9e0c3dddcd660d3160b77bcb87ee7cbfdda3a7c",
+    "tests/test_m36_evidence.py": "f5b910f73e034794c3bac1b83d16d153225ad0ae2533d37bb481533463740d66",
+    "docs/milestone-36-client-recovery-qualification.md": "46ed397c387b331f261fef55c2803b0999e91ba17c5dcdeca014c7352c6e8ce7",
+    "docs/README.md": "52b3485bb15d45955aa4ec8c406188ff5978587e0672c1caf68672c52975109f",
+    "docs/doc-classification.json": "e8bc9d14f29c69c7b2840854419917a9e793e1a2fa3607b98fcd91e3245ab13a",
+    "docs/implementation-plan.md": "2f373f603ffdd151f5042d0bdb2ac497484298886939beb5a28f823eadd17594",
+    "docs/qualification.md": "197189733aecc8c45923b28e2c847a98fd46a47b761508a3e11066cf8a3aa16c",
+    "docs/session-state.md": "9009795e66796425979e2f46f0507fc89e35f341d66f0ff9f21f2df17b761a37"
+  },
+  "evidence_hashes": {
+    "m35-http.json": "3edbb4f65e7ad68c07247f2868593c4b1323d4d98569e805dad2bb4ed4922f6c",
+    "native-interruptions.log": "a360a7cf8243a7739cb68562247e3ac7a2198cca4cb9692a124cf81a9d3535b5",
+    "poison-get-defect.json": "3659683da5709054a55be34dbd40f28494d1ba766faed7708c4229df67a7fba8",
+    "runtime-correction.patch": "6f5ede56c1e2fd1fae0361723a6df313a2b2b9d9ebecf83727116d23c0466785",
+    "horizon-regressions.log": "9d01d2b0d4a7bf7f7ee0d5bc593ffa04e3a1243d20b984d234f55ce5cc4fe750",
+    "native-interruptions.json": "575b9c851c0c2e759088fa45a9e1a1594c6435d256a5064e380128179d9d3bea",
+    "m35-http.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "rust-regressions.log": "91987607ea4fecc2b7dc54b1f1a7a46abeafa7fd28ed9c2019051648441c8260",
+    "probe.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "boundary-regressions.log": "58e622eafd3a9fa127297902906ec6a2b07845e7296cc5074433294c117cb3bc",
+    "prior-evidence-regressions.log": "7cd3f4719dd4b2f814c6c55b0a041824100b224d7a1a45def2e35bdb0570f63e",
+    "early-poison-observation.json": "0ebffa02463c2174f6cfe3ea4c9c9ff8f2978df8be18409eb4b94eedd6476b25",
+    "pre-pressure-harness-fix.json": "b7a42ab1f1ac41868b1118f8b18031973743d9ef2286be4529bcdcbc5d4f4533",
+    "release-off-regressions.log": "3c2806e89e6d963fb5e0a88a61d5e2f9ad8e613a6d8815c54601f39af41381bd",
+    "boundary-regressions-final.log": "d75603f9786468f1512af75d1b71c88f548072b4a5f03f4f6e0bcccba8804844",
+    "poison-get-defect.log": "185f0097d21fe513916aedc593912b5f21691136c96a73f2ad3caab8936c8651",
+    "commands.json": "f440c9a915b9aafd07123ada550656f8fdfe38d7fe1277c015de804518abc42c",
+    "rust-request.json": "51dd0192444a1cce676dfa8930f0c73a88cc78665b8544a3cd7a2e6f195edfe4",
+    "identities.log": "2d6c92d89f59fd9726f88a8370cae248689d3406c1f3b7572abe95b48cd5f050",
+    "probe.json": "84b1d0470eb17dc33ecabefe1ca45d619ca9afe5cb1f304a813c3a931fd46d2f",
+    "off-policy-regressions.log": "d446da316516a186102ea33b0d9a4c6c93f8bb4d61317beb6c5f81535881ef46",
+    "pre-pressure-harness-fix.log": "10036f0426b2ce9549564beb7926981ed162590da4601bb67d630459e06903f9",
+    "runtime-regressions.log": "751f23dbb31f856123e6126dc503a5b120704f842d2c39f7c54a059803202a59"
+  }
+}

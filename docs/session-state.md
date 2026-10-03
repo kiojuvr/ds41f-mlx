@@ -18,6 +18,12 @@ recorded session history commits at quiescence, and socket writes never acknowle
 model-token ordinals. Client-observed recipe events remain a canonical prefix;
 GET recovery followed by ordinary exact-prefix conversion consumes retained caches.
 Protected failures require termination rather than ambiguous idle recovery.
+[M36](milestone-36-client-recovery-qualification.md) establishes that native idle
+coherence alone does not certify protocol reconstructability: interrupted canonical
+DSML can produce an unfinished tool call whose ordinary encoding is non-prefix.
+The internal backend now poisons such settlement and reports busy until retirement
+releases the response lease. Its diagnostic partial tool response is not execution
+permission. Full client recovery/admission qualification remains blocked.
 
 The current native session owner is `TextBackboneState` together with `TextEncoder`, `TextDecoder`, and `TextGeneration` state machinery. It is the reference state contract for future production architecture unless a documented architecture decision replaces or wraps it. Validation inventory helpers are not independent production session implementations.
 

@@ -34,11 +34,15 @@ Rust iterator drop, with zero replay/repack. Explicit backend object injection
 only; no normal public/release selector. Matched direct/HTTP model-phase rates
 remain effectively equal.
 
+[M36](milestone-36-client-recovery-qualification.md) is
+**BLOCKED_CANONICAL_PROTOCOL_REPRESENTABILITY**: unfinished canonical tool DSML
+cannot be assumed to be an ordinary reconstructable assistant result. Internal
+settlement now poisons unfinished tool results; busy remains visible until cleanup
+settles. A real partial-UTF-8 text recovery and finite restrictive socket workload
+are observations, not full M36 qualification. Next is M36R protocol representability
+and local recovery admission design, before release or longer-context gates.
 Production/default MTP remains OFF; public MTP disabled; MTP persistence/restore,
-token-exact immediate abort and shared/concurrent MTP remain unsupported. Next:
-M36 client/agent canonical recovery and admission qualification, including
-pending-byte recovery and larger real-socket backpressure; release/public
-promotion and longer-context HTTP operation remain separate gates.
+token-exact immediate abort and shared/concurrent MTP remain unsupported.
 
 ## Qualified release scope
 

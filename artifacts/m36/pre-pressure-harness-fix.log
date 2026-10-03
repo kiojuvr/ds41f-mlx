@@ -1,0 +1,109 @@
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/run_m36_recovery_probe.py", line 38, in pressure_app
+    await app(scope,receive,measured)
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/fastapi/applications.py", line 1215, in __call__
+    await super().__call__(scope, receive, send)
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/fastapi/telemetry/_asgi.py", line 151, in __call__
+    await self.app(scope, receive, send)
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/starlette/routing.py", line 676, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/fastapi/routing.py", line 2786, in app
+    await route.handle(scope, receive, send)
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/fastapi/routing.py", line 1310, in handle
+    await super().handle(scope, receive, send)
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/starlette/routing.py", line 282, in handle
+    await self.app(scope, receive, send)
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/fastapi/routing.py", line 165, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/fastapi/routing.py", line 152, in app
+    await response(scope, receive, send)
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/starlette/responses.py", line 169, in __call__
+    await send({"type": "http.response.body", "body": self.body})
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/starlette/_exception_handler.py", line 39, in sender
+    await send(message)
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/starlette/_exception_handler.py", line 39, in sender
+    await send(message)
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/starlette/middleware/errors.py", line 161, in _send
+    await send(message)
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/run_m36_recovery_probe.py", line 35, in measured
+    try: await send(message)
+         ^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 502, in send
+    output = self.conn.send(event=h11.Data(data=data))
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/h11/_connection.py", line 538, in send
+    data_list = self.send_with_data_passthrough(event)
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/h11/_connection.py", line 571, in send_with_data_passthrough
+    writer(event, data_list.append)
+    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/h11/_writers.py", line 65, in __call__
+    self.send_data(event.data, write)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/h11/_writers.py", line 91, in send_data
+    raise LocalProtocolError("Too much data for declared Content-Length")
+h11._util.LocalProtocolError: Too much data for declared Content-Length
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/run_m36_recovery_probe.py", line 136, in <module>
+    if __name__=='__main__':asyncio.run(main())
+                            ~~~~~~~~~~~^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 196, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 119, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 726, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/run_m36_recovery_probe.py", line 118, in main
+    rec,wait=await q.idle('socket-pressure')
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/run_m35_http_qualification.py", line 112, in idle
+    status,rec=await call('GET',f'/v1/sessions/{sid}')
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/run_m35_http_qualification.py", line 108, in call
+    async def call(*a): return await asyncio.to_thread(http_request,*a)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/threads.py", line 26, in to_thread
+    return await loop.run_in_executor(None, func_call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/concurrent/futures/thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/run_m35_http_qualification.py", line 81, in http_request
+    r=c.getresponse(); raw=r.read(); status=r.status; c.close()
+                           ~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/http/client.py", line 510, in read
+    s = self._safe_read(self.length)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/http/client.py", line 671, in _safe_read
+    raise IncompleteRead(data, amt - len(data))
+http.client.IncompleteRead: IncompleteRead(0 bytes read, 97 more expected)

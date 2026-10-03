@@ -1,0 +1,40 @@
+diff --git a/ds41f_mlx/serving/internal_mtp.py b/ds41f_mlx/serving/internal_mtp.py
+index b6eeb3f..8a0f918 100644
+--- a/ds41f_mlx/serving/internal_mtp.py
++++ b/ds41f_mlx/serving/internal_mtp.py
+@@ -36,7 +36,7 @@ class QualificationSession:
+ 
+     def to_json(self):
+         return dict(id=self.session_id, state='closed' if self.closed else
+-                    'poisoned' if self.poisoned else 'busy' if self.busy else
++                    'busy' if self.busy else 'poisoned' if self.poisoned else
+                     'idle' if self.cache is not None else 'empty',
+                     request_count=self.request_count, last_turn=self.last_turn,
+                     canonical_frontier=len(self.canonical))
+@@ -229,9 +229,26 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
+                          protocol_events=protocol_events,
+                          canonical_generated=canonical_generated,
+                          prediction_retired=True, queue_empty=True)
++            self._qualify_settled_protocol(rec, trace)
+             rec.processor.close(); rec.processor = None
+             trace['cleanup_s'] = perf_counter()-t0
+ 
++    @staticmethod
++    def _qualify_settled_protocol(rec, trace):
++        # Native cache quiescence is not a complete protocol-result certificate.
++        # The recipe can emit argument deltas before the DSML terminal becomes
++        # canonical. Never advertise that partial call as an idle agent result,
++        # even if its current arguments happen to be valid JSON. Only the native
++        # recipe terminal/finish owner can establish a complete call.
++        choices = trace['response'].get('choices', [])
++        has_calls = any(c.get('message', {}).get('tool_calls') for c in choices)
++        completed_block = any(m['identity'][0] == 'DSML_TOOL_CALL_BLOCK_END'
++                              for m in trace.get('terminal_matches', []))
++        if has_calls and not (rec.guard.finished and completed_block and
++                              all(c.get('finish_reason') == 'tool_calls' for c in choices)):
++            rec.poisoned = True
++            trace['recovery_error'] = 'unfinished canonical tool protocol; ordinary continuation not qualified'
++
+     async def qualification_response(self, session_id, request, *, tokenizer):
+         """Acquire before HTTP 200. Retain lease until generator cleanup, not send."""
+         from fastapi.responses import JSONResponse

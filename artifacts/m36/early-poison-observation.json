@@ -1,0 +1,9 @@
+{
+  "schema": "ds41f.m36.defect.v1",
+  "scope": "source-confirmed synthetic state-order reproduction following real poison-get-defect.log",
+  "before": {"busy": true, "poisoned": true, "cache": null, "last_turn": null},
+  "incorrect_to_json_state": "poisoned",
+  "required_to_json_state": "busy",
+  "cause": "QualificationSession.to_json gave poison priority over the still-owned response/retirement lease; client polling could observe an unsettled poisoned record",
+  "fix": "busy precedes poisoned until shielded settlement/retirement releases the lease"
+}

@@ -2,6 +2,17 @@
 
 This roadmap converts the runtime strategy into a finite sequence of milestones. It is not an optimization backlog. Runtime behavior, selectors, API integration, and multimodal work must not change until the relevant architecture milestone authorizes that work.
 
+## M36 — Client recovery investigation
+
+Decision: **BLOCKED_CANONICAL_PROTOCOL_REPRESENTABILITY**. Real interrupted DSML
+can leave coherent native caches but an unfinished assistant tool result whose
+ordinary recipe encoding is not the canonical prefix. Internal settlement now
+fails closed for unfinished tools; poison remains busy until lease cleanup settles.
+One partial-UTF-8 transport recovery and finite genuine socket pressure are observed,
+not a complete recovery/admission contract. See [M36](milestone-36-client-recovery-qualification.md).
+Next: **M36R canonical protocol representability and recovery admission design**,
+not release promotion or a longer-context qualification.
+
 ## M35 — Internal HTTP/SSE qualification
 
 Decision: **HTTP_SSE_QUALIFIED_BOUNDED_INTERNAL_SINGLETON**. Eighteen real HTTP
@@ -11,9 +22,9 @@ object injection only; no public/release selector. Shielded-loop cancellation
 starvation and protocol/response ownership transitions are corrected without
 changing M33/M34 runtime authority. See [M35](milestone-35-http-sse-qualification.md).
 
-Next **M36**: client/agent canonical recovery and admission qualification,
-including pending-byte recovery and larger real-socket backpressure workloads.
-Release/public/default promotion and longer-context HTTP operation remain separate.
+M36 investigated the pending-byte/agent recovery gap and remains blocked as
+recorded above. Release/public/default promotion and longer-context HTTP operation
+remain separate.
 
 ## M34 — Guarded singleton operational qualification
 

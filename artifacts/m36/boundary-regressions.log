@@ -1,0 +1,59 @@
+........F......                                                          [100%]
+=================================== FAILURES ===================================
+___ LeaseTests.test_native_chunk_transfer_serializes_before_response_append ____
+
+self = <test_m35_transport_lease.LeaseTests testMethod=test_native_chunk_transfer_serializes_before_response_append>
+
+    def test_native_chunk_transfer_serializes_before_response_append(self):
+        import deepseek_recipe as d
+        processor = d.StreamProcessor(d.ChatCompletionChunkGenerator('x', 'v41', False, False), d.ParsingOptions())
+        events = processor.push(d.InferenceChunk.text('hello', 1))
+        self.assertTrue(events)
+        class Cache:
+            def size(self): return 3
+        class Quiet:
+            target_cache = [Cache() for _ in range(40)]
+            dspark_context = SimpleNamespace(caches=[SimpleNamespace(offset=3) for _ in range(3)])
+            canonical_tokens = (1, 2, 3)
+            counters = SimpleNamespace(require_m28_zeroes=lambda: None)
+            def to_json(self): return {'canonical_frontier': 3}
+        class Owner:
+            calls = 0
+            _bg = SimpleNamespace(_generation_batch=SimpleNamespace())
+            history = SimpleNamespace(canonical_generated_tokens=[3])
+            def quiesce(self):
+                self.calls += 1
+                assert self.calls == 1
+                return Quiet()
+            def close(self): pass
+        b = FixtureBackend()
+        owner = Owner()
+        rec = SimpleNamespace(owner=owner, guard=SimpleNamespace(events=events, matches=[]), processor=processor)
+        trace = {'response_id': 'x'}
+>       InternalMTPQualificationBackend._settle(b, rec, trace)
+
+tests/test_m35_transport_lease.py:216: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+ds41f_mlx/serving/internal_mtp.py:232: in _settle
+    self._qualify_settled_protocol(rec, trace)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+rec = namespace(owner=None, guard=namespace(events=[<deepseek_recipe._native.ChatCompletionChunk object at 0x122b41210>, <de...he object at 0x122b53020>], rings=[namespace(offset=3), namespace(offset=3), namespace(offset=3)], canonical=[1, 2, 3])
+trace = {'response_id': 'x', 'quiescence': {'canonical_frontier': 3}, 'canonical_frontier': 3, 'target_offsets': [3, 3, 3, 3, 3, 3, ...], ...}
+
+    @staticmethod
+    def _qualify_settled_protocol(rec, trace):
+        # Native cache quiescence is not a complete protocol-result certificate.
+        # The recipe can emit argument deltas before the DSML terminal becomes
+        # canonical. Never advertise that partial call as an idle agent result,
+        # even if its current arguments happen to be valid JSON. Only the native
+        # recipe terminal/finish owner can establish a complete call.
+        choices = trace['response'].get('choices', [])
+>       if not rec.guard.finished and any(c.get('message', {}).get('tool_calls') for c in choices):
+               ^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'finished'
+
+ds41f_mlx/serving/internal_mtp.py:244: AttributeError
+=========================== short test summary info ============================
+FAILED tests/test_m35_transport_lease.py::LeaseTests::test_native_chunk_transfer_serializes_before_response_append
+1 failed, 14 passed in 1.05s

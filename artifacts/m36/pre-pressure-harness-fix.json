@@ -1,0 +1,1542 @@
+{
+  "schema": "ds41f.m36.recovery-probe.v1",
+  "status": "FAIL",
+  "base_commit": "9de575072e0b3a6a32d7a8744d50e5e2c1cb994b",
+  "cases": [
+    {
+      "name": "partial-tool",
+      "request": {
+        "model": "deepseek-v4.1-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Use the tool to look up the weather in Berlin, then answer concisely."
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "lookup_weather",
+              "description": "Return deterministic weather for a city.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "city": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "city"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            }
+          }
+        ],
+        "tool_choice": {
+          "type": "function",
+          "function": {
+            "name": "lookup_weather"
+          }
+        },
+        "reasoning_effort": "none",
+        "temperature": 0,
+        "max_tokens": 96,
+        "stop": null,
+        "stream": true
+      },
+      "observed": {
+        "events": [
+          {
+            "id": "5751b6d7bc404a789acdb035b9b7aa66",
+            "object": "chat.completion.chunk",
+            "created": 1791045881,
+            "model": "deepseek-v4.1-flash",
+            "system_fingerprint": null,
+            "choices": [
+              {
+                "index": 0,
+                "delta": {
+                  "role": "assistant",
+                  "content": ""
+                },
+                "logprobs": null,
+                "finish_reason": null
+              }
+            ]
+          },
+          {
+            "id": "5751b6d7bc404a789acdb035b9b7aa66",
+            "object": "chat.completion.chunk",
+            "created": 1791045881,
+            "model": "deepseek-v4.1-flash",
+            "system_fingerprint": null,
+            "choices": [
+              {
+                "index": 0,
+                "delta": {
+                  "tool_calls": [
+                    {
+                      "index": 0,
+                      "id": "call_5751b6d7bc404a789acdb035b9b7aa66_0",
+                      "type": "function",
+                      "function": {
+                        "name": "lookup_weather",
+                        "arguments": ""
+                      }
+                    }
+                  ]
+                },
+                "logprobs": null,
+                "finish_reason": null
+              }
+            ]
+          },
+          {
+            "id": "5751b6d7bc404a789acdb035b9b7aa66",
+            "object": "chat.completion.chunk",
+            "created": 1791045881,
+            "model": "deepseek-v4.1-flash",
+            "system_fingerprint": null,
+            "choices": [
+              {
+                "index": 0,
+                "delta": {
+                  "tool_calls": [
+                    {
+                      "index": 0,
+                      "function": {
+                        "arguments": "{"
+                      }
+                    }
+                  ]
+                },
+                "logprobs": null,
+                "finish_reason": null
+              }
+            ]
+          }
+        ],
+        "tool_executions": 0
+      },
+      "recovered": {
+        "id": "partial-tool",
+        "state": "idle",
+        "request_count": 1,
+        "last_turn": {
+          "session_id": "partial-tool",
+          "response_id": "5751b6d7bc404a789acdb035b9b7aa66",
+          "t0": 287655.129193708,
+          "generated": 15,
+          "decode_s": 0.4801556248567067,
+          "first_canonical_s": 71.28997412498575,
+          "first_chunk_s": 71.31718245800585,
+          "formatting_s": 3.187399124726653e-05,
+          "delivery_wait_s": 0.08117608400061727,
+          "protocol_chunks_produced": 4,
+          "iterator_yields": 3,
+          "canonical_emitted": 15,
+          "rows": [
+            {
+              "canonical_ordinal": 1,
+              "produced_s": 71.29012433299795,
+              "yield_s": 71.31718245800585
+            },
+            {
+              "canonical_ordinal": 10,
+              "produced_s": 71.52494758297689,
+              "yield_s": 71.55200629198225
+            },
+            {
+              "canonical_ordinal": 15,
+              "produced_s": 71.7577605000115,
+              "yield_s": 71.78482370800339
+            },
+            {
+              "canonical_ordinal": 15,
+              "produced_s": 71.7848928750027
+            }
+          ],
+          "cancelled": true,
+          "client_acknowledged_ordinal": 0,
+          "load_s": 66.95159479201538,
+          "prefill_handoff_s": 4.268458375008777,
+          "prompt_replay": 0,
+          "full_cache_repack": 0,
+          "exit_exception": "CancelledError(\"Cancelled via cancel scope 129e38730 by <Task pending name='Task-6' coro=<RequestResponseCycle.run_asgi() running at /private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py:411> cb=[set.discard()]>\")",
+          "quiescence": {
+            "canonical_frontier": 310,
+            "recovery_suffix_tokens": [
+              30,
+              128825,
+              34756,
+              2329,
+              1281,
+              12533,
+              1425,
+              65,
+              50219,
+              3816,
+              30,
+              128825,
+              10767,
+              2329,
+              1281,
+              37399,
+              4
+            ],
+            "discarded_future_token": 3418,
+            "counters": {
+              "new_verify_cycles": 0,
+              "new_proposals": 0,
+              "target_forwards": 0,
+              "history_replay": 0,
+              "full_cache_repack": 0,
+              "dspark_appends": 0
+            },
+            "latency_s": 0.00014858396025374532,
+            "queue_drained_tokens": [
+              37399,
+              4
+            ],
+            "dspark": {
+              "frontier": 310,
+              "offsets": [
+                310,
+                310,
+                310
+              ],
+              "target_layer_ids": [
+                37,
+                38,
+                39
+              ],
+              "stage_count": 3,
+              "window_size": 5,
+              "authority": "bounded committed DSpark context; not executable target truth"
+            }
+          },
+          "canonical_frontier": 310,
+          "target_offsets": [
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310
+          ],
+          "dspark_offsets": [
+            310,
+            310,
+            310
+          ],
+          "terminal_matches": [],
+          "response": {
+            "id": "5751b6d7bc404a789acdb035b9b7aa66",
+            "object": "chat.completion",
+            "created": 1791045884,
+            "model": "deepseek-v4.1-flash",
+            "system_fingerprint": null,
+            "choices": [
+              {
+                "index": 0,
+                "message": {
+                  "role": "assistant",
+                  "content": "",
+                  "tool_calls": [
+                    {
+                      "id": "call_5751b6d7bc404a789acdb035b9b7aa66_0",
+                      "type": "function",
+                      "function": {
+                        "name": "lookup_weather",
+                        "arguments": "{\"city\""
+                      }
+                    }
+                  ]
+                },
+                "logprobs": null,
+                "finish_reason": null
+              }
+            ]
+          },
+          "protocol_events": [
+            {
+              "id": "5751b6d7bc404a789acdb035b9b7aa66",
+              "object": "chat.completion.chunk",
+              "created": 1791045881,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "role": "assistant",
+                    "content": ""
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "5751b6d7bc404a789acdb035b9b7aa66",
+              "object": "chat.completion.chunk",
+              "created": 1791045881,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "id": "call_5751b6d7bc404a789acdb035b9b7aa66_0",
+                        "type": "function",
+                        "function": {
+                          "name": "lookup_weather",
+                          "arguments": ""
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "5751b6d7bc404a789acdb035b9b7aa66",
+              "object": "chat.completion.chunk",
+              "created": 1791045881,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": "{"
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "5751b6d7bc404a789acdb035b9b7aa66",
+              "object": "chat.completion.chunk",
+              "created": 1791045881,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": "\""
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "5751b6d7bc404a789acdb035b9b7aa66",
+              "object": "chat.completion.chunk",
+              "created": 1791045881,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": "city"
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "5751b6d7bc404a789acdb035b9b7aa66",
+              "object": "chat.completion.chunk",
+              "created": 1791045881,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": "\""
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            }
+          ],
+          "canonical_generated": [
+            30,
+            128825,
+            34756,
+            2329,
+            1281,
+            12533,
+            1425,
+            65,
+            50219,
+            3816,
+            30,
+            128825,
+            10767,
+            2329,
+            1281,
+            37399,
+            4
+          ],
+          "prediction_retired": true,
+          "queue_empty": true,
+          "cleanup_s": 0.0014010409940965474,
+          "elapsed_s": 71.78690291696694
+        },
+        "canonical_frontier": 310
+      },
+      "repeated_get_idempotent": true,
+      "recovery_wait_s": 0.0027106659836135805,
+      "continuation_request": {
+        "model": "deepseek-v4.1-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Use the tool to look up the weather in Berlin, then answer concisely."
+          },
+          {
+            "role": "assistant",
+            "content": "",
+            "tool_calls": [
+              {
+                "id": "call_5751b6d7bc404a789acdb035b9b7aa66_0",
+                "type": "function",
+                "function": {
+                  "name": "lookup_weather",
+                  "arguments": "{\"city\""
+                }
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "content": "Acknowledge in one short sentence. Do not call tools."
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "lookup_weather",
+              "description": "Return deterministic weather for a city.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "city": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "city"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "reasoning_effort": "none",
+        "temperature": 0,
+        "max_tokens": 64,
+        "stop": null,
+        "stream": false
+      },
+      "continuation_status": 400,
+      "continuation_response": {
+        "error": {
+          "message": "An assistant message with 'tool_calls' must be followed by tool messages responding to each 'tool_call_id'. (insufficient tool messages following tool_calls message)",
+          "type": "invalid_request_error",
+          "param": null,
+          "code": "invalid_request_error"
+        }
+      },
+      "rejection_mutation_atomic": true,
+      "after": {
+        "id": "partial-tool",
+        "state": "idle",
+        "request_count": 1,
+        "last_turn": {
+          "session_id": "partial-tool",
+          "response_id": "5751b6d7bc404a789acdb035b9b7aa66",
+          "t0": 287655.129193708,
+          "generated": 15,
+          "decode_s": 0.4801556248567067,
+          "first_canonical_s": 71.28997412498575,
+          "first_chunk_s": 71.31718245800585,
+          "formatting_s": 3.187399124726653e-05,
+          "delivery_wait_s": 0.08117608400061727,
+          "protocol_chunks_produced": 4,
+          "iterator_yields": 3,
+          "canonical_emitted": 15,
+          "rows": [
+            {
+              "canonical_ordinal": 1,
+              "produced_s": 71.29012433299795,
+              "yield_s": 71.31718245800585
+            },
+            {
+              "canonical_ordinal": 10,
+              "produced_s": 71.52494758297689,
+              "yield_s": 71.55200629198225
+            },
+            {
+              "canonical_ordinal": 15,
+              "produced_s": 71.7577605000115,
+              "yield_s": 71.78482370800339
+            },
+            {
+              "canonical_ordinal": 15,
+              "produced_s": 71.7848928750027
+            }
+          ],
+          "cancelled": true,
+          "client_acknowledged_ordinal": 0,
+          "load_s": 66.95159479201538,
+          "prefill_handoff_s": 4.268458375008777,
+          "prompt_replay": 0,
+          "full_cache_repack": 0,
+          "exit_exception": "CancelledError(\"Cancelled via cancel scope 129e38730 by <Task pending name='Task-6' coro=<RequestResponseCycle.run_asgi() running at /private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py:411> cb=[set.discard()]>\")",
+          "quiescence": {
+            "canonical_frontier": 310,
+            "recovery_suffix_tokens": [
+              30,
+              128825,
+              34756,
+              2329,
+              1281,
+              12533,
+              1425,
+              65,
+              50219,
+              3816,
+              30,
+              128825,
+              10767,
+              2329,
+              1281,
+              37399,
+              4
+            ],
+            "discarded_future_token": 3418,
+            "counters": {
+              "new_verify_cycles": 0,
+              "new_proposals": 0,
+              "target_forwards": 0,
+              "history_replay": 0,
+              "full_cache_repack": 0,
+              "dspark_appends": 0
+            },
+            "latency_s": 0.00014858396025374532,
+            "queue_drained_tokens": [
+              37399,
+              4
+            ],
+            "dspark": {
+              "frontier": 310,
+              "offsets": [
+                310,
+                310,
+                310
+              ],
+              "target_layer_ids": [
+                37,
+                38,
+                39
+              ],
+              "stage_count": 3,
+              "window_size": 5,
+              "authority": "bounded committed DSpark context; not executable target truth"
+            }
+          },
+          "canonical_frontier": 310,
+          "target_offsets": [
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310
+          ],
+          "dspark_offsets": [
+            310,
+            310,
+            310
+          ],
+          "terminal_matches": [],
+          "response": {
+            "id": "5751b6d7bc404a789acdb035b9b7aa66",
+            "object": "chat.completion",
+            "created": 1791045884,
+            "model": "deepseek-v4.1-flash",
+            "system_fingerprint": null,
+            "choices": [
+              {
+                "index": 0,
+                "message": {
+                  "role": "assistant",
+                  "content": "",
+                  "tool_calls": [
+                    {
+                      "id": "call_5751b6d7bc404a789acdb035b9b7aa66_0",
+                      "type": "function",
+                      "function": {
+                        "name": "lookup_weather",
+                        "arguments": "{\"city\""
+                      }
+                    }
+                  ]
+                },
+                "logprobs": null,
+                "finish_reason": null
+              }
+            ]
+          },
+          "protocol_events": [
+            {
+              "id": "5751b6d7bc404a789acdb035b9b7aa66",
+              "object": "chat.completion.chunk",
+              "created": 1791045881,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "role": "assistant",
+                    "content": ""
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "5751b6d7bc404a789acdb035b9b7aa66",
+              "object": "chat.completion.chunk",
+              "created": 1791045881,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "id": "call_5751b6d7bc404a789acdb035b9b7aa66_0",
+                        "type": "function",
+                        "function": {
+                          "name": "lookup_weather",
+                          "arguments": ""
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "5751b6d7bc404a789acdb035b9b7aa66",
+              "object": "chat.completion.chunk",
+              "created": 1791045881,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": "{"
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "5751b6d7bc404a789acdb035b9b7aa66",
+              "object": "chat.completion.chunk",
+              "created": 1791045881,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": "\""
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "5751b6d7bc404a789acdb035b9b7aa66",
+              "object": "chat.completion.chunk",
+              "created": 1791045881,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": "city"
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "5751b6d7bc404a789acdb035b9b7aa66",
+              "object": "chat.completion.chunk",
+              "created": 1791045881,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": "\""
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            }
+          ],
+          "canonical_generated": [
+            30,
+            128825,
+            34756,
+            2329,
+            1281,
+            12533,
+            1425,
+            65,
+            50219,
+            3816,
+            30,
+            128825,
+            10767,
+            2329,
+            1281,
+            37399,
+            4
+          ],
+          "prediction_retired": true,
+          "queue_empty": true,
+          "cleanup_s": 0.0014010409940965474,
+          "elapsed_s": 71.78690291696694
+        },
+        "canonical_frontier": 310
+      }
+    },
+    {
+      "name": "utf8-byte",
+      "request": {
+        "model": "deepseek-v4.1-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output exactly: caf\u00e9 \ud83d\ude42 \u6f22\u5b57. Nothing else."
+          }
+        ],
+        "reasoning_effort": "none",
+        "temperature": 0,
+        "max_tokens": 64,
+        "stream": true
+      },
+      "observed": {
+        "bytes_hex": "646174613a207b226964223a226163646137363834643035653463343639616465373433316337653032346562222c226f626a656374223a22636861742e636f6d706c6574696f6e2e6368756e6b222c2263726561746564223a313739313034353838342c226d6f64656c223a22646565707365656b2d76342e312d666c617368222c2273797374656d5f66696e6765727072696e74223a6e756c6c2c2263686f69636573223a5b7b22696e646578223a302c2264656c7461223a7b22726f6c65223a22617373697374616e74222c22636f6e74656e74223a22227d2c226c6f6770726f6273223a6e756c6c2c2266696e6973685f726561736f6e223a6e756c6c7d5d7d0a0a646174613a207b226964223a226163646137363834643035653463343639616465373433316337653032346562222c226f626a656374223a22636861742e636f6d706c6574696f6e2e6368756e6b222c2263726561746564223a313739313034353838342c226d6f64656c223a22646565707365656b2d76342e312d666c617368222c2273797374656d5f66696e6765727072696e74223a6e756c6c2c2263686f69636573223a5b7b22696e646578223a302c2264656c7461223a7b22636f6e74656e74223a2263227d2c226c6f6770726f6273223a6e756c6c2c2266696e6973685f726561736f6e223a6e756c6c7d5d7d0a0a646174613a207b226964223a226163646137363834643035653463343639616465373433316337653032346562222c226f626a656374223a22636861742e636f6d706c6574696f6e2e6368756e6b222c2263726561746564223a313739313034353838342c226d6f64656c223a22646565707365656b2d76342e312d666c617368222c2273797374656d5f66696e6765727072696e74223a6e756c6c2c2263686f69636573223a5b7b22696e646578223a302c2264656c7461223a7b22636f6e74656e74223a226166227d2c226c6f6770726f6273223a6e756c6c2c2266696e6973685f726561736f6e223a6e756c6c7d5d7d0a0a646174613a207b226964223a226163646137363834643035653463343639616465373433316337653032346562222c226f626a656374223a22636861742e636f6d706c6574696f6e2e6368756e6b222c2263726561746564223a313739313034353838342c226d6f64656c223a22646565707365656b2d76342e312d666c617368222c2273797374656d5f66696e6765727072696e74223a6e756c6c2c2263686f69636573223a5b7b22696e646578223a302c2264656c7461223a7b22636f6e74656e74223a22c3",
+        "incomplete_utf8": true
+      },
+      "recovered": {
+        "id": "utf8-byte",
+        "state": "idle",
+        "request_count": 1,
+        "last_turn": {
+          "session_id": "utf8-byte",
+          "response_id": "acda7684d05e4c469ade7431c7e024eb",
+          "t0": 287726.940656125,
+          "generated": 4,
+          "decode_s": 0.1679301658878103,
+          "first_canonical_s": 0.26248537498759106,
+          "first_chunk_s": 0.28966066596331075,
+          "formatting_s": 2.3041036911308765e-05,
+          "delivery_wait_s": 0.10821983293863013,
+          "protocol_chunks_produced": 5,
+          "iterator_yields": 4,
+          "canonical_emitted": 4,
+          "rows": [
+            {
+              "canonical_ordinal": 1,
+              "produced_s": 0.2625969159998931,
+              "yield_s": 0.28966066596331075
+            },
+            {
+              "canonical_ordinal": 1,
+              "produced_s": 0.28972474997863173,
+              "yield_s": 0.3167727079708129
+            },
+            {
+              "canonical_ordinal": 2,
+              "produced_s": 0.31723262497689575,
+              "yield_s": 0.34428579098312184
+            },
+            {
+              "canonical_ordinal": 3,
+              "produced_s": 0.45038249995559454,
+              "yield_s": 0.4774410829995759
+            },
+            {
+              "canonical_ordinal": 4,
+              "produced_s": 0.4780260410043411
+            }
+          ],
+          "cancelled": true,
+          "client_acknowledged_ordinal": 0,
+          "load_s": 1.625041477382183e-06,
+          "prefill_handoff_s": 0.20028412499232218,
+          "prompt_replay": 0,
+          "full_cache_repack": 0,
+          "exit_exception": "CancelledError(\"Cancelled via cancel scope c4dd0ad6d0 by <Task pending name='Task-24' coro=<RequestResponseCycle.run_asgi() running at /private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py:411> cb=[set.discard()]>\")",
+          "quiescence": {
+            "canonical_frontier": 21,
+            "recovery_suffix_tokens": [
+              69,
+              2797,
+              619,
+              68139,
+              223
+            ],
+            "discarded_future_token": 29069,
+            "counters": {
+              "new_verify_cycles": 0,
+              "new_proposals": 0,
+              "target_forwards": 0,
+              "history_replay": 0,
+              "full_cache_repack": 0,
+              "dspark_appends": 0
+            },
+            "latency_s": 0.0002163749886676669,
+            "queue_drained_tokens": [
+              223
+            ],
+            "dspark": {
+              "frontier": 21,
+              "offsets": [
+                21,
+                21,
+                21
+              ],
+              "target_layer_ids": [
+                37,
+                38,
+                39
+              ],
+              "stage_count": 3,
+              "window_size": 5,
+              "authority": "bounded committed DSpark context; not executable target truth"
+            }
+          },
+          "canonical_frontier": 21,
+          "target_offsets": [
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21
+          ],
+          "dspark_offsets": [
+            21,
+            21,
+            21
+          ],
+          "terminal_matches": [],
+          "response": {
+            "id": "acda7684d05e4c469ade7431c7e024eb",
+            "object": "chat.completion",
+            "created": 1791045884,
+            "model": "deepseek-v4.1-flash",
+            "system_fingerprint": null,
+            "choices": [
+              {
+                "index": 0,
+                "message": {
+                  "role": "assistant",
+                  "content": "caf\u00e9 \ud83d\ude42 "
+                },
+                "logprobs": null,
+                "finish_reason": null
+              }
+            ]
+          },
+          "protocol_events": [
+            {
+              "id": "acda7684d05e4c469ade7431c7e024eb",
+              "object": "chat.completion.chunk",
+              "created": 1791045884,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "role": "assistant",
+                    "content": ""
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "acda7684d05e4c469ade7431c7e024eb",
+              "object": "chat.completion.chunk",
+              "created": 1791045884,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "c"
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "acda7684d05e4c469ade7431c7e024eb",
+              "object": "chat.completion.chunk",
+              "created": 1791045884,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "af"
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "acda7684d05e4c469ade7431c7e024eb",
+              "object": "chat.completion.chunk",
+              "created": 1791045884,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "\u00e9"
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "acda7684d05e4c469ade7431c7e024eb",
+              "object": "chat.completion.chunk",
+              "created": 1791045884,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " \ud83d\ude42"
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "acda7684d05e4c469ade7431c7e024eb",
+              "object": "chat.completion.chunk",
+              "created": 1791045884,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " "
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            }
+          ],
+          "canonical_generated": [
+            69,
+            2797,
+            619,
+            68139,
+            223
+          ],
+          "prediction_retired": true,
+          "queue_empty": true,
+          "cleanup_s": 0.0015516250277869403,
+          "elapsed_s": 0.4799835829762742
+        },
+        "canonical_frontier": 21
+      },
+      "repeated_get_idempotent": true,
+      "recovery_wait_s": 0.002819791028741747,
+      "continuation_request": {
+        "model": "deepseek-v4.1-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output exactly: caf\u00e9 \ud83d\ude42 \u6f22\u5b57. Nothing else."
+          },
+          {
+            "role": "assistant",
+            "content": "caf\u00e9 \ud83d\ude42 "
+          },
+          {
+            "role": "user",
+            "content": "Acknowledge in one short sentence. Do not call tools."
+          }
+        ],
+        "reasoning_effort": "none",
+        "temperature": 0,
+        "max_tokens": 64,
+        "stream": false
+      },
+      "continuation_status": 200,
+      "continuation_response": {
+        "id": "4ef0b2ec9bb146d4bf3f60037f355f77",
+        "object": "chat.completion",
+        "created": 1791045885,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Got it."
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 38,
+          "completion_tokens": 3,
+          "total_tokens": 41,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 38
+        }
+      },
+      "rejection_mutation_atomic": null,
+      "after": {
+        "id": "utf8-byte",
+        "state": "idle",
+        "request_count": 2,
+        "last_turn": {
+          "session_id": "utf8-byte",
+          "response_id": "4ef0b2ec9bb146d4bf3f60037f355f77",
+          "t0": 287727.425203291,
+          "generated": 4,
+          "decode_s": 0.2701625819900073,
+          "first_canonical_s": 0.28392470901599154,
+          "first_chunk_s": 0.3111101249814965,
+          "formatting_s": 2.5167129933834076e-05,
+          "delivery_wait_s": 0.13348870689515024,
+          "protocol_chunks_produced": 5,
+          "iterator_yields": 5,
+          "canonical_emitted": 4,
+          "rows": [
+            {
+              "canonical_ordinal": 1,
+              "produced_s": 0.28404795902315527,
+              "yield_s": 0.3111101249814965
+            },
+            {
+              "canonical_ordinal": 1,
+              "produced_s": 0.31111420900560915,
+              "yield_s": 0.33637079200707376
+            },
+            {
+              "canonical_ordinal": 2,
+              "produced_s": 0.3366658340091817,
+              "yield_s": 0.3637270419858396
+            },
+            {
+              "canonical_ordinal": 3,
+              "produced_s": 0.47211450000759214,
+              "yield_s": 0.4991768749896437
+            },
+            {
+              "canonical_ordinal": 4,
+              "produced_s": 0.652124541986268,
+              "yield_s": 0.6791761670028791
+            }
+          ],
+          "cancelled": false,
+          "client_acknowledged_ordinal": 0,
+          "load_s": 7.919734343886375e-07,
+          "prefill_handoff_s": 0.22278437501518056,
+          "prompt_replay": 0,
+          "full_cache_repack": 0,
+          "mtp_stats": {
+            "cycles": 2,
+            "accepts": 0,
+            "rejects": 2,
+            "init_emits": 2,
+            "draft_emits": 0,
+            "bonus_emits": 0,
+            "verify_emits": 2,
+            "depth_drafted": [
+              2,
+              0,
+              0
+            ],
+            "depth_accepted": [
+              0,
+              0,
+              0
+            ],
+            "zero_cycles": 0,
+            "backbone_ms": 188.39016603305936,
+            "mtp_head_ms": 6.779082003049552,
+            "sample_ms": 0.14529103646054864,
+            "cache_ops_ms": 3.2770009711384773
+          },
+          "quiescence": {
+            "canonical_frontier": 42,
+            "recovery_suffix_tokens": [
+              70935,
+              436,
+              16,
+              1
+            ],
+            "discarded_future_token": null,
+            "counters": {
+              "new_verify_cycles": 0,
+              "new_proposals": 0,
+              "target_forwards": 1,
+              "history_replay": 0,
+              "full_cache_repack": 0,
+              "dspark_appends": 1
+            },
+            "latency_s": 0.02312429202720523,
+            "queue_drained_tokens": [],
+            "dspark": {
+              "frontier": 42,
+              "offsets": [
+                42,
+                42,
+                42
+              ],
+              "target_layer_ids": [
+                37,
+                38,
+                39
+              ],
+              "stage_count": 3,
+              "window_size": 5,
+              "authority": "bounded committed DSpark context; not executable target truth"
+            }
+          },
+          "canonical_frontier": 42,
+          "target_offsets": [
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42,
+            42
+          ],
+          "dspark_offsets": [
+            42,
+            42,
+            42
+          ],
+          "terminal_matches": [],
+          "response": {
+            "id": "4ef0b2ec9bb146d4bf3f60037f355f77",
+            "object": "chat.completion",
+            "created": 1791045885,
+            "model": "deepseek-v4.1-flash",
+            "system_fingerprint": null,
+            "choices": [
+              {
+                "index": 0,
+                "message": {
+                  "role": "assistant",
+                  "content": "Got it."
+                },
+                "logprobs": null,
+                "finish_reason": "stop"
+              }
+            ],
+            "usage": {
+              "prompt_tokens": 38,
+              "completion_tokens": 3,
+              "total_tokens": 41,
+              "prompt_tokens_details": {
+                "cached_tokens": 0
+              },
+              "prompt_cache_hit_tokens": 0,
+              "prompt_cache_miss_tokens": 38
+            }
+          },
+          "protocol_events": [
+            {
+              "id": "4ef0b2ec9bb146d4bf3f60037f355f77",
+              "object": "chat.completion.chunk",
+              "created": 1791045885,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "role": "assistant",
+                    "content": ""
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ],
+              "usage": null
+            },
+            {
+              "id": "4ef0b2ec9bb146d4bf3f60037f355f77",
+              "object": "chat.completion.chunk",
+              "created": 1791045885,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "Got"
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ],
+              "usage": null
+            },
+            {
+              "id": "4ef0b2ec9bb146d4bf3f60037f355f77",
+              "object": "chat.completion.chunk",
+              "created": 1791045885,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " it"
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ],
+              "usage": null
+            },
+            {
+              "id": "4ef0b2ec9bb146d4bf3f60037f355f77",
+              "object": "chat.completion.chunk",
+              "created": 1791045885,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "."
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ],
+              "usage": null
+            },
+            {
+              "id": "4ef0b2ec9bb146d4bf3f60037f355f77",
+              "object": "chat.completion.chunk",
+              "created": 1791045885,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": ""
+                  },
+                  "logprobs": null,
+                  "finish_reason": "stop"
+                }
+              ],
+              "usage": {
+                "prompt_tokens": 38,
+                "completion_tokens": 3,
+                "total_tokens": 41,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "prompt_cache_hit_tokens": 0,
+                "prompt_cache_miss_tokens": 38
+              }
+            }
+          ],
+          "canonical_generated": [
+            70935,
+            436,
+            16,
+            1
+          ],
+          "prediction_retired": true,
+          "queue_empty": true,
+          "cleanup_s": 0.05173137498786673,
+          "elapsed_s": 0.6792091249953955
+        },
+        "canonical_frontier": 42
+      }
+    }
+  ],
+  "counts": {
+    "replay": 0,
+    "repack": 0,
+    "verify": 8,
+    "proposal": 11,
+    "fresh_target_allocations": 3
+  },
+  "transport": {
+    "uvicorn": "0.54.0",
+    "http": "h11",
+    "listener_sndbuf": 8192
+  },
+  "error": "IncompleteRead(0 bytes read, 97 more expected)"
+}
