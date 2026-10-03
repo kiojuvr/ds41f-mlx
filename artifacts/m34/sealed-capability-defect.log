@@ -1,0 +1,21 @@
+Traceback (most recent call last):
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/run_m34_recovery.py", line 37, in <module>
+    exec(compile(code,str(source),'exec'),dict(__file__=str(source),__name__='__main__'))
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/run_m34_operational_soak.py", line 125, in <module>
+    return OMLXMTPGenerationSession(model_arg,cache_arg,np.asarray(prefix),context,config=config,sampler=sampler,max_tokens=max_tokens,semantic_guard=guard)
+                                                                               ^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/prefill_fp8_mlx/p6_append.py", line 270, in execute_all
+    self.execute_segment(segment)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/prefill_fp8_mlx/p6_append.py", line 286, in execute_segment
+    execn.runner.execute_batch(segment.commands, execn.arena)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/prefill_fp8_mlx/block_runner.py", line 125, in execute_batch
+    result = self.execute_command(command, arena)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/prefill_fp8_mlx/block_runner.py", line 135, in execute_command
+    self._assert_p6_cache_capability()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/prefill_fp8_mlx/block_runner.py", line 307, in _assert_p6_cache_capability
+    raise BlockExecutionError("cache is sealed; prefill execution is revoked")
+ds41f_mlx.prefill_fp8_mlx.block_runner.BlockExecutionError: cache is sealed; prefill execution is revoked

@@ -1,0 +1,11 @@
+{
+  "schema": "ds41f.m34.narrow-correction.v1",
+  "path": "ds41f_mlx/runtime/mtp_lifecycle.py",
+  "m33_sha256": "a5c6f379582d3fed683d7cf763d3689a6f9a7c0ad1a9f32223cd401e1f39d7d6",
+  "m34_sha256": "a05744364d5440a16774905d9d60a5266ccc4528f1ca871f20db715d8c5fcde6",
+  "patch": "artifacts/m34/cache-release.patch",
+  "patch_sha256": "b6f3b04610c1db38aa6d506f8cabb522694495fbc3ccdad3300226a94816e070",
+  "cause": "Active cancellation lacked the completed-response native ownership transfer: filter([]) cleared the returned list; shallow retention also kept old P6 sealed capability on active cache objects.",
+  "fix": "Use existing GenerationBatch.extract_cache(0) native singleton row-view transfer for active cancellation before owner removal. Completed-response transfer unchanged; old P6 capabilities not cleared, no arrays repacked or history replayed.",
+  "upstream_candidates_unchanged": true
+}

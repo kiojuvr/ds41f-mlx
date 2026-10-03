@@ -3,8 +3,15 @@
 M25 preserves the OFF-only idle artifact: save/restore reject models with
 preserved or active MTP before I/O. The pinned upstream MTP emission queue and
 target cache do not provide the required arbitrary committed frontier through
-ordinary extraction; see [M25](milestone-25-mtp-decision.md). No MTP session or
-restore qualification is implied by the contracts below.
+ordinary extraction; see [M25](milestone-25-mtp-decision.md). No production MTP
+session or restore qualification is implied by the contracts below.
+
+The separate internal guarded singleton contract is operationally qualified in
+[M34](milestone-34-operational-qualification.md), using M33's target/DSpark/
+canonical/delivery frontiers and bounded quiescence. Active cancellation transfers
+native singleton cache row views before owner release, preserving subsequent P6
+admission and old-owner revocation. MTP save/restore still fails closed before I/O;
+this is not qualification of persisted or concurrent MTP sessions.
 
 The current native session owner is `TextBackboneState` together with `TextEncoder`, `TextDecoder`, and `TextGeneration` state machinery. It is the reference state contract for future production architecture unless a documented architecture decision replaces or wraps it. Validation inventory helpers are not independent production session implementations.
 

@@ -2,6 +2,20 @@
 
 This roadmap converts the runtime strategy into a finite sequence of milestones. It is not an optimization backlog. Runtime behavior, selectors, API integration, and multimodal work must not change until the relevant architecture milestone authorizes that work.
 
+## M34 — Guarded singleton operational qualification
+
+Decision: **OPERATIONALLY_QUALIFIED_BOUNDED_SINGLETON**. M33's semantic horizon
+is preserved. Fresh 90-turn/three-session and 12-turn cancellation/re-entry
+checkpoint evidence establishes zero replay/repack, coherent frontiers and
+ownership, bounded resource behavior and useful acceleration. Active cancellation
+now uses the existing native row-view extraction seam before owner removal;
+P6 capability checks remain intact. See [M34](milestone-34-operational-qualification.md).
+Production/public MTP, persistence, immediate abort and concurrency remain unsupported.
+
+Next **M35**: internal single-flight serving/HTTP/SSE transport integration and
+qualification. Public or default promotion is a separate release/admission gate,
+not authorized by M34 alone. M25 below remains the historical unguarded decision.
+
 ## M25 — Pinned upstream MTP lifecycle decision
 
 Decision: **REJECT/DEFER MTP**. The exact upstream V4.1 loop was audited and

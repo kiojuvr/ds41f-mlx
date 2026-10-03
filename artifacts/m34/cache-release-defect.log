@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/run_m34_recovery.py", line 37, in <module>
+    exec(compile(code,str(source),'exec'),dict(__file__=str(source),__name__='__main__'))
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/run_m34_operational_soak.py", line 120, in <module>
+    return OMLXMTPGenerationSession(model_arg,cache_arg,np.asarray(prefix),context,config=config,sampler=sampler,max_tokens=max_tokens,semantic_guard=guard)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/prefill_fp8_mlx/p6_append.py", line 212, in create
+    return cls(language_model=language_model, live_cache=live_cache, request_token_history=tuple(int(t) for t in request_token_history), plan=plan, mx=mx)
+  File "<string>", line 17, in __init__
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/prefill_fp8_mlx/p6_append.py", line 201, in __post_init__
+    if self.plan.C != self._public_frontier():
+                      ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/prefill_fp8_mlx/p6_append.py", line 486, in _public_frontier
+    return _frontier_from_cache(self.live_cache)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/prefill_fp8_mlx/p6_append.py", line 656, in _frontier_from_cache
+    raise P6AppendError("P6 append requires one live 40-layer cache list")
+ds41f_mlx.prefill_fp8_mlx.p6_append.P6AppendError: P6 append requires one live 40-layer cache list

@@ -16,6 +16,22 @@ protocol/tool gates and MTP restart/restore remain blocked; OFF evidence does no
 transfer. M9 explicitly refuses preserved/active MTP models. New bounded OFF
 regression/soak evidence is separate under `artifacts/m25/`.
 
+## Guarded MTP qualification (internal, not release promotion)
+
+[M33](milestone-33-protocol-qualification.md) closed the protocol gate.
+[M34](milestone-34-operational-qualification.md) now qualifies **bounded guarded
+singleton operation** on its exact isolated candidates plus a narrow native
+cache-ownership transfer correction: 90-turn/three-session soak, 12-turn
+cancellation/re-entry, 16 interruption/fault cases, and paired 4K/12K controls.
+Observed replay/repack are zero; cache/frontier, semantic ownership and delivery
+prefixes remain coherent. This supersedes the M25 blocker only for this guarded
+internal path, not unmodified upstream or public serving.
+
+Production/default MTP remains OFF; public MTP disabled; MTP persistence/restore,
+token-exact immediate abort and shared/concurrent MTP remain unsupported. Next:
+M35 internal single-flight HTTP/SSE integration and transport qualification,
+with separate release/public promotion gates.
+
 ## Qualified release scope
 
 | Area | Status | Scope |
@@ -44,7 +60,7 @@ regression/soak evidence is separate under `artifacts/m25/`.
 - Vision or image input.
 - Arbitrary batching and distributed serving.
 - Sessionized Responses or Messages.
-- MTP, DSpark, or speculative decode.
+- Production/public MTP, DSpark, or speculative decode (bounded isolated guarded qualification is separate above).
 - Server-side tool execution, MCP/plugins, web search, shell tools.
 - Cross-runtime/cross-backend KV artifact portability.
 - Arbitrary stateful request stop-string truncation/rollback.

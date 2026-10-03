@@ -1,0 +1,160 @@
+{
+  "schema": "ds41f.m34.soak.v1",
+  "status": "RUNNING",
+  "base_commit": "2e47dff6d17d27309b6ba84b7eb3dadf8a4124dc",
+  "runtime_identities": {
+    "schema": "ds41f.m33.runtime-identities.v1",
+    "ds41f_base_commit": "fff84bdd1acd814ae84b994bec4ed110f31f4bb1",
+    "ds41f_final_commit": {
+      "resolver": "git log -1 --format=%H -- artifacts/m33/qualification.json",
+      "reason": "avoid impossible self-referential committed SHA; final SHA also reported in completion"
+    },
+    "recipe_base": "8cadfede7063c896b944e7bae05daa3549ae97ea",
+    "recipe_candidate": "29dabb5a55b7b2c6a68e18bbb3eb14495623e81a",
+    "recipe_native_path": "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/deepseek_recipe/_native.abi3.so",
+    "recipe_native_sha256": "454413afdcee2916795e1c5f7ce1b94a8346e76bffd6b45024f28f69f8d0a73f",
+    "recipe_binding": "FULL_BINDING_QUALIFIED: unchanged M32 full standard ARM64/OpenCV host-linked binding",
+    "recipe_build_provenance": "artifacts/m32/runtime-identities.json",
+    "recipe_lock_sha256": "0897f68c7220e3fa11b11b03fe45245ab88bd2515586af057d00bf64111c9328",
+    "recipe_patch_sha256": "dea4826afcc7561bbf5c719c0f7e40ec11037b3e7d4fc95f07fc117b02c266b9",
+    "opencv_native_version": "4.14.0",
+    "rust_tokenizers_version": "0.23.2",
+    "python_tokenizers_version": "0.23.2",
+    "omlx_base": "4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40",
+    "omlx_candidate": "fbe18e8fe68e5bb7b9b1971652ed330f752b6afc",
+    "omlx_path": "/tmp/ds41f-m33-omlx",
+    "omlx_patch_sha256": "fb120b1ddc9120e69d71ce70f128db7e3bf19a7444b0f237d7661388c9b318d5",
+    "omlx_source_hashes": {
+      "omlx/patches/deepseek_v41/mtp.py": "f22d25151c4006aac378d11cc4bb54e22b254878355f3a5904598ed9dbc83005",
+      "omlx/patches/mlx_lm_mtp/batch_generator.py": "6f878936757cf0e66b9b06afd784120ab17f763a333e69ec7ada83de93ba9a51",
+      "omlx/patches/mlx_lm_mtp/deepseek_v4_dspark.py": "6cd25674acf3329e0c5a0234cfdb1fbc2df702b5f3c9261a98b05b7e9d9ea99e",
+      "omlx/patches/mlx_lm_mtp/semantic_horizon.py": "550fef6b35c3cc0b2254b0fb8165b51ef0a68dd17ea56703e2a1cbed7e3190fe"
+    },
+    "actual_tool_import": "/tmp/ds41f-m33-omlx/omlx/api/tool_calling.py",
+    "actual_tool_import_ok": true,
+    "candidate_optional_cpp_dsa_available": false,
+    "model_kernel_scope": "stock pinned model MLX/source-JIT kernels; no borrowed release C++ extension and no claim of a new compiled C++ model variant",
+    "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+    "checkpoint_config_sha256": "8be45ce0476004a3f529fd896115a4a2e800a129ad2d3ec05b16050f52e21879",
+    "tokenizer_sha256": "81f64d1248a68ce3663e07ab3ee48b851e5df0e32d27cb98e4c9a268151e8d99",
+    "python": "3.13.15 (main, Aug  5 2026, 12:25:43) [Clang 21.0.0 (clang-2100.1.1.101)]",
+    "python_executable": "/private/tmp/ds41f-m32-qual/bin/python",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "rustc": "rustc 1.98.1 (48a229cea 2026-09-01) (Homebrew)\nbinary: rustc\ncommit-hash: 48a229ceaefd4985c50990b14116b6d856af0985\ncommit-date: 2026-09-01\nhost: aarch64-apple-darwin\nrelease: 1.98.1\nLLVM version: 22.1.8",
+    "packages": {
+      "deepseek-recipe": "0.1.1",
+      "tokenizers": "0.23.2",
+      "mlx": "0.32.2",
+      "mlx-lm": "0.31.4.dev132+g94cdcae13",
+      "omlx": "0.7.0",
+      "jsonschema": "4.26.0",
+      "pytest": "9.1.1"
+    },
+    "DOCS_RS": null,
+    "preserved_release_native_sha256": "a41596ca12503efa1b0a25b16d9d52293378528b3aec4f060c3814f488fdcd43",
+    "preserved_release_cpp_artifacts": [
+      {
+        "path": "/Users/kioju/omlx-0.7.0.release/omlx/custom_kernels/bonsai/_ext.cpython-313-darwin.so",
+        "sha256": "34f7f9d19c44559018fe5b36a596c6fdaf2d12b5900a227d005bdc746a35fb97",
+        "size": 131624
+      },
+      {
+        "path": "/Users/kioju/omlx-0.7.0.release/omlx/custom_kernels/bonsai/libomlx_bonsai_kernel_ops.dylib",
+        "sha256": "311881094e5bcf6e00a56371f402d2cba9f8a80fbf1b83dae260d7f1da451b4a",
+        "size": 115856
+      },
+      {
+        "path": "/Users/kioju/omlx-0.7.0.release/omlx/custom_kernels/bonsai/omlx_bonsai_kernels.metallib",
+        "sha256": "128c74521e7968ee76658ea0c8f335456936e24c0b293830291468d127daff0d",
+        "size": 2100684
+      },
+      {
+        "path": "/Users/kioju/omlx-0.7.0.release/omlx/custom_kernels/decode_fast/_ext.cpython-313-darwin.so",
+        "sha256": "1f7bc1b0163d67aa61641a5bc8dbac272970dad2ff2df1c4a3e8ba5c28b5b623",
+        "size": 127832
+      },
+      {
+        "path": "/Users/kioju/omlx-0.7.0.release/omlx/custom_kernels/decode_fast/libomlx_decode_fast_kernel_ops.dylib",
+        "sha256": "e9dde101005d9d6cfcdf03c879983aea940baf3ed1223e2f6d7825d92c85f702",
+        "size": 85176
+      },
+      {
+        "path": "/Users/kioju/omlx-0.7.0.release/omlx/custom_kernels/decode_fast/omlx_decode_fast_kernels.metallib",
+        "sha256": "f676d3420b4fa9acfe3585e3ab8a40ba8dff87465023a87890e89ede23a158ed",
+        "size": 554616
+      },
+      {
+        "path": "/Users/kioju/omlx-0.7.0.release/omlx/custom_kernels/glm_moe_dsa/_ext.cpython-313-darwin.so",
+        "sha256": "0f656f7aecde1c136e351b4b96006085dc7f94764c5e62680f5accffa7a8d0ac",
+        "size": 152984
+      },
+      {
+        "path": "/Users/kioju/omlx-0.7.0.release/omlx/custom_kernels/glm_moe_dsa/libomlx_glm_kernel_ops.dylib",
+        "sha256": "42769328361c0a18d95f3e873977ea710ccd138271347a4959cff90c941f391d",
+        "size": 376528
+      },
+      {
+        "path": "/Users/kioju/omlx-0.7.0.release/omlx/custom_kernels/glm_moe_dsa/omlx_glm_kernels.metallib",
+        "sha256": "d6626be62d3edba1296c31ff9a954657a1a523ff1aff0fc76d7185561373923e",
+        "size": 3015000
+      },
+      {
+        "path": "/Users/kioju/omlx-0.7.0.release/omlx/custom_kernels/minimax_m3/_ext.cpython-313-darwin.so",
+        "sha256": "167889a36286077870392a23817eadd8f326843b91bc93ce5d1fed5dcc657ca2",
+        "size": 127416
+      },
+      {
+        "path": "/Users/kioju/omlx-0.7.0.release/omlx/custom_kernels/minimax_m3/libomlx_minimax_m3_kernel_ops.dylib",
+        "sha256": "fc37e571ffee1c86e28df6e8f3e69db3b56b4d684cd11c88ac394dc72488b498",
+        "size": 71168
+      },
+      {
+        "path": "/Users/kioju/omlx-0.7.0.release/omlx/custom_kernels/minimax_m3/omlx_minimax_m3_kernels.metallib",
+        "sha256": "168154e3adbc14f3592d1c258a79ce8d3b3eb49335d2fa336ba5fd665b663daa",
+        "size": 58384
+      },
+      {
+        "path": "/Users/kioju/omlx-0.7.0.release/omlx/custom_kernels/qwen35_prefill/_ext.cpython-313-darwin.so",
+        "sha256": "91720cc385584d33d3f0d499c99d12220a15f8814019ae3110052c2c3e2420f4",
+        "size": 198280
+      },
+      {
+        "path": "/Users/kioju/omlx-0.7.0.release/omlx/custom_kernels/qwen35_prefill/libomlx_qwen35_prefill_kernel_ops.dylib",
+        "sha256": "53cb38a820ec993ed2a6d2e2db27d86de7af08648e96340fa74e4124162ec8f7",
+        "size": 458632
+      },
+      {
+        "path": "/Users/kioju/omlx-0.7.0.release/omlx/custom_kernels/qwen35_prefill/omlx_qwen35_prefill_kernels.metallib",
+        "sha256": "7c0c27d6c4d7a3e587b0e1bc09ff8a3e68257541ed41829da097017e215cdc69",
+        "size": 2974792
+      },
+      {
+        "path": "/Users/kioju/omlx-0.7.0.release/omlx/custom_kernels/qwen35_prefill/omlx_qwen35_prefill_kernels_nax.metallib",
+        "sha256": "2a2a2e396128f5d376edf07140544e1465e9afd28ed5aa55bfad8a4900e90fd4",
+        "size": 4120712
+      }
+    ],
+    "preserved_release_unchanged": true,
+    "historical_artifacts_m25_m32_unchanged": true,
+    "ds41f_source_hashes": {
+      "ds41f_mlx/runtime/recipe_semantic_guard.py": "6397801995cb1285a0f87c2455d6423160964be54e70889b390aa379e06e808d",
+      "ds41f_mlx/runtime/mtp_lifecycle.py": "a5c6f379582d3fed683d7cf763d3689a6f9a7c0ad1a9f32223cd401e1f39d7d6",
+      "ds41f_mlx/prefill_fp8_mlx/handoff.py": "94cd3364ae023607e8b5b4e2b65685b885b3f7b6a78654ee6c335c66c82f37c3",
+      "tools/m33_semantic_tests.py": "77127f303c3171d82fabc262c06afd76ab5ef45fd801ac83ed85aff923aced39",
+      "tools/m33_semantic_extra_tests.py": "6584e1246b278fb3abed63a5089aecacc9f27c89703ef5198d0822b06ae588d9",
+      "tools/m33_recipe_clone_driver.rs": "9c2630a9f6fb083ccc131fc5d68da7a8010dacf1551fc94e9a3882b025aa8a6b",
+      "tools/run_m33_live_semantics.py": "37afed36c55e416d2892b0c7b75367cf664f9976c679a4da07a21bab02f102c8",
+      "tools/run_m33_interruptions.py": "045f071950d8e7e289c67d091522ef0086e90f80fe0a0ad97655f1afce77367e",
+      "tools/run_m33_tool_reentry.py": "1d149e088525ae7f6b7a90c748be41ef73d8e5e4c2e576dad010da1c388ae13f",
+      "tools/run_m33_guard_bench.py": "9057ca5a84e05ff0912df9159a28f32e630456d86632fb052c7261c889b7a01e",
+      "tools/record_m33_evidence.py": "4cb4c24d99825535315dbe42d77dda0965f80aefb15ffcdf0617fe4b8fce698b",
+      "tests/test_m33_protocol_evidence.py": "51af57b8a7152574fe3aab534d6c4063d456036ad3ea8b36d370576b379f6c71",
+      "docs/milestone-33-semantic-horizon.md": "9c2fc81dd64c26b20908ffbc1ad99ab48985c21f71eb27edf83cef95499533d3",
+      "docs/milestone-33-protocol-qualification.md": "20f6b26d9478f236d91165ef3c1034e0877e7e5590239892685e3c260e5fffad"
+    }
+  },
+  "harness_sha256": "ffc640045275d6326555b028e4c474ae1c2c19f02b931c17a59187a1ed5e25c5",
+  "turns": [],
+  "resources": [],
+  "started": 1791035014.683014
+}

@@ -478,14 +478,10 @@ class OMLXMTPGenerationSession:
             raise MTPLifecycleError("native target cache unavailable")
         observe = None if self.semantic_guard is None else lambda token: self.semantic_guard.observe_canonical_emit(token, None)
         with self.mx.stream(self.stream):
-            # Match native completed-response ownership transfer for active
-            # cancellation too. filter([]) clears the batch's cache container;
-            # retaining its objects also retains the old P6 sealed capability.
-            # Native singleton extraction transfers row views, not repacked
-            # arrays or reconstructed history. The old prefill owner stays revoked.
-            if cache is getattr(gb, 'prompt_cache', None):
-                cache = gb.extract_cache(0)
-            result = canonical_quiesce_native_singleton(language_model=self.language_model, target_cache=cache, mtp_state=state, history=self.history, mx=self.mx,
+            # GenerationBatch.filter([]) clears its prompt_cache list on
+            # owner removal. Detach that container before releasing the owner;
+            # retain the exact native cache objects/arrays, never repack them.
+            result = canonical_quiesce_native_singleton(language_model=self.language_model, target_cache=list(cache), mtp_state=state, history=self.history, mx=self.mx,
                                                        queue_pop=lambda q: q.popleft() if hasattr(q, 'popleft') else q.pop(0), observe_canonical=observe)
             self.mx.eval(*[c.keys for c in result.dspark_context.caches if c.keys is not None])
             self.mx.synchronize(self.stream)
