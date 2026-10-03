@@ -1,0 +1,34 @@
+Traceback (most recent call last):
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/run_m33_tool_reentry.py", line 123, in <module>
+    token=session.next_token()
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/mtp_lifecycle.py", line 319, in operation
+    return method(self, *args, **kwargs)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/mtp_lifecycle.py", line 421, in next_token
+    _, gr = self._bg.next(); self.mx.synchronize(self.stream)
+            ~~~~~~~~~~~~~^^
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/mlx_lm/generate.py", line 1870, in next
+    return self._next()
+           ~~~~~~~~~~^^
+  File "/tmp/ds41f-m33-omlx/omlx/patches/mlx_lm_mtp/batch_generator.py", line 346, in patched_bg_next
+    return original_bg_next(self, *args, **kwargs)
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/mlx_lm/generate.py", line 1790, in _next
+    generation_responses = self._generation_batch.next()
+  File "/tmp/ds41f-m33-omlx/omlx/patches/mlx_lm_mtp/batch_generator.py", line 292, in scoped_next
+    return patched_next(self, *args, **kwargs)
+  File "/tmp/ds41f-m33-omlx/omlx/patches/mlx_lm_mtp/batch_generator.py", line 194, in patched_next
+    return _mtp_next(self, state)
+  File "/tmp/ds41f-m33-omlx/omlx/patches/mlx_lm_mtp/batch_generator.py", line 3708, in _mtp_next
+    _run_verify_cycle(gen_batch, state)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/tmp/ds41f-m33-omlx/omlx/patches/mlx_lm_mtp/batch_generator.py", line 3806, in _run_verify_cycle
+    return _run_verify_cycle_chain(gen_batch, state)
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/run_m33_tool_reentry.py", line 46, in cycle
+    ret=old_cycle(gb,state,*args,**kwargs)
+  File "/tmp/ds41f-m33-omlx/omlx/patches/mlx_lm_mtp/batch_generator.py", line 4206, in _run_verify_cycle_chain
+    terminal = semantic.preview(gen_batch, draft_ids[:m] + [emit_last_id],
+                                region='chain', queue=state.queue)
+  File "/tmp/ds41f-m33-omlx/omlx/patches/mlx_lm_mtp/semantic_horizon.py", line 53, in preview
+    result = self.guard.preview(ids)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/recipe_semantic_guard.py", line 38, in preview
+    raise SemanticGuardError('candidate sequence crosses a backend control terminal')
+omlx.patches.mlx_lm_mtp.semantic_horizon.SemanticGuardError: candidate sequence crosses a backend control terminal

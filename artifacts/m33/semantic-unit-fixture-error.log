@@ -1,0 +1,65 @@
+..................F.....                                                 [100%]
+=================================== FAILURES ===================================
+_____ test_alignment_successor_previews_safe_queue_and_binds_exact_ordinal _____
+
+rig = (<deepseek_recipe._native.Tokenizer object at 0x1207ab990>, <tools.m33_semantic_tests.Model object at 0x12078a710>, <tools.m33_semantic_tests.Batch object at 0x106376350>)
+
+    def test_alignment_successor_previews_safe_queue_and_binds_exact_ordinal(rig):
+        t,model,gb=rig
+        safe,hello=t.encode('Hi')[0],t.encode('Hello')[0]
+        guard=attach(t,gb,['Hello'])
+        state=mtp._MtpState(uid=1);state.chain=True;state.mtp_cache=model.rings;state.hist_offset=10
+        state.queue.append((safe,mx.zeros(131072),'bonus'));gb._omlx_mtp_state=state;gb.sampled_successor=hello
+        before=guard.processor.semantic_snapshot()
+>       mtp._materialize_mtp_boundary_emit(gb,state)
+
+tools/m33_semantic_extra_tests.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+gen_batch = <tools.m33_semantic_tests.Batch object at 0x106376350>
+state = _MtpState(uid=1, queue=deque([(23166, array([0, 0, 0, ..., 0, 0, 0], dtype=float32), 'bonus')]), mtp_cache=[namespace(...depth_drafted=[], depth_accepted=[], zero_cycles=0, backbone_ms=0.0, mtp_head_ms=0.0, sample_ms=0.0, cache_ops_ms=0.0))
+
+    def _materialize_mtp_boundary_emit(gen_batch: Any, state: _MtpState) -> None:
+        """Commit a queued verify/bonus boundary token before it is emitted.
+    
+        MTP normally leaves the final token of a cycle one position ahead of the
+        backbone cache. If that token is the next block boundary, process it with a
+        confirmed one-token forward and seed the following target token. The queue
+        then reaches the boundary with an exactly aligned cache snapshot and keeps
+        the usual one-token pipeline skew after the following token is emitted.
+        """
+        import time
+    
+        import mlx.core as mx
+    
+        if not state.queue:
+            raise _MtpStepFallback("boundary materialization has no queued token")
+    
+        from .semantic_horizon import horizon, SemanticGuardError
+        semantic = horizon(gen_batch)
+        if semantic is not None:
+            # Re-prove the bounded queued prefix before forwarding its final safe
+            # entry. A pending/completed terminal forbids materialization outright.
+            semantic.preview(gen_batch, [], region='alignment-safe-prefix', queue=state.queue)
+        boundary_id = int(state.queue[-1][0])
+        boundary_tok = mx.array([boundary_id], dtype=mx.uint32)
+        procs = _proc_list(gen_batch)
+        prev_buf = None
+        if procs is not None:
+            prev_buf = gen_batch._token_context[0].update_and_fetch(boundary_tok)
+    
+        t0 = time.perf_counter()
+        drafter = _drafter_for(gen_batch.model)
+>       logits, hidden, _, captured = _call_backbone_captured(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            gen_batch.model,
+            boundary_tok[:, None],
+            gen_batch.prompt_cache,
+            capture_layer_ids=_drafter_capture_ids(gen_batch.model),
+        )
+E       ValueError: not enough values to unpack (expected 4, got 3)
+
+/tmp/ds41f-m33-omlx/omlx/patches/mlx_lm_mtp/batch_generator.py:4385: ValueError
+=========================== short test summary info ============================
+FAILED tools/m33_semantic_extra_tests.py::test_alignment_successor_previews_safe_queue_and_binds_exact_ordinal
+1 failed, 23 passed in 1.77s

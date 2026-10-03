@@ -15,6 +15,8 @@ Canonical current-state documents:
 - [M24 operational soak status](milestone-24-operational-soak-status.md) — bounded real-agent/client tool-loop soak, persistence/restore, interruption recovery, and observability evidence
 - [M25 MTP decision](milestone-25-mtp-decision.md) — pinned upstream lifecycle audit, real-model extraction failure, diagnostic A/B and continued-default-OFF decision
 - [M30 recipe semantic preview](milestone-30-recipe-semantic-preview.md) — pinned parser audit and missing upstream preview API; protocol gate remains blocked and MTP remains OFF
+- [M33 protocol qualification](milestone-33-protocol-qualification.md) — PROTOCOL_GATE_SOLVED for the isolated native singleton; M34 operational qualification authorized, production MTP remains OFF
+- [M33 semantic horizon design](milestone-33-semantic-horizon.md) — strong unforwarded-terminal invariant and native initialization/chain/alignment ownership
 - [M32 native recipe gate](milestone-32-native-recipe-gate.md) — full ARM64/OpenCV build and native parity pass; initialization commit edge blocks semantic MTP qualification, no M33 authorization
 - [M31 recipe semantic session](milestone-31-recipe-semantic-session.md) — candidate upstream extension and source parity; real native build blocked, no live semantic MTP gate
 - [Performance](performance.md) — qualified performance class and baselines

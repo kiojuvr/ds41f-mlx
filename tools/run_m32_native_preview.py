@@ -63,5 +63,5 @@ result = dict(scope='Real native Python binding, synthetic M31 corpus, NOT live 
               calls_per_diagnostic_row=201, rows=rows,
               preview_latency=dict(samples=len(timings), median_ns=sorted_times[len(timings)//2], p95_ns=sorted_times[int(len(timings)*.95)], max_ns=max(timings)),
               clone_latency=None, clone_latency_status='not separately instrumented in Python binding', live_calls_per_cycle=None)
-(ROOT / 'artifacts/m32/native-preview.json').write_text(json.dumps(result, indent=2, ensure_ascii=False)+'\n')
+(Path(sys.argv[2]) if len(sys.argv) > 2 else ROOT / 'artifacts/m32/native-preview.json').write_text(json.dumps(result, indent=2, ensure_ascii=False)+'\n')
 print(json.dumps({key: value for key, value in result.items() if key != 'rows'}, indent=2))

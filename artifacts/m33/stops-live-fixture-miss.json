@@ -1,0 +1,2168 @@
+{
+  "scope": "Fresh actual model native semantics; no public promotion or operational soak",
+  "native_path": "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/deepseek_recipe/_native.abi3.so",
+  "native_sha256": "454413afdcee2916795e1c5f7ce1b94a8346e76bffd6b45024f28f69f8d0a73f",
+  "omlx_revision": "4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40",
+  "cases": [
+    {
+      "name": "multi_stop",
+      "mtp": true,
+      "prompt_ids": [
+        0,
+        128803,
+        63006,
+        44388,
+        295,
+        834,
+        3107,
+        10175,
+        16,
+        128804,
+        128822
+      ],
+      "status": "PASS",
+      "emits": [
+        {
+          "token": 19923,
+          "backend_finish": null,
+          "parser": [
+            "040f52f14c7ca8b5",
+            [],
+            0,
+            5
+          ],
+          "semantic_terminal": null,
+          "history": 12,
+          "target": [
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12
+          ],
+          "dspark": [
+            12,
+            12,
+            12
+          ]
+        },
+        {
+          "token": 1031,
+          "backend_finish": "stop",
+          "parser": [
+            "c23f1e9f38fedf52",
+            [],
+            0,
+            11
+          ],
+          "semantic_terminal": {
+            "kind": "STOP_SEQUENCE",
+            "start": 0,
+            "end": 11
+          },
+          "history": 13,
+          "target": [
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12
+          ],
+          "dspark": [
+            12,
+            12,
+            12
+          ]
+        }
+      ],
+      "cycles": [],
+      "counts_before": {
+        "verify": 0,
+        "proposal": 0,
+        "target_forward": 0,
+        "reconcile": 0,
+        "repack": 0
+      },
+      "backend_finish": "stop",
+      "decode_seconds": 0.05922774999635294,
+      "first_token_seconds": 0.058845584018854424,
+      "tok_s": 33.76795505693115,
+      "prediction_matches": [
+        {
+          "ordinal": 1,
+          "token_id": 1031,
+          "identity": [
+            "STOP_SEQUENCE",
+            0,
+            11
+          ]
+        }
+      ],
+      "quiescence": {
+        "canonical_frontier": 13,
+        "recovery_suffix_tokens": [],
+        "discarded_future_token": null,
+        "counters": {
+          "new_verify_cycles": 0,
+          "new_proposals": 0,
+          "target_forwards": 1,
+          "history_replay": 0,
+          "full_cache_repack": 0,
+          "dspark_appends": 1
+        },
+        "latency_s": 0.019560082990210503,
+        "queue_drained_tokens": [],
+        "dspark": {
+          "frontier": 13,
+          "offsets": [
+            13,
+            13,
+            13
+          ],
+          "target_layer_ids": [
+            37,
+            38,
+            39
+          ],
+          "stage_count": 3,
+          "window_size": 5,
+          "authority": "bounded committed DSpark context; not executable target truth"
+        }
+      },
+      "quiescence_actual_counter_delta": {
+        "verify": 0,
+        "proposal": 0,
+        "target_forward": 1,
+        "reconcile": 0,
+        "repack": 0
+      },
+      "quiescence_forwards": [
+        {
+          "start": 12,
+          "ids": [
+            1031
+          ]
+        }
+      ],
+      "protocol": {
+        "id": "m33",
+        "object": "chat.completion",
+        "created": 0,
+        "model": "v41",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": ""
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 2,
+          "total_tokens": 2,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 0
+        }
+      },
+      "preview": {
+        "calls": 2,
+        "candidate_ids": 3,
+        "latencies_ns": [
+          20500,
+          11167
+        ],
+        "pending_groups": [
+          1,
+          1
+        ],
+        "rows": [
+          {
+            "ids": [
+              19923
+            ],
+            "source_bytes_before": 0,
+            "pending_ids_before": [],
+            "safe": 1,
+            "terminal_kind": null,
+            "index": null,
+            "start": null,
+            "end": null
+          },
+          {
+            "ids": [
+              19923,
+              1031
+            ],
+            "source_bytes_before": 0,
+            "pending_ids_before": [],
+            "safe": 1,
+            "terminal_kind": "STOP_SEQUENCE",
+            "index": 1,
+            "start": 0,
+            "end": 11
+          }
+        ]
+      },
+      "forward_spans": [
+        {
+          "start": 0,
+          "ids": [
+            0,
+            128803,
+            63006,
+            44388,
+            295,
+            834,
+            3107,
+            10175,
+            16,
+            128804
+          ]
+        },
+        {
+          "start": 10,
+          "ids": [
+            128822
+          ]
+        },
+        {
+          "start": 11,
+          "ids": [
+            19923
+          ]
+        },
+        {
+          "start": 12,
+          "ids": [
+            1031
+          ]
+        }
+      ],
+      "counts_delta": {
+        "verify": 0,
+        "proposal": 0,
+        "target_forward": 4,
+        "reconcile": 0,
+        "repack": 0
+      }
+    },
+    {
+      "name": "shared_stop",
+      "mtp": true,
+      "prompt_ids": [
+        0,
+        128803,
+        63006,
+        44388,
+        295,
+        834,
+        3107,
+        10175,
+        16,
+        128804,
+        128822
+      ],
+      "status": "PASS",
+      "emits": [
+        {
+          "token": 19923,
+          "backend_finish": null,
+          "parser": [
+            "1433597a80c5105b",
+            [],
+            0,
+            5
+          ],
+          "semantic_terminal": null,
+          "history": 12,
+          "target": [
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12
+          ],
+          "dspark": [
+            12,
+            12,
+            12
+          ]
+        },
+        {
+          "token": 1031,
+          "backend_finish": "stop",
+          "parser": [
+            "4cc71251d7f1a698",
+            [],
+            0,
+            11
+          ],
+          "semantic_terminal": {
+            "kind": "STOP_SEQUENCE",
+            "start": 0,
+            "end": 11
+          },
+          "history": 13,
+          "target": [
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12
+          ],
+          "dspark": [
+            12,
+            12,
+            12
+          ]
+        }
+      ],
+      "cycles": [],
+      "counts_before": {
+        "verify": 0,
+        "proposal": 0,
+        "target_forward": 4,
+        "reconcile": 0,
+        "repack": 0
+      },
+      "backend_finish": "stop",
+      "decode_seconds": 0.04870741697959602,
+      "first_token_seconds": 0.04833737498847768,
+      "tok_s": 41.06150816492318,
+      "prediction_matches": [
+        {
+          "ordinal": 1,
+          "token_id": 1031,
+          "identity": [
+            "STOP_SEQUENCE",
+            0,
+            11
+          ]
+        }
+      ],
+      "quiescence": {
+        "canonical_frontier": 13,
+        "recovery_suffix_tokens": [],
+        "discarded_future_token": null,
+        "counters": {
+          "new_verify_cycles": 0,
+          "new_proposals": 0,
+          "target_forwards": 1,
+          "history_replay": 0,
+          "full_cache_repack": 0,
+          "dspark_appends": 1
+        },
+        "latency_s": 0.019091875001322478,
+        "queue_drained_tokens": [],
+        "dspark": {
+          "frontier": 13,
+          "offsets": [
+            13,
+            13,
+            13
+          ],
+          "target_layer_ids": [
+            37,
+            38,
+            39
+          ],
+          "stage_count": 3,
+          "window_size": 5,
+          "authority": "bounded committed DSpark context; not executable target truth"
+        }
+      },
+      "quiescence_actual_counter_delta": {
+        "verify": 0,
+        "proposal": 0,
+        "target_forward": 1,
+        "reconcile": 0,
+        "repack": 0
+      },
+      "quiescence_forwards": [
+        {
+          "start": 12,
+          "ids": [
+            1031
+          ]
+        }
+      ],
+      "protocol": {
+        "id": "m33",
+        "object": "chat.completion",
+        "created": 0,
+        "model": "v41",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": ""
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 2,
+          "total_tokens": 2,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 0
+        }
+      },
+      "preview": {
+        "calls": 2,
+        "candidate_ids": 3,
+        "latencies_ns": [
+          9458,
+          10167
+        ],
+        "pending_groups": [
+          1,
+          1
+        ],
+        "rows": [
+          {
+            "ids": [
+              19923
+            ],
+            "source_bytes_before": 0,
+            "pending_ids_before": [],
+            "safe": 1,
+            "terminal_kind": null,
+            "index": null,
+            "start": null,
+            "end": null
+          },
+          {
+            "ids": [
+              19923,
+              1031
+            ],
+            "source_bytes_before": 0,
+            "pending_ids_before": [],
+            "safe": 1,
+            "terminal_kind": "STOP_SEQUENCE",
+            "index": 1,
+            "start": 0,
+            "end": 11
+          }
+        ]
+      },
+      "forward_spans": [
+        {
+          "start": 0,
+          "ids": [
+            0,
+            128803,
+            63006,
+            44388,
+            295,
+            834,
+            3107,
+            10175,
+            16,
+            128804
+          ]
+        },
+        {
+          "start": 10,
+          "ids": [
+            128822
+          ]
+        },
+        {
+          "start": 11,
+          "ids": [
+            19923
+          ]
+        },
+        {
+          "start": 12,
+          "ids": [
+            1031
+          ]
+        }
+      ],
+      "counts_delta": {
+        "verify": 0,
+        "proposal": 0,
+        "target_forward": 4,
+        "reconcile": 0,
+        "repack": 0
+      }
+    },
+    {
+      "name": "unicode_stop",
+      "mtp": true,
+      "prompt_ids": [
+        0,
+        128803,
+        19905,
+        9045,
+        418,
+        28,
+        57664,
+        80300,
+        227,
+        437,
+        59410,
+        57792,
+        16,
+        4147,
+        554,
+        1258,
+        5657,
+        3006,
+        16,
+        128804,
+        128822
+      ],
+      "status": "PASS",
+      "emits": [
+        {
+          "token": 69,
+          "backend_finish": null,
+          "parser": [
+            "3761dde8d07561cf",
+            [],
+            0,
+            1
+          ],
+          "semantic_terminal": null,
+          "history": 22,
+          "target": [
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22
+          ],
+          "dspark": [
+            22,
+            22,
+            22
+          ]
+        },
+        {
+          "token": 2797,
+          "backend_finish": null,
+          "parser": [
+            "de8c942ad7131c79",
+            [],
+            0,
+            3
+          ],
+          "semantic_terminal": null,
+          "history": 23,
+          "target": [
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22,
+            22
+          ],
+          "dspark": [
+            22,
+            22,
+            22
+          ]
+        },
+        {
+          "token": 619,
+          "backend_finish": null,
+          "parser": [
+            "515fa17f6779e846",
+            [],
+            0,
+            5
+          ],
+          "semantic_terminal": null,
+          "history": 24,
+          "target": [
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26
+          ],
+          "dspark": [
+            26,
+            26,
+            26
+          ]
+        },
+        {
+          "token": 80300,
+          "backend_finish": null,
+          "parser": [
+            "b92fe9d1588d8443",
+            [
+              80300
+            ],
+            1,
+            5
+          ],
+          "semantic_terminal": null,
+          "history": 25,
+          "target": [
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26
+          ],
+          "dspark": [
+            26,
+            26,
+            26
+          ]
+        },
+        {
+          "token": 227,
+          "backend_finish": null,
+          "parser": [
+            "cb66aa1de337036d",
+            [],
+            0,
+            9
+          ],
+          "semantic_terminal": null,
+          "history": 26,
+          "target": [
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26
+          ],
+          "dspark": [
+            26,
+            26,
+            26
+          ]
+        },
+        {
+          "token": 1,
+          "backend_finish": "stop",
+          "parser": [
+            "b0dfebc25a2e4056",
+            [],
+            0,
+            36
+          ],
+          "semantic_terminal": null,
+          "history": 27,
+          "target": [
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26
+          ],
+          "dspark": [
+            26,
+            26,
+            26
+          ]
+        }
+      ],
+      "cycles": [
+        {
+          "depth": 5,
+          "accepted": 3,
+          "target": [
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26,
+            26
+          ],
+          "dspark": [
+            26,
+            26,
+            26
+          ],
+          "history": 23,
+          "queue": [
+            [
+              619,
+              "draft"
+            ],
+            [
+              80300,
+              "draft"
+            ],
+            [
+              227,
+              "draft"
+            ],
+            [
+              1,
+              "verify"
+            ]
+          ],
+          "terminal": null
+        }
+      ],
+      "counts_before": {
+        "verify": 0,
+        "proposal": 0,
+        "target_forward": 8,
+        "reconcile": 0,
+        "repack": 0
+      },
+      "backend_finish": "stop",
+      "decode_seconds": 0.18630345902056433,
+      "first_token_seconds": 0.07050795899704099,
+      "tok_s": 32.20552120472286,
+      "prediction_matches": [],
+      "quiescence": {
+        "canonical_frontier": 27,
+        "recovery_suffix_tokens": [],
+        "discarded_future_token": null,
+        "counters": {
+          "new_verify_cycles": 0,
+          "new_proposals": 0,
+          "target_forwards": 1,
+          "history_replay": 0,
+          "full_cache_repack": 0,
+          "dspark_appends": 1
+        },
+        "latency_s": 0.023746499995468184,
+        "queue_drained_tokens": [],
+        "dspark": {
+          "frontier": 27,
+          "offsets": [
+            27,
+            27,
+            27
+          ],
+          "target_layer_ids": [
+            37,
+            38,
+            39
+          ],
+          "stage_count": 3,
+          "window_size": 5,
+          "authority": "bounded committed DSpark context; not executable target truth"
+        }
+      },
+      "quiescence_actual_counter_delta": {
+        "verify": 0,
+        "proposal": 0,
+        "target_forward": 1,
+        "reconcile": 0,
+        "repack": 0
+      },
+      "quiescence_forwards": [
+        {
+          "start": 26,
+          "ids": [
+            1
+          ]
+        }
+      ],
+      "protocol": {
+        "id": "m33",
+        "object": "chat.completion",
+        "created": 0,
+        "model": "v41",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "café🙂<｜end▁of▁sentence｜>"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 6,
+          "total_tokens": 6,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 0
+        }
+      },
+      "preview": {
+        "calls": 3,
+        "candidate_ids": 7,
+        "latencies_ns": [
+          8583,
+          10334,
+          11292
+        ],
+        "pending_groups": [
+          1,
+          1,
+          2
+        ],
+        "rows": [
+          {
+            "ids": [
+              69
+            ],
+            "source_bytes_before": 0,
+            "pending_ids_before": [],
+            "safe": 1,
+            "terminal_kind": null,
+            "index": null,
+            "start": null,
+            "end": null
+          },
+          {
+            "ids": [
+              69,
+              2797
+            ],
+            "source_bytes_before": 0,
+            "pending_ids_before": [],
+            "safe": 2,
+            "terminal_kind": null,
+            "index": null,
+            "start": null,
+            "end": null
+          },
+          {
+            "ids": [
+              619,
+              80300,
+              227,
+              1
+            ],
+            "source_bytes_before": 3,
+            "pending_ids_before": [],
+            "safe": 4,
+            "terminal_kind": null,
+            "index": null,
+            "start": null,
+            "end": null
+          }
+        ]
+      },
+      "forward_spans": [
+        {
+          "start": 0,
+          "ids": [
+            0,
+            128803,
+            19905,
+            9045,
+            418,
+            28,
+            57664,
+            80300,
+            227,
+            437,
+            59410,
+            57792,
+            16,
+            4147,
+            554,
+            1258,
+            5657,
+            3006,
+            16,
+            128804
+          ]
+        },
+        {
+          "start": 20,
+          "ids": [
+            128822
+          ]
+        },
+        {
+          "start": 21,
+          "ids": [
+            69
+          ]
+        },
+        {
+          "start": 22,
+          "ids": [
+            2797,
+            619,
+            80300,
+            227,
+            437,
+            59410
+          ]
+        },
+        {
+          "start": 26,
+          "ids": [
+            1
+          ]
+        }
+      ],
+      "counts_delta": {
+        "verify": 1,
+        "proposal": 2,
+        "target_forward": 5,
+        "reconcile": 0,
+        "repack": 0
+      }
+    },
+    {
+      "name": "cycle_stop",
+      "mtp": true,
+      "prompt_ids": [
+        0,
+        128803,
+        19905,
+        9045,
+        418,
+        28,
+        21138,
+        21474,
+        37149,
+        32901,
+        437,
+        59410,
+        57792,
+        16,
+        4147,
+        554,
+        1258,
+        5657,
+        3006,
+        16,
+        128804,
+        128822
+      ],
+      "status": "PASS",
+      "emits": [
+        {
+          "token": 8339,
+          "backend_finish": null,
+          "parser": [
+            "ef73c5ef46ba7122",
+            [],
+            0,
+            5
+          ],
+          "semantic_terminal": null,
+          "history": 23,
+          "target": [
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23
+          ],
+          "dspark": [
+            23,
+            23,
+            23
+          ]
+        },
+        {
+          "token": 21474,
+          "backend_finish": null,
+          "parser": [
+            "02358c077e427dd2",
+            [],
+            0,
+            10
+          ],
+          "semantic_terminal": null,
+          "history": 24,
+          "target": [
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23,
+            23
+          ],
+          "dspark": [
+            23,
+            23,
+            23
+          ]
+        },
+        {
+          "token": 37149,
+          "backend_finish": null,
+          "parser": [
+            "b31648ead598c91e",
+            [],
+            0,
+            16
+          ],
+          "semantic_terminal": null,
+          "history": 25,
+          "target": [
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27
+          ],
+          "dspark": [
+            27,
+            27,
+            27
+          ]
+        },
+        {
+          "token": 32901,
+          "backend_finish": null,
+          "parser": [
+            "c11cd6188663c9e3",
+            [],
+            0,
+            22
+          ],
+          "semantic_terminal": null,
+          "history": 26,
+          "target": [
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27
+          ],
+          "dspark": [
+            27,
+            27,
+            27
+          ]
+        },
+        {
+          "token": 437,
+          "backend_finish": null,
+          "parser": [
+            "4ab0e85ff6302c80",
+            [],
+            0,
+            24
+          ],
+          "semantic_terminal": null,
+          "history": 27,
+          "target": [
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27
+          ],
+          "dspark": [
+            27,
+            27,
+            27
+          ]
+        },
+        {
+          "token": 59410,
+          "backend_finish": null,
+          "parser": [
+            "13e3dbde3aafbd62",
+            [],
+            0,
+            27
+          ],
+          "semantic_terminal": null,
+          "history": 28,
+          "target": [
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27
+          ],
+          "dspark": [
+            27,
+            27,
+            27
+          ]
+        },
+        {
+          "token": 57792,
+          "backend_finish": "stop",
+          "parser": [
+            "a44f2ce308ac2deb",
+            [],
+            0,
+            31
+          ],
+          "semantic_terminal": {
+            "kind": "STOP_SEQUENCE",
+            "start": 23,
+            "end": 31
+          },
+          "history": 29,
+          "target": [
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28
+          ],
+          "dspark": [
+            28,
+            28,
+            28
+          ]
+        }
+      ],
+      "cycles": [
+        {
+          "depth": 5,
+          "accepted": 3,
+          "target": [
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27,
+            27
+          ],
+          "dspark": [
+            27,
+            27,
+            27
+          ],
+          "history": 24,
+          "queue": [
+            [
+              37149,
+              "draft"
+            ],
+            [
+              32901,
+              "draft"
+            ],
+            [
+              437,
+              "draft"
+            ],
+            [
+              59410,
+              "verify"
+            ]
+          ],
+          "terminal": null
+        },
+        {
+          "depth": 5,
+          "accepted": 0,
+          "target": [
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28,
+            28
+          ],
+          "dspark": [
+            28,
+            28,
+            28
+          ],
+          "history": 28,
+          "queue": [
+            [
+              57792,
+              "verify"
+            ]
+          ],
+          "terminal": {
+            "ordinal": 6,
+            "prediction": {
+              "kind": "STOP_SEQUENCE",
+              "index": 0,
+              "safe_count": 0,
+              "token_id": 57792,
+              "identity": [
+                "STOP_SEQUENCE",
+                23,
+                31
+              ]
+            },
+            "region": "chain",
+            "candidate_ids": [
+              57792
+            ],
+            "queued_prefix": 0
+          }
+        }
+      ],
+      "counts_before": {
+        "verify": 1,
+        "proposal": 2,
+        "target_forward": 13,
+        "reconcile": 0,
+        "repack": 0
+      },
+      "backend_finish": "stop",
+      "decode_seconds": 0.2764178339857608,
+      "first_token_seconds": 0.06745379199855961,
+      "tok_s": 25.323981087126935,
+      "prediction_matches": [
+        {
+          "ordinal": 6,
+          "token_id": 57792,
+          "identity": [
+            "STOP_SEQUENCE",
+            23,
+            31
+          ]
+        }
+      ],
+      "quiescence": {
+        "canonical_frontier": 29,
+        "recovery_suffix_tokens": [],
+        "discarded_future_token": null,
+        "counters": {
+          "new_verify_cycles": 0,
+          "new_proposals": 0,
+          "target_forwards": 1,
+          "history_replay": 0,
+          "full_cache_repack": 0,
+          "dspark_appends": 1
+        },
+        "latency_s": 0.020123374997638166,
+        "queue_drained_tokens": [],
+        "dspark": {
+          "frontier": 29,
+          "offsets": [
+            29,
+            29,
+            29
+          ],
+          "target_layer_ids": [
+            37,
+            38,
+            39
+          ],
+          "stage_count": 3,
+          "window_size": 5,
+          "authority": "bounded committed DSpark context; not executable target truth"
+        }
+      },
+      "quiescence_actual_counter_delta": {
+        "verify": 0,
+        "proposal": 0,
+        "target_forward": 1,
+        "reconcile": 0,
+        "repack": 0
+      },
+      "quiescence_forwards": [
+        {
+          "start": 28,
+          "ids": [
+            57792
+          ]
+        }
+      ],
+      "protocol": {
+        "id": "m33",
+        "object": "chat.completion",
+        "created": 0,
+        "model": "v41",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "alpha beta gamma delta "
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 7,
+          "total_tokens": 7,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 0
+        }
+      },
+      "preview": {
+        "calls": 5,
+        "candidate_ids": 11,
+        "latencies_ns": [
+          9417,
+          9542,
+          11541,
+          8209,
+          1459
+        ],
+        "pending_groups": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "rows": [
+          {
+            "ids": [
+              8339
+            ],
+            "source_bytes_before": 0,
+            "pending_ids_before": [],
+            "safe": 1,
+            "terminal_kind": null,
+            "index": null,
+            "start": null,
+            "end": null
+          },
+          {
+            "ids": [
+              8339,
+              21474
+            ],
+            "source_bytes_before": 0,
+            "pending_ids_before": [],
+            "safe": 2,
+            "terminal_kind": null,
+            "index": null,
+            "start": null,
+            "end": null
+          },
+          {
+            "ids": [
+              37149,
+              32901,
+              437,
+              59410
+            ],
+            "source_bytes_before": 10,
+            "pending_ids_before": [],
+            "safe": 4,
+            "terminal_kind": null,
+            "index": null,
+            "start": null,
+            "end": null
+          },
+          {
+            "ids": [
+              57792,
+              16,
+              1
+            ],
+            "source_bytes_before": 27,
+            "pending_ids_before": [],
+            "safe": 0,
+            "terminal_kind": "STOP_SEQUENCE",
+            "index": 0,
+            "start": 23,
+            "end": 31
+          },
+          {
+            "ids": [
+              57792
+            ],
+            "source_bytes_before": 27,
+            "pending_ids_before": [],
+            "safe": 0,
+            "terminal_kind": "STOP_SEQUENCE",
+            "index": 0,
+            "start": 23,
+            "end": 31
+          }
+        ]
+      },
+      "forward_spans": [
+        {
+          "start": 0,
+          "ids": [
+            0,
+            128803,
+            19905,
+            9045,
+            418,
+            28,
+            21138,
+            21474,
+            37149,
+            32901,
+            437,
+            59410,
+            57792,
+            16,
+            4147,
+            554,
+            1258,
+            5657,
+            3006,
+            16,
+            128804
+          ]
+        },
+        {
+          "start": 21,
+          "ids": [
+            128822
+          ]
+        },
+        {
+          "start": 22,
+          "ids": [
+            8339
+          ]
+        },
+        {
+          "start": 23,
+          "ids": [
+            21474,
+            37149,
+            32901,
+            437,
+            8363,
+            57792
+          ]
+        },
+        {
+          "start": 27,
+          "ids": [
+            59410,
+            57792,
+            16,
+            1,
+            129276,
+            22663
+          ]
+        },
+        {
+          "start": 28,
+          "ids": [
+            57792
+          ]
+        }
+      ],
+      "counts_delta": {
+        "verify": 2,
+        "proposal": 2,
+        "target_forward": 6,
+        "reconcile": 0,
+        "repack": 0
+      }
+    }
+  ],
+  "status": "PASS"
+}

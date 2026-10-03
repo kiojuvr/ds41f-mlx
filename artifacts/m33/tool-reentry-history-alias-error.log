@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/run_m33_tool_reentry.py", line 120, in <module>
+    quiet=session.quiesce();mx.synchronize(generation_stream)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/mtp_lifecycle.py", line 317, in operation
+    return method(self, *args, **kwargs)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/mtp_lifecycle.py", line 453, in quiesce
+    result = canonical_quiesce_native_singleton(language_model=self.language_model, target_cache=cache, mtp_state=state, history=self.history, mx=self.mx,
+                                               queue_pop=lambda q: q.popleft() if hasattr(q, 'popleft') else q.pop(0), observe_canonical=observe)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/mtp_lifecycle.py", line 278, in canonical_quiesce_native_singleton
+    raise MTPLifecycleError(f"unsupported target/history relation target={target_frontier} history={h_frontier} queue={len(queue)}")
+ds41f_mlx.runtime.mtp_lifecycle.MTPLifecycleError: unsupported target/history relation target=326 history=328 queue=0

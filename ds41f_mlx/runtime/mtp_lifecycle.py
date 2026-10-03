@@ -16,6 +16,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from time import perf_counter
+from threading import RLock
+from functools import wraps
 from typing import Any, Callable, Sequence
 import importlib
 import sys
@@ -212,6 +214,7 @@ def canonical_quiesce_native_singleton(
     history: CanonicalTransportHistory,
     mx: Any | None = None,
     queue_pop: Callable[[Any], tuple[int, Any, str]] | None = None,
+    observe_canonical: Callable[[int], Any] | None = None,
 ) -> CanonicalQuiescenceResult:
     """Promote the M28 diagnostic drain into a runtime primitive.
 
@@ -250,6 +253,10 @@ def canonical_quiesce_native_singleton(
         for _ in range(needed):
             entry = pop(queue)
             token = int(entry[0])
+            if observe_canonical is not None:
+                # The bounded committed safe suffix becomes canonical exactly
+                # once. A semantic guard must reject any terminal in this drain.
+                observe_canonical(token)
             drained.append(token)
         final = pop(queue)
         discarded = int(final[0])
@@ -279,6 +286,8 @@ def canonical_quiesce_native_singleton(
             except Exception:
                 pass
     canonical_frontier = history.canonical_frontier
+    if hasattr(mtp_state, 'hist_offset'):
+        mtp_state.hist_offset = canonical_frontier
     final_offsets = _target_offsets(target_cache)
     final_ds = _dspark_offsets(ds_caches)
     if any(o != canonical_frontier for o in final_offsets) or any(o != canonical_frontier for o in final_ds):
@@ -300,6 +309,20 @@ def canonical_quiesce_native_singleton(
     )
 
 
+def _serialized_mtp_operation(method):
+    @wraps(method)
+    def operation(self, *args, **kwargs):
+        with self._operation_lock:
+            if self._operation_failed and method.__name__ != 'close':
+                raise MTPLifecycleError('native MTP session failed closed')
+            try:
+                return method(self, *args, **kwargs)
+            except BaseException:
+                self._operation_failed = True
+                raise
+    return operation
+
+
 @dataclass
 class OMLXMTPGenerationSession:
     """Internal opt-in native MTP session preserving MTP-OFF class identity."""
@@ -312,8 +335,11 @@ class OMLXMTPGenerationSession:
     sampler: Callable[[Any], Any] | None = None
     max_tokens: int = 128
     stream: Any | None = None
+    semantic_guard: Any | None = None
 
     def __post_init__(self) -> None:
+        self._operation_lock = RLock()
+        self._operation_failed = False
         if not self.config.speculation_enabled or self.config.preserve_mtp is not True:
             raise MTPLifecycleError("OMLXMTPGenerationSession is internal MTP-ON only")
         root = str(self.config.omlx_path or DEFAULT_OMLX)
@@ -325,6 +351,8 @@ class OMLXMTPGenerationSession:
             importlib.import_module("omlx.scheduler")
             mtp = importlib.import_module("omlx.patches.mlx_lm_mtp.batch_generator")
             rb = importlib.import_module("omlx.patches.mlx_lm_mtp.cache_rollback")
+            if self.semantic_guard is not None and getattr(mtp, 'SEMANTIC_HORIZON_VERSION', 0) != 1:
+                raise MTPLifecycleError('guarded MTP requires the semantic-horizon candidate engine')
             if hasattr(mtp, "apply"):
                 mtp.apply()
             if hasattr(rb, "apply"):
@@ -335,6 +363,11 @@ class OMLXMTPGenerationSession:
         self.generation_stream = gen.generation_stream
         self.stream = self.stream or self.generation_stream
         self.language_model = getattr(self.model, "language_model", self.model)
+        if self.semantic_guard is not None and set(getattr(self.semantic_guard, 'control_token_ids', ())) - set(self.config.stop_token_ids or ()):
+            raise MTPLifecycleError('suppressed control IDs require native backend stop matchers')
+        if self.semantic_guard is not None and not all(callable(getattr(self.language_model, name, None)) for name in (
+                'mtp_validate_committed_context', 'mtp_take_committed_context', 'mtp_install_committed_context')):
+            raise MTPLifecycleError('guarded MTP requires native committed-context ownership hooks')
         if hasattr(self.language_model, "configure_mtp"):
             depth = int(getattr(getattr(self.language_model, "_config", object()), "n_mtp_layers", 5) or 5)
             self.language_model.configure_mtp(True, depth)
@@ -346,59 +379,125 @@ class OMLXMTPGenerationSession:
         if any(o != len(self.prefix_tokens) for o in _target_offsets(self.initial_cache)):
             raise MTPLifecycleError("target cache frontier does not match token history")
         self.history = CanonicalTransportHistory(prompt_tokens=tuple(self.prefix_tokens))
-        self._bg = self.BatchGenerator(self.language_model, max_tokens=self.max_tokens, sampler=self.sampler, completion_batch_size=1, prefill_batch_size=1, prefill_step_size=2048, stream=self.stream)
+        guarded_stops = [[int(t)] for t in (self.config.stop_token_ids or ())] if self.semantic_guard is not None else None
+        self._bg = self.BatchGenerator(self.language_model, max_tokens=self.max_tokens, sampler=self.sampler, stop_tokens=guarded_stops or None, completion_batch_size=1, prefill_batch_size=1, prefill_step_size=2048, stream=self.stream)
         self.uid: int | None = None
         self._started = False
         self._closed = False
+        self._quiesced = False
 
+    @_serialized_mtp_operation
     def start(self, terminal_prompt_token: int) -> None:
         if self._started:
             raise MTPLifecycleError("MTP session already started")
         # Upstream owns the transfer of primed DSpark context; do not rebuild it
         # from token history.  Different pinned revisions expose this either via
         # take/drop priming helpers or directly on the language model.
-        if hasattr(self.language_model, "_dspark_prime_context"):
+        install = getattr(self.language_model, 'mtp_install_committed_context', None)
+        if callable(install):
+            install(self.initial_cache, self.dspark_context.caches)
+        elif hasattr(self.language_model, "_dspark_prime_context"):
             self.language_model._dspark_prime_context = self.dspark_context.caches
-        uids = self._bg.insert([[int(terminal_prompt_token)]], max_tokens=[self.max_tokens], caches=[self.initial_cache], all_tokens=[self.prefix_tokens], samplers=[self.sampler])
+        uids = self._bg.insert([[int(terminal_prompt_token)]], max_tokens=[self.max_tokens], caches=[self.initial_cache], all_tokens=[list(self.prefix_tokens)], samplers=[self.sampler])
         self.uid = int(uids[0])
         pr, gr = self._bg.next(); self.mx.synchronize(self.stream)
         if gr:
             raise MTPLifecycleError("unexpected generation response during terminal bootstrap")
         self.history.prompt_tokens = tuple([*self.prefix_tokens, int(terminal_prompt_token)])
+        if self.semantic_guard is not None:
+            self._bg._generation_batch._omlx_semantic_guard = self.semantic_guard
+        self.prompt_replay_count = 0
+        self.last_response = None
         self._started = True
         self.initial_cache = []
 
-    def next_token(self) -> int | None:
+    @_serialized_mtp_operation
+    def next_token(self, *, transport_delivered: bool = True) -> int | None:
+        if self._quiesced or (self.semantic_guard is not None and self.semantic_guard.finished):
+            return None
         if not self._started:
             raise MTPLifecycleError("call start() before next_token")
+        if transport_delivered and len(self.history.transport_delivered_tokens) != len(self.history.canonical_generated_tokens):
+            raise MTPLifecycleError('transport delivery must remain a canonical prefix')
         _, gr = self._bg.next(); self.mx.synchronize(self.stream)
         if not gr:
             return None
+        self.last_response = gr[0]
         token = int(gr[0].token)
-        self.history.record_delivered(token)
+        if transport_delivered:
+            self.history.record_delivered(token)
+        else:
+            self.history.commit_undelivered([token])
+        if self.semantic_guard is not None and gr[0].finish_reason is not None and not self.semantic_guard.finished:
+            self.semantic_guard.finish_backend(gr[0].finish_reason)
         return token
 
+    @_serialized_mtp_operation
+    def confirm_delivery(self, token_ids: Sequence[int], *, start_ordinal: int) -> None:
+        """Acknowledge the exact canonical response prefix, metadata only."""
+        delivered = len(self.history.transport_delivered_tokens)
+        ids = list(map(int, token_ids))
+        if int(start_ordinal) != delivered or self.history.canonical_generated_tokens[delivered:delivered + len(ids)] != ids:
+            raise MTPLifecycleError('transport acknowledgement is not the next canonical prefix')
+        self.history.transport_delivered_tokens.extend(ids)
+
+    def active_cache_offsets(self) -> tuple[int, ...] | None:
+        gb = getattr(self._bg, '_generation_batch', None)
+        cache = getattr(gb, 'prompt_cache', None)
+        if not cache:
+            return None
+        return _target_offsets(cache)
+
+    @_serialized_mtp_operation
     def quiesce(self) -> CanonicalQuiescenceResult:
         gb = getattr(self._bg, "_generation_batch", None)
         if gb is None:
             raise MTPLifecycleError("no active native generation batch to quiesce")
+        horizon = getattr(gb, '_omlx_semantic_horizon', None)
         state = getattr(gb, "_omlx_mtp_state", None)
+        cache = getattr(gb, "prompt_cache", None)
+        # Backend finish filters the row. The optional horizon retains only
+        # the exact idle-transition owners, never a reconstructed target cache.
+        if horizon is not None and horizon.last_state is not None:
+            state, cache = horizon.last_state, horizon.last_cache
+        if state is None and self.semantic_guard is not None and cache:
+            # External cancellation before lazy MTP activation: adopt only the
+            # existing committed prompt rings and discard the standard pending
+            # response. No forward, sample, proposal or verification is needed.
+            from collections import deque
+            from types import SimpleNamespace
+            take = getattr(self.language_model, 'mtp_take_committed_context', None)
+            pending = getattr(gb, '_next_tokens', None)
+            if not callable(take) or pending is None or any(c.size() != self.history.canonical_frontier for c in cache):
+                raise MTPLifecycleError('preactivation committed context is unavailable')
+            rings, offset = take(cache)
+            state = SimpleNamespace(mtp_cache=rings, queue=deque([(int(pending.tolist()[0]), None, 'pending')]))
         if state is None:
             raise MTPLifecycleError("native MTP state unavailable")
-        cache = getattr(gb, "prompt_cache", None)
         if not cache:
             raise MTPLifecycleError("native target cache unavailable")
-        result = canonical_quiesce_native_singleton(language_model=self.language_model, target_cache=cache, mtp_state=state, history=self.history, mx=self.mx)
+        observe = None if self.semantic_guard is None else lambda token: self.semantic_guard.observe_canonical_emit(token, None)
+        with self.mx.stream(self.stream):
+            result = canonical_quiesce_native_singleton(language_model=self.language_model, target_cache=cache, mtp_state=state, history=self.history, mx=self.mx,
+                                                       queue_pop=lambda q: q.popleft() if hasattr(q, 'popleft') else q.pop(0), observe_canonical=observe)
+            self.mx.eval(*[c.keys for c in result.dspark_context.caches if c.keys is not None])
+            self.mx.synchronize(self.stream)
+        if horizon is not None:
+            # Any un-emitted future terminal was discarded, not canonically
+            # observed. Its ordinal ownership cannot leak into the next turn.
+            horizon.pending = None
         if self.uid is not None:
             try:
                 self._bg.remove([self.uid])
             except Exception:
                 pass
             self.uid = None
+        self._quiesced = True
         return result
 
     cancel = quiesce
 
+    @_serialized_mtp_operation
     def close(self) -> None:
         if self._closed:
             return

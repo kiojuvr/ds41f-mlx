@@ -1,0 +1,468 @@
+diff --git a/omlx/patches/deepseek_v41/mtp.py b/omlx/patches/deepseek_v41/mtp.py
+index dc9cba91..0c3fe66a 100644
+--- a/omlx/patches/deepseek_v41/mtp.py
++++ b/omlx/patches/deepseek_v41/mtp.py
+@@ -86,6 +86,21 @@ class DSparkMixin:
+ 
+         return take_primed(self, cache, main_token)
+ 
++    def mtp_install_committed_context(self, cache, rings):
++        from ..mlx_lm_mtp.deepseek_v4_dspark import install_committed_context
++
++        install_committed_context(self, cache, rings)
++
++    def mtp_validate_committed_context(self, cache):
++        from ..mlx_lm_mtp.deepseek_v4_dspark import validate_committed_context
++
++        return validate_committed_context(self, cache)
++
++    def mtp_take_committed_context(self, cache):
++        from ..mlx_lm_mtp.deepseek_v4_dspark import take_committed_context
++
++        return take_committed_context(self, cache)
++
+     def mtp_partial_rollback(self, cache, accepted, num_drafts):
+         if not 0 <= accepted <= num_drafts:
+             return False
+diff --git a/omlx/patches/mlx_lm_mtp/batch_generator.py b/omlx/patches/mlx_lm_mtp/batch_generator.py
+index c9ddd805..e02f953e 100644
+--- a/omlx/patches/mlx_lm_mtp/batch_generator.py
++++ b/omlx/patches/mlx_lm_mtp/batch_generator.py
+@@ -33,6 +33,10 @@ from . import prompt_priming as _prompt_priming
+ 
+ logger = logging.getLogger(__name__)
+ 
++# Session layers must fail closed rather than attach a guard to an older engine
++# that would silently ignore the optional attribute.
++SEMANTIC_HORIZON_VERSION = 1
++
+ 
+ def _set_verify_qmm_armed(flag: bool, *, row_exact: bool = False) -> None:
+     """Arm the verify-shape qmm routing for the duration of an MTP forward.
+@@ -127,6 +131,11 @@ def apply() -> bool:
+                     logger.debug("MTP path not active: %s", reason)
+ 
+         def patched_next(self, *args, **kwargs):
++            if getattr(self, '_omlx_semantic_guard', None) is not None:
++                from .semantic_horizon import horizon, SemanticGuardError
++                semantic = horizon(self)
++                if semantic.completed or not _is_mtp_eligible(self) or _singleton_mtp_handoff_ready(self):
++                    raise SemanticGuardError('guarded singleton cannot enter standard/shared handoff')
+             if _is_mtp_batch_eligible(self):
+                 policy = _batch_policy_for_next(self)
+                 if policy is not None and policy.needs_standard():
+@@ -184,6 +193,8 @@ def apply() -> bool:
+                             with _spec_command_buffers():
+                                 return _mtp_next(self, state)
+                     except _MtpStepFallback as exc:
++                        if getattr(self, '_omlx_semantic_guard', None) is not None:
++                            raise RuntimeError('guarded MTP forbids history reconciliation fallback') from exc
+                         logger.debug("MTP next() fallback to standard step: %s", exc)
+                         active = getattr(self, "_omlx_mtp_state", None)
+                         if active is not None:
+@@ -216,6 +227,9 @@ def apply() -> bool:
+             return original_next(self, *args, **kwargs)
+ 
+         def patched_extend(self, batch, *args, **kwargs):
++            if getattr(self, '_omlx_semantic_guard', None) is not None or getattr(batch, '_omlx_semantic_guard', None) is not None:
++                from .semantic_horizon import SemanticGuardError
++                raise SemanticGuardError('guarded singleton cannot join a shared batch')
+             # Reconcile before adding rows without MTP state so the drained
+             # batch can feed its last tokens without replaying its history.
+             if not _reconcile_mtp_batch_to_standard(self):
+@@ -3143,6 +3157,31 @@ def _post_init_mtp(gen_batch: Any, *, verify_result=None, priming_offset=None) -
+     main_tok = _ensure_uint32(gen_batch._next_tokens)  # (1,)
+     main_lp = gen_batch._next_logprobs[0]  # (vocab,)
+ 
++    from .semantic_horizon import horizon, SemanticGuardError
++    semantic = horizon(gen_batch)
++    if semantic is not None:
++        if verify_result is not None:
++            raise SemanticGuardError('guarded singleton activation must preview before forward')
++        validate = getattr(gen_batch.model, 'mtp_validate_committed_context', None)
++        if not callable(validate):
++            raise SemanticGuardError('model lacks committed prompt context validation')
++        validate(gen_batch.prompt_cache)
++        mx.eval(main_tok)
++        main_id = int(main_tok.tolist()[0])
++        terminal = semantic.preview(gen_batch, [main_id], region='init-main')
++        if terminal is not None:
++            take = getattr(gen_batch.model, 'mtp_take_committed_context', None)
++            if not callable(take):
++                raise SemanticGuardError('model lacks committed prompt context transfer')
++            rings, offset = take(gen_batch.prompt_cache)
++            state = _MtpState(uid=gen_batch.uids[0])
++            state.chain = True
++            state.mtp_cache, state.hist_offset = rings, offset
++            state.queue.append((main_id, main_lp, 'init'))
++            semantic.bind(terminal)
++            gen_batch._omlx_mtp_state = state
++            return
++
+     if procs is not None:
+         prev_buf = gen_batch._token_context[0].update_and_fetch(main_tok)
+     else:
+@@ -3174,6 +3213,15 @@ def _post_init_mtp(gen_batch: Any, *, verify_result=None, priming_offset=None) -
+ 
+     chain, depth, head_clone = _resolve_mtp_chain_depth(gen_batch.model)
+ 
++    successor_terminal = None
++    if semantic is not None:
++        if not chain or _dspark_host(gen_batch.model) is None:
++            raise SemanticGuardError('guarded activation requires native committed-context append')
++        mx.eval(next_main_tok)
++        successor_terminal = semantic.preview(
++            gen_batch, [main_id, int(next_main_tok.tolist()[0])], region='init-successor'
++        )
++
+     if chain:
+         # Depth-k seed: the history fold pairs hidden(main_tok) with
+         # next_main_tok — the first committed history entry — and its logits
+@@ -3226,19 +3274,29 @@ def _post_init_mtp(gen_batch: Any, *, verify_result=None, priming_offset=None) -
+             state.mtp_cache, state.hist_offset = primed
+             state.head_history_primed = True
+         else:
++            if semantic is not None:
++                raise SemanticGuardError('guarded init cannot reconstruct missing prompt context')
+             state.mtp_cache = gen_batch.model.make_mtp_cache()
+         state.next_main = _ensure_uint32(next_main_tok)
+         state.queue.append((int(main_tok.tolist()[0]), main_lp, "init"))
+         state.queue.append(
+             (int(next_main_tok.tolist()[0]), next_main_lp.squeeze(0), "init")
+         )
+-        _chain_next_drafts(
+-            gen_batch,
+-            state,
+-            hidden[:, -1:],
+-            state.next_main,
+-            prev_buf,
+-        )
++        if successor_terminal is not None:
++            # Same committed hidden append as ordinary DSpark init, no decoder
++            # proposal or sampling beyond the predicted final response.
++            host = _dspark_host(gen_batch.model)
++            host.dspark_append_context(hidden[:, -1:], state.mtp_cache)
++            state.hist_offset += 1
++            semantic.bind(successor_terminal)
++        else:
++            _chain_next_drafts(
++                gen_batch,
++                state,
++                hidden[:, -1:],
++                state.next_main,
++                prev_buf,
++            )
+         gen_batch._omlx_mtp_state = state
+         return
+ 
+@@ -3956,6 +4014,10 @@ def _run_verify_cycle_chain(
+ 
+     import mlx.core as mx
+ 
++    from .semantic_horizon import horizon, SemanticGuardError
++    semantic = horizon(gen_batch)
++    if semantic is not None and (semantic.pending is not None or semantic.completed):
++        raise SemanticGuardError('verify after predicted/canonical terminal')
+     if state.next_main is None or state.drafts is None:
+         raise _MtpStepFallback("chain cycle entered without next_main / drafts")
+ 
+@@ -4138,6 +4200,27 @@ def _run_verify_cycle_chain(
+         emit_last_id = draft_ids[m]
+         emit_last_lp = combined_lp[m]
+ 
++    terminal = None
++    if semantic is not None:
++        while True:
++            terminal = semantic.preview(gen_batch, draft_ids[:m] + [emit_last_id],
++                                        region='chain', queue=state.queue)
++            if terminal is None:
++                break
++            safe = terminal.prediction.safe_count - terminal.queued_prefix
++            if safe >= m:
++                break
++            m = safe
++            if callable(clamp):
++                narrowed = int(clamp(gen_batch.prompt_cache, m, k))
++                if not 0 <= narrowed <= m:
++                    raise SemanticGuardError('model clamp violates semantic commit bound')
++                m = narrowed
++            emit_last_id = draft_ids[m]
++            emit_last_lp = combined_lp[m]
++            # The shortened model-legal sequence may no longer reach terminal.
++            # Re-preview that exact candidate; never carry stale ownership.
++
+     # Rewind budget-capable processors to the last emitted position.
+     # Rows 0..m produced the m+1 emitted tokens (m accepted drafts + the
+     # bonus/verify correction); rows m+1..k predicted rejected drafts that
+@@ -4151,7 +4234,15 @@ def _run_verify_cycle_chain(
+     # A clamp can put the final verify token on the boundary, while a full
+     # accept can put its bonus token there. Neither token is present in the
+     # backbone cache yet, so materialize it before the queue reaches it.
+-    materialize_boundary_emit = align > 0 and to_boundary > 0 and to_boundary == m + 1
++    backend_terminal = False
++    if semantic is not None:
++        # Re-check the FINAL candidate with the existing backend matcher, not
++        # with a second recipe grammar. A known EOS is suppressed protocol text
++        # and cannot be materialized/sampled past before canonical emission.
++        final_matcher = copy(gen_batch._matchers[0])
++        backend_terminal = any(final_matcher.advance(token) for token in
++                               [int(entry[0]) for entry in state.queue] + draft_ids[:m] + [emit_last_id])
++    materialize_boundary_emit = (terminal is None and not backend_terminal and align > 0 and to_boundary > 0 and to_boundary == m + 1)
+     state.boundary_emit_pending = materialize_boundary_emit
+ 
+     # --- stats ---
+@@ -4174,6 +4265,15 @@ def _run_verify_cycle_chain(
+     accept_ms = (time.perf_counter() - cycle_t0) * 1000
+ 
+     def draft_next():
++        if terminal is not None:
++            host = _dspark_host(gen_batch.model)
++            if host is None:
++                raise SemanticGuardError('terminal commit lacks native append-only context hook')
++            host.dspark_append_context(hidden[:, :m + 1], state.mtp_cache)
++            state.hist_offset += m + 1
++            state.next_main = None
++            state.drafts = None
++            return
+         # --- MTP-head history + next draft chain (async-dispatched) ---
+         t0 = time.perf_counter()
+         if draft_jobs is None and not state.head_clone:
+@@ -4215,6 +4315,8 @@ def _run_verify_cycle_chain(
+         state.queue.append(
+             (int(emit_last_id), emit_last_lp, "bonus" if m == k else "verify")
+         )
++        if terminal is not None:
++            semantic.bind(terminal)
+         if m < k and procs is not None:
+             _trim_token_buffer(gen_batch, k - m)
+         # The GPU runs a chain that never reads the backbone cache while the
+@@ -4283,6 +4385,16 @@ def _materialize_mtp_boundary_emit(gen_batch: Any, state: _MtpState) -> None:
+     if not state.queue:
+         raise _MtpStepFallback("boundary materialization has no queued token")
+ 
++    from .semantic_horizon import horizon, SemanticGuardError
++    semantic = horizon(gen_batch)
++    if semantic is not None:
++        from copy import copy
++        final_matcher = copy(gen_batch._matchers[0])
++        if any(final_matcher.advance(int(entry[0])) for entry in state.queue):
++            raise SemanticGuardError('backend-terminal queue cannot be boundary-materialized before emission')
++        # Re-prove the bounded queued prefix before forwarding its final safe
++        # entry. A pending/completed terminal forbids materialization outright.
++        semantic.preview(gen_batch, [], region='alignment-safe-prefix', queue=state.queue)
+     boundary_id = int(state.queue[-1][0])
+     boundary_tok = mx.array([boundary_id], dtype=mx.uint32)
+     procs = _proc_list(gen_batch)
+@@ -4305,8 +4417,21 @@ def _materialize_mtp_boundary_emit(gen_batch: Any, state: _MtpState) -> None:
+     mx.eval(next_tok)
+     state.stats.backbone_ms += (time.perf_counter() - t0) * 1000
+ 
++    next_id = int(next_tok.tolist()[0])
++    terminal = None if semantic is None else semantic.preview(
++        gen_batch, [next_id], region='alignment-successor', queue=state.queue
++    )
+     t0 = time.perf_counter()
+-    if drafter is not None:
++    if terminal is not None:
++        host = _dspark_host(gen_batch.model)
++        if host is None:
++            raise SemanticGuardError('alignment successor lacks append-only context')
++        host.dspark_append_context(hidden[:, -1:], state.mtp_cache)
++        state.hist_offset += 1
++        state.next_main = None
++        state.drafts = None
++        semantic.bind(terminal)
++    elif drafter is not None:
+         drafter.draft([(gen_batch, state, captured, next_tok, prev_buf)])
+     else:
+         _chain_next_drafts(
+@@ -4317,8 +4442,8 @@ def _materialize_mtp_boundary_emit(gen_batch: Any, state: _MtpState) -> None:
+             prev_buf,
+         )
+     state.stats.mtp_head_ms += (time.perf_counter() - t0) * 1000
+-    next_id = int(next_tok.tolist()[0])
+-    state.next_main = next_tok
++    if terminal is None:
++        state.next_main = next_tok
+     state.queue.append((next_id, next_lp_2d.squeeze(0), "bonus"))
+ 
+ 
+@@ -4648,6 +4773,9 @@ def _emit_response(
+     """
+     Response = type(gen_batch).Response
+ 
++    from .semantic_horizon import horizon
++    semantic = horizon(gen_batch)
++    semantic_finish = semantic.observe(gen_batch, token_id) if semantic is not None else None
+     finish_reason: Optional[str] = None
+ 
+     gen_batch.tokens[0].append(token_id)
+@@ -4658,8 +4786,13 @@ def _emit_response(
+     if gen_batch._matchers[0].advance(token_id):
+         finish_reason = "stop"
+ 
++    if semantic_finish is not None:
++        finish_reason = semantic_finish
+     if finish_reason is not None:
+         prompt_cache = gen_batch.extract_cache(0)
++        if semantic is not None:
++            semantic.last_state = getattr(gen_batch, '_omlx_mtp_state', None)
++            semantic.last_cache = prompt_cache
+         all_tokens = gen_batch.tokens[0]
+         response = Response(
+             uid=gen_batch.uids[0],
+diff --git a/omlx/patches/mlx_lm_mtp/deepseek_v4_dspark.py b/omlx/patches/mlx_lm_mtp/deepseek_v4_dspark.py
+index c627636b..31d92929 100644
+--- a/omlx/patches/mlx_lm_mtp/deepseek_v4_dspark.py
++++ b/omlx/patches/mlx_lm_mtp/deepseek_v4_dspark.py
+@@ -191,6 +191,34 @@ def capture_prompt(
+         mx.async_eval(arrays)
+ 
+ 
++def install_committed_context(host: Any, target_cache, caches):
++    """Resume the same bounded rings on the existing target timeline."""
++    offset = _target_cache_offset(target_cache)
++    if offset is None or not caches or any(c.offset != offset for c in caches):
++        raise RuntimeError('DSpark continuation frontier mismatch')
++    setattr(host, _PRIME_CTX_ATTR, _DSparkPrimeContext(
++        caches=caches, expected_target_offset=offset,
++    ))
++
++
++def validate_committed_context(host: Any, target_cache: Optional[list[Any]]):
++    """Prove full committed prompt priming without consuming its ownership."""
++    ctx = getattr(host, _PRIME_CTX_ATTR, None)
++    offset = _target_cache_offset(target_cache)
++    if not isinstance(ctx, _DSparkPrimeContext) or offset is None:
++        raise RuntimeError('committed DSpark priming context unavailable')
++    if ctx.expected_target_offset != offset or not ctx.caches or any(c.offset != offset for c in ctx.caches):
++        raise RuntimeError('committed DSpark priming frontier mismatch')
++    return ctx.caches, offset
++
++
++def take_committed_context(host: Any, target_cache: Optional[list[Any]]):
++    """Transfer prompt rings BEFORE activation, without forwarding pending main."""
++    result = validate_committed_context(host, target_cache)
++    drop_primed(host)
++    return result
++
++
+ def take_primed(
+     host: Any,
+     target_cache: Optional[list[Any]],
+diff --git a/omlx/patches/mlx_lm_mtp/semantic_horizon.py b/omlx/patches/mlx_lm_mtp/semantic_horizon.py
+new file mode 100644
+index 00000000..c7ea59b7
+--- /dev/null
++++ b/omlx/patches/mlx_lm_mtp/semantic_horizon.py
+@@ -0,0 +1,110 @@
++"""Optional session-owned singleton semantic horizon; contains no grammar.
++
++Errors deliberately are not _MtpStepFallback: guarded requests may never enter
++upstream's history-rebuilding reconciliation path on a semantic failure.
++"""
++from dataclasses import dataclass
++from collections import deque
++
++
++class SemanticGuardError(RuntimeError):
++    pass
++
++
++@dataclass(frozen=True)
++class Prediction:
++    kind: str
++    index: int
++    safe_count: int
++    token_id: int
++    identity: object
++
++
++@dataclass(frozen=True)
++class OwnedTerminal:
++    ordinal: int
++    prediction: Prediction
++    region: str
++    candidate_ids: tuple[int, ...]
++    queued_prefix: int
++    owner_uid: object
++
++
++class SemanticHorizon:
++    def __init__(self, guard):
++        self.guard = guard
++        self.owner_uid = None
++        self.pending = None
++        self.completed = False
++        self.last_state = None
++        self.last_cache = None
++        self.decisions = deque(maxlen=16)
++
++    def preview(self, gen_batch, candidate_ids, *, region, queue=()):
++        if self.owner_uid is None:
++            self.owner_uid = gen_batch.uids[0]
++        if self.owner_uid != gen_batch.uids[0]:
++            raise SemanticGuardError('semantic prediction belongs to a different generation UID')
++        if self.completed or self.pending is not None:
++            raise SemanticGuardError('semantic horizon forbids another candidate cycle')
++        queued = [int(entry[0]) for entry in queue]
++        candidates = list(map(int, candidate_ids))
++        ids = queued + candidates
++        result = self.guard.preview(ids)
++        if result is None:
++            return None
++        if not isinstance(result, Prediction):
++            raise SemanticGuardError('guard returned invalid prediction type')
++        if not (0 <= result.index < len(ids)) or result.safe_count != result.index or ids[result.index] != result.token_id:
++            raise SemanticGuardError('guard returned inexact candidate provenance')
++        if result.index < len(queued):
++            # Such a terminal was already target-committed: do not hide it by
++            # treating only the new region as safe or advancing canonical state.
++            raise SemanticGuardError('semantic terminal inside committed queued prefix')
++        self.decisions.append(OwnedTerminal(int(gen_batch._num_tokens[0]) + result.index,
++                                            result, region, tuple(ids), len(queued), self.owner_uid))
++        return self.decisions[-1]
++
++    def bind(self, terminal):
++        if self.pending is not None or self.completed:
++            raise SemanticGuardError('duplicate terminal ownership')
++        self.pending = terminal
++
++    def observe(self, gen_batch, token_id):
++        if self.owner_uid is not None and self.owner_uid != gen_batch.uids[0]:
++            raise SemanticGuardError('canonical emission owner differs from prediction UID')
++        if self.completed:
++            raise SemanticGuardError('canonical emission after semantic terminal')
++        ordinal = int(gen_batch._num_tokens[0])
++        expected = None
++        if self.pending is not None:
++            if ordinal > self.pending.ordinal:
++                raise SemanticGuardError('terminal response ordinal skipped')
++            if ordinal == self.pending.ordinal:
++                if int(token_id) != self.pending.prediction.token_id:
++                    raise SemanticGuardError('terminal token differs from owned response')
++                expected = self.pending.prediction.identity
++        reason = self.guard.observe_canonical_emit(int(token_id), expected)
++        if (reason is not None) != (expected is not None):
++            raise SemanticGuardError('unexpected or missing canonical terminal')
++        if reason is not None:
++            if reason != 'stop':
++                raise SemanticGuardError('guard must supply backend stop for protocol completion')
++            self.completed = True
++            self.pending = None
++        return reason
++
++
++def horizon(gen_batch):
++    guard = getattr(gen_batch, '_omlx_semantic_guard', None)
++    if guard is None:
++        return None
++    if len(gen_batch.uids) != 1:
++        raise SemanticGuardError('semantic guard is singleton-only')
++    current = getattr(gen_batch, '_omlx_semantic_horizon', None)
++    if current is None:
++        current = SemanticHorizon(guard)
++        gen_batch._omlx_semantic_horizon = current
++    elif current.guard is not guard:
++        raise SemanticGuardError('semantic guard owner changed')
++    return current

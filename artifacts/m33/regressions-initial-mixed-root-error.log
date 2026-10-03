@@ -1,0 +1,48 @@
+..........................F...................................F......... [ 50%]
+..................................................... [ 87%]
+..................                                                  [100%]
+=================================== FAILURES ===================================
+____________ test_old_engine_cannot_silently_ignore_attached_guard _____________
+
+rig = (<deepseek_recipe._native.Tokenizer object at 0x135e73e70>, <tools.m33_semantic_tests.Model object at 0x136203a50>, <tools.m33_semantic_tests.Batch object at 0x136203550>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x128125630>
+
+    def test_old_engine_cannot_silently_ignore_attached_guard(rig,monkeypatch):
+        from types import SimpleNamespace
+        import ds41f_mlx.runtime.mtp_lifecycle as life
+        from ds41f_mlx.runtime.omlx_generation import OMLXDecodeConfig
+        t,model,gb=rig
+        original=life.importlib.import_module
+        def modules(name):
+            if name=='omlx.patches.mlx_lm_mtp.batch_generator':return SimpleNamespace(apply=lambda:True)
+            return original(name)
+        monkeypatch.setattr(life.importlib,'import_module',modules)
+        with pytest.raises(MTPLifecycleError) as error:
+            OMLXMTPGenerationSession(model,gb.prompt_cache,[42]*10,None,config=OMLXDecodeConfig(speculation_enabled=True,preserve_mtp=True),semantic_guard=object())
+>       assert 'semantic-horizon candidate engine' in str(error.value.__cause__)
+E       AssertionError: assert 'semantic-horizon candidate engine' in 'test_old_engine_cannot_silently_ignore_attached_guard.<locals>.modules() takes 1 positional argument but 2 were given'
+E        +  where 'test_old_engine_cannot_silently_ignore_attached_guard.<locals>.modules() takes 1 positional argument but 2 were given' = str(TypeError('test_old_engine_cannot_silently_ignore_attached_guard.<locals>.modules() takes 1 positional argument but 2 were given'))
+E        +    where TypeError('test_old_engine_cannot_silently_ignore_attached_guard.<locals>.modules() takes 1 positional argument but 2 were given') = MTPLifecycleError('pinned upstream oMLX MTP patches are unavailable').__cause__
+E        +      where MTPLifecycleError('pinned upstream oMLX MTP patches are unavailable') = <ExceptionInfo MTPLifecycleError('pinned upstream oMLX MTP patches are unavailable') tblen=3>.value
+
+tools/m33_semantic_extra_tests.py:196: AssertionError
+______________ test_deepseek_native_array_abi_and_pack_execution _______________
+
+    def test_deepseek_native_array_abi_and_pack_execution():
+        fast = importlib.import_module("omlx.custom_kernels.glm_moe_dsa.fast")
+>       assert fast.has_symbol("deepseek_v41_packed_attention")
+E       AssertionError: assert False
+E        +  where False = <function has_symbol at 0x3016daac0>('deepseek_v41_packed_attention')
+E        +    where <function has_symbol at 0x3016daac0> = <module 'omlx.custom_kernels.glm_moe_dsa.fast' from '/tmp/ds41f-m33-omlx/omlx/custom_kernels/glm_moe_dsa/fast.py'>.has_symbol
+
+tests/test_m20_generation_dependency.py:110: AssertionError
+=============================== warnings summary ===============================
+tests/test_m20_generation_dependency.py::test_zero_replay_cancel_removes_owner_and_continues
+  /tmp/ds41f-m33-omlx/omlx/api/openai_models.py:269: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class ResponseFormatJsonSchema(BaseModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tools/m33_semantic_extra_tests.py::test_old_engine_cannot_silently_ignore_attached_guard
+FAILED tests/test_m20_generation_dependency.py::test_deepseek_native_array_abi_and_pack_execution
+2 failed, 141 passed, 1 warning, 24 subtests passed in 9.26s

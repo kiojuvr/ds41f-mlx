@@ -195,7 +195,8 @@ def _generation_session_type():
 
 
 def handoff_to_generation(result: LivePrefillResult, model: Any, *, terminal_prompt_token: int,
-                          config: Any = None, max_tokens: int = 128, sampler: Any = None) -> 'OMLXGenerationSession':
+                          config: Any = None, max_tokens: int = 128, sampler: Any = None,
+                          session_factory: Any = None) -> 'OMLXGenerationSession':
     """Transfer once and bootstrap only the held-out terminal prompt token.
 
     Admission and start are one operation. Even a failed transfer/start attempt
@@ -214,7 +215,10 @@ def handoff_to_generation(result: LivePrefillResult, model: Any, *, terminal_pro
     result.handoff_count = 1
     session = None
     try:
-        session = _generation_session_type().from_prefilled_cache(
+        # Internal qualification may explicitly supply a guarded native MTP
+        # session factory. Public/default serving still selects MTP-OFF only.
+        session_type = session_factory or _generation_session_type()
+        session = session_type.from_prefilled_cache(
             model, cache, result.prefix_token_ids, config, max_tokens=max_tokens, sampler=sampler)
         if session.initial_cache is not cache:
             raise LiveCacheHandoffError('generation admission replaced the live cache list')

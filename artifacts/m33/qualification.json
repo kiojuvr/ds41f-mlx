@@ -1,0 +1,100 @@
+{
+  "schema": "ds41f.m33.qualification.v1",
+  "decision": "PROTOCOL_GATE_SOLVED",
+  "binding": "FULL_BINDING_QUALIFIED",
+  "authorized_next": "M34 operational qualification only",
+  "production_mtp_default": "OFF",
+  "public_mtp_option": "disabled",
+  "mtp_persistence": "fail closed",
+  "token_exact_immediate_abort": "unsupported",
+  "broad_operational_soak": false,
+  "public_serving_promotion": false,
+  "identities": "artifacts/m33/runtime-identities.json",
+  "native_parity": {
+    "cases": 22,
+    "comparisons": 64,
+    "equal": true
+  },
+  "native_preview": {
+    "rows": 77,
+    "repeated_samples": 15400,
+    "nonmutation": true
+  },
+  "rust_tests": 10,
+  "candidate_python_tests": 139,
+  "release_off_runtime_tests": 5,
+  "subtests": 24,
+  "semantic_tests": 29,
+  "live_matrix_cases": 15,
+  "interruptions": {
+    "cases": 16,
+    "exact_recovery": 13,
+    "deliberate_internal_phase_fail_closed": 3
+  },
+  "tool_result_reentry": {
+    "turns": 2,
+    "P7_enabled": true,
+    "P6_P5_same_forward_taps": true,
+    "model_history_replay": 0,
+    "full_cache_repack": 0
+  },
+  "performance": {
+    "qualified_scope": "single paired M26-shape 4K/128 benchmark; no operational soak",
+    "rates": {
+      "warmup_guarded": 42.95353484100798,
+      "OFF": 19.37191484753415,
+      "ON_no_guard": 42.984364708028714,
+      "ON_guarded": 42.839795962799045
+    },
+    "guard_vs_no_guard_ratio": 0.9966367132278992,
+    "native_preview_latency": {
+      "samples": 15400,
+      "median_ns": 1625,
+      "p95_ns": 1875,
+      "max_ns": 7084
+    },
+    "same_core_source_clone_latency": {
+      "samples": 15400,
+      "median_ns": 84,
+      "p95_ns": 167,
+      "max_ns": 7417
+    },
+    "standalone_python_binding_clone_timer": null,
+    "clone_timer_scope": "release Rust same-core SemanticSession clone (black-boxed) and preview; NOT separate Python ABI clone timing or live MTP",
+    "live_preview": {
+      "calls": 25,
+      "init_calls": 2,
+      "calls_per_cycle": 1.0,
+      "candidate_ids": 129,
+      "median_ns": 14458,
+      "p95_ns": 17917,
+      "max_ns": 18458,
+      "metadata": "one owned terminal, <=16 bounded diagnostic decisions; no terminal on this performance corpus"
+    },
+    "metadata_overhead": {
+      "current_owned_terminal_limit": 1,
+      "decision_history_limit": 16,
+      "actual_owner_samples": 11,
+      "max_owned_graph_bytes": 1868,
+      "max_owned_json_bytes": 276,
+      "scope": "recursive unique Python object sizing of reconstituted actual owner records, excludes shared model/parser/output/cache objects",
+      "actual_max_candidate_ids": 6,
+      "max_preview_diagnostic_rows": 64,
+      "max_preview_timing_samples": 4096
+    },
+    "acceptance_metric": "unchanged upstream considered-draft counter metric, same as M26"
+  },
+  "proof_scope": "non-mutating canonical forks, exact owner/ordinal/token/span match; safe-prefix native rollback and append-only context; bounded quiescence only after canonical emission",
+  "excluded_experiments": [
+    "init-live-unmatched-eos",
+    "stops-live-fixture-miss",
+    "tool-reentry-history-alias-error",
+    "performance-supervisor-timeout",
+    "regressions-initial-mixed-root-error",
+    "semantic-unit-fixture-error",
+    "alignment-live (pre-final candidate)",
+    "control-policy-config-error",
+    "tool-reentry-control-name-error",
+    "tool-reentry-missing-matcher-error"
+  ]
+}

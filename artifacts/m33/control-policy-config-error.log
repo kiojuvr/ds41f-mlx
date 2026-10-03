@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/run_m33_interruptions.py", line 105, in <module>
+    session=OMLXMTPGenerationSession(model,cache,np.asarray(ids[:-1]),context,config=cfg,sampler=make_sampler(temp=1.,top_p=1.,top_k=0),max_tokens=128,semantic_guard=guard)
+  File "<string>", line 12, in __init__
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/mtp_lifecycle.py", line 367, in __post_init__
+    raise MTPLifecycleError('suppressed control IDs require native backend stop matchers')
+ds41f_mlx.runtime.mtp_lifecycle.MTPLifecycleError: suppressed control IDs require native backend stop matchers
