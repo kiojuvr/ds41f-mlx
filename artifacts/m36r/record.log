@@ -1,0 +1,97 @@
+{
+  "decision": "QUALIFIED_BOUNDED_CERTIFIED_RECOVERY",
+  "tested_state_classes": {
+    "fixture_scope": "real native official recipe/tokenizer; controlled token input, no sampled model or synthetic-cache execution claim",
+    "positive": [
+      "text",
+      "unicode_full",
+      "length",
+      "marker_prefix",
+      "eos",
+      "reasoning_transition_exact",
+      "complete_tool",
+      "complete_two_tools",
+      "complete_auto_tool"
+    ],
+    "negative": [
+      "leading_newline",
+      "think_marker_prefix",
+      "unicode_pending",
+      "unicode_eos_pending",
+      "reasoning_only",
+      "reasoning_transition",
+      "tool_block_prefix",
+      "partial_name",
+      "partial_arguments",
+      "valid_json_unfinished",
+      "valid_json_length",
+      "complete_tool_alternate_spelling",
+      "valid_json_canonical_prefix_30",
+      "valid_json_canonical_prefix_31",
+      "valid_json_canonical_prefix_32",
+      "valid_json_canonical_prefix_33",
+      "enabled_marker_prefix",
+      "enabled_block_prefix",
+      "json_fence_lossy"
+    ],
+    "exact_but_incomplete": [
+      "valid_json_canonical_prefix_30",
+      "valid_json_canonical_prefix_31",
+      "valid_json_canonical_prefix_32",
+      "valid_json_canonical_prefix_33"
+    ],
+    "complete_but_nonprefix": "complete_tool_alternate_spelling",
+    "positive_and_negative_certificates": "recipe-matrix.json"
+  },
+  "continuation": {
+    "unicode": {
+      "exact_prefix": true,
+      "frontiers": [
+        21,
+        33
+      ],
+      "retained_cache_continuation": true,
+      "expired_retry_atomic": true
+    },
+    "completed-tool": {
+      "exact_prefix": true,
+      "frontiers": [
+        327,
+        373
+      ],
+      "retained_cache_continuation": true,
+      "expired_retry_atomic": true
+    }
+  },
+  "backpressure": {
+    "unchanged_m36_workload": true,
+    "listener_sndbuf": 8192,
+    "comment_padding_bytes": 262144,
+    "max_send_wait_s": 3.307648916961625,
+    "plateau_responses": 2,
+    "settled_responses": 3,
+    "disconnect_to_settled_s": 2.009793500008527,
+    "bound": "pull-based finite socket-pressure case; 768 responses / 8192 total tokens; no independent generation queue",
+    "diagnostic_lifetime_retention": "unchanged, not qualified for indefinite service"
+  },
+  "gates": {
+    "logs": [
+      "runtime-regressions.log",
+      "controlled-admission-regressions.log",
+      "horizon-regressions.log",
+      "off-policy-regressions.log",
+      "release-off-regressions.log",
+      "rust-regressions.log",
+      "prior-evidence-regressions.log"
+    ],
+    "m35_http_turns": 18,
+    "native_interruption_cases": 16,
+    "controlled_native_recipe_cases": 28,
+    "historical_hash_deselections": [
+      "M35 identity_and_sources",
+      "M36 current_sources_and_raw_evidence_match"
+    ],
+    "current_source_hash_gate": "tests/test_m36r_evidence.py",
+    "real_m36_pressure_rerun": true
+  }
+}

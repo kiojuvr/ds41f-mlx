@@ -1,0 +1,18 @@
+................F                                                               [100%]
+=================================== FAILURES ===================================
+_________________ test_current_sources_and_raw_evidence_match __________________
+
+    def test_current_sources_and_raw_evidence_match():
+        q = json.loads((OUT / 'qualification.json').read_text())
+        for name, digest in q['source_hashes'].items():
+>           assert hashlib.sha256((ROOT / name).read_bytes()).hexdigest() == digest, name
+E           AssertionError: ds41f_mlx/serving/internal_mtp.py
+E           assert '303f9e69010c...a8dc280e7a15b' == 'f642c3aeccbc...cefeca59e516b'
+E             
+E             - f642c3aeccbc3ebb56f80e5f513c3ee3fd2775b3c26ee5b50e4cefeca59e516b
+E             + 303f9e69010c4fb0c649b1e36df856b50ee97b570ad0b5c8627a8dc280e7a15b
+
+tests/test_m36_evidence.py:32: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_m36_evidence.py::test_current_sources_and_raw_evidence_match
+1 failed, 16 passed, 1 deselected, 137 subtests passed in 0.09s

@@ -1,0 +1,22 @@
+{
+  "schema": "ds41f.m36r.commands.v1",
+  "qualification_python": "/tmp/ds41f-m32-qual/bin/python",
+  "qualification_environment": {"DS41F_OMLX_PATH": "/tmp/ds41f-m33-omlx"},
+  "recipe_matrix": "python tools/run_m36r_recipe_matrix.py",
+  "fenced_http": "python -m tools.run_m36r_http",
+  "m35_http": "python -c \"import asyncio; from tools import run_m35_http_qualification as q; q.OUT=q.ROOT/'artifacts/m36r/m35-http.json'; asyncio.run(q.main())\"",
+  "m36_byte_tool_pressure": "python -c \"import asyncio; from tools import run_m36_recovery_probe as q; q.OUT=q.q.ROOT/'artifacts/m36r/m36-probe.json'; asyncio.run(q.main())\"",
+  "native_interruptions": "python -c \"from pathlib import Path; p=Path('tools/run_m35_native_interruptions.py'); code=p.read_text().replace('artifacts/m35/native-interruptions.json','artifacts/m36r/native-interruptions.json'); exec(compile(code,str(p),'exec'),{'__file__':str(p.resolve()),'__name__':'__main__'})\"",
+  "runtime": "python -m pytest -q tests/test_m36r_recovery.py tests/test_m36_recovery_boundary.py tests/test_m35_transport_lease.py tests/test_m34_cache_release.py tests/test_m29_mtp_lifecycle.py tests/test_m25_mtp_boundary.py tests/test_prefill_fp8_mlx_p5.py tests/test_prefill_fp8_mlx_p6.py tests/test_prefill_fp8_mlx_p7.py",
+  "controlled_admission": "python -m pytest -q tests/test_m36r_evidence.py -k 'not final_qualification'",
+  "horizon": "python -m pytest -q tools/m33_semantic_tests.py tools/m33_semantic_extra_tests.py",
+  "off_policy": "python -m pytest -q tests/test_stateful_request_policy.py tests/test_runtime_config.py tests/test_m25_mtp_boundary.py",
+  "release_off": "env -u DS41F_OMLX_PATH -u DS41F_RECIPE_PATH /Users/kioju/.venvs/omlx-0.7.0.release/bin/python -m pytest -q tests/test_m20_generation_dependency.py",
+  "historical_evidence": "python -m pytest -q tests/test_m33_protocol_evidence.py tests/test_m34_operational_evidence.py tests/test_m35_http_evidence.py tests/test_m36_evidence.py -k 'not identity_and_sources and not current_sources_and_raw_evidence_match'",
+  "historical_caveat": "Two HEAD-source-hash checks describe historical M35/M36, not M36R. Initial wrong deselection name is preserved as excluded attempt. Fresh current-source/evidence hashes are checked in M36R.",
+  "identities": "python tools/check_m34_identities.py",
+  "identity_caveat": "Checker writes the historical M34 identity file; bytes unchanged. Fresh output retained as identities.log.",
+  "rust": "cargo test",
+  "record": "python tools/record_m36r_evidence.py",
+  "final_gate": "python -m pytest -q tests/test_m36r_evidence.py"
+}

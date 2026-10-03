@@ -23,7 +23,16 @@ coherence alone does not certify protocol reconstructability: interrupted canoni
 DSML can produce an unfinished tool call whose ordinary encoding is non-prefix.
 The internal backend now poisons such settlement and reports busy until retirement
 releases the response lease. Its diagnostic partial tool response is not execution
-permission. Full client recovery/admission qualification remains blocked.
+permission. Universal client recovery remains blocked.
+[M36R](milestone-36r-recovery-admission.md) qualifies only settled outcomes carrying
+an official-recipe ordinary reconstruction certificate and exact-prefix admission.
+Its `outcome_state` distinguishes not_admitted, active, recoverable, unrecoverable,
+and poisoned; the legacy `state=poisoned` label also contains protocol-unrecoverable
+outcomes. Nonrepresentable outcomes retire caches and require DELETE/fresh start.
+Opt-in internal sequence/body identity fencing makes observation/retry non-generating;
+older identities reject after the next admitted turn. No second model-history
+owner, persisted fence, public MTP route or distributed exactly-once tool claim
+is introduced.
 
 The current native session owner is `TextBackboneState` together with `TextEncoder`, `TextDecoder`, and `TextGeneration` state machinery. It is the reference state contract for future production architecture unless a documented architecture decision replaces or wraps it. Validation inventory helpers are not independent production session implementations.
 

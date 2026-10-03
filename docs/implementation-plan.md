@@ -2,6 +2,17 @@
 
 This roadmap converts the runtime strategy into a finite sequence of milestones. It is not an optimization backlog. Runtime behavior, selectors, API integration, and multimodal work must not change until the relevant architecture milestone authorizes that work.
 
+## M36R — Certified recovery admission
+
+Decision: **QUALIFIED_BOUNDED_CERTIFIED_RECOVERY**. The explicitly injected
+singleton backend publishes recoverable outcomes only after native settlement and
+an ordinary official-recipe exact-prefix reconstruction certificate. A bounded
+in-process sequence/body fence prevents ambiguous retry from duplicating a turn;
+a single-client tool ledger prevents repeated canonical call execution. Partial
+DSML and other lossy parser/decoder boundaries remain intentionally unsupported
+and require DELETE, not transcript repair. See [M36R](milestone-36r-recovery-admission.md).
+Next: bounded client integration of this internal contract, not public/default MTP.
+
 ## M36 — Client recovery investigation
 
 Decision: **BLOCKED_CANONICAL_PROTOCOL_REPRESENTABILITY**. Real interrupted DSML
@@ -10,8 +21,8 @@ ordinary recipe encoding is not the canonical prefix. Internal settlement now
 fails closed for unfinished tools; poison remains busy until lease cleanup settles.
 One partial-UTF-8 transport recovery and finite genuine socket pressure are observed,
 not a complete recovery/admission contract. See [M36](milestone-36-client-recovery-qualification.md).
-Next: **M36R canonical protocol representability and recovery admission design**,
-not release promotion or a longer-context qualification.
+M36R now qualifies a certified subset above; the original counterexample remains
+blocking evidence against universal recovery, not a defect repaired by generation.
 
 ## M35 — Internal HTTP/SSE qualification
 

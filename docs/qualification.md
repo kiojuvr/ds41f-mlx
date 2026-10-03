@@ -39,8 +39,13 @@ remain effectively equal.
 cannot be assumed to be an ordinary reconstructable assistant result. Internal
 settlement now poisons unfinished tool results; busy remains visible until cleanup
 settles. A real partial-UTF-8 text recovery and finite restrictive socket workload
-are observations, not full M36 qualification. Next is M36R protocol representability
-and local recovery admission design, before release or longer-context gates.
+are observations, not full M36 qualification.
+[M36R](milestone-36r-recovery-admission.md) qualifies a narrower **bounded certified
+recovery** contract: official-recipe ordinary exact-prefix reconstruction plus
+canonical tool completion, local sequence/body outcome fencing, and a living
+single-client tool ledger. Negative certificates require DELETE/fresh session;
+partial DSML is not repaired. The normal release API and Rust client are unchanged.
+Client integration, release and longer-context gates remain separate.
 Production/default MTP remains OFF; public MTP disabled; MTP persistence/restore,
 token-exact immediate abort and shared/concurrent MTP remain unsupported.
 

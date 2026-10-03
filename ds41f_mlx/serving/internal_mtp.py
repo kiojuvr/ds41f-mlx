@@ -33,13 +33,23 @@ class QualificationSession:
     poisoned: bool = False
     request_count: int = 0
     last_turn: Any = None
+    unrecoverable: bool = False
+    certificate: Any = None
+    fence: Any = None
+    consumed_sequence: int = 0
+    reconstruction_body: Any = None
+    reconstruction_tokenizer: Any = None
 
     def to_json(self):
         return dict(id=self.session_id, state='closed' if self.closed else
                     'busy' if self.busy else 'poisoned' if self.poisoned else
                     'idle' if self.cache is not None else 'empty',
                     request_count=self.request_count, last_turn=self.last_turn,
-                    canonical_frontier=len(self.canonical))
+                    canonical_frontier=len(self.canonical),
+                    outcome_state='active' if self.busy else 'not_admitted' if self.fence and self.fence['state'] == 'not_admitted' else 'poisoned' if self.poisoned and not self.unrecoverable else
+                    'unrecoverable' if self.unrecoverable else 'recoverable' if self.certificate and self.certificate['representable'] else 'not_admitted',
+                    certificate=self.certificate, request_fence=self.fence,
+                    next_sequence=self.consumed_sequence + 1)
 
 
 class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
@@ -93,6 +103,7 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
             rec.closed = True
             return rec.to_json()
         except BaseException:
+            rec.unrecoverable = False
             rec.poisoned = True
             raise
         finally:
@@ -230,6 +241,17 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
                          canonical_generated=canonical_generated,
                          prediction_retired=True, queue_empty=True)
             self._qualify_settled_protocol(rec, trace)
+            if getattr(rec, 'reconstruction_body', None) is not None:
+                from .recovery_certificate import reconstruction_certificate
+                completed = rec.guard.finished and any(m['identity'][0] == 'DSML_TOOL_CALL_BLOCK_END'
+                                                       for m in trace['terminal_matches'])
+                rec.certificate = reconstruction_certificate(rec.reconstruction_body, trace['response'], rec.canonical,
+                    tokenizer=rec.reconstruction_tokenizer, recipe_path=self.recipe_path, completed_tool_block=completed)
+                trace['certificate'] = rec.certificate
+                if not rec.certificate['representable']:
+                    rec.unrecoverable = True
+                    rec.poisoned = True  # legacy containment/retirement label, not internal-failure outcome
+                    trace['recovery_error'] = 'no official-recipe reconstruction certificate; DELETE required'
             rec.processor.close(); rec.processor = None
             trace['cleanup_s'] = perf_counter()-t0
 
@@ -249,7 +271,7 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
             rec.poisoned = True
             trace['recovery_error'] = 'unfinished canonical tool protocol; ordinary continuation not qualified'
 
-    async def qualification_response(self, session_id, request, *, tokenizer):
+    async def qualification_response(self, session_id, request, *, tokenizer, body=None, sequence=None):
         """Acquire before HTTP 200. Retain lease until generator cleanup, not send."""
         from fastapi.responses import JSONResponse
         from .server import InferenceStreamingResponse, sse_frame
@@ -262,6 +284,10 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
             raise ValueError('internal qualification bounded to 768 responses and 8192 total tokens')
         self.make_sampler(request.inference_options)
         rec = self.get_stateful_session(session_id)
+        from .request_fence import observe_retry, reserve, finish
+        retry = observe_retry(rec, sequence, body)
+        if retry is not None:
+            return JSONResponse(content=retry)
         if rec.poisoned:
             raise RuntimeError('session poisoned; DELETE required')
         if rec.busy or self._lock.locked():
@@ -270,6 +296,9 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
             raise ValueError('request must exactly extend retained canonical prefix')
         await self._lock.acquire()
         rec.busy = True
+        reserve(rec, sequence, body)
+        rec.reconstruction_body = json.loads(body) if body is not None else None
+        rec.reconstruction_tokenizer = tokenizer
         trace = dict(session_id=session_id, response_id=uuid4().hex, t0=perf_counter(),
                      generated=0, decode_s=0., first_canonical_s=None, first_chunk_s=None,
                      formatting_s=0., delivery_wait_s=0., protocol_chunks_produced=0,
@@ -283,6 +312,8 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
             cursor = 0
             settled = False
             try:
+                if rec.fence is not None:
+                    rec.fence['started'] = True
                 with CancelScope(shield=True):
                     await self._call(self._start, rec, request, tokenizer, trace)
                 # Native phases are shielded, but the response owner MUST admit
@@ -323,6 +354,7 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
             except (GeneratorExit, asyncio.CancelledError):
                 raise
             except BaseException:
+                rec.unrecoverable = False
                 # Protocol/serialization failures are fail closed too. They
                 # cannot trigger a second runtime settlement or implicit resume.
                 rec.poisoned = True
@@ -338,6 +370,7 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
                         if not settled and rec.owner is not None:
                             await self._call(self._settle, rec, trace)
                     except BaseException as exc:
+                        rec.unrecoverable = False
                         rec.poisoned = True
                         trace['cleanup_error'] = repr(exc)
                         raise
@@ -349,6 +382,8 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
                                 rec.poisoned = True
                                 await self._call(self._retire, rec)
                         except BaseException as exc:
+                            rec.unrecoverable = False
+                            rec.poisoned = True
                             trace['retirement_error'] = repr(exc)
                             raise
                         finally:
@@ -357,6 +392,7 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
                             trace['elapsed_s'] = perf_counter()-trace['t0']
                             rec.last_turn = trace
                             rec.request_count += 1
+                            finish(rec)
                             lease_released = True
                             rec.busy = False
                             self._lock.release()
@@ -376,6 +412,7 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
                                 # This exact response's reservation, never a
                                 # subsequent request's busy/lock ownership.
                                 lease_released = True
+                                finish(rec, unstarted=True)
                                 rec.busy = False
                                 self_backend._lock.release()
             self_backend = self

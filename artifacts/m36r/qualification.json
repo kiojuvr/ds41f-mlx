@@ -1,0 +1,401 @@
+{
+  "schema": "ds41f.m36r.qualification.v1",
+  "decision": "QUALIFIED_BOUNDED_CERTIFIED_RECOVERY",
+  "base_commit": "df788d5cbc02fb302abd7323178b12984f532951",
+  "final_commit_resolver": "git log -1 --format=%H -- artifacts/m36r/qualification.json",
+  "identities": {
+    "schema": "ds41f.m34.identities.v1",
+    "status": "PASS",
+    "checks": {
+      "performance_primitive_unchanged": true,
+      "narrow_correction": true,
+      "native": true,
+      "checkpoint_config": true,
+      "tokenizer": true,
+      "recipe_commit": true,
+      "recipe_clean": true,
+      "omlx_commit": true,
+      "omlx_clean": true,
+      "actual_import": true,
+      "full_native_build": true,
+      "packages": true,
+      "runtime_sources": true,
+      "candidate_sources": true,
+      "release_native": true,
+      "release_recipe_native": true,
+      "historical_m25_m33_unchanged": true
+    },
+    "python": "3.13.15 (main, Aug  5 2026, 12:25:43) [Clang 21.0.0 (clang-2100.1.1.101)]",
+    "executable": "/private/tmp/ds41f-m32-qual/bin/python",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "native_path": "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/deepseek_recipe/_native.abi3.so",
+    "tool_api": "/tmp/ds41f-m33-omlx/omlx/api/tool_calling.py",
+    "packages": {
+      "deepseek-recipe": "0.1.1",
+      "tokenizers": "0.23.2",
+      "mlx": "0.32.2",
+      "mlx-lm": "0.31.4.dev132+g94cdcae13",
+      "omlx": "0.7.0",
+      "jsonschema": "4.26.0",
+      "pytest": "9.1.1"
+    },
+    "m33_identity_sha256": "9589ffa695641e327f3ab88dc7ac838b2504e286d7dc018e131d23b6e13a27d2",
+    "current_runtime_sources": {
+      "ds41f_mlx/runtime/recipe_semantic_guard.py": "6397801995cb1285a0f87c2455d6423160964be54e70889b390aa379e06e808d",
+      "ds41f_mlx/runtime/mtp_lifecycle.py": "a05744364d5440a16774905d9d60a5266ccc4528f1ca871f20db715d8c5fcde6",
+      "ds41f_mlx/prefill_fp8_mlx/handoff.py": "94cd3364ae023607e8b5b4e2b65685b885b3f7b6a78654ee6c335c66c82f37c3",
+      "tools/m33_semantic_tests.py": "77127f303c3171d82fabc262c06afd76ab5ef45fd801ac83ed85aff923aced39",
+      "tools/m33_semantic_extra_tests.py": "6584e1246b278fb3abed63a5089aecacc9f27c89703ef5198d0822b06ae588d9",
+      "tools/m33_recipe_clone_driver.rs": "9c2630a9f6fb083ccc131fc5d68da7a8010dacf1551fc94e9a3882b025aa8a6b",
+      "tools/run_m33_live_semantics.py": "37afed36c55e416d2892b0c7b75367cf664f9976c679a4da07a21bab02f102c8",
+      "tools/run_m33_interruptions.py": "045f071950d8e7e289c67d091522ef0086e90f80fe0a0ad97655f1afce77367e",
+      "tools/run_m33_tool_reentry.py": "1d149e088525ae7f6b7a90c748be41ef73d8e5e4c2e576dad010da1c388ae13f",
+      "tools/run_m33_guard_bench.py": "9057ca5a84e05ff0912df9159a28f32e630456d86632fb052c7261c889b7a01e",
+      "tools/record_m33_evidence.py": "4cb4c24d99825535315dbe42d77dda0965f80aefb15ffcdf0617fe4b8fce698b",
+      "tests/test_m33_protocol_evidence.py": "51af57b8a7152574fe3aab534d6c4063d456036ad3ea8b36d370576b379f6c71",
+      "docs/milestone-33-semantic-horizon.md": "9c2fc81dd64c26b20908ffbc1ad99ab48985c21f71eb27edf83cef95499533d3",
+      "docs/milestone-33-protocol-qualification.md": "20f6b26d9478f236d91165ef3c1034e0877e7e5590239892685e3c260e5fffad"
+    },
+    "runtime_correction": {
+      "schema": "ds41f.m34.narrow-correction.v1",
+      "path": "ds41f_mlx/runtime/mtp_lifecycle.py",
+      "m33_sha256": "a5c6f379582d3fed683d7cf763d3689a6f9a7c0ad1a9f32223cd401e1f39d7d6",
+      "m34_sha256": "a05744364d5440a16774905d9d60a5266ccc4528f1ca871f20db715d8c5fcde6",
+      "patch": "artifacts/m34/cache-release.patch",
+      "patch_sha256": "b6f3b04610c1db38aa6d506f8cabb522694495fbc3ccdad3300226a94816e070",
+      "cause": "Active cancellation lacked the completed-response native ownership transfer: filter([]) cleared the returned list; shallow retention also kept old P6 sealed capability on active cache objects.",
+      "fix": "Use existing GenerationBatch.extract_cache(0) native singleton row-view transfer for active cancellation before owner removal. Completed-response transfer unchanged; old P6 capabilities not cleared, no arrays repacked or history replayed.",
+      "upstream_candidates_unchanged": true
+    }
+  },
+  "rule": {
+    "authority": "sole native canonical H plus existing official recipe interpretation",
+    "certificate": "ordinary official message witness converts/renders/encodes to a strictly longer request with prefix exactly H; tool outcomes additionally require canonical DSML block terminal and tool_calls finish",
+    "negative_policy": "no certificate => retire native owners/caches, outcome_state unrecoverable, preserve diagnostic H, DELETE/fresh session required",
+    "completeness": "conservative fixed-authoritative-message witness, not exhaustive search over hypothetical equivalent envelopes",
+    "native_settlement_required": true,
+    "syntactic_json_sufficient": false,
+    "cache_quiescence_sufficient": false,
+    "sse_accumulation_sufficient": false
+  },
+  "tested_state_classes": {
+    "fixture_scope": "real native official recipe/tokenizer; controlled token input, no sampled model or synthetic-cache execution claim",
+    "positive": [
+      "text",
+      "unicode_full",
+      "length",
+      "marker_prefix",
+      "eos",
+      "reasoning_transition_exact",
+      "complete_tool",
+      "complete_two_tools",
+      "complete_auto_tool"
+    ],
+    "negative": [
+      "leading_newline",
+      "think_marker_prefix",
+      "unicode_pending",
+      "unicode_eos_pending",
+      "reasoning_only",
+      "reasoning_transition",
+      "tool_block_prefix",
+      "partial_name",
+      "partial_arguments",
+      "valid_json_unfinished",
+      "valid_json_length",
+      "complete_tool_alternate_spelling",
+      "valid_json_canonical_prefix_30",
+      "valid_json_canonical_prefix_31",
+      "valid_json_canonical_prefix_32",
+      "valid_json_canonical_prefix_33",
+      "enabled_marker_prefix",
+      "enabled_block_prefix",
+      "json_fence_lossy"
+    ],
+    "exact_but_incomplete": [
+      "valid_json_canonical_prefix_30",
+      "valid_json_canonical_prefix_31",
+      "valid_json_canonical_prefix_32",
+      "valid_json_canonical_prefix_33"
+    ],
+    "complete_but_nonprefix": "complete_tool_alternate_spelling",
+    "positive_and_negative_certificates": "recipe-matrix.json"
+  },
+  "state_model": {
+    "authoritative_field": "outcome_state",
+    "states": [
+      "not_admitted",
+      "active",
+      "recoverable",
+      "unrecoverable",
+      "poisoned"
+    ],
+    "busy_until_native_and_protocol_settlement": true,
+    "legacy_state_poisoned_contains_unrecoverable": true,
+    "private_direct_controls_without_body": "not protocol-certified; contract applies to ordinary HTTP requests through injected backend"
+  },
+  "fence": {
+    "header": "X-DS41F-Request-Sequence",
+    "start": 1,
+    "identity": "session ID / monotonic integer / SHA256 exact body bytes",
+    "scope": "one living in-process local singleton and one well-behaved client; no process restart or concurrent client scope",
+    "storage": "one latest outcome slot plus consumed monotonic sequence; older sequences reject as expired",
+    "active_retry": "409 non-generating",
+    "settled_retry": "200 JSON outcome wrapper, non-generating and non-mutating",
+    "not_admitted": "pre-conversion/rejection leaves next sequence unchanged; unstarted response header failure keeps same-body sequence retryable",
+    "started_failure": "consume sequence and poison, never retry generation",
+    "body_mismatch_and_nonprefix_atomic": true,
+    "preiteration_header_failure_evidence": "synthetic lifecycle",
+    "active_and_committed_ambiguity_evidence": "real checkpoint HTTP",
+    "public_api": false,
+    "legacy_no_header": "no ambiguous identity guarantee; mixing modes rejected"
+  },
+  "client_workflow": [
+    "retry/observe the same exact-body sequence after loss",
+    "wait until non-active",
+    "discard local transport fragments; recover only certified canonical response",
+    "replace assistant entry",
+    "execute only completed certified tools through living client ledger",
+    "build ordinary next messages and increment sequence",
+    "official conversion plus actual exact canonical-prefix admission",
+    "on negative/poison DELETE and restart fresh"
+  ],
+  "tools": {
+    "completed_call_effects": 1,
+    "reobservations": 4,
+    "incomplete_effects": 0,
+    "key": [
+      "session_id",
+      "sequence",
+      "call_index",
+      "call_id"
+    ],
+    "reserve_before_effect": true,
+    "ambiguous_effect_automatic_retry": false,
+    "active_wrong_identity_and_poisoned_denied": true,
+    "scope": "bounded living single-client/session duplicate prevention, NOT distributed/crash-safe exactly-once"
+  },
+  "continuation": {
+    "unicode": {
+      "exact_prefix": true,
+      "frontiers": [
+        21,
+        33
+      ],
+      "retained_cache_continuation": true,
+      "expired_retry_atomic": true
+    },
+    "completed-tool": {
+      "exact_prefix": true,
+      "frontiers": [
+        327,
+        373
+      ],
+      "retained_cache_continuation": true,
+      "expired_retry_atomic": true
+    }
+  },
+  "negative_checkpoint": {
+    "frontier": 310,
+    "certificate": {
+      "version": 1,
+      "frontier": 310,
+      "canonical_sha256": "a9aa5bbc483c0fe9cc6d19e0935c149c31ecb731288b495db109498fe0eab6db",
+      "representable": false,
+      "executable_tools": false,
+      "exact_prefix": false,
+      "semantic_complete": false,
+      "first_mismatch": 308,
+      "witness": {
+        "model": "deepseek-v4.1-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Use the tool to look up the weather in Berlin, then answer concisely."
+          },
+          {
+            "role": "assistant",
+            "content": "",
+            "tool_calls": [
+              {
+                "id": "call_3a5b0994171b46e0ae692f9e823a591a_0",
+                "type": "function",
+                "function": {
+                  "name": "lookup_weather",
+                  "arguments": "{\"city\""
+                }
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "call_3a5b0994171b46e0ae692f9e823a591a_0",
+            "content": "NOT EXECUTED: reconstruction witness"
+          },
+          {
+            "role": "user",
+            "content": "Continue."
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "lookup_weather",
+              "description": "Return deterministic weather for a city.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "city": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "city"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "reasoning_effort": "none",
+        "temperature": 0,
+        "max_tokens": 1,
+        "stream": false,
+        "stop": null
+      },
+      "encoded_length": 351
+    },
+    "continuation_rejected_before_mutation": true,
+    "tool_executions": 0
+  },
+  "replay_repack": {
+    "all_instrumented_counts_zero": true,
+    "http": {
+      "replay": 0,
+      "repack": 0,
+      "verify": 16,
+      "proposal": 20,
+      "fresh_target_allocations": 4
+    },
+    "m35": {
+      "replay": 0,
+      "repack": 0,
+      "verify": 870,
+      "proposal": 888,
+      "fresh_target_allocations": 11
+    },
+    "m36": {
+      "replay": 0,
+      "repack": 0,
+      "verify": 8,
+      "proposal": 12,
+      "fresh_target_allocations": 3
+    },
+    "settlement_new_verify_and_proposal_zero": true
+  },
+  "backpressure": {
+    "unchanged_m36_workload": true,
+    "listener_sndbuf": 8192,
+    "comment_padding_bytes": 262144,
+    "max_send_wait_s": 3.307648916961625,
+    "plateau_responses": 2,
+    "settled_responses": 3,
+    "disconnect_to_settled_s": 2.009793500008527,
+    "bound": "pull-based finite socket-pressure case; 768 responses / 8192 total tokens; no independent generation queue",
+    "diagnostic_lifetime_retention": "unchanged, not qualified for indefinite service"
+  },
+  "defects": {
+    "new_native_ownership_mismatch": false,
+    "upstream_protocol_limitations_repaired": false,
+    "new_contract_hardenings": [
+      "ledger checks settled state and matching identity",
+      "DELETE retirement failure is internal poison, not protocol limitation"
+    ],
+    "historical_hash_gate_selection_attempt": "preserved in prior-evidence-historical-hash-attempt.log; excluded",
+    "native_horizon_and_cache_transfer_unchanged": true
+  },
+  "gates": {
+    "logs": [
+      "runtime-regressions.log",
+      "controlled-admission-regressions.log",
+      "horizon-regressions.log",
+      "off-policy-regressions.log",
+      "release-off-regressions.log",
+      "rust-regressions.log",
+      "prior-evidence-regressions.log"
+    ],
+    "m35_http_turns": 18,
+    "native_interruption_cases": 16,
+    "controlled_native_recipe_cases": 28,
+    "historical_hash_deselections": [
+      "M35 identity_and_sources",
+      "M36 current_sources_and_raw_evidence_match"
+    ],
+    "current_source_hash_gate": "tests/test_m36r_evidence.py",
+    "real_m36_pressure_rerun": true
+  },
+  "historical_evidence_hashes": {
+    "artifacts/m33/qualification.json": "d7bc84e056d0402de7cd1198d3835ad2b2cfc7188eb7fa83727dd17700a67691",
+    "artifacts/m34/qualification.json": "e4753370eefe22102f8349357321312ccedf4fca2f812110f5590162ba77321a",
+    "artifacts/m35/qualification.json": "046a7381d6a2e90e11106794447f2d77aa3a466a7f5da4f92490ec41fb244054",
+    "artifacts/m36/qualification.json": "4d79b6e636857e4571a9f2c88733f194c36ab4006e54f37e91433438eab4263b",
+    "artifacts/m36/pre-pressure-harness-fix.json": "b7a42ab1f1ac41868b1118f8b18031973743d9ef2286be4529bcdcbc5d4f4533"
+  },
+  "unsupported": [
+    "public/default/release MTP",
+    "persistence/process restart",
+    "token-exact immediate abort",
+    "concurrent/shared MTP",
+    "batching",
+    "distributed recovery/idempotency",
+    "200K HTTP MTP",
+    "unbounded backpressure",
+    "portable native wheels",
+    "universal partial canonical DSML/tool recovery",
+    "hypothetical alternate envelope search"
+  ],
+  "next_milestone": "M37 bounded internal local-client recovery/execution-ledger integration, including DELETE/restart and expired outcome handling",
+  "source_hashes": {
+    "ds41f_mlx/serving/internal_mtp.py": "afb3165e0b9516a8b0112fc504534e32e905b7b992e8209b763242430638509a",
+    "ds41f_mlx/serving/server.py": "a2da2a7320d456a2695fccb98b12654f635c490f48926c8ce0f431500908559a",
+    "ds41f_mlx/serving/recovery_certificate.py": "9b355ddd7a81953079f0b4edd6be7930293b8916f54036cc2c5dd49d1685aea4",
+    "ds41f_mlx/serving/request_fence.py": "07f397caf7e30e305fa498655cf24afbb5bf19a80e3340dc487f6ff7348e2272",
+    "tools/run_m36r_http.py": "cfbd8193eae7145d1c9903f5bcc6d9709f68f4e2b2cf32ea38d27e70f120f291",
+    "tools/run_m36r_recipe_matrix.py": "f1256077aa68f5c58ceddfe1a64ca22269a224ae00913a1436d9875c47f20975",
+    "tools/record_m36r_evidence.py": "f54dfdb1dd44e18893a5cf75880b0ae2833b3c8aa2b43be0ff101a2ac2c1f824",
+    "tests/test_m36r_recovery.py": "b428b6e66731d71e1365acb33342e09e1920df69850a786ccfec703a9f7fced7",
+    "tests/test_m36r_evidence.py": "4257f5eee3973dcac3aa7f34f29a039061ed7314061feba4cce82e501f81fc60",
+    "docs/milestone-36r-recovery-admission.md": "1254b52577f5ec0782cb634ec43dd9f2744f3a8e76732733935a6840d87d458c",
+    "docs/README.md": "a2bf9be94376678917d294365282a1ac550387469f41093b69939ff5e9f0f2dc",
+    "docs/doc-classification.json": "78231f68f7816d1df50f0d70e50c846a8eab9973f9d362cc24a18d60376fa391",
+    "docs/implementation-plan.md": "edcb9fc4ecd2169e8b4c03348c74cc3f25d0aed39763da4ef4c25b369e5fa6ff",
+    "docs/qualification.md": "aa76f88c32b3cc0d1cc4a2a25a0b7bbb402c9f75a5209f0d1daf58fc5570e226",
+    "docs/session-state.md": "4feff3d80b752f9b209c5815ad30911fda13f8c198fecb1693ca4b4ca376ad04"
+  },
+  "evidence_hashes": {
+    "artifacts/m36r/m35-http.json": "501fd136f258e7a968f0b06127d35273ec1423c4b6cc85e5629ed981bc77b39c",
+    "artifacts/m36r/native-interruptions.log": "a360a7cf8243a7739cb68562247e3ac7a2198cca4cb9692a124cf81a9d3535b5",
+    "artifacts/m36r/horizon-regressions.log": "6200b2d9b6f0e6e4f68e1059e9454884ff4b32cff860bcde353eebd6ed25fcbd",
+    "artifacts/m36r/native-interruptions.json": "b924d1c7f337aef2ffefcd8d13bebd1fd3c68c36217b8d95e592b38daad32b23",
+    "artifacts/m36r/m35-http.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m36r/rust-regressions.log": "d710dc9ab2a42dd2a9a8ebf654690d37799583df25e19361747c094b503b4381",
+    "artifacts/m36r/recipe-matrix.log": "61c11329a0026dd9c439ee1e8838f1723221da191994e90f4168e9cd235515ff",
+    "artifacts/m36r/prior-evidence-regressions.log": "c44c3ccd78be694493bf02176280a7f5361485ca3020535569deb57f0216707b",
+    "artifacts/m36r/http.json": "91d5d34c8666ab7040695086f546099ec294b4536fb31ee77efea78fecb89468",
+    "artifacts/m36r/release-off-regressions.log": "5266b33cf4acf83eba8d45f210bff3f2a3863d683b43d0d3d24c040293b584a9",
+    "artifacts/m36r/commands.json": "8abbab5c24b2661ae9b916f4ada6da0605a2f4baa7aa7ac28aaca75e6be91184",
+    "artifacts/m36r/rust-request.json": "51dd0192444a1cce676dfa8930f0c73a88cc78665b8544a3cd7a2e6f195edfe4",
+    "artifacts/m36r/prior-evidence-historical-hash-attempt.log": "f8373b4d4281b8ae78c2e136f5f48ce46b84ffa56c5b3981d82c5a6147c0bf02",
+    "artifacts/m36r/identities.log": "2d6c92d89f59fd9726f88a8370cae248689d3406c1f3b7572abe95b48cd5f050",
+    "artifacts/m36r/http.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m36r/off-policy-regressions.log": "d446da316516a186102ea33b0d9a4c6c93f8bb4d61317beb6c5f81535881ef46",
+    "artifacts/m36r/controlled-admission-regressions.log": "2a6d5df37b8ffb51aee1f82c7c03ea1284b32fd81d59d532a7943ebdcf01c77c",
+    "artifacts/m36r/runtime-regressions.log": "2d449d0a7957253b47df41ce6ff2449a1f5586343201927b2e63ef2d80c9418f",
+    "artifacts/m36r/m36-probe.json": "56370b80bc1858675ad44c3d9d6316c417f180f27f28ae3b5bd912a836ad1204",
+    "artifacts/m36r/recipe-matrix.json": "6da62e6fe40275c5f38a3284583857587c76fcec3fee508a4948afe60e37adee",
+    "artifacts/m36r/m36-probe.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

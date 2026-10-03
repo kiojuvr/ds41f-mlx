@@ -1,0 +1,2458 @@
+{
+  "status": "PASS",
+  "native_sha256": "454413afdcee2916795e1c5f7ce1b94a8346e76bffd6b45024f28f69f8d0a73f",
+  "cases": [
+    {
+      "name": "before_init",
+      "status": "PASS",
+      "before": {
+        "history": {
+          "prompt_len": 11,
+          "canonical_frontier": 11,
+          "delivered_frontier": 11,
+          "transport_delivered_tokens": [],
+          "canonical_generated_tokens": [],
+          "recovery_suffix_tokens": []
+        },
+        "parser": [
+          "3025a66cb52684c1",
+          [],
+          0,
+          0
+        ],
+        "prediction": null
+      },
+      "quiescence": {
+        "canonical_frontier": 11,
+        "recovery_suffix_tokens": [],
+        "discarded_future_token": 19923,
+        "counters": {
+          "new_verify_cycles": 0,
+          "new_proposals": 0,
+          "target_forwards": 0,
+          "history_replay": 0,
+          "full_cache_repack": 0,
+          "dspark_appends": 0
+        },
+        "latency_s": 3.8624973967671394e-05,
+        "queue_drained_tokens": [],
+        "dspark": {
+          "frontier": 11,
+          "offsets": [
+            11,
+            11,
+            11
+          ],
+          "target_layer_ids": [
+            37,
+            38,
+            39
+          ],
+          "stage_count": 3,
+          "window_size": 5,
+          "authority": "bounded committed DSpark context; not executable target truth"
+        }
+      },
+      "counts_delta": {
+        "verify": 0,
+        "proposal": 0,
+        "forward": 0,
+        "reconcile": 0
+      },
+      "forward_spans": [],
+      "parser_after": [
+        "3025a66cb52684c1",
+        [],
+        0,
+        0
+      ],
+      "parser_matches_emitted_only": true,
+      "prediction_matches": [],
+      "preview_rows": []
+    },
+    {
+      "name": "after_first_safe_emit",
+      "status": "PASS",
+      "before": {
+        "history": {
+          "prompt_len": 11,
+          "canonical_frontier": 12,
+          "delivered_frontier": 12,
+          "transport_delivered_tokens": [
+            19923
+          ],
+          "canonical_generated_tokens": [
+            19923
+          ],
+          "recovery_suffix_tokens": []
+        },
+        "parser": [
+          "49c206148e72f69a",
+          [],
+          0,
+          5
+        ],
+        "prediction": null
+      },
+      "quiescence": {
+        "canonical_frontier": 12,
+        "recovery_suffix_tokens": [],
+        "discarded_future_token": 1031,
+        "counters": {
+          "new_verify_cycles": 0,
+          "new_proposals": 0,
+          "target_forwards": 0,
+          "history_replay": 0,
+          "full_cache_repack": 0,
+          "dspark_appends": 0
+        },
+        "latency_s": 3.404199378564954e-05,
+        "queue_drained_tokens": [],
+        "dspark": {
+          "frontier": 12,
+          "offsets": [
+            12,
+            12,
+            12
+          ],
+          "target_layer_ids": [
+            37,
+            38,
+            39
+          ],
+          "stage_count": 3,
+          "window_size": 5,
+          "authority": "bounded committed DSpark context; not executable target truth"
+        }
+      },
+      "counts_delta": {
+        "verify": 0,
+        "proposal": 0,
+        "forward": 0,
+        "reconcile": 0
+      },
+      "forward_spans": [],
+      "parser_after": [
+        "49c206148e72f69a",
+        [],
+        0,
+        5
+      ],
+      "parser_matches_emitted_only": true,
+      "prediction_matches": [],
+      "preview_rows": [
+        {
+          "ids": [
+            19923
+          ],
+          "recipe_input_ids": [
+            19923
+          ],
+          "source_bytes_before": 0,
+          "pending_ids_before": [],
+          "safe": 1,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            19923,
+            1031
+          ],
+          "recipe_input_ids": [
+            19923,
+            1031
+          ],
+          "source_bytes_before": 0,
+          "pending_ids_before": [],
+          "safe": 2,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        }
+      ]
+    },
+    {
+      "name": "predicted_successor_before_emit",
+      "status": "PASS",
+      "before": {
+        "history": {
+          "prompt_len": 11,
+          "canonical_frontier": 12,
+          "delivered_frontier": 12,
+          "transport_delivered_tokens": [
+            19923
+          ],
+          "canonical_generated_tokens": [
+            19923
+          ],
+          "recovery_suffix_tokens": []
+        },
+        "parser": [
+          "a6ea060c63706bff",
+          [],
+          0,
+          5
+        ],
+        "prediction": {
+          "ordinal": 1,
+          "prediction": {
+            "kind": "STOP_SEQUENCE",
+            "index": 1,
+            "safe_count": 1,
+            "token_id": 1031,
+            "identity": [
+              "STOP_SEQUENCE",
+              5,
+              11
+            ]
+          },
+          "region": "init-successor",
+          "candidate_ids": [
+            19923,
+            1031
+          ],
+          "queued_prefix": 0,
+          "owner_uid": 0
+        }
+      },
+      "quiescence": {
+        "canonical_frontier": 12,
+        "recovery_suffix_tokens": [],
+        "discarded_future_token": 1031,
+        "counters": {
+          "new_verify_cycles": 0,
+          "new_proposals": 0,
+          "target_forwards": 0,
+          "history_replay": 0,
+          "full_cache_repack": 0,
+          "dspark_appends": 0
+        },
+        "latency_s": 2.9666000045835972e-05,
+        "queue_drained_tokens": [],
+        "dspark": {
+          "frontier": 12,
+          "offsets": [
+            12,
+            12,
+            12
+          ],
+          "target_layer_ids": [
+            37,
+            38,
+            39
+          ],
+          "stage_count": 3,
+          "window_size": 5,
+          "authority": "bounded committed DSpark context; not executable target truth"
+        }
+      },
+      "counts_delta": {
+        "verify": 0,
+        "proposal": 0,
+        "forward": 0,
+        "reconcile": 0
+      },
+      "forward_spans": [],
+      "parser_after": [
+        "a6ea060c63706bff",
+        [],
+        0,
+        5
+      ],
+      "parser_matches_emitted_only": true,
+      "prediction_matches": [],
+      "preview_rows": [
+        {
+          "ids": [
+            19923
+          ],
+          "recipe_input_ids": [
+            19923
+          ],
+          "source_bytes_before": 0,
+          "pending_ids_before": [],
+          "safe": 1,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            19923,
+            1031
+          ],
+          "recipe_input_ids": [
+            19923,
+            1031
+          ],
+          "source_bytes_before": 0,
+          "pending_ids_before": [],
+          "safe": 1,
+          "terminal_kind": "STOP_SEQUENCE",
+          "index": 1,
+          "start": 5,
+          "end": 11
+        }
+      ]
+    },
+    {
+      "name": "safe_undelivered_prefix",
+      "status": "PASS",
+      "before": {
+        "history": {
+          "prompt_len": 282,
+          "canonical_frontier": 285,
+          "delivered_frontier": 285,
+          "transport_delivered_tokens": [
+            43,
+            5922,
+            1747
+          ],
+          "canonical_generated_tokens": [
+            43,
+            5922,
+            1747
+          ],
+          "recovery_suffix_tokens": []
+        },
+        "parser": [
+          "7e56fe9d833acdaf",
+          [],
+          0,
+          9
+        ],
+        "prediction": null
+      },
+      "quiescence": {
+        "canonical_frontier": 286,
+        "recovery_suffix_tokens": [
+          890
+        ],
+        "discarded_future_token": 270,
+        "counters": {
+          "new_verify_cycles": 0,
+          "new_proposals": 0,
+          "target_forwards": 0,
+          "history_replay": 0,
+          "full_cache_repack": 0,
+          "dspark_appends": 0
+        },
+        "latency_s": 3.9417005609720945e-05,
+        "queue_drained_tokens": [
+          890
+        ],
+        "dspark": {
+          "frontier": 286,
+          "offsets": [
+            286,
+            286,
+            286
+          ],
+          "target_layer_ids": [
+            37,
+            38,
+            39
+          ],
+          "stage_count": 3,
+          "window_size": 5,
+          "authority": "bounded committed DSpark context; not executable target truth"
+        }
+      },
+      "counts_delta": {
+        "verify": 0,
+        "proposal": 0,
+        "forward": 0,
+        "reconcile": 0
+      },
+      "forward_spans": [],
+      "parser_after": [
+        "356a95b3151472af",
+        [],
+        0,
+        12
+      ],
+      "parser_matches_emitted_only": true,
+      "prediction_matches": [],
+      "preview_rows": [
+        {
+          "ids": [
+            43
+          ],
+          "recipe_input_ids": [
+            43
+          ],
+          "source_bytes_before": 0,
+          "pending_ids_before": [],
+          "safe": 1,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            43,
+            5922
+          ],
+          "recipe_input_ids": [
+            43,
+            5922
+          ],
+          "source_bytes_before": 0,
+          "pending_ids_before": [],
+          "safe": 2,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            1747,
+            890,
+            270
+          ],
+          "recipe_input_ids": [
+            1747,
+            890,
+            270
+          ],
+          "source_bytes_before": 4,
+          "pending_ids_before": [],
+          "safe": 3,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        }
+      ]
+    },
+    {
+      "name": "inside_DSML",
+      "status": "PASS",
+      "before": {
+        "history": {
+          "prompt_len": 282,
+          "canonical_frontier": 297,
+          "delivered_frontier": 297,
+          "transport_delivered_tokens": [
+            43,
+            5922,
+            1747,
+            890,
+            270,
+            9670,
+            362,
+            1952,
+            11234,
+            1928,
+            339,
+            30,
+            128825,
+            10699,
+            1018
+          ],
+          "canonical_generated_tokens": [
+            43,
+            5922,
+            1747,
+            890,
+            270,
+            9670,
+            362,
+            1952,
+            11234,
+            1928,
+            339,
+            30,
+            128825,
+            10699,
+            1018
+          ],
+          "recovery_suffix_tokens": []
+        },
+        "parser": [
+          "20cb73e8089dc0bd",
+          [],
+          0,
+          66
+        ],
+        "prediction": null
+      },
+      "quiescence": {
+        "canonical_frontier": 297,
+        "recovery_suffix_tokens": [],
+        "discarded_future_token": 30,
+        "counters": {
+          "new_verify_cycles": 0,
+          "new_proposals": 0,
+          "target_forwards": 0,
+          "history_replay": 0,
+          "full_cache_repack": 0,
+          "dspark_appends": 0
+        },
+        "latency_s": 3.5917037166655064e-05,
+        "queue_drained_tokens": [],
+        "dspark": {
+          "frontier": 297,
+          "offsets": [
+            297,
+            297,
+            297
+          ],
+          "target_layer_ids": [
+            37,
+            38,
+            39
+          ],
+          "stage_count": 3,
+          "window_size": 5,
+          "authority": "bounded committed DSpark context; not executable target truth"
+        }
+      },
+      "counts_delta": {
+        "verify": 0,
+        "proposal": 0,
+        "forward": 0,
+        "reconcile": 0
+      },
+      "forward_spans": [],
+      "parser_after": [
+        "20cb73e8089dc0bd",
+        [],
+        0,
+        66
+      ],
+      "parser_matches_emitted_only": true,
+      "prediction_matches": [],
+      "preview_rows": [
+        {
+          "ids": [
+            43
+          ],
+          "recipe_input_ids": [
+            43
+          ],
+          "source_bytes_before": 0,
+          "pending_ids_before": [],
+          "safe": 1,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            43,
+            5922
+          ],
+          "recipe_input_ids": [
+            43,
+            5922
+          ],
+          "source_bytes_before": 0,
+          "pending_ids_before": [],
+          "safe": 2,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            1747,
+            890,
+            270
+          ],
+          "recipe_input_ids": [
+            1747,
+            890,
+            270
+          ],
+          "source_bytes_before": 4,
+          "pending_ids_before": [],
+          "safe": 3,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            9670,
+            362,
+            1952,
+            11234
+          ],
+          "recipe_input_ids": [
+            9670,
+            362,
+            1952,
+            11234
+          ],
+          "source_bytes_before": 16,
+          "pending_ids_before": [],
+          "safe": 4,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            1928
+          ],
+          "recipe_input_ids": [
+            1928
+          ],
+          "source_bytes_before": 40,
+          "pending_ids_before": [],
+          "safe": 1,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            339,
+            30,
+            128825,
+            10699
+          ],
+          "recipe_input_ids": [
+            339,
+            30,
+            128825,
+            10699
+          ],
+          "source_bytes_before": 44,
+          "pending_ids_before": [],
+          "safe": 4,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            1018,
+            30
+          ],
+          "recipe_input_ids": [
+            1018,
+            30
+          ],
+          "source_bytes_before": 64,
+          "pending_ids_before": [],
+          "safe": 2,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        }
+      ]
+    },
+    {
+      "name": "before_DSML_closure",
+      "status": "PASS",
+      "before": {
+        "history": {
+          "prompt_len": 282,
+          "canonical_frontier": 354,
+          "delivered_frontier": 354,
+          "transport_delivered_tokens": [
+            43,
+            5922,
+            1747,
+            890,
+            270,
+            9670,
+            362,
+            1952,
+            11234,
+            1928,
+            339,
+            30,
+            128825,
+            10699,
+            1018,
+            30,
+            128825,
+            34756,
+            2329,
+            1281,
+            12533,
+            1425,
+            3816,
+            30,
+            128825,
+            10767,
+            2329,
+            1281,
+            37399,
+            4,
+            3418,
+            1281,
+            11476,
+            3320,
+            51119,
+            1718,
+            128825,
+            10767,
+            1018,
+            1718,
+            128825,
+            34756,
+            1018,
+            30,
+            128825,
+            34756,
+            2329,
+            1281,
+            12533,
+            1425,
+            3816,
+            30,
+            128825,
+            10767,
+            2329,
+            1281,
+            37399,
+            4,
+            3418,
+            1281,
+            11476,
+            3320,
+            27571,
+            1718,
+            128825,
+            10767,
+            1018,
+            1718,
+            128825,
+            34756,
+            1018,
+            1718
+          ],
+          "canonical_generated_tokens": [
+            43,
+            5922,
+            1747,
+            890,
+            270,
+            9670,
+            362,
+            1952,
+            11234,
+            1928,
+            339,
+            30,
+            128825,
+            10699,
+            1018,
+            30,
+            128825,
+            34756,
+            2329,
+            1281,
+            12533,
+            1425,
+            3816,
+            30,
+            128825,
+            10767,
+            2329,
+            1281,
+            37399,
+            4,
+            3418,
+            1281,
+            11476,
+            3320,
+            51119,
+            1718,
+            128825,
+            10767,
+            1018,
+            1718,
+            128825,
+            34756,
+            1018,
+            30,
+            128825,
+            34756,
+            2329,
+            1281,
+            12533,
+            1425,
+            3816,
+            30,
+            128825,
+            10767,
+            2329,
+            1281,
+            37399,
+            4,
+            3418,
+            1281,
+            11476,
+            3320,
+            27571,
+            1718,
+            128825,
+            10767,
+            1018,
+            1718,
+            128825,
+            34756,
+            1018,
+            1718
+          ],
+          "recovery_suffix_tokens": []
+        },
+        "parser": [
+          "e312f715de66b29a",
+          [],
+          0,
+          333
+        ],
+        "prediction": {
+          "ordinal": 74,
+          "prediction": {
+            "kind": "DSML_TOOL_CALL_BLOCK_END",
+            "index": 3,
+            "safe_count": 3,
+            "token_id": 32,
+            "identity": [
+              "DSML_TOOL_CALL_BLOCK_END",
+              331,
+              350
+            ]
+          },
+          "region": "chain",
+          "candidate_ids": [
+            1718,
+            128825,
+            10699,
+            32
+          ],
+          "queued_prefix": 0,
+          "owner_uid": 0
+        }
+      },
+      "quiescence": {
+        "canonical_frontier": 356,
+        "recovery_suffix_tokens": [
+          128825,
+          10699
+        ],
+        "discarded_future_token": 32,
+        "counters": {
+          "new_verify_cycles": 0,
+          "new_proposals": 0,
+          "target_forwards": 0,
+          "history_replay": 0,
+          "full_cache_repack": 0,
+          "dspark_appends": 0
+        },
+        "latency_s": 3.816699609160423e-05,
+        "queue_drained_tokens": [
+          128825,
+          10699
+        ],
+        "dspark": {
+          "frontier": 356,
+          "offsets": [
+            356,
+            356,
+            356
+          ],
+          "target_layer_ids": [
+            37,
+            38,
+            39
+          ],
+          "stage_count": 3,
+          "window_size": 5,
+          "authority": "bounded committed DSpark context; not executable target truth"
+        }
+      },
+      "counts_delta": {
+        "verify": 0,
+        "proposal": 0,
+        "forward": 0,
+        "reconcile": 0
+      },
+      "forward_spans": [],
+      "parser_after": [
+        "ca751dd27a48a400",
+        [],
+        0,
+        349
+      ],
+      "parser_matches_emitted_only": true,
+      "prediction_matches": [],
+      "preview_rows": [
+        {
+          "ids": [
+            43
+          ],
+          "recipe_input_ids": [
+            43
+          ],
+          "source_bytes_before": 0,
+          "pending_ids_before": [],
+          "safe": 1,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            43,
+            5922
+          ],
+          "recipe_input_ids": [
+            43,
+            5922
+          ],
+          "source_bytes_before": 0,
+          "pending_ids_before": [],
+          "safe": 2,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            1747,
+            890,
+            270
+          ],
+          "recipe_input_ids": [
+            1747,
+            890,
+            270
+          ],
+          "source_bytes_before": 4,
+          "pending_ids_before": [],
+          "safe": 3,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            9670,
+            362,
+            1952,
+            11234
+          ],
+          "recipe_input_ids": [
+            9670,
+            362,
+            1952,
+            11234
+          ],
+          "source_bytes_before": 16,
+          "pending_ids_before": [],
+          "safe": 4,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            1928
+          ],
+          "recipe_input_ids": [
+            1928
+          ],
+          "source_bytes_before": 40,
+          "pending_ids_before": [],
+          "safe": 1,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            339,
+            30,
+            128825,
+            10699
+          ],
+          "recipe_input_ids": [
+            339,
+            30,
+            128825,
+            10699
+          ],
+          "source_bytes_before": 44,
+          "pending_ids_before": [],
+          "safe": 4,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            1018,
+            30
+          ],
+          "recipe_input_ids": [
+            1018,
+            30
+          ],
+          "source_bytes_before": 64,
+          "pending_ids_before": [],
+          "safe": 2,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            128825,
+            34756,
+            2329,
+            1281
+          ],
+          "recipe_input_ids": [
+            128825,
+            34756,
+            2329,
+            1281
+          ],
+          "source_bytes_before": 67,
+          "pending_ids_before": [],
+          "safe": 4,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            12533,
+            1425,
+            3816
+          ],
+          "recipe_input_ids": [
+            12533,
+            1425,
+            3816
+          ],
+          "source_bytes_before": 91,
+          "pending_ids_before": [],
+          "safe": 3,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            30,
+            128825,
+            10767,
+            2329
+          ],
+          "recipe_input_ids": [
+            30,
+            128825,
+            10767,
+            2329
+          ],
+          "source_bytes_before": 100,
+          "pending_ids_before": [],
+          "safe": 4,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            1281,
+            37399,
+            4,
+            3418
+          ],
+          "recipe_input_ids": [
+            1281,
+            37399,
+            4,
+            3418
+          ],
+          "source_bytes_before": 126,
+          "pending_ids_before": [],
+          "safe": 4,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            1281,
+            11476,
+            3320,
+            51119
+          ],
+          "recipe_input_ids": [
+            1281,
+            11476,
+            3320,
+            51119
+          ],
+          "source_bytes_before": 140,
+          "pending_ids_before": [],
+          "safe": 4,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            1718,
+            128825,
+            10767,
+            1018
+          ],
+          "recipe_input_ids": [
+            1718,
+            128825,
+            10767,
+            1018
+          ],
+          "source_bytes_before": 153,
+          "pending_ids_before": [],
+          "safe": 4,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            1718,
+            128825,
+            34756,
+            1018
+          ],
+          "recipe_input_ids": [
+            1718,
+            128825,
+            34756,
+            1018
+          ],
+          "source_bytes_before": 177,
+          "pending_ids_before": [],
+          "safe": 4,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            30,
+            128825,
+            34756,
+            2329
+          ],
+          "recipe_input_ids": [
+            30,
+            128825,
+            34756,
+            2329
+          ],
+          "source_bytes_before": 198,
+          "pending_ids_before": [],
+          "safe": 4,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            1281,
+            12533,
+            1425,
+            3816
+          ],
+          "recipe_input_ids": [
+            1281,
+            12533,
+            1425,
+            3816
+          ],
+          "source_bytes_before": 221,
+          "pending_ids_before": [],
+          "safe": 4,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            30,
+            128825,
+            10767,
+            2329
+          ],
+          "recipe_input_ids": [
+            30,
+            128825,
+            10767,
+            2329
+          ],
+          "source_bytes_before": 232,
+          "pending_ids_before": [],
+          "safe": 4,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            1281,
+            37399,
+            4,
+            3418
+          ],
+          "recipe_input_ids": [
+            1281,
+            37399,
+            4,
+            3418
+          ],
+          "source_bytes_before": 258,
+          "pending_ids_before": [],
+          "safe": 4,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            1281,
+            11476,
+            3320,
+            27571
+          ],
+          "recipe_input_ids": [
+            1281,
+            11476,
+            3320,
+            27571
+          ],
+          "source_bytes_before": 272,
+          "pending_ids_before": [],
+          "safe": 4,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            1718,
+            128825,
+            10767,
+            1018
+          ],
+          "recipe_input_ids": [
+            1718,
+            128825,
+            10767,
+            1018
+          ],
+          "source_bytes_before": 286,
+          "pending_ids_before": [],
+          "safe": 4,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            1718,
+            128825,
+            34756,
+            1018
+          ],
+          "recipe_input_ids": [
+            1718,
+            128825,
+            34756,
+            1018
+          ],
+          "source_bytes_before": 310,
+          "pending_ids_before": [],
+          "safe": 4,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            1718,
+            128825,
+            10699,
+            32
+          ],
+          "recipe_input_ids": [
+            1718,
+            128825,
+            10699,
+            32
+          ],
+          "source_bytes_before": 331,
+          "pending_ids_before": [],
+          "safe": 3,
+          "terminal_kind": "DSML_TOOL_CALL_BLOCK_END",
+          "index": 3,
+          "start": 331,
+          "end": 350
+        }
+      ]
+    },
+    {
+      "name": "after_terminal_emit",
+      "status": "PASS",
+      "before": {
+        "history": {
+          "prompt_len": 11,
+          "canonical_frontier": 12,
+          "delivered_frontier": 12,
+          "transport_delivered_tokens": [
+            19923
+          ],
+          "canonical_generated_tokens": [
+            19923
+          ],
+          "recovery_suffix_tokens": []
+        },
+        "parser": [
+          "719f19d50c47ee2d",
+          [],
+          0,
+          5
+        ],
+        "prediction": null
+      },
+      "quiescence": {
+        "canonical_frontier": 12,
+        "recovery_suffix_tokens": [],
+        "discarded_future_token": null,
+        "counters": {
+          "new_verify_cycles": 0,
+          "new_proposals": 0,
+          "target_forwards": 1,
+          "history_replay": 0,
+          "full_cache_repack": 0,
+          "dspark_appends": 1
+        },
+        "latency_s": 0.02045595902018249,
+        "queue_drained_tokens": [],
+        "dspark": {
+          "frontier": 12,
+          "offsets": [
+            12,
+            12,
+            12
+          ],
+          "target_layer_ids": [
+            37,
+            38,
+            39
+          ],
+          "stage_count": 3,
+          "window_size": 5,
+          "authority": "bounded committed DSpark context; not executable target truth"
+        }
+      },
+      "counts_delta": {
+        "verify": 0,
+        "proposal": 0,
+        "forward": 1,
+        "reconcile": 0
+      },
+      "forward_spans": [
+        {
+          "start": 11,
+          "ids": [
+            19923
+          ]
+        }
+      ],
+      "parser_after": [
+        "719f19d50c47ee2d",
+        [],
+        0,
+        5
+      ],
+      "parser_matches_emitted_only": true,
+      "prediction_matches": [
+        {
+          "ordinal": 0,
+          "token_id": 19923,
+          "identity": [
+            "STOP_SEQUENCE",
+            0,
+            5
+          ]
+        }
+      ],
+      "preview_rows": [
+        {
+          "ids": [
+            19923
+          ],
+          "recipe_input_ids": [
+            19923
+          ],
+          "source_bytes_before": 0,
+          "pending_ids_before": [],
+          "safe": 0,
+          "terminal_kind": "STOP_SEQUENCE",
+          "index": 0,
+          "start": 0,
+          "end": 5
+        }
+      ]
+    },
+    {
+      "name": "after_safe_main_forward",
+      "status": "PASS_FAIL_CLOSED",
+      "parser_unchanged": true,
+      "externally_resumable": false,
+      "counts_delta": {
+        "verify": 0,
+        "proposal": 0,
+        "forward": 1,
+        "reconcile": 0
+      },
+      "target": [
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12
+      ]
+    },
+    {
+      "name": "after_successor_sample",
+      "status": "PASS_FAIL_CLOSED",
+      "parser_unchanged": true,
+      "externally_resumable": false,
+      "counts_delta": {
+        "verify": 0,
+        "proposal": 0,
+        "forward": 1,
+        "reconcile": 0
+      },
+      "target": [
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12
+      ]
+    },
+    {
+      "name": "after_init_construction",
+      "status": "PASS_FAIL_CLOSED",
+      "parser_unchanged": true,
+      "externally_resumable": false,
+      "counts_delta": {
+        "verify": 0,
+        "proposal": 1,
+        "forward": 1,
+        "reconcile": 0
+      },
+      "target": [
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12
+      ]
+    },
+    {
+      "name": "native_fixture_pending_main",
+      "status": "PASS",
+      "scope": "synthetic pending-token fixture through real model caches/DSpark/native init; not a sampler-distribution test",
+      "before": {
+        "history": {
+          "prompt_len": 12,
+          "canonical_frontier": 13,
+          "delivered_frontier": 13,
+          "transport_delivered_tokens": [
+            227
+          ],
+          "canonical_generated_tokens": [
+            227
+          ],
+          "recovery_suffix_tokens": []
+        },
+        "parser": [
+          "78caf35f7dd6818a",
+          [],
+          0,
+          4
+        ],
+        "prediction": null
+      },
+      "quiescence": {
+        "canonical_frontier": 13,
+        "recovery_suffix_tokens": [],
+        "discarded_future_token": null,
+        "counters": {
+          "new_verify_cycles": 0,
+          "new_proposals": 0,
+          "target_forwards": 1,
+          "history_replay": 0,
+          "full_cache_repack": 0,
+          "dspark_appends": 1
+        },
+        "latency_s": 0.01892150001367554,
+        "queue_drained_tokens": [],
+        "dspark": {
+          "frontier": 13,
+          "offsets": [
+            13,
+            13,
+            13
+          ],
+          "target_layer_ids": [
+            37,
+            38,
+            39
+          ],
+          "stage_count": 3,
+          "window_size": 5,
+          "authority": "bounded committed DSpark context; not executable target truth"
+        }
+      },
+      "counts_delta": {
+        "verify": 0,
+        "proposal": 0,
+        "forward": 1,
+        "reconcile": 0
+      },
+      "forward_spans": [
+        {
+          "start": 12,
+          "ids": [
+            227
+          ]
+        }
+      ],
+      "parser_after": [
+        "78caf35f7dd6818a",
+        [],
+        0,
+        4
+      ],
+      "parser_matches_emitted_only": true,
+      "prediction_matches": [
+        {
+          "ordinal": 0,
+          "token_id": 227,
+          "identity": [
+            "STOP_SEQUENCE",
+            0,
+            4
+          ]
+        }
+      ],
+      "preview_rows": [
+        {
+          "ids": [
+            227
+          ],
+          "recipe_input_ids": [
+            227
+          ],
+          "source_bytes_before": 0,
+          "pending_ids_before": [
+            80300
+          ],
+          "safe": 0,
+          "terminal_kind": "STOP_SEQUENCE",
+          "index": 0,
+          "start": 0,
+          "end": 4
+        }
+      ]
+    },
+    {
+      "name": "native_fixture_pending_successor",
+      "status": "PASS",
+      "scope": "synthetic pending-token fixture through real model caches/DSpark/native init; not a sampler-distribution test",
+      "before": {
+        "history": {
+          "prompt_len": 11,
+          "canonical_frontier": 13,
+          "delivered_frontier": 13,
+          "transport_delivered_tokens": [
+            80300,
+            227
+          ],
+          "canonical_generated_tokens": [
+            80300,
+            227
+          ],
+          "recovery_suffix_tokens": []
+        },
+        "parser": [
+          "78caf35f7dd6818a",
+          [],
+          0,
+          4
+        ],
+        "prediction": null
+      },
+      "quiescence": {
+        "canonical_frontier": 13,
+        "recovery_suffix_tokens": [],
+        "discarded_future_token": null,
+        "counters": {
+          "new_verify_cycles": 0,
+          "new_proposals": 0,
+          "target_forwards": 1,
+          "history_replay": 0,
+          "full_cache_repack": 0,
+          "dspark_appends": 1
+        },
+        "latency_s": 0.019808582961559296,
+        "queue_drained_tokens": [],
+        "dspark": {
+          "frontier": 13,
+          "offsets": [
+            13,
+            13,
+            13
+          ],
+          "target_layer_ids": [
+            37,
+            38,
+            39
+          ],
+          "stage_count": 3,
+          "window_size": 5,
+          "authority": "bounded committed DSpark context; not executable target truth"
+        }
+      },
+      "counts_delta": {
+        "verify": 0,
+        "proposal": 0,
+        "forward": 1,
+        "reconcile": 0
+      },
+      "forward_spans": [
+        {
+          "start": 12,
+          "ids": [
+            227
+          ]
+        }
+      ],
+      "parser_after": [
+        "78caf35f7dd6818a",
+        [],
+        0,
+        4
+      ],
+      "parser_matches_emitted_only": true,
+      "prediction_matches": [
+        {
+          "ordinal": 1,
+          "token_id": 227,
+          "identity": [
+            "STOP_SEQUENCE",
+            0,
+            4
+          ]
+        }
+      ],
+      "preview_rows": [
+        {
+          "ids": [
+            80300
+          ],
+          "recipe_input_ids": [
+            80300
+          ],
+          "source_bytes_before": 0,
+          "pending_ids_before": [],
+          "safe": 1,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            80300,
+            227
+          ],
+          "recipe_input_ids": [
+            80300,
+            227
+          ],
+          "source_bytes_before": 0,
+          "pending_ids_before": [],
+          "safe": 1,
+          "terminal_kind": "STOP_SEQUENCE",
+          "index": 1,
+          "start": 0,
+          "end": 4
+        }
+      ]
+    },
+    {
+      "name": "native_fixture_stop_prefix_main",
+      "status": "PASS",
+      "scope": "synthetic pending-token fixture through real model caches/DSpark/native init; not a sampler-distribution test",
+      "before": {
+        "history": {
+          "prompt_len": 13,
+          "canonical_frontier": 14,
+          "delivered_frontier": 14,
+          "transport_delivered_tokens": [
+            57792
+          ],
+          "canonical_generated_tokens": [
+            57792
+          ],
+          "recovery_suffix_tokens": []
+        },
+        "parser": [
+          "48aa79d7313cc22b",
+          [],
+          0,
+          8
+        ],
+        "prediction": null
+      },
+      "quiescence": {
+        "canonical_frontier": 14,
+        "recovery_suffix_tokens": [],
+        "discarded_future_token": null,
+        "counters": {
+          "new_verify_cycles": 0,
+          "new_proposals": 0,
+          "target_forwards": 1,
+          "history_replay": 0,
+          "full_cache_repack": 0,
+          "dspark_appends": 1
+        },
+        "latency_s": 0.020669084042310715,
+        "queue_drained_tokens": [],
+        "dspark": {
+          "frontier": 14,
+          "offsets": [
+            14,
+            14,
+            14
+          ],
+          "target_layer_ids": [
+            37,
+            38,
+            39
+          ],
+          "stage_count": 3,
+          "window_size": 5,
+          "authority": "bounded committed DSpark context; not executable target truth"
+        }
+      },
+      "counts_delta": {
+        "verify": 0,
+        "proposal": 0,
+        "forward": 1,
+        "reconcile": 0
+      },
+      "forward_spans": [
+        {
+          "start": 13,
+          "ids": [
+            57792
+          ]
+        }
+      ],
+      "parser_after": [
+        "48aa79d7313cc22b",
+        [],
+        0,
+        8
+      ],
+      "parser_matches_emitted_only": true,
+      "prediction_matches": [
+        {
+          "ordinal": 0,
+          "token_id": 57792,
+          "identity": [
+            "STOP_SEQUENCE",
+            0,
+            8
+          ]
+        }
+      ],
+      "preview_rows": [
+        {
+          "ids": [
+            57792
+          ],
+          "recipe_input_ids": [
+            57792
+          ],
+          "source_bytes_before": 4,
+          "pending_ids_before": [],
+          "safe": 0,
+          "terminal_kind": "STOP_SEQUENCE",
+          "index": 0,
+          "start": 0,
+          "end": 8
+        }
+      ]
+    },
+    {
+      "name": "alignment_successor_terminal",
+      "status": "PASS",
+      "alignment": {
+        "prediction": {
+          "ordinal": 2,
+          "prediction": {
+            "kind": "STOP_SEQUENCE",
+            "index": 1,
+            "safe_count": 1,
+            "token_id": 3,
+            "identity": [
+              "STOP_SEQUENCE",
+              11,
+              12
+            ]
+          },
+          "region": "alignment-successor",
+          "candidate_ids": [
+            1031,
+            3
+          ],
+          "queued_prefix": 1,
+          "owner_uid": 0
+        },
+        "counter_delta": {
+          "verify": 0,
+          "proposal": 0,
+          "forward": 1,
+          "reconcile": 0
+        },
+        "parser_unchanged": true
+      },
+      "before": {
+        "history": {
+          "prompt_len": 11,
+          "canonical_frontier": 14,
+          "delivered_frontier": 14,
+          "transport_delivered_tokens": [
+            19923,
+            1031,
+            3
+          ],
+          "canonical_generated_tokens": [
+            19923,
+            1031,
+            3
+          ],
+          "recovery_suffix_tokens": []
+        },
+        "parser": [
+          "d8490816af80603b",
+          [],
+          0,
+          12
+        ],
+        "prediction": null
+      },
+      "quiescence": {
+        "canonical_frontier": 14,
+        "recovery_suffix_tokens": [],
+        "discarded_future_token": null,
+        "counters": {
+          "new_verify_cycles": 0,
+          "new_proposals": 0,
+          "target_forwards": 1,
+          "history_replay": 0,
+          "full_cache_repack": 0,
+          "dspark_appends": 1
+        },
+        "latency_s": 0.020330665982328355,
+        "queue_drained_tokens": [],
+        "dspark": {
+          "frontier": 14,
+          "offsets": [
+            14,
+            14,
+            14
+          ],
+          "target_layer_ids": [
+            37,
+            38,
+            39
+          ],
+          "stage_count": 3,
+          "window_size": 5,
+          "authority": "bounded committed DSpark context; not executable target truth"
+        }
+      },
+      "counts_delta": {
+        "verify": 0,
+        "proposal": 0,
+        "forward": 1,
+        "reconcile": 0
+      },
+      "forward_spans": [
+        {
+          "start": 13,
+          "ids": [
+            3
+          ]
+        }
+      ],
+      "parser_after": [
+        "d8490816af80603b",
+        [],
+        0,
+        12
+      ],
+      "parser_matches_emitted_only": true,
+      "prediction_matches": [
+        {
+          "ordinal": 2,
+          "token_id": 3,
+          "identity": [
+            "STOP_SEQUENCE",
+            11,
+            12
+          ]
+        }
+      ],
+      "preview_rows": [
+        {
+          "ids": [
+            19923
+          ],
+          "recipe_input_ids": [
+            19923
+          ],
+          "source_bytes_before": 0,
+          "pending_ids_before": [],
+          "safe": 1,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            19923,
+            1031
+          ],
+          "recipe_input_ids": [
+            19923,
+            1031
+          ],
+          "source_bytes_before": 0,
+          "pending_ids_before": [],
+          "safe": 2,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            1031
+          ],
+          "recipe_input_ids": [
+            1031
+          ],
+          "source_bytes_before": 5,
+          "pending_ids_before": [],
+          "safe": 1,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            1031,
+            3
+          ],
+          "recipe_input_ids": [
+            1031,
+            3
+          ],
+          "source_bytes_before": 5,
+          "pending_ids_before": [],
+          "safe": 1,
+          "terminal_kind": "STOP_SEQUENCE",
+          "index": 1,
+          "start": 11,
+          "end": 12
+        }
+      ]
+    },
+    {
+      "name": "alignment_prediction_interruption",
+      "status": "PASS",
+      "alignment": {
+        "prediction": {
+          "ordinal": 2,
+          "prediction": {
+            "kind": "STOP_SEQUENCE",
+            "index": 1,
+            "safe_count": 1,
+            "token_id": 3,
+            "identity": [
+              "STOP_SEQUENCE",
+              11,
+              12
+            ]
+          },
+          "region": "alignment-successor",
+          "candidate_ids": [
+            1031,
+            3
+          ],
+          "queued_prefix": 1,
+          "owner_uid": 0
+        },
+        "counter_delta": {
+          "verify": 0,
+          "proposal": 0,
+          "forward": 1,
+          "reconcile": 0
+        },
+        "parser_unchanged": true
+      },
+      "before": {
+        "history": {
+          "prompt_len": 11,
+          "canonical_frontier": 12,
+          "delivered_frontier": 12,
+          "transport_delivered_tokens": [
+            19923
+          ],
+          "canonical_generated_tokens": [
+            19923
+          ],
+          "recovery_suffix_tokens": []
+        },
+        "parser": [
+          "ecb232730c2fe595",
+          [],
+          0,
+          5
+        ],
+        "prediction": {
+          "ordinal": 2,
+          "prediction": {
+            "kind": "STOP_SEQUENCE",
+            "index": 1,
+            "safe_count": 1,
+            "token_id": 3,
+            "identity": [
+              "STOP_SEQUENCE",
+              11,
+              12
+            ]
+          },
+          "region": "alignment-successor",
+          "candidate_ids": [
+            1031,
+            3
+          ],
+          "queued_prefix": 1,
+          "owner_uid": 0
+        }
+      },
+      "quiescence": {
+        "canonical_frontier": 13,
+        "recovery_suffix_tokens": [
+          1031
+        ],
+        "discarded_future_token": 3,
+        "counters": {
+          "new_verify_cycles": 0,
+          "new_proposals": 0,
+          "target_forwards": 0,
+          "history_replay": 0,
+          "full_cache_repack": 0,
+          "dspark_appends": 0
+        },
+        "latency_s": 4.379200981929898e-05,
+        "queue_drained_tokens": [
+          1031
+        ],
+        "dspark": {
+          "frontier": 13,
+          "offsets": [
+            13,
+            13,
+            13
+          ],
+          "target_layer_ids": [
+            37,
+            38,
+            39
+          ],
+          "stage_count": 3,
+          "window_size": 5,
+          "authority": "bounded committed DSpark context; not executable target truth"
+        }
+      },
+      "counts_delta": {
+        "verify": 0,
+        "proposal": 0,
+        "forward": 0,
+        "reconcile": 0
+      },
+      "forward_spans": [],
+      "parser_after": [
+        "5eeda9e8f941ff75",
+        [],
+        0,
+        11
+      ],
+      "parser_matches_emitted_only": true,
+      "prediction_matches": [],
+      "preview_rows": [
+        {
+          "ids": [
+            19923
+          ],
+          "recipe_input_ids": [
+            19923
+          ],
+          "source_bytes_before": 0,
+          "pending_ids_before": [],
+          "safe": 1,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            19923,
+            1031
+          ],
+          "recipe_input_ids": [
+            19923,
+            1031
+          ],
+          "source_bytes_before": 0,
+          "pending_ids_before": [],
+          "safe": 2,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            1031
+          ],
+          "recipe_input_ids": [
+            1031
+          ],
+          "source_bytes_before": 5,
+          "pending_ids_before": [],
+          "safe": 1,
+          "terminal_kind": null,
+          "index": null,
+          "start": null,
+          "end": null
+        },
+        {
+          "ids": [
+            1031,
+            3
+          ],
+          "recipe_input_ids": [
+            1031,
+            3
+          ],
+          "source_bytes_before": 5,
+          "pending_ids_before": [],
+          "safe": 1,
+          "terminal_kind": "STOP_SEQUENCE",
+          "index": 1,
+          "start": 11,
+          "end": 12
+        }
+      ]
+    },
+    {
+      "name": "canonical_terminal_transport_pending",
+      "status": "PASS",
+      "before": {
+        "history": {
+          "prompt_len": 11,
+          "canonical_frontier": 12,
+          "delivered_frontier": 11,
+          "transport_delivered_tokens": [],
+          "canonical_generated_tokens": [
+            19923
+          ],
+          "recovery_suffix_tokens": [
+            19923
+          ]
+        },
+        "parser": [
+          "719f19d50c47ee2d",
+          [],
+          0,
+          5
+        ],
+        "prediction": null
+      },
+      "delivery_ack": {
+        "metadata_only": true,
+        "history": {
+          "prompt_len": 11,
+          "canonical_frontier": 12,
+          "delivered_frontier": 12,
+          "transport_delivered_tokens": [
+            19923
+          ],
+          "canonical_generated_tokens": [
+            19923
+          ],
+          "recovery_suffix_tokens": []
+        },
+        "counter_delta": {
+          "verify": 0,
+          "proposal": 0,
+          "forward": 0,
+          "reconcile": 0
+        }
+      },
+      "quiescence": {
+        "canonical_frontier": 12,
+        "recovery_suffix_tokens": [
+          19923
+        ],
+        "discarded_future_token": null,
+        "counters": {
+          "new_verify_cycles": 0,
+          "new_proposals": 0,
+          "target_forwards": 1,
+          "history_replay": 0,
+          "full_cache_repack": 0,
+          "dspark_appends": 1
+        },
+        "latency_s": 0.020106000010855496,
+        "queue_drained_tokens": [],
+        "dspark": {
+          "frontier": 12,
+          "offsets": [
+            12,
+            12,
+            12
+          ],
+          "target_layer_ids": [
+            37,
+            38,
+            39
+          ],
+          "stage_count": 3,
+          "window_size": 5,
+          "authority": "bounded committed DSpark context; not executable target truth"
+        }
+      },
+      "counts_delta": {
+        "verify": 0,
+        "proposal": 0,
+        "forward": 1,
+        "reconcile": 0
+      },
+      "forward_spans": [
+        {
+          "start": 11,
+          "ids": [
+            19923
+          ]
+        }
+      ],
+      "parser_after": [
+        "719f19d50c47ee2d",
+        [],
+        0,
+        5
+      ],
+      "parser_matches_emitted_only": true,
+      "prediction_matches": [
+        {
+          "ordinal": 0,
+          "token_id": 19923,
+          "identity": [
+            "STOP_SEQUENCE",
+            0,
+            5
+          ]
+        }
+      ],
+      "preview_rows": [
+        {
+          "ids": [
+            19923
+          ],
+          "recipe_input_ids": [
+            19923
+          ],
+          "source_bytes_before": 0,
+          "pending_ids_before": [],
+          "safe": 0,
+          "terminal_kind": "STOP_SEQUENCE",
+          "index": 0,
+          "start": 0,
+          "end": 5
+        }
+      ]
+    }
+  ],
+  "m35_driver_sha256": "4e8532192a90960dc17bd149e31344203b6db983a1774d37868375c4b465b069",
+  "m34_corrected_runtime_sha256": "a05744364d5440a16774905d9d60a5266ccc4528f1ca871f20db715d8c5fcde6"
+}

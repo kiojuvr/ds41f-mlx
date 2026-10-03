@@ -217,7 +217,9 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
             # request/env/public MTP selector is installed by the normal server.
             qualification = getattr(backend, 'qualification_response', None)
             if qualification is not None:
-                return await qualification(session_id, prepared, tokenizer=tokenizer)
+                raw_sequence = request.headers.get('X-DS41F-Request-Sequence')
+                sequence = int(raw_sequence) if raw_sequence is not None else None
+                return await qualification(session_id, prepared, tokenizer=tokenizer, body=body, sequence=sequence)
             turn = await backend.run_stateful_chat_turn(session_id, prepared, tokenizer=tokenizer)
         except KeyError as exc:
             raise RequestError(str(exc), 404)
