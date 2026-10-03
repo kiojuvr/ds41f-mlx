@@ -1,0 +1,4693 @@
+[
+  {
+    "name": "ordinary",
+    "origin": "synthetic parser diagnostic; NOT model qualification",
+    "input": "Ordinary café 🙂 text.",
+    "tokens": [
+      60572,
+      3620,
+      57664,
+      68139,
+      3051,
+      16
+    ],
+    "stop_sequences": [],
+    "decoder_trace": [
+      {
+        "candidate_index": 0,
+        "pending_ids": [
+          60572
+        ],
+        "decoded": "Ord",
+        "held": false,
+        "parser_input": "Ord"
+      },
+      {
+        "candidate_index": 1,
+        "pending_ids": [
+          3620
+        ],
+        "decoded": "inary",
+        "held": false,
+        "parser_input": "inary"
+      },
+      {
+        "candidate_index": 2,
+        "pending_ids": [
+          57664
+        ],
+        "decoded": " café",
+        "held": false,
+        "parser_input": " café"
+      },
+      {
+        "candidate_index": 3,
+        "pending_ids": [
+          68139
+        ],
+        "decoded": " 🙂",
+        "held": false,
+        "parser_input": " 🙂"
+      },
+      {
+        "candidate_index": 4,
+        "pending_ids": [
+          3051
+        ],
+        "decoded": " text",
+        "held": false,
+        "parser_input": " text"
+      },
+      {
+        "candidate_index": 5,
+        "pending_ids": [
+          16
+        ],
+        "decoded": ".",
+        "held": false,
+        "parser_input": "."
+      }
+    ],
+    "response": {
+      "id": "m30",
+      "object": "chat.completion",
+      "created": 0,
+      "model": "deepseek-v4.1-flash",
+      "system_fingerprint": null,
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "Ordinary café 🙂 text."
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 6,
+        "total_tokens": 6,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 0
+      }
+    },
+    "events": [
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "role": "assistant",
+              "content": ""
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "Ord"
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "inary"
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " café"
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " 🙂"
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " text"
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "."
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ""
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 6,
+          "total_tokens": 6,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 0
+        }
+      }
+    ],
+    "finished_before_backend_finish": false,
+    "finished_candidate_index": null,
+    "diagnostic_parse_ns": 106958,
+    "target_frontier": null,
+    "dspark_frontier": null,
+    "m_recipe_semantic": null,
+    "commit_clamp": "unavailable"
+  },
+  {
+    "name": "one_call",
+    "origin": "synthetic parser diagnostic; NOT model qualification",
+    "input": "<｜DSML｜ calls>\n<｜DSML｜ invoke name=\"lookup_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "tokens": [
+      30,
+      128825,
+      10699,
+      1018,
+      30,
+      128825,
+      34756,
+      2329,
+      1281,
+      12533,
+      1425,
+      65,
+      50219,
+      3816,
+      30,
+      128825,
+      10767,
+      2329,
+      1281,
+      37399,
+      4,
+      3418,
+      1281,
+      11476,
+      3320,
+      51119,
+      1718,
+      128825,
+      10767,
+      1018,
+      1718,
+      128825,
+      34756,
+      1018,
+      1718,
+      128825,
+      10699,
+      32
+    ],
+    "stop_sequences": [],
+    "decoder_trace": [
+      {
+        "candidate_index": 0,
+        "pending_ids": [
+          30
+        ],
+        "decoded": "<",
+        "held": false,
+        "parser_input": "<"
+      },
+      {
+        "candidate_index": 1,
+        "pending_ids": [
+          128825
+        ],
+        "decoded": "｜DSML｜",
+        "held": false,
+        "parser_input": "｜DSML｜"
+      },
+      {
+        "candidate_index": 2,
+        "pending_ids": [
+          10699
+        ],
+        "decoded": " calls",
+        "held": false,
+        "parser_input": " calls"
+      },
+      {
+        "candidate_index": 3,
+        "pending_ids": [
+          1018
+        ],
+        "decoded": ">\n",
+        "held": false,
+        "parser_input": ">\n"
+      },
+      {
+        "candidate_index": 4,
+        "pending_ids": [
+          30
+        ],
+        "decoded": "<",
+        "held": false,
+        "parser_input": "<"
+      },
+      {
+        "candidate_index": 5,
+        "pending_ids": [
+          128825
+        ],
+        "decoded": "｜DSML｜",
+        "held": false,
+        "parser_input": "｜DSML｜"
+      },
+      {
+        "candidate_index": 6,
+        "pending_ids": [
+          34756
+        ],
+        "decoded": " invoke",
+        "held": false,
+        "parser_input": " invoke"
+      },
+      {
+        "candidate_index": 7,
+        "pending_ids": [
+          2329
+        ],
+        "decoded": " name",
+        "held": false,
+        "parser_input": " name"
+      },
+      {
+        "candidate_index": 8,
+        "pending_ids": [
+          1281
+        ],
+        "decoded": "=\"",
+        "held": false,
+        "parser_input": "=\""
+      },
+      {
+        "candidate_index": 9,
+        "pending_ids": [
+          12533
+        ],
+        "decoded": "look",
+        "held": false,
+        "parser_input": "look"
+      },
+      {
+        "candidate_index": 10,
+        "pending_ids": [
+          1425
+        ],
+        "decoded": "up",
+        "held": false,
+        "parser_input": "up"
+      },
+      {
+        "candidate_index": 11,
+        "pending_ids": [
+          65
+        ],
+        "decoded": "_",
+        "held": false,
+        "parser_input": "_"
+      },
+      {
+        "candidate_index": 12,
+        "pending_ids": [
+          50219
+        ],
+        "decoded": "weather",
+        "held": false,
+        "parser_input": "weather"
+      },
+      {
+        "candidate_index": 13,
+        "pending_ids": [
+          3816
+        ],
+        "decoded": "\">\n",
+        "held": false,
+        "parser_input": "\">\n"
+      },
+      {
+        "candidate_index": 14,
+        "pending_ids": [
+          30
+        ],
+        "decoded": "<",
+        "held": false,
+        "parser_input": "<"
+      },
+      {
+        "candidate_index": 15,
+        "pending_ids": [
+          128825
+        ],
+        "decoded": "｜DSML｜",
+        "held": false,
+        "parser_input": "｜DSML｜"
+      },
+      {
+        "candidate_index": 16,
+        "pending_ids": [
+          10767
+        ],
+        "decoded": " parameter",
+        "held": false,
+        "parser_input": " parameter"
+      },
+      {
+        "candidate_index": 17,
+        "pending_ids": [
+          2329
+        ],
+        "decoded": " name",
+        "held": false,
+        "parser_input": " name"
+      },
+      {
+        "candidate_index": 18,
+        "pending_ids": [
+          1281
+        ],
+        "decoded": "=\"",
+        "held": false,
+        "parser_input": "=\""
+      },
+      {
+        "candidate_index": 19,
+        "pending_ids": [
+          37399
+        ],
+        "decoded": "city",
+        "held": false,
+        "parser_input": "city"
+      },
+      {
+        "candidate_index": 20,
+        "pending_ids": [
+          4
+        ],
+        "decoded": "\"",
+        "held": false,
+        "parser_input": "\""
+      },
+      {
+        "candidate_index": 21,
+        "pending_ids": [
+          3418
+        ],
+        "decoded": " string",
+        "held": false,
+        "parser_input": " string"
+      },
+      {
+        "candidate_index": 22,
+        "pending_ids": [
+          1281
+        ],
+        "decoded": "=\"",
+        "held": false,
+        "parser_input": "=\""
+      },
+      {
+        "candidate_index": 23,
+        "pending_ids": [
+          11476
+        ],
+        "decoded": "true",
+        "held": false,
+        "parser_input": "true"
+      },
+      {
+        "candidate_index": 24,
+        "pending_ids": [
+          3320
+        ],
+        "decoded": "\">",
+        "held": false,
+        "parser_input": "\">"
+      },
+      {
+        "candidate_index": 25,
+        "pending_ids": [
+          51119
+        ],
+        "decoded": "Paris",
+        "held": false,
+        "parser_input": "Paris"
+      },
+      {
+        "candidate_index": 26,
+        "pending_ids": [
+          1718
+        ],
+        "decoded": "</",
+        "held": false,
+        "parser_input": "</"
+      },
+      {
+        "candidate_index": 27,
+        "pending_ids": [
+          128825
+        ],
+        "decoded": "｜DSML｜",
+        "held": false,
+        "parser_input": "｜DSML｜"
+      },
+      {
+        "candidate_index": 28,
+        "pending_ids": [
+          10767
+        ],
+        "decoded": " parameter",
+        "held": false,
+        "parser_input": " parameter"
+      },
+      {
+        "candidate_index": 29,
+        "pending_ids": [
+          1018
+        ],
+        "decoded": ">\n",
+        "held": false,
+        "parser_input": ">\n"
+      },
+      {
+        "candidate_index": 30,
+        "pending_ids": [
+          1718
+        ],
+        "decoded": "</",
+        "held": false,
+        "parser_input": "</"
+      },
+      {
+        "candidate_index": 31,
+        "pending_ids": [
+          128825
+        ],
+        "decoded": "｜DSML｜",
+        "held": false,
+        "parser_input": "｜DSML｜"
+      },
+      {
+        "candidate_index": 32,
+        "pending_ids": [
+          34756
+        ],
+        "decoded": " invoke",
+        "held": false,
+        "parser_input": " invoke"
+      },
+      {
+        "candidate_index": 33,
+        "pending_ids": [
+          1018
+        ],
+        "decoded": ">\n",
+        "held": false,
+        "parser_input": ">\n"
+      },
+      {
+        "candidate_index": 34,
+        "pending_ids": [
+          1718
+        ],
+        "decoded": "</",
+        "held": false,
+        "parser_input": "</"
+      },
+      {
+        "candidate_index": 35,
+        "pending_ids": [
+          128825
+        ],
+        "decoded": "｜DSML｜",
+        "held": false,
+        "parser_input": "｜DSML｜"
+      },
+      {
+        "candidate_index": 36,
+        "pending_ids": [
+          10699
+        ],
+        "decoded": " calls",
+        "held": false,
+        "parser_input": " calls"
+      },
+      {
+        "candidate_index": 37,
+        "pending_ids": [
+          32
+        ],
+        "decoded": ">",
+        "held": false,
+        "parser_input": ">"
+      }
+    ],
+    "response": {
+      "id": "m30",
+      "object": "chat.completion",
+      "created": 0,
+      "model": "deepseek-v4.1-flash",
+      "system_fingerprint": null,
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "",
+            "tool_calls": [
+              {
+                "id": "call_m30_0",
+                "type": "function",
+                "function": {
+                  "name": "lookup_weather",
+                  "arguments": "{\"city\": \"Paris\"}"
+                }
+              }
+            ]
+          },
+          "logprobs": null,
+          "finish_reason": "tool_calls"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 38,
+        "total_tokens": 38,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 0
+      }
+    },
+    "events": [
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "role": "assistant",
+              "content": ""
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "id": "call_m30_0",
+                  "type": "function",
+                  "function": {
+                    "name": "lookup_weather",
+                    "arguments": ""
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "{"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "\""
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "city"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "\""
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": ": "
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "\""
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "Paris"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "\""
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "}"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ""
+            },
+            "logprobs": null,
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 38,
+          "total_tokens": 38,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 0
+        }
+      }
+    ],
+    "finished_before_backend_finish": false,
+    "finished_candidate_index": null,
+    "diagnostic_parse_ns": 67000,
+    "target_frontier": null,
+    "dspark_frontier": null,
+    "m_recipe_semantic": null,
+    "commit_clamp": "unavailable"
+  },
+  {
+    "name": "multiple_calls",
+    "origin": "synthetic parser diagnostic; NOT model qualification",
+    "input": "<｜DSML｜ calls>\n<｜DSML｜ invoke name=\"lookup_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n<｜DSML｜ invoke name=\"store\">\n<｜DSML｜ parameter name=\"city\" string=\"false\">{\"count\":2,\"ok\":true}</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "tokens": [
+      30,
+      128825,
+      10699,
+      1018,
+      30,
+      128825,
+      34756,
+      2329,
+      1281,
+      12533,
+      1425,
+      65,
+      50219,
+      3816,
+      30,
+      128825,
+      10767,
+      2329,
+      1281,
+      37399,
+      4,
+      3418,
+      1281,
+      11476,
+      3320,
+      51119,
+      1718,
+      128825,
+      10767,
+      1018,
+      1718,
+      128825,
+      34756,
+      1018,
+      30,
+      128825,
+      34756,
+      2329,
+      1281,
+      23008,
+      3816,
+      30,
+      128825,
+      10767,
+      2329,
+      1281,
+      37399,
+      4,
+      3418,
+      1281,
+      19836,
+      3320,
+      24313,
+      10499,
+      3362,
+      20,
+      3184,
+      633,
+      3362,
+      11476,
+      24568,
+      128825,
+      10767,
+      1018,
+      1718,
+      128825,
+      34756,
+      1018,
+      1718,
+      128825,
+      10699,
+      32
+    ],
+    "stop_sequences": [],
+    "decoder_trace": [
+      {
+        "candidate_index": 0,
+        "pending_ids": [
+          30
+        ],
+        "decoded": "<",
+        "held": false,
+        "parser_input": "<"
+      },
+      {
+        "candidate_index": 1,
+        "pending_ids": [
+          128825
+        ],
+        "decoded": "｜DSML｜",
+        "held": false,
+        "parser_input": "｜DSML｜"
+      },
+      {
+        "candidate_index": 2,
+        "pending_ids": [
+          10699
+        ],
+        "decoded": " calls",
+        "held": false,
+        "parser_input": " calls"
+      },
+      {
+        "candidate_index": 3,
+        "pending_ids": [
+          1018
+        ],
+        "decoded": ">\n",
+        "held": false,
+        "parser_input": ">\n"
+      },
+      {
+        "candidate_index": 4,
+        "pending_ids": [
+          30
+        ],
+        "decoded": "<",
+        "held": false,
+        "parser_input": "<"
+      },
+      {
+        "candidate_index": 5,
+        "pending_ids": [
+          128825
+        ],
+        "decoded": "｜DSML｜",
+        "held": false,
+        "parser_input": "｜DSML｜"
+      },
+      {
+        "candidate_index": 6,
+        "pending_ids": [
+          34756
+        ],
+        "decoded": " invoke",
+        "held": false,
+        "parser_input": " invoke"
+      },
+      {
+        "candidate_index": 7,
+        "pending_ids": [
+          2329
+        ],
+        "decoded": " name",
+        "held": false,
+        "parser_input": " name"
+      },
+      {
+        "candidate_index": 8,
+        "pending_ids": [
+          1281
+        ],
+        "decoded": "=\"",
+        "held": false,
+        "parser_input": "=\""
+      },
+      {
+        "candidate_index": 9,
+        "pending_ids": [
+          12533
+        ],
+        "decoded": "look",
+        "held": false,
+        "parser_input": "look"
+      },
+      {
+        "candidate_index": 10,
+        "pending_ids": [
+          1425
+        ],
+        "decoded": "up",
+        "held": false,
+        "parser_input": "up"
+      },
+      {
+        "candidate_index": 11,
+        "pending_ids": [
+          65
+        ],
+        "decoded": "_",
+        "held": false,
+        "parser_input": "_"
+      },
+      {
+        "candidate_index": 12,
+        "pending_ids": [
+          50219
+        ],
+        "decoded": "weather",
+        "held": false,
+        "parser_input": "weather"
+      },
+      {
+        "candidate_index": 13,
+        "pending_ids": [
+          3816
+        ],
+        "decoded": "\">\n",
+        "held": false,
+        "parser_input": "\">\n"
+      },
+      {
+        "candidate_index": 14,
+        "pending_ids": [
+          30
+        ],
+        "decoded": "<",
+        "held": false,
+        "parser_input": "<"
+      },
+      {
+        "candidate_index": 15,
+        "pending_ids": [
+          128825
+        ],
+        "decoded": "｜DSML｜",
+        "held": false,
+        "parser_input": "｜DSML｜"
+      },
+      {
+        "candidate_index": 16,
+        "pending_ids": [
+          10767
+        ],
+        "decoded": " parameter",
+        "held": false,
+        "parser_input": " parameter"
+      },
+      {
+        "candidate_index": 17,
+        "pending_ids": [
+          2329
+        ],
+        "decoded": " name",
+        "held": false,
+        "parser_input": " name"
+      },
+      {
+        "candidate_index": 18,
+        "pending_ids": [
+          1281
+        ],
+        "decoded": "=\"",
+        "held": false,
+        "parser_input": "=\""
+      },
+      {
+        "candidate_index": 19,
+        "pending_ids": [
+          37399
+        ],
+        "decoded": "city",
+        "held": false,
+        "parser_input": "city"
+      },
+      {
+        "candidate_index": 20,
+        "pending_ids": [
+          4
+        ],
+        "decoded": "\"",
+        "held": false,
+        "parser_input": "\""
+      },
+      {
+        "candidate_index": 21,
+        "pending_ids": [
+          3418
+        ],
+        "decoded": " string",
+        "held": false,
+        "parser_input": " string"
+      },
+      {
+        "candidate_index": 22,
+        "pending_ids": [
+          1281
+        ],
+        "decoded": "=\"",
+        "held": false,
+        "parser_input": "=\""
+      },
+      {
+        "candidate_index": 23,
+        "pending_ids": [
+          11476
+        ],
+        "decoded": "true",
+        "held": false,
+        "parser_input": "true"
+      },
+      {
+        "candidate_index": 24,
+        "pending_ids": [
+          3320
+        ],
+        "decoded": "\">",
+        "held": false,
+        "parser_input": "\">"
+      },
+      {
+        "candidate_index": 25,
+        "pending_ids": [
+          51119
+        ],
+        "decoded": "Paris",
+        "held": false,
+        "parser_input": "Paris"
+      },
+      {
+        "candidate_index": 26,
+        "pending_ids": [
+          1718
+        ],
+        "decoded": "</",
+        "held": false,
+        "parser_input": "</"
+      },
+      {
+        "candidate_index": 27,
+        "pending_ids": [
+          128825
+        ],
+        "decoded": "｜DSML｜",
+        "held": false,
+        "parser_input": "｜DSML｜"
+      },
+      {
+        "candidate_index": 28,
+        "pending_ids": [
+          10767
+        ],
+        "decoded": " parameter",
+        "held": false,
+        "parser_input": " parameter"
+      },
+      {
+        "candidate_index": 29,
+        "pending_ids": [
+          1018
+        ],
+        "decoded": ">\n",
+        "held": false,
+        "parser_input": ">\n"
+      },
+      {
+        "candidate_index": 30,
+        "pending_ids": [
+          1718
+        ],
+        "decoded": "</",
+        "held": false,
+        "parser_input": "</"
+      },
+      {
+        "candidate_index": 31,
+        "pending_ids": [
+          128825
+        ],
+        "decoded": "｜DSML｜",
+        "held": false,
+        "parser_input": "｜DSML｜"
+      },
+      {
+        "candidate_index": 32,
+        "pending_ids": [
+          34756
+        ],
+        "decoded": " invoke",
+        "held": false,
+        "parser_input": " invoke"
+      },
+      {
+        "candidate_index": 33,
+        "pending_ids": [
+          1018
+        ],
+        "decoded": ">\n",
+        "held": false,
+        "parser_input": ">\n"
+      },
+      {
+        "candidate_index": 34,
+        "pending_ids": [
+          30
+        ],
+        "decoded": "<",
+        "held": false,
+        "parser_input": "<"
+      },
+      {
+        "candidate_index": 35,
+        "pending_ids": [
+          128825
+        ],
+        "decoded": "｜DSML｜",
+        "held": false,
+        "parser_input": "｜DSML｜"
+      },
+      {
+        "candidate_index": 36,
+        "pending_ids": [
+          34756
+        ],
+        "decoded": " invoke",
+        "held": false,
+        "parser_input": " invoke"
+      },
+      {
+        "candidate_index": 37,
+        "pending_ids": [
+          2329
+        ],
+        "decoded": " name",
+        "held": false,
+        "parser_input": " name"
+      },
+      {
+        "candidate_index": 38,
+        "pending_ids": [
+          1281
+        ],
+        "decoded": "=\"",
+        "held": false,
+        "parser_input": "=\""
+      },
+      {
+        "candidate_index": 39,
+        "pending_ids": [
+          23008
+        ],
+        "decoded": "store",
+        "held": false,
+        "parser_input": "store"
+      },
+      {
+        "candidate_index": 40,
+        "pending_ids": [
+          3816
+        ],
+        "decoded": "\">\n",
+        "held": false,
+        "parser_input": "\">\n"
+      },
+      {
+        "candidate_index": 41,
+        "pending_ids": [
+          30
+        ],
+        "decoded": "<",
+        "held": false,
+        "parser_input": "<"
+      },
+      {
+        "candidate_index": 42,
+        "pending_ids": [
+          128825
+        ],
+        "decoded": "｜DSML｜",
+        "held": false,
+        "parser_input": "｜DSML｜"
+      },
+      {
+        "candidate_index": 43,
+        "pending_ids": [
+          10767
+        ],
+        "decoded": " parameter",
+        "held": false,
+        "parser_input": " parameter"
+      },
+      {
+        "candidate_index": 44,
+        "pending_ids": [
+          2329
+        ],
+        "decoded": " name",
+        "held": false,
+        "parser_input": " name"
+      },
+      {
+        "candidate_index": 45,
+        "pending_ids": [
+          1281
+        ],
+        "decoded": "=\"",
+        "held": false,
+        "parser_input": "=\""
+      },
+      {
+        "candidate_index": 46,
+        "pending_ids": [
+          37399
+        ],
+        "decoded": "city",
+        "held": false,
+        "parser_input": "city"
+      },
+      {
+        "candidate_index": 47,
+        "pending_ids": [
+          4
+        ],
+        "decoded": "\"",
+        "held": false,
+        "parser_input": "\""
+      },
+      {
+        "candidate_index": 48,
+        "pending_ids": [
+          3418
+        ],
+        "decoded": " string",
+        "held": false,
+        "parser_input": " string"
+      },
+      {
+        "candidate_index": 49,
+        "pending_ids": [
+          1281
+        ],
+        "decoded": "=\"",
+        "held": false,
+        "parser_input": "=\""
+      },
+      {
+        "candidate_index": 50,
+        "pending_ids": [
+          19836
+        ],
+        "decoded": "false",
+        "held": false,
+        "parser_input": "false"
+      },
+      {
+        "candidate_index": 51,
+        "pending_ids": [
+          3320
+        ],
+        "decoded": "\">",
+        "held": false,
+        "parser_input": "\">"
+      },
+      {
+        "candidate_index": 52,
+        "pending_ids": [
+          24313
+        ],
+        "decoded": "{\"",
+        "held": false,
+        "parser_input": "{\""
+      },
+      {
+        "candidate_index": 53,
+        "pending_ids": [
+          10499
+        ],
+        "decoded": "count",
+        "held": false,
+        "parser_input": "count"
+      },
+      {
+        "candidate_index": 54,
+        "pending_ids": [
+          3362
+        ],
+        "decoded": "\":",
+        "held": false,
+        "parser_input": "\":"
+      },
+      {
+        "candidate_index": 55,
+        "pending_ids": [
+          20
+        ],
+        "decoded": "2",
+        "held": false,
+        "parser_input": "2"
+      },
+      {
+        "candidate_index": 56,
+        "pending_ids": [
+          3184
+        ],
+        "decoded": ",\"",
+        "held": false,
+        "parser_input": ",\""
+      },
+      {
+        "candidate_index": 57,
+        "pending_ids": [
+          633
+        ],
+        "decoded": "ok",
+        "held": false,
+        "parser_input": "ok"
+      },
+      {
+        "candidate_index": 58,
+        "pending_ids": [
+          3362
+        ],
+        "decoded": "\":",
+        "held": false,
+        "parser_input": "\":"
+      },
+      {
+        "candidate_index": 59,
+        "pending_ids": [
+          11476
+        ],
+        "decoded": "true",
+        "held": false,
+        "parser_input": "true"
+      },
+      {
+        "candidate_index": 60,
+        "pending_ids": [
+          24568
+        ],
+        "decoded": "}</",
+        "held": false,
+        "parser_input": "}</"
+      },
+      {
+        "candidate_index": 61,
+        "pending_ids": [
+          128825
+        ],
+        "decoded": "｜DSML｜",
+        "held": false,
+        "parser_input": "｜DSML｜"
+      },
+      {
+        "candidate_index": 62,
+        "pending_ids": [
+          10767
+        ],
+        "decoded": " parameter",
+        "held": false,
+        "parser_input": " parameter"
+      },
+      {
+        "candidate_index": 63,
+        "pending_ids": [
+          1018
+        ],
+        "decoded": ">\n",
+        "held": false,
+        "parser_input": ">\n"
+      },
+      {
+        "candidate_index": 64,
+        "pending_ids": [
+          1718
+        ],
+        "decoded": "</",
+        "held": false,
+        "parser_input": "</"
+      },
+      {
+        "candidate_index": 65,
+        "pending_ids": [
+          128825
+        ],
+        "decoded": "｜DSML｜",
+        "held": false,
+        "parser_input": "｜DSML｜"
+      },
+      {
+        "candidate_index": 66,
+        "pending_ids": [
+          34756
+        ],
+        "decoded": " invoke",
+        "held": false,
+        "parser_input": " invoke"
+      },
+      {
+        "candidate_index": 67,
+        "pending_ids": [
+          1018
+        ],
+        "decoded": ">\n",
+        "held": false,
+        "parser_input": ">\n"
+      },
+      {
+        "candidate_index": 68,
+        "pending_ids": [
+          1718
+        ],
+        "decoded": "</",
+        "held": false,
+        "parser_input": "</"
+      },
+      {
+        "candidate_index": 69,
+        "pending_ids": [
+          128825
+        ],
+        "decoded": "｜DSML｜",
+        "held": false,
+        "parser_input": "｜DSML｜"
+      },
+      {
+        "candidate_index": 70,
+        "pending_ids": [
+          10699
+        ],
+        "decoded": " calls",
+        "held": false,
+        "parser_input": " calls"
+      },
+      {
+        "candidate_index": 71,
+        "pending_ids": [
+          32
+        ],
+        "decoded": ">",
+        "held": false,
+        "parser_input": ">"
+      }
+    ],
+    "response": {
+      "id": "m30",
+      "object": "chat.completion",
+      "created": 0,
+      "model": "deepseek-v4.1-flash",
+      "system_fingerprint": null,
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "",
+            "tool_calls": [
+              {
+                "id": "call_m30_0",
+                "type": "function",
+                "function": {
+                  "name": "lookup_weather",
+                  "arguments": "{\"city\": \"Paris\"}"
+                }
+              },
+              {
+                "id": "call_m30_1",
+                "type": "function",
+                "function": {
+                  "name": "store",
+                  "arguments": "{\"city\": {\"count\":2,\"ok\":true}}"
+                }
+              }
+            ]
+          },
+          "logprobs": null,
+          "finish_reason": "tool_calls"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 72,
+        "total_tokens": 72,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 0
+      }
+    },
+    "events": [
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "role": "assistant",
+              "content": ""
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "id": "call_m30_0",
+                  "type": "function",
+                  "function": {
+                    "name": "lookup_weather",
+                    "arguments": ""
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "{"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "\""
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "city"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "\""
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": ": "
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "\""
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "Paris"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "\""
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "}"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 1,
+                  "id": "call_m30_1",
+                  "type": "function",
+                  "function": {
+                    "name": "store",
+                    "arguments": ""
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 1,
+                  "function": {
+                    "arguments": "{"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 1,
+                  "function": {
+                    "arguments": "\""
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 1,
+                  "function": {
+                    "arguments": "city"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 1,
+                  "function": {
+                    "arguments": "\""
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 1,
+                  "function": {
+                    "arguments": ": "
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 1,
+                  "function": {
+                    "arguments": "{\""
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 1,
+                  "function": {
+                    "arguments": "count"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 1,
+                  "function": {
+                    "arguments": "\":"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 1,
+                  "function": {
+                    "arguments": "2"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 1,
+                  "function": {
+                    "arguments": ",\""
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 1,
+                  "function": {
+                    "arguments": "ok"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 1,
+                  "function": {
+                    "arguments": "\":"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 1,
+                  "function": {
+                    "arguments": "true"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 1,
+                  "function": {
+                    "arguments": "}"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 1,
+                  "function": {
+                    "arguments": "}"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ""
+            },
+            "logprobs": null,
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 72,
+          "total_tokens": 72,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 0
+        }
+      }
+    ],
+    "finished_before_backend_finish": false,
+    "finished_candidate_index": null,
+    "diagnostic_parse_ns": 106750,
+    "target_frontier": null,
+    "dspark_frontier": null,
+    "m_recipe_semantic": null,
+    "commit_clamp": "unavailable"
+  },
+  {
+    "name": "thinking_to_dsml",
+    "origin": "synthetic parser diagnostic; NOT model qualification",
+    "input": "Let me check.\n</think>\n<｜DSML｜ calls>\n<｜DSML｜ invoke name=\"lookup_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "tokens": [
+      5718,
+      678,
+      4085,
+      603,
+      128822,
+      201,
+      30,
+      128825,
+      10699,
+      1018,
+      30,
+      128825,
+      34756,
+      2329,
+      1281,
+      12533,
+      1425,
+      65,
+      50219,
+      3816,
+      30,
+      128825,
+      10767,
+      2329,
+      1281,
+      37399,
+      4,
+      3418,
+      1281,
+      11476,
+      3320,
+      51119,
+      1718,
+      128825,
+      10767,
+      1018,
+      1718,
+      128825,
+      34756,
+      1018,
+      1718,
+      128825,
+      10699,
+      32
+    ],
+    "stop_sequences": [],
+    "decoder_trace": [
+      {
+        "candidate_index": 0,
+        "pending_ids": [
+          5718
+        ],
+        "decoded": "Let",
+        "held": false,
+        "parser_input": "Let"
+      },
+      {
+        "candidate_index": 1,
+        "pending_ids": [
+          678
+        ],
+        "decoded": " me",
+        "held": false,
+        "parser_input": " me"
+      },
+      {
+        "candidate_index": 2,
+        "pending_ids": [
+          4085
+        ],
+        "decoded": " check",
+        "held": false,
+        "parser_input": " check"
+      },
+      {
+        "candidate_index": 3,
+        "pending_ids": [
+          603
+        ],
+        "decoded": ".\n",
+        "held": false,
+        "parser_input": ".\n"
+      },
+      {
+        "candidate_index": 4,
+        "pending_ids": [
+          128822
+        ],
+        "decoded": "</think>",
+        "held": false,
+        "parser_input": "</think>"
+      },
+      {
+        "candidate_index": 5,
+        "pending_ids": [
+          201
+        ],
+        "decoded": "\n",
+        "held": false,
+        "parser_input": "\n"
+      },
+      {
+        "candidate_index": 6,
+        "pending_ids": [
+          30
+        ],
+        "decoded": "<",
+        "held": false,
+        "parser_input": "<"
+      },
+      {
+        "candidate_index": 7,
+        "pending_ids": [
+          128825
+        ],
+        "decoded": "｜DSML｜",
+        "held": false,
+        "parser_input": "｜DSML｜"
+      },
+      {
+        "candidate_index": 8,
+        "pending_ids": [
+          10699
+        ],
+        "decoded": " calls",
+        "held": false,
+        "parser_input": " calls"
+      },
+      {
+        "candidate_index": 9,
+        "pending_ids": [
+          1018
+        ],
+        "decoded": ">\n",
+        "held": false,
+        "parser_input": ">\n"
+      },
+      {
+        "candidate_index": 10,
+        "pending_ids": [
+          30
+        ],
+        "decoded": "<",
+        "held": false,
+        "parser_input": "<"
+      },
+      {
+        "candidate_index": 11,
+        "pending_ids": [
+          128825
+        ],
+        "decoded": "｜DSML｜",
+        "held": false,
+        "parser_input": "｜DSML｜"
+      },
+      {
+        "candidate_index": 12,
+        "pending_ids": [
+          34756
+        ],
+        "decoded": " invoke",
+        "held": false,
+        "parser_input": " invoke"
+      },
+      {
+        "candidate_index": 13,
+        "pending_ids": [
+          2329
+        ],
+        "decoded": " name",
+        "held": false,
+        "parser_input": " name"
+      },
+      {
+        "candidate_index": 14,
+        "pending_ids": [
+          1281
+        ],
+        "decoded": "=\"",
+        "held": false,
+        "parser_input": "=\""
+      },
+      {
+        "candidate_index": 15,
+        "pending_ids": [
+          12533
+        ],
+        "decoded": "look",
+        "held": false,
+        "parser_input": "look"
+      },
+      {
+        "candidate_index": 16,
+        "pending_ids": [
+          1425
+        ],
+        "decoded": "up",
+        "held": false,
+        "parser_input": "up"
+      },
+      {
+        "candidate_index": 17,
+        "pending_ids": [
+          65
+        ],
+        "decoded": "_",
+        "held": false,
+        "parser_input": "_"
+      },
+      {
+        "candidate_index": 18,
+        "pending_ids": [
+          50219
+        ],
+        "decoded": "weather",
+        "held": false,
+        "parser_input": "weather"
+      },
+      {
+        "candidate_index": 19,
+        "pending_ids": [
+          3816
+        ],
+        "decoded": "\">\n",
+        "held": false,
+        "parser_input": "\">\n"
+      },
+      {
+        "candidate_index": 20,
+        "pending_ids": [
+          30
+        ],
+        "decoded": "<",
+        "held": false,
+        "parser_input": "<"
+      },
+      {
+        "candidate_index": 21,
+        "pending_ids": [
+          128825
+        ],
+        "decoded": "｜DSML｜",
+        "held": false,
+        "parser_input": "｜DSML｜"
+      },
+      {
+        "candidate_index": 22,
+        "pending_ids": [
+          10767
+        ],
+        "decoded": " parameter",
+        "held": false,
+        "parser_input": " parameter"
+      },
+      {
+        "candidate_index": 23,
+        "pending_ids": [
+          2329
+        ],
+        "decoded": " name",
+        "held": false,
+        "parser_input": " name"
+      },
+      {
+        "candidate_index": 24,
+        "pending_ids": [
+          1281
+        ],
+        "decoded": "=\"",
+        "held": false,
+        "parser_input": "=\""
+      },
+      {
+        "candidate_index": 25,
+        "pending_ids": [
+          37399
+        ],
+        "decoded": "city",
+        "held": false,
+        "parser_input": "city"
+      },
+      {
+        "candidate_index": 26,
+        "pending_ids": [
+          4
+        ],
+        "decoded": "\"",
+        "held": false,
+        "parser_input": "\""
+      },
+      {
+        "candidate_index": 27,
+        "pending_ids": [
+          3418
+        ],
+        "decoded": " string",
+        "held": false,
+        "parser_input": " string"
+      },
+      {
+        "candidate_index": 28,
+        "pending_ids": [
+          1281
+        ],
+        "decoded": "=\"",
+        "held": false,
+        "parser_input": "=\""
+      },
+      {
+        "candidate_index": 29,
+        "pending_ids": [
+          11476
+        ],
+        "decoded": "true",
+        "held": false,
+        "parser_input": "true"
+      },
+      {
+        "candidate_index": 30,
+        "pending_ids": [
+          3320
+        ],
+        "decoded": "\">",
+        "held": false,
+        "parser_input": "\">"
+      },
+      {
+        "candidate_index": 31,
+        "pending_ids": [
+          51119
+        ],
+        "decoded": "Paris",
+        "held": false,
+        "parser_input": "Paris"
+      },
+      {
+        "candidate_index": 32,
+        "pending_ids": [
+          1718
+        ],
+        "decoded": "</",
+        "held": false,
+        "parser_input": "</"
+      },
+      {
+        "candidate_index": 33,
+        "pending_ids": [
+          128825
+        ],
+        "decoded": "｜DSML｜",
+        "held": false,
+        "parser_input": "｜DSML｜"
+      },
+      {
+        "candidate_index": 34,
+        "pending_ids": [
+          10767
+        ],
+        "decoded": " parameter",
+        "held": false,
+        "parser_input": " parameter"
+      },
+      {
+        "candidate_index": 35,
+        "pending_ids": [
+          1018
+        ],
+        "decoded": ">\n",
+        "held": false,
+        "parser_input": ">\n"
+      },
+      {
+        "candidate_index": 36,
+        "pending_ids": [
+          1718
+        ],
+        "decoded": "</",
+        "held": false,
+        "parser_input": "</"
+      },
+      {
+        "candidate_index": 37,
+        "pending_ids": [
+          128825
+        ],
+        "decoded": "｜DSML｜",
+        "held": false,
+        "parser_input": "｜DSML｜"
+      },
+      {
+        "candidate_index": 38,
+        "pending_ids": [
+          34756
+        ],
+        "decoded": " invoke",
+        "held": false,
+        "parser_input": " invoke"
+      },
+      {
+        "candidate_index": 39,
+        "pending_ids": [
+          1018
+        ],
+        "decoded": ">\n",
+        "held": false,
+        "parser_input": ">\n"
+      },
+      {
+        "candidate_index": 40,
+        "pending_ids": [
+          1718
+        ],
+        "decoded": "</",
+        "held": false,
+        "parser_input": "</"
+      },
+      {
+        "candidate_index": 41,
+        "pending_ids": [
+          128825
+        ],
+        "decoded": "｜DSML｜",
+        "held": false,
+        "parser_input": "｜DSML｜"
+      },
+      {
+        "candidate_index": 42,
+        "pending_ids": [
+          10699
+        ],
+        "decoded": " calls",
+        "held": false,
+        "parser_input": " calls"
+      },
+      {
+        "candidate_index": 43,
+        "pending_ids": [
+          32
+        ],
+        "decoded": ">",
+        "held": false,
+        "parser_input": ">"
+      }
+    ],
+    "response": {
+      "id": "m30",
+      "object": "chat.completion",
+      "created": 0,
+      "model": "deepseek-v4.1-flash",
+      "system_fingerprint": null,
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "",
+            "reasoning_content": "Let me check.",
+            "tool_calls": [
+              {
+                "id": "call_m30_0",
+                "type": "function",
+                "function": {
+                  "name": "lookup_weather",
+                  "arguments": "{\"city\": \"Paris\"}"
+                }
+              }
+            ]
+          },
+          "logprobs": null,
+          "finish_reason": "tool_calls"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 44,
+        "total_tokens": 44,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 0
+      }
+    },
+    "events": [
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "role": "assistant",
+              "content": null,
+              "reasoning_content": ""
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": null,
+              "reasoning_content": "Let"
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": null,
+              "reasoning_content": " me"
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": null,
+              "reasoning_content": " check"
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": null,
+              "reasoning_content": "."
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "id": "call_m30_0",
+                  "type": "function",
+                  "function": {
+                    "name": "lookup_weather",
+                    "arguments": ""
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "{"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "\""
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "city"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "\""
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": ": "
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "\""
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "Paris"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "\""
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "}"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "",
+              "reasoning_content": null
+            },
+            "logprobs": null,
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 44,
+          "total_tokens": 44,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 0
+        }
+      }
+    ],
+    "finished_before_backend_finish": false,
+    "finished_candidate_index": null,
+    "diagnostic_parse_ns": 65417,
+    "target_frontier": null,
+    "dspark_frontier": null,
+    "m_recipe_semantic": null,
+    "commit_clamp": "unavailable"
+  },
+  {
+    "name": "invoke_closed_block_unclosed",
+    "origin": "synthetic parser diagnostic; NOT model qualification",
+    "input": "<｜DSML｜ calls>\n<｜DSML｜ invoke name=\"lookup_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n",
+    "tokens": [
+      30,
+      128825,
+      10699,
+      1018,
+      30,
+      128825,
+      34756,
+      2329,
+      1281,
+      12533,
+      1425,
+      65,
+      50219,
+      3816,
+      30,
+      128825,
+      10767,
+      2329,
+      1281,
+      37399,
+      4,
+      3418,
+      1281,
+      11476,
+      3320,
+      51119,
+      1718,
+      128825,
+      10767,
+      1018,
+      1718,
+      128825,
+      34756,
+      1018
+    ],
+    "stop_sequences": [],
+    "decoder_trace": [
+      {
+        "candidate_index": 0,
+        "pending_ids": [
+          30
+        ],
+        "decoded": "<",
+        "held": false,
+        "parser_input": "<"
+      },
+      {
+        "candidate_index": 1,
+        "pending_ids": [
+          128825
+        ],
+        "decoded": "｜DSML｜",
+        "held": false,
+        "parser_input": "｜DSML｜"
+      },
+      {
+        "candidate_index": 2,
+        "pending_ids": [
+          10699
+        ],
+        "decoded": " calls",
+        "held": false,
+        "parser_input": " calls"
+      },
+      {
+        "candidate_index": 3,
+        "pending_ids": [
+          1018
+        ],
+        "decoded": ">\n",
+        "held": false,
+        "parser_input": ">\n"
+      },
+      {
+        "candidate_index": 4,
+        "pending_ids": [
+          30
+        ],
+        "decoded": "<",
+        "held": false,
+        "parser_input": "<"
+      },
+      {
+        "candidate_index": 5,
+        "pending_ids": [
+          128825
+        ],
+        "decoded": "｜DSML｜",
+        "held": false,
+        "parser_input": "｜DSML｜"
+      },
+      {
+        "candidate_index": 6,
+        "pending_ids": [
+          34756
+        ],
+        "decoded": " invoke",
+        "held": false,
+        "parser_input": " invoke"
+      },
+      {
+        "candidate_index": 7,
+        "pending_ids": [
+          2329
+        ],
+        "decoded": " name",
+        "held": false,
+        "parser_input": " name"
+      },
+      {
+        "candidate_index": 8,
+        "pending_ids": [
+          1281
+        ],
+        "decoded": "=\"",
+        "held": false,
+        "parser_input": "=\""
+      },
+      {
+        "candidate_index": 9,
+        "pending_ids": [
+          12533
+        ],
+        "decoded": "look",
+        "held": false,
+        "parser_input": "look"
+      },
+      {
+        "candidate_index": 10,
+        "pending_ids": [
+          1425
+        ],
+        "decoded": "up",
+        "held": false,
+        "parser_input": "up"
+      },
+      {
+        "candidate_index": 11,
+        "pending_ids": [
+          65
+        ],
+        "decoded": "_",
+        "held": false,
+        "parser_input": "_"
+      },
+      {
+        "candidate_index": 12,
+        "pending_ids": [
+          50219
+        ],
+        "decoded": "weather",
+        "held": false,
+        "parser_input": "weather"
+      },
+      {
+        "candidate_index": 13,
+        "pending_ids": [
+          3816
+        ],
+        "decoded": "\">\n",
+        "held": false,
+        "parser_input": "\">\n"
+      },
+      {
+        "candidate_index": 14,
+        "pending_ids": [
+          30
+        ],
+        "decoded": "<",
+        "held": false,
+        "parser_input": "<"
+      },
+      {
+        "candidate_index": 15,
+        "pending_ids": [
+          128825
+        ],
+        "decoded": "｜DSML｜",
+        "held": false,
+        "parser_input": "｜DSML｜"
+      },
+      {
+        "candidate_index": 16,
+        "pending_ids": [
+          10767
+        ],
+        "decoded": " parameter",
+        "held": false,
+        "parser_input": " parameter"
+      },
+      {
+        "candidate_index": 17,
+        "pending_ids": [
+          2329
+        ],
+        "decoded": " name",
+        "held": false,
+        "parser_input": " name"
+      },
+      {
+        "candidate_index": 18,
+        "pending_ids": [
+          1281
+        ],
+        "decoded": "=\"",
+        "held": false,
+        "parser_input": "=\""
+      },
+      {
+        "candidate_index": 19,
+        "pending_ids": [
+          37399
+        ],
+        "decoded": "city",
+        "held": false,
+        "parser_input": "city"
+      },
+      {
+        "candidate_index": 20,
+        "pending_ids": [
+          4
+        ],
+        "decoded": "\"",
+        "held": false,
+        "parser_input": "\""
+      },
+      {
+        "candidate_index": 21,
+        "pending_ids": [
+          3418
+        ],
+        "decoded": " string",
+        "held": false,
+        "parser_input": " string"
+      },
+      {
+        "candidate_index": 22,
+        "pending_ids": [
+          1281
+        ],
+        "decoded": "=\"",
+        "held": false,
+        "parser_input": "=\""
+      },
+      {
+        "candidate_index": 23,
+        "pending_ids": [
+          11476
+        ],
+        "decoded": "true",
+        "held": false,
+        "parser_input": "true"
+      },
+      {
+        "candidate_index": 24,
+        "pending_ids": [
+          3320
+        ],
+        "decoded": "\">",
+        "held": false,
+        "parser_input": "\">"
+      },
+      {
+        "candidate_index": 25,
+        "pending_ids": [
+          51119
+        ],
+        "decoded": "Paris",
+        "held": false,
+        "parser_input": "Paris"
+      },
+      {
+        "candidate_index": 26,
+        "pending_ids": [
+          1718
+        ],
+        "decoded": "</",
+        "held": false,
+        "parser_input": "</"
+      },
+      {
+        "candidate_index": 27,
+        "pending_ids": [
+          128825
+        ],
+        "decoded": "｜DSML｜",
+        "held": false,
+        "parser_input": "｜DSML｜"
+      },
+      {
+        "candidate_index": 28,
+        "pending_ids": [
+          10767
+        ],
+        "decoded": " parameter",
+        "held": false,
+        "parser_input": " parameter"
+      },
+      {
+        "candidate_index": 29,
+        "pending_ids": [
+          1018
+        ],
+        "decoded": ">\n",
+        "held": false,
+        "parser_input": ">\n"
+      },
+      {
+        "candidate_index": 30,
+        "pending_ids": [
+          1718
+        ],
+        "decoded": "</",
+        "held": false,
+        "parser_input": "</"
+      },
+      {
+        "candidate_index": 31,
+        "pending_ids": [
+          128825
+        ],
+        "decoded": "｜DSML｜",
+        "held": false,
+        "parser_input": "｜DSML｜"
+      },
+      {
+        "candidate_index": 32,
+        "pending_ids": [
+          34756
+        ],
+        "decoded": " invoke",
+        "held": false,
+        "parser_input": " invoke"
+      },
+      {
+        "candidate_index": 33,
+        "pending_ids": [
+          1018
+        ],
+        "decoded": ">\n",
+        "held": false,
+        "parser_input": ">\n"
+      }
+    ],
+    "response": {
+      "id": "m30",
+      "object": "chat.completion",
+      "created": 0,
+      "model": "deepseek-v4.1-flash",
+      "system_fingerprint": null,
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "",
+            "tool_calls": [
+              {
+                "id": "call_m30_0",
+                "type": "function",
+                "function": {
+                  "name": "lookup_weather",
+                  "arguments": "{\"city\": \"Paris\"}"
+                }
+              }
+            ]
+          },
+          "logprobs": null,
+          "finish_reason": "tool_calls"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 34,
+        "total_tokens": 34,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 0
+      }
+    },
+    "events": [
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "role": "assistant",
+              "content": ""
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "id": "call_m30_0",
+                  "type": "function",
+                  "function": {
+                    "name": "lookup_weather",
+                    "arguments": ""
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "{"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "\""
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "city"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "\""
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": ": "
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "\""
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "Paris"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "\""
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "}"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ""
+            },
+            "logprobs": null,
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 34,
+          "total_tokens": 34,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 0
+        }
+      }
+    ],
+    "finished_before_backend_finish": false,
+    "finished_candidate_index": null,
+    "diagnostic_parse_ns": 50125,
+    "target_frontier": null,
+    "dspark_frontier": null,
+    "m_recipe_semantic": null,
+    "commit_clamp": "unavailable"
+  },
+  {
+    "name": "stop_one_token",
+    "origin": "synthetic parser diagnostic; NOT model qualification",
+    "input": "abcSTOPtail",
+    "tokens": [
+      32372,
+      2453,
+      7819,
+      27837
+    ],
+    "stop_sequences": [
+      "STOP"
+    ],
+    "decoder_trace": [
+      {
+        "candidate_index": 0,
+        "pending_ids": [
+          32372
+        ],
+        "decoded": "abc",
+        "held": false,
+        "parser_input": "abc"
+      },
+      {
+        "candidate_index": 1,
+        "pending_ids": [
+          2453
+        ],
+        "decoded": "ST",
+        "held": false,
+        "parser_input": "ST"
+      },
+      {
+        "candidate_index": 2,
+        "pending_ids": [
+          7819
+        ],
+        "decoded": "OP",
+        "held": false,
+        "parser_input": "OP"
+      },
+      {
+        "candidate_index": 3,
+        "pending_ids": [
+          27837
+        ],
+        "decoded": "tail",
+        "held": false,
+        "parser_input": "tail"
+      }
+    ],
+    "response": {
+      "id": "m30",
+      "object": "chat.completion",
+      "created": 0,
+      "model": "deepseek-v4.1-flash",
+      "system_fingerprint": null,
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "abc"
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 3,
+        "total_tokens": 3,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 0
+      }
+    },
+    "events": [
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "role": "assistant",
+              "content": ""
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "abc"
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ""
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 3,
+          "total_tokens": 3,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 0
+        }
+      }
+    ],
+    "finished_before_backend_finish": true,
+    "finished_candidate_index": 2,
+    "diagnostic_parse_ns": 10041,
+    "target_frontier": null,
+    "dspark_frontier": null,
+    "m_recipe_semantic": null,
+    "commit_clamp": "unavailable"
+  },
+  {
+    "name": "stop_multiple_tokens_unicode",
+    "origin": "synthetic parser diagnostic; NOT model qualification",
+    "input": "café🙂alpha HALT NOW omega",
+    "tokens": [
+      69,
+      2797,
+      619,
+      80300,
+      227,
+      8339,
+      437,
+      59410,
+      57792,
+      54235
+    ],
+    "stop_sequences": [
+      "HALT NOW"
+    ],
+    "decoder_trace": [
+      {
+        "candidate_index": 0,
+        "pending_ids": [
+          69
+        ],
+        "decoded": "c",
+        "held": false,
+        "parser_input": "c"
+      },
+      {
+        "candidate_index": 1,
+        "pending_ids": [
+          2797
+        ],
+        "decoded": "af",
+        "held": false,
+        "parser_input": "af"
+      },
+      {
+        "candidate_index": 2,
+        "pending_ids": [
+          619
+        ],
+        "decoded": "é",
+        "held": false,
+        "parser_input": "é"
+      },
+      {
+        "candidate_index": 3,
+        "pending_ids": [
+          80300
+        ],
+        "decoded": "�",
+        "held": true,
+        "parser_input": null
+      },
+      {
+        "candidate_index": 4,
+        "pending_ids": [
+          80300,
+          227
+        ],
+        "decoded": "🙂",
+        "held": false,
+        "parser_input": "🙂"
+      },
+      {
+        "candidate_index": 5,
+        "pending_ids": [
+          8339
+        ],
+        "decoded": "alpha",
+        "held": false,
+        "parser_input": "alpha"
+      },
+      {
+        "candidate_index": 6,
+        "pending_ids": [
+          437
+        ],
+        "decoded": " H",
+        "held": false,
+        "parser_input": " H"
+      },
+      {
+        "candidate_index": 7,
+        "pending_ids": [
+          59410
+        ],
+        "decoded": "ALT",
+        "held": false,
+        "parser_input": "ALT"
+      },
+      {
+        "candidate_index": 8,
+        "pending_ids": [
+          57792
+        ],
+        "decoded": " NOW",
+        "held": false,
+        "parser_input": " NOW"
+      },
+      {
+        "candidate_index": 9,
+        "pending_ids": [
+          54235
+        ],
+        "decoded": " omega",
+        "held": false,
+        "parser_input": " omega"
+      }
+    ],
+    "response": {
+      "id": "m30",
+      "object": "chat.completion",
+      "created": 0,
+      "model": "deepseek-v4.1-flash",
+      "system_fingerprint": null,
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "café🙂alpha "
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 9,
+        "total_tokens": 9,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 0
+      }
+    },
+    "events": [
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "role": "assistant",
+              "content": ""
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "c"
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "af"
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "é"
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "🙂"
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "alpha"
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " "
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ""
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 9,
+          "total_tokens": 9,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 0
+        }
+      }
+    ],
+    "finished_before_backend_finish": true,
+    "finished_candidate_index": 8,
+    "diagnostic_parse_ns": 24875,
+    "target_frontier": null,
+    "dspark_frontier": null,
+    "m_recipe_semantic": null,
+    "commit_clamp": "unavailable"
+  },
+  {
+    "name": "stop_shared_prefix",
+    "origin": "synthetic parser diagnostic; NOT model qualification",
+    "input": "HALT NOT yet HALT NOW tail",
+    "tokens": [
+      42,
+      59410,
+      11388,
+      4671,
+      437,
+      59410,
+      57792,
+      11104
+    ],
+    "stop_sequences": [
+      "HALT NOW"
+    ],
+    "decoder_trace": [
+      {
+        "candidate_index": 0,
+        "pending_ids": [
+          42
+        ],
+        "decoded": "H",
+        "held": false,
+        "parser_input": "H"
+      },
+      {
+        "candidate_index": 1,
+        "pending_ids": [
+          59410
+        ],
+        "decoded": "ALT",
+        "held": false,
+        "parser_input": "ALT"
+      },
+      {
+        "candidate_index": 2,
+        "pending_ids": [
+          11388
+        ],
+        "decoded": " NOT",
+        "held": false,
+        "parser_input": " NOT"
+      },
+      {
+        "candidate_index": 3,
+        "pending_ids": [
+          4671
+        ],
+        "decoded": " yet",
+        "held": false,
+        "parser_input": " yet"
+      },
+      {
+        "candidate_index": 4,
+        "pending_ids": [
+          437
+        ],
+        "decoded": " H",
+        "held": false,
+        "parser_input": " H"
+      },
+      {
+        "candidate_index": 5,
+        "pending_ids": [
+          59410
+        ],
+        "decoded": "ALT",
+        "held": false,
+        "parser_input": "ALT"
+      },
+      {
+        "candidate_index": 6,
+        "pending_ids": [
+          57792
+        ],
+        "decoded": " NOW",
+        "held": false,
+        "parser_input": " NOW"
+      },
+      {
+        "candidate_index": 7,
+        "pending_ids": [
+          11104
+        ],
+        "decoded": " tail",
+        "held": false,
+        "parser_input": " tail"
+      }
+    ],
+    "response": {
+      "id": "m30",
+      "object": "chat.completion",
+      "created": 0,
+      "model": "deepseek-v4.1-flash",
+      "system_fingerprint": null,
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "HALT NOT yet "
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 7,
+        "total_tokens": 7,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 0
+      }
+    },
+    "events": [
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "role": "assistant",
+              "content": ""
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "H"
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "ALT"
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " NOT"
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " yet"
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " "
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "m30",
+        "object": "chat.completion.chunk",
+        "created": 1791005749,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ""
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 7,
+          "total_tokens": 7,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 0
+        }
+      }
+    ],
+    "finished_before_backend_finish": true,
+    "finished_candidate_index": 6,
+    "diagnostic_parse_ns": 20083,
+    "target_frontier": null,
+    "dspark_frontier": null,
+    "m_recipe_semantic": null,
+    "commit_clamp": "unavailable"
+  }
+]

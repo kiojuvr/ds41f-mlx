@@ -1,0 +1,186 @@
+{
+  "schema": "ds41f.m30.recipe-preview-audit.v1",
+  "base_commit": "e19eb817c33e848237758332c552e52e3461a9f4",
+  "decision": "RECIPE_PREVIEW_API_REQUIRED",
+  "protocol_gate_passed": false,
+  "production_mtp": "OFF",
+  "copy_attempts": {
+    "copy": {
+      "supported": false,
+      "error": "TypeError: cannot pickle 'deepseek_recipe._native.StreamProcessor' object"
+    },
+    "deepcopy": {
+      "supported": false,
+      "error": "TypeError: cannot pickle 'deepseek_recipe._native.StreamProcessor' object"
+    },
+    "pickle": {
+      "supported": false,
+      "error": "TypeError: cannot pickle 'deepseek_recipe._native.StreamProcessor' object"
+    }
+  },
+  "python_public_parser_api": [
+    "close",
+    "finish",
+    "finished",
+    "push"
+  ],
+  "preview_implemented": false,
+  "semantic_clamp_installed": false,
+  "model_executions": 0,
+  "model_history_replay": 0,
+  "full_target_cache_repack": 0,
+  "verify_during_quiesce": 0,
+  "proposal_during_quiesce": 0,
+  "zero_counter_scope": "this audit did not execute model or quiescence; NOT live-MTP proof",
+  "parser_history_replays": 1,
+  "parser_history_replay_scope": "one historical OFF artifact diagnostic, not per cycle",
+  "preview_cycle_overhead_ns": null,
+  "tool_result_reentry": "not run: protocol gate blocked",
+  "fresh_actual_model_artifacts": [],
+  "off_on_parity": "not qualified",
+  "diagnostic_cases": [
+    "ordinary",
+    "one_call",
+    "multiple_calls",
+    "thinking_to_dsml",
+    "invoke_closed_block_unclosed",
+    "stop_one_token",
+    "stop_multiple_tokens_unicode",
+    "stop_shared_prefix"
+  ],
+  "required_live_cases": {
+    "ordinary_completion": {
+      "status": "BLOCKED_PREVIEW_API",
+      "target_frontier": null,
+      "dspark_frontier": null,
+      "parser_frontier": null,
+      "acceptance_topology": null
+    },
+    "EOS": {
+      "status": "BLOCKED_PREVIEW_API",
+      "target_frontier": null,
+      "dspark_frontier": null,
+      "parser_frontier": null,
+      "acceptance_topology": null
+    },
+    "max_tokens": {
+      "status": "BLOCKED_PREVIEW_API",
+      "target_frontier": null,
+      "dspark_frontier": null,
+      "parser_frontier": null,
+      "acceptance_topology": null
+    },
+    "one_token_stop": {
+      "status": "BLOCKED_PREVIEW_API",
+      "target_frontier": null,
+      "dspark_frontier": null,
+      "parser_frontier": null,
+      "acceptance_topology": null
+    },
+    "multi_token_stop": {
+      "status": "BLOCKED_PREVIEW_API",
+      "target_frontier": null,
+      "dspark_frontier": null,
+      "parser_frontier": null,
+      "acceptance_topology": null
+    },
+    "stop_cross_verify_cycles": {
+      "status": "BLOCKED_PREVIEW_API",
+      "target_frontier": null,
+      "dspark_frontier": null,
+      "parser_frontier": null,
+      "acceptance_topology": null
+    },
+    "one_valid_DSML_call": {
+      "status": "BLOCKED_PREVIEW_API",
+      "target_frontier": null,
+      "dspark_frontier": null,
+      "parser_frontier": null,
+      "acceptance_topology": null
+    },
+    "multiple_calls_one_DSML_block": {
+      "status": "BLOCKED_PREVIEW_API",
+      "target_frontier": null,
+      "dspark_frontier": null,
+      "parser_frontier": null,
+      "acceptance_topology": null
+    },
+    "DSML_close_cross_candidate_blocks": {
+      "status": "BLOCKED_PREVIEW_API",
+      "target_frontier": null,
+      "dspark_frontier": null,
+      "parser_frontier": null,
+      "acceptance_topology": null
+    },
+    "thinking_to_DSML": {
+      "status": "BLOCKED_PREVIEW_API",
+      "target_frontier": null,
+      "dspark_frontier": null,
+      "parser_frontier": null,
+      "acceptance_topology": null
+    },
+    "full_acceptance": {
+      "status": "BLOCKED_PREVIEW_API",
+      "target_frontier": null,
+      "dspark_frontier": null,
+      "parser_frontier": null,
+      "acceptance_topology": null
+    },
+    "partial_acceptance": {
+      "status": "BLOCKED_PREVIEW_API",
+      "target_frontier": null,
+      "dspark_frontier": null,
+      "parser_frontier": null,
+      "acceptance_topology": null
+    },
+    "rejection": {
+      "status": "BLOCKED_PREVIEW_API",
+      "target_frontier": null,
+      "dspark_frontier": null,
+      "parser_frontier": null,
+      "acceptance_topology": null
+    },
+    "semantic_boundary_before_rejection": {
+      "status": "BLOCKED_PREVIEW_API",
+      "target_frontier": null,
+      "dspark_frontier": null,
+      "parser_frontier": null,
+      "acceptance_topology": null
+    },
+    "rejection_before_semantic_boundary": {
+      "status": "BLOCKED_PREVIEW_API",
+      "target_frontier": null,
+      "dspark_frontier": null,
+      "parser_frontier": null,
+      "acceptance_topology": null
+    },
+    "interruption_before_tool_completion": {
+      "status": "BLOCKED_PREVIEW_API",
+      "target_frontier": null,
+      "dspark_frontier": null,
+      "parser_frontier": null,
+      "acceptance_topology": null
+    },
+    "interruption_safe_undelivered_prefix": {
+      "status": "BLOCKED_PREVIEW_API",
+      "target_frontier": null,
+      "dspark_frontier": null,
+      "parser_frontier": null,
+      "acceptance_topology": null
+    },
+    "quiescence_after_tool_completion": {
+      "status": "BLOCKED_PREVIEW_API",
+      "target_frontier": null,
+      "dspark_frontier": null,
+      "parser_frontier": null,
+      "acceptance_topology": null
+    },
+    "tool_result_reentry": {
+      "status": "BLOCKED_PREVIEW_API",
+      "target_frontier": null,
+      "dspark_frontier": null,
+      "parser_frontier": null,
+      "acceptance_topology": null
+    }
+  }
+}

@@ -14,6 +14,7 @@ Canonical current-state documents:
 - [M20 oMLX release migration](m20-omlx-release-migration.md) — promoted exact upstream 0.7.0 MTP-OFF baseline and bounded qualification evidence
 - [M24 operational soak status](milestone-24-operational-soak-status.md) — bounded real-agent/client tool-loop soak, persistence/restore, interruption recovery, and observability evidence
 - [M25 MTP decision](milestone-25-mtp-decision.md) — pinned upstream lifecycle audit, real-model extraction failure, diagnostic A/B and continued-default-OFF decision
+- [M30 recipe semantic preview](milestone-30-recipe-semantic-preview.md) — pinned parser audit and missing upstream preview API; protocol gate remains blocked and MTP remains OFF
 - [Performance](performance.md) — qualified performance class and baselines
 - [Provenance](provenance.md) — checkpoint/source/import/dependency identity
 - [Qualification](qualification.md) — current qualified, optional, unqualified, and non-goal areas
