@@ -2,6 +2,18 @@
 
 This roadmap converts the runtime strategy into a finite sequence of milestones. It is not an optimization backlog. Runtime behavior, selectors, API integration, and multimodal work must not change until the relevant architecture milestone authorizes that work.
 
+## M39 — Operational lifetime, identity and admission
+
+Decision: **QUALIFIED_FINITE_PROCESS_LIFETIME_ADMISSION**, explicitly internal only.
+Server-issued process-namespace serials never wrap; retirement derives from bounded
+issuance state, not permanent tombstones. One live authority/lease, 16 small retired
+summaries, no closed outcome payloads, fixed trace/request/sequence budgets. The
+20,000-lifetime stress and checkpoint/post-eviction integration pass. Exhaustion
+fails closed; arbitrary client IDs and restart/persistence are not qualified.
+See [M39](milestone-39-lifetime-admission.md) and its canonical evidence.
+Next: one dedicated release/admission/provenance readiness evaluation, not another
+recovery micro-milestone. No public/default/release MTP promotion.
+
 ## M38 — Living-client operational soak
 
 Decision: **BLOCKED_OPERATIONAL_LIFETIME_RETENTION**. The 76-request, three-session

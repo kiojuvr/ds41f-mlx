@@ -1,0 +1,526 @@
+....................................FF.......FFFFFFFFFFFFFFFFFF          [100%]
+=================================== FAILURES ===================================
+_ test_negative_poison_never_insert_native_assistant_and_delete_fresh[unrecoverable] _
+
+state = 'unrecoverable'
+
+    @pytest.mark.parametrize('state',['unrecoverable','poisoned'])
+    def test_negative_poison_never_insert_native_assistant_and_delete_fresh(state):
+        r,c=setup();submit(c);identity=c.identity
+        r.slot['state']=state;r.out.update(outcome_state=state,certificate=dict(representable=False))
+        c.reconcile();assert c.state==state and c.messages==json.loads(identity.body)['messages']
+        with pytest.raises(ClientStateError):c.execute_tools(lambda _:pytest.fail('negative effect'))
+        c.retire();assert c.state=='retired'
+        with pytest.raises(ClientStateError):c.observe_identity(identity)
+>       preserved=c.messages;c.create('fresh');assert c.messages==preserved and c.next_sequence==1
+                             ^^^^^^^^^^^^^^^^^
+
+tests/test_m37_local_client.py:154: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <ds41f_mlx.internal_local_client.InternalLocalClient object at 0x16875c1b0>
+session_id = 'fresh'
+
+    def create(self, session_id=None):
+        self._require_known_lifecycle()
+        self._require_resolved_effects()
+        if self.state != 'retired':
+            self._stop('must explicitly retire before fresh session creation')
+        if session_id is not None:
+>           raise ClientStateError('internal session identity must be server-issued')
+E           ds41f_mlx.internal_local_client.ClientStateError: internal session identity must be server-issued
+
+ds41f_mlx/internal_local_client.py:140: ClientStateError
+_ test_negative_poison_never_insert_native_assistant_and_delete_fresh[poisoned] _
+
+state = 'poisoned'
+
+    @pytest.mark.parametrize('state',['unrecoverable','poisoned'])
+    def test_negative_poison_never_insert_native_assistant_and_delete_fresh(state):
+        r,c=setup();submit(c);identity=c.identity
+        r.slot['state']=state;r.out.update(outcome_state=state,certificate=dict(representable=False))
+        c.reconcile();assert c.state==state and c.messages==json.loads(identity.body)['messages']
+        with pytest.raises(ClientStateError):c.execute_tools(lambda _:pytest.fail('negative effect'))
+        c.retire();assert c.state=='retired'
+        with pytest.raises(ClientStateError):c.observe_identity(identity)
+>       preserved=c.messages;c.create('fresh');assert c.messages==preserved and c.next_sequence==1
+                             ^^^^^^^^^^^^^^^^^
+
+tests/test_m37_local_client.py:154: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <ds41f_mlx.internal_local_client.InternalLocalClient object at 0x16875e360>
+session_id = 'fresh'
+
+    def create(self, session_id=None):
+        self._require_known_lifecycle()
+        self._require_resolved_effects()
+        if self.state != 'retired':
+            self._stop('must explicitly retire before fresh session creation')
+        if session_id is not None:
+>           raise ClientStateError('internal session identity must be server-issued')
+E           ds41f_mlx.internal_local_client.ClientStateError: internal session identity must be server-issued
+
+ds41f_mlx/internal_local_client.py:140: ClientStateError
+_______________ test_lifecycle_ambiguity_is_sticky[False-delete] _______________
+
+action = 'delete', reached = False
+
+    @pytest.mark.parametrize('action', ['delete', 'create'])
+    @pytest.mark.parametrize('reached', [False, True])
+    def test_lifecycle_ambiguity_is_sticky(action, reached):
+>       r=ResetRuntime(); c=InternalLocalClient(r); c.create('old'); submit(c); c.reconcile()
+                                                    ^^^^^^^^^^^^^^^
+
+tests/test_m38_client_faults.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <ds41f_mlx.internal_local_client.InternalLocalClient object at 0x16875f490>
+session_id = 'old'
+
+    def create(self, session_id=None):
+        self._require_known_lifecycle()
+        self._require_resolved_effects()
+        if self.state != 'retired':
+            self._stop('must explicitly retire before fresh session creation')
+        if session_id is not None:
+>           raise ClientStateError('internal session identity must be server-issued')
+E           ds41f_mlx.internal_local_client.ClientStateError: internal session identity must be server-issued
+
+ds41f_mlx/internal_local_client.py:140: ClientStateError
+_______________ test_lifecycle_ambiguity_is_sticky[False-create] _______________
+
+action = 'create', reached = False
+
+    @pytest.mark.parametrize('action', ['delete', 'create'])
+    @pytest.mark.parametrize('reached', [False, True])
+    def test_lifecycle_ambiguity_is_sticky(action, reached):
+>       r=ResetRuntime(); c=InternalLocalClient(r); c.create('old'); submit(c); c.reconcile()
+                                                    ^^^^^^^^^^^^^^^
+
+tests/test_m38_client_faults.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <ds41f_mlx.internal_local_client.InternalLocalClient object at 0x16875f6a0>
+session_id = 'old'
+
+    def create(self, session_id=None):
+        self._require_known_lifecycle()
+        self._require_resolved_effects()
+        if self.state != 'retired':
+            self._stop('must explicitly retire before fresh session creation')
+        if session_id is not None:
+>           raise ClientStateError('internal session identity must be server-issued')
+E           ds41f_mlx.internal_local_client.ClientStateError: internal session identity must be server-issued
+
+ds41f_mlx/internal_local_client.py:140: ClientStateError
+_______________ test_lifecycle_ambiguity_is_sticky[True-delete] ________________
+
+action = 'delete', reached = True
+
+    @pytest.mark.parametrize('action', ['delete', 'create'])
+    @pytest.mark.parametrize('reached', [False, True])
+    def test_lifecycle_ambiguity_is_sticky(action, reached):
+>       r=ResetRuntime(); c=InternalLocalClient(r); c.create('old'); submit(c); c.reconcile()
+                                                    ^^^^^^^^^^^^^^^
+
+tests/test_m38_client_faults.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <ds41f_mlx.internal_local_client.InternalLocalClient object at 0x16875f960>
+session_id = 'old'
+
+    def create(self, session_id=None):
+        self._require_known_lifecycle()
+        self._require_resolved_effects()
+        if self.state != 'retired':
+            self._stop('must explicitly retire before fresh session creation')
+        if session_id is not None:
+>           raise ClientStateError('internal session identity must be server-issued')
+E           ds41f_mlx.internal_local_client.ClientStateError: internal session identity must be server-issued
+
+ds41f_mlx/internal_local_client.py:140: ClientStateError
+_______________ test_lifecycle_ambiguity_is_sticky[True-create] ________________
+
+action = 'create', reached = True
+
+    @pytest.mark.parametrize('action', ['delete', 'create'])
+    @pytest.mark.parametrize('reached', [False, True])
+    def test_lifecycle_ambiguity_is_sticky(action, reached):
+>       r=ResetRuntime(); c=InternalLocalClient(r); c.create('old'); submit(c); c.reconcile()
+                                                    ^^^^^^^^^^^^^^^
+
+tests/test_m38_client_faults.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <ds41f_mlx.internal_local_client.InternalLocalClient object at 0x107c5dde0>
+session_id = 'old'
+
+    def create(self, session_id=None):
+        self._require_known_lifecycle()
+        self._require_resolved_effects()
+        if self.state != 'retired':
+            self._stop('must explicitly retire before fresh session creation')
+        if session_id is not None:
+>           raise ClientStateError('internal session identity must be server-issued')
+E           ds41f_mlx.internal_local_client.ClientStateError: internal session identity must be server-issued
+
+ds41f_mlx/internal_local_client.py:140: ClientStateError
+_ test_reserved_effect_cannot_be_bypassed_by_observation_or_retirement[raise] __
+
+result = 'raise'
+
+    @pytest.mark.parametrize('result', ['raise', 'oversized', 'invalid'])
+    def test_reserved_effect_cannot_be_bypassed_by_observation_or_retirement(result):
+>       r=ResetRuntime(); c=InternalLocalClient(r); c.create('old'); certify_tool(r,c); effects=[]
+                                                    ^^^^^^^^^^^^^^^
+
+tests/test_m38_client_faults.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <ds41f_mlx.internal_local_client.InternalLocalClient object at 0x16875fc20>
+session_id = 'old'
+
+    def create(self, session_id=None):
+        self._require_known_lifecycle()
+        self._require_resolved_effects()
+        if self.state != 'retired':
+            self._stop('must explicitly retire before fresh session creation')
+        if session_id is not None:
+>           raise ClientStateError('internal session identity must be server-issued')
+E           ds41f_mlx.internal_local_client.ClientStateError: internal session identity must be server-issued
+
+ds41f_mlx/internal_local_client.py:140: ClientStateError
+_ test_reserved_effect_cannot_be_bypassed_by_observation_or_retirement[oversized] _
+
+result = 'oversized'
+
+    @pytest.mark.parametrize('result', ['raise', 'oversized', 'invalid'])
+    def test_reserved_effect_cannot_be_bypassed_by_observation_or_retirement(result):
+>       r=ResetRuntime(); c=InternalLocalClient(r); c.create('old'); certify_tool(r,c); effects=[]
+                                                    ^^^^^^^^^^^^^^^
+
+tests/test_m38_client_faults.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <ds41f_mlx.internal_local_client.InternalLocalClient object at 0x16875fd80>
+session_id = 'old'
+
+    def create(self, session_id=None):
+        self._require_known_lifecycle()
+        self._require_resolved_effects()
+        if self.state != 'retired':
+            self._stop('must explicitly retire before fresh session creation')
+        if session_id is not None:
+>           raise ClientStateError('internal session identity must be server-issued')
+E           ds41f_mlx.internal_local_client.ClientStateError: internal session identity must be server-issued
+
+ds41f_mlx/internal_local_client.py:140: ClientStateError
+_ test_reserved_effect_cannot_be_bypassed_by_observation_or_retirement[invalid] _
+
+result = 'invalid'
+
+    @pytest.mark.parametrize('result', ['raise', 'oversized', 'invalid'])
+    def test_reserved_effect_cannot_be_bypassed_by_observation_or_retirement(result):
+>       r=ResetRuntime(); c=InternalLocalClient(r); c.create('old'); certify_tool(r,c); effects=[]
+                                                    ^^^^^^^^^^^^^^^
+
+tests/test_m38_client_faults.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <ds41f_mlx.internal_local_client.InternalLocalClient object at 0x1687ec100>
+session_id = 'old'
+
+    def create(self, session_id=None):
+        self._require_known_lifecycle()
+        self._require_resolved_effects()
+        if self.state != 'retired':
+            self._stop('must explicitly retire before fresh session creation')
+        if session_id is not None:
+>           raise ClientStateError('internal session identity must be server-issued')
+E           ds41f_mlx.internal_local_client.ClientStateError: internal session identity must be server-issued
+
+ds41f_mlx/internal_local_client.py:140: ClientStateError
+______ test_ambiguous_effect_direct_retire_cannot_construct_fresh_history ______
+
+    def test_ambiguous_effect_direct_retire_cannot_construct_fresh_history():
+>       r=ResetRuntime();c=InternalLocalClient(r);c.create('s');certify_tool(r,c)
+                                                  ^^^^^^^^^^^^^
+
+tests/test_m38_client_faults.py:62: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <ds41f_mlx.internal_local_client.InternalLocalClient object at 0x1687ec520>
+session_id = 's'
+
+    def create(self, session_id=None):
+        self._require_known_lifecycle()
+        self._require_resolved_effects()
+        if self.state != 'retired':
+            self._stop('must explicitly retire before fresh session creation')
+        if session_id is not None:
+>           raise ClientStateError('internal session identity must be server-issued')
+E           ds41f_mlx.internal_local_client.ClientStateError: internal session identity must be server-issued
+
+ds41f_mlx/internal_local_client.py:140: ClientStateError
+______ test_actual_128_entry_capacity_multi_session_no_eviction_or_alias _______
+
+    def test_actual_128_entry_capacity_multi_session_no_eviction_or_alias():
+>       r=ResetRuntime(); c=InternalLocalClient(r); c.create('s0'); effects=[]
+                                                    ^^^^^^^^^^^^^^
+
+tests/test_m38_client_faults.py:70: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <ds41f_mlx.internal_local_client.InternalLocalClient object at 0x1687ec940>
+session_id = 's0'
+
+    def create(self, session_id=None):
+        self._require_known_lifecycle()
+        self._require_resolved_effects()
+        if self.state != 'retired':
+            self._stop('must explicitly retire before fresh session creation')
+        if session_id is not None:
+>           raise ClientStateError('internal session identity must be server-issued')
+E           ds41f_mlx.internal_local_client.ClientStateError: internal session identity must be server-issued
+
+ds41f_mlx/internal_local_client.py:140: ClientStateError
+__________ test_maximum_stored_result_is_reused_without_second_effect __________
+
+    def test_maximum_stored_result_is_reused_without_second_effect():
+>       r=ResetRuntime();c=InternalLocalClient(r);c.create('s');certify_tool(r,c)
+                                                  ^^^^^^^^^^^^^
+
+tests/test_m38_client_faults.py:111: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <ds41f_mlx.internal_local_client.InternalLocalClient object at 0x1687ec520>
+session_id = 's'
+
+    def create(self, session_id=None):
+        self._require_known_lifecycle()
+        self._require_resolved_effects()
+        if self.state != 'retired':
+            self._stop('must explicitly retire before fresh session creation')
+        if session_id is not None:
+>           raise ClientStateError('internal session identity must be server-issued')
+E           ds41f_mlx.internal_local_client.ClientStateError: internal session identity must be server-issued
+
+ds41f_mlx/internal_local_client.py:140: ClientStateError
+__________ test_local_request_faults_do_not_mutate_server[body_limit] __________
+
+fault = 'body_limit'
+
+    @pytest.mark.parametrize('fault',['body_limit','owned_messages','not_serializable'])
+    def test_local_request_faults_do_not_mutate_server(fault):
+>       r=ResetRuntime();c=InternalLocalClient(r);c.create('s')
+                                                  ^^^^^^^^^^^^^
+
+tests/test_m38_client_faults.py:119: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <ds41f_mlx.internal_local_client.InternalLocalClient object at 0x1687ecb50>
+session_id = 's'
+
+    def create(self, session_id=None):
+        self._require_known_lifecycle()
+        self._require_resolved_effects()
+        if self.state != 'retired':
+            self._stop('must explicitly retire before fresh session creation')
+        if session_id is not None:
+>           raise ClientStateError('internal session identity must be server-issued')
+E           ds41f_mlx.internal_local_client.ClientStateError: internal session identity must be server-issued
+
+ds41f_mlx/internal_local_client.py:140: ClientStateError
+________ test_local_request_faults_do_not_mutate_server[owned_messages] ________
+
+fault = 'owned_messages'
+
+    @pytest.mark.parametrize('fault',['body_limit','owned_messages','not_serializable'])
+    def test_local_request_faults_do_not_mutate_server(fault):
+>       r=ResetRuntime();c=InternalLocalClient(r);c.create('s')
+                                                  ^^^^^^^^^^^^^
+
+tests/test_m38_client_faults.py:119: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <ds41f_mlx.internal_local_client.InternalLocalClient object at 0x1687ece10>
+session_id = 's'
+
+    def create(self, session_id=None):
+        self._require_known_lifecycle()
+        self._require_resolved_effects()
+        if self.state != 'retired':
+            self._stop('must explicitly retire before fresh session creation')
+        if session_id is not None:
+>           raise ClientStateError('internal session identity must be server-issued')
+E           ds41f_mlx.internal_local_client.ClientStateError: internal session identity must be server-issued
+
+ds41f_mlx/internal_local_client.py:140: ClientStateError
+_______ test_local_request_faults_do_not_mutate_server[not_serializable] _______
+
+fault = 'not_serializable'
+
+    @pytest.mark.parametrize('fault',['body_limit','owned_messages','not_serializable'])
+    def test_local_request_faults_do_not_mutate_server(fault):
+>       r=ResetRuntime();c=InternalLocalClient(r);c.create('s')
+                                                  ^^^^^^^^^^^^^
+
+tests/test_m38_client_faults.py:119: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <ds41f_mlx.internal_local_client.InternalLocalClient object at 0x1687ed0d0>
+session_id = 's'
+
+    def create(self, session_id=None):
+        self._require_known_lifecycle()
+        self._require_resolved_effects()
+        if self.state != 'retired':
+            self._stop('must explicitly retire before fresh session creation')
+        if session_id is not None:
+>           raise ClientStateError('internal session identity must be server-issued')
+E           ds41f_mlx.internal_local_client.ClientStateError: internal session identity must be server-issued
+
+ds41f_mlx/internal_local_client.py:140: ClientStateError
+__________ test_absence_lookup_then_active_retry_race_keeps_identity ___________
+
+    def test_absence_lookup_then_active_retry_race_keeps_identity():
+>       r=ResetRuntime();c=InternalLocalClient(r);c.create('s');r.fail=True
+                                                  ^^^^^^^^^^^^^
+
+tests/test_m38_client_faults.py:127: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <ds41f_mlx.internal_local_client.InternalLocalClient object at 0x1687ed390>
+session_id = 's'
+
+    def create(self, session_id=None):
+        self._require_known_lifecycle()
+        self._require_resolved_effects()
+        if self.state != 'retired':
+            self._stop('must explicitly retire before fresh session creation')
+        if session_id is not None:
+>           raise ClientStateError('internal session identity must be server-issued')
+E           ds41f_mlx.internal_local_client.ClientStateError: internal session identity must be server-issued
+
+ds41f_mlx/internal_local_client.py:140: ClientStateError
+__________ test_dropped_owned_handle_closes_response_without_history ___________
+
+    def test_dropped_owned_handle_closes_response_without_history():
+        import gc
+>       r=ResetRuntime();c=InternalLocalClient(r);c.create('s');submit(c)
+                                                  ^^^^^^^^^^^^^
+
+tests/test_m38_client_faults.py:141: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <ds41f_mlx.internal_local_client.InternalLocalClient object at 0x1687ed650>
+session_id = 's'
+
+    def create(self, session_id=None):
+        self._require_known_lifecycle()
+        self._require_resolved_effects()
+        if self.state != 'retired':
+            self._stop('must explicitly retire before fresh session creation')
+        if session_id is not None:
+>           raise ClientStateError('internal session identity must be server-issued')
+E           ds41f_mlx.internal_local_client.ClientStateError: internal session identity must be server-issued
+
+ds41f_mlx/internal_local_client.py:140: ClientStateError
+_______ test_invalid_local_additions_reject_before_mutation[additions0] ________
+
+additions = [None]
+
+    @pytest.mark.parametrize('additions', [[None], ['user'], [{'role':'tool','content':'invented'}]])
+    def test_invalid_local_additions_reject_before_mutation(additions):
+>       r=ResetRuntime(); c=InternalLocalClient(r); c.create('s')
+                                                    ^^^^^^^^^^^^^
+
+tests/test_m38_client_faults.py:151: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <ds41f_mlx.internal_local_client.InternalLocalClient object at 0x1687ecb50>
+session_id = 's'
+
+    def create(self, session_id=None):
+        self._require_known_lifecycle()
+        self._require_resolved_effects()
+        if self.state != 'retired':
+            self._stop('must explicitly retire before fresh session creation')
+        if session_id is not None:
+>           raise ClientStateError('internal session identity must be server-issued')
+E           ds41f_mlx.internal_local_client.ClientStateError: internal session identity must be server-issued
+
+ds41f_mlx/internal_local_client.py:140: ClientStateError
+_______ test_invalid_local_additions_reject_before_mutation[additions1] ________
+
+additions = ['user']
+
+    @pytest.mark.parametrize('additions', [[None], ['user'], [{'role':'tool','content':'invented'}]])
+    def test_invalid_local_additions_reject_before_mutation(additions):
+>       r=ResetRuntime(); c=InternalLocalClient(r); c.create('s')
+                                                    ^^^^^^^^^^^^^
+
+tests/test_m38_client_faults.py:151: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <ds41f_mlx.internal_local_client.InternalLocalClient object at 0x1687ed9c0>
+session_id = 's'
+
+    def create(self, session_id=None):
+        self._require_known_lifecycle()
+        self._require_resolved_effects()
+        if self.state != 'retired':
+            self._stop('must explicitly retire before fresh session creation')
+        if session_id is not None:
+>           raise ClientStateError('internal session identity must be server-issued')
+E           ds41f_mlx.internal_local_client.ClientStateError: internal session identity must be server-issued
+
+ds41f_mlx/internal_local_client.py:140: ClientStateError
+_______ test_invalid_local_additions_reject_before_mutation[additions2] ________
+
+additions = [{'role': 'tool', 'content': 'invented'}]
+
+    @pytest.mark.parametrize('additions', [[None], ['user'], [{'role':'tool','content':'invented'}]])
+    def test_invalid_local_additions_reject_before_mutation(additions):
+>       r=ResetRuntime(); c=InternalLocalClient(r); c.create('s')
+                                                    ^^^^^^^^^^^^^
+
+tests/test_m38_client_faults.py:151: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <ds41f_mlx.internal_local_client.InternalLocalClient object at 0x1687ede90>
+session_id = 's'
+
+    def create(self, session_id=None):
+        self._require_known_lifecycle()
+        self._require_resolved_effects()
+        if self.state != 'retired':
+            self._stop('must explicitly retire before fresh session creation')
+        if session_id is not None:
+>           raise ClientStateError('internal session identity must be server-issued')
+E           ds41f_mlx.internal_local_client.ClientStateError: internal session identity must be server-issued
+
+ds41f_mlx/internal_local_client.py:140: ClientStateError
+=========================== short test summary info ============================
+FAILED tests/test_m37_local_client.py::test_negative_poison_never_insert_native_assistant_and_delete_fresh[unrecoverable]
+FAILED tests/test_m37_local_client.py::test_negative_poison_never_insert_native_assistant_and_delete_fresh[poisoned]
+FAILED tests/test_m38_client_faults.py::test_lifecycle_ambiguity_is_sticky[False-delete]
+FAILED tests/test_m38_client_faults.py::test_lifecycle_ambiguity_is_sticky[False-create]
+FAILED tests/test_m38_client_faults.py::test_lifecycle_ambiguity_is_sticky[True-delete]
+FAILED tests/test_m38_client_faults.py::test_lifecycle_ambiguity_is_sticky[True-create]
+FAILED tests/test_m38_client_faults.py::test_reserved_effect_cannot_be_bypassed_by_observation_or_retirement[raise]
+FAILED tests/test_m38_client_faults.py::test_reserved_effect_cannot_be_bypassed_by_observation_or_retirement[oversized]
+FAILED tests/test_m38_client_faults.py::test_reserved_effect_cannot_be_bypassed_by_observation_or_retirement[invalid]
+FAILED tests/test_m38_client_faults.py::test_ambiguous_effect_direct_retire_cannot_construct_fresh_history
+FAILED tests/test_m38_client_faults.py::test_actual_128_entry_capacity_multi_session_no_eviction_or_alias
+FAILED tests/test_m38_client_faults.py::test_maximum_stored_result_is_reused_without_second_effect
+FAILED tests/test_m38_client_faults.py::test_local_request_faults_do_not_mutate_server[body_limit]
+FAILED tests/test_m38_client_faults.py::test_local_request_faults_do_not_mutate_server[owned_messages]
+FAILED tests/test_m38_client_faults.py::test_local_request_faults_do_not_mutate_server[not_serializable]
+FAILED tests/test_m38_client_faults.py::test_absence_lookup_then_active_retry_race_keeps_identity
+FAILED tests/test_m38_client_faults.py::test_dropped_owned_handle_closes_response_without_history
+FAILED tests/test_m38_client_faults.py::test_invalid_local_additions_reject_before_mutation[additions0]
+FAILED tests/test_m38_client_faults.py::test_invalid_local_additions_reject_before_mutation[additions1]
+FAILED tests/test_m38_client_faults.py::test_invalid_local_additions_reject_before_mutation[additions2]
+20 failed, 43 passed in 1.37s

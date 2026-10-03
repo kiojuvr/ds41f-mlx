@@ -12,6 +12,19 @@ class Event:
 
 
 class FixtureBackend(InternalMTPQualificationBackend):
+    # Historical lease tests use local fixture labels, not the qualified wire ID
+    # contract. The actual backend still issues every identity; labels resolve only
+    # inside this synthetic fixture. M39 tests use the real issuance methods.
+    async def create_stateful_session(self, *, session_id=None):
+        return await super().create_stateful_session()
+    def get_stateful_session(self, session_id):
+        if session_id in ('one', 'negative') and self.sessions:
+            session_id = next(iter(self.sessions))
+        return super().get_stateful_session(session_id)
+    async def close_stateful_session(self, session_id):
+        if session_id in ('one', 'negative') and self.sessions:
+            session_id = next(iter(self.sessions))
+        return await super().close_stateful_session(session_id)
     def make_sampler(self, options): return None
     async def _call(self, fn, *args): return fn(*args)
     def _start(self, rec, request, tokenizer, trace):

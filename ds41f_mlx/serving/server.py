@@ -207,6 +207,14 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
     @app.post('/v1/sessions/{session_id}/chat/completions')
     async def session_chat(session_id: str, request: Request) -> Response:
         body = await request.body()
+        qualification = getattr(backend, 'qualification_response', None)
+        if qualification is not None:
+            if len(body) > backend.MAX_BODY_BYTES:
+                raise RequestError('internal request body exceeds 1 MiB', 400)
+            try:
+                backend.get_stateful_session(session_id)
+            except KeyError as exc:
+                raise RequestError(str(exc), 404)
         try:
             validate_stateful_chat_request_policy(body)
         except ValueError as exc:

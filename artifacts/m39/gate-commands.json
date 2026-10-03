@@ -1,0 +1,115 @@
+[
+  {
+    "name": "identities",
+    "command": [
+      "/private/tmp/ds41f-m32-qual/bin/python",
+      "tools/check_m34_identities.py"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "admission-tests",
+    "command": [
+      "/private/tmp/ds41f-m32-qual/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_m39_lifetime_admission.py",
+      "--junitxml=artifacts/m39/admission-tests.xml"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "client-tests",
+    "command": [
+      "/private/tmp/ds41f-m32-qual/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_m38_client_faults.py",
+      "tests/test_m37_local_client.py",
+      "tests/test_m19_web_client.py",
+      "--junitxml=artifacts/m39/client-tests.xml"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "runtime-regressions",
+    "command": [
+      "/private/tmp/ds41f-m32-qual/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_m36r_recovery.py",
+      "tests/test_m36_recovery_boundary.py",
+      "tests/test_m35_transport_lease.py",
+      "tests/test_m34_cache_release.py",
+      "tests/test_m29_mtp_lifecycle.py",
+      "tests/test_m25_mtp_boundary.py",
+      "tests/test_prefill_fp8_mlx_p5.py",
+      "tests/test_prefill_fp8_mlx_p6.py",
+      "tests/test_prefill_fp8_mlx_p7.py",
+      "tools/m33_semantic_tests.py",
+      "tools/m33_semantic_extra_tests.py",
+      "tests/test_stateful_request_policy.py",
+      "tests/test_runtime_config.py"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "prior-evidence-regressions",
+    "command": [
+      "/private/tmp/ds41f-m32-qual/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_m33_protocol_evidence.py",
+      "tests/test_m34_operational_evidence.py",
+      "tests/test_m35_http_evidence.py",
+      "tests/test_m36_evidence.py",
+      "tests/test_m36r_evidence.py",
+      "tests/test_m37_evidence.py",
+      "tests/test_m38_evidence.py",
+      "-k",
+      "not identity_and_sources and not current_sources_and_raw_evidence_match and not final_qualification and not current_source_and_evidence_hashes and not current_receipt_hashes_and_nonpromotion"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "release-off-regressions",
+    "command": [
+      "/Users/kioju/.venvs/omlx-0.7.0.release/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_m20_generation_dependency.py"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "rust-regressions",
+    "command": [
+      "cargo",
+      "test"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "recipe-matrix",
+    "command": [
+      "/private/tmp/ds41f-m32-qual/bin/python",
+      "-c",
+      "from pathlib import Path; p=Path('tools/run_m36r_recipe_matrix.py'); code=p.read_text().replace('artifacts/m36r/recipe-matrix.json','artifacts/m39/recipe-matrix.json'); exec(compile(code,str(p),'exec'),{'__file__':str(p.resolve()),'__name__':'__main__'})"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "native-interruptions",
+    "command": [
+      "/private/tmp/ds41f-m32-qual/bin/python",
+      "-c",
+      "from pathlib import Path; p=Path('tools/run_m35_native_interruptions.py'); code=p.read_text().replace('artifacts/m35/native-interruptions.json','artifacts/m39/native-interruptions.json'); exec(compile(code,str(p),'exec'),{'__file__':str(p.resolve()),'__name__':'__main__'})"
+    ],
+    "returncode": 0
+  }
+]

@@ -55,6 +55,13 @@ longer-context and release gates remain separate.
 soak and bounded fault/ledger matrix, but is **BLOCKED_OPERATIONAL_LIFETIME_RETENTION**:
 server closed records/diagnostic payloads have no lifetime cap. Client ambiguity
 now remains fenced across re-observation and lifecycle actions. This is not promotion.
+[M39](milestone-39-lifetime-admission.md) resolves that retention blocker by narrowing
+internal IDs to server-issued process-namespace serial lifetimes. No-wrap issuance
+and live-only admission fence retired identities independently of 16 bounded summaries;
+closed records/payloads are discarded. 20,000-lifetime structural stress and checkpoint
+post-eviction integration pass, with explicit exhaustion denial rather than unlimited
+issuance. This remains internal; the next task is dedicated release/admission/provenance
+readiness evaluation, not further recovery micro-qualification.
 Production/default MTP remains OFF; public MTP disabled; MTP persistence/restore,
 token-exact immediate abort and shared/concurrent MTP remain unsupported.
 

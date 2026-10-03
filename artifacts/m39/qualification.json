@@ -1,0 +1,483 @@
+{
+  "schema": "ds41f.m39.qualification.v1",
+  "decision": "QUALIFIED_FINITE_PROCESS_LIFETIME_ADMISSION",
+  "base_commit": "998500b",
+  "checks": {
+    "prior_ownership_layers_unchanged": true,
+    "lifetime_stress": true,
+    "diagnostic_plateau": true,
+    "authoritative_plateau": true,
+    "eviction_and_exhaustion": true,
+    "checkpoint_integration": true,
+    "no_replay": true,
+    "admission_before_mutation": true,
+    "lifecycle_ambiguity": true,
+    "affected_gates": true,
+    "checkpoint_native": true,
+    "official_recipe_matrix": true,
+    "integration_sources": true
+  },
+  "primary_commands": [
+    {
+      "command": [
+        "/private/tmp/ds41f-m32-qual/bin/python",
+        "tools/run_m39_lifetimes.py"
+      ],
+      "environment": {
+        "DS41F_OMLX_PATH": "/tmp/ds41f-m33-omlx",
+        "DS41F_RECIPE_PATH": "/tmp/ds41f-m32-recipe"
+      }
+    },
+    {
+      "command": [
+        "/private/tmp/ds41f-m32-qual/bin/python",
+        "tools/run_m39_integration.py"
+      ],
+      "environment": {
+        "DS41F_OMLX_PATH": "/tmp/ds41f-m33-omlx",
+        "DS41F_RECIPE_PATH": "/tmp/ds41f-m32-recipe"
+      }
+    },
+    {
+      "command": [
+        "/private/tmp/ds41f-m32-qual/bin/python",
+        "tools/run_m39_lifecycle_transport.py"
+      ],
+      "environment": {
+        "DS41F_OMLX_PATH": "/tmp/ds41f-m33-omlx",
+        "DS41F_RECIPE_PATH": "/tmp/ds41f-m32-recipe"
+      }
+    },
+    {
+      "command": [
+        "/private/tmp/ds41f-m32-qual/bin/python",
+        "tools/run_m39_gates.py"
+      ],
+      "environment": {
+        "DS41F_OMLX_PATH": "/tmp/ds41f-m33-omlx",
+        "DS41F_RECIPE_PATH": "/tmp/ds41f-m32-recipe"
+      }
+    }
+  ],
+  "identity_model": "single backend/process namespace plus contiguous fixed 128-bit no-wrap server issuance",
+  "invariant": "only live dictionary membership executes; issued serials never reissued; diagnostics never authorize",
+  "budgets": {
+    "live_sessions": 1,
+    "active_requests": 1,
+    "identity_namespace_bits": 128,
+    "identity_counter_bits": 128,
+    "lifetimes_max": "340282366920938463463374607431768211455",
+    "request_sequence_bits": 64,
+    "body_bytes": 1048576,
+    "total_tokens": 8192,
+    "responses": 768,
+    "retired_authority_records": 0,
+    "retired_outcome_payload_slots": 0,
+    "diagnostic_records": 16,
+    "diagnostic_summary_max_bytes": 199,
+    "diagnostic_list_max_bytes": 3216,
+    "trace_slots": 32,
+    "session_trace_slots": 32
+  },
+  "lifetimes": 20000,
+  "performance": {
+    "early": {
+      "create": {
+        "samples": 200,
+        "median_ns": 1125.0,
+        "p95_ns": 1875
+      },
+      "delete": {
+        "samples": 200,
+        "median_ns": 68042.0,
+        "p95_ns": 88791
+      },
+      "stale_reject": {
+        "samples": 200,
+        "median_ns": 2584.0,
+        "p95_ns": 3000
+      },
+      "get": {
+        "samples": 200,
+        "median_ns": 2833.0,
+        "p95_ns": 3208
+      },
+      "outcome_retry": {
+        "samples": 200,
+        "median_ns": 3458.0,
+        "p95_ns": 4625
+      },
+      "capacity_deny": {
+        "samples": 200,
+        "median_ns": 458.0,
+        "p95_ns": 625
+      }
+    },
+    "mid": {
+      "create": {
+        "samples": 200,
+        "median_ns": 1083.0,
+        "p95_ns": 1250
+      },
+      "delete": {
+        "samples": 200,
+        "median_ns": 67729.5,
+        "p95_ns": 74292
+      },
+      "stale_reject": {
+        "samples": 200,
+        "median_ns": 2583.0,
+        "p95_ns": 2750
+      },
+      "get": {
+        "samples": 200,
+        "median_ns": 2834.0,
+        "p95_ns": 3000
+      },
+      "outcome_retry": {
+        "samples": 200,
+        "median_ns": 3333.0,
+        "p95_ns": 3667
+      },
+      "capacity_deny": {
+        "samples": 200,
+        "median_ns": 437.5,
+        "p95_ns": 500
+      }
+    },
+    "late": {
+      "create": {
+        "samples": 200,
+        "median_ns": 1083.0,
+        "p95_ns": 1166
+      },
+      "delete": {
+        "samples": 200,
+        "median_ns": 67375.0,
+        "p95_ns": 70334
+      },
+      "stale_reject": {
+        "samples": 200,
+        "median_ns": 2583.0,
+        "p95_ns": 2667
+      },
+      "get": {
+        "samples": 200,
+        "median_ns": 2833.0,
+        "p95_ns": 2917
+      },
+      "outcome_retry": {
+        "samples": 200,
+        "median_ns": 3334.0,
+        "p95_ns": 3500
+      },
+      "capacity_deny": {
+        "samples": 200,
+        "median_ns": 458.0,
+        "p95_ns": 500
+      }
+    }
+  },
+  "structural_samples": [
+    {
+      "cycles": 1,
+      "live_records": 0,
+      "live_dictionary_storage_bytes": 184,
+      "native_owners": 0,
+      "identity_scalars": 2,
+      "namespace_bytes": 32,
+      "counter_bits": 1,
+      "counter_max_bits": 128,
+      "identity_storage_bytes": 101,
+      "retired_authority_records": 0,
+      "diagnostic_records": 1,
+      "diagnostic_payload_bytes": 180,
+      "closed_outcome_payload_bytes": 0,
+      "diagnostic_deque_storage_bytes": 760,
+      "session_trace_slots": 0,
+      "session_trace_limit": 32,
+      "trace_slots": 0,
+      "trace_limit": 32,
+      "process_maxrss": 46546944
+    },
+    {
+      "cycles": 16,
+      "live_records": 0,
+      "live_dictionary_storage_bytes": 184,
+      "native_owners": 0,
+      "identity_scalars": 2,
+      "namespace_bytes": 32,
+      "counter_bits": 5,
+      "counter_max_bits": 128,
+      "identity_storage_bytes": 101,
+      "retired_authority_records": 0,
+      "diagnostic_records": 16,
+      "diagnostic_payload_bytes": 2880,
+      "closed_outcome_payload_bytes": 0,
+      "diagnostic_deque_storage_bytes": 760,
+      "session_trace_slots": 0,
+      "session_trace_limit": 32,
+      "trace_slots": 0,
+      "trace_limit": 32,
+      "process_maxrss": 46579712
+    },
+    {
+      "cycles": 32,
+      "live_records": 0,
+      "live_dictionary_storage_bytes": 184,
+      "native_owners": 0,
+      "identity_scalars": 2,
+      "namespace_bytes": 32,
+      "counter_bits": 6,
+      "counter_max_bits": 128,
+      "identity_storage_bytes": 101,
+      "retired_authority_records": 0,
+      "diagnostic_records": 16,
+      "diagnostic_payload_bytes": 2880,
+      "closed_outcome_payload_bytes": 0,
+      "diagnostic_deque_storage_bytes": 760,
+      "session_trace_slots": 0,
+      "session_trace_limit": 32,
+      "trace_slots": 0,
+      "trace_limit": 32,
+      "process_maxrss": 46579712
+    },
+    {
+      "cycles": 200,
+      "live_records": 0,
+      "live_dictionary_storage_bytes": 184,
+      "native_owners": 0,
+      "identity_scalars": 2,
+      "namespace_bytes": 32,
+      "counter_bits": 8,
+      "counter_max_bits": 128,
+      "identity_storage_bytes": 101,
+      "retired_authority_records": 0,
+      "diagnostic_records": 16,
+      "diagnostic_payload_bytes": 2880,
+      "closed_outcome_payload_bytes": 0,
+      "diagnostic_deque_storage_bytes": 760,
+      "session_trace_slots": 0,
+      "session_trace_limit": 32,
+      "trace_slots": 0,
+      "trace_limit": 32,
+      "process_maxrss": 46710784
+    },
+    {
+      "cycles": 10000,
+      "live_records": 0,
+      "live_dictionary_storage_bytes": 184,
+      "native_owners": 0,
+      "identity_scalars": 2,
+      "namespace_bytes": 32,
+      "counter_bits": 14,
+      "counter_max_bits": 128,
+      "identity_storage_bytes": 101,
+      "retired_authority_records": 0,
+      "diagnostic_records": 16,
+      "diagnostic_payload_bytes": 2880,
+      "closed_outcome_payload_bytes": 0,
+      "diagnostic_deque_storage_bytes": 760,
+      "session_trace_slots": 0,
+      "session_trace_limit": 32,
+      "trace_slots": 0,
+      "trace_limit": 32,
+      "process_maxrss": 46743552
+    },
+    {
+      "cycles": 20000,
+      "live_records": 0,
+      "live_dictionary_storage_bytes": 184,
+      "native_owners": 0,
+      "identity_scalars": 2,
+      "namespace_bytes": 32,
+      "counter_bits": 15,
+      "counter_max_bits": 128,
+      "identity_storage_bytes": 101,
+      "retired_authority_records": 0,
+      "diagnostic_records": 16,
+      "diagnostic_payload_bytes": 2880,
+      "closed_outcome_payload_bytes": 0,
+      "diagnostic_deque_storage_bytes": 760,
+      "session_trace_slots": 0,
+      "session_trace_limit": 32,
+      "trace_slots": 0,
+      "trace_limit": 32,
+      "process_maxrss": 46858240
+    }
+  ],
+  "checkpoint_resources": [
+    {
+      "live_records": 0,
+      "live_dictionary_storage_bytes": 184,
+      "native_owners": 0,
+      "identity_scalars": 2,
+      "namespace_bytes": 32,
+      "counter_bits": 1,
+      "counter_max_bits": 128,
+      "identity_storage_bytes": 101,
+      "retired_authority_records": 0,
+      "diagnostic_records": 1,
+      "diagnostic_payload_bytes": 178,
+      "closed_outcome_payload_bytes": 0,
+      "diagnostic_deque_storage_bytes": 760,
+      "session_trace_slots": 0,
+      "session_trace_limit": 32,
+      "trace_slots": 0,
+      "trace_limit": 32,
+      "process_maxrss": 20009107456,
+      "mlx_active_bytes": 309155355500,
+      "mlx_cache_bytes": 0,
+      "process_rss_bytes": 11799298048
+    },
+    {
+      "live_records": 0,
+      "live_dictionary_storage_bytes": 184,
+      "native_owners": 0,
+      "identity_scalars": 2,
+      "namespace_bytes": 32,
+      "counter_bits": 2,
+      "counter_max_bits": 128,
+      "identity_storage_bytes": 101,
+      "retired_authority_records": 0,
+      "diagnostic_records": 2,
+      "diagnostic_payload_bytes": 356,
+      "closed_outcome_payload_bytes": 0,
+      "diagnostic_deque_storage_bytes": 760,
+      "session_trace_slots": 0,
+      "session_trace_limit": 32,
+      "trace_slots": 0,
+      "trace_limit": 32,
+      "process_maxrss": 20009107456,
+      "mlx_active_bytes": 309159932536,
+      "mlx_cache_bytes": 0,
+      "process_rss_bytes": 7265337344
+    },
+    {
+      "live_records": 0,
+      "live_dictionary_storage_bytes": 184,
+      "native_owners": 0,
+      "identity_scalars": 2,
+      "namespace_bytes": 32,
+      "counter_bits": 2,
+      "counter_max_bits": 128,
+      "identity_storage_bytes": 101,
+      "retired_authority_records": 0,
+      "diagnostic_records": 3,
+      "diagnostic_payload_bytes": 534,
+      "closed_outcome_payload_bytes": 0,
+      "diagnostic_deque_storage_bytes": 760,
+      "session_trace_slots": 0,
+      "session_trace_limit": 32,
+      "trace_slots": 0,
+      "trace_limit": 32,
+      "process_maxrss": 20009107456,
+      "mlx_active_bytes": 309159715060,
+      "mlx_cache_bytes": 0,
+      "process_rss_bytes": 7268302848
+    },
+    {
+      "live_records": 0,
+      "live_dictionary_storage_bytes": 184,
+      "native_owners": 0,
+      "identity_scalars": 2,
+      "namespace_bytes": 32,
+      "counter_bits": 6,
+      "counter_max_bits": 128,
+      "identity_storage_bytes": 101,
+      "retired_authority_records": 0,
+      "diagnostic_records": 16,
+      "diagnostic_payload_bytes": 2849,
+      "closed_outcome_payload_bytes": 0,
+      "diagnostic_deque_storage_bytes": 760,
+      "session_trace_slots": 0,
+      "session_trace_limit": 32,
+      "trace_slots": 0,
+      "trace_limit": 32,
+      "process_maxrss": 20009107456,
+      "mlx_active_bytes": 309172136802,
+      "mlx_cache_bytes": 0,
+      "process_rss_bytes": 7286276096
+    }
+  ],
+  "preserved_ownership_layers": {
+    "ds41f_mlx/serving/request_fence.py": "07f397caf7e30e305fa498655cf24afbb5bf19a80e3340dc487f6ff7348e2272",
+    "ds41f_mlx/serving/recovery_certificate.py": "9b355ddd7a81953079f0b4edd6be7930293b8916f54036cc2c5dd49d1685aea4",
+    "ds41f_mlx/runtime/mtp_lifecycle.py": "a05744364d5440a16774905d9d60a5266ccc4528f1ca871f20db715d8c5fcde6",
+    "ds41f_mlx/runtime/recipe_semantic_guard.py": "6397801995cb1285a0f87c2455d6423160964be54e70889b390aa379e06e808d",
+    "ds41f_mlx/internal_local_client.py": "36caed07e0b4165d076354cd5d1843679788ad4c0e1f9083b1085ad5a706ce55",
+    "ds41f_mlx/web_client.py": "635dd021475da57f9cc77be63c4de8a3fe35fbbe9ac6708d1dc5cc605703696f"
+  },
+  "historical_evidence": {
+    "artifacts/m33/qualification.json": "d7bc84e056d0402de7cd1198d3835ad2b2cfc7188eb7fa83727dd17700a67691",
+    "artifacts/m34/qualification.json": "e4753370eefe22102f8349357321312ccedf4fca2f812110f5590162ba77321a",
+    "artifacts/m35/qualification.json": "046a7381d6a2e90e11106794447f2d77aa3a466a7f5da4f92490ec41fb244054",
+    "artifacts/m36/qualification.json": "4d79b6e636857e4571a9f2c88733f194c36ab4006e54f37e91433438eab4263b",
+    "artifacts/m36r/qualification.json": "3024b43b14a47263b43d86306b28585e06716bcca87a80a95f02f8137168d2a9",
+    "artifacts/m37/qualification.json": "3f12530fc74aab0d8345453c36c5e7cc6df79936420aedd29045c67de1c6fa39",
+    "artifacts/m38/qualification.json": "27f560c107663771b7e67bae39f4abb4a88c01540c46e7d5d92af45b138d1839"
+  },
+  "sources": {
+    "ds41f_mlx/serving/internal_mtp.py": "d5c1839ca8e84c788f867c61f6214d8fa756a5dda3b7fa46fc78729a5fbe4de0",
+    "ds41f_mlx/serving/server.py": "9d81aac0f9121630a622dfb229f47b55a1ae981e7b03688d9a846e2dccdb099f",
+    "ds41f_mlx/serving/request_fence.py": "07f397caf7e30e305fa498655cf24afbb5bf19a80e3340dc487f6ff7348e2272",
+    "ds41f_mlx/internal_local_client.py": "36caed07e0b4165d076354cd5d1843679788ad4c0e1f9083b1085ad5a706ce55",
+    "tests/test_m35_transport_lease.py": "fbd9985a7e8bfda1dd33be7526f0a0a96a062bfd299e19e98e3100a52bca26e4",
+    "tests/test_m39_lifetime_admission.py": "7de0f4c62c4759f8ad63834ce43813a67ab3333de9648cbc1fd6fc0ab0d0decc",
+    "tests/test_m39_evidence.py": "c680a2950b30cc1fc58fc1d96389d08e1c7d6722ed54e6cbdd0686fb2fbee3f8",
+    "docs/milestone-39-lifetime-admission.md": "9d0c3ec2f84e18f76dfbd47ac11f5d7d2de13fac6f08e8b973b594b10389113f",
+    "docs/README.md": "ced62b4fb335ced68a2ebfe74d1504b16c66b34d332a28d893dc8204d839d868",
+    "docs/doc-classification.json": "8900b4d3bd0f545bf6836eaa707ad986afe581dab40b83b96b5b101a633cea73",
+    "docs/session-state.md": "f5a2d24ebeac88d7aaea8a57fb412d93ce55bdc7cb53f9aa29572680f33b4e56",
+    "docs/qualification.md": "6b85d85a4d7abdbde23e8fd8f0347b136ce9af21c9a527e35540a0331e5f978d",
+    "docs/implementation-plan.md": "92ce4f0b5e89d5a6a83abe163f4d92b025f525247a55fb62199c4cdd5fb102b2",
+    "tools/record_m39_evidence.py": "023bf85d0b982afb8e96ea1f2ba1752978102ba288254ead85c803a75d13c672",
+    "tools/run_m39_gates.py": "128c23fd4facf7f2829dcf3d15a9dd9c8f8a1827de95b39a264d3d6bc0d58650",
+    "tools/run_m39_integration.py": "3f5c8ba03e96e1139386507a6efc335b2531ebb8783bf255f1ac44b20d0827d4",
+    "tools/run_m39_lifecycle_transport.py": "77b0d98528df15eccef23bfcd3af2d498e8e08d89867e34930ca39fc47ee5926",
+    "tools/run_m39_lifetimes.py": "2253ced139a970485787056cb99fffccc697cf67061dfa99ed9f83d7f79f8173"
+  },
+  "evidence": {
+    "admission-tests.log": "9c2bc789bf2cba75cc5ed822cd3fccab9cf3d7a226611daf566ceea5ed0c55b1",
+    "admission-tests.xml": "23a5eab6b6d807c5695b58a91338d6788c8962673694a3cb40c9a294d73fbef5",
+    "client-tests.log": "db4371c69a0dcb9c95913dd4982abea57146ef6bb31403a6a4b5bca1a03bc3a4",
+    "client-tests.xml": "8bfd92afb6ca9225f531aaf69f6ee2f86ab271cbb7047780e2dd9fadb6dac9bc",
+    "gate-commands.json": "fec8523b88645460385b00db82844dff16328e94dbf5054868686d45cdd06c0d",
+    "identities.log": "2d6c92d89f59fd9726f88a8370cae248689d3406c1f3b7572abe95b48cd5f050",
+    "integration.json": "e01aae84aed72801191c4229e9d99cbb31a829857d9703d0d41c67b5dbd55eb4",
+    "integration.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "lifecycle-transport.json": "6c66419c252636eae40074dbb1e7fd19fefde867999c626a487dd775bff8682b",
+    "lifecycle-transport.log": "924700d422a91ada8cf3cbeb7d3751d3952b9023443272d717c39d1b34141231",
+    "lifetimes.json": "c3abacde8c8f1901c4f67a93296f381ed6c6fedceaf6c22b0690c909b2e6f381",
+    "lifetimes.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native-interruptions.json": "600f0336a03a5a25d1002aea9722bdd977ed94f049f8182aabc4d73373d32149",
+    "native-interruptions.log": "a360a7cf8243a7739cb68562247e3ac7a2198cca4cb9692a124cf81a9d3535b5",
+    "prior-evidence-regressions.log": "c4d811b5f12b1ca7f07c583b88e43cbe712c8f04e0a26bd176efba425b001791",
+    "recipe-matrix.json": "6da62e6fe40275c5f38a3284583857587c76fcec3fee508a4948afe60e37adee",
+    "recipe-matrix.log": "61c11329a0026dd9c439ee1e8838f1723221da191994e90f4168e9cd235515ff",
+    "release-off-regressions.log": "a6ce283b12e071bd238b5c39300290360d38d02a13d07c64ef24411369930c04",
+    "runtime-regressions.log": "47c2a33b633e09492b66cdd3710141b83eff511d4114636a2bdd8708e3088a32",
+    "rust-regressions.log": "213f5c4cc5604b66f50dd1f6fb0ce68ebefd565a772ad8eb9006563b4afe97c3"
+  },
+  "excluded_attempts": {
+    "initial-regressions.log": "tests called historical client-selected IDs; synthetic lease fixture labels adapted, real admission covered separately",
+    "admission-tests-first-attempt.log": "ceiling fixture attempted no-header fenced retry, which correctly rejects mode mixing; fixture corrected",
+    "lifetimes-first-attempt.log": "weakref checked before executor result callback release; next event-loop turn required, not backend retention",
+    "integration-envelope-attempt.json": "tool schema changed on retained text-only session; exact-prefix correctly rejected; final lifetime integration keeps envelope unchanged",
+    "integration-preliminary.json": "passing preliminary integration superseded by final source-hashed HTTP admission run"
+  },
+  "unsupported": [
+    "public/default/release MTP",
+    "persistence/process restart/backend recreation",
+    "distributed identity/recovery",
+    "crash-safe tool exactly-once",
+    "concurrent/shared MTP",
+    "batching",
+    "token-exact immediate abort",
+    "200K HTTP MTP",
+    "unbounded backpressure",
+    "portable native wheels",
+    "universal partial DSML recovery"
+  ],
+  "next_task": "dedicated release/admission/provenance readiness evaluation; not a recovery micro-milestone"
+}

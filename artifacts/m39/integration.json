@@ -1,0 +1,3191 @@
+{
+  "schema": "ds41f.m39.integration.v1",
+  "status": "PASS",
+  "phases": [
+    {
+      "session_id": "mtp_31880eca313d4c5c8f2adec30fa2d7e2_00000000000000000000000000000001",
+      "turns": [
+        {
+          "identity": {
+            "session_id": "mtp_31880eca313d4c5c8f2adec30fa2d7e2_00000000000000000000000000000001",
+            "sequence": 1,
+            "body_utf8": "{\"model\": \"deepseek-v4.1-flash\", \"temperature\": 0, \"max_tokens\": 64, \"reasoning_effort\": \"none\", \"stream\": true, \"messages\": [{\"role\": \"user\", \"content\": \"Say hello briefly. Do not use tools.\"}]}",
+            "body_sha256": "4a64ca87eb9299e4e76262c203ad72f5449b2729e9645343d8a0da3f321beb66"
+          },
+          "outcome": {
+            "sequence": 1,
+            "outcome_state": "recoverable",
+            "certificate": {
+              "version": 1,
+              "frontier": 16,
+              "canonical_sha256": "b6fa45c846ea547889f9e693572bfd50bc7365e42311fb4490ef96d80e80b55e",
+              "representable": true,
+              "executable_tools": false,
+              "exact_prefix": true,
+              "semantic_complete": true,
+              "first_mismatch": null,
+              "witness": {
+                "model": "deepseek-v4.1-flash",
+                "temperature": 0,
+                "max_tokens": 1,
+                "reasoning_effort": "none",
+                "stream": false,
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": "Say hello briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hello!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Continue."
+                  }
+                ]
+              },
+              "encoded_length": 21
+            },
+            "response": {
+              "id": "364e2acf96244602ab13407bef3fce9a",
+              "object": "chat.completion",
+              "created": 1791059922,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "message": {
+                    "role": "assistant",
+                    "content": "Hello!"
+                  },
+                  "logprobs": null,
+                  "finish_reason": "stop"
+                }
+              ],
+              "usage": {
+                "prompt_tokens": 13,
+                "completion_tokens": 2,
+                "total_tokens": 15,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "prompt_cache_hit_tokens": 0,
+                "prompt_cache_miss_tokens": 13
+              }
+            }
+          },
+          "trace": {
+            "session_id": "mtp_31880eca313d4c5c8f2adec30fa2d7e2_00000000000000000000000000000001",
+            "response_id": "364e2acf96244602ab13407bef3fce9a",
+            "t0": 301694.047231833,
+            "generated": 3,
+            "decode_s": 0.16086870792787522,
+            "first_canonical_s": 70.69097958301427,
+            "first_chunk_s": 70.69108983303886,
+            "formatting_s": 2.0292005501687527e-05,
+            "delivery_wait_s": 2.0849984139204025e-06,
+            "protocol_chunks_produced": 4,
+            "iterator_yields": 4,
+            "canonical_emitted": 3,
+            "rows": [
+              {
+                "canonical_ordinal": 1,
+                "produced_s": 70.69108812499326,
+                "yield_s": 70.69108983303886
+              },
+              {
+                "canonical_ordinal": 1,
+                "produced_s": 70.69113695801934,
+                "yield_s": 70.6911380829988
+              },
+              {
+                "canonical_ordinal": 2,
+                "produced_s": 70.69138720800402,
+                "yield_s": 70.69138775003375
+              },
+              {
+                "canonical_ordinal": 3,
+                "produced_s": 70.83267883298686,
+                "yield_s": 70.83267999999225
+              }
+            ],
+            "cancelled": false,
+            "client_acknowledged_ordinal": 0,
+            "load_s": 66.79136275005294,
+            "prefill_handoff_s": 3.8310425419476815,
+            "prompt_replay": 0,
+            "full_cache_repack": 0,
+            "mtp_stats": {
+              "cycles": 1,
+              "accepts": 0,
+              "rejects": 1,
+              "init_emits": 2,
+              "draft_emits": 0,
+              "bonus_emits": 0,
+              "verify_emits": 1,
+              "depth_drafted": [
+                1,
+                0,
+                0
+              ],
+              "depth_accepted": [
+                0,
+                0,
+                0
+              ],
+              "zero_cycles": 0,
+              "backbone_ms": 81.14162500714883,
+              "mtp_head_ms": 3.0573339900001884,
+              "sample_ms": 0.06879097782075405,
+              "cache_ops_ms": 2.1114589762873948
+            },
+            "quiescence": {
+              "canonical_frontier": 16,
+              "recovery_suffix_tokens": [
+                19923,
+                3,
+                1
+              ],
+              "discarded_future_token": null,
+              "counters": {
+                "new_verify_cycles": 0,
+                "new_proposals": 0,
+                "target_forwards": 1,
+                "history_replay": 0,
+                "full_cache_repack": 0,
+                "dspark_appends": 1
+              },
+              "latency_s": 0.020868459017947316,
+              "queue_drained_tokens": [],
+              "dspark": {
+                "frontier": 16,
+                "offsets": [
+                  16,
+                  16,
+                  16
+                ],
+                "target_layer_ids": [
+                  37,
+                  38,
+                  39
+                ],
+                "stage_count": 3,
+                "window_size": 5,
+                "authority": "bounded committed DSpark context; not executable target truth"
+              }
+            },
+            "canonical_frontier": 16,
+            "target_offsets": [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ],
+            "dspark_offsets": [
+              16,
+              16,
+              16
+            ],
+            "terminal_matches": [],
+            "response": {
+              "id": "364e2acf96244602ab13407bef3fce9a",
+              "object": "chat.completion",
+              "created": 1791059922,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "message": {
+                    "role": "assistant",
+                    "content": "Hello!"
+                  },
+                  "logprobs": null,
+                  "finish_reason": "stop"
+                }
+              ],
+              "usage": {
+                "prompt_tokens": 13,
+                "completion_tokens": 2,
+                "total_tokens": 15,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "prompt_cache_hit_tokens": 0,
+                "prompt_cache_miss_tokens": 13
+              }
+            },
+            "protocol_events": [
+              {
+                "id": "364e2acf96244602ab13407bef3fce9a",
+                "object": "chat.completion.chunk",
+                "created": 1791059920,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "delta": {
+                      "role": "assistant",
+                      "content": ""
+                    },
+                    "logprobs": null,
+                    "finish_reason": null
+                  }
+                ]
+              },
+              {
+                "id": "364e2acf96244602ab13407bef3fce9a",
+                "object": "chat.completion.chunk",
+                "created": 1791059920,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "delta": {
+                      "content": "Hello"
+                    },
+                    "logprobs": null,
+                    "finish_reason": null
+                  }
+                ]
+              },
+              {
+                "id": "364e2acf96244602ab13407bef3fce9a",
+                "object": "chat.completion.chunk",
+                "created": 1791059920,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "delta": {
+                      "content": "!"
+                    },
+                    "logprobs": null,
+                    "finish_reason": null
+                  }
+                ]
+              },
+              {
+                "id": "364e2acf96244602ab13407bef3fce9a",
+                "object": "chat.completion.chunk",
+                "created": 1791059920,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "delta": {
+                      "content": ""
+                    },
+                    "logprobs": null,
+                    "finish_reason": "stop"
+                  }
+                ],
+                "usage": {
+                  "prompt_tokens": 13,
+                  "completion_tokens": 2,
+                  "total_tokens": 15,
+                  "prompt_tokens_details": {
+                    "cached_tokens": 0
+                  },
+                  "prompt_cache_hit_tokens": 0,
+                  "prompt_cache_miss_tokens": 13
+                }
+              }
+            ],
+            "canonical_generated": [
+              19923,
+              3,
+              1
+            ],
+            "prediction_retired": true,
+            "queue_empty": true,
+            "certificate": {
+              "version": 1,
+              "frontier": 16,
+              "canonical_sha256": "b6fa45c846ea547889f9e693572bfd50bc7365e42311fb4490ef96d80e80b55e",
+              "representable": true,
+              "executable_tools": false,
+              "exact_prefix": true,
+              "semantic_complete": true,
+              "first_mismatch": null,
+              "witness": {
+                "model": "deepseek-v4.1-flash",
+                "temperature": 0,
+                "max_tokens": 1,
+                "reasoning_effort": "none",
+                "stream": false,
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": "Say hello briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hello!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Continue."
+                  }
+                ]
+              },
+              "encoded_length": 21
+            },
+            "cleanup_s": 0.047292166971601546,
+            "elapsed_s": 70.83273895800812
+          }
+        },
+        {
+          "identity": {
+            "session_id": "mtp_31880eca313d4c5c8f2adec30fa2d7e2_00000000000000000000000000000001",
+            "sequence": 2,
+            "body_utf8": "{\"model\": \"deepseek-v4.1-flash\", \"temperature\": 0, \"max_tokens\": 64, \"reasoning_effort\": \"none\", \"stream\": true, \"messages\": [{\"role\": \"user\", \"content\": \"Say hello briefly. Do not use tools.\"}, {\"role\": \"assistant\", \"content\": \"Hello!\"}, {\"role\": \"user\", \"content\": \"Say goodbye briefly. Do not use tools.\"}]}",
+            "body_sha256": "5ab59d35c73611243e5bec114d25cbdd9984053c64f6bbf719d199a10144d7b6"
+          },
+          "outcome": {
+            "sequence": 2,
+            "outcome_state": "recoverable",
+            "certificate": {
+              "version": 1,
+              "frontier": 32,
+              "canonical_sha256": "9ce0cf5763f9c4dc0d8511448315baa77d06147287765980e86f062dfd7eab25",
+              "representable": true,
+              "executable_tools": false,
+              "exact_prefix": true,
+              "semantic_complete": true,
+              "first_mismatch": null,
+              "witness": {
+                "model": "deepseek-v4.1-flash",
+                "temperature": 0,
+                "max_tokens": 1,
+                "reasoning_effort": "none",
+                "stream": false,
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": "Say hello briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hello!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say goodbye briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Goodbye!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Continue."
+                  }
+                ]
+              },
+              "encoded_length": 37
+            },
+            "response": {
+              "id": "6d409bd0cbfe41808c9bd192540e5d37",
+              "object": "chat.completion",
+              "created": 1791059922,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "message": {
+                    "role": "assistant",
+                    "content": "Goodbye!"
+                  },
+                  "logprobs": null,
+                  "finish_reason": "stop"
+                }
+              ],
+              "usage": {
+                "prompt_tokens": 28,
+                "completion_tokens": 3,
+                "total_tokens": 31,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "prompt_cache_hit_tokens": 0,
+                "prompt_cache_miss_tokens": 28
+              }
+            }
+          },
+          "trace": {
+            "session_id": "mtp_31880eca313d4c5c8f2adec30fa2d7e2_00000000000000000000000000000001",
+            "response_id": "6d409bd0cbfe41808c9bd192540e5d37",
+            "t0": 301764.885173166,
+            "generated": 4,
+            "decode_s": 0.15285454306285828,
+            "first_canonical_s": 0.23747150000417605,
+            "first_chunk_s": 0.23759083403274417,
+            "formatting_s": 1.6583944670856e-05,
+            "delivery_wait_s": 1.374981366097927e-06,
+            "protocol_chunks_produced": 5,
+            "iterator_yields": 5,
+            "canonical_emitted": 4,
+            "rows": [
+              {
+                "canonical_ordinal": 1,
+                "produced_s": 0.23758995899697766,
+                "yield_s": 0.23759083403274417
+              },
+              {
+                "canonical_ordinal": 1,
+                "produced_s": 0.23763400001917034,
+                "yield_s": 0.2376345419907011
+              },
+              {
+                "canonical_ordinal": 2,
+                "produced_s": 0.23789570899680257,
+                "yield_s": 0.23789620900060982
+              },
+              {
+                "canonical_ordinal": 3,
+                "produced_s": 0.3292655840050429,
+                "yield_s": 0.3292666249908507
+              },
+              {
+                "canonical_ordinal": 4,
+                "produced_s": 0.37960358400596306,
+                "yield_s": 0.37960462499177083
+              }
+            ],
+            "cancelled": false,
+            "client_acknowledged_ordinal": 0,
+            "load_s": 1.292035449296236e-06,
+            "prefill_handoff_s": 0.1760024999966845,
+            "prompt_replay": 0,
+            "full_cache_repack": 0,
+            "mtp_stats": {
+              "cycles": 1,
+              "accepts": 1,
+              "rejects": 1,
+              "init_emits": 2,
+              "draft_emits": 1,
+              "bonus_emits": 0,
+              "verify_emits": 1,
+              "depth_drafted": [
+                1,
+                1,
+                0
+              ],
+              "depth_accepted": [
+                1,
+                0,
+                0
+              ],
+              "zero_cycles": 0,
+              "backbone_ms": 79.33916599722579,
+              "mtp_head_ms": 3.9790000300854445,
+              "sample_ms": 0.0712500186637044,
+              "cache_ops_ms": 0.4532919847406447
+            },
+            "quiescence": {
+              "canonical_frontier": 32,
+              "recovery_suffix_tokens": [
+                17259,
+                37584,
+                3,
+                1
+              ],
+              "discarded_future_token": null,
+              "counters": {
+                "new_verify_cycles": 0,
+                "new_proposals": 0,
+                "target_forwards": 1,
+                "history_replay": 0,
+                "full_cache_repack": 0,
+                "dspark_appends": 1
+              },
+              "latency_s": 0.02143083297414705,
+              "queue_drained_tokens": [],
+              "dspark": {
+                "frontier": 32,
+                "offsets": [
+                  32,
+                  32,
+                  32
+                ],
+                "target_layer_ids": [
+                  37,
+                  38,
+                  39
+                ],
+                "stage_count": 3,
+                "window_size": 5,
+                "authority": "bounded committed DSpark context; not executable target truth"
+              }
+            },
+            "canonical_frontier": 32,
+            "target_offsets": [
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32
+            ],
+            "dspark_offsets": [
+              32,
+              32,
+              32
+            ],
+            "terminal_matches": [],
+            "response": {
+              "id": "6d409bd0cbfe41808c9bd192540e5d37",
+              "object": "chat.completion",
+              "created": 1791059922,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "message": {
+                    "role": "assistant",
+                    "content": "Goodbye!"
+                  },
+                  "logprobs": null,
+                  "finish_reason": "stop"
+                }
+              ],
+              "usage": {
+                "prompt_tokens": 28,
+                "completion_tokens": 3,
+                "total_tokens": 31,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "prompt_cache_hit_tokens": 0,
+                "prompt_cache_miss_tokens": 28
+              }
+            },
+            "protocol_events": [
+              {
+                "id": "6d409bd0cbfe41808c9bd192540e5d37",
+                "object": "chat.completion.chunk",
+                "created": 1791059922,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "delta": {
+                      "role": "assistant",
+                      "content": ""
+                    },
+                    "logprobs": null,
+                    "finish_reason": null
+                  }
+                ]
+              },
+              {
+                "id": "6d409bd0cbfe41808c9bd192540e5d37",
+                "object": "chat.completion.chunk",
+                "created": 1791059922,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "delta": {
+                      "content": "Good"
+                    },
+                    "logprobs": null,
+                    "finish_reason": null
+                  }
+                ]
+              },
+              {
+                "id": "6d409bd0cbfe41808c9bd192540e5d37",
+                "object": "chat.completion.chunk",
+                "created": 1791059922,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "delta": {
+                      "content": "bye"
+                    },
+                    "logprobs": null,
+                    "finish_reason": null
+                  }
+                ]
+              },
+              {
+                "id": "6d409bd0cbfe41808c9bd192540e5d37",
+                "object": "chat.completion.chunk",
+                "created": 1791059922,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "delta": {
+                      "content": "!"
+                    },
+                    "logprobs": null,
+                    "finish_reason": null
+                  }
+                ]
+              },
+              {
+                "id": "6d409bd0cbfe41808c9bd192540e5d37",
+                "object": "chat.completion.chunk",
+                "created": 1791059922,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "delta": {
+                      "content": ""
+                    },
+                    "logprobs": null,
+                    "finish_reason": "stop"
+                  }
+                ],
+                "usage": {
+                  "prompt_tokens": 28,
+                  "completion_tokens": 3,
+                  "total_tokens": 31,
+                  "prompt_tokens_details": {
+                    "cached_tokens": 0
+                  },
+                  "prompt_cache_hit_tokens": 0,
+                  "prompt_cache_miss_tokens": 28
+                }
+              }
+            ],
+            "canonical_generated": [
+              17259,
+              37584,
+              3,
+              1
+            ],
+            "prediction_retired": true,
+            "queue_empty": true,
+            "certificate": {
+              "version": 1,
+              "frontier": 32,
+              "canonical_sha256": "9ce0cf5763f9c4dc0d8511448315baa77d06147287765980e86f062dfd7eab25",
+              "representable": true,
+              "executable_tools": false,
+              "exact_prefix": true,
+              "semantic_complete": true,
+              "first_mismatch": null,
+              "witness": {
+                "model": "deepseek-v4.1-flash",
+                "temperature": 0,
+                "max_tokens": 1,
+                "reasoning_effort": "none",
+                "stream": false,
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": "Say hello briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hello!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say goodbye briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Goodbye!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Continue."
+                  }
+                ]
+              },
+              "encoded_length": 37
+            },
+            "cleanup_s": 0.04968066600849852,
+            "elapsed_s": 0.3796635000035167
+          }
+        }
+      ],
+      "delete_payloads_removed": true
+    },
+    {
+      "session_id": "mtp_31880eca313d4c5c8f2adec30fa2d7e2_00000000000000000000000000000002",
+      "turns": [
+        {
+          "identity": {
+            "session_id": "mtp_31880eca313d4c5c8f2adec30fa2d7e2_00000000000000000000000000000002",
+            "sequence": 1,
+            "body_utf8": "{\"model\": \"deepseek-v4.1-flash\", \"temperature\": 0, \"max_tokens\": 64, \"reasoning_effort\": \"none\", \"stream\": true, \"messages\": [{\"role\": \"user\", \"content\": \"Say hello briefly. Do not use tools.\"}, {\"role\": \"assistant\", \"content\": \"Hello!\"}, {\"role\": \"user\", \"content\": \"Say goodbye briefly. Do not use tools.\"}, {\"role\": \"assistant\", \"content\": \"Goodbye!\"}, {\"role\": \"user\", \"content\": \"Say hello briefly. Do not use tools.\"}]}",
+            "body_sha256": "fe2c6a87f8df639fd25519de66ba9be272e20d2648ac36c539da9e8dc01e1649"
+          },
+          "outcome": {
+            "sequence": 1,
+            "outcome_state": "recoverable",
+            "certificate": {
+              "version": 1,
+              "frontier": 47,
+              "canonical_sha256": "dcbec9b8c329da9fac6c024ce246999c42b994e7b8b8264a4364a42db3307624",
+              "representable": true,
+              "executable_tools": false,
+              "exact_prefix": true,
+              "semantic_complete": true,
+              "first_mismatch": null,
+              "witness": {
+                "model": "deepseek-v4.1-flash",
+                "temperature": 0,
+                "max_tokens": 1,
+                "reasoning_effort": "none",
+                "stream": false,
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": "Say hello briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hello!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say goodbye briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Goodbye!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say hello briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hi!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Continue."
+                  }
+                ]
+              },
+              "encoded_length": 52
+            },
+            "response": {
+              "id": "d50e0bbe6e4f4eb3bc1c1c8712cca25b",
+              "object": "chat.completion",
+              "created": 1791059923,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "message": {
+                    "role": "assistant",
+                    "content": "Hi!"
+                  },
+                  "logprobs": null,
+                  "finish_reason": "stop"
+                }
+              ],
+              "usage": {
+                "prompt_tokens": 44,
+                "completion_tokens": 2,
+                "total_tokens": 46,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "prompt_cache_hit_tokens": 0,
+                "prompt_cache_miss_tokens": 44
+              }
+            }
+          },
+          "trace": {
+            "session_id": "mtp_31880eca313d4c5c8f2adec30fa2d7e2_00000000000000000000000000000002",
+            "response_id": "d50e0bbe6e4f4eb3bc1c1c8712cca25b",
+            "t0": 301765.29824475,
+            "generated": 3,
+            "decode_s": 0.15509849996306002,
+            "first_canonical_s": 0.3505655829794705,
+            "first_chunk_s": 0.3506845409865491,
+            "formatting_s": 1.6333069652318954e-05,
+            "delivery_wait_s": 8.33999365568161e-07,
+            "protocol_chunks_produced": 4,
+            "iterator_yields": 4,
+            "canonical_emitted": 3,
+            "rows": [
+              {
+                "canonical_ordinal": 1,
+                "produced_s": 0.3506835409789346,
+                "yield_s": 0.3506845409865491
+              },
+              {
+                "canonical_ordinal": 1,
+                "produced_s": 0.3507314159651287,
+                "yield_s": 0.3507318329648115
+              },
+              {
+                "canonical_ordinal": 2,
+                "produced_s": 0.35098129097605124,
+                "yield_s": 0.35098191600991413
+              },
+              {
+                "canonical_ordinal": 3,
+                "produced_s": 0.49374704097863287,
+                "yield_s": 0.49374779098434374
+              }
+            ],
+            "cancelled": false,
+            "client_acknowledged_ordinal": 0,
+            "load_s": 3.541994374245405e-06,
+            "prefill_handoff_s": 0.28893516695825383,
+            "prompt_replay": 0,
+            "full_cache_repack": 0,
+            "mtp_stats": {
+              "cycles": 1,
+              "accepts": 0,
+              "rejects": 1,
+              "init_emits": 2,
+              "draft_emits": 0,
+              "bonus_emits": 0,
+              "verify_emits": 1,
+              "depth_drafted": [
+                1,
+                0,
+                0
+              ],
+              "depth_accepted": [
+                0,
+                0,
+                0
+              ],
+              "zero_cycles": 0,
+              "backbone_ms": 80.98449994577095,
+              "mtp_head_ms": 3.2669579959474504,
+              "sample_ms": 0.0735839712433517,
+              "cache_ops_ms": 2.144666970707476
+            },
+            "quiescence": {
+              "canonical_frontier": 47,
+              "recovery_suffix_tokens": [
+                23166,
+                3,
+                1
+              ],
+              "discarded_future_token": null,
+              "counters": {
+                "new_verify_cycles": 0,
+                "new_proposals": 0,
+                "target_forwards": 1,
+                "history_replay": 0,
+                "full_cache_repack": 0,
+                "dspark_appends": 1
+              },
+              "latency_s": 0.020670666999649256,
+              "queue_drained_tokens": [],
+              "dspark": {
+                "frontier": 47,
+                "offsets": [
+                  47,
+                  47,
+                  47
+                ],
+                "target_layer_ids": [
+                  37,
+                  38,
+                  39
+                ],
+                "stage_count": 3,
+                "window_size": 5,
+                "authority": "bounded committed DSpark context; not executable target truth"
+              }
+            },
+            "canonical_frontier": 47,
+            "target_offsets": [
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47,
+              47
+            ],
+            "dspark_offsets": [
+              47,
+              47,
+              47
+            ],
+            "terminal_matches": [],
+            "response": {
+              "id": "d50e0bbe6e4f4eb3bc1c1c8712cca25b",
+              "object": "chat.completion",
+              "created": 1791059923,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "message": {
+                    "role": "assistant",
+                    "content": "Hi!"
+                  },
+                  "logprobs": null,
+                  "finish_reason": "stop"
+                }
+              ],
+              "usage": {
+                "prompt_tokens": 44,
+                "completion_tokens": 2,
+                "total_tokens": 46,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "prompt_cache_hit_tokens": 0,
+                "prompt_cache_miss_tokens": 44
+              }
+            },
+            "protocol_events": [
+              {
+                "id": "d50e0bbe6e4f4eb3bc1c1c8712cca25b",
+                "object": "chat.completion.chunk",
+                "created": 1791059923,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "delta": {
+                      "role": "assistant",
+                      "content": ""
+                    },
+                    "logprobs": null,
+                    "finish_reason": null
+                  }
+                ]
+              },
+              {
+                "id": "d50e0bbe6e4f4eb3bc1c1c8712cca25b",
+                "object": "chat.completion.chunk",
+                "created": 1791059923,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "delta": {
+                      "content": "Hi"
+                    },
+                    "logprobs": null,
+                    "finish_reason": null
+                  }
+                ]
+              },
+              {
+                "id": "d50e0bbe6e4f4eb3bc1c1c8712cca25b",
+                "object": "chat.completion.chunk",
+                "created": 1791059923,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "delta": {
+                      "content": "!"
+                    },
+                    "logprobs": null,
+                    "finish_reason": null
+                  }
+                ]
+              },
+              {
+                "id": "d50e0bbe6e4f4eb3bc1c1c8712cca25b",
+                "object": "chat.completion.chunk",
+                "created": 1791059923,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "delta": {
+                      "content": ""
+                    },
+                    "logprobs": null,
+                    "finish_reason": "stop"
+                  }
+                ],
+                "usage": {
+                  "prompt_tokens": 44,
+                  "completion_tokens": 2,
+                  "total_tokens": 46,
+                  "prompt_tokens_details": {
+                    "cached_tokens": 0
+                  },
+                  "prompt_cache_hit_tokens": 0,
+                  "prompt_cache_miss_tokens": 44
+                }
+              }
+            ],
+            "canonical_generated": [
+              23166,
+              3,
+              1
+            ],
+            "prediction_retired": true,
+            "queue_empty": true,
+            "certificate": {
+              "version": 1,
+              "frontier": 47,
+              "canonical_sha256": "dcbec9b8c329da9fac6c024ce246999c42b994e7b8b8264a4364a42db3307624",
+              "representable": true,
+              "executable_tools": false,
+              "exact_prefix": true,
+              "semantic_complete": true,
+              "first_mismatch": null,
+              "witness": {
+                "model": "deepseek-v4.1-flash",
+                "temperature": 0,
+                "max_tokens": 1,
+                "reasoning_effort": "none",
+                "stream": false,
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": "Say hello briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hello!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say goodbye briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Goodbye!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say hello briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hi!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Continue."
+                  }
+                ]
+              },
+              "encoded_length": 52
+            },
+            "cleanup_s": 0.04862258303910494,
+            "elapsed_s": 0.4938055829843506
+          }
+        },
+        {
+          "identity": {
+            "session_id": "mtp_31880eca313d4c5c8f2adec30fa2d7e2_00000000000000000000000000000002",
+            "sequence": 2,
+            "body_utf8": "{\"model\": \"deepseek-v4.1-flash\", \"temperature\": 0, \"max_tokens\": 64, \"reasoning_effort\": \"none\", \"stream\": true, \"messages\": [{\"role\": \"user\", \"content\": \"Say hello briefly. Do not use tools.\"}, {\"role\": \"assistant\", \"content\": \"Hello!\"}, {\"role\": \"user\", \"content\": \"Say goodbye briefly. Do not use tools.\"}, {\"role\": \"assistant\", \"content\": \"Goodbye!\"}, {\"role\": \"user\", \"content\": \"Say hello briefly. Do not use tools.\"}, {\"role\": \"assistant\", \"content\": \"Hi!\"}, {\"role\": \"user\", \"content\": \"Say goodbye briefly. Do not use tools.\"}]}",
+            "body_sha256": "74d8f875d6bbc991917073e54414941109c9def87411813c07366b540627b21c"
+          },
+          "outcome": {
+            "sequence": 2,
+            "outcome_state": "recoverable",
+            "certificate": {
+              "version": 1,
+              "frontier": 63,
+              "canonical_sha256": "0096695a06fdd27f313c86a81dd2a7ee4e78bee5d117427fe5ab4cdada8694c6",
+              "representable": true,
+              "executable_tools": false,
+              "exact_prefix": true,
+              "semantic_complete": true,
+              "first_mismatch": null,
+              "witness": {
+                "model": "deepseek-v4.1-flash",
+                "temperature": 0,
+                "max_tokens": 1,
+                "reasoning_effort": "none",
+                "stream": false,
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": "Say hello briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hello!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say goodbye briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Goodbye!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say hello briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hi!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say goodbye briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Bye!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Continue."
+                  }
+                ]
+              },
+              "encoded_length": 68
+            },
+            "response": {
+              "id": "d4d8edde6ab0451c9bff16403eb15e57",
+              "object": "chat.completion",
+              "created": 1791059923,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "message": {
+                    "role": "assistant",
+                    "content": "Bye!"
+                  },
+                  "logprobs": null,
+                  "finish_reason": "stop"
+                }
+              ],
+              "usage": {
+                "prompt_tokens": 59,
+                "completion_tokens": 3,
+                "total_tokens": 62,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "prompt_cache_hit_tokens": 0,
+                "prompt_cache_miss_tokens": 59
+              }
+            }
+          },
+          "trace": {
+            "session_id": "mtp_31880eca313d4c5c8f2adec30fa2d7e2_00000000000000000000000000000002",
+            "response_id": "d4d8edde6ab0451c9bff16403eb15e57",
+            "t0": 301765.797332333,
+            "generated": 4,
+            "decode_s": 0.15351695893332362,
+            "first_canonical_s": 0.23734649998368695,
+            "first_chunk_s": 0.2374699580250308,
+            "formatting_s": 1.9248982425779104e-05,
+            "delivery_wait_s": 1.915963366627693e-06,
+            "protocol_chunks_produced": 5,
+            "iterator_yields": 5,
+            "canonical_emitted": 4,
+            "rows": [
+              {
+                "canonical_ordinal": 1,
+                "produced_s": 0.23746912501519546,
+                "yield_s": 0.2374699580250308
+              },
+              {
+                "canonical_ordinal": 1,
+                "produced_s": 0.23751150001771748,
+                "yield_s": 0.23751187499146909
+              },
+              {
+                "canonical_ordinal": 2,
+                "produced_s": 0.2377773750340566,
+                "yield_s": 0.237778042035643
+              },
+              {
+                "canonical_ordinal": 3,
+                "produced_s": 0.32835137500660494,
+                "yield_s": 0.32835262501612306
+              },
+              {
+                "canonical_ordinal": 4,
+                "produced_s": 0.3777305419789627,
+                "yield_s": 0.37773166701663285
+              }
+            ],
+            "cancelled": false,
+            "client_acknowledged_ordinal": 0,
+            "load_s": 7.500057108700275e-07,
+            "prefill_handoff_s": 0.17442191700683907,
+            "prompt_replay": 0,
+            "full_cache_repack": 0,
+            "mtp_stats": {
+              "cycles": 1,
+              "accepts": 1,
+              "rejects": 1,
+              "init_emits": 2,
+              "draft_emits": 1,
+              "bonus_emits": 0,
+              "verify_emits": 1,
+              "depth_drafted": [
+                1,
+                1,
+                0
+              ],
+              "depth_accepted": [
+                1,
+                0,
+                0
+              ],
+              "zero_cycles": 0,
+              "backbone_ms": 79.4423749903217,
+              "mtp_head_ms": 3.1060839537531137,
+              "sample_ms": 0.06170797860249877,
+              "cache_ops_ms": 0.43658301001414657
+            },
+            "quiescence": {
+              "canonical_frontier": 63,
+              "recovery_suffix_tokens": [
+                4546,
+                71,
+                3,
+                1
+              ],
+              "discarded_future_token": null,
+              "counters": {
+                "new_verify_cycles": 0,
+                "new_proposals": 0,
+                "target_forwards": 1,
+                "history_replay": 0,
+                "full_cache_repack": 0,
+                "dspark_appends": 1
+              },
+              "latency_s": 0.020714542013593018,
+              "queue_drained_tokens": [],
+              "dspark": {
+                "frontier": 63,
+                "offsets": [
+                  63,
+                  63,
+                  63
+                ],
+                "target_layer_ids": [
+                  37,
+                  38,
+                  39
+                ],
+                "stage_count": 3,
+                "window_size": 5,
+                "authority": "bounded committed DSpark context; not executable target truth"
+              }
+            },
+            "canonical_frontier": 63,
+            "target_offsets": [
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63,
+              63
+            ],
+            "dspark_offsets": [
+              63,
+              63,
+              63
+            ],
+            "terminal_matches": [],
+            "response": {
+              "id": "d4d8edde6ab0451c9bff16403eb15e57",
+              "object": "chat.completion",
+              "created": 1791059923,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "message": {
+                    "role": "assistant",
+                    "content": "Bye!"
+                  },
+                  "logprobs": null,
+                  "finish_reason": "stop"
+                }
+              ],
+              "usage": {
+                "prompt_tokens": 59,
+                "completion_tokens": 3,
+                "total_tokens": 62,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "prompt_cache_hit_tokens": 0,
+                "prompt_cache_miss_tokens": 59
+              }
+            },
+            "protocol_events": [
+              {
+                "id": "d4d8edde6ab0451c9bff16403eb15e57",
+                "object": "chat.completion.chunk",
+                "created": 1791059923,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "delta": {
+                      "role": "assistant",
+                      "content": ""
+                    },
+                    "logprobs": null,
+                    "finish_reason": null
+                  }
+                ]
+              },
+              {
+                "id": "d4d8edde6ab0451c9bff16403eb15e57",
+                "object": "chat.completion.chunk",
+                "created": 1791059923,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "delta": {
+                      "content": "By"
+                    },
+                    "logprobs": null,
+                    "finish_reason": null
+                  }
+                ]
+              },
+              {
+                "id": "d4d8edde6ab0451c9bff16403eb15e57",
+                "object": "chat.completion.chunk",
+                "created": 1791059923,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "delta": {
+                      "content": "e"
+                    },
+                    "logprobs": null,
+                    "finish_reason": null
+                  }
+                ]
+              },
+              {
+                "id": "d4d8edde6ab0451c9bff16403eb15e57",
+                "object": "chat.completion.chunk",
+                "created": 1791059923,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "delta": {
+                      "content": "!"
+                    },
+                    "logprobs": null,
+                    "finish_reason": null
+                  }
+                ]
+              },
+              {
+                "id": "d4d8edde6ab0451c9bff16403eb15e57",
+                "object": "chat.completion.chunk",
+                "created": 1791059923,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "delta": {
+                      "content": ""
+                    },
+                    "logprobs": null,
+                    "finish_reason": "stop"
+                  }
+                ],
+                "usage": {
+                  "prompt_tokens": 59,
+                  "completion_tokens": 3,
+                  "total_tokens": 62,
+                  "prompt_tokens_details": {
+                    "cached_tokens": 0
+                  },
+                  "prompt_cache_hit_tokens": 0,
+                  "prompt_cache_miss_tokens": 59
+                }
+              }
+            ],
+            "canonical_generated": [
+              4546,
+              71,
+              3,
+              1
+            ],
+            "prediction_retired": true,
+            "queue_empty": true,
+            "certificate": {
+              "version": 1,
+              "frontier": 63,
+              "canonical_sha256": "0096695a06fdd27f313c86a81dd2a7ee4e78bee5d117427fe5ab4cdada8694c6",
+              "representable": true,
+              "executable_tools": false,
+              "exact_prefix": true,
+              "semantic_complete": true,
+              "first_mismatch": null,
+              "witness": {
+                "model": "deepseek-v4.1-flash",
+                "temperature": 0,
+                "max_tokens": 1,
+                "reasoning_effort": "none",
+                "stream": false,
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": "Say hello briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hello!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say goodbye briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Goodbye!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say hello briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hi!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say goodbye briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Bye!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Continue."
+                  }
+                ]
+              },
+              "encoded_length": 68
+            },
+            "cleanup_s": 0.04872700001578778,
+            "elapsed_s": 0.37778999999864027
+          }
+        }
+      ],
+      "delete_payloads_removed": true
+    },
+    {
+      "session_id": "mtp_31880eca313d4c5c8f2adec30fa2d7e2_00000000000000000000000000000003",
+      "turns": [
+        {
+          "identity": {
+            "session_id": "mtp_31880eca313d4c5c8f2adec30fa2d7e2_00000000000000000000000000000003",
+            "sequence": 1,
+            "body_utf8": "{\"model\": \"deepseek-v4.1-flash\", \"temperature\": 0, \"max_tokens\": 64, \"reasoning_effort\": \"none\", \"stream\": true, \"messages\": [{\"role\": \"user\", \"content\": \"Say hello briefly. Do not use tools.\"}, {\"role\": \"assistant\", \"content\": \"Hello!\"}, {\"role\": \"user\", \"content\": \"Say goodbye briefly. Do not use tools.\"}, {\"role\": \"assistant\", \"content\": \"Goodbye!\"}, {\"role\": \"user\", \"content\": \"Say hello briefly. Do not use tools.\"}, {\"role\": \"assistant\", \"content\": \"Hi!\"}, {\"role\": \"user\", \"content\": \"Say goodbye briefly. Do not use tools.\"}, {\"role\": \"assistant\", \"content\": \"Bye!\"}, {\"role\": \"user\", \"content\": \"Say hello briefly. Do not use tools.\"}]}",
+            "body_sha256": "d3ad1e429e2b457977fbfbd25d9fe1e1be847c0433727e812e05847279e323c2"
+          },
+          "outcome": {
+            "sequence": 1,
+            "outcome_state": "recoverable",
+            "certificate": {
+              "version": 1,
+              "frontier": 78,
+              "canonical_sha256": "79cecdffd744e7cfc18179e3ad296e17710a5d2a976400751d0071b831ea58c9",
+              "representable": true,
+              "executable_tools": false,
+              "exact_prefix": true,
+              "semantic_complete": true,
+              "first_mismatch": null,
+              "witness": {
+                "model": "deepseek-v4.1-flash",
+                "temperature": 0,
+                "max_tokens": 1,
+                "reasoning_effort": "none",
+                "stream": false,
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": "Say hello briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hello!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say goodbye briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Goodbye!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say hello briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hi!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say goodbye briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Bye!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say hello briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hello!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Continue."
+                  }
+                ]
+              },
+              "encoded_length": 83
+            },
+            "response": {
+              "id": "3a1b2ea7b1bb4d6fbc385a2e73c7fb9b",
+              "object": "chat.completion",
+              "created": 1791059924,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "message": {
+                    "role": "assistant",
+                    "content": "Hello!"
+                  },
+                  "logprobs": null,
+                  "finish_reason": "stop"
+                }
+              ],
+              "usage": {
+                "prompt_tokens": 75,
+                "completion_tokens": 2,
+                "total_tokens": 77,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "prompt_cache_hit_tokens": 0,
+                "prompt_cache_miss_tokens": 75
+              }
+            }
+          },
+          "trace": {
+            "session_id": "mtp_31880eca313d4c5c8f2adec30fa2d7e2_00000000000000000000000000000003",
+            "response_id": "3a1b2ea7b1bb4d6fbc385a2e73c7fb9b",
+            "t0": 301766.198358958,
+            "generated": 3,
+            "decode_s": 0.15740637492854148,
+            "first_canonical_s": 0.4828298329957761,
+            "first_chunk_s": 0.4829678329988383,
+            "formatting_s": 1.6000005416572094e-05,
+            "delivery_wait_s": 8.750357665121555e-07,
+            "protocol_chunks_produced": 4,
+            "iterator_yields": 4,
+            "canonical_emitted": 3,
+            "rows": [
+              {
+                "canonical_ordinal": 1,
+                "produced_s": 0.4829669580212794,
+                "yield_s": 0.4829678329988383
+              },
+              {
+                "canonical_ordinal": 1,
+                "produced_s": 0.48301095800707117,
+                "yield_s": 0.4830114580108784
+              },
+              {
+                "canonical_ordinal": 2,
+                "produced_s": 0.4832875420106575,
+                "yield_s": 0.48328820802271366
+              },
+              {
+                "canonical_ordinal": 3,
+                "produced_s": 0.6276341669727117,
+                "yield_s": 0.6276351250126027
+              }
+            ],
+            "cancelled": false,
+            "client_acknowledged_ordinal": 0,
+            "load_s": 4.208006430417299e-06,
+            "prefill_handoff_s": 0.4189507080009207,
+            "prompt_replay": 0,
+            "full_cache_repack": 0,
+            "mtp_stats": {
+              "cycles": 1,
+              "accepts": 0,
+              "rejects": 1,
+              "init_emits": 2,
+              "draft_emits": 0,
+              "bonus_emits": 0,
+              "verify_emits": 1,
+              "depth_drafted": [
+                1,
+                0,
+                0
+              ],
+              "depth_accepted": [
+                0,
+                0,
+                0
+              ],
+              "zero_cycles": 0,
+              "backbone_ms": 81.17254101671278,
+              "mtp_head_ms": 3.0874579679220915,
+              "sample_ms": 0.07254100637510419,
+              "cache_ops_ms": 2.122459001839161
+            },
+            "quiescence": {
+              "canonical_frontier": 78,
+              "recovery_suffix_tokens": [
+                19923,
+                3,
+                1
+              ],
+              "discarded_future_token": null,
+              "counters": {
+                "new_verify_cycles": 0,
+                "new_proposals": 0,
+                "target_forwards": 1,
+                "history_replay": 0,
+                "full_cache_repack": 0,
+                "dspark_appends": 1
+              },
+              "latency_s": 0.0219068750157021,
+              "queue_drained_tokens": [],
+              "dspark": {
+                "frontier": 78,
+                "offsets": [
+                  78,
+                  78,
+                  78
+                ],
+                "target_layer_ids": [
+                  37,
+                  38,
+                  39
+                ],
+                "stage_count": 3,
+                "window_size": 5,
+                "authority": "bounded committed DSpark context; not executable target truth"
+              }
+            },
+            "canonical_frontier": 78,
+            "target_offsets": [
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78,
+              78
+            ],
+            "dspark_offsets": [
+              78,
+              78,
+              78
+            ],
+            "terminal_matches": [],
+            "response": {
+              "id": "3a1b2ea7b1bb4d6fbc385a2e73c7fb9b",
+              "object": "chat.completion",
+              "created": 1791059924,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "message": {
+                    "role": "assistant",
+                    "content": "Hello!"
+                  },
+                  "logprobs": null,
+                  "finish_reason": "stop"
+                }
+              ],
+              "usage": {
+                "prompt_tokens": 75,
+                "completion_tokens": 2,
+                "total_tokens": 77,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "prompt_cache_hit_tokens": 0,
+                "prompt_cache_miss_tokens": 75
+              }
+            },
+            "protocol_events": [
+              {
+                "id": "3a1b2ea7b1bb4d6fbc385a2e73c7fb9b",
+                "object": "chat.completion.chunk",
+                "created": 1791059924,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "delta": {
+                      "role": "assistant",
+                      "content": ""
+                    },
+                    "logprobs": null,
+                    "finish_reason": null
+                  }
+                ]
+              },
+              {
+                "id": "3a1b2ea7b1bb4d6fbc385a2e73c7fb9b",
+                "object": "chat.completion.chunk",
+                "created": 1791059924,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "delta": {
+                      "content": "Hello"
+                    },
+                    "logprobs": null,
+                    "finish_reason": null
+                  }
+                ]
+              },
+              {
+                "id": "3a1b2ea7b1bb4d6fbc385a2e73c7fb9b",
+                "object": "chat.completion.chunk",
+                "created": 1791059924,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "delta": {
+                      "content": "!"
+                    },
+                    "logprobs": null,
+                    "finish_reason": null
+                  }
+                ]
+              },
+              {
+                "id": "3a1b2ea7b1bb4d6fbc385a2e73c7fb9b",
+                "object": "chat.completion.chunk",
+                "created": 1791059924,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "delta": {
+                      "content": ""
+                    },
+                    "logprobs": null,
+                    "finish_reason": "stop"
+                  }
+                ],
+                "usage": {
+                  "prompt_tokens": 75,
+                  "completion_tokens": 2,
+                  "total_tokens": 77,
+                  "prompt_tokens_details": {
+                    "cached_tokens": 0
+                  },
+                  "prompt_cache_hit_tokens": 0,
+                  "prompt_cache_miss_tokens": 75
+                }
+              }
+            ],
+            "canonical_generated": [
+              19923,
+              3,
+              1
+            ],
+            "prediction_retired": true,
+            "queue_empty": true,
+            "certificate": {
+              "version": 1,
+              "frontier": 78,
+              "canonical_sha256": "79cecdffd744e7cfc18179e3ad296e17710a5d2a976400751d0071b831ea58c9",
+              "representable": true,
+              "executable_tools": false,
+              "exact_prefix": true,
+              "semantic_complete": true,
+              "first_mismatch": null,
+              "witness": {
+                "model": "deepseek-v4.1-flash",
+                "temperature": 0,
+                "max_tokens": 1,
+                "reasoning_effort": "none",
+                "stream": false,
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": "Say hello briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hello!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say goodbye briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Goodbye!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say hello briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hi!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say goodbye briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Bye!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say hello briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hello!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Continue."
+                  }
+                ]
+              },
+              "encoded_length": 83
+            },
+            "cleanup_s": 0.05017270799726248,
+            "elapsed_s": 0.6276959580136463
+          }
+        },
+        {
+          "identity": {
+            "session_id": "mtp_31880eca313d4c5c8f2adec30fa2d7e2_00000000000000000000000000000003",
+            "sequence": 2,
+            "body_utf8": "{\"model\": \"deepseek-v4.1-flash\", \"temperature\": 0, \"max_tokens\": 64, \"reasoning_effort\": \"none\", \"stream\": true, \"messages\": [{\"role\": \"user\", \"content\": \"Say hello briefly. Do not use tools.\"}, {\"role\": \"assistant\", \"content\": \"Hello!\"}, {\"role\": \"user\", \"content\": \"Say goodbye briefly. Do not use tools.\"}, {\"role\": \"assistant\", \"content\": \"Goodbye!\"}, {\"role\": \"user\", \"content\": \"Say hello briefly. Do not use tools.\"}, {\"role\": \"assistant\", \"content\": \"Hi!\"}, {\"role\": \"user\", \"content\": \"Say goodbye briefly. Do not use tools.\"}, {\"role\": \"assistant\", \"content\": \"Bye!\"}, {\"role\": \"user\", \"content\": \"Say hello briefly. Do not use tools.\"}, {\"role\": \"assistant\", \"content\": \"Hello!\"}, {\"role\": \"user\", \"content\": \"Say goodbye briefly. Do not use tools.\"}]}",
+            "body_sha256": "48221e1b92f24e97677ab795d12a563947731471001a14c8ddb7332933e718ea"
+          },
+          "outcome": {
+            "sequence": 2,
+            "outcome_state": "recoverable",
+            "certificate": {
+              "version": 1,
+              "frontier": 94,
+              "canonical_sha256": "b1d4f70af0415402b1ef913899d69b60cc2963b308a84c9da3050a6525d2cb7c",
+              "representable": true,
+              "executable_tools": false,
+              "exact_prefix": true,
+              "semantic_complete": true,
+              "first_mismatch": null,
+              "witness": {
+                "model": "deepseek-v4.1-flash",
+                "temperature": 0,
+                "max_tokens": 1,
+                "reasoning_effort": "none",
+                "stream": false,
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": "Say hello briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hello!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say goodbye briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Goodbye!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say hello briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hi!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say goodbye briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Bye!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say hello briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hello!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say goodbye briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Goodbye!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Continue."
+                  }
+                ]
+              },
+              "encoded_length": 99
+            },
+            "response": {
+              "id": "b0ad3a42ebc4404ba228c79cc3841a64",
+              "object": "chat.completion",
+              "created": 1791059924,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "message": {
+                    "role": "assistant",
+                    "content": "Goodbye!"
+                  },
+                  "logprobs": null,
+                  "finish_reason": "stop"
+                }
+              ],
+              "usage": {
+                "prompt_tokens": 90,
+                "completion_tokens": 3,
+                "total_tokens": 93,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "prompt_cache_hit_tokens": 0,
+                "prompt_cache_miss_tokens": 90
+              }
+            }
+          },
+          "trace": {
+            "session_id": "mtp_31880eca313d4c5c8f2adec30fa2d7e2_00000000000000000000000000000003",
+            "response_id": "b0ad3a42ebc4404ba228c79cc3841a64",
+            "t0": 301766.831462458,
+            "generated": 4,
+            "decode_s": 0.1540915411314927,
+            "first_canonical_s": 0.24298766697756946,
+            "first_chunk_s": 0.24310629197862,
+            "formatting_s": 1.8625985831022263e-05,
+            "delivery_wait_s": 1.208973117172718e-06,
+            "protocol_chunks_produced": 5,
+            "iterator_yields": 5,
+            "canonical_emitted": 4,
+            "rows": [
+              {
+                "canonical_ordinal": 1,
+                "produced_s": 0.24310562497703359,
+                "yield_s": 0.24310629197862
+              },
+              {
+                "canonical_ordinal": 1,
+                "produced_s": 0.24314670800231397,
+                "yield_s": 0.24314716696972027
+              },
+              {
+                "canonical_ordinal": 2,
+                "produced_s": 0.24338887498015538,
+                "yield_s": 0.2433893330162391
+              },
+              {
+                "canonical_ordinal": 3,
+                "produced_s": 0.335649749962613,
+                "yield_s": 0.3356504169641994
+              },
+              {
+                "canonical_ordinal": 4,
+                "produced_s": 0.38588016701396555,
+                "yield_s": 0.3858810829697177
+              }
+            ],
+            "cancelled": false,
+            "client_acknowledged_ordinal": 0,
+            "load_s": 1.00000761449337e-06,
+            "prefill_handoff_s": 0.18118441698607057,
+            "prompt_replay": 0,
+            "full_cache_repack": 0,
+            "mtp_stats": {
+              "cycles": 1,
+              "accepts": 1,
+              "rejects": 1,
+              "init_emits": 2,
+              "draft_emits": 1,
+              "bonus_emits": 0,
+              "verify_emits": 1,
+              "depth_drafted": [
+                1,
+                1,
+                0
+              ],
+              "depth_accepted": [
+                1,
+                0,
+                0
+              ],
+              "zero_cycles": 0,
+              "backbone_ms": 81.138750014361,
+              "mtp_head_ms": 3.1447919900529087,
+              "sample_ms": 0.06916699931025505,
+              "cache_ops_ms": 0.43816695688292384
+            },
+            "quiescence": {
+              "canonical_frontier": 94,
+              "recovery_suffix_tokens": [
+                17259,
+                37584,
+                3,
+                1
+              ],
+              "discarded_future_token": null,
+              "counters": {
+                "new_verify_cycles": 0,
+                "new_proposals": 0,
+                "target_forwards": 1,
+                "history_replay": 0,
+                "full_cache_repack": 0,
+                "dspark_appends": 1
+              },
+              "latency_s": 0.021488750004209578,
+              "queue_drained_tokens": [],
+              "dspark": {
+                "frontier": 94,
+                "offsets": [
+                  94,
+                  94,
+                  94
+                ],
+                "target_layer_ids": [
+                  37,
+                  38,
+                  39
+                ],
+                "stage_count": 3,
+                "window_size": 5,
+                "authority": "bounded committed DSpark context; not executable target truth"
+              }
+            },
+            "canonical_frontier": 94,
+            "target_offsets": [
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94,
+              94
+            ],
+            "dspark_offsets": [
+              94,
+              94,
+              94
+            ],
+            "terminal_matches": [],
+            "response": {
+              "id": "b0ad3a42ebc4404ba228c79cc3841a64",
+              "object": "chat.completion",
+              "created": 1791059924,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "message": {
+                    "role": "assistant",
+                    "content": "Goodbye!"
+                  },
+                  "logprobs": null,
+                  "finish_reason": "stop"
+                }
+              ],
+              "usage": {
+                "prompt_tokens": 90,
+                "completion_tokens": 3,
+                "total_tokens": 93,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "prompt_cache_hit_tokens": 0,
+                "prompt_cache_miss_tokens": 90
+              }
+            },
+            "protocol_events": [
+              {
+                "id": "b0ad3a42ebc4404ba228c79cc3841a64",
+                "object": "chat.completion.chunk",
+                "created": 1791059924,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "delta": {
+                      "role": "assistant",
+                      "content": ""
+                    },
+                    "logprobs": null,
+                    "finish_reason": null
+                  }
+                ]
+              },
+              {
+                "id": "b0ad3a42ebc4404ba228c79cc3841a64",
+                "object": "chat.completion.chunk",
+                "created": 1791059924,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "delta": {
+                      "content": "Good"
+                    },
+                    "logprobs": null,
+                    "finish_reason": null
+                  }
+                ]
+              },
+              {
+                "id": "b0ad3a42ebc4404ba228c79cc3841a64",
+                "object": "chat.completion.chunk",
+                "created": 1791059924,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "delta": {
+                      "content": "bye"
+                    },
+                    "logprobs": null,
+                    "finish_reason": null
+                  }
+                ]
+              },
+              {
+                "id": "b0ad3a42ebc4404ba228c79cc3841a64",
+                "object": "chat.completion.chunk",
+                "created": 1791059924,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "delta": {
+                      "content": "!"
+                    },
+                    "logprobs": null,
+                    "finish_reason": null
+                  }
+                ]
+              },
+              {
+                "id": "b0ad3a42ebc4404ba228c79cc3841a64",
+                "object": "chat.completion.chunk",
+                "created": 1791059924,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "delta": {
+                      "content": ""
+                    },
+                    "logprobs": null,
+                    "finish_reason": "stop"
+                  }
+                ],
+                "usage": {
+                  "prompt_tokens": 90,
+                  "completion_tokens": 3,
+                  "total_tokens": 93,
+                  "prompt_tokens_details": {
+                    "cached_tokens": 0
+                  },
+                  "prompt_cache_hit_tokens": 0,
+                  "prompt_cache_miss_tokens": 90
+                }
+              }
+            ],
+            "canonical_generated": [
+              17259,
+              37584,
+              3,
+              1
+            ],
+            "prediction_retired": true,
+            "queue_empty": true,
+            "certificate": {
+              "version": 1,
+              "frontier": 94,
+              "canonical_sha256": "b1d4f70af0415402b1ef913899d69b60cc2963b308a84c9da3050a6525d2cb7c",
+              "representable": true,
+              "executable_tools": false,
+              "exact_prefix": true,
+              "semantic_complete": true,
+              "first_mismatch": null,
+              "witness": {
+                "model": "deepseek-v4.1-flash",
+                "temperature": 0,
+                "max_tokens": 1,
+                "reasoning_effort": "none",
+                "stream": false,
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": "Say hello briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hello!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say goodbye briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Goodbye!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say hello briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hi!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say goodbye briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Bye!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say hello briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hello!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say goodbye briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Goodbye!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Continue."
+                  }
+                ]
+              },
+              "encoded_length": 99
+            },
+            "cleanup_s": 0.0495439589722082,
+            "elapsed_s": 0.3859323330107145
+          }
+        }
+      ],
+      "delete_payloads_removed": true
+    },
+    {
+      "session_id": "mtp_31880eca313d4c5c8f2adec30fa2d7e2_00000000000000000000000000000034",
+      "turns": [
+        {
+          "identity": {
+            "session_id": "mtp_31880eca313d4c5c8f2adec30fa2d7e2_00000000000000000000000000000034",
+            "sequence": 1,
+            "body_utf8": "{\"model\": \"deepseek-v4.1-flash\", \"temperature\": 0, \"max_tokens\": 64, \"reasoning_effort\": \"none\", \"stream\": true, \"messages\": [{\"role\": \"user\", \"content\": \"Say hello briefly. Do not use tools.\"}, {\"role\": \"assistant\", \"content\": \"Hello!\"}, {\"role\": \"user\", \"content\": \"Say goodbye briefly. Do not use tools.\"}, {\"role\": \"assistant\", \"content\": \"Goodbye!\"}, {\"role\": \"user\", \"content\": \"Say hello briefly. Do not use tools.\"}, {\"role\": \"assistant\", \"content\": \"Hi!\"}, {\"role\": \"user\", \"content\": \"Say goodbye briefly. Do not use tools.\"}, {\"role\": \"assistant\", \"content\": \"Bye!\"}, {\"role\": \"user\", \"content\": \"Say hello briefly. Do not use tools.\"}, {\"role\": \"assistant\", \"content\": \"Hello!\"}, {\"role\": \"user\", \"content\": \"Say goodbye briefly. Do not use tools.\"}, {\"role\": \"assistant\", \"content\": \"Goodbye!\"}, {\"role\": \"user\", \"content\": \"Reply with one short greeting. Do not use tools.\"}]}",
+            "body_sha256": "cdae09f2734323dfbf4b3e27d835696334c120fcf4f0a589d3701227a6974433"
+          },
+          "outcome": {
+            "sequence": 1,
+            "outcome_state": "recoverable",
+            "certificate": {
+              "version": 1,
+              "frontier": 112,
+              "canonical_sha256": "036eda302ddba8e8072a39c1853ce1938fcef6529b979739782c145f66f69785",
+              "representable": true,
+              "executable_tools": false,
+              "exact_prefix": true,
+              "semantic_complete": true,
+              "first_mismatch": null,
+              "witness": {
+                "model": "deepseek-v4.1-flash",
+                "temperature": 0,
+                "max_tokens": 1,
+                "reasoning_effort": "none",
+                "stream": false,
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": "Say hello briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hello!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say goodbye briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Goodbye!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say hello briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hi!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say goodbye briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Bye!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say hello briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hello!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say goodbye briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Goodbye!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Reply with one short greeting. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hi there!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Continue."
+                  }
+                ]
+              },
+              "encoded_length": 117
+            },
+            "response": {
+              "id": "15c7ac03bf2948f7b4ac129ae556ca94",
+              "object": "chat.completion",
+              "created": 1791059925,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "message": {
+                    "role": "assistant",
+                    "content": "Hi there!"
+                  },
+                  "logprobs": null,
+                  "finish_reason": "stop"
+                }
+              ],
+              "usage": {
+                "prompt_tokens": 108,
+                "completion_tokens": 3,
+                "total_tokens": 111,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "prompt_cache_hit_tokens": 0,
+                "prompt_cache_miss_tokens": 108
+              }
+            }
+          },
+          "trace": {
+            "session_id": "mtp_31880eca313d4c5c8f2adec30fa2d7e2_00000000000000000000000000000034",
+            "response_id": "15c7ac03bf2948f7b4ac129ae556ca94",
+            "t0": 301767.286765083,
+            "generated": 4,
+            "decode_s": 0.15825420600594953,
+            "first_canonical_s": 0.6447632920462638,
+            "first_chunk_s": 0.6448804170358926,
+            "formatting_s": 1.7915910575538874e-05,
+            "delivery_wait_s": 1.208973117172718e-06,
+            "protocol_chunks_produced": 5,
+            "iterator_yields": 5,
+            "canonical_emitted": 4,
+            "rows": [
+              {
+                "canonical_ordinal": 1,
+                "produced_s": 0.6448796250042506,
+                "yield_s": 0.6448804170358926
+              },
+              {
+                "canonical_ordinal": 1,
+                "produced_s": 0.6449233330204152,
+                "yield_s": 0.6449238330242224
+              },
+              {
+                "canonical_ordinal": 2,
+                "produced_s": 0.6452069580554962,
+                "yield_s": 0.6452075420529582
+              },
+              {
+                "canonical_ordinal": 3,
+                "produced_s": 0.7419051670003682,
+                "yield_s": 0.7419061250402592
+              },
+              {
+                "canonical_ordinal": 4,
+                "produced_s": 0.7920639580115676,
+                "yield_s": 0.7920647500432096
+              }
+            ],
+            "cancelled": false,
+            "client_acknowledged_ordinal": 0,
+            "load_s": 1.9579892978072166e-06,
+            "prefill_handoff_s": 0.5831626250292175,
+            "prompt_replay": 0,
+            "full_cache_repack": 0,
+            "mtp_stats": {
+              "cycles": 1,
+              "accepts": 1,
+              "rejects": 1,
+              "init_emits": 2,
+              "draft_emits": 1,
+              "bonus_emits": 0,
+              "verify_emits": 1,
+              "depth_drafted": [
+                1,
+                1,
+                0
+              ],
+              "depth_accepted": [
+                1,
+                0,
+                0
+              ],
+              "zero_cycles": 0,
+              "backbone_ms": 83.63841602113098,
+              "mtp_head_ms": 3.161999979056418,
+              "sample_ms": 0.0749579630792141,
+              "cache_ops_ms": 2.28658301057294
+            },
+            "quiescence": {
+              "canonical_frontier": 112,
+              "recovery_suffix_tokens": [
+                23166,
+                1031,
+                3,
+                1
+              ],
+              "discarded_future_token": null,
+              "counters": {
+                "new_verify_cycles": 0,
+                "new_proposals": 0,
+                "target_forwards": 1,
+                "history_replay": 0,
+                "full_cache_repack": 0,
+                "dspark_appends": 1
+              },
+              "latency_s": 0.021246833028271794,
+              "queue_drained_tokens": [],
+              "dspark": {
+                "frontier": 112,
+                "offsets": [
+                  112,
+                  112,
+                  112
+                ],
+                "target_layer_ids": [
+                  37,
+                  38,
+                  39
+                ],
+                "stage_count": 3,
+                "window_size": 5,
+                "authority": "bounded committed DSpark context; not executable target truth"
+              }
+            },
+            "canonical_frontier": 112,
+            "target_offsets": [
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112,
+              112
+            ],
+            "dspark_offsets": [
+              112,
+              112,
+              112
+            ],
+            "terminal_matches": [],
+            "response": {
+              "id": "15c7ac03bf2948f7b4ac129ae556ca94",
+              "object": "chat.completion",
+              "created": 1791059925,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "message": {
+                    "role": "assistant",
+                    "content": "Hi there!"
+                  },
+                  "logprobs": null,
+                  "finish_reason": "stop"
+                }
+              ],
+              "usage": {
+                "prompt_tokens": 108,
+                "completion_tokens": 3,
+                "total_tokens": 111,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "prompt_cache_hit_tokens": 0,
+                "prompt_cache_miss_tokens": 108
+              }
+            },
+            "protocol_events": [
+              {
+                "id": "15c7ac03bf2948f7b4ac129ae556ca94",
+                "object": "chat.completion.chunk",
+                "created": 1791059925,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "delta": {
+                      "role": "assistant",
+                      "content": ""
+                    },
+                    "logprobs": null,
+                    "finish_reason": null
+                  }
+                ]
+              },
+              {
+                "id": "15c7ac03bf2948f7b4ac129ae556ca94",
+                "object": "chat.completion.chunk",
+                "created": 1791059925,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "delta": {
+                      "content": "Hi"
+                    },
+                    "logprobs": null,
+                    "finish_reason": null
+                  }
+                ]
+              },
+              {
+                "id": "15c7ac03bf2948f7b4ac129ae556ca94",
+                "object": "chat.completion.chunk",
+                "created": 1791059925,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "delta": {
+                      "content": " there"
+                    },
+                    "logprobs": null,
+                    "finish_reason": null
+                  }
+                ]
+              },
+              {
+                "id": "15c7ac03bf2948f7b4ac129ae556ca94",
+                "object": "chat.completion.chunk",
+                "created": 1791059925,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "delta": {
+                      "content": "!"
+                    },
+                    "logprobs": null,
+                    "finish_reason": null
+                  }
+                ]
+              },
+              {
+                "id": "15c7ac03bf2948f7b4ac129ae556ca94",
+                "object": "chat.completion.chunk",
+                "created": 1791059925,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "delta": {
+                      "content": ""
+                    },
+                    "logprobs": null,
+                    "finish_reason": "stop"
+                  }
+                ],
+                "usage": {
+                  "prompt_tokens": 108,
+                  "completion_tokens": 3,
+                  "total_tokens": 111,
+                  "prompt_tokens_details": {
+                    "cached_tokens": 0
+                  },
+                  "prompt_cache_hit_tokens": 0,
+                  "prompt_cache_miss_tokens": 108
+                }
+              }
+            ],
+            "canonical_generated": [
+              23166,
+              1031,
+              3,
+              1
+            ],
+            "prediction_retired": true,
+            "queue_empty": true,
+            "certificate": {
+              "version": 1,
+              "frontier": 112,
+              "canonical_sha256": "036eda302ddba8e8072a39c1853ce1938fcef6529b979739782c145f66f69785",
+              "representable": true,
+              "executable_tools": false,
+              "exact_prefix": true,
+              "semantic_complete": true,
+              "first_mismatch": null,
+              "witness": {
+                "model": "deepseek-v4.1-flash",
+                "temperature": 0,
+                "max_tokens": 1,
+                "reasoning_effort": "none",
+                "stream": false,
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": "Say hello briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hello!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say goodbye briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Goodbye!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say hello briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hi!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say goodbye briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Bye!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say hello briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hello!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Say goodbye briefly. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Goodbye!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Reply with one short greeting. Do not use tools."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hi there!"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Continue."
+                  }
+                ]
+              },
+              "encoded_length": 117
+            },
+            "cleanup_s": 0.04946650000056252,
+            "elapsed_s": 0.792122625047341
+          }
+        }
+      ],
+      "post_eviction": true
+    }
+  ],
+  "resources": [
+    {
+      "live_records": 0,
+      "live_dictionary_storage_bytes": 184,
+      "native_owners": 0,
+      "identity_scalars": 2,
+      "namespace_bytes": 32,
+      "counter_bits": 1,
+      "counter_max_bits": 128,
+      "identity_storage_bytes": 101,
+      "retired_authority_records": 0,
+      "diagnostic_records": 1,
+      "diagnostic_payload_bytes": 178,
+      "closed_outcome_payload_bytes": 0,
+      "diagnostic_deque_storage_bytes": 760,
+      "session_trace_slots": 0,
+      "session_trace_limit": 32,
+      "trace_slots": 0,
+      "trace_limit": 32,
+      "process_maxrss": 20009107456,
+      "mlx_active_bytes": 309155355500,
+      "mlx_cache_bytes": 0,
+      "process_rss_bytes": 11799298048
+    },
+    {
+      "live_records": 0,
+      "live_dictionary_storage_bytes": 184,
+      "native_owners": 0,
+      "identity_scalars": 2,
+      "namespace_bytes": 32,
+      "counter_bits": 2,
+      "counter_max_bits": 128,
+      "identity_storage_bytes": 101,
+      "retired_authority_records": 0,
+      "diagnostic_records": 2,
+      "diagnostic_payload_bytes": 356,
+      "closed_outcome_payload_bytes": 0,
+      "diagnostic_deque_storage_bytes": 760,
+      "session_trace_slots": 0,
+      "session_trace_limit": 32,
+      "trace_slots": 0,
+      "trace_limit": 32,
+      "process_maxrss": 20009107456,
+      "mlx_active_bytes": 309159932536,
+      "mlx_cache_bytes": 0,
+      "process_rss_bytes": 7265337344
+    },
+    {
+      "live_records": 0,
+      "live_dictionary_storage_bytes": 184,
+      "native_owners": 0,
+      "identity_scalars": 2,
+      "namespace_bytes": 32,
+      "counter_bits": 2,
+      "counter_max_bits": 128,
+      "identity_storage_bytes": 101,
+      "retired_authority_records": 0,
+      "diagnostic_records": 3,
+      "diagnostic_payload_bytes": 534,
+      "closed_outcome_payload_bytes": 0,
+      "diagnostic_deque_storage_bytes": 760,
+      "session_trace_slots": 0,
+      "session_trace_limit": 32,
+      "trace_slots": 0,
+      "trace_limit": 32,
+      "process_maxrss": 20009107456,
+      "mlx_active_bytes": 309159715060,
+      "mlx_cache_bytes": 0,
+      "process_rss_bytes": 7268302848
+    },
+    {
+      "live_records": 0,
+      "live_dictionary_storage_bytes": 184,
+      "native_owners": 0,
+      "identity_scalars": 2,
+      "namespace_bytes": 32,
+      "counter_bits": 6,
+      "counter_max_bits": 128,
+      "identity_storage_bytes": 101,
+      "retired_authority_records": 0,
+      "diagnostic_records": 16,
+      "diagnostic_payload_bytes": 2849,
+      "closed_outcome_payload_bytes": 0,
+      "diagnostic_deque_storage_bytes": 760,
+      "session_trace_slots": 0,
+      "session_trace_limit": 32,
+      "trace_slots": 0,
+      "trace_limit": 32,
+      "process_maxrss": 20009107456,
+      "mlx_active_bytes": 309172136802,
+      "mlx_cache_bytes": 0,
+      "process_rss_bytes": 7286276096
+    }
+  ],
+  "admission": [
+    {
+      "name": "live_capacity",
+      "status": 409
+    },
+    {
+      "name": "body_capacity",
+      "status": 400
+    },
+    {
+      "name": "sequence_capacity",
+      "status": 400
+    }
+  ],
+  "sources": {
+    "ds41f_mlx/serving/internal_mtp.py": "d5c1839ca8e84c788f867c61f6214d8fa756a5dda3b7fa46fc78729a5fbe4de0",
+    "ds41f_mlx/serving/server.py": "9d81aac0f9121630a622dfb229f47b55a1ae981e7b03688d9a846e2dccdb099f",
+    "ds41f_mlx/internal_local_client.py": "36caed07e0b4165d076354cd5d1843679788ad4c0e1f9083b1085ad5a706ce55",
+    "tools/run_m39_integration.py": "3f5c8ba03e96e1139386507a6efc335b2531ebb8783bf255f1ac44b20d0827d4",
+    "tools/run_m39_lifetimes.py": "2253ced139a970485787056cb99fffccc697cf67061dfa99ed9f83d7f79f8173"
+  },
+  "counts": {
+    "replay": 0,
+    "repack": 0,
+    "verify": 7,
+    "proposal": 14,
+    "fresh_target_allocations": 4
+  },
+  "empty_lifetimes": 48,
+  "evicted_session_and_request_rejected": true,
+  "trace_count": 7
+}

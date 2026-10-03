@@ -7,6 +7,7 @@ is deliberately NOT a CanonicalTransportHistory acknowledgement.
 from __future__ import annotations
 
 import asyncio
+from collections import deque
 from dataclasses import dataclass, field
 import json
 from time import perf_counter, time
@@ -57,6 +58,11 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.max_live_sessions = 1
+        self._namespace = uuid4().hex
+        self._issued = 0
+        self.retired_diagnostics = deque(maxlen=16)
+        self.traces = deque(maxlen=32)
+        self.session_traces = deque(maxlen=32)
         # Experiment controller only, never read from a request.
         self.delivery_delay_s = 0.0
         self.progress = None
@@ -76,14 +82,44 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
         raise ValueError('internal MTP qualification requires singleton stateful Chat Completions')
         yield  # async iterator contract
 
+    MAX_LIFETIMES = (1 << 128) - 1
+    MAX_SEQUENCE = (1 << 64) - 1
+    MAX_BODY_BYTES = 1048576
+
+    def identity_state(self, session_id):
+        """Derive admission without consulting optional diagnostics or history."""
+        if not isinstance(session_id, str) or len(session_id) != 69:
+            return 'never_valid'
+        parts = session_id.split('_')
+        if len(parts) != 3 or parts[0] != 'mtp' or any(
+                len(p) != 32 or any(c not in '0123456789abcdef' for c in p)
+                for p in parts[1:]):
+            return 'never_valid'
+        if parts[1] != self._namespace:
+            return 'stale_namespace'
+        serial = int(parts[2], 16)
+        if not 1 <= serial <= self._issued:
+            return 'never_valid'
+        return 'live' if session_id in self.sessions else 'retired'
+
+    def get_stateful_session(self, session_id):
+        state = self.identity_state(session_id)
+        if state != 'live':
+            raise KeyError(f'{state} session identity')
+        return self.sessions[session_id]
+
     async def create_stateful_session(self, *, session_id=None):
-        if any(not s.closed for s in self.sessions.values()):
+        if session_id is not None:
+            raise ValueError('internal session IDs are server-issued; requested IDs unsupported')
+        if self.sessions or self._lock.locked():
             raise RuntimeError('maximum live session count reached')
-        sid = session_id or f'sess_{uuid4().hex}'
-        if sid in self.sessions:
-            raise ValueError('qualification session IDs cannot be reused')
+        if self._issued == self.MAX_LIFETIMES:
+            raise RuntimeError('process lifetime namespace exhausted; no wrap permitted')
+        serial = self._issued + 1
+        sid = f'mtp_{self._namespace}_{serial:032x}'
         rec = QualificationSession(sid)
         self.sessions[sid] = rec
+        self._issued = serial
         return rec
 
     async def persist_stateful_session(self, *args, **kwargs):
@@ -96,12 +132,29 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
         rec = self.get_stateful_session(session_id)
         if rec.busy or self._lock.locked():
             raise RuntimeError('session already has an active request')
+        previous_outcome = rec.to_json()['outcome_state']
         await self._lock.acquire()
         rec.busy = True
         try:
-            await self._call(self._retire, rec)
-            rec.closed = True
-            return rec.to_json()
+            with CancelScope(shield=True):
+                await self._call(self._retire, rec)
+                summary = dict(id=rec.session_id, state='closed',
+                               request_count=rec.request_count,
+                               canonical_frontier=len(rec.canonical),
+                               outcome_state=previous_outcome)
+                rec.closed = True
+                # Identity correctness is the issuance invariant, not this record.
+                del self.sessions[session_id]
+                self.retired_diagnostics.append(summary)
+                rec.canonical.clear()
+                rec.owner = rec.processor = rec.guard = None
+                rec.cache = rec.rings = None
+                rec.last_turn = rec.certificate = rec.fence = None
+                rec.reconstruction_body = rec.reconstruction_tokenizer = None
+                self.session_traces.clear()
+                self.traces.clear()
+                self.progress = self.last_trace = None
+                return dict(summary)
         except BaseException:
             rec.unrecoverable = False
             rec.poisoned = True
@@ -275,6 +328,11 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
         """Acquire before HTTP 200. Retain lease until generator cleanup, not send."""
         from fastapi.responses import JSONResponse
         from .server import InferenceStreamingResponse, sse_frame
+        # Bounds checked before reservation, consumption or native authority.
+        if body is not None and (not isinstance(body, bytes) or len(body) > self.MAX_BODY_BYTES):
+            raise ValueError('internal request body exceeds 1 MiB or is not bytes')
+        if sequence is not None and (type(sequence) is not int or not 1 <= sequence <= self.MAX_SEQUENCE):
+            raise ValueError('internal request sequence outside fixed 64-bit budget')
         if request.protocol != 'chat_completions' or request.image_sources:
             raise ValueError('internal MTP supports text Chat Completions only')
         if request.model is not None and request.model not in MODEL_ALIASES:
@@ -288,6 +346,8 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
         retry = observe_retry(rec, sequence, body)
         if retry is not None:
             return JSONResponse(content=retry)
+        if rec.consumed_sequence >= self.MAX_SEQUENCE or rec.request_count >= self.MAX_SEQUENCE:
+            raise RuntimeError('session request lifetime exhausted; DELETE required')
         if rec.poisoned:
             raise RuntimeError('session poisoned; DELETE required')
         if rec.busy or self._lock.locked():

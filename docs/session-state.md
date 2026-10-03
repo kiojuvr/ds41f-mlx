@@ -45,6 +45,15 @@ sticky/stopped and reserved effects non-bypassable, including DELETE/fresh actio
 No automatic resolution API is provided. Its finite living-client soak passes, but
 server retirement lifetime retention is BLOCKED: closed identities and payloads
 remain in an uncapped session map despite the bounded trace deque.
+[M39](milestone-39-lifetime-admission.md) replaces that explicitly internal ID
+contract with server-issued process-namespace serial lifetimes. Retirement is
+permanent under the no-wrap issuance invariant, independent of diagnostic eviction.
+One live record/lease, two fixed-width identity scalars, 16 small retired summaries,
+and fixed 32-slot trace deques replace the historical closed-record archive; DELETE
+removes detailed payloads and references. Client-selected IDs are unsupported on
+this path; `InternalLocalClient.create()` already accepts server-issued identities.
+Exhaustion rejects rather than wrapping; persistence/restart and public MTP remain
+unqualified. See the canonical M39 evidence for scope and limits.
 
 The current native session owner is `TextBackboneState` together with `TextEncoder`, `TextDecoder`, and `TextGeneration` state machinery. It is the reference state contract for future production architecture unless a documented architecture decision replaces or wraps it. Validation inventory helpers are not independent production session implementations.
 

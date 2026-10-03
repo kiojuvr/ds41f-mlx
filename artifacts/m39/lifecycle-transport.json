@@ -1,0 +1,35 @@
+{
+  "schema": "ds41f.m39.lifecycle-transport.v1",
+  "status": "PASS",
+  "rows": [
+    {
+      "action": "delete",
+      "error": {
+        "type": "IncompleteRead",
+        "message": "IncompleteRead(0 bytes read, 167 more expected)"
+      },
+      "client_state": "stopped",
+      "uncertain": {
+        "action": "delete",
+        "session_id": "mtp_15871d015330460c870ac71785cfa796_00000000000000000000000000000001"
+      },
+      "mutation_reached": true,
+      "no_retry_or_replacement": true
+    },
+    {
+      "action": "create",
+      "error": {
+        "type": "IncompleteRead",
+        "message": "IncompleteRead(0 bytes read, 241 more expected)"
+      },
+      "client_state": "stopped",
+      "uncertain": {
+        "action": "create",
+        "requested_session_id": null
+      },
+      "mutation_reached": true,
+      "no_retry_or_replacement": true
+    }
+  ],
+  "scope": "actual loopback lifecycle/socket; controlled ASGI post-header body loss; no model execution"
+}

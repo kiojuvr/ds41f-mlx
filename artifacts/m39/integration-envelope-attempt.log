@@ -1,0 +1,46 @@
+Traceback (most recent call last):
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/internal_local_client.py", line 178, in _send
+    conn, resp = self.runtime.internal_fenced_request(identity.session_id, identity.body, identity.sequence)
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/web_client.py", line 68, in internal_fenced_request
+    raise RuntimeHTTPError(response.status, response.read().decode('utf-8'))
+ds41f_mlx.web_client.RuntimeHTTPError: runtime HTTP 400: {"error":{"message":"request must exactly extend retained canonical prefix","type":"invalid_request_error","param":null,"code":"invalid_request_error"}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/run_m39_integration.py", line 112, in <module>
+    if __name__=='__main__':asyncio.run(main())
+                            ~~~~~~~~~~~^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 196, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 119, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 726, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/run_m39_integration.py", line 69, in main
+    rows.append(await turn('Use lookup_weather for Paris.',opts=tools))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/run_m39_integration.py", line 44, in turn
+    value=await call(client.submit_tool_results,options=opts or options) if tool_result else await call(client.submit,[dict(role='user',content=text)],options=opts or options)
+                                                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/run_m39_integration.py", line 32, in call
+    async def call(fn,*a,**kw):return await asyncio.to_thread(fn,*a,**kw)
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/threads.py", line 26, in to_thread
+    return await loop.run_in_executor(None, func_call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/concurrent/futures/thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/internal_local_client.py", line 171, in submit
+    return self._send()
+           ~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/internal_local_client.py", line 201, in _send
+    self._stop(f'fenced request rejected; client/admission state error: {exc}')
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/internal_local_client.py", line 123, in _stop
+    raise ClientStateError(message)
+ds41f_mlx.internal_local_client.ClientStateError: fenced request rejected; client/admission state error: runtime HTTP 400: {"error":{"message":"request must exactly extend retained canonical prefix","type":"invalid_request_error","param":null,"code":"invalid_request_error"}}
