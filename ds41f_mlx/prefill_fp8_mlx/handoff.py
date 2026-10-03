@@ -153,6 +153,7 @@ class LivePrefillResult:
     _live_cache: list[Any] | None
     _state: str
     handoff_count: int
+    dspark_committed_context: Any | None
 
     @classmethod
     def from_committed(cls, setup: PrefillExecutionSetup, *, prefix_token_ids: Sequence[int]) -> 'LivePrefillResult':
@@ -168,6 +169,7 @@ class LivePrefillResult:
             setattr(actual_setup, "p6_commit_authority", setup)
         result._setup, result._live_cache = actual_setup, actual_setup.block_runner.working_cache
         result._state, result.handoff_count = 'ready', 0
+        result.dspark_committed_context = getattr(setup, "dspark_committed_context", None)
         actual_setup.handoff_claimed = True
         actual_setup.block_runner.handoff_reserved = True
         if getattr(actual_setup.block_runner, "scheduling_coordinator", None) is not None:

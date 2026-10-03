@@ -1,0 +1,78 @@
+{
+  "schema": "ds41f.m29.qualification.v1",
+  "base_commit": "4a336075630b076583d9ee6bfb892855492e4312",
+  "decision": "PROTOCOL_BLOCKED",
+  "production_mtp_default": "OFF",
+  "public_serving_option": "not enabled",
+  "off_path_preserved": {
+    "class": "ds41f_mlx.runtime.omlx_generation.OMLXGenerationSession",
+    "speculation_policy": "still rejects speculation_enabled/preserve_mtp",
+    "mixed_on_off_refactor": false
+  },
+  "implemented": {
+    "p7_sidecar_seam": "NativeDSparkPriming reads dspark_target_layer_ids and uses native return_dspark_hidden/dspark_append_context",
+    "p6_continuity_seam": "same NativeDSparkPriming.forward_and_append_once shape for already-required suffix target computation",
+    "native_mtp_session": "OMLXMTPGenerationSession internal opt-in only",
+    "canonical_quiescence": "canonical_quiesce_native_singleton implements M28 frontier relation",
+    "canonical_vs_delivered": "CanonicalTransportHistory separates canonical_generated_tokens, transport_delivered_tokens, recovery_suffix_tokens"
+  },
+  "idle_invariants": {
+    "target_offsets": "all40 == len(canonical_history)",
+    "dspark_offsets": "all rings == len(canonical_history)",
+    "queue": "empty",
+    "rollback_stash": "absent/cleared",
+    "scheduler_uid": "absent/cleared"
+  },
+  "zero_replay_repack_contract": {
+    "new_verify_cycles": 0,
+    "new_proposals": 0,
+    "history_replay": 0,
+    "full_cache_repack": 0
+  },
+  "protocol_gate": {
+    "safe": [
+      "internal text generation with no parser-only boundary",
+      "length termination",
+      "EOS/stop-token sequences registered in upstream token matcher before target verification"
+    ],
+    "unsafe": [
+      "parser-only tool/DSML boundaries",
+      "arbitrary user stop strings outside upstream token matcher",
+      "token-exact immediate abort"
+    ],
+    "blocker": "actual tool/parser termination may be known only after semantic text crosses a boundary; canonical drain is not sound"
+  },
+  "real_session_qualification": {
+    "status": "not promoted",
+    "reason": "PROTOCOL_BLOCKED before agent-ready repeated real-session qualification",
+    "fresh_real_session_artifacts": []
+  },
+  "performance": {
+    "status": "not claimed for M29",
+    "m26_reference_class": "40+ tok/s, 90%+ checked-draft acceptance, ~4 accepted/cycle under stock full priming",
+    "regression_gate": "acceptance collapse remains fail-closed for future operational qualification"
+  },
+  "memory": {
+    "status": "no real repeated-session memory claim in M29",
+    "leak_policy": "future operational qualification must fail on unexplained monotonic DSpark/MTP growth"
+  },
+  "persistence": {
+    "status": "fail-closed guard retained",
+    "serializable_idle_representation": false
+  },
+  "structural_tests": [
+    "tests/test_m29_mtp_lifecycle.py"
+  ],
+  "test_results": {
+    "selected_off_and_m29_regressions": {
+      "command": ".venv/bin/python -m pytest -q tests/test_m29_mtp_lifecycle.py tests/test_m25_mtp_boundary.py tests/test_prefill_fp8_mlx_p5.py",
+      "result": "25 passed, 12 subtests passed"
+    },
+    "full_pytest": {
+      "command": ".venv/bin/python -m pytest -q",
+      "result": "137 passed, 1 skipped, 32 subtests passed, 9 failed",
+      "failure_classification": "environment/repository pre-existing harness issues: native/tools/benchmark/run_engram_cache.py absent for native engram tests; jsonschema missing in local oMLX tool_calling dependency for M20 tests"
+    }
+  },
+  "final_recommendation": "Resolve recipe/tool protocol pre-commit boundary, then run repeated P7/P6/MTP/quiesce real-session operational qualification."
+}
