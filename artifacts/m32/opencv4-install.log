@@ -1,0 +1,42 @@
+==> Downloading bottle manifests
+✔︎ Bottle Manifest opencv@4 (4.14.0_10)
+==> Would install 1 formula:
+opencv@4 4.14.0_10
+==> Would upgrade 1 dependency for opencv@4:
+ca-certificates
+==> Fetching downloads for: opencv@4
+✔︎ Bottle ca-certificates (2026-09-25)
+✔︎ Bottle opencv@4 (4.14.0_10)
+Warning: opencv@4 was installed but not linked because opencv is already linked.
+To link this version, run:
+  brew link opencv@4
+==> Pouring opencv@4--4.14.0_10.arm64_tahoe.bottle.tar.gz
+🍺  /opt/homebrew/Cellar/opencv@4/4.14.0_10: 978 files, 149.0MB
+==> Caveats
+==> opencv@4
+opencv@4 is keg-only, which means it was not symlinked into /opt/homebrew,
+because this is an alternate version of another formula.
+
+If you need to have opencv@4 first in your PATH, run:
+  echo 'export PATH=/opt/homebrew/opt/opencv@4/bin:$PATH' >> ~/.zshrc
+
+For compilers to find opencv@4 you may need to set:
+  export LDFLAGS=-L/opt/homebrew/opt/opencv@4/lib
+  export CPPFLAGS=-I/opt/homebrew/opt/opencv@4/include
+
+For pkgconf to find opencv@4 you may need to set:
+  export PKG_CONFIG_PATH=/opt/homebrew/opt/opencv@4/lib/pkgconfig
+
+For cmake to find opencv@4 you may need to set:
+  export CMAKE_PREFIX_PATH=/opt/homebrew/opt/opencv@4
+
+The following opencv@4 executables are shadowed by other linked Homebrew commands:
+  opencv_annotation (shadowed by /opt/homebrew/bin/opencv_annotation from opencv)
+  opencv_model_diagnostics (shadowed by /opt/homebrew/bin/opencv_model_diagnostics from opencv)
+  opencv_version (shadowed by /opt/homebrew/bin/opencv_version from opencv)
+  opencv_visualisation (shadowed by /opt/homebrew/bin/opencv_visualisation from opencv)
+  opencv_waldboost_detector (shadowed by /opt/homebrew/bin/opencv_waldboost_detector from opencv)
+Running these by name will not invoke the version provided by this formula.
+Run `brew link opencv@4` to switch the active version to this keg.
+Disable this behaviour by setting `HOMEBREW_NO_PATH_SHADOW_CHECK=1`.
+Hide these hints with `HOMEBREW_NO_ENV_HINTS=1` (see `man brew`).

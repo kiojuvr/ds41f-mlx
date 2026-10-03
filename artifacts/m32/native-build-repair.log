@@ -1,0 +1,29 @@
+Using Python 3.13.15 environment at: /private/tmp/ds41f-m32-qual
+Resolved 1 package in 0.76ms
+   Building deepseek-recipe @ file:///tmp/ds41f-m31-recipe/deepseek-recipe-python
+  × Failed to build `deepseek-recipe @
+  │ file:///tmp/ds41f-m31-recipe/deepseek-recipe-python`
+  ├─▶ The build backend returned an error
+  ╰─▶ Call to `maturin.build_wheel` failed (exit status: 1)
+
+      [stdout]
+      Running `maturin pep517 build-wheel -i
+      /private/tmp/ds41f-m32-qual/bin/python --compatibility off`
+
+      [stderr]
+      🍹 Building a mixed python/rust project
+      🐍 Found CPython 3.13 at /private/tmp/ds41f-m32-qual/bin/python
+      🔗 Found pyo3 bindings with abi3-py3.10 support
+      📡 Using build options features from pyproject.toml
+      💻 Using `MACOSX_DEPLOYMENT_TARGET=11.0` for aarch64-apple-darwin by
+      default
+          Finished `release` profile [optimized] target(s) in 0.10s
+      💥 maturin failed
+        Caused by: Cannot repair wheel, because required library
+      @rpath/libgcc_s.1.1.dylib could not be located.
+      Error: command ['maturin', 'pep517', 'build-wheel', '-i',
+      '/private/tmp/ds41f-m32-qual/bin/python', '--compatibility', 'off']
+      returned non-zero exit status 1
+
+
+hint: Build failures usually indicate a problem with the package or the build environment

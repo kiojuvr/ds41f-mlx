@@ -1,0 +1,28 @@
+Traceback (most recent call last):
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/run_m32_init_boundary_probe.py", line 87, in <module>
+    pr, gr = bg.next()
+             ~~~~~~~^^
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/mlx_lm/generate.py", line 1870, in next
+    return self._next()
+           ~~~~~~~~~~^^
+  File "/tmp/ds41f-m32-omlx/omlx/patches/mlx_lm_mtp/batch_generator.py", line 338, in patched_bg_next
+    result = original_bg_next(self, *args, **kwargs)
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/mlx_lm/generate.py", line 1790, in _next
+    generation_responses = self._generation_batch.next()
+  File "/tmp/ds41f-m32-omlx/omlx/patches/mlx_lm_mtp/batch_generator.py", line 278, in scoped_next
+    return patched_next(self, *args, **kwargs)
+  File "/tmp/ds41f-m32-omlx/omlx/patches/mlx_lm_mtp/batch_generator.py", line 182, in patched_next
+    state = _prepare_mtp_state_for_next(self)
+  File "/tmp/ds41f-m32-omlx/omlx/patches/mlx_lm_mtp/batch_generator.py", line 1421, in _prepare_mtp_state_for_next
+    _post_init_mtp(gen_batch)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/run_m32_init_boundary_probe.py", line 50, in init
+    stop = t.decode([main])
+           ^^^^^^^^
+AttributeError: 'deepseek_recipe._native.Tokenizer' object has no attribute 'decode'. Did you mean: 'encode'?
+Exception ignored in: <function BatchGenerator.__del__ at 0x16cda8680>
+Traceback (most recent call last):
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/mlx_lm/generate.py", line 1577, in __del__
+  File "/tmp/ds41f-m32-omlx/omlx/patches/mlx_lm_mtp/batch_generator.py", line 304, in patched_bg_close
+  File "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/mlx_lm/generate.py", line 1572, in close
+RuntimeError: There is no Stream(gpu, 1) in current thread.
