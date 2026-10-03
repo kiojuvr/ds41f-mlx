@@ -1,0 +1,55 @@
+[
+  {
+    "name": "identities",
+    "command": [
+      "/private/tmp/ds41f-m32-qual/bin/python",
+      "tools/check_m34_identities.py"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "recipe-matrix",
+    "command": [
+      "/private/tmp/ds41f-m32-qual/bin/python",
+      "-c",
+      "from pathlib import Path; p=Path('tools/run_m36r_recipe_matrix.py'); code=p.read_text().replace('artifacts/m36r/recipe-matrix.json','artifacts/m37/recipe-matrix.json'); exec(compile(code,str(p),'exec'),{'__file__':str(p.resolve()),'__name__':'__main__'})"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "m35-http",
+    "command": [
+      "/private/tmp/ds41f-m32-qual/bin/python",
+      "-c",
+      "import asyncio; from tools import run_m35_http_qualification as q; q.OUT=q.ROOT/'artifacts/m37/m35-http.json'; asyncio.run(q.main())"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "m36-probe",
+    "command": [
+      "/private/tmp/ds41f-m32-qual/bin/python",
+      "-c",
+      "import asyncio; from tools import run_m36_recovery_probe as q; q.OUT=q.q.ROOT/'artifacts/m37/m36-probe.json'; asyncio.run(q.main())"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "m36r-http",
+    "command": [
+      "/private/tmp/ds41f-m32-qual/bin/python",
+      "-c",
+      "import asyncio; from tools import run_m36r_http as q; q.OUT=q.q.ROOT/'artifacts/m37/m36r-http.json'; asyncio.run(q.main())"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "native-interruptions",
+    "command": [
+      "/private/tmp/ds41f-m32-qual/bin/python",
+      "-c",
+      "from pathlib import Path; p=Path('tools/run_m35_native_interruptions.py'); code=p.read_text().replace('artifacts/m35/native-interruptions.json','artifacts/m37/native-interruptions.json'); exec(compile(code,str(p),'exec'),{'__file__':str(p.resolve()),'__name__':'__main__'})"
+    ],
+    "returncode": 0
+  }
+]

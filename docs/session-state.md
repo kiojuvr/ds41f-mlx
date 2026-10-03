@@ -33,6 +33,13 @@ Opt-in internal sequence/body identity fencing makes observation/retry non-gener
 older identities reject after the next admitted turn. No second model-history
 owner, persisted fence, public MTP route or distributed exactly-once tool claim
 is introduced.
+[M37](milestone-37-local-client-integration.md) places the integrated workflow in an
+experimental reusable local client. Its transcript is ordinary application history,
+its ledger owns only living-client effects, and its frozen request/expected sequence
+are transport/admission observations, not token/cache authority. Negative outcomes
+omit the unrepresentable final assistant; explicit DELETE/fresh creation may prefill
+legitimate prior visible messages as a new session, never carry retired native state.
+Expired identities surface without regeneration.
 
 The current native session owner is `TextBackboneState` together with `TextEncoder`, `TextDecoder`, and `TextGeneration` state machinery. It is the reference state contract for future production architecture unless a documented architecture decision replaces or wraps it. Validation inventory helpers are not independent production session implementations.
 

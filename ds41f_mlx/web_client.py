@@ -47,6 +47,30 @@ class RuntimeClient:
             raise RuntimeHTTPError(exc.code, exc.read().decode("utf-8", "replace")) from exc
         return json.loads(raw) if raw else {}
 
+    def internal_fenced_request(self, session_id: str, body: bytes, sequence: int):
+        """Exact-byte experimental transport; not used by the public browser loop.
+
+        The caller owns/ closes the returned response even on interrupted reads.
+        No serialization, retry, or sequence allocation occurs here.
+        """
+        import http.client
+        from urllib.parse import urlsplit, quote
+        url = urlsplit(self.base_url)
+        if url.scheme != 'http' or url.hostname not in ('127.0.0.1', 'localhost') or url.path:
+            raise ValueError('internal recovery requires loopback HTTP without a base path')
+        conn = http.client.HTTPConnection(url.hostname, url.port or 80, timeout=1800)
+        try:
+            conn.request('POST', f'/v1/sessions/{quote(session_id, safe="")}/chat/completions',
+                         body, {'Content-Type': 'application/json',
+                                'X-DS41F-Request-Sequence': str(sequence)})
+            response = conn.getresponse()
+            if response.status != 200:
+                raise RuntimeHTTPError(response.status, response.read().decode('utf-8'))
+            return conn, response
+        except BaseException:
+            conn.close()
+            raise
+
     def health(self) -> dict[str, Any]:
         return self.request("GET", "/health", timeout=5)
 

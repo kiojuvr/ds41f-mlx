@@ -1,0 +1,3367 @@
+{
+  "schema": "ds41f.m37.workflow.v1",
+  "status": "RUNNING",
+  "turns": [
+    {
+      "name": "normal-streamed-text",
+      "identity": {
+        "session_id": "m37-agent",
+        "sequence": 1,
+        "body_utf8": "{\"model\": \"deepseek-v4.1-flash\", \"tools\": [{\"type\": \"function\", \"function\": {\"name\": \"lookup_weather\", \"description\": \"Return deterministic weather for a city.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"city\": {\"type\": \"string\"}}, \"required\": [\"city\"], \"additionalProperties\": false}, \"strict\": true}}], \"tool_choice\": \"auto\", \"reasoning_effort\": \"none\", \"temperature\": 0, \"max_tokens\": 64, \"stream\": true, \"messages\": [{\"role\": \"user\", \"content\": \"Say hello briefly. Do not use tools.\"}]}",
+        "body_sha256": "70a38f1be1f9dfe5e1f92bb15bd6ecee543ba54a46bf6e2497d57c012f1b04a6"
+      },
+      "observed": [
+        {
+          "id": "d07203b62ad949c59cb9c58b9715003b",
+          "object": "chat.completion.chunk",
+          "created": 1791055411,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "d07203b62ad949c59cb9c58b9715003b",
+          "object": "chat.completion.chunk",
+          "created": 1791055411,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "Hello"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "d07203b62ad949c59cb9c58b9715003b",
+          "object": "chat.completion.chunk",
+          "created": 1791055411,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "!"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "d07203b62ad949c59cb9c58b9715003b",
+          "object": "chat.completion.chunk",
+          "created": 1791055411,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 280,
+            "completion_tokens": 2,
+            "total_tokens": 282,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 280
+          }
+        }
+      ],
+      "outcome": {
+        "sequence": 1,
+        "outcome_state": "recoverable",
+        "certificate": {
+          "version": 1,
+          "frontier": 283,
+          "canonical_sha256": "fd516eb7c22b46c68bb249f550d219e1891a10e0275f3c994256ff8e4b860b3c",
+          "representable": true,
+          "executable_tools": false,
+          "exact_prefix": true,
+          "semantic_complete": true,
+          "first_mismatch": null,
+          "witness": {
+            "model": "deepseek-v4.1-flash",
+            "tools": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "lookup_weather",
+                  "description": "Return deterministic weather for a city.",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "city": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "city"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "strict": true
+                }
+              }
+            ],
+            "tool_choice": "auto",
+            "reasoning_effort": "none",
+            "temperature": 0,
+            "max_tokens": 1,
+            "stream": false,
+            "messages": [
+              {
+                "role": "user",
+                "content": "Say hello briefly. Do not use tools."
+              },
+              {
+                "role": "assistant",
+                "content": "Hello!"
+              },
+              {
+                "role": "user",
+                "content": "Continue."
+              }
+            ]
+          },
+          "encoded_length": 288
+        },
+        "response": {
+          "id": "d07203b62ad949c59cb9c58b9715003b",
+          "object": "chat.completion",
+          "created": 1791055413,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "Hello!"
+              },
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 280,
+            "completion_tokens": 2,
+            "total_tokens": 282,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 280
+          }
+        }
+      },
+      "transcript": [
+        {
+          "role": "user",
+          "content": "Say hello briefly. Do not use tools."
+        },
+        {
+          "role": "assistant",
+          "content": "Hello!"
+        }
+      ],
+      "state": "ready",
+      "wall_s": 73.40222920803353,
+      "recovery_wait_and_lookup_s": 0.002074457996059209,
+      "retained_state_bytes": 2057
+    },
+    {
+      "name": "normal-tool",
+      "identity": {
+        "session_id": "m37-agent",
+        "sequence": 2,
+        "body_utf8": "{\"model\": \"deepseek-v4.1-flash\", \"tools\": [{\"type\": \"function\", \"function\": {\"name\": \"lookup_weather\", \"description\": \"Return deterministic weather for a city.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"city\": {\"type\": \"string\"}}, \"required\": [\"city\"], \"additionalProperties\": false}, \"strict\": true}}], \"tool_choice\": {\"type\": \"function\", \"function\": {\"name\": \"lookup_weather\"}}, \"reasoning_effort\": \"none\", \"temperature\": 0, \"max_tokens\": 96, \"stream\": true, \"messages\": [{\"role\": \"user\", \"content\": \"Say hello briefly. Do not use tools.\"}, {\"role\": \"assistant\", \"content\": \"Hello!\"}, {\"role\": \"user\", \"content\": \"Use lookup_weather for Paris.\"}]}",
+        "body_sha256": "63250684fb4e198580e72a22356c0490ca8e9498a075012f9f18e92d0758af1f"
+      },
+      "observed": [
+        {
+          "id": "978fd4353f8444f88a7b7c139f447456",
+          "object": "chat.completion.chunk",
+          "created": 1791055413,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "978fd4353f8444f88a7b7c139f447456",
+          "object": "chat.completion.chunk",
+          "created": 1791055413,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "id": "call_978fd4353f8444f88a7b7c139f447456_0",
+                    "type": "function",
+                    "function": {
+                      "name": "lookup_weather",
+                      "arguments": ""
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "978fd4353f8444f88a7b7c139f447456",
+          "object": "chat.completion.chunk",
+          "created": 1791055413,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "function": {
+                      "arguments": "{"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "978fd4353f8444f88a7b7c139f447456",
+          "object": "chat.completion.chunk",
+          "created": 1791055413,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "function": {
+                      "arguments": "\""
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "978fd4353f8444f88a7b7c139f447456",
+          "object": "chat.completion.chunk",
+          "created": 1791055413,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "function": {
+                      "arguments": "city"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "978fd4353f8444f88a7b7c139f447456",
+          "object": "chat.completion.chunk",
+          "created": 1791055413,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "function": {
+                      "arguments": "\""
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "978fd4353f8444f88a7b7c139f447456",
+          "object": "chat.completion.chunk",
+          "created": 1791055413,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "function": {
+                      "arguments": ": "
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "978fd4353f8444f88a7b7c139f447456",
+          "object": "chat.completion.chunk",
+          "created": 1791055413,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "function": {
+                      "arguments": "\""
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "978fd4353f8444f88a7b7c139f447456",
+          "object": "chat.completion.chunk",
+          "created": 1791055413,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "function": {
+                      "arguments": "Paris"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "978fd4353f8444f88a7b7c139f447456",
+          "object": "chat.completion.chunk",
+          "created": 1791055413,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "function": {
+                      "arguments": "\""
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "978fd4353f8444f88a7b7c139f447456",
+          "object": "chat.completion.chunk",
+          "created": 1791055413,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "function": {
+                      "arguments": "}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "978fd4353f8444f88a7b7c139f447456",
+          "object": "chat.completion.chunk",
+          "created": 1791055413,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": "tool_calls"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 298,
+            "completion_tokens": 34,
+            "total_tokens": 332,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 298
+          }
+        }
+      ],
+      "outcome": {
+        "sequence": 2,
+        "outcome_state": "recoverable",
+        "certificate": {
+          "version": 1,
+          "frontier": 332,
+          "canonical_sha256": "592d35d0f24c13bc105542ccd116a1b2890445ccd1d344556e619dfe8658607c",
+          "representable": true,
+          "executable_tools": true,
+          "exact_prefix": true,
+          "semantic_complete": true,
+          "first_mismatch": null,
+          "witness": {
+            "model": "deepseek-v4.1-flash",
+            "tools": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "lookup_weather",
+                  "description": "Return deterministic weather for a city.",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "city": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "city"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "strict": true
+                }
+              }
+            ],
+            "tool_choice": "auto",
+            "reasoning_effort": "none",
+            "temperature": 0,
+            "max_tokens": 1,
+            "stream": false,
+            "messages": [
+              {
+                "role": "user",
+                "content": "Say hello briefly. Do not use tools."
+              },
+              {
+                "role": "assistant",
+                "content": "Hello!"
+              },
+              {
+                "role": "user",
+                "content": "Use lookup_weather for Paris."
+              },
+              {
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [
+                  {
+                    "id": "call_978fd4353f8444f88a7b7c139f447456_0",
+                    "type": "function",
+                    "function": {
+                      "name": "lookup_weather",
+                      "arguments": "{\"city\": \"Paris\"}"
+                    }
+                  }
+                ]
+              },
+              {
+                "role": "tool",
+                "tool_call_id": "call_978fd4353f8444f88a7b7c139f447456_0",
+                "content": "NOT EXECUTED: reconstruction witness"
+              },
+              {
+                "role": "user",
+                "content": "Continue."
+              }
+            ]
+          },
+          "encoded_length": 354
+        },
+        "response": {
+          "id": "978fd4353f8444f88a7b7c139f447456",
+          "object": "chat.completion",
+          "created": 1791055414,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [
+                  {
+                    "id": "call_978fd4353f8444f88a7b7c139f447456_0",
+                    "type": "function",
+                    "function": {
+                      "name": "lookup_weather",
+                      "arguments": "{\"city\": \"Paris\"}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": "tool_calls"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 298,
+            "completion_tokens": 34,
+            "total_tokens": 332,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 298
+          }
+        }
+      },
+      "transcript": [
+        {
+          "role": "user",
+          "content": "Say hello briefly. Do not use tools."
+        },
+        {
+          "role": "assistant",
+          "content": "Hello!"
+        },
+        {
+          "role": "user",
+          "content": "Use lookup_weather for Paris."
+        },
+        {
+          "role": "assistant",
+          "content": "",
+          "tool_calls": [
+            {
+              "id": "call_978fd4353f8444f88a7b7c139f447456_0",
+              "type": "function",
+              "function": {
+                "name": "lookup_weather",
+                "arguments": "{\"city\": \"Paris\"}"
+              }
+            }
+          ]
+        }
+      ],
+      "state": "tool_pending",
+      "wall_s": 1.1381764170364477,
+      "recovery_wait_and_lookup_s": 0.002046082983724773,
+      "retained_state_bytes": 3040
+    },
+    {
+      "name": "normal-tool-result",
+      "identity": {
+        "session_id": "m37-agent",
+        "sequence": 3,
+        "body_utf8": "{\"model\": \"deepseek-v4.1-flash\", \"tools\": [{\"type\": \"function\", \"function\": {\"name\": \"lookup_weather\", \"description\": \"Return deterministic weather for a city.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"city\": {\"type\": \"string\"}}, \"required\": [\"city\"], \"additionalProperties\": false}, \"strict\": true}}], \"tool_choice\": \"auto\", \"reasoning_effort\": \"none\", \"temperature\": 0, \"max_tokens\": 64, \"stream\": true, \"messages\": [{\"role\": \"user\", \"content\": \"Say hello briefly. Do not use tools.\"}, {\"role\": \"assistant\", \"content\": \"Hello!\"}, {\"role\": \"user\", \"content\": \"Use lookup_weather for Paris.\"}, {\"role\": \"assistant\", \"content\": \"\", \"tool_calls\": [{\"id\": \"call_978fd4353f8444f88a7b7c139f447456_0\", \"type\": \"function\", \"function\": {\"name\": \"lookup_weather\", \"arguments\": \"{\\\"city\\\": \\\"Paris\\\"}\"}}]}, {\"role\": \"tool\", \"tool_call_id\": \"call_978fd4353f8444f88a7b7c139f447456_0\", \"content\": \"{\\\"city\\\":\\\"Paris\\\",\\\"weather\\\":\\\"sunny 21C\\\",\\\"source\\\":\\\"m11_deterministic_stub\\\"}\"}]}",
+        "body_sha256": "89d8ce7cf736dc8cb51d5e7f469ffc5f5af61ad878110f09a1c708d72c05da7e"
+      },
+      "observed": [
+        {
+          "id": "f90ef777fde14282b1cf241388ddd237",
+          "object": "chat.completion.chunk",
+          "created": 1791055414,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "f90ef777fde14282b1cf241388ddd237",
+          "object": "chat.completion.chunk",
+          "created": 1791055414,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "Paris"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "f90ef777fde14282b1cf241388ddd237",
+          "object": "chat.completion.chunk",
+          "created": 1791055414,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": ":"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "f90ef777fde14282b1cf241388ddd237",
+          "object": "chat.completion.chunk",
+          "created": 1791055414,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": " sunny"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "f90ef777fde14282b1cf241388ddd237",
+          "object": "chat.completion.chunk",
+          "created": 1791055414,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": ","
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "f90ef777fde14282b1cf241388ddd237",
+          "object": "chat.completion.chunk",
+          "created": 1791055414,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": " "
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "f90ef777fde14282b1cf241388ddd237",
+          "object": "chat.completion.chunk",
+          "created": 1791055414,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "21"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "f90ef777fde14282b1cf241388ddd237",
+          "object": "chat.completion.chunk",
+          "created": 1791055414,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "\u00b0"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "f90ef777fde14282b1cf241388ddd237",
+          "object": "chat.completion.chunk",
+          "created": 1791055414,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "C"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "f90ef777fde14282b1cf241388ddd237",
+          "object": "chat.completion.chunk",
+          "created": 1791055414,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "."
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "f90ef777fde14282b1cf241388ddd237",
+          "object": "chat.completion.chunk",
+          "created": 1791055414,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 368,
+            "completion_tokens": 9,
+            "total_tokens": 377,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 368
+          }
+        }
+      ],
+      "outcome": {
+        "sequence": 3,
+        "outcome_state": "recoverable",
+        "certificate": {
+          "version": 1,
+          "frontier": 378,
+          "canonical_sha256": "ffbf966a912dc4f1e31af1d6110ff063fb77fcf8f12471a2c0051311174adccd",
+          "representable": true,
+          "executable_tools": false,
+          "exact_prefix": true,
+          "semantic_complete": true,
+          "first_mismatch": null,
+          "witness": {
+            "model": "deepseek-v4.1-flash",
+            "tools": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "lookup_weather",
+                  "description": "Return deterministic weather for a city.",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "city": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "city"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "strict": true
+                }
+              }
+            ],
+            "tool_choice": "auto",
+            "reasoning_effort": "none",
+            "temperature": 0,
+            "max_tokens": 1,
+            "stream": false,
+            "messages": [
+              {
+                "role": "user",
+                "content": "Say hello briefly. Do not use tools."
+              },
+              {
+                "role": "assistant",
+                "content": "Hello!"
+              },
+              {
+                "role": "user",
+                "content": "Use lookup_weather for Paris."
+              },
+              {
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [
+                  {
+                    "id": "call_978fd4353f8444f88a7b7c139f447456_0",
+                    "type": "function",
+                    "function": {
+                      "name": "lookup_weather",
+                      "arguments": "{\"city\": \"Paris\"}"
+                    }
+                  }
+                ]
+              },
+              {
+                "role": "tool",
+                "tool_call_id": "call_978fd4353f8444f88a7b7c139f447456_0",
+                "content": "{\"city\":\"Paris\",\"weather\":\"sunny 21C\",\"source\":\"m11_deterministic_stub\"}"
+              },
+              {
+                "role": "assistant",
+                "content": "Paris: sunny, 21\u00b0C."
+              },
+              {
+                "role": "user",
+                "content": "Continue."
+              }
+            ]
+          },
+          "encoded_length": 383
+        },
+        "response": {
+          "id": "f90ef777fde14282b1cf241388ddd237",
+          "object": "chat.completion",
+          "created": 1791055415,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "Paris: sunny, 21\u00b0C."
+              },
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 368,
+            "completion_tokens": 9,
+            "total_tokens": 377,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 368
+          }
+        }
+      },
+      "transcript": [
+        {
+          "role": "user",
+          "content": "Say hello briefly. Do not use tools."
+        },
+        {
+          "role": "assistant",
+          "content": "Hello!"
+        },
+        {
+          "role": "user",
+          "content": "Use lookup_weather for Paris."
+        },
+        {
+          "role": "assistant",
+          "content": "",
+          "tool_calls": [
+            {
+              "id": "call_978fd4353f8444f88a7b7c139f447456_0",
+              "type": "function",
+              "function": {
+                "name": "lookup_weather",
+                "arguments": "{\"city\": \"Paris\"}"
+              }
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "tool_call_id": "call_978fd4353f8444f88a7b7c139f447456_0",
+          "content": "{\"city\":\"Paris\",\"weather\":\"sunny 21C\",\"source\":\"m11_deterministic_stub\"}"
+        },
+        {
+          "role": "assistant",
+          "content": "Paris: sunny, 21\u00b0C."
+        }
+      ],
+      "state": "ready",
+      "wall_s": 0.6859927499899641,
+      "recovery_wait_and_lookup_s": 0.0020063749980181456,
+      "retained_state_bytes": 4003
+    },
+    {
+      "name": "ambiguous-stream-text",
+      "identity": {
+        "session_id": "m37-agent",
+        "sequence": 4,
+        "body_utf8": "{\"model\": \"deepseek-v4.1-flash\", \"tools\": [{\"type\": \"function\", \"function\": {\"name\": \"lookup_weather\", \"description\": \"Return deterministic weather for a city.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"city\": {\"type\": \"string\"}}, \"required\": [\"city\"], \"additionalProperties\": false}, \"strict\": true}}], \"tool_choice\": \"auto\", \"reasoning_effort\": \"none\", \"temperature\": 0, \"max_tokens\": 64, \"stream\": true, \"messages\": [{\"role\": \"user\", \"content\": \"Say hello briefly. Do not use tools.\"}, {\"role\": \"assistant\", \"content\": \"Hello!\"}, {\"role\": \"user\", \"content\": \"Use lookup_weather for Paris.\"}, {\"role\": \"assistant\", \"content\": \"\", \"tool_calls\": [{\"id\": \"call_978fd4353f8444f88a7b7c139f447456_0\", \"type\": \"function\", \"function\": {\"name\": \"lookup_weather\", \"arguments\": \"{\\\"city\\\": \\\"Paris\\\"}\"}}]}, {\"role\": \"tool\", \"tool_call_id\": \"call_978fd4353f8444f88a7b7c139f447456_0\", \"content\": \"{\\\"city\\\":\\\"Paris\\\",\\\"weather\\\":\\\"sunny 21C\\\",\\\"source\\\":\\\"m11_deterministic_stub\\\"}\"}, {\"role\": \"assistant\", \"content\": \"Paris: sunny, 21\u00b0C.\"}, {\"role\": \"user\", \"content\": \"Output exactly: caf\u00e9 \ud83d\ude42 \u6f22\u5b57. Nothing else.\"}]}",
+        "body_sha256": "d5088803b6f2bdbeb8973888a6ef379e822539b5ba97f5369de2b0ee32fa5609"
+      },
+      "observed": [
+        {
+          "id": "9f1875d8e4774e73aa55d978879b5809",
+          "object": "chat.completion.chunk",
+          "created": 1791055415,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "9f1875d8e4774e73aa55d978879b5809",
+          "object": "chat.completion.chunk",
+          "created": 1791055415,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "c"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        }
+      ],
+      "outcome": {
+        "sequence": 4,
+        "outcome_state": "recoverable",
+        "certificate": {
+          "version": 1,
+          "frontier": 395,
+          "canonical_sha256": "de30259444ea8c2b40538f2adf82b09b1c26bc6a6e469b1b2f744437c12ed899",
+          "representable": true,
+          "executable_tools": false,
+          "exact_prefix": true,
+          "semantic_complete": true,
+          "first_mismatch": null,
+          "witness": {
+            "model": "deepseek-v4.1-flash",
+            "tools": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "lookup_weather",
+                  "description": "Return deterministic weather for a city.",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "city": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "city"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "strict": true
+                }
+              }
+            ],
+            "tool_choice": "auto",
+            "reasoning_effort": "none",
+            "temperature": 0,
+            "max_tokens": 1,
+            "stream": false,
+            "messages": [
+              {
+                "role": "user",
+                "content": "Say hello briefly. Do not use tools."
+              },
+              {
+                "role": "assistant",
+                "content": "Hello!"
+              },
+              {
+                "role": "user",
+                "content": "Use lookup_weather for Paris."
+              },
+              {
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [
+                  {
+                    "id": "call_978fd4353f8444f88a7b7c139f447456_0",
+                    "type": "function",
+                    "function": {
+                      "name": "lookup_weather",
+                      "arguments": "{\"city\": \"Paris\"}"
+                    }
+                  }
+                ]
+              },
+              {
+                "role": "tool",
+                "tool_call_id": "call_978fd4353f8444f88a7b7c139f447456_0",
+                "content": "{\"city\":\"Paris\",\"weather\":\"sunny 21C\",\"source\":\"m11_deterministic_stub\"}"
+              },
+              {
+                "role": "assistant",
+                "content": "Paris: sunny, 21\u00b0C."
+              },
+              {
+                "role": "user",
+                "content": "Output exactly: caf\u00e9 \ud83d\ude42 \u6f22\u5b57. Nothing else."
+              },
+              {
+                "role": "assistant",
+                "content": "caf"
+              },
+              {
+                "role": "user",
+                "content": "Continue."
+              }
+            ]
+          },
+          "encoded_length": 401
+        },
+        "response": {
+          "id": "9f1875d8e4774e73aa55d978879b5809",
+          "object": "chat.completion",
+          "created": 1791055415,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "caf"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        }
+      },
+      "transcript": [
+        {
+          "role": "user",
+          "content": "Say hello briefly. Do not use tools."
+        },
+        {
+          "role": "assistant",
+          "content": "Hello!"
+        },
+        {
+          "role": "user",
+          "content": "Use lookup_weather for Paris."
+        },
+        {
+          "role": "assistant",
+          "content": "",
+          "tool_calls": [
+            {
+              "id": "call_978fd4353f8444f88a7b7c139f447456_0",
+              "type": "function",
+              "function": {
+                "name": "lookup_weather",
+                "arguments": "{\"city\": \"Paris\"}"
+              }
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "tool_call_id": "call_978fd4353f8444f88a7b7c139f447456_0",
+          "content": "{\"city\":\"Paris\",\"weather\":\"sunny 21C\",\"source\":\"m11_deterministic_stub\"}"
+        },
+        {
+          "role": "assistant",
+          "content": "Paris: sunny, 21\u00b0C."
+        },
+        {
+          "role": "user",
+          "content": "Output exactly: caf\u00e9 \ud83d\ude42 \u6f22\u5b57. Nothing else."
+        },
+        {
+          "role": "assistant",
+          "content": "caf"
+        }
+      ],
+      "state": "ready",
+      "wall_s": 0.4276087079779245,
+      "recovery_wait_and_lookup_s": 0.05893120897235349,
+      "retained_state_bytes": 4211
+    },
+    {
+      "name": "ambiguous-complete-tool",
+      "identity": {
+        "session_id": "m37-agent",
+        "sequence": 5,
+        "body_utf8": "{\"model\": \"deepseek-v4.1-flash\", \"tools\": [{\"type\": \"function\", \"function\": {\"name\": \"lookup_weather\", \"description\": \"Return deterministic weather for a city.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"city\": {\"type\": \"string\"}}, \"required\": [\"city\"], \"additionalProperties\": false}, \"strict\": true}}], \"tool_choice\": {\"type\": \"function\", \"function\": {\"name\": \"lookup_weather\"}}, \"reasoning_effort\": \"none\", \"temperature\": 0, \"max_tokens\": 96, \"stream\": true, \"messages\": [{\"role\": \"user\", \"content\": \"Say hello briefly. Do not use tools.\"}, {\"role\": \"assistant\", \"content\": \"Hello!\"}, {\"role\": \"user\", \"content\": \"Use lookup_weather for Paris.\"}, {\"role\": \"assistant\", \"content\": \"\", \"tool_calls\": [{\"id\": \"call_978fd4353f8444f88a7b7c139f447456_0\", \"type\": \"function\", \"function\": {\"name\": \"lookup_weather\", \"arguments\": \"{\\\"city\\\": \\\"Paris\\\"}\"}}]}, {\"role\": \"tool\", \"tool_call_id\": \"call_978fd4353f8444f88a7b7c139f447456_0\", \"content\": \"{\\\"city\\\":\\\"Paris\\\",\\\"weather\\\":\\\"sunny 21C\\\",\\\"source\\\":\\\"m11_deterministic_stub\\\"}\"}, {\"role\": \"assistant\", \"content\": \"Paris: sunny, 21\u00b0C.\"}, {\"role\": \"user\", \"content\": \"Output exactly: caf\u00e9 \ud83d\ude42 \u6f22\u5b57. Nothing else.\"}, {\"role\": \"assistant\", \"content\": \"caf\"}, {\"role\": \"user\", \"content\": \"Use lookup_weather for Berlin.\"}]}",
+        "body_sha256": "aaf5ff66aebf0c8b80cba5844d52ee622747b738b9c787fc3f977f0a60d1060b"
+      },
+      "observed": [],
+      "outcome": {
+        "sequence": 5,
+        "outcome_state": "recoverable",
+        "certificate": {
+          "version": 1,
+          "frontier": 445,
+          "canonical_sha256": "2b3992c44b77ae7d60286675ce594cec7eb4b5d63c805118de97e18bf2140c30",
+          "representable": true,
+          "executable_tools": true,
+          "exact_prefix": true,
+          "semantic_complete": true,
+          "first_mismatch": null,
+          "witness": {
+            "model": "deepseek-v4.1-flash",
+            "tools": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "lookup_weather",
+                  "description": "Return deterministic weather for a city.",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "city": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "city"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "strict": true
+                }
+              }
+            ],
+            "tool_choice": "auto",
+            "reasoning_effort": "none",
+            "temperature": 0,
+            "max_tokens": 1,
+            "stream": false,
+            "messages": [
+              {
+                "role": "user",
+                "content": "Say hello briefly. Do not use tools."
+              },
+              {
+                "role": "assistant",
+                "content": "Hello!"
+              },
+              {
+                "role": "user",
+                "content": "Use lookup_weather for Paris."
+              },
+              {
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [
+                  {
+                    "id": "call_978fd4353f8444f88a7b7c139f447456_0",
+                    "type": "function",
+                    "function": {
+                      "name": "lookup_weather",
+                      "arguments": "{\"city\": \"Paris\"}"
+                    }
+                  }
+                ]
+              },
+              {
+                "role": "tool",
+                "tool_call_id": "call_978fd4353f8444f88a7b7c139f447456_0",
+                "content": "{\"city\":\"Paris\",\"weather\":\"sunny 21C\",\"source\":\"m11_deterministic_stub\"}"
+              },
+              {
+                "role": "assistant",
+                "content": "Paris: sunny, 21\u00b0C."
+              },
+              {
+                "role": "user",
+                "content": "Output exactly: caf\u00e9 \ud83d\ude42 \u6f22\u5b57. Nothing else."
+              },
+              {
+                "role": "assistant",
+                "content": "caf"
+              },
+              {
+                "role": "user",
+                "content": "Use lookup_weather for Berlin."
+              },
+              {
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [
+                  {
+                    "id": "call_d4a7bc318aee4705aa240b5a8787c139_0",
+                    "type": "function",
+                    "function": {
+                      "name": "lookup_weather",
+                      "arguments": "{\"city\": \"Berlin\"}"
+                    }
+                  }
+                ]
+              },
+              {
+                "role": "tool",
+                "tool_call_id": "call_d4a7bc318aee4705aa240b5a8787c139_0",
+                "content": "NOT EXECUTED: reconstruction witness"
+              },
+              {
+                "role": "user",
+                "content": "Continue."
+              }
+            ]
+          },
+          "encoded_length": 467
+        },
+        "response": {
+          "id": "d4a7bc318aee4705aa240b5a8787c139",
+          "object": "chat.completion",
+          "created": 1791055429,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [
+                  {
+                    "id": "call_d4a7bc318aee4705aa240b5a8787c139_0",
+                    "type": "function",
+                    "function": {
+                      "name": "lookup_weather",
+                      "arguments": "{\"city\": \"Berlin\"}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": "tool_calls"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 411,
+            "completion_tokens": 34,
+            "total_tokens": 445,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 411
+          }
+        }
+      },
+      "transcript": [
+        {
+          "role": "user",
+          "content": "Say hello briefly. Do not use tools."
+        },
+        {
+          "role": "assistant",
+          "content": "Hello!"
+        },
+        {
+          "role": "user",
+          "content": "Use lookup_weather for Paris."
+        },
+        {
+          "role": "assistant",
+          "content": "",
+          "tool_calls": [
+            {
+              "id": "call_978fd4353f8444f88a7b7c139f447456_0",
+              "type": "function",
+              "function": {
+                "name": "lookup_weather",
+                "arguments": "{\"city\": \"Paris\"}"
+              }
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "tool_call_id": "call_978fd4353f8444f88a7b7c139f447456_0",
+          "content": "{\"city\":\"Paris\",\"weather\":\"sunny 21C\",\"source\":\"m11_deterministic_stub\"}"
+        },
+        {
+          "role": "assistant",
+          "content": "Paris: sunny, 21\u00b0C."
+        },
+        {
+          "role": "user",
+          "content": "Output exactly: caf\u00e9 \ud83d\ude42 \u6f22\u5b57. Nothing else."
+        },
+        {
+          "role": "assistant",
+          "content": "caf"
+        },
+        {
+          "role": "user",
+          "content": "Use lookup_weather for Berlin."
+        },
+        {
+          "role": "assistant",
+          "content": "",
+          "tool_calls": [
+            {
+              "id": "call_d4a7bc318aee4705aa240b5a8787c139_0",
+              "type": "function",
+              "function": {
+                "name": "lookup_weather",
+                "arguments": "{\"city\": \"Berlin\"}"
+              }
+            }
+          ]
+        }
+      ],
+      "state": "tool_pending",
+      "wall_s": 14.198082832968794,
+      "recovery_wait_and_lookup_s": 0.002881249994970858,
+      "retained_state_bytes": 5390
+    },
+    {
+      "name": "ambiguous-tool-result",
+      "identity": {
+        "session_id": "m37-agent",
+        "sequence": 6,
+        "body_utf8": "{\"model\": \"deepseek-v4.1-flash\", \"tools\": [{\"type\": \"function\", \"function\": {\"name\": \"lookup_weather\", \"description\": \"Return deterministic weather for a city.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"city\": {\"type\": \"string\"}}, \"required\": [\"city\"], \"additionalProperties\": false}, \"strict\": true}}], \"tool_choice\": \"auto\", \"reasoning_effort\": \"none\", \"temperature\": 0, \"max_tokens\": 64, \"stream\": true, \"messages\": [{\"role\": \"user\", \"content\": \"Say hello briefly. Do not use tools.\"}, {\"role\": \"assistant\", \"content\": \"Hello!\"}, {\"role\": \"user\", \"content\": \"Use lookup_weather for Paris.\"}, {\"role\": \"assistant\", \"content\": \"\", \"tool_calls\": [{\"id\": \"call_978fd4353f8444f88a7b7c139f447456_0\", \"type\": \"function\", \"function\": {\"name\": \"lookup_weather\", \"arguments\": \"{\\\"city\\\": \\\"Paris\\\"}\"}}]}, {\"role\": \"tool\", \"tool_call_id\": \"call_978fd4353f8444f88a7b7c139f447456_0\", \"content\": \"{\\\"city\\\":\\\"Paris\\\",\\\"weather\\\":\\\"sunny 21C\\\",\\\"source\\\":\\\"m11_deterministic_stub\\\"}\"}, {\"role\": \"assistant\", \"content\": \"Paris: sunny, 21\u00b0C.\"}, {\"role\": \"user\", \"content\": \"Output exactly: caf\u00e9 \ud83d\ude42 \u6f22\u5b57. Nothing else.\"}, {\"role\": \"assistant\", \"content\": \"caf\"}, {\"role\": \"user\", \"content\": \"Use lookup_weather for Berlin.\"}, {\"role\": \"assistant\", \"content\": \"\", \"tool_calls\": [{\"id\": \"call_d4a7bc318aee4705aa240b5a8787c139_0\", \"type\": \"function\", \"function\": {\"name\": \"lookup_weather\", \"arguments\": \"{\\\"city\\\": \\\"Berlin\\\"}\"}}]}, {\"role\": \"tool\", \"tool_call_id\": \"call_d4a7bc318aee4705aa240b5a8787c139_0\", \"content\": \"{\\\"city\\\":\\\"Berlin\\\",\\\"weather\\\":\\\"cloudy 17C\\\",\\\"source\\\":\\\"m11_deterministic_stub\\\"}\"}]}",
+        "body_sha256": "bcde049a76bb015157da87ac01fd3c4ae89c79ea362a59505afde94f4878a782"
+      },
+      "observed": [
+        {
+          "id": "10f6c3d6b27940ab85471324b6e17c0b",
+          "object": "chat.completion.chunk",
+          "created": 1791055430,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "10f6c3d6b27940ab85471324b6e17c0b",
+          "object": "chat.completion.chunk",
+          "created": 1791055430,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "Berlin"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "10f6c3d6b27940ab85471324b6e17c0b",
+          "object": "chat.completion.chunk",
+          "created": 1791055430,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": ":"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "10f6c3d6b27940ab85471324b6e17c0b",
+          "object": "chat.completion.chunk",
+          "created": 1791055430,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": " cloudy"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "10f6c3d6b27940ab85471324b6e17c0b",
+          "object": "chat.completion.chunk",
+          "created": 1791055430,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": ","
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "10f6c3d6b27940ab85471324b6e17c0b",
+          "object": "chat.completion.chunk",
+          "created": 1791055430,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": " "
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "10f6c3d6b27940ab85471324b6e17c0b",
+          "object": "chat.completion.chunk",
+          "created": 1791055430,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "17"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "10f6c3d6b27940ab85471324b6e17c0b",
+          "object": "chat.completion.chunk",
+          "created": 1791055430,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "\u00b0"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "10f6c3d6b27940ab85471324b6e17c0b",
+          "object": "chat.completion.chunk",
+          "created": 1791055430,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "C"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "10f6c3d6b27940ab85471324b6e17c0b",
+          "object": "chat.completion.chunk",
+          "created": 1791055430,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "."
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "10f6c3d6b27940ab85471324b6e17c0b",
+          "object": "chat.completion.chunk",
+          "created": 1791055430,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 481,
+            "completion_tokens": 9,
+            "total_tokens": 490,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 481
+          }
+        }
+      ],
+      "outcome": {
+        "sequence": 6,
+        "outcome_state": "recoverable",
+        "certificate": {
+          "version": 1,
+          "frontier": 491,
+          "canonical_sha256": "bbad0d6813a52d2669ef7c854a68fbdd1ffae322f78b2c50348da7bd75fbe0ec",
+          "representable": true,
+          "executable_tools": false,
+          "exact_prefix": true,
+          "semantic_complete": true,
+          "first_mismatch": null,
+          "witness": {
+            "model": "deepseek-v4.1-flash",
+            "tools": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "lookup_weather",
+                  "description": "Return deterministic weather for a city.",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "city": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "city"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "strict": true
+                }
+              }
+            ],
+            "tool_choice": "auto",
+            "reasoning_effort": "none",
+            "temperature": 0,
+            "max_tokens": 1,
+            "stream": false,
+            "messages": [
+              {
+                "role": "user",
+                "content": "Say hello briefly. Do not use tools."
+              },
+              {
+                "role": "assistant",
+                "content": "Hello!"
+              },
+              {
+                "role": "user",
+                "content": "Use lookup_weather for Paris."
+              },
+              {
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [
+                  {
+                    "id": "call_978fd4353f8444f88a7b7c139f447456_0",
+                    "type": "function",
+                    "function": {
+                      "name": "lookup_weather",
+                      "arguments": "{\"city\": \"Paris\"}"
+                    }
+                  }
+                ]
+              },
+              {
+                "role": "tool",
+                "tool_call_id": "call_978fd4353f8444f88a7b7c139f447456_0",
+                "content": "{\"city\":\"Paris\",\"weather\":\"sunny 21C\",\"source\":\"m11_deterministic_stub\"}"
+              },
+              {
+                "role": "assistant",
+                "content": "Paris: sunny, 21\u00b0C."
+              },
+              {
+                "role": "user",
+                "content": "Output exactly: caf\u00e9 \ud83d\ude42 \u6f22\u5b57. Nothing else."
+              },
+              {
+                "role": "assistant",
+                "content": "caf"
+              },
+              {
+                "role": "user",
+                "content": "Use lookup_weather for Berlin."
+              },
+              {
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [
+                  {
+                    "id": "call_d4a7bc318aee4705aa240b5a8787c139_0",
+                    "type": "function",
+                    "function": {
+                      "name": "lookup_weather",
+                      "arguments": "{\"city\": \"Berlin\"}"
+                    }
+                  }
+                ]
+              },
+              {
+                "role": "tool",
+                "tool_call_id": "call_d4a7bc318aee4705aa240b5a8787c139_0",
+                "content": "{\"city\":\"Berlin\",\"weather\":\"cloudy 17C\",\"source\":\"m11_deterministic_stub\"}"
+              },
+              {
+                "role": "assistant",
+                "content": "Berlin: cloudy, 17\u00b0C."
+              },
+              {
+                "role": "user",
+                "content": "Continue."
+              }
+            ]
+          },
+          "encoded_length": 496
+        },
+        "response": {
+          "id": "10f6c3d6b27940ab85471324b6e17c0b",
+          "object": "chat.completion",
+          "created": 1791055430,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "Berlin: cloudy, 17\u00b0C."
+              },
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 481,
+            "completion_tokens": 9,
+            "total_tokens": 490,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 481
+          }
+        }
+      },
+      "transcript": [
+        {
+          "role": "user",
+          "content": "Say hello briefly. Do not use tools."
+        },
+        {
+          "role": "assistant",
+          "content": "Hello!"
+        },
+        {
+          "role": "user",
+          "content": "Use lookup_weather for Paris."
+        },
+        {
+          "role": "assistant",
+          "content": "",
+          "tool_calls": [
+            {
+              "id": "call_978fd4353f8444f88a7b7c139f447456_0",
+              "type": "function",
+              "function": {
+                "name": "lookup_weather",
+                "arguments": "{\"city\": \"Paris\"}"
+              }
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "tool_call_id": "call_978fd4353f8444f88a7b7c139f447456_0",
+          "content": "{\"city\":\"Paris\",\"weather\":\"sunny 21C\",\"source\":\"m11_deterministic_stub\"}"
+        },
+        {
+          "role": "assistant",
+          "content": "Paris: sunny, 21\u00b0C."
+        },
+        {
+          "role": "user",
+          "content": "Output exactly: caf\u00e9 \ud83d\ude42 \u6f22\u5b57. Nothing else."
+        },
+        {
+          "role": "assistant",
+          "content": "caf"
+        },
+        {
+          "role": "user",
+          "content": "Use lookup_weather for Berlin."
+        },
+        {
+          "role": "assistant",
+          "content": "",
+          "tool_calls": [
+            {
+              "id": "call_d4a7bc318aee4705aa240b5a8787c139_0",
+              "type": "function",
+              "function": {
+                "name": "lookup_weather",
+                "arguments": "{\"city\": \"Berlin\"}"
+              }
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "tool_call_id": "call_d4a7bc318aee4705aa240b5a8787c139_0",
+          "content": "{\"city\":\"Berlin\",\"weather\":\"cloudy 17C\",\"source\":\"m11_deterministic_stub\"}"
+        },
+        {
+          "role": "assistant",
+          "content": "Berlin: cloudy, 17\u00b0C."
+        }
+      ],
+      "state": "ready",
+      "wall_s": 0.6675152920070104,
+      "recovery_wait_and_lookup_s": 0.002183500037062913,
+      "retained_state_bytes": 6370
+    },
+    {
+      "name": "incomplete-tool",
+      "identity": {
+        "session_id": "m37-agent",
+        "sequence": 7,
+        "body_utf8": "{\"model\": \"deepseek-v4.1-flash\", \"tools\": [{\"type\": \"function\", \"function\": {\"name\": \"lookup_weather\", \"description\": \"Return deterministic weather for a city.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"city\": {\"type\": \"string\"}}, \"required\": [\"city\"], \"additionalProperties\": false}, \"strict\": true}}], \"tool_choice\": {\"type\": \"function\", \"function\": {\"name\": \"lookup_weather\"}}, \"reasoning_effort\": \"none\", \"temperature\": 0, \"max_tokens\": 96, \"stream\": true, \"messages\": [{\"role\": \"user\", \"content\": \"Say hello briefly. Do not use tools.\"}, {\"role\": \"assistant\", \"content\": \"Hello!\"}, {\"role\": \"user\", \"content\": \"Use lookup_weather for Paris.\"}, {\"role\": \"assistant\", \"content\": \"\", \"tool_calls\": [{\"id\": \"call_978fd4353f8444f88a7b7c139f447456_0\", \"type\": \"function\", \"function\": {\"name\": \"lookup_weather\", \"arguments\": \"{\\\"city\\\": \\\"Paris\\\"}\"}}]}, {\"role\": \"tool\", \"tool_call_id\": \"call_978fd4353f8444f88a7b7c139f447456_0\", \"content\": \"{\\\"city\\\":\\\"Paris\\\",\\\"weather\\\":\\\"sunny 21C\\\",\\\"source\\\":\\\"m11_deterministic_stub\\\"}\"}, {\"role\": \"assistant\", \"content\": \"Paris: sunny, 21\u00b0C.\"}, {\"role\": \"user\", \"content\": \"Output exactly: caf\u00e9 \ud83d\ude42 \u6f22\u5b57. Nothing else.\"}, {\"role\": \"assistant\", \"content\": \"caf\"}, {\"role\": \"user\", \"content\": \"Use lookup_weather for Berlin.\"}, {\"role\": \"assistant\", \"content\": \"\", \"tool_calls\": [{\"id\": \"call_d4a7bc318aee4705aa240b5a8787c139_0\", \"type\": \"function\", \"function\": {\"name\": \"lookup_weather\", \"arguments\": \"{\\\"city\\\": \\\"Berlin\\\"}\"}}]}, {\"role\": \"tool\", \"tool_call_id\": \"call_d4a7bc318aee4705aa240b5a8787c139_0\", \"content\": \"{\\\"city\\\":\\\"Berlin\\\",\\\"weather\\\":\\\"cloudy 17C\\\",\\\"source\\\":\\\"m11_deterministic_stub\\\"}\"}, {\"role\": \"assistant\", \"content\": \"Berlin: cloudy, 17\u00b0C.\"}, {\"role\": \"user\", \"content\": \"Use lookup_weather for Paris again.\"}]}",
+        "body_sha256": "d238e8daa5eca8bd8b10c4e40b954d6f1a2b05cc8e3248580fb485a32729273f"
+      },
+      "observed": [
+        {
+          "id": "36b9b8f7ed7c46adb63fbc8f7d1e1e42",
+          "object": "chat.completion.chunk",
+          "created": 1791055430,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "36b9b8f7ed7c46adb63fbc8f7d1e1e42",
+          "object": "chat.completion.chunk",
+          "created": 1791055430,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "id": "call_36b9b8f7ed7c46adb63fbc8f7d1e1e42_0",
+                    "type": "function",
+                    "function": {
+                      "name": "lookup_weather",
+                      "arguments": ""
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "36b9b8f7ed7c46adb63fbc8f7d1e1e42",
+          "object": "chat.completion.chunk",
+          "created": 1791055430,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "function": {
+                      "arguments": "{"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        }
+      ],
+      "outcome": {
+        "sequence": 7,
+        "outcome_state": "unrecoverable",
+        "certificate": {
+          "version": 1,
+          "frontier": 524,
+          "canonical_sha256": "f64321630bc66ffafdbc6cfee6f234a87ed8bc85f77b7a5e376c7214419e05d8",
+          "representable": false,
+          "executable_tools": false,
+          "exact_prefix": false,
+          "semantic_complete": false,
+          "first_mismatch": 522,
+          "witness": {
+            "model": "deepseek-v4.1-flash",
+            "tools": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "lookup_weather",
+                  "description": "Return deterministic weather for a city.",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "city": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "city"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "strict": true
+                }
+              }
+            ],
+            "tool_choice": "auto",
+            "reasoning_effort": "none",
+            "temperature": 0,
+            "max_tokens": 1,
+            "stream": false,
+            "messages": [
+              {
+                "role": "user",
+                "content": "Say hello briefly. Do not use tools."
+              },
+              {
+                "role": "assistant",
+                "content": "Hello!"
+              },
+              {
+                "role": "user",
+                "content": "Use lookup_weather for Paris."
+              },
+              {
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [
+                  {
+                    "id": "call_978fd4353f8444f88a7b7c139f447456_0",
+                    "type": "function",
+                    "function": {
+                      "name": "lookup_weather",
+                      "arguments": "{\"city\": \"Paris\"}"
+                    }
+                  }
+                ]
+              },
+              {
+                "role": "tool",
+                "tool_call_id": "call_978fd4353f8444f88a7b7c139f447456_0",
+                "content": "{\"city\":\"Paris\",\"weather\":\"sunny 21C\",\"source\":\"m11_deterministic_stub\"}"
+              },
+              {
+                "role": "assistant",
+                "content": "Paris: sunny, 21\u00b0C."
+              },
+              {
+                "role": "user",
+                "content": "Output exactly: caf\u00e9 \ud83d\ude42 \u6f22\u5b57. Nothing else."
+              },
+              {
+                "role": "assistant",
+                "content": "caf"
+              },
+              {
+                "role": "user",
+                "content": "Use lookup_weather for Berlin."
+              },
+              {
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [
+                  {
+                    "id": "call_d4a7bc318aee4705aa240b5a8787c139_0",
+                    "type": "function",
+                    "function": {
+                      "name": "lookup_weather",
+                      "arguments": "{\"city\": \"Berlin\"}"
+                    }
+                  }
+                ]
+              },
+              {
+                "role": "tool",
+                "tool_call_id": "call_d4a7bc318aee4705aa240b5a8787c139_0",
+                "content": "{\"city\":\"Berlin\",\"weather\":\"cloudy 17C\",\"source\":\"m11_deterministic_stub\"}"
+              },
+              {
+                "role": "assistant",
+                "content": "Berlin: cloudy, 17\u00b0C."
+              },
+              {
+                "role": "user",
+                "content": "Use lookup_weather for Paris again."
+              },
+              {
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [
+                  {
+                    "id": "call_36b9b8f7ed7c46adb63fbc8f7d1e1e42_0",
+                    "type": "function",
+                    "function": {
+                      "name": "lookup_weather",
+                      "arguments": "{\"city\""
+                    }
+                  }
+                ]
+              },
+              {
+                "role": "tool",
+                "tool_call_id": "call_36b9b8f7ed7c46adb63fbc8f7d1e1e42_0",
+                "content": "NOT EXECUTED: reconstruction witness"
+              },
+              {
+                "role": "user",
+                "content": "Continue."
+              }
+            ]
+          },
+          "encoded_length": 565
+        },
+        "response": {
+          "id": "36b9b8f7ed7c46adb63fbc8f7d1e1e42",
+          "object": "chat.completion",
+          "created": 1791055431,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [
+                  {
+                    "id": "call_36b9b8f7ed7c46adb63fbc8f7d1e1e42_0",
+                    "type": "function",
+                    "function": {
+                      "name": "lookup_weather",
+                      "arguments": "{\"city\""
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        }
+      },
+      "transcript": [
+        {
+          "role": "user",
+          "content": "Say hello briefly. Do not use tools."
+        },
+        {
+          "role": "assistant",
+          "content": "Hello!"
+        },
+        {
+          "role": "user",
+          "content": "Use lookup_weather for Paris."
+        },
+        {
+          "role": "assistant",
+          "content": "",
+          "tool_calls": [
+            {
+              "id": "call_978fd4353f8444f88a7b7c139f447456_0",
+              "type": "function",
+              "function": {
+                "name": "lookup_weather",
+                "arguments": "{\"city\": \"Paris\"}"
+              }
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "tool_call_id": "call_978fd4353f8444f88a7b7c139f447456_0",
+          "content": "{\"city\":\"Paris\",\"weather\":\"sunny 21C\",\"source\":\"m11_deterministic_stub\"}"
+        },
+        {
+          "role": "assistant",
+          "content": "Paris: sunny, 21\u00b0C."
+        },
+        {
+          "role": "user",
+          "content": "Output exactly: caf\u00e9 \ud83d\ude42 \u6f22\u5b57. Nothing else."
+        },
+        {
+          "role": "assistant",
+          "content": "caf"
+        },
+        {
+          "role": "user",
+          "content": "Use lookup_weather for Berlin."
+        },
+        {
+          "role": "assistant",
+          "content": "",
+          "tool_calls": [
+            {
+              "id": "call_d4a7bc318aee4705aa240b5a8787c139_0",
+              "type": "function",
+              "function": {
+                "name": "lookup_weather",
+                "arguments": "{\"city\": \"Berlin\"}"
+              }
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "tool_call_id": "call_d4a7bc318aee4705aa240b5a8787c139_0",
+          "content": "{\"city\":\"Berlin\",\"weather\":\"cloudy 17C\",\"source\":\"m11_deterministic_stub\"}"
+        },
+        {
+          "role": "assistant",
+          "content": "Berlin: cloudy, 17\u00b0C."
+        },
+        {
+          "role": "user",
+          "content": "Use lookup_weather for Paris again."
+        }
+      ],
+      "state": "unrecoverable",
+      "wall_s": 1.0242952079861425,
+      "recovery_wait_and_lookup_s": 0.04311966703971848,
+      "retained_state_bytes": 6948
+    },
+    {
+      "name": "fresh-session-ordinary-prefill",
+      "identity": {
+        "session_id": "m37-fresh",
+        "sequence": 1,
+        "body_utf8": "{\"model\": \"deepseek-v4.1-flash\", \"reasoning_effort\": \"none\", \"temperature\": 0, \"max_tokens\": 64, \"stream\": true, \"messages\": [{\"role\": \"user\", \"content\": \"Say hello briefly. Do not use tools.\"}, {\"role\": \"assistant\", \"content\": \"Hello!\"}, {\"role\": \"user\", \"content\": \"Use lookup_weather for Paris.\"}, {\"role\": \"assistant\", \"content\": \"\", \"tool_calls\": [{\"id\": \"call_978fd4353f8444f88a7b7c139f447456_0\", \"type\": \"function\", \"function\": {\"name\": \"lookup_weather\", \"arguments\": \"{\\\"city\\\": \\\"Paris\\\"}\"}}]}, {\"role\": \"tool\", \"tool_call_id\": \"call_978fd4353f8444f88a7b7c139f447456_0\", \"content\": \"{\\\"city\\\":\\\"Paris\\\",\\\"weather\\\":\\\"sunny 21C\\\",\\\"source\\\":\\\"m11_deterministic_stub\\\"}\"}, {\"role\": \"assistant\", \"content\": \"Paris: sunny, 21\u00b0C.\"}, {\"role\": \"user\", \"content\": \"Output exactly: caf\u00e9 \ud83d\ude42 \u6f22\u5b57. Nothing else.\"}, {\"role\": \"assistant\", \"content\": \"caf\"}, {\"role\": \"user\", \"content\": \"Use lookup_weather for Berlin.\"}, {\"role\": \"assistant\", \"content\": \"\", \"tool_calls\": [{\"id\": \"call_d4a7bc318aee4705aa240b5a8787c139_0\", \"type\": \"function\", \"function\": {\"name\": \"lookup_weather\", \"arguments\": \"{\\\"city\\\": \\\"Berlin\\\"}\"}}]}, {\"role\": \"tool\", \"tool_call_id\": \"call_d4a7bc318aee4705aa240b5a8787c139_0\", \"content\": \"{\\\"city\\\":\\\"Berlin\\\",\\\"weather\\\":\\\"cloudy 17C\\\",\\\"source\\\":\\\"m11_deterministic_stub\\\"}\"}, {\"role\": \"assistant\", \"content\": \"Berlin: cloudy, 17\u00b0C.\"}, {\"role\": \"user\", \"content\": \"Use lookup_weather for Paris again.\"}, {\"role\": \"user\", \"content\": \"Ignore the unfinished last lookup. Say goodbye briefly without a tool.\"}]}",
+        "body_sha256": "0daae012fb60c957397e0a95ca514b46f41a67b4745a9f3ddf4e52869ad86aa2"
+      },
+      "observed": [
+        {
+          "id": "917880e23d4c4440b575dfac2cbe272f",
+          "object": "chat.completion.chunk",
+          "created": 1791055433,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "917880e23d4c4440b575dfac2cbe272f",
+          "object": "chat.completion.chunk",
+          "created": 1791055433,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "Good"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "917880e23d4c4440b575dfac2cbe272f",
+          "object": "chat.completion.chunk",
+          "created": 1791055433,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "bye"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "917880e23d4c4440b575dfac2cbe272f",
+          "object": "chat.completion.chunk",
+          "created": 1791055433,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "!"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "917880e23d4c4440b575dfac2cbe272f",
+          "object": "chat.completion.chunk",
+          "created": 1791055433,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 248,
+            "completion_tokens": 3,
+            "total_tokens": 251,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 248
+          }
+        }
+      ],
+      "outcome": {
+        "sequence": 1,
+        "outcome_state": "recoverable",
+        "certificate": {
+          "version": 1,
+          "frontier": 252,
+          "canonical_sha256": "45c1287b39d2e8fcfac01084803daca52489678f1d4e70e13580ab80a741c040",
+          "representable": true,
+          "executable_tools": false,
+          "exact_prefix": true,
+          "semantic_complete": true,
+          "first_mismatch": null,
+          "witness": {
+            "model": "deepseek-v4.1-flash",
+            "reasoning_effort": "none",
+            "temperature": 0,
+            "max_tokens": 1,
+            "stream": false,
+            "messages": [
+              {
+                "role": "user",
+                "content": "Say hello briefly. Do not use tools."
+              },
+              {
+                "role": "assistant",
+                "content": "Hello!"
+              },
+              {
+                "role": "user",
+                "content": "Use lookup_weather for Paris."
+              },
+              {
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [
+                  {
+                    "id": "call_978fd4353f8444f88a7b7c139f447456_0",
+                    "type": "function",
+                    "function": {
+                      "name": "lookup_weather",
+                      "arguments": "{\"city\": \"Paris\"}"
+                    }
+                  }
+                ]
+              },
+              {
+                "role": "tool",
+                "tool_call_id": "call_978fd4353f8444f88a7b7c139f447456_0",
+                "content": "{\"city\":\"Paris\",\"weather\":\"sunny 21C\",\"source\":\"m11_deterministic_stub\"}"
+              },
+              {
+                "role": "assistant",
+                "content": "Paris: sunny, 21\u00b0C."
+              },
+              {
+                "role": "user",
+                "content": "Output exactly: caf\u00e9 \ud83d\ude42 \u6f22\u5b57. Nothing else."
+              },
+              {
+                "role": "assistant",
+                "content": "caf"
+              },
+              {
+                "role": "user",
+                "content": "Use lookup_weather for Berlin."
+              },
+              {
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [
+                  {
+                    "id": "call_d4a7bc318aee4705aa240b5a8787c139_0",
+                    "type": "function",
+                    "function": {
+                      "name": "lookup_weather",
+                      "arguments": "{\"city\": \"Berlin\"}"
+                    }
+                  }
+                ]
+              },
+              {
+                "role": "tool",
+                "tool_call_id": "call_d4a7bc318aee4705aa240b5a8787c139_0",
+                "content": "{\"city\":\"Berlin\",\"weather\":\"cloudy 17C\",\"source\":\"m11_deterministic_stub\"}"
+              },
+              {
+                "role": "assistant",
+                "content": "Berlin: cloudy, 17\u00b0C."
+              },
+              {
+                "role": "user",
+                "content": "Use lookup_weather for Paris again."
+              },
+              {
+                "role": "user",
+                "content": "Ignore the unfinished last lookup. Say goodbye briefly without a tool."
+              },
+              {
+                "role": "assistant",
+                "content": "Goodbye!"
+              },
+              {
+                "role": "user",
+                "content": "Continue."
+              }
+            ]
+          },
+          "encoded_length": 257
+        },
+        "response": {
+          "id": "917880e23d4c4440b575dfac2cbe272f",
+          "object": "chat.completion",
+          "created": 1791055436,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "Goodbye!"
+              },
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 248,
+            "completion_tokens": 3,
+            "total_tokens": 251,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 248
+          }
+        }
+      },
+      "transcript": [
+        {
+          "role": "user",
+          "content": "Say hello briefly. Do not use tools."
+        },
+        {
+          "role": "assistant",
+          "content": "Hello!"
+        },
+        {
+          "role": "user",
+          "content": "Use lookup_weather for Paris."
+        },
+        {
+          "role": "assistant",
+          "content": "",
+          "tool_calls": [
+            {
+              "id": "call_978fd4353f8444f88a7b7c139f447456_0",
+              "type": "function",
+              "function": {
+                "name": "lookup_weather",
+                "arguments": "{\"city\": \"Paris\"}"
+              }
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "tool_call_id": "call_978fd4353f8444f88a7b7c139f447456_0",
+          "content": "{\"city\":\"Paris\",\"weather\":\"sunny 21C\",\"source\":\"m11_deterministic_stub\"}"
+        },
+        {
+          "role": "assistant",
+          "content": "Paris: sunny, 21\u00b0C."
+        },
+        {
+          "role": "user",
+          "content": "Output exactly: caf\u00e9 \ud83d\ude42 \u6f22\u5b57. Nothing else."
+        },
+        {
+          "role": "assistant",
+          "content": "caf"
+        },
+        {
+          "role": "user",
+          "content": "Use lookup_weather for Berlin."
+        },
+        {
+          "role": "assistant",
+          "content": "",
+          "tool_calls": [
+            {
+              "id": "call_d4a7bc318aee4705aa240b5a8787c139_0",
+              "type": "function",
+              "function": {
+                "name": "lookup_weather",
+                "arguments": "{\"city\": \"Berlin\"}"
+              }
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "tool_call_id": "call_d4a7bc318aee4705aa240b5a8787c139_0",
+          "content": "{\"city\":\"Berlin\",\"weather\":\"cloudy 17C\",\"source\":\"m11_deterministic_stub\"}"
+        },
+        {
+          "role": "assistant",
+          "content": "Berlin: cloudy, 17\u00b0C."
+        },
+        {
+          "role": "user",
+          "content": "Use lookup_weather for Paris again."
+        },
+        {
+          "role": "user",
+          "content": "Ignore the unfinished last lookup. Say goodbye briefly without a tool."
+        },
+        {
+          "role": "assistant",
+          "content": "Goodbye!"
+        }
+      ],
+      "state": "ready",
+      "wall_s": 4.562909584026784,
+      "recovery_wait_and_lookup_s": 0.0020612080115824938,
+      "retained_state_bytes": 6413
+    }
+  ],
+  "effects": [
+    {
+      "identity": {
+        "session_id": "m37-agent",
+        "sequence": 2,
+        "body_utf8": "{\"model\": \"deepseek-v4.1-flash\", \"tools\": [{\"type\": \"function\", \"function\": {\"name\": \"lookup_weather\", \"description\": \"Return deterministic weather for a city.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"city\": {\"type\": \"string\"}}, \"required\": [\"city\"], \"additionalProperties\": false}, \"strict\": true}}], \"tool_choice\": {\"type\": \"function\", \"function\": {\"name\": \"lookup_weather\"}}, \"reasoning_effort\": \"none\", \"temperature\": 0, \"max_tokens\": 96, \"stream\": true, \"messages\": [{\"role\": \"user\", \"content\": \"Say hello briefly. Do not use tools.\"}, {\"role\": \"assistant\", \"content\": \"Hello!\"}, {\"role\": \"user\", \"content\": \"Use lookup_weather for Paris.\"}]}",
+        "body_sha256": "63250684fb4e198580e72a22356c0490ca8e9498a075012f9f18e92d0758af1f"
+      },
+      "call": {
+        "id": "call_978fd4353f8444f88a7b7c139f447456_0",
+        "type": "function",
+        "function": {
+          "name": "lookup_weather",
+          "arguments": "{\"city\": \"Paris\"}"
+        }
+      }
+    },
+    {
+      "identity": {
+        "session_id": "m37-agent",
+        "sequence": 5,
+        "body_utf8": "{\"model\": \"deepseek-v4.1-flash\", \"tools\": [{\"type\": \"function\", \"function\": {\"name\": \"lookup_weather\", \"description\": \"Return deterministic weather for a city.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"city\": {\"type\": \"string\"}}, \"required\": [\"city\"], \"additionalProperties\": false}, \"strict\": true}}], \"tool_choice\": {\"type\": \"function\", \"function\": {\"name\": \"lookup_weather\"}}, \"reasoning_effort\": \"none\", \"temperature\": 0, \"max_tokens\": 96, \"stream\": true, \"messages\": [{\"role\": \"user\", \"content\": \"Say hello briefly. Do not use tools.\"}, {\"role\": \"assistant\", \"content\": \"Hello!\"}, {\"role\": \"user\", \"content\": \"Use lookup_weather for Paris.\"}, {\"role\": \"assistant\", \"content\": \"\", \"tool_calls\": [{\"id\": \"call_978fd4353f8444f88a7b7c139f447456_0\", \"type\": \"function\", \"function\": {\"name\": \"lookup_weather\", \"arguments\": \"{\\\"city\\\": \\\"Paris\\\"}\"}}]}, {\"role\": \"tool\", \"tool_call_id\": \"call_978fd4353f8444f88a7b7c139f447456_0\", \"content\": \"{\\\"city\\\":\\\"Paris\\\",\\\"weather\\\":\\\"sunny 21C\\\",\\\"source\\\":\\\"m11_deterministic_stub\\\"}\"}, {\"role\": \"assistant\", \"content\": \"Paris: sunny, 21\u00b0C.\"}, {\"role\": \"user\", \"content\": \"Output exactly: caf\u00e9 \ud83d\ude42 \u6f22\u5b57. Nothing else.\"}, {\"role\": \"assistant\", \"content\": \"caf\"}, {\"role\": \"user\", \"content\": \"Use lookup_weather for Berlin.\"}]}",
+        "body_sha256": "aaf5ff66aebf0c8b80cba5844d52ee622747b738b9c787fc3f977f0a60d1060b"
+      },
+      "call": {
+        "id": "call_d4a7bc318aee4705aa240b5a8787c139_0",
+        "type": "function",
+        "function": {
+          "name": "lookup_weather",
+          "arguments": "{\"city\": \"Berlin\"}"
+        }
+      }
+    }
+  ],
+  "actions": [
+    {
+      "name": "normal-tool-repeated-observation",
+      "observations": 4,
+      "results": [
+        {
+          "role": "tool",
+          "tool_call_id": "call_978fd4353f8444f88a7b7c139f447456_0",
+          "content": "{\"city\":\"Paris\",\"weather\":\"sunny 21C\",\"source\":\"m11_deterministic_stub\"}"
+        }
+      ],
+      "ledger": [
+        {
+          "key": [
+            "m37-agent",
+            2,
+            0,
+            "call_978fd4353f8444f88a7b7c139f447456_0"
+          ],
+          "call": {
+            "id": "call_978fd4353f8444f88a7b7c139f447456_0",
+            "type": "function",
+            "function": {
+              "name": "lookup_weather",
+              "arguments": "{\"city\": \"Paris\"}"
+            }
+          },
+          "status": "completed",
+          "result": {
+            "role": "tool",
+            "tool_call_id": "call_978fd4353f8444f88a7b7c139f447456_0",
+            "content": "{\"city\":\"Paris\",\"weather\":\"sunny 21C\",\"source\":\"m11_deterministic_stub\"}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "ambiguous-tool-repeated-observation",
+      "observations": 4,
+      "results": [
+        {
+          "role": "tool",
+          "tool_call_id": "call_d4a7bc318aee4705aa240b5a8787c139_0",
+          "content": "{\"city\":\"Berlin\",\"weather\":\"cloudy 17C\",\"source\":\"m11_deterministic_stub\"}"
+        }
+      ]
+    },
+    {
+      "name": "expired-outcome",
+      "identity": {
+        "session_id": "m37-agent",
+        "sequence": 1,
+        "body_utf8": "{\"model\": \"deepseek-v4.1-flash\", \"tools\": [{\"type\": \"function\", \"function\": {\"name\": \"lookup_weather\", \"description\": \"Return deterministic weather for a city.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"city\": {\"type\": \"string\"}}, \"required\": [\"city\"], \"additionalProperties\": false}, \"strict\": true}}], \"tool_choice\": \"auto\", \"reasoning_effort\": \"none\", \"temperature\": 0, \"max_tokens\": 64, \"stream\": true, \"messages\": [{\"role\": \"user\", \"content\": \"Say hello briefly. Do not use tools.\"}]}",
+        "body_sha256": "70a38f1be1f9dfe5e1f92bb15bd6ecee543ba54a46bf6e2497d57c012f1b04a6"
+      },
+      "result": {
+        "outcome_state": "expired",
+        "sequence": 1,
+        "action": "use current certified conversation or explicitly restart; no regeneration"
+      },
+      "no_generation": true
+    },
+    {
+      "name": "delete-fresh",
+      "old_identity": {
+        "session_id": "m37-agent",
+        "sequence": 7,
+        "body_utf8": "{\"model\": \"deepseek-v4.1-flash\", \"tools\": [{\"type\": \"function\", \"function\": {\"name\": \"lookup_weather\", \"description\": \"Return deterministic weather for a city.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"city\": {\"type\": \"string\"}}, \"required\": [\"city\"], \"additionalProperties\": false}, \"strict\": true}}], \"tool_choice\": {\"type\": \"function\", \"function\": {\"name\": \"lookup_weather\"}}, \"reasoning_effort\": \"none\", \"temperature\": 0, \"max_tokens\": 96, \"stream\": true, \"messages\": [{\"role\": \"user\", \"content\": \"Say hello briefly. Do not use tools.\"}, {\"role\": \"assistant\", \"content\": \"Hello!\"}, {\"role\": \"user\", \"content\": \"Use lookup_weather for Paris.\"}, {\"role\": \"assistant\", \"content\": \"\", \"tool_calls\": [{\"id\": \"call_978fd4353f8444f88a7b7c139f447456_0\", \"type\": \"function\", \"function\": {\"name\": \"lookup_weather\", \"arguments\": \"{\\\"city\\\": \\\"Paris\\\"}\"}}]}, {\"role\": \"tool\", \"tool_call_id\": \"call_978fd4353f8444f88a7b7c139f447456_0\", \"content\": \"{\\\"city\\\":\\\"Paris\\\",\\\"weather\\\":\\\"sunny 21C\\\",\\\"source\\\":\\\"m11_deterministic_stub\\\"}\"}, {\"role\": \"assistant\", \"content\": \"Paris: sunny, 21\u00b0C.\"}, {\"role\": \"user\", \"content\": \"Output exactly: caf\u00e9 \ud83d\ude42 \u6f22\u5b57. Nothing else.\"}, {\"role\": \"assistant\", \"content\": \"caf\"}, {\"role\": \"user\", \"content\": \"Use lookup_weather for Berlin.\"}, {\"role\": \"assistant\", \"content\": \"\", \"tool_calls\": [{\"id\": \"call_d4a7bc318aee4705aa240b5a8787c139_0\", \"type\": \"function\", \"function\": {\"name\": \"lookup_weather\", \"arguments\": \"{\\\"city\\\": \\\"Berlin\\\"}\"}}]}, {\"role\": \"tool\", \"tool_call_id\": \"call_d4a7bc318aee4705aa240b5a8787c139_0\", \"content\": \"{\\\"city\\\":\\\"Berlin\\\",\\\"weather\\\":\\\"cloudy 17C\\\",\\\"source\\\":\\\"m11_deterministic_stub\\\"}\"}, {\"role\": \"assistant\", \"content\": \"Berlin: cloudy, 17\u00b0C.\"}, {\"role\": \"user\", \"content\": \"Use lookup_weather for Paris again.\"}]}",
+        "body_sha256": "d238e8daa5eca8bd8b10c4e40b954d6f1a2b05cc8e3248580fb485a32729273f"
+      },
+      "delete": {
+        "id": "m37-agent",
+        "state": "closed",
+        "request_count": 7,
+        "last_turn": {
+          "session_id": "m37-agent",
+          "response_id": "36b9b8f7ed7c46adb63fbc8f7d1e1e42",
+          "t0": 297272.979021916,
+          "generated": 15,
+          "decode_s": 0.49511329195229337,
+          "first_canonical_s": 0.29910524998558685,
+          "first_chunk_s": 0.3807996250106953,
+          "formatting_s": 3.724789712578058e-05,
+          "delivery_wait_s": 0.24583370896289125,
+          "protocol_chunks_produced": 4,
+          "iterator_yields": 3,
+          "canonical_emitted": 15,
+          "rows": [
+            {
+              "canonical_ordinal": 1,
+              "produced_s": 0.29921637498773634,
+              "yield_s": 0.3807996250106953
+            },
+            {
+              "canonical_ordinal": 10,
+              "produced_s": 0.5958151249797083,
+              "yield_s": 0.6778840839979239
+            },
+            {
+              "canonical_ordinal": 15,
+              "produced_s": 0.8973443750292063,
+              "yield_s": 0.9795299170073122
+            },
+            {
+              "canonical_ordinal": 15,
+              "produced_s": 0.9796840840135701
+            }
+          ],
+          "cancelled": true,
+          "client_acknowledged_ordinal": 0,
+          "load_s": 1.00000761449337e-06,
+          "prefill_handoff_s": 0.23602779099019244,
+          "prompt_replay": 0,
+          "full_cache_repack": 0,
+          "exit_exception": "CancelledError(\"Cancelled via cancel scope c0402c6f30 by <Task pending name='Task-80' coro=<RequestResponseCycle.run_asgi() running at /private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py:411> cb=[set.discard()]>\")",
+          "quiescence": {
+            "canonical_frontier": 524,
+            "recovery_suffix_tokens": [
+              30,
+              128825,
+              34756,
+              2329,
+              1281,
+              12533,
+              1425,
+              65,
+              50219,
+              3816,
+              30,
+              128825,
+              10767,
+              2329,
+              1281,
+              37399,
+              4
+            ],
+            "discarded_future_token": 3418,
+            "counters": {
+              "new_verify_cycles": 0,
+              "new_proposals": 0,
+              "target_forwards": 0,
+              "history_replay": 0,
+              "full_cache_repack": 0,
+              "dspark_appends": 0
+            },
+            "latency_s": 0.0007544580148532987,
+            "queue_drained_tokens": [
+              37399,
+              4
+            ],
+            "dspark": {
+              "frontier": 524,
+              "offsets": [
+                524,
+                524,
+                524
+              ],
+              "target_layer_ids": [
+                37,
+                38,
+                39
+              ],
+              "stage_count": 3,
+              "window_size": 5,
+              "authority": "bounded committed DSpark context; not executable target truth"
+            }
+          },
+          "canonical_frontier": 524,
+          "target_offsets": [
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524,
+            524
+          ],
+          "dspark_offsets": [
+            524,
+            524,
+            524
+          ],
+          "terminal_matches": [],
+          "response": {
+            "id": "36b9b8f7ed7c46adb63fbc8f7d1e1e42",
+            "object": "chat.completion",
+            "created": 1791055431,
+            "model": "deepseek-v4.1-flash",
+            "system_fingerprint": null,
+            "choices": [
+              {
+                "index": 0,
+                "message": {
+                  "role": "assistant",
+                  "content": "",
+                  "tool_calls": [
+                    {
+                      "id": "call_36b9b8f7ed7c46adb63fbc8f7d1e1e42_0",
+                      "type": "function",
+                      "function": {
+                        "name": "lookup_weather",
+                        "arguments": "{\"city\""
+                      }
+                    }
+                  ]
+                },
+                "logprobs": null,
+                "finish_reason": null
+              }
+            ]
+          },
+          "protocol_events": [
+            {
+              "id": "36b9b8f7ed7c46adb63fbc8f7d1e1e42",
+              "object": "chat.completion.chunk",
+              "created": 1791055430,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "role": "assistant",
+                    "content": ""
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "36b9b8f7ed7c46adb63fbc8f7d1e1e42",
+              "object": "chat.completion.chunk",
+              "created": 1791055430,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "id": "call_36b9b8f7ed7c46adb63fbc8f7d1e1e42_0",
+                        "type": "function",
+                        "function": {
+                          "name": "lookup_weather",
+                          "arguments": ""
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "36b9b8f7ed7c46adb63fbc8f7d1e1e42",
+              "object": "chat.completion.chunk",
+              "created": 1791055430,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": "{"
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "36b9b8f7ed7c46adb63fbc8f7d1e1e42",
+              "object": "chat.completion.chunk",
+              "created": 1791055430,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": "\""
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "36b9b8f7ed7c46adb63fbc8f7d1e1e42",
+              "object": "chat.completion.chunk",
+              "created": 1791055430,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": "city"
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "36b9b8f7ed7c46adb63fbc8f7d1e1e42",
+              "object": "chat.completion.chunk",
+              "created": 1791055430,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": "\""
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            }
+          ],
+          "canonical_generated": [
+            30,
+            128825,
+            34756,
+            2329,
+            1281,
+            12533,
+            1425,
+            65,
+            50219,
+            3816,
+            30,
+            128825,
+            10767,
+            2329,
+            1281,
+            37399,
+            4
+          ],
+          "prediction_retired": true,
+          "queue_empty": true,
+          "recovery_error": "no official-recipe reconstruction certificate; DELETE required",
+          "certificate": {
+            "version": 1,
+            "frontier": 524,
+            "canonical_sha256": "f64321630bc66ffafdbc6cfee6f234a87ed8bc85f77b7a5e376c7214419e05d8",
+            "representable": false,
+            "executable_tools": false,
+            "exact_prefix": false,
+            "semantic_complete": false,
+            "first_mismatch": 522,
+            "witness": {
+              "model": "deepseek-v4.1-flash",
+              "tools": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "lookup_weather",
+                    "description": "Return deterministic weather for a city.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "city": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "city"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "strict": true
+                  }
+                }
+              ],
+              "tool_choice": "auto",
+              "reasoning_effort": "none",
+              "temperature": 0,
+              "max_tokens": 1,
+              "stream": false,
+              "messages": [
+                {
+                  "role": "user",
+                  "content": "Say hello briefly. Do not use tools."
+                },
+                {
+                  "role": "assistant",
+                  "content": "Hello!"
+                },
+                {
+                  "role": "user",
+                  "content": "Use lookup_weather for Paris."
+                },
+                {
+                  "role": "assistant",
+                  "content": "",
+                  "tool_calls": [
+                    {
+                      "id": "call_978fd4353f8444f88a7b7c139f447456_0",
+                      "type": "function",
+                      "function": {
+                        "name": "lookup_weather",
+                        "arguments": "{\"city\": \"Paris\"}"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "role": "tool",
+                  "tool_call_id": "call_978fd4353f8444f88a7b7c139f447456_0",
+                  "content": "{\"city\":\"Paris\",\"weather\":\"sunny 21C\",\"source\":\"m11_deterministic_stub\"}"
+                },
+                {
+                  "role": "assistant",
+                  "content": "Paris: sunny, 21\u00b0C."
+                },
+                {
+                  "role": "user",
+                  "content": "Output exactly: caf\u00e9 \ud83d\ude42 \u6f22\u5b57. Nothing else."
+                },
+                {
+                  "role": "assistant",
+                  "content": "caf"
+                },
+                {
+                  "role": "user",
+                  "content": "Use lookup_weather for Berlin."
+                },
+                {
+                  "role": "assistant",
+                  "content": "",
+                  "tool_calls": [
+                    {
+                      "id": "call_d4a7bc318aee4705aa240b5a8787c139_0",
+                      "type": "function",
+                      "function": {
+                        "name": "lookup_weather",
+                        "arguments": "{\"city\": \"Berlin\"}"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "role": "tool",
+                  "tool_call_id": "call_d4a7bc318aee4705aa240b5a8787c139_0",
+                  "content": "{\"city\":\"Berlin\",\"weather\":\"cloudy 17C\",\"source\":\"m11_deterministic_stub\"}"
+                },
+                {
+                  "role": "assistant",
+                  "content": "Berlin: cloudy, 17\u00b0C."
+                },
+                {
+                  "role": "user",
+                  "content": "Use lookup_weather for Paris again."
+                },
+                {
+                  "role": "assistant",
+                  "content": "",
+                  "tool_calls": [
+                    {
+                      "id": "call_36b9b8f7ed7c46adb63fbc8f7d1e1e42_0",
+                      "type": "function",
+                      "function": {
+                        "name": "lookup_weather",
+                        "arguments": "{\"city\""
+                      }
+                    }
+                  ]
+                },
+                {
+                  "role": "tool",
+                  "tool_call_id": "call_36b9b8f7ed7c46adb63fbc8f7d1e1e42_0",
+                  "content": "NOT EXECUTED: reconstruction witness"
+                },
+                {
+                  "role": "user",
+                  "content": "Continue."
+                }
+              ]
+            },
+            "encoded_length": 565
+          },
+          "cleanup_s": 0.010354041995014995,
+          "elapsed_s": 1.020152874989435
+        },
+        "canonical_frontier": 524,
+        "outcome_state": "active",
+        "certificate": {
+          "version": 1,
+          "frontier": 524,
+          "canonical_sha256": "f64321630bc66ffafdbc6cfee6f234a87ed8bc85f77b7a5e376c7214419e05d8",
+          "representable": false,
+          "executable_tools": false,
+          "exact_prefix": false,
+          "semantic_complete": false,
+          "first_mismatch": 522,
+          "witness": {
+            "model": "deepseek-v4.1-flash",
+            "tools": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "lookup_weather",
+                  "description": "Return deterministic weather for a city.",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "city": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "city"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "strict": true
+                }
+              }
+            ],
+            "tool_choice": "auto",
+            "reasoning_effort": "none",
+            "temperature": 0,
+            "max_tokens": 1,
+            "stream": false,
+            "messages": [
+              {
+                "role": "user",
+                "content": "Say hello briefly. Do not use tools."
+              },
+              {
+                "role": "assistant",
+                "content": "Hello!"
+              },
+              {
+                "role": "user",
+                "content": "Use lookup_weather for Paris."
+              },
+              {
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [
+                  {
+                    "id": "call_978fd4353f8444f88a7b7c139f447456_0",
+                    "type": "function",
+                    "function": {
+                      "name": "lookup_weather",
+                      "arguments": "{\"city\": \"Paris\"}"
+                    }
+                  }
+                ]
+              },
+              {
+                "role": "tool",
+                "tool_call_id": "call_978fd4353f8444f88a7b7c139f447456_0",
+                "content": "{\"city\":\"Paris\",\"weather\":\"sunny 21C\",\"source\":\"m11_deterministic_stub\"}"
+              },
+              {
+                "role": "assistant",
+                "content": "Paris: sunny, 21\u00b0C."
+              },
+              {
+                "role": "user",
+                "content": "Output exactly: caf\u00e9 \ud83d\ude42 \u6f22\u5b57. Nothing else."
+              },
+              {
+                "role": "assistant",
+                "content": "caf"
+              },
+              {
+                "role": "user",
+                "content": "Use lookup_weather for Berlin."
+              },
+              {
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [
+                  {
+                    "id": "call_d4a7bc318aee4705aa240b5a8787c139_0",
+                    "type": "function",
+                    "function": {
+                      "name": "lookup_weather",
+                      "arguments": "{\"city\": \"Berlin\"}"
+                    }
+                  }
+                ]
+              },
+              {
+                "role": "tool",
+                "tool_call_id": "call_d4a7bc318aee4705aa240b5a8787c139_0",
+                "content": "{\"city\":\"Berlin\",\"weather\":\"cloudy 17C\",\"source\":\"m11_deterministic_stub\"}"
+              },
+              {
+                "role": "assistant",
+                "content": "Berlin: cloudy, 17\u00b0C."
+              },
+              {
+                "role": "user",
+                "content": "Use lookup_weather for Paris again."
+              },
+              {
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [
+                  {
+                    "id": "call_36b9b8f7ed7c46adb63fbc8f7d1e1e42_0",
+                    "type": "function",
+                    "function": {
+                      "name": "lookup_weather",
+                      "arguments": "{\"city\""
+                    }
+                  }
+                ]
+              },
+              {
+                "role": "tool",
+                "tool_call_id": "call_36b9b8f7ed7c46adb63fbc8f7d1e1e42_0",
+                "content": "NOT EXECUTED: reconstruction witness"
+              },
+              {
+                "role": "user",
+                "content": "Continue."
+              }
+            ]
+          },
+          "encoded_length": 565
+        },
+        "request_fence": {
+          "sequence": 7,
+          "body_sha256": "d238e8daa5eca8bd8b10c4e40b954d6f1a2b05cc8e3248580fb485a32729273f",
+          "state": "unrecoverable",
+          "started": true
+        },
+        "next_sequence": 8
+      },
+      "preserved_application_messages": [
+        {
+          "role": "user",
+          "content": "Say hello briefly. Do not use tools."
+        },
+        {
+          "role": "assistant",
+          "content": "Hello!"
+        },
+        {
+          "role": "user",
+          "content": "Use lookup_weather for Paris."
+        },
+        {
+          "role": "assistant",
+          "content": "",
+          "tool_calls": [
+            {
+              "id": "call_978fd4353f8444f88a7b7c139f447456_0",
+              "type": "function",
+              "function": {
+                "name": "lookup_weather",
+                "arguments": "{\"city\": \"Paris\"}"
+              }
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "tool_call_id": "call_978fd4353f8444f88a7b7c139f447456_0",
+          "content": "{\"city\":\"Paris\",\"weather\":\"sunny 21C\",\"source\":\"m11_deterministic_stub\"}"
+        },
+        {
+          "role": "assistant",
+          "content": "Paris: sunny, 21\u00b0C."
+        },
+        {
+          "role": "user",
+          "content": "Output exactly: caf\u00e9 \ud83d\ude42 \u6f22\u5b57. Nothing else."
+        },
+        {
+          "role": "assistant",
+          "content": "caf"
+        },
+        {
+          "role": "user",
+          "content": "Use lookup_weather for Berlin."
+        },
+        {
+          "role": "assistant",
+          "content": "",
+          "tool_calls": [
+            {
+              "id": "call_d4a7bc318aee4705aa240b5a8787c139_0",
+              "type": "function",
+              "function": {
+                "name": "lookup_weather",
+                "arguments": "{\"city\": \"Berlin\"}"
+              }
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "tool_call_id": "call_d4a7bc318aee4705aa240b5a8787c139_0",
+          "content": "{\"city\":\"Berlin\",\"weather\":\"cloudy 17C\",\"source\":\"m11_deterministic_stub\"}"
+        },
+        {
+          "role": "assistant",
+          "content": "Berlin: cloudy, 17\u00b0C."
+        },
+        {
+          "role": "user",
+          "content": "Use lookup_weather for Paris again."
+        }
+      ],
+      "unrepresentable_assistant_omitted": true,
+      "native_state_carried": false,
+      "old_id_and_request_denied": true
+    }
+  ]
+}

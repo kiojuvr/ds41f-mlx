@@ -2,6 +2,15 @@
 
 This roadmap converts the runtime strategy into a finite sequence of milestones. It is not an optimization backlog. Runtime behavior, selectors, API integration, and multimodal work must not change until the relevant architecture milestone authorizes that work.
 
+## M37 — Bounded internal local-client integration
+
+The reusable experimental local `InternalLocalClient` owns one frozen request,
+centralized certified transcript reconciliation and bounded living-client tool
+ownership. Explicit DELETE/fresh creation preserves only legitimate application
+messages; expired identities never regenerate. See [M37](milestone-37-local-client-integration.md)
+and its current-source evidence for decision/scope. No public/default promotion.
+Next: M38 bounded internal recovery-client operational soak/fault matrix, not release.
+
 ## M36R — Certified recovery admission
 
 Decision: **QUALIFIED_BOUNDED_CERTIFIED_RECOVERY**. The explicitly injected

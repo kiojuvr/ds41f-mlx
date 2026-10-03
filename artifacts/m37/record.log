@@ -1,0 +1,219 @@
+{
+  "decision": "QUALIFIED_BOUNDED_INTERNAL_LOCAL_CLIENT",
+  "replay_repack": {
+    "model_history_replay": 0,
+    "full_cache_repack": 0,
+    "fresh_target_allocations": 2,
+    "retained_continuation_turns": 6,
+    "new_session_prefill_turns": 2,
+    "post_delete_new_session_prefill_turns": 1
+  },
+  "observations": {
+    "latencies": [
+      {
+        "name": "normal-streamed-text",
+        "request_wall_s": 72.91471612500027,
+        "recovery_wait_lookup_observe_s": 0.0020572500070557,
+        "load_s": 67.47786054201424,
+        "decode_s": 0.17167241597780958,
+        "prefill_handoff_s": 4.432710624998435,
+        "delivery_wait_s": 1.6239937394857407e-06,
+        "cleanup_s": 0.0493913340033032,
+        "fresh_session_prefill": true,
+        "new_fresh_after_delete": false
+      },
+      {
+        "name": "normal-tool",
+        "request_wall_s": 1.1363869580090977,
+        "recovery_wait_lookup_observe_s": 0.0020702500478364527,
+        "load_s": 1.1659576557576656e-06,
+        "decode_s": 0.8493646220304072,
+        "prefill_handoff_s": 0.22860062494874,
+        "delivery_wait_s": 2.2081658244132996e-06,
+        "cleanup_s": 0.0507450420409441,
+        "fresh_session_prefill": false,
+        "new_fresh_after_delete": false
+      },
+      {
+        "name": "normal-tool-result",
+        "request_wall_s": 0.6857776250108145,
+        "recovery_wait_lookup_observe_s": 0.002083208004478365,
+        "load_s": 7.500057108700275e-07,
+        "decode_s": 0.2572469179867767,
+        "prefill_handoff_s": 0.37300420901738107,
+        "delivery_wait_s": 1.9178842194378376e-06,
+        "cleanup_s": 0.050264000019524246,
+        "fresh_session_prefill": false,
+        "new_fresh_after_delete": false
+      },
+      {
+        "name": "ambiguous-stream-text",
+        "request_wall_s": 0.4336694579687901,
+        "recovery_wait_lookup_observe_s": 0.06624795799143612,
+        "load_s": 9.160139597952366e-07,
+        "decode_s": 0.06342837499687448,
+        "prefill_handoff_s": 0.21977058303309605,
+        "delivery_wait_s": 0.08213129092473537,
+        "cleanup_s": 0.05601749999914318,
+        "fresh_session_prefill": false,
+        "new_fresh_after_delete": false
+      },
+      {
+        "name": "ambiguous-complete-tool",
+        "request_wall_s": 14.247512332978658,
+        "recovery_wait_lookup_observe_s": 0.00292158400407061,
+        "load_s": 1.0829535312950611e-06,
+        "decode_s": 2.921255334164016,
+        "prefill_handoff_s": 0.24292158300522715,
+        "delivery_wait_s": 11.009172916878015,
+        "cleanup_s": 0.052944499999284744,
+        "fresh_session_prefill": false,
+        "new_fresh_after_delete": false
+      },
+      {
+        "name": "ambiguous-tool-result",
+        "request_wall_s": 0.666786374989897,
+        "recovery_wait_lookup_observe_s": 0.0022567089763469994,
+        "load_s": 9.5803989097476e-07,
+        "decode_s": 0.26219458307605237,
+        "prefill_handoff_s": 0.3498563750181347,
+        "delivery_wait_s": 1.416075974702835e-06,
+        "cleanup_s": 0.049008541041985154,
+        "fresh_session_prefill": false,
+        "new_fresh_after_delete": false
+      },
+      {
+        "name": "incomplete-tool",
+        "request_wall_s": 1.0160343329771422,
+        "recovery_wait_lookup_observe_s": 0.037766541994642466,
+        "load_s": 8.750357665121555e-07,
+        "decode_s": 0.4945992919965647,
+        "prefill_handoff_s": 0.23647862498182803,
+        "delivery_wait_s": 0.24316224997164682,
+        "cleanup_s": 0.0051557080005295575,
+        "fresh_session_prefill": false,
+        "new_fresh_after_delete": false
+      },
+      {
+        "name": "fresh-session-ordinary-prefill",
+        "request_wall_s": 3.8595476250047795,
+        "recovery_wait_lookup_observe_s": 0.0020290829706937075,
+        "load_s": 1.0420335456728935e-06,
+        "decode_s": 0.1632779999054037,
+        "prefill_handoff_s": 3.6424785829731263,
+        "delivery_wait_s": 6.680493243038654e-07,
+        "cleanup_s": 0.04961429099785164,
+        "fresh_session_prefill": true,
+        "new_fresh_after_delete": true
+      }
+    ],
+    "ledger_with_effect_s": [
+      3.5333039704710245e-05,
+      4.383397754281759e-05
+    ],
+    "ledger_only_s": [
+      9.583018254488707e-06,
+      7.708033081144094e-06,
+      6.959016900509596e-06,
+      1.0499963536858559e-05,
+      1.029198756441474e-05,
+      7.3750270530581474e-06
+    ],
+    "lifecycle": [
+      {
+        "action": "create",
+        "seconds": 0.014755250012967736
+      },
+      {
+        "action": "delete",
+        "seconds": 0.001045333978254348
+      },
+      {
+        "action": "create",
+        "seconds": 0.0005716250161640346
+      }
+    ],
+    "resources": {
+      "process_maxrss": 20006109184,
+      "mlx_active_bytes": 309217529760,
+      "mlx_cache_bytes": 0
+    },
+    "final_client_serialized_payload_bytes": 6414,
+    "max_measured_client_serialized_payload_bytes": 6948,
+    "retention": "one current frozen body/outcome, transcript, 128 ledger effects (64KiB result each), 128 timing samples; body <=1MiB; estimates exclude Python allocator overhead"
+  },
+  "gates": {
+    "native": [
+      {
+        "name": "identities",
+        "command": [
+          "/private/tmp/ds41f-m32-qual/bin/python",
+          "tools/check_m34_identities.py"
+        ],
+        "returncode": 0
+      },
+      {
+        "name": "recipe-matrix",
+        "command": [
+          "/private/tmp/ds41f-m32-qual/bin/python",
+          "-c",
+          "from pathlib import Path; p=Path('tools/run_m36r_recipe_matrix.py'); code=p.read_text().replace('artifacts/m36r/recipe-matrix.json','artifacts/m37/recipe-matrix.json'); exec(compile(code,str(p),'exec'),{'__file__':str(p.resolve()),'__name__':'__main__'})"
+        ],
+        "returncode": 0
+      },
+      {
+        "name": "m35-http",
+        "command": [
+          "/private/tmp/ds41f-m32-qual/bin/python",
+          "-c",
+          "import asyncio; from tools import run_m35_http_qualification as q; q.OUT=q.ROOT/'artifacts/m37/m35-http.json'; asyncio.run(q.main())"
+        ],
+        "returncode": 0
+      },
+      {
+        "name": "m36-probe",
+        "command": [
+          "/private/tmp/ds41f-m32-qual/bin/python",
+          "-c",
+          "import asyncio; from tools import run_m36_recovery_probe as q; q.OUT=q.q.ROOT/'artifacts/m37/m36-probe.json'; asyncio.run(q.main())"
+        ],
+        "returncode": 0
+      },
+      {
+        "name": "m36r-http",
+        "command": [
+          "/private/tmp/ds41f-m32-qual/bin/python",
+          "-c",
+          "import asyncio; from tools import run_m36r_http as q; q.OUT=q.q.ROOT/'artifacts/m37/m36r-http.json'; asyncio.run(q.main())"
+        ],
+        "returncode": 0
+      },
+      {
+        "name": "native-interruptions",
+        "command": [
+          "/private/tmp/ds41f-m32-qual/bin/python",
+          "-c",
+          "from pathlib import Path; p=Path('tools/run_m35_native_interruptions.py'); code=p.read_text().replace('artifacts/m35/native-interruptions.json','artifacts/m37/native-interruptions.json'); exec(compile(code,str(p),'exec'),{'__file__':str(p.resolve()),'__name__':'__main__'})"
+        ],
+        "returncode": 0
+      }
+    ],
+    "logs": [
+      "client-tests.log",
+      "runtime-regressions.log",
+      "rust-regressions.log",
+      "prior-evidence-regressions.log",
+      "release-off-regressions.log"
+    ],
+    "m35_http_turns": 18,
+    "m36r_http_sessions": 4,
+    "native_interruption_cases": 16,
+    "native_recipe_cases": 28,
+    "historical_deselections": [
+      "M35 identity_and_sources",
+      "M36 current_sources_and_raw_evidence_match",
+      "M36R final_qualification"
+    ],
+    "current_hash_gate": "tests/test_m37_evidence.py"
+  }
+}

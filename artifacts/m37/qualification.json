@@ -1,0 +1,364 @@
+{
+  "schema": "ds41f.m37.qualification.v1",
+  "decision": "QUALIFIED_BOUNDED_INTERNAL_LOCAL_CLIENT",
+  "base_commit": "40e2303",
+  "final_commit_resolver": "git log -1 --format=%H -- artifacts/m37/qualification.json",
+  "integrated_boundary": "ds41f_mlx.internal_local_client.InternalLocalClient above existing local/browser RuntimeClient HTTP boundary; explicitly experimental; public browser and raw Rust API unchanged",
+  "authority": {
+    "server": "canonical history, certificate, request/outcome identity, classification and session/cache ownership",
+    "client": "ordinary local transcript, frozen bytes, expected sequence, transport observations and bounded living-client effect ledger",
+    "sse": "display-only; incomplete fragments discarded",
+    "no_token_parser_cache_authority": true
+  },
+  "fence": {
+    "sequences": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      1
+    ],
+    "same_body_retry": true,
+    "settlement": "same exact-byte POST JSON outcome; no generation",
+    "active": "no sequence advancement; explicit wait",
+    "absent": "same identity only, never absent-GET ACK",
+    "expired": "explicit expired result; reconcile current conversation or explicit restart, no regeneration",
+    "wrong_body": "state error/stop, never substitute work",
+    "current_displaced_expiry_evidence": "synthetic client fault test; shared clients unsupported"
+  },
+  "recovery": {
+    "positive_assistant_replacement": true,
+    "complete_tool_zero_events_lost": true,
+    "ordinary_next_turn_exact_prefix": true,
+    "negative_assistant_not_manufactured": true,
+    "internal_poison_distinct": true
+  },
+  "tools": {
+    "effects": 2,
+    "observations_per_call": 4,
+    "ledger_entries": 2,
+    "key": [
+      "session_id",
+      "sequence",
+      "call_index",
+      "call_id"
+    ],
+    "full_call_binding": true,
+    "reserve_before_effect": true,
+    "ordinary_stored_result_continuation": true,
+    "incomplete_effects": 0,
+    "ambiguous_client_effect_retry": false,
+    "scope": "one living single-thread client; not crash-safe/distributed exactly-once"
+  },
+  "restart": {
+    "explicit_delete": true,
+    "old_id_and_request_denied": true,
+    "fresh_creation": true,
+    "preserved": "prior certified assistants, actual completed tools/results and user messages including final submitted user; no unrepresentable final native assistant",
+    "native_state_carried": false,
+    "new_session_ordinary_prefill": true
+  },
+  "replay_repack": {
+    "model_history_replay": 0,
+    "full_cache_repack": 0,
+    "fresh_target_allocations": 2,
+    "retained_continuation_turns": 6,
+    "new_session_prefill_turns": 2,
+    "post_delete_new_session_prefill_turns": 1
+  },
+  "observations": {
+    "latencies": [
+      {
+        "name": "normal-streamed-text",
+        "request_wall_s": 72.91471612500027,
+        "recovery_wait_lookup_observe_s": 0.0020572500070557,
+        "load_s": 67.47786054201424,
+        "decode_s": 0.17167241597780958,
+        "prefill_handoff_s": 4.432710624998435,
+        "delivery_wait_s": 1.6239937394857407e-06,
+        "cleanup_s": 0.0493913340033032,
+        "fresh_session_prefill": true,
+        "new_fresh_after_delete": false
+      },
+      {
+        "name": "normal-tool",
+        "request_wall_s": 1.1363869580090977,
+        "recovery_wait_lookup_observe_s": 0.0020702500478364527,
+        "load_s": 1.1659576557576656e-06,
+        "decode_s": 0.8493646220304072,
+        "prefill_handoff_s": 0.22860062494874,
+        "delivery_wait_s": 2.2081658244132996e-06,
+        "cleanup_s": 0.0507450420409441,
+        "fresh_session_prefill": false,
+        "new_fresh_after_delete": false
+      },
+      {
+        "name": "normal-tool-result",
+        "request_wall_s": 0.6857776250108145,
+        "recovery_wait_lookup_observe_s": 0.002083208004478365,
+        "load_s": 7.500057108700275e-07,
+        "decode_s": 0.2572469179867767,
+        "prefill_handoff_s": 0.37300420901738107,
+        "delivery_wait_s": 1.9178842194378376e-06,
+        "cleanup_s": 0.050264000019524246,
+        "fresh_session_prefill": false,
+        "new_fresh_after_delete": false
+      },
+      {
+        "name": "ambiguous-stream-text",
+        "request_wall_s": 0.4336694579687901,
+        "recovery_wait_lookup_observe_s": 0.06624795799143612,
+        "load_s": 9.160139597952366e-07,
+        "decode_s": 0.06342837499687448,
+        "prefill_handoff_s": 0.21977058303309605,
+        "delivery_wait_s": 0.08213129092473537,
+        "cleanup_s": 0.05601749999914318,
+        "fresh_session_prefill": false,
+        "new_fresh_after_delete": false
+      },
+      {
+        "name": "ambiguous-complete-tool",
+        "request_wall_s": 14.247512332978658,
+        "recovery_wait_lookup_observe_s": 0.00292158400407061,
+        "load_s": 1.0829535312950611e-06,
+        "decode_s": 2.921255334164016,
+        "prefill_handoff_s": 0.24292158300522715,
+        "delivery_wait_s": 11.009172916878015,
+        "cleanup_s": 0.052944499999284744,
+        "fresh_session_prefill": false,
+        "new_fresh_after_delete": false
+      },
+      {
+        "name": "ambiguous-tool-result",
+        "request_wall_s": 0.666786374989897,
+        "recovery_wait_lookup_observe_s": 0.0022567089763469994,
+        "load_s": 9.5803989097476e-07,
+        "decode_s": 0.26219458307605237,
+        "prefill_handoff_s": 0.3498563750181347,
+        "delivery_wait_s": 1.416075974702835e-06,
+        "cleanup_s": 0.049008541041985154,
+        "fresh_session_prefill": false,
+        "new_fresh_after_delete": false
+      },
+      {
+        "name": "incomplete-tool",
+        "request_wall_s": 1.0160343329771422,
+        "recovery_wait_lookup_observe_s": 0.037766541994642466,
+        "load_s": 8.750357665121555e-07,
+        "decode_s": 0.4945992919965647,
+        "prefill_handoff_s": 0.23647862498182803,
+        "delivery_wait_s": 0.24316224997164682,
+        "cleanup_s": 0.0051557080005295575,
+        "fresh_session_prefill": false,
+        "new_fresh_after_delete": false
+      },
+      {
+        "name": "fresh-session-ordinary-prefill",
+        "request_wall_s": 3.8595476250047795,
+        "recovery_wait_lookup_observe_s": 0.0020290829706937075,
+        "load_s": 1.0420335456728935e-06,
+        "decode_s": 0.1632779999054037,
+        "prefill_handoff_s": 3.6424785829731263,
+        "delivery_wait_s": 6.680493243038654e-07,
+        "cleanup_s": 0.04961429099785164,
+        "fresh_session_prefill": true,
+        "new_fresh_after_delete": true
+      }
+    ],
+    "ledger_with_effect_s": [
+      3.5333039704710245e-05,
+      4.383397754281759e-05
+    ],
+    "ledger_only_s": [
+      9.583018254488707e-06,
+      7.708033081144094e-06,
+      6.959016900509596e-06,
+      1.0499963536858559e-05,
+      1.029198756441474e-05,
+      7.3750270530581474e-06
+    ],
+    "lifecycle": [
+      {
+        "action": "create",
+        "seconds": 0.014755250012967736
+      },
+      {
+        "action": "delete",
+        "seconds": 0.001045333978254348
+      },
+      {
+        "action": "create",
+        "seconds": 0.0005716250161640346
+      }
+    ],
+    "resources": {
+      "process_maxrss": 20006109184,
+      "mlx_active_bytes": 309217529760,
+      "mlx_cache_bytes": 0
+    },
+    "final_client_serialized_payload_bytes": 6414,
+    "max_measured_client_serialized_payload_bytes": 6948,
+    "retention": "one current frozen body/outcome, transcript, 128 ledger effects (64KiB result each), 128 timing samples; body <=1MiB; estimates exclude Python allocator overhead"
+  },
+  "defects": {
+    "server_runtime_defects": false,
+    "owning_layers_unchanged": [
+      "ds41f_mlx/serving/internal_mtp.py",
+      "ds41f_mlx/serving/request_fence.py",
+      "ds41f_mlx/serving/recovery_certificate.py",
+      "ds41f_mlx/serving/server.py",
+      "ds41f_mlx/runtime/mtp_lifecycle.py",
+      "ds41f_mlx/runtime/recipe_semantic_guard.py"
+    ],
+    "excluded_attempts": [
+      "initial fresh tool-enabled model validly requested a new tool, violating harness text-only expectation",
+      "superseded in-development JSON serialization of diagnostic deque; fixed harness conversion to list"
+    ],
+    "failure_evidence_preserved": true
+  },
+  "gates": {
+    "native": [
+      {
+        "name": "identities",
+        "command": [
+          "/private/tmp/ds41f-m32-qual/bin/python",
+          "tools/check_m34_identities.py"
+        ],
+        "returncode": 0
+      },
+      {
+        "name": "recipe-matrix",
+        "command": [
+          "/private/tmp/ds41f-m32-qual/bin/python",
+          "-c",
+          "from pathlib import Path; p=Path('tools/run_m36r_recipe_matrix.py'); code=p.read_text().replace('artifacts/m36r/recipe-matrix.json','artifacts/m37/recipe-matrix.json'); exec(compile(code,str(p),'exec'),{'__file__':str(p.resolve()),'__name__':'__main__'})"
+        ],
+        "returncode": 0
+      },
+      {
+        "name": "m35-http",
+        "command": [
+          "/private/tmp/ds41f-m32-qual/bin/python",
+          "-c",
+          "import asyncio; from tools import run_m35_http_qualification as q; q.OUT=q.ROOT/'artifacts/m37/m35-http.json'; asyncio.run(q.main())"
+        ],
+        "returncode": 0
+      },
+      {
+        "name": "m36-probe",
+        "command": [
+          "/private/tmp/ds41f-m32-qual/bin/python",
+          "-c",
+          "import asyncio; from tools import run_m36_recovery_probe as q; q.OUT=q.q.ROOT/'artifacts/m37/m36-probe.json'; asyncio.run(q.main())"
+        ],
+        "returncode": 0
+      },
+      {
+        "name": "m36r-http",
+        "command": [
+          "/private/tmp/ds41f-m32-qual/bin/python",
+          "-c",
+          "import asyncio; from tools import run_m36r_http as q; q.OUT=q.q.ROOT/'artifacts/m37/m36r-http.json'; asyncio.run(q.main())"
+        ],
+        "returncode": 0
+      },
+      {
+        "name": "native-interruptions",
+        "command": [
+          "/private/tmp/ds41f-m32-qual/bin/python",
+          "-c",
+          "from pathlib import Path; p=Path('tools/run_m35_native_interruptions.py'); code=p.read_text().replace('artifacts/m35/native-interruptions.json','artifacts/m37/native-interruptions.json'); exec(compile(code,str(p),'exec'),{'__file__':str(p.resolve()),'__name__':'__main__'})"
+        ],
+        "returncode": 0
+      }
+    ],
+    "logs": [
+      "client-tests.log",
+      "runtime-regressions.log",
+      "rust-regressions.log",
+      "prior-evidence-regressions.log",
+      "release-off-regressions.log"
+    ],
+    "m35_http_turns": 18,
+    "m36r_http_sessions": 4,
+    "native_interruption_cases": 16,
+    "native_recipe_cases": 28,
+    "historical_deselections": [
+      "M35 identity_and_sources",
+      "M36 current_sources_and_raw_evidence_match",
+      "M36R final_qualification"
+    ],
+    "current_hash_gate": "tests/test_m37_evidence.py"
+  },
+  "unsupported": [
+    "public/default/release MTP",
+    "persistence/process restart",
+    "client crash-safe tool exactly-once",
+    "distributed idempotency",
+    "concurrent/shared MTP",
+    "batching",
+    "token-exact immediate abort",
+    "200K HTTP MTP",
+    "unbounded backpressure",
+    "portable native wheels",
+    "universal partial DSML recovery"
+  ],
+  "next_milestone": "M38 bounded internal recovery-client operational soak and fault matrix; separate later release/admission evaluation",
+  "source_hashes": {
+    "ds41f_mlx/internal_local_client.py": "861aac3e4d80e7d5ea17bc9e3f535e5550a16d9cd2b42bbdc87b8dd4b4d381df",
+    "ds41f_mlx/web_client.py": "635dd021475da57f9cc77be63c4de8a3fe35fbbe9ac6708d1dc5cc605703696f",
+    "tools/run_m37_local_client.py": "c040a9fc833ae14614cf8b25a8821dc5fa84d54c93d38e282c2d8cb156885ff9",
+    "tools/run_m37_gates.py": "b0b544ae97a93193339c81eba4754f0278834b3a9c78f814cc1ac3c7e91e2f8e",
+    "tools/record_m37_evidence.py": "ecfaa9d34d47cb977ab70b1669080477439f03188f0bb53974762368ddd93cf8",
+    "tests/test_m37_local_client.py": "9fd70d9ec21110eceaf18f138a9d1139c8fa1446b0385870d4267ea37bce30d2",
+    "tests/test_m37_evidence.py": "5cf5099107abac5fbf9256bb03aa1fa28eb22eb79232dc9344fd538c7ee1bcfd",
+    "docs/milestone-37-local-client-integration.md": "5ae50677abd6b5b239009ca8b52a8088a581db29475f8f8aade06366ec63df20",
+    "docs/README.md": "12fde5aa113e5415e574865bae6ad83abd237f4105db2e2ec6f524e2f36f7968",
+    "docs/implementation-plan.md": "426336b9e24a756ff7f0621dc082106bc3ba2a33f2adbdae73b794d0d00ea08b",
+    "docs/qualification.md": "4c689a01419442bdb136d1b17a23ce6c2c8599e77dbad4ee1ae6ba752eb9d634",
+    "docs/session-state.md": "7696e63b13787f240314b03a8763e5920aa514cff36297a4d33a47fe1982ea06",
+    "docs/doc-classification.json": "a8092128ec93a4cf8865ec6c85bce2d425013e75231986b609731d3b4788797e"
+  },
+  "historical_evidence_hashes": {
+    "artifacts/m33/qualification.json": "d7bc84e056d0402de7cd1198d3835ad2b2cfc7188eb7fa83727dd17700a67691",
+    "artifacts/m34/qualification.json": "e4753370eefe22102f8349357321312ccedf4fca2f812110f5590162ba77321a",
+    "artifacts/m35/qualification.json": "046a7381d6a2e90e11106794447f2d77aa3a466a7f5da4f92490ec41fb244054",
+    "artifacts/m36/qualification.json": "4d79b6e636857e4571a9f2c88733f194c36ab4006e54f37e91433438eab4263b",
+    "artifacts/m36r/qualification.json": "3024b43b14a47263b43d86306b28585e06716bcca87a80a95f02f8137168d2a9"
+  },
+  "evidence_hashes": {
+    "artifacts/m37/native-gate-commands.json": "df546353dea3f52f864ae31b2452b8d59d23fd3699f397a4f4314e2357db62d2",
+    "artifacts/m37/workflow-initial-fresh-tool.json": "e18abfc678dc24d8fd11322d966837aedb794659b75af4413cdc4770217bdf58",
+    "artifacts/m37/m36r-http.json": "c852a19e8b44df46952f52439320d1f4012b2bcf8d159f855785ee4c86825c95",
+    "artifacts/m37/m35-http.json": "557585e2b14a2c98ead7e3c70e9e24e8051819d89bed401ac0041d15943332d5",
+    "artifacts/m37/native-interruptions.log": "a360a7cf8243a7739cb68562247e3ac7a2198cca4cb9692a124cf81a9d3535b5",
+    "artifacts/m37/workflow.json": "b8d6f7207531380e9c287111c32681e2619ae97442719663878d83f351f25c71",
+    "artifacts/m37/workflow-superseded.log": "bf9c6fae7d0c24c26fc1b81f51f6d46357a860044c059d364555b8f5d69e6e93",
+    "artifacts/m37/workflow.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m37/native-interruptions.json": "3698e97b250bd9c33e11ab8e07aff7b0b7d32fbf38ea2cbded03a39e25ce2d31",
+    "artifacts/m37/m35-http.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m37/workflow-pre-hardening.json": "900f1d69060ce651f760e612afe7bdea3c6c3b32048bd38c046d476d7b60e8ab",
+    "artifacts/m37/workflow-pre-hardening.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m37/client-tests.log": "70f1d517f9c42c95c7f8988ac129c0067d1ba2934ea4feaec427f5438c3a24cd",
+    "artifacts/m37/rust-regressions.log": "9d429745ea7fa3f4a3edad2d3b9c9635280fd0f8b6759fbb5f53787649664b59",
+    "artifacts/m37/workflow-serialization-attempt.log": "0c2deec599857fb07e06fb9709f647c9e09858a24549bd497bec774ccc175cbe",
+    "artifacts/m37/recipe-matrix.log": "61c11329a0026dd9c439ee1e8838f1723221da191994e90f4168e9cd235515ff",
+    "artifacts/m37/workflow-initial-fresh-tool.log": "ef7987d110120980e374bba87af24c2e43fa6e882a7690c23ff98272a76d01c6",
+    "artifacts/m37/prior-evidence-regressions.log": "eb081624ec429e6be5de081955077b9dcc6ce0de689411869d9cc60ab7309baf",
+    "artifacts/m37/release-off-regressions.log": "488185c267b00c3a2f2865ab6efa23e8dcdca2729b9b1964a11c3d071680cfae",
+    "artifacts/m37/workflow-serialization-attempt.json": "53beedfb9f6fb09938924cbd27ea1fa3438ad9c08f2200ca94ce64456dae0e2b",
+    "artifacts/m37/commands.json": "18b42dd3f5e91458ff56dc2c280f4ee0abafdfbea7e8467ef203cfc78f55bf50",
+    "artifacts/m37/rust-request.json": "51dd0192444a1cce676dfa8930f0c73a88cc78665b8544a3cd7a2e6f195edfe4",
+    "artifacts/m37/identities.log": "2d6c92d89f59fd9726f88a8370cae248689d3406c1f3b7572abe95b48cd5f050",
+    "artifacts/m37/gates.log": "fdaf3edf813064b4a912b184c39d696050097dab43635a505f68ab8cb9ed6b1a",
+    "artifacts/m37/workflow-superseded.json": "6454b76764abb7648c11c71c96066ca65b59e9be6fcf10a6617e40a7599b173d",
+    "artifacts/m37/runtime-regressions.log": "b1f3598abe54f7d04f16890435ba3cb7a49dac29b16fffe1ba41eda6e2846841",
+    "artifacts/m37/m36-probe.json": "e9a927261fc490b1b563b96d50186fb58ce7da20160fc04bcc8cd4b01eee0486",
+    "artifacts/m37/recipe-matrix.json": "6da62e6fe40275c5f38a3284583857587c76fcec3fee508a4948afe60e37adee",
+    "artifacts/m37/m36r-http.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m37/m36-probe.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

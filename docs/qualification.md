@@ -45,7 +45,12 @@ recovery** contract: official-recipe ordinary exact-prefix reconstruction plus
 canonical tool completion, local sequence/body outcome fencing, and a living
 single-client tool ledger. Negative certificates require DELETE/fresh session;
 partial DSML is not repaired. The normal release API and Rust client are unchanged.
-Client integration, release and longer-context gates remain separate.
+[M37](milestone-37-local-client-integration.md) integrates that contract in a reusable
+experimental local Python client above the existing browser HTTP boundary: frozen
+requests, centralized certified reconciliation, bounded tool ownership and explicit
+DELETE/fresh/expired results. The public browser loop and Rust raw API stay unchanged.
+Current-source decision and exact scope are in its canonical artifact; release,
+longer-context and longer living-client soak gates remain separate.
 Production/default MTP remains OFF; public MTP disabled; MTP persistence/restore,
 token-exact immediate abort and shared/concurrent MTP remain unsupported.
 

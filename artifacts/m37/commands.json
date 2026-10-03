@@ -1,0 +1,17 @@
+{
+  "schema": "ds41f.m37.commands.v1",
+  "qualification_python": "/tmp/ds41f-m32-qual/bin/python",
+  "environment": {"DS41F_OMLX_PATH": "/tmp/ds41f-m33-omlx"},
+  "workflow": "python -m tools.run_m37_local_client",
+  "native_http_gates": "python tools/run_m37_gates.py",
+  "native_http_command_details": "native-gate-commands.json",
+  "client": "python -m pytest -q tests/test_m37_local_client.py tests/test_m19_web_client.py",
+  "runtime_horizon_off": "python -m pytest -q tests/test_m36r_recovery.py tests/test_m36_recovery_boundary.py tests/test_m35_transport_lease.py tests/test_m34_cache_release.py tests/test_m29_mtp_lifecycle.py tests/test_m25_mtp_boundary.py tests/test_prefill_fp8_mlx_p5.py tests/test_prefill_fp8_mlx_p6.py tests/test_prefill_fp8_mlx_p7.py tools/m33_semantic_tests.py tools/m33_semantic_extra_tests.py tests/test_stateful_request_policy.py tests/test_runtime_config.py",
+  "historical_evidence": "python -m pytest -q tests/test_m33_protocol_evidence.py tests/test_m34_operational_evidence.py tests/test_m35_http_evidence.py tests/test_m36_evidence.py tests/test_m36r_evidence.py -k 'not identity_and_sources and not current_sources_and_raw_evidence_match and not final_qualification'",
+  "historical_caveat": "Explicitly exclude M35/M36 historical HEAD-source assertions and M36R final artifact hashes; historical evidence remains unchanged. Fresh M37 source/evidence hashes are checked separately.",
+  "release_off": "env -u DS41F_OMLX_PATH -u DS41F_RECIPE_PATH /Users/kioju/.venvs/omlx-0.7.0.release/bin/python -m pytest -q tests/test_m20_generation_dependency.py",
+  "rust": "cargo test",
+  "record": "python tools/record_m37_evidence.py",
+  "final_gate": "python -m pytest -q tests/test_m37_evidence.py",
+  "excluded_attempts": ["workflow-initial-fresh-tool.json: harness expected text but tools remained enabled in fresh session; actual client correctly returned tool_pending", "workflow-superseded.json and workflow-serialization-attempt.json: in-development evidence JSON deque serialization attempts, not passing gates", "workflow-pre-hardening.json: passing exploratory workflow superseded by strict malformed-certificate typing/hash validation and explicit client-state HTTP rejection classification; not current-source authority"]
+}
