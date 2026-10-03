@@ -12,6 +12,12 @@ canonical/delivery frontiers and bounded quiescence. Active cancellation transfe
 native singleton cache row views before owner release, preserving subsequent P6
 admission and old-owner revocation. MTP save/restore still fails closed before I/O;
 this is not qualification of persisted or concurrent MTP sessions.
+[M35](milestone-35-http-sse-qualification.md) qualifies bounded internal HTTP/SSE
+recovery on that authority: active canonical history remains owned by generation,
+recorded session history commits at quiescence, and socket writes never acknowledge
+model-token ordinals. Client-observed recipe events remain a canonical prefix;
+GET recovery followed by ordinary exact-prefix conversion consumes retained caches.
+Protected failures require termination rather than ambiguous idle recovery.
 
 The current native session owner is `TextBackboneState` together with `TextEncoder`, `TextDecoder`, and `TextGeneration` state machinery. It is the reference state contract for future production architecture unless a documented architecture decision replaces or wraps it. Validation inventory helpers are not independent production session implementations.
 

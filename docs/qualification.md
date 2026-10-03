@@ -27,10 +27,18 @@ Observed replay/repack are zero; cache/frontier, semantic ownership and delivery
 prefixes remain coherent. This supersedes the M25 blocker only for this guarded
 internal path, not unmodified upstream or public serving.
 
+[M35](milestone-35-http-sse-qualification.md) additionally qualifies **bounded
+internal single-flight HTTP/SSE transport**: 18 real HTTP turns, ordinary and
+semantic-terminal disconnect recovery, slow consumers, tool-result re-entry and
+Rust iterator drop, with zero replay/repack. Explicit backend object injection
+only; no normal public/release selector. Matched direct/HTTP model-phase rates
+remain effectively equal.
+
 Production/default MTP remains OFF; public MTP disabled; MTP persistence/restore,
 token-exact immediate abort and shared/concurrent MTP remain unsupported. Next:
-M35 internal single-flight HTTP/SSE integration and transport qualification,
-with separate release/public promotion gates.
+M36 client/agent canonical recovery and admission qualification, including
+pending-byte recovery and larger real-socket backpressure; release/public
+promotion and longer-context HTTP operation remain separate gates.
 
 ## Qualified release scope
 

@@ -15,6 +15,7 @@ Canonical current-state documents:
 - [M24 operational soak status](milestone-24-operational-soak-status.md) — bounded real-agent/client tool-loop soak, persistence/restore, interruption recovery, and observability evidence
 - [M25 MTP decision](milestone-25-mtp-decision.md) — pinned upstream lifecycle audit, real-model extraction failure, diagnostic A/B and continued-default-OFF decision
 - [M30 recipe semantic preview](milestone-30-recipe-semantic-preview.md) — pinned parser audit and missing upstream preview API; protocol gate remains blocked and MTP remains OFF
+- [M35 HTTP/SSE qualification](milestone-35-http-sse-qualification.md) — bounded internal single-flight transport, disconnect/re-entry and Rust drop qualified; public/default MTP remains disabled
 - [M34 operational qualification](milestone-34-operational-qualification.md) — bounded guarded singleton soak/recovery qualified; native cancellation ownership-transfer defect fixed, production/public MTP remains disabled
 - [M33 protocol qualification](milestone-33-protocol-qualification.md) — PROTOCOL_GATE_SOLVED for the isolated native singleton; M34 operational qualification authorized, production MTP remains OFF
 - [M33 semantic horizon design](milestone-33-semantic-horizon.md) — strong unforwarded-terminal invariant and native initialization/chain/alignment ownership

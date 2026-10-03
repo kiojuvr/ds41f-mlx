@@ -22,15 +22,19 @@ recipe-formatted HTTP response/session boundary
 
 The release architecture has one executable cache authority. `PrefillContinuationState` and handoff artifacts are evidence/admission structures; after GenerationBatch bootstrap, scheduler-owned cache is authoritative. Persisted artifacts are dormant storage and never a second live authority.
 
-## Guarded singleton qualification (M33–M34, internal)
+## Guarded singleton qualification (M33–M35, internal)
 
 The isolated guarded path is operationally qualified at the bounded scale in
 [M34](milestone-34-operational-qualification.md), preserving M33's strong
 unforwarded-terminal horizon and zero replay/repack. A narrow active-cancellation
 fix uses existing native singleton row-view ownership transfer, not P6 capability
 flag clearing or history reconstruction. This is not public/default serving
-promotion; the production architecture above remains OFF. M35 should qualify
-internal HTTP/SSE integration separately.
+promotion; the production architecture above remains OFF.
+[M35](milestone-35-http-sse-qualification.md) separately qualifies a bounded,
+explicitly injected single-flight HTTP/SSE bridge. Canonical native recipe input
+precedes serialization; writes/yields are not client acknowledgements. Native
+phases and cleanup are shielded, cancellation is admitted between response
+boundaries, and ordinary continuation consumes retained native cache authority.
 
 ## MTP lifecycle decision (M25, historical unguarded path)
 

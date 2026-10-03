@@ -1,0 +1,759 @@
+{
+  "schema": "ds41f.m35.qualification.v1",
+  "decision": "HTTP_SSE_QUALIFIED_BOUNDED_INTERNAL_SINGLETON",
+  "base_commit": "2d6e313698f04fc811928bf200facb9da70433e0",
+  "final_commit_resolver": "git log -1 --format=%H -- artifacts/m35/qualification.json",
+  "identities": {
+    "schema": "ds41f.m34.identities.v1",
+    "status": "PASS",
+    "checks": {
+      "performance_primitive_unchanged": true,
+      "narrow_correction": true,
+      "native": true,
+      "checkpoint_config": true,
+      "tokenizer": true,
+      "recipe_commit": true,
+      "recipe_clean": true,
+      "omlx_commit": true,
+      "omlx_clean": true,
+      "actual_import": true,
+      "full_native_build": true,
+      "packages": true,
+      "runtime_sources": true,
+      "candidate_sources": true,
+      "release_native": true,
+      "release_recipe_native": true,
+      "historical_m25_m33_unchanged": true
+    },
+    "python": "3.13.15 (main, Aug  5 2026, 12:25:43) [Clang 21.0.0 (clang-2100.1.1.101)]",
+    "executable": "/private/tmp/ds41f-m32-qual/bin/python",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "native_path": "/private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/deepseek_recipe/_native.abi3.so",
+    "tool_api": "/tmp/ds41f-m33-omlx/omlx/api/tool_calling.py",
+    "packages": {
+      "deepseek-recipe": "0.1.1",
+      "tokenizers": "0.23.2",
+      "mlx": "0.32.2",
+      "mlx-lm": "0.31.4.dev132+g94cdcae13",
+      "omlx": "0.7.0",
+      "jsonschema": "4.26.0",
+      "pytest": "9.1.1"
+    },
+    "m33_identity_sha256": "9589ffa695641e327f3ab88dc7ac838b2504e286d7dc018e131d23b6e13a27d2",
+    "current_runtime_sources": {
+      "ds41f_mlx/runtime/recipe_semantic_guard.py": "6397801995cb1285a0f87c2455d6423160964be54e70889b390aa379e06e808d",
+      "ds41f_mlx/runtime/mtp_lifecycle.py": "a05744364d5440a16774905d9d60a5266ccc4528f1ca871f20db715d8c5fcde6",
+      "ds41f_mlx/prefill_fp8_mlx/handoff.py": "94cd3364ae023607e8b5b4e2b65685b885b3f7b6a78654ee6c335c66c82f37c3",
+      "tools/m33_semantic_tests.py": "77127f303c3171d82fabc262c06afd76ab5ef45fd801ac83ed85aff923aced39",
+      "tools/m33_semantic_extra_tests.py": "6584e1246b278fb3abed63a5089aecacc9f27c89703ef5198d0822b06ae588d9",
+      "tools/m33_recipe_clone_driver.rs": "9c2630a9f6fb083ccc131fc5d68da7a8010dacf1551fc94e9a3882b025aa8a6b",
+      "tools/run_m33_live_semantics.py": "37afed36c55e416d2892b0c7b75367cf664f9976c679a4da07a21bab02f102c8",
+      "tools/run_m33_interruptions.py": "045f071950d8e7e289c67d091522ef0086e90f80fe0a0ad97655f1afce77367e",
+      "tools/run_m33_tool_reentry.py": "1d149e088525ae7f6b7a90c748be41ef73d8e5e4c2e576dad010da1c388ae13f",
+      "tools/run_m33_guard_bench.py": "9057ca5a84e05ff0912df9159a28f32e630456d86632fb052c7261c889b7a01e",
+      "tools/record_m33_evidence.py": "4cb4c24d99825535315dbe42d77dda0965f80aefb15ffcdf0617fe4b8fce698b",
+      "tests/test_m33_protocol_evidence.py": "51af57b8a7152574fe3aab534d6c4063d456036ad3ea8b36d370576b379f6c71",
+      "docs/milestone-33-semantic-horizon.md": "9c2fc81dd64c26b20908ffbc1ad99ab48985c21f71eb27edf83cef95499533d3",
+      "docs/milestone-33-protocol-qualification.md": "20f6b26d9478f236d91165ef3c1034e0877e7e5590239892685e3c260e5fffad"
+    },
+    "runtime_correction": {
+      "schema": "ds41f.m34.narrow-correction.v1",
+      "path": "ds41f_mlx/runtime/mtp_lifecycle.py",
+      "m33_sha256": "a5c6f379582d3fed683d7cf763d3689a6f9a7c0ad1a9f32223cd401e1f39d7d6",
+      "m34_sha256": "a05744364d5440a16774905d9d60a5266ccc4528f1ca871f20db715d8c5fcde6",
+      "patch": "artifacts/m34/cache-release.patch",
+      "patch_sha256": "b6f3b04610c1db38aa6d506f8cabb522694495fbc3ccdad3300226a94816e070",
+      "cause": "Active cancellation lacked the completed-response native ownership transfer: filter([]) cleared the returned list; shallow retention also kept old P6 sealed capability on active cache objects.",
+      "fix": "Use existing GenerationBatch.extract_cache(0) native singleton row-view transfer for active cancellation before owner removal. Completed-response transfer unchanged; old P6 capabilities not cleared, no arrays repacked or history replayed.",
+      "upstream_candidates_unchanged": true
+    }
+  },
+  "server": {
+    "host": "127.0.0.1",
+    "port": 57704,
+    "uvicorn": "0.54.0",
+    "admission": "explicit Python backend object injection; no public selector",
+    "single_flight": true,
+    "max_live_sessions": 1,
+    "max_response_tokens": 768,
+    "max_total_tokens": 8192
+  },
+  "transport_identities": {
+    "uvicorn": "0.54.0",
+    "fastapi": "0.142.2",
+    "starlette": "1.7.0",
+    "anyio": "4.15.1"
+  },
+  "rust_binary_sha256": "4b5f23337d63a9f12b50a1fe27a1d48b101f5df89d017795204d91026c0559f7",
+  "cases": [
+    "nonstream",
+    "nonstream_continuation",
+    "tool_sse",
+    "tool_result_reentry",
+    "semantic_terminal_disconnect",
+    "terminal_tool_result_reentry",
+    "normal_sse",
+    "slow_sse",
+    "disconnect_long",
+    "disconnect_long_continuation",
+    "undelivered_suffix",
+    "undelivered_suffix_continuation",
+    "terminal_disconnect",
+    "terminal_disconnect_continuation",
+    "rust_iterator_drop",
+    "rust_drop_continuation"
+  ],
+  "total_http_turns": 18,
+  "returned_responses": 1359,
+  "counters": {
+    "replay": 0,
+    "repack": 0,
+    "verify": 870,
+    "proposal": 888,
+    "fresh_target_allocations": 11
+  },
+  "admission": [
+    {
+      "method": "POST",
+      "path": "/v1/sessions/admission/chat/completions",
+      "status": 409,
+      "response": {
+        "error": {
+          "message": "singleton already has an active request",
+          "type": "invalid_request_error",
+          "param": null,
+          "code": "invalid_request_error"
+        }
+      },
+      "retained_history_unchanged": true
+    },
+    {
+      "method": "POST",
+      "path": "/v1/sessions",
+      "status": 409,
+      "response": {
+        "error": {
+          "message": "maximum live session count reached",
+          "type": "invalid_request_error",
+          "param": null,
+          "code": "invalid_request_error"
+        }
+      },
+      "retained_history_unchanged": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/v1/sessions/admission",
+      "status": 409,
+      "response": {
+        "error": {
+          "message": "session already has an active request",
+          "type": "invalid_request_error",
+          "param": null,
+          "code": "invalid_request_error"
+        }
+      },
+      "retained_history_unchanged": true
+    },
+    {
+      "method": "POST",
+      "path": "/v1/sessions/admission/persist",
+      "status": 409,
+      "response": {
+        "error": {
+          "message": "internal MTP persistence unsupported before I/O",
+          "type": "invalid_request_error",
+          "param": null,
+          "code": "invalid_request_error"
+        }
+      },
+      "retained_history_unchanged": true
+    },
+    {
+      "method": "POST",
+      "path": "/v1/sessions/restore",
+      "status": 409,
+      "response": {
+        "error": {
+          "message": "internal MTP restore unsupported before mutation or I/O",
+          "type": "invalid_request_error",
+          "param": null,
+          "code": "invalid_request_error"
+        }
+      },
+      "retained_history_unchanged": true
+    },
+    {
+      "method": "POST",
+      "path": "/v1/sessions/admission/chat/completions",
+      "status": 400,
+      "response": {
+        "error": {
+          "message": "stateful Chat Completions sessions do not support request stop strings; omit 'stop' and rely on DeepSeek EOS/length termination, or use a stateless endpoint",
+          "type": "invalid_request_error",
+          "param": null,
+          "code": "invalid_request_error"
+        }
+      },
+      "retained_history_unchanged": true
+    },
+    {
+      "method": "POST",
+      "path": "/v1/sessions/admission/chat/completions",
+      "status": 400,
+      "response": {
+        "error": {
+          "message": "unsupported model",
+          "type": "invalid_request_error",
+          "param": null,
+          "code": "invalid_request_error"
+        }
+      },
+      "retained_history_unchanged": true
+    },
+    {
+      "method": "POST",
+      "path": "/v1/sessions/admission/chat/completions",
+      "status": 400,
+      "response": {
+        "error": {
+          "message": "invalid request body: invalid value: integer `-1`, expected u32",
+          "type": "invalid_request_error",
+          "param": null,
+          "code": "invalid_request_error"
+        }
+      },
+      "retained_history_unchanged": true
+    },
+    {
+      "method": "POST",
+      "path": "/v1/sessions/admission/chat/completions",
+      "status": 400,
+      "response": {
+        "error": {
+          "message": "internal qualification bounded to 768 responses and 8192 total tokens",
+          "type": "invalid_request_error",
+          "param": null,
+          "code": "invalid_request_error"
+        }
+      },
+      "retained_history_unchanged": true
+    },
+    {
+      "method": "POST",
+      "path": "/v1/sessions/admission/chat/completions",
+      "status": 400,
+      "response": {
+        "error": {
+          "message": "internal qualification bounded to 768 responses and 8192 total tokens",
+          "type": "invalid_request_error",
+          "param": null,
+          "code": "invalid_request_error"
+        }
+      },
+      "retained_history_unchanged": true
+    },
+    {
+      "method": "POST",
+      "path": "/v1/sessions/admission/chat/completions",
+      "status": 400,
+      "response": {
+        "error": {
+          "message": "invalid request body: invalid length 0, expected struct ChatCompletionRequest with 18 elements",
+          "type": "invalid_request_error",
+          "param": null,
+          "code": "invalid_request_error"
+        }
+      },
+      "retained_history_unchanged": true
+    },
+    {
+      "method": "POST",
+      "path": "/v1/chat/completions",
+      "status": 400,
+      "response": {
+        "error": {
+          "message": "internal MTP qualification requires singleton stateful Chat Completions",
+          "type": "invalid_request_error",
+          "param": null,
+          "code": "invalid_request_error"
+        }
+      },
+      "retained_history_unchanged": true
+    },
+    {
+      "case": "nonprefix_idle",
+      "status": 400,
+      "mutation_atomic": true
+    }
+  ],
+  "native_interruption_cases": 16,
+  "performance": [
+    {
+      "case": "nonstream",
+      "responses": 3,
+      "model_phase_tok_s": 18.849662764969377,
+      "model_phase_s": 0.15915404097177088,
+      "model_load_s": 68.44249658298213,
+      "prefill_handoff_s": 4.198742792010307,
+      "first_canonical_from_admission_s": 72.70733258302789,
+      "first_iterator_yield_s": 72.7074496660498,
+      "first_client_event_s": null,
+      "formatting_s": 2.0625011529773474e-05,
+      "controller_delivery_delay_s": 1.8320279195904732e-06,
+      "cleanup_s": 0.046685083012562245,
+      "residual_dispatch_loop_s": 0.0017266270006075501,
+      "client_wall_s": 73.49903958302457,
+      "idle_observation_wait_s": 0.0008980829734355211,
+      "acceptance": 0.0,
+      "acceptance_scope": "unchanged native considered-draft metric; completed-owner stats only",
+      "max_observed_client_lag_input_watermarks": 0
+    },
+    {
+      "case": "nonstream_continuation",
+      "responses": 4,
+      "model_phase_tok_s": 26.082108527654835,
+      "model_phase_s": 0.1533618340617977,
+      "model_load_s": 1.667009200900793e-06,
+      "prefill_handoff_s": 0.16179316700436175,
+      "first_canonical_from_admission_s": 0.2236564580234699,
+      "first_iterator_yield_s": 0.22377937502460554,
+      "first_client_event_s": null,
+      "formatting_s": 1.837499439716339e-05,
+      "controller_delivery_delay_s": 1.0819640010595322e-06,
+      "cleanup_s": 0.04785783402621746,
+      "residual_dispatch_loop_s": 0.0008063739514909685,
+      "client_wall_s": 0.3648544169845991,
+      "idle_observation_wait_s": 0.0007767080096527934,
+      "acceptance": 0.5,
+      "acceptance_scope": "unchanged native considered-draft metric; completed-owner stats only",
+      "max_observed_client_lag_input_watermarks": 0
+    },
+    {
+      "case": "tool_sse",
+      "responses": 34,
+      "model_phase_tok_s": 39.970179233928775,
+      "model_phase_s": 0.850634164060466,
+      "model_load_s": 9.5803989097476e-07,
+      "prefill_handoff_s": 4.011014332994819,
+      "first_canonical_from_admission_s": 4.075223000021651,
+      "first_iterator_yield_s": 4.075345458986703,
+      "first_client_event_s": 4.077146499999799,
+      "formatting_s": 6.758590461686254e-05,
+      "controller_delivery_delay_s": 2.5000772438943386e-06,
+      "cleanup_s": 0.04899924999335781,
+      "residual_dispatch_loop_s": 0.004106208914890885,
+      "client_wall_s": 4.916567958018277,
+      "idle_observation_wait_s": 0.0007854160503484309,
+      "acceptance": 1.0,
+      "acceptance_scope": "unchanged native considered-draft metric; completed-owner stats only",
+      "max_observed_client_lag_input_watermarks": 1
+    },
+    {
+      "case": "tool_result_reentry",
+      "responses": 10,
+      "model_phase_tok_s": 37.72033403705617,
+      "model_phase_s": 0.2651089990395121,
+      "model_load_s": 9.170034900307655e-07,
+      "prefill_handoff_s": 0.3716081670136191,
+      "first_canonical_from_admission_s": 0.4353932079975493,
+      "first_iterator_yield_s": 0.4355030420119874,
+      "first_client_event_s": 0.43681733298581094,
+      "formatting_s": 3.729300806298852e-05,
+      "controller_delivery_delay_s": 2.2929743863642216e-06,
+      "cleanup_s": 0.04888229101197794,
+      "residual_dispatch_loop_s": 0.0018677899497561157,
+      "client_wall_s": 0.6888111250009388,
+      "idle_observation_wait_s": 0.0008016249630600214,
+      "acceptance": 1.0,
+      "acceptance_scope": "unchanged native considered-draft metric; completed-owner stats only",
+      "max_observed_client_lag_input_watermarks": 1
+    },
+    {
+      "case": "semantic_terminal_disconnect",
+      "responses": 34,
+      "model_phase_tok_s": 37.6726189281867,
+      "model_phase_s": 0.9025122480816208,
+      "model_load_s": 1.0830117389559746e-06,
+      "prefill_handoff_s": 3.7679716250277124,
+      "first_canonical_from_admission_s": 3.8316423330106772,
+      "first_iterator_yield_s": 3.8619026669766754,
+      "first_client_event_s": null,
+      "formatting_s": 0.0001058360212482512,
+      "controller_delivery_delay_s": 0.330972290947102,
+      "cleanup_s": 0.0530653340392746,
+      "residual_dispatch_loop_s": 0.0063648748910054564,
+      "client_wall_s": 5.061613042023964,
+      "idle_observation_wait_s": 0.001093166007194668,
+      "acceptance": 1.0,
+      "acceptance_scope": "unchanged native considered-draft metric; completed-owner stats only",
+      "max_observed_client_lag_input_watermarks": 0
+    },
+    {
+      "case": "terminal_tool_result_reentry",
+      "responses": 10,
+      "model_phase_tok_s": 37.93539725463189,
+      "model_phase_s": 0.2636060440563597,
+      "model_load_s": 9.160139597952366e-07,
+      "prefill_handoff_s": 0.36472716700518504,
+      "first_canonical_from_admission_s": 0.4279200420132838,
+      "first_iterator_yield_s": 0.42804458300815895,
+      "first_client_event_s": null,
+      "formatting_s": 3.4292053896933794e-05,
+      "controller_delivery_delay_s": 1.6679405234754086e-06,
+      "cleanup_s": 0.048940040986053646,
+      "residual_dispatch_loop_s": 0.0013906219974160194,
+      "client_wall_s": 0.6802997500053607,
+      "idle_observation_wait_s": 0.0007702500442974269,
+      "acceptance": 1.0,
+      "acceptance_scope": "unchanged native considered-draft metric; completed-owner stats only",
+      "max_observed_client_lag_input_watermarks": 0
+    },
+    {
+      "case": "normal_sse",
+      "responses": 490,
+      "model_phase_tok_s": 24.438342567402504,
+      "model_phase_s": 20.050459586142097,
+      "model_load_s": 9.579816833138466e-07,
+      "prefill_handoff_s": 0.31511162500828505,
+      "first_canonical_from_admission_s": 0.3767219579895027,
+      "first_iterator_yield_s": 0.3768370419857092,
+      "first_client_event_s": 0.37772000004770234,
+      "formatting_s": 0.001877951784990728,
+      "controller_delivery_delay_s": 9.394728112965822e-05,
+      "cleanup_s": 0.053752000036183745,
+      "residual_dispatch_loop_s": 0.07315897376975045,
+      "client_wall_s": 20.495343000045978,
+      "idle_observation_wait_s": 0.002906374982558191,
+      "acceptance": 0.6387434554973822,
+      "acceptance_scope": "unchanged native considered-draft metric; completed-owner stats only",
+      "max_observed_client_lag_input_watermarks": 1
+    },
+    {
+      "case": "normal_sse_continuation",
+      "responses": 26,
+      "model_phase_tok_s": 28.201988964987713,
+      "model_phase_s": 0.921920791908633,
+      "model_load_s": 9.169452823698521e-07,
+      "prefill_handoff_s": 0.240503917040769,
+      "first_canonical_from_admission_s": 0.30265241698361933,
+      "first_iterator_yield_s": 0.3027742919512093,
+      "first_client_event_s": null,
+      "formatting_s": 9.478890569880605e-05,
+      "controller_delivery_delay_s": 5.916983354836702e-06,
+      "cleanup_s": 0.049734292028006166,
+      "residual_dispatch_loop_s": 0.0032328341621905565,
+      "client_wall_s": 1.2173107499838807,
+      "idle_observation_wait_s": 0.0009064589976333082,
+      "acceptance": 0.7142857142857143,
+      "acceptance_scope": "unchanged native considered-draft metric; completed-owner stats only",
+      "max_observed_client_lag_input_watermarks": 0
+    },
+    {
+      "case": "slow_sse",
+      "responses": 490,
+      "model_phase_tok_s": 24.507152778192168,
+      "model_phase_s": 19.994162701594178,
+      "model_load_s": 9.170034900307655e-07,
+      "prefill_handoff_s": 0.30180375004420057,
+      "first_canonical_from_admission_s": 0.36366575001738966,
+      "first_iterator_yield_s": 0.36379566602408886,
+      "first_client_event_s": 0.36468304198933765,
+      "formatting_s": 0.001802868559025228,
+      "controller_delivery_delay_s": 7.861357880756259e-05,
+      "cleanup_s": 0.05148008302785456,
+      "residual_dispatch_loop_s": 0.06814835721161216,
+      "client_wall_s": 42.943839250016026,
+      "idle_observation_wait_s": 0.01764604198979214,
+      "acceptance": 0.6387434554973822,
+      "acceptance_scope": "unchanged native considered-draft metric; completed-owner stats only",
+      "max_observed_client_lag_input_watermarks": 259
+    },
+    {
+      "case": "slow_sse_continuation",
+      "responses": 26,
+      "model_phase_tok_s": 28.535328276142543,
+      "model_phase_s": 0.9111512490198947,
+      "model_load_s": 1.458043698221445e-06,
+      "prefill_handoff_s": 4.158365042007063,
+      "first_canonical_from_admission_s": 4.220216125017032,
+      "first_iterator_yield_s": 4.220335917023476,
+      "first_client_event_s": null,
+      "formatting_s": 8.75439727678895e-05,
+      "controller_delivery_delay_s": 4.293047823011875e-06,
+      "cleanup_s": 0.049472250044345856,
+      "residual_dispatch_loop_s": 0.0031972058350220323,
+      "client_wall_s": 5.125536999956239,
+      "idle_observation_wait_s": 0.0008711669943295419,
+      "acceptance": 0.7142857142857143,
+      "acceptance_scope": "unchanged native considered-draft metric; completed-owner stats only",
+      "max_observed_client_lag_input_watermarks": 0
+    },
+    {
+      "case": "disconnect_long",
+      "responses": 41,
+      "model_phase_tok_s": 28.546579677327852,
+      "model_phase_s": 1.4362491220817901,
+      "model_load_s": 1.0420335456728935e-06,
+      "prefill_handoff_s": 0.30131379200611264,
+      "first_canonical_from_admission_s": 0.3627845000009984,
+      "first_iterator_yield_s": 0.3628979590139352,
+      "first_client_event_s": 0.36377100000390783,
+      "formatting_s": 0.00013704103184863925,
+      "controller_delivery_delay_s": 8.457922376692295e-06,
+      "cleanup_s": 0.049241375003475696,
+      "residual_dispatch_loop_s": 0.006552794948220253,
+      "client_wall_s": 1.7443269159994088,
+      "idle_observation_wait_s": 0.06163662497419864,
+      "acceptance": null,
+      "acceptance_scope": "unchanged native considered-draft metric; completed-owner stats only",
+      "max_observed_client_lag_input_watermarks": 1
+    },
+    {
+      "case": "disconnect_long_continuation",
+      "responses": 20,
+      "model_phase_tok_s": 24.761638218458014,
+      "model_phase_s": 0.8077010019915178,
+      "model_load_s": 1.00000761449337e-06,
+      "prefill_handoff_s": 0.2227144169737585,
+      "first_canonical_from_admission_s": 0.28430408402346075,
+      "first_iterator_yield_s": 0.28441449999809265,
+      "first_client_event_s": null,
+      "formatting_s": 7.770711090415716e-05,
+      "controller_delivery_delay_s": 4.2940955609083176e-06,
+      "cleanup_s": 0.04947199998423457,
+      "residual_dispatch_loop_s": 0.002627079840749502,
+      "client_wall_s": 1.0837021250044927,
+      "idle_observation_wait_s": 0.0008610420045442879,
+      "acceptance": 0.6428571428571429,
+      "acceptance_scope": "unchanged native considered-draft metric; completed-owner stats only",
+      "max_observed_client_lag_input_watermarks": 0
+    },
+    {
+      "case": "undelivered_suffix",
+      "responses": 1,
+      "model_phase_tok_s": 16.22883752588328,
+      "model_phase_s": 0.06161870795767754,
+      "model_load_s": 6.67001586407423e-07,
+      "prefill_handoff_s": 0.3014695410383865,
+      "first_canonical_from_admission_s": 0.36340641701826826,
+      "first_iterator_yield_s": null,
+      "first_client_event_s": null,
+      "formatting_s": 6.292015314102173e-06,
+      "controller_delivery_delay_s": 0.0,
+      "cleanup_s": 0.0010823750053532422,
+      "residual_dispatch_loop_s": 0.0008456259965896606,
+      "client_wall_s": 0.36415820801630616,
+      "idle_observation_wait_s": 0.002034959034062922,
+      "acceptance": null,
+      "acceptance_scope": "unchanged native considered-draft metric; completed-owner stats only",
+      "max_observed_client_lag_input_watermarks": 0
+    },
+    {
+      "case": "undelivered_suffix_continuation",
+      "responses": 23,
+      "model_phase_tok_s": 25.99949820296866,
+      "model_phase_s": 0.8846324579208158,
+      "model_load_s": 1.00000761449337e-06,
+      "prefill_handoff_s": 0.2141196660231799,
+      "first_canonical_from_admission_s": 0.2755863749771379,
+      "first_iterator_yield_s": 0.27571058296598494,
+      "first_client_event_s": null,
+      "formatting_s": 8.620502194389701e-05,
+      "controller_delivery_delay_s": 4.335946869105101e-06,
+      "cleanup_s": 0.04834154201671481,
+      "residual_dispatch_loop_s": 0.002964085026178509,
+      "client_wall_s": 1.1512278339941986,
+      "idle_observation_wait_s": 0.0008431250462308526,
+      "acceptance": 0.6875,
+      "acceptance_scope": "unchanged native considered-draft metric; completed-owner stats only",
+      "max_observed_client_lag_input_watermarks": 0
+    },
+    {
+      "case": "terminal_disconnect",
+      "responses": 4,
+      "model_phase_tok_s": 23.4757915447514,
+      "model_phase_s": 0.17038829094963148,
+      "model_load_s": 7.910421118140221e-07,
+      "prefill_handoff_s": 0.15067645796807483,
+      "first_canonical_from_admission_s": 0.21029775001807138,
+      "first_iterator_yield_s": 0.24056975002167746,
+      "first_client_event_s": null,
+      "formatting_s": 2.721004420891404e-05,
+      "controller_delivery_delay_s": 0.1205991649767384,
+      "cleanup_s": 0.05397512501804158,
+      "residual_dispatch_loop_s": 0.0017626270418986678,
+      "client_wall_s": 0.49770629103295505,
+      "idle_observation_wait_s": 0.0010904580121859908,
+      "acceptance": 0.5,
+      "acceptance_scope": "unchanged native considered-draft metric; completed-owner stats only",
+      "max_observed_client_lag_input_watermarks": 0
+    },
+    {
+      "case": "terminal_disconnect_continuation",
+      "responses": 6,
+      "model_phase_tok_s": 24.93213348157549,
+      "model_phase_s": 0.24065329204313457,
+      "model_load_s": 1.00000761449337e-06,
+      "prefill_handoff_s": 0.19498445797944441,
+      "first_canonical_from_admission_s": 0.2572580419946462,
+      "first_iterator_yield_s": 0.2573760829982348,
+      "first_client_event_s": null,
+      "formatting_s": 2.6960100512951612e-05,
+      "controller_delivery_delay_s": 1.8329010345041752e-06,
+      "cleanup_s": 0.04827870900044218,
+      "residual_dispatch_loop_s": 0.0010237479582428932,
+      "client_wall_s": 0.4861207500216551,
+      "idle_observation_wait_s": 0.0007872909773141146,
+      "acceptance": 0.5,
+      "acceptance_scope": "unchanged native considered-draft metric; completed-owner stats only",
+      "max_observed_client_lag_input_watermarks": 0
+    },
+    {
+      "case": "rust_iterator_drop",
+      "responses": 41,
+      "model_phase_tok_s": 28.51724662109203,
+      "model_phase_s": 1.4377264588256367,
+      "model_load_s": 1.087499549612403e-05,
+      "prefill_handoff_s": 0.3025363750057295,
+      "first_canonical_from_admission_s": 0.36432737502036616,
+      "first_iterator_yield_s": 0.36444841604679823,
+      "first_client_event_s": null,
+      "formatting_s": 0.00013929378474131227,
+      "controller_delivery_delay_s": 9.24902269616723e-06,
+      "cleanup_s": 0.04909074999159202,
+      "residual_dispatch_loop_s": 0.0066239144071005285,
+      "client_wall_s": 1.8106817079824395,
+      "idle_observation_wait_s": 0.04895366699201986,
+      "acceptance": null,
+      "acceptance_scope": "unchanged native considered-draft metric; completed-owner stats only",
+      "max_observed_client_lag_input_watermarks": 0
+    },
+    {
+      "case": "rust_drop_continuation",
+      "responses": 96,
+      "model_phase_tok_s": 27.063010406987452,
+      "model_phase_s": 3.5472772081266157,
+      "model_load_s": 1.0410440154373646e-06,
+      "prefill_handoff_s": 0.18686933297431096,
+      "first_canonical_from_admission_s": 0.25019541702931747,
+      "first_iterator_yield_s": 0.2503254589973949,
+      "first_client_event_s": null,
+      "formatting_s": 0.00031753891380503774,
+      "controller_delivery_delay_s": 1.60860363394022e-05,
+      "cleanup_s": 0.04879633302334696,
+      "residual_dispatch_loop_s": 0.010789626918267459,
+      "client_wall_s": 3.7951552500016987,
+      "idle_observation_wait_s": 0.0015857910038903356,
+      "acceptance": 0.6933333333333334,
+      "acceptance_scope": "unchanged native considered-draft metric; completed-owner stats only",
+      "max_observed_client_lag_input_watermarks": 0
+    }
+  ],
+  "direct_same_request_control": {
+    "responses": 490,
+    "model_phase_tok_s": 24.42861844306822,
+    "http_model_phase_ratio": 1.00039806280314,
+    "direct_elapsed_s": 20.416015291993972,
+    "http_elapsed_s": 20.49445504200412,
+    "identical_tokens": true
+  },
+  "frontier_contract": {
+    "canonical": "M33/M34 emitted/drained inputs; never a socket-write frontier",
+    "client": "received recipe event prefix with canonical input upper-bound watermark; not a token-exact delivery claim",
+    "acknowledgement": "no application ACK protocol; runtime delivered-token metadata remains ordinal zero for the turn",
+    "recovery": "GET internal canonical response, ordinary recipe exact-prefix continuation; no prompt replay or cache reconstruction"
+  },
+  "defects": [
+    {
+      "name": "shielded-loop cancellation starvation",
+      "evidence": "cancellation-checkpoint-defect.json",
+      "fix": "unshielded AnyIO checkpoints between synchronous canonical boundaries; shield only native mutation and cleanup"
+    },
+    {
+      "name": "protocol chunk transfer / double-settlement failure",
+      "evidence": "chunk-transfer-error.json",
+      "fix": "serialize native chunks before response.append consumes them; retire native runtime ownership exactly once before protocol accumulation; protocol faults poison session"
+    },
+    {
+      "name": "unstarted iterator admission lease",
+      "evidence": "lease-tests.log",
+      "scope": "synthetic response-header send failure",
+      "fix": "response-level cleanup owns pre-iteration reservation too; exact per-response lease retirement cannot release a subsequent request; DELETE owns the same lease; retirement faults release admission but poison singleton reuse"
+    }
+  ],
+  "attempts": {
+    "pilot": "pre-fix exploratory transport, not final qualification",
+    "pre_final": "pre-checkpoint exploratory transport, not final qualification",
+    "pre_lease_hardening": "post-checkpoint pilot before exact per-response lease hardening; excluded from final decision",
+    "pre_retirement_hardening": "pilot before failed-retirement lease cleanup; excluded from final decision",
+    "pre_delete_hardening": "pilot before serialized DELETE ownership; excluded from final decision",
+    "harness_name_error": "client helper shadowed http import; pre-model failure",
+    "chunk_transfer_error": "real native transfer defect; secondary retry hid primary error",
+    "cancellation_checkpoint_defect": "real ordinary and Rust disconnect ignored until completion; excluded"
+  },
+  "unsupported": [
+    "public/default/release MTP",
+    "persistence/restore/process restart",
+    "token-exact immediate abort",
+    "concurrent/shared generation",
+    "batching",
+    "200K/long-context HTTP MTP",
+    "distributed serving",
+    "portable native wheels",
+    "unbounded socket saturation",
+    "arbitrary partial Unicode/stop-string client recovery"
+  ],
+  "next_milestone": "M36: client/agent canonical recovery and admission qualification, including pending-byte recovery and larger real-socket backpressure; not automatic release promotion",
+  "source_hashes": {
+    "ds41f_mlx/serving/internal_mtp.py": "6a6169aaa54f635c3e5334e3f64307fcca76db6cf9d84d3d623f64c84dc1687b",
+    "ds41f_mlx/serving/server.py": "38409603d7cad32178653e1034469ef3538bd0462b833ff88291a950475d55d5",
+    "tools/run_m35_http_qualification.py": "9ee56cba8498a907c08af6e24e8dafd6d9531c817b0b6723157622dac4fd86ed",
+    "tools/run_m35_native_interruptions.py": "4e8532192a90960dc17bd149e31344203b6db983a1774d37868375c4b465b069",
+    "tools/record_m35_evidence.py": "9d16e7253418b54afa7867bf29fb5ccdd6507553c7f583b8f5c12e0d5c72808f",
+    "tests/test_m35_transport_lease.py": "d22456796b2ea30de5ac5541bba7f4a1e178fb15ddb712fe1728bf1652c9a973",
+    "tests/test_m35_http_evidence.py": "f7dbcf134eae386befe257b7ea9c44a089568e802f0a63fa69b96be3086e3c0b",
+    "rust/ds41f_api/src/bin/m35_internal_transport.rs": "053525437b1b1fd82906a17c2fb54dde01128d4fd1845fd94a9608df6e8593e0",
+    "rust/ds41f_api/src/lib.rs": "b11847720490b0258772b3678326fca126cc37f05161c7d4d04daeb6d072aa43",
+    "Cargo.toml": "b90a3143f88668fb433c6c66dc40f84e638d58460ae4026e5783a8dd705be26a",
+    "Cargo.lock": "495886631b141d1a1cc8493e72f6b738ceee9e23bbcf622e40d3af86f5a01eb5",
+    "rust/ds41f_api/Cargo.toml": "692882ecf65454eef626a87360e9d65a0d31afd23f71bd7eefa7166c92614bb2",
+    ".gitignore": "4830deef268ed1f1049014341605219e61cafee28747b35c6542fc9fcc00aa90",
+    "docs/milestone-35-http-sse-qualification.md": "700407569db133c60dbcaa5a17b5ce96596a2a4027c334cba87faf9e52b6d97d",
+    "docs/README.md": "3841ce5e09713bbae34a3cb382915ab5be56c752da38adbfb9067aa62c511191",
+    "docs/implementation-plan.md": "cd8736bea29bd969654571fa08ede6c3f84916c529f60d66899b1aa0241ea5c1",
+    "docs/architecture.md": "47bd5d6cef231489482f5915632068f8d3de8ab97ecf7f7a447f643f5ad65cc9",
+    "docs/qualification.md": "e09cffcdfada2b026ce33c9448d3eeb03c9a687fbd38369f8df22f7f14a67cda",
+    "docs/session-state.md": "57443a18e4fc06f1e6be4343665984994013896ebb54d41902e9e16813afb985",
+    "docs/doc-classification.json": "2a9b42c18423caa11fa3052b13585086c1b79eb57f697ada1d94ff1c45597295"
+  },
+  "evidence_hashes": {
+    "native-interruptions.log": "a360a7cf8243a7739cb68562247e3ac7a2198cca4cb9692a124cf81a9d3535b5",
+    "chunk-transfer-error.json": "277b3ab75d8da3958fc39e984e059fc29aa6446efd7cd750f0fd00a4231cd8cc",
+    "pilot-http.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "final-run-wrapper.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "pilot-http.json": "7232721c4250ab012d389365707e3629b03e0d09e77ca24a933159faa3f3e663",
+    "cancellation-checkpoint-defect.json": "a952700079539896142850be762b2c15b2408e04ae1a2d22688c8f1a683bd4d8",
+    "horizon-regressions.log": "c866207cbceb74777a86522e92a173aac5a5e5accfc992681a71a77ae78a19bc",
+    "native-interruptions.json": "b3e3b3441de76783a9bedcdbdf8b497a397c9cffca431406a356d8872033ad6b",
+    "cancellation-checkpoint-defect.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "harness-name-error.log": "735fa82e8c035ea23ba15305ad62bbbf54fcf5f5904eccb35e2c04605e61d18d",
+    "chunk-transfer-error.log": "ba5b9f463fa704cc5f11e63188d59cf05e414e5340362315b7bb3bfa4954f750",
+    "pre-final-http.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "rust-regressions.log": "1087c357aa51b80d710ae7945478fd129ff76b2691a74c48a7c546101076c5bf",
+    "pre-lease-hardening-http.json": "77b75511e6f375082dcbebf9d0bf6af810d0056212afb995cbe5c14bbf3a524b",
+    "identities.json": "2d6c92d89f59fd9726f88a8370cae248689d3406c1f3b7572abe95b48cd5f050",
+    "harness-name-error.json": "65dcc7ca48cbf956936033d8f9fb936c58d63e39c8a7718d93d5ee2892d44c1f",
+    "http.json": "d59457f3f1f0c2169d10047edbecf0d1d6fb9cbac588b82a8720c8bd53c690fc",
+    "release-off-regressions.log": "2f718eac2e55389af96ded7cd404356b692c50f676eb79d0db8eb1b2e6d39618",
+    "rust-request.json": "51dd0192444a1cce676dfa8930f0c73a88cc78665b8544a3cd7a2e6f195edfe4",
+    "identities.log": "2d6c92d89f59fd9726f88a8370cae248689d3406c1f3b7572abe95b48cd5f050",
+    "pre-final-http.json": "663a4e8c0ce3ecfc906a10bfd1272fab1f4b39cceb1d377c5f0dc6a72b4cfced",
+    "http.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "off-policy-regressions.log": "c101dcd7dec1b326c4a36f12ac529bf996a144aef90043453d99a02791061636",
+    "lease-tests.log": "51c7522ee9f890ea65da1794a28ec206fa19307007b53a51eaa644bc3ba3b9be",
+    "pre-delete-hardening-http.json": "d61b6b9abcbc630179a40c1fcda911ef631044612f47520c09b8ea50fc5bb7cf",
+    "regressions.log": "3cb1794f9a54fc5a523363ebb19d4dfc55732024341ab9a02c845b306176d539",
+    "pre-retirement-hardening-http.json": "a270c82ea7ef4b4157b63e99aa5dc2e7c291a5d07a8a8adaa3379528a195ed38"
+  }
+}

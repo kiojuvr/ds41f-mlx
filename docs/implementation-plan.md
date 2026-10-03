@@ -2,6 +2,19 @@
 
 This roadmap converts the runtime strategy into a finite sequence of milestones. It is not an optimization backlog. Runtime behavior, selectors, API integration, and multimodal work must not change until the relevant architecture milestone authorizes that work.
 
+## M35 — Internal HTTP/SSE qualification
+
+Decision: **HTTP_SSE_QUALIFIED_BOUNDED_INTERNAL_SINGLETON**. Eighteen real HTTP
+turns qualify bounded canonical-before-visible streaming, tool-result re-entry,
+real disconnect/slow-consumer recovery and existing Rust iterator drop. Explicit
+object injection only; no public/release selector. Shielded-loop cancellation
+starvation and protocol/response ownership transitions are corrected without
+changing M33/M34 runtime authority. See [M35](milestone-35-http-sse-qualification.md).
+
+Next **M36**: client/agent canonical recovery and admission qualification,
+including pending-byte recovery and larger real-socket backpressure workloads.
+Release/public/default promotion and longer-context HTTP operation remain separate.
+
 ## M34 — Guarded singleton operational qualification
 
 Decision: **OPERATIONALLY_QUALIFIED_BOUNDED_SINGLETON**. M33's semantic horizon
@@ -12,9 +25,9 @@ now uses the existing native row-view extraction seam before owner removal;
 P6 capability checks remain intact. See [M34](milestone-34-operational-qualification.md).
 Production/public MTP, persistence, immediate abort and concurrency remain unsupported.
 
-Next **M35**: internal single-flight serving/HTTP/SSE transport integration and
-qualification. Public or default promotion is a separate release/admission gate,
-not authorized by M34 alone. M25 below remains the historical unguarded decision.
+M35 separately qualifies bounded internal HTTP/SSE integration. Public or default
+promotion remains a separate release/admission gate, not authorized by M34 or M35
+alone. M25 below remains the historical unguarded decision.
 
 ## M25 — Pinned upstream MTP lifecycle decision
 

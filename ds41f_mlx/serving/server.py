@@ -201,6 +201,8 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
             return JSONResponse(content=await backend.close_stateful_session(session_id))
         except KeyError as exc:
             raise RequestError(str(exc), 404)
+        except RuntimeError as exc:
+            raise RequestError(str(exc), 409)
 
     @app.post('/v1/sessions/{session_id}/chat/completions')
     async def session_chat(session_id: str, request: Request) -> Response:
@@ -211,6 +213,11 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
             raise RequestError(str(exc), 400)
         prepared = await run_in_threadpool(prepare_request, 'chat_completions', body, tokenizer=tokenizer, recipe_path=recipe_path, options=options)
         try:
+            # Explicit backend injection for internal qualification only. No
+            # request/env/public MTP selector is installed by the normal server.
+            qualification = getattr(backend, 'qualification_response', None)
+            if qualification is not None:
+                return await qualification(session_id, prepared, tokenizer=tokenizer)
             turn = await backend.run_stateful_chat_turn(session_id, prepared, tokenizer=tokenizer)
         except KeyError as exc:
             raise RequestError(str(exc), 404)
@@ -240,7 +247,10 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
         body = await request.json()
         if not body.get('artifact_path'):
             raise RequestError('artifact_path is required')
-        rec = await backend.restore_stateful_session(artifact_path=Path(body['artifact_path']), tokenizer=tokenizer, session_id=body.get('id'))
+        try:
+            rec = await backend.restore_stateful_session(artifact_path=Path(body['artifact_path']), tokenizer=tokenizer, session_id=body.get('id'))
+        except RuntimeError as exc:
+            raise RequestError(str(exc), 409)
         return JSONResponse(content=rec.to_json())
 
     if os.environ.get('DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS') == '1':
