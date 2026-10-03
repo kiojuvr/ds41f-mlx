@@ -15,6 +15,7 @@ Canonical current-state documents:
 - [M24 operational soak status](milestone-24-operational-soak-status.md) — bounded real-agent/client tool-loop soak, persistence/restore, interruption recovery, and observability evidence
 - [M25 MTP decision](milestone-25-mtp-decision.md) — pinned upstream lifecycle audit, real-model extraction failure, diagnostic A/B and continued-default-OFF decision
 - [M30 recipe semantic preview](milestone-30-recipe-semantic-preview.md) — pinned parser audit and missing upstream preview API; protocol gate remains blocked and MTP remains OFF
+- [M38 client operational soak](milestone-38-client-operational-soak.md) — 76-request living-client workload passes after fail-closed hardening; lifetime server retirement retention remains BLOCKED, no promotion
 - [M37 local-client integration](milestone-37-local-client-integration.md) — internal reusable sequence-fenced recovery/tool client, explicit DELETE/fresh and expired identities; no release promotion
 - [M36R recovery admission](milestone-36r-recovery-admission.md) — bounded official-recipe reconstruction certificates and local request/tool fences; nonrepresentable outcomes require DELETE, no release promotion
 - [M36 client recovery investigation](milestone-36-client-recovery-qualification.md) — BLOCKED on unfinished canonical protocol representability; fail-closed tool settlement, partial-UTF-8 and finite socket-pressure evidence

@@ -1,0 +1,3321 @@
+{
+  "schema": "ds41f.m36r.http.v1",
+  "status": "PASS",
+  "cases": [
+    {
+      "name": "unicode",
+      "request": {
+        "model": "deepseek-v4.1-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output exactly: caf\u00e9 \ud83d\ude42 \u6f22\u5b57. Nothing else."
+          }
+        ],
+        "reasoning_effort": "none",
+        "temperature": 0,
+        "max_tokens": 64,
+        "stream": true,
+        "stop": null
+      },
+      "observed": {
+        "bytes_hex": "646174613a207b226964223a223838303136656535323934323463303039396235326538653338643966646466222c226f626a656374223a22636861742e636f6d706c6574696f6e2e6368756e6b222c2263726561746564223a313739313035383138362c226d6f64656c223a22646565707365656b2d76342e312d666c617368222c2273797374656d5f66696e6765727072696e74223a6e756c6c2c2263686f69636573223a5b7b22696e646578223a302c2264656c7461223a7b22726f6c65223a22617373697374616e74222c22636f6e74656e74223a22227d2c226c6f6770726f6273223a6e756c6c2c2266696e6973685f726561736f6e223a6e756c6c7d5d7d0a0a646174613a207b226964223a223838303136656535323934323463303039396235326538653338643966646466222c226f626a656374223a22636861742e636f6d706c6574696f6e2e6368756e6b222c2263726561746564223a313739313035383138362c226d6f64656c223a22646565707365656b2d76342e312d666c617368222c2273797374656d5f66696e6765727072696e74223a6e756c6c2c2263686f69636573223a5b7b22696e646578223a302c2264656c7461223a7b22636f6e74656e74223a2263227d2c226c6f6770726f6273223a6e756c6c2c2266696e6973685f726561736f6e223a6e756c6c7d5d7d0a0a646174613a207b226964223a223838303136656535323934323463303039396235326538653338643966646466222c226f626a656374223a22636861742e636f6d706c6574696f6e2e6368756e6b222c2263726561746564223a313739313035383138362c226d6f64656c223a22646565707365656b2d76342e312d666c617368222c2273797374656d5f66696e6765727072696e74223a6e756c6c2c2263686f69636573223a5b7b22696e646578223a302c2264656c7461223a7b22636f6e74656e74223a226166227d2c226c6f6770726f6273223a6e756c6c2c2266696e6973685f726561736f6e223a6e756c6c7d5d7d0a0a646174613a207b226964223a223838303136656535323934323463303039396235326538653338643966646466222c226f626a656374223a22636861742e636f6d706c6574696f6e2e6368756e6b222c2263726561746564223a313739313035383138362c226d6f64656c223a22646565707365656b2d76342e312d666c617368222c2273797374656d5f66696e6765727072696e74223a6e756c6c2c2263686f69636573223a5b7b22696e646578223a302c2264656c7461223a7b22636f6e74656e74223a22c3",
+        "events": []
+      },
+      "recovered": {
+        "id": "unicode",
+        "state": "idle",
+        "request_count": 1,
+        "last_turn": {
+          "session_id": "unicode",
+          "response_id": "88016ee529424c0099b52e8e38d9fddf",
+          "t0": 299958.904749416,
+          "generated": 4,
+          "decode_s": 0.17074478999711573,
+          "first_canonical_s": 71.76638295903103,
+          "first_chunk_s": 71.80857666698284,
+          "formatting_s": 3.58739634975791e-05,
+          "delivery_wait_s": 0.16819624899653718,
+          "protocol_chunks_produced": 5,
+          "iterator_yields": 4,
+          "canonical_emitted": 4,
+          "rows": [
+            {
+              "canonical_ordinal": 1,
+              "produced_s": 71.76651266700355,
+              "yield_s": 71.80857666698284
+            },
+            {
+              "canonical_ordinal": 1,
+              "produced_s": 71.80863970902283,
+              "yield_s": 71.85069320903858
+            },
+            {
+              "canonical_ordinal": 2,
+              "produced_s": 71.85126537503675,
+              "yield_s": 71.89330158400116
+            },
+            {
+              "canonical_ordinal": 3,
+              "produced_s": 71.99756312498357,
+              "yield_s": 72.03961041703587
+            },
+            {
+              "canonical_ordinal": 4,
+              "produced_s": 72.0403169170022
+            }
+          ],
+          "cancelled": true,
+          "client_acknowledged_ordinal": 0,
+          "load_s": 67.48465408297488,
+          "prefill_handoff_s": 4.214050124981441,
+          "prompt_replay": 0,
+          "full_cache_repack": 0,
+          "exit_exception": "CancelledError(\"Cancelled via cancel scope 15670e850 by <Task pending name='Task-12' coro=<RequestResponseCycle.run_asgi() running at /private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py:411> cb=[set.discard()]>\")",
+          "quiescence": {
+            "canonical_frontier": 21,
+            "recovery_suffix_tokens": [
+              69,
+              2797,
+              619,
+              68139,
+              223
+            ],
+            "discarded_future_token": 29069,
+            "counters": {
+              "new_verify_cycles": 0,
+              "new_proposals": 0,
+              "target_forwards": 0,
+              "history_replay": 0,
+              "full_cache_repack": 0,
+              "dspark_appends": 0
+            },
+            "latency_s": 0.00020662503084167838,
+            "queue_drained_tokens": [
+              223
+            ],
+            "dspark": {
+              "frontier": 21,
+              "offsets": [
+                21,
+                21,
+                21
+              ],
+              "target_layer_ids": [
+                37,
+                38,
+                39
+              ],
+              "stage_count": 3,
+              "window_size": 5,
+              "authority": "bounded committed DSpark context; not executable target truth"
+            }
+          },
+          "canonical_frontier": 21,
+          "target_offsets": [
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21
+          ],
+          "dspark_offsets": [
+            21,
+            21,
+            21
+          ],
+          "terminal_matches": [],
+          "response": {
+            "id": "88016ee529424c0099b52e8e38d9fddf",
+            "object": "chat.completion",
+            "created": 1791058188,
+            "model": "deepseek-v4.1-flash",
+            "system_fingerprint": null,
+            "choices": [
+              {
+                "index": 0,
+                "message": {
+                  "role": "assistant",
+                  "content": "caf\u00e9 \ud83d\ude42 "
+                },
+                "logprobs": null,
+                "finish_reason": null
+              }
+            ]
+          },
+          "protocol_events": [
+            {
+              "id": "88016ee529424c0099b52e8e38d9fddf",
+              "object": "chat.completion.chunk",
+              "created": 1791058186,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "role": "assistant",
+                    "content": ""
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "88016ee529424c0099b52e8e38d9fddf",
+              "object": "chat.completion.chunk",
+              "created": 1791058186,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "c"
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "88016ee529424c0099b52e8e38d9fddf",
+              "object": "chat.completion.chunk",
+              "created": 1791058186,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "af"
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "88016ee529424c0099b52e8e38d9fddf",
+              "object": "chat.completion.chunk",
+              "created": 1791058186,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "\u00e9"
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "88016ee529424c0099b52e8e38d9fddf",
+              "object": "chat.completion.chunk",
+              "created": 1791058186,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " \ud83d\ude42"
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "88016ee529424c0099b52e8e38d9fddf",
+              "object": "chat.completion.chunk",
+              "created": 1791058186,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " "
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            }
+          ],
+          "canonical_generated": [
+            69,
+            2797,
+            619,
+            68139,
+            223
+          ],
+          "prediction_retired": true,
+          "queue_empty": true,
+          "certificate": {
+            "version": 1,
+            "frontier": 21,
+            "canonical_sha256": "e93f58767e4b37a8af720b3d673c270030241077bd2a910431f12f6ccc7da0f1",
+            "representable": true,
+            "executable_tools": false,
+            "exact_prefix": true,
+            "semantic_complete": true,
+            "first_mismatch": null,
+            "witness": {
+              "model": "deepseek-v4.1-flash",
+              "messages": [
+                {
+                  "role": "user",
+                  "content": "Output exactly: caf\u00e9 \ud83d\ude42 \u6f22\u5b57. Nothing else."
+                },
+                {
+                  "role": "assistant",
+                  "content": "caf\u00e9 \ud83d\ude42 "
+                },
+                {
+                  "role": "user",
+                  "content": "Continue."
+                }
+              ],
+              "reasoning_effort": "none",
+              "temperature": 0,
+              "max_tokens": 1,
+              "stream": false,
+              "stop": null
+            },
+            "encoded_length": 27
+          },
+          "cleanup_s": 0.0023654999677091837,
+          "elapsed_s": 72.04355487501016
+        },
+        "canonical_frontier": 21,
+        "outcome_state": "recoverable",
+        "certificate": {
+          "version": 1,
+          "frontier": 21,
+          "canonical_sha256": "e93f58767e4b37a8af720b3d673c270030241077bd2a910431f12f6ccc7da0f1",
+          "representable": true,
+          "executable_tools": false,
+          "exact_prefix": true,
+          "semantic_complete": true,
+          "first_mismatch": null,
+          "witness": {
+            "model": "deepseek-v4.1-flash",
+            "messages": [
+              {
+                "role": "user",
+                "content": "Output exactly: caf\u00e9 \ud83d\ude42 \u6f22\u5b57. Nothing else."
+              },
+              {
+                "role": "assistant",
+                "content": "caf\u00e9 \ud83d\ude42 "
+              },
+              {
+                "role": "user",
+                "content": "Continue."
+              }
+            ],
+            "reasoning_effort": "none",
+            "temperature": 0,
+            "max_tokens": 1,
+            "stream": false,
+            "stop": null
+          },
+          "encoded_length": 27
+        },
+        "request_fence": {
+          "sequence": 1,
+          "body_sha256": "33f0be7e094e2ffdb916e0f8535119bf7ef18acfe5040a0a81995fcb8367fd0a",
+          "state": "recoverable",
+          "started": true
+        },
+        "next_sequence": 2
+      },
+      "reobserved": {
+        "sequence": 1,
+        "outcome_state": "recoverable",
+        "certificate": {
+          "version": 1,
+          "frontier": 21,
+          "canonical_sha256": "e93f58767e4b37a8af720b3d673c270030241077bd2a910431f12f6ccc7da0f1",
+          "representable": true,
+          "executable_tools": false,
+          "exact_prefix": true,
+          "semantic_complete": true,
+          "first_mismatch": null,
+          "witness": {
+            "model": "deepseek-v4.1-flash",
+            "messages": [
+              {
+                "role": "user",
+                "content": "Output exactly: caf\u00e9 \ud83d\ude42 \u6f22\u5b57. Nothing else."
+              },
+              {
+                "role": "assistant",
+                "content": "caf\u00e9 \ud83d\ude42 "
+              },
+              {
+                "role": "user",
+                "content": "Continue."
+              }
+            ],
+            "reasoning_effort": "none",
+            "temperature": 0,
+            "max_tokens": 1,
+            "stream": false,
+            "stop": null
+          },
+          "encoded_length": 27
+        },
+        "response": {
+          "id": "88016ee529424c0099b52e8e38d9fddf",
+          "object": "chat.completion",
+          "created": 1791058188,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "caf\u00e9 \ud83d\ude42 "
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        }
+      },
+      "duplicate_nonmutating": true,
+      "body_mismatch_atomic": true,
+      "continuation_exact_prefix": true,
+      "after": {
+        "id": "unicode",
+        "state": "idle",
+        "request_count": 2,
+        "last_turn": {
+          "session_id": "unicode",
+          "response_id": "ecc174e380dd4726b62fdd191be3bd9e",
+          "t0": 300030.97065375,
+          "generated": 4,
+          "decode_s": 0.15787841595010832,
+          "first_canonical_s": 0.22531366598559543,
+          "first_chunk_s": 0.2254388749715872,
+          "formatting_s": 1.8957012798637152e-05,
+          "delivery_wait_s": 1.167005393654108e-06,
+          "protocol_chunks_produced": 5,
+          "iterator_yields": 5,
+          "canonical_emitted": 4,
+          "rows": [
+            {
+              "canonical_ordinal": 1,
+              "produced_s": 0.22543816600227728,
+              "yield_s": 0.2254388749715872
+            },
+            {
+              "canonical_ordinal": 1,
+              "produced_s": 0.2254405000130646,
+              "yield_s": 0.2254410830209963
+            },
+            {
+              "canonical_ordinal": 2,
+              "produced_s": 0.22565558302449062,
+              "yield_s": 0.22565629100427032
+            },
+            {
+              "canonical_ordinal": 3,
+              "produced_s": 0.3195387499872595,
+              "yield_s": 0.31953945802524686
+            },
+            {
+              "canonical_ordinal": 4,
+              "produced_s": 0.3687804579967633,
+              "yield_s": 0.36878133297432214
+            }
+          ],
+          "cancelled": false,
+          "client_acknowledged_ordinal": 0,
+          "load_s": 2.6249908842146397e-06,
+          "prefill_handoff_s": 0.1613521670224145,
+          "prompt_replay": 0,
+          "full_cache_repack": 0,
+          "mtp_stats": {
+            "cycles": 1,
+            "accepts": 1,
+            "rejects": 1,
+            "init_emits": 2,
+            "draft_emits": 1,
+            "bonus_emits": 0,
+            "verify_emits": 1,
+            "depth_drafted": [
+              1,
+              1,
+              0
+            ],
+            "depth_accepted": [
+              1,
+              0,
+              0
+            ],
+            "zero_cycles": 0,
+            "backbone_ms": 79.79004201479256,
+            "mtp_head_ms": 4.182583012152463,
+            "sample_ms": 0.07808301597833633,
+            "cache_ops_ms": 2.3046659771353006
+          },
+          "quiescence": {
+            "canonical_frontier": 33,
+            "recovery_suffix_tokens": [
+              17259,
+              37584,
+              3,
+              1
+            ],
+            "discarded_future_token": null,
+            "counters": {
+              "new_verify_cycles": 0,
+              "new_proposals": 0,
+              "target_forwards": 1,
+              "history_replay": 0,
+              "full_cache_repack": 0,
+              "dspark_appends": 1
+            },
+            "latency_s": 0.02046654198784381,
+            "queue_drained_tokens": [],
+            "dspark": {
+              "frontier": 33,
+              "offsets": [
+                33,
+                33,
+                33
+              ],
+              "target_layer_ids": [
+                37,
+                38,
+                39
+              ],
+              "stage_count": 3,
+              "window_size": 5,
+              "authority": "bounded committed DSpark context; not executable target truth"
+            }
+          },
+          "canonical_frontier": 33,
+          "target_offsets": [
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33,
+            33
+          ],
+          "dspark_offsets": [
+            33,
+            33,
+            33
+          ],
+          "terminal_matches": [],
+          "response": {
+            "id": "ecc174e380dd4726b62fdd191be3bd9e",
+            "object": "chat.completion",
+            "created": 1791058188,
+            "model": "deepseek-v4.1-flash",
+            "system_fingerprint": null,
+            "choices": [
+              {
+                "index": 0,
+                "message": {
+                  "role": "assistant",
+                  "content": "Goodbye!"
+                },
+                "logprobs": null,
+                "finish_reason": "stop"
+              }
+            ],
+            "usage": {
+              "prompt_tokens": 29,
+              "completion_tokens": 3,
+              "total_tokens": 32,
+              "prompt_tokens_details": {
+                "cached_tokens": 0
+              },
+              "prompt_cache_hit_tokens": 0,
+              "prompt_cache_miss_tokens": 29
+            }
+          },
+          "protocol_events": [
+            {
+              "id": "ecc174e380dd4726b62fdd191be3bd9e",
+              "object": "chat.completion.chunk",
+              "created": 1791058188,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "role": "assistant",
+                    "content": ""
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ],
+              "usage": null
+            },
+            {
+              "id": "ecc174e380dd4726b62fdd191be3bd9e",
+              "object": "chat.completion.chunk",
+              "created": 1791058188,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "Good"
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ],
+              "usage": null
+            },
+            {
+              "id": "ecc174e380dd4726b62fdd191be3bd9e",
+              "object": "chat.completion.chunk",
+              "created": 1791058188,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "bye"
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ],
+              "usage": null
+            },
+            {
+              "id": "ecc174e380dd4726b62fdd191be3bd9e",
+              "object": "chat.completion.chunk",
+              "created": 1791058188,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "!"
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ],
+              "usage": null
+            },
+            {
+              "id": "ecc174e380dd4726b62fdd191be3bd9e",
+              "object": "chat.completion.chunk",
+              "created": 1791058188,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": ""
+                  },
+                  "logprobs": null,
+                  "finish_reason": "stop"
+                }
+              ],
+              "usage": {
+                "prompt_tokens": 29,
+                "completion_tokens": 3,
+                "total_tokens": 32,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "prompt_cache_hit_tokens": 0,
+                "prompt_cache_miss_tokens": 29
+              }
+            }
+          ],
+          "canonical_generated": [
+            17259,
+            37584,
+            3,
+            1
+          ],
+          "prediction_retired": true,
+          "queue_empty": true,
+          "certificate": {
+            "version": 1,
+            "frontier": 33,
+            "canonical_sha256": "682923d19287ba8943b104f483c0125dea55d3025b3811aa3646f0f1a492ae97",
+            "representable": true,
+            "executable_tools": false,
+            "exact_prefix": true,
+            "semantic_complete": true,
+            "first_mismatch": null,
+            "witness": {
+              "model": "deepseek-v4.1-flash",
+              "messages": [
+                {
+                  "role": "user",
+                  "content": "Output exactly: caf\u00e9 \ud83d\ude42 \u6f22\u5b57. Nothing else."
+                },
+                {
+                  "role": "assistant",
+                  "content": "caf\u00e9 \ud83d\ude42 "
+                },
+                {
+                  "role": "user",
+                  "content": "Say goodbye briefly."
+                },
+                {
+                  "role": "assistant",
+                  "content": "Goodbye!"
+                },
+                {
+                  "role": "user",
+                  "content": "Continue."
+                }
+              ],
+              "reasoning_effort": "none",
+              "temperature": 0,
+              "max_tokens": 1,
+              "stream": false,
+              "stop": null
+            },
+            "encoded_length": 38
+          },
+          "cleanup_s": 0.048688708047848195,
+          "elapsed_s": 0.3687943330151029
+        },
+        "canonical_frontier": 33,
+        "outcome_state": "recoverable",
+        "certificate": {
+          "version": 1,
+          "frontier": 33,
+          "canonical_sha256": "682923d19287ba8943b104f483c0125dea55d3025b3811aa3646f0f1a492ae97",
+          "representable": true,
+          "executable_tools": false,
+          "exact_prefix": true,
+          "semantic_complete": true,
+          "first_mismatch": null,
+          "witness": {
+            "model": "deepseek-v4.1-flash",
+            "messages": [
+              {
+                "role": "user",
+                "content": "Output exactly: caf\u00e9 \ud83d\ude42 \u6f22\u5b57. Nothing else."
+              },
+              {
+                "role": "assistant",
+                "content": "caf\u00e9 \ud83d\ude42 "
+              },
+              {
+                "role": "user",
+                "content": "Say goodbye briefly."
+              },
+              {
+                "role": "assistant",
+                "content": "Goodbye!"
+              },
+              {
+                "role": "user",
+                "content": "Continue."
+              }
+            ],
+            "reasoning_effort": "none",
+            "temperature": 0,
+            "max_tokens": 1,
+            "stream": false,
+            "stop": null
+          },
+          "encoded_length": 38
+        },
+        "request_fence": {
+          "sequence": 2,
+          "body_sha256": "223024c2e75cc45a8ac91e98af138de255aee48c20e85101b8ca79e4d1f9f467",
+          "state": "recoverable",
+          "started": true
+        },
+        "next_sequence": 3
+      },
+      "expired_retry_atomic": true
+    },
+    {
+      "name": "partial-tool",
+      "request": {
+        "model": "deepseek-v4.1-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Use the tool to look up the weather in Berlin, then answer concisely."
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "lookup_weather",
+              "description": "Return deterministic weather for a city.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "city": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "city"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            }
+          }
+        ],
+        "tool_choice": {
+          "type": "function",
+          "function": {
+            "name": "lookup_weather"
+          }
+        },
+        "reasoning_effort": "none",
+        "temperature": 0,
+        "max_tokens": 96,
+        "stream": true,
+        "stop": null
+      },
+      "observed": {
+        "bytes_hex": "",
+        "events": [
+          {
+            "id": "4cca69daa5804a7d9e84e57faa9232fa",
+            "object": "chat.completion.chunk",
+            "created": 1791058190,
+            "model": "deepseek-v4.1-flash",
+            "system_fingerprint": null,
+            "choices": [
+              {
+                "index": 0,
+                "delta": {
+                  "role": "assistant",
+                  "content": ""
+                },
+                "logprobs": null,
+                "finish_reason": null
+              }
+            ]
+          },
+          {
+            "id": "4cca69daa5804a7d9e84e57faa9232fa",
+            "object": "chat.completion.chunk",
+            "created": 1791058190,
+            "model": "deepseek-v4.1-flash",
+            "system_fingerprint": null,
+            "choices": [
+              {
+                "index": 0,
+                "delta": {
+                  "tool_calls": [
+                    {
+                      "index": 0,
+                      "id": "call_4cca69daa5804a7d9e84e57faa9232fa_0",
+                      "type": "function",
+                      "function": {
+                        "name": "lookup_weather",
+                        "arguments": ""
+                      }
+                    }
+                  ]
+                },
+                "logprobs": null,
+                "finish_reason": null
+              }
+            ]
+          },
+          {
+            "id": "4cca69daa5804a7d9e84e57faa9232fa",
+            "object": "chat.completion.chunk",
+            "created": 1791058190,
+            "model": "deepseek-v4.1-flash",
+            "system_fingerprint": null,
+            "choices": [
+              {
+                "index": 0,
+                "delta": {
+                  "tool_calls": [
+                    {
+                      "index": 0,
+                      "function": {
+                        "arguments": "{"
+                      }
+                    }
+                  ]
+                },
+                "logprobs": null,
+                "finish_reason": null
+              }
+            ]
+          }
+        ]
+      },
+      "recovered": {
+        "id": "partial-tool",
+        "state": "poisoned",
+        "request_count": 1,
+        "last_turn": {
+          "session_id": "partial-tool",
+          "response_id": "4cca69daa5804a7d9e84e57faa9232fa",
+          "t0": 300031.35926725,
+          "generated": 15,
+          "decode_s": 0.47588537505362183,
+          "first_canonical_s": 4.152464791026432,
+          "first_chunk_s": 4.194641874986701,
+          "formatting_s": 3.270816523581743e-05,
+          "delivery_wait_s": 0.1256542920600623,
+          "protocol_chunks_produced": 4,
+          "iterator_yields": 3,
+          "canonical_emitted": 15,
+          "rows": [
+            {
+              "canonical_ordinal": 1,
+              "produced_s": 4.152581790986005,
+              "yield_s": 4.194641874986701
+            },
+            {
+              "canonical_ordinal": 10,
+              "produced_s": 4.399821290979162,
+              "yield_s": 4.441891791007947
+            },
+            {
+              "canonical_ordinal": 15,
+              "produced_s": 4.650745833001565,
+              "yield_s": 4.692273374996148
+            },
+            {
+              "canonical_ordinal": 15,
+              "produced_s": 4.692331250000279
+            }
+          ],
+          "cancelled": true,
+          "client_acknowledged_ordinal": 0,
+          "load_s": 9.579816833138466e-07,
+          "prefill_handoff_s": 4.088377541047521,
+          "prompt_replay": 0,
+          "full_cache_repack": 0,
+          "exit_exception": "CancelledError(\"Cancelled via cancel scope 16fb61950 by <Task pending name='Task-54' coro=<RequestResponseCycle.run_asgi() running at /private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py:411> cb=[set.discard()]>\")",
+          "quiescence": {
+            "canonical_frontier": 310,
+            "recovery_suffix_tokens": [
+              30,
+              128825,
+              34756,
+              2329,
+              1281,
+              12533,
+              1425,
+              65,
+              50219,
+              3816,
+              30,
+              128825,
+              10767,
+              2329,
+              1281,
+              37399,
+              4
+            ],
+            "discarded_future_token": 3418,
+            "counters": {
+              "new_verify_cycles": 0,
+              "new_proposals": 0,
+              "target_forwards": 0,
+              "history_replay": 0,
+              "full_cache_repack": 0,
+              "dspark_appends": 0
+            },
+            "latency_s": 0.00024858402321115136,
+            "queue_drained_tokens": [
+              37399,
+              4
+            ],
+            "dspark": {
+              "frontier": 310,
+              "offsets": [
+                310,
+                310,
+                310
+              ],
+              "target_layer_ids": [
+                37,
+                38,
+                39
+              ],
+              "stage_count": 3,
+              "window_size": 5,
+              "authority": "bounded committed DSpark context; not executable target truth"
+            }
+          },
+          "canonical_frontier": 310,
+          "target_offsets": [
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310,
+            310
+          ],
+          "dspark_offsets": [
+            310,
+            310,
+            310
+          ],
+          "terminal_matches": [],
+          "response": {
+            "id": "4cca69daa5804a7d9e84e57faa9232fa",
+            "object": "chat.completion",
+            "created": 1791058193,
+            "model": "deepseek-v4.1-flash",
+            "system_fingerprint": null,
+            "choices": [
+              {
+                "index": 0,
+                "message": {
+                  "role": "assistant",
+                  "content": "",
+                  "tool_calls": [
+                    {
+                      "id": "call_4cca69daa5804a7d9e84e57faa9232fa_0",
+                      "type": "function",
+                      "function": {
+                        "name": "lookup_weather",
+                        "arguments": "{\"city\""
+                      }
+                    }
+                  ]
+                },
+                "logprobs": null,
+                "finish_reason": null
+              }
+            ]
+          },
+          "protocol_events": [
+            {
+              "id": "4cca69daa5804a7d9e84e57faa9232fa",
+              "object": "chat.completion.chunk",
+              "created": 1791058190,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "role": "assistant",
+                    "content": ""
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "4cca69daa5804a7d9e84e57faa9232fa",
+              "object": "chat.completion.chunk",
+              "created": 1791058190,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "id": "call_4cca69daa5804a7d9e84e57faa9232fa_0",
+                        "type": "function",
+                        "function": {
+                          "name": "lookup_weather",
+                          "arguments": ""
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "4cca69daa5804a7d9e84e57faa9232fa",
+              "object": "chat.completion.chunk",
+              "created": 1791058190,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": "{"
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "4cca69daa5804a7d9e84e57faa9232fa",
+              "object": "chat.completion.chunk",
+              "created": 1791058190,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": "\""
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "4cca69daa5804a7d9e84e57faa9232fa",
+              "object": "chat.completion.chunk",
+              "created": 1791058190,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": "city"
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "4cca69daa5804a7d9e84e57faa9232fa",
+              "object": "chat.completion.chunk",
+              "created": 1791058190,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": "\""
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            }
+          ],
+          "canonical_generated": [
+            30,
+            128825,
+            34756,
+            2329,
+            1281,
+            12533,
+            1425,
+            65,
+            50219,
+            3816,
+            30,
+            128825,
+            10767,
+            2329,
+            1281,
+            37399,
+            4
+          ],
+          "prediction_retired": true,
+          "queue_empty": true,
+          "recovery_error": "no official-recipe reconstruction certificate; DELETE required",
+          "certificate": {
+            "version": 1,
+            "frontier": 310,
+            "canonical_sha256": "a9aa5bbc483c0fe9cc6d19e0935c149c31ecb731288b495db109498fe0eab6db",
+            "representable": false,
+            "executable_tools": false,
+            "exact_prefix": false,
+            "semantic_complete": false,
+            "first_mismatch": 308,
+            "witness": {
+              "model": "deepseek-v4.1-flash",
+              "messages": [
+                {
+                  "role": "user",
+                  "content": "Use the tool to look up the weather in Berlin, then answer concisely."
+                },
+                {
+                  "role": "assistant",
+                  "content": "",
+                  "tool_calls": [
+                    {
+                      "id": "call_4cca69daa5804a7d9e84e57faa9232fa_0",
+                      "type": "function",
+                      "function": {
+                        "name": "lookup_weather",
+                        "arguments": "{\"city\""
+                      }
+                    }
+                  ]
+                },
+                {
+                  "role": "tool",
+                  "tool_call_id": "call_4cca69daa5804a7d9e84e57faa9232fa_0",
+                  "content": "NOT EXECUTED: reconstruction witness"
+                },
+                {
+                  "role": "user",
+                  "content": "Continue."
+                }
+              ],
+              "tools": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "lookup_weather",
+                    "description": "Return deterministic weather for a city.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "city": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "city"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "strict": true
+                  }
+                }
+              ],
+              "tool_choice": "auto",
+              "reasoning_effort": "none",
+              "temperature": 0,
+              "max_tokens": 1,
+              "stream": false,
+              "stop": null
+            },
+            "encoded_length": 351
+          },
+          "cleanup_s": 0.0028702919953502715,
+          "elapsed_s": 4.701755249989219
+        },
+        "canonical_frontier": 310,
+        "outcome_state": "unrecoverable",
+        "certificate": {
+          "version": 1,
+          "frontier": 310,
+          "canonical_sha256": "a9aa5bbc483c0fe9cc6d19e0935c149c31ecb731288b495db109498fe0eab6db",
+          "representable": false,
+          "executable_tools": false,
+          "exact_prefix": false,
+          "semantic_complete": false,
+          "first_mismatch": 308,
+          "witness": {
+            "model": "deepseek-v4.1-flash",
+            "messages": [
+              {
+                "role": "user",
+                "content": "Use the tool to look up the weather in Berlin, then answer concisely."
+              },
+              {
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [
+                  {
+                    "id": "call_4cca69daa5804a7d9e84e57faa9232fa_0",
+                    "type": "function",
+                    "function": {
+                      "name": "lookup_weather",
+                      "arguments": "{\"city\""
+                    }
+                  }
+                ]
+              },
+              {
+                "role": "tool",
+                "tool_call_id": "call_4cca69daa5804a7d9e84e57faa9232fa_0",
+                "content": "NOT EXECUTED: reconstruction witness"
+              },
+              {
+                "role": "user",
+                "content": "Continue."
+              }
+            ],
+            "tools": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "lookup_weather",
+                  "description": "Return deterministic weather for a city.",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "city": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "city"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "strict": true
+                }
+              }
+            ],
+            "tool_choice": "auto",
+            "reasoning_effort": "none",
+            "temperature": 0,
+            "max_tokens": 1,
+            "stream": false,
+            "stop": null
+          },
+          "encoded_length": 351
+        },
+        "request_fence": {
+          "sequence": 1,
+          "body_sha256": "712a91c7ef972b10f1eb4e83e7e70e47dba6cee4a3df4f6f4c9524cc41477c2b",
+          "state": "unrecoverable",
+          "started": true
+        },
+        "next_sequence": 2
+      },
+      "reobserved": {
+        "sequence": 1,
+        "outcome_state": "unrecoverable",
+        "certificate": {
+          "version": 1,
+          "frontier": 310,
+          "canonical_sha256": "a9aa5bbc483c0fe9cc6d19e0935c149c31ecb731288b495db109498fe0eab6db",
+          "representable": false,
+          "executable_tools": false,
+          "exact_prefix": false,
+          "semantic_complete": false,
+          "first_mismatch": 308,
+          "witness": {
+            "model": "deepseek-v4.1-flash",
+            "messages": [
+              {
+                "role": "user",
+                "content": "Use the tool to look up the weather in Berlin, then answer concisely."
+              },
+              {
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [
+                  {
+                    "id": "call_4cca69daa5804a7d9e84e57faa9232fa_0",
+                    "type": "function",
+                    "function": {
+                      "name": "lookup_weather",
+                      "arguments": "{\"city\""
+                    }
+                  }
+                ]
+              },
+              {
+                "role": "tool",
+                "tool_call_id": "call_4cca69daa5804a7d9e84e57faa9232fa_0",
+                "content": "NOT EXECUTED: reconstruction witness"
+              },
+              {
+                "role": "user",
+                "content": "Continue."
+              }
+            ],
+            "tools": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "lookup_weather",
+                  "description": "Return deterministic weather for a city.",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "city": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "city"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "strict": true
+                }
+              }
+            ],
+            "tool_choice": "auto",
+            "reasoning_effort": "none",
+            "temperature": 0,
+            "max_tokens": 1,
+            "stream": false,
+            "stop": null
+          },
+          "encoded_length": 351
+        },
+        "response": {
+          "id": "4cca69daa5804a7d9e84e57faa9232fa",
+          "object": "chat.completion",
+          "created": 1791058193,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [
+                  {
+                    "id": "call_4cca69daa5804a7d9e84e57faa9232fa_0",
+                    "type": "function",
+                    "function": {
+                      "name": "lookup_weather",
+                      "arguments": "{\"city\""
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        }
+      },
+      "duplicate_nonmutating": true,
+      "body_mismatch_atomic": true,
+      "tool_executions": 0,
+      "continuation_rejected_atomic": true
+    },
+    {
+      "name": "completed-tool",
+      "request": {
+        "model": "deepseek-v4.1-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Use the tool to look up the weather in Berlin, then answer concisely."
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "lookup_weather",
+              "description": "Return deterministic weather for a city.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "city": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "city"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            }
+          }
+        ],
+        "tool_choice": {
+          "type": "function",
+          "function": {
+            "name": "lookup_weather"
+          }
+        },
+        "reasoning_effort": "none",
+        "temperature": 0,
+        "max_tokens": 96,
+        "stream": true,
+        "stop": null
+      },
+      "observed": {
+        "controlled_terminal_window": true,
+        "received_body_bytes": 0
+      },
+      "recovered": {
+        "id": "completed-tool",
+        "state": "idle",
+        "request_count": 1,
+        "last_turn": {
+          "session_id": "completed-tool",
+          "response_id": "168b6f60d15e44ee82efdaef6e7c281a",
+          "t0": 300036.085069958,
+          "generated": 34,
+          "decode_s": 2.8959256678353995,
+          "first_canonical_s": 4.066508500021882,
+          "first_chunk_s": 4.868098957987968,
+          "formatting_s": 0.0002162478631362319,
+          "delivery_wait_s": 8.810903956997208,
+          "protocol_chunks_produced": 12,
+          "iterator_yields": 11,
+          "canonical_emitted": 34,
+          "rows": [
+            {
+              "canonical_ordinal": 1,
+              "produced_s": 4.066615124989767,
+              "yield_s": 4.868098957987968
+            },
+            {
+              "canonical_ordinal": 10,
+              "produced_s": 5.080230457999278,
+              "yield_s": 5.8811857079854235
+            },
+            {
+              "canonical_ordinal": 15,
+              "produced_s": 6.108778542024083,
+              "yield_s": 6.9109153330209665
+            },
+            {
+              "canonical_ordinal": 15,
+              "produced_s": 6.9112866669893265,
+              "yield_s": 7.711694249999709
+            },
+            {
+              "canonical_ordinal": 16,
+              "produced_s": 7.713808582979254,
+              "yield_s": 8.515210625017062
+            },
+            {
+              "canonical_ordinal": 17,
+              "produced_s": 8.516395792015828,
+              "yield_s": 9.31674620800186
+            },
+            {
+              "canonical_ordinal": 18,
+              "produced_s": 9.318700457981322,
+              "yield_s": 10.118987374997232
+            },
+            {
+              "canonical_ordinal": 21,
+              "produced_s": 12.151357666996773,
+              "yield_s": 12.95250329200644
+            },
+            {
+              "canonical_ordinal": 22,
+              "produced_s": 12.954646291967947,
+              "yield_s": 13.75574241700815
+            },
+            {
+              "canonical_ordinal": 24,
+              "produced_s": 13.87708708300488,
+              "yield_s": 14.67751487501664
+            },
+            {
+              "canonical_ordinal": 28,
+              "produced_s": 14.804072916973382,
+              "yield_s": 15.605322707968298
+            },
+            {
+              "canonical_ordinal": 34,
+              "produced_s": 15.776931917003822
+            }
+          ],
+          "cancelled": true,
+          "client_acknowledged_ordinal": 0,
+          "load_s": 2.040993422269821e-06,
+          "prefill_handoff_s": 4.0028926659724675,
+          "prompt_replay": 0,
+          "full_cache_repack": 0,
+          "mtp_stats": {
+            "cycles": 8,
+            "accepts": 24,
+            "rejects": 0,
+            "init_emits": 2,
+            "draft_emits": 24,
+            "bonus_emits": 8,
+            "verify_emits": 0,
+            "depth_drafted": [
+              8,
+              8,
+              8
+            ],
+            "depth_accepted": [
+              8,
+              8,
+              8
+            ],
+            "zero_cycles": 0,
+            "backbone_ms": 2743.1250829831697,
+            "mtp_head_ms": 25.427041051443666,
+            "sample_ms": 0.6474999827332795,
+            "cache_ops_ms": 0.822418078314513
+          },
+          "quiescence": {
+            "canonical_frontier": 327,
+            "recovery_suffix_tokens": [
+              30,
+              128825,
+              34756,
+              2329,
+              1281,
+              12533,
+              1425,
+              65,
+              50219,
+              3816,
+              30,
+              128825,
+              10767,
+              2329,
+              1281,
+              37399,
+              4,
+              3418,
+              1281,
+              11476,
+              3320,
+              93689,
+              1718,
+              128825,
+              10767,
+              1018,
+              1718,
+              128825,
+              34756,
+              1018,
+              1718,
+              128825,
+              10699,
+              32
+            ],
+            "discarded_future_token": null,
+            "counters": {
+              "new_verify_cycles": 0,
+              "new_proposals": 0,
+              "target_forwards": 1,
+              "history_replay": 0,
+              "full_cache_repack": 0,
+              "dspark_appends": 1
+            },
+            "latency_s": 0.024857292009983212,
+            "queue_drained_tokens": [],
+            "dspark": {
+              "frontier": 327,
+              "offsets": [
+                327,
+                327,
+                327
+              ],
+              "target_layer_ids": [
+                37,
+                38,
+                39
+              ],
+              "stage_count": 3,
+              "window_size": 5,
+              "authority": "bounded committed DSpark context; not executable target truth"
+            }
+          },
+          "canonical_frontier": 327,
+          "target_offsets": [
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327,
+            327
+          ],
+          "dspark_offsets": [
+            327,
+            327,
+            327
+          ],
+          "terminal_matches": [
+            {
+              "ordinal": 33,
+              "token_id": 32,
+              "identity": [
+                "DSML_TOOL_CALL_BLOCK_END",
+                141,
+                160
+              ]
+            }
+          ],
+          "response": {
+            "id": "168b6f60d15e44ee82efdaef6e7c281a",
+            "object": "chat.completion",
+            "created": 1791058209,
+            "model": "deepseek-v4.1-flash",
+            "system_fingerprint": null,
+            "choices": [
+              {
+                "index": 0,
+                "message": {
+                  "role": "assistant",
+                  "content": "",
+                  "tool_calls": [
+                    {
+                      "id": "call_168b6f60d15e44ee82efdaef6e7c281a_0",
+                      "type": "function",
+                      "function": {
+                        "name": "lookup_weather",
+                        "arguments": "{\"city\": \"Berlin\"}"
+                      }
+                    }
+                  ]
+                },
+                "logprobs": null,
+                "finish_reason": "tool_calls"
+              }
+            ],
+            "usage": {
+              "prompt_tokens": 293,
+              "completion_tokens": 34,
+              "total_tokens": 327,
+              "prompt_tokens_details": {
+                "cached_tokens": 0
+              },
+              "prompt_cache_hit_tokens": 0,
+              "prompt_cache_miss_tokens": 293
+            }
+          },
+          "protocol_events": [
+            {
+              "id": "168b6f60d15e44ee82efdaef6e7c281a",
+              "object": "chat.completion.chunk",
+              "created": 1791058195,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "role": "assistant",
+                    "content": ""
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "168b6f60d15e44ee82efdaef6e7c281a",
+              "object": "chat.completion.chunk",
+              "created": 1791058195,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "id": "call_168b6f60d15e44ee82efdaef6e7c281a_0",
+                        "type": "function",
+                        "function": {
+                          "name": "lookup_weather",
+                          "arguments": ""
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "168b6f60d15e44ee82efdaef6e7c281a",
+              "object": "chat.completion.chunk",
+              "created": 1791058195,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": "{"
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "168b6f60d15e44ee82efdaef6e7c281a",
+              "object": "chat.completion.chunk",
+              "created": 1791058195,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": "\""
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "168b6f60d15e44ee82efdaef6e7c281a",
+              "object": "chat.completion.chunk",
+              "created": 1791058195,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": "city"
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "168b6f60d15e44ee82efdaef6e7c281a",
+              "object": "chat.completion.chunk",
+              "created": 1791058195,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": "\""
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "168b6f60d15e44ee82efdaef6e7c281a",
+              "object": "chat.completion.chunk",
+              "created": 1791058195,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": ": "
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "168b6f60d15e44ee82efdaef6e7c281a",
+              "object": "chat.completion.chunk",
+              "created": 1791058195,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": "\""
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "168b6f60d15e44ee82efdaef6e7c281a",
+              "object": "chat.completion.chunk",
+              "created": 1791058195,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": "Berlin"
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "168b6f60d15e44ee82efdaef6e7c281a",
+              "object": "chat.completion.chunk",
+              "created": 1791058195,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": "\""
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "168b6f60d15e44ee82efdaef6e7c281a",
+              "object": "chat.completion.chunk",
+              "created": 1791058195,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": "}"
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            },
+            {
+              "id": "168b6f60d15e44ee82efdaef6e7c281a",
+              "object": "chat.completion.chunk",
+              "created": 1791058195,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": ""
+                  },
+                  "logprobs": null,
+                  "finish_reason": "tool_calls"
+                }
+              ],
+              "usage": {
+                "prompt_tokens": 293,
+                "completion_tokens": 34,
+                "total_tokens": 327,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "prompt_cache_hit_tokens": 0,
+                "prompt_cache_miss_tokens": 293
+              }
+            }
+          ],
+          "canonical_generated": [
+            30,
+            128825,
+            34756,
+            2329,
+            1281,
+            12533,
+            1425,
+            65,
+            50219,
+            3816,
+            30,
+            128825,
+            10767,
+            2329,
+            1281,
+            37399,
+            4,
+            3418,
+            1281,
+            11476,
+            3320,
+            93689,
+            1718,
+            128825,
+            10767,
+            1018,
+            1718,
+            128825,
+            34756,
+            1018,
+            1718,
+            128825,
+            10699,
+            32
+          ],
+          "prediction_retired": true,
+          "queue_empty": true,
+          "certificate": {
+            "version": 1,
+            "frontier": 327,
+            "canonical_sha256": "02c9aa21bce8b5b1c1d942e7117371f10875afe3c1d38a34fcaa089bb2bfdfe1",
+            "representable": true,
+            "executable_tools": true,
+            "exact_prefix": true,
+            "semantic_complete": true,
+            "first_mismatch": null,
+            "witness": {
+              "model": "deepseek-v4.1-flash",
+              "messages": [
+                {
+                  "role": "user",
+                  "content": "Use the tool to look up the weather in Berlin, then answer concisely."
+                },
+                {
+                  "role": "assistant",
+                  "content": "",
+                  "tool_calls": [
+                    {
+                      "id": "call_168b6f60d15e44ee82efdaef6e7c281a_0",
+                      "type": "function",
+                      "function": {
+                        "name": "lookup_weather",
+                        "arguments": "{\"city\": \"Berlin\"}"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "role": "tool",
+                  "tool_call_id": "call_168b6f60d15e44ee82efdaef6e7c281a_0",
+                  "content": "NOT EXECUTED: reconstruction witness"
+                },
+                {
+                  "role": "user",
+                  "content": "Continue."
+                }
+              ],
+              "tools": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "lookup_weather",
+                    "description": "Return deterministic weather for a city.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "city": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "city"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "strict": true
+                  }
+                }
+              ],
+              "tool_choice": "auto",
+              "reasoning_effort": "none",
+              "temperature": 0,
+              "max_tokens": 1,
+              "stream": false,
+              "stop": null
+            },
+            "encoded_length": 349
+          },
+          "cleanup_s": 0.054660000023432076,
+          "exit_exception": "CancelledError(\"Cancelled via cancel scope b294725090 by <Task pending name='Task-92' coro=<RequestResponseCycle.run_asgi() running at /private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py:411> cb=[set.discard()]>\")",
+          "elapsed_s": 15.782629124994855
+        },
+        "canonical_frontier": 327,
+        "outcome_state": "recoverable",
+        "certificate": {
+          "version": 1,
+          "frontier": 327,
+          "canonical_sha256": "02c9aa21bce8b5b1c1d942e7117371f10875afe3c1d38a34fcaa089bb2bfdfe1",
+          "representable": true,
+          "executable_tools": true,
+          "exact_prefix": true,
+          "semantic_complete": true,
+          "first_mismatch": null,
+          "witness": {
+            "model": "deepseek-v4.1-flash",
+            "messages": [
+              {
+                "role": "user",
+                "content": "Use the tool to look up the weather in Berlin, then answer concisely."
+              },
+              {
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [
+                  {
+                    "id": "call_168b6f60d15e44ee82efdaef6e7c281a_0",
+                    "type": "function",
+                    "function": {
+                      "name": "lookup_weather",
+                      "arguments": "{\"city\": \"Berlin\"}"
+                    }
+                  }
+                ]
+              },
+              {
+                "role": "tool",
+                "tool_call_id": "call_168b6f60d15e44ee82efdaef6e7c281a_0",
+                "content": "NOT EXECUTED: reconstruction witness"
+              },
+              {
+                "role": "user",
+                "content": "Continue."
+              }
+            ],
+            "tools": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "lookup_weather",
+                  "description": "Return deterministic weather for a city.",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "city": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "city"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "strict": true
+                }
+              }
+            ],
+            "tool_choice": "auto",
+            "reasoning_effort": "none",
+            "temperature": 0,
+            "max_tokens": 1,
+            "stream": false,
+            "stop": null
+          },
+          "encoded_length": 349
+        },
+        "request_fence": {
+          "sequence": 1,
+          "body_sha256": "712a91c7ef972b10f1eb4e83e7e70e47dba6cee4a3df4f6f4c9524cc41477c2b",
+          "state": "recoverable",
+          "started": true
+        },
+        "next_sequence": 2
+      },
+      "reobserved": {
+        "sequence": 1,
+        "outcome_state": "recoverable",
+        "certificate": {
+          "version": 1,
+          "frontier": 327,
+          "canonical_sha256": "02c9aa21bce8b5b1c1d942e7117371f10875afe3c1d38a34fcaa089bb2bfdfe1",
+          "representable": true,
+          "executable_tools": true,
+          "exact_prefix": true,
+          "semantic_complete": true,
+          "first_mismatch": null,
+          "witness": {
+            "model": "deepseek-v4.1-flash",
+            "messages": [
+              {
+                "role": "user",
+                "content": "Use the tool to look up the weather in Berlin, then answer concisely."
+              },
+              {
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [
+                  {
+                    "id": "call_168b6f60d15e44ee82efdaef6e7c281a_0",
+                    "type": "function",
+                    "function": {
+                      "name": "lookup_weather",
+                      "arguments": "{\"city\": \"Berlin\"}"
+                    }
+                  }
+                ]
+              },
+              {
+                "role": "tool",
+                "tool_call_id": "call_168b6f60d15e44ee82efdaef6e7c281a_0",
+                "content": "NOT EXECUTED: reconstruction witness"
+              },
+              {
+                "role": "user",
+                "content": "Continue."
+              }
+            ],
+            "tools": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "lookup_weather",
+                  "description": "Return deterministic weather for a city.",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "city": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "city"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "strict": true
+                }
+              }
+            ],
+            "tool_choice": "auto",
+            "reasoning_effort": "none",
+            "temperature": 0,
+            "max_tokens": 1,
+            "stream": false,
+            "stop": null
+          },
+          "encoded_length": 349
+        },
+        "response": {
+          "id": "168b6f60d15e44ee82efdaef6e7c281a",
+          "object": "chat.completion",
+          "created": 1791058209,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [
+                  {
+                    "id": "call_168b6f60d15e44ee82efdaef6e7c281a_0",
+                    "type": "function",
+                    "function": {
+                      "name": "lookup_weather",
+                      "arguments": "{\"city\": \"Berlin\"}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": "tool_calls"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 293,
+            "completion_tokens": 34,
+            "total_tokens": 327,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 293
+          }
+        }
+      },
+      "duplicate_nonmutating": true,
+      "body_mismatch_atomic": true,
+      "tool_executions": 1,
+      "execution_reobservations": 4,
+      "continuation_exact_prefix": true,
+      "after": {
+        "id": "completed-tool",
+        "state": "idle",
+        "request_count": 2,
+        "last_turn": {
+          "session_id": "completed-tool",
+          "response_id": "3bda0b9fc7154fdcb5f2b2cbc19fd5e9",
+          "t0": 300051.879681458,
+          "generated": 10,
+          "decode_s": 0.26494058198295534,
+          "first_canonical_s": 0.4361329579842277,
+          "first_chunk_s": 0.4362662499770522,
+          "formatting_s": 3.216502955183387e-05,
+          "delivery_wait_s": 1.2498931027948856e-06,
+          "protocol_chunks_produced": 11,
+          "iterator_yields": 11,
+          "canonical_emitted": 10,
+          "rows": [
+            {
+              "canonical_ordinal": 1,
+              "produced_s": 0.43626537499949336,
+              "yield_s": 0.4362662499770522
+            },
+            {
+              "canonical_ordinal": 1,
+              "produced_s": 0.4362675829906948,
+              "yield_s": 0.43626804201630875
+            },
+            {
+              "canonical_ordinal": 2,
+              "produced_s": 0.43647000001510605,
+              "yield_s": 0.43647058302303776
+            },
+            {
+              "canonical_ordinal": 3,
+              "produced_s": 0.5375932920142077,
+              "yield_s": 0.5375939580262639
+            },
+            {
+              "canonical_ordinal": 4,
+              "produced_s": 0.5377944579813629,
+              "yield_s": 0.5377949579851702
+            },
+            {
+              "canonical_ordinal": 5,
+              "produced_s": 0.5379579580039717,
+              "yield_s": 0.5379583329777233
+            },
+            {
+              "canonical_ordinal": 6,
+              "produced_s": 0.538118458003737,
+              "yield_s": 0.5381187919992954
+            },
+            {
+              "canonical_ordinal": 7,
+              "produced_s": 0.6380225419998169,
+              "yield_s": 0.6380231250077486
+            },
+            {
+              "canonical_ordinal": 8,
+              "produced_s": 0.6382140829809941,
+              "yield_s": 0.6382145829848014
+            },
+            {
+              "canonical_ordinal": 9,
+              "produced_s": 0.6383822080097161,
+              "yield_s": 0.6383825829834677
+            },
+            {
+              "canonical_ordinal": 10,
+              "produced_s": 0.6882445000228472,
+              "yield_s": 0.6882451249985024
+            }
+          ],
+          "cancelled": false,
+          "client_acknowledged_ordinal": 0,
+          "load_s": 3.832974471151829e-06,
+          "prefill_handoff_s": 0.37254191702231765,
+          "prompt_replay": 0,
+          "full_cache_repack": 0,
+          "mtp_stats": {
+            "cycles": 2,
+            "accepts": 6,
+            "rejects": 0,
+            "init_emits": 2,
+            "draft_emits": 6,
+            "bonus_emits": 2,
+            "verify_emits": 0,
+            "depth_drafted": [
+              2,
+              2,
+              2
+            ],
+            "depth_accepted": [
+              2,
+              2,
+              2
+            ],
+            "zero_cycles": 0,
+            "backbone_ms": 179.08191605238244,
+            "mtp_head_ms": 6.550249992869794,
+            "sample_ms": 0.1443749642930925,
+            "cache_ops_ms": 0.1676660031080246
+          },
+          "quiescence": {
+            "canonical_frontier": 373,
+            "recovery_suffix_tokens": [
+              93689,
+              28,
+              57534,
+              14,
+              223,
+              1002,
+              2614,
+              37,
+              16,
+              1
+            ],
+            "discarded_future_token": null,
+            "counters": {
+              "new_verify_cycles": 0,
+              "new_proposals": 0,
+              "target_forwards": 1,
+              "history_replay": 0,
+              "full_cache_repack": 0,
+              "dspark_appends": 1
+            },
+            "latency_s": 0.020600334042683244,
+            "queue_drained_tokens": [],
+            "dspark": {
+              "frontier": 373,
+              "offsets": [
+                373,
+                373,
+                373
+              ],
+              "target_layer_ids": [
+                37,
+                38,
+                39
+              ],
+              "stage_count": 3,
+              "window_size": 5,
+              "authority": "bounded committed DSpark context; not executable target truth"
+            }
+          },
+          "canonical_frontier": 373,
+          "target_offsets": [
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373,
+            373
+          ],
+          "dspark_offsets": [
+            373,
+            373,
+            373
+          ],
+          "terminal_matches": [],
+          "response": {
+            "id": "3bda0b9fc7154fdcb5f2b2cbc19fd5e9",
+            "object": "chat.completion",
+            "created": 1791058210,
+            "model": "deepseek-v4.1-flash",
+            "system_fingerprint": null,
+            "choices": [
+              {
+                "index": 0,
+                "message": {
+                  "role": "assistant",
+                  "content": "Berlin: cloudy, 17\u00b0C."
+                },
+                "logprobs": null,
+                "finish_reason": "stop"
+              }
+            ],
+            "usage": {
+              "prompt_tokens": 363,
+              "completion_tokens": 9,
+              "total_tokens": 372,
+              "prompt_tokens_details": {
+                "cached_tokens": 0
+              },
+              "prompt_cache_hit_tokens": 0,
+              "prompt_cache_miss_tokens": 363
+            }
+          },
+          "protocol_events": [
+            {
+              "id": "3bda0b9fc7154fdcb5f2b2cbc19fd5e9",
+              "object": "chat.completion.chunk",
+              "created": 1791058209,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "role": "assistant",
+                    "content": ""
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ],
+              "usage": null
+            },
+            {
+              "id": "3bda0b9fc7154fdcb5f2b2cbc19fd5e9",
+              "object": "chat.completion.chunk",
+              "created": 1791058209,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "Berlin"
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ],
+              "usage": null
+            },
+            {
+              "id": "3bda0b9fc7154fdcb5f2b2cbc19fd5e9",
+              "object": "chat.completion.chunk",
+              "created": 1791058209,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": ":"
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ],
+              "usage": null
+            },
+            {
+              "id": "3bda0b9fc7154fdcb5f2b2cbc19fd5e9",
+              "object": "chat.completion.chunk",
+              "created": 1791058209,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " cloudy"
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ],
+              "usage": null
+            },
+            {
+              "id": "3bda0b9fc7154fdcb5f2b2cbc19fd5e9",
+              "object": "chat.completion.chunk",
+              "created": 1791058209,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": ","
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ],
+              "usage": null
+            },
+            {
+              "id": "3bda0b9fc7154fdcb5f2b2cbc19fd5e9",
+              "object": "chat.completion.chunk",
+              "created": 1791058209,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " "
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ],
+              "usage": null
+            },
+            {
+              "id": "3bda0b9fc7154fdcb5f2b2cbc19fd5e9",
+              "object": "chat.completion.chunk",
+              "created": 1791058209,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "17"
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ],
+              "usage": null
+            },
+            {
+              "id": "3bda0b9fc7154fdcb5f2b2cbc19fd5e9",
+              "object": "chat.completion.chunk",
+              "created": 1791058209,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "\u00b0"
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ],
+              "usage": null
+            },
+            {
+              "id": "3bda0b9fc7154fdcb5f2b2cbc19fd5e9",
+              "object": "chat.completion.chunk",
+              "created": 1791058209,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "C"
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ],
+              "usage": null
+            },
+            {
+              "id": "3bda0b9fc7154fdcb5f2b2cbc19fd5e9",
+              "object": "chat.completion.chunk",
+              "created": 1791058209,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "."
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ],
+              "usage": null
+            },
+            {
+              "id": "3bda0b9fc7154fdcb5f2b2cbc19fd5e9",
+              "object": "chat.completion.chunk",
+              "created": 1791058209,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": ""
+                  },
+                  "logprobs": null,
+                  "finish_reason": "stop"
+                }
+              ],
+              "usage": {
+                "prompt_tokens": 363,
+                "completion_tokens": 9,
+                "total_tokens": 372,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "prompt_cache_hit_tokens": 0,
+                "prompt_cache_miss_tokens": 363
+              }
+            }
+          ],
+          "canonical_generated": [
+            93689,
+            28,
+            57534,
+            14,
+            223,
+            1002,
+            2614,
+            37,
+            16,
+            1
+          ],
+          "prediction_retired": true,
+          "queue_empty": true,
+          "certificate": {
+            "version": 1,
+            "frontier": 373,
+            "canonical_sha256": "328fa6f9527e9164364298c7a6d411c63038a29cefef8c047944c8d383c0fb2c",
+            "representable": true,
+            "executable_tools": false,
+            "exact_prefix": true,
+            "semantic_complete": true,
+            "first_mismatch": null,
+            "witness": {
+              "model": "deepseek-v4.1-flash",
+              "messages": [
+                {
+                  "role": "user",
+                  "content": "Use the tool to look up the weather in Berlin, then answer concisely."
+                },
+                {
+                  "role": "assistant",
+                  "content": "",
+                  "tool_calls": [
+                    {
+                      "id": "call_168b6f60d15e44ee82efdaef6e7c281a_0",
+                      "type": "function",
+                      "function": {
+                        "name": "lookup_weather",
+                        "arguments": "{\"city\": \"Berlin\"}"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "role": "tool",
+                  "tool_call_id": "call_168b6f60d15e44ee82efdaef6e7c281a_0",
+                  "content": "{\"city\":\"Berlin\",\"weather\":\"cloudy 17C\",\"source\":\"m11_deterministic_stub\"}"
+                },
+                {
+                  "role": "assistant",
+                  "content": "Berlin: cloudy, 17\u00b0C."
+                },
+                {
+                  "role": "user",
+                  "content": "Continue."
+                }
+              ],
+              "tools": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "lookup_weather",
+                    "description": "Return deterministic weather for a city.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "city": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "city"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "strict": true
+                  }
+                }
+              ],
+              "tool_choice": "auto",
+              "reasoning_effort": "none",
+              "temperature": 0,
+              "max_tokens": 1,
+              "stream": false,
+              "stop": null
+            },
+            "encoded_length": 378
+          },
+          "cleanup_s": 0.049374874972272664,
+          "elapsed_s": 0.6882575830095448
+        },
+        "canonical_frontier": 373,
+        "outcome_state": "recoverable",
+        "certificate": {
+          "version": 1,
+          "frontier": 373,
+          "canonical_sha256": "328fa6f9527e9164364298c7a6d411c63038a29cefef8c047944c8d383c0fb2c",
+          "representable": true,
+          "executable_tools": false,
+          "exact_prefix": true,
+          "semantic_complete": true,
+          "first_mismatch": null,
+          "witness": {
+            "model": "deepseek-v4.1-flash",
+            "messages": [
+              {
+                "role": "user",
+                "content": "Use the tool to look up the weather in Berlin, then answer concisely."
+              },
+              {
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [
+                  {
+                    "id": "call_168b6f60d15e44ee82efdaef6e7c281a_0",
+                    "type": "function",
+                    "function": {
+                      "name": "lookup_weather",
+                      "arguments": "{\"city\": \"Berlin\"}"
+                    }
+                  }
+                ]
+              },
+              {
+                "role": "tool",
+                "tool_call_id": "call_168b6f60d15e44ee82efdaef6e7c281a_0",
+                "content": "{\"city\":\"Berlin\",\"weather\":\"cloudy 17C\",\"source\":\"m11_deterministic_stub\"}"
+              },
+              {
+                "role": "assistant",
+                "content": "Berlin: cloudy, 17\u00b0C."
+              },
+              {
+                "role": "user",
+                "content": "Continue."
+              }
+            ],
+            "tools": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "lookup_weather",
+                  "description": "Return deterministic weather for a city.",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "city": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "city"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "strict": true
+                }
+              }
+            ],
+            "tool_choice": "auto",
+            "reasoning_effort": "none",
+            "temperature": 0,
+            "max_tokens": 1,
+            "stream": false,
+            "stop": null
+          },
+          "encoded_length": 378
+        },
+        "request_fence": {
+          "sequence": 2,
+          "body_sha256": "e0a39b8965bfea3588a09e3d6171585406190e3adb8508a0ea91ff740c31ad47",
+          "state": "recoverable",
+          "started": true
+        },
+        "next_sequence": 3
+      },
+      "expired_retry_atomic": true
+    },
+    {
+      "name": "active",
+      "active_retry_no_generation": true,
+      "recovered": {
+        "id": "active",
+        "state": "idle",
+        "request_count": 1,
+        "last_turn": {
+          "session_id": "active",
+          "response_id": "5ae5ac467f6f47ffb6598944e99f3611",
+          "t0": 300052.577728625,
+          "generated": 0,
+          "decode_s": 0.0,
+          "first_canonical_s": null,
+          "first_chunk_s": null,
+          "formatting_s": 0.0,
+          "delivery_wait_s": 0.0,
+          "protocol_chunks_produced": 0,
+          "iterator_yields": 0,
+          "canonical_emitted": 0,
+          "rows": [],
+          "cancelled": true,
+          "client_acknowledged_ordinal": 0,
+          "load_s": 8.749775588512421e-07,
+          "prefill_handoff_s": 0.13968345895409584,
+          "prompt_replay": 0,
+          "full_cache_repack": 0,
+          "exit_exception": "CancelledError(\"Cancelled via cancel scope b294724ff0 by <Task pending name='Task-126' coro=<RequestResponseCycle.run_asgi() running at /private/tmp/ds41f-m32-qual/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py:411> cb=[set.discard()]>\")",
+          "quiescence": {
+            "canonical_frontier": 7,
+            "recovery_suffix_tokens": [],
+            "discarded_future_token": 19923,
+            "counters": {
+              "new_verify_cycles": 0,
+              "new_proposals": 0,
+              "target_forwards": 0,
+              "history_replay": 0,
+              "full_cache_repack": 0,
+              "dspark_appends": 0
+            },
+            "latency_s": 2.8749986086040735e-05,
+            "queue_drained_tokens": [],
+            "dspark": {
+              "frontier": 7,
+              "offsets": [
+                7,
+                7,
+                7
+              ],
+              "target_layer_ids": [
+                37,
+                38,
+                39
+              ],
+              "stage_count": 3,
+              "window_size": 5,
+              "authority": "bounded committed DSpark context; not executable target truth"
+            }
+          },
+          "canonical_frontier": 7,
+          "target_offsets": [
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7
+          ],
+          "dspark_offsets": [
+            7,
+            7,
+            7
+          ],
+          "terminal_matches": [],
+          "response": {
+            "id": "5ae5ac467f6f47ffb6598944e99f3611",
+            "object": "chat.completion",
+            "created": 1791058210,
+            "model": "deepseek-v4.1-flash",
+            "system_fingerprint": null,
+            "choices": [
+              {
+                "index": 0,
+                "message": {
+                  "role": "assistant",
+                  "content": ""
+                },
+                "logprobs": null,
+                "finish_reason": null
+              }
+            ]
+          },
+          "protocol_events": [
+            {
+              "id": "5ae5ac467f6f47ffb6598944e99f3611",
+              "object": "chat.completion.chunk",
+              "created": 1791058210,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "role": "assistant",
+                    "content": ""
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ]
+            }
+          ],
+          "canonical_generated": [],
+          "prediction_retired": true,
+          "queue_empty": true,
+          "certificate": {
+            "version": 1,
+            "frontier": 7,
+            "canonical_sha256": "4747652360a0dce92a5f4d3e469aa9e033514054b7a61743417abd1f381eb052",
+            "representable": true,
+            "executable_tools": false,
+            "exact_prefix": true,
+            "semantic_complete": true,
+            "first_mismatch": null,
+            "witness": {
+              "model": "deepseek-v4.1-flash",
+              "messages": [
+                {
+                  "role": "user",
+                  "content": "Say hello."
+                },
+                {
+                  "role": "assistant",
+                  "content": ""
+                },
+                {
+                  "role": "user",
+                  "content": "Continue."
+                }
+              ],
+              "reasoning_effort": "none",
+              "temperature": 0,
+              "max_tokens": 1,
+              "stream": false
+            },
+            "encoded_length": 13
+          },
+          "cleanup_s": 0.00117816700367257,
+          "elapsed_s": 0.1412806250154972
+        },
+        "canonical_frontier": 7,
+        "outcome_state": "recoverable",
+        "certificate": {
+          "version": 1,
+          "frontier": 7,
+          "canonical_sha256": "4747652360a0dce92a5f4d3e469aa9e033514054b7a61743417abd1f381eb052",
+          "representable": true,
+          "executable_tools": false,
+          "exact_prefix": true,
+          "semantic_complete": true,
+          "first_mismatch": null,
+          "witness": {
+            "model": "deepseek-v4.1-flash",
+            "messages": [
+              {
+                "role": "user",
+                "content": "Say hello."
+              },
+              {
+                "role": "assistant",
+                "content": ""
+              },
+              {
+                "role": "user",
+                "content": "Continue."
+              }
+            ],
+            "reasoning_effort": "none",
+            "temperature": 0,
+            "max_tokens": 1,
+            "stream": false
+          },
+          "encoded_length": 13
+        },
+        "request_fence": {
+          "sequence": 1,
+          "body_sha256": "1fe0c280fc261f028f02fd5ba44fa3428acb6c0dad95ccd31e86d5fb5584099b",
+          "state": "recoverable",
+          "started": true
+        },
+        "next_sequence": 2
+      }
+    }
+  ],
+  "counts": {
+    "replay": 0,
+    "repack": 0,
+    "verify": 16,
+    "proposal": 20,
+    "fresh_target_allocations": 4
+  },
+  "sources": {
+    "ds41f_mlx/serving/internal_mtp.py": "afb3165e0b9516a8b0112fc504534e32e905b7b992e8209b763242430638509a",
+    "ds41f_mlx/serving/server.py": "a2da2a7320d456a2695fccb98b12654f635c490f48926c8ce0f431500908559a",
+    "ds41f_mlx/serving/recovery_certificate.py": "9b355ddd7a81953079f0b4edd6be7930293b8916f54036cc2c5dd49d1685aea4",
+    "ds41f_mlx/serving/request_fence.py": "07f397caf7e30e305fa498655cf24afbb5bf19a80e3340dc487f6ff7348e2272",
+    "tools/run_m36r_http.py": "cfbd8193eae7145d1c9903f5bcc6d9709f68f4e2b2cf32ea38d27e70f120f291"
+  }
+}

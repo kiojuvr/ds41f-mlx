@@ -1,0 +1,20 @@
+{
+  "schema": "ds41f.m38.commands.v1",
+  "qualification_python": "/tmp/ds41f-m32-qual/bin/python",
+  "environment": {"DS41F_OMLX_PATH": "/tmp/ds41f-m33-omlx"},
+  "serialized_checkpoint_commands": [
+    "python -m tools.run_m38_soak",
+    "python tools/run_m38_gates.py",
+    "DS41F_M38_GATE_START=prior-evidence-regressions python tools/run_m38_gates.py",
+    "python -m tools.run_m38_client_pressure"
+  ],
+  "non_generation_fault_commands": [
+    "python -m tools.run_m38_lifecycle_transport",
+    "python -m tools.run_m38_retention_probe"
+  ],
+  "gate_details": "gate-commands.json and native-gate-commands.json; original historical-hash selection failure preserved separately",
+  "pre_fix_regression": "Load git show daf429e:ds41f_mlx/internal_local_client.py into its original module namespace; pytest tests/test_m38_client_faults.py (10 failed / 8 passed). Current source is not overwritten.",
+  "final_record": "python tools/record_m38_evidence.py",
+  "final_gate": "python -m pytest -q tests/test_m38_evidence.py",
+  "note": "Only final serialized checkpoint runs are authoritative. In-development overlapping/interrupted gate starts are retained under excluded-gate-attempt and never counted. Non-generation transport and synthetic tests do not load the checkpoint."
+}

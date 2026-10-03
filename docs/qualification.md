@@ -50,7 +50,11 @@ experimental local Python client above the existing browser HTTP boundary: froze
 requests, centralized certified reconciliation, bounded tool ownership and explicit
 DELETE/fresh/expired results. The public browser loop and Rust raw API stay unchanged.
 Current-source decision and exact scope are in its canonical artifact; release,
-longer-context and longer living-client soak gates remain separate.
+longer-context and release gates remain separate.
+[M38](milestone-38-client-operational-soak.md) completes a 76-request living-client
+soak and bounded fault/ledger matrix, but is **BLOCKED_OPERATIONAL_LIFETIME_RETENTION**:
+server closed records/diagnostic payloads have no lifetime cap. Client ambiguity
+now remains fenced across re-observation and lifecycle actions. This is not promotion.
 Production/default MTP remains OFF; public MTP disabled; MTP persistence/restore,
 token-exact immediate abort and shared/concurrent MTP remain unsupported.
 

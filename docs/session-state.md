@@ -40,6 +40,11 @@ are transport/admission observations, not token/cache authority. Negative outcom
 omit the unrepresentable final assistant; explicit DELETE/fresh creation may prefill
 legitimate prior visible messages as a new session, never carry retired native state.
 Expired identities surface without regeneration.
+[M38](milestone-38-client-operational-soak.md) makes lifecycle response uncertainty
+sticky/stopped and reserved effects non-bypassable, including DELETE/fresh actions.
+No automatic resolution API is provided. Its finite living-client soak passes, but
+server retirement lifetime retention is BLOCKED: closed identities and payloads
+remain in an uncapped session map despite the bounded trace deque.
 
 The current native session owner is `TextBackboneState` together with `TextEncoder`, `TextDecoder`, and `TextGeneration` state machinery. It is the reference state contract for future production architecture unless a documented architecture decision replaces or wraps it. Validation inventory helpers are not independent production session implementations.
 

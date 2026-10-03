@@ -2,6 +2,16 @@
 
 This roadmap converts the runtime strategy into a finite sequence of milestones. It is not an optimization backlog. Runtime behavior, selectors, API integration, and multimodal work must not change until the relevant architecture milestone authorizes that work.
 
+## M38 — Living-client operational soak
+
+Decision: **BLOCKED_OPERATIONAL_LIFETIME_RETENTION**. The 76-request, three-session
+checkpoint workload passes after sticky lifecycle-uncertainty and ambiguous-effect
+hardening. Default 128-entry ledger exhaustion fails before effect with no eviction.
+Closed server identities and diagnostic payloads still have no lifetime cap; trace
+deque bounds alone are insufficient. See [M38](milestone-38-client-operational-soak.md).
+Next: operational lifetime/admission hardening, then a dedicated release-readiness
+evaluation. Production/public MTP remains OFF/disabled.
+
 ## M37 — Bounded internal local-client integration
 
 The reusable experimental local `InternalLocalClient` owns one frozen request,

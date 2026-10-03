@@ -1,0 +1,49 @@
+{
+  "schema": "ds41f.m38.retention-probe.v1",
+  "scope": "synthetic closed flags; actual create method; no checkpoint execution",
+  "finding": "NO_LIFETIME_SESSION_CAP",
+  "samples": [
+    {
+      "cycles": 32,
+      "retained_sessions": 32,
+      "serialized_record_bytes": 6454
+    },
+    {
+      "cycles": 64,
+      "retained_sessions": 64,
+      "serialized_record_bytes": 12918
+    },
+    {
+      "cycles": 96,
+      "retained_sessions": 96,
+      "serialized_record_bytes": 19382
+    },
+    {
+      "cycles": 128,
+      "retained_sessions": 128,
+      "serialized_record_bytes": 25874
+    },
+    {
+      "cycles": 160,
+      "retained_sessions": 160,
+      "serialized_record_bytes": 32370
+    },
+    {
+      "cycles": 192,
+      "retained_sessions": 192,
+      "serialized_record_bytes": 38866
+    },
+    {
+      "cycles": 224,
+      "retained_sessions": 224,
+      "serialized_record_bytes": 45362
+    },
+    {
+      "cycles": 256,
+      "retained_sessions": 256,
+      "serialized_record_bytes": 51858
+    }
+  ],
+  "old_ids_denied": true,
+  "explanation": "max_live_sessions excludes closed records; sessions dict retains every closed identity and its diagnostics indefinitely"
+}

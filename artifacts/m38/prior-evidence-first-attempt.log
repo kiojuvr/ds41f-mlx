@@ -1,0 +1,20 @@
+..............................................F...                              [100%]
+=================================== FAILURES ===================================
+___________________ test_current_source_and_evidence_hashes ____________________
+
+    def test_current_source_and_evidence_hashes():
+        q=load('qualification.json')
+        assert q['decision']=='QUALIFIED_BOUNDED_INTERNAL_LOCAL_CLIENT'
+        for group in ['source_hashes','evidence_hashes','historical_evidence_hashes']:
+>           for path,digest in q[group].items():assert sha(ROOT/path)==digest,path
+                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: ds41f_mlx/internal_local_client.py
+E           assert '36caed07e0b4...85ad5a706ce55' == '861aac3e4d80...b8dd4b4d381df'
+E             
+E             - 861aac3e4d80e7d5ea17bc9e3f535e5550a16d9cd2b42bbdc87b8dd4b4d381df
+E             + 36caed07e0b4165d076354cd5d1843679788ad4c0e1f9083b1085ad5a706ce55
+
+tests/test_m37_evidence.py:16: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_m37_evidence.py::test_current_source_and_evidence_hashes - ...
+1 failed, 49 passed, 3 deselected, 137 subtests passed in 2.14s

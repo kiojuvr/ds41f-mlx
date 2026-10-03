@@ -1,0 +1,75 @@
+[
+  {
+    "name": "native-gates",
+    "command": [
+      "/private/tmp/ds41f-m32-qual/bin/python",
+      "-c",
+      "from pathlib import Path; p=Path('tools/run_m37_gates.py'); code=p.read_text().replace('artifacts/m37','artifacts/m38'); exec(compile(code,str(p),'exec'),{'__file__':str(p.resolve()),'__name__':'__main__'})"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "m37-workflow",
+    "command": [
+      "/private/tmp/ds41f-m32-qual/bin/python",
+      "-c",
+      "import asyncio; from tools import run_m37_local_client as q; q.OUT=q.q.ROOT/'artifacts/m38/m37-workflow.json'; asyncio.run(q.main())"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "client-tests",
+    "command": [
+      "/private/tmp/ds41f-m32-qual/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_m38_client_faults.py",
+      "tests/test_m37_local_client.py",
+      "tests/test_m19_web_client.py",
+      "--junitxml=artifacts/m38/client-tests.xml"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "runtime-regressions",
+    "command": [
+      "/private/tmp/ds41f-m32-qual/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_m36r_recovery.py",
+      "tests/test_m36_recovery_boundary.py",
+      "tests/test_m35_transport_lease.py",
+      "tests/test_m34_cache_release.py",
+      "tests/test_m29_mtp_lifecycle.py",
+      "tests/test_m25_mtp_boundary.py",
+      "tests/test_prefill_fp8_mlx_p5.py",
+      "tests/test_prefill_fp8_mlx_p6.py",
+      "tests/test_prefill_fp8_mlx_p7.py",
+      "tools/m33_semantic_tests.py",
+      "tools/m33_semantic_extra_tests.py",
+      "tests/test_stateful_request_policy.py",
+      "tests/test_runtime_config.py"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "prior-evidence-regressions",
+    "command": [
+      "/private/tmp/ds41f-m32-qual/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_m33_protocol_evidence.py",
+      "tests/test_m34_operational_evidence.py",
+      "tests/test_m35_http_evidence.py",
+      "tests/test_m36_evidence.py",
+      "tests/test_m36r_evidence.py",
+      "tests/test_m37_evidence.py",
+      "-k",
+      "not identity_and_sources and not current_sources_and_raw_evidence_match and not final_qualification"
+    ],
+    "returncode": 1
+  }
+]

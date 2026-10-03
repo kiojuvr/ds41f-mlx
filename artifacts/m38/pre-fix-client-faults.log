@@ -1,0 +1,235 @@
+FFFFFFFF.......FF.                                                       [100%]
+=================================== FAILURES ===================================
+_______________ test_lifecycle_ambiguity_is_sticky[False-delete] _______________
+
+action = 'delete', reached = False
+
+    @pytest.mark.parametrize('action', ['delete', 'create'])
+    @pytest.mark.parametrize('reached', [False, True])
+    def test_lifecycle_ambiguity_is_sticky(action, reached):
+        r=ResetRuntime(); c=InternalLocalClient(r); c.create('old'); submit(c); c.reconcile()
+        if action=='create': c.retire()
+        original = r.close_session if action=='delete' else r.create_session
+        def loss(sid):
+            if reached: original(sid)
+            raise OSError('response lost; admission unknown')
+        if action=='delete': r.close_session=loss
+        else: r.create_session=loss
+        with pytest.raises(OSError): c.retire() if action=='delete' else c.create('new')
+        if action=='delete': r.close_session=original
+        else: r.create_session=original
+        before=(list(r.creates), list(r.deletes), list(r.posts))
+        for fn in [c.retire, lambda:c.create('another'), lambda:submit(c), c.reconcile]:
+>           with pytest.raises(ClientStateError): fn()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE ClientStateError
+
+tests/test_m38_client_faults.py:37: Failed
+_______________ test_lifecycle_ambiguity_is_sticky[False-create] _______________
+
+action = 'create', reached = False
+
+    @pytest.mark.parametrize('action', ['delete', 'create'])
+    @pytest.mark.parametrize('reached', [False, True])
+    def test_lifecycle_ambiguity_is_sticky(action, reached):
+        r=ResetRuntime(); c=InternalLocalClient(r); c.create('old'); submit(c); c.reconcile()
+        if action=='create': c.retire()
+        original = r.close_session if action=='delete' else r.create_session
+        def loss(sid):
+            if reached: original(sid)
+            raise OSError('response lost; admission unknown')
+        if action=='delete': r.close_session=loss
+        else: r.create_session=loss
+        with pytest.raises(OSError): c.retire() if action=='delete' else c.create('new')
+        if action=='delete': r.close_session=original
+        else: r.create_session=original
+        before=(list(r.creates), list(r.deletes), list(r.posts))
+        for fn in [c.retire, lambda:c.create('another'), lambda:submit(c), c.reconcile]:
+>           with pytest.raises(ClientStateError): fn()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE ClientStateError
+
+tests/test_m38_client_faults.py:37: Failed
+_______________ test_lifecycle_ambiguity_is_sticky[True-delete] ________________
+
+action = 'delete', reached = True
+
+    @pytest.mark.parametrize('action', ['delete', 'create'])
+    @pytest.mark.parametrize('reached', [False, True])
+    def test_lifecycle_ambiguity_is_sticky(action, reached):
+        r=ResetRuntime(); c=InternalLocalClient(r); c.create('old'); submit(c); c.reconcile()
+        if action=='create': c.retire()
+        original = r.close_session if action=='delete' else r.create_session
+        def loss(sid):
+            if reached: original(sid)
+            raise OSError('response lost; admission unknown')
+        if action=='delete': r.close_session=loss
+        else: r.create_session=loss
+        with pytest.raises(OSError): c.retire() if action=='delete' else c.create('new')
+        if action=='delete': r.close_session=original
+        else: r.create_session=original
+        before=(list(r.creates), list(r.deletes), list(r.posts))
+        for fn in [c.retire, lambda:c.create('another'), lambda:submit(c), c.reconcile]:
+>           with pytest.raises(ClientStateError): fn()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE ClientStateError
+
+tests/test_m38_client_faults.py:37: Failed
+_______________ test_lifecycle_ambiguity_is_sticky[True-create] ________________
+
+action = 'create', reached = True
+
+    @pytest.mark.parametrize('action', ['delete', 'create'])
+    @pytest.mark.parametrize('reached', [False, True])
+    def test_lifecycle_ambiguity_is_sticky(action, reached):
+        r=ResetRuntime(); c=InternalLocalClient(r); c.create('old'); submit(c); c.reconcile()
+        if action=='create': c.retire()
+        original = r.close_session if action=='delete' else r.create_session
+        def loss(sid):
+            if reached: original(sid)
+            raise OSError('response lost; admission unknown')
+        if action=='delete': r.close_session=loss
+        else: r.create_session=loss
+        with pytest.raises(OSError): c.retire() if action=='delete' else c.create('new')
+        if action=='delete': r.close_session=original
+        else: r.create_session=original
+        before=(list(r.creates), list(r.deletes), list(r.posts))
+        for fn in [c.retire, lambda:c.create('another'), lambda:submit(c), c.reconcile]:
+>           with pytest.raises(ClientStateError): fn()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE ClientStateError
+
+tests/test_m38_client_faults.py:37: Failed
+_ test_reserved_effect_cannot_be_bypassed_by_observation_or_retirement[raise] __
+
+result = 'raise'
+
+    @pytest.mark.parametrize('result', ['raise', 'oversized', 'invalid'])
+    def test_reserved_effect_cannot_be_bypassed_by_observation_or_retirement(result):
+        r=ResetRuntime(); c=InternalLocalClient(r); c.create('old'); certify_tool(r,c); effects=[]
+        def effect(call):
+            effects.append(call)
+            if result=='raise': raise OSError('effect may have happened')
+            return 'x'*65537 if result=='oversized' else None
+        with pytest.raises((OSError,ClientStateError)): c.execute_tools(effect)
+        ledger=c.ledger; posts=len(r.posts)
+        for _ in range(4):
+>           c.reconcile(); assert c.state=='tool_ambiguous'
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: assert 'tool_pending' == 'tool_ambiguous'
+E             
+E             - tool_ambiguous
+E             + tool_pending
+
+tests/test_m38_client_faults.py:52: AssertionError
+_ test_reserved_effect_cannot_be_bypassed_by_observation_or_retirement[oversized] _
+
+result = 'oversized'
+
+    @pytest.mark.parametrize('result', ['raise', 'oversized', 'invalid'])
+    def test_reserved_effect_cannot_be_bypassed_by_observation_or_retirement(result):
+        r=ResetRuntime(); c=InternalLocalClient(r); c.create('old'); certify_tool(r,c); effects=[]
+        def effect(call):
+            effects.append(call)
+            if result=='raise': raise OSError('effect may have happened')
+            return 'x'*65537 if result=='oversized' else None
+        with pytest.raises((OSError,ClientStateError)): c.execute_tools(effect)
+        ledger=c.ledger; posts=len(r.posts)
+        for _ in range(4):
+>           c.reconcile(); assert c.state=='tool_ambiguous'
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: assert 'tool_pending' == 'tool_ambiguous'
+E             
+E             - tool_ambiguous
+E             + tool_pending
+
+tests/test_m38_client_faults.py:52: AssertionError
+_ test_reserved_effect_cannot_be_bypassed_by_observation_or_retirement[invalid] _
+
+result = 'invalid'
+
+    @pytest.mark.parametrize('result', ['raise', 'oversized', 'invalid'])
+    def test_reserved_effect_cannot_be_bypassed_by_observation_or_retirement(result):
+        r=ResetRuntime(); c=InternalLocalClient(r); c.create('old'); certify_tool(r,c); effects=[]
+        def effect(call):
+            effects.append(call)
+            if result=='raise': raise OSError('effect may have happened')
+            return 'x'*65537 if result=='oversized' else None
+        with pytest.raises((OSError,ClientStateError)): c.execute_tools(effect)
+        ledger=c.ledger; posts=len(r.posts)
+        for _ in range(4):
+>           c.reconcile(); assert c.state=='tool_ambiguous'
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: assert 'tool_pending' == 'tool_ambiguous'
+E             
+E             - tool_ambiguous
+E             + tool_pending
+
+tests/test_m38_client_faults.py:52: AssertionError
+______ test_ambiguous_effect_direct_retire_cannot_construct_fresh_history ______
+
+    def test_ambiguous_effect_direct_retire_cannot_construct_fresh_history():
+        r=ResetRuntime();c=InternalLocalClient(r);c.create('s');certify_tool(r,c)
+        def effect(_):raise OSError('external effect may have occurred')
+        with pytest.raises(OSError):c.execute_tools(effect)
+>       with pytest.raises(ClientStateError,match='application intervention'):c.retire()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ClientStateError
+
+tests/test_m38_client_faults.py:65: Failed
+_______ test_invalid_local_additions_reject_before_mutation[additions0] ________
+
+additions = [None]
+
+    @pytest.mark.parametrize('additions', [[None], ['user'], [{'role':'tool','content':'invented'}]])
+    def test_invalid_local_additions_reject_before_mutation(additions):
+        r=ResetRuntime(); c=InternalLocalClient(r); c.create('s')
+>       with pytest.raises(ClientStateError): c.submit(additions,options={})
+                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_m38_client_faults.py:152: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+ds41f_mlx.internal_local_client:147: in submit
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+.0 = <list_iterator object at 0x107984220>
+
+>   ???
+E   AttributeError: 'NoneType' object has no attribute 'get'
+
+ds41f_mlx.internal_local_client:147: AttributeError
+_______ test_invalid_local_additions_reject_before_mutation[additions1] ________
+
+additions = ['user']
+
+    @pytest.mark.parametrize('additions', [[None], ['user'], [{'role':'tool','content':'invented'}]])
+    def test_invalid_local_additions_reject_before_mutation(additions):
+        r=ResetRuntime(); c=InternalLocalClient(r); c.create('s')
+>       with pytest.raises(ClientStateError): c.submit(additions,options={})
+                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_m38_client_faults.py:152: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+ds41f_mlx.internal_local_client:147: in submit
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+.0 = <list_iterator object at 0x107985990>
+
+>   ???
+E   AttributeError: 'str' object has no attribute 'get'
+
+ds41f_mlx.internal_local_client:147: AttributeError
+=========================== short test summary info ============================
+FAILED tests/test_m38_client_faults.py::test_lifecycle_ambiguity_is_sticky[False-delete]
+FAILED tests/test_m38_client_faults.py::test_lifecycle_ambiguity_is_sticky[False-create]
+FAILED tests/test_m38_client_faults.py::test_lifecycle_ambiguity_is_sticky[True-delete]
+FAILED tests/test_m38_client_faults.py::test_lifecycle_ambiguity_is_sticky[True-create]
+FAILED tests/test_m38_client_faults.py::test_reserved_effect_cannot_be_bypassed_by_observation_or_retirement[raise]
+FAILED tests/test_m38_client_faults.py::test_reserved_effect_cannot_be_bypassed_by_observation_or_retirement[oversized]
+FAILED tests/test_m38_client_faults.py::test_reserved_effect_cannot_be_bypassed_by_observation_or_retirement[invalid]
+FAILED tests/test_m38_client_faults.py::test_ambiguous_effect_direct_retire_cannot_construct_fresh_history
+FAILED tests/test_m38_client_faults.py::test_invalid_local_additions_reject_before_mutation[additions0]
+FAILED tests/test_m38_client_faults.py::test_invalid_local_additions_reject_before_mutation[additions1]
+10 failed, 8 passed in 4.07s

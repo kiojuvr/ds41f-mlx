@@ -1,0 +1,37 @@
+{
+  "schema": "ds41f.m38.lifecycle-transport.v1",
+  "status": "PASS",
+  "scope": "actual HTTP/socket/lifecycle; synthetic post-header ASGI failure; no checkpoint generation",
+  "rows": [
+    {
+      "action": "delete",
+      "error": {
+        "type": "IncompleteRead",
+        "message": "IncompleteRead(0 bytes read, 187 more expected)"
+      },
+      "client_state": "stopped",
+      "uncertain": {
+        "action": "delete",
+        "session_id": "m38-body-loss-delete"
+      },
+      "mutation_reached": true,
+      "server_closed": true,
+      "retry_or_replacement": false
+    },
+    {
+      "action": "create",
+      "error": {
+        "type": "IncompleteRead",
+        "message": "IncompleteRead(0 bytes read, 192 more expected)"
+      },
+      "client_state": "stopped",
+      "uncertain": {
+        "action": "create",
+        "requested_session_id": "m38-body-loss-create"
+      },
+      "mutation_reached": true,
+      "server_closed": false,
+      "retry_or_replacement": false
+    }
+  ]
+}

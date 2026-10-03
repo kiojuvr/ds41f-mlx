@@ -96,6 +96,7 @@ class InternalLocalClient:
         self._outcome = None
         self._stream = None
         self._ledger = {}
+        self.lifecycle_uncertain = None  # sticky; no API can prove a lost create/DELETE response
         if type(ledger_limit) is not int or not 0 <= ledger_limit <= 128:
             raise ValueError('ledger capacity must be between 0 and 128')
         self.ledger_limit = ledger_limit
@@ -121,7 +122,18 @@ class InternalLocalClient:
         self.state = 'stopped'
         raise ClientStateError(message)
 
+    def _require_known_lifecycle(self):
+        if self.lifecycle_uncertain is not None:
+            self._stop('session lifecycle uncertain; manual reconciliation required')
+
+    def _require_resolved_effects(self):
+        if any(e['status'] == 'reserved' for e in self._ledger.values()):
+            self.state = 'tool_ambiguous'
+            raise ClientStateError('reserved effect ambiguous; application intervention required')
+
     def create(self, session_id=None):
+        self._require_known_lifecycle()
+        self._require_resolved_effects()
         if self.state != 'retired':
             self._stop('must explicitly retire before fresh session creation')
         t0 = time.perf_counter()
@@ -130,6 +142,7 @@ class InternalLocalClient:
             if not isinstance(rec.get('id'), str) or rec.get('outcome_state') != 'not_admitted' or rec.get('next_sequence') != 1:
                 raise ClientStateError('fresh session did not establish the internal fence contract')
         except BaseException:
+            self.lifecycle_uncertain = dict(action='create', requested_session_id=session_id)
             self.state = 'stopped'
             raise
         self.session_id = rec['id']
@@ -140,11 +153,13 @@ class InternalLocalClient:
         return dict(id=self.session_id, outcome_state='not_admitted', next_sequence=1)
 
     def submit(self, additions, *, options):
+        self._require_known_lifecycle()
+        self._require_resolved_effects()
         if self.state != 'ready':
             self._stop('unresolved request or tool ownership; new work forbidden')
         if 'messages' in options:
             self._stop('options cannot replace owned conversation')
-        if not isinstance(additions, list) or any(m.get('role') != 'user' for m in additions):
+        if not isinstance(additions, list) or any(not isinstance(m, dict) or m.get('role') != 'user' for m in additions):
             self._stop('submit accepts ordinary user additions; tool results are ledger owned')
         body = deepcopy(options)
         body['messages'] = self.messages + deepcopy(additions)
@@ -258,7 +273,8 @@ class InternalLocalClient:
             if out['outcome_state'] == 'recoverable':
                 calls = out['response']['choices'][0]['message'].get('tool_calls') or []
                 completed = calls and all(self._ledger.get((self.session_id, seq, i, c['id']), {}).get('status') == 'completed' for i,c in enumerate(calls))
-                self.state = ('tool_completed' if completed else 'tool_pending') if calls else 'ready'
+                reserved = any(e['status'] == 'reserved' for e in self._ledger.values())
+                self.state = 'tool_ambiguous' if reserved else (('tool_completed' if completed else 'tool_pending') if calls else 'ready')
             else:
                 self.state = out['outcome_state']
             return
@@ -307,6 +323,8 @@ class InternalLocalClient:
         self._outcome = deepcopy(out)
 
     def execute_tools(self, execute):
+        self._require_known_lifecycle()
+        self._require_resolved_effects()
         if self.state not in ('tool_pending', 'tool_completed') or not self._outcome:
             self._stop('no owned certified completed tool outcome')
         t0 = time.perf_counter()
@@ -346,12 +364,16 @@ class InternalLocalClient:
         return results
 
     def submit_tool_results(self, *, options):
+        self._require_known_lifecycle()
+        self._require_resolved_effects()
         if self.state != 'tool_completed':
             self._stop('stored ordinary tool results required')
         self.state = 'ready'
         return self.submit([], options=options)
 
     def retire(self):
+        self._require_known_lifecycle()
+        self._require_resolved_effects()
         if self.state in ('streaming', 'in_flight', 'ambiguous'):
             self._stop('resolve/close active request before DELETE')
         t0 = time.perf_counter()
@@ -360,6 +382,7 @@ class InternalLocalClient:
             if rec.get('state') != 'closed':
                 raise ClientStateError('DELETE not confirmed')
         except BaseException:
+            self.lifecycle_uncertain = dict(action='delete', session_id=self.session_id)
             self.state = 'stopped'
             raise
         self.state = 'retired'

@@ -1,0 +1,19 @@
+[
+  {
+    "name": "identities",
+    "command": [
+      "/private/tmp/ds41f-m32-qual/bin/python",
+      "tools/check_m34_identities.py"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "recipe-matrix",
+    "command": [
+      "/private/tmp/ds41f-m32-qual/bin/python",
+      "-c",
+      "from pathlib import Path; p=Path('tools/run_m36r_recipe_matrix.py'); code=p.read_text().replace('artifacts/m36r/recipe-matrix.json','artifacts/m38/recipe-matrix.json'); exec(compile(code,str(p),'exec'),{'__file__':str(p.resolve()),'__name__':'__main__'})"
+    ],
+    "returncode": 0
+  }
+]

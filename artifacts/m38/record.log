@@ -1,0 +1,635 @@
+{
+  "decision": "BLOCKED_OPERATIONAL_LIFETIME_RETENTION",
+  "scale": {
+    "main_turns": 76,
+    "agent_sessions": 3,
+    "all_main_process_sessions": 5,
+    "certified_effects": 14,
+    "returned_responses": 2390,
+    "pressure_client_turns": 2,
+    "synthetic_ledger_effects": 128,
+    "synthetic_ledger_sessions": 4,
+    "synthetic_retention_records": 256
+  },
+  "replay_repack": {
+    "main_model_replay": 0,
+    "main_full_repack": 0,
+    "main_fresh_prefills": 3,
+    "main_retained_suffix_requests": 73,
+    "pressure_fresh_prefills": 1,
+    "pressure_retained_suffix_requests": 1,
+    "settlement_new_verify_proposals": 0
+  },
+  "performance": {
+    "phases": [
+      {
+        "phase": 0,
+        "turns": 25,
+        "cohort": "ordinary normal/json, excluding first sequence and injected loss/delay",
+        "median_wall_s": 1.1878860410070047,
+        "median_prefill_handoff_s": 0.2589530830155127,
+        "weighted_decode_responses_s": 28.683994411664784,
+        "median_reconcile_wall_s": 0.0029301249887794256,
+        "fresh_prefill_handoff_s": 4.356769791978877,
+        "load_s": 80.26669404102722
+      },
+      {
+        "phase": 1,
+        "turns": 26,
+        "cohort": "ordinary normal/json, excluding first sequence and injected loss/delay",
+        "median_wall_s": 1.1708555204968434,
+        "median_prefill_handoff_s": 0.25857256300514564,
+        "weighted_decode_responses_s": 34.408025424380014,
+        "median_reconcile_wall_s": 0.004291813005693257,
+        "fresh_prefill_handoff_s": 10.326589500007685,
+        "load_s": 3.7499703466892242e-06
+      },
+      {
+        "phase": 2,
+        "turns": 25,
+        "cohort": "ordinary normal/json, excluding first sequence and injected loss/delay",
+        "median_wall_s": 1.1855050835001748,
+        "median_prefill_handoff_s": 0.26027475052978843,
+        "weighted_decode_responses_s": 35.39497708436388,
+        "median_reconcile_wall_s": 0.005892020970350131,
+        "fresh_prefill_handoff_s": 16.89382908400148,
+        "load_s": 4.959001671522856e-06
+      }
+    ],
+    "retained_timing_samples": [
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.001161874970421195
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.001097082975320518
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0010451250127516687
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0010377919534221292
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0027116660494357347
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0014431250165216625
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0014120839769020677
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0013995419722050428
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.003439583000726998
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004361707950010896,
+        "sequence": 12
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005233375006355345
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0037800829741172493,
+        "sequence": 12
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.00468662497587502
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0038120829849503934,
+        "sequence": 12
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.004640416998881847
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.005245957989245653,
+        "sequence": 13
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004800124967005104,
+        "sequence": 13
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.006237416993826628
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0038602910353802145,
+        "sequence": 13
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.004991707974113524
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0038837079773657024,
+        "sequence": 13
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005066166981123388
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0054062079871073365,
+        "sequence": 14
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0045161250163801014,
+        "sequence": 14
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005917917005717754
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004014750011265278,
+        "sequence": 14
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0053001660271547735
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.003887917031534016,
+        "sequence": 14
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005024167010560632
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0056317500420846045,
+        "sequence": 15
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.005412667000200599,
+        "sequence": 15
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.006966124987229705
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004522125003859401,
+        "sequence": 15
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005649124970659614
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004375583026558161,
+        "sequence": 15
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.00543149997247383
+      },
+      {
+        "action": "tool_ledger_and_effect",
+        "seconds": 0.0001330420491285622
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0051014579948969185,
+        "sequence": 15
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0065626659779809415
+      },
+      {
+        "action": "tool_ledger_and_effect",
+        "seconds": 9.875046089291573e-06
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0039688749820925295,
+        "sequence": 15
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0049479579902254045
+      },
+      {
+        "action": "tool_ledger_and_effect",
+        "seconds": 1.008401159197092e-05
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004361917031928897,
+        "sequence": 16
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004667291010264307,
+        "sequence": 16
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005850874993484467
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004078999976627529,
+        "sequence": 16
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.00506608298746869
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.003976958978455514,
+        "sequence": 16
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.004921749990899116
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 1.0550983749562874,
+        "sequence": 17
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004718500014860183,
+        "sequence": 17
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0060117500252090394
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0060306250234134495,
+        "sequence": 17
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.007061749987769872
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004128917003981769,
+        "sequence": 17
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0051792089943774045
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.005675000022165477,
+        "sequence": 18
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.004110292007680982
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0059614169877022505,
+        "sequence": 18
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0071834170375950634
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.005373707972466946,
+        "sequence": 18
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.006620750005822629
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004908083006739616,
+        "sequence": 18
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005984916002489626
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.005910707986913621,
+        "sequence": 19
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004736500035505742,
+        "sequence": 19
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.006195374997332692
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004219499998725951,
+        "sequence": 19
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005515334021765739
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004283874994143844,
+        "sequence": 19
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005561458005104214
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.005746249982621521,
+        "sequence": 20
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004866374947596341,
+        "sequence": 20
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.006366625020746142
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0044220410054549575,
+        "sequence": 20
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005651207990013063
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0041411659913137555,
+        "sequence": 20
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005306708044372499
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.006210291001480073,
+        "sequence": 21
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.005011625005863607,
+        "sequence": 21
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.006289125012699515
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.00438420899445191,
+        "sequence": 21
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0054359170026145875
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0042277080356143415,
+        "sequence": 21
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005190249998122454
+      },
+      {
+        "action": "tool_ledger_and_effect",
+        "seconds": 0.00014349998673424125
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0053475829772651196,
+        "sequence": 21
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.00687674997607246
+      },
+      {
+        "action": "tool_ledger_and_effect",
+        "seconds": 7.540977094322443e-06
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0042511249775998294,
+        "sequence": 21
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005262750026304275
+      },
+      {
+        "action": "tool_ledger_and_effect",
+        "seconds": 7.374968845397234e-06
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.00463450001552701,
+        "sequence": 22
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0051228750380687416,
+        "sequence": 22
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.006346917012706399
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004318249993957579,
+        "sequence": 22
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005388416990172118
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004340749990660697,
+        "sequence": 22
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005271958012599498
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 1.0573995829909109,
+        "sequence": 23
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.005065583041869104,
+        "sequence": 23
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.006461791985202581
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.00498549995245412,
+        "sequence": 23
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0061265420517884195
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004414958006236702,
+        "sequence": 23
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005528040986973792
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.006293583021033555,
+        "sequence": 24
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005454667028971016
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.001892667030915618
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0018284590332768857
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0016485829837620258
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0013977910275571048
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.006039917003363371,
+        "sequence": 24
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0071621250244788826
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.005016583018004894,
+        "sequence": 24
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.006153707974590361
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004688292043283582,
+        "sequence": 24
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0057062910054810345
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0060200419975444674,
+        "sequence": 25
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.005093624989967793,
+        "sequence": 25
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.006584124988876283
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.00440366700058803,
+        "sequence": 25
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005778125021606684
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004508082987740636,
+        "sequence": 25
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.00566849997267127
+      },
+      {
+        "action": "delete",
+        "seconds": 0.01872766698943451
+      },
+      {
+        "action": "create",
+        "seconds": 0.0010105419787578285
+      }
+    ],
+    "pressure_max_send_wait_s": 3.077916791953612,
+    "pressure_disconnect_to_settlement_s": 2.111103874980472
+  }
+}

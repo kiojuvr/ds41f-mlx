@@ -1,0 +1,1608 @@
+{
+  "schema": "ds41f.m38.qualification.v1",
+  "base_commit": "daf429e30928aa7c9af513737f0f9880c6115e58",
+  "decision": "BLOCKED_OPERATIONAL_LIFETIME_RETENTION",
+  "bounded_workload": "PASS_BOUNDED_WORKLOAD",
+  "release_promoted": false,
+  "final_commit_resolver": "git log -1 --format=%H -- artifacts/m38/qualification.json",
+  "scale": {
+    "main_turns": 76,
+    "agent_sessions": 3,
+    "all_main_process_sessions": 5,
+    "certified_effects": 14,
+    "returned_responses": 2390,
+    "pressure_client_turns": 2,
+    "synthetic_ledger_effects": 128,
+    "synthetic_ledger_sessions": 4,
+    "synthetic_retention_records": 256
+  },
+  "longitudinal": {
+    "one_current_identity": true,
+    "qualified_sequence_advance": true,
+    "frozen_retries_not_generation": true,
+    "immutable_outcomes": true,
+    "sse_display_only": true,
+    "positive_replacement_once": true,
+    "negative_execution": false,
+    "expired_regeneration": false,
+    "retired_identity_reuse": false,
+    "fresh_native_authority_inheritance": false,
+    "end_of_request_and_phase_assertions": true
+  },
+  "recovery_matrix": {
+    "main_modes": {
+      "normal": 44,
+      "json": 12,
+      "drop": 6,
+      "zero": 3,
+      "slow": 3,
+      "terminal": 3,
+      "iterator-drop": 3,
+      "partial": 2
+    },
+    "synthetic_cases": [
+      {
+        "name": "test_lifecycle_ambiguity_is_sticky[False-delete]",
+        "classname": "tests.test_m38_client_faults",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_lifecycle_ambiguity_is_sticky[False-create]",
+        "classname": "tests.test_m38_client_faults",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_lifecycle_ambiguity_is_sticky[True-delete]",
+        "classname": "tests.test_m38_client_faults",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_lifecycle_ambiguity_is_sticky[True-create]",
+        "classname": "tests.test_m38_client_faults",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_reserved_effect_cannot_be_bypassed_by_observation_or_retirement[raise]",
+        "classname": "tests.test_m38_client_faults",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_reserved_effect_cannot_be_bypassed_by_observation_or_retirement[oversized]",
+        "classname": "tests.test_m38_client_faults",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_reserved_effect_cannot_be_bypassed_by_observation_or_retirement[invalid]",
+        "classname": "tests.test_m38_client_faults",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_ambiguous_effect_direct_retire_cannot_construct_fresh_history",
+        "classname": "tests.test_m38_client_faults",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_actual_128_entry_capacity_multi_session_no_eviction_or_alias",
+        "classname": "tests.test_m38_client_faults",
+        "seconds": 4.223
+      },
+      {
+        "name": "test_maximum_stored_result_is_reused_without_second_effect",
+        "classname": "tests.test_m38_client_faults",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_local_request_faults_do_not_mutate_server[body_limit]",
+        "classname": "tests.test_m38_client_faults",
+        "seconds": 0.003
+      },
+      {
+        "name": "test_local_request_faults_do_not_mutate_server[owned_messages]",
+        "classname": "tests.test_m38_client_faults",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_local_request_faults_do_not_mutate_server[not_serializable]",
+        "classname": "tests.test_m38_client_faults",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_absence_lookup_then_active_retry_race_keeps_identity",
+        "classname": "tests.test_m38_client_faults",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_dropped_owned_handle_closes_response_without_history",
+        "classname": "tests.test_m38_client_faults",
+        "seconds": 0.005
+      },
+      {
+        "name": "test_invalid_local_additions_reject_before_mutation[additions0]",
+        "classname": "tests.test_m38_client_faults",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_invalid_local_additions_reject_before_mutation[additions1]",
+        "classname": "tests.test_m38_client_faults",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_invalid_local_additions_reject_before_mutation[additions2]",
+        "classname": "tests.test_m38_client_faults",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_lost_unstarted_retry_frozen_bytes_and_sequence",
+        "classname": "tests.test_m37_local_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_active_never_advances_and_new_work_stops",
+        "classname": "tests.test_m37_local_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_disagreement_stops_without_substitute[sequence]",
+        "classname": "tests.test_m37_local_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_disagreement_stops_without_substitute[body]",
+        "classname": "tests.test_m37_local_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_disagreement_stops_without_substitute[next]",
+        "classname": "tests.test_m37_local_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_disagreement_stops_without_substitute[state]",
+        "classname": "tests.test_m37_local_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_invalid_or_changed_outcome_stops[certificate]",
+        "classname": "tests.test_m37_local_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_invalid_or_changed_outcome_stops[identity]",
+        "classname": "tests.test_m37_local_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_invalid_or_changed_outcome_stops[witness]",
+        "classname": "tests.test_m37_local_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_invalid_or_changed_outcome_stops[tools]",
+        "classname": "tests.test_m37_local_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_invalid_or_changed_outcome_stops[response]",
+        "classname": "tests.test_m37_local_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_invalid_or_changed_outcome_stops[changed]",
+        "classname": "tests.test_m37_local_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_invalid_or_changed_outcome_stops[hash]",
+        "classname": "tests.test_m37_local_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_invalid_or_changed_outcome_stops[version]",
+        "classname": "tests.test_m37_local_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_invalid_or_changed_outcome_stops[flag]",
+        "classname": "tests.test_m37_local_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_tool_effect_reserved_completed_reobserved_result_submitted",
+        "classname": "tests.test_m37_local_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_ambiguous_effect_no_retry_even_after_reobservation",
+        "classname": "tests.test_m37_local_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_ledger_identity_mismatch_and_bound",
+        "classname": "tests.test_m37_local_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_negative_poison_never_insert_native_assistant_and_delete_fresh[unrecoverable]",
+        "classname": "tests.test_m37_local_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_negative_poison_never_insert_native_assistant_and_delete_fresh[poisoned]",
+        "classname": "tests.test_m37_local_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_expired_older_identity_never_regenerates",
+        "classname": "tests.test_m37_local_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_current_identity_expired_requires_explicit_action",
+        "classname": "tests.test_m37_local_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_delete_and_create_failure_stop[delete]",
+        "classname": "tests.test_m37_local_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_delete_and_create_failure_stop[create]",
+        "classname": "tests.test_m37_local_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_actual_stream_handle_interruption_discards_incomplete_fragment",
+        "classname": "tests.test_m37_local_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_http_body_fence_rejection_is_client_state_error_not_new_work",
+        "classname": "tests.test_m37_local_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_malformed_transport_outcome_is_not_a_retry_heuristic",
+        "classname": "tests.test_m37_local_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_m19_generic_tool_loop_returns_result_to_same_stateful_session",
+        "classname": "tests.test_m19_web_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_m19_tool_registry_rejects_duplicate_unknown_and_malformed_calls",
+        "classname": "tests.test_m19_web_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_m19_tool_round_limit_is_bounded",
+        "classname": "tests.test_m19_web_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_m19_auto_provider_selection_is_deterministic_and_falls_back",
+        "classname": "tests.test_m19_web_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_m19_explicit_provider_override",
+        "classname": "tests.test_m19_web_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_m19_web_search_malformed_provider_payload_is_tool_error",
+        "classname": "tests.test_m19_web_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_m19_mcp_sse_error_is_tool_error",
+        "classname": "tests.test_m19_web_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_m19_fetch_url_blocks_loopback_before_network",
+        "classname": "tests.test_m19_web_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_m19_fetch_url_blocks_public_to_private_redirect",
+        "classname": "tests.test_m19_web_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_m19_fetch_url_rejects_content_type_and_size",
+        "classname": "tests.test_m19_web_client",
+        "seconds": 0.0
+      },
+      {
+        "name": "test_m19_unknown_closed_session_surfaces_runtime_error",
+        "classname": "tests.test_m19_web_client",
+        "seconds": 0.0
+      }
+    ],
+    "actual_lifecycle_transport": [
+      {
+        "action": "delete",
+        "error": {
+          "type": "IncompleteRead",
+          "message": "IncompleteRead(0 bytes read, 187 more expected)"
+        },
+        "client_state": "stopped",
+        "uncertain": {
+          "action": "delete",
+          "session_id": "m38-body-loss-delete"
+        },
+        "mutation_reached": true,
+        "server_closed": true,
+        "retry_or_replacement": false
+      },
+      {
+        "action": "create",
+        "error": {
+          "type": "IncompleteRead",
+          "message": "IncompleteRead(0 bytes read, 192 more expected)"
+        },
+        "client_state": "stopped",
+        "uncertain": {
+          "action": "create",
+          "requested_session_id": "m38-body-loss-create"
+        },
+        "mutation_reached": true,
+        "server_closed": false,
+        "retry_or_replacement": false
+      }
+    ],
+    "pressure_scope": "real checkpoint/HTTP/socket/InternalLocalClient; synthetic bounded SSE comments only",
+    "native_poison": "fresh 16-case native gate; controlled protected-phase exceptions, not naturally sampled poison"
+  },
+  "tools": {
+    "main_effects": 14,
+    "main_ledger_entries": 14,
+    "capacity": 128,
+    "overflow_effects": 0,
+    "no_eviction": true,
+    "ambiguous_effect": "reserved; repeated observation preserves tool_ambiguous; execution/new-work/results/retire/create blocked",
+    "resolution": "explicit external application intervention; no supported reset/resolution API",
+    "ledger_exhaustion_scope": "synthetic certificate/runtime; actual InternalLocalClient",
+    "crash_safe": false,
+    "distributed_exactly_once": false
+  },
+  "lifecycle": {
+    "successful_main_agent_retirements": 3,
+    "retained_fresh_reconstruction_cycles": 2,
+    "sequence_restart": 1,
+    "uncertain_delete_create": "sticky stopped/manual reconciliation; no silent retry or replacement",
+    "real_truncated_response_errors": [
+      "IncompleteRead",
+      "IncompleteRead"
+    ],
+    "external_controller_cleanup_not_client_authority": true
+  },
+  "replay_repack": {
+    "main_model_replay": 0,
+    "main_full_repack": 0,
+    "main_fresh_prefills": 3,
+    "main_retained_suffix_requests": 73,
+    "pressure_fresh_prefills": 1,
+    "pressure_retained_suffix_requests": 1,
+    "settlement_new_verify_proposals": 0
+  },
+  "resources": {
+    "phases": [
+      {
+        "client_bytes": 9095,
+        "ledger_entries": 4,
+        "ledger_json_bytes": 1772,
+        "timings": 128,
+        "request_bytes": 0,
+        "outcome_bytes": 4,
+        "server_sessions": 1,
+        "server_trace_length": 25,
+        "server_trace_limit": 32,
+        "closed_sessions": 1,
+        "server_session_json_bytes": 21904,
+        "retained_canonical_ids": 1555,
+        "mlx_active_bytes": 309205266750,
+        "mlx_cache_bytes": 0,
+        "process_rss_bytes": 11731468288,
+        "maxrss": 20005683200
+      },
+      {
+        "client_bytes": 18829,
+        "ledger_entries": 9,
+        "ledger_json_bytes": 3985,
+        "timings": 128,
+        "request_bytes": 0,
+        "outcome_bytes": 4,
+        "server_sessions": 2,
+        "server_trace_length": 32,
+        "server_trace_limit": 32,
+        "closed_sessions": 2,
+        "server_session_json_bytes": 58847,
+        "retained_canonical_ids": 4421,
+        "mlx_active_bytes": 309179186008,
+        "mlx_cache_bytes": 0,
+        "process_rss_bytes": 8764030976,
+        "maxrss": 20005683200
+      },
+      {
+        "client_bytes": 28496,
+        "ledger_entries": 14,
+        "ledger_json_bytes": 6198,
+        "timings": 128,
+        "request_bytes": 0,
+        "outcome_bytes": 4,
+        "server_sessions": 3,
+        "server_trace_length": 32,
+        "server_trace_limit": 32,
+        "closed_sessions": 3,
+        "server_session_json_bytes": 130376,
+        "retained_canonical_ids": 8565,
+        "mlx_active_bytes": 309173066880,
+        "mlx_cache_bytes": 0,
+        "process_rss_bytes": 9050374144,
+        "maxrss": 20005683200
+      }
+    ],
+    "final": {
+      "client_bytes": 28496,
+      "ledger_entries": 14,
+      "ledger_json_bytes": 6198,
+      "timings": 128,
+      "request_bytes": 0,
+      "outcome_bytes": 4,
+      "server_sessions": 5,
+      "server_trace_length": 32,
+      "server_trace_limit": 32,
+      "closed_sessions": 5,
+      "server_session_json_bytes": 130786,
+      "retained_canonical_ids": 8565,
+      "mlx_active_bytes": 309173066880,
+      "mlx_cache_bytes": 0,
+      "process_rss_bytes": 9062219776,
+      "maxrss": 20005683200
+    },
+    "max_measured_client_payload_bytes": 74481,
+    "ledger_capacity_samples": [
+      {
+        "effects": 32,
+        "ledger_entries": 32,
+        "timings": 128,
+        "client_bytes": 38296,
+        "request_bytes": 9898,
+        "outcome_bytes": 10432,
+        "session_id": "s0"
+      },
+      {
+        "effects": 64,
+        "ledger_entries": 64,
+        "timings": 128,
+        "client_bytes": 76083,
+        "request_bytes": 19818,
+        "outcome_bytes": 20352,
+        "session_id": "s1"
+      },
+      {
+        "effects": 96,
+        "ledger_entries": 96,
+        "timings": 128,
+        "client_bytes": 113870,
+        "request_bytes": 29738,
+        "outcome_bytes": 30272,
+        "session_id": "s2"
+      },
+      {
+        "effects": 128,
+        "ledger_entries": 128,
+        "timings": 128,
+        "client_bytes": 151769,
+        "request_bytes": 39686,
+        "outcome_bytes": 40220,
+        "session_id": "s3"
+      }
+    ],
+    "intended_bounds": {
+      "request_bytes": 1048576,
+      "ledger_entries": 128,
+      "result_bytes": 65536,
+      "timing_samples": 128,
+      "server_trace_samples": 32,
+      "max_response_tokens": 768,
+      "max_prompt_plus_budget_tokens": 8192,
+      "max_live_sessions": 1
+    },
+    "open_blocker": "uncapped closed-session map retains canonical IDs, last_turn/certificate/reconstruction/guard payloads; trace eviction does not release them",
+    "estimate_caveat": "serialized payload estimate, excludes Python allocator and timing deque; model-resident MLX bytes != process RSS; not a universal leak proof"
+  },
+  "performance": {
+    "phases": [
+      {
+        "phase": 0,
+        "turns": 25,
+        "cohort": "ordinary normal/json, excluding first sequence and injected loss/delay",
+        "median_wall_s": 1.1878860410070047,
+        "median_prefill_handoff_s": 0.2589530830155127,
+        "weighted_decode_responses_s": 28.683994411664784,
+        "median_reconcile_wall_s": 0.0029301249887794256,
+        "fresh_prefill_handoff_s": 4.356769791978877,
+        "load_s": 80.26669404102722
+      },
+      {
+        "phase": 1,
+        "turns": 26,
+        "cohort": "ordinary normal/json, excluding first sequence and injected loss/delay",
+        "median_wall_s": 1.1708555204968434,
+        "median_prefill_handoff_s": 0.25857256300514564,
+        "weighted_decode_responses_s": 34.408025424380014,
+        "median_reconcile_wall_s": 0.004291813005693257,
+        "fresh_prefill_handoff_s": 10.326589500007685,
+        "load_s": 3.7499703466892242e-06
+      },
+      {
+        "phase": 2,
+        "turns": 25,
+        "cohort": "ordinary normal/json, excluding first sequence and injected loss/delay",
+        "median_wall_s": 1.1855050835001748,
+        "median_prefill_handoff_s": 0.26027475052978843,
+        "weighted_decode_responses_s": 35.39497708436388,
+        "median_reconcile_wall_s": 0.005892020970350131,
+        "fresh_prefill_handoff_s": 16.89382908400148,
+        "load_s": 4.959001671522856e-06
+      }
+    ],
+    "retained_timing_samples": [
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.001161874970421195
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.001097082975320518
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0010451250127516687
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0010377919534221292
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0027116660494357347
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0014431250165216625
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0014120839769020677
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0013995419722050428
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.003439583000726998
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004361707950010896,
+        "sequence": 12
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005233375006355345
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0037800829741172493,
+        "sequence": 12
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.00468662497587502
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0038120829849503934,
+        "sequence": 12
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.004640416998881847
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.005245957989245653,
+        "sequence": 13
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004800124967005104,
+        "sequence": 13
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.006237416993826628
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0038602910353802145,
+        "sequence": 13
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.004991707974113524
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0038837079773657024,
+        "sequence": 13
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005066166981123388
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0054062079871073365,
+        "sequence": 14
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0045161250163801014,
+        "sequence": 14
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005917917005717754
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004014750011265278,
+        "sequence": 14
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0053001660271547735
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.003887917031534016,
+        "sequence": 14
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005024167010560632
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0056317500420846045,
+        "sequence": 15
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.005412667000200599,
+        "sequence": 15
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.006966124987229705
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004522125003859401,
+        "sequence": 15
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005649124970659614
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004375583026558161,
+        "sequence": 15
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.00543149997247383
+      },
+      {
+        "action": "tool_ledger_and_effect",
+        "seconds": 0.0001330420491285622
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0051014579948969185,
+        "sequence": 15
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0065626659779809415
+      },
+      {
+        "action": "tool_ledger_and_effect",
+        "seconds": 9.875046089291573e-06
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0039688749820925295,
+        "sequence": 15
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0049479579902254045
+      },
+      {
+        "action": "tool_ledger_and_effect",
+        "seconds": 1.008401159197092e-05
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004361917031928897,
+        "sequence": 16
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004667291010264307,
+        "sequence": 16
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005850874993484467
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004078999976627529,
+        "sequence": 16
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.00506608298746869
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.003976958978455514,
+        "sequence": 16
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.004921749990899116
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 1.0550983749562874,
+        "sequence": 17
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004718500014860183,
+        "sequence": 17
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0060117500252090394
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0060306250234134495,
+        "sequence": 17
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.007061749987769872
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004128917003981769,
+        "sequence": 17
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0051792089943774045
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.005675000022165477,
+        "sequence": 18
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.004110292007680982
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0059614169877022505,
+        "sequence": 18
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0071834170375950634
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.005373707972466946,
+        "sequence": 18
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.006620750005822629
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004908083006739616,
+        "sequence": 18
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005984916002489626
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.005910707986913621,
+        "sequence": 19
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004736500035505742,
+        "sequence": 19
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.006195374997332692
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004219499998725951,
+        "sequence": 19
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005515334021765739
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004283874994143844,
+        "sequence": 19
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005561458005104214
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.005746249982621521,
+        "sequence": 20
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004866374947596341,
+        "sequence": 20
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.006366625020746142
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0044220410054549575,
+        "sequence": 20
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005651207990013063
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0041411659913137555,
+        "sequence": 20
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005306708044372499
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.006210291001480073,
+        "sequence": 21
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.005011625005863607,
+        "sequence": 21
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.006289125012699515
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.00438420899445191,
+        "sequence": 21
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0054359170026145875
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0042277080356143415,
+        "sequence": 21
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005190249998122454
+      },
+      {
+        "action": "tool_ledger_and_effect",
+        "seconds": 0.00014349998673424125
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0053475829772651196,
+        "sequence": 21
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.00687674997607246
+      },
+      {
+        "action": "tool_ledger_and_effect",
+        "seconds": 7.540977094322443e-06
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0042511249775998294,
+        "sequence": 21
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005262750026304275
+      },
+      {
+        "action": "tool_ledger_and_effect",
+        "seconds": 7.374968845397234e-06
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.00463450001552701,
+        "sequence": 22
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0051228750380687416,
+        "sequence": 22
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.006346917012706399
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004318249993957579,
+        "sequence": 22
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005388416990172118
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004340749990660697,
+        "sequence": 22
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005271958012599498
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 1.0573995829909109,
+        "sequence": 23
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.005065583041869104,
+        "sequence": 23
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.006461791985202581
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.00498549995245412,
+        "sequence": 23
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0061265420517884195
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004414958006236702,
+        "sequence": 23
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005528040986973792
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.006293583021033555,
+        "sequence": 24
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005454667028971016
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.001892667030915618
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0018284590332768857
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0016485829837620258
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0013977910275571048
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.006039917003363371,
+        "sequence": 24
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0071621250244788826
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.005016583018004894,
+        "sequence": 24
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.006153707974590361
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004688292043283582,
+        "sequence": 24
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.0057062910054810345
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.0060200419975444674,
+        "sequence": 25
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.005093624989967793,
+        "sequence": 25
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.006584124988876283
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.00440366700058803,
+        "sequence": 25
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.005778125021606684
+      },
+      {
+        "action": "send_headers_or_json",
+        "seconds": 0.004508082987740636,
+        "sequence": 25
+      },
+      {
+        "action": "reconcile_lookup_and_observe",
+        "seconds": 0.00566849997267127
+      },
+      {
+        "action": "delete",
+        "seconds": 0.01872766698943451
+      },
+      {
+        "action": "create",
+        "seconds": 0.0010105419787578285
+      }
+    ],
+    "pressure_max_send_wait_s": 3.077916791953612,
+    "pressure_disconnect_to_settlement_s": 2.111103874980472
+  },
+  "defects_fixed": [
+    "sticky lifecycle uncertainty prohibits subsequent lifecycle mutation",
+    "reserved effect cannot lose classification or bypass through retirement/fresh creation",
+    "non-dictionary additions reject explicitly before mutation"
+  ],
+  "blocker_fixed": false,
+  "owning_server_runtime_layers_unchanged": [
+    "ds41f_mlx/serving/internal_mtp.py",
+    "ds41f_mlx/serving/server.py",
+    "ds41f_mlx/serving/request_fence.py",
+    "ds41f_mlx/serving/recovery_certificate.py",
+    "ds41f_mlx/runtime/mtp_lifecycle.py",
+    "ds41f_mlx/runtime/recipe_semantic_guard.py"
+  ],
+  "gates": {
+    "commands": [
+      {
+        "name": "native-gates",
+        "command": [
+          "/private/tmp/ds41f-m32-qual/bin/python",
+          "-c",
+          "from pathlib import Path; p=Path('tools/run_m37_gates.py'); code=p.read_text().replace('artifacts/m37','artifacts/m38'); exec(compile(code,str(p),'exec'),{'__file__':str(p.resolve()),'__name__':'__main__'})"
+        ],
+        "returncode": 0
+      },
+      {
+        "name": "m37-workflow",
+        "command": [
+          "/private/tmp/ds41f-m32-qual/bin/python",
+          "-c",
+          "import asyncio; from tools import run_m37_local_client as q; q.OUT=q.q.ROOT/'artifacts/m38/m37-workflow.json'; asyncio.run(q.main())"
+        ],
+        "returncode": 0
+      },
+      {
+        "name": "client-tests",
+        "command": [
+          "/private/tmp/ds41f-m32-qual/bin/python",
+          "-m",
+          "pytest",
+          "-q",
+          "tests/test_m38_client_faults.py",
+          "tests/test_m37_local_client.py",
+          "tests/test_m19_web_client.py",
+          "--junitxml=artifacts/m38/client-tests.xml"
+        ],
+        "returncode": 0
+      },
+      {
+        "name": "runtime-regressions",
+        "command": [
+          "/private/tmp/ds41f-m32-qual/bin/python",
+          "-m",
+          "pytest",
+          "-q",
+          "tests/test_m36r_recovery.py",
+          "tests/test_m36_recovery_boundary.py",
+          "tests/test_m35_transport_lease.py",
+          "tests/test_m34_cache_release.py",
+          "tests/test_m29_mtp_lifecycle.py",
+          "tests/test_m25_mtp_boundary.py",
+          "tests/test_prefill_fp8_mlx_p5.py",
+          "tests/test_prefill_fp8_mlx_p6.py",
+          "tests/test_prefill_fp8_mlx_p7.py",
+          "tools/m33_semantic_tests.py",
+          "tools/m33_semantic_extra_tests.py",
+          "tests/test_stateful_request_policy.py",
+          "tests/test_runtime_config.py"
+        ],
+        "returncode": 0
+      },
+      {
+        "name": "prior-evidence-regressions",
+        "command": [
+          "/private/tmp/ds41f-m32-qual/bin/python",
+          "-m",
+          "pytest",
+          "-q",
+          "tests/test_m33_protocol_evidence.py",
+          "tests/test_m34_operational_evidence.py",
+          "tests/test_m35_http_evidence.py",
+          "tests/test_m36_evidence.py",
+          "tests/test_m36r_evidence.py",
+          "tests/test_m37_evidence.py",
+          "-k",
+          "not identity_and_sources and not current_sources_and_raw_evidence_match and not final_qualification and not current_source_and_evidence_hashes"
+        ],
+        "returncode": 0
+      },
+      {
+        "name": "release-off-regressions",
+        "command": [
+          "/Users/kioju/.venvs/omlx-0.7.0.release/bin/python",
+          "-m",
+          "pytest",
+          "-q",
+          "tests/test_m20_generation_dependency.py"
+        ],
+        "returncode": 0
+      },
+      {
+        "name": "rust-regressions",
+        "command": [
+          "cargo",
+          "test"
+        ],
+        "returncode": 0
+      }
+    ],
+    "native": [
+      {
+        "name": "identities",
+        "command": [
+          "/private/tmp/ds41f-m32-qual/bin/python",
+          "tools/check_m34_identities.py"
+        ],
+        "returncode": 0
+      },
+      {
+        "name": "recipe-matrix",
+        "command": [
+          "/private/tmp/ds41f-m32-qual/bin/python",
+          "-c",
+          "from pathlib import Path; p=Path('tools/run_m36r_recipe_matrix.py'); code=p.read_text().replace('artifacts/m36r/recipe-matrix.json','artifacts/m38/recipe-matrix.json'); exec(compile(code,str(p),'exec'),{'__file__':str(p.resolve()),'__name__':'__main__'})"
+        ],
+        "returncode": 0
+      },
+      {
+        "name": "m35-http",
+        "command": [
+          "/private/tmp/ds41f-m32-qual/bin/python",
+          "-c",
+          "import asyncio; from tools import run_m35_http_qualification as q; q.OUT=q.ROOT/'artifacts/m38/m35-http.json'; asyncio.run(q.main())"
+        ],
+        "returncode": 0
+      },
+      {
+        "name": "m36-probe",
+        "command": [
+          "/private/tmp/ds41f-m32-qual/bin/python",
+          "-c",
+          "import asyncio; from tools import run_m36_recovery_probe as q; q.OUT=q.q.ROOT/'artifacts/m38/m36-probe.json'; asyncio.run(q.main())"
+        ],
+        "returncode": 0
+      },
+      {
+        "name": "m36r-http",
+        "command": [
+          "/private/tmp/ds41f-m32-qual/bin/python",
+          "-c",
+          "import asyncio; from tools import run_m36r_http as q; q.OUT=q.q.ROOT/'artifacts/m38/m36r-http.json'; asyncio.run(q.main())"
+        ],
+        "returncode": 0
+      },
+      {
+        "name": "native-interruptions",
+        "command": [
+          "/private/tmp/ds41f-m32-qual/bin/python",
+          "-c",
+          "from pathlib import Path; p=Path('tools/run_m35_native_interruptions.py'); code=p.read_text().replace('artifacts/m35/native-interruptions.json','artifacts/m38/native-interruptions.json'); exec(compile(code,str(p),'exec'),{'__file__':str(p.resolve()),'__name__':'__main__'})"
+        ],
+        "returncode": 0
+      }
+    ],
+    "client_test_cases": 56,
+    "historical_hash_deselections": [
+      "identity_and_sources",
+      "current_sources_and_raw_evidence_match",
+      "final_qualification",
+      "current_source_and_evidence_hashes"
+    ]
+  },
+  "excluded_attempts": [
+    "import-attempt.log: direct script lacked repository import path; final invocation is python -m",
+    "soak-fresh-tool-attempt.*: valid unsolicited certified fresh-session tool, harness tried new work before stored-result continuation",
+    "excluded-gate-attempt/: interrupted overlapping in-development gate scheduling; no result used",
+    "gate-commands-first-attempt.json/prior-evidence-first-attempt.log: missed historical M37 HEAD-hash deselection; corrected subset rerun",
+    "pre-fix-client-faults.log: deliberate original M37 regressions, 10 failed/8 passed"
+  ],
+  "unsupported": [
+    "public/default/release MTP",
+    "persistence/process restart",
+    "client crash-safe tool exactly-once",
+    "distributed idempotency",
+    "concurrent/shared MTP",
+    "batching",
+    "token-exact immediate abort",
+    "200K HTTP MTP",
+    "unbounded backpressure",
+    "portable native wheels",
+    "universal partial DSML recovery"
+  ],
+  "readiness_gaps": [
+    "server lifetime/admission retirement budget",
+    "released manual lifecycle/effect workflow and envelope/admission policy",
+    "portable installation/native provenance",
+    "separate longer-context HTTP qualification"
+  ],
+  "recommended_next": "operational lifetime/admission hardening: finite budget without retired-ID eviction, closed payload reduction and mutation-atomic capacity denial; then dedicated release/admission/provenance evaluation, not client-semantic micro-milestones",
+  "source_hashes": {
+    "ds41f_mlx/serving/internal_mtp.py": "afb3165e0b9516a8b0112fc504534e32e905b7b992e8209b763242430638509a",
+    "ds41f_mlx/serving/server.py": "a2da2a7320d456a2695fccb98b12654f635c490f48926c8ce0f431500908559a",
+    "ds41f_mlx/serving/request_fence.py": "07f397caf7e30e305fa498655cf24afbb5bf19a80e3340dc487f6ff7348e2272",
+    "ds41f_mlx/serving/recovery_certificate.py": "9b355ddd7a81953079f0b4edd6be7930293b8916f54036cc2c5dd49d1685aea4",
+    "ds41f_mlx/runtime/mtp_lifecycle.py": "a05744364d5440a16774905d9d60a5266ccc4528f1ca871f20db715d8c5fcde6",
+    "ds41f_mlx/runtime/recipe_semantic_guard.py": "6397801995cb1285a0f87c2455d6423160964be54e70889b390aa379e06e808d",
+    "ds41f_mlx/internal_local_client.py": "36caed07e0b4165d076354cd5d1843679788ad4c0e1f9083b1085ad5a706ce55",
+    "ds41f_mlx/web_client.py": "635dd021475da57f9cc77be63c4de8a3fe35fbbe9ac6708d1dc5cc605703696f",
+    "tools/record_m38_evidence.py": "8ee28afdbed7ee84613fd6f1edb9a180e213cca7ee4d105aa076856c9b16eefa",
+    "tools/run_m38_gates.py": "7f56832d345053cf2a171cede7ceff080a80088b4eba972504242fd1a0f4b1be",
+    "tools/run_m38_client_pressure.py": "de16f6a69bb8fa45d639ca22f75a7c4b6b73537cbba3136c9db5789aedcffac0",
+    "tools/run_m38_retention_probe.py": "1291cdc3dfef5bdb5615b98836246fba6dd4d26db66c2f2c9f309954d8652b27",
+    "tools/run_m38_lifecycle_transport.py": "e84b098101cc44f4d84784815a2ecfd0df82d45338565abe608664e6a04cff92",
+    "tools/run_m38_soak.py": "6237a3a2ebb6320ae12e09e84dcf5c54ed8450e3b7378ef9191b8e11dcc81e7f",
+    "tests/test_m38_client_faults.py": "60e749de411557bba41ccacdd9d6036e86b257a30bf98e7e8975bfdefcd9eb26",
+    "tests/test_m38_evidence.py": "3742c94fb4e71b87be97df81d1202792c78fdd38e9bbd784a9cc0006baaf4891",
+    "docs/milestone-38-client-operational-soak.md": "6ce7bdcbd3bf7495304b555f7548a9d4332c3fc621d84590a912bb36273eb9a8",
+    "docs/README.md": "7402ae175462a202d8dd55bdaba042eb9e559b77909e99b5f208eada48ca676c",
+    "docs/implementation-plan.md": "1577b2c0a8c5cfcfb8f675fccf7c82e97086ada0b0b299afd66bb936e723e1d9",
+    "docs/qualification.md": "ff5cc023ad7c419c75a6691a1ba917fc93614d687c256cbcb4ee20ae5cbfb625",
+    "docs/session-state.md": "62b880cfb270aa6d3fce9adf041faf9ff7f85db97cc06604fc205d581dc28dec",
+    "docs/doc-classification.json": "412489b803d6cd48f9257d370baedab1c10cbc2ff72386feedf8cdf0338937cf"
+  },
+  "historical_evidence_hashes": {
+    "artifacts/m33/tool-reentry-control-name-error.log": "a58146edcfcb49abbd2cd6cf876c0d24a3c2987fdce5a7d468772570b9d0ecd5",
+    "artifacts/m33/performance.log": "d493e34c99c1f1a7129cff6359edc7ae4a7ec74f24227d422160f0659503d4da",
+    "artifacts/m33/init-live-unmatched-eos.json": "f6876acad9a1853d88e640d41bf3386895791cc099077204cb360f5f5321274c",
+    "artifacts/m33/qualification.json": "d7bc84e056d0402de7cd1198d3835ad2b2cfc7188eb7fa83727dd17700a67691",
+    "artifacts/m33/tool-reentry.log": "7cf472d1a01233b5562080a8ba63b618e2f9c49c36b8ad5bd73edca5b5649d29",
+    "artifacts/m33/control-policy-config-error.json": "de484ce0c8bbd05d46af8d3c90e54be475c68cd371a78fad10ee47216e1f2202",
+    "artifacts/m33/tool-reentry-missing-matcher-error.log": "e819c12d154eb9aee8ace1f1dad29f31cdd32da7cd8d857d09e5f754b032c18b",
+    "artifacts/m33/control-policy-config-error.log": "f72d38980dbf06fb28e58ecd674b0946c1ce2062964b9c3844861867778b2741",
+    "artifacts/m33/stops-live.json": "e3c55db54fed0188b4e115f903fe648bee5bd433b4f9cd92723fe4693b53530a",
+    "artifacts/m33/native-preview.json": "5f42077dfb024acd2cabf023b1aedaf86680f313df5cb8c5892d898fa8516c85",
+    "artifacts/m33/tools-live.log": "bc6e307f08c0ca67642a62346b1e2d128476c1028b99779ba4b741981762098b",
+    "artifacts/m33/runtime-identities.json": "9589ffa695641e327f3ab88dc7ac838b2504e286d7dc018e131d23b6e13a27d2",
+    "artifacts/m33/init-live.json": "86eec00133dde394a9709272e748fbaf2df7b2643c869dee335c73c86fa78da4",
+    "artifacts/m33/alignment-live.log": "5d18896017a7d29ac839cf3c90770abb08820178ed3f2cb1a6dc410d74a34115",
+    "artifacts/m33/canonical-parity.json": "49cf727c650ea8845e85b9a1c9399c97cd79ce68e6ad8d0cebcc7caf124de952",
+    "artifacts/m33/native-preview.log": "885b5b4810fb8755ba8c90caf3594b12a8cf4e77599a4993d6ff6bf6af5a0a71",
+    "artifacts/m33/alignment-live.json": "ae9bf5baa7c82862e9771753ca8672c326d6c2214ba5ffbb828d66ca044b587d",
+    "artifacts/m33/tool-reentry-control-name-error.json": "b76ed067b431a18ad1ff6588bdac43af4413537db71979f1744a301a27fc788d",
+    "artifacts/m33/rust-tests.log": "4dfdae07285d0e4b007aad9c3a90235db20a89542ab4d1e45fb57646646be601",
+    "artifacts/m33/tool-reentry-history-alias-error.json": "906572cd981a2907aeeec6b81f402c2f89c0be1e6ba6bb9cb61647debbcc6e95",
+    "artifacts/m33/tool-reentry.json": "e627c45cf27876d00f404a756ddd9459c70b06a89ce5c120d766a509f2f09cf5",
+    "artifacts/m33/tool-reentry-history-alias-error.log": "f39fd43d7ade598f23fc1fe410e228e3f86b8fe755bc627cb109431e0f2bb347",
+    "artifacts/m33/stops-live.log": "d3cd9f2870610c068cb3c9a4625e5490716c3f026efa298359187bb023f8d9d6",
+    "artifacts/m33/release-off-runtime-regressions.log": "1216b9ea52a23b286dca03192429ffac3b8ca425d02317c99612ba540fae18eb",
+    "artifacts/m33/stops-live-fixture-miss.log": "765693bac67b22294e661cdb83cde53c1bbac0f4ef5f943e8004d9067b1fb123",
+    "artifacts/m33/metadata-overhead.json": "bd633f1732d89126c2cf0b19f5a5fcf2460c930ced528c569f1d9842116c36e5",
+    "artifacts/m33/evidence-tests.log": "d5be81bbe49b412357ba177be7fae47b32ba70b563d2a01ec6ee15df362cc215",
+    "artifacts/m33/structural-progress.log": "41a5a7a678bd1ec494ee2d7cb4c1feab2393eaa95c64b354dbf03492745f9c13",
+    "artifacts/m33/performance.json": "f1fc5cc656b67c0e77aac1946a91278fe25dff9eb4f3583da9623f73d4be43ce",
+    "artifacts/m33/init-live-unmatched-eos.log": "18bc843d0f727d47833fe76c942b46a0a243b8af704a2ed51a76e11debdda43e",
+    "artifacts/m33/source-preview-clone.json": "763ef72204f4f1f0d28610755435066ab495609502f63dbdbc6270de55675d02",
+    "artifacts/m33/tool-reentry-missing-matcher-error.json": "7626bdc9681183471ce589c136ba0c7794c990511eba6642cce2fe0d69eb3046",
+    "artifacts/m33/canonical-candidate.json": "a7ae05f3bec3f5c050872cc8d59fab208f10dde5121e917ea959a2b82d752e74",
+    "artifacts/m33/performance-supervisor-timeout.json": "257dcd978772baa4bb3fbfbef62abcd1d765b335e575f703a01d3c870313d1a1",
+    "artifacts/m33/stops-live-fixture-miss.json": "9f31b57fedb0a090d1bf0fe5f70bd8593d9bee415389c179ba59f93b2046aa34",
+    "artifacts/m33/init-live.log": "18bc843d0f727d47833fe76c942b46a0a243b8af704a2ed51a76e11debdda43e",
+    "artifacts/m33/semantic-unit-tests.log": "a2f6a805aabcec26da0bd0d103d3eb1c376c15975f8c2815890ba5461d0de28a",
+    "artifacts/m33/regressions.log": "4fc9f41baec7a780081bfa45e095d52d0106c83e613137c1255d92383e88e27f",
+    "artifacts/m33/omlx-semantic-horizon.patch": "fb120b1ddc9120e69d71ce70f128db7e3bf19a7444b0f237d7661388c9b318d5",
+    "artifacts/m33/interruptions.json": "8f8c90f37739a52d3b76ed6eb350476ec43f1a57f6d1a0772d133dfe237ffa37",
+    "artifacts/m33/regressions-initial-mixed-root-error.log": "243d6b3c445c64b7c72b4a3c64c68526e2549e991a9028e6d8e5c0d6ea9240ce",
+    "artifacts/m33/canonical-base.json": "337b6aa665f2a5d678f5f16bf3e8e8416d12cc083cc478589a73b35bab804833",
+    "artifacts/m33/file-manifest.json": "fae316599ce5e63fbe31f3db05d4593d9360a74bc8a65b58986786ef876034a2",
+    "artifacts/m33/tools-live.json": "59a6bc003ed6b27a759b074d236cdc6f7f74dbb0b3785345257332a58d0d9e2b",
+    "artifacts/m33/interruptions.log": "a360a7cf8243a7739cb68562247e3ac7a2198cca4cb9692a124cf81a9d3535b5",
+    "artifacts/m33/semantic-unit-fixture-error.log": "63969c0264366b59919a0070005036f7b4d922dbd4d654285706ccb78b4a9017",
+    "artifacts/m33/performance-supervisor-timeout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m34/controls.log": "76e33316ee714a3c9c9349645953fb4a9bc1f5c23966cd4e1163d8689385ff9d",
+    "artifacts/m34/baseline-authority-findings.json": "7bfaaf77203cd72aae4e2741f93ef5d7aee573699268e3c41f5256c2b552eab8",
+    "artifacts/m34/pilot-soak.json": "e7fba222d748bc78d8cf189f0120270d6ed501a37db9fb4b1c18a30fa5521aea",
+    "artifacts/m34/sealed-capability-defect.log": "0ad20b2bb0bffa1aabc076943ec63b71aecb981b1f542a81dc6b30993e66bb49",
+    "artifacts/m34/abandoned-preflight.json": "68ee90dbfb2d7490cb3c35fee6ee0e22eb002c6c8c514e51b3b8573a8cb0e531",
+    "artifacts/m34/cache-release.patch": "b6f3b04610c1db38aa6d506f8cabb522694495fbc3ccdad3300226a94816e070",
+    "artifacts/m34/resource-sampler.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m34/qualification.json": "e4753370eefe22102f8349357321312ccedf4fca2f812110f5590162ba77321a",
+    "artifacts/m34/horizon-regressions.log": "60dce3ec2e1b086a4368a6948c15b5b30b2118951ded68cefec74ba5871aa83d",
+    "artifacts/m34/pre-fix-soak.log": "0a19996c36ffa8ddb768c8316c4d4d935c34d3b00ef6b57cc6a278055e6bbad0",
+    "artifacts/m34/pilot-soak.log": "61a9a225c46a163c6658b856331c217739a87dfefb534f2375dd8aba8312b04c",
+    "artifacts/m34/rust-regressions.log": "333f269e68248e4a3100c9a38596df83bd8de04b9eb13e78378f97ab71dab226",
+    "artifacts/m34/attempts.json": "9b244195c77da0b6839347bacee7855966fe5ae9a95c2f513e7e83e1c84899eb",
+    "artifacts/m34/cache-release-defect.log": "82baee0aff8c5e75e9ddf2023b10721c825a24740a9d5ea8085914af12c2b15c",
+    "artifacts/m34/shallow-fix-soak.log": "0a19996c36ffa8ddb768c8316c4d4d935c34d3b00ef6b57cc6a278055e6bbad0",
+    "artifacts/m34/identities.json": "2d6c92d89f59fd9726f88a8370cae248689d3406c1f3b7572abe95b48cd5f050",
+    "artifacts/m34/runtime-correction.json": "6959423ffd0ccf465d57cc732758cd61e8d08a812ca0166efc3234c6196508f0",
+    "artifacts/m34/harness-wrapper-identity-error.log": "42a55de904be56d37bec52d2ffaa5dfac9f1c7932183555c42d96f97383d4ac1",
+    "artifacts/m34/release-off-regressions.log": "cfffb5c0d87b96406826109cef6a55aff74d4f96f47f3c372819584e19ff83a3",
+    "artifacts/m34/soak.json": "91574b9418c7790b1d7a6d95154a2f68c4cc434ee8af36764204e16e5f323651",
+    "artifacts/m34/evidence-tests.log": "f96696f899f24ff2e94441f68256078d747bee2554b40b52be8b50590d3578ae",
+    "artifacts/m34/rss-samples.json": "37ae02ceeb9401005da9a7d8a7a91d1ed240e43cfe3fc82600b27fec9bba5bb2",
+    "artifacts/m34/identities.log": "2d6c92d89f59fd9726f88a8370cae248689d3406c1f3b7572abe95b48cd5f050",
+    "artifacts/m34/shallow-fix-mtp_lifecycle.py": "669d8ae15943b6c0aef46cc712415bee46ce926709032134d010fd502e2e390a",
+    "artifacts/m34/control-4096.json": "ec43fa0d4a2b48489f9f38ae56e2288b3f6fddfe689f05d9194d973d1f0e4d16",
+    "artifacts/m34/shallow-fix-soak.json": "ed5f51390a5ef1b4e2858d9b6f44daf7dbefc9dd4c16885b0ee7fdbe414b21e8",
+    "artifacts/m34/abandoned-preflight.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m34/cache-release-defect.json": "b49c3e6401e32401ae0faa7ea4526103e0cbb9d0ffe1571582aee710294aef25",
+    "artifacts/m34/off-policy-regressions.log": "ef0e7ef49e71fa999842be0cb8d22ec1058d3a384ed5c0a2ec6efb8f434975ac",
+    "artifacts/m34/authority-labels.log": "a50f62a7b406f5c7108da37725b76f8add426d3ffa4be30d12c009e917c44f2d",
+    "artifacts/m34/changed-authority-labels.log": "b3f20e18f93e03eaf66de7eee8d672e751b12739e86255ead88f6c6481ee4701",
+    "artifacts/m34/regressions.log": "c9dc5f2aadb07181ce0088f40834e0e69c96bad4712336ea6ddb923d3108ae1b",
+    "artifacts/m34/harness-wrapper-identity-error.json": "f0321761c25c5744a2bf60e6857b0c9a950cb0a84a515e17162af9e28e9d014b",
+    "artifacts/m34/control-12288.json": "5e6a7ea0aeae461faf7bfc89593fd61c612a6599daca0886e43d66b14a152a20",
+    "artifacts/m34/recovery.log": "018cc94a192702a06f0bd6ceed9b6d6001aadd79fa37bedd04ded1c334a67c74",
+    "artifacts/m34/interruptions.json": "65f17a1c43e481508bd2d06df4c7734773f19943324b01117e751b16be631b30",
+    "artifacts/m34/record.log": "5c518196de7119ffc46f36d6ac6eebfe2cb9e14b304fc3887a25de2a187b9998",
+    "artifacts/m34/pre-fix-soak.json": "b9642e5295329bf68f2cb8df22e0d802f4ee28bcc6d0d177ef75253c30c6d5cb",
+    "artifacts/m34/recovery.json": "c9c9bd60e7dc071b9f5eec939013c0772d90edb6780d9f5628bc0cd2fcfd655f",
+    "artifacts/m34/interruptions.log": "a360a7cf8243a7739cb68562247e3ac7a2198cca4cb9692a124cf81a9d3535b5",
+    "artifacts/m34/sealed-capability-defect.json": "f260cc532ebbeff24c25eed5a3fd22fa7b9e7462de3a6130840c112b034bcad2",
+    "artifacts/m34/soak.log": "0a19996c36ffa8ddb768c8316c4d4d935c34d3b00ef6b57cc6a278055e6bbad0",
+    "artifacts/m35/native-interruptions.log": "a360a7cf8243a7739cb68562247e3ac7a2198cca4cb9692a124cf81a9d3535b5",
+    "artifacts/m35/chunk-transfer-error.json": "277b3ab75d8da3958fc39e984e059fc29aa6446efd7cd750f0fd00a4231cd8cc",
+    "artifacts/m35/pilot-http.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m35/final-run-wrapper.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m35/pilot-http.json": "7232721c4250ab012d389365707e3629b03e0d09e77ca24a933159faa3f3e663",
+    "artifacts/m35/cancellation-checkpoint-defect.json": "a952700079539896142850be762b2c15b2408e04ae1a2d22688c8f1a683bd4d8",
+    "artifacts/m35/qualification.json": "046a7381d6a2e90e11106794447f2d77aa3a466a7f5da4f92490ec41fb244054",
+    "artifacts/m35/horizon-regressions.log": "c866207cbceb74777a86522e92a173aac5a5e5accfc992681a71a77ae78a19bc",
+    "artifacts/m35/native-interruptions.json": "b3e3b3441de76783a9bedcdbdf8b497a397c9cffca431406a356d8872033ad6b",
+    "artifacts/m35/cancellation-checkpoint-defect.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m35/harness-name-error.log": "735fa82e8c035ea23ba15305ad62bbbf54fcf5f5904eccb35e2c04605e61d18d",
+    "artifacts/m35/chunk-transfer-error.log": "ba5b9f463fa704cc5f11e63188d59cf05e414e5340362315b7bb3bfa4954f750",
+    "artifacts/m35/pre-final-http.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m35/rust-regressions.log": "1087c357aa51b80d710ae7945478fd129ff76b2691a74c48a7c546101076c5bf",
+    "artifacts/m35/pre-lease-hardening-http.json": "77b75511e6f375082dcbebf9d0bf6af810d0056212afb995cbe5c14bbf3a524b",
+    "artifacts/m35/identities.json": "2d6c92d89f59fd9726f88a8370cae248689d3406c1f3b7572abe95b48cd5f050",
+    "artifacts/m35/harness-name-error.json": "65dcc7ca48cbf956936033d8f9fb936c58d63e39c8a7718d93d5ee2892d44c1f",
+    "artifacts/m35/http.json": "d59457f3f1f0c2169d10047edbecf0d1d6fb9cbac588b82a8720c8bd53c690fc",
+    "artifacts/m35/release-off-regressions.log": "2f718eac2e55389af96ded7cd404356b692c50f676eb79d0db8eb1b2e6d39618",
+    "artifacts/m35/rust-request.json": "51dd0192444a1cce676dfa8930f0c73a88cc78665b8544a3cd7a2e6f195edfe4",
+    "artifacts/m35/evidence-tests.log": "0e96d7ca7406320840ee2e704cbada03e2fe4b6d6aea1d667b4f685b07e7e24d",
+    "artifacts/m35/identities.log": "2d6c92d89f59fd9726f88a8370cae248689d3406c1f3b7572abe95b48cd5f050",
+    "artifacts/m35/pre-final-http.json": "663a4e8c0ce3ecfc906a10bfd1272fab1f4b39cceb1d377c5f0dc6a72b4cfced",
+    "artifacts/m35/http.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m35/off-policy-regressions.log": "c101dcd7dec1b326c4a36f12ac529bf996a144aef90043453d99a02791061636",
+    "artifacts/m35/lease-tests.log": "51c7522ee9f890ea65da1794a28ec206fa19307007b53a51eaa644bc3ba3b9be",
+    "artifacts/m35/pre-delete-hardening-http.json": "d61b6b9abcbc630179a40c1fcda911ef631044612f47520c09b8ea50fc5bb7cf",
+    "artifacts/m35/regressions.log": "3cb1794f9a54fc5a523363ebb19d4dfc55732024341ab9a02c845b306176d539",
+    "artifacts/m35/record.log": "c0a7ade2411847cf4701efbe6af58dd78c1a1bf626b15598a33ab25a16525377",
+    "artifacts/m35/pre-retirement-hardening-http.json": "a270c82ea7ef4b4157b63e99aa5dc2e7c291a5d07a8a8adaa3379528a195ed38",
+    "artifacts/m36/m35-http.json": "3edbb4f65e7ad68c07247f2868593c4b1323d4d98569e805dad2bb4ed4922f6c",
+    "artifacts/m36/native-interruptions.log": "a360a7cf8243a7739cb68562247e3ac7a2198cca4cb9692a124cf81a9d3535b5",
+    "artifacts/m36/poison-get-defect.json": "3659683da5709054a55be34dbd40f28494d1ba766faed7708c4229df67a7fba8",
+    "artifacts/m36/runtime-correction.patch": "6f5ede56c1e2fd1fae0361723a6df313a2b2b9d9ebecf83727116d23c0466785",
+    "artifacts/m36/qualification.json": "4d79b6e636857e4571a9f2c88733f194c36ab4006e54f37e91433438eab4263b",
+    "artifacts/m36/horizon-regressions.log": "9d01d2b0d4a7bf7f7ee0d5bc593ffa04e3a1243d20b984d234f55ce5cc4fe750",
+    "artifacts/m36/native-interruptions.json": "575b9c851c0c2e759088fa45a9e1a1594c6435d256a5064e380128179d9d3bea",
+    "artifacts/m36/m35-http.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m36/rust-regressions.log": "91987607ea4fecc2b7dc54b1f1a7a46abeafa7fd28ed9c2019051648441c8260",
+    "artifacts/m36/probe.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m36/boundary-regressions.log": "58e622eafd3a9fa127297902906ec6a2b07845e7296cc5074433294c117cb3bc",
+    "artifacts/m36/prior-evidence-regressions.log": "7cd3f4719dd4b2f814c6c55b0a041824100b224d7a1a45def2e35bdb0570f63e",
+    "artifacts/m36/early-poison-observation.json": "0ebffa02463c2174f6cfe3ea4c9c9ff8f2978df8be18409eb4b94eedd6476b25",
+    "artifacts/m36/pre-pressure-harness-fix.json": "b7a42ab1f1ac41868b1118f8b18031973743d9ef2286be4529bcdcbc5d4f4533",
+    "artifacts/m36/release-off-regressions.log": "3c2806e89e6d963fb5e0a88a61d5e2f9ad8e613a6d8815c54601f39af41381bd",
+    "artifacts/m36/boundary-regressions-final.log": "d75603f9786468f1512af75d1b71c88f548072b4a5f03f4f6e0bcccba8804844",
+    "artifacts/m36/poison-get-defect.log": "185f0097d21fe513916aedc593912b5f21691136c96a73f2ad3caab8936c8651",
+    "artifacts/m36/commands.json": "f440c9a915b9aafd07123ada550656f8fdfe38d7fe1277c015de804518abc42c",
+    "artifacts/m36/rust-request.json": "51dd0192444a1cce676dfa8930f0c73a88cc78665b8544a3cd7a2e6f195edfe4",
+    "artifacts/m36/evidence-tests.log": "fcd476841e8af121ff907e81a92a59579b64c007b70cb79f9d096806f703fc7e",
+    "artifacts/m36/identities.log": "2d6c92d89f59fd9726f88a8370cae248689d3406c1f3b7572abe95b48cd5f050",
+    "artifacts/m36/probe.json": "84b1d0470eb17dc33ecabefe1ca45d619ca9afe5cb1f304a813c3a931fd46d2f",
+    "artifacts/m36/off-policy-regressions.log": "d446da316516a186102ea33b0d9a4c6c93f8bb4d61317beb6c5f81535881ef46",
+    "artifacts/m36/record.log": "1da14ed452c5aee60fc2bd50a012c2e44453a0b6ed9b2cd657218e2e2b63ca77",
+    "artifacts/m36/pre-pressure-harness-fix.log": "10036f0426b2ce9549564beb7926981ed162590da4601bb67d630459e06903f9",
+    "artifacts/m36/runtime-regressions.log": "751f23dbb31f856123e6126dc503a5b120704f842d2c39f7c54a059803202a59",
+    "artifacts/m36r/m35-http.json": "501fd136f258e7a968f0b06127d35273ec1423c4b6cc85e5629ed981bc77b39c",
+    "artifacts/m36r/native-interruptions.log": "a360a7cf8243a7739cb68562247e3ac7a2198cca4cb9692a124cf81a9d3535b5",
+    "artifacts/m36r/qualification.json": "3024b43b14a47263b43d86306b28585e06716bcca87a80a95f02f8137168d2a9",
+    "artifacts/m36r/horizon-regressions.log": "6200b2d9b6f0e6e4f68e1059e9454884ff4b32cff860bcde353eebd6ed25fcbd",
+    "artifacts/m36r/native-interruptions.json": "b924d1c7f337aef2ffefcd8d13bebd1fd3c68c36217b8d95e592b38daad32b23",
+    "artifacts/m36r/m35-http.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m36r/rust-regressions.log": "d710dc9ab2a42dd2a9a8ebf654690d37799583df25e19361747c094b503b4381",
+    "artifacts/m36r/recipe-matrix.log": "61c11329a0026dd9c439ee1e8838f1723221da191994e90f4168e9cd235515ff",
+    "artifacts/m36r/prior-evidence-regressions.log": "c44c3ccd78be694493bf02176280a7f5361485ca3020535569deb57f0216707b",
+    "artifacts/m36r/http.json": "91d5d34c8666ab7040695086f546099ec294b4536fb31ee77efea78fecb89468",
+    "artifacts/m36r/release-off-regressions.log": "5266b33cf4acf83eba8d45f210bff3f2a3863d683b43d0d3d24c040293b584a9",
+    "artifacts/m36r/commands.json": "8abbab5c24b2661ae9b916f4ada6da0605a2f4baa7aa7ac28aaca75e6be91184",
+    "artifacts/m36r/rust-request.json": "51dd0192444a1cce676dfa8930f0c73a88cc78665b8544a3cd7a2e6f195edfe4",
+    "artifacts/m36r/prior-evidence-historical-hash-attempt.log": "f8373b4d4281b8ae78c2e136f5f48ce46b84ffa56c5b3981d82c5a6147c0bf02",
+    "artifacts/m36r/evidence-tests.log": "f0d1f04fe54eb5bac7671f6045f7a33c5d126de248d4f99c0bc619f2fd92c3d0",
+    "artifacts/m36r/identities.log": "2d6c92d89f59fd9726f88a8370cae248689d3406c1f3b7572abe95b48cd5f050",
+    "artifacts/m36r/http.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m36r/off-policy-regressions.log": "d446da316516a186102ea33b0d9a4c6c93f8bb4d61317beb6c5f81535881ef46",
+    "artifacts/m36r/record.log": "30a4f033323bffa5a3378bcea5e2da1bb9bac053205b6eb13f54ee70f4062add",
+    "artifacts/m36r/controlled-admission-regressions.log": "2a6d5df37b8ffb51aee1f82c7c03ea1284b32fd81d59d532a7943ebdcf01c77c",
+    "artifacts/m36r/runtime-regressions.log": "2d449d0a7957253b47df41ce6ff2449a1f5586343201927b2e63ef2d80c9418f",
+    "artifacts/m36r/m36-probe.json": "56370b80bc1858675ad44c3d9d6316c417f180f27f28ae3b5bd912a836ad1204",
+    "artifacts/m36r/recipe-matrix.json": "6da62e6fe40275c5f38a3284583857587c76fcec3fee508a4948afe60e37adee",
+    "artifacts/m36r/m36-probe.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m37/native-gate-commands.json": "df546353dea3f52f864ae31b2452b8d59d23fd3699f397a4f4314e2357db62d2",
+    "artifacts/m37/workflow-initial-fresh-tool.json": "e18abfc678dc24d8fd11322d966837aedb794659b75af4413cdc4770217bdf58",
+    "artifacts/m37/m36r-http.json": "c852a19e8b44df46952f52439320d1f4012b2bcf8d159f855785ee4c86825c95",
+    "artifacts/m37/m35-http.json": "557585e2b14a2c98ead7e3c70e9e24e8051819d89bed401ac0041d15943332d5",
+    "artifacts/m37/native-interruptions.log": "a360a7cf8243a7739cb68562247e3ac7a2198cca4cb9692a124cf81a9d3535b5",
+    "artifacts/m37/workflow.json": "b8d6f7207531380e9c287111c32681e2619ae97442719663878d83f351f25c71",
+    "artifacts/m37/workflow-superseded.log": "bf9c6fae7d0c24c26fc1b81f51f6d46357a860044c059d364555b8f5d69e6e93",
+    "artifacts/m37/workflow.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m37/qualification.json": "3f12530fc74aab0d8345453c36c5e7cc6df79936420aedd29045c67de1c6fa39",
+    "artifacts/m37/native-interruptions.json": "3698e97b250bd9c33e11ab8e07aff7b0b7d32fbf38ea2cbded03a39e25ce2d31",
+    "artifacts/m37/m35-http.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m37/workflow-pre-hardening.json": "900f1d69060ce651f760e612afe7bdea3c6c3b32048bd38c046d476d7b60e8ab",
+    "artifacts/m37/workflow-pre-hardening.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m37/client-tests.log": "70f1d517f9c42c95c7f8988ac129c0067d1ba2934ea4feaec427f5438c3a24cd",
+    "artifacts/m37/rust-regressions.log": "9d429745ea7fa3f4a3edad2d3b9c9635280fd0f8b6759fbb5f53787649664b59",
+    "artifacts/m37/workflow-serialization-attempt.log": "0c2deec599857fb07e06fb9709f647c9e09858a24549bd497bec774ccc175cbe",
+    "artifacts/m37/recipe-matrix.log": "61c11329a0026dd9c439ee1e8838f1723221da191994e90f4168e9cd235515ff",
+    "artifacts/m37/workflow-initial-fresh-tool.log": "ef7987d110120980e374bba87af24c2e43fa6e882a7690c23ff98272a76d01c6",
+    "artifacts/m37/prior-evidence-regressions.log": "eb081624ec429e6be5de081955077b9dcc6ce0de689411869d9cc60ab7309baf",
+    "artifacts/m37/release-off-regressions.log": "488185c267b00c3a2f2865ab6efa23e8dcdca2729b9b1964a11c3d071680cfae",
+    "artifacts/m37/workflow-serialization-attempt.json": "53beedfb9f6fb09938924cbd27ea1fa3438ad9c08f2200ca94ce64456dae0e2b",
+    "artifacts/m37/commands.json": "18b42dd3f5e91458ff56dc2c280f4ee0abafdfbea7e8467ef203cfc78f55bf50",
+    "artifacts/m37/rust-request.json": "51dd0192444a1cce676dfa8930f0c73a88cc78665b8544a3cd7a2e6f195edfe4",
+    "artifacts/m37/evidence-tests.log": "988344a7589dd35ded61b8e784dcd5bc43cb64ba0f19a2bda1a7ec44b380abcb",
+    "artifacts/m37/identities.log": "2d6c92d89f59fd9726f88a8370cae248689d3406c1f3b7572abe95b48cd5f050",
+    "artifacts/m37/gates.log": "fdaf3edf813064b4a912b184c39d696050097dab43635a505f68ab8cb9ed6b1a",
+    "artifacts/m37/workflow-superseded.json": "6454b76764abb7648c11c71c96066ca65b59e9be6fcf10a6617e40a7599b173d",
+    "artifacts/m37/record.log": "546e33251df9fb6e8e517a0ff373dda1aa2b8a79d492bca7a7c69afb2b1c1dbe",
+    "artifacts/m37/runtime-regressions.log": "b1f3598abe54f7d04f16890435ba3cb7a49dac29b16fffe1ba41eda6e2846841",
+    "artifacts/m37/m36-probe.json": "e9a927261fc490b1b563b96d50186fb58ce7da20160fc04bcc8cd4b01eee0486",
+    "artifacts/m37/recipe-matrix.json": "6da62e6fe40275c5f38a3284583857587c76fcec3fee508a4948afe60e37adee",
+    "artifacts/m37/m36r-http.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m37/m36-probe.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "evidence_hashes": {
+    "artifacts/m38/native-gate-commands.json": "a4befb477a076c3f114d4ecfac15fca952fed4755f769cc47bc6882d80088951",
+    "artifacts/m38/ledger-exhaustion.json": "1a4e8f06ad105e00f9997ead33cb7a6217e03204f5847d25d7e9e3c5cd44af1f",
+    "artifacts/m38/pre-fix-client-faults.log": "f9199878499dd1444261c5f0df4e6ed321bf7d7571b0205a14f9155cdf13f3bc",
+    "artifacts/m38/m36r-http.json": "cc9e0e48daec66503ded9f7261d740f436b88a01102f397001a156c07d3cb781",
+    "artifacts/m38/m35-http.json": "e579157c80fd2f27f6f7f9eab55f23f7052c8178c4333145fb6e8d5fc3f315a1",
+    "artifacts/m38/native-interruptions.log": "a360a7cf8243a7739cb68562247e3ac7a2198cca4cb9692a124cf81a9d3535b5",
+    "artifacts/m38/retention-probe.json": "84b0f3186b9982393e35f4058c7f53fe968b7fa6ab94ee57db0d60e5b9930a9f",
+    "artifacts/m38/soak-fresh-tool-attempt.log": "b5690886c3d1eb586386445f6c2b8fb90917bc599c0c301048c070ba1e790ce3",
+    "artifacts/m38/historical-evidence-audit.json": "b1d451ffeb0bd98b763e542b05e80f44be47c1e93e0dd108d827e9a3e7be9011",
+    "artifacts/m38/native-interruptions.json": "6815a541ceb81fac1105c90ed44a7eee8a219031c10fe3be0a8780417601b3ab",
+    "artifacts/m38/client-pressure.json": "ce1575ecdce9a9c9722bdcdca1f3673b045e94529c3e9366cb77c16864de19a1",
+    "artifacts/m38/m35-http.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m38/m37-workflow.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m38/client-tests.log": "d0a1c29580c484e2c1458bbd17cb00211f3cbab73f3e2b483f0443f9be219c10",
+    "artifacts/m38/import-attempt.log": "f421b7b1f41366b51de9dbfd60f4e6ca2baf0c7d3283157ed376e2e2911fce3c",
+    "artifacts/m38/soak-fresh-tool-harness.py": "f6c196f78c3f01f01d26fecc9c791319ad6b3c853aacb8507899ec364ce6867b",
+    "artifacts/m38/rust-regressions.log": "dfa91550cf7627f231832d4a8d3b6bb3a7a2db89ba3aa386ecb1f8f94697daeb",
+    "artifacts/m38/recipe-matrix.log": "61c11329a0026dd9c439ee1e8838f1723221da191994e90f4168e9cd235515ff",
+    "artifacts/m38/prior-evidence-regressions.log": "f996575262351118b0ff252c1096d203259fd40cff5f7d22e3cdda3425b04672",
+    "artifacts/m38/m37-workflow.json": "dd6f3e5d33045918f9527c2ca674e0050979c1fc7d6eeb8e453e0e3a1c764951",
+    "artifacts/m38/release-off-regressions.log": "6cebd57046c070e79f9e0cf30c389f8884cf819a745f0d278a770d5bdb8f4dd7",
+    "artifacts/m38/soak.json": "0d97aa8a7d728da08edb3fa34a54274a75636749c1c2e955f3b125803ffb3cc8",
+    "artifacts/m38/prior-evidence-first-attempt.log": "aa60a309b3475708f3c5b8853339b2d72b3d98b799970d14143473fa74ddf977",
+    "artifacts/m38/commands.json": "82b800a21f1e7e5d9d2f9fd5daaf05cf55a35976898ef28b774f2dca7a5eca6f",
+    "artifacts/m38/rust-request.json": "51dd0192444a1cce676dfa8930f0c73a88cc78665b8544a3cd7a2e6f195edfe4",
+    "artifacts/m38/client-pressure.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m38/lifecycle-transport.json": "083f49f035c804ca367f29c5de853b9c4a92ab271fe5c952849bd85d6e9ce1f1",
+    "artifacts/m38/identities.log": "2d6c92d89f59fd9726f88a8370cae248689d3406c1f3b7572abe95b48cd5f050",
+    "artifacts/m38/gates.log": "8ebe86fa81a62649259c3e25b9cd27971cb0b0022ebf4a7b7e4cb3466dbbe1ed",
+    "artifacts/m38/native-gates.log": "fdaf3edf813064b4a912b184c39d696050097dab43635a505f68ab8cb9ed6b1a",
+    "artifacts/m38/gate-commands-first-attempt.json": "f82a57a6089ae21ceca4d7fdcb5819ee539edb77f01c4f5c99bd7ed8271aa1ec",
+    "artifacts/m38/lifecycle-transport.log": "98ad76e95f08b5513e2da70639d96b78f86b54c4cf50da135b22a66fb062bb6a",
+    "artifacts/m38/runtime-regressions.log": "43a1deaba5a87bb7033a8bcd9119e3856985d61e288410e43e0fa26f836db6f0",
+    "artifacts/m38/m36-probe.json": "c84196033551bb9232622d9e00973a38355dddcdfbafb7acbfe6f573e5ee0790",
+    "artifacts/m38/recipe-matrix.json": "6da62e6fe40275c5f38a3284583857587c76fcec3fee508a4948afe60e37adee",
+    "artifacts/m38/gate-commands.json": "2e68ae7719f65fa11d70f1fe6712f41e3f22795e1a58b5e6fd1109e0ed146767",
+    "artifacts/m38/m36r-http.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m38/client-tests.xml": "39571e6e1137622bda5fb76ac102aa156dff4548380962c2c249803894b3507c",
+    "artifacts/m38/soak-fresh-tool-attempt.json": "27fdf53b0fe14caca443d674760f43ba1dbf3d1f1b37640c3c195d27384d7c1d",
+    "artifacts/m38/m36-probe.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m38/soak.log": "c73a03b4bfaa6cb4317428536a410b1add877fdf565bafcb85e112076b37c9da",
+    "artifacts/m38/excluded-gate-attempt/native-gate-commands.json": "effd35e81cec36f9bcc8572c7fd1ef015e41583e6764fe5c39cb487b156c0d96",
+    "artifacts/m38/excluded-gate-attempt/m35-http.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m38/excluded-gate-attempt/recipe-matrix.log": "61c11329a0026dd9c439ee1e8838f1723221da191994e90f4168e9cd235515ff",
+    "artifacts/m38/excluded-gate-attempt/identities.log": "2d6c92d89f59fd9726f88a8370cae248689d3406c1f3b7572abe95b48cd5f050",
+    "artifacts/m38/excluded-gate-attempt/gates.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m38/excluded-gate-attempt/native-gates.log": "d85993d42162ffeba89778003052eb1601e2a4d7a18347edd8a57a2b917a0fc2",
+    "artifacts/m38/excluded-gate-attempt/recipe-matrix.json": "6da62e6fe40275c5f38a3284583857587c76fcec3fee508a4948afe60e37adee"
+  }
+}
