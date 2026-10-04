@@ -19,12 +19,12 @@ live DeepseekV41Cache[40] + all-token history
   ↓
 P5 terminal-token handoff exactly once
   ↓
-oMLX GenerationBatch, MTP/DSpark/speculation OFF
+ds41f TargetGenerationSession, MTP/DSpark/speculation OFF
   ↓
 recipe-formatted HTTP response/session boundary
 ```
 
-The release architecture has one executable cache authority. `PrefillContinuationState` and handoff artifacts are evidence/admission structures; after GenerationBatch bootstrap, scheduler-owned cache is authoritative. Persisted artifacts are dormant storage and never a second live authority.
+The release architecture has one executable cache authority. `PrefillContinuationState` and handoff artifacts are evidence/admission structures; after terminal bootstrap, ds41f TargetGenerationSession owns the exact live cache list. Its sampled lookahead is uncommitted until consumed. Model forward/cache math remains attributed temporary substrate; see M44. Persisted artifacts are dormant storage and never a second live authority.
 
 ## Guarded singleton qualification (M33–M35, internal)
 
@@ -64,7 +64,7 @@ The native C++ core remains local and self-contained. It includes checkpoint/sto
 
 ## State ownership
 
-Persistent model/session state includes token history, per-layer window KV, compressed source KV, index K, shared publications, Engram hash/history state, candidate/top-k state, and GenerationBatch-owned cache state. Runtime-owned state includes request/session ownership, executor scheduling, RNG provider state, diagnostics, and persistence transaction state. Call-local hidden/logit tensors are not persistent session authority.
+Persistent model/session state includes token history, per-layer window KV, compressed source KV, index K, shared publications, Engram hash/history state, candidate/top-k state, and ds41f-engine-owned live cache state. Runtime-owned state includes request/session ownership, executor scheduling, RNG provider state, diagnostics, and persistence transaction state. Call-local hidden/logit tensors are not persistent session authority.
 
 ## Non-selected paths
 

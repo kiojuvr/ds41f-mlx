@@ -1,4 +1,12 @@
-# Session state contract
+# Session state
+
+Current standard-off authority (M44): P7 produces the live packed 40-layer list;
+P5 transfers it once to ds41f `TargetGenerationSession`. The engine owns target
+scheduling, sampling, consumed history and EOS/length/cancel boundaries, and
+returns that exact list to idle P6 continuation. Unconsumed sampled lookahead is
+not committed state. Model forward/cache math remains temporary attributed
+substrate. The M2–M4 admission discussion below is historical/reference machinery,
+not the production selector. See `runtime-strategy.md` and the M44 decision. contract
 
 M25 preserves the OFF-only idle artifact: save/restore reject models with
 preserved or active MTP before I/O. The pinned upstream MTP emission queue and

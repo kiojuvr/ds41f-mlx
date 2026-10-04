@@ -8,7 +8,7 @@ The project exists to make the full official model practically usable as a local
 
 That requires both preserving the model semantics, precision boundaries, persistent state, and generation behavior required by DeepSeek-V4.1-Flash, and achieving practical inference performance across prefill, incremental decoding, and long-running agent sessions.
 
-Correctness and performance are therefore not separate end goals. Correctness defines the boundary within which performance must be achieved. The text runtime now has a scoped release qualification for the target production path: dense P0-P7 prefill, P7 SSD-backed Engram, P5 zero-replay handoff, and oMLX GenerationBatch MTP-OFF decode behind local single-flight HTTP.
+Correctness and performance are therefore not separate end goals. Correctness defines the boundary within which performance must be achieved. The text runtime now has a scoped release qualification for the target production path: dense P0-P7 prefill, P7 SSD-backed Engram, P5 zero-replay handoff, and ds41f-owned single-stream MTP-OFF decode behind local single-flight HTTP (M44). Model arithmetic and packed cache/SSD Engram implementation remain attributed temporary substrate.
 
 The canonical [final runtime target](docs/final-runtime-target.md) defines the intended
 self-contained public source repository. **M43 release extraction is complete**:
@@ -76,7 +76,7 @@ official checkpoint
   -> DENSE_P0_P7 production prefill
   -> P7 FULL_RESIDENT_BACKBONE_SSD_ENGRAM
   -> P5 zero-replay handoff
-  -> oMLX GenerationBatch decode, MTP/DSpark/speculation OFF
+  -> ds41f TargetGenerationSession decode, MTP/DSpark/speculation OFF
   -> official deepseek-recipe local HTTP serving
 ```
 
@@ -99,7 +99,7 @@ Source closure is complete for the native model core. Checkpoint-free native bui
 
 ## Architecture summary
 
-The release production architecture is described in `docs/runtime-strategy.md`: dense P0-P7 FP8/MLX prefill commits a live `DeepseekV41Cache[40]`; P5 hands the held-out terminal token to oMLX `GenerationBatch`; decode proceeds MTP-OFF with one executable cache authority. Transformer/session details from the native reference runtime remain documented because they define important state and correctness contracts.
+The release production architecture is described in `docs/runtime-strategy.md`: dense P0-P7 FP8/MLX prefill commits a live `DeepseekV41Cache[40]`; P5 hands the held-out terminal token to ds41f `TargetGenerationSession`; decode proceeds MTP-OFF with one executable cache authority. [M44](docs/milestone-44-target-generation-ownership.md) owns target scheduling, sampling, committed history, termination and exact-list idle transfer; the attributed model-forward/cache/kernel implementation remains external. Transformer/session details from the native reference runtime remain documented because they define important state and correctness contracts.
 
 ## Repository layout
 

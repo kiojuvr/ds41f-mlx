@@ -28,7 +28,7 @@ regression/soak results and explicit blocked MTP gates are under `artifacts/m25/
 - Model: official DeepSeek-V4.1-Flash checkpoint.
 - Input: text only.
 - Prefill: `DENSE_P0_P7`, P7 `FULL_RESIDENT_BACKBONE_SSD_ENGRAM`.
-- Decode: oMLX `GenerationBatch`, MTP OFF, DSpark OFF, speculative decode OFF.
+- Decode: ds41f `TargetGenerationSession`, MTP OFF, DSpark OFF, speculative decode OFF. M44 transfers execution/history/lifecycle authority; attributed target model math, packed cache objects and SSD Engram remain temporary substrate. See [M44](milestone-44-target-generation-ownership.md) for fresh R1, real-model, operational and performance evidence. Earlier GenerationBatch receipts are immutable historical evidence, not qualification of the changed engine.
 - Serving: local single-flight HTTP.
 - Stateless API: Chat Completions, Responses, Messages in the already qualified text scope.
 - Stateful API: Chat Completions sessions only.
@@ -84,7 +84,7 @@ Official checkpoint only; no requantized substitute; dense P0-P7 selector; P7 SS
 
 ## Performance and safety sanity
 
-Performance class remains the established dense P0-P7 class: practical prefill through 200K, practical GenerationBatch decode above the floor, EOS avoiding post-answer over-generation, and persistence/restore small relative to load/inference. Recorded target evidence reports no unexpected swap in the qualified workloads and bounded diagnostics/session traces. Resource cleanup evidence covers cancellation, session close, and request cleanup; memory growth/leak stress beyond representative release workloads remains outside this scoped claim.
+Performance class remains the established dense P0-P7 class: practical prefill through 200K, practical ds41f-owned target decode above the floor, EOS avoiding post-answer over-generation, and persistence/restore small relative to load/inference. Recorded target evidence reports no unexpected swap in the qualified workloads and bounded diagnostics/session traces. Resource cleanup evidence covers cancellation, session close, and request cleanup; memory growth/leak stress beyond representative release workloads remains outside this scoped claim.
 
 ## Provenance
 

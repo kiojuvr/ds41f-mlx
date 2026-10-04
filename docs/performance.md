@@ -6,7 +6,7 @@ This document records current performance-relevant conclusions without preservin
 
 The current native attention, MoE, Engram, state, and generation paths are measured as the current correctness/reference runtime. Their components may be reused in production where architecturally justified, but this document does not promote the current native execution topology as final production architecture.
 
-The current production-prefill candidate for Milestone 6 is the existing **dense P0-P7 DwarfStar-derived FP8/MLX path** with `P7 FULL_RESIDENT_BACKBONE_SSD_ENGRAM`, `P7_ENGRAM_TILE=2048`, and oMLX `GenerationBatch` MTP-OFF decode. P8 optimization search is complete: `TILE_NATIVE_CARRY_REJECTED_NO_E2E_GAIN`; the tile-native implementation is retained as experimental/default OFF and is not production-selected.
+The current production-prefill candidate for Milestone 6 is the existing **dense P0-P7 DwarfStar-derived FP8/MLX path** with `P7 FULL_RESIDENT_BACKBONE_SSD_ENGRAM`, `P7_ENGRAM_TILE=2048`, and ds41f `TargetGenerationSession` MTP-OFF decode (M44). The earlier GenerationBatch measurements below are historical comparison evidence; M44 records fresh matched measurements for the changed engine. P8 optimization search is complete: `TILE_NATIVE_CARRY_REJECTED_NO_E2E_GAIN`; the tile-native implementation is retained as experimental/default OFF and is not production-selected.
 
 ## Historical native reference baseline
 
@@ -73,7 +73,7 @@ Rejected/deferred candidates include wide/rectangular attention alternatives, fu
 
 ## Release performance sanity
 
-The scoped release relies on the dense P0-P7 performance class already qualified through 200K, practical GenerationBatch decode above the interactive floor, EOS termination avoiding unnecessary post-answer generation, and same-backend persistence/restore that is operationally small relative to model load/inference.
+The scoped release relies on the dense P0-P7 performance class already qualified through 200K, practical ds41f-owned target decode above the interactive floor, EOS termination avoiding unnecessary post-answer generation, and same-backend persistence/restore that is operationally small relative to model load/inference.
 
 Operator-facing performance claims are regression class claims, not a new benchmark competition. Do not broaden them beyond the recorded checkpoint/runtime/hardware/config provenance.
 

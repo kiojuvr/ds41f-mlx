@@ -12,7 +12,7 @@ official DeepSeek-V4.1-Flash checkpoint
   -> DENSE_P0_P7 production prefill
   -> P7 FULL_RESIDENT_BACKBONE_SSD_ENGRAM
   -> P5 terminal holdout/handoff exactly once
-  -> oMLX GenerationBatch decode
+  -> ds41f TargetGenerationSession single-stream decode
   -> MTP OFF / DSpark OFF / speculative decode OFF
   -> official deepseek-recipe local HTTP serving
 ```
@@ -35,7 +35,9 @@ Backend-local determinism is required for fixed checkpoint/runtime/backend/build
 
 The runtime-facing prefill facade selects the dense P0-P7 FP8/MLX path with P7 `FULL_RESIDENT_BACKBONE_SSD_ENGRAM` and `P7_ENGRAM_TILE=2048`. P8 tile-native carry is retained as experimental/default OFF because it did not produce an end-to-end gain. The old one-chunk oMLX layer-loop substrate is diagnostic/legacy and is not selected by serving or release performance qualification.
 
-P5 is the release handoff seam: serving holds out the terminal prompt token, prefill commits the prefix to one live `DeepseekV41Cache[40]`, and oMLX `GenerationBatch` receives the terminal token exactly once. After bootstrap, GenerationBatch-owned cache is the single executable authority.
+P5 is the release handoff seam: serving holds out the terminal prompt token, prefill commits the prefix to one live `DeepseekV41Cache[40]`, and ds41f `TargetGenerationSession` consumes the terminal token exactly once. The engine owns target-call scheduling, normalized-logprob sampling, consumed-token history, EOS/length/cancel, failure invalidation, and return of the exact live list to idle continuation. Sampled lookahead is not committed until consumed. No scheduler row extraction, cache repack, prompt replay or hidden reconstruction occurs.
+
+[M44](milestone-44-target-generation-ownership.md) transfers this complete execution/lifecycle boundary, not model arithmetic. The attributed oMLX loader, LanguageModel target forward, packed cache representation, quantization/custom kernels and SSD Engram remain temporary dependencies. The old `omlx_generation.py` engine is retained only for R1 legacy lifecycle fixtures and explicit matched comparisons; production serving and P5 do not select it. The bounded MTP profile is unchanged and still uses its separately qualified scheduler. The next frontier is the target-forward/all-layer cache mutation boundary, sharing the existing packed representation with P7 rather than introducing another cache authority.
 
 ## Session and persistence strategy
 

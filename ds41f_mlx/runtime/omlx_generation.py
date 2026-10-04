@@ -1,4 +1,8 @@
-"""Practical oMLX GenerationBatch production decode session.
+"""Legacy qualified oMLX GenerationBatch comparison/fixture session.
+
+M44 production standard-off selects target_generation.TargetGenerationSession.
+This implementation remains only for immutable R1 lifecycle fixtures and explicit
+matched legacy comparisons; it is not a runtime fallback or production selector.
 
 This module promotes the Milestone-4 P5 no-prompt-replay mechanism into a
 runtime-facing session while keeping :class:`OMLXDecodeSession.decode_one` as the

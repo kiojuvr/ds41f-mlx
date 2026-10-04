@@ -1,4 +1,4 @@
-"""DeepSeek recipe serving backend for the qualified oMLX GenerationBatch path."""
+"""DeepSeek recipe serving backend for ds41f-owned standard-off generation."""
 from __future__ import annotations
 
 import asyncio
@@ -19,7 +19,7 @@ from ds41f_mlx.runtime.dwarfstar_prefill import DwarfStarMLXPrefillSession, PROD
 from ds41f_mlx.prefill_fp8_mlx import handoff_to_generation
 from ds41f_mlx.runtime.omlx_core import OmlxRuntime, OmlxRuntimeConfig
 from ds41f_mlx.runtime.omlx_decode import OMLXDecodeConfig
-from ds41f_mlx.runtime.omlx_generation import OMLXGenerationSession
+from ds41f_mlx.runtime.target_generation import TargetGenerationSession
 from ds41f_mlx.runtime.tool_boundary_session import M11RecipeToolSession, M11AssistantTurn
 MODEL_ALIASES = {DEFAULT_MODEL_ID, 'deepseek-v41-flash', 'deepseek-flash'}
 REFERENCE_VERTICAL_SLICE_CLASSIFICATION = 'PRODUCTION_PREFILL_REGRESSED_TO_REFERENCE_VERTICAL_SLICE'
@@ -238,7 +238,7 @@ class DeepSeekRecipeRuntimeBackend:
         trace = RequestTrace(str(uuid4()), request.protocol, len(request.token_ids), len(prefix), first)
         self.last_trace = trace
         self.traces.append(trace)
-        session: OMLXGenerationSession | None = None
+        session: TargetGenerationSession | None = None
         session_counted = False
         await self._lock.acquire()
         try:

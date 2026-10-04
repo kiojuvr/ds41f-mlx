@@ -3,13 +3,13 @@
 Terminal-token contract (request ownership, not the last sweep's arena):
     full_prompt = complete_prefix_token_ids + [terminal_prompt_token]
 Only the prefix was prefilled. Its length must equal all 40 cache frontiers.
-The held-out terminal token is forwarded once by GenerationBatch bootstrap;
+The held-out terminal token is forwarded once by ds41f target-engine bootstrap;
 it is not prompt replay. No final-prefix logits are needed. Never pass an
 already-prefilled terminal token to start() again.
 
 No cache creation, tensor copy/conversion, merge, continuation-state export,
 or reconstruction from publication records occurs here. After transfer the
-prefill runner is revoked; after bootstrap the scheduler is decode authority.
+prefill runner is revoked; after bootstrap the ds41f engine is decode authority.
 External diagnostic aliases are passive references, not executable authorities.
 """
 from __future__ import annotations
@@ -20,7 +20,7 @@ from typing import Any, Sequence, TYPE_CHECKING
 from .executor import PrefillExecutionSetup
 
 if TYPE_CHECKING:
-    from ds41f_mlx.runtime.omlx_generation import OMLXGenerationSession
+    from ds41f_mlx.runtime.target_generation import TargetGenerationSession
 
 
 class LiveCacheHandoffError(RuntimeError):
@@ -184,19 +184,19 @@ class LivePrefillResult:
 
     @property
     def cache_authority_owner(self) -> str:
-        return {'ready': 'LivePrefillResult', 'transferring': 'OMLXGenerationSession',
-                'started': 'BatchGenerator/GenerationBatch', 'failed': 'invalidated'}[self._state]
+        return {'ready': 'LivePrefillResult', 'transferring': getattr(self, '_decode_authority_label', 'OMLXGenerationSession'),
+                'started': getattr(self, '_decode_authority_label', 'BatchGenerator/GenerationBatch'), 'failed': 'invalidated'}[self._state]
 
 
 def _generation_session_type():
     # Avoid loading the older compatibility admission path at package import.
-    from ds41f_mlx.runtime.omlx_generation import OMLXGenerationSession
-    return OMLXGenerationSession
+    from ds41f_mlx.runtime.target_generation import TargetGenerationSession
+    return TargetGenerationSession
 
 
 def handoff_to_generation(result: LivePrefillResult, model: Any, *, terminal_prompt_token: int,
                           config: Any = None, max_tokens: int = 128, sampler: Any = None,
-                          session_factory: Any = None) -> 'OMLXGenerationSession':
+                          session_factory: Any = None) -> 'TargetGenerationSession':
     """Transfer once and bootstrap only the held-out terminal prompt token.
 
     Admission and start are one operation. Even a failed transfer/start attempt
@@ -218,6 +218,7 @@ def handoff_to_generation(result: LivePrefillResult, model: Any, *, terminal_pro
         # Internal qualification may explicitly supply a guarded native MTP
         # session factory. Public/default serving still selects MTP-OFF only.
         session_type = session_factory or _generation_session_type()
+        result._decode_authority_label = getattr(session_type, 'cache_authority_label', 'BatchGenerator/GenerationBatch')
         session = session_type.from_prefilled_cache(
             model, cache, result.prefix_token_ids, config, max_tokens=max_tokens, sampler=sampler)
         if session.initial_cache is not cache:

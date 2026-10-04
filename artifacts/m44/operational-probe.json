@@ -1,0 +1,146 @@
+{
+  "schema": "ds41f.m41.off-protocols.v1",
+  "status": "FAIL",
+  "cases": [
+    {
+      "route": "/v1/chat/completions",
+      "response": {
+        "id": "0555b5e8-1492-4a7d-a3d4-a99035f11a9a",
+        "object": "chat.completion",
+        "created": 1791112871,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Hello!"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 8,
+          "completion_tokens": 2,
+          "total_tokens": 10,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 8
+        }
+      },
+      "wall_s": 66.6765937920427
+    },
+    {
+      "route": "/v1/responses",
+      "response": {
+        "id": "abb48384-3453-42ff-9f7f-3d5387ae5361",
+        "object": "response",
+        "created_at": 1791112938,
+        "model": "deepseek-v4.1-flash",
+        "status": "incomplete",
+        "completed_at": 1791112939,
+        "error": null,
+        "incomplete_details": {
+          "reason": "max_output_tokens"
+        },
+        "output": [
+          {
+            "type": "reasoning",
+            "id": "rs_abb48384-3453-42ff-9f7f-3d5387ae5361_0",
+            "status": "incomplete",
+            "content": [
+              {
+                "type": "reasoning_text",
+                "text": "We need answer user asks \"Say hello briefly.\" Need comply. Just \"Hello"
+              }
+            ],
+            "summary": []
+          }
+        ],
+        "usage": {
+          "input_tokens": 34,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 16,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 50
+        }
+      },
+      "wall_s": 1.0701947499765083
+    },
+    {
+      "route": "/v1/messages",
+      "response": {
+        "id": "585b547b-c374-425f-8c51-2283a5b608f1",
+        "type": "message",
+        "role": "assistant",
+        "model": "deepseek-v4.1-flash",
+        "content": [
+          {
+            "type": "thinking",
+            "thinking": "We need answer user asks \"Say hello briefly.\" Need comply. Just \"Hello",
+            "signature": "585b547b-c374-425f-8c51-2283a5b608f1"
+          }
+        ],
+        "stop_reason": "max_tokens",
+        "stop_sequence": null,
+        "usage": {
+          "input_tokens": 34,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "output_tokens": 16,
+          "service_tier": "standard"
+        }
+      },
+      "wall_s": 1.0569066659663804
+    }
+  ],
+  "stateful_tool": {
+    "id": "468f4fad-d7ac-4b8b-b2c5-a30a3e115851",
+    "object": "chat.completion",
+    "created": 1791112941,
+    "model": "deepseek-v4.1-flash",
+    "system_fingerprint": null,
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "",
+          "tool_calls": [
+            {
+              "id": "call_468f4fad-d7ac-4b8b-b2c5-a30a3e115851_0",
+              "type": "function",
+              "function": {
+                "name": "lookup_weather",
+                "arguments": "{\"city\": \"Paris\"}"
+              }
+            }
+          ]
+        },
+        "logprobs": null,
+        "finish_reason": "tool_calls"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 293,
+      "completion_tokens": 28,
+      "total_tokens": 321,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 293
+    }
+  },
+  "stream_status": 400,
+  "stream_raw": "{\"error\":{\"message\":\"cache is sealed; prefill execution is revoked\",\"type\":\"invalid_request_error\",\"param\":null,\"code\":\"invalid_request_error\"}}",
+  "error": "AssertionError('{\"error\":{\"message\":\"cache is sealed; prefill execution is revoked\",\"type\":\"invalid_request_error\",\"param\":null,\"code\":\"invalid_request_error\"}}')"
+}

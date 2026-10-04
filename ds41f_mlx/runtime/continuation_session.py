@@ -1,10 +1,10 @@
 """M8 long-lived single-flight continuation session.
 
-The production authority is always exactly one live oMLX ``DeepseekV41Cache``
-list.  Completed generation is extracted from ``GenerationBatch`` at a turn
-boundary, then newly recipe-encoded prompt suffix tokens are appended in-place by
-P6/P7 ``DeferredPrefillAppend``.  The final suffix token is held out and consumed
-once by the next ``GenerationBatch`` bootstrap, preserving the P5 zero-replay
+The production authority is always exactly one live ``DeepseekV41Cache`` list.
+ds41f ``TargetGenerationSession`` returns that exact list at a turn boundary,
+then newly recipe-encoded prompt suffix tokens are appended in-place by
+P6/P7 ``DeferredPrefillAppend``. The final suffix token is held out and consumed
+once by the next ds41f target bootstrap, preserving the P5 zero-replay
 contract across repeated turns.
 """
 from __future__ import annotations
@@ -16,7 +16,7 @@ from typing import Any, Callable, Sequence
 from ds41f_mlx.prefill_fp8_mlx import DeferredPrefillAppend, LivePrefillResult, handoff_to_generation
 from ds41f_mlx.prefill_fp8_mlx.handoff import validate_committed_cache, _validate_live_cache_structure
 from ds41f_mlx.runtime.omlx_decode import OMLXDecodeConfig
-from ds41f_mlx.runtime.omlx_generation import OMLXGenerationSession, OMLXGenerationStepReport
+from ds41f_mlx.runtime.target_generation import TargetGenerationSession, TargetGenerationStepReport
 
 
 class M8ContinuationError(RuntimeError):
@@ -66,7 +66,7 @@ class M8LiveContinuationSession:
     ``token_history`` is request metadata used for boundary validation and
     scheduler bookkeeping; it is not a second executable state authority.  The
     executable state is ``live_cache`` while idle, or the active
-    ``OMLXGenerationSession`` while decoding.
+    ``TargetGenerationSession`` while decoding.
     """
 
     model: Any
@@ -75,7 +75,7 @@ class M8LiveContinuationSession:
     config: OMLXDecodeConfig = field(default_factory=OMLXDecodeConfig)
     sampler: Callable[[Any], Any] | None = None
     mx: Any | None = None
-    generation: OMLXGenerationSession | None = None
+    generation: TargetGenerationSession | None = None
     closed: bool = False
     turn_records: list[M8TurnRecord] = field(default_factory=list)
     total_prompt_replay_count: int = 0
@@ -194,8 +194,16 @@ class M8LiveContinuationSession:
             self.live_cache = live.live_cache
             self.token_history = list(target_history)
         else:
-            gen = OMLXGenerationSession.from_prefilled_cache(self.model, self.live_cache, self.token_history, self.config, max_tokens=max_tokens, sampler=self.sampler)
-            gen.start(terminal, max_tokens=max_tokens)
+            gen = TargetGenerationSession.from_prefilled_cache(self.model, self.live_cache, self.token_history, self.config, max_tokens=max_tokens, sampler=self.sampler)
+            try:
+                gen.start(terminal, max_tokens=max_tokens)
+            except BaseException:
+                # Bootstrap may already have mutated the sole cache lease.
+                # Never leave it looking like committed idle continuation.
+                self.live_cache = []
+                self.closed = True
+                gen.close()
+                raise
             self.live_cache = []
             self.generation = gen
             self.token_history = gen.current_token_history()
@@ -234,7 +242,7 @@ class M8LiveContinuationSession:
             first_token_latency_s=None,
         ))
 
-    def next_token(self) -> OMLXGenerationStepReport | None:
+    def next_token(self) -> TargetGenerationStepReport | None:
         if self.generation is None:
             raise M8ContinuationError("no active generation; call begin_turn first")
         t0 = perf_counter()
