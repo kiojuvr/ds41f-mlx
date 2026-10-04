@@ -407,7 +407,13 @@ The existence of `ds41f-runtime` therefore does not force premature donor-remova
 ## Future development after R1
 
 Once R1 and M43 one-way promotion are established, qualification has two distinct
-tracks:
+tracks. For the current post-M48 development phase, the authoritative
+[production roadmap](implementation-plan.md#post-m48-production-boundary-and-remaining-work-current-authority)
+defers full R1 regression re-verification until implementation and operational
+behavior are sufficiently stable; “R1 conformance where applicable” below does not
+mandate repeated full R1 runs at each intermediate milestone. Runtime promotion,
+clean-room work and release machinery remain deferred while substantive production
+implementation and operational qualification accumulate:
 
 ```text
 development qualification (in ds41f-mlx)

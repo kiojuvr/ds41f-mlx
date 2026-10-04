@@ -8,7 +8,16 @@ of milestone scheduling or prior chat context. The final public form is a
 DeepSeek-V4.1-Flash checkpoint on the documented Apple Silicon platform.
 
 This document defines the destination, not an implementation plan or a claim that
-it has already been reached. [Runtime strategy](runtime-strategy.md),
+it has already been reached. **M48 completed the supported text-only standard-OFF
+production core; it did not complete the entire production implementation of
+DeepSeek-V4.1-Flash.** The authoritative [post-M48 roadmap](implementation-plan.md#post-m48-production-boundary-and-remaining-work-current-authority)
+distinguishes current text performance/long-session qualification, very-long-context
+production completion (200K confirmation before 512K-class and practical-ceiling
+work), Vision production completion, later R1 regression proof and runtime promotion.
+Vision remains part of the production-completion target despite current text-only
+serving; no 512K qualification is claimed. Implementation and operational
+qualification iterate as expanded scope exposes gaps; Stage 1 is not globally
+complete. [Runtime strategy](runtime-strategy.md),
 [operations](operations.md), the [release manifest](../release/ds41f-release.json)
 and scoped qualification records continue to describe the current runtime.
 Production/default MTP, DSpark and speculation remain OFF; this target neither
@@ -22,8 +31,11 @@ refines the repository model: `ds41f-mlx` remains the sole development authority
 implementation line or a continuously synchronized development mirror. M42
 semantic closure/Reference Release R1 and M43 deterministic extraction are
 established baselines. Ordinary milestones qualify affected implementation in
-`ds41f-mlx`, with R1 and necessary real-model/lifecycle/performance evidence;
-multiple qualified milestones may accumulate without updating `ds41f-runtime`.
+`ds41f-mlx` with necessary real-model/lifecycle/performance evidence. Full R1
+regression re-verification is deferred to a sufficiently stable implementation
+and operational boundary under the current roadmap, not repeated after every
+intermediate milestone; multiple qualified milestones may accumulate without
+updating `ds41f-runtime`.
 Release promotion is a separate explicit checkpoint applying M43's existing
 projection, fresh independent setup, release-profile acceptance and receipt
 rules. A changed release surface alone does not trigger that checkpoint. No direct
@@ -62,32 +74,25 @@ prohibited. The official checkpoint is an intentionally external model asset.
 
 ## Dependency destination
 
-### oMLX: temporary implementation substrate
+### First-party text execution and remaining dependencies
 
-Today the OFF release manifest pins oMLX and OFF configuration imports its
-checkout; M41's separate candidate installs repository-exported source as a package.
-M44's ds41f `TargetGenerationSession` now owns standard-off target scheduling,
-sampling, consumed-token history, generation lifecycle and exact-list idle
-transfer after dense P0–P7 prefill/P5 handoff. M45 owns single-token target-forward
-sequencing and all-40-layer mutation/commit on that same list. Model loading,
-stateless numerical math, packed cache representation, kernels and SSD Engram reads remain temporarily oMLX-supplied. [M46](milestone-46-state-production-ownership.md) owns block state production, packed mutation and compressed/index/candidate lifecycle below the target transaction; external state-producing module calls are no longer used in OFF decode. [M47](milestone-47-execution-resource-admission.md) admits the exact numerical/native artifact set, official checkpoint payloads, tokenizer pair and SSD descriptors before OFF execution. External implementation does not imply external permission to participate; that decision is ds41f-owned. The remaining measured frontier is startup verification I/O, not dependency count. Internal guarded qualification additionally uses a
-patched oMLX candidate. This is a **temporary implementation substrate**, not the
-intended final public architecture or the authority defining ds41f contracts.
-The self-contained native reference core does not by itself close this production
-dependency.
+[M48](milestone-48-first-party-model-execution.md) establishes first-party official
+checkpoint loading, numerical/model execution, packed storage and SSD-backed
+Engram implementation in `ds41f_mlx/model_execution/` for standard-OFF. M44's
+generation authority, M45's all-40-layer target transaction, M46's state-production
+authority and M47's model-lifetime resource admission remain intact on the existing
+DENSE_P0_P7 / P5 continuation architecture. There is no donor model execution
+fallback on this supported path.
 
-Functionality currently supplied through oMLX is expected eventually to become
-owned by `ds41f-mlx` or otherwise cease to require a separate oMLX repository
-checkout. This includes model loading/execution support, decode execution,
-GenerationBatch-equivalent state, cache/KV ownership, continuation state,
-generation lifecycle/state transitions, cancellation/quiescence, cache
-transfer/extraction, and—as applicable to an explicitly supported capability—MTP
-lifecycle, DSpark integration/state and proposal/verification lifecycle.
-Ownership replacement does not imply enabling those experimental capabilities.
-The target-forward/all-layer mutation frontier is transferred by M45 on the
-existing P7-compatible packed representation; no new capability is implied.
-Subsequent architecture work must be justified by measured remaining boundaries,
-not by dependency-count reduction.
+Remaining attributed MLX/Metal and stateless acceleration primitives are
+lower-level dependencies, not competing model, state or generation authorities.
+Release metadata/setup and separate guarded candidate profiles may retain donor
+identities or provisioning requirements; those do not reopen M48's text ownership
+or qualify broader capabilities. Reproducible dependency delivery remains part of
+the eventual self-contained destination, but dependency-count reduction is not a
+reason to weaken or replace the completed production core. Broader context and
+Vision implementation must follow measured gaps and existing ownership principles.
+MTP, DSpark and speculation remain separately scoped and OFF by default.
 
 ### deepseek-recipe: protocol authority, not a developer-checkout requirement
 

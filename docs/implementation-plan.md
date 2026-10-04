@@ -1,6 +1,95 @@
 # Implementation plan
 
-This roadmap converts the runtime strategy into a finite sequence of milestones. It is not an optimization backlog. Runtime behavior, selectors, API integration, and multimodal work must not change until the relevant architecture milestone authorizes that work.
+This roadmap records implementation boundaries and evidence-driven next work. It is not an optimization backlog or a requirement to create a new milestone for every implementation/qualification iteration.
+
+## Post-M48 production boundary and remaining work (current authority)
+
+**M48 completed the supported text-only standard-OFF production core; it did not complete the entire production implementation of DeepSeek-V4.1-Flash.**
+
+For that scope, first-party production implementation is established: official
+checkpoint loading and numerical/model execution, standard-OFF generation, packed
+cache/state production, SSD-backed Engram, the existing DENSE_P0_P7 / P5
+continuation architecture, and M44–M47 generation, transaction, state-production
+and admission ownership. See [M48 evidence](milestone-48-first-party-model-execution.md).
+Do not weaken or reopen those ownership boundaries merely to eliminate remaining
+dependencies. Historical milestone statements describe their bounded evidence;
+this section governs the current interpretation of production completion.
+
+### Immediate priority: production performance / long-session qualification
+
+First-party text correctness and practical operation come first. Exercise and
+improve the current core under realistic performance and long-session conditions,
+starting with confirmation at approximately **200K** before expanding aggressively.
+The existing architecture has historical evidence through 200K; that is not a
+substitute for practical long-context qualification of the post-M48 first-party
+implementation. Vision and the next context frontier need not interrupt this
+baseline.
+
+### Very-long-context production completion
+
+After the current first-party text path is healthy at approximately 200K, exercise
+**512K-class operation**, then determine the **actual practical context ceiling**
+on the target Mac Studio M3 Ultra 512 GB. A configured maximum is not proof of
+supported operation. **512K support is not declared qualified here.**
+
+Context qualification is not merely “prefill completed”. It must eventually cover
+decode capability, continuation, memory pressure, cache/state lifecycle,
+SSD-backed Engram behavior, persistence/restore where relevant, and operational
+usability near the limit. The supported envelope must follow that evidence,
+including practical limits rather than just admission/configuration limits.
+If 512K or another long-context frontier exposes an implementation deficiency,
+fixing it is **production implementation work**, not merely benchmarking. This
+work both qualifies the existing path and closes implementation gaps needed to
+expand supported production scope.
+
+### Vision production completion
+
+The checkpoint includes Vision-related model structure, but current production
+serving is text-only. **Vision / multimodal remains an unfinished production
+capability within the full production-completion target**, not a permanent
+non-goal. A model-forward smoke test alone cannot close it. Completion requires a
+coherently integrated supported multimodal serving lifecycle: preprocessing/input
+representation, first-party model execution, generation, state/lifecycle behavior
+and appropriate qualification. Exact design remains open and must follow evidence
+and the existing ownership principles; no detailed Vision architecture is
+prescribed here.
+
+### Iterative implementation and qualification, not a one-way stage gate
+
+**Text production core complete** is the M48 boundary, not “Stage 1 globally
+complete”. Stage 1 production implementation and Stage 3 performance/robustness
+qualification are iterative, not a strict one-way sequence:
+
+```text
+implementation -> real qualification -> exposed implementation gap
+               -> implementation refinement -> qualification
+```
+
+Qualify and improve the current text core; exercise expanded scope such as
+512K-class contexts and Vision; refine implementation when that evidence exposes
+gaps; continue performance/robustness qualification on the expanded implementation.
+Stage 3 need not finish completely before further Stage 1 work. No artificial
+milestone bureaucracy is required around this cycle. **Full production
+implementation complete** is reserved for actual closure of supported production
+scope, including the very-long-context and Vision capabilities above, not M48
+alone; implementation closure also does not substitute for operational qualification.
+
+### Later regression proof and runtime promotion
+
+**R1 regression re-verification** remains a later proof once implementation and
+Stage-3 operational behavior have reached a sufficiently stable boundary. Do not
+repeat R1 after every intermediate milestone or schedule it immediately after
+current text performance work. Affected development qualification remains necessary;
+this deferral is not permission to weaken semantic contracts.
+
+**Runtime promotion** remains a separate, later explicit checkpoint after enough
+substantive implementation and operational evidence has accumulated into a coherent
+promotion-worthy state. Do not spend meaningful effort now on release, packaging,
+distribution, promotion machinery or clean-room work. Preserve M43's promotion
+rules for that later checkpoint; do not promote `ds41f-runtime` now.
+
+The milestone sections below retain bounded prior plans and evidence; they do not
+supersede this current sequencing.
 
 ## M42–M43 — Reference closure and prospective release projection
 
@@ -20,10 +109,12 @@ broadens M41's scope or automatically schedules full oMLX replacement.
 
 ## Post-M43 development and explicit promotion checkpoints
 
-Ordinary milestones are implemented and qualified in `ds41f-mlx`: affected tests,
-R1 conformance where applicable, and necessary real-model, lifecycle, operational
-and performance evidence. Qualified milestones may accumulate before the next
-explicit release/promotion checkpoint. Changing release-surface files does not
+Ordinary milestones are implemented and qualified in `ds41f-mlx`: affected tests
+and necessary real-model, lifecycle, operational and performance evidence. R1
+remains semantic authority; the current post-M48 sequencing above defers full R1
+regression re-verification to a sufficiently stable implementation/operational
+boundary rather than repeating it after every intermediate milestone. Qualified
+milestones may accumulate before the next explicit release/promotion checkpoint. Changing release-surface files does not
 require automatic clean-room projection, independent OFF/MTP setup, repeated
 determinism qualification, a promotion receipt, or a `ds41f-runtime` update.
 
