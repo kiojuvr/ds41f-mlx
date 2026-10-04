@@ -307,6 +307,9 @@ class DenseP0P7PrefillResult:
         }
 
 
+from ds41f_mlx.runtime.resource_admission import resources_for
+
+
 class DenseP0P7PrefillSession:
     """M6-qualified dense P0-P7 production prefill selector implementation."""
 
@@ -319,6 +322,10 @@ class DenseP0P7PrefillSession:
         self.language_model = getattr(model, "language_model", model)
         if hasattr(self.language_model, "configure_mtp"):
             self.language_model.configure_mtp(False, 1)
+        self.resources = (None if getattr(getattr(self.language_model, '_config', None),
+                                          'preserve_mtp', False) else resources_for(self.language_model))
+        if self.resources is not None:
+            self.resources.require_backend(self.mx)
         self.stream = stream
         self._require_production_configuration()
 
@@ -330,6 +337,8 @@ class DenseP0P7PrefillSession:
             raise RuntimeError("production DENSE_P0_P7 requires P7 overlap enabled")
 
     def prefill(self, token_ids: Sequence[int]) -> DenseP0P7PrefillResult:
+        if self.resources is not None:
+            self.resources.validate_binding(self.language_model)
         LegacyOneChunkMLXPrefillSession._assert_no_reference_modules_loaded_at_entry()
         ids = tuple(int(t) for t in token_ids)
         if not ids:

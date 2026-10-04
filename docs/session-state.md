@@ -1,6 +1,6 @@
 # Session state
 
-Current standard-off authority (M44/M45/M46): P7 produces the live packed 40-layer list;
+Current standard-off authority (M44/M45/M46/M47): P7 produces the live packed 40-layer list;
 P5 transfers it once to ds41f `TargetGenerationSession`. The engine owns target
 scheduling, sampling, consumed history and EOS/length/cancel boundaries, and
 returns that exact list to idle P6 continuation. Unconsumed sampled lookahead is
@@ -8,7 +8,7 @@ not committed state. M45 sequences each single-token forward directly through
 all 40 layers on that list. All mutated slots must complete and every frontier
 must validate before history commits; any failure burns every layer. Lower-level
 numerical/storage/SSD Engram read primitives remain attributed substrate. M46's owned `DecodeStateProducer` controls window, compressor tails, compressed/index/candidate publication and structural completion; no donor Block/Attention/Compressor/Indexer call executes in standard-off decode. The M2–M4 admission discussion below is historical/reference machinery,
-not the production selector. See `runtime-strategy.md` and the M44/M45/[M46](milestone-46-state-production-ownership.md) decisions.
+not the production selector. See `runtime-strategy.md` and the M44/M45/[M46](milestone-46-state-production-ownership.md)/[M47](milestone-47-execution-resource-admission.md) decisions. M47 binds a live model-resource capability through prefill, idle P6 and target decode. Changed/unadmitted resources reject entry before mutation; model close revokes the capability, and retired-resource execution burns the transaction lease.
 
 M25 preserves the OFF-only idle artifact: save/restore reject models with
 preserved or active MTP before I/O. The pinned upstream MTP emission queue and

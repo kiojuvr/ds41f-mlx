@@ -4,24 +4,26 @@
 # License: ../prefill_fp8_mlx/OMLX_MATH_LICENSE; artifacts/m45/provenance.json.
 """Owned standard-off, one-token/all-40-layer decode transaction.
 
-No LanguageModel call, row extraction/merge, replay, or alternate cache. Blocks,
-head/HC/packing math and SSD Engram are subordinate attributed primitives.
+No LanguageModel call, row extraction/merge, replay, or alternate cache. Owned
+state production uses admitted numerical/storage/SSD Engram primitive handles.
 A failed transaction burns every layer, including passive aliases; there is no
 rollback or resumable partially mutated state. M44 publishes history only after
 execute returns. Single-flight cancellation is observed between transactions.
 """
 from contextlib import nullcontext
-import importlib
 
 from ds41f_mlx.runtime.state_production import DecodeStateProducer
+from ds41f_mlx.runtime.resource_admission import resources_for
 
 
 class TargetForwardTransaction:
     def __init__(self, model, mx):
         self.model, self.mx = model, mx
-        self.producer = DecodeStateProducer(mx)
-        # Import primitives, never the external forward/scheduler.
-        math = importlib.import_module('omlx.patches.deepseek_v41.language')
+        self.resources = resources_for(model)
+        self.resources.require_backend(mx)
+        self.producer = DecodeStateProducer(mx, self.resources.math)
+        # Stable admitted primitives, never a fresh ambient import.
+        math = self.resources.math
         self.hc_pre = math.hc_pre
         self.project_logits = math.project_logits
         self.pack_activation = math.pack_activation
@@ -33,6 +35,7 @@ class TargetForwardTransaction:
             item._p6_append_invalid = True
 
     def validate(self, token, cache, frontier):
+        self.resources.assert_active()
         c = self.model._config
         if token.shape != (1,) or len(cache) != 40 or len(self.model.layers) != 40:
             raise ValueError('owned target requires one token and all 40 layers')
@@ -41,6 +44,8 @@ class TargetForwardTransaction:
         if c.engram_layer_ids and self.model._hasher is None:
             raise ValueError('owned target requires tokenizer-derived Engram map')
         for i, item in enumerate(cache):
+            if type(item) is not self.resources.cache_type:
+                raise ValueError('unadmitted packed-cache implementation')
             if (getattr(item, '_p6_append_invalid', False)
                 or getattr(item, '_p6_append_failed', False)
                 or getattr(item, '_p6_append_pending', False)):

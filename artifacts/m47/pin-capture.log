@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/capture_m47_resources.py", line 73, in <module>
+    if __name__ == '__main__': main()
+                               ~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/capture_m47_resources.py", line 64, in main
+    dispatch={n: getattr(switch,n) for n in ('_SORT_MIN_ROUTES','_AFFINE_BLOCK_MIN_ROUTES',
+                 ~~~~~~~^^^^^^^^^^
+AttributeError: module 'omlx.patches.deepseek_v4.switch_layers' has no attribute '_AFFINE_BLOCK_MIN_ROUTES'. Did you mean: '_AFFINE_NATIVE_MIN_ROUTES'?

@@ -150,7 +150,11 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
     recipe_path = Path(recipe_path) if recipe_path is not None else runtime_config.recipe_path
     model_id = model_id if model_id is not None else runtime_config.model_id
     backend = backend or DeepSeekRecipeRuntimeBackend(recipe_path=recipe_path, model_id=model_id, runtime_config=runtime_config)
-    tokenizer = load_v41_tokenizer(recipe_path)
+    if not local_mtp and isinstance(backend, DeepSeekRecipeRuntimeBackend):
+        from ds41f_mlx.runtime.resource_admission import load_protocol_tokenizer
+        tokenizer = load_protocol_tokenizer(recipe_path)
+    else:
+        tokenizer = load_v41_tokenizer(recipe_path)  # unchanged MTP/fixture path
     if local_mtp:
         from ds41f_mlx.mtp_profile import PROFILE, LIMITS, validate_chat, strict_json
         from .mtp_public import LocalBoundary, public_record

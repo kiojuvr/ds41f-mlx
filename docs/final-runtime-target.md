@@ -70,7 +70,7 @@ M44's ds41f `TargetGenerationSession` now owns standard-off target scheduling,
 sampling, consumed-token history, generation lifecycle and exact-list idle
 transfer after dense P0–P7 prefill/P5 handoff. M45 owns single-token target-forward
 sequencing and all-40-layer mutation/commit on that same list. Model loading,
-stateless numerical math, packed cache representation, kernels and SSD Engram reads remain temporarily oMLX-supplied. [M46](milestone-46-state-production-ownership.md) owns block state production, packed mutation and compressed/index/candidate lifecycle below the target transaction; external state-producing module calls are no longer used in OFF decode. Internal guarded qualification additionally uses a
+stateless numerical math, packed cache representation, kernels and SSD Engram reads remain temporarily oMLX-supplied. [M46](milestone-46-state-production-ownership.md) owns block state production, packed mutation and compressed/index/candidate lifecycle below the target transaction; external state-producing module calls are no longer used in OFF decode. [M47](milestone-47-execution-resource-admission.md) admits the exact numerical/native artifact set, official checkpoint payloads, tokenizer pair and SSD descriptors before OFF execution. External implementation does not imply external permission to participate; that decision is ds41f-owned. The remaining measured frontier is startup verification I/O, not dependency count. Internal guarded qualification additionally uses a
 patched oMLX candidate. This is a **temporary implementation substrate**, not the
 intended final public architecture or the authority defining ds41f contracts.
 The self-contained native reference core does not by itself close this production

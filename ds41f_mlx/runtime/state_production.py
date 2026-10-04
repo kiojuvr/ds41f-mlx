@@ -10,13 +10,12 @@ Compressor and Indexer calls are never invoked. Writes are tentative under the
 parent all-layer pending lease, not commits. No CED, replay, verification state,
 cache creation, recovery or alternate representation exists here.
 """
-import importlib
 
 
 class DecodeStateProducer:
-    def __init__(self, mx):
+    def __init__(self, mx, math):
         self.mx = mx
-        self.math = importlib.import_module('omlx.patches.deepseek_v41.language')
+        self.math = math  # Parent supplies the admitted implementation handle.
 
     @staticmethod
     def validate_completion(cache, c, frontier):

@@ -2,6 +2,7 @@
 import pytest
 from test_m44_target_generation import mx, session
 from ds41f_mlx.runtime.state_production import DecodeStateProducer
+import omlx.patches.deepseek_v41.language as math
 from omlx.patches.deepseek_v41.config import ModelConfig
 from omlx.patches.deepseek_v41.language import Block, Attention, Compressor, Indexer
 from omlx.patches.deepseek_v41.cache import DeepseekV41Cache
@@ -31,7 +32,7 @@ def test_block_source_reuse_candidate_tail_lifecycle_matches_m45(ratio, monkeypa
     control = [DeepseekV41Cache(ratio), DeepseekV41Cache(0)]
     owned = [DeepseekV41Cache(ratio), DeepseekV41Cache(0)]
     originals = tuple(map(id, owned))
-    producer = DecodeStateProducer(mx)
+    producer = DecodeStateProducer(mx, math)
     # Every prefix crosses compressor completion, empty/nonempty candidates,
     # chronological top-k, and window eviction. No cloned executable state.
     for start in range(9):
@@ -72,7 +73,7 @@ def test_block_source_reuse_candidate_tail_lifecycle_matches_m45(ratio, monkeypa
 
 
 def test_producer_requires_pending_and_rejects_verification_state():
-    producer = DecodeStateProducer(mx)
+    producer = DecodeStateProducer(mx, math)
     c = config(2); layer = Block(c, 0); cache = DeepseekV41Cache(2)
     with pytest.raises(RuntimeError, match='pending'):
         producer.block(layer, None, None, cache, {}, 0)

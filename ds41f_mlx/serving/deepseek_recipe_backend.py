@@ -195,8 +195,13 @@ class DeepSeekRecipeRuntimeBackend:
     def load(self) -> None:
         if self._runtime is not None:
             return
-        self._runtime = OmlxRuntime(OmlxRuntimeConfig(omlx_path=self.omlx_path, checkpoint_path=self.checkpoint, engram_ssd_offload=True, preserve_mtp=False))
-        self._model, _ = self._runtime.load_model()
+        runtime = OmlxRuntime(OmlxRuntimeConfig(omlx_path=self.omlx_path, checkpoint_path=self.checkpoint, engram_ssd_offload=True, preserve_mtp=False, recipe_path=self.recipe_path))
+        try:
+            model, _ = runtime.load_model()
+        except BaseException:
+            runtime.close()
+            raise
+        self._runtime, self._model = runtime, model
 
     async def _call(self, fn, *args):
         loop = asyncio.get_running_loop()

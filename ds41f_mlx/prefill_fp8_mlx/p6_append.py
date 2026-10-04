@@ -189,6 +189,16 @@ class DeferredPrefillAppend:
     stale_generation: int = 0
 
     def __post_init__(self) -> None:
+        # Production models retain their resource capability through idle P6
+        # append as well as target decode. Generic fixture/MTP primitives remain
+        # separate; they cannot enter the OFF facade/target without admission.
+        if hasattr(self.language_model, '_ds41f_resources'):
+            from ds41f_mlx.runtime.resource_admission import resources_for, require
+            resources = resources_for(self.language_model)
+            self.mx = resources.modules['mlx.core'] if self.mx is None else self.mx
+            resources.require_backend(self.mx)
+            require(all(type(item) is resources.cache_type for item in self.live_cache),
+                    'unadmitted packed-cache implementation for P6 append')
         self.owner_token = _next_owner_token()
         self.C = int(self.plan.C)
         self.E = self.C

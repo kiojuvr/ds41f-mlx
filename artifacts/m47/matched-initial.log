@@ -1,0 +1,19 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/qualify_m47.py", line 193, in <module>
+    if __name__ == '__main__': main()
+                               ~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/qualify_m47.py", line 59, in main
+    model, processor = runtime.load_model()
+                       ~~~~~~~~~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/omlx_core.py", line 60, in load_model
+    admission = prepare_resources(self.config.checkpoint_path, self.config.recipe_path)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/resource_admission.py", line 302, in prepare_resources
+    recipe_token = check_file(recipe_tokenizer, pin['checkpoint']['tokenizer.json'], 'protocol tokenizer')
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/resource_admission.py", line 58, in check_file
+    require(actual == expected, f'identity mismatch: {label}')
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/resource_admission.py", line 50, in require
+    raise ResourceAdmissionError(message)
+ds41f_mlx.runtime.resource_admission.ResourceAdmissionError: identity mismatch: protocol tokenizer

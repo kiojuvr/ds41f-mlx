@@ -1,0 +1,178 @@
+{
+  "schema": "ds41f.m47.development-decision.v1",
+  "status": "PASS",
+  "baseline": "4a64135e020cc0eeb9d97c73dddf660ba1ffae5e",
+  "boundary": "OFF model-lifetime admitted numerical/native/checkpoint/tokenizer/SSD resource capability",
+  "resources": {
+    "policy_sha256": "10fafd9b2a4987b2809733b5b15bffbd73dab4cfc69e8958970246d559341a07",
+    "modules": 62,
+    "complete_shards": 48,
+    "profiles": [
+      "native",
+      "portable"
+    ],
+    "checkpoint_origin": {
+      "model": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+    }
+  },
+  "r1": {
+    "status": "PASS",
+    "decision": "CONFORMANT",
+    "profile": "standard-off",
+    "gates": 24,
+    "manifest": "45653bd63c6a924c42dcdf0871cd950decb5efaabacce7b3c78ecf6b47f8b4ca"
+  },
+  "tests": {
+    "passed": 146,
+    "subtests": 32
+  },
+  "real_model_contexts": [
+    4096,
+    32768
+  ],
+  "generated_tokens_per_run": 128,
+  "matched": [
+    {
+      "context": 4096,
+      "token_identity": true,
+      "exact_all_40_by_7_cache_slots": true,
+      "owned_m46_median_ratio": 1.0029189276313382
+    },
+    {
+      "context": 32768,
+      "token_identity": true,
+      "exact_all_40_by_7_cache_slots": true,
+      "owned_m46_median_ratio": 1.0014268009303482
+    }
+  ],
+  "negative_loaded_model_admission": [
+    {
+      "resource": "config",
+      "rejected": true,
+      "before_authoritative_mutation": true
+    },
+    {
+      "resource": "numerical_module",
+      "rejected": true,
+      "before_authoritative_mutation": true
+    },
+    {
+      "resource": "engram_key",
+      "rejected": true,
+      "before_authoritative_mutation": true
+    },
+    {
+      "resource": "engram_descriptor",
+      "rejected": true,
+      "before_authoritative_mutation": true
+    },
+    {
+      "resource": "packed_cache_type",
+      "rejected": true,
+      "before_authoritative_mutation": true,
+      "whole_lease_burn": true
+    },
+    {
+      "resource": "retired_model_resources",
+      "rejected": true,
+      "before_authoritative_mutation": true
+    }
+  ],
+  "startup_admission_s": 241.5509590000147,
+  "model_binding_s": 0.05220595799619332,
+  "post_startup_overhead": {
+    "session_setup_median_s": 0.004004229005658999,
+    "token_guard_s": 3.499375015962869e-08,
+    "no_resource_file_hashing_after_startup": true
+  },
+  "performance": [
+    {
+      "engine": "m46-control",
+      "context": 4096,
+      "median_tok_s": 19.883392245343096
+    },
+    {
+      "engine": "owned",
+      "context": 4096,
+      "median_tok_s": 19.94143042837276
+    },
+    {
+      "engine": "m46-control",
+      "context": 32768,
+      "median_tok_s": 19.618141113841677
+    },
+    {
+      "engine": "owned",
+      "context": 32768,
+      "median_tok_s": 19.646132295834608
+    }
+  ],
+  "source_binding": {
+    "schema": "ds41f.m47.resource-provenance.v1",
+    "baseline": "4a64135e020cc0eeb9d97c73dddf660ba1ffae5e",
+    "resource_policy_sha256": "10fafd9b2a4987b2809733b5b15bffbd73dab4cfc69e8958970246d559341a07",
+    "numerical_modules": 62,
+    "complete_checkpoint_shards": 48,
+    "checkpoint_payload_bytes": 510296708312,
+    "official_checkpoint": {
+      "model": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+    },
+    "frozen_m46_producer_byte_identity": true,
+    "frozen_m46_transaction_identical_except_control_import": true,
+    "owned_producer_numerical_state_method_ast_identity": true,
+    "p6_ast_identity_except_admission_entry_gate": true,
+    "final_runtime_source_bound_to_r1": true,
+    "final_target_producer_admission_bound_to_matched": true,
+    "source": {
+      "ds41f_mlx/runtime/resource_admission.py": "d8df3604c93864e841412db8713e8f3acbe6a91031480400949a1c1939e366a1",
+      "ds41f_mlx/runtime/omlx_core.py": "c49df03f4cfb0129f10b2d65684c3dd13e835cd032219b0a1e4e9832464f1c9a",
+      "ds41f_mlx/runtime/target_forward.py": "a5f217a2b93bd109142769990ce14ba159e5d90db24623855d9f619811a4a8d3",
+      "ds41f_mlx/runtime/state_production.py": "e96dc97d6142f29be8b2de5d2fed1b21411f328c7092241d4197734c840b4832",
+      "ds41f_mlx/runtime/dwarfstar_prefill.py": "a3af595b240e5b0f8f6fc9cf8eb9aee2b719c2e36f9c046cea3fcb87945f9e0a",
+      "ds41f_mlx/prefill_fp8_mlx/p6_append.py": "9cd81f935c98e679b3341d305544e54d8423ceb697be9274b8a1318491b5ae7f",
+      "ds41f_mlx/serving/deepseek_recipe_backend.py": "d89472daea6a39898e73ac4daf1cba7951568eed83b48f1d2d8dc1f77541a161",
+      "ds41f_mlx/serving/server.py": "4b09612dc0ecacd4f1b74526d83fd0587c45ca8627f4f9e258f606ca5ba800a3",
+      "ds41f_mlx/runtime/admitted_resources.json": "10fafd9b2a4987b2809733b5b15bffbd73dab4cfc69e8958970246d559341a07",
+      "tools/qualify_m47.py": "93f7b52bf42fe5d2766f1ed168edbcac5e9898610b97c83729c90a91c28808b2",
+      "tools/capture_m47_resources.py": "126f7ad40e2c4c79d3dd3f0df9dca74426f0f72458c1a13a81bcd892727b1a61",
+      "tools/m47_m46_control.py": "e797315aea17d3d7156609d023db40a3615937c655fd25b47b64415a4c5e03b9",
+      "tools/m47_m46_producer_control.py": "14101cd77515aea16bb34a96e34865b2d34b12c82c4eb356569997561309a0a5"
+    },
+    "release_promotion": false
+  },
+  "local_operator_static_resource_assumption": true,
+  "cryptographic_host_attestation": false,
+  "release_promotion": false,
+  "mtp_changed": false,
+  "evidence": {
+    "artifacts/m47/admission-final-tests.log": "c831e46be8704b503082c5fc5bb89afd15cf3a38b32cd8d57b8d09b529d9251c",
+    "artifacts/m47/admission-tests.log": "b63e67cf0be92adcf5f45762f6c5a962a7687ba1e8fe506bb8645e8960ee5178",
+    "artifacts/m47/affected-tests.log": "959619db836c06dcaf55185601491bf59cfa0e74ace7ee4ec69ab4dafad4c036",
+    "artifacts/m47/checkpoint-capture.json": "b0784387b0d1c3e91c99857335dd75def506bbc4bfffdf95082a2534fe92f2a8",
+    "artifacts/m47/checkpoint-capture.log": "6a7eb0a0aa389e56404237107e00701c00ff757d2c11ae1123656cd52b3ab985",
+    "artifacts/m47/lifecycle-tests.log": "56206fc647678101f4223061b4088729adfa50a6ccfe0c00743acee4f94e3ea7",
+    "artifacts/m47/matched-final.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "artifacts/m47/matched-final.json": "6023a488eeb4f49df6b66714c26e4f4652ccd59fa0af9f9a79d0debffab6c776",
+    "artifacts/m47/matched-final.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m47/matched-initial.exit": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "artifacts/m47/matched-initial.json": "b8751e29fa9f02c6e9cce151b33503f763e7c33023870a150822fa668c6f3f9b",
+    "artifacts/m47/matched-initial.log": "27f8bf18f0a64485c11a11ecbf48e5ca20df44f45216806b1a928410af34ccfb",
+    "artifacts/m47/matched-pre-final.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "artifacts/m47/matched-pre-final.json": "ddbbe3e39c4fd14b67663aa85f7341b0176a422095ddaa616976168b34cfcc9a",
+    "artifacts/m47/matched-pre-final.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m47/matched-pre-identity-hardening.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "artifacts/m47/matched-pre-identity-hardening.json": "cd8554311cf7da9b3b2f5380519ca3d60f67731cc386c88af2644ac0f868daf2",
+    "artifacts/m47/matched-pre-identity-hardening.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m47/pin-capture.log": "77f821003e3ac080925e3c6a7f877fe539662136cd2b3a677578ea1ceb206295",
+    "artifacts/m47/provenance.json": "2e30e08e58b69ea4bd5eae077221940a6c3e0ae6691d503148c98657fa7590c3",
+    "artifacts/m47/r1-final.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "artifacts/m47/r1-final.json": "0f8a70f041e280a50778133dfe622f1274eb28b5122f815133af8b88e6b48864",
+    "artifacts/m47/r1-final.log": "3039a9f1dacf8c559939b3cd69cc4a2599ad7de3b4c78ba46ac5adfae3fb9546",
+    "artifacts/m47/r1-pre-final.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "artifacts/m47/r1-pre-final.json": "462122cdc7e44d9bd99c01855c07922b4900c169a7677de8e1a51fae47c9cad3",
+    "artifacts/m47/r1-pre-final.log": "3039a9f1dacf8c559939b3cd69cc4a2599ad7de3b4c78ba46ac5adfae3fb9546"
+  },
+  "next_frontier": "reduce full checkpoint/Engram startup verification I/O through verified immutable-store/loader-read binding, without weakening payload identity"
+}
