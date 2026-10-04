@@ -1,4 +1,11 @@
 {
+  "closed_source_roots": [
+    "ds41f_mlx",
+    "native",
+    "rust/ds41f_api",
+    "third_party/mtp",
+    "reference/R1"
+  ],
   "excluded": [
     "CUDA oracle",
     "DwarfStar investigation/comparison source",
@@ -8,6 +15,18 @@
     "donor checkouts",
     "generated binaries/model weights"
   ],
+  "excluded_source_files": [
+    "ds41f_mlx/build_release.py",
+    "ds41f_mlx/dwarfstar_prefill.py",
+    "ds41f_mlx/dwarfstar_prefill_slice.py",
+    "ds41f_mlx/dwarfstar_semantics.py",
+    "ds41f_mlx/dwarfstar_v41_sweep.py",
+    "ds41f_mlx/m2_layer_major.py",
+    "ds41f_mlx/official_model_math.py",
+    "ds41f_mlx/oracle/__init__.py",
+    "ds41f_mlx/source_incremental_executor.py",
+    "rust/ds41f_api/src/bin/m35_internal_transport.rs"
+  ],
   "files": {
     "Cargo.lock": "Cargo.lock",
     "Cargo.toml": "Cargo.toml",
@@ -15,8 +34,8 @@
     "README.md": "release/runtime-README.md",
     "docs/api.md": "docs/api.md",
     "docs/mtp-local-release-candidate.md": "docs/mtp-local-release-candidate.md",
-    "docs/source-delivery.md": "release/runtime-source-delivery.md",
     "docs/reference-release-r1.md": "docs/reference-release-r1.md",
+    "docs/source-delivery.md": "release/runtime-source-delivery.md",
     "ds41f_mlx/__init__.py": "ds41f_mlx/__init__.py",
     "ds41f_mlx/acceptance.py": "ds41f_mlx/acceptance.py",
     "ds41f_mlx/backend.py": "ds41f_mlx/backend.py",

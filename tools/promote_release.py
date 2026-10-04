@@ -49,6 +49,10 @@ def promote(commit, reference, output, qualification=None):
     for line in git('ls-tree', '-r', commit).decode().splitlines():
         meta, path = line.split('\t'); mode, kind, _ = meta.split()
         modes[path] = mode
+    covered = set(surface['files'].values()) | set(surface['excluded_source_files'])
+    for path in modes:
+        if any(path.startswith(root + '/') for root in surface['closed_source_roots']) and path not in covered:
+            raise ValueError(f'unexpected owned source; classify its release necessity explicitly: {path}')
     for dest, source in surface['files'].items():
         if source not in modes or modes[source] not in ('100644', '100755'):
             raise ValueError(f'missing/nonregular required source: {source}')

@@ -60,6 +60,11 @@ class PromotionTests(unittest.TestCase):
         (self.source/'native/CMakeLists.txt').unlink(); self.commit()
         with self.assertRaisesRegex(ValueError,'required source'): promotion.promote('HEAD','R1',self.base/'a')
 
+    def test_unclassified_authoritative_source_rejected(self):
+        (self.source/'ds41f_mlx/runtime_extra.py').write_text('new owner not classified')
+        self.commit()
+        with self.assertRaisesRegex(ValueError,'unexpected owned source'): promotion.promote('HEAD','R1',self.base/'a')
+
     def test_unexpected_runtime_source_rejected(self):
         a=self.base/'a'; promotion.promote('HEAD','R1',a)
         (a/'runtime_only.py').write_text('unsupported')
