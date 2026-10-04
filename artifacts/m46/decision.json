@@ -1,0 +1,90 @@
+{
+  "schema": "ds41f.m46.development-decision.v1",
+  "status": "PASS",
+  "baseline": "e09fb699b262eee67cde96071c9a63208e77bbe2",
+  "boundary": "standard-off single-token block/attention/compressor/index production on original P7 packed cache",
+  "r1": {
+    "status": "PASS",
+    "decision": "CONFORMANT",
+    "profile": "standard-off",
+    "gates": 24,
+    "manifest": "45653bd63c6a924c42dcdf0871cd950decb5efaabacce7b3c78ecf6b47f8b4ca"
+  },
+  "tests": {
+    "passed": 112,
+    "subtests": 32
+  },
+  "real_model_contexts": [
+    4096,
+    32768
+  ],
+  "generated_tokens_per_run": 128,
+  "checkpoint_config_sha256": "8be45ce0476004a3f529fd896115a4a2e800a129ad2d3ec05b16050f52e21879",
+  "checkpoint_config_matches_m45": true,
+  "matched": [
+    {
+      "context": 4096,
+      "token_identity": true,
+      "exact_all_40_by_7_cache_slots": true,
+      "owned_m45_median_ratio": 0.9980106754897506
+    },
+    {
+      "context": 32768,
+      "token_identity": true,
+      "exact_all_40_by_7_cache_slots": true,
+      "owned_m45_median_ratio": 0.9996158484198006
+    }
+  ],
+  "performance": [
+    {
+      "engine": "m45-control",
+      "context": 4096,
+      "median_tok_s": 19.883194582665496
+    },
+    {
+      "engine": "owned",
+      "context": 4096,
+      "median_tok_s": 19.843640456340143
+    },
+    {
+      "engine": "m45-control",
+      "context": 32768,
+      "median_tok_s": 19.624116338331415
+    },
+    {
+      "engine": "owned",
+      "context": 32768,
+      "median_tok_s": 19.61657770303003
+    }
+  ],
+  "final_sources_bound_to_matched_and_r1": true,
+  "frozen_m45_byte_identity": true,
+  "release_promotion": false,
+  "mtp_changed": false,
+  "hidden_continuation_authority_at_selected_seam": false,
+  "evidence": {
+    "artifacts/m46/affected-tests.log": "0f3bf9e773557d7f7e08fe7b348d221b40513a8f15fecb4682af0bca769da404",
+    "artifacts/m46/lifecycle.log": "37b00e857b725dd258c153fda51428f2d7443affdc05345099dc8e2173a641f3",
+    "artifacts/m46/matched-final.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "artifacts/m46/matched-final.json": "0c1eec8001a0ffbb33623dc00116dcf2d0d9d319dc1e57a3335e4f110f319c20",
+    "artifacts/m46/matched-final.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m46/matched-initial.exit": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "artifacts/m46/matched-initial.json": "551c21cf7b1b6c3fb04653112b35d258d7c664a90668c842d5eed13d21bbb10c",
+    "artifacts/m46/matched-initial.log": "ca617f645c98881cea00731cb2aff236bbb96c99817d159e776176e9ff368681",
+    "artifacts/m46/matched-pre-completion.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "artifacts/m46/matched-pre-completion.json": "5561bcaf2a7de679a89171591812f1d37578f39448524c8cc766485157d0f43b",
+    "artifacts/m46/matched-pre-completion.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m46/producer-tests.log": "8ceacda1b2cf25a3a192a2318c2919562d4e2a64e1594eaba3704ff98b8b5232",
+    "artifacts/m46/provenance.json": "093006c1f939908b0ce18bc05026c24139b31783cc2f92366dbd62507aa3ef2e",
+    "artifacts/m46/r1-final.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "artifacts/m46/r1-final.json": "1124d2e08ca23b444aca4dba11ac7bd1c68b2c757cf324a7dc67a3a9f6b10092",
+    "artifacts/m46/r1-final.log": "3039a9f1dacf8c559939b3cd69cc4a2599ad7de3b4c78ba46ac5adfae3fb9546"
+  },
+  "source": {
+    "ds41f_mlx/runtime/state_production.py": "14101cd77515aea16bb34a96e34865b2d34b12c82c4eb356569997561309a0a5",
+    "ds41f_mlx/runtime/target_forward.py": "ad1ebe83852523b0c12c8930951574105a5170d5ecfe67819da59053c72d6d4b",
+    "tools/qualify_m46.py": "3d90fbe16da4d1ec4436cf9e5f48af494b3c93e4ca71f681e79212edc03aa52d",
+    "tools/m46_m45_control.py": "cb11c91eda117c2e008683abe4d7a228956d7b57244da99010c07bd35d7d02db"
+  },
+  "next_frontier": "loaded numerical-module/checkpoint and SSD-resource admission binding, not cache representation or dependency count"
+}

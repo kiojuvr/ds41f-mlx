@@ -11,7 +11,7 @@ dependencies here describe current operation; no dependency migration is implied
 Required local components:
 
 - official DeepSeek-V4.1-Flash checkpoint;
-- attributed oMLX source used for model loading, block math, packed cache objects and SSD Engram; ds41f owns standard-off generation lifecycle (M44) and single-token/all-40-layer forward mutation/commit (M45);
+- attributed oMLX source used for model loading, stateless math, packed cache objects and SSD Engram reads; ds41f owns standard-off generation (M44), target-forward commit (M45), and block/packed-cache state production (M46);
 - DeepSeek `deepseek-recipe` checkout containing the V4.1 tokenizer and git revision evidence;
 - Python environment with FastAPI/uvicorn, MLX, mlx-lm, and an importable `deepseek-recipe` package/native extension available;
 - SSD-backed KV artifact location for persistence.

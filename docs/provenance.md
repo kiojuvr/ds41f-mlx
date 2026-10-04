@@ -77,6 +77,7 @@ Older expensive evidence can be inherited only through an explicit migration att
 
 - DwarfStar: production architecture source for the dense prefill topology; not a correctness authority.
 - oMLX: subordinate production numerical/cache/Engram substrate, compatibility/performance baseline, and implementation donor; not a correctness or target-transaction authority. M45's owned decode orchestration is derived from the MIT-attributed `deepseek_v41/language.py` single-row decode branch; its source digest and subtree MIT license are recorded in `artifacts/m45/provenance.json` (`ds41f_mlx/prefill_fp8_mlx/OMLX_MATH_LICENSE`, not the donor top-level Apache license).
+- M46's `runtime/state_production.py` is MIT-derived from the same donor's Block/Attention/Compressor/Indexer decode semantics, specialized to one unpadded token without CED or MTP verification. `artifacts/m46/provenance.json` binds donor, owned producer and frozen authoritative M45 control digests. The donor state producers remain for unchanged prefill/MTP, not OFF target execution.
 - Historical native source: implementation origin and imported regression evidence only.
 
 No donor supersedes the official checkpoint and reviewed official-source semantics.

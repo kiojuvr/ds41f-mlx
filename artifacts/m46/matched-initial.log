@@ -1,0 +1,32 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/qualify_m46.py", line 184, in <module>
+    if __name__ == '__main__': main()
+                               ~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/qualify_m46.py", line 102, in main
+    pre = DwarfStarMLXPrefillSession(model, omlx_path=cfg.omlx_path).prefill(ids[:-1])
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/dwarfstar_prefill.py", line 394, in prefill
+    return self._delegate.prefill(token_ids)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/dwarfstar_prefill.py", line 349, in prefill
+    app.execute_all()
+    ~~~~~~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/prefill_fp8_mlx/p6_append.py", line 270, in execute_all
+    self.execute_segment(segment)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/prefill_fp8_mlx/p6_append.py", line 286, in execute_segment
+    execn.runner.execute_batch(segment.commands, execn.arena)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/prefill_fp8_mlx/block_runner.py", line 125, in execute_batch
+    result = self.execute_command(command, arena)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/prefill_fp8_mlx/block_runner.py", line 148, in execute_command
+    return self._execute_encode_rows(command, arena, record)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/prefill_fp8_mlx/block_runner.py", line 233, in _execute_encode_rows
+    h_out, pre_out = layer(h_chunk, pre_chunk, cache, shared, absolute_start, self.image_mask)
+                     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/qualify_m46.py", line 91, in guarded
+    assert label != 'owned', 'external state producer on owned path'
+           ^^^^^^^^^^^^^^^^
+AssertionError: external state producer on owned path

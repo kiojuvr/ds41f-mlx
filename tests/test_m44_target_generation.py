@@ -40,7 +40,8 @@ class TinyModel(nn.Module):
         self.calls = []
         self.fail = False
         self.fail_layer = 0
-        self._config = SimpleNamespace(n_layers=40, hc_mult=1, engram_layer_ids=(),
+        self._config = SimpleNamespace(_state_production_test_double=True,
+            n_layers=40, hc_mult=1, engram_layer_ids=(),
             compress_ratios=(1,)*40, kv_source_layers=tuple(range(40)),
             index_head_dim=128, head_dim=128)
         self.layers = [TinyBlock(self, i) for i in range(40)]

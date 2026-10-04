@@ -2,7 +2,7 @@
 
 ## Qualified release path
 
-The production text release uses dense P0-P7 prefill plus P5 zero-replay handoff into ds41f `TargetGenerationSession` and its M45 `TargetForwardTransaction` with MTP, DSpark, and speculative decode OFF.
+The production text release uses dense P0-P7 prefill plus P5 zero-replay handoff into ds41f `TargetGenerationSession`, its M45 `TargetForwardTransaction` and M46 `DecodeStateProducer` with MTP, DSpark, and speculative decode OFF.
 
 ```text
 recipe-rendered prompt tokens

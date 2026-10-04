@@ -1,0 +1,51 @@
+{
+  "status": "STARTING",
+  "config": {
+    "checkpoint_path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+    "omlx_path": "/Volumes/SDXC-512/ds41f-mlx/artifacts/m46/r1-final-gates/off-source",
+    "recipe_path": "/Volumes/SDXC-512/ds41f-mlx/.venv/share/ds41f-mtp/recipe",
+    "kv_root": "/Volumes/SDXC-512/ds41f-mlx/artifacts/m46/r1-final-gates/kv",
+    "host": "127.0.0.1",
+    "port": 61234,
+    "max_live_sessions": 4,
+    "trace_history_limit": 32,
+    "enable_diagnostics": false,
+    "model_id": "deepseek-v4.1-flash",
+    "production_prefill_selector": "DENSE_P0_P7",
+    "mtp": "OFF",
+    "dspark": "OFF",
+    "speculative_decode": "OFF"
+  },
+  "provenance_status": "WARNING"
+}
+INFO:     Started server process [60801]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:61234 (Press CTRL+C to quit)
+INFO:     127.0.0.1:61258 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61259 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61267 - "POST /v1/responses HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61268 - "POST /v1/messages HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61269 - "POST /v1/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61270 - "POST /v1/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61271 - "POST /v1/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61272 - "POST /v1/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61273 - "POST /v1/sessions HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:61274 - "POST /v1/sessions/m41_off_0/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61275 - "POST /v1/sessions/m41_off_0/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61276 - "POST /v1/sessions/m41_off_0/persist HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61277 - "DELETE /v1/sessions/m41_off_0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61278 - "POST /v1/sessions/restore HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:61279 - "POST /v1/sessions/restore HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:61280 - "POST /v1/sessions/restore HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:61281 - "POST /v1/sessions/restore HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61282 - "POST /v1/sessions/m41_off_restored/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61283 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61284 - "DELETE /v1/sessions/m41_off_1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61285 - "DELETE /v1/sessions/m41_off_2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61286 - "DELETE /v1/sessions/m41_off_3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61287 - "DELETE /v1/sessions/m41_off_restored HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [60801]

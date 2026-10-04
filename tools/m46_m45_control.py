@@ -13,13 +13,10 @@ execute returns. Single-flight cancellation is observed between transactions.
 from contextlib import nullcontext
 import importlib
 
-from ds41f_mlx.runtime.state_production import DecodeStateProducer
-
 
 class TargetForwardTransaction:
     def __init__(self, model, mx):
         self.model, self.mx = model, mx
-        self.producer = DecodeStateProducer(mx)
         # Import primitives, never the external forward/scheduler.
         math = importlib.import_module('omlx.patches.deepseek_v41.language')
         self.hc_pre = math.hc_pre
@@ -45,10 +42,6 @@ class TargetForwardTransaction:
                 or getattr(item, '_p6_append_failed', False)
                 or getattr(item, '_p6_append_pending', False)):
                 raise RuntimeError('owned target cache is invalid or pending')
-            if getattr(item, '_mtp_verify_state', None) is not None:
-                raise ValueError('owned target cannot consume MTP verification state')
-            if len(item.cache) != 7:
-                raise ValueError('owned target requires seven packed slots')
             ratio = c.compress_ratios[i] if i in c.kv_source_layers else 0
             if item.compress_ratio != ratio:
                 raise ValueError('owned target cache compression layout mismatch')
@@ -83,7 +76,7 @@ class TargetForwardTransaction:
                     if prefetch is not None and ix + 1 < len(c.engram_layer_ids):
                         prefetch.submit(model.layers[c.engram_layer_ids[ix + 1]].engram.embed,
                                         hashes[:, :, ix + 1])
-                h, pre = self.producer.block(layer, h, pre, cache[i], shared, frontier)
+                h, pre = layer(h, pre, cache[i], shared, frontier, None)
                 if prefetch is not None and 'engram' in layer:
                     mx.async_eval(h, pre)
                 cache[i][0] = mx.array([frontier + 1], mx.int32)
@@ -102,16 +95,11 @@ class TargetForwardTransaction:
                         elif slot == 3:
                             empty = self.pack_activation(empty, 4)
                         cache[i][slot] = mx.zeros((1, 0), mx.int64) if slot == 6 else empty
-                # Admission metadata is state too; no subordinate advance call.
-                if cache[i].lengths is not None:
-                    cache[i].lengths -= 1
-                if cache[i].left_padding is not None:
-                    cache[i].left_padding -= 1
+                cache[i].advance(1)
         return self.project_logits(model.norm(self.hc_pre(h, pre)), model.head.weight)[:, -1, :]
 
     def execute(self, token, cache, frontier, sampler, stream):
         mx = self.mx
-        objects = tuple(cache)
         try:
             with mx.stream(stream):
                 self.validate(token, cache, frontier)
@@ -123,20 +111,15 @@ class TargetForwardTransaction:
                 # Materialize ALL mutated state, not just dependencies of logits.
                 # Completion is the commit barrier, including compressor/history
                 # writes that may otherwise remain lazy after sampling.
-                mx.async_eval(pending, logprobs, *(x for c in cache
-                    for x in (*c.cache, c.lengths, c.left_padding) if x is not None))
+                mx.async_eval(pending, logprobs, *(x for c in cache for x in c.cache if x is not None))
                 mx.eval(token)
                 consumed = int(token.item())
             mx.synchronize(stream)
-            if len(cache) != len(objects) or any(a is not b for a, b in zip(cache, objects)):
-                raise RuntimeError('owned target cache objects replaced')
             if any(item.size() != frontier + 1 for item in cache):
                 raise RuntimeError('owned target commit frontier mismatch')
-            self.producer.validate_completion(cache, self.model._config, frontier + 1)
             for item in cache:
                 item._p6_append_pending = False
             return consumed, pending
         except BaseException:
-            self.invalidate(objects)
             self.invalidate(cache)
             raise

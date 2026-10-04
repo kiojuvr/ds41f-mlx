@@ -24,7 +24,7 @@ ds41f TargetGenerationSession, MTP/DSpark/speculation OFF
 recipe-formatted HTTP response/session boundary
 ```
 
-The release architecture has one executable cache authority. `PrefillContinuationState` and handoff artifacts are evidence/admission structures; after terminal bootstrap, ds41f TargetGenerationSession owns the exact live cache list. Its sampled lookahead is uncommitted until consumed. M45's `TargetForwardTransaction` sequences all 40 blocks directly on that list and commits only after all mutated slots complete and frontiers validate. Lower-level block/cache math remains attributed temporary substrate; see [M45](milestone-45-target-forward-ownership.md). Persisted artifacts are dormant storage and never a second live authority.
+The release architecture has one executable cache authority. `PrefillContinuationState` and handoff artifacts are evidence/admission structures; after terminal bootstrap, ds41f TargetGenerationSession owns the exact live cache list. Its sampled lookahead is uncommitted until consumed. M45's `TargetForwardTransaction` sequences all 40 blocks directly on that list and commits only after all mutated slots complete and frontiers validate. [M46](milestone-46-state-production-ownership.md) inserts ds41f `DecodeStateProducer` below that transaction: it owns block sequencing, packed window/compressor/index mutation and token-local CSA2 publications. External numerical/storage/SSD read primitives receive no mutable continuation-state authority. Persisted artifacts are dormant storage and never a second live authority.
 
 ## Guarded singleton qualification (M33–M35, internal)
 
