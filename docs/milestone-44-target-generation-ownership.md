@@ -57,6 +57,11 @@ Kernel-by-kernel donor removal would not transfer this generation authority.
   tests: **37 passed, 8 subtests**. These include failure burn, stale-alias
   rejection, terminal-only bootstrap failure, seal retirement, idle frontier
   failure, wired-limit restoration and refusal to construct an external scheduler.
+  The same 10 checks pass in fresh independent delivery. An initially copied
+  legacy host probe assumed an optional donor fast-kernel symbol was mandatory;
+  delivery/R1 do not promise that symbol. The check now executes the required
+  packed representation rather than adding a new kernel-presence admission rule.
+  No production math or dependency source was changed for this test correction.
 - Matched fresh P7 prefixes at **4096 and 32768 tokens**, **128 output tokens**
   each: token identity and exact equality of every **40×7 cache slot**, including
   packed bytes, pending compressor state and Engram history. Each decode forward
@@ -66,6 +71,10 @@ Kernel-by-kernel donor removal would not transfer this generation authority.
 - Median decode throughput (legacy → owned): **19.75 → 19.78 tok/s at 4K** and
   **19.48 → 19.46 tok/s at 32K**. Ratios **1.0016 / 0.9988**: practically flat,
   no claimed speedup. Bootstrap is measured separately from steady-state decode.
+  Fresh independent installed delivery repeated the full matched test: **19.34 →
+  19.38 tok/s at 4K**, **18.83 → 18.88 tok/s at 32K** (ratios **1.0020 / 1.0030**),
+  again identical tokens/all cache slots and explicit rejection of stale prefill
+  certificates. These are practical measurements, not a universal timing promise.
 - Owned **200000-token / 32-output-token** endpoint: **PASS**; prefill **237.30 s**,
   bootstrap **9.03 s**, median decode **19.01 tok/s**, MLX peak **319.79 GB**,
   coherent frontier **200032**, zero replay/repack. The established >=15 tok/s

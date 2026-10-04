@@ -1,0 +1,15 @@
+....F.....                                                               [100%]
+=================================== FAILURES ===================================
+______________ test_deepseek_native_array_abi_and_pack_execution _______________
+
+    def test_deepseek_native_array_abi_and_pack_execution():
+        fast = importlib.import_module("omlx.custom_kernels.glm_moe_dsa.fast")
+>       assert fast.has_symbol("deepseek_v41_packed_attention")
+E       AssertionError: assert False
+E        +  where False = <function has_symbol at 0x113d07060>('deepseek_v41_packed_attention')
+E        +    where <function has_symbol at 0x113d07060> = <module 'omlx.custom_kernels.glm_moe_dsa.fast' from '/Volumes/SDXC-512/ds41f-m44-sealed/off-env/lib/python3.13/site-packages/omlx/custom_kernels/glm_moe_dsa/fast.py'>.has_symbol
+
+checks/test_target_generation.py:106: AssertionError
+=========================== short test summary info ============================
+FAILED checks/test_target_generation.py::test_deepseek_native_array_abi_and_pack_execution
+1 failed, 9 passed in 0.89s
