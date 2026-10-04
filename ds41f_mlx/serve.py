@@ -60,7 +60,9 @@ def main(argv: list[str] | None = None) -> int:
 
     report = inspect_runtime(cfg)
     from .delivery import RECORD
-    if RECORD.exists() and (args.no_validate or report['status'] != 'PASS'):
+    from pathlib import Path
+    projected = (Path(__file__).resolve().parents[1]/'release/promotion.json').exists()
+    if (RECORD.exists() or projected) and (args.no_validate or report['status'] != 'PASS'):
         print(json.dumps({'status': 'FAIL', 'error': 'source-delivered OFF provenance cannot be bypassed', 'provenance': report}), file=sys.stderr)
         return 2
     if args.print_config:

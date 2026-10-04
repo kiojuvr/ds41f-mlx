@@ -318,6 +318,12 @@ def inspect_runtime(config: RuntimeConfig | None = None) -> dict[str, Any]:
         except (ValueError, OSError, ImportError) as exc:
             return {'schema': 'ds41f.off.delivery.v1', 'status': 'FAIL', 'error': str(exc)}
     cfg.apply_import_paths()
+    if (Path(__file__).resolve().parents[1]/'release/promotion.json').exists():
+        try:
+            from .delivery import inspect_reference_execution
+            return inspect_reference_execution(cfg)
+        except (ValueError, OSError, ImportError) as exc:
+            return {'schema': 'ds41f.off.delivery.v1', 'status': 'FAIL', 'error': str(exc)}
     validation = validate_runtime_config(cfg)
     omlx_rev = git_rev(cfg.omlx_path)
     recipe_rev = git_rev(cfg.recipe_path)

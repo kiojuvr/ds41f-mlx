@@ -72,6 +72,54 @@ def snapshot():
                 off_source_sha256=sha(ROOT/'reference/R1/off-source.tar.gz'))
 
 
+def inspect_reference_execution(cfg):
+    """Authenticate R1's private OFF export lane, not a normal OFF installation.
+
+    The unchanged reference verifier explicitly extracts its own OFF substrate
+    into a gate directory. This narrow lane may use the sealed MTP environment's
+    shared dependencies, but never permits default OFF on MTP patched sources.
+    """
+    from .projection import verify
+    verify()
+    exported = cfg.omlx_path.resolve()
+    if not exported.is_relative_to((ROOT/'artifacts').resolve()):
+        raise ValueError('standard-off requires its own source-delivered environment')
+    if cfg.recipe_path.resolve() != paths()[1].resolve():
+        raise ValueError('private Reference recipe must be provisioned')
+    from hashlib import sha256
+    expected = {}
+    with tarfile.open(ROOT/'reference/R1/off-source.tar.gz') as tar:
+        for member in tar.getmembers():
+            if member.isfile():
+                expected[member.name.removeprefix('./')] = sha256(tar.extractfile(member).read()).hexdigest()
+    if inventory(exported) != expected:
+        raise ValueError('private Reference OFF export drift')
+    saved = json.loads((Path(sys.prefix)/'share/ds41f-mtp/identity.json').read_text())['identity']
+    if inventory(paths()[0]) != saved['package_payload']:
+        raise ValueError('private Reference dependency identity drift')
+    for name, digest in saved['runtime'].items():
+        if sha(ROOT/name) != digest:
+            raise ValueError('private Reference executable source drift')
+    if sha(cfg.recipe_path/'static/tokenizers/v41/tokenizer.json') != saved['tokenizer_sha256']:
+        raise ValueError('private Reference tokenizer drift')
+    from deepseek_recipe import _native
+    if sha(Path(_native.__file__)) != saved['native_sha256'] or dylibs(Path(_native.__file__)) != saved['native_links']:
+        raise ValueError('private Reference native/link drift')
+    origin = importlib.util.find_spec('omlx').origin
+    if not origin or not Path(origin).resolve().is_relative_to(exported):
+        raise ValueError('private Reference import origin drift')
+    if not os.environ.get('DS41F_CHECKPOINT'):
+        raise ValueError('explicit official external checkpoint required')
+    for name,digest in CHECKPOINT.items():
+        if sha(cfg.checkpoint_path/name) != digest:
+            raise ValueError('private Reference checkpoint drift')
+    return dict(schema='ds41f.off.reference-execution.v1',status='PASS',
+        lane='R1 private execution, not normal OFF source installation',
+        actual_origins={name:importlib.util.find_spec(name).origin for name in
+                       ('ds41f_mlx','omlx','deepseek_recipe','deepseek_recipe._native','mlx_lm')},
+        checkpoint=checkpoint_inventory(cfg.checkpoint_path))
+
+
 def inspect(cfg):
     from .projection import verify
     if (ROOT/'release/promotion.json').exists():

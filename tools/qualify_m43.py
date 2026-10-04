@@ -69,6 +69,7 @@ def main():
         run('mtp-bad-origin',[mtp,'-m','ds41f_mlx.ops','inspect','--profile','mtp-singleton-v1'],2)
         env.pop('DS41F_OMLX_PATH')
         run('off-no-validate',[off,'-m','ds41f_mlx.serve','--no-validate','--print-config'],2)
+        run('off-wrong-profile-environment',[mtp,'-m','ds41f_mlx.serve','--print-config'],2)
         run('source-origin',[mtp,'-m','ds41f_mlx.projection'])
         result['results']={name:json.loads((work/name).read_text())['status'] for name in ('off-acceptance.json','mtp-acceptance.json')}
         result['results']['reference']=json.loads((runtime/'artifacts/m43/reference.json').read_text())['status']
