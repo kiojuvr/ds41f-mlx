@@ -1,0 +1,83 @@
+{
+  "complete_source_comparison": "artifacts/m43/determinism.json",
+  "gates": [
+    {
+      "actual_origins": {
+        "deepseek_recipe": "/Volumes/SDXC-512/ds41f-m43-sealed/off-env/lib/python3.13/site-packages/deepseek_recipe/__init__.py",
+        "deepseek_recipe._native": "/Volumes/SDXC-512/ds41f-m43-sealed/off-env/lib/python3.13/site-packages/deepseek_recipe/_native.abi3.so",
+        "ds41f_mlx": "/Volumes/SDXC-512/ds41f-runtime/ds41f_mlx/__init__.py",
+        "mlx_lm": "/Volumes/SDXC-512/ds41f-m43-sealed/off-env/lib/python3.13/site-packages/mlx_lm/__init__.py",
+        "omlx": "/Volumes/SDXC-512/ds41f-m43-sealed/off-env/lib/python3.13/site-packages/omlx/__init__.py"
+      },
+      "log": "final-off-origins.log",
+      "name": "off",
+      "sha256": "30b2f0b4d68c58f950e115ad8b8c603679228fea660bbca26e3695af3fb4719c",
+      "status": "PASS"
+    },
+    {
+      "actual_origins": {
+        "deepseek_recipe": "/Volumes/SDXC-512/ds41f-m43-sealed/mtp-env/lib/python3.13/site-packages/deepseek_recipe/__init__.py",
+        "deepseek_recipe._native": "/Volumes/SDXC-512/ds41f-m43-sealed/mtp-env/lib/python3.13/site-packages/deepseek_recipe/_native.abi3.so",
+        "ds41f_mlx": "/Volumes/SDXC-512/ds41f-runtime/ds41f_mlx/__init__.py",
+        "mlx_lm": "/Volumes/SDXC-512/ds41f-m43-sealed/mtp-env/lib/python3.13/site-packages/mlx_lm/__init__.py",
+        "omlx": "/Volumes/SDXC-512/ds41f-m43-sealed/mtp-env/lib/python3.13/site-packages/omlx/__init__.py"
+      },
+      "log": "final-mtp-origins.log",
+      "name": "mtp",
+      "sha256": "d17e601a5588341baeeab377a944c3e6425122ead520e39361fdfb3b73e6c030",
+      "status": "PASS"
+    },
+    {
+      "actual_origins": null,
+      "log": "final-source-origins.log",
+      "name": "source",
+      "sha256": "bc10e29a2434892e4a4180d668ef183db9affb51c754bc56dc9e934563dd3b03",
+      "status": "PASS"
+    }
+  ],
+  "isolation": [
+    {
+      "path": "/Volumes/SDXC-512/ds41f-mlx",
+      "unavailable": true
+    },
+    {
+      "path": "/tmp/ds41f-m33-omlx",
+      "unavailable": true
+    },
+    {
+      "path": "/tmp/ds41f-m32-recipe",
+      "unavailable": true
+    },
+    {
+      "path": "/Users/kioju/omlx-0.7.0.release",
+      "unavailable": true
+    },
+    {
+      "path": "/Volumes/SDXC-512/deepseek-v41-flash-mlx/third_party/deepseek-recipe",
+      "unavailable": true
+    },
+    {
+      "path": "/Volumes/SDXC-512/ds41f-m41-final-build",
+      "unavailable": true
+    },
+    {
+      "path": "/Volumes/SDXC-512/ds41f-m43-sealed/off-build",
+      "unavailable": true
+    },
+    {
+      "path": "/Volumes/SDXC-512/ds41f-m43-sealed/mtp-build",
+      "unavailable": true
+    }
+  ],
+  "reference": {
+    "name": "R1",
+    "sha256": "45653bd63c6a924c42dcdf0871cd950decb5efaabacce7b3c78ecf6b47f8b4ca"
+  },
+  "release_qualification_status": "PASS",
+  "restored": true,
+  "runtime_git_commit": "a8a1f528f308e34fb83e81cb4bcacde0a2ba50aa",
+  "schema": "ds41f.m43.final-origin.v1",
+  "source_commit": "170665af60b37c6db3773e05f8a4770dc211b8f8",
+  "source_tree_sha256": "adb4b5b02e8870d798c39cf30ca72f56726482599cc4d090f2da9f26b6de0c87",
+  "status": "PASS"
+}
