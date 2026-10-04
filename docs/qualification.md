@@ -92,7 +92,7 @@ token-exact immediate abort and shared/concurrent MTP remain unsupported.
 | Backend-local fidelity policy | QUALIFIED | Correctness is backend-local for a fixed checkpoint/runtime/backend/build/config/input/session state; cross-backend hidden/logit/token identity is not required under official-compatible floating-point semantics. |
 | Production prefill | QUALIFIED | `PRODUCTION_PREFILL_SELECTOR = DENSE_P0_P7`, dense FP8/MLX path, P7 `FULL_RESIDENT_BACKBONE_SSD_ENGRAM`, `P7_ENGRAM_TILE=2048`. |
 | P5 handoff | QUALIFIED | Terminal prompt token held out once and handed to ds41f TargetGenerationSession; no prompt replay and no second cache authority. |
-| Decode | QUALIFIED | ds41f `TargetGenerationSession`, MTP OFF, DSpark OFF, speculative decode OFF; M44 records fresh R1/real-model/operational and matched performance qualification. |
+| Decode | QUALIFIED | ds41f `TargetGenerationSession`, MTP OFF, DSpark OFF, speculative decode OFF; M44 records generation qualification; M45 records R1, owned-forward/all-layer lifecycle and matched pre-M45 real-model/cache/performance regression evidence. M45 is development-only, not runtime promotion. |
 | API serving | QUALIFIED | Local text-only single-flight HTTP: stateless Chat Completions, Responses, Messages; stateful Chat Completions sessions. |
 | Long context | QUALIFIED THROUGH 200K | Production prefill/decode performance and memory class verified through 200K-token contexts in the dense P0-P7 path. |
 | Long sessions | QUALIFIED FOR SINGLE-SESSION TEXT/AGENT SCOPE | Repeated exact-prefix append/decode, bounded diagnostics, persistence/restore, client interruption recovery, and stable bounded memory/performance in restored long-session and M24 operational-soak evidence. |

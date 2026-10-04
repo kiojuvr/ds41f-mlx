@@ -57,7 +57,7 @@ manifest/checkouts and historical evidence below remain separate and unchanged.
 The current production path has explicit external requirements:
 
 - official DeepSeek-V4.1-Flash checkpoint at the documented local checkpoint path;
-- oMLX GenerationBatch decode, promoted clean upstream `v0.7.0` at `4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40`, qualified in `~/omlx-0.7.0.release`; preserved dev2 rollback at `b390b31e0c6831225fed0f24d278eb1db7fcb68b`;
+- oMLX attributed loader, numerical block/cache/Engram primitives (not the standard-off target scheduler/forward transaction), promoted clean upstream `v0.7.0` at `4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40`, qualified in `~/omlx-0.7.0.release`; preserved dev2 rollback at `b390b31e0c6831225fed0f24d278eb1db7fcb68b`;
 - MLX / mlx-lm versions recorded by the production artifacts for the target machine;
 - official `deepseek-recipe` checkout/tokenizer, pinned in session/tool/termination evidence to revision `8cadfede7063c896b944e7bae05daa3549ae97ea`.
 
@@ -76,7 +76,7 @@ Older expensive evidence can be inherited only through an explicit migration att
 ## External architecture and implementation sources
 
 - DwarfStar: production architecture source for the dense prefill topology; not a correctness authority.
-- oMLX: selected production decode implementation for the scoped release, compatibility/performance baseline, and implementation donor; not a correctness authority.
+- oMLX: subordinate production numerical/cache/Engram substrate, compatibility/performance baseline, and implementation donor; not a correctness or target-transaction authority. M45's owned decode orchestration is derived from the MIT-attributed `deepseek_v41/language.py` single-row decode branch; its source digest and subtree MIT license are recorded in `artifacts/m45/provenance.json` (`ds41f_mlx/prefill_fp8_mlx/OMLX_MATH_LICENSE`, not the donor top-level Apache license).
 - Historical native source: implementation origin and imported regression evidence only.
 
 No donor supersedes the official checkpoint and reviewed official-source semantics.

@@ -1,0 +1,246 @@
+.F.F.F...F                                                               [100%]
+=================================== FAILURES ===================================
+______________________ test_fresh_closure_and_inheritance ______________________
+
+    def test_fresh_closure_and_inheritance():
+        q=load(OUT/'qualification.json')
+        assert q['decision']=='SEMANTIC_CLOSURE_REFERENCE_R1' and q['status']=='PASS'
+        assert q['reference_sha256']==sha(OWN/'manifest.json')
+        assert not q['runtime_behavior_changed']
+        assert q['fresh']['semantic_checks']==249 and q['fresh']['mutations_rejected']==3
+        for name,row in q['fresh']['receipts'].items():assert sha(ROOT/row['path'])==row['sha256']
+        for path,digest in q['evidence'].items():assert sha(ROOT/path)==digest
+        for row in q['inheritance']['source_comparisons']:
+>           assert row['equal'] and sha(ROOT/row['path'])==row['current']==row['previous']
+E           AssertionError: assert (True and 'ac81cedad27d...c9e10524040b2' == '8d24bc00c067...8065a94d6fa7b'
+E             
+E             - 8d24bc00c067e958a3e45e900bb0dc211c8e6ce66ad718450658065a94d6fa7b
+E             + ac81cedad27dd30c02f0cba253553f29b48f4d3004e82e6366dc9e10524040b2)
+
+tests/test_m42_reference.py:33: AssertionError
+___ PromotionTests.test_deterministic_complete_projection_and_reverse_patch ____
+
+self = <test_m43_promotion.PromotionTests testMethod=test_deterministic_complete_projection_and_reverse_patch>
+
+    def test_deterministic_complete_projection_and_reverse_patch(self):
+        a,b = self.base/'a',self.base/'b'
+>       m = promotion.promote('HEAD','R1',a)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_m43_promotion.py:35: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+commit = 'aae86b2e4f8d1ddef532e8772d3f5ca855f58ba7', reference = 'R1'
+output = PosixPath('/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/m43-mechanics-9l2_q5q4/a')
+qualification = None
+
+    def promote(commit, reference, output, qualification=None):
+        commit = git('rev-parse', commit + '^{commit}').decode().strip()
+        if commit != git('rev-parse', 'HEAD').decode().strip() or git('status', '--porcelain').strip():
+            raise ValueError('promotion requires the declared clean HEAD; commit source changes first')
+        def blob(path):
+            return git('show', f'{commit}:{path}')
+        surface_bytes = blob('release/runtime-surface.json')
+        surface = json.loads(surface_bytes)
+        spec = surface['references'][reference]
+        ref_bytes = blob(f'reference/{reference}/manifest.json')
+        if sha(ref_bytes) != spec['sha256']:
+            raise ValueError('Reference Release identity drift')
+        ref = json.loads(ref_bytes)
+        for name, digest in ref['files'].items():
+            if sha(blob(f'reference/{reference}/{name}')) != digest:
+                raise ValueError(f'Reference material drift: {name}')
+        if sha(blob('ds41f_mlx/reference.py')) != ref['verifier_sha256']:
+            raise ValueError('Reference verifier drift')
+        contract_bytes = blob(f'reference/{reference}/contract.json')
+        contract = json.loads(contract_bytes)
+        lock = json.loads(blob('third_party/mtp/sources.json'))
+        for dep in lock['sources'].values():
+            if sha(blob('third_party/mtp/' + dep['archive'])) != dep['sha256']:
+                raise ValueError('dependency source drift')
+        entries, payload = {}, {}
+        modes = {}
+        for line in git('ls-tree', '-r', commit).decode().splitlines():
+            meta, path = line.split('\t'); mode, kind, _ = meta.split()
+            modes[path] = mode
+        covered = set(surface['files'].values()) | set(surface['excluded_source_files'])
+        for path in modes:
+            if any(path.startswith(root + '/') for root in surface['closed_source_roots']) and path not in covered:
+                raise ValueError(f'unexpected owned source; classify its release necessity explicitly: {path}')
+        for dest, source in surface['files'].items():
+            if source not in modes or modes[source] not in ('100644', '100755'):
+                raise ValueError(f'missing/nonregular required source: {source}')
+            if Path(dest).is_absolute() or '..' in Path(dest).parts:
+                raise ValueError('unsafe release destination')
+            data = blob(source)
+            payload[dest] = data
+            entries[dest] = dict(sha256=sha(data), size=len(data), mode=modes[source], origin=source)
+        tree_identity = sha(canonical(entries))
+        qualification_result = {'status': 'NOT_RELEASE_QUALIFIED'}
+        receipt_path = 'release/promotion-qualification.json'
+        if qualification or receipt_path in modes:
+            if receipt_path not in modes:
+                raise ValueError('qualification must be committed in the authoritative source')
+            qbytes = blob(receipt_path)
+            if qualification and Path(qualification).read_bytes() != qbytes:
+                raise ValueError('qualification differs from authoritative committed receipt')
+            q = json.loads(qbytes)
+            ancestor = subprocess.run(['git', '-C', str(ROOT), 'merge-base', '--is-ancestor', q['source_commit'], commit]).returncode == 0
+            if (q['status'] != 'PASS' or not ancestor or
+                    q['source_tree_sha256'] != tree_identity or q['reference_sha256'] != spec['sha256']):
+>               raise ValueError('qualification does not bind this promotion input')
+E               ValueError: qualification does not bind this promotion input
+
+tools/promote_release.py:77: ValueError
+__________ PromotionTests.test_qualification_input_mismatch_rejected ___________
+
+self = <test_m43_promotion.PromotionTests testMethod=test_qualification_input_mismatch_rejected>
+
+    def test_qualification_input_mismatch_rejected(self):
+>       a=self.base/'a'; m=promotion.promote('HEAD','R1',a)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_m43_promotion.py:74: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+commit = 'aae86b2e4f8d1ddef532e8772d3f5ca855f58ba7', reference = 'R1'
+output = PosixPath('/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/m43-mechanics-csmho_ap/a')
+qualification = None
+
+    def promote(commit, reference, output, qualification=None):
+        commit = git('rev-parse', commit + '^{commit}').decode().strip()
+        if commit != git('rev-parse', 'HEAD').decode().strip() or git('status', '--porcelain').strip():
+            raise ValueError('promotion requires the declared clean HEAD; commit source changes first')
+        def blob(path):
+            return git('show', f'{commit}:{path}')
+        surface_bytes = blob('release/runtime-surface.json')
+        surface = json.loads(surface_bytes)
+        spec = surface['references'][reference]
+        ref_bytes = blob(f'reference/{reference}/manifest.json')
+        if sha(ref_bytes) != spec['sha256']:
+            raise ValueError('Reference Release identity drift')
+        ref = json.loads(ref_bytes)
+        for name, digest in ref['files'].items():
+            if sha(blob(f'reference/{reference}/{name}')) != digest:
+                raise ValueError(f'Reference material drift: {name}')
+        if sha(blob('ds41f_mlx/reference.py')) != ref['verifier_sha256']:
+            raise ValueError('Reference verifier drift')
+        contract_bytes = blob(f'reference/{reference}/contract.json')
+        contract = json.loads(contract_bytes)
+        lock = json.loads(blob('third_party/mtp/sources.json'))
+        for dep in lock['sources'].values():
+            if sha(blob('third_party/mtp/' + dep['archive'])) != dep['sha256']:
+                raise ValueError('dependency source drift')
+        entries, payload = {}, {}
+        modes = {}
+        for line in git('ls-tree', '-r', commit).decode().splitlines():
+            meta, path = line.split('\t'); mode, kind, _ = meta.split()
+            modes[path] = mode
+        covered = set(surface['files'].values()) | set(surface['excluded_source_files'])
+        for path in modes:
+            if any(path.startswith(root + '/') for root in surface['closed_source_roots']) and path not in covered:
+                raise ValueError(f'unexpected owned source; classify its release necessity explicitly: {path}')
+        for dest, source in surface['files'].items():
+            if source not in modes or modes[source] not in ('100644', '100755'):
+                raise ValueError(f'missing/nonregular required source: {source}')
+            if Path(dest).is_absolute() or '..' in Path(dest).parts:
+                raise ValueError('unsafe release destination')
+            data = blob(source)
+            payload[dest] = data
+            entries[dest] = dict(sha256=sha(data), size=len(data), mode=modes[source], origin=source)
+        tree_identity = sha(canonical(entries))
+        qualification_result = {'status': 'NOT_RELEASE_QUALIFIED'}
+        receipt_path = 'release/promotion-qualification.json'
+        if qualification or receipt_path in modes:
+            if receipt_path not in modes:
+                raise ValueError('qualification must be committed in the authoritative source')
+            qbytes = blob(receipt_path)
+            if qualification and Path(qualification).read_bytes() != qbytes:
+                raise ValueError('qualification differs from authoritative committed receipt')
+            q = json.loads(qbytes)
+            ancestor = subprocess.run(['git', '-C', str(ROOT), 'merge-base', '--is-ancestor', q['source_commit'], commit]).returncode == 0
+            if (q['status'] != 'PASS' or not ancestor or
+                    q['source_tree_sha256'] != tree_identity or q['reference_sha256'] != spec['sha256']):
+>               raise ValueError('qualification does not bind this promotion input')
+E               ValueError: qualification does not bind this promotion input
+
+tools/promote_release.py:77: ValueError
+____________ PromotionTests.test_unexpected_runtime_source_rejected ____________
+
+self = <test_m43_promotion.PromotionTests testMethod=test_unexpected_runtime_source_rejected>
+
+    def test_unexpected_runtime_source_rejected(self):
+>       a=self.base/'a'; promotion.promote('HEAD','R1',a)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_m43_promotion.py:69: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+commit = 'aae86b2e4f8d1ddef532e8772d3f5ca855f58ba7', reference = 'R1'
+output = PosixPath('/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/m43-mechanics-ufeg005m/a')
+qualification = None
+
+    def promote(commit, reference, output, qualification=None):
+        commit = git('rev-parse', commit + '^{commit}').decode().strip()
+        if commit != git('rev-parse', 'HEAD').decode().strip() or git('status', '--porcelain').strip():
+            raise ValueError('promotion requires the declared clean HEAD; commit source changes first')
+        def blob(path):
+            return git('show', f'{commit}:{path}')
+        surface_bytes = blob('release/runtime-surface.json')
+        surface = json.loads(surface_bytes)
+        spec = surface['references'][reference]
+        ref_bytes = blob(f'reference/{reference}/manifest.json')
+        if sha(ref_bytes) != spec['sha256']:
+            raise ValueError('Reference Release identity drift')
+        ref = json.loads(ref_bytes)
+        for name, digest in ref['files'].items():
+            if sha(blob(f'reference/{reference}/{name}')) != digest:
+                raise ValueError(f'Reference material drift: {name}')
+        if sha(blob('ds41f_mlx/reference.py')) != ref['verifier_sha256']:
+            raise ValueError('Reference verifier drift')
+        contract_bytes = blob(f'reference/{reference}/contract.json')
+        contract = json.loads(contract_bytes)
+        lock = json.loads(blob('third_party/mtp/sources.json'))
+        for dep in lock['sources'].values():
+            if sha(blob('third_party/mtp/' + dep['archive'])) != dep['sha256']:
+                raise ValueError('dependency source drift')
+        entries, payload = {}, {}
+        modes = {}
+        for line in git('ls-tree', '-r', commit).decode().splitlines():
+            meta, path = line.split('\t'); mode, kind, _ = meta.split()
+            modes[path] = mode
+        covered = set(surface['files'].values()) | set(surface['excluded_source_files'])
+        for path in modes:
+            if any(path.startswith(root + '/') for root in surface['closed_source_roots']) and path not in covered:
+                raise ValueError(f'unexpected owned source; classify its release necessity explicitly: {path}')
+        for dest, source in surface['files'].items():
+            if source not in modes or modes[source] not in ('100644', '100755'):
+                raise ValueError(f'missing/nonregular required source: {source}')
+            if Path(dest).is_absolute() or '..' in Path(dest).parts:
+                raise ValueError('unsafe release destination')
+            data = blob(source)
+            payload[dest] = data
+            entries[dest] = dict(sha256=sha(data), size=len(data), mode=modes[source], origin=source)
+        tree_identity = sha(canonical(entries))
+        qualification_result = {'status': 'NOT_RELEASE_QUALIFIED'}
+        receipt_path = 'release/promotion-qualification.json'
+        if qualification or receipt_path in modes:
+            if receipt_path not in modes:
+                raise ValueError('qualification must be committed in the authoritative source')
+            qbytes = blob(receipt_path)
+            if qualification and Path(qualification).read_bytes() != qbytes:
+                raise ValueError('qualification differs from authoritative committed receipt')
+            q = json.loads(qbytes)
+            ancestor = subprocess.run(['git', '-C', str(ROOT), 'merge-base', '--is-ancestor', q['source_commit'], commit]).returncode == 0
+            if (q['status'] != 'PASS' or not ancestor or
+                    q['source_tree_sha256'] != tree_identity or q['reference_sha256'] != spec['sha256']):
+>               raise ValueError('qualification does not bind this promotion input')
+E               ValueError: qualification does not bind this promotion input
+
+tools/promote_release.py:77: ValueError
+=========================== short test summary info ============================
+FAILED tests/test_m42_reference.py::test_fresh_closure_and_inheritance - Asse...
+FAILED tests/test_m43_promotion.py::PromotionTests::test_deterministic_complete_projection_and_reverse_patch
+FAILED tests/test_m43_promotion.py::PromotionTests::test_qualification_input_mismatch_rejected
+FAILED tests/test_m43_promotion.py::PromotionTests::test_unexpected_runtime_source_rejected
+4 failed, 6 passed in 14.69s

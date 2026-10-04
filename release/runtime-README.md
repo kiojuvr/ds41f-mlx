@@ -19,7 +19,7 @@ ds41f-mlx source.
 Default **standard-off**: local text Chat Completions, Responses, Messages,
 stateful exact-prefix Chat, SSE, idle same-backend persist/restore, Rust HTTP/SSE
 boundary, local web client. Production prefill remains DENSE_P0_P7/P5/P7 and
-ds41f-owned TargetGenerationSession decode (M44); attributed model forward, packed cache objects, kernels and SSD Engram remain temporary substrate. Explicit **mtp-singleton-v1**: loopback only, one worker,
+ds41f-owned TargetGenerationSession (M44) and single-token/all-40-layer TargetForwardTransaction (M45); attributed block math, packed cache objects, kernels and SSD Engram remain subordinate temporary substrate. Explicit **mtp-singleton-v1**: loopback only, one worker,
 one session, depth 5, prompt+budget <=8192, output <=768, fixed weather tool and
 living-client restrictive recovery. See `reference/R1/contract.json` for the exact
 contract and `docs/mtp-local-release-candidate.md` for the bounded client API.

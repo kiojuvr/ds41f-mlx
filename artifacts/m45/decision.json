@@ -1,0 +1,115 @@
+{
+  "schema": "ds41f.m45.development-decision.v1",
+  "status": "PASS",
+  "scope": "qualified ds41f-mlx development only; no ds41f-runtime qualification or promotion",
+  "control_commit": "aae86b2",
+  "boundary": "M44 _consume -> owned single-row single-token TargetForwardTransaction; all 40 original P7-compatible cache objects, completion/frontier barrier before history publication",
+  "authority_moved": [
+    "embedding/hash/HC entry",
+    "Engram prefetch and all-block sequencing",
+    "direct live-layer mutation orchestration",
+    "all-slot completion and all-layer frontier commit barrier",
+    "whole-lease invalidation on preflight/mutation/evaluation/commit failure"
+  ],
+  "remaining_external": [
+    "checkpoint loading",
+    "numerical block/attention/MoE/HC/head primitives",
+    "packed cache class/methods",
+    "quantization/custom kernels",
+    "SSD Engram/hash/prefetch",
+    "separate bounded MTP engine"
+  ],
+  "r1": {
+    "status": "PASS",
+    "decision": "CONFORMANT",
+    "profile": "standard-off",
+    "level": "full",
+    "gate_count": 24,
+    "reference_sha256": "45653bd63c6a924c42dcdf0871cd950decb5efaabacce7b3c78ecf6b47f8b4ca"
+  },
+  "tests": {
+    "affected_and_metadata_passed": 80,
+    "subtests": 32,
+    "owned_specific_passed": 21
+  },
+  "matched": [
+    {
+      "context": 4096,
+      "token_identity": true,
+      "exact_all_40_by_7_cache_slots": true,
+      "owned_m44_median_ratio": 1.0051463500964088
+    },
+    {
+      "context": 32768,
+      "token_identity": true,
+      "exact_all_40_by_7_cache_slots": true,
+      "owned_m44_median_ratio": 1.0042424292626748
+    }
+  ],
+  "median_tok_s": [
+    {
+      "engine": "m44-control",
+      "context": 4096,
+      "median_tok_s": 19.867450925808292
+    },
+    {
+      "engine": "owned",
+      "context": 4096,
+      "median_tok_s": 19.969695783795725
+    },
+    {
+      "engine": "m44-control",
+      "context": 32768,
+      "median_tok_s": 19.557901844667477
+    },
+    {
+      "engine": "owned",
+      "context": 32768,
+      "median_tok_s": 19.640874859769816
+    }
+  ],
+  "cache_lifecycle": {
+    "layers": 40,
+    "slots_per_layer": 7,
+    "all_frontiers_each_owned_forward": true,
+    "exact_list_and_objects_through_continuation": true,
+    "failed_history_never_published": true,
+    "replay_count": 0,
+    "full_repack_count": 0,
+    "donor_forward_extract_merge_forbidden_on_owned_path": true,
+    "cancellation": "M44 single-flight between committed transactions; sampled lookahead discarded"
+  },
+  "environment": {
+    "python": "3.13.14 (main, Jun 11 2026, 03:58:32) [Clang 22.1.3 ]",
+    "packages": {
+      "deepseek-recipe": "0.1.1",
+      "mlx": "0.32.2",
+      "mlx-lm": "0.31.4.dev132+g94cdcae13",
+      "omlx": "0.7.0"
+    },
+    "note": "Existing development environment, repaired missing R1 prerequisites and pre-existing mlx-lm drift; no fresh release environments. Python differs from historical release 3.13.15; not an independent release-environment qualification."
+  },
+  "limitations": [
+    "No new 200K endpoint or broad soak claim; M44 evidence remains historical",
+    "Same-backend identity is regression evidence only",
+    "Exploratory unpinned runs retained but not authoritative",
+    "Historical policy-suite receipts are tree-bound and stale for development; no projection completed",
+    "Broad canonical-doc static checker flags pre-existing M2 historical token; no old evidence removed"
+  ],
+  "next_frontier": "Loaded numerical block/cache-state producer and SSD Engram primitive interface, including shared CSA2/compressor tails; investigate only demonstrated ownership/stability/performance needs, not a preassigned dependency-removal milestone",
+  "evidence": {
+    "artifacts/m45/r1-pinned.json": "36ca1c2ec7398d63ad187b0233c100717d9db8048e82e564e8bbdfa3969cb4b1",
+    "artifacts/m45/matched-pinned.json": "ad909795f3b52ba96fb546c45f77e86afe02a84c1ba5e61cef55368745bbef03",
+    "artifacts/m45/tests-final.log": "a7ea76a5932b1ef1302e4d09721b24a23c8b4bd4549fee7b2079becb2887eb20",
+    "artifacts/m45/tests-pinned.log": "faf98956c5a2bbbf8d3add6af28225885abace7c8a2cac906f7f091b75ea5d1f",
+    "artifacts/m45/unit-final.log": "84853372f6f896781610c039f0364cbcf2dbc645fb934ef7f6d3d707430b6abe",
+    "artifacts/m45/metadata-tests.log": "d2a6a030c14b06247b2496f0d6742a7c472d841e152e19413fc05201a9fe8b1d",
+    "artifacts/m45/runtime-provenance-final.json": "becd5889cf89ee5371dcd634e4d68f9df15b838957b1c17c8f94751ac2963579",
+    "artifacts/m45/code-binding.json": "988fedb6067c542cfdb9126dd3d6b6e100cfb124684748f7603add3915d137fa",
+    "artifacts/m45/provenance.json": "bd11250de6a551939c918aa5370dc8734fe4f348ac0c43ba66dd6b56a7f75824"
+  },
+  "runtime_source": {
+    "ds41f_mlx/runtime/target_forward.py": "cb11c91eda117c2e008683abe4d7a228956d7b57244da99010c07bd35d7d02db",
+    "ds41f_mlx/runtime/target_generation.py": "6fcdde5cd077c821ee34ed1fd96ecf75bc7c84ae162c68c2113e3ec366bd1690"
+  }
+}

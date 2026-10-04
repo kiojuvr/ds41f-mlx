@@ -68,8 +68,9 @@ Today the OFF release manifest pins oMLX and OFF configuration imports its
 checkout; M41's separate candidate installs repository-exported source as a package.
 M44's ds41f `TargetGenerationSession` now owns standard-off target scheduling,
 sampling, consumed-token history, generation lifecycle and exact-list idle
-transfer after dense P0–P7 prefill/P5 handoff. Model loading/target-forward math,
-packed cache representation, kernels and SSD Engram remain temporarily oMLX-owned. Internal guarded qualification additionally uses a
+transfer after dense P0–P7 prefill/P5 handoff. M45 owns single-token target-forward
+sequencing and all-40-layer mutation/commit on that same list. Model loading,
+block math, packed cache representation, kernels and SSD Engram remain temporarily oMLX-supplied. Internal guarded qualification additionally uses a
 patched oMLX candidate. This is a **temporary implementation substrate**, not the
 intended final public architecture or the authority defining ds41f contracts.
 The self-contained native reference core does not by itself close this production
@@ -83,8 +84,10 @@ generation lifecycle/state transitions, cancellation/quiescence, cache
 transfer/extraction, and—as applicable to an explicitly supported capability—MTP
 lifecycle, DSpark integration/state and proposal/verification lifecycle.
 Ownership replacement does not imply enabling those experimental capabilities.
-The next selected ownership frontier is target-forward/all-layer cache mutation
-on the existing P7-compatible packed representation; no new capability is implied.
+The target-forward/all-layer mutation frontier is transferred by M45 on the
+existing P7-compatible packed representation; no new capability is implied.
+Subsequent architecture work must be justified by measured remaining boundaries,
+not by dependency-count reduction.
 
 ### deepseek-recipe: protocol authority, not a developer-checkout requirement
 

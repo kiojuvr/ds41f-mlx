@@ -18,29 +18,57 @@ from ds41f_mlx.runtime.omlx_decode import OMLXDecodeConfig
 from ds41f_mlx.runtime.target_generation import TargetGenerationSession as OMLXGenerationSession
 
 
+from types import SimpleNamespace
+
+
+class TinyBlock(nn.Module):
+    def __init__(self, owner, index):
+        super().__init__()
+        # Avoid an nn.Module ownership cycle.
+        object.__setattr__(self, 'owner', owner)
+        self.index = index
+
+    def __call__(self, h, pre, cache, shared, start, image_mask):
+        if self.owner.fail and self.index == self.owner.fail_layer:
+            raise RuntimeError('injected forward failure')
+        return h, pre
+
+
 class TinyModel(nn.Module):
     def __init__(self):
         super().__init__()
         self.calls = []
         self.fail = False
+        self.fail_layer = 0
+        self._config = SimpleNamespace(n_layers=40, hc_mult=1, engram_layer_ids=(),
+            compress_ratios=(1,)*40, kv_source_layers=tuple(range(40)),
+            index_head_dim=128, head_dim=128)
+        self.layers = [TinyBlock(self, i) for i in range(40)]
+        self.head = nn.Linear(4, 4, bias=False)
+        self.head.weight = mx.eye(4)
 
-    def __call__(self, ids, cache):
-        if self.fail:
-            raise RuntimeError("injected forward failure")
+    def __call__(self, *args, **kwargs):
+        pytest.fail('external LanguageModel target call')
+
+    def embed(self, ids):
         self.calls.append(ids.tolist())
-        for c in cache:
-            c[0] = c[0] + ids.shape[1]
-            c[6] = mx.concatenate([c[6], ids.astype(mx.int64)], axis=1)
         return mx.broadcast_to(mx.array([0., 1., 9., 0.]), (*ids.shape, 4))
+
+    def norm(self, h):
+        return h
+
+    def _hasher(self, ids, history, image_mask):
+        return None, mx.concatenate([history, ids.astype(mx.int64)], axis=1)
 
 
 def session(max_tokens=3, stop=()):
-    c = DeepseekV41Cache(1)
-    c[0] = mx.array([2], mx.int32)
-    c[6] = mx.array([[0, 1]], mx.int64)
+    cache = [DeepseekV41Cache(1) for _ in range(40)]
+    for c in cache:
+        c[0] = mx.array([2], mx.int32)
+        c[6] = mx.array([[0, 1]], mx.int64)
     model = TinyModel()
     gen = OMLXGenerationSession.from_prefilled_cache(
-        model, [c], [0, 1], OMLXDecodeConfig(omlx_path=ROOT, preserve_mtp=False,
+        model, cache, [0, 1], OMLXDecodeConfig(omlx_path=ROOT, preserve_mtp=False,
                                          stop_token_ids=stop), max_tokens=max_tokens)
     return model, gen
 

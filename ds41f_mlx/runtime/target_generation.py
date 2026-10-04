@@ -16,6 +16,7 @@ from typing import Any, Callable
 import numpy as np
 
 from ds41f_mlx.runtime.omlx_decode import OMLXDecodeConfig
+from ds41f_mlx.runtime.target_forward import TargetForwardTransaction
 
 
 @dataclass(frozen=True)
@@ -69,6 +70,7 @@ class TargetGenerationSession:
         self.language_model = getattr(self.model, 'language_model', self.model)
         if hasattr(self.language_model, 'configure_mtp'):
             self.language_model.configure_mtp(False, 1)
+        self.target_forward = TargetForwardTransaction(self.language_model, self.mx)
         self.sampler = self.sampler or (lambda p: self.mx.argmax(p, axis=-1))
         self.prefix_tokens = [int(t) for t in np.asarray(self.initial_token_ids).reshape(-1)]
         self.admitted_frontier = len(self.prefix_tokens)
@@ -109,17 +111,9 @@ class TargetGenerationSession:
         return cls(model, cache, ids, cfg, sampler, max_tokens)
 
     def _consume(self, token):
-        # This is the only execution entry. Preserve the qualified normalized
-        # logprob sampler input and lazy async graph topology. Cache mutations
-        # and history commit are on the same consumed-token boundary.
-        with self.mx.stream(self.stream):
-            logits = self.language_model(token[:, None], cache=self._cache)[:, -1, :]
-            logprobs = logits - self.mx.logsumexp(logits, axis=-1, keepdims=True)
-            pending = self.sampler(logprobs)
-            self.mx.async_eval(pending, logprobs)
-            self.mx.eval(token)
-            consumed = int(token.item())
-        self.mx.synchronize(self.stream)
+        # Publish history only after the all-layer mutation transaction commits.
+        consumed, pending = self.target_forward.execute(
+            token, self._cache, self.token_frontier, self.sampler, self.stream)
         self._pending = pending
         self._history.append(consumed)
         self.token_frontier = len(self._history)
@@ -194,7 +188,11 @@ class TargetGenerationSession:
             return
         self._stopped = True
         self.stop_reason = reason
-        self.mx.synchronize(self.stream)
+        try:
+            self.mx.synchronize(self.stream)
+        except BaseException:
+            self._invalidate()
+            raise
         self._pending = None  # sampled but unconsumed: not history/cache state
         if self._started and not self._failed:
             if any(n != len(self._history) for n in self.cache_offsets(self._cache)):
@@ -250,7 +248,7 @@ class TargetGenerationSession:
     def metadata(self):
         return TargetGenerationMetadata(
             'ds41f.target-generation.metadata.v1',
-            'ds41f single-stream MLX target engine; temporary attributed model/cache kernels',
+            'ds41f single-stream target/all-layer transaction; attributed block/cache/Engram primitives',
             self.cache_authority_label, self.admitted_frontier, 0, self.first_input_token,
             self.token_frontier, len(self.generated_tokens), self._stopped, self.stop_reason)
 
