@@ -38,7 +38,7 @@ class OmlxV41SuffixMath:
 
     def _ops(self, layer):
         # Unknown layers must opt in with explicit fake hooks, never __call__.
-        if type(layer).__module__ != "omlx.patches.deepseek_v41.language":
+        if type(layer).__module__ not in ("ds41f_mlx.model_execution.language", "omlx.patches.deepseek_v41.language"):
             raise SuffixMathError(f"unsupported suffix layer semantics: {type(layer).__module__}")
         try:
             return importlib.import_module(type(layer).__module__), importlib.import_module("mlx.core")

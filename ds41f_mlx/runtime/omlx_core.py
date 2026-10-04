@@ -1,8 +1,7 @@
-"""Thin M0 bridge to the local known-good oMLX DeepSeek-V4.1 runtime.
+"""Model lifetime bridge. Standard-OFF uses first-party model execution.
 
-This module intentionally does not reimplement or optimize the model.  M0 uses
-it to make the oMLX execution substrate explicit and provenance-recorded before
-native optimization work begins.
+The historical API name remains for callers; diagnostic/MTP loading is separate
+and still uses the donor. There is no fallback from first-party OFF loading.
 """
 
 from __future__ import annotations
@@ -27,12 +26,7 @@ class OmlxRuntimeConfig:
 
 
 class OmlxRuntime:
-    """Lazy wrapper around `omlx.patches.deepseek_v41.loading.load`.
-
-    The first implementation goal is direct reproduction, so this wrapper keeps
-    oMLX ownership of compatibility behavior, cache layout, and MLX execution
-    topology. It is not an official DeepSeek semantics authority.
-    """
+    """Lazy loader retaining the established admission and retirement contract."""
 
     def __init__(self, config: OmlxRuntimeConfig | None = None):
         self.config = config or OmlxRuntimeConfig()
@@ -48,13 +42,11 @@ class OmlxRuntime:
             sys.path.insert(0, root)
 
     def load_model(self):
-        """Load the official checkpoint through oMLX for compatibility/performance diagnostics.
+        """Load admitted first-party OFF execution, or the separate diagnostic donor.
 
-        This may allocate hundreds of GiB and should only be called by explicit
-        smoke/performance runners, not at module import time.
+        This allocates hundreds of GiB and is lazy, never performed at import.
         """
         self.ensure_import_path()
-        loading = importlib.import_module("omlx.patches.deepseek_v41.loading")
         # Bounded MTP/diagnostic offload loading remains on its separate path.
         if (self.config.preserve_mtp is False and self.config.engram_ssd_offload
                 and self.config.moe_expert_offload_resident_fraction is None):
@@ -63,7 +55,9 @@ class OmlxRuntime:
             admission = prepare_resources(self.config.checkpoint_path, self.config.recipe_path)
             self.admission_seconds = perf_counter() - start
             self.admission = admission
-            loading = admission.modules['omlx.patches.deepseek_v41.loading']
+            loading = admission.modules['ds41f_mlx.model_execution.loading']
+        else:
+            loading = importlib.import_module("omlx.patches.deepseek_v41.loading")
         try:
             self.model, self.processor = loading.load(
                 self.admission._checkpoint if self.admission else self.config.checkpoint_path,

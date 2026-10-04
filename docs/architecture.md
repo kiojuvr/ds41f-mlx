@@ -9,6 +9,8 @@ current implementation, not a permanent external-checkout requirement.
 ```text
 official DeepSeek-V4.1-Flash checkpoint
   ↓
+ds41f model_execution (load/projections/CSA2/HC/MoE/SSD Engram)
+  ↓
 official deepseek-recipe protocol/rendering
   ↓
 DENSE_P0_P7 prefill facade
@@ -24,7 +26,7 @@ ds41f TargetGenerationSession, MTP/DSpark/speculation OFF
 recipe-formatted HTTP response/session boundary
 ```
 
-The release architecture has one executable cache authority. `PrefillContinuationState` and handoff artifacts are evidence/admission structures; after terminal bootstrap, ds41f TargetGenerationSession owns the exact live cache list. Its sampled lookahead is uncommitted until consumed. M45's `TargetForwardTransaction` sequences all 40 blocks directly on that list and commits only after all mutated slots complete and frontiers validate. [M46](milestone-46-state-production-ownership.md) inserts ds41f `DecodeStateProducer` below that transaction: it owns block sequencing, packed window/compressor/index mutation and token-local CSA2 publications. External numerical/storage/SSD read primitives receive no mutable continuation-state authority. [M47](milestone-47-execution-resource-admission.md) binds the external primitive implementation and full checkpoint/SSD resource set in a ds41f model-lifetime admission capability. OFF prefill/idle append/target entry require that binding; decode uses stable admitted handles and rejects retired leases. Persisted artifacts are dormant storage and never a second live authority.
+The release architecture has one executable cache authority. `PrefillContinuationState` and handoff artifacts are evidence/admission structures; after terminal bootstrap, ds41f TargetGenerationSession owns the exact live cache list. Its sampled lookahead is uncommitted until consumed. M45's `TargetForwardTransaction` sequences all 40 blocks directly on that list and commits only after all mutated slots complete and frontiers validate. [M46](milestone-46-state-production-ownership.md) inserts ds41f `DecodeStateProducer` below that transaction: it owns block sequencing, packed window/compressor/index mutation and token-local CSA2 publications. External numerical/storage/SSD read primitives receive no mutable continuation-state authority. [M47](milestone-47-execution-resource-admission.md) binds the external primitive implementation and full checkpoint/SSD resource set in a ds41f model-lifetime admission capability. OFF prefill/idle append/target entry require that binding; decode uses stable admitted handles and rejects retired leases. Persisted artifacts are dormant storage and never a second live authority. [M48](milestone-48-first-party-model-execution.md) replaces the donor model/numerical/storage implementation with `ds41f_mlx/model_execution/`, including checkpoint construction and restored cache classes. M44–M47 authorities remain unchanged. Admitted MLX/Metal and stateless acceleration primitives remain lower-level dependencies; no donor model execution fallback exists on standard-OFF.
 
 ## Guarded singleton qualification (M33–M35, internal)
 
@@ -52,7 +54,8 @@ unchanged. Diagnostic throughput is not agent-session qualification.
 ## Repository components
 
 - `ds41f_mlx/prefill_fp8_mlx/` — dense FP8/MLX prefill, P7 Engram/SSD behavior, P5 handoff helpers, P8 experimental probes.
-- `ds41f_mlx/runtime/` — oMLX runtime loading, decode/session wrappers, long-session continuation, KV persistence, tool-boundary session logic.
+- `ds41f_mlx/model_execution/` — first-party checkpoint construction, numerical model/projections/CSA2/HC/MoE, packed cache and SSD Engram implementation.
+- `ds41f_mlx/runtime/` — admitted model lifetime, owned generation/forward/state production, continuation, KV persistence and tool-boundary session logic; separate donor diagnostic/MTP loading.
 - `ds41f_mlx/serving/` — official recipe HTTP backend, session API, policy checks, diagnostics.
 - `native/` — local C++ reference model core and tests.
 - `artifacts/` — provenance, qualification, and performance evidence.

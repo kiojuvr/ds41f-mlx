@@ -70,7 +70,7 @@ def _cache_class(omlx_path: Path = DEFAULT_OMLX):
     root = str(omlx_path)
     if root not in sys.path:
         sys.path.insert(0, root)
-    from omlx.patches.deepseek_v41.cache import DeepseekV41Cache
+    from ds41f_mlx.model_execution.cache import DeepseekV41Cache
     return DeepseekV41Cache
 
 

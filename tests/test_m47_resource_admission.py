@@ -15,7 +15,7 @@ from ds41f_mlx.runtime import resource_admission as a
 from ds41f_mlx.runtime.target_forward import TargetForwardTransaction
 
 PIN = json.loads(a.PIN.read_bytes())
-MATH = 'omlx.patches.deepseek_v41.language'
+MATH = 'ds41f_mlx.model_execution.language'
 
 
 def test_current_numerical_and_native_resource_identity_positive():
@@ -49,7 +49,7 @@ def test_live_definition_substitution_even_with_correct_source(monkeypatch):
 
 
 def test_cache_class_primitive_substitution_with_correct_source(monkeypatch):
-    name = 'omlx.patches.deepseek_v41.cache'
+    name = 'ds41f_mlx.model_execution.cache'
     module = importlib.import_module(name)
     monkeypatch.setattr(module.DeepseekV41Cache, 'size', lambda self: 900)
     with pytest.raises(a.ResourceAdmissionError, match='class primitive'):
@@ -179,7 +179,7 @@ def test_unadmitted_model_has_no_access_to_owned_transaction():
 def test_runtime_admission_failure_does_not_call_loader(monkeypatch):
     from ds41f_mlx.runtime.omlx_core import OmlxRuntime, OmlxRuntimeConfig
     calls = []
-    loading = importlib.import_module('omlx.patches.deepseek_v41.loading')
+    loading = importlib.import_module('ds41f_mlx.model_execution.loading')
     monkeypatch.setattr(loading, 'load', lambda *args, **kw: calls.append('load'))
     def fail(*args): raise a.ResourceAdmissionError('injected setup admission')
     monkeypatch.setattr(a, 'prepare_resources', fail)
@@ -193,8 +193,8 @@ def test_ssd_resource_identity_and_retirement_before_transaction(tmp_path, chang
     import struct
     import numpy as np
     import mlx.nn as nn
-    from omlx.patches.deepseek_v41.storage import DiskEngramEmbedding
-    from omlx.patches.deepseek_v41.language import LanguageModel
+    from ds41f_mlx.model_execution.storage import DiskEngramEmbedding
+    from ds41f_mlx.model_execution.language import LanguageModel
     from test_m46_state_production import config
     path = tmp_path/'engram.tensor'; raw = np.full((16,4),0x3f80,np.uint16)
     header = json.dumps({'w':dict(dtype='BF16',shape=[16,4],data_offsets=[0,raw.nbytes])}).encode()

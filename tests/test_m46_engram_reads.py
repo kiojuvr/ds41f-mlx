@@ -7,7 +7,7 @@ import numpy as np
 import pytest
 import mlx.nn as nn
 from test_m44_target_generation import mx, session
-from omlx.patches.deepseek_v41.storage import DiskEngramEmbedding, EngramPrefetch
+from ds41f_mlx.model_execution.storage import DiskEngramEmbedding, EngramPrefetch
 
 
 @pytest.mark.parametrize('failed', [False, True])

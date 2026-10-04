@@ -226,7 +226,7 @@ def check_native(modules, pin, verified=None):
 
 
 def check_dispatch(pin):
-    switch = importlib.import_module('omlx.patches.deepseek_v4.switch_layers')
+    switch = importlib.import_module('ds41f_mlx.model_execution.switch_layers')
     for name, expected in pin['dispatch'].items():
         require(getattr(switch, name) == expected, f'unqualified numerical dispatch: {name}')
     # These flags are queried dynamically by the retained projection path.
@@ -253,11 +253,11 @@ class AdmittedResources:
 
     @property
     def math(self):
-        return self.modules['omlx.patches.deepseek_v41.language']
+        return self.modules['ds41f_mlx.model_execution.language']
 
     @property
     def cache_type(self):
-        return self.modules['omlx.patches.deepseek_v41.cache'].DeepseekV41Cache
+        return self.modules['ds41f_mlx.model_execution.cache'].DeepseekV41Cache
 
     def assert_active(self):
         require(self.active, 'execution resource lease retired')
@@ -306,12 +306,12 @@ class AdmittedResources:
         require(sha256(processor.tokenizer.backend_tokenizer.to_str().encode()).hexdigest()
                 == self.pin['tokenizer_serialization_sha256'],
                 'loaded tokenizer mismatch')
-        storage = self.modules['omlx.patches.deepseek_v41.storage']
-        source = self.modules['omlx.patches.deepseek_v41.convert']
+        storage = self.modules['ds41f_mlx.model_execution.storage']
+        source = self.modules['ds41f_mlx.model_execution.checkpoint']
         root = self._checkpoint
         raw = json.loads((root/'config.json').read_text())
         mapping = json.loads((root/'model.safetensors.index.json').read_text())['weight_map']
-        expected_config = self.modules['omlx.patches.deepseek_v41.config'].ModelConfig.from_dict(raw)
+        expected_config = self.modules['ds41f_mlx.model_execution.config'].ModelConfig.from_dict(raw)
         expected_config.preserve_mtp = False
         require(asdict(language._config) == asdict(expected_config), 'loaded configuration differs from admitted checkpoint')
         tables = source.source_engram_tables(mapping, raw)
