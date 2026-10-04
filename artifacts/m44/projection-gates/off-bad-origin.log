@@ -1,0 +1,69 @@
+{
+  "provenance": {
+    "error": "DS41F_OMLX_PATH is unsupported by source-delivered OFF",
+    "schema": "ds41f.off.delivery.v1",
+    "status": "FAIL"
+  },
+  "release_manifest": {
+    "checkpoint": {
+      "external": true,
+      "name": "DeepSeek-V4.1-Flash official checkpoint",
+      "required_files": {
+        "config.json": "8be45ce0476004a3f529fd896115a4a2e800a129ad2d3ec05b16050f52e21879",
+        "model.safetensors.index.json": "74b0686a3d2891980d5e303251b075a3bccae2c2ff650747db2620a649b98fa8",
+        "tokenizer.json": "c90dfa01249db1be4245780a052ede752e1361c612ac6d08e2bdada7d599476b"
+      }
+    },
+    "dependencies": {
+      "deepseek_recipe": {
+        "revision": "8cadfede7063c896b944e7bae05daa3549ae97ea",
+        "role": "protocol, prompt, response, tool, thinking and streaming authority",
+        "version": "0.1.1"
+      },
+      "mlx": {
+        "version": "0.32.2"
+      },
+      "mlx_lm": {
+        "revision": "94cdcae13b266c337bcaca09b97b9c5a9c0e2cde",
+        "version": "0.31.4.dev132+g94cdcae13"
+      },
+      "omlx": {
+        "checkout_role": "qualified production decode authority",
+        "revision": "4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40",
+        "version": "0.7.0"
+      }
+    },
+    "evidence_authority": {
+      "m20": "runtime dependency baseline and model behavior",
+      "m21": "Rust/API boundary",
+      "m22": "packaging, manifest, operational commands and release acceptance",
+      "m23": "relocatable bundle and clean-room installation qualification"
+    },
+    "release": {
+      "name": "ds41f-mlx",
+      "scope": "local text runtime for official DeepSeek-V4.1-Flash on Mac Studio M3 Ultra 512GB class systems",
+      "status": "M23_RELOCATABLE_RELEASE_BUNDLE_QUALIFIED",
+      "version": "0.23.0"
+    },
+    "runtime": {
+      "decode": "ds41f TargetGenerationSession (M44); attributed oMLX target-forward/cache/kernel substrate",
+      "dspark": "OFF",
+      "engram_policy": "P7_FULL_RESIDENT_BACKBONE_SSD_ENGRAM",
+      "handoff": "P5_ZERO_REPLAY_TERMINAL_HOLDOUT",
+      "model_id": "deepseek-v4.1-flash",
+      "mtp": "OFF",
+      "production_prefill_selector": "DENSE_P0_P7",
+      "python_requires": ">=3.13,<3.14",
+      "qualified_python": "3.13.15",
+      "speculative_decode": "OFF"
+    },
+    "rust": {
+      "boundary": "loopback HTTP/SSE client plus optional process lifecycle control",
+      "crate": "ds41f_api",
+      "version": "0.23.0"
+    },
+    "schema": "ds41f.release-manifest.v1"
+  },
+  "schema": "ds41f.ops.inspect.v1",
+  "status": "FAIL"
+}
