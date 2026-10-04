@@ -2,7 +2,9 @@
 
 Canonical architectural intent:
 
-- [Reference release and promotion strategy](reference-release-and-promotion-strategy.md) — prospective M42 semantic closure/R1 and M43 deterministic one-way projection to `ds41f-runtime`; `ds41f-mlx` remains sole development authority
+- [Reference release and promotion strategy](reference-release-and-promotion-strategy.md) — semantic reference and prospective M43 one-way projection; sole `ds41f-mlx` development authority
+- [Reference Release R1](reference-release-r1.md) — owned executable contracts, equivalence, command and invalidation
+- [M42 closure decision](milestone-42-reference-release.md) — fresh qualification, semantic rejection, donor independence and inherited evidence
 
 - [Final runtime target](final-runtime-target.md) — intended self-contained public source runtime, stable ds41f contracts and dependency destination; prospective, not current qualification
 

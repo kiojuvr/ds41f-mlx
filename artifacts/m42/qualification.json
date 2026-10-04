@@ -1,0 +1,719 @@
+{
+  "schema": "ds41f.m42.qualification.v1",
+  "decision": "SEMANTIC_CLOSURE_REFERENCE_R1",
+  "status": "PASS",
+  "reference": "R1",
+  "reference_sha256": "45653bd63c6a924c42dcdf0871cd950decb5efaabacce7b3c78ecf6b47f8b4ca",
+  "contract_sha256": "8856d0b29fafb49ef337af095cfe9593bbe43eeb3cbf0522d31433f9200cdac6",
+  "source_base": "14228319f01bbdb8cb79cc393b2e4c99f999aacc",
+  "runtime_behavior_changed": false,
+  "default_profile": "standard-off",
+  "mtp_profile": "mtp-singleton-v1 (unchanged M41 scope)",
+  "canonical_command": "python -m ds41f_mlx.reference --profile both --real-model --output artifacts/r1/qualification.json",
+  "fresh": {
+    "receipts": {
+      "independent": {
+        "path": "artifacts/m42/independent.json",
+        "sha256": "2514c335c2eaae0c083194b0a0dcc9dab1338f9537074a60f55fa4f9d923c321",
+        "status": "PASS"
+      },
+      "isolation": {
+        "path": "artifacts/m42/isolation.json",
+        "sha256": "0f3f7046c33c16556d33c5542ad00724d84df84a08d64ec5ff3911c6d6b49ced",
+        "status": "PASS"
+      },
+      "mutations": {
+        "path": "artifacts/m42/mutations.json",
+        "sha256": "c455e8cc842794e67b2b989cb827ab2873596eda9d493e9b5764e038cdaf5456",
+        "status": "PASS"
+      },
+      "preserved-off": {
+        "path": "artifacts/m42/preserved-off.json",
+        "sha256": "93fb0ecc2d876d0df2d8f1c9dd736a03493dc39325063f00672bcee8504495f3",
+        "status": "PASS"
+      }
+    },
+    "semantic_checks": 249,
+    "subtests": 32,
+    "protocol_records": 64,
+    "preview_rows": 77,
+    "preview_repeated_calls": 15400,
+    "recovery_cases": 28,
+    "mtp_outcomes": 18,
+    "mtp_admission_rejections": 27,
+    "mutations_rejected": 3
+  },
+  "inheritance": {
+    "authority": "M41 scope-reconciled source/native qualification and its precisely inherited M33-M39/M20-M24 evidence",
+    "receipt_sha256": "f497e718dbe4cd9dab40d19da5a26613f8e0363171c1b709aa022e1b3063255f",
+    "all_compared_owners_unchanged": true,
+    "source_comparisons": [
+      {
+        "path": "ds41f_mlx/m2_layer_major.py",
+        "previous": "cbef65f7b0527121518178e33d51170561d24148d634f493aabde7713aae1b53",
+        "current": "cbef65f7b0527121518178e33d51170561d24148d634f493aabde7713aae1b53",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/server.py",
+        "previous": "9175afd50782d38e342a4395e1398860dbc1eb2cbdfdc038df725d34573243fd",
+        "current": "9175afd50782d38e342a4395e1398860dbc1eb2cbdfdc038df725d34573243fd",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/web_tools.py",
+        "previous": "b6ce1f3cf93c8a17f90b42e1f579d9e459d09d34bf02f11f1f7a13def2da166d",
+        "current": "b6ce1f3cf93c8a17f90b42e1f579d9e459d09d34bf02f11f1f7a13def2da166d",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/web.py",
+        "previous": "5ce625d85be8cfc29a15d9240fa5f4bece7c5128bdeb1383a76b76b539225b28",
+        "current": "5ce625d85be8cfc29a15d9240fa5f4bece7c5128bdeb1383a76b76b539225b28",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/release.py",
+        "previous": "ff9688701baecd1b65ba4b47351d2c3b5e7bb39e530c3318df78b2f9649a5587",
+        "current": "ff9688701baecd1b65ba4b47351d2c3b5e7bb39e530c3318df78b2f9649a5587",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/backend.py",
+        "previous": "99b5450f17bfd41790b85c97545a0c79c757cb6157929c7900cd07ca11a7e57a",
+        "current": "99b5450f17bfd41790b85c97545a0c79c757cb6157929c7900cd07ca11a7e57a",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/config.py",
+        "previous": "8d24bc00c067e958a3e45e900bb0dc211c8e6ce66ad718450658065a94d6fa7b",
+        "current": "8d24bc00c067e958a3e45e900bb0dc211c8e6ce66ad718450658065a94d6fa7b",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/mtp_identity.py",
+        "previous": "4f04838ee380e84240e995e623ccddaff86052116f3ad3c37c1495b833d6067a",
+        "current": "4f04838ee380e84240e995e623ccddaff86052116f3ad3c37c1495b833d6067a",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/web_client.py",
+        "previous": "29840bda7993796a65046439df97172bfbb8e05950176378e1bcf7b6600e2746",
+        "current": "29840bda7993796a65046439df97172bfbb8e05950176378e1bcf7b6600e2746",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/m2_state_publication.py",
+        "previous": "064557b1e88c255a68e48c8847e488932b169ef0c2733e4d78c6d15a767d7d3b",
+        "current": "064557b1e88c255a68e48c8847e488932b169ef0c2733e4d78c6d15a767d7d3b",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/acceptance.py",
+        "previous": "8456391f30f730b3bd034f1fbf679235c58e7bf38a7a3a1ce794b7a63fe6bbd2",
+        "current": "8456391f30f730b3bd034f1fbf679235c58e7bf38a7a3a1ce794b7a63fe6bbd2",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/prefill_session.py",
+        "previous": "00155aa0a583046e983510ff9866cf9b47e29fbce27e3836542fa34e62b02244",
+        "current": "00155aa0a583046e983510ff9866cf9b47e29fbce27e3836542fa34e62b02244",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/mtp_acceptance.py",
+        "previous": "6eb13dca5c11f30041295db087ae9876d94a757f6beea66b58063d38946e3d2e",
+        "current": "6eb13dca5c11f30041295db087ae9876d94a757f6beea66b58063d38946e3d2e",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/__init__.py",
+        "previous": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "current": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/serve.py",
+        "previous": "dd008b06c5b8baa3823e7cb3c26efe23f02b3ca9c893da4cb8e07d64e0affdb1",
+        "current": "dd008b06c5b8baa3823e7cb3c26efe23f02b3ca9c893da4cb8e07d64e0affdb1",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/build_release.py",
+        "previous": "50e16cd184f7b2aa3883bca5388b928f70c637348653956f6234dfe35a530860",
+        "current": "50e16cd184f7b2aa3883bca5388b928f70c637348653956f6234dfe35a530860",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/release_acceptance.py",
+        "previous": "4c2917057a702ff0ecc9a4e15e8ad9e0e3ace6d1f78ca3c3bfa57b9d9a922217",
+        "current": "4c2917057a702ff0ecc9a4e15e8ad9e0e3ace6d1f78ca3c3bfa57b9d9a922217",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/ops.py",
+        "previous": "b4822f3f3e00b18f120ba00e419d61865c0915926d4d09d82455a96d49be89c5",
+        "current": "b4822f3f3e00b18f120ba00e419d61865c0915926d4d09d82455a96d49be89c5",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/mtp_setup.py",
+        "previous": "38e9abacfb9160ff2ff14336b5e68eb9896962886eb06c153c307acfb55f6015",
+        "current": "38e9abacfb9160ff2ff14336b5e68eb9896962886eb06c153c307acfb55f6015",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/dwarfstar_prefill_slice.py",
+        "previous": "f999d14a059f7ba4b008be786e81c78eb337a8fcbc728fdd85fe755db2adb605",
+        "current": "f999d14a059f7ba4b008be786e81c78eb337a8fcbc728fdd85fe755db2adb605",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/dwarfstar_semantics.py",
+        "previous": "9fd4142dc9404fc4147e03ddf9289936bb11e71fa2e52e4626e47c57f784b9b2",
+        "current": "9fd4142dc9404fc4147e03ddf9289936bb11e71fa2e52e4626e47c57f784b9b2",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/internal_local_client.py",
+        "previous": "f5ea8f37b2f2990a4b7710439bd371f4c1462208bd72a038fe93ce880b984bd5",
+        "current": "f5ea8f37b2f2990a4b7710439bd371f4c1462208bd72a038fe93ce880b984bd5",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/dwarfstar_v41_sweep.py",
+        "previous": "ffa80551acc7ddbaa46ec1dd6061b96a7faa2fca8bf82019afca2ed55d99a222",
+        "current": "ffa80551acc7ddbaa46ec1dd6061b96a7faa2fca8bf82019afca2ed55d99a222",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/local_client.py",
+        "previous": "ede92742c474fd66aad7274207899418da0b0e7549e7efa98f94871838e7e06f",
+        "current": "ede92742c474fd66aad7274207899418da0b0e7549e7efa98f94871838e7e06f",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/native_prefill.py",
+        "previous": "1373879196ad2e56bb4491c2f3a65c8ea8760885a3b46b6ffadcd62da1b66ccc",
+        "current": "1373879196ad2e56bb4491c2f3a65c8ea8760885a3b46b6ffadcd62da1b66ccc",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/provenance.py",
+        "previous": "070839386522a4f7d79185703a2f8928f713d46948bf005d02abee3c807acc1b",
+        "current": "070839386522a4f7d79185703a2f8928f713d46948bf005d02abee3c807acc1b",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/dwarfstar_prefill.py",
+        "previous": "615270311add5e083f008076cdc5436f547f402fd8385c1ac35a64a3aa618819",
+        "current": "615270311add5e083f008076cdc5436f547f402fd8385c1ac35a64a3aa618819",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/official_model_math.py",
+        "previous": "04c992cbc7e7a5b32ab8b540a2cabb661fb3d52da176af4a5c1a09bc593ff110",
+        "current": "04c992cbc7e7a5b32ab8b540a2cabb661fb3d52da176af4a5c1a09bc593ff110",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/qualify.py",
+        "previous": "6bef1f9df7327817940a8aa4c24d63f987458fe29b3176d475f8dfdf9faaa6d6",
+        "current": "6bef1f9df7327817940a8aa4c24d63f987458fe29b3176d475f8dfdf9faaa6d6",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/mtp_profile.py",
+        "previous": "11993ff4f0851eeadacfcb2862d1a7afefdfadbb847d1a48ea8a285294ca5cf9",
+        "current": "11993ff4f0851eeadacfcb2862d1a7afefdfadbb847d1a48ea8a285294ca5cf9",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/source_incremental_executor.py",
+        "previous": "b5fd49e200fe9cf4042514ccf5b35c0f8e2243e10f802fff6b3d4d191b012596",
+        "current": "b5fd49e200fe9cf4042514ccf5b35c0f8e2243e10f802fff6b3d4d191b012596",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/serving/recovery_certificate.py",
+        "previous": "805d74b58654205b0f0011ea9cfe44f0135bbfcebdeec4309a60174834d1b476",
+        "current": "805d74b58654205b0f0011ea9cfe44f0135bbfcebdeec4309a60174834d1b476",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/serving/internal_mtp.py",
+        "previous": "6821d84acb8c4538885ce93ec906c4410a31484b754339847df535f9cf111577",
+        "current": "6821d84acb8c4538885ce93ec906c4410a31484b754339847df535f9cf111577",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/serving/server.py",
+        "previous": "ba521f613f2ade754b9b49d0c739e015d2acd78d0120f7b7d5744033cbcfd60c",
+        "current": "ba521f613f2ade754b9b49d0c739e015d2acd78d0120f7b7d5744033cbcfd60c",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/serving/request_policy.py",
+        "previous": "b7ed71c1aff93bf9e017e85494f96cd79b748d8253ae1278b4250b3920b1ce93",
+        "current": "b7ed71c1aff93bf9e017e85494f96cd79b748d8253ae1278b4250b3920b1ce93",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/serving/local_h11.py",
+        "previous": "e991e3c07b3dc2ddc364212bacfbce28b15c5df86e1c8616c8634675eeccc802",
+        "current": "e991e3c07b3dc2ddc364212bacfbce28b15c5df86e1c8616c8634675eeccc802",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/serving/__init__.py",
+        "previous": "e9291b77a9a3a117a1728b6f4c746b5c449f78796abee21c15a399d59091a91b",
+        "current": "e9291b77a9a3a117a1728b6f4c746b5c449f78796abee21c15a399d59091a91b",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/serving/mtp_public.py",
+        "previous": "662b395957626798ef01d9e18b98b7316508b6a5ca60a2c7fbecd2f597bc0f2c",
+        "current": "662b395957626798ef01d9e18b98b7316508b6a5ca60a2c7fbecd2f597bc0f2c",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/serving/deepseek_recipe_backend.py",
+        "previous": "1e15cc802715397dcb360c135c300bff8ff79f0b3ba8890ade200ebf0738426f",
+        "current": "1e15cc802715397dcb360c135c300bff8ff79f0b3ba8890ade200ebf0738426f",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/serving/request_fence.py",
+        "previous": "07f397caf7e30e305fa498655cf24afbb5bf19a80e3340dc487f6ff7348e2272",
+        "current": "07f397caf7e30e305fa498655cf24afbb5bf19a80e3340dc487f6ff7348e2272",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/native/ds41f_prefill_native.h",
+        "previous": "92c99c7995d31c303377f5e15cd4f1b74dcbd6ad8755ae98a0dca09090de284f",
+        "current": "92c99c7995d31c303377f5e15cd4f1b74dcbd6ad8755ae98a0dca09090de284f",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/native/ds41f_prefill_native.c",
+        "previous": "2fb444347bf43469684bcae5aefc3cf19848ad587635ed4a39c8c8ab0621e03e",
+        "current": "2fb444347bf43469684bcae5aefc3cf19848ad587635ed4a39c8c8ab0621e03e",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/native/ds41f_prefill_kernels.metal",
+        "previous": "98c34ceac81c28bf62d26042db8759e76200927bf7d6984322ae0cb1547f1102",
+        "current": "98c34ceac81c28bf62d26042db8759e76200927bf7d6984322ae0cb1547f1102",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/web_static/index.html",
+        "previous": "518df2771766f15074c09764ed72987a8dbcc4db4841add145dbecb9de17ff9a",
+        "current": "518df2771766f15074c09764ed72987a8dbcc4db4841add145dbecb9de17ff9a",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/web_static/style.css",
+        "previous": "ce5068d949a1c8161be9497fd725ef0f43ec8573013668df42f3004015c1bd13",
+        "current": "ce5068d949a1c8161be9497fd725ef0f43ec8573013668df42f3004015c1bd13",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/web_static/app.js",
+        "previous": "b4f63b7ce1eac55fe85794492bc2a419a2177b49328b10abf038ee2b295dbd5c",
+        "current": "b4f63b7ce1eac55fe85794492bc2a419a2177b49328b10abf038ee2b295dbd5c",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/oracle/__init__.py",
+        "previous": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "current": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/runtime/kv_persistence.py",
+        "previous": "bc5461153f35cf6140b5d94d17ec8083ca3c4cf73f2f4d8ab332d09ffa952b54",
+        "current": "bc5461153f35cf6140b5d94d17ec8083ca3c4cf73f2f4d8ab332d09ffa952b54",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/runtime/omlx_worker.py",
+        "previous": "fb4945986f2a10c578d3cb05a7a8228d2e34a8bedee6c01aefe36d38f9e3f4ea",
+        "current": "fb4945986f2a10c578d3cb05a7a8228d2e34a8bedee6c01aefe36d38f9e3f4ea",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/runtime/omlx_core.py",
+        "previous": "f2be6fd1d921007c6f226cf8d81ccdaf648505949cbc95452112a90b2ab3dd62",
+        "current": "f2be6fd1d921007c6f226cf8d81ccdaf648505949cbc95452112a90b2ab3dd62",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/runtime/__init__.py",
+        "previous": "44cab6e40c45f8429a6178bb8ba39a341b9c535c147385f0cd4e22adbed0b705",
+        "current": "44cab6e40c45f8429a6178bb8ba39a341b9c535c147385f0cd4e22adbed0b705",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/runtime/recipe_semantic_guard.py",
+        "previous": "6397801995cb1285a0f87c2455d6423160964be54e70889b390aa379e06e808d",
+        "current": "6397801995cb1285a0f87c2455d6423160964be54e70889b390aa379e06e808d",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/runtime/tool_boundary_session.py",
+        "previous": "5f2ad9ba076ff94e5a7776d1186027e249622bad034e391a39182e000f5dc805",
+        "current": "5f2ad9ba076ff94e5a7776d1186027e249622bad034e391a39182e000f5dc805",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/runtime/dwarfstar_prefill.py",
+        "previous": "3b990687549c289290767ccb7fcc64add8f24acefb82881b679dc1d71578af31",
+        "current": "3b990687549c289290767ccb7fcc64add8f24acefb82881b679dc1d71578af31",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/runtime/omlx_decode.py",
+        "previous": "0bb0a2b9d1cfe8621069cc0c748d9f4f11beb9b024cb1f047cc66b30aaf0d8aa",
+        "current": "0bb0a2b9d1cfe8621069cc0c748d9f4f11beb9b024cb1f047cc66b30aaf0d8aa",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/runtime/omlx_generation.py",
+        "previous": "59fecf77ba14041c2372adecfd4802f3ace2e73658784cfd04796063267f1ee2",
+        "current": "59fecf77ba14041c2372adecfd4802f3ace2e73658784cfd04796063267f1ee2",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/runtime/mtp_lifecycle.py",
+        "previous": "a05744364d5440a16774905d9d60a5266ccc4528f1ca871f20db715d8c5fcde6",
+        "current": "a05744364d5440a16774905d9d60a5266ccc4528f1ca871f20db715d8c5fcde6",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/runtime/continuation_session.py",
+        "previous": "e5b890a0c4df9537beeb1aec3c0de10686243b53ff6a19656402e11d3e9b9efe",
+        "current": "e5b890a0c4df9537beeb1aec3c0de10686243b53ff6a19656402e11d3e9b9efe",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/prefill_fp8_mlx/planner.py",
+        "previous": "ae7217e986a0a928a1f42a8db30acca5e30b4690adb0ea1efc48ce805380c68c",
+        "current": "ae7217e986a0a928a1f42a8db30acca5e30b4690adb0ea1efc48ce805380c68c",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/prefill_fp8_mlx/p7_scheduling.py",
+        "previous": "fe78eed3d23e3cc2699cae693ef911a8e7d3646766e5475011dd052d12b66d09",
+        "current": "fe78eed3d23e3cc2699cae693ef911a8e7d3646766e5475011dd052d12b66d09",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/prefill_fp8_mlx/guards.py",
+        "previous": "38e1098cff401dfaf2c8a819eaf5b0339ee08b64fdf98b45ebe13c00b9ad7366",
+        "current": "38e1098cff401dfaf2c8a819eaf5b0339ee08b64fdf98b45ebe13c00b9ad7366",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/prefill_fp8_mlx/block_runner.py",
+        "previous": "15220f5d22da0cdaa00a210cd7a7f77ff2584a8f27ecf806aa7fd2143be5fa91",
+        "current": "15220f5d22da0cdaa00a210cd7a7f77ff2584a8f27ecf806aa7fd2143be5fa91",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/prefill_fp8_mlx/publications.py",
+        "previous": "f149b613b1173efca67475738f0870ba9d0a804d75e5e3c5265b78ea10fd410f",
+        "current": "f149b613b1173efca67475738f0870ba9d0a804d75e5e3c5265b78ea10fd410f",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/prefill_fp8_mlx/handoff.py",
+        "previous": "94cd3364ae023607e8b5b4e2b65685b885b3f7b6a78654ee6c335c66c82f37c3",
+        "current": "94cd3364ae023607e8b5b4e2b65685b885b3f7b6a78654ee6c335c66c82f37c3",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/prefill_fp8_mlx/OMLX_MATH_LICENSE",
+        "previous": "6e4c38e1172f42fdbff13edf9a7a017679fb82b0fde415a3e8b3c31c6ed4a4e4",
+        "current": "6e4c38e1172f42fdbff13edf9a7a017679fb82b0fde415a3e8b3c31c6ed4a4e4",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/prefill_fp8_mlx/__init__.py",
+        "previous": "fbe9846f1d9bcb19ff6f2218bb2e43758aa0a96ddb2dae7e4b134df5c13941e1",
+        "current": "fbe9846f1d9bcb19ff6f2218bb2e43758aa0a96ddb2dae7e4b134df5c13941e1",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/prefill_fp8_mlx/telemetry.py",
+        "previous": "fc4a78d7a0cd61fefa355937af395fd80380acc15cb653c600c995aaa3ac850b",
+        "current": "fc4a78d7a0cd61fefa355937af395fd80380acc15cb653c600c995aaa3ac850b",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/prefill_fp8_mlx/omlx_suffix_math.py",
+        "previous": "aa4608480b45c4c5522ee182421e8d9ac887dc8fcc88382ff35a6661e67049e1",
+        "current": "aa4608480b45c4c5522ee182421e8d9ac887dc8fcc88382ff35a6661e67049e1",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/prefill_fp8_mlx/tile_carry.py",
+        "previous": "19ed305807a49d2d330ef6743cab32b6fbaca8a4d2e56cce495f6d5fe8a888c6",
+        "current": "19ed305807a49d2d330ef6743cab32b6fbaca8a4d2e56cce495f6d5fe8a888c6",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/prefill_fp8_mlx/p8_optimizer.py",
+        "previous": "a3baa9ff166a13ce39959747268e5aff2ff29e690126f8ada6092a0f305ffadd",
+        "current": "a3baa9ff166a13ce39959747268e5aff2ff29e690126f8ada6092a0f305ffadd",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/prefill_fp8_mlx/p6_append.py",
+        "previous": "0f0e9187023bfb3e4c47a08a9cb6e5b8dfa5243065083b72054549c34a753ffd",
+        "current": "0f0e9187023bfb3e4c47a08a9cb6e5b8dfa5243065083b72054549c34a753ffd",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/prefill_fp8_mlx/executor.py",
+        "previous": "b91053ab5fcf355c4a86a402b2ef6da10305242b28cc0479ed5ff5a38c2365ea",
+        "current": "b91053ab5fcf355c4a86a402b2ef6da10305242b28cc0479ed5ff5a38c2365ea",
+        "equal": true
+      },
+      {
+        "path": "ds41f_mlx/prefill_fp8_mlx/arena.py",
+        "previous": "d5536baf985ae958427e5cf83cc13a92e5f108afd4c59d6c8107550cee758ddb",
+        "current": "d5536baf985ae958427e5cf83cc13a92e5f108afd4c59d6c8107550cee758ddb",
+        "equal": true
+      },
+      {
+        "path": "third_party/mtp/sources.json",
+        "previous": "d2689fa97f0eb84f64b83b8487f9339453ae9071a7dd6ea09d59c1f8bc1f249e",
+        "current": "d2689fa97f0eb84f64b83b8487f9339453ae9071a7dd6ea09d59c1f8bc1f249e",
+        "equal": true
+      },
+      {
+        "path": "third_party/mtp/omlx-LICENSE",
+        "previous": "de69b4352c9952cd5f0f4b8cb4584782a07f02c9ba82aeb5d496aa2b7fe5457d",
+        "current": "de69b4352c9952cd5f0f4b8cb4584782a07f02c9ba82aeb5d496aa2b7fe5457d",
+        "equal": true
+      },
+      {
+        "path": "third_party/mtp/README.md",
+        "previous": "8b21085b16cfcaaeb9cc99afd4c02bc89296db9db1dc35bd6bade98386b83f70",
+        "current": "8b21085b16cfcaaeb9cc99afd4c02bc89296db9db1dc35bd6bade98386b83f70",
+        "equal": true
+      },
+      {
+        "path": "third_party/mtp/recipe-source.tar.gz",
+        "previous": "5b71ea6837ad3eb54a07da2b7ba1dd0a4ce658b585cdd2db24f4b83d9f879c22",
+        "current": "5b71ea6837ad3eb54a07da2b7ba1dd0a4ce658b585cdd2db24f4b83d9f879c22",
+        "equal": true
+      },
+      {
+        "path": "third_party/mtp/recipe-LICENSE",
+        "previous": "ebb4f09972aee8608be255debaf78451a68e95c290f55c240dec2ecfa16ea6be",
+        "current": "ebb4f09972aee8608be255debaf78451a68e95c290f55c240dec2ecfa16ea6be",
+        "equal": true
+      },
+      {
+        "path": "third_party/mtp/omlx-source.tar.gz",
+        "previous": "26cc224a5fa77d8576589764a56ba8053ac31fe9f4904d8ba60305ed841f33e6",
+        "current": "26cc224a5fa77d8576589764a56ba8053ac31fe9f4904d8ba60305ed841f33e6",
+        "equal": true
+      },
+      {
+        "path": "third_party/mtp/requirements.lock",
+        "previous": "cf60accd810914c43510b919ee8d03e5ce1b2544a8afc16a06be63a2e6383daf",
+        "current": "cf60accd810914c43510b919ee8d03e5ce1b2544a8afc16a06be63a2e6383daf",
+        "equal": true
+      }
+    ],
+    "classification": {
+      "promoted": {
+        "M31-M32": "canonical protocol inputs/results and nonmutating preview rows",
+        "M36R-M39": "canonical representability predicates and token identities",
+        "M8-M14, P1-P7, M29-M41": "executable ownership/operation/negative checks, no historical receipt assertions"
+      },
+      "historical_only": [
+        "M33-M41 source identity receipt tests",
+        "M33-M34 long real-model campaign traces",
+        "M38 76-request soak",
+        "M39 20000-lifetime stress",
+        "M41 speed/identity/socket negative campaigns",
+        "M20-M24 200K and restored-session campaigns"
+      ],
+      "superseded_for_ordinary_verification": [
+        "milestone protocol/parity/preview/certificate fixture directory dependencies",
+        "historical absolute tokenizer paths",
+        "historical composed harness native-gate imports"
+      ]
+    }
+  },
+  "limits": [
+    "universal floating bit identity",
+    "new backend/math authority from seam tests alone",
+    "MTP default, concurrency, persistence/restart, remote/browser/Rust application support",
+    "arbitrary MTP schema/sampling/stop",
+    "distributed/crash-safe effects",
+    "200K MTP",
+    "M43 extraction"
+  ],
+  "debt": "Five stale historical whole-current-source receipt assertions remain historical debt; not used by R1. OFF operator delivery/provenance still uses its legacy deployment; R1 verification delivers its own OFF execution source, not an OFF dependency migration.",
+  "excluded_attempts": [
+    "first R1 tokenizer check incorrectly conflated checkpoint and recipe identities; separated before final run",
+    "combined in-process owner fixtures contaminated import paths; isolated each file before final run",
+    "initial real run omitted explicit checkpoint; startup rejected",
+    "editable clone origins and subsequent source seal drift rejected; module invocation, current editable install and normal seal precede final run",
+    "parallel mutation attempt was killed during real model load; final sequential mutation campaign has explicit assertion failures"
+  ],
+  "evidence": {
+    "artifacts/m42/current-inspect.json": "e13626ad4c5bf7d31d61d70cfc8902b3af067ab36a99dc94663eb1102796617b",
+    "artifacts/m42/current-install.log": "6713b745c0b9946b4da3eaba05ddeaa05273efa9df58cca6989d5a481ae88762",
+    "artifacts/m42/current-seal.log": "b9674eadf2bd19e476d30e3ac9c9f1ad43dc47a11318e1b94ea6b56f7e3e86b6",
+    "artifacts/m42/independent-gates/mtp-model.json": "ffef54121289bea7b0411f45e234842cacc824869b105bf7045f21905e7f7d23",
+    "artifacts/m42/independent-gates/mtp-model.server.log": "254d9c1bd8d64ed207eb0d332b6b0423c3ab2cd6387b099b3c79ef18aa64bd24",
+    "artifacts/m42/independent-gates/mtp-singleton-v1.log": "7e0808f2dc71ccef11538a3a1dde5e2c999b9cc134f6c5d6579256da71156856",
+    "artifacts/m42/independent-gates/off-model.json": "646be79254cafecdebcb29980add12c40238ce2028f97e1357e164d7ae9cfad3",
+    "artifacts/m42/independent-gates/off-model.server.log": "196afe82159dbf09064413b7d23323eed247217bda70c116a7067186708fc8e9",
+    "artifacts/m42/independent-gates/preview.json": "1547d55f658abef6c6af290173a0b5214cf0b8cc8cb845c088bb6c1338cea1d4",
+    "artifacts/m42/independent-gates/preview.log": "c7c1e0e86600fcb8a0f6e7e7d6ea0a2b652ea21947724f81558e5222ee1fcf96",
+    "artifacts/m42/independent-gates/protocol.log": "015c44bc9a9e777a1ac18706c204314439221a9c88854bbad0840b6dcfc39b25",
+    "artifacts/m42/independent-gates/recovery.json": "99f40d7d8d0c78972ebfff76fef1ada11eb0b1ca42edee0e4507d87908f27f6e",
+    "artifacts/m42/independent-gates/recovery.log": "61c11329a0026dd9c439ee1e8838f1723221da191994e90f4168e9cd235515ff",
+    "artifacts/m42/independent-gates/standard-off.log": "87366e9afda9a7e710f63e55404e5e14bed637a2245ab3f35754c82b7dc0357d",
+    "artifacts/m42/independent-gates/test_engram_integer_state.log": "3be6ffcaecf85b5bd3eef3693ab214b0e7c9eb4e36d117fcf1825652de5eb298",
+    "artifacts/m42/independent-gates/test_m11_tool_boundary_contract.log": "d2e19278f2acef7cfe468afa87fbba8925315ff38a8d23649526ec4f7bbe6521",
+    "artifacts/m42/independent-gates/test_m14_termination_contract.log": "35d86279d96ed65491ba8ff0748e1c8e7891711531404dc5d4b9cd6ae33de3ec",
+    "artifacts/m42/independent-gates/test_m29_mtp_lifecycle.log": "0e96d7ca7406320840ee2e704cbada03e2fe4b6d6aea1d667b4f685b07e7e24d",
+    "artifacts/m42/independent-gates/test_m34_cache_release.log": "35d86279d96ed65491ba8ff0748e1c8e7891711531404dc5d4b9cd6ae33de3ec",
+    "artifacts/m42/independent-gates/test_m35_transport_lease.log": "22395c302c54e86926a83c9a57feb1fead0389d4b50d1b2090688b087daae598",
+    "artifacts/m42/independent-gates/test_m36_recovery_boundary.log": "c2c6b596f6326dec34c3110029f10ae752a6b80ef7dd9f3d368c2793a9363a31",
+    "artifacts/m42/independent-gates/test_m36r_recovery.log": "0699f27a57117a61856dac022656af0fc9d7e745c5c8f8af3ea444beaf9036c6",
+    "artifacts/m42/independent-gates/test_m37_local_client.log": "05e804a35468d0d64e8c4ba91441ea987473dd6736665b08b7b2b3be67644d93",
+    "artifacts/m42/independent-gates/test_m38_client_faults.log": "c633baeffe5ac5db97aff79a2a727c57e3d3a1579d84b2885a5009b3576ea053",
+    "artifacts/m42/independent-gates/test_m39_lifetime_admission.log": "74c59642f4da8a65cb8c00a18e7314216212062e43e1d3a90a5bc51b2df6ef20",
+    "artifacts/m42/independent-gates/test_m41_profile.log": "1d3c90d3f6218d823cb03fb0be6bc828a53d3dc4994c5b7bf809d6142c8cb562",
+    "artifacts/m42/independent-gates/test_m8_continuation_contract.log": "a120868bd3fc09d509fffc59557d83c4a1b7c4ac7ff8bd6cf4e1a6bd1c89bd3b",
+    "artifacts/m42/independent-gates/test_prefill_fp8_mlx_p1_p2.log": "c64ce325df4a88d7dad3b9b78d3c45bf95b7c46df7e9fdcf3ceedd31368968fa",
+    "artifacts/m42/independent-gates/test_prefill_fp8_mlx_p5.log": "b2cdcb0ca248702ee49d026471d49b7eb35a20642a35020babcc69e18eb2f548",
+    "artifacts/m42/independent-gates/test_prefill_fp8_mlx_p6.log": "d2404fafe05f3fd040c1c4e88e4c436d961e5622c98d6f7f72ebc1f2221ad563",
+    "artifacts/m42/independent-gates/test_prefill_fp8_mlx_p7.log": "fac8aaadc73a18f429accef33900b10cfd78bd95c7687ad6e7c91bc437aa1b8d",
+    "artifacts/m42/independent-gates/test_quiescence_negatives.log": "0e96d7ca7406320840ee2e704cbada03e2fe4b6d6aea1d667b4f685b07e7e24d",
+    "artifacts/m42/independent-gates/test_stateful_request_policy.log": "d08b58d4000568b7dd29f079a4d4449f07e0d785985c28487ea9a234bb775c69",
+    "artifacts/m42/independent-gates/test_suffix_math_regressions.log": "3cd577296ca882b24ffb03085dc4d942d129649786a2b8d9b0faa84025de03f4",
+    "artifacts/m42/independent.json": "2514c335c2eaae0c083194b0a0dcc9dab1338f9537074a60f55fa4f9d923c321",
+    "artifacts/m42/independent.log": "3039a9f1dacf8c559939b3cd69cc4a2599ad7de3b4c78ba46ac5adfae3fb9546",
+    "artifacts/m42/isolation-run.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m42/isolation-run2.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m42/isolation-run3.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m42/isolation.json": "0f3f7046c33c16556d33c5542ad00724d84df84a08d64ec5ff3911c6d6b49ced",
+    "artifacts/m42/mutations.json": "c455e8cc842794e67b2b989cb827ab2873596eda9d493e9b5764e038cdaf5456",
+    "artifacts/m42/noncanonical-fence-admitted-gates/test_engram_integer_state.log": "c91dad03511eb111dba9f317cdb7962c64ec389c7d259de488e167c78aac1b31",
+    "artifacts/m42/noncanonical-fence-admitted-gates/test_m11_tool_boundary_contract.log": "7cd0def610c08948d8972feff72a2d42b89ae25f95d5f6460f558867f48ee6b9",
+    "artifacts/m42/noncanonical-fence-admitted-gates/test_m14_termination_contract.log": "35d86279d96ed65491ba8ff0748e1c8e7891711531404dc5d4b9cd6ae33de3ec",
+    "artifacts/m42/noncanonical-fence-admitted-gates/test_m29_mtp_lifecycle.log": "ad430bcd751b836a91fab4ff65c168e7e4f252c79243c40745308b866b554cb7",
+    "artifacts/m42/noncanonical-fence-admitted-gates/test_m34_cache_release.log": "35d86279d96ed65491ba8ff0748e1c8e7891711531404dc5d4b9cd6ae33de3ec",
+    "artifacts/m42/noncanonical-fence-admitted-gates/test_m35_transport_lease.log": "2c0c0231e8b5a37b7d5adb769a78aa7bf9096fd9381d5724c1b13a0612776651",
+    "artifacts/m42/noncanonical-fence-admitted-gates/test_m36_recovery_boundary.log": "c2c6b596f6326dec34c3110029f10ae752a6b80ef7dd9f3d368c2793a9363a31",
+    "artifacts/m42/noncanonical-fence-admitted-gates/test_m36r_recovery.log": "549382ad279450af426155555f4393fbda60e916b629a27e924475be124aeae4",
+    "artifacts/m42/noncanonical-fence-admitted-gates/test_m37_local_client.log": "a37398ba11abc14d093878beefe2dbd0a5f55f210e1243bfdd90b6b43f4084dc",
+    "artifacts/m42/noncanonical-fence-admitted-gates/test_m38_client_faults.log": "c66e52d93f03788ef8b117d4556ace1dc53301be4d4d672ab7346c5a5eb6b2d3",
+    "artifacts/m42/noncanonical-fence-admitted-gates/test_m39_lifetime_admission.log": "4aafbc5ca95f67cbeae74d395cc35b529399cc131f8a7f47c2031a58cc637af8",
+    "artifacts/m42/noncanonical-fence-admitted-gates/test_m41_profile.log": "c1edcbfdbc42b3d2f0ab69756137c8563f4cabc5581520a1d85049abfaf42034",
+    "artifacts/m42/noncanonical-fence-admitted.json": "bfe7b1453dfb70ec72c01d74163996d60978391b333b87c5703054e6acb0e23e",
+    "artifacts/m42/noncanonical-fence-admitted.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m42/preserved-off.json": "93fb0ecc2d876d0df2d8f1c9dd736a03493dc39325063f00672bcee8504495f3",
+    "artifacts/m42/preserved-off.log": "6664fa6c3da7bb84da6983094ae2c5abe3c7e88dfca521f4dc76232f03a40b45",
+    "artifacts/m42/quiescence-work-admitted-gates/preview.json": "809bd525187b4b108e37305f75572911db95b36b5bbdf34b1ede3c290cd0a075",
+    "artifacts/m42/quiescence-work-admitted-gates/preview.log": "d5f40c42a758d449a75724d69ac1204b2fdb4c55dfb685029840c5f6cfa212ce",
+    "artifacts/m42/quiescence-work-admitted-gates/protocol.log": "015c44bc9a9e777a1ac18706c204314439221a9c88854bbad0840b6dcfc39b25",
+    "artifacts/m42/quiescence-work-admitted-gates/recovery.json": "99f40d7d8d0c78972ebfff76fef1ada11eb0b1ca42edee0e4507d87908f27f6e",
+    "artifacts/m42/quiescence-work-admitted-gates/recovery.log": "61c11329a0026dd9c439ee1e8838f1723221da191994e90f4168e9cd235515ff",
+    "artifacts/m42/quiescence-work-admitted-gates/test_engram_integer_state.log": "c91dad03511eb111dba9f317cdb7962c64ec389c7d259de488e167c78aac1b31",
+    "artifacts/m42/quiescence-work-admitted-gates/test_m11_tool_boundary_contract.log": "7cd0def610c08948d8972feff72a2d42b89ae25f95d5f6460f558867f48ee6b9",
+    "artifacts/m42/quiescence-work-admitted-gates/test_m14_termination_contract.log": "35d86279d96ed65491ba8ff0748e1c8e7891711531404dc5d4b9cd6ae33de3ec",
+    "artifacts/m42/quiescence-work-admitted-gates/test_m29_mtp_lifecycle.log": "ad430bcd751b836a91fab4ff65c168e7e4f252c79243c40745308b866b554cb7",
+    "artifacts/m42/quiescence-work-admitted-gates/test_m34_cache_release.log": "35d86279d96ed65491ba8ff0748e1c8e7891711531404dc5d4b9cd6ae33de3ec",
+    "artifacts/m42/quiescence-work-admitted-gates/test_m35_transport_lease.log": "10f619a7643076ae6cd215d75d0e185258118549d62b9aef5fe360bf0651bea0",
+    "artifacts/m42/quiescence-work-admitted-gates/test_m36_recovery_boundary.log": "c2c6b596f6326dec34c3110029f10ae752a6b80ef7dd9f3d368c2793a9363a31",
+    "artifacts/m42/quiescence-work-admitted-gates/test_m36r_recovery.log": "549382ad279450af426155555f4393fbda60e916b629a27e924475be124aeae4",
+    "artifacts/m42/quiescence-work-admitted-gates/test_m37_local_client.log": "a37398ba11abc14d093878beefe2dbd0a5f55f210e1243bfdd90b6b43f4084dc",
+    "artifacts/m42/quiescence-work-admitted-gates/test_m38_client_faults.log": "5d66f3148d066037d7ad6aded42236237075d9f22d5ed327632ea0c560f713ea",
+    "artifacts/m42/quiescence-work-admitted-gates/test_m39_lifetime_admission.log": "4aafbc5ca95f67cbeae74d395cc35b529399cc131f8a7f47c2031a58cc637af8",
+    "artifacts/m42/quiescence-work-admitted-gates/test_m41_profile.log": "c45346e465de25262d901ed8fc51cc5bcbe0760c62cd8782ffebe68b5f9152e9",
+    "artifacts/m42/quiescence-work-admitted-gates/test_m8_continuation_contract.log": "a120868bd3fc09d509fffc59557d83c4a1b7c4ac7ff8bd6cf4e1a6bd1c89bd3b",
+    "artifacts/m42/quiescence-work-admitted-gates/test_prefill_fp8_mlx_p1_p2.log": "78c29202af7f0ec64ad0b1ec2b73efaf10cdb9459927ca016c3a297b2b3796a6",
+    "artifacts/m42/quiescence-work-admitted-gates/test_prefill_fp8_mlx_p5.log": "04cc89b5c4aa0f993c9912a703f781a17f84524e3e9c38c2f73b9e2b5c9f8903",
+    "artifacts/m42/quiescence-work-admitted-gates/test_prefill_fp8_mlx_p6.log": "d2404fafe05f3fd040c1c4e88e4c436d961e5622c98d6f7f72ebc1f2221ad563",
+    "artifacts/m42/quiescence-work-admitted-gates/test_prefill_fp8_mlx_p7.log": "fac8aaadc73a18f429accef33900b10cfd78bd95c7687ad6e7c91bc437aa1b8d",
+    "artifacts/m42/quiescence-work-admitted-gates/test_quiescence_negatives.log": "679f2aca6661291fcae5926bf4d3699e51d121d6b47f85549e64c236f7d34c7b",
+    "artifacts/m42/quiescence-work-admitted-gates/test_stateful_request_policy.log": "7131908a11fcb454ed1ce1291059f31c5078c200049a8d2f0a9161c697949a10",
+    "artifacts/m42/quiescence-work-admitted-gates/test_suffix_math_regressions.log": "993c91b9cf383206ee4bf9374cb454c81408ae0fad88d0a82c2585592715c794",
+    "artifacts/m42/quiescence-work-admitted.json": "90406ff68a45bf025f92738ee90836780b9d528e0e6b510d90d13e10800c95c5",
+    "artifacts/m42/quiescence-work-admitted.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m42/receipt-tests.log": "6affff3fa6ce0c6f95578cfcdc5fb8f6e18696d0b51309940bab380bda460a3e",
+    "artifacts/m42/record.log": "2a6521e7a9fb29aa84b87de555170a19374feb6d5f0407c4f595b75fbaed65b2",
+    "artifacts/m42/repository-policy.log": "3942f433a66f02473e45e64f589e30f8a717b3d123b2e6bcfb4f754422e64bdc",
+    "artifacts/m42/seams-final-gates/preview.json": "ae5a25a339a2c0a6ecca496051236c0a54481d9710d6e5be040bf8236eccbca3",
+    "artifacts/m42/seams-final-gates/preview.log": "646dae26b470f227181191515ffd11828a2838fc98b85c6aca1cc10a00a21ffe",
+    "artifacts/m42/seams-final-gates/protocol.log": "015c44bc9a9e777a1ac18706c204314439221a9c88854bbad0840b6dcfc39b25",
+    "artifacts/m42/seams-final-gates/recovery.json": "99f40d7d8d0c78972ebfff76fef1ada11eb0b1ca42edee0e4507d87908f27f6e",
+    "artifacts/m42/seams-final-gates/recovery.log": "61c11329a0026dd9c439ee1e8838f1723221da191994e90f4168e9cd235515ff",
+    "artifacts/m42/seams-final-gates/test_m11_tool_boundary_contract.log": "d2e19278f2acef7cfe468afa87fbba8925315ff38a8d23649526ec4f7bbe6521",
+    "artifacts/m42/seams-final-gates/test_m14_termination_contract.log": "35d86279d96ed65491ba8ff0748e1c8e7891711531404dc5d4b9cd6ae33de3ec",
+    "artifacts/m42/seams-final-gates/test_m29_mtp_lifecycle.log": "0e96d7ca7406320840ee2e704cbada03e2fe4b6d6aea1d667b4f685b07e7e24d",
+    "artifacts/m42/seams-final-gates/test_m34_cache_release.log": "35d86279d96ed65491ba8ff0748e1c8e7891711531404dc5d4b9cd6ae33de3ec",
+    "artifacts/m42/seams-final-gates/test_m35_transport_lease.log": "ec4adbebee639de68c62f5dc37db0d32f178a43d5e8c7ac73950125fd3553689",
+    "artifacts/m42/seams-final-gates/test_m36_recovery_boundary.log": "c2c6b596f6326dec34c3110029f10ae752a6b80ef7dd9f3d368c2793a9363a31",
+    "artifacts/m42/seams-final-gates/test_m36r_recovery.log": "549382ad279450af426155555f4393fbda60e916b629a27e924475be124aeae4",
+    "artifacts/m42/seams-final-gates/test_m37_local_client.log": "05e804a35468d0d64e8c4ba91441ea987473dd6736665b08b7b2b3be67644d93",
+    "artifacts/m42/seams-final-gates/test_m38_client_faults.log": "69ad8bc89e5643afdc3e782e2ca89531d211907895310c8e9020c4ba180b5a3b",
+    "artifacts/m42/seams-final-gates/test_m39_lifetime_admission.log": "42317fada6dcccf66125f116d742efc2b7f7fa15372a60582b23352bdc60c64e",
+    "artifacts/m42/seams-final-gates/test_m41_profile.log": "2894a137ff03e42e4c1b0211856c858b7e1bd838294ad08ea21aaf1a378ee5e1",
+    "artifacts/m42/seams-final-gates/test_m8_continuation_contract.log": "651660ff45a517b93320a7926cbcdfb6876945d52ae47af2cf59fadd66ba8bc0",
+    "artifacts/m42/seams-final-gates/test_prefill_fp8_mlx_p1_p2.log": "8c513aae6531cd694c131566701d35ef0b0e5f23a2c1e12c3109d03b9135bf9f",
+    "artifacts/m42/seams-final-gates/test_prefill_fp8_mlx_p5.log": "04cc89b5c4aa0f993c9912a703f781a17f84524e3e9c38c2f73b9e2b5c9f8903",
+    "artifacts/m42/seams-final-gates/test_prefill_fp8_mlx_p6.log": "d2404fafe05f3fd040c1c4e88e4c436d961e5622c98d6f7f72ebc1f2221ad563",
+    "artifacts/m42/seams-final-gates/test_prefill_fp8_mlx_p7.log": "fac8aaadc73a18f429accef33900b10cfd78bd95c7687ad6e7c91bc437aa1b8d",
+    "artifacts/m42/seams-final-gates/test_stateful_request_policy.log": "7131908a11fcb454ed1ce1291059f31c5078c200049a8d2f0a9161c697949a10",
+    "artifacts/m42/seams-final-gates/test_suffix_math_regressions.log": "964a5588daf0b19cf9a8a7e8c67e3515f6e5f3245ad86bbe44ab9d755f706d83",
+    "artifacts/m42/seams-final.json": "f845f4f5897d5918a7154e9a3d29de01d7afa95d6417b6b7b4d6fecfd197ba17",
+    "artifacts/m42/seams-final.log": "12f95061f83aaf2ba9defa383a8c0cdaf3500001b1ec82846c342af6e98f06a1",
+    "artifacts/m42/seams-gates/test_m11_tool_boundary_contract.log": "d2e19278f2acef7cfe468afa87fbba8925315ff38a8d23649526ec4f7bbe6521",
+    "artifacts/m42/seams-gates/test_m14_termination_contract.log": "35d86279d96ed65491ba8ff0748e1c8e7891711531404dc5d4b9cd6ae33de3ec",
+    "artifacts/m42/seams-gates/test_m29_mtp_lifecycle.log": "0e96d7ca7406320840ee2e704cbada03e2fe4b6d6aea1d667b4f685b07e7e24d",
+    "artifacts/m42/seams-gates/test_m34_cache_release.log": "35d86279d96ed65491ba8ff0748e1c8e7891711531404dc5d4b9cd6ae33de3ec",
+    "artifacts/m42/seams-gates/test_m35_transport_lease.log": "ec4adbebee639de68c62f5dc37db0d32f178a43d5e8c7ac73950125fd3553689",
+    "artifacts/m42/seams-gates/test_m36_recovery_boundary.log": "c2c6b596f6326dec34c3110029f10ae752a6b80ef7dd9f3d368c2793a9363a31",
+    "artifacts/m42/seams-gates/test_m36r_recovery.log": "549382ad279450af426155555f4393fbda60e916b629a27e924475be124aeae4",
+    "artifacts/m42/seams-gates/test_m37_local_client.log": "05e804a35468d0d64e8c4ba91441ea987473dd6736665b08b7b2b3be67644d93",
+    "artifacts/m42/seams-gates/test_m38_client_faults.log": "493239ec99fbcb4f277bd563c601c9a7dfdb28cb9996b58291db02a0d6c2c66b",
+    "artifacts/m42/seams-gates/test_m39_lifetime_admission.log": "42317fada6dcccf66125f116d742efc2b7f7fa15372a60582b23352bdc60c64e",
+    "artifacts/m42/seams-gates/test_m41_profile.log": "2894a137ff03e42e4c1b0211856c858b7e1bd838294ad08ea21aaf1a378ee5e1",
+    "artifacts/m42/seams-gates/test_m8_continuation_contract.log": "651660ff45a517b93320a7926cbcdfb6876945d52ae47af2cf59fadd66ba8bc0",
+    "artifacts/m42/seams-gates/test_stateful_request_policy.log": "7131908a11fcb454ed1ce1291059f31c5078c200049a8d2f0a9161c697949a10",
+    "artifacts/m42/seams.json": "a663167b7111651106c568ed0efc60a9690099632f265eda871178554c1475cc",
+    "artifacts/m42/stateful-stop-admitted-gates/test_engram_integer_state.log": "f69b41b567fe2583118441e8e8390afa756eecb8625fa01f5e10bcff2c1cef10",
+    "artifacts/m42/stateful-stop-admitted-gates/test_m11_tool_boundary_contract.log": "7cd0def610c08948d8972feff72a2d42b89ae25f95d5f6460f558867f48ee6b9",
+    "artifacts/m42/stateful-stop-admitted-gates/test_m14_termination_contract.log": "35d86279d96ed65491ba8ff0748e1c8e7891711531404dc5d4b9cd6ae33de3ec",
+    "artifacts/m42/stateful-stop-admitted-gates/test_m29_mtp_lifecycle.log": "ad430bcd751b836a91fab4ff65c168e7e4f252c79243c40745308b866b554cb7",
+    "artifacts/m42/stateful-stop-admitted-gates/test_m34_cache_release.log": "35d86279d96ed65491ba8ff0748e1c8e7891711531404dc5d4b9cd6ae33de3ec",
+    "artifacts/m42/stateful-stop-admitted-gates/test_m35_transport_lease.log": "a8bb7fa9d648dad3e61a16c128b2612d006a6c19b2819be352761097b03e5a51",
+    "artifacts/m42/stateful-stop-admitted-gates/test_m36_recovery_boundary.log": "c2c6b596f6326dec34c3110029f10ae752a6b80ef7dd9f3d368c2793a9363a31",
+    "artifacts/m42/stateful-stop-admitted-gates/test_m36r_recovery.log": "549382ad279450af426155555f4393fbda60e916b629a27e924475be124aeae4",
+    "artifacts/m42/stateful-stop-admitted-gates/test_m37_local_client.log": "a37398ba11abc14d093878beefe2dbd0a5f55f210e1243bfdd90b6b43f4084dc",
+    "artifacts/m42/stateful-stop-admitted-gates/test_m38_client_faults.log": "76e0415c9598931c3babe5e2c93aeb7bd99d6ee4f6f3b6ce64078b24b828b494",
+    "artifacts/m42/stateful-stop-admitted-gates/test_m39_lifetime_admission.log": "4aafbc5ca95f67cbeae74d395cc35b529399cc131f8a7f47c2031a58cc637af8",
+    "artifacts/m42/stateful-stop-admitted-gates/test_m41_profile.log": "ea2397229707593bcce5b53ef881141b8d3ebe99ade13937b704825aa22d42ed",
+    "artifacts/m42/stateful-stop-admitted-gates/test_m8_continuation_contract.log": "a120868bd3fc09d509fffc59557d83c4a1b7c4ac7ff8bd6cf4e1a6bd1c89bd3b",
+    "artifacts/m42/stateful-stop-admitted-gates/test_prefill_fp8_mlx_p1_p2.log": "1bfd194bcb432ad23e4fe9b7edc2dfa200c1e82bdc50a625b187c036384b2dde",
+    "artifacts/m42/stateful-stop-admitted-gates/test_prefill_fp8_mlx_p5.log": "04cc89b5c4aa0f993c9912a703f781a17f84524e3e9c38c2f73b9e2b5c9f8903",
+    "artifacts/m42/stateful-stop-admitted-gates/test_prefill_fp8_mlx_p6.log": "d2404fafe05f3fd040c1c4e88e4c436d961e5622c98d6f7f72ebc1f2221ad563",
+    "artifacts/m42/stateful-stop-admitted-gates/test_prefill_fp8_mlx_p7.log": "fac8aaadc73a18f429accef33900b10cfd78bd95c7687ad6e7c91bc437aa1b8d",
+    "artifacts/m42/stateful-stop-admitted-gates/test_quiescence_negatives.log": "0e96d7ca7406320840ee2e704cbada03e2fe4b6d6aea1d667b4f685b07e7e24d",
+    "artifacts/m42/stateful-stop-admitted-gates/test_stateful_request_policy.log": "53ef839f5ebaa9abf0171f79f5c9a2d5223088dff4881368a547b3a06dbed954",
+    "artifacts/m42/stateful-stop-admitted.json": "37dd8e305e5f2bcb9c1fdf03ccc62ddb4ce5c593eee7fa6c88cb0756a400bef8",
+    "artifacts/m42/stateful-stop-admitted.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

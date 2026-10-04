@@ -165,6 +165,18 @@ See [setup/API/operator instructions](docs/mtp-local-release-candidate.md) and
 Candidate setup builds repository-delivered dependency sources in a fresh venv;
 no separate donor checkout or historical `/tmp` authority is required.
 
+## Reference Release R1
+
+Repository-owned semantic conformance is documented in [Reference R1](docs/reference-release-r1.md)
+and [M42 evidence](docs/milestone-42-reference-release.md):
+
+```sh
+python -m ds41f_mlx.reference --profile both --real-model --output artifacts/r1/qualification.json
+```
+
+Use the documented provisioned environment and explicit official checkpoint.
+This is a development oracle, not M43 extraction or expanded MTP admission.
+
 ## Operations (standard-off)
 
 Configure machine-specific paths with environment variables instead of editing source:

@@ -2,6 +2,15 @@
 
 This document records the current qualified state at HEAD. Historical milestone documents remain evidence, but this page is the canonical current-state summary.
 
+## Current profile and reference authority
+
+`standard-off` remains default qualified production. [M41](milestone-41-local-mtp-release-candidate.md)
+separately qualifies explicit bounded `mtp-singleton-v1`; the internal historical
+promotion statements below must not be read as reversing M41's scoped admission.
+[M42 / Reference Release R1](milestone-42-reference-release.md) makes the established
+semantics executable through [owned contracts and conformance](reference-release-r1.md).
+It neither broadens either profile nor promotes a new numerical backend.
+
 M20's promoted decode dependency is clean upstream oMLX `v0.7.0` at
 `4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40`. Fresh bounded lifecycle,
 persistence/HTTP/tool/EOS, A/B, repeated-session and 200K endpoint evidence is
@@ -93,7 +102,7 @@ token-exact immediate abort and shared/concurrent MTP remain unsupported.
 - Vision or image input.
 - Arbitrary batching and distributed serving.
 - Sessionized Responses or Messages.
-- Production/public MTP, DSpark, or speculative decode (bounded isolated guarded qualification is separate above).
+- Default/implicit or generalized public MTP, DSpark, or speculative decode (explicit bounded M41 local profile is separately qualified).
 - Server-side tool execution, MCP/plugins, web search, shell tools.
 - Cross-runtime/cross-backend KV artifact portability.
 - Arbitrary stateful request stop-string truncation/rollback.

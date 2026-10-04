@@ -4,6 +4,7 @@ This classification prevents architecture roles from drifting again. A file can 
 
 | Path | Classification | Reason |
 | --- | --- | --- |
+| `reference/R1/*`, `ds41f_mlx/reference.py` | CANONICAL SEMANTIC CONFORMANCE | Owned contracts, protocol/state/negative fixtures, attributed OFF execution source and manifest-bound verifier. Historical origins are evidence, not ordinary dependencies; see [R1](reference-release-r1.md). |
 | `native/*` | REFERENCE / QUALIFICATION; REUSABLE PRODUCTION COMPONENT where documented | Current executable native implementation with checkpoint loading, state, attention, MoE/HC, Engram, sampling, generation, and tests. Retained as high-value correctness/reference runtime, but not automatically final production architecture. |
 | `ds41f_mlx/native/*` | PREFILL ARCHITECTURE SCAFFOLD | Native C/Metal DwarfStar-derived prefill ownership/submission/primitive scaffold. Not full model runtime yet; continue from this line for prefill restoration. |
 | `ds41f_mlx/native_prefill.py` | PREFILL TOOLING BRIDGE | ctypes bridge to the native prefill ABI and planner/primitive artifacts. |

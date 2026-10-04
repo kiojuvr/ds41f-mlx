@@ -1,0 +1,26 @@
+"""Finalize R1 material identities; explicit maintainer operation, never verification."""
+import json, hashlib, subprocess, tarfile, io, gzip
+from pathlib import Path
+R=Path(__file__).resolve().parents[1];O=R/'reference/R1'
+# Only private OFF execution sources, not UI/evaluation assets or prebuilt kernels.
+p=Path('/Users/kioju/omlx-0.7.0.release')
+files=subprocess.check_output(['git','ls-files','omlx','LICENSE'],cwd=p,text=True).splitlines()
+selected=[f for f in files if f=='LICENSE' or Path(f).suffix in ('.py','.metal','.h','.cpp','.c','.json') and not any(x in Path(f).parts for x in ('admin','eval')) and 'calibration_data' not in f]
+with gzip.GzipFile(filename=str(O/'off-source.tar.gz'),mode='wb',mtime=0) as gz, tarfile.open(fileobj=gz,mode='w') as t:
+    for name in selected:
+        blob=subprocess.check_output(['git','show','HEAD:'+name],cwd=p)
+        info=tarfile.TarInfo(name);info.size=len(blob);info.mode=0o644;t.addfile(info,io.BytesIO(blob))
+sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+identity=json.loads((R/'artifacts/m41/final-inspect.json').read_text())
+contract=dict(schema='ds41f.reference.contract.v1',reference='R1',authority='official semantics > ds41f qualification > R1 > future implementation',
+ identities=dict(established_from_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=R,text=True).strip(),checkpoint='deepseek-ai/DeepSeek-V4.1-Flash',checkpoint_revision='dba1be0a40aa45a94ad051997016db3960a90277',checkpoint_metadata='environment.json',tokenizer_sha256='81f64d1248a68ce3663e07ab3ee48b851e5df0e32d27cb98e4c9a268151e8d99',checkpoint_tokenizer_sha256='c90dfa01249db1be4245780a052ede752e1361c612ac6d08e2bdada7d599476b',official_protocol='DeepSeek V4.1 recipe; canonical-base corpus',off_substrate_revision='4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40',mtp_delivery='third_party/mtp/sources.json',qualified_environment='M3 Ultra 512 GB, macOS, Python 3.13.15; M41 source setup'),
+ profiles={'standard-off':dict(default=True,prefill='DENSE_P0_P7/P5; P7 Engram tile 2048',mtp=False,persistence='same-backend idle only',protocols=['Chat Completions','Responses','Messages'],stateful='Chat Completions exact prefix'), 'mtp-singleton-v1':dict(default=False,explicit=True,host='127.0.0.1',workers=1,live_sessions=1,depth=5,prompt_plus_budget=8192,max_output=768,persistence=False,remote=False,browser=False,tools='pinned weather only',recovery='living client restrictive certificate only')},
+ equivalence={'floating_intermediates':'No universal bit identity. Qualified backend-local FP8/BF16/MLX trajectories allowed. No invented hidden/logit goldens.', 'routing_and_state':'Observable decisions, token ownership and persistent/cache frontiers required; changes to routing/math need affected official-authority qualification, not merely seam PASS.', 'protocol':'Exact canonical IDs, events, responses and certificate predicates in fixtures.', 'determinism':'Fixed recipe corpus/preview must match exactly; real model workflow checks semantic outcomes, not universal generated prose.', 'source':'Source/build hashes identify tested candidate and inheritance; they are not semantic equality tests.'},
+ required_surfaces=['prefill full-context state and held-out terminal handoff','incremental cache/Engram/index/candidate state with qualified backend-local math','EOS canonical commit and suppressed delivery','exact-prefix continuation and no replay/repack','MTP proposal/verify/commit/rollback and idle alignment','cancellation shielded settlement and ownership transfer','unstarted/active response lease release','sequence and exact-byte fencing','negative protocol representability and no partial-tool repair','living-client once-owned effects and ambiguity fences','finite no-wrap issuer and retirement','strict bounded local capability admission','OFF idle persistence/restore and corruption refusal'],
+ exclusions=['universal floating bit identity','new backend/math authority from seam tests alone','MTP default, concurrency, persistence/restart, remote/browser/Rust application support','arbitrary MTP schema/sampling/stop','distributed/crash-safe effects','200K MTP','M43 extraction'],
+ inherited_evidence={'M33':'semantic horizon, official-compatible math and full-context priming','M34':'native ownership and protected-phase real-model faults','M35-M36R':'lease, negative representation, certificate/fence','M37-M39':'living-client effects, bounded namespace and 20000 lifetimes','M41':'rebuilt native parity, composed profile, identity/socket negatives, OFF regression','M20-M24':'OFF 200K and same-backend idle persistence'},
+ rule='Full qualification requires --real-model and affected inherited ownership bindings. Seam PASS is not model-math or hardware qualification. Defects return to official authority; never preserve a golden bug.')
+(O/'contract.json').write_text(json.dumps(contract,indent=2)+'\n')
+manifest=dict(schema='ds41f.reference.manifest.v1',reference='R1',verifier_sha256=sha(R/'ds41f_mlx/reference.py'),files={str(f.relative_to(O)):sha(f) for f in sorted(O.rglob('*')) if f.is_file() and '__pycache__' not in f.parts and f.name!='manifest.json'})
+(O/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
+print(sha(O/'manifest.json'))

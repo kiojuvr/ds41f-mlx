@@ -1,4 +1,8 @@
-# Release qualification: DS41F_TEXT_RUNTIME_RELEASE_QUALIFIED
+# Release qualification
+
+[M42 / Reference Release R1](milestone-42-reference-release.md) adds repository-owned
+[semantic conformance](reference-release-r1.md) above these separately qualified
+profiles. It does not change release admission or perform M43 extraction.: DS41F_TEXT_RUNTIME_RELEASE_QUALIFIED
 
 ## Status
 

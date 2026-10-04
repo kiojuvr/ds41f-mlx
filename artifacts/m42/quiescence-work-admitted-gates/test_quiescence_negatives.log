@@ -1,0 +1,52 @@
+FFFF.                                                                    [100%]
+=================================== FAILURES ===================================
+______________ test_forbidden_settlement_work[new_verify_cycles] _______________
+
+field = 'new_verify_cycles'
+
+    @pytest.mark.parametrize('field',['new_verify_cycles','new_proposals','history_replay','full_cache_repack'])
+    def test_forbidden_settlement_work(field):
+>       with pytest.raises(MTPLifecycleError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE MTPLifecycleError
+
+reference/R1/checks/test_quiescence_negatives.py:8: Failed
+________________ test_forbidden_settlement_work[new_proposals] _________________
+
+field = 'new_proposals'
+
+    @pytest.mark.parametrize('field',['new_verify_cycles','new_proposals','history_replay','full_cache_repack'])
+    def test_forbidden_settlement_work(field):
+>       with pytest.raises(MTPLifecycleError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE MTPLifecycleError
+
+reference/R1/checks/test_quiescence_negatives.py:8: Failed
+________________ test_forbidden_settlement_work[history_replay] ________________
+
+field = 'history_replay'
+
+    @pytest.mark.parametrize('field',['new_verify_cycles','new_proposals','history_replay','full_cache_repack'])
+    def test_forbidden_settlement_work(field):
+>       with pytest.raises(MTPLifecycleError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE MTPLifecycleError
+
+reference/R1/checks/test_quiescence_negatives.py:8: Failed
+______________ test_forbidden_settlement_work[full_cache_repack] _______________
+
+field = 'full_cache_repack'
+
+    @pytest.mark.parametrize('field',['new_verify_cycles','new_proposals','history_replay','full_cache_repack'])
+    def test_forbidden_settlement_work(field):
+>       with pytest.raises(MTPLifecycleError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE MTPLifecycleError
+
+reference/R1/checks/test_quiescence_negatives.py:8: Failed
+=========================== short test summary info ============================
+FAILED reference/R1/checks/test_quiescence_negatives.py::test_forbidden_settlement_work[new_verify_cycles]
+FAILED reference/R1/checks/test_quiescence_negatives.py::test_forbidden_settlement_work[new_proposals]
+FAILED reference/R1/checks/test_quiescence_negatives.py::test_forbidden_settlement_work[history_replay]
+FAILED reference/R1/checks/test_quiescence_negatives.py::test_forbidden_settlement_work[full_cache_repack]
+4 failed, 1 passed in 0.04s

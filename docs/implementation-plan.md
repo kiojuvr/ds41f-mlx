@@ -2,14 +2,14 @@
 
 This roadmap converts the runtime strategy into a finite sequence of milestones. It is not an optimization backlog. Runtime behavior, selectors, API integration, and multimodal work must not change until the relevant architecture milestone authorizes that work.
 
-## M42–M43 — Prospective reference closure and release projection
+## M42–M43 — Reference closure and prospective release projection
 
 The [reference release and promotion strategy](reference-release-and-promotion-strategy.md)
-defines the next planned progression, not completed qualification:
+defines the progression:
 
-- **M42:** semantic closure / Reference Release R1; repository-owned contracts and
-  fixtures must suffice for ordinary future conformance without historical donor
-  trees or undocumented development state. No broad optimization campaign.
+- **M42:** Reference Release R1; [contract and command](reference-release-r1.md),
+  [decision/evidence](milestone-42-reference-release.md). Repository-owned fixtures,
+  fresh semantic rejection and donor-unavailable qualification; no optimization campaign.
 - **M43:** only after R1 closure, deterministic release-surface extraction and
   independent qualification of `ds41f-runtime`, with source/reference/dependency
   and qualification identity preserved in a promotion manifest.

@@ -1,0 +1,46 @@
+..                                                               [100%]
+=================================== FAILURES ===================================
+_ StatefulRequestPolicyTests.test_stateful_stop_policy_rejects_string_and_list_before_mutation (body=b'{"stop":"END"}') _
+
+self = <test_stateful_request_policy.StatefulRequestPolicyTests testMethod=test_stateful_stop_policy_rejects_string_and_list_before_mutation>
+
+    def test_stateful_stop_policy_rejects_string_and_list_before_mutation(self):
+        for body in (b'{"stop":"END"}', b'{"stop":["END"]}', {"stop": "END"}):
+            with self.subTest(body=body):
+                self.assertTrue(user_stop_present(body))
+>               with self.assertRaisesRegex(ValueError, "do not support request stop strings"):
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               AssertionError: ValueError not raised
+
+reference/R1/checks/test_stateful_request_policy.py:23: AssertionError
+_ StatefulRequestPolicyTests.test_stateful_stop_policy_rejects_string_and_list_before_mutation (body=b'{"stop":["END"]}') _
+
+self = <test_stateful_request_policy.StatefulRequestPolicyTests testMethod=test_stateful_stop_policy_rejects_string_and_list_before_mutation>
+
+    def test_stateful_stop_policy_rejects_string_and_list_before_mutation(self):
+        for body in (b'{"stop":"END"}', b'{"stop":["END"]}', {"stop": "END"}):
+            with self.subTest(body=body):
+                self.assertTrue(user_stop_present(body))
+>               with self.assertRaisesRegex(ValueError, "do not support request stop strings"):
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               AssertionError: ValueError not raised
+
+reference/R1/checks/test_stateful_request_policy.py:23: AssertionError
+_ StatefulRequestPolicyTests.test_stateful_stop_policy_rejects_string_and_list_before_mutation (body={'stop': 'END'}) _
+
+self = <test_stateful_request_policy.StatefulRequestPolicyTests testMethod=test_stateful_stop_policy_rejects_string_and_list_before_mutation>
+
+    def test_stateful_stop_policy_rejects_string_and_list_before_mutation(self):
+        for body in (b'{"stop":"END"}', b'{"stop":["END"]}', {"stop": "END"}):
+            with self.subTest(body=body):
+                self.assertTrue(user_stop_present(body))
+>               with self.assertRaisesRegex(ValueError, "do not support request stop strings"):
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               AssertionError: ValueError not raised
+
+reference/R1/checks/test_stateful_request_policy.py:23: AssertionError
+=========================== short test summary info ============================
+SUBFAILED(body=b'{"stop":"END"}') reference/R1/checks/test_stateful_request_policy.py::StatefulRequestPolicyTests::test_stateful_stop_policy_rejects_string_and_list_before_mutation
+SUBFAILED(body=b'{"stop":["END"]}') reference/R1/checks/test_stateful_request_policy.py::StatefulRequestPolicyTests::test_stateful_stop_policy_rejects_string_and_list_before_mutation
+SUBFAILED(body={'stop': 'END'}) reference/R1/checks/test_stateful_request_policy.py::StatefulRequestPolicyTests::test_stateful_stop_policy_rejects_string_and_list_before_mutation
+3 failed, 2 passed, 5 subtests passed in 0.01s

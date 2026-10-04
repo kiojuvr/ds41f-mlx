@@ -1,0 +1,74 @@
+................................................FF.......F.............. [ 88%]
+.........                                                                [100%]
+=================================== FAILURES ===================================
+___________________________ test_sequence_syntax[0] ____________________________
+
+value = b'0'
+
+    @pytest.mark.parametrize('value',[b'0',b'01',b'+1',b'-1',b' 1',b'1 ',b'18446744073709551616',b''])
+    def test_sequence_syntax(value):
+>       with pytest.raises(ValueError):sequence([(b'x-ds41f-request-sequence',value)])
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+reference/R1/checks/test_m41_profile.py:49: Failed
+___________________________ test_sequence_syntax[01] ___________________________
+
+value = b'01'
+
+    @pytest.mark.parametrize('value',[b'0',b'01',b'+1',b'-1',b' 1',b'1 ',b'18446744073709551616',b''])
+    def test_sequence_syntax(value):
+>       with pytest.raises(ValueError):sequence([(b'x-ds41f-request-sequence',value)])
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+reference/R1/checks/test_m41_profile.py:49: Failed
+_________________ test_http_rejections_do_not_issue_or_mutate __________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10abbb5c0>
+
+    def test_http_rejections_do_not_issue_or_mutate(monkeypatch):
+        # Real recipe tokenizer/conversion; no model/native owner execution.
+        import sys
+        recipe=__import__('pathlib').Path(sys.prefix)/'share/ds41f-mtp/recipe'
+        cfg=replace(config(),port=8000,recipe_path=recipe)
+        b=LocalMTPBackend(runtime_config=cfg)
+        b._retire=lambda _:None
+        app=create_app(backend=b,runtime_config=cfg,profile=PROFILE)
+        try:
+            with TestClient(app,base_url='http://127.0.0.1:8000') as c:
+                for raw in (b'[]',b'{"id":null}',b'{"id":""}',b'{"extra":1}',b'{"a":1,"a":2}'):
+                    assert c.post('/v1/sessions',content=raw,headers={'Content-Type':'application/json'}).status_code==400
+                    assert b._issued==0 and not b.sessions
+                rec=c.post('/v1/sessions',json={}).json();sid=rec['id'];before=deepcopy(b.sessions[sid].to_json())
+                p=f'/v1/sessions/{sid}/chat/completions'
+                for route in ('/v1/chat/completions','/v1/responses','/v1/messages','/v1/sessions/restore',
+                              f'/v1/sessions/{sid}/persist','/docs','/redoc','/openapi.json','/_ds41f/diagnostics'):
+                    assert c.post(route,content=b'not JSON').json()['error']['code']=='unsupported_capability'
+                for headers in ({'Origin':'http://evil.invalid'},{'Host':'evil.invalid'},{'Content-Encoding':'gzip'},
+                                {'Content-Type':'text/plain'},{'X-DS41F-Request-Sequence':'01'}):
+                    h={'Content-Type':'application/json','X-DS41F-Request-Sequence':'1'};h.update(headers)
+>                   assert c.post(p,content=json.dumps(BASE),headers=h).status_code==400
+E                   assert 200 == 400
+E                    +  where 200 = <Response [200 OK]>.status_code
+E                    +    where <Response [200 OK]> = post('/v1/sessions/mtp_63fa96b2a111454489d23ef026a9c454_00000000000000000000000000000001/chat/completions', content='{"model": "deepseek-v4.1-flash", "messages": [{"role": "user", "content": "Hello"}], "max_tokens": 32}', headers={'Content-Type': 'application/json', 'X-DS41F-Request-Sequence': '01'})
+E                    +      where post = <starlette.testclient.TestClient object at 0x11ece01a0>.post
+E                    +      and   '{"model": "deepseek-v4.1-flash", "messages": [{"role": "user", "content": "Hello"}], "max_tokens": 32}' = <function dumps at 0x1082ce200>({'model': 'deepseek-v4.1-flash', 'messages': [{'role': 'user', 'content': 'Hello'}], 'max_tokens': 32})
+E                    +        where <function dumps at 0x1082ce200> = json.dumps
+
+reference/R1/checks/test_m41_profile.py:79: AssertionError
+=============================== warnings summary ===============================
+../../../../../../../Volumes/SDXC-512/ds41f-m41-final-venv/lib/python3.13/site-packages/fastapi/testclient.py:1
+  /Volumes/SDXC-512/ds41f-m41-final-venv/lib/python3.13/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+reference/R1/checks/test_m41_profile.py::test_http_rejections_do_not_issue_or_mutate
+  /Volumes/SDXC-512/ds41f-m41-final-venv/lib/python3.13/site-packages/omlx/api/openai_models.py:269: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class ResponseFormatJsonSchema(BaseModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED reference/R1/checks/test_m41_profile.py::test_sequence_syntax[0] - Fai...
+FAILED reference/R1/checks/test_m41_profile.py::test_sequence_syntax[01] - Fa...
+FAILED reference/R1/checks/test_m41_profile.py::test_http_rejections_do_not_issue_or_mutate
+3 failed, 78 passed, 2 warnings in 71.79s (0:01:11)

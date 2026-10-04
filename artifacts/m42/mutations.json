@@ -1,0 +1,39 @@
+{
+  "schema": "ds41f.m42.mutations.v1",
+  "status": "PASS",
+  "cases": [
+    {
+      "name": "stateful-stop-admitted",
+      "source": "serving/request_policy.py",
+      "mutation": {
+        "before": "    if user_stop_present(body):",
+        "after": "    if False:"
+      },
+      "decision": "REJECTED_SEMANTIC_VIOLATION",
+      "failed_gate": "test_stateful_request_policy",
+      "receipt_sha256": "37dd8e305e5f2bcb9c1fdf03ccc62ddb4ce5c593eee7fa6c88cb0756a400bef8"
+    },
+    {
+      "name": "quiescence-work-admitted",
+      "source": "runtime/mtp_lifecycle.py",
+      "mutation": {
+        "before": "if self.new_verify_cycles or self.new_proposals or self.history_replay or self.full_cache_repack:",
+        "after": "if False:"
+      },
+      "decision": "REJECTED_SEMANTIC_VIOLATION",
+      "failed_gate": "test_quiescence_negatives",
+      "receipt_sha256": "90406ff68a45bf025f92738ee90836780b9d528e0e6b510d90d13e10800c95c5"
+    },
+    {
+      "name": "noncanonical-fence-admitted",
+      "source": "mtp_profile.py",
+      "mutation": {
+        "before": "rb'[1-9][0-9]{0,19}'",
+        "after": "rb'[0-9][0-9]{0,19}'"
+      },
+      "decision": "REJECTED_SEMANTIC_VIOLATION",
+      "failed_gate": "test_m41_profile",
+      "receipt_sha256": "bfe7b1453dfb70ec72c01d74163996d60978391b333b87c5703054e6acb0e23e"
+    }
+  ]
+}

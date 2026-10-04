@@ -2,7 +2,11 @@
 
 ## Authority and scope
 
-This document defines the prospective development, semantic-reference, and release-repository model for `ds41f-mlx`.
+This document defines the development, semantic-reference, and prospective release-repository model for `ds41f-mlx`.
+
+M42's executable result is [Reference Release R1](reference-release-r1.md), with
+[decision and evidence](milestone-42-reference-release.md). M43 remains prospective;
+no runtime repository is extracted by M42.
 
 It does not change the currently qualified runtime scope. M41 established `mtp-singleton-v1` as a qualified explicit bounded local MTP release candidate while `standard-off` remains the default qualified production profile.
 
@@ -487,9 +491,9 @@ Qualified explicit bounded local MTP release candidate
         ↓
 
 M42
-Semantic Closure
-Establish Reference Release R1
-Prove repository-owned conformance is sufficient for ordinary future development
+Semantic Closure / Reference Release R1
+Repository-owned conformance and qualification (see M42 decision)
+COMPLETE within declared R1 scope
 
         ↓
 
