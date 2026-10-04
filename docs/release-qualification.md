@@ -22,6 +22,27 @@ boundary diagnostics; it does not qualify an optional serving mode. The M9
 artifact now explicitly fails closed for preserved/active MTP models. Fresh OFF
 regression/soak results and explicit blocked MTP gates are under `artifacts/m25/`.
 
+## Development qualification versus release promotion
+
+This release evidence does not impose a promotion after every development
+milestone. Ordinary work in `ds41f-mlx` requires affected tests, R1 conformance
+where applicable, and necessary real-model/lifecycle/operational/performance
+gates. Multiple qualified milestones may accumulate without a runtime update,
+even when they change release-surface files.
+
+Release promotion is a separate explicit checkpoint: deterministic projection,
+fresh independent runtime setup, release-profile acceptance, a bound promotion
+receipt, and a `ds41f-runtime` update under M43's existing rules. The runtime
+repository is qualified release history, not a continuously synchronized mirror;
+no direct feature development or release-only semantic fixes belong there.
+Every runtime release flows one-way from a qualified `ds41f-mlx` state.
+
+M44 remains PASS and its completed release requalification/promotion evidence is
+preserved. Its receipt binds that release payload, not later development HEADs;
+documentation or implementation changes do not automatically require a new
+receipt or invalidate the prior milestone. See the
+[development/promotion policy](reference-release-and-promotion-strategy.md).
+
 ## Supported scope
 
 - Hardware: Mac Studio M3 Ultra 512 GB class target.

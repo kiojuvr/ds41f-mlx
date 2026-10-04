@@ -93,12 +93,32 @@ Early failed probes are retained as bounded development evidence, not release
 claims; the first off-only environment also lacked R1's guarded preview substrate
 and was replaced by the documented R1-capable environment, not by changing R1.
 
-The release surface includes the owned engine and its regression checks. The
-changed payload requires fresh independent OFF/MTP operator acceptance, native
-checks, R1 for both existing profiles, source-origin checks and deterministic
-projection using unchanged M43 mechanics. Promotion is qualified only when the
-current tree matches the attached PASS receipt in
-`release/promotion-qualification.json` / the generated promotion envelope.
+The release surface includes the owned engine and its regression checks. M44
+also performed an explicit release requalification/promotion checkpoint: fresh
+independent OFF/MTP operator acceptance, native checks, R1 for both existing
+profiles, source-origin checks, deterministic projection and a tree-bound PASS
+receipt using unchanged M43 mechanics. Those completed results remain M44 evidence
+in `release/promotion-qualification.json`, the generated promotion envelope and
+`artifacts/m44`; they are not a mandatory sequence for every future milestone.
+
+**M44 remains PASS.** Ordinary development milestones occur in `ds41f-mlx` and
+run affected tests, R1 conformance where applicable, and the real-model,
+lifecycle, operational and performance gates needed to justify the change.
+Changing release-surface files does not itself require a clean-room
+`ds41f-runtime` projection, independent OFF/MTP setup, repeated determinism
+qualification, a new promotion receipt, or a runtime release update. Multiple
+qualified development milestones may accumulate before a separate explicit
+release/promotion checkpoint.
+
+At that explicit checkpoint, M43's existing promotion and independent
+qualification rules still apply; the selected release payload must match its
+PASS receipt. A completed receipt continues to describe its bound release tree,
+not subsequent development HEADs. `ds41f-runtime` is a qualified release history,
+not a continuously synchronized mirror: no direct feature development or
+release-only semantic fixes are permitted there. Every runtime release still
+flows one-way from a qualified `ds41f-mlx` state. See the
+[development/promotion policy](reference-release-and-promotion-strategy.md).
+
 Historical milestone artifacts and immutable R1 materials are not rewritten;
 M43's superseded receipt is preserved, not relabeled as this new source proof.
 

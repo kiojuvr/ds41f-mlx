@@ -14,8 +14,14 @@ The canonical [final runtime target](docs/final-runtime-target.md) defines the i
 self-contained public source repository. **M43 release extraction is complete**:
 [deterministic promotion](docs/milestone-43-release-repository-extraction.md) delivers
 an independently qualified `ds41f-runtime` source projection without donor or
-`ds41f-mlx` checkout requirements. Development/qualification remains here; runtime
-changes flow only from here through promotion. The broader feature target remains
+`ds41f-mlx` checkout requirements. Development/qualification remains here;
+multiple qualified milestones may accumulate before a separate explicit release
+promotion checkpoint. Changing release-surface files does not automatically
+require independent release setup, repeated determinism qualification, a new
+receipt or a `ds41f-runtime` update. Runtime changes flow only from here through
+M43-governed promotion, never through direct runtime development or release-only
+semantic fixes. See the [development/promotion policy](docs/reference-release-and-promotion-strategy.md).
+The broader feature target remains
 incomplete and bounded MTP scope is unchanged.
 
 ## Project definition

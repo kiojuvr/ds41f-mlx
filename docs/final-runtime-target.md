@@ -18,9 +18,18 @@ narrow [setup/capability contract](mtp-local-release-candidate.md).
 
 The [reference release and promotion strategy](reference-release-and-promotion-strategy.md)
 refines the repository model: `ds41f-mlx` remains the sole development authority;
-a future `ds41f-runtime` is its deterministic release projection, not a second
-implementation line. M42 semantic closure/Reference Release R1 precedes M43
-extraction. This does not schedule full oMLX replacement or change qualification.
+`ds41f-runtime` is its qualified release history/projection, not a second
+implementation line or a continuously synchronized development mirror. M42
+semantic closure/Reference Release R1 and M43 deterministic extraction are
+established baselines. Ordinary milestones qualify affected implementation in
+`ds41f-mlx`, with R1 and necessary real-model/lifecycle/performance evidence;
+multiple qualified milestones may accumulate without updating `ds41f-runtime`.
+Release promotion is a separate explicit checkpoint applying M43's existing
+projection, fresh independent setup, release-profile acceptance and receipt
+rules. A changed release surface alone does not trigger that checkpoint. No direct
+runtime feature development or release-only semantic fixes are allowed; runtime
+releases flow one-way from a qualified `ds41f-mlx` state. This does not schedule
+full oMLX replacement or weaken either qualification track.
 
 ## Fresh-clone expectation
 

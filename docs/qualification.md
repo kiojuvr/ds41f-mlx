@@ -2,6 +2,16 @@
 
 This document records the current qualified state at HEAD. Historical milestone documents remain evidence, but this page is the canonical current-state summary.
 
+Development qualification and runtime release promotion are separate. Ordinary
+`ds41f-mlx` milestones run affected tests, applicable R1 conformance and necessary
+real-model/lifecycle/performance/operational gates; multiple qualified milestones
+may accumulate without promoting `ds41f-runtime`. Changed release-surface files
+do not automatically require independent release environments, repeated
+projection/determinism qualification or a new receipt. Only an explicit promotion
+checkpoint applies M43's release rules. M44 remains PASS; its completed promotion
+work is retained as evidence, not a mandatory future milestone sequence. See the
+[development/promotion policy](reference-release-and-promotion-strategy.md).
+
 ## Current profile and reference authority
 
 `standard-off` remains default qualified production. [M41](milestone-41-local-mtp-release-candidate.md)

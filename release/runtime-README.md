@@ -2,9 +2,17 @@
 
 Canonical released source projection of **ds41f-mlx**, not a development fork.
 Official semantics outrank implementation qualification, which anchors Reference
-Release R1, which anchors this projection. Fix bugs/add features in ds41f-mlx,
-qualify affected owners and reference/release behavior there, then promote again.
-Runtime-only semantic patches and reverse synchronization are unsupported.
+Release R1, which anchors this projection. Fix bugs/add features in ds41f-mlx
+and qualify affected owners, applicable R1 conformance and necessary real-model,
+lifecycle/operational/performance behavior there. Multiple qualified development
+milestones may accumulate: this repository is qualified release history, not a
+continuously synchronized development mirror. Updating it requires a separate
+explicit release/promotion checkpoint under M43's existing deterministic
+projection, fresh independent setup, release-profile acceptance and receipt
+rules. Changed release-surface files alone do not require that checkpoint.
+Direct runtime feature development, runtime-only semantic patches and reverse
+synchronization are unsupported; all releases flow one-way from qualified
+ds41f-mlx source.
 
 ## Scope and requirements
 
@@ -86,7 +94,10 @@ unsupported runtime-only changes. Declared generated exclusions are `.git`,
 `__pycache__`, `.pytest_cache`, `artifacts`, `target`, and editable package metadata.
 They do not exclude arbitrary source mutations. Keep setup/build scratch outside
 the tree. Promotion always targets an empty destination: replace the projection
-from a newly qualified ds41f-mlx commit, not manual two-way reconciliation.
+from a qualified ds41f-mlx state at an explicit release checkpoint, not manual
+two-way reconciliation or automatic synchronization after each milestone.
+Receipts bind their released payloads, not subsequent development HEADs; advancing
+ds41f-mlx alone neither updates this release nor requires a new receipt.
 
 The M23 bundle builder is historical development machinery, superseded for this
 source-delivery boundary; it is deliberately not delivered here. Historical

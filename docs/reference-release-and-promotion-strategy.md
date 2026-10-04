@@ -60,7 +60,7 @@ Development evidence, donor analysis and failed or superseded investigations are
 
 ### `ds41f-runtime`
 
-The future `ds41f-runtime` repository is a release projection of `ds41f-mlx`, not an independent implementation and not a peer development repository.
+`ds41f-runtime` is a qualified release history/projection of `ds41f-mlx`, not an independent implementation, a peer development repository, or a continuously synchronized development mirror.
 
 It contains only the source, build definitions, stable contracts, qualification surface and operator documentation required to build and operate the promoted runtime.
 
@@ -96,23 +96,24 @@ All source present in `ds41f-runtime` must have an authoritative origin in `ds41
 
 Direct feature development, bug fixes or semantic changes must not be performed only in `ds41f-runtime`.
 
-The normal change path is:
+The normal development path is:
 
 ```text
 problem or requested change
         ↓
-ds41f-mlx
+ds41f-mlx implementation
         ↓
-implementation
+development qualification
         ↓
-semantic/reference qualification
+qualified development milestone
         ↓
-release qualification
-        ↓
-promotion
-        ↓
-ds41f-runtime
+further development may accumulate in ds41f-mlx
 ```
+
+Updating `ds41f-runtime` requires a separate explicit release/promotion checkpoint,
+not completion of each development milestone. At that checkpoint, a qualified
+`ds41f-mlx` state flows one-way through M43 release promotion qualification into
+`ds41f-runtime`.
 
 If a defect is first discovered while using `ds41f-runtime`, the defect is returned upstream to `ds41f-mlx`.
 
@@ -133,7 +134,11 @@ ds41f-runtime issue
         ↓
 ds41f-mlx fix
         ↓
-qualification
+development qualification
+        ↓
+explicit release/promotion checkpoint
+        ↓
+release promotion qualification
         ↓
 new promoted runtime
 ```
@@ -401,19 +406,39 @@ The existence of `ds41f-runtime` therefore does not force premature donor-remova
 
 ## Future development after R1
 
-Once R1 and one-way promotion are established, ordinary implementation development becomes:
+Once R1 and M43 one-way promotion are established, qualification has two distinct
+tracks:
 
 ```text
-change ds41f-mlx
+development qualification (in ds41f-mlx)
+    affected tests
+    + R1 conformance where applicable
+    + necessary real-model / lifecycle / performance evidence
         ↓
-run current tests
-        ↓
-Reference R1 conformance
-        ↓
-affected qualification
-        ↓
-promote release
+qualified development milestone
 ```
+
+```text
+release promotion qualification (only at an explicit checkpoint)
+    deterministic projection
+    + fresh independent runtime setup
+    + release-profile acceptance
+    + promotion receipt
+    + ds41f-runtime update
+```
+
+Multiple qualified development milestones may accumulate before the next runtime
+promotion. A successful development milestone, including one that changes files
+in the release surface, does **not** automatically require a clean-room runtime
+projection, independent OFF/MTP environment construction, repeated determinism
+qualification, or a promotion receipt. M43 already established and qualified the
+promotion mechanism; its existing projection and independent qualification rules
+remain authoritative whenever release promotion is explicitly performed.
+
+A promotion receipt qualifies its bound release tree, not every subsequent
+`ds41f-mlx` HEAD. Retain completed release evidence when development advances;
+do not regenerate receipts merely to keep development HEAD promotable. The next
+explicit release checkpoint must qualify its selected payload under M43 rules.
 
 This substantially reduces the need to compare every implementation change independently against multiple historical references.
 
@@ -446,12 +471,13 @@ The intended policy for `ds41f-runtime` is:
 3. do not maintain a release-only implementation branch;
 4. return discovered defects to `ds41f-mlx`;
 5. qualify changes in `ds41f-mlx`;
-6. promote a new release snapshot;
+6. at a separate explicit release/promotion checkpoint, apply M43's release qualification rules and promote a qualified source snapshot;
 7. preserve source and reference identity in every promoted release.
 
 This policy avoids two-way synchronization and prevents semantic divergence between development and release repositories.
 
-`ds41f-runtime` is a release history, not a second development history.
+`ds41f-runtime` is a qualified release history, not a second development history
+or a mirror that must advance after every qualified development milestone.
 
 ---
 
@@ -506,16 +532,17 @@ Create and independently qualify ds41f-runtime
 
         ↓
 
-Future development
-ds41f-mlx
+Future development in ds41f-mlx
     ↓
-Reference conformance
+Reference conformance where applicable + affected qualification
     ↓
-affected qualification
+qualified milestones may accumulate
+
+At a separately selected release/promotion checkpoint
     ↓
-promotion
+M43 deterministic projection + independent release qualification + receipt
     ↓
-ds41f-runtime
+ds41f-runtime update
 ```
 
 M42 should not automatically perform M43 extraction before semantic closure is established.

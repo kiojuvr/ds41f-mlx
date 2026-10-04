@@ -24,9 +24,15 @@ retain their installed licenses. No upstream ownership replacement is claimed.
 Setup seals actual installed Python payload/native link/source identity. The seal
 is local operator-owned, not a signature or semantic qualification. Import origins
 must be provisioned environment resources (plus this projected source repository),
-never development/donor checkouts. Changed executable payload requires rebuild and
-affected acceptance. Runtime-only source changes are rejected by projection checks;
-behavior changes belong in ds41f-mlx.
+never development/donor checkouts. When updating an installed runtime at an
+explicit release checkpoint, changed executable payload requires rebuild and
+affected acceptance under M43's release rules. This is not a requirement to
+rebuild independent release environments or promote ds41f-runtime after every
+ds41f-mlx development milestone. Development qualification covers affected tests,
+applicable R1 conformance and necessary real-model/lifecycle/performance evidence;
+qualified milestones may accumulate before release promotion. Runtime-only source
+changes are rejected by projection checks; features and semantic fixes belong
+in ds41f-mlx and flow one-way through explicit qualified releases.
 
 For structural source qualification, keep build products outside the repository:
 

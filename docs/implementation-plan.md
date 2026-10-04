@@ -18,6 +18,24 @@ defines the progression:
 upstream for implementation, qualification and one-way promotion. Neither stage
 broadens M41's scope or automatically schedules full oMLX replacement.
 
+## Post-M43 development and explicit promotion checkpoints
+
+Ordinary milestones are implemented and qualified in `ds41f-mlx`: affected tests,
+R1 conformance where applicable, and necessary real-model, lifecycle, operational
+and performance evidence. Qualified milestones may accumulate before the next
+explicit release/promotion checkpoint. Changing release-surface files does not
+require automatic clean-room projection, independent OFF/MTP setup, repeated
+determinism qualification, a promotion receipt, or a `ds41f-runtime` update.
+
+At an explicit release checkpoint, M43's existing deterministic projection,
+fresh independent runtime setup, release-profile acceptance and receipt rules
+remain authoritative. `ds41f-runtime` is qualified release history, never a
+development mirror or a place for direct features/release-only semantic fixes.
+All releases flow one-way from a qualified `ds41f-mlx` state. M44 remains PASS;
+its completed release requalification is evidence actually performed, not a
+mandatory cadence for future milestones. See the
+[development/promotion policy](reference-release-and-promotion-strategy.md).
+
 ## M41 — Explicit bounded local MTP release candidate
 
 Implementation and fresh composed qualification: separate `mtp-singleton-v1`
