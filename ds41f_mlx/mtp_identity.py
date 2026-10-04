@@ -145,7 +145,7 @@ def snapshot():
             raise ValueError(f'unapproved dependency import origin {name}')
         dependencies[name] = str(Path(roots[0]).resolve().relative_to(cfg.omlx_path))
     links = dylibs(native)
-    if not any('libopencv_core.414.dylib' in p for p in links):
+    if not any(Path(p).name == 'libopencv_core.4.14.0.dylib' for p in links):
         raise ValueError('full target-native recipe/OpenCV link closure required')
     if not hasattr(deepseek_recipe.StreamProcessor, 'preview_tokens') or not hasattr(deepseek_recipe.StreamProcessor, 'semantic_snapshot'):
         raise ValueError('native recipe lacks qualified semantic preview capability')

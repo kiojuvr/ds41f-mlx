@@ -235,10 +235,10 @@ def test_living_frozen_retry_when_previous_slot_is_still_latest():
     class Runtime:
         def get_session(self,_):return dict(outcome_state='recoverable',next_sequence=2,
             request_fence=dict(sequence=1,state='recoverable',body_sha256='old_body'))
-    c=InternalLocalClient(Runtime());c.session_id='s';c._next_sequence=2;c.state='ambiguous'
+    c=InternalLocalClient(Runtime());c.session_id='s';c.next_sequence=2;c.state='ambiguous'
     c._pending=RequestIdentity('s',2,b'current_frozen')
     c._send=lambda: c._pending
-    assert c.reconcile() is c._pending and c._next_sequence==2 and c.state=='ambiguous'
+    assert c.reconcile() is c._pending and c.next_sequence==2 and c.state=='ambiguous'
     # This observation never advances or substitutes a third identity.
 
 
