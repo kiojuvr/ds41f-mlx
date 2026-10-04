@@ -10,6 +10,10 @@ That requires both preserving the model semantics, precision boundaries, persist
 
 Correctness and performance are therefore not separate end goals. Correctness defines the boundary within which performance must be achieved. The text runtime now has a scoped release qualification for the target production path: dense P0-P7 prefill, P7 SSD-backed Engram, P5 zero-replay handoff, and oMLX GenerationBatch MTP-OFF decode behind local single-flight HTTP.
 
+The canonical [final runtime target](docs/final-runtime-target.md) defines the intended
+self-contained public source repository. Current oMLX/recipe checkout requirements
+are transitional; that target is not a claim of completed migration or MTP promotion.
+
 ## Project definition
 
 A valid `ds41f-mlx` runtime is defined by these requirements:
@@ -247,6 +251,7 @@ Start with `docs/README.md`.
 
 Key documents:
 
+- [Final runtime target](docs/final-runtime-target.md) — long-term architectural intent
 - `docs/runtime-strategy.md`
 - `docs/implementation-plan.md`
 - `docs/architecture.md`

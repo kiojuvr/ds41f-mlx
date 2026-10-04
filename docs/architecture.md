@@ -1,5 +1,9 @@
 # Architecture
 
+The [final runtime target](final-runtime-target.md) is the canonical long-term
+architecture and dependency direction. The qualified topology below describes
+current implementation, not a permanent external-checkout requirement.
+
 ## Qualified production architecture
 
 ```text

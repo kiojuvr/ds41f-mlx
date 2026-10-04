@@ -1,5 +1,9 @@
 # ds41f-mlx documentation
 
+Canonical architectural intent:
+
+- [Final runtime target](final-runtime-target.md) — intended self-contained public source runtime, stable ds41f contracts and dependency destination; prospective, not current qualification
+
 Canonical current-state documents:
 
 - [Runtime strategy](runtime-strategy.md) — production architecture and non-selected paths

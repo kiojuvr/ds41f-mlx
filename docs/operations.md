@@ -2,6 +2,10 @@
 
 This is the operator-facing path for the scoped text runtime. Historical milestone documents are not required for normal startup. M22 defines `release/ds41f-release.json` as the active release/dependency manifest and `python -m ds41f_mlx.ops` as the canonical source/operator command surface. M23 adds a relocatable local bundle with `./bin/ds41f` and `./bin/ds41f-accept` wrappers for installed operation outside the development checkout.
 
+The [final runtime target](final-runtime-target.md) defines the intended fresh-clone
+setup without separate runtime development checkouts. The instructions and
+dependencies here describe current operation; no dependency migration is implied.
+
 ## Dependencies
 
 Required local components:
