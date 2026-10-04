@@ -185,6 +185,16 @@ source config/ds41f.env
 
 Installed acceptance uses the bundled Rust acceptance binary and does not require Cargo/CMake or the original Git checkout. Source-tree quick/full qualification remains available through `python -m ds41f_mlx.ops quick/full`.
 
+## MTP readiness status (no operator selector yet)
+
+[M40](milestone-40-release-readiness.md) evaluates a proposed explicit local
+`mtp-singleton-v1` profile. It is **not ready for release**: public admission/local
+security, reproducible dependency delivery, supported operator/client boundaries
+and installed acceptance remain required. No `--profile` command described in
+that design is implemented by this release. Current startup remains MTP OFF;
+changing environment paths to internal qualification candidates does not enable
+or qualify a supported MTP release.
+
 ## Supported runtime behavior
 
 See `api.md` and `release-qualification.md` for the exact supported API and release scope. The operations workflow does not broaden scope: vision, batching, MTP, DSpark, speculative decode, sessionized Responses/Messages, server-side tool execution, distributed serving, authentication, cross-runtime KV portability, and arbitrary stateful stop strings remain outside the release contract.

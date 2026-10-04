@@ -70,6 +70,14 @@ Stateless endpoints continue to use official recipe request behavior for fields 
 
 Rejected requests are atomic with respect to model/session state: no partial token commit, KV mutation, publication, or generation-state advance may survive. Unknown session returns not-found; active overlap/max-session conflicts return conflict; validation failures return invalid request errors.
 
+## Proposed bounded MTP profile (not released)
+
+[M40 readiness evaluation](milestone-40-release-readiness.md) specifies a separate
+process-wide `mtp-singleton-v1` candidate contract, not an available public mode.
+Decision: `NOT_READY_PUBLIC_ADMISSION_AND_REPRODUCIBLE_DELIVERY`. The release API
+above remains unchanged and MTP remains OFF. Do not infer MTP feature parity or
+release qualification from internal M33–M39 evidence.
+
 ## Optional / experimental
 
 Diagnostic endpoints exist only when `DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS=1`. Their output is bounded operational metadata and is not a public cache API.
