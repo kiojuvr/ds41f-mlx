@@ -11,8 +11,12 @@ That requires both preserving the model semantics, precision boundaries, persist
 Correctness and performance are therefore not separate end goals. Correctness defines the boundary within which performance must be achieved. The text runtime now has a scoped release qualification for the target production path: dense P0-P7 prefill, P7 SSD-backed Engram, P5 zero-replay handoff, and oMLX GenerationBatch MTP-OFF decode behind local single-flight HTTP.
 
 The canonical [final runtime target](docs/final-runtime-target.md) defines the intended
-self-contained public source repository. Current oMLX/recipe checkout requirements
-are transitional; that target is not a claim of completed migration or MTP promotion.
+self-contained public source repository. **M43 release extraction is complete**:
+[deterministic promotion](docs/milestone-43-release-repository-extraction.md) delivers
+an independently qualified `ds41f-runtime` source projection without donor or
+`ds41f-mlx` checkout requirements. Development/qualification remains here; runtime
+changes flow only from here through promotion. The broader feature target remains
+incomplete and bounded MTP scope is unchanged.
 
 ## Project definition
 

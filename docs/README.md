@@ -2,7 +2,8 @@
 
 Canonical architectural intent:
 
-- [Reference release and promotion strategy](reference-release-and-promotion-strategy.md) — semantic reference and prospective M43 one-way projection; sole `ds41f-mlx` development authority
+- [M43 repository extraction](milestone-43-release-repository-extraction.md) — deterministic qualified one-way promotion, self-contained attributed delivery and independent runtime proof
+- [Reference release and promotion strategy](reference-release-and-promotion-strategy.md) — semantic reference and one-way projection; sole `ds41f-mlx` development authority
 - [Reference Release R1](reference-release-r1.md) — owned executable contracts, equivalence, command and invalidation
 - [M42 closure decision](milestone-42-reference-release.md) — fresh qualification, semantic rejection, donor independence and inherited evidence
 

@@ -1,0 +1,1529 @@
+{
+  "fresh_setup": {
+    "changed_files": [],
+    "gates": [
+      {
+        "log": "artifacts/m43/off-setup.log",
+        "name": "off-setup",
+        "sha256": "ed162ffab55af1e2935f9cc201e37f0368b97450ec93143c59ec15dab24e7768",
+        "status": "PASS"
+      },
+      {
+        "log": "artifacts/m43/mtp-setup.log",
+        "name": "mtp-setup",
+        "sha256": "2d04069595b7f0acad97bbc36886a5eec73eb59b5847ba36faded4edfb049536",
+        "status": "PASS"
+      }
+    ],
+    "manifest_sha256": "635c1ba21db482e9588e0db586e38e2ee1e2597ab8521ce2eea368c79244d181",
+    "reason": "Fresh independent construction from this exact complete source payload; dependency build scratch was unavailable during operation.",
+    "source_commit": "9d69a6e86f8125c0232c116b4ab1b5e60545b1d7",
+    "source_tree_sha256": "adb4b5b02e8870d798c39cf30ca72f56726482599cc4d090f2da9f26b6de0c87"
+  },
+  "gates": [
+    {
+      "command": [
+        "git",
+        "init"
+      ],
+      "expected": 0,
+      "log": "git-init.log",
+      "name": "git-init",
+      "returncode": 0,
+      "sha256": "5c5af5ee359cfd15a88287839356f49e644c893711aec7e84699b5c7e34e07f4",
+      "wall_s": 0.09083070798078552
+    },
+    {
+      "command": [
+        "git",
+        "add",
+        "."
+      ],
+      "expected": 0,
+      "log": "git-add.log",
+      "name": "git-add",
+      "returncode": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wall_s": 1.2265151659958065
+    },
+    {
+      "command": [
+        "git",
+        "-c",
+        "user.name=ds41f promotion",
+        "-c",
+        "user.email=promotion@local",
+        "commit",
+        "-m",
+        "Canonical source projection"
+      ],
+      "expected": 0,
+      "log": "git-import.log",
+      "name": "git-import",
+      "returncode": 0,
+      "sha256": "7170461928051c7170976f6787dccb3e7b68a79dec73fa33b98252fe81ee8f48",
+      "wall_s": 0.3218530410085805
+    },
+    {
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-m",
+        "ds41f_mlx.mtp_setup",
+        "--profile",
+        "standard-off",
+        "--venv",
+        "/Volumes/SDXC-512/ds41f-m43-sealed/off-env",
+        "--build-dir",
+        "/Volumes/SDXC-512/ds41f-m43-sealed/off-build"
+      ],
+      "expected": 0,
+      "log": "off-setup.log",
+      "name": "off-setup",
+      "returncode": 0,
+      "sha256": "ed162ffab55af1e2935f9cc201e37f0368b97450ec93143c59ec15dab24e7768",
+      "wall_s": 96.60354808304692
+    },
+    {
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-m",
+        "ds41f_mlx.mtp_setup",
+        "--profile",
+        "mtp-singleton-v1",
+        "--venv",
+        "/Volumes/SDXC-512/ds41f-m43-sealed/mtp-env",
+        "--build-dir",
+        "/Volumes/SDXC-512/ds41f-m43-sealed/mtp-build"
+      ],
+      "expected": 0,
+      "log": "mtp-setup.log",
+      "name": "mtp-setup",
+      "returncode": 0,
+      "sha256": "2d04069595b7f0acad97bbc36886a5eec73eb59b5847ba36faded4edfb049536",
+      "wall_s": 85.4595028340118
+    },
+    {
+      "command": [
+        "cmake",
+        "-S",
+        "native",
+        "-B",
+        "/Volumes/SDXC-512/ds41f-m43-sealed/native-build"
+      ],
+      "expected": 0,
+      "log": "native-configure.log",
+      "name": "native-configure",
+      "returncode": 0,
+      "sha256": "57cf1cfb3098e55af24512591c9cc6e8985c59ba7c496ad3142b8c1faf8746e2",
+      "wall_s": 0.44543066702317446
+    },
+    {
+      "command": [
+        "cmake",
+        "--build",
+        "/Volumes/SDXC-512/ds41f-m43-sealed/native-build",
+        "-j",
+        "8"
+      ],
+      "expected": 0,
+      "log": "native-build.log",
+      "name": "native-build",
+      "returncode": 0,
+      "sha256": "7d7380c1e5908276e3cfdc62890c621bc80eca964d274289a34891ffe267e3e5",
+      "wall_s": 3.4661707910127006
+    },
+    {
+      "command": [
+        "ctest",
+        "--test-dir",
+        "/Volumes/SDXC-512/ds41f-m43-sealed/native-build",
+        "--output-on-failure"
+      ],
+      "expected": 0,
+      "log": "native-tests.log",
+      "name": "native-tests",
+      "returncode": 0,
+      "sha256": "e9887115c1e0db96d950539b6688923962cdfdd0809a017260c25329175652fd",
+      "wall_s": 1.6926849160226993
+    },
+    {
+      "command": [
+        "/Volumes/SDXC-512/ds41f-m43-sealed/off-env/bin/python",
+        "-m",
+        "ds41f_mlx.ops",
+        "inspect"
+      ],
+      "expected": 0,
+      "log": "off-inspect.log",
+      "name": "off-inspect",
+      "returncode": 0,
+      "sha256": "383b6d83a3c9559cc600e6cf37602c5344d3532ef805854f5d21dea0fa62ab94",
+      "wall_s": 7.08469916600734
+    },
+    {
+      "command": [
+        "/Volumes/SDXC-512/ds41f-m43-sealed/off-env/bin/python",
+        "-m",
+        "ds41f_mlx.ops",
+        "accept",
+        "--output",
+        "/Volumes/SDXC-512/ds41f-m43-sealed/off-acceptance.json"
+      ],
+      "expected": 0,
+      "log": "off-accept.log",
+      "name": "off-accept",
+      "returncode": 0,
+      "sha256": "9ab2c0075f7ddcaee8ebe91a7bfeb792fbd85b38898f22a0a53a6c20477d8a15",
+      "wall_s": 96.14736762503162
+    },
+    {
+      "command": [
+        "/Volumes/SDXC-512/ds41f-m43-sealed/mtp-env/bin/python",
+        "-m",
+        "ds41f_mlx.ops",
+        "inspect",
+        "--profile",
+        "mtp-singleton-v1"
+      ],
+      "expected": 0,
+      "log": "mtp-inspect.log",
+      "name": "mtp-inspect",
+      "returncode": 0,
+      "sha256": "d17e601a5588341baeeab377a944c3e6425122ead520e39361fdfb3b73e6c030",
+      "wall_s": 7.409133750014007
+    },
+    {
+      "command": [
+        "/Volumes/SDXC-512/ds41f-m43-sealed/mtp-env/bin/python",
+        "-m",
+        "ds41f_mlx.ops",
+        "accept",
+        "--profile",
+        "mtp-singleton-v1",
+        "--output",
+        "/Volumes/SDXC-512/ds41f-m43-sealed/mtp-acceptance.json"
+      ],
+      "expected": 0,
+      "log": "mtp-accept.log",
+      "name": "mtp-accept",
+      "returncode": 0,
+      "sha256": "7e0808f2dc71ccef11538a3a1dde5e2c999b9cc134f6c5d6579256da71156856",
+      "wall_s": 124.06282441603253
+    },
+    {
+      "command": [
+        "/Volumes/SDXC-512/ds41f-m43-sealed/mtp-env/bin/python",
+        "-m",
+        "ds41f_mlx.reference",
+        "--profile",
+        "both",
+        "--real-model",
+        "--output",
+        "/Volumes/SDXC-512/ds41f-runtime/artifacts/m43/reference.json"
+      ],
+      "expected": 0,
+      "log": "reference.log",
+      "name": "reference",
+      "returncode": 0,
+      "sha256": "3039a9f1dacf8c559939b3cd69cc4a2599ad7de3b4c78ba46ac5adfae3fb9546",
+      "wall_s": 217.32313537498703
+    },
+    {
+      "command": [
+        "/Volumes/SDXC-512/ds41f-m43-sealed/off-env/bin/python",
+        "-m",
+        "ds41f_mlx.ops",
+        "inspect"
+      ],
+      "expected": 2,
+      "log": "off-bad-origin.log",
+      "name": "off-bad-origin",
+      "returncode": 2,
+      "sha256": "7c3cdbc5fd507cecc6c4b0eb067a965673289ead46a7aaf38c26b39fd4286050",
+      "wall_s": 0.1816148340003565
+    },
+    {
+      "command": [
+        "/Volumes/SDXC-512/ds41f-m43-sealed/mtp-env/bin/python",
+        "-m",
+        "ds41f_mlx.ops",
+        "inspect",
+        "--profile",
+        "mtp-singleton-v1"
+      ],
+      "expected": 2,
+      "log": "mtp-bad-origin.log",
+      "name": "mtp-bad-origin",
+      "returncode": 2,
+      "sha256": "ee9249d649d427023c3396ef68d5f3506a723706fedf7596011b03cb384b44e5",
+      "wall_s": 0.07763929199427366
+    },
+    {
+      "command": [
+        "/Volumes/SDXC-512/ds41f-m43-sealed/off-env/bin/python",
+        "-m",
+        "ds41f_mlx.serve",
+        "--no-validate",
+        "--print-config"
+      ],
+      "expected": 2,
+      "log": "off-no-validate.log",
+      "name": "off-no-validate",
+      "returncode": 2,
+      "sha256": "29bd73991014b2ba64a63e91305ab4d6da00deb350f84782d89ab9f99e9e0172",
+      "wall_s": 7.073551625013351
+    },
+    {
+      "command": [
+        "/Volumes/SDXC-512/ds41f-m43-sealed/mtp-env/bin/python",
+        "-m",
+        "ds41f_mlx.serve",
+        "--print-config"
+      ],
+      "expected": 2,
+      "log": "off-wrong-profile-environment.log",
+      "name": "off-wrong-profile-environment",
+      "returncode": 2,
+      "sha256": "2a854df75f2d3529be9ff0a5347a872734c78e90c7009498e3448c7f10eebbcb",
+      "wall_s": 0.13244875002419576
+    },
+    {
+      "command": [
+        "/Volumes/SDXC-512/ds41f-m43-sealed/mtp-env/bin/python",
+        "-m",
+        "ds41f_mlx.projection"
+      ],
+      "expected": 0,
+      "log": "source-origin.log",
+      "name": "source-origin",
+      "returncode": 0,
+      "sha256": "544ee5a9c3e95fd7f0a8cc08cb9d3cbf2bf558507d3d4ee2c7c8462450f6e58c",
+      "wall_s": 0.13248216599458829
+    }
+  ],
+  "isolation": [
+    {
+      "existed": true,
+      "path": "/Volumes/SDXC-512/ds41f-mlx",
+      "unavailable": true
+    },
+    {
+      "existed": true,
+      "path": "/tmp/ds41f-m33-omlx",
+      "unavailable": true
+    },
+    {
+      "existed": true,
+      "path": "/tmp/ds41f-m32-recipe",
+      "unavailable": true
+    },
+    {
+      "existed": true,
+      "path": "/Users/kioju/omlx-0.7.0.release",
+      "unavailable": true
+    },
+    {
+      "existed": true,
+      "path": "/Volumes/SDXC-512/deepseek-v41-flash-mlx/third_party/deepseek-recipe",
+      "unavailable": true
+    },
+    {
+      "existed": true,
+      "path": "/Volumes/SDXC-512/ds41f-m41-final-build",
+      "unavailable": true
+    },
+    {
+      "existed": true,
+      "path": "/Volumes/SDXC-512/ds41f-m43-sealed/off-build",
+      "unavailable": true
+    },
+    {
+      "existed": true,
+      "path": "/Volumes/SDXC-512/ds41f-m43-sealed/mtp-build",
+      "unavailable": true
+    }
+  ],
+  "mechanics": {
+    "receipt": "artifacts/m43/mechanics.log",
+    "scope": "complete manifests, independent destinations/checkout paths, timestamps/ignored build products, dirty inputs, missing/unclassified source, reference drift, qualification mismatch and runtime-only patches",
+    "sha256": "75b1d1d9873b2717bb9464f0682d0c6f4938da2ac1ef32a73ca2212dda13d803",
+    "status": "PASS",
+    "tests": 7
+  },
+  "origins": {
+    "mtp": {
+      "actual_origins": {
+        "deepseek_recipe": "/Volumes/SDXC-512/ds41f-m43-sealed/mtp-env/lib/python3.13/site-packages/deepseek_recipe/__init__.py",
+        "deepseek_recipe._native": "/Volumes/SDXC-512/ds41f-m43-sealed/mtp-env/lib/python3.13/site-packages/deepseek_recipe/_native.abi3.so",
+        "ds41f_mlx": "/Volumes/SDXC-512/ds41f-runtime/ds41f_mlx/__init__.py",
+        "mlx_lm": "/Volumes/SDXC-512/ds41f-m43-sealed/mtp-env/lib/python3.13/site-packages/mlx_lm/__init__.py",
+        "omlx": "/Volumes/SDXC-512/ds41f-m43-sealed/mtp-env/lib/python3.13/site-packages/omlx/__init__.py"
+      },
+      "build": {
+        "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05) (Homebrew)\n",
+        "cmake": "cmake version 4.3.3\n\nCMake suite maintained and supported by Kitware (kitware.com/cmake).\n",
+        "host_linked": true,
+        "opencv": "4.14.0\n",
+        "rustc": "rustc 1.98.1 (48a229cea 2026-09-01) (Homebrew)\nbinary: rustc\ncommit-hash: 48a229ceaefd4985c50990b14116b6d856af0985\ncommit-date: 2026-09-01\nhost: aarch64-apple-darwin\nrelease: 1.98.1\nLLVM version: 22.1.8\n",
+        "wheel_sha256": "53d6eff4665de97f5c3c69e4f0efd5e8b608fba1c6fee852ce7fab0b0d77dd59"
+      },
+      "checkpoint": {
+        "metadata": {
+          "config.json": "8be45ce0476004a3f529fd896115a4a2e800a129ad2d3ec05b16050f52e21879",
+          "model.safetensors.index.json": "74b0686a3d2891980d5e303251b075a3bccae2c2ff650747db2620a649b98fa8",
+          "tokenizer.json": "c90dfa01249db1be4245780a052ede752e1361c612ac6d08e2bdada7d599476b"
+        },
+        "shards": [
+          {
+            "bytes": 970533624,
+            "lfs_sha256": "886aebdafa08cc27bbae2165ed35bdfe0de9370bf88c1411283c155c6ae4ff89",
+            "name": "model-00001-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 1323858272,
+            "lfs_sha256": "4320066fc6958e5bc01d8c3feba79b7454b59f0f4b7299ab7145ed44bbf4ecec",
+            "name": "model-00002-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389759032,
+            "lfs_sha256": "e1281f85d0ce4a3dfb63d41926fc4a47fa71f36ba20992e3597e702ead49d4c9",
+            "name": "model-00003-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389759032,
+            "lfs_sha256": "79456c9db0cda3b8115fe1c726fe3db1a34b434584a3991917088a0ab56a39de",
+            "name": "model-00004-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7405953784,
+            "lfs_sha256": "4a42dc78698bee6b1a821aa01c9650749ef1f716143751f1cdb815c6400280a9",
+            "name": "model-00005-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389759032,
+            "lfs_sha256": "020a6df51a2853452561d91268a65481f7a7d7954ed47f8e6c9ce69a4a134f77",
+            "name": "model-00006-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389759032,
+            "lfs_sha256": "40f8b52f763f6380d41257e1af04eee3aad300af6a418c38e49ff99e3604163a",
+            "name": "model-00007-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389759032,
+            "lfs_sha256": "d62cca4e698f030d4b96ec624c08bed7ad604cec13077da6d6b06669281c4650",
+            "name": "model-00008-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389759032,
+            "lfs_sha256": "1ca62e4c294df31aee69a782974cb14269264fdc08465ab4835760258f05d6ef",
+            "name": "model-00009-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389759032,
+            "lfs_sha256": "dd33c9750a40cbfcdfb19cd8335d955f533e3a18b790c0ee43d1e5d77911595c",
+            "name": "model-00010-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7405953784,
+            "lfs_sha256": "a9b309f90e0d1e2252a224ed6b057b9c82c27d3a49cff64bfbfef12efd067f7c",
+            "name": "model-00011-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389759032,
+            "lfs_sha256": "b359227eceb3f839c80de19dddf946648ca89425d9b719ff44702cf5e8cfbe0e",
+            "name": "model-00012-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "41d87a4c81fec1550f9cb975db05598a18ee0161c2664e8e1a0c7b60742755a6",
+            "name": "model-00013-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "e7ca4a12688a5819829ead3a03282aedb380e438bc41a00e969f70952c6d0eb9",
+            "name": "model-00014-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "fa9d49314bbb25118b3d52c573ed66a4d0acfb01dcb26d8367f43c66a52f46c4",
+            "name": "model-00015-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "07d08bce9d73d416eaca0f42843440a8c45c5f939eff1a3690fb460d8dd7f623",
+            "name": "model-00016-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7405956128,
+            "lfs_sha256": "3d35e330a6c28cd59a06a1caab8b0048f7e12cc037d728736f74431c4c0a1a4c",
+            "name": "model-00017-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "48bd0c28b7f441f131f562cb664366d7726447a3698da3dd56ebbfeb1b916c75",
+            "name": "model-00018-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "b7a25cb64a959ca5e5a99e239bb1ba2092b9bcf022bec4ba71f7441334107bd1",
+            "name": "model-00019-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "8aea8c4026ba4b93e82b4ed1b6b4620d02b6aaac88d211aaf577acea443aff84",
+            "name": "model-00020-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "4cb6558dedfdc75a6be472e27bc3e830d8443a3371854e61dc54454a1b5b18f7",
+            "name": "model-00021-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "81031b68c967539a7c51d1b12d37d18de926ca3045ec554ccdd49a83b4dc0084",
+            "name": "model-00022-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7400713088,
+            "lfs_sha256": "096723fc8afa9886b976fb63aabef159406dc483e6f2a41e3fe386435b0436cc",
+            "name": "model-00023-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "c9438ff607bd902fdeb38267d36239ccf60d38595988364562b862791841da75",
+            "name": "model-00024-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "4227ef9fe34d10de584d67250845fab905cbd8462fd84d9da24d772f223db6b4",
+            "name": "model-00025-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "0af8c8f1b96b502eda652a0549cf55cd8a4d472a34d27ef9bf1c1d7c4567ca3f",
+            "name": "model-00026-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7395337384,
+            "lfs_sha256": "3066bd03043726d2400302cb9af759ec4e3957a935d56e241b83b52870322e28",
+            "name": "model-00027-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "9bc915075568b75e2aec9c645cc0fece6287f115c32031a52ab4f9ba9d12fde6",
+            "name": "model-00028-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "d153dd9cde7c4aa7ea9896cf7aa25b49447af573f90ad14cfaaa532fbbd19434",
+            "name": "model-00029-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "3c9ccd96e908e00f02a70930b0821a6c53e5301376a261284a092e1aea7bb5da",
+            "name": "model-00030-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7395337384,
+            "lfs_sha256": "0de7b6d7142df18ad45a215e9c0ef004f78cdbfefd59cc16345b2bc004047343",
+            "name": "model-00031-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "6a5aaa73c6f97294bd079914ba44209ecf3d0491c8b95ef9995655511e35aee6",
+            "name": "model-00032-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "386e3e91f7f02f7e2c25f398b3a63379051c2077839b3081f7556e18c29a69c9",
+            "name": "model-00033-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "9deab3c4f27c956f91cd989d9a1f6cf4bbb91858ce3f7164caa5ae61125c943f",
+            "name": "model-00034-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7395337384,
+            "lfs_sha256": "226573bc07f35091b0ec27b0056ab3059f9bc1c0afd0bc104c93c86dd029cad2",
+            "name": "model-00035-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "90d6a85c1eb0cae68c6c7bffa11b60654ea00353d27a0ae17701b72e239894cd",
+            "name": "model-00036-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "207aef18f995fdfe7506175aabd700aa62dcf6f488c7cc375e9de06f56891b83",
+            "name": "model-00037-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "cbbaa0b0807311807a696efec09f9b5a5d63bdf68b82378e1fc7402a2533c627",
+            "name": "model-00038-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7395337384,
+            "lfs_sha256": "f4cf191547b50efbc35c4ed1f36cfb26043d94f987c49d54b15ef2d632a14a77",
+            "name": "model-00039-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "e991bfc416055c45ddb89f1447eae1e67dba2816e7580044ffff3db7e2af27a3",
+            "name": "model-00040-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "48a1c08afadf4e73223c587f9c6ad6f32aef57c01342ae75e96b07a001711d42",
+            "name": "model-00041-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "e1a4d5d30ae51bafda75078d49b05a585c924b0af9b3481c075b04341507c2ef",
+            "name": "model-00042-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 1323837624,
+            "lfs_sha256": "d762b688f138e00a24eac96f27b842715bb4b534ecc9ca39076bed2b8c33201e",
+            "name": "model-00043-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 2652728736,
+            "lfs_sha256": "9a6b39fb88a2510487a8efaef77aa7864e8061f6b62c95a0f010e9dd538f3b05",
+            "name": "model-00044-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 2573998176,
+            "lfs_sha256": "0cc9d5f6ca3a2158ccc63ce2c70c76aeda8177d54913340481af566680329eb5",
+            "name": "model-00045-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 2706402896,
+            "lfs_sha256": "e625902027b9d23d416f8818c665fab4704e0b96dc1bc778321601b700475a9d",
+            "name": "model-00046-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 101535150936,
+            "lfs_sha256": "824db4881320407ac340736d14dcee5ecd748c27d0f5836b8127ecc2e3781b0f",
+            "name": "model-00047-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 101537926640,
+            "lfs_sha256": "976330f4954338e1ad8b508c32aa912032c7ad908959fd53c8307650fe4520ed",
+            "name": "model-00048-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          }
+        ],
+        "verification": "metadata/source inventory only; weights not freshly rehashed"
+      },
+      "identity_sha256": "50872bd63fbdfa9e38a29bf9ff852fa130ad7cf5597183629eaa3123e4b5f4cf",
+      "native_links": {
+        "/Volumes/SDXC-512/ds41f-m43-sealed/mtp-env/lib/python3.13/site-packages/deepseek_recipe/_native.abi3.so": "87f162c2e0f91bd288e128dcce89e08f4c68bf01c2ed452f57de1691ed48bf9e",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_base.2608.0.0.dylib": "9375f0a888e642b904fe3650d33a901529f361163a7fdb269f2869881a61f8fb",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_base_cpu_detect.2608.0.0.dylib": "40004034f363e6649269c9ecc88aa8ab4be94c528434fb14f4cd90af65b271fc",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_city.2608.0.0.dylib": "6378d401843f3b7ebc8297ea6e88db4afd29c69ee57f146867f7ed2662d71d6d",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_civil_time.2608.0.0.dylib": "d44e2c2f4f4f479ba1b3f4717e2a896b303096a7f0d507972e72e625de535750",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_cord.2608.0.0.dylib": "6d1b41a0a9f9cd6d3f47452d6afe9427fb0e457c29093e426db07fd17d6bea3a",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_cord_internal.2608.0.0.dylib": "dd11ec6d26a3bef6ae56e732add0ad94b6b4a498599f7b361b45d7239d7a193a",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_cordz_functions.2608.0.0.dylib": "5aa0f143cffdab249833a76fa6c3731bf13785378870c7e37a1f670ecf490a08",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_cordz_handle.2608.0.0.dylib": "7a8276e1ed0f2eb629b8d326dc2ec429b4d87254d2dc254e28cebefc111d4448",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_cordz_info.2608.0.0.dylib": "03ce4fb8ff4913f54fcf426f7a0ff1d5bad8a39cbe5294f7bb6427a48ab8d605",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_crc32c.2608.0.0.dylib": "e67f10b791f0b32a670792c9017d983249cd65fad8cad7253176579f2d0e41f8",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_crc_cord_state.2608.0.0.dylib": "554c8a81c9c7c7a07bde0095f1b5fc9711561a1489f3556fd82e57e50a32528e",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_crc_internal.2608.0.0.dylib": "4340bcdd787f9d086ef4aa74d0c01368393675362ba34c959e71477a62412483",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_debugging_internal.2608.0.0.dylib": "014714cd2ad9173c9db60213deaa9e0a65262170de39047a6ce5c311629a9aaf",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_decode_rust_punycode.2608.0.0.dylib": "574ba91bf156937fc4dc1ad6833b6bcfadf25969395d03f10a0975d8456a97e4",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_demangle_internal.2608.0.0.dylib": "fc0e01f38f27757e2afb4bac191a97faaa0aeab3f06e68b50f030ee2032f31fa",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_demangle_rust.2608.0.0.dylib": "3e59c1875a507a8c900356b5a15915480d85c54c2118b2745ac5f198c20862d8",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_die_if_null.2608.0.0.dylib": "0275370e19a90371009483a7348d5160757c8312e18d1c410ef2d343786e4a55",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_examine_stack.2608.0.0.dylib": "b12eef962f1a986ed031d61b62c9fa62efebd93b819378eec608028b1ebc0ccf",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_exponential_biased.2608.0.0.dylib": "879a00b1437013bb55a7a54f60307e2c776fb36181e1d5ef937add8e59836e62",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_commandlineflag.2608.0.0.dylib": "b6ffea01ddcd47fa7a6ae1d8964deec648fe79f017cad7c801d4facdcc372766",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_commandlineflag_internal.2608.0.0.dylib": "1a90a430a02893a71c312cf25abd3c15b1127097a5affe1a2d5e65a2660d8440",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_config.2608.0.0.dylib": "ec8ce870416357fbbae8381e2e7a2829b771da4d491dee6ed09f47bd34a1c9b3",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_internal.2608.0.0.dylib": "6682944682aeb2a76241c31d3a1dc4ecfc8b9a66e31908494be962e7b098d61f",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_marshalling.2608.0.0.dylib": "26de3eedff3c30a111d4273cae082dff84415ffe12106c673bb4a061183b517e",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_private_handle_accessor.2608.0.0.dylib": "aa85fefd92ef84fd2698b80b152977d828b8166954c7c211983d2cabd5c065fd",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_program_name.2608.0.0.dylib": "1666191cb60067ae1e47f793cbef31662b0863dcff75f00e80541344d7bf0bfd",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_reflection.2608.0.0.dylib": "e41a1915283ef3a208266d9a7b60514567d7ca0cc3523fb04d52edee4c04a950",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_graphcycles_internal.2608.0.0.dylib": "b4c0ad5c79f8e9ceaa61568ed1c5f093a8b4435b6f77db2f2b70872a688081c0",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_hardening.2608.0.0.dylib": "232e5aa6f0ad4109edc57aa5f86152f278290030d118e881f5fd1c24e2df2020",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_hash.2608.0.0.dylib": "ae38554101cdce65c3471a449acf1997411b5e1e9f07e70000f4fe4cb2f1ddf1",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_hashtablez_sampler.2608.0.0.dylib": "92315be32b893b239f188a11ee08ce3bef737bee39049e685285d6d7ec65b1db",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_int128.2608.0.0.dylib": "c9b9a31bdee2b70ba6434cb85c8ae3d289de554f3b81060829e41df50cbd20c3",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_kernel_timeout_internal.2608.0.0.dylib": "c84e6e220544faf63fae49e07b4b611de31ad8c51dd541018acacfbd2b826302",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_leak_check.2608.0.0.dylib": "97dce3e7137cf6df6c03653b8af3182fd81552e7c43b4306584fe32397f26a44",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_entry.2608.0.0.dylib": "948841336bd3da61fd7a9a6238d8efff57f682c238d67d2bbb57b35c8acaf5e2",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_globals.2608.0.0.dylib": "f82e96f8f54357aff361bdd6cad92178a861498e3d5d56c38b5d08fcdb26fe39",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_initialize.2608.0.0.dylib": "030964b8b27174c92edb581454b7f184a891c56bac933bd1f6877f260c8c5d83",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_check_op.2608.0.0.dylib": "28e12bf31d25cbdfeabc600d7ec0a617579a5d14c22d9d56ca2a08862f1cac2c",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_conditions.2608.0.0.dylib": "0bd29169a52ce9d164abcb880db55546faaffbf8bdb6b2e590a915177c6834c2",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_fnmatch.2608.0.0.dylib": "79e61c46c1825291ecbe9d59c16afcc57eaa1c5a61cd107c7adcb70c33371b4b",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_format.2608.0.0.dylib": "3f66fb51ded366962df7beeabf4df7fa0b39fcec7bdcc2c8682f3e7b81e506ea",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_globals.2608.0.0.dylib": "bf5f10661c46033ab49a503500777d97401624b574f04e26f7bf5c894b3ba1cd",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_log_sink_set.2608.0.0.dylib": "d867270923f5e939962511e9e6b9fa86e99036ce9d430ad26a2efbd290f3769e",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_message.2608.0.0.dylib": "eadb5b8b7424b3e5b701262016a33372e317bcb2dc7b239fe09147f4118f3eaa",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_nullguard.2608.0.0.dylib": "c8e2340c79646a95c82006225db3bb6ef05346f106aecd0fb154650e7095139a",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_proto.2608.0.0.dylib": "a98c2018e6840c3faab7867f12fbdbc4e9f9177bace14df7ba8f3ba6d58072ca",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_structured_proto.2608.0.0.dylib": "560193e67aac58152890142c9b0fe40e336153650c09975a63fe6eb96cbf6cac",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_severity.2608.0.0.dylib": "6c055cd4d49dc57c6a2dc6467f2ffbb3e2edde947b299149bd5e7694cf830a11",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_sink.2608.0.0.dylib": "19cd121f5d779e55bc03f557b71a2420c86db09632e6e6bbd07d83b9b67c5f22",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_malloc_internal.2608.0.0.dylib": "a3bcd539b4f5ec9ddb1961b3b30bb774868983d605b54eac80ab50e9d3913205",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_distributions.2608.0.0.dylib": "c7c730f0486843cad739e269705cc65f8658bcdac89550631ef717802ea87edd",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_entropy_pool.2608.0.0.dylib": "64fd8cbbbaa53b6256f31881093ddc722fa16eccd13b4e15b4f394e601ca1b0b",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_platform.2608.0.0.dylib": "75a54b4ef6fa63544b222cb115fc18f07b1ec77e93f2bf8905d99cea55219c82",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_randen.2608.0.0.dylib": "2e8ba5db30ee581f54f7dfeb520cc91104e070c11a5d8d713dd6bf814a881a52",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_randen_hwaes.2608.0.0.dylib": "a283f5cda345a6fc8a02b47e477c642d08a89ac42d6bc18da83b38b94a3039f4",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_randen_hwaes_impl.2608.0.0.dylib": "55f13df6d21a5ffdec490611970e302b7a85cc8f2ae0cb8821b2a67a973c4d23",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_randen_slow.2608.0.0.dylib": "d32f7d2840f1516c1e586bb7dc784cc0da3082556199b353dae5bcafd8fb3a20",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_seed_material.2608.0.0.dylib": "9e492eeb4f4316f9078a3af28cb51d2a5fc498e419126cfa31ffc9f4f0a15ac4",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_seed_gen_exception.2608.0.0.dylib": "8309b5e78727bb89272878e839c4a46ce2479de111672255bd05c31114e8e0d3",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_seed_sequences.2608.0.0.dylib": "2f4fec150fee6bc388e8e207770c3f33d751d4a595271e99998c252a3d04b1ce",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_raw_hash_set.2608.0.0.dylib": "af8f05c217ca1e6ed1447822f8d89e4a338dfa4da31f76a16a279000cb437cd8",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_raw_logging_internal.2608.0.0.dylib": "0cff48f2a0a36c3116d2d90d70a368591669a919d1de4d6bc5e92547bc389f63",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_source_location.2608.0.0.dylib": "ff821ad289dce5a14076d6ab756e73bc974bfe85d5eb74427e923f80ef7ac7e6",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_spinlock_wait.2608.0.0.dylib": "d69b4ce2f4953ece42f0126f64485580fccf84df297d888797cebc6122c1b7ae",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_stacktrace.2608.0.0.dylib": "8b55702e448b15f5cb9ee4470ce64a8b990b0ade31444e65260bebdbedffcab7",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_status.2608.0.0.dylib": "065a90fd5cf893b6b854a2c3b3f12629d967df61c711ce0d7062290688a96b24",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_statusor.2608.0.0.dylib": "12d1df685406a203c87e18851d31c722b8e31625d281d6af83f32ac89d61f38f",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_str_format_internal.2608.0.0.dylib": "0b4daf203209a8a73c50a32093303d6be88fa8c82ee6a3a55d5773f4a50f78e4",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_strerror.2608.0.0.dylib": "3648f22d467be8b1c2e04fbe7a10fc403f6797c2aa8998d9cccbd89f5ecf3f99",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_strings.2608.0.0.dylib": "f2099d0fcb283d473483c7dd736c6933f1ca7d262a5ba31d74f4b4241db38e05",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_strings_internal.2608.0.0.dylib": "e43a06406fbbca1928356143fec57902e87bf347a1bc72b8d2e540e44d241cf6",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_symbolize.2608.0.0.dylib": "f74d52731d1aa923d747258f0746d38226fa7398c3e56bc02f6841ee08ab9bb6",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_synchronization.2608.0.0.dylib": "7ea4c06fa127e3eaf3af98f99ce1613696130713b40d541dca82ee302992b67d",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_throw_delegate.2608.0.0.dylib": "8438db6f3f9bb6fef27232963ea74b5d3cfc0b892cbb47bd4aa3c0c8ea9bbe1c",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_time.2608.0.0.dylib": "db06136dc3e7f74c7caa1871f2be1f4efd0342b40a4990f2830ec2d63fa7b26f",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_time_zone.2608.0.0.dylib": "a44dbfe629b2e26a88890c44a136c4ffd3eec130db5b9fb4b0ddbc29f4609ad0",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_tracing_internal.2608.0.0.dylib": "76cf6e733f5e5f6ed0140e9f299d7919a2e82f7034a54a026f2de2705956e447",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_utf8_for_code_point.2608.0.0.dylib": "40c07a92a4cc6d38cfe13372f602fc562fdd042d5c7e512ad6a66dbe7dba70dd",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_vlog_config_internal.2608.0.0.dylib": "6866be4a9f158035c08b997f1f83d0c3bbafe8ba3aaacdcc080ff6dd03407b99",
+        "/opt/homebrew/Cellar/ceres-solver/2.2.0_6/lib/libceres.2.2.0.dylib": "bc9a4550fc239e5b73b3f8105d33236f161cea8a6db3822502a3dd00ff2c7736",
+        "/opt/homebrew/Cellar/dav1d/1.5.4/lib/libdav1d.7.dylib": "60c3a42a79582241ac77bbbba4c0137c2209204aecbc59e5d6392c2dc0a5b439",
+        "/opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libavcodec.63.1.102.dylib": "9ce2e6d93ef08a6674ff50a9ab329694c398e8280779c43e7eaffc6fe067db9a",
+        "/opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libavdevice.63.1.102.dylib": "0c67c6e5c9abe90af71987d3497d22f6a11e9918f188195fb9c7d386ca190e1d",
+        "/opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libavfilter.12.1.102.dylib": "72bc05566b584faa564859815c50ae95abcc5c177812d0fe84e4b5b60014fce0",
+        "/opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libavformat.63.1.102.dylib": "282e63f30f3fd0c8bf5dd41493d0764f67a5140683cc74134912816fa51efbae",
+        "/opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libavutil.61.1.102.dylib": "fece27810ff85c21b2eab640428c737cddcbf09105bac16c3f4856ec721d8818",
+        "/opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libswresample.7.1.102.dylib": "08f4884a5b93a0e9fca2656c4eba8d967c94c329274291d73bbaddf226b470a9",
+        "/opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libswscale.10.1.102.dylib": "5aa9795516bd448166c6301df93fb0a3123e58d10db0bb694a248b092b39069c",
+        "/opt/homebrew/Cellar/freetype/2.14.3/lib/libfreetype.6.dylib": "3e85a7f40549dc2d42d68fcd5b18eefd5a41079d1b5a5933888c585b8e1fed9e",
+        "/opt/homebrew/Cellar/gcc/16.2.0/lib/gcc/current/libgcc_s.1.1.dylib": "5b741a6f933be1fea16db7361121d178bb88b81fc8c567846d1d5593bd0cc146",
+        "/opt/homebrew/Cellar/gcc/16.2.0/lib/gcc/current/libgfortran.5.dylib": "09c11f298a73589b0fa79d93bad7fda25c29055999b5c331507e02f456bf1775",
+        "/opt/homebrew/Cellar/gcc/16.2.0/lib/gcc/current/libquadmath.0.dylib": "6f885df6ad8277edf614f0f5f7fbc6f8564a95b64679b88fb860382c9d1c0e9a",
+        "/opt/homebrew/Cellar/gettext/1.0/lib/libintl.8.dylib": "be8f2b23ec17bd294c7bd4fceaa00526c135b6110a55598b82b3aceeb533a601",
+        "/opt/homebrew/Cellar/gflags/2.3.1/lib/libgflags.2.3.0.dylib": "250d086291645b337defd6af5736db421b0f3cd4161daba73565de06e7d03730",
+        "/opt/homebrew/Cellar/giflib/6.1.3/lib/libgif.7.2.0.dylib": "77e036a84a310be30185307d58f62c8a165e89c563951394ce50ecf396d9a78c",
+        "/opt/homebrew/Cellar/glib/2.90.0/lib/libglib-2.0.0.dylib": "e23a6acee2d81c533320953756b9d5151201b762d6fd12a332b1bd8acc110d14",
+        "/opt/homebrew/Cellar/glog/0.7.1/lib/libglog.0.7.1.dylib": "3dc43acebff76f0617c36ef0b5239dcdb67584dffc0a030cabc1c7e1429a0a90",
+        "/opt/homebrew/Cellar/graphite2/1.3.15/lib/libgraphite2.3.3.1.dylib": "fc59eeb61994433d7dcd349848db14951be1fac332349872ad03f86361473153",
+        "/opt/homebrew/Cellar/harfbuzz/14.5.0/lib/libharfbuzz.0.dylib": "6b9751b1edf515e346410d30aad89921203b6eca871bbc718299c73122e41f5c",
+        "/opt/homebrew/Cellar/imath/3.2.3/lib/libImath-3_2.30.3.2.3.dylib": "5f8f052455e1f32fe968a0f68b8ae86e69da954ff79755f9a94ac4b424a6fd4c",
+        "/opt/homebrew/Cellar/jpeg-turbo/3.2.0/lib/libjpeg.8.3.2.dylib": "f001712591dd976f2d582fb3d22571dab35ff548e926c4e3da3954dbc6c9ac3a",
+        "/opt/homebrew/Cellar/jsoncpp/1.9.8/lib/libjsoncpp.27.dylib": "dee0ea406ef58b09f448564c9095f8f45960e81496766c089b641a8ef3dbf458",
+        "/opt/homebrew/Cellar/lame/4.0/lib/libmp3lame.0.dylib": "5150d16a2b09a8f6f3475dcc837fdf5435d4f97e817ca12306fec8da5614647c",
+        "/opt/homebrew/Cellar/leptonica/1.87.0/lib/libleptonica.6.dylib": "4e520fcf5ee6327d9fc8a151b6ab94e91474c1fb6317a1f2510217fb4ce3cbcb",
+        "/opt/homebrew/Cellar/libarchive/3.8.9/lib/libarchive.13.dylib": "d16c676c5900e0b4394ba227be05f5fbd4626222533d68c82be80a1f898b6f24",
+        "/opt/homebrew/Cellar/libb2/0.98.1/lib/libb2.1.dylib": "3b47cc062d3b2547159844fe700b96c9a3c912e5eeb39101af9a1b5d4b83b4e2",
+        "/opt/homebrew/Cellar/libdeflate/1.26/lib/libdeflate.0.dylib": "9d9dbada77f94f88e856d42731b1dc9f0004e922aa4c441557f383b2cdf5fcb0",
+        "/opt/homebrew/Cellar/libomp/23.1.2/lib/libomp.dylib": "432b8d15fc1b2431f937bba89796a32daaa2dd464eda12a744d9cb2818842477",
+        "/opt/homebrew/Cellar/libpng/1.6.58/lib/libpng16.16.dylib": "226f9b3f071cc7fcecc4909ea34fda44c041db9b25f23969e50b076ca1326cc1",
+        "/opt/homebrew/Cellar/libtiff/4.7.2/lib/libtiff.6.dylib": "01ad3e6a7fa258bd1008bccf8b840aa1c5d580caebd6650da2b9319018fa304f",
+        "/opt/homebrew/Cellar/libvmaf/3.2.1/lib/libvmaf.3.dylib": "f9ca4510cb08cca61ecd571fc417f2b4440c25555fbeefdb4b5477a35891de1c",
+        "/opt/homebrew/Cellar/libvpx/1.17.0/lib/libvpx.12.dylib": "b434dc31541ec72a484c209b412579dd1be79f31ed7a5667724a5f0eec20450a",
+        "/opt/homebrew/Cellar/lz4/1.10.0/lib/liblz4.1.10.0.dylib": "3ce8bec34557e6a5c76129cef6588dc59959caa51e1e54321f45ea7c6e528e07",
+        "/opt/homebrew/Cellar/metis/5.1.0/lib/libmetis.dylib": "e0b42177690c1af9621099c342497e042016f858752ac6daf97487b4c9feaaff",
+        "/opt/homebrew/Cellar/mpg123/1.33.7/lib/libmpg123.0.dylib": "25751ddb9880cd94b3aedd668b24305edfdcd88454d5a06077f72d93fab82b20",
+        "/opt/homebrew/Cellar/openblas/0.3.34/lib/libopenblasp-r0.3.34.dylib": "aeb5f40d3b5cc0fca84e05e90b8e7da6921cea2c33ca701062b0ccd7b4caf117",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_alphamat.4.14.0.dylib": "aa2609a5a094bff87ef5222db2a25946ddfb73e72dd48780af5ce144caf8b988",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_aruco.4.14.0.dylib": "457c4749f0c46f062ef0fb6c2c1269a69eb4d888fd22eb5006e85d20a6b4f2af",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_bgsegm.4.14.0.dylib": "a231cb7d3122c2b5258d0305ca1dc876b41ec5e248b908eac1e1d2a899ff15b1",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_bioinspired.4.14.0.dylib": "20e64f124b475cb8be9d70ed7dcccb65a09ef2c11683a1638b897a59143da77b",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_calib3d.4.14.0.dylib": "106568a3eafc54734cf64a1481b5c0d3517c6fa73f6b509f69b8fb1ef7ec0ede",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_ccalib.4.14.0.dylib": "886b8521ccc52fa75aebea22aef95cd4d1be1f30a6abe3c7113bfc866f9254a4",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_core.4.14.0.dylib": "cbd642641178bce8db67fb5a4f56f09418f09a2f9120ed1da2fe1e24ab33c8fb",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_datasets.4.14.0.dylib": "0453266f0f289e08be5ee64cb4edfbff1c0c77a7af17d945459bbe207e8e3ab8",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_dnn.4.14.0.dylib": "626955043a51f5c562f0a9da130618c948f0b0b8291875fc22f228a4c6bbf177",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_dnn_objdetect.4.14.0.dylib": "450aa08c8a15a5a8e3e866dbac6d234b4f01bfa67422d25ed966bebac4137071",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_dnn_superres.4.14.0.dylib": "6d6f3321a001ab79268115edb822601359ebe9b410a8d9c215e5589878442741",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_dpm.4.14.0.dylib": "343b03c3b856b190af4e4fb5cbaf2b6a3b92f555fd02d26203235e954fdf6c30",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_face.4.14.0.dylib": "65287349c4d2b949ecb297c51c74d03a109fd53e3e46d4bcd862da8ef41181d6",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_features2d.4.14.0.dylib": "313dd17c9238966a75a3381ea81cbd32418a3dbed13c02b6c714a206d49784c9",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_flann.4.14.0.dylib": "894cf16b1983f79d6e5ead940aa5636de0b856c81226b5026fb3480e63a3288c",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_freetype.4.14.0.dylib": "cec68eb4a77a6f4ba97c7697f853c8bb4f76dbb95adaeca22aca8985f68e5862",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_fuzzy.4.14.0.dylib": "aa2399eabb8373ffe0bd17cc1d35729c728d5ff7839ea1767d385d2b771cb289",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_gapi.4.14.0.dylib": "197518e592f9bbc4dcb5439d9bfef707233951775ebc9bb73674b95afe7201a4",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_hfs.4.14.0.dylib": "26f022b5ff1c9784f020d749ed5d2ac47961fab7c7c9b31ef40ae28281df7795",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_highgui.4.14.0.dylib": "0ad094b6874cb37f709a755ff341aa3a90844da1d52d8a274ea78455dfc4d773",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_img_hash.4.14.0.dylib": "6e1215d0d408f15ec02ddef5c4ed0fe6d3142d2378e18024009fd7ab0dbd4454",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_imgcodecs.4.14.0.dylib": "5741d8794de0fb73bbe6428c2cefdad391c301d083b09dc238bef4eac4f41a7c",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_imgproc.4.14.0.dylib": "6643d2fd198ee10eb3aefc351c01269f089d49645e5d65e8b2d7c6ea06ffc224",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_intensity_transform.4.14.0.dylib": "200d8ca1910cbaf72835e803e4e8fde968beb4eeaa3b769c43a0ed3b6ab05147",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_line_descriptor.4.14.0.dylib": "c7f250b1ca36ece043d2df5b0b7f9ba429b19f345dc6930b7fddc81f6e7e3da0",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_mcc.4.14.0.dylib": "b1597099af9c29714e0713a3c7f5a7ec72c9f62a1ac5b76bdaa041ba89ef6bbc",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_ml.4.14.0.dylib": "1e27e966fb1230b3a4546e2b0f9b36e4a3734724acd3e73cbe8b76b9d3976054",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_objdetect.4.14.0.dylib": "3c426b1705c6054b2aedeacd0a25eb10fdd3168f425a522fbf8d9b01463a420c",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_optflow.4.14.0.dylib": "682b36c4d8f88eed9b8b31cbd945187712306d497448228676615f446b3a7341",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_phase_unwrapping.4.14.0.dylib": "a3c6e45279884b484b6bcafa21f5ab4349a64f751859a4f2c1d2733b038eea53",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_photo.4.14.0.dylib": "f086866eb1f39507be32c0f3674a21888da283bbee235ee266cb5ae55dfbfd3b",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_plot.4.14.0.dylib": "e4a057e914687ac4148c672bfc2021e9c246e6fe0ee22e86cb0635ca1cc14011",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_quality.4.14.0.dylib": "0324ad8c91edfc5931208b339e2d2eff86dd866856f6b22cee8c21aafda0f556",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_rapid.4.14.0.dylib": "427b5caa4e7581dbe988409e5242799ec7da432c1ef2412b59b2759268092327",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_reg.4.14.0.dylib": "32ca805134f4155df0ab8c4358745b5454d6eeabce6921cd1d3b20f9f7b4fde5",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_rgbd.4.14.0.dylib": "82c05c25ae5270667bf8566d1f2df5452ec55ff3c4621963be8363a92c7af763",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_saliency.4.14.0.dylib": "d9035c4e9abeea613b38ab9e82bb6ddfb148c9b339fe10cf28a4ba441cf1b286",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_sfm.4.14.0.dylib": "162d3b2c86398dff5381d486c150fafd21063da2e87a372431bb248135cb8a84",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_shape.4.14.0.dylib": "70c4c3e0dd66038e35dbc4635035776dfa5b07eeac1e630b00db5572a281fe85",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_signal.4.14.0.dylib": "9c853719279c06c2e804710580b6d572cd31d097a7f463c7e44f8ba02e5ff4b2",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_stereo.4.14.0.dylib": "dfda5304925aeb3f63be702367aee5995ef1f669cdd5a524156b8e24fecddae4",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_stitching.4.14.0.dylib": "b6719d3eb8632cd129f7c81d778f86962cd264b7fa53aec1983e51166bf6c785",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_structured_light.4.14.0.dylib": "d1d33829fce3e44caf0a7139d0c73a597e1ad703985bdf5700afc465431ca7ff",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_superres.4.14.0.dylib": "d32d0f7af2924a412a691b5b5eed836e90426d37d1e04ab45dbdeb6eb4cd5bc3",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_surface_matching.4.14.0.dylib": "cc273f7d4fd1b8496bcd8fde925abd7d9623fc0ac37d0d1c08ae714100520d1c",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_text.4.14.0.dylib": "fc08b4bd5cc46c1e1af4efb8bd62c74d72a244f2cf3378d652e71971d78f6559",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_tracking.4.14.0.dylib": "f280b0eeeb73bb5d63740c7c2b6835a20ad03d8c7d6974bedae5a74b131581a2",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_video.4.14.0.dylib": "34a35fb4e276c33e66c944076eba0f42c9eba4006f1f1b3a2fc2e57ed57bf442",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_videoio.4.14.0.dylib": "5811059d72ba924b37ea0ce135c330ccf516515b295df8c0222d836811ca1ca2",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_videostab.4.14.0.dylib": "3a0e90358e746dfe30518260d72bcb005eadbfd57cdf1f88bd18a50c35ffafea",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_viz.4.14.0.dylib": "5c27798a4c0208a5f6a212e9bead7ac2ad189403111bb4e9e87090cca88be195",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_wechat_qrcode.4.14.0.dylib": "3b83b7ea8ef098c6904d4bd145e3d24aaa3f8e00e4eaef8f1ca99d7e5f1d58ea",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_xfeatures2d.4.14.0.dylib": "08f9a8198ff243c4ad3915e291c986bdef970c271d85d3e1c5ba4eb259bde249",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_ximgproc.4.14.0.dylib": "958070869a6c6e53dfb444d75b0fbe56d64f12510cdc9cee8971dea105340f04",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_xobjdetect.4.14.0.dylib": "e5c44fab5d63187ea59b882c70abda26a567344492c67b5fc4daa847b72bd80d",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_xphoto.4.14.0.dylib": "bdd7ebad35ca0fde281df8a07a47de22f5becc4ff6c1f701c6907276afe488e3",
+        "/opt/homebrew/Cellar/openexr/3.5.1/lib/libIex-3_5.34.3.5.1.dylib": "30986d991a86d334e2bd48ac22fa90265e59adcb49659e7f9a9bc4f048d1c121",
+        "/opt/homebrew/Cellar/openexr/3.5.1/lib/libIlmThread-3_5.34.3.5.1.dylib": "141a2d125c91a46a1875a182ebe11856ed0252aed5b5ec533af159e24205b743",
+        "/opt/homebrew/Cellar/openexr/3.5.1/lib/libOpenEXR-3_5.34.3.5.1.dylib": "12490fb428920c893f22fb5e3bc4a1952ecdfa2873fc9ae8a0cec31f83f16353",
+        "/opt/homebrew/Cellar/openexr/3.5.1/lib/libOpenEXRCore-3_5.34.3.5.1.dylib": "47238c833ccd5f09fc026846a4f192a5d38d370c1038521b7309bd8e50ca94c7",
+        "/opt/homebrew/Cellar/openjpeg/2.5.4/lib/libopenjp2.2.5.4.dylib": "703be79d7cd53ceeef6845ea5e5887e514ab85cc6dc81159b76fb420ee05f530",
+        "/opt/homebrew/Cellar/openjph/0.32.0/lib/libopenjph.0.32.0.dylib": "e3ed75fcdb86ee16e590c8322804dcbe26577ada4839957f0c2775761955753f",
+        "/opt/homebrew/Cellar/openssl@3/3.6.4/lib/libcrypto.3.dylib": "bae675614cd791d37ec35416ea9f87edcc85407d020810504cf458119b63522c",
+        "/opt/homebrew/Cellar/openssl@3/3.6.4/lib/libssl.3.dylib": "c6ee373222087cf31bc2f3817537d268b3c23e56b7fadd44bbf5c2317caed349",
+        "/opt/homebrew/Cellar/openvino/2026.4.0_1/lib/libopenvino.2026.4.0.dylib": "b611216648bbb82cc94a86f6488ea300fde121cef9f002246a89320db96fa5d5",
+        "/opt/homebrew/Cellar/opus/1.6.1/lib/libopus.0.dylib": "435581a316f3dd41982f3101caa6be6ec974572e31765cd0e29c7cbe30198609",
+        "/opt/homebrew/Cellar/pcre2/10.48/lib/libpcre2-8.0.dylib": "6b698ffc744550e149829d94045912448b8ac4b692cb267dce9fc2f3ed60659d",
+        "/opt/homebrew/Cellar/protobuf/36.2/lib/libprotobuf.36.2.0.dylib": "6922760a25d855b76f45974f3754f7689cbb74b29de54064e739da441c12603f",
+        "/opt/homebrew/Cellar/protobuf/36.2/lib/libutf8_validity.36.2.0.dylib": "513a54c31d9fdc422d6a9cbfc0d7aca6ec628b2a8ac21e851af4645267edd58a",
+        "/opt/homebrew/Cellar/pugixml/1.16/lib/libpugixml.1.16.dylib": "ea73900321be5a7b912dc31e576ba06006c078a41d9698dc92d37167c7d8407e",
+        "/opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libamd.3.3.4.dylib": "83e2517b8a1741a814e18d8c3aed9ab5745ff4c73d5ddf887b40d24bb60de6c7",
+        "/opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libcamd.3.3.5.dylib": "1930e9f68e4df3500c628586d53c19f99f9283d2823f7dbeda7464cc8f312962",
+        "/opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libccolamd.3.3.5.dylib": "492c571ec588965331ec2e7bbe986991ba4104147317f21d1a0828df58298fcc",
+        "/opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libcholmod.5.3.5.dylib": "c72517ccf51151d4922b6cdf81b65d5bd4c8cf8580f111ad32dd6a0e6ac49fef",
+        "/opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libcolamd.3.3.5.dylib": "5ab1945d8ecb7fc3b45dbf3316e1ec157d45d29d7551dc1e25800400d7953b96",
+        "/opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libspqr.4.3.6.dylib": "bedc5c57ce0399d94e227eddceadb04427b5746b9c500cfccc3edff1816bda42",
+        "/opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libsuitesparseconfig.7.14.1.dylib": "1a2f1fd9b9efc8847ffbb06a5dfd0b9cf710eaa0ee87b521082ec280e1d88b00",
+        "/opt/homebrew/Cellar/svt-av1/4.2.0/lib/libSvtAv1Enc.4.2.0.dylib": "bac7066bcd47c31971f61e57cdd0eccabb2ec2ef3ca5aa1e08bd5ca51cd54608",
+        "/opt/homebrew/Cellar/tbb/2023.1.0/lib/libtbb.12.19.dylib": "e8f5dbb74fed228aca558cb6edab6ade436dd295c724a02e66450522dd85ffb7",
+        "/opt/homebrew/Cellar/tesseract/5.5.3/lib/libtesseract.5.dylib": "0822b7d61b76160c97a8f11f53281359f175b832d9fc43e0088de85264bde0f0",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonCache-9.7.9.7.dylib": "85c07c15e1229d0dd7294b01a35e4c618f499067ca4adc644571b38cac2d76ea",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonColor-9.7.9.7.dylib": "e1bdf04bf50181a2d82d39f396e820b828b9eea2f63ace7b1986112d53f42daf",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonComputationalGeometry-9.7.9.7.dylib": "ff2a9dbeff1001852a9a653337f32e72888c6758e13aa98c3cf521f8052fe366",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonCore-9.7.9.7.dylib": "85e93e23d8c1b1899a43c1f01993605b89046eb6c5ffc31f211d29a5f89744cc",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonDataModel-9.7.9.7.dylib": "9848883166987e14bfdb3200aa6c5f4d032f9abc7bb230bf6b263e3a1a1799c2",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonExecutionModel-9.7.9.7.dylib": "15d39fa05c192b25c9f12d1f4a8eb48e96e90b3508324e1987faa497b6cf5fb8",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonMath-9.7.9.7.dylib": "d9f128d80e64e7b46a6d997cbfbd91678d26b4fa1fe4fdc5918cb1e7d3591dbf",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonMisc-9.7.9.7.dylib": "89aba4966718485e974a81b20ac267ee60d83b7575fdade79cf784faa1403ab4",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonSystem-9.7.9.7.dylib": "41a1f7b6e30100ebddad90f93fda2060e40474ff56eba190f79146a52763bfcf",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonTransforms-9.7.9.7.dylib": "a24e5054701a513763ea436a9c4401e655e4288b056788cbf4917d153892ca96",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkDICOMParser-9.7.9.7.dylib": "27c629371ae827a42f843f4cb9ef2ac557363eb0407a495dbbe608c195794abd",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkDomainsChemistry-9.7.9.7.dylib": "354095bd09b77232a3b8afd39e1087b378aaf405909365475166d929a5f0a5a3",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersCellGrid-9.7.9.7.dylib": "ceceb2eb4abecfb81f580b4fc69c5a697881b84fccd9997e2f1448c35eeb70d0",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersCore-9.7.9.7.dylib": "abc1e273db02e6e078ed79cdfc305a1d38c617873a3d1073151f02c798896ded",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersExtraction-9.7.9.7.dylib": "62809c46865154408f3f32e6a677819cd52c6d5490636fc92b6591ee57431777",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersGeneral-9.7.9.7.dylib": "e9ede42a7eee1e45bf4158d6b081728f7be65888e874d532305a49739f2bc53c",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersGeometry-9.7.9.7.dylib": "c1dbd5fdf4466a67804dbf7040c80a9f49311ada5dcf7027c1e6dfed580286dc",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersHybrid-9.7.9.7.dylib": "c648d06c4579f1727bcff4458986850cdef88fa924508e29c11b304258057f04",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersHyperTree-9.7.9.7.dylib": "ba29073fefdadb8531e8b3cd3b1bc7cd8076e044c51e1e0e97760a31aad75ce1",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersModeling-9.7.9.7.dylib": "e748c8207ecbaee97b0ebb8c64ea04dcd96f577829b8032a65c9f0720191f533",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersReduction-9.7.9.7.dylib": "e88807b5d1aed0fc9d69b257daf3c7badf7b2cbea18d1233ec985fffd643dfdc",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersSources-9.7.9.7.dylib": "c1d3f59c246260551cd0f8d09aa936b9afe9fc8ca892a4b7aed552b5d9b330f7",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersStatistics-9.7.9.7.dylib": "4da3942802dbe927b3d6205e5b31fa8d4c8081af198a6edf4b5084d5b4ff2f4b",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersTexture-9.7.9.7.dylib": "3598a4c8af55282cde1dada1615b3796dfea8e6cae650ed7b856cbf95ffa2b62",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersVerdict-9.7.9.7.dylib": "78006102fb2631f367a3587852eb3500a2d9458bb87af242a51bdde1c7240300",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOCellGrid-9.7.9.7.dylib": "94d5c70392e1361aec72a5211400cb51329be7e46d66bc09631df0a4ee09fd86",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOCore-9.7.9.7.dylib": "ea81b37f4e4cc56e08a4d3c6f1f5ad248281efc1f607876bedab1d832450a71a",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOExport-9.7.9.7.dylib": "993dfa488c0ddfdac7032e6165374d35a48096e6e84ea2f343b545a48aa6cd0a",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOGeometry-9.7.9.7.dylib": "72b395c314e75752e57a9e0c44568300dbac9b2a95682a188b7b127f69650bab",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOImage-9.7.9.7.dylib": "69349c1f5773d5043d9471fd6af52fbce5267fb49673b8a1f273f22ec608a5db",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOLegacy-9.7.9.7.dylib": "ca72496db57766306b9c86f1f17fb4eb986d802f7bb7e0375755fe18152489f7",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOPLY-9.7.9.7.dylib": "384ed918f015cc7a0c3172ae8022e8f8c6e6769eadc037a2a29581dc33cf54a3",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOXML-9.7.9.7.dylib": "d75cc9844b22ed933a8f366b0db4a8320380e402cb27b04b64b50e1e76dd304d",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOXMLParser-9.7.9.7.dylib": "8e5cfa22aa43fa957afddf3db675183fc5d962726a8913f03286fa58e96fb856",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkImagingCore-9.7.9.7.dylib": "be61830c7b11278c2710e59f75f7bea826522e0e1ca6df24fcfe9cddb494129a",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkImagingSources-9.7.9.7.dylib": "6382fba0567b0de2c9f37703caf233a04fa3cf3c0bcd7a9f782c9ac1fcf0f872",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkInteractionStyle-9.7.9.7.dylib": "646ae4a31771d9dccf68b7870d08ca99ac6a079c2cc984444b07dabef94232ce",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkParallelCore-9.7.9.7.dylib": "dbe14f3e8203a669067eeb2ed7ce4f13e86a5544c606afcd5f5c389f58d7ae9d",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkParallelDIY-9.7.9.7.dylib": "92454e81248e54c1e9d2f6d1b9b2954bc4885fe04e1ff7ee86d9b1b83a4f464b",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingContext2D-9.7.9.7.dylib": "cf19b51e8bd5f35f79c37a24bc624ae9a41ce9957e55c6d611110bc88a46b8f0",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingCore-9.7.9.7.dylib": "f4e15f02db810cad46aa7f6507753a73dbcf9c4dba5c043e563690db964cc9a1",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingFreeType-9.7.9.7.dylib": "1cc695c4d7528a0cc37f10e57217e1acf1517dab0a1c7a6a7a4b02673690fa06",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingHyperTreeGrid-9.7.9.7.dylib": "8a60023e03f80b4113a4b1c44d600c4d4fe49157b1342865ccc43acb50627542",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingLOD-9.7.9.7.dylib": "e0196d6d680947682c6db0a48dc1dc1cce7511fdf5f2a756fdb23ec4e3ce361d",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingLabel-9.7.9.7.dylib": "6ab4f8627f0fc2ad1d38cb13734e1b13c8d827e1baab2313b150c90e4c48d95a",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingOpenGL2-9.7.9.7.dylib": "b65c7f3fff46e5824ef78d54c6e4e29b10a7e61b33cfcc3e01087432a5dfc35f",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingSceneGraph-9.7.9.7.dylib": "85631415b619769c89e4a4f333b216df67d3fc660fa24b239b171831a84ccf92",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingUI-9.7.9.7.dylib": "67fa86a125c8590dec757541f18b9b13f1658fe058af183e53347b2b2808cdec",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingVtkJS-9.7.9.7.dylib": "c79102a5f57e60c966caac1755e26a8cbdbe3b1177e280bb2e99b9712665bdcb",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkfmt-9.7.9.7.dylib": "576d3e35648425e13c8699236c582bfb09da0bc830effafd9a6c0e16c1c41e11",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkglad-9.7.9.7.dylib": "f4d9b7ebed709af213130fb09e7a36cfebf39386b234bce1d1931f57089dc6c6",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkkissfft-9.7.9.7.dylib": "095f297e66c74fd40491ce0733c4373d262cfa563646b0e2b422e91484fe5118",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkloguru-9.7.9.7.dylib": "d85c2422263adbcf0c4db4c909c504b8185275e99bebeb4e31e31861e6845172",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkmetaio-9.7.9.7.dylib": "b72239a8f24ea251a476ba3b0fc6cca394ca6e144e371d6b522aa0b771f82390",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkscn-9.7.9.7.dylib": "7a78d25368f174e51638a9a81a44c543361c411f56b8bcb32418b5b6db318574",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtksys-9.7.9.7.dylib": "ba870a063107619fd6706e8e7e25d54edeaaacd35d13298ab51617daff125adf",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtktoken-9.7.9.7.dylib": "2d9068d0165f5c8afda4e26ee1ee2bfe36931d929219e6b3a8d4d8f46ca5a8c5",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkverdict-9.7.9.7.dylib": "8660483c03b90c8608a41b753a2d57f01766705873869d308ebb1738b3714b42",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkx11-9.7.9.7.dylib": "de6558e93aef613f8f4bb0532bc2459b46b0bafd6a4d548ffea001ef116d69b6",
+        "/opt/homebrew/Cellar/webp/1.6.0/lib/libsharpyuv.0.1.2.dylib": "c003b10375a8d2bd777e4f03b28943b65d5c017821e611180932a64b2e2813a2",
+        "/opt/homebrew/Cellar/webp/1.6.0/lib/libwebp.7.2.0.dylib": "ecc407a45864e2bb9096cd17c9b2a526289bae4826a5bfa9b3c1bf0ced6928df",
+        "/opt/homebrew/Cellar/webp/1.6.0/lib/libwebpdemux.2.0.17.dylib": "829d68e54a6be7e9ed2d5c3420ef2f1918ecd01093170666186f99675bda0662",
+        "/opt/homebrew/Cellar/webp/1.6.0/lib/libwebpmux.3.1.2.dylib": "af8ce2d4ffc5e493606790cd630175ab2cf555adadea4d94d6f4c8fe366905e3",
+        "/opt/homebrew/Cellar/x264/r3222/lib/libx264.165.dylib": "e0d737b88c67ac30e8561d9267d10495529cfede1af45838914c0b522c37a26d",
+        "/opt/homebrew/Cellar/x265/4.3/lib/libx265.217.dylib": "2e25cd9a70616daf5c3aec2979bad071d577e2150c0493ddc5fd369c174d0b0f",
+        "/opt/homebrew/Cellar/xz/5.8.4/lib/liblzma.5.dylib": "41cdf225f3e10fb54f952c8eca11c8a847d095470540dc42736ae7bd761beaa4",
+        "/opt/homebrew/Cellar/zstd/1.5.7_1/lib/libzstd.1.5.7.dylib": "602d50cbe6fad0f0da6d1b73284ae3f75316015aea482ebd55614b6df2406b43"
+      }
+    },
+    "off": {
+      "actual_origins": {
+        "deepseek_recipe": "/Volumes/SDXC-512/ds41f-m43-sealed/off-env/lib/python3.13/site-packages/deepseek_recipe/__init__.py",
+        "deepseek_recipe._native": "/Volumes/SDXC-512/ds41f-m43-sealed/off-env/lib/python3.13/site-packages/deepseek_recipe/_native.abi3.so",
+        "ds41f_mlx": "/Volumes/SDXC-512/ds41f-runtime/ds41f_mlx/__init__.py",
+        "mlx_lm": "/Volumes/SDXC-512/ds41f-m43-sealed/off-env/lib/python3.13/site-packages/mlx_lm/__init__.py",
+        "omlx": "/Volumes/SDXC-512/ds41f-m43-sealed/off-env/lib/python3.13/site-packages/omlx/__init__.py"
+      },
+      "build": {
+        "opencv": "4.14.0\n",
+        "rustc": "rustc 1.98.1 (48a229cea 2026-09-01) (Homebrew)\nbinary: rustc\ncommit-hash: 48a229ceaefd4985c50990b14116b6d856af0985\ncommit-date: 2026-09-01\nhost: aarch64-apple-darwin\nrelease: 1.98.1\nLLVM version: 22.1.8\n",
+        "wheel_sha256": "0a5685c7553da8084c6a53192467be25c434018ebaf6aa325adb71a358f0a08b"
+      },
+      "checkpoint": {
+        "metadata": {
+          "config.json": "8be45ce0476004a3f529fd896115a4a2e800a129ad2d3ec05b16050f52e21879",
+          "model.safetensors.index.json": "74b0686a3d2891980d5e303251b075a3bccae2c2ff650747db2620a649b98fa8",
+          "tokenizer.json": "c90dfa01249db1be4245780a052ede752e1361c612ac6d08e2bdada7d599476b"
+        },
+        "shards": [
+          {
+            "bytes": 970533624,
+            "lfs_sha256": "886aebdafa08cc27bbae2165ed35bdfe0de9370bf88c1411283c155c6ae4ff89",
+            "name": "model-00001-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 1323858272,
+            "lfs_sha256": "4320066fc6958e5bc01d8c3feba79b7454b59f0f4b7299ab7145ed44bbf4ecec",
+            "name": "model-00002-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389759032,
+            "lfs_sha256": "e1281f85d0ce4a3dfb63d41926fc4a47fa71f36ba20992e3597e702ead49d4c9",
+            "name": "model-00003-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389759032,
+            "lfs_sha256": "79456c9db0cda3b8115fe1c726fe3db1a34b434584a3991917088a0ab56a39de",
+            "name": "model-00004-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7405953784,
+            "lfs_sha256": "4a42dc78698bee6b1a821aa01c9650749ef1f716143751f1cdb815c6400280a9",
+            "name": "model-00005-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389759032,
+            "lfs_sha256": "020a6df51a2853452561d91268a65481f7a7d7954ed47f8e6c9ce69a4a134f77",
+            "name": "model-00006-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389759032,
+            "lfs_sha256": "40f8b52f763f6380d41257e1af04eee3aad300af6a418c38e49ff99e3604163a",
+            "name": "model-00007-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389759032,
+            "lfs_sha256": "d62cca4e698f030d4b96ec624c08bed7ad604cec13077da6d6b06669281c4650",
+            "name": "model-00008-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389759032,
+            "lfs_sha256": "1ca62e4c294df31aee69a782974cb14269264fdc08465ab4835760258f05d6ef",
+            "name": "model-00009-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389759032,
+            "lfs_sha256": "dd33c9750a40cbfcdfb19cd8335d955f533e3a18b790c0ee43d1e5d77911595c",
+            "name": "model-00010-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7405953784,
+            "lfs_sha256": "a9b309f90e0d1e2252a224ed6b057b9c82c27d3a49cff64bfbfef12efd067f7c",
+            "name": "model-00011-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389759032,
+            "lfs_sha256": "b359227eceb3f839c80de19dddf946648ca89425d9b719ff44702cf5e8cfbe0e",
+            "name": "model-00012-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "41d87a4c81fec1550f9cb975db05598a18ee0161c2664e8e1a0c7b60742755a6",
+            "name": "model-00013-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "e7ca4a12688a5819829ead3a03282aedb380e438bc41a00e969f70952c6d0eb9",
+            "name": "model-00014-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "fa9d49314bbb25118b3d52c573ed66a4d0acfb01dcb26d8367f43c66a52f46c4",
+            "name": "model-00015-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "07d08bce9d73d416eaca0f42843440a8c45c5f939eff1a3690fb460d8dd7f623",
+            "name": "model-00016-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7405956128,
+            "lfs_sha256": "3d35e330a6c28cd59a06a1caab8b0048f7e12cc037d728736f74431c4c0a1a4c",
+            "name": "model-00017-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "48bd0c28b7f441f131f562cb664366d7726447a3698da3dd56ebbfeb1b916c75",
+            "name": "model-00018-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "b7a25cb64a959ca5e5a99e239bb1ba2092b9bcf022bec4ba71f7441334107bd1",
+            "name": "model-00019-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "8aea8c4026ba4b93e82b4ed1b6b4620d02b6aaac88d211aaf577acea443aff84",
+            "name": "model-00020-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "4cb6558dedfdc75a6be472e27bc3e830d8443a3371854e61dc54454a1b5b18f7",
+            "name": "model-00021-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "81031b68c967539a7c51d1b12d37d18de926ca3045ec554ccdd49a83b4dc0084",
+            "name": "model-00022-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7400713088,
+            "lfs_sha256": "096723fc8afa9886b976fb63aabef159406dc483e6f2a41e3fe386435b0436cc",
+            "name": "model-00023-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "c9438ff607bd902fdeb38267d36239ccf60d38595988364562b862791841da75",
+            "name": "model-00024-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "4227ef9fe34d10de584d67250845fab905cbd8462fd84d9da24d772f223db6b4",
+            "name": "model-00025-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "0af8c8f1b96b502eda652a0549cf55cd8a4d472a34d27ef9bf1c1d7c4567ca3f",
+            "name": "model-00026-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7395337384,
+            "lfs_sha256": "3066bd03043726d2400302cb9af759ec4e3957a935d56e241b83b52870322e28",
+            "name": "model-00027-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "9bc915075568b75e2aec9c645cc0fece6287f115c32031a52ab4f9ba9d12fde6",
+            "name": "model-00028-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "d153dd9cde7c4aa7ea9896cf7aa25b49447af573f90ad14cfaaa532fbbd19434",
+            "name": "model-00029-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "3c9ccd96e908e00f02a70930b0821a6c53e5301376a261284a092e1aea7bb5da",
+            "name": "model-00030-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7395337384,
+            "lfs_sha256": "0de7b6d7142df18ad45a215e9c0ef004f78cdbfefd59cc16345b2bc004047343",
+            "name": "model-00031-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "6a5aaa73c6f97294bd079914ba44209ecf3d0491c8b95ef9995655511e35aee6",
+            "name": "model-00032-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "386e3e91f7f02f7e2c25f398b3a63379051c2077839b3081f7556e18c29a69c9",
+            "name": "model-00033-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "9deab3c4f27c956f91cd989d9a1f6cf4bbb91858ce3f7164caa5ae61125c943f",
+            "name": "model-00034-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7395337384,
+            "lfs_sha256": "226573bc07f35091b0ec27b0056ab3059f9bc1c0afd0bc104c93c86dd029cad2",
+            "name": "model-00035-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "90d6a85c1eb0cae68c6c7bffa11b60654ea00353d27a0ae17701b72e239894cd",
+            "name": "model-00036-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "207aef18f995fdfe7506175aabd700aa62dcf6f488c7cc375e9de06f56891b83",
+            "name": "model-00037-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "cbbaa0b0807311807a696efec09f9b5a5d63bdf68b82378e1fc7402a2533c627",
+            "name": "model-00038-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7395337384,
+            "lfs_sha256": "f4cf191547b50efbc35c4ed1f36cfb26043d94f987c49d54b15ef2d632a14a77",
+            "name": "model-00039-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "e991bfc416055c45ddb89f1447eae1e67dba2816e7580044ffff3db7e2af27a3",
+            "name": "model-00040-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "48a1c08afadf4e73223c587f9c6ad6f32aef57c01342ae75e96b07a001711d42",
+            "name": "model-00041-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 7389761368,
+            "lfs_sha256": "e1a4d5d30ae51bafda75078d49b05a585c924b0af9b3481c075b04341507c2ef",
+            "name": "model-00042-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 1323837624,
+            "lfs_sha256": "d762b688f138e00a24eac96f27b842715bb4b534ecc9ca39076bed2b8c33201e",
+            "name": "model-00043-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 2652728736,
+            "lfs_sha256": "9a6b39fb88a2510487a8efaef77aa7864e8061f6b62c95a0f010e9dd538f3b05",
+            "name": "model-00044-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 2573998176,
+            "lfs_sha256": "0cc9d5f6ca3a2158ccc63ce2c70c76aeda8177d54913340481af566680329eb5",
+            "name": "model-00045-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 2706402896,
+            "lfs_sha256": "e625902027b9d23d416f8818c665fab4704e0b96dc1bc778321601b700475a9d",
+            "name": "model-00046-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 101535150936,
+            "lfs_sha256": "824db4881320407ac340736d14dcee5ecd748c27d0f5836b8127ecc2e3781b0f",
+            "name": "model-00047-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          },
+          {
+            "bytes": 101537926640,
+            "lfs_sha256": "976330f4954338e1ad8b508c32aa912032c7ad908959fd53c8307650fe4520ed",
+            "name": "model-00048-of-00048.safetensors",
+            "source_revision": "dba1be0a40aa45a94ad051997016db3960a90277"
+          }
+        ],
+        "verification": "metadata/source inventory only; weights not freshly rehashed"
+      },
+      "identity_sha256": "1cd32c5778d920211212f990c74f60178bd5d7a29b968fecfca14d29c7448520",
+      "native_links": {
+        "/Volumes/SDXC-512/ds41f-m43-sealed/off-env/lib/python3.13/site-packages/deepseek_recipe/_native.abi3.so": "7ede8ed543e41fa5f0b13ae7a45188b903fa77cbe3097b12853e339c00d900ff",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_base.2608.0.0.dylib": "9375f0a888e642b904fe3650d33a901529f361163a7fdb269f2869881a61f8fb",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_base_cpu_detect.2608.0.0.dylib": "40004034f363e6649269c9ecc88aa8ab4be94c528434fb14f4cd90af65b271fc",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_city.2608.0.0.dylib": "6378d401843f3b7ebc8297ea6e88db4afd29c69ee57f146867f7ed2662d71d6d",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_civil_time.2608.0.0.dylib": "d44e2c2f4f4f479ba1b3f4717e2a896b303096a7f0d507972e72e625de535750",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_cord.2608.0.0.dylib": "6d1b41a0a9f9cd6d3f47452d6afe9427fb0e457c29093e426db07fd17d6bea3a",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_cord_internal.2608.0.0.dylib": "dd11ec6d26a3bef6ae56e732add0ad94b6b4a498599f7b361b45d7239d7a193a",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_cordz_functions.2608.0.0.dylib": "5aa0f143cffdab249833a76fa6c3731bf13785378870c7e37a1f670ecf490a08",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_cordz_handle.2608.0.0.dylib": "7a8276e1ed0f2eb629b8d326dc2ec429b4d87254d2dc254e28cebefc111d4448",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_cordz_info.2608.0.0.dylib": "03ce4fb8ff4913f54fcf426f7a0ff1d5bad8a39cbe5294f7bb6427a48ab8d605",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_crc32c.2608.0.0.dylib": "e67f10b791f0b32a670792c9017d983249cd65fad8cad7253176579f2d0e41f8",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_crc_cord_state.2608.0.0.dylib": "554c8a81c9c7c7a07bde0095f1b5fc9711561a1489f3556fd82e57e50a32528e",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_crc_internal.2608.0.0.dylib": "4340bcdd787f9d086ef4aa74d0c01368393675362ba34c959e71477a62412483",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_debugging_internal.2608.0.0.dylib": "014714cd2ad9173c9db60213deaa9e0a65262170de39047a6ce5c311629a9aaf",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_decode_rust_punycode.2608.0.0.dylib": "574ba91bf156937fc4dc1ad6833b6bcfadf25969395d03f10a0975d8456a97e4",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_demangle_internal.2608.0.0.dylib": "fc0e01f38f27757e2afb4bac191a97faaa0aeab3f06e68b50f030ee2032f31fa",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_demangle_rust.2608.0.0.dylib": "3e59c1875a507a8c900356b5a15915480d85c54c2118b2745ac5f198c20862d8",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_die_if_null.2608.0.0.dylib": "0275370e19a90371009483a7348d5160757c8312e18d1c410ef2d343786e4a55",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_examine_stack.2608.0.0.dylib": "b12eef962f1a986ed031d61b62c9fa62efebd93b819378eec608028b1ebc0ccf",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_exponential_biased.2608.0.0.dylib": "879a00b1437013bb55a7a54f60307e2c776fb36181e1d5ef937add8e59836e62",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_commandlineflag.2608.0.0.dylib": "b6ffea01ddcd47fa7a6ae1d8964deec648fe79f017cad7c801d4facdcc372766",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_commandlineflag_internal.2608.0.0.dylib": "1a90a430a02893a71c312cf25abd3c15b1127097a5affe1a2d5e65a2660d8440",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_config.2608.0.0.dylib": "ec8ce870416357fbbae8381e2e7a2829b771da4d491dee6ed09f47bd34a1c9b3",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_internal.2608.0.0.dylib": "6682944682aeb2a76241c31d3a1dc4ecfc8b9a66e31908494be962e7b098d61f",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_marshalling.2608.0.0.dylib": "26de3eedff3c30a111d4273cae082dff84415ffe12106c673bb4a061183b517e",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_private_handle_accessor.2608.0.0.dylib": "aa85fefd92ef84fd2698b80b152977d828b8166954c7c211983d2cabd5c065fd",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_program_name.2608.0.0.dylib": "1666191cb60067ae1e47f793cbef31662b0863dcff75f00e80541344d7bf0bfd",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_reflection.2608.0.0.dylib": "e41a1915283ef3a208266d9a7b60514567d7ca0cc3523fb04d52edee4c04a950",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_graphcycles_internal.2608.0.0.dylib": "b4c0ad5c79f8e9ceaa61568ed1c5f093a8b4435b6f77db2f2b70872a688081c0",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_hardening.2608.0.0.dylib": "232e5aa6f0ad4109edc57aa5f86152f278290030d118e881f5fd1c24e2df2020",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_hash.2608.0.0.dylib": "ae38554101cdce65c3471a449acf1997411b5e1e9f07e70000f4fe4cb2f1ddf1",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_hashtablez_sampler.2608.0.0.dylib": "92315be32b893b239f188a11ee08ce3bef737bee39049e685285d6d7ec65b1db",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_int128.2608.0.0.dylib": "c9b9a31bdee2b70ba6434cb85c8ae3d289de554f3b81060829e41df50cbd20c3",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_kernel_timeout_internal.2608.0.0.dylib": "c84e6e220544faf63fae49e07b4b611de31ad8c51dd541018acacfbd2b826302",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_leak_check.2608.0.0.dylib": "97dce3e7137cf6df6c03653b8af3182fd81552e7c43b4306584fe32397f26a44",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_entry.2608.0.0.dylib": "948841336bd3da61fd7a9a6238d8efff57f682c238d67d2bbb57b35c8acaf5e2",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_globals.2608.0.0.dylib": "f82e96f8f54357aff361bdd6cad92178a861498e3d5d56c38b5d08fcdb26fe39",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_initialize.2608.0.0.dylib": "030964b8b27174c92edb581454b7f184a891c56bac933bd1f6877f260c8c5d83",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_check_op.2608.0.0.dylib": "28e12bf31d25cbdfeabc600d7ec0a617579a5d14c22d9d56ca2a08862f1cac2c",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_conditions.2608.0.0.dylib": "0bd29169a52ce9d164abcb880db55546faaffbf8bdb6b2e590a915177c6834c2",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_fnmatch.2608.0.0.dylib": "79e61c46c1825291ecbe9d59c16afcc57eaa1c5a61cd107c7adcb70c33371b4b",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_format.2608.0.0.dylib": "3f66fb51ded366962df7beeabf4df7fa0b39fcec7bdcc2c8682f3e7b81e506ea",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_globals.2608.0.0.dylib": "bf5f10661c46033ab49a503500777d97401624b574f04e26f7bf5c894b3ba1cd",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_log_sink_set.2608.0.0.dylib": "d867270923f5e939962511e9e6b9fa86e99036ce9d430ad26a2efbd290f3769e",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_message.2608.0.0.dylib": "eadb5b8b7424b3e5b701262016a33372e317bcb2dc7b239fe09147f4118f3eaa",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_nullguard.2608.0.0.dylib": "c8e2340c79646a95c82006225db3bb6ef05346f106aecd0fb154650e7095139a",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_proto.2608.0.0.dylib": "a98c2018e6840c3faab7867f12fbdbc4e9f9177bace14df7ba8f3ba6d58072ca",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_structured_proto.2608.0.0.dylib": "560193e67aac58152890142c9b0fe40e336153650c09975a63fe6eb96cbf6cac",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_severity.2608.0.0.dylib": "6c055cd4d49dc57c6a2dc6467f2ffbb3e2edde947b299149bd5e7694cf830a11",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_sink.2608.0.0.dylib": "19cd121f5d779e55bc03f557b71a2420c86db09632e6e6bbd07d83b9b67c5f22",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_malloc_internal.2608.0.0.dylib": "a3bcd539b4f5ec9ddb1961b3b30bb774868983d605b54eac80ab50e9d3913205",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_distributions.2608.0.0.dylib": "c7c730f0486843cad739e269705cc65f8658bcdac89550631ef717802ea87edd",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_entropy_pool.2608.0.0.dylib": "64fd8cbbbaa53b6256f31881093ddc722fa16eccd13b4e15b4f394e601ca1b0b",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_platform.2608.0.0.dylib": "75a54b4ef6fa63544b222cb115fc18f07b1ec77e93f2bf8905d99cea55219c82",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_randen.2608.0.0.dylib": "2e8ba5db30ee581f54f7dfeb520cc91104e070c11a5d8d713dd6bf814a881a52",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_randen_hwaes.2608.0.0.dylib": "a283f5cda345a6fc8a02b47e477c642d08a89ac42d6bc18da83b38b94a3039f4",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_randen_hwaes_impl.2608.0.0.dylib": "55f13df6d21a5ffdec490611970e302b7a85cc8f2ae0cb8821b2a67a973c4d23",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_randen_slow.2608.0.0.dylib": "d32f7d2840f1516c1e586bb7dc784cc0da3082556199b353dae5bcafd8fb3a20",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_seed_material.2608.0.0.dylib": "9e492eeb4f4316f9078a3af28cb51d2a5fc498e419126cfa31ffc9f4f0a15ac4",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_seed_gen_exception.2608.0.0.dylib": "8309b5e78727bb89272878e839c4a46ce2479de111672255bd05c31114e8e0d3",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_seed_sequences.2608.0.0.dylib": "2f4fec150fee6bc388e8e207770c3f33d751d4a595271e99998c252a3d04b1ce",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_raw_hash_set.2608.0.0.dylib": "af8f05c217ca1e6ed1447822f8d89e4a338dfa4da31f76a16a279000cb437cd8",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_raw_logging_internal.2608.0.0.dylib": "0cff48f2a0a36c3116d2d90d70a368591669a919d1de4d6bc5e92547bc389f63",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_source_location.2608.0.0.dylib": "ff821ad289dce5a14076d6ab756e73bc974bfe85d5eb74427e923f80ef7ac7e6",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_spinlock_wait.2608.0.0.dylib": "d69b4ce2f4953ece42f0126f64485580fccf84df297d888797cebc6122c1b7ae",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_stacktrace.2608.0.0.dylib": "8b55702e448b15f5cb9ee4470ce64a8b990b0ade31444e65260bebdbedffcab7",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_status.2608.0.0.dylib": "065a90fd5cf893b6b854a2c3b3f12629d967df61c711ce0d7062290688a96b24",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_statusor.2608.0.0.dylib": "12d1df685406a203c87e18851d31c722b8e31625d281d6af83f32ac89d61f38f",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_str_format_internal.2608.0.0.dylib": "0b4daf203209a8a73c50a32093303d6be88fa8c82ee6a3a55d5773f4a50f78e4",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_strerror.2608.0.0.dylib": "3648f22d467be8b1c2e04fbe7a10fc403f6797c2aa8998d9cccbd89f5ecf3f99",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_strings.2608.0.0.dylib": "f2099d0fcb283d473483c7dd736c6933f1ca7d262a5ba31d74f4b4241db38e05",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_strings_internal.2608.0.0.dylib": "e43a06406fbbca1928356143fec57902e87bf347a1bc72b8d2e540e44d241cf6",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_symbolize.2608.0.0.dylib": "f74d52731d1aa923d747258f0746d38226fa7398c3e56bc02f6841ee08ab9bb6",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_synchronization.2608.0.0.dylib": "7ea4c06fa127e3eaf3af98f99ce1613696130713b40d541dca82ee302992b67d",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_throw_delegate.2608.0.0.dylib": "8438db6f3f9bb6fef27232963ea74b5d3cfc0b892cbb47bd4aa3c0c8ea9bbe1c",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_time.2608.0.0.dylib": "db06136dc3e7f74c7caa1871f2be1f4efd0342b40a4990f2830ec2d63fa7b26f",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_time_zone.2608.0.0.dylib": "a44dbfe629b2e26a88890c44a136c4ffd3eec130db5b9fb4b0ddbc29f4609ad0",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_tracing_internal.2608.0.0.dylib": "76cf6e733f5e5f6ed0140e9f299d7919a2e82f7034a54a026f2de2705956e447",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_utf8_for_code_point.2608.0.0.dylib": "40c07a92a4cc6d38cfe13372f602fc562fdd042d5c7e512ad6a66dbe7dba70dd",
+        "/opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_vlog_config_internal.2608.0.0.dylib": "6866be4a9f158035c08b997f1f83d0c3bbafe8ba3aaacdcc080ff6dd03407b99",
+        "/opt/homebrew/Cellar/ceres-solver/2.2.0_6/lib/libceres.2.2.0.dylib": "bc9a4550fc239e5b73b3f8105d33236f161cea8a6db3822502a3dd00ff2c7736",
+        "/opt/homebrew/Cellar/dav1d/1.5.4/lib/libdav1d.7.dylib": "60c3a42a79582241ac77bbbba4c0137c2209204aecbc59e5d6392c2dc0a5b439",
+        "/opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libavcodec.63.1.102.dylib": "9ce2e6d93ef08a6674ff50a9ab329694c398e8280779c43e7eaffc6fe067db9a",
+        "/opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libavdevice.63.1.102.dylib": "0c67c6e5c9abe90af71987d3497d22f6a11e9918f188195fb9c7d386ca190e1d",
+        "/opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libavfilter.12.1.102.dylib": "72bc05566b584faa564859815c50ae95abcc5c177812d0fe84e4b5b60014fce0",
+        "/opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libavformat.63.1.102.dylib": "282e63f30f3fd0c8bf5dd41493d0764f67a5140683cc74134912816fa51efbae",
+        "/opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libavutil.61.1.102.dylib": "fece27810ff85c21b2eab640428c737cddcbf09105bac16c3f4856ec721d8818",
+        "/opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libswresample.7.1.102.dylib": "08f4884a5b93a0e9fca2656c4eba8d967c94c329274291d73bbaddf226b470a9",
+        "/opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libswscale.10.1.102.dylib": "5aa9795516bd448166c6301df93fb0a3123e58d10db0bb694a248b092b39069c",
+        "/opt/homebrew/Cellar/freetype/2.14.3/lib/libfreetype.6.dylib": "3e85a7f40549dc2d42d68fcd5b18eefd5a41079d1b5a5933888c585b8e1fed9e",
+        "/opt/homebrew/Cellar/gcc/16.2.0/lib/gcc/current/libgcc_s.1.1.dylib": "5b741a6f933be1fea16db7361121d178bb88b81fc8c567846d1d5593bd0cc146",
+        "/opt/homebrew/Cellar/gcc/16.2.0/lib/gcc/current/libgfortran.5.dylib": "09c11f298a73589b0fa79d93bad7fda25c29055999b5c331507e02f456bf1775",
+        "/opt/homebrew/Cellar/gcc/16.2.0/lib/gcc/current/libquadmath.0.dylib": "6f885df6ad8277edf614f0f5f7fbc6f8564a95b64679b88fb860382c9d1c0e9a",
+        "/opt/homebrew/Cellar/gettext/1.0/lib/libintl.8.dylib": "be8f2b23ec17bd294c7bd4fceaa00526c135b6110a55598b82b3aceeb533a601",
+        "/opt/homebrew/Cellar/gflags/2.3.1/lib/libgflags.2.3.0.dylib": "250d086291645b337defd6af5736db421b0f3cd4161daba73565de06e7d03730",
+        "/opt/homebrew/Cellar/giflib/6.1.3/lib/libgif.7.2.0.dylib": "77e036a84a310be30185307d58f62c8a165e89c563951394ce50ecf396d9a78c",
+        "/opt/homebrew/Cellar/glib/2.90.0/lib/libglib-2.0.0.dylib": "e23a6acee2d81c533320953756b9d5151201b762d6fd12a332b1bd8acc110d14",
+        "/opt/homebrew/Cellar/glog/0.7.1/lib/libglog.0.7.1.dylib": "3dc43acebff76f0617c36ef0b5239dcdb67584dffc0a030cabc1c7e1429a0a90",
+        "/opt/homebrew/Cellar/graphite2/1.3.15/lib/libgraphite2.3.3.1.dylib": "fc59eeb61994433d7dcd349848db14951be1fac332349872ad03f86361473153",
+        "/opt/homebrew/Cellar/harfbuzz/14.5.0/lib/libharfbuzz.0.dylib": "6b9751b1edf515e346410d30aad89921203b6eca871bbc718299c73122e41f5c",
+        "/opt/homebrew/Cellar/imath/3.2.3/lib/libImath-3_2.30.3.2.3.dylib": "5f8f052455e1f32fe968a0f68b8ae86e69da954ff79755f9a94ac4b424a6fd4c",
+        "/opt/homebrew/Cellar/jpeg-turbo/3.2.0/lib/libjpeg.8.3.2.dylib": "f001712591dd976f2d582fb3d22571dab35ff548e926c4e3da3954dbc6c9ac3a",
+        "/opt/homebrew/Cellar/jsoncpp/1.9.8/lib/libjsoncpp.27.dylib": "dee0ea406ef58b09f448564c9095f8f45960e81496766c089b641a8ef3dbf458",
+        "/opt/homebrew/Cellar/lame/4.0/lib/libmp3lame.0.dylib": "5150d16a2b09a8f6f3475dcc837fdf5435d4f97e817ca12306fec8da5614647c",
+        "/opt/homebrew/Cellar/leptonica/1.87.0/lib/libleptonica.6.dylib": "4e520fcf5ee6327d9fc8a151b6ab94e91474c1fb6317a1f2510217fb4ce3cbcb",
+        "/opt/homebrew/Cellar/libarchive/3.8.9/lib/libarchive.13.dylib": "d16c676c5900e0b4394ba227be05f5fbd4626222533d68c82be80a1f898b6f24",
+        "/opt/homebrew/Cellar/libb2/0.98.1/lib/libb2.1.dylib": "3b47cc062d3b2547159844fe700b96c9a3c912e5eeb39101af9a1b5d4b83b4e2",
+        "/opt/homebrew/Cellar/libdeflate/1.26/lib/libdeflate.0.dylib": "9d9dbada77f94f88e856d42731b1dc9f0004e922aa4c441557f383b2cdf5fcb0",
+        "/opt/homebrew/Cellar/libomp/23.1.2/lib/libomp.dylib": "432b8d15fc1b2431f937bba89796a32daaa2dd464eda12a744d9cb2818842477",
+        "/opt/homebrew/Cellar/libpng/1.6.58/lib/libpng16.16.dylib": "226f9b3f071cc7fcecc4909ea34fda44c041db9b25f23969e50b076ca1326cc1",
+        "/opt/homebrew/Cellar/libtiff/4.7.2/lib/libtiff.6.dylib": "01ad3e6a7fa258bd1008bccf8b840aa1c5d580caebd6650da2b9319018fa304f",
+        "/opt/homebrew/Cellar/libvmaf/3.2.1/lib/libvmaf.3.dylib": "f9ca4510cb08cca61ecd571fc417f2b4440c25555fbeefdb4b5477a35891de1c",
+        "/opt/homebrew/Cellar/libvpx/1.17.0/lib/libvpx.12.dylib": "b434dc31541ec72a484c209b412579dd1be79f31ed7a5667724a5f0eec20450a",
+        "/opt/homebrew/Cellar/lz4/1.10.0/lib/liblz4.1.10.0.dylib": "3ce8bec34557e6a5c76129cef6588dc59959caa51e1e54321f45ea7c6e528e07",
+        "/opt/homebrew/Cellar/metis/5.1.0/lib/libmetis.dylib": "e0b42177690c1af9621099c342497e042016f858752ac6daf97487b4c9feaaff",
+        "/opt/homebrew/Cellar/mpg123/1.33.7/lib/libmpg123.0.dylib": "25751ddb9880cd94b3aedd668b24305edfdcd88454d5a06077f72d93fab82b20",
+        "/opt/homebrew/Cellar/openblas/0.3.34/lib/libopenblasp-r0.3.34.dylib": "aeb5f40d3b5cc0fca84e05e90b8e7da6921cea2c33ca701062b0ccd7b4caf117",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_alphamat.4.14.0.dylib": "aa2609a5a094bff87ef5222db2a25946ddfb73e72dd48780af5ce144caf8b988",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_aruco.4.14.0.dylib": "457c4749f0c46f062ef0fb6c2c1269a69eb4d888fd22eb5006e85d20a6b4f2af",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_bgsegm.4.14.0.dylib": "a231cb7d3122c2b5258d0305ca1dc876b41ec5e248b908eac1e1d2a899ff15b1",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_bioinspired.4.14.0.dylib": "20e64f124b475cb8be9d70ed7dcccb65a09ef2c11683a1638b897a59143da77b",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_calib3d.4.14.0.dylib": "106568a3eafc54734cf64a1481b5c0d3517c6fa73f6b509f69b8fb1ef7ec0ede",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_ccalib.4.14.0.dylib": "886b8521ccc52fa75aebea22aef95cd4d1be1f30a6abe3c7113bfc866f9254a4",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_core.4.14.0.dylib": "cbd642641178bce8db67fb5a4f56f09418f09a2f9120ed1da2fe1e24ab33c8fb",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_datasets.4.14.0.dylib": "0453266f0f289e08be5ee64cb4edfbff1c0c77a7af17d945459bbe207e8e3ab8",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_dnn.4.14.0.dylib": "626955043a51f5c562f0a9da130618c948f0b0b8291875fc22f228a4c6bbf177",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_dnn_objdetect.4.14.0.dylib": "450aa08c8a15a5a8e3e866dbac6d234b4f01bfa67422d25ed966bebac4137071",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_dnn_superres.4.14.0.dylib": "6d6f3321a001ab79268115edb822601359ebe9b410a8d9c215e5589878442741",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_dpm.4.14.0.dylib": "343b03c3b856b190af4e4fb5cbaf2b6a3b92f555fd02d26203235e954fdf6c30",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_face.4.14.0.dylib": "65287349c4d2b949ecb297c51c74d03a109fd53e3e46d4bcd862da8ef41181d6",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_features2d.4.14.0.dylib": "313dd17c9238966a75a3381ea81cbd32418a3dbed13c02b6c714a206d49784c9",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_flann.4.14.0.dylib": "894cf16b1983f79d6e5ead940aa5636de0b856c81226b5026fb3480e63a3288c",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_freetype.4.14.0.dylib": "cec68eb4a77a6f4ba97c7697f853c8bb4f76dbb95adaeca22aca8985f68e5862",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_fuzzy.4.14.0.dylib": "aa2399eabb8373ffe0bd17cc1d35729c728d5ff7839ea1767d385d2b771cb289",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_gapi.4.14.0.dylib": "197518e592f9bbc4dcb5439d9bfef707233951775ebc9bb73674b95afe7201a4",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_hfs.4.14.0.dylib": "26f022b5ff1c9784f020d749ed5d2ac47961fab7c7c9b31ef40ae28281df7795",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_highgui.4.14.0.dylib": "0ad094b6874cb37f709a755ff341aa3a90844da1d52d8a274ea78455dfc4d773",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_img_hash.4.14.0.dylib": "6e1215d0d408f15ec02ddef5c4ed0fe6d3142d2378e18024009fd7ab0dbd4454",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_imgcodecs.4.14.0.dylib": "5741d8794de0fb73bbe6428c2cefdad391c301d083b09dc238bef4eac4f41a7c",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_imgproc.4.14.0.dylib": "6643d2fd198ee10eb3aefc351c01269f089d49645e5d65e8b2d7c6ea06ffc224",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_intensity_transform.4.14.0.dylib": "200d8ca1910cbaf72835e803e4e8fde968beb4eeaa3b769c43a0ed3b6ab05147",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_line_descriptor.4.14.0.dylib": "c7f250b1ca36ece043d2df5b0b7f9ba429b19f345dc6930b7fddc81f6e7e3da0",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_mcc.4.14.0.dylib": "b1597099af9c29714e0713a3c7f5a7ec72c9f62a1ac5b76bdaa041ba89ef6bbc",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_ml.4.14.0.dylib": "1e27e966fb1230b3a4546e2b0f9b36e4a3734724acd3e73cbe8b76b9d3976054",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_objdetect.4.14.0.dylib": "3c426b1705c6054b2aedeacd0a25eb10fdd3168f425a522fbf8d9b01463a420c",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_optflow.4.14.0.dylib": "682b36c4d8f88eed9b8b31cbd945187712306d497448228676615f446b3a7341",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_phase_unwrapping.4.14.0.dylib": "a3c6e45279884b484b6bcafa21f5ab4349a64f751859a4f2c1d2733b038eea53",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_photo.4.14.0.dylib": "f086866eb1f39507be32c0f3674a21888da283bbee235ee266cb5ae55dfbfd3b",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_plot.4.14.0.dylib": "e4a057e914687ac4148c672bfc2021e9c246e6fe0ee22e86cb0635ca1cc14011",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_quality.4.14.0.dylib": "0324ad8c91edfc5931208b339e2d2eff86dd866856f6b22cee8c21aafda0f556",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_rapid.4.14.0.dylib": "427b5caa4e7581dbe988409e5242799ec7da432c1ef2412b59b2759268092327",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_reg.4.14.0.dylib": "32ca805134f4155df0ab8c4358745b5454d6eeabce6921cd1d3b20f9f7b4fde5",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_rgbd.4.14.0.dylib": "82c05c25ae5270667bf8566d1f2df5452ec55ff3c4621963be8363a92c7af763",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_saliency.4.14.0.dylib": "d9035c4e9abeea613b38ab9e82bb6ddfb148c9b339fe10cf28a4ba441cf1b286",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_sfm.4.14.0.dylib": "162d3b2c86398dff5381d486c150fafd21063da2e87a372431bb248135cb8a84",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_shape.4.14.0.dylib": "70c4c3e0dd66038e35dbc4635035776dfa5b07eeac1e630b00db5572a281fe85",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_signal.4.14.0.dylib": "9c853719279c06c2e804710580b6d572cd31d097a7f463c7e44f8ba02e5ff4b2",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_stereo.4.14.0.dylib": "dfda5304925aeb3f63be702367aee5995ef1f669cdd5a524156b8e24fecddae4",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_stitching.4.14.0.dylib": "b6719d3eb8632cd129f7c81d778f86962cd264b7fa53aec1983e51166bf6c785",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_structured_light.4.14.0.dylib": "d1d33829fce3e44caf0a7139d0c73a597e1ad703985bdf5700afc465431ca7ff",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_superres.4.14.0.dylib": "d32d0f7af2924a412a691b5b5eed836e90426d37d1e04ab45dbdeb6eb4cd5bc3",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_surface_matching.4.14.0.dylib": "cc273f7d4fd1b8496bcd8fde925abd7d9623fc0ac37d0d1c08ae714100520d1c",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_text.4.14.0.dylib": "fc08b4bd5cc46c1e1af4efb8bd62c74d72a244f2cf3378d652e71971d78f6559",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_tracking.4.14.0.dylib": "f280b0eeeb73bb5d63740c7c2b6835a20ad03d8c7d6974bedae5a74b131581a2",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_video.4.14.0.dylib": "34a35fb4e276c33e66c944076eba0f42c9eba4006f1f1b3a2fc2e57ed57bf442",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_videoio.4.14.0.dylib": "5811059d72ba924b37ea0ce135c330ccf516515b295df8c0222d836811ca1ca2",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_videostab.4.14.0.dylib": "3a0e90358e746dfe30518260d72bcb005eadbfd57cdf1f88bd18a50c35ffafea",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_viz.4.14.0.dylib": "5c27798a4c0208a5f6a212e9bead7ac2ad189403111bb4e9e87090cca88be195",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_wechat_qrcode.4.14.0.dylib": "3b83b7ea8ef098c6904d4bd145e3d24aaa3f8e00e4eaef8f1ca99d7e5f1d58ea",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_xfeatures2d.4.14.0.dylib": "08f9a8198ff243c4ad3915e291c986bdef970c271d85d3e1c5ba4eb259bde249",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_ximgproc.4.14.0.dylib": "958070869a6c6e53dfb444d75b0fbe56d64f12510cdc9cee8971dea105340f04",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_xobjdetect.4.14.0.dylib": "e5c44fab5d63187ea59b882c70abda26a567344492c67b5fc4daa847b72bd80d",
+        "/opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_xphoto.4.14.0.dylib": "bdd7ebad35ca0fde281df8a07a47de22f5becc4ff6c1f701c6907276afe488e3",
+        "/opt/homebrew/Cellar/openexr/3.5.1/lib/libIex-3_5.34.3.5.1.dylib": "30986d991a86d334e2bd48ac22fa90265e59adcb49659e7f9a9bc4f048d1c121",
+        "/opt/homebrew/Cellar/openexr/3.5.1/lib/libIlmThread-3_5.34.3.5.1.dylib": "141a2d125c91a46a1875a182ebe11856ed0252aed5b5ec533af159e24205b743",
+        "/opt/homebrew/Cellar/openexr/3.5.1/lib/libOpenEXR-3_5.34.3.5.1.dylib": "12490fb428920c893f22fb5e3bc4a1952ecdfa2873fc9ae8a0cec31f83f16353",
+        "/opt/homebrew/Cellar/openexr/3.5.1/lib/libOpenEXRCore-3_5.34.3.5.1.dylib": "47238c833ccd5f09fc026846a4f192a5d38d370c1038521b7309bd8e50ca94c7",
+        "/opt/homebrew/Cellar/openjpeg/2.5.4/lib/libopenjp2.2.5.4.dylib": "703be79d7cd53ceeef6845ea5e5887e514ab85cc6dc81159b76fb420ee05f530",
+        "/opt/homebrew/Cellar/openjph/0.32.0/lib/libopenjph.0.32.0.dylib": "e3ed75fcdb86ee16e590c8322804dcbe26577ada4839957f0c2775761955753f",
+        "/opt/homebrew/Cellar/openssl@3/3.6.4/lib/libcrypto.3.dylib": "bae675614cd791d37ec35416ea9f87edcc85407d020810504cf458119b63522c",
+        "/opt/homebrew/Cellar/openssl@3/3.6.4/lib/libssl.3.dylib": "c6ee373222087cf31bc2f3817537d268b3c23e56b7fadd44bbf5c2317caed349",
+        "/opt/homebrew/Cellar/openvino/2026.4.0_1/lib/libopenvino.2026.4.0.dylib": "b611216648bbb82cc94a86f6488ea300fde121cef9f002246a89320db96fa5d5",
+        "/opt/homebrew/Cellar/opus/1.6.1/lib/libopus.0.dylib": "435581a316f3dd41982f3101caa6be6ec974572e31765cd0e29c7cbe30198609",
+        "/opt/homebrew/Cellar/pcre2/10.48/lib/libpcre2-8.0.dylib": "6b698ffc744550e149829d94045912448b8ac4b692cb267dce9fc2f3ed60659d",
+        "/opt/homebrew/Cellar/protobuf/36.2/lib/libprotobuf.36.2.0.dylib": "6922760a25d855b76f45974f3754f7689cbb74b29de54064e739da441c12603f",
+        "/opt/homebrew/Cellar/protobuf/36.2/lib/libutf8_validity.36.2.0.dylib": "513a54c31d9fdc422d6a9cbfc0d7aca6ec628b2a8ac21e851af4645267edd58a",
+        "/opt/homebrew/Cellar/pugixml/1.16/lib/libpugixml.1.16.dylib": "ea73900321be5a7b912dc31e576ba06006c078a41d9698dc92d37167c7d8407e",
+        "/opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libamd.3.3.4.dylib": "83e2517b8a1741a814e18d8c3aed9ab5745ff4c73d5ddf887b40d24bb60de6c7",
+        "/opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libcamd.3.3.5.dylib": "1930e9f68e4df3500c628586d53c19f99f9283d2823f7dbeda7464cc8f312962",
+        "/opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libccolamd.3.3.5.dylib": "492c571ec588965331ec2e7bbe986991ba4104147317f21d1a0828df58298fcc",
+        "/opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libcholmod.5.3.5.dylib": "c72517ccf51151d4922b6cdf81b65d5bd4c8cf8580f111ad32dd6a0e6ac49fef",
+        "/opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libcolamd.3.3.5.dylib": "5ab1945d8ecb7fc3b45dbf3316e1ec157d45d29d7551dc1e25800400d7953b96",
+        "/opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libspqr.4.3.6.dylib": "bedc5c57ce0399d94e227eddceadb04427b5746b9c500cfccc3edff1816bda42",
+        "/opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libsuitesparseconfig.7.14.1.dylib": "1a2f1fd9b9efc8847ffbb06a5dfd0b9cf710eaa0ee87b521082ec280e1d88b00",
+        "/opt/homebrew/Cellar/svt-av1/4.2.0/lib/libSvtAv1Enc.4.2.0.dylib": "bac7066bcd47c31971f61e57cdd0eccabb2ec2ef3ca5aa1e08bd5ca51cd54608",
+        "/opt/homebrew/Cellar/tbb/2023.1.0/lib/libtbb.12.19.dylib": "e8f5dbb74fed228aca558cb6edab6ade436dd295c724a02e66450522dd85ffb7",
+        "/opt/homebrew/Cellar/tesseract/5.5.3/lib/libtesseract.5.dylib": "0822b7d61b76160c97a8f11f53281359f175b832d9fc43e0088de85264bde0f0",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonCache-9.7.9.7.dylib": "85c07c15e1229d0dd7294b01a35e4c618f499067ca4adc644571b38cac2d76ea",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonColor-9.7.9.7.dylib": "e1bdf04bf50181a2d82d39f396e820b828b9eea2f63ace7b1986112d53f42daf",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonComputationalGeometry-9.7.9.7.dylib": "ff2a9dbeff1001852a9a653337f32e72888c6758e13aa98c3cf521f8052fe366",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonCore-9.7.9.7.dylib": "85e93e23d8c1b1899a43c1f01993605b89046eb6c5ffc31f211d29a5f89744cc",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonDataModel-9.7.9.7.dylib": "9848883166987e14bfdb3200aa6c5f4d032f9abc7bb230bf6b263e3a1a1799c2",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonExecutionModel-9.7.9.7.dylib": "15d39fa05c192b25c9f12d1f4a8eb48e96e90b3508324e1987faa497b6cf5fb8",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonMath-9.7.9.7.dylib": "d9f128d80e64e7b46a6d997cbfbd91678d26b4fa1fe4fdc5918cb1e7d3591dbf",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonMisc-9.7.9.7.dylib": "89aba4966718485e974a81b20ac267ee60d83b7575fdade79cf784faa1403ab4",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonSystem-9.7.9.7.dylib": "41a1f7b6e30100ebddad90f93fda2060e40474ff56eba190f79146a52763bfcf",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonTransforms-9.7.9.7.dylib": "a24e5054701a513763ea436a9c4401e655e4288b056788cbf4917d153892ca96",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkDICOMParser-9.7.9.7.dylib": "27c629371ae827a42f843f4cb9ef2ac557363eb0407a495dbbe608c195794abd",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkDomainsChemistry-9.7.9.7.dylib": "354095bd09b77232a3b8afd39e1087b378aaf405909365475166d929a5f0a5a3",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersCellGrid-9.7.9.7.dylib": "ceceb2eb4abecfb81f580b4fc69c5a697881b84fccd9997e2f1448c35eeb70d0",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersCore-9.7.9.7.dylib": "abc1e273db02e6e078ed79cdfc305a1d38c617873a3d1073151f02c798896ded",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersExtraction-9.7.9.7.dylib": "62809c46865154408f3f32e6a677819cd52c6d5490636fc92b6591ee57431777",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersGeneral-9.7.9.7.dylib": "e9ede42a7eee1e45bf4158d6b081728f7be65888e874d532305a49739f2bc53c",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersGeometry-9.7.9.7.dylib": "c1dbd5fdf4466a67804dbf7040c80a9f49311ada5dcf7027c1e6dfed580286dc",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersHybrid-9.7.9.7.dylib": "c648d06c4579f1727bcff4458986850cdef88fa924508e29c11b304258057f04",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersHyperTree-9.7.9.7.dylib": "ba29073fefdadb8531e8b3cd3b1bc7cd8076e044c51e1e0e97760a31aad75ce1",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersModeling-9.7.9.7.dylib": "e748c8207ecbaee97b0ebb8c64ea04dcd96f577829b8032a65c9f0720191f533",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersReduction-9.7.9.7.dylib": "e88807b5d1aed0fc9d69b257daf3c7badf7b2cbea18d1233ec985fffd643dfdc",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersSources-9.7.9.7.dylib": "c1d3f59c246260551cd0f8d09aa936b9afe9fc8ca892a4b7aed552b5d9b330f7",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersStatistics-9.7.9.7.dylib": "4da3942802dbe927b3d6205e5b31fa8d4c8081af198a6edf4b5084d5b4ff2f4b",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersTexture-9.7.9.7.dylib": "3598a4c8af55282cde1dada1615b3796dfea8e6cae650ed7b856cbf95ffa2b62",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersVerdict-9.7.9.7.dylib": "78006102fb2631f367a3587852eb3500a2d9458bb87af242a51bdde1c7240300",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOCellGrid-9.7.9.7.dylib": "94d5c70392e1361aec72a5211400cb51329be7e46d66bc09631df0a4ee09fd86",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOCore-9.7.9.7.dylib": "ea81b37f4e4cc56e08a4d3c6f1f5ad248281efc1f607876bedab1d832450a71a",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOExport-9.7.9.7.dylib": "993dfa488c0ddfdac7032e6165374d35a48096e6e84ea2f343b545a48aa6cd0a",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOGeometry-9.7.9.7.dylib": "72b395c314e75752e57a9e0c44568300dbac9b2a95682a188b7b127f69650bab",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOImage-9.7.9.7.dylib": "69349c1f5773d5043d9471fd6af52fbce5267fb49673b8a1f273f22ec608a5db",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOLegacy-9.7.9.7.dylib": "ca72496db57766306b9c86f1f17fb4eb986d802f7bb7e0375755fe18152489f7",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOPLY-9.7.9.7.dylib": "384ed918f015cc7a0c3172ae8022e8f8c6e6769eadc037a2a29581dc33cf54a3",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOXML-9.7.9.7.dylib": "d75cc9844b22ed933a8f366b0db4a8320380e402cb27b04b64b50e1e76dd304d",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOXMLParser-9.7.9.7.dylib": "8e5cfa22aa43fa957afddf3db675183fc5d962726a8913f03286fa58e96fb856",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkImagingCore-9.7.9.7.dylib": "be61830c7b11278c2710e59f75f7bea826522e0e1ca6df24fcfe9cddb494129a",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkImagingSources-9.7.9.7.dylib": "6382fba0567b0de2c9f37703caf233a04fa3cf3c0bcd7a9f782c9ac1fcf0f872",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkInteractionStyle-9.7.9.7.dylib": "646ae4a31771d9dccf68b7870d08ca99ac6a079c2cc984444b07dabef94232ce",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkParallelCore-9.7.9.7.dylib": "dbe14f3e8203a669067eeb2ed7ce4f13e86a5544c606afcd5f5c389f58d7ae9d",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkParallelDIY-9.7.9.7.dylib": "92454e81248e54c1e9d2f6d1b9b2954bc4885fe04e1ff7ee86d9b1b83a4f464b",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingContext2D-9.7.9.7.dylib": "cf19b51e8bd5f35f79c37a24bc624ae9a41ce9957e55c6d611110bc88a46b8f0",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingCore-9.7.9.7.dylib": "f4e15f02db810cad46aa7f6507753a73dbcf9c4dba5c043e563690db964cc9a1",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingFreeType-9.7.9.7.dylib": "1cc695c4d7528a0cc37f10e57217e1acf1517dab0a1c7a6a7a4b02673690fa06",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingHyperTreeGrid-9.7.9.7.dylib": "8a60023e03f80b4113a4b1c44d600c4d4fe49157b1342865ccc43acb50627542",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingLOD-9.7.9.7.dylib": "e0196d6d680947682c6db0a48dc1dc1cce7511fdf5f2a756fdb23ec4e3ce361d",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingLabel-9.7.9.7.dylib": "6ab4f8627f0fc2ad1d38cb13734e1b13c8d827e1baab2313b150c90e4c48d95a",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingOpenGL2-9.7.9.7.dylib": "b65c7f3fff46e5824ef78d54c6e4e29b10a7e61b33cfcc3e01087432a5dfc35f",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingSceneGraph-9.7.9.7.dylib": "85631415b619769c89e4a4f333b216df67d3fc660fa24b239b171831a84ccf92",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingUI-9.7.9.7.dylib": "67fa86a125c8590dec757541f18b9b13f1658fe058af183e53347b2b2808cdec",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingVtkJS-9.7.9.7.dylib": "c79102a5f57e60c966caac1755e26a8cbdbe3b1177e280bb2e99b9712665bdcb",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkfmt-9.7.9.7.dylib": "576d3e35648425e13c8699236c582bfb09da0bc830effafd9a6c0e16c1c41e11",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkglad-9.7.9.7.dylib": "f4d9b7ebed709af213130fb09e7a36cfebf39386b234bce1d1931f57089dc6c6",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkkissfft-9.7.9.7.dylib": "095f297e66c74fd40491ce0733c4373d262cfa563646b0e2b422e91484fe5118",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkloguru-9.7.9.7.dylib": "d85c2422263adbcf0c4db4c909c504b8185275e99bebeb4e31e31861e6845172",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkmetaio-9.7.9.7.dylib": "b72239a8f24ea251a476ba3b0fc6cca394ca6e144e371d6b522aa0b771f82390",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkscn-9.7.9.7.dylib": "7a78d25368f174e51638a9a81a44c543361c411f56b8bcb32418b5b6db318574",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtksys-9.7.9.7.dylib": "ba870a063107619fd6706e8e7e25d54edeaaacd35d13298ab51617daff125adf",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtktoken-9.7.9.7.dylib": "2d9068d0165f5c8afda4e26ee1ee2bfe36931d929219e6b3a8d4d8f46ca5a8c5",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkverdict-9.7.9.7.dylib": "8660483c03b90c8608a41b753a2d57f01766705873869d308ebb1738b3714b42",
+        "/opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkx11-9.7.9.7.dylib": "de6558e93aef613f8f4bb0532bc2459b46b0bafd6a4d548ffea001ef116d69b6",
+        "/opt/homebrew/Cellar/webp/1.6.0/lib/libsharpyuv.0.1.2.dylib": "c003b10375a8d2bd777e4f03b28943b65d5c017821e611180932a64b2e2813a2",
+        "/opt/homebrew/Cellar/webp/1.6.0/lib/libwebp.7.2.0.dylib": "ecc407a45864e2bb9096cd17c9b2a526289bae4826a5bfa9b3c1bf0ced6928df",
+        "/opt/homebrew/Cellar/webp/1.6.0/lib/libwebpdemux.2.0.17.dylib": "829d68e54a6be7e9ed2d5c3420ef2f1918ecd01093170666186f99675bda0662",
+        "/opt/homebrew/Cellar/webp/1.6.0/lib/libwebpmux.3.1.2.dylib": "af8ce2d4ffc5e493606790cd630175ab2cf555adadea4d94d6f4c8fe366905e3",
+        "/opt/homebrew/Cellar/x264/r3222/lib/libx264.165.dylib": "e0d737b88c67ac30e8561d9267d10495529cfede1af45838914c0b522c37a26d",
+        "/opt/homebrew/Cellar/x265/4.3/lib/libx265.217.dylib": "2e25cd9a70616daf5c3aec2979bad071d577e2150c0493ddc5fd369c174d0b0f",
+        "/opt/homebrew/Cellar/xz/5.8.4/lib/liblzma.5.dylib": "41cdf225f3e10fb54f952c8eca11c8a847d095470540dc42736ae7bd761beaa4",
+        "/opt/homebrew/Cellar/zstd/1.5.7_1/lib/libzstd.1.5.7.dylib": "602d50cbe6fad0f0da6d1b73284ae3f75316015aea482ebd55614b6df2406b43"
+      }
+    }
+  },
+  "promotion_implementation_sha256": "b4b1ab1b0ac944164bc7202d27732941328762a8f1d9a5f74d604fb0ebff1f1f",
+  "reference_sha256": "45653bd63c6a924c42dcdf0871cd950decb5efaabacce7b3c78ecf6b47f8b4ca",
+  "release_surface_sha256": "3e6e98ffaef35407b0547f946d276221a157c7e0bab7b03da0ea40d9d13cf9f3",
+  "restored": true,
+  "results": {
+    "mtp-acceptance.json": "PASS",
+    "off-acceptance.json": "PASS",
+    "reference": "PASS"
+  },
+  "schema": "ds41f.m43.qualification.v1",
+  "source_commit": "9d69a6e86f8125c0232c116b4ab1b5e60545b1d7",
+  "source_tree_sha256": "adb4b5b02e8870d798c39cf30ca72f56726482599cc4d090f2da9f26b6de0c87",
+  "status": "PASS"
+}
