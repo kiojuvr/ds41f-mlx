@@ -1,8 +1,9 @@
 # Explicit bounded local MTP candidate
 
 This is a separate, explicitly selected process capability, **not the default**.
-The M41 [decision/evidence](milestone-41-local-mtp-release-candidate.md) determines
-its qualification. `standard-off` remains the qualified default production path.
+The M41 qualification is inherited through the repository-owned R1 contract.
+In a release projection, `release/promotion.json` identifies the source, reference
+and bound release qualification; see the root README for current delivery. `standard-off` remains the qualified default production path.
 No request, environment acceleration flag, error or fallback selects MTP.
 
 ## Source-clone setup

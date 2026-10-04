@@ -55,6 +55,9 @@ def main():
             row['unavailable']=not path.exists();result['isolation'].append(row)
         save()
         off=work/'off-env/bin/python'; mtp=work/'mtp-env/bin/python'
+        run('native-configure',['cmake','-S','native','-B',work/'native-build'])
+        run('native-build',['cmake','--build',work/'native-build','-j','8'])
+        run('native-tests',['ctest','--test-dir',work/'native-build','--output-on-failure'])
         run('off-inspect',[off,'-m','ds41f_mlx.ops','inspect'])
         run('off-accept',[off,'-m','ds41f_mlx.ops','accept','--output',work/'off-acceptance.json'])
         run('mtp-inspect',[mtp,'-m','ds41f_mlx.ops','inspect','--profile','mtp-singleton-v1'])
@@ -70,7 +73,14 @@ def main():
         result['results']={name:json.loads((work/name).read_text())['status'] for name in ('off-acceptance.json','mtp-acceptance.json')}
         result['results']['reference']=json.loads((runtime/'artifacts/m43/reference.json').read_text())['status']
         if set(result['results'].values()) != {'PASS'}:raise RuntimeError('failed qualification receipt')
-        result['origins']={name:json.loads((work/(name+'-inspect.log')).read_text()) for name in ('off','mtp')}
+        result['origins']={}
+        for name in ('off','mtp'):
+            report=json.loads((work/(name+'-inspect.log')).read_text())
+            report=report.get('provenance',report)
+            result['origins'][name]=dict(actual_origins=report['actual_origins'],
+                native_links=report['identity']['native_links'],build=report['build'],
+                identity_sha256=hashlib.sha256(json.dumps(report['identity'],sort_keys=True).encode()).hexdigest(),
+                checkpoint=report['checkpoint'])
         result['status']='PASS'
     except BaseException as exc:
         result.update(status='FAIL',error=repr(exc));raise

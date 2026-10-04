@@ -1,6 +1,7 @@
 """Extraction mechanics: Git authority, full manifests, drift and one-way policy."""
 import importlib.util
 import json
+import os
 from pathlib import Path
 import subprocess
 import tempfile
@@ -32,6 +33,13 @@ class PromotionTests(unittest.TestCase):
     def test_deterministic_complete_projection_and_reverse_patch(self):
         a,b = self.base/'a',self.base/'b'
         m = promotion.promote('HEAD','R1',a)
+        # Ambient checkout path, source mtimes and ignored build junk cannot enter
+        # Git-object projection. Preserve commit and authoritative input bytes.
+        relocated = self.base/'relocated-source'
+        self.source.rename(relocated); self.source = relocated; promotion.ROOT = relocated
+        os.utime(relocated/'ds41f_mlx/config.py', (1,1))
+        (relocated/'target').mkdir(exist_ok=True)
+        (relocated/'target/nondeterministic-build-product').write_text('ignored build scratch')
         n = promotion.promote('HEAD','R1',b)
         self.assertEqual(m,n)
         self.assertEqual((a/'release/promotion.json').read_bytes(),(b/'release/promotion.json').read_bytes())

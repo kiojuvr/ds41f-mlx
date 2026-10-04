@@ -74,7 +74,7 @@ Rejected requests are atomic with respect to model/session state: no partial tok
 
 M41 implements the process-wide **opt-in** `mtp-singleton-v1` profile; its
 [API/setup/helper contract](mtp-local-release-candidate.md) and
-[decision/evidence](milestone-41-local-mtp-release-candidate.md) are separate from
+R1 contract and promotion-bound qualification are separate from
 standard-off above. M40's negative readiness record remains historical evidence,
 not the current operator interface. Omitted profile remains OFF. No feature parity,
 remote/browser/Rust application support or persistence follows from opt-in MTP.

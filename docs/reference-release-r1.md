@@ -5,7 +5,10 @@
 Official checkpoint/model/protocol semantics → ds41f implementation and qualification
 → **Reference Release R1** → future implementation conformance. R1 is an executable
 development oracle, not permission to preserve a discovered reference defect.
-The [strategy](reference-release-and-promotion-strategy.md) governs; M43 is not done.
+The one-way release/development boundary is described by the root README and
+`release/promotion.json` in a runtime projection. The development repository owns
+`docs/reference-release-and-promotion-strategy.md`; runtime-only patches are not
+a supported development process.
 
 Normative material is `reference/R1/contract.json`, its content manifest, owned
 fixtures/checks and the manifest-bound `ds41f_mlx/reference.py` verifier. The R1
@@ -91,8 +94,8 @@ or greedy-token golden across different numerical backends.
 
 ## Inheritance, invalidation and limits
 
-[M42](milestone-42-reference-release.md) records fresh gates and content-reconciled
-inheritance. M33–M41 remain historical evidence, never rewritten as R1 fixtures by
+M42 records fresh gates and content-reconciled inheritance in ds41f-mlx.
+A runtime projection delivers its compact receipt as `release/inherited/M42.json`. M33–M41 remain historical evidence, never rewritten as R1 fixtures by
 changing their receipts. Promoted material now has an R1 owner. Historical source
 receipt tests are not run by ordinary R1 verification.
 
