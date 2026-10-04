@@ -1,0 +1,85 @@
+.F..F...F.................................F.F..................                 [100%]
+=================================== FAILURES ===================================
+_____________ test_m39_canonical_decision_sources_and_raw_evidence _____________
+
+    def test_m39_canonical_decision_sources_and_raw_evidence():
+        d=json.loads((OUT/'qualification.json').read_text())
+        assert d['decision']=='QUALIFIED_FINITE_PROCESS_LIFETIME_ADMISSION'
+        assert all(d['checks'].values())
+>       for p,h in d['sources'].items():assert hashlib.sha256((ROOT/p).read_bytes()).hexdigest()==h,p
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: ds41f_mlx/serving/internal_mtp.py
+E       assert '6821d84acb8c...535f9cf111577' == 'd5c1839ca8e8...8729a5fbe4de0'
+E         
+E         - d5c1839ca8e84c788f867c61f6214d8fa756a5dda3b7fa46fc78729a5fbe4de0
+E         + 6821d84acb8c4538885ce93ec906c4410a31484b754339847df535f9cf111577
+
+tests/test_m39_evidence.py:12: AssertionError
+_________________ test_current_receipt_hashes_and_nonpromotion _________________
+
+    def test_current_receipt_hashes_and_nonpromotion():
+        q=load('qualification.json')
+        assert q['decision']=='BLOCKED_OPERATIONAL_LIFETIME_RETENTION'
+        assert q['bounded_workload']=='PASS_BOUNDED_WORKLOAD' and not q['release_promoted']
+        for group in ['source_hashes','evidence_hashes','historical_evidence_hashes']:
+>           for path,digest in q[group].items():assert hashlib.sha256((ROOT/path).read_bytes()).hexdigest()==digest,path
+                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: ds41f_mlx/serving/internal_mtp.py
+E           assert '6821d84acb8c...535f9cf111577' == 'afb3165e0b95...242430638509a'
+E             
+E             - afb3165e0b9516a8b0112fc504534e32e905b7b992e8209b763242430638509a
+E             + 6821d84acb8c4538885ce93ec906c4410a31484b754339847df535f9cf111577
+
+tests/test_m38_evidence.py:14: AssertionError
+___________________ test_current_source_and_evidence_hashes ____________________
+
+    def test_current_source_and_evidence_hashes():
+        q=load('qualification.json')
+        assert q['decision']=='QUALIFIED_BOUNDED_INTERNAL_LOCAL_CLIENT'
+        for group in ['source_hashes','evidence_hashes','historical_evidence_hashes']:
+>           for path,digest in q[group].items():assert sha(ROOT/path)==digest,path
+                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: ds41f_mlx/internal_local_client.py
+E           assert 'f5ea8f37b2f2...3ce880b984bd5' == '861aac3e4d80...b8dd4b4d381df'
+E             
+E             - 861aac3e4d80e7d5ea17bc9e3f535e5550a16d9cd2b42bbdc87b8dd4b4d381df
+E             + f5ea8f37b2f2990a4b7710439bd371f4c1462208bd72a038fe93ce880b984bd5
+
+tests/test_m37_evidence.py:16: AssertionError
+____________ test_final_qualification_current_sources_and_evidence _____________
+
+    def test_final_qualification_current_sources_and_evidence():
+        p=load('qualification.json');assert p['decision']=='QUALIFIED_BOUNDED_CERTIFIED_RECOVERY'
+        for key in ['source_hashes','evidence_hashes']:
+>           for path,digest in p[key].items():assert hashlib.sha256((ROOT/path).read_bytes()).hexdigest()==digest,path
+                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: ds41f_mlx/serving/internal_mtp.py
+E           assert '6821d84acb8c...535f9cf111577' == 'afb3165e0b95...242430638509a'
+E             
+E             - afb3165e0b9516a8b0112fc504534e32e905b7b992e8209b763242430638509a
+E             + 6821d84acb8c4538885ce93ec906c4410a31484b754339847df535f9cf111577
+
+tests/test_m36r_evidence.py:73: AssertionError
+___________________ EvidenceTests.test_identity_and_sources ____________________
+
+self = <test_m35_http_evidence.EvidenceTests testMethod=test_identity_and_sources>
+
+    def test_identity_and_sources(self):
+        self.assertEqual(self.q['decision'], 'HTTP_SSE_QUALIFIED_BOUNDED_INTERNAL_SINGLETON')
+        self.assertEqual(self.http['status'], 'PASS')
+        self.assertEqual(self.q['identities']['status'], 'PASS')
+        for path, digest in self.q['source_hashes'].items():
+>           self.assertEqual(hashlib.sha256((ROOT/path).read_bytes()).hexdigest(), digest, path)
+E           AssertionError: '6821d84acb8c4538885ce93ec906c4410a31484b754339847df535f9cf111577' != '6a6169aaa54f635c3e5334e3f64307fcca76db6cf9d84d3d623f64c84dc1687b'
+E           - 6821d84acb8c4538885ce93ec906c4410a31484b754339847df535f9cf111577
+E           + 6a6169aaa54f635c3e5334e3f64307fcca76db6cf9d84d3d623f64c84dc1687b
+E            : ds41f_mlx/serving/internal_mtp.py
+
+tests/test_m35_http_evidence.py:23: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_m39_evidence.py::test_m39_canonical_decision_sources_and_raw_evidence
+FAILED tests/test_m38_evidence.py::test_current_receipt_hashes_and_nonpromotion
+FAILED tests/test_m37_evidence.py::test_current_source_and_evidence_hashes - ...
+FAILED tests/test_m36r_evidence.py::test_final_qualification_current_sources_and_evidence
+FAILED tests/test_m35_http_evidence.py::EvidenceTests::test_identity_and_sources
+5 failed, 58 passed, 137 subtests passed in 2.22s

@@ -1,0 +1,62 @@
+{
+  "schema": "ds41f.m41.sockets.v1",
+  "status": "PASS",
+  "limits": {
+    "body_bytes": 1048576,
+    "context_tokens": 8192,
+    "output_tokens": 768,
+    "live_sessions": 1,
+    "preparation_slots": 1,
+    "connections": 8,
+    "body_timeout_s": 30,
+    "send_stall_s": 30,
+    "effects": 128,
+    "tool_result_bytes": 65536
+  },
+  "cases": [
+    {
+      "name": "content_length_excess",
+      "status": 413
+    },
+    {
+      "name": "chunked_cumulative_excess",
+      "status": 413
+    },
+    {
+      "name": "compressed_body",
+      "status": 400
+    },
+    {
+      "name": "overlong_content_length",
+      "status": 400
+    },
+    {
+      "name": "duplicate_sequence",
+      "status": 400
+    },
+    {
+      "name": "body_timeout_and_single_slot",
+      "status": 408,
+      "seconds": 30.00284270895645,
+      "overlap_status": 409
+    },
+    {
+      "name": "idle_connection_cap_and_header_deadline",
+      "accepted": 8,
+      "excess_closed": true,
+      "seconds": 29.898965125030372
+    },
+    {
+      "name": "saturated_send_stall",
+      "fixture": "synthetic bounded SSE comments; no model",
+      "timeout_seconds": 30.008908417017665,
+      "produced": 3,
+      "production_plateau": true,
+      "iterator_closed": true,
+      "exception_types": [
+        "TimeoutError"
+      ]
+    }
+  ],
+  "ingress_rejections_no_issuance_or_model_work": true
+}

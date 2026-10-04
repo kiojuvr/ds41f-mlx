@@ -1,0 +1,162 @@
+{
+  "schema": "ds41f.m41.identity-negatives.v1",
+  "status": "PASS",
+  "cases": [
+    {
+      "name": "pristine",
+      "returncode": 0,
+      "stdout": "\"patch_sha256\": \"dea4826afcc7561bbf5c719c0f7e40ec11037b3e7d4fc95f07fc117b02c266b9\",\n          \"sha256\": \"5b71ea6837ad3eb54a07da2b7ba1dd0a4ce658b585cdd2db24f4b83d9f879c22\",\n          \"upstream_base\": \"8cadfede7063c896b944e7bae05daa3549ae97ea\"\n        }\n      }\n    },\n    \"tokenizer_sha256\": \"81f64d1248a68ce3663e07ab3ee48b851e5df0e32d27cb98e4c9a268151e8d99\",\n    \"tool\": {\n      \"function\": {\n        \"description\": \"Return deterministic weather for a city.\",\n        \"name\": \"lookup_weather\",\n        \"parameters\": {\n          \"additionalProperties\": false,\n          \"properties\": {\n            \"city\": {\n              \"type\": \"string\"\n            }\n          },\n          \"required\": [\n            \"city\"\n          ],\n          \"type\": \"object\"\n        },\n        \"strict\": true\n      },\n      \"type\": \"function\"\n    }\n  },\n  \"identity_sha256\": \"9ae9a19d84e45c1ddebe5347d2860d3a2133813c1df72837f1fcac5fd2f406c2\",\n  \"profile\": \"mtp-singleton-v1\",\n  \"release_qualified\": false,\n  \"status\": \"PASS\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "name": "runtime_source_drift",
+      "returncode": 2,
+      "stdout": "{\"status\": \"FAIL\", \"profile\": \"mtp-singleton-v1\", \"error\": \"unapproved executable identity drift: ['runtime']\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "candidate_package_drift",
+      "returncode": 2,
+      "stdout": "{\"status\": \"FAIL\", \"profile\": \"mtp-singleton-v1\", \"error\": \"unapproved omlx candidate content: _version.py\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "wrong_tokenizer",
+      "returncode": 2,
+      "stdout": "{\"status\": \"FAIL\", \"profile\": \"mtp-singleton-v1\", \"error\": \"wrong recipe V41 tokenizer\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "missing_tokenizer",
+      "returncode": 2,
+      "stdout": "{\"status\": \"FAIL\", \"profile\": \"mtp-singleton-v1\", \"error\": \"[Errno 2] No such file or directory: '/Volumes/SDXC-512/ds41f-m41-final-venv/share/ds41f-mtp/recipe/static/tokenizers/v41/tokenizer.json'\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "missing_native_module",
+      "returncode": 2,
+      "stdout": "{\"status\": \"FAIL\", \"profile\": \"mtp-singleton-v1\", \"error\": \"No module named 'deepseek_recipe._native'\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "wrong_native_same_version",
+      "returncode": 2,
+      "stdout": "{\"status\": \"FAIL\", \"profile\": \"mtp-singleton-v1\", \"error\": \"dlopen(/Volumes/SDXC-512/ds41f-m41-final-venv/lib/python3.13/site-packages/deepseek_recipe/_native.abi3.so, 0x0002): Library not loaded: @loader_path/.dylibs/libopencv_core.4.12.0.dylib\\n  Referenced from: <AA27A054-8301-32CB-A231-E525C3ED71F5> /Volumes/SDXC-512/ds41f-m41-final-venv/lib/python3.13/site-packages/deepseek_recipe/_native.abi3.so\\n  Reason: tried: '/Volumes/SDXC-512/ds41f-m41-final-venv/lib/python3.13/site-packages/deepseek_recipe/.dylibs/libopencv_core.4.12.0.dylib' (no such file)\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "missing_native_dylib",
+      "returncode": 2,
+      "stdout": "{\"status\": \"FAIL\", \"profile\": \"mtp-singleton-v1\", \"error\": \"dlopen(/Volumes/SDXC-512/ds41f-m41-final-venv/lib/python3.13/site-packages/deepseek_recipe/_native.abi3.so, 0x0002): Library not loaded: /private/var/empty/ds41f-missing.dylib\\n  Referenced from: <1A6EA06E-06CC-3213-AF37-02223BC64A04> /Volumes/SDXC-512/ds41f-m41-final-venv/lib/python3.13/site-packages/deepseek_recipe/_native.abi3.so\\n  Reason: tried: '/private/var/empty/ds41f-missing.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/private/var/empty/ds41f-missing.dylib' (no such file), '/private/var/empty/ds41f-missing.dylib' (no such file)\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "DS41F_HOST_0.0.0.0",
+      "returncode": 2,
+      "stdout": "{\"status\": \"FAIL\", \"profile\": \"mtp-singleton-v1\", \"error\": \"MTP requires literal 127.0.0.1 and a fixed port\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "DS41F_HOST_localhost",
+      "returncode": 2,
+      "stdout": "{\"status\": \"FAIL\", \"profile\": \"mtp-singleton-v1\", \"error\": \"MTP requires literal 127.0.0.1 and a fixed port\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "DS41F_MAX_LIVE_SESSIONS_4",
+      "returncode": 2,
+      "stdout": "{\"status\": \"FAIL\", \"profile\": \"mtp-singleton-v1\", \"error\": \"MTP requires exactly one live session\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "DS41F_OMLX_PATH_/tmp/forbidden",
+      "returncode": 2,
+      "stdout": "{\"status\": \"FAIL\", \"profile\": \"mtp-singleton-v1\", \"error\": \"unqualified profile environment settings: ['DS41F_OMLX_PATH']\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "DS41F_RECIPE_PATH_/tmp/forbidden",
+      "returncode": 2,
+      "stdout": "{\"status\": \"FAIL\", \"profile\": \"mtp-singleton-v1\", \"error\": \"unqualified profile environment settings: ['DS41F_RECIPE_PATH']\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "PYTHONPATH_.",
+      "returncode": 2,
+      "stdout": "{\"status\": \"FAIL\", \"profile\": \"mtp-singleton-v1\", \"error\": \"PYTHONPATH unavailable in MTP\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS_1",
+      "returncode": 2,
+      "stdout": "{\"status\": \"FAIL\", \"profile\": \"mtp-singleton-v1\", \"error\": \"diagnostics/custom model configuration unavailable in MTP\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "DS41F_TRACE_HISTORY_LIMIT_2048",
+      "returncode": 2,
+      "stdout": "{\"status\": \"FAIL\", \"profile\": \"mtp-singleton-v1\", \"error\": \"MTP trace budget is fixed at 32\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "OMLX_MTP_ROW_EXACT_VERIFY_0",
+      "returncode": 2,
+      "stdout": "{\"status\": \"FAIL\", \"profile\": \"mtp-singleton-v1\", \"error\": \"unqualified profile environment settings: ['OMLX_MTP_ROW_EXACT_VERIFY']\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "DS41F_P8_TILE_NATIVE_CARRY_1",
+      "returncode": 2,
+      "stdout": "{\"status\": \"FAIL\", \"profile\": \"mtp-singleton-v1\", \"error\": \"unqualified profile environment settings: ['DS41F_P8_TILE_NATIVE_CARRY']\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "WEB_CONCURRENCY_2",
+      "returncode": 2,
+      "stdout": "{\"status\": \"FAIL\", \"profile\": \"mtp-singleton-v1\", \"error\": \"MTP requires one worker\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "unknown_profile",
+      "returncode": 2,
+      "stdout": "",
+      "stderr": "usage: ops.py inspect [-h] [--profile {standard-off,mtp-singleton-v1}]\nops.py inspect: error: argument --profile: invalid choice: 'unknown' (choose from 'standard-off', 'mtp-singleton-v1')\n"
+    },
+    {
+      "name": "validation_bypass",
+      "returncode": 2,
+      "stdout": "",
+      "stderr": "usage: serve.py [-h] [--profile {standard-off,mtp-singleton-v1}] [--host HOST]\n                [--port PORT] [--print-config] [--no-validate]\nserve.py: error: MTP identity validation cannot be disabled\n"
+    },
+    {
+      "name": "worker_override",
+      "returncode": 2,
+      "stdout": "",
+      "stderr": "usage: serve.py [-h] [--profile {standard-off,mtp-singleton-v1}] [--host HOST]\n                [--port PORT] [--print-config] [--no-validate]\nserve.py: error: unrecognized arguments: --workers 2\n"
+    },
+    {
+      "name": "nonloopback_cli",
+      "returncode": 2,
+      "stdout": "",
+      "stderr": "{\"status\": \"FAIL\", \"error\": \"MTP requires literal 127.0.0.1 and a fixed port\"}\n"
+    },
+    {
+      "name": "missing_checkpoint",
+      "returncode": 2,
+      "stdout": "{\"status\": \"FAIL\", \"profile\": \"mtp-singleton-v1\", \"error\": \"[Errno 2] No such file or directory: '/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/tmp4ij1zk_y/config.json'\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "wrong_checkpoint_metadata",
+      "returncode": 2,
+      "stdout": "{\"status\": \"FAIL\", \"profile\": \"mtp-singleton-v1\", \"error\": \"unqualified checkpoint metadata: config.json\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "restored_pristine",
+      "returncode": 0,
+      "stdout": "\"patch_sha256\": \"dea4826afcc7561bbf5c719c0f7e40ec11037b3e7d4fc95f07fc117b02c266b9\",\n          \"sha256\": \"5b71ea6837ad3eb54a07da2b7ba1dd0a4ce658b585cdd2db24f4b83d9f879c22\",\n          \"upstream_base\": \"8cadfede7063c896b944e7bae05daa3549ae97ea\"\n        }\n      }\n    },\n    \"tokenizer_sha256\": \"81f64d1248a68ce3663e07ab3ee48b851e5df0e32d27cb98e4c9a268151e8d99\",\n    \"tool\": {\n      \"function\": {\n        \"description\": \"Return deterministic weather for a city.\",\n        \"name\": \"lookup_weather\",\n        \"parameters\": {\n          \"additionalProperties\": false,\n          \"properties\": {\n            \"city\": {\n              \"type\": \"string\"\n            }\n          },\n          \"required\": [\n            \"city\"\n          ],\n          \"type\": \"object\"\n        },\n        \"strict\": true\n      },\n      \"type\": \"function\"\n    }\n  },\n  \"identity_sha256\": \"9ae9a19d84e45c1ddebe5347d2860d3a2133813c1df72837f1fcac5fd2f406c2\",\n  \"profile\": \"mtp-singleton-v1\",\n  \"release_qualified\": false,\n  \"status\": \"PASS\"\n}\n",
+      "stderr": ""
+    }
+  ]
+}
