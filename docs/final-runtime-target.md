@@ -16,11 +16,17 @@ promotes MTP nor broadens any qualified capability. The separately implemented
 [M41 local candidate](milestone-41-local-mtp-release-candidate.md) has its own
 narrow [setup/capability contract](mtp-local-release-candidate.md).
 
+The [reference release and promotion strategy](reference-release-and-promotion-strategy.md)
+refines the repository model: `ds41f-mlx` remains the sole development authority;
+a future `ds41f-runtime` is its deterministic release projection, not a second
+implementation line. M42 semantic closure/Reference Release R1 precedes M43
+extraction. This does not schedule full oMLX replacement or change qualification.
+
 ## Fresh-clone expectation
 
 At the intended public state, a user or coding agent can:
 
-1. `git clone` **one** `ds41f-mlx` source repository;
+1. `git clone` **one** promoted `ds41f-runtime` source repository (developed in `ds41f-mlx`);
 2. read repository-owned README/setup and operations instructions;
 3. install ordinary reproducible package/system dependencies;
 4. obtain the official DeepSeek-V4.1-Flash checkpoint;
