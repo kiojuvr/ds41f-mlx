@@ -30,6 +30,17 @@ def create_app(*, runtime_base_url: str | None = None) -> FastAPI:
     app.state.runtime = runtime
     app.state.tool_registry = tools
 
+    @app.middleware('http')
+    async def profile_handshake(request: Request, call_next):
+        if request.method in ('POST','DELETE') and request.url.path.startswith('/api/'):
+            try:
+                if runtime.health().get('profile') == 'mtp-singleton-v1':
+                    return JSONResponse(status_code=400, content={'error':{'code':'unsupported_capability',
+                        'message':'Browser client does not support the local MTP profile'}})
+            except RuntimeHTTPError as exc:
+                return JSONResponse(status_code=502, content={'error':{'message':str(exc)}})
+        return await call_next(request)
+
     @app.exception_handler(RuntimeHTTPError)
     async def runtime_error(_request: Request, exc: RuntimeHTTPError) -> Response:
         return JSONResponse(status_code=502 if exc.status >= 500 else exc.status, content={"error": {"message": str(exc), "runtime_status": exc.status, "runtime_body": exc.body}})

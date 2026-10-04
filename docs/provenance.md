@@ -40,7 +40,19 @@ test dependency: none
 - `tools/check_native_import_dependencies.py` verifies native source/build/test independence from the historical source repository.
 - `tools/check_repository_self_containment.py` verifies canonical docs, links, provenance paths, and self-containment.
 
-## External runtime dependencies for the scoped release
+## Explicit MTP candidate provenance
+
+M41's separate profile delivers attributed dependency **source exports** in this
+repository and builds/installs them normally into a fresh environment. Its native
+recipe, tokenizer, substrate, runtime/helper, critical package and host-link content
+identities fail closed on unknown drift. No donor checkout/Git revision lookup or
+`/tmp` authority participates in normal MTP operation. The seal is a build record,
+not acceptance or a signature; rebuilt artifacts receive fresh qualification.
+See [setup](mtp-local-release-candidate.md), `ds41f_mlx.mtp_identity` and
+[M41 evidence](milestone-41-local-mtp-release-candidate.md). The original OFF
+manifest/checkouts and historical evidence below remain separate and unchanged.
+
+## External runtime dependencies for standard-off
 
 The current production path has explicit external requirements:
 

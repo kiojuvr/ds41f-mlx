@@ -2,6 +2,23 @@
 
 This roadmap converts the runtime strategy into a finite sequence of milestones. It is not an optimization backlog. Runtime behavior, selectors, API integration, and multimodal work must not change until the relevant architecture milestone authorizes that work.
 
+## M41 — Explicit bounded local MTP release candidate
+
+Implementation and fresh composed qualification: separate `mtp-singleton-v1`
+process authority, strict local admission/resource boundary, repository-delivered
+candidate source/native setup, supported Python helper and operator commands.
+`standard-off` remains safe/default and separately regression-qualified.
+Canonical decision/evidence: [M41](milestone-41-local-mtp-release-candidate.md);
+normal setup: [local MTP contract](mtp-local-release-candidate.md).
+The longer-term [self-contained destination](final-runtime-target.md) remains
+prospective; no automatic next-milestone dependency-removal/optimization schedule.
+
+## M40 — Release-readiness gap analysis (historical)
+
+[M40](milestone-40-release-readiness.md) found the M39 lifecycle sufficient but
+public admission/setup/application/installed acceptance not ready. M41 owns closing
+those gaps coherently. M40 is not rewritten as a successful release qualification.
+
 ## M39 — Operational lifetime, identity and admission
 
 Decision: **QUALIFIED_FINITE_PROCESS_LIFETIME_ADMISSION**, explicitly internal only.

@@ -1,3 +1,13 @@
+[build-system]
+requires = ["setuptools==82.0.1", "wheel==0.48.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["ds41f_mlx*"]
+
+[tool.setuptools.package-data]
+ds41f_mlx = ["web_static/*", "native/*.c", "native/*.cpp", "native/*.h", "native/*.metal"]
+
 [project]
 name = "ds41f-mlx"
 version = "0.23.0"

@@ -6,6 +6,9 @@ Canonical architectural intent:
 
 Canonical current-state documents:
 
+- [M41 local MTP candidate](milestone-41-local-mtp-release-candidate.md) — explicit bounded opt-in capability, composed/source-clone evidence and OFF regression
+- [Local MTP setup/API/operator boundary](mtp-local-release-candidate.md) — supported profile, reproducible source/native setup and conservative application states
+
 - [Runtime strategy](runtime-strategy.md) — production architecture and non-selected paths
 - [Implementation plan](implementation-plan.md) — staged implementation status and current selector decisions
 - [Architecture](architecture.md) — runtime components and ownership boundaries

@@ -1,6 +1,6 @@
 # Operations and configuration
 
-This is the operator-facing path for the scoped text runtime. Historical milestone documents are not required for normal startup. M22 defines `release/ds41f-release.json` as the active release/dependency manifest and `python -m ds41f_mlx.ops` as the canonical source/operator command surface. M23 adds a relocatable local bundle with `./bin/ds41f` and `./bin/ds41f-accept` wrappers for installed operation outside the development checkout.
+This is the **standard-off** operator-facing path for the scoped text runtime. Historical milestone documents are not required for normal startup. M22 defines `release/ds41f-release.json` as the active release/dependency manifest and `python -m ds41f_mlx.ops` as the canonical source/operator command surface. M23 adds a relocatable local bundle with `./bin/ds41f` and `./bin/ds41f-accept` wrappers for installed operation outside the development checkout.
 
 The [final runtime target](final-runtime-target.md) defines the intended fresh-clone
 setup without separate runtime development checkouts. The instructions and
@@ -189,15 +189,15 @@ source config/ds41f.env
 
 Installed acceptance uses the bundled Rust acceptance binary and does not require Cargo/CMake or the original Git checkout. Source-tree quick/full qualification remains available through `python -m ds41f_mlx.ops quick/full`.
 
-## MTP readiness status (no operator selector yet)
+## Explicit bounded local MTP candidate
 
-[M40](milestone-40-release-readiness.md) evaluates a proposed explicit local
-`mtp-singleton-v1` profile. It is **not ready for release**: public admission/local
-security, reproducible dependency delivery, supported operator/client boundaries
-and installed acceptance remain required. No `--profile` command described in
-that design is implemented by this release. Current startup remains MTP OFF;
-changing environment paths to internal qualification candidates does not enable
-or qualify a supported MTP release.
+M41 adds `inspect/start/accept --profile mtp-singleton-v1`, with a separate
+repository-delivered source/native setup and strict loopback capability boundary.
+See [normal setup and operator/application contract](mtp-local-release-candidate.md)
+and [M41 decision/evidence](milestone-41-local-mtp-release-candidate.md).
+Do not reuse the OFF checkout configuration/environment for MTP. Omitted profile
+is **standard-off**, unchanged; no request/env acceleration selection or fallback.
+M40's readiness analysis remains historical, not today's operator command surface.
 
 ## Supported runtime behavior
 

@@ -155,7 +155,17 @@ ctest --test-dir native/build --output-on-failure
 
 These do not run benchmarks or full checkpoint qualification.
 
-## Operations
+## Explicit local MTP release candidate
+
+`standard-off` remains the default qualified production profile. The separate
+`mtp-singleton-v1` candidate is explicitly opt-in and local/singleton only; it does
+not inherit OFF API parity, persistence, browser or Rust application support.
+See [setup/API/operator instructions](docs/mtp-local-release-candidate.md) and
+[M41 decision and evidence](docs/milestone-41-local-mtp-release-candidate.md).
+Candidate setup builds repository-delivered dependency sources in a fresh venv;
+no separate donor checkout or historical `/tmp` authority is required.
+
+## Operations (standard-off)
 
 Configure machine-specific paths with environment variables instead of editing source:
 
@@ -243,7 +253,7 @@ Historical provenance is recorded in provenance/archive documentation and is not
 
 Qualified/source-verified areas include checkpoint provenance, official primitive validators, source integrity, native source closure, checkpoint-free native build/tests, MLX-enabled native build/tests, bounded full-checkpoint native execution, backend-local correctness policy, dense production prefill through 200K, practical GenerationBatch decode, official recipe HTTP serving, long-session continuation, same-backend KV persistence/restore, repeated function-tool loops, and EOS termination.
 
-The release claim is intentionally scoped, not universal. Vision, batching, MTP, DSpark, speculative decode, distributed serving, authentication, server-side tool execution, sessionized Responses/Messages, cross-runtime KV portability, and arbitrary stateful stop strings remain unsupported or unqualified.
+The standard-off release claim is intentionally scoped, not universal. Vision, batching, implicit/default MTP, distributed serving, authentication, server-side tool execution, sessionized Responses/Messages, cross-runtime KV portability, and arbitrary stateful stop strings remain unsupported or unqualified. Explicit guarded MTP/DSpark/speculation is confined to the separate bounded M41 candidate above.
 
 ## Canonical documentation
 

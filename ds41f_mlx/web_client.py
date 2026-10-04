@@ -48,7 +48,9 @@ class RuntimeClient:
         return json.loads(raw) if raw else {}
 
     def internal_fenced_request(self, session_id: str, body: bytes, sequence: int):
-        """Exact-byte experimental transport; not used by the public browser loop.
+        """Exact-byte fenced transport; reused by the explicit local MTP helper.
+
+        Not used by the public browser loop.
 
         The caller owns/ closes the returned response even on interrupted reads.
         No serialization, retry, or sequence allocation occurs here.
@@ -121,6 +123,9 @@ class StatefulToolChatClient:
         self.runtime = runtime; self.registry = registry
 
     def run_turn(self, *, session_id: str, transcript: list[dict[str, Any]], user_message: str, max_tokens: int = 512, temperature: float = 0.0, tools_enabled: bool = True, max_tool_rounds: int = 4) -> ChatLoopResult:
+        handshake = getattr(self.runtime, 'health', None)
+        if handshake is not None and handshake().get('profile') == 'mtp-singleton-v1':
+            raise ToolError('StatefulToolChatClient does not support the explicit local MTP profile')
         messages = list(transcript) + [{"role": "user", "content": user_message}]
         result = ChatLoopResult(session_id=session_id, messages=messages)
         for round_idx in range(max_tool_rounds + 1):

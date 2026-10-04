@@ -2,14 +2,14 @@
 import json
 from pathlib import Path
 import sys
-sys.path[:0] = [str(Path(__file__).resolve().parents[1]), '/tmp/ds41f-m33-omlx']
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import deepseek_recipe as d
 from ds41f_mlx.serving.server import prepare_request, load_v41_tokenizer
 from ds41f_mlx.serving.recovery_certificate import reconstruction_certificate
 from ds41f_mlx.runtime.recipe_semantic_guard import RecipeSemanticGuard
 from tools.run_m11_tool_boundary_qualification import initial_body
 ROOT = Path(__file__).resolve().parents[1]
-RECIPE = Path('/tmp/ds41f-m32-recipe')
+RECIPE = Path(sys.argv[1]) if len(sys.argv) > 1 else Path('/tmp/ds41f-m32-recipe')
 t = load_v41_tokenizer(RECIPE)
 plain = dict(model='deepseek-v4.1-flash', messages=[dict(role='user', content='Say hello.')],
              reasoning_effort='none', max_tokens=32, stream=True)
@@ -62,6 +62,6 @@ run('enabled_marker_prefix', auto, '<｜DSML｜')
 run('enabled_block_prefix', auto, '\n\n<｜DSML｜ calls>\n')
 j=dict(plain,response_format=dict(type='json_object'), messages=[dict(role='user',content='Output json.')])
 run('json_fence_lossy',j,'```json\n{"x":1}\n```',finish='length')
-path=ROOT/'artifacts/m36r/recipe-matrix.json';path.parent.mkdir(parents=True,exist_ok=True)
+path=Path(sys.argv[2]) if len(sys.argv) > 2 else ROOT/'artifacts/m36r/recipe-matrix.json';path.parent.mkdir(parents=True,exist_ok=True)
 path.write_text(json.dumps(dict(schema='ds41f.m36r.recipe-matrix.v1',rows=rows),indent=2)+'\n')
 print([(r['name'],r['certificate']['representable'],r['certificate'].get('first_mismatch'),r['response']['choices']) for r in rows])

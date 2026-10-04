@@ -139,8 +139,8 @@ class InternalLocalClient:
         t0 = time.perf_counter()
         try:
             rec = self.runtime.create_session(session_id)
-            if not isinstance(rec.get('id'), str) or rec.get('outcome_state') != 'not_admitted' or rec.get('next_sequence') != 1:
-                raise ClientStateError('fresh session did not establish the internal fence contract')
+            if not self._valid_created_record(rec):
+                raise ClientStateError('fresh session did not establish the fence contract')
         except BaseException:
             self.lifecycle_uncertain = dict(action='create', requested_session_id=session_id)
             self.state = 'stopped'
@@ -232,6 +232,13 @@ class InternalLocalClient:
                 self.state = 'expired'
                 return dict(outcome_state='expired', sequence=seq,
                             action='explicit restart or external canonical reconciliation required; no regeneration')
+            # After a retained request is lost before reservation, GET still
+            # exposes the previous settled slot. It is NOT an ACK that the new
+            # POST cannot arrive: retry only this same frozen next identity.
+            if (seq > 1 and slot and slot['sequence'] == seq-1 and
+                    slot.get('state') == rec.get('outcome_state') == 'recoverable' and
+                    rec['next_sequence'] == seq):
+                return self._send()
             if slot and (slot.get('sequence') != seq or slot.get('body_sha256') != hashlib.sha256(self._pending.body).hexdigest()):
                 self._stop('sequence/body disagreement')
             state = rec.get('outcome_state')
@@ -300,8 +307,7 @@ class InternalLocalClient:
                     raise ValueError('tool certificate mismatch')
                 request = json.loads(self._pending.body)
                 # Check ordinary witness binding, not tokens or recipe re-encoding.
-                if cert['witness']['messages'][:len(request['messages'])+1] != request['messages']+[msg]:
-                    raise ValueError('certificate ordinary message binding mismatch')
+                self._validate_message_binding(cert, request, msg)
                 if calls and (len({c['id'] for c in calls}) != len(calls) or
                               any(c['type'] != 'function' or not isinstance(c['function']['arguments'], str) for c in calls)):
                     raise ValueError('invalid completed calls')
@@ -321,6 +327,13 @@ class InternalLocalClient:
             self._messages = json.loads(self._pending.body)['messages']
             self.state = 'poisoned'
         self._outcome = deepcopy(out)
+
+    def _valid_created_record(self, rec):
+        return isinstance(rec.get('id'), str) and rec.get('outcome_state') == 'not_admitted' and rec.get('next_sequence') == 1
+
+    def _validate_message_binding(self, cert, request, msg):
+        if cert['witness']['messages'][:len(request['messages'])+1] != request['messages']+[msg]:
+            raise ValueError('certificate ordinary message binding mismatch')
 
     def execute_tools(self, execute):
         self._require_known_lifecycle()

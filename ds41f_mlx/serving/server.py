@@ -33,8 +33,8 @@ PROTOCOL_TYPES = {
 
 
 class RequestError(Exception):
-    def __init__(self, message: str, status_code: int = 400) -> None:
-        super().__init__(message); self.status_code = status_code
+    def __init__(self, message: str, status_code: int = 400, code: str | None = None) -> None:
+        super().__init__(message); self.status_code = status_code; self.code = code
 
 
 def load_v41_tokenizer(recipe_path: Path = DEFAULT_RECIPE) -> Any:
@@ -130,30 +130,56 @@ def _chat_sse_events(events: list[dict[str, Any]] | tuple[dict[str, Any], ...]) 
     return gen()
 
 
-def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_path: Path | None = None, options: ConversionOptions | None = None, model_id: str | None = None) -> FastAPI:
-    runtime_config = load_runtime_config()
+def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_path: Path | None = None, options: ConversionOptions | None = None, model_id: str | None = None, runtime_config=None, profile='standard-off') -> FastAPI:
+    if profile not in ('standard-off', 'mtp-singleton-v1'):
+        raise ValueError('unknown capability profile')
+    local_mtp = profile == 'mtp-singleton-v1'
+    runtime_config = runtime_config or load_runtime_config()
+    if local_mtp:
+        from .mtp_public import LocalMTPBackend
+        if not isinstance(backend, LocalMTPBackend):
+            raise ValueError('MTP requires its explicit singleton backend; no fallback')
+        if (runtime_config.host != '127.0.0.1' or not 1 <= runtime_config.port <= 65535 or
+                runtime_config.max_live_sessions != 1 or runtime_config.trace_history_limit != 32 or
+                runtime_config.enable_diagnostics or runtime_config.model_id != DEFAULT_MODEL_ID or
+                runtime_config.production_prefill_selector != 'DENSE_P0_P7' or
+                any(getattr(runtime_config, k) != 'ON' for k in ('mtp','dspark','speculative_decode'))):
+            raise ValueError('contradictory local MTP process configuration')
     runtime_config.apply_environment()
     runtime_config.apply_import_paths()
     recipe_path = Path(recipe_path) if recipe_path is not None else runtime_config.recipe_path
     model_id = model_id if model_id is not None else runtime_config.model_id
     backend = backend or DeepSeekRecipeRuntimeBackend(recipe_path=recipe_path, model_id=model_id, runtime_config=runtime_config)
     tokenizer = load_v41_tokenizer(recipe_path)
-    app = FastAPI(title='ds41f-deepseek-recipe', version='0.1.0')
+    if local_mtp:
+        from ds41f_mlx.mtp_profile import PROFILE, LIMITS, validate_chat, strict_json
+        from .mtp_public import LocalBoundary, public_record
+        options = ConversionOptions(default_thinking_mode=False)
+    app = FastAPI(title='ds41f-deepseek-recipe', version='0.1.0',
+                  docs_url=None if local_mtp else '/docs',
+                  redoc_url=None if local_mtp else '/redoc',
+                  openapi_url=None if local_mtp else '/openapi.json')
+    if local_mtp:
+        app.add_middleware(LocalBoundary, authority=f'127.0.0.1:{runtime_config.port}')
     app.state.backend = backend
     app.state.recipe_tokenizer = tokenizer
 
     @app.exception_handler(ConversionError)
     async def conversion_error_handler(_request: Request, exc: ConversionError) -> Response:
+        if local_mtp:
+            return JSONResponse(status_code=exc.status_code,content={'error':{'code':'conversion_rejected','message':'conversion_rejected'}})
         return Response(content=exc.body, status_code=exc.status_code, media_type='application/json')
 
     @app.exception_handler(RequestError)
     async def request_error_handler(_request: Request, exc: RequestError) -> Response:
         error_type = 'internal_error' if exc.status_code >= 500 else 'invalid_request_error'
-        return JSONResponse(status_code=exc.status_code, content={'error': {'message': str(exc), 'type': error_type, 'param': None, 'code': error_type}})
+        code = exc.code or ({400:'invalid_profile_request',404:'session_not_live',409:'session_conflict'}.get(exc.status_code,'request_failed') if local_mtp else error_type)
+        return JSONResponse(status_code=exc.status_code, content={'error': {'message': code if local_mtp else str(exc), 'type': error_type, 'param': None, 'code': code}})
 
     @app.exception_handler(ValueError)
     async def value_error_handler(_request: Request, exc: ValueError) -> Response:
-        return JSONResponse(status_code=400, content={'error': {'message': str(exc), 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_request_error'}})
+        code = 'invalid_profile_request' if local_mtp else 'invalid_request_error'
+        return JSONResponse(status_code=400, content={'error': {'message': code if local_mtp else str(exc), 'type': 'invalid_request_error', 'param': None, 'code': code}})
 
     def api_handler(protocol: str) -> Callable[[Request], Awaitable[Response]]:
         async def handler(request: Request) -> Response:
@@ -169,6 +195,14 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
     @app.get('/health')
     async def health() -> Response:
         fatal = getattr(backend, 'fatal_error', None)
+        if local_mtp:
+            ready = getattr(backend, '_model', None) is not None
+            return JSONResponse(status_code=503 if fatal else 200, content={
+                'status':'unavailable' if fatal else 'ready' if ready else 'alive',
+                'process_alive':True, 'model_ready':ready, 'profile':PROFILE,
+                'limits':LIMITS, 'mtp':'ON', 'dspark':'ON', 'depth':5,
+                'qualification':'release-candidate; see M41 evidence',
+                'dependency_identity':getattr(backend, 'dependency_identity', None)})
         ready = getattr(backend, '_model', None) is not None
         status = 'unavailable' if fatal else ('ready' if ready else 'alive')
         code = 503 if fatal else 200
@@ -181,17 +215,20 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
     @app.post('/v1/sessions')
     async def create_session(request: Request) -> Response:
         raw = await request.body()
-        body = json.loads(raw.decode()) if raw else {}
+        body = strict_json(raw) if local_mtp and raw else json.loads(raw.decode()) if raw else {}
+        if local_mtp and body != {}:
+            raise RequestError('create accepts only empty object')
         try:
             rec = await backend.create_stateful_session(session_id=body.get('id'))
         except RuntimeError as exc:
             raise RequestError(str(exc), 409)
-        return JSONResponse(content=rec.to_json())
+        return JSONResponse(content=public_record(rec) if local_mtp else rec.to_json())
 
     @app.get('/v1/sessions/{session_id}')
     async def get_session(session_id: str) -> Response:
         try:
-            return JSONResponse(content=backend.get_stateful_session(session_id).to_json())
+            rec = backend.get_stateful_session(session_id)
+            return JSONResponse(content=public_record(rec) if local_mtp else rec.to_json())
         except KeyError as exc:
             raise RequestError(str(exc), 404)
 
@@ -207,6 +244,8 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
     @app.post('/v1/sessions/{session_id}/chat/completions')
     async def session_chat(session_id: str, request: Request) -> Response:
         body = await request.body()
+        if local_mtp:
+            validate_chat(body)
         qualification = getattr(backend, 'qualification_response', None)
         if qualification is not None:
             if len(body) > backend.MAX_BODY_BYTES:
@@ -221,19 +260,19 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
             raise RequestError(str(exc), 400)
         prepared = await run_in_threadpool(prepare_request, 'chat_completions', body, tokenizer=tokenizer, recipe_path=recipe_path, options=options)
         try:
-            # Explicit backend injection for internal qualification only. No
-            # request/env/public MTP selector is installed by the normal server.
+            # Internal qualification and the explicit public process profile
+            # share the same guarded owner, never a request/env mode selector.
             qualification = getattr(backend, 'qualification_response', None)
             if qualification is not None:
                 raw_sequence = request.headers.get('X-DS41F-Request-Sequence')
-                sequence = int(raw_sequence) if raw_sequence is not None else None
-                return await qualification(session_id, prepared, tokenizer=tokenizer, body=body, sequence=sequence)
+                request_sequence = int(raw_sequence) if raw_sequence is not None else None
+                return await qualification(session_id, prepared, tokenizer=tokenizer, body=body, sequence=request_sequence)
             turn = await backend.run_stateful_chat_turn(session_id, prepared, tokenizer=tokenizer)
         except KeyError as exc:
             raise RequestError(str(exc), 404)
         except RuntimeError as exc:
-            status = 409 if 'active request' in str(exc) or 'maximum live session' in str(exc) else 400
-            raise RequestError(str(exc), status)
+            status = 409 if local_mtp or 'active request' in str(exc) or 'maximum live session' in str(exc) else 400
+            raise RequestError(str(exc), status, getattr(exc,'code',None) if local_mtp else None)
         if prepared.stream:
             return InferenceStreamingResponse(_chat_sse_events(turn.stream_events), media_type='text/event-stream')
         if turn.response_json is None:
@@ -263,7 +302,7 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
             raise RequestError(str(exc), 409)
         return JSONResponse(content=rec.to_json())
 
-    if os.environ.get('DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS') == '1':
+    if not local_mtp and os.environ.get('DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS') == '1':
         @app.get('/_ds41f/diagnostics')
         async def diagnostics() -> Response:
             traces = [t.to_json() for t in getattr(backend, 'traces', [])]
@@ -285,4 +324,5 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
     return app
 
 
-app = create_app()
+# Launcher resolves capability and dependencies before creating an app.
+# No default backend is constructed as an import side effect.

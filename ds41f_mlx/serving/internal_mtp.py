@@ -299,7 +299,8 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
                 completed = rec.guard.finished and any(m['identity'][0] == 'DSML_TOOL_CALL_BLOCK_END'
                                                        for m in trace['terminal_matches'])
                 rec.certificate = reconstruction_certificate(rec.reconstruction_body, trace['response'], rec.canonical,
-                    tokenizer=rec.reconstruction_tokenizer, recipe_path=self.recipe_path, completed_tool_block=completed)
+                    tokenizer=rec.reconstruction_tokenizer, recipe_path=self.recipe_path, completed_tool_block=completed,
+                    options=getattr(self, 'conversion_options', None))
                 trace['certificate'] = rec.certificate
                 if not rec.certificate['representable']:
                     rec.unrecoverable = True

@@ -1,6 +1,6 @@
 # Public API contract
 
-This is the release-scope API contract for the qualified text runtime. It is intentionally narrower than all fields that the upstream `deepseek-recipe` request classes can parse.
+This is the **standard-off** release-scope API contract for the qualified text runtime. It is intentionally narrower than all fields that the upstream `deepseek-recipe` request classes can parse.
 
 ## Qualified release scope
 
@@ -70,13 +70,14 @@ Stateless endpoints continue to use official recipe request behavior for fields 
 
 Rejected requests are atomic with respect to model/session state: no partial token commit, KV mutation, publication, or generation-state advance may survive. Unknown session returns not-found; active overlap/max-session conflicts return conflict; validation failures return invalid request errors.
 
-## Proposed bounded MTP profile (not released)
+## Explicit bounded MTP candidate (separate contract)
 
-[M40 readiness evaluation](milestone-40-release-readiness.md) specifies a separate
-process-wide `mtp-singleton-v1` candidate contract, not an available public mode.
-Decision: `NOT_READY_PUBLIC_ADMISSION_AND_REPRODUCIBLE_DELIVERY`. The release API
-above remains unchanged and MTP remains OFF. Do not infer MTP feature parity or
-release qualification from internal M33–M39 evidence.
+M41 implements the process-wide **opt-in** `mtp-singleton-v1` profile; its
+[API/setup/helper contract](mtp-local-release-candidate.md) and
+[decision/evidence](milestone-41-local-mtp-release-candidate.md) are separate from
+standard-off above. M40's negative readiness record remains historical evidence,
+not the current operator interface. Omitted profile remains OFF. No feature parity,
+remote/browser/Rust application support or persistence follows from opt-in MTP.
 
 ## Optional / experimental
 

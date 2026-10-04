@@ -2,7 +2,10 @@
 
 ## Status
 
-`DS41F_TEXT_RUNTIME_RELEASE_QUALIFIED` for the scoped local text runtime below. This is not a universal project-complete claim.
+`DS41F_TEXT_RUNTIME_RELEASE_QUALIFIED` for the **standard-off** scoped local text runtime below.
+The separate opt-in [M41 local MTP candidate](milestone-41-local-mtp-release-candidate.md)
+has its own composed/source-clone acceptance and narrower [contract](mtp-local-release-candidate.md);
+this OFF qualification does not grant it feature parity. This is not a universal project-complete claim.
 
 M20 promotes exact upstream oMLX `v0.7.0` (`4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40`) after fresh bounded dependency-reachable gates, A/B, persistence, HTTP/tool/EOS, repeated-session and targeted 200K endpoint checks. See [M20](m20-omlx-release-migration.md) and `artifacts/m20/promotion.json`. The old M18 whole-runtime migration attestation is stale for this dependency; it is not reclassified to preserve inheritance. Unchanged source/prefill evidence is retained explicitly, not represented as fresh release timing.
 

@@ -11,11 +11,45 @@ from ds41f_mlx.provenance import inspect_runtime
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Launch ds41f local text runtime")
+    parser.add_argument('--profile', choices=['standard-off','mtp-singleton-v1'], default='standard-off')
     parser.add_argument("--host", help="override DS41F_HOST")
     parser.add_argument("--port", type=int, help="override DS41F_PORT")
     parser.add_argument("--print-config", action="store_true", help="print resolved config/provenance and exit")
     parser.add_argument("--no-validate", action="store_true", help="skip path validation before launch")
     args = parser.parse_args(argv)
+
+    if args.profile == 'mtp-singleton-v1':
+        if args.no_validate:
+            parser.error('MTP identity validation cannot be disabled')
+        try:
+            from .mtp_identity import config, inspect
+            cfg = config(args.host, args.port)
+            report = inspect(cfg)
+        except (ValueError, OSError, ImportError) as exc:
+            print(json.dumps({'status':'FAIL','error':str(exc)}), file=sys.stderr)
+            return 2
+        if args.print_config:
+            print(json.dumps(report,indent=2))
+            return 0
+        cfg.apply_environment()
+        from .serving.mtp_public import LocalMTPBackend
+        from .serving.server import create_app
+        backend = LocalMTPBackend(runtime_config=cfg)
+        backend.dependency_identity = report['identity_sha256']
+        app = create_app(backend=backend, runtime_config=cfg, profile=args.profile)
+        import uvicorn
+        from .serving.local_h11 import LocalH11Protocol
+        uvicorn.run(app, host=cfg.host, port=cfg.port, workers=1, proxy_headers=False, ws='none', loop='asyncio',
+                    limit_concurrency=8, backlog=8, timeout_keep_alive=5,
+                    h11_max_incomplete_event_size=16384, http=LocalH11Protocol)
+        # Shutdown does not claim persistence or recovery. Await shielded retirement.
+        import asyncio
+        async def retire():
+            for sid in list(backend.sessions):
+                await backend.close_stateful_session(sid)
+        asyncio.run(retire())
+        backend.close()
+        return 0
 
     cfg = load_runtime_config()
     if args.host is not None or args.port is not None:

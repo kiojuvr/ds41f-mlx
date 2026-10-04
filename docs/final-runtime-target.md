@@ -12,7 +12,9 @@ it has already been reached. [Runtime strategy](runtime-strategy.md),
 [operations](operations.md), the [release manifest](../release/ds41f-release.json)
 and scoped qualification records continue to describe the current runtime.
 Production/default MTP, DSpark and speculation remain OFF; this target neither
-promotes MTP nor broadens any qualified capability.
+promotes MTP nor broadens any qualified capability. The separately implemented
+[M41 local candidate](milestone-41-local-mtp-release-candidate.md) has its own
+narrow [setup/capability contract](mtp-local-release-candidate.md).
 
 ## Fresh-clone expectation
 
@@ -47,7 +49,8 @@ prohibited. The official checkpoint is an intentionally external model asset.
 
 ### oMLX: temporary implementation substrate
 
-Today the release manifest pins oMLX, configuration imports its checkout, and
+Today the OFF release manifest pins oMLX and OFF configuration imports its
+checkout; M41's separate candidate installs repository-exported source as a package.
 GenerationBatch decode owns executable cache state after the repository's dense
 P0–P7 prefill/P5 handoff. Internal guarded qualification additionally uses a
 patched oMLX candidate. This is a **temporary implementation substrate**, not the
@@ -72,7 +75,9 @@ protocol/prompt/response authority, including tokenizer, tools, thinking,
 streaming and semantic preview behavior. Current setup prefers an installed
 native recipe package but still requires a checkout for tokenizer/provenance;
 internal qualification uses an exact candidate native build. Merely installing
-a package today does not eliminate that checkout requirement.
+a package in the OFF setup does not eliminate that checkout requirement. M41's
+separate source/native provisioning delivers the candidate and tokenizer without
+requiring a developer checkout; OFF migration remains separate.
 
 The final dependency must provide all required functionality and resources via
 **a normal reproducible package dependency, repository-owned functionality, or

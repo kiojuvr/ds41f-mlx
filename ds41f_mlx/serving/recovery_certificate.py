@@ -5,7 +5,7 @@ import json
 
 
 def reconstruction_certificate(body, response, canonical, *, tokenizer, recipe_path,
-                               completed_tool_block=False):
+                               completed_tool_block=False, options=None):
     from deepseek_recipe import ConversionError
     from .server import prepare_request, RequestError
     choices = response.get('choices', [])
@@ -30,7 +30,7 @@ def reconstruction_certificate(body, response, canonical, *, tokenizer, recipe_p
         witness['tool_choice'] = 'auto'
     try:
         prepared = prepare_request('chat_completions', json.dumps(witness).encode(),
-                                   tokenizer=tokenizer, recipe_path=recipe_path)
+                                   tokenizer=tokenizer, recipe_path=recipe_path, options=options)
         ids = prepared.token_ids
         exact = len(ids) > len(canonical) and ids[:len(canonical)] == canonical
         result.update(exact_prefix=exact, semantic_complete=complete,

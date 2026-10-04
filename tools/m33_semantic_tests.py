@@ -8,7 +8,9 @@ from pathlib import Path
 from types import SimpleNamespace as NS
 import os
 import sys
-sys.path[:0] = [str(Path(__file__).resolve().parents[1]),os.environ.get('DS41F_OMLX_CANDIDATE','/tmp/ds41f-m33-omlx')]
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+if not os.environ.get('DS41F_TEST_INSTALLED'):
+    sys.path.insert(0, os.environ.get('DS41F_OMLX_CANDIDATE','/tmp/ds41f-m33-omlx'))
 import pytest
 import mlx.core as mx
 import deepseek_recipe as d
@@ -16,7 +18,7 @@ from omlx.patches.mlx_lm_mtp import batch_generator as mtp
 from omlx.patches.mlx_lm_mtp.semantic_horizon import SemanticGuardError, SemanticHorizon, Prediction
 from ds41f_mlx.runtime.recipe_semantic_guard import RecipeSemanticGuard
 from ds41f_mlx.runtime.mtp_lifecycle import CanonicalTransportHistory, canonical_quiesce_native_singleton
-TOKENIZER='/tmp/ds41f-m32-recipe/static/tokenizers/v41/tokenizer.json'
+TOKENIZER=str(Path(sys.prefix)/'share/ds41f-mtp/recipe/static/tokenizers/v41/tokenizer.json') if os.environ.get('DS41F_TEST_INSTALLED') else '/tmp/ds41f-m32-recipe/static/tokenizers/v41/tokenizer.json'
 
 class Cache:
     def __init__(self,n):self.n=n
