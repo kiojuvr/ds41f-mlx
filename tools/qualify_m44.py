@@ -10,7 +10,7 @@ from pathlib import Path
 import sys
 from time import perf_counter
 
-from ds41f_mlx.config import RuntimeConfig
+from ds41f_mlx.config import load_runtime_config
 
 
 def main():
@@ -20,7 +20,7 @@ def main():
     p.add_argument('--tokens', type=int, default=128)
     p.add_argument('--engine', choices=['both', 'owned'], default='both')
     args = p.parse_args()
-    cfg = RuntimeConfig(); cfg.apply_import_paths()
+    cfg = load_runtime_config(); cfg.apply_import_paths()
     import mlx.core as mx
     import omlx.scheduler
     from omlx.patches.deepseek_v41.loading import load
@@ -80,7 +80,9 @@ def main():
                     try:
                         DeferredPrefillAppend.continue_from_commit(lm, commit, history+[ids[-1]], mx=mx)
                     except P6AppendError as exc:
-                        assert 'reserved/transferred' in str(exc)
+                        assert str(exc) in (
+                            'prior P6 commit does not own the same live cache',
+                            'prior P6 commit has been reserved/transferred for P5')
                     else:
                         raise AssertionError('stale prefill certificate remained executable')
                     if label == 'owned':

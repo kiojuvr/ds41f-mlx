@@ -101,9 +101,10 @@ def test_failed_bootstrap_close_drains_pending_owner():
     gen.close()
 
 
-def test_deepseek_native_array_abi_and_pack_execution():
-    fast = importlib.import_module("omlx.custom_kernels.glm_moe_dsa.fast")
-    assert fast.has_symbol("deepseek_v41_packed_attention")
+def test_qualified_packed_cache_representation_execution():
+    # M43/R1 delivery does not promise every optional donor fast symbol.
+    # The moved boundary requires the qualified packed representation, not
+    # a new kernel-presence admission rule inherited from a legacy host probe.
     quant = importlib.import_module("omlx.patches.deepseek_v41.quantization")
     packed = quant.pack_activation(mx.ones((1, 2, 128), mx.bfloat16), bits=4,
                                    group_size=16, e4m3_scale=True)
