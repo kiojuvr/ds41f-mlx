@@ -45,9 +45,11 @@ def snapshot():
     origins = {}
     for name in ('omlx','deepseek_recipe','deepseek_recipe._native','mlx','mlx_lm'):
         spec = importlib.util.find_spec(name)
-        if not spec or not spec.origin or not Path(spec.origin).resolve().is_relative_to(site.resolve()):
+        locations = list(spec.submodule_search_locations or []) if spec else []
+        origin = spec.origin if spec and spec.origin else (locations[0] if len(locations) == 1 else None)
+        if not origin or not Path(origin).resolve().is_relative_to(site.resolve()):
             raise ValueError(f'non-provisioned module origin: {name}')
-        origins[name] = str(Path(spec.origin).resolve().relative_to(site))
+        origins[name] = str(Path(origin).resolve().relative_to(site))
     if sha(recipe/'static/tokenizers/v41/tokenizer.json') != '81f64d1248a68ce3663e07ab3ee48b851e5df0e32d27cb98e4c9a268151e8d99':
         raise ValueError('recipe tokenizer drift')
     if platform.python_version() != '3.13.15':
