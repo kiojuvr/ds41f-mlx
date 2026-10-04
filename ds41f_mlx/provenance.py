@@ -311,6 +311,12 @@ def release_manifest_checks() -> list[dict[str, Any]]:
 
 def inspect_runtime(config: RuntimeConfig | None = None) -> dict[str, Any]:
     cfg = config or load_runtime_config()
+    from .delivery import RECORD, inspect as inspect_delivery
+    if RECORD.exists():
+        try:
+            return inspect_delivery(cfg)
+        except (ValueError, OSError, ImportError) as exc:
+            return {'schema': 'ds41f.off.delivery.v1', 'status': 'FAIL', 'error': str(exc)}
     cfg.apply_import_paths()
     validation = validate_runtime_config(cfg)
     omlx_rev = git_rev(cfg.omlx_path)

@@ -23,6 +23,7 @@ def run(*args, env=None):
 
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument('--profile', choices=['standard-off', 'mtp-singleton-v1'], default='mtp-singleton-v1')
     p.add_argument('--venv', type=Path, required=True)
     p.add_argument('--build-dir', type=Path, required=True)
     args = p.parse_args(argv)
@@ -75,8 +76,16 @@ def main(argv=None):
     resource.mkdir(parents=True, exist_ok=True)
     import shutil
     shutil.copy2(build/'recipe/static/tokenizers/v41/tokenizer.json',resource/'tokenizer.json')
-    # Record actual executable and link identity inside the target environment.
-    run(python,'-m','ds41f_mlx.mtp_identity','seal','--wheel',wheels[0],env=env)
+    # Standard OFF uses the unchanged R1 attributed base source, not the MTP patches.
+    if args.profile == 'standard-off':
+        site = Path(subprocess.check_output([str(python), '-c', 'import sysconfig; print(sysconfig.get_paths()["purelib"])'], text=True).strip())
+        shutil.rmtree(site/'omlx')
+        with tarfile.open(ROOT/'reference/R1/off-source.tar.gz') as archive:
+            archive.extractall(site, filter='data')
+        run(python, '-m', 'ds41f_mlx.delivery', 'seal', '--wheel', wheels[0], env=env)
+    else:
+        # Record actual executable and link identity inside the target environment.
+        run(python,'-m','ds41f_mlx.mtp_identity','seal','--wheel',wheels[0],env=env)
     print(f'Provisioned {venv}. Runtime needs neither donor checkouts nor build-dir.')
 
 

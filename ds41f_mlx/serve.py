@@ -59,6 +59,10 @@ def main(argv: list[str] | None = None) -> int:
     cfg.apply_import_paths()
 
     report = inspect_runtime(cfg)
+    from .delivery import RECORD
+    if RECORD.exists() and (args.no_validate or report['status'] != 'PASS'):
+        print(json.dumps({'status': 'FAIL', 'error': 'source-delivered OFF provenance cannot be bypassed', 'provenance': report}), file=sys.stderr)
+        return 2
     if args.print_config:
         print(json.dumps(report, indent=2, sort_keys=True))
         return 0 if report["status"] in {"PASS", "WARNING"} else 2

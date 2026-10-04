@@ -41,10 +41,11 @@ def main(argv=None):
     preview = Path(str(prefix)+'.native-preview.json')
     matrix = Path(str(prefix)+'.recipe-matrix.json')
     parity = Path(str(prefix)+'.native-parity.json')
+    owned = ROOT/'reference/R1'
     native_commands = [
-        ('preview',[sys.executable,'-m','tools.run_m32_native_preview',str(cfg.recipe_path/'static/tokenizers/v41/tokenizer.json'),str(preview)]),
-        ('parity',[sys.executable,'-m','tools.m32_native_parity_driver',str(ROOT/'artifacts/m31/parity-fixtures.json'),str(cfg.recipe_path/'static/tokenizers/v41/tokenizer.json')]),
-        ('representation',[sys.executable,'-m','tools.run_m36r_recipe_matrix',str(cfg.recipe_path),str(matrix)])]
+        ('preview',[sys.executable,'-m','reference.R1.preview',str(cfg.recipe_path/'static/tokenizers/v41/tokenizer.json'),str(preview)]),
+        ('parity',[sys.executable,'-m','reference.R1.protocol',str(owned/'fixtures/protocol-inputs.json'),str(cfg.recipe_path/'static/tokenizers/v41/tokenizer.json')]),
+        ('representation',[sys.executable,'-m','reference.R1.recovery',str(cfg.recipe_path),str(matrix)])]
     native_results = []
     for name, command in native_commands:
         process = subprocess.run(command,cwd=ROOT,text=True,capture_output=True,timeout=120)
@@ -55,14 +56,13 @@ def main(argv=None):
         if name == 'parity':
             parity.write_text(process.stdout)
             actual = json.loads(process.stdout)
-            reference = json.loads((ROOT/'artifacts/m32/canonical-base.json').read_text())
-            if actual['records'] != reference['records']:
+            reference = json.loads((owned/'fixtures/protocol-expected.json').read_text())
+            if actual['records'] != reference:
                 fail('native_parity', 'rebuilt native recipe differs from official base corpus')
     actual_matrix = json.loads(matrix.read_text())['rows']
-    old_matrix = json.loads((ROOT/'artifacts/m39/recipe-matrix.json').read_text())['rows']
+    old_matrix = json.loads((owned/'fixtures/recovery-expected.json').read_text())
     predicates = ('representable','exact_prefix','semantic_complete','executable_tools','first_mismatch')
-    if [(r['name'],r['canonical'],{k:r['certificate'].get(k) for k in predicates}) for r in actual_matrix] != [
-            (r['name'],r['canonical'],{k:r['certificate'].get(k) for k in predicates}) for r in old_matrix]:
+    if [dict(name=r['name'],canonical=r['canonical'],certificate={k:r['certificate'].get(k) for k in predicates}) for r in actual_matrix] != old_matrix:
         fail('native_representation', 'native representation fixture contract changed')
     result = dict(schema='ds41f.m41.composed.v1',status='RUNNING',native_gates=native_results,
                   identity_sha256=provenance['identity_sha256'],cases=[],admission=[])

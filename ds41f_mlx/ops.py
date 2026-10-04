@@ -54,6 +54,8 @@ def main(argv: list[str] | None = None) -> int:
         return 0 if provenance.get("status") in {"PASS", "WARNING"} else 2
     if args.cmd == "start":
         os.execv(sys.executable, [sys.executable, '-m', 'ds41f_mlx.serve', *rest])
+    if (ROOT/'release/promotion.json').exists() and args.cmd in ('quick', 'full'):
+        parser.error('Projected runtime qualification: use ds41f_mlx.reference --real-model, not historical development campaigns')
     if args.cmd == "quick":
         return _run_module("ds41f_mlx.qualify", ["--mode", "quick", *rest])
     if args.cmd == "accept":

@@ -50,7 +50,10 @@ def main(argv: list[str] | None = None) -> int:
     provenance = inspect_runtime(cfg)
     gates: list[dict[str, Any]] = []
     if not args.skip_cheap_gates and not args.installed:
-        gates.extend(run_command(cmd, timeout=300) for cmd in CHEAP_GATES)
+        commands = CHEAP_GATES
+        if (ROOT/'release/promotion.json').exists():
+            commands = [[sys.executable, '-m', 'ds41f_mlx.projection'], ['cargo', 'test', '--locked']]
+        gates.extend(run_command(cmd, timeout=300) for cmd in commands)
     real = run_rust_acceptance(installed=args.installed)
     status = "PASS" if provenance.get("status") == "PASS" and all(g.get("status") == "PASS" for g in gates) and real.get("status") == "PASS" else "FAILED"
     artifact = {

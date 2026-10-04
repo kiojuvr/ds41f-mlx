@@ -159,6 +159,9 @@ def snapshot():
 
 
 def inspect(cfg, *, checkpoint=True):
+    if (ROOT/'release/promotion.json').exists():
+        from .projection import verify
+        verify()
     if checkpoint and not os.environ.get('DS41F_CHECKPOINT'):
         raise ValueError('DS41F_CHECKPOINT must explicitly identify the official external asset')
     if platform.system() != 'Darwin' or platform.machine() != 'arm64':
