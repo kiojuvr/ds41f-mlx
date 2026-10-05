@@ -15,8 +15,9 @@ Canonical current-state documents:
 - [Local MTP setup/API/operator boundary](mtp-local-release-candidate.md) — supported profile, reproducible source/native setup and conservative application states
 
 - [Runtime strategy](runtime-strategy.md) — production architecture and non-selected paths
-- [Implementation plan: post-M48 boundary and remaining work](implementation-plan.md#post-m48-production-boundary-and-remaining-work-current-authority) — authoritative current roadmap: text standard-OFF core complete, not full production implementation; iterative qualification, very-long-context/practical ceiling and Vision completion, deferred R1 and promotion
+- [Implementation plan: post-M48 boundary and remaining work](implementation-plan.md#post-m48-production-boundary-and-remaining-work-current-authority) — authoritative current roadmap: text standard-OFF core complete, not full production implementation; measured bounded 1M text core, remaining Vision completion, deferred R1 and promotion
 - [Standard-OFF 200K production qualification](standard-off-200k-production-qualification.md) — post-M48 real long-session core, allocator defect closure, exact persistence/restart and bounded operational envelope
+- [Very-long-context production qualification](very-long-context-production-qualification.md) — actual 512K/768K/1M text core, residency-lifetime repair, measured supported ceiling and exact restart/re-entry
 - [Architecture](architecture.md) — runtime components and ownership boundaries
 - [Correctness](correctness.md) — backend-local fidelity policy and authority hierarchy
 - [Session state](session-state.md) — persistent, runtime-owned, and call-local state contract

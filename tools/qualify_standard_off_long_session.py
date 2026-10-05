@@ -36,11 +36,16 @@ def main():
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--artifact-root', type=Path, required=True)
     p.add_argument('--context', type=int, default=200000)
+    p.add_argument('--fixture-revision', help='Git corpus revision for exact-workload requalification only')
     p.add_argument('--turns', type=int, default=16)
     p.add_argument('--decode-tokens', type=int, default=256)
     p.add_argument('--restore', type=Path, help='initial-phase JSON (fresh process required)')
     p.add_argument('--compare', type=Path, help='same-workload pre-policy receipt, evidence only')
+    p.add_argument('--restore-probe-only', action='store_true',
+                   help='fresh exact restore/probe and close without growing an already full frontier')
     a = p.parse_args()
+    if a.restore_probe_only and not a.restore:
+        p.error('--restore-probe-only requires --restore')
     class NoDonor(importlib.abc.MetaPathFinder):
         def find_spec(self, fullname, path=None, target=None):
             if displaced(fullname):
@@ -66,18 +71,28 @@ def main():
     a.output.parent.mkdir(parents=True, exist_ok=True)
     start = time.perf_counter(); stop = threading.Event(); session = None
     def memory():
-        return dict(elapsed_s=time.perf_counter()-start, rss_bytes=psutil.Process().memory_info().rss,
+        vm_stat=subprocess.check_output(['vm_stat'], text=True)
+        return dict(vm_stat=vm_stat,elapsed_s=time.perf_counter()-start, rss_bytes=psutil.Process().memory_info().rss,
                     mlx_active_bytes=mx.get_active_memory(), mlx_cache_bytes=mx.get_cache_memory(),
                     mlx_peak_bytes=mx.get_peak_memory(), swap_used_bytes=psutil.swap_memory().used,
                     system_available_bytes=psutil.virtual_memory().available,
-                    thread_count=psutil.Process().num_threads(), fd_count=psutil.Process().num_fds())
+                    thread_count=psutil.Process().num_threads(), fd_count=psutil.Process().num_fds(),
+                    disk_io={name: counters._asdict() for name, counters in
+                             (psutil.disk_io_counters(perdisk=True) or {}).items()})
     def save():
         tmp = a.output.with_suffix('.tmp'); tmp.write_text(json.dumps(result, indent=2)+'\n'); tmp.replace(a.output)
     def progress(stage):
         print(json.dumps(dict(event='heartbeat', stage=stage, elapsed_s=time.perf_counter()-start)), flush=True)
     def sample():
         while not stop.wait(10):
-            result['resources'].append(memory()); progress('resource-sample')
+            snapshot=memory()
+            result['resources'].append(snapshot)
+            with a.output.with_suffix('.resources.jsonl').open('a') as log:
+                log.write(json.dumps(snapshot)+'\n')
+            progress('resource-sample')
+    result['start_memory']=memory()
+    result['device']=mx.device_info()
+    result['physical_memory_bytes']=psutil.virtual_memory().total
     observer = threading.Thread(target=sample, daemon=True); observer.start()
     def slots(cache):
         return [dict(layer=i, slot=j, shape=list(x.shape), dtype=str(x.dtype),
@@ -120,6 +135,7 @@ def main():
         model=backend._model; lm=model.language_model; tokenizer=backend._runtime.processor.tokenizer
         assert type(lm).__module__ == 'ds41f_mlx.model_execution.language'
         result['admission']=backend._runtime.admission.describe()
+        result['configured_max_seq_len']=lm._config.max_seq_len
         result['loaded_memory']=memory()
         dc=OMLXDecodeConfig(preserve_mtp=False, omlx_path=cfg.omlx_path)
         probe_suffix=tokenizer.encode('\nOperational checkpoint: summarize the invariants of the committed session.\n')
@@ -135,6 +151,15 @@ def main():
             assert [r['token'] for r in row['reports']]==source['probe_tokens']
             assert slots(session.live_cache)==source['probe_slots']
             result['fresh_process_restore_exact']=True
+            if a.restore_probe_only:
+                # The last live branch already consumed the remaining capacity.
+                # Reproduce it exactly; do not manufacture a post-ceiling suffix.
+                for key in ('persisted_slots', 'persisted_history_sha256', 'persisted_frontier',
+                            'artifact', 'artifact_bytes', 'probe_tokens', 'probe_slots'):
+                    result[key]=source[key]
+                result.update(save_s=0.0, save_performed=False, restored_artifact_only=True,
+                              final_frontier=session.frontier, diagnostics=session.diagnostics(), status='PASS')
+                return
         else:
             # Exercise the actual recipe serving infer path as well as its long-lived runtime seams.
             options=types.SimpleNamespace(temperature=0.0, top_p=0.0, max_tokens=16)
@@ -147,13 +172,19 @@ def main():
             assert trace['prompt_replay_count']==trace['full_cache_repack_count']==0
             result['serving_trace']=trace
             # Mixed real repository documents/code and uniquely numbered operational journal entries.
-            corpus='\n'.join((ROOT/f).read_text() for f in ['docs/architecture.md','docs/session-state.md',
-                'docs/engram.md','ds41f_mlx/runtime/continuation_session.py','docs/operations.md'])
+            corpus_files=['docs/architecture.md','docs/session-state.md','docs/engram.md',
+                          'ds41f_mlx/runtime/continuation_session.py','docs/operations.md']
+            corpus='\n'.join(subprocess.check_output(['git','show',f'{a.fixture_revision}:{f}'], text=True)
+                             if a.fixture_revision else (ROOT/f).read_text() for f in corpus_files)
+            result['fixture_corpus_revision']=a.fixture_revision
             text='Review this runtime maintenance journal and retain its operational constraints.\n'
-            text+='\n'.join(f'Journal section {i}:\n{corpus}\nEnd section {i}.\n' for i in range(80))
+            sections=max(80, a.context//len(tokenizer.encode(corpus))+2)
+            text+='\n'.join(f'Journal section {i}:\n{corpus}\nEnd section {i}.\n' for i in range(sections))
             ids=tokenizer.encode(text)[:a.context]; assert len(ids)==a.context
             result['fixture']=dict(kind='repository text and numbered maintenance journal', count=len(ids), sha256=digest_ids(ids))
+            result['before_prefill_memory']=memory(); save()
             progress('prefill'); pre=DwarfStarMLXPrefillSession(model, omlx_path=cfg.omlx_path).prefill(ids[:-1])
+            result['after_prefill_memory']=memory(); progress('prefill-complete'); save()
             result['prefill']=pre.to_json(); result['prefill']['tok_s']=(len(ids)-1)/pre.seconds
             live=pre.live_result.live_cache; t=time.perf_counter()
             session=M8LiveContinuationSession.from_prefill_result(model=model, live_result=pre.live_result,
@@ -192,12 +223,15 @@ def main():
         result['diagnostics']=session.diagnostics()
         if a.compare:
             previous=json.loads(a.compare.read_text()); assert previous['status']=='PASS'
-            for key in ('fixture','persisted_frontier','persisted_history_sha256','persisted_slots','probe_tokens','probe_slots','final_frontier'):
+            keys=['persisted_frontier','persisted_history_sha256','persisted_slots','probe_tokens','probe_slots','final_frontier']
+            if not a.restore: keys.append('fixture')
+            for key in keys:
                 assert result[key]==previous[key], key
             for old,new in zip(previous['turns'],result['turns'],strict=True):
                 assert old['suffix_sha256']==new['suffix_sha256']
                 assert [r['token'] for r in old['reports']]==[r['token'] for r in new['reports']]
-            assert [r['token'] for r in previous['initial_decode']['reports']]==[r['token'] for r in result['initial_decode']['reports']]
+            if not a.restore:
+                assert [r['token'] for r in previous['initial_decode']['reports']]==[r['token'] for r in result['initial_decode']['reports']]
             result['pre_policy_comparison']='exact tokens, history, persisted/probe all 280 slots'
         result['status']='PASS'
     except BaseException as exc:
@@ -209,8 +243,11 @@ def main():
         result['backend_active_sessions']=backend.active_generation_sessions
         current=mx.set_cache_limit(0); mx.set_cache_limit(current)
         result['retired_allocator_cache_limit_bytes']=current
+        wired=mx.set_wired_limit(0); mx.set_wired_limit(wired)
+        result['retired_wired_limit_bytes']=wired
         if result['status']=='PASS':
             assert current==result['admission']['previous_allocator_cache_limit_bytes']
+            assert wired==result['admission']['previous_wired_limit_bytes']
         save()
 
 

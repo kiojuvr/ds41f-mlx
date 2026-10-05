@@ -1,0 +1,653 @@
+{
+  "schema": "ds41f.standard-off.very-long-frontier.v1",
+  "decision": "QUALIFIED_BOUNDED_VERY_LONG_FIRST_PARTY_OFF",
+  "context_tokens": 524288,
+  "final_frontier": 532774,
+  "process_count": 2,
+  "fresh_process_restores": 1,
+  "wall_s": 1527.8971305420273,
+  "prefill_s": 764.2152576660155,
+  "prefill_tok_s": 686.0462346711334,
+  "initial_decode_tok_s": 16.98249331669135,
+  "sustained_decode_tok_s": {
+    "min": 17.019973031025106,
+    "median": 17.241639614147868,
+    "max": 17.487301162772766,
+    "early_middle_late_medians": [
+      17.12092494963492,
+      17.207672898164837,
+      17.449017784850078
+    ]
+  },
+  "continuation_bootstrap_s": {
+    "min": 0.10154133394826204,
+    "max": 7.6354494169936515
+  },
+  "decoded_tokens": 1518,
+  "continued_turns": 15,
+  "cancelled_turns": 2,
+  "persistence": [
+    {
+      "frontier": 529967,
+      "bytes": 479690405,
+      "save_s": 0.8165664999978617,
+      "restore_s": null
+    },
+    {
+      "frontier": 532728,
+      "bytes": 482163045,
+      "save_s": 0.8128721250104718,
+      "restore_s": 0.20559120899997652
+    }
+  ],
+  "resources": {
+    "peak_mlx_active_bytes": 320066739152,
+    "max_sampled_mlx_active_plus_free_cache_bytes": 342412239405,
+    "peak_sampled_rss_bytes": 22770532352,
+    "swap_start_bytes": 326762496,
+    "swap_end_bytes": 293208064,
+    "per_process_idle": [
+      {
+        "first": {
+          "vm_stat": "Mach Virtual Memory Statistics: (page size of 16384 bytes)\nPages free:                                   518820.\nPages active:                                5955115.\nPages inactive:                              5969017.\nPages speculative:                             17992.\nPages throttled:                                   0.\nPages wired down:                           20961983.\nPages purgeable:                                 538.\n\"Translation faults\":                     2258252998.\nPages copy-on-write:                        34666698.\nPages zero filled:                       17261682205.\nPages reactivated:                          78660389.\nPages purged:                               14685989.\nFile-backed pages:                          11856236.\nAnonymous pages:                               85888.\nPages stored in compressor:                   273874.\nPages occupied by compressor:                  74433.\nDecompressions:                             57781494.\nCompressions:                              144597083.\nPageins:                                  2426332837.\nPageouts:                                       9610.\nSwapins:                                       53686.\nSwapouts:                                     102948.\n",
+          "elapsed_s": 1104.5247433750192,
+          "rss_bytes": 16676847616,
+          "mlx_active_bytes": 301870793416,
+          "mlx_cache_bytes": 34351258076,
+          "mlx_peak_bytes": 320066739152,
+          "swap_used_bytes": 293208064,
+          "system_available_bytes": 106593239040,
+          "thread_count": 87,
+          "fd_count": 13,
+          "disk_io": {
+            "disk0": {
+              "read_count": 10026506,
+              "write_count": 2778383,
+              "read_bytes": 2116638363648,
+              "write_bytes": 81103278080,
+              "read_time": 27950653,
+              "write_time": 178889
+            },
+            "disk6": {
+              "read_count": 778815,
+              "write_count": 1013317,
+              "read_bytes": 36136213504,
+              "write_bytes": 61136646144,
+              "read_time": 2157321,
+              "write_time": 29365964
+            },
+            "disk8": {
+              "read_count": 294844192,
+              "write_count": 1657228,
+              "read_bytes": 67361787991040,
+              "write_bytes": 427996647424,
+              "read_time": 131434326,
+              "write_time": 2861485
+            },
+            "disk10": {
+              "read_count": 60600,
+              "write_count": 954,
+              "read_bytes": 401191936,
+              "write_bytes": 23650304,
+              "read_time": 7413,
+              "write_time": 59
+            },
+            "disk12": {
+              "read_count": 55095,
+              "write_count": 99274,
+              "read_bytes": 2337125888,
+              "write_bytes": 43146510336,
+              "read_time": 42752,
+              "write_time": 673224
+            },
+            "disk13": {
+              "read_count": 56128,
+              "write_count": 100897,
+              "read_bytes": 2347146752,
+              "write_bytes": 43177488384,
+              "read_time": 43590,
+              "write_time": 663602
+            },
+            "disk4": {
+              "read_count": 1180,
+              "write_count": 0,
+              "read_bytes": 159591424,
+              "write_bytes": 0,
+              "read_time": 2076,
+              "write_time": 0
+            },
+            "disk16": {
+              "read_count": 287,
+              "write_count": 0,
+              "read_bytes": 1903616,
+              "write_bytes": 0,
+              "read_time": 58,
+              "write_time": 0
+            }
+          }
+        },
+        "last": {
+          "vm_stat": "Mach Virtual Memory Statistics: (page size of 16384 bytes)\nPages free:                                   415967.\nPages active:                                5990719.\nPages inactive:                              6013363.\nPages speculative:                             21555.\nPages throttled:                                   0.\nPages wired down:                           20985147.\nPages purgeable:                                 606.\n\"Translation faults\":                     2258748831.\nPages copy-on-write:                        34689114.\nPages zero filled:                       17263191337.\nPages reactivated:                          78660513.\nPages purged:                               14686613.\nFile-backed pages:                          11892718.\nAnonymous pages:                              132919.\nPages stored in compressor:                   262435.\nPages occupied by compressor:                  70215.\nDecompressions:                             57792635.\nCompressions:                              144597083.\nPageins:                                  2426339575.\nPageouts:                                       9610.\nSwapins:                                       53686.\nSwapouts:                                     102948.\n",
+          "elapsed_s": 1172.0422601250466,
+          "rss_bytes": 17836179456,
+          "mlx_active_bytes": 302956205896,
+          "mlx_cache_bytes": 33637911296,
+          "mlx_peak_bytes": 320066739152,
+          "swap_used_bytes": 293208064,
+          "system_available_bytes": 105692987392,
+          "thread_count": 88,
+          "fd_count": 13,
+          "disk_io": {
+            "disk0": {
+              "read_count": 10028868,
+              "write_count": 2778499,
+              "read_bytes": 2116692865024,
+              "write_bytes": 81121415168,
+              "read_time": 27951108,
+              "write_time": 178900
+            },
+            "disk6": {
+              "read_count": 779137,
+              "write_count": 1014307,
+              "read_bytes": 36184779776,
+              "write_bytes": 61210935296,
+              "read_time": 2157874,
+              "write_time": 29378231
+            },
+            "disk8": {
+              "read_count": 294844288,
+              "write_count": 1657228,
+              "read_bytes": 67361796559872,
+              "write_bytes": 427996647424,
+              "read_time": 131434341,
+              "write_time": 2861485
+            },
+            "disk10": {
+              "read_count": 60600,
+              "write_count": 954,
+              "read_bytes": 401191936,
+              "write_bytes": 23650304,
+              "read_time": 7413,
+              "write_time": 59
+            },
+            "disk12": {
+              "read_count": 55101,
+              "write_count": 99561,
+              "read_bytes": 2337179136,
+              "write_bytes": 43386667008,
+              "read_time": 42754,
+              "write_time": 675537
+            },
+            "disk13": {
+              "read_count": 56131,
+              "write_count": 101184,
+              "read_bytes": 2347187712,
+              "write_bytes": 43417616384,
+              "read_time": 43591,
+              "write_time": 667160
+            },
+            "disk4": {
+              "read_count": 1180,
+              "write_count": 0,
+              "read_bytes": 159591424,
+              "write_bytes": 0,
+              "read_time": 2076,
+              "write_time": 0
+            },
+            "disk16": {
+              "read_count": 287,
+              "write_count": 0,
+              "read_bytes": 1903616,
+              "write_bytes": 0,
+              "read_time": 58,
+              "write_time": 0
+            }
+          }
+        }
+      },
+      {
+        "first": {
+          "vm_stat": "Mach Virtual Memory Statistics: (page size of 16384 bytes)\nPages free:                                   325104.\nPages active:                                6081507.\nPages inactive:                              6018562.\nPages speculative:                           1782934.\nPages throttled:                                   0.\nPages wired down:                           19235125.\nPages purgeable:                                1121.\n\"Translation faults\":                     2261962961.\nPages copy-on-write:                        34729321.\nPages zero filled:                       17284023088.\nPages reactivated:                          78731939.\nPages purged:                               14694269.\nFile-backed pages:                          13744191.\nAnonymous pages:                              138812.\nPages stored in compressor:                   217305.\nPages occupied by compressor:                  54060.\nDecompressions:                             57818122.\nCompressions:                              144597083.\nPageins:                                  2450293794.\nPageouts:                                       9629.\nSwapins:                                       53690.\nSwapouts:                                     102948.\n",
+          "elapsed_s": 319.57673691702075,
+          "rss_bytes": 12910116864,
+          "mlx_active_bytes": 301768246760,
+          "mlx_cache_bytes": 6286681895,
+          "mlx_peak_bytes": 303509389780,
+          "swap_used_bytes": 293208064,
+          "system_available_bytes": 133147869184,
+          "thread_count": 96,
+          "fd_count": 13,
+          "disk_io": {
+            "disk0": {
+              "read_count": 10053529,
+              "write_count": 2780809,
+              "read_bytes": 2116949458944,
+              "write_bytes": 81142845440,
+              "read_time": 27952576,
+              "write_time": 178962
+            },
+            "disk6": {
+              "read_count": 779317,
+              "write_count": 1014648,
+              "read_bytes": 36193836032,
+              "write_bytes": 61214744576,
+              "read_time": 2158068,
+              "write_time": 29380118
+            },
+            "disk8": {
+              "read_count": 296786363,
+              "write_count": 1657228,
+              "read_bytes": 67854868231168,
+              "write_bytes": 427996647424,
+              "read_time": 132711335,
+              "write_time": 2861485
+            },
+            "disk10": {
+              "read_count": 60600,
+              "write_count": 954,
+              "read_bytes": 401191936,
+              "write_bytes": 23650304,
+              "read_time": 7413,
+              "write_time": 59
+            },
+            "disk12": {
+              "read_count": 55994,
+              "write_count": 99744,
+              "read_bytes": 2432980480,
+              "write_bytes": 43388542976,
+              "read_time": 44265,
+              "write_time": 675581
+            },
+            "disk13": {
+              "read_count": 57055,
+              "write_count": 101405,
+              "read_bytes": 2443255296,
+              "write_bytes": 43419824128,
+              "read_time": 45185,
+              "write_time": 667216
+            },
+            "disk4": {
+              "read_count": 1180,
+              "write_count": 0,
+              "read_bytes": 159591424,
+              "write_bytes": 0,
+              "read_time": 2076,
+              "write_time": 0
+            },
+            "disk16": {
+              "read_count": 287,
+              "write_count": 0,
+              "read_bytes": 1903616,
+              "write_bytes": 0,
+              "read_time": 58,
+              "write_time": 0
+            }
+          }
+        },
+        "last": {
+          "vm_stat": "Mach Virtual Memory Statistics: (page size of 16384 bytes)\nPages free:                                     4442.\nPages active:                                6114963.\nPages inactive:                              6049261.\nPages speculative:                           1268119.\nPages throttled:                                   0.\nPages wired down:                           20006773.\nPages purgeable:                                1209.\n\"Translation faults\":                     2262303947.\nPages copy-on-write:                        34746035.\nPages zero filled:                       17284970169.\nPages reactivated:                          78731951.\nPages purged:                               14695235.\nFile-backed pages:                          13259094.\nAnonymous pages:                              173249.\nPages stored in compressor:                   217102.\nPages occupied by compressor:                  53948.\nDecompressions:                             57818319.\nCompressions:                              144597083.\nPageins:                                  2450294213.\nPageouts:                                       9629.\nSwapins:                                       53690.\nSwapouts:                                     102948.\n",
+          "elapsed_s": 355.18808495800477,
+          "rss_bytes": 14380335104,
+          "mlx_active_bytes": 301771696280,
+          "mlx_cache_bytes": 18875869270,
+          "mlx_peak_bytes": 305170362037,
+          "swap_used_bytes": 293208064,
+          "system_available_bytes": 119962468352,
+          "thread_count": 96,
+          "fd_count": 13,
+          "disk_io": {
+            "disk0": {
+              "read_count": 10053901,
+              "write_count": 2780923,
+              "read_bytes": 2116955516928,
+              "write_bytes": 81144348672,
+              "read_time": 27952668,
+              "write_time": 178966
+            },
+            "disk6": {
+              "read_count": 779320,
+              "write_count": 1014687,
+              "read_bytes": 36193872896,
+              "write_bytes": 61216100352,
+              "read_time": 2158071,
+              "write_time": 29380346
+            },
+            "disk8": {
+              "read_count": 296786369,
+              "write_count": 1657228,
+              "read_bytes": 67854868329472,
+              "write_bytes": 427996647424,
+              "read_time": 132711336,
+              "write_time": 2861485
+            },
+            "disk10": {
+              "read_count": 60600,
+              "write_count": 954,
+              "read_bytes": 401191936,
+              "write_bytes": 23650304,
+              "read_time": 7413,
+              "write_time": 59
+            },
+            "disk12": {
+              "read_count": 56000,
+              "write_count": 100038,
+              "read_bytes": 2433033728,
+              "write_bytes": 43630120960,
+              "read_time": 44297,
+              "write_time": 679008
+            },
+            "disk13": {
+              "read_count": 57058,
+              "write_count": 101694,
+              "read_bytes": 2443275776,
+              "write_bytes": 43661430784,
+              "read_time": 45200,
+              "write_time": 670559
+            },
+            "disk4": {
+              "read_count": 1180,
+              "write_count": 0,
+              "read_bytes": 159591424,
+              "write_bytes": 0,
+              "read_time": 2076,
+              "write_time": 0
+            },
+            "disk16": {
+              "read_count": 287,
+              "write_count": 0,
+              "read_bytes": 1903616,
+              "write_bytes": 0,
+              "read_time": 58,
+              "write_time": 0
+            }
+          }
+        }
+      }
+    ],
+    "min_system_available_bytes": 99267493888,
+    "max_allocator_cache_bytes": 34339517240,
+    "per_process_swap_bytes": [
+      {
+        "start": 326762496,
+        "loaded": 326762496,
+        "end": 293208064
+      },
+      {
+        "start": 293208064,
+        "loaded": 293208064,
+        "end": 293208064
+      }
+    ]
+  },
+  "allocator_cache_limits_bytes": [
+    34359738368,
+    34359738368
+  ],
+  "pre_policy_numerical_comparison": null,
+  "zero_replay_repack": true,
+  "exact_restart_tokens_and_all_280_slots": true,
+  "invariants": "one packed list; all 40 offsets equal consumed history; sampled lookahead discarded on cancel; invalid prefix rejected",
+  "limitations": [
+    "finite single-flight core workload, not an unbounded leak proof",
+    "long turns use exact-prefix token suffixes, not a complete HTTP/client tool-loop qualification",
+    "no crash-durability, immediate in-transaction abort, concurrency or cross-backend persistence claim",
+    "no extrapolation beyond tested frontiers, vision, speculative/MTP, R1 or release/promotion claim"
+  ],
+  "prefill_telemetry": {
+    "enabled": true,
+    "policy": "FULL_RESIDENT_BACKBONE_SSD_ENGRAM",
+    "p7_engram_tile": 2048,
+    "foreground_fallback": 0,
+    "background_reads": 512,
+    "foreground_engram_fallback": 0,
+    "prefetch_submissions": 512,
+    "consume_events": 512,
+    "logical_match_consumptions": 512,
+    "donor_observed_consumptions": 512
+  },
+  "bootstrap_s": 5.809486957965419,
+  "suffix_bootstrap_s": {
+    "1": {
+      "count": 3,
+      "min": 0.10154133394826204,
+      "median": 0.10443975002272055,
+      "max": 0.10477933299262077
+    },
+    "14": {
+      "count": 3,
+      "min": 0.3781819170108065,
+      "median": 0.3964804579736665,
+      "max": 0.4128412089776248
+    },
+    "17": {
+      "count": 3,
+      "min": 0.39229941699886695,
+      "median": 0.4002082090009935,
+      "max": 0.4093018749845214
+    },
+    "257": {
+      "count": 3,
+      "min": 1.306530790985562,
+      "median": 1.3121554579702206,
+      "max": 1.3189062079763971
+    },
+    "2049": {
+      "count": 3,
+      "min": 7.590771708055399,
+      "median": 7.6015908339759335,
+      "max": 7.6354494169936515
+    }
+  },
+  "configured_max_seq_len": 1048576,
+  "max_qualified_frontier": 532774,
+  "global_disk_io_deltas": [
+    {
+      "model_load": {
+        "disk0": {
+          "read_bytes": 266596352,
+          "write_bytes": 40689664,
+          "read_count": 3105,
+          "write_count": 1655
+        },
+        "disk6": {
+          "read_bytes": 19529728,
+          "write_bytes": 2535424,
+          "read_count": 34,
+          "write_count": 377
+        },
+        "disk8": {
+          "read_bytes": 493647605760,
+          "write_bytes": 0,
+          "read_count": 1937689,
+          "write_count": 0
+        },
+        "disk10": {
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "read_count": 0,
+          "write_count": 0
+        },
+        "disk12": {
+          "read_bytes": 0,
+          "write_bytes": 389120,
+          "read_count": 0,
+          "write_count": 16
+        },
+        "disk13": {
+          "read_bytes": 16384,
+          "write_bytes": 331776,
+          "read_count": 1,
+          "write_count": 18
+        },
+        "disk4": {
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "read_count": 0,
+          "write_count": 0
+        },
+        "disk16": {
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "read_count": 0,
+          "write_count": 0
+        }
+      },
+      "production": {
+        "disk0": {
+          "read_bytes": 346644480,
+          "write_bytes": 119959552,
+          "read_count": 18833,
+          "write_count": 7272
+        },
+        "disk6": {
+          "read_bytes": 51007488,
+          "write_bytes": 80388096,
+          "read_count": 741,
+          "write_count": 1633
+        },
+        "disk8": {
+          "read_bytes": 11550720,
+          "write_bytes": 0,
+          "read_count": 278,
+          "write_count": 0
+        },
+        "disk10": {
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "read_count": 0,
+          "write_count": 0
+        },
+        "disk12": {
+          "read_bytes": 1409024,
+          "write_bytes": 241807360,
+          "read_count": 127,
+          "write_count": 417
+        },
+        "disk13": {
+          "read_bytes": 1363968,
+          "write_bytes": 241942528,
+          "read_count": 125,
+          "write_count": 409
+        },
+        "disk4": {
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "read_count": 0,
+          "write_count": 0
+        },
+        "disk16": {
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "read_count": 0,
+          "write_count": 0
+        }
+      }
+    },
+    {
+      "model_load": {
+        "disk0": {
+          "read_bytes": 242810880,
+          "write_bytes": 21422080,
+          "read_count": 24096,
+          "write_count": 2308
+        },
+        "disk6": {
+          "read_bytes": 6864896,
+          "write_bytes": 2170880,
+          "read_count": 28,
+          "write_count": 334
+        },
+        "disk8": {
+          "read_bytes": 493071671296,
+          "write_bytes": 0,
+          "read_count": 1942075,
+          "write_count": 0
+        },
+        "disk10": {
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "read_count": 0,
+          "write_count": 0
+        },
+        "disk12": {
+          "read_bytes": 95801344,
+          "write_bytes": 1875968,
+          "read_count": 893,
+          "write_count": 183
+        },
+        "disk13": {
+          "read_bytes": 96067584,
+          "write_bytes": 2207744,
+          "read_count": 924,
+          "write_count": 221
+        },
+        "disk4": {
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "read_count": 0,
+          "write_count": 0
+        },
+        "disk16": {
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "read_count": 0,
+          "write_count": 0
+        }
+      },
+      "production": {
+        "disk0": {
+          "read_bytes": 7413760,
+          "write_bytes": 1511424,
+          "read_count": 424,
+          "write_count": 116
+        },
+        "disk6": {
+          "read_bytes": 36864,
+          "write_bytes": 1691648,
+          "read_count": 3,
+          "write_count": 40
+        },
+        "disk8": {
+          "read_bytes": 98304,
+          "write_bytes": 0,
+          "read_count": 6,
+          "write_count": 0
+        },
+        "disk10": {
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "read_count": 0,
+          "write_count": 0
+        },
+        "disk12": {
+          "read_bytes": 53248,
+          "write_bytes": 241577984,
+          "read_count": 6,
+          "write_count": 294
+        },
+        "disk13": {
+          "read_bytes": 20480,
+          "write_bytes": 241606656,
+          "read_count": 3,
+          "write_count": 289
+        },
+        "disk4": {
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "read_count": 0,
+          "write_count": 0
+        },
+        "disk16": {
+          "read_bytes": 0,
+          "write_bytes": 0,
+          "read_count": 0,
+          "write_count": 0
+        }
+      }
+    }
+  ],
+  "receipts": [
+    "artifacts/very-long-context/512k-wired.json",
+    "artifacts/very-long-context/512k-restored.json"
+  ]
+}

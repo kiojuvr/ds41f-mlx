@@ -7,13 +7,13 @@ from pathlib import Path
 import statistics
 
 
-def summarize(phases):
+def summarize(phases, *, context_tokens=200000):
     if len(phases) < 2 or phases[0]['phase'] != 'initial':
         raise ValueError('initial and fresh-process restore evidence required')
     if not all(p['status'] == 'PASS' for p in phases):
         raise ValueError('failed/incomplete process receipt')
-    if phases[0].get('fixture',{}).get('count') != 200000:
-        raise ValueError('200K baseline receipt required')
+    if phases[0].get('fixture',{}).get('count') != context_tokens:
+        raise ValueError('requested context baseline receipt required')
     p5=phases[0].get('p5')
     if p5 != dict(handoff_count=1,same_list=True,exported=False,replay=0,repack=0):
         raise ValueError('P5 transfer invariant')
@@ -52,7 +52,8 @@ def summarize(phases):
     groups=[rates[:max(1,len(rates)//3)], rates[len(rates)//3:2*len(rates)//3], rates[2*len(rates)//3:]]
     performance_ok=min([initial['decode_tok_s']]+rates)>=15
     return dict(schema='ds41f.standard-off.long-session.summary.v1',
-        decision='QUALIFIED_BOUNDED_200K_FIRST_PARTY_OFF' if performance_ok else 'BLOCKED_PRACTICAL_DECODE',
+        decision=(('QUALIFIED_BOUNDED_200K_FIRST_PARTY_OFF' if context_tokens == 200000 else
+                   'QUALIFIED_BOUNDED_VERY_LONG_FIRST_PARTY_OFF') if performance_ok else 'BLOCKED_PRACTICAL_DECODE'),
         context_tokens=phases[0]['fixture']['count'], final_frontier=phases[-1]['final_frontier'],
         process_count=len(phases), fresh_process_restores=len(phases)-1,
         wall_s=sum(p['wall_s'] for p in phases),
@@ -76,7 +77,8 @@ def summarize(phases):
         limitations=['finite single-flight core workload, not an unbounded leak proof',
             'long turns use exact-prefix token suffixes, not a complete HTTP/client tool-loop qualification',
             'no crash-durability, immediate in-transaction abort, concurrency or cross-backend persistence claim',
-            'no 512K, vision, speculative/MTP, R1 or release/promotion claim'])
+            ('no 512K, vision, speculative/MTP, R1 or release/promotion claim' if context_tokens == 200000 else
+             'no extrapolation beyond tested frontiers, vision, speculative/MTP, R1 or release/promotion claim')])
 
 
 def main():

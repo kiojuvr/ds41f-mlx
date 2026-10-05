@@ -34,28 +34,42 @@ requalification preserves every token and all checked physical slots exactly;
 corrected system swap usage is unchanged. This is not executable-KV eviction,
 a numerical change, P5 redesign, or a persistence-format change.
 
-This is bounded production-core evidence, not unlimited lifetime, a new long-HTTP
-tool-loop claim, or a practical context ceiling. The 200K baseline is now closed;
-512K-class work is a later explicit task, not an automatic continuation of this
-qualification. Vision, R1 re-verification and release/runtime promotion remain
-separate as below.
+This is bounded production-core evidence, not unlimited lifetime or a new
+long-HTTP tool-loop claim. The 200K baseline remains closed. The subsequent
+very-long qualification below extends it without redesigning the core. Vision,
+R1 re-verification and release/runtime promotion remain separate.
 
-### Very-long-context production completion
+### Very-long-context text production boundary (qualified, bounded)
 
-After the current first-party text path is healthy at approximately 200K, exercise
-**512K-class operation**, then determine the **actual practical context ceiling**
-on the target Mac Studio M3 Ultra 512 GB. A configured maximum is not proof of
-supported operation. **512K support is not declared qualified here.**
+[Very-long-context production qualification](very-long-context-production-qualification.md)
+qualifies actual first-party OFF operation at **524,288**, **786,432** and a
+**1,040,090-token initial context**, with continuation to **1,048,576 consumed
+tokens** on the M3 Ultra 512 GiB. This closes the supported checkpoint's 1M text
+core envelope, not an inferred physical-RAM exhaustion ceiling or an unbounded
+long-HTTP/client qualification. Configured maximum alone was not evidence: every
+frontier ran decode, suffix continuation, SSD Engram, cancellation/re-entry, idle
+persistence and exact fresh-process restore, with zero replay/repack.
 
-Context qualification is not merely “prefill completed”. It must eventually cover
-decode capability, continuation, memory pressure, cache/state lifecycle,
-SSD-backed Engram behavior, persistence/restore where relevant, and operational
-usability near the limit. The supported envelope must follow that evidence,
-including practical limits rather than just admission/configuration limits.
-If 512K or another long-context frontier exposes an implementation deficiency,
-fixing it is **production implementation work**, not merely benchmarking. This
-work both qualifies the existing path and closes implementation gaps needed to
-expand supported production scope.
+512K first exposed OS compression/jetsam despite bounded MLX allocation/cache.
+The production repair extends the existing admitted resource-policy owner to
+hold the recommended GPU wired budget for the **whole model lifetime**, including
+prefill and idle P6, rather than only target generation. The same failed 512K
+fixture was requalified and higher frontiers passed. M44–M48 state authority,
+math, precision, transaction failure and handoff semantics are unchanged.
+Per-turn allocation also exposed a passive P6 certificate/setup cycle retaining
+old source publications until GC. P5 now retires that admission backlink after
+transfer/burn without touching live state; all three frontiers were requalified
+with identical tokens and all 280 checked physical slots.
+
+Practical support is **single-flight maintenance/document ingestion** accepting
+13–32 minute initial prefill, followed by approximately 16–17 tok/s decode and
+7.6–10.5 second 2K suffix bootstrap. Maximum measured live MLX allocation is about
+320.44 GB, sampled active plus free cache 348.60 GB, with at least 96 GB sampled
+system headroom and no corrected swap growth. The supported total frontier
+includes prompt, generated tokens and future appends; reserve capacity rather
+than interpreting 1M as a prompt plus unlimited completion. Above the official
+checkpoint's 1M envelope is not qualified; physical exhaustion was not reached
+within it. Vision remains unfinished, and R1/promotion remain deferred.
 
 ### Vision production completion
 

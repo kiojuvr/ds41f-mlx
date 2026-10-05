@@ -47,6 +47,20 @@ closes the measured free-allocation cache retention gap with a lifetime-scoped
 numerical ownership and M44–M47 state/failure boundaries remain intact. Full R1,
 release/packaging and `ds41f-runtime` promotion were not performed.
 
+## Very-long-context text core
+
+[Fresh very-long qualification](very-long-context-production-qualification.md)
+closes bounded 512K/768K operation and continuation to **1,048,576 consumed tokens**
+with practical decode, SSD Engram, idle persistence, exact fresh-process restore,
+cancellation/re-entry and zero replay/repack. A prefill/idle GPU residency-lifetime
+defect exposed by 512K jetsam was repaired. P5 also retires a passive P6
+certificate/setup cycle rather than retaining old publication buffers until GC.
+All three frontiers were requalified with identical tokens and all checked slots.
+The supported envelope accepts long batch ingestion latency; it is not physical
+RAM exhaustion, arbitrary prompt-quality proof or long HTTP/client/tool recovery.
+The configured 1M model range is supported here only because actual operation
+reached it; no above-checkpoint extrapolation, new release or promotion is claimed.
+
 ## Guarded MTP qualification (internal, not release promotion)
 
 [M33](milestone-33-protocol-qualification.md) closed the protocol gate.
@@ -106,7 +120,7 @@ token-exact immediate abort and shared/concurrent MTP remain unsupported.
 | P5 handoff | QUALIFIED | Terminal prompt token held out once and handed to ds41f TargetGenerationSession; no prompt replay and no second cache authority. |
 | Decode | QUALIFIED | ds41f `TargetGenerationSession`, MTP OFF, DSpark OFF, speculative decode OFF; M44 records generation qualification; M45 records R1, owned-forward/all-layer lifecycle and matched pre-M45 real-model/cache/performance regression evidence. M46 adds owned block/packed state producers with R1 standard-off PASS, 112 affected tests (32 subtests), and matched M45 4K/32K token/cache identity and performance regression evidence; see `milestone-46-state-production-ownership.md`. M47 adds enforced execution-resource admission: 146 affected tests (32 subtests), all 24 R1 standard-off gates PASS, and admitted matched M46 4K/32K token/cache/performance regression evidence. See `milestone-47-execution-resource-admission.md`. M45–M47 qualification is development-only, not runtime promotion. |
 | API serving | QUALIFIED | Local text-only single-flight HTTP: stateless Chat Completions, Responses, Messages; stateful Chat Completions sessions. |
-| Long context | QUALIFIED THROUGH 200K | Production prefill/decode performance and memory class verified through 200K-token contexts in the dense P0-P7 path. |
+| Long context | QUALIFIED DEVELOPMENT CORE THROUGH 1M | Fresh first-party 512K/768K/near-1M prefill, decode, continuation to 1,048,576 consumed tokens and exact fresh idle restore; bounded maintenance/document workload, not a new long-HTTP/client/release claim. |
 | Long sessions | QUALIFIED FOR SINGLE-SESSION TEXT/AGENT SCOPE | Repeated exact-prefix append/decode, bounded diagnostics, persistence/restore, client interruption recovery, and stable bounded memory/performance in restored long-session and M24 operational-soak evidence. |
 | Persistence/restore | QUALIFIED FOR SAME-BACKEND IDLE ARTIFACTS | Idle `DeepseekV41Cache[40]` plus exact all-token history saves and restores with provenance/schema/shape/dtype/frontier validation and fail-closed corruption handling. |
 | Tools/agent loops | QUALIFIED FOR CLIENT FUNCTION TOOLS | Chat Completions tool-call boundaries, tool results, repeated tool loops, invalid result rejection before mutation, persistence between tool steps, and M24 client-side coding-tool soak. |

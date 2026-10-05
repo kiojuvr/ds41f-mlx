@@ -260,6 +260,8 @@ class AdmittedResources:
     _locations: dict = field(default_factory=dict, repr=False)
     _old_cache_limit: int | None = field(default=None, repr=False)
     _cache_limit: int | None = field(default=None, repr=False)
+    _old_wired_limit: int | None = field(default=None, repr=False)
+    _wired_limit: int | None = field(default=None, repr=False)
 
     def acquire_allocator_policy(self):
         """Bound freed buffers for the whole OFF lifetime, including idle P6."""
@@ -276,10 +278,14 @@ class AdmittedResources:
             try:
                 if limit != _OFF_ALLOCATOR_CACHE_BYTES:
                     mx.set_cache_limit(limit)
+                wired = mx.device_info()['max_recommended_working_set_size']
+                mx.synchronize()
+                old_wired = mx.set_wired_limit(wired)
             except BaseException:
                 mx.set_cache_limit(old)
                 raise
             self._old_cache_limit, self._cache_limit = old, limit
+            self._old_wired_limit, self._wired_limit = old_wired, wired
             _allocator_owner = self
 
     @property
@@ -408,18 +414,26 @@ class AdmittedResources:
                 'dependency_versions': self.pin['versions'],
                 'ssd_engram': 'admitted checkpoint descriptors',
                 'allocator_cache_limit_bytes': self._cache_limit,
-                'previous_allocator_cache_limit_bytes': self._old_cache_limit}
+                'previous_allocator_cache_limit_bytes': self._old_cache_limit,
+                'wired_limit_bytes': self._wired_limit,
+                'previous_wired_limit_bytes': self._old_wired_limit}
 
     def retire(self):
         global _allocator_owner
         with _allocator_lock:
             self.active = False
-            if self._old_cache_limit is not None:
+            if self._old_cache_limit is not None or self._old_wired_limit is not None:
                 require(_allocator_owner is self, 'OFF allocator policy ownership lost')
-                # Retire permission before restoring the process-global setting.
-                # No live tensor is evicted or repacked by this allocator operation.
-                self.modules['mlx.core'].set_cache_limit(self._old_cache_limit)
-                self._old_cache_limit = None
+                # Retire permission before restoration; retain ownership on failure
+                # so cleanup can retry without another lifetime nesting global state.
+                mx = self.modules['mlx.core']
+                mx.synchronize()
+                if self._old_wired_limit is not None:
+                    mx.set_wired_limit(self._old_wired_limit)
+                    self._old_wired_limit = None
+                if self._old_cache_limit is not None:
+                    mx.set_cache_limit(self._old_cache_limit)
+                    self._old_cache_limit = None
                 _allocator_owner = None
 
 

@@ -51,6 +51,22 @@ KV/weights, clear caches per token/turn, change precision, or create a second st
 owner. Live working-set feasibility remains an evidence/admission concern, not a
 promise of arbitrary context operation.
 
+Very-long qualification also requires GPU residency across the **whole admitted
+OFF lifetime**, not only active target decode. The default MLX wired limit is
+zero; an idle/P6 prefill must not depend on a previously closed generation lease
+to keep resident weights available. Admission owns the device-recommended wired
+budget alongside the existing allocator policy, restores both settings at
+retirement/load failure, and synchronizes before changing residency. This changes
+resource lifetime only; no live state is evicted, replayed or repacked. Supported
+frontiers still require actual lifecycle qualification.
+
+Very-long turns also require deterministic retirement of the **passive** P6
+certificate/setup reference cycle after P5 transfer (including failed bootstrap).
+The setup-to-certificate backlink is needed for admission while ready, not after
+the runner is revoked. Retiring that backlink does not alter the live packed list,
+publication semantics, single-transfer/burn guards or explicit diagnostic aliases;
+it prevents old source buffers from depending on Python cyclic GC for release.
+
 ## Session and persistence strategy
 
 Stateful Chat Completions sessions preserve exact-prefix continuation, zero prompt replay, zero full-cache repack/reconstruction, and coherent all-layer cache frontiers at idle boundaries. Persistence is for idle same-backend artifacts only. Restore validates provenance, schema, shape, dtype, checkpoint identity, and frontier before re-entry, and fails closed on mismatch/corruption.

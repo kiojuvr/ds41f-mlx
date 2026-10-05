@@ -1,0 +1,94 @@
+{
+  "schema": "ds41f.standard-off.very-long-fatal-exit.v1",
+  "status": "OS_KILLED_IN_PREFILL",
+  "context_tokens": 524288,
+  "fixture_sha256": "aed0a57392e17478c4fc47eafcc6474be1d835dfdfb31b40f3adf9e402d12609",
+  "supervisor_exit_code": 137,
+  "original_receipt_status": "RUNNING",
+  "kernel_evidence": [
+    "artifacts/very-long-context/initial-jetsam.log",
+    "artifacts/very-long-context/diagnostic-jetsam.log"
+  ],
+  "last_durable_sample": {
+    "elapsed_s": 1091.199616333004,
+    "rss_bytes": 16222093312,
+    "mlx_active_bytes": 311462911852,
+    "mlx_cache_bytes": 30320166797,
+    "mlx_peak_bytes": 320066722768,
+    "swap_used_bytes": 239992832,
+    "system_available_bytes": 238158643200,
+    "thread_count": 87,
+    "fd_count": 13,
+    "disk_io": {
+      "disk0": {
+        "read_count": 9967465,
+        "write_count": 2748855,
+        "read_bytes": 2115373895680,
+        "write_bytes": 80703279104,
+        "read_time": 27907713,
+        "write_time": 177069
+      },
+      "disk6": {
+        "read_count": 778119,
+        "write_count": 1012183,
+        "read_bytes": 36110658560,
+        "write_bytes": 61127827456,
+        "read_time": 2156699,
+        "write_time": 29359955
+      },
+      "disk8": {
+        "read_count": 292906321,
+        "write_count": 1657228,
+        "read_bytes": 66868137403392,
+        "write_bytes": 427996647424,
+        "read_time": 130158352,
+        "write_time": 2861485
+      },
+      "disk10": {
+        "read_count": 60599,
+        "write_count": 954,
+        "read_bytes": 401187840,
+        "write_bytes": 23650304,
+        "read_time": 7413,
+        "write_time": 59
+      },
+      "disk12": {
+        "read_count": 54969,
+        "write_count": 99106,
+        "read_bytes": 2335704576,
+        "write_bytes": 43144065024,
+        "read_time": 42713,
+        "write_time": 673180
+      },
+      "disk13": {
+        "read_count": 56001,
+        "write_count": 100743,
+        "read_bytes": 2345774592,
+        "write_bytes": 43174998016,
+        "read_time": 43553,
+        "write_time": 663563
+      },
+      "disk4": {
+        "read_count": 1180,
+        "write_count": 0,
+        "read_bytes": 159591424,
+        "write_bytes": 0,
+        "read_time": 2076,
+        "write_time": 0
+      },
+      "disk16": {
+        "read_count": 287,
+        "write_count": 0,
+        "read_bytes": 1903616,
+        "write_bytes": 0,
+        "read_time": 58,
+        "write_time": 0
+      }
+    }
+  },
+  "peak_mlx_active_bytes": 320066722768,
+  "max_sampled_mlx_active_plus_cache_bytes": 341783078649,
+  "no_completed_prefill_or_decode": true,
+  "live_state_recovery_attempted": false,
+  "interpretation": "default zero wired residency outside active decode caused OS compression/jetsam despite bounded MLX cache; corrected same fixture is separately qualified"
+}

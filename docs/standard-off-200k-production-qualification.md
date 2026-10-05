@@ -191,6 +191,9 @@ active-state persistence, cross-backend portability, immediate protected-phase
 abort, or operation beyond this tested envelope. Existing fail-closed burn and
 ownership semantics remain authoritative; no partial transaction is repaired.
 
-**512K-class / practical context ceiling remains a later explicit task.** No Vision,
+At this closeout, **512K-class / practical context ceiling remained a later
+explicit task**. The subsequent [very-long qualification](very-long-context-production-qualification.md)
+now extends this closed baseline through the checkpoint's measured 1M core
+boundary, with a prefill/idle residency-lifetime repair. No Vision,
 MTP/DSpark/speculation promotion, full R1, release/packaging/clean-room work or
-`ds41f-runtime` promotion was undertaken.
+`ds41f-runtime` promotion was undertaken here.

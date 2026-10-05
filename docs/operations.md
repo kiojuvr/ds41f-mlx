@@ -52,7 +52,24 @@ The OFF model lifetime bounds MLX's **free allocation cache** to 32 GiB, preserv
 a caller's smaller limit and restoring the prior setting on close/load failure.
 This is not a KV/context limit or eviction of live model/session state. Keep the
 single model lifetime explicit; overlapping OFF allocator-policy owners reject.
-No per-token or per-turn cache clear is needed.
+No per-token or per-turn cache clear is needed. The same admitted owner holds
+the device-recommended **wired GPU residency budget** for the entire model
+lifetime, including prefill and idle P6, then synchronizes/restores the caller's
+setting on retirement. This is a budget, not allocation of the whole recommended
+working set; target generation restores to that lifetime setting between turns.
+
+The [very-long production envelope](very-long-context-production-qualification.md)
+is qualified to **1,048,576 total consumed text tokens** on this machine, with
+near-1M fresh ingestion plus decode, continuation and exact restart. Reserve
+capacity for completion/future suffixes; the configured 1M value is not a prompt
+budget plus unlimited output. Expect 13–32 minute very-long initial prefill,
+about 16–17 tok/s subsequent decode and 8–11 second 2K suffix bootstrap, plus
+roughly five-minute fresh resource verification/load. This is bounded core
+maintenance/document operation, not new long HTTP/tool recovery or unlimited
+lifetime support. Above-checkpoint context extrapolation is unqualified; this
+measurement did not reach physical RAM exhaustion. Use VM wired/compressor and
+swap samples alongside MLX/RSS; large macOS available-memory figures alone did
+not prevent the pre-repair jetsam.
 
 ## Qualified dependency and operational checkout (historical M20 environment)
 

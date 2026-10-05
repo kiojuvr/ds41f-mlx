@@ -93,6 +93,44 @@ class P5HandoffTests(unittest.TestCase):
     def result(self, setup, count=2048):
         return LivePrefillResult.from_committed(setup, prefix_token_ids=[1]*count)
 
+    def test_p6_certificate_backlink_retires_without_gc_on_transfer_or_burn(self):
+        import gc
+        import weakref
+        from ds41f_mlx.prefill_fp8_mlx.p6_append import P6AppendCommit
+        for fail in (False, True):
+            with self.subTest(failed_bootstrap=fail):
+                setup, lm = self.setup_ready()
+                cache = setup.block_runner.working_cache
+                for item in cache:
+                    item._p6_append_sealed = True
+                    item._p6_owner_token = 17
+                commit = P6AppendCommit(cache, tuple([1]*2048), 0, 2048, 2048, 2048,
+                    17, {20:2048}, {i:2048 for i in range(40)}, 2048, setup)
+                result = LivePrefillResult.from_committed(commit, prefix_token_ids=[1]*2048)
+                ref = weakref.ref(commit)
+                self.assertIs(setup.p6_commit_authority, commit)
+                class Generation(RecordingGenerationSession):
+                    def start(self, terminal):
+                        super().start(terminal)
+                        if fail: raise RuntimeError('injected bootstrap failure')
+                was_enabled = gc.isenabled(); gc.disable()
+                try:
+                    with patch('ds41f_mlx.prefill_fp8_mlx.handoff._generation_session_type', return_value=Generation):
+                        if fail:
+                            with self.assertRaisesRegex(RuntimeError, 'injected'):
+                                handoff_to_generation(result, lm, terminal_prompt_token=3)
+                        else:
+                            gen = handoff_to_generation(result, lm, terminal_prompt_token=3)
+                            self.assertIs(gen.admitted_cache, cache)
+                    self.assertFalse(hasattr(setup, 'p6_commit_authority'))
+                    self.assertTrue(setup.block_runner.handoff_transferred)
+                    with self.assertRaises(LiveCacheHandoffError):
+                        LivePrefillResult.from_committed(commit, prefix_token_ids=[1]*2048)
+                    del commit
+                    self.assertIsNone(ref(), 'retired certificate must not wait for cyclic GC')
+                finally:
+                    if was_enabled: gc.enable()
+
     def test_prefix_length_mismatch_fails(self):
         setup, _ = self.setup_ready()
         with self.assertRaises(LiveCacheHandoffError): self.result(setup, 2049)

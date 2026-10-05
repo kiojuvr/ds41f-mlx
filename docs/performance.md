@@ -18,6 +18,29 @@ This closes a long-session free-allocation retention defect with a model-lifetim
 32 GiB cache budget, not arithmetic/kernel changes. Historical M6/M20 endpoint
 measurements below are comparison evidence, not substitutes for this current run.
 
+## Very-long-context supported text core
+
+The [fresh very-long qualification](very-long-context-production-qualification.md)
+uses actual first-party OFF prefill/decode/continuation and fresh exact restore,
+not configured-length admission. 524,288 / 786,432 / 1,040,090 initial contexts
+prefill in 762.91 / 1,310.01 / 1,947.39 s (687 / 600 / 534 tok/s), with sustained
+decode approximately 17.30 / 16.57 / 16.07 tok/s. Actual final frontier reaches
+**1,048,576**. This is the measured supported checkpoint text-core ceiling, not
+physical memory exhaustion or qualification beyond the checkpoint context range.
+Initial ingestion is batch/maintenance-class; 2K suffix bootstrap remains about
+7.6 / 9.1 / 10.5 s. No separate suffix optimization was required.
+
+512K exposed OS compression/jetsam with the default zero wired budget during
+prefill. The admitted lifetime now owns recommended GPU residency in addition
+to the unchanged 32 GiB allocator-cache budget. The same 512K fixture and higher
+frontiers qualify after repair: peak MLX active 320.44 GB, sampled active plus
+cache 348.60 GB, minimum sampled system headroom 96.41 GB, no corrected swap growth.
+P5 also retires a passive certificate/setup cycle that retained old source buffers
+until GC. Identical-token/all-slot requalification keeps idle allocation growth
+near 5 MB instead of gigabytes across these turns; no live state is discarded.
+See `artifacts/very-long-context/summary.json` for lifecycle, SSD and persistence
+costs/limits. No new release, R1 or runtime promotion is implied.
+
 ## Historical native reference baseline
 
 The first current post-import native performance baseline is recorded in:

@@ -6,7 +6,12 @@ from ds41f_mlx.runtime.omlx_core import OmlxRuntime, OmlxRuntimeConfig
 
 
 class Allocator:
-    def __init__(self, limit): self.limit=limit; self.calls=[]
+    def __init__(self, limit):
+        self.limit=limit; self.calls=[]; self.wired=0; self.wired_calls=[]; self.syncs=0
+    def device_info(self): return {'max_recommended_working_set_size': 498216206336}
+    def synchronize(self): self.syncs+=1
+    def set_wired_limit(self, value):
+        self.wired_calls.append(value); old=self.wired; self.wired=value; return old
     def set_cache_limit(self, value):
         self.calls.append(value); old=self.limit; self.limit=value; return old
 
@@ -21,8 +26,10 @@ def test_never_loosen_and_restore_exactly_once(old):
     try:
         r.acquire_allocator_policy()
         assert mx.limit == min(old,32*1024**3)
-        calls=list(mx.calls); r.acquire_allocator_policy(); assert mx.calls==calls
-        r.retire(); assert mx.limit==old and not r.active
+        assert mx.wired == 498216206336
+        calls=list(mx.calls); wired_calls=list(mx.wired_calls)
+        r.acquire_allocator_policy(); assert mx.calls==calls and mx.wired_calls==wired_calls
+        r.retire(); assert mx.limit==old and mx.wired==0 and not r.active
         calls=list(mx.calls); r.retire(); assert mx.calls==calls
         with pytest.raises(a.ResourceAdmissionError,match='retired'): r.acquire_allocator_policy()
     finally: r.retire()

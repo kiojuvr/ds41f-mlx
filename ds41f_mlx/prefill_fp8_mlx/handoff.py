@@ -251,3 +251,9 @@ def handoff_to_generation(result: LivePrefillResult, model: Any, *, terminal_pro
         if session is not None:
             session.close()
         raise
+    finally:
+        # P6 commit.final_setup points back here. After this one-shot transfer
+        # (or burn), the admission backlink is no longer executable authority.
+        # Break only that passive cycle: keep the live cache and all revocation
+        # guards intact, without waiting for cyclic GC to free old publications.
+        setup.__dict__.pop('p6_commit_authority', None)
