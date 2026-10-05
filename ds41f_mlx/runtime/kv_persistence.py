@@ -198,6 +198,12 @@ def restore_m8_idle_state(*, artifact_path: Path, model: Any, checkpoint: Path, 
             slots.append(value)
         item.cache = slots
         restored.append(item)
+    # mx.load creates deferred CPU I/O on this thread's stream. A committed
+    # restore must own real tensors, not export lazy file/stream dependencies to
+    # a later request (or another thread). Materialize the exact loaded objects;
+    # no dtype conversion, replay, cache reconstruction or repack occurs here.
+    mx.eval(*(value for item in restored for value in item.cache))
+    mx.synchronize()
     lm = getattr(model, "language_model", model)
     _validate_live_cache_structure(restored, lm._config, frontier)
     return restored, tokens, manifest

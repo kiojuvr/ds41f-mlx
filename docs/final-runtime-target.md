@@ -11,13 +11,12 @@ This document defines the destination, not an implementation plan or a claim tha
 it has already been reached. **M48 completed the supported text-only standard-OFF
 production core; it did not complete the entire production implementation of
 DeepSeek-V4.1-Flash.** The authoritative [post-M48 roadmap](implementation-plan.md#post-m48-production-boundary-and-remaining-work-current-authority)
-distinguishes current text performance/long-session qualification, very-long-context
-production completion (200K confirmation before 512K-class and practical-ceiling
-work), Vision production completion, later R1 regression proof and runtime promotion.
-Vision remains part of the production-completion target despite current text-only
-serving; no 512K qualification is claimed. Implementation and operational
-qualification iterate as expanded scope exposes gaps; Stage 1 is not globally
-complete. [Runtime strategy](runtime-strategy.md),
+distinguishes the qualified 1M text core, the separately qualified bounded
+[first-party multimodal production capability](multimodal-production-qualification.md)
+(four inline images / 8,192 consumed positions), and later R1 regression proof
+and runtime promotion. These measured core boundaries do not imply unlimited
+context, universal visual quality or release/packaging completion. Implementation
+and operational qualification iterate as expanded scope exposes gaps. [Runtime strategy](runtime-strategy.md),
 [operations](operations.md), the [release manifest](../release/ds41f-release.json)
 and scoped qualification records continue to describe the current runtime.
 Production/default MTP, DSpark and speculation remain OFF; this target neither

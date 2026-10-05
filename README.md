@@ -10,7 +10,7 @@ That requires both preserving the model semantics, precision boundaries, persist
 
 Correctness and performance are therefore not separate end goals. Correctness defines the boundary within which performance must be achieved. The text runtime now has a scoped release qualification for the target production path: dense P0-P7 prefill, P7 SSD-backed Engram, P5 zero-replay handoff, and ds41f-owned single-stream MTP-OFF decode behind local single-flight HTTP (M44/M45). ds41f owns the single-token forward and all-40-layer cache transaction. M46 adds ds41f-owned block state production, packed-slot mutation and compressed/index/candidate publication. M48 establishes first-party checkpoint loading, numerical/model execution, packed storage and SSD-backed Engram under those retained authorities; admitted MLX/Metal and stateless acceleration primitives remain lower-level dependencies.
 
-**M48 completed the supported text-only standard-OFF production core; it did not complete the entire production implementation of DeepSeek-V4.1-Flash.** See the authoritative [post-M48 roadmap](docs/implementation-plan.md#post-m48-production-boundary-and-remaining-work-current-authority) for text performance/long-session qualification, 200K confirmation before 512K-class/practical-context-ceiling work, unfinished Vision production support, and the iterative implementation/qualification cycle. Full R1 regression re-verification and runtime promotion remain later checkpoints, not immediate next steps.
+**M48 completed the supported text-only standard-OFF production core; it did not complete the entire production implementation of DeepSeek-V4.1-Flash.** See the authoritative [post-M48 roadmap](docs/implementation-plan.md#post-m48-production-boundary-and-remaining-work-current-authority) for the qualified 1M text core, bounded [first-party multimodal production capability](docs/multimodal-production-qualification.md) (four inline images / 8,192 consumed positions), and the iterative implementation/qualification cycle. Full R1 regression re-verification and runtime promotion remain later checkpoints, not immediate next steps.
 
 The canonical [final runtime target](docs/final-runtime-target.md) defines the intended
 self-contained public source repository. **M43 release extraction is complete**:
@@ -77,7 +77,7 @@ Likewise, a fast runtime that changes required model behavior or state semantics
 
 ## Current implementation status
 
-The qualified release scope is a text-only local runtime for the official DeepSeek-V4.1-Flash checkpoint on the Mac Studio M3 Ultra 512 GB class target. The production path is:
+The historical qualified release scope is a text-only local runtime for the official DeepSeek-V4.1-Flash checkpoint on the Mac Studio M3 Ultra 512 GB class target. The production path is:
 
 ```text
 official checkpoint
@@ -277,7 +277,7 @@ Historical provenance is recorded in provenance/archive documentation and is not
 
 Qualified/source-verified areas include checkpoint provenance, official primitive validators, source integrity, native source closure, checkpoint-free native build/tests, MLX-enabled native build/tests, bounded full-checkpoint native execution, backend-local correctness policy, dense production prefill through 200K, practical GenerationBatch decode, official recipe HTTP serving, long-session continuation, same-backend KV persistence/restore, repeated function-tool loops, and EOS termination.
 
-The standard-off release claim is intentionally scoped, not universal. Vision, batching, implicit/default MTP, distributed serving, authentication, server-side tool execution, sessionized Responses/Messages, cross-runtime KV portability, and arbitrary stateful stop strings remain unsupported or unqualified. Explicit guarded MTP/DSpark/speculation is confined to the separate bounded M41 candidate above.
+The standard-off release claim is intentionally scoped, not universal. Vision beyond the separately qualified bounded development/core envelope, batching, implicit/default MTP, distributed serving, authentication, server-side tool execution, sessionized Responses/Messages, cross-runtime KV portability, and arbitrary stateful stop strings remain unsupported or unqualified. Explicit guarded MTP/DSpark/speculation is confined to the separate bounded M41 candidate above.
 
 ## Canonical documentation
 

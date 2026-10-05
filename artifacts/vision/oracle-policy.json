@@ -1,0 +1,11 @@
+{
+  "schema": "ds41f.vision.oracle-policy.v1",
+  "initial_bf16_gate": {"relative_rms_max": 0.04, "cosine_min": 0.999, "outcome": "FAILED"},
+  "original_raw_failure_receipt": "overwritten during requalification; not claimed as preserved",
+  "final_fp32_gate": {"relative_rms_max": 0.0002, "cosine_min": 0.99999},
+  "final_bf16_local_gate": {"relative_rms_max": 0.1, "cosine_min": 0.995},
+  "basis": "Exact pixels/layout and independent official FP32 checkpoint-weight comparison isolate BF16 CPU/Metal backend drift. Final BF16 gate was revised after diagnosis, not preregistered and not CUDA parity.",
+  "rounding_control": "qualification-only FP32 SiLU/GELU calculation did not improve corn agreement; not promoted to production",
+  "canonical_metrics": "official-reference.json",
+  "claims_excluded": ["CUDA BF16 parity", "full-LM logits or greedy parity", "universal visual quality"]
+}

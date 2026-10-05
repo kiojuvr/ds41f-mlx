@@ -1,6 +1,9 @@
 # Public API contract
 
-This is the **standard-off** release-scope API contract for the qualified text runtime. It is intentionally narrower than all fields that the upstream `deepseek-recipe` request classes can parse.
+This is the **standard-OFF** API contract. The historical release-qualified text
+surface is retained; the bounded multimodal development/core extension below is
+separately qualified, not R1/release/runtime promotion. Supported fields remain
+narrower than everything upstream `deepseek-recipe` can parse.
 
 ## Qualified release scope
 
@@ -17,16 +20,38 @@ Supported endpoints:
 - `POST /v1/messages` — stateless text Messages scope pinned to the qualified recipe revision.
 - `POST /v1/sessions` — create a local stateful Chat Completions session. Optional body field: `id`.
 - `GET /v1/sessions/{id}` — bounded metadata for a live session; not a cache/token authority.
-- `DELETE /v1/sessions/{id}` — close a live session and release its GenerationBatch/session ownership.
+- `DELETE /v1/sessions/{id}` — close a live session and release its target/session ownership.
 - `POST /v1/sessions/{id}/chat/completions` — continue one local stateful Chat Completions session.
 - `POST /v1/sessions/{id}/persist` — persist an idle session artifact. Optional body field: `artifact_root`.
 - `POST /v1/sessions/restore` — restore an idle same-backend artifact into a local session. Required body field: `artifact_path`; optional `id`.
 
+## Bounded multimodal development/core extension
+
+The existing stateless and sessionized Chat Completions endpoints accept standard
+`content` parts, e.g. `{"type":"image_url","image_url":{"url":"data:image/jpeg;base64,...","detail":"high"}}`
+alongside `{"type":"text","text":"What is shown?"}`. See the canonical
+[multimodal qualification](multimodal-production-qualification.md) for evidence.
+
+Full conversations allow at most four single-frame inline PNG/JPEG/WebP images,
+16 MiB encoded bytes and 4M decoded pixels per image, aspect 1:2–2:1, high/default/
+auto detail, and **8,192 consumed positions including expanded spans and reserved
+output** (default 128). Remote/file URLs, low detail, animations, missing spans,
+multimodal Responses/Messages and excess context reject before cache mutation.
+Text-only retains its qualified 1M core boundary.
+
+Continue by submitting the exact full canonical conversation with identical old
+image bytes, plus text or additional images within the limits. Identity is
+encoded-byte SHA256 plus absolute span/grid/order, not merely repeated image IDs.
+Idle save/restore needs no images and never re-encodes old spans; subsequent full
+conversation requests revalidate their CPU input identities. No new execution or
+cache API is exposed. Protected worker cancellation drains before lock release;
+completed stateful turns remain available as `last_turn` even if transport cancels.
+
 ## Runtime contract behind the API
 
-Production serving uses `PRODUCTION_PREFILL_SELECTOR = DENSE_P0_P7`: official recipe tokens are rendered, `tokens[-1]` is held out, `tokens[:-1]` are committed through `DeferredPrefillAppend` with P7 `FULL_RESIDENT_BACKBONE_SSD_ENGRAM`, and P5 hands the held-out terminal token exactly once to oMLX `GenerationBatch` with MTP, DSpark, and speculative decode OFF.
+Production serving uses `PRODUCTION_PREFILL_SELECTOR = DENSE_P0_P7`: official recipe tokens are rendered, `tokens[-1]` is held out, `tokens[:-1]` are committed through `DeferredPrefillAppend` with P7 `FULL_RESIDENT_BACKBONE_SSD_ENGRAM`, and P5 hands the held-out terminal token exactly once to first-party `TargetGenerationSession` with MTP, DSpark, and speculative decode OFF.
 
-Stateful sessions route to exactly one live recipe tool session/GenerationBatch authority. The HTTP layer and Rust boundary never own KV tensors, all-token history, prompt replay, cache repack/export, or tool execution.
+Stateful sessions route to exactly one live recipe tool session/first-party target authority. The HTTP layer and Rust boundary never own KV tensors, all-token history, prompt replay, cache repack/export, or tool execution.
 
 ## Stateful behavior
 
@@ -38,7 +63,7 @@ Stateful sessions route to exactly one live recipe tool session/GenerationBatch 
 - Idle boundaries: all 40 cache offsets must equal the committed frontier.
 - Maximum live sessions: `DS41F_MAX_LIVE_SESSIONS`, default `4`.
 - Single-flight: one backend request at a time; overlapping requests fail with conflict instead of creating a second active authority.
-- Close: releases live session and GenerationBatch ownership.
+- Close: releases live session and target-generation ownership.
 
 ## Persistence/restore
 
@@ -54,11 +79,11 @@ Invalid tool-result order, wrong ids, duplicate results, unknown sessions, and o
 
 ## Streaming
 
-Stateless streaming follows official recipe chunk formatting for text Chat Completions/Responses in the qualified scope. Stateful Chat Completions streaming replays official chunks only after a committed session boundary, so protocol-visible chunks never outrun the cache frontier. Cancellation triggers cleanup and must not leave an active GenerationBatch owner.
+Stateless streaming follows official recipe chunk formatting for text Chat Completions/Responses in the qualified scope. Stateful Chat Completions streaming replays official chunks only after a committed session boundary, so protocol-visible chunks never outrun the cache frontier. Cancellation drains any protected worker operation, then cleans up its owned state; it must not leave an active target-generation owner.
 
 ## Termination
 
-DeepSeek V4.1 EOS token semantics are qualified for the GenerationBatch path. EOS token id `1` is retained in cache/all-token history, hidden from protocol text by the recipe layer, and reported as finish reason `stop`. Length termination reports `length` according to the recipe response.
+DeepSeek V4.1 EOS token semantics are qualified for the first-party target-generation path. EOS token id `1` is retained in cache/all-token history, hidden from protocol text by the recipe layer, and reported as finish reason `stop`. Length termination reports `length` according to the recipe response.
 
 ## Stateful `stop` policy
 
@@ -85,4 +110,4 @@ Diagnostic endpoints exist only when `DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS=1`. Thei
 
 ## Unqualified / unsupported
 
-Vision, arbitrary batching, sessionized Responses/Messages, MTP, DSpark, speculative decode, distributed sessions, authentication, server-side tool execution, MCP/plugins, web search, shell tools, cross-runtime KV portability, and arbitrary stateful stop strings are outside the release contract.
+Vision beyond the separate bounded core extension, arbitrary batching, sessionized Responses/Messages, MTP, DSpark, speculative decode, distributed sessions, authentication, server-side tool execution, MCP/plugins, web search, shell tools, cross-runtime KV portability, and arbitrary stateful stop strings are outside the release contract.

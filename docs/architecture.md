@@ -4,6 +4,15 @@ The [final runtime target](final-runtime-target.md) is the canonical long-term
 architecture and dependency direction. The qualified topology below describes
 current implementation, not a permanent external-checkout requirement.
 
+The current bounded [multimodal core](multimodal-production-qualification.md)
+extends this same topology: CPU preprocessing/identity validation, first-party
+Vision + aligner encoding of **new** images only, sparse absolute embedding
+injection and command-local VL/Engram masks. Image state then lives in the same
+40 × seven packed slots and token frontier, not an image generation/cache engine.
+Idle persistence adds only image identities; exact slot restoration does not
+re-run images or prompts. The measured four-image / 8K multimodal limit does not
+change the 1M text/resource boundary or promote R1/release/runtime scope.
+
 ## Qualified production architecture
 
 ```text

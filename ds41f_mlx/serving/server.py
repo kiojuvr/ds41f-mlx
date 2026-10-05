@@ -41,7 +41,7 @@ def load_v41_tokenizer(recipe_path: Path = DEFAULT_RECIPE) -> Any:
     return Tokenizer.from_file(str(Path(recipe_path) / 'static' / 'tokenizers' / 'v41' / 'tokenizer.json'))
 
 
-def prepare_request(protocol: str, body: bytes, *, tokenizer: Any, recipe_path: Path = DEFAULT_RECIPE, options: ConversionOptions | None = None) -> RecipePreparedRequest:
+def prepare_request(protocol: str, body: bytes, *, tokenizer: Any, recipe_path: Path = DEFAULT_RECIPE, options: ConversionOptions | None = None, checkpoint: Path | None = None) -> RecipePreparedRequest:
     request_type, _ = PROTOCOL_TYPES[protocol]
     try:
         request = request_type(body)
@@ -53,15 +53,32 @@ def prepare_request(protocol: str, body: bytes, *, tokenizer: Any, recipe_path: 
     encoding = DeepseekV41Encoding().with_tokenizer(tokenizer)
     rendered = encoding.render_conversation(converted.conversation)
     token_ids = [int(x) for x in encoding.encode(converted.conversation)]
+    multimodal = None
     if rendered.image_sources:
-        raise RequestError('multimodal/image input is not supported by current ds41f text-only serving backend', 400)
+        if protocol != 'chat_completions':
+            raise RequestError('multimodal support is qualified for Chat Completions only', 400)
+        from ds41f_mlx.model_execution.config import ModelConfig
+        from ds41f_mlx.runtime.multimodal import prepare_multimodal
+        config = ModelConfig.from_dict(json.loads(((checkpoint or load_runtime_config().checkpoint_path) / 'config.json').read_text()))
+        try:
+            multimodal = prepare_multimodal(token_ids, list(rendered.image_sources), config)
+        except ValueError as error:
+            raise RequestError(str(error), 400) from error
+        token_ids = list(multimodal.token_ids)
+        from ds41f_mlx.runtime.multimodal import MAX_MULTIMODAL_CONTEXT
+        maximum = converted.inference_options.max_tokens
+        maximum = 128 if maximum is None else int(maximum)
+        if maximum < 1 or len(token_ids) + maximum > MAX_MULTIMODAL_CONTEXT:
+            raise RequestError('multimodal prompt plus output reservation exceeds qualified context', 400)
+    elif 129264 in token_ids:
+        raise RequestError('missing image source for image placeholder', 400)
     if len(token_ids) < 2:
         raise RequestError(f'encoded prompt must contain at least 2 tokens, got {len(token_ids)}', 400)
     try:
         stop_token_ids = tuple(int(t) for t in tokenizer.encode(EOS_TOKEN))
     except Exception:
         stop_token_ids = ()
-    return RecipePreparedRequest(protocol, converted, converted, token_ids, list(rendered.image_sources), include_usage, custom_tool_names, stop_token_ids)
+    return RecipePreparedRequest(protocol, converted, converted, token_ids, list(rendered.image_sources), include_usage, custom_tool_names, stop_token_ids, multimodal)
 
 
 class InferenceStreamingResponse(StreamingResponse):
@@ -188,7 +205,7 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
     def api_handler(protocol: str) -> Callable[[Request], Awaitable[Response]]:
         async def handler(request: Request) -> Response:
             body = await request.body()
-            prepared = await run_in_threadpool(prepare_request, protocol, body, tokenizer=tokenizer, recipe_path=recipe_path, options=options)
+            prepared = await run_in_threadpool(prepare_request, protocol, body, tokenizer=tokenizer, recipe_path=recipe_path, options=options, checkpoint=getattr(backend, 'checkpoint', runtime_config.checkpoint_path))
             output = response_body(prepared, backend.infer, tokenizer=tokenizer, model_id=model_id)
             if prepared.stream:
                 return InferenceStreamingResponse(output, media_type='text/event-stream')
@@ -262,7 +279,7 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
             validate_stateful_chat_request_policy(body)
         except ValueError as exc:
             raise RequestError(str(exc), 400)
-        prepared = await run_in_threadpool(prepare_request, 'chat_completions', body, tokenizer=tokenizer, recipe_path=recipe_path, options=options)
+        prepared = await run_in_threadpool(prepare_request, 'chat_completions', body, tokenizer=tokenizer, recipe_path=recipe_path, options=options, checkpoint=getattr(backend, 'checkpoint', runtime_config.checkpoint_path))
         try:
             # Internal qualification and the explicit public process profile
             # share the same guarded owner, never a request/env mode selector.

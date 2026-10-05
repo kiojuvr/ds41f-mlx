@@ -169,6 +169,7 @@ class DeferredPrefillAppend:
     request_token_history: tuple[int, ...]
     plan: AppendPlan
     mx: Any | None = None
+    image_embeddings: Any = None
     C: int = field(init=False)
     E: int = field(init=False)
     D: int = field(init=False)
@@ -216,10 +217,10 @@ class DeferredPrefillAppend:
             self.coverage.source_by_layer[layer] = self.C
 
     @classmethod
-    def create(cls, language_model: Any, live_cache: list[Any], request_token_history: Sequence[int], *, committed_frontier: int | None = None, capacity: int = P6_CARRY_CAPACITY, mx: Any | None = None) -> "DeferredPrefillAppend":
+    def create(cls, language_model: Any, live_cache: list[Any], request_token_history: Sequence[int], *, committed_frontier: int | None = None, capacity: int = P6_CARRY_CAPACITY, mx: Any | None = None, image_embeddings: Any = None) -> "DeferredPrefillAppend":
         C = _frontier_from_cache(live_cache) if committed_frontier is None else int(committed_frontier)
         plan = P6AppendPlanner(capacity=capacity).plan(C=C, T=len(request_token_history))
-        return cls(language_model=language_model, live_cache=live_cache, request_token_history=tuple(int(t) for t in request_token_history), plan=plan, mx=mx)
+        return cls(language_model=language_model, live_cache=live_cache, request_token_history=tuple(int(t) for t in request_token_history), plan=plan, mx=mx, image_embeddings=image_embeddings)
 
     @classmethod
     def continue_from_commit(cls, language_model: Any, prior_commit: P6AppendCommit, request_token_history: Sequence[int], *, capacity: int = P6_CARRY_CAPACITY, mx: Any | None = None) -> "DeferredPrefillAppend":
@@ -311,7 +312,10 @@ class DeferredPrefillAppend:
     def _make_segment_execution(self, segment: P6SegmentPlan) -> SegmentExecution:
         token_slice = self.request_token_history[segment.start:segment.end]
         plan = _sweep_shell(segment.count, segment.commands, encoder_only=segment.source_only)
-        h_current, h_next, pre, input_ids, hashes, history = _make_segment_tensors(self.language_model, self.mx, token_slice, self._private_history(), None)
+        image_mask = None
+        if self.image_embeddings is not None:
+            image_mask = self.mx.array([token_slice]) == self.image_embeddings.image_token_id
+        h_current, h_next, pre, input_ids, hashes, history = _make_segment_tensors(self.language_model, self.mx, token_slice, self._private_history(), image_mask, self.image_embeddings, segment.start)
         arena = RequestArena.from_plan(plan, token_ids=token_slice, input_ids=input_ids, h_current=h_current, h_next=h_next, pre=pre, engram_hashes=hashes, engram_history=history, base_frontier=segment.start)
         if tile_native_enabled() and segment.mode in (SegmentMode.ENCODER_SOURCE_ONLY, SegmentMode.FINAL_ENCODER_DECODER):
             ok, reason = admit_tile_native(plan)
@@ -331,7 +335,7 @@ class DeferredPrefillAppend:
         else:
             # Persistent cumulative handles remain in the live cache; old row spans are not carried.
             manager.append_transaction_active = True
-        runner = OfficialFP8MLXBlockRunner(self.language_model, manager, working_cache=self.live_cache, mx=self.mx, p8_optimizer=getattr(self.language_model, "_p8_optimizer", None))
+        runner = OfficialFP8MLXBlockRunner(self.language_model, manager, image_mask=image_mask, working_cache=self.live_cache, mx=self.mx, p8_optimizer=getattr(self.language_model, "_p8_optimizer", None))
         runner.p6_owner_token = self.owner_token
         return SegmentExecution(segment, arena, manager, runner)
 
@@ -621,7 +625,7 @@ def _sweep_shell(count: int, commands: Sequence[SweepCommand], *, encoder_only: 
     return SweepPlan(count=int(count), prefill_cap=P6_ENCODER_TILE, encoder_chunk=P6_ENCODER_TILE, wide=count >= P6_FINAL_TAIL_THRESHOLD, decoder_suffix=any(c.phase is SweepPhase.DECODER_SUFFIX for c in commands), encoder_only=encoder_only, resume_encoder=False, defer_decoder_candidate=False, checkpoint_valid_during_sweep=False, checkpoint_valid_after_sweep=False, encoder_row_layer_work=0, decoder_suffix_row_layer_work=0, total_row_layer_work=0, allocations=allocs, commands=tuple(commands), command_counts={}, prefetch_event_count=0, checkpoint_transition_count=0)
 
 
-def _make_segment_tensors(language_model: Any, mx: Any, token_slice: Sequence[int], prior_history: Any, image_mask: Any) -> tuple[Any, Any, Any, Any, Any, Any]:
+def _make_segment_tensors(language_model: Any, mx: Any, token_slice: Sequence[int], prior_history: Any, image_mask: Any, image_embeddings: Any = None, absolute_start: int = 0) -> tuple[Any, Any, Any, Any, Any, Any]:
     if mx is None:
         try:
             import mlx.core as mx  # type: ignore
@@ -635,6 +639,8 @@ def _make_segment_tensors(language_model: Any, mx: Any, token_slice: Sequence[in
     if embed is None:
         raise PrefillSetupError("language model must expose embed for P6 append")
     h = embed(input_ids)
+    if image_embeddings is not None:
+        h = image_embeddings.merge(h, absolute_start)
     if mx is not None:
         hc_mult = int(getattr(language_model._config, "hc_mult", 4))
         h_current = mx.repeat(h[..., None, :], hc_mult, -2)

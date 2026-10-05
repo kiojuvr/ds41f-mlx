@@ -144,7 +144,7 @@ class M8LiveContinuationSession:
             self.generation = None
         self._assert_cache_frontier()
 
-    def begin_turn_from_recipe_tokens(self, full_recipe_token_ids: Sequence[int], *, max_tokens: int = 128) -> None:
+    def begin_turn_from_recipe_tokens(self, full_recipe_token_ids: Sequence[int], *, max_tokens: int = 128, image_embeddings: Any = None) -> None:
         """Append only the new recipe suffix and start decode at its terminal.
 
         The canonical boundary is an exact token-prefix relation between the
@@ -158,14 +158,14 @@ class M8LiveContinuationSession:
         if full[: len(self.token_history)] != self.token_history:
             raise M8ContinuationError("next recipe encoding is not an exact extension of generated session history")
         suffix = full[len(self.token_history):]
-        self._append_suffix_and_start(suffix, max_tokens=max_tokens)
+        self._append_suffix_and_start(suffix, max_tokens=max_tokens, image_embeddings=image_embeddings)
 
     def begin_turn_from_suffix(self, suffix_token_ids: Sequence[int], *, max_tokens: int = 128) -> None:
         self.ensure_idle("before_append")
         suffix = [int(t) for t in suffix_token_ids]
         self._append_suffix_and_start(suffix, max_tokens=max_tokens)
 
-    def _append_suffix_and_start(self, suffix: list[int], *, max_tokens: int) -> None:
+    def _append_suffix_and_start(self, suffix: list[int], *, max_tokens: int, image_embeddings: Any = None) -> None:
         if not suffix:
             raise M8ContinuationError("suffix must contain at least the held-out terminal token")
         if max_tokens < 1:
@@ -184,8 +184,15 @@ class M8LiveContinuationSession:
                 target_history,
                 committed_frontier=frontier_before,
                 mx=self.mx,
+                image_embeddings=image_embeddings,
             )
-            app.execute_all()
+            try:
+                app.execute_all()
+            except BaseException:
+                # Pending append failures burn the sole authority; no idle lease.
+                self.live_cache = []
+                self.closed = True
+                raise
             append_seconds = perf_counter() - t0
             if app.commit_certificate is None:
                 raise M8ContinuationError("append did not produce a sealed P6 commit")
@@ -222,7 +229,12 @@ class M8LiveContinuationSession:
                 first_token_latency_s=None,
             ))
             return
-        gen = handoff_to_generation(live, self.model, terminal_prompt_token=terminal, config=self.config, max_tokens=max_tokens, sampler=self.sampler)
+        try:
+            gen = handoff_to_generation(live, self.model, terminal_prompt_token=terminal, config=self.config, max_tokens=max_tokens, sampler=self.sampler)
+        except BaseException:
+            self.live_cache = []
+            self.closed = True
+            raise
         self.live_cache = []
         self.generation = gen
         self.token_history = gen.current_token_history()

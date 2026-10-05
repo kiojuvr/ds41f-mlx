@@ -52,6 +52,7 @@ class RecipePreparedRequest:
     include_usage: bool = False
     custom_tool_names: frozenset[str] = frozenset()
     stop_token_ids: tuple[int, ...] = ()
+    multimodal: Any = None
 
     @property
     def model(self) -> str | None:
@@ -85,6 +86,8 @@ class RequestTrace:
     frontier_after_first_input: int | None = None
     frontier_after_terminal: int | None = None
     prefill_seconds: float | None = None
+    image_encoding_seconds: float = 0.0
+    image_encoded_count: int = 0
     prefill_phase_timings_s: dict[str, float] | None = None
     generated_tokens: list[int] = field(default_factory=list)
     decode_latencies_s: list[float] = field(default_factory=list)
@@ -115,6 +118,8 @@ class RequestTrace:
             'frontier_after_first_input': self.frontier_after_first_input,
             'frontier_after_terminal': self.frontier_after_terminal,
             'prefill_seconds': self.prefill_seconds,
+            'image_encoding_seconds': self.image_encoding_seconds,
+            'image_encoded_count': self.image_encoded_count,
             'prefill_phase_timings_s': self.prefill_phase_timings_s,
             'generated_tokens': list(self.generated_tokens),
             'completion_tokens': len(self.generated_tokens),
@@ -203,9 +208,28 @@ class DeepSeekRecipeRuntimeBackend:
             raise
         self._runtime, self._model = runtime, model
 
-    async def _call(self, fn, *args):
+    async def _call(self, fn, *args, on_cancel=None):
+        """Cancellation cannot release ownership while the worker still mutates it."""
+        from anyio import CancelScope
         loop = asyncio.get_running_loop()
-        return await loop.run_in_executor(self._executor, lambda: fn(*args))
+        future = loop.run_in_executor(self._executor, lambda: fn(*args))
+        try:
+            return await asyncio.shield(future)
+        except asyncio.CancelledError:
+            async def settle(pending):
+                with CancelScope(shield=True):
+                    while True:
+                        try:
+                            return await asyncio.shield(pending)
+                        except asyncio.CancelledError:
+                            if pending.done():
+                                return pending.result()
+            result = await settle(future)
+            if on_cancel is not None:
+                await settle(loop.run_in_executor(self._executor, lambda: on_cancel(result)))
+            # Do not retain private tensor results in cancellation tracebacks.
+            result = future = None
+            raise
 
     def make_sampler(self, options: Any):
         temp = 0.0 if options.temperature is None else float(options.temperature)
@@ -226,13 +250,26 @@ class DeepSeekRecipeRuntimeBackend:
             raise ValueError('max_tokens must be positive')
         return value
 
+    def validate_multimodal_request(self, request: RecipePreparedRequest) -> None:
+        if request.image_sources and request.multimodal is None:
+            raise ValueError('image inputs must be prepared before execution')
+        if request.multimodal is None and 129264 in request.token_ids:
+            raise ValueError('missing image representation for image tokens')
+        if request.multimodal is not None:
+            if request.protocol != 'chat_completions':
+                raise ValueError('multimodal support is qualified for Chat Completions only')
+            from ds41f_mlx.runtime.multimodal import MAX_MULTIMODAL_CONTEXT
+            if tuple(request.token_ids) != request.multimodal.token_ids:
+                raise ValueError('multimodal tokens differ from prepared representation')
+            if len(request.token_ids) + self.max_tokens(request.inference_options) > MAX_MULTIMODAL_CONTEXT:
+                raise ValueError('multimodal prompt plus output reservation exceeds qualified context')
+
     async def infer(self, request: RecipePreparedRequest) -> AsyncIterator[Any]:
         from deepseek_recipe import InferenceChunk, InferenceFinishReason, PromptUsage
 
         if request.model is not None and request.model not in MODEL_ALIASES:
             raise ValueError(f"unsupported model {request.model!r}; supported aliases: {sorted(MODEL_ALIASES)}")
-        if request.image_sources:
-            raise ValueError('multimodal/image input is not supported by ds41f text serving backend')
+        self.validate_multimodal_request(request)
         if len(request.token_ids) < 2:
             raise ValueError(f'encoded prompt must contain prefix + first token, got {len(request.token_ids)} token(s)')
         prefix = request.token_ids[:-1]
@@ -245,13 +282,21 @@ class DeepSeekRecipeRuntimeBackend:
         self.traces.append(trace)
         session: TargetGenerationSession | None = None
         session_counted = False
-        await self._lock.acquire()
+        lock_acquired = False
         try:
+            await self._lock.acquire()
+            lock_acquired = True
             await self._call(self.load)
             sampler = self.make_sampler(request.inference_options)
             max_tokens = self.max_tokens(request.inference_options)
             prefill_session = DwarfStarMLXPrefillSession(self._model, omlx_path=self.omlx_path)
-            prefill_result = await self._call(prefill_session.prefill, prefix)
+            image_embeddings = None
+            if request.multimodal is not None:
+                image_embeddings = await self._call(request.multimodal.encode_new, self._model)
+                trace.image_encoding_seconds = image_embeddings.seconds
+                trace.image_encoded_count = len(image_embeddings.rows)
+            prefill_result = await self._call(lambda: prefill_session.prefill(prefix) if image_embeddings is None else prefill_session.prefill(prefix, image_embeddings=image_embeddings), on_cancel=lambda result: result.live_result.discard())
+            image_embeddings = None
             trace.production_prefill_selector = getattr(prefill_result, 'production_prefill_selector', PRODUCTION_PREFILL_SELECTOR)
             trace.prefill_seconds = float(prefill_result.seconds)
             trace.prefill_phase_timings_s = {k: float(v) for k, v in prefill_result.phase_timings_s.items()}
@@ -262,7 +307,7 @@ class DeepSeekRecipeRuntimeBackend:
             if trace.production_prefill_selector != PRODUCTION_PREFILL_SELECTOR or trace.prefill_frontier != len(prefix):
                 raise RuntimeError('production DENSE_P0_P7 prefill selector/frontier gate failed')
             cfg = OMLXDecodeConfig(omlx_path=self.omlx_path, checkpoint_path=self.checkpoint, engram_ssd_offload=True, preserve_mtp=False, speculation_enabled=False, stop_token_ids=tuple(request.stop_token_ids))
-            session = await self._call(lambda: handoff_to_generation(prefill_result.live_result, self._model, terminal_prompt_token=first, config=cfg, max_tokens=max_tokens, sampler=sampler))
+            session = await self._call(lambda: handoff_to_generation(prefill_result.live_result, self._model, terminal_prompt_token=first, config=cfg, max_tokens=max_tokens, sampler=sampler), on_cancel=lambda generation: generation.close())
             self.active_generation_sessions += 1
             session_counted = True
             trace.initial_admitted_frontier = session.admitted_frontier
@@ -309,7 +354,8 @@ class DeepSeekRecipeRuntimeBackend:
                                 session_counted = False
             finally:
                 trace.cleanup_called = True
-                self._lock.release()
+                if lock_acquired:
+                    self._lock.release()
 
     async def create_stateful_session(self, *, session_id: str | None = None) -> StatefulSessionRecord:
         sid = session_id or f"sess_{uuid4().hex}"
@@ -332,8 +378,7 @@ class DeepSeekRecipeRuntimeBackend:
             raise ValueError('M12 stateful serving currently qualifies chat_completions only')
         if request.model is not None and request.model not in MODEL_ALIASES:
             raise ValueError(f"unsupported model {request.model!r}; supported aliases: {sorted(MODEL_ALIASES)}")
-        if request.image_sources:
-            raise ValueError('multimodal/image input is not supported by ds41f stateful serving')
+        self.validate_multimodal_request(request)
         rec = self.get_stateful_session(session_id)
         if rec.busy:
             raise RuntimeError(f"session {session_id!r} already has an active request")
@@ -342,55 +387,65 @@ class DeepSeekRecipeRuntimeBackend:
         trace: dict[str, Any] = {'session_id': session_id, 'prompt_tokens': len(request.token_ids), 'stream': bool(request.stream), 'started_at': rec.updated_at}
         turn_t0 = perf_counter()
         self.session_traces.append(trace)
-        await self._lock.acquire()
+        lock_acquired = False
         try:
+            await self._lock.acquire()
+            lock_acquired = True
             await self._call(self.load)
             sampler = self.make_sampler(request.inference_options)
             max_tokens = self.max_tokens(request.inference_options)
-            if rec.m11 is None:
-                turn = await self._call(lambda: self._start_and_run_m11(tokenizer, request, sampler, max_tokens))
-                rec.m11 = turn[0]
-                assistant_turn = turn[1]
-                trace['created_runtime_session'] = True
-            else:
-                def cont() -> M11AssistantTurn:
-                    assert rec.m11 is not None
+            def execute_and_publish() -> M11AssistantTurn:
+                # Publish completed state and its protocol record before the worker
+                # result can be lost to transport/task cancellation. No new KV owner.
+                if rec.m11 is None:
+                    rec.m11, assistant_turn = self._start_and_run_m11(tokenizer, request, sampler, max_tokens)
+                    trace['created_runtime_session'] = True
+                else:
                     before = rec.m11.m8.frontier
-                    rec.m11.continue_from_prepared(request, max_tokens=max_tokens)
-                    out = rec.m11.run_current_assistant_turn(request)
+                    try:
+                        rec.m11.continue_from_prepared(request, max_tokens=max_tokens)
+                        assistant_turn = rec.m11.run_current_assistant_turn(request)
+                    except BaseException:
+                        if rec.m11.m8.generation is not None:
+                            rec.m11.m8.close()
+                        raise
                     trace['frontier_before'] = before
                     trace['frontier_after'] = rec.m11.m8.frontier
                     trace['exact_prefix_extension'] = True
-                    return out
-                assistant_turn = await self._call(cont)
-                trace['created_runtime_session'] = False
-            rec.request_count += 1
-            rec.updated_at = time()
-            rec.last_turn = assistant_turn.to_json()
-            rec.last_error = None
-            diag = rec.m11.diagnostics() if rec.m11 is not None else {}
-            m8diag = diag.get('m8', {}) if isinstance(diag, dict) else {}
-            last_runtime_turn = (m8diag.get('turns') or [{}])[-1]
-            trace.update({
-                'ok': True,
-                'finish_reason': assistant_turn.finish_reason,
-                'tool_call_count': len(assistant_turn.tool_calls),
-                'generated_token_count': len(assistant_turn.generated_tokens),
-                'frontier': m8diag.get('frontier'),
-                'all_cache_offsets_equal_frontier': m8diag.get('all_cache_offsets_equal_frontier'),
-                'cache_layer_count': m8diag.get('cache_layer_count'),
-                'cache_offsets_all': m8diag.get('cache_offsets_all'),
-                'prompt_suffix_tokens': last_runtime_turn.get('prompt_suffix_tokens'),
-                'appended_prefill_tokens': last_runtime_turn.get('appended_prefill_tokens'),
-                'append_seconds': last_runtime_turn.get('append_seconds'),
-                'first_token_latency_s': last_runtime_turn.get('first_token_latency_s'),
-                'decode_seconds': last_runtime_turn.get('decode_seconds'),
-                'decode_tok_s': last_runtime_turn.get('decode_tok_s'),
-                'prompt_replay_count': m8diag.get('total_prompt_replay_count'),
-                'full_cache_repack_count': m8diag.get('total_full_cache_repack_count'),
-                'elapsed_seconds': perf_counter() - turn_t0,
-            })
-            return assistant_turn
+                    trace['created_runtime_session'] = False
+                rec.request_count += 1
+                rec.updated_at = time()
+                rec.last_turn = assistant_turn.to_json()
+                rec.last_error = None
+                diag = rec.m11.diagnostics()
+                m8diag = diag.get('m8', {})
+                last_runtime_turn = (m8diag.get('turns') or [{}])[-1]
+                trace.update({
+                    'ok': True,
+                    'image_encoding_seconds': diag.get('last_image_encoding_seconds', 0.0),
+                    'image_encoded_count': diag.get('last_image_encoded_count', 0),
+                    'finish_reason': assistant_turn.finish_reason,
+                    'tool_call_count': len(assistant_turn.tool_calls),
+                    'generated_token_count': len(assistant_turn.generated_tokens),
+                    'frontier': m8diag.get('frontier'),
+                    'all_cache_offsets_equal_frontier': m8diag.get('all_cache_offsets_equal_frontier'),
+                    'cache_layer_count': m8diag.get('cache_layer_count'),
+                    'cache_offsets_all': m8diag.get('cache_offsets_all'),
+                    'prompt_suffix_tokens': last_runtime_turn.get('prompt_suffix_tokens'),
+                    'appended_prefill_tokens': last_runtime_turn.get('appended_prefill_tokens'),
+                    'append_seconds': last_runtime_turn.get('append_seconds'),
+                    'first_token_latency_s': last_runtime_turn.get('first_token_latency_s'),
+                    'decode_seconds': last_runtime_turn.get('decode_seconds'),
+                    'decode_tok_s': last_runtime_turn.get('decode_tok_s'),
+                    'prompt_replay_count': m8diag.get('total_prompt_replay_count'),
+                    'full_cache_repack_count': m8diag.get('total_full_cache_repack_count'),
+                    'elapsed_seconds': perf_counter() - turn_t0,
+                })
+                return assistant_turn
+            return await self._call(execute_and_publish)
+        except asyncio.CancelledError:
+            trace['cancelled'] = True
+            raise
         except Exception as exc:
             rec.last_error = str(exc)
             trace.update({'ok': False, 'error': str(exc), 'error_type': type(exc).__name__})
@@ -398,11 +453,16 @@ class DeepSeekRecipeRuntimeBackend:
         finally:
             rec.busy = False
             rec.updated_at = time()
-            self._lock.release()
+            if lock_acquired:
+                self._lock.release()
 
     def _start_and_run_m11(self, tokenizer: Any, request: RecipePreparedRequest, sampler: Any, max_tokens: int) -> tuple[M11RecipeToolSession, M11AssistantTurn]:
         sess = M11RecipeToolSession.start_from_prepared(model=self._model, tokenizer=tokenizer, checkpoint=self.checkpoint, omlx_path=self.omlx_path, recipe_path=self.recipe_path, prepared=request, sampler=sampler, max_tokens=max_tokens)
-        return sess, sess.run_current_assistant_turn(request)
+        try:
+            return sess, sess.run_current_assistant_turn(request)
+        except BaseException:
+            sess.m8.close()
+            raise
 
     async def persist_stateful_session(self, session_id: str, *, artifact_root: Path | None = None) -> dict[str, Any]:
         rec = self.get_stateful_session(session_id)
@@ -411,35 +471,43 @@ class DeepSeekRecipeRuntimeBackend:
         if rec.m11 is None:
             raise ValueError('cannot persist an empty session')
         rec.busy = True
-        await self._lock.acquire()
+        lock_acquired = False
         try:
+            await self._lock.acquire()
+            lock_acquired = True
             default_root = (self.runtime_config.kv_root if self.runtime_config is not None else DEFAULT_KV_ROOT) / 'm12'
-            info = await self._call(lambda: rec.m11.persist_idle(artifact_root=artifact_root or default_root, diagnostics={'m12_session_id': session_id}))
-            rec.persisted_artifact = info.to_json()
-            rec.updated_at = time()
-            return rec.persisted_artifact
+            def save_and_publish():
+                info = rec.m11.persist_idle(artifact_root=artifact_root or default_root, diagnostics={'m12_session_id': session_id})
+                rec.persisted_artifact = info.to_json()
+                rec.updated_at = time()
+                return rec.persisted_artifact
+            return await self._call(save_and_publish)
         finally:
             rec.busy = False
-            self._lock.release()
+            if lock_acquired:
+                self._lock.release()
 
     async def restore_stateful_session(self, *, artifact_path: Path, tokenizer: Any, session_id: str | None = None) -> StatefulSessionRecord:
         rec = await self.create_stateful_session(session_id=session_id)
         rec.busy = True
-        await self._lock.acquire()
+        lock_acquired = False
         try:
+            await self._lock.acquire()
+            lock_acquired = True
             await self._call(self.load)
             def restore() -> M11RecipeToolSession:
                 return M11RecipeToolSession.restore(model=self._model, tokenizer=tokenizer, checkpoint=self.checkpoint, omlx_path=self.omlx_path, recipe_path=self.recipe_path, artifact_path=artifact_path, protocol='chat_completions', model_id=self.model_id)
-            rec.m11 = await self._call(restore)
+            rec.m11 = await self._call(restore, on_cancel=lambda session: session.m8.close())
             rec.persisted_artifact = {'path': str(artifact_path)}
             rec.updated_at = time()
             return rec
-        except Exception:
+        except BaseException:
             rec.closed = True
             raise
         finally:
             rec.busy = False
-            self._lock.release()
+            if lock_acquired:
+                self._lock.release()
 
     async def close_stateful_session(self, session_id: str) -> dict[str, Any]:
         rec = self.get_stateful_session(session_id)

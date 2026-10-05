@@ -176,6 +176,23 @@ class LivePrefillResult:
             actual_setup.block_runner.scheduling_coordinator.revoke()
         return result
 
+    def discard(self) -> None:
+        """Burn an untransferred ready lease after protected prefill cancellation."""
+        if self._state != 'ready':
+            raise LiveCacheHandoffError('only a ready prefill lease can be discarded')
+        setup, cache = self._setup, self._live_cache
+        self._state, self._live_cache = 'failed', None
+        try:
+            for item in cache or ():
+                item._p6_append_failed = True
+                item._p6_append_invalid = True
+                item._p6_append_sealed = False
+            setup.block_runner.handoff_transferred = True
+            setup.continuation = None
+            setup.block_runner.close()
+        finally:
+            setup.__dict__.pop('p6_commit_authority', None)
+
     @property
     def live_cache(self) -> list[Any]:
         if self._state != 'ready' or self._live_cache is None:

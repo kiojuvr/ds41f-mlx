@@ -22,6 +22,13 @@ commit generated tokens/KV
 DeepSeek EOS, length, cancel, or continuation
 ```
 
+The separately qualified [bounded multimodal core](multimodal-production-qualification.md)
+uses this exact scheduler, transaction and packed cache representation. Image
+spans replace input embeddings and provide VL/Engram masks during prefill; they do
+not select another generation engine. Only new images are encoded on continuation.
+Protected worker cancellation drains before ownership release; an untransferred
+ready prefill is explicitly discarded/burned, not recycled or replayed.
+
 ## Commit and continuation invariants
 
 Prefill initializes persistent cache/token state. Incremental decode consumes and extends that state. M44 commits all-token history only after M45 completes all 40 cache mutations, materializes every mutated slot, synchronizes the owned stream and checks every frontier. Continuation reuses the exact list and layer objects. Invalid input fails preflight; any transaction failure burns every layer rather than publishing or rolling back partially mutated state.

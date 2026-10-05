@@ -81,6 +81,9 @@ class M11RecipeToolSession:
     model_id: str
     request_count: int = 0
     boundary_records: list[dict[str, Any]] = field(default_factory=list)
+    image_identities: list[dict[str, Any]] = field(default_factory=list)
+    last_image_encoding_seconds: float = 0.0
+    last_image_encoded_count: int = 0
 
     @classmethod
     def start_from_prepared(
@@ -95,12 +98,17 @@ class M11RecipeToolSession:
         sampler: Callable[[Any], Any] | None = None,
         max_tokens: int | None = None,
     ) -> "M11RecipeToolSession":
-        if prepared.image_sources:
-            raise M11ToolBoundaryError("M11 is text/tool-only; multimodal image input is not supported")
+        if prepared.image_sources and prepared.multimodal is None:
+            raise M11ToolBoundaryError('image input was not prepared')
         if len(prepared.token_ids) < 2:
             raise M11ToolBoundaryError("encoded prompt must contain prefix and held-out terminal")
         cfg = OMLXDecodeConfig(omlx_path=omlx_path, checkpoint_path=checkpoint, engram_ssd_offload=True, preserve_mtp=False, speculation_enabled=False, stop_token_ids=tuple(getattr(prepared, "stop_token_ids", ()) or ()))
-        prefill = DwarfStarMLXPrefillSession(model, omlx_path=omlx_path).prefill(prepared.token_ids[:-1])
+        prefill_session = DwarfStarMLXPrefillSession(model, omlx_path=omlx_path)
+        if prepared.multimodal is None:
+            prefill = prefill_session.prefill(prepared.token_ids[:-1])
+        else:
+            embeddings = prepared.multimodal.encode_new(model)
+            prefill = prefill_session.prefill(prepared.token_ids[:-1], image_embeddings=embeddings)
         if getattr(prefill, "production_prefill_selector", None) != PRODUCTION_PREFILL_SELECTOR:
             raise M11ToolBoundaryError("production prefill selector gate failed")
         if int(prefill.frontier) != len(prepared.token_ids) - 1:
@@ -139,6 +147,9 @@ class M11RecipeToolSession:
             m8=m8,
             protocol=prepared.protocol,
             model_id=prepared.model or "deepseek-v4.1-flash",
+            image_identities=[] if prepared.multimodal is None else prepared.multimodal.identities(),
+            last_image_encoding_seconds=0.0 if prepared.multimodal is None else embeddings.seconds,
+            last_image_encoded_count=0 if prepared.multimodal is None else len(embeddings.rows),
         )
 
     @classmethod
@@ -158,7 +169,31 @@ class M11RecipeToolSession:
         cache, tokens, _manifest = restore_m8_idle_state(artifact_path=artifact_path, model=model, checkpoint=checkpoint, omlx_path=omlx_path)
         cfg = OMLXDecodeConfig(omlx_path=omlx_path, checkpoint_path=checkpoint, engram_ssd_offload=True, preserve_mtp=False, speculation_enabled=False)
         m8 = M8LiveContinuationSession.from_live_cache(model=model, live_cache=cache, token_history=tokens, config=cfg, sampler=sampler)
-        return cls(model=model, tokenizer=tokenizer, checkpoint=Path(checkpoint), omlx_path=Path(omlx_path), recipe_path=Path(recipe_path), m8=m8, protocol=protocol, model_id=model_id)
+        identities = _manifest.get('diagnostics', {}).get('image_identities', [])
+        image_id = model.config.image_token_id
+        from ds41f_mlx.runtime.multimodal import MAX_IMAGES, MAX_IMAGE_TOKENS, MAX_MULTIMODAL_CONTEXT
+        if identities and len(tokens) > MAX_MULTIMODAL_CONTEXT:
+            raise M11ToolBoundaryError('persisted image history exceeds qualified context envelope')
+        if not isinstance(identities, list) or len(identities) > MAX_IMAGES:
+            raise M11ToolBoundaryError('invalid persisted image count')
+        covered = set()
+        previous_end = 0
+        for identity in identities:
+            start, length = identity['start'], identity['length']
+            digest = identity.get('sha256', '')
+            grid = identity.get('grid', [])
+            if (not isinstance(start, int) or not isinstance(length, int) or start < previous_end
+                    or not 1 <= length <= MAX_IMAGE_TOKENS or start + length > len(tokens)
+                    or any(t != image_id for t in tokens[start:start+length])
+                    or not isinstance(digest, str) or len(digest) != 64 or any(c not in '0123456789abcdef' for c in digest)
+                    or not isinstance(grid, list) or len(grid) != 2 or any(not isinstance(v, int) or v < 1 for v in grid)
+                    or length != ((grid[0]+2)//3)*((grid[1]+2)//3+1)+2):
+                raise M11ToolBoundaryError('invalid persisted image identity')
+            covered.update(range(start, start + length))
+            previous_end = start + length
+        if covered != {i for i, t in enumerate(tokens) if t == image_id}:
+            raise M11ToolBoundaryError('persisted image coverage does not match history')
+        return cls(model=model, tokenizer=tokenizer, checkpoint=Path(checkpoint), omlx_path=Path(omlx_path), recipe_path=Path(recipe_path), m8=m8, protocol=protocol, model_id=model_id, image_identities=identities)
 
     def continue_from_prepared(self, prepared: RecipePreparedRequest, *, max_tokens: int | None = None) -> None:
         """Validate exact-prefix extension and start the next model turn.
@@ -169,12 +204,25 @@ class M11RecipeToolSession:
         """
         if prepared.protocol != self.protocol:
             raise M11ToolBoundaryError(f"protocol changed from {self.protocol} to {prepared.protocol}")
+        self.m8.ensure_idle('multimodal_preflight')
+        embeddings = None
+        if prepared.multimodal is not None:
+            prepared.multimodal.validate_prefix(self.m8.frontier, self.image_identities)
+            embeddings = prepared.multimodal.encode_new(self.model, self.m8.frontier)
+        elif self.image_identities or prepared.image_sources:
+            raise M11ToolBoundaryError('continuation must retain committed inline image identities')
+        self.last_image_encoding_seconds = 0.0 if embeddings is None else embeddings.seconds
+        self.last_image_encoded_count = 0 if embeddings is None else len(embeddings.rows)
         before = self.m8.diagnostics()
         stop_ids = tuple(getattr(prepared, "stop_token_ids", ()) or ())
         if stop_ids != tuple(getattr(self.m8.config, "stop_token_ids", ()) or ()):
             self.m8.config = replace(self.m8.config, stop_token_ids=stop_ids)
         try:
-            self.m8.begin_turn_from_recipe_tokens(prepared.token_ids, max_tokens=max_tokens or _max_tokens(prepared))
+            if embeddings is None:
+                self.m8.begin_turn_from_recipe_tokens(prepared.token_ids, max_tokens=max_tokens or _max_tokens(prepared))
+            else:
+                self.m8.begin_turn_from_recipe_tokens(prepared.token_ids, max_tokens=max_tokens or _max_tokens(prepared), image_embeddings=embeddings)
+                self.image_identities = prepared.multimodal.identities()
         except Exception as exc:
             after = self.m8.diagnostics()
             if after.get("frontier") != before.get("frontier") or after.get("state") != before.get("state"):
@@ -254,6 +302,7 @@ class M11RecipeToolSession:
         diag = {"m8": self.m8.diagnostics(), "m11_boundaries": self.boundary_records[-4:]}
         if diagnostics:
             diag.update(diagnostics)
+        diag['image_identities'] = self.image_identities
         return save_m8_idle_state(artifact_root=artifact_root, model=self.model, live_cache=self.m8.live_cache, all_tokens=self.m8.token_history, checkpoint=self.checkpoint, omlx_path=self.omlx_path, diagnostics=diag)
 
     def diagnostics(self) -> dict[str, Any]:
@@ -261,6 +310,9 @@ class M11RecipeToolSession:
             "schema": "ds41f.m11.tool-boundary-session.diagnostics.v1",
             "protocol": self.protocol,
             "request_count": self.request_count,
+            "image_identities": self.image_identities,
+            "last_image_encoding_seconds": self.last_image_encoding_seconds,
+            "last_image_encoded_count": self.last_image_encoded_count,
             "m8": self.m8.diagnostics(),
             "boundaries": self.boundary_records[-16:],
         }

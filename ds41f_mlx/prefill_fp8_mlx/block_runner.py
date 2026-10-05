@@ -216,6 +216,7 @@ class OfficialFP8MLXBlockRunner:
             live = {"h/current": arena.carry.current.value is not None, "h/next": arena.carry.next.value is not None, "pre": arena.carry.pre.value is not None, "publication_handles": bool(getattr(self.publication_manager, "pending_spans_by_layer", {}))}
             if layer_id in (0, 1, 19) and int(command.offset) == 0:
                 self.p8_optimizer.telemetry.record_graph_retention_proxy(f"before_encoder_layer{layer_id}", live=live)
+        image_mask = None if self.image_mask is None else self.image_mask[:, command.offset:command.offset + command.rows]
         invoked_engram = False
         if _layer_has_engram(layer):
             hashes = _slice_engram_hashes(arena.engram.hashes.value, command.offset, command.rows, layer_id, lm)
@@ -223,14 +224,14 @@ class OfficialFP8MLXBlockRunner:
                 if self.scheduling_coordinator is not None:
                     h_chunk = self.scheduling_coordinator.apply_engram_micro_pipeline(command, arena, h_chunk, pre_chunk, layer.engram, self.image_mask, _slice_engram_hashes)
                 else:
-                    h_chunk = layer.engram(h_chunk, hashes, self.image_mask)
+                    h_chunk = layer.engram(h_chunk, hashes, image_mask)
                 invoked_engram = True
         if not callable(layer):
             raise BlockExecutionError(f"layer {command.layer} is not callable")
         if command.phase is SweepPhase.DECODER_SUFFIX:
-            h_out, pre_out = self.suffix_math.execute_suffix_query(layer_id=layer_id, h_chunk=h_chunk, pre_chunk=pre_chunk, cache=cache, shared=shared, absolute_start=absolute_start, image_mask=self.image_mask)
+            h_out, pre_out = self.suffix_math.execute_suffix_query(layer_id=layer_id, h_chunk=h_chunk, pre_chunk=pre_chunk, cache=cache, shared=shared, absolute_start=absolute_start, image_mask=image_mask)
         else:
-            h_out, pre_out = layer(h_chunk, pre_chunk, cache, shared, absolute_start, self.image_mask)
+            h_out, pre_out = layer(h_chunk, pre_chunk, cache, shared, absolute_start, image_mask)
         block_event_id = self.p8_optimizer.shape_registry.record_lineage_event("BLOCK_OUTPUT", layer=layer_id, command_index=int(command.index), rows=int(command.rows)) if self.p8_optimizer is not None and self.p8_optimizer.enabled else None
         if tile_native:
             arena.tile_carry.bind_output(command, h_out, pre_out, base_frontier=base_start)

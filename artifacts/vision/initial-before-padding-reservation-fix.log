@@ -1,0 +1,24 @@
+Traceback (most recent call last):
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/qualify_multimodal.py", line 258, in <module>
+    if __name__ == '__main__': main()
+                               ~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/qualify_multimodal.py", line 238, in main
+    asyncio.run(run())
+    ~~~~~~~~~~~^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 196, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 119, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 726, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/qualify_multimodal.py", line 213, in run
+    maximum=prepare(maximum_messages,32)
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/qualify_multimodal.py", line 69, in prepare
+    return prepare_request('chat_completions', json.dumps(dict(model=cfg.model_id,
+        messages=messages, reasoning_effort='none', temperature=0, max_tokens=max_tokens)).encode(), tokenizer=tokenizer)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/server.py", line 72, in prepare_request
+    raise RequestError('multimodal prompt plus output reservation exceeds qualified context', 400)
+ds41f_mlx.serving.server.RequestError: multimodal prompt plus output reservation exceeds qualified context

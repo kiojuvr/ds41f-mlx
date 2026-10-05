@@ -36,8 +36,9 @@ a numerical change, P5 redesign, or a persistence-format change.
 
 This is bounded production-core evidence, not unlimited lifetime or a new
 long-HTTP tool-loop claim. The 200K baseline remains closed. The subsequent
-very-long qualification below extends it without redesigning the core. Vision,
-R1 re-verification and release/runtime promotion remain separate.
+very-long qualification below extends it without redesigning the core. The bounded
+Vision qualification below is separate; R1 re-verification and release/runtime
+promotion remain later work.
 
 ### Very-long-context text production boundary (qualified, bounded)
 
@@ -69,19 +70,26 @@ system headroom and no corrected swap growth. The supported total frontier
 includes prompt, generated tokens and future appends; reserve capacity rather
 than interpreting 1M as a prompt plus unlimited completion. Above the official
 checkpoint's 1M envelope is not qualified; physical exhaustion was not reached
-within it. Vision remains unfinished, and R1/promotion remain deferred.
+within it. R1/promotion remain deferred.
 
-### Vision production completion
+### Vision production completion (qualified, bounded)
 
-The checkpoint includes Vision-related model structure, but current production
-serving is text-only. **Vision / multimodal remains an unfinished production
-capability within the full production-completion target**, not a permanent
-non-goal. A model-forward smoke test alone cannot close it. Completion requires a
-coherently integrated supported multimodal serving lifecycle: preprocessing/input
-representation, first-party model execution, generation, state/lifecycle behavior
-and appropriate qualification. Exact design remains open and must follow evidence
-and the existing ownership principles; no detailed Vision architecture is
-prescribed here.
+[Multimodal production qualification](multimodal-production-qualification.md)
+closes practical first-party standard-OFF image capability on the existing text
+core: canonical Chat Completions preprocessing and execution, meaningful text and
+additional-image continuation, same-list all-layer state, protected cancellation,
+identity rejection, idle persistence and exact fresh-process restore with no old
+image encode, prompt replay or cache repack. The measured envelope is four inline
+PNG/JPEG/WebP images, up to 4M source pixels each and **8,192 total consumed
+multimodal positions**; the **1M text** envelope is unchanged.
+
+Real qualification exposed stream/restore materialization, image-span accounting,
+command-local mask and protected-worker cancellation/publication gaps. Repairs
+retain M44–M48, P5/P6 and resource-policy ownership, not a second generation/cache
+stack. Official preprocessing/layout and FP32 tower/aligner fidelity are checked;
+BF16 backend-local drift is disclosed, not CUDA/full-LM parity. This closes the
+supported bounded production implementation, not universal visual quality, larger
+multimodal contexts, full R1, release/packaging or `ds41f-runtime` promotion.
 
 ### Iterative implementation and qualification, not a one-way stage gate
 

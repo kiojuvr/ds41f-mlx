@@ -79,7 +79,8 @@ def plan_image_grid(width: int, height: int, args):
     )
 
 
-def image_patches(image, config):
+def image_patch_array(image, config):
+    """CPU-only request representation; no inference-thread stream ownership."""
     image = image.convert("RGB")
     nh, nw, height, width = plan_image_grid(image.width, image.height, config)
     if (
@@ -109,7 +110,12 @@ def image_patches(image, config):
         .reshape(-1, 3, p, p)
     )
     types = [0] + ([1] * nw + [2]) * nh + [3]
-    return mx.array(patches).astype(mx.bfloat16), height // p, width // p, types
+    return patches, height // p, width // p, types
+
+
+def image_patches(image, config):
+    patches, h, w, types = image_patch_array(image, config)
+    return mx.array(patches).astype(mx.bfloat16), h, w, types
 
 
 class Processor:

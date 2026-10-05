@@ -71,6 +71,24 @@ it prevents old source buffers from depending on Python cyclic GC for release.
 
 Stateful Chat Completions sessions preserve exact-prefix continuation, zero prompt replay, zero full-cache repack/reconstruction, and coherent all-layer cache frontiers at idle boundaries. Persistence is for idle same-backend artifacts only. Restore validates provenance, schema, shape, dtype, checkpoint identity, and frontier before re-entry, and fails closed on mismatch/corruption.
 
+## Bounded multimodal strategy
+
+[Multimodal production qualification](multimodal-production-qualification.md)
+closes four inline images / 8,192 consumed positions on the same first-party
+standard-OFF core; 1M text/resource semantics remain unchanged. CPU-only bounded
+preprocessing produces expanded spans and byte identities. The owner worker
+encodes only new images, injects sparse absolute embeddings and slices the VL /
+Engram-exclusion mask per command. P5/P6 and first-party target generation remain
+the only cache/execution authority; no image-specific generation stack exists.
+
+Idle artifacts preserve image identities and all packed slots, never pixels or
+encoder activations. Restore materializes exact loaded arrays on its worker
+before publication. Cancellation drains protected work before releasing fences,
+burns discarded ready leases, and publishes completed stateful protocol records
+inside the worker. These are lifecycle repairs, not replay/repack or a new format.
+Official preprocessing/FP32 fidelity and BF16-local drift limits are explicit.
+This is bounded development/core support, not R1/release/runtime promotion.
+
 ## API strategy
 
 HTTP protocol compatibility is delegated to official `deepseek-recipe`; ds41f implements only the runtime backend. Stateless text Chat Completions, Responses, and Messages are in scope. Stateful sessions are Chat Completions only, including client-side function-tool/result loops. The server does not execute tools.
@@ -87,4 +105,4 @@ Arbitrary stateful request stop strings are rejected before mutation. The qualif
 
 ## Unqualified / non-goals
 
-Vision, batching, MTP, DSpark, speculative decode, distributed serving, authentication, server-side tool execution, MCP/plugins, web search, shell tools, sessionized Responses/Messages, cross-runtime KV portability, new kernel optimization, and arbitrary stateful stop rollback are outside the release strategy.
+Vision beyond the separate bounded core envelope, batching, MTP, DSpark, speculative decode, distributed serving, authentication, server-side tool execution, MCP/plugins, web search, shell tools, sessionized Responses/Messages, cross-runtime KV portability, new kernel optimization, and arbitrary stateful stop rollback are outside the release strategy.

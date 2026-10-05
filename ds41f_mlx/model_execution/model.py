@@ -23,6 +23,23 @@ class Model(nn.Module):
             self.image_newline = mx.zeros((config.dim,))
             self.image_end = mx.zeros((config.dim,))
 
+    def encode_image_span(self, patches, height, width, kinds):
+        """Checkpoint-owned ViT/aligner/delimiter representation for one image."""
+        features = self.aligner(self.vision(patches, height, width), height, width)
+        if kinds.count(1) != len(features):
+            raise ValueError('image layout does not match aligned features')
+        values, index = [], 0
+        delimiters = {0: self.image_start, 2: self.image_newline, 3: self.image_end}
+        for kind in kinds:
+            if kind == 1:
+                values.append(features[index])
+                index += 1
+            else:
+                if kind not in delimiters:
+                    raise ValueError('unknown image token type')
+                values.append(delimiters[kind])
+        return mx.stack(values)
+
     def get_input_embeddings(self, input_ids, pixel_values=None, **kwargs):
         h = self.language_model.embed(input_ids)
         if pixel_values is None:
@@ -41,29 +58,17 @@ class Model(nn.Module):
         offset = 0
         for (height, width), (start, length), kinds in zip(grids, spans, types):
             count = height * width
-            features = self.aligner(
-                self.vision(pixel_values[offset : offset + count], height, width),
-                height,
-                width,
-            )
+            values = self.encode_image_span(pixel_values[offset : offset + count], height, width, kinds)
             offset += count
-            if kinds.count(1) != len(features) or length != len(kinds):
+            if length != len(kinds):
                 raise ValueError("Image layout does not match aligned features")
-            values, index = [], 0
-            delimiters = {0: self.image_start, 2: self.image_newline, 3: self.image_end}
-            for kind in kinds:
-                if kind == 1:
-                    values.append(features[index])
-                    index += 1
-                else:
-                    values.append(delimiters[kind])
             if not bool(
                 mx.all(
                     input_ids[0, start : start + length] == self.config.image_token_id
                 ).item()
             ):
                 raise ValueError("Image span does not cover image token ids")
-            h[:, start : start + length] = mx.stack(values).astype(h.dtype)
+            h[:, start : start + length] = values.astype(h.dtype)
         if offset != pixel_values.shape[0]:
             raise ValueError("Unused image patches")
         return InputEmbeddingsFeatures(inputs_embeds=h)

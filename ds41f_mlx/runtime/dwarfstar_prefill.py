@@ -336,7 +336,7 @@ class DenseP0P7PrefillSession:
         if getattr(self.language_model, "_p7_enable_overlap", False) is not True:
             raise RuntimeError("production DENSE_P0_P7 requires P7 overlap enabled")
 
-    def prefill(self, token_ids: Sequence[int]) -> DenseP0P7PrefillResult:
+    def prefill(self, token_ids: Sequence[int], *, image_embeddings: Any = None) -> DenseP0P7PrefillResult:
         if self.resources is not None:
             self.resources.validate_binding(self.language_model)
         LegacyOneChunkMLXPrefillSession._assert_no_reference_modules_loaded_at_entry()
@@ -354,6 +354,7 @@ class DenseP0P7PrefillSession:
             ids,
             committed_frontier=0,
             mx=self.mx,
+            image_embeddings=image_embeddings,
         )
         app.execute_all()
         if app.commit_certificate is None:
@@ -399,5 +400,5 @@ class DwarfStarMLXPrefillSession:
     def __init__(self, model: Any, *, omlx_path: Any = DEFAULT_OMLX, mx: Any | None = None, stream: Any | None = None, **_: Any):
         self._delegate = DenseP0P7PrefillSession(model, omlx_path=omlx_path, mx=mx, stream=stream)
 
-    def prefill(self, token_ids: Sequence[int]) -> DenseP0P7PrefillResult:
-        return self._delegate.prefill(token_ids)
+    def prefill(self, token_ids: Sequence[int], *, image_embeddings: Any = None) -> DenseP0P7PrefillResult:
+        return self._delegate.prefill(token_ids, image_embeddings=image_embeddings)
