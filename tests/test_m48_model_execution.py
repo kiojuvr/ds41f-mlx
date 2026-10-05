@@ -49,14 +49,15 @@ def test_off_loader_failure_cannot_fall_back_to_donor(monkeypatch):
         calls.append('first-party')
         raise RuntimeError('first-party load failed')
     admission = SimpleNamespace(modules={'ds41f_mlx.model_execution.loading': SimpleNamespace(load=fail)},
-                                _checkpoint=Path('/verified'), retire=lambda: calls.append('retire'))
+                                _checkpoint=Path('/verified'), retire=lambda: calls.append('retire'),
+                                acquire_allocator_policy=lambda: calls.append('allocator-policy'))
     monkeypatch.setattr(resource_admission, 'prepare_resources', lambda *a: admission)
     donor = importlib.import_module('omlx.patches.deepseek_v41.loading')
     monkeypatch.setattr(donor, 'load', lambda *a, **kw: calls.append('donor'))
     runtime = OmlxRuntime(OmlxRuntimeConfig(preserve_mtp=False))
     with pytest.raises(RuntimeError, match='first-party load failed'):
         runtime.load_model()
-    assert calls == ['first-party', 'retire']
+    assert calls == ['allocator-policy', 'first-party', 'retire']
     assert runtime.model is None
 
 

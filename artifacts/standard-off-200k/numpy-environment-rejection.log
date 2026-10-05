@@ -1,0 +1,25 @@
+{"event": "heartbeat", "stage": "load", "elapsed_s": 9.445799514651299e-05}
+Traceback (most recent call last):
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/qualify_standard_off_long_session.py", line 199, in <module>
+    if __name__=='__main__': main()
+                             ~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/qualify_standard_off_long_session.py", line 114, in main
+    progress('load'); t=time.perf_counter(); backend.load()
+                                             ~~~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/deepseek_recipe_backend.py", line 200, in load
+    model, _ = runtime.load_model()
+               ~~~~~~~~~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/omlx_core.py", line 55, in load_model
+    admission = prepare_resources(self.config.checkpoint_path, self.config.recipe_path)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/resource_admission.py", line 409, in prepare_resources
+    modules = {name: check_module(name, identity, files) for name, identity in pin['modules'].items()}
+                     ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/resource_admission.py", line 84, in check_module
+    check_file(path, expected, name, verified)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/resource_admission.py", line 59, in check_file
+    require(actual == expected, f'identity mismatch: {label}')
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/resource_admission.py", line 51, in require
+    raise ResourceAdmissionError(message)
+ds41f_mlx.runtime.resource_admission.ResourceAdmissionError: identity mismatch: numpy

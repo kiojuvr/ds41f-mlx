@@ -15,15 +15,30 @@ Do not weaken or reopen those ownership boundaries merely to eliminate remaining
 dependencies. Historical milestone statements describe their bounded evidence;
 this section governs the current interpretation of production completion.
 
-### Immediate priority: production performance / long-session qualification
+### 200K production performance / long-session baseline (qualified)
 
-First-party text correctness and practical operation come first. Exercise and
-improve the current core under realistic performance and long-session conditions,
-starting with confirmation at approximately **200K** before expanding aggressively.
-The existing architecture has historical evidence through 200K; that is not a
-substitute for practical long-context qualification of the post-M48 first-party
-implementation. Vision and the next context frontier need not interrupt this
-baseline.
+The [fresh post-M48 first-party OFF qualification](standard-off-200k-production-qualification.md)
+closes the first practical **200K** core baseline: 199,999-token prefix prefill
+plus the P5 terminal, sustained decode/continuation to frontier 229,281, 41
+continuation/probe turns, five cancellations, and two exact fresh-process idle
+restores. Prefill is 806 tok/s; sustained decode remains about 19.1 tok/s with
+zero replay/repack and coherent all-layer state. Historical M6/M20/M24 evidence
+was not treated as a substitute for this actual first-party run.
+
+Qualification exposed and fixed a resource-policy gap: MLX's default free-cache
+budget plus the resident model could exceed physical RAM, with freed buffers
+accumulating across turns despite stable live state. The admitted OFF lifetime
+now bounds this **allocator cache** to at most 32 GiB, including prefill and idle
+P6, and restores the caller setting on retirement/load failure. Same-workload
+requalification preserves every token and all checked physical slots exactly;
+corrected system swap usage is unchanged. This is not executable-KV eviction,
+a numerical change, P5 redesign, or a persistence-format change.
+
+This is bounded production-core evidence, not unlimited lifetime, a new long-HTTP
+tool-loop claim, or a practical context ceiling. The 200K baseline is now closed;
+512K-class work is a later explicit task, not an automatic continuation of this
+qualification. Vision, R1 re-verification and release/runtime promotion remain
+separate as below.
 
 ### Very-long-context production completion
 

@@ -11,7 +11,7 @@ dependencies here describe current operation; no dependency migration is implied
 Required local components:
 
 - official DeepSeek-V4.1-Flash checkpoint;
-- attributed oMLX source used for model loading, stateless math, packed cache objects and SSD Engram reads; ds41f owns standard-off generation (M44), target-forward commit (M45), and block/packed-cache state production (M46), and model-lifetime numerical/native/checkpoint/SSD admission (M47). Candidate paths may be relocated but must match the shipped content policy. Keep resources static until model close; cold startup verifies ~510 GB of payload (~242 s), while decode performs no resource-file hash sweeps;
+- attributed oMLX/native and generic MLX dependencies: M48 owns standard-off checkpoint/model/numerical execution, packed cache and SSD Engram implementation; M44–M47 own generation, all-layer commit, state production and resource admission. Candidate paths may be relocated but must match the admitted content policy. Keep resources static until model close; cold startup verifies ~510 GB of payload, while decode performs no resource-file hash sweeps;
 - DeepSeek `deepseek-recipe` checkout containing the V4.1 tokenizer and git revision evidence;
 - Python environment with FastAPI/uvicorn, MLX, mlx-lm, and an importable `deepseek-recipe` package/native extension available;
 - SSD-backed KV artifact location for persistence.
@@ -38,7 +38,23 @@ All machine-specific paths are overrideable without source edits:
 
 The single configuration authority is `ds41f_mlx.config.RuntimeConfig`. Server startup, provenance inspection, and unified qualification resolve settings through this seam.
 
-## Qualified dependency and operational checkout
+## Current first-party admission and memory policy
+
+For post-M48 standard-OFF, `ds41f_mlx/runtime/admitted_resources.json` is the
+numerical/checkpoint/native content authority. Historical M20 package versions
+below do not substitute for it. The fresh [200K production qualification](standard-off-200k-production-qualification.md)
+uses NumPy 2.5.3 and Transformers 5.18.0 alongside the admitted MLX/recipe/native
+bytes. The same package version alone is insufficient: a changed recipe wrapper
+or native binary rejects before allocation. Restore/select the exact admitted
+packages; do not weaken or automatically regenerate the pin to make startup pass.
+
+The OFF model lifetime bounds MLX's **free allocation cache** to 32 GiB, preserving
+a caller's smaller limit and restoring the prior setting on close/load failure.
+This is not a KV/context limit or eviction of live model/session state. Keep the
+single model lifetime explicit; overlapping OFF allocator-policy owners reject.
+No per-token or per-turn cache clear is needed.
+
+## Qualified dependency and operational checkout (historical M20 environment)
 
 M20 promotes clean upstream `v0.7.0` at
 `4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40`, with Python 3.13.15,

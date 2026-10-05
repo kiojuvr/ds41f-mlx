@@ -59,6 +59,8 @@ class OmlxRuntime:
         else:
             loading = importlib.import_module("omlx.patches.deepseek_v41.loading")
         try:
+            if self.admission is not None:
+                self.admission.acquire_allocator_policy()
             self.model, self.processor = loading.load(
                 self.admission._checkpoint if self.admission else self.config.checkpoint_path,
                 engram_ssd_offload=self.config.engram_ssd_offload,
@@ -76,13 +78,17 @@ class OmlxRuntime:
         return self.model, self.processor
 
     def close(self) -> None:
-        if self.admission is not None:
-            self.admission.retire()
-        model = self.model
-        if model is not None:
-            close = getattr(model, "close", None)
-            if close is not None:
-                close()
-        self.model = None
-        self.processor = None
-        self.tokenizer = None
+        try:
+            if self.admission is not None:
+                self.admission.retire()
+        finally:
+            try:
+                model = self.model
+                if model is not None:
+                    close = getattr(model, "close", None)
+                    if close is not None:
+                        close()
+            finally:
+                self.model = None
+                self.processor = None
+                self.tokenizer = None

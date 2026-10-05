@@ -35,6 +35,18 @@ protocol/tool gates and MTP restart/restore remain blocked; OFF evidence does no
 transfer. M9 explicitly refuses preserved/active MTP models. New bounded OFF
 regression/soak evidence is separate under `artifacts/m25/`.
 
+## Post-M48 first-party OFF long-session core
+
+The [200K production qualification](standard-off-200k-production-qualification.md)
+provides fresh first-party core evidence, not inheritance from M6/M20/M24: long
+prefill followed by sustained exact-prefix append/decode, idle persistence and
+fresh-process exact restore, cancellation/re-entry and resource behavior. It also
+closes the measured free-allocation cache retention gap with a lifetime-scoped
+32 GiB budget. The long turns exercise the actual core seams; this is not a new
+200K HTTP/client tool-loop or unlimited-process-lifetime qualification. M48's
+numerical ownership and M44–M47 state/failure boundaries remain intact. Full R1,
+release/packaging and `ds41f-runtime` promotion were not performed.
+
 ## Guarded MTP qualification (internal, not release promotion)
 
 [M33](milestone-33-protocol-qualification.md) closed the protocol gate.

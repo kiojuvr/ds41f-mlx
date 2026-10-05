@@ -1,0 +1,150 @@
+{
+  "schema": "ds41f.standard-off.long-session.summary.v1",
+  "decision": "QUALIFIED_BOUNDED_200K_FIRST_PARTY_OFF",
+  "context_tokens": 200000,
+  "final_frontier": 229281,
+  "process_count": 3,
+  "fresh_process_restores": 2,
+  "wall_s": 1747.2310813330696,
+  "prefill_s": 248.09889737505,
+  "prefill_tok_s": 806.126113884587,
+  "initial_decode_tok_s": 19.121209086553502,
+  "sustained_decode_tok_s": {
+    "min": 19.02889827164818,
+    "median": 19.130444076912354,
+    "max": 19.340109422595493,
+    "early_middle_late_medians": [
+      19.092149725124344,
+      19.205578309925635,
+      19.11402513000192
+    ]
+  },
+  "continuation_bootstrap_s": {
+    "min": 0.07085554202785715,
+    "max": 8.869976416986901
+  },
+  "decoded_tokens": 8387,
+  "continued_turns": 41,
+  "cancelled_turns": 5,
+  "persistence": [
+    {
+      "frontier": 213150,
+      "bytes": 194593894,
+      "save_s": 0.3469249999616295,
+      "restore_s": null
+    },
+    {
+      "frontier": 226090,
+      "bytes": 206237498,
+      "save_s": 0.36518170800991356,
+      "restore_s": 0.08698904101038352
+    },
+    {
+      "frontier": 229235,
+      "bytes": 209079032,
+      "save_s": 0.3596358750364743,
+      "restore_s": 0.09126962500158697
+    }
+  ],
+  "resources": {
+    "peak_mlx_active_bytes": 319790585944,
+    "max_sampled_mlx_active_plus_free_cache_bytes": 339967876331,
+    "peak_sampled_rss_bytes": 22428844032,
+    "swap_start_bytes": 293797888,
+    "swap_end_bytes": 293797888,
+    "per_process_idle": [
+      {
+        "first": {
+          "elapsed_s": 603.1905258750194,
+          "rss_bytes": 16961732608,
+          "mlx_active_bytes": 301539270640,
+          "mlx_cache_bytes": 34272282049,
+          "mlx_peak_bytes": 319790585944,
+          "swap_used_bytes": 293797888,
+          "system_available_bytes": 108299386880,
+          "thread_count": 88,
+          "fd_count": 13
+        },
+        "last": {
+          "elapsed_s": 820.9773134580464,
+          "rss_bytes": 17495130112,
+          "mlx_active_bytes": 301721946008,
+          "mlx_cache_bytes": 34325405752,
+          "mlx_peak_bytes": 319790585944,
+          "swap_used_bytes": 293797888,
+          "system_available_bytes": 107733549056,
+          "thread_count": 88,
+          "fd_count": 13
+        }
+      },
+      {
+        "first": {
+          "elapsed_s": 320.99883100000443,
+          "rss_bytes": 12480561152,
+          "mlx_active_bytes": 301373478376,
+          "mlx_cache_bytes": 5812801401,
+          "mlx_peak_bytes": 303509389780,
+          "swap_used_bytes": 293797888,
+          "system_available_bytes": 137150595072,
+          "thread_count": 88,
+          "fd_count": 13
+        },
+        "last": {
+          "elapsed_s": 551.7578329159878,
+          "rss_bytes": 13300105216,
+          "mlx_active_bytes": 301467680732,
+          "mlx_cache_bytes": 29152133570,
+          "mlx_peak_bytes": 304752141969,
+          "swap_used_bytes": 293797888,
+          "system_available_bytes": 113101455360,
+          "thread_count": 96,
+          "fd_count": 13
+        }
+      },
+      {
+        "first": {
+          "elapsed_s": 320.9139672500314,
+          "rss_bytes": 12501270528,
+          "mlx_active_bytes": 301389633000,
+          "mlx_cache_bytes": 5890748009,
+          "mlx_peak_bytes": 303509389780,
+          "swap_used_bytes": 293797888,
+          "system_available_bytes": 136975433728,
+          "thread_count": 96,
+          "fd_count": 13
+        },
+        "last": {
+          "elapsed_s": 373.8633266669931,
+          "rss_bytes": 13209911296,
+          "mlx_active_bytes": 301393549456,
+          "mlx_cache_bytes": 16265468406,
+          "mlx_peak_bytes": 304575934137,
+          "swap_used_bytes": 293797888,
+          "system_available_bytes": 126499553280,
+          "thread_count": 97,
+          "fd_count": 13
+        }
+      }
+    ]
+  },
+  "allocator_cache_limits_bytes": [
+    34359738368,
+    34359738368,
+    34359738368
+  ],
+  "pre_policy_numerical_comparison": "exact tokens, history, persisted/probe all 280 slots",
+  "zero_replay_repack": true,
+  "exact_restart_tokens_and_all_280_slots": true,
+  "invariants": "one packed list; all 40 offsets equal consumed history; sampled lookahead discarded on cancel; invalid prefix rejected",
+  "limitations": [
+    "finite single-flight core workload, not an unbounded leak proof",
+    "long turns use exact-prefix token suffixes, not a complete HTTP/client tool-loop qualification",
+    "no crash-durability, immediate in-transaction abort, concurrency or cross-backend persistence claim",
+    "no 512K, vision, speculative/MTP, R1 or release/promotion claim"
+  ],
+  "receipts": [
+    "artifacts/standard-off-200k/initial.json",
+    "artifacts/standard-off-200k/restored.json",
+    "artifacts/standard-off-200k/restored-again.json"
+  ]
+}

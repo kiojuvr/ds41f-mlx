@@ -8,6 +8,16 @@ The current native attention, MoE, Engram, state, and generation paths are measu
 
 The current production-prefill candidate for Milestone 6 is the existing **dense P0-P7 DwarfStar-derived FP8/MLX path** with `P7 FULL_RESIDENT_BACKBONE_SSD_ENGRAM`, `P7_ENGRAM_TILE=2048`, and ds41f `TargetGenerationSession` MTP-OFF decode (M44). The earlier GenerationBatch measurements below are historical comparison evidence; M44 records fresh matched measurements for the changed engine. P8 optimization search is complete: `TILE_NATIVE_CARRY_REJECTED_NO_E2E_GAIN`; the tile-native implementation is retained as experimental/default OFF and is not production-selected.
 
+## Post-M48 first-party 200K production baseline
+
+Fresh core evidence is recorded in [standard-OFF 200K production qualification](standard-off-200k-production-qualification.md)
+and `artifacts/standard-off-200k/summary.json`: real first-party checkpoint/model
+execution, 200K prefill followed by sustained decode/continuation, idle persistence,
+fresh-process exact restore, cancellation/re-entry and bounded allocator resources.
+This closes a long-session free-allocation retention defect with a model-lifetime
+32 GiB cache budget, not arithmetic/kernel changes. Historical M6/M20 endpoint
+measurements below are comparison evidence, not substitutes for this current run.
+
 ## Historical native reference baseline
 
 The first current post-import native performance baseline is recorded in:
@@ -55,7 +65,7 @@ Engram-specific read/page counters are not currently exposed through a non-invas
 
 MLX-enabled native build/tests remain qualified as reference evidence. The old native ~51 tok/s prefill / ~0.31 tok/s decode path is preserved historically as a **native reference runtime**, not the current practical production candidate.
 
-Current production-candidate performance qualification is Milestone 6 and is now **qualified through 200K** for the dense P0-P7 FP8/MLX path. The measurement includes serving-path prefill to a committed live `DeepseekV41Cache`, P5 same-cache terminal bootstrap, first generated token, bounded decode throughput, memory, P6/P7/P5 evidence, and comparison to the recorded oMLX baseline.
+Historical Milestone 6 performance qualification was **qualified through 200K** for the dense P0-P7 FP8/MLX path. The measurement includes serving-path prefill to a committed live `DeepseekV41Cache`, P5 same-cache terminal bootstrap, first generated token, bounded decode throughput, memory, P6/P7/P5 evidence, and comparison to the recorded oMLX baseline.
 
 Historical M6 result: `artifacts/m6/performance-qualification/result.json`. Decision: `M6_PERFORMANCE_QUALIFIED_200K` against dev2. M20 retains the unchanged prefill/context-ladder scope and freshly confirms the endpoint against exact upstream 0.7.0: `artifacts/m20/release-200k-endpoint.json` reports 242.88 s prefill, 19.00 tok/s decode, 18.73 tok/s live continuation, 319.79 GB MLX peak, zero replay/repack and coherent all-layer frontiers. No intermediate ladder was rerun.
 

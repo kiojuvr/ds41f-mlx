@@ -21,6 +21,7 @@ import sys
 import struct
 import types
 import weakref
+from threading import Lock
 
 PIN = Path(__file__).with_name('admitted_resources.json')
 
@@ -234,6 +235,13 @@ def check_dispatch(pin):
         require(os.environ.get(name, expected) == expected, f'unqualified execution override: {name}')
 
 
+# MLX's free-buffer allocator cache is process-global, not executable KV state.
+# The supported OFF process has one model lifetime. Never nest global restorations.
+_OFF_ALLOCATOR_CACHE_BYTES = 32 * 1024**3
+_allocator_owner = None
+_allocator_lock = Lock()
+
+
 @dataclass
 class AdmittedResources:
     """A model-lifetime capability. Inspection is pathless; handles stay private."""
@@ -250,6 +258,29 @@ class AdmittedResources:
     _hash_identity: tuple = field(default=(), repr=False)
     _device: str = ''
     _locations: dict = field(default_factory=dict, repr=False)
+    _old_cache_limit: int | None = field(default=None, repr=False)
+    _cache_limit: int | None = field(default=None, repr=False)
+
+    def acquire_allocator_policy(self):
+        """Bound freed buffers for the whole OFF lifetime, including idle P6."""
+        global _allocator_owner
+        with _allocator_lock:
+            self.assert_active()
+            require(_allocator_owner is None or _allocator_owner is self,
+                    'OFF allocator policy already owned by another model lifetime')
+            if _allocator_owner is self:
+                return
+            mx = self.modules['mlx.core']
+            old = mx.set_cache_limit(_OFF_ALLOCATOR_CACHE_BYTES)
+            limit = min(old, _OFF_ALLOCATOR_CACHE_BYTES)
+            try:
+                if limit != _OFF_ALLOCATOR_CACHE_BYTES:
+                    mx.set_cache_limit(limit)
+            except BaseException:
+                mx.set_cache_limit(old)
+                raise
+            self._old_cache_limit, self._cache_limit = old, limit
+            _allocator_owner = self
 
     @property
     def math(self):
@@ -375,10 +406,21 @@ class AdmittedResources:
                 'protocol_tokenizer': self.pin['protocol_tokenizer'],
                 'python_abi': self.pin['python_abi'], 'gpu_architecture': self.pin['gpu_architecture'],
                 'dependency_versions': self.pin['versions'],
-                'ssd_engram': 'admitted checkpoint descriptors'}
+                'ssd_engram': 'admitted checkpoint descriptors',
+                'allocator_cache_limit_bytes': self._cache_limit,
+                'previous_allocator_cache_limit_bytes': self._old_cache_limit}
 
     def retire(self):
-        self.active = False
+        global _allocator_owner
+        with _allocator_lock:
+            self.active = False
+            if self._old_cache_limit is not None:
+                require(_allocator_owner is self, 'OFF allocator policy ownership lost')
+                # Retire permission before restoring the process-global setting.
+                # No live tensor is evicted or repacked by this allocator operation.
+                self.modules['mlx.core'].set_cache_limit(self._old_cache_limit)
+                self._old_cache_limit = None
+                _allocator_owner = None
 
 
 def resources_for(model):
