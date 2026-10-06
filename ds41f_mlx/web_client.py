@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 import json
 import urllib.error
 import urllib.request
+from urllib.parse import quote
 from typing import Any
 
 from ds41f_mlx.web_tools import ToolRegistry, ToolError
@@ -45,6 +46,8 @@ class RuntimeClient:
                 raw = resp.read().decode("utf-8", "replace")
         except urllib.error.HTTPError as exc:
             raise RuntimeHTTPError(exc.code, exc.read().decode("utf-8", "replace")) from exc
+        except (urllib.error.URLError, TimeoutError, ConnectionError) as exc:
+            raise RuntimeHTTPError(503, str(exc)) from exc
         return json.loads(raw) if raw else {}
 
     def internal_fenced_request(self, session_id: str, body: bytes, sequence: int):
@@ -80,21 +83,21 @@ class RuntimeClient:
         return self.request("POST", "/v1/sessions", {} if session_id is None else {"id": session_id}, timeout=30)
 
     def get_session(self, session_id: str) -> dict[str, Any]:
-        return self.request("GET", f"/v1/sessions/{session_id}", timeout=10)
+        return self.request("GET", f"/v1/sessions/{quote(session_id, safe='')}", timeout=10)
 
     def close_session(self, session_id: str) -> dict[str, Any]:
-        return self.request("DELETE", f"/v1/sessions/{session_id}", timeout=120)
+        return self.request("DELETE", f"/v1/sessions/{quote(session_id, safe='')}", timeout=120)
 
     def chat(self, session_id: str, body: dict[str, Any]) -> dict[str, Any]:
-        return self.request("POST", f"/v1/sessions/{session_id}/chat/completions", body, timeout=1800)
+        return self.request("POST", f"/v1/sessions/{quote(session_id, safe='')}/chat/completions", body, timeout=1800)
 
     def persist(self, session_id: str, artifact_root: str | None = None) -> dict[str, Any]:
-        return self.request("POST", f"/v1/sessions/{session_id}/persist", {} if artifact_root is None else {"artifact_root": artifact_root}, timeout=300)
+        return self.request("POST", f"/v1/sessions/{quote(session_id, safe='')}/persist", {} if artifact_root is None else {"artifact_root": artifact_root}, timeout=300)
 
     def restore(self, artifact_path: str, session_id: str | None = None) -> dict[str, Any]:
         body: dict[str, Any] = {"artifact_path": artifact_path}
         if session_id: body["id"] = session_id
-        return self.request("POST", "/v1/sessions/restore", body, timeout=300)
+        return self.request("POST", "/v1/sessions/restore", body, timeout=1800)
 
 
 def _message(response: dict[str, Any]) -> dict[str, Any]:

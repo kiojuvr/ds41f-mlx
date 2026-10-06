@@ -164,8 +164,9 @@ def _normalize_text_results(text: str, *, provider: str, max_results: int) -> li
                     excerpts = item.get("excerpts")
                     snippet = " ".join(str(x) for x in excerpts) if isinstance(excerpts, list) else str(item.get("snippet") or item.get("description") or "")
                     out.append({"title": str(item.get("title", ""))[:200], "url": str(item.get("url", ""))[:500], "snippet": " ".join(snippet.split())[:900], "provider_metadata": provider})
-                if out:
-                    return out
+                usable = [item for item in out if item['url'].startswith(('http://', 'https://'))]
+                if usable:
+                    return usable
         except Exception:
             pass
     results: list[dict[str, str]] = []
@@ -180,13 +181,16 @@ def _normalize_text_results(text: str, *, provider: str, max_results: int) -> li
             elif not line.startswith(("Published:", "Author:", "Highlights:")):
                 lines.append(line.strip())
         snippet = " ".join(" ".join(lines).split())
-        if title or url or snippet:
+        if url.startswith(('http://', 'https://')):
             results.append({"title": title[:200], "url": url[:500], "snippet": snippet[:900], "provider_metadata": provider})
         if len(results) >= max_results:
             break
-    if not results and text.strip():
-        results.append({"title": f"{provider} search result", "url": "", "snippet": " ".join(text.split())[:900], "provider_metadata": provider})
-    return results[:max_results]
+    usable = [item for item in results if item['url'].startswith(('http://', 'https://'))]
+    if not usable:
+        # Hosted MCP quota/auth notices can arrive as ordinary text, not isError.
+        # They are provider failures, never invented successful search sources.
+        raise ToolError(f"{provider} returned no usable source URLs: " + " ".join(text.split())[:180])
+    return usable[:max_results]
 
 
 class ExaMCPProvider:

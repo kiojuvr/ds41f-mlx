@@ -288,17 +288,45 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
                 raw_sequence = request.headers.get('X-DS41F-Request-Sequence')
                 request_sequence = int(raw_sequence) if raw_sequence is not None else None
                 return await qualification(session_id, prepared, tokenizer=tokenizer, body=body, sequence=request_sequence)
+            if prepared.stream:
+                expected = request.headers.get('X-DS41F-Expected-Request-Count')
+                if expected is not None:
+                    if not expected.isdecimal() or backend.get_stateful_session(session_id).request_count != int(expected):
+                        raise RequestError('observed request_count changed; reconcile before generation', 409)
+                application_id = request.headers.get('X-DS41F-Application-Request-ID')
+                if application_id is not None:
+                    from uuid import UUID
+                    try:
+                        if str(UUID(application_id)) != application_id:
+                            raise ValueError('not canonical UUID')
+                    except ValueError:
+                        raise RequestError('application request correlation must be a canonical UUID', 400)
+                stream = await backend.open_stateful_stream(session_id, prepared, tokenizer=tokenizer, body=body, options=options, application_id=application_id)
+                return InferenceStreamingResponse(stream, media_type='text/event-stream', headers={
+                    'X-DS41F-Request-ID': stream.request_id, 'Cache-Control': 'no-store', 'X-Accel-Buffering': 'no'})
             turn = await backend.run_stateful_chat_turn(session_id, prepared, tokenizer=tokenizer)
         except KeyError as exc:
             raise RequestError(str(exc), 404)
         except RuntimeError as exc:
             status = 409 if local_mtp or 'active request' in str(exc) or 'maximum live session' in str(exc) else 400
             raise RequestError(str(exc), status, getattr(exc,'code',None) if local_mtp else None)
-        if prepared.stream:
-            return InferenceStreamingResponse(_chat_sse_events(turn.stream_events), media_type='text/event-stream')
         if turn.response_json is None:
             raise RequestError('stateful turn did not produce a protocol response', 500)
         return JSONResponse(content=turn.response_json)
+
+    @app.post('/v1/sessions/{session_id}/cancel')
+    async def cancel_session_turn(session_id: str, request: Request) -> Response:
+        if local_mtp:
+            raise RequestError('standard-OFF streaming cancellation only', 400)
+        body = await request.json()
+        if not isinstance(body.get('request_id'), str):
+            raise RequestError('request_id is required')
+        try:
+            return JSONResponse(content=await backend.cancel_stateful_stream(session_id, body['request_id']))
+        except KeyError as exc:
+            raise RequestError(str(exc), 404)
+        except RuntimeError as exc:
+            raise RequestError(str(exc), 409)
 
     @app.post('/v1/sessions/{session_id}/persist')
     async def persist_session(session_id: str, request: Request) -> Response:

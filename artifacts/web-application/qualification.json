@@ -1,0 +1,59 @@
+{
+  "status": "PASS",
+  "scope": "single-user localhost standard-OFF Web application; not R1/runtime/release promotion",
+  "base": "2fe40a9af2da8cbeab8a9543a6925a91c4452e6d",
+  "sources": {
+    "ds41f_mlx/runtime/live_turn.py": "8facbcfd1f3bbc7de5d437a938253320104eb8c5f5eb0ed2109e7ac59c9f0dd9",
+    "ds41f_mlx/serving/stateful_stream.py": "f0d43c36082756623810393cc6fb4f63448c68569d5fb4ba0cd0ead7d7cad3c3",
+    "ds41f_mlx/serving/server.py": "3849205e13163eaf9667c921f99f2bd1c365196355d8390e4d75f777c835aaaf",
+    "ds41f_mlx/serving/deepseek_recipe_backend.py": "a9e92afca06b0b65fdc9eb65e3df99f6e0a8011ba78f694eccf20ba3246f12a1",
+    "ds41f_mlx/serving/recovery_certificate.py": "3fa2b9d66efa93f3ff4cec64de27471f312ba9ee944663ddbf703e4b8263cb1e",
+    "ds41f_mlx/web.py": "56a1387119c80bfaa41614c98a97cf17491e4ce806d1699e2a1b014e91fd9052",
+    "ds41f_mlx/web_client.py": "6689de6cd07fd4824bb3a653a936e44276453c9a0eccccbeeae9826925a10a00",
+    "ds41f_mlx/web_tools.py": "f00a7cc914f1767286d731c094c509ff3c4187815f25d67135938370314ed685",
+    "ds41f_mlx/web_static/app.js": "4cad9116531437221b04240fa996010925182df2e415cd5c785a8cf4a419826c",
+    "ds41f_mlx/web_static/store.js": "ce9d294941b335686bdea1b0d8ba39ac6884d8fc2ad7f2435ac78ce6e237bf97",
+    "ds41f_mlx/web_static/render.js": "a6ac6785445f420a582f9b0c664df211105e9902338a9459e00ee1a5d5705e2d",
+    "ds41f_mlx/web_static/index.html": "2c15d2a67d1bb767a282e0ab0ad69f451326aa1efddaa9a208cd054b1d6548cf",
+    "ds41f_mlx/web_static/style.css": "4360581a6ec598c2cd2c0f3695c9e6327db2028a718ff78db2b1facd74be94f9"
+  },
+  "unchanged_core": {
+    "ds41f_mlx/runtime/target_generation.py": "6fcdde5cd077c821ee34ed1fd96ecf75bc7c84ae162c68c2113e3ec366bd1690",
+    "ds41f_mlx/runtime/target_forward.py": "a5f217a2b93bd109142769990ce14ba159e5d90db24623855d9f619811a4a8d3",
+    "ds41f_mlx/runtime/multimodal.py": "8f5501a0a02d1f334cd7f04c2a33506d6909e36618395864bef9cb03d71c88c0"
+  },
+  "receipts": {
+    "artifacts/stateful-live/http.json": "5d02c92eaf6aadc3ecba95f37a30eb17806358dd5344e8764b42f2a6fb67f90b",
+    "artifacts/web-application/initial.json": "2bdf866fca2e0d9de3f95f4b5cd34c3ee9ffe084d7f8ecfb1a5ed737cefa4a9d",
+    "artifacts/web-application/restored.json": "56b28f02559922a2314c172f831335872a626e04ffeef8c9b0fba52fcc6a5233",
+    "artifacts/web-application/soak.json": "1a2d0b7f1c1ebc5f25f3666ea1d67eea3e82808224fd840cd3cb4780a3182e86"
+  },
+  "tests": {
+    "affected": "177 passed + 8 subtests",
+    "renderer": "5 passed"
+  },
+  "matched_save_restore": {
+    "artifact": "/Volumes/USB-SSD-RAID-0/ds41f-mlx/kv/m12/m9-1791245882-27a4d9eed123",
+    "frontier": 3035,
+    "image_sha256": [
+      "251fe7ad58f44db139a6af5ed489e027eca93ae60878b83f3e709c7d6f0112a1",
+      "5df896a4a07e127281c60fc957f8b3d73f4735b3258a0bf762b4383557f8fa9a"
+    ],
+    "restore_journal_id": "sess_c6acb6b46f44412fa4ba7f5949a5e492",
+    "historical_image_encodes_after_restore": 0
+  },
+  "processes": {
+    "ds41f-final-runtime": "4235",
+    "ds41f-final-web": "4236",
+    "ds41f-matched-fresh-runtime": "4604",
+    "ds41f-matched-fresh-web": "4605"
+  },
+  "exclusions": [
+    "full R1/200K/1M",
+    "MTP/DSpark/speculation",
+    "multi-user/auth/internet serving",
+    "arbitrary partial Unicode/DSML recoverability",
+    "TCP-buffer saturation (controlled ASGI saturation qualified)",
+    "permanent anonymous search availability"
+  ]
+}

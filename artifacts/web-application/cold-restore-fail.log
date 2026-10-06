@@ -1,0 +1,29 @@
+Traceback (most recent call last):
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/qualify_web_browser.py", line 169, in <module>
+    if __name__ == '__main__': main()
+                               ~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/qualify_web_browser.py", line 164, in main
+    asyncio.run(exercise(args, receipt)); receipt['status'] = 'PASS'
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/asyncio/runners.py", line 196, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/asyncio/runners.py", line 119, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/asyncio/base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/qualify_web_browser.py", line 142, in exercise
+    restored = await record('fresh_restore')
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/qualify_web_browser.py", line 62, in record
+    summary = await browser.evaluate("""(async()=>{
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<11 lines>...
+    })()""")
+    ^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/qualify_web_browser.py", line 40, in evaluate
+    if 'exceptionDetails' in response: raise RuntimeError(response['exceptionDetails'])
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: {'exceptionId': 1, 'text': 'Uncaught (in promise) Error: runtime HTTP 404: {"error":{"message":"\\"unknown or closed session \'sess_03827b10bd3044c9b43f9e99ef096810\'\\"","type":"invalid_request_error","param":null,"code":"invalid_request_error"}}', 'lineNumber': 0, 'columnNumber': 0, 'exception': {'type': 'object', 'subtype': 'error', 'className': 'Error', 'description': 'Error: runtime HTTP 404: {"error":{"message":"\\"unknown or closed session \'sess_03827b10bd3044c9b43f9e99ef096810\'\\"","type":"invalid_request_error","param":null,"code":"invalid_request_error"}}\n    at api (http://127.0.0.1:8080/static/app.js:11:41)\n    at async <anonymous>:3:27', 'objectId': '-8534047056704437332.5.1'}}

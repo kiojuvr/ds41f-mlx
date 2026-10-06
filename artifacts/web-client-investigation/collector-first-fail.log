@@ -1,0 +1,20 @@
+Traceback (most recent call last):
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_web_stateful_delivery.py", line 133, in <module>
+    main()
+    ~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_web_stateful_delivery.py", line 123, in main
+    asyncio.run(probe(args, receipt))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/asyncio/runners.py", line 196, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/asyncio/runners.py", line 119, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/asyncio/base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_web_stateful_delivery.py", line 61, in probe
+    canonical = after['last_turn']['response_json']['choices'][0]['message'].get('content') or ''
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'response'

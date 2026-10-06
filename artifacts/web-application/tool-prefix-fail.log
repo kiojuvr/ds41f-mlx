@@ -1,0 +1,22 @@
+Traceback (most recent call last):
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/qualify_web_browser.py", line 169, in <module>
+    if __name__ == '__main__': main()
+                               ~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/qualify_web_browser.py", line 164, in main
+    asyncio.run(exercise(args, receipt)); receipt['status'] = 'PASS'
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/asyncio/runners.py", line 196, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/asyncio/runners.py", line 119, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/asyncio/base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/qualify_web_browser.py", line 108, in exercise
+    await send('Use web_search to find the official Python documentation. Give one source link and a short description.')
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/qualify_web_browser.py", line 85, in send
+    assert not summary['problem'] and not summary['pending'], summary
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'problem': 'No settled turn for the frozen request. No automatic retry. Reconcile, then explicitly discard the unadmitted UI request if appropriate.', 'pending': {'base': 2, 'requestId': '0045bf77-6975-4515-b213-a01197254a75', 'addedUser': True}, 'notice': 'No settled turn for the frozen request. No automatic retry. Reconcile, then explicitly discard the unadmitted UI request if appropriate.'}

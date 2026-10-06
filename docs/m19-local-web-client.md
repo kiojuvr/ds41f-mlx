@@ -1,6 +1,8 @@
 # M19 local web client
 
-M19 adds a separate local browser client above the qualified ds41f runtime API.
+M19 added the original separate local browser client above the qualified ds41f runtime API.
+This document retains M19's historical acceptance. For the current streaming,
+Vision, recovery and save/restore application, see [Web application](web-application.md).
 
 ```text
 browser -> ds41f_mlx.web -> qualified ds41f HTTP API -> stateful Chat Completions session
@@ -68,7 +70,7 @@ For `DS41F_WEB_SEARCH_PROVIDER=auto`, ds41f deterministically hashes the ds41f s
 
 Do not add filesystem, shell, network, or other external actions to `ds41f_mlx.serve` for client convenience. New tools belong in the client/tool layer and must be declared through Chat Completions `tools`, validated, executed outside the runtime process, and returned as tool messages to the same stateful session.
 
-The browser stores the session id and presentation transcript in localStorage so refresh can continue when the ds41f session still exists. If the runtime reports an unknown/closed session, the UI surfaces that state; it does not silently create a fresh prefill as a substitute for lost model state.
+The original M19 browser stored the session id and presentation transcript in localStorage so refresh could continue when the ds41f session still existed. If the runtime reports an unknown/closed session, the UI surfaces that state; it does not silently create a fresh prefill as a substitute for lost model state.
 
 ## Tools
 
@@ -93,9 +95,9 @@ Initial tools:
 
 `fetch_url` is not a general browser. It validates the initial URL and every redirect target before fetching. Destinations resolving to loopback, private, link-local, multicast, reserved, or unspecified address space are refused. Redirects are bounded. Timeout, response size, accepted content type, and returned excerpt size are bounded.
 
-## Persistence
+## Historical M19 persistence
 
-The UI exposes explicit save/restore actions mapped directly to the existing same-backend KV persistence API. Browser metadata and server-side KV artifacts remain distinct; restored sessions start with an empty browser presentation transcript unless the operator separately retained it.
+The original UI exposed explicit save/restore actions mapped directly to the existing same-backend KV persistence API. Browser metadata and server-side KV artifacts remain distinct; restored sessions start with an empty browser presentation transcript unless the operator separately retained it.
 
 ## Final real-model acceptance (2026-10-02)
 
@@ -133,7 +135,7 @@ capture a binary hash, so historical byte-for-byte verification is unavailable;
 the current native hash is now recorded. No expensive runtime requalification was
 rerun. Only documentation and acceptance artifacts changed.
 
-## Current limitations
+## Historical M19 limitations (superseded by current application documentation)
 
 - Keep tool declarations/settings unchanged within a live stateful session; disabling tools mid-session changes the recipe prefix and may reject continuation. Close/create a session to change settings. An ordinary conversational turn can leave tools enabled without using them.
 - UI token streaming is not implemented.

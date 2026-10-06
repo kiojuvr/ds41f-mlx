@@ -1,28 +1,42 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ds41f local client</title>
-<link rel="stylesheet" href="/static/style.css">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DeepSeek local chat</title><link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 <header>
-  <h1>ds41f local client</h1>
-  <div id="status">starting…</div>
-  <div class="controls">
-    <button id="newSession">New</button>
-    <button id="resetSession">Reset/close</button>
-    <button id="saveSession">Save KV</button>
-    <button id="restoreSession">Restore KV</button>
-    <label><input type="checkbox" id="toolsEnabled" checked> tools</label>
-  </div>
+<h1>DeepSeek-V4.1-Flash · local chat</h1>
+<div id="status" role="status">Connecting…</div>
+<div class="controls">
+<select id="sessions" aria-label="Conversation"></select>
+<button id="newSession">New</button><button id="closeSession">Close</button>
+<button id="saveSession">Save idle session</button>
+<select id="saves" aria-label="Saved session"></select><button id="restoreSession">Restore as new session</button>
+<button id="reconnect">Reconnect / reconcile</button>
+</div>
+<details><summary>Options &amp; recovery</summary>
+<div class="controls">
+<label>Sampling <select id="preset"><option value="precise">Precise · 0</option><option value="balanced">Balanced · 0.6</option><option value="creative">Creative · 0.9</option></select></label>
+<label>Output budget <input id="maxTokens" type="number" min="1" max="4096" value="512"></label>
+<label>Top-p <input id="topP" type="number" min="0" max="1" step="0.05" value="0.95"></label>
+<label>Reasoning <select id="reasoning"><option value="none">Off</option><option value="high">High</option></select></label>
+<label><input type="checkbox" id="toolsEnabled" checked> Execute Web search &amp; public URL fetch</label>
+<button id="runTools">Run requested tools</button>
+<button id="discardPending">Discard unadmitted UI request</button>
+<button id="skipTools">Continue with unavailable tool results (no retry)</button>
+</div>
+<p class="small">Vision: original PNG/JPEG/WebP; 4 images total, 16 MiB/image, 4 MP, aspect 1:2–2:1. Multimodal prompt + output is limited to 8,192 positions; runtime admission is final. Stop settles after a complete transaction, not a GPU interrupt.</p>
+<div id="sessionInfo" class="small"></div>
+</details>
+<div id="notice" role="alert"></div>
 </header>
 <main id="messages"></main>
 <form id="composer">
-  <textarea id="input" placeholder="Message ds41f…" rows="3"></textarea>
-  <button id="send" type="submit">Send</button>
+<div id="attachments"></div>
+<textarea id="input" placeholder="Message… (images can be dropped here)" rows="3" aria-label="Message"></textarea>
+<div class="controls"><label class="fileButton">Add images<input id="images" type="file" accept="image/png,image/jpeg,image/webp" multiple></label>
+<button id="send" type="submit">Send</button><button id="stop" type="button" disabled>Stop</button></div>
 </form>
-<script src="/static/app.js"></script>
-</body>
-</html>
+<script src="/static/render.js"></script><script src="/static/store.js"></script><script src="/static/app.js"></script>
+</body></html>

@@ -150,13 +150,17 @@ class StatefulSessionRecord:
     last_turn: dict[str, Any] | None = None
     last_error: str | None = None
     persisted_artifact: dict[str, Any] | None = None
+    active_stream: Any = None  # transport control only, never an execution owner
+    recovery_state: str = 'ready'
 
     def to_json(self) -> dict[str, Any]:
         diag = None if self.m11 is None else self.m11.diagnostics()
         return {
             'id': self.session_id,
             'protocol': self.protocol,
-            'state': 'closed' if self.closed else ('busy' if self.busy else ('empty' if self.m11 is None else self.m11.m8.state)),
+            'state': 'closed' if self.closed else ('busy' if self.busy else ('unrecoverable' if self.recovery_state == 'unrecoverable' else ('empty' if self.m11 is None else self.m11.m8.state))),
+            'recovery_state': self.recovery_state,
+            'active_request_id': None if self.active_stream is None else self.active_stream.request_id,
             'created_at': self.created_at,
             'updated_at': self.updated_at,
             'request_count': self.request_count,
@@ -380,6 +384,8 @@ class DeepSeekRecipeRuntimeBackend:
             raise ValueError(f"unsupported model {request.model!r}; supported aliases: {sorted(MODEL_ALIASES)}")
         self.validate_multimodal_request(request)
         rec = self.get_stateful_session(session_id)
+        if rec.recovery_state == 'unrecoverable':
+            raise RuntimeError('session is protocol-unrecoverable; DELETE required')
         if rec.busy:
             raise RuntimeError(f"session {session_id!r} already has an active request")
         rec.busy = True
@@ -403,6 +409,7 @@ class DeepSeekRecipeRuntimeBackend:
                 else:
                     before = rec.m11.m8.frontier
                     try:
+                        rec.m11.m8.sampler = sampler
                         rec.m11.continue_from_prepared(request, max_tokens=max_tokens)
                         assistant_turn = rec.m11.run_current_assistant_turn(request)
                     except BaseException:
@@ -455,6 +462,19 @@ class DeepSeekRecipeRuntimeBackend:
             rec.updated_at = time()
             if lock_acquired:
                 self._lock.release()
+
+    async def open_stateful_stream(self, session_id, request, *, tokenizer, body, options=None, application_id=None):
+        from .stateful_stream import StatefulStream
+        return StatefulStream(self, session_id, request, tokenizer, body, options, application_id)
+
+    async def cancel_stateful_stream(self, session_id, request_id):
+        rec = self.get_stateful_session(session_id)
+        stream = rec.active_stream
+        if stream is None or stream.request_id != request_id:
+            raise RuntimeError('no matching active stream; stale cancellation refused')
+        stream.cancel.set()
+        await stream.aclose()
+        return {'id': session_id, 'request_id': request_id, 'cancellation_requested': True, 'session': rec.to_json()}
 
     def _start_and_run_m11(self, tokenizer: Any, request: RecipePreparedRequest, sampler: Any, max_tokens: int) -> tuple[M11RecipeToolSession, M11AssistantTurn]:
         sess = M11RecipeToolSession.start_from_prepared(model=self._model, tokenizer=tokenizer, checkpoint=self.checkpoint, omlx_path=self.omlx_path, recipe_path=self.recipe_path, prepared=request, sampler=sampler, max_tokens=max_tokens)
@@ -517,7 +537,11 @@ class DeepSeekRecipeRuntimeBackend:
         if rec.m11 is not None:
             await self._call(rec.m11.m8.close)
         rec.updated_at = time()
-        return rec.to_json()
+        result = rec.to_json()
+        # GET already rejects closed records; retaining their full parser/history
+        # payloads forever serves no public authority or recovery purpose.
+        self.sessions.pop(session_id, None)
+        return result
 
     def close(self) -> None:
         for rec in list(self.sessions.values()):
