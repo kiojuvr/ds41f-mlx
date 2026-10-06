@@ -223,6 +223,8 @@ runtime API. Bounded search/fetch tools execute outside the model server. Everyd
 UI, actual model-control mappings and the separate UX qualification gate are in
 [`docs/chat-interface.md`](docs/chat-interface.md); stateful recovery/persistence
 semantics are in [`docs/web-application.md`](docs/web-application.md).
+For trusted LAN PCs, opt in with `--host 0.0.0.0 --allow-private-lan`;
+see [LAN/HTTPS options and limitations](docs/private-lan.md).
 
 Build and test the Rust boundary:
 

@@ -25,6 +25,7 @@ Canonical current-state documents:
 - [Generation](generation.md) — prefill/decode/commit/termination lifecycle
 - [Operations](operations.md) — configuration, provenance inspection, launch, and unified qualification
 - [API](api.md) — release-scope public HTTP contract
+- [Private LAN access](private-lan.md) — explicit network opt-in, HTTP browser fallback and HTTPS options
 - [Everyday Chat interface](chat-interface.md) — UX, actual model controls and browser qualification gate
 - [Stateful Web application](web-application.md) — canonical runtime, tools, Vision and persistence semantics
 - [M19 local web client](m19-local-web-client.md) — historical browser client and client-side tool boundary

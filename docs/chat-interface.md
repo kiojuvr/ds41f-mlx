@@ -2,9 +2,13 @@
 
 ## Gate
 
-**PASS: 68 current-source real Chrome/runtime checks, 90 affected Python tests +
+**Historical everyday-UI PASS at `9312cdd`: 68 real Chrome/runtime checks, 90 affected Python tests +
 8 subtests, 12 renderer tests.** The receipts and source gate are
 `artifacts/chat-ux/browser.json` and `artifacts/chat-ux/qualification.json`.
+
+The later opt-in [private-LAN extension](private-lan.md) has its own current-source
+HTTP/browser capability receipt. The older asset/Python hashes below describe the
+`9312cdd` everyday-UI gate, not automatic acceptance of subsequent network changes.
 
 The `133adc4` stateful Web/runtime qualification remains the semantic baseline,
 not automatic acceptance of a changed UX. All five final static sources match the

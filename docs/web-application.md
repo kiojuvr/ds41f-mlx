@@ -2,6 +2,10 @@
 
 ## Status and scope
 
+Explicit `--allow-private-lan` access and HTTP/HTTPS browser capabilities are
+specified in [Private LAN](private-lan.md). Localhost remains the default; this
+opt-in extension is not authentication or internet-serving qualification.
+
 The everyday Chat surface and its separate current-source UX gate are documented
 in [Chat interface](chat-interface.md). That document supersedes the original
 management-oriented UI/model-control descriptions below. The following PASS is

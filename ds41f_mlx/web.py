@@ -8,6 +8,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
+import ipaddress
 import os
 from pathlib import Path
 from urllib.parse import quote
@@ -36,7 +37,23 @@ class WebStreamingResponse(StreamingResponse):
                 await self.body_iterator.aclose()
 
 
-def create_app(*, runtime_base_url: str | None = None) -> FastAPI:
+PRIVATE_NETWORKS = tuple(ipaddress.ip_network(value) for value in (
+    '10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16', 'fc00::/7',
+))
+
+
+def private_address(value: str) -> bool:
+    """Explicit LAN ranges, not is_private (which includes reserved/test networks)."""
+    try:
+        address = ipaddress.ip_address(value)
+    except ValueError:
+        return False
+    if isinstance(address, ipaddress.IPv6Address) and address.ipv4_mapped:
+        address = address.ipv4_mapped
+    return address.is_loopback or any(address.version == network.version and address in network for network in PRIVATE_NETWORKS)
+
+
+def create_app(*, runtime_base_url: str | None = None, allow_private_lan: bool = False) -> FastAPI:
     runtime = RuntimeClient(runtime_base_url or os.environ.get('DS41F_RUNTIME_URL', 'http://127.0.0.1:8000'))
     tools = registry_from_env()
     app = FastAPI(title='ds41f-local-web-client', version='0.2.0')
@@ -45,7 +62,8 @@ def create_app(*, runtime_base_url: str | None = None) -> FastAPI:
     # Bounded living-client tool effect ledger, NOT model/session authority.
     effects = {}
     effect_locks = {}
-    app.add_middleware(TrustedHostMiddleware, allowed_hosts=['127.0.0.1', 'localhost', '[::1]'])
+    if not allow_private_lan:
+        app.add_middleware(TrustedHostMiddleware, allowed_hosts=['127.0.0.1', 'localhost', '[::1]'])
 
     async def call(fn, *args, **kwargs):
         return await run_in_threadpool(fn, *args, **kwargs)
@@ -62,6 +80,18 @@ def create_app(*, runtime_base_url: str | None = None) -> FastAPI:
 
     @app.middleware('http')
     async def local_boundary(request, call_next):
+        if allow_private_lan:
+            # Use the socket peer, never forwarded headers. Numeric LAN URLs only;
+            # accepting arbitrary DNS names would reopen DNS-rebinding access.
+            peer = request.client.host if request.client else ''
+            try:
+                host = request.url.hostname or ''
+            except ValueError:
+                host = ''
+            if not private_address(peer):
+                return JSONResponse(status_code=403, content={'error': {'message': 'private LAN peers only'}})
+            if host != 'localhost' and not private_address(host):
+                return JSONResponse(status_code=400, content={'error': {'message': 'private IP or localhost Host required'}})
         if request.method in ('POST', 'DELETE') and request.url.path.startswith('/api/'):
             origin = request.headers.get('origin')
             if (origin and origin != f'{request.url.scheme}://{request.url.netloc}') or request.headers.get('sec-fetch-site') == 'cross-site':
@@ -210,9 +240,18 @@ def main(argv=None):
     parser.add_argument('--host', default=os.environ.get('DS41F_WEB_HOST', '127.0.0.1'))
     parser.add_argument('--port', type=int, default=int(os.environ.get('DS41F_WEB_PORT', '8080')))
     parser.add_argument('--runtime-url', default=os.environ.get('DS41F_RUNTIME_URL', 'http://127.0.0.1:8000'))
+    parser.add_argument('--allow-private-lan', action='store_true', help='allow trusted private-LAN peers and numeric IP Hosts; no authentication or internet serving')
+    parser.add_argument('--ssl-certfile', help='optional HTTPS certificate (trusted by the browsing PCs)')
+    parser.add_argument('--ssl-keyfile', help='HTTPS private key; required with --ssl-certfile')
     args = parser.parse_args(argv)
-    if args.host not in ('127.0.0.1', 'localhost', '::1'): parser.error('single-user local application must bind loopback')
+    if bool(args.ssl_certfile) != bool(args.ssl_keyfile):
+        parser.error('--ssl-certfile and --ssl-keyfile must be supplied together')
+    if args.host not in ('127.0.0.1', 'localhost', '::1'):
+        if not args.allow_private_lan:
+            parser.error('non-loopback bind requires --allow-private-lan')
+        if args.host not in ('0.0.0.0', '::') and not private_address(args.host):
+            parser.error('bind must be loopback, a private IP, or a wildcard with --allow-private-lan')
     import uvicorn
-    uvicorn.run(create_app(runtime_base_url=args.runtime_url), host=args.host, port=args.port)
+    uvicorn.run(create_app(runtime_base_url=args.runtime_url, allow_private_lan=args.allow_private_lan), host=args.host, port=args.port, proxy_headers=False, ssl_certfile=args.ssl_certfile, ssl_keyfile=args.ssl_keyfile)
 
 if __name__ == '__main__': main()

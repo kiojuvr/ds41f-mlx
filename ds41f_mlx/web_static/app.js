@@ -225,8 +225,7 @@ async function reconcile(wait = false) {
 async function exclusive(action) {
   if (state.busy) return;
   const name = 'ds41f.session.' + (state.session?.id || 'lifecycle');
-  await navigator.locks.request(name, {ifAvailable: true}, async lock => {
-    if (!lock) throw new Error('Another browser tab is using this conversation');
+  await ChatPlatform.withLock(name, async () => {
     state.busy = true; state.stop = false; phase = 'Recovering'; controls();
     try {
       if (state.session) state.session = await ChatStore.get('sessions', state.session.id);
@@ -250,7 +249,7 @@ async function generate() {
     reasoning_effort: s.protocol.reasoning, tools: s.protocol.tools, tool_choice: 'auto'};
   // Recipe tool declarations are part of the historical prompt prefix. Keep
   // them stable; Tools mode controls client execution, not prefix rewriting.
-  s.pending ||= {base: s.count, requestId: null, nonce: crypto.randomUUID(), addedUser: false};
+  s.pending ||= {base: s.count, requestId: null, nonce: ChatPlatform.uuid(), addedUser: false};
   await save(); // frozen ordinary history durable BEFORE request/effect
   state.controller = new AbortController();
   s.visibleUnsettled = null;
@@ -352,7 +351,7 @@ async function send() {
     s.toolPause = ''; s.toolError = ''; s.interrupted = false;
     s.messages.push({role: 'user', content: state.attachments.length ? parts : text});
     s.title ||= text.slice(0, 60) || 'Image conversation';
-    s.pending = {base: s.count, requestId: null, nonce: crypto.randomUUID(), addedUser: true};
+    s.pending = {base: s.count, requestId: null, nonce: ChatPlatform.uuid(), addedUser: true};
     await save(); $('input').value = ''; resizeInput(); state.attachments = []; follow = true; preview(); render();
     await generate(); await toolLoop();
   });
@@ -447,7 +446,7 @@ $('restoreSession').onclick = () => exclusive(async () => {
     try { await api(path(state.session.id), 'DELETE'); } catch (error) { if (error.status !== 404) throw error; }
     await ChatStore.remove('sessions', state.session.id); state.session = null; localStorage.removeItem('ds41f.selected');
   }
-  const id = 'sess_' + crypto.randomUUID().replaceAll('-', '');
+  const id = 'sess_' + ChatPlatform.uuid().replaceAll('-', '');
   const journal = {id, title: snapshot.title + ' (restored)', messages: snapshot.messages,
     interruptions: snapshot.interruptions || [], interruptionKinds: snapshot.interruptionKinds || {}, lateStops: snapshot.lateStops || [], endings: snapshot.endings || {}, finishReason: snapshot.finishReason, interrupted: !!snapshot.interrupted, toolAwaitingResponse: !!snapshot.toolAwaitingResponse, toolPause: snapshot.toolPause || '', toolError: snapshot.toolError || '', toolRounds: snapshot.toolRounds || 0, protocol: snapshot.protocol, count: 0,
     frontier: snapshot.frontier, pendingRestore: {frontier: snapshot.frontier, artifact: snapshot.artifact},
