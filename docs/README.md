@@ -26,6 +26,7 @@ Canonical current-state documents:
 - [Operations](operations.md) — configuration, provenance inspection, launch, and unified qualification
 - [API](api.md) — release-scope public HTTP contract
 - [Private LAN access](private-lan.md) — explicit network opt-in, HTTP browser fallback and HTTPS options
+- [Dynamic capability budget](dynamic-capability-budget.md) — actual-request Output Auto, context-aware fetch fitting and explicit runaway/resource boundaries
 - [Everyday Chat interface](chat-interface.md) — UX, actual model controls and browser qualification gate
 - [Stateful Web application](web-application.md) — canonical runtime, tools, Vision and persistence semantics
 - [M19 local web client](m19-local-web-client.md) — historical browser client and client-side tool boundary

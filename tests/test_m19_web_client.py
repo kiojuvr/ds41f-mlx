@@ -117,7 +117,8 @@ def test_m19_fetch_url_blocks_public_to_private_redirect(monkeypatch):
         def getheader(self, name, default=None): return "http://localhost/private" if name == "Location" else default
         def read(self, *a): return b""
     class Conn:
-        def __init__(self, *a, **k): pass
+        def __init__(self, *a, **k): self.sock = type('Sock', (), {'getpeername': lambda _: ('93.184.216.34', 80), 'settimeout': lambda *_: None})()
+        def connect(self): pass
         def request(self, *a, **k): pass
         def getresponse(self): return Resp()
         def close(self): pass
@@ -126,15 +127,17 @@ def test_m19_fetch_url_blocks_public_to_private_redirect(monkeypatch):
         FetchURLTool().run({"url": "http://public.example/start"})
 
 
-def test_m19_fetch_url_rejects_content_type_and_size(monkeypatch):
+def test_m19_fetch_url_rejects_content_type_but_preserves_large_page_and_partial_resource(monkeypatch):
     monkeypatch.setattr("socket.getaddrinfo", lambda *a, **k: [(None, None, None, None, ("93.184.216.34", 0))])
     class Resp:
         status = 200
-        def __init__(self, ctype, data): self.ctype=ctype; self.data=data
+        def __init__(self, ctype, data): self.ctype=ctype; self.data=data; self.pos=0
         def getheader(self, name, default=None): return self.ctype if name == "content-type" else default
-        def read(self, n=-1): return self.data[:n]
+        def read1(self, n=-1):
+            value=self.data[self.pos:self.pos+n]; self.pos+=len(value); return value
     class ConnBadType:
-        def __init__(self, *a, **k): pass
+        def __init__(self, *a, **k): self.sock = type('Sock', (), {'getpeername': lambda _: ('93.184.216.34', 443), 'settimeout': lambda *_: None})()
+        def connect(self): pass
         def request(self, *a, **k): pass
         def getresponse(self): return Resp("image/png", b"x")
         def close(self): pass
@@ -144,8 +147,78 @@ def test_m19_fetch_url_rejects_content_type_and_size(monkeypatch):
     class ConnHuge(ConnBadType):
         def getresponse(self): return Resp("text/plain", b"x" * 80001)
     monkeypatch.setattr("http.client.HTTPSConnection", ConnHuge)
-    with pytest.raises(ToolError, match="exceeds"):
-        FetchURLTool().run({"url": "https://example.com/huge"})
+    result = FetchURLTool().run({"url": "https://example.com/huge"})
+    assert len(json.loads(result.content)['excerpt']) == 80001
+    class ConnResource(ConnBadType):
+        def getresponse(self): return Resp('text/plain', b'x' * (8 * 1024 * 1024 + 1))
+    monkeypatch.setattr('http.client.HTTPSConnection', ConnResource)
+    payload = json.loads(FetchURLTool().run({'url': 'https://example.com/huge'}).content)
+    assert payload['network_truncated'] and payload['resource_truncated']
+    assert len(payload['excerpt']) == 1024 * 1024
+    assert payload['next_offset'] == 1024 * 1024
+
+
+def test_fetch_deadline_applies_before_response_headers(monkeypatch):
+    from ds41f_mlx import web_tools
+    monkeypatch.setattr(web_tools, '_validate_public_url', lambda url: url)
+    times = iter([0, 0, 1, 46])  # start, redirect loop, after connect, before headers
+    monkeypatch.setattr(web_tools, 'monotonic', lambda: next(times))
+    events = []
+    class Socket:
+        def getpeername(self): return ('93.184.216.34', 443)
+        def settimeout(self, timeout): events.append(('timeout', timeout))
+    class Conn:
+        def __init__(self, *args, **kwargs): self.sock = Socket()
+        def connect(self): pass
+        def request(self, *args, **kwargs): events.append('request')
+        def getresponse(self): pytest.fail('expired deadline must not wait on headers')
+        def close(self): events.append('close')
+    monkeypatch.setattr('http.client.HTTPSConnection', Conn)
+    with pytest.raises(ToolError, match='timeout ceiling'):
+        FetchURLTool().run({'url': 'https://example.com/'})
+    assert events == [('timeout', 44), 'request', 'close']
+
+
+def test_fetch_transfer_deadline_shuts_down_stalled_headers(monkeypatch):
+    from threading import Event
+    from ds41f_mlx import web_tools
+    monkeypatch.setattr(web_tools, '_validate_public_url', lambda url: url)
+    expired, closed = Event(), Event()
+    class Socket:
+        def getpeername(self): return ('93.184.216.34', 443)
+        def settimeout(self, timeout): pass
+        def shutdown(self, how): expired.set()
+    class Conn:
+        def __init__(self, *args, **kwargs): self.sock = Socket()
+        def connect(self): pass
+        def request(self, *args, **kwargs): pass
+        def getresponse(self):
+            assert expired.wait(1), 'absolute deadline did not shut down stalled headers'
+            raise TimeoutError('expired')
+        def close(self): closed.set()
+    monkeypatch.setattr('http.client.HTTPSConnection', Conn)
+    with pytest.raises(TimeoutError): web_tools._read_public_url('https://example.com/', timeout=.02)
+    assert expired.is_set() and closed.is_set()
+
+
+@pytest.mark.parametrize('offset', [-1, True, '1'])
+def test_fetch_invalid_offset_never_downloads(monkeypatch, offset):
+    monkeypatch.setattr('ds41f_mlx.web_tools._read_public_url', lambda *_: pytest.fail('invalid offset downloaded'))
+    with pytest.raises(ToolError, match='offset'): FetchURLTool().run({'url': 'https://example.com/', 'offset': offset})
+
+
+def test_fetch_rejects_actual_private_peer_before_get(monkeypatch):
+    from ds41f_mlx import web_tools
+    monkeypatch.setattr(web_tools, '_validate_public_url', lambda url: url)
+    class Conn:
+        def __init__(self, *args, **kwargs):
+            self.sock = type('Socket', (), {'getpeername': lambda _: ('127.0.0.1', 443)})()
+        def connect(self): pass
+        def request(self, *args, **kwargs): pytest.fail('private peer must not receive GET')
+        def close(self): pass
+    monkeypatch.setattr('http.client.HTTPSConnection', Conn)
+    with pytest.raises(ToolError, match='actual local/private'):
+        FetchURLTool().run({'url': 'https://example.com/'})
 
 
 def test_m19_unknown_closed_session_surfaces_runtime_error():

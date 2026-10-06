@@ -9,6 +9,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from html import unescape
+from html.parser import HTMLParser
+from time import monotonic
+from threading import Timer
 import hashlib
 import http.client
 import ipaddress
@@ -70,36 +73,82 @@ def _validate_public_url(url: str) -> str:
     return url
 
 
-def _read_public_url(url: str, *, timeout: float = 10, max_bytes: int = 80_000, max_redirects: int = 4) -> tuple[str, str, bytes]:
+def readable_text(text: str, content_type: str) -> str:
+    if 'html' not in content_type.lower(): return ' '.join(text.split())
+    class Reader(HTMLParser):
+        def __init__(self): super().__init__(convert_charrefs=True); self.parts = []; self.hidden = []
+        def handle_starttag(self, tag, attrs):
+            if tag in ('script', 'style', 'noscript', 'template'): self.hidden.append(tag)
+            if not self.hidden and tag in ('p', 'div', 'br', 'li', 'h1', 'h2', 'h3', 'tr'): self.parts.append(' ')
+        def handle_endtag(self, tag):
+            if self.hidden and tag == self.hidden[-1]: self.hidden.pop()
+            if not self.hidden: self.parts.append(' ')
+        def handle_data(self, value):
+            if not self.hidden: self.parts.append(value)
+    reader = Reader(); reader.feed(text); reader.close()
+    return ' '.join(''.join(reader.parts).split())
+
+
+def _read_public_url(url: str, *, timeout: float = 45, max_bytes: int = 8 * 1024 * 1024, max_redirects: int = 8) -> tuple[str, str, bytes]:
     current = _validate_public_url(url)
+    deadline = monotonic() + timeout
     for _ in range(max_redirects + 1):
         parsed = urlparse(current)
         conn_cls = http.client.HTTPSConnection if parsed.scheme == "https" else http.client.HTTPConnection
         host = parsed.hostname or ""
         port = parsed.port
-        conn = conn_cls(host, port=port, timeout=timeout)
+        remaining = deadline - monotonic()
+        if remaining <= 0: raise ToolError('fetch network timeout ceiling reached')
+        conn = conn_cls(host, port=port, timeout=remaining)
         path = (parsed.path or "/") + (("?" + parsed.query) if parsed.query else "")
+        deadline_timer = None
         try:
-            conn.request("GET", path, headers={"User-Agent": "ds41f-local-web-client/0.1", "Accept": "text/html,text/plain,application/json;q=0.9,*/*;q=0.1"})
+            conn.connect()
+            connection_socket = conn.sock
+            peer = ipaddress.ip_address(connection_socket.getpeername()[0])
+            if not peer.is_global: raise ToolError('refusing actual local/private network peer')
+            def set_remaining_timeout():
+                remaining = deadline - monotonic()
+                if remaining <= 0: raise ToolError('fetch network timeout ceiling reached')
+                connection_socket.settimeout(remaining)
+                return remaining
+            remaining = set_remaining_timeout()
+            def expire_transfer():
+                # Inactivity timeouts alone do not bound trickled headers.
+                try: connection_socket.shutdown(socket.SHUT_RDWR)
+                except OSError: pass
+            deadline_timer = Timer(remaining, expire_transfer)
+            deadline_timer.daemon = True
+            deadline_timer.start()
+            conn.request("GET", path, headers={"User-Agent": "ds41f-local-web-client/0.1", "Accept-Encoding": "identity", "Accept": "text/html,text/plain,application/json;q=0.9,*/*;q=0.1"})
+            set_remaining_timeout()
             resp = conn.getresponse()
             if resp.status in {301, 302, 303, 307, 308}:
                 loc = resp.getheader("Location")
                 if not loc:
                     raise ToolError("redirect response missing Location header")
                 current = _validate_public_url(urljoin(current, loc))
-                resp.read(1024)
-                continue
+                continue  # finally closes connection; never wait on a redirect body
             if resp.status >= 400:
                 raise ToolError(f"fetch_url HTTP status {resp.status}")
             ctype = resp.getheader("content-type", "")
             allowed = any(x in ctype.lower() for x in ("text/", "html", "json", "xml"))
             if not allowed:
                 raise ToolError(f"refusing non-text content type {ctype!r}")
-            data = resp.read(max_bytes + 1)
-            if len(data) > max_bytes:
-                raise ToolError(f"response exceeds {max_bytes} byte limit")
+            if resp.getheader('content-encoding', 'identity').lower() not in ('identity', ''):
+                raise ToolError('compressed fetch bodies are not supported (resource/decompression boundary)')
+            chunks = bytearray()
+            while len(chunks) <= max_bytes:
+                set_remaining_timeout()
+                chunk = resp.read1(min(65536, max_bytes + 1 - len(chunks)))
+                if not chunk: break
+                chunks.extend(chunk)
+            data = bytes(chunks)
+            # Keep usable partial data at the resource ceiling, not an error
+            # that discards an otherwise ordinary large page.
             return current, ctype, data
         finally:
+            if deadline_timer is not None: deadline_timer.cancel()
             conn.close()
     raise ToolError("too many redirects")
 
@@ -280,7 +329,7 @@ class WebSearchTool:
                 "type": "object",
                 "properties": {
                     "query": {"type": "string", "description": "Search query."},
-                    "max_results": {"type": "integer", "minimum": 1, "maximum": 5, "description": "Number of results to return."},
+                    "max_results": {"type": "integer", "minimum": 1, "maximum": 20, "description": "Number of results to return (default 10, maximum 20)."},
                 },
                 "required": ["query"],
                 "additionalProperties": False,
@@ -295,9 +344,9 @@ class WebSearchTool:
         query = arguments.get("query")
         if not isinstance(query, str) or not query.strip():
             raise ToolError("web_search.query must be a non-empty string")
-        max_results = arguments.get("max_results", 5)
-        if not isinstance(max_results, int) or max_results < 1 or max_results > 5:
-            raise ToolError("web_search.max_results must be an integer from 1 to 5")
+        max_results = arguments.get("max_results", 10)
+        if isinstance(max_results, bool) or not isinstance(max_results, int) or max_results < 1 or max_results > 20:
+            raise ToolError("web_search.max_results must be an integer from 1 to 20")
         payload = self.provider.search(query.strip(), max_results=max_results, session_id=None if context is None else context.session_id)
         raw_results = payload.get("results") or []
         if not isinstance(raw_results, list):
@@ -319,8 +368,8 @@ class FetchURLTool:
         "type": "function",
         "function": {
             "name": "fetch_url",
-            "description": "Fetch a bounded text excerpt from a public http(s) URL. Every redirect target is validated; local/private network addresses are refused.",
-            "parameters": {"type": "object", "properties": {"url": {"type": "string"}}, "required": ["url"], "additionalProperties": False},
+            "description": "Fetch readable public http(s) text. Network resource ceiling 8 MiB; model-facing text is fitted by runtime context admission. Truncation and next_offset are explicit; use offset for an intentional continuation. Private/local URLs and redirects are refused.",
+            "parameters": {"type": "object", "properties": {"url": {"type": "string"}, "offset": {"type": "integer", "minimum": 0}}, "required": ["url"], "additionalProperties": False},
         },
     }
 
@@ -328,10 +377,22 @@ class FetchURLTool:
         url = arguments.get("url")
         if not isinstance(url, str) or not url.strip():
             raise ToolError("fetch_url.url must be a non-empty string")
+        offset = arguments.get('offset', 0)
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            raise ToolError('fetch_url.offset must be a nonnegative integer')
         final_url, ctype, data = _read_public_url(url.strip())
-        text = data.decode("utf-8", "replace")
-        excerpt = " ".join(text.split())[:4000]
-        payload = {"url": final_url, "content_type": ctype, "excerpt": excerpt}
+        network_limit = 8 * 1024 * 1024
+        network_truncated = len(data) > network_limit
+        text = readable_text(data[:network_limit].decode('utf-8', 'replace'), ctype)
+        # A separate memory/serialization ceiling, not a model token estimate.
+        selected = text[offset:].encode('utf-8')
+        excerpt = selected[:1024 * 1024].decode('utf-8', 'ignore')
+        payload = {"url": final_url, "content_type": ctype, "excerpt": excerpt,
+                   'offset': offset, 'total_chars': len(text), 'returned_chars': len(excerpt),
+                   'next_offset': offset + len(excerpt), 'network_truncated': network_truncated,
+                   'resource_truncated': len(selected) > 1024 * 1024,
+                   'context_truncated': False,
+                   'termination_reason': 'network_resource_ceiling' if network_truncated else 'model_facing_resource_ceiling' if len(selected) > 1024 * 1024 else None}
         return ToolResult(content=_json_dumps(payload), display={"tool": self.name, **payload})
 
 

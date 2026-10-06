@@ -43,11 +43,43 @@ def test_tool_effect_reserved_once_and_restart_observation_never_executes(monkey
             assert tool.executions == 1
             observed = await client.get('/api/tools/result?session_id=s&request_count=1')
             assert observed.json()['result']['messages'][0]['tool_call_id'] == 'call1'
+            RuntimeDouble.count = 2  # consumption advances authority; old receipt is not executable
+            try:
+                observed = await client.get('/api/tools/result?session_id=s&request_count=1')
+                assert observed.json() == {'result': None, 'observation_only': True}
+                assert tool.executions == 1
+            finally:
+                RuntimeDouble.count = 1
         restarted = web.create_app()
         async with httpx.AsyncClient(transport=httpx.ASGITransport(app=restarted), base_url='http://127.0.0.1') as client:
             observed = await client.get('/api/tools/result?session_id=s&request_count=1')
             assert observed.json()['result'] is None
             assert tool.executions == 1
+    asyncio.run(run())
+
+
+def test_completed_effect_budget_failure_remains_observable_and_never_reexecutes(monkeypatch):
+    from ds41f_mlx.web_client import RuntimeHTTPError
+    tool = CounterTool()
+    monkeypatch.setattr(web, 'RuntimeClient', RuntimeDouble)
+    monkeypatch.setattr(web, 'registry_from_env', lambda: ToolRegistry([tool]))
+    attempts = []
+    def fail_budget(*args):
+        attempts.append(args)
+        raise RuntimeHTTPError(409, 'prefix changed')
+    monkeypatch.setattr('ds41f_mlx.web_budget.fit_tool_results', fail_budget)
+    app = web.create_app()
+    async def run():
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url='http://127.0.0.1') as client:
+            value = {'session_id': 's', 'request_count': 1, 'request': {'max_tokens': 'auto'}}
+            first = await client.post('/api/tools', json=value)
+            result = first.json()
+            assert first.status_code == 200 and 'budget_error' in result
+            assert json.loads(result['messages'][0]['content'])['excerpt'] == 'one effect'
+            repeat = await client.post('/api/tools', json=value)
+            observed = await client.get('/api/tools/result?session_id=s&request_count=1')
+            assert repeat.json() == result == observed.json()['result']
+            assert tool.executions == 1 and len(attempts) == 1
     asyncio.run(run())
 
 

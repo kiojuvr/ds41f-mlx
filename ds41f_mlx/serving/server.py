@@ -43,6 +43,12 @@ def load_v41_tokenizer(recipe_path: Path = DEFAULT_RECIPE) -> Any:
 
 def prepare_request(protocol: str, body: bytes, *, tokenizer: Any, recipe_path: Path = DEFAULT_RECIPE, options: ConversionOptions | None = None, checkpoint: Path | None = None) -> RecipePreparedRequest:
     request_type, _ = PROTOCOL_TYPES[protocol]
+    # Runtime extension, resolved only after the real recipe/image expansion.
+    payload = json.loads(body)
+    automatic = isinstance(payload, dict) and payload.get('max_tokens') == 'auto'
+    if automatic:
+        payload['max_tokens'] = 1
+        body = json.dumps(payload).encode()
     try:
         request = request_type(body)
     except ValueError as error:
@@ -65,11 +71,6 @@ def prepare_request(protocol: str, body: bytes, *, tokenizer: Any, recipe_path: 
         except ValueError as error:
             raise RequestError(str(error), 400) from error
         token_ids = list(multimodal.token_ids)
-        from ds41f_mlx.runtime.multimodal import MAX_MULTIMODAL_CONTEXT
-        maximum = converted.inference_options.max_tokens
-        maximum = 128 if maximum is None else int(maximum)
-        if maximum < 1 or len(token_ids) + maximum > MAX_MULTIMODAL_CONTEXT:
-            raise RequestError('multimodal prompt plus output reservation exceeds qualified context', 400)
     elif 129264 in token_ids:
         raise RequestError('missing image source for image placeholder', 400)
     if len(token_ids) < 2:
@@ -78,7 +79,13 @@ def prepare_request(protocol: str, body: bytes, *, tokenizer: Any, recipe_path: 
         stop_token_ids = tuple(int(t) for t in tokenizer.encode(EOS_TOKEN))
     except Exception:
         stop_token_ids = ()
-    return RecipePreparedRequest(protocol, converted, converted, token_ids, list(rendered.image_sources), include_usage, custom_tool_names, stop_token_ids, multimodal)
+    prepared = RecipePreparedRequest(protocol, converted, converted, token_ids, list(rendered.image_sources), include_usage, custom_tool_names, stop_token_ids, multimodal)
+    from .capacity import resolve_capacity
+    try:
+        resolve_capacity(prepared, checkpoint=checkpoint or load_runtime_config().checkpoint_path, automatic=automatic)
+    except ValueError as error:
+        raise RequestError(str(error), 400, 'context_capacity_exhausted') from error
+    return prepared
 
 
 class InferenceStreamingResponse(StreamingResponse):
@@ -261,6 +268,24 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
             raise RequestError(str(exc), 404)
         except RuntimeError as exc:
             raise RequestError(str(exc), 409)
+
+    @app.post('/v1/sessions/{session_id}/budget')
+    async def session_budget(session_id: str, request: Request) -> Response:
+        if local_mtp or getattr(backend, 'qualification_response', None) is not None:
+            raise RequestError('budget is standard-OFF only', 400)
+        body = await request.body()
+        try:
+            validate_stateful_chat_request_policy(body)
+            prepared = await run_in_threadpool(prepare_request, 'chat_completions', body, tokenizer=tokenizer, recipe_path=recipe_path, options=options, checkpoint=getattr(backend, 'checkpoint', runtime_config.checkpoint_path))
+            rec = backend.validate_stateful_admission(session_id, prepared)
+            expected = request.headers.get('X-DS41F-Expected-Request-Count')
+            if expected is not None and (not expected.isdecimal() or rec.request_count != int(expected)):
+                raise RequestError('observed request_count changed; reconcile before budget', 409)
+            return JSONResponse(content={**prepared.capacity, 'request_count': rec.request_count})
+        except KeyError as error:
+            raise RequestError(str(error), 404) from error
+        except (ValueError, RuntimeError) as error:
+            raise RequestError(str(error), 400) from error
 
     @app.post('/v1/sessions/{session_id}/chat/completions')
     async def session_chat(session_id: str, request: Request) -> Response:

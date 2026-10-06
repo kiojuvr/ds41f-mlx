@@ -22,24 +22,8 @@ from .recovery_certificate import reconstruction_certificate
 
 class StatefulStream:
     def __init__(self, backend, session_id, prepared, tokenizer, body, options, application_id=None):
-        from .deepseek_recipe_backend import MODEL_ALIASES
-        backend.validate_multimodal_request(prepared)
-        if prepared.model is not None and prepared.model not in MODEL_ALIASES:
-            raise RuntimeError('unsupported model')
         self.backend = backend
-        self.rec = backend.get_stateful_session(session_id)
-        if self.rec.busy:
-            raise RuntimeError('session already has an active request')
-        if self.rec.recovery_state == 'unrecoverable':
-            raise RuntimeError('session is protocol-unrecoverable; DELETE required, no automatic replay')
-        if self.rec.m11 is not None:
-            history = self.rec.m11.m8.token_history
-            if len(prepared.token_ids) <= len(history) or prepared.token_ids[:len(history)] != history:
-                raise RuntimeError('next recipe encoding is not an exact extension of generated session history')
-            if prepared.multimodal is not None:
-                prepared.multimodal.validate_prefix(len(history), self.rec.m11.image_identities)
-            elif self.rec.m11.image_identities:
-                raise RuntimeError('continuation must retain committed inline image identities')
+        self.rec = backend.validate_stateful_admission(session_id, prepared)
         self.frontier_before = None if self.rec.m11 is None else self.rec.m11.m8.frontier
         self.prepared, self.tokenizer, self.body, self.options = prepared, tokenizer, body, options
         self.request_id = str(uuid4())
@@ -65,7 +49,9 @@ class StatefulStream:
     def publish(self, turn, cancelled):
         rec = self.rec
         record = turn.to_json()
-        record.update(request_id=self.request_id, application_request_id=self.application_id, cancelled=cancelled)
+        record.update(request_id=self.request_id, application_request_id=self.application_id, cancelled=cancelled,
+                      capacity=None if self.prepared.capacity is None else {**self.prepared.capacity, 'binding': True},
+                      termination_reason=('user_stop' if cancelled else 'context_capacity' if turn.finish_reason == 'length' and self.prepared.capacity and self.prepared.capacity['output_mode'] == 'auto' else 'output_limit' if turn.finish_reason == 'length' else turn.finish_reason))
         if cancelled or turn.tool_calls:
             certificate = reconstruction_certificate(
                 json.loads(self.body), turn.response_json, rec.m11.m8.token_history,
@@ -99,7 +85,7 @@ class StatefulStream:
             return
         rec, backend = self.rec, self.backend
         sampler = backend.make_sampler(self.prepared.inference_options)
-        maximum = backend.max_tokens(self.prepared.inference_options)
+        maximum = backend.request_max_tokens(self.prepared)
         if rec.m11 is None:
             rec.m11 = M11RecipeToolSession.start_from_prepared(
                 model=backend._model, tokenizer=self.tokenizer, checkpoint=backend.checkpoint,

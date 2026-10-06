@@ -127,10 +127,11 @@ function termination() {
   else if (s.record?.state === 'busy') { label = 'The response is still running. Wait for it to settle or Stop.'; actions = [['Reconcile', () => $('reconnect').click()], ['Stop', () => $('stop').click()]]; }
   else if (s.pendingRestore) { label = 'Restore is not yet confirmed. It will not be automatically repeated.'; actions = [['Reconcile', () => $('reconnect').click()], ['Details', () => $('settingsDialog').showModal()]]; }
   else if (s.problem || s.pending) { label = 'The last request has an uncertain outcome. The runtime will not automatically retry it.'; actions = [['Reconcile', () => $('reconnect').click()], ['Details', () => $('settingsDialog').showModal()]]; }
+  else if (s.capacityStop || s.terminationReason === 'context_capacity') { label = s.capacityStop ? 'Context/admission boundary: ' + s.capacityStop : 'Qualified total context capacity reached. This history cannot continue in the same envelope.'; actions = [['Settings / Recovery', () => $('settingsDialog').showModal()], ['Check / Continue', pendingCalls().length || s.toolAwaitingResponse ? continueTools : continueResponse], ['New chat', () => $('newSession').click()]]; }
   else if (s.effects?.state === 'reserved') { label = (s.toolError ? 'Tool failed: ' + s.toolError + '. ' : '') + 'Tool outcome unavailable. It will not be retried.'; actions = [['Continue without result', () => $('skipTools').click()], ['Details', () => $('settingsDialog').showModal()]]; }
   else if (s.toolPause === 'error') { label = 'Tool failed: ' + (s.toolError || 'Result unavailable'); actions = [['Continue without result', () => $('skipTools').click()]]; if (!pendingCalls().length) actions = [['Continue without result', continueResponse]]; }
   else if (pendingCalls().length) {
-    label = s.toolPause === 'ceiling' ? `Tool execution paused after ${s.toolRounds} rounds.` : s.toolPause === 'stopped' ? 'Tool workflow stopped. Pending tools have not been run.' : s.interrupted ? 'Stopped by user. Requested tools have not been run.' : $('toolsMode').value === 'ask' ? 'Allow requested tools to run?' : 'Tool execution paused.';
+    label = s.toolPause === 'ceiling' ? `Runaway circuit breaker reached (${s.toolRounds} rounds). Pending calls are preserved; only explicit Continue resets it.` : s.toolPause === 'stopped' ? 'Tool workflow stopped. Pending tools have not been run.' : s.interrupted ? 'Stopped by user. Requested tools have not been run.' : $('toolsMode').value === 'ask' ? 'Allow requested tools to run?' : 'Tool execution paused.';
     actions = [['Continue tools', continueTools], ['Stop', pauseTools], ['Continue without result', () => $('skipTools').click()]];
   } else if (s.toolAwaitingResponse) { label = s.interrupted ? 'Stopped by user. Tool results were received safely.' : 'Tool results received. Continue the response?'; actions = [['Continue tools', continueTools]];
   } else if (s.finishReason === 'length' && !s.interrupted) { label = 'Output limit reached.'; actions = [['Continue response', continueResponse]]; }
@@ -148,7 +149,7 @@ async function select(id) {
   localStorage.setItem('ds41f.selected', id);
   visible = 100; state.attachments = []; rendered.clear(); follow = true;
   const reasoning = state.session?.protocol?.reasoning;
-  if (reasoning) { $('thinking').value = reasoning === 'none' ? 'off' : 'on'; $('reasoning').value = reasoning === 'none' ? 'high' : reasoning === 'xhigh' ? 'high' : reasoning; }
+  if (reasoning) { $('thinking').value = reasoning === 'none' ? 'off' : 'on'; $('reasoning').value = reasoning === 'none' ? 'max' : reasoning === 'xhigh' ? 'high' : reasoning; }
   preview(); render();
   state.busy = true; setPhase('Recovering');
   try { await reconcile(true); } finally { state.busy = false; phase = ''; controls(); }
@@ -167,6 +168,7 @@ function appendResults(result) {
   }
   s.effects = {count: s.count, state: 'completed'};
   s.toolAwaitingResponse = true;
+  s.capacityStop = result.budget_error || '';
   const failure = result.results?.find(item => item.error);
   s.toolPause = failure ? 'error' : ''; s.toolError = failure ? (typeof failure.error === 'string' ? failure.error : JSON.stringify(failure.error)) : '';
 }
@@ -197,6 +199,7 @@ async function reconcile(wait = false) {
       s.messages.push(turn.response_json.choices[0].message);
       s.toolAwaitingResponse = false;
       s.finishReason = turn.response_json.choices[0].finish_reason;
+      s.terminationReason = turn.termination_reason || s.finishReason; s.capacity = turn.capacity || s.capacity; s.capacityStop = '';
       s.endings ||= {}; s.endings[s.messages.length - 1] = turn.cancelled ? 'cancelled' : s.finishReason;
       if (turn.cancelled || userStop) { s.interruptions ||= []; s.interruptions.push(s.messages.length - 1); s.interruptionKinds ||= {}; s.interruptionKinds[s.messages.length - 1] = userStop ? 'user' : 'interrupted'; if (!turn.cancelled) { s.lateStops ||= []; s.lateStops.push(s.messages.length - 1); } }
       s.count = rec.request_count; s.pending = null; s.problem = ''; s.visibleUnsettled = null;
@@ -236,17 +239,28 @@ async function exclusive(action) {
 }
 function settings() {
   const temperature = Number($('temperature').value);
-  const hasImages = state.attachments.length > 0 || state.session?.messages.some(m => Array.isArray(m.content) && m.content.some(p => p.type === 'image_url'));
-  const max_tokens = $('outputLimit').value === 'auto' ? (hasImages ? 1024 : 8192) : Number($('maxTokens').value), top_p = Number($('topP').value);
-  if (!Number.isInteger(max_tokens) || max_tokens < 1 || max_tokens > 4294967295 || !Number.isFinite(temperature) || temperature < 0 || !Number.isFinite(top_p) || top_p < 0 || top_p > 1) throw new Error('Invalid temperature, output budget or top-p');
+  const max_tokens = $('outputLimit').value === 'auto' ? 'auto' : Number($('maxTokens').value), top_p = Number($('topP').value);
+  if ((max_tokens !== 'auto' && (!Number.isInteger(max_tokens) || max_tokens < 1 || max_tokens > 4294967295)) || !Number.isFinite(temperature) || temperature < 0 || !Number.isFinite(top_p) || top_p < 0 || top_p > 1) throw new Error('Invalid temperature, output budget or top-p');
   return {temperature, top_p, max_tokens, reasoning_effort: $('thinking').value === 'off' ? 'none' : $('reasoning').value};
 }
-async function generate() {
-  const s = state.session;
-  const options = settings();
+function generationRequest() {
+  const s = state.session, options = settings();
   s.protocol ||= {tools: state.tools, reasoning: options.reasoning_effort};
-  const request = {model: 'deepseek-v4.1-flash', messages: s.messages, stream: true, ...options,
+  return {model: 'deepseek-v4.1-flash', messages: s.messages, stream: true, ...options,
     reasoning_effort: s.protocol.reasoning, tools: s.protocol.tools, tool_choice: 'auto'};
+}
+async function generate() {
+  const s = state.session, request = generationRequest();
+  // Nonbinding observation, using the actual request. Actual admission rechecks
+  // it before native reservation; preview never grants execution permission.
+  try {
+    s.capacity = await api('/api/budget', 'POST', {session_id: s.id, expected_count: s.count, request});
+    s.capacityStop = '';
+  } catch (error) {
+    s.capacityStop = error.message; s.pending = null; await save(); render();
+    throw new Error('No generation submitted: ' + error.message);
+  }
+  if (state.stop) { s.pending = null; s.interrupted = true; await save(); notice('Stopped before generation admission.'); return; }
   // Recipe tool declarations are part of the historical prompt prefix. Keep
   // them stable; Tools mode controls client execution, not prefix rewriting.
   s.pending ||= {base: s.count, requestId: null, nonce: ChatPlatform.uuid(), addedUser: false};
@@ -314,8 +328,7 @@ async function toolLoop(explicit = false) {
   if (!pendingCalls().length) return;
   if (!explicit && $('toolsMode').value !== 'auto') { s.toolPause = 'approval'; await save(); return; }
   if (explicit && $('toolsMode').value === 'off') { notice('Tools are Off. Choose Ask or Auto to execute them.'); return; }
-  const ceiling = Number($('toolCeiling').value);
-  if (!Number.isInteger(ceiling) || ceiling < 1 || ceiling > 128) throw new Error('Tool ceiling must be 1–128 rounds');
+  const ceiling = 128; // runaway circuit breaker, not an ordinary UX round quota
   s.toolPause = ''; s.toolRounds = 0;
   for (let round = 0; round < ceiling && !state.stop; round++) {
     const calls = pendingCalls(); if (!calls.length || state.session.problem) return;
@@ -324,9 +337,10 @@ async function toolLoop(explicit = false) {
     setPhase('Using tool'); notice(calls.some(c => c.function.name === 'web_search') ? 'Searching web…' : 'Fetching URL…');
     state.session.effects = {count: state.session.count, state: 'reserved'}; await save();
     let result;
-    try { result = await api('/api/tools', 'POST', {session_id: state.session.id, request_count: state.session.count}); }
+    try { result = await api('/api/tools', 'POST', {session_id: state.session.id, request_count: state.session.count, request: generationRequest()}); }
     catch (error) { s.toolPause = 'error'; s.toolError = error.message; await save(); throw error; }
     appendResults(result); s.toolRounds = round + 1; await save(); render(); notice('');
+    if (result.budget_error) { s.capacityStop = result.budget_error; await save(); render(); return; }
     const failed = result.results?.find(item => item.error);
     if (failed) { s.toolPause = 'error'; s.toolError = typeof failed.error === 'string' ? failed.error : JSON.stringify(failed.error); await save(); return; }
     if (state.stop) { s.interrupted = true; s.interruptions ||= []; const index = s.messages.findLastIndex(m => m.role === 'assistant'); if (!s.interruptions.includes(index)) s.interruptions.push(index); s.interruptionKinds ||= {}; s.interruptionKinds[index] = 'user'; await save(); render(); return; }
@@ -434,7 +448,7 @@ $('saveSession').onclick = () => exclusive(async () => {
   if (rec.state !== 'idle' || s.pending || s.problem || pendingCalls().length) throw new Error('Save requires a settled idle application/runtime frontier, with completed tool results');
   const result = rec.persisted_artifact?.frontier === s.frontier ? {artifact: rec.persisted_artifact} : await api(path(s.id) + '/persist', 'POST', {});
   if (result.artifact.frontier !== s.frontier) throw new Error('Native artifact frontier changed; application snapshot NOT paired. Reconcile before saving. Artifact: ' + result.artifact.path);
-  await ChatStore.put('saves', {id: s.id, title: s.title || 'Conversation', messages: s.messages, interruptions: s.interruptions || [], interruptionKinds: s.interruptionKinds || {}, lateStops: s.lateStops || [], endings: s.endings || {}, finishReason: s.finishReason, interrupted: !!s.interrupted, toolAwaitingResponse: !!s.toolAwaitingResponse, toolPause: s.toolPause || '', toolError: s.toolError || '', toolRounds: s.toolRounds || 0, protocol: s.protocol, frontier: s.frontier, artifact: result.artifact.path, savedAt: Date.now()});
+  await ChatStore.put('saves', {id: s.id, title: s.title || 'Conversation', messages: s.messages, interruptions: s.interruptions || [], interruptionKinds: s.interruptionKinds || {}, lateStops: s.lateStops || [], endings: s.endings || {}, finishReason: s.finishReason, terminationReason: s.terminationReason, capacity: s.capacity, capacityStop: s.capacityStop, interrupted: !!s.interrupted, toolAwaitingResponse: !!s.toolAwaitingResponse, toolPause: s.toolPause || '', toolError: s.toolError || '', toolRounds: s.toolRounds || 0, protocol: s.protocol, frontier: s.frontier, artifact: result.artifact.path, savedAt: Date.now()});
   notice('Saved native idle artifact and matching original-byte browser history. Later chat does not change this snapshot. Keep this browser storage: native artifacts do not contain historical image bytes.');
 });
 $('restoreSession').onclick = () => exclusive(async () => {
@@ -448,7 +462,7 @@ $('restoreSession').onclick = () => exclusive(async () => {
   }
   const id = 'sess_' + ChatPlatform.uuid().replaceAll('-', '');
   const journal = {id, title: snapshot.title + ' (restored)', messages: snapshot.messages,
-    interruptions: snapshot.interruptions || [], interruptionKinds: snapshot.interruptionKinds || {}, lateStops: snapshot.lateStops || [], endings: snapshot.endings || {}, finishReason: snapshot.finishReason, interrupted: !!snapshot.interrupted, toolAwaitingResponse: !!snapshot.toolAwaitingResponse, toolPause: snapshot.toolPause || '', toolError: snapshot.toolError || '', toolRounds: snapshot.toolRounds || 0, protocol: snapshot.protocol, count: 0,
+    interruptions: snapshot.interruptions || [], interruptionKinds: snapshot.interruptionKinds || {}, lateStops: snapshot.lateStops || [], endings: snapshot.endings || {}, finishReason: snapshot.finishReason, terminationReason: snapshot.terminationReason, capacity: snapshot.capacity, capacityStop: snapshot.capacityStop, interrupted: !!snapshot.interrupted, toolAwaitingResponse: !!snapshot.toolAwaitingResponse, toolPause: snapshot.toolPause || '', toolError: snapshot.toolError || '', toolRounds: snapshot.toolRounds || 0, protocol: snapshot.protocol, count: 0,
     frontier: snapshot.frontier, pendingRestore: {frontier: snapshot.frontier, artifact: snapshot.artifact},
     problem: 'Restore pending; outcome must be reconciled before continuation'};
   await ChatStore.put('sessions', journal); // known standard-OFF session ID BEFORE restore I/O
@@ -467,15 +481,15 @@ $('discardPending').onclick = () => exclusive(async () => {
 });
 $('reasoning').onchange = $('thinking').onchange = () => {
   const protocol = state.session?.protocol;
-  if (protocol) { $('thinking').value = protocol.reasoning === 'none' ? 'off' : 'on'; $('reasoning').value = protocol.reasoning === 'none' ? 'high' : protocol.reasoning === 'xhigh' ? 'high' : protocol.reasoning; }
+  if (protocol) { $('thinking').value = protocol.reasoning === 'none' ? 'off' : 'on'; $('reasoning').value = protocol.reasoning === 'none' ? 'max' : protocol.reasoning === 'xhigh' ? 'high' : protocol.reasoning; }
   controls(); persistPreferences();
 };
 $('toolsMode').onchange = () => { controls(); persistPreferences(); };
 $('settingsButton').onclick = async () => { $('settingsDialog').showModal(); try { await menus(); } catch (error) { notice(error.message); } };
 $('settingsClose').onclick = () => $('settingsDialog').close();
 $('outputLimit').onchange = () => { const custom = $('outputLimit').value === 'custom'; $('maxTokens').hidden = !custom; if (!custom && $('outputLimit').value !== 'auto') $('maxTokens').value = $('outputLimit').value; persistPreferences(); };
-function persistPreferences() { const values = {}; for (const id of ['temperature', 'topP', 'outputLimit', 'maxTokens', 'thinking', 'reasoning', 'toolsMode', 'toolCeiling']) values[id] = $(id).value; localStorage.setItem('ds41f.preferences', JSON.stringify(values)); }
-for (const id of ['temperature', 'topP', 'maxTokens', 'toolCeiling']) $(id).onchange = persistPreferences;
+function persistPreferences() { const values = {}; for (const id of ['temperature', 'topP', 'outputLimit', 'maxTokens', 'thinking', 'reasoning', 'toolsMode']) values[id] = $(id).value; localStorage.setItem('ds41f.preferences', JSON.stringify(values)); }
+for (const id of ['temperature', 'topP', 'maxTokens']) $(id).onchange = persistPreferences;
 $('resetGeneration').onclick = () => { $('temperature').value = '0'; $('topP').value = '0'; $('outputLimit').value = 'custom'; $('maxTokens').value = '128'; $('maxTokens').hidden = false; persistPreferences(); };
 $('skipTools').onclick = () => exclusive(async () => {
   await reconcile(); if (state.session.problem) throw new Error(state.session.problem);

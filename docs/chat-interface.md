@@ -6,8 +6,10 @@
 8 subtests, 12 renderer tests.** The receipts and source gate are
 `artifacts/chat-ux/browser.json` and `artifacts/chat-ux/qualification.json`.
 
-The later opt-in [private-LAN extension](private-lan.md) has its own current-source
-HTTP/browser capability receipt. The older asset/Python hashes below describe the
+The later opt-in [private-LAN extension](private-lan.md) has its own source-specific
+HTTP/browser capability receipt at `3d29cc4`. The later [dynamic capability budget](dynamic-capability-budget.md)
+changes runtime admission and tool defaults and has a separate source-specific gate.
+The older asset/Python hashes below describe the
 `9312cdd` everyday-UI gate, not automatic acceptance of subsequent network changes.
 
 The `133adc4` stateful Web/runtime qualification remains the semantic baseline,
@@ -47,6 +49,7 @@ Reload reconnects and waits on GET; it never sends a generation or tool effect.
   `max`, which map to the pinned V4.1 recipe's **50, 75, 100** respectively.
   Historical `xhigh` is retained in the request and displayed as 75. Thinking and
   effort are separate controls; effort is disabled while Thinking is Off.
+  New Thinking On defaults to 100; existing preferences/frozen prefixes remain unchanged.
 - The pinned recipe uses an enum, **not arbitrary numeric 1–100 effort**. Its
   `deepseek-recipe-encoding/src/v4/dsv41.rs` maps Low→50, High/Xhigh→75, Max→100;
   Chat Completion conversion accepts enum names, not numbers. An arbitrary
@@ -58,21 +61,23 @@ Reload reconnects and waits on GET; it never sends a generation or tool effect.
   first generation request is durably submitted. Locked controls cannot silently
   rewrite the conversation prefix. Use New chat to choose a different setting.
 - Settings > Generation directly sends finite, nonnegative `temperature`,
-  `top_p` in 0..1, and positive integer `max_tokens`. No top-k, ignored parameter
+  `top_p` in 0..1, and Auto or positive integer `max_tokens`. No top-k, ignored parameter
   or private sampler is introduced. Initial everyday sampling is 1.0 / .95.
   Reset to runtime defaults selects 0 / 0 / 128, exactly the fallbacks in
   `DeepSeekRecipeRuntimeBackend.make_sampler()` / `max_tokens()`; this does not
   claim a different official model sampler.
-- Output presets: Auto, 4K, 8K, 16K, 32K, Custom. Auto is an explicit conservative
-  reservation policy: 8192 tokens for text, 1024 if any historical/new image is
-  present. It does not estimate remaining native context or bypass admission.
-  Custom accepts the recipe's positive u32 domain rather than the old UI 4096
-  cap. Runtime context/multimodal admission always remains final.
+- Output presets: Auto, 4K, 8K, 16K, 32K, Custom. Auto reserves the remaining
+  qualified total envelope after actual recipe/image-expanded tokenization.
+  Text has a 1,048,576 total envelope; Vision has a separate 8192 total envelope,
+  both intersected with the checkpoint limit. Custom accepts positive u32 output
+  reservations that fit actual runtime admission. Preview is observation only;
+  see [capacity authority and limits](dynamic-capability-budget.md).
 - Tools Auto executes certified canonical pending calls; Ask pauses before each
   batch; Off never starts a new effect. Changing mode changes client execution,
-  not the frozen protocol declarations. The configurable ceiling defaults to
-  **32 rounds** (1..128 UI range), not four. A round is one tool batch followed
-  by a canonical assistant request. There is no hidden generation/effect retry.
+  not the frozen protocol declarations. Auto has no ordinary round quota;
+  a fixed **128-round runaway circuit breaker** preserves pending calls and
+  requires explicit Continue to reset. A round is one tool batch followed by
+  a canonical assistant request. There is no hidden generation/effect retry.
 
 ## Rendering, scrolling and safety
 
@@ -116,7 +121,7 @@ Reasons are shown below the response, not buried in Settings:
 | State | Explanation / next action |
 | --- | --- |
 | Native finish `length` | Output limit reached → Continue response |
-| Tool ceiling | Paused after N rounds → Continue tools / Stop / unavailable result |
+| Runaway breaker | Paused after 128 rounds → explicit Continue tools / Stop / unavailable result |
 | Ask / Off with pending calls | Approval / paused → Continue tools / unavailable result |
 | User Stop | Recorded user intent, committed state reconciled; a small suffix may be recovered |
 | Disconnect / unknown cancellation cause | Response interrupted, canonical state reconciled; never guessed to be User Stop |

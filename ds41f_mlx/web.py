@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import copy
 import json
 import ipaddress
 import os
@@ -151,6 +152,17 @@ def create_app(*, runtime_base_url: str | None = None, allow_private_lan: bool =
     async def cancel(session_id: str, request: Request):
         return JSONResponse(content=await call(runtime.request, 'POST', f'/v1/sessions/{quote(session_id, safe="")}/cancel', await body(request)))
 
+    @app.post('/api/budget')
+    async def budget(request: Request):
+        value = await body(request)
+        sid = value.get('session_id')
+        if not isinstance(sid, str) or not isinstance(value.get('request'), dict):
+            raise ToolError('session_id and complete request required')
+        result = await call(runtime.request, 'POST', f'/v1/sessions/{quote(sid, safe="")}/budget', value['request'])
+        if result['request_count'] != value.get('expected_count'):
+            raise ToolError('runtime/application frontier mismatch; reconcile before budget')
+        return JSONResponse(content=result)
+
     @app.post('/api/stream')
     async def stream(request: Request):
         value = await body(request)
@@ -208,7 +220,17 @@ def create_app(*, runtime_base_url: str | None = None, allow_private_lan: bool =
                 return JSONResponse(content=entry['result'])
             entry = effects[sid] = {'identity': identity, 'result': None}  # reserve before effects
             messages, displays = await call(tools.execute_calls, calls, session_id=sid)
+            # Publish actual effects before any budget fitting can fail. Never
+            # leave a completed download/search as an uncertain/retryable effect.
+            entry['source_results'] = copy.deepcopy({'messages': messages, 'results': displays})
             entry['result'] = {'messages': messages, 'results': displays, 'request_count': count}
+            if isinstance(value.get('request'), dict):
+                from ds41f_mlx.web_budget import fit_tool_results
+                try:
+                    messages, displays, budget = await call(fit_tool_results, runtime, sid, count, value['request'], messages, displays)
+                    entry['result'].update(messages=messages, results=displays, capacity=budget)
+                except (RuntimeHTTPError, ToolError) as error:
+                    entry['result']['budget_error'] = str(error)
             return JSONResponse(content=entry['result'])
 
     @app.post('/api/session/{session_id}/persist')

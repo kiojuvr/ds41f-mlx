@@ -225,6 +225,9 @@ UI, actual model-control mappings and the separate UX qualification gate are in
 semantics are in [`docs/web-application.md`](docs/web-application.md).
 For trusted LAN PCs, opt in with `--host 0.0.0.0 --allow-private-lan`;
 see [LAN/HTTPS options and limitations](docs/private-lan.md).
+[Dynamic capability budgeting](docs/dynamic-capability-budget.md) documents runtime-authoritative
+Output Auto, default-100 Thinking, fetch continuation and tool/resource boundaries;
+its evidence is separate from the historical Chat/LAN gates.
 
 Build and test the Rust boundary:
 

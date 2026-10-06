@@ -69,7 +69,9 @@ KV state, prompt replay or cache format is introduced. See
 
 See [exact control mappings](chat-interface.md#model-controls-exact-mapping) for
 Thinking Off/On, supported effort 50/75/100, direct temperature/top-p values,
-Auto/output presets and the 32-round tool ceiling. No custom sampler is implemented.
+runtime-authoritative Auto/output presets and the fixed 128-round runaway breaker.
+See [dynamic capability budgeting](dynamic-capability-budget.md) for actual-request
+admission, fetch fitting and separate resource ceilings. No custom sampler is implemented.
 Protocol reasoning and tool declarations freeze at the first turn; Tools Auto/Ask/Off
 controls **application execution**, not historical declarations. Only published
 `reasoning_content` appears in the collapsed Reasoning disclosure.

@@ -53,6 +53,8 @@ class RecipePreparedRequest:
     custom_tool_names: frozenset[str] = frozenset()
     stop_token_ids: tuple[int, ...] = ()
     multimodal: Any = None
+    resolved_max_tokens: int | None = None
+    capacity: dict[str, Any] | None = None
 
     @property
     def model(self) -> str | None:
@@ -254,6 +256,30 @@ class DeepSeekRecipeRuntimeBackend:
             raise ValueError('max_tokens must be positive')
         return value
 
+    def request_max_tokens(self, request: RecipePreparedRequest) -> int:
+        maximum = getattr(request, 'resolved_max_tokens', None)
+        return self.max_tokens(request.inference_options) if maximum is None else maximum
+
+    def validate_stateful_admission(self, session_id, request):
+        """Observation only; shared by preview and actual reservation."""
+        self.validate_multimodal_request(request)
+        if request.model is not None and request.model not in MODEL_ALIASES:
+            raise RuntimeError('unsupported model')
+        rec = self.get_stateful_session(session_id)
+        if rec.busy:
+            raise RuntimeError('session already has an active request')
+        if rec.recovery_state == 'unrecoverable':
+            raise RuntimeError('session is protocol-unrecoverable; DELETE required, no automatic replay')
+        if rec.m11 is not None:
+            history = rec.m11.m8.token_history
+            if len(request.token_ids) <= len(history) or request.token_ids[:len(history)] != history:
+                raise RuntimeError('next recipe encoding is not an exact extension of generated session history')
+            if request.multimodal is not None:
+                request.multimodal.validate_prefix(len(history), rec.m11.image_identities)
+            elif rec.m11.image_identities:
+                raise RuntimeError('continuation must retain committed inline image identities')
+        return rec
+
     def validate_multimodal_request(self, request: RecipePreparedRequest) -> None:
         if request.image_sources and request.multimodal is None:
             raise ValueError('image inputs must be prepared before execution')
@@ -265,7 +291,7 @@ class DeepSeekRecipeRuntimeBackend:
             from ds41f_mlx.runtime.multimodal import MAX_MULTIMODAL_CONTEXT
             if tuple(request.token_ids) != request.multimodal.token_ids:
                 raise ValueError('multimodal tokens differ from prepared representation')
-            if len(request.token_ids) + self.max_tokens(request.inference_options) > MAX_MULTIMODAL_CONTEXT:
+            if len(request.token_ids) + self.request_max_tokens(request) > MAX_MULTIMODAL_CONTEXT:
                 raise ValueError('multimodal prompt plus output reservation exceeds qualified context')
 
     async def infer(self, request: RecipePreparedRequest) -> AsyncIterator[Any]:
@@ -292,7 +318,7 @@ class DeepSeekRecipeRuntimeBackend:
             lock_acquired = True
             await self._call(self.load)
             sampler = self.make_sampler(request.inference_options)
-            max_tokens = self.max_tokens(request.inference_options)
+            max_tokens = self.request_max_tokens(request)
             prefill_session = DwarfStarMLXPrefillSession(self._model, omlx_path=self.omlx_path)
             image_embeddings = None
             if request.multimodal is not None:
@@ -382,12 +408,7 @@ class DeepSeekRecipeRuntimeBackend:
             raise ValueError('M12 stateful serving currently qualifies chat_completions only')
         if request.model is not None and request.model not in MODEL_ALIASES:
             raise ValueError(f"unsupported model {request.model!r}; supported aliases: {sorted(MODEL_ALIASES)}")
-        self.validate_multimodal_request(request)
-        rec = self.get_stateful_session(session_id)
-        if rec.recovery_state == 'unrecoverable':
-            raise RuntimeError('session is protocol-unrecoverable; DELETE required')
-        if rec.busy:
-            raise RuntimeError(f"session {session_id!r} already has an active request")
+        rec = self.validate_stateful_admission(session_id, request)
         rec.busy = True
         rec.updated_at = time()
         trace: dict[str, Any] = {'session_id': session_id, 'prompt_tokens': len(request.token_ids), 'stream': bool(request.stream), 'started_at': rec.updated_at}
@@ -399,7 +420,7 @@ class DeepSeekRecipeRuntimeBackend:
             lock_acquired = True
             await self._call(self.load)
             sampler = self.make_sampler(request.inference_options)
-            max_tokens = self.max_tokens(request.inference_options)
+            max_tokens = self.request_max_tokens(request)
             def execute_and_publish() -> M11AssistantTurn:
                 # Publish completed state and its protocol record before the worker
                 # result can be lost to transport/task cancellation. No new KV owner.
@@ -423,6 +444,8 @@ class DeepSeekRecipeRuntimeBackend:
                 rec.request_count += 1
                 rec.updated_at = time()
                 rec.last_turn = assistant_turn.to_json()
+                rec.last_turn.update(capacity=None if request.capacity is None else {**request.capacity, 'binding': True},
+                                     termination_reason='context_capacity' if assistant_turn.finish_reason == 'length' and request.capacity and request.capacity['output_mode'] == 'auto' else 'output_limit' if assistant_turn.finish_reason == 'length' else assistant_turn.finish_reason)
                 rec.last_error = None
                 diag = rec.m11.diagnostics()
                 m8diag = diag.get('m8', {})

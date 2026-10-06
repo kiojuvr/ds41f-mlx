@@ -82,7 +82,7 @@ Chrome context against an existing standard-OFF runtime. It requires an actually
 insecure origin with Web Locks/randomUUID/Clipboard absent, checks cryptographic
 UUIDs and two-tab transaction exclusion/release/reload, real generation, reported
 Copy limitations, reconnect, canonical safe Stop, and fresh native restore.
-`artifacts/private-lan/browser.json` records current-source PASS and zero replay /
+`artifacts/private-lan/browser.json` records **historical PASS at `3d29cc4`** and zero replay /
 full-cache repack. ASGI tests independently reject public peers, spoofed forwarding,
 DNS/public Hosts, cross-origin/non-JSON mutations and non-opted-in LAN binds.
 This is same-machine access through the real LAN interface plus simulated remote
@@ -90,3 +90,5 @@ peer boundary tests, not a claim that a second physical PC or every firewall/OS
 was tested. No full R1, 200K/1M, full Vision, release or runtime promotion was run.
 The prior everyday GUI qualification remains historical evidence at `9312cdd`;
 this change is a separate explicit network/browser-capability extension.
+Later [dynamic budgeting](dynamic-capability-budget.md) changes Web/runtime policy
+and has separate evidence; the LAN receipt does not automatically qualify those changes.
