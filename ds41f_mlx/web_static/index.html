@@ -1,42 +1,24 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DeepSeek local chat</title><link rel="stylesheet" href="/static/style.css">
-</head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DeepSeek chat</title><link rel="stylesheet" href="/static/style.css"></head>
 <body>
-<header>
-<h1>DeepSeek-V4.1-Flash · local chat</h1>
-<div id="status" role="status">Connecting…</div>
-<div class="controls">
-<select id="sessions" aria-label="Conversation"></select>
-<button id="newSession">New</button><button id="closeSession">Close</button>
-<button id="saveSession">Save idle session</button>
-<select id="saves" aria-label="Saved session"></select><button id="restoreSession">Restore as new session</button>
-<button id="reconnect">Reconnect / reconcile</button>
-</div>
-<details><summary>Options &amp; recovery</summary>
-<div class="controls">
-<label>Sampling <select id="preset"><option value="precise">Precise · 0</option><option value="balanced">Balanced · 0.6</option><option value="creative">Creative · 0.9</option></select></label>
-<label>Output budget <input id="maxTokens" type="number" min="1" max="4096" value="512"></label>
-<label>Top-p <input id="topP" type="number" min="0" max="1" step="0.05" value="0.95"></label>
-<label>Reasoning <select id="reasoning"><option value="none">Off</option><option value="high">High</option></select></label>
-<label><input type="checkbox" id="toolsEnabled" checked> Execute Web search &amp; public URL fetch</label>
-<button id="runTools">Run requested tools</button>
-<button id="discardPending">Discard unadmitted UI request</button>
-<button id="skipTools">Continue with unavailable tool results (no retry)</button>
-</div>
-<p class="small">Vision: original PNG/JPEG/WebP; 4 images total, 16 MiB/image, 4 MP, aspect 1:2–2:1. Multimodal prompt + output is limited to 8,192 positions; runtime admission is final. Stop settles after a complete transaction, not a GPU interrupt.</p>
-<div id="sessionInfo" class="small"></div>
-</details>
-<div id="notice" role="alert"></div>
-</header>
-<main id="messages"></main>
+<header><h1>DeepSeek V4.1 Flash</h1><div id="status" role="status">Recovering</div><button id="newSession">New chat</button><button id="settingsButton" aria-label="Settings">⚙</button></header>
+<main id="messages" aria-label="Conversation" tabindex="0"></main>
+<button id="latest" hidden>↓ Latest</button>
 <form id="composer">
-<div id="attachments"></div>
-<textarea id="input" placeholder="Message… (images can be dropped here)" rows="3" aria-label="Message"></textarea>
-<div class="controls"><label class="fileButton">Add images<input id="images" type="file" accept="image/png,image/jpeg,image/webp" multiple></label>
-<button id="send" type="submit">Send</button><button id="stop" type="button" disabled>Stop</button></div>
+<div id="notice" role="alert"></div><div id="attachments"></div>
+<textarea id="input" placeholder="Message DeepSeek…" rows="1" aria-label="Message"></textarea>
+<div class="controls"><label class="fileButton" title="Add image" aria-label="Add image" role="button" tabindex="0">＋<input id="images" type="file" accept="image/png,image/jpeg,image/webp" multiple></label>
+<details class="popover"><summary id="thinkLabel">Think Off</summary><div><label>Thinking <select id="thinking"><option value="off">Off</option><option value="on">On</option></select></label><label>Reasoning effort <select id="reasoning"><option value="low">50 · Low</option><option value="high" selected>75 · High</option><option value="max">100 · Max</option></select></label><p id="thinkingLock" class="small"></p><p class="small">This runtime supports 50, 75 and 100, not arbitrary intermediate values.</p></div></details>
+<details class="popover"><summary id="toolsLabel">Tools Auto</summary><div><label>Tools <select id="toolsMode"><option value="auto">Auto</option><option value="ask">Ask before running</option><option value="off">Off</option></select></label><p class="small">Controls execution of requested tools; conversation declarations stay fixed.</p></div></details>
+<button id="send" type="submit">Send</button><button id="stop" type="button" hidden>Stop</button></div>
 </form>
+<dialog id="settingsDialog"><div class="dialogHeader"><h2>Settings</h2><button id="settingsClose" aria-label="Close settings">×</button></div>
+<section><h3>Generation</h3><label>Temperature <input id="temperature" type="number" min="0" step="0.1" value="1.0"></label><label>Top-p <input id="topP" type="number" min="0" max="1" step="0.01" value="0.95"></label><label>Output limit <select id="outputLimit"><option value="auto">Auto</option><option value="4096">4K</option><option value="8192">8K</option><option value="16384">16K</option><option value="32768">32K</option><option value="custom">Custom…</option></select></label><input id="maxTokens" aria-label="Custom output limit" type="number" min="1" max="4294967295" value="8192" hidden><p class="small">Auto reserves 8K output for text, 1K with images. Runtime context admission remains final; choose a smaller budget if rejected.</p><button id="resetGeneration">Reset to runtime defaults</button></section>
+<section><h3>Thinking</h3><p>Use Think beside the message input. Thinking and effort are locked after the first request; start a new chat to change them.</p></section>
+<section><h3>Tools</h3><label>Safety ceiling <input id="toolCeiling" type="number" min="1" max="128" value="32"> rounds</label><p class="small">Auto runs until completion or the ceiling. Ask pauses before execution. Off never executes tools.</p></section>
+<section><h3>Recovery</h3><button id="saveSession">Save current state</button><select id="saves" aria-label="Saved state"></select><button id="restoreSession">Restore saved state</button><button id="reconnect">Reconnect runtime</button><div id="recoveryActions"><button id="discardPending" hidden>Discard unadmitted request</button><button id="skipTools" hidden>Continue without result (no retry)</button></div><button id="closeSession">Close current conversation</button><p class="small">Saved states require this browser's original history and images. Restore creates a fresh native conversation and never replays prompts.</p></section>
+<section><details><summary>Diagnostics</summary><div id="sessionInfo" class="small"></div><pre id="diagnostics"></pre><select id="sessions" hidden aria-label="Internal conversation identity"></select></details></section>
+</dialog>
 <script src="/static/render.js"></script><script src="/static/store.js"></script><script src="/static/app.js"></script>
 </body></html>

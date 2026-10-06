@@ -2,7 +2,13 @@
 
 ## Status and scope
 
-**PASS within the single-user localhost standard-OFF scope.** Current-source
+The everyday Chat surface and its separate current-source UX gate are documented
+in [Chat interface](chat-interface.md). That document supersedes the original
+management-oriented UI/model-control descriptions below. The following PASS is
+the historical `133adc4` runtime/application semantics baseline, not an automatic
+PASS for a changed frontend.
+
+**PASS within the single-user localhost standard-OFF scope (`133adc4` baseline).** Current-source
 HTTP, initial browser workflow, matched fresh runtime/model restore and operational
 soak receipts all pass. See `artifacts/web-application/qualification.json`. No R1, release/runtime promotion,
 MTP/DSpark/speculation, multi-user auth, internet serving or 200K/1M rerun is implied.
@@ -48,23 +54,21 @@ KV state, prompt replay or cache format is introduced. See
    committed but undelivered suffix can appear after canonical reconciliation.
    Interrupted messages are explicitly labelled; incomplete grammar may retire
    the session rather than invent a resumable ordinary history.
-6. Switch among sessions. Close explicitly releases native session state and
-   removes its application entry; failed close does not silently forget identity.
-7. Save only while idle and with no unresolved tools/request. Save pairs the
-   native artifact/frontier with the exact application-history snapshot.
-8. Reload/Reconcile observes the existing runtime session, never automatically
-   repeats a user request or tool effect.
-9. After a runtime restart, choose the corresponding save and **Restore**. This
-   creates a new native ID, restores the existing native artifact and associates
-   the saved ordinary original-byte history. Continue on that new ID.
+6. Use Header > New chat to close the current native conversation explicitly;
+   failed close does not silently forget identity. There is no ordinary session list.
+7. Settings > Recovery holds Save/Restore/Reconnect. Save only while idle and with
+   no unresolved tools/request; it pairs native artifact/frontier and application history.
+8. Reload reconnects and reconciles the current native session, never automatically
+   repeating a user request or tool effect.
+9. After a runtime restart, choose a matching saved state in Recovery and Restore.
+   This creates a fresh native ID and retains original-byte ordinary history.
 
-Precise (temperature 0) is the default, recommended for reproducible/tool work.
-Balanced (.6) and Creative (.9), top-p, output budget and reasoning None/High use
-supported runtime parameters; no custom sampler is implemented. Protocol reasoning
-mode and tool declarations freeze at the first turn. The tool checkbox gates
-**application execution**, not historical declarations; disabling declarations
-mid-session would change the recipe prefix. Published `reasoning_content` appears
-in a disclosure panel; no private/unpublished reasoning is manufactured.
+See [exact control mappings](chat-interface.md#model-controls-exact-mapping) for
+Thinking Off/On, supported effort 50/75/100, direct temperature/top-p values,
+Auto/output presets and the 32-round tool ceiling. No custom sampler is implemented.
+Protocol reasoning and tool declarations freeze at the first turn; Tools Auto/Ask/Off
+controls **application execution**, not historical declarations. Only published
+`reasoning_content` appears in the collapsed Reasoning disclosure.
 
 ## History, uncertainty and recovery
 
@@ -112,9 +116,10 @@ unbounded snapshots. The first 100 messages are rendered by default, with explic
 
 - Loopback bind guard, TrustedHost, same-origin JSON mutations, cross-site rejection
   and restrictive CSP. This is not an authenticated LAN/internet/multi-user service.
-- No `innerHTML`: text-node prose, linear fenced-code rendering, code/reasoning/tool
-  disclosure and safe HTTP(S) source links without URL credentials. Original inline
-  images only; no network image loads or image recompression by the client.
+- No `innerHTML`: safe DOM/text-node Markdown with raw HTML literal, bounded
+  inline parsing, fenced code Copy, collapsed reasoning/tools and HTTP(S) links
+  without credentials. Original inline images only; no network image loading or
+  image recompression by the client.
 - Existing `web_tools.py` guards are unchanged: public addresses/DNS only, pinned
   retrieval, every redirect revalidated, bounded redirects/timeout/size/content
   type/excerpt. Search/fetch are outside the runtime; no filesystem/shell tools.
@@ -122,8 +127,9 @@ unbounded snapshots. The first 100 messages are rendered by default, with explic
   qualified envelope: PNG/JPEG/WebP, 16 MiB/file, 4 MP, aspect 1:2..2:1, at most
   four historical images and 8192 consumed multimodal tokens including reserved
   output. Animated/unsupported containers are rejected by runtime validation.
-- Web bodies are capped at 100 MiB; output UI budget 1..4096, default 512. Ledger
-  retains bounded entries per live session and refuses more than 32 unresolved
+- Web bodies are capped at 100 MiB. Output UI budget no longer has a 4096 cap;
+  Auto/4K/8K/16K/32K/Custom retain runtime admission authority (see Chat interface).
+  Ledger retains bounded entries per live session and refuses more than 32 unresolved
   ledger session namespaces rather than evicting uncertainty. Four native live
   sessions remain the default runtime capacity. Successful native DELETE removes
   its closed record payload rather than retaining full history indefinitely.
@@ -133,8 +139,10 @@ unbounded snapshots. The first 100 messages are rendered by default, with explic
 
 ## Qualification
 
-Current collectors: `tools/qualify_stateful_live_http.py` and
+Baseline collectors: `tools/qualify_stateful_live_http.py` and the historical
 `tools/qualify_web_browser.py --phase initial|restored|soak` (real Chrome CDP).
+The everyday UI collector is now `tools/qualify_chat_ux.py`; the old collector's
+management-UI selectors are not an acceptance test for the new surface.
 Receipts/logs are under `artifacts/stateful-live/` and `artifacts/web-application/`.
 The final manifest pins production sources, current receipts and affected tests.
 RUNNING/FAIL and older-source passes are not used to close the application gate.

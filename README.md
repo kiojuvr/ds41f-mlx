@@ -218,7 +218,11 @@ Launch the optional M19 browser client in a separate process:
 python3 -m ds41f_mlx.web --runtime-url http://127.0.0.1:8000
 ```
 
-The web client is above the runtime API and executes client-side tools such as bounded web search outside the model server. See `docs/m19-local-web-client.md`.
+The Web client is a single-current-conversation Chat interface above the canonical
+runtime API. Bounded search/fetch tools execute outside the model server. Everyday
+UI, actual model-control mappings and the separate UX qualification gate are in
+[`docs/chat-interface.md`](docs/chat-interface.md); stateful recovery/persistence
+semantics are in [`docs/web-application.md`](docs/web-application.md).
 
 Build and test the Rust boundary:
 

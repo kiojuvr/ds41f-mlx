@@ -2,7 +2,23 @@
 'use strict';
 const $ = id => document.getElementById(id);
 const state = {session: null, busy: false, stop: false, attachments: [], tools: [], runtime: null, live: null, controller: null};
-let visible = 100;
+let visible = 100, follow = true, phase = '', liveNode = null, scrollIntentUntil = 0, layoutScrollUntil = 0;
+const rendered = new Map();
+function followLatest() { if (follow) { const node = $('messages'); if (node.scrollHeight - node.clientHeight - node.scrollTop > 1) node.scrollTop = node.scrollHeight; } $('latest').hidden = follow; }
+$('messages').addEventListener('scroll', () => {
+  const node = $('messages'), nearBottom = node.scrollHeight - node.clientHeight - node.scrollTop < 70;
+  if (!nearBottom && (performance.now() > layoutScrollUntil || performance.now() < scrollIntentUntil)) follow = false;
+  else if (follow || performance.now() < scrollIntentUntil) follow = true;
+  $('latest').hidden = follow;
+}, {passive: true});
+for (const type of ['wheel', 'touchmove', 'keydown', 'pointerdown']) $('messages').addEventListener(type, () => { scrollIntentUntil = performance.now() + 600; }, {passive: true});
+$('messages').addEventListener('pointermove', event => { if (event.buttons) scrollIntentUntil = performance.now() + 600; }, {passive: true});
+$('latest').onclick = () => { follow = true; followLatest(); };
+// Disclosure changes are deliberate reading actions, never token-follow triggers.
+$('messages').addEventListener('click', event => { if (event.target.closest('summary')) { scrollIntentUntil = 0; follow = false; $('latest').hidden = false; } });
+new ResizeObserver(() => { $('latest').style.bottom = ($('composer').offsetHeight + 28) + 'px'; followLatest(); }).observe($('composer'));
+$('messages').addEventListener('load', event => { if (event.target.tagName === 'IMG') { layoutScrollUntil = performance.now() + 200; followLatest(); } }, true);
+function setPhase(value) { phase = value; controls(); }
 const path = id => '/api/session/' + encodeURIComponent(id);
 function notice(value) { $('notice').textContent = String(value || ''); }
 async function api(url, method = 'GET', value) {
@@ -14,60 +30,134 @@ async function api(url, method = 'GET', value) {
 async function save() { if (state.session) await ChatStore.put('sessions', state.session); }
 function controls() {
   for (const id of ['send', 'newSession', 'closeSession', 'saveSession', 'restoreSession', 'sessions', 'saves', 'images']) $(id).disabled = state.busy;
-  $('send').disabled ||= !state.session || !!state.session.problem || !!state.session.pending || state.session.effects?.state === 'reserved';
-  $('stop').disabled = !state.busy || !!state.session?.pendingRestore;
+  $('send').disabled ||= !state.session || !!state.session.problem || !!state.session.pending || state.session.effects?.state === 'reserved' || state.session.toolAwaitingResponse || pendingCalls().length > 0;
+  const active = state.busy || state.session?.record?.state === 'busy';
+  $('send').hidden = active; $('stop').hidden = !active;
+  $('stop').disabled = !active || !!state.session?.pendingRestore || (state.stop && state.busy);
+  $('status').textContent = state.stop && state.busy ? 'Stopping' : phase || (state.busy ? 'Recovering' : state.session?.record?.state === 'busy' ? 'Generating' : state.session?.problem || state.session?.toolPause === 'error' || state.session?.effects?.state === 'reserved' ? 'Error' : state.runtime?.status === 'ready' ? 'Ready' : ['error', 'unreachable', 'unavailable'].includes(state.runtime?.status) ? 'Error' : 'Recovering');
+  const locked = !!state.session?.protocol;
+  if (locked) { const effort = state.session.protocol.reasoning; $('thinking').value = effort === 'none' ? 'off' : 'on'; if (effort !== 'none') $('reasoning').value = ({minimal: 'low', medium: 'high', xhigh: 'high'}[effort] || effort); }
+  $('thinking').disabled = locked || state.busy;
+  $('reasoning').disabled = locked || state.busy || $('thinking').value === 'off';
+  $('thinkLabel').textContent = $('thinking').value === 'off' ? 'Think Off' : 'Think ' + ({low: 50, high: 75, xhigh: 75, max: 100}[$('reasoning').value] || 75);
+  $('thinkingLock').textContent = locked ? 'Locked for this conversation. Start a new chat to change.' : '';
+  $('toolsLabel').textContent = 'Tools ' + {auto: 'Auto', ask: 'Ask', off: 'Off'}[$('toolsMode').value];
+  $('discardPending').hidden = !state.session?.pending || !state.session?.problem;
+  $('skipTools').hidden = !state.session || !pendingCalls().length || !!state.session.problem;
+  $('diagnostics').textContent = JSON.stringify({runtime: state.runtime, session: state.session?.record, count: state.session?.count, pending: state.session?.pending, effects: state.session?.effects, persistence: state.session?.pendingRestore}, null, 2);
+  termination();
 }
 async function menus() {
-  const sessions = await ChatStore.all('sessions');
   $('sessions').replaceChildren();
-  for (const session of sessions) {
+  for (const session of state.session ? [state.session] : []) {
     const option = document.createElement('option'); option.value = session.id;
     option.textContent = session.title || session.id; option.selected = session.id === state.session?.id;
     $('sessions').appendChild(option);
   }
+  if (!$('settingsDialog').open) return;
+  const selected = $('saves').value;
   $('saves').replaceChildren();
-  for (const item of await ChatStore.all('saves')) {
+  for (const item of await ChatStore.metadata('saves')) {
     const option = document.createElement('option'); option.value = item.id;
-    option.textContent = `${item.title} · ${new Date(item.savedAt).toLocaleString()} · frontier ${item.frontier}`;
+    option.textContent = `${item.title} · ${new Date(item.savedAt).toLocaleString()}`; option.selected = item.id === selected;
     $('saves').appendChild(option);
   }
 }
 function render() {
-  $('messages').replaceChildren();
+  layoutScrollUntil = performance.now() + 200;
+  const main = $('messages'), top = main.scrollTop;
+  const anchor = [...main.querySelectorAll('article[data-index]')].find(node => node.offsetTop + node.offsetHeight >= top + main.offsetTop);
+  const anchorIndex = anchor?.dataset.index, anchorOffset = anchor ? anchor.offsetTop - top : 0;
+  const liveReasoningOpen = !!(liveNode?.isConnected && liveNode.querySelector('.reasoning')?.open);
+  const open = new Map([...main.querySelectorAll('article')].map(node => [node.dataset.index, {reasoning: !!node.querySelector('.reasoning')?.open, toolcall: !!node.querySelector('.toolcall')?.open}]));
+  const fragment = document.createDocumentFragment();
+  const keep = new Set();
   const messages = state.session?.messages || [];
   const start = Math.max(0, messages.length - visible);
   if (start) {
     const older = document.createElement('button'); older.textContent = `Show 100 earlier messages (${start} hidden)`;
-    older.onclick = () => { visible += 100; render(); }; $('messages').appendChild(older);
+    older.onclick = () => { scrollIntentUntil = 0; follow = false; visible += 100; render(); }; fragment.appendChild(older);
   }
+  const toolResults = new Map(messages.filter(m => m.role === 'tool').map(m => [m.tool_call_id, m]));
   for (let index = start; index < messages.length; index++) {
-    const node = ChatRender.message($('messages'), messages[index]);
-    if (state.session.interruptions?.includes(index)) {
-      const label = document.createElement('div'); label.className = 'small';
-      label.textContent = 'Interrupted · canonical committed partial response'; node.appendChild(label);
+    if (messages[index].role === 'tool') continue;
+    const key = index;
+    let display = messages[index], interrupted = state.session.interruptions?.includes(index), interruptionIndex = interrupted ? index : -1, limited = state.session.endings?.[index] === 'length' && !interrupted;
+    if (display.role === 'assistant') {
+      const group = [display];
+      while (index + 1 < messages.length && ['assistant', 'tool'].includes(messages[index + 1].role)) {
+        index++; if (messages[index].role === 'assistant') group.push(messages[index]);
+        if (state.session.interruptions?.includes(index)) { interrupted = true; interruptionIndex = index; } limited ||= state.session.endings?.[index] === 'length' && !state.session.interruptions?.includes(index);
+      }
+      display = {role: 'assistant', content: group.map(m => m.content || '').filter(Boolean).join('\n\n'), reasoning_content: group.map(m => m.reasoning_content || '').filter(Boolean).join('\n\n'), tool_calls: group.flatMap(m => m.tool_calls || [])};
     }
+    const lateStop = state.session.lateStops?.includes(interruptionIndex), userStopped = state.session.interruptionKinds?.[interruptionIndex] === 'user';
+    const results = (display.tool_calls || []).map(call => toolResults.get(call.id)).filter(Boolean);
+    // User payloads are immutable; avoid serializing historical original image bytes on each paint boundary.
+    const fingerprint = display.role === 'user' ? (typeof display.content === 'string' ? state.session.id + ':' + key + ':' + display.content : display.content) : JSON.stringify([display, results, interrupted, lateStop, userStopped, limited]);
+    let entry = rendered.get(key);
+    if (!entry || entry.fingerprint !== fingerprint) {
+      const node = ChatRender.message(fragment, display, results); node.dataset.index = String(key);
+      for (const kind of ['reasoning', 'toolcall']) { const details = node.querySelector('.' + kind); if (details) details.open = open.get(String(key))?.[kind] || (kind === 'reasoning' && liveReasoningOpen && index === messages.length - 1); }
+      if (interrupted) { const label = document.createElement('div'); label.className = 'small'; label.textContent = lateStop ? 'Response completed before Stop took effect. Canonical committed state has been reconciled.' : (userStopped ? 'Stopped by user. ' : 'Response interrupted. ') + 'Canonical committed state has been reconciled; a small committed suffix may have been recovered.'; node.appendChild(label); }
+      if (limited) { const label = document.createElement('div'); label.className = 'small'; label.textContent = 'Output limit reached.'; node.appendChild(label); }
+      entry = {node, fingerprint}; rendered.set(key, entry);
+    }
+    fragment.appendChild(entry.node); keep.add(key);
   }
-  if (state.live) ChatRender.message($('messages'), state.live);
+  for (const index of rendered.keys()) if (!keep.has(index)) rendered.delete(index);
+  if (state.live) { liveNode = ChatRender.message(fragment, state.live, [], true); liveNode.querySelector('.reasoning').open = liveReasoningOpen; }
   else if (state.session?.visibleUnsettled) {
-    const node = ChatRender.message($('messages'), state.session.visibleUnsettled);
+    const node = ChatRender.message(fragment, state.session.visibleUnsettled);
     const label = document.createElement('div'); label.className = 'error';
-    label.textContent = 'Unsettled / unrecoverable visible output · display only, NOT tool execution permission';
+    label.textContent = 'This partial response is unconfirmed. See the recovery actions below.';
     node.appendChild(label);
   }
-  controls();
+  if (!messages.length && !state.live) { const empty = document.createElement('div'); empty.className = 'empty'; empty.textContent = 'What can I help with?'; fragment.appendChild(empty); }
+  main.replaceChildren(fragment);
+  const restoredAnchor = anchorIndex === undefined ? null : main.querySelector(`article[data-index="${anchorIndex}"]`);
+  main.scrollTop = !follow && restoredAnchor ? restoredAnchor.offsetTop - anchorOffset : top;
+  controls(); followLatest();
 }
+function termination() {
+  document.querySelectorAll('.termination').forEach(node => node.remove());
+  const s = state.session; if (!s || state.busy) return;
+  let label = '', actions = [];
+  if (['unrecoverable', 'closed'].includes(s.record?.state)) { label = 'This conversation cannot safely continue. Start a new chat or restore a saved state.'; actions = [['New chat', () => $('newSession').click()], ['Recovery', () => $('settingsDialog').showModal()]]; }
+  else if (s.record?.state === 'busy') { label = 'The response is still running. Wait for it to settle or Stop.'; actions = [['Reconcile', () => $('reconnect').click()], ['Stop', () => $('stop').click()]]; }
+  else if (s.pendingRestore) { label = 'Restore is not yet confirmed. It will not be automatically repeated.'; actions = [['Reconcile', () => $('reconnect').click()], ['Details', () => $('settingsDialog').showModal()]]; }
+  else if (s.problem || s.pending) { label = 'The last request has an uncertain outcome. The runtime will not automatically retry it.'; actions = [['Reconcile', () => $('reconnect').click()], ['Details', () => $('settingsDialog').showModal()]]; }
+  else if (s.effects?.state === 'reserved') { label = (s.toolError ? 'Tool failed: ' + s.toolError + '. ' : '') + 'Tool outcome unavailable. It will not be retried.'; actions = [['Continue without result', () => $('skipTools').click()], ['Details', () => $('settingsDialog').showModal()]]; }
+  else if (s.toolPause === 'error') { label = 'Tool failed: ' + (s.toolError || 'Result unavailable'); actions = [['Continue without result', () => $('skipTools').click()]]; if (!pendingCalls().length) actions = [['Continue without result', continueResponse]]; }
+  else if (pendingCalls().length) {
+    label = s.toolPause === 'ceiling' ? `Tool execution paused after ${s.toolRounds} rounds.` : s.toolPause === 'stopped' ? 'Tool workflow stopped. Pending tools have not been run.' : s.interrupted ? 'Stopped by user. Requested tools have not been run.' : $('toolsMode').value === 'ask' ? 'Allow requested tools to run?' : 'Tool execution paused.';
+    actions = [['Continue tools', continueTools], ['Stop', pauseTools], ['Continue without result', () => $('skipTools').click()]];
+  } else if (s.toolAwaitingResponse) { label = s.interrupted ? 'Stopped by user. Tool results were received safely.' : 'Tool results received. Continue the response?'; actions = [['Continue tools', continueTools]];
+  } else if (s.finishReason === 'length' && !s.interrupted) { label = 'Output limit reached.'; actions = [['Continue response', continueResponse]]; }
+  if (!label) return;
+  const parent = [...$('messages').querySelectorAll('.assistant')].pop() || $('messages');
+  const box = document.createElement('div'); box.className = 'termination'; const message = document.createElement('div'); message.textContent = label; box.appendChild(message);
+  for (const [name, action] of actions) { const button = document.createElement('button'); button.type = 'button'; button.textContent = name; button.onclick = action; box.appendChild(button); }
+  parent.appendChild(box);
+}
+async function pauseTools() { await exclusive(async () => { state.session.toolPause = 'stopped'; state.session.interrupted = true; await save(); }); }
+async function continueResponse() { await exclusive(async () => { await reconcile(); if (state.stop) { notice('Stopped before continuing.'); return; } if (state.session.problem || state.session.pending || pendingCalls().length || state.session.effects?.state === 'reserved') throw new Error('Reconcile the current outcome first'); state.session.toolPause = ''; await generate(); await toolLoop(); }); }
+async function continueTools() { await exclusive(async () => { await reconcile(); if (state.stop) { notice('Stopped before continuing tools.'); return; } const s = state.session; if (s.problem || s.pending || s.effects?.state === 'reserved') throw new Error('Reconcile the tool outcome first'); if (s.toolAwaitingResponse && !pendingCalls().length) await generate(); await toolLoop(true); }); }
 async function select(id) {
   state.session = await ChatStore.get('sessions', id);
   localStorage.setItem('ds41f.selected', id);
-  visible = 100; state.attachments = [];
-  $('reasoning').value = state.session?.protocol?.reasoning || 'none';
+  visible = 100; state.attachments = []; rendered.clear(); follow = true;
+  const reasoning = state.session?.protocol?.reasoning;
+  if (reasoning) { $('thinking').value = reasoning === 'none' ? 'off' : 'on'; $('reasoning').value = reasoning === 'none' ? 'high' : reasoning === 'xhigh' ? 'high' : reasoning; }
   preview(); render();
-  await reconcile(); await menus();
+  state.busy = true; setPhase('Recovering');
+  try { await reconcile(true); } finally { state.busy = false; phase = ''; controls(); }
+  await menus();
 }
 async function status() {
   const result = await api('/api/status');
   state.tools = result.tools || []; state.runtime = result.runtime;
-  $('status').textContent = `Runtime ${result.runtime.status}${result.runtime.error ? ': ' + result.runtime.error : ''} · tools: ${state.tools.map(x => x.function.name).join(', ')}`;
+  controls();
 }
 function appendResults(result) {
   const s = state.session;
@@ -76,6 +166,9 @@ function appendResults(result) {
     if (!s.messages.some(m => m.role === 'tool' && m.tool_call_id === message.tool_call_id)) s.messages.push(message);
   }
   s.effects = {count: s.count, state: 'completed'};
+  s.toolAwaitingResponse = true;
+  const failure = result.results?.find(item => item.error);
+  s.toolPause = failure ? 'error' : ''; s.toolError = failure ? (typeof failure.error === 'string' ? failure.error : JSON.stringify(failure.error)) : '';
 }
 async function reconcile(wait = false) {
   const s = state.session;
@@ -100,10 +193,14 @@ async function reconcile(wait = false) {
       const turn = rec.last_turn;
       if (s.pending.nonce !== turn?.application_request_id || (s.pending.requestId && s.pending.requestId !== turn?.request_id)) throw new Error('Request identity mismatch; application history cannot be reconciled');
       if (!turn?.response_json) throw new Error('No canonical response for pending turn');
+      const userStop = state.stop || !!s.pending.userStopRequested;
       s.messages.push(turn.response_json.choices[0].message);
-      if (turn.cancelled) { s.interruptions ||= []; s.interruptions.push(s.messages.length - 1); }
+      s.toolAwaitingResponse = false;
+      s.finishReason = turn.response_json.choices[0].finish_reason;
+      s.endings ||= {}; s.endings[s.messages.length - 1] = turn.cancelled ? 'cancelled' : s.finishReason;
+      if (turn.cancelled || userStop) { s.interruptions ||= []; s.interruptions.push(s.messages.length - 1); s.interruptionKinds ||= {}; s.interruptionKinds[s.messages.length - 1] = userStop ? 'user' : 'interrupted'; if (!turn.cancelled) { s.lateStops ||= []; s.lateStops.push(s.messages.length - 1); } }
       s.count = rec.request_count; s.pending = null; s.problem = ''; s.visibleUnsettled = null;
-      s.interrupted = !!turn.cancelled;
+      s.interrupted = !!turn.cancelled || userStop;
       notice(turn.cancelled ? 'Interrupted at a committed transaction. Canonical response recovered from runtime.' : '');
     } else if (rec.request_count !== s.count) {
       s.problem = 'Runtime/application turn count differs. Missing ordinary history; continuation disabled (no replay).';
@@ -130,40 +227,40 @@ async function exclusive(action) {
   const name = 'ds41f.session.' + (state.session?.id || 'lifecycle');
   await navigator.locks.request(name, {ifAvailable: true}, async lock => {
     if (!lock) throw new Error('Another browser tab is using this conversation');
-    state.busy = true; state.stop = false; controls();
+    state.busy = true; state.stop = false; phase = 'Recovering'; controls();
     try {
       if (state.session) state.session = await ChatStore.get('sessions', state.session.id);
       await action();
     } catch (error) { notice(error.message); }
-    finally { state.busy = false; state.controller = null; state.live = null; controls(); await menus(); }
+    finally { state.busy = false; phase = ''; state.controller = null; state.live = null; controls(); followLatest(); await menus(); }
   });
 }
 function settings() {
-  const temperature = {precise: 0, balanced: .6, creative: .9}[$('preset').value];
-  const max_tokens = Number($('maxTokens').value), top_p = Number($('topP').value);
-  if (!Number.isInteger(max_tokens) || max_tokens < 1 || max_tokens > 4096 || !Number.isFinite(top_p) || top_p < 0 || top_p > 1) throw new Error('Invalid output budget or top-p');
-  return {temperature, top_p, max_tokens, reasoning_effort: $('reasoning').value};
+  const temperature = Number($('temperature').value);
+  const hasImages = state.attachments.length > 0 || state.session?.messages.some(m => Array.isArray(m.content) && m.content.some(p => p.type === 'image_url'));
+  const max_tokens = $('outputLimit').value === 'auto' ? (hasImages ? 1024 : 8192) : Number($('maxTokens').value), top_p = Number($('topP').value);
+  if (!Number.isInteger(max_tokens) || max_tokens < 1 || max_tokens > 4294967295 || !Number.isFinite(temperature) || temperature < 0 || !Number.isFinite(top_p) || top_p < 0 || top_p > 1) throw new Error('Invalid temperature, output budget or top-p');
+  return {temperature, top_p, max_tokens, reasoning_effort: $('thinking').value === 'off' ? 'none' : $('reasoning').value};
 }
 async function generate() {
   const s = state.session;
-  s.protocol ||= {tools: state.tools, reasoning: $('reasoning').value};
-  const request = {model: 'deepseek-v4.1-flash', messages: s.messages, stream: true, ...settings(),
+  const options = settings();
+  s.protocol ||= {tools: state.tools, reasoning: options.reasoning_effort};
+  const request = {model: 'deepseek-v4.1-flash', messages: s.messages, stream: true, ...options,
     reasoning_effort: s.protocol.reasoning, tools: s.protocol.tools, tool_choice: 'auto'};
   // Recipe tool declarations are part of the historical prompt prefix. Keep
-  // them stable; the checkbox controls client execution, not prefix rewriting.
+  // them stable; Tools mode controls client execution, not prefix rewriting.
   s.pending ||= {base: s.count, requestId: null, nonce: crypto.randomUUID(), addedUser: false};
   await save(); // frozen ordinary history durable BEFORE request/effect
   state.controller = new AbortController();
   s.visibleUnsettled = null;
   state.live = {role: 'assistant', content: '', reasoning_content: ''};
-  let liveNode = ChatRender.message($('messages'), state.live), lastPaint = 0;
-  const paint = () => {
-    const expanded = [...liveNode.querySelectorAll('details')].map(node => node.open);
-    const parent = document.createElement('div'); const next = ChatRender.message(parent, state.live);
-    [...next.querySelectorAll('details')].forEach((node, index) => { node.open = expanded[index] || false; });
-    liveNode.replaceWith(next); liveNode = next;
-  };
+  liveNode = ChatRender.message($('messages'), state.live, [], true);
+  setPhase('Generating');
+  // Append to persistent text nodes while streaming; Markdown parses once at settlement.
+  const paintTimer = setInterval(() => { if (state.live) { ChatRender.updateLive(liveNode, state.live); followLatest(); } }, 80);
   try {
+    if (state.stop) throw new Error('Stopped before request submission. No request was retried.');
     const response = await fetch('/api/stream', {method: 'POST', headers: {'content-type': 'application/json'},
       body: JSON.stringify({session_id: s.id, expected_count: s.count, application_id: s.pending.nonce, request}), signal: state.controller.signal});
     if (!response.ok) { const data = await response.json(); throw new Error(data.error?.message || response.statusText); }
@@ -184,7 +281,7 @@ async function generate() {
         if (call.function?.name) item.function.name += call.function.name;
         if (call.function?.arguments) item.function.arguments += call.function.arguments;
       }
-      if (performance.now() - lastPaint > 50) { paint(); lastPaint = performance.now(); }
+      // Painting is independent of token cadence and does not rebuild the response DOM.
     }
     while (true) {
       const chunk = await reader.read(); if (chunk.done) break;
@@ -198,6 +295,7 @@ async function generate() {
     notice(error.name === 'AbortError' ? 'Stop/disconnect requested; waiting for canonical settlement…' : error.message);
   }
   finally {
+    clearInterval(paintTimer); setPhase(state.stop ? 'Stopping' : 'Recovering');
     const visibleOutput = state.live; state.live = null;
     try { await reconcile(true); }
     finally {
@@ -209,42 +307,53 @@ async function generate() {
 }
 function pendingCalls() {
   const s = state.session;
-  const last = [...s.messages].reverse().find(m => m.role === 'assistant');
+  const last = [...(s?.messages || [])].reverse().find(m => m.role === 'assistant');
   return (last?.tool_calls || []).filter(call => !s.messages.some(m => m.role === 'tool' && m.tool_call_id === call.id));
 }
-async function toolLoop() {
-  if (!$('toolsEnabled').checked) {
-    if (pendingCalls().length) notice('Client tool execution paused. Enable execution and run requested tools, or return explicit unavailable results.');
-    return;
-  }
-  for (let round = 0; round < 4 && !state.stop; round++) {
+async function toolLoop(explicit = false) {
+  const s = state.session;
+  if (!pendingCalls().length) return;
+  if (!explicit && $('toolsMode').value !== 'auto') { s.toolPause = 'approval'; await save(); return; }
+  if (explicit && $('toolsMode').value === 'off') { notice('Tools are Off. Choose Ask or Auto to execute them.'); return; }
+  const ceiling = Number($('toolCeiling').value);
+  if (!Number.isInteger(ceiling) || ceiling < 1 || ceiling > 128) throw new Error('Tool ceiling must be 1–128 rounds');
+  s.toolPause = ''; s.toolRounds = 0;
+  for (let round = 0; round < ceiling && !state.stop; round++) {
     const calls = pendingCalls(); if (!calls.length || state.session.problem) return;
+    if ($('toolsMode').value === 'off') { s.toolPause = 'approval'; await save(); return; }
     if (state.session.effects?.state === 'reserved') { notice('Tool reservation is uncertain; no automatic re-execution'); return; }
-    notice('Calling: ' + calls.map(c => c.function.name).join(', '));
+    setPhase('Using tool'); notice(calls.some(c => c.function.name === 'web_search') ? 'Searching web…' : 'Fetching URL…');
     state.session.effects = {count: state.session.count, state: 'reserved'}; await save();
-    const result = await api('/api/tools', 'POST', {session_id: state.session.id, request_count: state.session.count});
-    appendResults(result); await save(); render();
-    for (const display of result.results) ChatRender.activity($('messages'), display);
-    if (state.stop) return;
+    let result;
+    try { result = await api('/api/tools', 'POST', {session_id: state.session.id, request_count: state.session.count}); }
+    catch (error) { s.toolPause = 'error'; s.toolError = error.message; await save(); throw error; }
+    appendResults(result); s.toolRounds = round + 1; await save(); render(); notice('');
+    const failed = result.results?.find(item => item.error);
+    if (failed) { s.toolPause = 'error'; s.toolError = typeof failed.error === 'string' ? failed.error : JSON.stringify(failed.error); await save(); return; }
+    if (state.stop) { s.interrupted = true; s.interruptions ||= []; const index = s.messages.findLastIndex(m => m.role === 'assistant'); if (!s.interruptions.includes(index)) s.interruptions.push(index); s.interruptionKinds ||= {}; s.interruptionKinds[index] = 'user'; await save(); render(); return; }
     await generate();
+    if ($('toolsMode').value === 'ask' && pendingCalls().length) { s.toolPause = 'approval'; await save(); return; }
   }
-  if (pendingCalls().length && !state.stop) notice('Client tool round limit reached; requested tools were not re-executed. Continue explicitly.');
+  if (pendingCalls().length && !state.stop) { s.toolPause = 'ceiling'; await save(); }
+  if (state.stop) { s.interrupted = true; await save(); }
 }
 async function send() {
   const text = $('input').value.trim();
   if (!text && !state.attachments.length) return;
   await exclusive(async () => {
-    await reconcile();
+    settings(); await reconcile();
+    if (state.stop) { notice('Stopped before sending. Your draft was kept.'); return; }
     const s = state.session;
     if (s.problem || s.pending || s.effects?.state === 'reserved') throw new Error(s.problem || 'Unresolved application request/effect');
-    if (pendingCalls().length) throw new Error('Resolve outstanding canonical tool calls before another user turn');
+    if (pendingCalls().length || s.toolAwaitingResponse) throw new Error('Continue the pending tool response before another user turn');
     const parts = [];
     if (text) parts.push({type: 'text', text});
     for (const file of state.attachments) parts.push({type: 'image_url', image_url: {url: file.url}});
+    s.toolPause = ''; s.toolError = ''; s.interrupted = false;
     s.messages.push({role: 'user', content: state.attachments.length ? parts : text});
     s.title ||= text.slice(0, 60) || 'Image conversation';
     s.pending = {base: s.count, requestId: null, nonce: crypto.randomUUID(), addedUser: true};
-    await save(); $('input').value = ''; state.attachments = []; preview(); render();
+    await save(); $('input').value = ''; resizeInput(); state.attachments = []; follow = true; preview(); render();
     await generate(); await toolLoop();
   });
 }
@@ -269,10 +378,11 @@ async function attach(files) {
       });
       additions.push({name: file.name, url, width, height}); // original bytes, no conversion
     }
-    state.attachments.push(...additions); preview(); notice('Original image bytes attached. Runtime validates animation/container/context before admission.');
+    state.attachments.push(...additions); preview(); notice('');
   } catch (error) { notice(error.message); }
 }
 function preview() {
+  layoutScrollUntil = performance.now() + 200;
   $('attachments').replaceChildren();
   state.attachments.forEach((file, index) => {
     const box = document.createElement('div'), image = document.createElement('img'), remove = document.createElement('button');
@@ -283,24 +393,38 @@ function preview() {
 }
 $('composer').onsubmit = event => { event.preventDefault(); send().catch(error => notice(error.message)); };
 $('images').onchange = async event => { await attach([...event.target.files]); event.target.value = ''; };
-$('input').ondragover = event => event.preventDefault();
-$('input').ondrop = event => { event.preventDefault(); attach([...event.dataTransfer.files]); };
+$('images').closest('label').onkeydown = event => { if (['Enter', ' '].includes(event.key)) { event.preventDefault(); if (!state.busy) $('images').click(); } };
+$('composer').ondragover = event => event.preventDefault();
+$('composer').ondrop = event => { event.preventDefault(); attach([...event.dataTransfer.files]); };
+$('input').onpaste = event => { const files = [...event.clipboardData.items].filter(item => item.kind === 'file').map(item => item.getAsFile()).filter(Boolean); if (files.length) { event.preventDefault(); attach(files); } };
+function resizeInput() { layoutScrollUntil = performance.now() + 200; $('input').style.height = 'auto'; $('input').style.height = Math.min(190, $('input').scrollHeight) + 'px'; }
+$('input').oninput = resizeInput;
+let composing = false;
+$('input').addEventListener('compositionstart', () => { composing = true; });
+$('input').addEventListener('compositionend', () => { composing = false; });
+$('input').onkeydown = event => { if (event.key === 'Enter' && !event.shiftKey && !event.isComposing && !composing && event.keyCode !== 229) { event.preventDefault(); if (!state.busy && !$('send').disabled) $('composer').requestSubmit(); } };
 $('stop').onclick = async () => {
-  state.stop = true;
+  state.stop = true; setPhase('Stopping'); notice('Waiting for safe cancellation boundary…');
   const s = state.session;
+  if (s?.pending) { s.pending.userStopRequested = true; try { await save(); } catch (_) { notice('Could not record Stop intent. Requesting safe cancellation…'); } }
   try {
     const id = s?.pending?.requestId || (await api(path(s.id))).active_request_id;
     if (id) await api(path(s.id) + '/cancel', 'POST', {request_id: id});
   } catch (error) { notice('Stop: ' + error.message + '; reconciling via GET'); }
-  finally { state.controller?.abort(); }
+  finally { state.controller?.abort(); if (!state.busy) await exclusive(async () => { await reconcile(true); }); }
 };
 $('newSession').onclick = () => exclusive(async () => {
+  if (state.session) {
+    if (!confirm('Start a new chat?\n\nThe current native conversation will be closed.' + (state.session.pending || state.session.problem || state.session.effects?.state === 'reserved' ? '\nThe current outcome is unresolved. Closing retires it; it will not be retried.' : ''))) return;
+    try { await api(path(state.session.id), 'DELETE'); } catch (error) { if (error.status !== 404) throw error; }
+    await ChatStore.remove('sessions', state.session.id); state.session = null; localStorage.removeItem('ds41f.selected'); render();
+  }
   const rec = await api('/api/session', 'POST', {});
   await ChatStore.put('sessions', {id: rec.id, title: '', messages: [], count: 0, frontier: 0, problem: ''});
   await select(rec.id);
 });
 $('sessions').onchange = () => select($('sessions').value).catch(error => notice(error.message));
-$('reconnect').onclick = () => { if (!state.busy) exclusive(async () => { await status(); await reconcile(true); }); };
+$('reconnect').onclick = () => { if (!state.busy) return exclusive(async () => { await status(); await reconcile(true); }); };
 $('closeSession').onclick = () => exclusive(async () => {
   if (!state.session || !confirm('Close the native runtime session? Saved artifacts remain available.')) return;
   try { await api(path(state.session.id), 'DELETE'); } catch (error) { if (error.status !== 404) throw error; }
@@ -311,16 +435,21 @@ $('saveSession').onclick = () => exclusive(async () => {
   if (rec.state !== 'idle' || s.pending || s.problem || pendingCalls().length) throw new Error('Save requires a settled idle application/runtime frontier, with completed tool results');
   const result = rec.persisted_artifact?.frontier === s.frontier ? {artifact: rec.persisted_artifact} : await api(path(s.id) + '/persist', 'POST', {});
   if (result.artifact.frontier !== s.frontier) throw new Error('Native artifact frontier changed; application snapshot NOT paired. Reconcile before saving. Artifact: ' + result.artifact.path);
-  await ChatStore.put('saves', {id: s.id, title: s.title || s.id, messages: s.messages, interruptions: s.interruptions || [], protocol: s.protocol, frontier: s.frontier, artifact: result.artifact.path, savedAt: Date.now()});
+  await ChatStore.put('saves', {id: s.id, title: s.title || 'Conversation', messages: s.messages, interruptions: s.interruptions || [], interruptionKinds: s.interruptionKinds || {}, lateStops: s.lateStops || [], endings: s.endings || {}, finishReason: s.finishReason, interrupted: !!s.interrupted, toolAwaitingResponse: !!s.toolAwaitingResponse, toolPause: s.toolPause || '', toolError: s.toolError || '', toolRounds: s.toolRounds || 0, protocol: s.protocol, frontier: s.frontier, artifact: result.artifact.path, savedAt: Date.now()});
   notice('Saved native idle artifact and matching original-byte browser history. Later chat does not change this snapshot. Keep this browser storage: native artifacts do not contain historical image bytes.');
 });
 $('restoreSession').onclick = () => exclusive(async () => {
   if (state.session?.pendingRestore) throw new Error('An existing restore outcome is unresolved. Reconcile its known ID before another restore.');
   const snapshot = await ChatStore.get('saves', $('saves').value);
   if (!snapshot) throw new Error('Choose a saved session. Native artifacts alone do not contain ordinary image/history payloads.');
+  if (state.session) {
+    if (!confirm('Restore saved state?\n\nThe current native conversation will be closed. Unresolved outcomes will not be retried.')) return;
+    try { await api(path(state.session.id), 'DELETE'); } catch (error) { if (error.status !== 404) throw error; }
+    await ChatStore.remove('sessions', state.session.id); state.session = null; localStorage.removeItem('ds41f.selected');
+  }
   const id = 'sess_' + crypto.randomUUID().replaceAll('-', '');
   const journal = {id, title: snapshot.title + ' (restored)', messages: snapshot.messages,
-    interruptions: snapshot.interruptions || [], protocol: snapshot.protocol, count: 0,
+    interruptions: snapshot.interruptions || [], interruptionKinds: snapshot.interruptionKinds || {}, lateStops: snapshot.lateStops || [], endings: snapshot.endings || {}, finishReason: snapshot.finishReason, interrupted: !!snapshot.interrupted, toolAwaitingResponse: !!snapshot.toolAwaitingResponse, toolPause: snapshot.toolPause || '', toolError: snapshot.toolError || '', toolRounds: snapshot.toolRounds || 0, protocol: snapshot.protocol, count: 0,
     frontier: snapshot.frontier, pendingRestore: {frontier: snapshot.frontier, artifact: snapshot.artifact},
     problem: 'Restore pending; outcome must be reconciled before continuation'};
   await ChatStore.put('sessions', journal); // known standard-OFF session ID BEFORE restore I/O
@@ -337,15 +466,21 @@ $('discardPending').onclick = () => exclusive(async () => {
   if (s.pending.addedUser) s.messages.pop();
   s.pending = null; s.problem = ''; await save(); render(); notice('Unadmitted UI request discarded.');
 });
-$('runTools').onclick = () => exclusive(async () => { await reconcile(); await toolLoop(); });
-$('reasoning').onchange = () => {
-  if (state.session?.protocol && $('reasoning').value !== state.session.protocol.reasoning) {
-    $('reasoning').value = state.session.protocol.reasoning;
-    notice('Reasoning protocol is fixed for this history. Choose the desired mode before the first turn of a new session.');
-  }
+$('reasoning').onchange = $('thinking').onchange = () => {
+  const protocol = state.session?.protocol;
+  if (protocol) { $('thinking').value = protocol.reasoning === 'none' ? 'off' : 'on'; $('reasoning').value = protocol.reasoning === 'none' ? 'high' : protocol.reasoning === 'xhigh' ? 'high' : protocol.reasoning; }
+  controls(); persistPreferences();
 };
+$('toolsMode').onchange = () => { controls(); persistPreferences(); };
+$('settingsButton').onclick = async () => { $('settingsDialog').showModal(); try { await menus(); } catch (error) { notice(error.message); } };
+$('settingsClose').onclick = () => $('settingsDialog').close();
+$('outputLimit').onchange = () => { const custom = $('outputLimit').value === 'custom'; $('maxTokens').hidden = !custom; if (!custom && $('outputLimit').value !== 'auto') $('maxTokens').value = $('outputLimit').value; persistPreferences(); };
+function persistPreferences() { const values = {}; for (const id of ['temperature', 'topP', 'outputLimit', 'maxTokens', 'thinking', 'reasoning', 'toolsMode', 'toolCeiling']) values[id] = $(id).value; localStorage.setItem('ds41f.preferences', JSON.stringify(values)); }
+for (const id of ['temperature', 'topP', 'maxTokens', 'toolCeiling']) $(id).onchange = persistPreferences;
+$('resetGeneration').onclick = () => { $('temperature').value = '0'; $('topP').value = '0'; $('outputLimit').value = 'custom'; $('maxTokens').value = '128'; $('maxTokens').hidden = false; persistPreferences(); };
 $('skipTools').onclick = () => exclusive(async () => {
   await reconcile(); if (state.session.problem) throw new Error(state.session.problem);
+  if (state.stop) { notice('Stopped before continuing.'); return; }
   if (!confirm('Do not execute/retry these tools. Return explicit unavailable results to the model?')) return;
   for (const call of pendingCalls()) state.session.messages.push({role: 'tool', tool_call_id: call.id, content: JSON.stringify({error: 'Client tool result unavailable; NOT executed/retried by recovery'})});
   state.session.effects = {count: state.session.count, state: 'completed'}; await save(); render();
@@ -353,11 +488,12 @@ $('skipTools').onclick = () => exclusive(async () => {
 });
 (async () => {
   try {
+    try { const values = JSON.parse(localStorage.getItem('ds41f.preferences') || '{}'); for (const [id, value] of Object.entries(values)) if ($(id)) $(id).value = value; $('maxTokens').hidden = $('outputLimit').value !== 'custom'; } catch (_) { /* Corrupt presentation preferences do not authorize runtime work. */ }
     await status(); await menus();
     const id = localStorage.getItem('ds41f.selected');
     if (id && await ChatStore.get('sessions', id)) await select(id);
-    else notice('Create or select a conversation. Legacy localStorage transcripts are not automatically replayed.');
+    else { const rec = await api('/api/session', 'POST', {}); await ChatStore.put('sessions', {id: rec.id, title: '', messages: [], count: 0, frontier: 0, problem: ''}); await select(rec.id); }
     controls();
   } catch (error) { notice(error.message); }
 })();
-setInterval(() => status().catch(error => notice(error.message)), 10000);
+setInterval(() => status().catch(error => { state.runtime = {status: 'error', error: error.message}; controls(); notice('Cannot connect to runtime. Open Settings → Recovery to reconnect.'); }), 10000);

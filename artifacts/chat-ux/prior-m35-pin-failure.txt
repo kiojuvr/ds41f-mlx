@@ -1,0 +1,22 @@
+..............................................F................. [ 67%]
+...............................                                          [100%]
+=================================== FAILURES ===================================
+___________________ EvidenceTests.test_identity_and_sources ____________________
+
+self = <test_m35_http_evidence.EvidenceTests testMethod=test_identity_and_sources>
+
+    def test_identity_and_sources(self):
+        self.assertEqual(self.q['decision'], 'HTTP_SSE_QUALIFIED_BOUNDED_INTERNAL_SINGLETON')
+        self.assertEqual(self.http['status'], 'PASS')
+        self.assertEqual(self.q['identities']['status'], 'PASS')
+        for path, digest in self.q['source_hashes'].items():
+>           self.assertEqual(hashlib.sha256((ROOT/path).read_bytes()).hexdigest(), digest, path)
+E           AssertionError: '6821d84acb8c4538885ce93ec906c4410a31484b754339847df535f9cf111577' != '6a6169aaa54f635c3e5334e3f64307fcca76db6cf9d84d3d623f64c84dc1687b'
+E           - 6821d84acb8c4538885ce93ec906c4410a31484b754339847df535f9cf111577
+E           + 6a6169aaa54f635c3e5334e3f64307fcca76db6cf9d84d3d623f64c84dc1687b
+E            : ds41f_mlx/serving/internal_mtp.py
+
+tests/test_m35_http_evidence.py:23: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_m35_http_evidence.py::EvidenceTests::test_identity_and_sources
+1 failed, 94 passed, 8 subtests passed in 5.70s

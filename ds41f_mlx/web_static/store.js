@@ -18,7 +18,23 @@ window.ChatStore = (() => {
       transaction.onerror = () => reject(transaction.error || request.error);
     });
   }
+  async function metadata(name) {
+    const db = await opened;
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(name, 'readonly'), items = [];
+      const request = transaction.objectStore(name).openCursor();
+      request.onsuccess = () => {
+        const cursor = request.result; if (!cursor) return;
+        const value = cursor.value;
+        items.push({id: value.id, title: value.title, savedAt: value.savedAt});
+        cursor.continue(); // Keep only small labels, not every snapshot/image payload.
+      };
+      transaction.oncomplete = () => resolve(items);
+      transaction.onabort = transaction.onerror = () => reject(transaction.error || request.error);
+    });
+  }
   return {
+    metadata,
     all: name => operate(name, 'readonly', 'getAll'),
     get: (name, id) => operate(name, 'readonly', 'get', id),
     put: (name, value) => operate(name, 'readwrite', 'put', value),
