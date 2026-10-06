@@ -1,0 +1,83 @@
+{
+  "schema": "ds41f.tool_capability_audit.partial.v1",
+  "captured_at": "2026-10-06T14:10:05.392194+00:00",
+  "baseline": "c8e1ee5156418e5ac343023c6a5c9febda3ea59d",
+  "source_hashes": {
+    "ds41f_mlx/web_tools.py": "161ee01b4c8dbd6a325a3443d8b05e7068aeee1a685e237900a7b5aa36df5846",
+    "ds41f_mlx/web_budget.py": "c342db6376bccfd8f770bad0d281f4d55d735b8913844cfaa5769b60c0ea3d41",
+    "ds41f_mlx/web.py": "ac85d68228a8b1e6491fd89767d472b8c2e61b92bc519fe4920eee3b39652484",
+    "ds41f_mlx/web_client.py": "6689de6cd07fd4824bb3a653a936e44276453c9a0eccccbeeae9826925a10a00",
+    "ds41f_mlx/runtime/multimodal.py": "8f5501a0a02d1f334cd7f04c2a33506d6909e36618395864bef9cb03d71c88c0",
+    "ds41f_mlx/serving/capacity.py": "35c2e8391e4048421c3fe45757fbb313d1b239bef0798b48858636ce73e0cbf7",
+    "ds41f_mlx/web_static/app.js": "5a22eb4daff58d5055e574b96d7f49b81053fda59e76acfdf5e738f0fb4eb560",
+    "ds41f_mlx/web_static/store.js": "62301651c84c336902f3013d8cad9d222bad387b32d2d020ebc11626ce4968d0",
+    "ds41f_mlx/web_static/render.js": "4dbb59eb4f21f7833e26dd1189deec34519671ad8e5bfec1abad89fe4cd07f95",
+    "docs/tool-capability-completion.md": "c9e0ee48910073a61ad66603aa0ded3bfa55788ef379f3d9780b51629941bd6b",
+    "docs/dynamic-capability-budget.md": "16649e203f1fa562490758c1c8a26d997e7d6fe530f893febf85b4d19f324e74",
+    "docs/doc-classification.json": "0ef3b687d23cd5a2ecb069e7c25d276af37e101ccfad213914ee6280339035d2",
+    "docs/README.md": "27610b9195bfdaa4250bedab4d8437e9644072b70e9e6c5618b1900dc63af0a4",
+    "tools/qualify_tool_acquisition_audit.py": "4ee638c010559850307f079256535f92b5b73197f8471aea331500579b2de345",
+    "tests/test_web_acquisition.py": "ea532358f09137ad3db0d6eeb6ded868e1bbe85e615c9d1d716e7763c1306cc3",
+    "tests/test_m19_web_client.py": "51ef478c3cb9191c7834ad62234d9c142495bd99d027cdc4e585bb14ef38ce5f",
+    "tests/test_web_application_boundary.py": "f3409028a70213cee376df3dd38ce706c42e1ff0b0652812d7d29e6bd2a7b8ed",
+    "tests/test_web_budget.py": "b3bc27ecf038c1c5f643e3838dd035a1a78f115b811ab1f16ce20b10f36c2524",
+    "tests/test_runtime_capacity.py": "ffb7ada3f1e75fc6c32e1dde27d0927658e5662ef587eb8f30a092b186bcc7bf",
+    "tests/test_multimodal_contract.py": "1f247947863c52c92bc407e3a8a187555af8f1007f31827246b08c886d54b6e6",
+    "tests/test_multimodal_restore_ownership.py": "7de98a1e574b230c4739f8d6b98e6ce11226a20013ac3f40452ba84dd57e3ffd",
+    "tests/test_web_search_unusable.py": "2485410c0daf19e9e35b77c23426ab0681e6399b789411538ff7d87edbdb5f6b",
+    "tests/test_web_private_lan.py": "fa4bcd429cb4fd3f0a87cd6e62a690a3ff5bbe1d6094a9aacf2282c7b0ce9f05",
+    "tests/web_render.test.cjs": "11379e0d1d1fb378bab55558c89fbdff7b2be489b0ff2422bc243a109fbf0c9f",
+    "tests/web_platform.test.cjs": "1c6158ffcc7fb4895101b2ac63cd2bee23d5e493e9821a1df1e869529b65c5a1"
+  },
+  "source_stable": true,
+  "status": "CPU_REGRESSIONS_PASS_NOT_ACCEPTANCE",
+  "milestone_complete": false,
+  "results": [
+    {
+      "command": [
+        "/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_web_acquisition.py",
+        "tests/test_m19_web_client.py",
+        "tests/test_web_application_boundary.py",
+        "tests/test_web_budget.py",
+        "tests/test_runtime_capacity.py",
+        "tests/test_multimodal_contract.py",
+        "tests/test_multimodal_restore_ownership.py",
+        "tests/test_web_search_unusable.py",
+        "tests/test_web_private_lan.py"
+      ],
+      "returncode": 0,
+      "log": "checks-0.txt"
+    },
+    {
+      "command": [
+        "node",
+        "--test",
+        "tests/web_render.test.cjs",
+        "tests/web_platform.test.cjs"
+      ],
+      "returncode": 0,
+      "log": "checks-1.txt"
+    }
+  ],
+  "scope": "CPU transport/security/effect bookkeeping and admission regression tests; renderer tests",
+  "not_run": [
+    "real browser/runtime research",
+    "GPU Vision",
+    "PDF interpretation",
+    "binary reload/save/fresh restore",
+    "1M",
+    "full Vision",
+    "R1",
+    "release",
+    "promotion"
+  ],
+  "declared_tools": [
+    "web_search",
+    "fetch_url"
+  ],
+  "new_dependencies": []
+}

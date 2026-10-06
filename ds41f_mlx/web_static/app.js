@@ -24,7 +24,7 @@ function notice(value) { $('notice').textContent = String(value || ''); }
 async function api(url, method = 'GET', value) {
   const response = await fetch(url, {method, headers: {'content-type': 'application/json'}, body: value === undefined ? undefined : JSON.stringify(value)});
   const data = await response.json();
-  if (!response.ok) throw Object.assign(new Error(data.error?.message || response.statusText), {status: response.status});
+  if (!response.ok) throw Object.assign(new Error(data.error?.message || response.statusText), {status: response.status, code: data.error?.code, effectNotStarted: data.error?.effect_not_started});
   return data;
 }
 async function save() { if (state.session) await ChatStore.put('sessions', state.session); }
@@ -338,7 +338,7 @@ async function toolLoop(explicit = false) {
     state.session.effects = {count: state.session.count, state: 'reserved'}; await save();
     let result;
     try { result = await api('/api/tools', 'POST', {session_id: state.session.id, request_count: state.session.count, request: generationRequest()}); }
-    catch (error) { s.toolPause = 'error'; s.toolError = error.message; await save(); throw error; }
+    catch (error) { if (error.effectNotStarted) s.effects = null; s.toolPause = 'error'; s.toolError = error.message; await save(); throw error; }
     appendResults(result); s.toolRounds = round + 1; await save(); render(); notice('');
     if (result.budget_error) { s.capacityStop = result.budget_error; await save(); render(); return; }
     const failed = result.results?.find(item => item.error);

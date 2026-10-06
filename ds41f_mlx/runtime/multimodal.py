@@ -105,6 +105,44 @@ def image_bytes(source: Any) -> bytes:
     return data
 
 
+class ImageConstraintError(ValueError):
+    """Valid image outside the qualified Vision resource envelope."""
+
+
+def validate_encoded_image(data: bytes, media_type: str | None = None) -> dict:
+    """CPU validation shared by manual and acquired images; never transforms bytes.
+
+    Expanded positions and full-conversation capacity remain prepare/admission
+    authority. Verify the complete file, not merely its header dimensions.
+    """
+    from PIL import Image
+    if not isinstance(data, bytes) or not 0 < len(data) <= MAX_IMAGE_BYTES:
+        raise ImageConstraintError('empty or oversized image bytes')
+    magic = ('image/png' if data.startswith(b'\x89PNG\r\n\x1a\n') else
+             'image/jpeg' if data.startswith(b'\xff\xd8\xff') else
+             'image/webp' if data.startswith(b'RIFF') and data[8:12] == b'WEBP' else None)
+    if magic is None or media_type is not None and media_type.split(';', 1)[0].strip().lower() != magic:
+        raise ValueError('image MIME/magic mismatch or unsupported format')
+    with warnings.catch_warnings():
+        warnings.simplefilter('error', Image.DecompressionBombWarning)
+        with Image.open(BytesIO(data)) as image:
+            if image.format not in ('PNG', 'JPEG', 'WEBP'):
+                raise ValueError('unsupported image format')
+            if getattr(image, 'n_frames', 1) != 1:
+                raise ImageConstraintError('animated image outside the qualified single-frame Vision envelope')
+            if not 0 < image.width * image.height <= MAX_PIXELS:
+                raise ImageConstraintError(f'image pixel limit {MAX_PIXELS} exceeded ({image.width}x{image.height})')
+            if not 0.5 <= image.width / image.height <= 2.0:
+                raise ImageConstraintError('image aspect ratio outside supported 1:2..2:1 envelope')
+            metadata = dict(content_type=magic, width=image.width, height=image.height,
+                            sha256=sha256(data).hexdigest())
+            image.verify()
+        # verify() alone does not force JPEG/WebP pixel decoding.
+        with Image.open(BytesIO(data)) as image:
+            image.load()
+    return metadata
+
+
 def prepare_multimodal(token_ids: list[int], sources: list[Any], config: Any) -> MultimodalInput:
     from PIL import Image
     from ds41f_mlx.model_execution.processing import image_patch_array
@@ -122,6 +160,7 @@ def prepare_multimodal(token_ids: list[int], sources: list[Any], config: Any) ->
             continue
         data = image_bytes(next(sources))
         try:
+            validate_encoded_image(data)
             with warnings.catch_warnings():
                 warnings.simplefilter('error', Image.DecompressionBombWarning)
                 with Image.open(BytesIO(data)) as image:

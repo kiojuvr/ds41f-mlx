@@ -50,8 +50,10 @@ KV state, prompt replay or cache format is introduced. See
    assistant content; final content is reconciled from canonical GET, not timers.
 2. Continue normally. Full ordinary history is submitted for exact-prefix runtime
    admission, not re-prefilled or interpreted as execution state by the client.
-3. Enable **Execute search / URL tools** for search or public-page retrieval.
-   Provider, arguments/results, progress and durable source links are visible.
+3. Use **Tools Auto/Ask/Off** for public search, retained HTML, fetched
+   PNG/JPEG/WebP and selected PDF text/visual pages. Provider, progress and safe
+   source/filename/page disclosure are visible. See the source-specific
+   [Tool Capability Completion](tool-capability-completion.md) boundary.
 4. Attach original PNG/JPEG/WebP files, review previews, then Send. Later text
    turns keep the originals; add another image when needed.
 5. Stop uses the admitted server request ID and safe worker settlement. A small
@@ -126,9 +128,13 @@ unbounded snapshots. The first 100 messages are rendered by default, with explic
   inline parsing, fenced code Copy, collapsed reasoning/tools and HTTP(S) links
   without credentials. Original inline images only; no network image loading or
   image recompression by the client.
-- Existing `web_tools.py` guards are unchanged: public addresses/DNS only, pinned
-  retrieval, every redirect revalidated, bounded redirects/timeout/size/content
-  type/excerpt. Search/fetch are outside the runtime; no filesystem/shell tools.
+- Shared `web_tools.py` acquisition validates public DNS and actual peers before
+  GET, revalidates redirects and bounds transfer bytes/time/MIME metadata.
+  Original bytes and selected PDF interpretations are immutable retained
+  application material. Excerpts are policy defaults, not context ceilings;
+  complete-request runtime fitting is authoritative. PDF work is bounded in an
+  isolated process, with no action/form execution or attachment extraction.
+  Search/acquisition remain outside the runtime; no filesystem/shell tools.
 - Runtime is final image/request/sampling authority. UI preflight mirrors the
   qualified envelope: PNG/JPEG/WebP, 16 MiB/file, 4 MP, aspect 1:2..2:1, at most
   four historical images and 8192 consumed multimodal tokens including reserved

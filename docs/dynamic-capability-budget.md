@@ -1,5 +1,10 @@
 # Runtime-authoritative capability budget (standard-OFF)
 
+The separate [Tool Capability Completion milestone](tool-capability-completion.md)
+now has its own source-pinned retained HTML/image/PDF and real browser/Vision
+qualification. It does not inherit the historical source-specific PASS below,
+and does not promote R1/release or newly qualify maximum context envelopes.
+
 Production defaults expose supported capability, not smoke-test quotas. Dynamic
 capacity comes from runtime; ordinary defaults, resource/security hard ceilings
 and qualified model envelopes are different policies. No R1/release/promotion is

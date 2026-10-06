@@ -15,6 +15,9 @@ description = "DeepSeek-V4.1-Flash Apple Silicon runtime project"
 requires-python = ">=3.13,<3.14"
 dependencies = []
 
+[project.optional-dependencies]
+web-binary = ["pypdf==6.10.0", "pypdfium2==5.3.0"]
+
 [project.scripts]
 ds41f = "ds41f_mlx.ops:main"
 ds41f-serve = "ds41f_mlx.serve:main"

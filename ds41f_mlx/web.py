@@ -23,10 +23,12 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from anyio import CancelScope
 
 from ds41f_mlx.web_client import RuntimeClient, RuntimeHTTPError, StatefulToolChatClient
-from ds41f_mlx.web_tools import registry_from_env, ToolError
+from ds41f_mlx.web_tools import registry_from_env, ToolError, TOOL_CALL_BYTES, TOOL_RESULT_BYTES, _json_dumps
 
 STATIC_DIR = Path(__file__).with_name('web_static')
 MAX_BODY = 100 * 1024 * 1024
+MAX_LEDGER_BYTES = 256 * 1024 * 1024
+LEDGER_BATCH_RESERVATION = 2 * (TOOL_RESULT_BYTES + TOOL_CALL_BYTES)
 
 
 class WebStreamingResponse(StreamingResponse):
@@ -116,7 +118,7 @@ def create_app(*, runtime_base_url: str | None = None, allow_private_lan: bool =
 
     @app.exception_handler(ToolError)
     async def tool_error(_, exc):
-        return JSONResponse(status_code=400, content={'error': {'message': str(exc), 'type': 'tool_error'}})
+        return JSONResponse(status_code=400, content={'error': {'message': str(exc), 'type': 'tool_error', 'code': exc.code, 'effect_not_started': exc.code in {'resource_ceiling', 'tool_preflight_rejection'}}})
 
     @app.get('/')
     async def index(): return FileResponse(STATIC_DIR/'index.html')
@@ -212,13 +214,22 @@ def create_app(*, runtime_base_url: str | None = None, allow_private_lan: bool =
             if rec['state'] != 'idle' or rec['request_count'] != count or not cert.get('executable_tools'):
                 raise ToolError('tools require the settled executable canonical turn')
             calls = turn['response_json']['choices'][0]['message'].get('tool_calls') or []
-            if not 1 <= len(calls) <= 8: raise ToolError('tool batch must contain 1–8 calls')
+            if not calls or len(_json_dumps(calls).encode('utf-8')) > TOOL_CALL_BYTES:
+                raise ToolError('tool batch must be nonempty and within 1 MiB call serialization ceiling', code='resource_ceiling')
             identity = (count, turn['request_id'])
             entry = effects.get(sid)
             if entry is not None and entry['identity'] == identity:
-                if entry['result'] is None: raise ToolError('tool effect outcome uncertain; automatic retry forbidden')
+                if entry['result'] is None: raise ToolError('tool effect outcome uncertain; automatic retry forbidden', code='uncertain_external_effect_outcome')
                 return JSONResponse(content=entry['result'])
-            entry = effects[sid] = {'identity': identity, 'result': None}  # reserve before effects
+            # Invalid calls have no effect outcome to reserve/reconcile.
+            try:
+                await call(tools.validate_calls, calls)
+            except ToolError as exc:
+                raise ToolError(str(exc), code='tool_preflight_rejection') from exc
+            ledger_used = sum(e.get('reserved_bytes', LEDGER_BATCH_RESERVATION) for key, e in effects.items() if key != sid)
+            if ledger_used + LEDGER_BATCH_RESERVATION > MAX_LEDGER_BYTES:
+                raise ToolError('aggregate tool ledger resource ceiling; close other sessions before executing tools', code='resource_ceiling')
+            entry = effects[sid] = {'identity': identity, 'result': None, 'reserved_bytes': LEDGER_BATCH_RESERVATION}  # reserve before effects
             messages, displays = await call(tools.execute_calls, calls, session_id=sid)
             # Publish actual effects before any budget fitting can fail. Never
             # leave a completed download/search as an uncertain/retryable effect.
@@ -231,6 +242,7 @@ def create_app(*, runtime_base_url: str | None = None, allow_private_lan: bool =
                     entry['result'].update(messages=messages, results=displays, capacity=budget)
                 except (RuntimeHTTPError, ToolError) as error:
                     entry['result']['budget_error'] = str(error)
+            entry['reserved_bytes'] = len(_json_dumps(entry['source_results']).encode('utf-8')) + len(_json_dumps(entry['result']).encode('utf-8'))
             return JSONResponse(content=entry['result'])
 
     @app.post('/api/session/{session_id}/persist')
@@ -250,7 +262,7 @@ def create_app(*, runtime_base_url: str | None = None, allow_private_lan: bool =
         if not isinstance(value.get('message'), str) or not value['message'].strip(): raise ToolError('message required')
         result = await call(StatefulToolChatClient(runtime, tools).run_turn, session_id=value['session_id'],
             transcript=value.get('transcript') or [], user_message=value['message'],
-            max_tokens=int(value.get('max_tokens', 512)), temperature=float(value.get('temperature', 0)), tools_enabled=bool(value.get('tools_enabled', True)))
+            max_tokens=value.get('max_tokens', 'auto'), temperature=float(value.get('temperature', 0)), tools_enabled=bool(value.get('tools_enabled', True)))
         return JSONResponse(content=result.to_json())
 
     app.mount('/static', StaticFiles(directory=STATIC_DIR), name='static')

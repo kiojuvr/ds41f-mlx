@@ -212,14 +212,20 @@ Launch the qualified local runtime server:
 ~/.venvs/omlx-0.7.0.release/bin/python -m ds41f_mlx.ops start
 ```
 
-Launch the optional M19 browser client in a separate process:
+Install the PDF extra in the existing runtime environment, then launch the optional
+browser client in a separate process:
 
 ```bash
+python3 -m pip install '.[web-binary]'
 python3 -m ds41f_mlx.web --runtime-url http://127.0.0.1:8000
 ```
 
 The Web client is a single-current-conversation Chat interface above the canonical
-runtime API. Bounded search/fetch tools execute outside the model server. Everyday
+runtime API. Bounded search, retained HTML, original PNG/JPEG/WebP and selected
+PDF text/visual tools execute outside the model server. The source-pinned
+[Tool Capability Completion](docs/tool-capability-completion.md) gate includes
+real browser/Vision research and exact-history recovery; it is not R1, release
+or runtime promotion. Everyday
 UI, actual model-control mappings and the separate UX qualification gate are in
 [`docs/chat-interface.md`](docs/chat-interface.md); stateful recovery/persistence
 semantics are in [`docs/web-application.md`](docs/web-application.md).

@@ -27,6 +27,7 @@ Canonical current-state documents:
 - [API](api.md) — release-scope public HTTP contract
 - [Private LAN access](private-lan.md) — explicit network opt-in, HTTP browser fallback and HTTPS options
 - [Dynamic capability budget](dynamic-capability-budget.md) — actual-request Output Auto, context-aware fetch fitting and explicit runaway/resource boundaries
+- [Tool Capability Completion](tool-capability-completion.md) — source-pinned retained HTML/image/PDF, real browser/Vision research and recovery qualification; not R1/release/promotion
 - [Everyday Chat interface](chat-interface.md) — UX, actual model controls and browser qualification gate
 - [Stateful Web application](web-application.md) — canonical runtime, tools, Vision and persistence semantics
 - [M19 local web client](m19-local-web-client.md) — historical browser client and client-side tool boundary

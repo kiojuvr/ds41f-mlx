@@ -147,15 +147,15 @@ def test_m19_fetch_url_rejects_content_type_but_preserves_large_page_and_partial
     class ConnHuge(ConnBadType):
         def getresponse(self): return Resp("text/plain", b"x" * 80001)
     monkeypatch.setattr("http.client.HTTPSConnection", ConnHuge)
-    result = FetchURLTool().run({"url": "https://example.com/huge"})
+    result = FetchURLTool().run({"url": "https://example.com/huge", "length": 80001})
     assert len(json.loads(result.content)['excerpt']) == 80001
     class ConnResource(ConnBadType):
         def getresponse(self): return Resp('text/plain', b'x' * (8 * 1024 * 1024 + 1))
     monkeypatch.setattr('http.client.HTTPSConnection', ConnResource)
-    payload = json.loads(FetchURLTool().run({'url': 'https://example.com/huge'}).content)
-    assert payload['network_truncated'] and payload['resource_truncated']
-    assert len(payload['excerpt']) == 1024 * 1024
-    assert payload['next_offset'] == 1024 * 1024
+    payload = json.loads(FetchURLTool().run({'url': 'https://example.com/huge', 'length': 8 * 1024 * 1024}).content)
+    assert payload['network_truncated'] and not payload['resource_truncated']
+    assert len(payload['excerpt']) == 8 * 1024 * 1024
+    assert payload['next_offset'] == 8 * 1024 * 1024
 
 
 def test_fetch_deadline_applies_before_response_headers(monkeypatch):
@@ -197,7 +197,8 @@ def test_fetch_transfer_deadline_shuts_down_stalled_headers(monkeypatch):
             raise TimeoutError('expired')
         def close(self): closed.set()
     monkeypatch.setattr('http.client.HTTPSConnection', Conn)
-    with pytest.raises(TimeoutError): web_tools._read_public_url('https://example.com/', timeout=.02)
+    with pytest.raises(ToolError) as error: web_tools._read_public_url('https://example.com/', timeout=.02)
+    assert error.value.code == 'resource_ceiling'
     assert expired.is_set() and closed.is_set()
 
 

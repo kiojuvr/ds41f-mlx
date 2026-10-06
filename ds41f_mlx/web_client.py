@@ -125,7 +125,7 @@ class StatefulToolChatClient:
     def __init__(self, runtime: RuntimeClient, registry: ToolRegistry) -> None:
         self.runtime = runtime; self.registry = registry
 
-    def run_turn(self, *, session_id: str, transcript: list[dict[str, Any]], user_message: str, max_tokens: int = 512, temperature: float = 0.0, tools_enabled: bool = True, max_tool_rounds: int = 4) -> ChatLoopResult:
+    def run_turn(self, *, session_id: str, transcript: list[dict[str, Any]], user_message: str, max_tokens: int | str = 'auto', temperature: float = 0.0, tools_enabled: bool = True, max_tool_rounds: int = 128) -> ChatLoopResult:
         handshake = getattr(self.runtime, 'health', None)
         if handshake is not None and handshake().get('profile') == 'mtp-singleton-v1':
             raise ToolError('StatefulToolChatClient does not support the explicit local MTP profile')
