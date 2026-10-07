@@ -111,6 +111,7 @@ class TargetGenerationSession:
         return cls(model, cache, ids, cfg, sampler, max_tokens)
 
     def _consume(self, token):
+        self._require_unborrowed()
         # Publish history only after the all-layer mutation transaction commits.
         consumed, pending = self.target_forward.execute(
             token, self._cache, self.token_frontier, self.sampler, self.stream)
@@ -183,7 +184,16 @@ class TargetGenerationSession:
                 break
         return result
 
+    def _require_unborrowed(self):
+        if any(getattr(item, '_p6_append_invalid', False)
+               or getattr(item, '_p6_append_failed', False) for item in self._cache or ()):
+            self._failed = True
+        if any(getattr(item, '_accepted_prefix_journal', None) is not None
+               for item in self._cache or ()):
+            raise RuntimeError('generation publication/idle transfer during target borrow')
+
     def stop(self, reason='cancelled'):
+        self._require_unborrowed()
         if self._stopped:
             return
         self._stopped = True
@@ -225,6 +235,13 @@ class TargetGenerationSession:
 
     def close(self):
         try:
+            children = {getattr(item, '_accepted_prefix_journal', None)
+                        for item in self._cache or ()} - {None}
+            if children:
+                # Owner destruction cannot abandon a borrowed, executable list.
+                self._invalidate()
+                for child in children:
+                    child.burn()
             self.stop('closed')
         finally:
             self.initial_cache = []

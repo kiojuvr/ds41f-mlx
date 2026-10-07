@@ -7,8 +7,9 @@
 Only this producer receives mutable slots/shared publications. Loaded modules
 supply weights and stateless projections, norms and MoE; their Block, Attention,
 Compressor and Indexer calls are never invoked. Writes are tentative under the
-parent all-layer pending lease, not commits. No CED, replay, verification state,
-cache creation, recovery or alternate representation exists here.
+parent all-layer pending lease, not commits. Optional accepted-prefix journal
+hooks record bounded undo payloads on the same objects. No CED, replay, donor
+verification state, cache creation or alternate representation exists here.
 """
 
 
@@ -40,11 +41,13 @@ class DecodeStateProducer:
                 if value is None or value.shape[0] != 1 or value.shape[1] != length:
                     raise RuntimeError(f'owned state lifecycle mismatch layer {i} slot {slot}')
 
-    def compressor(self, module, x, cache, start):
+    def compressor(self, module, x, cache, start, journal=None, layer=None):
         mx, r = self.mx, module.ratio
         if r == 1:
             return module.norm(module.wkv(x))
         kv, gate = module.wkv(x.astype(mx.float32)), module.wgate(x.astype(mx.float32))
+        if journal is not None:
+            journal.compressor_write(layer, kv, gate)
         rem = start % r
         if rem:
             kv = mx.concatenate([cache[4][:, :rem], kv], 1)
@@ -99,7 +102,7 @@ class DecodeStateProducer:
         idx = mx.take_along_axis(candidates, order, -1)
         return mx.sort(mx.where(valid, idx, -1), -1)
 
-    def attention(self, module, x, cache, shared, start):
+    def attention(self, module, x, cache, shared, start, journal=None):
         mx, m = self.mx, self.math
         c, layer = module._config, module._layer
         ratio, length = c.compress_ratios[layer], x.shape[1]
@@ -113,6 +116,8 @@ class DecodeStateProducer:
         old = cache[1]
         old_len = min(start, c.window_size, 0 if old is None else int(old.shape[1]))
         kv = mx.concatenate([old[:, :old_len], new], 1) if old_len else new
+        if journal is not None:
+            journal.window_write(layer, old, c.window_size)
         cache[1] = kv[:, -c.window_size:]
         if start == 0:
             local = mx.maximum(positions[:, None] - c.window_size + 1, 0)
@@ -126,7 +131,7 @@ class DecodeStateProducer:
         if ratio:
             latent = None
             if layer in c.kv_source_layers:
-                latent = self.compressor(module.compressor, x, cache, start)
+                latent = self.compressor(module.compressor, x, cache, start, journal, layer)
                 if cache[2] is None:
                     cache[2] = m.pack_activation(mx.zeros((1, 0, c.head_dim), x.dtype),
                                                 bits=4, group_size=16, e4m3_scale=True)
@@ -145,9 +150,11 @@ class DecodeStateProducer:
         weight = module.wo_a.weight.reshape(c.o_groups, c.o_lora_rank, -1)
         return module.wo_b(mx.einsum('bsgd,grd->bsgr', grouped, weight).flatten(-2))
 
-    def block(self, module, h, pre, cache, shared, start):
+    def block(self, module, h, pre, cache, shared, start, journal=None):
         if not getattr(cache, '_p6_append_pending', False):
             raise RuntimeError('state production requires pending target lease')
+        if getattr(cache, '_accepted_prefix_journal', None) is not journal:
+            raise RuntimeError('state production outside borrowed journal')
         if getattr(cache, '_mtp_verify_state', None) is not None:
             raise RuntimeError('standard-off producer cannot mutate MTP verification state')
         if h.shape[:2] != (1, 1) or start < 0:
@@ -155,7 +162,7 @@ class DecodeStateProducer:
         m, c = self.math, module._config
         ap, ao, ac = m.hc_mixes(h, module.hc_attn_fn, module.hc_attn_scale, module.hc_attn_base, c)
         x = m.hc_pre_norm(h, pre, module.attn_norm.weight, module.attn_norm.eps)
-        h = m.hc_post(self.attention(module.attn, x, cache, shared, start), h, ao, ac)
+        h = m.hc_post(self.attention(module.attn, x, cache, shared, start, journal), h, ao, ac)
         fp, fo, fc = m.hc_mixes(h, module.hc_ffn_fn, module.hc_ffn_scale, module.hc_ffn_base, c)
         h = m.hc_post(module.ffn(m.hc_pre_norm(h, ap, module.ffn_norm.weight,
                                             module.ffn_norm.eps), None), h, fo, fc)

@@ -7,8 +7,10 @@
 No LanguageModel call, row extraction/merge, replay, or alternate cache. Owned
 state production uses admitted numerical/storage/SSD Engram primitive handles.
 A failed transaction burns every layer, including passive aliases; there is no
-rollback or resumable partially mutated state. M44 publishes history only after
-execute returns. Single-flight cancellation is observed between transactions.
+resumable partially mutated state. OFF execute retains its one-token contract;
+begin_prefix_journal supplies a separate bounded producer/settlement primitive,
+not a generation acceptance loop. M44 publishes history only after execute
+returns. Single-flight OFF cancellation is observed between transactions.
 """
 from contextlib import nullcontext
 
@@ -63,7 +65,11 @@ class TargetForwardTransaction:
             if mask is not None and not bool(self.mx.all(mask).item()):
                 raise ValueError('owned target cannot consume padded input')
 
-    def forward(self, token, cache, frontier):
+    def begin_prefix_journal(self, cache, frontier, bound, stream, *, fault=None):
+        from ds41f_mlx.runtime.accepted_prefix import AcceptedPrefixJournal
+        return AcceptedPrefixJournal(self, cache, frontier, bound, stream, fault)
+
+    def forward(self, token, cache, frontier, journal=None):
         """Sequence qualified primitives directly on the sole live cache list."""
         mx, model = self.mx, self.model
         c = model._config
@@ -88,7 +94,10 @@ class TargetForwardTransaction:
                     if prefetch is not None and ix + 1 < len(c.engram_layer_ids):
                         prefetch.submit(model.layers[c.engram_layer_ids[ix + 1]].engram.embed,
                                         hashes[:, :, ix + 1])
-                h, pre = self.producer.block(layer, h, pre, cache[i], shared, frontier)
+                if journal is None:
+                    h, pre = self.producer.block(layer, h, pre, cache[i], shared, frontier)
+                else:
+                    h, pre = self.producer.block(layer, h, pre, cache[i], shared, frontier, journal)
                 if prefetch is not None and 'engram' in layer:
                     mx.async_eval(h, pre)
                 cache[i][0] = mx.array([frontier + 1], mx.int32)

@@ -1,0 +1,33 @@
+0.0s loading admitted checkpoint
+321.0s independent OFF oracles complete
+329.4s cycle 0 accepted 8 PASS
+329.9s cycle 1 accepted 4 PASS
+330.5s cycle 2 accepted 1 PASS
+331.0s cycle 3 accepted 0 PASS
+331.6s cycle 4 accepted 6 PASS
+340.0s arbitrary prefix 1 PASS
+348.6s arbitrary prefix 2 PASS
+357.3s arbitrary prefix 3 PASS
+365.7s arbitrary prefix 4 PASS
+374.0s arbitrary prefix 5 PASS
+382.4s arbitrary prefix 6 PASS
+390.8s arbitrary prefix 7 PASS
+399.2s cancel after materialization=False PASS
+407.6s cancel after materialization=True PASS
+415.9s fault materialize-before/-1/-1 PASS
+424.3s fault materialize-after/-1/-1 PASS
+432.6s fault prepare/19/-1 PASS
+441.0s fault publish/0/1 PASS
+449.4s fault publish/19/4 PASS
+457.8s fault publish/39/lengths PASS
+466.2s fault publication-boundary/-1/-1 PASS
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m51_accepted_prefix.py", line 213, in <module>
+    save()
+    ^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m51_accepted_prefix.py", line 189, in main
+    assert all(x['replay'] == x['repack'] == 0 and x['handoffs'] == 1 for x in counters)
+                                      ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'EngramPrefetch' object has no attribute '_prefetched'
