@@ -1,0 +1,76 @@
+{
+  "schema": "ds41f.mtp.isolated-dispatch.v1",
+  "status": "PASS",
+  "input_description_sha256": "15ea417b93498274a52ab55a2ea76f813c2e297e251453b97f8c39a5783347d2",
+  "source": {
+    "cycle": 31,
+    "phase": "target_verify",
+    "operation": "packed_attention",
+    "shapes": [
+      [
+        1,
+        4,
+        64,
+        512
+      ],
+      [
+        1,
+        132,
+        528
+      ],
+      [
+        1,
+        413,
+        288
+      ],
+      [
+        1,
+        4,
+        128
+      ],
+      [
+        1,
+        4,
+        416
+      ],
+      [
+        64
+      ],
+      null
+    ],
+    "dtypes": [
+      "mlx.core.bfloat16",
+      "mlx.core.uint8",
+      "mlx.core.uint8",
+      "mlx.core.int32",
+      "mlx.core.int32",
+      "mlx.core.float32",
+      null
+    ],
+    "kwargs": {}
+  },
+  "calls": [
+    {
+      "shape": [
+        1,
+        4,
+        64,
+        512
+      ],
+      "output_shape": [
+        1,
+        4,
+        64,
+        512
+      ]
+    }
+  ],
+  "pipeline_strings": [
+    "custom_kernel_deepseek_v41_online_merge__512_bfloat16_t_64_float_float_int32_tc_bfloat16_t",
+    "custom_kernel_deepseek_v41_online_mma_scores__512_bfloat16_t_uint8_t_uint8_t_int32_t_int32_t_int32_tc_floatc_float_float",
+    "custom_kernel_deepseek_v41_online_mma_values__512_float_float_uint8_t_uint8_t_int32_t_int32_t_int32_tc_float"
+  ],
+  "trace": "artifacts/mtp-verification/dispatch-attention-mma.gputrace",
+  "scope": "real operand replay; capture changes costs, no timing claim",
+  "capture_metadata_sha256": "ca09effcabebdb4e90bfc92008d834eeb85d545e97f16fb887590e4c9ba39790"
+}

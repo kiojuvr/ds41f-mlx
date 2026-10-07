@@ -1,0 +1,75 @@
+{
+  "schema": "ds41f.mtp.isolated-dispatch.v1",
+  "status": "PASS",
+  "input_description_sha256": "b8a98a7256971d3736acef3d8f51e21a1f0dfa95c5936bdc65fe18ac60daaba9",
+  "source": {
+    "cycle": 14,
+    "phase": "target_verify",
+    "operation": "packed_attention",
+    "shapes": [
+      [
+        1,
+        4,
+        64,
+        512
+      ],
+      [
+        1,
+        132,
+        528
+      ],
+      [
+        1,
+        364,
+        288
+      ],
+      [
+        1,
+        4,
+        128
+      ],
+      [
+        1,
+        4,
+        368
+      ],
+      [
+        64
+      ],
+      null
+    ],
+    "dtypes": [
+      "mlx.core.bfloat16",
+      "mlx.core.uint8",
+      "mlx.core.uint8",
+      "mlx.core.int32",
+      "mlx.core.int32",
+      "mlx.core.float32",
+      null
+    ],
+    "kwargs": {}
+  },
+  "calls": [
+    {
+      "shape": [
+        1,
+        4,
+        64,
+        512
+      ],
+      "output_shape": [
+        1,
+        4,
+        64,
+        512
+      ]
+    }
+  ],
+  "pipeline_strings": [
+    "custom_kernel_deepseek_v41_online_fused__512_16_32_bfloat16_t_uint8_t_uint8_t_int32_t_int32_t_int32_tc_floatc_float",
+    "custom_kernel_deepseek_v41_online_merge__512_bfloat16_t_32_float_float_int32_tc_bfloat16_t"
+  ],
+  "trace": "artifacts/mtp-verification/dispatch-attention-fused.gputrace",
+  "scope": "real operand replay; capture changes costs, no timing claim",
+  "capture_metadata_sha256": "5f8425a2a15a22f8661d671d5c8fb45ffa9babd880c3e68dbfc421eb715f36bb"
+}

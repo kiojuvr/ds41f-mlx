@@ -1,0 +1,942 @@
+{
+  "schema": "ds41f.r1.off-session-observer.v1",
+  "records": [
+    {
+      "session": "m41_off_0",
+      "since_start_s": 184.85276295800577,
+      "record": {
+        "id": "m41_off_0",
+        "protocol": "chat_completions",
+        "state": "busy",
+        "recovery_state": "ready",
+        "active_request_id": null,
+        "created_at": 1791331891.758257,
+        "updated_at": 1791331891.7618,
+        "request_count": 0,
+        "last_error": null,
+        "last_turn": null,
+        "persisted_artifact": null,
+        "diagnostics": null
+      }
+    },
+    {
+      "session": "m41_off_0",
+      "since_start_s": 187.8709775830066,
+      "record": {
+        "id": "m41_off_0",
+        "protocol": "chat_completions",
+        "state": "busy",
+        "recovery_state": "ready",
+        "active_request_id": "a32c6e0b-3af0-424b-ad47-94929a144d18",
+        "created_at": 1791331891.758257,
+        "updated_at": 1791331894.855057,
+        "request_count": 1,
+        "last_error": null,
+        "last_turn": {
+          "finish_reason": "tool_calls",
+          "generated_tokens": [
+            30,
+            128825,
+            34756,
+            2329,
+            1281,
+            12533,
+            1425,
+            65,
+            50219,
+            3816,
+            30,
+            128825,
+            10767,
+            2329,
+            1281,
+            37399,
+            4,
+            3418,
+            1281,
+            11476,
+            3320,
+            51119,
+            1718,
+            128825,
+            10767,
+            1018,
+            1718,
+            128825
+          ],
+          "frontier_after_commit": 321,
+          "tool_calls": [
+            {
+              "id": "call_47f38f9f-a90b-490e-bdd0-6e8c79588888_0",
+              "name": "lookup_weather",
+              "arguments": "{\"city\": \"Paris\"}",
+              "protocol": "chat_completions",
+              "index": 0,
+              "response_item_id": null
+            }
+          ],
+          "response_json": {
+            "id": "47f38f9f-a90b-490e-bdd0-6e8c79588888",
+            "object": "chat.completion",
+            "created": 1791331893,
+            "model": "deepseek-v4.1-flash",
+            "system_fingerprint": null,
+            "choices": [
+              {
+                "index": 0,
+                "message": {
+                  "role": "assistant",
+                  "content": "",
+                  "tool_calls": [
+                    {
+                      "id": "call_47f38f9f-a90b-490e-bdd0-6e8c79588888_0",
+                      "type": "function",
+                      "function": {
+                        "name": "lookup_weather",
+                        "arguments": "{\"city\": \"Paris\"}"
+                      }
+                    }
+                  ]
+                },
+                "logprobs": null,
+                "finish_reason": "tool_calls"
+              }
+            ],
+            "usage": {
+              "prompt_tokens": 293,
+              "completion_tokens": 28,
+              "total_tokens": 321,
+              "prompt_tokens_details": {
+                "cached_tokens": 0
+              },
+              "prompt_cache_hit_tokens": 0,
+              "prompt_cache_miss_tokens": 293
+            }
+          },
+          "stream_events": [
+            {
+              "id": "47f38f9f-a90b-490e-bdd0-6e8c79588888",
+              "object": "chat.completion.chunk",
+              "created": 1791331893,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "role": "assistant",
+                    "content": ""
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ],
+              "usage": null
+            },
+            {
+              "id": "47f38f9f-a90b-490e-bdd0-6e8c79588888",
+              "object": "chat.completion.chunk",
+              "created": 1791331893,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "id": "call_47f38f9f-a90b-490e-bdd0-6e8c79588888_0",
+                        "type": "function",
+                        "function": {
+                          "name": "lookup_weather",
+                          "arguments": ""
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ],
+              "usage": null
+            },
+            {
+              "id": "47f38f9f-a90b-490e-bdd0-6e8c79588888",
+              "object": "chat.completion.chunk",
+              "created": 1791331893,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": "{"
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ],
+              "usage": null
+            },
+            {
+              "id": "47f38f9f-a90b-490e-bdd0-6e8c79588888",
+              "object": "chat.completion.chunk",
+              "created": 1791331893,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": "\""
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ],
+              "usage": null
+            },
+            {
+              "id": "47f38f9f-a90b-490e-bdd0-6e8c79588888",
+              "object": "chat.completion.chunk",
+              "created": 1791331893,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": "city"
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ],
+              "usage": null
+            },
+            {
+              "id": "47f38f9f-a90b-490e-bdd0-6e8c79588888",
+              "object": "chat.completion.chunk",
+              "created": 1791331893,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": "\""
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ],
+              "usage": null
+            },
+            {
+              "id": "47f38f9f-a90b-490e-bdd0-6e8c79588888",
+              "object": "chat.completion.chunk",
+              "created": 1791331893,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": ": "
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ],
+              "usage": null
+            },
+            {
+              "id": "47f38f9f-a90b-490e-bdd0-6e8c79588888",
+              "object": "chat.completion.chunk",
+              "created": 1791331893,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": "\""
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ],
+              "usage": null
+            },
+            {
+              "id": "47f38f9f-a90b-490e-bdd0-6e8c79588888",
+              "object": "chat.completion.chunk",
+              "created": 1791331893,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": "Paris"
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ],
+              "usage": null
+            },
+            {
+              "id": "47f38f9f-a90b-490e-bdd0-6e8c79588888",
+              "object": "chat.completion.chunk",
+              "created": 1791331893,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": "\""
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ],
+              "usage": null
+            },
+            {
+              "id": "47f38f9f-a90b-490e-bdd0-6e8c79588888",
+              "object": "chat.completion.chunk",
+              "created": 1791331893,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "tool_calls": [
+                      {
+                        "index": 0,
+                        "function": {
+                          "arguments": "}"
+                        }
+                      }
+                    ]
+                  },
+                  "logprobs": null,
+                  "finish_reason": null
+                }
+              ],
+              "usage": null
+            },
+            {
+              "id": "47f38f9f-a90b-490e-bdd0-6e8c79588888",
+              "object": "chat.completion.chunk",
+              "created": 1791331893,
+              "model": "deepseek-v4.1-flash",
+              "system_fingerprint": null,
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": ""
+                  },
+                  "logprobs": null,
+                  "finish_reason": "tool_calls"
+                }
+              ],
+              "usage": {
+                "prompt_tokens": 293,
+                "completion_tokens": 28,
+                "total_tokens": 321,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "prompt_cache_hit_tokens": 0,
+                "prompt_cache_miss_tokens": 293
+              }
+            }
+          ],
+          "prompt_replay_count": 0,
+          "full_cache_repack_count": 0,
+          "capacity": {
+            "envelope_kind": "text",
+            "qualified_total_tokens": 1048576,
+            "prompt_tokens": 293,
+            "remaining_tokens": 1048283,
+            "max_tokens": 96,
+            "output_mode": "custom",
+            "model_output_ceiling": null,
+            "binding": true
+          },
+          "termination_reason": "tool_calls"
+        },
+        "persisted_artifact": null,
+        "diagnostics": {
+          "schema": "ds41f.m11.tool-boundary-session.diagnostics.v1",
+          "protocol": "chat_completions",
+          "request_count": 0,
+          "image_identities": [],
+          "last_image_encoding_seconds": 0.0,
+          "last_image_encoded_count": 0,
+          "m8": {
+            "schema": "ds41f.m8.live-continuation.diagnostics.v1",
+            "state": "idle",
+            "frontier": 351,
+            "cache_offsets_head": [
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352
+            ],
+            "cache_offsets_all": [
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352,
+              352
+            ],
+            "cache_layer_count": 40,
+            "all_cache_offsets_equal_frontier": false,
+            "turn_count": 1,
+            "total_prompt_replay_count": 0,
+            "total_full_cache_repack_count": 0,
+            "turns": [
+              {
+                "turn_index": 0,
+                "frontier_before": 292,
+                "prompt_suffix_tokens": 293,
+                "appended_prefill_tokens": 292,
+                "terminal_token": 1018,
+                "generated_tokens": [
+                  30,
+                  128825,
+                  34756,
+                  2329,
+                  1281,
+                  12533,
+                  1425,
+                  65,
+                  50219,
+                  3816,
+                  30,
+                  128825,
+                  10767,
+                  2329,
+                  1281,
+                  37399,
+                  4,
+                  3418,
+                  1281,
+                  11476,
+                  3320,
+                  51119,
+                  1718,
+                  128825,
+                  10767,
+                  1018,
+                  1718,
+                  128825
+                ],
+                "frontier_after": 321,
+                "prompt_replay_count": 0,
+                "full_cache_repack_count": 0,
+                "append_seconds": 0.5360486249992391,
+                "decode_seconds": 1.4253059180191485,
+                "first_token_latency_s": 0.05158516600204166,
+                "decode_tok_s": 19.644905452236976,
+                "cancelled": false
+              }
+            ]
+          },
+          "boundaries": [
+            {
+              "finish_reason": "tool_calls",
+              "generated_tokens": [
+                30,
+                128825,
+                34756,
+                2329,
+                1281,
+                12533,
+                1425,
+                65,
+                50219,
+                3816,
+                30,
+                128825,
+                10767,
+                2329,
+                1281,
+                37399,
+                4,
+                3418,
+                1281,
+                11476,
+                3320,
+                51119,
+                1718,
+                128825,
+                10767,
+                1018,
+                1718,
+                128825
+              ],
+              "frontier_after_commit": 321,
+              "tool_calls": [
+                {
+                  "id": "call_47f38f9f-a90b-490e-bdd0-6e8c79588888_0",
+                  "name": "lookup_weather",
+                  "arguments": "{\"city\": \"Paris\"}",
+                  "protocol": "chat_completions",
+                  "index": 0,
+                  "response_item_id": null
+                }
+              ],
+              "response_json": {
+                "id": "47f38f9f-a90b-490e-bdd0-6e8c79588888",
+                "object": "chat.completion",
+                "created": 1791331893,
+                "model": "deepseek-v4.1-flash",
+                "system_fingerprint": null,
+                "choices": [
+                  {
+                    "index": 0,
+                    "message": {
+                      "role": "assistant",
+                      "content": "",
+                      "tool_calls": [
+                        {
+                          "id": "call_47f38f9f-a90b-490e-bdd0-6e8c79588888_0",
+                          "type": "function",
+                          "function": {
+                            "name": "lookup_weather",
+                            "arguments": "{\"city\": \"Paris\"}"
+                          }
+                        }
+                      ]
+                    },
+                    "logprobs": null,
+                    "finish_reason": "tool_calls"
+                  }
+                ],
+                "usage": {
+                  "prompt_tokens": 293,
+                  "completion_tokens": 28,
+                  "total_tokens": 321,
+                  "prompt_tokens_details": {
+                    "cached_tokens": 0
+                  },
+                  "prompt_cache_hit_tokens": 0,
+                  "prompt_cache_miss_tokens": 293
+                }
+              },
+              "stream_events": [
+                {
+                  "id": "47f38f9f-a90b-490e-bdd0-6e8c79588888",
+                  "object": "chat.completion.chunk",
+                  "created": 1791331893,
+                  "model": "deepseek-v4.1-flash",
+                  "system_fingerprint": null,
+                  "choices": [
+                    {
+                      "index": 0,
+                      "delta": {
+                        "role": "assistant",
+                        "content": ""
+                      },
+                      "logprobs": null,
+                      "finish_reason": null
+                    }
+                  ],
+                  "usage": null
+                },
+                {
+                  "id": "47f38f9f-a90b-490e-bdd0-6e8c79588888",
+                  "object": "chat.completion.chunk",
+                  "created": 1791331893,
+                  "model": "deepseek-v4.1-flash",
+                  "system_fingerprint": null,
+                  "choices": [
+                    {
+                      "index": 0,
+                      "delta": {
+                        "tool_calls": [
+                          {
+                            "index": 0,
+                            "id": "call_47f38f9f-a90b-490e-bdd0-6e8c79588888_0",
+                            "type": "function",
+                            "function": {
+                              "name": "lookup_weather",
+                              "arguments": ""
+                            }
+                          }
+                        ]
+                      },
+                      "logprobs": null,
+                      "finish_reason": null
+                    }
+                  ],
+                  "usage": null
+                },
+                {
+                  "id": "47f38f9f-a90b-490e-bdd0-6e8c79588888",
+                  "object": "chat.completion.chunk",
+                  "created": 1791331893,
+                  "model": "deepseek-v4.1-flash",
+                  "system_fingerprint": null,
+                  "choices": [
+                    {
+                      "index": 0,
+                      "delta": {
+                        "tool_calls": [
+                          {
+                            "index": 0,
+                            "function": {
+                              "arguments": "{"
+                            }
+                          }
+                        ]
+                      },
+                      "logprobs": null,
+                      "finish_reason": null
+                    }
+                  ],
+                  "usage": null
+                },
+                {
+                  "id": "47f38f9f-a90b-490e-bdd0-6e8c79588888",
+                  "object": "chat.completion.chunk",
+                  "created": 1791331893,
+                  "model": "deepseek-v4.1-flash",
+                  "system_fingerprint": null,
+                  "choices": [
+                    {
+                      "index": 0,
+                      "delta": {
+                        "tool_calls": [
+                          {
+                            "index": 0,
+                            "function": {
+                              "arguments": "\""
+                            }
+                          }
+                        ]
+                      },
+                      "logprobs": null,
+                      "finish_reason": null
+                    }
+                  ],
+                  "usage": null
+                },
+                {
+                  "id": "47f38f9f-a90b-490e-bdd0-6e8c79588888",
+                  "object": "chat.completion.chunk",
+                  "created": 1791331893,
+                  "model": "deepseek-v4.1-flash",
+                  "system_fingerprint": null,
+                  "choices": [
+                    {
+                      "index": 0,
+                      "delta": {
+                        "tool_calls": [
+                          {
+                            "index": 0,
+                            "function": {
+                              "arguments": "city"
+                            }
+                          }
+                        ]
+                      },
+                      "logprobs": null,
+                      "finish_reason": null
+                    }
+                  ],
+                  "usage": null
+                },
+                {
+                  "id": "47f38f9f-a90b-490e-bdd0-6e8c79588888",
+                  "object": "chat.completion.chunk",
+                  "created": 1791331893,
+                  "model": "deepseek-v4.1-flash",
+                  "system_fingerprint": null,
+                  "choices": [
+                    {
+                      "index": 0,
+                      "delta": {
+                        "tool_calls": [
+                          {
+                            "index": 0,
+                            "function": {
+                              "arguments": "\""
+                            }
+                          }
+                        ]
+                      },
+                      "logprobs": null,
+                      "finish_reason": null
+                    }
+                  ],
+                  "usage": null
+                },
+                {
+                  "id": "47f38f9f-a90b-490e-bdd0-6e8c79588888",
+                  "object": "chat.completion.chunk",
+                  "created": 1791331893,
+                  "model": "deepseek-v4.1-flash",
+                  "system_fingerprint": null,
+                  "choices": [
+                    {
+                      "index": 0,
+                      "delta": {
+                        "tool_calls": [
+                          {
+                            "index": 0,
+                            "function": {
+                              "arguments": ": "
+                            }
+                          }
+                        ]
+                      },
+                      "logprobs": null,
+                      "finish_reason": null
+                    }
+                  ],
+                  "usage": null
+                },
+                {
+                  "id": "47f38f9f-a90b-490e-bdd0-6e8c79588888",
+                  "object": "chat.completion.chunk",
+                  "created": 1791331893,
+                  "model": "deepseek-v4.1-flash",
+                  "system_fingerprint": null,
+                  "choices": [
+                    {
+                      "index": 0,
+                      "delta": {
+                        "tool_calls": [
+                          {
+                            "index": 0,
+                            "function": {
+                              "arguments": "\""
+                            }
+                          }
+                        ]
+                      },
+                      "logprobs": null,
+                      "finish_reason": null
+                    }
+                  ],
+                  "usage": null
+                },
+                {
+                  "id": "47f38f9f-a90b-490e-bdd0-6e8c79588888",
+                  "object": "chat.completion.chunk",
+                  "created": 1791331893,
+                  "model": "deepseek-v4.1-flash",
+                  "system_fingerprint": null,
+                  "choices": [
+                    {
+                      "index": 0,
+                      "delta": {
+                        "tool_calls": [
+                          {
+                            "index": 0,
+                            "function": {
+                              "arguments": "Paris"
+                            }
+                          }
+                        ]
+                      },
+                      "logprobs": null,
+                      "finish_reason": null
+                    }
+                  ],
+                  "usage": null
+                },
+                {
+                  "id": "47f38f9f-a90b-490e-bdd0-6e8c79588888",
+                  "object": "chat.completion.chunk",
+                  "created": 1791331893,
+                  "model": "deepseek-v4.1-flash",
+                  "system_fingerprint": null,
+                  "choices": [
+                    {
+                      "index": 0,
+                      "delta": {
+                        "tool_calls": [
+                          {
+                            "index": 0,
+                            "function": {
+                              "arguments": "\""
+                            }
+                          }
+                        ]
+                      },
+                      "logprobs": null,
+                      "finish_reason": null
+                    }
+                  ],
+                  "usage": null
+                },
+                {
+                  "id": "47f38f9f-a90b-490e-bdd0-6e8c79588888",
+                  "object": "chat.completion.chunk",
+                  "created": 1791331893,
+                  "model": "deepseek-v4.1-flash",
+                  "system_fingerprint": null,
+                  "choices": [
+                    {
+                      "index": 0,
+                      "delta": {
+                        "tool_calls": [
+                          {
+                            "index": 0,
+                            "function": {
+                              "arguments": "}"
+                            }
+                          }
+                        ]
+                      },
+                      "logprobs": null,
+                      "finish_reason": null
+                    }
+                  ],
+                  "usage": null
+                },
+                {
+                  "id": "47f38f9f-a90b-490e-bdd0-6e8c79588888",
+                  "object": "chat.completion.chunk",
+                  "created": 1791331893,
+                  "model": "deepseek-v4.1-flash",
+                  "system_fingerprint": null,
+                  "choices": [
+                    {
+                      "index": 0,
+                      "delta": {
+                        "content": ""
+                      },
+                      "logprobs": null,
+                      "finish_reason": "tool_calls"
+                    }
+                  ],
+                  "usage": {
+                    "prompt_tokens": 293,
+                    "completion_tokens": 28,
+                    "total_tokens": 321,
+                    "prompt_tokens_details": {
+                      "cached_tokens": 0
+                    },
+                    "prompt_cache_hit_tokens": 0,
+                    "prompt_cache_miss_tokens": 293
+                  }
+                }
+              ],
+              "prompt_replay_count": 0,
+              "full_cache_repack_count": 0
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "reads": 4,
+  "scope": "public GET only, once per second; no stateless decode timing claim",
+  "elapsed_s": 190.88974279200193
+}

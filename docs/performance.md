@@ -8,6 +8,17 @@ The current native attention, MoE, Engram, state, and generation paths are measu
 
 The current production-prefill candidate for Milestone 6 is the existing **dense P0-P7 DwarfStar-derived FP8/MLX path** with `P7 FULL_RESIDENT_BACKBONE_SSD_ENGRAM`, `P7_ENGRAM_TILE=2048`, and ds41f `TargetGenerationSession` MTP-OFF decode (M44). The earlier GenerationBatch measurements below are historical comparison evidence; M44 records fresh matched measurements for the changed engine. P8 optimization search is complete: `TILE_NATIVE_CARRY_REJECTED_NO_E2E_GAIN`; the tile-native implementation is retained as experimental/default OFF and is not production-selected.
 
+## Post-`d006e1f` R1 verification compute investigation
+
+The [bounded real-model investigation](mtp-verification-compute-investigation.md)
+re-establishes OFF/MTP R1 independently and maps four-row verification, expert-local
+occupancy, packed-attention dispatch and head costs. Dense MXFP8 already uses wide
+few-row kernels; sparse experts average 1.35 active rows. A private BF16 head
+prototype gives 3.54× microkernel speedup but only about 0.8–1.7% modeled request
+compute gain. The highest-value next boundary is fresh DSpark context materialization
+and P5 startup, not a general few-row MMA kernel campaign. No production dispatch,
+Web, qualification scope or release/promotion changes were made.
+
 ## Post-M48 first-party 200K production baseline
 
 Fresh core evidence is recorded in [standard-OFF 200K production qualification](standard-off-200k-production-qualification.md)
@@ -123,7 +134,7 @@ trend, native/package identity and bounded-session limits.
 ## Unqualified areas
 
 - batch throughput serving;
-- MTP/DSpark/speculative performance;
+- general MTP/DSpark/speculative performance claims beyond the bounded R1 investigation;
 - non-target hardware performance;
 - vision/multimodal performance;
 - cross-runtime KV portability costs.

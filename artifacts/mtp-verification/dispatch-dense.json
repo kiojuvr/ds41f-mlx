@@ -1,0 +1,152 @@
+{
+  "schema": "ds41f.mtp.isolated-dispatch.v1",
+  "status": "PASS",
+  "input_description_sha256": "ec11ec94d35bef064b86ee0a0b8a398c9925664ddc84e96e2b6ba60811637543",
+  "source": {
+    "cycle": 0,
+    "phase": "target_verify",
+    "operation": "quantized_matmul",
+    "shapes": [
+      [
+        1,
+        4,
+        6144
+      ],
+      [
+        25600,
+        1536
+      ],
+      [
+        25600,
+        192
+      ],
+      null
+    ],
+    "dtypes": [
+      "mlx.core.bfloat16",
+      "mlx.core.uint32",
+      "mlx.core.uint8",
+      null
+    ],
+    "kwargs": {
+      "group_size": 32,
+      "bits": 8,
+      "mode": "mxfp8"
+    }
+  },
+  "calls": [
+    {
+      "shape": [
+        1,
+        4,
+        6144
+      ],
+      "output_shape": [
+        1,
+        4,
+        25600
+      ]
+    },
+    {
+      "rows": 1,
+      "shape": [
+        1,
+        6144
+      ],
+      "output_shape": [
+        1,
+        25600
+      ]
+    },
+    {
+      "rows": 2,
+      "shape": [
+        2,
+        6144
+      ],
+      "output_shape": [
+        2,
+        25600
+      ]
+    },
+    {
+      "rows": 3,
+      "shape": [
+        3,
+        6144
+      ],
+      "output_shape": [
+        3,
+        25600
+      ]
+    },
+    {
+      "rows": 4,
+      "shape": [
+        4,
+        6144
+      ],
+      "output_shape": [
+        4,
+        25600
+      ]
+    },
+    {
+      "rows": 5,
+      "shape": [
+        5,
+        6144
+      ],
+      "output_shape": [
+        5,
+        25600
+      ]
+    },
+    {
+      "rows": 6,
+      "shape": [
+        6,
+        6144
+      ],
+      "output_shape": [
+        6,
+        25600
+      ]
+    },
+    {
+      "rows": 8,
+      "shape": [
+        8,
+        6144
+      ],
+      "output_shape": [
+        8,
+        25600
+      ]
+    },
+    {
+      "rows": 16,
+      "shape": [
+        16,
+        6144
+      ],
+      "output_shape": [
+        16,
+        25600
+      ]
+    }
+  ],
+  "pipeline_strings": [
+    "/mlx/backend/metal/kernels/indexing/gather_front.h",
+    "gather_frontbfloat16_int32_int_2",
+    "mxfp8_qmm_t_bfloat16_t_gs_32_b_8_alN_true_batch_0",
+    "mxfp8_qmv_fast_bfloat16_t_gs_32_b_8_batch_0",
+    "mxfp8_qmv_wide_bfloat16_t_gs_32_b_8_nv_2_kl_16_batch_0",
+    "mxfp8_qmv_wide_bfloat16_t_gs_32_b_8_nv_3_kl_16_batch_0",
+    "mxfp8_qmv_wide_bfloat16_t_gs_32_b_8_nv_4_kl_16_batch_0",
+    "mxfp8_qmv_wide_bfloat16_t_gs_32_b_8_nv_5_kl_16_batch_0"
+  ],
+  "trace": "artifacts/mtp-verification/dispatch-dense.gputrace",
+  "scope": "real operand replay; capture changes costs, no timing claim",
+  "capture_metadata_sha256": "cfdeb21303e431450fc072eea99b36b5ddba5e59088eaaf07a1cf67be639c0de"
+}

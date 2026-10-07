@@ -1,0 +1,72 @@
+{
+  "schema": "ds41f.mtp.isolated-dispatch.v1",
+  "status": "PASS",
+  "input_description_sha256": "1a04c1a727e2b101a99ffdc103ac67d849d95cef83cc85df4857d5170488cb48",
+  "source": {
+    "cycle": 0,
+    "phase": "target_verify",
+    "operation": "gather_qmm",
+    "shapes": [
+      [
+        1,
+        4,
+        1,
+        1,
+        5120
+      ],
+      [
+        384,
+        2304,
+        640
+      ],
+      [
+        384,
+        2304,
+        160
+      ],
+      null
+    ],
+    "dtypes": [
+      "mlx.core.bfloat16",
+      "mlx.core.uint32",
+      "mlx.core.uint8",
+      null
+    ],
+    "kwargs": {
+      "rhs_indices": [
+        1,
+        4,
+        6
+      ],
+      "transpose": true,
+      "group_size": 32,
+      "bits": 4,
+      "mode": "mxfp4",
+      "sorted_indices": false
+    }
+  },
+  "calls": [
+    {
+      "shape": [
+        1,
+        4,
+        1,
+        1,
+        5120
+      ],
+      "output_shape": [
+        1,
+        4,
+        6,
+        1,
+        2304
+      ]
+    }
+  ],
+  "pipeline_strings": [
+    "mxfp4_gather_qmv_fast_bfloat16_t_gs_32_b_4"
+  ],
+  "trace": "artifacts/mtp-verification/dispatch-routed.gputrace",
+  "scope": "real operand replay; capture changes costs, no timing claim",
+  "capture_metadata_sha256": "3aa69e6fa241ac50335bd0dda41a06df010ef350d672a20b1472a4d022364cf6"
+}

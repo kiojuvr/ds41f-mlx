@@ -1,0 +1,42 @@
+{
+  "status": "STARTING",
+  "config": {
+    "checkpoint_path": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+    "omlx_path": "/Volumes/SDXC-512/ds41f-mlx/artifacts/mtp-verification/r1-current-gates/off-source",
+    "recipe_path": "/Users/kioju/.venvs/ds41f-mtp-investigation/share/ds41f-mtp/recipe",
+    "kv_root": "/Volumes/SDXC-512/ds41f-mlx/artifacts/mtp-verification/r1-current-gates/kv",
+    "host": "127.0.0.1",
+    "port": 53948,
+    "max_live_sessions": 4,
+    "trace_history_limit": 32,
+    "enable_diagnostics": false,
+    "model_id": "deepseek-v4.1-flash",
+    "production_prefill_selector": "DENSE_P0_P7",
+    "mtp": "OFF",
+    "dspark": "OFF",
+    "speculative_decode": "OFF"
+  },
+  "provenance_status": "FAIL"
+}
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serve.py", line 94, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serve.py", line 88, in main
+    app = create_app(model_id=cfg.model_id, recipe_path=cfg.recipe_path)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/server.py", line 179, in create_app
+    tokenizer = load_protocol_tokenizer(recipe_path)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/resource_admission.py", line 451, in load_protocol_tokenizer
+    check_module(name, pin['modules'][name])
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/resource_admission.py", line 85, in check_module
+    check_file(path, expected, name, verified)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/resource_admission.py", line 60, in check_file
+    require(actual == expected, f'identity mismatch: {label}')
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/resource_admission.py", line 52, in require
+    raise ResourceAdmissionError(message)
+ds41f_mlx.runtime.resource_admission.ResourceAdmissionError: identity mismatch: deepseek_recipe._native

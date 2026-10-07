@@ -1,0 +1,52 @@
+{
+  "operation": "quantized_matmul",
+  "source": {
+    "cycle": 0,
+    "phase": "draft",
+    "operation": "quantized_matmul",
+    "shapes": [
+      [
+        1,
+        1,
+        15360
+      ],
+      [
+        5120,
+        3840
+      ],
+      [
+        5120,
+        480
+      ],
+      null
+    ],
+    "dtypes": [
+      "mlx.core.bfloat16",
+      "mlx.core.uint32",
+      "mlx.core.uint8",
+      null
+    ],
+    "kwargs": {
+      "group_size": 32,
+      "bits": 8,
+      "mode": "mxfp8"
+    }
+  },
+  "args": [
+    {
+      "array": "arg0"
+    },
+    {
+      "array": "arg1"
+    },
+    {
+      "array": "arg2"
+    },
+    null
+  ],
+  "kwargs": {
+    "group_size": 32,
+    "bits": 8,
+    "mode": "mxfp8"
+  }
+}

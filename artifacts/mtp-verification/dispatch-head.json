@@ -1,0 +1,46 @@
+{
+  "schema": "ds41f.mtp.isolated-dispatch.v1",
+  "status": "PASS",
+  "input_description_sha256": "fa99504524bef365918df3c10aa36d0427d5d929725583d95e3e8c9e64e49ea5",
+  "source": {
+    "cycle": 0,
+    "phase": "target_verify",
+    "operation": "bf16_head",
+    "shapes": [
+      [
+        1,
+        4,
+        5120
+      ],
+      [
+        129280,
+        5120
+      ]
+    ],
+    "dtypes": [
+      "mlx.core.bfloat16",
+      "mlx.core.bfloat16"
+    ],
+    "kwargs": {}
+  },
+  "calls": [
+    {
+      "shape": [
+        1,
+        4,
+        5120
+      ],
+      "output_shape": [
+        1,
+        4,
+        129280
+      ]
+    }
+  ],
+  "pipeline_strings": [
+    "custom_kernel_v41_bf16_head_fp32_output__129280_5120_16_float_bfloat16_t_float"
+  ],
+  "trace": "artifacts/mtp-verification/dispatch-head.gputrace",
+  "scope": "real operand replay; capture changes costs, no timing claim",
+  "capture_metadata_sha256": "c4bb4da639556722491ac34cb8bdc4b5ff629255e85f24c3e8de7600ede5ce7c"
+}

@@ -1,0 +1,37 @@
+{
+  "schema": "ds41f.mtp.headroom.v1",
+  "scope": "target-head-only model; microkernel delta times observed calls, not a measured runtime speedup",
+  "delta_per_four_row_head_s": 0.005438125001091976,
+  "rows": [
+    {
+      "case": "one_call",
+      "generated": 34,
+      "verify_cycles_observed": 8,
+      "baseline_decode_s": 0.8514986240261351,
+      "baseline_request_compute_s": 5.293853916024091,
+      "modeled_saved_s": 0.043505000008735806,
+      "modeled_decode_speedup": 1.0538432466736878,
+      "modeled_request_speedup": 1.0082861159714607
+    },
+    {
+      "case": "two_calls",
+      "generated": 64,
+      "verify_cycles_observed": 16,
+      "baseline_decode_s": 1.6625782970077125,
+      "baseline_request_compute_s": 6.099583297000208,
+      "modeled_saved_s": 0.08701000001747161,
+      "modeled_decode_speedup": 1.0552245181523925,
+      "modeled_request_speedup": 1.0144713412576833
+    },
+    {
+      "case": "stored_result_continuation",
+      "generated": 10,
+      "verify_cycles_observed": 2,
+      "baseline_decode_s": 0.2656779160097358,
+      "baseline_request_compute_s": 0.6532966230079182,
+      "modeled_saved_s": 0.010876250002183951,
+      "modeled_decode_speedup": 1.0426851604724656,
+      "modeled_request_speedup": 1.0169301137684916
+    }
+  ]
+}
