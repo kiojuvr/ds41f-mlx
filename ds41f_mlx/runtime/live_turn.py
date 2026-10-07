@@ -17,10 +17,11 @@ from .tool_boundary_session import (
 
 
 class LiveRecipeTurn:
-    def __init__(self, session, prepared, on_commit):
+    def __init__(self, session, prepared, on_commit, *, cancelled=None):
         self.session = session
         self.prepared = prepared
         self.on_commit = on_commit
+        self._cancelled = cancelled or (lambda: False)
         self.recipe = _recipe_module()
         self.response_id = str(uuid4())
         self.processor, self.response = _make_processor_and_response(
@@ -31,6 +32,18 @@ class LiveRecipeTurn:
         self.closed = False
         self.cancelled = False
         self.ready = True
+        self.cycle_adapter = None
+        if getattr(session, 'execution_strategy', 'off') == 'first-party-mtp-development':
+            from .semantic_cycle import SemanticCycleAdapter
+            from .dspark_proposal import DSparkProposalProducer
+            gen = session.m8.generation
+            seed = getattr(gen, '_prefill_tap_receipt', None)
+            producer = DSparkProposalProducer(gen, seed)
+            gen._prefill_tap_receipt = None
+            self.cycle_adapter = SemanticCycleAdapter(
+                session.m8, self.processor,
+                parse_tool_calls=prepared.conversation_request.parsing_options.parse_tool_calls,
+                producer=producer)
 
     def record(self, outputs):
         batch = []
@@ -51,6 +64,19 @@ class LiveRecipeTurn:
             self.ready = False
             return self.record(self.processor.push(self.recipe.InferenceChunk.ready(
                 prompt_usage=self.recipe.PromptUsage(prompt_tokens=len(self.prepared.token_ids), prompt_cache_hit_tokens=0))))
+        if self.cycle_adapter is not None:
+            batch = []
+            def observe(report):
+                self.generated.append(int(report.token))
+                suppressed = report.finish_reason == 'stop' and int(report.token) in set(self.prepared.stop_token_ids)
+                if not suppressed:
+                    batch.extend(self.record(self.processor.push(self.recipe.InferenceChunk.token(int(report.token)))))
+            reports = self.cycle_adapter.advance(observe, cancelled=self._cancelled)
+            terminal = self.processor.semantic_terminal is not None or self.processor.finished
+            if not reports or terminal or reports[-1].finish_reason:
+                reason = (reports[-1].finish_reason or 'stop') if reports else 'stop'
+                batch.extend(self.finish(cancelled=self._cancelled(), reason=reason))
+            return batch
         report = self.session.m8.next_token()
         if report is None:
             return self.finish()
@@ -93,6 +119,8 @@ class LiveRecipeTurn:
                 response_json=response, stream_events=tuple(self.events),
                 prompt_replay_count=self.session.m8.total_prompt_replay_count,
                 full_cache_repack_count=self.session.m8.total_full_cache_repack_count)
+            if self.cycle_adapter is not None:
+                self.session.last_cycle_metrics = dict(self.cycle_adapter.metrics)
             self.on_commit(self.turn, cancelled)
             # This retains diagnostics, never the live delivery source.
             self.session.boundary_records.append(self.turn.to_json())

@@ -2,8 +2,11 @@
 
 **NO / M54 NOT PASS.** Base: M53 execution-core PASS `bf8305d`, M52
 `6d7c936`, M51 `40bd187`. This is a blocked integration assessment, not a
-claim that first-party operational MTP is impossible. No operational selector
-was enabled. M51–M53 are not redesigned or demoted. No promotion decision can
+claim that first-party operational MTP is impossible. This is the historical
+assessment. [M54 continuation](milestone-54-semantic-authorized-continuation.md)
+implements both primitives and partially qualifies standard socket execution;
+its next EOF-sensitive tool boundary remains NOT PASS. In this assessment, no
+operational selector was enabled. M51–M53 are not redesigned or demoted. No promotion decision can
 be inferred from this assessment.
 
 ## Actual application architecture

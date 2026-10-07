@@ -27,6 +27,10 @@ class StatefulStream:
         self.frontier_before = None if self.rec.m11 is None else self.rec.m11.m8.frontier
         self.prepared, self.tokenizer, self.body, self.options = prepared, tokenizer, body, options
         self.request_id = str(uuid4())
+        slot = self.rec.response_reservation
+        self.reservation = slot if slot is not None and slot.state == 'active' else None
+        if self.reservation is not None:
+            self.reservation.request_id = self.request_id
         self.application_id = application_id  # correlation only, not a retry fence
         self.cancel = Event()
         self.rec.busy = True  # before response headers, even if iterator never starts
@@ -99,7 +103,8 @@ class StatefulStream:
             self.trace.update(created_runtime_session=False, frontier_before=before, exact_prefix_extension=True)
         # Publish the cursor inside the worker, before cancellation can lose the
         # future's result. Startup stays protected; Stop then settles before decode.
-        self.cursor = LiveRecipeTurn(rec.m11, self.prepared, self.publish)
+        rec.m11.execution_strategy = getattr(backend, 'execution_strategy', 'off')
+        self.cursor = LiveRecipeTurn(rec.m11, self.prepared, self.publish, cancelled=self.cancel.is_set)
 
     async def __anext__(self):
         async with self.gate:
@@ -131,7 +136,10 @@ class StatefulStream:
             if self.pending:
                 event = self.pending.popleft()
                 self.trace['delivered_events'] += 1  # iterator yield, NOT socket/client ACK
-                return 'data: ' + json.dumps(event, separators=(',', ':')) + '\n\n'
+                frame = 'data: ' + json.dumps(event, separators=(',', ':')) + '\n\n'
+                if self.reservation is not None:
+                    self.reservation.append(frame)
+                return frame
             self.done_sent = True
             await self._close()
             return 'data: [DONE]\n\n'
@@ -139,6 +147,8 @@ class StatefulStream:
             raise
         except BaseException as exc:
             if not isinstance(exc, asyncio.CancelledError):
+                if self.reservation is not None:
+                    self.reservation.burn()  # never freeze a worker error as successful EOF
                 m8 = None if self.rec.m11 is None else self.rec.m11.m8
                 self.failed = self.cursor is not None or (m8 is not None and (m8.state != 'idle' or m8.frontier != self.frontier_before))
                 self.rec.last_error = str(exc)
@@ -186,7 +196,13 @@ class StatefulStream:
                         self.rec.last_error += '; retirement: ' + str(exc)
                 elif self.cursor is not None and not self.cursor.closed:
                     try:
-                        await self.backend._call(lambda: self.cursor.finish(cancelled=True))
+                        final_events = await self.backend._call(lambda: self.cursor.finish(cancelled=True))
+                        if self.reservation is not None:
+                            # Serialize once into the same reserved response, even
+                            # when the socket vanished before terminal delivery.
+                            for event in list(self.pending) + list(final_events):
+                                self.reservation.append('data: ' + json.dumps(event, separators=(',', ':')) + '\n\n')
+                            self.pending.clear()
                     except BaseException as exc:
                         self.rec.last_error = str(exc)
                         self.rec.recovery_state = 'unrecoverable'
@@ -194,7 +210,24 @@ class StatefulStream:
                 elif self.rec.m11 is not None and ((self.cursor is not None and self.cursor.turn is None) or (self.cursor is None and (self.rec.m11.m8.generation is not None or self.rec.m11.m8.closed))):
                     self.rec.recovery_state = 'unrecoverable'
                     await self.backend._call(self.retire_worker)
+        except BaseException:
+            if self.reservation is not None:
+                self.reservation.burn()
+            raise
         finally:
+            if self.reservation is not None and self.reservation.state == 'active':
+                try:
+                    if self.failed or (self.cursor is not None and self.cursor.turn is None):
+                        self.reservation.burn()
+                    else:
+                        for event in self.pending:
+                            self.reservation.append('data: ' + json.dumps(event, separators=(',', ':')) + '\n\n')
+                        self.reservation.append('data: [DONE]\n\n')
+                        self.reservation.complete()
+                except Exception as exc:
+                    self.reservation.burn()
+                    self.rec.recovery_state = 'unrecoverable'
+                    self.rec.last_error = str(exc)
             self.pending.clear()
             # Exact response reservation; never clear a later request's owner.
             if self.rec.active_stream is self:

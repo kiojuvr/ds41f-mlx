@@ -79,9 +79,12 @@ Likewise, a fast runtime that changes required model behavior or state semantics
 
 [M53 first-party MTP execution core](docs/milestone-53-proposal-primitives-continuation.md)
 is development-qualified. [M54 runtime/application assessment](docs/milestone-54-runtime-semantic-horizon-assessment.md)
-is **NOT PASS**: semantic-authorized cycle/batch adoption and standard response
-retry fencing remain unintegrated. No first-party operational MTP selector or
-application capability envelope is enabled; standard-OFF remains default/control.
+is historical. [M54 continuation](docs/milestone-54-semantic-authorized-continuation.md)
+implements semantic-authorized cycle/batch adoption and standard exact-byte
+response reservation, with partial official-checkpoint socket qualification.
+M54 remains **NOT PASS**: native EOF-sensitive tool authorization is still missing.
+The explicit development backend API is not a promoted operational profile;
+standard-OFF remains default/control.
 
 The historical qualified release scope is a text-only local runtime for the official DeepSeek-V4.1-Flash checkpoint on the Mac Studio M3 Ultra 512 GB class target. The production path is:
 

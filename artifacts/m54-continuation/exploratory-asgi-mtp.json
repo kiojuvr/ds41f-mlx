@@ -1,0 +1,488 @@
+{
+  "decision": "ORDINARY STANDARD HTTP PROBE PASS; M54 NOT PASS (tools unqualified)",
+  "strategy": "first-party-mtp-development",
+  "phase": "complete",
+  "cases": [
+    {
+      "sequence": 1,
+      "stream": false,
+      "response_bytes": 432,
+      "exact_retry": true,
+      "turn": {
+        "finish_reason": "stop",
+        "generated_tokens": [
+          11932,
+          1
+        ],
+        "frontier_after_commit": 239,
+        "tool_calls": [],
+        "response_json": {
+          "id": "f88dcefb-c02e-40b6-b6eb-a62db6f6bc92",
+          "object": "chat.completion",
+          "created": 1791388271,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "OK"
+              },
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 237,
+            "completion_tokens": 1,
+            "total_tokens": 238,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 237
+          }
+        },
+        "stream_events": [
+          {
+            "id": "f88dcefb-c02e-40b6-b6eb-a62db6f6bc92",
+            "object": "chat.completion.chunk",
+            "created": 1791388271,
+            "model": "deepseek-v4.1-flash",
+            "system_fingerprint": null,
+            "choices": [
+              {
+                "index": 0,
+                "delta": {
+                  "role": "assistant",
+                  "content": ""
+                },
+                "logprobs": null,
+                "finish_reason": null
+              }
+            ],
+            "usage": null
+          },
+          {
+            "id": "f88dcefb-c02e-40b6-b6eb-a62db6f6bc92",
+            "object": "chat.completion.chunk",
+            "created": 1791388271,
+            "model": "deepseek-v4.1-flash",
+            "system_fingerprint": null,
+            "choices": [
+              {
+                "index": 0,
+                "delta": {
+                  "content": "OK"
+                },
+                "logprobs": null,
+                "finish_reason": null
+              }
+            ],
+            "usage": null
+          },
+          {
+            "id": "f88dcefb-c02e-40b6-b6eb-a62db6f6bc92",
+            "object": "chat.completion.chunk",
+            "created": 1791388271,
+            "model": "deepseek-v4.1-flash",
+            "system_fingerprint": null,
+            "choices": [
+              {
+                "index": 0,
+                "delta": {
+                  "content": ""
+                },
+                "logprobs": null,
+                "finish_reason": "stop"
+              }
+            ],
+            "usage": {
+              "prompt_tokens": 237,
+              "completion_tokens": 1,
+              "total_tokens": 238,
+              "prompt_tokens_details": {
+                "cached_tokens": 0
+              },
+              "prompt_cache_hit_tokens": 0,
+              "prompt_cache_miss_tokens": 237
+            }
+          }
+        ],
+        "prompt_replay_count": 0,
+        "full_cache_repack_count": 0,
+        "capacity": {
+          "envelope_kind": "text",
+          "qualified_total_tokens": 1048576,
+          "prompt_tokens": 237,
+          "remaining_tokens": 1048339,
+          "max_tokens": 32,
+          "output_mode": "custom",
+          "model_output_ceiling": null,
+          "binding": true
+        },
+        "termination_reason": "stop"
+      },
+      "diagnostics": {
+        "schema": "ds41f.m8.live-continuation.diagnostics.v1",
+        "state": "idle",
+        "frontier": 239,
+        "cache_offsets_head": [
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239
+        ],
+        "cache_offsets_all": [
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239,
+          239
+        ],
+        "cache_layer_count": 40,
+        "all_cache_offsets_equal_frontier": true,
+        "turn_count": 1,
+        "total_prompt_replay_count": 0,
+        "total_full_cache_repack_count": 0,
+        "turns": [
+          {
+            "turn_index": 0,
+            "frontier_before": 236,
+            "prompt_suffix_tokens": 237,
+            "appended_prefill_tokens": 236,
+            "terminal_token": 128822,
+            "generated_tokens": [
+              11932,
+              1
+            ],
+            "frontier_after": 239,
+            "prompt_replay_count": 0,
+            "full_cache_repack_count": 0,
+            "append_seconds": 1.0844295419992704,
+            "decode_seconds": 0.11196954100159928,
+            "first_token_latency_s": 0.05699470800027484,
+            "decode_tok_s": 17.862000523619486,
+            "cancelled": false
+          }
+        ]
+      },
+      "metrics": {
+        "cycles": 0,
+        "offered": 0,
+        "accepted": 0,
+        "consumed": 2,
+        "proposal_s": 0.019412999998166924,
+        "authorization_s": 3.0499999411404133e-05,
+        "execution_s": 0.11216816700107302,
+        "report_s": 5.674999920302071e-05,
+        "protected_steps": 2
+      },
+      "target_calls": 3
+    },
+    {
+      "sequence": 2,
+      "stream": true,
+      "response_bytes": 953,
+      "exact_retry": true,
+      "turn": {
+        "finish_reason": "stop",
+        "generated_tokens": [
+          51346,
+          1
+        ],
+        "frontier_after_commit": 251,
+        "tool_calls": [],
+        "response_json": {
+          "id": "55085b98-bde7-4ddf-aaa8-7a04656e3e27",
+          "object": "chat.completion",
+          "created": 1791388272,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "YES"
+              },
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 249,
+            "completion_tokens": 1,
+            "total_tokens": 250,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 249
+          }
+        },
+        "stream_events": [
+          {
+            "id": "55085b98-bde7-4ddf-aaa8-7a04656e3e27",
+            "object": "chat.completion.chunk",
+            "created": 1791388272,
+            "model": "deepseek-v4.1-flash",
+            "system_fingerprint": null,
+            "choices": [
+              {
+                "index": 0,
+                "delta": {
+                  "role": "assistant",
+                  "content": ""
+                },
+                "logprobs": null,
+                "finish_reason": null
+              }
+            ]
+          },
+          {
+            "id": "55085b98-bde7-4ddf-aaa8-7a04656e3e27",
+            "object": "chat.completion.chunk",
+            "created": 1791388272,
+            "model": "deepseek-v4.1-flash",
+            "system_fingerprint": null,
+            "choices": [
+              {
+                "index": 0,
+                "delta": {
+                  "content": "YES"
+                },
+                "logprobs": null,
+                "finish_reason": null
+              }
+            ]
+          },
+          {
+            "id": "55085b98-bde7-4ddf-aaa8-7a04656e3e27",
+            "object": "chat.completion.chunk",
+            "created": 1791388272,
+            "model": "deepseek-v4.1-flash",
+            "system_fingerprint": null,
+            "choices": [
+              {
+                "index": 0,
+                "delta": {
+                  "content": ""
+                },
+                "logprobs": null,
+                "finish_reason": "stop"
+              }
+            ],
+            "usage": {
+              "prompt_tokens": 249,
+              "completion_tokens": 1,
+              "total_tokens": 250,
+              "prompt_tokens_details": {
+                "cached_tokens": 0
+              },
+              "prompt_cache_hit_tokens": 0,
+              "prompt_cache_miss_tokens": 249
+            }
+          }
+        ],
+        "prompt_replay_count": 0,
+        "full_cache_repack_count": 0,
+        "request_id": "c74073dd-fc9d-4abe-a96d-b4c7f87a0851",
+        "application_request_id": null,
+        "cancelled": false,
+        "capacity": {
+          "envelope_kind": "text",
+          "qualified_total_tokens": 1048576,
+          "prompt_tokens": 249,
+          "remaining_tokens": 1048327,
+          "max_tokens": 32,
+          "output_mode": "custom",
+          "model_output_ceiling": null,
+          "binding": true
+        },
+        "termination_reason": "stop"
+      },
+      "diagnostics": {
+        "schema": "ds41f.m8.live-continuation.diagnostics.v1",
+        "state": "idle",
+        "frontier": 251,
+        "cache_offsets_head": [
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251
+        ],
+        "cache_offsets_all": [
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251,
+          251
+        ],
+        "cache_layer_count": 40,
+        "all_cache_offsets_equal_frontier": true,
+        "turn_count": 2,
+        "total_prompt_replay_count": 0,
+        "total_full_cache_repack_count": 0,
+        "turns": [
+          {
+            "turn_index": 0,
+            "frontier_before": 236,
+            "prompt_suffix_tokens": 237,
+            "appended_prefill_tokens": 236,
+            "terminal_token": 128822,
+            "generated_tokens": [
+              11932,
+              1
+            ],
+            "frontier_after": 239,
+            "prompt_replay_count": 0,
+            "full_cache_repack_count": 0,
+            "append_seconds": 1.0844295419992704,
+            "decode_seconds": 0.11196954100159928,
+            "first_token_latency_s": 0.05699470800027484,
+            "decode_tok_s": 17.862000523619486,
+            "cancelled": false
+          },
+          {
+            "turn_index": 1,
+            "frontier_before": 239,
+            "prompt_suffix_tokens": 10,
+            "appended_prefill_tokens": 9,
+            "terminal_token": 128822,
+            "generated_tokens": [
+              51346,
+              1
+            ],
+            "frontier_after": 251,
+            "prompt_replay_count": 0,
+            "full_cache_repack_count": 0,
+            "append_seconds": 0.17356841699802317,
+            "decode_seconds": 0.11212016600256902,
+            "first_token_latency_s": 0.056820791000063764,
+            "decode_tok_s": 17.838004270830048,
+            "cancelled": false
+          }
+        ]
+      },
+      "metrics": {
+        "cycles": 0,
+        "offered": 0,
+        "accepted": 0,
+        "consumed": 2,
+        "proposal_s": 0.0,
+        "authorization_s": 1.0415998985990882e-05,
+        "execution_s": 0.11229395899863448,
+        "report_s": 4.7375000576721504e-05,
+        "protected_steps": 2
+      },
+      "target_calls": 6
+    }
+  ],
+  "elapsed_s": 318.5010282080002,
+  "tool_fail_closed": {
+    "status": 400,
+    "body": {
+      "error": {
+        "message": "EOF-sensitive tool preview is not qualified for first-party MTP",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": "invalid_request_error"
+      }
+    },
+    "mutation": false
+  },
+  "idle_child": {
+    "receipts": 0,
+    "producers": 0
+  },
+  "resources": {
+    "parent_active": false,
+    "child_active": false,
+    "receipts": 0,
+    "producers": 0
+  },
+  "counts": {
+    "target": 6,
+    "forbidden": 0
+  }
+}
