@@ -109,6 +109,12 @@ class OfficialFP8MLXBlockRunner:
     p8_optimizer: P8ExecutionOptimizer | None = None
 
     def __post_init__(self) -> None:
+        child = getattr(self.language_model, '_ds41f_proposal_child', None)
+        self.tap_capture = None
+        if child is not None:
+            from ds41f_mlx.runtime.hidden_taps import PrefillTapCapture
+            child.assert_active()
+            self.tap_capture = PrefillTapCapture(child)
         if self.suffix_math is None:
             self.suffix_math = OmlxV41SuffixMath(self.language_model)
         if self.scheduling_coordinator is None and getattr(self.language_model, "_p7_enable_overlap", False):
@@ -232,6 +238,8 @@ class OfficialFP8MLXBlockRunner:
             h_out, pre_out = self.suffix_math.execute_suffix_query(layer_id=layer_id, h_chunk=h_chunk, pre_chunk=pre_chunk, cache=cache, shared=shared, absolute_start=absolute_start, image_mask=image_mask)
         else:
             h_out, pre_out = layer(h_chunk, pre_chunk, cache, shared, absolute_start, image_mask)
+        if self.tap_capture is not None:
+            self.tap_capture.capture(layer_id, absolute_start, h_out)
         block_event_id = self.p8_optimizer.shape_registry.record_lineage_event("BLOCK_OUTPUT", layer=layer_id, command_index=int(command.index), rows=int(command.rows)) if self.p8_optimizer is not None and self.p8_optimizer.enabled else None
         if tile_native:
             arena.tile_carry.bind_output(command, h_out, pre_out, base_frontier=base_start)
@@ -295,6 +303,8 @@ class OfficialFP8MLXBlockRunner:
         if self.scheduling_coordinator is not None:
             self.scheduling_coordinator.revoke()
         self.closed = True
+        if self.tap_capture is not None:
+            self.tap_capture.parts.clear()
         self.working_cache = None
 
     def _assert_p6_cache_capability(self) -> None:

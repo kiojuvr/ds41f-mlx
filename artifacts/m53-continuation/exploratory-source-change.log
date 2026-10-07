@@ -1,0 +1,25 @@
+0.00s load
+315.38s failed at load
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m53_proposal_loop.py", line 103, in <module>
+    # Paired sessions are strictly sequential, never concurrent lifetimes.
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m53_proposal_loop.py", line 41, in main
+    note('load')
+    ~~~~^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/deepseek_recipe_backend.py", line 211, in load
+    model, _ = runtime.load_model()
+               ~~~~~~~~~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/omlx_core.py", line 72, in load_model
+    self.admission.bind_model(self.model, self.processor)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/resource_admission.py", line 333, in bind_model
+    self.assert_active(); self.check_files()
+                          ~~~~~~~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/resource_admission.py", line 311, in check_files
+    require(file_token(path.stat()) == token, 'admitted resource changed/replaced')
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/resource_admission.py", line 52, in require
+    raise ResourceAdmissionError(message)
+ds41f_mlx.runtime.resource_admission.ResourceAdmissionError: admitted resource changed/replaced

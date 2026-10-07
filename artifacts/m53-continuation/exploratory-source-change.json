@@ -1,0 +1,8 @@
+{
+  "decision": "NOT PASS",
+  "phase": "failed at load",
+  "cycles": [],
+  "error": "ResourceAdmissionError: admitted resource changed/replaced",
+  "traceback": "Traceback (most recent call last):\n  File \"/Volumes/SDXC-512/ds41f-mlx/tools/probe_m53_proposal_loop.py\", line 41, in main\n    note('load')\n    ~~~~^^^^^^^^\n  File \"/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/deepseek_recipe_backend.py\", line 211, in load\n    model, _ = runtime.load_model()\n               ~~~~~~~~~~~~~~~~~~^^\n  File \"/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/omlx_core.py\", line 72, in load_model\n    self.admission.bind_model(self.model, self.processor)\n    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/resource_admission.py\", line 333, in bind_model\n    self.assert_active(); self.check_files()\n                          ~~~~~~~~~~~~~~~~^^\n  File \"/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/resource_admission.py\", line 311, in check_files\n    require(file_token(path.stat()) == token, 'admitted resource changed/replaced')\n    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/resource_admission.py\", line 52, in require\n    raise ResourceAdmissionError(message)\nds41f_mlx.runtime.resource_admission.ResourceAdmissionError: admitted resource changed/replaced\n",
+  "elapsed_s": 315.39688695899895
+}

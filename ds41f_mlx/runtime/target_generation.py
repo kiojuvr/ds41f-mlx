@@ -120,10 +120,56 @@ class TargetGenerationSession:
         self._pending = pending
         self._history.append(consumed)
         self.token_frontier = len(self._history)
+        self._publish_taps(self.token_frontier - 1, getattr(self.target_forward, 'tap_rows', None))
+        self.target_forward.tap_rows = None
         return consumed
+
+    def disable_proposals(self):
+        """Explicit derived-only discard at a coherent idle target boundary.
+
+        Never called as an exception fallback inside a speculative cycle.
+        Re-enabling requires a newly qualified full seed, not cache replay.
+        """
+        self._require_unborrowed()
+        if self._failed or not self._started or self._stopped:
+            raise RuntimeError('live coherent generation required')
+        if set(self.active_cache_offsets()) != {len(self._history)}:
+            raise RuntimeError('incoherent proposal disable boundary')
+        self._retire_proposal()
+        self.target_forward.proposal_child = None
+        self.target_forward.tap_rows = None
+
+    def take_tap_receipt(self):
+        self._require_unborrowed()
+        receipt = getattr(self, '_tap_receipt', None)
+        if receipt is None or receipt.retired:
+            raise RuntimeError('committed tap receipt unavailable')
+        self._tap_receipt = None
+        return receipt
+
+    def _publish_taps(self, start, rows):
+        old = getattr(self, '_tap_receipt', None)
+        if old is not None:
+            old.retire()
+        self._tap_receipt = None
+        if rows is not None:
+            from ds41f_mlx.runtime.hidden_taps import CommittedTapReceipt
+            self._tap_receipt = CommittedTapReceipt(
+                self.target_forward.proposal_child, self, start, rows)
+
+    def _retire_proposal(self):
+        producer = getattr(self, '_proposal_producer', None)
+        if producer is not None:
+            producer.retire()
+        for name in ('_tap_receipt', '_prefill_tap_receipt'):
+            receipt = getattr(self, name, None)
+            if receipt is not None:
+                receipt.retire()
+                setattr(self, name, None)
 
     def _invalidate(self):
         self._failed = True
+        self._retire_proposal()
         for item in (self._cache or self._final_cache or ()):
             # Existing P6 admission/runner guards also reject passive stale
             # aliases after a potentially partially mutating target failure.
@@ -251,6 +297,8 @@ class TargetGenerationSession:
                     raise RuntimeError('generation settlement receipt mismatch')
                 self.token_frontier = end
                 fault('frontier')
+            committed_taps = (self.mx.concatenate(journal.tap_rows[:len(consumed)], 1)
+                              if getattr(journal, 'tap_rows', None) else None)
             journal.settle(len(consumed), publish=publish_frontier)
             fault('settled')
             # No user-visible reports/response until the target barrier succeeds.
@@ -276,6 +324,8 @@ class TargetGenerationSession:
                     self._cycle_active = True
             fault('terminal')
             fault('response')
+            if not self._stopped:
+                self._publish_taps(before, committed_taps)
             return dict(cancelled=self.stop_reason == 'cancelled', confirmed_anchor=anchor,
                         proposal_acceptance_count=accepted, consumed_positions=len(consumed),
                         next_lookahead=None if self._pending is None else int(self._pending.item()),
@@ -315,6 +365,7 @@ class TargetGenerationSession:
         if self._stopped:
             return
         self._stopped = True
+        self._retire_proposal()
         self.stop_reason = reason
         try:
             self.mx.synchronize(self.stream)
@@ -364,6 +415,7 @@ class TargetGenerationSession:
                     child.burn()
             self.stop('closed')
         finally:
+            self._retire_proposal()
             self.initial_cache = []
             self._cache = self._pending = self._final_cache = self._final_all_tokens = None
             if self._old_wired_limit is not None:

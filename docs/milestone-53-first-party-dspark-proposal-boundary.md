@@ -1,6 +1,10 @@
 # M53 — first-party DSpark proposal boundary assessment
 
-Base: M52 `6d7c936` and M51 `40bd187`. **NO / M53 NOT PASS.**
+Base: M52 `6d7c936` and M51 `40bd187`. **Historical assessment: NO / M53 NOT PASS.**
+
+The two primitives and real proposal loop are now implemented and qualified:
+[M53 continuation — YES / PASS](milestone-53-proposal-primitives-continuation.md).
+The findings/evidence below describe the earlier tree, not the current boundary.
 
 This change identifies and probes the missing proposal-side primitives. It does
 **not** implement or qualify a first-party DSpark producer. No real proposal

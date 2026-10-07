@@ -402,6 +402,18 @@ class AdmittedResources:
             require(any(model.layers[i].engram.embed is embed for embed, _, _, _, _ in self._engram),
                     'SSD Engram module substituted')
 
+    def admit_proposal_child(self, model):
+        """Opt-in derived resources under this exact loaded OFF model lifetime."""
+        from ds41f_mlx.runtime.dspark_proposal import ProposalResources
+        self.validate_binding(model)
+        require(getattr(model, '_ds41f_proposal_child', None) is None,
+                'proposal child already bound')
+        child = ProposalResources(self, model)
+        if not hasattr(self, '_proposal_children'):
+            self._proposal_children = []
+        self._proposal_children.append(child)
+        return child
+
     def describe(self):
         return {'schema': 'ds41f.execution-admission.v1', 'resource_set_sha256': self.identity,
                 'native_profile': self.profile, 'active': self.active, 'model_bound': self._model is not None,
@@ -422,6 +434,8 @@ class AdmittedResources:
         global _allocator_owner
         with _allocator_lock:
             self.active = False
+            for child in getattr(self, '_proposal_children', ()):
+                child.retire()
             if self._old_cache_limit is not None or self._old_wired_limit is not None:
                 require(_allocator_owner is self, 'OFF allocator policy ownership lost')
                 # Retire permission before restoration; retain ownership on failure

@@ -24,6 +24,7 @@ class AcceptedPrefixJournal:
         self.evicted, self.projections, self.histories = [], {}, []
         self.initial = []
         self.logits = []
+        self.tap_rows = []
         try:
             for item in self.objects:
                 item._p6_append_pending = True
@@ -103,6 +104,9 @@ class AcceptedPrefixJournal:
             with self.mx.stream(self.stream):
                 logits = self.target.forward(token, self.cache, self.frontier + self.count,
                                              journal=self)
+                if getattr(self.target, 'tap_rows', None) is not None:
+                    self.tap_rows.append(self.target.tap_rows)
+                    self.target.tap_rows = None
                 self.histories.append(self.detach(self.cache[0][6]))
                 # B lazy logits could otherwise pin B context-sized packed
                 # parents. Retain bounded outputs, never their execution graphs.
@@ -267,6 +271,9 @@ class AcceptedPrefixJournal:
         self.histories.clear()
         self.initial.clear()
         self.logits.clear()
+        self.tap_rows.clear()
+        if self.target is not None:
+            self.target.tap_rows = None
         self.fault = None
         self.cache = None
         self.objects = ()

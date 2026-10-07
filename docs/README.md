@@ -12,7 +12,8 @@ Canonical architectural intent:
 Canonical current-state documents:
 
 - [M41 local MTP candidate](milestone-41-local-mtp-release-candidate.md) — explicit bounded opt-in capability, composed/source-clone evidence and OFF regression
-- [M49 promotion assessment](milestone-49-runtime-promotion-assessment.md) — historical stopped / NO promotion assessment at M49; transaction/generation subsequently implemented in M51/M52, proposal integration remains blocked at M53; no new supported envelope
+- [M49 promotion assessment](milestone-49-runtime-promotion-assessment.md) — historical stopped / NO promotion assessment; M51–M53 subsequently close transaction/generation/proposal execution core, without runtime promotion
+- [M53 proposal primitives](milestone-53-proposal-primitives-continuation.md) — PASS: admitted first-party DSpark child, same-forward receipts and real M52/M51 loop; development-only, no new runtime/application envelope
 - [Local MTP setup/API/operator boundary](mtp-local-release-candidate.md) — supported profile, reproducible source/native setup and conservative application states
 
 - [Runtime strategy](runtime-strategy.md) — production architecture and non-selected paths

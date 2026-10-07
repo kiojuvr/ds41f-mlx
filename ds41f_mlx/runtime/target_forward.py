@@ -24,6 +24,8 @@ class TargetForwardTransaction:
         self.resources = resources_for(model)
         self.resources.require_backend(mx)
         self.producer = DecodeStateProducer(mx, self.resources.math)
+        self.proposal_child = getattr(model, '_ds41f_proposal_child', None)
+        self.tap_rows = None
         # Stable admitted primitives, never a fresh ambient import.
         math = self.resources.math
         self.hc_pre = math.hc_pre
@@ -81,6 +83,11 @@ class TargetForwardTransaction:
         h = mx.repeat(h[..., None, :], c.hc_mult, -2)
         pre = mx.broadcast_to((mx.arange(c.hc_mult) == 0).astype(mx.float32), h.shape[:-1])
         shared = {}
+        captured = {}
+        child = self.proposal_child
+        if child is not None:
+            child.assert_active()
+        self.tap_rows = None
         prefetch = getattr(model, '_engram_prefetch', None)
         with prefetch.forward() if prefetch is not None else nullcontext():
             if prefetch is not None and c.engram_layer_ids:
@@ -98,6 +105,9 @@ class TargetForwardTransaction:
                     h, pre = self.producer.block(layer, h, pre, cache[i], shared, frontier)
                 else:
                     h, pre = self.producer.block(layer, h, pre, cache[i], shared, frontier, journal)
+                if child is not None and i in c.dspark_target_layer_ids:
+                    from ds41f_mlx.runtime.hidden_taps import detach
+                    captured[i] = detach(mx, mx.mean(h, axis=2))
                 if prefetch is not None and 'engram' in layer:
                     mx.async_eval(h, pre)
                 cache[i][0] = mx.array([frontier + 1], mx.int32)
@@ -121,6 +131,9 @@ class TargetForwardTransaction:
                     cache[i].lengths -= 1
                 if cache[i].left_padding is not None:
                     cache[i].left_padding -= 1
+        if child is not None:
+            self.tap_rows = mx.concatenate([captured[i] for i in c.dspark_target_layer_ids], -1)
+            mx.eval(self.tap_rows)
         return self.project_logits(model.norm(self.hc_pre(h, pre)), model.head.weight)[:, -1, :]
 
     def execute(self, token, cache, frontier, sampler, stream):
@@ -151,6 +164,7 @@ class TargetForwardTransaction:
                 item._p6_append_pending = False
             return consumed, pending
         except BaseException:
+            self.tap_rows = None
             self.invalidate(objects)
             self.invalidate(cache)
             raise
