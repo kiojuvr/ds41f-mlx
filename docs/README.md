@@ -47,6 +47,7 @@ Canonical current-state documents:
 - [M32 native recipe gate](milestone-32-native-recipe-gate.md) — full ARM64/OpenCV build and native parity pass; initialization commit edge blocks semantic MTP qualification, no M33 authorization
 - [M31 recipe semantic session](milestone-31-recipe-semantic-session.md) — candidate upstream extension and source parity; real native build blocked, no live semantic MTP gate
 - [Fresh MTP startup](mtp-startup-investigation.md) — deferred target-prefix compute, late Metal wiring, request-scoped resource fix and R1 evidence
+- [Target dense prefill](target-prefill-investigation.md) — native scaling regimes, real dispatch/replay controls and unselected P6 headroom
 - [Performance](performance.md) — qualified performance class and baselines
 - [Provenance](provenance.md) — checkpoint/source/import/dependency identity
 - [Qualification](qualification.md) — current qualified, optional, unqualified, and non-goal areas

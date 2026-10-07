@@ -1,5 +1,15 @@
 # Tools
 
+## `bench_target_prefill.py` / `summarize_target_prefill.py`
+
+Completed first-party real-model P6 length ladder, same-cache P5/decode and optional
+continuation; separate producer probes and real dense/Expert operands. `--suffix-ab`
+compares unchanged production with an unselected native target-attention candidate;
+`--suffix-ab`, `--moe-ab`, and `--p6-ab` are tool-only diagnostic controls, not
+runtime selectors. Probes preserve opaque native few-row GatherQMM pipelines and
+are not production GPU percentages. See [the investigation](../docs/target-prefill-investigation.md)
+for normally admitted interpreter, import ordering, reproduction and scope.
+
 ## `record_m0_identity.py`
 
 Records source and checkpoint identity for M0 without loading the model and without writing to the checkpoint directory.

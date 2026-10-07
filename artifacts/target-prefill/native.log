@@ -1,0 +1,79 @@
+64 0 0.453 141.2
+64 1 0.283 226.4
+128 0 0.399 320.7
+128 1 0.395 324.4
+292 0 0.783 373.0
+292 1 0.716 407.8
+512 0 1.19 430.2
+512 1 1.123 455.7
+1024 0 2.173 471.2
+1024 1 2.12 483.1
+2048 0 4.113 497.9
+2048 1 4.08 502.0
+4096 0 7.902 518.4
+4096 1 7.877 520.0
+8191 0 15.611 524.7
+8191 1 15.604 524.9
+8192 0 11.138 735.5
+8192 1 11.14 735.4
+16384 0 19.343 847.0
+16384 1 19.336 847.3
+32768 0 35.816 914.9
+32768 1 35.895 912.9
+65536 0 70.763 926.1
+65536 1 70.504 929.5
+292 0 1.2 243.2
+292 1 1.058 276.0
+2048 0 5.09 402.4
+2048 1 4.64 441.3
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/bench_target_prefill.py", line 148, in <module>
+    dt=time.perf_counter(); continuation.begin_turn_from_suffix(suffix,max_tokens=8); row['continuation_start_s']=time.perf_counter()-dt
+         ^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/bench_target_prefill.py", line 126, in main
+    capture = a.capture is not None and repeat == a.repeats-1
+    ^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/prefill_fp8_mlx/p6_append.py", line 281, in execute_all
+    self.execute_segment(segment)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/prefill_fp8_mlx/p6_append.py", line 297, in execute_segment
+    execn.runner.execute_batch(segment.commands, execn.arena)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/prefill_fp8_mlx/block_runner.py", line 125, in execute_batch
+    result = self.execute_command(command, arena)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/prefill_fp8_mlx/block_runner.py", line 148, in execute_command
+    return self._execute_encode_rows(command, arena, record)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/prefill_fp8_mlx/block_runner.py", line 232, in _execute_encode_rows
+    h_out, pre_out = self.suffix_math.execute_suffix_query(layer_id=layer_id, h_chunk=h_chunk, pre_chunk=pre_chunk, cache=cache, shared=shared, absolute_start=absolute_start, image_mask=image_mask)
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/prefill_fp8_mlx/omlx_suffix_math.py", line 27, in checked
+    return operation(*args, **kwargs)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/prefill_fp8_mlx/omlx_suffix_math.py", line 113, in execute_suffix_query
+    h = lang.hc_post(layer.ffn(lang.hc_pre_norm(h, ap, layer.ffn_norm.weight, layer.ffn_norm.eps), image_mask), h, fo, fc)
+                     ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/bench_target_prefill.py", line 72, in call
+    key=cls.__name__ + (':routed' if cls is lang.Expert and len(args)>1 and args[1] is not None else ':shared' if cls is lang.Expert else '')
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/model_execution/language.py", line 655, in __call__
+    routed = self.experts(
+             ~~~~~~~~~~~~^
+        routed_input[..., None, None, :],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        input_quantized=routed_quantized,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ).squeeze(-2)
+    ^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/bench_target_prefill.py", line 72, in call
+    key=cls.__name__ + (':routed' if cls is lang.Expert and len(args)>1 and args[1] is not None else ':shared' if cls is lang.Expert else '')
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/model_execution/language.py", line 461, in __call__
+    return glm_fast.deepseek_v41_grouped_expert(gate, up, y, down).reshape(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/kioju/omlx-0.7.0.release/omlx/custom_kernels/glm_moe_dsa/fast.py", line 847, in deepseek_v41_grouped_expert
+    return _ext.deepseek_v41_grouped_expert(gate, up, activation, down)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: Expected unevaluated BF16 MXFP or affine GatherQMM nodes

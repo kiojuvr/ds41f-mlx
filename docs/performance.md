@@ -8,6 +8,21 @@ The current native attention, MoE, Engram, state, and generation paths are measu
 
 The current production-prefill candidate for Milestone 6 is the existing **dense P0-P7 DwarfStar-derived FP8/MLX path** with `P7 FULL_RESIDENT_BACKBONE_SSD_ENGRAM`, `P7_ENGRAM_TILE=2048`, and ds41f `TargetGenerationSession` MTP-OFF decode (M44). The earlier GenerationBatch measurements below are historical comparison evidence; M44 records fresh matched measurements for the changed engine. P8 optimization search is complete: `TILE_NATIVE_CARRY_REJECTED_NO_E2E_GAIN`; the tile-native implementation is retained as experimental/default OFF and is not production-selected.
 
+## Post-`2f928cd` target dense prefill
+
+The [real first-party investigation](target-prefill-investigation.md) separates
+short-shape occupancy, the 8192-token P6 work-elimination transition, source/tail
+amortization, lazy GPU debt and actual native/portable dispatch. The native baseline
+rises from 226 tok/s at 64 tokens to 525 just below 8192 and about 930 at 64K.
+Dense MXFP8/GEMM and MoE variant controls reject a broad leaf-kernel campaign.
+Reusing normal target packed attention in P6's 127-old-row suffix geometry
+measures about 1.85 s headroom, but changes decoder-window bytes and a paired
+32-token decode is 2.3% slower. The candidate is **not selected**, despite passing
+native state/restore and full OFF R1 checks. No production execution changes:
+planner, precision, source/cache ownership, resources and donor/MTP remain
+unchanged. See the investigation for dispatch loss, affected qualification and
+the subsequent optimization seam; a prefill gain is not permission to accept a steady regression.
+
 ## Post-`d006e1f` R1 verification compute investigation
 
 The [bounded real-model investigation](mtp-verification-compute-investigation.md)
