@@ -4,6 +4,9 @@ Runtime base: **`d006e1f`**. Apple M3 Ultra, 512 GB, macOS 26.5.2,
 MLX 0.32.2, official DeepSeek-V4.1-Flash checkpoint. No production numerical,
 acceptance, cache, fallback, Web, release or promotion changes were made.
 
+Follow-up: [fresh MTP startup investigation and production wiring fix](mtp-startup-investigation.md).
+The timings below remain the unchanged `12182b3` baseline.
+
 ## Decision
 
 **Do not start a general llama.cpp-style few-row MMA campaign.**

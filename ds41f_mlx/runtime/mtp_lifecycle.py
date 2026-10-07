@@ -336,6 +336,7 @@ class OMLXMTPGenerationSession:
     max_tokens: int = 128
     stream: Any | None = None
     semantic_guard: Any | None = None
+    wired_limit_lease: Any | None = None
 
     def __post_init__(self) -> None:
         self._operation_lock = RLock()
@@ -385,6 +386,9 @@ class OMLXMTPGenerationSession:
         self._started = False
         self._closed = False
         self._quiesced = False
+        if self.wired_limit_lease is not None:
+            self.wired_limit_lease.transfer_to(self._bg)
+            self.wired_limit_lease = None
 
     @_serialized_mtp_operation
     def start(self, terminal_prompt_token: int) -> None:

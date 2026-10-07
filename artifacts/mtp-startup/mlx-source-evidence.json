@@ -1,0 +1,13 @@
+{
+  "schema": "ds41f.mtp.startup-mlx-source.v1",
+  "installed_mlx_version": "0.32.2",
+  "upstream": "https://github.com/ml-explore/mlx",
+  "tag": "v0.32.2",
+  "commit": "1f8e74e3f12f31365464a6867c6579f0e9b29d85",
+  "scope": "Read-only release source inspection supporting measured API attribution; no MLX build, patch, residency tuning or exact driver/page-fault claim.",
+  "files": [
+    {"path": "mlx/backend/metal/allocator.cpp", "sha256": "b317edbeda67afbafe63a4abe685c810b1fb0fd7d94f5f5ee17a7773bf97c65f", "observations": ["MetalAllocator::set_wired_limit holds allocator mutex, swaps wired_limit and calls residency_sets_.resize", "Allocator cache reuse and retained allocations remain tracked by residency sets"]},
+    {"path": "mlx/backend/metal/resident.cpp", "sha256": "c93200998adbfa895d1e5398d50068334bee81cca633480a3bd5bb93d524f99f", "observations": ["resize returns immediately when capacity is unchanged", "Budget growth walks tracked allocations, adds those that fit, and commits touched Metal residency sets", "insert registers newly allocated buffers in residency sets immediately when budget allows"]},
+    {"path": "mlx/backend/metal/resident.h", "sha256": "434ac8937033f94f16257b203760dcf10e7e402fcec282db4f2d7bcd46641962", "observations": ["Zero default wired limit means nothing is wired unless requested", "Metal residency is managed per set; standing residency requests cover later inserts"]}
+  ]
+}

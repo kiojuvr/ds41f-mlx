@@ -189,7 +189,9 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
         from ds41f_mlx.runtime.mtp_lifecycle import DSparkCommittedContext, OMLXMTPGenerationSession
         from ds41f_mlx.runtime.omlx_decode import OMLXDecodeConfig
         from ds41f_mlx.runtime.recipe_semantic_guard import RecipeSemanticGuard
-        with mx.stream(generation_stream):
+        from contextlib import ExitStack
+        from ds41f_mlx.runtime.mtp_resources import MTPWiredLimitLease
+        with mx.stream(generation_stream), ExitStack() as startup_resources:
             load_start = perf_counter()
             self.load()
             trace['load_s'] = perf_counter()-load_start
@@ -214,6 +216,10 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
                     taps[self.index].append(reduced)
                     return self.layer(h, *args, **kwargs)
             t0 = perf_counter()
+            # Acquire the same native generation resource before dense prefix
+            # allocations. Include acquisition in request/handoff latency and
+            # restore on every pre-transfer failure; no state is published here.
+            wired = startup_resources.enter_context(MTPWiredLimitLease(mx, generation_stream))
             try:
                 for i, layer in original.items(): lm.layers[i] = Tap(i, layer)
                 app = DeferredPrefillAppend.create(lm, rec.cache, ids[:-1], committed_frontier=C, mx=mx)
@@ -237,7 +243,8 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
                 @classmethod
                 def from_prefilled_cache(cls, model, cache, prefix, config, *, max_tokens, sampler):
                     return OMLXMTPGenerationSession(model, cache, np.asarray(prefix), context,
-                        config=config, sampler=sampler, max_tokens=max_tokens, semantic_guard=rec.guard)
+                        config=config, sampler=sampler, max_tokens=max_tokens, semantic_guard=rec.guard,
+                        wired_limit_lease=wired)
             rec.owner = handoff_to_generation(live, self._model, terminal_prompt_token=ids[-1], config=cfg,
                 max_tokens=self.max_tokens(request.inference_options), sampler=self.make_sampler(request.inference_options), session_factory=Factory)
             trace.update(prefill_handoff_s=perf_counter()-t0, prompt_replay=rec.owner.prompt_replay_count,
