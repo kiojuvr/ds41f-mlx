@@ -1,0 +1,28 @@
+0.0s loading checkpoint
+338.0s greedy: repeated and every consumed prefix 1..8 PASS
+353.1s script: repeated and every consumed prefix 1..8 PASS
+368.3s rng: repeated and every consumed prefix 1..8 PASS
+384.5s fault verify-before PASS
+385.2s fault tentative PASS
+386.3s fault materialized PASS
+387.5s fault acceptance PASS
+388.6s fault frontier PASS
+389.8s fault settled PASS
+390.9s fault history PASS
+392.1s fault lookahead PASS
+393.2s fault terminal PASS
+394.3s fault response PASS
+394.3s FAILED
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m52_generation.py", line 203, in <module>
+    assert all(c == dict(replay=0, repack=0, handoffs=1) for c in out['counters'])
+    ^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m52_generation.py", line 191, in main
+    assert all(x._p6_append_invalid and x._p6_append_failed for x in aliases)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/mlx/nn/layers/base.py", line 103, in __getattr__
+    super(Module, self).__getattribute__(key)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+AttributeError: 'LanguageModel' object has no attribute '_engram_embed'
