@@ -1,0 +1,107 @@
+{
+  "schema": "ds41f.m53.proposal-boundary.v1",
+  "status": "BOUNDARY_CONFIRMED",
+  "decision": "NO / M53 NOT PASS",
+  "actual_dspark_proposals": 0,
+  "qualification": "boundary probe only; not end-to-end DSpark qualification",
+  "resource_identity": "de2fab3b871868f45c51fe338adefad403c1ba2284aded6c616d5c369314113a",
+  "model_type": "ds41f_mlx.model_execution.language.LanguageModel",
+  "admitted_dspark_modules": [],
+  "loaded_mtp_parameter_count": 0,
+  "loaded_mtp_stage_count": 0,
+  "config": {
+    "preserve_mtp": false,
+    "n_mtp_layers": 3,
+    "dspark_block_size": 5,
+    "dspark_target_layer_ids": [
+      37,
+      38,
+      39
+    ],
+    "window_size": 128
+  },
+  "checkpoint_mtp_tensor_count": 2401,
+  "checkpoint_mtp_stages": [
+    "0",
+    "1",
+    "2"
+  ],
+  "checkpoint_mtp_shards": [
+    "model-00044-of-00048.safetensors",
+    "model-00045-of-00048.safetensors",
+    "model-00046-of-00048.safetensors"
+  ],
+  "first_party_preserve_mtp_rejection": "ds41f loading requires standard-OFF, SSD Engram and dense prefill",
+  "prefill_dspark_context_present": false,
+  "journal_outputs": {
+    "row_shape": [
+      1,
+      129280
+    ],
+    "row_dtype": "mlx.core.float32",
+    "logits_count": 2,
+    "hidden_attribute_present": false,
+    "dspark_attribute_present": false
+  },
+  "journal_cancel_exact_state": true,
+  "journal_retired": "retired",
+  "empty_cycle_presampling_cancellation": {
+    "exact_state": true,
+    "consumed": 0
+  },
+  "empty_cycle_control": {
+    "consumed": 1,
+    "proposals": 0,
+    "accepted": 0
+  },
+  "continuations": [
+    {
+      "exact_list": true,
+      "frontier": 260
+    },
+    {
+      "exact_list": true,
+      "frontier": 263
+    }
+  ],
+  "off_control_timing": {
+    "tokens": 16,
+    "elapsed_s": 0.8263495410010364,
+    "tok_s": 19.3622664576272,
+    "instrumentation": "Python donor-call profile guard enabled",
+    "is_mtp_throughput": false
+  },
+  "terminal_control": {
+    "reason": "length",
+    "exact_list": true,
+    "history_frontier": 279,
+    "all_40_layers_coherent": true
+  },
+  "counters": {
+    "replay": 0,
+    "full_cache_repack": 0,
+    "initial_handoffs": 1
+  },
+  "target_failure_control": {
+    "all_aliases_burned": true,
+    "journal_retired": true,
+    "continuation_rejected": true
+  },
+  "native_mtp_calls": [],
+  "not_qualified": [
+    "actual proposal generation",
+    "all/partial/first reject",
+    "proposal RNG isolation",
+    "canonical stochastic sampling with real proposals",
+    "proposal advancement/reset/retirement/failure",
+    "MTP throughput",
+    "native candidate proposal/acceptance/result comparison",
+    "semantic horizon"
+  ],
+  "retirement_control": {
+    "admission_active": false,
+    "engram_closed": true,
+    "proposal_resources_allocated": 0
+  },
+  "elapsed_s": 316.97478766699896
+}
