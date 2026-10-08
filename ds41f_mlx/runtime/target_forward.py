@@ -106,8 +106,7 @@ class TargetForwardTransaction:
                 else:
                     h, pre = self.producer.block(layer, h, pre, cache[i], shared, frontier, journal)
                 if child is not None and i in c.dspark_target_layer_ids:
-                    from ds41f_mlx.runtime.hidden_taps import detach
-                    captured[i] = detach(mx, mx.mean(h, axis=2))
+                    captured[i] = mx.mean(h, axis=2)
                 if prefetch is not None and 'engram' in layer:
                     mx.async_eval(h, pre)
                 cache[i][0] = mx.array([frontier + 1], mx.int32)
@@ -133,7 +132,8 @@ class TargetForwardTransaction:
                     cache[i].left_padding -= 1
         if child is not None:
             self.tap_rows = mx.concatenate([captured[i] for i in c.dspark_target_layer_ids], -1)
-            mx.eval(self.tap_rows)
+            # The caller materializes and detaches this bounded same-forward
+            # receipt with the row completion barrier, not at each tapped layer.
         return self.project_logits(model.norm(self.hc_pre(h, pre)), model.head.weight)[:, -1, :]
 
     def execute(self, token, cache, frontier, sampler, stream):
@@ -150,11 +150,16 @@ class TargetForwardTransaction:
                 # Materialize ALL mutated state, not just dependencies of logits.
                 # Completion is the commit barrier, including compressor/history
                 # writes that may otherwise remain lazy after sampling.
-                mx.async_eval(pending, logprobs, *(x for c in cache
+                mx.async_eval(pending, logprobs,
+                    *(() if self.tap_rows is None else (self.tap_rows,)), *(x for c in cache
                     for x in (*c.cache, c.lengths, c.left_padding) if x is not None))
                 mx.eval(token)
                 consumed = int(token.item())
             mx.synchronize(stream)
+            if self.tap_rows is not None:
+                from ds41f_mlx.runtime.hidden_taps import detach
+                with mx.stream(stream):
+                    self.tap_rows = detach(mx, self.tap_rows)
             if len(cache) != len(objects) or any(a is not b for a, b in zip(cache, objects)):
                 raise RuntimeError('owned target cache objects replaced')
             if any(item.size() != frontier + 1 for item in cache):

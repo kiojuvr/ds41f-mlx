@@ -22,6 +22,8 @@ def main():
     ap.add_argument('--lane', choices=['off','first-party-mtp-development','candidate'], required=True)
     ap.add_argument('--output',type=Path,required=True)
     ap.add_argument('--repeats',type=int,default=3)
+    ap.add_argument('--topology', action='store_true', help='Count executable verify boundaries; diagnostic timings only')
+    ap.add_argument('--phase-detail', action='store_true', help='Observe M52 publication and derived ring boundaries separately')
     args = ap.parse_args()
     # Explicit correctness receipt prerequisite; never relabel pre-PASS timings.
     evidence = Path('artifacts/m54-eof/matched-correctness.json')
@@ -54,6 +56,8 @@ def main():
     phases = defaultdict(float)
     calls = defaultdict(int)
     frames = {}
+    topology = defaultdict(int)
+    verify_frames = set()
     epoch = [None,None]
     mapping = {}
     def register(fn,label): mapping[fn.__code__] = label
@@ -76,9 +80,25 @@ def main():
         (InternalMTPQualificationBackend._next,'candidate_decode_step_s'),
         (InternalMTPQualificationBackend._settle,'candidate_settle_report_s'),
     ]: register(method,label)
+    if args.phase_detail:
+        register(TargetGenerationSession.speculative_cycle, 'M52_cycle_inclusive_s')
+        register(TargetGenerationSession._publish_taps, 'same_forward_receipt_publication_s')
+        register(DSparkProposalProducer.advance, 'derived_ring_publication_s')
     def profile(frame,event,arg):
         code = frame.f_code
         label = mapping.get(code)
+        if args.topology:
+            region = (code is AcceptedPrefixJournal.advance.__code__ or
+                      code.co_name == '_run_verify_cycle_chain')
+            if region and event == 'call':
+                verify_frames.add(id(frame))
+            if verify_frames:
+                if event == 'call':
+                    topology[code.co_filename.split('site-packages/')[-1] + ':' + code.co_name] += 1
+                elif event == 'c_call':
+                    topology['native:' + str(getattr(arg, '__module__', '')) + ':' + getattr(arg, '__name__', type(arg).__name__)] += 1
+            if region and event == 'return':
+                verify_frames.discard(id(frame))
         if label is None:
             if (args.lane != 'candidate' and event == 'call' and code.co_name == '_forward'
                     and code.co_filename.endswith('/model_execution/language.py')):
@@ -124,7 +144,7 @@ def main():
                 out['request_sha256'] = hashlib.sha256(body).hexdigest()
                 for sample in range(args.repeats+1):
                     rec = await backend.create_stateful_session()
-                    phases.clear();calls.clear();frames.clear();epoch[:]=[None,None]
+                    phases.clear();calls.clear();frames.clear();topology.clear();verify_frames.clear();epoch[:]=[None,None]
                     begin = time.perf_counter()
                     response = await client.post('/v1/sessions/'+rec.session_id+'/chat/completions',content=body,
                         headers={'Content-Type':'application/json','X-DS41F-Request-Sequence':'1'})
@@ -171,6 +191,7 @@ def main():
                         end_to_end_decode_s=decode,end_to_end_decode_tok_s=len(tokens)/decode,
                         request_tok_s=len(tokens)/latency,acceptance=acceptance,
                         phase_s=snapshot,phase_calls=count_snapshot,metrics=metrics,
+                        verify_topology=dict(topology) if args.topology else None,
                         replay=0,repack=0,hidden_target_reexecution=0 if args.lane!='candidate' else None)
                     out['rows'].append(row)
                     await backend.close_stateful_session(rec.session_id)

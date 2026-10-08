@@ -93,6 +93,17 @@ def main():
                                     break
                     if partial == 'worker-eof':
                         reader = asyncio.create_task(receive())
+                        route_entered = asyncio.Event()
+                        original_cancel = backend.cancel_stateful_stream
+                        async def observed_cancel(session_id, request_id):
+                            # Disconnect itself may already set stream.cancel.
+                            # Observe entry of the real explicit route separately;
+                            # do not release EOF just because disconnect won.
+                            active = rec.active_stream
+                            assert active is not None and active.request_id == request_id
+                            route_entered.set()
+                            return await original_cancel(session_id, request_id)
+                        backend.cancel_stateful_stream = observed_cancel
                         try:
                             for _ in range(10000):
                                 if eof_entered.is_set(): break
@@ -106,11 +117,13 @@ def main():
                             cancellation = asyncio.create_task(client.post(f'/v1/sessions/{rec.session_id}/cancel',
                                 json={'request_id':stream.request_id}))
                             for _ in range(1000):
-                                if stream.cancel.is_set(): break
+                                if route_entered.is_set() and stream.cancel.is_set(): break
+                                if cancellation.done(): await cancellation
                                 await asyncio.sleep(.01)
-                            assert stream.cancel.is_set(), 'standard cancellation signal did not reach protected worker'
+                            assert route_entered.is_set() and stream.cancel.is_set(), 'standard cancellation route did not reach protected worker'
                         finally:
                             eof_release.set()
+                            backend.cancel_stateful_stream = original_cancel
                         reconciled = await cancellation
                         assert reconciled.status_code == 200, reconciled.text
                     else:
@@ -179,6 +192,11 @@ def main():
                     from ds41f_mlx.runtime.tool_eof_preview import ToolEOFPreview
                     original_completed = ToolEOFPreview.completed
                     if streaming == 'worker-eof':
+                        # Earlier cases release this shared gate in cleanup.
+                        # Rearm it: otherwise wait() returns immediately and the
+                        # supposed in-worker cut is only a timing-dependent race.
+                        eof_entered.clear()
+                        eof_release.clear()
                         def held_completed(oracle, ordinal):
                             complete = original_completed(oracle, ordinal)
                             if complete and not eof_entered.is_set():

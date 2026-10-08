@@ -4,7 +4,6 @@ The caller owns the exact-list lease and committed frontier. While borrowed,
 all objects remain pending and unusable by OFF/admission/idle transfer. A returned
 settled frontier is a publication receipt, NOT a history/RNG commit.
 """
-import numpy as np
 
 
 class AcceptedPrefixJournal:
@@ -56,15 +55,24 @@ class AcceptedPrefixJournal:
     def detach(self, value):
         if value is None:
             return None
-        # contiguous/array(slice) are NOT a guaranteed allocation boundary in
-        # MLX. A bounded byte-preserving host copy explicitly severs both parent
-        # allocation and lazy graph. bfloat16 is copied through its uint16 view.
-        self.mx.eval(value)
-        raw = np.array(value.view(self.mx.uint8), copy=True)
-        out = self.mx.array(raw).view(value.dtype).reshape(value.shape)
-        self.mx.eval(out)
-        self.payload_bytes += value.nbytes
-        return out
+        return self.detach_many([value])[0]
+
+    def detach_many(self, values, *, dependencies=()):
+        # Same byte-preserving allocation boundary as settlement's take, not
+        # contiguous/array(slice), which may alias the oversized parent. Private
+        # pending-lease references survive only this forward, never another row.
+        # Copy uint8 storage on-device: no float conversion or host readback.
+        outputs = []
+        for value in values:
+            if value is None:
+                outputs.append(None)
+                continue
+            raw = value.view(self.mx.uint8).reshape(-1)
+            copied = self.mx.take(raw, self.mx.arange(value.nbytes), axis=0)
+            outputs.append(copied.view(value.dtype).reshape(value.shape))
+            self.payload_bytes += value.nbytes
+        self.mx.eval(*dependencies, *(value for value in outputs if value is not None))
+        return outputs
 
     def check(self):
         self.target.resources.assert_active()
@@ -81,13 +89,13 @@ class AcceptedPrefixJournal:
             raise RuntimeError('duplicate journal window mutation')
         # One-token producer: at most one lost chronological row per layer.
         lost = old[:, :1] if old.shape[1] == window else None
-        self.evicted[-1][layer] = self.detach(lost)
+        self.evicted[-1][layer] = lost
 
     def compressor_write(self, layer, kv, gate):
         rows = self.projections.setdefault(layer, [])
         if len(rows) != self.count or kv.shape[1] != 1 or gate.shape != kv.shape:
             raise RuntimeError('unbounded or duplicate journal projection')
-        rows.append((self.detach(kv), self.detach(gate)))
+        rows.append((kv, gate))
 
     def advance(self, token):
         if self.phase != 'tentative' or self.count >= self.bound:
@@ -104,13 +112,26 @@ class AcceptedPrefixJournal:
             with self.mx.stream(self.stream):
                 logits = self.target.forward(token, self.cache, self.frontier + self.count,
                                              journal=self)
-                if getattr(self.target, 'tap_rows', None) is not None:
-                    self.tap_rows.append(self.target.tap_rows)
-                    self.target.tap_rows = None
-                self.histories.append(self.detach(self.cache[0][6]))
-                # B lazy logits could otherwise pin B context-sized packed
-                # parents. Retain bounded outputs, never their execution graphs.
-                self.mx.eval(logits)
+                taps = getattr(self.target, 'tap_rows', None)
+                self.target.tap_rows = None
+                layers = list(self.evicted[-1])
+                sources = list(self.projections)
+                values = [self.evicted[-1][i] for i in layers]
+                values += [v for i in sources for v in self.projections[i][-1]]
+                values += [self.cache[0][6], taps]
+                # One numerical execution region per row: no layer-local
+                # compressor/tap readback can serialize the backbone. All
+                # bounded undo payloads are still physically detached before
+                # the next row, preventing context-sized graph retention.
+                detached = iter(self.detach_many(values, dependencies=(logits,)))
+                for i in layers:
+                    self.evicted[-1][i] = next(detached)
+                for i in sources:
+                    self.projections[i][-1] = (next(detached), next(detached))
+                self.histories.append(next(detached))
+                retained_taps = next(detached)
+                if retained_taps is not None:
+                    self.tap_rows.append(retained_taps)
                 self.logits.append(logits)
             if len(self.evicted[-1]) != len(self.objects):
                 raise RuntimeError('incomplete all-layer journal window coverage')

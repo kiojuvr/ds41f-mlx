@@ -16,6 +16,7 @@ import time
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--strategy', choices=['off', 'first-party-mtp-development'], default='off')
     args = p.parse_args()
     from ds41f_mlx.config import load_runtime_config
     cfg = load_runtime_config(); cfg.apply_import_paths()
@@ -29,9 +30,9 @@ def main():
 
     result = dict(schema='ds41f.m51.journal-qualification.v1', status='RUNNING',
                   base=subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(),
-                  cycles=[], cancellation=[], faults=[])
+                  strategy=args.strategy, cycles=[], cancellation=[], faults=[])
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    backend = DeepSeekRecipeRuntimeBackend(runtime_config=cfg)
+    backend = DeepSeekRecipeRuntimeBackend(runtime_config=cfg, execution_strategy=args.strategy)
     started = time.monotonic()
     def save():
         args.output.write_text(json.dumps(result, indent=2) + '\n')

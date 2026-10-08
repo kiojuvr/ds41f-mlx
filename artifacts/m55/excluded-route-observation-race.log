@@ -1,0 +1,56 @@
+0.0001517910059192218 load
+314.4516943750059 tool JSON
+317.3252045830013 response completed
+317.3282599160011 tool completion / effect authorization
+317.346693958003 effect result
+317.35050775000127 tool result continuation
+318.43754475000605 response completed
+318.439665124999 repeated assistant generation
+318.798910041005 response completed
+318.80222429100104 tool SSE
+321.5593664160042 response completed
+321.55986304100225 tool completion / effect authorization
+321.56450450000557 effect result
+321.57021462500416 tool result continuation
+322.5635287910045 response completed
+322.56750270799967 repeated assistant generation
+322.92243625000265 response completed
+322.9255870410052 tool SSE
+325.68435033300193 response completed
+325.6865539999999 tool completion / effect authorization
+325.69425795799907 effect result
+325.69814233299985 tool result continuation
+326.7002896250051 response completed
+326.7027083330031 repeated assistant generation
+327.0604800830042 response completed
+327.0635795410053 second tool cycle
+329.13427583299926 response completed
+329.14027391600393 second tool result continuation
+330.161099666002 response completed
+330.16629595799895 tool SSE
+333.04219170800206 complete
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m54_eof_application.py", line 299, in <module>
+    if __name__ == '__main__': main()
+                               ~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m54_eof_application.py", line 283, in main
+    asyncio.run(run())
+    ~~~~~~~~~~~^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 196, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 119, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 726, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m54_eof_application.py", line 190, in run
+    msg = await request(rec,body,1,partial=streaming if streaming in ('completed-tool','worker-eof') else False)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m54_eof_application.py", line 115, in request
+    assert reconciled.status_code == 200, reconciled.text
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {"error":{"message":"no matching active stream; stale cancellation refused","type":"invalid_request_error","param":null,"code":"invalid_request_error"}}

@@ -1,0 +1,119 @@
+0.0001396669977111742 load
+312.83046762500453 tool JSON
+315.6969687919991 response completed
+315.69733512499806 tool completion / effect authorization
+315.7108210000006 effect result
+315.7170998750007 tool result continuation
+316.7268423330024 response completed
+316.7309695830045 repeated assistant generation
+317.0872250829998 response completed
+317.09354612500465 tool SSE
+319.85444012500375 response completed
+319.8549433750013 tool completion / effect authorization
+319.8596966250043 effect result
+319.8637616670021 tool result continuation
+320.85686949999945 response completed
+320.86191395800415 repeated assistant generation
+321.21627891700336 response completed
+321.2193798330045 tool SSE
+323.9807974580035 response completed
+323.9836168750044 tool completion / effect authorization
+323.9919311249978 effect result
+323.9959555000023 tool result continuation
+324.9957100419997 response completed
+324.9981838750027 repeated assistant generation
+325.35317779199977 response completed
+325.3538798330046 second tool cycle
+327.4192904579977 response completed
+327.4230593750035 second tool result continuation
+328.44091099999787 response completed
+328.44465350000246 tool SSE
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/private/tmp/ds41f-m55-py315/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/private/tmp/ds41f-m55-py315/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/ds41f-m55-py315/lib/python3.13/site-packages/fastapi/applications.py", line 1215, in __call__
+    await super().__call__(scope, receive, send)
+  File "/private/tmp/ds41f-m55-py315/lib/python3.13/site-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/private/tmp/ds41f-m55-py315/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/private/tmp/ds41f-m55-py315/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/private/tmp/ds41f-m55-py315/lib/python3.13/site-packages/fastapi/telemetry/_asgi.py", line 151, in __call__
+    await self.app(scope, receive, send)
+  File "/private/tmp/ds41f-m55-py315/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/private/tmp/ds41f-m55-py315/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/private/tmp/ds41f-m55-py315/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/private/tmp/ds41f-m55-py315/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/private/tmp/ds41f-m55-py315/lib/python3.13/site-packages/starlette/routing.py", line 676, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/private/tmp/ds41f-m55-py315/lib/python3.13/site-packages/fastapi/routing.py", line 2786, in app
+    await route.handle(scope, receive, send)
+  File "/private/tmp/ds41f-m55-py315/lib/python3.13/site-packages/fastapi/routing.py", line 1310, in handle
+    await super().handle(scope, receive, send)
+  File "/private/tmp/ds41f-m55-py315/lib/python3.13/site-packages/starlette/routing.py", line 282, in handle
+    await self.app(scope, receive, send)
+  File "/private/tmp/ds41f-m55-py315/lib/python3.13/site-packages/fastapi/routing.py", line 165, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/private/tmp/ds41f-m55-py315/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/private/tmp/ds41f-m55-py315/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/private/tmp/ds41f-m55-py315/lib/python3.13/site-packages/fastapi/routing.py", line 151, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/private/tmp/ds41f-m55-py315/lib/python3.13/site-packages/fastapi/routing.py", line 727, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/private/tmp/ds41f-m55-py315/lib/python3.13/site-packages/fastapi/routing.py", line 360, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/server.py", line 406, in cancel_session_turn
+    return JSONResponse(content=await backend.cancel_stateful_stream(session_id, body['request_id']))
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m54_eof_application.py", line 103, in observed_cancel
+    assert active is not None and active.request_id == request_id
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+343.15757070800464 complete
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m54_eof_application.py", line 312, in <module>
+    if __name__ == '__main__': main()
+                               ~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m54_eof_application.py", line 296, in main
+    asyncio.run(run())
+    ~~~~~~~~~~~^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 196, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 119, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 726, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m54_eof_application.py", line 203, in run
+    msg = await request(rec,body,1,partial=streaming if streaming in ('completed-tool','worker-eof') else False)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m54_eof_application.py", line 123, in request
+    assert route_entered.is_set() and stream.cancel.is_set(), 'standard cancellation route did not reach protected worker'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: standard cancellation route did not reach protected worker
