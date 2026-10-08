@@ -1,0 +1,200 @@
+{
+  "schema": "ds41f.m50r.movement-summary.v1",
+  "status": "CAPTURED",
+  "identity_sha256": "9329cb3a6ea4248c9f9127f6615caa89176947dc38b9cddca1fed3dc1bb3316b",
+  "request_sha256": "1663245e5156def29348eaebebdfd12fa19efa814de4fba06342ab50a3e2e4b1",
+  "pid": 25754,
+  "trace_epoch_ns": 1791473270915000064,
+  "observation_window_relative_ns": [
+    1855514936,
+    6330274936
+  ],
+  "table_sha256": {
+    "metal-gpu-intervals.xml": "02f9022dd71451edbd0a46241d19c26fbca9fc1a0ba39ae2ec05fd671852030d",
+    "metal-application-command-buffer-submissions.xml": "b20f6b27294dbecf583e5541d9b343ef8a0b76d1f9c6d296ead0466dbe68e230",
+    "metal-driver-intervals.xml": "c7ca26e52ea6883c70347456985f478a5d57f517175a499846fa878f1f6a8f0c",
+    "metal-command-buffer-completed.xml": "e117a1d6d8e8a7e915a21b9333b229af7638f3a4d2cd8f69ae104161dbd8201a",
+    "metal-application-intervals.xml": "e8150c717e57ee39af84dd72d9e94e0555d88deae34e86be852282ad5191bca7",
+    "metal-current-allocated-size.xml": "9dee60c2ae8d091b544fd5f4b56c56d9f6764d85486bf9f2ccd24fa917a1758e",
+    "metal-gpu-execution-points.xml": "7dacaf532f2b9109c780f73a67bdfe42be51194eddb42e8a1f38ae654606834f",
+    "metal-application-event-interval.xml": "5400136867268c32504a549f45debff7e8cd0a8b915d6bf94966eb60a75cf22c",
+    "metal-wired-sysmem-level-interval.xml": "5f5af7bf0b66c40f77cdcc8b78adf66262bd5f814ed39791ce335533c95350c7",
+    "metal-application-encoders-list.xml": "d260d4707f370248a40b354ba49eca380776494a36f76f50cae5727e6bd7c9f8",
+    "metal-resource-allocations.xml": "c9534cd4bc039d01de13add19f55856b60aecb295582dc5f6068b66054ed2972",
+    "toc.xml": "f66d6775bbd1bd2b9fa3e07412a062b0d32071cead8eda883893ade3e762a855"
+  },
+  "native_constructors": {
+    "count": 4909,
+    "numpy_source_count": 98,
+    "numpy_source_payload_bytes": 4035408,
+    "source_kinds": {
+      "list": 4783,
+      "cpu-ndarray": 98,
+      "float": 28
+    }
+  },
+  "native_host_materializations": {
+    "count": 1482,
+    "shape_counts": {
+      "native array.item:[1]": 1463,
+      "native array.item:[]": 4,
+      "native array.tolist:[1]": 5,
+      "native array.tolist:[8]": 10
+    },
+    "caution": "Materialization sites, not a count of actual waits/fences: already-ready shared data may need no device wait."
+  },
+  "actual_api_regions": {
+    "native offset scalar materialization": 1063,
+    "native mlx.array constructor": 4909,
+    "mlx-to-numpy export/materialization": 56,
+    "CPU integer Engram hashing": 15,
+    "Engram prefetch drain": 43,
+    "Engram prefetch submit": 28,
+    "CPU selected-row copy/read": 56,
+    "Engram worker rows": 28,
+    "mlx.async_eval": 69,
+    "CPU-to-MLX decode/import site": 56,
+    "mlx.concatenate": 1024,
+    "mlx.eval": 7,
+    "mlx.synchronize": 46,
+    "native array.item": 1467,
+    "native array.tolist": 15,
+    "prefill/bootstrap": 1,
+    "native parallel proposal": 11,
+    "protected next": 41,
+    "native rollback": 1,
+    "settlement": 1,
+    "retirement": 1
+  },
+  "api_regions_by_phase": {
+    "proposal enqueue": {
+      "mlx.concatenate": 143,
+      "native mlx.array constructor": 66,
+      "native parallel proposal": 11
+    },
+    "Engram CPU read worker": {
+      "CPU selected-row copy/read": 56,
+      "Engram worker rows": 28
+    },
+    "settlement": {
+      "native array.item": 241,
+      "native offset scalar materialization": 201,
+      "native mlx.array constructor": 343,
+      "mlx-to-numpy export/materialization": 4,
+      "CPU integer Engram hashing": 1,
+      "Engram prefetch drain": 3,
+      "Engram prefetch submit": 2,
+      "mlx.concatenate": 61,
+      "mlx.async_eval": 4,
+      "CPU-to-MLX decode/import site": 4,
+      "mlx.eval": 1,
+      "mlx.synchronize": 2,
+      "settlement": 1
+    },
+    "prefix rollback": {
+      "native array.item": 40,
+      "native offset scalar materialization": 40,
+      "mlx-to-numpy export/materialization": 2,
+      "CPU integer Engram hashing": 1,
+      "native mlx.array constructor": 41,
+      "mlx.eval": 1,
+      "native rollback": 1
+    },
+    "protected next": {
+      "native array.item": 943,
+      "mlx.eval": 3,
+      "native array.tolist": 14,
+      "native offset scalar materialization": 461,
+      "mlx-to-numpy export/materialization": 44,
+      "CPU integer Engram hashing": 11,
+      "Engram prefetch drain": 33,
+      "Engram prefetch submit": 22,
+      "native mlx.array constructor": 3772,
+      "mlx.concatenate": 723,
+      "mlx.async_eval": 55,
+      "CPU-to-MLX decode/import site": 44,
+      "mlx.synchronize": 41,
+      "protected next": 41
+    },
+    "prefill/bootstrap": {
+      "native offset scalar materialization": 361,
+      "native mlx.array constructor": 687,
+      "mlx-to-numpy export/materialization": 6,
+      "CPU integer Engram hashing": 2,
+      "Engram prefetch drain": 7,
+      "Engram prefetch submit": 4,
+      "mlx.async_eval": 10,
+      "CPU-to-MLX decode/import site": 8,
+      "mlx.concatenate": 97,
+      "mlx.eval": 2,
+      "mlx.synchronize": 2,
+      "native array.item": 243,
+      "native array.tolist": 1,
+      "prefill/bootstrap": 1
+    },
+    "retirement": {
+      "mlx.synchronize": 1,
+      "retirement": 1
+    }
+  },
+  "threads": {
+    "ds41f-recipe-infer_0": 8854,
+    "v41-engram_0": 84
+  },
+  "cpu_selected_row_copies": {
+    "count": 56,
+    "bytes": 3598848,
+    "owns_data": true
+  },
+  "actual_host_exports": {
+    "count": 56,
+    "returned_payload_bytes": 111664,
+    "owning_cpu_copies": 13
+  },
+  "native_import_sites": {
+    "count": 56,
+    "derived_constructor_payload_bytes_by_dtype": {
+      "F8_E4M3": 3489792,
+      "F8_E8M0": 436224
+    },
+    "ownership_assay": "native constructor snapshots copied CPU source; export is a non-owning shared view"
+  },
+  "logical_concatenations": 1024,
+  "metal": {
+    "command_buffer_submissions": 5832,
+    "encoder_intervals": 3484,
+    "encoder_labels": {
+      "Compute": 3484
+    },
+    "gpu_interval_channels": {
+      "Compute": 3475
+    },
+    "gpu_active_union_s": 2.329912496,
+    "command_buffer_ids_with_completion_points": 5832,
+    "application_event_types": {
+      "Encoding": 9316
+    },
+    "driver_types": {
+      "Driver Processing": 9316
+    },
+    "resource_events": {
+      "Allocation": 776,
+      "Deallocation": 776
+    },
+    "resource_storage_modes": {
+      "Shared": 1552
+    },
+    "allocated_size_range_bytes": [
+      309162196992,
+      311861248000
+    ]
+  },
+  "limits": [
+    "Native Python-to-nanobind constructor/item/tolist calls are observed with CPython monitoring, including all threads. C++-internal operations are not Python CALL events.",
+    "Encoder/device intervals are observed, not kernel dispatches. Shader Timeline is disabled; compute-copy kernel bytes and individual internal barriers/page migrations are not measured.",
+    "CPU/API phase boundaries may overlap device work. Device busy union is for the whole instrumented request; it is not uninstrumented device latency or additive proposal/verify/prefill cost.",
+    "Native host imports copy into shared Metal storage; neither their payload sizes nor logical concatenations are discrete DMA volume.",
+    "Warm identical prompt uses mapped CPU gathers/prefetch; absent pread events do not qualify cold SSD I/O.",
+    "Internal MLX copy/fusion detail remains opaque: preservation requires unchanged pinned MLX/oMLX physical sources/binaries, matching bridge/eval/sync/shape path, Shared allocation route and initial matched-rate gate. A changed physical implementation or extra unclassified bridge requires remeasurement/BLOCK."
+  ]
+}

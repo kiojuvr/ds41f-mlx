@@ -154,10 +154,15 @@ cache formats, integration technique or packaging choices.
 | **M54R — operational/soak/performance qualification** | Matched real workloads, long-turn/resource/cancellation/retirement soak, repeatability and affected R1; evidence-driven envelope | Slow physical topology cannot be moved to optimization backlog; bounded fixtures alone do not qualify operation |
 | **M55R — release decision, conditional** | Only sufficient source/setup/semantic/topology/performance/operational evidence permits an explicit promotion assessment under M43 | Promotion may be NO; no automatic packaging/extraction/`ds41f-runtime` update |
 
-The immediate next milestone is **M50R**, baseline audit/measurement tooling only.
-The first runtime integration implementation is **M51R**, authorized only after
-M50R freezes and passes the candidate baseline. No implementation stage is
-started by this architecture reset.
+At reset the immediate milestone was **M50R**, baseline audit/measurement tooling
+only. The [M50R baseline assessment](milestone-50r-omlx-candidate-baseline.md) now
+records **PASS for a bounded candidate freeze**: independent byte-content prefix
+selection/taps/logits, actual native/Metal boundary observations and bounded
+reload/residency measurements. Opaque kernel internals do not qualify a changed
+physical graph; preservation conditions and changed-graph BLOCK are explicit.
+The first runtime implementation remains **M51R**. Its baseline prerequisite is
+satisfied, but it is **not authorized to commence** by this reset or the freeze:
+explicit authorization is still required. No implementation stage is started.
 
 ## Physical topology conformance and performance gate
 

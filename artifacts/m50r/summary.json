@@ -1,0 +1,2032 @@
+{
+  "schema": "ds41f.m50r.summary.v2",
+  "decision": "PASS",
+  "m51r_prerequisite_satisfied": true,
+  "m51r_authorized": false,
+  "closure": {
+    "blockers": [],
+    "prefix": {
+      "primitive_cases": 16,
+      "live_cases": 2,
+      "byte_exact": true,
+      "oracle_scheduler_live": false,
+      "arithmetic": "same qualified MLX/oMLX width-4 arithmetic; independent CPU prefix/layout selectors, adversarial future and deferred actual-candidate captures"
+    },
+    "movement": {
+      "schema": "ds41f.m50r.movement-summary.v1",
+      "status": "CAPTURED",
+      "identity_sha256": "9329cb3a6ea4248c9f9127f6615caa89176947dc38b9cddca1fed3dc1bb3316b",
+      "request_sha256": "1663245e5156def29348eaebebdfd12fa19efa814de4fba06342ab50a3e2e4b1",
+      "pid": 25754,
+      "trace_epoch_ns": 1791473270915000064,
+      "observation_window_relative_ns": [
+        1855514936,
+        6330274936
+      ],
+      "table_sha256": {
+        "metal-gpu-intervals.xml": "02f9022dd71451edbd0a46241d19c26fbca9fc1a0ba39ae2ec05fd671852030d",
+        "metal-application-command-buffer-submissions.xml": "b20f6b27294dbecf583e5541d9b343ef8a0b76d1f9c6d296ead0466dbe68e230",
+        "metal-driver-intervals.xml": "c7ca26e52ea6883c70347456985f478a5d57f517175a499846fa878f1f6a8f0c",
+        "metal-command-buffer-completed.xml": "e117a1d6d8e8a7e915a21b9333b229af7638f3a4d2cd8f69ae104161dbd8201a",
+        "metal-application-intervals.xml": "e8150c717e57ee39af84dd72d9e94e0555d88deae34e86be852282ad5191bca7",
+        "metal-current-allocated-size.xml": "9dee60c2ae8d091b544fd5f4b56c56d9f6764d85486bf9f2ccd24fa917a1758e",
+        "metal-gpu-execution-points.xml": "7dacaf532f2b9109c780f73a67bdfe42be51194eddb42e8a1f38ae654606834f",
+        "metal-application-event-interval.xml": "5400136867268c32504a549f45debff7e8cd0a8b915d6bf94966eb60a75cf22c",
+        "metal-wired-sysmem-level-interval.xml": "5f5af7bf0b66c40f77cdcc8b78adf66262bd5f814ed39791ce335533c95350c7",
+        "metal-application-encoders-list.xml": "d260d4707f370248a40b354ba49eca380776494a36f76f50cae5727e6bd7c9f8",
+        "metal-resource-allocations.xml": "c9534cd4bc039d01de13add19f55856b60aecb295582dc5f6068b66054ed2972",
+        "toc.xml": "f66d6775bbd1bd2b9fa3e07412a062b0d32071cead8eda883893ade3e762a855"
+      },
+      "native_constructors": {
+        "count": 4909,
+        "numpy_source_count": 98,
+        "numpy_source_payload_bytes": 4035408,
+        "source_kinds": {
+          "list": 4783,
+          "cpu-ndarray": 98,
+          "float": 28
+        }
+      },
+      "native_host_materializations": {
+        "count": 1482,
+        "shape_counts": {
+          "native array.item:[1]": 1463,
+          "native array.item:[]": 4,
+          "native array.tolist:[1]": 5,
+          "native array.tolist:[8]": 10
+        },
+        "caution": "Materialization sites, not a count of actual waits/fences: already-ready shared data may need no device wait."
+      },
+      "actual_api_regions": {
+        "native offset scalar materialization": 1063,
+        "native mlx.array constructor": 4909,
+        "mlx-to-numpy export/materialization": 56,
+        "CPU integer Engram hashing": 15,
+        "Engram prefetch drain": 43,
+        "Engram prefetch submit": 28,
+        "CPU selected-row copy/read": 56,
+        "Engram worker rows": 28,
+        "mlx.async_eval": 69,
+        "CPU-to-MLX decode/import site": 56,
+        "mlx.concatenate": 1024,
+        "mlx.eval": 7,
+        "mlx.synchronize": 46,
+        "native array.item": 1467,
+        "native array.tolist": 15,
+        "prefill/bootstrap": 1,
+        "native parallel proposal": 11,
+        "protected next": 41,
+        "native rollback": 1,
+        "settlement": 1,
+        "retirement": 1
+      },
+      "api_regions_by_phase": {
+        "proposal enqueue": {
+          "mlx.concatenate": 143,
+          "native mlx.array constructor": 66,
+          "native parallel proposal": 11
+        },
+        "Engram CPU read worker": {
+          "CPU selected-row copy/read": 56,
+          "Engram worker rows": 28
+        },
+        "settlement": {
+          "native array.item": 241,
+          "native offset scalar materialization": 201,
+          "native mlx.array constructor": 343,
+          "mlx-to-numpy export/materialization": 4,
+          "CPU integer Engram hashing": 1,
+          "Engram prefetch drain": 3,
+          "Engram prefetch submit": 2,
+          "mlx.concatenate": 61,
+          "mlx.async_eval": 4,
+          "CPU-to-MLX decode/import site": 4,
+          "mlx.eval": 1,
+          "mlx.synchronize": 2,
+          "settlement": 1
+        },
+        "prefix rollback": {
+          "native array.item": 40,
+          "native offset scalar materialization": 40,
+          "mlx-to-numpy export/materialization": 2,
+          "CPU integer Engram hashing": 1,
+          "native mlx.array constructor": 41,
+          "mlx.eval": 1,
+          "native rollback": 1
+        },
+        "protected next": {
+          "native array.item": 943,
+          "mlx.eval": 3,
+          "native array.tolist": 14,
+          "native offset scalar materialization": 461,
+          "mlx-to-numpy export/materialization": 44,
+          "CPU integer Engram hashing": 11,
+          "Engram prefetch drain": 33,
+          "Engram prefetch submit": 22,
+          "native mlx.array constructor": 3772,
+          "mlx.concatenate": 723,
+          "mlx.async_eval": 55,
+          "CPU-to-MLX decode/import site": 44,
+          "mlx.synchronize": 41,
+          "protected next": 41
+        },
+        "prefill/bootstrap": {
+          "native offset scalar materialization": 361,
+          "native mlx.array constructor": 687,
+          "mlx-to-numpy export/materialization": 6,
+          "CPU integer Engram hashing": 2,
+          "Engram prefetch drain": 7,
+          "Engram prefetch submit": 4,
+          "mlx.async_eval": 10,
+          "CPU-to-MLX decode/import site": 8,
+          "mlx.concatenate": 97,
+          "mlx.eval": 2,
+          "mlx.synchronize": 2,
+          "native array.item": 243,
+          "native array.tolist": 1,
+          "prefill/bootstrap": 1
+        },
+        "retirement": {
+          "mlx.synchronize": 1,
+          "retirement": 1
+        }
+      },
+      "threads": {
+        "ds41f-recipe-infer_0": 8854,
+        "v41-engram_0": 84
+      },
+      "cpu_selected_row_copies": {
+        "count": 56,
+        "bytes": 3598848,
+        "owns_data": true
+      },
+      "actual_host_exports": {
+        "count": 56,
+        "returned_payload_bytes": 111664,
+        "owning_cpu_copies": 13
+      },
+      "native_import_sites": {
+        "count": 56,
+        "derived_constructor_payload_bytes_by_dtype": {
+          "F8_E4M3": 3489792,
+          "F8_E8M0": 436224
+        },
+        "ownership_assay": "native constructor snapshots copied CPU source; export is a non-owning shared view"
+      },
+      "logical_concatenations": 1024,
+      "metal": {
+        "command_buffer_submissions": 5832,
+        "encoder_intervals": 3484,
+        "encoder_labels": {
+          "Compute": 3484
+        },
+        "gpu_interval_channels": {
+          "Compute": 3475
+        },
+        "gpu_active_union_s": 2.329912496,
+        "command_buffer_ids_with_completion_points": 5832,
+        "application_event_types": {
+          "Encoding": 9316
+        },
+        "driver_types": {
+          "Driver Processing": 9316
+        },
+        "resource_events": {
+          "Allocation": 776,
+          "Deallocation": 776
+        },
+        "resource_storage_modes": {
+          "Shared": 1552
+        },
+        "allocated_size_range_bytes": [
+          309162196992,
+          311861248000
+        ]
+      },
+      "limits": [
+        "Native Python-to-nanobind constructor/item/tolist calls are observed with CPython monitoring, including all threads. C++-internal operations are not Python CALL events.",
+        "Encoder/device intervals are observed, not kernel dispatches. Shader Timeline is disabled; compute-copy kernel bytes and individual internal barriers/page migrations are not measured.",
+        "CPU/API phase boundaries may overlap device work. Device busy union is for the whole instrumented request; it is not uninstrumented device latency or additive proposal/verify/prefill cost.",
+        "Native host imports copy into shared Metal storage; neither their payload sizes nor logical concatenations are discrete DMA volume.",
+        "Warm identical prompt uses mapped CPU gathers/prefetch; absent pread events do not qualify cold SSD I/O.",
+        "Internal MLX copy/fusion detail remains opaque: preservation requires unchanged pinned MLX/oMLX physical sources/binaries, matching bridge/eval/sync/shape path, Shared allocation route and initial matched-rate gate. A changed physical implementation or extra unclassified bridge requires remeasurement/BLOCK."
+      ]
+    },
+    "environment": {
+      "groups": [
+        {
+          "name": "reload-a",
+          "load_s": 90.77682145899962,
+          "available_range_bytes": [
+            218646659072,
+            218665009152
+          ],
+          "swap_used_range": [
+            0,
+            0
+          ],
+          "decode": {
+            "n": 3,
+            "mean": 40.47495748832892,
+            "median": 40.47226857232765,
+            "stdev": 0.046614912195462405,
+            "min": 40.42974523535203,
+            "max": 40.52285865730707,
+            "cv": 0.0011516976196677652
+          }
+        },
+        {
+          "name": "pressure-a",
+          "load_s": 100.66589229100282,
+          "available_range_bytes": [
+            153809059840,
+            153821052928
+          ],
+          "swap_used_range": [
+            43646976,
+            43646976
+          ],
+          "decode": {
+            "n": 3,
+            "mean": 40.3865384728559,
+            "median": 40.38886111785044,
+            "stdev": 0.005167820587074903,
+            "min": 40.38061686047332,
+            "max": 40.39013744024394,
+            "cv": 0.00012795898788276283
+          }
+        },
+        {
+          "name": "reload-b",
+          "load_s": 90.95636487500087,
+          "available_range_bytes": [
+            222865473536,
+            222894391296
+          ],
+          "swap_used_range": [
+            43646976,
+            43646976
+          ],
+          "decode": {
+            "n": 3,
+            "mean": 40.39593754096504,
+            "median": 40.3916230695568,
+            "stdev": 0.009565970254227903,
+            "min": 40.389288711188186,
+            "max": 40.40690084215015,
+            "cv": 0.00023680525410574183
+          }
+        },
+        {
+          "name": "pressure-b",
+          "load_s": 96.55599333300052,
+          "available_range_bytes": [
+            153059229696,
+            153079562240
+          ],
+          "swap_used_range": [
+            85393408,
+            85393408
+          ],
+          "decode": {
+            "n": 3,
+            "mean": 40.3164017940299,
+            "median": 40.32584589602526,
+            "stdev": 0.033654905263321974,
+            "min": 40.27903377312154,
+            "max": 40.344325712942904,
+            "cv": 0.0008347695668690758
+          }
+        }
+      ],
+      "measured_sessions": 18,
+      "decode": {
+        "n": 18,
+        "mean": 40.388354791895864,
+        "median": 40.38907491451931,
+        "stdev": 0.05552750192378363,
+        "min": 40.27903377312154,
+        "max": 40.52285865730707,
+        "cv": 0.001374839411258354
+      },
+      "verify_wall_s": {
+        "n": 18,
+        "mean": 0.8423291180531831,
+        "median": 0.8422449364989006,
+        "stdev": 0.0011134044851156726,
+        "min": 0.8396469189974596,
+        "max": 0.8442831239990483,
+        "cv": 0.0013218164506636162
+      },
+      "empirical_decode_full_range_fraction": 0.006037009564807853,
+      "empirical_verify_full_range_fraction": 0.0055040303157321896,
+      "limitations": "one host/day; process reload NOT filesystem/JIT/Engram-cold; bounded touched 64 GiB co-residency NOT severe OS pressure; original six resident samples unchanged"
+    },
+    "residual_observability": {
+      "blocks_changed_physical_implementation": true,
+      "blocks_unchanged_delegated_primitive_graph": false,
+      "reason": "Metal records real Shared resources, encoder/execution/completion intervals; native constructor/item/tolist and bridge/eval/sync sites are observed. Internal compute-copy kernels, per-kernel barriers and page migrations are opaque. Conformance requires unchanged qualified MLX/native binaries and oMLX physical functions, reviewed identical primitive graph/shape/dtype/ownership/async-lifetime bindings, numerical oracle and matched rates. Changes outside this preserved graph require new diagnostics and BLOCK, not inference from these intervals."
+    }
+  },
+  "head": "ddc9cafa33f170fa2b776c6849f7cd5b7fae775f",
+  "identity_sha256": "9329cb3a6ea4248c9f9127f6615caa89176947dc38b9cddca1fed3dc1bb3316b",
+  "checkpoint_manifest_sha256": "8c23a5075a92fc903da780b2a20ba2046e4794ec59bd6588eb0235f7ea9a059e",
+  "checkpoint_bytes": 510296708312,
+  "measured_trials": 6,
+  "tokens": 41,
+  "request_sha256": "1663245e5156def29348eaebebdfd12fa19efa814de4fba06342ab50a3e2e4b1",
+  "frontier": 283,
+  "timing": {
+    "decode_tok_s": {
+      "n": 6,
+      "mean": 40.37814672759771,
+      "median": 40.377749598492,
+      "stdev": 0.036685484190102965,
+      "min": 40.331015967398834,
+      "max": 40.421221942855645,
+      "cv": 0.000908547993487505
+    },
+    "settled_decode_tok_s": {
+      "n": 6,
+      "mean": 38.219075438670295,
+      "median": 38.22436509288741,
+      "stdev": 0.046390357627394976,
+      "min": 38.14571505734386,
+      "max": 38.267313608762045,
+      "cv": 0.0012138011475928308
+    },
+    "http_s": {
+      "n": 6,
+      "mean": 2.4349533053336927,
+      "median": 2.4321874785000546,
+      "stdev": 0.008006175412067473,
+      "min": 2.430168124999909,
+      "max": 2.451114499999676,
+      "cv": 0.003288020100644306
+    },
+    "request_tok_s": {
+      "n": 6,
+      "mean": 16.83825616536149,
+      "median": 16.85725454938252,
+      "stdev": 0.0550834022114939,
+      "min": 16.727084760832437,
+      "max": 16.87126070752884,
+      "cv": 0.0032713246354339064
+    },
+    "ttft_content_s": {
+      "n": 6,
+      "mean": 1.424014548500054,
+      "median": 1.4211427705013193,
+      "stdev": 0.007000680143074834,
+      "min": 1.4204565000000002,
+      "max": 1.438258041998779,
+      "cv": 0.004916157739012431
+    }
+  },
+  "phase_s": {
+    "prefill_handoff_s": {
+      "n": 6,
+      "mean": 1.3597547640007785,
+      "median": 1.356948625001678,
+      "stdev": 0.006834377869961621,
+      "min": 1.3562520000014047,
+      "max": 1.3736458329985908,
+      "cv": 0.005026184170043259
+    },
+    "cleanup_s": {
+      "n": 6,
+      "mean": 0.04892620149924672,
+      "median": 0.04883793749831966,
+      "stdev": 0.000289590468912125,
+      "min": 0.048664166999515146,
+      "max": 0.049438666999776615,
+      "cv": 0.0059189240128642235
+    },
+    "decode_s": {
+      "n": 6,
+      "mean": 1.0154014368332962,
+      "median": 1.015410748499562,
+      "stdev": 0.0009225624052427407,
+      "min": 1.0143186679997598,
+      "max": 1.0165873340047256,
+      "cv": 0.0009085691350998183
+    },
+    "elapsed_s": {
+      "n": 6,
+      "mean": 2.432519222334425,
+      "median": 2.429855167001733,
+      "stdev": 0.0079095883516526,
+      "min": 2.4276628750012605,
+      "max": 2.4484723749992554,
+      "cv": 0.003251603637508761
+    }
+  },
+  "built_in_telemetry_s": {
+    "backbone_ms": {
+      "n": 6,
+      "mean": 0.8425865766639618,
+      "median": 0.8426604784963274,
+      "stdev": 0.0007716008757764406,
+      "min": 0.8415646679968631,
+      "max": 0.8435416660031478,
+      "cv": 0.0009157526326035556
+    },
+    "mtp_head_ms": {
+      "n": 6,
+      "mean": 0.031956861831834736,
+      "median": 0.031970021498636925,
+      "stdev": 0.00021933062834824152,
+      "min": 0.03159245999268023,
+      "max": 0.032226084997091675,
+      "cv": 0.00686333437564727
+    },
+    "sample_ms": {
+      "n": 6,
+      "mean": 0.0005979665014213728,
+      "median": 0.0005862710040673846,
+      "stdev": 4.106034906662471e-05,
+      "min": 0.0005522089995793067,
+      "max": 0.000667959000566043,
+      "cv": 0.06866663762773302
+    },
+    "cache_ops_ms": {
+      "n": 6,
+      "mean": 0.002757430001414226,
+      "median": 0.0027357915041648084,
+      "stdev": 7.489357201325788e-05,
+      "min": 0.0026721249960246496,
+      "max": 0.0028575830001500435,
+      "cv": 0.02716064305343983
+    }
+  },
+  "topology": [
+    {
+      "sample": 0,
+      "cancelled": false,
+      "requested_cancel": false,
+      "terminal_matches": [],
+      "target_width_histogram": {
+        "1": 1,
+        "4": 10
+      },
+      "verify_layer_projections": 400,
+      "verify_packed_attention": 400,
+      "cycles": [
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            247,
+            247,
+            247
+          ],
+          "queue": [
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "bonus"
+            ]
+          ]
+        },
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            251,
+            251,
+            251
+          ],
+          "queue": [
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "bonus"
+            ]
+          ]
+        },
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            255,
+            255,
+            255
+          ],
+          "queue": [
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "bonus"
+            ]
+          ]
+        },
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            259,
+            259,
+            259
+          ],
+          "queue": [
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "bonus"
+            ]
+          ]
+        },
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            263,
+            263,
+            263
+          ],
+          "queue": [
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "bonus"
+            ]
+          ]
+        },
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            267,
+            267,
+            267
+          ],
+          "queue": [
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "bonus"
+            ]
+          ]
+        },
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            271,
+            271,
+            271
+          ],
+          "queue": [
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "bonus"
+            ]
+          ]
+        },
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            275,
+            275,
+            275
+          ],
+          "queue": [
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "bonus"
+            ]
+          ]
+        },
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            279,
+            279,
+            279
+          ],
+          "queue": [
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "bonus"
+            ]
+          ]
+        },
+        {
+          "k": 3,
+          "m": 2,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            282,
+            282,
+            282
+          ],
+          "queue": [
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "draft"
+            ],
+            [
+              1,
+              "verify"
+            ]
+          ]
+        }
+      ],
+      "quiescence": {
+        "canonical_frontier": 283,
+        "recovery_suffix_tokens": [
+          11932,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          1
+        ],
+        "discarded_future_token": null,
+        "counters": {
+          "new_verify_cycles": 0,
+          "new_proposals": 0,
+          "target_forwards": 1,
+          "history_replay": 0,
+          "full_cache_repack": 0,
+          "dspark_appends": 1
+        },
+        "latency_s": 0.026706708998972317,
+        "queue_drained_tokens": [],
+        "dspark": {
+          "frontier": 283,
+          "offsets": [
+            283,
+            283,
+            283
+          ],
+          "target_layer_ids": [
+            37,
+            38,
+            39
+          ],
+          "stage_count": 3,
+          "window_size": 5,
+          "authority": "bounded committed DSpark context; not executable target truth"
+        }
+      }
+    },
+    {
+      "sample": 1,
+      "cancelled": false,
+      "requested_cancel": false,
+      "terminal_matches": [
+        {
+          "ordinal": 33,
+          "token_id": 32,
+          "identity": [
+            "DSML_TOOL_CALL_BLOCK_END",
+            140,
+            159
+          ]
+        }
+      ],
+      "target_width_histogram": {
+        "1": 1,
+        "4": 8
+      },
+      "verify_layer_projections": 320,
+      "verify_packed_attention": 320,
+      "cycles": [
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            517,
+            517,
+            517
+          ],
+          "queue": [
+            [
+              34756,
+              "draft"
+            ],
+            [
+              2329,
+              "draft"
+            ],
+            [
+              1281,
+              "draft"
+            ],
+            [
+              12533,
+              "bonus"
+            ]
+          ]
+        },
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            521,
+            521,
+            521
+          ],
+          "queue": [
+            [
+              1425,
+              "draft"
+            ],
+            [
+              65,
+              "draft"
+            ],
+            [
+              50219,
+              "draft"
+            ],
+            [
+              3816,
+              "bonus"
+            ]
+          ]
+        },
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            525,
+            525,
+            525
+          ],
+          "queue": [
+            [
+              30,
+              "draft"
+            ],
+            [
+              128825,
+              "draft"
+            ],
+            [
+              10767,
+              "draft"
+            ],
+            [
+              2329,
+              "bonus"
+            ]
+          ]
+        },
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            529,
+            529,
+            529
+          ],
+          "queue": [
+            [
+              1281,
+              "draft"
+            ],
+            [
+              37399,
+              "draft"
+            ],
+            [
+              4,
+              "draft"
+            ],
+            [
+              3418,
+              "bonus"
+            ]
+          ]
+        },
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            533,
+            533,
+            533
+          ],
+          "queue": [
+            [
+              1281,
+              "draft"
+            ],
+            [
+              11476,
+              "draft"
+            ],
+            [
+              3320,
+              "draft"
+            ],
+            [
+              51119,
+              "bonus"
+            ]
+          ]
+        },
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            537,
+            537,
+            537
+          ],
+          "queue": [
+            [
+              1718,
+              "draft"
+            ],
+            [
+              128825,
+              "draft"
+            ],
+            [
+              10767,
+              "draft"
+            ],
+            [
+              1018,
+              "bonus"
+            ]
+          ]
+        },
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            541,
+            541,
+            541
+          ],
+          "queue": [
+            [
+              1718,
+              "draft"
+            ],
+            [
+              128825,
+              "draft"
+            ],
+            [
+              34756,
+              "draft"
+            ],
+            [
+              1018,
+              "bonus"
+            ]
+          ]
+        },
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            545,
+            545,
+            545
+          ],
+          "queue": [
+            [
+              1718,
+              "draft"
+            ],
+            [
+              128825,
+              "draft"
+            ],
+            [
+              10699,
+              "draft"
+            ],
+            [
+              32,
+              "bonus"
+            ]
+          ]
+        }
+      ],
+      "quiescence": {
+        "canonical_frontier": 546,
+        "recovery_suffix_tokens": [
+          30,
+          128825,
+          34756,
+          2329,
+          1281,
+          12533,
+          1425,
+          65,
+          50219,
+          3816,
+          30,
+          128825,
+          10767,
+          2329,
+          1281,
+          37399,
+          4,
+          3418,
+          1281,
+          11476,
+          3320,
+          51119,
+          1718,
+          128825,
+          10767,
+          1018,
+          1718,
+          128825,
+          34756,
+          1018,
+          1718,
+          128825,
+          10699,
+          32
+        ],
+        "discarded_future_token": null,
+        "counters": {
+          "new_verify_cycles": 0,
+          "new_proposals": 0,
+          "target_forwards": 1,
+          "history_replay": 0,
+          "full_cache_repack": 0,
+          "dspark_appends": 1
+        },
+        "latency_s": 0.028588166998815723,
+        "queue_drained_tokens": [],
+        "dspark": {
+          "frontier": 546,
+          "offsets": [
+            546,
+            546,
+            546
+          ],
+          "target_layer_ids": [
+            37,
+            38,
+            39
+          ],
+          "stage_count": 3,
+          "window_size": 5,
+          "authority": "bounded committed DSpark context; not executable target truth"
+        }
+      }
+    },
+    {
+      "sample": 2,
+      "cancelled": true,
+      "requested_cancel": true,
+      "terminal_matches": [],
+      "target_width_histogram": {
+        "1": 1
+      },
+      "verify_layer_projections": 0,
+      "verify_packed_attention": 0,
+      "cycles": [],
+      "quiescence": {
+        "canonical_frontier": 243,
+        "recovery_suffix_tokens": [
+          11932
+        ],
+        "discarded_future_token": 20370,
+        "counters": {
+          "new_verify_cycles": 0,
+          "new_proposals": 0,
+          "target_forwards": 0,
+          "history_replay": 0,
+          "full_cache_repack": 0,
+          "dspark_appends": 0
+        },
+        "latency_s": 0.00032479100264026783,
+        "queue_drained_tokens": [],
+        "dspark": {
+          "frontier": 243,
+          "offsets": [
+            243,
+            243,
+            243
+          ],
+          "target_layer_ids": [
+            37,
+            38,
+            39
+          ],
+          "stage_count": 3,
+          "window_size": 5,
+          "authority": "bounded committed DSpark context; not executable target truth"
+        }
+      }
+    },
+    {
+      "sample": 3,
+      "cancelled": false,
+      "requested_cancel": false,
+      "terminal_matches": [],
+      "target_width_histogram": {
+        "1": 1,
+        "4": 16
+      },
+      "verify_layer_projections": 640,
+      "verify_packed_attention": 640,
+      "cycles": [
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            304,
+            304,
+            304
+          ],
+          "queue": [
+            [
+              223,
+              "draft"
+            ],
+            [
+              1002,
+              "draft"
+            ],
+            [
+              14,
+              "draft"
+            ],
+            [
+              223,
+              "bonus"
+            ]
+          ]
+        },
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            308,
+            308,
+            308
+          ],
+          "queue": [
+            [
+              6131,
+              "draft"
+            ],
+            [
+              14,
+              "draft"
+            ],
+            [
+              223,
+              "draft"
+            ],
+            [
+              1557,
+              "bonus"
+            ]
+          ]
+        },
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            312,
+            312,
+            312
+          ],
+          "queue": [
+            [
+              14,
+              "draft"
+            ],
+            [
+              223,
+              "draft"
+            ],
+            [
+              4739,
+              "draft"
+            ],
+            [
+              14,
+              "bonus"
+            ]
+          ]
+        },
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            316,
+            316,
+            316
+          ],
+          "queue": [
+            [
+              223,
+              "draft"
+            ],
+            [
+              3354,
+              "draft"
+            ],
+            [
+              14,
+              "draft"
+            ],
+            [
+              223,
+              "bonus"
+            ]
+          ]
+        },
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            320,
+            320,
+            320
+          ],
+          "queue": [
+            [
+              5106,
+              "draft"
+            ],
+            [
+              14,
+              "draft"
+            ],
+            [
+              223,
+              "draft"
+            ],
+            [
+              779,
+              "bonus"
+            ]
+          ]
+        },
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            324,
+            324,
+            324
+          ],
+          "queue": [
+            [
+              14,
+              "draft"
+            ],
+            [
+              223,
+              "draft"
+            ],
+            [
+              5863,
+              "draft"
+            ],
+            [
+              14,
+              "bonus"
+            ]
+          ]
+        },
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            328,
+            328,
+            328
+          ],
+          "queue": [
+            [
+              223,
+              "draft"
+            ],
+            [
+              1942,
+              "draft"
+            ],
+            [
+              14,
+              "draft"
+            ],
+            [
+              223,
+              "bonus"
+            ]
+          ]
+        },
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            332,
+            332,
+            332
+          ],
+          "queue": [
+            [
+              4414,
+              "draft"
+            ],
+            [
+              14,
+              "draft"
+            ],
+            [
+              223,
+              "draft"
+            ],
+            [
+              511,
+              "bonus"
+            ]
+          ]
+        },
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            336,
+            336,
+            336
+          ],
+          "queue": [
+            [
+              14,
+              "draft"
+            ],
+            [
+              223,
+              "draft"
+            ],
+            [
+              4362,
+              "draft"
+            ],
+            [
+              14,
+              "bonus"
+            ]
+          ]
+        },
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            340,
+            340,
+            340
+          ],
+          "queue": [
+            [
+              223,
+              "draft"
+            ],
+            [
+              1349,
+              "draft"
+            ],
+            [
+              14,
+              "draft"
+            ],
+            [
+              223,
+              "bonus"
+            ]
+          ]
+        },
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            344,
+            344,
+            344
+          ],
+          "queue": [
+            [
+              3186,
+              "draft"
+            ],
+            [
+              14,
+              "draft"
+            ],
+            [
+              223,
+              "draft"
+            ],
+            [
+              2181,
+              "bonus"
+            ]
+          ]
+        },
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            348,
+            348,
+            348
+          ],
+          "queue": [
+            [
+              14,
+              "draft"
+            ],
+            [
+              223,
+              "draft"
+            ],
+            [
+              3981,
+              "draft"
+            ],
+            [
+              14,
+              "bonus"
+            ]
+          ]
+        },
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            352,
+            352,
+            352
+          ],
+          "queue": [
+            [
+              223,
+              "draft"
+            ],
+            [
+              3286,
+              "draft"
+            ],
+            [
+              14,
+              "draft"
+            ],
+            [
+              223,
+              "bonus"
+            ]
+          ]
+        },
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            356,
+            356,
+            356
+          ],
+          "queue": [
+            [
+              3318,
+              "draft"
+            ],
+            [
+              14,
+              "draft"
+            ],
+            [
+              223,
+              "draft"
+            ],
+            [
+              907,
+              "bonus"
+            ]
+          ]
+        },
+        {
+          "k": 3,
+          "m": 0,
+          "m_gpu": 0,
+          "stash_before": null,
+          "ring_offsets": [
+            357,
+            357,
+            357
+          ],
+          "queue": [
+            [
+              16,
+              "verify"
+            ]
+          ]
+        },
+        {
+          "k": 3,
+          "m": 0,
+          "m_gpu": 1,
+          "stash_before": null,
+          "ring_offsets": [
+            358,
+            358,
+            358
+          ],
+          "queue": [
+            [
+              1,
+              "verify"
+            ]
+          ]
+        }
+      ],
+      "quiescence": {
+        "canonical_frontier": 359,
+        "recovery_suffix_tokens": [
+          6207,
+          14,
+          223,
+          1002,
+          14,
+          223,
+          6131,
+          14,
+          223,
+          1557,
+          14,
+          223,
+          4739,
+          14,
+          223,
+          3354,
+          14,
+          223,
+          5106,
+          14,
+          223,
+          779,
+          14,
+          223,
+          5863,
+          14,
+          223,
+          1942,
+          14,
+          223,
+          4414,
+          14,
+          223,
+          511,
+          14,
+          223,
+          4362,
+          14,
+          223,
+          1349,
+          14,
+          223,
+          3186,
+          14,
+          223,
+          2181,
+          14,
+          223,
+          3981,
+          14,
+          223,
+          3286,
+          14,
+          223,
+          3318,
+          14,
+          223,
+          907,
+          16,
+          1
+        ],
+        "discarded_future_token": null,
+        "counters": {
+          "new_verify_cycles": 0,
+          "new_proposals": 0,
+          "target_forwards": 1,
+          "history_replay": 0,
+          "full_cache_repack": 0,
+          "dspark_appends": 1
+        },
+        "latency_s": 0.026895249997323845,
+        "queue_drained_tokens": [],
+        "dspark": {
+          "frontier": 359,
+          "offsets": [
+            359,
+            359,
+            359
+          ],
+          "target_layer_ids": [
+            37,
+            38,
+            39
+          ],
+          "stage_count": 3,
+          "window_size": 5,
+          "authority": "bounded committed DSpark context; not executable target truth"
+        }
+      }
+    },
+    {
+      "sample": 4,
+      "cancelled": true,
+      "requested_cancel": true,
+      "terminal_matches": [],
+      "target_width_histogram": {
+        "1": 1,
+        "4": 2
+      },
+      "verify_layer_projections": 80,
+      "verify_packed_attention": 80,
+      "cycles": [
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            247,
+            247,
+            247
+          ],
+          "queue": [
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "bonus"
+            ]
+          ]
+        },
+        {
+          "k": 3,
+          "m": 3,
+          "m_gpu": 3,
+          "stash_before": null,
+          "ring_offsets": [
+            251,
+            251,
+            251
+          ],
+          "queue": [
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "draft"
+            ],
+            [
+              20370,
+              "bonus"
+            ]
+          ]
+        }
+      ],
+      "quiescence": {
+        "canonical_frontier": 251,
+        "recovery_suffix_tokens": [
+          11932,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370,
+          20370
+        ],
+        "discarded_future_token": 20370,
+        "counters": {
+          "new_verify_cycles": 0,
+          "new_proposals": 0,
+          "target_forwards": 0,
+          "history_replay": 0,
+          "full_cache_repack": 0,
+          "dspark_appends": 0
+        },
+        "latency_s": 0.00033687500035739504,
+        "queue_drained_tokens": [
+          20370
+        ],
+        "dspark": {
+          "frontier": 251,
+          "offsets": [
+            251,
+            251,
+            251
+          ],
+          "target_layer_ids": [
+            37,
+            38,
+            39
+          ],
+          "stage_count": 3,
+          "window_size": 5,
+          "authority": "bounded committed DSpark context; not executable target truth"
+        }
+      }
+    }
+  ],
+  "model_config": {
+    "max_batch_size": 4,
+    "max_seq_len": 1048576,
+    "temperature": 1,
+    "dtype": "fp8",
+    "expert_dtype": "fp4",
+    "vocab_size": 129280,
+    "dim": 5120,
+    "moe_inter_dim": 2304,
+    "n_layers": 40,
+    "n_mtp_layers": 3,
+    "n_heads": 64,
+    "n_routed_experts": 384,
+    "n_shared_experts": 1,
+    "n_activated_experts": 6,
+    "score_func": "sqrtsoftplus",
+    "gate_temp": 1.0,
+    "norm_topk_prob": true,
+    "route_scale": 1.5,
+    "swiglu_limit": 10.0,
+    "q_lora_rank": 1280,
+    "head_dim": 512,
+    "rope_head_dim": 64,
+    "norm_eps": 1e-20,
+    "o_groups": 8,
+    "o_lora_rank": 1024,
+    "window_size": 128,
+    "compress_ratios": [
+      0,
+      0,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      0,
+      0,
+      0
+    ],
+    "kv_source_layers": [
+      2,
+      8,
+      14,
+      20
+    ],
+    "index_source_layers": [
+      2,
+      8,
+      14,
+      20,
+      24,
+      28,
+      32,
+      36
+    ],
+    "compress_rope_theta": 160000,
+    "original_seq_len": 65536,
+    "rope_theta": 10000,
+    "rope_factor": 16,
+    "beta_fast": 32,
+    "beta_slow": 1,
+    "index_n_heads": 32,
+    "index_head_dim": 128,
+    "index_topk": 512,
+    "candidate_source_layer": 20,
+    "candidate_topk_blocks": 2048,
+    "candidate_block_size": 8,
+    "hc_mult": 4,
+    "hc_sinkhorn_iters": 20,
+    "hc_eps": 1e-06,
+    "engram_layer_ids": [
+      1,
+      14
+    ],
+    "engram_num_embeddings": [
+      384006168,
+      384016682
+    ],
+    "engram_max_ngram_size": 4,
+    "engram_vocab_size": 16000000,
+    "engram_n_heads": 8,
+    "engram_head_dim": 256,
+    "engram_pad_id": 2,
+    "engram_compressed_vocab_size": 99092,
+    "vision_n_layers": 32,
+    "vision_dim": 1024,
+    "vision_n_heads": 16,
+    "vision_inter_dim": 2816,
+    "vision_patch_size": 14,
+    "vision_rope_theta": 10000,
+    "vision_downsample_ratio": 3,
+    "vision_max_n_token": 1024,
+    "vision_min_pixels": 295936,
+    "vision_max_wh_ratio": null,
+    "image_token_id": 129264,
+    "preserve_mtp": true,
+    "ced_prefill": false,
+    "dspark_block_size": 5,
+    "dspark_noise_token_id": 128799,
+    "dspark_target_layer_ids": [
+      37,
+      38,
+      39
+    ],
+    "dspark_markov_rank": 256,
+    "dspark_n_routed_experts": 128,
+    "dspark_n_activated_experts": 3,
+    "model_type": "deepseek_v41"
+  },
+  "causal_coverage": {
+    "gpu_proposal_mismatch": true,
+    "backend_or_budget_clamp": true,
+    "protected_recipe_terminal": true,
+    "early_cancel": true,
+    "committed_queue_cancel": true,
+    "fresh_uncertain_mutation_faults": false,
+    "independent_numerical_state_oracle": true,
+    "qualified_native_boundary_and_metal_trace": true,
+    "complete_internal_kernel_transfer_sync_trace": false
+  },
+  "blockers": [],
+  "screening": {
+    "decode_and_verify_regression": 0.05,
+    "policy": ">5% outside measured uncertainty blocks; no topology allowance or optimization-backlog waiver",
+    "noise_budget": "original six plus twelve bounded process-reload sessions when closure PASS; empirical full decode/verify ranges <1%, not a confidence interval or cross-day allowance. Matched current candidate control required; >1% control drift or new resource regime requires more repeats/causal isolation. >5% regression beyond uncertainty BLOCKS."
+  },
+  "caveats": [
+    "decode_tok_s uses summed existing _next worker timers; settled_decode_tok_s subtracts built-in load/prefill timers from settled request elapsed wall time, including delivery/recipe/settlement and worker scheduling.",
+    "backbone_ms includes graph enqueue, host materialization and outstanding lazy work; mtp_head_ms is asynchronous proposal enqueue, not GPU proposal latency; these are NOT additive isolated device phases.",
+    "Counts include canonical suppressed backend stop token, not just visible text.",
+    "after_close MLX residency includes the loaded process-scoped model; DELETE retires sessions, not model weights.",
+    "Serialized quiescence window_size derives from dspark_block_size (5); actual native ring max_size is window_size (128).",
+    "HTTP uses canonical LocalH11 options and explicit preloaded worker with lifespan off; no model-cold operator-launch/TTFT performance claim."
+  ]
+}

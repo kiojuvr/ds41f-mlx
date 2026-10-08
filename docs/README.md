@@ -13,6 +13,7 @@ Canonical current-state documents:
 
 - [M41 local MTP candidate](milestone-41-local-mtp-release-candidate.md) — explicit bounded opt-in capability, composed/source-clone evidence and OFF regression
 - [M49R MTP architecture reset and roadmap](mtp-architecture-reset.md) — current authority: restart `5e784d9`, oMLX physical topology, retained M54 requirements, conformance/performance gates and M49R–M55R series
+- [M50R candidate baseline assessment](milestone-50r-omlx-candidate-baseline.md) — **PASS, bounded freeze**: exact identity, byte-content prefix oracle, native/Metal boundary diagnostics and bounded reload/residency envelope; unchanged physical-graph requirement; M51R still requires explicit authorization
 - [M49 assessment](milestone-49-runtime-promotion-assessment.md) — historical NO promotion at the restart point; proposed first-party redesign superseded
 - [M50–M56 source archive and manifest](archive/mtp-reconstruction/README.md) — superseded failed production architecture line; original results/provenance preserved, not active runtime
 - [M53 proposal primitives](milestone-53-proposal-primitives-continuation.md) — superseded historical implementation PASS; same-forward oracle retained
