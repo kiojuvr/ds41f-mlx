@@ -15,7 +15,8 @@ Canonical current-state documents:
 - [M49 promotion assessment](milestone-49-runtime-promotion-assessment.md) — historical stopped / NO promotion assessment; M51–M53 subsequently close transaction/generation/proposal execution core, without runtime promotion
 - [M53 proposal primitives](milestone-53-proposal-primitives-continuation.md) — PASS: admitted first-party DSpark child, same-forward receipts and real M52/M51 loop; development-only, no new runtime/application envelope
 - [M54 operational integration](milestone-54-eof-sensitive-operational-continuation.md) — bounded development tool/effect/retry/re-entry PASS; OFF remains default
-- [M55 target verification topology](milestone-55-target-verification-topology.md) — NO closure: bounded device-copy repair qualified, final-source R1 PASS; canonical row-serial block-producer interface remains the concrete performance blocker
+- [M55 target verification topology](milestone-55-target-verification-topology.md) — historical NO closure: bounded device-copy repair qualified; identifies canonical row serialization
+- [M56 canonical accepted-prefix block](milestone-56-canonical-accepted-prefix-block.md) — producer/state/operational PASS, 41→7 target forwards; faster than OFF and coherent bounded local candidate, no default/profile/release promotion
 - [Local MTP setup/API/operator boundary](mtp-local-release-candidate.md) — supported profile, reproducible source/native setup and conservative application states
 
 - [Runtime strategy](runtime-strategy.md) — production architecture and non-selected paths

@@ -1,5 +1,9 @@
 # M55 — canonical target verification topology reconciliation
 
+Historical M55 boundary. [M56](milestone-56-canonical-accepted-prefix-block.md)
+implements and qualifies the canonical block producer identified here; M55's
+measurements and NOT CLOSED decision below remain historical evidence.
+
 **NO / M55 not closed. Bounded materialization repair: qualified and committed.**
 The dominant physical blocker is identified, not removed: the canonical M51
 producer/undo interface accepts one input row, whereas the candidate executes

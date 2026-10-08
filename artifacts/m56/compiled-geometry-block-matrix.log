@@ -1,0 +1,42 @@
+0.0s loading admitted checkpoint
+330.4s independent OFF oracles complete
+338.8s cycle 0 accepted 8 FAIL
+339.1s cycle 1 accepted 4 FAIL
+339.4s cycle 2 accepted 1 PASS
+339.7s cycle 3 accepted 0 PASS
+340.0s cycle 4 accepted 6 PASS
+348.4s arbitrary prefix 1 PASS
+356.8s arbitrary prefix 2 FAIL
+365.1s arbitrary prefix 3 PASS
+373.5s arbitrary prefix 4 FAIL
+381.8s arbitrary prefix 5 PASS
+390.2s arbitrary prefix 6 FAIL
+398.5s arbitrary prefix 7 PASS
+406.9s cancel after materialization=False PASS
+415.2s cancel after materialization=True PASS
+423.6s fault materialize-before/-1/-1 PASS
+431.9s fault materialize-after/-1/-1 PASS
+440.3s fault materialize-state/19/-1 PASS
+448.6s fault prepare/19/-1 PASS
+457.0s fault publish/0/0 PASS
+465.3s fault publish/0/1 PASS
+473.7s fault publish/2/2 PASS
+482.0s fault publish/2/3 PASS
+490.4s fault publish/2/4 PASS
+498.7s fault publish/2/5 PASS
+507.0s fault publish/0/6 PASS
+515.4s fault publish/39/lengths PASS
+523.7s fault publish/39/left_padding PASS
+532.1s fault publication-boundary/-1/-1 PASS
+540.4s fault owner-publication/-1/-1 PASS
+559.9s matched M50 OFF state/performance regression PASS
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m51_accepted_prefix.py", line 373, in <module>
+    except RuntimeError:
+    ^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m51_accepted_prefix.py", line 357, in main
+    perf['all_state_byte_match'] = True
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: independent OFF state oracle mismatch

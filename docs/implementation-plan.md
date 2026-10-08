@@ -2,6 +2,27 @@
 
 This roadmap records implementation boundaries and evidence-driven next work. It is not an optimization backlog or a requirement to create a new milestone for every implementation/qualification iteration.
 
+## Canonical MTP block execution (current development boundary)
+
+[M56](milestone-56-canonical-accepted-prefix-block.md) closes M55's row-serialized
+producer topology: M52 now invokes one owned layer-major numerical block, with
+M51 bounded per-prefix undo and the sole pending exact packed list. No candidate
+model/scheduler/verification-state owner is borrowed. The matched verify request
+changes **41 forwards / 1,640 layer regions → 7 / 280**. Existing attention alone
+splits at canonical sparse-list widths (748 calls); full target rows do not repeat.
+Independent checkpoint state/tap/logit prefix oracles and M54 socket/tool/effect/
+retry/re-entry pass. Matched decode is **17.85 tok/s versus OFF 15.51**, not candidate
+parity (31.45). This establishes a coherent **bounded local operational candidate**,
+not new kernels, capabilities, default/profile selection or release promotion.
+
+The next boundary is a separate approval of a normal local profile with M54's
+explicit Chat/greedy/text/single-session envelope and its consuming-EOF native
+dependency. Do not infer Vision, persistence, long context or stochastic application
+admission, expand gates, or promote `ds41f-runtime` in this work. Remaining practical
+performance differences are batched GEMV reduction geometry, sparse-list attention
+subregions and the existing proposal/receipt/ring scheduling boundaries, not a
+missing canonical accepted-prefix block producer.
+
 ## Post-M48 production boundary and remaining work (current authority)
 
 **M48 completed the supported text-only standard-OFF production core; it did not complete the entire production implementation of DeepSeek-V4.1-Flash.**

@@ -36,7 +36,7 @@ class SemanticCycleAdapter:
         self.metrics = dict(cycles=0, offered=0, accepted=0, consumed=0,
                             proposal_s=0., authorization_s=0., execution_s=0., report_s=0.,
                             eof_preview_s=0., eof_consuming_probe_s=0.,
-                            protected_steps=0, planned_target_inputs=0)
+                            protected_steps=0, planned_target_inputs=0, planned_target_blocks=0)
 
     def _preview(self, ids):
         before = self.processor.semantic_snapshot()
@@ -143,7 +143,11 @@ class SemanticCycleAdapter:
         try:
             t0 = perf_counter()
             if permission.drafts:
+                from ds41f_mlx.runtime.accepted_prefix import AcceptedPrefixJournal
                 self.metrics['planned_target_inputs'] += 1 + len(permission.drafts)
+                self.metrics['planned_target_blocks'] += (
+                    1 + len(permission.drafts) + AcceptedPrefixJournal.MAX_BLOCK - 1
+                ) // AcceptedPrefixJournal.MAX_BLOCK
                 result = gen.speculative_cycle(permission.drafts, cancelled=cancelled)
                 reports = result['reports']
                 self.metrics['cycles'] += 1
@@ -153,6 +157,7 @@ class SemanticCycleAdapter:
                 report = gen.next_token()
                 reports = [] if report is None else [report]
                 self.metrics['planned_target_inputs'] += len(reports)
+                self.metrics['planned_target_blocks'] += len(reports)
                 self.metrics['protected_steps'] += 1
             self.metrics['execution_s'] += perf_counter() - t0
             mutated = bool(reports)

@@ -39,6 +39,31 @@ P5 is the release handoff seam: serving holds out the terminal prompt token, pre
 
 [M44](milestone-44-target-generation-ownership.md) transfers the generation lifecycle. [M45](milestone-45-target-forward-ownership.md) adds owned single-token target-forward orchestration and the all-40-layer mutation/commit transaction. No external LanguageModel forward or row extraction/merge executes on this production decode path. [M46](milestone-46-state-production-ownership.md) transfers the standard-off block/attention/compressor/index producer boundary into `DecodeStateProducer`: no external state-producing module call receives the live cache. ds41f owns slot writes, compressor tails, compressed/index/candidate reuse publications, admission-metadata advancement and structural completion. M48 subsequently owns checkpoint loading, projections/norms/MoE/HC/head/quantization math, packed storage and SSD Engram read mechanisms for standard-OFF; generic MLX/native primitives remain subordinate dependencies. [M47](milestone-47-execution-resource-admission.md) owns admission of that numerical/native implementation and the full checkpoint/tokenizer/SSD backing set. OFF startup verifies content and loaded native identities, then binds model/configuration and concrete SSD descriptors; OFF execution requires this live capability. Cold payload verification is explicit (~242 s for ~510 GB); no resource-file hashing occurs in the token loop. The OFF model/prefill math is first-party; bounded MTP and diagnostic donor execution/admission remain separate. The old `omlx_generation.py` engine remains only for R1 legacy fixtures/comparisons; bounded MTP is unchanged on its separate scheduler. Failed transactions invalidate every cache alias and cannot publish continuation; cancellation occurs between completed transactions.
 
+## Canonical speculative block producer (bounded development qualification)
+
+The development accepted-prefix producer may construct multiple causal inputs in
+one owned 40-layer numerical region on the sole pending packed list. Window undo
+records the chronological row lost at **each** input (including rows introduced
+inside a block), compressor receipts retain each pre-pooling projection, and
+history/taps/logits are indexed by consumed-input prefix. Receipts are bounded,
+physically detached at block completion; all-layer settlement still prepares and
+evaluates every slot before any alias becomes executable. Candidate scheduling,
+verification-state objects and cache extraction/merge are not used.
+
+[M56](milestone-56-canonical-accepted-prefix-block.md) qualifies independent
+row-oracle state/tap/logit parity and selects this entry in M52. Short blocks use
+existing batched GEMV primitives to preserve OFF reduction geometry. Attention
+alone groups rows by canonical sparse-list width: block-end padding would move
+valid keys across BF16 softmax tiles and is NOT equivalent to OFF. Embedding,
+projections, HC, MoE and head remain layer-major block execution. Blocks are at
+most eight inputs, journals at most 32; cancellation drains protected blocks
+before prefix-zero settlement, and faults burn all aliases.
+
+OFF retains its one-input contract, and the M54 semantic horizon remains the
+admission authority. Matched performance is now faster than OFF in the bounded
+M54 envelope. This permits a separate normal-local-profile approval evaluation,
+not automatic profile/default/release promotion or broader capability admission.
+
 ## Model-lifetime allocator resource policy
 
 The admitted standard-OFF lifetime bounds MLX's **free allocation cache** to at

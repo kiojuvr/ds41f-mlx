@@ -1,0 +1,23 @@
+0.0s loading admitted checkpoint
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m51_accepted_prefix.py", line 407, in <module>
+    main()
+    ~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m51_accepted_prefix.py", line 195, in main
+    _, pending = tx.execute(mx.array([tokens[j]], mx.int32), control, f,
+                 ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                             lambda p: mx.argmax(p, axis=-1), stream)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/target_forward.py", line 151, in execute
+    logits = self.forward(token, cache, frontier)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/target_forward.py", line 141, in forward
+    return logits[:, -1, :] if input_width == 1 else logits
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m51_accepted_prefix.py", line 188, in row_profile
+    capture(frame, event, arg, numerical_oracle)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m51_accepted_prefix.py", line 110, in capture
+    selected = layer >= 0 and (args.trace_layer == -1 or layer == args.trace_layer)
+               ^^^^^^^^^^
+TypeError: '>=' not supported between instances of 'Block' and 'int'

@@ -28,6 +28,7 @@ def main():
     gen = child = None
     old_profile = sys.getprofile()
     target_calls = [0]
+    target_rows = [0]
     proposal_times, verify_times, transport_times = [], [], []
     def note(phase):
         out['phase'] = phase
@@ -41,6 +42,7 @@ def main():
                 raise RuntimeError('diagnostic target reexecution forbidden')
             if name.endswith('/ds41f_mlx/runtime/target_forward.py') and frame.f_code.co_name == 'forward':
                 target_calls[0] += 1
+                target_rows[0] += frame.f_locals['token'].shape[0]
             if '/omlx/patches/mlx_lm_mtp/' in name or '/omlx/patches/deepseek_v41/' in name and name.endswith(('mtp.py', 'dspark.py', 'language.py')):
                 raise RuntimeError('donor execution forbidden: ' + name)
     try:
@@ -92,8 +94,10 @@ def main():
                                 accepted=sum(r['accepted'] for r in out['cycles']))
         out['phase_seconds'] = dict(proposal_math=sum(proposal_times),
             target_verify_and_settlement=sum(verify_times), hidden_transport_and_ring=sum(transport_times))
-        assert target_calls[0] == 1 + sum(len(r['proposals']) + 1 for r in out['cycles'])
+        assert target_rows[0] == 1 + sum(len(r['proposals']) + 1 for r in out['cycles'])
+        assert target_calls[0] == 1 + sum((len(r['proposals']) + 8) // 8 for r in out['cycles'])
         out['target_forward_calls'] = target_calls[0]
+        out['physical_target_rows'] = target_rows[0]
         out['hidden_target_reexecution'] = 0
         out['coherent'] = True
         out['terminal'] = dict(reason=gen.stop_reason, frontier=gen.token_frontier,
@@ -141,6 +145,10 @@ def main():
                 gen.disable_proposals()
                 gen.generate(32)
                 actual = snapshot(gen)
+                if actual != expected:
+                    out['parity_failure'] = dict(mode=mode, actual=actual, expected=expected,
+                                                cycles=rows)
+                    note('independent OFF parity mismatch')
                 assert actual == expected
                 out['matrix'][mode + '_off_parity'] = dict(exact=True, cycles=rows)
                 gen.close()

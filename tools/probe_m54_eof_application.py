@@ -30,7 +30,7 @@ def main():
     from tools.run_m11_tool_boundary_qualification import initial_body, tool_def
     backend = DeepSeekRecipeRuntimeBackend(runtime_config=cfg, execution_strategy=args.strategy)
     output = dict(decision='NOT PASS', strategy=args.strategy, cases=[])
-    counts = dict(target=0, forbidden=0, effects=0)
+    counts = dict(target=0, target_rows=0, backbone_regions=0, forbidden=0, effects=0)
     eof_entered, eof_release = Event(), Event()
     start = time.perf_counter()
     def save(phase):
@@ -41,7 +41,11 @@ def main():
     def guard(frame, event, arg):
         if event != 'call': return
         name = frame.f_code.co_filename.replace('\\', '/')
-        if name.endswith('/runtime/target_forward.py') and frame.f_code.co_name == 'forward': counts['target'] += 1
+        if name.endswith('/runtime/target_forward.py') and frame.f_code.co_name == 'forward':
+            counts['target'] += 1
+            counts['target_rows'] += frame.f_locals['token'].shape[0]
+        if name.endswith('/runtime/state_production.py') and frame.f_code.co_name == 'block':
+            counts['backbone_regions'] += 1
         if (name.endswith('/model_execution/language.py') and frame.f_code.co_name == '_forward'
             or '/omlx/patches/mlx_lm_mtp/' in name
             or '/omlx/patches/deepseek_v41/' in name and name.endswith(('mtp.py', 'dspark.py', 'language.py'))):
@@ -80,6 +84,8 @@ def main():
                 headers = {'X-DS41F-Request-Sequence':str(sequence), 'Content-Type':'application/json'}
                 path = f'/v1/sessions/{rec.session_id}/chat/completions'
                 before_target = counts['target']
+                before_rows = counts['target_rows']
+                before_regions = counts['backbone_regions']
                 prefix = b''
                 if partial:
                     async def receive():
@@ -168,13 +174,17 @@ def main():
                 assert before == (rec.request_count, rec.m11.m8.frontier, counts['target'], counts['effects'])
                 metrics = getattr(rec.m11,'last_cycle_metrics',None)
                 if metrics is not None:
-                    assert counts['target']-before_target == 1+metrics['planned_target_inputs'], 'hidden target execution'
+                    assert counts['target_rows']-before_rows == 1+metrics['planned_target_inputs'], 'hidden target execution'
+                    assert counts['target']-before_target == 1+metrics['planned_target_blocks']
+                assert counts['backbone_regions']-before_regions == 40*(counts['target']-before_target)
                 diag = rec.m11.diagnostics()['m8']
                 assert diag['all_cache_offsets_equal_frontier']
                 assert diag['total_prompt_replay_count'] == diag['total_full_cache_repack_count'] == 0
                 output['cases'].append(dict(sequence=sequence, partial=partial, stream=body.get('stream'),
                     exact_retry=True, mismatch_status=bad.status_code, stale_status=stale.status_code,
                     prefix_bytes=len(prefix), frozen_bytes=len(frozen), target_calls=counts['target']-before_target,
+                    target_rows=counts['target_rows']-before_rows,
+                    backbone_regions=counts['backbone_regions']-before_regions,
                     turn=rec.last_turn, diagnostics=diag, metrics=getattr(rec.m11,'last_cycle_metrics',None)))
                 save('response completed')
                 return rec.last_turn['response_json']['choices'][0]['message']

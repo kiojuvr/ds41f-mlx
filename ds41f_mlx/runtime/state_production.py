@@ -45,7 +45,16 @@ class DecodeStateProducer:
         mx, r = self.mx, module.ratio
         if r == 1:
             return module.norm(module.wkv(x))
-        kv, gate = module.wkv(x.astype(mx.float32)), module.wgate(x.astype(mx.float32))
+        if x.shape[1] > 1 and journal is not None:
+            def project(projection):
+                value = x.astype(mx.float32)
+                if hasattr(projection, 'project_quantized'):
+                    return projection(value)
+                result = self.math.causal_matmul(value, projection.weight)
+                return result if 'bias' not in projection else result + projection.bias
+            kv, gate = project(module.wkv), project(module.wgate)
+        else:
+            kv, gate = module.wkv(x.astype(mx.float32)), module.wgate(x.astype(mx.float32))
         if journal is not None:
             journal.compressor_write(layer, kv, gate)
         rem = start % r
@@ -82,11 +91,21 @@ class DecodeStateProducer:
         weights = module.weights_proj(x).astype(mx.float32) * (
             c.index_head_dim**-0.5 * c.index_n_heads**-0.5)
         candidates = None
+        visible = [min(key.shape[1], (start + row + 1) // ratio)
+                   for row in range(x.shape[1])]
         if 0 <= c.candidate_source_layer < layer:
             blocks = shared['candidates']
             candidates = blocks[..., None] * c.candidate_block_size + mx.arange(c.candidate_block_size)
             candidates = mx.where(blocks[..., None] >= 0, candidates, -1).reshape(
                 1, x.shape[1], blocks.shape[-1] * c.candidate_block_size)
+            visible = [min(c.candidate_topk_blocks,
+                           (n + c.candidate_block_size - 1) // c.candidate_block_size)
+                       * c.candidate_block_size for n in visible]
+        # OFF's sorted -1 padding occupies the FRONT of the sparse list. A
+        # block-end-sized list would move causal keys into different 64-key
+        # BF16 softmax tiles, even if all future keys are correctly masked.
+        # Retain each input's canonical list width as forward-local metadata.
+        shared['idx_widths'] = [min(c.index_topk, n) for n in visible]
         if candidates is None:
             idx, blocks = m.packed_index_topk(
                 q, key, weights, start, ratio, c.index_topk,
@@ -117,7 +136,7 @@ class DecodeStateProducer:
         old_len = min(start, c.window_size, 0 if old is None else int(old.shape[1]))
         kv = mx.concatenate([old[:, :old_len], new], 1) if old_len else new
         if journal is not None:
-            journal.window_write(layer, old, c.window_size)
+            journal.window_write(layer, old, c.window_size, new)
         cache[1] = kv[:, -c.window_size:]
         if start == 0:
             local = mx.maximum(positions[:, None] - c.window_size + 1, 0)
@@ -144,11 +163,36 @@ class DecodeStateProducer:
                 compressed = m.pack_activation(compressed, bits=4, group_size=16, e4m3_scale=True)
                 shared['kv'] = cache[2] = mx.concatenate([shared['kv'], compressed], 1)
             ci, pooled = shared['idx'], shared['kv']
-        out = m.packed_sparse_attention(q, kv, pooled, idx, ci, module.attn_sink, c.head_dim**-0.5)
+        widths = shared['idx_widths'] if ratio else [0] * length
+        if length > 1 and any(n != ci.shape[-1] for n in widths):
+            # Subdivide ONLY attention lists at numerical width transitions;
+            # embeddings/projections/HC/MoE/head still execute the full block.
+            # Existing qualified attention primitives need no kernel changes.
+            parts, begin = [], 0
+            while begin < length:
+                end = begin + 1
+                while end < length and widths[end] == widths[begin]:
+                    end += 1
+                n = widths[begin]
+                selected = ci[:, begin:end, ci.shape[-1] - n:]
+                parts.append(m.packed_sparse_attention(q[:, begin:end], kv, pooled,
+                    idx[:, begin:end], selected, module.attn_sink, c.head_dim**-0.5))
+                begin = end
+            out = mx.concatenate(parts, 1)
+        else:
+            out = m.packed_sparse_attention(q, kv, pooled, idx, ci, module.attn_sink, c.head_dim**-0.5)
         out = m.rope(out, positions, c, bool(ratio), inverse=True)
         grouped = out.reshape(1, length, c.o_groups, -1)
         weight = module.wo_a.weight.reshape(c.o_groups, c.o_lora_rank, -1)
-        return module.wo_b(mx.einsum('bsgd,grd->bsgr', grouped, weight).flatten(-2))
+        if length > 1 and journal is not None:
+            # Preserve row-local dense reduction with existing batched GEMV.
+            # Explicit bounded RHS scratch prevents MLX collapsing into GEMM.
+            weights = mx.take(weight[None], mx.zeros((length,), mx.int32), axis=0)
+            projected = (grouped.reshape(length, c.o_groups, 1, -1)
+                         @ weights.swapaxes(-1, -2)).reshape(1, length, c.o_groups, c.o_lora_rank)
+        else:
+            projected = mx.einsum('bsgd,grd->bsgr', grouped, weight)
+        return module.wo_b(projected.flatten(-2))
 
     def block(self, module, h, pre, cache, shared, start, journal=None):
         if not getattr(cache, '_p6_append_pending', False):
@@ -157,8 +201,10 @@ class DecodeStateProducer:
             raise RuntimeError('state production outside borrowed journal')
         if getattr(cache, '_mtp_verify_state', None) is not None:
             raise RuntimeError('standard-off producer cannot mutate MTP verification state')
-        if h.shape[:2] != (1, 1) or start < 0:
-            raise ValueError('state production requires one unpadded decode token')
+        if (h.shape[0] != 1 or start < 0 or
+            (h.shape[1] != 1 and (journal is None or
+             h.shape[1] != getattr(journal, 'block_width', 1)))):
+            raise ValueError('state production requires an owned unpadded span')
         m, c = self.math, module._config
         ap, ao, ac = m.hc_mixes(h, module.hc_attn_fn, module.hc_attn_scale, module.hc_attn_base, c)
         x = m.hc_pre_norm(h, pre, module.attn_norm.weight, module.attn_norm.eps)

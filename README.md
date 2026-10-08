@@ -85,8 +85,13 @@ response reservation; its partial qualification is historical.
 [M54 EOF-sensitive continuation](docs/milestone-54-eof-sensitive-operational-continuation.md)
 is **development operational integration PASS**: exact consuming-state EOF
 preview, tool/effect/retry/re-entry and atomic worker delivery are qualified.
-Full R1 is **NOT PASS** (historical MTP profile environment identity); performance
-and broader capability gates remain before promotion.
+[M56 canonical accepted-prefix block execution](docs/milestone-56-canonical-accepted-prefix-block.md)
+closes M55's row-serialized verification blocker: **41→7 target forwards**,
+independent checkpoint state/tap/logit prefix parity, retained M54 socket semantics,
+and **full R1 25/25 PASS**. Matched decode is **17.85 tok/s versus OFF 15.51**
+(candidate 31.45). First-party MTP is now a coherent **bounded local operational
+candidate**; a separate normal-profile/native-dependency approval is justified,
+not an unrestricted capability or release promotion.
 The explicit development backend API is not a promoted operational profile;
 standard-OFF remains default/control.
 

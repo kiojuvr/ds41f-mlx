@@ -8,6 +8,7 @@ settled frontier is a publication receipt, NOT a history/RNG commit.
 
 class AcceptedPrefixJournal:
     MAX_SPAN = 32
+    MAX_BLOCK = 8  # Existing short-block attention reduction geometry.
 
     def __init__(self, target, cache, frontier, bound, stream, fault=None):
         if not isinstance(bound, int) or not 1 <= bound <= self.MAX_SPAN:
@@ -84,18 +85,26 @@ class AcceptedPrefixJournal:
                    or getattr(x, '_p6_append_failed', False) for x in self.objects)):
             raise RuntimeError('borrowed exact target lease changed')
 
-    def window_write(self, layer, old, window):
-        if layer in self.evicted[-1]:
-            raise RuntimeError('duplicate journal window mutation')
-        # One-token producer: at most one lost chronological row per layer.
-        lost = old[:, :1] if old.shape[1] == window else None
-        self.evicted[-1][layer] = lost
+    def window_write(self, layer, old, window, new=None):
+        width = getattr(self, 'block_width', 1)
+        base = self.count if width > 1 else len(self.evicted) - 1
+        old_len = old.shape[1]
+        joined = (self.mx.concatenate([old, new], 1) if width > 1 else old)
+        for row in range(width):
+            record = self.evicted[base + row]
+            if layer in record:
+                raise RuntimeError('duplicate journal window mutation')
+            lost_index = old_len + row - window
+            record[layer] = (joined[:, lost_index:lost_index + 1]
+                             if lost_index >= 0 else None)
 
     def compressor_write(self, layer, kv, gate):
         rows = self.projections.setdefault(layer, [])
-        if len(rows) != self.count or kv.shape[1] != 1 or gate.shape != kv.shape:
+        width = getattr(self, 'block_width', 1)
+        if len(rows) != self.count or kv.shape[1] != width or gate.shape != kv.shape:
             raise RuntimeError('unbounded or duplicate journal projection')
-        rows.append((kv, gate))
+        rows.extend((kv[:, row:row + 1], gate[:, row:row + 1])
+                    for row in range(width))
 
     def advance(self, token):
         if self.phase != 'tentative' or self.count >= self.bound:
@@ -136,6 +145,73 @@ class AcceptedPrefixJournal:
             if len(self.evicted[-1]) != len(self.objects):
                 raise RuntimeError('incomplete all-layer journal window coverage')
             self.count += 1
+            return logits
+        except BaseException:
+            self.burn()
+            raise
+
+    def advance_block(self, tokens):
+        """One causal backbone region, with bounded undo for EVERY input prefix.
+
+        M52 chooses inputs and acceptance; this producer owns only tentative
+        state/undo. Width one delegates to the ordinary row primitive; wider
+        blocks never loop advance/execute or manufacture executable cache views.
+        """
+        if self.phase != 'tentative':
+            raise RuntimeError('journal not open')
+        try:
+            self.check()
+            width = tokens.shape[0] if tokens.ndim == 1 else 0
+            if not 1 <= width <= min(self.MAX_BLOCK, self.bound - self.count):
+                raise ValueError('block outside borrowed span or short-block geometry')
+            if width == 1:
+                return self.advance(tokens)
+            for item in self.objects:
+                mask = item.make_mask(width)
+                if mask is not None and not bool(self.mx.all(mask).item()):
+                    raise ValueError('journal cannot advance past unpadded admission')
+            self.block_width = width
+            base = self.count
+            self.evicted.extend({} for _ in range(width))
+            with self.mx.stream(self.stream):
+                # History is tokenizer-derived state, not target re-execution.
+                hasher = self.target.model._hasher
+                histories = []
+                for row in range(width):
+                    if hasher is None:
+                        histories.append(self.cache[0][6])
+                    else:
+                        _, history = hasher(tokens[None, :row + 1], self.cache[0][6], None)
+                        histories.append(self.mx.array(history, self.mx.int64))
+                from ds41f_mlx.model_execution.quantization import causal_block_arithmetic
+                with causal_block_arithmetic(width):
+                    logits = self.target.forward(tokens, self.cache, self.frontier + base,
+                                                 journal=self)
+                taps = self.target.tap_rows
+                self.target.tap_rows = None
+                keys = [(row, layer) for row in range(base, base + width)
+                        for layer in self.evicted[row]]
+                pkeys = [(layer, row) for layer in self.projections
+                         for row in range(base, base + width)]
+                values = [self.evicted[row][layer] for row, layer in keys]
+                values += [v for layer, row in pkeys for v in self.projections[layer][row]]
+                values += histories
+                values += ([] if taps is None else [taps[:, row:row + 1]
+                                                    for row in range(width)])
+                detached = iter(self.detach_many(values, dependencies=(logits,)))
+                for row, layer in keys:
+                    self.evicted[row][layer] = next(detached)
+                for layer, row in pkeys:
+                    self.projections[layer][row] = (next(detached), next(detached))
+                self.histories.extend(next(detached) for _ in range(width))
+                if taps is not None:
+                    self.tap_rows.extend(next(detached) for _ in range(width))
+                self.logits.extend(logits[:, row, :] for row in range(width))
+            if any(len(self.evicted[row]) != len(self.objects)
+                   for row in range(base, base + width)):
+                raise RuntimeError('incomplete all-layer block window coverage')
+            self.count += width
+            self.block_width = 1
             return logits
         except BaseException:
             self.burn()

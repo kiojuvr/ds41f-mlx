@@ -257,13 +257,18 @@ class TargetGenerationSession:
             fault('verify-before')
             journal = self.target_forward.begin_prefix_journal(
                 self._cache, before, len(inputs), self.stream)
-            for token in inputs:
-                journal.advance(self.mx.array([token], self.mx.uint32))
-                fault('tentative')
-                if cancel():
-                    journal.cancel()
-                    return dict(cancelled=True, consumed_positions=0,
-                                proposal_acceptance_count=0, reports=[])
+            for start in range(0, len(inputs), journal.MAX_BLOCK):
+                block = inputs[start:start + journal.MAX_BLOCK]
+                journal.advance_block(self.mx.array(block, self.mx.uint32))
+                # Protected cancellation is observed after a whole numerical
+                # block. Preserve logical per-input qualification checkpoints,
+                # never interleave sampling/publication or another target call.
+                for _ in block:
+                    fault('tentative')
+                    if cancel():
+                        journal.cancel()
+                        return dict(cancelled=True, consumed_positions=0,
+                                    proposal_acceptance_count=0, reports=[])
             journal.complete()
             fault('materialized')
             if cancel():

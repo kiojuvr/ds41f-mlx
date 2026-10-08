@@ -17,7 +17,8 @@ class StateTarget:
         c = SimpleNamespace(window_size=4, n_layers=40, compress_ratios=(2,) * 40,
                             kv_source_layers=tuple(range(40)), index_source_layers=tuple(range(40)),
                             engram_layer_ids=(0,), engram_max_ngram_size=3)
-        self.model = SimpleNamespace(_config=c)
+        self.model = SimpleNamespace(_config=c, _hasher=self.hash)
+        self.tap_rows = None
         self.producer = DecodeStateProducer(mx, None)
 
     def validate(self, token, cache, frontier):
@@ -31,25 +32,34 @@ class StateTarget:
         for item in cache:
             item._p6_append_failed = item._p6_append_invalid = True
 
+    @staticmethod
+    def hash(ids, history, image_mask):
+        joined = np.concatenate([np.asarray(history), np.asarray(ids)], 1)
+        return None, joined[:, -2:]
+
     def forward(self, token, cache, frontier, journal=None):
+        width = token.shape[0]
         for i, item in enumerate(cache):
-            new = mx.array([[[int(token.item()) + i]]], mx.float32)
+            new = token.reshape(1, width, 1).astype(mx.float32) + i
             if journal:
-                journal.window_write(i, item[1], 4)
+                journal.window_write(i, item[1], 4, new)
                 journal.compressor_write(i, new, new + 1)
             item[1] = mx.concatenate([item[1], new], 1)[:, -4:]
             kv = mx.concatenate([item[4], new], 1)
             gate = mx.concatenate([item[5], new + 1], 1)
-            if kv.shape[1] == 2:
-                item[2] = mx.concatenate([item[2], mx.sum(kv, axis=1, keepdims=True)], 1)
-                item[3] = mx.concatenate([item[3], mx.sum(gate, axis=1, keepdims=True)], 1)
-            item[4], item[5] = kv[:, kv.shape[1] // 2 * 2:], gate[:, gate.shape[1] // 2 * 2:]
-            item[0] = mx.array([frontier + 1], mx.int32)
+            cutoff = kv.shape[1] // 2 * 2
+            if cutoff:
+                item[2] = mx.concatenate([item[2], mx.sum(
+                    kv[:, :cutoff].reshape(1, -1, 2, 1), axis=2)], 1)
+                item[3] = mx.concatenate([item[3], mx.sum(
+                    gate[:, :cutoff].reshape(1, -1, 2, 1), axis=2)], 1)
+            item[4], item[5] = kv[:, cutoff:], gate[:, cutoff:]
+            item[0] = mx.array([frontier + width], mx.int32)
             if i == 0:
-                item[6] = mx.concatenate([item[6], token.reshape(1, 1).astype(mx.int64)], 1)[:, -2:]
-            item.lengths -= 1
-            item.left_padding -= 1
-        return token.astype(mx.float32)
+                item[6] = mx.array(self.hash(token[None], item[6], None)[1], mx.int64)
+            item.lengths -= width
+            item.left_padding -= width
+        return token.astype(mx.float32) if width == 1 else token.reshape(1, width, 1).astype(mx.float32)
 
 
 def fresh():

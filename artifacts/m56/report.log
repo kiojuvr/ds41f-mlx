@@ -1,0 +1,141 @@
+{
+  "decision": "CANONICAL BLOCK EXECUTION QUALIFIED; BOUNDED LOCAL CANDIDATE, NO RELEASE PROMOTION",
+  "base": "5bad422cf9b72f0096e0ce63f3132f9b97fd967a",
+  "qualification": {
+    "final-all-prefix-state.json": {
+      "frontier": 4095,
+      "width": 8,
+      "faults": 15,
+      "additional_width_prefix_trials": 0,
+      "off_latency_ratio": 1.0105324477015833
+    },
+    "all-widths-state.json": {
+      "frontier": 255,
+      "width": 8,
+      "faults": 15,
+      "additional_width_prefix_trials": 33,
+      "off_latency_ratio": 1.006267856938062
+    }
+  },
+  "proposal": {
+    "target_forwards": 12,
+    "physical_rows": 67,
+    "decode": {
+      "tokens": 64,
+      "seconds": 2.9095625420013675,
+      "tok_s": 21.9964338542718
+    }
+  },
+  "operational": {
+    "turns": 17,
+    "counts": {
+      "target": 142,
+      "target_rows": 260,
+      "backbone_regions": 5680,
+      "forbidden": 0,
+      "effects": 5
+    },
+    "all_M55_tokens_and_frontiers_exact": true,
+    "duplicate_effects": 0
+  },
+  "request_sha256": "9e6698b142d643a03a0863f39edad7e744dfe4e887ccf641410a8db2a8786956",
+  "matched_generated_inputs": 41,
+  "frontier": 283,
+  "lanes": {
+    "off": {
+      "decode_tok_s": 15.512182877330112,
+      "http_tok_s": 10.92843682730171,
+      "offered": 0,
+      "accepted": 0,
+      "mean_phase_s": {
+        "response_serialization_reservation_s": 9.08266520127654e-06,
+        "target_forward_s": 1.385647790991546,
+        "application_publication_s": 1.1055667224961022e-05,
+        "normal_decode_epoch": 2.6430838473364324,
+        "protected_target_step_s": 2.638068432357007,
+        "prefill_handoff_s": 0.3786264303344069
+      }
+    },
+    "first-party-mtp-development": {
+      "decode_tok_s": 17.847114649400357,
+      "http_tok_s": 11.877515534801903,
+      "offered": 102,
+      "accepted": 96,
+      "mean_phase_s": {
+        "proposal_s": 0.17879522199897716,
+        "response_serialization_reservation_s": 9.305668451512853e-06,
+        "recipe_report_s": 0.0014783883282992367,
+        "target_verify_s": 1.6608141120232176,
+        "adapter_execution_s": 1.9727479993161978,
+        "target_forward_s": 0.7662439309982195,
+        "application_publication_s": 1.0277663629191617e-05,
+        "normal_decode_epoch": 2.2972901113389526,
+        "protected_target_step_s": 0.15258236066438258,
+        "M51_journal_setup_s": 0.04800141700252425,
+        "prefill_handoff_s": 0.8340693333302625,
+        "M51_settlement_s": 0.04535636100627016,
+        "semantic_preview_authorization_s": 0.0004380686635461946,
+        "M8_accounting_s": 0.0010917639980713527
+      }
+    },
+    "candidate": {
+      "decode_tok_s": 31.44599754986266,
+      "http_tok_s": 14.8190336959912,
+      "offered": 90,
+      "accepted": 87,
+      "mean_phase_s": {
+        "candidate_sampling_s": 0.0027350000018486753,
+        "candidate_cache_ops_s": 0.005925529326001803,
+        "candidate_target_verify_s": 1.0055550693311186,
+        "candidate_settle_report_s": 0.06841734666765358,
+        "candidate_recipe_report_s": 0.0005829986427367354,
+        "prefill_handoff_s": 1.4602119859919185,
+        "candidate_proposal_s": 0.04276040335147021,
+        "candidate_decode_step_s": 1.2286028326683056,
+        "candidate_semantic_preview_s": 0.0005046666677420338
+      }
+    }
+  },
+  "topology": {
+    "first-party-mtp-development": {
+      "target_forwards": 7,
+      "backbone_layer_regions": 280,
+      "attention_regions": 748,
+      "width_histogram": {
+        "6": 6,
+        "5": 1
+      },
+      "verified_rows": 41
+    },
+    "candidate": {
+      "target_forwards": 10,
+      "backbone_layer_regions": 400,
+      "attention_regions": 400,
+      "width_histogram": {
+        "4": 10
+      },
+      "verified_rows": 40
+    }
+  },
+  "M55_row_topology": {
+    "target_forwards": 41,
+    "backbone_layer_regions": 1640,
+    "attention_regions": 1640
+  },
+  "replay": 0,
+  "full_cache_repack": 0,
+  "hidden_target_reexecution": 0,
+  "full_R1": {
+    "status": "PASS",
+    "gates": 25,
+    "runs": 1
+  },
+  "notes": [
+    "Region counts are observed Python/native execution boundaries, NOT GPU dispatch counts.",
+    "Extended topology trials are separate from three-sample rates; one warm-up excluded in every lane.",
+    "Attention alone splits at canonical sparse-list widths; complete target/backbone does not serialize rows.",
+    "Batched GEMV and bounded dense RHS scratch preserve OFF reduction; no new Metal/MMA/FP8/MoE kernels.",
+    "M51 packed-byte prefix selection copies remain; they are not full-cache repacking.",
+    "Chat/greedy/text/single-session/M54 bounds only; no new Vision, restore, context or stochastic application admission."
+  ]
+}

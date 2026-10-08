@@ -26,7 +26,8 @@ def tapped_session(**kwargs):
     forward = target.forward
     def tapped(token, *args, **kwargs):
         logits = forward(token, *args, **kwargs)
-        target.tap_rows = (mx.full((1, 1, 3), int(token.item()), mx.float32)
+        target.tap_rows = (mx.broadcast_to(token.reshape(1, -1, 1),
+                                           (1, token.shape[0], 3)).astype(mx.float32)
                            if target.proposal_child is not None else None)
         return logits
     target.forward = tapped

@@ -2,7 +2,7 @@
 # Copyright (c) 2023 DeepSeek
 # Decode sequencing derived from oMLX deepseek_v41/language.py (MIT), modified.
 # License: ../prefill_fp8_mlx/OMLX_MATH_LICENSE; artifacts/m45/provenance.json.
-"""Owned standard-off, one-token/all-40-layer decode transaction.
+"""Owned target sequencing: OFF row or bounded causal block, all 40 layers.
 
 No LanguageModel call, row extraction/merge, replay, or alternate cache. Owned
 state production uses admitted numerical/storage/SSD Engram primitive handles.
@@ -72,10 +72,18 @@ class TargetForwardTransaction:
         return AcceptedPrefixJournal(self, cache, frontier, bound, stream, fault)
 
     def forward(self, token, cache, frontier, journal=None):
-        """Sequence qualified primitives directly on the sole live cache list."""
+        """Execute one row or one journal-owned causal block on the sole list.
+
+        This is layer-major numerical execution, never a loop over target rows.
+        Only OFF execute owns a one-row publication; journal settlement owns
+        every accepted prefix of the block under its all-layer pending barrier.
+        """
         mx, model = self.mx, self.model
         c = model._config
-        ids = token[:, None]
+        input_width = token.shape[0]
+        if input_width != 1 and (journal is None or input_width != journal.block_width):
+            raise ValueError('block forward requires bounded journal ownership')
+        ids = token[None, :]
         h = model.embed(ids)
         hashes, history = (None, None)
         if model._hasher is not None:
@@ -109,7 +117,7 @@ class TargetForwardTransaction:
                     captured[i] = mx.mean(h, axis=2)
                 if prefetch is not None and 'engram' in layer:
                     mx.async_eval(h, pre)
-                cache[i][0] = mx.array([frontier + 1], mx.int32)
+                cache[i][0] = mx.array([frontier + input_width], mx.int32)
                 if history is not None and i == 0:
                     cache[i][6] = mx.array(history, mx.int64)
                 # Preserve the qualified seven-slot empty representation. This
@@ -127,14 +135,15 @@ class TargetForwardTransaction:
                         cache[i][slot] = mx.zeros((1, 0), mx.int64) if slot == 6 else empty
                 # Admission metadata is state too; no subordinate advance call.
                 if cache[i].lengths is not None:
-                    cache[i].lengths -= 1
+                    cache[i].lengths -= input_width
                 if cache[i].left_padding is not None:
-                    cache[i].left_padding -= 1
+                    cache[i].left_padding -= input_width
         if child is not None:
             self.tap_rows = mx.concatenate([captured[i] for i in c.dspark_target_layer_ids], -1)
             # The caller materializes and detaches this bounded same-forward
             # receipt with the row completion barrier, not at each tapped layer.
-        return self.project_logits(model.norm(self.hc_pre(h, pre)), model.head.weight)[:, -1, :]
+        logits = self.project_logits(model.norm(self.hc_pre(h, pre)), model.head.weight)
+        return logits[:, -1, :] if input_width == 1 else logits
 
     def execute(self, token, cache, frontier, sampler, stream):
         mx = self.mx

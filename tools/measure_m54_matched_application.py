@@ -64,6 +64,7 @@ def main():
     for method,label in [
         (AcceptedPrefixJournal.__init__,'M51_journal_setup_s'),
         (AcceptedPrefixJournal.advance,'target_verify_s'),
+        (AcceptedPrefixJournal.advance_block,'target_verify_s'),
         (AcceptedPrefixJournal.complete,'target_verify_s'),
         (AcceptedPrefixJournal.settle,'M51_settlement_s'),
         (TargetGenerationSession.next_token,'protected_target_step_s'),
@@ -88,13 +89,18 @@ def main():
         code = frame.f_code
         label = mapping.get(code)
         if args.topology:
-            region = (code is AcceptedPrefixJournal.advance.__code__ or
+            region = (code in (AcceptedPrefixJournal.advance.__code__,
+                              AcceptedPrefixJournal.advance_block.__code__) or
                       code.co_name == '_run_verify_cycle_chain')
             if region and event == 'call':
                 verify_frames.add(id(frame))
             if verify_frames:
                 if event == 'call':
                     topology[code.co_filename.split('site-packages/')[-1] + ':' + code.co_name] += 1
+                    if code is TargetForwardTransaction.forward.__code__:
+                        topology['observed_target_width_' + str(frame.f_locals['token'].shape[0])] += 1
+                    elif code.co_name == '_call_backbone_captured':
+                        topology['observed_target_width_' + str(frame.f_locals['inputs'].shape[-1])] += 1
                 elif event == 'c_call':
                     topology['native:' + str(getattr(arg, '__module__', '')) + ':' + getattr(arg, '__name__', type(arg).__name__)] += 1
             if region and event == 'return':
@@ -108,6 +114,9 @@ def main():
         if event == 'call':
             frames[id(frame)] = (now,label)
             calls[label] += 1
+            if label == 'target_forward_s':
+                calls['physical_target_rows'] += frame.f_locals['token'].shape[0]
+                calls['target_width_' + str(frame.f_locals['token'].shape[0])] += 1
             if label in ('normal_decode_epoch','candidate_decode_step_s') and epoch[0] is None:
                 epoch[0] = now
         elif event == 'return':
@@ -182,9 +191,10 @@ def main():
                         if metrics is not None:
                             snapshot['recipe_report_s'] = metrics['report_s']
                             snapshot['adapter_execution_s'] = metrics['execution_s']
-                            assert count_snapshot['target_forward_s'] == 1+metrics['planned_target_inputs']
+                            assert count_snapshot['physical_target_rows'] == 1+metrics['planned_target_inputs']
+                            assert count_snapshot['target_forward_s'] == 1 + metrics['planned_target_blocks']
                         else:
-                            assert count_snapshot['target_forward_s'] == 1+len(tokens)
+                            assert count_snapshot['target_forward_s'] == count_snapshot['physical_target_rows'] == 1+len(tokens)
                     decode = epoch[1]-epoch[0]
                     row = dict(sample=sample,warmup=sample==0,tokens=len(tokens),generated_tokens=tokens,
                         frontier=frontier,response=response.json(),http_latency_s=latency,

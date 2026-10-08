@@ -14,7 +14,9 @@ class Target(StateTarget):
         self.children = []
     def forward(self, token, cache, frontier, journal=None):
         super().forward(token, cache, frontier, journal)
-        return mx.where(mx.arange(128)[None, :] == (token.reshape(1, 1)+1) % 128, 9., 0.)
+        logits = mx.where(mx.arange(128)[None, None, :] ==
+                          (token.reshape(1, -1, 1) + 1) % 128, 9., 0.)
+        return logits[:, 0] if token.shape[0] == 1 else logits
     def begin_prefix_journal(self, *args):
         child = AcceptedPrefixJournal(self, *args)
         self.children.append(child)

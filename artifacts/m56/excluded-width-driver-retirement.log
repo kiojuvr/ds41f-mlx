@@ -1,0 +1,62 @@
+0.0s loading admitted checkpoint
+321.6s independent OFF oracles complete
+322.6s cycle 0 accepted 8 PASS
+322.9s cycle 1 accepted 4 PASS
+323.2s cycle 2 accepted 1 PASS
+323.5s cycle 3 accepted 0 PASS
+323.8s cycle 4 accepted 6 PASS
+324.9s arbitrary prefix 1 PASS
+325.9s arbitrary prefix 2 PASS
+326.9s arbitrary prefix 3 PASS
+327.9s arbitrary prefix 4 PASS
+328.9s arbitrary prefix 5 PASS
+329.9s arbitrary prefix 6 PASS
+331.0s arbitrary prefix 7 PASS
+332.0s cancel after materialization=False PASS
+333.0s cancel after materialization=True PASS
+334.0s fault materialize-before/-1/-1 PASS
+335.0s fault materialize-after/-1/-1 PASS
+336.0s fault materialize-state/19/-1 PASS
+337.0s fault prepare/19/-1 PASS
+338.0s fault publish/0/0 PASS
+339.0s fault publish/0/1 PASS
+339.9s fault publish/2/2 PASS
+341.0s fault publish/2/3 PASS
+342.0s fault publish/2/4 PASS
+343.0s fault publish/2/5 PASS
+344.0s fault publish/0/6 PASS
+345.0s fault publish/39/lengths PASS
+346.0s fault publish/39/left_padding PASS
+347.0s fault publication-boundary/-1/-1 PASS
+348.0s fault owner-publication/-1/-1 PASS
+352.6s matched M50 OFF state/performance regression PASS
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m51_accepted_prefix.py", line 430, in <module>
+    main()
+    ~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m51_accepted_prefix.py", line 396, in main
+    tx, cache = fresh()
+                ~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m51_accepted_prefix.py", line 85, in fresh
+    pre = DwarfStarMLXPrefillSession(model, omlx_path=cfg.omlx_path).prefill(ids[:-1])
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/dwarfstar_prefill.py", line 401, in __init__
+    self._delegate = DenseP0P7PrefillSession(model, omlx_path=omlx_path, mx=mx, stream=stream)
+                     ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/dwarfstar_prefill.py", line 326, in __init__
+    'preserve_mtp', False) else resources_for(self.language_model))
+                                ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/resource_admission.py", line 457, in resources_for
+    resources.validate_binding(model)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/resource_admission.py", line 384, in validate_binding
+    self.assert_active(); self.check_files()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/resource_admission.py", line 300, in assert_active
+    require(self.active, 'execution resource lease retired')
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/resource_admission.py", line 52, in require
+    raise ResourceAdmissionError(message)
+ds41f_mlx.runtime.resource_admission.ResourceAdmissionError: execution resource lease retired

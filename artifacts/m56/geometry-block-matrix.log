@@ -1,0 +1,46 @@
+0.0s loading admitted checkpoint
+326.9s independent OFF oracles complete
+335.2s cycle 0 accepted 8 FAIL
+335.5s cycle 1 accepted 4 FAIL
+335.8s cycle 2 accepted 1 FAIL
+336.2s cycle 3 accepted 0 FAIL
+336.5s cycle 4 accepted 6 FAIL
+344.9s arbitrary prefix 1 FAIL
+353.2s arbitrary prefix 2 FAIL
+361.6s arbitrary prefix 3 FAIL
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m51_accepted_prefix.py", line 373, in <module>
+    main()
+    ~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m51_accepted_prefix.py", line 244, in main
+    tx, cache = fresh()
+                ~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m51_accepted_prefix.py", line 75, in fresh
+    gen = handoff_to_generation(pre.live_result, model, terminal_prompt_token=ids[-1],
+        config=OMLXDecodeConfig(preserve_mtp=False, omlx_path=cfg.omlx_path), max_tokens=64)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/prefill_fp8_mlx/handoff.py", line 246, in handoff_to_generation
+    session = session_type.from_prefilled_cache(
+        model, cache, result.prefix_token_ids, config, max_tokens=max_tokens, sampler=sampler)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/target_generation.py", line 113, in from_prefilled_cache
+    return cls(model, cache, ids, cfg, sampler, max_tokens)
+  File "<string>", line 10, in __init__
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/target_generation.py", line 73, in __post_init__
+    self.target_forward = TargetForwardTransaction(self.language_model, self.mx)
+                          ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/target_forward.py", line 24, in __init__
+    self.resources = resources_for(model)
+                     ~~~~~~~~~~~~~^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/resource_admission.py", line 457, in resources_for
+    resources.validate_binding(model)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/resource_admission.py", line 384, in validate_binding
+    self.assert_active(); self.check_files()
+                          ~~~~~~~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/resource_admission.py", line 311, in check_files
+    require(file_token(path.stat()) == token, 'admitted resource changed/replaced')
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/resource_admission.py", line 52, in require
+    raise ResourceAdmissionError(message)
+ds41f_mlx.runtime.resource_admission.ResourceAdmissionError: admitted resource changed/replaced
