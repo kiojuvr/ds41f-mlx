@@ -28,9 +28,7 @@ from .hyper_connection import (
     sinkhorn,
 )
 from .kernels import packed_index_scores, packed_index_topk, packed_sparse_attention
-from .quantization import (
-    QuantizedProjection, pack_activation, quantize_activation, causal_matmul, causal_width,
-)
+from .quantization import QuantizedProjection, pack_activation, quantize_activation
 from .routing import combine_sorted_experts
 
 
@@ -593,7 +591,7 @@ class Gate(nn.Module):
 
     def __call__(self, x, image_mask):
         c = self._config
-        raw = causal_matmul(x.astype(mx.float32), self.weight.astype(mx.float32)) / c.gate_temp
+        raw = (x.astype(mx.float32) @ self.weight.astype(mx.float32).T) / c.gate_temp
         scores = (
             mx.softmax(raw, -1)
             if c.score_func == "softmax"
@@ -686,23 +684,7 @@ def _hc_mixes(x, fn, scale, base, n, norm_eps, hc_eps, iters):
     return _hc_mix_weights(mixes, scale, base, n, hc_eps, iters)
 
 
-@mx.compile
-def _causal_hc_mixes(x, fn, scale, base, n, norm_eps, hc_eps, iters):
-    # Keep OFF's compiled normalization/mix graph and reduction ordering;
-    # only represent the token axis as an independent singleton GEMV batch.
-    width = x.shape[1]
-    flat = x.flatten(-2).astype(mx.float32)
-    weights = mx.take(fn[None], mx.zeros((width,), mx.int32), axis=0)
-    projection = (flat.reshape(width, 1, flat.shape[-1])
-                  @ weights.swapaxes(-1, -2)).reshape(1, width, fn.shape[0])
-    mixes = projection * mx.rsqrt(mx.mean(flat * flat, -1, keepdims=True) + norm_eps)
-    return _hc_mix_weights(mixes, scale, base, n, hc_eps, iters)
-
-
 def hc_mixes(x, fn, scale, base, c):
-    if causal_width() > 1:
-        return _causal_hc_mixes(
-            x, fn, scale, base, c.hc_mult, c.norm_eps, c.hc_eps, c.hc_sinkhorn_iters)
     if (
         x.ndim == 4
         and x.shape[1] >= 256

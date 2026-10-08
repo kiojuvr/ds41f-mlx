@@ -5,8 +5,6 @@ from functools import cache
 
 import mlx.core as mx
 
-from .quantization import causal_width
-
 _SOURCE = r"""
     const uint row = thread_position_in_grid.x / KL;
     if (row >= N) return;
@@ -43,7 +41,7 @@ def project_logits(x, weight):
     if (
         weight.dtype != mx.bfloat16
         or x.shape[-1] != width
-        or not 1 <= x.size // width <= (8 if causal_width() > 1 else 5)
+        or not 1 <= x.size // width <= 5
         or width % 4
         or width < 256
         or rows < 4096

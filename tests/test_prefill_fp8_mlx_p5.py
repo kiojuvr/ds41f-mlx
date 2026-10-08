@@ -131,16 +131,6 @@ class P5HandoffTests(unittest.TestCase):
                 finally:
                     if was_enabled: gc.enable()
 
-    def test_legacy_candidate_context_is_not_a_first_party_receipt(self):
-        setup, lm = self.setup_ready()
-        result = self.result(setup)
-        context = object()  # existing candidate factory owns its context contract
-        result.dspark_committed_context = context
-        session = handoff_to_generation(result, lm, terminal_prompt_token=3,
-            session_factory=RecordingGenerationSession)
-        self.assertIs(result.dspark_committed_context, context)
-        self.assertFalse(hasattr(session, '_prefill_tap_receipt'))
-
     def test_prefix_length_mismatch_fails(self):
         setup, _ = self.setup_ready()
         with self.assertRaises(LiveCacheHandoffError): self.result(setup, 2049)

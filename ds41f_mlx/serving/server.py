@@ -211,8 +211,6 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
 
     def api_handler(protocol: str) -> Callable[[Request], Awaitable[Response]]:
         async def handler(request: Request) -> Response:
-            if isinstance(backend, DeepSeekRecipeRuntimeBackend) and backend.execution_strategy != 'off':
-                raise RequestError('development first-party MTP requires fenced stateful text Chat', 400)
             body = await request.body()
             prepared = await run_in_threadpool(prepare_request, protocol, body, tokenizer=tokenizer, recipe_path=recipe_path, options=options, checkpoint=getattr(backend, 'checkpoint', runtime_config.checkpoint_path))
             output = response_body(prepared, backend.infer, tokenizer=tokenizer, model_id=model_id)
@@ -236,8 +234,7 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
         ready = getattr(backend, '_model', None) is not None
         status = 'unavailable' if fatal else ('ready' if ready else 'alive')
         code = 503 if fatal else 200
-        return JSONResponse(status_code=code, content={'status': status, 'process_alive': True, 'model_ready': ready, 'fatal_error': fatal,
-            'execution_strategy': getattr(backend, 'execution_strategy', 'off')})
+        return JSONResponse(status_code=code, content={'status': status, 'process_alive': True, 'model_ready': ready, 'fatal_error': fatal})
 
     @app.get('/v1/models')
     async def models() -> Response:
@@ -274,8 +271,7 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
 
     @app.post('/v1/sessions/{session_id}/budget')
     async def session_budget(session_id: str, request: Request) -> Response:
-        if (local_mtp or getattr(backend, 'qualification_response', None) is not None
-                or getattr(backend, 'execution_strategy', 'off') != 'off'):
+        if local_mtp or getattr(backend, 'qualification_response', None) is not None:
             raise RequestError('budget is standard-OFF only', 400)
         body = await request.body()
         try:
@@ -308,42 +304,8 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
             validate_stateful_chat_request_policy(body)
         except ValueError as exc:
             raise RequestError(str(exc), 400)
-        reservation = None
-        sequence = None
-        if qualification is None and isinstance(backend, DeepSeekRecipeRuntimeBackend):
-            from .response_reservation import observe_retry, reserve
-            raw_sequence = request.headers.get('X-DS41F-Request-Sequence')
-            try:
-                if raw_sequence is not None:
-                    if not raw_sequence.isdecimal():
-                        raise ValueError('positive request sequence required')
-                    sequence = int(raw_sequence)
-                if backend.execution_strategy != 'off' and sequence is None:
-                    raise ValueError('development first-party MTP requires exact-byte request sequence')
-                rec = backend.get_stateful_session(session_id)
-                retry = observe_retry(rec, sequence, body)
-                if retry is not None:
-                    if retry.media_type == 'text/event-stream':
-                        chunks = tuple(retry.chunks)
-                        async def replay():
-                            for chunk in chunks:
-                                yield chunk
-                        return InferenceStreamingResponse(replay(), media_type=retry.media_type,
-                            headers={'X-DS41F-Request-ID': retry.request_id or '', 'Cache-Control': 'no-store',
-                                     'X-DS41F-Response-Replay': 'exact-bytes'})
-                    return Response(content=b''.join(retry.chunks), media_type=retry.media_type,
-                                    headers={'X-DS41F-Response-Replay': 'exact-bytes'})
-                backend.validate_development_body(body)
-            except KeyError as exc:
-                raise RequestError(str(exc), 404) from exc
-            except ValueError as exc:
-                raise RequestError(str(exc), 400) from exc
-            except RuntimeError as exc:
-                raise RequestError(str(exc), 409) from exc
         prepared = await run_in_threadpool(prepare_request, 'chat_completions', body, tokenizer=tokenizer, recipe_path=recipe_path, options=options, checkpoint=getattr(backend, 'checkpoint', runtime_config.checkpoint_path))
         try:
-            if qualification is None and isinstance(backend, DeepSeekRecipeRuntimeBackend):
-                rec = backend.validate_stateful_admission(session_id, prepared)
             # Internal qualification and the explicit public process profile
             # share the same guarded owner, never a request/env mode selector.
             qualification = getattr(backend, 'qualification_response', None)
@@ -364,35 +326,17 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
                             raise ValueError('not canonical UUID')
                     except ValueError:
                         raise RequestError('application request correlation must be a canonical UUID', 400)
-                if qualification is None and isinstance(backend, DeepSeekRecipeRuntimeBackend):
-                    reservation = reserve(rec, sequence, body, 'text/event-stream')
                 stream = await backend.open_stateful_stream(session_id, prepared, tokenizer=tokenizer, body=body, options=options, application_id=application_id)
                 return InferenceStreamingResponse(stream, media_type='text/event-stream', headers={
                     'X-DS41F-Request-ID': stream.request_id, 'Cache-Control': 'no-store', 'X-Accel-Buffering': 'no'})
-            if qualification is None and isinstance(backend, DeepSeekRecipeRuntimeBackend):
-                reservation = reserve(rec, sequence, body, 'application/json')
-            if isinstance(backend, DeepSeekRecipeRuntimeBackend):
-                turn = await backend.run_stateful_chat_turn(session_id, prepared, tokenizer=tokenizer, body=body, options=options)
-            else:
-                turn = await backend.run_stateful_chat_turn(session_id, prepared, tokenizer=tokenizer)
+            turn = await backend.run_stateful_chat_turn(session_id, prepared, tokenizer=tokenizer)
         except KeyError as exc:
             raise RequestError(str(exc), 404)
         except RuntimeError as exc:
-            if reservation is not None and reservation.state == 'active':
-                reservation.burn()
             status = 409 if local_mtp or 'active request' in str(exc) or 'maximum live session' in str(exc) else 400
             raise RequestError(str(exc), status, getattr(exc,'code',None) if local_mtp else None)
-        except BaseException:
-            if reservation is not None and reservation.state == 'active':
-                reservation.burn()
-            raise
         if turn.response_json is None:
             raise RequestError('stateful turn did not produce a protocol response', 500)
-        if reservation is not None:
-            if reservation.state != 'completed':
-                reservation.burn()
-                raise RequestError('response reservation did not complete', 409)
-            return Response(content=b''.join(reservation.chunks), media_type=reservation.media_type)
         return JSONResponse(content=turn.response_json)
 
     @app.post('/v1/sessions/{session_id}/cancel')

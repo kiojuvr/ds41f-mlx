@@ -12,11 +12,12 @@ Canonical architectural intent:
 Canonical current-state documents:
 
 - [M41 local MTP candidate](milestone-41-local-mtp-release-candidate.md) — explicit bounded opt-in capability, composed/source-clone evidence and OFF regression
-- [M49 promotion assessment](milestone-49-runtime-promotion-assessment.md) — historical stopped / NO promotion assessment; M51–M53 subsequently close transaction/generation/proposal execution core, without runtime promotion
-- [M53 proposal primitives](milestone-53-proposal-primitives-continuation.md) — PASS: admitted first-party DSpark child, same-forward receipts and real M52/M51 loop; development-only, no new runtime/application envelope
-- [M54 operational integration](milestone-54-eof-sensitive-operational-continuation.md) — bounded development tool/effect/retry/re-entry PASS; OFF remains default
-- [M55 target verification topology](milestone-55-target-verification-topology.md) — historical NO closure: bounded device-copy repair qualified; identifies canonical row serialization
-- [M56 canonical accepted-prefix block](milestone-56-canonical-accepted-prefix-block.md) — producer/state/operational PASS, 41→7 target forwards; faster than OFF and coherent bounded local candidate, no default/profile/release promotion
+- [M49R MTP architecture reset and roadmap](mtp-architecture-reset.md) — current authority: restart `5e784d9`, oMLX physical topology, retained M54 requirements, conformance/performance gates and M49R–M55R series
+- [M49 assessment](milestone-49-runtime-promotion-assessment.md) — historical NO promotion at the restart point; proposed first-party redesign superseded
+- [M50–M56 source archive and manifest](archive/mtp-reconstruction/README.md) — superseded failed production architecture line; original results/provenance preserved, not active runtime
+- [M53 proposal primitives](milestone-53-proposal-primitives-continuation.md) — superseded historical implementation PASS; same-forward oracle retained
+- [M54 operational integration](milestone-54-eof-sensitive-operational-continuation.md) — superseded integration implementation; semantic/application requirements remain current under M49R
+- [M55 topology evidence](milestone-55-target-verification-topology.md) and [M56 block evidence](milestone-56-canonical-accepted-prefix-block.md) — historical topology/state/performance receipts, not normal-profile approval or active direction
 - [Local MTP setup/API/operator boundary](mtp-local-release-candidate.md) — supported profile, reproducible source/native setup and conservative application states
 
 - [Runtime strategy](runtime-strategy.md) — production architecture and non-selected paths

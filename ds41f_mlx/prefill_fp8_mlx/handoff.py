@@ -170,9 +170,6 @@ class LivePrefillResult:
         result._setup, result._live_cache = actual_setup, actual_setup.block_runner.working_cache
         result._state, result.handoff_count = 'ready', 0
         result.dspark_committed_context = getattr(setup, "dspark_committed_context", None)
-        capture = getattr(actual_setup.block_runner, 'tap_capture', None)
-        if capture is not None:
-            result.dspark_committed_context = capture.commit(result, frontier)
         actual_setup.handoff_claimed = True
         actual_setup.block_runner.handoff_reserved = True
         if getattr(actual_setup.block_runner, "scheduling_coordinator", None) is not None:
@@ -184,10 +181,6 @@ class LivePrefillResult:
         if self._state != 'ready':
             raise LiveCacheHandoffError('only a ready prefill lease can be discarded')
         setup, cache = self._setup, self._live_cache
-        from ds41f_mlx.runtime.hidden_taps import CommittedTapReceipt
-        if isinstance(self.dspark_committed_context, CommittedTapReceipt):
-            self.dspark_committed_context.retire()
-            self.dspark_committed_context = None
         self._state, self._live_cache = 'failed', None
         try:
             for item in cache or ():
@@ -256,14 +249,6 @@ def handoff_to_generation(result: LivePrefillResult, model: Any, *, terminal_pro
             setup.block_runner.scheduling_coordinator.revoke()
         setup.continuation = None
         result._live_cache = None
-        seed = result.dspark_committed_context
-        from ds41f_mlx.runtime.hidden_taps import CommittedTapReceipt
-        if isinstance(seed, CommittedTapReceipt):
-            if seed.owner is not result or seed.end != result.frontier:
-                raise LiveCacheHandoffError('prefill tap receipt binding mismatch')
-            seed.owner = session
-            session._prefill_tap_receipt = seed
-            result.dspark_committed_context = None
         session.start(terminal)
         if session.prompt_replay_count != 0:
             raise LiveCacheHandoffError('prefix prompt replay during terminal bootstrap')

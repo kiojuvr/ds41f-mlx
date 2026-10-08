@@ -154,18 +154,14 @@ class StatefulSessionRecord:
     persisted_artifact: dict[str, Any] | None = None
     active_stream: Any = None  # transport control only, never an execution owner
     recovery_state: str = 'ready'
-    response_reservation: Any = None  # sole bounded serialized-response/retry authority
 
     def to_json(self) -> dict[str, Any]:
-        # GET must not observe worker-owned history between M8 adoption and
-        # canonical recipe feed. Busy exposes reservation/outcome metadata only.
-        diag = None if self.busy or self.m11 is None else self.m11.diagnostics()
+        diag = None if self.m11 is None else self.m11.diagnostics()
         return {
             'id': self.session_id,
             'protocol': self.protocol,
             'state': 'closed' if self.closed else ('busy' if self.busy else ('unrecoverable' if self.recovery_state == 'unrecoverable' else ('empty' if self.m11 is None else self.m11.m8.state))),
             'recovery_state': self.recovery_state,
-            'response_reservation': None if self.response_reservation is None else self.response_reservation.certificate(),
             'active_request_id': None if self.active_stream is None else self.active_stream.request_id,
             'created_at': self.created_at,
             'updated_at': self.updated_at,
@@ -180,10 +176,7 @@ class StatefulSessionRecord:
 class DeepSeekRecipeRuntimeBackend:
     """Single-flight adapter from recipe prepared requests to token chunks."""
 
-    def __init__(self, *, checkpoint: Path = DEFAULT_CHECKPOINT, omlx_path: Path = DEFAULT_OMLX, recipe_path: Path = DEFAULT_RECIPE, model_id: str = DEFAULT_MODEL_ID, native_out_dir: Path = Path('artifacts/m7/deepseek-recipe-serving/native'), runtime_config: RuntimeConfig | None = None, execution_strategy: str = 'off'):
-        if execution_strategy not in ('off', 'first-party-mtp-development'):
-            raise ValueError('unknown standard execution strategy')
-        self._execution_strategy = execution_strategy
+    def __init__(self, *, checkpoint: Path = DEFAULT_CHECKPOINT, omlx_path: Path = DEFAULT_OMLX, recipe_path: Path = DEFAULT_RECIPE, model_id: str = DEFAULT_MODEL_ID, native_out_dir: Path = Path('artifacts/m7/deepseek-recipe-serving/native'), runtime_config: RuntimeConfig | None = None):
         if runtime_config is not None:
             checkpoint = runtime_config.checkpoint_path
             omlx_path = runtime_config.omlx_path
@@ -210,35 +203,12 @@ class DeepSeekRecipeRuntimeBackend:
         self.sessions: dict[str, StatefulSessionRecord] = {}
         self.session_traces: deque[dict[str, Any]] = deque(maxlen=int(os.environ.get('DS41F_TRACE_HISTORY_LIMIT', '32')))
 
-    @property
-    def execution_strategy(self):
-        return self._execution_strategy
-
-    def validate_development_body(self, body):
-        if self.execution_strategy == 'off':
-            return
-        import json
-        payload = json.loads(body)
-        if not isinstance(payload, dict):
-            raise ValueError('development first-party MTP requires a Chat object')
-        if any(payload.get(key) for key in ('functions', 'function_call', 'response_format')):
-            raise ValueError('legacy functions / structured output are not qualified for first-party MTP')
-        if payload.get('reasoning_effort') != 'none':
-            raise ValueError('development first-party MTP requires explicitly disabled reasoning')
-        if payload.get('max_tokens') == 'auto' or payload.get('n', 1) != 1:
-            raise ValueError('development first-party MTP requires explicit bounded single output')
-        for message in payload.get('messages', []):
-            if message.get('role') not in ('system', 'user', 'assistant', 'tool') or not isinstance(message.get('content'), (str, type(None))):
-                raise ValueError('development first-party MTP admits text dialogue only')
-
     def load(self) -> None:
         if self._runtime is not None:
             return
         runtime = OmlxRuntime(OmlxRuntimeConfig(omlx_path=self.omlx_path, checkpoint_path=self.checkpoint, engram_ssd_offload=True, preserve_mtp=False, recipe_path=self.recipe_path))
         try:
             model, _ = runtime.load_model()
-            if self.execution_strategy == 'first-party-mtp-development':
-                runtime.admission.admit_proposal_child(model.language_model)
         except BaseException:
             runtime.close()
             raise
@@ -311,21 +281,6 @@ class DeepSeekRecipeRuntimeBackend:
         return rec
 
     def validate_multimodal_request(self, request: RecipePreparedRequest) -> None:
-        if self.execution_strategy == 'first-party-mtp-development':
-            if request.protocol != 'chat_completions' or request.multimodal is not None or request.image_sources:
-                raise ValueError('development first-party MTP admits stateful text Chat only')
-            if request.conversation_request.parsing_options.parse_tool_calls:
-                from ..runtime.tool_boundary_session import _recipe_module
-                if not hasattr(_recipe_module().StreamProcessor, 'preview_eof_tokens'):
-                    raise ValueError('native EOF-sensitive tool preview is required for first-party MTP')
-            if request.conversation_request.conversation.thinking_mode:
-                raise ValueError('development first-party MTP reasoning is unqualified')
-            if len(request.token_ids) + self.request_max_tokens(request) > 512:
-                raise ValueError('development first-party MTP reservation exceeds 512 positions')
-            if self.request_max_tokens(request) > 64:
-                raise ValueError('development first-party MTP output exceeds 64 tokens')
-            if request.inference_options.temperature not in (None, 0, 0.0):
-                raise ValueError('development application qualification is greedy only')
         if request.image_sources and request.multimodal is None:
             raise ValueError('image inputs must be prepared before execution')
         if request.multimodal is None and 129264 in request.token_ids:
@@ -342,8 +297,6 @@ class DeepSeekRecipeRuntimeBackend:
     async def infer(self, request: RecipePreparedRequest) -> AsyncIterator[Any]:
         from deepseek_recipe import InferenceChunk, InferenceFinishReason, PromptUsage
 
-        if self.execution_strategy != 'off':
-            raise ValueError('development first-party MTP requires a fenced stateful session')
         if request.model is not None and request.model not in MODEL_ALIASES:
             raise ValueError(f"unsupported model {request.model!r}; supported aliases: {sorted(MODEL_ALIASES)}")
         self.validate_multimodal_request(request)
@@ -435,8 +388,6 @@ class DeepSeekRecipeRuntimeBackend:
                     self._lock.release()
 
     async def create_stateful_session(self, *, session_id: str | None = None) -> StatefulSessionRecord:
-        if self.execution_strategy != 'off' and any(not s.closed for s in self.sessions.values()):
-            raise RuntimeError('development first-party MTP admits one live session')
         sid = session_id or f"sess_{uuid4().hex}"
         if sid in self.sessions and not self.sessions[sid].closed:
             raise ValueError(f"session {sid!r} already exists")
@@ -452,28 +403,12 @@ class DeepSeekRecipeRuntimeBackend:
             raise KeyError(f"unknown or closed session {session_id!r}")
         return rec
 
-    def _require_response_reservation(self, rec):
-        slot = rec.response_reservation
-        if (slot is not None and slot.state != 'active') or (slot is None and self.execution_strategy != 'off'):
-            raise ValueError('fenced generation requires an active exact-byte response reservation')
-
-    async def run_stateful_chat_turn(self, session_id: str, request: RecipePreparedRequest, *, tokenizer: Any, body=None, options=None) -> M11AssistantTurn:
+    async def run_stateful_chat_turn(self, session_id: str, request: RecipePreparedRequest, *, tokenizer: Any) -> M11AssistantTurn:
         if request.protocol != 'chat_completions':
             raise ValueError('M12 stateful serving currently qualifies chat_completions only')
         if request.model is not None and request.model not in MODEL_ALIASES:
             raise ValueError(f"unsupported model {request.model!r}; supported aliases: {sorted(MODEL_ALIASES)}")
         rec = self.validate_stateful_admission(session_id, request)
-        self._require_response_reservation(rec)
-        slot = rec.response_reservation
-        if body is None and slot is not None:
-            body = slot.request_bytes
-        if slot is not None and bytes(body) != slot.request_bytes:
-            raise ValueError('canonical JSON publication request-body identity mismatch')
-        if request.conversation_request.parsing_options.parse_tool_calls and body is None:
-            raise ValueError('canonical tool publication requires original request body')
-        request_id = str(uuid4())
-        if slot is not None:
-            slot.request_id = request_id
         rec.busy = True
         rec.updated_at = time()
         trace: dict[str, Any] = {'session_id': session_id, 'prompt_tokens': len(request.token_ids), 'stream': bool(request.stream), 'started_at': rec.updated_at}
@@ -497,31 +432,21 @@ class DeepSeekRecipeRuntimeBackend:
                     try:
                         rec.m11.m8.sampler = sampler
                         rec.m11.continue_from_prepared(request, max_tokens=max_tokens)
-                        assistant_turn = self._run_recipe_turn(rec.m11, request)
+                        assistant_turn = rec.m11.run_current_assistant_turn(request)
                     except BaseException:
-                        self._retire_failed_recipe_session(rec.m11)
+                        if rec.m11.m8.generation is not None:
+                            rec.m11.m8.close()
                         raise
                     trace['frontier_before'] = before
                     trace['frontier_after'] = rec.m11.m8.frontier
                     trace['exact_prefix_extension'] = True
                     trace['created_runtime_session'] = False
-                from .recipe_publication import publish_recipe_turn
-                try:
-                    publish_recipe_turn(self, rec, request, tokenizer, body, options, assistant_turn,
-                                        request_id=request_id)
-                except BaseException:
-                    self._retire_failed_recipe_session(rec.m11)
-                    raise
-                slot = rec.response_reservation
-                if slot is not None and slot.state == 'active' and slot.media_type == 'application/json':
-                    from fastapi.responses import JSONResponse
-                    try:
-                        slot.append(JSONResponse(content=assistant_turn.response_json).body)
-                        slot.complete()
-                    except BaseException:
-                        slot.burn()
-                        rec.recovery_state = 'unrecoverable'
-                        raise
+                rec.request_count += 1
+                rec.updated_at = time()
+                rec.last_turn = assistant_turn.to_json()
+                rec.last_turn.update(capacity=None if request.capacity is None else {**request.capacity, 'binding': True},
+                                     termination_reason='context_capacity' if assistant_turn.finish_reason == 'length' and request.capacity and request.capacity['output_mode'] == 'auto' else 'output_limit' if assistant_turn.finish_reason == 'length' else assistant_turn.finish_reason)
+                rec.last_error = None
                 diag = rec.m11.diagnostics()
                 m8diag = diag.get('m8', {})
                 last_runtime_turn = (m8diag.get('turns') or [{}])[-1]
@@ -553,15 +478,6 @@ class DeepSeekRecipeRuntimeBackend:
             raise
         except Exception as exc:
             rec.last_error = str(exc)
-            if rec.response_reservation is not None and rec.response_reservation.state == 'active':
-                rec.response_reservation.burn()
-            if self.execution_strategy != 'off':
-                rec.recovery_state = 'unrecoverable'
-            if rec.m11 is not None and rec.m11.m8.closed:
-                rec.recovery_state = 'unrecoverable'
-                generation, rec.m11.m8.generation = rec.m11.m8.generation, None
-                if generation is not None:
-                    await self._call(generation.close)
             trace.update({'ok': False, 'error': str(exc), 'error_type': type(exc).__name__})
             raise
         finally:
@@ -571,10 +487,6 @@ class DeepSeekRecipeRuntimeBackend:
                 self._lock.release()
 
     async def open_stateful_stream(self, session_id, request, *, tokenizer, body, options=None, application_id=None):
-        rec = self.get_stateful_session(session_id)
-        self._require_response_reservation(rec)
-        if rec.response_reservation is not None and bytes(body) != rec.response_reservation.request_bytes:
-            raise ValueError('canonical SSE publication request-body identity mismatch')
         from .stateful_stream import StatefulStream
         return StatefulStream(self, session_id, request, tokenizer, body, options, application_id)
 
@@ -590,42 +502,12 @@ class DeepSeekRecipeRuntimeBackend:
     def _start_and_run_m11(self, tokenizer: Any, request: RecipePreparedRequest, sampler: Any, max_tokens: int) -> tuple[M11RecipeToolSession, M11AssistantTurn]:
         sess = M11RecipeToolSession.start_from_prepared(model=self._model, tokenizer=tokenizer, checkpoint=self.checkpoint, omlx_path=self.omlx_path, recipe_path=self.recipe_path, prepared=request, sampler=sampler, max_tokens=max_tokens)
         try:
-            return sess, self._run_recipe_turn(sess, request)
+            return sess, sess.run_current_assistant_turn(request)
         except BaseException:
-            self._retire_failed_recipe_session(sess)
-            raise
-
-    @staticmethod
-    def _retire_failed_recipe_session(sess):
-        # A failed recipe publication cannot use ensure_idle to extract a burned
-        # target. Release its generation lease directly, even if M8 is closed.
-        m8 = sess.m8
-        generation, m8.generation = m8.generation, None
-        try:
-            if generation is not None:
-                generation._invalidate()
-                generation.close()
-        finally:
-            m8.live_cache = []
-            m8.closed = True
-
-    def _run_recipe_turn(self, sess, request):
-        if self.execution_strategy == 'off':
-            return sess.run_current_assistant_turn(request)
-        from ds41f_mlx.runtime.live_turn import LiveRecipeTurn
-        sess.execution_strategy = self.execution_strategy
-        cursor = LiveRecipeTurn(sess, request, lambda turn, cancelled: None)
-        try:
-            while not cursor.closed:
-                cursor.advance()
-            return cursor.turn
-        except BaseException:
-            cursor.abort()
+            sess.m8.close()
             raise
 
     async def persist_stateful_session(self, session_id: str, *, artifact_root: Path | None = None) -> dict[str, Any]:
-        if self.execution_strategy != 'off':
-            raise ValueError('development first-party MTP persistence is unqualified')
         rec = self.get_stateful_session(session_id)
         if rec.busy:
             raise RuntimeError(f"session {session_id!r} already has an active request")
@@ -649,8 +531,6 @@ class DeepSeekRecipeRuntimeBackend:
                 self._lock.release()
 
     async def restore_stateful_session(self, *, artifact_path: Path, tokenizer: Any, session_id: str | None = None) -> StatefulSessionRecord:
-        if self.execution_strategy != 'off':
-            raise ValueError('development first-party MTP restore is unqualified')
         rec = await self.create_stateful_session(session_id=session_id)
         rec.busy = True
         lock_acquired = False
@@ -684,22 +564,15 @@ class DeepSeekRecipeRuntimeBackend:
         # GET already rejects closed records; retaining their full parser/history
         # payloads forever serves no public authority or recovery purpose.
         self.sessions.pop(session_id, None)
-        if rec.response_reservation is not None:
-            rec.response_reservation.retire()
         return result
 
     def close(self) -> None:
         for rec in list(self.sessions.values()):
             if rec.m11 is not None:
                 try:
-                    if rec.m11.m8.generation is not None:
-                        self._retire_failed_recipe_session(rec.m11)
-                    else:
-                        rec.m11.m8.close()
+                    rec.m11.m8.close()
                 except Exception:
                     pass
-            if rec.response_reservation is not None:
-                rec.response_reservation.retire()
             rec.closed = True
         if self._runtime is not None:
             self._runtime.close()
@@ -724,9 +597,7 @@ class DeepSeekRecipeRuntimeBackend:
             'model_id': self.model_id,
             'single_flight': True,
             'production_prefill_selector': PRODUCTION_PREFILL_SELECTOR,
-            'execution_strategy': self.execution_strategy,
-            'target_preserve_mtp': False,
-            'mtp': 'OFF' if self.execution_strategy == 'off' else 'FIRST_PARTY_DEVELOPMENT',
-            'dspark': 'OFF' if self.execution_strategy == 'off' else 'FIRST_PARTY_DEVELOPMENT',
-            'speculative_decode': 'OFF' if self.execution_strategy == 'off' else 'SEMANTIC_AUTHORIZED_DEVELOPMENT',
+            'mtp': 'OFF',
+            'dspark': 'OFF',
+            'speculative_decode': 'OFF',
         }

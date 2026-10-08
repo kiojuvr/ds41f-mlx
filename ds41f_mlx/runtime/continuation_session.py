@@ -273,37 +273,6 @@ class M8LiveContinuationSession:
             )
         return report
 
-    def adopt_cycle_reports(self, reports) -> None:
-        """Adopt a complete settled M52 prefix, never a deferred report queue.
-
-        Called on the same protected worker as recipe advancement. No target
-        calls, sampling, acceptance or history reconstruction occurs here.
-        """
-        gen = self.generation
-        if gen is None or self.closed:
-            raise M8ContinuationError('active coherent generation required')
-        before = len(self.token_history)
-        tokens = [int(r.token) for r in reports]
-        for i, report in enumerate(reports):
-            if report.frontier_before != before + i or report.frontier_after != before + i + 1:
-                raise M8ContinuationError('cycle report frontier mismatch')
-            if report.finish_reason and i != len(reports) - 1:
-                raise M8ContinuationError('cycle report follows terminal')
-        history = gen.current_token_history()
-        if history != self.token_history + tokens or gen.token_frontier != len(history):
-            raise M8ContinuationError('incomplete or duplicate cycle report')
-        if set(gen.active_cache_offsets()) != {len(history)}:
-            raise M8ContinuationError('cycle target/history mismatch')
-        self.token_history = history
-        if reports:
-            last = self.turn_records[-1]
-            elapsed = sum(float(r.latency_s) for r in reports)
-            self.turn_records[-1] = replace(
-                last, generated_tokens=last.generated_tokens + tuple(tokens),
-                frontier_after=len(history), decode_seconds=last.decode_seconds + elapsed,
-                first_token_latency_s=reports[0].latency_s if not last.generated_tokens else last.first_token_latency_s,
-                prompt_replay_count=int(gen.prompt_replay_count))
-
     def cancel_turn(self, reason: str = "cancelled") -> None:
         self.ensure_idle(reason)
         if self.turn_records:

@@ -1,0 +1,104 @@
+................................F........FF..................F.......... [ 70%]
+..............................                             [100%]
+=================================== FAILURES ===================================
+_________ test_current_numerical_and_native_resource_identity_positive _________
+
+    def test_current_numerical_and_native_resource_identity_positive():
+>       modules = {n: a.check_module(n, identity) for n, identity in PIN['modules'].items()}
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_m47_resource_admission.py:22: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+ds41f_mlx/runtime/resource_admission.py:85: in check_module
+    check_file(path, expected, name, verified)
+ds41f_mlx/runtime/resource_admission.py:60: in check_file
+    require(actual == expected, f'identity mismatch: {label}')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False, message = 'identity mismatch: deepseek_recipe._native'
+
+    def require(condition, message):
+        if not condition:
+>           raise ResourceAdmissionError(message)
+E           ds41f_mlx.runtime.resource_admission.ResourceAdmissionError: identity mismatch: deepseek_recipe._native
+
+ds41f_mlx/runtime/resource_admission.py:52: ResourceAdmissionError
+______ test_compatible_header_altered_official_shard_rejected_before_load ______
+
+tmp_path = PosixPath('/private/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/pytest-of-kioju/pytest-1/test_compatible_header_altered0')
+
+    def test_compatible_header_altered_official_shard_rejected_before_load(tmp_path):
+        import struct
+        from ds41f_mlx.config import load_runtime_config
+        from ds41f_mlx.runtime.omlx_core import OmlxRuntime, OmlxRuntimeConfig
+        cfg = load_runtime_config()
+        for name in ('config.json', 'model.safetensors.index.json', 'tokenizer.json', 'tokenizer_config.json'):
+            (tmp_path/name).symlink_to(cfg.checkpoint_path/name)
+        name = 'model-00001-of-00048.safetensors'
+        source = cfg.checkpoint_path/name
+        with source.open('rb') as reader:
+            prefix = reader.read(8)
+            header = reader.read(struct.unpack('<Q', prefix)[0])
+        # Only one <=1GiB sparse fault artifact; never copy/reconstruct the checkpoint.
+        with (tmp_path/name).open('wb') as stream:
+            stream.write(prefix+header); stream.seek(source.stat().st_size-1); stream.write(b'\0')
+        runtime = OmlxRuntime(OmlxRuntimeConfig(omlx_path=cfg.omlx_path, checkpoint_path=tmp_path,
+                                              recipe_path=cfg.recipe_path, preserve_mtp=False))
+        _, gen = session(); cache = gen.initial_cache
+        try:
+>           with pytest.raises(a.ResourceAdmissionError, match=f'checkpoint/{name}'):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E             Expected regex: 'checkpoint/model-00001-of-00048.safetensors'
+E             Actual message: 'identity mismatch: deepseek_recipe._native'
+
+tests/test_m47_resource_admission.py:98: AssertionError
+___________ test_dependency_version_drift_rejected_before_checkpoint ___________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1468835b0>
+
+    def test_dependency_version_drift_rejected_before_checkpoint(monkeypatch):
+        from ds41f_mlx.config import load_runtime_config
+        cfg = load_runtime_config()
+        version = a.importlib.metadata.version
+        monkeypatch.setattr(a.importlib.metadata, 'version', lambda name: 'wrong' if name == 'mlx-lm' else version(name))
+>       with pytest.raises(a.ResourceAdmissionError, match='version mismatch'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'version mismatch'
+E         Actual message: 'identity mismatch: deepseek_recipe._native'
+
+tests/test_m47_resource_admission.py:111: AssertionError
+_______________ test_protocol_resource_positive_and_substitution _______________
+
+tmp_path = PosixPath('/private/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/pytest-of-kioju/pytest-1/test_protocol_resource_positiv0')
+
+    def test_protocol_resource_positive_and_substitution(tmp_path):
+        from ds41f_mlx.config import DEFAULT_RECIPE
+>       tokenizer = a.load_protocol_tokenizer(DEFAULT_RECIPE)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_m47_resource_admission.py:266: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+ds41f_mlx/runtime/resource_admission.py:451: in load_protocol_tokenizer
+    check_module(name, pin['modules'][name])
+ds41f_mlx/runtime/resource_admission.py:85: in check_module
+    check_file(path, expected, name, verified)
+ds41f_mlx/runtime/resource_admission.py:60: in check_file
+    require(actual == expected, f'identity mismatch: {label}')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False, message = 'identity mismatch: deepseek_recipe._native'
+
+    def require(condition, message):
+        if not condition:
+>           raise ResourceAdmissionError(message)
+E           ds41f_mlx.runtime.resource_admission.ResourceAdmissionError: identity mismatch: deepseek_recipe._native
+
+ds41f_mlx/runtime/resource_admission.py:52: ResourceAdmissionError
+=========================== short test summary info ============================
+FAILED tests/test_m47_resource_admission.py::test_current_numerical_and_native_resource_identity_positive
+FAILED tests/test_m47_resource_admission.py::test_compatible_header_altered_official_shard_rejected_before_load
+FAILED tests/test_m47_resource_admission.py::test_dependency_version_drift_rejected_before_checkpoint
+FAILED tests/test_m47_resource_admission.py::test_protocol_resource_positive_and_substitution
+4 failed, 98 passed, 14 subtests passed in 6.81s

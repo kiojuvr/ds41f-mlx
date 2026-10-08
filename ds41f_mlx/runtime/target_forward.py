@@ -2,15 +2,13 @@
 # Copyright (c) 2023 DeepSeek
 # Decode sequencing derived from oMLX deepseek_v41/language.py (MIT), modified.
 # License: ../prefill_fp8_mlx/OMLX_MATH_LICENSE; artifacts/m45/provenance.json.
-"""Owned target sequencing: OFF row or bounded causal block, all 40 layers.
+"""Owned standard-off, one-token/all-40-layer decode transaction.
 
 No LanguageModel call, row extraction/merge, replay, or alternate cache. Owned
 state production uses admitted numerical/storage/SSD Engram primitive handles.
 A failed transaction burns every layer, including passive aliases; there is no
-resumable partially mutated state. OFF execute retains its one-token contract;
-begin_prefix_journal supplies a separate bounded producer/settlement primitive,
-not a generation acceptance loop. M44 publishes history only after execute
-returns. Single-flight OFF cancellation is observed between transactions.
+rollback or resumable partially mutated state. M44 publishes history only after
+execute returns. Single-flight cancellation is observed between transactions.
 """
 from contextlib import nullcontext
 
@@ -24,8 +22,6 @@ class TargetForwardTransaction:
         self.resources = resources_for(model)
         self.resources.require_backend(mx)
         self.producer = DecodeStateProducer(mx, self.resources.math)
-        self.proposal_child = getattr(model, '_ds41f_proposal_child', None)
-        self.tap_rows = None
         # Stable admitted primitives, never a fresh ambient import.
         math = self.resources.math
         self.hc_pre = math.hc_pre
@@ -67,23 +63,11 @@ class TargetForwardTransaction:
             if mask is not None and not bool(self.mx.all(mask).item()):
                 raise ValueError('owned target cannot consume padded input')
 
-    def begin_prefix_journal(self, cache, frontier, bound, stream, *, fault=None):
-        from ds41f_mlx.runtime.accepted_prefix import AcceptedPrefixJournal
-        return AcceptedPrefixJournal(self, cache, frontier, bound, stream, fault)
-
-    def forward(self, token, cache, frontier, journal=None):
-        """Execute one row or one journal-owned causal block on the sole list.
-
-        This is layer-major numerical execution, never a loop over target rows.
-        Only OFF execute owns a one-row publication; journal settlement owns
-        every accepted prefix of the block under its all-layer pending barrier.
-        """
+    def forward(self, token, cache, frontier):
+        """Sequence qualified primitives directly on the sole live cache list."""
         mx, model = self.mx, self.model
         c = model._config
-        input_width = token.shape[0]
-        if input_width != 1 and (journal is None or input_width != journal.block_width):
-            raise ValueError('block forward requires bounded journal ownership')
-        ids = token[None, :]
+        ids = token[:, None]
         h = model.embed(ids)
         hashes, history = (None, None)
         if model._hasher is not None:
@@ -91,11 +75,6 @@ class TargetForwardTransaction:
         h = mx.repeat(h[..., None, :], c.hc_mult, -2)
         pre = mx.broadcast_to((mx.arange(c.hc_mult) == 0).astype(mx.float32), h.shape[:-1])
         shared = {}
-        captured = {}
-        child = self.proposal_child
-        if child is not None:
-            child.assert_active()
-        self.tap_rows = None
         prefetch = getattr(model, '_engram_prefetch', None)
         with prefetch.forward() if prefetch is not None else nullcontext():
             if prefetch is not None and c.engram_layer_ids:
@@ -109,15 +88,10 @@ class TargetForwardTransaction:
                     if prefetch is not None and ix + 1 < len(c.engram_layer_ids):
                         prefetch.submit(model.layers[c.engram_layer_ids[ix + 1]].engram.embed,
                                         hashes[:, :, ix + 1])
-                if journal is None:
-                    h, pre = self.producer.block(layer, h, pre, cache[i], shared, frontier)
-                else:
-                    h, pre = self.producer.block(layer, h, pre, cache[i], shared, frontier, journal)
-                if child is not None and i in c.dspark_target_layer_ids:
-                    captured[i] = mx.mean(h, axis=2)
+                h, pre = self.producer.block(layer, h, pre, cache[i], shared, frontier)
                 if prefetch is not None and 'engram' in layer:
                     mx.async_eval(h, pre)
-                cache[i][0] = mx.array([frontier + input_width], mx.int32)
+                cache[i][0] = mx.array([frontier + 1], mx.int32)
                 if history is not None and i == 0:
                     cache[i][6] = mx.array(history, mx.int64)
                 # Preserve the qualified seven-slot empty representation. This
@@ -135,15 +109,10 @@ class TargetForwardTransaction:
                         cache[i][slot] = mx.zeros((1, 0), mx.int64) if slot == 6 else empty
                 # Admission metadata is state too; no subordinate advance call.
                 if cache[i].lengths is not None:
-                    cache[i].lengths -= input_width
+                    cache[i].lengths -= 1
                 if cache[i].left_padding is not None:
-                    cache[i].left_padding -= input_width
-        if child is not None:
-            self.tap_rows = mx.concatenate([captured[i] for i in c.dspark_target_layer_ids], -1)
-            # The caller materializes and detaches this bounded same-forward
-            # receipt with the row completion barrier, not at each tapped layer.
-        logits = self.project_logits(model.norm(self.hc_pre(h, pre)), model.head.weight)
-        return logits[:, -1, :] if input_width == 1 else logits
+                    cache[i].left_padding -= 1
+        return self.project_logits(model.norm(self.hc_pre(h, pre)), model.head.weight)[:, -1, :]
 
     def execute(self, token, cache, frontier, sampler, stream):
         mx = self.mx
@@ -159,16 +128,11 @@ class TargetForwardTransaction:
                 # Materialize ALL mutated state, not just dependencies of logits.
                 # Completion is the commit barrier, including compressor/history
                 # writes that may otherwise remain lazy after sampling.
-                mx.async_eval(pending, logprobs,
-                    *(() if self.tap_rows is None else (self.tap_rows,)), *(x for c in cache
+                mx.async_eval(pending, logprobs, *(x for c in cache
                     for x in (*c.cache, c.lengths, c.left_padding) if x is not None))
                 mx.eval(token)
                 consumed = int(token.item())
             mx.synchronize(stream)
-            if self.tap_rows is not None:
-                from ds41f_mlx.runtime.hidden_taps import detach
-                with mx.stream(stream):
-                    self.tap_rows = detach(mx, self.tap_rows)
             if len(cache) != len(objects) or any(a is not b for a, b in zip(cache, objects)):
                 raise RuntimeError('owned target cache objects replaced')
             if any(item.size() != frontier + 1 for item in cache):
@@ -178,7 +142,6 @@ class TargetForwardTransaction:
                 item._p6_append_pending = False
             return consumed, pending
         except BaseException:
-            self.tap_rows = None
             self.invalidate(objects)
             self.invalidate(cache)
             raise

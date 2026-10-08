@@ -245,14 +245,6 @@ class M11RecipeToolSession:
         processor, response = _make_processor_and_response(d, prepared, response_id, self.model_id, self.tokenizer)
         events: list[dict[str, Any]] = []
         response_json: dict[str, Any] | None = None
-        eof_preview = None
-        if (prepared.protocol == 'chat_completions'
-                and prepared.conversation_request.parsing_options.parse_tool_calls
-                and hasattr(processor, 'preview_eof_tokens')):
-            from types import SimpleNamespace
-            from .tool_eof_preview import ToolEOFPreview
-            eof_preview = ToolEOFPreview(SimpleNamespace(
-                prepared=prepared, processor=processor, response=response, events=events))
         prompt_usage = d.PromptUsage(prompt_tokens=len(prepared.token_ids), prompt_cache_hit_tokens=0)
         for out in processor.push(d.InferenceChunk.ready(prompt_usage=prompt_usage)):
             _record_protocol_output(out, response, events)
@@ -267,13 +259,13 @@ class M11RecipeToolSession:
             if not suppress_protocol_token:
                 for out in processor.push(d.InferenceChunk.token(int(report.token))):
                     _record_protocol_output(out, response, events)
-            # Same consuming-state native EOF decision as live/MTP authorization.
-            # Legacy non-Chat bindings retain their existing M11 authority.
-            tool_terminal = (eof_preview.completed(len(generated)) if eof_preview is not None
-                else (prepared.conversation_request.parsing_options.parse_tool_calls
-                      and _recent_tool_arguments_look_complete(prepared.protocol, events)
-                      and _probe_tool_calls_complete(d, prepared, response_id, self.model_id, self.tokenizer, generated)))
-            if tool_terminal:
+            # Official-parser early boundary: if a fresh official StreamProcessor
+            # over the consumed token prefix would expose a completed tool call
+            # on EOF/Stop, freeze the scheduler cache here instead of allowing
+            # hidden post-tool tokens to advance the cache until max_tokens.
+            if (prepared.conversation_request.parsing_options.parse_tool_calls
+                    and _recent_tool_arguments_look_complete(prepared.protocol, events)
+                    and _probe_tool_calls_complete(d, prepared, response_id, self.model_id, self.tokenizer, generated)):
                 finish_reason = "tool_calls"
                 for out in processor.push(d.InferenceChunk.finish(d.InferenceFinishReason.Stop)):
                     _record_protocol_output(out, response, events)
@@ -303,7 +295,6 @@ class M11RecipeToolSession:
         )
         self.boundary_records.append(turn.to_json())
         self.boundary_records = self.boundary_records[-16:]
-        processor.close()
         return turn
 
     def persist_idle(self, *, artifact_root: Path, diagnostics: dict[str, Any] | None = None) -> M9ArtifactInfo:

@@ -5,9 +5,6 @@ Persistent KV uses packed FP8/FP4 bytes and one-byte scales. Activation-only
 round trips remain available for projection arithmetic and numerical tests.
 """
 
-from contextlib import contextmanager
-from contextvars import ContextVar
-
 import mlx.core as mx
 import mlx.nn as nn
 
@@ -15,44 +12,6 @@ from omlx.custom_kernels.glm_moe_dsa import fast as glm_fast
 
 from .switch_layers import _AFFINE_NATIVE_MIN_ROUTES, QuantizedSwitchLinear
 from .activation import quantize_fp8_activation
-
-
-_causal_width = ContextVar('ds41f_causal_arithmetic_width', default=1)
-
-
-@contextmanager
-def causal_block_arithmetic(width):
-    """Owned short-block numerical scope; never model/cache/scheduler state.
-
-    The time axis must not silently choose a different GEMM reduction than OFF.
-    Context is worker-local and reset even on a target fault. OFF is unchanged.
-    """
-    if not 1 <= width <= 8:
-        raise ValueError('unqualified causal numerical width')
-    token = _causal_width.set(width)
-    try:
-        yield
-    finally:
-        _causal_width.reset(token)
-
-
-def causal_matmul(x, weight):
-    """Use existing batched GEMV arithmetic, not repeated per-row Python calls.
-
-    MLX collapses a broadcast/zero-stride RHS back into GEMM. Explicit take of
-    these small dense HC/router matrices keeps one-input reduction geometry.
-    This is bounded numerical scratch, NOT target cache or parameter authority.
-    """
-    width = _causal_width.get()
-    if width == 1 or x.ndim != 3 or x.shape[:2] != (1, width):
-        return x @ weight.T
-    copies = mx.take(weight[None], mx.zeros((width,), mx.int32), axis=0)
-    result = x.reshape(width, 1, x.shape[-1]) @ copies.swapaxes(-1, -2)
-    return result.reshape(1, width, weight.shape[0])
-
-
-def causal_width():
-    return _causal_width.get()
 
 
 def _normal_power_of_two(exponent):
@@ -242,16 +201,6 @@ class QuantizedProjection(QuantizedSwitchLinear):
     def project_quantized(self, x, indices=None, sorted_indices=False, block_plan=None):
         """Project an input whose activation quantization is already complete."""
         if indices is None:
-            width = _causal_width.get()
-            if width > 1 and x.ndim == 3 and x.shape[:2] == (1, width):
-                # Singleton matrix rows in a batch select the qualified GEMV
-                # reduction while sharing one numerical primitive invocation.
-                out = mx.quantized_matmul(
-                    x.reshape(width, 1, x.shape[-1]), self.weight[None],
-                    self.scales[None],
-                    None if self.get('biases') is None else self.biases[None],
-                    group_size=self.group_size, bits=self.bits, mode=self.mode)
-                return out.reshape(1, width, out.shape[-1])
             return mx.quantized_matmul(
                 x,
                 self.weight,

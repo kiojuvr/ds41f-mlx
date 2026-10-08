@@ -9,7 +9,7 @@ from ds41f_mlx.serving.deepseek_recipe_backend import DeepSeekRecipeRuntimeBacke
 
 
 def request():
-    return RecipePreparedRequest('chat_completions',SimpleNamespace(model=None,stream=False,inference_options=SimpleNamespace(max_tokens=8),parsing_options=SimpleNamespace(parse_tool_calls=False)),None,[1,2],[])
+    return RecipePreparedRequest('chat_completions',SimpleNamespace(model=None,stream=False,inference_options=SimpleNamespace(max_tokens=8)),None,[1,2],[])
 
 
 async def entered(event):
@@ -90,9 +90,7 @@ def test_cancelled_initial_turn_publishes_completed_protocol_state():
         assert rec.busy and backend._lock.locked() and not task.done()
         release.set()
         with pytest.raises(asyncio.CancelledError): await task
-        assert rec.m11 is sess and rec.last_turn=={'completed':True,'capacity':None,'termination_reason':'stop',
-            'request_id':rec.last_turn['request_id'],'application_request_id':None,'cancelled':False}
-        assert rec.last_turn['request_id']
+        assert rec.m11 is sess and rec.last_turn=={'completed':True,'capacity':None,'termination_reason':'stop'}
         assert rec.request_count==1 and not rec.busy and not backend._lock.locked()
         assert backend.session_traces[-1]['ok'] and backend.session_traces[-1]['cancelled']
     try: asyncio.run(run())

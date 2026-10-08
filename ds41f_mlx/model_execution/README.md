@@ -47,18 +47,6 @@ not qualify or expand MTP. Historical names in runtime APIs, checkpoint format
 fields and dispatch environment settings are retained compatibility contracts,
 not execution-owner selectors.
 
-## Optional M53 proposal child (development qualification only)
-
-`dspark.py` and `proposal_ring.py` provide first-party DSpark numerical and
-physical-ring primitives under an explicit M47 child capability. They do not
-change OFF target configuration, attach a target `mtp` subtree, load a donor
-model, or execute a scheduler. Shared target embedding/head are read handles;
-proposal weights belong to the child. Canonical same-forward receipts and M52
-alone govern advancement/acceptance. See
-[the M53 continuation](../../docs/milestone-53-proposal-primitives-continuation.md)
-and its evidence for the qualified checkpoint loop and limitations. This is not
-a standard runtime selector or replacement/removal of the existing singleton.
-
 ## Attribution
 
 MIT portions: Copyright (c) 2023 DeepSeek; see `LICENSE`. Apache-2.0 portions

@@ -93,9 +93,26 @@ reason to weaken or replace the completed production core. Broader context and
 Vision implementation must follow measured gaps and existing ownership principles.
 MTP, DSpark and speculation remain separately scoped and OFF by default.
 
+### MTP physical architecture and semantic authority
+
+[M49R reset](mtp-architecture-reset.md) is the current MTP roadmap. The formal
+restart is `5e784d9`; M50–M56 are a superseded failed production architecture
+line, not a normal-profile candidate. Their correctness evidence remains usable;
+M54 application/semantic requirements remain mandatory.
+
+**oMLX is the MTP/decode physical execution architecture authority**, not merely
+an algorithmic reference to reimplement independently. Prefill physical authority
+remains DwarfStar topology and qualified MLX numerical implementation. ds41f owns
+semantic/application/lifecycle/resource authority. Ownership transfer and eventual
+self-contained delivery must preserve physical topology; they do not authorize
+redesign. Candidate speed is an initial architecture gate, not a later optimization
+goal. Material unexplained matched-workload gaps BLOCK the milestone. The existing
+qualified standard-OFF implementation is not rolled back or reopened by this
+prospective MTP doctrine. No profile or release promotion occurs in M49R.
+
 ### deepseek-recipe: protocol authority, not a developer-checkout requirement
 
-Unlike oMLX, the current official recipe implementation remains an important
+Alongside oMLX's physical architecture authority, the current official recipe implementation remains an important
 protocol/prompt/response authority, including tokenizer, tools, thinking,
 streaming and semantic preview behavior. Current setup prefers an installed
 native recipe package but still requires a checkout for tokenizer/provenance;
@@ -121,7 +138,9 @@ Admission / sessions / recovery / lifecycle
         ↓
 ds41f runtime interfaces and ownership
         ↓
-ds41f model execution implementation
+Qualified execution implementation
+(standard-OFF: ds41f; MTP/decode topology: oMLX;
+ prefill: DwarfStar topology + qualified MLX numerics)
         ↓
 MLX / ordinary system or package dependencies
         ↓

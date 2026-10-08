@@ -2,26 +2,32 @@
 
 This roadmap records implementation boundaries and evidence-driven next work. It is not an optimization backlog or a requirement to create a new milestone for every implementation/qualification iteration.
 
-## Canonical MTP block execution (current development boundary)
+## MTP architectural restart (current authority)
 
-[M56](milestone-56-canonical-accepted-prefix-block.md) closes M55's row-serialized
-producer topology: M52 now invokes one owned layer-major numerical block, with
-M51 bounded per-prefix undo and the sole pending exact packed list. No candidate
-model/scheduler/verification-state owner is borrowed. The matched verify request
-changes **41 forwards / 1,640 layer regions → 7 / 280**. Existing attention alone
-splits at canonical sparse-list widths (748 calls); full target rows do not repeat.
-Independent checkpoint state/tap/logit prefix oracles and M54 socket/tool/effect/
-retry/re-entry pass. Matched decode is **17.85 tok/s versus OFF 15.51**, not candidate
-parity (31.45). This establishes a coherent **bounded local operational candidate**,
-not new kernels, capabilities, default/profile selection or release promotion.
+[M49R reset and canonical roadmap](mtp-architecture-reset.md) supersedes M50–M56
+as a failed production architecture line. Active runtime is restored to
+`5e784d9e83a85c497cd192f87184e9b01a1343eb`, preserving the existing standard-OFF
+and separate oMLX candidate. M56 is not a production basis or normal-profile
+candidate; its historical PASS and topology measurements are qualification assets.
+M54 application/semantic obligations remain mandatory, not discarded with its
+execution implementation.
 
-The next boundary is a separate approval of a normal local profile with M54's
-explicit Chat/greedy/text/single-session envelope and its consuming-EOF native
-dependency. Do not infer Vision, persistence, long context or stochastic application
-admission, expand gates, or promote `ds41f-runtime` in this work. Remaining practical
-performance differences are batched GEMV reduction geometry, sparse-list attention
-subregions and the existing proposal/receipt/ring scheduling boundaries, not a
-missing canonical accepted-prefix block producer.
+**oMLX owns MTP/decode physical architecture; DwarfStar topology and qualified MLX
+numerics own prefill physical architecture.** ds41f owns semantic/application/
+lifecycle/resource authority. Ownership transfer does not require redesign.
+Reconstructing first-party execution and recovering candidate speed later is
+forbidden. Matched candidate speed and preserved proposal/verification/block/
+attention/rollback/commit/synchronization topology are initial gates; material
+unexplained gaps BLOCK, not optimization backlog.
+
+The new series is M49R reset → M50R candidate topology/state/performance freeze →
+M51R minimal canonical/lifecycle connection → M52R application/EOF/tool/retry
+integration → M53R separately approved normal-local dependency/admission/profile →
+M54R operational/soak/performance qualification → M55R conditional release decision.
+See the reset document for evidence gates and structural-change requirements.
+Next is **M50R**, not profile approval. No new runtime producer, kernel optimization,
+normal-profile promotion, release packaging or `ds41f-runtime` promotion is authorized
+by this reset. The unrelated post-M48 qualified work below remains intact.
 
 ## Post-M48 production boundary and remaining work (current authority)
 

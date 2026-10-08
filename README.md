@@ -77,23 +77,22 @@ Likewise, a fast runtime that changes required model behavior or state semantics
 
 ## Current implementation status
 
-[M53 first-party MTP execution core](docs/milestone-53-proposal-primitives-continuation.md)
-is development-qualified. [M54 runtime/application assessment](docs/milestone-54-runtime-semantic-horizon-assessment.md)
-is historical. [M54 continuation](docs/milestone-54-semantic-authorized-continuation.md)
-implements semantic-authorized cycle/batch adoption and standard exact-byte
-response reservation; its partial qualification is historical.
-[M54 EOF-sensitive continuation](docs/milestone-54-eof-sensitive-operational-continuation.md)
-is **development operational integration PASS**: exact consuming-state EOF
-preview, tool/effect/retry/re-entry and atomic worker delivery are qualified.
-[M56 canonical accepted-prefix block execution](docs/milestone-56-canonical-accepted-prefix-block.md)
-closes M55's row-serialized verification blocker: **41→7 target forwards**,
-independent checkpoint state/tap/logit prefix parity, retained M54 socket semantics,
-and **full R1 25/25 PASS**. Matched decode is **17.85 tok/s versus OFF 15.51**
-(candidate 31.45). First-party MTP is now a coherent **bounded local operational
-candidate**; a separate normal-profile/native-dependency approval is justified,
-not an unrestricted capability or release promotion.
-The explicit development backend API is not a promoted operational profile;
-standard-OFF remains default/control.
+[M49R architecture reset](docs/mtp-architecture-reset.md) is the current MTP authority.
+The formal restart point is `5e784d9e83a85c497cd192f87184e9b01a1343eb`.
+**M50–M56 are superseded as a failed production architecture line**; M56 is not
+continued or considered for normal-profile promotion. Historical results and
+correctness assets remain archived; **M54 application/semantic requirements remain
+mandatory**, independently of its discarded execution implementation.
+Active runtime source is restored to the restart state. Standard-OFF remains
+default/control and the existing bounded oMLX candidate remains separately explicit.
+
+MTP/decode physical topology authority is **oMLX**; prefill remains **DwarfStar
+with qualified MLX numerics**. ds41f owns semantic/application/lifecycle/resource
+authority, not a reconstructed execution topology. Candidate performance is an
+initial conformance gate: unexplained material gaps BLOCK, not future optimization.
+The new series is **M49R–M55R**; next is **M50R candidate baseline freeze**, then
+minimal topology-preserving authority integration. No new MTP implementation,
+profile, packaging or release promotion is performed by this reset.
 
 The historical qualified release scope is a text-only local runtime for the official DeepSeek-V4.1-Flash checkpoint on the Mac Studio M3 Ultra 512 GB class target. The production path is:
 
