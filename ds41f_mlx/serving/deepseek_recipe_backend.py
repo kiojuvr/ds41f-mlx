@@ -221,14 +221,14 @@ class DeepSeekRecipeRuntimeBackend:
         payload = json.loads(body)
         if not isinstance(payload, dict):
             raise ValueError('development first-party MTP requires a Chat object')
-        if any(payload.get(key) for key in ('tools', 'functions', 'tool_choice', 'function_call', 'response_format')):
-            raise ValueError('EOF-sensitive tools / structured output are not qualified for first-party MTP')
+        if any(payload.get(key) for key in ('functions', 'function_call', 'response_format')):
+            raise ValueError('legacy functions / structured output are not qualified for first-party MTP')
         if payload.get('reasoning_effort') != 'none':
             raise ValueError('development first-party MTP requires explicitly disabled reasoning')
         if payload.get('max_tokens') == 'auto' or payload.get('n', 1) != 1:
             raise ValueError('development first-party MTP requires explicit bounded single output')
         for message in payload.get('messages', []):
-            if message.get('role') not in ('system', 'user', 'assistant') or not isinstance(message.get('content'), (str, type(None))):
+            if message.get('role') not in ('system', 'user', 'assistant', 'tool') or not isinstance(message.get('content'), (str, type(None))):
                 raise ValueError('development first-party MTP admits text dialogue only')
 
     def load(self) -> None:
@@ -315,7 +315,9 @@ class DeepSeekRecipeRuntimeBackend:
             if request.protocol != 'chat_completions' or request.multimodal is not None or request.image_sources:
                 raise ValueError('development first-party MTP admits stateful text Chat only')
             if request.conversation_request.parsing_options.parse_tool_calls:
-                raise ValueError('EOF-sensitive tool preview is not qualified for first-party MTP')
+                from ..runtime.tool_boundary_session import _recipe_module
+                if not hasattr(_recipe_module().StreamProcessor, 'preview_eof_tokens'):
+                    raise ValueError('native EOF-sensitive tool preview is required for first-party MTP')
             if request.conversation_request.conversation.thinking_mode:
                 raise ValueError('development first-party MTP reasoning is unqualified')
             if len(request.token_ids) + self.request_max_tokens(request) > 512:
@@ -451,18 +453,27 @@ class DeepSeekRecipeRuntimeBackend:
         return rec
 
     def _require_response_reservation(self, rec):
-        if self.execution_strategy != 'off':
-            slot = rec.response_reservation
-            if slot is None or slot.state != 'active':
-                raise ValueError('development first-party MTP requires an active exact-byte response reservation')
+        slot = rec.response_reservation
+        if (slot is not None and slot.state != 'active') or (slot is None and self.execution_strategy != 'off'):
+            raise ValueError('fenced generation requires an active exact-byte response reservation')
 
-    async def run_stateful_chat_turn(self, session_id: str, request: RecipePreparedRequest, *, tokenizer: Any) -> M11AssistantTurn:
+    async def run_stateful_chat_turn(self, session_id: str, request: RecipePreparedRequest, *, tokenizer: Any, body=None, options=None) -> M11AssistantTurn:
         if request.protocol != 'chat_completions':
             raise ValueError('M12 stateful serving currently qualifies chat_completions only')
         if request.model is not None and request.model not in MODEL_ALIASES:
             raise ValueError(f"unsupported model {request.model!r}; supported aliases: {sorted(MODEL_ALIASES)}")
         rec = self.validate_stateful_admission(session_id, request)
         self._require_response_reservation(rec)
+        slot = rec.response_reservation
+        if body is None and slot is not None:
+            body = slot.request_bytes
+        if slot is not None and bytes(body) != slot.request_bytes:
+            raise ValueError('canonical JSON publication request-body identity mismatch')
+        if request.conversation_request.parsing_options.parse_tool_calls and body is None:
+            raise ValueError('canonical tool publication requires original request body')
+        request_id = str(uuid4())
+        if slot is not None:
+            slot.request_id = request_id
         rec.busy = True
         rec.updated_at = time()
         trace: dict[str, Any] = {'session_id': session_id, 'prompt_tokens': len(request.token_ids), 'stream': bool(request.stream), 'started_at': rec.updated_at}
@@ -494,12 +505,13 @@ class DeepSeekRecipeRuntimeBackend:
                     trace['frontier_after'] = rec.m11.m8.frontier
                     trace['exact_prefix_extension'] = True
                     trace['created_runtime_session'] = False
-                rec.request_count += 1
-                rec.updated_at = time()
-                rec.last_turn = assistant_turn.to_json()
-                rec.last_turn.update(capacity=None if request.capacity is None else {**request.capacity, 'binding': True},
-                                     termination_reason='context_capacity' if assistant_turn.finish_reason == 'length' and request.capacity and request.capacity['output_mode'] == 'auto' else 'output_limit' if assistant_turn.finish_reason == 'length' else assistant_turn.finish_reason)
-                rec.last_error = None
+                from .recipe_publication import publish_recipe_turn
+                try:
+                    publish_recipe_turn(self, rec, request, tokenizer, body, options, assistant_turn,
+                                        request_id=request_id)
+                except BaseException:
+                    self._retire_failed_recipe_session(rec.m11)
+                    raise
                 slot = rec.response_reservation
                 if slot is not None and slot.state == 'active' and slot.media_type == 'application/json':
                     from fastapi.responses import JSONResponse
@@ -559,7 +571,10 @@ class DeepSeekRecipeRuntimeBackend:
                 self._lock.release()
 
     async def open_stateful_stream(self, session_id, request, *, tokenizer, body, options=None, application_id=None):
-        self._require_response_reservation(self.get_stateful_session(session_id))
+        rec = self.get_stateful_session(session_id)
+        self._require_response_reservation(rec)
+        if rec.response_reservation is not None and bytes(body) != rec.response_reservation.request_bytes:
+            raise ValueError('canonical SSE publication request-body identity mismatch')
         from .stateful_stream import StatefulStream
         return StatefulStream(self, session_id, request, tokenizer, body, options, application_id)
 

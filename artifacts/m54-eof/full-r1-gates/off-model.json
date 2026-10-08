@@ -1,0 +1,293 @@
+{
+  "schema": "ds41f.m41.off-protocols.v1",
+  "status": "PASS",
+  "cases": [
+    {
+      "route": "/v1/chat/completions",
+      "response": {
+        "id": "508905d2-527a-4f1f-b586-1d9b730e36ef",
+        "object": "chat.completion",
+        "created": 1791416875,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Hello!"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 8,
+          "completion_tokens": 2,
+          "total_tokens": 10,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 8
+        }
+      },
+      "wall_s": 312.5178021660031
+    },
+    {
+      "route": "/v1/responses",
+      "response": {
+        "id": "41a7673f-ff1e-4fc7-9cfd-84c7e5a1ab61",
+        "object": "response",
+        "created_at": 1791417188,
+        "model": "deepseek-v4.1-flash",
+        "status": "incomplete",
+        "completed_at": 1791417189,
+        "error": null,
+        "incomplete_details": {
+          "reason": "max_output_tokens"
+        },
+        "output": [
+          {
+            "type": "reasoning",
+            "id": "rs_41a7673f-ff1e-4fc7-9cfd-84c7e5a1ab61_0",
+            "status": "incomplete",
+            "content": [
+              {
+                "type": "reasoning_text",
+                "text": "We need answer user asks \"Say hello briefly.\" Need comply. Just \"Hello"
+              }
+            ],
+            "summary": []
+          }
+        ],
+        "usage": {
+          "input_tokens": 34,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 16,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 50
+        }
+      },
+      "wall_s": 1.0823207499997807
+    },
+    {
+      "route": "/v1/messages",
+      "response": {
+        "id": "b0fae8a4-45e0-4f5d-8d8d-0ad973e06bbc",
+        "type": "message",
+        "role": "assistant",
+        "model": "deepseek-v4.1-flash",
+        "content": [
+          {
+            "type": "thinking",
+            "thinking": "We need answer user asks \"Say hello briefly.\" Need comply. Just \"Hello",
+            "signature": "b0fae8a4-45e0-4f5d-8d8d-0ad973e06bbc"
+          }
+        ],
+        "stop_reason": "max_tokens",
+        "stop_sequence": null,
+        "usage": {
+          "input_tokens": 34,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "output_tokens": 16,
+          "service_tier": "standard"
+        }
+      },
+      "wall_s": 1.066425042001356
+    }
+  ],
+  "persistence_rejections": [
+    {
+      "field": "schema",
+      "status": 409
+    },
+    {
+      "field": "tensor_sha256",
+      "status": 409
+    },
+    {
+      "field": "frontier",
+      "status": 409
+    }
+  ],
+  "requested_ids": true,
+  "live_sessions": 4,
+  "stateful_tool": {
+    "id": "bc061c50-4365-430d-b532-03337b6f9553",
+    "object": "chat.completion",
+    "created": 1791417191,
+    "model": "deepseek-v4.1-flash",
+    "system_fingerprint": null,
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "",
+          "tool_calls": [
+            {
+              "id": "call_bc061c50-4365-430d-b532-03337b6f9553_0",
+              "type": "function",
+              "function": {
+                "name": "lookup_weather",
+                "arguments": "{\"city\": \"Paris\"}"
+              }
+            }
+          ]
+        },
+        "logprobs": null,
+        "finish_reason": "tool_calls"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 293,
+      "completion_tokens": 28,
+      "total_tokens": 321,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 293
+    }
+  },
+  "streamed_result_events": 11,
+  "persist": {
+    "session_id": "m41_off_0",
+    "artifact": {
+      "path": "/Volumes/SDXC-512/ds41f-mlx/artifacts/m54-eof/full-r1-gates/off-kv/m9-1791417194-66bfef9f861d",
+      "frontier": 362,
+      "token_count": 362,
+      "tensor_count": 280,
+      "tensor_sha256": "f4f9464792ed78f6050ff89581af234cddfd4def6e8e8707e0c06b641a6c0c85"
+    }
+  },
+  "restore": {
+    "id": "m41_off_restored",
+    "protocol": "chat_completions",
+    "state": "idle",
+    "recovery_state": "ready",
+    "response_reservation": null,
+    "active_request_id": null,
+    "created_at": 1791417194.300508,
+    "updated_at": 1791417194.3077881,
+    "request_count": 0,
+    "last_error": null,
+    "last_turn": null,
+    "persisted_artifact": {
+      "path": "/Volumes/SDXC-512/ds41f-mlx/artifacts/m54-eof/full-r1-gates/off-kv/m9-1791417194-66bfef9f861d"
+    },
+    "diagnostics": {
+      "schema": "ds41f.m11.tool-boundary-session.diagnostics.v1",
+      "protocol": "chat_completions",
+      "request_count": 0,
+      "image_identities": [],
+      "last_image_encoding_seconds": 0.0,
+      "last_image_encoded_count": 0,
+      "m8": {
+        "schema": "ds41f.m8.live-continuation.diagnostics.v1",
+        "state": "idle",
+        "frontier": 362,
+        "cache_offsets_head": [
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362
+        ],
+        "cache_offsets_all": [
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362,
+          362
+        ],
+        "cache_layer_count": 40,
+        "all_cache_offsets_equal_frontier": true,
+        "turn_count": 0,
+        "total_prompt_replay_count": 0,
+        "total_full_cache_repack_count": 0,
+        "turns": []
+      },
+      "boundaries": []
+    }
+  },
+  "continued": {
+    "id": "6c74e8f0-67a4-4869-a484-d699884fda78",
+    "object": "chat.completion",
+    "created": 1791417194,
+    "model": "deepseek-v4.1-flash",
+    "system_fingerprint": null,
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "Goodbye!"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 369,
+      "completion_tokens": 3,
+      "total_tokens": 372,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 369
+    }
+  },
+  "final_health": {
+    "status": "ready",
+    "process_alive": true,
+    "model_ready": true,
+    "fatal_error": null,
+    "execution_strategy": "off"
+  }
+}

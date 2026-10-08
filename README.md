@@ -81,8 +81,12 @@ Likewise, a fast runtime that changes required model behavior or state semantics
 is development-qualified. [M54 runtime/application assessment](docs/milestone-54-runtime-semantic-horizon-assessment.md)
 is historical. [M54 continuation](docs/milestone-54-semantic-authorized-continuation.md)
 implements semantic-authorized cycle/batch adoption and standard exact-byte
-response reservation, with partial official-checkpoint socket qualification.
-M54 remains **NOT PASS**: native EOF-sensitive tool authorization is still missing.
+response reservation; its partial qualification is historical.
+[M54 EOF-sensitive continuation](docs/milestone-54-eof-sensitive-operational-continuation.md)
+is **development operational integration PASS**: exact consuming-state EOF
+preview, tool/effect/retry/re-entry and atomic worker delivery are qualified.
+Full R1 is **NOT PASS** (historical MTP profile environment identity); performance
+and broader capability gates remain before promotion.
 The explicit development backend API is not a promoted operational profile;
 standard-OFF remains default/control.
 

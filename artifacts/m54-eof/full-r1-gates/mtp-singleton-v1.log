@@ -1,0 +1,21 @@
+Traceback (most recent call last):
+  File "/Volumes/SDXC-512/ds41f-mlx/reference/R1/mtp_model.py", line 36, in main
+    provenance = inspect(cfg)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/mtp_identity.py", line 180, in inspect
+    raise ValueError('unqualified Python/MLX dependency identity')
+ValueError: unqualified Python/MLX dependency identity
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Volumes/SDXC-512/ds41f-mlx/reference/R1/mtp_model.py", line 293, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/reference/R1/mtp_model.py", line 38, in main
+    fail('identity', exc)
+    ~~~~^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/reference/R1/mtp_model.py", line 32, in fail
+    raise RuntimeError(str(error))
+RuntimeError: unqualified Python/MLX dependency identity

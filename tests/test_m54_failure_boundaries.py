@@ -60,6 +60,42 @@ def test_inexact_preview_retires_derived_state_before_target_mutation(monkeypatc
         gen.close()
 
 
+def test_lost_awaited_sse_worker_result_keeps_every_canonical_delta(monkeypatch):
+    import threading
+    from ds41f_mlx.runtime.live_turn import LiveRecipeTurn
+    backend, tokenizer, body, prepared = delivery_setup(monkeypatch)
+    entered, release = threading.Event(), threading.Event()
+    original = LiveRecipeTurn.advance
+    def held(cursor):
+        batch = original(cursor)
+        if (not entered.is_set() and any(c.get('delta',{}).get('content')
+            for e in batch for c in e.get('choices',[]))):
+            entered.set()
+            assert release.wait(5)
+        return batch
+    monkeypatch.setattr(LiveRecipeTurn,'advance',held)
+    async def run():
+        rec = await backend.create_stateful_session()
+        slot = reserve(rec,1,body,'text/event-stream')
+        stream = await backend.open_stateful_stream(rec.session_id,prepared,tokenizer=tokenizer,body=body)
+        await anext(stream)  # ready
+        task = asyncio.create_task(anext(stream))
+        for _ in range(1000):
+            if entered.is_set(): break
+            await asyncio.sleep(.001)
+        assert entered.is_set()
+        task.cancel(); release.set()
+        with pytest.raises(asyncio.CancelledError): await task
+        assert slot.state == 'completed' and not rec.busy
+        events = [json.loads(line[6:]) for line in b''.join(slot.chunks).splitlines()
+                  if line.startswith(b'data: ') and line != b'data: [DONE]']
+        text = ''.join(c.get('delta',{}).get('content','') or '' for e in events for c in e.get('choices',[]))
+        assert text == rec.last_turn['response_json']['choices'][0]['message']['content']
+        assert text and observe_retry(rec,1,body) is slot
+    try: asyncio.run(run())
+    finally: release.set(); backend.close()
+
+
 def test_json_task_cancellation_after_reservation_keeps_exact_outcome(monkeypatch):
     backend, tokenizer, body, _ = delivery_setup(monkeypatch, delay=.001)
     payload = json.loads(body)
@@ -77,6 +113,55 @@ def test_json_task_cancellation_after_reservation_keeps_exact_outcome(monkeypatc
         assert not rec.busy and rec.request_count == 1 and slot.state == 'completed'
         assert json.loads(b''.join(slot.chunks)) == rec.last_turn['response_json']
         assert observe_retry(rec, 1, body) is slot
+    try:
+        asyncio.run(run())
+    finally:
+        backend.close()
+
+
+@pytest.mark.parametrize('streaming', [False, True])
+def test_direct_publication_body_mismatch_rejected_before_mutation(monkeypatch, streaming):
+    backend, tokenizer, body, _ = delivery_setup(monkeypatch)
+    payload = json.loads(body); payload['stream'] = streaming
+    body = json.dumps(payload).encode()
+    prepared = prepare_request('chat_completions',body,tokenizer=tokenizer,recipe_path=backend.recipe_path)
+    async def run():
+        rec = await backend.create_stateful_session()
+        slot = reserve(rec,1,body,'text/event-stream' if streaming else 'application/json')
+        with pytest.raises(ValueError, match='request-body identity'):
+            if streaming:
+                await backend.open_stateful_stream(rec.session_id,prepared,tokenizer=tokenizer,body=body+b' ')
+            else:
+                await backend.run_stateful_chat_turn(rec.session_id,prepared,tokenizer=tokenizer,body=body+b' ')
+        assert rec.m11 is None and rec.request_count == 0 and not rec.busy
+        assert slot.state == 'active'
+        slot.complete()
+        with pytest.raises(ValueError, match='active exact-byte'):
+            await backend.run_stateful_chat_turn(rec.session_id,prepared,tokenizer=tokenizer,body=body)
+        assert rec.m11 is None
+    try:
+        asyncio.run(run())
+    finally:
+        backend.close()
+
+
+def test_json_publication_failure_burns_reservation_and_reentry(monkeypatch):
+    backend, tokenizer, body, _ = delivery_setup(monkeypatch)
+    payload = json.loads(body); payload['stream'] = False
+    body = json.dumps(payload).encode()
+    prepared = prepare_request('chat_completions',body,tokenizer=tokenizer,recipe_path=backend.recipe_path)
+    def fail(*args, **kwargs): raise RuntimeError('injected application publication failure')
+    monkeypatch.setattr('ds41f_mlx.serving.recipe_publication.publish_recipe_turn',fail)
+    async def run():
+        rec = await backend.create_stateful_session()
+        slot = reserve(rec,1,body,'application/json')
+        with pytest.raises(RuntimeError, match='publication failure'):
+            await backend.run_stateful_chat_turn(rec.session_id,prepared,tokenizer=tokenizer)
+        assert rec.m11.m8.closed and not rec.m11.m8.live_cache
+        assert rec.request_count == 0 and rec.last_turn is None and not rec.busy
+        assert rec.recovery_state == 'unrecoverable' and slot.state == 'uncertain'
+        with pytest.raises(RuntimeError, match='never regenerate'):
+            observe_retry(rec,1,body)
     try:
         asyncio.run(run())
     finally:

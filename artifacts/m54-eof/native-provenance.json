@@ -1,0 +1,49 @@
+{
+  "schema": "ds41f.m54.native-consuming-eof-preview.v1",
+  "patch_sha256": "9a68135c5147e8f402fe56b91279767d0aa812bfa7376a8a926a46bdc23c6b13",
+  "sources": {
+    "deepseek-recipe/src/stream/processor.rs": {
+      "base_sha256": "df35d8d1f74075184847b8657c63083f09c832578933ed0dfde4d42fbd2cdb41",
+      "modified_sha256": "18009bdf3490459a5ba4742ad468a6c4c7779154f3e67a615bcc5695d36a2de9"
+    },
+    "deepseek-recipe/src/stream/semantic.rs": {
+      "base_sha256": "881b86dedd1ece229f2f1059683244ed6c8225a879fa1639df27812bd8d1c2c4",
+      "modified_sha256": "6f29c0ed198174ff5d7b5b6cea251187545b5651833373ec39f50881d8289035"
+    },
+    "deepseek-recipe/src/stream/mod.rs": {
+      "base_sha256": "d2626bafd79faf5f50663166099fe46ee49b8f1fd826771ecb771060f56f768e",
+      "modified_sha256": "fc5682bd819b7223baae895b48a59b5d248dea219285c27017e97ad757f75335"
+    },
+    "deepseek-recipe-python/src/response.rs": {
+      "base_sha256": "61a579be18b3ac4b6f163a6952ad3f31fd5e186c199af5b3c4f81f5b075b410a",
+      "modified_sha256": "0af824ac725af7444f33a8cf8b63e413c526108e931b517d41b6970f147e9601"
+    },
+    "deepseek-recipe/src/protocol/openai/chat_completion/response/chunk_generator.rs": {
+      "base_sha256": "1e7435c6b6b86ef713984deea6802c61dd3f4d17439e75bc1b16e6c9fb06880a",
+      "modified_sha256": "e7317a4330095ee209d54c4b89772f6affac8c3e70d4c7ed95a02c23655d8233"
+    },
+    "deepseek-recipe/src/protocol/openai/chat_completion/response/schema.rs": {
+      "base_sha256": "4cfc16d7bbcbac42886baa751cd72a9ed983e39b4d2eaebf745dd50633df1fc3",
+      "modified_sha256": "b6017635ccd237f2ddcbf282ceb06e2c3d66d7048bb3a8deb0109c0d48c39b4a"
+    }
+  },
+  "base": "previous M32 native semantic-session recipe in current admitted build tree",
+  "application": "patch -p1; verify base file hashes first; no parser replacement",
+  "native": {
+    "path": "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/deepseek_recipe/_native.abi3.so",
+    "sha256": "49e10b44793135ba37e2bc64ad03d7e8a440086b23c4db81b4da5be7c2f1cb5d",
+    "size": 14039360
+  },
+  "python": {
+    "path": "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/deepseek_recipe/__init__.py",
+    "sha256": "93f28f69404725157b84d2bebf3f36fb11d8a70a9997787a22d3394ebd26e5ae"
+  },
+  "wheel": {
+    "path": "/Volumes/SDXC-512/ds41f-mtp-investigation-build/wheels/deepseek_recipe-0.1.1-cp310-abi3-macosx_11_0_arm64.whl",
+    "sha256": "bc79798597f2164bf68a0205ceb780c01f4a53c86c99488f54e8d256847ddb44"
+  },
+  "cargo_lock_sha256": "0897f68c7220e3fa11b11b03fe45245ab88bd2515586af057d00bf64111c9328",
+  "rustc": "rustc 1.98.1 (48a229cea 2026-09-01) (Homebrew)",
+  "build": "PKG_CONFIG_PATH=/opt/homebrew/opt/opencv@4/lib/pkgconfig CARGO_TARGET_DIR=/Volumes/SDXC-512/ds41f-mtp-investigation-build/cargo .venv/bin/maturin build --release --offline --skip-auditwheel --manifest-path <recipe>/deepseek-recipe-python/Cargo.toml -o <wheels>",
+  "scope": "development native binding only; no release/packaging/runtime promotion"
+}

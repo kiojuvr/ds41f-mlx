@@ -1,0 +1,43 @@
+0.0001731669981381856 load
+96.69411591699463 sample completed
+99.47226170799695 sample completed
+102.2333534999998 sample completed
+104.99753412499558 sample completed
+105.20216270799574 complete
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/measure_m54_matched_application.py", line 200, in <module>
+    if __name__=='__main__': main()
+                             ~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/measure_m54_matched_application.py", line 191, in main
+    asyncio.run(run())
+    ~~~~~~~~~~~^^^^^^^
+  File "/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/asyncio/runners.py", line 196, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/asyncio/runners.py", line 119, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/asyncio/base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/measure_m54_matched_application.py", line 186, in run
+    await backend._call(backend.close)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/deepseek_recipe_backend.py", line 253, in _call
+    return await asyncio.shield(future)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/concurrent/futures/thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/deepseek_recipe_backend.py", line 251, in <lambda>
+    future = loop.run_in_executor(self._executor, lambda: fn(*args))
+                                                          ~~^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/internal_mtp.py", line 496, in close
+    self._executor.shutdown(wait=True)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/concurrent/futures/thread.py", line 239, in shutdown
+    t.join()
+    ~~~~~~^^
+  File "/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/threading.py", line 1088, in join
+    raise RuntimeError("cannot join current thread")
+RuntimeError: cannot join current thread

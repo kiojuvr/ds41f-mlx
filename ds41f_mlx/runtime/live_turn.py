@@ -33,6 +33,12 @@ class LiveRecipeTurn:
         self.cancelled = False
         self.ready = True
         self.cycle_adapter = None
+        self.eof_preview = None
+        if (prepared.protocol == 'chat_completions'
+                and prepared.conversation_request.parsing_options.parse_tool_calls
+                and hasattr(self.processor, 'preview_eof_tokens')):
+            from .tool_eof_preview import ToolEOFPreview
+            self.eof_preview = ToolEOFPreview(self)
         if getattr(session, 'execution_strategy', 'off') == 'first-party-mtp-development':
             from .semantic_cycle import SemanticCycleAdapter
             from .dspark_proposal import DSparkProposalProducer
@@ -43,7 +49,7 @@ class LiveRecipeTurn:
             self.cycle_adapter = SemanticCycleAdapter(
                 session.m8, self.processor,
                 parse_tool_calls=prepared.conversation_request.parsing_options.parse_tool_calls,
-                producer=producer)
+                producer=producer, eof_preview=self.eof_preview)
 
     def record(self, outputs):
         batch = []
@@ -72,10 +78,15 @@ class LiveRecipeTurn:
                 if not suppressed:
                     batch.extend(self.record(self.processor.push(self.recipe.InferenceChunk.token(int(report.token)))))
             reports = self.cycle_adapter.advance(observe, cancelled=self._cancelled)
-            terminal = self.processor.semantic_terminal is not None or self.processor.finished
+            tool_terminal = self.eof_preview is not None and self.eof_preview.last_boundary is not None
+            terminal = tool_terminal or self.processor.semantic_terminal is not None or self.processor.finished
             if not reports or terminal or reports[-1].finish_reason:
-                reason = (reports[-1].finish_reason or 'stop') if reports else 'stop'
-                batch.extend(self.finish(cancelled=self._cancelled(), reason=reason))
+                reason = 'tool_calls' if tool_terminal else ((reports[-1].finish_reason or 'stop') if reports else 'stop')
+                # A known canonical terminal wins over a concurrent transport
+                # cancellation. Disconnect is not permission to rewrite a settled
+                # tool/EOS/length outcome into a different recipe EOF decision.
+                known_boundary = terminal or bool(reports and reports[-1].finish_reason)
+                batch.extend(self.finish(cancelled=self._cancelled() and not known_boundary, reason=reason))
             return batch
         report = self.session.m8.next_token()
         if report is None:
@@ -83,10 +94,11 @@ class LiveRecipeTurn:
         self.generated.append(int(report.token))
         suppressed = report.finish_reason == 'stop' and int(report.token) in set(self.prepared.stop_token_ids)
         batch = [] if suppressed else self.record(self.processor.push(self.recipe.InferenceChunk.token(int(report.token))))
-        tool_terminal = (self.prepared.conversation_request.parsing_options.parse_tool_calls
-                         and _recent_tool_arguments_look_complete(self.prepared.protocol, self.events)
-                         and _probe_tool_calls_complete(self.recipe, self.prepared, self.response_id,
-                                                       self.session.model_id, self.session.tokenizer, self.generated))
+        tool_terminal = (self.eof_preview.completed(len(self.generated)) if self.eof_preview is not None
+                         else (self.prepared.conversation_request.parsing_options.parse_tool_calls
+                               and _recent_tool_arguments_look_complete(self.prepared.protocol, self.events)
+                               and _probe_tool_calls_complete(self.recipe, self.prepared, self.response_id,
+                                                             self.session.model_id, self.session.tokenizer, self.generated)))
         if tool_terminal or report.finish_reason:
             # Terminal publication/idle transfer precedes visible terminal events.
             batch.extend(self.finish(reason='tool_calls' if tool_terminal else report.finish_reason))

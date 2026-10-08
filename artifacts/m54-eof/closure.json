@@ -1,0 +1,35 @@
+{
+  "decision": "YES \u2014 M54 development operational integration PASS; NO PROMOTION; full R1 NOT PASS",
+  "base_commit": "fbca4bc0827f789c9fc39c3e2359e8a0167c0be1",
+  "source_sha256": {
+    "README.md": "222cb6659d89c20d97cd1be5ee31dc9a83c3a7df7c2ea64de9e03a555aa83832",
+    "docs/milestone-54-semantic-authorized-continuation.md": "4424892d09807abcbed1b7c6492d7425f69f88ecad4649d553eefca5ff6c3160",
+    "ds41f_mlx/runtime/admitted_resources.json": "7303b7d56fcd9a95ea1565dbd08ba6c53f5c76e675268c0954146a14e6c879c8",
+    "ds41f_mlx/runtime/live_turn.py": "42e891f704bc46a0429c0e65dde39836ee1838af9072c30c021b7f7c374ee5a4",
+    "ds41f_mlx/runtime/semantic_cycle.py": "58356993dcd2d3b59ecd308554ef3103c066a5f89efba9f235a694f0b7e06ac4",
+    "ds41f_mlx/runtime/tool_boundary_session.py": "2f049ab90a333f46d4b8b78d419052424bbee1085c248efce3196c69d69d78fa",
+    "ds41f_mlx/serving/deepseek_recipe_backend.py": "c7c1d26d97fb2eb871bfde31101ac81a15797b97b51937ef859360769f6ea16d",
+    "ds41f_mlx/serving/server.py": "497690c4d59a9754572d8184f63b9a20b2488a532538efe3e5f0a0cb996e3c45",
+    "ds41f_mlx/serving/stateful_stream.py": "89194b82423ace4bda660b116c26675516b3339c4ce57c5b10ceec5383a347c3",
+    "tests/test_m54_failure_boundaries.py": "5b050aab8d80057bd6812c6f8c38a2ea97bb0b3226a92f921f0125a654f921b1",
+    "tests/test_multimodal_cancellation.py": "3c91272c8c4eda8ad32c14f5cfaa26c51d0d83431d5c4f20dac9e338e16b15f8",
+    "docs/milestone-54-eof-sensitive-operational-continuation.md": "294bb0606cd25f484b17ba7ea94204c6391c7f355e352732cc17d55c1401e4ce",
+    "ds41f_mlx/runtime/tool_eof_preview.py": "6558420eebbd7ed158c60f8ba4b4d76989f5191d18b31f27889f9597b90221e5",
+    "ds41f_mlx/serving/recipe_publication.py": "e5b8f2e8b9b117691527f13a98eaca5a68e579fbb84739d572ec293ff31e4768",
+    "tests/test_m54_native_eof_preview.py": "4be866d0a70a03d2b19550bf48003d6f30a50bf05e863ccf7611bfaeb2f5789e",
+    "tests/test_m54_recipe_publication.py": "92e6cb3dd2dc783a39d73f69fcba5508b297ed1ca94dbbf60e73edc37a48f9f1",
+    "tools/measure_m54_matched_application.py": "de151b65f7949210ab5f1e1c545072695f0a060e581c950ea64afaf8aea95c59",
+    "tools/probe_m54_eof_application.py": "fcd1c97de76ffd18a5d0a8461813288bdad91844cbad6d65e36acdb38d452e42",
+    "tools/record_m54_native_eof.py": "fe0f1bc4f8d5853641ac297d8bb5e9b8028c8b2074522d56de52e9402f9151ce",
+    "tools/report_m54_matched_performance.py": "7b47889dcabb07b72f168351167c6c3eba08ff7feef20bba91126d087f96cab0"
+  },
+  "core_unchanged": true,
+  "remaining_boundaries": [
+    "text Chat only; greedy reasoning none; one session; <=64 output and <=512 total reservation",
+    "no Vision/persistence/concurrency expansion",
+    "short reentry rings require canonical warmup, not history reconstruction",
+    "full R1 one run FAIL environment; predates final worker race fix and matched performance; no rerun",
+    "first-party integrated decode slower than OFF; candidate preserved",
+    "external native dependency patch not promoted upstream/release"
+  ]
+}

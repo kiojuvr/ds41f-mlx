@@ -1,5 +1,8 @@
 # M54 continuation — semantic-authorized cycles and exact-byte reservation
 
+Historical `fbca4bc` status. The [EOF-sensitive operational continuation](milestone-54-eof-sensitive-operational-continuation.md)
+implements the next native primitive and supersedes this NOT PASS decision.
+
 **NO / M54 NOT PASS (operational tool envelope).** Base: M51–M53 PASS,
 M54 assessment `2b68a69`. The two previously identified primitives are now
 implemented, exercised, and connected to the standard application boundary.

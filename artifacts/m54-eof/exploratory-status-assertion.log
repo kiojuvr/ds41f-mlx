@@ -1,0 +1,28 @@
+0.00013749999925494194 load
+323.3354893749929 tool JSON
+326.5679824579929 complete
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m54_eof_application.py", line 180, in <module>
+    if __name__ == '__main__': main()
+                               ~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m54_eof_application.py", line 171, in main
+    asyncio.run(run())
+    ~~~~~~~~~~~^^^^^^^
+  File "/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/asyncio/runners.py", line 196, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/asyncio/runners.py", line 119, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/asyncio/base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m54_eof_application.py", line 123, in run
+    msg = await request(rec,body,1)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m54_eof_application.py", line 105, in request
+    assert bad.status_code == 409, bad.text
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {"error":{"message":"request sequence exact-byte mismatch","type":"invalid_request_error","param":null,"code":"invalid_request_error"}}

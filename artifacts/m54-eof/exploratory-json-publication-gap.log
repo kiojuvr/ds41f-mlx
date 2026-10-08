@@ -1,0 +1,26 @@
+0.0001359590023639612 load
+317.7209117500024 tool JSON
+320.87181695899926 response completed
+320.9616004999989 complete
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m54_eof_application.py", line 234, in <module>
+    if __name__ == '__main__': main()
+                               ~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m54_eof_application.py", line 218, in main
+    asyncio.run(run())
+    ~~~~~~~~~~~^^^^^^^
+  File "/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/asyncio/runners.py", line 196, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/asyncio/runners.py", line 119, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/asyncio/base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m54_eof_application.py", line 131, in run
+    output['tool_certificate'] = rec.last_turn['reconstruction']
+                                 ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+KeyError: 'reconstruction'

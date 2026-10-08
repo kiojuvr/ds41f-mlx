@@ -1,0 +1,140 @@
+0.00016841699834913015 load
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1215, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/fastapi/telemetry/_asgi.py", line 151, in __call__
+    await self.app(scope, receive, send)
+  File "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/starlette/routing.py", line 676, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 2786, in app
+    await route.handle(scope, receive, send)
+  File "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 1310, in handle
+    await super().handle(scope, receive, send)
+  File "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/starlette/routing.py", line 282, in handle
+    await self.app(scope, receive, send)
+  File "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 165, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 151, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 727, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 360, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/server.py", line 353, in session_chat
+    return await qualification(session_id, prepared, tokenizer=tokenizer, body=body, sequence=request_sequence)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/internal_mtp.py", line 488, in qualification_response
+    async for _ in iterator:
+        pass
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/internal_mtp.py", line 386, in chunks
+    await self._call(self._start, rec, request, tokenizer, trace)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/deepseek_recipe_backend.py", line 253, in _call
+    return await asyncio.shield(future)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/concurrent/futures/thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/deepseek_recipe_backend.py", line 251, in <lambda>
+    future = loop.run_in_executor(self._executor, lambda: fn(*args))
+                                                          ~~^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/internal_mtp.py", line 248, in _start
+    rec.owner = handoff_to_generation(live, self._model, terminal_prompt_token=ids[-1], config=cfg,
+                ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        max_tokens=self.max_tokens(request.inference_options), sampler=self.make_sampler(request.inference_options), session_factory=Factory)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/prefill_fp8_mlx/handoff.py", line 267, in handoff_to_generation
+    session.start(terminal)
+    ~~~~~~~~~~~~~^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/mtp_lifecycle.py", line 319, in operation
+    return method(self, *args, **kwargs)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/mtp_lifecycle.py", line 407, in start
+    pr, gr = self._bg.next(); self.mx.synchronize(self.stream)
+             ~~~~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/mlx_lm/generate.py", line 1870, in next
+    return self._next()
+           ~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/omlx/patches/mlx_lm_mtp/batch_generator.py", line 352, in patched_bg_next
+    result = original_bg_next(self, *args, **kwargs)
+  File "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/mlx_lm/generate.py", line 1825, in _next
+    gen_batch = self._prompt_batch.split(split).generate(last_inputs)
+  File "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/mlx_lm/generate.py", line 1225, in generate
+    generation = GenerationBatch(
+        self.model,
+    ...<8 lines>...
+        self.max_tokens,
+    )
+  File "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/omlx/patches/mlx_lm_mtp/batch_generator.py", line 122, in patched_init
+    original_init(self, model, uids, *args, **kwargs)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/mlx_lm/generate.py", line 1323, in __init__
+    self._step()
+    ~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/omlx/scheduler.py", line 774, in _patched_generation_batch_step
+    _omlx_advance_grammar_rows(self)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/omlx/scheduler.py", line 726, in _omlx_advance_grammar_rows
+    from .api.grammar import GrammarConstraintProcessor
+  File "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/omlx/api/__init__.py", line 58, in <module>
+    from .tool_calling import (
+    ...<7 lines>...
+    )
+  File "/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/omlx/api/tool_calling.py", line 29, in <module>
+    from jsonschema import SchemaError, ValidationError, validate
+ModuleNotFoundError: No module named 'jsonschema'
+94.44082250000065 complete
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/measure_m54_matched_application.py", line 200, in <module>
+    if __name__=='__main__': main()
+                             ~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/measure_m54_matched_application.py", line 191, in main
+    asyncio.run(run())
+    ~~~~~~~~~~~^^^^^^^
+  File "/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/asyncio/runners.py", line 196, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/asyncio/runners.py", line 119, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/asyncio/base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/measure_m54_matched_application.py", line 132, in run
+    assert response.status_code == 200,response.text
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Internal Server Error

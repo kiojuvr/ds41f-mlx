@@ -1,0 +1,47 @@
+0.0001265419996343553 load
+0.6264888330042595 complete
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m54_eof_application.py", line 180, in <module>
+    if __name__ == '__main__': main()
+                               ~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m54_eof_application.py", line 171, in main
+    asyncio.run(run())
+    ~~~~~~~~~~~^^^^^^^
+  File "/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/asyncio/runners.py", line 196, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/asyncio/runners.py", line 119, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/asyncio/base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/probe_m54_eof_application.py", line 60, in run
+    await backend._call(backend.load)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/deepseek_recipe_backend.py", line 253, in _call
+    return await asyncio.shield(future)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/concurrent/futures/thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/deepseek_recipe_backend.py", line 251, in <lambda>
+    future = loop.run_in_executor(self._executor, lambda: fn(*args))
+                                                          ~~^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/deepseek_recipe_backend.py", line 239, in load
+    model, _ = runtime.load_model()
+               ~~~~~~~~~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/omlx_core.py", line 55, in load_model
+    admission = prepare_resources(self.config.checkpoint_path, self.config.recipe_path)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/resource_admission.py", line 479, in prepare_resources
+    modules = {name: check_module(name, identity, files) for name, identity in pin['modules'].items()}
+                     ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/resource_admission.py", line 85, in check_module
+    check_file(path, expected, name, verified)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/resource_admission.py", line 60, in check_file
+    require(actual == expected, f'identity mismatch: {label}')
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/resource_admission.py", line 52, in require
+    raise ResourceAdmissionError(message)
+ds41f_mlx.runtime.resource_admission.ResourceAdmissionError: identity mismatch: deepseek_recipe._native

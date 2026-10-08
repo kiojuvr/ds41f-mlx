@@ -371,7 +371,10 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
                     'X-DS41F-Request-ID': stream.request_id, 'Cache-Control': 'no-store', 'X-Accel-Buffering': 'no'})
             if qualification is None and isinstance(backend, DeepSeekRecipeRuntimeBackend):
                 reservation = reserve(rec, sequence, body, 'application/json')
-            turn = await backend.run_stateful_chat_turn(session_id, prepared, tokenizer=tokenizer)
+            if isinstance(backend, DeepSeekRecipeRuntimeBackend):
+                turn = await backend.run_stateful_chat_turn(session_id, prepared, tokenizer=tokenizer, body=body, options=options)
+            else:
+                turn = await backend.run_stateful_chat_turn(session_id, prepared, tokenizer=tokenizer)
         except KeyError as exc:
             raise RequestError(str(exc), 404)
         except RuntimeError as exc:
