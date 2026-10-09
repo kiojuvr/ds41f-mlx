@@ -1,0 +1,108 @@
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/internal_mtp.py", line 400, in chunks
+    token = await self._call(self._next, rec, trace)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/deepseek_recipe_backend.py", line 223, in _call
+    return await asyncio.shield(future)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/concurrent/futures/thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/deepseek_recipe_backend.py", line 221, in <lambda>
+    future = loop.run_in_executor(self._executor, lambda: fn(*args))
+                                                          ~~^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/internal_mtp.py", line 259, in _next
+    token = rec.owner.next_token(transport_delivered=False)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/mtp_lifecycle.py", line 378, in operation
+    return method(self, *args, **kwargs)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/mtp_lifecycle.py", line 522, in next_token
+    self._bind_connection()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "artifacts/m51r/fault-boundary.driver.py", line 31, in bind
+    raise RuntimeError('M51R injected publication failure after native verify')
+RuntimeError: M51R injected publication failure after native verify
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/kioju/.venvs/ds41f-mtp-investigation/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/kioju/.venvs/ds41f-mtp-investigation/lib/python3.13/site-packages/fastapi/applications.py", line 1215, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/kioju/.venvs/ds41f-mtp-investigation/lib/python3.13/site-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/kioju/.venvs/ds41f-mtp-investigation/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/kioju/.venvs/ds41f-mtp-investigation/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/kioju/.venvs/ds41f-mtp-investigation/lib/python3.13/site-packages/fastapi/telemetry/_asgi.py", line 151, in __call__
+    await self.app(scope, receive, send)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/mtp_public.py", line 203, in __call__
+    await self.app(scope, bounded_receive if owned else receive, bounded_send)
+  File "/Users/kioju/.venvs/ds41f-mtp-investigation/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/kioju/.venvs/ds41f-mtp-investigation/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/kioju/.venvs/ds41f-mtp-investigation/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/kioju/.venvs/ds41f-mtp-investigation/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/kioju/.venvs/ds41f-mtp-investigation/lib/python3.13/site-packages/starlette/routing.py", line 676, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/kioju/.venvs/ds41f-mtp-investigation/lib/python3.13/site-packages/fastapi/routing.py", line 2786, in app
+    await route.handle(scope, receive, send)
+  File "/Users/kioju/.venvs/ds41f-mtp-investigation/lib/python3.13/site-packages/fastapi/routing.py", line 1310, in handle
+    await super().handle(scope, receive, send)
+  File "/Users/kioju/.venvs/ds41f-mtp-investigation/lib/python3.13/site-packages/starlette/routing.py", line 282, in handle
+    await self.app(scope, receive, send)
+  File "/Users/kioju/.venvs/ds41f-mtp-investigation/lib/python3.13/site-packages/fastapi/routing.py", line 165, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/kioju/.venvs/ds41f-mtp-investigation/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/kioju/.venvs/ds41f-mtp-investigation/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/kioju/.venvs/ds41f-mtp-investigation/lib/python3.13/site-packages/fastapi/routing.py", line 152, in app
+    await response(scope, receive, send)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/internal_mtp.py", line 481, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/server.py", line 94, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/kioju/.venvs/ds41f-mtp-investigation/lib/python3.13/site-packages/starlette/responses.py", line 275, in __call__
+    async with create_collapsing_task_group() as task_group:
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 235, in __aexit__
+    await self.gen.athrow(value)
+  File "/Users/kioju/.venvs/ds41f-mtp-investigation/lib/python3.13/site-packages/starlette/_utils.py", line 115, in create_collapsing_task_group
+    raise exc from exc.__cause__ or context
+  File "/Users/kioju/.venvs/ds41f-mtp-investigation/lib/python3.13/site-packages/anyio/_core/_tasks.py", line 327, in _run_coro
+    retval = await self._coro
+             ^^^^^^^^^^^^^^^^
+  File "/Users/kioju/.venvs/ds41f-mtp-investigation/lib/python3.13/site-packages/starlette/responses.py", line 278, in wrap
+    await func()
+  File "/Users/kioju/.venvs/ds41f-mtp-investigation/lib/python3.13/site-packages/starlette/responses.py", line 252, in stream_response
+    async for chunk in self.body_iterator:
+    ...<2 lines>...
+        await send({"type": "http.response.body", "body": chunk, "more_body": True})
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/internal_mtp.py", line 447, in chunks
+    await self._call(self._settle, rec, trace)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/deepseek_recipe_backend.py", line 223, in _call
+    return await asyncio.shield(future)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/concurrent/futures/thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/deepseek_recipe_backend.py", line 221, in <lambda>
+    future = loop.run_in_executor(self._executor, lambda: fn(*args))
+                                                          ~~^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/mtp_public.py", line 35, in _settle
+    super()._settle(rec, trace)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/internal_mtp.py", line 273, in _settle
+    quiet = rec.owner.quiesce()
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/mtp_lifecycle.py", line 376, in operation
+    raise MTPLifecycleError('native MTP session failed closed')
+ds41f_mlx.runtime.mtp_lifecycle.MTPLifecycleError: native MTP session failed closed

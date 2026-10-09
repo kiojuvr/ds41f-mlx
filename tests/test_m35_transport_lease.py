@@ -216,7 +216,9 @@ class LeaseTests(unittest.TestCase):
         class Owner:
             calls = 0
             _bg = SimpleNamespace(_generation_batch=SimpleNamespace())
-            history = SimpleNamespace(canonical_generated_tokens=[3])
+            history = SimpleNamespace(canonical_generated_tokens=[3], canonical_frontier=3)
+            connection = SimpleNamespace(lifetime='fixture', revision=1, disposition='settled',
+                consumed_tokens=(1,2,3), queue_ahead=(), pending_prediction=None, rng_draws=0)
             def quiesce(self):
                 self.calls += 1
                 assert self.calls == 1

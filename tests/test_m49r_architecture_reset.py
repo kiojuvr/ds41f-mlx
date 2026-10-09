@@ -1,8 +1,10 @@
-"""M49R restoration integrity, not future MTP implementation qualification.
+"""M49R restart integrity outside the explicitly qualified M51R source delta.
 
-Retire the exact-source reset guard explicitly when an approved M51R integration
-replaces it with topology/state/performance conformance tests.
+The two connection files use their M51R evidence hashes instead of restart bytes.
+All other runtime files and archived-producer exclusions keep the reset guard.
+Physical/state/performance qualification is recorded separately in M51R receipts.
 """
+import gzip
 import hashlib
 import json
 from pathlib import Path
@@ -33,8 +35,14 @@ def test_reconstruction_archive_and_restored_active_paths():
 
 
 def test_all_baseline_runtime_files_preserved_and_no_new_producer():
+    allowed = {'ds41f_mlx/runtime/mtp_lifecycle.py', 'ds41f_mlx/serving/internal_mtp.py'}
+    qualified = json.loads(gzip.decompress((ROOT / 'artifacts/m51r/qualification-identity.json.gz').read_bytes()))['identity']['runtime']
     for path in git('ls-tree', '-r', '--name-only', BASE, '--', 'ds41f_mlx').decode().splitlines():
-        assert (ROOT / path).read_bytes() == git('show', f'{BASE}:{path}'), path
+        data = (ROOT / path).read_bytes()
+        if path in allowed:
+            assert hashlib.sha256(data).hexdigest() == qualified[path], path
+        else:
+            assert data == git('show', f'{BASE}:{path}'), path
     for name in ('accepted_prefix', 'dspark_proposal', 'hidden_taps', 'semantic_cycle'):
         assert not (ROOT / 'ds41f_mlx/runtime' / f'{name}.py').exists()
 

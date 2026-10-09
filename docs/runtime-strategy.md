@@ -55,8 +55,10 @@ Prefill retains DwarfStar topology with qualified MLX numerics. ds41f owns
 semantic/application/lifecycle/resource authority, not execution reinvention.
 Matched candidate performance is an initial conformance gate; material unexplained
 slowdown BLOCKS rather than becoming an optimization backlog. Standard-OFF's
-qualified single-input architecture and the separate existing candidate remain
-unchanged. Next is M50R baseline freeze, not implementation or profile promotion.
+qualified single-input architecture remains unchanged. The separate candidate now
+has the [M51R minimal authority connection](milestone-51r-canonical-lifecycle-connection.md)
+after the M50R bounded freeze and explicit authorization; its physical graph is
+preserved. M52R remains unstarted. Neither PASS approves normal-profile promotion.
 
 ## Model-lifetime allocator resource policy
 

@@ -1,0 +1,227 @@
+{
+  "milestone": "M51R",
+  "decision": "PASS",
+  "scope": "M50R bounded greedy candidate minimal canonical/lifecycle connection; no M52R or profile promotion",
+  "runtime_source_delta": [
+    "ds41f_mlx/runtime/mtp_lifecycle.py",
+    "ds41f_mlx/serving/internal_mtp.py"
+  ],
+  "unchanged_identity_sections": [],
+  "delegated_identity_sections_preserved": [
+    "schema",
+    "profile",
+    "limits",
+    "tool",
+    "sources",
+    "dependencies",
+    "package_payload",
+    "omlx",
+    "recipe",
+    "native_sha256",
+    "native_links",
+    "tokenizer_sha256",
+    "packages",
+    "python",
+    "platform"
+  ],
+  "performance": {
+    "control_before_tok_s": 40.431187365849254,
+    "connection_tok_s": 40.43261704618365,
+    "control_after_tok_s": 40.422371318709004,
+    "control_drift_percent": -0.02180506612501354,
+    "decode_rate_delta_percent": 0.014440190387388085,
+    "control_backbone_ms": 841.4506745005685,
+    "connection_backbone_ms": 840.8870693334999,
+    "backbone_wall_delta_percent": -0.06698017889202879,
+    "measured_sessions_per_process": 3,
+    "excluded_warmups_per_process": 1,
+    "not_isolated_gpu_phase_cost": true
+  },
+  "topology": [
+    {
+      "sample": 0,
+      "frontier": 283,
+      "native_topology_exact": true,
+      "canonical_ids_exact": true,
+      "settlement": {
+        "new_verify_cycles": 0,
+        "new_proposals": 0,
+        "target_forwards": 1,
+        "history_replay": 0,
+        "full_cache_repack": 0,
+        "dspark_appends": 1
+      }
+    },
+    {
+      "sample": 1,
+      "frontier": 546,
+      "native_topology_exact": true,
+      "canonical_ids_exact": true,
+      "settlement": {
+        "new_verify_cycles": 0,
+        "new_proposals": 0,
+        "target_forwards": 1,
+        "history_replay": 0,
+        "full_cache_repack": 0,
+        "dspark_appends": 1
+      }
+    },
+    {
+      "sample": 2,
+      "frontier": 243,
+      "native_topology_exact": true,
+      "canonical_ids_exact": true,
+      "settlement": {
+        "new_verify_cycles": 0,
+        "new_proposals": 0,
+        "target_forwards": 0,
+        "history_replay": 0,
+        "full_cache_repack": 0,
+        "dspark_appends": 0
+      }
+    },
+    {
+      "sample": 3,
+      "frontier": 359,
+      "native_topology_exact": true,
+      "canonical_ids_exact": true,
+      "settlement": {
+        "new_verify_cycles": 0,
+        "new_proposals": 0,
+        "target_forwards": 1,
+        "history_replay": 0,
+        "full_cache_repack": 0,
+        "dspark_appends": 1
+      }
+    },
+    {
+      "sample": 4,
+      "frontier": 251,
+      "native_topology_exact": true,
+      "canonical_ids_exact": true,
+      "settlement": {
+        "new_verify_cycles": 0,
+        "new_proposals": 0,
+        "target_forwards": 0,
+        "history_replay": 0,
+        "full_cache_repack": 0,
+        "dspark_appends": 0
+      }
+    }
+  ],
+  "movement": {
+    "region_counts_exact": true,
+    "region_counts": {
+      "native offset scalar materialization": 1063,
+      "native mlx.array constructor": 4909,
+      "mlx-to-numpy export/materialization": 56,
+      "CPU integer Engram hashing": 15,
+      "Engram prefetch drain": 43,
+      "Engram prefetch submit": 28,
+      "CPU selected-row copy/read": 56,
+      "Engram worker rows": 28,
+      "mlx.async_eval": 69,
+      "CPU-to-MLX decode/import site": 56,
+      "mlx.concatenate": 1024,
+      "mlx.eval": 7,
+      "mlx.synchronize": 46,
+      "native array.item": 1467,
+      "native array.tolist": 15,
+      "prefill/bootstrap": 1,
+      "native parallel proposal": 11,
+      "protected next": 41,
+      "native rollback": 1,
+      "settlement": 1,
+      "retirement": 1
+    },
+    "numpy_import_bytes": 4035408,
+    "cpu_selected_row_copy_bytes": 3598848,
+    "fresh_metal_trace": false,
+    "opaque_internal_kernels": "M50R unchanged delegated primitive condition retained"
+  },
+  "oracle": {
+    "primitive_cases": 16,
+    "live_cases": 2,
+    "status": "PASS"
+  },
+  "fault": {
+    "scope": "post-verify connection publication failure; not rates or M52R",
+    "driver_sha256": "e05e8bc093254a55a0ff718ca68ce3bad35388a8f7f17dae3f40ae66158e4dd3",
+    "injected": {
+      "cycles": 1,
+      "consumed_frontier": 247,
+      "emitted_frontier": 245,
+      "queue_ahead": [
+        20370,
+        20370
+      ],
+      "pending_prediction": 20370
+    },
+    "burn": {
+      "disposition": "fault",
+      "failed": true,
+      "closed": true,
+      "bg_retired": true,
+      "rings_retired": true,
+      "model_alias_retired": true,
+      "observation_retired": true,
+      "uid_retired": true
+    },
+    "retirement": {
+      "poisoned": true,
+      "owner_retired": true,
+      "cache_retired": true,
+      "rings_retired": true,
+      "processor_retired": true
+    },
+    "harness_exit": "RemoteProtocolError('peer closed connection without sending complete message body (incomplete chunked read)')",
+    "status": "PASS"
+  },
+  "r1": {
+    "status": "PASS",
+    "gates": 24,
+    "reference_sha256": "45653bd63c6a924c42dcdf0871cd950decb5efaabacce7b3c78ecf6b47f8b4ca",
+    "qualification_adaptation": {
+      "source_allowance": "artifacts/m51r/qualification-identity.json",
+      "fixtures": [
+        {
+          "original": "/Volumes/SDXC-512/ds41f-mlx/reference/R1/checks/test_m34_cache_release.py",
+          "fixture_adapter": "tests/test_m34_cache_release.py"
+        },
+        {
+          "original": "/Volumes/SDXC-512/ds41f-mlx/reference/R1/checks/test_m35_transport_lease.py",
+          "fixture_adapter": "tests/test_m35_transport_lease.py"
+        }
+      ],
+      "server": "canonical serve; qualification-only source record; owned process",
+      "not_normal_profile_promotion": true
+    }
+  },
+  "affected_tests": 33,
+  "profile_tests": 81,
+  "oracle_tool_tests": 7,
+  "application_boundary": "M52R consuming EOF/tool horizon, JSON/SSE/effects, exact retry/re-entry and worker delivery races remain unstarted; existing bounded R1 is not application completion",
+  "sampling_limit": "greedy only; sampling RNG draws zero. Non-greedy internal callables remain unqualified (unknown draw state, never a stochastic PASS).",
+  "receipt_sha256": {
+    "connection-performance.json": "d0ee827fa51c6b29bdb163a41e6b39c649dceb31ce164a3e5005f80efaa65b31",
+    "connection-trace.json": "a9c3a53101f56d506390b44c690ce8067017b83c1ef3c0d3e50392a9c620cded",
+    "control-after.json": "ac16b77960126d8086f26883f00a8883e453d6e6044baf19b22ad0b759e6258c",
+    "control-before.json": "6d9823f5ad479468d7d39e539c03e97ee63f9e47ca741bc2975a344a6966aa3d",
+    "fault-boundary.json": "cafd6a42dfdd51c3d161e8308a772aad91596121c4b84cb3623fd2e89a10b8a2",
+    "fault-harness.json": "08fcb76cc574c09b0d696968ac8597337e59286e9821b64d70b3128f87cf0243",
+    "movement.json": "7e4488bd6eccc6bf7be81697e27f13cefd0efcc92c922e941f99d5cf842cc8ec",
+    "prefix-oracle.json": "bcac66790b9f96e624deae7ef65e0770b936b0a7878264b801faafe05309880e",
+    "qualification-identity.json": "8d9cab34bc57725ed0d3623896e3ceab341bf453a68ed385c911d1f0b6ea7103",
+    "r1.json": "8b8d811e279c699f13eeb6f1df5d06e5945048b897d34a5e64d5da224998dc6a"
+  },
+  "installed_admission": {
+    "status": "UNCHANGED_FAIL_CLOSED",
+    "error": "unapproved executable identity drift: ['runtime']",
+    "record_sha256": "d3817b732c52255b0f47a2aafd6d54aef457c5d535fd0806ca910ce25d29f5af"
+  },
+  "reset_guard_tests": 3,
+  "qualification_driver_sha256": {
+    "fault-boundary.driver.py": "e05e8bc093254a55a0ff718ca68ce3bad35388a8f7f17dae3f40ae66158e4dd3",
+    "r1.driver.py": "e408d2a8376f92902ef2fc8238d69266f57dbcce06b90a1294552b3e329870fe"
+  }
+}

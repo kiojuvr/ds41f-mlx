@@ -244,7 +244,8 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
                 def from_prefilled_cache(cls, model, cache, prefix, config, *, max_tokens, sampler):
                     return OMLXMTPGenerationSession(model, cache, np.asarray(prefix), context,
                         config=config, sampler=sampler, max_tokens=max_tokens, semantic_guard=rec.guard,
-                        wired_limit_lease=wired)
+                        wired_limit_lease=wired,
+                        canonical_sampling_policy='greedy' if request.inference_options.temperature in (None, 0) else None)
             rec.owner = handoff_to_generation(live, self._model, terminal_prompt_token=ids[-1], config=cfg,
                 max_tokens=self.max_tokens(request.inference_options), sampler=self.make_sampler(request.inference_options), session_factory=Factory)
             trace.update(prefill_handoff_s=perf_counter()-t0, prompt_replay=rec.owner.prompt_replay_count,
@@ -285,6 +286,13 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
             # accumulation (which can itself fail). No second quiescence on a
             # drained/retired owner is permitted during exception cleanup.
             trace['quiescence'] = quiet.to_json()
+            connection = rec.owner.connection
+            trace['authority_connection'] = dict(lifetime=connection.lifetime,
+                revision=connection.revision, disposition=connection.disposition,
+                consumed_frontier=len(connection.consumed_tokens),
+                emitted_frontier=rec.owner.history.canonical_frontier,
+                queue_ahead=list(connection.queue_ahead),
+                pending_prediction=connection.pending_prediction, rng_draws=connection.rng_draws)
             canonical_generated = list(rec.owner.history.canonical_generated_tokens)
             rec.owner.close(); rec.owner = None
             assert len(rec.cache) == 40 and all(c.size() == len(rec.canonical) for c in rec.cache)

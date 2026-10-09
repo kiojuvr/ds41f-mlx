@@ -5,7 +5,7 @@ This roadmap records implementation boundaries and evidence-driven next work. It
 ## MTP architectural restart (current authority)
 
 [M49R reset and canonical roadmap](mtp-architecture-reset.md) supersedes M50–M56
-as a failed production architecture line. Active runtime is restored to
+as a failed production architecture line. Active runtime was restored to
 `5e784d9e83a85c497cd192f87184e9b01a1343eb`, preserving the existing standard-OFF
 and separate oMLX candidate. M56 is not a production basis or normal-profile
 candidate; its historical PASS and topology measurements are qualification assets.
@@ -25,9 +25,11 @@ M51R minimal canonical/lifecycle connection → M52R application/EOF/tool/retry
 integration → M53R separately approved normal-local dependency/admission/profile →
 M54R operational/soak/performance qualification → M55R conditional release decision.
 See the reset document for evidence gates and structural-change requirements.
-Next is **M50R**, not profile approval. No new runtime producer, kernel optimization,
-normal-profile promotion, release packaging or `ds41f-runtime` promotion is authorized
-by this reset. The unrelated post-M48 qualified work below remains intact.
+[M50R](milestone-50r-omlx-candidate-baseline.md) passed the bounded freeze;
+explicitly authorized [M51R](milestone-51r-canonical-lifecycle-connection.md) passed
+the minimal canonical/lifecycle connection without rebuilding execution.
+**M52R is not started.** No kernel optimization, normal-profile promotion,
+release packaging or `ds41f-runtime` promotion is authorized by these decisions. The unrelated post-M48 qualified work below remains intact.
 
 ## Post-M48 production boundary and remaining work (current authority)
 

@@ -160,9 +160,12 @@ records **PASS for a bounded candidate freeze**: independent byte-content prefix
 selection/taps/logits, actual native/Metal boundary observations and bounded
 reload/residency measurements. Opaque kernel internals do not qualify a changed
 physical graph; preservation conditions and changed-graph BLOCK are explicit.
-The first runtime implementation remains **M51R**. Its baseline prerequisite is
-satisfied, but it is **not authorized to commence** by this reset or the freeze:
-explicit authorization is still required. No implementation stage is started.
+The first runtime implementation is **M51R**. The reset/freeze did not authorize
+its commencement; subsequent explicit user authorization did. The
+[M51R assessment](milestone-51r-canonical-lifecycle-connection.md) now records
+**PASS for the bounded minimal canonical/lifecycle connection**, preserving the
+frozen physical graph. **M52R remains unstarted**; no profile or release promotion
+follows from either PASS.
 
 ## Physical topology conformance and performance gate
 

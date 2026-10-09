@@ -21,6 +21,7 @@ from functools import wraps
 from typing import Any, Callable, Sequence
 import importlib
 import sys
+from uuid import uuid4
 
 import numpy as np
 
@@ -309,6 +310,64 @@ def canonical_quiesce_native_singleton(
     )
 
 
+@dataclass
+class CanonicalPhysicalConnection:
+    """Host-only authority connection, never a cache or a scheduler.
+
+    Emission can lag committed target rows or lead them by one prediction.
+    Native queue's last entry is always unconsumed; only its preceding entries
+    can extend consumed history. No array inspection/eval or RNG draw occurs here.
+    The public frozen candidate admits greedy sampling only (zero RNG draws).
+    """
+
+    lifetime: str = field(default_factory=lambda: uuid4().hex)
+    disposition: str = 'active'
+    revision: int = 0
+    consumed_tokens: tuple[int, ...] = ()
+    pending_prediction: int | None = None
+    queue_ahead: tuple[int, ...] = ()
+    rng_draws: int | None = None
+
+    def bind(self, history, rings, state):
+        if self.disposition != 'active':
+            raise MTPLifecycleError('retired canonical connection')
+        offsets = _dspark_offsets(rings)
+        if len(offsets) != 3 or len(set(offsets)) != 1:
+            raise MTPLifecycleError('canonical connection requires three aligned native rings')
+        physical = offsets[0]
+        emitted = history.canonical_tokens
+        delta = physical - len(emitted)
+        queue = () if state is None else tuple(int(entry[0]) for entry in state.queue)
+        if state is not None and int(state.hist_offset) != physical:
+            raise MTPLifecycleError('native history/ring frontier mismatch')
+        if state is None:
+            # Bootstrap/preactivation: the prediction remains native-owned.
+            if delta not in (0, -1):
+                raise MTPLifecycleError('unknown preactivation frontier')
+            ahead = ()
+            pending = emitted[-1] if delta == -1 else None
+        elif delta >= 0 and len(queue) == delta + 1:
+            ahead, pending = queue[:-1], queue[-1]
+        elif delta == -1 and not queue:
+            ahead, pending = (), emitted[-1]
+        else:
+            raise MTPLifecycleError('canonical/native queue relation is incoherent')
+        consumed = tuple(emitted[:physical]) + ahead
+        if len(consumed) != physical:
+            raise MTPLifecycleError('consumed prefix does not bind physical frontier')
+        if consumed[:len(self.consumed_tokens)] != self.consumed_tokens:
+            raise MTPLifecycleError('committed consumed history changed')
+        self.consumed_tokens = consumed
+        self.pending_prediction = pending
+        self.queue_ahead = ahead
+        self.revision += 1
+
+    def retire(self, disposition):
+        self.disposition = disposition
+        self.pending_prediction = None
+        self.queue_ahead = ()
+
+
 def _serialized_mtp_operation(method):
     @wraps(method)
     def operation(self, *args, **kwargs):
@@ -319,6 +378,16 @@ def _serialized_mtp_operation(method):
                 return method(self, *args, **kwargs)
             except BaseException:
                 self._operation_failed = True
+                if hasattr(self, 'connection'):
+                    self.connection.retire('fault')
+                # A failed mutation/publication cannot be quiesced into idle.
+                # Remove every session alias even if native retirement fails;
+                # the serving boundary poisons the lifetime and drops priming.
+                if method.__name__ != 'close':
+                    try:
+                        self.close()
+                    except BaseException:
+                        pass
                 raise
     return operation
 
@@ -337,10 +406,14 @@ class OMLXMTPGenerationSession:
     stream: Any | None = None
     semantic_guard: Any | None = None
     wired_limit_lease: Any | None = None
+    canonical_sampling_policy: str | None = None
 
     def __post_init__(self) -> None:
         self._operation_lock = RLock()
         self._operation_failed = False
+        self.connection = CanonicalPhysicalConnection(
+            rng_draws=0 if self.canonical_sampling_policy == 'greedy' else None)
+        self.bound_observation = None
         if not self.config.speculation_enabled or self.config.preserve_mtp is not True:
             raise MTPLifecycleError("OMLXMTPGenerationSession is internal MTP-ON only")
         root = str(self.config.omlx_path or DEFAULT_OMLX)
@@ -414,6 +487,16 @@ class OMLXMTPGenerationSession:
         self.last_response = None
         self._started = True
         self.initial_cache = []
+        self._bind_connection()
+
+    def _bind_connection(self):
+        gb = self._bg._generation_batch
+        horizon = getattr(gb, '_omlx_semantic_horizon', None)
+        state = getattr(gb, '_omlx_mtp_state', None)
+        if horizon is not None and horizon.last_state is not None:
+            state = horizon.last_state
+        rings = self.dspark_context.caches if state is None else state.mtp_cache
+        self.connection.bind(self.history, rings, state)
 
     @_serialized_mtp_operation
     def next_token(self, *, transport_delivered: bool = True) -> int | None:
@@ -426,6 +509,8 @@ class OMLXMTPGenerationSession:
         _, gr = self._bg.next(); self.mx.synchronize(self.stream)
         if not gr:
             return None
+        if gr[0].uid != self.uid:
+            raise MTPLifecycleError('foreign native response lifetime')
         self.last_response = gr[0]
         token = int(gr[0].token)
         if transport_delivered:
@@ -434,6 +519,14 @@ class OMLXMTPGenerationSession:
             self.history.commit_undelivered([token])
         if self.semantic_guard is not None and gr[0].finish_reason is not None and not self.semantic_guard.finished:
             self.semantic_guard.finish_backend(gr[0].finish_reason)
+        self._bind_connection()
+        prefix = tuple(self.history.canonical_tokens[:-1])
+        if self.connection.consumed_tokens[:len(prefix)] != prefix:
+            raise MTPLifecycleError('native observation has foreign consumed-prefix identity')
+        # Original native response logprobs, not recomputed logits. The qualified
+        # queue keeps their same-forward source row through prefix selection.
+        self.bound_observation = (self.connection.lifetime, self.connection.revision,
+                                  prefix, token, gr[0].logprobs)
         return token
 
     @_serialized_mtp_operation
@@ -498,11 +591,12 @@ class OMLXMTPGenerationSession:
             # observed. Its ordinal ownership cannot leak into the next turn.
             horizon.pending = None
         if self.uid is not None:
-            try:
-                self._bg.remove([self.uid])
-            except Exception:
-                pass
+            self._bg.remove([self.uid])
             self.uid = None
+        self.connection.bind(self.history, result.dspark_context.caches, None)
+        if self.connection.consumed_tokens != result.canonical_tokens:
+            raise MTPLifecycleError('settled canonical/consumed prefix mismatch')
+        self.connection.retire('settled')
         self._quiesced = True
         return result
 
@@ -517,4 +611,17 @@ class OMLXMTPGenerationSession:
             if self.uid is not None:
                 self._bg.remove([self.uid])
         finally:
-            self._bg.close()
+            try:
+                self._bg.close()
+            finally:
+                self.uid = None
+                self.initial_cache = []
+                self.dspark_context = None
+                self._bg = None
+                self.model = self.language_model = None
+                self.initial_token_ids = None
+                self.sampler = None
+                self.last_response = None
+                self.bound_observation = None
+                if self.connection.disposition == 'active':
+                    self.connection.retire('retired')

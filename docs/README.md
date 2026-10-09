@@ -13,10 +13,11 @@ Canonical current-state documents:
 
 - [M41 local MTP candidate](milestone-41-local-mtp-release-candidate.md) — explicit bounded opt-in capability, composed/source-clone evidence and OFF regression
 - [M49R MTP architecture reset and roadmap](mtp-architecture-reset.md) — current authority: restart `5e784d9`, oMLX physical topology, retained M54 requirements, conformance/performance gates and M49R–M55R series
-- [M50R candidate baseline assessment](milestone-50r-omlx-candidate-baseline.md) — **PASS, bounded freeze**: exact identity, byte-content prefix oracle, native/Metal boundary diagnostics and bounded reload/residency envelope; unchanged physical-graph requirement; M51R still requires explicit authorization
+- [M50R candidate baseline assessment](milestone-50r-omlx-candidate-baseline.md) — **PASS, bounded freeze**: exact identity, byte-content prefix oracle, native/Metal boundary diagnostics and bounded reload/residency envelope; unchanged physical-graph requirement; no implementation authorization by the freeze
 - [M49 assessment](milestone-49-runtime-promotion-assessment.md) — historical NO promotion at the restart point; proposed first-party redesign superseded
 - [M50–M56 source archive and manifest](archive/mtp-reconstruction/README.md) — superseded failed production architecture line; original results/provenance preserved, not active runtime
 - [M53 proposal primitives](milestone-53-proposal-primitives-continuation.md) — superseded historical implementation PASS; same-forward oracle retained
+- [M51R canonical/lifecycle connection](milestone-51r-canonical-lifecycle-connection.md) — **PASS, bounded greedy candidate**: host authority connection, native topology/bridge parity, byte oracle, fault retirement and matched controls; M52R unstarted, no profile promotion
 - [M54 operational integration](milestone-54-eof-sensitive-operational-continuation.md) — superseded integration implementation; semantic/application requirements remain current under M49R
 - [M55 topology evidence](milestone-55-target-verification-topology.md) and [M56 block evidence](milestone-56-canonical-accepted-prefix-block.md) — historical topology/state/performance receipts, not normal-profile approval or active direction
 - [Local MTP setup/API/operator boundary](mtp-local-release-candidate.md) — supported profile, reproducible source/native setup and conservative application states
