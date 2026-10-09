@@ -83,16 +83,19 @@ The formal restart point is `5e784d9e83a85c497cd192f87184e9b01a1343eb`.
 continued or considered for normal-profile promotion. Historical results and
 correctness assets remain archived; **M54 application/semantic requirements remain
 mandatory**, independently of its discarded execution implementation.
-Active runtime source is restored to the restart state. Standard-OFF remains
-default/control and the existing bounded oMLX candidate remains separately explicit.
+The reset restored runtime source to the restart state; M51R/M52R subsequently
+connected canonical/lifecycle/application authority without rebuilding the physical
+execution graph. Standard-OFF remains default/control; MTP remains separately explicit.
 
 MTP/decode physical topology authority is **oMLX**; prefill remains **DwarfStar
 with qualified MLX numerics**. ds41f owns semantic/application/lifecycle/resource
 authority, not a reconstructed execution topology. Candidate performance is an
 initial conformance gate: unexplained material gaps BLOCK, not future optimization.
-The new series is **M49R–M55R**; next is **M50R candidate baseline freeze**, then
-minimal topology-preserving authority integration. No new MTP implementation,
-profile, packaging or release promotion is performed by this reset.
+The **M49R–M55R** series now closes the supported normal-local MTP release:
+M50R–M53R PASS; [M54R operational sufficiency / M55R release decision](docs/milestone-54r-55r-operational-release.md)
+is **evidence-complete, RELEASE APPROVED, PROMOTION DEFERRED**, with zero release
+blockers and no additional operational campaign. This approves source-clone
+operation only, not portable packaging, default MTP or `ds41f-runtime` promotion.
 
 The historical qualified release scope is a text-only local runtime for the official DeepSeek-V4.1-Flash checkpoint on the Mac Studio M3 Ultra 512 GB class target. The production path is:
 
@@ -187,11 +190,16 @@ These do not run benchmarks or full checkpoint qualification.
 ## Explicit normal-local MTP profile
 
 `standard-off` remains the default qualified production profile. The separate
-`mtp-singleton-v1` candidate is explicitly opt-in and local/singleton only; it does
+`mtp-singleton-v1` release is explicitly opt-in and local/singleton only; it does
 not inherit OFF API parity, persistence, browser or Rust application support.
 See [setup/API/operator instructions](docs/mtp-local-release-candidate.md) and
 [M41 decision and evidence](docs/milestone-41-local-mtp-release-candidate.md), with
 [M53R normal-local dependency/admission closure](docs/milestone-53r-normal-local.md).
+The [M55R decision](docs/milestone-54r-55r-operational-release.md#exact-supported-release-envelope)
+approves the exact M3 Ultra 512 GB / macOS 26.5.2 arm64 / linked-host closure,
+greedy <=8192-token singleton profile and one/two weather-call JSON/SSE Python
+application contract. Source-clone delivery is the formal operational release;
+portable runtime projection is deferred, not a release prerequisite.
 Normal-local setup installs repository-delivered oMLX sources and the exact M52R
 recipe/native wheel in a fresh locked venv. Strict repository-qualified identity
 checks precede the installation seal; no investigation environment, source

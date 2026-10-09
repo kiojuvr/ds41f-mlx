@@ -10,7 +10,13 @@ no extraction. [M43](milestone-43-release-repository-extraction.md) now implemen
 and qualifies this deterministic repository projection; broader feature completeness
 remains prospective.
 
-It does not change the currently qualified runtime scope. M41 established `mtp-singleton-v1` as a qualified explicit bounded local MTP release candidate while `standard-off` remains the default qualified production profile.
+It does not broaden qualified runtime scope. M41 established the explicit bounded
+`mtp-singleton-v1` candidate; [M54R/M55R](milestone-54r-55r-operational-release.md)
+now approve its M53R normal-local source-clone delivery as an operational release,
+**RELEASE APPROVED, PROMOTION DEFERRED**. `standard-off` remains default.
+A source-clone release decision does not require or constitute `ds41f-runtime`
+promotion. M43 projection/independent qualification rules below apply when that
+separate promotion is explicitly requested, not as a prerequisite for M55R.
 
 The purpose of this document is to define how that implementation should become a stable semantic reference and, subsequently, how a separate release repository should be derived and maintained without creating a second independent development line.
 

@@ -23,13 +23,21 @@ unexplained gaps BLOCK, not optimization backlog.
 The new series is M49R reset → M50R candidate topology/state/performance freeze →
 M51R minimal canonical/lifecycle connection → M52R application/EOF/tool/retry
 integration → M53R separately approved normal-local dependency/admission/profile →
-M54R operational/soak/performance qualification → M55R conditional release decision.
+M54R operational evidence sufficiency → M55R scoped release decision.
 See the reset document for evidence gates and structural-change requirements.
 [M50R](milestone-50r-omlx-candidate-baseline.md) passed the bounded freeze;
 explicitly authorized [M51R](milestone-51r-canonical-lifecycle-connection.md) passed
 the minimal canonical/lifecycle connection without rebuilding execution.
-**M52R is not started.** No kernel optimization, normal-profile promotion,
-release packaging or `ds41f-runtime` promotion is authorized by these decisions. The unrelated post-M48 qualified work below remains intact.
+[M52R](milestone-52r-application-integration.md) passed consuming EOF, one/two-call
+application/effect/re-entry and JSON/SSE retry integration. [M53R](milestone-53r-normal-local.md)
+passed fresh normal-local dependency/admission/setup with zero supported-profile
+release blockers. [M54R/M55R](milestone-54r-55r-operational-release.md) now establish
+**M54R PASS, evidence-complete without another operational campaign**, and
+**RELEASE APPROVED, PROMOTION DEFERRED** for explicit `mtp-singleton-v1`
+normal-local source-clone operation. Portable `ds41f-runtime` projection/package
+is not required now; a separately requested promotion remains subject to M43.
+No capability expansion, default-MTP change or optimization is authorized.
+The unrelated post-M48 qualified work below remains intact.
 
 ## Post-M48 production boundary and remaining work (current authority)
 
@@ -184,7 +192,8 @@ milestones may accumulate before the next explicit release/promotion checkpoint.
 require automatic clean-room projection, independent OFF/MTP setup, repeated
 determinism qualification, a promotion receipt, or a `ds41f-runtime` update.
 
-At an explicit release checkpoint, M43's existing deterministic projection,
+The M55R normal-local source-clone release does not require a runtime projection.
+At an explicit `ds41f-runtime` promotion checkpoint, M43's existing deterministic projection,
 fresh independent runtime setup, release-profile acceptance and receipt rules
 remain authoritative. `ds41f-runtime` is qualified release history, never a
 development mirror or a place for direct features/release-only semantic fixes.

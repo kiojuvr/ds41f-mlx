@@ -6,8 +6,10 @@
 production architecture line, not a foundation for further production work.**
 M56 is neither the next production basis nor a normal-local-profile candidate.
 Its historical PASS results remain facts within their recorded scope; they do
-not pass the new architecture gate. No new MTP implementation, optimization,
-profile, packaging, release or `ds41f-runtime` promotion is authorized here.
+not pass the new architecture gate. The reset itself authorized no new implementation or promotion. Subsequent
+M50R–M53R gates passed; [M54R/M55R](milestone-54r-55r-operational-release.md) now
+approve the explicit normal-local source-clone release, with portable
+`ds41f-runtime` promotion deferred. Architecture doctrine below remains unchanged.
 
 The formal architectural restart point is
 **`5e784d9e83a85c497cd192f87184e9b01a1343eb`**, the state assessed by
@@ -24,8 +26,9 @@ This document governs current MTP direction over historical milestone prose.
 [Implementation plan](implementation-plan.md), [runtime strategy](runtime-strategy.md)
 and [final runtime target](final-runtime-target.md) retain the independently
 qualified standard-OFF and application work. Production/default MTP stays OFF.
-The existing M41 `mtp-singleton-v1` candidate stays explicit and bounded; it is
-not new normal-runtime integration evidence.
+The `mtp-singleton-v1` profile stays explicit and bounded. M52R/M53R provide its
+current application and normal-local admission evidence; M55R fixes its release
+envelope without inheriting OFF capabilities.
 
 ## Architecture authority doctrine
 
@@ -151,8 +154,8 @@ cache formats, integration technique or packaging choices.
 | **M51R — minimal canonical/lifecycle connection** | Connect minimum ds41f authority to the preserved oMLX physical topology; prove sole executable state, frontier/history/RNG, cancel/fault, resource retirement and same-forward observations | New token-serialized transaction, rebuilt proposal/verification/attention/rollback topology or deferred parity = BLOCK |
 | **M52R — application integration** | Official semantic horizon and consuming EOF, JSON/SSE, tool/effect, exact retry/re-entry and worker races; retain M54 requirements with affected real socket/native tests | Crossing unauthorized horizon, duplicate effects, parser imitation, lost consumed delivery or unjustified physical change = BLOCK |
 | **M53R — normal-local dependency/admission/profile** | Only after integrated conformance: reproducible dependency identities, operator/capability admission, explicit exclusions and fresh setup in a separately approved normal-local profile | No alias of M56, implicit fallback or inherited OFF Vision/context/persistence capabilities |
-| **M54R — operational/soak/performance qualification** | Matched real workloads, long-turn/resource/cancellation/retirement soak, repeatability and affected R1; evidence-driven envelope | Slow physical topology cannot be moved to optimization backlog; bounded fixtures alone do not qualify operation |
-| **M55R — release decision, conditional** | Only sufficient source/setup/semantic/topology/performance/operational evidence permits an explicit promotion assessment under M43 | Promotion may be NO; no automatic packaging/extraction/`ds41f-runtime` update |
+| **M54R — operational sufficiency** | PASS: compose retained bounded operation/lifetime policy with M50R–M53R physical, lifecycle, fresh setup/application/R1 and matched performance evidence; no concrete supported-scope gap, no additional run | A specific release-blocking operational risk requires only the minimum existing-path check; confidence-only soak is not prerequisite |
+| **M55R — scoped release decision** | RELEASE APPROVED, PROMOTION DEFERRED: normal-local source-clone `mtp-singleton-v1`, exact envelope in the decision | No capability expansion or automatic packaging/extraction/`ds41f-runtime` update; separate requested promotion uses M43 |
 
 At reset the immediate milestone was **M50R**, baseline audit/measurement tooling
 only. The [M50R baseline assessment](milestone-50r-omlx-candidate-baseline.md) now
@@ -164,8 +167,11 @@ The first runtime implementation is **M51R**. The reset/freeze did not authorize
 its commencement; subsequent explicit user authorization did. The
 [M51R assessment](milestone-51r-canonical-lifecycle-connection.md) now records
 **PASS for the bounded minimal canonical/lifecycle connection**, preserving the
-frozen physical graph. **M52R remains unstarted**; no profile or release promotion
-follows from either PASS.
+frozen physical graph. [M52R](milestone-52r-application-integration.md) passed
+application/consuming-EOF integration; [M53R](milestone-53r-normal-local.md) passed
+normal-local setup/admission. [M54R/M55R](milestone-54r-55r-operational-release.md)
+complete operational sufficiency and approve source-clone release without an
+additional campaign. No portable runtime promotion follows automatically.
 
 ## Physical topology conformance and performance gate
 

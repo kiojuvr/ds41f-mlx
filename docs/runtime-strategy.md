@@ -58,7 +58,10 @@ slowdown BLOCKS rather than becoming an optimization backlog. Standard-OFF's
 qualified single-input architecture remains unchanged. The separate candidate now
 has the [M51R minimal authority connection](milestone-51r-canonical-lifecycle-connection.md)
 after the M50R bounded freeze and explicit authorization; its physical graph is
-preserved. M52R remains unstarted. Neither PASS approves normal-profile promotion.
+preserved. M52R application integration and M53R fresh normal-local admission
+subsequently passed. [M54R/M55R](milestone-54r-55r-operational-release.md) now approve
+the exact normal-local source-clone release by operational evidence composition,
+without another campaign; portable runtime promotion remains deferred.
 
 ## Model-lifetime allocator resource policy
 

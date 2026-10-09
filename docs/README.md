@@ -17,10 +17,13 @@ Canonical current-state documents:
 - [M49 assessment](milestone-49-runtime-promotion-assessment.md) — historical NO promotion at the restart point; proposed first-party redesign superseded
 - [M50–M56 source archive and manifest](archive/mtp-reconstruction/README.md) — superseded failed production architecture line; original results/provenance preserved, not active runtime
 - [M53 proposal primitives](milestone-53-proposal-primitives-continuation.md) — superseded historical implementation PASS; same-forward oracle retained
-- [M51R canonical/lifecycle connection](milestone-51r-canonical-lifecycle-connection.md) — **PASS, bounded greedy candidate**: host authority connection, native topology/bridge parity, byte oracle, fault retirement and matched controls; M52R unstarted, no profile promotion
+- [M51R canonical/lifecycle connection](milestone-51r-canonical-lifecycle-connection.md) — **PASS, bounded greedy candidate**: host authority connection, native topology/bridge parity, byte oracle, fault retirement and matched controls; historical stage boundary, followed by M52R/M53R
 - [M54 operational integration](milestone-54-eof-sensitive-operational-continuation.md) — superseded integration implementation; semantic/application requirements remain current under M49R
 - [M55 topology evidence](milestone-55-target-verification-topology.md) and [M56 block evidence](milestone-56-canonical-accepted-prefix-block.md) — historical topology/state/performance receipts, not normal-profile approval or active direction
-- [Local MTP setup/API/operator boundary](mtp-local-release-candidate.md) — supported profile, reproducible source/native setup and conservative application states
+- [M52R application integration](milestone-52r-application-integration.md) — **PASS**: consuming EOF, one/two-call effects and result re-entry, JSON/SSE exact retry/reconnect, fresh full MTP R1
+- [M53R normal-local admission](milestone-53r-normal-local.md) — **PASS**: fresh setup, strict delivered native/dependency/checkpoint identity, operator startup/shutdown and application acceptance
+- [M54R/M55R operational release decision](milestone-54r-55r-operational-release.md) — **M54R PASS, evidence-complete; RELEASE APPROVED, PROMOTION DEFERRED**: zero blockers, no added operational run, exact normal-local source-clone envelope; portable projection not required now
+- [Local MTP setup/API/operator boundary](mtp-local-release-candidate.md) — released source-clone profile, reproducible source/native setup and conservative application states
 
 - [Runtime strategy](runtime-strategy.md) — production architecture and non-selected paths
 - [Implementation plan: post-M48 boundary and remaining work](implementation-plan.md#post-m48-production-boundary-and-remaining-work-current-authority) — authoritative current roadmap: text standard-OFF core complete, not full production implementation; measured bounded 1M text and four-image/8K multimodal cores, deferred R1 and promotion
@@ -44,7 +47,7 @@ Canonical current-state documents:
 - [M25 MTP decision](milestone-25-mtp-decision.md) — pinned upstream lifecycle audit, real-model extraction failure, diagnostic A/B and continued-default-OFF decision
 - [M30 recipe semantic preview](milestone-30-recipe-semantic-preview.md) — pinned parser audit and missing upstream preview API; protocol gate remains blocked and MTP remains OFF
 - [M39 lifetime/admission](milestone-39-lifetime-admission.md) — server-issued internal lifetimes, derivable retirement and finite ownership/diagnostic budgets; no release promotion
-- [M38 client operational soak](milestone-38-client-operational-soak.md) — 76-request living-client workload passes after fail-closed hardening; lifetime server retirement retention remains BLOCKED, no promotion
+- [M38 client operational soak](milestone-38-client-operational-soak.md) — 76-request living-client workload passes after fail-closed hardening; historical lifetime retention BLOCK resolved by M39; no promotion at M38
 - [M37 local-client integration](milestone-37-local-client-integration.md) — internal reusable sequence-fenced recovery/tool client, explicit DELETE/fresh and expired identities; no release promotion
 - [M36R recovery admission](milestone-36r-recovery-admission.md) — bounded official-recipe reconstruction certificates and local request/tool fences; nonrepresentable outcomes require DELETE, no release promotion
 - [M36 client recovery investigation](milestone-36-client-recovery-qualification.md) — BLOCKED on unfinished canonical protocol representability; fail-closed tool settlement, partial-UTF-8 and finite socket-pressure evidence

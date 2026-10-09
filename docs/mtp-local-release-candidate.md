@@ -1,8 +1,11 @@
-# Explicit bounded normal-local MTP profile (M53R)
+# Released explicit bounded normal-local MTP profile (M55R)
 
 This is a separate, explicitly selected process capability, **not the default**.
 `mtp-singleton-v1` uses the qualified M52R runtime/application semantics unchanged.
 The M41 qualification is inherited through the repository-owned R1 contract.
+[M54R/M55R](milestone-54r-55r-operational-release.md) establish operational sufficiency
+and **RELEASE APPROVED, PROMOTION DEFERRED** for this exact source-clone profile;
+no additional campaign or portable package is required for its release.
 In a release projection, `release/promotion.json` identifies the source, reference
 and bound release qualification; see the root README for current delivery. `standard-off` remains the qualified default production path.
 No request, environment acceleration flag, error or fallback selects MTP.
@@ -128,7 +131,8 @@ point OFF at candidate dependencies or dynamically switch a loaded backend.
 
 Public authority: `ds41f_mlx.mtp_profile` (included in executable identity).
 
-- One process/backend/live session/response lease, guarded MTP + DSpark depth 5;
+- One process/backend/live session/response lease, guarded MTP + DSpark requested
+  depth metadata 5; actual native maximum **3 drafts / width 4**, frozen by M50R.
   DENSE_P0_P7/P5 and stock MLX source-JIT kernels. No parallel OFF backend.
 - Encoded prompt + requested output **<=8192**, output **1..768**, no truncation,
   hidden replay/repack, persistence or context rollover. Every retained turn must
