@@ -50,7 +50,10 @@ class RuntimeClient:
             raise RuntimeHTTPError(503, str(exc)) from exc
         return json.loads(raw) if raw else {}
 
-    def internal_fenced_request(self, session_id: str, body: bytes, sequence: int):
+    def internal_outcome_request(self, session_id: str, body: bytes, sequence: int):
+        return self.internal_fenced_request(session_id, body, sequence, outcome_projection=True)
+
+    def internal_fenced_request(self, session_id: str, body: bytes, sequence: int, *, outcome_projection=False):
         """Exact-byte fenced transport; reused by the explicit local MTP helper.
 
         Not used by the public browser loop.
@@ -67,7 +70,8 @@ class RuntimeClient:
         try:
             conn.request('POST', f'/v1/sessions/{quote(session_id, safe="")}/chat/completions',
                          body, {'Content-Type': 'application/json',
-                                'X-DS41F-Request-Sequence': str(sequence)})
+                                'X-DS41F-Request-Sequence': str(sequence),
+                                'X-DS41F-Outcome-Projection': 'json' if outcome_projection else 'delivery'})
             response = conn.getresponse()
             if response.status != 200:
                 raise RuntimeHTTPError(response.status, response.read().decode('utf-8'))

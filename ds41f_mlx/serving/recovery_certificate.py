@@ -54,14 +54,32 @@ class LocalToolLedger:
         certificate = outcome['certificate']
         if not certificate['representable'] or not certificate['executable_tools']:
             raise ValueError('no executable canonical tool certificate')
+        if outcome.get('session_id', session_id) != session_id:
+            raise ValueError('foreign certified tool lifetime')
         calls = outcome['response']['choices'][0]['message']['tool_calls']
+        if len({c['id'] for c in calls}) != len(calls):
+            raise ValueError('duplicate tool-call identity')
+        authority = json.dumps(outcome, sort_keys=True, separators=(',', ':'))
+        if any(key[:2] == (session_id, sequence) and entry['authority'] != authority
+               for key, entry in self.entries.items()):
+            raise ValueError('conflicting duplicate certified outcome')
+        missing = sum((session_id, sequence, i, c['id']) not in self.entries for i, c in enumerate(calls))
+        if len(self.entries) + missing > 128:
+            raise ValueError('bounded effect ownership full; no eviction/re-execution')
         results = []
         for index, call in enumerate(calls):
             key = (session_id, sequence, index, call['id'])
             if key not in self.entries:
-                self.entries[key] = None  # a failed/ambiguous effect is never retried
-                self.entries[key] = execute(call)
-            if self.entries[key] is None:
+                entry = self.entries[key] = dict(authority=authority, result=None)
+                # Reserve before effect: failure remains uncertain, never rerun.
+                content = execute(deepcopy(call))
+                if not isinstance(content, str) or len(content.encode()) > 65536:
+                    raise ValueError('bounded ordinary tool result required')
+                entry['result'] = content
+            entry = self.entries[key]
+            if entry['authority'] != authority:
+                raise ValueError('conflicting duplicate certified outcome')
+            if entry['result'] is None:
                 raise RuntimeError('tool effect ambiguous; local automatic retry forbidden')
-            results.append(dict(role='tool', tool_call_id=call['id'], content=self.entries[key]))
+            results.append(dict(role='tool', tool_call_id=call['id'], content=entry['result']))
         return results

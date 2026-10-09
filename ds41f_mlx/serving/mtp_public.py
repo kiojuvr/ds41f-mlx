@@ -31,8 +31,7 @@ class LocalMTPBackend(InternalMTPQualificationBackend):
         from deepseek_recipe import ConversionOptions
         self.conversion_options = ConversionOptions(default_thinking_mode=False)
 
-    def _settle(self, rec, trace):
-        super()._settle(rec, trace)
+    def _finalize_application_certificate(self, rec, trace):
         from ds41f_mlx.mtp_profile import validate_completed_calls
         try:
             choices = trace['response'].get('choices', [])
@@ -49,7 +48,7 @@ class LocalMTPBackend(InternalMTPQualificationBackend):
                                    profile_supported=False)
             trace['certificate'] = rec.certificate
 
-    async def qualification_response(self, session_id, request, *, tokenizer, body=None, sequence=None):
+    async def qualification_response(self, session_id, request, *, tokenizer, body=None, sequence=None, outcome_projection=False):
         if sequence is None:
             raise ValueError('mandatory request sequence missing')
         rec = self.get_stateful_session(session_id)
@@ -78,26 +77,20 @@ class LocalMTPBackend(InternalMTPQualificationBackend):
                     raise ProfileConflict('certified_history_changed')
         try:
             response = await super().qualification_response(session_id, request,
-                tokenizer=tokenizer, body=body, sequence=sequence)
+                tokenizer=tokenizer, body=body, sequence=sequence, outcome_projection=outcome_projection)
         except ValueError as exc:
             identity_error(exc)
         if isinstance(response, JSONResponse):
             value = json.loads(response.body)
             if 'outcome_state' in value:
                 rec = self.get_stateful_session(session_id)
-                value['certificate'] = certificate_projection(rec.certificate,
+                value['certificate'] = certificate_projection(value['certificate'],
                     rec.reconstruction_body, value.get('response'))
                 value['profile'] = PROFILE
                 value['body_sha256'] = rec.fence['body_sha256']
-                t = rec.last_turn or {}
-                value['metrics'] = {k:t.get(k) for k in ('generated','decode_s','prefill_handoff_s',
-                    'load_s','cleanup_s','elapsed_s','prompt_replay','full_cache_repack')}
-                value['metrics']['aligned_idle'] = bool(t.get('target_offsets')) and set(
-                    t.get('target_offsets', []) + t.get('dspark_offsets', [])) == {t.get('canonical_frontier')}
-                stats = t.get('mtp_stats', {})
-                value['metrics']['considered_drafts'] = sum(stats.get('depth_drafted', []))
-                value['metrics']['accepted_drafts'] = sum(stats.get('depth_accepted', []))
-                value['metrics']['settlement'] = t.get('quiescence', {}).get('counters')
+                # Worker-certified metrics are immutable too: socket elapsed
+                # time must not make two observations of one outcome conflict.
+                value['metrics'] = value.get('metrics', {})
                 return JSONResponse(value)
         return response
 

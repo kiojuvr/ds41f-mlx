@@ -194,9 +194,66 @@ class LeaseTests(unittest.TestCase):
                 self.fail('cancelled owner must not yield another chunk')
             self.assertEqual(len(calls), 1)
             self.assertEqual(rec.canonical, [1, 2, 3])
+            self.assertEqual(rec.pending_delivery, (Event().to_json(),))
             self.assertFalse(rec.busy)
             self.assertFalse(rec.poisoned)
             self.assertFalse(b._lock.locked())
+            b.close()
+        self.run_async(test)
+
+    def test_terminal_worker_completion_lost_to_cancel_keeps_exact_outcome(self):
+        import threading
+        async def test():
+            b = FixtureBackend()
+            rec = await b.create_stateful_session()
+            entered, release = asyncio.Event(), threading.Event()
+            loop = asyncio.get_running_loop()
+            calls = []
+            def terminal(rec, trace):
+                calls.append('next')
+                rec.guard.events.append(Event())
+                rec.guard.finished = True
+                loop.call_soon_threadsafe(entered.set)
+                assert release.wait(5)
+                return 1
+            original_settle = b._settle
+            def settle(rec, trace):
+                calls.append('settle')
+                original_settle(rec, trace)
+                rec.certificate = {'representable': True}
+            b._next, b._settle = terminal, settle
+            async def worker(fn, *args):
+                if fn == b._advance_application:
+                    return await InternalMTPQualificationBackend._call(b, fn, *args)
+                return fn(*args)
+            b._call = worker
+            body = b'{"messages": []}'
+            response = await b.qualification_response(rec.session_id, request(),
+                tokenizer=None, body=body, sequence=1)
+            task = asyncio.create_task(anext(response.body_iterator))
+            try:
+                await asyncio.wait_for(entered.wait(), 5)
+                task.cancel()
+            finally:
+                release.set()
+            with self.assertRaises(asyncio.CancelledError):
+                await task
+            self.assertEqual(calls, ['next', 'settle'])
+            self.assertEqual(rec.pending_delivery, (Event().to_json(),))
+            self.assertTrue(rec.last_turn['application_terminal'])
+            self.assertTrue(rec.last_turn['cancelled'])
+            self.assertFalse(rec.poisoned)
+            self.assertFalse(rec.busy)
+            retry = await b.qualification_response(rec.session_id, request(),
+                tokenizer=None, body=body, sequence=1, outcome_projection=True)
+            self.assertEqual(json.loads(retry.body)['response'], rec.last_turn['response'])
+            from ds41f_mlx.serving.server import sse_frame
+            for _ in range(2):
+                replay = await b.qualification_response(rec.session_id, request(),
+                    tokenizer=None, body=body, sequence=1)
+                frames = [frame async for frame in replay.body_iterator]
+                self.assertEqual(frames, [sse_frame(None, Event().to_json()), sse_frame(None, '[DONE]')])
+            self.assertEqual(calls, ['next', 'settle'])
             b.close()
         self.run_async(test)
 
@@ -226,7 +283,7 @@ class LeaseTests(unittest.TestCase):
             def close(self): pass
         b = FixtureBackend()
         owner = Owner()
-        rec = SimpleNamespace(owner=owner, guard=SimpleNamespace(events=events, matches=[]), processor=processor)
+        rec = SimpleNamespace(owner=owner, guard=SimpleNamespace(events=events, matches=[]), processor=processor, fence=None)
         trace = {'response_id': 'x'}
         InternalMTPQualificationBackend._settle(b, rec, trace)
         self.assertEqual(owner.calls, 1)

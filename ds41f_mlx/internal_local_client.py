@@ -170,12 +170,14 @@ class InternalLocalClient:
         self._outcome = None
         return self._send()
 
-    def _send(self):
+    def _send(self, *, outcome_projection=False):
         self.state = 'in_flight'
         identity = self._pending
         t0 = time.perf_counter()
         try:
-            conn, resp = self.runtime.internal_fenced_request(identity.session_id, identity.body, identity.sequence)
+            send = (getattr(self.runtime, 'internal_outcome_request', self.runtime.internal_fenced_request)
+                    if outcome_projection else self.runtime.internal_fenced_request)
+            conn, resp = send(identity.session_id, identity.body, identity.sequence)
             if resp.getheader('Content-Type', '').startswith('text/event-stream'):
                 stream = OwnedStream(self, conn, resp)
                 # Client does not retain the stream: dropping the handle closes it.
@@ -253,7 +255,7 @@ class InternalLocalClient:
                 return self._send()
             if state not in ('recoverable', 'unrecoverable', 'poisoned') or rec['next_sequence'] != seq+1 or slot is None or slot.get('state') != state:
                 self._stop('settled sequence disagreement')
-            return self._send()
+            return self._send(outcome_projection=True)
         finally:
             self.timings.append(dict(action='reconcile_lookup_and_observe', seconds=time.perf_counter()-t0))
 
@@ -272,6 +274,9 @@ class InternalLocalClient:
 
     def _accept(self, out):
         seq = self._pending.sequence
+        if ('session_id' in out and out['session_id'] != self._pending.session_id or
+                'body_sha256' in out and out['body_sha256'] != hashlib.sha256(self._pending.body).hexdigest()):
+            self._stop('foreign certified application outcome')
         if out.get('sequence') != seq or out.get('outcome_state') not in ('recoverable', 'unrecoverable', 'poisoned'):
             self._stop('malformed settled outcome identity')
         if self._outcome is not None:
@@ -349,6 +354,14 @@ class InternalLocalClient:
         missing = sum((identity.session_id, identity.sequence, i, c['id']) not in self._ledger for i,c in enumerate(calls))
         if len(self._ledger) + missing > self.ledger_limit:
             self._stop('bounded tool ledger full; no eviction/re-execution')
+        authority = json.dumps(out, sort_keys=True, separators=(',', ':'))
+        if any(key[:2] == (identity.session_id, identity.sequence) and entry.get('authority') != authority
+               for key, entry in self._ledger.items()):
+            self._stop('conflicting duplicate certified effect authority')
+        for index, call in enumerate(calls):
+            entry = self._ledger.get((identity.session_id, identity.sequence, index, call['id']))
+            if entry is not None and (entry['call'] != call or entry.get('authority') != authority):
+                self._stop('conflicting duplicate certified effect authority')
         results = []
         for index, call in enumerate(calls):
             key = (identity.session_id, identity.sequence, index, call['id'])
@@ -358,7 +371,7 @@ class InternalLocalClient:
             if entry is None:
                 if len(self._ledger) >= self.ledger_limit:
                     self._stop('bounded tool ledger full; no eviction/re-execution')
-                entry = self._ledger[key] = dict(call=deepcopy(call), status='reserved', result=None)
+                entry = self._ledger[key] = dict(call=deepcopy(call), authority=authority, status='reserved', result=None)
                 try:
                     content = execute(deepcopy(call))
                     if not isinstance(content, str) or len(content.encode()) > 65536:

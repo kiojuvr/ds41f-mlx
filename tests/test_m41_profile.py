@@ -265,7 +265,7 @@ def test_unsupported_completed_output_is_negative_profile_not_repair(monkeypatch
                             function=dict(name='unqualified',arguments='{"city":"Paris"}'))])):
             rec=SimpleNamespace(certificate={'representable':True,'executable_tools':True},poisoned=False,unrecoverable=False)
             trace={'response':{'choices':[{'message':message}]}}
-            b._settle(rec,trace)
+            b._finalize_application_certificate(rec,trace)
             assert rec.unrecoverable and rec.poisoned and rec.certificate['representable'] is False
             assert rec.certificate['profile_supported'] is False
     finally:b.close()

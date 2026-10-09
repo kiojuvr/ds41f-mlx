@@ -1,5 +1,6 @@
 """Bounded in-process singleton request identity; no generation authority."""
 import hashlib
+import json
 from copy import deepcopy
 
 
@@ -21,6 +22,13 @@ def observe_retry(rec, sequence, body):
         if slot['state'] == 'active':
             raise RuntimeError('active request; observe session outcome')
         if slot['state'] != 'not_admitted':
+            certified = (rec.last_turn or {}).get('certified_outcome')
+            if certified:
+                out = json.loads(certified)
+                if (out['sequence'] != sequence or out['body_sha256'] != digest(body) or
+                        out['session_id'] != rec.session_id or out['outcome_state'] != slot['state']):
+                    raise RuntimeError('conflicting certified application outcome')
+                return out
             return dict(sequence=sequence, outcome_state=slot['state'],
                         certificate=deepcopy(rec.certificate),
                         response=deepcopy(rec.last_turn.get('response')) if rec.last_turn else None)
@@ -45,6 +53,16 @@ def finish(rec, unstarted=False):
         rec.fence['state'] = 'not_admitted'
         return
     rec.consumed_sequence = rec.fence['sequence']
+    certified = (rec.last_turn or {}).get('certified_outcome')
+    if certified:
+        out = json.loads(certified)
+        if (out['sequence'] != rec.fence['sequence'] or
+                out['body_sha256'] != rec.fence['body_sha256'] or out['session_id'] != rec.session_id):
+            rec.poisoned = True
+            rec.fence['state'] = 'poisoned'
+            raise RuntimeError('foreign certified outcome')
+        rec.fence['state'] = out['outcome_state']
+        return
     rec.fence['state'] = ('unrecoverable' if rec.unrecoverable else 'poisoned' if rec.poisoned
                           else 'recoverable' if rec.certificate and rec.certificate['representable']
                           else 'poisoned')

@@ -22,20 +22,22 @@ def run(name, body, source=None, ids=None, finish=None):
     body = dict(body)
     request = prepare_request('chat_completions', json.dumps(body).encode(), tokenizer=t, recipe_path=RECIPE)
     p = d.StreamProcessor(d.ChatCompletionRequest.chunk_generator(request.conversation_request, name, body['model']), request.conversation_request.parsing_options, t)
-    g = RecipeSemanticGuard(p, control_token_ids=request.stop_token_ids)
-    g.events.extend(p.push(d.InferenceChunk.ready(prompt_usage=d.PromptUsage(prompt_tokens=len(request.token_ids), prompt_cache_hit_tokens=0))))
-    tokens = t.encode(source) if ids is None else ids
-    for token in tokens:
+    response = d.ChatCompletionResponse(name, body['model'], 0, 0, 0)
+    g = RecipeSemanticGuard(p, control_token_ids=request.stop_token_ids, response=response, frontier=len(request.token_ids))
+    g._push(d.InferenceChunk.ready(prompt_usage=d.PromptUsage(prompt_tokens=len(request.token_ids), prompt_cache_hit_tokens=0)))
+    candidates = t.encode(source) if ids is None else ids
+    tokens = []
+    for token in candidates:
+        if g.finished: break
         pred = g.preview([token])
         g.observe_canonical_emit(token, None if pred is None else pred.identity)
+        tokens.append(token)
     snapshot = list(p.semantic_snapshot())
     if finish and not g.finished: g.finish_backend(finish)
-    response = d.ChatCompletionResponse(name, body['model'], 0, 0, 0)
-    for e in g.events: response.append(e)
     response = json.loads(response.to_json())
     canonical = request.token_ids + list(tokens)
     cert = reconstruction_certificate(body, response, canonical, tokenizer=t, recipe_path=RECIPE,
-        completed_tool_block=any(m['identity'][0] == 'DSML_TOOL_CALL_BLOCK_END' for m in g.matches))
+        completed_tool_block=g.tool_complete)
     rows.append(dict(name=name, fixture='controlled native official recipe; no checkpoint model',
                      source=source, tokens=tokens, finish=finish, snapshot= snapshot,
                      response=response, canonical=canonical, certificate=cert))

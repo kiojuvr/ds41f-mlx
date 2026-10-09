@@ -40,6 +40,9 @@ class QualificationSession:
     consumed_sequence: int = 0
     reconstruction_body: Any = None
     reconstruction_tokenizer: Any = None
+    # Sole in-process delivery owner; socket progress is not canonical ACK.
+    # Serialized before a worker completion can be lost to cancellation.
+    pending_delivery: tuple[str, ...] = ()
 
     def to_json(self):
         return dict(id=self.session_id, state='closed' if self.closed else
@@ -47,7 +50,7 @@ class QualificationSession:
                     'idle' if self.cache is not None else 'empty',
                     request_count=self.request_count, last_turn=self.last_turn,
                     canonical_frontier=len(self.canonical),
-                    outcome_state='active' if self.busy else 'not_admitted' if self.fence and self.fence['state'] == 'not_admitted' else 'poisoned' if self.poisoned and not self.unrecoverable else
+                    outcome_state=self.fence['state'] if self.fence and (self.last_turn or {}).get('certified_outcome') and self.fence['state'] not in ('active', 'not_admitted') else 'active' if self.busy else 'not_admitted' if self.fence and self.fence['state'] == 'not_admitted' else 'poisoned' if self.poisoned and not self.unrecoverable else
                     'unrecoverable' if self.unrecoverable else 'recoverable' if self.certificate and self.certificate['representable'] else 'not_admitted',
                     certificate=self.certificate, request_fence=self.fence,
                     next_sequence=self.consumed_sequence + 1)
@@ -151,6 +154,7 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
                 rec.cache = rec.rings = None
                 rec.last_turn = rec.certificate = rec.fence = None
                 rec.reconstruction_body = rec.reconstruction_tokenizer = None
+                rec.pending_delivery = ()
                 self.session_traces.clear()
                 self.traces.clear()
                 self.progress = self.last_trace = None
@@ -235,8 +239,9 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
             generator = d.ChatCompletionRequest.chunk_generator(request.conversation_request, trace['response_id'], request.model or self.model_id)
             generator = generator.with_include_usage(request.include_usage)
             rec.processor = d.StreamProcessor(generator, request.conversation_request.parsing_options, tokenizer)
-            rec.guard = RecipeSemanticGuard(rec.processor, control_token_ids=request.stop_token_ids)
-            rec.guard.events.extend(rec.processor.push(d.InferenceChunk.ready(prompt_usage=d.PromptUsage(prompt_tokens=len(ids), prompt_cache_hit_tokens=0))))
+            rec.guard = RecipeSemanticGuard(rec.processor, control_token_ids=request.stop_token_ids,
+                frontier=len(ids), response=d.ChatCompletionResponse(trace['response_id'], self.model_id, int(time()), 0, 0))
+            rec.guard._push(d.InferenceChunk.ready(prompt_usage=d.PromptUsage(prompt_tokens=len(ids), prompt_cache_hit_tokens=0)))
             cfg = OMLXDecodeConfig(omlx_path=self.omlx_path, checkpoint_path=self.checkpoint,
                                   preserve_mtp=True, speculation_enabled=True, stop_token_ids=request.stop_token_ids)
             class Factory:
@@ -263,6 +268,35 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
                 trace['first_canonical_s'] = perf_counter()-trace['t0']
             trace['canonical_emitted'] = len(rec.owner.history.canonical_generated_tokens)
             return token
+
+    def _advance_application(self, rec, trace):
+        """Publish consumed protocol input before awaited worker completion.
+
+        No parser replay or executable state is introduced. Native phases remain
+        owned by _next/_settle; delivery owns only immutable serialized events.
+        A known terminal settles in this worker turn, before transport cancellation
+        can win the event-loop checkpoint. Any serialization/settlement failure
+        remains fail closed through the existing retirement path.
+        """
+        token = self._next(rec, trace)
+        # The existing last_turn owner accumulates immutable call segments while
+        # its request fence remains active. No task outcome/effect reservation is
+        # published until full official response settlement.
+        certificates = getattr(rec.guard, 'call_certificates', ())
+        trace['call_certificates'] = tuple(dict(
+            processor_identity=id(c.processor), lifetime=c.lifetime,
+            revision=c.revision, consumed_frontier=c.frontier,
+            choice=c.choice, index=c.index, call=json.loads(c.call),
+            candidate_ids=c.candidate_ids, response_snapshot=c.response_snapshot,
+            consuming_outcome=c.consuming_outcome) for c in certificates)
+        rec.last_turn = trace
+        new_events = rec.guard.events[len(rec.pending_delivery):]
+        encoded = tuple(event.to_json() for event in new_events)
+        rec.pending_delivery += encoded
+        if rec.guard.finished or token is None:
+            self._settle(rec, trace)
+            trace['application_terminal'] = True
+        return token
 
     def _settle(self, rec, trace):
         import deepseek_recipe as d
@@ -299,9 +333,16 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
             assert all(c.offset == len(rec.canonical) for c in rec.rings)
             # Native response.append transfers chunk ownership. Serialize the
             # evidence while recipe chunks still own their native payloads.
-            protocol_events = [json.loads(e.to_json()) for e in rec.guard.events]
-            response = d.ChatCompletionResponse(trace['response_id'], self.model_id, int(time()), 0, 0)
-            for event in rec.guard.events: response.append(event)
+            # Settlement can drain committed queued input not yet observed by
+            # the async iterator. Preserve that delivery too, before append
+            # transfers native chunk ownership and invalidates their serializers.
+            encoded_events = tuple(e.to_json() for e in rec.guard.events)
+            rec.pending_delivery = encoded_events
+            protocol_events = [json.loads(e) for e in encoded_events]
+            response = getattr(rec.guard, 'response', None)
+            if response is None:
+                response = d.ChatCompletionResponse(trace['response_id'], self.model_id, int(time()), 0, 0)
+                for event in rec.guard.events: response.append(event)
             trace.update(quiescence=quiet.to_json(), canonical_frontier=len(rec.canonical),
                          target_offsets=[c.size() for c in rec.cache], dspark_offsets=[c.offset for c in rec.rings],
                          terminal_matches=list(rec.guard.matches), response=json.loads(response.to_json()),
@@ -311,8 +352,7 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
             self._qualify_settled_protocol(rec, trace)
             if getattr(rec, 'reconstruction_body', None) is not None:
                 from .recovery_certificate import reconstruction_certificate
-                completed = rec.guard.finished and any(m['identity'][0] == 'DSML_TOOL_CALL_BLOCK_END'
-                                                       for m in trace['terminal_matches'])
+                completed = rec.guard.finished and rec.guard.tool_complete
                 rec.certificate = reconstruction_certificate(rec.reconstruction_body, trace['response'], rec.canonical,
                     tokenizer=rec.reconstruction_tokenizer, recipe_path=self.recipe_path, completed_tool_block=completed,
                     options=getattr(self, 'conversion_options', None))
@@ -321,8 +361,39 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
                     rec.unrecoverable = True
                     rec.poisoned = True  # legacy containment/retirement label, not internal-failure outcome
                     trace['recovery_error'] = 'no official-recipe reconstruction certificate; DELETE required'
+            self._finalize_application_certificate(rec, trace)
             rec.processor.close(); rec.processor = None
             trace['cleanup_s'] = perf_counter()-t0
+            # Single immutable application authority, published on the consuming
+            # worker. Transport cleanup cannot change this known disposition.
+            if rec.fence is not None:
+                state = ('unrecoverable' if rec.unrecoverable else 'poisoned' if rec.poisoned
+                         else 'recoverable' if rec.certificate and rec.certificate['representable'] else 'poisoned')
+                trace['certified_outcome'] = json.dumps(dict(session_id=rec.session_id,
+                    sequence=rec.fence['sequence'], body_sha256=rec.fence['body_sha256'],
+                    outcome_state=state, certificate=rec.certificate, response=trace['response'],
+                    canonical_events=list(rec.pending_delivery),
+                    call_certificates=trace.get('call_certificates', ()),
+                    metrics=self._application_metrics(trace)))
+                rec.last_turn = trace
+                rec.consumed_sequence = rec.fence['sequence']
+                rec.fence['state'] = state
+
+    @staticmethod
+    def _application_metrics(trace):
+        metrics = {k:trace.get(k) for k in ('generated', 'decode_s', 'prefill_handoff_s',
+            'load_s', 'cleanup_s', 'prompt_replay', 'full_cache_repack')}
+        metrics['elapsed_s'] = perf_counter() - trace['t0']
+        metrics['aligned_idle'] = bool(trace.get('target_offsets')) and set(
+            trace.get('target_offsets', []) + trace.get('dspark_offsets', [])) == {trace.get('canonical_frontier')}
+        stats = trace.get('mtp_stats', {})
+        metrics['considered_drafts'] = sum(stats.get('depth_drafted', []))
+        metrics['accepted_drafts'] = sum(stats.get('depth_accepted', []))
+        metrics['settlement'] = trace.get('quiescence', {}).get('counters')
+        return metrics
+
+    def _finalize_application_certificate(self, rec, trace):
+        """Profile constraints run before the one application certification."""
 
     @staticmethod
     def _qualify_settled_protocol(rec, trace):
@@ -333,14 +404,13 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
         # recipe terminal/finish owner can establish a complete call.
         choices = trace['response'].get('choices', [])
         has_calls = any(c.get('message', {}).get('tool_calls') for c in choices)
-        completed_block = any(m['identity'][0] == 'DSML_TOOL_CALL_BLOCK_END'
-                              for m in trace.get('terminal_matches', []))
+        completed_block = getattr(rec.guard, 'tool_complete', False)
         if has_calls and not (rec.guard.finished and completed_block and
                               all(c.get('finish_reason') == 'tool_calls' for c in choices)):
             rec.poisoned = True
             trace['recovery_error'] = 'unfinished canonical tool protocol; ordinary continuation not qualified'
 
-    async def qualification_response(self, session_id, request, *, tokenizer, body=None, sequence=None):
+    async def qualification_response(self, session_id, request, *, tokenizer, body=None, sequence=None, outcome_projection=False):
         """Acquire before HTTP 200. Retain lease until generator cleanup, not send."""
         from fastapi.responses import JSONResponse
         from .server import InferenceStreamingResponse, sse_frame
@@ -361,6 +431,17 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
         from .request_fence import observe_retry, reserve, finish
         retry = observe_retry(rec, sequence, body)
         if retry is not None:
+            if request.stream and not outcome_projection and retry['outcome_state'] == 'recoverable':
+                # Exact whole-delivery reprojection, not a cursor/ACK protocol.
+                # Capture before any following request can replace the slot.
+                retained = tuple(retry.get('canonical_events', rec.pending_delivery))
+                if retained != rec.pending_delivery:
+                    raise RuntimeError('conflicting retained canonical delivery')
+                async def replay():
+                    for event in retained:
+                        yield sse_frame(None, event)
+                    yield sse_frame(None, '[DONE]')
+                return InferenceStreamingResponse(replay(), media_type='text/event-stream')
             return JSONResponse(content=retry)
         if rec.consumed_sequence >= self.MAX_SEQUENCE or rec.request_count >= self.MAX_SEQUENCE:
             raise RuntimeError('session request lifetime exhausted; DELETE required')
@@ -370,9 +451,11 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
             raise RuntimeError('singleton already has an active request')
         if request.token_ids[:len(rec.canonical)] != rec.canonical or len(request.token_ids) <= len(rec.canonical):
             raise ValueError('request must exactly extend retained canonical prefix')
+        self._validate_result_reentry(rec, body, sequence)
         await self._lock.acquire()
         rec.busy = True
         reserve(rec, sequence, body)
+        rec.pending_delivery = ()
         rec.reconstruction_body = json.loads(body) if body is not None else None
         rec.reconstruction_tokenizer = tokenizer
         trace = dict(session_id=session_id, response_id=uuid4().hex, t0=perf_counter(),
@@ -397,21 +480,18 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
                 await checkpoint()
                 while True:
                     with CancelScope(shield=True):
-                        token = await self._call(self._next, rec, trace)
+                        token = await self._call(self._advance_application, rec, trace)
+                    settled = bool(trace.get('application_terminal'))
                     await checkpoint()
                     t0 = perf_counter()
-                    events = rec.guard.events[cursor:]
-                    cursor = len(rec.guard.events)
-                    frames = [sse_frame(None, event.to_json()) for event in events]
+                    events = rec.pending_delivery[cursor:]
+                    cursor = len(rec.pending_delivery)
+                    frames = [sse_frame(None, event) for event in events]
                     trace['formatting_s'] += perf_counter()-t0
                     trace['protocol_chunks_produced'] += len(frames)
-                    terminal = rec.guard.finished or token is None
-                    # Settle before exposing a semantic terminal. Ordinary chunks
-                    # already have canonical parser/model ownership, not idle caches.
-                    if terminal:
-                        with CancelScope(shield=True):
-                            await self._call(self._settle, rec, trace)
-                        settled = True
+                    terminal = settled
+                    # The worker has already settled terminal ownership. Socket
+                    # publication is only a projection of its retained outcome.
                     for frame in frames:
                         ordinal = trace['canonical_emitted']
                         row = dict(canonical_ordinal=ordinal, produced_s=perf_counter()-trace['t0'])
@@ -433,14 +513,19 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
                 rec.unrecoverable = False
                 # Protocol/serialization failures are fail closed too. They
                 # cannot trigger a second runtime settlement or implicit resume.
-                rec.poisoned = True
+                if not trace.get('certified_outcome'):
+                    rec.poisoned = True
                 raise
             finally:
                 import sys
                 failure = sys.exc_info()[1]
                 if failure is not None:
                     trace['exit_exception'] = repr(failure)
-                trace['cancelled'] = not settled or trace['iterator_yields'] < trace['protocol_chunks_produced']
+                # asyncio cancellation may discard _call's return even though
+                # its worker completed. Consult worker-published disposition,
+                # never a local variable dependent on delivery of that return.
+                settled = settled or bool(trace.get('application_terminal'))
+                trace['cancelled'] = failure is not None or not settled or trace['iterator_yields'] < trace['protocol_chunks_produced']
                 with CancelScope(shield=True):
                     try:
                         if not settled and rec.owner is not None:
@@ -496,6 +581,42 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
         async for _ in iterator:
             pass
         return JSONResponse(content=trace['response'])
+
+    @staticmethod
+    def _validate_result_reentry(rec, body, sequence):
+        if body is None:
+            return
+        incoming = json.loads(body).get('messages', [])
+        previous = rec.reconstruction_body
+        if not previous:
+            if any(m.get('role') == 'tool' for m in incoming):
+                raise ValueError('foreign tool result without certified request')
+            return
+        trace = rec.last_turn or {}
+        certified = trace.get('certified_outcome')
+        if not certified:
+            if any(m.get('role') == 'tool' for m in incoming[len(previous['messages']):]):
+                raise ValueError('tool result without certified outcome')
+            return
+        out = json.loads(certified)
+        if out['session_id'] != rec.session_id or sequence != out['sequence'] + 1:
+            raise ValueError('result request lifetime/sequence mismatch')
+        message = out['response']['choices'][0]['message']
+        prefix = previous['messages'] + [message]
+        if incoming[:len(prefix)] != prefix:
+            raise ValueError('conversation differs from certified application outcome')
+        additions = incoming[len(prefix):]
+        calls = message.get('tool_calls') or []
+        results = additions[:len(calls)]
+        if calls:
+            if (out['outcome_state'] != 'recoverable' or
+                    not out['certificate']['executable_tools'] or len(results) != len(calls) or
+                    any(r.get('role') != 'tool' or r.get('tool_call_id') != c['id'] or
+                        not isinstance(r.get('content'), str) or len(r['content'].encode()) > 65536
+                        for r, c in zip(results, calls))):
+                raise ValueError('result is not bound to certified completed tool call')
+        if any(m.get('role') == 'tool' for m in additions[len(calls):]):
+            raise ValueError('duplicate/foreign tool result')
 
     def close(self):
         # Experiment runner awaits DELETE before synchronous executor shutdown.

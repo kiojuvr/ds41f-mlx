@@ -77,10 +77,63 @@ def test_dsml_close_is_not_python_stream_finished(recipe):
 def test_eof_tool_probe_does_not_prove_closed_dsml(recipe):
     d, tokenizer, _ = recipe
     text = '<｜DSML｜ calls>\n' + tool()
-    result = parse_tokens(d, tokenizer, tokenizer.encode(text))
+    ids = tokenizer.encode(text)
+    p, _ = make_processor(d, tokenizer)
+    try:
+        before = p.semantic_snapshot()
+        preview = p.preview_tokens(ids)
+        assert preview.mapping_exact
+        assert preview.terminal_kind is None
+        assert p.semantic_snapshot() == before
+    finally:
+        p.close()
+    # The current raw preview permits continuation although the official
+    # consuming Stop/EOF projection below already completes this tool call.
+    # This is the M52R blocker, not a license to imitate DSML or JSON syntax.
+    result = parse_tokens(d, tokenizer, ids)
     assert '</｜DSML｜ calls>' not in text
     assert result["response"]["choices"][0]["finish_reason"] == "tool_calls"
     assert json.loads(result["response"]["choices"][0]["message"]["tool_calls"][0]["function"]["arguments"]) == {"city": "Paris"}
+    from ds41f_mlx.runtime.recipe_semantic_guard import RecipeSemanticGuard
+    p, response = make_processor(d, tokenizer)
+    guard = RecipeSemanticGuard(p, response=response, frontier=17)
+    guard._push(d.InferenceChunk.ready())
+    try:
+        before = p.semantic_snapshot(), p.preview_revision, response.to_json()
+        predicted = guard.preview(ids)
+        assert predicted is None  # A call certificate is not turn closure.
+        proof = guard._eof_proof
+        assert (p.semantic_snapshot(), p.preview_revision, response.to_json()) == before
+        assert not guard.tool_complete and not guard.finished
+        for token in ids:
+            assert guard.observe_canonical_emit(token, None) is None
+        assert not guard.tool_complete and not guard.finished
+        first = guard.call_certificates[0]
+        assert json.loads(first.call)['function']['arguments'] == '{"city": "Paris"}'
+        assert first.frontier <= 17 + len(ids)
+        second_ids = tokenizer.encode('\n' + tool(value='Berlin') + '\n</｜DSML｜ calls>')
+        for token in second_ids:
+            predicted = guard.preview([token])
+            guard.observe_canonical_emit(token, predicted.identity if predicted else None)
+        assert guard.finished and guard.tool_complete
+        assert len(guard.call_certificates) == 2
+        assert guard.call_certificates[0] is first
+        assert first.frontier < guard.call_certificates[1].frontier
+        calls = json.loads(response.to_json())['choices'][0]['message']['tool_calls']
+        assert [json.loads(c['function']['arguments'])['city'] for c in calls] == ['Paris', 'Berlin']
+        assert [json.loads(c.call) for c in guard.call_certificates] == calls
+        # Same recipe, foreign processor/lifetime: reject before canonical push.
+        other, other_response = make_processor(d, tokenizer)
+        try:
+            foreign = RecipeSemanticGuard(other, response=other_response)
+            before = other.semantic_snapshot(), other.preview_revision
+            with pytest.raises(RuntimeError, match='foreign'):
+                foreign.observe_canonical_emit(ids[-1], ('CONSUMING_TOOL_EOF', proof))
+            assert (other.semantic_snapshot(), other.preview_revision) == before
+        finally:
+            other.close()
+    finally:
+        p.close()
 
 
 def test_canonical_parser_copy_fails_without_mutating_it(recipe):

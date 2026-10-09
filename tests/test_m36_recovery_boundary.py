@@ -5,7 +5,7 @@ from ds41f_mlx.serving.internal_mtp import InternalMTPQualificationBackend as Ba
 
 
 def fixture(finished, arguments):
-    rec = SimpleNamespace(guard=SimpleNamespace(finished=finished), poisoned=False)
+    rec = SimpleNamespace(guard=SimpleNamespace(finished=finished, tool_complete=finished), poisoned=False)
     trace = {'terminal_matches': [{'identity': ['DSML_TOOL_CALL_BLOCK_END', 0, 1]}] if finished else [],
              'response': {'choices': [{'message': {'tool_calls': [
         {'function': {'name': 'lookup_weather', 'arguments': arguments}}

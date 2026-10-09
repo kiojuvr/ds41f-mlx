@@ -1,0 +1,541 @@
+--- a/deepseek-recipe/src/stream/processor.rs
++++ b/deepseek-recipe/src/stream/processor.rs
+@@ -1,5 +1,7 @@
+ use std::collections::VecDeque;
+ use std::pin::pin;
++use std::sync::{Arc, Mutex};
++use super::semantic::SemanticSession;
+ 
+ use async_stream::stream;
+ use tokio_stream::{Stream, StreamExt};
+@@ -16,6 +18,7 @@
+ pub struct StreamProcessor<G> {
+     generator: G,
+     semantic: SemanticSessionHandle,
++    preview: Option<(CanonicalPreviewHandle<G>, fn(&G) -> G)>,
+ }
+ 
+ impl<G> StreamProcessor<G>
+@@ -27,6 +30,7 @@
+         Self {
+             generator,
+             semantic: SemanticSessionHandle::new(options),
++            preview: None,
+         }
+     }
+ 
+@@ -47,6 +51,13 @@
+         self.semantic.clone()
+     }
+ 
++    /// Opt into exact consuming-state snapshots, without changing parser semantics.
++    pub fn with_preview(mut self) -> (Self, CanonicalPreviewHandle<G>) where G: Clone {
++        let handle = CanonicalPreviewHandle(Arc::new(Mutex::new(None)));
++        self.preview = Some((handle.clone(), G::clone));
++        (self, handle)
++    }
++
+     /// Consume inference chunks until a finish chunk, matched stop sequence, or EOF.
+     ///
+     /// A ready chunk received before output starts supplies the initial prompt
+@@ -65,6 +76,7 @@
+     {
+         let mut generator = self.generator;
+         let semantic = self.semantic;
++        let preview = self.preview;
+         stream! {
+             let mut inference = pin!(inference);
+             let mut stashed = StashedChunks::new();
+@@ -75,7 +87,15 @@
+             let mut backend_finish = None;
+             let mut stop_sequence = None;
+ 
+-            while let Some(chunk) = inference.next().await {
++            loop {
++                if let Some((handle, clone_generator)) = &preview {
++                    let snapshot = CanonicalSnapshot {
++                        semantic: match semantic.fork() { Ok(s) => s, Err(e) => { yield Err(e); return; } }, stashed: stashed.clone(),
++                        generator: clone_generator(&generator), completion_usage,
++                    };
++                    *handle.0.lock().expect("preview lock poisoned") = Some(snapshot);
++                }
++                let Some(chunk) = inference.next().await else { break; };
+                 let (content, content_tokens, actions) = match chunk {
+                     InferenceChunk::Ready {
+                         system_fingerprint,
+@@ -154,19 +174,7 @@
+             if let Some(tail) = stashed.take_stop_sequence() {
+                 stop_sequence.get_or_insert_with(String::new).push_str(&tail);
+             }
+-            let reason = if stop_sequence.is_some() {
+-                FinishReason::StopSequence
+-            } else {
+-                match backend_finish {
+-                    Some(InferenceFinishReason::Stop) if stashed.has_tool_calls => {
+-                        FinishReason::ToolCalls
+-                    }
+-                    Some(InferenceFinishReason::Stop) => FinishReason::Stop,
+-                    Some(InferenceFinishReason::Length) => FinishReason::Length,
+-                    Some(InferenceFinishReason::ContentFilter) => FinishReason::ContentFilter,
+-                    None => FinishReason::EndOfStream,
+-                }
+-            };
++            let reason = canonical_finish_reason(backend_finish, stashed.has_tool_calls, stop_sequence.is_some());
+             let finish = OutputChunk::Finish {
+                 reason,
+                 stop_sequence,
+@@ -179,6 +187,7 @@
+     }
+ }
+ 
++#[derive(Clone)]
+ struct StashedChunks {
+     chunks: VecDeque<Option<String>>,
+     last_stashed_action: Option<OutputActionSegment>,
+@@ -186,6 +195,7 @@
+     last_pop_action: OutputAction,
+     stop_sequence: Option<String>,
+     has_tool_calls: bool,
++    open_tool_call: bool,
+ }
+ 
+ impl StashedChunks {
+@@ -197,6 +207,7 @@
+             last_pop_action: OutputAction::Skip,
+             stop_sequence: None,
+             has_tool_calls: false,
++            open_tool_call: false,
+         }
+     }
+ 
+@@ -241,6 +252,7 @@
+             }
+             OutputAction::ToolCallBegin => {
+                 if last_pop_action != OutputAction::ToolCallBegin {
++                    self.open_tool_call = true;
+                     Some(OutputChunk::ToolCallBegin)
+                 } else {
+                     None
+@@ -285,6 +297,7 @@
+                 if last_pop_action == action.action {
+                     return None;
+                 }
++                self.open_tool_call = false;
+                 output.map(|output| OutputChunk::ToolArgumentsDelta {
+                     content: output.to_string(),
+                 })
+@@ -363,6 +376,60 @@
+     }
+ }
+ 
++/// Snapshot of the actual consuming parser, decoder, stashing and protocol generator.
++/// It is refreshed only at the canonical next-input boundary, never by replay.
++pub struct CanonicalPreviewHandle<G>(Arc<Mutex<Option<CanonicalSnapshot<G>>>>);
++impl<G> Clone for CanonicalPreviewHandle<G> {
++    fn clone(&self) -> Self { Self(self.0.clone()) }
++}
++#[derive(Clone)]
++struct CanonicalSnapshot<G> {
++    semantic: SemanticSession,
++    stashed: StashedChunks,
++    generator: G,
++    completion_usage: CompletionUsage,
++}
++impl<G: ChunkGenerator + Clone> CanonicalPreviewHandle<G> {
++    /// Each row contains consuming token events and its cloned Stop/EOF events.
++    /// EOF forks do not advance the next candidate or the canonical generator.
++    pub async fn preview_tokens_eof(&self, ids: &[u32]) -> Result<Vec<(Vec<G::Chunk>, Vec<G::Chunk>, bool)>, StreamError> {
++        let mut fork = self.0.lock().map_err(|_| StreamError::Decode { detail: "preview lock poisoned".into() })?
++            .as_ref().ok_or(StreamError::Decode { detail: "no canonical input boundary".into() })?.clone();
++        let mut rows = Vec::new();
++        for id in ids.iter().map(Some).chain(if ids.is_empty() { Some(None) } else { None }) {
++            let mut chunks = Vec::new();
++            if let Some((content, tokens, actions)) = match id { Some(id) => fork.semantic.token(*id)?, None => None } {
++                fork.completion_usage.completion_tokens += tokens;
++                fork.stashed.push(Some(content));
++                chunks = fork.stashed.apply_actions(actions, &mut fork.generator).await;
++            }
++            let mut eof = fork.clone();
++            let actions = eof.semantic.finish();
++            let mut finish = eof.stashed.apply_actions(actions, &mut eof.generator).await;
++            let stop_sequence = eof.stashed.take_stop_sequence();
++            let reason = canonical_finish_reason(Some(InferenceFinishReason::Stop), eof.stashed.has_tool_calls, stop_sequence.is_some());
++            finish.extend(eof.generator.generate(OutputChunk::Finish {
++                reason, stop_sequence, usage: eof.completion_usage,
++            }).await);
++            let completed_tools = eof.stashed.has_tool_calls && !eof.stashed.open_tool_call;
++            rows.push((chunks, finish, completed_tools));
++            if fork.semantic.terminal().is_some() { break; }
++        }
++        Ok(rows)
++    }
++}
++
++fn canonical_finish_reason(backend: Option<InferenceFinishReason>, has_tool_calls: bool, stopped: bool) -> FinishReason {
++    if stopped { return FinishReason::StopSequence; }
++    match backend {
++        Some(InferenceFinishReason::Stop) if has_tool_calls => FinishReason::ToolCalls,
++        Some(InferenceFinishReason::Stop) => FinishReason::Stop,
++        Some(InferenceFinishReason::Length) => FinishReason::Length,
++        Some(InferenceFinishReason::ContentFilter) => FinishReason::ContentFilter,
++        None => FinishReason::EndOfStream,
++    }
++}
++
+ fn non_empty(content: Option<String>) -> Option<String> {
+     content.filter(|content| !content.is_empty())
+ }
+--- a/deepseek-recipe/src/stream/semantic.rs
++++ b/deepseek-recipe/src/stream/semantic.rs
+@@ -202,6 +202,12 @@
+             .preview_tokens(ids)
+     }
+ 
++    pub fn fork(&self) -> Result<SemanticSession, StreamError> {
++        Ok(self.0.lock().map_err(|_| StreamError::Decode {
++            detail: "semantic lock poisoned".into(),
++        })?.clone())
++    }
++
+     pub fn diagnostic_snapshot(&self) -> Result<(String, Vec<u32>, usize, usize), StreamError> {
+         Ok(self.0.lock().map_err(|_| StreamError::Decode {
+             detail: "semantic lock poisoned".into(),
+--- a/deepseek-recipe/src/stream/mod.rs
++++ b/deepseek-recipe/src/stream/mod.rs
+@@ -4,7 +4,7 @@
+ pub use inference::{
+     CompletionUsage, FinishReason, InferenceChunk, InferenceFinishReason, PromptUsage,
+ };
+-pub use processor::StreamProcessor;
++pub use processor::{StreamProcessor, CanonicalPreviewHandle};
+ pub use semantic::{SemanticPreview, SemanticSession, SemanticSessionHandle};
+ pub use state_machine::{SemanticTerminal, SemanticTerminalKind};
+ 
+--- a/deepseek-recipe/src/protocol/openai/chat_completion/response/chunk_generator.rs
++++ b/deepseek-recipe/src/protocol/openai/chat_completion/response/chunk_generator.rs
+@@ -13,7 +13,7 @@
+ ///
+ /// The caller supplies an ordered stream for one inference. Tool argument
+ /// deltas follow the tool call whose arguments they extend.
+-#[derive(Debug)]
++#[derive(Debug, Clone)]
+ pub struct ChatCompletionChunkGenerator {
+     id: String,
+     model: String,
+--- a/deepseek-recipe/src/protocol/openai/chat_completion/response/schema.rs
++++ b/deepseek-recipe/src/protocol/openai/chat_completion/response/schema.rs
+@@ -12,7 +12,7 @@
+ /// A complete response, also usable as an accumulator for generated chunks.
+ /// Chunks are accumulated in inference order. Tool argument deltas extend the
+ /// tool call identified by their index.
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ pub struct ChatCompletionResponse {
+     pub id: String,
+     pub object: &'static str,
+@@ -24,7 +24,7 @@
+     pub usage: Option<ChatCompletionUsage>,
+ }
+ 
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ pub struct ChatCompletionChoice {
+     pub index: u32,
+     pub message: ChatCompletionResponseMessage,
+@@ -32,7 +32,7 @@
+     pub finish_reason: Option<ChatCompletionFinishReason>,
+ }
+ 
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ pub struct ChatCompletionChunk {
+     pub id: String,
+     pub object: &'static str,
+@@ -44,7 +44,7 @@
+     pub usage: Option<Option<ChatCompletionUsage>>,
+ }
+ 
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ pub struct ChatCompletionChunkChoice {
+     pub index: u32,
+     pub delta: ChatCompletionMessageDelta,
+@@ -53,7 +53,7 @@
+ }
+ 
+ /// A complete assistant message accumulated from response deltas.
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ pub struct ChatCompletionResponseMessage {
+     pub role: ChatCompletionRole,
+     pub content: Option<String>,
+@@ -64,7 +64,7 @@
+ }
+ 
+ /// An incremental update to an assistant message.
+-#[derive(Debug, Default, Serialize)]
++#[derive(Debug, Clone, Default, Serialize)]
+ pub struct ChatCompletionMessageDelta {
+     #[serde(skip_serializing_if = "Option::is_none")]
+     pub role: Option<ChatCompletionRole>,
+@@ -77,28 +77,28 @@
+     pub tool_calls: Option<Vec<ChatCompletionToolCallDelta>>,
+ }
+ 
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ #[serde(rename_all = "snake_case")]
+ pub enum ChatCompletionRole {
+     Assistant,
+ }
+ 
+ /// A complete tool call in an assistant response message.
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ pub struct ChatCompletionResponseToolCall {
+     pub id: String,
+     pub r#type: ChatCompletionToolCallType,
+     pub function: ChatCompletionResponseFunctionCall,
+ }
+ 
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ pub struct ChatCompletionResponseFunctionCall {
+     pub name: String,
+     pub arguments: String,
+ }
+ 
+ /// An initial tool call or an update to its arguments.
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ #[serde(untagged)]
+ pub enum ChatCompletionToolCallDelta {
+     Start {
+@@ -112,13 +112,13 @@
+     },
+ }
+ 
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ #[serde(rename_all = "snake_case")]
+ pub enum ChatCompletionToolCallType {
+     Function,
+ }
+ 
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ pub struct ChatCompletionFunctionArgumentsDelta {
+     pub arguments: String,
+ }
+@@ -148,7 +148,7 @@
+ }
+ 
+ /// Log probabilities are not supplied by the current inference contract.
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ pub struct ChatCompletionLogprobs {
+     #[serde(skip_serializing_if = "Option::is_none")]
+     pub content: Option<Vec<ChatCompletionTokenLogprob>>,
+@@ -163,7 +163,7 @@
+     }
+ }
+ 
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ pub struct ChatCompletionTokenLogprob {
+     pub token: String,
+     pub logprob: f32,
+@@ -171,14 +171,14 @@
+     pub top_logprobs: Vec<ChatCompletionTopLogprob>,
+ }
+ 
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ pub struct ChatCompletionTopLogprob {
+     pub token: String,
+     pub logprob: f32,
+     pub bytes: Option<Vec<u8>>,
+ }
+ 
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ pub struct ChatCompletionUsage {
+     pub prompt_tokens: usize,
+     pub completion_tokens: usize,
+@@ -190,12 +190,12 @@
+     pub prompt_cache_miss_tokens: usize,
+ }
+ 
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ pub struct ChatCompletionInputTokenUsage {
+     pub cached_tokens: usize,
+ }
+ 
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ pub struct ChatCompletionOutputTokenUsage {
+     pub reasoning_tokens: usize,
+ }
+--- a/deepseek-recipe-python/src/response.rs
++++ b/deepseek-recipe-python/src/response.rs
+@@ -18,7 +18,7 @@
+ use deepseek_recipe::response::ProtocolResponse;
+ use deepseek_recipe::stream::state_machine::ParsingOptions;
+ use deepseek_recipe::stream::{
+-    ChunkGenerator, InferenceChunk, SemanticPreview, SemanticSessionHandle, SemanticTerminal,
++    CanonicalPreviewHandle, ChunkGenerator, InferenceChunk, SemanticPreview, SemanticSessionHandle, SemanticTerminal,
+     SemanticTerminalKind, StreamError, StreamProcessor,
+ };
+ use deepseek_recipe::util::append_delta::AppendDelta;
+@@ -139,7 +139,7 @@
+ macro_rules! response_bindings {
+     (
+         $py_chunk:ident, $chunk:ident, $chunk_name:literal,
+-        $py_response:ident, $response:ident, $response_name:literal
++        $py_response:ident, $response:ident, $response_name:literal $(, $extra:item)*
+     ) => {
+         /// A protocol chunk consumed by response accumulation.
+         #[pyclass(name = $chunk_name, module = "deepseek_recipe._native")]
+@@ -171,6 +171,7 @@
+ 
+         #[pymethods]
+         impl $py_response {
++            $($extra)*
+             #[new]
+             fn new(
+                 id: String,
+@@ -226,7 +227,12 @@
+     "ChatCompletionChunk",
+     PyChatCompletionResponse,
+     ChatCompletionResponse,
+-    "ChatCompletionResponse"
++    "ChatCompletionResponse",
++    fn fork(&self) -> Self { Self { inner: self.inner.clone() } },
++    fn append_copy(&mut self, chunk: &PyChatCompletionChunk) -> PyResult<()> {
++        self.inner.append(chunk.as_core()?.clone());
++        Ok(())
++    }
+ );
+ response_bindings!(
+     PyResponsesStreamEvent,
+@@ -332,6 +338,8 @@
+ 
+ struct Processor {
+     semantic: SemanticSessionHandle,
++    eof_preview: Option<CanonicalPreviewHandle<ChatCompletionChunkGenerator>>,
++    revision: u64,
+     input: Option<mpsc::Sender<InferenceChunk>>,
+     events: Option<ChunkStream>,
+     input_pending: Arc<AtomicBool>,
+@@ -355,6 +363,7 @@
+         options: ParsingOptions,
+         tokenizer: Option<Arc<Tokenizer>>,
+         wrap: fn(G::Chunk) -> ProtocolChunk,
++        attach_preview: impl FnOnce(StreamProcessor<G>) -> (StreamProcessor<G>, Option<CanonicalPreviewHandle<ChatCompletionChunkGenerator>>),
+     ) -> Self
+     where
+         G: ChunkGenerator,
+@@ -375,12 +384,15 @@
+             Some(tokenizer) => processor.with_tokenizer(tokenizer),
+             None => processor,
+         };
++        let (processor, eof_preview) = attach_preview(processor);
+         let semantic = processor.semantic_session();
+         let events =
+             futures::StreamExt::map(processor.process(input), move |event| event.map(wrap));
+         Self {
+             state: Mutex::new(Processor {
+                 semantic,
++                eof_preview,
++                revision: 0,
+                 input: Some(sender),
+                 events: Some(Box::pin(events)),
+                 input_pending,
+@@ -423,6 +435,7 @@
+                 options.inner.clone(),
+                 tokenizer,
+                 ProtocolChunk::ChatCompletion,
++                |p| { let (p, h) = p.with_preview(); (p, Some(h)) },
+             ))
+         } else if let Ok(mut generator) =
+             generator.extract::<PyRefMut<'_, PyResponsesChunkGenerator>>()
+@@ -432,6 +445,7 @@
+                 options.inner.clone(),
+                 tokenizer,
+                 ProtocolChunk::Responses,
++                |p| (p, None),
+             ))
+         } else if let Ok(mut generator) =
+             generator.extract::<PyRefMut<'_, PyMessagesChunkGenerator>>()
+@@ -441,6 +455,7 @@
+                 options.inner.clone(),
+                 tokenizer,
+                 ProtocolChunk::Messages,
++                |p| (p, None),
+             ))
+         } else {
+             Err(PyTypeError::new_err("expected a protocol chunk generator"))
+@@ -451,7 +466,11 @@
+     /// Raises `RuntimeError` after completion or close, or on a decoding failure.
+     fn push(&self, py: Python<'_>, chunk: &PyInferenceChunk) -> PyResult<Vec<Py<PyAny>>> {
+         let chunk = chunk.to_core();
+-        self.with_state(py, |state| state.push(chunk))?
++        self.with_state(py, |state| {
++            let result = state.push(chunk)?;
++            state.revision += 1;
++            Ok(result)
++        })?
+             .into_iter()
+             .map(|chunk| chunk.into_python(py))
+             .collect()
+@@ -478,6 +497,40 @@
+         })
+     }
+ 
++    /// Exact worker-local canonical revision (not a hashed state identity).
++    #[getter]
++    fn preview_revision(&self, py: Python<'_>) -> PyResult<u64> {
++        self.with_state(py, |state| Ok(state.revision))
++    }
++
++    fn preview_eof_tokens(&self, py: Python<'_>, candidate_ids: Vec<u32>)
++        -> PyResult<(u64, Vec<u32>, Vec<(Vec<Py<PyAny>>, Vec<Py<PyAny>>)>)> {
++        let (revision, ids, rows) = self.preview_certified_eof_tokens(py, candidate_ids)?;
++        Ok((revision, ids, rows.into_iter().map(|(tokens, eof, _)| (tokens, eof)).collect()))
++    }
++
++    /// Native consuming-state fork with Stop/EOF at EACH observed prefix.
++    /// Returns revision, exact candidate IDs and (token events, EOF events) rows.
++    /// No canonical input, parser, generator, response or tool identity is changed.
++    fn preview_certified_eof_tokens(&self, py: Python<'_>, candidate_ids: Vec<u32>)
++        -> PyResult<(u64, Vec<u32>, Vec<(Vec<Py<PyAny>>, Vec<Py<PyAny>>, bool)>)> {
++        let (revision, rows) = self.with_state(py, |state| {
++            if state.closed || state.finished {
++                return Err(PyRuntimeError::new_err("stream processor is closed or finished"));
++            }
++            let handle = state.eof_preview.as_ref().ok_or_else(|| PyRuntimeError::new_err("EOF preview requires Chat Completions"))?;
++            let rows = block_on(handle.preview_tokens_eof(&candidate_ids))
++                .map_err(|e| PyRuntimeError::new_err(e.to_string()))?;
++            Ok((state.revision, rows))
++        })?;
++        let rows = rows.into_iter().map(|(tokens, eof, completed)| {
++            let wrap = |chunks: Vec<ChatCompletionChunk>| chunks.into_iter()
++                .map(|c| ProtocolChunk::ChatCompletion(c).into_python(py)).collect::<PyResult<Vec<_>>>();
++            Ok((wrap(tokens)?, wrap(eof)?, completed))
++        }).collect::<PyResult<Vec<_>>>()?;
++        Ok((revision, candidate_ids, rows))
++    }
++
+     /// Opaque diagnostic fingerprint, pending IDs/count and decoded byte count.
+     /// No history, private parser stage or state restoration is exposed.
+     fn semantic_snapshot(&self, py: Python<'_>) -> PyResult<(String, Vec<u32>, usize, usize)> {
+@@ -590,6 +643,8 @@
+ 
+     fn close(&mut self) {
+         self.closed = true;
++        self.revision += 1;
++        self.eof_preview = None;
+         self.input = None;
+         self.events = None;
+     }

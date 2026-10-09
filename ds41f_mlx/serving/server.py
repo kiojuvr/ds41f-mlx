@@ -312,7 +312,11 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
             if qualification is not None:
                 raw_sequence = request.headers.get('X-DS41F-Request-Sequence')
                 request_sequence = int(raw_sequence) if raw_sequence is not None else None
-                return await qualification(session_id, prepared, tokenizer=tokenizer, body=body, sequence=request_sequence)
+                projection = request.headers.get('X-DS41F-Outcome-Projection', 'delivery')
+                if projection not in ('delivery', 'json'):
+                    raise RequestError('unsupported retained outcome projection', 400)
+                return await qualification(session_id, prepared, tokenizer=tokenizer, body=body,
+                    sequence=request_sequence, outcome_projection=projection == 'json')
             if prepared.stream:
                 expected = request.headers.get('X-DS41F-Expected-Request-Count')
                 if expected is not None:

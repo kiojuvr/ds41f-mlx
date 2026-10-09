@@ -85,7 +85,7 @@ def test_fixed_counter_exhaustion_and_last_settled_retry():
             rec.certificate = {'representable': True}; finish(rec)
             before = deepcopy(rec.to_json())
             for _ in range(3):
-                out = await b.qualification_response(rec.session_id,request(),tokenizer=None,body=b'{}',sequence=b.MAX_SEQUENCE)
+                out = await b.qualification_response(rec.session_id,request(),tokenizer=None,body=b'{}',sequence=b.MAX_SEQUENCE,outcome_projection=True)
                 assert json.loads(out.body)['outcome_state'] == 'recoverable'
             assert before == rec.to_json()
             with pytest.raises(ValueError):

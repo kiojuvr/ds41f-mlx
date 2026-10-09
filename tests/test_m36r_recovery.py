@@ -32,6 +32,18 @@ def test_fence_not_admitted_active_recoverable_expired_atomic():
     reserve(rec,2,body)
     with pytest.raises(ValueError):observe_retry(rec,1,body)
     assert rec.fence['sequence']==2
+    # Worker-certified consumption is observable while its original socket
+    # still owns the busy delivery lease. Transport cannot delay permission.
+    certified=dict(session_id='one',sequence=2,body_sha256=rec.fence['body_sha256'],
+                   outcome_state='recoverable',certificate={'representable':True},
+                   response={'choices':[]},canonical_events=['immutable'])
+    rec.last_turn={'certified_outcome':json.dumps(certified)}
+    rec.fence['state']='recoverable';rec.consumed_sequence=2;rec.busy=True
+    assert rec.to_json()['outcome_state']=='recoverable'
+    assert rec.to_json()['next_sequence']==3
+    assert observe_retry(rec,2,body)==certified
+    rec.certificate['representable']=False
+    assert observe_retry(rec,2,body)==certified
 
 
 @pytest.mark.parametrize('unrecoverable,poisoned,state',[(True,True,'unrecoverable'),(False,True,'poisoned')])
@@ -113,3 +125,26 @@ def test_tools_reserve_before_effect_and_never_retry_ambiguous_effect():
     assert len(calls)==1
     out['certificate']['representable']=False
     with pytest.raises(ValueError):ledger.execute('s',1,out,fail)
+    out['certificate']['representable']=True
+    owned=LocalToolLedger(); effects=[]
+    result=owned.execute('s',1,out,lambda call: effects.append(call) or 'done')
+    assert owned.execute('s',1,deepcopy(out),lambda _: pytest.fail('duplicate effect')) == result
+    conflicting=deepcopy(out)
+    conflicting['response']['choices'][0]['message']['tool_calls'][0]['function']['arguments']='{"changed":true}'
+    with pytest.raises(ValueError,match='conflicting'):
+        owned.execute('s',1,conflicting,lambda _: pytest.fail('conflicting effect'))
+    assert len(effects)==1
+    from ds41f_mlx.serving.internal_mtp import InternalMTPQualificationBackend as B
+    rec=QualificationSession('s',reconstruction_body={'messages':[]})
+    certified=deepcopy(out); certified['session_id']='s'
+    msg=certified['response']['choices'][0]['message']
+    rec.last_turn={'certified_outcome':json.dumps(certified)}
+    body=json.dumps({'messages':[msg]+result}).encode()
+    B._validate_result_reentry(rec,body,2)
+    B._validate_result_reentry(rec,body,2)
+    for seq, changed in [(3,body),(2,json.dumps({'messages':[msg,dict(role='tool',tool_call_id='foreign',content='done')]}).encode()),
+                         (2,json.dumps({'messages':[msg]+result+result}).encode())]:
+        with pytest.raises(ValueError):B._validate_result_reentry(rec,changed,seq)
+    certified['certificate']['executable_tools']=False
+    rec.last_turn={'certified_outcome':json.dumps(certified)}
+    with pytest.raises(ValueError):B._validate_result_reentry(rec,body,2)

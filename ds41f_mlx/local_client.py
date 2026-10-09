@@ -41,12 +41,12 @@ class LocalMTPClient(InternalLocalClient):
                 type(rec.get('request_count')) is int and rec['request_count'] == 0 and
                 rec.get('request_fence') is None and rec.get('certificate') is None)
 
-    def _send(self):
+    def _send(self, *, outcome_projection=False):
         if type(self._pending.sequence) is not int or not 1 <= self._pending.sequence <= (1 << 64)-1:
             self._stop('request sequence exhausted; explicit retire/fresh decision required')
         validate_chat(self._pending.body)
         try:
-            return super()._send()
+            return super()._send(outcome_projection=outcome_projection)
         except RuntimeHTTPError as exc:
             try:
                 code = json.loads(exc.body)['error']['code']
