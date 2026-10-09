@@ -54,8 +54,11 @@ def validate_chat(raw, *, ordinary_tools=False):
     if b.get('model') not in ALIASES:
         raise ValueError('fixed model alias required')
     n = b.get('max_tokens')
-    if type(n) is not int or not 1 <= n <= 768:
-        raise ValueError('max_tokens must be integer 1..768')
+    if ordinary_tools:
+        from .serving.capacity import validate_ordinary_output
+        validate_ordinary_output(n)
+    elif type(n) is not int or not 1 <= n <= LIMITS['output_tokens']:
+        raise ValueError(f'max_tokens must be integer 1..{LIMITS["output_tokens"]}')
     if 'temperature' in b and (type(b['temperature']) not in (int, float) or b['temperature'] != 0):
         raise ValueError('temperature must be numeric zero')
     if 'reasoning_effort' in b and b['reasoning_effort'] != 'none':

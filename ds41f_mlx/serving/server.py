@@ -41,7 +41,7 @@ def load_v41_tokenizer(recipe_path: Path = DEFAULT_RECIPE) -> Any:
     return Tokenizer.from_file(str(Path(recipe_path) / 'static' / 'tokenizers' / 'v41' / 'tokenizer.json'))
 
 
-def prepare_request(protocol: str, body: bytes, *, tokenizer: Any, recipe_path: Path = DEFAULT_RECIPE, options: ConversionOptions | None = None, checkpoint: Path | None = None) -> RecipePreparedRequest:
+def prepare_request(protocol: str, body: bytes, *, tokenizer: Any, recipe_path: Path = DEFAULT_RECIPE, options: ConversionOptions | None = None, checkpoint: Path | None = None, ordinary: bool = False) -> RecipePreparedRequest:
     request_type, _ = PROTOCOL_TYPES[protocol]
     # Runtime extension, resolved only after the real recipe/image expansion.
     payload = json.loads(body)
@@ -82,7 +82,7 @@ def prepare_request(protocol: str, body: bytes, *, tokenizer: Any, recipe_path: 
     prepared = RecipePreparedRequest(protocol, converted, converted, token_ids, list(rendered.image_sources), include_usage, custom_tool_names, stop_token_ids, multimodal)
     from .capacity import resolve_capacity
     try:
-        resolve_capacity(prepared, checkpoint=checkpoint or load_runtime_config().checkpoint_path, automatic=automatic)
+        resolve_capacity(prepared, checkpoint=checkpoint or load_runtime_config().checkpoint_path, automatic=automatic, ordinary=ordinary)
     except ValueError as error:
         raise RequestError(str(error), 400, 'context_capacity_exhausted') from error
     return prepared
@@ -228,7 +228,7 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
                 if protocol != 'chat_completions':
                     raise RequestError('ordinary MTP supports Chat Completions only')
                 backend.validate_ordinary(body)
-            prepared = await run_in_threadpool(prepare_request, protocol, body, tokenizer=tokenizer, recipe_path=recipe_path, options=options, checkpoint=getattr(backend, 'checkpoint', runtime_config.checkpoint_path))
+            prepared = await run_in_threadpool(prepare_request, protocol, body, tokenizer=tokenizer, recipe_path=recipe_path, options=options, checkpoint=getattr(backend, 'checkpoint', runtime_config.checkpoint_path), ordinary=ordinary_mtp)
             if ordinary_mtp:
                 release = request.scope.get('ds41f.release_preparation')
                 if release is not None:
@@ -279,8 +279,8 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
     async def models() -> Response:
         model = {'id': model_id, 'object': 'model', 'owned_by': 'ds41f', 'aliases': sorted(MODEL_ALIASES)}
         if ordinary_mtp:
-            from ds41f_mlx.mtp_profile import LIMITS as serving_limits
-            model.update(context_length=backend.context_tokens, max_output_tokens=serving_limits['output_tokens'])
+            from .capacity import ORDINARY_OUTPUT_CEILING
+            model.update(context_length=backend.context_tokens, max_output_tokens=ORDINARY_OUTPUT_CEILING)
         return JSONResponse(content={'object': 'list', 'data': [model]})
 
     @app.post('/v1/sessions')

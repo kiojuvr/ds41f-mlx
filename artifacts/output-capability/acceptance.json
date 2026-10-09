@@ -1,0 +1,397 @@
+{
+  "short_128": {
+    "id": "chatcmpl-acb7a4e4dd034c0bb7ff84c2bd30e90d",
+    "object": "chat.completion",
+    "created": 1791542134,
+    "model": "deepseek-v4.1-flash",
+    "system_fingerprint": null,
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "OUTPUT_OK"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 10,
+      "completion_tokens": 3,
+      "total_tokens": 13,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 10
+    }
+  },
+  "short_32768": {
+    "id": "chatcmpl-7e23060af21f4f08ba620a4bfec3610c",
+    "object": "chat.completion",
+    "created": 1791542135,
+    "model": "deepseek-v4.1-flash",
+    "system_fingerprint": null,
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "OUTPUT_OK"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 10,
+      "completion_tokens": 3,
+      "total_tokens": 13,
+      "prompt_tokens_details": {
+        "cached_tokens": 8
+      },
+      "prompt_cache_hit_tokens": 8,
+      "prompt_cache_miss_tokens": 2
+    }
+  },
+  "short_393216": {
+    "id": "chatcmpl-8d3907f8f41343229e28850d5efa78b0",
+    "object": "chat.completion",
+    "created": 1791542135,
+    "model": "deepseek-v4.1-flash",
+    "system_fingerprint": null,
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "OUTPUT_OK"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 10,
+      "completion_tokens": 3,
+      "total_tokens": 13,
+      "prompt_tokens_details": {
+        "cached_tokens": 8
+      },
+      "prompt_cache_hit_tokens": 8,
+      "prompt_cache_miss_tokens": 2
+    }
+  },
+  "beyond_768": {
+    "id": "chatcmpl-c8328818616d4111b7d1a4051a14c556",
+    "object": "chat.completion",
+    "created": 1791542136,
+    "model": "deepseek-v4.1-flash",
+    "system_fingerprint": null,
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "1. **Never commit directly to the main branch.** The main branch should always represent a deployable, reviewed state of the codebase. Direct commits bypass peer review, CI checks, and the opportunity to catch mistakes before they reach production. Instead, create a short-lived feature branch, open a pull request, and let automated checks and human reviewers validate the change before merging. This practice preserves the integrity of the mainline and makes rollbacks and audits dramatically simpler.\n\n2. **Require at least one approving review before merging.** Code review is one of the cheapest and most effective defect-detection mechanisms available. Even a brief review by a second engineer catches typos, logic errors, security oversights, and design mismatches that the author is blind to. Configure your repository host to enforce this rule mechanically so it cannot be skipped under deadline pressure.\n\n3. **Protect the main branch with branch protection rules.** Enable settings that prevent force pushes, require status checks to pass, require reviews, and restrict who can merge. These rules encode your team's safety policy into the platform itself, removing reliance on discipline and memory. They also create a clear, auditable record of what was required for every merge.\n\n4. **Keep commits small and focused.** A commit should do one logical thing and be describable in a single sentence. Small commits are easier to review, easier to revert, and easier to bisect when hunting a regression. When a commit tries to do five things at once, reviewers skim, bugs hide, and reverting one change forces you to lose the others.\n\n5. **Write meaningful commit messages.** A good commit message explains what changed and, more importantly, why. Future engineers\u2014including your future self\u2014will read these messages while debugging at 2 a.m. Follow a consistent convention such as a short imperative subject line followed by a body that explains motivation, trade-offs, and any relevant issue references.\n\n6. **Reference issue tracker IDs in commits and pull requests.** Linking code changes to tickets creates a traceable chain from requirement to implementation to deployment. When a bug appears months later, you can find the original intent, the discussion, and the acceptance criteria. This linkage also helps with compliance and release notes generation.\n\n7. **Never commit secrets, credentials, or API keys.** Secrets in version control are effectively public forever, even after deletion, because they persist in history and in every clone. Use environment variables, secret managers, or vault services instead. Add pre-commit hooks and CI scanners to catch accidental secret commits before they land.\n\n8. **Add a comprehensive .gitignore from day one.** Build artifacts, dependency directories, editor files, local environment files, and OS metadata should never enter the repository. A well-maintained .gitignore keeps diffs clean, reduces clone size, and prevents platform-specific noise from polluting history. Review and update it as your toolchain evolves.\n\n9. **Use a consistent branching strategy.** Whether you choose trunk-based development, GitHub Flow, or Git Flow, pick one and document it. Inconsistent branching confuses contributors, complicates CI configuration, and leads to merge tangles. The strategy should match your release cadence and team size, and it should be written down where everyone can find it.\n\n10. **Delete branches after merging.** Stale branches accumulate, confuse newcomers, and make it hard to tell what work is actually in progress. Configure your host to auto-delete head branches on merge, and periodically prune remote branches that have gone dormant. A clean branch list is a small but meaningful signal of repository hygiene.\n\n11. **Rebase or merge main into your branch before merging.** Keeping your feature branch up to date with main reduces the chance of semantic conflicts and ensures CI runs against a realistic integration state. Whether you rebase or merge is a team preference, but the goal is the same: merge a branch that has already been tested against current mainline code.\n\n12. **Squash trivial fixup commits before merging.** A pull request full of \"fix typo,\" \"address review,\" and \"oops\" commits pollutes history and makes bisecting harder. Squash them into coherent commits that tell a clean story. Many teams squash the entire PR into one commit; others preserve logical units. Either way, avoid noise.\n\n13. **Enforce linear history if your team prefers it.** Linear history makes `git log` readable, simplifies bisecting, and avoids confusing merge commits. Enable \"require linear history\" in branch protection and use rebase or squash merges. This is a preference, not a universal rule, but consistency matters more than the specific choice.\n\n14. **Tag every production release.** Tags create immutable, named reference points that map deployed artifacts to exact source states. Use semantic versioning or a documented scheme, and push tags to the remote. When you need to reproduce a production bug or roll back, tags are your anchor.\n\n15. **Sign your commits and tags if your threat model warrants it.** GPG or SSH signing provides cryptographic proof of authorship and prevents tampering"
+        },
+        "logprobs": null,
+        "finish_reason": "length"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 41,
+      "completion_tokens": 1024,
+      "total_tokens": 1065,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 41
+    }
+  },
+  "generated_reuse": {
+    "id": "chatcmpl-c72fc17eab4b42f7bf674403acc52c24",
+    "object": "chat.completion",
+    "created": 1791542187,
+    "model": "deepseek-v4.1-flash",
+    "system_fingerprint": null,
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "REUSE_OK"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1076,
+      "completion_tokens": 3,
+      "total_tokens": 1079,
+      "prompt_tokens_details": {
+        "cached_tokens": 1065
+      },
+      "prompt_cache_hit_tokens": 1065,
+      "prompt_cache_miss_tokens": 11
+    }
+  },
+  "cancel_visible_tokens": 801,
+  "cancel_health": {
+    "status": "ready",
+    "process_alive": true,
+    "model_ready": true,
+    "fatal_error": null,
+    "profile": "mtp-serving-v1",
+    "dependency_identity": "4c6c0a4cff792018ff16d8ec32cd52204780a04671fc7eedd938a28feab3b120",
+    "queued_requests": 0,
+    "active_requests": 0,
+    "prefix_cache": {
+      "hits": 9,
+      "misses": 9,
+      "evictions": 5,
+      "total_blocks": 5,
+      "allocated_blocks": 5,
+      "free_blocks": 0,
+      "shared_blocks": 0,
+      "total_tokens_cached": 1992,
+      "cow_copies": 0,
+      "total_queries": 18,
+      "hit_rate": 0.5,
+      "utilization": 1.0
+    }
+  },
+  "after_cancel": {
+    "id": "chatcmpl-79dc75db8abf4af784e3500e3213cf08",
+    "object": "chat.completion",
+    "created": 1791542266,
+    "model": "deepseek-v4.1-flash",
+    "system_fingerprint": null,
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "CANCEL_OK"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 11,
+      "completion_tokens": 4,
+      "total_tokens": 15,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 11
+    }
+  },
+  "models": {
+    "object": "list",
+    "data": [
+      {
+        "id": "deepseek-v4.1-flash",
+        "object": "model",
+        "owned_by": "ds41f",
+        "aliases": [
+          "deepseek-flash",
+          "deepseek-v4.1-flash",
+          "deepseek-v41-flash"
+        ],
+        "context_length": 1048576,
+        "max_output_tokens": 393216
+      }
+    ]
+  },
+  "tools": {
+    "call": {
+      "id": "chatcmpl-5a0de0e5b5af411cac9382b93072ba21",
+      "object": "chat.completion",
+      "created": 1791542269,
+      "model": "deepseek-v4.1-flash",
+      "system_fingerprint": null,
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "I'll read the file for you.",
+            "tool_calls": [
+              {
+                "id": "call_chatcmpl-5a0de0e5b5af411cac9382b93072ba21_0",
+                "type": "function",
+                "function": {
+                  "name": "read_file",
+                  "arguments": "{\"path\": \"/tmp/example.txt\"}"
+                }
+              }
+            ]
+          },
+          "logprobs": null,
+          "finish_reason": "tool_calls"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 327,
+        "completion_tokens": 48,
+        "total_tokens": 375,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 327
+      }
+    },
+    "continuation": {
+      "id": "chatcmpl-705b536f29b9458c953fee62abba12d4",
+      "object": "chat.completion",
+      "created": 1791542271,
+      "model": "deepseek-v4.1-flash",
+      "system_fingerprint": null,
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "The file `/tmp/example.txt` contains the exact marker:\n\n**GENERIC_TOOL_SUCCESS**"
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 400,
+        "completion_tokens": 21,
+        "total_tokens": 421,
+        "prompt_tokens_details": {
+          "cached_tokens": 375
+        },
+        "prompt_cache_hit_tokens": 375,
+        "prompt_cache_miss_tokens": 25
+      }
+    },
+    "branch": {
+      "id": "chatcmpl-70c02a2956e5482ca98b90dc676258bd",
+      "object": "chat.completion",
+      "created": 1791542272,
+      "model": "deepseek-v4.1-flash",
+      "system_fingerprint": null,
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "The file `/tmp/example.txt` contains the exact marker:\n\n**BRANCH_SUCCESS**"
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 399,
+        "completion_tokens": 19,
+        "total_tokens": 418,
+        "prompt_tokens_details": {
+          "cached_tokens": 375
+        },
+        "prompt_cache_hit_tokens": 375,
+        "prompt_cache_miss_tokens": 24
+      }
+    },
+    "sse": [
+      "{\"id\":\"chatcmpl-64562f43387f47f4ab124608dcd1e4da\",\"object\":\"chat.completion.chunk\",\"created\":1791542274,\"model\":\"deepseek-v4.1-flash\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"logprobs\":null,\"finish_reason\":null}]}",
+      "{\"id\":\"chatcmpl-64562f43387f47f4ab124608dcd1e4da\",\"object\":\"chat.completion.chunk\",\"created\":1791542274,\"model\":\"deepseek-v4.1-flash\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"delta\":{\"content\":\"I\"},\"logprobs\":null,\"finish_reason\":null}]}",
+      "{\"id\":\"chatcmpl-64562f43387f47f4ab124608dcd1e4da\",\"object\":\"chat.completion.chunk\",\"created\":1791542274,\"model\":\"deepseek-v4.1-flash\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"delta\":{\"content\":\"'ll\"},\"logprobs\":null,\"finish_reason\":null}]}",
+      "{\"id\":\"chatcmpl-64562f43387f47f4ab124608dcd1e4da\",\"object\":\"chat.completion.chunk\",\"created\":1791542274,\"model\":\"deepseek-v4.1-flash\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"delta\":{\"content\":\" read\"},\"logprobs\":null,\"finish_reason\":null}]}",
+      "{\"id\":\"chatcmpl-64562f43387f47f4ab124608dcd1e4da\",\"object\":\"chat.completion.chunk\",\"created\":1791542274,\"model\":\"deepseek-v4.1-flash\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"delta\":{\"content\":\" the\"},\"logprobs\":null,\"finish_reason\":null}]}",
+      "{\"id\":\"chatcmpl-64562f43387f47f4ab124608dcd1e4da\",\"object\":\"chat.completion.chunk\",\"created\":1791542274,\"model\":\"deepseek-v4.1-flash\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"delta\":{\"content\":\" file\"},\"logprobs\":null,\"finish_reason\":null}]}",
+      "{\"id\":\"chatcmpl-64562f43387f47f4ab124608dcd1e4da\",\"object\":\"chat.completion.chunk\",\"created\":1791542274,\"model\":\"deepseek-v4.1-flash\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"delta\":{\"content\":\" for\"},\"logprobs\":null,\"finish_reason\":null}]}",
+      "{\"id\":\"chatcmpl-64562f43387f47f4ab124608dcd1e4da\",\"object\":\"chat.completion.chunk\",\"created\":1791542274,\"model\":\"deepseek-v4.1-flash\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"delta\":{\"content\":\" you\"},\"logprobs\":null,\"finish_reason\":null}]}",
+      "{\"id\":\"chatcmpl-64562f43387f47f4ab124608dcd1e4da\",\"object\":\"chat.completion.chunk\",\"created\":1791542274,\"model\":\"deepseek-v4.1-flash\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"delta\":{\"content\":\".\"},\"logprobs\":null,\"finish_reason\":null}]}",
+      "{\"id\":\"chatcmpl-64562f43387f47f4ab124608dcd1e4da\",\"object\":\"chat.completion.chunk\",\"created\":1791542274,\"model\":\"deepseek-v4.1-flash\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"id\":\"call_chatcmpl-64562f43387f47f4ab124608dcd1e4da_0\",\"type\":\"function\",\"function\":{\"name\":\"read_file\",\"arguments\":\"\"}}]},\"logprobs\":null,\"finish_reason\":null}]}",
+      "{\"id\":\"chatcmpl-64562f43387f47f4ab124608dcd1e4da\",\"object\":\"chat.completion.chunk\",\"created\":1791542274,\"model\":\"deepseek-v4.1-flash\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"{\"}}]},\"logprobs\":null,\"finish_reason\":null}]}",
+      "{\"id\":\"chatcmpl-64562f43387f47f4ab124608dcd1e4da\",\"object\":\"chat.completion.chunk\",\"created\":1791542274,\"model\":\"deepseek-v4.1-flash\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"\\\"\"}}]},\"logprobs\":null,\"finish_reason\":null}]}",
+      "{\"id\":\"chatcmpl-64562f43387f47f4ab124608dcd1e4da\",\"object\":\"chat.completion.chunk\",\"created\":1791542274,\"model\":\"deepseek-v4.1-flash\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"path\"}}]},\"logprobs\":null,\"finish_reason\":null}]}",
+      "{\"id\":\"chatcmpl-64562f43387f47f4ab124608dcd1e4da\",\"object\":\"chat.completion.chunk\",\"created\":1791542274,\"model\":\"deepseek-v4.1-flash\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"\\\"\"}}]},\"logprobs\":null,\"finish_reason\":null}]}",
+      "{\"id\":\"chatcmpl-64562f43387f47f4ab124608dcd1e4da\",\"object\":\"chat.completion.chunk\",\"created\":1791542274,\"model\":\"deepseek-v4.1-flash\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\": \"}}]},\"logprobs\":null,\"finish_reason\":null}]}",
+      "{\"id\":\"chatcmpl-64562f43387f47f4ab124608dcd1e4da\",\"object\":\"chat.completion.chunk\",\"created\":1791542274,\"model\":\"deepseek-v4.1-flash\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"\\\"\"}}]},\"logprobs\":null,\"finish_reason\":null}]}",
+      "{\"id\":\"chatcmpl-64562f43387f47f4ab124608dcd1e4da\",\"object\":\"chat.completion.chunk\",\"created\":1791542274,\"model\":\"deepseek-v4.1-flash\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"/\"}}]},\"logprobs\":null,\"finish_reason\":null}]}",
+      "{\"id\":\"chatcmpl-64562f43387f47f4ab124608dcd1e4da\",\"object\":\"chat.completion.chunk\",\"created\":1791542274,\"model\":\"deepseek-v4.1-flash\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"tmp\"}}]},\"logprobs\":null,\"finish_reason\":null}]}",
+      "{\"id\":\"chatcmpl-64562f43387f47f4ab124608dcd1e4da\",\"object\":\"chat.completion.chunk\",\"created\":1791542274,\"model\":\"deepseek-v4.1-flash\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"/\"}}]},\"logprobs\":null,\"finish_reason\":null}]}",
+      "{\"id\":\"chatcmpl-64562f43387f47f4ab124608dcd1e4da\",\"object\":\"chat.completion.chunk\",\"created\":1791542274,\"model\":\"deepseek-v4.1-flash\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"example\"}}]},\"logprobs\":null,\"finish_reason\":null}]}",
+      "{\"id\":\"chatcmpl-64562f43387f47f4ab124608dcd1e4da\",\"object\":\"chat.completion.chunk\",\"created\":1791542274,\"model\":\"deepseek-v4.1-flash\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\".txt\"}}]},\"logprobs\":null,\"finish_reason\":null}]}",
+      "{\"id\":\"chatcmpl-64562f43387f47f4ab124608dcd1e4da\",\"object\":\"chat.completion.chunk\",\"created\":1791542274,\"model\":\"deepseek-v4.1-flash\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"\\\"\"}}]},\"logprobs\":null,\"finish_reason\":null}]}",
+      "{\"id\":\"chatcmpl-64562f43387f47f4ab124608dcd1e4da\",\"object\":\"chat.completion.chunk\",\"created\":1791542274,\"model\":\"deepseek-v4.1-flash\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"}\"}}]},\"logprobs\":null,\"finish_reason\":null}]}",
+      "{\"id\":\"chatcmpl-64562f43387f47f4ab124608dcd1e4da\",\"object\":\"chat.completion.chunk\",\"created\":1791542274,\"model\":\"deepseek-v4.1-flash\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"delta\":{\"content\":\"\"},\"logprobs\":null,\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":327,\"completion_tokens\":48,\"total_tokens\":375,\"prompt_tokens_details\":{\"cached_tokens\":0},\"prompt_cache_hit_tokens\":0,\"prompt_cache_miss_tokens\":327}}",
+      "[DONE]"
+    ],
+    "health": {
+      "status": "ready",
+      "process_alive": true,
+      "model_ready": true,
+      "fatal_error": null,
+      "profile": "mtp-serving-v1",
+      "dependency_identity": "4c6c0a4cff792018ff16d8ec32cd52204780a04671fc7eedd938a28feab3b120",
+      "queued_requests": 0,
+      "active_requests": 0,
+      "prefix_cache": {
+        "hits": 13,
+        "misses": 22,
+        "evictions": 18,
+        "total_blocks": 5,
+        "allocated_blocks": 5,
+        "free_blocks": 0,
+        "shared_blocks": 0,
+        "total_tokens_cached": 1516,
+        "cow_copies": 0,
+        "total_queries": 35,
+        "hit_rate": 0.37142857142857144,
+        "utilization": 1.0
+      }
+    }
+  },
+  "rejections": {
+    "total_overflow": {
+      "status": 400,
+      "error": {
+        "error": {
+          "message": "prompt + requested output exceeds 1,048,576 total context tokens",
+          "type": "invalid_request_error",
+          "param": null,
+          "code": "context_capacity_exhausted"
+        }
+      }
+    },
+    "output_overflow": {
+      "status": 400,
+      "error": {
+        "error": {
+          "message": "max_tokens must be integer 1..393216 (output capability ceiling)",
+          "type": "invalid_request_error",
+          "param": null,
+          "code": "invalid_request_error"
+        }
+      }
+    }
+  },
+  "requested_maxima": {
+    "short_128": 128,
+    "short_32768": 32768,
+    "short_393216": 393216,
+    "beyond_768": 1024,
+    "generated_reuse": 393216,
+    "cancel": 393216,
+    "tools_json_round_trip": 393216
+  },
+  "serving_limits": {
+    "body_bytes": 16777216,
+    "context_tokens": 1048576,
+    "output_tokens": 393216
+  }
+}

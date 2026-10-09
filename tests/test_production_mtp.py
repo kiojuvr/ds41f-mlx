@@ -174,13 +174,23 @@ def test_ordinary_http_recipe_route_has_no_compulsory_public_session(monkeypatch
             advertised = client.get('/v1/models')
             assert advertised.status_code == 200
             assert advertised.json()['data'][0]['context_length'] == backend.context_tokens
-            assert advertised.json()['data'][0]['max_output_tokens'] == 768
+            assert advertised.json()['data'][0]['max_output_tokens'] == 393216
             for headers in ({'Host': ''}, {'Host': 'bad host'}, {'Origin': 'http://other.invalid'}):
                 assert client.get('/v1/models', headers=headers).status_code == 400
             assert client.get('/v1/models', headers=[('Host', authority), ('Host', authority)]).status_code == 400
             result = client.post('/v1/chat/completions', json={
                 'model': 'deepseek-v4.1-flash', 'messages': [{'role': 'user', 'content': 'Hello'}]})
             assert result.status_code == 200
+            for maximum in (769, 32768, 393216):
+                result = client.post('/v1/chat/completions', json={
+                    'model': 'deepseek-v4.1-flash', 'max_tokens': maximum,
+                    'messages': [{'role': 'user', 'content': 'Hello'}]})
+                assert result.status_code == 200
+            result = client.post('/v1/chat/completions', json={
+                'model': 'deepseek-v4.1-flash', 'max_tokens': 393217,
+                'messages': [{'role': 'user', 'content': 'Hello'}]})
+            assert result.status_code == 400
+            assert 'output capability ceiling' in result.json()['error']['message']
             assert seen and not backend.sessions
             assert client.post('/v1/sessions', json={}).status_code == 404
             assert client.post('/v1/responses', json={}).status_code == 400

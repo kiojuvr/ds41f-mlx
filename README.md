@@ -230,9 +230,11 @@ lifecycle and paired target/DSpark prefix reuse, including generic ordinary
 function tools and ID-bound tool result continuations. DeepSeek recipe owns tool
 semantics; clients execute tools. No public session or sequence protocol is required.
 Ordinary serving now uses the established **1,048,576-token total context envelope**;
-output remains **768 tokens**. The former 8192 ordinary bound was temporary serving
-scope, not a runtime context limit. Singleton's 8192-total/weather-only contract
-is unchanged. See [operation, ownership and acceptance](docs/mtp-production-serving.md).
+maximum output is **393,216 tokens**, with unchanged missing-`max_tokens` default
+of **128**. Prompt + requested output must fit the total envelope. The maximum is
+capability, not mandatory generation or advance memory allocation; actual execution
+can stop early. Runaway/agent budgets are separate application policy.
+Singleton's 8192-total / 768-output weather-only qualification contract is unchanged. See [operation, ownership and acceptance](docs/mtp-production-serving.md).
 It does not change the default or the existing singleton public contract, and is
 not a claim of complete general-runtime production parity.
 

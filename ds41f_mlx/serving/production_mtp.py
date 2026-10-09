@@ -17,8 +17,7 @@ from omlx.request import Request, RequestOutput, RequestStatus, SamplingParams
 
 from .internal_mtp import InternalMTPQualificationBackend, QualificationSession
 from .paired_checkpoint import PairedCheckpointAuthority
-from .capacity import context_envelope, ORDINARY_BODY_BYTES
-from ds41f_mlx.mtp_profile import LIMITS
+from .capacity import context_envelope, ORDINARY_BODY_BYTES, validate_ordinary_capacity
 
 logger = logging.getLogger('uvicorn.error.ds41f')
 
@@ -224,7 +223,7 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
 
     @staticmethod
     def validate_ordinary(raw):
-        from ds41f_mlx.mtp_profile import strict_json, validate_chat, LIMITS
+        from ds41f_mlx.mtp_profile import strict_json, validate_chat
         if len(raw) > ORDINARY_BODY_BYTES:
             raise ValueError('body limit exceeded')
         body = strict_json(raw)
@@ -295,8 +294,9 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
         if prepared.protocol != 'chat_completions' or prepared.image_sources:
             raise ValueError('ordinary MTP supports text Chat Completions only')
         limit = self.max_tokens(prepared.inference_options)
-        if not 1 <= limit <= LIMITS['output_tokens'] or len(prepared.token_ids) < 3 or len(prepared.token_ids)+limit > self.context_tokens:
-            raise ValueError(f'ordinary MTP bounded to {self.context_tokens} total / {LIMITS["output_tokens"]} output tokens')
+        validate_ordinary_capacity(len(prepared.token_ids), limit, self.context_tokens)
+        if len(prepared.token_ids) < 3:
+            raise ValueError('encoded prompt must contain at least 3 tokens')
         rid = uuid4().hex
         queue = self._deliveries[rid] = asyncio.Queue()
         self._settled[rid] = asyncio.Event()

@@ -1,0 +1,14 @@
+Normal-local Python: /Volumes/SDXC-512/m53r-local-venv/bin/python
+DS41F_CHECKPOINT=/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash
+Independent pytest processes (avoid existing import/environment contamination):
+  tests/test_production_mtp.py: 19 passed
+  tests/test_production_context.py: 4 passed
+  tests/test_generic_mtp_tools.py: 6 passed
+  tests/test_m41_profile.py: 83 passed
+  tests/test_m29_mtp_lifecycle.py: 8 passed
+  tests/test_mtp_bind.py: 7 passed
+  tests/test_runtime_capacity.py -k 'not budget_http': 11 passed, 1 deselected
+  tests/test_m34_cache_release.py tests/test_prefill_fp8_mlx_p5.py: 20 passed, 14 subtests passed
+Total: 158 passed, 14 subtests passed.
+The deselected standard-off budget HTTP test fails normal-local recipe-native resource identity admission, outside this ordinary MTP delta. No full-repository qualification claimed.
+Real ordinary HTTP: 1024-token completion; 393216-ceiling EOS after 3 completion tokens; 802-token cancellation; generic tool round trip; OpenCode read/result/continuation.

@@ -91,13 +91,18 @@ def test_admission_uses_checkpoint_bounded_authority_not_8k(tmp_path, monkeypatc
     async def run():
         with pytest.raises(RuntimeError, match='entered production enqueue'):
             await backend.ordinary_response(prepared(32768), tokenizer=None)
-        for request in (prepared(TEXT_QUALIFIED_ENVELOPE, 1), prepared(32768, 769)):
-            with pytest.raises(ValueError, match='bounded'):
+        for prompt, output in ((32768, 769), (32768, 32768), (600000, 393216)):
+            with pytest.raises(RuntimeError, match='entered production enqueue'):
+                await backend.ordinary_response(prepared(prompt, output), tokenizer=None)
+        for request in (prepared(TEXT_QUALIFIED_ENVELOPE, 1), prepared(900000, 393216)):
+            with pytest.raises(ValueError, match=r'prompt \+ requested output exceeds'):
                 await backend.ordinary_response(request, tokenizer=None)
-        assert len(entered) == 1
+        with pytest.raises(ValueError, match='output capability ceiling'):
+            await backend.ordinary_response(prepared(3, 393217), tokenizer=None)
+        assert len(entered) == 4
         (tmp_path / 'config.json').write_text(json.dumps({'max_position_embeddings': 32768}))
         assert backend.context_tokens == 32768
-        with pytest.raises(ValueError, match='bounded'):
+        with pytest.raises(ValueError, match='total context tokens'):
             await backend.ordinary_response(prepared(32768), tokenizer=None)
     try:
         asyncio.run(run())

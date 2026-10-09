@@ -42,6 +42,25 @@ def test_qualified_boundary_and_model_boundary_are_total_and_separate(tmp_path):
     assert resolve_capacity(request, checkpoint=tmp_path, automatic=True)['max_tokens'] == 1
 
 
+@pytest.mark.parametrize('prompt,maximum,accepted', [
+    (600000, 393216, True), (900000, 393216, False),
+    (655360, 393216, True), (655361, 393216, False),
+    (32, 32768, True), (32, 393217, False),
+])
+def test_ordinary_output_and_total_capacity(tmp_path, prompt, maximum, accepted):
+    (tmp_path / 'config.json').write_text(json.dumps({'max_position_embeddings': 1048576}))
+    request = SimpleNamespace(token_ids=range(prompt), multimodal=None,
+                              inference_options=SimpleNamespace(max_tokens=maximum))
+    if accepted:
+        budget = resolve_capacity(request, checkpoint=tmp_path, ordinary=True)
+        assert budget['max_tokens'] == maximum
+        assert budget['model_output_ceiling'] == 393216
+    else:
+        reason = 'output capability ceiling' if maximum > 393216 else r'prompt \+ requested output exceeds 1,048,576'
+        with pytest.raises(ValueError, match=reason):
+            resolve_capacity(request, checkpoint=tmp_path, ordinary=True)
+
+
 def test_budget_prefix_guard_never_mutates_count_or_authority(monkeypatch):
     backend = DeepSeekRecipeRuntimeBackend(runtime_config=load_runtime_config())
     rec = SimpleNamespace(busy=False, recovery_state='ready', request_count=7, m11=SimpleNamespace(m8=SimpleNamespace(token_history=[1,2,3]), image_identities=[]))

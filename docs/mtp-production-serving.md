@@ -59,8 +59,9 @@ constraint leakage, not an execution or dependency admission requirement.
 
 This path keeps one worker, one executable native singleton and greedy/thinking-off
 text. Ordinary prompt + output is bounded by **1,048,576 tokens** (or a smaller
-checkpoint-configured range); output remains **768 tokens**. The old 8192 limit
-was temporary bounded serving scope, not the model/runtime long-context limit.
+checkpoint-configured range); maximum output is **393,216 tokens**. The old
+8192 total / 768 output ordinary bounds were historical bounded serving scope,
+not the model/runtime capability.
 `serving/capacity.py` owns the established qualified text envelope; recipe capacity
 admission, ordinary admission, Scheduler paired-cache sizing/publication and
 `/v1/models` use that authority. `ds41f inspect --profile mtp-serving-v1` reports
@@ -72,7 +73,15 @@ resource headroom, not a byte-to-token approximation; tool-result/argument bound
 remain unchanged. Ordinary generic function tools are supported, including
 multiple declarations, arbitrary names and recipe-representable JSON Schema-style
 parameters. Missing `max_tokens`
-uses 128. Unsupported controls are rejected, not silently implemented. Applications
+uses 128 (unchanged default generation budget). The maximum output is a capability
+ceiling, not mandatory generation or a KV/DSpark/output allocation reservation.
+`1 <= requested output <= 393,216` and `prompt + requested output <= 1,048,576`
+are separate admission rules: 600,000 + 393,216 fits; 900,000 + 393,216 does not.
+Actual state grows with prompt and tokens actually executed; EOS, recipe semantic
+stop, tool calls and application termination can finish far below the maximum.
+Thought/runaway/agent-loop policy, cancellation budgets and operator cost policy
+are separate responsibilities, not reasons to lower this capability ceiling.
+No new runaway-protection framework is introduced. Unsupported controls are rejected, not silently implemented. Applications
 own their messages and branches. Independent requests may queue; they do not join
 a shared native MTP batch. No persistence, crash recovery, exactly-once effects, or
 implicit HTTP retry identity is promised.
@@ -118,7 +127,7 @@ Only the wire request's `model` participates in ds41f admission. For OpenCode
           "id": "deepseek-v4.1-flash",
           "name": "DeepSeek V4.1 Flash",
           "tool_call": true,
-          "limit": {"context": 1048576, "output": 768}
+          "limit": {"context": 1048576, "output": 393216}
         }
       }
     }
@@ -296,7 +305,7 @@ that directory. Only the production delta was exercised, not a context ladder:
   **6 passed** in their standard-OFF pin (the MTP native recipe is intentionally
   a different admission identity). Total **212 passed, 26 subtests**. Final
   normal-local seal and ordinary `inspect` admission passed with the advertised
-  **1,048,576 / 768** limits. No full-repository qualification was run.
+  **1,048,576 / 768** limits at that time (output subsequently promoted below). No full-repository qualification was run.
 
 ### Generic function acceptance (2026-10-09)
 
@@ -382,3 +391,66 @@ observability in `production-serving-parity-closure.md` still need implementatio
 Portable packaging/promotion, above-qualified context, Web, new hosts and
 default-profile changes remain outside this task. M54R/M55R's existing bounded execution approval
 is not replaced by a new campaign or extended to those domains.
+
+## Ordinary output-capability promotion
+
+The sole ordinary output authority is `serving/capacity.py:ORDINARY_OUTPUT_CEILING`
+(**393,216**). Validation, recipe capacity preparation, production admission,
+Scheduler request construction, `/v1/models` and `ds41f inspect` agree. The
+singleton `mtp_profile.LIMITS` and internal qualification route remain 8192/768.
+No decode, sampling, settlement or paired-cache algorithm changed.
+
+Allocation ownership was inspected along OpenAI `max_tokens` -> recipe inference
+options -> ProductionMTPBackend -> SamplingParams/Request -> Scheduler-owned
+BatchGenerator -> native MTP. BatchGenerator stores a scalar/list termination
+budget; its insertion creates state from actual prompt IDs/cache, not that budget.
+Native MTP compares the generated count with the ceiling and clamps its existing
+small speculative block to the remaining budget. Target state in
+`model_execution/cache.py` and `language.py` grows from executed rows (bounded
+window, appended compressed KV/index state). DSparkContextCache appends committed
+rows to model-sized rings, independent of `max_tokens`. TokenBuffer grows in
+256-token increments; recipe delivery/history accumulate actual events/tokens.
+No max-output-sized preallocation exists or was introduced.
+
+Finite real production HTTP results are in `artifacts/output-capability/`:
+
+- `max_tokens=32768` and `393216`: accepted; both returned `OUTPUT_OK` in **3**
+  completion tokens, `finish_reason=stop` (4 native canonical tokens including EOS).
+- One **1024-token** completion crossed the old 768 boundary and normally ended
+  with `finish_reason=length`. Canonical target and all three DSpark frontiers
+  settled at **1065** and published. Follow-up reused **1065** tokens.
+- One SSE disconnect after >800 visible tokens cancelled at **802** native
+  generated tokens, settled/published at **843**, with no engine fault; a subsequent
+  huge-ceiling short request completed normally. Existing fail-closed/burn tests
+  remain passing; error handling was not relaxed.
+- Generic model-generated `read_file` -> actual client file read -> continuation,
+  changed-result branch and existing SSE behavior passed. JSON tool round trip
+  used a **393216** allowance and terminated at the tool call/answer, not the budget.
+- Every observed settlement retained same-frontier paired state, **0 prompt
+  replay / 0 whole-cache repack**, and no new settlement proposal/verify cycle.
+- Temporary external observers around existing enqueue/retire methods sampled
+  MLX memory, without changing allocation. For the short 393216 request, active
+  memory was **309,151,981,340 bytes** both before and after enqueue; cache memory
+  was **2,503,408 bytes** both times. After EOS active memory remained unchanged,
+  and peak stayed at the model-load peak **311,556,974,436 bytes**. State did not
+  reserve 393K output positions. This is a diagnostic sample, not a memory suite.
+- Actual HTTP total overflow returned `prompt + requested output exceeds
+  1,048,576 total context tokens`; 393217 returned a distinct output-capability
+  violation. Boundary tests accept 600000 + 393216 and reject 900000 + 393216.
+- OpenCode **1.18.30**, local-only provider configured as **1048576/393216**, read
+  `marker.txt` via its real read tool, continued with **7413** cached tokens and
+  returned `OPENCODE_OUTPUT_PROMOTION_OK`. No external provider or 384K generation.
+- The existing `accept_long_mtp_serving.py` regression also passed unchanged:
+  **17110**-token fresh prompt, **17108** repeat reuse, **17114** append/branch
+  reuse, disconnect recovery and long-context generic tool continuation.
+  Receipt: `long-context-regression.json`; replay/repack remained zero.
+- Relevant independent-process regressions: **158 passed + 14 subtests** across
+  production serving/context, generic tools, ordinary capacity, singleton profile,
+  lifecycle, bind, cache release and P5. The unrelated standard-off budget HTTP
+  test was excluded for its normal-local recipe-native identity mismatch; this is
+  not a full-repository qualification. Mixed-process runs expose existing
+  environment/import contamination; affected profile suites pass independently.
+
+The normal-local source inventory/local seal was refreshed using the unchanged
+admitted recipe wheel. No new framework, endurance matrix, runaway policy,
+packaging or release promotion was added.
