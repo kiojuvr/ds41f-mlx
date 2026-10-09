@@ -109,6 +109,16 @@ failed one M30 EOF audit because the installed native recipe lacks
 issue is separate from ordinary admission and remains unresolved; no inference
 or promotion claim is made from the boundary tests.
 
+Deployment follow-up: the five changed/added runtime files must also be reflected
+in `third_party/mtp/normal-local.json`'s reviewed runtime inventory. That inventory
+has been updated without changing native/dependency/checkpoint admission. The
+existing `/Volumes/SDXC-512/m53r-local-venv` seal was refreshed with the unchanged
+admitted wheel; `ops inspect --profile mtp-serving-v1` passed with the official
+checkpoint. Inventory/ordinary grammar/tool tests passed 61 tests in that
+normal-local environment. A repository inventory regression now prevents source
+changes from shipping without the matching admission update. Other existing
+installations must refresh their local seal after updating the source clone.
+
 This closes this admission defect's scope. It does not promote `mtp-serving-v1`
 to default, qualify all API features, prove Windows end-to-end inference, or
 replace separately scoped release/LAN/security gates.

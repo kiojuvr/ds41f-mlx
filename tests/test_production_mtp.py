@@ -131,6 +131,16 @@ def test_pinned_mlx_native_arrays_and_wrapped_ring_snapshot_are_stable(frontier)
     assert np.all(np.array(restored[0].cache[1]) == 1)
 
 
+def test_runtime_source_inventory_matches_repository_admission():
+    # Source edits must ship with the reviewed inventory, not require disabling
+    # startup identity checks or blindly resealing an unapproved source tree.
+    from ds41f_mlx.mtp_identity import qualified, runtime_inventory
+    actual, expected = runtime_inventory(), qualified()['runtime']
+    changed = sorted(path for path in actual.keys() | expected.keys()
+                     if actual.get(path) != expected.get(path))
+    assert not changed, f'unadmitted runtime source changes: {changed}'
+
+
 def test_ordinary_request_has_no_session_sequence_and_keeps_execution_bounds():
     pytest.importorskip('mlx.core')
     pytest.importorskip('omlx')
