@@ -23,7 +23,7 @@ def main(argv: list[str] | None = None) -> int:
             parser.error('MTP identity validation cannot be disabled')
         try:
             from .mtp_identity import config, inspect
-            cfg = config(args.host, args.port)
+            cfg = config(args.host, args.port, profile=args.profile)
             report = inspect(cfg)
         except (ValueError, OSError, ImportError) as exc:
             print(json.dumps({'status':'FAIL','error':str(exc)}), file=sys.stderr)

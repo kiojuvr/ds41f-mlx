@@ -20,8 +20,11 @@ python3 -m ds41f_mlx.serve --host 0.0.0.0 --port 8000
 
 It does not require the Web flag. Keeping runtime on loopback is also possible;
 remote browsers communicate only with the Web proxy. The separate MTP singleton
-profile retains its existing loopback constraint; no MTP/runtime promotion is
-implied.
+profile retains its existing loopback constraint. Ordinary `mtp-serving-v1`
+also supports direct LAN binding without the Web flag or proxy; see
+[ordinary MTP serving](mtp-production-serving.md#direct-trusted-private-lan-serving).
+Its trusted private-LAN / single-operator scope provides no authentication,
+adversarial multi-user isolation or Internet serving.
 
 ## Boundary and trust
 

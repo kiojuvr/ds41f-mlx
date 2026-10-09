@@ -26,7 +26,9 @@ CHECKPOINT = {'config.json':'8be45ce0476004a3f529fd896115a4a2e800a129ad2d3ec05b1
     'tokenizer.json':'c90dfa01249db1be4245780a052ede752e1361c612ac6d08e2bdada7d599476b'}
 
 
-def config(host=None, port=None):
+def config(host=None, port=None, *, profile=PROFILE):
+    if profile not in (PROFILE, 'mtp-serving-v1'):
+        raise ValueError('unknown MTP profile')
     allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
                'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
                'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID'}
@@ -48,7 +50,9 @@ def config(host=None, port=None):
     cfg = load_runtime_config()
     host = host if host is not None else cfg.host
     port = port if port is not None else cfg.port
-    if host != '127.0.0.1' or type(port) is not int or not 1 <= port <= 65535:
+    if type(port) is not int or not 1 <= port <= 65535:
+        raise ValueError('MTP requires a fixed port')
+    if profile == PROFILE and host != '127.0.0.1':
         raise ValueError('MTP requires literal 127.0.0.1 and a fixed port')
     if cfg.enable_diagnostics or cfg.model_id != 'deepseek-v4.1-flash':
         raise ValueError('diagnostics/custom model configuration unavailable in MTP')
@@ -112,7 +116,8 @@ def runtime_inventory():
 
 
 def snapshot():
-    cfg = config()
+    # Bind address is transport configuration, not executable/source identity.
+    cfg = config(host='127.0.0.1')
     import deepseek_recipe
     from deepseek_recipe import _native
     native = Path(_native.__file__).resolve()

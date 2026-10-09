@@ -33,7 +33,31 @@ Sealing verifies repository-admitted source/dependencies; it is not a new releas
 qualification. Native recipe, oMLX archive, dependency locks, checkpoint admission,
 hardware envelope, and native topology are unchanged.
 
-This path keeps the bounded execution capabilities: trusted loopback, one worker,
+### Direct trusted private-LAN serving
+
+```sh
+/Volumes/SDXC-512/m53r-local-venv/bin/python -m ds41f_mlx.ops start \
+  --profile mtp-serving-v1 --host 0.0.0.0 --port 8000
+```
+
+From another trusted LAN client use `http://<Mac-Studio-LAN-IP>:8000/v1`.
+Local `http://127.0.0.1:8000/v1` clients continue to work with the wildcard bind.
+A concrete LAN interface address (or IPv6 bind) can be supplied instead; clients
+must then use a reachable bound interface. The default remains `127.0.0.1`.
+Ordinary Host admission accepts one syntactically valid IP/IPv6/DNS authority,
+with optional port, rather than requiring `127.0.0.1:<port>` or matching the bind
+address. Missing, duplicate and malformed Host headers and Origin remain rejected.
+No proxy, SSH tunnel, VPN or additional transport daemon is required.
+
+`mtp-serving-v1` targets **trusted private LAN / single-operator deployments**.
+It provides no authentication, TLS, adversarial multi-user isolation, or Internet
+exposure support. Wildcard binding listens on all interfaces; select a private
+interface and/or configure the host firewall as appropriate for your deployment.
+`mtp-singleton-v1` retains its literal `127.0.0.1` bind and exact Host contract;
+`standard-off` is unchanged. This removes historical singleton transport
+constraint leakage, not an execution or dependency admission requirement.
+
+This path keeps the bounded execution capabilities: one worker,
 one executable native singleton, greedy/thinking-off text, prompt + output budget
 <=8192, output <=768, and the existing weather-tool subset. Missing `max_tokens`
 uses 128. Unsupported controls are rejected, not silently implemented. Applications
@@ -128,6 +152,35 @@ raw hash-index hit counters. Ordinary settlement logs record request ID, reused
 frontier, canonical frontier, publication and cancellation disposition.
 
 ## Acceptance and regression
+
+### Direct-LAN transport fix checks (2026-10-09)
+
+- Admitted normal-local startup with `mtp-serving-v1 --host 0.0.0.0 --port 8000`
+  succeeded on the Mac Studio. `/v1/models` returned 200 through both
+  `127.0.0.1:8000` and `192.168.68.56:8000`.
+- A localhost Chat Completions request returned `OK`, fresh 0/9 cached tokens.
+  Through the LAN-IP authority, its repeat returned `OK`, 7/9 paired tokens
+  restored; appended history returned `YES`, 11/20 restored. These requests
+  used ordinary JSON, without public sessions or sequence headers.
+- LAN-IP SSE disconnected after content; the engine logged canonical settlement
+  with `cancelled=True`. Subsequent JSON completed; its repeat restored 7/9.
+  Final health had zero queued/active requests and no fatal error.
+- `mtp-singleton-v1 --host 0.0.0.0` still failed before startup with the literal
+  loopback requirement. Profile bind/worker/port, ordinary HTTP, paired cache,
+  lifecycle, singleton boundary and MTP resource tests: **111 passed**.
+  Additional M29/M34/M47/multimodal cancellation/Web private-LAN checks:
+  **44 passed, 4 failed**. All four M47 identity failures also reproduce on the
+  unmodified parent in this MTP environment (26 passed, same 4 failures);
+  its native dependency is not the standard-OFF resource pin.
+
+**Pending acceptance:** both IP clients above ran on the same Mac. No separate
+LAN client execution facility was available; this is not evidence of packets
+crossing the LAN or of host-firewall reachability. From another trusted machine,
+GET `http://192.168.68.56:8000/v1/models`, POST the example Chat Completions body
+twice, and confirm `OK` plus positive paired `cached_tokens` on the repeat.
+The direct-LAN acceptance remains incomplete until those checks actually run.
+
+### Existing ordinary execution acceptance
 
 Actual normal-local startup on the admitted M3 Ultra/512 GB host, official asset,
 and unchanged native dependencies exercised ordinary HTTP clients:

@@ -1,6 +1,7 @@
 """Public projection and ingress around the qualified guarded singleton.
 
-No alternate cache/parser/lifecycle owner. Trusted single-operator loopback only.
+No alternate cache/parser/lifecycle owner. Ordinary serving trusts a private LAN;
+the singleton profile retains its literal loopback authority.
 """
 import asyncio
 import json
@@ -116,7 +117,15 @@ class LocalBoundary:
         headers = scope['headers']
         def values(key):
             return [v for k,v in headers if k.lower() == key]
-        if values(b'host') != [self.authority.encode()] or values(b'origin'):
+        hosts = values(b'host')
+        if self.ordinary:
+            # Host names the client-facing interface, not the wildcard bind.
+            # Keep one syntactically bounded authority; no literal-IP allowlist.
+            valid_host = len(hosts) == 1 and re.fullmatch(
+                rb'(?:[A-Za-z0-9._-]+|\[[0-9A-Fa-f:.]+\])(?::[0-9]{1,5})?', hosts[0])
+        else:
+            valid_host = hosts == [self.authority.encode()]
+        if not valid_host or values(b'origin'):
             return await deny(400, 'local_authority_required')
         if values(b'upgrade'):
             return await deny(400, 'unsupported_capability')

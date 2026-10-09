@@ -141,7 +141,13 @@ def test_ordinary_request_has_no_session_sequence_and_keeps_execution_bounds():
             ProductionMTPBackend.validate_ordinary(json.dumps(body | unsupported).encode())
 
 
-def test_ordinary_http_recipe_route_has_no_compulsory_public_session(monkeypatch):
+@pytest.mark.parametrize('host,authority', [
+    ('127.0.0.1', '127.0.0.1:8000'),
+    ('0.0.0.0', '192.168.68.56:8000'),
+    ('192.168.68.56', 'mac-studio.local:8000'),
+    ('::', '[fd12::56]:8000'),
+])
+def test_ordinary_http_recipe_route_has_no_compulsory_public_session(monkeypatch, host, authority):
     pytest.importorskip('mlx.core')
     pytest.importorskip('omlx')
     import os
@@ -151,7 +157,7 @@ def test_ordinary_http_recipe_route_has_no_compulsory_public_session(monkeypatch
     from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
     from ds41f_mlx.serving.server import create_app
     previous = dict(os.environ)
-    backend = ProductionMTPBackend(runtime_config=config())
+    backend = ProductionMTPBackend(runtime_config=config(host, profile='mtp-serving-v1'))
     backend.dependency_identity = 'fixture-admitted-identity'
     seen = []
     async def response(prepared, *, tokenizer, http_request):
@@ -162,7 +168,11 @@ def test_ordinary_http_recipe_route_has_no_compulsory_public_session(monkeypatch
     monkeypatch.setattr(backend, 'ordinary_response', response)
     try:
         app = create_app(profile='mtp-serving-v1', runtime_config=backend.runtime_config, backend=backend)
-        with TestClient(app, base_url='http://127.0.0.1:8000') as client:
+        with TestClient(app, base_url=f'http://{authority}') as client:
+            assert client.get('/v1/models').status_code == 200
+            for headers in ({'Host': ''}, {'Host': 'bad host'}, {'Origin': 'http://other.invalid'}):
+                assert client.get('/v1/models', headers=headers).status_code == 400
+            assert client.get('/v1/models', headers=[('Host', authority), ('Host', authority)]).status_code == 400
             result = client.post('/v1/chat/completions', json={
                 'model': 'deepseek-v4.1-flash', 'messages': [{'role': 'user', 'content': 'Hello'}]})
             assert result.status_code == 200

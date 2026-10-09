@@ -44,7 +44,7 @@ def main(argv: list[str] | None = None) -> int:
             parser.error('MTP supports inspect/start/accept only')
         try:
             from .mtp_identity import config, inspect
-            report = inspect(config())
+            report = inspect(config(profile=args.profile))
             if args.profile == 'mtp-serving-v1':
                 report['serving_profile'] = args.profile
             print(json.dumps(report, indent=2, sort_keys=True))
