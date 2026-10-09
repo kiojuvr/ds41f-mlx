@@ -2,7 +2,25 @@
 
 This roadmap records implementation boundaries and evidence-driven next work. It is not an optimization backlog or a requirement to create a new milestone for every implementation/qualification iteration.
 
-## MTP architectural restart (current authority)
+## Production-serving closure (superseding authority)
+
+[Production Serving Parity Closure](production-serving-parity-closure.md) governs
+production-serving completion and supersedes broader release interpretations in
+this roadmap. **ds41f is not production-release-complete as a general LLM runtime
+server.** The broader release decision is reopened because ordinary runtime-server
+requirements were omitted from the previous scope. M50R–M55R remain authoritative
+within their qualified execution/application scope; M55R is a bounded
+`mtp-singleton-v1` release qualification, not general serving completion.
+`ds41f-runtime` promotion remains deferred.
+
+The next implementation milestone is **SP1 — Production Serving Foundation**.
+Follow its priorities, anti-rewrite/anti-meandering rules and PASS/BLOCK boundary
+in the policy document. Portable packaging, broad Web expansion, long-context
+research, additional model optimization and unrelated release infrastructure are
+not the next work. Historical sequencing below remains bounded evidence, not an
+authorization to continue the old objective function.
+
+## MTP architectural restart (execution authority)
 
 [M49R reset and canonical roadmap](mtp-architecture-reset.md) supersedes M50–M56
 as a failed production architecture line. Active runtime was restored to
@@ -36,10 +54,11 @@ release blockers. [M54R/M55R](milestone-54r-55r-operational-release.md) now esta
 **RELEASE APPROVED, PROMOTION DEFERRED** for explicit `mtp-singleton-v1`
 normal-local source-clone operation. Portable `ds41f-runtime` projection/package
 is not required now; a separately requested promotion remains subject to M43.
-No capability expansion, default-MTP change or optimization is authorized.
-The unrelated post-M48 qualified work below remains intact.
+That historical decision did not authorize capability expansion, default-MTP
+change or optimization. SP1 now governs serving implementation priorities while
+preserving the qualified execution boundaries and post-M48 evidence below.
 
-## Post-M48 production boundary and remaining work (current authority)
+## Post-M48 production boundary and remaining work (bounded execution scope)
 
 **M48 completed the supported text-only standard-OFF production core; it did not complete the entire production implementation of DeepSeek-V4.1-Flash.**
 
@@ -50,7 +69,8 @@ continuation architecture, and M44–M47 generation, transaction, state-producti
 and admission ownership. See [M48 evidence](milestone-48-first-party-model-execution.md).
 Do not weaken or reopen those ownership boundaries merely to eliminate remaining
 dependencies. Historical milestone statements describe their bounded evidence;
-this section governs the current interpretation of production completion.
+this section governs the bounded post-M48 execution scope, subject to the
+superseding production-serving completion policy above.
 
 ### 200K production performance / long-session baseline (qualified)
 

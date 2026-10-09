@@ -1,5 +1,19 @@
 # ds41f-mlx
 
+## Production-serving authority
+
+[Production Serving Parity Closure](docs/production-serving-parity-closure.md) is the
+superseding policy for production-serving completion. **ds41f is not
+production-release-complete as a general LLM runtime server.** The broader release
+decision is reopened because the previous scope omitted ordinary runtime-server
+requirements. M50R–M55R evidence remains valid within its bounded scope; M55R
+qualified the constrained `mtp-singleton-v1` execution/application profile, not
+general production serving. `ds41f-runtime` promotion remains deferred.
+
+The next implementation milestone is **SP1 — Production Serving Foundation**,
+under the new SP series. Its priorities and PASS/BLOCK boundary are defined in
+the policy above; historical execution cores and qualification evidence are retained.
+
 ## Purpose
 
 `ds41f-mlx` is a native Apple Silicon runtime for the official DeepSeek-V4.1-Flash checkpoint, developed primarily for the Mac Studio M3 Ultra 512 GB.
@@ -94,8 +108,10 @@ initial conformance gate: unexplained material gaps BLOCK, not future optimizati
 The **M49R–M55R** series now closes the supported normal-local MTP release:
 M50R–M53R PASS; [M54R operational sufficiency / M55R release decision](docs/milestone-54r-55r-operational-release.md)
 is **evidence-complete, RELEASE APPROVED, PROMOTION DEFERRED**, with zero release
-blockers and no additional operational campaign. This approves source-clone
-operation only, not portable packaging, default MTP or `ds41f-runtime` promotion.
+blockers within that bounded profile and no additional operational campaign.
+This approves constrained source-clone operation only, not general production
+serving, portable packaging, default MTP or `ds41f-runtime` promotion. The broader
+serving release remains blocked under the production-serving policy above.
 
 The historical qualified release scope is a text-only local runtime for the official DeepSeek-V4.1-Flash checkpoint on the Mac Studio M3 Ultra 512 GB class target. The production path is:
 
