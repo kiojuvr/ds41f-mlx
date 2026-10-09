@@ -1,7 +1,21 @@
 {
   "schema": "ds41f.docs_classification.v1",
-  "policy": "Canonical docs are current-state normative. docs/archive and SUPERSEDED_HISTORICAL entries are non-normative history/evidence. M49R governs MTP; M50–M56 implementation is superseded while M54 semantic requirements survive in the reset doctrine.",
+  "policy": "Canonical docs are current-state normative. docs/archive and SUPERSEDED_HISTORICAL entries are non-normative history/evidence. M49R governs retained MTP execution architecture; production-serving-parity-closure.md governs current serving/development policy, with mtp-serving-v1 as the production-semantics boundary. Historical SP1 BLOCK was subsequently resolved for B1/B2 on the ordinary path, not broader release completion. M50–M56 implementation is superseded while M54 semantic requirements survive in the reset doctrine.",
   "entries": [
+    {
+      "path": "docs/production-serving-parity-closure.md",
+      "classification": "CANONICAL",
+      "absorbed_into": [],
+      "evidence_preserved": true,
+      "reason": "Current production-serving and development-policy authority: mtp-serving-v1 production-semantics boundary, restriction rationale burden, capability/policy separation, real-workload evidence and qualified-core reuse/delta validation. Preserved SP1 assessment is historical; B1/B2 subsequently closed for ordinary serving, broader release gates remain open."
+    },
+    {
+      "path": "docs/mtp-production-serving.md",
+      "classification": "CANONICAL",
+      "absorbed_into": [],
+      "evidence_preserved": true,
+      "reason": "Current ordinary MTP operation, supported capability, Scheduler/paired-cache/lifecycle ownership and acceptance. Uses the serving closure's production decision rule; singleton evidence remains separate. Separate-machine LAN acceptance pending; no general release or promotion completion."
+    },
     {
       "path": "docs/milestone-54r-55r-operational-release.md",
       "classification": "CANONICAL",

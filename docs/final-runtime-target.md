@@ -10,7 +10,7 @@ DeepSeek-V4.1-Flash checkpoint on the documented Apple Silicon platform.
 This document defines the destination, not an implementation plan or a claim that
 it has already been reached. **M48 completed the supported text-only standard-OFF
 production core; it did not complete the entire production implementation of
-DeepSeek-V4.1-Flash.** The authoritative [post-M48 roadmap](implementation-plan.md#post-m48-production-boundary-and-remaining-work-current-authority)
+DeepSeek-V4.1-Flash.** The authoritative [post-M48 roadmap](implementation-plan.md#post-m48-production-boundary-and-remaining-work-bounded-execution-scope)
 distinguishes the qualified 1M text core, the separately qualified bounded
 [first-party multimodal production capability](multimodal-production-qualification.md)
 (four inline images / 8,192 consumed positions), and later R1 regression proof
@@ -19,10 +19,13 @@ context, universal visual quality or release/packaging completion. Implementatio
 and operational qualification iterate as expanded scope exposes gaps. [Runtime strategy](runtime-strategy.md),
 [operations](operations.md), the [release manifest](../release/ds41f-release.json)
 and scoped qualification records continue to describe the current runtime.
-Production/default MTP, DSpark and speculation remain OFF; this target neither
-promotes MTP nor broadens any qualified capability. The separately implemented
-[M41 local candidate](milestone-41-local-mtp-release-candidate.md) has its own
-narrow [setup/capability contract](mtp-local-release-candidate.md).
+MTP, DSpark and speculation remain OFF **by default**. Explicit
+[`mtp-serving-v1`](mtp-production-serving.md) now provides ordinary production-facing
+MTP semantics; `mtp-singleton-v1` retains its separate bounded
+[setup/capability contract](mtp-local-release-candidate.md). The
+[production-semantics boundary and decision rule](production-serving-parity-closure.md#mtp-production-semantics-boundary)
+govern subsequent MTP serving decisions, without implying release/promotion,
+Internet/multi-user readiness or completion of this prospective target.
 
 The [reference release and promotion strategy](reference-release-and-promotion-strategy.md)
 refines the repository model: `ds41f-mlx` remains the sole development authority;
@@ -95,7 +98,9 @@ MTP, DSpark and speculation remain separately scoped and OFF by default.
 
 ### MTP physical architecture and semantic authority
 
-[M49R reset](mtp-architecture-reset.md) is the current MTP roadmap. The formal
+[M49R reset](mtp-architecture-reset.md) governs retained MTP execution architecture;
+the [current serving roadmap](implementation-plan.md#production-serving-closure-superseding-authority)
+governs subsequent production-facing work. The formal
 restart is `5e784d9`; M50–M56 are a superseded failed production architecture
 line, not a normal-profile candidate. Their correctness evidence remains usable;
 M54 application/semantic requirements remain mandatory.

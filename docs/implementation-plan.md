@@ -13,21 +13,26 @@ within their qualified execution/application scope; M55R is a bounded
 `mtp-singleton-v1` release qualification, not general serving completion.
 `ds41f-runtime` promotion remains deferred.
 
-**SP1 — Serving/API Authority Reconstruction: BLOCK.** Its boundary was
-intentionally narrowed from foundation implementation to an authority/restoration
-decision. **SP1 PASS does not close production-serving functionality or release
-blockers. It establishes the architecture and ownership basis for subsequent
-implementation.** The authoritative policy records two unresolved contracts:
-paired target/DSpark prefix checkpoint restoration, and generic scheduler adoption
-of P5 plus canonical settlement/publication/retirement. Recipe delegation remains
-a valid asset; generic oMLX scheduler/cache restoration is not yet approved.
+**Current ordinary MTP serving:** `mtp-serving-v1` is implemented, with B1 paired
+target/DSpark checkpoint restoration and B2 Scheduler/P5 settlement, publication
+and retirement connected/closed for the supported path. Ordinary Chat Completions,
+generic recipe-authoritative tools, 1,048,576 total context / 393,216 output
+capability and explicit trusted private-LAN binding are provided; see
+[operation, scope and acceptance](mtp-production-serving.md). Separate-machine
+LAN acceptance remains pending. This does not close broader release requirements.
 
-The smallest proposed next work is separately authorized resolution of those
-contracts, not SP2 implementation. No serving restoration, adapter, cache-manager
-replacement, default change or release/promotion is authorized. Portable packaging,
-broad Web expansion, long-context research, optimization and unrelated release
-infrastructure remain outside this boundary. Historical sequencing below remains
-bounded evidence, not authorization to continue the old objective function.
+**SP1 BLOCK is the historical starting assessment**, preserved in the serving
+closure document; its unresolved B1/B2 contracts and no-implementation authorization
+language are not current blockers. Subsequent implementation resolved those
+contracts for ordinary serving without declaring general release completion.
+
+`mtp-serving-v1` is the **production-semantics boundary**. Future work follows the
+[canonical production decision rule](production-serving-parity-closure.md#decision-rule-for-future-agents):
+protect established runtime capability rather than inherit qualification artifacts,
+justify current restrictions, and validate production deltas using real supported
+workload evidence. Full R1, packaging, promotion, broader product features and
+Internet/multi-user security remain separate scopes. Historical sequencing below
+is bounded evidence, not authorization to continue the old objective function.
 
 ## MTP architectural restart (execution authority)
 
@@ -64,9 +69,9 @@ release blockers. [M54R/M55R](milestone-54r-55r-operational-release.md) now esta
 normal-local source-clone operation. Portable `ds41f-runtime` projection/package
 is not required now; a separately requested promotion remains subject to M43.
 That historical decision did not authorize capability expansion, default-MTP
-change or optimization. The SP1 authority/restoration decision now governs the
-basis for future serving work, without authorizing implementation and while
-preserving the qualified execution boundaries and post-M48 evidence below.
+change or optimization. Subsequent `mtp-serving-v1` implementation is governed by
+the current production-serving authority above, not SP1's historical implementation
+hold. Qualified execution boundaries and post-M48 evidence below remain preserved.
 
 ## Post-M48 production boundary and remaining work (bounded execution scope)
 

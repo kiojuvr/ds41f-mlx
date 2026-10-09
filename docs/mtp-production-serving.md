@@ -1,5 +1,16 @@
 # Ordinary MTP serving: state ownership
 
+## Development authority
+
+`mtp-serving-v1` is the **production-semantics boundary**, not another bounded
+qualification milestone. The canonical [MTP production doctrine and decision rule](production-serving-parity-closure.md#mtp-production-semantics-boundary)
+govern future work: start from established capability, justify restrictions with
+current production reasons, separate capability/policy/defaults, reuse qualified
+core evidence and validate production deltas from real supported workloads.
+Historical singleton evidence remains unchanged, not ordinary production policy.
+This boundary does not declare full release, R1, packaging, `ds41f-runtime`
+promotion, Internet security or multi-user serving complete.
+
 ## Enable explicitly
 
 `standard-off` remains the default. `mtp-singleton-v1` retains its existing
@@ -384,7 +395,8 @@ lifecycle doubles otherwise contaminate import origins in a combined invocation)
 No soak, benchmark campaign, qualification framework or new artifact schema was
 created.
 
-B1/B2 are implemented for this bounded ordinary serving path. This is **not**
+B1/B2 are implemented/closed for this supported ordinary serving path; SP1's
+unresolved-contract assessment is historical, not its current status. This is **not**
 closure of every general-runtime production-release requirement: broader API and
 control domains beyond the supported ordinary function tools, transparent profile/resource policy and full production
 observability in `production-serving-parity-closure.md` still need implementation.

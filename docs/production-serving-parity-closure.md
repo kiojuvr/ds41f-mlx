@@ -31,6 +31,121 @@ approved bounded execution core.
 
 ---
 
+# MTP production-semantics boundary
+
+**`mtp-serving-v1` is the production-semantics boundary for MTP development.**
+Before it, bounded qualification primarily asked: “Can correctness be proved
+under these deliberately limited conditions?” From this boundary onward,
+production-facing work primarily asks: “Are we withholding established
+model/runtime capability expected by real users and clients without a concrete
+production reason?” This is development policy, not a new qualification milestone.
+
+```text
+historical qualification / bounded evidence
+  mtp-singleton-v1; specialized session/fence/certificate contracts
+  deliberately narrow capability envelopes
+                         ↓
+        production-semantics boundary: mtp-serving-v1
+                         ↓
+ordinary production-facing serving
+  ordinary OpenAI-compatible API; real applications / OpenCode; generic tools
+  model/runtime capability; production cache/lifecycle/resource policy
+```
+
+## Historical evidence versus current production authority
+
+Historical evidence states what was proved at that time within that scope.
+Current production authority states what the production path should provide now.
+Preserve both without confusing them: `mtp-singleton-v1` retains its 8192-total /
+768-output, weather, certificate and effect qualification contract unchanged.
+Those bounds must not flow back into `mtp-serving-v1` policy merely because they
+already exist. Internal correctness and lifecycle invariants remain assets; their
+specialized application protocol is not an ordinary client obligation.
+
+## Production restriction burden
+
+The side retaining or adding a production capability restriction bears the burden
+of documenting a **current concrete rationale**: correctness, state/lifecycle
+integrity, an actual resource bound, hardware/runtime incompatibility, a security
+boundary, protocol incompatibility, measured operational failure, or an explicit
+product scope decision.
+
+“Previously it was so,” “only that range was qualified,” and “smaller is more
+cautious” are not sufficient rationales. Historical 8192 context, 768 output,
+weather-only tools, loopback-only transport, special session IDs and
+sequence/fence/certificate requirements do not justify production restrictions
+by themselves. This is not an unconditional rule to publish every maximum:
+concrete implementation reasons may require a capability limit and must be stated.
+
+A few resolved leaks illustrate the distinction, not a new milestone history:
+
+| Qualification-era constraint | Current ordinary production resolution |
+| --- | --- |
+| Weather-only declarations | Generic recipe-authoritative function tools |
+| 8192 total context | 1,048,576 total context (subject to checkpoint range) |
+| 768 output | 393,216 output capability |
+| Loopback-only transport | Explicit trusted private-LAN serving |
+| Specialized MTP application protocol | Ordinary Chat Completions interface |
+
+See [ordinary MTP serving](mtp-production-serving.md) for the supported envelope
+and evidence, including the still-pending separate-machine LAN acceptance.
+
+## Capability, policy and defaults
+
+Keep model/runtime capability, operational safety policy and operator defaults
+separate where possible. The established ordinary envelope is **1,048,576 total
+context / 393,216 maximum output**; the ordinary default generation budget is
+**128**, not a capability ceiling. Thought/runaway loops, agent loops, timeouts,
+operator cost and network security are separate policy responsibilities.
+
+Prefer capability → application/operator policy → runaway/safety/resource guards,
+not artificially shrinking model capability as the first response. When a concrete
+implementation reason requires limiting capability itself, document that reason.
+Production cache retention, single-flight execution and trusted-network scope
+remain intentional policies, not automatic inheritance of qualification bounds.
+
+## Production evidence and validation loop
+
+Failures from real **supported** clients/workloads are first-class development
+inputs, not merely gaps in synthetic qualification coverage: normal OpenCode
+prompts rejected, generic declarations denied, real edits truncated, ordinary
+client semantics changed, long-conversation reuse failing, cancellation corrupting
+state, or operational memory retention problems.
+
+The basic loop is: real workload exposes a concrete failure → identify the
+responsible production boundary → repair it → small affected acceptance → return
+to real operation. Count blockers removed, not scripts, probes, artifacts or
+milestones created; do not prolong confidence-building after closure.
+
+Compose **already-qualified core + new production boundary**. Reuse authoritative
+execution-core evidence and validate the changed boundary's delta instead of
+re-proving the core for every integration. Return to core validation only to the
+extent concrete evidence indicates a regression. Task B/C applied this through
+existing long-context evidence reuse, no numerical requalification, no staged
+64K/128K/256K campaign, and output promotion without 384K endurance generation.
+
+## Decision rule for future agents
+
+For `mtp-serving-v1` and later production-facing work:
+
+1. Start from established model/runtime capability, not historical qualification bounds.
+2. Preserve a restriction only with a current concrete production rationale.
+3. Separate capability, safety policy and operator defaults where possible.
+4. Reuse authoritative qualification evidence; validate the changed production boundary.
+5. Treat real supported client/workload failures as first-class production evidence.
+6. Stop confidence-building test/milestone campaigns once the concrete blocker is closed.
+
+## Production semantics is not release completion
+
+This boundary starts evaluation of subsequent feature, API, resource and lifecycle
+decisions as real-operation decisions. It does **not** mean `ds41f-runtime`
+promotion, general runtime release, or all product features are complete, nor
+Internet/multi-user production readiness. Release packaging, full R1 regression,
+promotion, Internet security and multi-user serving remain separately scoped.
+B1/B2 closure for the supported ordinary path does not close those broader gates.
+
+---
+
 # Why this closure exists
 
 Development to date concentrated successfully on difficult model-runtime problems:
@@ -51,7 +166,8 @@ They are not sufficient.
 
 A runtime server must also provide the ordinary serving semantics expected by applications using modern local LLM runtimes.
 
-Recent inspection exposed several examples:
+The historical starting inspection exposed several examples (not a current
+unresolved-blocker list; see the implementation update above):
 
 - MTP changes the public HTTP contract instead of remaining an internal execution strategy.
 - ordinary `/v1/chat/completions` clients cannot use the qualified MTP path.
@@ -371,7 +487,8 @@ semantic projection; execution of tools belongs to the client. See
 
 The weather-only schema remains unchanged qualification evidence for
 `mtp-singleton-v1`, not a restriction of the general ordinary function API.
-The existing 8192-total / 768-output bound remains a separate limitation.
+The historical singleton 8192-total / 768-output bound is not ordinary production
+policy; ordinary serving now exposes 1,048,576 total / 393,216 output capability.
 
 Web search, PDF, Vision and other ds41f application capabilities remain independently scoped and must not be accidentally bundled into foundational serving work.
 
@@ -565,7 +682,14 @@ Create a new milestone only when a coherent production-serving boundary needs im
 
 ---
 
-# SP1 — Serving/API Authority Reconstruction
+# SP1 — Serving/API Authority Reconstruction (historical starting assessment)
+
+**Historical scope of the remainder of this document:** the SP1 assessment,
+B1/B2 unresolved contracts, conditional matrix and proposed next work below
+record the starting state. They are preserved, not current blockers or an ongoing
+ban on serving implementation. B1/B2 were subsequently implemented/closed for
+`mtp-serving-v1`; the current status and production decision rule above govern.
+Broader release gates remain open.
 
 The milestone boundary is intentionally revised. SP1 is an authority/restoration
 **decision**, not a serving implementation milestone. The former foundation

@@ -11,7 +11,8 @@ Canonical architectural intent:
 
 Canonical current-state documents:
 
-- [Production Serving Parity Closure](production-serving-parity-closure.md) — **superseding serving authority; SP1 BLOCK** on paired target/DSpark prefix restoration and scheduler/P5 settlement ownership. SP1 is intentionally decision-only; PASS closes no serving functionality or release blockers. General runtime-server release remains incomplete; no SP2 implementation authorized.
+- [Production Serving Parity Closure](production-serving-parity-closure.md) — **superseding serving/development authority; `mtp-serving-v1` production-semantics boundary** and [future-agent decision rule](production-serving-parity-closure.md#decision-rule-for-future-agents). SP1 BLOCK is the preserved historical starting assessment; B1/B2 are subsequently implemented/closed for ordinary serving. General runtime release and promotion remain incomplete.
+- [Ordinary MTP production serving](mtp-production-serving.md) — current opt-in Chat Completions, generic tools, 1,048,576 total context / 393,216 output capability, paired cache/lifecycle ownership and trusted private-LAN scope; separate-machine LAN acceptance pending, not Internet/multi-user readiness.
 
 - [M41 local MTP candidate](milestone-41-local-mtp-release-candidate.md) — explicit bounded opt-in capability, composed/source-clone evidence and OFF regression
 - [M49R MTP architecture reset and roadmap](mtp-architecture-reset.md) — current authority: restart `5e784d9`, oMLX physical topology, retained M54 requirements, conformance/performance gates and M49R–M55R series
@@ -28,7 +29,7 @@ Canonical current-state documents:
 - [Local MTP setup/API/operator boundary](mtp-local-release-candidate.md) — released source-clone profile, reproducible source/native setup and conservative application states
 
 - [Runtime strategy](runtime-strategy.md) — production architecture and non-selected paths
-- [Implementation plan: post-M48 boundary and remaining work](implementation-plan.md#post-m48-production-boundary-and-remaining-work-current-authority) — authoritative current roadmap: text standard-OFF core complete, not full production implementation; measured bounded 1M text and four-image/8K multimodal cores, deferred R1 and promotion
+- [Implementation plan: post-M48 boundary and remaining work](implementation-plan.md#post-m48-production-boundary-and-remaining-work-bounded-execution-scope) — authoritative current roadmap: text standard-OFF core complete, not full production implementation; measured bounded 1M text and four-image/8K multimodal cores, deferred R1 and promotion
 - [Standard-OFF 200K production qualification](standard-off-200k-production-qualification.md) — post-M48 real long-session core, allocator defect closure, exact persistence/restart and bounded operational envelope
 - [Very-long-context production qualification](very-long-context-production-qualification.md) — actual 512K/768K/1M text core, residency-lifetime repair, measured supported ceiling and exact restart/re-entry
 - [Multimodal production qualification](multimodal-production-qualification.md) — first-party image preprocessing/execution, exact continuation/restore, protected cancellation and bounded fidelity/resource/performance evidence
