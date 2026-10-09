@@ -13,12 +13,21 @@ within their qualified execution/application scope; M55R is a bounded
 `mtp-singleton-v1` release qualification, not general serving completion.
 `ds41f-runtime` promotion remains deferred.
 
-The next implementation milestone is **SP1 — Production Serving Foundation**.
-Follow its priorities, anti-rewrite/anti-meandering rules and PASS/BLOCK boundary
-in the policy document. Portable packaging, broad Web expansion, long-context
-research, additional model optimization and unrelated release infrastructure are
-not the next work. Historical sequencing below remains bounded evidence, not an
-authorization to continue the old objective function.
+**SP1 — Serving/API Authority Reconstruction: BLOCK.** Its boundary was
+intentionally narrowed from foundation implementation to an authority/restoration
+decision. **SP1 PASS does not close production-serving functionality or release
+blockers. It establishes the architecture and ownership basis for subsequent
+implementation.** The authoritative policy records two unresolved contracts:
+paired target/DSpark prefix checkpoint restoration, and generic scheduler adoption
+of P5 plus canonical settlement/publication/retirement. Recipe delegation remains
+a valid asset; generic oMLX scheduler/cache restoration is not yet approved.
+
+The smallest proposed next work is separately authorized resolution of those
+contracts, not SP2 implementation. No serving restoration, adapter, cache-manager
+replacement, default change or release/promotion is authorized. Portable packaging,
+broad Web expansion, long-context research, optimization and unrelated release
+infrastructure remain outside this boundary. Historical sequencing below remains
+bounded evidence, not authorization to continue the old objective function.
 
 ## MTP architectural restart (execution authority)
 
@@ -55,7 +64,8 @@ release blockers. [M54R/M55R](milestone-54r-55r-operational-release.md) now esta
 normal-local source-clone operation. Portable `ds41f-runtime` projection/package
 is not required now; a separately requested promotion remains subject to M43.
 That historical decision did not authorize capability expansion, default-MTP
-change or optimization. SP1 now governs serving implementation priorities while
+change or optimization. The SP1 authority/restoration decision now governs the
+basis for future serving work, without authorizing implementation and while
 preserving the qualified execution boundaries and post-M48 evidence below.
 
 ## Post-M48 production boundary and remaining work (bounded execution scope)

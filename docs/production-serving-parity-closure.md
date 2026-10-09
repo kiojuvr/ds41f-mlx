@@ -548,66 +548,484 @@ Create a new milestone only when a coherent production-serving boundary needs im
 
 ---
 
-# SP1 — Production Serving Foundation
+# SP1 — Serving/API Authority Reconstruction
 
-SP1 is the first implementation milestone under this document.
+The milestone boundary is intentionally revised. SP1 is an authority/restoration
+**decision**, not a serving implementation milestone. The former foundation
+implementation exit condition is superseded; all broader serving domains and
+release criteria above remain unchanged.
 
-Its purpose is not to produce a report.
+**SP1 PASS does not close production-serving functionality or release blockers. It establishes the architecture and ownership basis for subsequent implementation.**
 
-Its purpose is to establish the missing production-serving architecture and close the foundational blockers exposed so far.
+PASS requires responsibility/path-level owners and concrete execution-state
+transitions sufficient to define a bounded next implementation task. In
+particular, target state, DSpark state and committed prompt frontiers must be
+coherent across cache publication/restore and P5 ownership transfer. A small
+adapter or separately successful subsystem runs do not establish this.
+Materially unresolved transformation, restore or ownership contracts require
+BLOCK, with the minimal additional evidence specified.
 
-SP1 begins with a bounded comparison against mature serving runtimes only to identify missing responsibilities.
-
-Then implementation begins immediately.
-
-The first priority areas are:
-
-1. stable OpenAI-compatible Chat Completions ingress independent of MTP internals,
-2. request/conversation semantics that do not assume append-only history,
-3. explicit reusable-prefix / KV cache management,
-4. execution-profile isolation beneath the public API,
-5. correct streaming/cancellation/retry integration through the existing MTP settlement machinery,
-6. ordinary operator configuration and defaults.
-
-Do not begin portable packaging, broad Web capability expansion, long-context research, additional model optimization or unrelated release infrastructure.
+SP1 neither restores serving nor authorizes SP2. No new API adapter, cache
+manager, production abstraction, execution-core restructuring, default-profile
+change, release/promotion work or `ds41f-runtime` change belongs here.
 
 ---
 
-# SP1 exit condition
+# SP1 decision — BLOCK
 
-SP1 PASS requires evidence that ds41f has crossed from a specialized qualified execution harness into an ordinary local LLM serving architecture.
+Assessment baseline: `55d1c0ae4d236313d5ab888a988ffcbc82cb969e`.
+Documentation-only assessment; no production code changed, diagnostic probe
+created, or fresh model execution performed. Source inspection resolves several
+owners, but not the two state contracts below. Stop at this decision.
 
-At minimum:
+## Examined identities and evidence scope
 
-- a normal OpenAI-compatible client can use `/v1/chat/completions`,
-- the client does not know ds41f MTP session/fence/sequence mechanics,
-- MTP remains an internal execution implementation,
-- append-only continuation remains fast,
-- edited/regenerated/branched prompts have correct defined cache behavior,
-- reusable prefixes are preserved when safe instead of forcing full exact-history continuation,
-- unrelated/new prompts work without protocol corruption,
-- cache hit/miss/reuse can be observed,
-- streaming and disconnect do not violate canonical state,
-- supported tool/sampling boundaries are stated accurately,
-- ordinary startup/configuration does not depend on development-machine source knowledge,
-- existing qualified MTP physical behavior is not silently replaced or materially regressed.
+- **oMLX 0.7.0:** exact admitted `third_party/mtp/omlx-source.tar.gz`, SHA256
+  `26cc224a5fa77d8576589764a56ba8053ac31fe9f4904d8ba60305ed841f33e6`;
+  upstream base `4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40`, attributed candidate
+  `fbe18e8fe68e5bb7b9b1971652ed330f752b6afc`. The archive, not upstream HEAD
+  or the base commit alone, is the serving/execution reference. Attribution and
+  patch identity are in `third_party/mtp/sources.json`; normal-local installed
+  file/dependency admission is in `third_party/mtp/normal-local.json`.
+- **DeepSeek recipe 0.1.1:** base `8cadfede7063c896b944e7bae05daa3549ae97ea`,
+  attributed candidate `29dabb5a55b7b2c6a68e18bbb3eb14495623e81a`; base archive
+  SHA256 `5b71ea6837ad3eb54a07da2b7ba1dd0a4ce658b585cdd2db24f4b83d9f879c22`.
+  Examined admitted M52R source archive `recipe-m52r-source.tar.gz`, SHA256
+  `1f4d42fd700b876ef36dd71a95db40cf88c3fa948dedc603e0676cd16e1db66b`, including
+  `m52r-recipe-consuming-eof.patch` SHA256
+  `560a791ff684a60ad366c3f46b961cb004f7819cfab95b4400bd0aa0d43b3794`.
+  These are official semantics with the recorded consuming-state integration
+  delta, not a claim that unmodified upstream contains every qualification hook.
+  Archive hashes were recomputed during SP1 and match admission records.
+- **Retained direct evidence:** [M50R](milestone-50r-omlx-candidate-baseline.md),
+  [M51R](milestone-51r-canonical-lifecycle-connection.md) and
+  [M52R](milestone-52r-application-integration.md) connect recipe semantics,
+  DwarfStar/P5 and native oMLX BatchGenerator/DSpark in the specialized singleton.
+  They do **not** connect the generic oMLX Scheduler/BlockAwarePrefixCache.
+  [Standard-OFF qualification](standard-off-200k-production-qualification.md)
+  connects first-party execution/P5, cancellation and exact idle persistence;
+  [multimodal qualification](multimodal-production-qualification.md) covers its
+  stated image envelope. Neither establishes request-crossing oMLX cache reuse.
+- **Reference evidence:** admitted oMLX serving/scheduler/cache source and recipe
+  source examined independently. Older ordinary oMLX runs and the historical
+  [P5 smoke](p5-live-cache-handoff.md) are only references for this proposed
+  composition (the latter used a different dependency identity). No new upstream
+  HTTP demonstration is claimed. No observed generic-serving + recipe + qualified
+  ds41f prefix-restore composition exists in this assessment.
 
-SP1 may remain single-flight.
+A fresh ordinary HTTP completion would not answer either blocker; no broad
+feature, performance or model-loading campaign was justified.
 
-Multi-user throughput and distributed serving are not required for SP1.
+## Current standard-OFF path: valid recipe assets, separate runtime owners
 
-A PASS must represent an actually usable runtime-server path, not only a design or test harness.
+`serving/server.py:prepare_request` selects `ChatCompletionRequest`,
+`ResponsesRequest` or `MessagesRequest` from `PROTOCOL_TYPES`, constructs the
+native request from JSON, calls `convert(ConversionOptions)`, then
+`DeepseekV41Encoding.with_tokenizer(...).render_conversation/encode`.
+The tokenizer is the official V41 `static/tokenizers/v41/tokenizer.json`;
+normal OFF loading uses the admitted `resource_admission.load_protocol_tokenizer`.
+Recipe conversion owns message/tool transformation, thinking/reasoning effort,
+response-format and stop parsing options. It is already a substantial official
+API path, not a failed compatibility layer.
 
----
+Recipe sources: `deepseek-recipe/src/protocol/openai/chat_completion/request/`,
+`openai/responses/request/`, `anthropic/messages/request/`, `request/options.rs`,
+`stream/{processor,semantic,state_machine}.rs`, and
+`deepseek-recipe-encoding/src/v4/{mod,dsv41}.rs`. V41 rendering normalizes
+messages, inserts tool/response-format system instructions, applies official
+special tokens and the assistant thinking/required-tool prefix; encoding tokenizes
+that rendered prompt. It is not oMLX's independent chat-template route.
+Chat conversion validates tools/names/parameters, maps named choice to required
+selection, and sets reasoning/tool/JSON parsing options. Responses additionally
+handles typed input items and custom tool names; Messages transforms system and
+content blocks. `ConversionOptions` defaults thinking on, Responses web-search
+ignore and Messages web-search reject; MTP explicitly selects thinking off.
+These defaults do not qualify web search or every protocol feature for ds41f.
 
-# Release gate after SP1
+`response_body` constructs the official request's chunk generator, forwards
+include-usage/custom-tool-name settings, then uses `StreamProcessor` with the
+**converted parsing options** and tokenizer. Token chunks, backend finish and
+iterator EOF pass through the official processor; response objects accumulate
+its official chunks for JSON, or ds41f frames their JSON as SSE. Recipe owns
+reasoning/tool grammar, stop stashing, usage and finish projection. In
+`processor.rs:canonical_finish_reason`, matched stop takes precedence; backend
+Stop with tool calls becomes ToolCalls, Length stays Length, and missing backend
+finish becomes EndOfStream. EOF must not be replaced by an invented successful
+tool terminal. M52R consuming forks distinguish call certification from complete
+response settlement. ds41f's adapters do not need a parallel grammar.
 
-SP1 does not automatically imply final release.
+Ordinary OFF `DeepSeekRecipeRuntimeBackend.infer` takes the single-flight lock,
+loads the first-party model, prefills `ids[:-1]` through DENSE_P0_P7, hands the
+same live cache to `TargetGenerationSession` via P5, and consumes the held-out
+terminal once. It returns `InferenceChunk.ready/token/finish`; ordinary requests
+prefill fresh and report zero prefix hits. Model aliases, resolved capacity,
+qualified image expansion, and execution capability checks are ds41f admission,
+not protocol conversion. Sampling currently maps temperature/top_p to MLX.
+Worker cancellation is shielded until mutations finish, then stop/close retires
+state; iterator/SSE closure is shielded too.
 
-After SP1, reassess the remaining parity matrix.
+Optional OFF `/v1/sessions` owns `M11RecipeToolSession`/M8 continuation, exact
+encoded-history extension, streaming/recovery records and idle persist/restore.
+That is separate from the ordinary stateless endpoint, but still couples reusable
+execution state to a selected application session. Exact idle restoration is not
+a generic partial-prefix cache. Preserve recipe preparation/projection and
+qualified resource/cancellation checks as long-term thin assets; generic HTTP,
+queueing and session-as-cache policy are not intrinsic recipe responsibilities.
 
-If no material production-serving blocker remains for the declared local-runtime scope, proceed directly to release/default-profile/operator-documentation closure.
+## Current MTP path and why its specialized components exist
 
-If concrete blockers remain, group them into the smallest coherent subsequent SP milestone.
+`mtp-singleton-v1` is strict dependency/admission and bounded capability identity,
+not the intended ordinary API contract. `LocalMTPBackend` in `mtp_public.py`
+subclasses `InternalMTPQualificationBackend`; despite the latter's historical
+qualification-only docstring, it is reachable in the current public profile.
+It rejects ordinary `infer`; `LocalBoundary` rejects ordinary Chat Completions
+and admits session-scoped Chat Completions instead.
 
-Do not invent follow-up milestones merely because the numbering exists.
+- `LocalBoundary`: trusted loopback authority/origin checks, one bounded
+  preparation slot, body/read/send limits. Original requirement: bounded ingress
+  and transport stalls without revoking native mutation ownership. Generic
+  transport/admission policy, not DeepSeek grammar.
+- `/v1/sessions`, singleton issued IDs and exact-extension admission: original
+  requirement: one cache/ring lifetime with no unsupported rewind, stale reuse or
+  hidden replay. Execution correctness warrants internal lifetime identity, but
+  not one public conversation for the entire server lifetime.
+- `X-DS41F-Request-Sequence`/request fences: original requirement: distinguish
+  duplicate, conflicting, active and expired requests; freeze exact body/outcome
+  before transport loss. Transport/retrieval identity, not prompt/cache identity.
+- Outcome/certificate projection: original requirement: prove recipe-representable
+  consumed history and supported tool completion before retry/re-entry or effect
+  permission. Internal semantic/settlement safeguards are necessary; ordinary
+  clients need not carry certificates or reconstruct raw canonical tokens.
+- `LocalMTPClient`/`InternalLocalClient`: original requirement: own transcript,
+  frozen request bytes, reconcile ambiguous delivery and reserve effects once.
+  Application orchestration and optional dedicated-client protocol; bounded
+  weather schema/ledger and qualification controllers are not general tool API
+  semantics. Do not promote their scope into OpenAI compatibility.
+
+Actual execution: `internal_mtp._start` appends only new prompt suffix with
+`DeferredPrefillAppend`, taps same-forward reduced layer inputs 37/38/39, appends
+native committed DSpark context, attaches it to `LivePrefillResult`, and P5
+transfers target state to `OMLXMTPGenerationSession`. Official processor plus
+`RecipeSemanticGuard` binds consuming semantics to the native horizon. Native
+BatchGenerator owns proposal/verify/rollback/commit; `_settle` quiesces it,
+retains target cache/rings/canonical IDs, retires predictions and the owner, then
+freezes response/events/certificate/fence outcome. Persistence/restore is explicitly
+unsupported for this profile. `rec.canonical`, cache, rings, previous envelope
+and next sequence are all retained in one live session: correct for its qualified
+contract, unnecessarily restrictive for ordinary independent requests.
+
+## Pinned generic oMLX serving and cache contracts
+
+Archive-relative source anchors:
+`omlx/server.py`, `engine/batched.py`, `engine_core.py`, `request.py`,
+`scheduler.py`, `cache/{prefix_cache,paged_cache,type_handlers,deepseek_v41_delta}.py`,
+`patches/mlx_lm_mtp/{batch_generator,prompt_priming,deepseek_v4_dspark}.py`.
+
+HTTP ingress obtains an engine/model lease; disconnect fan-out is request-scoped
+(`_with_request_disconnect_abort`). BatchedEngine currently applies its own
+chat template/message/tool plumbing, makes `SamplingParams`, and delegates to
+EngineCore's asynchronous request/stream lifecycle. Scheduler separates waiting
+and running requests, request ID and BatchGenerator UID. `Request` separately
+stores full prompt IDs, remaining IDs, cached count, prompt cache, block table,
+output IDs, sampling and cache-store policy. This is useful generic machinery,
+not permission to replace recipe conversion or output parsing with oMLX's
+independent template/tool parsers.
+
+`_prepare_prefix_cache_for_request` fetches chain-hashed prefixes, acquires shared
+block references, reconstructs cache objects, applies optional model restore,
+and computes the suffix from the **actual restored** count. Invalid/missing
+blocks become misses or shorter hits. Exact hits need N-1 state for the final
+input: non-sliceable/stateful cases fall back to prefill rather than pretending
+that generic trim can undo recurrence. Capacity/eviction belongs to PagedCache
+and tiered hot/SSD machinery, not conversation deletion. Model name and optional
+media keys participate in hashes; layout signatures/metadata guard restores.
+Those keys do not by themselves prove strict checkpoint/tokenizer/template/
+execution-profile identity. ds41f's admitted identity must namespace reuse;
+recipe-generated IDs include tool/schema rendering, but numeric token equality
+across tokenizer/model identities is not sufficient.
+
+The cache handles non-KV state, not just attention tensors. V41 has specialized
+storage-only deltas: `compact_state` validates seven slots, absolute offsets,
+compression ratio and packed KV/index dimensions; `restore_chain` validates
+contiguous absolute ranges and retains the terminal window/compressor/history
+state while concatenating packed rows, then creates `DeepseekV41Cache`. This
+is storage reconstruction, not proven same-live P5 transfer. ArraysCache and
+other recurrent families use boundary/exact-state mechanisms rather than unsafe
+arbitrary slicing. Existence of those mechanisms does not prove every qualified
+V41 frontier is captured or paired with DSpark.
+
+`_cleanup_finished` synchronizes, selects cacheable prompt/output boundaries,
+extracts/merges/materializes state and dispatches async storage. Removal is
+retained until storage finishes; abort/failure clears request admission/priming
+and releases request block tables. Cache stats, phase timers, request counts,
+SSD/capacity/pressure and admin snapshots provide generic observability. These
+are reference lifecycle contracts, **not** M52R semantic commit certificates:
+backend completion or delivered token count cannot alone authorize publication
+of qualified MTP state.
+
+## Highest-priority compatibility finding: target state is not DSpark state
+
+Required reusable execution checkpoint at committed frontier **C**:
+
+1. All 40 target layers' seven slots: offsets, packed window, compressed KV,
+   index keys, compressor KV/gate tails and Engram integer lookback, plus layout/
+   compression/padding metadata and compatible model/SSD resource lifetime.
+   This includes non-KV state; target offset equality alone is insufficient.
+2. All three DSpark rings: projected committed hidden context, absolute offsets,
+   actual capacity **128**, physical modulo slot order, stage/layer identity and
+   native install/take ownership. Draft KV is ephemeral, never committed context.
+3. Complete encoded prefix IDs through C and strict checkpoint/tokenizer/recipe/
+   layout/profile identity; prompt-priming context must reference that same C.
+4. No reusable request-local proposal, verify stash, rejected suffix, queued
+   unconsumed prediction, semantic horizon pending ordinal or RNG claim. These
+   are retired at settlement, not serialized into a new request. Qualified MTP
+   is greedy; non-greedy draw-state equivalence is not established.
+
+Pinned oMLX **does** have a generic MTP sidecar, but it is Lightning/head priming:
+`_MtpPrefixSnapshot(boundary_tokens, mtp_cache, pending_hidden)`, memory-only,
+bounded LRU, keyed by exact target chain tip. Restore requires that target tip
+remain live; eviction/hash-map clear drops sidecars. At target C it restores
+head pairs through C-1 plus hidden(token[C-1]) awaiting the next pair. This is
+coherent for that head's different representation, not a DSpark offset mismatch
+and not evidence for DSpark restoration.
+
+Crucially, `prompt_priming._prepare_prefix_context` explicitly returns False for
+`_omlx_dspark_decode_enabled`. `deepseek_v4_dspark.capture_prompt` instead builds
+or appends the host priming slot; noncontiguous offsets create a new context.
+A capture starting at nonzero offset can acquire that absolute offset without
+possessing the earlier retained context rows. `install_committed_context` checks
+ring offsets against target state; it does not reconstruct lost rows or recover
+an earlier physical ring from a later ring. No DSpark prefix-cache snapshot/store/
+restore companion is defined in this examined chain. The generic missing-sidecar
+fallback to unprimed MTP cannot stand in for **qualified** full committed priming.
+
+For reusable qualified DSpark state, target C = ring absolute C = encoded
+committed prefix C. Physical rows must match the committed tail, not merely
+report C. Arbitrary earlier-history rewind cannot be inferred from speculative
+rollback: a bounded ring at M has overwritten rows required at N < M. Use an
+exact earlier paired checkpoint or miss; never restore target N plus rings M.
+Exact-hit N-to-N-1 target fallback/trim must choose a corresponding paired DSpark
+checkpoint too. The existing generic head sidecar does not establish this.
+
+## P5 and canonical publication: established local transfer, unresolved generic adoption
+
+Established local seam: request owns immutable prefix IDs through P=N-1;
+DwarfStar's committed runner owns the same 40-layer live cache and same-forward
+DSpark taps/rings through P. `LivePrefillResult` reserves/freezes the producer;
+P5 validates committed transaction/frontiers/layout, detaches/revokes the producer,
+consumes the result, installs native committed context and inserts only terminal
+`ids[P]` with `all_tokens=ids[:P]`. Native BatchGenerator becomes sole executable
+owner. Failed transfer/start burns the result; it is not retryable mutable state.
+This neither replays prefix nor repacks the whole cache. The current wrapper
+constructs its own BatchGenerator, **not** the generic Scheduler's active batch.
+
+Established retirement seam: qualified quiescence reconciles execution-ahead
+queue with consumed history, drains only already committed safe suffix, discards
+the final future prediction, or consumes exactly one canonical token when target
+is one behind. It extracts native row views, checks all target/ring offsets and
+canonical IDs, removes UID and retires native prediction/proposal ownership.
+Semantic failure or failed removal poisons and burns state; it cannot publish idle
+reuse. Recipe turn completion/call certification is separate from socket delivery.
+
+Intended generic ownership transition (not implemented or approved): scheduler
+leases a complete compatible checkpoint, execution acquires exclusive mutable
+state through P5/native install, then execution settles before any immutable
+cache publication. Cache retention owns snapshots, not an active executable
+alias. Cancellation must wait for the native worker, settle or burn, then release
+leases. Eviction frees snapshots/blocks only; it never deletes application history
+or a retained response. Acquisition cannot expose mutable shared state to two
+requests, even with only one active generation.
+
+The existing local transfer describes **move** ownership without reconstruction;
+cache reuse requires an independently defined snapshot/restore or exclusive
+lease operation. The generic storage path reconstructs packed target state and
+has its own completion/remove schedule. It has not established where P5 adopts
+into that schedule or where M52R quiescence delays publication/removal.
+There is a useful existing structural seam: Scheduler `_do_external_prefill`
+holds out the terminal, and `_insert_prefilled_request` / `_schedule_waiting`
+insert prefilled cache plus terminal into **its own** BatchGenerator and register
+request/UID ownership. Thus adoption is not structurally absent and a new
+scheduler is not justified. However, those paths currently run their own prefill,
+cache finalization, stop state machine and completion lifecycle, not P5 producer
+revocation plus the qualified semantic guard/quiescence transaction. B2 concerns
+that specific state/ownership adaptation, not the mere existence of `insert`.
+Attaching
+the current wrapper beside Scheduler would leave two schedulers/executable
+lifetimes, not a bounded integration. No safe whole-cache repack or prompt replay
+is authorized to bridge this gap.
+
+## Minimal blocking set and smallest additional evidence
+
+**B1 — Paired reusable checkpoint/restore contract.** Unresolved: how generic
+prefix ownership captures and restores complete target **and DSpark** state at
+the same committed C, including partial-prefix and exact-hit terminal holdout,
+without replay or interpreting speculative rollback as conversation rewind.
+Available source provides V41 target delta reconstruction and a different MTP
+head sidecar; DSpark deliberately bypasses it. Retained model evidence transfers
+live rings only and exercises no generic prefix fetch. Thus neither contents nor
+snapshot immutability/restore ownership is established for the required pair.
+Smallest additional evidence: identify a concrete existing or proposed paired
+checkpoint capture/restore operation and its physical ring/target boundary
+representation, copy/transfer policy, identity namespace, failure/eviction rules
+and miss behavior. If source cannot establish it, one isolated diagnostic of a
+real partial hit after ring wrap, plus the exact-hit holdout decision, must compare
+restored target slots/ring contents/frontiers to the committed checkpoint and
+show no prompt replay. A normal completion or offsets-only probe is insufficient.
+This may reveal that ds41f must retain checkpoint-state ownership; upstream cache
+manager ownership is **not yet a safe restoration decision**.
+
+**B2 — Scheduler adoption and semantic publication/retirement contract.**
+Unresolved: how the generic scheduler becomes the sole executable owner of P5
+state and native DSpark priming, and gates extraction/store/remove on the existing
+canonical/recipe settlement result rather than backend finish or partial SSE.
+Source shows P5 entering a separately constructed BatchGenerator. Generic
+Scheduler already inserts externally prefilled cache/terminal state, but owns
+its own batch/completion/store queues without the qualified P5 revocation,
+DSpark installation and semantic settlement contract. These are promising
+insertion sites, not proof of the required shared ownership transition. Smallest additional evidence: a concrete
+transition trace specifying pre/post owners, native cache/UID adoption, held-out
+terminal, semantic guard attachment, quiesce-before-publication ordering and
+failure/cancel-before-removal behavior, including async-store retention/release.
+If source reasoning is insufficient, isolate one real handoff and one committed-
+queue cancellation with the proposed ownership chain, proving same-live transfer,
+unchanged topology and exactly one owner/retirement. Do not build a server to
+obtain this evidence. A small adapter signature alone does not resolve B2.
+
+These are architectural blockers, not requests for a broad qualification suite.
+Both must resolve before destructive scheduler/cache restoration is safe. Missing
+direct composition alone is not the BLOCK reason; materially missing state and
+ownership transitions are. SP1 stops here rather than implementing them.
+
+## Intended API split (conditional on B1/B2)
+
+```text
+ordinary OpenAI request / application-owned messages
+  -> generic HTTP lease, body/error/disconnect lifecycle (candidate: pinned oMLX)
+  -> official recipe schema conversion, encoding and parsing options
+  -> generic scheduler request + identity-scoped compatible prefix lookup
+  -> exclusive qualified DwarfStar/P5/native MTP execution and settlement
+  -> official recipe response/chunk processing with consuming safeguards
+  -> generic JSON/SSE delivery (not canonical acknowledgement)
+```
+
+Recipe owns supported request schema/messages, reasoning controls, tool
+declarations/choice, model conversation encoding, response schema/finish reasons,
+usage and chunks. Generic serving owns model registry/aliases, transport errors,
+HTTP/SSE lifecycle and delivery; ds41f validates admitted model identity and
+concrete execution limitations. Recipe converts generation parameters; execution
+implements only qualified sampling, and admission must reject unsupported controls
+rather than silently invent semantics. Chat conversion currently validates seed/
+penalties but its `InferenceOptions` passes max_tokens/temperature/top_p only:
+schema acceptance does not prove runtime support. Ordinary OFF image preparation
+remains its qualified model-execution seam; generic oMLX VLM routing does not
+qualify MTP images. Responses/Messages adapters remain assets, not mandatory new
+serving closure scope. Recipe conversion errors retain official bodies; generic
+layer supplies lifecycle/resource error mapping. No parallel DeepSeek grammar.
+
+## Distinct identities and ordinary workload owners
+
+HTTP request identifies one delivery attempt; application conversation is the
+client's message history; encoded prompt is recipe/model/tokenizer-bound IDs;
+scheduler request is an admitted work/UID lifetime; prefix cache is immutable
+compatible committed state at C; active generation owns exclusive mutation;
+canonical output is consumed/semantically settled output; MTP state contains
+rings plus transient speculative machinery. None is interchangeable.
+
+oMLX separates request ID, UID, block table/hash chain, prompt and output, with
+no compulsory conversation ID. OFF separates ordinary HTTP requests and optional
+sessions. MTP separates emitted/consumed/delivered tokens internally, but its
+public session collapses conversation, reusable target/rings, canonical history
+and retry lifetime. The latter is qualified containment, not general API identity.
+
+New/unrelated conversation: recipe encodes full request, scheduler admits fresh
+or compatible prefix. Exact append: cache reuses a safe complete prefix, execution
+computes suffix. Last-turn edit/regeneration: cache uses only unchanged committed
+prompt checkpoints; prior assistant output is not compulsory history. Earlier
+edit/branch: longest compatible **paired checkpoint**, not live ring rewind.
+Shortened context: earlier checkpoint or miss, never trim recurrence blindly.
+Shared system prefix: reuse by encoded identity across requests, not session ID.
+Applications own edits/branches; recipe owns their interpretation; cache owner
+chooses safe reuse/miss; execution enforces state coherence. None of these cases
+is implemented or newly qualified by SP1.
+
+## Responsibility/path decision map
+
+RESTORE = existing official/upstream owner should be authoritative; KEEP =
+necessary qualified ds41f ownership; ADAPT = correct candidate owner needs an
+integration seam; DELETE = leave the ordinary production path in later authorized
+work. ADAPT entries marked blocked are **conditional candidates**, not restoration
+approval; DELETE is not permission to remove current code before replacement.
+
+| Responsibility/path | Classification and owner/boundary |
+|---|---|
+| HTTP transport, generic errors/leases | RESTORE pinned oMLX machinery; ADAPT disconnect to settlement (B2) |
+| API models/DeepSeek conversion/encoding | KEEP current thin delegation to official recipe; no oMLX template replacement |
+| Output parsing/projection, tool/reasoning grammar | KEEP recipe processor/generators; KEEP consuming guard where qualified |
+| Scheduler queues/request crossing | ADAPT pinned Scheduler candidate, blocked B2; retain current lease until resolved |
+| Capacity/lookup/eviction/cache manager | ADAPT pinned cache candidate, blocked B1/B2; no unconditional restoration |
+| Cache-state publication/restore | KEEP ds41f committed-state gates; paired snapshot authority unresolved B1 |
+| Prefill and qualified numerical execution | KEEP DwarfStar/MLX and first-party OFF execution |
+| P5 transfer/terminal holdout | KEEP same-live producer revocation; ADAPT scheduler adoption, blocked B2 |
+| MTP/decode physical path | KEEP qualified native oMLX topology plus ds41f frontier/lifecycle safeguards |
+| Sampling | KEEP qualified MLX/native sampler; ADAPT recipe options/admission, no stochastic-MTP claim |
+| Tool effect semantics | KEEP certification prerequisite; application effect reservations optional, not grammar |
+| Cancellation/streaming/backpressure | RESTORE generic transport machinery; KEEP worker shielding/settlement; ADAPT B2 |
+| Retry/outcome retention | KEEP immutable settled projection; ADAPT internal request identity; no automatic HTTP exactly-once |
+| Observability | RESTORE generic stats/resource counters; ADAPT true committed/reused frontier reporting |
+| Application-visible sessions/sequences/certificates | DELETE compulsory ordinary-path dependency; retain optional diagnostics/dedicated qualification |
+
+Later removal/demotion candidates: `LocalBoundary`'s endpoint/session restriction
+(not its ingress safety requirements), mandatory `/v1/sessions`/sequence headers,
+public certificate/outcome envelopes, exact-extension-as-only-admission rule,
+and dedicated-client orchestration as prerequisite for ordinary serving. Their
+original stale-state/retry/effect requirements remain. Alternative generic owners
+have lookup/lifecycle machinery, but B1/B2 prevent proving that restoration is
+smaller and safer yet. Do not delete `internal_mtp` wholesale: its same-forward
+priming, semantic guard, canonical quiescence and worker settlement are assets.
+Likewise retain OFF recipe preparation/projection, not another adapter around MTP.
+
+## M52R guarantees: preserve findings, not an enlarged public promise
+
+- **A — Model-output settlement:** KEEP internal consuming recipe/canonical
+  agreement, immutable certified call prefix, queue drain/prediction retirement,
+  fail-closed incomplete tool output. Streaming deltas alone authorize neither
+  reusable generated cache nor effects. Valid committed prompt checkpoints may
+  be reusable independently of successful response delivery; speculative or
+  transport-partial generated state may not.
+- **B — Publication/retrieval:** complete tool calls/outcome are frozen before
+  transport completion; exact identified retries can project retained data
+  without regeneration. Generic HTTP retry without retained request identity
+  need not denote the same generation. Whole-outcome reconnect is not per-event
+  ACK or proof that a client observed every call. Optional idempotency/retrieval
+  semantics need explicit future retention/identity policy, not compulsory MTP
+  sequence/session protocol.
+- **C — Server-owned effects:** if offered, server must reserve/authorize only
+  certified supported settled calls, reject conflicting duplicate authority,
+  reuse known results and never rerun uncertain reservations. M52R's concrete
+  ledger lives in the dedicated client; it does not establish a generic server
+  effect executor or durable crash-safe exactly-once ledger.
+- **D — External client effects:** ordinary clients choose whether/how to execute
+  tools. Server cannot guarantee exactly-once real-world external execution from
+  an OpenAI response. Dedicated-client fencing/reconciliation is optional
+  application semantics; weather-only schema, bounded ledger and qualification
+  controller are qualification scope, not universal server guarantees.
+
+## Next scope and unchanged release gate
+
+Smallest proposed next **investigation**, requiring separate authorization:
+resolve B1's paired checkpoint state operation and B2's scheduler adoption/
+settlement transition, using existing sources/evidence first and only the named
+isolated diagnostics if needed. No SP2 implementation is pre-authorized; a bounded
+restoration implementation task cannot safely be finalized while these contracts
+remain unresolved. No elaborate follow-up series is prescribed.
+
+All broader required serving domains remain open to actual closure evidence:
+ordinary MTP ingress, independent edited/branched requests, qualified prefix reuse
+and capacity/lifecycle, transparent profiles, streaming/disconnect/retrieval,
+supported sampling/tools, resource policy, configuration and production
+observability. Neither this BLOCK nor a later SP1 PASS changes their release gate.
+
+**ds41f is not production-release-complete as a general LLM runtime server.**
+Actual restoration and capability closure require later explicit authorization.
+Historical M-series evidence is unchanged; default MTP and `ds41f-runtime`
+promotion remain deferred.

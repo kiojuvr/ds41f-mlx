@@ -10,9 +10,12 @@ requirements. M50R–M55R evidence remains valid within its bounded scope; M55R
 qualified the constrained `mtp-singleton-v1` execution/application profile, not
 general production serving. `ds41f-runtime` promotion remains deferred.
 
-The next implementation milestone is **SP1 — Production Serving Foundation**,
-under the new SP series. Its priorities and PASS/BLOCK boundary are defined in
-the policy above; historical execution cores and qualification evidence are retained.
+**SP1 — Serving/API Authority Reconstruction: BLOCK**, on paired target/DSpark
+prefix restoration and scheduler/P5 settlement ownership. SP1 was intentionally
+narrowed to an authority/restoration decision: even PASS closes no serving
+functionality or release blockers. Findings and minimum additional evidence are
+recorded in the policy above. No restoration or SP2 implementation is authorized;
+historical execution cores and qualification evidence are retained.
 
 ## Purpose
 

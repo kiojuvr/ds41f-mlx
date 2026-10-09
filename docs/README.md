@@ -11,6 +11,8 @@ Canonical architectural intent:
 
 Canonical current-state documents:
 
+- [Production Serving Parity Closure](production-serving-parity-closure.md) — **superseding serving authority; SP1 BLOCK** on paired target/DSpark prefix restoration and scheduler/P5 settlement ownership. SP1 is intentionally decision-only; PASS closes no serving functionality or release blockers. General runtime-server release remains incomplete; no SP2 implementation authorized.
+
 - [M41 local MTP candidate](milestone-41-local-mtp-release-candidate.md) — explicit bounded opt-in capability, composed/source-clone evidence and OFF regression
 - [M49R MTP architecture reset and roadmap](mtp-architecture-reset.md) — current authority: restart `5e784d9`, oMLX physical topology, retained M54 requirements, conformance/performance gates and M49R–M55R series
 - [M50R candidate baseline assessment](milestone-50r-omlx-candidate-baseline.md) — **PASS, bounded freeze**: exact identity, byte-content prefix oracle, native/Metal boundary diagnostics and bounded reload/residency envelope; unchanged physical-graph requirement; no implementation authorization by the freeze
