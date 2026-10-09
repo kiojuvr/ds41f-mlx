@@ -164,11 +164,13 @@ class LocalBoundary:
                     self.preparation_lock.release()
         if self.ordinary:
             scope['ds41f.release_preparation'] = release_preparation
+        from .capacity import ORDINARY_BODY_BYTES
+        body_limit = ORDINARY_BODY_BYTES if self.ordinary else LIMITS['body_bytes']
         if method in ('POST','DELETE'):
             cl = values(b'content-length')
             if len(cl) > 1 or (cl and not re.fullmatch(rb'[0-9]+', cl[0])):
                 return await deny(400, 'invalid_content_length')
-            if cl and int(cl[0]) > LIMITS['body_bytes']:
+            if cl and int(cl[0]) > body_limit:
                 return await deny(413, 'body_limit')
             if self.preparation_lock is not None:
                 # Transport/tokenizer capacity lease only, released immediately
@@ -197,7 +199,7 @@ class LocalBoundary:
                 raise IngressError(408, 'body_timeout') from exc
             if event['type'] == 'http.request':
                 total += len(event.get('body', b''))
-                if total > LIMITS['body_bytes']:
+                if total > body_limit:
                     raise IngressError(413, 'body_limit')
                 body_complete = not event.get('more_body', False)
             return event

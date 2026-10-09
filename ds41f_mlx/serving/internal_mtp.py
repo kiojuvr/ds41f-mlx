@@ -184,6 +184,9 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
             mx.synchronize(generation_stream)
             mx.clear_cache()
 
+    def _prefill_tap_start(self, ids, frontier, rings):
+        return frontier
+
     def _start(self, rec, request, tokenizer, trace, *, checkpoint_capture=None, batch_generator_factory=None):
         import deepseek_recipe as d
         import mlx.core as mx
@@ -228,21 +231,39 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
             # prefill token still to execute. Exact reuse therefore needs no
             # recurrent trim and still reaches P5 through a real sealed append.
             ends = [len(ids)-1] if checkpoint_capture is None else [len(ids)-2, len(ids)-1]
+            # Production may run a qualified deferred prefix without hidden
+            # taps, then initialize bounded DSpark rings from a full ordinary
+            # tail. Deferred decoder cones do not produce all late-layer rows.
+            tap_start = self._prefill_tap_start(ids, C, rec.rings) if checkpoint_capture is not None else C
+            if tap_start > C:
+                ends.insert(0, tap_start)
             app = None
             try:
-                for i, layer in original.items(): lm.layers[i] = Tap(i, layer)
                 for end in ends:
+                    observed = end > tap_start
+                    for i, layer in original.items():
+                        lm.layers[i] = Tap(i, layer) if observed else layer
                     if end > C:
                         if app is None:
                             app = DeferredPrefillAppend.create(lm, rec.cache, ids[:end], committed_frontier=C, mx=mx)
                         else:
                             app = DeferredPrefillAppend.continue_from_commit(lm, app.commit_certificate, ids[:end], mx=mx)
                         app.execute_all()
-                        hidden = mx.concatenate([mx.concatenate(taps[i], axis=1) for i in taps], axis=-1)
-                        lm.dspark_append_context(hidden, rec.rings, start_offset=C)
-                        for values in taps.values(): values.clear()
+                        if observed:
+                            hidden = mx.concatenate([mx.concatenate(taps[i], axis=1) for i in taps], axis=-1)
+                            if hidden.shape[1] != end - C:
+                                raise RuntimeError('incomplete committed DSpark tail')
+                            lm.dspark_append_context(hidden, rec.rings, start_offset=C)
+                            for values in taps.values(): values.clear()
+                            mx.eval(*[c.keys for c in rec.rings])
+                        else:
+                            # No executable native owner exists yet. Earlier
+                            # rings are passive restored handles, not conversation
+                            # rewind. A complete capacity-sized tail replaces all
+                            # their slots via native absolute-offset initialization.
+                            rec.rings = lm.make_mtp_cache()
                         C = end
-                        mx.eval(*[c.keys for c in rec.rings]); mx.synchronize(generation_stream)
+                        mx.synchronize(generation_stream)
                     if checkpoint_capture is not None and end == len(ids)-2:
                         checkpoint_capture(rec.cache, rec.rings, ids[:end])
             finally:

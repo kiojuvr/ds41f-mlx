@@ -17,6 +17,8 @@ from omlx.request import Request, RequestOutput, RequestStatus, SamplingParams
 
 from .internal_mtp import InternalMTPQualificationBackend, QualificationSession
 from .paired_checkpoint import PairedCheckpointAuthority
+from .capacity import context_envelope, ORDINARY_BODY_BYTES
+from ds41f_mlx.mtp_profile import LIMITS
 
 logger = logging.getLogger('uvicorn.error.ds41f')
 
@@ -31,7 +33,8 @@ class ProductionScheduler(Scheduler):
                                          prefill_step_size=2048, decode_fairness=False,
                                          model_name=backend.dependency_identity), generation_stream)
         self.backend = backend
-        self.checkpoints = PairedCheckpointAuthority(backend.dependency_identity, mx)
+        self.checkpoints = PairedCheckpointAuthority(backend.dependency_identity, mx,
+                                                     context_tokens=backend.context_tokens)
         self.paged_cache_manager = self.checkpoints.paged
         self._completed = []
         self.last_settlement = None
@@ -87,10 +90,11 @@ class ProductionScheduler(Scheduler):
                     # Both payloads are immutable before their hashes become
                     # discoverable. A prompt capture is never an active alias.
                     # At the envelope ceiling no admitted future prompt can
-                    # extend this frontier with P5 holdout. Retain the earlier
-                    # prompt pair, not an unusable 8192-token root/full block.
+                    # extend this frontier with a genuine append, P5 holdout
+                    # and at least one output token. Keep the earlier prompt
+                    # pair instead. This is extendability, not an 8K limit.
                     final = (self.checkpoints.capture(rec.cache, rec.rings, rec.canonical)
-                             if len(rec.canonical) < 8192 else None)
+                             if len(rec.canonical) + 3 <= self.checkpoints.context_tokens else None)
                     if request.prompt_checkpoint is not None:
                         self.checkpoints.publish(request.prompt_checkpoint)
                     if final is not None:
@@ -127,9 +131,9 @@ class ProductionScheduler(Scheduler):
             trace.update(cancelled=cancelled, cache_published=publication,
                          elapsed_s=perf_counter()-trace['t0'])
             self.last_settlement = trace
-            logger.info('MTP settled request=%s cached=%d canonical=%s published=%s cancelled=%s error=%s',
+            logger.info('MTP settled request=%s cached=%d canonical=%s published=%s cancelled=%s error=%s replay=%s repack=%s',
                         request.request_id, request.cached_tokens, trace.get('canonical_frontier'),
-                        publication, cancelled, error)
+                        publication, cancelled, error, trace.get('prompt_replay'), trace.get('full_cache_repack'))
             output = RequestOutput(request_id=request.request_id, finished=True,
                                    finish_reason='error' if error else 'abort' if cancelled else semantic_finish,
                                    error=str(error) if error else None)
@@ -203,10 +207,25 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
         self._pump_task = None
         self.serving_traces = self.session_traces
 
+    def _prefill_tap_start(self, ids, frontier, rings):
+        from ds41f_mlx.prefill_fp8_mlx.p6_append import P6_FINAL_TAIL_THRESHOLD
+        capacity = rings[0].max_size
+        if any(r.max_size != capacity for r in rings):
+            raise RuntimeError('incompatible DSpark ring capacities')
+        prompt_capture = len(ids) - 2
+        # Reuse qualified DwarfStar for the bulk, then an ordinary completing
+        # append for every row needed by the bounded physical DSpark rings.
+        # No target token is run twice and no long late-layer tensor is retained.
+        return prompt_capture - capacity if prompt_capture - frontier >= P6_FINAL_TAIL_THRESHOLD else frontier
+
+    @property
+    def context_tokens(self):
+        return context_envelope(self.checkpoint)
+
     @staticmethod
     def validate_ordinary(raw):
         from ds41f_mlx.mtp_profile import strict_json, validate_chat, LIMITS
-        if len(raw) > LIMITS['body_bytes']:
+        if len(raw) > ORDINARY_BODY_BYTES:
             raise ValueError('body limit exceeded')
         body = strict_json(raw)
         # Ordinary OpenAI defaults, without widening the qualified execution
@@ -276,8 +295,8 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
         if prepared.protocol != 'chat_completions' or prepared.image_sources:
             raise ValueError('ordinary MTP supports text Chat Completions only')
         limit = self.max_tokens(prepared.inference_options)
-        if not 1 <= limit <= 768 or not 3 <= len(prepared.token_ids) or len(prepared.token_ids)+limit > 8192:
-            raise ValueError('ordinary MTP bounded to 8192 total / 768 output tokens')
+        if not 1 <= limit <= LIMITS['output_tokens'] or len(prepared.token_ids) < 3 or len(prepared.token_ids)+limit > self.context_tokens:
+            raise ValueError(f'ordinary MTP bounded to {self.context_tokens} total / {LIMITS["output_tokens"]} output tokens')
         rid = uuid4().hex
         queue = self._deliveries[rid] = asyncio.Queue()
         self._settled[rid] = asyncio.Event()

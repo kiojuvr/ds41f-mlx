@@ -57,9 +57,19 @@ interface and/or configure the host firewall as appropriate for your deployment.
 `standard-off` is unchanged. This removes historical singleton transport
 constraint leakage, not an execution or dependency admission requirement.
 
-This path keeps the bounded execution capabilities: one worker,
-one executable native singleton, greedy/thinking-off text, prompt + output budget
-<=8192 and output <=768. Ordinary generic function tools are supported, including
+This path keeps one worker, one executable native singleton and greedy/thinking-off
+text. Ordinary prompt + output is bounded by **1,048,576 tokens** (or a smaller
+checkpoint-configured range); output remains **768 tokens**. The old 8192 limit
+was temporary bounded serving scope, not the model/runtime long-context limit.
+`serving/capacity.py` owns the established qualified text envelope; recipe capacity
+admission, ordinary admission, Scheduler paired-cache sizing/publication and
+`/v1/models` use that authority. `ds41f inspect --profile mtp-serving-v1` reports
+these as `serving_limits`; its nested identity's historical singleton limits are
+not ordinary admission policy. There is no unlimited-context claim. Ordinary
+JSON body/main text ingress is bounded to **16 MiB**, rather than singleton's
+qualification-era 1 MiB, so normal long text can reach token admission. This is
+resource headroom, not a byte-to-token approximation; tool-result/argument bounds
+remain unchanged. Ordinary generic function tools are supported, including
 multiple declarations, arbitrary names and recipe-representable JSON Schema-style
 parameters. Missing `max_tokens`
 uses 128. Unsupported controls are rejected, not silently implemented. Applications
@@ -88,8 +98,8 @@ application history or reusable generated state.
 
 `mtp-singleton-v1` retains its pinned weather declaration, bounded call/effect
 semantics and certificate contract. The weather schema is qualification evidence,
-not the ordinary serving tool API. The 8192-total / 768-output ceiling is unchanged;
-8K expansion is a separate remaining production limitation.
+not the ordinary serving tool API. Its own 8192-total / 768-output ceiling remains
+unchanged; only ordinary serving promotes the existing long-context capability.
 
 OpenCode provider-local model key and display `name` need not match the model ID.
 Only the wire request's `model` participates in ds41f admission. For OpenCode
@@ -97,17 +107,18 @@ Only the wire request's `model` participates in ds41f admission. For OpenCode
 
 ```json
 {
-  "model": "ds41f/local-alias",
+  "model": "local/deepseek-v4.1-flash",
+  "enabled_providers": ["local"],
   "provider": {
-    "ds41f": {
+    "local": {
       "npm": "@ai-sdk/openai-compatible",
       "options": {"baseURL": "http://127.0.0.1:8000/v1", "apiKey": "local"},
       "models": {
-        "local-alias": {
+        "deepseek-v4.1-flash": {
           "id": "deepseek-v4.1-flash",
-          "name": "Arbitrary presentation label",
+          "name": "DeepSeek V4.1 Flash",
           "tool_call": true,
-          "limit": {"context": 8192, "output": 128}
+          "limit": {"context": 1048576, "output": 768}
         }
       }
     }
@@ -115,8 +126,10 @@ Only the wire request's `model` participates in ds41f admission. For OpenCode
 }
 ```
 
-Keep agent temperature zero and its prompt/tools within the bounded context.
-This is not a claim that the full default OpenCode workload fits 8K.
+Keep agent temperature zero and the complete encoded prompt plus output reservation
+within the advertised envelope. No reduced agent/tool schema is required merely
+to fit the obsolete 8K serving scope. Keep the provider local-only and fail closed;
+`enabled_providers` prevents fallback to an Internet provider.
 
 ## Owners and production boundaries
 
@@ -136,9 +149,12 @@ This is not a claim that the full default OpenCode workload fits 8K.
   `OMLXMTPGenerationSession` is a subordinate physical/semantic adapter, with no
   independent waiting queue, scheduling policy, or reusable cache authority.
 - `PairedCheckpointAuthority` owns paired payload integrity. Upstream PagedCache
-  owns hash lookup, acquisition references, capacity and LRU eviction. The bounded
-  context fits a root tail; four complete checkpoints are retained, with no
-  independent prefix index or eviction policy. Hash-drop/clear hooks drop the
+  owns hash lookup, acquisition references, capacity and LRU eviction. Its root-tail
+  block size follows the authoritative context envelope, so long complete pairs
+  remain discoverable without splitting/repacking state. Four complete checkpoints
+  are retained (plus upstream's reserved null block), with no independent prefix
+  index or eviction policy. `total_tokens_cached` counts actual retained frontiers,
+  not four times the block-size capacity. Hash-drop/clear hooks drop the
   associated paired payload. Target-only SSD restoration is deliberately absent.
 
 The existing thin HTTP boundary is retained. Importing the pinned full oMLX HTTP
@@ -157,8 +173,9 @@ Draft KV, proposal/verify stashes, queued future predictions, semantic horizon a
 RNG state are never cached.
 
 Capture creates frozen slot/ring metadata and independent array/cache handles.
-Pinned MLX arrays are functional values: immutable backing may be shared until an
-update; mutable cache containers and ring objects are never shared. Acquisition
+Pinned MLX arrays are functional values, but backing sharing is **not** a retention
+budget assumption: materialized `mx.array` snapshots can allocate a full copy.
+Mutable cache containers and ring objects are never shared. Acquisition
 constructs fresh target and ring objects/array handles and materializes them before
 use. Native array indexed updates and wrapped ring appends were regression-tested
 not to change the retained snapshot. There is no numeric pack/unpack, whole-cache
@@ -170,8 +187,10 @@ prefill seals at N-2, captures a **pending, undiscoverable** pair, then continue
 via the existing P6 committed-owner transfer to N-1. P5 consumes terminal N-1
 once. This avoids both recurrent N-to-N-1 trimming and synthetic P5 certificates
 for a zero-length append. Settled generated checkpoints can serve append requests
-when their complete encoded prefix matches. At the context ceiling only the
-earlier prompt pair is retained: no admitted future request can extend C=8192.
+when their complete encoded prefix matches. Publication requires room for a genuine
+suffix-prefill token, P5 terminal and at least one reserved output token: C+3 must
+fit the authoritative context ceiling. Near the ceiling only the earlier eligible
+prompt pair is retained. An unusable ceiling checkpoint is not published.
 
 Incomplete, damaged, incompatible, or missing paired payloads are invalidated
 and become a shorter upstream hit or miss. A target hash hit alone is never an
@@ -204,7 +223,80 @@ recipe usage reports the **actual paired restored token count**, independently o
 raw hash-index hit counters. Ordinary settlement logs record request ID, reused
 frontier, canonical frontier, publication and cancellation disposition.
 
+## Long-context promotion evidence and retention
+
+This is integration of existing capability, **not a new long-context qualification**.
+The [very-long-context evidence](very-long-context-production-qualification.md)
+establishes DwarfStar/P5/P6 same-list execution, deferred append, ownership,
+resource lifetime and cancellation through **1,048,576 consumed tokens**.
+[M25 native MTP evidence](milestone-25-mtp-decision.md) includes real 200,000-token
+prefix execution; current canonical state/settlement rules reuse M50/M51R/M52R
+and their regression evidence. These components are composed through the existing
+ProductionScheduler, not numerically re-proved. No model-execution or MTP algorithm
+code changes are needed for this serving promotion. The serving prefill bridge
+needed one integration repair: its short-context hidden-tap wrapper is not a
+qualified suffix-math layer and the deferred decoder intentionally computes only
+terminal cones. Bulk prefill now runs the original admitted layers, then the
+existing ordinary P6 append produces the final 128 rows at all DSpark tap layers.
+Native absolute-offset ring initialization consumes those rows once, fills every
+physical slot and reaches the prompt-capture frontier. Earlier passive ring
+handles can be replaced before P5; no live native state is rewound. Reused short
+suffixes still append to restored rings directly. No token is replayed, and no
+late-layer full-prompt hidden tensor or new prefill executor is introduced. Task A's recipe-authoritative
+generic declarations, tool calls/results and SSE remain unchanged.
+
+The existing four-pair retention bound is kept deliberately. Historical measured
+near-1M packed target state is about 946 MB per complete state, plus three bounded
+128-row DSpark rings and encoded-token metadata. Even full independent array copies
+therefore retain roughly 4 GB of target/ring state, not four models or four prefill
+arenas, within the admitted 512 GiB host's established headroom. A pinned-MLX
+16 MiB array snapshot check confirms materialized copying (not zero-cost sharing)
+and immutable retained contents after mutable-handle updates. Active execution is
+not evictable; acquisition clones before releasing its upstream lease. Hash drop,
+clear and failure burn release the paired immutable payload through existing
+PagedCache callbacks. No second cache, byte index, replay or whole-cache repack is
+introduced. This bounded policy does not promise multi-user memory admission.
+
 ## Acceptance and regression
+
+### Long-context production-path acceptance (2026-10-09)
+
+Actual admitted normal-local environment, unchanged official asset and native
+packages, ordinary HTTP and OpenCode. Compact receipt:
+`artifacts/long-mtp-serving/acceptance.json`; raw server/client receipts remain in
+that directory. Only the production delta was exercised, not a context ladder:
+
+- Ordinary maintenance prompt **17,110 tokens** executed. Repeat restored paired
+  **17,108**, appended turn **17,114**, and changed suffix **17,114** tokens.
+- One long SSE disconnect settled at canonical **17,130**, with cached **17,114**,
+  publication after settlement, no error and no live request left. Subsequent JSON
+  completed. The earlier exact prompt had been evicted under four-pair LRU: its
+  safe miss is intentional, not a cancellation failure. The collector's mistaken
+  guaranteed-hit assertion was removed; cancellation was not repeated.
+- Generic `read_file`/`stat_file` declarations used a **17,426-token** prompt.
+  Model `read_file` arguments drove a real client-side file read. Continuation
+  returned `GENERIC_TOOL_SUCCESS`, restoring paired **17,474** tokens; edited
+  result returned `BRANCH_SUCCESS` at the same safe **17,474** frontier. Generic
+  SSE and existing malformed-declaration/result-ID checks also passed.
+- OpenCode **1.18.30**, canonical **`local/deepseek-v4.1-flash`**, local-only
+  provider, normal **build** agent and all **10** normal tool declarations, with
+  this project's serving document configured through ordinary `instructions`:
+  initial prompt **12,051 tokens**; actual client `read` completed; continuation
+  restored paired **12,116** tokens and returned `OPENCODE_LONG_TOOL_SUCCESS`.
+  Build/title temperature was zero; no reduced agent prompt or tool schema,
+  serving-layer tool special case, or Internet fallback. A capture-only localhost
+  forwarder recorded unchanged wire requests. Text-part file attachments remain
+  outside the unchanged string-message surface; they were not normalized by it.
+- Every settled execution logged **replay=0, repack=0**, including cancellation;
+  final health had no fatal error and zero queued/active requests. PagedCache
+  eviction occurred, and counters counted the actual retained paired frontiers.
+- Relevant ordinary/generic/cache/lifecycle/resource regression: **61 passed**;
+  singleton/profile/transport/recovery: **107 passed**; selected existing P5/P6
+  ownership/append/handoff: **38 passed, 26 subtests**. Existing capacity tests:
+  **6 passed** in their standard-OFF pin (the MTP native recipe is intentionally
+  a different admission identity). Total **212 passed, 26 subtests**. Final
+  normal-local seal and ordinary `inspect` admission passed with the advertised
+  **1,048,576 / 768** limits. No full-repository qualification was run.
 
 ### Generic function acceptance (2026-10-09)
 
@@ -287,6 +379,6 @@ B1/B2 are implemented for this bounded ordinary serving path. This is **not**
 closure of every general-runtime production-release requirement: broader API and
 control domains beyond the supported ordinary function tools, transparent profile/resource policy and full production
 observability in `production-serving-parity-closure.md` still need implementation.
-Portable packaging/promotion, broader context, Web, new hosts and default-profile
-changes remain outside this task. M54R/M55R's existing bounded execution approval
+Portable packaging/promotion, above-qualified context, Web, new hosts and
+default-profile changes remain outside this task. M54R/M55R's existing bounded execution approval
 is not replaced by a new campaign or extended to those domains.

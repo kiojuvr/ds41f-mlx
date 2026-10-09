@@ -7,14 +7,21 @@ import json
 from pathlib import Path
 
 TEXT_QUALIFIED_ENVELOPE = 1_048_576
+# Bounded JSON ingress headroom for ordinary long text plus generic schemas.
+# This byte/resource policy is not a token estimate; actual recipe IDs decide.
+ORDINARY_BODY_BYTES = 16 * TEXT_QUALIFIED_ENVELOPE
 
 
-def resolve_capacity(prepared, *, checkpoint: Path, automatic: bool = False):
+def context_envelope(checkpoint: Path, *, multimodal: bool = False):
     from ds41f_mlx.runtime.multimodal import MAX_MULTIMODAL_CONTEXT
     config = json.loads((checkpoint / 'config.json').read_text())
     model_context = int(config.get('text_config', config)['max_position_embeddings'])
-    qualified = MAX_MULTIMODAL_CONTEXT if prepared.multimodal is not None else TEXT_QUALIFIED_ENVELOPE
-    envelope = min(model_context, qualified)
+    qualified = MAX_MULTIMODAL_CONTEXT if multimodal else TEXT_QUALIFIED_ENVELOPE
+    return min(model_context, qualified)
+
+
+def resolve_capacity(prepared, *, checkpoint: Path, automatic: bool = False):
+    envelope = context_envelope(checkpoint, multimodal=prepared.multimodal is not None)
     prompt = len(prepared.token_ids)
     remaining = envelope - prompt
     requested = prepared.inference_options.max_tokens

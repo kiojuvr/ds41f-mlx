@@ -229,7 +229,10 @@ admitted execution envelope with standard `/v1/chat/completions`, Scheduler-owne
 lifecycle and paired target/DSpark prefix reuse, including generic ordinary
 function tools and ID-bound tool result continuations. DeepSeek recipe owns tool
 semantics; clients execute tools. No public session or sequence protocol is required.
-The 8192-total / 768-output bound and singleton weather-only contract are unchanged. See [operation, ownership and acceptance](docs/mtp-production-serving.md).
+Ordinary serving now uses the established **1,048,576-token total context envelope**;
+output remains **768 tokens**. The former 8192 ordinary bound was temporary serving
+scope, not a runtime context limit. Singleton's 8192-total/weather-only contract
+is unchanged. See [operation, ownership and acceptance](docs/mtp-production-serving.md).
 It does not change the default or the existing singleton public contract, and is
 not a claim of complete general-runtime production parity.
 

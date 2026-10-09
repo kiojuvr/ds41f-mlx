@@ -5,12 +5,12 @@ from pathlib import Path
 import httpx
 
 
-def run(url='http://127.0.0.1:8000'):
+def run(url='http://127.0.0.1:8000', *, context=''):
     tools = [dict(type='function', function=dict(name=name, description=description,
         parameters=dict(type='object', properties=dict(path=dict(type='string')), required=['path'])))
         for name, description in [('read_file', 'Read a file.'), ('stat_file', 'Get file metadata.')]]
     body = dict(model='deepseek-v4.1-flash', temperature=0, reasoning_effort='none', max_tokens=128,
-        tools=tools, messages=[dict(role='user', content='Call read_file with path /tmp/example.txt. Do not answer until you receive the file content.')])
+        tools=tools, messages=[dict(role='user', content=context+'\nCall read_file with path /tmp/example.txt. Do not answer until you receive the file content.')])
     receipt = {}
     with httpx.Client(base_url=url, timeout=1800) as client:
         def post(label, request):
@@ -24,13 +24,18 @@ def run(url='http://127.0.0.1:8000'):
         calls = message['tool_calls']
         assert len(calls) == 1 and calls[0]['function']['name'] == 'read_file', calls
         assert json.loads(calls[0]['function']['arguments']) == {'path': '/tmp/example.txt'}
-        result = dict(role='tool', tool_call_id=calls[0]['id'], content='The file contains: GENERIC_TOOL_SUCCESS. Report this exact marker.')
+        # Execute on the client, not in ds41f. Use the model-generated args.
+        Path('/tmp/example.txt').write_text('GENERIC_TOOL_SUCCESS\n')
+        contents = Path(json.loads(calls[0]['function']['arguments'])['path']).read_text().strip()
+        result = dict(role='tool', tool_call_id=calls[0]['id'], content=f'The file contains: {contents}. Report this exact marker.')
         continuation = body | dict(messages=body['messages']+[message, result])
         second = post('continuation', continuation)
         assert second['choices'][0]['finish_reason'] == 'stop'
         assert 'GENERIC_TOOL_SUCCESS' in second['choices'][0]['message']['content']
         cached = second['usage']['prompt_tokens_details']['cached_tokens']
-        assert cached > 0, second
+        assert cached > (8192 if context else 0), second
+        if context:
+            assert first['usage']['prompt_tokens'] > 12000
         branch = body | dict(messages=body['messages']+[message, result | dict(content='The file contains: BRANCH_SUCCESS. Report this exact marker.')])
         changed = post('branch', branch)
         assert 'BRANCH_SUCCESS' in changed['choices'][0]['message']['content']

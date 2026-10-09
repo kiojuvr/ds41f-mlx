@@ -4,6 +4,7 @@ import numpy as np
 import pytest
 
 from ds41f_mlx.serving.paired_checkpoint import PairedCheckpoint, validate_pair
+from ds41f_mlx.serving.capacity import TEXT_QUALIFIED_ENVELOPE
 
 
 class Cache:
@@ -102,12 +103,13 @@ def test_upstream_lookup_eviction_and_invalid_pair_miss():
     assert authority.acquire(list(range(222))) is None
 
 
-def test_pinned_mlx_native_arrays_and_wrapped_ring_snapshot_are_stable():
+@pytest.mark.parametrize('frontier', [193, 32768, TEXT_QUALIFIED_ENVELOPE - 3])
+def test_pinned_mlx_native_arrays_and_wrapped_ring_snapshot_are_stable(frontier):
     mx = pytest.importorskip('mlx.core')
     pytest.importorskip('omlx')
     from omlx.patches.deepseek_v41.cache import DeepseekV41Cache
     from omlx.patches.mlx_lm_mtp.deepseek_v4_dspark import DSparkContextCache
-    target, rings, tokens = pair()
+    target, rings, tokens = pair(frontier)
     target = [DeepseekV41Cache.from_state([mx.array(v) for v in c.cache], c.meta_state) for c in target]
     native_rings = []
     for ring in rings:
@@ -169,7 +171,10 @@ def test_ordinary_http_recipe_route_has_no_compulsory_public_session(monkeypatch
     try:
         app = create_app(profile='mtp-serving-v1', runtime_config=backend.runtime_config, backend=backend)
         with TestClient(app, base_url=f'http://{authority}') as client:
-            assert client.get('/v1/models').status_code == 200
+            advertised = client.get('/v1/models')
+            assert advertised.status_code == 200
+            assert advertised.json()['data'][0]['context_length'] == backend.context_tokens
+            assert advertised.json()['data'][0]['max_output_tokens'] == 768
             for headers in ({'Host': ''}, {'Host': 'bad host'}, {'Origin': 'http://other.invalid'}):
                 assert client.get('/v1/models', headers=headers).status_code == 400
             assert client.get('/v1/models', headers=[('Host', authority), ('Host', authority)]).status_code == 400
@@ -225,7 +230,10 @@ def test_json_delivery_stops_disconnect_probe_even_when_probe_consumes_cancellat
     asyncio.run(run())
 
 
-@pytest.mark.parametrize('cancel,fail,frontier', [(False, False, 200), (True, False, 200), (False, True, 200), (False, False, 8192)])
+@pytest.mark.parametrize('cancel,fail,frontier', [
+    (False, False, 200), (True, False, 32768), (False, True, 32768),
+    (False, False, 8192), (False, False, TEXT_QUALIFIED_ENVELOPE - 3),
+    (False, False, TEXT_QUALIFIED_ENVELOPE - 2), (False, False, TEXT_QUALIFIED_ENVELOPE)])
 def test_scheduler_adoption_settlement_publication_and_burn(monkeypatch, cancel, fail, frontier):
     pytest.importorskip('mlx.core')
     pytest.importorskip('omlx')
@@ -260,7 +268,7 @@ def test_scheduler_adoption_settlement_publication_and_burn(monkeypatch, cancel,
         rec.cache, rec.rings, rec.canonical = pair(frontier)
         rec.owner = None
         trace['quiescence'], trace['canonical_frontier'] = {}, len(rec.canonical)
-        trace['response'] = {'choices': [{'finish_reason': 'length' if frontier == 8192 else 'stop'}]}
+        trace['response'] = {'choices': [{'finish_reason': 'length' if frontier == TEXT_QUALIFIED_ENVELOPE else 'stop'}]}
     def advance(rec, trace):
         transitions.append('generation')
     def retire(rec):
@@ -289,7 +297,7 @@ def test_scheduler_adoption_settlement_publication_and_burn(monkeypatch, cancel,
     assert transitions[-2:] == ['settlement', 'retirement']
     assert output.outputs[-1].finished
     assert bool(output.outputs[-1].error) == fail
-    if frontier == 8192:
+    if frontier == TEXT_QUALIFIED_ENVELOPE:
         from omlx.request import RequestStatus
         assert request.status == RequestStatus.FINISHED_LENGTH_CAPPED
         assert output.outputs[-1].finish_reason == 'length'
@@ -300,3 +308,5 @@ def test_scheduler_adoption_settlement_publication_and_burn(monkeypatch, cancel,
     assert scheduler.last_settlement['cache_published'] != fail
     if not fail:
         assert len(scheduler.checkpoints.acquire(list(range(202)))[2]) == 200
+        expected = frontier if frontier + 3 <= TEXT_QUALIFIED_ENVELOPE else 200
+        assert len(scheduler.checkpoints.acquire(list(range(frontier + 2)))[2]) == expected

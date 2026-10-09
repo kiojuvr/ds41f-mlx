@@ -44,9 +44,14 @@ def main(argv: list[str] | None = None) -> int:
             parser.error('MTP supports inspect/start/accept only')
         try:
             from .mtp_identity import config, inspect
-            report = inspect(config(profile=args.profile))
+            cfg = config(profile=args.profile)
+            report = inspect(cfg)
             if args.profile == 'mtp-serving-v1':
+                from .serving.capacity import context_envelope, ORDINARY_BODY_BYTES
+                from .mtp_profile import LIMITS
                 report['serving_profile'] = args.profile
+                report['serving_limits'] = dict(context_tokens=context_envelope(cfg.checkpoint_path),
+                                                output_tokens=LIMITS['output_tokens'], body_bytes=ORDINARY_BODY_BYTES)
             print(json.dumps(report, indent=2, sort_keys=True))
             return 0
         except (ValueError, OSError, ImportError) as exc:

@@ -277,7 +277,11 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
 
     @app.get('/v1/models')
     async def models() -> Response:
-        return JSONResponse(content={'object': 'list', 'data': [{'id': model_id, 'object': 'model', 'owned_by': 'ds41f', 'aliases': sorted(MODEL_ALIASES)}]})
+        model = {'id': model_id, 'object': 'model', 'owned_by': 'ds41f', 'aliases': sorted(MODEL_ALIASES)}
+        if ordinary_mtp:
+            from ds41f_mlx.mtp_profile import LIMITS as serving_limits
+            model.update(context_length=backend.context_tokens, max_output_tokens=serving_limits['output_tokens'])
+        return JSONResponse(content={'object': 'list', 'data': [model]})
 
     @app.post('/v1/sessions')
     async def create_session(request: Request) -> Response:

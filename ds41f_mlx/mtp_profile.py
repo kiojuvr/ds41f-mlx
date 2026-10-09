@@ -76,6 +76,8 @@ def validate_chat(raw, *, ordinary_tools=False):
     messages = b.get('messages')
     if not isinstance(messages, list) or not messages:
         raise ValueError('nonempty ordinary messages required')
+    from .serving.capacity import ORDINARY_BODY_BYTES
+    content_limit = ORDINARY_BODY_BYTES if ordinary_tools else LIMITS['body_bytes']
     pending = []
     for m in messages:
         if not isinstance(m, dict):
@@ -86,7 +88,7 @@ def validate_chat(raw, *, ordinary_tools=False):
         if role in ('system', 'user'):
             if set(m) != {'role', 'content'}:
                 raise ValueError('unsupported message field')
-            string(m['content'])
+            string(m['content'], limit=content_limit)
         elif role == 'assistant':
             assistant_fields = {'role', 'content', 'tool_calls'}
             if ordinary_tools:
@@ -94,12 +96,12 @@ def validate_chat(raw, *, ordinary_tools=False):
             if set(m) - assistant_fields:
                 raise ValueError('unsupported assistant field')
             if ordinary_tools and m.get('reasoning_content') is not None:
-                string(m['reasoning_content'])
+                string(m['reasoning_content'], limit=content_limit)
             calls = m.get('tool_calls')
             if 'tool_calls' in m and (not isinstance(calls, list) or not calls or (not ordinary_tools and len(calls) > 2)):
                 raise ValueError('ordinary completed calls required' if ordinary_tools else 'one/two ordinary completed calls required')
             if m.get('content') is not None:
-                string(m['content'])
+                string(m['content'], limit=content_limit)
             if calls:
                 if not ordinary_tools and ('tools' not in b or not 1 <= len(calls) <= 2):
                     raise ValueError('one/two weather calls required')

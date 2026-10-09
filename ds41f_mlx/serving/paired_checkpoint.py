@@ -1,11 +1,13 @@
 """Immutable paired state authority, indexed/evicted by pinned oMLX PagedCache.
 
-There is no independent lookup, LRU, or conversation rewind here. In the bounded
-8192-token serving envelope every complete checkpoint is an upstream root tail.
+There is no independent lookup, LRU, or conversation rewind here. Within the
+qualified context envelope every extendable checkpoint is an upstream root tail.
 The payload is memory-only: losing either owner is a miss, never unprimed MTP.
 """
 from dataclasses import dataclass
 from typing import Any
+
+from .capacity import TEXT_QUALIFIED_ENVELOPE
 
 
 def _copy(value, mx):
@@ -23,7 +25,7 @@ def _arrays(target, rings):
 
 def validate_pair(target, rings, tokens):
     C = len(tokens)
-    if not 0 < C < 8192 or len(target) != 40 or len(rings) != 3:
+    if not 0 < C <= TEXT_QUALIFIED_ENVELOPE - 3 or len(target) != 40 or len(rings) != 3:
         raise ValueError('incomplete paired checkpoint')
     for layer in target:
         if len(layer.cache) != 7 or layer.size() != C or layer.cache[0] is None or layer.cache[1] is None:
@@ -115,10 +117,16 @@ class PairedCheckpoint:
 
 
 class PairedCheckpointAuthority:
-    def __init__(self, identity, mx, *, retained_checkpoints=4):
+    def __init__(self, identity, mx, *, retained_checkpoints=4, context_tokens=TEXT_QUALIFIED_ENVELOPE):
         from omlx.cache.paged_cache import PagedCacheManager
+        if not 3 <= context_tokens <= TEXT_QUALIFIED_ENVELOPE:
+            raise ValueError('invalid paired context envelope')
         self.identity, self.mx = identity, mx
-        self.paged = PagedCacheManager(block_size=8192, max_blocks=retained_checkpoints+1,
+        self.context_tokens = context_tokens
+        # Complete pairs are indivisible root tails, not token-grid KV blocks.
+        # The null block consumes one slot. Four immutable pairs remain bounded;
+        # live/restored handles are outside this reusable-state capacity.
+        self.paged = PagedCacheManager(block_size=context_tokens, max_blocks=retained_checkpoints+1,
                                       initial_blocks=retained_checkpoints+1, model_name=identity)
         self._payloads = {}
         self.paged.on_block_hash_dropped = self._drop_payload
@@ -130,11 +138,13 @@ class PairedCheckpointAuthority:
             self.paged.stats.total_tokens_cached -= len(checkpoint.tokens)
 
     def capture(self, target, rings, tokens):
+        if len(tokens) + 3 > self.context_tokens:
+            raise ValueError('checkpoint cannot be extended within context envelope')
         return PairedCheckpoint.capture(self.identity, target, rings, tokens, self.mx)
 
     def publish(self, checkpoint):
-        if checkpoint.identity != self.identity:
-            raise ValueError('foreign checkpoint publication')
+        if checkpoint.identity != self.identity or len(checkpoint.tokens) + 3 > self.context_tokens:
+            raise ValueError('foreign or unextendable checkpoint publication')
         validate_pair(checkpoint.target, checkpoint.rings, checkpoint.tokens)
         tokens = list(checkpoint.tokens)
         if self.paged.find_cached_block(tokens) is not None:
