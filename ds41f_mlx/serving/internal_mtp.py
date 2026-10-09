@@ -287,7 +287,7 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
                         wired_limit_lease=wired, batch_generator_factory=batch_generator_factory,
                         canonical_sampling_policy='greedy' if request.inference_options.temperature in (None, 0) else None)
             rec.owner = handoff_to_generation(live, self._model, terminal_prompt_token=ids[-1], config=cfg,
-                max_tokens=self.max_tokens(request.inference_options), sampler=self.make_sampler(request.inference_options), session_factory=Factory)
+                max_tokens=self.request_max_tokens(request), sampler=self.make_sampler(request.inference_options), session_factory=Factory)
             trace.update(prefill_handoff_s=perf_counter()-t0, prompt_replay=rec.owner.prompt_replay_count,
                          full_cache_repack=app.final_execution.runner.full_cache_repack_count)
 

@@ -45,7 +45,8 @@ def string(value, *, limit=1048576):
         raise ValueError('raw special-token source unavailable')
 
 
-def validate_chat(raw, *, ordinary_tools=False):
+def validate_chat(raw):
+    """Pinned singleton qualification grammar, never ordinary API admission."""
     b = strict_json(raw)
     allowed = {'model', 'messages', 'temperature', 'reasoning_effort', 'tools',
                'tool_choice', 'stream', 'max_tokens'}
@@ -54,10 +55,7 @@ def validate_chat(raw, *, ordinary_tools=False):
     if b.get('model') not in ALIASES:
         raise ValueError('fixed model alias required')
     n = b.get('max_tokens')
-    if ordinary_tools:
-        from .serving.capacity import validate_ordinary_output
-        validate_ordinary_output(n)
-    elif type(n) is not int or not 1 <= n <= LIMITS['output_tokens']:
+    if type(n) is not int or not 1 <= n <= LIMITS['output_tokens']:
         raise ValueError(f'max_tokens must be integer 1..{LIMITS["output_tokens"]}')
     if 'temperature' in b and (type(b['temperature']) not in (int, float) or b['temperature'] != 0):
         raise ValueError('temperature must be numeric zero')
@@ -65,11 +63,7 @@ def validate_chat(raw, *, ordinary_tools=False):
         raise ValueError('reasoning_effort must be none')
     if 'stream' in b and type(b['stream']) is not bool:
         raise ValueError('stream must be boolean')
-    if ordinary_tools:
-        # Declaration/choice/schema semantics belong to the DeepSeek recipe.
-        # Conversion runs before Scheduler admission on the ordinary route.
-        pass
-    elif 'tools' in b:
+    if 'tools' in b:
         if json.dumps(b['tools'], sort_keys=True, separators=(',', ':')) != json.dumps([WEATHER], sort_keys=True, separators=(',', ':')):
             raise ValueError('only the pinned weather declaration is supported')
         if b.get('tool_choice', 'auto') not in ('auto',) and b.get('tool_choice') != {'type':'function','function':{'name':'lookup_weather'}}:
@@ -79,8 +73,7 @@ def validate_chat(raw, *, ordinary_tools=False):
     messages = b.get('messages')
     if not isinstance(messages, list) or not messages:
         raise ValueError('nonempty ordinary messages required')
-    from .serving.capacity import ORDINARY_BODY_BYTES
-    content_limit = ORDINARY_BODY_BYTES if ordinary_tools else LIMITS['body_bytes']
+    content_limit = LIMITS['body_bytes']
     pending = []
     for m in messages:
         if not isinstance(m, dict):
@@ -94,19 +87,15 @@ def validate_chat(raw, *, ordinary_tools=False):
             string(m['content'], limit=content_limit)
         elif role == 'assistant':
             assistant_fields = {'role', 'content', 'tool_calls'}
-            if ordinary_tools:
-                assistant_fields.add('reasoning_content')
             if set(m) - assistant_fields:
                 raise ValueError('unsupported assistant field')
-            if ordinary_tools and m.get('reasoning_content') is not None:
-                string(m['reasoning_content'], limit=content_limit)
             calls = m.get('tool_calls')
-            if 'tool_calls' in m and (not isinstance(calls, list) or not calls or (not ordinary_tools and len(calls) > 2)):
-                raise ValueError('ordinary completed calls required' if ordinary_tools else 'one/two ordinary completed calls required')
+            if 'tool_calls' in m and (not isinstance(calls, list) or not 1 <= len(calls) <= 2):
+                raise ValueError('one/two ordinary completed calls required')
             if m.get('content') is not None:
                 string(m['content'], limit=content_limit)
             if calls:
-                if not ordinary_tools and ('tools' not in b or not 1 <= len(calls) <= 2):
+                if 'tools' not in b or not 1 <= len(calls) <= 2:
                     raise ValueError('one/two weather calls required')
                 for c in calls:
                     if not isinstance(c, dict) or set(c) != {'id','type','function'} or c['type'] != 'function':
@@ -117,13 +106,12 @@ def validate_chat(raw, *, ordinary_tools=False):
                         raise ValueError('ordinary function required')
                     string(f['name'], limit=256)
                     string(f['arguments'], limit=65536)
-                    if not ordinary_tools:
-                        if f['name'] != 'lookup_weather':
-                            raise ValueError('weather function required')
-                        args = strict_json(f['arguments'].encode())
-                        if set(args) != {'city'}:
-                            raise ValueError('weather city required')
-                        string(args['city'], limit=65536)
+                    if f['name'] != 'lookup_weather':
+                        raise ValueError('weather function required')
+                    args = strict_json(f['arguments'].encode())
+                    if set(args) != {'city'}:
+                        raise ValueError('weather city required')
+                    string(args['city'], limit=65536)
                     pending.append(c['id'])
                 if len(set(pending)) != len(pending):
                     raise ValueError('duplicate tool IDs')
@@ -132,11 +120,7 @@ def validate_chat(raw, *, ordinary_tools=False):
         elif role == 'tool':
             if set(m) != {'role','tool_call_id','content'} or not pending:
                 raise ValueError('wrong/missing/duplicate tool result')
-            if ordinary_tools:
-                if m['tool_call_id'] not in pending:
-                    raise ValueError('wrong/missing/duplicate tool result')
-                pending.remove(m['tool_call_id'])
-            elif m['tool_call_id'] != pending.pop(0):
+            if m['tool_call_id'] != pending.pop(0):
                 raise ValueError('wrong/missing/duplicate tool result')
             string(m['content'], limit=65536)
         else:

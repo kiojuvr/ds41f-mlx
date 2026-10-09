@@ -101,12 +101,18 @@ implicit HTTP retry identity is promised.
 
 DeepSeek recipe is the authority for declaration conversion, conversation rendering,
 argument/tool-call parsing, tool result semantics and JSON/SSE response projection.
-Serving admission enforces the bounded request surface and binds `role: tool`
-results to prior assistant `tool_call_id` values; it does not validate arbitrary
-parameter schemas or implement a second tool grammar. Multiple completed calls
+Serving admission enforces JSON security, runtime capabilities and resource
+budgets, not a second ordinary request grammar. Recipe owns `role: tool` result
+binding to prior assistant `tool_call_id` values as well as declaration schemas.
+The [ordinary API authority audit](ordinary-api-boundary.md) records removed
+independent validation, retained constraints and the default-promotion gate. Multiple completed calls
 are supported within recipe capabilities and the existing body/context budgets.
 OpenCode's empty assistant `reasoning_content` is accepted through this same recipe
-path; generation remains thinking-off.
+path; generation remains thinking-off. OpenCode Plan's text-plus-reminder arrays
+are accepted by authoritative recipe conversion, not a client-specific exception.
+Converted image sources are rejected before expansion on this text-only route.
+Ordinary history uses body/context budgets, not singleton fixture string limits;
+`mtp-singleton-v1` retains its separate pinned grammar.
 
 **Tool execution is the client's responsibility.** ds41f does not execute file,
 shell, browser, Web or MCP tools. After a canonical recipe-completed assistant

@@ -168,6 +168,13 @@ def test_ordinary_http_recipe_route_has_no_compulsory_public_session(monkeypatch
         assert not backend.sessions
         return JSONResponse({'choices': [{'message': {'role': 'assistant', 'content': 'OK'}}]})
     monkeypatch.setattr(backend, 'ordinary_response', response)
+    from ds41f_mlx.serving import ordinary_admission
+    parsed = []
+    native_request = ordinary_admission.ChatCompletionRequest
+    def tracked_request(raw):
+        parsed.append(raw)
+        return native_request(raw)
+    monkeypatch.setattr(ordinary_admission, 'ChatCompletionRequest', tracked_request)
     try:
         app = create_app(profile='mtp-serving-v1', runtime_config=backend.runtime_config, backend=backend)
         with TestClient(app, base_url=f'http://{authority}') as client:
@@ -191,6 +198,33 @@ def test_ordinary_http_recipe_route_has_no_compulsory_public_session(monkeypatch
                 'messages': [{'role': 'user', 'content': 'Hello'}]})
             assert result.status_code == 400
             assert 'output capability ceiling' in result.json()['error']['message']
+            for changes in (
+                {'messages': [{'role': 'user', 'content': [
+                    {'type': 'text', 'text': 'こんにちは'},
+                    {'type': 'text', 'text': '<system-reminder>Plan mode</system-reminder>'}]}]},
+                {'messages': [{'role': 'latest_reminder', 'content': 'Read only'}]},
+                {'stream': True, 'stream_options': {'include_usage': False}},
+                {'stop': ['END'], 'n': 1, 'top_p': 1, 'client_metadata': {}},
+                {'max_tokens': 'auto'},
+            ):
+                before = len(parsed)
+                result = client.post('/v1/chat/completions', json={
+                    'model': 'deepseek-v4.1-flash',
+                    'messages': [{'role': 'user', 'content': 'Hello'}]} | changes)
+                assert result.status_code == 200, result.text
+                assert len(parsed) == before + 1  # no duplicate recipe conversion
+            for changes in (
+                {'temperature': 1}, {'n': 2}, {'seed': 1},
+                {'messages': [{'role': 'user', 'content': [{'type': 'image_url',
+                    'image_url': {'url': 'https://example.com/a.png'}}]}]},
+                {'messages': [{'role': 'tool', 'tool_call_id': 'foreign', 'content': 'OK'}]},
+            ):
+                before = len(seen)
+                result = client.post('/v1/chat/completions', json={
+                    'model': 'deepseek-v4.1-flash',
+                    'messages': [{'role': 'user', 'content': 'Hello'}]} | changes)
+                assert result.status_code == 400
+                assert len(seen) == before  # never reaches execution admission
             assert seen and not backend.sessions
             assert client.post('/v1/sessions', json={}).status_code == 404
             assert client.post('/v1/responses', json={}).status_code == 400

@@ -5,7 +5,6 @@ external-prefill, decode, and completion hooks differ: qualified P5/recipe
 settlement replaces generic prefill/parser/backend-finish cache publication.
 """
 import asyncio
-import json
 import logging
 from time import perf_counter
 from uuid import uuid4
@@ -17,7 +16,7 @@ from omlx.request import Request, RequestOutput, RequestStatus, SamplingParams
 
 from .internal_mtp import InternalMTPQualificationBackend, QualificationSession
 from .paired_checkpoint import PairedCheckpointAuthority
-from .capacity import context_envelope, ORDINARY_BODY_BYTES, validate_ordinary_capacity
+from .capacity import context_envelope, validate_ordinary_capacity
 
 logger = logging.getLogger('uvicorn.error.ds41f')
 
@@ -223,23 +222,9 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
 
     @staticmethod
     def validate_ordinary(raw):
-        from ds41f_mlx.mtp_profile import strict_json, validate_chat
-        if len(raw) > ORDINARY_BODY_BYTES:
-            raise ValueError('body limit exceeded')
-        body = strict_json(raw)
-        # Ordinary OpenAI defaults, without widening the qualified execution
-        # controls. Recipe still converts the ORIGINAL request below.
-        validation = dict(body)
-        validation.setdefault('max_tokens', 128)
-        stream_options = validation.pop('stream_options', None)
-        if stream_options is not None and stream_options != {'include_usage': True}:
-            raise ValueError('unsupported stream_options')
-        validate_chat(json.dumps(validation).encode(), ordinary_tools=True)
-        # Use the authoritative request converter, not a serving-layer tool or
-        # JSON Schema validator. Malformed declarations/choices are client errors
-        # even when this boundary is invoked without HTTP preparation.
-        from deepseek_recipe import ChatCompletionRequest, ConversionOptions
-        ChatCompletionRequest(raw).convert(ConversionOptions(default_thinking_mode=False))
+        from .ordinary_admission import convert_ordinary
+        converted, _, _ = convert_ordinary(raw)
+        return converted
 
     def _enqueue(self, prepared, tokenizer, request_id):
         if self.fatal_error:
@@ -248,7 +233,7 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
         if self.scheduler is None:
             self.scheduler = ProductionScheduler(self)
         request = Request(request_id=request_id, prompt=list(prepared.token_ids),
-                          sampling_params=SamplingParams(max_tokens=self.max_tokens(prepared.inference_options), temperature=0))
+                          sampling_params=SamplingParams(max_tokens=self.request_max_tokens(prepared), temperature=0))
         request.prepared, request.recipe_tokenizer = prepared, tokenizer
         request.execution = QualificationSession(request_id)
         request.prompt_checkpoint, request.delivery_cursor = None, 0
@@ -293,7 +278,7 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
         from .server import InferenceStreamingResponse, sse_frame
         if prepared.protocol != 'chat_completions' or prepared.image_sources:
             raise ValueError('ordinary MTP supports text Chat Completions only')
-        limit = self.max_tokens(prepared.inference_options)
+        limit = self.request_max_tokens(prepared)
         validate_ordinary_capacity(len(prepared.token_ids), limit, self.context_tokens)
         if len(prepared.token_ids) < 3:
             raise ValueError('encoded prompt must contain at least 3 tokens')

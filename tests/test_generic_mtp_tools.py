@@ -1,4 +1,4 @@
-"""Ordinary admission delegates tools to recipe; singleton stays bounded."""
+"""Recipe owns ordinary tool-result binding; singleton stays bounded."""
 import json
 import pytest
 
@@ -38,7 +38,8 @@ def test_multiple_calls_result_identity_and_opencode_empty_reasoning():
     for identity in ('foreign', 'call-2'):
         changed = json.loads(json.dumps(value))
         changed['messages'][-1]['tool_call_id'] = identity
-        with pytest.raises(ValueError, match='tool result'):
+        from deepseek_recipe import ConversionError
+        with pytest.raises(ConversionError, match='tool_call_id'):
             admit(changed)
     with pytest.raises(ValueError):
         validate_completed_calls(message)

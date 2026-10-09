@@ -104,6 +104,15 @@ implementation reason requires limiting capability itself, document that reason.
 Production cache retention, single-flight execution and trusted-network scope
 remain intentional policies, not automatic inheritance of qualification bounds.
 
+## Ordinary API authority gate
+
+Before default promotion, ordinary request acceptance must follow authoritative
+protocol/recipe semantics, not historical fixture grammar or a list of successful
+clients. The [ordinary API boundary audit](ordinary-api-boundary.md) separates
+recipe-owned grammar from ds41f capability/resource/security admission and records
+boundary acceptance tests. This admission repair does not itself promote the
+profile or close separately scoped release and LAN gates.
+
 ## Production evidence and validation loop
 
 Failures from real **supported** clients/workloads are first-class development

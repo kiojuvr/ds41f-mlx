@@ -2,6 +2,7 @@
 import base64
 import hashlib
 import json
+import os
 from types import SimpleNamespace
 
 import pytest
@@ -11,6 +12,18 @@ from ds41f_mlx.serving.capacity import resolve_capacity
 from ds41f_mlx.serving.server import prepare_request, load_v41_tokenizer, RequestError
 from ds41f_mlx.serving.deepseek_recipe_backend import DeepSeekRecipeRuntimeBackend
 from ds41f_mlx.web_tools import readable_text
+
+
+@pytest.fixture(autouse=True)
+def preserve_runtime_environment():
+    # RuntimeConfig.apply_environment in existing preparation/backend tests must
+    # not leak standard-off defaults into later singleton admission tests.
+    before = dict(os.environ)
+    try:
+        yield
+    finally:
+        os.environ.clear()
+        os.environ.update(before)
 
 
 def test_auto_is_actual_recipe_tokens_not_frontier_subtraction():
@@ -27,6 +40,30 @@ def test_auto_is_actual_recipe_tokens_not_frontier_subtraction():
     value['max_tokens'] = 1048576
     with pytest.raises(RequestError, match='total envelope'):
         prepare_request('chat_completions', json.dumps(value).encode(), tokenizer=tokenizer)
+
+
+def test_ordinary_auto_uses_resolved_budget_for_execution():
+    from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+    cfg = load_runtime_config(); cfg.apply_import_paths()
+    tokenizer = load_v41_tokenizer(cfg.recipe_path)
+    value = {'model': cfg.model_id, 'messages': [{'role': 'user', 'content': 'Hi'}], 'max_tokens': 'auto'}
+    prepared = prepare_request('chat_completions', json.dumps(value).encode(),
+                               tokenizer=tokenizer, checkpoint=cfg.checkpoint_path, ordinary=True)
+    assert prepared.inference_options.max_tokens == 1  # recipe placeholder, not execution budget
+    assert prepared.resolved_max_tokens == 393216
+    backend = object.__new__(ProductionMTPBackend)
+    assert backend.request_max_tokens(prepared) == 393216
+
+
+def test_ordinary_rejects_images_before_render_or_expansion(monkeypatch):
+    from ds41f_mlx.serving import server
+    def forbidden():
+        pytest.fail('rejected image request reached rendering/expansion')
+    monkeypatch.setattr(server, 'DeepseekV41Encoding', forbidden)
+    value = {'model': 'deepseek-v4.1-flash', 'messages': [{'role': 'user', 'content': [
+        {'type': 'image_url', 'image_url': {'url': 'https://example.com/a.png'}}]}]}
+    with pytest.raises(ValueError, match='text Chat'):
+        prepare_request('chat_completions', json.dumps(value).encode(), tokenizer=None, ordinary=True)
 
 
 def test_qualified_boundary_and_model_boundary_are_total_and_separate(tmp_path):

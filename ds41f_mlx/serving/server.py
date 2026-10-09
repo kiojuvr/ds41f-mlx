@@ -43,19 +43,26 @@ def load_v41_tokenizer(recipe_path: Path = DEFAULT_RECIPE) -> Any:
 
 def prepare_request(protocol: str, body: bytes, *, tokenizer: Any, recipe_path: Path = DEFAULT_RECIPE, options: ConversionOptions | None = None, checkpoint: Path | None = None, ordinary: bool = False) -> RecipePreparedRequest:
     request_type, _ = PROTOCOL_TYPES[protocol]
-    # Runtime extension, resolved only after the real recipe/image expansion.
-    payload = json.loads(body)
-    automatic = isinstance(payload, dict) and payload.get('max_tokens') == 'auto'
-    if automatic:
-        payload['max_tokens'] = 1
-        body = json.dumps(payload).encode()
-    try:
-        request = request_type(body)
-    except ValueError as error:
-        raise RequestError(str(error)) from error
-    include_usage = request.include_usage() if protocol == 'chat_completions' else False
-    custom_tool_names = frozenset(request.custom_tool_names()) if protocol == 'responses' else frozenset()
-    converted = request.convert(options if options is not None else ConversionOptions())
+    if ordinary:
+        if protocol != 'chat_completions':
+            raise RequestError('ordinary MTP supports Chat Completions only')
+        from .ordinary_admission import convert_ordinary
+        converted, include_usage, automatic = convert_ordinary(body)
+        custom_tool_names = frozenset()
+    else:
+        # Runtime extension, resolved only after the real recipe/image expansion.
+        payload = json.loads(body)
+        automatic = isinstance(payload, dict) and payload.get('max_tokens') == 'auto'
+        if automatic:
+            payload['max_tokens'] = 1
+            body = json.dumps(payload).encode()
+        try:
+            request = request_type(body)
+        except ValueError as error:
+            raise RequestError(str(error)) from error
+        include_usage = request.include_usage() if protocol == 'chat_completions' else False
+        custom_tool_names = frozenset(request.custom_tool_names()) if protocol == 'responses' else frozenset()
+        converted = request.convert(options if options is not None else ConversionOptions())
     encoding = DeepseekV41Encoding().with_tokenizer(tokenizer)
     rendered = encoding.render_conversation(converted.conversation)
     token_ids = [int(x) for x in encoding.encode(converted.conversation)]
@@ -227,7 +234,6 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
             if ordinary_mtp:
                 if protocol != 'chat_completions':
                     raise RequestError('ordinary MTP supports Chat Completions only')
-                backend.validate_ordinary(body)
             prepared = await run_in_threadpool(prepare_request, protocol, body, tokenizer=tokenizer, recipe_path=recipe_path, options=options, checkpoint=getattr(backend, 'checkpoint', runtime_config.checkpoint_path), ordinary=ordinary_mtp)
             if ordinary_mtp:
                 release = request.scope.get('ds41f.release_preparation')
