@@ -101,10 +101,12 @@ class LocalBoundary:
     Transport timeouts never revoke native ownership. Response finally blocks own
     shielded settlement. GET can observe busy while preparation/generation runs.
     """
-    def __init__(self, app, *, authority, body_timeout=30, send_timeout=30):
+    def __init__(self, app, *, authority, body_timeout=30, send_timeout=30, ordinary=False):
         self.app, self.authority = app, authority
+        self.ordinary = ordinary
         self.body_timeout, self.send_timeout = body_timeout, send_timeout
         self.preparing = False
+        self.preparation_lock = asyncio.Lock() if ordinary else None
 
     async def __call__(self, scope, receive, send):
         if scope['type'] != 'http':
@@ -124,6 +126,8 @@ class LocalBoundary:
         chat = re.fullmatch(r'/v1/sessions/[^/]+/chat/completions', path) and method == 'POST'
         lifecycle = re.fullmatch(r'/v1/sessions/[^/]+', path) and path != '/v1/sessions/restore' and method in ('GET','DELETE')
         supported = create or chat or lifecycle or (method == 'GET' and path in ('/health','/v1/models'))
+        if self.ordinary:
+            supported = (method == 'POST' and path == '/v1/chat/completions') or (method == 'GET' and path in ('/health','/v1/models'))
         known = path in ('/v1/chat/completions','/v1/responses','/v1/messages','/v1/sessions/restore',
                          '/docs','/redoc','/openapi.json','/_ds41f/diagnostics') or re.fullmatch(r'/v1/sessions/[^/]+/(persist|responses|messages)', path)
         if not supported:
@@ -143,13 +147,29 @@ class LocalBoundary:
             except ValueError:
                 return await deny(400, 'invalid_request_sequence')
         owned = False
+        def release_preparation():
+            nonlocal owned
+            if owned:
+                self.preparing = owned = False
+                if self.preparation_lock is not None:
+                    self.preparation_lock.release()
+        if self.ordinary:
+            scope['ds41f.release_preparation'] = release_preparation
         if method in ('POST','DELETE'):
             cl = values(b'content-length')
             if len(cl) > 1 or (cl and not re.fullmatch(rb'[0-9]+', cl[0])):
                 return await deny(400, 'invalid_content_length')
             if cl and int(cl[0]) > LIMITS['body_bytes']:
                 return await deny(413, 'body_limit')
-            if self.preparing:
+            if self.preparation_lock is not None:
+                # Transport/tokenizer capacity lease only, released immediately
+                # after recipe conversion. Executable requests queue exclusively
+                # in Scheduler, never behind this HTTP preparation semaphore.
+                try:
+                    await asyncio.wait_for(self.preparation_lock.acquire(), self.body_timeout)
+                except TimeoutError:
+                    return await deny(503, 'preparation_busy')
+            elif self.preparing:
                 return await deny(409, 'preparation_busy')
             self.preparing = owned = True
         total = 0
@@ -177,8 +197,7 @@ class LocalBoundary:
             nonlocal owned, started
             if event['type'] == 'http.response.start':
                 started = True
-                if owned:
-                    self.preparing = owned = False
+                release_preparation()
             await asyncio.wait_for(send(event), self.send_timeout)
         try:
             # DELETE bodies are unsupported, but still read under the ingress bound.
@@ -200,8 +219,7 @@ class LocalBoundary:
             else:
                 raise
         finally:
-            if owned:
-                self.preparing = False
+            release_preparation()
 
 
 class IngressError(Exception):

@@ -18,6 +18,17 @@ It is **not sufficient evidence that ds41f is a production-complete general LLM 
 
 Production serving release remains blocked until the serving requirements defined here are closed.
 
+**Implementation update:** B1/B2 are now connected in production code for the
+explicit `mtp-serving-v1` ordinary Chat Completions path. Scheduler owns execution
+and settlement; immutable paired target/DSpark checkpoints use pinned PagedCache
+lookup/capacity/eviction. Fresh/reuse/append/edit/branch and disconnect acceptance
+ran on the admitted host, with the existing singleton contract preserved. See
+[ordinary MTP serving ownership and operation](mtp-production-serving.md).
+The SP1 BLOCK below is retained as the historical starting assessment, not the
+current B1/B2 implementation status. Broader general-runtime release requirements
+remain open; no new soak/qualification campaign is required for the already
+approved bounded execution core.
+
 ---
 
 # Why this closure exists
@@ -571,7 +582,7 @@ change, release/promotion work or `ds41f-runtime` change belongs here.
 
 ---
 
-# SP1 decision — BLOCK
+# SP1 decision — BLOCK (historical assessment)
 
 Assessment baseline: `55d1c0ae4d236313d5ab888a988ffcbc82cb969e`.
 Documentation-only assessment; no production code changed, diagnostic probe

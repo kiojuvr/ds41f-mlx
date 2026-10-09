@@ -224,6 +224,13 @@ recipe/native wheel in a fresh locked venv. Strict repository-qualified identity
 checks precede the installation seal; no investigation environment, source
 allowance, separate donor checkout or historical `/tmp` authority is required.
 
+**Ordinary serving opt-in:** `ds41f start --profile mtp-serving-v1` uses the same
+admitted execution envelope with standard `/v1/chat/completions`, Scheduler-owned
+lifecycle and paired target/DSpark prefix reuse. No public session or sequence
+protocol is required. See [operation, ownership and acceptance](docs/mtp-production-serving.md).
+It does not change the default or the existing singleton public contract, and is
+not a claim of complete general-runtime production parity.
+
 ## Reference Release R1
 
 Repository-owned semantic conformance is documented in [Reference R1](docs/reference-release-r1.md)

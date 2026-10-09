@@ -11,14 +11,14 @@ from ds41f_mlx.provenance import inspect_runtime
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Launch ds41f local text runtime")
-    parser.add_argument('--profile', choices=['standard-off','mtp-singleton-v1'], default='standard-off')
+    parser.add_argument('--profile', choices=['standard-off','mtp-singleton-v1','mtp-serving-v1'], default='standard-off')
     parser.add_argument("--host", help="override DS41F_HOST")
     parser.add_argument("--port", type=int, help="override DS41F_PORT")
     parser.add_argument("--print-config", action="store_true", help="print resolved config/provenance and exit")
     parser.add_argument("--no-validate", action="store_true", help="skip path validation before launch")
     args = parser.parse_args(argv)
 
-    if args.profile == 'mtp-singleton-v1':
+    if args.profile in ('mtp-singleton-v1', 'mtp-serving-v1'):
         if args.no_validate:
             parser.error('MTP identity validation cannot be disabled')
         try:
@@ -34,7 +34,11 @@ def main(argv: list[str] | None = None) -> int:
         cfg.apply_environment()
         from .serving.mtp_public import LocalMTPBackend
         from .serving.server import create_app
-        backend = LocalMTPBackend(runtime_config=cfg)
+        if args.profile == 'mtp-serving-v1':
+            from .serving.production_mtp import ProductionMTPBackend
+            backend = ProductionMTPBackend(runtime_config=cfg)
+        else:
+            backend = LocalMTPBackend(runtime_config=cfg)
         backend.dependency_identity = report['identity_sha256']
         app = create_app(backend=backend, runtime_config=cfg, profile=args.profile)
         import uvicorn
@@ -45,6 +49,9 @@ def main(argv: list[str] | None = None) -> int:
         # Shutdown does not claim persistence or recovery. Await shielded retirement.
         import asyncio
         async def retire():
+            if args.profile == 'mtp-serving-v1':
+                await backend.shutdown_serving()
+                return
             for sid in list(backend.sessions):
                 await backend.close_stateful_session(sid)
         asyncio.run(retire())

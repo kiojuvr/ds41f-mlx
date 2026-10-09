@@ -407,6 +407,8 @@ class OMLXMTPGenerationSession:
     semantic_guard: Any | None = None
     wired_limit_lease: Any | None = None
     canonical_sampling_policy: str | None = None
+    # Scheduler-owned construction for ordinary serving; no second native batch.
+    batch_generator_factory: Callable[..., Any] | None = None
 
     def __post_init__(self) -> None:
         self._operation_lock = RLock()
@@ -454,7 +456,8 @@ class OMLXMTPGenerationSession:
             raise MTPLifecycleError("target cache frontier does not match token history")
         self.history = CanonicalTransportHistory(prompt_tokens=tuple(self.prefix_tokens))
         guarded_stops = [[int(t)] for t in (self.config.stop_token_ids or ())] if self.semantic_guard is not None else None
-        self._bg = self.BatchGenerator(self.language_model, max_tokens=self.max_tokens, sampler=self.sampler, stop_tokens=guarded_stops or None, completion_batch_size=1, prefill_batch_size=1, prefill_step_size=2048, stream=self.stream)
+        factory = self.batch_generator_factory or self.BatchGenerator
+        self._bg = factory(self.language_model, max_tokens=self.max_tokens, sampler=self.sampler, stop_tokens=guarded_stops or None, completion_batch_size=1, prefill_batch_size=1, prefill_step_size=2048, stream=self.stream)
         self.uid: int | None = None
         self._started = False
         self._closed = False

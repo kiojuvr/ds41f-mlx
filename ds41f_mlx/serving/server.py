@@ -155,9 +155,14 @@ def _chat_sse_events(events: list[dict[str, Any]] | tuple[dict[str, Any], ...]) 
 
 
 def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_path: Path | None = None, options: ConversionOptions | None = None, model_id: str | None = None, runtime_config=None, profile='standard-off') -> FastAPI:
-    if profile not in ('standard-off', 'mtp-singleton-v1'):
+    if profile not in ('standard-off', 'mtp-singleton-v1', 'mtp-serving-v1'):
         raise ValueError('unknown capability profile')
     local_mtp = profile == 'mtp-singleton-v1'
+    ordinary_mtp = profile == 'mtp-serving-v1'
+    if ordinary_mtp:
+        from .production_mtp import ProductionMTPBackend
+        if not isinstance(backend, ProductionMTPBackend) or not getattr(backend, 'dependency_identity', None):
+            raise ValueError('ordinary MTP requires an explicitly admitted production backend')
     runtime_config = runtime_config or load_runtime_config()
     if local_mtp:
         from .mtp_public import LocalMTPBackend
@@ -174,7 +179,7 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
     recipe_path = Path(recipe_path) if recipe_path is not None else runtime_config.recipe_path
     model_id = model_id if model_id is not None else runtime_config.model_id
     backend = backend or DeepSeekRecipeRuntimeBackend(recipe_path=recipe_path, model_id=model_id, runtime_config=runtime_config)
-    if not local_mtp and isinstance(backend, DeepSeekRecipeRuntimeBackend):
+    if not (local_mtp or ordinary_mtp) and isinstance(backend, DeepSeekRecipeRuntimeBackend):
         from ds41f_mlx.runtime.resource_admission import load_protocol_tokenizer
         tokenizer = load_protocol_tokenizer(recipe_path)
     else:
@@ -183,14 +188,21 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
         from ds41f_mlx.mtp_profile import PROFILE, LIMITS, validate_chat, strict_json
         from .mtp_public import LocalBoundary, public_record
         options = ConversionOptions(default_thinking_mode=False)
+    if ordinary_mtp:
+        from .mtp_public import LocalBoundary
+        options = ConversionOptions(default_thinking_mode=False)
     app = FastAPI(title='ds41f-deepseek-recipe', version='0.1.0',
                   docs_url=None if local_mtp else '/docs',
                   redoc_url=None if local_mtp else '/redoc',
                   openapi_url=None if local_mtp else '/openapi.json')
-    if local_mtp:
-        app.add_middleware(LocalBoundary, authority=f'127.0.0.1:{runtime_config.port}')
+    if local_mtp or ordinary_mtp:
+        app.add_middleware(LocalBoundary, authority=f'127.0.0.1:{runtime_config.port}', ordinary=ordinary_mtp)
     app.state.backend = backend
     app.state.recipe_tokenizer = tokenizer
+    if ordinary_mtp:
+        @app.on_event('shutdown')
+        async def shutdown_ordinary():
+            await backend.shutdown_serving()
 
     @app.exception_handler(ConversionError)
     async def conversion_error_handler(_request: Request, exc: ConversionError) -> Response:
@@ -212,7 +224,27 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
     def api_handler(protocol: str) -> Callable[[Request], Awaitable[Response]]:
         async def handler(request: Request) -> Response:
             body = await request.body()
+            if ordinary_mtp:
+                if protocol != 'chat_completions':
+                    raise RequestError('ordinary MTP supports Chat Completions only')
+                backend.validate_ordinary(body)
             prepared = await run_in_threadpool(prepare_request, protocol, body, tokenizer=tokenizer, recipe_path=recipe_path, options=options, checkpoint=getattr(backend, 'checkpoint', runtime_config.checkpoint_path))
+            if ordinary_mtp:
+                release = request.scope.get('ds41f.release_preparation')
+                if release is not None:
+                    release()
+                try:
+                    return await backend.ordinary_response(prepared, tokenizer=tokenizer, http_request=request)
+                except ValueError as exc:
+                    raise RequestError(str(exc)) from exc
+                except RuntimeError as exc:
+                    raise RequestError(str(exc), 503) from exc
+                except Exception as exc:
+                    from omlx.exceptions import SchedulerQueueFullError
+                    if isinstance(exc, SchedulerQueueFullError):
+                        return JSONResponse({'error': {'message': str(exc), 'code': 'queue_full'}},
+                                            status_code=503, headers={'Retry-After': '1'})
+                    raise
             output = response_body(prepared, backend.infer, tokenizer=tokenizer, model_id=model_id)
             if prepared.stream:
                 return InferenceStreamingResponse(output, media_type='text/event-stream')
@@ -234,7 +266,14 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
         ready = getattr(backend, '_model', None) is not None
         status = 'unavailable' if fatal else ('ready' if ready else 'alive')
         code = 503 if fatal else 200
-        return JSONResponse(status_code=code, content={'status': status, 'process_alive': True, 'model_ready': ready, 'fatal_error': fatal})
+        state = {'status': status, 'process_alive': True, 'model_ready': ready, 'fatal_error': fatal}
+        if ordinary_mtp:
+            scheduler = getattr(backend, 'scheduler', None)
+            state.update(profile=profile, dependency_identity=backend.dependency_identity,
+                         queued_requests=0 if scheduler is None else len(scheduler.waiting),
+                         active_requests=0 if scheduler is None else len(scheduler.running),
+                         prefix_cache=None if scheduler is None else scheduler.checkpoints.paged.get_stats().to_dict())
+        return JSONResponse(status_code=code, content=state)
 
     @app.get('/v1/models')
     async def models() -> Response:

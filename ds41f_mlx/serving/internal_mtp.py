@@ -77,7 +77,7 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
         from omlx.patches.deepseek_v41.loading import load
         from omlx.patches.mlx_lm_mtp import batch_generator, cache_rollback
         assert batch_generator.apply() and cache_rollback.apply()
-        self._model, _ = load(self.checkpoint, preserve_mtp=True, engram_ssd_offload=True)
+        self._model, self._execution_tokenizer = load(self.checkpoint, preserve_mtp=True, engram_ssd_offload=True)
         self._model.language_model.configure_mtp(True, 5)
         self._model.language_model._p7_enable_overlap = True
 
@@ -184,7 +184,7 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
             mx.synchronize(generation_stream)
             mx.clear_cache()
 
-    def _start(self, rec, request, tokenizer, trace):
+    def _start(self, rec, request, tokenizer, trace, *, checkpoint_capture=None, batch_generator_factory=None):
         import deepseek_recipe as d
         import mlx.core as mx
         import numpy as np
@@ -224,15 +224,29 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
             # allocations. Include acquisition in request/handoff latency and
             # restore on every pre-transfer failure; no state is published here.
             wired = startup_resources.enter_context(MTPWiredLimitLease(mx, generation_stream))
+            # The ordinary path retains a paired prompt checkpoint with one
+            # prefill token still to execute. Exact reuse therefore needs no
+            # recurrent trim and still reaches P5 through a real sealed append.
+            ends = [len(ids)-1] if checkpoint_capture is None else [len(ids)-2, len(ids)-1]
+            app = None
             try:
                 for i, layer in original.items(): lm.layers[i] = Tap(i, layer)
-                app = DeferredPrefillAppend.create(lm, rec.cache, ids[:-1], committed_frontier=C, mx=mx)
-                app.execute_all()
+                for end in ends:
+                    if end > C:
+                        if app is None:
+                            app = DeferredPrefillAppend.create(lm, rec.cache, ids[:end], committed_frontier=C, mx=mx)
+                        else:
+                            app = DeferredPrefillAppend.continue_from_commit(lm, app.commit_certificate, ids[:end], mx=mx)
+                        app.execute_all()
+                        hidden = mx.concatenate([mx.concatenate(taps[i], axis=1) for i in taps], axis=-1)
+                        lm.dspark_append_context(hidden, rec.rings, start_offset=C)
+                        for values in taps.values(): values.clear()
+                        C = end
+                        mx.eval(*[c.keys for c in rec.rings]); mx.synchronize(generation_stream)
+                    if checkpoint_capture is not None and end == len(ids)-2:
+                        checkpoint_capture(rec.cache, rec.rings, ids[:end])
             finally:
                 for i, layer in original.items(): lm.layers[i] = layer
-            hidden = mx.concatenate([mx.concatenate(taps[i], axis=1) for i in taps], axis=-1)
-            lm.dspark_append_context(hidden, rec.rings, start_offset=C)
-            mx.eval(*[c.keys for c in rec.rings]); mx.synchronize(generation_stream)
             context = DSparkCommittedContext.from_native(rec.rings, frontier=len(ids)-1, target_layer_ids=lm._config.dspark_target_layer_ids)
             live = LivePrefillResult.from_committed(app.commit_certificate, prefix_token_ids=ids[:-1])
             live.dspark_committed_context = context
@@ -241,7 +255,7 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
             rec.processor = d.StreamProcessor(generator, request.conversation_request.parsing_options, tokenizer)
             rec.guard = RecipeSemanticGuard(rec.processor, control_token_ids=request.stop_token_ids,
                 frontier=len(ids), response=d.ChatCompletionResponse(trace['response_id'], self.model_id, int(time()), 0, 0))
-            rec.guard._push(d.InferenceChunk.ready(prompt_usage=d.PromptUsage(prompt_tokens=len(ids), prompt_cache_hit_tokens=0)))
+            rec.guard._push(d.InferenceChunk.ready(prompt_usage=d.PromptUsage(prompt_tokens=len(ids), prompt_cache_hit_tokens=trace.get('cached_tokens', 0))))
             cfg = OMLXDecodeConfig(omlx_path=self.omlx_path, checkpoint_path=self.checkpoint,
                                   preserve_mtp=True, speculation_enabled=True, stop_token_ids=request.stop_token_ids)
             class Factory:
@@ -249,7 +263,7 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
                 def from_prefilled_cache(cls, model, cache, prefix, config, *, max_tokens, sampler):
                     return OMLXMTPGenerationSession(model, cache, np.asarray(prefix), context,
                         config=config, sampler=sampler, max_tokens=max_tokens, semantic_guard=rec.guard,
-                        wired_limit_lease=wired,
+                        wired_limit_lease=wired, batch_generator_factory=batch_generator_factory,
                         canonical_sampling_policy='greedy' if request.inference_options.temperature in (None, 0) else None)
             rec.owner = handoff_to_generation(live, self._model, terminal_prompt_token=ids[-1], config=cfg,
                 max_tokens=self.max_tokens(request.inference_options), sampler=self.make_sampler(request.inference_options), session_factory=Factory)

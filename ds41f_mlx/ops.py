@@ -29,10 +29,13 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("accept", help="run one-command release acceptance")
     sub.add_parser("full", help="run explicit full qualification")
     for command in sub.choices.values():
-        command.add_argument('--profile', choices=['standard-off','mtp-singleton-v1'], default='standard-off')
+        profiles = ['standard-off', 'mtp-singleton-v1']
+        if command is sub.choices['start'] or command is sub.choices['inspect']:
+            profiles.append('mtp-serving-v1')
+        command.add_argument('--profile', choices=profiles, default='standard-off')
     args, rest = parser.parse_known_args(argv)
 
-    if args.profile == 'mtp-singleton-v1':
+    if args.profile in ('mtp-singleton-v1', 'mtp-serving-v1'):
         if args.cmd == 'start':
             os.execv(sys.executable, [sys.executable, '-m', 'ds41f_mlx.serve', '--profile', args.profile, *rest])
         if args.cmd == 'accept':
@@ -41,7 +44,10 @@ def main(argv: list[str] | None = None) -> int:
             parser.error('MTP supports inspect/start/accept only')
         try:
             from .mtp_identity import config, inspect
-            print(json.dumps(inspect(config()), indent=2, sort_keys=True))
+            report = inspect(config())
+            if args.profile == 'mtp-serving-v1':
+                report['serving_profile'] = args.profile
+            print(json.dumps(report, indent=2, sort_keys=True))
             return 0
         except (ValueError, OSError, ImportError) as exc:
             print(json.dumps({'status':'FAIL','profile':args.profile,'error':str(exc)}))
