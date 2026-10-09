@@ -1,7 +1,7 @@
 """Fail-closed MTP environment/source identity, separate from OFF provenance.
 
-Seal records a locally built artifact, not a release qualification or signature.
-Operator controls this environment. Unknown drift requires rebuild + acceptance.
+Repository-qualified identities precede the local installation seal. A seal
+cannot admit arbitrary source/native drift. The repository/operator are trusted.
 """
 import argparse
 from dataclasses import replace
@@ -96,6 +96,21 @@ def dylibs(native):
     return seen
 
 
+def qualified():
+    return json.loads((SOURCES/'normal-local.json').read_text())
+
+
+def runtime_inventory():
+    source = {str(p.relative_to(ROOT)):sha(p) for tree in ('ds41f_mlx','native')
+              for p in sorted((ROOT/tree).rglob('*')) if p.is_file() and
+              p.suffix in ('.py','.metal','.c','.cc','.cpp','.h','.hpp') and
+              not any(part.startswith('build') for part in p.relative_to(ROOT/tree).parts)}
+    source.update({str(p.relative_to(ROOT)):sha(p) for p in
+                   (ROOT/'pyproject.toml', SOURCES/'sources.json', SOURCES/'requirements.lock',
+                    SOURCES/'requirements-normal-local.lock')})
+    return source
+
+
 def snapshot():
     cfg = config()
     import deepseek_recipe
@@ -103,13 +118,15 @@ def snapshot():
     native = Path(_native.__file__).resolve()
     if not native.is_relative_to(Path(sys.prefix).resolve()):
         raise ValueError('native recipe must be installed in this environment')
-    source = {str(p.relative_to(ROOT)):sha(p) for tree in ('ds41f_mlx','native')
-              for p in sorted((ROOT/tree).rglob('*')) if p.is_file() and
-              p.suffix in ('.py','.metal','.c','.cc','.cpp','.h','.hpp') and
-              not any(part.startswith('build') for part in p.relative_to(ROOT/tree).parts)}
-    source.update({str(p.relative_to(ROOT)):sha(p) for p in
-                   (ROOT/'pyproject.toml', SOURCES/'sources.json', SOURCES/'requirements.lock')})
+    authority = qualified()
+    source = runtime_inventory()
+    import ds41f_mlx
+    if Path(ds41f_mlx.__file__).resolve() != ROOT/'ds41f_mlx/__init__.py':
+        raise ValueError('unapproved ds41f runtime import origin')
+    if source != authority['runtime']:
+        raise ValueError('unqualified ds41f runtime source identity')
     lock = json.loads((SOURCES/'sources.json').read_text())
+    lock['sources']['recipe'] = authority['recipe_source']
     for item in lock['sources'].values():
         if sha(SOURCES/item['archive']) != item['sha256']:
             raise ValueError('unapproved source export')
@@ -147,11 +164,29 @@ def snapshot():
     links = dylibs(native)
     if not any(Path(p).name == 'libopencv_core.4.14.0.dylib' for p in links):
         raise ValueError('full target-native recipe/OpenCV link closure required')
-    if not hasattr(deepseek_recipe.StreamProcessor, 'preview_tokens') or not hasattr(deepseek_recipe.StreamProcessor, 'semantic_snapshot'):
-        raise ValueError('native recipe lacks qualified semantic preview capability')
+    if not all(hasattr(deepseek_recipe.StreamProcessor, name) for name in
+               ('preview_tokens', 'semantic_snapshot', 'preview_eof_tokens',
+                'preview_certified_eof_tokens', 'semantic_terminal')):
+        raise ValueError('native recipe lacks qualified consuming semantic capability')
+    packages = dict(sorted((d.metadata['Name'].lower().replace('_','-'),d.version)
+                           for d in metadata.distributions()))
+    expected_packages = {k.replace('_','-'):v for k,v in authority['packages'].items()}
+    if packages != expected_packages or platform.python_version() != authority['python']:
+        raise ValueError('unqualified dependency/package versions')
+    if platform.platform() != authority['platform']:
+        raise ValueError('unqualified normal-local OS/platform identity')
+    if sha(native) != authority['native_sha256'] or {
+            p:v for p,v in links.items() if p != str(native)} != authority['native_links']:
+        raise ValueError('unqualified recipe native/link identity')
+    if inventory(cfg.omlx_path/'omlx') != authority['omlx'] or inventory(Path(deepseek_recipe.__file__).parent) != authority['recipe']:
+        raise ValueError('unqualified oMLX/recipe package identity')
+    payload = inventory(cfg.omlx_path)
+    prefixes = tuple(name+'/' for name in dependencies)
+    if {k:v for k,v in payload.items() if k.startswith(prefixes)} != authority['dependency_payload']:
+        raise ValueError('unqualified MLX/runtime dependency payload')
     return dict(schema='ds41f.mtp.identity.v1', profile=PROFILE, limits=LIMITS,
                 tool=WEATHER, sources=lock, runtime=source,
-                dependencies=dependencies, package_payload=inventory(cfg.omlx_path),
+                dependencies=dependencies, package_payload=payload,
                 omlx=inventory(cfg.omlx_path/'omlx'), recipe=inventory(Path(deepseek_recipe.__file__).parent),
                 native_sha256=sha(native), native_links=links, tokenizer_sha256=sha(tokenizer),
                 packages=dict(sorted((d.metadata['Name'].lower(),d.version) for d in metadata.distributions())),
@@ -171,6 +206,8 @@ def inspect(cfg, *, checkpoint=True):
     if hardware != 'Apple M3 Ultra' or memory < 500_000_000_000:
         raise ValueError('MTP qualification requires M3 Ultra 512 GB class')
     saved = json.loads(RECORD.read_text())
+    if saved['build'] != qualified()['build']:
+        raise ValueError('unqualified native build provenance')
     actual = snapshot()
     expected = saved['identity']
     if actual != expected:
@@ -180,10 +217,18 @@ def inspect(cfg, *, checkpoint=True):
         raise ValueError('unqualified Python/MLX dependency identity')
     assets = {}
     if checkpoint:
-        for file, digest in CHECKPOINT.items():
+        metadata_files = {**CHECKPOINT, **qualified()['checkpoint_metadata']}
+        if {p.name for p in cfg.checkpoint_path.glob('*.json')} != set(metadata_files) or any(
+                (cfg.checkpoint_path/name).exists() for name in ('chat_template.jinja', 'chat_templates')):
+            raise ValueError('unqualified checkpoint/tokenizer configuration files')
+        for file, digest in metadata_files.items():
             if sha(cfg.checkpoint_path/file) != digest:
                 raise ValueError(f'unqualified checkpoint metadata: {file}')
         assets = checkpoint_inventory(cfg.checkpoint_path)
+        if assets != qualified()['checkpoint']:
+            raise ValueError('unqualified checkpoint shard identity')
+        verify_checkpoint_bytes(cfg.checkpoint_path, assets)
+        assets = dict(assets, verification='full-byte SHA256; installation cache only for unchanged file identity')
     identity_digest = hashlib.sha256(json.dumps(actual,sort_keys=True).encode()).hexdigest()
     return dict(status='PASS', profile=PROFILE, environment_valid=True,
                 release_qualified=False, identity_sha256=identity_digest,
@@ -208,6 +253,27 @@ def checkpoint_inventory(root):
                 verification='metadata/source inventory only; weights not freshly rehashed')
 
 
+def verify_checkpoint_bytes(root, assets):
+    """Rehash once per installation/file identity; never trust arbitrary LFS metadata."""
+    cache = RECORD.parent/'checkpoint-bytes.json'
+    def file_identity(path):
+        s = path.stat()
+        return [str(path.resolve()), s.st_dev, s.st_ino, s.st_size, s.st_mtime_ns, s.st_ctime_ns]
+    files = {s['name']:file_identity(root/s['name']) for s in assets['shards']}
+    expected = {s['name']:s['lfs_sha256'] for s in assets['shards']}
+    saved = json.loads(cache.read_text()) if cache.exists() else {}
+    if saved == dict(files=files, sha256=expected):
+        return
+    for name, digest in expected.items():
+        h = hashlib.sha256()
+        with (root/name).open('rb') as f:
+            for chunk in iter(lambda:f.read(8*1024*1024), b''):
+                h.update(chunk)
+        if h.hexdigest() != digest or file_identity(root/name) != files[name]:
+            raise ValueError(f'unqualified checkpoint bytes: {name}')
+    cache.write_text(json.dumps(dict(files=files, sha256=expected),sort_keys=True)+'\n')
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument('action', choices=['seal','inspect'])
@@ -216,11 +282,10 @@ def main(argv=None):
     if args.action == 'seal':
         if args.wheel is None:
             parser.error('--wheel required for seal')
-        build = dict(wheel_sha256=sha(args.wheel), host_linked=True,
-                     rustc=subprocess.check_output(['rustc','-Vv'],text=True),
-                     cargo=subprocess.check_output(['cargo','-V'],text=True),
-                     cmake=subprocess.check_output(['cmake','--version'],text=True),
-                     opencv=subprocess.check_output(['pkg-config','--modversion','opencv4'],text=True))
+        authority = qualified()
+        if sha(args.wheel) != authority['wheel']['sha256']:
+            raise ValueError('seal requires the repository-qualified M52R wheel')
+        build = authority['build']
         RECORD.parent.mkdir(parents=True,exist_ok=True)
         RECORD.write_text(json.dumps(dict(identity=snapshot(),build=build),indent=2)+'\n')
         print(RECORD)

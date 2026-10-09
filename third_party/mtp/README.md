@@ -1,11 +1,13 @@
 # Attributed source exports for the bounded local MTP profile
 
-These archives are repository-owned **source**, not prebuilt executable donor
-artifacts. `sources.json` binds their exact SHA256, official upstream bases,
+The base archives remain repository-owned **source** for the preserved OFF lane.
+Normal-local MTP obtains the repository-delivered exact M52R native wheel, bound
+by `normal-local.json`, not an operator's investigation environment. `sources.json` binds their exact SHA256, official upstream bases,
 historical candidate evidence commits and delivered patch identities. No public
 setup command clones/checks out those candidate commits or applies undocumented
 patches. `ds41f_mlx.mtp_setup` verifies/extracts them in operator-owned build scratch,
-builds recipe with its delivered Cargo.lock and installs both into a fresh venv.
+installs oMLX and the pinned native wheel into a fresh venv. OFF still builds its
+original recipe with the delivered Cargo.lock.
 
 - oMLX: https://github.com/jundot/omlx (Apache-2.0; `omlx-LICENSE`, also inside
   archive). Full clean source export of the M33 candidate on the pinned 0.7.0 base;
@@ -22,6 +24,15 @@ builds recipe with its delivered Cargo.lock and installs both into a fresh venv.
   It contains **no local filesystem URLs/development checkouts**. Build tools and
   unused transitive packages remain explicitly locked for reproducibility; this
   does not promote their optional audio/vision/network/oMLX-server capabilities.
+
+`normal-local.json` binds the M52R consuming-EOF patched recipe source export,
+complete patch digest, native/wheel digests, build provenance, actual host-linked
+dylib hashes, qualified runtime/module contents and official checkpoint inventory.
+`requirements-normal-local.lock` reproduces the complete qualified namespace,
+including the already-present PDF helper packages; their presence does not admit
+Web/binary/Vision capabilities to MTP. The native wheel and patched export are
+MIT-licensed under `recipe-LICENSE`; oMLX remains Apache-2.0. The unchanged base
+archives, base lock and OFF environment are not promoted to the M52R native.
 
 Historical `/tmp` trees and candidate commit labels remain evidence/attribution,
 never runtime lookup authorities. Archives can be inspected with `tar -tzf` or

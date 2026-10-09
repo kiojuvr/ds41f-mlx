@@ -1,0 +1,35 @@
+[
+  {
+    "fault": "omlx_source",
+    "operation": "inspect",
+    "returncode": 2,
+    "stdout": "{\"status\": \"FAIL\", \"profile\": \"mtp-singleton-v1\", \"error\": \"unapproved omlx candidate content: __init__.py\"}\n",
+    "stderr": ""
+  },
+  {
+    "fault": "omlx_source",
+    "operation": "reseal",
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 203, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/mtp_identity.py\", line 297, in <module>\n    main()\n    ~~~~^^\n  File \"/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/mtp_identity.py\", line 290, in main\n    RECORD.write_text(json.dumps(dict(identity=snapshot(),build=build),indent=2)+'\\n')\n                                               ~~~~~~~~^^\n  File \"/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/mtp_identity.py\", line 148, in snapshot\n    raise ValueError(f'unapproved {name} candidate content: {relative}')\nValueError: unapproved omlx candidate content: __init__.py\n"
+  },
+  {
+    "fault": "mlx_version",
+    "operation": "inspect",
+    "returncode": 2,
+    "stdout": "{\"status\": \"FAIL\", \"profile\": \"mtp-singleton-v1\", \"error\": \"unqualified dependency/package versions\"}\n",
+    "stderr": ""
+  },
+  {
+    "fault": "mlx_version",
+    "operation": "reseal",
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 203, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/mtp_identity.py\", line 297, in <module>\n    main()\n    ~~~~^^\n  File \"/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/mtp_identity.py\", line 290, in main\n    RECORD.write_text(json.dumps(dict(identity=snapshot(),build=build),indent=2)+'\\n')\n                                               ~~~~~~~~^^\n  File \"/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/mtp_identity.py\", line 175, in snapshot\n    raise ValueError('unqualified dependency/package versions')\nValueError: unqualified dependency/package versions\n"
+  },
+  {
+    "restored_identity": "b8dea561299747643a3ba3e153633f0ed3a282015f17c3ca7bc1d76127ed4164",
+    "status": "PASS",
+    "seal_unchanged": true
+  }
+]

@@ -31,6 +31,9 @@ def main(argv=None):
         p.error('qualified setup requires Apple Silicon macOS')
     venv, build = args.venv.resolve(), args.build_dir.resolve()
     lock = json.loads((SOURCES/'sources.json').read_text())
+    normal = json.loads((SOURCES/'normal-local.json').read_text())
+    if args.profile == 'mtp-singleton-v1':
+        lock['sources']['recipe'] = normal['recipe_source']
     build.mkdir(parents=True, exist_ok=True)
     for name, spec in lock['sources'].items():
         archive = SOURCES/spec['archive']
@@ -48,7 +51,9 @@ def main(argv=None):
     python = venv/'bin/python'
     if subprocess.check_output([str(python),'-c','import platform; print(platform.python_version())'],text=True).strip() != '3.13.15':
         raise ValueError('qualified setup requires Python 3.13.15; recreate the target venv')
-    run('uv','pip','install','--python',python,'-r',SOURCES/'requirements.lock')
+    requirements = SOURCES/('requirements-normal-local.lock' if args.profile == 'mtp-singleton-v1'
+                            else 'requirements.lock')
+    run('uv','pip','install','--python',python,'-r',requirements)
     env = dict(os.environ)
     for key in list(env):
         if key in ('DOCS_RS','PYTHONPATH','WEB_CONCURRENCY','RUSTFLAGS','CARGO_ENCODED_RUSTFLAGS',
@@ -62,14 +67,23 @@ def main(argv=None):
                CARGO_TARGET_DIR=str(build/'cargo'))
     if subprocess.check_output(['pkg-config','--modversion','opencv4'],env=env,text=True).strip() != '4.14.0':
         raise ValueError('qualified native build requires OpenCV 4.14.0')
-    if not subprocess.check_output(['rustc','-V'],text=True).startswith('rustc 1.98.1 '):
+    if args.profile == 'standard-off' and not subprocess.check_output(['rustc','-V'],text=True).startswith('rustc 1.98.1 '):
         raise ValueError('qualified native build requires Rust 1.98.1')
-    run(venv/'bin/maturin','build','--release','--locked','--skip-auditwheel',
-        '--manifest-path',build/'recipe/deepseek-recipe-python/Cargo.toml',
-        '-i',python,'-o',build/'wheels',env=env)
-    wheels = list((build/'wheels').glob('*.whl'))
-    if len(wheels) != 1:
-        raise ValueError('exactly one native recipe wheel required')
+    if args.profile == 'standard-off':
+        run(venv/'bin/maturin','build','--release','--locked','--skip-auditwheel',
+            '--manifest-path',build/'recipe/deepseek-recipe-python/Cargo.toml',
+            '-i',python,'-o',build/'wheels',env=env)
+        wheels = list((build/'wheels').glob('*.whl'))
+        if len(wheels) != 1:
+            raise ValueError('exactly one native recipe wheel required')
+    else:
+        # Obtain the exact M52R artifact, not a path-dependent substitute build.
+        # Full patched sources/Cargo.lock and original toolchain provenance ship
+        # alongside it; strict admission also verifies every linked host dylib.
+        wheel = SOURCES/normal['wheel']['file']
+        if sha(wheel) != normal['wheel']['sha256']:
+            raise ValueError('unapproved normal-local native wheel')
+        wheels = [wheel]
     run('uv','pip','install','--reinstall','--no-deps','--python',python,wheels[0],build/'omlx')
     run('uv','pip','install','--no-deps','--python',python,'-e',ROOT)
     resource = venv/'share/ds41f-mtp/recipe/static/tokenizers/v41'

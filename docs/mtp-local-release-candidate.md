@@ -1,6 +1,7 @@
-# Explicit bounded local MTP candidate
+# Explicit bounded normal-local MTP profile (M53R)
 
 This is a separate, explicitly selected process capability, **not the default**.
+`mtp-singleton-v1` uses the qualified M52R runtime/application semantics unchanged.
 The M41 qualification is inherited through the repository-owned R1 contract.
 In a release projection, `release/promotion.json` identifies the source, reference
 and bound release qualification; see the root README for current delivery. `standard-off` remains the qualified default production path.
@@ -19,30 +20,40 @@ package manager, checkpoint and build inputs. No authentication is provided.
    a runtime prerequisite. Exact attributed candidate source exports are delivered
    in `third_party/mtp/`; their archive digests/base/patch identities are in
    `sources.json`. The upstream oMLX substrate remains transitional and private.
-2. Install normal target build dependencies: Homebrew Python **3.13.15**, Rust
-   **1.98.1**, CMake, pkgconf, **opencv@4 4.14.0**, Xcode/Command Line Tools with
-   libclang at the documented Xcode default toolchain path, and `uv`. For the
-   qualified current Homebrew catalog: `brew install python@3.13 rust cmake
-   pkgconf opencv@4`. Verify versions; setup fails rather than silently substituting
-   a different Python/Rust/OpenCV. This is not a promise that future Homebrew
-   catalogs retain the same versions. New host versions require explicit build
-   identity reconciliation and affected qualification, not donor patch recreation.
+2. Install Homebrew Python **3.13.15**, pkgconf, **opencv@4 4.14.0_10** and `uv`:
+   `brew install python@3.13 pkgconf opencv@4`. The native wheel is delivered in
+   the repository, not built by an operator or taken from an investigation venv.
+   `third_party/mtp/normal-local.json` pins its SHA256, native binary, complete
+   transitive Homebrew dylib closure (50 exact package versions and arm64_tahoe
+   bottle URLs/SHA256s), patched recipe source and original Rust
+   1.98.1/Cargo/CMake 4.3.3 build provenance (Xcode 26.6, build 17F113).
+   Admission checks actual library bytes, not only OpenCV's version string.
+   Homebrew catalog drift fails closed: do not reseal it to bypass this check.
+   This is a host-linked Apple Silicon artifact, not a portable release package.
+   A different host-library closure needs an explicit dependency decision; it is
+   not silently supported. The preserved OFF setup still builds its original
+   recipe with its original toolchain and `requirements.lock`.
 3. From the clone, provision an **empty build directory** and an **absent target
    venv** (setup creates a fresh locked namespace):
 
    ```sh
-   python3 -m ds41f_mlx.mtp_setup \
+   python3 -m ds41f_mlx.mtp_setup --profile mtp-singleton-v1 \
      --venv "$HOME/.venvs/ds41f-mtp-v1" \
      --build-dir "$HOME/ds41f-mtp-build"
    ```
 
-   Setup verifies source exports, installs `requirements.lock`, builds the full
-   recipe binding with Cargo.lock/default image features and target OpenCV,
-   installs oMLX normally (no optional compiled model kernels), installs ds41f
-   editable from this source repository, copies the official recipe tokenizer into
-   the environment, and records executable/build/link identity. The native recipe
-   is built, never borrowed from a donor wheel. MLX 0.32.2 and the ordinary mlx-lm
-   package's pinned upstream source revision are explicit package dependencies.
+   Setup verifies source exports and the repository-delivered exact M52R wheel,
+   installs `requirements-normal-local.lock`, installs that wheel and oMLX normally
+   (no optional compiled model kernels), installs ds41f editable from this source
+   repository, copies the official recipe tokenizer into the environment, and
+   records executable/build/link identity **only after qualified identity checks**.
+   No investigation checkout, process-local allowance or manual patch is required.
+   The patched source export includes Cargo.lock/default image feature inputs;
+   `docs/m52r-recipe-consuming-eof.patch` remains its complete attributed delta.
+   MLX 0.32.2 and mlx-lm `94cdcae13b266c337bcaca09b97b9c5a9c0e2cde`
+   (`0.31.4.dev132+g94cdcae13`) are explicit package dependencies. Actual qualified
+   module/native payloads, oMLX 0.7.0 and recipe 0.1.1 are checked byte-for-byte;
+   a matching package version alone cannot pass admission.
    This first candidate deliberately uses **source-clone/editable installation**;
    arbitrary ds41f wheel/tarball distribution is not its delivery contract.
    Keep the clone at its installation location; after relocation reinstall `-e`
@@ -61,10 +72,15 @@ package manager, checkpoint and build inputs. No authentication is provided.
    ```
 
    This is an official **asset** revision, not a runtime donor revision. Inspection
-   checks index/config/tokenizer fingerprints and all 48 shard sizes/source-revision
-   and LFS-digest metadata. It does not claim fresh full-weight rehashing. Keep the
-   Hugging Face `.cache/huggingface/download/*.metadata` provenance files. A missing
-   or inconsistent asset source inventory fails closed.
+   checks index/config/tokenizer/tokenizer-config fingerprints and all 48 shard sizes/source-revision
+   and LFS hashes against the repository-qualified inventory. First inspection also
+   rehashes all weight bytes (allow several minutes). Subsequent inspection reuses
+   the installation-local byte-verification receipt only while resolved path,
+   device/inode, size, nanosecond mtime/ctime and expected digest remain identical.
+   Any changed file is rehashed; the receipt is an operator-owned cache, not a
+   signature against hostile local peers. Keep the Hugging Face
+   `.cache/huggingface/download/*.metadata` provenance files. Missing/inconsistent
+   assets fail closed.
 5. Clear legacy donor configuration/import shadowing and experiment knobs, then
    inspect/qualify. Runtime rejects unrecognized `DS41F_*` (including test/P8 flags),
    all `OMLX_*`/`UVICORN_*`/`DYLD_*`, non-one `WEB_CONCURRENCY`, and non-32 trace
@@ -83,13 +99,16 @@ package manager, checkpoint and build inputs. No authentication is provided.
    `inspect` hashes actual imported runtime/helper, substrate, recipe/native,
    critical package contents and transitive host dylibs. Unknown executable drift,
    missing/wrong native capability, tokenizer or asset metadata fails. It reports
-   environment-valid, **not release-qualified**. The local identity seal is a build
-   record, not a signature, semantic proof or acceptance bypass. `accept` first
+   environment-valid, **not a release promotion**. The repository-qualified runtime
+   manifest precedes the local seal: resealing modified runtime/native/dependency
+   bytes is rejected. The seal is an installation record, not a signature, semantic
+   proof or acceptance bypass. `accept` first
    reruns 77 native preview/nonmutation cases (15,400 previews), 64-record
    official-base parity and the 28-row representation corpus, then composed real
    HTTP/helper qualification. HTTP alone is not universal parser parity.
-   Hash inspection can take seconds before the HTTP process becomes alive. The
-   first inference loads the model; health distinguishes alive from model-ready.
+   First byte verification can take minutes before the HTTP process becomes alive;
+   later unchanged-asset inspection takes seconds. Run `inspect` first as above.
+   The first inference loads the model; health distinguishes alive from model-ready.
 
 Only literal `127.0.0.1` and a fixed port are supported. `--host`/`--port` resolve
 before imports/model load; nonloopback/ambiguous hosts, diagnostics, contradictory
@@ -178,7 +197,7 @@ result = client.submit([{"role": "user", "content": "Say hello briefly."}],
 if isinstance(result, OwnedStream):
     with result:
         for event in result:
-            display(event)  # application function; display-only, never history
+            print(event)  # display-only, never assistant history
 outcome = client.reconcile()  # active => caller waits and explicitly reconciles again
 # ready is established only by a settled positive bound certificate.
 # Inspect client.state before further generation or effects.
@@ -201,6 +220,17 @@ Explicit identity/history conflicts have bounded 409 codes `request_body_mismatc
 `request_expired`, `request_sequence_gap`, `retained_envelope_changed`,
 `certified_history_changed`, `canonical_prefix_mismatch`. The supported helper
 stops on terminal conflicts rather than looping.
+
+For ordinary qualified tool use, import `WEATHER` from `ds41f_mlx.mtp_profile`,
+pass `tools=[WEATHER]` and the named `lookup_weather` `tool_choice` in the same
+`options`, and ask for Paris/Berlin weather. Consume/reconcile the complete outcome
+as above. In `tool_pending`, explicitly call `client.execute_tools(callback)`;
+the callback receives the ordinary certified call and returns a real string result
+(for example JSON with the requested city and its weather). Then call
+`client.submit_tool_results(options={**options, 'tool_choice':'auto'})`, consume
+and reconcile its final summary, and retire. Preserve the same tools/reasoning
+configuration throughout the session. This is the unchanged M52R two-call
+application path; no effects execute from streamed argument deltas.
 
 For `tool_pending`, call `execute_tools(callback)` explicitly. Reserve before
 execution; the living ledger binds call contents/session/sequence/index/ID, reuses

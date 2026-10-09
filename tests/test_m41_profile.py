@@ -269,3 +269,29 @@ def test_unsupported_completed_output_is_negative_profile_not_repair(monkeypatch
             assert rec.unrecoverable and rec.poisoned and rec.certificate['representable'] is False
             assert rec.certificate['profile_supported'] is False
     finally:b.close()
+
+
+def test_normal_local_checkpoint_byte_cache_invalidates_changed_file(tmp_path, monkeypatch):
+    # New normal-local boundary: metadata alone may not certify weight bytes.
+    from ds41f_mlx import mtp_identity as identity
+    monkeypatch.setattr(identity, 'RECORD', tmp_path/'identity.json')
+    shard = tmp_path/'model.safetensors'
+    shard.write_bytes(b'qualified')
+    assets = {'shards':[{'name':shard.name,
+                        'lfs_sha256':hashlib.sha256(b'qualified').hexdigest()}]}
+    identity.verify_checkpoint_bytes(tmp_path, assets)
+    receipt = (tmp_path/'checkpoint-bytes.json').read_bytes()
+    identity.verify_checkpoint_bytes(tmp_path, assets)
+    assert (tmp_path/'checkpoint-bytes.json').read_bytes() == receipt
+    shard.write_bytes(b'corrupted')  # equal size, changed file identity
+    with pytest.raises(ValueError, match='checkpoint bytes'):
+        identity.verify_checkpoint_bytes(tmp_path, assets)
+    assert (tmp_path/'checkpoint-bytes.json').read_bytes() == receipt
+
+
+def test_normal_local_seal_rejects_unqualified_native_wheel(tmp_path):
+    from ds41f_mlx import mtp_identity as identity
+    wheel = tmp_path/'unqualified.whl'
+    wheel.write_bytes(b'not the qualified M52R artifact')
+    with pytest.raises(ValueError, match='repository-qualified M52R wheel'):
+        identity.main(['seal', '--wheel', str(wheel)])

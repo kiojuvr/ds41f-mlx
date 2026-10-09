@@ -184,15 +184,18 @@ ctest --test-dir native/build --output-on-failure
 
 These do not run benchmarks or full checkpoint qualification.
 
-## Explicit local MTP release candidate
+## Explicit normal-local MTP profile
 
 `standard-off` remains the default qualified production profile. The separate
 `mtp-singleton-v1` candidate is explicitly opt-in and local/singleton only; it does
 not inherit OFF API parity, persistence, browser or Rust application support.
 See [setup/API/operator instructions](docs/mtp-local-release-candidate.md) and
-[M41 decision and evidence](docs/milestone-41-local-mtp-release-candidate.md).
-Candidate setup builds repository-delivered dependency sources in a fresh venv;
-no separate donor checkout or historical `/tmp` authority is required.
+[M41 decision and evidence](docs/milestone-41-local-mtp-release-candidate.md), with
+[M53R normal-local dependency/admission closure](docs/milestone-53r-normal-local.md).
+Normal-local setup installs repository-delivered oMLX sources and the exact M52R
+recipe/native wheel in a fresh locked venv. Strict repository-qualified identity
+checks precede the installation seal; no investigation environment, source
+allowance, separate donor checkout or historical `/tmp` authority is required.
 
 ## Reference Release R1
 
