@@ -1,5 +1,6 @@
 """Regression for paired immutable cache authority and ordinary MTP ingress."""
 from types import SimpleNamespace
+from pathlib import Path
 import numpy as np
 import pytest
 
@@ -216,6 +217,14 @@ def test_ordinary_http_recipe_route_has_no_compulsory_public_session(monkeypatch
                 {'stream': True, 'stream_options': {'include_usage': False}},
                 {'stop': ['END'], 'n': 1, 'top_p': 1, 'client_metadata': {}},
                 {'max_tokens': 'auto'},
+                {'messages': [
+                    {'role': 'user', 'content': 'Review the repository'},
+                    {'role': 'assistant', 'content': None, 'tool_calls': [
+                        {'id': 'read-source', 'type': 'function', 'function': {
+                            'name': 'read', 'arguments': '{"filePath":"ds41f_mlx/mtp_profile.py"}'}}]},
+                    {'role': 'tool', 'tool_call_id': 'read-source', 'content': (
+                        Path(__file__).resolve().parents[1] / 'ds41f_mlx/mtp_profile.py').read_text()},
+                ]},
             ):
                 before = len(parsed)
                 result = client.post('/v1/chat/completions', json={

@@ -111,8 +111,11 @@ OpenCode's empty assistant `reasoning_content` is accepted through this same rec
 path; generation remains thinking-off. OpenCode Plan's text-plus-reminder arrays
 are accepted by authoritative recipe conversion, not a client-specific exception.
 Converted image sources are rejected before expansion on this text-only route.
-Ordinary history uses body/context budgets, not singleton fixture string limits;
-`mtp-singleton-v1` retains its separate pinned grammar.
+Ordinary history uses body/context budgets, not singleton fixture string limits
+or its blanket `<|` / fullwidth `｜` source ban. Source-code reads and quoted
+special-token text follow recipe conversion/encoding without ds41f rewriting;
+recipe image-placeholder rejection remains enforced. `mtp-singleton-v1` retains
+its separate pinned grammar.
 
 **Tool execution is the client's responsibility.** ds41f does not execute file,
 shell, browser, Web or MCP tools. After a canonical recipe-completed assistant

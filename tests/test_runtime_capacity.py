@@ -4,6 +4,7 @@ import hashlib
 import json
 import os
 from types import SimpleNamespace
+from pathlib import Path
 
 import pytest
 
@@ -40,6 +41,40 @@ def test_auto_is_actual_recipe_tokens_not_frontier_subtraction():
     value['max_tokens'] = 1048576
     with pytest.raises(RequestError, match='total envelope'):
         prepare_request('chat_completions', json.dumps(value).encode(), tokenizer=tokenizer)
+
+
+def test_source_review_preparation_preserves_recipe_encoding():
+    from deepseek_recipe import ChatCompletionRequest, ConversionOptions, DeepseekV41Encoding
+    cfg = load_runtime_config(); cfg.apply_import_paths()
+    tokenizer = load_v41_tokenizer(cfg.recipe_path)
+    source = (Path(__file__).resolve().parents[1] / 'ds41f_mlx/mtp_profile.py').read_text()
+    value = {'model': cfg.model_id, 'max_tokens': 16, 'messages': [
+        {'role': 'user', 'content': 'Review source'},
+        {'role': 'assistant', 'tool_calls': [{'id': 'read-1', 'function': {'name': 'read', 'arguments': '{}'}}]},
+        {'role': 'tool', 'tool_call_id': 'read-1', 'content': source}]}
+    raw = json.dumps(value).encode()
+    converted = ChatCompletionRequest(raw).convert(ConversionOptions(default_thinking_mode=False))
+    authoritative_ids = DeepseekV41Encoding().with_tokenizer(tokenizer).encode(converted.conversation)
+    prepared = prepare_request('chat_completions', raw, tokenizer=tokenizer,
+                               checkpoint=cfg.checkpoint_path, ordinary=True)
+    assert prepared.token_ids == authoritative_ids
+    assert prepared.converted.conversation.messages[-1].content == source
+
+
+def test_unbacked_image_placeholder_in_escaped_arguments_is_rejected():
+    from deepseek_recipe import IMAGE_SPECIAL_TOKEN
+    cfg = load_runtime_config(); cfg.apply_import_paths()
+    tokenizer = load_v41_tokenizer(cfg.recipe_path)
+    value = {'model': cfg.model_id, 'max_tokens': 16, 'messages': [
+        {'role': 'user', 'content': 'Read a file'},
+        {'role': 'assistant', 'tool_calls': [{'id': 'read-1', 'function': {
+            'name': 'read', 'arguments': json.dumps({'path': IMAGE_SPECIAL_TOKEN})}}]},
+        {'role': 'tool', 'tool_call_id': 'read-1', 'content': 'OK'}]}
+    # Recipe can preserve escaped JSON arguments, then unescape them on render.
+    # Existing encoded-placeholder admission still protects the text-only runtime.
+    with pytest.raises(RequestError, match='missing image source'):
+        prepare_request('chat_completions', json.dumps(value).encode(), tokenizer=tokenizer,
+                        checkpoint=cfg.checkpoint_path, ordinary=True)
 
 
 def test_ordinary_auto_uses_resolved_budget_for_execution():

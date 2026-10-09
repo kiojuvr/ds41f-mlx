@@ -58,10 +58,15 @@ specifies, not flattened independently by ds41f.
   replaced by Scheduler defaults.
 - Images rejected from converted message sources before rendering, expansion,
   fetching or model loading: ordinary MTP is text-only.
-- Raw special-token source policy retained for converted message text, reasoning,
-  tool names/arguments/descriptions/parameters. This is source-injection policy,
-  not role/block grammar. Converted strings use the body ceiling, not historical
-  256-byte IDs or 64-KiB tool fixture ceilings.
+- Text spelling/encoding is recipe-owned. Ordinary requests do **not** inherit
+  singleton's blanket ban on `<|` or fullwidth `｜`: those occur in legitimate
+  source, quoted token documentation, regexes and tool results. Text is not
+  scrubbed, escaped or rewritten independently by ds41f. The recipe's unbacked
+  image-placeholder rejection and the encoded missing-image-source guard remain
+  enforced, as do body and actual encoded capacity limits. This does not claim
+  that recipe escapes role delimiters or prevents prompt injection; clients must
+  treat tool text as untrusted and enforce tool permissions. Raw token-ID
+  execution is not added by accepting ordinary text.
 - Actual encoded prompt plus output reservation uses checkpoint context range,
   qualified 1,048,576 total envelope and 393,216 output ceiling. Defaults are not
   capability ceilings. Existing Scheduler admission/settlement remains unchanged.
@@ -118,6 +123,23 @@ checkpoint. Inventory/ordinary grammar/tool tests passed 61 tests in that
 normal-local environment. A repository inventory regression now prevents source
 changes from shipping without the matching admission update. Other existing
 installations must refresh their local seal after updating the source clone.
+
+Repository-review follow-up: OpenCode's read of `mtp_profile.py` reproduced
+`raw special-token source unavailable`: the recipe preserved the source, but
+ordinary admission reused singleton's `string()` filter and rejected the file's
+own `<|`/`｜` checks. That filter is removed from ordinary admission entirely,
+not bypassed only for `read` or tool messages. Regression tests cover full source
+reads, every recipe prompt-text surface, unchanged authoritative token encoding,
+HTTP continuation and retained singleton/image-placeholder rejection. The
+reviewed runtime inventory and normal-local seal accompany this change. Follow-up
+validation: 203 related tests passed in `.venv`; 202 passed in the normal-local
+environment, excluding the standard-off budget HTTP test whose separate native
+recipe pin differs from this MTP environment. Normal-local reseal and checkpoint
+startup admission both passed. The Mac server was subsequently started from this
+source and the real OpenCode Plan repository review completed source reads,
+including `mtp_profile.py`, and model/tool continuations without this rejection.
+See [Mac production review](opencode-production-review.md) for review disposition
+and affected regression results. Windows review completion remains unverified.
 
 This closes this admission defect's scope. It does not promote `mtp-serving-v1`
 to default, qualify all API features, prove Windows end-to-end inference, or

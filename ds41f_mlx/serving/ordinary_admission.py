@@ -7,7 +7,7 @@ import json
 
 from deepseek_recipe import ChatCompletionRequest, ConversionOptions
 
-from ds41f_mlx.mtp_profile import ALIASES, strict_json, string
+from ds41f_mlx.mtp_profile import ALIASES, strict_json
 from .capacity import ORDINARY_BODY_BYTES, validate_ordinary_output
 
 
@@ -49,18 +49,12 @@ def admit_capabilities(converted, payload):
         raise ValueError('ordinary MTP does not support logprobs')
 
     # Text-only capability is checked BEFORE rendering/image expansion or I/O.
-    for message in conversation.messages:
-        if message.image_sources:
-            raise ValueError('ordinary MTP supports text Chat Completions only')
-        string(message.content, limit=ORDINARY_BODY_BYTES)
-        if message.reasoning_content is not None:
-            string(message.reasoning_content, limit=ORDINARY_BODY_BYTES)
-        for call in message.tool_calls or ():
-            for text in (call.name, call.arguments):
-                string(text, limit=ORDINARY_BODY_BYTES)
-    for tool in conversation.tools:
-        for text in (tool.name, tool.description or '', json.dumps(tool.parameters, ensure_ascii=False)):
-            string(text, limit=ORDINARY_BODY_BYTES)
+    # Text spelling/encoding belongs to recipe, not singleton's string policy:
+    # source code and tool results legitimately contain '<|' and fullwidth pipes.
+    # Recipe still rejects unbacked image placeholders. Body and actual encoded
+    # capacity bound resources; no duplicate per-string grammar/security filter.
+    if any(message.image_sources for message in conversation.messages):
+        raise ValueError('ordinary MTP supports text Chat Completions only')
 
 
 def convert_ordinary(raw):

@@ -1,8 +1,9 @@
 """Ordinary request grammar comes from the installed authoritative recipe."""
 import json
+from pathlib import Path
 
 import pytest
-from deepseek_recipe import ChatCompletionRequest, ConversionError, ConversionOptions
+from deepseek_recipe import ChatCompletionRequest, ConversionError, ConversionOptions, IMAGE_SPECIAL_TOKEN
 
 from ds41f_mlx.mtp_profile import validate_chat
 from ds41f_mlx.serving.ordinary_admission import convert_ordinary
@@ -43,6 +44,8 @@ def parts():
     dict(messages=[dict(role='user', content='Return json')], response_format=dict(type='json_object')),
     dict(tools=[], tool_choice='none'),
     dict(client_extension={'anything': 'metadata'}),
+    dict(messages=[dict(role='user', content="Code: if '<|' in value or '｜' in value: pass")]),
+    dict(messages=[dict(role='user', content='<｜User｜>Quoted prompt token')]),
 ])
 def test_recipe_accepted_grammar_is_not_redefined(changes):
     value = body(**changes)
@@ -87,7 +90,6 @@ def test_recipe_rejections_propagate_unchanged(changes):
     (dict(logprobs=True), 'logprobs'), (dict(top_logprobs=1), 'logprobs'),
     (dict(max_tokens=393217), 'output capability ceiling'),
     (dict(messages=[dict(role='user', content=[dict(type='image_url', image_url=dict(url='https://example.com/a.png'))])]), 'text Chat'),
-    (dict(messages=[dict(role='user', content='<|im_start|>')]), 'special-token'),
 ])
 def test_recipe_acceptance_does_not_override_runtime_limits(changes, match):
     value = body(**changes)
@@ -101,6 +103,78 @@ def test_plan_parts_leave_singleton_contract_unchanged():
     convert(value)
     with pytest.raises(ValueError, match='bounded string'):
         validate_chat(json.dumps(value).encode())
+
+
+@pytest.mark.parametrize('path', [
+    'ds41f_mlx/serving/production_mtp.py', 'ds41f_mlx/serving/capacity.py',
+    'ds41f_mlx/mtp_profile.py', 'ds41f_mlx/serving/ordinary_admission.py',
+])
+def test_repository_review_tool_results_follow_recipe(path):
+    source = (Path(__file__).resolve().parents[1] / path).read_text()
+    value = body(messages=[dict(role='user', content='Review the repository'),
+        dict(role='assistant', content='Read source', tool_calls=[dict(id='read-1',
+            type='function', function=dict(name='read', arguments=json.dumps({'filePath': path})))]),
+        dict(role='tool', tool_call_id='read-1', content=source)])
+    assert convert(value).conversation.messages[-1].content == source
+    assert recipe(value).conversation.messages[-1].content == source
+
+
+@pytest.mark.parametrize('surface', ['system', 'user', 'assistant', 'reasoning',
+                                    'latest_reminder', 'tool', 'arguments', 'description', 'parameters'])
+def test_token_like_text_is_recipe_owned_on_all_prompt_surfaces(surface):
+    text = "if '<|' in value or '｜' in value: pass; <｜Assistant｜> quoted delimiter"
+    value = body()
+    if surface in ('system', 'user', 'assistant', 'latest_reminder'):
+        value['messages'] = [dict(role=surface, content=text), dict(role='user', content='Continue')]
+    elif surface == 'reasoning':
+        value['messages'] = [dict(role='assistant', content='Previous reply', reasoning_content=text),
+                             dict(role='user', content='Continue')]
+    elif surface in ('tool', 'arguments'):
+        value['messages'] += [dict(role='assistant', content=None, tool_calls=[dict(id='read-1',
+            function=dict(name='read', arguments=json.dumps({'path': text if surface == 'arguments' else 'a'})))]),
+            dict(role='tool', tool_call_id='read-1', content=text if surface == 'tool' else 'OK')]
+    else:
+        function = dict(name='read', parameters=dict(type='object', properties={}))
+        if surface == 'description':
+            function['description'] = text
+        else:
+            function['parameters']['description'] = text
+        value['tools'] = [dict(type='function', function=function)]
+    converted, authoritative = convert(value).conversation, recipe(value).conversation
+    def projection(conversation):
+        return ([ (m.role, m.content, m.reasoning_content,
+                   [(c.name, c.arguments) for c in m.tool_calls or ()]) for m in conversation.messages ],
+                [(t.name, t.description, t.parameters) for t in conversation.tools])
+    assert projection(converted) == projection(authoritative)
+    assert '<|' in str(projection(converted))
+
+
+@pytest.mark.parametrize('surface', ['user', 'tool', 'arguments', 'description', 'parameters'])
+def test_unbacked_image_placeholder_remains_authoritative_rejection(surface):
+    value = body()
+    if surface == 'user':
+        value['messages'][0]['content'] = IMAGE_SPECIAL_TOKEN
+    elif surface in ('tool', 'arguments'):
+        value['messages'] += [dict(role='assistant', content=None, tool_calls=[dict(id='read-1',
+            function=dict(name='read', arguments=json.dumps({'path': IMAGE_SPECIAL_TOKEN if surface == 'arguments' else 'a'}, ensure_ascii=False)))]),
+            dict(role='tool', tool_call_id='read-1', content=IMAGE_SPECIAL_TOKEN if surface == 'tool' else 'OK')]
+    else:
+        function = dict(name='read', parameters=dict(type='object', properties={}))
+        if surface == 'description':
+            function['description'] = IMAGE_SPECIAL_TOKEN
+        else:
+            function['parameters']['description'] = IMAGE_SPECIAL_TOKEN
+        value['tools'] = [dict(type='function', function=function)]
+    with pytest.raises(ConversionError) as expected:
+        recipe(value)
+    with pytest.raises(ConversionError) as actual:
+        convert(value)
+    assert str(actual.value) == str(expected.value)
+
+
+def test_singleton_still_rejects_token_like_source():
+    with pytest.raises(ValueError, match='raw special-token source'):
+        validate_chat(json.dumps(body(messages=[dict(role='user', content="'<|' and '｜'")])).encode())
 
 
 def test_tool_results_have_body_budget_not_historical_fixture_limit():
