@@ -59,11 +59,64 @@ constraint leakage, not an execution or dependency admission requirement.
 
 This path keeps the bounded execution capabilities: one worker,
 one executable native singleton, greedy/thinking-off text, prompt + output budget
-<=8192, output <=768, and the existing weather-tool subset. Missing `max_tokens`
+<=8192 and output <=768. Ordinary generic function tools are supported, including
+multiple declarations, arbitrary names and recipe-representable JSON Schema-style
+parameters. Missing `max_tokens`
 uses 128. Unsupported controls are rejected, not silently implemented. Applications
 own their messages and branches. Independent requests may queue; they do not join
 a shared native MTP batch. No persistence, crash recovery, exactly-once effects, or
 implicit HTTP retry identity is promised.
+
+## Ordinary function tools and OpenCode
+
+DeepSeek recipe is the authority for declaration conversion, conversation rendering,
+argument/tool-call parsing, tool result semantics and JSON/SSE response projection.
+Serving admission enforces the bounded request surface and binds `role: tool`
+results to prior assistant `tool_call_id` values; it does not validate arbitrary
+parameter schemas or implement a second tool grammar. Multiple completed calls
+are supported within recipe capabilities and the existing body/context budgets.
+OpenCode's empty assistant `reasoning_content` is accepted through this same recipe
+path; generation remains thinking-off.
+
+**Tool execution is the client's responsibility.** ds41f does not execute file,
+shell, browser, Web or MCP tools. After a canonical recipe-completed assistant
+call, send its assistant message and matching tool results in the next ordinary
+conversation request. No session ID or ds41f certificate protocol is required.
+The same Scheduler settlement/publication and paired prefix rules apply to tool
+round trips and changed-result branches. Partial speculative calls do not publish
+application history or reusable generated state.
+
+`mtp-singleton-v1` retains its pinned weather declaration, bounded call/effect
+semantics and certificate contract. The weather schema is qualification evidence,
+not the ordinary serving tool API. The 8192-total / 768-output ceiling is unchanged;
+8K expansion is a separate remaining production limitation.
+
+OpenCode provider-local model key and display `name` need not match the model ID.
+Only the wire request's `model` participates in ds41f admission. For OpenCode
+1.18.30, configure `id` (the wire modelID) separately from presentation metadata:
+
+```json
+{
+  "model": "ds41f/local-alias",
+  "provider": {
+    "ds41f": {
+      "npm": "@ai-sdk/openai-compatible",
+      "options": {"baseURL": "http://127.0.0.1:8000/v1", "apiKey": "local"},
+      "models": {
+        "local-alias": {
+          "id": "deepseek-v4.1-flash",
+          "name": "Arbitrary presentation label",
+          "tool_call": true,
+          "limit": {"context": 8192, "output": 128}
+        }
+      }
+    }
+  }
+}
+```
+
+Keep agent temperature zero and its prompt/tools within the bounded context.
+This is not a claim that the full default OpenCode workload fits 8K.
 
 ## Owners and production boundaries
 
@@ -153,6 +206,28 @@ frontier, canonical frontier, publication and cancellation disposition.
 
 ## Acceptance and regression
 
+### Generic function acceptance (2026-10-09)
+
+`tools/accept_generic_mtp_tools.py` ran against the actual admitted normal-local
+`mtp-serving-v1` HTTP server, official checkpoint, P5/native MTP and Scheduler:
+
+- Two declarations (`read_file`, `stat_file`) admitted; model returned ordinary
+  `read_file({"path":"/tmp/example.txt"})` with a recipe-generated call ID.
+- Matching client result completed with `GENERIC_TOOL_SUCCESS`; paired reuse
+  restored **374 tokens**, the settled assistant-call frontier.
+- Changed result completed with `BRANCH_SUCCESS`, safely restoring the same earlier
+  **374-token** prefix, not the prior result/final-answer state. No rewind or fault.
+- Ordinary SSE returned `read_file` deltas, `finish_reason: tool_calls` and `[DONE]`.
+  Malformed declaration and foreign result ID returned HTTP 400, not weather errors.
+- OpenCode **1.18.30**, reduced read-only agent, arbitrary local key `local-alias`,
+  distinct display name and canonical `id`, sent its unmodified generic `read`
+  declaration via a capture-only forwarding proxy. ds41f returned a tool call;
+  OpenCode executed the file read and completed `OPENCODE_GENERIC_SUCCESS`.
+  Continuation restored **853 tokens** (also reported in OpenCode's cache usage).
+- Relevant admission, singleton/profile, recovery, paired cache, lifecycle,
+  bind/resource and recipe boundary/transport regressions in the pinned normal-local
+  environment: **161 passed**. No native/recipe dependency change.
+
 ### Direct-LAN transport fix checks (2026-10-09)
 
 - Admitted normal-local startup with `mtp-serving-v1 --host 0.0.0.0 --port 8000`
@@ -210,7 +285,7 @@ created.
 
 B1/B2 are implemented for this bounded ordinary serving path. This is **not**
 closure of every general-runtime production-release requirement: broader API and
-control/tool domains, transparent profile/resource policy and full production
+control domains beyond the supported ordinary function tools, transparent profile/resource policy and full production
 observability in `production-serving-parity-closure.md` still need implementation.
 Portable packaging/promotion, broader context, Web, new hosts and default-profile
 changes remain outside this task. M54R/M55R's existing bounded execution approval

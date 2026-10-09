@@ -45,7 +45,7 @@ def string(value, *, limit=1048576):
         raise ValueError('raw special-token source unavailable')
 
 
-def validate_chat(raw):
+def validate_chat(raw, *, ordinary_tools=False):
     b = strict_json(raw)
     allowed = {'model', 'messages', 'temperature', 'reasoning_effort', 'tools',
                'tool_choice', 'stream', 'max_tokens'}
@@ -62,7 +62,11 @@ def validate_chat(raw):
         raise ValueError('reasoning_effort must be none')
     if 'stream' in b and type(b['stream']) is not bool:
         raise ValueError('stream must be boolean')
-    if 'tools' in b:
+    if ordinary_tools:
+        # Declaration/choice/schema semantics belong to the DeepSeek recipe.
+        # Conversion runs before Scheduler admission on the ordinary route.
+        pass
+    elif 'tools' in b:
         if json.dumps(b['tools'], sort_keys=True, separators=(',', ':')) != json.dumps([WEATHER], sort_keys=True, separators=(',', ':')):
             raise ValueError('only the pinned weather declaration is supported')
         if b.get('tool_choice', 'auto') not in ('auto',) and b.get('tool_choice') != {'type':'function','function':{'name':'lookup_weather'}}:
@@ -84,35 +88,50 @@ def validate_chat(raw):
                 raise ValueError('unsupported message field')
             string(m['content'])
         elif role == 'assistant':
-            if set(m) - {'role', 'content', 'tool_calls'}:
+            assistant_fields = {'role', 'content', 'tool_calls'}
+            if ordinary_tools:
+                assistant_fields.add('reasoning_content')
+            if set(m) - assistant_fields:
                 raise ValueError('unsupported assistant field')
+            if ordinary_tools and m.get('reasoning_content') is not None:
+                string(m['reasoning_content'])
             calls = m.get('tool_calls')
-            if 'tool_calls' in m and (not isinstance(calls, list) or not 1 <= len(calls) <= 2):
-                raise ValueError('one/two ordinary completed calls required')
+            if 'tool_calls' in m and (not isinstance(calls, list) or not calls or (not ordinary_tools and len(calls) > 2)):
+                raise ValueError('ordinary completed calls required' if ordinary_tools else 'one/two ordinary completed calls required')
             if m.get('content') is not None:
                 string(m['content'])
             if calls:
-                if 'tools' not in b or not isinstance(calls, list) or not 1 <= len(calls) <= 2:
+                if not ordinary_tools and ('tools' not in b or not 1 <= len(calls) <= 2):
                     raise ValueError('one/two weather calls required')
                 for c in calls:
                     if not isinstance(c, dict) or set(c) != {'id','type','function'} or c['type'] != 'function':
                         raise ValueError('ordinary function call required')
                     string(c['id'], limit=256)
                     f = c['function']
-                    if not isinstance(f, dict) or set(f) != {'name','arguments'} or f['name'] != 'lookup_weather':
-                        raise ValueError('weather function required')
+                    if not isinstance(f, dict) or set(f) != {'name','arguments'}:
+                        raise ValueError('ordinary function required')
+                    string(f['name'], limit=256)
                     string(f['arguments'], limit=65536)
-                    args = strict_json(f['arguments'].encode())
-                    if set(args) != {'city'}:
-                        raise ValueError('weather city required')
-                    string(args['city'], limit=65536)
+                    if not ordinary_tools:
+                        if f['name'] != 'lookup_weather':
+                            raise ValueError('weather function required')
+                        args = strict_json(f['arguments'].encode())
+                        if set(args) != {'city'}:
+                            raise ValueError('weather city required')
+                        string(args['city'], limit=65536)
                     pending.append(c['id'])
                 if len(set(pending)) != len(pending):
                     raise ValueError('duplicate tool IDs')
             elif not isinstance(m.get('content'), str):
                 raise ValueError('assistant text required')
         elif role == 'tool':
-            if set(m) != {'role','tool_call_id','content'} or not pending or m['tool_call_id'] != pending.pop(0):
+            if set(m) != {'role','tool_call_id','content'} or not pending:
+                raise ValueError('wrong/missing/duplicate tool result')
+            if ordinary_tools:
+                if m['tool_call_id'] not in pending:
+                    raise ValueError('wrong/missing/duplicate tool result')
+                pending.remove(m['tool_call_id'])
+            elif m['tool_call_id'] != pending.pop(0):
                 raise ValueError('wrong/missing/duplicate tool result')
             string(m['content'], limit=65536)
         else:

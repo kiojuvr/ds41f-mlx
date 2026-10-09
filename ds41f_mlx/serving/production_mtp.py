@@ -216,7 +216,12 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
         stream_options = validation.pop('stream_options', None)
         if stream_options is not None and stream_options != {'include_usage': True}:
             raise ValueError('unsupported stream_options')
-        validate_chat(json.dumps(validation).encode())
+        validate_chat(json.dumps(validation).encode(), ordinary_tools=True)
+        # Use the authoritative request converter, not a serving-layer tool or
+        # JSON Schema validator. Malformed declarations/choices are client errors
+        # even when this boundary is invoked without HTTP preparation.
+        from deepseek_recipe import ChatCompletionRequest, ConversionOptions
+        ChatCompletionRequest(raw).convert(ConversionOptions(default_thinking_mode=False))
 
     def _enqueue(self, prepared, tokenizer, request_id):
         if self.fatal_error:

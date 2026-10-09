@@ -363,9 +363,15 @@ A production OpenAI-compatible tool API should not require applications to know 
 
 Existing M52R tool/effect correctness should remain authoritative internally.
 
-The serving layer must eventually support ordinary function declarations and tool result messages for the supported tool scope.
+`mtp-serving-v1` now supports ordinary generic function declarations, model-generated
+calls and ID-bound tool result continuations, including JSON/SSE and paired prefix
+reuse across round trips. DeepSeek recipe owns conversion, rendering, parsing and
+semantic projection; execution of tools belongs to the client. See
+[implementation and real acceptance](mtp-production-serving.md#ordinary-function-tools-and-opencode).
 
-A weather-only schema is qualification evidence, not a general production tool API.
+The weather-only schema remains unchanged qualification evidence for
+`mtp-singleton-v1`, not a restriction of the general ordinary function API.
+The existing 8192-total / 768-output bound remains a separate limitation.
 
 Web search, PDF, Vision and other ds41f application capabilities remain independently scoped and must not be accidentally bundled into foundational serving work.
 

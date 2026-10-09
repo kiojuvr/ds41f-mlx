@@ -226,8 +226,10 @@ allowance, separate donor checkout or historical `/tmp` authority is required.
 
 **Ordinary serving opt-in:** `ds41f start --profile mtp-serving-v1` uses the same
 admitted execution envelope with standard `/v1/chat/completions`, Scheduler-owned
-lifecycle and paired target/DSpark prefix reuse. No public session or sequence
-protocol is required. See [operation, ownership and acceptance](docs/mtp-production-serving.md).
+lifecycle and paired target/DSpark prefix reuse, including generic ordinary
+function tools and ID-bound tool result continuations. DeepSeek recipe owns tool
+semantics; clients execute tools. No public session or sequence protocol is required.
+The 8192-total / 768-output bound and singleton weather-only contract are unchanged. See [operation, ownership and acceptance](docs/mtp-production-serving.md).
 It does not change the default or the existing singleton public contract, and is
 not a claim of complete general-runtime production parity.
 
