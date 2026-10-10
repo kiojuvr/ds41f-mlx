@@ -238,6 +238,8 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
             if tap_start > C:
                 ends.insert(0, tap_start)
             app = None
+            append_t0 = perf_counter()
+            capture_s = 0.
             try:
                 for end in ends:
                     observed = end > tap_start
@@ -265,9 +267,14 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
                         C = end
                         mx.synchronize(generation_stream)
                     if checkpoint_capture is not None and end == len(ids)-2:
+                        capture_t0 = perf_counter()
                         checkpoint_capture(rec.cache, rec.rings, ids[:end])
+                        capture_s += perf_counter()-capture_t0
             finally:
                 for i, layer in original.items(): lm.layers[i] = layer
+            trace['prompt_checkpoint_capture_s'] = capture_s
+            trace['suffix_append_s'] = perf_counter()-append_t0-capture_s
+            handoff_t0 = perf_counter()
             context = DSparkCommittedContext.from_native(rec.rings, frontier=len(ids)-1, target_layer_ids=lm._config.dspark_target_layer_ids)
             live = LivePrefillResult.from_committed(app.commit_certificate, prefix_token_ids=ids[:-1])
             live.dspark_committed_context = context
@@ -288,7 +295,8 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
                         canonical_sampling_policy='greedy' if request.inference_options.temperature in (None, 0) else None)
             rec.owner = handoff_to_generation(live, self._model, terminal_prompt_token=ids[-1], config=cfg,
                 max_tokens=self.request_max_tokens(request), sampler=self.make_sampler(request.inference_options), session_factory=Factory)
-            trace.update(prefill_handoff_s=perf_counter()-t0, prompt_replay=rec.owner.prompt_replay_count,
+            trace.update(p5_handoff_s=perf_counter()-handoff_t0,
+                         prefill_handoff_s=perf_counter()-t0, prompt_replay=rec.owner.prompt_replay_count,
                          full_cache_repack=app.final_execution.runner.full_cache_repack_count)
 
     def _next(self, rec, trace):
@@ -297,10 +305,15 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
         with mx.stream(generation_stream):
             t0 = perf_counter()
             token = rec.owner.next_token(transport_delivered=False)
-            trace['decode_s'] += perf_counter()-t0
+            elapsed = perf_counter()-t0
+            trace['decode_s'] += elapsed
+            if 'first_native_decode_s' not in trace:
+                trace['first_native_decode_s'] = rec.owner.last_native_decode_s
+                trace['first_decode_call_s'] = elapsed
             trace['generated'] += token is not None
             if trace['first_canonical_s'] is None and token is not None:
                 trace['first_canonical_s'] = perf_counter()-trace['t0']
+                trace['total_ttft_s'] = trace['first_canonical_s']
             trace['canonical_emitted'] = len(rec.owner.history.canonical_generated_tokens)
             return token
 

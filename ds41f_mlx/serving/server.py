@@ -6,7 +6,7 @@ from dataclasses import dataclass
 import json
 import os
 from pathlib import Path
-from time import time
+from time import time, perf_counter
 from uuid import uuid4
 from typing import Any
 
@@ -42,6 +42,7 @@ def load_v41_tokenizer(recipe_path: Path = DEFAULT_RECIPE) -> Any:
 
 
 def prepare_request(protocol: str, body: bytes, *, tokenizer: Any, recipe_path: Path = DEFAULT_RECIPE, options: ConversionOptions | None = None, checkpoint: Path | None = None, ordinary: bool = False) -> RecipePreparedRequest:
+    prepare_t0 = perf_counter()
     request_type, _ = PROTOCOL_TYPES[protocol]
     if ordinary:
         if protocol != 'chat_completions':
@@ -63,9 +64,14 @@ def prepare_request(protocol: str, body: bytes, *, tokenizer: Any, recipe_path: 
         include_usage = request.include_usage() if protocol == 'chat_completions' else False
         custom_tool_names = frozenset(request.custom_tool_names()) if protocol == 'responses' else frozenset()
         converted = request.convert(options if options is not None else ConversionOptions())
+    convert_s = perf_counter() - prepare_t0
     encoding = DeepseekV41Encoding().with_tokenizer(tokenizer)
+    render_t0 = perf_counter()
     rendered = encoding.render_conversation(converted.conversation)
+    render_s = perf_counter() - render_t0
+    encode_t0 = perf_counter()
     token_ids = [int(x) for x in encoding.encode(converted.conversation)]
+    encode_s = perf_counter() - encode_t0
     multimodal = None
     if rendered.image_sources:
         if protocol != 'chat_completions':
@@ -92,6 +98,12 @@ def prepare_request(protocol: str, body: bytes, *, tokenizer: Any, recipe_path: 
         resolve_capacity(prepared, checkpoint=checkpoint or load_runtime_config().checkpoint_path, automatic=automatic, ordinary=ordinary)
     except ValueError as error:
         raise RequestError(str(error), 400, 'context_capacity_exhausted') from error
+    if ordinary:
+        prepared.phase_timings = dict(request_prepare_s=perf_counter()-prepare_t0,
+                                     recipe_convert_s=convert_s, recipe_render_s=render_s,
+                                     recipe_encode_s=encode_s,
+                                     recipe_convert_or_encode_s=convert_s+render_s+encode_s)
+        prepared.arrival_t0 = prepare_t0
     return prepared
 
 
@@ -230,12 +242,15 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
 
     def api_handler(protocol: str) -> Callable[[Request], Awaitable[Response]]:
         async def handler(request: Request) -> Response:
+            arrival_t0 = perf_counter()
             body = await request.body()
             if ordinary_mtp:
                 if protocol != 'chat_completions':
                     raise RequestError('ordinary MTP supports Chat Completions only')
             prepared = await run_in_threadpool(prepare_request, protocol, body, tokenizer=tokenizer, recipe_path=recipe_path, options=options, checkpoint=getattr(backend, 'checkpoint', runtime_config.checkpoint_path), ordinary=ordinary_mtp)
             if ordinary_mtp:
+                prepared.arrival_t0 = arrival_t0
+                prepared.phase_timings['request_prepare_s'] = perf_counter()-arrival_t0
                 release = request.scope.get('ds41f.release_preparation')
                 if release is not None:
                     release()

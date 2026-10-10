@@ -82,7 +82,10 @@ def test_upstream_lookup_eviction_and_invalid_pair_miss():
     second = authority.capture(*pair(200))
     authority.publish(first)
     authority.publish(second)
-    assert len(authority.acquire(list(range(202)))[2]) == 200
+    timings = {}
+    assert len(authority.acquire(list(range(202)), timings=timings)[2]) == 200
+    assert set(timings) == {'cache_lookup_s', 'paired_restore_s'}
+    assert all(value >= 0 for value in timings.values())
     # Earlier edit cannot borrow a later ring. Longest intact earlier pair wins.
     branch = list(range(202))
     branch[195] = -1
@@ -176,6 +179,11 @@ def test_ordinary_http_recipe_route_has_no_compulsory_public_session(monkeypatch
     async def response(prepared, *, tokenizer, http_request):
         seen.append(prepared.token_ids)
         assert prepared.protocol == 'chat_completions'
+        phases = prepared.phase_timings
+        assert phases['request_prepare_s'] >= phases['recipe_convert_or_encode_s'] >= 0
+        assert phases['recipe_convert_or_encode_s'] == sum(phases[k] for k in
+            ('recipe_convert_s', 'recipe_render_s', 'recipe_encode_s'))
+        assert prepared.arrival_t0 > 0
         assert not backend.sessions
         return JSONResponse({'choices': [{'message': {'role': 'assistant', 'content': 'OK'}}]})
     monkeypatch.setattr(backend, 'ordinary_response', response)

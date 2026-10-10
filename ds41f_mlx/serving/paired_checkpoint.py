@@ -6,6 +6,7 @@ The payload is memory-only: losing either owner is a miss, never unprimed MTP.
 """
 from dataclasses import dataclass
 from typing import Any
+from time import perf_counter
 
 from .capacity import TEXT_QUALIFIED_ENVELOPE
 
@@ -166,9 +167,13 @@ class PairedCheckpointAuthority:
         finally:
             self.paged.release_for_eviction([block.block_id])
 
-    def acquire(self, prompt):
+    def acquire(self, prompt, *, timings=None):
         # Leave a genuine suffix append before P5's terminal holdout. In
         # particular, NEVER turn an exact N hit into N-1 by recurrent trimming.
+        lookup_t0 = perf_counter()
+        restore_s = 0.
+        if timings is not None:
+            timings.update(cache_lookup_s=0., paired_restore_s=0.)
         eligible = list(prompt[:-2])
         while eligible:
             blocks, C = self.paged.get_computed_blocks(eligible)
@@ -183,7 +188,14 @@ class PairedCheckpointAuthority:
             try:
                 if checkpoint is not None and len(checkpoint.tokens) == C:
                     try:
-                        target, rings, tokens = checkpoint.restore(self.identity, prompt, self.mx)
+                        restore_t0 = perf_counter()
+                        try:
+                            target, rings, tokens = checkpoint.restore(self.identity, prompt, self.mx)
+                        finally:
+                            restore_s += perf_counter()-restore_t0
+                            if timings is not None:
+                                timings.update(paired_restore_s=restore_s,
+                                               cache_lookup_s=perf_counter()-lookup_t0-restore_s)
                         return target, rings, tokens
                     except (ValueError, TypeError, AttributeError, IndexError):
                         pass
@@ -192,6 +204,9 @@ class PairedCheckpointAuthority:
             # Missing/invalid pair cannot restore target alone. Invalidate the
             # indexed candidate, then let upstream select a shorter root tail.
             self.paged.evict(key)
+        if timings is not None:
+            timings.update(paired_restore_s=restore_s,
+                           cache_lookup_s=perf_counter()-lookup_t0-restore_s)
         return None
 
     def clear(self):

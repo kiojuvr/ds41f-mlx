@@ -192,6 +192,54 @@ restoring that entire server is not necessary to use Scheduler/PagedCache and
 would introduce an additional protocol/dependency surface. No parallel DeepSeek
 request, tool, or response grammar is introduced.
 
+## Full-hit TTFT diagnostic
+
+`tools/diagnose_mtp_cache_hit_ttft.py` is a finite synthetic diagnostic through
+real `create_app` HTTP ingress, recipe preparation, ProductionScheduler,
+PagedCache paired restoration and native MTP generation. It uses neither an
+OpenCode session nor injected model/cache state. Run in the admitted normal-local
+environment with explicit `DS41F_CHECKPOINT`, **with no concurrent model-serving
+process**:
+
+```sh
+/path/to/mtp-env/bin/python tools/diagnose_mtp_cache_hit_ttft.py
+```
+
+Defaults target 4,096 / 32,768 / 220,000 encoded tokens (actual recipe counts are
+recorded). Each seed completes settlement/publication before an exact repeat;
+ordinary N-2 restoration leaves two real input tokens: one suffix-prefill and
+one P5 terminal. The driver asserts paired hit N-2, suffix 2, replay/repack 0,
+publication, no active/queued work, and target/DSpark same-frontier settlement.
+One JSON receipt stores seed/hit traces, without full prompts/cache tensors.
+
+Production traces now include `request_prepare_s`, recipe conversion/render/encode
+(and their sum `recipe_convert_or_encode_s`), `cache_lookup_s`,
+`paired_restore_s`, `cached_tokens`, `remaining_suffix_tokens`,
+`suffix_append_s`, `prompt_checkpoint_capture_s`, `p5_handoff_s`,
+`first_native_decode_s`, `first_decode_call_s`, `first_canonical_s`, and
+`total_ttft_s`. TTFT starts at HTTP handler entry (body read and preparation
+included; upstream header ingress/preparation-semaphore wait excluded), not
+Scheduler enqueue. Recipe encode may itself render internally; separate render
+and encode timings expose rather than remove existing work. Restore includes
+prefix verification, clone/materialization, validation and returned token list.
+Suffix append excludes prompt checkpoint capture; **even a full hit still
+captures a pending prompt checkpoint**, so that separate cost must be included
+in TTFT. P5 includes its terminal bootstrap/model evaluation; native decode is
+only the first subsequent BatchGenerator.next plus stream synchronization.
+`first_decode_call_s` additionally includes canonical ownership checks. Other
+queue/load/resource/metadata work remains visible in total TTFT, not attributed
+to attention by subtraction. No timing adds extra MLX evaluation/synchronization.
+
+Investigation status: **measurement blocked, not classified**. Two independent
+model runs terminated with exit 137 before producing the first short-case
+receipt while the existing production process on port 8000 remained running.
+The cause of termination is not established; no OOM diagnosis or performance
+conclusion is claimed. The existing process was not stopped/restarted. A
+single-model maintenance window is required to obtain the scaling table.
+No optimization, array-sharing ownership change or default-promotion decision
+has been made; replay/repack/state checks are driver assertions, not completed
+long-context evidence. Cached token counts alone are not TTFT evidence.
+
 ## Paired capture and restore
 
 A checkpoint binds admitted execution/tokenizer/recipe identity, complete encoded

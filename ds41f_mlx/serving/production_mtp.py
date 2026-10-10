@@ -52,11 +52,12 @@ class ProductionScheduler(Scheduler):
         def capture(target, rings, tokens):
             request.prompt_checkpoint = self.checkpoints.capture(target, rings, tokens)
         try:
-            restored = self.checkpoints.acquire(request.prompt_token_ids)
+            restored = self.checkpoints.acquire(request.prompt_token_ids, timings=trace)
             if restored is not None:
                 rec.cache, rec.rings, rec.canonical = restored
             request.cached_tokens = trace['cached_tokens'] = len(rec.canonical)
             request.remaining_tokens = request.prompt_token_ids[len(rec.canonical):]
+            trace['remaining_suffix_tokens'] = len(request.remaining_tokens)
             self.backend._start(rec, request.prepared, request.recipe_tokenizer, trace,
                                 checkpoint_capture=capture, batch_generator_factory=self._new_batch)
             # P5 revoked the producer and inserted the held-out terminal into
@@ -237,8 +238,10 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
         request.prepared, request.recipe_tokenizer = prepared, tokenizer
         request.execution = QualificationSession(request_id)
         request.prompt_checkpoint, request.delivery_cursor = None, 0
-        request.trace = dict(response_id='chatcmpl-'+request_id, t0=perf_counter(), generated=0,
+        request.trace = dict(response_id='chatcmpl-'+request_id,
+                             t0=getattr(prepared, 'arrival_t0', perf_counter()), generated=0,
                              decode_s=0., first_canonical_s=None, canonical_emitted=0)
+        request.trace.update(getattr(prepared, 'phase_timings', {}))
         self.scheduler.add_request(request)
 
     async def _pump(self):

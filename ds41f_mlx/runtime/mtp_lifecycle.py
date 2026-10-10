@@ -509,7 +509,9 @@ class OMLXMTPGenerationSession:
             raise MTPLifecycleError("call start() before next_token")
         if transport_delivered and len(self.history.transport_delivered_tokens) != len(self.history.canonical_generated_tokens):
             raise MTPLifecycleError('transport delivery must remain a canonical prefix')
+        native_t0 = perf_counter()
         _, gr = self._bg.next(); self.mx.synchronize(self.stream)
+        self.last_native_decode_s = perf_counter()-native_t0
         if not gr:
             return None
         if gr[0].uid != self.uid:
