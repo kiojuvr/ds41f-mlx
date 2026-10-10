@@ -1,7 +1,28 @@
 {
   "schema": "ds41f.docs_classification.v1",
-  "policy": "Canonical docs are current-state normative. docs/archive and SUPERSEDED_HISTORICAL entries are non-normative history/evidence. M49R governs retained MTP execution architecture; production-serving-parity-closure.md governs current serving/development policy, with mtp-serving-v1 as the production-semantics boundary. Historical SP1 BLOCK was subsequently resolved for B1/B2 on the ordinary path, not broader release completion. M50–M56 implementation is superseded while M54 semantic requirements survive in the reset doctrine.",
+  "policy": "Canonical docs are current-state normative. docs/archive and SUPERSEDED_HISTORICAL entries are non-normative history/evidence. runtime-admission.md governs installed execution/compatibility/provenance/evidence boundaries; M49R governs retained MTP execution architecture; production-serving-parity-closure.md governs current serving/development policy, with mtp-serving-v1 as the production-semantics boundary. Historical SP1 BLOCK was subsequently resolved for B1/B2 on the ordinary path, not broader release completion. M50–M56 implementation is superseded while M54 semantic requirements survive in the reset doctrine.",
   "entries": [
+    {
+      "path": "docs/runtime-admission.md",
+      "classification": "CANONICAL",
+      "absorbed_into": [],
+      "evidence_preserved": true,
+      "reason": "Installed execution authority, host ABI compatibility, source/build provenance and historical evidence separation; supersedes source/local seal and whole host closure startup equality. Ordinary MTP bounded acceptance, not fresh OFF/full release qualification."
+    },
+    {
+      "path": "docs/archive/operations-source-seal.md",
+      "classification": "SUPERSEDED_HISTORICAL",
+      "absorbed_into": ["docs/operations.md", "docs/runtime-admission.md"],
+      "evidence_preserved": true,
+      "reason": "Archived former checkout/qualification/local-seal operator instructions; not current production operation."
+    },
+    {
+      "path": "docs/archive/mtp-local-source-clone.md",
+      "classification": "SUPERSEDED_HISTORICAL",
+      "absorbed_into": ["docs/mtp-local-release-candidate.md", "docs/runtime-admission.md"],
+      "evidence_preserved": true,
+      "reason": "Preserved singleton protocol and original source-clone release history; setup/local-seal/host closure authority superseded."
+    },
     {
       "path": "docs/production-serving-parity-closure.md",
       "classification": "CANONICAL",
@@ -21,14 +42,14 @@
       "classification": "CANONICAL",
       "absorbed_into": [],
       "evidence_preserved": true,
-      "reason": "Current normal-local release disposition: M54R operational sufficiency PASS by existing evidence composition, no additional run; M55R RELEASE APPROVED, PROMOTION DEFERRED for the exact source-clone envelope, zero blockers. Portable runtime projection remains separate."
+      "reason": "Historical M54R/M55R operational disposition and singleton semantic evidence retained. Source-clone/local-seal/host closure startup authority is superseded by runtime-admission.md; no full new release or promotion completion implied."
     },
     {
       "path": "docs/milestone-53r-normal-local.md",
       "classification": "CANONICAL",
       "absorbed_into": [],
       "evidence_preserved": true,
-      "reason": "M53R fresh normal-local setup, strict dependency/native/linked-host/checkpoint admission and real operator/application acceptance PASS; historical handoff preserved, current release disposition is M55R."
+      "reason": "M53R original normal-local setup/acceptance evidence retained. Exact model/executable identities are inherited; whole host closure and mutable source/local seal startup authority superseded by runtime-admission.md."
     },
     {
       "path": "docs/milestone-52r-application-integration.md",

@@ -192,7 +192,25 @@ def check_loaded_image(path):
             matching.append(_macho_uuid(ctypes.string_at(pointer, 32+length)))
     with path.open('rb') as reader:
         header = reader.read(32)
+        magic = struct.unpack_from('>I', header)[0]
+        if magic in (0xcafebabe, 0xcafebabf):
+            # Universal host image: compare the executing arm64 slice UUID.
+            count = struct.unpack_from('>I', header, 4)[0]
+            require(count <= 64, 'invalid universal image architecture count')
+            reader.seek(8)
+            size = 20 if magic == 0xcafebabe else 32
+            slices = []
+            for _ in range(count):
+                entry = reader.read(size)
+                cpu = struct.unpack_from('>I', entry)[0]
+                offset = struct.unpack_from('>I' if size == 20 else '>Q', entry, 8)[0]
+                if cpu == 0x100000c:
+                    slices.append(offset)
+            require(len(slices) == 1, 'missing/ambiguous arm64 image slice')
+            reader.seek(slices[0])
+            header = reader.read(32)
         length = struct.unpack_from('<I', header, 20)[0]
+        require(length < 16*1024*1024, 'invalid disk native header')
         disk = _macho_uuid(header+reader.read(length))
     require(matching == [disk], 'missing/stale/mixed loaded native image UUID')
 

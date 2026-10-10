@@ -21,10 +21,11 @@ and attribution in `omlx_suffix_math.py`. Native nlohmann JSON carries its embed
 copyright/license in `native/third_party/nlohmann/json.hpp`. Dependency packages
 retain their installed licenses. No upstream ownership replacement is claimed.
 
-Setup seals actual installed Python payload/native link/source identity. The seal
-is local operator-owned, not a signature or semantic qualification. Import origins
-must be provisioned environment resources (plus this projected source repository),
-never development/donor checkouts. When updating an installed runtime at an
+Setup constructs and installs a profile-specific execution wheel. Production
+requires installed package origins; the projected/source repository is build and
+promotion provenance only. There is no local seal or startup source-export/whole
+host-closure equality. Exact semantic/executable payload and assets are checked
+separately from host ABI compatibility; see `docs/runtime-admission.md`. When updating an installed runtime at an
 explicit release checkpoint, changed executable payload requires rebuild and
 affected acceptance under M43's release rules. This is not a requirement to
 rebuild independent release environments or promote ds41f-runtime after every

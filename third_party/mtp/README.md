@@ -25,9 +25,15 @@ original recipe with the delivered Cargo.lock.
   unused transitive packages remain explicitly locked for reproducibility; this
   does not promote their optional audio/vision/network/oMLX-server capabilities.
 
-`normal-local.json` binds the M52R consuming-EOF patched recipe source export,
-complete patch digest, native/wheel digests, build provenance, actual host-linked
-dylib hashes, qualified runtime/module contents and official checkpoint inventory.
+`normal-local.json` preserves the historical M52R/M53R qualification inventory:
+source/patch/native/wheel/build, observed host closure, old source inventory and
+checkpoint evidence. It is **not** read at production startup. Package construction
+inherits its exact executable dependency and reachable semantic-native hashes;
+observed unused host closure and checkout hashes are evidence only.
+`runtime-support-payload.json` preserves previously sealed candidate hashes for
+additional packages actually imported by the model/ordinary protocol path
+(Pillow, regex/Jinja, HTTP support and their helpers), not a new observation seal.
+See `docs/runtime-admission.md` for classification and installed authority.
 `requirements-normal-local.lock` reproduces the complete qualified namespace,
 including the already-present PDF helper packages; their presence does not admit
 Web/binary/Vision capabilities to MTP. The native wheel and patched export are

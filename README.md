@@ -215,14 +215,13 @@ See [setup/API/operator instructions](docs/mtp-local-release-candidate.md) and
 [M41 decision and evidence](docs/milestone-41-local-mtp-release-candidate.md), with
 [M53R normal-local dependency/admission closure](docs/milestone-53r-normal-local.md).
 The [M55R decision](docs/milestone-54r-55r-operational-release.md#exact-supported-release-envelope)
-approves the exact M3 Ultra 512 GB / macOS 26.5.2 arm64 / linked-host closure,
-greedy <=8192-token singleton profile and one/two weather-call JSON/SSE Python
-application contract. Source-clone delivery is the formal operational release;
-portable runtime projection is deferred, not a release prerequisite.
-Normal-local setup installs repository-delivered oMLX sources and the exact M52R
-recipe/native wheel in a fresh locked venv. Strict repository-qualified identity
-checks precede the installation seal; no investigation environment, source
-allowance, separate donor checkout or historical `/tmp` authority is required.
+is historical singleton qualification. Current [runtime admission](docs/runtime-admission.md)
+uses a non-editable installed execution package: exact model/tokenizer, executable
+Python/native/kernels and reachable image/numerical dependencies, separate host ABI
+compatibility, and non-authoritative build/source provenance and historical evidence.
+There is no checkout source equality, local seal or whole Homebrew closure SHA gate.
+Normal-local setup builds this package from attributed dependencies and the unchanged
+admitted M52R recipe wheel. See [current operations](docs/operations.md).
 
 **Ordinary serving opt-in:** `ds41f start --profile mtp-serving-v1` uses the same
 admitted execution envelope with standard `/v1/chat/completions`, Scheduler-owned

@@ -6,7 +6,6 @@ import json
 import sys
 
 from ds41f_mlx.config import load_runtime_config, validate_runtime_config
-from ds41f_mlx.provenance import inspect_runtime
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -108,12 +107,13 @@ def _main(argv, *, control=None, projection=None) -> int:
             print('CONFLICT: service socket already in use', file=sys.stderr)
             return 2
 
-    report = inspect_runtime(cfg)
-    from .delivery import RECORD
-    from pathlib import Path
-    projected = (Path(__file__).resolve().parents[1]/'release/promotion.json').exists()
-    if (RECORD.exists() or projected) and (args.no_validate or report['status'] != 'PASS'):
-        print(json.dumps({'status': 'FAIL', 'error': 'source-delivered OFF provenance cannot be bypassed', 'provenance': report}), file=sys.stderr)
+    from .delivery import inspect as inspect_installed_off
+    if args.no_validate:
+        parser.error('installed execution admission cannot be disabled')
+    try:
+        report = inspect_installed_off(cfg)
+    except (ValueError, OSError, ImportError) as exc:
+        print(json.dumps({'status': 'FAIL', 'error': str(exc)}), file=sys.stderr)
         return 2
     if args.print_config:
         print(json.dumps(report, indent=2, sort_keys=True))

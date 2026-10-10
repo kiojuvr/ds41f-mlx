@@ -42,15 +42,13 @@ test dependency: none
 
 ## Explicit MTP candidate provenance
 
-M41's separate profile delivers attributed dependency **source exports** in this
-repository and builds/installs them normally into a fresh environment. Its native
-recipe, tokenizer, substrate, runtime/helper, critical package and host-link content
-identities fail closed on unknown drift. No donor checkout/Git revision lookup or
-`/tmp` authority participates in normal MTP operation. The seal is a build record,
-not acceptance or a signature; rebuilt artifacts receive fresh qualification.
-See [setup](mtp-local-release-candidate.md), `ds41f_mlx.mtp_identity` and
-[M41 evidence](milestone-41-local-mtp-release-candidate.md). The original OFF
-manifest/checkouts and historical evidence below remain separate and unchanged.
+Current production uses [installed execution admission](runtime-admission.md).
+Source exports, commit/patch/lock/toolchain inventories and historical closure
+hashes are build provenance/qualification evidence, never startup equality.
+Exact installed semantic/runtime payload and assets are checked separately from
+host ABI compatibility. MTP/OFF local seals were removed. M41 and the historical
+OFF/checkouts below remain evidence of their original architectures, not current
+operator instructions; use [operations](operations.md).
 
 ## External runtime dependencies for standard-off
 

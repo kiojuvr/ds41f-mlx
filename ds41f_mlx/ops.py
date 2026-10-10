@@ -10,7 +10,6 @@ from pathlib import Path
 from typing import Any
 
 from ds41f_mlx.config import load_runtime_config
-from ds41f_mlx.provenance import inspect_runtime
 from ds41f_mlx.release import load_release_manifest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -34,16 +33,18 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("full", help="run explicit full qualification")
     for command in sub.choices.values():
         profiles = ['standard-off', 'mtp-singleton-v1']
-        if command is sub.choices['start'] or command is sub.choices['inspect']:
+        if command is sub.choices['start'] or command is sub.choices['inspect'] or command is sub.choices['accept']:
             profiles.append('mtp-serving-v1')
         command.add_argument('--profile', choices=profiles, default='standard-off')
     args, rest = parser.parse_known_args(argv)
 
     if args.profile in ('mtp-singleton-v1', 'mtp-serving-v1'):
         if args.cmd == 'start':
-            os.execv(sys.executable, [sys.executable, '-m', 'ds41f_mlx.serve', '--profile', args.profile, *rest])
+            os.execv(sys.executable, [sys.executable, '-I', '-m', 'ds41f_mlx.serve', '--profile', args.profile, *rest])
         if args.cmd == 'accept':
-            return _run_module('ds41f_mlx.mtp_acceptance', rest)
+            if args.profile == 'mtp-serving-v1':
+                return subprocess.call([sys.executable, '-I', '-m', 'ds41f_mlx.production_acceptance', *rest])
+            parser.error('historical singleton qualification belongs to the source/R1 evidence lane; use ordinary installed acceptance')
         if args.cmd != 'inspect':
             parser.error('MTP supports inspect/start/accept only')
         try:
@@ -63,11 +64,15 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.cmd == "inspect":
         cfg = load_runtime_config(); cfg.apply_environment(); cfg.apply_import_paths()
-        provenance = inspect_runtime(cfg)
-        print(json.dumps({"schema":"ds41f.ops.inspect.v1", "status": provenance.get("status"), "release_manifest": load_release_manifest(), "provenance": provenance}, indent=2, sort_keys=True))
+        from .delivery import inspect as inspect_installed_off
+        try:
+            provenance = inspect_installed_off(cfg)
+        except (ValueError, OSError, ImportError) as exc:
+            provenance = {'status': 'FAIL', 'error': str(exc)}
+        print(json.dumps({"schema":"ds41f.ops.inspect.v2", "status": provenance.get("status"), "release_manifest": load_release_manifest(), "admission": provenance}, indent=2, sort_keys=True))
         return 0 if provenance.get("status") in {"PASS", "WARNING"} else 2
     if args.cmd == "start":
-        os.execv(sys.executable, [sys.executable, '-m', 'ds41f_mlx.serve', *rest])
+        os.execv(sys.executable, [sys.executable, '-I', '-m', 'ds41f_mlx.serve', *rest])
     if (ROOT/'release/promotion.json').exists() and args.cmd in ('quick', 'full'):
         parser.error('Projected runtime qualification: use ds41f_mlx.reference --real-model, not historical development campaigns')
     if args.cmd == "quick":

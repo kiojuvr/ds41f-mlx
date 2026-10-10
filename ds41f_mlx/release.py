@@ -6,7 +6,9 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
-RELEASE_MANIFEST_PATH = ROOT / "release" / "ds41f-release.json"
+RELEASE_MANIFEST_PATH = Path(__file__).with_name('runtime_release.json')
+if not RELEASE_MANIFEST_PATH.exists():  # development provenance tools only
+    RELEASE_MANIFEST_PATH = ROOT / 'release' / 'ds41f-release.json'
 
 
 def load_release_manifest(path: Path | None = None) -> dict[str, Any]:

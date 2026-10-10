@@ -79,13 +79,12 @@ def main(argv=None):
     else:
         # Obtain the exact M52R artifact, not a path-dependent substitute build.
         # Full patched sources/Cargo.lock and original toolchain provenance ship
-        # alongside it; strict admission also verifies every linked host dylib.
+        # alongside it. Runtime separates semantic payload from host ABI.
         wheel = SOURCES/normal['wheel']['file']
         if sha(wheel) != normal['wheel']['sha256']:
             raise ValueError('unapproved normal-local native wheel')
         wheels = [wheel]
     run('uv','pip','install','--reinstall','--no-deps','--python',python,wheels[0],build/'omlx')
-    run('uv','pip','install','--no-deps','--python',python,'-e',ROOT)
     resource = venv/'share/ds41f-mtp/recipe/static/tokenizers/v41'
     resource.mkdir(parents=True, exist_ok=True)
     import shutil
@@ -96,10 +95,18 @@ def main(argv=None):
         shutil.rmtree(site/'omlx')
         with tarfile.open(ROOT/'reference/R1/off-source.tar.gz') as archive:
             archive.extractall(site, filter='data')
-        run(python, '-m', 'ds41f_mlx.delivery', 'seal', '--wheel', wheels[0], env=env)
-    else:
-        # Record actual executable and link identity inside the target environment.
-        run(python,'-m','ds41f_mlx.mtp_identity','seal','--wheel',wheels[0],env=env)
+    package_args = ['--output', build/'runtime-wheels']
+    if args.profile == 'standard-off':
+        package_args += ['--profile', 'standard-off', '--recipe-wheel', wheels[0]]
+    run(python, ROOT/'tools/build_execution_package.py', *package_args)
+    runtime_wheels = list((build/'runtime-wheels').glob('ds41f_mlx-*.whl'))
+    if len(runtime_wheels) != 1:
+        raise ValueError('exactly one execution package required')
+    run('uv','pip','install','--no-deps','--python',python,runtime_wheels[0])
+    # No local seal: the built package carries publisher admission authority.
+    subprocess.run([str(python), '-I', '-c',
+                    'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                   check=True, env=env)
     print(f'Provisioned {venv}. Runtime needs neither donor checkouts nor build-dir.')
 
 

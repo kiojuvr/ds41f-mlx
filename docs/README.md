@@ -11,6 +11,8 @@ Canonical architectural intent:
 
 Canonical current-state documents:
 
+- [Runtime admission](runtime-admission.md) — **installed executable authority**, exact semantic payload/assets, host ABI compatibility, separate build/source provenance and historical evidence; supersedes checkout/local seals and whole Homebrew closure SHA startup gates.
+
 - [Production Serving Parity Closure](production-serving-parity-closure.md) — **superseding serving/development authority; `mtp-serving-v1` production-semantics boundary** and [future-agent decision rule](production-serving-parity-closure.md#decision-rule-for-future-agents). SP1 BLOCK is the preserved historical starting assessment; B1/B2 are subsequently implemented/closed for ordinary serving. General runtime release and promotion remain incomplete.
 - [Ordinary MTP production serving](mtp-production-serving.md) — current opt-in Chat Completions, generic tools, 1,048,576 total context / 393,216 output capability, paired cache/lifecycle ownership and trusted private-LAN scope; separate-machine LAN acceptance pending, not Internet/multi-user readiness.
 
@@ -26,7 +28,7 @@ Canonical current-state documents:
 - [M52R application integration](milestone-52r-application-integration.md) — **PASS**: consuming EOF, one/two-call effects and result re-entry, JSON/SSE exact retry/reconnect, fresh full MTP R1
 - [M53R normal-local admission](milestone-53r-normal-local.md) — **PASS**: fresh setup, strict delivered native/dependency/checkpoint identity, operator startup/shutdown and application acceptance
 - [M54R/M55R operational release decision](milestone-54r-55r-operational-release.md) — **M54R PASS, evidence-complete; RELEASE APPROVED, PROMOTION DEFERRED**: zero blockers, no added operational run, exact normal-local source-clone envelope; portable projection not required now
-- [Local MTP setup/API/operator boundary](mtp-local-release-candidate.md) — released source-clone profile, reproducible source/native setup and conservative application states
+- [Local MTP setup/API/operator boundary](mtp-local-release-candidate.md) — installed execution package setup and preserved singleton application states; historical source-clone instructions archived
 
 - [Runtime strategy](runtime-strategy.md) — production architecture and non-selected paths
 - [Implementation plan: post-M48 boundary and remaining work](implementation-plan.md#post-m48-production-boundary-and-remaining-work-bounded-execution-scope) — authoritative current roadmap: text standard-OFF core complete, not full production implementation; measured bounded 1M text and four-image/8K multimodal cores, deferred R1 and promotion

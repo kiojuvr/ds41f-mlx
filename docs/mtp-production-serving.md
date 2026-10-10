@@ -18,8 +18,8 @@ session/fence/sequence contract. The separate **`mtp-serving-v1`** opt-in expose
 ordinary `POST /v1/chat/completions`, `/v1/models`, and `/health`, without public
 sessions, sequence headers, certificates, or a dedicated client.
 
-Use the existing normal-local MTP environment and asset admission, not a new
-package or dependency stack:
+Use a provisioned MTP environment with the non-editable installed execution
+package and [current admission boundary](runtime-admission.md):
 
 ```sh
 export DS41F_CHECKPOINT=/absolute/official/DeepSeek-V4.1-Flash
@@ -31,18 +31,13 @@ curl http://127.0.0.1:8000/v1/chat/completions \
   -d '{"model":"deepseek-v4.1-flash","messages":[{"role":"user","content":"Reply with exactly OK."}],"max_tokens":16}'
 ```
 
-The source admission inventory in `third_party/mtp/normal-local.json` is refreshed
-for this implementation. After updating an existing source clone, refresh its
-local seal with the **unchanged admitted recipe wheel**:
-
-```sh
-/path/to/mtp-env/bin/python -m ds41f_mlx.mtp_identity seal \
-  --wheel third_party/mtp/deepseek_recipe-0.1.1-cp310-abi3-macosx_11_0_arm64.whl
-```
-
-Sealing verifies repository-admitted source/dependencies; it is not a new release
-qualification. Native recipe, oMLX archive, dependency locks, checkpoint admission,
-hardware envelope, and native topology are unchanged.
+`third_party/mtp/normal-local.json` is now historical qualification/build evidence,
+not a startup source or host-closure authority. There is no local seal refresh.
+Publish and install a qualified execution wheel; see [operations](operations.md).
+Checkpoint, recipe, canonical state and paired MTP/DSpark guarantees remain exact.
+Unrelated Homebrew native bytes use ABI compatibility, not closure SHA equality.
+The bounded migration acceptance is in `artifacts/execution-admission/`; historical
+qualification accounts below describe their original source/seal architecture.
 
 ### Direct trusted private-LAN serving
 

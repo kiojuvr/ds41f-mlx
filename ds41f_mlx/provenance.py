@@ -311,8 +311,9 @@ def release_manifest_checks() -> list[dict[str, Any]]:
 
 def inspect_runtime(config: RuntimeConfig | None = None) -> dict[str, Any]:
     cfg = config or load_runtime_config()
-    from .delivery import RECORD, inspect as inspect_delivery
-    if RECORD.exists():
+    from .delivery import inspect as inspect_delivery
+    import sysconfig
+    if Path(__file__).resolve().parents[1] == Path(sysconfig.get_paths()['purelib']).resolve():
         try:
             return inspect_delivery(cfg)
         except (ValueError, OSError, ImportError) as exc:

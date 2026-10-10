@@ -12,9 +12,10 @@ DEFAULT_CHECKPOINT = Path("/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.
 DEFAULT_OMLX = Path.home() / "omlx-0.7.0.release"
 DEFAULT_RECIPE = Path("/Volumes/SDXC-512/deepseek-v41-flash-mlx/third_party/deepseek-recipe")
 DEFAULT_KV_ROOT = Path("/Volumes/USB-SSD-RAID-0/ds41f-mlx/kv")
-# Repository projection uses provisioned resources, never historical donor paths.
-if (Path(__file__).resolve().parents[1] / 'release/promotion.json').exists():
-    import sysconfig
+# Installed production uses provisioned resources, never a development checkout.
+import sysconfig
+if (Path(__file__).resolve().parents[1] == Path(sysconfig.get_paths()['purelib']).resolve()
+        or (Path(__file__).resolve().parents[1] / 'release/promotion.json').exists()):
     DEFAULT_CHECKPOINT = Path('/official-checkpoint-must-be-explicitly-configured')
     DEFAULT_OMLX = Path(sysconfig.get_paths()['purelib'])
     DEFAULT_RECIPE = Path(sys.prefix) / 'share/ds41f-mtp/recipe'

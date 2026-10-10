@@ -274,7 +274,7 @@ def test_unsupported_completed_output_is_negative_profile_not_repair(monkeypatch
 def test_normal_local_checkpoint_byte_cache_invalidates_changed_file(tmp_path, monkeypatch):
     # New normal-local boundary: metadata alone may not certify weight bytes.
     from ds41f_mlx import mtp_identity as identity
-    monkeypatch.setattr(identity, 'RECORD', tmp_path/'identity.json')
+    monkeypatch.setattr(identity, 'CHECKPOINT_CACHE', tmp_path/'checkpoint-bytes.json')
     shard = tmp_path/'model.safetensors'
     shard.write_bytes(b'qualified')
     assets = {'shards':[{'name':shard.name,
@@ -289,9 +289,7 @@ def test_normal_local_checkpoint_byte_cache_invalidates_changed_file(tmp_path, m
     assert (tmp_path/'checkpoint-bytes.json').read_bytes() == receipt
 
 
-def test_normal_local_seal_rejects_unqualified_native_wheel(tmp_path):
+def test_local_reseal_is_not_an_admission_action():
     from ds41f_mlx import mtp_identity as identity
-    wheel = tmp_path/'unqualified.whl'
-    wheel.write_bytes(b'not the qualified M52R artifact')
-    with pytest.raises(ValueError, match='repository-qualified M52R wheel'):
-        identity.main(['seal', '--wheel', str(wheel)])
+    with pytest.raises(SystemExit):
+        identity.main(['seal'])
