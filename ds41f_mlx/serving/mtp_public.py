@@ -102,9 +102,10 @@ class LocalBoundary:
     Transport timeouts never revoke native ownership. Response finally blocks own
     shielded settlement. GET can observe busy while preparation/generation runs.
     """
-    def __init__(self, app, *, authority, body_timeout=30, send_timeout=30, ordinary=False):
+    def __init__(self, app, *, authority, body_timeout=30, send_timeout=30, ordinary=False, telemetry=None):
         self.app, self.authority = app, authority
         self.ordinary = ordinary
+        self.telemetry = telemetry
         self.body_timeout, self.send_timeout = body_timeout, send_timeout
         self.preparing = False
         self.preparation_lock = asyncio.Lock() if ordinary else None
@@ -172,6 +173,12 @@ class LocalBoundary:
                 return await deny(400, 'invalid_content_length')
             if cl and int(cl[0]) > body_limit:
                 return await deny(413, 'body_limit')
+            if self.telemetry is not None and self.ordinary:
+                from uuid import uuid4
+                scope['ds41f.diagnostic_id'] = uuid4().hex
+                self.telemetry.begin(scope['ds41f.diagnostic_id'])
+                if self.preparation_lock.locked():
+                    self.telemetry.phase(scope['ds41f.diagnostic_id'], 'QUEUED', queue_reason='http_preparation')
             if self.preparation_lock is not None:
                 # Transport/tokenizer capacity lease only, released immediately
                 # after recipe conversion. Executable requests queue exclusively
@@ -179,6 +186,8 @@ class LocalBoundary:
                 try:
                     await asyncio.wait_for(self.preparation_lock.acquire(), self.body_timeout)
                 except TimeoutError:
+                    if self.telemetry is not None:
+                        self.telemetry.finish(scope.get('ds41f.diagnostic_id'))
                     return await deny(503, 'preparation_busy')
             elif self.preparing:
                 return await deny(409, 'preparation_busy')
@@ -231,6 +240,8 @@ class LocalBoundary:
                 raise
         finally:
             release_preparation()
+            if self.telemetry is not None:
+                self.telemetry.finish(scope.get('ds41f.diagnostic_id'))
 
 
 class IngressError(Exception):

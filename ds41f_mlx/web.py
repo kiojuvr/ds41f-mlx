@@ -285,7 +285,22 @@ def main(argv=None):
             parser.error('non-loopback bind requires --allow-private-lan')
         if args.host not in ('0.0.0.0', '::') and not private_address(args.host):
             parser.error('bind must be loopback, a private IP, or a wildcard with --allow-private-lan')
-    import uvicorn
-    uvicorn.run(create_app(runtime_base_url=args.runtime_url, allow_private_lan=args.allow_private_lan), host=args.host, port=args.port, proxy_headers=False, ssl_certfile=args.ssl_certfile, ssl_keyfile=args.ssl_keyfile)
+    from .observability import Projection
+    from .operator_control import Control, CHAT_PORT
+    projection = Projection()
+    try:
+        control = Control(projection, CHAT_PORT)
+    except OSError:
+        parser.error('CONFLICT: chat control socket already in use')
+    try:
+        control.reserve_service(args.host, args.port)
+        app = create_app(runtime_base_url=args.runtime_url, allow_private_lan=args.allow_private_lan)
+        @app.on_event('startup')
+        async def ready():
+            projection.lifecycle('READY', dict(host=args.host, port=args.port))
+        control.run(app, host=args.host, port=args.port, proxy_headers=False,
+                    ssl_certfile=args.ssl_certfile, ssl_keyfile=args.ssl_keyfile)
+    finally:
+        control.close()
 
 if __name__ == '__main__': main()

@@ -18,6 +18,7 @@ from anyio import CancelScope
 from anyio.lowlevel import checkpoint
 
 from .deepseek_recipe_backend import DeepSeekRecipeRuntimeBackend, MODEL_ALIASES
+from ds41f_mlx.observability import phase, metrics
 
 
 @dataclass
@@ -238,6 +239,7 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
             if tap_start > C:
                 ends.insert(0, tap_start)
             app = None
+            phase(self, trace, 'SUFFIX_APPEND')
             append_t0 = perf_counter()
             capture_s = 0.
             try:
@@ -267,13 +269,17 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
                         C = end
                         mx.synchronize(generation_stream)
                     if checkpoint_capture is not None and end == len(ids)-2:
+                        phase(self, trace, 'CHECKPOINT_CAPTURE')
                         capture_t0 = perf_counter()
                         checkpoint_capture(rec.cache, rec.rings, ids[:end])
                         capture_s += perf_counter()-capture_t0
+                        phase(self, trace, 'SUFFIX_APPEND')
             finally:
                 for i, layer in original.items(): lm.layers[i] = layer
             trace['prompt_checkpoint_capture_s'] = capture_s
             trace['suffix_append_s'] = perf_counter()-append_t0-capture_s
+            phase(self, trace, 'P5_HANDOFF')
+            metrics(self, trace)
             handoff_t0 = perf_counter()
             context = DSparkCommittedContext.from_native(rec.rings, frontier=len(ids)-1, target_layer_ids=lm._config.dspark_target_layer_ids)
             live = LivePrefillResult.from_committed(app.commit_certificate, prefix_token_ids=ids[:-1])
@@ -298,6 +304,8 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
             trace.update(p5_handoff_s=perf_counter()-handoff_t0,
                          prefill_handoff_s=perf_counter()-t0, prompt_replay=rec.owner.prompt_replay_count,
                          full_cache_repack=app.final_execution.runner.full_cache_repack_count)
+            metrics(self, trace)
+            phase(self, trace, 'DECODING')
 
     def _next(self, rec, trace):
         import mlx.core as mx
@@ -315,6 +323,7 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
                 trace['first_canonical_s'] = perf_counter()-trace['t0']
                 trace['total_ttft_s'] = trace['first_canonical_s']
             trace['canonical_emitted'] = len(rec.owner.history.canonical_generated_tokens)
+            metrics(self, trace)
             return token
 
     def _advance_application(self, rec, trace):

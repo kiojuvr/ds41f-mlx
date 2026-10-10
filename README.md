@@ -273,6 +273,14 @@ Launch the qualified local runtime server:
 ~/.venvs/omlx-0.7.0.release/bin/python -m ds41f_mlx.ops start
 ```
 
+For ordinary MTP operation, activate the provisioned MTP environment and run
+`ds41f` to open the local operator TUI (stdlib curses, no additional packages).
+NOW shows the actual request phase and elapsed wait; Start/Stop/Restart use the
+canonical launcher and runtime's loopback graceful-control boundary. Quit leaves
+the runtime running; reopening rediscovers live state. Existing headless
+subcommands are unchanged. See [operator live observability](docs/operator-live-observability.md)
+for keys, snapshot schema, metric definitions and local acceptance results.
+
 Install the PDF extra in the existing runtime environment, then launch the optional
 browser client in a separate process:
 

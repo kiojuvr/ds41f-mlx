@@ -55,7 +55,9 @@ def test_default_stays_localhost(monkeypatch):
 def test_bind_option_requires_consent_and_disables_proxy_trust(monkeypatch):
     calls = []
     monkeypatch.setattr(web, 'RuntimeClient', Runtime)
-    monkeypatch.setitem(sys.modules, 'uvicorn', SimpleNamespace(run=lambda *args, **kwargs: calls.append(kwargs)))
+    from ds41f_mlx.operator_control import Control
+    monkeypatch.setattr(Control, 'reserve_service', lambda *args: None)
+    monkeypatch.setattr(Control, 'run', lambda self, app, **kwargs: calls.append(kwargs))
     with pytest.raises(SystemExit): web.main(['--host', '0.0.0.0'])
     with pytest.raises(SystemExit): web.main(['--host', '8.8.8.8', '--allow-private-lan'])
     web.main(['--host', '0.0.0.0', '--allow-private-lan'])

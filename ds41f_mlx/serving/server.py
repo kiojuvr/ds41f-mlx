@@ -215,7 +215,8 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
                   redoc_url=None if local_mtp else '/redoc',
                   openapi_url=None if local_mtp else '/openapi.json')
     if local_mtp or ordinary_mtp:
-        app.add_middleware(LocalBoundary, authority=f'127.0.0.1:{runtime_config.port}', ordinary=ordinary_mtp)
+        app.add_middleware(LocalBoundary, authority=f'127.0.0.1:{runtime_config.port}', ordinary=ordinary_mtp,
+                           telemetry=getattr(backend, 'telemetry', None))
     app.state.backend = backend
     app.state.recipe_tokenizer = tokenizer
     if ordinary_mtp:
@@ -243,12 +244,22 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
     def api_handler(protocol: str) -> Callable[[Request], Awaitable[Response]]:
         async def handler(request: Request) -> Response:
             arrival_t0 = perf_counter()
+            projection = getattr(backend, 'telemetry', None)
+            diagnostic_id = request.scope.get('ds41f.diagnostic_id')
+            if projection is not None:
+                projection.phase(diagnostic_id, 'RECEIVED')
             body = await request.body()
+            if projection is not None:
+                projection.phase(diagnostic_id, 'ENCODING')
             if ordinary_mtp:
                 if protocol != 'chat_completions':
                     raise RequestError('ordinary MTP supports Chat Completions only')
             prepared = await run_in_threadpool(prepare_request, protocol, body, tokenizer=tokenizer, recipe_path=recipe_path, options=options, checkpoint=getattr(backend, 'checkpoint', runtime_config.checkpoint_path), ordinary=ordinary_mtp)
             if ordinary_mtp:
+                prepared.diagnostic_id = diagnostic_id
+                if projection is not None:
+                    projection.metrics(diagnostic_id, prepared.phase_timings, len(prepared.token_ids))
+                    projection.phase(diagnostic_id, 'QUEUED')
                 prepared.arrival_t0 = arrival_t0
                 prepared.phase_timings['request_prepare_s'] = perf_counter()-arrival_t0
                 release = request.scope.get('ds41f.release_preparation')

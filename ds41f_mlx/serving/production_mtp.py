@@ -17,6 +17,7 @@ from omlx.request import Request, RequestOutput, RequestStatus, SamplingParams
 from .internal_mtp import InternalMTPQualificationBackend, QualificationSession
 from .paired_checkpoint import PairedCheckpointAuthority
 from .capacity import context_envelope, validate_ordinary_capacity
+from ds41f_mlx.observability import phase, metrics
 
 logger = logging.getLogger('uvicorn.error.ds41f')
 
@@ -52,12 +53,15 @@ class ProductionScheduler(Scheduler):
         def capture(target, rings, tokens):
             request.prompt_checkpoint = self.checkpoints.capture(target, rings, tokens)
         try:
-            restored = self.checkpoints.acquire(request.prompt_token_ids, timings=trace)
+            phase(self.backend, trace, 'CACHE_LOOKUP')
+            restored = self.checkpoints.acquire(request.prompt_token_ids, timings=trace,
+                observe=lambda name: phase(self.backend, trace, name))
             if restored is not None:
                 rec.cache, rec.rings, rec.canonical = restored
             request.cached_tokens = trace['cached_tokens'] = len(rec.canonical)
             request.remaining_tokens = request.prompt_token_ids[len(rec.canonical):]
             trace['remaining_suffix_tokens'] = len(request.remaining_tokens)
+            metrics(self.backend, trace)
             self.backend._start(rec, request.prepared, request.recipe_tokenizer, trace,
                                 checkpoint_capture=capture, batch_generator_factory=self._new_batch)
             # P5 revoked the producer and inserted the held-out terminal into
@@ -79,6 +83,7 @@ class ProductionScheduler(Scheduler):
     def _retire(self, request, *, error=None, cancelled=False):
         rec, trace = request.execution, request.trace
         publication = False
+        phase(self.backend, trace, 'SETTLING')
         try:
             if error is None:
                 if rec.owner is not None:
@@ -130,6 +135,17 @@ class ProductionScheduler(Scheduler):
             trace.update(cancelled=cancelled, cache_published=publication,
                          elapsed_s=perf_counter()-trace['t0'])
             self.last_settlement = trace
+            metrics(self.backend, trace)
+            projection = getattr(self.backend, 'telemetry', None)
+            if projection is not None:
+                try:
+                    projection.cache_summary(self.checkpoints.paged.get_stats().to_dict())
+                except Exception:
+                    pass
+                projection.finish(trace.get('diagnostic_id'),
+                                  'error' if error else 'abort' if cancelled else semantic_finish)
+                if error:
+                    projection.lifecycle('FAILED')
             logger.info('MTP settled request=%s cached=%d canonical=%s published=%s cancelled=%s error=%s replay=%s repack=%s',
                         request.request_id, request.cached_tokens, trace.get('canonical_frontier'),
                         publication, cancelled, error, trace.get('prompt_replay'), trace.get('full_cache_repack'))
@@ -151,6 +167,9 @@ class ProductionScheduler(Scheduler):
         if request_id not in self.running:
             self.waiting = type(self.waiting)(r for r in self.waiting if r.request_id != request_id)
             self.requests.pop(request_id, None)
+            projection = getattr(self.backend, 'telemetry', None)
+            if projection is not None:
+                projection.finish(request.trace.get('diagnostic_id'), 'abort')
             output = RequestOutput(request_id=request_id, finished=True, finish_reason='abort')
             output.recipe_events, output.recipe_response = (), None
             self._completed.append(output)
@@ -242,6 +261,7 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
                              t0=getattr(prepared, 'arrival_t0', perf_counter()), generated=0,
                              decode_s=0., first_canonical_s=None, canonical_emitted=0)
         request.trace.update(getattr(prepared, 'phase_timings', {}))
+        request.trace['diagnostic_id'] = getattr(prepared, 'diagnostic_id', None)
         self.scheduler.add_request(request)
 
     async def _pump(self):

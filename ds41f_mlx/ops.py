@@ -21,6 +21,10 @@ def _run_module(module: str, args: list[str]) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
+    argv = sys.argv[1:] if argv is None else argv
+    if not argv:
+        from .operator_tui import main as tui_main
+        return tui_main()
     parser = argparse.ArgumentParser(description="ds41f release operations")
     sub = parser.add_subparsers(dest="cmd", required=True)
     sub.add_parser("inspect", help="inspect release manifest, configuration and provenance")

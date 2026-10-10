@@ -167,7 +167,7 @@ class PairedCheckpointAuthority:
         finally:
             self.paged.release_for_eviction([block.block_id])
 
-    def acquire(self, prompt, *, timings=None):
+    def acquire(self, prompt, *, timings=None, observe=None):
         # Leave a genuine suffix append before P5's terminal holdout. In
         # particular, NEVER turn an exact N hit into N-1 by recurrent trimming.
         lookup_t0 = perf_counter()
@@ -188,11 +188,21 @@ class PairedCheckpointAuthority:
             try:
                 if checkpoint is not None and len(checkpoint.tokens) == C:
                     try:
+                        if observe is not None:
+                            try:
+                                observe('RESTORING')
+                            except Exception:
+                                pass
                         restore_t0 = perf_counter()
                         try:
                             target, rings, tokens = checkpoint.restore(self.identity, prompt, self.mx)
                         finally:
                             restore_s += perf_counter()-restore_t0
+                            if observe is not None:
+                                try:
+                                    observe('CACHE_LOOKUP')
+                                except Exception:
+                                    pass
                             if timings is not None:
                                 timings.update(paired_restore_s=restore_s,
                                                cache_lookup_s=perf_counter()-lookup_t0-restore_s)
