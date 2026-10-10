@@ -40,11 +40,12 @@ def test_projection_is_copy_and_content_free():
     p.finish('opaque-1', 'tool_calls')
     assert p.snapshot()['active_requests'] == 0
     text = '\n'.join(render(p.snapshot()))
-    assert 'SERVER IDLE' in text and 'WAITING FOR CLIENT' in text
-    assert '90.0%' in text and 'NEW 10 tokens' in text
-    assert 'NEW PREFILL 9 tokens' in text
-    assert 'DECODE 20.0 tok/s' in text
-    assert 'TTFT 100.0 ms' in text
+    assert 'IDLE' in text and 'WAITING FOR CLIENT' in text
+    assert '90.0%' in text and '20.0 tok/s' in text
+    assert '100.0 ms' in text
+    from ds41f_mlx.operator_dashboard import Dashboard
+    assert Dashboard(p.snapshot()).new == 10
+    assert Dashboard(p.snapshot()).work == 9
 
 
 def test_queue_age_and_local_elapsed():
@@ -55,9 +56,9 @@ def test_queue_age_and_local_elapsed():
     assert s['active_requests'] == s['queued_requests'] == 1
     assert s['current_request']['request_id'] == 'a'
     t0 = s['sampled_mono']
-    before, after = render(s, t0)[0], render(s, t0+5)[0]
+    before, after = '\n'.join(render(s, t0)), '\n'.join(render(s, t0+5))
     assert before != after
-    assert '5.00 s' in after and 'QUEUED' in after
+    assert '5.00 s' in after and 'QUEUE' in after
     p.finish('a', 'stop')
     assert p.snapshot()['current_request']['current_phase'] == 'QUEUED'
 
@@ -68,7 +69,7 @@ def test_last_settled_mtp_and_alignment():
         canonical_frontier=42, target_offsets=[42]*40, dspark_offsets=[42]*5))
     p.finish('a', 'stop')
     text = '\n'.join(render(p.snapshot()))
-    assert 'MTP ACCEPT 80.0%' in text and 'ALIGNED (last settled)' in text
+    assert '80.0%' in text and '✓ ALIGNED' in text
 
 
 def test_control_local_boundary_and_graceful_callback():

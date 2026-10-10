@@ -8,10 +8,42 @@ error without affecting `ds41f start`, `inspect`, or `accept`. The frozen MTP
 package inventory is not expanded for a UI framework.
 
 Keys: **S** Start, **X** graceful Stop, **R** Restart, **C** Chat Start,
-**V** Chat Stop, **Q** Quit, arrows scroll. Layout reflows on terminal resize.
-NOW/current phase/phase elapsed/request elapsed precede performance and diagnostics.
-Elapsed times refresh locally every 100ms, using the same machine's monotonic
-clock; snapshot polling is 400ms. No spinner or synthetic activity.
+**V** Chat Stop, **Q** Quit, **D** toggle Diagnostics, **?** toggle help.
+Arrows scroll secondary views only; the normal dashboard never scrolls.
+The footer stays at the bottom. Controls remain available in every view.
+
+The dashboard puts NOW/current phase/phase elapsed/request elapsed and queue counts
+first, then performance and context, then compact alignment/frontier/replay/repack
+health. Color is limited to runtime-state and active-phase labels and actual
+warnings/errors. Headers and phase rails are not colored as a whole; healthy
+alignment rows are monochrome, with only anomalous fields emphasized in red.
+Ordinary labels and values use the default foreground, secondary labels are dim,
+and important numeric values are bold. MTP acceptance and
+alignment/frontier describe the last settled request; other metrics describe the
+current request, or the last request when idle. Idle only shows WAITING FOR CLIENT
+when the last settled finish reason was `tool_calls`.
+
+At >=100 columns performance/context share two columns; at 70–99 they stack;
+smaller terminals use compact labels without dropping metric fields when space
+permits. Content width is bounded to 112 columns; stacked metric columns are
+bounded to 56 so labels and values do not drift apart on resize. Available height
+is spent on gaps between sections before information is reduced. Observed request
+timings use aligned cells rather than a long clipped line. The phase rail includes
+RECEIVED, QUEUED, CHECKPOINT and settlement as well as inference phases; complete
+phase tokens move to another row when necessary. It shows **only observed**
+completed/current phases, not presumed prior or future execution, and is not an
+ordered transition log (the projection retains durations, not transition history).
+No prose wrapping is used. Only physically short viewports drop timings and then
+the rail before reducing the core to an instrument strip; all details remain in
+Diagnostics. Raw cache, queue reasons, subphase timings and other low-level values
+continue to live in Diagnostics.
+
+Request elapsed times refresh locally every 100ms, using the same machine's
+monotonic clock; snapshot polling is 400ms. The current authoritative snapshot
+has no lifecycle-start timestamp: LOADING MODEL therefore displays elapsed `—`
+(including rediscovery), never an observation-age timer presented as load time.
+Diagnostics states that lifecycle elapsed is not published. No spinner,
+percentage, progress bar or synthetic activity.
 
 ## Process and control boundary
 
@@ -126,7 +158,19 @@ results, tokens, file/source contents, native objects or exception text enters
 telemetry. Diagnostic update failures are swallowed, never inference decisions.
 Only current requests and one last completion are retained in process memory.
 
-## Actual local acceptance
+## Dashboard presentation acceptance
+
+The presentation redesign leaves the projection schema, runtime, launcher and
+lifecycle methods unchanged. Focused tests cover states, queues, honest unknowns,
+metric definitions, content exclusion, observed-only rails, layout breakpoints,
+height degradation, integrity anomalies, diagnostics and help. A real curses PTY
+passes exercised 110×32, 80×28, 60×20/26 and 40×10 dashboard sizes, Diagnostics resize
+and scrolling, help and Quit. Captured terminal cells were inspected for hierarchy,
+column alignment, clipping and the stable footer. This pass used disposable
+content-free Projection fixtures, not model inference; the loaded-runtime/control
+acceptance below is historical and is not claimed as rerun for this UI-only change.
+
+## Actual local acceptance (pre-redesign runtime/control)
 
 Verified using the installed `ds41f` executable through a real PTY and real
 OpenAI-compatible requests on the provisioned MTP environment:

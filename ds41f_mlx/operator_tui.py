@@ -5,12 +5,12 @@ import asyncio
 import json
 import subprocess
 import sys
-import textwrap
 from time import monotonic
 from urllib.request import Request, urlopen
 from urllib.error import URLError
 
 from .operator_control import RUNTIME_PORT, CHAT_PORT, tui_guard
+from .operator_dashboard import Viewport, render_screen, command_strip
 
 
 def call(port, path='/ds41f/status', method='GET'):
@@ -29,65 +29,24 @@ def launch(chat=False, endpoint=None):
                             start_new_session=True)
 
 
-def number(value, unit=''):
-    if value is None:
-        return '—'
-    return (f'{value:,}' if isinstance(value, int) else f'{value:,.1f}') + unit
-
-
 def render(snapshot, now=None):
-    now = monotonic() if now is None else now
-    if snapshot is None:
-        return 'SERVER STOPPED\nNo ds41f runtime control listener.', '', '', ''
-    r, last = snapshot['current_request'], snapshot['last_request']
-    state, queue, active = snapshot['state'], snapshot['queued_requests'], snapshot['active_requests']
-    if r:
-        phase = r['current_phase']
-        now_text = (f"{phase.replace('_', ' ')}   {now-r['phase_started_mono']:.2f} s\n"
-                    f"request {now-r['request_started_mono']:.2f} s   active {active}   queued {queue}")
-        waiting = [item for item in snapshot['requests'] if item['current_phase'] == 'QUEUED']
-        if waiting:
-            age = max(now-item['queue_entered_mono'] for item in waiting)
-            reasons = ', '.join(sorted({item.get('queue_reason', 'scheduler_worker') for item in waiting}))
-            now_text += f'\nQUEUED  oldest {age:.2f} s — {reasons}; waiting behind active request'
-    elif state == 'READY':
-        now_text = 'SERVER IDLE — no request waiting inside ds41f'
-        if last:
-            now_text += f"\nlast request {now-last['finished_mono']:.1f} s ago"
-            if last['finish_reason'] == 'tool_calls':
-                now_text += '\nWAITING FOR CLIENT — last finish: tool_calls; no active request'
-    else:
-        now_text = state + ' — runtime lifecycle'
-    m = (r or last or {}).get('metrics', {})
-    label = 'current' if r else 'last'
-    prompt, cached = m.get('prompt_tokens'), m.get('cached_tokens')
-    new = None if prompt is None or cached is None else prompt-cached
-    hit = None if not prompt or cached is None else 100*cached/prompt
-    decode = m.get('generated', 0)/m['decode_s'] if m.get('decode_s', 0) else None
-    # Only genuine new prefill work; excludes terminal P5 holdout.
-    prefill_work = max(0, new-1) if new is not None else None
-    prefill = prefill_work/m['suffix_append_s'] if m.get('suffix_append_s', 0) and prefill_work else None
-    ttft = m.get('total_ttft_s')
-    stats = (last or {}).get('metrics', {})
-    drafted = stats.get('proposed_drafts', 0)
-    accept = 100*stats.get('accepted_drafts', 0)/drafted if drafted else None
-    performance = (f'DECODE {number(decode, " tok/s")}   PREFILL {number(prefill, " tok/s")} ({label})\n'
-                   f'TTFT {number(None if ttft is None else ttft*1000, " ms")}   MTP ACCEPT {number(accept, "%")} (last settled)')
-    capacity = (snapshot.get('endpoint') or {}).get('context_tokens')
-    context = (f'CONTEXT / PROMPT {number(prompt)} / {number(capacity)}   CACHE HIT {number(hit, "%")} ({label})\n'
-               f'CACHED {number(cached)} / {number(prompt)} tokens   NEW {number(new)} tokens\n'
-               f'NEW PREFILL {number(prefill_work)} tokens (excludes terminal P5 token)')
-    durations = (r or last or {}).get('completed_phase_durations', {})
-    timings = '  |  '.join(f'{key.removesuffix("_ms").upper()} {value:.0f}ms' for key, value in durations.items())
-    detailed = '  |  '.join(f'{key.removesuffix("_s")} {m[key]*1000:.0f}ms' for key in
-        ('recipe_convert_s', 'recipe_render_s', 'recipe_encode_s', 'cache_lookup_s', 'paired_restore_s',
-         'prompt_checkpoint_capture_s', 'suffix_append_s', 'p5_handoff_s', 'first_decode_call_s') if key in m)
-    aligned = stats.get('aligned')
-    diagnostic = (f"REPLAY {m.get('prompt_replay', '—')}   REPACK {m.get('full_cache_repack', '—')}   "
-                  f"FRONTIER {stats.get('canonical_frontier', '—')}   "
-                  f"{'ALIGNED' if aligned else 'NOT ALIGNED' if aligned is False else '—'} (last settled)\n"
-                  f'{timings}\n{detailed}\nCACHE {json.dumps(snapshot.get("cache"), ensure_ascii=False)}')
-    return now_text, performance, context, diagnostic
+    """Text projection for headless checks; terminal uses explicit viewport layouts."""
+    return tuple(line.text for line in render_screen(snapshot, Viewport(100, 40), now=now))
+
+
+def terminal_styles(curses):
+    styles = {'': 0, 'dim': curses.A_DIM}
+    if curses.has_colors():
+        curses.start_color()
+        try:
+            curses.use_default_colors()
+            background = -1
+        except curses.error:
+            background = curses.COLOR_BLACK
+        for pair, name in enumerate(('green', 'cyan', 'yellow', 'red'), 1):
+            curses.init_pair(pair, getattr(curses, 'COLOR_'+name.upper()), background)
+            styles[name] = curses.color_pair(pair)
+    return styles
 
 
 class Operator:
@@ -97,6 +56,7 @@ class Operator:
         self.children = {}
         self.message = ''
         self.offset = 0
+        self.mode = 'dashboard'
         self.conflicts = set()
 
     async def poll(self):
@@ -176,6 +136,7 @@ class Operator:
             curses.curs_set(0)
         except curses.error:
             pass
+        styles = terminal_styles(curses)
         poll_task = None
         action_task = None
         last_poll = -1.
@@ -188,37 +149,49 @@ class Operator:
                     poll_task = asyncio.create_task(self.poll())
                     last_poll = now
                 height, width = screen.getmaxyx()
-                state = (self.snapshot or {}).get('state', 'CONFLICT' if RUNTIME_PORT in self.conflicts else 'STOPPED')
-                if state == 'READY' and self.snapshot.get('current_request'):
-                    state = 'BUSY'
-                lines = [f'ds41f — DeepSeek-V4.1-Flash   {state}', '']
-                panels = render(self.snapshot)
-                if self.snapshot is None and RUNTIME_PORT in self.conflicts:
-                    panels = ('CONFLICT — service :8000 occupied without ds41f control; no startup attempted', *panels[1:])
-                for title, value in zip(('NOW', 'PERFORMANCE', 'CONTEXT / CACHE', 'RUNTIME DIAGNOSTICS'), panels):
-                    lines.extend([f'── {title} ──', *value.splitlines(), ''])
-                chat = self.chat_snapshot['state'] if self.chat_snapshot else 'CONFLICT' if CHAT_PORT in self.conflicts else 'STOPPED'
-                lines.extend([f'CHAT {chat} — ds41f_mlx.web :8080', self.message])
-                wrapped = [piece for line in lines for piece in (textwrap.wrap(line, max(1, width-2)) or [''])]
-                self.offset = max(0, min(self.offset, len(wrapped)-max(1, height-2)))
+                lines = render_screen(self.snapshot, Viewport(width, height), now=now,
+                    mode=self.mode, conflict=RUNTIME_PORT in self.conflicts,
+                    chat=self.chat_snapshot, chat_conflict=CHAT_PORT in self.conflicts,
+                    message=self.message)
+                # Main dashboard never scrolls. Secondary views retain the header.
+                header_count = 1 if width < 70 else 2
+                if self.mode == 'dashboard':
+                    self.offset = 0
+                    visible = lines
+                else:
+                    body_height = max(0, height-1-header_count)
+                    self.offset = max(0, min(self.offset, len(lines)-header_count-body_height))
+                    visible = lines[:header_count] + lines[header_count+self.offset:header_count+self.offset+body_height]
                 screen.erase()
-                for row, line in enumerate(wrapped[self.offset:self.offset+max(0, height-2)]):
+                for row, line in enumerate(visible[:max(0, height-1)]):
                     try:
-                        screen.addnstr(row, 1, line, max(0, width-2), curses.A_BOLD if 'NOW' in line or row+self.offset in (0, 3) else 0)
+                        screen.addnstr(row, 1, line.text, max(0, width-2),
+                                       styles.get(line.tone, 0) | (curses.A_BOLD if line.bold else 0))
+                        for start, length in line.values:
+                            if start < width-2:
+                                screen.addnstr(row, 1+start, line.text[start:start+length],
+                                               min(length, width-2-start), curses.A_BOLD)
+                        for start, length, tone in line.accents:
+                            if start < width-2:
+                                screen.addnstr(row, 1+start, line.text[start:start+length],
+                                               min(length, width-2-start), styles.get(tone, 0) | curses.A_BOLD)
                     except curses.error:
                         pass
                 try:
-                    screen.addnstr(max(0, height-1), 0,
-                        '[S] Start [X] Stop [R] Restart [C] Chat Start [V] Chat Stop [Q] Quit ↑↓ scroll', max(0, width-1))
+                    screen.addnstr(max(0, height-1), 0, command_strip(self.mode, width), max(0, width-1), curses.A_DIM)
                 except curses.error:
                     pass
                 screen.refresh()
                 key = screen.getch()
                 if key in (ord('q'), ord('Q')):
                     break
-                if key == curses.KEY_UP:
+                if key in (ord('d'), ord('D'), ord('?')):
+                    target = 'help' if key == ord('?') else 'diagnostics'
+                    self.mode = 'dashboard' if self.mode == target else target
+                    self.offset = 0
+                if self.mode != 'dashboard' and key == curses.KEY_UP:
                     self.offset -= 1
-                elif key == curses.KEY_DOWN:
+                elif self.mode != 'dashboard' and key == curses.KEY_DOWN:
                     self.offset += 1
                 commands = {'s': ('start', False), 'x': ('stop', False), 'r': ('restart', False),
                             'c': ('start', True), 'v': ('stop', True)}
