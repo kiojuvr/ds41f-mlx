@@ -230,15 +230,75 @@ only the first subsequent BatchGenerator.next plus stream synchronization.
 queue/load/resource/metadata work remains visible in total TTFT, not attributed
 to attention by subtraction. No timing adds extra MLX evaluation/synchronization.
 
-Investigation status: **measurement blocked, not classified**. Two independent
-model runs terminated with exit 137 before producing the first short-case
-receipt while the existing production process on port 8000 remained running.
-The cause of termination is not established; no OOM diagnosis or performance
-conclusion is claimed. The existing process was not stopped/restarted. A
-single-model maintenance window is required to obtain the scaling table.
-No optimization, array-sharing ownership change or default-promotion decision
-has been made; replay/repack/state checks are driver assertions, not completed
-long-context evidence. Cached token counts alone are not TTFT evidence.
+### Measured production result
+
+Completed single-model runs using the official checkpoint and admitted
+normal-local environment on the 512 GiB Mac Studio. The previous port-8000
+server was already stopped when the maintenance window began. The two earlier
+concurrent-model attempts exited 137 without measurements; their cause remains
+unestablished and they are excluded. One seed followed by one hit per size:
+
+| Phase (seconds) | 4,085 tokens | 32,765 tokens | 219,989 tokens |
+| --- | ---: | ---: | ---: |
+| cached tokens / remaining suffix | 4,083 / 2 | 32,763 / 2 | 219,987 / 2 |
+| request preparation (includes recipe below) | 0.003889 | 0.029638 | 0.201997 |
+| recipe conversion + render + encode | 0.003593 | 0.029142 | 0.200694 |
+| cache lookup | 0.000215 | 0.001504 | 0.009346 |
+| paired restore | 0.020977 | 0.122439 | 0.010983 |
+| prompt checkpoint capture | 0.001554 | 0.002200 | 0.006688 |
+| real suffix append | 0.060462 | 0.062647 | 0.071366 |
+| P5 handoff (includes terminal bootstrap) | 0.052892 | 0.057411 | 0.081052 |
+| first native decode | 0.063258 | 0.065571 | 0.068390 |
+| first decode call including ownership checks | 0.063340 | 0.066202 | 0.071905 |
+| first canonical / total TTFT | **0.204150** | **0.343342** | **0.456946** |
+
+Do not sum request preparation and its nested recipe row, or native decode and
+its enclosing decode-call row. The small residual includes enqueue, resource,
+metadata and worker transfer costs. HTTP JSON completion is later than canonical
+TTFT because it also waits for semantic completion and settlement/publication.
+All three seed/hit pairs returned `OK`. Hits had replay=0, repack=0, published
+pairs, empty queues and retired predictions; all forty target and three DSpark
+offsets agreed at canonical frontiers 4,087 / 32,767 / 219,991.
+
+**Scaling:** encode alone was 0.003488 / 0.028724 / 0.198566 seconds;
+conversion was 0.000097 / 0.000393 / 0.002001 and the explicit render was only
+0.000007 / 0.000025 / 0.000127. Full-conversation encoding is the clearly
+context-proportional preparation phase. It accounts for about 78% of the
+short-to-long TTFT increase. Lookup also grows with context, but is only 9 ms
+at 220K. First native decode increases from 63 to 68 ms, not an
+attention-dominated long-context TTFT. Suffix/P5/decode together contribute a
+roughly 0.18–0.22-second model/generation floor.
+
+The initial medium restore was non-monotonic. One bounded medium-only recheck
+(`--sizes 32768 --hit-repeats 2`) reproduced a first-hit restore of 0.125397 s
+(TTFT 0.353495), followed by 0.001659 s (TTFT 0.214746) on the second hit.
+This is a first-hit transient, not demonstrated O(context) scaling; its cause
+is not assigned to backing copies, attention, or tokenization. Long restore
+was only 11 ms. These results do **not** establish the hypothesis that copying
+220K backing state dominates restoration. Per the investigation rule, no
+array-sharing/restore optimization was pursued.
+
+**Classification: D (expected protocol preparation plus ordinary model/handoff
+floor), with context growth principally B.** No A (dominant avoidable full-hit
+work) or C (long-attention-dominated first decode) was established. The unusually
+long TTFT reported in the motivating workload was not reproduced by this
+synthetic fixture: the long full hit reached canonical output in 0.457 s.
+This result is not a universal bound for all message shapes, tokenizer inputs,
+queueing or memory pressure, nor a client-specific diagnosis.
+
+No performance fix was justified, so there is no optimization before/after
+claim. Instrumentation did not change cache ownership, settlement, branch/edit,
+cancellation or singleton semantics. Affected regressions: **66 passed,
+14 subtests passed**, including immutable native-array/wrapped-ring snapshots,
+branch/invalid-pair eviction, lifecycle interruption, P5 and wired-limit cleanup.
+No production blocker for default promotion was identified **by this finite
+investigation**; other promotion gates remain unchanged. The remaining dominant
+O(context) encoding cost is expected with the stateless ordinary API; an
+incremental tokenizer/session protocol is outside scope. No further optimization
+campaign is warranted by these measurements.
+
+The single receipt `artifacts/mtp-cache-hit-ttft/diagnostic.json` contains the
+three seed/hit traces and the bounded medium recheck. Investigation stops here.
 
 ## Paired capture and restore
 

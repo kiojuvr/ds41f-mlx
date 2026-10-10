@@ -11,7 +11,7 @@ import time
 from pathlib import Path
 
 
-def run(sizes, output):
+def run(sizes, output, *, hit_repeats=1):
     from fastapi.testclient import TestClient
     from ds41f_mlx.mtp_identity import config, inspect
     from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
@@ -24,7 +24,7 @@ def run(sizes, output):
     backend.dependency_identity = identity['identity_sha256']
     tokenizer = load_v41_tokenizer(cfg.recipe_path)
     app = create_app(profile='mtp-serving-v1', runtime_config=cfg, backend=backend)
-    receipt = dict(identity=backend.dependency_identity, cases=[])
+    receipt = dict(identity=backend.dependency_identity, hit_repeats=hit_repeats, cases=[])
     output.parent.mkdir(parents=True, exist_ok=True)
     def save():
         output.write_text(json.dumps(receipt, indent=2)+'\n')
@@ -44,7 +44,7 @@ def run(sizes, output):
                 request = body(units)
                 case = dict(requested_tokens=size, rows=[])
                 receipt['cases'].append(case)
-                for label in ('seed', 'hit'):
+                for label in ('seed', *('hit' if i == 0 else f'hit_{i+1}' for i in range(hit_repeats))):
                     print(f'Running {size} {label}', flush=True)
                     t0 = time.perf_counter()
                     response = client.post('/v1/chat/completions', json=request)
@@ -55,12 +55,13 @@ def run(sizes, output):
                     case['rows'].append(row)
                     save()
                     print(json.dumps(dict(size=size, label=label, usage=result['usage'], phases={k:v for k,v in trace.items() if k.endswith('_s')})), flush=True)
+                    assert result['choices'][0]['message']['content'] == 'OK'
                     assert trace['cache_published'] and not trace['cancelled']
                     assert trace['prompt_replay'] == trace['full_cache_repack'] == 0
                     assert set(trace['target_offsets']+trace['dspark_offsets']) == {trace['canonical_frontier']}
                     health = client.get('/health').json()
                     assert not health['fatal_error'] and not health['active_requests'] and not health['queued_requests']
-                    if label == 'hit':
+                    if label.startswith('hit'):
                         assert trace['cached_tokens'] == result['usage']['prompt_tokens']-2
                         assert trace['remaining_suffix_tokens'] == 2
                 save()
@@ -73,5 +74,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--sizes', nargs='+', type=int, default=[4096, 32768, 220000])
     parser.add_argument('--output', type=Path, default=Path('artifacts/mtp-cache-hit-ttft/diagnostic.json'))
+    parser.add_argument('--hit-repeats', type=int, choices=[1, 2, 3], default=1,
+                        help='Bounded repeat only for phase noise checks')
     args = parser.parse_args()
-    run(args.sizes, args.output)
+    run(args.sizes, args.output, hit_repeats=args.hit_repeats)
