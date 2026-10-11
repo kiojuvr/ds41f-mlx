@@ -1,50 +1,62 @@
 # HC and MoE runtime
 
-HC and MoE are part of the local native model core and are implemented under `native/include/dsv41`, `native/src/mhc`, `native/src/moe`, `native/metal/mhc`, and `native/metal/moe`.
+This page owns **HC/MoE math, state classification and storage/dispatch boundaries**.
+[Correctness](correctness.md) outranks implementation lineage;
+[architecture](architecture.md) selects execution. The
+[source edition](archive/editorial-baseline/moe-hc.md.txt) preserves the former
+native-import production/residency descriptions and rejected candidates.
 
 ## HC ownership
 
-HC wraps both attention and FFN/MoE subblocks:
+HC wraps attention and FFN/MoE with pre-mix, subblock and post/collapse.
+`pre_mix`, hidden values and related intermediates are call-local handoffs, not
+independent persistent session authority. Preserve required normalization,
+accumulation, cast and mixing semantics; a fused implementation must retain
+necessary intermediate dtype boundaries, not merely similar final output.
 
-```text
-HC pre-mix
-  attention or FFN/MoE subblock
-HC post/collapse
-```
-
-`pre_mix`-style intermediates are call-local handoffs, not persistent session state.  Correctness authority remains the reviewed official HC semantics and local validators; imported source is the production implementation.
+Current OFF owners include `model_execution/language.py` and
+`hyper_connection.py`; ordinary MTP retains admitted pinned model math.
+Native HC headers/source/Metal remain executable reference and reusable material,
+not the selected complete model engine.
 
 ## MoE structure
 
-The production MoE path preserves legacy arithmetic and ordering:
+Preserve the selected qualified operation contract:
 
-1. gate computation
-2. route selection
-3. tie policy and expert ordering
-4. shared expert computation
-5. routed expert computation
-6. route reduction
-7. shared/routed merge in the imported order
+1. Gate computation and route selection.
+2. Required tie handling and expert ordering on valid backend-produced values.
+3. Shared and routed expert computation with admitted precision/cast boundaries.
+4. Route weighting/reduction and shared/routed merge semantics.
 
-Do not simplify routing arithmetic, tie handling, cast boundaries, expert ordering, or shared/routed merge order without a new authority-backed qualification.
+Do not simplify routing arithmetic, ties, quantization, expert ordering or merge
+boundaries without authority-backed affected qualification. Backend-local floating
+trajectories need not share universal bit/logit/token identity; that is not license
+to change a discrete algorithm or hide an invalid route.
+
+OFF's first-party projection/routing/switch-layer owners choose admitted stateless
+acceleration primitives. Kernel names, batch shapes, route counts and portable
+primitive fallbacks do not select a donor model fallback or qualify another graph.
 
 ## Expert storage and residency
 
-Implemented components include:
-
-- expert bank / atlas
-- expert backing
-- grouped expert pipeline
-- runtime residency infrastructure
-
-Current production policy is the imported accepted residency behavior.  Late file-backed residency work is classified as non-default candidate/archival unless separately promoted by evidence.  Static expert weights/backing are model data, not session state.
+Static expert weights/backing are model data, not session state. Selected dense
+prefill uses the full-resident backbone/SSD-Engram policy; OFF model lifetime and
+allocator/wired admission are defined in [runtime strategy](runtime-strategy.md).
+Do not inherit a native expert-bank/atlas/residency experiment as current OFF/MTP
+policy or add file-backed expert dispatch merely because the reference contains it.
+Checkpoint storage/precision and installed dependency/native identity remain
+[admitted resources](runtime-admission.md), separately from host compatibility.
 
 ## Known distinctions
 
-Backend/tie differences are documented limitations.  They are not repaired opportunistically during migration or documentation cleanup.
+Historical backend/tie observations remain evidence, not semantic exceptions.
+Review against official algorithms and the qualified backend configuration;
+documentation cleanup neither repairs nor blesses numerical differences.
 
 ## Not production
 
-- fused mHC decode candidate: rejected/deferred and unavailable as a production selector
-- experimental decode graphs/performance-only candidates: diagnostic/archive only
-- late file-backed residency candidate: not canonical production by default
+The edition retains the rejected/deferred fused-mHC decode, experimental decode
+graph and late file-backed residency classifications. Retained native/reference
+or investigation material does not create a production selector. Any independently
+justified future change needs affected math/state/performance qualification, not
+a duplicate core or a new campaign requested by this page.

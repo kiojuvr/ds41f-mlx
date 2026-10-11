@@ -80,6 +80,23 @@ Before the eighth CURRENT compilation:
 
 The R1 **guide** edition changes no manifest-bound contract, fixture or verifier.
 
+## Numerical, prefill and provenance pages — `fc2f788`
+
+Before the ninth CURRENT compilation:
+
+- [Correctness policy source](correctness.md.txt)
+- [Attention contract source](attention.md.txt)
+- [HC/MoE contract source](moe-hc.md.txt)
+- [Engram contract source](engram.md.txt)
+- [Provenance policy source](provenance.md.txt)
+- [Production prefill source](production-mlx-prefill-substrate.md.txt)
+- [Tool completion report source](tool-capability-completion.md.txt)
+- [PDF acceptance report source](pdf-document-acceptance.md.txt)
+- [Private-LAN launch source](private-lan.md.txt)
+
+The tool/PDF reports are source-scoped evidence, not new qualification decisions.
+The LAN change uses the installed launcher without changing the network boundary.
+
 The `.md.txt` files are retained **source evidence**, not current instructions.
 Their Markdown, old relative links and paths are preserved verbatim; resolve
 relative references from each file's original location when studying that edition.
@@ -95,4 +112,5 @@ recorded in `artifacts/documentation-authority/current-compilation-01.json` and
 `artifacts/documentation-authority/current-compilation-05.json` and
 `artifacts/documentation-authority/current-compilation-06.json` and
 `artifacts/documentation-authority/current-compilation-07.json` and
-`artifacts/documentation-authority/current-compilation-08.json`.
+`artifacts/documentation-authority/current-compilation-08.json` and
+`artifacts/documentation-authority/current-compilation-09.json`.

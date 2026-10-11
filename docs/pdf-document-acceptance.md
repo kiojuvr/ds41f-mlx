@@ -1,5 +1,12 @@
 # PDF document application acceptance
 
+This is **retrospective application evidence** for its recorded source/runtime
+inputs. Counts, ports and service statements are acceptance-time observations,
+not present process readiness or later-HEAD qualification. Current behavior and
+setup belong to [PDF workflow](pdf-document-workflow.md) and [operations](operations.md).
+The [original report edition](archive/editorial-baseline/pdf-document-acceptance.md.txt)
+is preserved; acceptance JSON and original receipts/results are unchanged.
+
 Real official **DeepSeek-V4.1-Flash**, actual Chat Server/runtime, not a mock-model
 acceptance. Implementation and acceptance are application-layer work, not runtime
 requalification, R1, release promotion or a new production Vision capability.
@@ -77,7 +84,8 @@ was not represented as autonomous OpenCode-authored code.
 Concrete frictions addressed:
 
 * OpenCode discovered :8080 was an older installed application while :8090 served
-  the working code. The canonical :8080 Chat Server now serves the new source.
+  the working code. At acceptance, the canonical :8080 Chat Server was switched
+  to the accepted source; this is not a statement of present service identity.
 * Discovery/uncertain observation payloads could falsely mark pages as read.
   Metadata discovery no longer extracts page 1; UI distinguishes referenced pages
   and extracted/observation state.
@@ -107,7 +115,7 @@ Focused Python tests: **138 passed**. Renderer/platform/policy Node tests:
 **19 passed**. No npm dependencies/build system or new document database was added.
 The existing artifact SQLite store owns derived material; runtime owns sessions.
 
-Current canonical Chat Server: **http://127.0.0.1:8080**, with the existing qualified
+At acceptance, canonical Chat Server: **http://127.0.0.1:8080**, with the existing qualified
 **standard-OFF** runtime at :8000 for fresh Vision. Production MTP remains text-only;
 use an explicitly available standard-OFF endpoint for new page observations when
 main chat runs production. No release default/profile promotion is claimed.

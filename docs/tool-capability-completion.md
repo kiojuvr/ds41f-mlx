@@ -1,5 +1,18 @@
 # Tool Capability Completion — source-pinned milestone accepted
 
+## Evidence authority
+
+This is a **source-pinned acceptance report**, not the current global capability,
+limit or setup contract. "Current", "production" and the numerical decision matrix
+below refer to its accepted slice. In particular, the restricted MTP row and legacy
+`fetch_pdf` raster retention do not define today's ordinary MTP or `document_pdf`.
+Use [application ownership](web-application.md), [retained PDF workflow](pdf-document-workflow.md),
+[capabilities](capabilities.md), [actual-request fitting](dynamic-capability-budget.md)
+and [installed setup](operations.md) for current behavior. Historical dependency
+installation commands are reproduction context, not installed admission repair.
+The [original report edition](archive/editorial-baseline/tool-capability-completion.md.txt)
+is retained; all original receipts/results remain unchanged.
+
 Baseline `c8e1ee5` was not reset. The earlier working-tree transport/MIME/batch
 fixes were audited and retained. The source-specific intermediate receipt
 `artifacts/tool-capability-audit/cpu-attempt-1/receipt.json` is unchanged and

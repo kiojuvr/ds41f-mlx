@@ -12,11 +12,16 @@ On another PC, open `http://<server-private-IP>:8080/` (for example
 alias. `--allow-private-lan` does not change the default bind address: specify
 `--host 0.0.0.0`, a private interface IP, or `::` explicitly.
 
-The standard-OFF runtime already supports:
+For the standard-OFF runtime, use the provisioned non-editable environment's
+canonical isolated launcher (see [operations](operations.md)):
 
 ```sh
-python3 -m ds41f_mlx.serve --host 0.0.0.0 --port 8000
+/path/to/off-env/bin/ds41f start --profile standard-off --host 0.0.0.0 --port 8000
 ```
+
+Do not substitute direct development-checkout execution or refresh a local seal.
+The [source edition](archive/editorial-baseline/private-lan.md.txt) retains the
+earlier generic module-launch example; LAN opt-in does not bypass admission.
 
 It does not require the Web flag. Keeping runtime on loopback is also possible;
 remote browsers communicate only with the Web proxy. The separate MTP singleton

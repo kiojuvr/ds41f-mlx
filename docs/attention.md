@@ -1,56 +1,67 @@
 # Attention runtime
 
-The native attention subsystem consists of per-layer SWA, compressed producer layers, reused consumer layers, global/shared publications, indexer/candidate machinery, and fixed-tile Metal kernels.
+This page owns **attention topology, persistent material and fidelity boundaries**.
+[Correctness](correctness.md) defines authority; [session state](session-state.md)
+owns publication/continuation; [architecture](architecture.md) selects execution.
+The [source edition](archive/editorial-baseline/attention.md.txt) preserves the
+former native-import production description and its import-environment status.
 
 ## Topology
 
-- Window attention uses a bounded sliding window KV cache.
-- Compressed producer layers create compressed KV and associated index/query material.
-- Index source layers publish K/index state for top-k candidate selection.
-- Candidate sources produce top-k candidate sets.
-- Candidate consumers and reuse regions read source-layer publications through `SharedAttention`.
-- Reused layers combine local window state with source publications according to the model topology.
+The official checkpoint/configuration determines layers and geometry, not an old
+native build or a directory name. Window attention has bounded SWA KV; compressed
+producers publish compressed KV; index sources publish K/index material; candidate
+sources publish top-k selections; consumers/reuse regions combine local window
+state with committed source publications. Source state, query-only values and
+consumer publications are distinct. A consumer must not read uncommitted or
+wrong-frontier source material.
 
-The exact layer map is represented in the imported native block/backbone implementation and provenance manifests.  Canonical behavior is publication-based: consumers read committed source state only.
+The native `SharedAttention`/compressed/reused-layer implementation remains a
+local executable reference of that topology, not the current production selector.
+Selected OFF model/cache semantics live in `model_execution/{language,cache,
+packed_attention,quantization}.py`; ordinary MTP uses its admitted pinned donor
+model with the separately qualified paired target/DSpark integration.
 
 ## State and publication
 
-Persistent attention state includes:
+Persistent material includes per-layer SWA, compressed producer KV, source/index
+publications, candidate lifecycle and pending compressor KV/score when cross-call
+buffering is required. Preserve physical packed precision/index contracts, not
+just a reconstruction of mathematically similar attention output.
 
-- SWA window KV per layer
-- compressed KV from producer layers
-- GlobalKV/source publications
-- indexer K
-- candidate/top-k lifecycle data
-- compressor pending KV/score when compression ratio requires cross-call buffering
-
-Reset clears state; fork copies committed state; continuation appends to it.  Invalid input must be atomic with respect to state mutation.
+Reset/fork/append are scoped ownership operations on coherent committed state.
+Admission must reject invalid identity/geometry before forbidden mutation;
+execution failures require the owning transaction/poison disposition, not a
+blanket promise of rollback of all consumed history. P6 idle material and MTP
+paired capture/leases have different lifetimes; the same logical token count or
+hash alone is not coherent reusable attention state.
 
 ## Production implementation
 
-Accepted production implementation includes:
+Dense P0–P7 prefill, OFF consumed target/state production and pinned Scheduler MTP
+use the selected profile's admitted math/primitives. Tile/split-K/width-one/ragged/
+packed dispatch and quantization must preserve that profile's required precision,
+topology and discrete decisions. A native reference kernel, tool-only candidate
+or alternative dispatch is not promoted merely by build success or a microbenchmark.
 
-- fixed-tile attention lineage
-- packed work-list topology where enabled by the imported production path
-- batched split-K kernels
-- ragged tail kernels
-- width-one path
-- request-boundary compact topology
-- KV quantization and compressed rope/index query machinery
-
-Relevant sources:
-
-- `native/src/attention/*`
-- `native/src/cache/global_kv.cpp`
-- `native/metal/attention/*`
-- `native/include/dsv41/shared_attention.hpp`
-- `native/include/dsv41/compressed_layer.hpp`
-- `native/include/dsv41/reused_layer.hpp`
+Reference sources remain under `native/src/attention`, `native/metal/attention`,
+`native/src/cache/global_kv.cpp` and the shared/compressed/reused-layer headers.
+Their imported acceptance is a fact about those inputs, not present installed
+production qualification. No source or selector changes occur in this compilation.
 
 ## Rejected historical alternatives
 
-Rejected/deferred candidates such as wide/rectangular/packed experimental alternatives are not production-selectable in the canonical build.  They may appear in archive/provenance as historical performance work but are not part of the current architecture.
+The edition retains former wide/rectangular/packed candidate classification.
+P8 tile-native carry and reference vertical-slice/old one-chunk serving are not
+selected. Other diagnostic kernels likewise need explicit affected authority/
+numerical/state/performance qualification before selection; a name or benchmark
+is not approval. [MTP doctrine](mtp-architecture-reset.md) forbids casually
+rebuilding its qualified physical topology for ownership aesthetics.
 
 ## Qualification status
 
-Attention source and checkpoint-free tests are local.  Full MLX-enabled runtime execution requires an MLX-capable build environment and remains explicitly unvalidated in the current import environment.
+Local reference/checkpoint-free tests are bounded evidence, not real-model or
+all-platform acceptance. The old statement that MLX execution was unvalidated
+belongs to the native-import environment, not a current blanket denial of later
+production evidence. [Qualification](qualification.md) and
+[performance](performance.md) interpret later profile/input-bound measurements.
