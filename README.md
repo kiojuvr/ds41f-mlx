@@ -1,407 +1,106 @@
 # ds41f-mlx
 
-## Production-serving authority
+Native Apple Silicon runtime for the **official DeepSeek-V4.1-Flash checkpoint**,
+primarily targeting the Mac Studio M3 Ultra 512 GB. Model fidelity, persistent-state
+correctness and practical local inference performance are joint requirements;
+this is not a reduced or requantized replacement model.
 
-[Production Serving Parity Closure](docs/production-serving-parity-closure.md) is the
-superseding policy for production-serving completion. **ds41f is not
-production-release-complete as a general LLM runtime server.** The broader release
-decision is reopened because the previous scope omitted ordinary runtime-server
-requirements. M50R–M55R evidence remains valid within its bounded scope; M55R
-qualified the constrained `mtp-singleton-v1` execution/application profile, not
-general production serving. No active `ds41f-runtime` release repository is required.
+`ds41f-mlx` is the sole development/source authority. The existing `ds41f-runtime`
+is an unused old generated environment, not an active deployment or accepted
+release history. No separate release repository is required for normal work.
 
-**Current ordinary MTP serving:** B1 paired target/DSpark checkpoint restoration
-and B2 Scheduler/P5 settlement, publication and retirement are implemented/closed
-for `mtp-serving-v1`. **SP1 BLOCK is the historical starting assessment**, not a
-current implementation prohibition. See [ordinary MTP serving](docs/mtp-production-serving.md).
-Broader general-runtime release requirements remain incomplete; the original
-assessment and qualification evidence are retained.
+## Read the current system
 
-## Purpose
+| Question | Primary document |
+| --- | --- |
+| How is execution structured, and who owns state? | [Architecture](docs/architecture.md) |
+| How do I install, inspect, start and operate it? | [Operations](docs/operations.md) |
+| Which profile supports which capability and limits? | [Capabilities](docs/capabilities.md) |
+| What remains, and how should development proceed? | [Implementation plan](docs/implementation-plan.md) |
 
-`ds41f-mlx` is a native Apple Silicon runtime for the official DeepSeek-V4.1-Flash checkpoint, developed primarily for the Mac Studio M3 Ultra 512 GB.
+These pages describe current boundaries. API, model, application and admission
+specialists linked from them provide detail. Milestone reports and receipts record
+what was proved at a particular revision; they do not certify every later checkout
+or the currently installed package.
 
-The project exists to make the full official model practically usable as a local model on this hardware.
+## Current scope
 
-That requires both preserving the model semantics, precision boundaries, persistent state, and generation behavior required by DeepSeek-V4.1-Flash, and achieving practical inference performance across prefill, incremental decoding, and long-running agent sessions.
+- **`standard-off` remains the default.** First-party model execution, dense
+  DwarfStar-derived FP8/MLX prefill, SSD-backed Engram and target decode; stateless
+  text Chat Completions/Responses/Messages and optional stateful Chat Completions.
+  Idle persistence/restore is same-backend only. Bounded OFF Vision is separate.
+- **`mtp-serving-v1` is explicitly selected.** Ordinary text Chat Completions,
+  generic client function tools, Scheduler-owned paired target/DSpark prefix reuse,
+  edited/branched requests and optional logical sessions. Sampling and reasoning
+  use `generation-policy-v1`, not the historical greedy-only singleton policy.
+- **`mtp-singleton-v1` remains a distinct bounded contract.** Its specialized
+  session/fence protocol and 8192-total / 768-output weather-tool scope do not
+  constrain ordinary MTP or grant it parity with OFF.
 
-Correctness and performance are therefore not separate end goals. Correctness defines the boundary within which performance must be achieved. The text runtime now has a scoped release qualification for the target production path: dense P0-P7 prefill, P7 SSD-backed Engram, P5 zero-replay handoff, and ds41f-owned single-stream MTP-OFF decode behind local single-flight HTTP (M44/M45). ds41f owns the single-token forward and all-40-layer cache transaction. M46 adds ds41f-owned block state production, packed-slot mutation and compressed/index/candidate publication. M48 establishes first-party checkpoint loading, numerical/model execution, packed storage and SSD-backed Engram under those retained authorities; admitted MLX/Metal and stateless acceleration primitives remain lower-level dependencies.
+The text-core envelope is **1,048,576 total tokens**, subject to the checkpoint's
+range. Ordinary MTP has a **393,216 output ceiling** and a missing-`max_tokens`
+default of **128**. Capacity is not guaranteed workload performance or advance
+allocation; prompt plus requested output must fit. See the profile matrix and
+qualification distinctions in [capabilities](docs/capabilities.md).
 
-**M48 completed the supported text-only standard-OFF production core; it did not complete the entire production implementation of DeepSeek-V4.1-Flash.** See the authoritative [post-M48 roadmap](docs/implementation-plan.md#post-m48-production-boundary-and-remaining-work-bounded-execution-scope) for the qualified 1M text core, bounded [first-party multimodal production capability](docs/multimodal-production-qualification.md) (four inline images / 8,192 consumed positions), and the iterative implementation/qualification cycle. Full R1 regression re-verification and runtime promotion remain later checkpoints, not immediate next steps.
+**General LLM-runtime production release is not complete.** Ordinary MTP's paired
+checkpoint and Scheduler settlement boundaries are implemented; the original SP1
+BLOCK is historical, not a current implementation hold. Broader release, separate-
+machine LAN acceptance, default-MTP promotion and product/security scope remain
+separate decisions. Neither a bounded release receipt nor this editorial update
+closes them.
 
-The canonical [final runtime target](docs/final-runtime-target.md) defines the
-intended self-contained public source repository. `ds41f-mlx` is the sole
-current development repository. The existing `ds41f-runtime` directory is an
-unused old generated environment, not an active deployment or accepted release
-history; it is not needed now. [M43 extraction evidence](docs/archive/development/milestone-43-release-repository-extraction.md)
-remains historical proof within its original scope, not qualification of that
-directory or later HEAD. Any future source projection requires a separate explicit
-release checkpoint and must flow one-way from qualified development here. See the
-[development/promotion policy](docs/reference-release-and-promotion-strategy.md).
-The broader feature target remains incomplete.
+## Start an installed runtime
 
-## Project definition
-
-A valid `ds41f-mlx` runtime is defined by these requirements:
-
-- **Official checkpoint:** execute the official DeepSeek-V4.1-Flash checkpoint directly. The project is not redefined around a converted, reduced, or approximate model.
-- **Model fidelity:** preserve the numerical/model semantics, required precision boundaries, layer behavior, and persistent-state lifecycle needed by the checkpoint. This is backend-local fidelity: cross-backend hidden-state, logits, or greedy-token identity is not required under otherwise official-compatible floating-point semantics.
-- **Native Apple Silicon execution:** use Apple Silicon, MLX, Metal, unified memory, and target-hardware-specific design where needed to obtain useful performance. Generic portability is not more important than practical execution on the target system.
-- **Practical performance:** provide usable prefill, decode, and long-session behavior for real interactive and agent workloads. Performance is part of project completion, not an optional later concern.
-- **Long-lived state correctness:** maintain correct operation across prefill, incremental decode, continuation, reset, fork/ownership, compressed KV publication, index state, candidate state, and generation state.
-- **Memory-aware execution:** deliberately use 512 GB unified memory and SSD-backed structures where appropriate to run the full model practically without sacrificing model fidelity for implementation convenience.
-- **SSD-backed Engram:** keep Engram SSD-backed as intended unless future evidence justifies a design change. The project is not complete merely because the model can be made resident by consuming unnecessary memory.
-- **Self-contained runtime:** keep enough implementation, tests, build definitions, runtime state machinery, qualification contracts, and documentation in this repository to maintain the runtime as its own project.
-- **Serving capability:** provide a stable local inference interface suitable for interactive and agent workloads. The HTTP/API layer is required for the finished system, but the API implementation itself is not the definition of model correctness.
-
-## Success criteria
-
-The project reaches its intended state when the native runtime can:
-
-1. load and execute the official DeepSeek-V4.1-Flash checkpoint;
-2. run the complete text-generation path on the target Apple Silicon system;
-3. preserve qualified model and session-state semantics through prefill and incremental decoding;
-4. sustain practical decode speed for interactive and agent use;
-5. provide practical prefill performance at context lengths required by real workloads;
-6. operate long sessions without unbounded state growth, corruption, or unnecessary reconstruction;
-7. use the intended SSD-backed Engram architecture without making storage latency an impractical bottleneck;
-8. expose a stable local inference interface;
-9. pass correctness, provenance, runtime, performance, and release qualification gates.
-
-A runtime that is numerically correct but too slow for practical use is not complete.
-
-Likewise, a fast runtime that changes required model behavior or state semantics is not complete.
-
-## Non-goals
-
-`ds41f-mlx` is not trying to:
-
-- create a smaller or approximate replacement for DeepSeek-V4.1-Flash;
-- change checkpoint representation merely because it simplifies implementation;
-- trade model fidelity for benchmark throughput;
-- optimize isolated kernels while end-to-end inference remains impractical;
-- treat successful compilation or bounded numerical fixtures alone as proof of runtime readiness.
-
-## Target model and runtime
-
-- Model: DeepSeek-V4.1-Flash official checkpoint.
-- Primary hardware target: Mac Studio M3 Ultra 512 GB.
-- Runtime target: Apple Silicon native execution using MLX/Metal components, unified memory, and SSD-backed storage for large structures such as Engram.
-- Internal C++ namespace: `dsv41`.
-
-## Current implementation status
-
-[M49R architecture reset](docs/mtp-architecture-reset.md) is the current MTP authority.
-The formal restart point is `5e784d9e83a85c497cd192f87184e9b01a1343eb`.
-**M50–M56 are superseded as a failed production architecture line**; M56 is not
-continued or considered for normal-profile promotion. Historical results and
-correctness assets remain archived; **M54 application/semantic requirements remain
-mandatory**, independently of its discarded execution implementation.
-The reset restored runtime source to the restart state; M51R/M52R subsequently
-connected canonical/lifecycle/application authority without rebuilding the physical
-execution graph. Standard-OFF remains default/control; MTP remains separately explicit.
-
-MTP/decode physical topology authority is **oMLX**; prefill remains **DwarfStar
-with qualified MLX numerics**. ds41f owns semantic/application/lifecycle/resource
-authority, not a reconstructed execution topology. Candidate performance is an
-initial conformance gate: unexplained material gaps BLOCK, not future optimization.
-The **M49R–M55R** series now closes the supported normal-local MTP release:
-M50R–M53R PASS; [M54R operational sufficiency / M55R release decision](docs/milestone-54r-55r-operational-release.md)
-is **evidence-complete, RELEASE APPROVED, PROMOTION DEFERRED**, with zero release
-blockers within that bounded profile and no additional operational campaign.
-This approves constrained source-clone operation only, not general production
-serving, portable packaging, default MTP or `ds41f-runtime` promotion. The broader
-serving release remains blocked under the production-serving policy above.
-
-The historical qualified release scope is a text-only local runtime for the official DeepSeek-V4.1-Flash checkpoint on the Mac Studio M3 Ultra 512 GB class target. The production path is:
-
-```text
-official checkpoint
-  -> DENSE_P0_P7 production prefill
-  -> P7 FULL_RESIDENT_BACKBONE_SSD_ENGRAM
-  -> P5 zero-replay handoff
-  -> ds41f TargetGenerationSession decode, MTP/DSpark/speculation OFF
-  -> official deepseek-recipe local HTTP serving
-```
-
-Stateless Chat Completions, Responses, and Messages are qualified for the documented text scope. Stateful Chat Completions sessions are qualified for single-flight multi-turn continuation, client function-tool/result loops, same-backend idle persistence/restore, and DeepSeek EOS token termination. See `docs/release-qualification.md` and `docs/api.md`.
-
-The native C++ implementation remains the executable correctness/reference runtime and a source of reusable components, but it is not the production prefill/decode selector for the scoped release.
-
-Local native source includes:
-
-- `WeightCatalog` / checkpoint atlas / storage foundation
-- SWA attention, compressed producer attention, reused consumer attention, GlobalKV, indexer and candidate/top-k machinery
-- HC and MoE including gate/routing, shared/routed experts, expert bank/backing, grouped expert pipeline, and residency infrastructure
-- SSD-backed Engram index/store plus MLX projection/dequantization and Engram layer integration
-- `Block`, `CompressedBlock`, `ReusedBlock`
-- `TextFront`, `TextEncoder`, `TextDecoder`, `TextBackbone`
-- sampling and `TextGeneration`
-- runtime bridge and lifecycle tests
-
-Source closure is complete for the native model core. Checkpoint-free native build/tests are qualified. MLX-enabled native build/tests are qualified against the local MLX 0.32.2 Python wheel CMake package. A bounded full-checkpoint native smoke has opened the official checkpoint plus Engram metadata, executed full prefill for the small token fixture, and produced one greedy token through `TextGenerationReference`.
-
-## Architecture summary
-
-The release production architecture is described in `docs/runtime-strategy.md`: dense P0-P7 FP8/MLX prefill commits a live `DeepseekV41Cache[40]`; P5 hands the held-out terminal token to ds41f `TargetGenerationSession`; decode proceeds MTP-OFF with one executable cache authority. [M44](docs/milestone-44-target-generation-ownership.md) owns target scheduling, sampling, committed history, termination and exact-list idle transfer; [M45](docs/milestone-45-target-forward-ownership.md) owns target-forward sequencing and the all-40-layer mutation/commit transaction; [M46](docs/milestone-46-state-production-ownership.md) owns subordinate block/attention/compressor/index state production on those same packed objects; stateless math/storage/kernel/SSD Engram primitives remain external. [M47](docs/milestone-47-execution-resource-admission.md) binds their qualified implementation, checkpoint payloads, tokenizer pair and SSD handles before authoritative execution; ambient imports or directory names do not grant admission. Transformer/session details from the native reference runtime remain documented because they define important state and correctness contracts.
-
-## Repository layout
-
-- `native/include/dsv41/` — C++ public/native headers
-- `native/src/` — C++ implementation
-- `native/metal/` — Metal kernel sources embedded into MLX targets
-- `native/tests/` — checkpoint-free and MLX-capable native tests
-- `artifacts/provenance/` — source, provenance, and closure manifests
-- `artifacts/` — official fixtures, validation outputs, and evidence
-- `docs/` — canonical current-state documentation
-- `docs/archive/` — non-normative development history and absorbed validation prose
-- `tools/` — validation, provenance, and self-containment checkers
-- `ds41f_mlx/` — Python tooling, DwarfStar-derived prefill architecture scaffolds, and oMLX bridge code; not a selector for production status by itself
-
-## Build
-
-Checkpoint-free build:
-
-```bash
-cmake -S native -B native/build
-cmake --build native/build
-```
-
-MLX-enabled native build, on a machine with MLX CMake package installed:
-
-```bash
-cmake -S native -B native/build-mlx -DDSV41_ENABLE_MLX=ON
-cmake --build native/build-mlx
-ctest --test-dir native/build-mlx --output-on-failure
-```
-
-MLX discovery supports `CMAKE_PREFIX_PATH`/`MLX_DIR`, explicit `DSV41_MLX_ROOT`, `DSV41_MLX_ROOT` in the environment, and Python-wheel MLX layouts such as `.venv/lib/python*/site-packages/mlx`.
-
-Bounded full-checkpoint smoke, with explicit local data paths:
-
-```bash
-native/build-mlx/dsv41-full-checkpoint-smoke \
-  --checkpoint /path/to/DeepSeek-V4.1-Flash \
-  --m1-summary artifacts/checkpoint/summary.json \
-  --engram-metadata artifacts/engram/metadata.json
-```
-
-The smoke uses the existing small token fixture `[0, 3]`, performs a bounded full-checkpoint prefill and one-token greedy generation (`max_new_tokens=1`, `temperature=0`), and is not a benchmark. The normal cheap gates do not run this large checkpoint smoke.
-
-## Tests and static gates
-
-Cheap gates:
-
-```bash
-python3 tools/check_legacy_import_integrity.py
-python3 tools/check_native_import_dependencies.py
-python3 tools/check_repository_self_containment.py
-cmake -S native -B native/build
-cmake --build native/build
-ctest --test-dir native/build --output-on-failure
-```
-
-These do not run benchmarks or full checkpoint qualification.
-
-## Explicit normal-local MTP profile
-
-`standard-off` remains the default qualified production profile. The separate
-`mtp-singleton-v1` release is explicitly opt-in and local/singleton only; it does
-not inherit OFF API parity, persistence, browser or Rust application support.
-See [setup/API/operator instructions](docs/mtp-local-release-candidate.md) and
-[M41 decision and evidence](docs/archive/development/milestone-41-local-mtp-release-candidate.md), with
-[M53R normal-local dependency/admission closure](docs/milestone-53r-normal-local.md).
-The [M55R decision](docs/milestone-54r-55r-operational-release.md#exact-supported-release-envelope)
-is historical singleton qualification. Current [runtime admission](docs/runtime-admission.md)
-uses a non-editable installed execution package: exact model/tokenizer, executable
-Python/native/kernels and reachable image/numerical dependencies, separate host ABI
-compatibility, and non-authoritative build/source provenance and historical evidence.
-There is no checkout source equality, local seal or whole Homebrew closure SHA gate.
-Normal-local setup builds this package from attributed dependencies and the unchanged
-admitted M52R recipe wheel. See [current operations](docs/operations.md).
-
-**Ordinary serving opt-in:** `ds41f start --profile mtp-serving-v1` uses the same
-admitted execution envelope with standard `/v1/chat/completions`, Scheduler-owned
-lifecycle and paired target/DSpark prefix reuse, including generic ordinary
-function tools and ID-bound tool result continuations. DeepSeek recipe owns tool
-semantics; clients execute tools. No public session or sequence protocol is required.
-Ordinary serving now uses the established **1,048,576-token total context envelope**;
-maximum output is **393,216 tokens**, with unchanged missing-`max_tokens` default
-of **128**. Prompt + requested output must fit the total envelope. The maximum is
-capability, not mandatory generation or advance memory allocation; actual execution
-can stop early. Runaway/agent budgets are separate application policy.
-Singleton's 8192-total / 768-output weather-only qualification contract is unchanged. See [operation, ownership and acceptance](docs/mtp-production-serving.md).
-It does not change the default or the existing singleton public contract, and is
-not a claim of complete general-runtime production parity.
-
-## Reference Release R1
-
-Repository-owned semantic conformance is documented in [Reference R1](docs/reference-release-r1.md)
-and [M42 evidence](docs/archive/development/milestone-42-reference-release.md):
+Use the appropriate **installed, non-editable** environment; the checkout's `.venv`
+is for development/application tooling. Configure the official external asset:
 
 ```sh
-python -m ds41f_mlx.reference --profile both --real-model --output artifacts/r1/qualification.json
+export DS41F_CHECKPOINT=/absolute/official/DeepSeek-V4.1-Flash
 ```
 
-Use the documented provisioned environment and explicit official checkpoint.
-This is a development oracle, not M43 extraction or expanded MTP admission.
+Default OFF:
 
-## Current local operation
-
-Use the separate installed environments documented in [operations](docs/operations.md).
-The repository's internal `.venv` is for development/application tooling, not
-installed runtime execution. Configure the external checkpoint and state paths:
-
-```bash
-export DS41F_CHECKPOINT=/path/to/DeepSeek-V4.1-Flash
-export DS41F_KV_ROOT=/path/to/ds41f-kv
-```
-
-Inspect and start standard-OFF using its installed execution package:
-
-```bash
+```sh
 /Volumes/SDXC-512/ds41f-mlx_off-venv/bin/ds41f inspect --profile standard-off
 /Volumes/SDXC-512/ds41f-mlx_off-venv/bin/ds41f start --profile standard-off
 ```
 
-For ordinary MTP, use `/Volumes/SDXC-512/ds41f-mlx_mtp-venv/bin/ds41f`
-with `--profile mtp-serving-v1`. Do not start both profiles on the same port.
-Mutable oMLX/recipe checkout paths and local seals are not execution authority;
-see [installed admission](docs/runtime-admission.md).
+Ordinary MTP, as an alternative launch:
 
-For ordinary MTP operation, activate the provisioned MTP environment and run
-`ds41f` to open the local operator TUI (stdlib curses, no additional packages).
-NOW shows the actual request phase and elapsed wait; Start/Stop/Restart use the
-canonical launcher and runtime's loopback graceful-control boundary. Quit leaves
-the runtime running; reopening rediscovers live state. Existing headless
-subcommands are unchanged. See [operator live observability](docs/operator-live-observability.md)
-for keys, snapshot schema, metric definitions and local acceptance results.
-
-Install the PDF extra in the development/application environment, not by
-replacing the admitted runtime package, then launch the optional browser client
-in a separate process from this checkout:
-
-```bash
-uv pip install --python .venv/bin/python '.[web-binary]'
-.venv/bin/python -m ds41f_mlx.web --runtime-url http://127.0.0.1:8000
+```sh
+/Volumes/SDXC-512/ds41f-mlx_mtp-venv/bin/ds41f inspect --profile mtp-serving-v1
+/Volumes/SDXC-512/ds41f-mlx_mtp-venv/bin/ds41f start --profile mtp-serving-v1
 ```
 
-The Web client is a single-current-conversation Chat interface above the canonical
-runtime API. Bounded search, retained HTML, original PNG/JPEG/WebP and selected
-PDF text/visual tools execute outside the model server. [Retained PDF document chat](docs/pdf-document-workflow.md)
-adds local PDF upload, bounded page search/read, isolated page Vision observations,
-source-page inspection and document reuse without consuming main-chat image slots.
-[Real-model PDF acceptance](docs/pdf-document-acceptance.md) includes 100-page text,
-12-page scans and real-paper figures/tables. Production remains text-only; fresh
-page Vision uses the existing standard-OFF runtime, not an expanded image limit.
-The source-pinned
-[Tool Capability Completion](docs/tool-capability-completion.md) gate includes
-real browser/Vision research and exact-history recovery; it is not R1, release
-or runtime promotion. Everyday
-UI, actual model-control mappings and the separate UX qualification gate are in
-[`docs/chat-interface.md`](docs/chat-interface.md); stateful recovery/persistence
-semantics are in [`docs/web-application.md`](docs/web-application.md).
-For trusted LAN PCs, opt in with `--host 0.0.0.0 --allow-private-lan`;
-see [LAN/HTTPS options and limitations](docs/private-lan.md).
-[Dynamic capability budgeting](docs/dynamic-capability-budget.md) documents runtime-authoritative
-Output Auto, fetch continuation and tool/resource boundaries. Current reasoning
-controls use runtime-advertised effort names and defaults, not the historical
-Thinking percentage; see [generation policy frontends](docs/generation-policy-frontends.md);
-its evidence is separate from the historical Chat/LAN gates.
+Do not start both on the same port. These paths describe the consolidated local
+installation, not portable prerequisites. Startup admits installed execution,
+exact semantic assets and host ABI compatibility—not checkout equality or local
+seals. No `--no-validate` or import override is supported. Package publication and
+acceptance are separate from starting an existing installation; see
+[operations](docs/operations.md).
 
-Build and test the Rust boundary:
+## Applications and development
 
-```bash
+The operator TUI and optional Browser Chat sit above the runtime. Tools execute in
+applications, not in the model server. PDF acquisition/page Vision, trusted-network
+access and frontend controls have separate scopes; see
+[application capabilities](docs/capabilities.md#applications).
+
+Implementation uses `ds41f_mlx/`, native/reference code uses `native/`, specialized
+contracts use `docs/`, and historical records use `docs/archive/` and `artifacts/`.
+Official model/protocol semantics remain above implementation and reference tests.
+
+Checkpoint-free native reference build/tests:
+
+```sh
+cmake -S native -B native/build
+cmake --build native/build
+ctest --test-dir native/build --output-on-failure
 cargo test
 ```
 
-### Historical M21–M23 acceptance and packaging (not current operation)
-
-The examples below retain the original checkout-based release procedure and
-its environment identities. They do not provision or admit today's installed
-runtime; use [operations](docs/operations.md) for current acceptance and deployment.
-
-M21 ran bounded Rust-to-real-server acceptance with its qualified Python environment:
-
-```bash
-DS41F_PYTHON=$HOME/.venvs/omlx-0.7.0.release/bin/python \
-  cargo run --bin m21_real_acceptance
-```
-
-Run quick qualification:
-
-```bash
-~/.venvs/omlx-0.7.0.release/bin/python -m ds41f_mlx.ops quick
-```
-
-Run one-command release acceptance:
-
-```bash
-~/.venvs/omlx-0.7.0.release/bin/python -m ds41f_mlx.ops accept
-```
-Build a relocatable local release bundle:
-
-```bash
-~/.venvs/omlx-0.7.0.release/bin/python -m ds41f_mlx.build_release --output-dir dist
-```
-
-Unpack the bundle elsewhere, edit/source `config/ds41f.env`, then use `./bin/ds41f inspect`, `./bin/ds41f start`, and `./bin/ds41f-accept`.
-
-
-These original procedures used Python 3.13 in `~/.venvs/omlx-0.7.0.release`.
-The M22 manifest (`release/ds41f-release.json`) records that historical release;
-it is not today's installed execution authority. M20 pinned upstream `v0.7.0`
-at `4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40`. The recorded checkout/rollback
-policy describes that milestone, not a requirement to retain those environments.
-
-Use [operations](docs/operations.md) for current deployment. Original packaging,
-distribution and migration evidence is retained in
-[M22](docs/archive/development/m22-release-packaging.md),
-[M23](docs/archive/development/m23-relocatable-release.md) and
-[M20](docs/archive/development/m20-omlx-release-migration.md).
-
-## Runtime/API status
-
-The supported serving layer uses official DeepSeek `deepseek-recipe` for protocol, prompt, response, tool-call, thinking, and streaming behavior, with a narrow `ds41f` backend interface below it. M21 adds the stable Rust-facing boundary as the `ds41f_api` crate over this same local HTTP/process-lifetime seam; Rust does not own KV/session state or reimplement recipe semantics. See `docs/api.md` and [the historical M21 report](docs/archive/development/m21-rust-api-boundary.md) for endpoint behavior, single-flight/max-session limits, persistence/restore, tool-loop behavior, streaming, cancellation, and ownership contracts.
-
-## Correctness model
-
-Current authority hierarchy:
-
-1. official checkpoint/data
-2. reviewed official DeepSeek reference semantics
-3. ds41f official-source-derived validators/contracts
-4. implementation regression evidence
-5. optimized production implementation
-
-Historical provenance is recorded in provenance/archive documentation and is not a live source/build/test dependency.
-
-## Qualification status
-
-Qualified/source-verified areas include checkpoint provenance, official primitive validators, source integrity, native source closure, checkpoint-free native build/tests, MLX-enabled native build/tests, bounded full-checkpoint native execution, backend-local correctness policy, dense production prefill through 200K, practical GenerationBatch decode, official recipe HTTP serving, long-session continuation, same-backend KV persistence/restore, repeated function-tool loops, and EOS termination.
-
-The standard-off release claim is intentionally scoped, not universal. Vision beyond the separately qualified bounded development/core envelope, batching, implicit/default MTP, distributed serving, authentication, server-side tool execution, sessionized Responses/Messages, cross-runtime KV portability, and arbitrary stateful stop strings remain unsupported or unqualified. The historical bounded M41 singleton contract remains separate from current
-opt-in ordinary MTP serving and [production logical sessions](docs/production-sessions.md).
-Ordinary OFF/MTP controls follow `generation-policy-v1`; this does not grant MTP
-images or native persistence, or declare general production-release completion.
-
-## Canonical documentation
-
-Start with `docs/README.md`.
-
-Key documents:
-
-- [Final runtime target](docs/final-runtime-target.md) — long-term architectural intent
-- `docs/runtime-strategy.md`
-- `docs/implementation-plan.md`
-- `docs/architecture.md`
-- `docs/correctness.md`
-- `docs/session-state.md`
-- `docs/attention.md`
-- `docs/moe-hc.md`
-- `docs/engram.md`
-- `docs/generation.md`
-- `docs/api.md`
-- `docs/performance.md`
-- `docs/provenance.md`
-- `docs/qualification.md`
+These are not real-model or release qualification. Use affected tests and relevant
+scope-specific acceptance for changes; full reference verification and release
+projection are explicit checkpoints, not a mandatory cadence for every edit.
+See [development decisions](docs/implementation-plan.md).

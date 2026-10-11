@@ -1,5 +1,11 @@
 # Production operations
 
+This page owns installation, publication and everyday operation. Use
+[capabilities](capabilities.md) for profile support/limits,
+[architecture](architecture.md) for state/execution ownership and
+[implementation plan](implementation-plan.md) for development decisions.
+Starting or inspecting a package is not fresh qualification of this checkout.
+
 Current admission is [installed execution admission](runtime-admission.md), not
 checkout provenance or a local environment seal. Historical M20/source-delivery
 instructions are preserved in [the archive](archive/operations-source-seal.md)
@@ -27,6 +33,52 @@ Historical `m53r-*-venv` and `ds41f-generation-policy*-venv` paths in qualificat
 records identify the original runs, not current launch instructions. They are
 not rewritten in historical receipts. See [environment consolidation](environment-consolidation.md)
 for migration details and completed legacy OFF retirement.
+
+## Operator TUI and applications
+
+To open the stdlib-curses operator interface in the MTP environment:
+
+```sh
+/Volumes/SDXC-512/ds41f-mlx_mtp-venv/bin/ds41f
+```
+
+Dashboard Start/Stop/Restart use the canonical launcher and loopback graceful
+control. Quit leaves the runtime running; reopening rediscovers live state.
+Chat and Ctrl-O generation settings are implemented, not WIP. Read
+[operator Chat](operator-chat.md) and [live observability](operator-live-observability.md)
+for keys, readiness, canonical reconciliation and metric meanings. Stop/transport
+loss does not permit automatic generation resend. Protected native work must
+settle before ownership is released. Unknown effect/lifecycle outcomes require
+explicit application/operator decisions, not guessed retries.
+
+The optional Browser application runs separately from this checkout, above an
+already READY runtime. Install application extras in the development/application
+`.venv`, never into the admitted model runtime:
+
+```sh
+uv pip install --python .venv/bin/python '.[web-binary]'
+.venv/bin/python -m ds41f_mlx.web --runtime-url http://127.0.0.1:8000
+```
+
+See [Chat interface](chat-interface.md), [application state](web-application.md)
+and [PDF workflow](pdf-document-workflow.md). PDF/page Vision uses separate bounded
+OFF execution, not MTP image admission. Application journals are not native
+persistence or shared TUI/Browser history. Tools/effects execute in applications,
+not the model server. Their scope is summarized in capabilities.
+
+## Network and shutdown
+
+Default runtime bind is `127.0.0.1:8000`. Ordinary MTP can explicitly bind a private
+interface or `--host 0.0.0.0`; singleton retains literal IPv4 loopback. Ordinary
+trusted-LAN serving has no authentication/TLS and rejects browser Origin; wildcard
+bind listens on every interface, so choose a private interface/firewall policy.
+Separate-machine direct-LAN acceptance remains pending. Browser application LAN
+exposure is a different opt-in boundary: see [private LAN](private-lan.md).
+
+Use TUI Stop or graceful SIGTERM for the owned runtime process; wait for protected
+native cleanup/retirement before replacement, package installation or model-asset
+changes. Process-alive health is not model-ready health. Do not launch a second
+model process to diagnose a busy one, or interpret a forced kill as session restore.
 
 ## Provision / publish
 
@@ -78,8 +130,10 @@ payload failure needs an explicitly qualified package, not a bypass.
 Standard-OFF remains the CLI default but requires its **own** installed OFF
 package. A patched MTP package cannot start OFF, nor vice versa. Existing editable
 or source-sealed environments must be migrated, not made usable with
-`--no-validate`. This change freshly qualifies ordinary MTP; historical OFF/R1
-semantic evidence is retained, not relabeled as new OFF deployment acceptance.
+`--no-validate`. The installed-admission migration's affected acceptance covers
+ordinary MTP; historical OFF/R1 semantic evidence is retained, not relabeled as
+new OFF deployment acceptance. This editorial update performs no acceptance or
+package publication.
 
 ## Bounded production acceptance
 

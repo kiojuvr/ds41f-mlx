@@ -1,89 +1,138 @@
-# Architecture
+# Current architecture
 
-The [final runtime target](final-runtime-target.md) is the canonical long-term
-architecture and dependency direction. The qualified topology below describes
-current implementation, not a permanent external-checkout requirement.
+This page owns the current structural overview. [Capabilities](capabilities.md)
+owns profile support/limits; [operations](operations.md) owns deployment;
+[implementation plan](implementation-plan.md) owns remaining work and decisions.
+The [final runtime target](final-runtime-target.md) is a destination, not a claim
+that every desired feature or a separate release repository already exists.
 
-The current bounded [multimodal core](multimodal-production-qualification.md)
-extends this same topology: CPU preprocessing/identity validation, first-party
-Vision + aligner encoding of **new** images only, sparse absolute embedding
-injection and command-local VL/Engram masks. Image state then lives in the same
-40 × seven packed slots and token frontier, not an image generation/cache engine.
-Idle persistence adds only image identities; exact slot restoration does not
-re-run images or prompts. The measured four-image / 8K multimodal limit does not
-change the 1M text/resource boundary or promote R1/release/runtime scope.
-
-## Qualified production architecture
-
-The flow below describes standard-OFF, not every supported execution profile.
-Current opt-in ordinary MTP is documented in [ordinary serving](mtp-production-serving.md)
-and [production logical sessions](production-sessions.md). Original M25–M35
-public-disabled decisions below remain historical evidence within their stated
-revision/profile, not a current ban on those ordinary paths.
+## Shared authority
 
 ```text
-official DeepSeek-V4.1-Flash checkpoint
-  ↓
-ds41f model_execution (load/projections/CSA2/HC/MoE/SSD Engram)
-  ↓
-official deepseek-recipe protocol/rendering
-  ↓
-DENSE_P0_P7 prefill facade
-  ↓
-P7 FULL_RESIDENT_BACKBONE_SSD_ENGRAM
-  ↓
-live DeepseekV41Cache[40] + all-token history
-  ↓
-P5 terminal-token handoff exactly once
-  ↓
-ds41f TargetGenerationSession, MTP/DSpark/speculation OFF
-  ↓
-recipe-formatted HTTP response/session boundary
+official checkpoint + exact admitted semantic assets
+  -> official deepseek-recipe conversion / rendering / encoding
+  -> profile-specific execution and state ownership
+  -> canonical recipe settlement
+  -> official JSON / SSE projection
+  -> transport and application
 ```
 
-The release architecture has one executable cache authority. `PrefillContinuationState` and handoff artifacts are evidence/admission structures; after terminal bootstrap, ds41f TargetGenerationSession owns the exact live cache list. Its sampled lookahead is uncommitted until consumed. M45's `TargetForwardTransaction` sequences all 40 blocks directly on that list and commits only after all mutated slots complete and frontiers validate. [M46](milestone-46-state-production-ownership.md) inserts ds41f `DecodeStateProducer` below that transaction: it owns block sequencing, packed window/compressor/index mutation and token-local CSA2 publications. External numerical/storage/SSD read primitives receive no mutable continuation-state authority. [M47](milestone-47-execution-resource-admission.md) binds the external primitive implementation and full checkpoint/SSD resource set in a ds41f model-lifetime admission capability. OFF prefill/idle append/target entry require that binding; decode uses stable admitted handles and rejects retired leases. Persisted artifacts are dormant storage and never a second live authority. [M48](milestone-48-first-party-model-execution.md) replaces the donor model/numerical/storage implementation with `ds41f_mlx/model_execution/`, including checkpoint construction and restored cache classes. M44–M47 authorities remain unchanged. Admitted MLX/Metal and stateless acceleration primitives remain lower-level dependencies; no donor model execution fallback exists on standard-OFF.
+Recipe owns message/tool/reasoning grammar, prompt encoding, response parsing,
+usage and finish projection. ds41f owns capability/resource/security admission,
+execution-lifetime integration and canonical-state safeguards. A second handwritten
+DeepSeek grammar, template or parser must not replace recipe authority.
 
-## Guarded singleton qualification (M33–M35, internal)
+Installed executable identity, exact checkpoint/tokenizer/numerical payloads and
+host ABI compatibility are distinct responsibilities. Source/build provenance and
+historical receipts support reproduction; they are not startup equality with the
+checkout. See [installed admission](runtime-admission.md).
 
-The isolated guarded path is operationally qualified at the bounded scale in
-[M34](archive/development/milestone-34-operational-qualification.md), preserving M33's strong
-unforwarded-terminal horizon and zero replay/repack. A narrow active-cancellation
-fix uses existing native singleton row-view ownership transfer, not P6 capability
-flag clearing or history reconstruction. This is not public/default serving
-promotion; the production architecture above remains OFF.
-[M35](archive/development/milestone-35-http-sse-qualification.md) separately qualifies a bounded,
-explicitly injected single-flight HTTP/SSE bridge. Canonical native recipe input
-precedes serialization; writes/yields are not client acknowledgements. Native
-phases and cleanup are shielded, cancellation is admitted between response
-boundaries, and ordinary continuation consumes retained native cache authority.
+## Standard-OFF execution
 
-## MTP lifecycle decision (M25, historical unguarded path)
+```text
+first-party model_execution: load / projections / attention / HC / MoE / SSD Engram
+  -> DENSE_P0_P7 dense FP8/MLX prefill
+  -> P7 FULL_RESIDENT_BACKBONE_SSD_ENGRAM
+  -> live 40-layer packed cache and consumed history
+  -> P5 producer revocation + terminal-token handoff exactly once
+  -> TargetGenerationSession / TargetForwardTransaction / DecodeStateProducer
+  -> coherent idle P6 continuation or retirement
+```
 
-[M25](archive/development/milestone-25-mtp-decision.md) rejects/defers the pinned upstream MTP
-integration: actual verification/rollback runs, but ordinary extraction does not
-produce a complete committed idle frontier, and upstream reconciliation can
-replay history. No optional serving path is qualified. M9 save/restore explicitly
-rejects MTP-preserved/active models; the production OFF architecture above remains
-unchanged. Diagnostic throughput is not agent-session qualification.
+The first-party path owns checkpoint construction, numerical/model execution,
+packed storage and SSD-backed Engram. MLX/Metal and admitted stateless acceleration
+primitives remain dependencies; no donor model fallback is selected for OFF.
+DwarfStar-derived prefill topology does not imply a different checkpoint format.
 
-## Repository components
+Target history commits only after all 40 layers' mutated slots complete and their
+frontiers validate. Unconsumed sampled lookahead is not canonical history.
+Transaction failure burns state rather than publishing a partial idle boundary.
+Successful continuation uses the exact live list; there is no hidden prompt replay,
+whole-cache repack or replacement generation engine. See
+[generation](generation.md) and the OFF [API contract](api.md).
 
-- `ds41f_mlx/prefill_fp8_mlx/` — dense FP8/MLX prefill, P7 Engram/SSD behavior, P5 handoff helpers, P8 experimental probes.
-- `ds41f_mlx/model_execution/` — first-party checkpoint construction, numerical model/projections/CSA2/HC/MoE, packed cache and SSD Engram implementation.
-- `ds41f_mlx/runtime/` — admitted model lifetime, owned generation/forward/state production, continuation, KV persistence and tool-boundary session logic; separate donor diagnostic/MTP loading.
-- `ds41f_mlx/serving/` — official recipe HTTP backend, session API, policy checks, diagnostics.
-- `native/` — local C++ reference model core and tests.
-- `artifacts/` — provenance, qualification, and performance evidence.
-- `tools/` — static gates, qualification runners, and diagnostic utilities.
+The bounded OFF image extension uses the same generation/cache topology: CPU image
+identity/preprocessing, first-party Vision/aligner encoding of **new images only**,
+sparse absolute embedding injection and command-local masks. Old image spans are
+not re-encoded during retained continuation or idle restore. Image identities do
+not create an independent cache engine or expand the text-only MTP scope.
 
-## Reference native architecture
+## Ordinary MTP execution
 
-The native C++ core remains local and self-contained. It includes checkpoint/storage discovery, attention/session state, HC/MoE, Engram, blocks, text runtime, sampling/generation, and runtime bridge tests. This implementation is reference/qualification evidence and may supply reusable components, but it is not the selected production prefill/decode topology for the release path.
+```text
+recipe-prepared ordinary request / application-owned conversation
+  -> ProductionScheduler (subclass of pinned oMLX Scheduler)
+  -> PagedCache lookup/refcount/capacity/eviction
+  -> PairedCheckpointAuthority: coherent target + DSpark checkpoint at C
+  -> compatible restore into fresh mutable handles, or legitimate cache miss
+  -> DwarfStar/P6 append -> P5 transfer into Scheduler's sole BatchGenerator
+  -> pinned oMLX physical proposal / verify / rollback / commit topology
+  -> consuming recipe guard and canonical quiescence
+  -> immutable paired publication or burn -> native/request retirement
+```
 
-## State ownership
+MTP/decode physical topology remains the qualified pinned oMLX architecture;
+ds41f owns semantic, lifecycle, application and resource integration. The
+subordinate `OMLXMTPGenerationSession` is not a second Scheduler or prefix cache.
+Do not reconstruct this physical topology and promise to recover its speed later.
 
-Persistent model/session state includes token history, per-layer window KV, compressed source KV, index K, shared publications, Engram hash/history state, candidate/top-k state, and ds41f-engine-owned live cache state. Runtime-owned state includes request/session ownership, executor scheduling, RNG provider state, diagnostics, and persistence transaction state. Call-local hidden/logit tensors are not persistent session authority.
+A reusable pair binds execution/tokenizer/recipe identity, complete prefix IDs,
+all 40 target layers' physical slots and all three committed DSpark rings at the
+same frontier. Rings have capacity 128 and preserve absolute-modulo physical
+order. Transient draft/proposal/verification/prediction and request RNG state are
+not reusable checkpoints. A target-only hit is not an MTP hit.
 
-## Non-selected paths
+Upstream PagedCache owns lookup, pins and four-pair retention/eviction; ds41f owns
+paired payload integrity. Immutable snapshots never share mutable cache/ring
+containers with active work. Ordinary lookup uses eligible checkpoints through
+N-2, leaving a genuine suffix-prefill token and P5 terminal; it does not rewind
+live rings or infer recurrent trim from speculative rollback. Edits, regeneration
+and branches may reuse an earlier valid pair or miss safely.
 
-The old one-chunk oMLX substrate, reference vertical-slice serving, P8 tile-native carry, MTP/DSpark/speculative decode, native HTTP serving, and diagnostic validators are not production-selected release paths unless a future qualification explicitly promotes them.
+Publication follows canonical settlement and native owner retirement—not backend
+finish, SSE writes or client receipt. Cancellation shields in-flight mutations,
+then settles or burns the owned request. Ownership/settlement failures fail the
+engine closed; no historical-session replay repairs them. Detail and scoped
+acceptance: [ordinary serving](mtp-production-serving.md).
+
+## State and application boundaries
+
+| Authority | What it owns | What it does not own |
+| --- | --- | --- |
+| Active execution | Exclusive native mutation, consumed frontier and retirement | Socket delivery or external tool effects |
+| Paired cache | Immutable compatible target/DSpark snapshots and upstream leases | Conversation identity or an active executable alias |
+| Production logical session | Canonical ordinary history, token identity, request correlations and latest outcome | Native cache/ring/parser/queue or a second model executor |
+| Frontend transcript | Application-visible conversation and settings/workflow snapshot | Canonical native history inferred from partial chunks |
+| Application tool ledger | Reservations and known results in its stated living-client scope | Crash-safe/distributed exactly-once effects |
+
+Optional ordinary MTP [logical sessions](production-sessions.md) pin their exact
+canonical pair through the same Scheduler/refcount owner. A lost or corrupt pinned
+pair is a failure before native start, not permission to prefill old session tokens.
+Ordinary independent requests may instead take a legitimate cache miss.
+
+OFF idle artifacts are dormant validated same-backend storage, never a second live
+owner. MTP native persistence/restore is unsupported. The historical singleton
+profile retains its separate session/sequence/certificate contract; none of those
+identities is compulsory for an ordinary Chat Completions request.
+
+## Reference and component boundaries
+
+- `ds41f_mlx/model_execution/`: first-party OFF model, packed state and SSD Engram.
+- `ds41f_mlx/prefill_fp8_mlx/`: selected dense prefill, append and P5 handoff.
+- `ds41f_mlx/runtime/`: generation/state/resource lifetimes and physical adapters.
+- `ds41f_mlx/serving/`: recipe HTTP integration, ordinary scheduling/cache/session
+  boundaries and generation/capacity policy.
+- `native/`: C++ executable reference core and selectively reusable components.
+- `reference/R1/`: immutable owned semantic material; not current-release approval.
+- `tools/`, `artifacts/`, `docs/archive/`: validation/reproduction and scoped history.
+
+Persistent state includes consumed history, window/compressed KV, compressor tails,
+index/candidate publications and Engram history. Hidden/logit tensors are call-local;
+weights and SSD backing are static model resources. The native reference lifecycle
+is valuable but is not the selected production prefill/decode engine.
+
+Reference vertical-slice serving, the old one-chunk prefill, P8 tile-native carry
+and the discarded first-party MTP execution line are not production selectors.
+Native build success or historical throughput does not promote them. Correctness
+is backend-local under official precision/algorithm/state contracts, not universal
+cross-backend hidden-state, logit, RNG or greedy-token bit identity.
