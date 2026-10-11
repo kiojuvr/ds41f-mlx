@@ -124,6 +124,12 @@ WARNING yellow, ERROR/CRITICAL red. Timestamp and sequence appear on each record
 wrapped continuations are indented. TUI component names omit the redundant
 `ds41f.operator.` prefix.
 
+A consumer may quit or hit its one-second HTTP timeout while control is preparing
+an answer. Connection loss / send timeout during **headers or body** closes that
+request quietly; it is not a runtime error and must not generate a socketserver
+traceback. Serialization and unexpected I/O failures are not swallowed. A shutdown
+already requested remains committed even if its HTTP acknowledgement cannot be sent.
+
 Canonical startup/admission, lifecycle/model load, received/finished request and
 existing MTP settlement output use one logging path. The existing settlement
 message is moved, not copied; its exception value becomes the exception type.
@@ -235,6 +241,20 @@ builder and installed non-editably; no checkout execution or validation bypass
 was used for runtime acceptance. No OFF/long-context/general-release campaign or
 release promotion is claimed. Local raw captures/driver/wheel are retained under
 `artifacts/operator-runtime-logs/`; the concise receipt is versioned above.
+
+### Control-disconnect follow-up
+
+The reported `BrokenPipeError` on status response delivery is covered by explicit
+transport-loss handling shared by status, logs and shutdown replies. **50** focused
+operator tests pass; **11** disconnect cases also pass against the newly installed
+non-editable wheel from `/tmp`, using isolated disposable control listeners (no
+checkout runtime or model load). Real TCP resets before response delivery produce
+no socketserver error, subsequent polling succeeds, and shutdown remains committed.
+Header/body BrokenPipe, reset, abort and timeout paths are tested; invalid JSON
+scalars and unrelated OSError still fail visibly. Wheel SHA:
+`01c0ffab35e32763144ae22ad5d319a4ce4c00a17ac447dcce179815087b4636`.
+This narrowly scoped follow-up does not claim a rerun of the model/TUI timeline
+above or additional model qualification.
 
 ## Dashboard presentation acceptance (historical, before runtime logs)
 

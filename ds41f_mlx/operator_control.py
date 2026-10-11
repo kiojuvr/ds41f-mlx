@@ -37,12 +37,18 @@ class Control:
 
             def reply(self, code, value):
                 body = json.dumps(value, allow_nan=False).encode()
-                self.send_response(code)
-                self.send_header('Content-Type', 'application/json')
-                self.send_header('Content-Length', str(len(body)))
-                self.send_header('Cache-Control', 'no-store')
-                self.end_headers()
-                self.wfile.write(body)
+                try:
+                    self.send_response(code)
+                    self.send_header('Content-Type', 'application/json')
+                    self.send_header('Content-Length', str(len(body)))
+                    self.send_header('Cache-Control', 'no-store')
+                    self.end_headers()
+                    self.wfile.write(body)
+                except (ConnectionError, TimeoutError):
+                    # A polling consumer may time out/quit during serialization
+                    # or sending. This is transport loss, not a runtime failure.
+                    # Include header writes; never retry or undo a control action.
+                    self.close_connection = True
 
             def allowed(self):
                 # Kernel peer address, never Forwarded/X-Forwarded-For. Origin
