@@ -49,9 +49,9 @@ Canonical current-state documents:
 - [Stateful Web application](web-application.md) — canonical runtime, tools, Vision and persistence semantics
 - [M19 local web client](archive/development/m19-local-web-client.md) — historical browser client and client-side tool boundary
 - [M20 oMLX release migration](archive/development/m20-omlx-release-migration.md) — promoted exact upstream 0.7.0 MTP-OFF baseline and bounded qualification evidence
-- [M24 operational soak status](milestone-24-operational-soak-status.md) — bounded real-agent/client tool-loop soak, persistence/restore, interruption recovery, and observability evidence
-- [M25 MTP decision](milestone-25-mtp-decision.md) — pinned upstream lifecycle audit, real-model extraction failure, diagnostic A/B and continued-default-OFF decision
-- [M30 recipe semantic preview](milestone-30-recipe-semantic-preview.md) — pinned parser audit and missing upstream preview API; protocol gate remains blocked and MTP remains OFF
+- [M24 operational soak status](archive/development/milestone-24-operational-soak-status.md) — bounded real-agent/client tool-loop soak, persistence/restore, interruption recovery, and observability evidence
+- [M25 MTP decision](archive/development/milestone-25-mtp-decision.md) — pinned upstream lifecycle audit, real-model extraction failure, diagnostic A/B and continued-default-OFF decision
+- [M30 recipe semantic preview](archive/development/milestone-30-recipe-semantic-preview.md) — pinned parser audit and missing upstream preview API; protocol gate remains blocked and MTP remains OFF
 - [M39 lifetime/admission](milestone-39-lifetime-admission.md) — server-issued internal lifetimes, derivable retirement and finite ownership/diagnostic budgets; no release promotion
 - [M38 client operational soak](milestone-38-client-operational-soak.md) — 76-request living-client workload passes after fail-closed hardening; historical lifetime retention BLOCK resolved by M39; no promotion at M38
 - [M37 local-client integration](milestone-37-local-client-integration.md) — internal reusable sequence-fenced recovery/tool client, explicit DELETE/fresh and expired identities; no release promotion

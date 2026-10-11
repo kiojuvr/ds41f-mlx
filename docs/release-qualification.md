@@ -28,7 +28,7 @@ M21 adds the Rust-facing `ds41f_api` boundary over the unchanged local HTTP/SSE 
 M22 defined the historical release manifest and operations/acceptance path.
 `release/ds41f-release.json` records that release metadata; its qualification artifacts use `ds41f.release-qualification.v1` / `ds41f.release-acceptance.v1` schemas under `artifacts/release/` by default. M22 acceptance evidence is `artifacts/m22/release-acceptance.json`.
 
-M25 [rejects/defers upstream MTP](milestone-25-mtp-decision.md) after real-model
+M25 [rejects/defers upstream MTP](archive/development/milestone-25-mtp-decision.md) after real-model
 boundary diagnostics; it does not qualify an optional serving mode. The M9
 artifact now explicitly fails closed for preserved/active MTP models. Fresh OFF
 regression/soak results and explicit blocked MTP gates are under `artifacts/m25/`.

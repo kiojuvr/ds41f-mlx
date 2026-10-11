@@ -10,10 +10,24 @@ must validate before history commits; any failure burns every layer. Lower-level
 numerical/storage/SSD Engram read primitives remain attributed substrate. M46's owned `DecodeStateProducer` controls window, compressor tails, compressed/index/candidate publication and structural completion; no donor Block/Attention/Compressor/Indexer call executes in standard-off decode. The M2–M4 admission discussion below is historical/reference machinery,
 not the production selector. See `runtime-strategy.md` and the M44/M45/[M46](milestone-46-state-production-ownership.md)/[M47](milestone-47-execution-resource-admission.md) decisions. M47 binds a live model-resource capability through prefill, idle P6 and target decode. Changed/unadmitted resources reject entry before mutation; model close revokes the capability, and retired-resource execution burns the transaction lease.
 
+Current ordinary MTP uses Scheduler-owned immutable paired target/DSpark
+checkpoints, aligned canonical frontiers and no history replay or full-cache
+repack. Logical session history/outcomes are not a second physical cache owner;
+transport delivery is distinct from canonical settlement. See
+[ordinary serving](mtp-production-serving.md) and [logical sessions](production-sessions.md).
+MTP native persistence/restore remains unsupported; OFF idle artifacts do not
+provide an MTP serialization format.
+
+The M25–M39 accounts below retain their original internal development scope.
+Public-disabled, blocked and next-task statements describe those stages, not
+current ordinary MTP or permission to continue their historical plans. In
+particular, M28's observed extra-suffix bound is a diagnostic result for its
+recorded topology, not a new universal cancellation policy.
+
 M25 preserves the OFF-only idle artifact: save/restore reject models with
 preserved or active MTP before I/O. The pinned upstream MTP emission queue and
 target cache do not provide the required arbitrary committed frontier through
-ordinary extraction; see [M25](milestone-25-mtp-decision.md). No production MTP
+ordinary extraction; see [M25](archive/development/milestone-25-mtp-decision.md). No production MTP
 session or restore qualification is implied by the contracts below.
 
 The separate internal guarded singleton contract is operationally qualified in

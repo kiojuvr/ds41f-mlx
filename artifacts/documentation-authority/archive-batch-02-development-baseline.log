@@ -1,0 +1,50 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+________________ test_eof_tool_probe_does_not_prove_closed_dsml ________________
+
+recipe = (<module 'deepseek_recipe' from '/Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/deepseek_recipe/__init..."), ("u", "s"), ("i", "g"), ("è", "¿"), ("å", "Ī"), ("c", "e"), ("æ", "ĺ"), ("Ð", "¾"), ("a", "m"), ("ä", "½"), ...])))
+
+    def test_eof_tool_probe_does_not_prove_closed_dsml(recipe):
+        d, tokenizer, _ = recipe
+        text = '<｜DSML｜ calls>\n' + tool()
+        ids = tokenizer.encode(text)
+        p, _ = make_processor(d, tokenizer)
+        try:
+            before = p.semantic_snapshot()
+            preview = p.preview_tokens(ids)
+            assert preview.mapping_exact
+            assert preview.terminal_kind is None
+            assert p.semantic_snapshot() == before
+        finally:
+            p.close()
+        # The current raw preview permits continuation although the official
+        # consuming Stop/EOF projection below already completes this tool call.
+        # This is the M52R blocker, not a license to imitate DSML or JSON syntax.
+        result = parse_tokens(d, tokenizer, ids)
+        assert '</｜DSML｜ calls>' not in text
+        assert result["response"]["choices"][0]["finish_reason"] == "tool_calls"
+        assert json.loads(result["response"]["choices"][0]["message"]["tool_calls"][0]["function"]["arguments"]) == {"city": "Paris"}
+        from ds41f_mlx.runtime.recipe_semantic_guard import RecipeSemanticGuard
+        p, response = make_processor(d, tokenizer)
+>       guard = RecipeSemanticGuard(p, response=response, frontier=17)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-history-baseline-_w93v3yp/test_m30_recipe_preview_audit.py:99: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <ds41f_mlx.runtime.recipe_semantic_guard.RecipeSemanticGuard object at 0x109165d30>
+processor = <deepseek_recipe._native.StreamProcessor object at 0x10914f2d0>
+diagnostic = False, control_token_ids = ()
+response = <deepseek_recipe._native.ChatCompletionResponse object at 0x11fd668d0>
+frontier = 17
+
+    def __init__(self, processor, *, diagnostic=False, control_token_ids=(), response=None, frontier=0):
+        import deepseek_recipe as d
+        if not hasattr(processor, 'preview_certified_eof_tokens'):
+>           raise RuntimeError('qualification consuming EOF native recipe required')
+E           RuntimeError: qualification consuming EOF native recipe required
+
+ds41f_mlx/runtime/recipe_semantic_guard.py:46: RuntimeError
+=========================== short test summary info ============================
+FAILED ../../../var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-history-baseline-_w93v3yp/test_m30_recipe_preview_audit.py::test_eof_tool_probe_does_not_prove_closed_dsml
+1 failed, 11 deselected in 0.36s

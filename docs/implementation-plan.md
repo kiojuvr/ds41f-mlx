@@ -345,7 +345,7 @@ exercised at short and 200K frontiers with real acceptance/rejection/rollback.
 Its ordinary extraction is not a committed arbitrary idle boundary; full-history
 reconciliation violates the no-replay contract. No serving switch or parallel
 production authority was added. M9 save/restore now explicitly fails closed for
-preserved/active MTP. See [M25](milestone-25-mtp-decision.md) and
+preserved/active MTP. See [M25](archive/development/milestone-25-mtp-decision.md) and
 `artifacts/m25/decision.json` for diagnostic A/B, fresh OFF regression/soak and
 blocked MTP lifecycle gates. Long-session MTP benefit remains unmeasured, not
 inherited. Future acceleration work first needs a sound upstream idle commit API.
@@ -353,7 +353,7 @@ inherited. Future acceleration work first needs a sound upstream idle commit API
 ## M24 — Bounded operational soak
 
 The OFF control is qualified for the bounded agent/tool workload in
-[M24](milestone-24-operational-soak-status.md); its architecture remains stable.
+[M24](archive/development/milestone-24-operational-soak-status.md); its architecture remains stable.
 
 ## M23 — Relocatable Release Bundle and Clean-Room Installation Qualification
 

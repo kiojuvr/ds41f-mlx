@@ -15,6 +15,12 @@ change the 1M text/resource boundary or promote R1/release/runtime scope.
 
 ## Qualified production architecture
 
+The flow below describes standard-OFF, not every supported execution profile.
+Current opt-in ordinary MTP is documented in [ordinary serving](mtp-production-serving.md)
+and [production logical sessions](production-sessions.md). Original M25–M35
+public-disabled decisions below remain historical evidence within their stated
+revision/profile, not a current ban on those ordinary paths.
+
 ```text
 official DeepSeek-V4.1-Flash checkpoint
   ↓
@@ -53,7 +59,7 @@ boundaries, and ordinary continuation consumes retained native cache authority.
 
 ## MTP lifecycle decision (M25, historical unguarded path)
 
-[M25](milestone-25-mtp-decision.md) rejects/defers the pinned upstream MTP
+[M25](archive/development/milestone-25-mtp-decision.md) rejects/defers the pinned upstream MTP
 integration: actual verification/rollback runs, but ordinary extraction does not
 produce a complete committed idle frontier, and upstream reconciliation can
 replay history. No optional serving path is qualified. M9 save/restore explicitly

@@ -372,7 +372,7 @@ This is integration of existing capability, **not a new long-context qualificati
 The [very-long-context evidence](very-long-context-production-qualification.md)
 establishes DwarfStar/P5/P6 same-list execution, deferred append, ownership,
 resource lifetime and cancellation through **1,048,576 consumed tokens**.
-[M25 native MTP evidence](milestone-25-mtp-decision.md) includes real 200,000-token
+[M25 native MTP evidence](archive/development/milestone-25-mtp-decision.md) includes real 200,000-token
 prefix execution; current canonical state/settlement rules reuse M50/M51R/M52R
 and their regression evidence. These components are composed through the existing
 ProductionScheduler, not numerically re-proved. No model-execution or MTP algorithm

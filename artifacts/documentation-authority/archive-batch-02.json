@@ -1,0 +1,84 @@
+{
+  "base_commit": "a04749a6fa22ddebd117e042d5fc25dc9548c4af",
+  "scope": "M24-M30 original OFF soak and initial MTP lifecycle/protocol history",
+  "moves": [
+    {
+      "old_path": "docs/milestone-24-operational-soak-status.md",
+      "new_path": "docs/archive/development/milestone-24-operational-soak-status.md",
+      "original_sha256": "6d00e29659a556ca539f83f5e12975675e3d29b318c8498f69a71c78dab376a1",
+      "archived_sha256": "6d00e29659a556ca539f83f5e12975675e3d29b318c8498f69a71c78dab376a1",
+      "content_preserved_byte_for_byte": true
+    },
+    {
+      "old_path": "docs/milestone-25-mtp-decision.md",
+      "new_path": "docs/archive/development/milestone-25-mtp-decision.md",
+      "original_sha256": "1fbb4d2d0223dcd2730500a435c7c576d7f5df49669cf274697f83e331fa544d",
+      "archived_sha256": "1fbb4d2d0223dcd2730500a435c7c576d7f5df49669cf274697f83e331fa544d",
+      "content_preserved_byte_for_byte": true
+    },
+    {
+      "old_path": "docs/milestone-26-mtp-performance-gap.md",
+      "new_path": "docs/archive/development/milestone-26-mtp-performance-gap.md",
+      "original_sha256": "f866d7b79d85d96de701ef92efa2cfd9f44c33cb42cd4e0d3d45a39b92fdfd7f",
+      "archived_sha256": "f866d7b79d85d96de701ef92efa2cfd9f44c33cb42cd4e0d3d45a39b92fdfd7f",
+      "content_preserved_byte_for_byte": true
+    },
+    {
+      "old_path": "docs/milestone-27-mtp-lifecycle-state.md",
+      "new_path": "docs/archive/development/milestone-27-mtp-lifecycle-state.md",
+      "original_sha256": "cb584ff399405d29616a17b6491af6e2613e916acf5e6248d9c95ad3d62a9ff4",
+      "archived_sha256": "cb584ff399405d29616a17b6491af6e2613e916acf5e6248d9c95ad3d62a9ff4",
+      "content_preserved_byte_for_byte": true
+    },
+    {
+      "old_path": "docs/milestone-28-mtp-quiescence.md",
+      "new_path": "docs/archive/development/milestone-28-mtp-quiescence.md",
+      "original_sha256": "84a046cc215248130c6632dc5df58274278806c3b409beaeb334145cb0b1a73d",
+      "archived_sha256": "84a046cc215248130c6632dc5df58274278806c3b409beaeb334145cb0b1a73d",
+      "content_preserved_byte_for_byte": true
+    },
+    {
+      "old_path": "docs/milestone-29-mtp-stateful-lifecycle.md",
+      "new_path": "docs/archive/development/milestone-29-mtp-stateful-lifecycle.md",
+      "original_sha256": "56cd2b58705f6fa1a1dffbb46a770b83bd1c32fbf9d0aa85e4c264dfe1350ded",
+      "archived_sha256": "56cd2b58705f6fa1a1dffbb46a770b83bd1c32fbf9d0aa85e4c264dfe1350ded",
+      "content_preserved_byte_for_byte": true
+    },
+    {
+      "old_path": "docs/milestone-30-recipe-semantic-preview.md",
+      "new_path": "docs/archive/development/milestone-30-recipe-semantic-preview.md",
+      "original_sha256": "2ded16dea781ce42882c9b447491b4019d44dfe364f131e136e8027031002a52",
+      "archived_sha256": "2ded16dea781ce42882c9b447491b4019d44dfe364f131e136e8027031002a52",
+      "content_preserved_byte_for_byte": true
+    }
+  ],
+  "retained_current_contracts": [
+    "OFF idle artifacts do not serialize MTP; MTP native persistence/restore remains unsupported",
+    "ordinary MTP paired target/DSpark same-frontier ownership and no replay/repack",
+    "canonical settlement distinct from transport delivery; logical history not a second physical cache",
+    "original M28 extra-suffix diagnostic bound is not a universal production cancellation policy"
+  ],
+  "classification_change": "paths only; existing labels/reasons/policy retained pending final index/classification stage",
+  "markdown_missing_target_files": [],
+  "executable_or_release_old_path_references": [],
+  "validation": {
+    "mtp_environment_tests": {
+      "passed": 23,
+      "failed": 0,
+      "files": [
+        "tests/test_m25_mtp_boundary.py",
+        "tests/test_m29_mtp_lifecycle.py",
+        "tests/test_m30_recipe_preview_audit.py"
+      ]
+    },
+    "development_environment_tests": {
+      "passed": 22,
+      "failed": 1,
+      "reason": "native recipe lacks preview_certified_eof_tokens; same failure reproduced with base-commit test and unchanged relevant runtime/tool code",
+      "baseline_log": "artifacts/documentation-authority/archive-batch-02-development-baseline.log"
+    },
+    "runtime_sources_tests_dependencies_original_evidence_unchanged": true,
+    "real_model_acceptance_run": false
+  },
+  "pending": "Existing self-containment gate rejects canonical archive links; policy/index/classification reconciliation remains a final-stage task."
+}

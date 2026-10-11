@@ -39,10 +39,14 @@ At idle committed boundaries there is one executable cache authority, prompt rep
 
 Historical M25: the pinned V4.1 MTP loop owns a draft cache, pending anchors and an emission
 queue; its target frontier can lead or lag emitted history. Plain upstream row
-extraction is not a ds41f idle commit. [M25](milestone-25-mtp-decision.md) records
+extraction is not a ds41f idle commit. [M25](archive/development/milestone-25-mtp-decision.md) records
 real-model verification/rollback and the failed extraction prerequisite. MTP
 was unsupported at M25. The later explicitly bounded M41 profile is separately qualified; M45 does not change it. Full-history
 upstream reconciliation is forbidden; no OFF evidence transfers to MTP.
+Current ordinary MTP execution/settlement follows [ordinary serving](mtp-production-serving.md)
+and [logical sessions](production-sessions.md), with its separately qualified
+[generation policy](generation-policy-investigation.md); the original M25
+extraction failure does not describe the current supported ordinary path.
 
 ## Sampling and determinism
 
