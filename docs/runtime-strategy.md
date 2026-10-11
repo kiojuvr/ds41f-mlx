@@ -19,7 +19,13 @@ official DeepSeek-V4.1-Flash checkpoint
 
 Target hardware is the Mac Studio M3 Ultra 512 GB class system. Input scope is text. Serving is local single-flight.
 
-M20 pins clean upstream oMLX `v0.7.0` at `4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40`; CED remains OFF/unused. M22 records this and the active package/dependency expectations in `release/ds41f-release.json`. The versioned release checkout is the qualification authority, dev2 is the unchanged rollback checkout, and `~/omlx` is reserved for a separately constructed identity-matching operational checkout. See [M20](m20-omlx-release-migration.md) and [M22](m22-release-packaging.md).
+The historical [M20 migration](archive/development/m20-omlx-release-migration.md)
+and [M22 packaging](archive/development/m22-release-packaging.md) recorded the
+upstream `v0.7.0` revision `4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40` and
+then-current checkout/release manifest policy. Those accounts are evidence, not
+current checkout or rollback requirements. Current executable/dependency identity
+is enforced by [installed execution admission](runtime-admission.md); use
+[operations](operations.md) for the provisioned OFF/MTP environments.
 
 ## Authority hierarchy
 

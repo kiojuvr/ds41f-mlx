@@ -84,7 +84,11 @@ def build_bundle(output_dir: Path, *, skip_rust_build: bool = False) -> dict[str
     shutil.copy2(ROOT / "Cargo.toml", dist_root / "Cargo.toml")
     shutil.copy2(ROOT / "Cargo.lock", dist_root / "Cargo.lock")
     shutil.copy2(ROOT / "README.md", dist_root / "README.md")
-    for doc in ("docs/operations.md", "docs/m22-release-packaging.md", "docs/m23-relocatable-release.md"):
+    # Preserve historical packaging reports at their archive paths; they are not
+    # current deployment instructions or authority for installed execution.
+    for doc in ("docs/operations.md",
+                "docs/archive/development/m22-release-packaging.md",
+                "docs/archive/development/m23-relocatable-release.md"):
         p = ROOT / doc
         if p.exists():
             out = dist_root / doc; out.parent.mkdir(parents=True, exist_ok=True); shutil.copy2(p, out)

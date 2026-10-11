@@ -354,11 +354,15 @@ it is not today's installed execution authority. M20 pinned upstream `v0.7.0`
 at `4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40`. The recorded checkout/rollback
 policy describes that milestone, not a requirement to retain those environments.
 
-See `docs/operations.md`, `docs/m22-release-packaging.md`, `docs/m23-relocatable-release.md`, and `docs/m20-omlx-release-migration.md` for configuration, packaging, distribution, qualification, and baseline evidence.
+Use [operations](docs/operations.md) for current deployment. Original packaging,
+distribution and migration evidence is retained in
+[M22](docs/archive/development/m22-release-packaging.md),
+[M23](docs/archive/development/m23-relocatable-release.md) and
+[M20](docs/archive/development/m20-omlx-release-migration.md).
 
 ## Runtime/API status
 
-The supported serving layer uses official DeepSeek `deepseek-recipe` for protocol, prompt, response, tool-call, thinking, and streaming behavior, with a narrow `ds41f` backend interface below it. M21 adds the stable Rust-facing boundary as the `ds41f_api` crate over this same local HTTP/process-lifetime seam; Rust does not own KV/session state or reimplement recipe semantics. See `docs/api.md` and `docs/m21-rust-api-boundary.md` for endpoint behavior, single-flight/max-session limits, persistence/restore, tool-loop behavior, streaming, cancellation, and ownership contracts.
+The supported serving layer uses official DeepSeek `deepseek-recipe` for protocol, prompt, response, tool-call, thinking, and streaming behavior, with a narrow `ds41f` backend interface below it. M21 adds the stable Rust-facing boundary as the `ds41f_api` crate over this same local HTTP/process-lifetime seam; Rust does not own KV/session state or reimplement recipe semantics. See `docs/api.md` and [the historical M21 report](docs/archive/development/m21-rust-api-boundary.md) for endpoint behavior, single-flight/max-session limits, persistence/restore, tool-loop behavior, streaming, cancellation, and ownership contracts.
 
 ## Correctness model
 

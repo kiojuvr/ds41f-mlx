@@ -2,7 +2,7 @@
 
 M19 added the original separate local browser client above the qualified ds41f runtime API.
 This document retains M19's historical acceptance. For the current streaming,
-Vision, recovery and save/restore application, see [Web application](web-application.md).
+Vision, recovery and save/restore application, see [Web application](../../web-application.md).
 
 ```text
 browser -> ds41f_mlx.web -> qualified ds41f HTTP API -> stateful Chat Completions session
@@ -113,11 +113,11 @@ shutdown of both services completed cleanly.
 
 Evidence:
 
-- [Environment reconciliation](../artifacts/m19/m19-environment-reconciliation.json)
-- [Final bounded real-model acceptance](../artifacts/m19/m19-real-model-acceptance.json)
-- [Earlier environment failure and independent provider checks](../artifacts/m19/m19-client-acceptance.json) (unchanged historical evidence)
-- [First qualified-runtime attempt](../artifacts/m19/m19-real-model-attempt-1.json): broad question exceeded the bounded tool-round limit after search/fetch calls.
-- [Second attempt](../artifacts/m19/m19-real-model-attempt-2.json): search loop passed; disabling tools on the following turn changed the recipe prompt and continuation was rejected. The final attempt kept declarations unchanged.
+- [Environment reconciliation](../../../artifacts/m19/m19-environment-reconciliation.json)
+- [Final bounded real-model acceptance](../../../artifacts/m19/m19-real-model-acceptance.json)
+- [Earlier environment failure and independent provider checks](../../../artifacts/m19/m19-client-acceptance.json) (unchanged historical evidence)
+- [First qualified-runtime attempt](../../../artifacts/m19/m19-real-model-attempt-1.json): broad question exceeded the bounded tool-round limit after search/fetch calls.
+- [Second attempt](../../../artifacts/m19/m19-real-model-attempt-2.json): search loop passed; disabling tools on the following turn changed the recipe prompt and continuation was rejected. The final attempt kept declarations unchanged.
 
 The original `_native` failure used the repository `.venv/bin/python`, which had
 no installed recipe package and fell back to the recipe source checkout without

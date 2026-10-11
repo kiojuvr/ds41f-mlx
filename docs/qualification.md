@@ -46,7 +46,7 @@ M20's promoted decode dependency was clean upstream oMLX `v0.7.0` at
 persistence/HTTP/tool/EOS, A/B, repeated-session and 200K endpoint evidence is
 recorded in `artifacts/m20/promotion.json`. Unchanged source/prefill ladder
 evidence is retained; old M18 whole-runtime inheritance is not valid for this
-new dependency. See [M20](m20-omlx-release-migration.md) for exact scopes.
+new dependency. See [M20](archive/development/m20-omlx-release-migration.md) for exact scopes.
 
 M25's [pinned upstream MTP decision](milestone-25-mtp-decision.md) is
 **REJECT/DEFER**, not optional qualification. Actual accepted/rejected speculative

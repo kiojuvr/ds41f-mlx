@@ -95,6 +95,26 @@ Stateless endpoints continue to use official recipe request behavior for fields 
 
 Rejected requests are atomic with respect to model/session state: no partial token commit, KV mutation, publication, or generation-state advance may survive. Unknown session returns not-found; active overlap/max-session conflicts return conflict; validation failures return invalid request errors.
 
+## Rust client boundary
+
+The repository's `rust/ds41f_api` crate is an HTTP/JSON/SSE client and optional
+child-process control boundary, not a Rust model runtime, FFI layer or owner of
+KV/session state. DeepSeek recipe and the server retain prompt/tool/thinking,
+execution, continuation and persistence authority. Tool effects execute in the
+client layer, not in the model server.
+
+For `RuntimeProcess`, `wait_process_alive()` proves only that `/health` responds
+with `alive` or `ready`; inference requires `wait_model_ready()` / `wait_ready()`.
+`shutdown()` reports graceful exit separately from a forced-kill fallback.
+Dropping an SSE iterator closes transport; canonical settlement and state remain
+server-owned, so transport loss is not proof of a token-exact rollback or permission
+to replay a request. Persistence support is profile-specific; these client methods
+do not grant OFF/MTP parity or new Rust application qualification.
+
+The original M21 design and bounded real-server acceptance are retained in
+[the historical Rust boundary report](archive/development/m21-rust-api-boundary.md).
+Use [operations](operations.md) for current installed server startup.
+
 ## Explicit bounded MTP candidate (separate contract)
 
 M41 implements the process-wide **opt-in** `mtp-singleton-v1` profile; its

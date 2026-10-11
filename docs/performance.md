@@ -143,7 +143,7 @@ Same MTP-OFF configuration on the target: dev2 median synchronized decode
 63.22 s versus 69.02/62.69 s; median continuation bootstrap ~0.169 s on both.
 No reproducible meaningful regression was found. Current RSS grew ~0.28 GiB
 across 12 follow-ups on each side, with coherent state growth and empty retired
-generators. See [M20](m20-omlx-release-migration.md) for timing scope, per-turn
+generators. See [M20](archive/development/m20-omlx-release-migration.md) for timing scope, per-turn
 trend, native/package identity and bounded-session limits.
 
 ## Unqualified areas

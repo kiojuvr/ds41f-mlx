@@ -47,8 +47,8 @@ Canonical current-state documents:
 - [Generation policy frontends](generation-policy-frontends.md) — runtime-owned eight-parameter contract, session reasoning lock, application workflow snapshots and real TUI/Chrome/OpenCode execution acceptance; backend semantics unchanged
 - [Everyday Chat interface](chat-interface.md) — UX, actual model controls and browser qualification gate
 - [Stateful Web application](web-application.md) — canonical runtime, tools, Vision and persistence semantics
-- [M19 local web client](m19-local-web-client.md) — historical browser client and client-side tool boundary
-- [M20 oMLX release migration](m20-omlx-release-migration.md) — promoted exact upstream 0.7.0 MTP-OFF baseline and bounded qualification evidence
+- [M19 local web client](archive/development/m19-local-web-client.md) — historical browser client and client-side tool boundary
+- [M20 oMLX release migration](archive/development/m20-omlx-release-migration.md) — promoted exact upstream 0.7.0 MTP-OFF baseline and bounded qualification evidence
 - [M24 operational soak status](milestone-24-operational-soak-status.md) — bounded real-agent/client tool-loop soak, persistence/restore, interruption recovery, and observability evidence
 - [M25 MTP decision](milestone-25-mtp-decision.md) — pinned upstream lifecycle audit, real-model extraction failure, diagnostic A/B and continued-default-OFF decision
 - [M30 recipe semantic preview](milestone-30-recipe-semantic-preview.md) — pinned parser audit and missing upstream preview API; protocol gate remains blocked and MTP remains OFF

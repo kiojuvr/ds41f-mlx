@@ -95,7 +95,7 @@ package versions, ds41f runtime identity, recipe, checkpoint and selectors—not
 an oMLX directory name. Rebuilding kernels, advancing a release or adding local
 code does not silently inherit M20 qualification. Full build/package/native
 records are in `artifacts/m20/release-environment.json`; see the
-[M20 report](../m20-omlx-release-migration.md) for evidence scope.
+[M20 report](development/m20-omlx-release-migration.md) for evidence scope.
 
 ## Inspect release/provenance without loading the model
 

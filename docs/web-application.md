@@ -28,12 +28,17 @@ browser HTML/CSS/JS + IndexedDB ordinary application history
  -> first-party worker-confined M11/M8/target execution and native persistence
 ```
 
-Use the existing admitted runtime environment/checkpoint, as described in
-[M19 launch](m19-local-web-client.md). The thin Web process needs FastAPI, uvicorn
-and httpx; it does not load the model. No npm, framework or frontend build is used.
+Use the installed runtime environment/checkpoint described in
+[operations](operations.md), not the original M19 checkout launcher. The runtime
+and Web client are separate processes; the repository's `.venv` is for the
+application/development process, not admitted model execution. The thin Web
+process needs FastAPI, uvicorn and httpx; it does not load the model. No npm,
+framework or frontend build is used.
 
 ```sh
-.venv/bin/python -m ds41f_mlx.serve --host 127.0.0.1 --port 8000
+# External DS41F_CHECKPOINT and state paths must already be configured.
+/Volumes/SDXC-512/ds41f-mlx_off-venv/bin/ds41f start --profile standard-off --host 127.0.0.1 --port 8000
+# Separate terminal, from the development checkout:
 .venv/bin/python -m ds41f_mlx.web --host 127.0.0.1 --port 8080 --runtime-url http://127.0.0.1:8000
 # Open http://127.0.0.1:8080/
 ```
