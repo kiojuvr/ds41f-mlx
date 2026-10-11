@@ -51,6 +51,15 @@ Before the fifth CURRENT compilation:
 - [Ordinary MTP serving source](mtp-production-serving.md.txt) — full original
   TTFT phase table, tool/LAN/context/output acceptance and source/seal chronology
 
+## Application and frontend pages — `17eb5e8`
+
+Before the sixth CURRENT compilation:
+
+- [Web application source](web-application.md.txt)
+- [Browser Chat interface source](chat-interface.md.txt)
+- [Operator Chat source](operator-chat.md.txt)
+- [Generation frontend source](generation-policy-frontends.md.txt)
+
 The `.md.txt` files are retained **source evidence**, not current instructions.
 Their Markdown, old relative links and paths are preserved verbatim; resolve
 relative references from each file's original location when studying that edition.
@@ -63,4 +72,5 @@ recorded in `artifacts/documentation-authority/current-compilation-01.json` and
 `artifacts/documentation-authority/current-compilation-02.json` and
 `artifacts/documentation-authority/current-compilation-03.json` and
 `artifacts/documentation-authority/current-compilation-04.json` and
-`artifacts/documentation-authority/current-compilation-05.json`.
+`artifacts/documentation-authority/current-compilation-05.json` and
+`artifacts/documentation-authority/current-compilation-06.json`.

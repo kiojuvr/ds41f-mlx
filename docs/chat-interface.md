@@ -1,230 +1,140 @@
 # Everyday local Chat interface
 
+This page owns **Browser interaction and truthful controls/labels**.
+[Application state](web-application.md) owns journals, effects and recovery;
+[frontend policy](generation-policy-frontends.md) owns generation ownership;
+[operations](operations.md) owns launch. Browser UI does not own runtime caches,
+settlement or recipe grammar.
+
 ## Gate
 
-**Historical everyday-UI PASS at `9312cdd`: 68 real Chrome/runtime checks, 90 affected Python tests +
-8 subtests, 12 renderer tests.** The receipts and source gate are
-`artifacts/chat-ux/browser.json` and `artifacts/chat-ux/qualification.json`.
-
-The later opt-in [private-LAN extension](private-lan.md) has its own source-specific
-HTTP/browser capability receipt at `3d29cc4`. The later [dynamic capability budget](dynamic-capability-budget.md)
-changes runtime admission and tool defaults and has a separate source-specific gate.
-The older asset/Python hashes below describe the
-`9312cdd` everyday-UI gate, not automatic acceptance of subsequent network changes.
-
-The `133adc4` stateful Web/runtime qualification remains the semantic baseline,
-not automatic acceptance of a changed UX. All five final static sources match the
-browser receipt; all 95 tracked production Python sources are identical to that
-baseline. A PARTIAL, RUNNING, failed collector or older-source receipt does not
-close the gate. **R1 re-verification, release and ds41f-runtime promotion were not
-performed by this task.** No runtime restart or user-conversation retirement is required
-for the collector: it uses a separate private Chrome context and its own sessions.
+The original everyday UI PASS at `9312cdd` is retained in
+[Browser receipt](../artifacts/chat-ux/browser.json) and
+[qualification](../artifacts/chat-ux/qualification.json). Its static/Python hash
+comparisons and the earlier `133adc4` semantics baseline apply to those inputs,
+not later network, budget, MTP, generation-policy or PDF changes. Failed/partial/
+older-source receipts cannot close a changed boundary. Full original gate wording
+and acceptance matrix remain in the source edition linked below.
 
 ## Main surface
 
-One current conversation, without a session sidebar. The header contains the
-model name, Ready / Generating / Using tool / Stopping / Recovering / Error,
-New chat and Settings. Runtime identities, frontiers, reservations and persistence
-information live under Settings > Diagnostics/Recovery. New chat explicitly warns
-that the current native conversation will be closed; DELETE must succeed (or
-confirm absence) before browser state is retired and a new session is created.
-Active work disables destructive lifecycle actions. Uncertain idle outcomes are
-not silently discarded: New chat warns about retiring the unresolved outcome.
+One current conversation, no ordinary session sidebar. The header shows model
+and Ready/Generating/Using tool/Stopping/Recovering/Error, New chat and Settings.
+Diagnostics/Recovery holds runtime IDs, frontiers and persistence metadata.
+New chat confirms retirement of the old conversation; DELETE must succeed or
+confirm absence before browser identity is forgotten. Active work disables
+destructive actions; uncertain idle outcomes are not silently discarded.
 
-The composer grows to 190px, then scrolls internally. Enter sends, Shift+Enter
-leaves newline input to the browser, and composition/229 key events cannot send.
-Image picker, paste and drop use the same preflight and original-byte reader;
-previews have individual removal. There is no canvas, transcoding or recompression.
-Historical image loading is restricted to supported inline original-byte data URLs.
-Limits are explained on rejection, not advertised as a management dashboard.
+Enter sends; Shift+Enter inserts newline. IME composition/229 cannot send. The
+composer grows to 190px before internal scrolling. OFF image picker/paste/drop
+share original-byte preflight/removable previews, without canvas/transcoding.
+Ordinary MTP disables chat image acquisition. PDF upload/drop and retained page
+exploration are separate document operations: see [PDF workflow](pdf-document-workflow.md).
+A page preview does not automatically consume an image slot or run inference.
 
-Send becomes Stop while an operation is active. Stop uses the known admitted
-request ID (or observation of the active ID), then disconnects live transport and
-waits for canonical settlement. The header says Stopping; it is not a GPU abort.
-Reload reconnects and waits on GET; it never sends a generation or tool effect.
+Send becomes Stop during active work. Stop observes/uses the authoritative ID,
+requests safe cancellation and reconciles canonical GET; it is not immediate GPU
+abort. Reload reconnects/observes without generation/effect POST replay.
 
 ## Model controls: exact mapping
 
-- `generation-policy-v1` is the only generation authority. Missing/unknown
-  versions, stateful capabilities and incompatible ownership fail closed.
-  Thinking Off uses `reasoning_effort: "none"`; On selects the runtime-advertised
-  effort enum directly, without percentages, aliases or frontend effort defaults.
-  Effort is disabled while Thinking is Off. Thinking token budgets are unsupported.
-- Reasoning and tool declarations freeze at durable first submission (including
-  unknown outcomes). Reasoning alone is session-owned; use New chat to change it.
-  Stateless API reasoning remains request-owned; the UI does not change that contract.
-- Settings > Generation renders temperature/top-p/top-k/min-p and Advanced
-  penalties/seed from capability defaults and bounds, including exclusive bounds
-  and nullable best-effort seed. There is no frontend sampler or numerical default.
-  Reset uses advertised runtime defaults, preserving already locked reasoning.
-- Sampling is request-owned, editable between user turns, and serialized explicitly.
-  Tool/explicit continuation retains the original user workflow's application
-  snapshot through Stop/GET/reconnect. Subsequent user turns snapshot the current
-  settings, not an implicit runtime previous-turn policy. Chat distinguishes next
-  user-turn settings from the effective workflow/continuation snapshot when they
-  differ. Existing non-UI omission continues to resolve to production defaults.
-- Output presets: Auto, 4K, 8K, 16K, 32K, Custom. Auto reserves the remaining
-  qualified total envelope after actual recipe/image-expanded tokenization.
-  Text has a 1,048,576 total envelope; Vision has a separate 8192 total envelope,
-  both intersected with the checkpoint limit. Custom accepts positive u32 output
-  reservations that fit actual runtime admission. Preview is observation only;
-  see [capacity authority and limits](dynamic-capability-budget.md).
-- Tools Auto executes certified canonical pending calls; Ask pauses before each
-  batch; Off never starts a new effect. Changing mode changes client execution,
-  not the frozen protocol declarations. Auto has no ordinary round quota;
-  a fixed **128-round runaway circuit breaker** preserves pending calls and
-  requires explicit Continue to reset. A round is one tool batch followed by
-  a canonical assistant request. There is no hidden generation/effect retry.
+- Require READY and supported `generation-policy-v1`/stateful ownership; no legacy
+  fallback. All eight sampling types/ranges/defaults and reasoning efforts come
+  from the runtime. Unknown or inconsistent capability rejects before generation.
+- Thinking Off sends `reasoning_effort: "none"`; On selects an advertised enum,
+  not percentages/aliases or frontend defaults. Token-budget thinking is unsupported.
+  Reasoning freezes at submission, including unknown outcomes; New chat is needed
+  to change it. Stateless reasoning is still request-owned.
+- Generation has temperature/top-p/top-k/min-p; Advanced has penalties/seed.
+  Reset uses runtime defaults without changing locked reasoning. Sampling is
+  editable between user turns and serialized explicitly; tools/continuation keep
+  their user workflow snapshot. Effective continuation and next-user-turn choices
+  are distinguished when they differ, not silently inherited by the runtime.
+- Auto/4K/8K/16K/32K/Custom output choices remain runtime-admitted reservations.
+  Auto resolves actual recipe/image-expanded prompt against remaining context and
+  the selected profile's output ceiling where present. Positive Custom must fit
+  both. Preview observes only; generation rechecks. See
+  [capabilities](capabilities.md) and [capacity policy](dynamic-capability-budget.md).
+- Tools Auto executes certified pending calls; Ask pauses before a batch; Off
+  starts no new effect. Mode changes application execution, not declarations.
+  A fixed **128-round runaway breaker** preserves calls and needs explicit Continue
+  to reset; it is not an ordinary round quota or automatic retry mechanism.
 
 ## Rendering, scrolling and safety
 
-The renderer creates DOM elements and text nodes only; it never invokes an HTML
-parser or `innerHTML`. Paragraphs, headings, emphasis, lists, blockquotes, inline
-code, fenced code with language/Copy, tables, rules and safe links are supported.
-Raw HTML remains literal. HTTP(S) URLs with credentials and all other schemes are
-rejected. Links use noopener/noreferrer; transcript images never load remote URLs.
-This small renderer is intentionally not a complete CommonMark implementation
-(e.g. nested lists, reference links and escaped table pipes are not promised).
-No npm, build chain, framework or frontend dependencies were added. Inline parsing
-is bounded; blockquote depth is capped at 16 and table separators are validated
-cell-by-cell to avoid ambiguous whitespace regex backtracking.
+Markdown uses DOM elements/text nodes, never `innerHTML` or raw HTML execution.
+Paragraphs/headings/emphasis/lists/quotes/code/tables/rules/safe links are supported,
+not full CommonMark. Credential URLs/non-HTTP(S) schemes reject; links use
+noopener/noreferrer, transcript images never fetch remote URLs. Inline parsing,
+blockquote depth and table separators are bounded. No npm/framework build.
 
-Streaming uses an 80ms timer independent of token cadence. Persistent text nodes
-receive new text; only newly completed Markdown blocks are parsed once. An
-unfinished fence/paragraph remains literal until a safe block boundary. Final
-canonical messages are rendered after reconciliation; unchanged message DOM and
-open disclosures are reused by kind, not position, so new public reasoning cannot
-steal a previously open tool disclosure. Opening live public reasoning survives
-canonical completion. Empty live reasoning remains hidden. Adjacent assistant/tool turns are display-grouped
-without modifying stored ordinary history, so the response remains the main
-surface and tool JSON never takes over the conversation. Reasoning is collapsed
-and consists solely of public `reasoning_content`. Tool rows contain names,
-queries/URLs, result/error summaries and clickable sources. Copy response and
-code Copy use the browser clipboard, reporting permission failure if necessary.
+An 80ms render timer is independent of token cadence. Stable live text nodes
+append; completed blocks parse once, unfinished blocks remain literal. Canonical
+reconciliation renders final messages while preserving unchanged DOM and open
+reasoning/tool disclosures by kind. Empty live reasoning stays hidden; only public
+`reasoning_content` is shown, collapsed by default. Tool rows show arguments,
+results/errors and sources without becoming the main response. Display grouping
+never changes stored ordinary messages. Clipboard failures are reported.
 
-Following occurs only near the bottom. Scroll-up detaches; Latest jumps to the
-end and reattaches. Disclosures detach deliberately, and layout/clamp events
-cannot silently reattach an unfollowed reader. Actual scroll gestures back to the
-bottom can reattach. Boundary renders restore a visible message anchor when
-unfollowed; native browser anchoring handles asynchronous image geometry changes.
-Image loads and composer resizes follow only while the reader still wants it. Default rendering remains bounded to the last 100 ordinary messages;
-explicit earlier-history expansion adds 100 at a time. This bounds default DOM,
-not user-retained IndexedDB history or native context.
+Following applies only near bottom. Scroll-up/disclosures detach; Latest explicitly
+reattaches. Layout/clamp/image/composer changes do not silently reattach a detached
+reader; real scrolling to bottom can. Boundary renders preserve visible anchors.
+The default last-100-message view expands in explicit 100-message increments:
+a DOM bound, not deletion/compaction of IndexedDB history or native state.
 
 ## Termination and continuation
 
-Reasons are shown below the response, not buried in Settings:
-
-| State | Explanation / next action |
+| Observed state | Truthful action/meaning |
 | --- | --- |
-| Native finish `length` | Output limit reached → Continue response |
-| Runaway breaker | Paused after 128 rounds → explicit Continue tools / Stop / unavailable result |
-| Ask / Off with pending calls | Approval / paused → Continue tools / unavailable result |
-| User Stop | Recorded user intent, committed state reconciled; a small suffix may be recovered |
-| Disconnect / unknown cancellation cause | Response interrupted, canonical state reconciled; never guessed to be User Stop |
-| Stop too late | Response completed before Stop took effect |
-| Tool error result | Tool failed with actual error → Continue without result; no Retry |
-| Tool reservation outcome unknown | Not retried → observe/reconcile, or explicit unavailable result |
-| Admitted/network outcome uncertain | No ordinary Continue → Reconcile / Details |
-| Native busy after observation window | Still running → Reconcile / Stop |
-| Unrecoverable/closed conversation | Cannot safely continue → New chat / Recovery |
+| Native `length` | Output/context admission boundary; Continue rechecks the complete exact request |
+| Breaker / Ask / Off pending calls | Explicit Continue tools or valid unavailable-result action; no hidden effects |
+| User Stop | Journalled intent plus canonical cancelled outcome; undelivered committed suffix may appear |
+| Disconnect / unknown cause | Neutral interrupted label, not guessed User Stop or output limit |
+| Stop too late | Native completion preceded Stop, not fabricated cancellation |
+| Tool error | Actual result/error; explicit continuation without effect retry |
+| Unknown reservation | GET observation or valid unavailable-result path, never another effect POST |
+| Admitted/request identity uncertain | Reconcile/Details; ordinary continuation disabled |
+| Busy / unrecoverable / absent | Observe/Stop or explicit New chat; no reconstruction by replay |
 
-Continue response sends the existing exact ordinary canonical history as the
-next native incremental assistant request. It does not resubmit a user turn or
-prefill/replay a prompt. Its text is a subsequent model turn, not a guarantee that
-the model resumes the exact interrupted sentence. Continue tools executes only
-outstanding certified calls, or, if their results were already observed, requests
-the next assistant turn without executing those calls again. Stop on a paused
-workflow leaves canonical pending calls intact and records a UI pause; it does
-not manufacture results or perform effects. Continue without result is explicit
-and retains the existing unavailable-result settlement path. These operations
-are separate from GET-only canonical reconciliation.
+Continue response submits exact canonical history as a **new incremental assistant
+turn**, not resubmission of the user request or a promise to resume the exact
+sentence. Exhausted context cannot be repaired by dropping/replaying committed
+history. Continue tools executes only certified outstanding calls or asks the model
+to consume already observed results, without rerunning effects. Paused Stop leaves
+calls intact; annotations alone grant no execution permission.
 
-Stop intent is an application journal annotation, not proof of generation
-cancellation: the native cancelled outcome is required for that classification.
-Stopping a client tool workflow is separately a recorded client pause, not a GPU
-or generation abort. A known user Stop
-which arrives after native completion is labelled too late. Unknown/legacy
-cancellations remain neutral “Response interrupted”, never blamed on the user or
-mislabelled as an output limit. A Stop before submission does not start a request.
-
-The reservation is still saved before tool POST. Reload observes
-`/api/tools/result`, never repeats POST. Results are deduplicated by tool-call ID.
-`toolAwaitingResponse` is application workflow presentation/journaling, **not
-execution permission**: a recovered completed result needs an explicit Continue
-tools to ask the model to consume it. Normal Send stays blocked while canonical
-calls, effects or a tool response remain unresolved. The Web server's canonical
-certificate, effect ledger, SSRF/redirect/size/content-type guards are unchanged.
+User Stop intent is not proof of native cancellation. Tool-workflow pause is
+separate from generation abort. A Stop before submission starts no request.
+`toolAwaitingResponse` records presentation/workflow state, not authority; recovered
+results require explicit Continue. Normal Send remains blocked while requests,
+calls/effects or their pending model response are unresolved.
 
 ## Recovery and persistence
 
-Settings is divided into Generation, Thinking, Tools, Recovery and Diagnostics.
-Save requires canonical idle settlement and uses the existing native artifact /
-application snapshot frontier pairing, including original images. UI finish/cause
-and paused workflow annotations are retained; received results awaiting a model
-response still have inline Continue tools after fresh restore. No reservation or
-execution permission is manufactured by those annotations. Locked Thinking controls
-always reflect the saved prefix, not the preferences of the conversation just closed. Restore uses
-that saved entry, never an artifact path input; it closes the current native
-conversation only after explicit confirmation, journals a known fresh restore ID
-before I/O, and reconciles that same ID. It cannot automatically repeat restore.
-Low-level discard/unavailable-result controls appear only in the relevant state.
-A missing old runtime session is not reconstructed from history. Normal sends do
-not enumerate old application sessions or load every saved image/history snapshot.
-Recovery menus read small metadata projections via a readonly cursor only when
-Settings is opened; IndexedDB schema/version and snapshot contents remain compatible.
+Settings separates Generation, Thinking, Tools, Recovery and Diagnostics. OFF Save
+requires canonical idle settlement, matched native artifact/frontier/application
+snapshot and original images. Paused workflow/control/finish annotations survive,
+but do not manufacture reservations or permission. Locked reasoning reflects the
+saved conversation, not preferences of the one being retired.
 
-There is no runtime/state-authority change: worker execution, committed delivery,
-cancellation settlement, exact-prefix admission, canonical request identity,
-no replay, tool reservation/certification, image identities and native persistence
-remain the `133adc4` semantics. Only static client files changed in production.
+OFF Restore selects a saved entry, confirms old-session close, journals a known
+fresh ID before I/O and reconciles that ID; never automatically repeat restore.
+MTP disables native Save/Restore. A lost runtime session is not rebuilt from the
+Browser journal. Recovery menus load metadata lazily, not all saved images/history
+on ordinary Send. Storage failure blocks unjournalled actions. The application
+state owner defines exact count/identity/effect/restore fences.
 
 ## Qualification
 
-Run `tools/qualify_chat_ux.py` against the already running Web and runtime and an
-isolated Chrome CDP endpoint. It records incremental receipts and an actual screen
-capture, checks production static-file hashes at both ends, uses real generation,
-search/fetch, Stop, reload, offline network loss, effect-response loss/observation,
-original image picker/paste/drop paths, save and fresh native restore. Failed and
-older-source attempts must be retained and must not be interpreted as PASS.
-Paste/drop input events and IME events are generated inside the real browser;
-this qualifies those event handlers, not every OS clipboard/IME implementation.
-Long-DOM testing is display-only synthetic data, never submitted as model history.
+The [earlier interface edition](archive/editorial-baseline/chat-interface.md.txt)
+retains all original browser checks, measured counts, screenshot and failed
+collector/IME/composition attempts, old reasoning/round labels and historical M35
+pin observation. Those obsolete labels are not current controls or test failures.
+The screenshot is [historical Browser capture](../artifacts/chat-ux/browser.png).
 
-The final real-browser receipt covers:
-
-| Qualification | Evidence |
-| --- | --- |
-| Text, Markdown, code Copy | Actual generated blocks and clipboard readback |
-| Long output / continuation | 2048-token tutorial, native length stop, inline next request |
-| Follow / reading / Latest | In-stream detached position and explicit reattachment |
-| User Stop | Native cancelled settlement, no false output-limit label |
-| Reload / uncertainty | Active reload, real offline transport loss, same application nonce; GET only |
-| Tools >4 rounds | Seven sequential fetches, 5-round pause, Stop/Continue; default remains 32 |
-| Search + fetch / failure | Actual sources and HTTP403 result; no Retry/effect replay |
-| Lost effect response | Real effect executed once, reload result observation once |
-| Paused workflow persistence | Received result saved before model observation, fresh restore, inline Continue |
-| Approval | Ask pauses before POST, approved effect occurs once |
-| Thinking | Actual low request; immutable prefix and public-only/possibly empty reasoning |
-| Disclosure geometry | Display-only fixture preserves tool kind and live public-reasoning open state |
-| Vision | Picker, remove/drop, exact-byte paste, historical display and zero old-image encodes |
-| Image save/restore | Paired frontier **1167**, exact JPEG hashes, fresh native continuation with zero old-image encodes |
-| Restore control truth | Off conversation → saved low prefix; locked UI reflects Think 50 |
-| UI bounds / input | 2000 display-only messages → 100 DOM messages; composition events, Enter/Shift+Enter and 190px cap |
-
-All recorded canonical snapshots have zero prompt replay and full-cache repack.
-The screenshot is `artifacts/chat-ux/browser.png`. Failed collection assumptions
-(background send awaited, premature observation, requiring nonempty public
-reasoning), older-source attempts and the actual composition event-wiring failure
-are preserved. The latter was fixed with real event listeners and verified before
-any generation and again at the end; do not use those earlier attempts as current
-acceptance evidence.
-
-Affected Python gates cover live delivery/backpressure/retirement, cancellation,
-multimodal cancellation, request policy, recovery and Web origin/tool boundaries.
-The separate historical M35 evidence pin test fails on `internal_mtp.py` SHA256
-(`6821d84…` versus its older receipt's `6a6169a…`); the actual source is identical
-to `133adc4`. That pre-existing historical pin mismatch is recorded, not repaired
-by rewriting a qualification receipt or claimed as an affected UX regression.
-Node renderer tests are optional developer tooling, not a runtime/build dependency.
-No 200K/1M, full Vision, R1, model restart or release qualification is implied.
+`tools/qualify_chat_ux.py` is the existing isolated-Chrome/current-static-boundary
+collector, not authorization for a new campaign here. Real Browser event injection
+proves tested handlers, not every OS IME/clipboard implementation; long-DOM data
+is display-only, never model history. Later generation/PDF/network changes have
+separate receipts. Renderer Node tests are developer tools, not runtime dependencies.
+Compilation does not refresh model, image, long-context, R1 or release approval.
