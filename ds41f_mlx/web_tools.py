@@ -637,7 +637,8 @@ def _default_tools():
     pdf_dependency_identity()
     path = os.environ.get('DS41F_WEB_ARTIFACT_DB', str(Path.home() / '.local/share/ds41f/web-artifacts.sqlite3'))
     store = ArtifactStore(path)
-    return [WebSearchTool(_provider_from_env()), FetchURLTool(store), FetchImageTool(store), FetchPDFTool(store)]
+    from ds41f_mlx.web_documents import DocumentPDFTool
+    return [WebSearchTool(_provider_from_env()), FetchURLTool(store), FetchImageTool(store), FetchPDFTool(store), DocumentPDFTool(store)]
 
 
 def registry_from_env() -> ToolRegistry:

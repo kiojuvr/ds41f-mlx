@@ -2,7 +2,8 @@
 
 A random capability identifies an immutable transfer (including original URLs).
 SQLite transactions publish bytes and metadata together. No URL cache/retry,
-parser index, document search, or model state lives here. Browser history owns
+runtime model state lives here. Page-scoped parser material and explicitly
+non-authoritative model observations share this bounded retention. Browser history owns
 observed image bytes independently of this seven-day staging retention.
 """
 from dataclasses import dataclass
@@ -93,6 +94,21 @@ class ArtifactStore:
             artifact = self._publish(db, resource, kind)
         return artifact
 
+    def put_document(self, identity, resource):
+        """Client-known upload receipt permits GET reconciliation, not POST retry."""
+        if not isinstance(identity, str) or len(identity) != 64 or any(c not in '0123456789abcdef' for c in identity):
+            raise ToolError('upload identity must be 64 lowercase hex characters')
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE')
+            row = db.execute('SELECT metadata FROM artifacts WHERE id=?', (identity,)).fetchone()
+            if row:
+                raise ToolError('upload identity already exists; observe via GET, do not repeat upload')
+            self._check_capacity(db, len(resource.data) + len(self._metadata(resource).encode('utf-8')))
+            expires = time.time() + self.lifetime
+            db.execute('INSERT INTO artifacts VALUES (?,?,?,?,?)',
+                       (identity, 'pdf', self._metadata(resource), resource.data, expires))
+        return Artifact(identity, 'pdf', resource, expires)
+
     def acquire(self, kind, max_bytes, fetch):
         # Reserve worst-case transfer storage BEFORE an external GET. Holding
         # the write transaction serializes staging acquisitions across processes;
@@ -145,6 +161,69 @@ class ArtifactStore:
             if size + len(encoded.encode('utf-8')) > self.max_bytes:
                 raise ToolError('artifact interpretation storage ceiling reached; original acquisition retained', code='artifact_resource_ceiling')
             db.execute('INSERT INTO interpretations VALUES (?,?,?)', (identity, key, encoded))
+
+    def unsettled_observation(self, identity, page):
+        """A policy/version change must not implicitly retry an uncertain page."""
+        with self._connect() as db:
+            row = db.execute("SELECT result FROM interpretations WHERE artifact_id=? "
+                             "AND key LIKE 'pdf-page-observation-%' AND json_extract(result,'$.page')=? "
+                             "AND json_extract(result,'$.state') IN ('reserved','uncertain') LIMIT 1",
+                             (identity, page)).fetchone()
+        return json.loads(row[0]) if row else None
+
+    def reserve_interpretation(self, identity, key, result):
+        """Reserve observation storage BEFORE inference, across processes."""
+        encoded = json.dumps(result, ensure_ascii=False)
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE')
+            if db.execute('SELECT 1 FROM interpretations WHERE artifact_id=? AND key=?', (identity, key)).fetchone():
+                return False
+            if key.startswith('pdf-page-observation-') and db.execute(
+                    "SELECT 1 FROM interpretations WHERE artifact_id=? AND key LIKE 'pdf-page-observation-%' "
+                    "AND json_extract(result,'$.page')=? AND json_extract(result,'$.state') IN ('reserved','uncertain')",
+                    (identity, result['page'])).fetchone():
+                return False  # atomic cross-policy fence, not just a key cache
+            _, size = self._usage(db)
+            # Padding is charged by _usage, including after process death.
+            if size + 65536 > self.max_bytes:
+                raise ToolError('observation storage ceiling; inference not started', code='artifact_resource_ceiling')
+            if len(encoded.encode('utf-8')) > 65536:
+                raise ToolError('observation reservation exceeds ceiling')
+            encoded += ' ' * (65536 - len(encoded.encode('utf-8')))
+            db.execute('INSERT INTO interpretations VALUES (?,?,?)', (identity, key, encoded))
+        return True
+
+    def settle_interpretation(self, identity, key, result):
+        encoded = json.dumps(result, ensure_ascii=False)
+        if len(encoded.encode('utf-8')) > 65536:
+            raise ToolError('observation output exceeds reservation; outcome remains reserved', code='uncertain_document_observation')
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE')
+            row = db.execute('SELECT result FROM interpretations WHERE artifact_id=? AND key=?', (identity, key)).fetchone()
+            if not row or json.loads(row[0]).get('state') != 'reserved':
+                raise ToolError('observation reservation not settleable')
+            db.execute('UPDATE interpretations SET result=? WHERE artifact_id=? AND key=?', (encoded, identity, key))
+
+    def document_page_states(self, identity):
+        # Project metadata in SQLite; never load all retained PNGs into Python
+        # just to refresh the document list.
+        with self._connect() as db:
+            rows = db.execute("SELECT key, json_extract(result,'$.page'), "
+                              "json_extract(result,'$.state'), json_extract(result,'$.pages[0].page'), "
+                              "coalesce(length(json_extract(result,'$.pages[0].text')),0)>0, "
+                              "coalesce(length(json_extract(result,'$.pages[0].image')),0)>0 "
+                              "FROM interpretations WHERE artifact_id=?", (identity,)).fetchall()
+        pages = {}
+        for key, observation_page, status, parser_page, has_text, has_raster in rows:
+            if key.startswith('pdf-page-observation-'):
+                pages.setdefault(observation_page, {'page': observation_page})['observation_state'] = status
+            elif key.startswith('pdf-v1:') and parser_page is not None:
+                state = pages.setdefault(parser_page, {'page': parser_page})
+                if has_text:
+                    state['text_extracted'] = True
+                if has_raster:
+                    state['raster_retained'] = True
+        return [pages[p] for p in sorted(pages)]
 
     def cleanup(self):
         with self._connect() as db:

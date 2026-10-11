@@ -53,6 +53,17 @@ test('tool sources survive normal transcript rendering', () => {
   ]})});
   assert.equal(descendants(root).filter(n => n.tag === 'a').length, 1);
 });
+test('document observations are explicitly derived and source pages are actionable', () => {
+  const root = new Node('main');
+  render.message(root, {role: 'tool', content: JSON.stringify({artifact_id: 'a'.repeat(64), tool: 'document_pdf', pages: [
+    {page: 7, observation: {state: 'completed', observation: '<script>not source</script>'}},
+  ]})});
+  assert.ok(descendants(root).some(n => n.tag === '#text' && n.value.includes('NOT original source')));
+  assert.ok(descendants(root).some(n => n.tag === '#text' && n.value === '<script>not source</script>'));
+  assert.equal(descendants(root).filter(n => n.tag === 'button').length, 1);
+  assert.equal(descendants(root).filter(n => n.tag === 'script').length, 0);
+});
+
 test('long unbroken backticks remain text without regex backtracking', () => {
   const root = new Node('main');
   const value = '`'.repeat(100000);

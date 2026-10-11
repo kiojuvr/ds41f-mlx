@@ -15,7 +15,7 @@ def fit_tool_results(runtime, session_id, count, request, messages, displays):
     original = copy.deepcopy(messages)
     fetches = []
     for index, display in enumerate(displays):
-        if display.get('tool') in {'fetch_url', 'fetch_pdf'} and not display.get('error'):
+        if display.get('tool') in {'fetch_url', 'fetch_pdf', 'document_pdf'} and not display.get('error'):
             content = original[index]['content']
             payload = json.loads(content[0]['text'] if isinstance(content, list) else content)
             if isinstance(payload.get('excerpt'), str) or any(isinstance(p.get('text'), str) and p['text'] for p in payload.get('pages', [])):
@@ -34,9 +34,10 @@ def fit_tool_results(runtime, session_id, count, request, messages, displays):
             else:
                 for page in value['pages']:
                     text = page['text']
-                    page.update(text=text[:size], context_truncated=len(text) > size,
+                    page.update(text=text[:size], context_truncated=page.get('context_truncated', False) or len(text) > size,
                                 returned_chars=min(len(text), size),
-                                next_offset=page.get('offset', 0) + min(len(text), size))
+                                next_offset=page.get('offset', 0) + min(len(text), size),
+                                has_more=page.get('total_chars', len(text)) > page.get('offset', 0) + min(len(text), size))
             encoded = json.dumps(value, ensure_ascii=False, separators=(',', ':'))
             if isinstance(out[index]['content'], list):
                 # Never modify image bytes/parts, including newly rendered pages.

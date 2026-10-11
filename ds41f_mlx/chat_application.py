@@ -68,8 +68,11 @@ class ChatApplication:
             raise ApplicationError(str(exc)) from exc
         self.runtime = runtime
         production = (runtime.get('capabilities') or {}).get('stateful_chat') == 'production-sessions-v1'
-        self.tools = [tool for tool in status['tools'] if not production or
-                      tool.get('function', {}).get('name') not in ('fetch_image', 'fetch_pdf')]
+        # Ordinary PDF workflows use retained document_pdf, never silently
+        # accumulate legacy fetch_pdf raster images in conversation history.
+        self.tools = [tool for tool in status['tools'] if
+                      tool.get('function', {}).get('name') != 'fetch_pdf' and
+                      (not production or tool.get('function', {}).get('name') != 'fetch_image')]
         # Retain the known ID even if the create acknowledgement is lost.
         self.id = 'tui-' + str(uuid4())
         self.messages = []

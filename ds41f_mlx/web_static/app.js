@@ -39,7 +39,8 @@ function policyDisplay() {
     + (s.protocol ? ' · reasoning session-owned' : '');
 }
 function controls() {
-  for (const id of ['send', 'newSession', 'closeSession', 'saveSession', 'restoreSession', 'sessions', 'saves', 'images']) $(id).disabled = state.busy;
+  for (const id of ['send', 'newSession', 'closeSession', 'saveSession', 'restoreSession', 'sessions', 'saves', 'images', 'pdfs', 'refreshDocuments']) $(id).disabled = state.busy;
+  for (const button of $('documents').querySelectorAll('[data-action="remove-document"]')) button.disabled = state.busy;
   $('send').disabled ||= !state.session || !!state.session.problem || !!state.session.pending || state.session.effects?.state === 'reserved' || state.session.toolAwaitingResponse || pendingCalls().length > 0;
   const active = state.busy || state.session?.record?.state === 'busy';
   $('send').hidden = active; $('stop').hidden = !active;
@@ -134,7 +135,7 @@ function render() {
   main.replaceChildren(fragment);
   const restoredAnchor = anchorIndex === undefined ? null : main.querySelector(`article[data-index="${anchorIndex}"]`);
   main.scrollTop = !follow && restoredAnchor ? restoredAnchor.offsetTop - anchorOffset : top;
-  controls(); followLatest();
+  renderDocuments(); controls(); followLatest();
 }
 function termination() {
   document.querySelectorAll('.termination').forEach(node => node.remove());
@@ -221,7 +222,8 @@ async function createConversation() {
 async function status() {
   const result = await api('/api/status');
   state.runtime = result.runtime;
-  state.tools = (result.tools || []).filter(tool => !production() || !['fetch_image', 'fetch_pdf'].includes(tool.function?.name));
+  $('documentCapability').textContent = result.documents?.vision_available ? 'Retained PDF · isolated page Vision available · no chat image slots used' : 'Retained PDF text/search available. ' + (result.documents?.vision_notice || 'Isolated Vision unavailable.');
+  state.tools = (result.tools || []).filter(tool => tool.function?.name !== 'fetch_pdf' && (!production() || tool.function?.name !== 'fetch_image'));
   buildPolicyControls();
   if (!state.session) applyDefaults(state.policyPreference || negotiate());
   controls();
@@ -231,6 +233,25 @@ function appendResults(result) {
   for (const message of result.messages) {
     // Only current canonical batch; each result is appended once.
     if (!s.messages.some(m => m.role === 'tool' && m.tool_call_id === message.tool_call_id)) s.messages.push(message);
+  }
+  for (const item of result.results || []) {
+    if (item.artifact_id && (item.tool === 'fetch_pdf' || item.tool === 'document_pdf')) {
+      s.documents ||= [];
+      let doc = s.documents.find(d => d.artifact_id === item.artifact_id);
+      if (!doc) { doc = {artifact_id: item.artifact_id, announced: true}; s.documents.push(doc); }
+      Object.assign(doc, {name: item.filename || doc.name || 'PDF', page_count: item.page_count || doc.page_count, state: item.error ? 'inspection-error' : 'retained'});
+      if (item.action === 'info') doc.pageStates = item.pages || [];
+      for (const page of item.pages || []) {
+        if (!page.observation) continue;
+        doc.pageStates ||= [];
+        let material = doc.pageStates.find(p => p.page === page.page);
+        if (!material) { material = {page: page.page}; doc.pageStates.push(material); }
+        material.observation_state = page.observation.state;
+      }
+      if (item.tool === 'fetch_pdf' || ['acquire', 'read', 'observe', 'observation'].includes(item.action)) {
+        doc.readPages = [...new Set([...(doc.readPages || []), ...(item.pages || []).filter(p => !p.observation || p.observation.state === 'completed').map(p => p.page)])];
+      }
+    }
   }
   s.effects = {count: s.count, state: 'completed'};
   s.toolAwaitingResponse = true;
@@ -431,7 +452,9 @@ async function toolLoop(explicit = false) {
   if (state.stop) { s.interrupted = true; await save(); }
 }
 async function send() {
-  const text = $('input').value.trim();
+  const newDocuments = (state.session?.documents || []).filter(d => !d.announced && d.state === 'retained');
+  const reference = newDocuments.map(d => `Retained PDF: ${d.name}; artifact_id=${d.artifact_id}; pages=${d.page_count}. Use document_pdf to search/read/observe additional pages without reacquisition. Original PDF bytes are source authority; parser text and model observations are derived. Cite page numbers.`).join('\n');
+  const text = [$('input').value.trim(), reference].filter(Boolean).join('\n\n');
   if (!text && !state.attachments.length) return;
   await exclusive(async () => {
     settings(); await reconcile();
@@ -446,7 +469,11 @@ async function send() {
     s.generation = settings(); s.workflow = {...s.generation};
     s.toolPause = ''; s.toolError = ''; s.interrupted = false;
     s.messages.push({role: 'user', content: state.attachments.length ? parts : text});
-    s.title ||= text.slice(0, 60) || 'Image conversation';
+    for (const reference of newDocuments) {
+      const doc = (s.documents || []).find(d => d.artifact_id === reference.artifact_id);
+      if (doc) doc.announced = true;
+    }
+    s.title ||= text.slice(0, 60) || 'Document conversation';
     s.pending = {base: s.count, requestId: null, nonce: ChatPlatform.uuid(), addedUser: true};
     await save(); $('input').value = ''; resizeInput(); state.attachments = []; follow = true; preview(); render();
     await generate(); await toolLoop();
@@ -491,9 +518,14 @@ function preview() {
 $('composer').onsubmit = event => { event.preventDefault(); send().catch(error => notice(error.message)); };
 $('images').onchange = async event => { await attach([...event.target.files]); event.target.value = ''; };
 $('images').closest('label').onkeydown = event => { if (['Enter', ' '].includes(event.key)) { event.preventDefault(); if (!state.busy) $('images').click(); } };
+async function attachFiles(files) {
+  const pdf = file => file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
+  for (const file of files.filter(pdf)) await addPDF(file);
+  const images = files.filter(file => !pdf(file)); if (images.length) await attach(images);
+}
 $('composer').ondragover = event => event.preventDefault();
-$('composer').ondrop = event => { event.preventDefault(); attach([...event.dataTransfer.files]); };
-$('input').onpaste = event => { const files = [...event.clipboardData.items].filter(item => item.kind === 'file').map(item => item.getAsFile()).filter(Boolean); if (files.length) { event.preventDefault(); attach(files); } };
+$('composer').ondrop = event => { event.preventDefault(); attachFiles([...event.dataTransfer.files]); };
+$('input').onpaste = event => { const files = [...event.clipboardData.items].filter(item => item.kind === 'file').map(item => item.getAsFile()).filter(Boolean); if (files.length) { event.preventDefault(); attachFiles(files); } };
 function resizeInput() { layoutScrollUntil = performance.now() + 200; $('input').style.height = 'auto'; $('input').style.height = Math.min(190, $('input').scrollHeight) + 'px'; }
 $('input').oninput = resizeInput;
 let composing = false;
@@ -531,7 +563,7 @@ $('saveSession').onclick = () => exclusive(async () => {
   if (rec.state !== 'idle' || s.pending || s.problem || pendingCalls().length) throw new Error('Save requires a settled idle application/runtime frontier, with completed tool results');
   const result = rec.persisted_artifact?.frontier === s.frontier ? {artifact: rec.persisted_artifact} : await api(path(s.id) + '/persist', 'POST', {});
   if (result.artifact.frontier !== s.frontier) throw new Error('Native artifact frontier changed; application snapshot NOT paired. Reconcile before saving. Artifact: ' + result.artifact.path);
-  await ChatStore.put('saves', {id: s.id, title: s.title || 'Conversation', messages: s.messages, interruptions: s.interruptions || [], interruptionKinds: s.interruptionKinds || {}, lateStops: s.lateStops || [], endings: s.endings || {}, finishReason: s.finishReason, terminationReason: s.terminationReason, capacity: s.capacity, capacityStop: s.capacityStop, interrupted: !!s.interrupted, toolAwaitingResponse: !!s.toolAwaitingResponse, toolPause: s.toolPause || '', toolError: s.toolError || '', toolRounds: s.toolRounds || 0, protocol: s.protocol, generation: s.generation, workflow: s.workflow, policyVersion: s.policyVersion, frontier: s.frontier, artifact: result.artifact.path, savedAt: Date.now()});
+  await ChatStore.put('saves', {id: s.id, title: s.title || 'Conversation', messages: s.messages, documents: s.documents || [], interruptions: s.interruptions || [], interruptionKinds: s.interruptionKinds || {}, lateStops: s.lateStops || [], endings: s.endings || {}, finishReason: s.finishReason, terminationReason: s.terminationReason, capacity: s.capacity, capacityStop: s.capacityStop, interrupted: !!s.interrupted, toolAwaitingResponse: !!s.toolAwaitingResponse, toolPause: s.toolPause || '', toolError: s.toolError || '', toolRounds: s.toolRounds || 0, protocol: s.protocol, generation: s.generation, workflow: s.workflow, policyVersion: s.policyVersion, frontier: s.frontier, artifact: result.artifact.path, savedAt: Date.now()});
   notice('Saved native idle artifact and matching original-byte browser history. Later chat does not change this snapshot. Keep this browser storage: native artifacts do not contain historical image bytes.');
 });
 $('restoreSession').onclick = () => exclusive(async () => {
@@ -546,7 +578,7 @@ $('restoreSession').onclick = () => exclusive(async () => {
     await ChatStore.remove('sessions', state.session.id); state.session = null; localStorage.removeItem('ds41f.selected');
   }
   const id = 'sess_' + ChatPlatform.uuid().replaceAll('-', '');
-  const journal = {id, title: snapshot.title + ' (restored)', messages: snapshot.messages,
+  const journal = {id, title: snapshot.title + ' (restored)', messages: snapshot.messages, documents: snapshot.documents || [],
     interruptions: snapshot.interruptions || [], interruptionKinds: snapshot.interruptionKinds || {}, lateStops: snapshot.lateStops || [], endings: snapshot.endings || {}, finishReason: snapshot.finishReason, terminationReason: snapshot.terminationReason, capacity: snapshot.capacity, capacityStop: snapshot.capacityStop, interrupted: !!snapshot.interrupted, toolAwaitingResponse: !!snapshot.toolAwaitingResponse, toolPause: snapshot.toolPause || '', toolError: snapshot.toolError || '', toolRounds: snapshot.toolRounds || 0, protocol: snapshot.protocol, generation: snapshot.generation, workflow: snapshot.workflow, policyVersion: snapshot.policyVersion, count: 0,
     frontier: snapshot.frontier, pendingRestore: {frontier: snapshot.frontier, artifact: snapshot.artifact},
     problem: 'Restore pending; outcome must be reconciled before continuation'};

@@ -59,6 +59,9 @@ def private_address(value: str) -> bool:
 def create_app(*, runtime_base_url: str | None = None, allow_private_lan: bool = False) -> FastAPI:
     runtime = RuntimeClient(runtime_base_url or os.environ.get('DS41F_RUNTIME_URL', 'http://127.0.0.1:8000'))
     tools = registry_from_env()
+    document = tools.tools.get('document_pdf')
+    if document and document.runtime_is_default:
+        document.runtime = runtime  # respect --runtime-url, unless explicitly isolated
     app = FastAPI(title='ds41f-local-web-client', version='0.2.0')
     app.state.runtime = runtime
     app.state.tool_registry = tools
@@ -127,7 +130,74 @@ def create_app(*, runtime_base_url: str | None = None, allow_private_lan: bool =
     async def status():
         try: health = await call(runtime.health)
         except Exception as exc: health = {'status': 'unreachable', 'error': str(exc)}
-        return JSONResponse(content={'runtime': health, 'runtime_base_url': runtime.base_url, 'tools': tools.declarations})
+        documents = None
+        if document:
+            try:
+                vision_health = health if document.runtime is runtime else await call(document.runtime.health)
+            except Exception:
+                vision_health = {'status': 'unreachable'}
+            documents = dict(architecture='retained-pdf-v1', historical_image_slots_used=0,
+                             observation_request='bounded-stateless',
+                             vision_available=vision_health.get('status') == 'ready' and vision_health.get('profile') == 'standard-off',
+                             vision_profile=vision_health.get('profile'),
+                             vision_notice='Scanned/figure observations require an existing standard-OFF Vision runtime. Production text-only limits are unchanged.')
+        return JSONResponse(content={'runtime': health, 'runtime_base_url': runtime.base_url, 'tools': tools.declarations, 'documents': documents})
+
+    @app.post('/api/documents')
+    async def upload_document(request: Request):
+        import base64
+        from urllib.parse import quote
+        from .web_tools import AcquiredResource
+        from .web_pdf_worker import MAX_PDF_BYTES
+        value = await body(request)
+        name = value.get('name', 'document.pdf')
+        encoded = value.get('data')
+        if not isinstance(name, str) or not 1 <= len(name) <= 200 or not isinstance(encoded, str) or len(encoded) > 4 * ((MAX_PDF_BYTES + 2) // 3):
+            raise ToolError('PDF upload requires a bounded filename and base64 bytes')
+        try:
+            name.encode('utf-8')
+            data = base64.b64decode(encoded, validate=True)
+        except (ValueError, UnicodeEncodeError) as exc:
+            raise ToolError('invalid PDF upload bytes/filename encoding') from exc
+        if len(data) > MAX_PDF_BYTES or not data.startswith(b'%PDF-'):
+            raise ToolError('PDF upload must be PDF bytes within 64 MiB')
+        document = tools.tools['document_pdf']
+        uri = 'upload:///' + quote(name, safe='')
+        artifact = await call(document.store.put_document, value.get('id'), AcquiredResource(data=data, url=uri, source_url=uri, content_type='application/pdf', truncated=False, redirects=0))
+        # Publish receipt even if parser inspection fails. GET can reconcile.
+        return JSONResponse(content=artifact.metadata())
+
+    @app.get('/api/documents/{identity}')
+    async def document_info(identity: str):
+        document = tools.tools['document_pdf']
+        artifact = await call(document.store.get, identity, 'pdf')
+        try:
+            result = await call(document.run, dict(artifact_id=identity, action='info'))
+            return JSONResponse(content=result.display)
+        except ToolError as exc:
+            return JSONResponse(content=dict(artifact.metadata(), state='inspection_failed', error=str(exc)))
+
+    @app.get('/api/documents/{identity}/pages/{page}')
+    async def document_page(identity: str, page: int):
+        document = tools.tools['document_pdf']
+        artifact = await call(document.store.get, identity, 'pdf')
+        result = await call(document.pdf.run, dict(artifact_id=identity, pages=[page], mode='text'))
+        if result.display.get('error'):
+            return JSONResponse(content=result.display)
+        # UI-only raster: not appended to conversation or sent for inference.
+        try:
+            image_part, raster_identity, parser_policy = await call(document.raster, artifact, page)
+            image, raster_error = image_part['image_url']['url'], None
+        except ToolError as exc:
+            image, raster_identity, parser_policy, raster_error = None, None, None, str(exc)
+        return JSONResponse(content=dict(result.display, image=image, raster_identity=raster_identity,
+                            parser_policy=parser_policy, raster_error=raster_error,
+                            observation=await call(document.observation, artifact, page)))
+
+    @app.get('/api/documents/{identity}/original')
+    async def original_document(identity: str):
+        artifact = await call(tools.tools['document_pdf'].store.get, identity, 'pdf')
+        return Response(artifact.resource.data, media_type='application/pdf', headers={'Content-Disposition': 'attachment; filename="original.pdf"'})
 
     @app.post('/api/session')
     async def create_session(request: Request):

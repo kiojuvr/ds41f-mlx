@@ -290,7 +290,13 @@ python3 -m ds41f_mlx.web --runtime-url http://127.0.0.1:8000
 
 The Web client is a single-current-conversation Chat interface above the canonical
 runtime API. Bounded search, retained HTML, original PNG/JPEG/WebP and selected
-PDF text/visual tools execute outside the model server. The source-pinned
+PDF text/visual tools execute outside the model server. [Retained PDF document chat](docs/pdf-document-workflow.md)
+adds local PDF upload, bounded page search/read, isolated page Vision observations,
+source-page inspection and document reuse without consuming main-chat image slots.
+[Real-model PDF acceptance](docs/pdf-document-acceptance.md) includes 100-page text,
+12-page scans and real-paper figures/tables. Production remains text-only; fresh
+page Vision uses the existing standard-OFF runtime, not an expanded image limit.
+The source-pinned
 [Tool Capability Completion](docs/tool-capability-completion.md) gate includes
 real browser/Vision research and exact-history recovery; it is not R1, release
 or runtime promotion. Everyday

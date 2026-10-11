@@ -43,8 +43,12 @@ Sampling may change between user turns. Reasoning alone locks at submission
 A user workflow snapshots its policy for tools and explicit continuation; Stop
 and canonical GET do not reset it. Tools Auto executes on Chat Server.
 Tool declarations are frozen when the session is created; generic call/argument/result messages and any reasoning_content are
-rendered as plain text. Image/PDF acquisition declarations are omitted in
-production text scope; no attachment UI exists. Server tools alone execute effects
+rendered as plain text. Legacy image acquisition is omitted in production
+text scope; legacy `fetch_pdf` is replaced in the default tool surface by
+[`document_pdf`](pdf-document-workflow.md), which acquires/reads retained PDFs
+without putting page images into history. No TUI attachment picker exists;
+PDF URLs or retained artifact IDs can be supplied in ordinary text. Fresh page
+observations require an explicitly available existing standard-OFF Vision runtime. Server tools alone execute effects
 and fit their results.
 Tool errors/budget errors pause continuation; Ctrl-E is explicit continuation,
 not automatic effect retry. Tools Auto uses the same 128-round runaway breaker.

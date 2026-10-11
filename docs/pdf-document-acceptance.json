@@ -1,0 +1,363 @@
+{
+  "scope": "application-PDF-dogfood-not-runtime-requalification",
+  "model": "deepseek-v4.1-flash",
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "profiles": [
+    "mtp-serving-v1",
+    "standard-off"
+  ],
+  "generation_policy": "generation-policy-v1",
+  "python_tests": 138,
+  "javascript_tests": 19,
+  "vision_stateless_requests": 21,
+  "document_history_images": 0,
+  "transient_raster_pages": 6,
+  "cases": [
+    {
+      "receipt": "text.json",
+      "case": "ordinary",
+      "session_id": "tui-14102282-826d-495f-84ee-664598f5ff19",
+      "request_count": 2,
+      "frontier": 1492,
+      "main_history_images": 0,
+      "cancelled": false,
+      "target_aligned": true,
+      "dspark_aligned": true,
+      "replay": 0,
+      "repack": 0,
+      "problem": ""
+    },
+    {
+      "receipt": "text.json",
+      "case": "long-search",
+      "session_id": "tui-14102282-826d-495f-84ee-664598f5ff19",
+      "request_count": 7,
+      "frontier": 3472,
+      "main_history_images": 0,
+      "cancelled": false,
+      "target_aligned": true,
+      "dspark_aligned": true,
+      "replay": 0,
+      "repack": 0,
+      "problem": ""
+    },
+    {
+      "receipt": "text.json",
+      "case": "noncontiguous",
+      "session_id": "tui-14102282-826d-495f-84ee-664598f5ff19",
+      "request_count": 9,
+      "frontier": 4585,
+      "main_history_images": 0,
+      "cancelled": false,
+      "target_aligned": true,
+      "dspark_aligned": true,
+      "replay": 0,
+      "repack": 0,
+      "problem": ""
+    },
+    {
+      "receipt": "text.json",
+      "case": "over-four-pages",
+      "session_id": "tui-14102282-826d-495f-84ee-664598f5ff19",
+      "request_count": 13,
+      "frontier": 7522,
+      "main_history_images": 0,
+      "cancelled": false,
+      "target_aligned": true,
+      "dspark_aligned": true,
+      "replay": 0,
+      "repack": 0,
+      "problem": ""
+    },
+    {
+      "receipt": "text.json",
+      "case": "public-paper-text",
+      "session_id": "tui-14102282-826d-495f-84ee-664598f5ff19",
+      "request_count": 16,
+      "frontier": 11097,
+      "main_history_images": 0,
+      "cancelled": false,
+      "target_aligned": true,
+      "dspark_aligned": true,
+      "replay": 0,
+      "repack": 0,
+      "problem": ""
+    },
+    {
+      "receipt": "text.json",
+      "case": "cancel-reconcile",
+      "session_id": "tui-14102282-826d-495f-84ee-664598f5ff19",
+      "request_count": 16,
+      "frontier": 11097,
+      "main_history_images": 0,
+      "cancelled": false,
+      "target_aligned": true,
+      "dspark_aligned": true,
+      "replay": 0,
+      "repack": 0,
+      "problem": "No settled outcome for frozen request; no automatic retry. Reconcile or close chat."
+    },
+    {
+      "receipt": "mtp-cancel.json",
+      "case": "read-existing",
+      "session_id": "tui-3c685c3e-2559-42ba-830a-46743ee2dcea",
+      "request_count": 2,
+      "frontier": 1353,
+      "main_history_images": 0,
+      "cancelled": false,
+      "target_aligned": true,
+      "dspark_aligned": true,
+      "replay": 0,
+      "repack": 0,
+      "problem": ""
+    },
+    {
+      "receipt": "mtp-cancel.json",
+      "case": "cancel",
+      "session_id": "tui-3c685c3e-2559-42ba-830a-46743ee2dcea",
+      "request_count": 3,
+      "frontier": 1374,
+      "main_history_images": 0,
+      "cancelled": true,
+      "target_aligned": true,
+      "dspark_aligned": true,
+      "replay": 0,
+      "repack": 0,
+      "problem": ""
+    },
+    {
+      "receipt": "mtp-cancel.json",
+      "case": "after-cancel-reuse",
+      "session_id": "tui-3c685c3e-2559-42ba-830a-46743ee2dcea",
+      "request_count": 4,
+      "frontier": 1460,
+      "main_history_images": 0,
+      "cancelled": false,
+      "target_aligned": true,
+      "dspark_aligned": true,
+      "replay": 0,
+      "repack": 0,
+      "problem": ""
+    },
+    {
+      "receipt": "scan.json",
+      "case": "scanned-12-pages",
+      "session_id": "tui-23c89d47-39e4-4721-94db-8c7a109895f0",
+      "request_count": 13,
+      "frontier": 13030,
+      "main_history_images": 0,
+      "cancelled": false,
+      "target_aligned": true,
+      "dspark_aligned": null,
+      "replay": 0,
+      "repack": 0,
+      "problem": ""
+    },
+    {
+      "receipt": "scan.json",
+      "case": "scanned-reuse-noncontiguous",
+      "session_id": "tui-23c89d47-39e4-4721-94db-8c7a109895f0",
+      "request_count": 17,
+      "frontier": 16412,
+      "main_history_images": 0,
+      "cancelled": false,
+      "target_aligned": true,
+      "dspark_aligned": null,
+      "replay": 0,
+      "repack": 0,
+      "problem": ""
+    },
+    {
+      "receipt": "scan.json",
+      "case": "public-figures-tables",
+      "session_id": "tui-23c89d47-39e4-4721-94db-8c7a109895f0",
+      "request_count": 20,
+      "frontier": 21105,
+      "main_history_images": 0,
+      "cancelled": false,
+      "target_aligned": true,
+      "dspark_aligned": null,
+      "replay": 0,
+      "repack": 0,
+      "problem": ""
+    },
+    {
+      "receipt": "scan.json",
+      "case": "cancel-reconcile",
+      "session_id": "tui-23c89d47-39e4-4721-94db-8c7a109895f0",
+      "request_count": 21,
+      "frontier": 21131,
+      "main_history_images": 0,
+      "cancelled": true,
+      "target_aligned": true,
+      "dspark_aligned": null,
+      "replay": 0,
+      "repack": 0,
+      "problem": ""
+    },
+    {
+      "receipt": "scan.json",
+      "case": "after-cancel",
+      "session_id": "tui-23c89d47-39e4-4721-94db-8c7a109895f0",
+      "request_count": 22,
+      "frontier": 21514,
+      "main_history_images": 0,
+      "cancelled": false,
+      "target_aligned": true,
+      "dspark_aligned": null,
+      "replay": 0,
+      "repack": 0,
+      "problem": ""
+    },
+    {
+      "receipt": "transient.json",
+      "case": "transient-six-pages",
+      "session_id": "tui-492d25ac-d7d2-4623-ba13-a67f860d7c4a",
+      "request_count": 7,
+      "frontier": 7998,
+      "main_history_images": 0,
+      "cancelled": false,
+      "target_aligned": true,
+      "dspark_aligned": null,
+      "replay": 0,
+      "repack": 0,
+      "problem": ""
+    },
+    {
+      "receipt": "transient.json",
+      "case": "transient-reuse",
+      "session_id": "tui-492d25ac-d7d2-4623-ba13-a67f860d7c4a",
+      "request_count": 11,
+      "frontier": 11429,
+      "main_history_images": 0,
+      "cancelled": false,
+      "target_aligned": true,
+      "dspark_aligned": null,
+      "replay": 0,
+      "repack": 0,
+      "problem": ""
+    },
+    {
+      "receipt": "tool-stop.json",
+      "case": "reserved",
+      "session_id": "tui-2fd60089-fb2f-4d34-b080-e0de280d0826",
+      "request_count": 1,
+      "frontier": 1086,
+      "main_history_images": 0,
+      "cancelled": false,
+      "target_aligned": true,
+      "dspark_aligned": null,
+      "replay": 0,
+      "repack": 0,
+      "problem": ""
+    },
+    {
+      "receipt": "tool-stop.json",
+      "case": "stopped-after-tool",
+      "session_id": "tui-2fd60089-fb2f-4d34-b080-e0de280d0826",
+      "request_count": 1,
+      "frontier": 1086,
+      "main_history_images": 0,
+      "cancelled": false,
+      "target_aligned": true,
+      "dspark_aligned": null,
+      "replay": 0,
+      "repack": 0,
+      "problem": ""
+    },
+    {
+      "receipt": "tool-stop.json",
+      "case": "explicit-continuation",
+      "session_id": "tui-2fd60089-fb2f-4d34-b080-e0de280d0826",
+      "request_count": 2,
+      "frontier": 2884,
+      "main_history_images": 0,
+      "cancelled": false,
+      "target_aligned": true,
+      "dspark_aligned": null,
+      "replay": 0,
+      "repack": 0,
+      "problem": ""
+    },
+    {
+      "receipt": "acquire.json",
+      "case": "acquire",
+      "session_id": "tui-2e800f32-0639-4923-8246-cf69d4a8eb23",
+      "request_count": 2,
+      "frontier": 1826,
+      "main_history_images": 0,
+      "cancelled": false,
+      "target_aligned": true,
+      "dspark_aligned": null,
+      "replay": 0,
+      "repack": 0,
+      "problem": ""
+    },
+    {
+      "receipt": "acquire.json",
+      "case": "reuse",
+      "session_id": "tui-2e800f32-0639-4923-8246-cf69d4a8eb23",
+      "request_count": 4,
+      "frontier": 2411,
+      "main_history_images": 0,
+      "cancelled": false,
+      "target_aligned": true,
+      "dspark_aligned": null,
+      "replay": 0,
+      "repack": 0,
+      "problem": ""
+    },
+    {
+      "receipt": "browser.json",
+      "case": "reload-reuse",
+      "session_id": "sess_c296e7d592644248948a34b7941ba1f1",
+      "request_count": 4,
+      "frontier": 2619,
+      "main_history_images": 0,
+      "cancelled": false,
+      "target_aligned": true,
+      "dspark_aligned": null,
+      "replay": 0,
+      "repack": 0,
+      "problem": ""
+    }
+  ],
+  "artifacts": {
+    "off-execution.jsonl": {
+      "sha256": "f142e63f27c94d188502a0591fe48572761136c8caf54f7ab04f211b93a7d81c",
+      "bytes": 216098
+    },
+    "opencode-review.jsonl": {
+      "sha256": "9026b5fdc1a3130f205f65660188df04df19df49a103af132966f55becb0f699",
+      "bytes": 368989
+    },
+    "transient.json": {
+      "sha256": "4203ea8e18937554375edee7d43ee41b3d850a583f28140862825ff6d2bf6582",
+      "bytes": 1227286
+    },
+    "tool-stop.json": {
+      "sha256": "9218669a1bea1481e0957a0aef16111303b4880ce321fbdbc94d49a83337a40b",
+      "bytes": 393804
+    },
+    "scan.json": {
+      "sha256": "9d98181e2ed484035e45c7edecd78c855e378cdba4346c3472b0545782403c97",
+      "bytes": 5000142
+    },
+    "mtp-cancel.json": {
+      "sha256": "a6c7ebb60db7513109820934a87eae812acba4c7544530610d7e9f27383bdf93",
+      "bytes": 22603
+    },
+    "text.json": {
+      "sha256": "61f131c5091d6c451a20f252952fa205b1e3168d988af44aa5d8cc6a8f29e0f9",
+      "bytes": 175624
+    },
+    "browser.json": {
+      "sha256": "12c9b5b735fa7be6bab8adab18e3bb5250abe49fe027e72cb066fc59c3d952fb",
+      "bytes": 276533
+    },
+    "acquire.json": {
+      "sha256": "a54419b996f2cca4a3d091f275b4890e358f8e0b1a97f6bd96460deaa287d7b3",
+      "bytes": 373413
+    }
+  }
+}

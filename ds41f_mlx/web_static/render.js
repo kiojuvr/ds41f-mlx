@@ -76,8 +76,32 @@
     const list = element(parent, 'ol', 'sources');
     for (const result of results.slice(0, 5)) { if (!result || typeof result !== 'object') continue; const row = element(list, 'li'), url = sourceURL(result.url), label = result.title || result.url || 'Source'; if (url) { const link = element(row, 'a'); link.href = url; link.target = '_blank'; link.rel = 'noopener noreferrer'; text(link, label); } else text(row, label); }
   }
+  function documentPage(parent, result, page, label) {
+    text(element(parent, 'div', 'small'), label);
+    if (/^[0-9a-f]{64}$/.test(result.artifact_id || '') && Number.isInteger(page) && page > 0) {
+      const button = element(parent, 'button'); button.type = 'button'; text(button, `Open source p. ${page}`);
+      button.onclick = () => window.dispatchEvent(new CustomEvent('ds41f-document-page', {detail: {artifact_id: result.artifact_id, page}}));
+    }
+  }
   function toolResult(parent, message) {
-    try { const result = JSON.parse(Array.isArray(message.content) ? message.content[0].text : message.content); if (result.error) text(element(parent, 'div', 'error'), '⚠ ' + (result.error_code || 'Tool failed') + ': ' + (typeof result.error === 'string' ? result.error : JSON.stringify(result.error))); sources(parent, result.results || (result.url ? [result] : [])); if (result.filename) text(element(parent, 'div', 'small'), result.filename); for (const page of result.pages || []) text(element(parent, 'div', 'small'), `✓ View PDF page ${page.page} · ${page.interpretation || 'text'}${page.context_truncated ? ' · context excerpt' : ''}`); if (result.context_truncated || result.network_truncated) text(element(parent, 'div', 'small'), result.context_truncated ? 'Context excerpt · continuation available' : 'Network resource ceiling · partial result'); if (!result.error) text(element(parent, 'div', 'small'), '✓ Result received'); } catch (_) { text(element(parent, 'div', 'small'), 'Result received'); }
+    try {
+      const result = JSON.parse(Array.isArray(message.content) ? message.content[0].text : message.content);
+      if (result.error) text(element(parent, 'div', 'error'), '⚠ ' + (result.error_code || 'Tool failed') + ': ' + (typeof result.error === 'string' ? result.error : JSON.stringify(result.error)));
+      sources(parent, result.results || (result.url ? [result] : []));
+      if (result.filename) text(element(parent, 'div', 'small'), result.filename);
+      for (const page of result.pages || []) {
+        const authority = page.observation ? 'Model-derived observation — NOT original source' : page.text !== undefined ? 'Parser-derived text' : 'Retained page state';
+        documentPage(parent, result, page.page, `PDF page ${page.page} · ${authority}${page.context_truncated ? ' · context excerpt' : ''}`);
+        if (page.observation?.observation) {
+          const derived = element(parent, 'details'); text(element(derived, 'summary'), authority);
+          text(element(derived, 'div', 'prose'), page.observation.observation);
+        }
+      }
+      for (const match of result.matches || []) documentPage(parent, result, match.page, `Search match p. ${match.page} · ${match.authority}: ${match.excerpt}`);
+      if (result.next_page) text(element(parent, 'div', 'small'), `Search continues at page ${result.next_page}`);
+      if (result.context_truncated || result.network_truncated) text(element(parent, 'div', 'small'), result.context_truncated ? 'Context excerpt · continuation available' : 'Network resource ceiling · partial result');
+      if (!result.error) text(element(parent, 'div', 'small'), '✓ Result received');
+    } catch (_) { text(element(parent, 'div', 'small'), 'Result received'); }
   }
   function message(parent, message, results = [], live = false) {
     const role = ['user', 'assistant', 'tool', 'system', 'error'].includes(message.role) ? message.role : 'system';

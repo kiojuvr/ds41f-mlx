@@ -11,6 +11,9 @@ import math
 import resource
 import sys
 
+# Local document uploads may exceed the public acquisition's 8 MiB ceiling.
+# Parser CPU/RSS/object/raster/output limits remain independently bounded.
+MAX_PDF_BYTES = 64 * 1024 * 1024
 MAX_PAGES = 10000
 MAX_OBJECTS = 100000
 MAX_PAGE_TEXT = 1024 * 1024
@@ -133,9 +136,9 @@ def main():
     source, target, selection = sys.argv[1:]
     try:
         with open(source, 'rb') as stream:
-            data = stream.read(8 * 1024 * 1024 + 1)
-        if len(data) > 8 * 1024 * 1024:
-            raise Refusal('pdf_resource_ceiling', 'PDF acquisition byte ceiling reached')
+            data = stream.read(MAX_PDF_BYTES + 1)
+        if len(data) > MAX_PDF_BYTES:
+            raise Refusal('pdf_resource_ceiling', 'PDF interpretation input byte ceiling reached')
         options = json.loads(selection)
         result = inspect_pdf(data, options['pages'], options['mode'])
     except MemoryError:
