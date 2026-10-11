@@ -1,9 +1,12 @@
 """Disposable, content-free diagnostic projection; never execution authority."""
 from __future__ import annotations
 
+import logging
 from copy import deepcopy
 from threading import Lock
 from time import time, monotonic
+
+logger = logging.getLogger('ds41f.operator.runtime')
 
 # Explicit allowlist: never publish a native object, response, or arbitrary trace.
 TRACE_FIELDS = ('cached_tokens', 'remaining_suffix_tokens', 'generated', 'decode_s',
@@ -26,9 +29,12 @@ class Projection:
     def lifecycle(self, state, endpoint=None):
         try:
             with self._lock:
+                changed = self.state != state
                 self.state = state
                 if endpoint is not None:
                     self.endpoint = endpoint
+            if changed:
+                logger.log(logging.ERROR if state == 'FAILED' else logging.INFO, 'lifecycle %s', state)
         except Exception:
             pass
 
@@ -40,6 +46,7 @@ class Projection:
                     request_started_at=now, request_started_mono=mono,
                     current_phase='RECEIVED', phase_started_at=now, phase_started_mono=mono,
                     last_progress_at=now, completed_phase_durations={}, metrics={})
+            logger.info('request received id=%s', rid)
         except Exception:
             pass
 
@@ -94,6 +101,9 @@ class Projection:
                 if r is not None:
                     r.update(finish_reason=finish_reason, finished_at=time(), finished_mono=monotonic())
                     self.last = r
+            if r is not None:
+                logger.log(logging.ERROR if finish_reason == 'error' else logging.INFO,
+                           'request finished id=%s reason=%s', rid, finish_reason)
         except Exception:
             pass
 

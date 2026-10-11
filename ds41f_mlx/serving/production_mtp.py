@@ -19,7 +19,7 @@ from .paired_checkpoint import PairedCheckpointAuthority
 from .capacity import context_envelope, validate_ordinary_capacity
 from ds41f_mlx.observability import phase, metrics
 
-logger = logging.getLogger('uvicorn.error.ds41f')
+logger = logging.getLogger('ds41f.operator.settlement')
 
 
 class ProductionScheduler(Scheduler):
@@ -146,9 +146,13 @@ class ProductionScheduler(Scheduler):
                                   'error' if error else 'abort' if cancelled else semantic_finish)
                 if error:
                     projection.lifecycle('FAILED')
-            logger.info('MTP settled request=%s cached=%d canonical=%s published=%s cancelled=%s error=%s replay=%s repack=%s',
-                        request.request_id, request.cached_tokens, trace.get('canonical_frontier'),
-                        publication, cancelled, error, trace.get('prompt_replay'), trace.get('full_cache_repack'))
+            try:
+                logger.info('MTP settled request=%s cached=%d canonical=%s published=%s cancelled=%s error=%s replay=%s repack=%s',
+                            request.request_id, request.cached_tokens, trace.get('canonical_frontier'),
+                            publication, cancelled, type(error).__name__ if error else None,
+                            trace.get('prompt_replay'), trace.get('full_cache_repack'))
+            except Exception:
+                pass  # logging is never settlement or delivery authority
             output = RequestOutput(request_id=request.request_id, finished=True,
                                    finish_reason='error' if error else 'abort' if cancelled else semantic_finish,
                                    error=str(error) if error else None)

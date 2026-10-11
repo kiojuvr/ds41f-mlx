@@ -1,0 +1,142 @@
+"""Bounded runtime history, privacy, reconnection and dashboard follow contract."""
+import asyncio
+import io
+import json
+import logging
+from urllib.request import urlopen, Request
+from urllib.error import HTTPError
+
+import pytest
+
+from ds41f_mlx.runtime_logging import History, RuntimeHandler, display, MESSAGE_LIMIT
+from ds41f_mlx.observability import Projection
+from ds41f_mlx.operator_control import Control
+from ds41f_mlx.operator_dashboard import render_screen, Viewport
+from ds41f_mlx.operator_tui import Operator
+from test_operator_observability import free_port
+
+
+def test_runtime_history_and_safe_logging():
+    history = History(3)
+    output = io.StringIO()
+    handler = RuntimeHandler(history, output)
+    for i in range(5):
+        record = logging.LogRecord('ds41f.operator.test', logging.INFO, '', 0, 'event %d', (i,), None)
+        record.created = 1234+i
+        handler.emit(record)
+    batch = history.retrieve(0, 2)
+    assert batch['gap'] and batch['oldest_sequence'] == 3
+    assert [r['sequence'] for r in batch['records']] == [3, 4]
+    assert batch['records'][0]['timestamp'] == 1236
+    assert '1970-01-01T00:20:36.000Z #3 INFO' in display(batch['records'][0])
+    batch['records'][0]['message'] = 'mutated'
+    assert history.retrieve(2)['records'][0]['message'] == 'event 2'
+    handler.emit(logging.LogRecord('uvicorn.access', logging.INFO, '', 0, 'GET /SECRET', (), None))
+    handler.emit(logging.LogRecord('omlx.engine_core', logging.ERROR, '', 0, 'SECRET token error', (), None))
+    assert 'SECRET' not in json.dumps(history.retrieve())
+    handler.queue.join()
+    assert 'SECRET token error' in output.getvalue()  # headless diagnostic retained
+    history.append(10, 'INFO', 'test', '\x1b\n'+ 'x'*(MESSAGE_LIMIT*2))
+    assert len(history.retrieve()['records'][-1]['message']) <= MESSAGE_LIMIT
+    assert '\x1b' not in history.retrieve()['records'][-1]['message']
+    class BrokenHistory:
+        def append(self, *args):
+            raise RuntimeError('logging failure')
+    handler.history = BrokenHistory()
+    handler.emit(logging.LogRecord('ds41f.operator.test', logging.INFO, '', 0, 'safe', (), None))
+
+
+def test_log_api_separate_bounded_and_local_only():
+    history = History(4)
+    for i in range(8):
+        history.append(100+i, 'INFO', 'test', str(i))
+    projection = Projection()
+    port = free_port()
+    control = Control(projection, port, logs=history)
+    base = f'http://127.0.0.1:{port}'
+    try:
+        with urlopen(base+'/ds41f/status') as response:
+            assert 'records' not in json.load(response)
+        with urlopen(base+'/ds41f/logs?after=0&limit=2') as response:
+            batch = json.load(response)
+        assert batch['gap'] and batch['next_sequence'] == 6
+        with urlopen(base+'/ds41f/logs?after=6') as response:
+            assert [r['sequence'] for r in json.load(response)['records']] == [7, 8]
+        for query in ('limit=129', 'after=-1', 'after=x', 'after=1&after=2', 'unknown=1'):
+            with pytest.raises(HTTPError) as error:
+                urlopen(base+'/ds41f/logs?'+query)
+            assert error.value.code == 400
+        with pytest.raises(HTTPError) as error:
+            urlopen(Request(base+'/ds41f/logs', headers={'Origin': 'null'}))
+        assert error.value.code == 403
+    finally:
+        control.close()
+
+
+def test_reconnect_restart_and_paused_dashboard(monkeypatch):
+    from ds41f_mlx import operator_tui
+    history = History()
+    for i in range(80):
+        history.append(1700000000+i, 'WARNING' if i == 79 else 'INFO', 'test', f'event {i}')
+    def call(port, path):
+        after = int(path.split('=')[1]) if '=' in path else None
+        return history.retrieve(after)
+    monkeypatch.setattr(operator_tui, 'call', call)
+    operator = Operator()
+    asyncio.run(operator.poll_logs())
+    assert operator.logs[-1]['sequence'] == 80
+    operator.log_end = 60
+    history.append(1700000080, 'ERROR', 'test', 'latest error')
+    asyncio.run(operator.poll_logs())
+    assert operator.log_end == 60 and operator.logs[-1]['sequence'] == 81
+    snapshot = {'state': 'READY'}
+    paused = render_screen(snapshot, Viewport(132, 57), logs=list(operator.logs), log_end=60)
+    assert 'PAUSED' in '\n'.join(r.text for r in paused)
+    assert any('event 59' in r.text for r in paused)
+    assert not any('latest error' in r.text for r in paused)
+    followed = render_screen(snapshot, Viewport(132, 57), logs=list(operator.logs))
+    assert len([r for r in followed if 'Z #' in r.text]) >= 25
+    assert next(r for r in followed if 'latest error' in r.text).tone == 'red'
+    assert next(r for r in followed if 'event 79' in r.text).tone == 'yellow'
+    for width, height in ((40, 10), (60, 20), (80, 28)):
+        before = render_screen(snapshot, Viewport(width, height))
+        after = render_screen(snapshot, Viewport(width, height), logs=list(operator.logs))
+        core_end = next((i-1 for i,r in enumerate(before) if 'RUNTIME LOG' in r.text), len(before))
+        assert before[:core_end] == after[:core_end]
+        assert len(after) <= height-1
+    reopened = Operator()
+    asyncio.run(reopened.poll_logs())
+    assert reopened.logs[-1]['sequence'] == 81
+    history = History()
+    history.append(1700000100, 'INFO', 'test', 'new runtime')
+    asyncio.run(operator.poll_logs())
+    assert len(operator.logs) == 1 and operator.log_end is None
+
+
+def test_slow_output_cannot_block_log_producers():
+    from threading import Event
+    from time import monotonic
+    entered, release = Event(), Event()
+    class SlowStream:
+        def write(self, text):
+            entered.set()
+            release.wait(5)
+        def flush(self):
+            pass
+    history = History()
+    handler = RuntimeHandler(history, SlowStream())
+    record = logging.LogRecord('ds41f.operator.test', logging.INFO, '', 0, 'safe', (), None)
+    try:
+        handler.emit(record)
+        assert entered.wait(1)
+        start = monotonic()
+        for _ in range(1000):
+            handler.emit(record)
+        assert monotonic()-start < 2
+        assert handler.queue.qsize() == 512
+        assert len(history.records) == 512
+        assert history.retrieve(0)['gap']
+        handler.drain(.01)
+    finally:
+        release.set()
+        handler.queue.join()

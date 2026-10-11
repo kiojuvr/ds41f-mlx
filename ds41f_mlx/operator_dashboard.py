@@ -228,7 +228,7 @@ def metric_rows(title, values, width):
 
 
 def render_screen(snapshot, viewport, *, now=None, mode='dashboard', conflict=False,
-                  chat=None, chat_conflict=False, message=''):
+                  chat=None, chat_conflict=False, message='', logs=None, log_end=None, log_gap=False):
     """Return unwrapped rows; dashboard fits the viewport, details scroll separately."""
     d = Dashboard(snapshot, now, conflict)
     width = max(1, min(112, viewport.width-2))
@@ -246,7 +246,8 @@ def render_screen(snapshot, viewport, *, now=None, mode='dashboard', conflict=Fa
     if mode == 'help':
         return header + [Line(), Line('KEYS', 'dim')] + [Line(s) for s in (
             'S  Start runtime', 'X  Graceful Stop', 'R  Restart runtime', 'C  Chat Start',
-            'V  Chat Stop', 'D  Toggle Diagnostics', '?  Toggle help', '↑↓ Scroll Diagnostics / help',
+            'V  Chat Stop', 'D  Toggle Diagnostics', '?  Toggle help', '↑↓ / PgUp/PgDn Scroll runtime logs; L / End follow latest',
+            '↑↓ Scroll Diagnostics / help',
             'Q  Quit TUI; runtime remains running', '', 'Metrics: current request, otherwise last.',
             'MTP / alignment / frontier: last settled request.', '— means not published or not yet measured.')]
     now_rows = d.now_lines(width)
@@ -310,6 +311,28 @@ def render_screen(snapshot, viewport, *, now=None, mode='dashboard', conflict=Fa
                      f'cached {d.context[1][1]} · new {d.context[2][1]}',
                      f'MTP · last {d.performance[3][1]}'):
             rows.append(Line(text, values=numeric_spans(text)))
+    # Logs consume only leftover space, never displace existing operator fields.
+    available = budget-len(rows)
+    if available >= 3:
+        from .runtime_logging import display
+        label = 'RUNTIME LOG · '+('FOLLOW' if log_end is None else 'PAUSED · L latest')
+        records = logs or []
+        if log_gap or (records and log_end is not None and log_end < records[0]['sequence']):
+            label += ' · history gap / older records expired'
+        rows += [Line(), Line(label, 'dim')]
+        if log_end is not None:
+            anchor = max(log_end, records[0]['sequence']) if records else log_end
+            records = [r for r in records if r['sequence'] <= anchor]
+        from textwrap import wrap
+        log_rows = []
+        for record in records[-(available-2):]:
+            projected = dict(record, component=record['component'].removeprefix('ds41f.operator.'))
+            tone = 'red' if record['severity'] in ('ERROR', 'CRITICAL') else 'yellow' if record['severity'] == 'WARNING' else ''
+            log_rows += [Line(text, tone) for text in wrap(display(projected), max(1, viewport.width-2),
+                                                        subsequent_indent='  ')]
+        rows += log_rows[-(available-2):]
+        if not log_rows:
+            rows.append(Line('waiting for runtime logs', 'dim'))
     return rows[:budget]
 
 
@@ -318,4 +341,4 @@ def command_strip(mode, width):
         return 'S Start X Stop R Restart Q Quit D/?'
     if width < 70:
         return 'S Start X Stop R Restart Q Quit C/V Chat D/?'
-    return 'S Start  X Stop  R Restart  C Chat  V Stop Chat  D Details  ? Help  Q Quit' + ('  ↑↓ scroll' if mode != 'dashboard' else '')
+    return 'S Start  X Stop  R Restart  C Chat  V Stop Chat  D Details  ? Help  Q Quit' + ('  ↑↓ scroll' if mode != 'dashboard' else '  ↑↓ Logs L Latest')

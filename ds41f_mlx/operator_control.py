@@ -24,8 +24,9 @@ def tui_guard():
 
 
 class Control:
-    def __init__(self, projection, port=RUNTIME_PORT):
+    def __init__(self, projection, port=RUNTIME_PORT, logs=None):
         self.projection = projection
+        self.logs = logs
         self.shutdown_requested = False
         self.server = None
         owner = self
@@ -53,6 +54,21 @@ class Control:
             def do_GET(self):
                 if not self.allowed():
                     return self.reply(403, {'error': 'local_operator_only'})
+                from urllib.parse import urlsplit, parse_qs
+                from .runtime_logging import BATCH_LIMIT
+                path = urlsplit(self.path)
+                if path.path == '/ds41f/logs' and owner.logs is not None:
+                    try:
+                        query = parse_qs(path.query, strict_parsing=True)
+                        if set(query)-{'after', 'limit'} or any(len(v) != 1 for v in query.values()):
+                            raise ValueError()
+                        after = int(query['after'][0]) if 'after' in query else None
+                        limit = int(query.get('limit', [str(BATCH_LIMIT)])[0])
+                        if (after is not None and not 0 <= after <= 2**63-1) or not 1 <= limit <= BATCH_LIMIT:
+                            raise ValueError()
+                    except ValueError:
+                        return self.reply(400, {'error': 'invalid_log_cursor'})
+                    return self.reply(200, owner.logs.retrieve(after, limit))
                 if self.path != '/ds41f/status':
                     return self.reply(404, {'error': 'not_found'})
                 return self.reply(200, owner.projection.snapshot())
@@ -100,11 +116,18 @@ class Control:
 
     def run(self, app, **kwargs):
         import uvicorn
+        if self.logs is not None:
+            kwargs['log_config'] = None
         self.server = uvicorn.Server(uvicorn.Config(app, **kwargs))
         self.server.should_exit = self.shutdown_requested
         self.server.run(sockets=[self.service_socket] if hasattr(self, 'service_socket') else None)
 
     def close(self):
+        if self.logs is not None:
+            # Execution has already retired. Keep final shutdown diagnostics
+            # discoverable for one normal polling interval; never wait for a TUI.
+            from time import sleep
+            sleep(.6)
         self.httpd.shutdown()
         self.httpd.server_close()
         self.thread.join()

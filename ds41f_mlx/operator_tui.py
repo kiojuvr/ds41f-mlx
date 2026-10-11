@@ -58,6 +58,38 @@ class Operator:
         self.offset = 0
         self.mode = 'dashboard'
         self.conflicts = set()
+        from collections import deque
+        from .runtime_logging import CAPACITY
+        self.logs = deque(maxlen=CAPACITY)
+        self.log_runtime = None
+        self.log_cursor = None
+        self.log_end = None  # sequence anchor; None follows latest
+        self.log_gap = False
+        self.log_lock = asyncio.Lock()
+
+    async def poll_logs(self):
+        async with self.log_lock:
+            await self._poll_logs()
+
+    async def _poll_logs(self):
+        try:
+            path = '/ds41f/logs' + (f'?after={self.log_cursor}' if self.log_cursor is not None else '')
+            batch = await asyncio.to_thread(call, RUNTIME_PORT, path)
+            if batch['runtime_id'] != self.log_runtime:
+                self.logs.clear()
+                self.log_runtime = batch['runtime_id']
+                self.log_end = None
+                self.log_gap = False
+                if self.log_cursor is not None:
+                    self.log_cursor = None
+                    return await self._poll_logs()
+            self.log_gap = self.log_gap or batch['gap']
+            for record in batch['records']:
+                if not self.logs or record['sequence'] > self.logs[-1]['sequence']:
+                    self.logs.append(record)
+            self.log_cursor = batch['next_sequence']
+        except (OSError, URLError, ValueError, KeyError):
+            pass  # keep the final tail visible after runtime exits
 
     async def poll(self):
         async def get(port):
@@ -66,6 +98,7 @@ class Operator:
             except (OSError, URLError, ValueError):
                 return None
         self.snapshot, self.chat_snapshot = await asyncio.gather(get(RUNTIME_PORT), get(CHAT_PORT))
+        await self.poll_logs()
         def occupied(port):
             import socket
             try:
@@ -101,6 +134,7 @@ class Operator:
                 self.message = name+' graceful shutdown requested'
                 for _ in range(1200):
                     await asyncio.sleep(.1)
+                    await self.poll_logs()
                     try:
                         await asyncio.to_thread(call, port)
                     except (OSError, URLError):
@@ -152,7 +186,8 @@ class Operator:
                 lines = render_screen(self.snapshot, Viewport(width, height), now=now,
                     mode=self.mode, conflict=RUNTIME_PORT in self.conflicts,
                     chat=self.chat_snapshot, chat_conflict=CHAT_PORT in self.conflicts,
-                    message=self.message)
+                    message=self.message, logs=list(self.logs), log_end=self.log_end,
+                    log_gap=self.log_gap)
                 # Main dashboard never scrolls. Secondary views retain the header.
                 header_count = 1 if width < 70 else 2
                 if self.mode == 'dashboard':
@@ -189,6 +224,17 @@ class Operator:
                     target = 'help' if key == ord('?') else 'diagnostics'
                     self.mode = 'dashboard' if self.mode == target else target
                     self.offset = 0
+                if self.mode == 'dashboard':
+                    page = max(1, sum(1 for line in lines if 'Z #' in line.text)-1)
+                    if key in (curses.KEY_UP, curses.KEY_PPAGE) and self.logs:
+                        current = self.log_end if self.log_end is not None else self.logs[-1]['sequence']
+                        self.log_end = max(self.logs[0]['sequence'], current-(page if key == curses.KEY_PPAGE else 1))
+                    elif key in (curses.KEY_DOWN, curses.KEY_NPAGE) and self.logs and self.log_end is not None:
+                        self.log_end += page if key == curses.KEY_NPAGE else 1
+                        if self.log_end >= self.logs[-1]['sequence']:
+                            self.log_end = None
+                    elif key in (ord('l'), ord('L'), curses.KEY_END):
+                        self.log_end = None
                 if self.mode != 'dashboard' and key == curses.KEY_UP:
                     self.offset -= 1
                 elif self.mode != 'dashboard' and key == curses.KEY_DOWN:

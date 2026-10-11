@@ -9,7 +9,9 @@ package inventory is not expanded for a UI framework.
 
 Keys: **S** Start, **X** graceful Stop, **R** Restart, **C** Chat Start,
 **V** Chat Stop, **Q** Quit, **D** toggle Diagnostics, **?** toggle help.
-Arrows scroll secondary views only; the normal dashboard never scrolls.
+On the dashboard **↑↓ / PgUp / PgDn** scroll the runtime log pane only;
+scrolling upward pauses follow at a sequence anchor. **L / End** returns to latest.
+The status/metrics above the pane never scroll. Arrows scroll secondary views.
 The footer stays at the bottom. Controls remain available in every view.
 
 The dashboard puts NOW/current phase/phase elapsed/request elapsed and queue counts
@@ -27,13 +29,17 @@ At >=100 columns performance/context share two columns; at 70–99 they stack;
 smaller terminals use compact labels without dropping metric fields when space
 permits. Content width is bounded to 112 columns; stacked metric columns are
 bounded to 56 so labels and values do not drift apart on resize. Available height
-is spent on gaps between sections before information is reduced. Observed request
+is spent on gaps between sections, then on the live runtime log pane below
+state integrity. At 132×57 the pane has roughly 30–38 rows (depending on request
+timings). It is omitted when fewer than three spare rows remain; it never
+removes existing information to make room for logs. Observed request
 timings use aligned cells rather than a long clipped line. The phase rail includes
 RECEIVED, QUEUED, CHECKPOINT and settlement as well as inference phases; complete
 phase tokens move to another row when necessary. It shows **only observed**
 completed/current phases, not presumed prior or future execution, and is not an
 ordered transition log (the projection retains durations, not transition history).
-No prose wrapping is used. Only physically short viewports drop timings and then
+Metric and phase layouts do not use prose wrapping; long log records wrap within
+the pane so settlement diagnostics are not silently clipped. Only physically short viewports drop timings and then
 the rail before reducing the core to an instrument strip; all details remain in
 Diagnostics. Raw cache, queue reasons, subphase timings and other low-level values
 continue to live in Diagnostics.
@@ -56,9 +62,12 @@ curses TUI → canonical ds41f start --profile mtp-serving-v1
 
 Children use a new process session, no inherited terminal, and the same Python
 interpreter/canonical entry points. Quit/crash never signals them. TUI child
-stdout/stderr goes to `/dev/null`; use the headless launcher for full startup
-logs if startup fails. TUI reports nonzero launcher exit as FAILED/CONFLICT.
-Reopen discovers live status, not remembered PIDs or ownership modes.
+stdout/stderr still goes to `/dev/null`, but runtime-owned structured history is
+retrieved separately; the TUI owns no child pipe. Full arbitrary exception details
+remain available from the headless launcher. TUI reports nonzero launcher exit as
+FAILED/CONFLICT. Reopen discovers live status and the recent log tail, not remembered
+PIDs or ownership modes. Once the runtime exits its in-memory history is gone;
+a TUI already connected retains its last observed tail until another runtime starts.
 
 Kernel listening sockets are the only singleton authority:
 
@@ -74,10 +83,13 @@ cannot control a pre-upgrade server. No ATTACH mechanism is provided.
 SIGKILL releases socket ownership automatically; `SO_REUSEADDR` allows immediate
 restart after TCP TIME_WAIT, **without** `SO_REUSEPORT`.
 
-`GET /ds41f/status` and empty-body `POST /ds41f/control/shutdown` exist only on
+`GET /ds41f/status`, runtime `GET /ds41f/logs`, and empty-body
+`POST /ds41f/control/shutdown` exist only on
 the respective loopback control socket. Shutdown sets the existing uvicorn
 Server's `should_exit`, draining requests and invoking the existing shutdown /
-shielded retirement path. Restart waits for control socket disappearance then
+shielded retirement path. After execution has retired, runtime control remains
+available for a fixed 600ms to expose the final shutdown tail. It never waits
+for a TUI/consumer acknowledgement and does not delay model settlement. Restart waits for control socket disappearance then
 calls the canonical Start (retaining discovered host/port). Stop does not force
 kill; very long requests/loading may take time. Restart times out after 120s
 without starting a competing runtime. Model loading is owned by canonical
@@ -88,6 +100,48 @@ loopback address and exact numeric Host, and rejects Origin and nonempty
 shutdown bodies. Forwarded headers confer no authority. LAN serving can still
 bind `0.0.0.0`; there are no operator-control routes on that serving interface
 (LAN shutdown returns 404). No new remote administration surface.
+
+## Runtime logs: `ds41f.logs.v1`
+
+The runtime process owns a **512-record** ring. Each record has occurrence-time
+UTC `timestamp` (from Python's LogRecord, not polling time), increasing
+`sequence`, `severity`, `component`, and a single-line `message` capped at 1024
+characters. Sequence is ordering authority; wall-clock adjustments do not reset
+it. A random `runtime_id` distinguishes restart from the same process continuing.
+Logging/formatting failures are swallowed. Ring locks cover only bounded scalar
+copies, never I/O, model execution or Scheduler/state work.
+
+`GET /ds41f/logs?after=<sequence>&limit=<1..128>` returns detached `records`,
+`oldest_sequence`, `latest_sequence`, `next_sequence`, `gap`, and `runtime_id`.
+Without `after`, it returns the latest batch. Poll from `next_sequence` to catch
+up; `gap` says older entries expired, not that execution failed. The same numeric
+Host / loopback-peer / no-Origin restrictions as status apply. There is no log
+route on the serving API and no chat history change. Status snapshots contain no
+logs. Polling is bounded at 128 records per response; TUI retains at most 512
+records, initially the latest 128. A paused anchor stays fixed as new records
+arrive; expired anchors visibly report a history gap. INFO stays monochrome,
+WARNING yellow, ERROR/CRITICAL red. Timestamp and sequence appear on each record;
+wrapped continuations are indented. TUI component names omit the redundant
+`ds41f.operator.` prefix.
+
+Canonical startup/admission, lifecycle/model load, received/finished request and
+existing MTP settlement output use one logging path. The existing settlement
+message is moved, not copied; its exception value becomes the exception type.
+Uvicorn's default handlers are disabled for the runtime so lifecycle messages are
+not duplicated. Its audited lifecycle templates enter the ring; access paths,
+queries and arbitrary third-party messages do not. Other WARNING/ERROR records
+enter as content-free component/severity notices (with exception type when
+available), never raw exception text or traceback. Prompt, response, reasoning,
+tool arguments/results, tokens and file/source contents are not logged anew.
+
+Headless output retains original third-party diagnostics, access output and
+tracebacks with UTC timestamps; safe operator records also show sequence.
+It uses a daemon writer and bounded 512-item queue (16 KiB per output item).
+A broken/slow stderr cannot block inference: output may drop under saturation,
+while the independent ring still retains its recent safe records. There is no
+stdout/stderr interception, database, daemon, telemetry dependency or persistent
+log history. Process exit gives headless output at most 200ms to drain; a slow
+stream is never awaited indefinitely. `--print-config` remains machine-readable JSON.
 
 ## Snapshot: `ds41f.live.v1`
 
@@ -158,7 +212,31 @@ results, tokens, file/source contents, native objects or exception text enters
 telemetry. Diagnostic update failures are swallowed, never inference decisions.
 Only current requests and one last completion are retained in process memory.
 
-## Dashboard presentation acceptance
+## Runtime log acceptance (installed package)
+
+[Focused receipt](operator-runtime-log-acceptance.json) records the installed
+wheel SHA and actual 132×57 curses acceptance. Final-package startup/admission,
+model load, READY, a real HTTP request, aligned settlement (frontier 25,
+replay/repack 0) and graceful shutdown appeared in the dashboard with occurrence
+UTC timestamps and sequences 1–16. Quit/Reopen rediscovered the same runtime ID
+and settlement tail; arrows paused follow and L restored it. Resize to 80×28,
+40×10 and back preserved the footer/core (40×10 omits logs). Long settlement
+records wrapped, and final shutdown/retirement logs remained visible after STOPPED.
+Raw ANSI was decoded including ncurses' CSI scroll-region operations and terminal
+cells inspected. The prompt sentinel was absent from the log API. Headless
+singleton conflict and admission refusal retained timestamped diagnostics and
+exit 2. Runtime and TUI were gracefully stopped after acceptance.
+
+**59 affected tests pass**, including bounded retrieval/gaps, privacy, reconnect
+and restart identity, paused anchors, layout degradation, broken logging and a
+stalled output sink. Model/dependency/native identities and execution semantics
+are unchanged. The new wheel was constructed with the existing one-way package
+builder and installed non-editably; no checkout execution or validation bypass
+was used for runtime acceptance. No OFF/long-context/general-release campaign or
+release promotion is claimed. Local raw captures/driver/wheel are retained under
+`artifacts/operator-runtime-logs/`; the concise receipt is versioned above.
+
+## Dashboard presentation acceptance (historical, before runtime logs)
 
 The presentation redesign leaves the projection schema, runtime, launcher and
 lifecycle methods unchanged. Focused tests cover states, queues, honest unknowns,
@@ -203,6 +281,6 @@ Regression sets pass: **219** in the admitted MTP environment plus **16**
 standard-OFF capacity tests in `.venv` (their native recipe pins differ). Runtime source admission inventory
 and local installation seal were updated only for these reviewed source changes;
 model/dependency/native identities, default profile and release promotion remain
-unchanged. Remaining scope: no remote/history/alerting infrastructure; no new
+unchanged. Remaining scope: no remote/persistent-history/alerting infrastructure; no new
 long-context campaign was run, so the earlier ~220K-context qualification is not
 claimed as rerun here.

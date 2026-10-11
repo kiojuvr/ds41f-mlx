@@ -3,7 +3,10 @@ from __future__ import annotations
 
 import argparse
 import json
+import logging
 import sys
+
+logger = logging.getLogger('ds41f.operator.launcher')
 
 from ds41f_mlx.config import load_runtime_config, validate_runtime_config
 
@@ -15,16 +18,32 @@ def main(argv: list[str] | None = None) -> int:
         return _main(argv)
     from .observability import Projection
     from .operator_control import Control
+    from .runtime_logging import History, install
+    history = History()
+    log_output = install(history, sys.stderr)
     projection = Projection()
     try:
-        control = Control(projection)
+        control = Control(projection, logs=history)
     except OSError:
-        print('CONFLICT: ds41f runtime/control socket already in use', file=sys.stderr)
+        logger.error('CONFLICT: ds41f runtime/control socket already in use')
+        log_output.drain()
         return 2
     try:
-        return _main(argv, control=control, projection=projection)
+        logger.info('STARTING; runtime admission begins')
+        result = _main(argv, control=control, projection=projection)
+        if result:
+            projection.lifecycle('FAILED')
+        else:
+            logger.info('shutdown complete; runtime retired')
+        return result
+    except Exception:
+        projection.lifecycle('FAILED')
+        # Arbitrary exception details/traceback remain headless only, once.
+        logging.getLogger('ds41f.diagnostic').exception('runtime launcher failed')
+        return 2
     finally:
         control.close()
+        log_output.drain()
 
 
 def _main(argv, *, control=None, projection=None) -> int:
@@ -46,11 +65,13 @@ def _main(argv, *, control=None, projection=None) -> int:
                 control.reserve_service(cfg.host, cfg.port)
             report = inspect(cfg)
         except (ValueError, OSError, ImportError) as exc:
-            print(json.dumps({'status':'FAIL','error':str(exc)}), file=sys.stderr)
+            logger.error('admission failed: %s', type(exc).__name__)
+            logging.getLogger('ds41f.diagnostic').error('admission detail: %s', exc)
             return 2
         if args.print_config:
             print(json.dumps(report,indent=2))
             return 0
+        logger.info('runtime admission passed profile=%s', args.profile)
         cfg.apply_environment()
         from .serving.mtp_public import LocalMTPBackend
         from .serving.server import create_app
@@ -104,7 +125,7 @@ def _main(argv, *, control=None, projection=None) -> int:
         try:
             control.reserve_service(cfg.host, cfg.port)
         except OSError:
-            print('CONFLICT: service socket already in use', file=sys.stderr)
+            logger.error('CONFLICT: service socket already in use')
             return 2
 
     from .delivery import inspect as inspect_installed_off
@@ -113,7 +134,8 @@ def _main(argv, *, control=None, projection=None) -> int:
     try:
         report = inspect_installed_off(cfg)
     except (ValueError, OSError, ImportError) as exc:
-        print(json.dumps({'status': 'FAIL', 'error': str(exc)}), file=sys.stderr)
+        logger.error('admission failed: %s', type(exc).__name__)
+        logging.getLogger('ds41f.diagnostic').error('admission detail: %s', exc)
         return 2
     if args.print_config:
         print(json.dumps(report, indent=2, sort_keys=True))
@@ -121,14 +143,16 @@ def _main(argv, *, control=None, projection=None) -> int:
     if not args.no_validate:
         failures = [f for f in validate_runtime_config(cfg) if f["status"] == "FAIL"]
         if failures:
-            print(json.dumps({"status": "FAIL", "failures": failures, "config": cfg.to_json()}, indent=2), file=sys.stderr)
+            logger.error('runtime configuration validation failed')
+            logging.getLogger('ds41f.diagnostic').error('%s', json.dumps({'failures': failures, 'config': cfg.to_json()}))
             return 2
 
-    print(json.dumps({"status": "STARTING", "config": cfg.to_json(), "provenance_status": report["status"]}, indent=2), flush=True)
+    logger.info('STARTING; runtime admission passed profile=%s', args.profile)
     try:
         import uvicorn
     except Exception as exc:
-        print(f"uvicorn is required to launch the server: {exc}", file=sys.stderr)
+        logger.error('uvicorn is required to launch the server')
+        logging.getLogger('ds41f.diagnostic').error('%s', exc)
         return 2
 
     # Import after cfg.apply_import_paths() so deepseek-recipe/oMLX checkouts do not

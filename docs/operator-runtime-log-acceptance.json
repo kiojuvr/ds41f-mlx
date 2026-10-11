@@ -1,0 +1,63 @@
+{
+  "schema": "ds41f.operator-log-acceptance.v1",
+  "status": "PASS",
+  "scope": "logging/operator observability only; no OFF, long-context or general release qualification",
+  "wheel": "artifacts/operator-runtime-logs/wheels/ds41f_mlx-0.23.0-py3-none-any.whl",
+  "wheel_sha256": "1f44ac7bccaa30da61573498496d635cf28171ec5fb31aafd4068bb0de3097d4",
+  "installed_python": "/Volumes/SDXC-512/m53r-normal-local-venv/bin/python",
+  "execution": "installed non-editable package, python -I -m ds41f_mlx.ops; TUI S launches canonical installed serve",
+  "profile": "mtp-serving-v1",
+  "validation_bypass": false,
+  "runtime_id": "0a4ecdb964e54154a397273d1b288005",
+  "viewport": [132, 57],
+  "resize_viewports": [[80, 28], [40, 10], [132, 57]],
+  "tests": {
+    "passed": 59,
+    "files": ["tests/test_operator_dashboard.py", "tests/test_operator_observability.py", "tests/test_runtime_logging.py", "tests/test_production_mtp.py"]
+  },
+  "request": {
+    "http_status": 200,
+    "prompt_tokens": 23,
+    "public_completion_tokens": 1,
+    "canonical_generated": 2,
+    "canonical_frontier": 25,
+    "aligned": true,
+    "prompt_replay": 0,
+    "full_cache_repack": 0
+  },
+  "checks": {
+    "startup_model_load_ready_in_actual_curses": true,
+    "real_request_settlement_in_dashboard": true,
+    "occurrence_utc_timestamps_and_increasing_sequences": true,
+    "quit_preserves_runtime": true,
+    "reopen_rediscovers_same_runtime_and_tail": true,
+    "scroll_pauses_follow_and_L_restores_latest": true,
+    "long_settlement_record_wraps": true,
+    "small_terminal_preserves_core_and_omits_log_pane": true,
+    "final_shutdown_tail_visible_after_STOPPED": true,
+    "prompt_sentinel_absent_from_logs": true,
+    "headless_conflict_and_admission_failure_timestamped_exit_2": true,
+    "no_runtime_or_tui_left_running": true
+  },
+  "timeline": [
+    "2026-10-11T00:30:56.561Z #1 STARTING; runtime admission begins",
+    "2026-10-11T00:31:29.902Z #2 runtime admission passed",
+    "2026-10-11T00:31:30.924Z #3 Started server process",
+    "2026-10-11T00:31:30.924Z #4 Waiting for application startup",
+    "2026-10-11T00:31:30.925Z #5 LOADING",
+    "2026-10-11T00:33:02.082Z #6 READY",
+    "2026-10-11T00:33:02.083Z #7 Application startup complete",
+    "2026-10-11T00:33:03.061Z #8 request received",
+    "2026-10-11T00:33:05.707Z #9 request finished",
+    "2026-10-11T00:33:05.707Z #10 MTP settled; aligned frontier 25, replay/repack 0",
+    "2026-10-11T00:33:17.530Z #11 STOPPING",
+    "2026-10-11T00:33:17.540Z #12 Shutting down",
+    "2026-10-11T00:33:17.643Z #13 Waiting for application shutdown",
+    "2026-10-11T00:33:17.654Z #14 Application shutdown complete",
+    "2026-10-11T00:33:17.654Z #15 Finished server process",
+    "2026-10-11T00:33:17.655Z #16 shutdown complete; runtime retired"
+  ],
+  "evidence": "artifacts/operator-runtime-logs/ (local ignored artifacts: raw ANSI, rendered cells, receipt, driver, headless output, test output, wheel)",
+  "terminal_decoder": "pyte ByteStream with CSI S/T scroll-region support; raw curses output replayed and cells inspected",
+  "release_promotion": "unchanged; existing release/execution-package.json remains historical baseline"
+}

@@ -168,7 +168,7 @@ def test_restart_composes_shutdown_disappearance_and_canonical_start(monkeypatch
         pass
     monkeypatch.setattr(operator, 'poll', poll)
     asyncio.run(operator.lifecycle('restart'))
-    assert events == ['GET', 'POST', 'GET', ('launch', False, endpoint)]
+    assert events == ['GET', 'POST', 'GET', 'GET', ('launch', False, endpoint)]
 
 
 def test_canonical_launcher_registers_load_on_actual_fastapi_router(monkeypatch):
