@@ -5,6 +5,29 @@ checkout provenance or a local environment seal. Historical M20/source-delivery
 instructions are preserved in [the archive](archive/operations-source-seal.md)
 and are not production launch instructions.
 
+## Local environment layout
+
+The development repository is `/Volumes/SDXC-512/ds41f-mlx`; its internal
+`.venv` is for development, not installed production execution. Local installed
+runtime environments are:
+
+- MTP: `/Volumes/SDXC-512/ds41f-mlx_mtp-venv`
+- Standard-OFF / bounded Vision: `/Volumes/SDXC-512/ds41f-mlx_off-venv`
+
+Use the matching environment's `bin/ds41f`, or `bin/python -I -m ds41f_mlx.ops`.
+For example:
+
+```sh
+/Volumes/SDXC-512/ds41f-mlx_mtp-venv/bin/ds41f start --profile mtp-serving-v1
+/Volumes/SDXC-512/ds41f-mlx_off-venv/bin/ds41f start --profile standard-off
+```
+
+These are alternative launches, not concurrent servers on the same port.
+Historical `m53r-*-venv` and `ds41f-generation-policy*-venv` paths in qualification
+records identify the original runs, not current launch instructions. They are
+not rewritten in historical receipts. See [environment consolidation](environment-consolidation.md)
+for migration details and completed legacy OFF retirement.
+
 ## Provision / publish
 
 Use a locked provisioned environment. `python -m ds41f_mlx.mtp_setup --profile

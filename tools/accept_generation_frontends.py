@@ -301,7 +301,7 @@ def browser(args, evidence):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('frontend', choices=['tui', 'browser'])
-    parser.add_argument('--python', default='/Volumes/SDXC-512/ds41f-generation-policy-venv/bin/python')
+    parser.add_argument('--python', default='/Volumes/SDXC-512/ds41f-mlx_mtp-venv/bin/python')
     parser.add_argument('--output', required=True)
     args = parser.parse_args(); evidence = Evidence(args.output)
     globals()[args.frontend](args, evidence)

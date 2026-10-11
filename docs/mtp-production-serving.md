@@ -45,7 +45,7 @@ qualification accounts below describe their original source/seal architecture.
 ### Direct trusted private-LAN serving
 
 ```sh
-/Volumes/SDXC-512/m53r-local-venv/bin/python -m ds41f_mlx.ops start \
+/Volumes/SDXC-512/ds41f-mlx_mtp-venv/bin/python -I -m ds41f_mlx.ops start \
   --profile mtp-serving-v1 --host 0.0.0.0 --port 8000
 ```
 
