@@ -2,17 +2,18 @@
 
 Activate the provisioned canonical environment, with the usual explicit
 `DS41F_CHECKPOINT` pointing at the external official model, then run **`ds41f`**.
-No extra package is needed: the TUI uses Python's optional-at-import stdlib
-`curses` module. A terminal is required; missing curses/non-TTY gives an actionable
+The terminal uses Python's optional-at-import stdlib `curses` module;
+Chat uses the provisioned runtime's existing `httpx`, with no new dependency. A terminal is required; missing curses/non-TTY gives an actionable
 error without affecting `ds41f start`, `inspect`, or `accept`. The frozen MTP
 package inventory is not expanded for a UI framework.
 
-Keys: **S** Start, **X** graceful Stop, **R** Restart, **C** Chat Start,
-**V** Chat Stop, **Q** Quit, **D** toggle Diagnostics, **?** toggle help.
+Dashboard keys: **S** Start, **X** graceful Stop, **R** Restart, **C** Chat mode,
+**V** Chat Server Stop, **Q** Quit, **D** toggle Diagnostics, **?** toggle help.
 On the dashboard **↑↓ / PgUp / PgDn** scroll the runtime log pane only;
 scrolling upward pauses follow at a sequence anchor. **L / End** returns to latest.
 The status/metrics above the pane never scroll. Arrows scroll secondary views.
-The footer stays at the bottom. Controls remain available in every view.
+The footer stays at the bottom. Dashboard controls also remain in Diagnostics/help.
+Chat has its own composer/control mapping, described below.
 
 The dashboard puts NOW/current phase/phase elapsed/request elapsed and queue counts
 first, then performance and context, then compact alignment/frontier/replay/repack
@@ -50,6 +51,9 @@ has no lifecycle-start timestamp: LOADING MODEL therefore displays elapsed `—`
 (including rediscovery), never an observation-age timer presented as load time.
 Diagnostics states that lifecycle elapsed is not published. No spinner,
 percentage, progress bar or synthetic activity.
+
+See [Operator Chat mode](operator-chat.md) for composer keys, production streaming
+protocol, independent session ownership and interruption/retirement boundaries.
 
 ## Process and control boundary
 

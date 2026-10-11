@@ -66,6 +66,11 @@ class Operator:
         self.log_end = None  # sequence anchor; None follows latest
         self.log_gap = False
         self.log_lock = asyncio.Lock()
+        from .chat_application import ChatApplication
+        from .operator_chat import ChatView
+        self.conversation = ChatApplication()
+        self.chat_view = ChatView()
+        self.chat_task = self.stop_task = None
 
     async def poll_logs(self):
         async with self.log_lock:
@@ -129,6 +134,12 @@ class Operator:
             except (OSError, URLError):
                 status = None
             endpoint = (status or {}).get('endpoint') or {}
+            if chat and action in ('stop', 'restart') and self.conversation.id:
+                # Retire our application session before taking its backend away.
+                await self.conversation.stop()
+                if self.chat_task and not self.chat_task.done():
+                    await asyncio.shield(self.chat_task)
+                await self.conversation.close()
             if action in ('stop', 'restart') and status:
                 await asyncio.to_thread(call, port, '/ds41f/control/shutdown', 'POST')
                 self.message = name+' graceful shutdown requested'
@@ -161,9 +172,33 @@ class Operator:
         except Exception as exc:
             self.message = name+f' control failed: {exc}'
         finally:
+            if chat and self.mode == 'chat':
+                self.conversation.notice = self.message
             self.operation = False
 
+    async def new_chat(self):
+        if not self.conversation.id:
+            endpoint = (self.chat_snapshot or {}).get('endpoint') or {}
+            port = endpoint.get('port', 8080)
+            self.conversation.http.base_url = f'http://127.0.0.1:{port}'
+        await self.conversation.new()
+
+    async def chat_action(self, action):
+        try:
+            await action()
+        except Exception as exc:
+            self.conversation.notice = str(exc)
+
+    def begin_chat_action(self, action):
+        if self.chat_task is None or self.chat_task.done():
+            self.chat_task = asyncio.create_task(self.chat_action(action))
+
     async def run(self, screen, curses):
+        # raw preserves Ctrl-C as application Stop, not process SIGINT.
+        curses.raw()
+        curses.set_escdelay(25)  # unknown ESC/paste sequences cannot stall polling
+        sys.stdout.write('\x1b[?2004h')
+        sys.stdout.flush()
         screen.nodelay(True)
         screen.keypad(True)
         try:
@@ -188,9 +223,15 @@ class Operator:
                     chat=self.chat_snapshot, chat_conflict=CHAT_PORT in self.conflicts,
                     message=self.message, logs=list(self.logs), log_end=self.log_end,
                     log_gap=self.log_gap)
+                chat_cursor = None
+                if self.mode == 'chat':
+                    lines, chat_cursor = self.chat_view.render(self.conversation, width, height,
+                        (self.snapshot or {}).get('state', 'STOPPED'),
+                        (self.chat_snapshot or {}).get('state', 'STOPPED — F2 Start'),
+                        self.chat_task is not None and not self.chat_task.done())
                 # Main dashboard never scrolls. Secondary views retain the header.
                 header_count = 1 if width < 70 else 2
-                if self.mode == 'dashboard':
+                if self.mode in ('dashboard', 'chat'):
                     self.offset = 0
                     visible = lines
                 else:
@@ -198,7 +239,7 @@ class Operator:
                     self.offset = max(0, min(self.offset, len(lines)-header_count-body_height))
                     visible = lines[:header_count] + lines[header_count+self.offset:header_count+self.offset+body_height]
                 screen.erase()
-                for row, line in enumerate(visible[:max(0, height-1)]):
+                for row, line in enumerate(visible[:height if self.mode == 'chat' else max(0, height-1)]):
                     try:
                         screen.addnstr(row, 1, line.text, max(0, width-2),
                                        styles.get(line.tone, 0) | (curses.A_BOLD if line.bold else 0))
@@ -213,11 +254,68 @@ class Operator:
                     except curses.error:
                         pass
                 try:
-                    screen.addnstr(max(0, height-1), 0, command_strip(self.mode, width), max(0, width-1), curses.A_DIM)
+                    if self.mode != 'chat':
+                        screen.addnstr(max(0, height-1), 0, command_strip(self.mode, width), max(0, width-1), curses.A_DIM)
+                    curses.curs_set(1 if chat_cursor else 0)
+                    if chat_cursor:
+                        screen.move(min(height-1, chat_cursor[0]), min(width-1, chat_cursor[1]))
                 except curses.error:
                     pass
                 screen.refresh()
-                key = screen.getch()
+                # Wide-character input: IME commits UTF-8 text, not getch bytes.
+                # Drain paste/edit events without blocking polling or streams.
+                keys = []
+                for _ in range(4096):
+                    try:
+                        key = screen.get_wch()
+                    except curses.error:
+                        break
+                    key = self.chat_view.editor.decode(key)
+                    if key is not None:
+                        keys.append(key)
+                if self.mode == 'chat':
+                    for key in keys:
+                        if key == '\x11':
+                            return
+                        if key == '\x14':
+                            self.mode = 'dashboard'
+                        elif key == '\x0c':
+                            self.chat_view.top = None
+                        elif key in (curses.KEY_PPAGE, curses.KEY_NPAGE):
+                            self.chat_view.scroll((-1 if key == curses.KEY_PPAGE else 1)*self.chat_view.body_height)
+                        elif key == '\x03':
+                            if self.stop_task is None or self.stop_task.done():
+                                self.stop_task = asyncio.create_task(self.chat_action(self.conversation.stop))
+                        elif key in ('\x0e', '\x17', '\x12', '\x05', '\x07'):
+                            actions = {'\x0e': self.new_chat, '\x17': self.conversation.close,
+                                       '\x12': lambda: self.conversation.reconcile(wait=True),
+                                       '\x05': self.conversation.resume}
+                            if key == '\x07':
+                                text = self.chat_view.editor.text.strip()
+                                if text and (self.chat_task is None or self.chat_task.done()):
+                                    async def send(text=text):
+                                        def submitted():
+                                            self.chat_view.editor.text = ''
+                                            self.chat_view.editor.cursor = 0
+                                        await self.conversation.send(text, on_submitted=submitted)
+                                    self.chat_view.top = None
+                                    self.begin_chat_action(send)
+                            else:
+                                self.begin_chat_action(actions[key])
+                        elif key in (curses.KEY_F2, curses.KEY_F3):
+                            if action_task is None or action_task.done():
+                                action_task = asyncio.create_task(self.lifecycle('start' if key == curses.KEY_F2 else 'stop', True))
+                        else:
+                            self.chat_view.editor.edit(key, curses, max(2, width-2))
+                    await asyncio.sleep(.04)
+                    continue
+                # Dashboard command path stays single-key, never interprets paste.
+                key = next((key for key in keys if key != curses.KEY_RESIZE), -1)
+                if isinstance(key, str):
+                    key = ord(key)
+                if key in (ord('c'), ord('C')):
+                    self.mode = 'chat'
+                    continue
                 if key in (ord('q'), ord('Q')):
                     break
                 if key in (ord('d'), ord('D'), ord('?')):
@@ -240,17 +338,34 @@ class Operator:
                 elif self.mode != 'dashboard' and key == curses.KEY_DOWN:
                     self.offset += 1
                 commands = {'s': ('start', False), 'x': ('stop', False), 'r': ('restart', False),
-                            'c': ('start', True), 'v': ('stop', True)}
+                            'v': ('stop', True)}
                 command = commands.get(chr(key).lower()) if 0 <= key < 256 else None
                 if command and (action_task is None or action_task.done()):
                     action_task = asyncio.create_task(self.lifecycle(*command))
                 await asyncio.sleep(.1)
         finally:
+            sys.stdout.write('\x1b[?2004l')
+            sys.stdout.flush()
+            # Retire only this frontend's native session, never either service.
+            if self.conversation.id:
+                try:
+                    await asyncio.wait_for(self.conversation.stop(), 10)
+                    if self.chat_task and not self.chat_task.done():
+                        await asyncio.wait_for(asyncio.shield(self.chat_task), 65)
+                except Exception as exc:
+                    print(f'Chat interruption could not be confirmed: {exc}; attempting session retirement', file=sys.stderr)
+                # Even if Stop/reconciliation failed, attempt authoritative DELETE.
+                try:
+                    await asyncio.wait_for(self.conversation.shutdown(), 65)
+                except Exception as exc:
+                    print(f'Chat session {self.conversation.id}: retirement unconfirmed: {exc}; no retry', file=sys.stderr)
+            else:
+                await self.conversation.http.aclose()
             # Cancel UI work only: never signal the detached runtime on quit.
-            for task in (poll_task, action_task):
+            for task in (poll_task, action_task, self.chat_task, self.stop_task):
                 if task is not None:
                     task.cancel()
-            await asyncio.gather(*(t for t in (poll_task, action_task) if t is not None), return_exceptions=True)
+            await asyncio.gather(*(t for t in (poll_task, action_task, self.chat_task, self.stop_task) if t is not None), return_exceptions=True)
 
 
 def main():

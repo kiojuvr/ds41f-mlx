@@ -245,8 +245,8 @@ def render_screen(snapshot, viewport, *, now=None, mode='dashboard', conflict=Fa
         return header + [Line()] + d.diagnostics()
     if mode == 'help':
         return header + [Line(), Line('KEYS', 'dim')] + [Line(s) for s in (
-            'S  Start runtime', 'X  Graceful Stop', 'R  Restart runtime', 'C  Chat Start',
-            'V  Chat Stop', 'D  Toggle Diagnostics', '?  Toggle help', '↑↓ / PgUp/PgDn Scroll runtime logs; L / End follow latest',
+            'S  Start runtime', 'X  Graceful Stop', 'R  Restart runtime', 'C  Open Chat mode (F2 starts Chat Server)' ,
+            'V  Chat Server Stop', 'D  Toggle Diagnostics', '?  Toggle help', '↑↓ / PgUp/PgDn Scroll runtime logs; L / End follow latest',
             '↑↓ Scroll Diagnostics / help',
             'Q  Quit TUI; runtime remains running', '', 'Metrics: current request, otherwise last.',
             'MTP / alignment / frontier: last settled request.', '— means not published or not yet measured.')]
@@ -341,4 +341,4 @@ def command_strip(mode, width):
         return 'S Start X Stop R Restart Q Quit D/?'
     if width < 70:
         return 'S Start X Stop R Restart Q Quit C/V Chat D/?'
-    return 'S Start  X Stop  R Restart  C Chat  V Stop Chat  D Details  ? Help  Q Quit' + ('  ↑↓ scroll' if mode != 'dashboard' else '  ↑↓ Logs L Latest')
+    return 'S Start  X Stop  R Restart  C Chat  V Stop Server  D Details  ? Help  Q Quit' + ('  ↑↓ scroll' if mode != 'dashboard' else '  ↑↓ Logs L Latest')

@@ -37,8 +37,12 @@ function controls() {
   $('status').textContent = state.stop && state.busy ? 'Stopping' : phase || (state.busy ? 'Recovering' : state.session?.record?.state === 'busy' ? 'Generating' : state.session?.problem || state.session?.toolPause === 'error' || state.session?.effects?.state === 'reserved' ? 'Error' : state.runtime?.status === 'ready' ? 'Ready' : ['error', 'unreachable', 'unavailable'].includes(state.runtime?.status) ? 'Error' : 'Recovering');
   const locked = !!state.session?.protocol;
   if (locked) { const effort = state.session.protocol.reasoning; $('thinking').value = effort === 'none' ? 'off' : 'on'; if (effort !== 'none') $('reasoning').value = ({minimal: 'low', medium: 'high', xhigh: 'high'}[effort] || effort); }
-  $('thinking').disabled = locked || state.busy;
-  $('reasoning').disabled = locked || state.busy || $('thinking').value === 'off';
+  const restricted = production();
+  for (const id of ['temperature', 'topP', 'outputLimit', 'maxTokens', 'resetGeneration']) $(id).disabled = restricted || locked || state.busy;
+  $('images').disabled ||= restricted;
+  for (const id of ['saveSession', 'restoreSession', 'saves']) $(id).disabled ||= state.runtime?.capabilities?.persist_restore === false;
+  $('thinking').disabled = restricted || locked || state.busy;
+  $('reasoning').disabled = restricted || locked || state.busy || $('thinking').value === 'off';
   $('thinkLabel').textContent = $('thinking').value === 'off' ? 'Think Off' : 'Think ' + ({low: 50, high: 75, xhigh: 75, max: 100}[$('reasoning').value] || 75);
   $('thinkingLock').textContent = locked ? 'Locked for this conversation. Start a new chat to change.' : '';
   $('toolsLabel').textContent = 'Tools ' + {auto: 'Auto', ask: 'Ask', off: 'Off'}[$('toolsMode').value];
@@ -148,6 +152,7 @@ async function select(id) {
   state.session = await ChatStore.get('sessions', id);
   localStorage.setItem('ds41f.selected', id);
   visible = 100; state.attachments = []; rendered.clear(); follow = true;
+  if (state.session?.generation) applyDefaults(state.session.generation);
   const reasoning = state.session?.protocol?.reasoning;
   if (reasoning) { $('thinking').value = reasoning === 'none' ? 'off' : 'on'; $('reasoning').value = reasoning === 'none' ? 'max' : reasoning === 'xhigh' ? 'high' : reasoning; }
   preview(); render();
@@ -155,9 +160,40 @@ async function select(id) {
   try { await reconcile(true); } finally { state.busy = false; phase = ''; controls(); }
   await menus();
 }
+function production() { return state.runtime?.capabilities?.stateful_chat === 'production-sessions-v1'; }
+function negotiate() {
+  const runtime = state.runtime;
+  if (runtime?.status !== 'ready') throw new Error('Runtime is not READY');
+  const capability = runtime.capabilities?.stateful_chat;
+  if (capability === 'production-sessions-v1') {
+    const d = runtime.chat_defaults;
+    if (!d || d.temperature !== 0 || d.top_p !== 1 || d.reasoning_effort !== 'none' || d.max_tokens !== 'auto') throw new Error('Unsupported production chat_defaults; no normalization');
+    return {...d};
+  }
+  if (capability === undefined && runtime.profile === 'standard-off') return {temperature: 1, top_p: .95, reasoning_effort: 'none', max_tokens: 'auto'};
+  throw new Error('Unsupported runtime stateful_chat capability: ' + capability);
+}
+function applyDefaults(d) {
+  $('temperature').value = d.temperature; $('topP').value = d.top_p;
+  $('thinking').value = d.reasoning_effort === 'none' ? 'off' : 'on';
+  $('outputLimit').value = d.max_tokens === 'auto' ? 'auto' : 'custom';
+  $('maxTokens').hidden = d.max_tokens === 'auto';
+  if (d.max_tokens !== 'auto') $('maxTokens').value = d.max_tokens;
+}
+async function createConversation() {
+  await status();
+  const defaults = negotiate();
+  // Standard-OFF has no advertised fixed defaults: preserve its existing UI choices.
+  if (production()) applyDefaults(defaults);
+  const rec = await api('/api/session', 'POST', {});
+  await ChatStore.put('sessions', {id: rec.id, title: '', messages: [], count: 0, frontier: 0, problem: '',
+    generation: production() ? defaults : null});
+  await select(rec.id);
+}
 async function status() {
   const result = await api('/api/status');
-  state.tools = result.tools || []; state.runtime = result.runtime;
+  state.runtime = result.runtime;
+  state.tools = (result.tools || []).filter(tool => !production() || !['fetch_image', 'fetch_pdf'].includes(tool.function?.name));
   controls();
 }
 function appendResults(result) {
@@ -221,7 +257,7 @@ async function reconcile(wait = false) {
     await save(); render();
     return rec;
   } catch (error) {
-    s.problem = error.status === 404 ? (s.pendingRestore ? 'Restore outcome not published at the known session ID. Reconcile later; no automatic restore retry.' : 'Runtime session is absent (closed or server restarted). Select a saved entry and Restore as a NEW native session.') : error.message;
+    s.problem = error.status === 404 ? (s.pendingRestore ? 'Restore outcome not published at the known session ID. Reconcile later; no automatic restore retry.' : 'Runtime session is absent (closed or server restarted). Close and start a new chat; production sessions cannot be restored.') : error.message;
     notice(s.problem); controls(); throw error;
   }
 }
@@ -238,6 +274,12 @@ async function exclusive(action) {
   });
 }
 function settings() {
+  negotiate(); // Fail closed even if the runtime changed since conversation creation.
+  if (state.session?.generation && !production()) throw new Error('Runtime capability changed; close this conversation');
+  if (production()) {
+    if (state.session && !state.session.generation) throw new Error('Conversation lacks negotiated production defaults; close and start a new chat');
+    return {...(state.session?.generation || negotiate())};
+  }
   const temperature = Number($('temperature').value);
   const max_tokens = $('outputLimit').value === 'auto' ? 'auto' : Number($('maxTokens').value), top_p = Number($('topP').value);
   if ((max_tokens !== 'auto' && (!Number.isInteger(max_tokens) || max_tokens < 1 || max_tokens > 4294967295)) || !Number.isFinite(temperature) || temperature < 0 || !Number.isFinite(top_p) || top_p < 0 || top_p > 1) throw new Error('Invalid temperature, output budget or top-p');
@@ -361,6 +403,7 @@ async function send() {
     if (pendingCalls().length || s.toolAwaitingResponse) throw new Error('Continue the pending tool response before another user turn');
     const parts = [];
     if (text) parts.push({type: 'text', text});
+    if (production() && state.attachments.length) throw new Error('Images unsupported by runtime');
     for (const file of state.attachments) parts.push({type: 'image_url', image_url: {url: file.url}});
     s.toolPause = ''; s.toolError = ''; s.interrupted = false;
     s.messages.push({role: 'user', content: state.attachments.length ? parts : text});
@@ -373,6 +416,8 @@ async function send() {
 async function attach(files) {
   if (state.busy) return;
   try {
+    negotiate();
+    if (production()) throw new Error('Images unsupported by runtime');
     const historical = (state.session?.messages || []).flatMap(m => Array.isArray(m.content) ? m.content : []).filter(p => p.type === 'image_url').length;
     if (historical + state.attachments.length + files.length > 4) throw new Error('At most four images in the full conversation');
     const additions = [];
@@ -432,9 +477,7 @@ $('newSession').onclick = () => exclusive(async () => {
     try { await api(path(state.session.id), 'DELETE'); } catch (error) { if (error.status !== 404) throw error; }
     await ChatStore.remove('sessions', state.session.id); state.session = null; localStorage.removeItem('ds41f.selected'); render();
   }
-  const rec = await api('/api/session', 'POST', {});
-  await ChatStore.put('sessions', {id: rec.id, title: '', messages: [], count: 0, frontier: 0, problem: ''});
-  await select(rec.id);
+  await createConversation();
 });
 $('sessions').onchange = () => select($('sessions').value).catch(error => notice(error.message));
 $('reconnect').onclick = () => { if (!state.busy) return exclusive(async () => { await status(); await reconcile(true); }); };
@@ -444,6 +487,7 @@ $('closeSession').onclick = () => exclusive(async () => {
   await ChatStore.remove('sessions', state.session.id); state.session = null; localStorage.removeItem('ds41f.selected'); render();
 });
 $('saveSession').onclick = () => exclusive(async () => {
+  if (state.runtime?.capabilities?.persist_restore === false) throw new Error('Persist/restore unsupported by runtime');
   const rec = await reconcile(); const s = state.session;
   if (rec.state !== 'idle' || s.pending || s.problem || pendingCalls().length) throw new Error('Save requires a settled idle application/runtime frontier, with completed tool results');
   const result = rec.persisted_artifact?.frontier === s.frontier ? {artifact: rec.persisted_artifact} : await api(path(s.id) + '/persist', 'POST', {});
@@ -452,6 +496,8 @@ $('saveSession').onclick = () => exclusive(async () => {
   notice('Saved native idle artifact and matching original-byte browser history. Later chat does not change this snapshot. Keep this browser storage: native artifacts do not contain historical image bytes.');
 });
 $('restoreSession').onclick = () => exclusive(async () => {
+  await status(); negotiate();
+  if (state.runtime?.capabilities?.persist_restore === false) throw new Error('Persist/restore unsupported by runtime');
   if (state.session?.pendingRestore) throw new Error('An existing restore outcome is unresolved. Reconcile its known ID before another restore.');
   const snapshot = await ChatStore.get('saves', $('saves').value);
   if (!snapshot) throw new Error('Choose a saved session. Native artifacts alone do not contain ordinary image/history payloads.');
@@ -505,7 +551,7 @@ $('skipTools').onclick = () => exclusive(async () => {
     await status(); await menus();
     const id = localStorage.getItem('ds41f.selected');
     if (id && await ChatStore.get('sessions', id)) await select(id);
-    else { const rec = await api('/api/session', 'POST', {}); await ChatStore.put('sessions', {id: rec.id, title: '', messages: [], count: 0, frontier: 0, problem: ''}); await select(rec.id); }
+    else await createConversation();
     controls();
   } catch (error) { notice(error.message); }
 })();
