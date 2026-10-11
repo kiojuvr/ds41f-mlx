@@ -1,0 +1,40 @@
+............F...                                                         [100%]
+=================================== FAILURES ===================================
+__________ test_budget_prefix_guard_never_mutates_count_or_authority ___________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x16a7c0050>
+
+    def test_budget_prefix_guard_never_mutates_count_or_authority(monkeypatch):
+        backend = DeepSeekRecipeRuntimeBackend(runtime_config=load_runtime_config())
+        rec = SimpleNamespace(busy=False, recovery_state='ready', request_count=7, m11=SimpleNamespace(m8=SimpleNamespace(token_history=[1,2,3]), image_identities=[]))
+        monkeypatch.setattr(backend, 'get_stateful_session', lambda _: rec)
+        request = SimpleNamespace(model=None, multimodal=None, image_sources=[], token_ids=[1,2,3,4])
+>       assert backend.validate_stateful_admission('s', request) is rec
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_runtime_capacity.py:141:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <ds41f_mlx.serving.deepseek_recipe_backend.DeepSeekRecipeRuntimeBackend object at 0x160f3be00>
+session_id = 's'
+request = namespace(model=None, multimodal=None, image_sources=[], token_ids=[1, 2, 3, 4])
+
+    def validate_stateful_admission(self, session_id, request):
+        """Observation only; shared by preview and actual reservation."""
+        self.validate_multimodal_request(request)
+        if request.model is not None and request.model not in MODEL_ALIASES:
+            raise RuntimeError('unsupported model')
+        rec = self.get_stateful_session(session_id)
+        if rec.busy:
+            raise RuntimeError('session already has an active request')
+        if rec.recovery_state == 'unrecoverable':
+            raise RuntimeError('session is protocol-unrecoverable; DELETE required, no automatic replay')
+        from .generation_policy import reasoning_policy
+>       if rec.reasoning_policy is not None and rec.reasoning_policy != reasoning_policy(request):
+           ^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'reasoning_policy'
+
+ds41f_mlx/serving/deepseek_recipe_backend.py:292: AttributeError
+=========================== short test summary info ============================
+FAILED tests/test_runtime_capacity.py::test_budget_prefix_guard_never_mutates_count_or_authority
+1 failed, 15 passed in 5.42s

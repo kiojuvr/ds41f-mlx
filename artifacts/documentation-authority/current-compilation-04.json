@@ -1,0 +1,194 @@
+{
+  "base_commit": "7b7e21a41a52eeed9b7b0c3fa2a6fef9253b9d05",
+  "preserved_editions": [
+    {
+      "original": "docs/api.md",
+      "snapshot": "docs/archive/editorial-baseline/api.md.txt",
+      "sha256": "bf84ef4d15b9e7ba427ad524b4edf28b4a8aa6e22e7da55c03d5a165f9c1ffd7",
+      "original_lines": 133,
+      "compiled_lines": 164,
+      "byte_identical_snapshot": true
+    },
+    {
+      "original": "docs/capabilities.md",
+      "snapshot": "docs/archive/editorial-baseline/capabilities.md.txt",
+      "sha256": "054926fd285a70f5602a651aebbb9b16027f715b61f68c0a1fb4de98b5b7c38b",
+      "original_lines": 150,
+      "compiled_lines": 151,
+      "byte_identical_snapshot": true
+    },
+    {
+      "original": "docs/generation.md",
+      "snapshot": "docs/archive/editorial-baseline/generation-7b7e21a.md.txt",
+      "sha256": "19333faf85c8151eb7efba56681aef8bd39c839e3d8af59425050f479fc3568e",
+      "original_lines": 77,
+      "compiled_lines": 78,
+      "byte_identical_snapshot": true
+    },
+    {
+      "original": "docs/ordinary-api-boundary.md",
+      "snapshot": "docs/archive/editorial-baseline/ordinary-api-boundary.md.txt",
+      "sha256": "425399524e3bb7ffb314dd4a5f2b7bb41d6d6348a9b5f9be713b8c226674382b",
+      "original_lines": 158,
+      "compiled_lines": 106,
+      "byte_identical_snapshot": true
+    },
+    {
+      "original": "docs/production-sessions.md",
+      "snapshot": "docs/archive/editorial-baseline/production-sessions.md.txt",
+      "sha256": "604b5cfca799c0c23ceec3ef241d52685a0ad121f62a57af79a85db162cc8e35",
+      "original_lines": 172,
+      "compiled_lines": 143,
+      "byte_identical_snapshot": true
+    }
+  ],
+  "scope": "Fourth editorial compilation: OFF public HTTP/client contract, ordinary recipe admission authority, and production-MTP logical continuation/outcome contract",
+  "document_roles": {
+    "docs/api.md": "Standard-OFF endpoint/client contract, live delivery and native continuation; explicit pointers distinguish MTP profiles",
+    "docs/ordinary-api-boundary.md": "Ordinary recipe-owned grammar and ds41f capability/security/resource admission order",
+    "docs/production-sessions.md": "Logical canonical history, opaque Scheduler pins, UUID/count reservation and observation; not native state ownership"
+  },
+  "compilation_changes": [
+    "Preserved three contract editions and the two narrowly corrected owner editions byte-for-byte, including audit counts, deployment/seal paths, acceptance results and failed attempts",
+    "Removed global limits/default repetition and historical acceptance diaries from contract bodies; current values remain owned by capabilities/operations and receipts retain exact proof scopes",
+    "OFF API now records existing budget and explicit stream-cancel endpoints, distinguishes optional OFF count/application correlation from mandatory production-MTP UUID reservation",
+    "Corrected stale whole-completed-turn-replay description: OFF stateful SSE is demand-driven worker-owned live recipe delivery with bounded pending batches; transport is not canonical acknowledgement. Aligned the same obsolete sentence in capabilities and generation without other changes to these owners.",
+    "Corrected blanket error atomicity: pre-execution admission rejection does not mutate native state; execution fault can follow committed/uncertain work and must settle/retire rather than claim complete rollback",
+    "Retained OFF same-live terminal transfer, exact extension/no replay/repack, bounded image identity/new-only encoding, same-backend dormant artifacts, stateful stop rejection and Rust readiness/transport boundary",
+    "Removed blanket MTP-unsupported framing from repository-wide interpretation while keeping this API page explicitly OFF and retaining separate ordinary/singleton contracts",
+    "Ordinary admission keeps one official recipe conversion, strict JSON/resource/security boundaries, capability deny-list, image-before-render rejection, Auto actual reservation and supported text spelling",
+    "Moved removed-rule/source-seal/OpenCode/M30 historical audit prose to source edition references without treating historical unresolved native status as universal current status",
+    "Logical sessions retain exact upstream hash/refcount pin, no second cache/native owner, missing-pair fail-before-start/no replay, atomic count/frontier/outcome, no POST retransmission, conservative unknown effects and no restart recovery",
+    "Retained frontend workflow versus request-owned sampling and frozen reasoning/tools distinction without copying numerical defaults",
+    "Existing incoming anchors retained; index/classification and remaining application/MTP reports remain deferred"
+  ],
+  "implementation_cross_checks": [
+    "ds41f_mlx/serving/server.py: route dispatch, readiness, budget/cancel and optional versus mandatory headers",
+    "ds41f_mlx/serving/ordinary_admission.py: strict structure, one conversion, capability deny-list and Auto placeholder",
+    "ds41f_mlx/serving/production_sessions.py: logical records, identity budgets, exact history/envelope, UUID reservation and atomic publication",
+    "ds41f_mlx/serving/stateful_stream.py: demand-driven advance, protected cancellation, bounded pending batch, canonical last_turn, retirement and correlation-only OFF UUID",
+    "ds41f_mlx/serving/deepseek_recipe_backend.py: single-flight execution and retained-session reasoning validation"
+  ],
+  "validation": {
+    "snapshot_byte_comparisons": "PASS: five complete base Git blobs (three contract editions and two owner corrections)",
+    "all_markdown_missing_file_targets": [],
+    "changed_outbound_and_incoming_anchor_errors": [],
+    "diff_check": "PASS",
+    "test_groups": [
+      {
+        "interpreter": "../ds41f-mlx_mtp-venv/bin/python",
+        "passed": 232,
+        "failed": 3,
+        "warnings": 11,
+        "files": [
+          "tests/test_production_sessions.py",
+          "tests/test_production_session_owner.py",
+          "tests/test_production_mtp.py",
+          "tests/test_ordinary_text_parts.py",
+          "tests/test_generic_mtp_tools.py",
+          "tests/test_production_context.py",
+          "tests/test_runtime_capacity.py",
+          "tests/test_m41_profile.py",
+          "tests/test_generation_policy.py"
+        ],
+        "log": "artifacts/documentation-authority/current-compilation-04-mtp-tests.log"
+      },
+      {
+        "interpreter": "../ds41f-mlx_off-venv/bin/python",
+        "passed": 14,
+        "subtests_passed": 8,
+        "failed": 0,
+        "files": [
+          "tests/test_stateful_live_delivery.py",
+          "tests/test_stateful_live_backpressure.py",
+          "tests/test_stateful_live_retirement.py",
+          "tests/test_stateful_request_policy.py",
+          "tests/test_m11_tool_boundary_contract.py",
+          "tests/test_m14_termination_contract.py",
+          "tests/test_build_release_docs.py"
+        ],
+        "log": "artifacts/documentation-authority/current-compilation-04-off-tests.log"
+      },
+      {
+        "interpreter": "../ds41f-mlx_off-venv/bin/python",
+        "passed": 15,
+        "failed": 1,
+        "files": [
+          "tests/test_runtime_capacity.py"
+        ],
+        "log": "artifacts/documentation-authority/current-compilation-04-off-capacity-tests.log",
+        "note": "Overlaps the MTP capacity suite; do not sum group results as unique tests. OFF-native budget HTTP test passes here; incomplete reasoning fixture still fails."
+      }
+    ],
+    "existing_failures": [
+      {
+        "test": "tests/test_production_session_owner.py::test_session_outcome_is_published_only_by_scheduler_after_native_retirement",
+        "reason": "Synthetic prepared SimpleNamespace lacks conversation_request required by current reasoning_policy; fails at reservation before Scheduler test execution"
+      },
+      {
+        "test": "tests/test_runtime_capacity.py::test_budget_prefix_guard_never_mutates_count_or_authority",
+        "reason": "Synthetic session SimpleNamespace lacks reasoning_policy required by current OFF admission; same failure in both environments"
+      },
+      {
+        "test": "tests/test_runtime_capacity.py::test_budget_http_is_observation_only_and_count_fenced",
+        "reason": "OFF native recipe identity mismatch in MTP environment; passes separately in OFF environment, no admission bypass"
+      }
+    ],
+    "failure_input_comparison": [
+      {
+        "path": "tests/test_production_session_owner.py",
+        "sha256": "d445cb20bafe813fe5847363e7e9871bdbf2e83eeafe538fa943c49382d173d6",
+        "unchanged_from_base": true
+      },
+      {
+        "path": "tests/test_runtime_capacity.py",
+        "sha256": "b228fb43e5ab11c617230277f092fa5861fec01a3190453b81c0afe059fc3414",
+        "unchanged_from_base": true
+      },
+      {
+        "path": "ds41f_mlx/serving/production_sessions.py",
+        "sha256": "7089bd8bcfc63b7b452a4b12b650d8dac50337f4636786d0fea1505fd79ceedc",
+        "unchanged_from_base": true
+      },
+      {
+        "path": "ds41f_mlx/serving/generation_policy.py",
+        "sha256": "6310ddad754a9443e76df17fae212553e0ea37c4b443e45270700b1b353e80bb",
+        "unchanged_from_base": true
+      },
+      {
+        "path": "ds41f_mlx/serving/deepseek_recipe_backend.py",
+        "sha256": "f26cbc3f23a334bd0fcc350dbdd1e123304e7e5ca6f010e1b862ff1c28d358f2",
+        "unchanged_from_base": true
+      },
+      {
+        "path": "ds41f_mlx/runtime/resource_admission.py",
+        "sha256": "99615720e19b83e2874186a73167bf38d17a2b8614a03f650c46d031bf58d9db",
+        "unchanged_from_base": true
+      }
+    ],
+    "baseline_method": "Compared failing test files and involved implementation bytes against base Git blobs. No detached baseline suite was run; no runtime/test changes, new skip or admission bypass added. Tests do not qualify model/release scope.",
+    "self_containment_checker": "Existing failure unchanged: canonical doc links to archive for normative definitions: docs/README.md. Index/classification and evidence-navigation versus normative archive checker reconciliation remain final work.",
+    "unchanged": [
+      "runtime/native/dependency/build implementation",
+      "tools and tests",
+      "previously compiled owners except one OFF-streaming wording correction each in capabilities.md and generation.md",
+      "docs/README.md and docs/doc-classification.json",
+      "authority inventory baseline",
+      "reference R1 material",
+      "release surfaces, receipts and original qualification artifacts",
+      "installed environments and existing ds41f-runtime directory"
+    ],
+    "real_model_native_rebuild_package_publication_or_release_campaign": false
+  },
+  "line_counts": {
+    "previous_contract_pages": 463,
+    "compiled_contract_pages": 413,
+    "note": "API grows locally to expose existing budget/cancel/live-delivery and failure distinctions; no new implementation or qualification."
+  },
+  "remaining_editorial_work": [
+    "Review ordinary MTP serving report for contract/evidence/operational diary separation, preserving all incoming anchors",
+    "Review Browser/Chat interface/operator application and generation frontend pages without duplicating global status",
+    "Review remaining historical candidates and mixed reference/promotion strategy body",
+    "Finally reconcile index/classifications/checker policy; not all original CURRENT entries are resolved"
+  ]
+}

@@ -40,8 +40,9 @@ ordinary continuation. No parallel parser, raw-token splice, invented tool resul
 or extra sampling repairs unfinished source.
 
 Canonical worker settlement/publication and transport delivery are different
-boundaries. OFF stateful chunks are projected after committed settlement; ordinary
-MTP can stream canonical events while its Scheduler owns generation, then freezes
+boundaries. OFF stateful chunks are demand-driven live recipe projection with a
+bounded pending batch; the final canonical turn publishes independently of socket
+delivery. Ordinary MTP streams while its Scheduler owns generation, then freezes
 its settled outcome and reusable paired state. Logical session outcomes publish
 only after native retirement. Slow/lost transport cannot release a mutating owner
 or authorize replay. Detailed endpoint/retry contracts remain in the profile APIs.

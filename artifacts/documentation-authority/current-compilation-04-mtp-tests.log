@@ -1,0 +1,155 @@
+...........F............................................................ [ 30%]
+........................................................F.F............. [ 61%]
+........................................................................ [ 91%]
+...................                                                      [100%]
+=================================== FAILURES ===================================
+_ test_session_outcome_is_published_only_by_scheduler_after_native_retirement __
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1651e98b0>
+
+    def test_session_outcome_is_published_only_by_scheduler_after_native_retirement(monkeypatch):
+        pytest.importorskip('omlx'); pytest.importorskip('mlx.core')
+        from omlx.request import Request, SamplingParams
+        from ds41f_mlx.serving.production_mtp import ProductionScheduler
+        from ds41f_mlx.serving.production_sessions import ProductionSessions
+        from ds41f_mlx.serving.internal_mtp import QualificationSession
+        from ds41f_mlx.serving.paired_checkpoint import PairedCheckpointAuthority
+        scheduler = object.__new__(ProductionScheduler)
+        scheduler.waiting, scheduler.running, scheduler.requests = deque(), {}, {}
+        scheduler.request_id_to_uid, scheduler.uid_to_request_id = {}, {}
+        scheduler._pending_abort_ids, scheduler._completed = set(), []
+        scheduler.batch_generator = None
+        scheduler.total_prompt_tokens = scheduler.total_completion_tokens = 0
+        scheduler.checkpoints = PairedCheckpointAuthority('identity', MX)
+        scheduler.session_leases = {}
+        stages = []
+        backend = NS(fatal_error=None)
+        sessions = backend.production_sessions = ProductionSessions(backend)
+        logical = sessions.create('logical-only')
+        body = {'messages':[{'role':'user','content':'Hi'}]}
+        prepared = NS(token_ids=list(range(202)), protocol='chat_completions', image_sources=[], capacity={})
+        appid = str(uuid4())
+>       sessions.reserve(logical.session_id, prepared, body, 0, appid, 'r1')
+
+tests/test_production_session_owner.py:53:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ds41f_mlx/serving/production_sessions.py:124: in reserve
+    rec = self.validate(sid, prepared, body, expected)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ds41f_mlx/serving/production_sessions.py:94: in validate
+    envelope = dict(tools=body.get('tools'), reasoning=reasoning_policy(prepared))
+                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+request = namespace(token_ids=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,...90, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201], protocol='chat_completions', image_sources=[], capacity={})
+
+    def reasoning_policy(request):
+>       conversation = request.conversation_request.conversation
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'conversation_request'
+
+ds41f_mlx/serving/generation_policy.py:75: AttributeError
+__________ test_budget_prefix_guard_never_mutates_count_or_authority ___________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x164e286e0>
+
+    def test_budget_prefix_guard_never_mutates_count_or_authority(monkeypatch):
+        backend = DeepSeekRecipeRuntimeBackend(runtime_config=load_runtime_config())
+        rec = SimpleNamespace(busy=False, recovery_state='ready', request_count=7, m11=SimpleNamespace(m8=SimpleNamespace(token_history=[1,2,3]), image_identities=[]))
+        monkeypatch.setattr(backend, 'get_stateful_session', lambda _: rec)
+        request = SimpleNamespace(model=None, multimodal=None, image_sources=[], token_ids=[1,2,3,4])
+>       assert backend.validate_stateful_admission('s', request) is rec
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_runtime_capacity.py:141:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <ds41f_mlx.serving.deepseek_recipe_backend.DeepSeekRecipeRuntimeBackend object at 0x16f6e6660>
+session_id = 's'
+request = namespace(model=None, multimodal=None, image_sources=[], token_ids=[1, 2, 3, 4])
+
+    def validate_stateful_admission(self, session_id, request):
+        """Observation only; shared by preview and actual reservation."""
+        self.validate_multimodal_request(request)
+        if request.model is not None and request.model not in MODEL_ALIASES:
+            raise RuntimeError('unsupported model')
+        rec = self.get_stateful_session(session_id)
+        if rec.busy:
+            raise RuntimeError('session already has an active request')
+        if rec.recovery_state == 'unrecoverable':
+            raise RuntimeError('session is protocol-unrecoverable; DELETE required, no automatic replay')
+        from .generation_policy import reasoning_policy
+>       if rec.reasoning_policy is not None and rec.reasoning_policy != reasoning_policy(request):
+           ^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'reasoning_policy'
+
+ds41f_mlx/serving/deepseek_recipe_backend.py:292: AttributeError
+____________ test_budget_http_is_observation_only_and_count_fenced _____________
+
+    def test_budget_http_is_observation_only_and_count_fenced():
+        import asyncio
+        import httpx
+        from ds41f_mlx.serving.server import create_app
+        cfg = load_runtime_config()
+        backend = DeepSeekRecipeRuntimeBackend(runtime_config=cfg)
+>       app = create_app(backend=backend, runtime_config=cfg)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_runtime_capacity.py:172:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ds41f_mlx/serving/server.py:207: in create_app
+    tokenizer = load_protocol_tokenizer(recipe_path)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ds41f_mlx/runtime/resource_admission.py:469: in load_protocol_tokenizer
+    check_module(name, pin['modules'][name])
+ds41f_mlx/runtime/resource_admission.py:85: in check_module
+    check_file(path, expected, name, verified)
+ds41f_mlx/runtime/resource_admission.py:60: in check_file
+    require(actual == expected, f'identity mismatch: {label}')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+condition = False, message = 'identity mismatch: deepseek_recipe._native'
+
+    def require(condition, message):
+        if not condition:
+>           raise ResourceAdmissionError(message)
+E           ds41f_mlx.runtime.resource_admission.ResourceAdmissionError: identity mismatch: deepseek_recipe._native
+
+ds41f_mlx/runtime/resource_admission.py:52: ResourceAdmissionError
+=============================== warnings summary ===============================
+../ds41f-mlx_mtp-venv/lib/python3.13/site-packages/fastapi/testclient.py:1
+  /Volumes/SDXC-512/ds41f-mlx_mtp-venv/lib/python3.13/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_production_sessions.py::test_production_dispatch_never_qualification_and_budget_is_observation
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[127.0.0.1-127.0.0.1:8000]
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[0.0.0.0-192.168.68.56:8000]
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[192.168.68.56-mac-studio.local:8000]
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[::-[fd12::56]:8000]
+  /Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/server.py:227: DeprecationWarning:
+          on_event is deprecated, use lifespan event handlers instead.
+
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+
+    @app.on_event('shutdown')
+
+tests/test_production_sessions.py::test_production_dispatch_never_qualification_and_budget_is_observation
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[127.0.0.1-127.0.0.1:8000]
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[0.0.0.0-192.168.68.56:8000]
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[192.168.68.56-mac-studio.local:8000]
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[::-[fd12::56]:8000]
+  /Volumes/SDXC-512/ds41f-mlx_mtp-venv/lib/python3.13/site-packages/fastapi/applications.py:4744: DeprecationWarning:
+          on_event is deprecated, use lifespan event handlers instead.
+
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+
+    return self.router.on_event(event_type)  # ty: ignore[deprecated]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_production_session_owner.py::test_session_outcome_is_published_only_by_scheduler_after_native_retirement
+FAILED tests/test_runtime_capacity.py::test_budget_prefix_guard_never_mutates_count_or_authority
+FAILED tests/test_runtime_capacity.py::test_budget_http_is_observation_only_and_count_fenced
+3 failed, 232 passed, 11 warnings in 2.89s

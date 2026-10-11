@@ -82,9 +82,10 @@ See [frontend contract and scoped evidence](generation-policy-frontends.md).
 
 - Recipe owns JSON/SSE projection; bytes, yields, `[DONE]` and HTTP success are not
   canonical-token acknowledgements or permission to replay a request.
-- OFF stateful streaming projects chunks after its committed boundary. Ordinary
-  MTP live streaming and session outcome publication have their own Scheduler
-  settlement semantics; neither is the other's transport contract.
+- OFF stateful streaming uses demand-driven live recipe chunks and a bounded
+  pending batch; final canonical `last_turn` publication is separate from delivery.
+  Ordinary MTP streaming/outcomes have Scheduler-owned settlement semantics;
+  neither is the other's transport or retry contract.
 - Production logical sessions use expected-count/application-UUID correlations,
   not singleton sequence headers. Identical POSTs reject; GET observes canonical
   outcomes without execution. No automatic generation resend or native restore.

@@ -1,158 +1,106 @@
-# Ordinary production API authority audit
+# Ordinary production API admission
 
-Scope: `mtp-serving-v1` Chat Completions admission. This is an API boundary
-repair, not a new-client allowlist, implementation of every OpenAI feature,
-release promotion, or numerical MTP requalification. Current generation controls
-follow [generation-policy-v1](generation-policy-investigation.md); the original
-boundary acceptance and source-seal follow-ups below retain their historical scope.
-Current startup uses [installed execution admission](runtime-admission.md).
+This page owns **`mtp-serving-v1` Chat Completions admission order and authority**,
+not a milestone diary or a new client allowlist. [Capabilities](capabilities.md)
+owns limits/defaults; [ordinary serving](mtp-production-serving.md) owns execution;
+[production sessions](production-sessions.md) adds retained-history/correlation
+rules. This contract neither implements every OpenAI feature nor promotes MTP.
 
 ## Authority and order
 
+```text
+bounded HTTP ingress / LocalBoundary
+  -> strict JSON object: UTF-8, unique keys, finite numbers
+  -> sampling defaults / explicit Auto placeholder
+  -> authoritative ChatCompletionRequest parsing + conversion once
+  -> ds41f converted execution/security capability admission
+  -> recipe rendering and tokenization
+  -> actual prompt + output capacity admission
+  -> ProductionScheduler
 ```
-bounded HTTP body / LocalBoundary
-  → strict JSON object (UTF-8, duplicate keys, finite numbers)
-  → authoritative ChatCompletionRequest parsing + conversion (once)
-  → ds41f converted capability/security admission
-  → recipe rendering and tokenization
-  → actual prompt + output capacity admission
-  → ProductionScheduler
-```
 
-`serving/ordinary_admission.py` implements the first conversion boundary.
-`server.prepare_request(ordinary=True)` consumes that conversion directly; it
-never calls the historical `mtp_profile.validate_chat`. The latter now has only
-its pinned singleton qualification contract, with no ordinary grammar switch.
-`ProductionMTPBackend.validate_ordinary` is a non-HTTP convenience entry point
-using the same conversion/capability function, not another protocol validator.
+`serving/ordinary_admission.py` performs structure admission and official recipe
+conversion. `server.prepare_request(ordinary=True)` consumes that conversion;
+it does not call singleton `mtp_profile.validate_chat`. The non-HTTP
+`ProductionMTPBackend.validate_ordinary` uses the same conversion/capability
+function, not a second protocol validator. Startup identity remains
+[installed admission](runtime-admission.md), not checkout equality or local seals.
 
-Audit authority: installed `deepseek_recipe` Python API (`_native.pyi`) and
-recipe Rust `deepseek-recipe/src/protocol/openai/chat_completion/request/`
-`schema.rs` and `convert.rs`. Dependency identity remains the production startup
-responsibility. Tests use the installed authority rather than copying its schema.
+## Recipe-owned grammar
 
-## Removed independent grammar
+The installed recipe API and admitted schema/converter are authoritative for:
 
-| Previous ds41f rule | Current owner |
-|---|---|
-| Top-level request field allowlist | Recipe schema; unknown fields follow recipe's ignore semantics |
-| Exact message field sets, string-only content | Recipe content/block parsing and conversion |
-| Four-role allowlist, user/tool-only history terminator | Recipe conversation semantics, including latest_reminder |
-| Assistant content/null/reasoning/tool-call shapes | Recipe |
-| Call IDs, ordered results, duplicates, foreign or missing results | Recipe transform_messages |
-| Tool name, argument and tool-result fixture byte limits | Whole-body resource budget, converted security checks, actual encoded capacity |
-| Stream options must equal include_usage=true | Recipe streaming validation and include_usage projection |
-| Wire reasoning_effort must be none | Recipe-owned thinking/effort conversion; stateless request policy and retained-session reasoning lock |
-| Wire max_tokens must be present | Converted default 128; ordinary output ceiling remains 393,216 |
+- optional/unknown fields and null semantics;
+- message roles, history endings/reminders and text/content-part ordering;
+- assistant content/reasoning/tool-call shapes;
+- tool declarations/choices, IDs and ordered/missing/duplicate/foreign results;
+- supported response formats, stop parsing and stream/include-usage projection.
 
-Tools, choice, response format and stop semantics remain recipe-owned. No
-serving-layer tool schema parser, text-part grammar, or application-specific
-normalization is retained. Text parts are joined/ordered exactly as the recipe
-specifies, not flattened independently by ds41f.
+No serving-layer field allowlist, tool schema parser, text-part grammar or
+application-specific normalization replaces them. Unknown extensions follow
+recipe behavior; successful OpenCode or fixture requests are not the schema.
+Tool `strict` metadata does not grant constrained decoding/schema enforcement.
 
-## Retained constraints and rationale
+Ordinary text may legitimately contain `<|` and fullwidth `｜` in code, regexes,
+quoted token documentation or tool results. Do not inherit singleton's blanket
+string filter, scrub text or rewrite encoding. Recipe unbacked-image-placeholder
+rejection and the encoded missing-image-source guard remain. This does not claim
+role-delimiter escaping or prompt-injection protection; clients treat tool text
+as untrusted and enforce permissions. Accepting text does not add raw-token execution.
 
-- HTTP host/origin/connection/body/time/preparation constraints: existing
-  LocalBoundary trusted-network/resource policy. Body ceiling: 16 MiB.
-- JSON object, unique keys, finite numbers, UTF-8: ambiguity/security admission.
-- Model alias: fixed loaded model, not protocol grammar.
-- Sampling uses the qualified eight-field `generation-policy-v1` contract;
-  omitted temperature/top-p resolve to 1.0/.95 before recipe conversion. Explicit
-  greedy uses temperature=0. Reasoning defaults off but supported recipe efforts
-  are not forced off; retained-session reasoning changes reject. Unsupported or
-  out-of-range controls are rejected, not silently replaced by Scheduler defaults.
-- Images rejected from converted message sources before rendering, expansion,
-  fetching or model loading: ordinary MTP is text-only.
-- Text spelling/encoding is recipe-owned. Ordinary requests do **not** inherit
-  singleton's blanket ban on `<|` or fullwidth `｜`: those occur in legitimate
-  source, quoted token documentation, regexes and tool results. Text is not
-  scrubbed, escaped or rewritten independently by ds41f. The recipe's unbacked
-  image-placeholder rejection and the encoded missing-image-source guard remain
-  enforced, as do body and actual encoded capacity limits. This does not claim
-  that recipe escapes role delimiters or prevents prompt injection; clients must
-  treat tool text as untrusted and enforce tool permissions. Raw token-ID
-  execution is not added by accepting ordinary text.
-- Actual encoded prompt plus output reservation uses checkpoint context range,
-  qualified 1,048,576 total envelope and 393,216 output ceiling. Defaults are not
-  capability ceilings. Existing Scheduler admission/settlement remains unchanged.
+## ds41f-owned constraints and rationale
 
-The recipe intentionally drops some caller-owned controls. These cannot be
-checked only on ConversationRequest. Sampling penalties and seed are now
-preserved and validated by `generation-policy-v1`; seed remains best-effort, not
-a deterministic promise. `parallel_tool_calls=false`, thinking budget_tokens,
-JSON Schema constrained output and requested logprobs are explicitly rejected as
-unsupported runtime controls after authoritative conversion.
-`parallel_tool_calls=true` does not require an additional execution guarantee. This is a
-small deny-list of capability promises, **not** a request-field allowlist.
-Unknown extension fields still follow authoritative recipe semantics. Tool
-`strict` declaration metadata is recipe-owned; this change adds no constrained
-sampling or schema enforcement guarantee.
+| Constraint | Current reason/owner |
+| --- | --- |
+| Host/origin/body/connection/time/preparation bounds | Trusted-network/resource admission; [operations](operations.md) |
+| Strict JSON object, UTF-8, unique keys, finite numbers | Ambiguity/security rejection before conversion |
+| Model alias | Fixed admitted model, not protocol grammar |
+| Sampling normalization/validation | `generation-policy-v1`; unsupported or invalid controls reject, not silent Scheduler defaults |
+| Converted image sources | MTP text-only: reject before rendering, expansion, fetching or model loading |
+| Actual encoded prompt/output reservation | Checkpoint range and ordinary total/output capability; [capacity](capabilities.md#capacity-resource-policy-and-defaults) |
+| Retained reasoning/tools/history | Session continuity, not a universal stateless grammar rule |
 
-`max_tokens: "auto"` remains an explicitly ds41f-owned extension: recipe sees a
-placeholder 1; actual encoding resolves the reservation. Scheduler and the
-shared MTP execution start consume `request_max_tokens`, never that placeholder.
+Wire-only controls intentionally dropped by recipe still need explicit capability
+checks. `parallel_tool_calls=false`, thinking `budget_tokens`, JSON Schema
+constrained output and requested logprobs are unsupported promises and reject
+after authoritative conversion. `parallel_tool_calls=true` does not add an
+execution guarantee. This is a small capability deny-list, not a field allowlist.
+Penalties and seed are preserved by the generation policy; seed is best-effort,
+not deterministic reproduction. Defaults and advertised efforts live in
+[capabilities](capabilities.md#generation-controls).
+
+`max_tokens: "auto"` is an explicit ds41f extension. Recipe receives placeholder
+`1`; actual tokenization resolves the real reservation. Scheduler/execution use
+`request_max_tokens`, never the placeholder. Missing `max_tokens` resolves to the
+ordinary default, not Auto or the output ceiling.
 
 ## Boundary acceptance / default-promotion gate
 
-The acceptance counts and deployment/review follow-ups below describe the original
-boundary repair, before installed-admission and generation-policy changes. They
-are not instructions to refresh local seals or evidence of all current controls.
+Acceptance must establish authority, not count clients:
 
-Required evidence is authority-based acceptance, not a count of clients:
+1. Supported recipe-accepted grammar projects identically through admission.
+2. Recipe parser/converter failures retain their class/message as client errors.
+3. Recipe acceptance cannot bypass explicit execution/security/resource limits.
+4. HTTP performs one conversion; rejected requests do not start native execution,
+   and image rejection precedes rendering/expansion.
+5. Actual capacity/default/Auto resolution and unchanged singleton regressions pass.
 
-- Recipe-accepted supported grammar projects identically through admission:
-  string/parts, optional/null fields, reminders, history endings, stream options,
-  stop sequences, JSON object output, metadata and tool choices/results.
-- Recipe parser/converter failures retain their error class/message and become
-  HTTP client errors. Duplicate/foreign/missing tool results are recipe errors.
-- Recipe acceptance does not bypass explicit runtime/security/resource limits.
-- HTTP performs one recipe parse/conversion; rejected requests never reach
-  execution admission, and image rejection precedes rendering/expansion.
-- Actual capacity/default/auto resolution and the singleton contract regressions
-  pass. Existing lifecycle/checkpoint tests remain applicable without another
-  long-context numerical qualification campaign.
+Focused owners are `test_ordinary_text_parts.py`, `test_generic_mtp_tools.py`,
+`test_production_mtp.py`, `test_production_context.py`, `test_runtime_capacity.py`
+and `test_m41_profile.py`. Existing lifecycle/checkpoint evidence applies at its
+scope; admission repair alone does not require numerical core requalification.
 
-Tests: `test_ordinary_text_parts.py`, `test_generic_mtp_tools.py`,
-`test_production_mtp.py`, `test_production_context.py`, `test_runtime_capacity.py`,
-`test_m41_profile.py`. OpenCode Plan's captured text-plus-reminder request is a
-real boundary reproducer, not the production grammar specification.
+## Historical audit and deployment follow-ups
 
-Validation receipt for this change: the six boundary/capacity/singleton suites
-above passed **180 tests**. An extended run including M29/M30/M33 passed 205 and
-failed one M30 EOF audit because the installed native recipe lacks
-`StreamProcessor.preview_certified_eof_tokens`. That dependency qualification
-issue is separate from ordinary admission and remains unresolved; no inference
-or promotion claim is made from the boundary tests.
+The [original audit edition](archive/editorial-baseline/ordinary-api-boundary.md.txt)
+retains removed-rule comparisons, original acceptance counts, the M30 native-API
+environment failure, source-inventory/seal refresh instructions and real OpenCode
+source-read reproducer. Those local paths and refresh steps are history, not
+current installation instructions. The unresolved status recorded there describes
+that dependency environment at that time, not every present runtime.
 
-Deployment follow-up: the five changed/added runtime files must also be reflected
-in `third_party/mtp/normal-local.json`'s reviewed runtime inventory. That inventory
-has been updated without changing native/dependency/checkpoint admission. The
-existing `/Volumes/SDXC-512/m53r-local-venv` seal was refreshed with the unchanged
-admitted wheel; `ops inspect --profile mtp-serving-v1` passed with the official
-checkpoint. Inventory/ordinary grammar/tool tests passed 61 tests in that
-normal-local environment. A repository inventory regression now prevents source
-changes from shipping without the matching admission update. Other existing
-installations required local-seal refresh at that historical stage. Local seals
-have since been removed; current deployments install an admitted execution wheel
-and follow `runtime-admission.md`, not those source-clone refresh instructions.
-
-Repository-review follow-up: OpenCode's read of `mtp_profile.py` reproduced
-`raw special-token source unavailable`: the recipe preserved the source, but
-ordinary admission reused singleton's `string()` filter and rejected the file's
-own `<|`/`｜` checks. That filter is removed from ordinary admission entirely,
-not bypassed only for `read` or tool messages. Regression tests cover full source
-reads, every recipe prompt-text surface, unchanged authoritative token encoding,
-HTTP continuation and retained singleton/image-placeholder rejection. The
-reviewed runtime inventory and normal-local seal accompany this change. Follow-up
-validation: 203 related tests passed in `.venv`; 202 passed in the normal-local
-environment, excluding the standard-off budget HTTP test whose separate native
-recipe pin differs from this MTP environment. Normal-local reseal and checkpoint
-startup admission both passed. The Mac server was subsequently started from this
-source and the real OpenCode Plan repository review completed source reads,
-including `mtp_profile.py`, and model/tool continuations without this rejection.
-See [Mac production review](opencode-production-review.md) for review disposition
-and affected regression results. Windows review completion remains unverified.
-
-This closes this admission defect's scope. It does not promote `mtp-serving-v1`
-to default, qualify all API features, prove Windows end-to-end inference, or
-replace separately scoped release/LAN/security gates.
+[Mac production review](opencode-production-review.md) owns its source-scoped review
+disposition. Neither its completion nor admission regressions establish Windows
+end-to-end inference, separate-machine LAN, all API features, default-MTP approval
+or general-runtime release. Current production changes follow the
+[serving decision policy](production-serving-parity-closure.md).

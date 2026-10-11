@@ -1,133 +1,164 @@
 # Public API contract
 
-This is the **standard-OFF** API contract. The historical release-qualified text
-surface is retained; the bounded multimodal development/core extension below is
-separately qualified, not R1/release/runtime promotion. Supported fields remain
-narrower than everything upstream `deepseek-recipe` can parse.
+This page owns the **standard-OFF HTTP contract and client boundary**. Explicit
+ordinary MTP shares recipe-facing Chat Completions but has different scheduling,
+state and recovery semantics: see [ordinary serving](mtp-production-serving.md),
+[admission](ordinary-api-boundary.md) and [production sessions](production-sessions.md).
+The singleton has its separate [bounded contract](mtp-local-release-candidate.md).
+[Capabilities](capabilities.md) owns profile comparisons, limits and defaults;
+[operations](operations.md) owns installed startup and network configuration.
+An implemented endpoint is not fresh release qualification of later HEAD.
 
-## Qualified release scope
+## Protocol authority and readiness
 
-Transport is local HTTP. Protocol conversion, prompt rendering, response parsing, tool-call parsing, thinking fields, and stream formatting are delegated to official DeepSeek `deepseek-recipe`; `ds41f-mlx` supplies the backend runtime below that layer. Production paths and server settings are resolved through `ds41f_mlx.config.RuntimeConfig`; see `operations.md`.
+Official DeepSeek recipe owns request conversion, prompt rendering/tokenization,
+tool/reasoning grammar, response parsing and JSON/SSE formatting. ds41f supplies
+execution, capability/resource/security admission and lifecycle safeguards.
+Supported execution is narrower than everything upstream recipe can parse.
+Configuration is resolved through `RuntimeConfig`; clients do not manipulate KV,
+prompt-token replay, native parser state or oMLX objects.
 
-The stable Rust-facing API is the `ds41f_api` crate over this HTTP/SSE contract. It exposes startup/readiness helpers, raw JSON request methods, session lifecycle calls, streaming iterators, cancellation-by-drop, and process shutdown helpers without exposing KV tensors, oMLX objects, prompt-token replay, or recipe internals. Rust process startup distinguishes process-alive `/health` from model-ready `/health`: `alive` is not inference readiness, while `ready` with `model_ready=true` is.
+`GET /health` distinguishes `alive` (process responding), `ready` (backend model
+loaded) and `unavailable` (fatal runtime error). Process liveness alone is not
+inference readiness; wait for `ready` with `model_ready=true`. Advertised generation
+policy/defaults describe the selected runtime, not a cross-profile guarantee.
+`GET /v1/models` reports the model and aliases: `deepseek-v4.1-flash`,
+`deepseek-v41-flash` and `deepseek-flash`.
 
-Supported endpoints:
+## Standard-OFF endpoints
 
-- `GET /health` — process/model health. Returns `alive` before model load, `ready` after the backend has a model, or `unavailable` with `fatal_error`.
-- `GET /v1/models` — model id plus aliases. The release model id is `deepseek-v4.1-flash`; accepted aliases are `deepseek-v41-flash` and `deepseek-flash`.
-- `POST /v1/chat/completions` — stateless text Chat Completions.
-- `POST /v1/responses` — stateless text Responses smoke-qualified scope.
-- `POST /v1/messages` — stateless text Messages scope pinned to the qualified recipe revision.
-- `POST /v1/sessions` — create a local stateful Chat Completions session. Optional body field: `id`.
-- `GET /v1/sessions/{id}` — bounded metadata for a live session; not a cache/token authority.
-- `DELETE /v1/sessions/{id}` — close a live session and release its target/session ownership.
-- `POST /v1/sessions/{id}/chat/completions` — continue one local stateful Chat Completions session.
-- `POST /v1/sessions/{id}/persist` — persist an idle session artifact. Optional body field: `artifact_root`.
-- `POST /v1/sessions/restore` — restore an idle same-backend artifact into a local session. Required body field: `artifact_path`; optional `id`.
+| Endpoint | Contract |
+| --- | --- |
+| `POST /v1/chat/completions` | Independent Chat Completions, JSON or SSE |
+| `POST /v1/responses` | Independent text Responses, retained smoke-qualified scope |
+| `POST /v1/messages` | Independent text Messages, supported admitted recipe scope |
+| `POST /v1/sessions` | Create a retained Chat Completions session; optional body `id` |
+| `GET /v1/sessions/{id}` | Observe bounded metadata, active request and latest canonical turn; never execute |
+| `DELETE /v1/sessions/{id}` | Close and release session/target ownership; active-work conflicts require reconciliation |
+| `POST /v1/sessions/{id}/chat/completions` | Exact retained continuation, JSON or SSE |
+| `POST /v1/sessions/{id}/budget` | Recipe tokenization/capacity preview and continuation validation without generation; optional expected-count check |
+| `POST /v1/sessions/{id}/cancel` | Cancel/reconcile the identified stateful stream using body `request_id` |
+| `POST /v1/sessions/{id}/persist` | Persist an idle artifact; optional body `artifact_root` |
+| `POST /v1/sessions/restore` | Restore an idle same-backend artifact; required `artifact_path`, optional `id` |
 
-## Bounded multimodal development/core extension
-
-The existing stateless and sessionized Chat Completions endpoints accept standard
-`content` parts, e.g. `{"type":"image_url","image_url":{"url":"data:image/jpeg;base64,...","detail":"high"}}`
-alongside `{"type":"text","text":"What is shown?"}`. See the canonical
-[multimodal qualification](multimodal-production-qualification.md) for evidence.
-
-Full conversations allow at most four single-frame inline PNG/JPEG/WebP images,
-16 MiB encoded bytes and 4M decoded pixels per image, aspect 1:2–2:1, high/default/
-auto detail, and **8,192 consumed positions including expanded spans and reserved
-output** (default 128). Remote/file URLs, low detail, animations, missing spans,
-multimodal Responses/Messages and excess context reject before cache mutation.
-Text-only retains its qualified 1M core boundary.
-
-Continue by submitting the exact full canonical conversation with identical old
-image bytes, plus text or additional images within the limits. Identity is
-encoded-byte SHA256 plus absolute span/grid/order, not merely repeated image IDs.
-Idle save/restore needs no images and never re-encodes old spans; subsequent full
-conversation requests revalidate their CPU input identities. No new execution or
-cache API is exposed. Protected worker cancellation drains before lock release;
-completed stateful turns remain available as `last_turn` even if transport cancels.
+The retained historical release scope and original endpoint account are preserved
+in the [earlier API edition](archive/editorial-baseline/api.md.txt). Current budget,
+stream cancellation and generation controls are not inferred from old release
+receipts. Sessionized Responses/Messages are unsupported.
 
 ## Runtime contract behind the API
 
-Production serving uses `PRODUCTION_PREFILL_SELECTOR = DENSE_P0_P7`: official recipe tokens are rendered, `tokens[-1]` is held out, `tokens[:-1]` are committed through `DeferredPrefillAppend` with P7 `FULL_RESIDENT_BACKBONE_SSD_ENGRAM`, and P5 hands the held-out terminal token exactly once to first-party `TargetGenerationSession` with MTP, DSpark, and speculative decode OFF.
-
-Stateful sessions route to exactly one live recipe tool session/first-party target authority. The HTTP layer and Rust boundary never own KV tensors, all-token history, prompt replay, cache repack/export, or tool execution.
+Standard-OFF selects DENSE_P0_P7/P7 dense prefill. Recipe tokens except the final
+input are committed; P5 transfers the same live state and held-out terminal once
+to first-party target generation. MTP, DSpark and speculative decode are OFF on
+this path. See [architecture](architecture.md) and [generation](generation.md).
+The HTTP/client layer owns neither native state nor tool effects.
 
 ## Stateful behavior
 
-- Scope: Chat Completions only.
-- Continuation: exact-prefix continuation from the committed conversation/cache frontier.
-- Prompt replay on stateful continuation: 0.
-- Full-cache repack/reconstruction on stateful continuation: 0.
-- Live authority: one executable cache authority per session.
-- Idle boundaries: all 40 cache offsets must equal the committed frontier.
-- Maximum live sessions: `DS41F_MAX_LIVE_SESSIONS`, default `4`.
-- Single-flight: one backend request at a time; overlapping requests fail with conflict instead of creating a second active authority.
-- Close: releases live session and target-generation ownership.
+Retained Chat Completions require exact full canonical conversation and encoded
+prefix extension. There is one executable cache authority per session, no hidden
+history replay, no whole-cache repack/reconstruction, and all 40 layer frontiers
+agree at an idle boundary. Independent requests instead prefill fresh; editing a
+retained transcript does not authorize rewinding its live recurrent cache.
+
+OFF's live-session limit is configurable through `DS41F_MAX_LIVE_SESSIONS`
+(default four). Native execution is single-flight; active response/session
+reservations and conflicts prevent competing mutation. Close retires its ownership.
+Sampling is request-owned under `generation-policy-v1`; retained reasoning cannot
+change silently. See [frontend controls](generation-policy-frontends.md).
+
+Streaming returns `X-DS41F-Request-ID`. Optional expected-count/application-UUID
+headers on OFF streaming provide observation/correlation; **they are not the
+mandatory reserved-UUID retry fence of production MTP logical sessions**.
+After ambiguous delivery, inspect the canonical `last_turn` and active identity;
+do not infer rollback or permission to resend from a lost socket.
+
+## Bounded multimodal development/core extension
+
+OFF Chat Completions accepts recipe text/image content parts with inline image
+data, for example `{"type":"image_url","image_url":{"url":"data:image/jpeg;base64,...","detail":"high"}}`.
+This is a separately qualified bounded core extension, not universal Vision,
+multimodal Responses/Messages, MTP images or release/R1 promotion.
+
+[Capabilities](capabilities.md#bounded-off-images) owns format/count/byte/pixel/
+aspect/context limits; [image qualification](multimodal-production-qualification.md)
+owns measured evidence. Invalid or unsupported images reject before native cache
+mutation. Expanded image positions count toward capacity and reserved output.
+
+Continuation revalidates identical old encoded image bytes and absolute
+span/grid/order before appending new content. Identity is not merely an image ID.
+New images encode once; retained spans are never re-encoded. Idle persistence/
+restore does not require resupplying old images; later conversation requests
+still revalidate their CPU input identities.
 
 ## Persistence/restore
 
-Persistence is qualified only for idle same-backend artifacts: manifest + safetensors + commit marker, with checkpoint/schema/shape/dtype/frontier/provenance validation. Restored artifacts are dormant storage until loaded; they are never a second live authority. Restore fails closed on mismatch/corruption and does not fall back to fresh prompt prefill.
-
-Cross-runtime or cross-backend KV portability is outside the release claim.
+Only idle same-backend artifacts are supported: manifest, safetensors and commit
+marker with checkpoint/schema/shape/dtype/frontier/provenance validation. Storage
+is dormant, never a second executable authority. Mismatch/corruption fails closed
+without fresh-history prefill. Cross-runtime/backend KV portability is unsupported.
+See [session state](session-state.md) for live versus dormant ownership.
 
 ## Function tools
 
-Ordinary client-side Chat Completions function tools are supported. The model may emit tool calls; the client executes tools and sends tool results in the next session turn. Repeated tool/result loops are qualified for this scope. The server does not execute arbitrary tools, plugins, MCP, shell commands, or web search.
+Recipe-authoritative client function tools and repeated tool/result continuations
+are supported within the OFF contract. Completed model calls precede client tool
+execution; matching ordered results extend canonical history. Invalid/foreign/
+duplicate results reject before mutation. The runtime does not execute arbitrary
+tools, plugins, MCP, shell or web search. Application-layer acquisition/effect
+policies do not become native server features.
 
-Invalid tool-result order, wrong ids, duplicate results, unknown sessions, and overlap conflicts fail before session mutation.
+## Streaming and interruption
 
-## Streaming
+Stateless projection uses official recipe chunks in the supported protocol scope.
+Current OFF stateful SSE is **demand-driven live delivery**, with one worker-owned
+recipe cursor and a bounded pending protocol batch; it is not simply replay of a
+whole completed turn. Backpressure stops further native demand. Protected worker
+operations drain before cancellation settles or retires their ownership.
 
-Stateless streaming follows official recipe chunk formatting for text Chat Completions/Responses in the qualified scope. Stateful Chat Completions streaming replays official chunks only after a committed session boundary, so protocol-visible chunks never outrun the cache frontier. Cancellation drains any protected worker operation, then cleans up its owned state; it must not leave an active target-generation owner.
+Canonical completion/cancellation publishes `last_turn` and request count before
+releasing the response reservation. Unrepresentable interrupted/tool history can
+retire executable authority and become unrecoverable. Yields, `[DONE]` and socket
+writes are not canonical acknowledgements. A native fault must not invent a
+successful partial turn or publish uncertain idle state.
 
-## Termination
+## Termination and stateful `stop` policy
 
-DeepSeek V4.1 EOS token semantics are qualified for the first-party target-generation path. EOS token id `1` is retained in cache/all-token history, hidden from protocol text by the recipe layer, and reported as finish reason `stop`. Length termination reports `length` according to the recipe response.
-
-## Stateful `stop` policy
-
-Arbitrary request stop strings are **not supported** on stateful session endpoints. A request body containing a non-empty/non-null `stop` field is rejected with `invalid_request_error` before recipe conversion can mutate session state. This avoids committing generated tokens/KV that the client protocol history would hide after detokenized stop-string truncation.
-
-Stateless endpoints continue to use official recipe request behavior for fields the recipe supports. The qualified stateful termination mechanism is DeepSeek EOS token/length, not generic KV rollback.
+OFF target generation retains DeepSeek EOS token ID `1` in native history; recipe
+hides it from text and projects `stop`. Length projects `length` under recipe
+semantics. Arbitrary non-empty/non-null request stop strings reject on stateful
+endpoints before mutation: detokenized truncation is not a generic recurrent-KV
+rollback operation. Independent requests retain official recipe stop behavior.
 
 ## Error behavior
 
-Rejected requests are atomic with respect to model/session state: no partial token commit, KV mutation, publication, or generation-state advance may survive. Unknown session returns not-found; active overlap/max-session conflicts return conflict; validation failures return invalid request errors.
+Admission/validation rejection does not mutate native session state. Unknown
+sessions return not-found; overlap/max-session conflicts return conflict.
+Execution faults are different: they may follow committed or uncertain native
+work and require conservative settlement/retirement, not a promise that every
+error rolls back all tokens. Transport failure alone proves neither nonadmission
+nor canonical completion.
 
 ## Rust client boundary
 
-The repository's `rust/ds41f_api` crate is an HTTP/JSON/SSE client and optional
-child-process control boundary, not a Rust model runtime, FFI layer or owner of
-KV/session state. DeepSeek recipe and the server retain prompt/tool/thinking,
-execution, continuation and persistence authority. Tool effects execute in the
-client layer, not in the model server.
+`rust/ds41f_api` is an HTTP/JSON/SSE client and optional child-process control
+boundary, not a Rust model runtime, FFI layer, KV owner or recipe parser.
+`wait_process_alive()` proves liveness; `wait_model_ready()`/`wait_ready()` are
+required for inference. `shutdown()` distinguishes graceful exit from forced kill.
+Dropping an SSE iterator closes transport; server-owned canonical settlement is
+not token-exact rollback or permission to replay.
 
-For `RuntimeProcess`, `wait_process_alive()` proves only that `/health` responds
-with `alive` or `ready`; inference requires `wait_model_ready()` / `wait_ready()`.
-`shutdown()` reports graceful exit separately from a forced-kill fallback.
-Dropping an SSE iterator closes transport; canonical settlement and state remain
-server-owned, so transport loss is not proof of a token-exact rollback or permission
-to replay a request. Persistence support is profile-specific; these client methods
-do not grant OFF/MTP parity or new Rust application qualification.
+Client persistence methods do not grant profile parity. No Rust MTP application
+qualification follows from a shared endpoint name. The earlier API edition above
+retains the original M21 evidence pointer; use current operations for startup.
 
-The original M21 design and bounded real-server acceptance are retained in
-[the historical Rust boundary report](archive/development/m21-rust-api-boundary.md).
-Use [operations](operations.md) for current installed server startup.
+## Diagnostics and unsupported scope
 
-## Explicit bounded MTP candidate (separate contract)
-
-M41 implements the process-wide **opt-in** `mtp-singleton-v1` profile; its
-[API/setup/helper contract](mtp-local-release-candidate.md) and
-R1 contract and promotion-bound qualification are separate from
-standard-off above. M40's negative readiness record remains historical evidence,
-not the current operator interface. Omitted profile remains OFF. No feature parity,
-remote/browser/Rust application support or persistence follows from opt-in MTP.
-
-## Optional / experimental
-
-Diagnostic endpoints exist only when `DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS=1`. Their output is bounded operational metadata and is not a public cache API.
-
-## Unqualified / unsupported
-
-Vision beyond the separate bounded core extension, arbitrary batching, sessionized Responses/Messages, MTP, DSpark, speculative decode, distributed sessions, authentication, server-side tool execution, MCP/plugins, web search, shell tools, cross-runtime KV portability, and arbitrary stateful stop strings are outside the release contract.
+`DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS=1` enables bounded operational metadata, not a
+public native-cache API. Unsupported scope includes above-envelope images,
+shared batching, distributed sessions, cross-backend KV, arbitrary stateful stop
+rollback, server-side arbitrary effects and Internet/multi-user authentication.
+Explicit ordinary MTP is supported in its own scope; “MTP unsupported” is not a
+blanket statement about the whole repository. No default/profile/release promotion
+follows from this API compilation.
