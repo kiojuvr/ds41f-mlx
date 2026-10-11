@@ -2,603 +2,182 @@
 
 ## Authority and scope
 
-This document defines the development, semantic-reference, and prospective
-one-way release-repository model for `ds41f-mlx`.
+This page owns **development authority, semantic reference and prospective source
+projection rules**. [Qualification](qualification.md) owns evidence interpretation;
+[R1](reference-release-r1.md) owns its frozen executable contract;
+[operations](operations.md) and [installed admission](runtime-admission.md) own
+package publication/deployment. None of these is proof that later HEAD is releasable.
 
-**Current repository status:** `ds41f-mlx` is the sole development repository.
-The existing `ds41f-runtime` directory is an unused old generated environment,
-not an active deployment or accepted release history. No permanent release
-repository is needed now. References below to its contents, release history and
-updates describe the intended future delivery model or original extraction
-evidence, not a requirement to maintain or use that existing directory.
-
-M42's executable result is [Reference Release R1](reference-release-r1.md), with
-[decision and evidence](archive/development/milestone-42-reference-release.md). M42 itself performed
-no extraction. [M43](archive/development/milestone-43-release-repository-extraction.md) records the
-historical implementation and scoped qualification of deterministic projection;
-that evidence does not certify the current `ds41f-runtime` directory or later
-source states. Broader feature completeness remains prospective.
-
-It does not broaden qualified runtime scope. M41 established the explicit bounded
-`mtp-singleton-v1` candidate; [M54R/M55R](milestone-54r-55r-operational-release.md)
-now approve its M53R normal-local source-clone delivery as an operational release,
-**RELEASE APPROVED, PROMOTION DEFERRED**. `standard-off` remains default.
-A source-clone release decision does not require or constitute `ds41f-runtime`
-promotion. M43 projection/independent qualification rules below apply when that
-separate promotion is explicitly requested, not as a prerequisite for M55R.
-
-The purpose of this document is to define how that implementation should become a stable semantic reference and, subsequently, how a separate release repository should be derived and maintained without creating a second independent development line.
-
-The intended progression is:
-
-```text
-M41
-qualified bounded release candidate
-        ↓
-M42
-semantic closure / Reference Release R1
-        ↓
-M43
-deterministic release-repository extraction
-        ↓
-ds41f-runtime
-```
-
-Milestone numbers are planning labels for this progression, not permission to weaken existing qualified contracts.
-
----
+`ds41f-mlx` is the sole development repository. The existing `ds41f-runtime`
+directory is unused old generation, not deployment or accepted release history.
+A permanent second repository is not required. Future projection, if explicitly
+selected, must follow the one-way rules below; documentation edits do not trigger it.
 
 ## Repository roles
 
 ### `ds41f-mlx`
 
-`ds41f-mlx` remains the sole development and source authority.
-
-It owns:
-
-- runtime implementation;
-- model and state-lifecycle development;
-- upstream/reference investigation;
-- oMLX, DeepSeek recipe, DwarfStar, CUDA and other comparative evidence where required;
-- architecture experiments;
-- semantic and numerical qualification;
-- negative evidence and historical milestone records;
-- regression and conformance tooling;
-- release-surface definition;
-- release-promotion tooling.
-
-The repository may therefore remain substantially larger and more evidence-heavy than a normal end-user runtime repository.
-
-That is intentional.
-
-Development evidence, donor analysis and failed or superseded investigations are valuable development assets and do not need to be removed merely to make the runtime distribution visually minimal.
+Own implementation, semantic/numerical/lifecycle development and qualification,
+reference/negative evidence, experiments, release surface and promotion tooling.
+It may retain more historical/investigation material than an end-user runtime.
+Do not delete useful evidence just to make delivery visually minimal.
 
 ### `ds41f-runtime`
 
-A future explicitly qualified release projection of `ds41f-mlx` may use the
-`ds41f-runtime` name. It would not be an independent implementation, a peer
-development repository, or a continuously synchronized development mirror.
-The existing directory does not fulfill that release role.
-
-Such a future projection would contain only the source, build definitions, stable
-contracts, qualification surface and operator documentation required to build and
-operate the promoted runtime.
-
-Conceptually:
-
-```text
-ds41f-mlx
-├── runtime implementation
-├── release conformance
-├── reference contracts
-├── development/reference machinery
-├── historical evidence
-└── promotion tooling
-        │
-        │ deterministic promotion
-        ▼
-ds41f-runtime
-├── runtime implementation
-├── required native/Metal sources
-├── reproducible dependency definitions
-├── stable public contracts
-├── release conformance suite
-└── operator documentation
-```
-
-All source present in `ds41f-runtime` must have an authoritative origin in `ds41f-mlx`.
-
-`ds41f-runtime` must not acquire an independent source-of-truth implementation.
-
----
+This name may identify a future qualified source projection, not an independent
+implementation, peer development line or continuously synchronized mirror.
+All projected source must have authoritative origin in `ds41f-mlx`; the existing
+directory does not fulfill that role. Source-clone operation/package publication
+can be supported without maintaining it.
 
 ## One-way development authority
 
-Direct feature development, bug fixes or semantic changes must not be performed only in `ds41f-runtime`.
-
-The normal development path is:
-
 ```text
-problem or requested change
-        ↓
-ds41f-mlx implementation
-        ↓
-development qualification
-        ↓
-qualified development milestone
-        ↓
-further development may accumulate in ds41f-mlx
+requested change / release defect
+  -> ds41f-mlx implementation + affected qualification
+  -> qualified development milestones may accumulate
+  -> separate explicit release/promotion checkpoint
+  -> qualified source projection / published payload
 ```
 
-Updating `ds41f-runtime` requires a separate explicit release/promotion checkpoint,
-not completion of each development milestone. At that checkpoint, a qualified
-`ds41f-mlx` state flows one-way through M43 release promotion qualification into
-`ds41f-runtime`.
-
-If a defect is first discovered while using `ds41f-runtime`, the defect is returned upstream to `ds41f-mlx`.
-
-The fix is implemented and qualified there before a new runtime release is promoted.
-
-Therefore:
-
-```text
-ds41f-runtime → direct code fix
-```
-
-is not a supported development path.
-
-The supported path is:
-
-```text
-ds41f-runtime issue
-        ↓
-ds41f-mlx fix
-        ↓
-development qualification
-        ↓
-explicit release/promotion checkpoint
-        ↓
-release promotion qualification
-        ↓
-new promoted runtime
-```
-
-Emergency release handling may shorten the qualification scope to the affected ownership boundary when justified by evidence, but it must not reverse repository authority.
-
----
+No runtime-only semantic fixes, reverse merges or release-only implementation
+branch. Return defects upstream, qualify there, then replace the selected payload.
+Emergency scope may be narrowed with evidence, never reverse authority or bypass
+required ownership/numerical gates. A release-surface edit does not force immediate
+clean-room setup, receipt renewal or source projection.
 
 ## Semantic authority hierarchy
 
-Separating the release repository does not make the release itself the ultimate definition of DeepSeek-V4.1-Flash semantics.
-
-The authority hierarchy remains:
-
-```text
-official checkpoint / official model and protocol semantics
-                    ↓
-              ds41f-mlx
-       implementation + qualification
-                    ↓
-          Reference Release Rn
-                    ↓
-       future ds41f implementation
-                    ↓
-             release promotion
-                    ↓
-             ds41f-runtime
-```
-
-Official sources remain the highest semantic authority when:
-
-- the checkpoint changes;
-- upstream semantics are corrected or clarified;
-- the protocol changes;
-- a new backend or hardware target is introduced;
-- evidence shows that the current reference release encoded an incorrect assumption.
-
-A Reference Release is therefore an executable development oracle, not an immutable substitute for the official model definition.
-
-This prevents a reference-release defect from becoming a permanent “golden bug.”
-
----
+Official checkpoint/model/protocol semantics outrank implementation qualification,
+which establishes a scoped Reference Release oracle for candidate conformance and
+later release decisions. A Reference Release is not permission to preserve a
+"golden bug". Changed official semantics, backend/platform or evidence of a defect
+requires investigation and affected qualification; explicitly revise/version the
+reference where needed, not expected outputs patched to fit a candidate.
 
 ## M42 — Semantic Closure and Reference Release
 
-Before separating the runtime into its own release repository, establish a Reference Release.
-
-The central M42 question is:
-
-> Can future `ds41f` implementations be judged for semantic conformance without requiring the original donor implementations or historical development environments?
-
-M42 should not be another broad optimization campaign or a repetition of every historical long-running test.
-
-Its purpose is to convert the already accumulated M33–M41 evidence into a durable executable semantic contract.
+This is a **completed historical boundary**, not the next work request.
+M42 established repository-owned R1 material, independent of historical donor
+checkouts for its declared conformance scope. It performed no M43 extraction.
+The [earlier strategy edition](archive/editorial-baseline/reference-release-and-promotion-strategy.md.txt)
+retains the original proposed gate, scope inventory, examples and chronology.
 
 ### Reference Release R1
 
-The first successful semantic closure should produce a versioned Reference Release, provisionally `R1`.
-
-R1 should bind at least:
-
-- runtime/source identity;
-- official checkpoint identity;
-- protocol/tokenizer identity;
-- model precision and numerical-equivalence policy;
-- prefill semantics;
-- prefill-to-decode handoff;
-- incremental decode semantics;
-- persistent state and cache lifecycle;
-- Engram/index/candidate state where semantically relevant;
-- generation commit and terminal semantics;
-- MTP proposal/verification/commit/rollback behavior within its qualified profile;
-- continuation and exact-prefix behavior;
-- cancellation, quiescence and ownership transfer;
-- request/outcome fencing;
-- protocol representability and certified recovery;
-- tool-call/result semantics;
-- external-effect ownership boundaries;
-- capability and admission behavior;
-- required negative and fail-closed behavior.
-
-The Reference Release must explicitly distinguish different forms of equivalence.
-
-For example:
-
-```text
-intermediate floating-point bit identity:
-    not universally required
-
-backend-local valid numerical trajectory:
-    permitted where established by qualification
-
-routing/state decision:
-    required where contractually observable
-
-persistent state transition:
-    required
-
-cache and ownership lifecycle:
-    required
-
-canonical protocol behavior:
-    required
-
-deterministic qualification output:
-    required where declared by the test contract
-
-unsupported or ambiguous state rejection:
-    required
-```
-
-The semantic contract must therefore avoid replacing model semantics with indiscriminate golden-tensor equality.
+The current [R1 contract guide](reference-release-r1.md) names immutable material,
+identity and verifier. R1 binds its checkpoint/tokenizer/precision, execution/state/
+protocol/lifecycle/negative fixtures and bounded profile scopes. Exact canonical
+and ownership predicates are distinct from universal floating tensor identity.
+Owned generalized fixtures do not expand public capability or later release scope.
 
 ### Reference conformance
 
-M42 should provide a stable repository-owned command or equivalent interface such as:
-
-```text
-ds41f reference verify
-```
-
-or:
-
-```text
-ds41f qualify --reference R1
-```
-
-The exact command design is not prescribed here.
-
-The important property is:
-
-```text
-candidate ds41f implementation
-            ↓
-      Reference Release R1
-            ↓
-       PASS / FAIL
-```
-
-without requiring the historical oMLX, DwarfStar, CUDA-oracle or other donor development trees merely to perform ordinary regression qualification.
-
-Those sources may remain available in `ds41f-mlx` for investigation and for establishing or revising the reference itself.
+The implemented interface is `python -m ds41f_mlx.reference`; flags and outcomes
+are described by R1. The old proposed CLI names are history, not missing work.
+Seam conformance and real-model conformance are different decisions. Neither
+alone is installed startup admission, maximum-workload qualification or promotion.
 
 ### Semantic-closure gate
 
-M42 is complete only when evidence supports the following statement:
-
-> For the declared R1 scope, a future ds41f implementation can be evaluated for semantic compatibility using repository-owned Reference Release contracts and fixtures without depending on historical donor implementations or undocumented development state.
-
-If this cannot be established, runtime-repository separation should not yet be treated as complete.
-
----
+Historical closure applies to declared R1 inputs and owned observations. A later
+implementation must satisfy applicable unchanged contracts and affected model/math
+qualification; a passing fake-cache seam is not mathematical backend fidelity.
+Absent dependency, skipped predicate or insufficient scope must not be called PASS.
 
 ## M43 — Release Repository Extraction
 
-After Reference Release R1 is established, create the separate runtime repository.
+M43 implemented and scoped-qualified **deterministic Git-object projection**.
+It was not runtime reimplementation and did not certify later source states or
+today's old runtime directory. Its existing mechanism is `tools/promote_release.py`
+over `release/runtime-surface.json`; no new promotion infrastructure is requested.
 
-M43 is not a rewrite of the runtime.
-
-The implementation destined for `ds41f-runtime` must already exist inside `ds41f-mlx`.
-
-M43 establishes a deterministic projection from the development repository to the release repository.
-
-Conceptually:
-
-```text
-ds41f-mlx source tree
-        +
-Reference Release identity
-        +
-release-surface definition
-        +
-promotion tooling
-        ↓
-deterministic extraction
-        ↓
-ds41f-runtime
-```
-
-The promotion mechanism should preferably be repository-owned and reproducible rather than a manual copy procedure.
-
-A future interface might conceptually resemble:
-
-```text
-ds41f promote-release \
-    --reference R1 \
-    --output ../ds41f-runtime
-```
-
-The exact command and implementation are deliberately left to the milestone that owns this work.
+At a selected checkpoint the mechanism requires clean declared HEAD, exact R1
+material/verifier/dependency archives and explicit inclusion/exclusion for owned
+source roots. Required entries must be regular files with safe destinations.
+Projection reads Git blobs, not ambient checkout mtimes/build junk. Output must
+be empty and outside development; it never reconciles runtime edits back upstream.
+It does not build binaries or establish model qualification by copying files.
 
 ### Promotion manifest
 
-Each promoted runtime should record enough information to identify its origin unambiguously, including at minimum:
+`ds41f.promotion.v1` binds source commit, reference/semantic contract, surface/tool
+identity, per-file origin/hash/size/mode, canonical payload-tree identity, dependency/
+checkpoint identities, declared nondeterministic artifacts and inherited receipts.
+The derived envelope is checked separately from its canonical files-map digest.
+Identical authoritative input reproduces the source payload.
 
-- `ds41f-mlx` source commit;
-- Reference Release identifier;
-- semantic-contract version;
-- release-surface/promotion-tool identity;
-- dependency identities;
-- checkpoint compatibility identity;
-- qualification result associated with the promotion.
-
-The same authoritative source state and promotion definition should reproduce the same release source tree, excluding explicitly identified nondeterministic build artifacts.
-
----
+Qualified promotion must bind the selected payload and reference through a committed
+PASS receipt; an ancestor commit alone is insufficient if the payload-tree hash
+differs. The tool labels a candidate `NOT_RELEASE_QUALIFIED` when no qualification
+receipt exists and rejects a present mismatched receipt. Do not erase or regenerate
+old receipts merely to make later HEAD extractable. Current added owners still
+need reviewed surface classification and selected-payload acceptance; historical
+mechanics tests do not make HEAD promotable.
 
 ## Release repository contents
 
-`ds41f-runtime` should contain the complete runtime source required for its supported operation, but not the complete historical development environment.
-
-Expected release-owned material includes:
-
-- runtime Python source;
-- required native source;
-- required Metal/kernel source;
-- build definitions;
-- dependency locks or reproducible dependency descriptions;
-- required protocol/tokenizer resources where redistribution and authority permit;
-- public API and operator contracts;
-- runtime configuration;
-- provenance tooling;
-- Reference Release conformance material required for release verification;
-- supported tests and qualification commands;
-- source-origin/promotion manifest.
-
-Development-only material can remain exclusively in `ds41f-mlx`, including where appropriate:
-
-- donor architecture investigations;
-- alternative backend experiments;
-- obsolete milestone harnesses;
-- historical failed approaches;
-- CUDA comparison/oracle machinery;
-- DwarfStar comparison infrastructure;
-- full development artifact history;
-- large diagnostic evidence not required for runtime conformance.
-
-The exact release allowlist is established by M43 rather than fixed here.
-
----
+An explicitly selected projection must deliver source/native/Metal/build/dependency
+material, required semantic assets, public contracts, configuration/provenance and
+its supported conformance surface. Development-only investigations, obsolete
+harnesses, donor comparison machinery and large evidence can remain in development.
+The actual allowlist is the reviewed surface, not a generic file-name heuristic.
+New owners must be explicitly classified; do not expand it merely because a checker
+or frozen receipt rejects later HEAD.
 
 ## Relationship to temporary implementation substrates
 
-M41 already supports a source-clone MTP setup without requiring historical donor checkouts, while oMLX remains a temporary private execution substrate.
-
-Reference-release qualification must not confuse source delivery closure with implementation ownership closure.
-
-The following are separate properties:
-
-```text
-no external donor checkout required
-                ≠
-ds41f owns all execution implementation
-```
-
-A Reference Release may initially contain qualified implementation derived from or incorporating attributed external source where permitted and reproducibly delivered.
-
-Later development may replace temporary oMLX-owned execution functionality with ds41f-owned implementation.
-
-Such replacement occurs in `ds41f-mlx`, and the replacement is tested against the Reference Release contract before promotion.
-
-The existence of `ds41f-runtime` therefore does not force premature donor-removal work.
-
----
+Source closure is not implementation-ownership closure. Attributed reproducible
+dependencies may remain without external developer checkouts. The OFF first-party
+core and MTP pinned-oMLX physical authority are separate current architectures.
+Delivery/dependency-count reduction does not authorize rebuilding qualified MTP
+topology and recovering speed later. [MTP doctrine](mtp-architecture-reset.md)
+governs structural changes; no automatic donor-removal milestone follows from R1.
 
 ## Future development after R1
 
-Once R1 and M43 one-way promotion are established, qualification has two distinct
-tracks. For the current post-M48 development phase, the authoritative
-[production roadmap](implementation-plan.md#post-m48-production-boundary-and-remaining-work-bounded-execution-scope)
-defers full R1 regression re-verification until implementation and operational
-behavior are sufficiently stable; “R1 conformance where applicable” below does not
-mandate repeated full R1 runs at each intermediate milestone. Runtime promotion,
-clean-room work and release machinery remain deferred while substantive production
-implementation and operational qualification accumulate:
+Development needs affected tests, applicable reference contracts and necessary
+model/lifecycle/performance evidence. Stable-boundary full R1 regression is a
+separate decision under [current priorities](implementation-plan.md), not a full
+campaign after every milestone. Source-scoped old receipts remain valid for their
+inputs; neither deferring regression nor passing mechanics qualifies later HEAD.
 
-```text
-development qualification (in ds41f-mlx)
-    affected tests
-    + R1 conformance where applicable
-    + necessary real-model / lifecycle / performance evidence
-        ↓
-qualified development milestone
-```
-
-```text
-release promotion qualification (only at an explicit checkpoint)
-    deterministic projection
-    + fresh independent runtime setup
-    + release-profile acceptance
-    + promotion receipt
-    + ds41f-runtime update
-```
-
-Multiple qualified development milestones may accumulate before the next runtime
-promotion. A successful development milestone, including one that changes files
-in the release surface, does **not** automatically require a clean-room runtime
-projection, independent OFF/MTP environment construction, repeated determinism
-qualification, or a promotion receipt. M43 already established and qualified the
-promotion mechanism; its existing projection and independent qualification rules
-remain authoritative whenever release promotion is explicitly performed.
-
-A promotion receipt qualifies its bound release tree, not every subsequent
-`ds41f-mlx` HEAD. Retain completed release evidence when development advances;
-do not regenerate receipts merely to keep development HEAD promotable. The next
-explicit release checkpoint must qualify its selected payload under M43 rules.
-
-This substantially reduces the need to compare every implementation change independently against multiple historical references.
-
-External reference investigation becomes necessary again when the semantic authority itself may have changed or when R1 is insufficient to adjudicate a new implementation boundary.
-
-When that happens:
-
-```text
-official/upstream evidence
-        ↓
-ds41f-mlx investigation
-        ↓
-new or revised semantic contract
-        ↓
-Reference Release R2
-        ↓
-future promotions
-```
-
-Reference Releases are therefore versioned semantic baselines rather than permanently frozen project doctrine.
-
----
+A future promotion needs deterministic projection, fresh independent setup,
+release-profile acceptance and bound receipt. Broader feature/security/default-MTP
+approval remains separate. New semantics outside R1 require authority review and
+potential R2, not invented inherited coverage.
 
 ## Release-repository change policy
 
-The intended policy for `ds41f-runtime` is:
+1. Fix and qualify in `ds41f-mlx`.
+2. Preserve source/reference identities and historical receipts.
+3. Select projection/publication as an explicit checkpoint, not synchronization.
+4. Qualify the exact chosen payload and independent setup under its admitted scope.
+5. Replace derived delivery; never introduce release-only runtime semantics.
 
-1. do not develop features directly there;
-2. do not make runtime-semantic bug fixes only there;
-3. do not maintain a release-only implementation branch;
-4. return discovered defects to `ds41f-mlx`;
-5. qualify changes in `ds41f-mlx`;
-6. at a separate explicit release/promotion checkpoint, apply M43's release qualification rules and promote a qualified source snapshot;
-7. preserve source and reference identity in every promoted release.
-
-This policy avoids two-way synchronization and prevents semantic divergence between development and release repositories.
-
-A future qualified projection would record explicitly accepted releases, not a
-second development history or a mirror that must advance after every qualified
-development milestone. This is not a description of the existing unused
-`ds41f-runtime` directory.
-
----
+Installed-wheel verification and host ABI compatibility are current startup
+boundaries, not equality with a developer checkout, SDK or local source seal.
+Source projection remains a source/build audit; it cannot admit ordinary startup.
 
 ## Relationship to the final runtime target
 
-This strategy refines rather than replaces [the final runtime target](final-runtime-target.md).
-
-The final user-facing runtime remains a self-contained source runtime with reproducible documented setup.
-
-The two-repository model changes where development evidence lives, not what the released runtime must provide.
-
-The resulting distinction is:
-
-```text
-ds41f-mlx
-    complete development authority
-    implementation + evidence + reference machinery
-
-ds41f-runtime
-    complete release runtime
-    implementation + stable contracts + reproducible setup
-```
-
-A user of `ds41f-runtime` should not need `ds41f-mlx` to build or operate the released runtime.
-
-A developer changing the runtime should work through `ds41f-mlx`.
-
----
+[Final target](final-runtime-target.md) is prospective source closure and documented
+reproducible setup, not mandatory installers/vendor removal or a second repository.
+If projection is chosen, users must not need the development evidence environment
+to operate it. Developers still work upstream. Scoped package/source-clone release
+approval is not completion of that destination or a general-runtime release.
 
 ## Planned progression
 
-The current architectural sequence is therefore:
-
-```text
-M41
-Qualified explicit bounded local MTP release candidate
-    COMPLETE
-
-        ↓
-
-M42
-Semantic Closure / Reference Release R1
-Repository-owned conformance and qualification (see M42 decision)
-COMPLETE within declared R1 scope
-
-        ↓
-
-M43
-Release Repository Extraction
-Establish deterministic one-way promotion
-Create and independently qualify ds41f-runtime
-
-        ↓
-
-Future development in ds41f-mlx
-    ↓
-Reference conformance where applicable + affected qualification
-    ↓
-qualified milestones may accumulate
-
-At a separately selected release/promotion checkpoint
-    ↓
-M43 deterministic projection + independent release qualification + receipt
-    ↓
-ds41f-runtime update
-```
-
-M42 should not automatically perform M43 extraction before semantic closure is established.
-
-M43 should not create a second implementation authority.
-
-Neither milestone should automatically schedule full oMLX replacement. Dependency and implementation ownership changes remain evidence-driven development work performed in `ds41f-mlx`.
-
----
+The original M41→M42→M43 sequence is historical and retained in the edition.
+M54R/M55R later approved a bounded normal-local singleton source-clone release
+with projection deferred. Ordinary MTP subsequently has its own implemented
+production semantics. None of those decisions automatically promotes default MTP,
+certifies later installed payloads or closes the general-serving release boundary.
+Current work is not a new extraction or repeat qualification campaign.
 
 ## Architectural invariant
 
-The core invariant of this strategy is:
-
-> **There is one development authority, one semantic promotion path, and no direct release-only implementation line.**
-
-Or, operationally:
-
-```text
-Official semantics
-       ↓
-   ds41f-mlx
-       ↓
-Reference Release
-       ↓
-qualified promotion
-       ↓
- ds41f-runtime
-```
-
-This invariant should remain stable even as the implementation, Reference Release version and supported capability envelope evolve.
+**One development authority, explicit semantic qualification and one-way derived
+delivery; no direct release-only implementation line.** Reference versions,
+packaging forms and supported envelopes may evolve without reversing that invariant.

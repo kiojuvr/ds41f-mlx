@@ -69,6 +69,17 @@ Before the seventh CURRENT compilation:
 - [Operator observability source](operator-live-observability.md.txt)
 - [Dynamic budget source](dynamic-capability-budget.md.txt)
 
+## Reference, release and scaffold pages — `74d2532`
+
+Before the eighth CURRENT compilation:
+
+- [Reference/promotion strategy source](reference-release-and-promotion-strategy.md.txt)
+- [Release qualification source](release-qualification.md.txt)
+- [R1 guide source](reference-release-r1.md.txt)
+- [Scaffold role source](scaffold-classification.md.txt)
+
+The R1 **guide** edition changes no manifest-bound contract, fixture or verifier.
+
 The `.md.txt` files are retained **source evidence**, not current instructions.
 Their Markdown, old relative links and paths are preserved verbatim; resolve
 relative references from each file's original location when studying that edition.
@@ -83,4 +94,5 @@ recorded in `artifacts/documentation-authority/current-compilation-01.json` and
 `artifacts/documentation-authority/current-compilation-04.json` and
 `artifacts/documentation-authority/current-compilation-05.json` and
 `artifacts/documentation-authority/current-compilation-06.json` and
-`artifacts/documentation-authority/current-compilation-07.json`.
+`artifacts/documentation-authority/current-compilation-07.json` and
+`artifacts/documentation-authority/current-compilation-08.json`.

@@ -1,17 +1,29 @@
 # Scaffold classification
 
-This classification prevents architecture roles from drifting again. A file can be valuable for correctness or planning without being the production execution topology.
+This page classifies **implementation roles**, not documentation labels or release
+approval. [Architecture](architecture.md) owns selected execution;
+[runtime strategy](runtime-strategy.md) owns lifetimes;
+[implementation decisions](implementation-plan.md) owns remaining work.
+A useful scaffold/reference does not become a production selector by being retained.
 
-| Path | Classification | Reason |
-| --- | --- | --- |
-| `reference/R1/*`, `ds41f_mlx/reference.py` | CANONICAL SEMANTIC CONFORMANCE | Owned contracts, protocol/state/negative fixtures, attributed OFF execution source and manifest-bound verifier. Historical origins are evidence, not ordinary dependencies; see [R1](reference-release-r1.md). |
-| `native/*` | REFERENCE / QUALIFICATION; REUSABLE PRODUCTION COMPONENT where documented | Current executable native implementation with checkpoint loading, state, attention, MoE/HC, Engram, sampling, generation, and tests. Retained as high-value correctness/reference runtime, but not automatically final production architecture. |
-| `ds41f_mlx/native/*` | PREFILL ARCHITECTURE SCAFFOLD | Native C/Metal DwarfStar-derived prefill ownership/submission/primitive scaffold. Not full model runtime yet; continue from this line for prefill restoration. |
-| `ds41f_mlx/native_prefill.py` | PREFILL TOOLING BRIDGE | ctypes bridge to the native prefill ABI and planner/primitive artifacts. |
-| `ds41f_mlx/m2_layer_major.py` | TOOL / PROTOTYPE | oMLX-compatible loop-inversion diagnostic. Retain to avoid repeating rejected shallow loop-inversion work; not production runtime. |
-| `ds41f_mlx/m2_state_publication.py` | TOOL / STATE-SEAM REFERENCE | Explicit publication-frontier skeleton useful for state-seam design; normative state contract remains `docs/session-state.md`. |
-| `ds41f_mlx/dwarfstar_*` | PREFILL ARCHITECTURE LINE / TOOLING | DwarfStar-derived planners and prefill engine seam record the intended production prefill direction. Not obsolete donor scaffold, but also not completed production runtime. |
-| `ds41f_mlx/runtime/omlx_*` | DECODE CANDIDATE / COMPATIBILITY BINDING | oMLX bridge retained for architecture comparison, compatibility, and baseline evidence. Not final API layer. |
-| `ds41f_mlx/server.py` | API SCAFFOLD | Current server scaffold only. Future serving integration should use official DeepSeek `deepseek-recipe`. |
+| Path | Current role / boundary |
+| --- | --- |
+| `ds41f_mlx/model_execution/` | First-party OFF model/checkpoint/packed state/SSD Engram; not a donor model fallback |
+| `ds41f_mlx/prefill_fp8_mlx/` and `runtime/dwarfstar_prefill.py` | Selected DENSE_P0_P7/P7 dense prefill, committed P6 append and P5 same-live transfer; experimental P8/tile variants are not selected by directory membership |
+| `runtime/target_generation.py`, target-forward/state-production owners | Selected first-party OFF consumed generation/transaction/state authority |
+| `serving/production_mtp.py`, `paired_checkpoint.py`, `runtime/mtp_lifecycle.py` | Ordinary pinned-Scheduler MTP and coherent target/DSpark lifecycle adapters, not a first-party speculative graph reconstruction |
+| `ds41f_mlx/serving/server.py` and recipe backend | Current official-recipe HTTP integration, profile dispatch/admission and canonical delivery; not the old root server scaffold |
+| `reference/R1/*`, `ds41f_mlx/reference.py` | Manifest-bound owned conformance, fixtures and attributed delivery; oracle/reproduction, not installed startup or general release approval |
+| `native/*` | Executable reference/qualification runtime and documented reusable components; native build success does not select it as production model engine |
+| `ds41f_mlx/native/*`, `native_prefill.py` | C/Metal prefill ABI/planning/primitive support and qualification tooling; their shared planner interfaces do not imply a separate complete native production model runtime |
+| `ds41f_mlx/m2_layer_major.py` | Loop-inversion diagnostic/prototype retained as a rejected-path reference, not production |
+| `ds41f_mlx/m2_state_publication.py` | Publication-seam skeleton/oracle; [session state](session-state.md) defines the current contract |
+| Root `ds41f_mlx/dwarfstar_*` | Earlier planner/prototype/investigation assets, distinct from the selected runtime/prefill_fp8_mlx path; not instructions to resume native restoration |
+| `ds41f_mlx/runtime/omlx_*` | Shared configuration/model/state compatibility and legacy comparison adapters; module prefix alone does not select an engine or supersede OFF target-generation/MTP ownership |
+| `ds41f_mlx/server.py` | Earlier reference vertical-slice server, not selected recipe production serving; official recipe delegation is already implemented, not a future task |
 
-No duplicate production model-core implementation should be developed by accident in scaffold files. Production work must follow `docs/runtime-strategy.md` and `docs/implementation-plan.md`, with qualification scoped to the implementation under test.
+[Original classification edition](archive/editorial-baseline/scaffold-classification.md.txt)
+retains former unfinished-prefill/API-restoration language. Do not develop a duplicate
+model core in scaffolds or replace qualified physical topology for ownership aesthetics.
+Role review and affected tests are not promotion; [delivery strategy](reference-release-and-promotion-strategy.md)
+keeps source/reference qualification separate from installed payload admission.
