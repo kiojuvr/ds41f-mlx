@@ -78,7 +78,7 @@ Specific executable boundaries:
 
 Source hashes, including the actually installed native Python implementations,
 are in `artifacts/m49/source-audit.json`. Earlier authority/evidence:
-[M41](milestone-41-local-mtp-release-candidate.md),
+[M41](archive/development/milestone-41-local-mtp-release-candidate.md),
 [M44](milestone-44-target-generation-ownership.md),
 [M45](milestone-45-target-forward-ownership.md),
 [M46](milestone-46-state-production-ownership.md),

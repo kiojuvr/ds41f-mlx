@@ -2,7 +2,8 @@
 
 Uses only stdlib; candidate paths are optional observations, not install defaults.
 Run from repository root after the M40 checks. --check verifies recorded repository
-identities without requiring the original machine or dependency checkouts.
+identities at the recorded historical commit, without requiring the original
+machine or dependency checkouts. It does not qualify the current checkout.
 """
 from __future__ import annotations
 
@@ -35,7 +36,7 @@ def identities():
                     and not any(x.startswith('build') or x in {'__pycache__', 'target'} for x in p.relative_to(ROOT).parts)):
                 paths.add(p)
     for name in ('release/ds41f-release.json', 'pyproject.toml', 'Cargo.toml', 'Cargo.lock',
-                 'docs/milestone-40-release-readiness.md', 'docs/api.md', 'docs/operations.md',
+                 'docs/archive/development/milestone-40-release-readiness.md', 'docs/api.md', 'docs/operations.md',
                  'tools/record_m40_readiness.py',
                  'tests/test_m40_readiness.py', 'tools/run_m11_tool_boundary_qualification.py'):
         paths.add(ROOT / name)
@@ -61,12 +62,19 @@ def main():
     args = ap.parse_args()
     if args.check:
         recorded = json.loads(OUT.read_text())
-        current = identities()
-        assert recorded['repository_hashes'] == current, 'M40 evaluation source/evidence is stale'
+        commit = subprocess.check_output(
+            ['git', 'log', '-1', '--format=%H', '--', 'artifacts/m40/readiness.json'],
+            cwd=ROOT, text=True).strip()
+        assert commit
+        for rel, digest in recorded['repository_hashes'].items():
+            # Saved evidence is still checked on disk; source belongs to M40.
+            data = ((ROOT / rel).read_bytes() if rel.startswith('artifacts/') else
+                    subprocess.check_output(['git', 'show', f'{commit}:{rel}'], cwd=ROOT))
+            assert hashlib.sha256(data).hexdigest() == digest, rel
         for rel, digest in recorded['evaluation_logs'].items():
             assert sha(ROOT / rel) == digest, rel
         assert recorded['decision'] == DECISION and not recorded['release_qualified']
-        print('M40 evaluation identities match; not MTP release qualification')
+        print('Historical M40 evaluation identities match; not current-source or MTP release qualification')
         return
     native = Path('/tmp/ds41f-m32-qual/lib/python3.13/site-packages/deepseek_recipe/_native.abi3.so')
     prior = json.loads((ROOT / 'artifacts/m33/runtime-identities.json').read_text())
@@ -82,7 +90,7 @@ def main():
         'final_commit_resolver': 'git log -1 --format=%H -- artifacts/m40/readiness.json',
         'decision': DECISION, 'architectural_blocker_found': False, 'release_qualified': False,
         'production_default_mtp': 'OFF',
-        'document': 'docs/milestone-40-release-readiness.md',
+        'document': 'docs/archive/development/milestone-40-release-readiness.md',
         'evaluation_checks': [
             {'command': 'DS41F_OMLX_PATH=/tmp/ds41f-m33-omlx DS41F_RECIPE_PATH=/tmp/ds41f-m32-recipe /tmp/ds41f-m32-qual/bin/python -m pytest -q tests/test_m39_evidence.py tests/test_m39_lifetime_admission.py tests/test_m37_local_client.py tests/test_m38_client_faults.py tests/test_runtime_config.py tests/test_m22_release_metadata.py tests/test_stateful_request_policy.py tests/test_m25_mtp_boundary.py',
              'result': '65 passed, 8 subtests passed', 'log': 'artifacts/m40/regressions.log'},

@@ -1,4 +1,8 @@
-"""Extraction mechanics: Git authority, full manifests, drift and one-way policy."""
+"""Current extraction mechanics on the qualified historical M43 input.
+
+Later development HEADs need separate surface classification and qualification;
+passing these mechanics does not make the current HEAD release-promotable.
+"""
 import importlib.util
 import json
 import os
@@ -19,6 +23,12 @@ class PromotionTests(unittest.TestCase):
         self.base = Path(self.tmp.name)
         self.source = self.base/'source'
         subprocess.run(['git','clone','--quiet','--shared',str(ROOT),str(self.source)],check=True)
+        # Use the final M43 evidence commit, never rewrite its bound PASS receipt.
+        commit = subprocess.check_output(
+            ['git', 'log', '-1', '--format=%H', '--', 'artifacts/m43/determinism.json'],
+            cwd=ROOT, text=True).strip()
+        assert commit
+        subprocess.run(['git', '-C', str(self.source), 'checkout', '--quiet', '--detach', commit], check=True)
         self.old = promotion.ROOT; promotion.ROOT = self.source
 
     def tearDown(self):
@@ -33,6 +43,7 @@ class PromotionTests(unittest.TestCase):
     def test_deterministic_complete_projection_and_reverse_patch(self):
         a,b = self.base/'a',self.base/'b'
         m = promotion.promote('HEAD','R1',a)
+        self.assertEqual(m['qualification']['status'], 'PASS')
         # Ambient checkout path, source mtimes and ignored build junk cannot enter
         # Git-object projection. Preserve commit and authoritative input bytes.
         relocated = self.base/'relocated-source'

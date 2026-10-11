@@ -33,7 +33,7 @@ The canonical [final runtime target](docs/final-runtime-target.md) defines the
 intended self-contained public source repository. `ds41f-mlx` is the sole
 current development repository. The existing `ds41f-runtime` directory is an
 unused old generated environment, not an active deployment or accepted release
-history; it is not needed now. [M43 extraction evidence](docs/milestone-43-release-repository-extraction.md)
+history; it is not needed now. [M43 extraction evidence](docs/archive/development/milestone-43-release-repository-extraction.md)
 remains historical proof within its original scope, not qualification of that
 directory or later HEAD. Any future source projection requires a separate explicit
 release checkpoint and must flow one-way from qualified development here. See the
@@ -209,7 +209,7 @@ These do not run benchmarks or full checkpoint qualification.
 `mtp-singleton-v1` release is explicitly opt-in and local/singleton only; it does
 not inherit OFF API parity, persistence, browser or Rust application support.
 See [setup/API/operator instructions](docs/mtp-local-release-candidate.md) and
-[M41 decision and evidence](docs/milestone-41-local-mtp-release-candidate.md), with
+[M41 decision and evidence](docs/archive/development/milestone-41-local-mtp-release-candidate.md), with
 [M53R normal-local dependency/admission closure](docs/milestone-53r-normal-local.md).
 The [M55R decision](docs/milestone-54r-55r-operational-release.md#exact-supported-release-envelope)
 is historical singleton qualification. Current [runtime admission](docs/runtime-admission.md)
@@ -237,7 +237,7 @@ not a claim of complete general-runtime production parity.
 ## Reference Release R1
 
 Repository-owned semantic conformance is documented in [Reference R1](docs/reference-release-r1.md)
-and [M42 evidence](docs/milestone-42-reference-release.md):
+and [M42 evidence](docs/archive/development/milestone-42-reference-release.md):
 
 ```sh
 python -m ds41f_mlx.reference --profile both --real-model --output artifacts/r1/qualification.json

@@ -227,7 +227,7 @@ Installed acceptance uses the bundled Rust acceptance binary and does not requir
 M41 adds `inspect/start/accept --profile mtp-singleton-v1`, with a separate
 repository-delivered source/native setup and strict loopback capability boundary.
 See [normal setup and operator/application contract](../mtp-local-release-candidate.md)
-and [M41 decision/evidence](../milestone-41-local-mtp-release-candidate.md).
+and [M41 decision/evidence](development/milestone-41-local-mtp-release-candidate.md).
 Do not reuse the OFF checkout configuration/environment for MTP. Omitted profile
 is **standard-off**, unchanged; no request/env acceleration selection or fallback.
 M40's readiness analysis remains historical, not today's operator command surface.

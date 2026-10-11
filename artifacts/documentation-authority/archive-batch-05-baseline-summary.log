@@ -1,0 +1,17 @@
+Pre-relocation baseline on 418f470. Command: ../ds41f-mlx_mtp-venv/bin/python -m pytest -q tests/test_m40_readiness.py tests/test_m41_evidence.py tests/test_m42_reference.py tests/test_m43_promotion.py
+
+Full scratch output: /tmp/ds41f-batch05-baseline.log
+Full output SHA256: 4afb5270c2a367362fdc50ab324a4424224b14ded98bab0de21830ae060f8798
+This saved excerpt omits the 2.3 MB current-vs-M39 source diff. Original historical qualification artifacts are unchanged.
+
+=========================== short test summary info ============================
+FAILED tests/test_m40_readiness.py::ReadinessEvaluationTests::test_no_runtime_or_release_change_since_m39
+FAILED tests/test_m40_readiness.py::ReadinessEvaluationTests::test_not_promotion
+FAILED tests/test_m40_readiness.py::ReadinessEvaluationTests::test_recorded_authority
+FAILED tests/test_m41_evidence.py::test_m41_receipt_and_content_bindings - As...
+FAILED tests/test_m42_reference.py::test_fresh_closure_and_inheritance - Asse...
+FAILED tests/test_m43_promotion.py::PromotionTests::test_deterministic_complete_projection_and_reverse_patch
+FAILED tests/test_m43_promotion.py::PromotionTests::test_qualification_input_mismatch_rejected
+FAILED tests/test_m43_promotion.py::PromotionTests::test_required_material_missing_rejected
+FAILED tests/test_m43_promotion.py::PromotionTests::test_unexpected_runtime_source_rejected
+9 failed, 7 passed in 12.09s

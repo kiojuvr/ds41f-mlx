@@ -40,7 +40,7 @@ profile settings, import overrides and validation bypasses fail closed. Errors d
 not select another backend. Native protected phases may delay orderly shutdown.
 
 The [historical protocol specification](archive/mtp-local-source-clone.md#capability-and-admission-v1)
-and [M41 qualification](milestone-41-local-mtp-release-candidate.md) retain the
+and [M41 qualification](archive/development/milestone-41-local-mtp-release-candidate.md) retain the
 session/sequence, freeze/reconcile, certificate, expiry and application details.
 Their setup/seal sections describe the former architecture only. Source-owned
 R1 native fixtures remain qualification tools; installed ordinary acceptance is

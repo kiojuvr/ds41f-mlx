@@ -209,7 +209,7 @@ that the current public OFF API implements every internal feature.
   outcome archive; successful retirement releases closed payload/native authority.
   Restart does not restore that process's identity or recovery authority.
 - **Explicit capability profiles and local security assumptions**
-  ([M40](milestone-40-release-readiness.md)): capability/dependency identity and
+  ([M40](archive/development/milestone-40-release-readiness.md)): capability/dependency identity and
   admission must be explicit, not implicit fallback or request-selected acceleration.
   Profiles carry their own supported envelope and acceptance. Local/single-operator
   operation trusts local operator peers; IDs are not authentication secrets and

@@ -13,7 +13,7 @@ R1 identity (SHA-256 of `reference/R1/manifest.json`):
 ```
 
 Canonical decision: `artifacts/m42/qualification.json`. Contract/operator/engineer
-instructions: [Reference Release R1](reference-release-r1.md).
+instructions: [Reference Release R1](../../reference-release-r1.md).
 
 ```sh
 python -m ds41f_mlx.reference --profile both --real-model --output artifacts/r1/qualification.json

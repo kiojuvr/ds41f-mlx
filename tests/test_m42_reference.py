@@ -1,6 +1,7 @@
-"""R1 identity/evidence regression; semantic execution lives in reference/R1."""
+"""Current immutable R1 identity plus historical M42 evidence regression."""
 import hashlib
 import json
+import subprocess
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -29,11 +30,18 @@ def test_fresh_closure_and_inheritance():
     assert q['fresh']['semantic_checks']==249 and q['fresh']['mutations_rejected']==3
     for name,row in q['fresh']['receipts'].items():assert sha(ROOT/row['path'])==row['sha256']
     for path,digest in q['evidence'].items():assert sha(ROOT/path)==digest
+    commit = subprocess.check_output(
+        ['git', 'log', '-1', '--format=%H', '--', 'artifacts/m42/qualification.json'],
+        cwd=ROOT, text=True).strip()
+    assert commit
     for row in q['inheritance']['source_comparisons']:
-        assert row['equal'] and sha(ROOT/row['path'])==row['current']==row['previous']
+        source = subprocess.check_output(['git', 'show', f"{commit}:{row['path']}"], cwd=ROOT)
+        assert row['equal'] and hashlib.sha256(source).hexdigest()==row['current']==row['previous']
     r=load(OUT/'independent.json')
     assert r['decision']=='CONFORMANT' and all(g['returncode']==0 for g in r['gates'])
-    for path,digest in r['candidate_source'].items():assert sha(ROOT/path)==digest
+    for path, digest in r['candidate_source'].items():
+        source = subprocess.check_output(['git', 'show', f'{commit}:{path}'], cwd=ROOT)
+        assert hashlib.sha256(source).hexdigest() == digest, path
 
 
 def test_independence_and_semantic_rejection():

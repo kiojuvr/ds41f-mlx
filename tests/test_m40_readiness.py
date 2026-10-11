@@ -1,4 +1,4 @@
-"""M40 evaluation consistency, not checkpoint/release qualification."""
+"""Historical M40 evaluation consistency, not current/release qualification."""
 import hashlib
 import json
 from pathlib import Path
@@ -10,6 +10,13 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class ReadinessEvaluationTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.source_commit = subprocess.check_output(
+            ['git', 'log', '-1', '--format=%H', '--', 'artifacts/m40/readiness.json'],
+            cwd=ROOT, text=True).strip()
+        assert cls.source_commit
+
     def test_recorded_authority(self):
         subprocess.run([sys.executable, str(ROOT / 'tools/record_m40_readiness.py'), '--check'],
                        cwd=ROOT, check=True)
@@ -22,13 +29,14 @@ class ReadinessEvaluationTests(unittest.TestCase):
         self.assertEqual(r['production_default_mtp'], 'OFF')
         self.assertEqual(r['profiles']['mtp-singleton-v1']['status'], 'proposed only; not selectable')
         self.assertEqual([x['rank'] for x in r['ranked_required_blockers']], [1, 2, 3, 4])
-        manifest = json.loads((ROOT / 'release/ds41f-release.json').read_text())
+        manifest = json.loads(subprocess.check_output(
+            ['git', 'show', f'{self.source_commit}:release/ds41f-release.json'], cwd=ROOT))
         self.assertEqual(manifest, r['dependency_delta']['off_manifest'])
         self.assertEqual(manifest['runtime']['mtp'], 'OFF')
 
     def test_no_runtime_or_release_change_since_m39(self):
         r = json.loads((ROOT / 'artifacts/m40/readiness.json').read_text())
-        result = subprocess.run(['git', 'diff', '--exit-code', r['evaluation_base'], '--',
+        result = subprocess.run(['git', 'diff', '--exit-code', r['evaluation_base'], self.source_commit, '--',
             'ds41f_mlx', 'native', 'release', 'rust', 'Cargo.toml', 'Cargo.lock', 'pyproject.toml'],
             cwd=ROOT, capture_output=True, text=True)
         self.assertEqual(result.returncode, 0, result.stdout)
@@ -49,7 +57,7 @@ class ReadinessEvaluationTests(unittest.TestCase):
         self.assertEqual(r['historical_evidence']['36']['decision'], 'BLOCKED_CANONICAL_PROTOCOL_REPRESENTABILITY')
 
     def test_contract_matches_document(self):
-        doc = (ROOT / 'docs/milestone-40-release-readiness.md').read_text()
+        doc = (ROOT / 'docs/archive/development/milestone-40-release-readiness.md').read_text()
         r = json.loads((ROOT / 'artifacts/m40/readiness.json').read_text())
         self.assertIn(r['decision'], doc)
         p = r['profiles']['mtp-singleton-v1']

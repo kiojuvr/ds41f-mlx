@@ -13,8 +13,8 @@ updates describe the intended future delivery model or original extraction
 evidence, not a requirement to maintain or use that existing directory.
 
 M42's executable result is [Reference Release R1](reference-release-r1.md), with
-[decision and evidence](milestone-42-reference-release.md). M42 itself performed
-no extraction. [M43](milestone-43-release-repository-extraction.md) records the
+[decision and evidence](archive/development/milestone-42-reference-release.md). M42 itself performed
+no extraction. [M43](archive/development/milestone-43-release-repository-extraction.md) records the
 historical implementation and scoped qualification of deterministic projection;
 that evidence does not certify the current `ds41f-runtime` directory or later
 source states. Broader feature completeness remains prospective.

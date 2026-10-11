@@ -2,7 +2,7 @@
 
 This document defines the durable **standard-off** production strategy for the scoped text release.
 The separately selected [bounded local MTP candidate](mtp-local-release-candidate.md)
-is governed by [M41 evidence](milestone-41-local-mtp-release-candidate.md), not OFF
+is governed by [M41 evidence](archive/development/milestone-41-local-mtp-release-candidate.md), not OFF
 feature parity. Omitted profile/default production MTP remains OFF.
 
 ## Qualified release scope

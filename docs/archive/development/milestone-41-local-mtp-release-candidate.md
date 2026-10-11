@@ -7,7 +7,7 @@ selected `mtp-singleton-v1` source-clone profile on the recorded M3 Ultra 512 GB
 macOS target. **`standard-off` remains the default qualified production profile.**
 No profile parity, browser/remote/general-agent/persistence promotion follows.
 
-Operator/application contract: [local MTP candidate](mtp-local-release-candidate.md).
+Operator/application contract: [local MTP candidate](../../mtp-local-release-candidate.md).
 Durable, content-bound receipt: `artifacts/m41/qualification.json`. Qualified
 implementation source: `c5eb83f` (final evidence/docs commits do not change runtime).
 Base: clean `master` `8813829`. No release blocker remains **within this declared
@@ -250,7 +250,7 @@ crash-safe or distributed exactly-once effects, unsupported hosts/platforms/nati
 artifacts and long-context MTP. Client/runtime replacement cannot resolve unknown
 external effects. These are limits, not silently working unsupported capabilities.
 
-Longer-term [final-runtime target](final-runtime-target.md) remains canonical and
+Longer-term [final-runtime target](../../final-runtime-target.md) remains canonical and
 prospective: migrate temporary oMLX execution ownership into ds41f and complete
 self-contained normal **OFF** delivery too. Optional artifact portability/dependency
 reduction/kernel work needs affected ownership/parity gates. M41's coherent

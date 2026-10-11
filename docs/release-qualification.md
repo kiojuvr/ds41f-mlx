@@ -1,6 +1,6 @@
 # Release qualification
 
-[M42 / Reference Release R1](milestone-42-reference-release.md) adds repository-owned
+[M42 / Reference Release R1](archive/development/milestone-42-reference-release.md) adds repository-owned
 [semantic conformance](reference-release-r1.md) above these separately qualified
 profiles. It does not change release admission or perform M43 extraction.: DS41F_TEXT_RUNTIME_RELEASE_QUALIFIED
 
@@ -17,7 +17,7 @@ not an active deployment or accepted release history. M43/M44 receipts remain
 historical evidence about their exact payloads, not certification of that directory.
 
 `DS41F_TEXT_RUNTIME_RELEASE_QUALIFIED` for the **standard-off** scoped local text runtime below.
-The separate opt-in [M41 local MTP candidate](milestone-41-local-mtp-release-candidate.md)
+The separate opt-in [M41 local MTP candidate](archive/development/milestone-41-local-mtp-release-candidate.md)
 has its own composed/source-clone acceptance and narrower [contract](mtp-local-release-candidate.md);
 this OFF qualification does not grant it feature parity. This is not a universal project-complete claim.
 

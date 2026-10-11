@@ -2,10 +2,10 @@
 
 Canonical architectural intent:
 
-- [M43 repository extraction](milestone-43-release-repository-extraction.md) — deterministic qualified one-way promotion, self-contained attributed delivery and independent runtime proof
+- [M43 repository extraction](archive/development/milestone-43-release-repository-extraction.md) — deterministic qualified one-way promotion, self-contained attributed delivery and independent runtime proof
 - [Reference release and promotion strategy](reference-release-and-promotion-strategy.md) — semantic reference and one-way projection; sole `ds41f-mlx` development authority
 - [Reference Release R1](reference-release-r1.md) — owned executable contracts, equivalence, command and invalidation
-- [M42 closure decision](milestone-42-reference-release.md) — fresh qualification, semantic rejection, donor independence and inherited evidence
+- [M42 closure decision](archive/development/milestone-42-reference-release.md) — fresh qualification, semantic rejection, donor independence and inherited evidence
 
 - [Final runtime target](final-runtime-target.md) — intended self-contained public source runtime, stable ds41f contracts and dependency destination; prospective, not current qualification
 
@@ -16,7 +16,7 @@ Canonical current-state documents:
 - [Production Serving Parity Closure](production-serving-parity-closure.md) — **superseding serving/development authority; `mtp-serving-v1` production-semantics boundary** and [future-agent decision rule](production-serving-parity-closure.md#decision-rule-for-future-agents). SP1 BLOCK is the preserved historical starting assessment; B1/B2 are subsequently implemented/closed for ordinary serving. General runtime release and promotion remain incomplete.
 - [Ordinary MTP production serving](mtp-production-serving.md) — current opt-in Chat Completions, generic tools, 1,048,576 total context / 393,216 output capability, paired cache/lifecycle ownership and trusted private-LAN scope; separate-machine LAN acceptance pending, not Internet/multi-user readiness.
 
-- [M41 local MTP candidate](milestone-41-local-mtp-release-candidate.md) — explicit bounded opt-in capability, composed/source-clone evidence and OFF regression
+- [M41 local MTP candidate](archive/development/milestone-41-local-mtp-release-candidate.md) — explicit bounded opt-in capability, composed/source-clone evidence and OFF regression
 - [M49R MTP architecture reset and roadmap](mtp-architecture-reset.md) — current authority: restart `5e784d9`, oMLX physical topology, retained M54 requirements, conformance/performance gates and M49R–M55R series
 - [M50R candidate baseline assessment](milestone-50r-omlx-candidate-baseline.md) — **PASS, bounded freeze**: exact identity, byte-content prefix oracle, native/Metal boundary diagnostics and bounded reload/residency envelope; unchanged physical-graph requirement; no implementation authorization by the freeze
 - [M49 assessment](milestone-49-runtime-promotion-assessment.md) — historical NO promotion at the restart point; proposed first-party redesign superseded

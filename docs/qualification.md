@@ -30,10 +30,10 @@ work is retained as evidence, not a mandatory future milestone sequence. See the
 
 ## Current profile and reference authority
 
-`standard-off` remains default qualified production. [M41](milestone-41-local-mtp-release-candidate.md)
+`standard-off` remains default qualified production. [M41](archive/development/milestone-41-local-mtp-release-candidate.md)
 separately qualifies explicit bounded `mtp-singleton-v1`; the internal historical
 promotion statements below must not be read as reversing M41's scoped admission.
-[M42 / Reference Release R1](milestone-42-reference-release.md) makes the established
+[M42 / Reference Release R1](archive/development/milestone-42-reference-release.md) makes the established
 semantics executable through [owned contracts and conformance](reference-release-r1.md).
 It neither broadens either profile nor promotes a new numerical backend.
 

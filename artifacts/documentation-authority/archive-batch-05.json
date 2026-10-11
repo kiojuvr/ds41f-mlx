@@ -1,0 +1,99 @@
+{
+  "base_commit": "418f4703051cd67a6af68ae3bba201dada13d07d",
+  "scope": "Batch 5: M40-M43 release/reference/promotion history (four documents)",
+  "moves": [
+    {
+      "old_path": "docs/milestone-40-release-readiness.md",
+      "new_path": "docs/archive/development/milestone-40-release-readiness.md",
+      "sha256": "85dfee3e7713cc5f26e4fd159949a4b3312f0c91e6c8d540be5afa80608c8d18",
+      "byte_identical": true
+    },
+    {
+      "old_path": "docs/milestone-41-local-mtp-release-candidate.md",
+      "new_path": "docs/archive/development/milestone-41-local-mtp-release-candidate.md",
+      "original_sha256": "e4fa7b4722b5efcda9c98026c5ceea2685ac8ba3aa1e1bcd5e295de8389e283d",
+      "archived_sha256": "6680953623ab634fbbe817b2eb35752c0b0bd1ef49873b9af95aec96245e1d20",
+      "allowed_changes": "Two relative Markdown links only: mtp-local-release-candidate.md and final-runtime-target.md now use ../../"
+    },
+    {
+      "old_path": "docs/milestone-42-reference-release.md",
+      "new_path": "docs/archive/development/milestone-42-reference-release.md",
+      "original_sha256": "2d07e6f8e97a25c470a886827267f8c545cded3e982774d4cbfc8c8d4b801149",
+      "archived_sha256": "20bf388de2c1b45257b600462460125b7f8bd67fa709a2ce499a11bf9fb3155d",
+      "allowed_changes": "One relative Markdown link only: reference-release-r1.md now uses ../../"
+    },
+    {
+      "old_path": "docs/milestone-43-release-repository-extraction.md",
+      "new_path": "docs/archive/development/milestone-43-release-repository-extraction.md",
+      "sha256": "c7f00fc46fe73f045a58d906abd86bfa76947ac8fcbd76abe4acfa793505b0e3",
+      "byte_identical": true
+    }
+  ],
+  "retained_current_contracts": {
+    "docs/reference-release-r1.md": "Official semantics remain higher authority than immutable, scoped executable R1; source identity is not semantic conformance or fresh model qualification",
+    "docs/reference-release-and-promotion-strategy.md": "Sole development authority; conditional one-way promotion and payload-bound receipt; no automatic promotion after development or source-clone release approval; existing ds41f-runtime is unused old generation, not an accepted release history",
+    "docs/final-runtime-target.md": "Stable scoped capability/dependency authority and local security assumptions; M40 proposed obligations remain historical/prospective, not new current guarantees",
+    "docs/mtp-production-serving.md": "Current ordinary production MTP scope is separate from the historical bounded M41 singleton candidate",
+    "changes": "No contract extraction needed: existing current docs retain the relevant contracts. Incoming links, navigation and archive cross-links repaired without rewriting historic qualification claims."
+  },
+  "classification_change": "Four path fields only; labels/reasons/policy and index structure preserved until final stage",
+  "historical_test_corrections": {
+    "baseline": "Before relocation: 9 failed / 7 passed. M40 incorrectly compares later HEAD runtime/manifest and source inventory with M39/M40; M41/M42 compare historical source hashes with current sources; M43 promotes later HEAD with unclassified ds41f_mlx/chat_application.py instead of its qualified historical input.",
+    "source_commits": {
+      "m40": "7e8ac4b89c3acd11c2eed00174987d1096ab2276",
+      "m41": "243d16045438604101964395210db035c3a2e7f1",
+      "m42": "08690aa7395086906022789e1147b51f600b217e",
+      "m43": "d7c63727ad0751a4cc6eef6e6c83769f0cf5bef8"
+    },
+    "m40": "Read-only recorder --check validates every recorded source blob at the receipt commit, while saved evidence/logs remain disk-checked. Runtime no-change test compares M39 with original M40, not later HEAD. OFF manifest equality uses original M40 manifest; archive document checked directly.",
+    "m41": "Source and unchanged-owner digests use original M41 blobs; artifact fixture inputs and evidence still checked on disk; original OFF manifest used for historical default claim.",
+    "m42": "Immutable R1 material/verifier checks remain against current files. Historical owner/inheritance/candidate digests use original M42 blobs; saved receipts, mutation outputs and rejection logs still checked on disk.",
+    "m43": "Unmodified current promotion/projection implementations exercise the qualified historical M43 input in temporary clones. All seven mechanics/negative assertions retained. No receipt rewrite, hash bypass, skip, extra release-surface exclusions or present-HEAD promotion claim.",
+    "function_names": "Existing selectors retained; module documentation and M40 checker output now explicitly distinguish historical checks from current qualification",
+    "full_git_history_required": true
+  },
+  "recorder_changes": {
+    "tools/record_m40_readiness.py": "Generated document input/reference moved to archive; --check now explicitly historical. Evidence generation branch was not executed.",
+    "tools/record_m41_evidence.py": "No moved document inputs; unchanged and not executed",
+    "tools/record_m42_evidence.py": "No moved document inputs; unchanged and not executed",
+    "tools/record_m43.py": "No moved document inputs; unchanged and not executed",
+    "tools/record_m44.py": "Original M42/M43 Git-diff pathspecs intentionally retained: they name paths in historical source commits, not filesystem input paths. Retargeting them would misinterpret historical Git comparisons. Tool unchanged and not executed."
+  },
+  "validation": {
+    "interpreter": "../ds41f-mlx_mtp-venv/bin/python",
+    "baseline_summary": "artifacts/documentation-authority/archive-batch-05-baseline-summary.log",
+    "batch5_log": "artifacts/documentation-authority/archive-batch-05-tests.log",
+    "batch5_tests": {
+      "passed": 99,
+      "warnings": 1,
+      "tests": [
+        "tests/test_m40_readiness.py",
+        "tests/test_m41_evidence.py",
+        "tests/test_m42_reference.py",
+        "tests/test_m43_promotion.py",
+        "tests/test_m41_profile.py"
+      ]
+    },
+    "separate_regression_processes": {
+      "batch4_evidence_recovery_client_lifetime": "110 passed (same ten test files as archive-batch-04.json)",
+      "batch3_evidence_cache_transport": "39 passed, 137 subtests passed (same seven test files as archive-batch-04.json)",
+      "production_sessions_browser_packaging": "28 passed, 3 deprecation warnings (test_production_sessions.py, test_m19_web_client.py, test_build_release_docs.py)"
+    },
+    "total_passed_in_separate_test_groups": 276,
+    "subtests_passed": 137,
+    "history_comparison": "M40/M43 byte-identical; M41/M42 exact after only the three declared relative-link repairs",
+    "markdown_missing_file_targets": [],
+    "stale_tracked_operational_doc_paths": [],
+    "intentional_historical_git_pathspecs": ["tools/record_m44.py"],
+    "classification_path_only_and_all_entry_paths_exist": true,
+    "current_navigation_document_changes": "Path-only, mechanically compared with base",
+    "recorder_ast_parse": "PASS for M40-M43 recorders",
+    "original_recorded_source_hashes_match_final_evidence_commits": true,
+    "diff_check": "PASS",
+    "runtime_native_dependency_rust_reference_release_and_original_receipt_changes": false,
+    "existing_runtime_directory_modified": false,
+    "real_model_clean_install_or_release_qualification_run": false,
+    "self_containment_checker": "Existing failure unchanged: canonical doc links to archive for normative definitions: README.md. Checker not weakened."
+  },
+  "pending": "The requested M19-M43 archive series is complete. Other historical inventory entries remain for later scope review. Next: CURRENT convergence, then final index/classification/checker-policy reconciliation; no push or release promotion."
+}

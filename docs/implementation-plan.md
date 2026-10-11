@@ -208,7 +208,7 @@ The [reference release and promotion strategy](reference-release-and-promotion-s
 defines the progression:
 
 - **M42:** Reference Release R1; [contract and command](reference-release-r1.md),
-  [decision/evidence](milestone-42-reference-release.md). Repository-owned fixtures,
+  [decision/evidence](archive/development/milestone-42-reference-release.md). Repository-owned fixtures,
   fresh semantic rejection and donor-unavailable qualification; no optimization campaign.
 - **M43:** only after R1 closure, deterministic release-surface extraction and
   independent qualification of `ds41f-runtime`, with source/reference/dependency
@@ -247,14 +247,14 @@ Implementation and fresh composed qualification: separate `mtp-singleton-v1`
 process authority, strict local admission/resource boundary, repository-delivered
 candidate source/native setup, supported Python helper and operator commands.
 `standard-off` remains safe/default and separately regression-qualified.
-Canonical decision/evidence: [M41](milestone-41-local-mtp-release-candidate.md);
+Canonical decision/evidence: [M41](archive/development/milestone-41-local-mtp-release-candidate.md);
 normal setup: [local MTP contract](mtp-local-release-candidate.md).
 The longer-term [self-contained destination](final-runtime-target.md) remains
 prospective; no automatic next-milestone dependency-removal/optimization schedule.
 
 ## M40 — Release-readiness gap analysis (historical)
 
-[M40](milestone-40-release-readiness.md) found the M39 lifecycle sufficient but
+[M40](archive/development/milestone-40-release-readiness.md) found the M39 lifecycle sufficient but
 public admission/setup/application/installed acceptance not ready. M41 owns closing
 those gaps coherently. M40 is not rewritten as a successful release qualification.
 
