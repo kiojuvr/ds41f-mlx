@@ -39,9 +39,46 @@ semantic certificates and canonical state ownership remain unchanged. Unknown
 profile settings, import overrides and validation bypasses fail closed. Errors do
 not select another backend. Native protected phases may delay orderly shutdown.
 
-The [historical protocol specification](archive/mtp-local-source-clone.md#capability-and-admission-v1)
-and [M41 qualification](archive/development/milestone-41-local-mtp-release-candidate.md) retain the
-session/sequence, freeze/reconcile, certificate, expiry and application details.
-Their setup/seal sections describe the former architecture only. Source-owned
+### Singleton request and outcome contract
+
+The current executable contract is `mtp_profile`, its bounded HTTP boundary and
+`local_client`, not archived setup text:
+
+- Only health/models and server-issued session create/GET/DELETE/session Chat
+  Completions; no stateless protocols, persistence/restore, diagnostics or images.
+  One cumulative 1 MiB body/preparation slot, no request queue; transport refusal
+  cannot revoke native ownership before coherent settlement/retirement.
+- Require configured Host, no Origin, JSON POST/DELETE, no content encoding/query/
+  upgrade or duplicate fence headers. Reject malformed/duplicate/nonfinite JSON,
+  wrong types/unknown fields before admission. Require model/messages/integer
+  `max_tokens`; optional temperature is zero, reasoning none and stream boolean.
+  No arbitrary sampling, seed, stop, stream_options, raw tokens or MTP switches.
+- String system/user messages and certified ordinary assistant history only;
+  tools are absent or exactly the published `mtp_profile.WEATHER`. Support one/two
+  complete `lookup_weather(city)` calls and ordered real string results. Preserve
+  retained tools/reasoning; never authorize effects from partial argument deltas.
+- Single canonical `X-DS41F-Request-Sequence` starts at 1 and binds server lifetime
+  plus exact body bytes. Active overlap, gaps, expired identity, changed bytes/
+  certified history/envelope or poison reject. Admission rejection consumes no
+  sequence. Settled exact-identity POST returns original JSON without model work,
+  even if original delivery streamed; this differs from ordinary MTP POST fencing.
+- Freeze one request/owned stream. After ambiguous delivery reconcile the **same**
+  identity; chunks/DONE/valid JSON are not permission. Positive versioned bound
+  reconstruction/profile/ordinary-message certificate grants continuation; real
+  encoding still checks exact IDs. GET exposes bounded outcome/fence, not native
+  token authority. Its latest slot expires on next admission.
+- The living client reserves before callbacks, retains at most 128 non-evicted
+  effects with 64 KiB string results and blocks uncertain effects/reexecution.
+  Negative/active/poisoned outcomes grant no effects; unrecoverable requires
+  explicit confirmed retirement/fresh decision, not replay or guessed recovery.
+  Unknown create/DELETE and failed retirement remain blocked. No crash-safe or
+  distributed exactly-once, client-restart recovery or native persistence.
+
+The [historical protocol account](archive/mtp-local-source-clone.md#capability-and-admission-v1)
+and [M41 qualification](archive/development/milestone-41-local-mtp-release-candidate.md)
+are reproduction/evidence citations only; current scope/ownership is defined above.
+The [prior guide edition](archive/editorial-baseline/mtp-local-release-candidate.md.txt)
+preserves its original delegation wording. Old setup/seal sections describe the
+former architecture only. Source-owned
 R1 native fixtures remain qualification tools; installed ordinary acceptance is
 `ds41f accept --profile mtp-serving-v1 --runtime-url URL --output receipt.json`.

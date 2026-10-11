@@ -1,0 +1,149 @@
+{
+  "schema": "ds41f.documentation.final_editorial_reconciliation.v1",
+  "base_commit": "730872fd833a7520bc1e8451a05e36a4bb3261cb",
+  "scope": "Final index/classification/typed contextual reference checker, following CURRENT compilation 01-09; no runtime/default/publication/qualification decision",
+  "preserved_editions": [
+    {
+      "original": "docs/README.md",
+      "snapshot": "docs/archive/editorial-baseline/docs-index.md.txt",
+      "sha256": "4977b2adb628c44d42ad2c3f0f8f509193a040c8cc252cef710824afc0dca744",
+      "byte_identical_snapshot": true
+    },
+    {
+      "original": "docs/doc-classification.json",
+      "snapshot": "docs/archive/editorial-baseline/doc-classification.json.txt",
+      "sha256": "a48efc7beb303745325c15ee151247bc18b670054f51e886043201569f6b8664",
+      "byte_identical_snapshot": true
+    },
+    {
+      "original": "docs/mtp-local-release-candidate.md",
+      "snapshot": "docs/archive/editorial-baseline/mtp-local-release-candidate.md.txt",
+      "sha256": "c297a2b5c4bd91c2ff14acbc60764c5043c86ba2ce6759e3af20fa3af0340b3e",
+      "byte_identical_snapshot": true
+    },
+    {
+      "original": "docs/web-application.md",
+      "snapshot": "docs/archive/editorial-baseline/web-application-730872f.md.txt",
+      "sha256": "595629a4b8498893570720f48c9a0bc8fe90b86fb8137b61a5848c2a5a8832d4",
+      "byte_identical_snapshot": true
+    }
+  ],
+  "original_ignored_evidence_now_versioned": [
+    {
+      "path": "artifacts/generation-policy/real-off-final.jsonl",
+      "sha256": "77bae9ad09f317de4e74df7110abce0edae9bd6109b25f6189f6199603c31d9d",
+      "bytes": 85002,
+      "matches_compilation_07": true,
+      "previously_ignored_now_versioned": true,
+      "regenerated": false
+    },
+    {
+      "path": "artifacts/generation-policy/real-mtp-final.jsonl",
+      "sha256": "b591847592412b016415c5da38d0e2464c57a0cfb01d239ebc8dd76b3ffc1a50",
+      "bytes": 142883,
+      "matches_compilation_07": true,
+      "previously_ignored_now_versioned": true,
+      "regenerated": false
+    }
+  ],
+  "changes": [
+    "Index now separates five primary pages, responsibility-specific contracts and source-scoped historical/evidence discovery instead of mixing milestone PASS/BLOCK/next-task with current architectural intent",
+    "Complete v2 role map replaces old CANONICAL/ABSORBED labels with CURRENT/HISTORICAL/EVIDENCE/RELEASE; original v1 is byte-preserved and provisional authority inventory is not regenerated",
+    "Current reference/promotion/release guides are not immutable release payloads; all actual R1/release materials remain outside the docs map and unchanged; RELEASE has zero entries in this documentation scope",
+    "Environment consolidation is source/migration EVIDENCE, not startup owner; milestones stay historical at retained locations without additional relocation/deletion",
+    "Current pages require contextual reviewed typed references for every noncurrent documentation or artifacts link; registry hashes source paragraph and literal URL/fragment, rejects normative/unknown relation, duplicate/stale/unreviewed/context drift and navigation from a contract",
+    "Source-edition relation targets inert literal editorial evidence only; no blanket archive allowlist, no unconditional history PASS inheritance",
+    "Required owners cannot be demoted/relabeled as navigation to evade checks, archive/inert source cannot become current, unsupported CURRENT reference-style/HTML links cannot silently escape the inline-link registry",
+    "Live Markdown file containment/existence and current outgoing/all incoming-current anchors are checked across every Markdown document; literal editions stay unparsed and original historical-internal anchors are not opportunistically rewritten",
+    "Historical chronology words are permitted as scoped evidence, not automatic rejection or obsolete policy; live old-native-repository dependency wording and retained native-origin/dependency/CMake/import/reconciliation guards remain enforced",
+    "Final paragraph review found two ambiguous normative/evidence edges: singleton guide now directly states current request/fence/certificate/client-effect contract from mtp_profile/internal/local-client owners, and Web labels tool report as original acceptance rather than current definition",
+    "Old singleton protocol/setup/M41 citations remain reproduction/evidence only, with current scope defined independently and no seal/editable/native-build recommendation",
+    "New documentation policy states checker limitations: auditable trusted review, not natural-language/model proof; inline/plain-code procedural semantics still need human review",
+    "No new model, native/package build, full R1, clean-room/Chrome/PTY/separate-PC campaign, installed deployment, receipt renewal, default change or source projection"
+  ],
+  "classification_counts": {
+    "CURRENT": 42,
+    "HISTORICAL": 110,
+    "EVIDENCE": 184,
+    "RELEASE": 0
+  },
+  "checker_result": {
+    "classified_files": 336,
+    "current_owners": 42,
+    "live_links": 533,
+    "reviewed_noncurrent_references": 92
+  },
+  "contextual_reference_review": {
+    "total": 92,
+    "relationships": {
+      "navigation": 16,
+      "source-edition": 28,
+      "evidence": 37,
+      "history": 11
+    },
+    "method": "Read actual containing paragraphs, not URL-prefix guessing. Reviewed original history/evidence/source-edition roles; narrowly corrected singleton and Web ambiguity. Registry construction helper stays temporary, not an automatic approval tool.",
+    "limitation": "Trusted human semantics review; static hash/role predicates cannot independently establish model correctness or detect a deliberately dishonest metadata/prose edit."
+  },
+  "validation": {
+    "all_classified_files": 336,
+    "all_live_markdown_file_targets": "PASS",
+    "current_outgoing_and_all_incoming_current_anchors": "PASS",
+    "snapshot_byte_identity": "PASS: four complete base Git blobs",
+    "diff_check": "PASS",
+    "focused_test_groups": [
+      {
+        "interpreter": ".venv/bin/python",
+        "files": [
+          "tests/test_documentation_authority.py",
+          "tests/test_build_release_docs.py",
+          "tests/test_m22_release_metadata.py"
+        ],
+        "passed": 50,
+        "log": "artifacts/documentation-authority/current-compilation-10-checker-tests.log",
+        "scope": "Actual repository closure plus positive/negative temporary-root checker/classification/context/containment/provenance boundaries and release metadata regressions"
+      },
+      {
+        "interpreter": "../ds41f-mlx_mtp-venv/bin/python",
+        "files": [
+          "tests/test_m41_profile.py",
+          "tests/test_m37_local_client.py",
+          "tests/test_web_application_boundary.py",
+          "tests/test_m43_promotion.py"
+        ],
+        "passed": 120,
+        "warnings": 1,
+        "log": "artifacts/documentation-authority/current-compilation-10-contracts-tests.log",
+        "scope": "Bounded singleton/admission/client certificate/effect/application regressions and unchanged projection mechanics using qualified historical M43 temporary clones, not present-HEAD promotion"
+      }
+    ],
+    "total_selected_python_tests_passed": 170,
+    "command_error": {
+      "log": "artifacts/documentation-authority/current-compilation-10-contracts-command-error.log",
+      "cause": "Initial guessed tests/test_local_mtp_client.py does not exist; pytest collected no tests. Corrected to actual tests/test_m37_local_client.py, no fixtures or code altered to bypass a failure."
+    },
+    "fresh_tracked_tree": "PASS: git checkout-index copy of staged tracked source/data only; no ignored/local build/model files, Git metadata, installed environment or package setup needed for checker",
+    "fresh_tracked_tree_log": "artifacts/documentation-authority/current-compilation-10-tracked-tree-check.log",
+    "native_independence": "PASS: 146 files; old repository production/build/imported-test dependency=0",
+    "native_independence_log": "artifacts/documentation-authority/current-compilation-10-native-dependencies.log",
+    "legacy_import_integrity": "PASS: 154 imports verified",
+    "legacy_import_integrity_log": "artifacts/documentation-authority/current-compilation-10-legacy-integrity.log",
+    "full_R1_or_model_release_qualification": false,
+    "known_unrelated_failures": "Earlier native-environment API/whole-reset guards and incomplete SimpleNamespace fixtures are unchanged; not rerun or declared repaired by this unit.",
+    "implementation_R1_native_release_archive_and_selected_receipt_files_compared_to_base": 555,
+    "preserved_file_hash_list": "artifacts/documentation-authority/current-compilation-10-preserved-files.json",
+    "no_push": true
+  },
+  "closure": {
+    "editorial_result": "Initial archive series, CURRENT-owner compilation/scope review and final index/classification/checker reconciliation closed at this bounded editorial scope.",
+    "not_claimed": [
+      "all-paragraph audit of every historical/evidence record",
+      "current HEAD promotability or later installed payload acceptance",
+      "fixed known runtime/test/native fixture failures",
+      "default MTP approval",
+      "full R1/general-runtime release completion",
+      "separate-machine LAN acceptance",
+      "new maximum-envelope or platform/security coverage"
+    ],
+    "retained_next_decisions": "Runtime/release work follows current implementation/qualification owners; no new campaign is requested by editorial closure. Future current prose/roles/edges need explicit review and checker tests, not automatic registry regeneration."
+  }
+}

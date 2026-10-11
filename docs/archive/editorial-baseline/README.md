@@ -97,6 +97,21 @@ Before the ninth CURRENT compilation:
 The tool/PDF reports are source-scoped evidence, not new qualification decisions.
 The LAN change uses the installed launcher without changing the network boundary.
 
+## Index and classification — `730872f`
+
+Before the final navigation/classification reconciliation:
+
+- [Documentation index source](docs-index.md.txt)
+- [Classification v1 source](doc-classification.json.txt)
+- [Bounded singleton guide source](mtp-local-release-candidate.md.txt)
+- [Application citation source](web-application-730872f.md.txt)
+
+The last two preserve the narrow normative/evidence edge wording corrected during
+final review, not a new API or application qualification.
+
+The prior CANONICAL labels and mixed current/historical navigation remain literal
+source evidence, not the final roles/edge policy.
+
 The `.md.txt` files are retained **source evidence**, not current instructions.
 Their Markdown, old relative links and paths are preserved verbatim; resolve
 relative references from each file's original location when studying that edition.
@@ -113,4 +128,5 @@ recorded in `artifacts/documentation-authority/current-compilation-01.json` and
 `artifacts/documentation-authority/current-compilation-06.json` and
 `artifacts/documentation-authority/current-compilation-07.json` and
 `artifacts/documentation-authority/current-compilation-08.json` and
-`artifacts/documentation-authority/current-compilation-09.json`.
+`artifacts/documentation-authority/current-compilation-09.json` and
+`artifacts/documentation-authority/current-compilation-10.json`.

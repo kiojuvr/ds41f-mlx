@@ -46,9 +46,12 @@ explicitly retires the known old runtime conversation; failure does not forget i
 
 Tools Auto/Ask/Off governs Browser execution of certified calls, not frozen
 protocol declarations. TUI uses Auto with explicit pause/continuation on errors.
-Search/HTML acquisition and retained PDF operations are application effects; see
-[tool capability](tool-capability-completion.md) and
-[PDF workflow](pdf-document-workflow.md). Default document tools retain original
+Search/HTML acquisition and retained PDF operations are application effects;
+[PDF workflow](pdf-document-workflow.md) owns the current document contract.
+[Original tool acceptance](tool-capability-completion.md) is source-scoped evidence,
+not a delegated current tool/limit definition. The
+[prior application edition](archive/editorial-baseline/web-application-730872f.md.txt)
+retains the earlier citation wording. Default document tools retain original
 PDFs and selected interpretations, not a growing series of chat images.
 Parser reads/search work on MTP. Fresh page observations require an existing OFF
 Vision runtime; they do not add image capability to main MTP Chat.
