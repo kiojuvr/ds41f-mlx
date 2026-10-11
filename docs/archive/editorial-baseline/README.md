@@ -60,6 +60,15 @@ Before the sixth CURRENT compilation:
 - [Operator Chat source](operator-chat.md.txt)
 - [Generation frontend source](generation-policy-frontends.md.txt)
 
+## Runtime boundary and observability pages — `6c8ab7a`
+
+Before the seventh CURRENT compilation:
+
+- [Generation core investigation source](generation-policy-investigation.md.txt)
+- [OFF live-delivery source](stateful-live-delivery.md.txt)
+- [Operator observability source](operator-live-observability.md.txt)
+- [Dynamic budget source](dynamic-capability-budget.md.txt)
+
 The `.md.txt` files are retained **source evidence**, not current instructions.
 Their Markdown, old relative links and paths are preserved verbatim; resolve
 relative references from each file's original location when studying that edition.
@@ -73,4 +82,5 @@ recorded in `artifacts/documentation-authority/current-compilation-01.json` and
 `artifacts/documentation-authority/current-compilation-03.json` and
 `artifacts/documentation-authority/current-compilation-04.json` and
 `artifacts/documentation-authority/current-compilation-05.json` and
-`artifacts/documentation-authority/current-compilation-06.json`.
+`artifacts/documentation-authority/current-compilation-06.json` and
+`artifacts/documentation-authority/current-compilation-07.json`.

@@ -1,117 +1,95 @@
 # Standard-OFF stateful live delivery
 
-**PASS in the bounded representative scope.** The separate
-[Web application closeout](web-application.md) also passes its current-source gates.
-R1 and broader runtime/release promotion remain deferred.
-Baseline findings are retained in `web-client-production-gaps.md` and
-`artifacts/web-client-investigation/`. This document describes the new delivery
-contract; a RUNNING/FAIL receipt is never a qualification pass.
+This page owns **OFF demand-driven transport over canonical native commit**.
+[Generation](generation.md) owns consumed history/settlement;
+[OFF API](api.md) owns endpoint behavior;
+[application state](web-application.md) owns frontend journals/effects.
+Ordinary MTP uses its separate Scheduler/pump contract, not this cursor/transport.
+Original HTTP PASS and later Web/UI acceptance are distinct historical scopes.
 
 ## Ownership and commit-before-visible
 
-M44/M45's `TargetGenerationSession.next_token` consumes a sampled token through
-one complete all-layer target transaction, synchronizes/validates the frontier,
-then publishes consumed history. Unconsumed lookahead is not committed history.
-M8 remains the sole live generation/cache owner. No token execution, rollback,
-replay, repack, new sampler or alternate cache is implemented in the transport.
+First-party target generation consumes a sampled token through the complete
+all-layer transaction, synchronizes/validates frontier, then publishes canonical
+history. Lookahead is not committed. M8 owns live generation/cache; transport
+implements no new token execution, sampler, rollback, replay, repack or cache.
 
-`runtime/live_turn.py:LiveRecipeTurn` is a worker-confined official recipe parser
-cursor. It advances only after a complete M8 target step. Therefore role/usage
-outputs depend on the committed prompt/bootstrap, and text/reasoning/tool deltas
-depend on already consumed canonical tokens. As in M35, parser output need not be
-one event per token. Active canonical progress belongs to generation, not an
-independent session record or socket-delivered frontier. GET reports busy during
-active work. Socket sends/yields are not application acknowledgements.
+Worker-confined `LiveRecipeTurn` advances the official recipe only after a complete
+M8 step. Role/usage follows committed prompt/bootstrap; text/reasoning/tool deltas
+follow consumed tokens. Parser event count is not token count. Active canonical
+progress belongs to execution, not a socket frontier; GET reports busy and
+writes/yields are not client acknowledgements.
 
-A semantic terminal calls M8 idle transfer **before** publishing its final recipe
-finish events. The same physical cache list transfers back to idle; lookahead is
-retired. `last_turn` publication occurs on the same worker before the finishing
-batch is returned. Cancellation does the same transfer at the last completed
-transaction, not an unsafe GPU abort or natural-max-token drain.
+A terminal transfers the same cache list back to idle and retires lookahead before
+final recipe finish events. Worker `last_turn` publication precedes returning that
+finishing batch. Cancellation settles at the last completed transaction, not an
+unsafe GPU abort or drain to the natural maximum.
 
 ## Live transport vs history / backpressure
 
-`serving/stateful_stream.py:StatefulStream` owns a response reservation, not model
-state. It drives one protected worker operation at a time using the existing
-single-worker executor. No background producer or event queue runs ahead.
-An advance returns a single parser batch. Every event in that batch is delivered
-in order before another target transaction can begin. ASGI send/TCP buffers are
-bounded downstream; a stalled send prevents subsequent generator demand. Explicit
-cancellation can settle a between-demand cursor even when a socket send is blocked.
-A batch may contain multiple official parser outputs, bounded by the request/output
-admission envelope; it is not an ever-growing accumulated response event list.
+`StatefulStream` owns one response reservation, not model state. It requests one
+protected operation on the existing worker executor at a time, with no background
+producer running ahead. Each returned parser batch is delivered before the next
+target transaction. A blocked send stops further demand; explicit cancellation
+can settle between demands even while send is blocked.
 
-The canonical response accumulator necessarily scales with the response. Only
-64 historical diagnostic events are retained; they are **never** used to deliver
-the stream. The full response, not the diagnostic tail, is used for GET recovery.
-An explicit unshielded asyncio checkpoint between events/transactions avoids the
-M35 socket-send cancellation-starvation defect.
+The pending batch is distinct from accumulated response/history. Canonical response
+storage scales with actual output; the bounded 64-event diagnostic tail is never
+the delivery source. GET uses the full latest response, not that tail. Explicit
+unshielded asyncio checkpoints admit disconnects rather than assuming every socket
+send suspends. Downstream buffering is not proof of client observation or a tested
+TCP saturation envelope.
 
 ## Disconnect, explicit Stop and settlement
 
-The response reserves busy state before headers or iterator startup. Response-level
-`InferenceStreamingResponse` cleanup closes even an unstarted iterator, so header
-send failure cannot strand a reservation. Each response clears only its own
-reservation. Admission while another request is busy rejects. Waiting for the
-single-flight lock is cancellable without touching another session's owner.
+Busy is reserved before headers/iterator startup. Response-level cleanup closes an
+unstarted iterator too; failed header send cannot strand ownership. Each response
+clears only its reservation. Busy admission rejects; cancellation while waiting
+for the single-flight lock cannot mutate another owner.
 
-A socket disconnect cancels the iterator. `_call` drains the current protected
-operation before cleanup. The transport gate serializes explicit Stop with that
-operation, including startup. Cleanup cancels at the completed transaction frontier,
-finalizes official parsing, publishes the canonical response, retires generation
-and releases the lock. Repeated cleanup is idempotent; settlement is never retried.
+Disconnect closes the iterator. Protected `_call` work drains before cleanup;
+the transport gate serializes Stop/start/advance. Settlement finalizes official
+parsing, publishes actual canonical outcome, retires generation and releases lock.
+Cleanup is idempotent; a failed settlement is not retried as mutable execution.
 
-`POST /v1/sessions/{id}/cancel` with `{ "request_id": "..." }` requests this same
-settlement and returns the settled session record. The request identity comes from
-`X-DS41F-Request-ID` on the SSE response, or `active_request_id` on busy GET. Stale
-identities reject with 409 and cannot cancel a newer turn. This is not MTP's
-sequence/body replay fence and does not implement automatic generation retries.
-Non-streaming compatibility execution retains its existing natural-turn behavior;
-the new Stop endpoint is specifically for active standard-OFF live streams.
+`POST /v1/sessions/{id}/cancel` takes `request_id` from SSE
+`X-DS41F-Request-ID` or busy GET `active_request_id`. Stale IDs reject with conflict,
+not cancellation of a later request. Its acknowledgement contains the session
+observation; authoritative reconciliation still uses count/identity/GET. This is
+not singleton sequence/body replay or production-MTP reserved-UUID identity.
+OFF Stop applies to live streams, not legacy nonstreaming natural-turn execution.
 
 ## Reconciliation and tool permission
 
-After disconnect/Stop the client must wait for GET to leave busy, then replace its
-provisional assistant with `last_turn.response_json`. That response may include a
-small committed but undelivered suffix. `last_turn.cancelled`, its request ID,
-request_count and frontier distinguish canonical settlement from local drawing.
-The protocol uses the official length finalization on interruption; cancellation
-is additionally explicit in the session record, not misrepresented as natural EOS.
+Wait for GET to leave busy, then replace provisional output with
+`last_turn.response_json` using request/application identity and expected count.
+A committed undelivered suffix may appear. Cancellation is explicit in the session
+record; recipe interruption finalizes length, not invented natural EOS.
 
-A finalized partial response is **not automatically ordinary-prefix reconstructable**.
-The existing official recipe reconstruction witness checks the exact canonical
-prefix. This check is used for cancelled turns and completed tool-call outcomes,
-now accepting the actual checkpoint for Vision validation. The witness does not
-execute tools, allocate a second cache, generate tokens or replay the prompt.
-Its full transcript/image bytes are not retained. Only the bounded certificate is
-published. A completed tool call is executable only if its certificate says so.
-Incomplete DSML/tool grammar or undecodable partial token bytes may be
-protocol-unrepresentable, as established in M36/M36R. In that case the cache is
-explicitly retired and GET says `state=unrecoverable`, `recovery_state=unrecoverable`.
-The diagnostic response is retained but conveys no tool execution permission.
-DELETE/fresh session is required; no silent rollback/completion/replay occurs.
+Finalized partial text is **not automatically ordinary-prefix representable**.
+Official reconstruction checks exact canonical IDs and checkpoint/image identity
+without another cache, model execution or replay. Only the bounded certificate,
+not its full witness transcript/image bytes, is retained. Completed calls grant
+effect permission only under a positive executable certificate.
 
-Protected parser/state failures similarly retire rather than advertise ambiguous
-idle authority. Legitimate ordinary exact-prefix continuation still uses existing
-M11/P6 admission; historical image bytes/identities must be retained unchanged.
+Incomplete tool/DSML grammar or undecodable bytes can retire the native cache and
+publish `unrecoverable` state with diagnostic outcome, not continuation/effect
+permission. Parser/native failures likewise retire rather than publish ambiguous
+idle authority. Explicit DELETE/fresh-session decisions are different from silent
+rollback, sampling onward, fabricated results or retained-history replay.
+Legitimate continuation keeps exact recipe prefix and old image identities.
 
 ## Evidence and scope exclusions
 
-- `tests/test_stateful_live_delivery.py`: native official parser with lifecycle
-  doubles; full >64-event delivery, pre-iteration cleanup/stale Stop, demand
-  backpressure and cancellation during a protected transaction.
-- `tools/qualify_stateful_live_http.py`: actual checkpoint HTTP stream, canonical
-  equality, slow reader, repeated real socket disconnect/explicit Stop, ordinary
-  continuation, tool terminal/one client-side result, Vision/new-image/text/cancel.
-- `artifacts/stateful-live/http.json`: durable RUNNING/FAIL/PASS receipt and source
-  hashes. This is HTTP qualification, **not** the final Web 12-step campaign.
+[Original HTTP receipt](../artifacts/stateful-live/http.json) and the
+[pre-compilation edition](archive/editorial-baseline/stateful-live-delivery.md.txt)
+retain exact source hashes, representative model stream/Stop/tool/image evidence,
+slow-reader setup and original PASS wording. RUNNING/FAIL is not PASS; neither an
+old HTTP result nor later Web acceptance qualifies every changed payload.
 
-The cancelled/plain-text representability gates pass with the real model. The
-current HTTP receipt also verifies application correlation, stale count rejection,
-full text/tool reconstruction and one finish event. Its slower reader pauses .8s
-per eight events. `tests/test_stateful_live_backpressure.py` additionally holds an
-ASGI send blocked and proves no further target demand, explicit Stop settlement,
-and unstarted header-failure cleanup. Mid-tool-prefix interruption executes zero
-tools and may explicitly retire, not claim universal resumability.
-TCP-buffer saturation, arbitrary image containers/Unicode/DSML prefixes and full
-R1/200K/1M are not implied by a bounded representative campaign.
+`qualify_stateful_live_http.py` is an existing reproduction driver, not a request
+to start a model campaign here. Focused delivery/backpressure/retirement tests
+exercise official parser/lifecycle seams, >64-event full delivery, protected cancel,
+blocked ASGI send and pre-iteration header failure. These do not prove arbitrary
+Unicode/DSML/image prefixes, universal resumability, TCP-buffer saturation,
+near-1M/long-context, full Vision, R1 or release scope.

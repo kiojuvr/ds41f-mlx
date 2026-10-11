@@ -1,310 +1,185 @@
 # Local operator TUI and live observability
 
-Activate the provisioned canonical environment, with the usual explicit
-`DS41F_CHECKPOINT` pointing at the external official model, then run **`ds41f`**.
-The terminal uses Python's optional-at-import stdlib `curses` module;
-Chat uses the provisioned runtime's existing `httpx`, with no new dependency. A terminal is required; missing curses/non-TTY gives an actionable
-error without affecting `ds41f start`, `inspect`, or `accept`. The frozen MTP
-package inventory is not expanded for a UI framework.
+This page owns **local service control, content-free logs/snapshots and metric
+interpretation**. [Operations](operations.md) owns installed environment/startup;
+[operator Chat](operator-chat.md) owns the independent composer/session controls.
+Observability is disposable projection, never execution, cache, settlement or
+application-history authority. Historical acceptance below is not current HEAD
+qualification or a deployment SLA.
 
-Dashboard keys: **S** Start, **X** graceful Stop, **R** Restart, **C** Chat mode,
-**V** Chat Server Stop, **Q** Quit, **D** toggle Diagnostics, **?** toggle help.
-On the dashboard **↑↓ / PgUp / PgDn** scroll the runtime log pane only;
-scrolling upward pauses follow at a sequence anchor. **L / End** returns to latest.
-The status/metrics above the pane never scroll. Arrows scroll secondary views.
-The footer stays at the bottom. Dashboard controls also remain in Diagnostics/help.
-Chat has its own composer/control mapping, described below.
+## Dashboard
 
-The dashboard puts NOW/current phase/phase elapsed/request elapsed and queue counts
-first, then performance and context, then compact alignment/frontier/replay/repack
-health. Color is limited to runtime-state and active-phase labels and actual
-warnings/errors. Headers and phase rails are not colored as a whole; healthy
-alignment rows are monochrome, with only anomalous fields emphasized in red.
-Ordinary labels and values use the default foreground, secondary labels are dim,
-and important numeric values are bold. MTP acceptance and
-alignment/frontier describe the last settled request; other metrics describe the
-current request, or the last request when idle. Idle only shows WAITING FOR CLIENT
-when the last settled finish reason was `tool_calls`.
+Run `ds41f` in the matching installed environment with configured checkpoint.
+The stdlib-curses terminal is optional-at-import; non-TTY/missing curses gives an
+actionable error without breaking headless start/inspect/accept. No UI framework
+or new model executor is added.
 
-At >=100 columns performance/context share two columns; at 70–99 they stack;
-smaller terminals use compact labels without dropping metric fields when space
-permits. Content width is bounded to 112 columns; stacked metric columns are
-bounded to 56 so labels and values do not drift apart on resize. Available height
-is spent on gaps between sections, then on the live runtime log pane below
-state integrity. At 132×57 the pane has roughly 30–38 rows (depending on request
-timings). It is omitted when fewer than three spare rows remain; it never
-removes existing information to make room for logs. Observed request
-timings use aligned cells rather than a long clipped line. The phase rail includes
-RECEIVED, QUEUED, CHECKPOINT and settlement as well as inference phases; complete
-phase tokens move to another row when necessary. It shows **only observed**
-completed/current phases, not presumed prior or future execution, and is not an
-ordered transition log (the projection retains durations, not transition history).
-Metric and phase layouts do not use prose wrapping; long log records wrap within
-the pane so settlement diagnostics are not silently clipped. Only physically short viewports drop timings and then
-the rail before reducing the core to an instrument strip; all details remain in
-Diagnostics. Raw cache, queue reasons, subphase timings and other low-level values
-continue to live in Diagnostics.
+**S** Start, **X** graceful Stop, **R** Restart, **C** Chat,
+**V** Chat Server Stop, **Q** Quit, **D** Diagnostics, **?** Help.
+Dashboard arrows/PgUp/PgDn scroll the log pane; **L/End** returns to latest.
+Metrics stay fixed and footer remains visible. Scroll-up pauses at a sequence
+anchor; expired records show a gap. Chat has its own key mapping.
 
-Request elapsed times refresh locally every 100ms, using the same machine's
-monotonic clock; snapshot polling is 400ms. The current authoritative snapshot
-has no lifecycle-start timestamp: LOADING MODEL therefore displays elapsed `—`
-(including rediscovery), never an observation-age timer presented as load time.
-Diagnostics states that lifecycle elapsed is not published. No spinner,
-percentage, progress bar or synthetic activity.
+NOW/observed phase/elapsed/queues lead, then performance/context and last-settled
+integrity. Phase rails show only observed completed/current phases, not a presumed
+execution sequence or transition history. Raw cache/queue/subtimings remain in
+Diagnostics. Healthy rows stay neutral; state/phase/warnings distinguish anomalies.
+Responsive columns, compact labels and bounded widths preserve the core; logs
+use spare height and disappear before displacing core information. Long log records
+wrap. Short viewports degrade timings/rail honestly, not synthesize metrics.
 
-See [Operator Chat mode](operator-chat.md) for composer keys, production streaming
-protocol, independent session ownership and interruption/retirement boundaries.
+Snapshot polling is 400ms; local elapsed refresh uses same-host monotonic time.
+No lifecycle-start timestamp is published: LOADING elapsed is `—`, not observation
+age passed off as load time. No synthetic percentage, spinner or progress bar.
+WAITING FOR CLIENT means idle after last `tool_calls`, not proof of tool activity.
 
 ## Process and control boundary
 
+```text
+TUI -> canonical ops start --profile mtp-serving-v1 -> runtime/backend
+                                                   -> loopback control
+    -> independent existing Chat Server launcher when requested
 ```
-curses TUI → canonical ds41f start --profile mtp-serving-v1
-                 → ds41f_mlx.serve / uvicorn / existing production backend
-                 → in-process loopback control thread
-           → existing ds41f_mlx.web (independent chat process, when requested)
-```
 
-Children use a new process session, no inherited terminal, and the same Python
-interpreter/canonical entry points. Quit/crash never signals them. TUI child
-stdout/stderr still goes to `/dev/null`, but runtime-owned structured history is
-retrieved separately; the TUI owns no child pipe. Full arbitrary exception details
-remain available from the headless launcher. TUI reports nonzero launcher exit as
-FAILED/CONFLICT. Reopen discovers live status and the recent log tail, not remembered
-PIDs or ownership modes. Once the runtime exits its in-memory history is gone;
-a TUI already connected retains its last observed tail until another runtime starts.
+Dashboard Start/Restart selects `mtp-serving-v1`, not a profile picker. Explicit
+OFF startup remains in operations; observing a ready OFF service does not change
+that launcher selection.
 
-Kernel listening sockets are the only singleton authority:
+Child processes use a new process session, no inherited terminal and canonical
+entry points. TUI owns no stdout/stderr pipe; Quit/crash does not signal services.
+Chat Quit's bounded own-session retirement is separate. Reopen discovers control
+state/recent runtime logs, not saved PIDs or execution ownership.
 
-* runtime/control: `127.0.0.1:18441` (all canonical runtime profiles)
-* TUI guard: `127.0.0.1:18442`
-* existing chat/control: `127.0.0.1:18443`
+Kernel listening sockets are singleton authority: runtime `127.0.0.1:18441`,
+TUI guard `:18442`, Chat control `:18443`. No daemon, PID/lock file, database,
+registry or multi-instance/ATTACH mode. Service bind is reserved before model load;
+an occupied service port without control is conflict, not permission to take it.
+SO_REUSEADDR allows restart after TIME_WAIT; no SO_REUSEPORT. SIGKILL releasing a
+socket does not restore native/session/effect state.
 
-There is no daemon, PID/lock file, registry, database, telemetry persistence,
-or multi-instance mode. Service socket is reserved before model loading,
-including refusal against a pre-upgrade/unrelated listener. The TUI displays
-CONFLICT for a default service port occupied without a control listener; it
-cannot control a pre-upgrade server. No ATTACH mechanism is provided.
-SIGKILL releases socket ownership automatically; `SO_REUSEADDR` allows immediate
-restart after TCP TIME_WAIT, **without** `SO_REUSEPORT`.
+Loopback-only `GET /ds41f/status`, runtime `GET /ds41f/logs` and empty-body
+`POST /ds41f/control/shutdown` are not serving-interface routes. Kernel peer must
+be loopback, Host exact numeric authority, Origin absent; forwarded headers grant
+nothing. Trusted-LAN runtime bind does not expose remote operator administration.
 
-`GET /ds41f/status`, runtime `GET /ds41f/logs`, and empty-body
-`POST /ds41f/control/shutdown` exist only on
-the respective loopback control socket. Shutdown sets the existing uvicorn
-Server's `should_exit`, draining requests and invoking the existing shutdown /
-shielded retirement path. After execution has retired, runtime control remains
-available for a fixed 600ms to expose the final shutdown tail. It never waits
-for a TUI/consumer acknowledgement and does not delay model settlement. Restart waits for control socket disappearance then
-calls the canonical Start (retaining discovered host/port). Stop does not force
-kill; very long requests/loading may take time. Restart times out after 120s
-without starting a competing runtime. Model loading is owned by canonical
-startup, **not** by telemetry/TUI; cold load takes about 100s on this machine.
-
-The control listener binds literal IPv4 loopback, checks the kernel peer's
-loopback address and exact numeric Host, and rejects Origin and nonempty
-shutdown bodies. Forwarded headers confer no authority. LAN serving can still
-bind `0.0.0.0`; there are no operator-control routes on that serving interface
-(LAN shutdown returns 404). No new remote administration surface.
+Shutdown sets existing uvicorn `should_exit` and drains shielded retirement.
+Control keeps final log tail for 600ms **after execution retirement**, without
+consumer ACK or delaying settlement. Stop never force-kills. Restart waits for
+control disappearance, retaining discovered host/port; after 120s it refuses
+another Start rather than launch a competing model. Loading remains canonical
+startup authority, not telemetry; historical load times are not an SLA.
 
 ## Runtime logs: `ds41f.logs.v1`
 
-The runtime process owns a **512-record** ring. Each record has occurrence-time
-UTC `timestamp` (from Python's LogRecord, not polling time), increasing
-`sequence`, `severity`, `component`, and a single-line `message` capped at 1024
-characters. Sequence is ordering authority; wall-clock adjustments do not reset
-it. A random `runtime_id` distinguishes restart from the same process continuing.
-Logging/formatting failures are swallowed. Ring locks cover only bounded scalar
-copies, never I/O, model execution or Scheduler/state work.
+Runtime owns a **512-record** in-memory ring. Fields are occurrence `timestamp`,
+monotonic-increasing `sequence`, severity, component and single-line message capped
+at **1024 characters**. Occurrence epoch is rendered as UTC, not polling time.
+Sequence orders records despite wall-clock changes; `runtime_id` distinguishes
+restart. Locks copy only bounded scalar records, never model/native work or I/O.
 
-`GET /ds41f/logs?after=<sequence>&limit=<1..128>` returns detached `records`,
-`oldest_sequence`, `latest_sequence`, `next_sequence`, `gap`, and `runtime_id`.
-Without `after`, it returns the latest batch. Poll from `next_sequence` to catch
-up; `gap` says older entries expired, not that execution failed. The same numeric
-Host / loopback-peer / no-Origin restrictions as status apply. There is no log
-route on the serving API and no chat history change. Status snapshots contain no
-logs. Polling is bounded at 128 records per response; TUI retains at most 512
-records, initially the latest 128. A paused anchor stays fixed as new records
-arrive; expired anchors visibly report a history gap. INFO stays monochrome,
-WARNING yellow, ERROR/CRITICAL red. Timestamp and sequence appear on each record;
-wrapped continuations are indented. TUI component names omit the redundant
-`ds41f.operator.` prefix.
+`GET /ds41f/logs?after=<sequence>&limit=<1..128>` returns schema/runtime ID,
+records, oldest/latest/next sequence and `gap`. Without cursor, return latest batch;
+continue from next sequence. Gap means expiry, not execution failure. TUI initially
+fetches latest 128 and retains at most 512; paused anchors remain fixed.
+Snapshots contain no logs; no serving log route or persistent history is added.
+Runtime exit loses its ring; a connected TUI may retain its observed tail until
+another runtime ID appears.
 
-A consumer may quit or hit its one-second HTTP timeout while control is preparing
-an answer. Connection loss / send timeout during **headers or body** closes that
-request quietly; it is not a runtime error and must not generate a socketserver
-traceback. Serialization and unexpected I/O failures are not swallowed. A shutdown
-already requested remains committed even if its HTTP acknowledgement cannot be sent.
+Safe operator startup/lifecycle/request/settlement and audited uvicorn lifecycle
+messages enter one ring path. Access URLs/queries and arbitrary third-party text
+do not. Other warning/error entries carry content-free component/severity notices
+and exception type, not raw exceptions/tracebacks. Prompts, responses, reasoning,
+tools, token IDs and source/file contents are not newly logged there.
 
-Canonical startup/admission, lifecycle/model load, received/finished request and
-existing MTP settlement output use one logging path. The existing settlement
-message is moved, not copied; its exception value becomes the exception type.
-Uvicorn's default handlers are disabled for the runtime so lifecycle messages are
-not duplicated. Its audited lifecycle templates enter the ring; access paths,
-queries and arbitrary third-party messages do not. Other WARNING/ERROR records
-enter as content-free component/severity notices (with exception type when
-available), never raw exception text or traceback. Prompt, response, reasoning,
-tool arguments/results, tokens and file/source contents are not logged anew.
+Headless output preserves original diagnostics/access/tracebacks with UTC stamps.
+A daemon writer uses a bounded 512-item queue and 16 KiB/item ceiling; slow/broken
+stderr cannot block inference and may drop output. The independent safe ring is
+not that queue. Exit drains for at most 200ms; `--print-config` stays JSON.
+No stdout interception, telemetry dependency or persistent log service.
 
-Headless output retains original third-party diagnostics, access output and
-tracebacks with UTC timestamps; safe operator records also show sequence.
-It uses a daemon writer and bounded 512-item queue (16 KiB per output item).
-A broken/slow stderr cannot block inference: output may drop under saturation,
-while the independent ring still retains its recent safe records. There is no
-stdout/stderr interception, database, daemon, telemetry dependency or persistent
-log history. Process exit gives headless output at most 200ms to drain; a slow
-stream is never awaited indefinitely. `--print-config` remains machine-readable JSON.
+Header/body connection loss or timeout closes a control reply quietly. It does
+not undo an already committed shutdown or become a runtime failure. Serialization
+and unrelated unexpected I/O failures remain visible. Logging/projection failures
+never determine execution admission/settlement.
 
 ## Snapshot: `ds41f.live.v1`
 
-Root fields: `schema`, `sampled_at`, `sampled_mono`, `state`, `endpoint`,
-`current_request`, `requests`, `active_requests`, `queued_requests`,
-`last_request`, `cache`. Lifecycle: STARTING, LOADING, READY, STOPPING, FAILED.
-TUI derives BUSY from observed in-flight requests; STOPPED/CONFLICT from discovery.
+Root: schema, sampled wall/monotonic times, lifecycle state, endpoint, current
+request, requests, active/queued counts, last request and cache summary.
+Lifecycle is STARTING/LOADING/READY/STOPPING/FAILED; TUI derives BUSY and discovery
+STOPPED/CONFLICT, not a new native state machine.
 
-Each request contains server-generated opaque `request_id`,
-`request_received_at`, `request_started_at`, `request_started_mono`,
-`current_phase`, `phase_started_at`, `phase_started_mono`, `last_progress_at`,
-`completed_phase_durations`, `metrics`. When applicable: `queue_entered_at`,
-`queue_entered_mono`, `queue_reason`, `first_token_at`, `last_token_at`,
-`finish_reason`, `finished_at`, `finished_mono`.
+Request: opaque generated ID, received/started wall/monotonic times, current phase,
+phase-start times, last progress, accumulated completed-phase durations and metrics.
+When applicable: queue-entered times/reason, first/last token times, finish reason
+and finished times. Current requests plus one last completion are retained, not
+an unlimited outcome archive.
 
-Projection phases (not an execution state machine):
-
-```
-RECEIVED → [QUEUED/http_preparation] → ENCODING
-         → QUEUED/scheduler_worker → CACHE_LOOKUP ↔ RESTORING
-         → SUFFIX_APPEND ↔ CHECKPOINT_CAPTURE → P5_HANDOFF
-         → DECODING → SETTLING → DONE / ERROR
+```text
+RECEIVED -> [QUEUED/http_preparation] -> ENCODING
+  -> QUEUED/scheduler_worker -> CACHE_LOOKUP <-> RESTORING
+  -> SUFFIX_APPEND <-> CHECKPOINT_CAPTURE -> P5_HANDOFF
+  -> DECODING -> SETTLING -> DONE / ERROR
 ```
 
-ENCODING includes ordinary recipe conversion/render/encode; their completed
-subtimings remain separate. RECEIVED includes bounded body receipt. Queue age
-includes waiting for the existing HTTP preparation lease or worker/Scheduler;
-queue reason identifies which boundary. Counts include admitted preparation
-requests, not just Scheduler.running/waiting. The active generation is prioritized
-in NOW while other queued requests and oldest queue age remain visible.
+This is projection, not execution-transition authority. Received includes body
+receipt; encoding includes recipe conversion/render/encode. Counts include HTTP
+preparation, not only native Scheduler work. NOW prioritizes generation while
+other queues/oldest age stay visible. Queue reason distinguishes preparation lease
+from worker/Scheduler waiting.
 
-Phase transition durations accumulate per request in milliseconds (including
-repeated append/capture or lookup/restore segments). Existing authoritative trace
-measurements are published separately in seconds: recipe convert/render/encode,
-lookup, paired restore, prompt capture, suffix append, P5, first native/canonical
-decode call and total TTFT. They need not equal projection durations: projection
-also includes boundary and worker overhead. TTFT retains the existing handler
-arrival-to-first-canonical definition; request elapsed starts earlier at HTTP
-boundary arrival and includes preparation-lease waiting.
-
-IDLE explicitly means no request waiting inside this server. Last `tool_calls`
-finish plus no active request shows WAITING FOR CLIENT. This says nothing about
-whether a client tool is running, or whether another continuation will arrive.
-No client behavior is inferred.
+Phase durations accumulate milliseconds across repeated segments. Authoritative
+recipe/lookup/restore/capture/append/P5/decode/TTFT trace seconds are separate and
+need not equal projection durations; boundary/worker overhead differs. TTFT retains
+handler-entry-to-first-canonical definition; request elapsed begins at earlier
+HTTP boundary arrival including preparation-lease wait. Do not sum nested timers.
+Idle means no waiting server request; it predicts no external client continuation.
 
 ## Metric definitions / privacy
 
-* Context: actual encoded prompt / admitted context envelope.
-* Cache hit: `cached_tokens / prompt_tokens`, per request; cached/new counts
-  displayed separately. The paged cache's query hit rate is **not** this metric.
-* New: prompt minus cached. NEW PREFILL: `new - 1` (nonnegative), excluding P5's
-  terminal holdout. Prefill tok/s divides this actual append work by
-  `suffix_append_s`, excluding checkpoint capture. A full-prefix hit never
-  claims the full prompt was newly prefilled.
-* Decode tok/s: generated canonical token count / accumulated native decode-call
-  seconds (not end-to-end delivery throughput).
-* MTP accept: sum(depth_accepted) / sum(depth_drafted), last **settled** request
-  only; no mutable native state is inspected by the TUI/control thread.
-* Replay/repack: confirmed request trace counters. Frontier/alignment: last
-  settled canonical frontier and equality of all target/DSpark offsets. Unknown
-  values are `—`, never optimistic zeros/alignment.
-* Cache: scalar retained paged/checkpoint summary, copied on the worker after
-  settlement; not a live native inspection.
+| Metric | Interpretation |
+| --- | --- |
+| Context | Actual encoded prompt / admitted context envelope |
+| Cache hit | Actual paired cached/prompt count per request, not paged query hit rate |
+| New / new prefill | Prompt minus cached / nonnegative new minus P5 terminal holdout |
+| Prefill tok/s | Actual append work / suffix append seconds, excluding checkpoint capture |
+| Decode tok/s | Canonical generated count / accumulated native decode-call seconds, not delivery throughput |
+| MTP accept | Sum accepted drafts / sum drafted, last settled request only |
+| Frontier/alignment | Last settled canonical frontier and all target/DSpark equality |
+| Replay/repack | Confirmed trace counters, not optimistic defaults |
+| Cache summary | Worker-copied scalar retention stats after settlement, not live native inspection |
 
-The worker/HTTP authority publishes explicit allowlisted scalar counts/timings;
-control returns a detached deep copy. No prompt, response, reasoning, tool args,
-results, tokens, file/source contents, native objects or exception text enters
-telemetry. Diagnostic update failures are swallowed, never inference decisions.
-Only current requests and one last completion are retained in process memory.
+Unknown fields are `—`, never guessed zero/alignment. No control/TUI thread reads
+mutable native state. Worker/HTTP allowlisted scalars publish; control returns a
+detached deep copy. No content, native objects or raw exception text enters the
+projection. See [performance](performance.md) for comparison/measurement scope.
 
 ## Runtime log acceptance (installed package)
 
-[Focused receipt](operator-runtime-log-acceptance.json) records the installed
-wheel SHA and actual 132×57 curses acceptance. Final-package startup/admission,
-model load, READY, a real HTTP request, aligned settlement (frontier 25,
-replay/repack 0) and graceful shutdown appeared in the dashboard with occurrence
-UTC timestamps and sequences 1–16. Quit/Reopen rediscovered the same runtime ID
-and settlement tail; arrows paused follow and L restored it. Resize to 80×28,
-40×10 and back preserved the footer/core (40×10 omits logs). Long settlement
-records wrapped, and final shutdown/retirement logs remained visible after STOPPED.
-Raw ANSI was decoded including ncurses' CSI scroll-region operations and terminal
-cells inspected. The prompt sentinel was absent from the log API. Headless
-singleton conflict and admission refusal retained timestamped diagnostics and
-exit 2. Runtime and TUI were gracefully stopped after acceptance.
-
-**59 affected tests pass**, including bounded retrieval/gaps, privacy, reconnect
-and restart identity, paused anchors, layout degradation, broken logging and a
-stalled output sink. Model/dependency/native identities and execution semantics
-are unchanged. The new wheel was constructed with the existing one-way package
-builder and installed non-editably; no checkout execution or validation bypass
-was used for runtime acceptance. No OFF/long-context/general-release campaign or
-release promotion is claimed. Local raw captures/driver/wheel are retained under
-`artifacts/operator-runtime-logs/`; the concise receipt is versioned above.
+[Runtime log receipt](operator-runtime-log-acceptance.json) records its installed
+wheel, actual PTY/model/request/shutdown timeline, privacy and rediscovery checks.
+The [earlier observability edition](archive/editorial-baseline/operator-live-observability.md.txt)
+retains all exact sequences/frontiers/rates, regression counts, terminal sizes,
+source/seal steps, failure handling and prior acceptance narratives. These are
+historical inputs, not fresh later-package approval.
 
 ### Control-disconnect follow-up
 
-The reported `BrokenPipeError` on status response delivery is covered by explicit
-transport-loss handling shared by status, logs and shutdown replies. **50** focused
-operator tests pass; **11** disconnect cases also pass against the newly installed
-non-editable wheel from `/tmp`, using isolated disposable control listeners (no
-checkout runtime or model load). Real TCP resets before response delivery produce
-no socketserver error, subsequent polling succeeds, and shutdown remains committed.
-Header/body BrokenPipe, reset, abort and timeout paths are tested; invalid JSON
-scalars and unrelated OSError still fail visibly. Wheel SHA:
-`01c0ffab35e32763144ae22ad5d319a4ce4c00a17ac447dcce179815087b4636`.
-This narrowly scoped follow-up does not claim a rerun of the model/TUI timeline
-above or additional model qualification.
+The original edition retains separate installed-wheel reset/header/body/timeout
+checks and SHA. Those disposable control-listener tests did not load a model or
+rerun the earlier TUI/model timeline. Current transport semantics are defined above;
+compilation repeats no installed-wheel campaign.
 
 ## Dashboard presentation acceptance (historical, before runtime logs)
 
-The presentation redesign leaves the projection schema, runtime, launcher and
-lifecycle methods unchanged. Focused tests cover states, queues, honest unknowns,
-metric definitions, content exclusion, observed-only rails, layout breakpoints,
-height degradation, integrity anomalies, diagnostics and help. A real curses PTY
-passes exercised 110×32, 80×28, 60×20/26 and 40×10 dashboard sizes, Diagnostics resize
-and scrolling, help and Quit. Captured terminal cells were inspected for hierarchy,
-column alignment, clipping and the stable footer. This pass used disposable
-content-free Projection fixtures, not model inference; the loaded-runtime/control
-acceptance below is historical and is not claimed as rerun for this UI-only change.
+Original fixture/PTY layout and scroll tests used content-free projection data,
+not inference. They do not turn presentation redesign into model qualification.
+Exact geometry and observations remain in the earlier edition.
 
 ## Actual local acceptance (pre-redesign runtime/control)
 
-Verified using the installed `ds41f` executable through a real PTY and real
-OpenAI-compatible requests on the provisioned MTP environment:
-
-* TUI/second-TUI refusal; Start; STARTING/LOADING/READY; second runtime refusal
-  even on a different service port.
-* Received/current phases and locally advancing elapsed; completed timings;
-  concurrent-request queue; IDLE; tool_calls/client-wait and paired continuation.
-* Repeated prompt: 19/21 cached, 128 generated; replay/repack 0, frontier 149,
-  target/DSpark aligned; MTP accepted 94/95 drafts.
-* Tool continuation: 330/351 cached (94.0%), 21 new / 20 actual prefill tokens,
-  TTFT ~401ms, frontier 354, aligned, replay/repack 0.
-* Quit preserves runtime; reopen rediscovers it; graceful Stop and Restart;
-  actual loaded-runtime SIGKILL followed immediately by canonical headless Start
-  succeeds without cleanup; LAN `192.168.68.56` cannot connect to control and
-  gets 404 for serving-port shutdown.
-* Existing chat process Start, `/api/status`, graceful Stop.
-* Final-source smoke also passed: TUI Start, STARTING/LOADING/READY/STOPPING,
-  real repeated request with 25/27 cached tokens, TTFT 183ms, frontier 59,
-  aligned, replay/repack 0; sentinel prompt/response absent from snapshot;
-  Quit/Reopen and TUI graceful Stop.
-
-Small warmed check (two repeated 128-token requests per condition): no consumer
-~43.03 tok/s vs TUI + **additional 50Hz** snapshot sampling ~42.89 tok/s (~0.33%
-change). Warm repeat TTFT 165.8ms vs 167.4ms; first repeats 177.2ms vs 190.6ms.
-No sustained material decode penalty observed. This is a small operational
-check, not a statistically powered benchmark or proof of zero overhead.
-
-Regression sets pass: **219** in the admitted MTP environment plus **16**
-standard-OFF capacity tests in `.venv` (their native recipe pins differ). Runtime source admission inventory
-and local installation seal were updated only for these reviewed source changes;
-model/dependency/native identities, default profile and release promotion remain
-unchanged. Remaining scope: no remote/persistent-history/alerting infrastructure; no new
-long-context campaign was run, so the earlier ~220K-context qualification is not
-claimed as rerun here.
+Original loaded-runtime/control/queue/tool/stop/restart/SIGKILL observations,
+small warmed overhead comparison and source-seal counts remain unchanged in the
+edition. The finite overhead check is not statistically powered or zero-cost proof.
+No remote administration, persistence, long-context rerun or release promotion is
+inferred. Local-seal refresh wording is historical; installed admission now governs.
