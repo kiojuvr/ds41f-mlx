@@ -1,6 +1,7 @@
 """Canonical M35 artifact gates, separate from live checkpoint workloads."""
 import hashlib
 import json
+import subprocess
 from pathlib import Path
 import unittest
 
@@ -14,13 +15,20 @@ class EvidenceTests(unittest.TestCase):
         cls.q = json.loads((ART/'qualification.json').read_text())
         cls.http = json.loads((ART/'http.json').read_text())
         cls.cases = {c['name']:c for c in cls.http['cases']}
+        # Follow the receipt's final-commit resolver, not today's source paths.
+        cls.source_commit = subprocess.check_output(
+            ['git', 'log', '-1', '--format=%H', '--', 'artifacts/m35/qualification.json'],
+            cwd=ROOT, text=True).strip()
+        assert cls.source_commit
 
     def test_identity_and_sources(self):
         self.assertEqual(self.q['decision'], 'HTTP_SSE_QUALIFIED_BOUNDED_INTERNAL_SINGLETON')
         self.assertEqual(self.http['status'], 'PASS')
         self.assertEqual(self.q['identities']['status'], 'PASS')
         for path, digest in self.q['source_hashes'].items():
-            self.assertEqual(hashlib.sha256((ROOT/path).read_bytes()).hexdigest(), digest, path)
+            source = subprocess.check_output(
+                ['git', 'show', f'{self.source_commit}:{path}'], cwd=ROOT)
+            self.assertEqual(hashlib.sha256(source).hexdigest(), digest, path)
         for path, digest in self.q['evidence_hashes'].items():
             self.assertEqual(hashlib.sha256((ART/path).read_bytes()).hexdigest(), digest, path)
 

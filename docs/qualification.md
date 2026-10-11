@@ -87,8 +87,8 @@ Public-disabled and next-task statements in this section describe those original
 internal milestones, not current `mtp-serving-v1`. Their receipts and original
 protocol boundaries remain evidence.
 
-[M33](milestone-33-protocol-qualification.md) closed the protocol gate.
-[M34](milestone-34-operational-qualification.md) now qualifies **bounded guarded
+[M33](archive/development/milestone-33-protocol-qualification.md) closed the protocol gate.
+[M34](archive/development/milestone-34-operational-qualification.md) now qualifies **bounded guarded
 singleton operation** on its exact isolated candidates plus a narrow native
 cache-ownership transfer correction: 90-turn/three-session soak, 12-turn
 cancellation/re-entry, 16 interruption/fault cases, and paired 4K/12K controls.
@@ -96,7 +96,7 @@ Observed replay/repack are zero; cache/frontier, semantic ownership and delivery
 prefixes remain coherent. This supersedes the M25 blocker only for this guarded
 internal path, not unmodified upstream or public serving.
 
-[M35](milestone-35-http-sse-qualification.md) additionally qualifies **bounded
+[M35](archive/development/milestone-35-http-sse-qualification.md) additionally qualifies **bounded
 internal single-flight HTTP/SSE transport**: 18 real HTTP turns, ordinary and
 semantic-terminal disconnect recovery, slow consumers, tool-result re-entry and
 Rust iterator drop, with zero replay/repack. Explicit backend object injection

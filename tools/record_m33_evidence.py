@@ -65,7 +65,8 @@ local_sources=[
     'tools/m33_semantic_tests.py','tools/m33_semantic_extra_tests.py','tools/m33_recipe_clone_driver.rs',
     'tools/run_m33_live_semantics.py','tools/run_m33_interruptions.py','tools/run_m33_tool_reentry.py','tools/run_m33_guard_bench.py',
     'tools/record_m33_evidence.py','tests/test_m33_protocol_evidence.py',
-    'docs/milestone-33-semantic-horizon.md','docs/milestone-33-protocol-qualification.md']
+    'docs/archive/development/milestone-33-semantic-horizon.md',
+    'docs/archive/development/milestone-33-protocol-qualification.md']
 identity['ds41f_source_hashes']={p:sha(ROOT/p) for p in local_sources}
 save('runtime-identities',identity)
 parity=load('canonical-parity');preview=load('native-preview');clones=load('source-preview-clone')

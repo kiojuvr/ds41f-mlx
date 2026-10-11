@@ -165,8 +165,8 @@ contracts unless new evidence requires a substantive architectural revision.
 Their qualified scopes remain bounded: internal guarded proofs are not claims
 that the current public OFF API implements every internal feature.
 
-- **Semantic-horizon ownership** ([M33](milestone-33-semantic-horizon.md),
-  [qualification](milestone-33-protocol-qualification.md)): authoritative recipe
+- **Semantic-horizon ownership** ([M33](archive/development/milestone-33-semantic-horizon.md),
+  [qualification](archive/development/milestone-33-protocol-qualification.md)): authoritative recipe
   preview does not advance canonical state. A predicted completing response stays
   unforwarded until canonical emission; ownership binds generation and absolute
   response ordinal, not token identity. Permitted one-token quiescence repair
@@ -177,8 +177,8 @@ that the current public OFF API implements every internal feature.
   are distinct. Coherent caches, valid JSON or delivered SSE do not prove an
   ordinary continuation is representable.
 - **Native/cache lifecycle and exact-prefix continuation**
-  ([M34](milestone-34-operational-qualification.md),
-  [M35](milestone-35-http-sse-qualification.md)): one executable cache authority;
+  ([M34](archive/development/milestone-34-operational-qualification.md),
+  [M35](archive/development/milestone-35-http-sse-qualification.md)): one executable cache authority;
   ownership transfer survives prior-owner close without reviving revoked owners.
   Shielded native phases and exact response leases govern coherent-boundary
   cancellation, settlement and retirement. Actual ordinary recipe re-encoding

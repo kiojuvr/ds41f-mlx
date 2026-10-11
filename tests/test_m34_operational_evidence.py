@@ -1,6 +1,7 @@
 """M34 is fresh measured evidence, not an inheritance of M33/OFF soak claims."""
 import hashlib
 import json
+import subprocess
 from pathlib import Path
 import unittest
 ROOT=Path(__file__).resolve().parents[1]
@@ -9,6 +10,13 @@ class M34Evidence(unittest.TestCase):
     def setUpClass(cls):
         cls.q=json.loads((ROOT/'artifacts/m34/qualification.json').read_text())
         cls.soak=json.loads((ROOT/'artifacts/m34/soak.json').read_text())
+        # The receipt qualifies its original source, not later development HEAD.
+        cls.source_commit=subprocess.check_output(
+            ['git','log','-1','--format=%H','--','artifacts/m34/qualification.json'],
+            cwd=ROOT,text=True).strip()
+        assert cls.source_commit
+    def historical_source(self, path):
+        return subprocess.check_output(['git','show',f'{self.source_commit}:{path}'],cwd=ROOT)
     def test_gate(self):
         self.assertEqual(self.q['decision'],'OPERATIONALLY_QUALIFIED_BOUNDED_SINGLETON')
         self.assertTrue(all(self.q['checks'].values()))
@@ -18,10 +26,10 @@ class M34Evidence(unittest.TestCase):
     def test_hashes(self):
         for path,sha in self.q['evidence_sha256'].items():
             with self.subTest(path=path):
-                self.assertEqual(hashlib.sha256((ROOT/path).read_bytes()).hexdigest(),sha)
-        identity=self.q['identities']
-        for path in ['ds41f_mlx/runtime/recipe_semantic_guard.py','ds41f_mlx/runtime/mtp_lifecycle.py','ds41f_mlx/prefill_fp8_mlx/handoff.py']:
-            self.assertEqual(hashlib.sha256((ROOT/path).read_bytes()).hexdigest(),self.q['current_runtime_sources'][path])
+                data=(ROOT/path).read_bytes() if path.startswith('artifacts/') else self.historical_source(path)
+                self.assertEqual(hashlib.sha256(data).hexdigest(),sha)
+        for path,sha in self.q['current_runtime_sources'].items():
+            self.assertEqual(hashlib.sha256(self.historical_source(path)).hexdigest(),sha,path)
     def test_frontiers_and_terminal_ownership(self):
         for t in self.soak['turns']:
             with self.subTest(session=t['fresh_session'],turn=t['turn']):

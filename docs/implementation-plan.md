@@ -318,7 +318,7 @@ turns qualify bounded canonical-before-visible streaming, tool-result re-entry,
 real disconnect/slow-consumer recovery and existing Rust iterator drop. Explicit
 object injection only; no public/release selector. Shielded-loop cancellation
 starvation and protocol/response ownership transitions are corrected without
-changing M33/M34 runtime authority. See [M35](milestone-35-http-sse-qualification.md).
+changing M33/M34 runtime authority. See [M35](archive/development/milestone-35-http-sse-qualification.md).
 
 M36 investigated the pending-byte/agent recovery gap and remains blocked as
 recorded above. Release/public/default promotion and longer-context HTTP operation
@@ -331,7 +331,7 @@ is preserved. Fresh 90-turn/three-session and 12-turn cancellation/re-entry
 checkpoint evidence establishes zero replay/repack, coherent frontiers and
 ownership, bounded resource behavior and useful acceleration. Active cancellation
 now uses the existing native row-view extraction seam before owner removal;
-P6 capability checks remain intact. See [M34](milestone-34-operational-qualification.md).
+P6 capability checks remain intact. See [M34](archive/development/milestone-34-operational-qualification.md).
 Production/public MTP, persistence, immediate abort and concurrency remain unsupported.
 
 M35 separately qualifies bounded internal HTTP/SSE integration. Public or default

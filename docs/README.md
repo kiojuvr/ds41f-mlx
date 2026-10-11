@@ -57,12 +57,12 @@ Canonical current-state documents:
 - [M37 local-client integration](milestone-37-local-client-integration.md) — internal reusable sequence-fenced recovery/tool client, explicit DELETE/fresh and expired identities; no release promotion
 - [M36R recovery admission](milestone-36r-recovery-admission.md) — bounded official-recipe reconstruction certificates and local request/tool fences; nonrepresentable outcomes require DELETE, no release promotion
 - [M36 client recovery investigation](milestone-36-client-recovery-qualification.md) — BLOCKED on unfinished canonical protocol representability; fail-closed tool settlement, partial-UTF-8 and finite socket-pressure evidence
-- [M35 HTTP/SSE qualification](milestone-35-http-sse-qualification.md) — bounded internal single-flight transport, disconnect/re-entry and Rust drop qualified; public/default MTP remains disabled
-- [M34 operational qualification](milestone-34-operational-qualification.md) — bounded guarded singleton soak/recovery qualified; native cancellation ownership-transfer defect fixed, production/public MTP remains disabled
-- [M33 protocol qualification](milestone-33-protocol-qualification.md) — PROTOCOL_GATE_SOLVED for the isolated native singleton; M34 operational qualification authorized, production MTP remains OFF
-- [M33 semantic horizon design](milestone-33-semantic-horizon.md) — strong unforwarded-terminal invariant and native initialization/chain/alignment ownership
-- [M32 native recipe gate](milestone-32-native-recipe-gate.md) — full ARM64/OpenCV build and native parity pass; initialization commit edge blocks semantic MTP qualification, no M33 authorization
-- [M31 recipe semantic session](milestone-31-recipe-semantic-session.md) — candidate upstream extension and source parity; real native build blocked, no live semantic MTP gate
+- [M35 HTTP/SSE qualification](archive/development/milestone-35-http-sse-qualification.md) — bounded internal single-flight transport, disconnect/re-entry and Rust drop qualified; public/default MTP remains disabled
+- [M34 operational qualification](archive/development/milestone-34-operational-qualification.md) — bounded guarded singleton soak/recovery qualified; native cancellation ownership-transfer defect fixed, production/public MTP remains disabled
+- [M33 protocol qualification](archive/development/milestone-33-protocol-qualification.md) — PROTOCOL_GATE_SOLVED for the isolated native singleton; M34 operational qualification authorized, production MTP remains OFF
+- [M33 semantic horizon design](archive/development/milestone-33-semantic-horizon.md) — strong unforwarded-terminal invariant and native initialization/chain/alignment ownership
+- [M32 native recipe gate](archive/development/milestone-32-native-recipe-gate.md) — full ARM64/OpenCV build and native parity pass; initialization commit edge blocks semantic MTP qualification, no M33 authorization
+- [M31 recipe semantic session](archive/development/milestone-31-recipe-semantic-session.md) — candidate upstream extension and source parity; real native build blocked, no live semantic MTP gate
 - [Fresh MTP startup](mtp-startup-investigation.md) — deferred target-prefix compute, late Metal wiring, request-scoped resource fix and R1 evidence
 - [Target dense prefill](target-prefill-investigation.md) — native scaling regimes, real dispatch/replay controls and unselected P6 headroom
 - [Performance](performance.md) — qualified performance class and baselines

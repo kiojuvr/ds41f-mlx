@@ -76,7 +76,7 @@ sources=list(http['sources'])+['tools/run_m35_native_interruptions.py','tools/re
     'tests/test_m35_transport_lease.py','tests/test_m35_http_evidence.py',
     'rust/ds41f_api/src/bin/m35_internal_transport.rs','rust/ds41f_api/src/lib.rs',
     'Cargo.toml','Cargo.lock','rust/ds41f_api/Cargo.toml','.gitignore',
-    'docs/milestone-35-http-sse-qualification.md',
+    'docs/archive/development/milestone-35-http-sse-qualification.md',
     'docs/README.md','docs/implementation-plan.md','docs/architecture.md','docs/qualification.md',
     'docs/session-state.md','docs/doc-classification.json']
 result=dict(schema='ds41f.m35.qualification.v1',decision='HTTP_SSE_QUALIFIED_BOUNDED_INTERNAL_SINGLETON',

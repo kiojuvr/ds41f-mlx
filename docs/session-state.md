@@ -31,12 +31,12 @@ ordinary extraction; see [M25](archive/development/milestone-25-mtp-decision.md)
 session or restore qualification is implied by the contracts below.
 
 The separate internal guarded singleton contract is operationally qualified in
-[M34](milestone-34-operational-qualification.md), using M33's target/DSpark/
+[M34](archive/development/milestone-34-operational-qualification.md), using M33's target/DSpark/
 canonical/delivery frontiers and bounded quiescence. Active cancellation transfers
 native singleton cache row views before owner release, preserving subsequent P6
 admission and old-owner revocation. MTP save/restore still fails closed before I/O;
 this is not qualification of persisted or concurrent MTP sessions.
-[M35](milestone-35-http-sse-qualification.md) qualifies bounded internal HTTP/SSE
+[M35](archive/development/milestone-35-http-sse-qualification.md) qualifies bounded internal HTTP/SSE
 recovery on that authority: active canonical history remains owned by generation,
 recorded session history commits at quiescence, and socket writes never acknowledge
 model-token ordinals. Client-observed recipe events remain a canonical prefix;

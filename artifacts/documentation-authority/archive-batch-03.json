@@ -1,0 +1,97 @@
+{
+  "base_commit": "53b5276a85e2ba17318e0ab83118b3b4741cf02b",
+  "scope": "Batch 3: M31-M35 semantic/protocol/HTTP history (six documents)",
+  "moves": [
+    {
+      "old_path": "docs/milestone-31-recipe-semantic-session.md",
+      "new_path": "docs/archive/development/milestone-31-recipe-semantic-session.md",
+      "original_sha256": "1ed5b8a5b304aaa863b54bee229bfbd53805ddbae40ba1c831f14dfc598384cd",
+      "archived_sha256": "1ed5b8a5b304aaa863b54bee229bfbd53805ddbae40ba1c831f14dfc598384cd",
+      "content_preserved_byte_for_byte": true
+    },
+    {
+      "old_path": "docs/milestone-32-native-recipe-gate.md",
+      "new_path": "docs/archive/development/milestone-32-native-recipe-gate.md",
+      "original_sha256": "bc672d25eadf844fdad12fae17c4d6f719893b131fdebc6272d11feddfd32635",
+      "archived_sha256": "bc672d25eadf844fdad12fae17c4d6f719893b131fdebc6272d11feddfd32635",
+      "content_preserved_byte_for_byte": true
+    },
+    {
+      "old_path": "docs/milestone-33-protocol-qualification.md",
+      "new_path": "docs/archive/development/milestone-33-protocol-qualification.md",
+      "original_sha256": "20f6b26d9478f236d91165ef3c1034e0877e7e5590239892685e3c260e5fffad",
+      "archived_sha256": "20f6b26d9478f236d91165ef3c1034e0877e7e5590239892685e3c260e5fffad",
+      "content_preserved_byte_for_byte": true
+    },
+    {
+      "old_path": "docs/milestone-33-semantic-horizon.md",
+      "new_path": "docs/archive/development/milestone-33-semantic-horizon.md",
+      "original_sha256": "9c2fc81dd64c26b20908ffbc1ad99ab48985c21f71eb27edf83cef95499533d3",
+      "archived_sha256": "9c2fc81dd64c26b20908ffbc1ad99ab48985c21f71eb27edf83cef95499533d3",
+      "content_preserved_byte_for_byte": true
+    },
+    {
+      "old_path": "docs/milestone-34-operational-qualification.md",
+      "new_path": "docs/archive/development/milestone-34-operational-qualification.md",
+      "original_sha256": "25abd0f12ce80492810c7637dd78460c19d317c679e0c2bfe3351ad5c2bcd495",
+      "archived_sha256": "25abd0f12ce80492810c7637dd78460c19d317c679e0c2bfe3351ad5c2bcd495",
+      "content_preserved_byte_for_byte": true
+    },
+    {
+      "old_path": "docs/milestone-35-http-sse-qualification.md",
+      "new_path": "docs/archive/development/milestone-35-http-sse-qualification.md",
+      "original_sha256": "700407569db133c60dbcaa5a17b5ce96596a2a4027c334cba87faf9e52b6d97d",
+      "archived_sha256": "700407569db133c60dbcaa5a17b5ce96596a2a4027c334cba87faf9e52b6d97d",
+      "content_preserved_byte_for_byte": true
+    }
+  ],
+  "retained_contracts": "Stable semantic-horizon, sole-cache ownership, no replay/repack, shielded native phases and response-lease contracts remain in docs/final-runtime-target.md; present settlement/transport contracts remain in mtp-production-serving.md and production-sessions.md. Only their historical citations were moved. No new production capability claim.",
+  "classification_change": "paths only; labels/reasons/policy and index structure retained until final stage",
+  "recorder_path_changes": [
+    "tools/record_m33_evidence.py",
+    "tools/record_m35_evidence.py"
+  ],
+  "recorders_executed": false,
+  "historical_test_correction": {
+    "tests": [
+      "tests/test_m34_operational_evidence.py",
+      "tests/test_m35_http_evidence.py"
+    ],
+    "original_source_commits": {
+      "m34": "2d6e313698f04fc811928bf200facb9da70433e0",
+      "m35": "9de575072e0b3a6a32d7a8744d50e5e2c1cb994b"
+    },
+    "reason": "Original source SHA values already failed against later HEAD before relocation. Validate exact original Git blobs, including relocated original docs; continue checking evidence payload files in the working tree. No SHA/receipt expectation changed and no missing-file/hash bypass.",
+    "m34_additional_coverage": "All recorded current_runtime_sources (at the historical receipt), not just three selected runtime files, are now checked."
+  },
+  "validation": {
+    "history_bodies": "six exact byte matches",
+    "markdown_missing_target_files": [],
+    "old_executable_or_release_path_refs": [],
+    "historical_and_lifecycle_tests": {
+      "passed": 39,
+      "subtests_passed": 137
+    },
+    "production_sessions_separate_process": {
+      "passed": 10,
+      "warnings": 3
+    },
+    "combined_process_attempt": {
+      "passed": 47,
+      "failed": 2,
+      "subtests_passed": 137,
+      "reason": "Legacy lifecycle fixtures change oMLX import origin in-process; production session environment-origin admission fails. Both groups pass in separate processes; no admission bypass or test skip added."
+    },
+    "prechange_evidence_test_attempt": {
+      "passed": 24,
+      "pytest_failure_reports": 3,
+      "subtests_passed": 136,
+      "reason": "Historical M34/M35 source hashes incorrectly compared to current HEAD; hashes match exact receipt commits."
+    },
+    "recorder_syntax": "AST parsing passed without executing evidence writers",
+    "diff_check": "PASS",
+    "runtime_dependencies_and_original_receipts_changed": false,
+    "real_model_acceptance_run": false
+  },
+  "pending": "Existing self-containment checker forbids canonical archive citations; reconcile evidence/navigation policy at final index/classification stage. Batch 4 M36-M39 and Batch 5 M40-M43 remain."
+}

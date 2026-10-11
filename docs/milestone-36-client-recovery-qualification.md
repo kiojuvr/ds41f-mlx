@@ -8,7 +8,7 @@
 `9de5750` (clean master at M35). Final commit resolves with
 `git log -1 --format=%H -- artifacts/m36/qualification.json`.
 
-The [M33 horizon](milestone-33-semantic-horizon.md), M34 native cache transfer,
+The [M33 horizon](archive/development/milestone-33-semantic-horizon.md), M34 native cache transfer,
 and M35 transport ownership remain intact. There is still exactly one canonical
 model/session history. The investigation stops rather than repairing an agent
 transcript by guessing, regenerating, replaying, or weakening exact-prefix admission.
