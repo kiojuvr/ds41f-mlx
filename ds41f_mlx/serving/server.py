@@ -43,6 +43,8 @@ def load_v41_tokenizer(recipe_path: Path = DEFAULT_RECIPE) -> Any:
 
 def prepare_request(protocol: str, body: bytes, *, tokenizer: Any, recipe_path: Path = DEFAULT_RECIPE, options: ConversionOptions | None = None, checkpoint: Path | None = None, ordinary: bool = False) -> RecipePreparedRequest:
     prepare_t0 = perf_counter()
+    from .generation_policy import normalize_policy, with_sampling_defaults
+    policy_payload = json.loads(body)
     request_type, _ = PROTOCOL_TYPES[protocol]
     if ordinary:
         if protocol != 'chat_completions':
@@ -52,18 +54,19 @@ def prepare_request(protocol: str, body: bytes, *, tokenizer: Any, recipe_path: 
         custom_tool_names = frozenset()
     else:
         # Runtime extension, resolved only after the real recipe/image expansion.
-        payload = json.loads(body)
+        payload = with_sampling_defaults(policy_payload)
         automatic = isinstance(payload, dict) and payload.get('max_tokens') == 'auto'
         if automatic:
             payload['max_tokens'] = 1
-            body = json.dumps(payload).encode()
+        body = json.dumps(payload).encode()
         try:
             request = request_type(body)
         except ValueError as error:
             raise RequestError(str(error)) from error
         include_usage = request.include_usage() if protocol == 'chat_completions' else False
         custom_tool_names = frozenset(request.custom_tool_names()) if protocol == 'responses' else frozenset()
-        converted = request.convert(options if options is not None else ConversionOptions())
+        converted = request.convert(options if options is not None else ConversionOptions(default_thinking_mode=False))
+    policy = normalize_policy(converted, policy_payload)
     convert_s = perf_counter() - prepare_t0
     encoding = DeepseekV41Encoding().with_tokenizer(tokenizer)
     render_t0 = perf_counter()
@@ -93,6 +96,7 @@ def prepare_request(protocol: str, body: bytes, *, tokenizer: Any, recipe_path: 
     except Exception:
         stop_token_ids = ()
     prepared = RecipePreparedRequest(protocol, converted, converted, token_ids, list(rendered.image_sources), include_usage, custom_tool_names, stop_token_ids, multimodal)
+    prepared.generation_policy = policy
     from .capacity import resolve_capacity
     try:
         resolve_capacity(prepared, checkpoint=checkpoint or load_runtime_config().checkpoint_path, automatic=automatic, ordinary=ordinary)
@@ -284,6 +288,9 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
             return Response(content, media_type='application/json')
         return handler
 
+    from .generation_policy import capability_contract
+    generation_capabilities = capability_contract()
+
     @app.get('/health')
     async def health() -> Response:
         fatal = getattr(backend, 'fatal_error', None)
@@ -298,7 +305,9 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
         ready = getattr(backend, '_model', None) is not None
         status = 'unavailable' if fatal else ('ready' if ready else 'alive')
         code = 503 if fatal else 200
-        state = {'status': status, 'process_alive': True, 'model_ready': ready, 'fatal_error': fatal}
+        state = {'status': status, 'profile': profile, 'process_alive': True, 'model_ready': ready, 'fatal_error': fatal,
+                 'generation_policy': generation_capabilities,
+                 'chat_defaults': dict(generation_capabilities['defaults'], reasoning_effort='none', max_tokens='auto')}
         if ordinary_mtp:
             scheduler = getattr(backend, 'scheduler', None)
             state.update(profile=profile, dependency_identity=backend.dependency_identity,
@@ -307,7 +316,8 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
                          prefix_cache=None if scheduler is None else scheduler.checkpoints.paged.get_stats().to_dict(),
                          capabilities={'stateful_chat': 'production-sessions-v1', 'persist_restore': False,
                                        'max_live_sessions': 1},
-                         chat_defaults={'temperature': 0, 'top_p': 1, 'reasoning_effort': 'none', 'max_tokens': 'auto'})
+                         generation_policy=generation_capabilities,
+                         chat_defaults=dict(generation_capabilities['defaults'], reasoning_effort='none', max_tokens='auto'))
         return JSONResponse(status_code=code, content=state)
 
     @app.get('/v1/models')

@@ -18,6 +18,26 @@ from ds41f_mlx.execution_identity import inventory, links
 from ds41f_mlx.mtp_setup import sha
 
 
+def off_dependency_payloads(off, pin):
+    """Cross-check inherited OFF payload metadata against numerical authority."""
+    for name, expected in off['payloads'].items():
+        if off['versions'][name] != pin['versions'][name]:
+            raise ValueError(f'OFF dependency authority version drift: {name}')
+        for module, identity in pin['modules'].items():
+            if module.split('.')[0] != name:
+                continue
+            relative = '/'.join(module.split('.')[1:])
+            candidates = [path for path in expected
+                          if path in ((relative+'.py', relative+'/__init__.py') if relative else ('__init__.py',))
+                          or relative and path.startswith(relative+'.') and path.endswith('.so')]
+            if len(candidates) != 1 or expected[candidates[0]] != identity['sha256']:
+                raise ValueError(f'OFF dependency authority module drift: {module}')
+        for path, identity in pin['package_resources'].get(name, {}).items():
+            if expected.get(path) != identity['sha256']:
+                raise ValueError(f'OFF dependency authority native drift: {name}/{path}')
+    return off['payloads']
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--output', type=Path, required=True)
@@ -51,6 +71,12 @@ def main():
     for name in {path.split('/')[0] for path in old['dependency_payload']}:
         payloads[name] = {path[len(name)+1:]: digest for path, digest in old['dependency_payload'].items()
                           if path.startswith(name+'/')}
+    if args.profile == 'standard-off':
+        # OFF numerical admission predates the MTP normal-local dependency set.
+        # Inherit its independently qualified payload, not the current shell.
+        off = json.loads((ROOT/'third_party/mtp/standard-off-dependencies.json').read_text())
+        pin = json.loads((ROOT/'ds41f_mlx/runtime/admitted_resources.json').read_text())
+        payloads.update(off_dependency_payloads(off, pin))
     support = json.loads((ROOT/'third_party/mtp/runtime-support-payload.json').read_text())['files']
     for name in {path.split('/')[0] for path in support if '/' in path}:
         payloads[name] = {path[len(name)+1:]: digest for path, digest in support.items()
@@ -86,7 +112,8 @@ def main():
                                     source_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
                                     source_payload_sha256=hashlib.sha256(json.dumps(payloads['ds41f_mlx'],sort_keys=True).encode()).hexdigest(),
                                     native_build=old['build'] if args.profile == 'mtp' else dict(wheel_sha256=sha(args.recipe_wheel)),
-                                    recipe_source=old['recipe_source'] if args.profile == 'mtp' else json.loads((ROOT/'third_party/mtp/sources.json').read_text())['sources']['recipe']),
+                                    recipe_source=old['recipe_source'] if args.profile == 'mtp' else json.loads((ROOT/'third_party/mtp/sources.json').read_text())['sources']['recipe'],
+                                    off_dependency_authority_sha256=sha(ROOT/'third_party/mtp/standard-off-dependencies.json') if args.profile == 'standard-off' else None),
                     evidence=dict(inherited_candidate_sha256=sha(legacy_path), reference='R1'))
     (ROOT/'ds41f_mlx/execution_manifest.json').write_text(json.dumps(manifest,indent=2,sort_keys=True)+'\n')
     args.output.mkdir(parents=True,exist_ok=True)

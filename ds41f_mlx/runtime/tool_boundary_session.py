@@ -102,7 +102,9 @@ class M11RecipeToolSession:
             raise M11ToolBoundaryError('image input was not prepared')
         if len(prepared.token_ids) < 2:
             raise M11ToolBoundaryError("encoded prompt must contain prefix and held-out terminal")
-        cfg = OMLXDecodeConfig(omlx_path=omlx_path, checkpoint_path=checkpoint, engram_ssd_offload=True, preserve_mtp=False, speculation_enabled=False, stop_token_ids=tuple(getattr(prepared, "stop_token_ids", ()) or ()))
+        from ds41f_mlx.serving.generation_policy import policy_for
+        policy = policy_for(prepared)
+        cfg = OMLXDecodeConfig(omlx_path=omlx_path, checkpoint_path=checkpoint, engram_ssd_offload=True, preserve_mtp=False, speculation_enabled=False, stop_token_ids=tuple(getattr(prepared, "stop_token_ids", ()) or ()), logits_processors=tuple(policy.processors()), seed=policy.seed)
         prefill_session = DwarfStarMLXPrefillSession(model, omlx_path=omlx_path)
         if prepared.multimodal is None:
             prefill = prefill_session.prefill(prepared.token_ids[:-1])

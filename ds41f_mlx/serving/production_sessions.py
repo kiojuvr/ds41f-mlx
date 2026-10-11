@@ -90,7 +90,8 @@ class ProductionSessions:
         incoming = body['messages']  # recipe schema/conversion has already validated it
         if not rec.request_count and any(m.get('role') in ('assistant', 'tool') for m in incoming):
             raise ValueError('new session cannot reconstruct prior assistant/tool history; no session replay')
-        envelope = dict(tools=body.get('tools'), reasoning_effort=body.get('reasoning_effort', 'none'))
+        from .generation_policy import reasoning_policy
+        envelope = dict(tools=body.get('tools'), reasoning=reasoning_policy(prepared))
         if rec.envelope is not None and envelope != rec.envelope:
             raise ValueError('retained session protocol envelope changed')
         if incoming[:len(rec.history)] != rec.history:
@@ -156,12 +157,14 @@ class ProductionSessions:
                     all_cache_offsets_equal_frontier=set(target+dspark) == {frontier},
                     total_prompt_replay_count=trace['prompt_replay'],
                     total_full_cache_repack_count=trace['full_cache_repack'])
+        turn['generation_policy'] = trace.get('generation_policy')
         turn['metrics'] = dict(diag, cached_tokens=trace.get('cached_tokens'),
                                generated=trace.get('generated'), cache_published=trace['cache_published'])
         rec.history = deepcopy(request.session_body['messages']) + [response['choices'][0]['message']]
         rec.canonical = tuple(execution.canonical)
+        from .generation_policy import reasoning_policy
         rec.envelope = dict(tools=deepcopy(request.session_body.get('tools')),
-                            reasoning_effort=request.session_body.get('reasoning_effort', 'none'))
+                            reasoning=reasoning_policy(request.prepared))
         # Atomic public snapshot replacement: count/frontier/outcome move together.
         rec.publication = dict(state='idle' if usable else 'unrecoverable',
             request_count=rec.request_count+1, frontier=frontier, last_turn=turn,

@@ -300,8 +300,10 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
         self.load()
         if self.scheduler is None:
             self.scheduler = ProductionScheduler(self)
+        from .generation_policy import policy_for
+        policy = policy_for(prepared)
         request = Request(request_id=request_id, prompt=list(prepared.token_ids),
-                          sampling_params=SamplingParams(max_tokens=self.request_max_tokens(prepared), temperature=0))
+                          sampling_params=policy.sampling_params(self.request_max_tokens(prepared)))
         request.prepared, request.recipe_tokenizer = prepared, tokenizer
         request.execution = QualificationSession(request_id)
         request.logical_session = logical_session
@@ -315,6 +317,7 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
                              t0=getattr(prepared, 'arrival_t0', perf_counter()), generated=0,
                              decode_s=0., first_canonical_s=None, canonical_emitted=0)
         request.trace.update(getattr(prepared, 'phase_timings', {}))
+        request.trace['generation_policy'] = policy.to_json()
         request.trace['diagnostic_id'] = getattr(prepared, 'diagnostic_id', None)
         self.scheduler.add_request(request)
 

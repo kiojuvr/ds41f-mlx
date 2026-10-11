@@ -72,6 +72,8 @@ class TargetGenerationSession:
             self.language_model.configure_mtp(False, 1)
         self.target_forward = TargetForwardTransaction(self.language_model, self.mx)
         self.sampler = self.sampler or (lambda p: self.mx.argmax(p, axis=-1))
+        if self.config.seed is not None:
+            self.mx.random.seed(self.config.seed)
         self.prefix_tokens = [int(t) for t in np.asarray(self.initial_token_ids).reshape(-1)]
         self.admitted_frontier = len(self.prefix_tokens)
         self.token_frontier = self.admitted_frontier
@@ -112,8 +114,10 @@ class TargetGenerationSession:
 
     def _consume(self, token):
         # Publish history only after the all-layer mutation transaction commits.
+        extra = (dict(logits_processors=self.config.logits_processors, history=self._history)
+                 if self.config.logits_processors else {})
         consumed, pending = self.target_forward.execute(
-            token, self._cache, self.token_frontier, self.sampler, self.stream)
+            token, self._cache, self.token_frontier, self.sampler, self.stream, **extra)
         self._pending = pending
         self._history.append(consumed)
         self.token_frontier = len(self._history)

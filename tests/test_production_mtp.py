@@ -174,7 +174,9 @@ def test_ordinary_request_has_no_session_sequence_and_keeps_execution_bounds():
     import json
     body = {'model': 'deepseek-v4.1-flash', 'messages': [{'role': 'user', 'content': 'Hi'}]}
     ProductionMTPBackend.validate_ordinary(json.dumps(body).encode())
-    for unsupported in ({'temperature': 1}, {'seed': 1}, {'reasoning_effort': 'high'}):
+    for supported in ({'temperature': 1}, {'seed': 1}, {'reasoning_effort': 'high'}):
+        ProductionMTPBackend.validate_ordinary(json.dumps(body | supported).encode())
+    for unsupported in ({'top_k': -1}, {'seed': -1}, {'min_p': 2}):
         with pytest.raises(ValueError):
             ProductionMTPBackend.validate_ordinary(json.dumps(body | unsupported).encode())
 
@@ -263,7 +265,7 @@ def test_ordinary_http_recipe_route_has_no_compulsory_public_session(monkeypatch
                 assert result.status_code == 200, result.text
                 assert len(parsed) == before + 1  # no duplicate recipe conversion
             for changes in (
-                {'temperature': 1}, {'n': 2}, {'seed': 1},
+                {'temperature': -1}, {'n': 2}, {'seed': -1},
                 {'messages': [{'role': 'user', 'content': [{'type': 'image_url',
                     'image_url': {'url': 'https://example.com/a.png'}}]}]},
                 {'messages': [{'role': 'tool', 'tool_call_id': 'foreign', 'content': 'OK'}]},

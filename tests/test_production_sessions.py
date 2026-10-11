@@ -11,7 +11,8 @@ from ds41f_mlx.serving.production_sessions import ProductionSessions
 
 
 def prepared(ids=(1,2,3,4)):
-    return NS(protocol='chat_completions', image_sources=[], token_ids=list(ids))
+    return NS(protocol='chat_completions', image_sources=[], token_ids=list(ids), capacity={},
+              conversation_request=NS(conversation=NS(thinking_mode=False, reasoning_effort=None)))
 
 
 def test_requested_ids_are_nonreusable_and_session_has_no_native_owner():
@@ -94,7 +95,7 @@ def publication(sessions, rec, message=None, representable=True, retained=True, 
                  prompt_replay=0, full_cache_repack=0, cache_published=True, cached_tokens=0, generated=1)
     request = NS(logical_session=rec, trace=trace, session_pair_retained=retained, request_id='r1', application_id=str(uuid4()),
                  execution=NS(canonical=[1,2,3,4], certificate={'representable': representable, 'executable_tools': bool(message.get('tool_calls')), 'witness': {}}),
-                 prepared=NS(capacity={}), session_body=body)
+                 prepared=prepared(), session_body=body)
     sessions.publish(request, error)
     return request
 

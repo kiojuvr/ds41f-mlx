@@ -114,7 +114,7 @@ class TargetForwardTransaction:
                     cache[i].left_padding -= 1
         return self.project_logits(model.norm(self.hc_pre(h, pre)), model.head.weight)[:, -1, :]
 
-    def execute(self, token, cache, frontier, sampler, stream):
+    def execute(self, token, cache, frontier, sampler, stream, *, logits_processors=(), history=()):
         mx = self.mx
         objects = tuple(cache)
         try:
@@ -123,6 +123,10 @@ class TargetForwardTransaction:
                 for item in cache:
                     item._p6_append_pending = True
                 logits = self.forward(token, cache, frontier)
+                if logits_processors:
+                    tokens = mx.concatenate([mx.array(history, mx.uint32), token.reshape(-1)])
+                    for processor in logits_processors:
+                        logits = processor(tokens, logits)
                 logprobs = logits - mx.logsumexp(logits, axis=-1, keepdims=True)
                 pending = sampler(logprobs)
                 # Materialize ALL mutated state, not just dependencies of logits.

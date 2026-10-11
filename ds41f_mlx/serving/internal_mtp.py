@@ -290,17 +290,24 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
             rec.guard = RecipeSemanticGuard(rec.processor, control_token_ids=request.stop_token_ids,
                 frontier=len(ids), response=d.ChatCompletionResponse(trace['response_id'], self.model_id, int(time()), 0, 0))
             rec.guard._push(d.InferenceChunk.ready(prompt_usage=d.PromptUsage(prompt_tokens=len(ids), prompt_cache_hit_tokens=trace.get('cached_tokens', 0))))
+            from .generation_policy import policy_for
+            policy = policy_for(request)
+            trace['generation_policy'] = policy.to_json()
             cfg = OMLXDecodeConfig(omlx_path=self.omlx_path, checkpoint_path=self.checkpoint,
-                                  preserve_mtp=True, speculation_enabled=True, stop_token_ids=request.stop_token_ids)
+                                  preserve_mtp=True, speculation_enabled=True, stop_token_ids=request.stop_token_ids,
+                                  logits_processors=tuple(policy.processors()), seed=policy.seed)
             class Factory:
                 @classmethod
                 def from_prefilled_cache(cls, model, cache, prefix, config, *, max_tokens, sampler):
                     return OMLXMTPGenerationSession(model, cache, np.asarray(prefix), context,
                         config=config, sampler=sampler, max_tokens=max_tokens, semantic_guard=rec.guard,
                         wired_limit_lease=wired, batch_generator_factory=batch_generator_factory,
-                        canonical_sampling_policy='greedy' if request.inference_options.temperature in (None, 0) else None)
+                        canonical_sampling_policy='greedy' if policy.temperature == 0 else None)
             rec.owner = handoff_to_generation(live, self._model, terminal_prompt_token=ids[-1], config=cfg,
-                max_tokens=self.request_max_tokens(request), sampler=self.make_sampler(request.inference_options), session_factory=Factory)
+                max_tokens=self.request_max_tokens(request), sampler=self.make_sampler(policy), session_factory=Factory)
+            from omlx.patches.mlx_lm_mtp.batch_generator import _is_greedy
+            trace['execution_sampling'] = ('greedy' if _is_greedy(rec.owner._bg._generation_batch) else 'stochastic')
+            trace['sampler_authority'] = 'omlx.utils.sampling.make_sampler'
             trace.update(p5_handoff_s=perf_counter()-handoff_t0,
                          prefill_handoff_s=perf_counter()-t0, prompt_replay=rec.owner.prompt_replay_count,
                          full_cache_repack=app.final_execution.runner.full_cache_repack_count)

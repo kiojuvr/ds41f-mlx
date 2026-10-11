@@ -30,6 +30,18 @@ def test_fail_closed(runtime):
         negotiate(runtime)
 
 
+def test_versioned_policy_negotiates_authoritative_values_not_frontend_constants():
+    from ds41f_mlx.serving.generation_policy import capability_contract
+    contract = capability_contract()
+    contract['defaults'].update(temperature=1., top_p=.95)
+    defaults = dict(contract['defaults'], reasoning_effort='none', max_tokens='auto')
+    runtime = dict(health(), generation_policy=contract, chat_defaults=defaults)
+    assert negotiate(runtime) == defaults
+    runtime['chat_defaults'] = dict(defaults, temperature=0)
+    with pytest.raises(ValueError, match='disagree'):
+        negotiate(runtime)
+
+
 def test_tui_freezes_negotiated_defaults_and_text_tools():
     async def check():
         def handler(req):

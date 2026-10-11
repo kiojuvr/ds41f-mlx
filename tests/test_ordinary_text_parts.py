@@ -79,11 +79,8 @@ def test_recipe_rejections_propagate_unchanged(changes):
 
 @pytest.mark.parametrize('changes,match', [
     (dict(model='other'), 'model alias'),
-    (dict(temperature=1), 'temperature'), (dict(top_p=0.5), 'top_p'),
-    (dict(reasoning_effort='high'), 'thinking-off'),
-    (dict(thinking=dict(type='enabled')), 'thinking-off'),
-    (dict(seed=1), 'seed'), (dict(frequency_penalty=1), 'frequency_penalty'),
-    (dict(presence_penalty=1), 'presence_penalty'),
+    (dict(top_k=-1), 'top_k'),
+    (dict(min_p=2), 'min_p'),
     (dict(parallel_tool_calls=False), 'parallel_tool_calls'),
     (dict(thinking=dict(type='disabled', budget_tokens=10)), 'budget_tokens'),
     (dict(response_format=dict(type='json_schema', json_schema={})), 'JSON Schema'),
@@ -96,6 +93,13 @@ def test_recipe_acceptance_does_not_override_runtime_limits(changes, match):
     recipe(value)
     with pytest.raises(ValueError, match=match):
         convert(value)
+
+
+@pytest.mark.parametrize('changes', [dict(temperature=1, top_p=.5),
+    dict(reasoning_effort='high'), dict(thinking=dict(type='enabled')),
+    dict(seed=1, frequency_penalty=1, presence_penalty=1, repetition_penalty=1.1, top_k=40, min_p=.05)])
+def test_recipe_sampling_controls_reach_ordinary_admission(changes):
+    convert(body(**changes))
 
 
 def test_plan_parts_leave_singleton_contract_unchanged():

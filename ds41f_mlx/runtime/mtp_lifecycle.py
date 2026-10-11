@@ -478,7 +478,9 @@ class OMLXMTPGenerationSession:
             install(self.initial_cache, self.dspark_context.caches)
         elif hasattr(self.language_model, "_dspark_prime_context"):
             self.language_model._dspark_prime_context = self.dspark_context.caches
-        uids = self._bg.insert([[int(terminal_prompt_token)]], max_tokens=[self.max_tokens], caches=[self.initial_cache], all_tokens=[list(self.prefix_tokens)], samplers=[self.sampler])
+        if self.config.seed is not None:
+            self.mx.random.seed(self.config.seed)
+        uids = self._bg.insert([[int(terminal_prompt_token)]], max_tokens=[self.max_tokens], caches=[self.initial_cache], all_tokens=[list(self.prefix_tokens)], samplers=[self.sampler], logits_processors=[list(self.config.logits_processors)])
         self.uid = int(uids[0])
         pr, gr = self._bg.next(); self.mx.synchronize(self.stream)
         if gr:

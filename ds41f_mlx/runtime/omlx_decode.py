@@ -47,6 +47,8 @@ class OMLXDecodeConfig:
     speculation_enabled: bool = False
     eval_logits: bool = True
     stop_token_ids: tuple[int, ...] = ()
+    logits_processors: tuple[Any, ...] = ()
+    seed: int | None = None
 
 
 @dataclass(frozen=True)

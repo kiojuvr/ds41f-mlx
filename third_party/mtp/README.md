@@ -30,6 +30,14 @@ source/patch/native/wheel/build, observed host closure, old source inventory and
 checkpoint evidence. It is **not** read at production startup. Package construction
 inherits its exact executable dependency and reachable semantic-native hashes;
 observed unused host closure and checkout hashes are evidence only.
+For standard-OFF only, `standard-off-dependencies.json` overrides the MTP
+NumPy/Transformers inventory with the exact cached payloads used by the existing
+200K OFF qualification (NumPy 2.5.3 / Transformers 5.18.0). Its provenance records
+the historical environment receipt digest. All numerical module/native hashes
+are cross-checked against the unchanged `runtime/admitted_resources.json` before
+packaging; full installed payload equality remains required. Neither MTP lock
+is an OFF numerical authority. No runtime enrollment or automatic reseal is added.
+
 `runtime-support-payload.json` preserves previously sealed candidate hashes for
 additional packages actually imported by the model/ordinary protocol path
 (Pillow, regex/Jinja, HTTP support and their helpers), not a new observation seal.

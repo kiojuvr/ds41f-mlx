@@ -84,7 +84,11 @@ class StatefulStream:
         if self.cancel.is_set():
             return
         rec, backend = self.rec, self.backend
-        sampler = backend.make_sampler(self.prepared.inference_options)
+        from .generation_policy import policy_for, reasoning_policy
+        policy = policy_for(self.prepared)
+        sampler = backend.make_sampler(policy)
+        rec.reasoning_policy = reasoning_policy(self.prepared)
+        self.trace['generation_policy'] = policy.to_json()
         maximum = backend.request_max_tokens(self.prepared)
         if rec.m11 is None:
             rec.m11 = M11RecipeToolSession.start_from_prepared(
@@ -95,6 +99,8 @@ class StatefulStream:
         else:
             before = rec.m11.m8.frontier
             rec.m11.m8.sampler = sampler
+            from dataclasses import replace
+            rec.m11.m8.config = replace(rec.m11.m8.config, logits_processors=tuple(policy.processors()), seed=policy.seed)
             rec.m11.continue_from_prepared(self.prepared, max_tokens=maximum)
             self.trace.update(created_runtime_session=False, frontier_before=before, exact_prefix_extension=True)
         # Publish the cursor inside the worker, before cancellation can lose the

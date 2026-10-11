@@ -10,6 +10,7 @@ from time import perf_counter, time
 from typing import Any, AsyncIterator
 from uuid import uuid4
 import importlib
+import math
 import os
 import subprocess
 import sys
@@ -93,6 +94,7 @@ class RequestTrace:
     prefill_phase_timings_s: dict[str, float] | None = None
     generated_tokens: list[int] = field(default_factory=list)
     decode_latencies_s: list[float] = field(default_factory=list)
+    generation_policy: dict[str, Any] | None = None
     cleanup_called: bool = False
     cancelled: bool = False
 
@@ -127,6 +129,7 @@ class RequestTrace:
             'completion_tokens': len(self.generated_tokens),
             'median_decode_tok_s': None if med is None else 1.0 / med,
             'decode_latencies_s': list(self.decode_latencies_s),
+            'generation_policy': self.generation_policy,
             'cleanup_called': self.cleanup_called,
             'cancelled': self.cancelled,
         }
@@ -154,6 +157,7 @@ class StatefulSessionRecord:
     persisted_artifact: dict[str, Any] | None = None
     active_stream: Any = None  # transport control only, never an execution owner
     recovery_state: str = 'ready'
+    reasoning_policy: dict[str, Any] | None = None
 
     def to_json(self) -> dict[str, Any]:
         diag = None if self.m11 is None else self.m11.diagnostics()
@@ -238,14 +242,28 @@ class DeepSeekRecipeRuntimeBackend:
             raise
 
     def make_sampler(self, options: Any):
-        temp = 0.0 if options.temperature is None else float(options.temperature)
-        top_p = 0.0 if options.top_p is None else float(options.top_p)
-        if temp < 0:
-            raise ValueError('temperature must be >= 0')
-        if top_p < 0 or top_p > 1:
-            raise ValueError('top_p must be in [0, 1]')
-        sample_utils = importlib.import_module('mlx_lm.sample_utils')
-        return sample_utils.make_sampler(temp=temp, top_p=top_p)
+        from .generation_policy import GenerationPolicy
+        defaults = GenerationPolicy()
+        temp = defaults.temperature if options.temperature is None else float(options.temperature)
+        top_p = defaults.top_p if options.top_p is None else float(options.top_p)
+        if not math.isfinite(temp) or temp < 0:
+            raise ValueError('temperature must be finite and >= 0')
+        if not math.isfinite(top_p) or top_p < 0 or top_p > 1:
+            raise ValueError('top_p must be finite and in [0, 1]')
+        # MTP uses the callable's upstream metadata and sampling-density hooks
+        # for greedy detection, acceptance and residual sampling. Stock MLX
+        # callables omit that contract and are treated as greedy by oMLX.
+        # Share oMLX's existing implementation with standard-OFF; never attach
+        # guessed metadata or recreate the speculative sampling distribution.
+        sample_utils = importlib.import_module('omlx.utils.sampling')
+        return sample_utils.make_sampler(temp=temp, top_p=top_p,
+                                         top_k=getattr(options, 'top_k', 0),
+                                         min_p=getattr(options, 'min_p', 0.0))
+
+    def generation_config(self, request, **kwargs):
+        from .generation_policy import policy_for
+        policy = policy_for(request)
+        return OMLXDecodeConfig(logits_processors=tuple(policy.processors()), seed=policy.seed, **kwargs)
 
     def max_tokens(self, options: Any) -> int:
         value = options.max_tokens
@@ -270,6 +288,9 @@ class DeepSeekRecipeRuntimeBackend:
             raise RuntimeError('session already has an active request')
         if rec.recovery_state == 'unrecoverable':
             raise RuntimeError('session is protocol-unrecoverable; DELETE required, no automatic replay')
+        from .generation_policy import reasoning_policy
+        if rec.reasoning_policy is not None and rec.reasoning_policy != reasoning_policy(request):
+            raise ValueError('retained session reasoning policy changed')
         if rec.m11 is not None:
             history = rec.m11.m8.token_history
             if len(request.token_ids) <= len(history) or request.token_ids[:len(history)] != history:
@@ -317,7 +338,10 @@ class DeepSeekRecipeRuntimeBackend:
             await self._lock.acquire()
             lock_acquired = True
             await self._call(self.load)
-            sampler = self.make_sampler(request.inference_options)
+            from .generation_policy import policy_for
+            policy = policy_for(request)
+            trace.generation_policy = policy.to_json()
+            sampler = self.make_sampler(policy)
             max_tokens = self.request_max_tokens(request)
             prefill_session = DwarfStarMLXPrefillSession(self._model, omlx_path=self.omlx_path)
             image_embeddings = None
@@ -336,7 +360,7 @@ class DeepSeekRecipeRuntimeBackend:
             trace.exported = bool(getattr(prefill_result, 'portable_state_exported', False))
             if trace.production_prefill_selector != PRODUCTION_PREFILL_SELECTOR or trace.prefill_frontier != len(prefix):
                 raise RuntimeError('production DENSE_P0_P7 prefill selector/frontier gate failed')
-            cfg = OMLXDecodeConfig(omlx_path=self.omlx_path, checkpoint_path=self.checkpoint, engram_ssd_offload=True, preserve_mtp=False, speculation_enabled=False, stop_token_ids=tuple(request.stop_token_ids))
+            cfg = self.generation_config(request, omlx_path=self.omlx_path, checkpoint_path=self.checkpoint, engram_ssd_offload=True, preserve_mtp=False, speculation_enabled=False, stop_token_ids=tuple(request.stop_token_ids))
             session = await self._call(lambda: handoff_to_generation(prefill_result.live_result, self._model, terminal_prompt_token=first, config=cfg, max_tokens=max_tokens, sampler=sampler), on_cancel=lambda generation: generation.close())
             self.active_generation_sessions += 1
             session_counted = True
@@ -419,7 +443,10 @@ class DeepSeekRecipeRuntimeBackend:
             await self._lock.acquire()
             lock_acquired = True
             await self._call(self.load)
-            sampler = self.make_sampler(request.inference_options)
+            from .generation_policy import policy_for
+            policy = policy_for(request)
+            trace['generation_policy'] = policy.to_json()
+            sampler = self.make_sampler(policy)
             max_tokens = self.request_max_tokens(request)
             def execute_and_publish() -> M11AssistantTurn:
                 # Publish completed state and its protocol record before the worker
@@ -431,6 +458,9 @@ class DeepSeekRecipeRuntimeBackend:
                     before = rec.m11.m8.frontier
                     try:
                         rec.m11.m8.sampler = sampler
+                        from dataclasses import replace
+                        policy = policy_for(request)
+                        rec.m11.m8.config = replace(rec.m11.m8.config, logits_processors=tuple(policy.processors()), seed=policy.seed)
                         rec.m11.continue_from_prepared(request, max_tokens=max_tokens)
                         assistant_turn = rec.m11.run_current_assistant_turn(request)
                     except BaseException:
@@ -441,6 +471,8 @@ class DeepSeekRecipeRuntimeBackend:
                     trace['frontier_after'] = rec.m11.m8.frontier
                     trace['exact_prefix_extension'] = True
                     trace['created_runtime_session'] = False
+                from .generation_policy import reasoning_policy
+                rec.reasoning_policy = reasoning_policy(request)
                 rec.request_count += 1
                 rec.updated_at = time()
                 rec.last_turn = assistant_turn.to_json()
