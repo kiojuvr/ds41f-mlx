@@ -37,6 +37,7 @@ class ProductionScheduler(Scheduler):
         self.paged_cache_manager = self.checkpoints.paged
         self._completed = []
         self.last_settlement = None
+        self.session_leases = {}
 
     def _new_batch(self, *args, **kwargs):
         from mlx_lm.generate import BatchGenerator
@@ -54,10 +55,21 @@ class ProductionScheduler(Scheduler):
             request.prompt_checkpoint = self.checkpoints.capture(target, rings, tokens)
         try:
             phase(self.backend, trace, 'CACHE_LOOKUP')
-            restored = self.checkpoints.acquire(request.prompt_token_ids, timings=trace,
-                observe=lambda name: phase(self.backend, trace, name))
+            logical = getattr(request, 'logical_session', None)
+            # Ordinary prefix hints are bounded and may forget a pinned root
+            # tail. Sessions restore the SAME authority's exact upstream lease,
+            # never a longer ordinary hit or replay from a shorter hint/miss.
+            observe = lambda name: phase(self.backend, trace, name)
+            if logical is not None and logical.canonical:
+                restored = self.checkpoints.acquire_retained(self.session_leases.get(logical.session_id),
+                    request.prompt_token_ids, timings=trace, observe=observe)
+            else:
+                restored = self.checkpoints.acquire(request.prompt_token_ids, timings=trace, observe=observe)
             if restored is not None:
                 rec.cache, rec.rings, rec.canonical = restored
+            logical = getattr(request, 'logical_session', None)
+            if logical is not None and logical.canonical and tuple(rec.canonical) != logical.canonical:
+                raise RuntimeError('canonical session pair unavailable or mismatched; prompt replay forbidden')
             request.cached_tokens = trace['cached_tokens'] = len(rec.canonical)
             request.remaining_tokens = request.prompt_token_ids[len(rec.canonical):]
             trace['remaining_suffix_tokens'] = len(request.remaining_tokens)
@@ -104,6 +116,14 @@ class ProductionScheduler(Scheduler):
                     if final is not None:
                         self.checkpoints.publish(final)
                     publication = True
+                    logical = getattr(request, 'logical_session', None)
+                    if logical is not None and final is not None:
+                        lease = self.checkpoints.retain(rec.canonical)
+                        previous = self.session_leases.get(logical.session_id)
+                        self.session_leases[logical.session_id] = lease
+                        if previous is not None:
+                            self.checkpoints.release(previous)
+                        request.session_pair_retained = True
         except BaseException as exc:
             error = exc
             rec.poisoned = True
@@ -135,6 +155,16 @@ class ProductionScheduler(Scheduler):
             trace.update(cancelled=cancelled, cache_published=publication,
                          elapsed_s=perf_counter()-trace['t0'])
             self.last_settlement = trace
+            if getattr(request, 'logical_session', None) is not None:
+                if rec.certificate is not None:
+                    rec.certificate.pop('witness', None)  # no diagnostic second history owner
+                try:
+                    self.backend.production_sessions.publish(request, error)
+                except BaseException as exc:
+                    error = exc
+                    self.backend.fatal_error = repr(exc)
+                    self.checkpoints.clear()
+                    self.backend.production_sessions.publish(request, exc)
             metrics(self.backend, trace)
             projection = getattr(self.backend, 'telemetry', None)
             if projection is not None:
@@ -176,6 +206,9 @@ class ProductionScheduler(Scheduler):
                 projection.finish(request.trace.get('diagnostic_id'), 'abort')
             output = RequestOutput(request_id=request_id, finished=True, finish_reason='abort')
             output.recipe_events, output.recipe_response = (), None
+            if getattr(request, 'logical_session', None) is not None:
+                self.backend.production_sessions.unstarted(request.logical_session, request_id,
+                                                          'cancelled before native admission; no committed turn')
             self._completed.append(output)
         else:
             self._retire(request, cancelled=True)
@@ -213,9 +246,15 @@ class ProductionScheduler(Scheduler):
         output.has_work = bool(output.outputs or self.waiting or self.running)
         return output
 
+    def release_session(self, session_id):
+        lease = self.session_leases.pop(session_id, None)
+        if lease is not None:
+            self.checkpoints.release(lease)
+
     def close_serving(self):
         for rid in list(self.requests):
             self._do_abort_request(rid)
+        self.session_leases.clear()
         self.checkpoints.clear()
         self.shutdown()
 
@@ -228,6 +267,11 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
         self._settled = {}
         self._pump_task = None
         self.serving_traces = self.session_traces
+        from .production_sessions import ProductionSessions
+        self.production_sessions = ProductionSessions(self)
+        self.sessions = self.production_sessions.records
+        from deepseek_recipe import ConversionOptions
+        self.conversion_options = ConversionOptions(default_thinking_mode=False)
 
     def _prefill_tap_start(self, ids, frontier, rings):
         from ds41f_mlx.prefill_fp8_mlx.p6_append import P6_FINAL_TAIL_THRESHOLD
@@ -250,7 +294,7 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
         converted, _, _ = convert_ordinary(raw)
         return converted
 
-    def _enqueue(self, prepared, tokenizer, request_id):
+    def _enqueue(self, prepared, tokenizer, request_id, logical_session=None, body=None, application_id=None):
         if self.fatal_error:
             raise RuntimeError(self.fatal_error)
         self.load()
@@ -260,6 +304,12 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
                           sampling_params=SamplingParams(max_tokens=self.request_max_tokens(prepared), temperature=0))
         request.prepared, request.recipe_tokenizer = prepared, tokenizer
         request.execution = QualificationSession(request_id)
+        request.logical_session = logical_session
+        request.session_pair_retained = False
+        if logical_session is not None:
+            request.session_body, request.application_id = body, application_id
+            request.execution.reconstruction_body = body
+            request.execution.reconstruction_tokenizer = tokenizer
         request.prompt_checkpoint, request.delivery_cursor = None, 0
         request.trace = dict(response_id='chatcmpl-'+request_id,
                              t0=getattr(prepared, 'arrival_t0', perf_counter()), generated=0,
@@ -277,6 +327,9 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
                     if queue is not None:
                         queue.put_nowait(output)
                     if output.finished:
+                        for rec in self.sessions.values():
+                            if rec.active_request_id == output.request_id:
+                                rec.active_request_id = None
                         event = self._settled.get(output.request_id)
                         if event is not None:
                             event.set()
@@ -301,7 +354,8 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
         self._deliveries.pop(request_id, None)
         self._settled.pop(request_id, None)
 
-    async def ordinary_response(self, prepared, *, tokenizer, http_request=None):
+    async def ordinary_response(self, prepared, *, tokenizer, http_request=None,
+                                request_id=None, logical_session=None, body=None, application_id=None):
         from .server import InferenceStreamingResponse, sse_frame
         if prepared.protocol != 'chat_completions' or prepared.image_sources:
             raise ValueError('ordinary MTP supports text Chat Completions only')
@@ -309,12 +363,15 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
         validate_ordinary_capacity(len(prepared.token_ids), limit, self.context_tokens)
         if len(prepared.token_ids) < 3:
             raise ValueError('encoded prompt must contain at least 3 tokens')
-        rid = uuid4().hex
+        rid = request_id or uuid4().hex
         queue = self._deliveries[rid] = asyncio.Queue()
         self._settled[rid] = asyncio.Event()
         try:
             with CancelScope(shield=True):
-                await self._call(self._enqueue, prepared, tokenizer, rid)
+                if logical_session is None:
+                    await self._call(self._enqueue, prepared, tokenizer, rid)
+                else:
+                    await self._call(self._enqueue, prepared, tokenizer, rid, logical_session, body, application_id)
         except BaseException:
             await self._cancel(rid)
             raise
@@ -371,7 +428,8 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
                         if not completed:
                             await backend._cancel(rid)
                         await stop_watcher()
-            return OwnedResponse(chunks(), media_type='text/event-stream')
+            return OwnedResponse(chunks(), media_type='text/event-stream', headers={
+                'X-DS41F-Request-ID': rid, 'Cache-Control': 'no-store', 'X-Accel-Buffering': 'no'})
         try:
             while True:
                 output = await queue.get()
@@ -387,10 +445,75 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
             self._deliveries.pop(rid, None)
             self._settled.pop(rid, None)
 
+    async def create_stateful_session(self, *, session_id=None):
+        return self.production_sessions.create(session_id)
+
+    def get_stateful_session(self, session_id):
+        return self.production_sessions.get(session_id)
+
+    async def close_stateful_session(self, session_id):
+        rec = self.get_stateful_session(session_id)
+        if rec.busy:
+            raise RuntimeError('session has an active request; cancel/reconcile before close')
+        # Reserve close against admission while releasing the sole Scheduler pin.
+        rec.closing = True
+        try:
+            with CancelScope(shield=True):
+                if self.scheduler is not None:
+                    await self._call(self.scheduler.release_session, session_id)
+                rec.closed = True
+                result = rec.to_json()
+                result['active_request_id'] = None
+                del self.sessions[session_id]
+                return result
+        finally:
+            rec.closing = False
+
+    async def production_session_response(self, session_id, prepared, *, tokenizer, body,
+                                          expected_count, application_id, http_request=None):
+        import json
+        if not prepared.stream:
+            raise ValueError('production session Chat Completions requires streaming; no legacy turn path')
+        payload = json.loads(body)
+        rid = uuid4().hex
+        rec = self.production_sessions.reserve(session_id, prepared, payload,
+                                               expected_count, application_id, rid)
+        try:
+            return await self.ordinary_response(prepared, tokenizer=tokenizer, http_request=http_request,
+                request_id=rid, logical_session=rec, body=payload, application_id=application_id)
+        except BaseException as exc:
+            if self.scheduler is not None and rid in self.scheduler.requests:
+                # Failed transport cleanup is NOT proof of non-admission. Leave
+                # the active identity fenced until Scheduler proves retirement.
+                rec.publication = dict(rec.publication, state='unrecoverable', last_error=str(exc))
+            else:
+                self.production_sessions.unstarted(rec, rid, exc)
+            raise
+
+    async def cancel_stateful_stream(self, session_id, request_id):
+        rec = self.get_stateful_session(session_id)
+        if rec.active_request_id != request_id:
+            if (rec.publication['last_turn'] or {}).get('request_id') == request_id:
+                return dict(request_id=request_id, completed=True, cancelled=False)
+            raise RuntimeError('active request identity mismatch')
+        await self._cancel(request_id)
+        return dict(request_id=request_id, state=rec.to_json()['state'])
+
+    async def qualification_response(self, *args, **kwargs):
+        raise RuntimeError('qualification execution is not a production capability')
+
+    async def run_stateful_chat_turn(self, *args, **kwargs):
+        raise RuntimeError('legacy stateful execution is not a production capability')
+
+    async def open_stateful_stream(self, *args, **kwargs):
+        raise RuntimeError('standard-OFF execution is not a production capability')
+
     async def shutdown_serving(self):
         with CancelScope(shield=True):
             for rid in list(self._deliveries):
                 await self._cancel(rid)
+            for sid in list(self.sessions):
+                await self.close_stateful_session(sid)
             if self.scheduler is not None:
                 await self._call(self.scheduler.close_serving)
                 self.scheduler = None

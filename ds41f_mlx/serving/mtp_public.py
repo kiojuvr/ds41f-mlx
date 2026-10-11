@@ -102,9 +102,11 @@ class LocalBoundary:
     Transport timeouts never revoke native ownership. Response finally blocks own
     shielded settlement. GET can observe busy while preparation/generation runs.
     """
-    def __init__(self, app, *, authority, body_timeout=30, send_timeout=30, ordinary=False, telemetry=None):
+    def __init__(self, app, *, authority, body_timeout=30, send_timeout=30, ordinary=False, telemetry=None,
+                 production_sessions=False):
         self.app, self.authority = app, authority
         self.ordinary = ordinary
+        self.production_sessions = production_sessions
         self.telemetry = telemetry
         self.body_timeout, self.send_timeout = body_timeout, send_timeout
         self.preparing = False
@@ -137,7 +139,10 @@ class LocalBoundary:
         lifecycle = re.fullmatch(r'/v1/sessions/[^/]+', path) and path != '/v1/sessions/restore' and method in ('GET','DELETE')
         supported = create or chat or lifecycle or (method == 'GET' and path in ('/health','/v1/models'))
         if self.ordinary:
-            supported = (method == 'POST' and path == '/v1/chat/completions') or (method == 'GET' and path in ('/health','/v1/models'))
+            session_control = method == 'POST' and re.fullmatch(r'/v1/sessions/[^/]+/(budget|cancel)', path)
+            supported = ((method == 'POST' and path == '/v1/chat/completions') or
+                         (method == 'GET' and path in ('/health','/v1/models')) or
+                         (self.production_sessions and (create or chat or lifecycle or session_control)))
         known = path in ('/v1/chat/completions','/v1/responses','/v1/messages','/v1/sessions/restore',
                          '/docs','/redoc','/openapi.json','/_ds41f/diagnostics') or re.fullmatch(r'/v1/sessions/[^/]+/(persist|responses|messages)', path)
         if not supported:
@@ -152,10 +157,14 @@ class LocalBoundary:
             if values(b'content-type') != [b'application/json'] or values(b'content-encoding'):
                 return await deny(400, 'json_uncompressed_required')
         if chat:
-            try:
-                sequence(headers)
-            except ValueError:
-                return await deny(400, 'invalid_request_sequence')
+            if self.ordinary:
+                if len(values(b'x-ds41f-expected-request-count')) != 1 or len(values(b'x-ds41f-application-request-id')) != 1:
+                    return await deny(400, 'production_session_fences_required')
+            else:
+                try:
+                    sequence(headers)
+                except ValueError:
+                    return await deny(400, 'invalid_request_sequence')
         owned = False
         def release_preparation():
             nonlocal owned
@@ -173,7 +182,7 @@ class LocalBoundary:
                 return await deny(400, 'invalid_content_length')
             if cl and int(cl[0]) > body_limit:
                 return await deny(413, 'body_limit')
-            if self.telemetry is not None and self.ordinary:
+            if self.telemetry is not None and self.ordinary and (chat or path == '/v1/chat/completions'):
                 from uuid import uuid4
                 scope['ds41f.diagnostic_id'] = uuid4().hex
                 self.telemetry.begin(scope['ds41f.diagnostic_id'])

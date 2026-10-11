@@ -15,8 +15,11 @@ promotion, Internet security or multi-user serving complete.
 
 `standard-off` remains the default. `mtp-singleton-v1` retains its existing
 session/fence/sequence contract. The separate **`mtp-serving-v1`** opt-in exposes
-ordinary `POST /v1/chat/completions`, `/v1/models`, and `/health`, without public
-sessions, sequence headers, certificates, or a dedicated client.
+ordinary `POST /v1/chat/completions`, `/v1/models`, and `/health`, without requiring
+sessions, sequence headers, certificates, or a dedicated client. Optional
+[production sessions](production-sessions.md) now provide the existing Chat Server
+canonical-outcome protocol on the **same ProductionScheduler**, not the historical
+singleton qualification execution path.
 
 Use a provisioned MTP environment with the non-editable installed execution
 package and [current admission boundary](runtime-admission.md):

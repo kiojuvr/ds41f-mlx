@@ -216,7 +216,7 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
                   openapi_url=None if local_mtp else '/openapi.json')
     if local_mtp or ordinary_mtp:
         app.add_middleware(LocalBoundary, authority=f'127.0.0.1:{runtime_config.port}', ordinary=ordinary_mtp,
-                           telemetry=getattr(backend, 'telemetry', None))
+                           telemetry=getattr(backend, 'telemetry', None), production_sessions=ordinary_mtp)
     app.state.backend = backend
     app.state.recipe_tokenizer = tokenizer
     if ordinary_mtp:
@@ -304,7 +304,10 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
             state.update(profile=profile, dependency_identity=backend.dependency_identity,
                          queued_requests=0 if scheduler is None else len(scheduler.waiting),
                          active_requests=0 if scheduler is None else len(scheduler.running),
-                         prefix_cache=None if scheduler is None else scheduler.checkpoints.paged.get_stats().to_dict())
+                         prefix_cache=None if scheduler is None else scheduler.checkpoints.paged.get_stats().to_dict(),
+                         capabilities={'stateful_chat': 'production-sessions-v1', 'persist_restore': False,
+                                       'max_live_sessions': 1},
+                         chat_defaults={'temperature': 0, 'top_p': 1, 'reasoning_effort': 'none', 'max_tokens': 'auto'})
         return JSONResponse(status_code=code, content=state)
 
     @app.get('/v1/models')
@@ -318,7 +321,13 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
     @app.post('/v1/sessions')
     async def create_session(request: Request) -> Response:
         raw = await request.body()
-        body = strict_json(raw) if local_mtp and raw else json.loads(raw.decode()) if raw else {}
+        if ordinary_mtp:
+            from .ordinary_admission import admit_structure
+            body = admit_structure(raw or b'{}')
+            if set(body) - {'id'}:
+                raise RequestError('production session create accepts only optional id')
+        else:
+            body = strict_json(raw) if local_mtp and raw else json.loads(raw.decode()) if raw else {}
         if local_mtp and body != {}:
             raise RequestError('create accepts only empty object')
         try:
@@ -346,13 +355,14 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
 
     @app.post('/v1/sessions/{session_id}/budget')
     async def session_budget(session_id: str, request: Request) -> Response:
-        if local_mtp or getattr(backend, 'qualification_response', None) is not None:
-            raise RequestError('budget is standard-OFF only', 400)
+        if local_mtp or (not ordinary_mtp and getattr(backend, 'qualification_response', None) is not None):
+            raise RequestError('budget is unavailable for qualification sessions', 400)
         body = await request.body()
         try:
             validate_stateful_chat_request_policy(body)
-            prepared = await run_in_threadpool(prepare_request, 'chat_completions', body, tokenizer=tokenizer, recipe_path=recipe_path, options=options, checkpoint=getattr(backend, 'checkpoint', runtime_config.checkpoint_path))
-            rec = backend.validate_stateful_admission(session_id, prepared)
+            prepared = await run_in_threadpool(prepare_request, 'chat_completions', body, tokenizer=tokenizer, recipe_path=recipe_path, options=options, checkpoint=getattr(backend, 'checkpoint', runtime_config.checkpoint_path), ordinary=ordinary_mtp)
+            rec = (backend.production_sessions.validate(session_id, prepared, json.loads(body)) if ordinary_mtp
+                   else backend.validate_stateful_admission(session_id, prepared))
             expected = request.headers.get('X-DS41F-Expected-Request-Count')
             if expected is not None and (not expected.isdecimal() or rec.request_count != int(expected)):
                 raise RequestError('observed request_count changed; reconcile before budget', 409)
@@ -365,6 +375,28 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
     @app.post('/v1/sessions/{session_id}/chat/completions')
     async def session_chat(session_id: str, request: Request) -> Response:
         body = await request.body()
+        if ordinary_mtp:
+            # Production dispatch is explicit and precedes inherited qualification
+            # methods. The only physical owner is the ordinary Scheduler broker.
+            try:
+                validate_stateful_chat_request_policy(body)
+                prepared = await run_in_threadpool(prepare_request, 'chat_completions', body,
+                    tokenizer=tokenizer, recipe_path=recipe_path, options=options,
+                    checkpoint=backend.checkpoint, ordinary=True)
+                prepared.diagnostic_id = request.scope.get('ds41f.diagnostic_id')
+                release = request.scope.get('ds41f.release_preparation')
+                if release is not None:
+                    release()
+                expected = request.headers.get('X-DS41F-Expected-Request-Count')
+                if expected is None or not expected.isdecimal():
+                    raise RequestError('expected request_count is required', 400)
+                return await backend.production_session_response(session_id, prepared, tokenizer=tokenizer,
+                    body=body, expected_count=int(expected),
+                    application_id=request.headers.get('X-DS41F-Application-Request-ID'), http_request=request)
+            except KeyError as exc:
+                raise RequestError(str(exc), 404) from exc
+            except RuntimeError as exc:
+                raise RequestError(str(exc), 409) from exc
         if local_mtp:
             validate_chat(body)
         qualification = getattr(backend, 'qualification_response', None)
@@ -422,7 +454,13 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
     async def cancel_session_turn(session_id: str, request: Request) -> Response:
         if local_mtp:
             raise RequestError('standard-OFF streaming cancellation only', 400)
-        body = await request.json()
+        if ordinary_mtp:
+            from .ordinary_admission import admit_structure
+            body = admit_structure(await request.body())
+            if set(body) != {'request_id'}:
+                raise RequestError('production cancellation requires only request_id')
+        else:
+            body = await request.json()
         if not isinstance(body.get('request_id'), str):
             raise RequestError('request_id is required')
         try:

@@ -73,6 +73,32 @@ def test_pair_rejects_frontier_identity_and_branch_mismatch():
         validate_pair(target, rings, tokens)
 
 
+def test_session_pin_is_only_upstream_refcount_and_survives_ordinary_cache_pressure():
+    pytest.importorskip('mlx.core'); pytest.importorskip('omlx')
+    from ds41f_mlx.serving.paired_checkpoint import PairedCheckpointAuthority
+    authority = PairedCheckpointAuthority('identity', MX, retained_checkpoints=2)
+    saved = authority.capture(*pair(193)); authority.publish(saved)
+    lease = authority.retain(saved.tokens)
+    for index in range(16):
+        target, rings, tokens = pair(200)
+        tokens = [1000+index]*len(tokens)
+        authority.publish(authority.capture(target, rings, tokens))
+    # The upstream bounded prefix-tail hint may forget a pinned block, while
+    # its hash/refcount lease and physical payload remain valid authority.
+    assert authority.acquire(list(range(195))) is None
+    assert authority.acquire_retained(lease, list(range(195)))[2] == list(saved.tokens)
+    with pytest.raises(ValueError, match='identity mismatch'):
+        authority.acquire_retained(lease, [-1]*195)
+    assert len(authority._payloads) == 2
+    authority.release(lease)
+    for C in (270, 280):
+        authority.publish(authority.capture(*pair(C)))
+    assert authority.acquire(list(range(195))) is None
+    with pytest.raises(RuntimeError, match='not published'):
+        authority.retain(saved.tokens)
+    authority.clear(); authority.release(lease)  # stale lease cannot change a new block
+
+
 def test_upstream_lookup_eviction_and_invalid_pair_miss():
     pytest.importorskip('mlx.core')
     pytest.importorskip('omlx')
@@ -249,7 +275,10 @@ def test_ordinary_http_recipe_route_has_no_compulsory_public_session(monkeypatch
                 assert result.status_code == 400
                 assert len(seen) == before  # never reaches execution admission
             assert seen and not backend.sessions
-            assert client.post('/v1/sessions', json={}).status_code == 404
+            created = client.post('/v1/sessions', json={})
+            assert created.status_code == 200
+            assert created.json()['state'] == 'empty'
+            assert client.delete('/v1/sessions/'+created.json()['id'], headers={'Content-Type': 'application/json'}).status_code == 200
             assert client.post('/v1/responses', json={}).status_code == 400
     finally:
         os.environ.clear()

@@ -219,5 +219,53 @@ class PairedCheckpointAuthority:
                            cache_lookup_s=perf_counter()-lookup_t0-restore_s)
         return None
 
+    def acquire_retained(self, lease, prompt, *, timings=None, observe=None):
+        """Restore a known refcounted pair, not a lossy prefix-index hint.
+
+        Upstream's bounded root-tail hint table may forget a still-live pinned
+        block. Its hash/refcount lease remains the sole physical authority.
+        """
+        t0 = perf_counter()
+        if lease is None:
+            raise RuntimeError('canonical session pair is not retained; no replay')
+        block_id, key = lease
+        checkpoint = self._payloads.get(key)
+        block = self.paged.acquire_cached_block(block_id, key)
+        if block is None:
+            raise RuntimeError('canonical session pair lease lost; no replay')
+        try:
+            if checkpoint is None:
+                raise RuntimeError('canonical paired payload missing; no replay')
+            if observe is not None:
+                observe('RESTORING')
+            restore_t0 = perf_counter()
+            result = checkpoint.restore(self.identity, prompt, self.mx)
+            if timings is not None:
+                timings.update(cache_lookup_s=restore_t0-t0, paired_restore_s=perf_counter()-restore_t0)
+            return result
+        finally:
+            self.paged.release_for_eviction([block_id])
+            if observe is not None:
+                observe('CACHE_LOOKUP')
+
+    def retain(self, tokens):
+        """Opaque upstream refcount lease; no second physical cache owner."""
+        block = self.paged.find_cached_block(list(tokens))
+        if block is None or block.block_hash not in self._payloads:
+            raise RuntimeError('canonical session pair was not published; no replay')
+        checkpoint = self._payloads[block.block_hash]
+        if checkpoint.tokens != tuple(tokens):
+            raise RuntimeError('session pair token identity mismatch')
+        leased = self.paged.acquire_cached_block(block.block_id, block.block_hash)
+        if leased is None:
+            raise RuntimeError('canonical pair lease unavailable; no replay')
+        return block.block_id, block.block_hash
+
+    def release(self, lease):
+        block_id, key = lease
+        block = self.paged.allocated_blocks.get(block_id)
+        if block is not None and block.block_hash == key:
+            self.paged.release_for_eviction([block_id])
+
     def clear(self):
         self.paged.clear()
