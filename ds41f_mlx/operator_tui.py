@@ -270,11 +270,14 @@ class Operator:
                         key = screen.get_wch()
                     except curses.error:
                         break
-                    key = self.chat_view.editor.decode(key)
+                    key = self.chat_view.active_editor.decode(key)
                     if key is not None:
                         keys.append(key)
                 if self.mode == 'chat':
                     for key in keys:
+                        if self.chat_view.setting_key(key, self.conversation, curses,
+                                self.chat_task is not None and not self.chat_task.done()):
+                            continue
                         if key == '\x11':
                             return
                         if key == '\x14':

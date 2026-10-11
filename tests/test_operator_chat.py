@@ -9,6 +9,13 @@ from ds41f_mlx.chat_application import ChatApplication, ApplicationError
 from ds41f_mlx.operator_chat import Composer, ChatView, wrap, cells
 
 
+def health():
+    from ds41f_mlx.serving.generation_policy import capability_contract
+    contract = capability_contract()
+    return {'status': 'ready', 'profile': 'standard-off', 'generation_policy': contract,
+            'chat_defaults': dict(contract['defaults'], reasoning_effort='none', max_tokens='auto')}
+
+
 def run(coro):
     return asyncio.run(coro)
 
@@ -28,7 +35,7 @@ class Backend:
         self.requests.append((req.method, req.url.path, value))
         path = req.url.path
         if path == '/api/status':
-            return httpx.Response(200, json={'runtime': {'status': 'ready', 'profile': 'standard-off'}, 'tools': [{'type': 'function', 'function': {'name': 'tool'}}]})
+            return httpx.Response(200, json={'runtime': health(), 'tools': [{'type': 'function', 'function': {'name': 'tool'}}]})
         if path == '/api/session':
             return httpx.Response(200, json={'id': value['id']})
         if path.startswith('/api/session/'):
@@ -78,7 +85,7 @@ def test_create_failure_retains_known_id_and_reports_actual_error():
     async def check():
         def handler(req):
             if req.url.path == '/api/status':
-                return httpx.Response(200, json={'runtime': {'status': 'ready', 'profile': 'standard-off'}, 'tools': []})
+                return httpx.Response(200, json={'runtime': health(), 'tools': []})
             return httpx.Response(404, json={'error': {'message': 'native session endpoint not_found'}})
         app = ChatApplication(transport=httpx.MockTransport(handler))
         with pytest.raises(ApplicationError):
@@ -135,9 +142,14 @@ def test_server_tool_result_and_safe_model_continuation():
     async def check():
         backend = Backend(); backend.mode = 'tools'
         app = ChatApplication(transport=httpx.MockTransport(backend.handle))
-        await app.new(); await app.send('use tool')
+        await app.new()
+        app.settings.change('top_k', 40); app.settings.change('min_p', .05)
+        await app.send('use tool')
         assert [m['role'] for m in app.messages] == ['user', 'assistant', 'tool', 'assistant']
         assert app.count == 2 and not app.awaiting_response
+        for _, path, value in backend.requests:
+            if path in ('/api/stream', '/api/tools'):
+                assert value['request']['top_k'] == 40 and value['request']['min_p'] == .05
         assert sum(p == '/api/tools' for _, p, _ in backend.requests) == 1
         await app.shutdown()
     run(check())
@@ -160,6 +172,33 @@ def test_uncertain_effect_is_observed_never_reexecuted():
         await app.shutdown()
     # Generate requires a user prefix (mock backend intentionally ignores recipe).
     run(check())
+
+
+def test_generation_editor_preserves_composer_paste_and_session_lock():
+    from ds41f_mlx.chat_capability import Settings
+    app = ChatApplication(); app.settings = Settings(health())
+    view = ChatView(); view.editor.insert('日本語 draft\nsecond line')
+    before = (view.editor.text, view.editor.cursor)
+    assert view.setting_key('\x0f', app, curses, False)
+    for char in '\x1b[200~low\x07\x03\x1b[201~':
+        assert view.active_editor.decode(char) is None
+    # Paste never dispatches Apply/Stop and never mutates the composer.
+    assert app.settings.values['reasoning_effort'] == 'none'
+    view.setting_editor.text = 'low'
+    view.setting_key('\x07', app, curses, False)
+    app.settings.begin_turn(); app.settings.freeze_reasoning()
+    view.setting_editor.text = 'high'; view.setting_key('\x07', app, curses, False)
+    assert 'session-owned' in app.notice
+    lines, _ = view.render(app, 160, 40, 'READY', 'READY', False)
+    assert any('exclusiveMinimum' in line.text for line in lines)
+    assert any('SESSION LOCKED' in line.text for line in lines)
+    view.setting_index = 8
+    view.setting_editor.text = '9' * 400
+    view.setting_key('\x07', app, curses, False)
+    assert 'finite integer' in app.notice and app.settings.values['seed'] is None
+    view.setting_key('\x0f', app, curses, False)
+    assert (view.editor.text, view.editor.cursor) == before
+    run(app.http.aclose())
 
 
 def test_unicode_paste_never_dispatches_actions_and_preserves_resize():

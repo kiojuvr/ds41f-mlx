@@ -28,6 +28,16 @@ async function api(url, method = 'GET', value) {
   return data;
 }
 async function save() { if (state.session) await ChatStore.put('sessions', state.session); }
+function policyDisplay() {
+  const s = state.session;
+  if (!s?.generation) return '';
+  const active = state.busy || !!s.pending || pendingCalls().length > 0 || !!s.toolAwaitingResponse;
+  const effective = active ? (s.workflow || s.generation) : s.generation;
+  const different = s.workflow && JSON.stringify(s.workflow) !== JSON.stringify(s.generation);
+  return (active ? 'Effective workflow: ' : 'Next user turn: ') + JSON.stringify(effective)
+    + (different ? ' · ' + (active ? 'Next user turn: ' + JSON.stringify(s.generation) : 'Continuation snapshot: ' + JSON.stringify(s.workflow)) : '')
+    + (s.protocol ? ' · reasoning session-owned' : '');
+}
 function controls() {
   for (const id of ['send', 'newSession', 'closeSession', 'saveSession', 'restoreSession', 'sessions', 'saves', 'images']) $(id).disabled = state.busy;
   $('send').disabled ||= !state.session || !!state.session.problem || !!state.session.pending || state.session.effects?.state === 'reserved' || state.session.toolAwaitingResponse || pendingCalls().length > 0;
@@ -36,14 +46,17 @@ function controls() {
   $('stop').disabled = !active || !!state.session?.pendingRestore || (state.stop && state.busy);
   $('status').textContent = state.stop && state.busy ? 'Stopping' : phase || (state.busy ? 'Recovering' : state.session?.record?.state === 'busy' ? 'Generating' : state.session?.problem || state.session?.toolPause === 'error' || state.session?.effects?.state === 'reserved' ? 'Error' : state.runtime?.status === 'ready' ? 'Ready' : ['error', 'unreachable', 'unavailable'].includes(state.runtime?.status) ? 'Error' : 'Recovering');
   const locked = !!state.session?.protocol;
-  if (locked) { const effort = state.session.protocol.reasoning; $('thinking').value = effort === 'none' ? 'off' : 'on'; if (effort !== 'none') $('reasoning').value = ({minimal: 'low', medium: 'high', xhigh: 'high'}[effort] || effort); }
+  if (locked) { const effort = state.session.protocol.reasoning; $('thinking').value = effort === 'none' ? 'off' : 'on'; if (effort !== 'none') $('reasoning').value = effort; }
   const restricted = production();
-  for (const id of ['temperature', 'topP', 'outputLimit', 'maxTokens', 'resetGeneration']) $(id).disabled = restricted || locked || state.busy;
+  const workflowLocked = state.busy || !!state.session?.pending || pendingCalls().length > 0 || !!state.session?.toolAwaitingResponse;
+  for (const name of GenerationPolicy.parameters) { if ($('policy_' + name)) $('policy_' + name).disabled = workflowLocked || !state.runtime?.generation_policy; }
+  for (const id of ['outputLimit', 'maxTokens', 'resetGeneration']) $(id).disabled = workflowLocked;
   $('images').disabled ||= restricted;
   for (const id of ['saveSession', 'restoreSession', 'saves']) $(id).disabled ||= state.runtime?.capabilities?.persist_restore === false;
-  $('thinking').disabled = restricted || locked || state.busy;
-  $('reasoning').disabled = restricted || locked || state.busy || $('thinking').value === 'off';
-  $('thinkLabel').textContent = $('thinking').value === 'off' ? 'Think Off' : 'Think ' + ({low: 50, high: 75, xhigh: 75, max: 100}[$('reasoning').value] || 75);
+  $('thinking').disabled = locked || workflowLocked;
+  $('reasoning').disabled = locked || workflowLocked || $('thinking').value === 'off';
+  $('thinkLabel').textContent = $('thinking').value === 'off' ? 'Think Off' : 'Think ' + $('reasoning').value;
+  $('effectivePolicy').textContent = policyDisplay();
   $('thinkingLock').textContent = locked ? 'Locked for this conversation. Start a new chat to change.' : '';
   $('toolsLabel').textContent = 'Tools ' + {auto: 'Auto', ask: 'Ask', off: 'Off'}[$('toolsMode').value];
   $('discardPending').hidden = !state.session?.pending || !state.session?.problem;
@@ -154,28 +167,42 @@ async function select(id) {
   visible = 100; state.attachments = []; rendered.clear(); follow = true;
   if (state.session?.generation) applyDefaults(state.session.generation);
   const reasoning = state.session?.protocol?.reasoning;
-  if (reasoning) { $('thinking').value = reasoning === 'none' ? 'off' : 'on'; $('reasoning').value = reasoning === 'none' ? 'max' : reasoning === 'xhigh' ? 'high' : reasoning; }
+  if (reasoning) { $('thinking').value = reasoning === 'none' ? 'off' : 'on'; if (reasoning !== 'none') $('reasoning').value = reasoning; }
   preview(); render();
   state.busy = true; setPhase('Recovering');
   try { await reconcile(true); } finally { state.busy = false; phase = ''; controls(); }
   await menus();
 }
 function production() { return state.runtime?.capabilities?.stateful_chat === 'production-sessions-v1'; }
-function negotiate() {
-  const runtime = state.runtime;
-  if (runtime?.status !== 'ready') throw new Error('Runtime is not READY');
-  const capability = runtime.capabilities?.stateful_chat;
-  if (capability === 'production-sessions-v1') {
-    const d = runtime.chat_defaults;
-    if (!d || d.temperature !== 0 || d.top_p !== 1 || d.reasoning_effort !== 'none' || d.max_tokens !== 'auto') throw new Error('Unsupported production chat_defaults; no normalization');
-    return {...d};
-  }
-  if (capability === undefined && runtime.profile === 'standard-off') return {temperature: 1, top_p: .95, reasoning_effort: 'none', max_tokens: 'auto'};
-  throw new Error('Unsupported runtime stateful_chat capability: ' + capability);
+function negotiate() { return GenerationPolicy.negotiate(state.runtime); }
+function buildPolicyControls() {
+  negotiate();
+  const contract = state.runtime.generation_policy;
+  if ($('samplingControls').dataset.contract === JSON.stringify(contract)) return;
+  if ($('samplingControls').dataset.contract && state.session) throw new Error('Runtime policy contract changed; close this conversation');
+  $('samplingControls').replaceChildren();
+  const advanced = document.createElement('details'), summary = document.createElement('summary'); summary.textContent = 'Advanced sampling'; advanced.appendChild(summary);
+  GenerationPolicy.parameters.forEach((name, index) => {
+    const spec = contract.parameters[name], label = document.createElement('label'), input = document.createElement('input');
+    label.textContent = name + ' · default ' + JSON.stringify(contract.defaults[name]);
+    input.id = 'policy_' + name; input.type = 'number'; input.step = spec.type === 'integer' ? '1' : 'any';
+    if ('minimum' in spec) input.min = spec.minimum;
+    if ('exclusiveMinimum' in spec) { input.min = spec.exclusiveMinimum; input.title = 'Must be greater than ' + spec.exclusiveMinimum; }
+    if ('maximum' in spec) input.max = spec.maximum;
+    if (name === 'seed') input.placeholder = 'null (' + spec.semantics + ')';
+    input.onchange = policyChanged; label.appendChild(input);
+    (index < 4 ? $('samplingControls') : advanced).appendChild(label);
+  });
+  $('samplingControls').appendChild(advanced);
+  $('reasoning').replaceChildren();
+  for (const effort of contract.reasoning.efforts.filter(e => e !== 'none')) { const option = document.createElement('option'); option.value = effort; option.textContent = effort; $('reasoning').appendChild(option); }
+  $('samplingControls').dataset.contract = JSON.stringify(contract);
 }
 function applyDefaults(d) {
-  $('temperature').value = d.temperature; $('topP').value = d.top_p;
+  GenerationPolicy.validate(state.runtime.generation_policy, d);
+  for (const name of GenerationPolicy.parameters) $('policy_' + name).value = d[name] === null ? '' : d[name];
   $('thinking').value = d.reasoning_effort === 'none' ? 'off' : 'on';
+  if (d.reasoning_effort !== 'none') $('reasoning').value = d.reasoning_effort;
   $('outputLimit').value = d.max_tokens === 'auto' ? 'auto' : 'custom';
   $('maxTokens').hidden = d.max_tokens === 'auto';
   if (d.max_tokens !== 'auto') $('maxTokens').value = d.max_tokens;
@@ -183,17 +210,20 @@ function applyDefaults(d) {
 async function createConversation() {
   await status();
   const defaults = negotiate();
-  // Standard-OFF has no advertised fixed defaults: preserve its existing UI choices.
-  if (production()) applyDefaults(defaults);
+  const preference = state.policyPreference || defaults;
+  GenerationPolicy.validate(state.runtime.generation_policy, preference);
+  applyDefaults(preference);
   const rec = await api('/api/session', 'POST', {});
   await ChatStore.put('sessions', {id: rec.id, title: '', messages: [], count: 0, frontier: 0, problem: '',
-    generation: production() ? defaults : null});
+    generation: {...preference}, policyVersion: state.runtime.generation_policy.version});
   await select(rec.id);
 }
 async function status() {
   const result = await api('/api/status');
   state.runtime = result.runtime;
   state.tools = (result.tools || []).filter(tool => !production() || !['fetch_image', 'fetch_pdf'].includes(tool.function?.name));
+  buildPolicyControls();
+  if (!state.session) applyDefaults(state.policyPreference || negotiate());
   controls();
 }
 function appendResults(result) {
@@ -274,22 +304,29 @@ async function exclusive(action) {
   });
 }
 function settings() {
-  negotiate(); // Fail closed even if the runtime changed since conversation creation.
-  if (state.session?.generation && !production()) throw new Error('Runtime capability changed; close this conversation');
-  if (production()) {
-    if (state.session && !state.session.generation) throw new Error('Conversation lacks negotiated production defaults; close and start a new chat');
-    return {...(state.session?.generation || negotiate())};
-  }
-  const temperature = Number($('temperature').value);
-  const max_tokens = $('outputLimit').value === 'auto' ? 'auto' : Number($('maxTokens').value), top_p = Number($('topP').value);
-  if ((max_tokens !== 'auto' && (!Number.isInteger(max_tokens) || max_tokens < 1 || max_tokens > 4294967295)) || !Number.isFinite(temperature) || temperature < 0 || !Number.isFinite(top_p) || top_p < 0 || top_p > 1) throw new Error('Invalid temperature, output budget or top-p');
-  return {temperature, top_p, max_tokens, reasoning_effort: $('thinking').value === 'off' ? 'none' : $('reasoning').value};
+  negotiate();
+  if (state.session && state.session.policyVersion !== state.runtime.generation_policy.version) throw new Error('Conversation lacks supported generation policy; start a new chat');
+  const values = {};
+  for (const name of GenerationPolicy.parameters) { const text = $('policy_' + name).value; if (!text && name !== 'seed') throw new Error(name + ' is required'); values[name] = !text ? null : Number(text); }
+  values.max_tokens = $('outputLimit').value === 'auto' ? 'auto' : Number($('maxTokens').value);
+  values.reasoning_effort = $('thinking').value === 'off' ? 'none' : $('reasoning').value;
+  if (state.session?.protocol && values.reasoning_effort !== state.session.protocol.reasoning) throw new Error('Reasoning is session-owned. Start a new chat to change it.');
+  return GenerationPolicy.validate(state.runtime.generation_policy, values);
+}
+function policyChanged() {
+  try {
+    const values = settings(); state.policyPreference = {...values};
+    if (state.session) { state.session.generation = {...values}; save().catch(error => notice(error.message)); }
+    controls();
+  } catch (error) { notice(error.message); }
 }
 function generationRequest() {
-  const s = state.session, options = settings();
-  s.protocol ||= {tools: state.tools, reasoning: options.reasoning_effort};
+  const s = state.session;
+  negotiate();
+  const options = GenerationPolicy.validate(state.runtime.generation_policy, s.workflow || settings());
+  if (s.protocol && options.reasoning_effort !== s.protocol.reasoning) throw new Error('Reasoning is session-owned. Start a new chat to change it.');
   return {model: 'deepseek-v4.1-flash', messages: s.messages, stream: true, ...options,
-    reasoning_effort: s.protocol.reasoning, tools: s.protocol.tools, tool_choice: 'auto'};
+    tools: s.protocol?.tools || state.tools, tool_choice: 'auto'};
 }
 async function generate() {
   const s = state.session, request = generationRequest();
@@ -306,6 +343,7 @@ async function generate() {
   // Recipe tool declarations are part of the historical prompt prefix. Keep
   // them stable; Tools mode controls client execution, not prefix rewriting.
   s.pending ||= {base: s.count, requestId: null, nonce: ChatPlatform.uuid(), addedUser: false};
+  s.protocol ||= {tools: request.tools, reasoning: request.reasoning_effort};
   await save(); // frozen ordinary history durable BEFORE request/effect
   state.controller = new AbortController();
   s.visibleUnsettled = null;
@@ -405,6 +443,7 @@ async function send() {
     if (text) parts.push({type: 'text', text});
     if (production() && state.attachments.length) throw new Error('Images unsupported by runtime');
     for (const file of state.attachments) parts.push({type: 'image_url', image_url: {url: file.url}});
+    s.generation = settings(); s.workflow = {...s.generation};
     s.toolPause = ''; s.toolError = ''; s.interrupted = false;
     s.messages.push({role: 'user', content: state.attachments.length ? parts : text});
     s.title ||= text.slice(0, 60) || 'Image conversation';
@@ -492,7 +531,7 @@ $('saveSession').onclick = () => exclusive(async () => {
   if (rec.state !== 'idle' || s.pending || s.problem || pendingCalls().length) throw new Error('Save requires a settled idle application/runtime frontier, with completed tool results');
   const result = rec.persisted_artifact?.frontier === s.frontier ? {artifact: rec.persisted_artifact} : await api(path(s.id) + '/persist', 'POST', {});
   if (result.artifact.frontier !== s.frontier) throw new Error('Native artifact frontier changed; application snapshot NOT paired. Reconcile before saving. Artifact: ' + result.artifact.path);
-  await ChatStore.put('saves', {id: s.id, title: s.title || 'Conversation', messages: s.messages, interruptions: s.interruptions || [], interruptionKinds: s.interruptionKinds || {}, lateStops: s.lateStops || [], endings: s.endings || {}, finishReason: s.finishReason, terminationReason: s.terminationReason, capacity: s.capacity, capacityStop: s.capacityStop, interrupted: !!s.interrupted, toolAwaitingResponse: !!s.toolAwaitingResponse, toolPause: s.toolPause || '', toolError: s.toolError || '', toolRounds: s.toolRounds || 0, protocol: s.protocol, frontier: s.frontier, artifact: result.artifact.path, savedAt: Date.now()});
+  await ChatStore.put('saves', {id: s.id, title: s.title || 'Conversation', messages: s.messages, interruptions: s.interruptions || [], interruptionKinds: s.interruptionKinds || {}, lateStops: s.lateStops || [], endings: s.endings || {}, finishReason: s.finishReason, terminationReason: s.terminationReason, capacity: s.capacity, capacityStop: s.capacityStop, interrupted: !!s.interrupted, toolAwaitingResponse: !!s.toolAwaitingResponse, toolPause: s.toolPause || '', toolError: s.toolError || '', toolRounds: s.toolRounds || 0, protocol: s.protocol, generation: s.generation, workflow: s.workflow, policyVersion: s.policyVersion, frontier: s.frontier, artifact: result.artifact.path, savedAt: Date.now()});
   notice('Saved native idle artifact and matching original-byte browser history. Later chat does not change this snapshot. Keep this browser storage: native artifacts do not contain historical image bytes.');
 });
 $('restoreSession').onclick = () => exclusive(async () => {
@@ -508,11 +547,11 @@ $('restoreSession').onclick = () => exclusive(async () => {
   }
   const id = 'sess_' + ChatPlatform.uuid().replaceAll('-', '');
   const journal = {id, title: snapshot.title + ' (restored)', messages: snapshot.messages,
-    interruptions: snapshot.interruptions || [], interruptionKinds: snapshot.interruptionKinds || {}, lateStops: snapshot.lateStops || [], endings: snapshot.endings || {}, finishReason: snapshot.finishReason, terminationReason: snapshot.terminationReason, capacity: snapshot.capacity, capacityStop: snapshot.capacityStop, interrupted: !!snapshot.interrupted, toolAwaitingResponse: !!snapshot.toolAwaitingResponse, toolPause: snapshot.toolPause || '', toolError: snapshot.toolError || '', toolRounds: snapshot.toolRounds || 0, protocol: snapshot.protocol, count: 0,
+    interruptions: snapshot.interruptions || [], interruptionKinds: snapshot.interruptionKinds || {}, lateStops: snapshot.lateStops || [], endings: snapshot.endings || {}, finishReason: snapshot.finishReason, terminationReason: snapshot.terminationReason, capacity: snapshot.capacity, capacityStop: snapshot.capacityStop, interrupted: !!snapshot.interrupted, toolAwaitingResponse: !!snapshot.toolAwaitingResponse, toolPause: snapshot.toolPause || '', toolError: snapshot.toolError || '', toolRounds: snapshot.toolRounds || 0, protocol: snapshot.protocol, generation: snapshot.generation, workflow: snapshot.workflow, policyVersion: snapshot.policyVersion, count: 0,
     frontier: snapshot.frontier, pendingRestore: {frontier: snapshot.frontier, artifact: snapshot.artifact},
     problem: 'Restore pending; outcome must be reconciled before continuation'};
   await ChatStore.put('sessions', journal); // known standard-OFF session ID BEFORE restore I/O
-  state.session = journal; localStorage.setItem('ds41f.selected', id); render();
+  state.session = journal; if (journal.generation) applyDefaults(journal.generation); localStorage.setItem('ds41f.selected', id); render();
   const rec = await api('/api/session/restore', 'POST', {artifact_path: snapshot.artifact, id});
   if (rec.id !== id || rec.diagnostics?.m8?.frontier !== snapshot.frontier) throw new Error('Saved application/runtime frontier mismatch; do not continue');
   await reconcile(); notice('Fresh native restore; no prompt replay or historical image re-encoding.');
@@ -527,16 +566,16 @@ $('discardPending').onclick = () => exclusive(async () => {
 });
 $('reasoning').onchange = $('thinking').onchange = () => {
   const protocol = state.session?.protocol;
-  if (protocol) { $('thinking').value = protocol.reasoning === 'none' ? 'off' : 'on'; $('reasoning').value = protocol.reasoning === 'none' ? 'max' : protocol.reasoning === 'xhigh' ? 'high' : protocol.reasoning; }
-  controls(); persistPreferences();
+  if (protocol) { $('thinking').value = protocol.reasoning === 'none' ? 'off' : 'on'; if (protocol.reasoning !== 'none') $('reasoning').value = protocol.reasoning; }
+  policyChanged(); controls();
 };
 $('toolsMode').onchange = () => { controls(); persistPreferences(); };
 $('settingsButton').onclick = async () => { $('settingsDialog').showModal(); try { await menus(); } catch (error) { notice(error.message); } };
 $('settingsClose').onclick = () => $('settingsDialog').close();
-$('outputLimit').onchange = () => { const custom = $('outputLimit').value === 'custom'; $('maxTokens').hidden = !custom; if (!custom && $('outputLimit').value !== 'auto') $('maxTokens').value = $('outputLimit').value; persistPreferences(); };
-function persistPreferences() { const values = {}; for (const id of ['temperature', 'topP', 'outputLimit', 'maxTokens', 'thinking', 'reasoning', 'toolsMode']) values[id] = $(id).value; localStorage.setItem('ds41f.preferences', JSON.stringify(values)); }
-for (const id of ['temperature', 'topP', 'maxTokens']) $(id).onchange = persistPreferences;
-$('resetGeneration').onclick = () => { $('temperature').value = '0'; $('topP').value = '0'; $('outputLimit').value = 'custom'; $('maxTokens').value = '128'; $('maxTokens').hidden = false; persistPreferences(); };
+$('outputLimit').onchange = () => { const custom = $('outputLimit').value === 'custom'; $('maxTokens').hidden = !custom; if (!custom && $('outputLimit').value !== 'auto') $('maxTokens').value = $('outputLimit').value; policyChanged(); };
+function persistPreferences() { const values = {}; for (const id of ['toolsMode']) values[id] = $(id).value; localStorage.setItem('ds41f.preferences', JSON.stringify(values)); }
+$('maxTokens').onchange = policyChanged;
+$('resetGeneration').onclick = () => { try { const d = negotiate(); if (state.session?.protocol) d.reasoning_effort = state.session.protocol.reasoning; applyDefaults(d); policyChanged(); } catch (error) { notice(error.message); } };
 $('skipTools').onclick = () => exclusive(async () => {
   await reconcile(); if (state.session.problem) throw new Error(state.session.problem);
   if (state.stop) { notice('Stopped before continuing.'); return; }
@@ -547,7 +586,7 @@ $('skipTools').onclick = () => exclusive(async () => {
 });
 (async () => {
   try {
-    try { const values = JSON.parse(localStorage.getItem('ds41f.preferences') || '{}'); for (const [id, value] of Object.entries(values)) if ($(id)) $(id).value = value; $('maxTokens').hidden = $('outputLimit').value !== 'custom'; } catch (_) { /* Corrupt presentation preferences do not authorize runtime work. */ }
+    try { const values = JSON.parse(localStorage.getItem('ds41f.preferences') || '{}'); for (const [id, value] of Object.entries(values)) if (id === 'toolsMode') $(id).value = value; $('maxTokens').hidden = $('outputLimit').value !== 'custom'; } catch (_) { /* Corrupt presentation preferences do not authorize runtime work. */ }
     await status(); await menus();
     const id = localStorage.getItem('ds41f.selected');
     if (id && await ChatStore.get('sessions', id)) await select(id);

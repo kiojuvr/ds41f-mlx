@@ -129,14 +129,20 @@ class StatefulToolChatClient:
     def __init__(self, runtime: RuntimeClient, registry: ToolRegistry) -> None:
         self.runtime = runtime; self.registry = registry
 
-    def run_turn(self, *, session_id: str, transcript: list[dict[str, Any]], user_message: str, max_tokens: int | str = 'auto', temperature: float = 0.0, tools_enabled: bool = True, max_tool_rounds: int = 128) -> ChatLoopResult:
+    def run_turn(self, *, session_id: str, transcript: list[dict[str, Any]], user_message: str, max_tokens: int | str = 'auto', temperature: float | None = None, generation_settings: dict[str, Any] | None = None, tools_enabled: bool = True, max_tool_rounds: int = 128) -> ChatLoopResult:
         handshake = getattr(self.runtime, 'health', None)
         if handshake is not None and handshake().get('profile') == 'mtp-singleton-v1':
             raise ToolError('StatefulToolChatClient does not support the explicit local MTP profile')
+        from .chat_capability import PARAMETERS
+        policy = dict(generation_settings or {})
+        if set(policy) - set(PARAMETERS + ('reasoning_effort',)):
+            raise ToolError('Unsupported generation setting')
+        if temperature is not None:
+            policy['temperature'] = temperature
         messages = list(transcript) + [{"role": "user", "content": user_message}]
         result = ChatLoopResult(session_id=session_id, messages=messages)
         for round_idx in range(max_tool_rounds + 1):
-            body: dict[str, Any] = {"model": "deepseek-v4.1-flash", "messages": messages, "max_tokens": max_tokens, "temperature": temperature, "stream": False}
+            body: dict[str, Any] = {"model": "deepseek-v4.1-flash", "messages": messages, "max_tokens": max_tokens, **policy, "stream": False}
             if tools_enabled:
                 body["tools"] = self.registry.declarations
                 body["tool_choice"] = "auto"

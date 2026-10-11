@@ -20,6 +20,10 @@ Chat keys (`^` in the footer means Ctrl):
   suppresses all action keys until its end marker. Terminal mode is restored on
   exit. Arrow keys edit; Home/End move within the logical line; Ctrl-A goes to
   line start; Ctrl-U deletes to line start. Composer wraps by terminal cells.
+* **Ctrl-O**: generation settings. Tab/Shift-Tab selects reasoning, temperature,
+  top-p, top-k, min-p, penalties and seed; Ctrl-G applies the edited value and
+  Ctrl-O returns without changing the conversation draft. Numbers use the
+  advertised runtime type/range; seed `null` means no explicit seed.
 * **Ctrl-C**: Stop at the authoritative safe boundary; wait for reconciliation.
 * **Ctrl-R**: observe/reconcile canonical session/request/tool outcome. It never
   submits another generation or repeats a tool effect.
@@ -30,11 +34,15 @@ Chat keys (`^` in the footer means Ctrl):
 * **Ctrl-Q**: quit TUI, retire its session, leave both services running.
 
 New Chat fetches runtime capability/defaults explicitly through `/api/status`.
-`production-sessions-v1` uses the advertised temperature 0, top-p 1, reasoning
-none and Auto output. Unknown capabilities/defaults are unsupported, not silently
-corrected. Standard-OFF retains its explicit existing compatibility defaults.
-TUI settings are frozen for the conversation; Tools Auto executes on Chat Server. Tool declarations are frozen when the session is
-created; generic call/argument/result messages and any reasoning_content are
+Both production MTP and standard-OFF require `generation-policy-v1`: all eight
+sampling defaults/ranges and reasoning efforts come from the runtime. There is
+no legacy sampler fallback. Unknown versions/capabilities fail closed. Settings
+remain application preferences across new chats and Dashboard/Chat changes.
+Sampling may change between user turns. Reasoning alone locks at submission
+(including unknown outcomes); Ctrl-N starts a new conversation to change it.
+A user workflow snapshots its policy for tools and explicit continuation; Stop
+and canonical GET do not reset it. Tools Auto executes on Chat Server.
+Tool declarations are frozen when the session is created; generic call/argument/result messages and any reasoning_content are
 rendered as plain text. Image/PDF acquisition declarations are omitted in
 production text scope; no attachment UI exists. Server tools alone execute effects
 and fit their results.
@@ -49,9 +57,11 @@ No terminal content is interpreted as ANSI/terminal control sequences.
 and DELETE. It does not use `/api/chat`, `StatefulToolChatClient.run_turn`, or a
 runtime chat protocol. Browser and TUI are independent, equal application
 frontends. The Python client is deliberately text-only. Browser also consumes
-runtime authority: production sampling/reasoning controls are locked, images and
-persist/restore are disabled, and old Browser preferences cannot enter a new
-production conversation. Standard-OFF image/persistence features remain available.
+the same `generation-policy-v1` authority and workflow/session ownership. Browser
+sampling controls remain request-owned; reasoning locks for the conversation.
+Production images and persist/restore are disabled. Unversioned Browser generation
+journals cannot silently acquire new defaults. Standard-OFF image/persistence
+features remain available under their existing runtime contracts.
 
 Each generation freezes history, expected request count and a fresh application
 request UUID. The admitted native request identity is retained. SSE output is

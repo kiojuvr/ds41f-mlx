@@ -129,12 +129,83 @@ class ChatView:
         self.total = 0
         self.cache_key = None
         self.history = []
+        self.settings_open = False
+        self.setting_index = 0
+        self.setting_editor = Composer()
+
+    @property
+    def active_editor(self):
+        return self.setting_editor if self.settings_open else self.editor
+
+    def load_setting(self, app):
+        from .chat_capability import PARAMETERS
+        name = ('reasoning_effort',) + PARAMETERS
+        value = app.settings.values[name[self.setting_index]]
+        self.setting_editor.text = json.dumps(value) if not isinstance(value, str) else value
+        self.setting_editor.cursor = len(self.setting_editor.text)
+
+    def setting_key(self, key, app, curses, busy):
+        from .chat_capability import PARAMETERS
+        names = ('reasoning_effort',) + PARAMETERS
+        if key == '\x0f':
+            if app.settings is None:
+                app.notice = 'Ctrl-N: negotiate runtime before settings'
+                return True
+            self.settings_open = not self.settings_open
+            if self.settings_open:
+                self.load_setting(app)
+            return True
+        if not self.settings_open:
+            return False
+        if key in ('\t', curses.KEY_BTAB):
+            self.setting_index = (self.setting_index + (-1 if key == curses.KEY_BTAB else 1)) % len(names)
+            self.load_setting(app)
+        elif key == '\x07':
+            try:
+                if busy or app.pending or app.calls() or app.awaiting_response:
+                    raise ValueError('Settle/continue the current workflow before changing settings')
+                name = names[self.setting_index]
+                text = self.setting_editor.text.strip()
+                if name == 'reasoning_effort':
+                    value = text
+                elif name == 'seed' and text == 'null':
+                    value = None
+                elif app.settings.contract['parameters'][name].get('type') == 'integer':
+                    value = int(text)
+                else:
+                    value = float(text)
+                app.settings.change(name, value)
+                app.notice = 'Setting applied to subsequent user turns'
+            except (ValueError, TypeError) as exc:
+                app.notice = str(exc)
+        elif key not in ('\x0e', '\x17', '\x12', '\x05', '\x14', '\x11', '\x03'):
+            self.setting_editor.edit(key, curses)
+        else:
+            return False
+        return True
+
+    def render_settings(self, app, width, height):
+        from .chat_capability import PARAMETERS
+        lines = [Line('Generation · runtime generation-policy-v1', bold=True)]
+        names = ('reasoning_effort',) + PARAMETERS
+        for i, name in enumerate(names):
+            spec = (app.settings.contract['reasoning'] if name == 'reasoning_effort'
+                    else app.settings.contract['parameters'][name])
+            lock = ' · SESSION LOCKED; Ctrl-N new chat' if name == 'reasoning_effort' and app.settings.reasoning is not None else ''
+            for row in wrap(f'{">" if i == self.setting_index else " "} {name}={app.settings.values[name]} · default={app.settings.defaults[name]} · {json.dumps(spec)}{lock}', max(2, width-2)):
+                lines.append(Line(row, tone='cyan' if i == self.setting_index else 'dim'))
+        # Keep editor/actions visible even on short terminals.
+        footer = [Line(app.notice, tone='yellow'), Line(names[self.setting_index] + ': ' + self.setting_editor.text),
+                  Line('Tab/Shift-Tab Select · ^G Apply · ^O Chat · Enter Newline · seed: null', tone='dim')]
+        return (lines[:max(0, height-3)] + footer)[:height], None
 
     def scroll(self, amount):
         current = max(0, self.total-self.body_height) if self.top is None else self.top
         self.top = max(0, min(max(0, self.total-self.body_height), current+amount))
 
     def render(self, app, width, height, runtime, server, busy):
+        if self.settings_open and app.settings:
+            return self.render_settings(app, width, height)
         width = max(2, width-2)
         def message_lines(messages):
             result = []
@@ -168,7 +239,7 @@ class ChatView:
                 draft.append('')
         help_lines = [Line(s, tone='dim') for text in (
             '^G Send  Enter Newline  ^C Stop  ^T Dashboard  ^Q Quit',
-            '^N New ^W Close ^R Reconcile ^E Continue PgUp/Dn Scroll ^L Latest F2 Start/F3 Stop Server')
+            '^O Generation ^N New ^W Close ^R Reconcile ^E Continue PgUp/Dn Scroll ^L Latest F2 Start/F3 Stop Server')
             for s in wrap(text, width)]
         input_height = max(1, min(max(1, height//4), max(2, len(draft)), height-5-len(help_lines)))
         first = max(0, cursor_row-input_height+1)
@@ -178,10 +249,10 @@ class ChatView:
         if self.top is not None:
             self.top = min(self.top, max(0, len(body)-self.body_height))
         top = max(0, len(body)-self.body_height) if self.top is None else self.top
-        defaults = app.defaults or {}
+        defaults = app.settings.values if app.settings else {}
         capability = ((app.runtime or {}).get('capabilities') or {}).get('stateful_chat', 'standard-off')
         lines = [Line(f'Chat · runtime {runtime} · server {server} · {"working" if busy else "idle"} · {"latest" if self.top is None else "scroll paused"}', bold=True),
-                 Line(f'{app.id or "no session"} · {(app.record or {}).get("state", "—")} · turns {app.count} · {capability} · T={defaults.get("temperature", "—")} p={defaults.get("top_p", "—")} reasoning={defaults.get("reasoning_effort", "—")} output={defaults.get("max_tokens", "—")}', tone='dim'),
+                 Line(f'{app.id or "no session"} · {(app.record or {}).get("state", "—")} · turns {app.count} · {capability} · T={defaults.get("temperature", "—")} p={defaults.get("top_p", "—")} k={defaults.get("top_k", "—")} min_p={defaults.get("min_p", "—")} reasoning={defaults.get("reasoning_effort", "—")} output={defaults.get("max_tokens", "—")}', tone='dim'),
                  Line(app.problem or app.notice, tone='yellow' if app.problem else 'dim')]
         lines += body[top:top+self.body_height]
         lines += [Line('')] * max(0, self.body_height-len(body[top:top+self.body_height]))

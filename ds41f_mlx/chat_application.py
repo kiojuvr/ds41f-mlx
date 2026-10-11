@@ -30,6 +30,7 @@ class ChatApplication:
         self.pending = self.effects = self.live = None
         self.tools = []
         self.defaults = None
+        self.settings = None
         self.runtime = None
         self.record = None
         self.problem = ''
@@ -58,9 +59,11 @@ class ChatApplication:
             await self.close()
         status = await self.api('/api/status')
         runtime = status.get('runtime') or {}
-        from .chat_capability import negotiate
+        from .chat_capability import Settings
         try:
-            self.defaults = negotiate(runtime)
+            previous = self.settings.values if self.settings else None
+            self.settings = Settings(runtime, previous)
+            self.defaults = self.settings.defaults
         except ValueError as exc:
             raise ApplicationError(str(exc)) from exc
         self.runtime = runtime
@@ -100,7 +103,7 @@ class ChatApplication:
         if self.defaults is None:
             raise ApplicationError('Runtime defaults have not been negotiated')
         return dict(model='deepseek-v4.1-flash', messages=self.messages, stream=True,
-                    **self.defaults, tools=self.tools, tool_choice='auto')
+                    **self.settings.request(), tools=self.tools, tool_choice='auto')
 
     def calls(self):
         last = next((m for m in reversed(self.messages) if m['role'] == 'assistant'), {})
@@ -173,6 +176,7 @@ class ChatApplication:
         self.check_continuation()
         if self.calls() or self.awaiting_response:
             raise ApplicationError('Pending tool continuation: Ctrl-E before another user turn')
+        self.settings.begin_turn()
         self.messages.append({'role': 'user', 'content': text})
         self.pending = {'base': self.count, 'nonce': str(uuid4())}
         if on_submitted:
@@ -185,6 +189,15 @@ class ChatApplication:
             raise ApplicationError(self.problem or 'Unresolved request/effect; reconcile or close')
 
     async def generate(self):
+        from .chat_capability import negotiate
+        runtime = (await self.api('/api/status')).get('runtime') or {}
+        try:
+            negotiate(runtime)
+            if runtime['generation_policy'] != self.settings.contract:
+                raise ValueError('Runtime generation contract changed; close and start a new chat')
+        except ValueError as exc:
+            raise ApplicationError(str(exc)) from exc
+        self.runtime = runtime
         request = self.request()
         await self.api('/api/budget', 'POST', dict(session_id=self.id, expected_count=self.count, request=request))
         if self.stopped:
@@ -193,6 +206,7 @@ class ChatApplication:
         self.live = {'role': 'assistant', 'content': '', 'reasoning_content': ''}
         self.notice = 'Streaming (unsettled)…'
         async def consume():
+            self.settings.freeze_reasoning()
             async with self.http.stream('POST', '/api/stream', json=dict(
                 session_id=self.id, expected_count=self.count,
                 application_id=self.pending['nonce'], request=request)) as response:

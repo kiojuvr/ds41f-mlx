@@ -45,27 +45,24 @@ Reload reconnects and waits on GET; it never sends a generation or tool effect.
 
 ## Model controls: exact mapping
 
-- Thinking Off maps to `reasoning_effort: "none"`. On selects `low`, `high` or
-  `max`, which map to the pinned V4.1 recipe's **50, 75, 100** respectively.
-  Historical `xhigh` is retained in the request and displayed as 75. Thinking and
-  effort are separate controls; effort is disabled while Thinking is Off.
-  New Thinking On defaults to 100; existing preferences/frozen prefixes remain unchanged.
-- The pinned recipe uses an enum, **not arbitrary numeric 1–100 effort**. Its
-  `deepseek-recipe-encoding/src/v4/dsv41.rs` maps Low→50, High/Xhigh→75, Max→100;
-  Chat Completion conversion accepts enum names, not numbers. An arbitrary
-  slider would falsely advertise ignored/unsupported values. The UI therefore
-  exposes the actual three levels and explains this limitation. Adding a 1–100
-  protocol would require a separate runtime/recipe change, explicitly outside
-  this task.
-- The original `protocol.reasoning` and tool declarations freeze before the
-  first generation request is durably submitted. Locked controls cannot silently
-  rewrite the conversation prefix. Use New chat to choose a different setting.
-- Settings > Generation directly sends finite, nonnegative `temperature`,
-  `top_p` in 0..1, and Auto or positive integer `max_tokens`. No top-k, ignored parameter
-  or private sampler is introduced. Initial everyday sampling is 1.0 / .95.
-  Reset to runtime defaults selects 0 / 0 / 128, exactly the fallbacks in
-  `DeepSeekRecipeRuntimeBackend.make_sampler()` / `max_tokens()`; this does not
-  claim a different official model sampler.
+- `generation-policy-v1` is the only generation authority. Missing/unknown
+  versions, stateful capabilities and incompatible ownership fail closed.
+  Thinking Off uses `reasoning_effort: "none"`; On selects the runtime-advertised
+  effort enum directly, without percentages, aliases or frontend effort defaults.
+  Effort is disabled while Thinking is Off. Thinking token budgets are unsupported.
+- Reasoning and tool declarations freeze at durable first submission (including
+  unknown outcomes). Reasoning alone is session-owned; use New chat to change it.
+  Stateless API reasoning remains request-owned; the UI does not change that contract.
+- Settings > Generation renders temperature/top-p/top-k/min-p and Advanced
+  penalties/seed from capability defaults and bounds, including exclusive bounds
+  and nullable best-effort seed. There is no frontend sampler or numerical default.
+  Reset uses advertised runtime defaults, preserving already locked reasoning.
+- Sampling is request-owned, editable between user turns, and serialized explicitly.
+  Tool/explicit continuation retains the original user workflow's application
+  snapshot through Stop/GET/reconnect. Subsequent user turns snapshot the current
+  settings, not an implicit runtime previous-turn policy. Chat distinguishes next
+  user-turn settings from the effective workflow/continuation snapshot when they
+  differ. Existing non-UI omission continues to resolve to production defaults.
 - Output presets: Auto, 4K, 8K, 16K, 32K, Custom. Auto reserves the remaining
   qualified total envelope after actual recipe/image-expanded tokenization.
   Text has a 1,048,576 total envelope; Vision has a separate 8192 total envelope,

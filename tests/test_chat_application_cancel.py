@@ -5,6 +5,7 @@ import json
 import httpx
 
 from ds41f_mlx.chat_application import ChatApplication
+from ds41f_mlx.serving.generation_policy import capability_contract
 
 
 def test_stop_fences_active_identity_and_recovers_canonical_suffix():
@@ -29,7 +30,9 @@ def test_stop_fences_active_identity_and_recovers_canonical_suffix():
             if req.method == 'POST':
                 posts.append((path, value))
             if path == '/api/status':
-                return httpx.Response(200, json={'runtime': {'status': 'ready', 'profile': 'standard-off'}, 'tools': []})
+                contract = capability_contract()
+                return httpx.Response(200, json={'runtime': {'status': 'ready', 'profile': 'standard-off',
+                    'generation_policy': contract, 'chat_defaults': dict(contract['defaults'], reasoning_effort='none', max_tokens='auto')}, 'tools': []})
             if path == '/api/session':
                 return httpx.Response(200, json={})
             if path.endswith('/cancel'):
@@ -51,6 +54,8 @@ def test_stop_fences_active_identity_and_recovers_canonical_suffix():
 
         app = ChatApplication(transport=httpx.MockTransport(handler))
         await app.new()
+        app.settings.change('temperature', .6)
+        app.settings.change('top_k', 40)
         task = asyncio.create_task(app.send('日本語'))
         await asyncio.wait_for(started.wait(), 2)
         assert app.live['content'] == 'visible prefix'
@@ -59,6 +64,11 @@ def test_stop_fences_active_identity_and_recovers_canonical_suffix():
         assert app.messages[-1]['content'] == 'canonical prefix + suffix'
         assert app.pending is app.live is None
         assert app.count == 1 and not app.problem
+        assert app.request()['temperature'] == .6 and app.request()['top_k'] == 40
+        assert next(v for p, v in posts if p == '/api/stream')['request']['temperature'] == .6
+        app.settings.change('temperature', .8)
+        app.settings.begin_turn()
+        assert app.request()['temperature'] == .8
         assert len([p for p, _ in posts if p == '/api/stream']) == 1
         await app.shutdown()
     asyncio.run(check())

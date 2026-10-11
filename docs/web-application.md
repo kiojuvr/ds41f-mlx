@@ -70,8 +70,16 @@ KV state, prompt replay or cache format is introduced. See
    This creates a fresh native ID and retains original-byte ordinary history.
 
 See [exact control mappings](chat-interface.md#model-controls-exact-mapping) for
-Thinking Off/On, supported effort 50/75/100, direct temperature/top-p values,
+Thinking Off/On, runtime-advertised reasoning efforts, all eight sampling controls,
 runtime-authoritative Auto/output presets and the fixed 128-round runaway breaker.
+`generation-policy-v1` alone supplies sampling defaults/ranges; temperature,
+top-p, top-k and min-p are in Generation, with penalties/seed in Advanced.
+Reset uses runtime defaults without changing a locked session's reasoning.
+Sampling is request-owned and editable between user turns. Application preferences
+are explicitly serialized; a tool/explicit continuation uses its workflow snapshot,
+including after Stop, canonical reconciliation, reload and recoverable reconnect.
+This is not runtime previous-turn inheritance: non-UI requests that omit policy
+still resolve to production defaults. Missing/unknown policy versions fail closed.
 See [dynamic capability budgeting](dynamic-capability-budget.md) for actual-request
 admission, fetch fitting and separate resource ceilings. No custom sampler is implemented.
 Protocol reasoning and tool declarations freeze at the first turn; Tools Auto/Ask/Off

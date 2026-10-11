@@ -262,7 +262,7 @@ def create_app(*, runtime_base_url: str | None = None, allow_private_lan: bool =
         if not isinstance(value.get('message'), str) or not value['message'].strip(): raise ToolError('message required')
         result = await call(StatefulToolChatClient(runtime, tools).run_turn, session_id=value['session_id'],
             transcript=value.get('transcript') or [], user_message=value['message'],
-            max_tokens=value.get('max_tokens', 'auto'), temperature=float(value.get('temperature', 0)), tools_enabled=bool(value.get('tools_enabled', True)))
+            max_tokens=value.get('max_tokens', 'auto'), temperature=value.get('temperature'), generation_settings=value.get('generation_settings'), tools_enabled=bool(value.get('tools_enabled', True)))
         return JSONResponse(content=result.to_json())
 
     app.mount('/static', StaticFiles(directory=STATIC_DIR), name='static')
