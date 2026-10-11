@@ -1,138 +1,77 @@
-# Runtime strategy
+# Execution selection and resource lifetime
 
-This document defines the durable **standard-off** production strategy for the scoped text release.
-The separately selected [bounded local MTP candidate](mtp-local-release-candidate.md)
-is governed by [M41 evidence](archive/development/milestone-41-local-mtp-release-candidate.md), not OFF
-feature parity. Omitted profile/default production MTP remains OFF.
+This specialist note explains production selector and resource-lifetime rules.
+It is not another global status, roadmap or release document. Start with
+[architecture](architecture.md), [capabilities](capabilities.md) and
+[operations](operations.md); future changes follow [implementation decisions](implementation-plan.md).
 
-## Qualified release scope
+## Selected execution
 
-```text
-official DeepSeek-V4.1-Flash checkpoint
-  -> DENSE_P0_P7 production prefill
-  -> P7 FULL_RESIDENT_BACKBONE_SSD_ENGRAM
-  -> P5 terminal holdout/handoff exactly once
-  -> ds41f TargetGenerationSession single-stream decode
-  -> MTP OFF / DSpark OFF / speculative decode OFF
-  -> official deepseek-recipe local HTTP serving
-```
+| Boundary | Selected owner / rule |
+| --- | --- |
+| Protocol | Official `deepseek-recipe` conversion, encoding and response processing |
+| Prefill | DENSE_P0_P7 dense FP8/MLX, DwarfStar-derived topology; P7 SSD-backed Engram with tile 2048 |
+| Terminal handoff | P5 revokes the prefill producer and supplies the held-out terminal once |
+| Standard-OFF | First-party model execution, `TargetGenerationSession`, `TargetForwardTransaction` and `DecodeStateProducer` |
+| Ordinary MTP | Pinned oMLX physical MTP topology, Scheduler-owned batch, ds41f paired-state and canonical/recipe lifecycle integration |
+| Native C++ core | Reference/qualification and selectively reusable components, not the production selector |
 
-Target hardware is the Mac Studio M3 Ultra 512 GB class system. Input scope is text. Serving is local single-flight.
+OFF and MTP are separately admitted installed payloads, not dynamic request switches
+or fallback backends. OFF first-party math/storage does not imply rebuilding MTP's
+proposal/verification/rollback graph. An architecture change must preserve actual
+state and performance contracts, not promise to recover them after a rewrite.
 
-The historical [M20 migration](archive/development/m20-omlx-release-migration.md)
-and [M22 packaging](archive/development/m22-release-packaging.md) recorded the
-upstream `v0.7.0` revision `4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40` and
-then-current checkout/release manifest policy. Those accounts are evidence, not
-current checkout or rollback requirements. Current executable/dependency identity
-is enforced by [installed execution admission](runtime-admission.md); use
-[operations](operations.md) for the provisioned OFF/MTP environments.
+The old one-chunk prefill, reference vertical-slice serving and P8 tile-native carry
+remain diagnostic/experimental, not selectable production defaults. Their build,
+fixture or historical throughput results grant no promotion. Source attribution,
+R1 fixtures and old engines retained for comparison are not active fallback paths.
 
-## Authority hierarchy
+## OFF model-lifetime resource policy
 
-1. Official checkpoint/data.
-2. Reviewed official DeepSeek semantics and `deepseek-recipe` protocol behavior.
-3. ds41f backend-local fidelity contracts and validators.
-4. Implementation-scoped regression evidence.
-5. Optimized production implementation.
+`runtime/resource_admission.py:AdmittedResources` binds model/configuration,
+admitted numerical payloads and concrete checkpoint/tokenizer/SSD resources.
+Execution requires a live capability; retirement revokes it. Changed/unadmitted
+resources reject entry, and an invalidated transaction cannot publish continuation.
+Installed admission and host compatibility are detailed in
+[runtime admission](runtime-admission.md), not inferred from directory names.
 
-Backend-local determinism is required for fixed checkpoint/runtime/backend/build/config/input/session state. Cross-backend hidden-state, logit, or greedy-token identity is not a release requirement under official-compatible floating-point semantics.
+The OFF lifetime owns two process-global MLX policies **before model allocation**,
+through dense prefill, generation and idle P6:
 
-## Production prefill/decode selection
+- Free allocation cache is at most **32 GiB**, never increasing a caller's smaller
+  limit. This bounds reusable freed buffers, not live model/KV state.
+- GPU residency uses the device-recommended wired budget for the entire model
+  lifetime, not only an active decode lease. Prefill/idle work must not depend on
+  a previously retired generation owner for resident weights.
 
-The runtime-facing prefill facade selects the dense P0-P7 FP8/MLX path with P7 `FULL_RESIDENT_BACKBONE_SSD_ENGRAM` and `P7_ENGRAM_TILE=2048`. P8 tile-native carry is retained as experimental/default OFF because it did not produce an end-to-end gain. The old one-chunk oMLX layer-loop substrate is diagnostic/legacy and is not selected by serving or release performance qualification.
+Overlapping OFF allocator-policy owners reject. Retirement/load-failure cleanup
+synchronizes and restores previous settings; ownership is not silently transferred
+when cleanup fails. No per-token cache clear, executable-KV eviction, numerical
+change, second state owner or promise of arbitrary working-set feasibility follows.
 
-P5 is the release handoff seam: serving holds out the terminal prompt token, prefill commits the prefix to one live `DeepseekV41Cache[40]`, and ds41f `TargetGenerationSession` consumes the terminal token exactly once. The engine owns target-call scheduling, normalized-logprob sampling, consumed-token history, EOS/length/cancel, failure invalidation, and return of the exact live list to idle continuation. Sampled lookahead is not committed until consumed. No scheduler row extraction, cache repack, prompt replay or hidden reconstruction occurs.
+P5 also retires the **passive** P6 setup/certificate backlink after transfer or burn.
+It was admission evidence while ready, not executable authority after revocation.
+Dropping that cycle releases old publications without waiting for cyclic GC; it
+does not alter live packed state, diagnostic aliases or one-shot transfer guards.
 
-[M44](milestone-44-target-generation-ownership.md) transfers the generation lifecycle. [M45](milestone-45-target-forward-ownership.md) adds owned single-token target-forward orchestration and the all-40-layer mutation/commit transaction. No external LanguageModel forward or row extraction/merge executes on this production decode path. [M46](milestone-46-state-production-ownership.md) transfers the standard-off block/attention/compressor/index producer boundary into `DecodeStateProducer`: no external state-producing module call receives the live cache. ds41f owns slot writes, compressor tails, compressed/index/candidate reuse publications, admission-metadata advancement and structural completion. M48 subsequently owns checkpoint loading, projections/norms/MoE/HC/head/quantization math, packed storage and SSD Engram read mechanisms for standard-OFF; generic MLX/native primitives remain subordinate dependencies. [M47](milestone-47-execution-resource-admission.md) owns admission of that numerical/native implementation and the full checkpoint/tokenizer/SSD backing set. OFF startup verifies content and loaded native identities, then binds model/configuration and concrete SSD descriptors; OFF execution requires this live capability. Cold payload verification is explicit (~242 s for ~510 GB); no resource-file hashing occurs in the token loop. The OFF model/prefill math is first-party; bounded MTP and diagnostic donor execution/admission remain separate. The old `omlx_generation.py` engine remains only for R1 legacy fixtures/comparisons; bounded MTP is unchanged on its separate scheduler. Failed transactions invalidate every cache alias and cannot publish continuation; cancellation occurs between completed transactions.
+## Continuation and images
 
-## MTP architecture authority (M49R reset)
+OFF returns the exact coherent live list to idle continuation; validated same-backend
+artifacts remain dormant until admitted restore. MTP reuses complete immutable
+paired checkpoints under its Scheduler/cache rules, never an OFF artifact or live
+ring rewind. Detail: [state contracts](session-state.md).
 
-[M49R](mtp-architecture-reset.md) supersedes M50–M56's first-party speculative
-reconstruction and restores active source to the M49 assessment base `5e784d9`.
-The archived M56 block is not selected, continued or considered for normal-profile
-promotion. Historical state/socket/R1 PASS remains evidence, not current direction.
-M54 semantic horizon, consuming EOF, tool/effect, retry/re-entry and atomic delivery
-requirements survive independently of the archived implementation.
+The bounded OFF image path preserves this execution topology. CPU preprocessing
+binds bytes and expanded spans; the worker encodes only new images, injects sparse
+absolute embeddings and slices VL/Engram masks per command. Idle artifacts contain
+image identities/packed state, not pixels or encoder activations. Restore and
+cancellation materialize/drain protected work before publication or fence release.
+Image limits and profile exclusions live in capabilities, not a second strategy.
 
-For the new MTP line, oMLX is the physical MTP/decode topology authority; retain
-its proposal, verification, block/attention scheduling, rollback/commit and
-synchronization structure unless concrete necessity evidence justifies a change.
-Prefill retains DwarfStar topology with qualified MLX numerics. ds41f owns
-semantic/application/lifecycle/resource authority, not execution reinvention.
-Matched candidate performance is an initial conformance gate; material unexplained
-slowdown BLOCKS rather than becoming an optimization backlog. Standard-OFF's
-qualified single-input architecture remains unchanged. The separate candidate now
-has the [M51R minimal authority connection](milestone-51r-canonical-lifecycle-connection.md)
-after the M50R bounded freeze and explicit authorization; its physical graph is
-preserved. M52R application integration and M53R fresh normal-local admission
-subsequently passed. [M54R/M55R](milestone-54r-55r-operational-release.md) now approve
-the exact normal-local source-clone release by operational evidence composition,
-without another campaign; portable runtime promotion remains deferred.
+## Evidence versus selection
 
-## Model-lifetime allocator resource policy
-
-The admitted standard-OFF lifetime bounds MLX's **free allocation cache** to at
-most 32 GiB (and never increases a caller's smaller limit). This policy is acquired
-before model allocation, covers dense prefill, decode and idle P6 continuation,
-and restores the previous process setting on retirement/load failure. Overlapping
-OFF allocator-policy owners reject rather than restore each other's global state.
-This addresses measured free-buffer accumulation at 200K; it does not evict live
-KV/weights, clear caches per token/turn, change precision, or create a second state
-owner. Live working-set feasibility remains an evidence/admission concern, not a
-promise of arbitrary context operation.
-
-Very-long qualification also requires GPU residency across the **whole admitted
-OFF lifetime**, not only active target decode. The default MLX wired limit is
-zero; an idle/P6 prefill must not depend on a previously closed generation lease
-to keep resident weights available. Admission owns the device-recommended wired
-budget alongside the existing allocator policy, restores both settings at
-retirement/load failure, and synchronizes before changing residency. This changes
-resource lifetime only; no live state is evicted, replayed or repacked. Supported
-frontiers still require actual lifecycle qualification.
-
-Very-long turns also require deterministic retirement of the **passive** P6
-certificate/setup reference cycle after P5 transfer (including failed bootstrap).
-The setup-to-certificate backlink is needed for admission while ready, not after
-the runner is revoked. Retiring that backlink does not alter the live packed list,
-publication semantics, single-transfer/burn guards or explicit diagnostic aliases;
-it prevents old source buffers from depending on Python cyclic GC for release.
-
-## Session and persistence strategy
-
-Stateful Chat Completions sessions preserve exact-prefix continuation, zero prompt replay, zero full-cache repack/reconstruction, and coherent all-layer cache frontiers at idle boundaries. Persistence is for idle same-backend artifacts only. Restore validates provenance, schema, shape, dtype, checkpoint identity, and frontier before re-entry, and fails closed on mismatch/corruption.
-
-## Bounded multimodal strategy
-
-[Multimodal production qualification](multimodal-production-qualification.md)
-closes four inline images / 8,192 consumed positions on the same first-party
-standard-OFF core; 1M text/resource semantics remain unchanged. CPU-only bounded
-preprocessing produces expanded spans and byte identities. The owner worker
-encodes only new images, injects sparse absolute embeddings and slices the VL /
-Engram-exclusion mask per command. P5/P6 and first-party target generation remain
-the only cache/execution authority; no image-specific generation stack exists.
-
-Idle artifacts preserve image identities and all packed slots, never pixels or
-encoder activations. Restore materializes exact loaded arrays on its worker
-before publication. Cancellation drains protected work before releasing fences,
-burns discarded ready leases, and publishes completed stateful protocol records
-inside the worker. These are lifecycle repairs, not replay/repack or a new format.
-Official preprocessing/FP32 fidelity and BF16-local drift limits are explicit.
-This is bounded development/core support, not R1/release/runtime promotion.
-
-## API strategy
-
-HTTP protocol compatibility is delegated to official `deepseek-recipe`; ds41f implements only the runtime backend. Stateless text Chat Completions, Responses, and Messages are in scope. Stateful sessions are Chat Completions only, including client-side function-tool/result loops. The server does not execute tools.
-
-M21's production Rust boundary is a Rust crate over this same loopback HTTP seam plus optional child-process startup/readiness/shutdown control. Rust clients do not receive executable cache handles, do not perform prompt replay, and do not duplicate DeepSeek protocol semantics; they submit JSON/SSE requests to the qualified server authority.
-
-Arbitrary stateful request stop strings are rejected before mutation. The qualified stateful stop mechanism is token-level DeepSeek EOS plus length/cancel handling.
-
-## Optional / experimental
-
-- Diagnostic endpoints and telemetry.
-- Native C++ model core as reference/qualification and reusable components.
-- P8 tile-native carry and other optimization probes, default OFF.
-
-## Unqualified / non-goals
-
-Vision beyond the separate bounded core envelope, batching, MTP, DSpark, speculative decode, distributed serving, authentication, server-side tool execution, MCP/plugins, web search, shell tools, sessionized Responses/Messages, cross-runtime KV portability, new kernel optimization, and arbitrary stateful stop rollback are outside the release strategy.
+Long-context resource repairs and rejected selector experiments are recorded in
+source-scoped reports. They are not startup dependencies or today's benchmark.
+Use [qualification interpretation](qualification.md) and
+[performance interpretation](performance.md); native build success, an old PASS
+or a configured maximum does not select a production path or qualify later HEAD.

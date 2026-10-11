@@ -1,137 +1,108 @@
-# Session state
+# State and continuation contracts
 
-Current standard-off authority (M44/M45/M46/M47): P7 produces the live packed 40-layer list;
-P5 transfers it once to ds41f `TargetGenerationSession`. The engine owns target
-scheduling, sampling, consumed history and EOS/length/cancel boundaries, and
-returns that exact list to idle P6 continuation. Unconsumed sampled lookahead is
-not committed state. M45 sequences each single-token forward directly through
-all 40 layers on that list. All mutated slots must complete and every frontier
-must validate before history commits; any failure burns every layer. Lower-level
-numerical/storage/SSD Engram read primitives remain attributed substrate. M46's owned `DecodeStateProducer` controls window, compressor tails, compressed/index/candidate publication and structural completion; no donor Block/Attention/Compressor/Indexer call executes in standard-off decode. The M2–M4 admission discussion below is historical/reference machinery,
-not the production selector. See `runtime-strategy.md` and the M44/M45/[M46](milestone-46-state-production-ownership.md)/[M47](milestone-47-execution-resource-admission.md) decisions. M47 binds a live model-resource capability through prefill, idle P6 and target decode. Changed/unadmitted resources reject entry before mutation; model close revokes the capability, and retired-resource execution burns the transaction lease.
-
-Current ordinary MTP uses Scheduler-owned immutable paired target/DSpark
-checkpoints, aligned canonical frontiers and no history replay or full-cache
-repack. Logical session history/outcomes are not a second physical cache owner;
-transport delivery is distinct from canonical settlement. See
-[ordinary serving](mtp-production-serving.md) and [logical sessions](production-sessions.md).
-MTP native persistence/restore remains unsupported; OFF idle artifacts do not
-provide an MTP serialization format.
-
-The M25–M39 accounts below retain their original internal development scope.
-Public-disabled, blocked and next-task statements describe those stages, not
-current ordinary MTP or permission to continue their historical plans. In
-particular, M28's observed extra-suffix bound is a diagnostic result for its
-recorded topology, not a new universal cancellation policy.
-
-M25 preserves the OFF-only idle artifact: save/restore reject models with
-preserved or active MTP before I/O. The pinned upstream MTP emission queue and
-target cache do not provide the required arbitrary committed frontier through
-ordinary extraction; see [M25](archive/development/milestone-25-mtp-decision.md). No production MTP
-session or restore qualification is implied by the contracts below.
-
-The separate internal guarded singleton contract is operationally qualified in
-[M34](archive/development/milestone-34-operational-qualification.md), using M33's target/DSpark/
-canonical/delivery frontiers and bounded quiescence. Active cancellation transfers
-native singleton cache row views before owner release, preserving subsequent P6
-admission and old-owner revocation. MTP save/restore still fails closed before I/O;
-this is not qualification of persisted or concurrent MTP sessions.
-[M35](archive/development/milestone-35-http-sse-qualification.md) qualifies bounded internal HTTP/SSE
-recovery on that authority: active canonical history remains owned by generation,
-recorded session history commits at quiescence, and socket writes never acknowledge
-model-token ordinals. Client-observed recipe events remain a canonical prefix;
-GET recovery followed by ordinary exact-prefix conversion consumes retained caches.
-Protected failures require termination rather than ambiguous idle recovery.
-[M36](archive/development/milestone-36-client-recovery-qualification.md) establishes that native idle
-coherence alone does not certify protocol reconstructability: interrupted canonical
-DSML can produce an unfinished tool call whose ordinary encoding is non-prefix.
-The internal backend now poisons such settlement and reports busy until retirement
-releases the response lease. Its diagnostic partial tool response is not execution
-permission. Universal client recovery remains blocked.
-[M36R](archive/development/milestone-36r-recovery-admission.md) qualifies only settled outcomes carrying
-an official-recipe ordinary reconstruction certificate and exact-prefix admission.
-Its `outcome_state` distinguishes not_admitted, active, recoverable, unrecoverable,
-and poisoned; the legacy `state=poisoned` label also contains protocol-unrecoverable
-outcomes. Nonrepresentable outcomes retire caches and require DELETE/fresh start.
-Opt-in internal sequence/body identity fencing makes observation/retry non-generating;
-older identities reject after the next admitted turn. No second model-history
-owner, persisted fence, public MTP route or distributed exactly-once tool claim
-is introduced.
-[M37](archive/development/milestone-37-local-client-integration.md) places the integrated workflow in an
-experimental reusable local client. Its transcript is ordinary application history,
-its ledger owns only living-client effects, and its frozen request/expected sequence
-are transport/admission observations, not token/cache authority. Negative outcomes
-omit the unrepresentable final assistant; explicit DELETE/fresh creation may prefill
-legitimate prior visible messages as a new session, never carry retired native state.
-Expired identities surface without regeneration.
-[M38](archive/development/milestone-38-client-operational-soak.md) makes lifecycle response uncertainty
-sticky/stopped and reserved effects non-bypassable, including DELETE/fresh actions.
-No automatic resolution API is provided. Its finite living-client soak passes, but
-server retirement lifetime retention is BLOCKED: closed identities and payloads
-remain in an uncapped session map despite the bounded trace deque.
-[M39](archive/development/milestone-39-lifetime-admission.md) replaces that explicitly internal ID
-contract with server-issued process-namespace serial lifetimes. Retirement is
-permanent under the no-wrap issuance invariant, independent of diagnostic eviction.
-One live record/lease, two fixed-width identity scalars, 16 small retired summaries,
-and fixed 32-slot trace deques replace the historical closed-record archive; DELETE
-removes detailed payloads and references. Client-selected IDs are unsupported on
-this path; `InternalLocalClient.create()` already accepts server-issued identities.
-Exhaustion rejects rather than wrapping; persistence/restart and public MTP remain
-unqualified. See the canonical M39 evidence for scope and limits.
-
-The current native session owner is `TextBackboneState` together with `TextEncoder`, `TextDecoder`, and `TextGeneration` state machinery. It is the reference state contract for future production architecture unless a documented architecture decision replaces or wraps it. Validation inventory helpers are not independent production session implementations.
+This specialist note defines persistent-state categories and transfer/continuation
+rules. [Architecture](architecture.md) owns the overall ownership map;
+[capabilities](capabilities.md) owns supported profiles/endpoints/limits.
+Native reference operations and historical adapters are not public session APIs.
 
 ## State classification
 
-| State | Classification | Owner / lifetime |
-| --- | --- | --- |
-| Token/ngram history | persistent model/session state | text backbone/generation session; reset clears, fork copies |
-| Per-layer window KV | persistent model/session state | SWA layer state; survives decode continuation |
-| Source-layer compressed KV | persistent model/session state | compressed producer layers; published for reuse consumers |
-| Ratio > 1 compressor pending KV/score | persistent model/session state | compressor; may span calls until publication boundary |
-| Indexer K | persistent model/session state | index source layers; reused by candidate/top-k flow |
-| SharedAttention publications | persistent model/session state | producer/consumer publication registry; republished when source advances |
-| Candidate/top-k buffers | runtime-owned state with persistent lifecycle hooks | candidate source/consumer machinery; invalidated on reset/fork as required |
-| HC pre/post `pre_mix` | call-local handoff | valid only during the subblock call that produced it |
-| `main_hidden` | call-local handoff | generation step output used for commit/logit-associated bookkeeping |
-| Runtime RNG | runtime-owned state | generation/sampler session; deterministic supplied-noise tests qualify arithmetic, not PyTorch bitstream parity |
-| Checkpoint weights, Engram rows, expert backing | static model data / storage-backed data | read-only catalog/store/backing; not session state |
-| DSpark/MTP priming context | speculative decode session state, not base target state | oMLX MTP-enabled prefill can create `_omlx_mtp_prime_ctx` containing `DSparkContextCache`, target-layer hidden history, and `expected_target_offset`; absent from current `PrefillContinuationState` and not required while MTP is OFF |
+| State | Category and lifecycle |
+| --- | --- |
+| Consumed token / ngram history | Persistent canonical model state; extends only at committed boundaries |
+| Per-layer window KV | Persistent local-attention state; retained across continuation |
+| Compressed source KV | Persistent producer state published for reuse consumers |
+| Compressor pending KV / scores | Persistent tails spanning calls until a valid publication boundary |
+| Indexer K | Persistent index-source state used by candidate/top-k flow |
+| Shared attention publications | Committed producer/consumer state, republished when the source advances |
+| Candidate/top-k buffers | Runtime-owned state with persistent publication/reset/fork hooks |
+| Committed DSpark rings | MTP continuation state paired with target/prefix frontier, not OFF state |
+| Draft KV, proposal/verify stashes, queued future predictions | Request-local speculative machinery; not reusable committed checkpoints |
+| Runtime RNG / sampling policy | Request/generation-owned; not a paired prefix-cache snapshot |
+| HC `pre_mix`, hidden/logit tensors | Call-local handoff/output, not an independent continuation owner |
+| Checkpoint weights, Engram rows, expert backing | Static read-only or storage-backed model resources |
+| Logical conversation / request correlations | Application/session metadata, not physical model state |
 
-## Reset, fork, and continuation
+History, all 40 target layers and required MTP auxiliary state must describe the
+same consumed frontier at a reusable committed boundary. Offset equality alone
+is insufficient: physical window/compressed/index/tail/Engram and DSpark ring
+contents/layout must agree with that prefix.
 
-- **reset** clears persistent session state and returns the runtime to a prompt-free state.
-- **fork** duplicates persistent session state so the child can continue without mutating the parent.
-- **continuation** appends new prompt/decode work to existing state while preserving already-published KV/index/candidate data.
-- invalid input must not partially mutate session state.
+## OFF live ownership and P5
 
-## Prefill to first decode
+Dense prefill creates the live 40-layer packed list. Ready prefill/admission records
+bind that list and its committed frontier; digests/manifests are evidence, not
+executable tensors. P5 reserves/revokes the producer, transfers the same list and
+consumes the held-out terminal once. Old setup/runner aliases cannot execute again.
 
-Prefill populates token/ngram history, window KV, source-layer compressed KV, indexer K, candidate/top-k publications, final logits, and shared publications according to the layer topology.  The first decode step consumes those states rather than recomputing a fresh prompt-only session.  Engram insertion points consume current token/ngram context through the backbone and preserve SSD-backed lookup semantics.
+`TargetGenerationSession` owns consumed history and active generation. Its target
+transaction completes/materializes all mutated slots before history commits.
+Unconsumed lookahead is not history. A failed transaction invalidates every layer
+and cannot yield an idle continuation; it is not repaired by rollback, reconstruction
+or prefill of the old history. Invalid requests must fail before forbidden mutation.
 
-The DwarfStar-derived prefill path commits an architecture-neutral live state represented by `ds41f_mlx.prefill_session.PrefillContinuationState`, with artifact/evidence views represented by `PrefillSessionHandoff`.  The live state contains actual runtime arrays/handles for token history, Engram hash history, per-layer window KV, source compressed KV, source index K, candidate state, top-k generations, shared publications, ownership, and empty/non-empty compressor-pending state.  The artifact handoff records digests, provenance, inventory, and ownership without pretending those digests are executable state.  HC residual/pre-mix digests remain final-output qualification evidence unless a future official continuation contract requires them across token boundaries.  oMLX target decode is selected for production, and `OMLXDecodeSession` / `OMLXDecodeStateAdapter` form the decode admission/session seam. After successful admission, `OMLXDecodeSession.cache` (`DeepseekV41Cache[40]`) is the active decode state authority; `PrefillContinuationState` is immutable input/evidence, not a second synchronized live authority. `OMLXDecodeSession` keeps CPU token history in append-only chunks for rollback/fork/reset bookkeeping; full concatenation is an explicit observation/export operation, not per-token hot-path work. The M21 Rust boundary is client/process control over local HTTP only and never becomes a session-state or cache authority.
+Successful stop synchronizes, discards unconsumed lookahead and returns the exact
+list/layer objects to idle P6. Lease markers retire without clearing the old
+producer's one-shot guards. Retained continuation performs zero hidden prompt replay
+and zero full-cache repack. Passive admission backlinks retire after P5; explicit
+observation/export data never becomes a second executable owner.
 
-M4 native-kernel-backed controls showed that ordinary oMLX `BatchGenerator` MTP-OFF decode can be much faster than direct one-token `_forward`, even from the same model core. P5 additionally proves the existing mlx-lm admission seam can consume an already-populated cache without prompt replay:
+## MTP reusable state and logical sessions
 
-```python
-BatchGenerator.insert(prompts=[[15]], caches=[admitted_cache], all_tokens=[[0, 3]])
-```
+Ordinary MTP uses `PairedCheckpointAuthority` under the existing Scheduler and
+PagedCache lookup/refcount/capacity/eviction owners. A complete immutable pair binds
+execution/tokenizer/recipe identity, prefix IDs, target slots and three committed
+DSpark rings at C. Acquisition creates fresh mutable containers/array handles.
+Do not assume zero-copy backing for retention budgets or serialize speculative/RNG
+state into a future request.
 
-At that seam the cache authority before decode is state after `[0,3]`; token `15` is the first GenerationBatch backbone input and is appended to token history by the GenerationBatch bootstrap; subsequent responses represent the distribution after `15`.  The current artifact records zero prompt-processing forwards from `[0,3]`.  This fast path is not yet the production authority because the DwarfStar-prefill state is not correctness-qualified against ordinary oMLX.
+An ordinary edited/branched prompt can restore a valid earlier pair or miss safely.
+It cannot combine target N with rings M, trim recurrence blindly or rewind a live
+wrapped ring. Ordinary N-2 eligibility leaves genuine suffix-prefill/P5 inputs;
+publication follows canonical settlement and native retirement. A target-only hash
+hit is not an MTP hit. See [paired state details](mtp-production-serving.md#paired-capture-and-restore).
 
-That fast scheduler path does not make DSpark priming part of base target correctness, but future practical speculative decode must either export or recreate the oMLX prefill-created priming contract: target-layer hidden history for `dspark_target_layer_ids`, per-MTP-layer `DSparkContextCache`, and `expected_target_offset` alignment consumed by `take_primed()`.
+Optional production logical sessions retain canonical ordinary history/token identity,
+frozen declarations/reasoning, request correlations and the latest outcome. The
+Scheduler pins their exact extendable pair; the session owns no native cache/ring,
+parser, queue or model executor. A missing/corrupt pinned pair fails before native
+start, never becomes replay of historical session tokens. Logical publication of
+count/frontier/response is atomic after native publication/retirement; close releases
+the opaque pin. Detail: [production sessions](production-sessions.md).
 
-## Ratio-2 and cross-call behavior
+The separate bounded singleton retains its process-lifetime sequence/body fencing
+and certificate contract. Its identity/retention policy is not the ordinary
+production logical-session contract. Native MTP persistence/restore is unsupported.
 
-Compressed producer layers with compression ratio greater than one can hold pending KV/score data across calls until enough tokens exist to publish a compressed entry.  Consumers must observe only committed publications.  Producer state publication ordering is part of the session contract; consumers do not read speculative partial state.
+## Idle artifacts and images
 
-## Publication lifecycle
+OFF persistence stores idle same-backend packed state and exact consumed history,
+with manifest/safetensors/commit marker and checkpoint/provenance/schema/shape/
+dtype/frontier validation. Dormant storage is not a second live authority. Mismatch
+or corruption rejects; no fresh-prefill fallback or cross-backend portability is
+promised. Exact restored arrays materialize before publication.
 
-1. Producer layer updates its local persistent state.
-2. At a valid boundary it publishes compressed/global/index data.
-3. Consumer layers read the publication for candidate selection and reused attention.
-4. Reset clears publications; fork copies the currently committed publications.
+The bounded OFF image extension additionally binds original bytes and absolute
+span/grid/order identities. Only new images are encoded on continuation; old spans
+are not re-run during idle restore. CPU revalidation does not authorize changed
+image identities. There is no image-specific generation/cache owner.
 
-## RNG lifecycle
+## Publication, reset, fork and observation
 
-Generation owns RNG provider state through the sampler seam.  Deterministic tests may supply explicit noise to validate arithmetic.  Native stochastic output is not claimed to match PyTorch bitstreams unless a future qualification explicitly states that.
+Compressed producers with ratio greater than one may retain pending KV/score tails
+across calls. Consumers read only committed source/global/index publications, not
+speculative partial state. Reset clears persistent state/publications; a supported
+internal/reference fork copies committed state so child updates cannot mutate its
+parent. These lifecycle contracts do not advertise a public live-Scheduler fork API.
+
+Native `TextBackboneState` / encoder/decoder/generation and historical
+`PrefillContinuationState` adapters remain reference/qualification machinery, not
+the selected current production session implementation. Their supplied-noise tests
+qualify arithmetic, not PyTorch or cross-backend RNG bitstreams.
+
+Socket bytes, SSE events and client transcripts are observations, not canonical
+native history. Coherent caches do not prove ordinary protocol representability.
+Interrupted/incomplete tool or reasoning source may require an unrecoverable outcome;
+never invent missing arguments, sample onward to repair it or execute partial calls.
+Protected cleanup must settle before ownership release; unknown delivery/effect
+outcomes are not permission to resend. See [generation contracts](generation.md).

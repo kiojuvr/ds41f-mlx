@@ -1,63 +1,77 @@
-# Generation runtime
+# Generation and settlement contracts
 
-## Qualified release path
+This specialist note defines consumed-token, termination and settlement rules.
+[Architecture](architecture.md) owns topology; [state](session-state.md) owns
+continuation categories; [capabilities](capabilities.md) owns profiles and controls.
+It is not a qualification chronology or a statement that all decode paths are OFF.
 
-The production text release uses dense P0-P7 prefill plus P5 zero-replay handoff into ds41f `TargetGenerationSession`, its M45 `TargetForwardTransaction` and M46 `DecodeStateProducer`, bound to M47's admitted model/resource capability, with MTP, DSpark, and speculative decode OFF.
+## Prefill and consumed history
 
-```text
-recipe-rendered prompt tokens
-  ↓
-hold out terminal prompt token once
-  ↓
-DENSE_P0_P7 prefill commits tokens[:-1]
-  ↓
-P7 SSD-backed Engram / live DeepseekV41Cache[40]
-  ↓
-P5 handoff supplies tokens[-1] exactly once
-  ↓
-ds41f single-token forward / 40-layer mutation transaction
-  ↓
-commit generated tokens/KV
-  ↓
-DeepSeek EOS, length, cancel, or continuation
-```
+The shared selected prefill path holds out the terminal prompt token, commits the
+prefix through DENSE_P0_P7/P7 and uses P5 to revoke the producer and consume the
+terminal exactly once. Ready prefill is a one-shot transfer capability, not another
+live generation owner. Failed transfer/bootstrap burns it; discarded ready work is
+retired rather than recycled or replayed.
 
-The separately qualified [bounded multimodal core](multimodal-production-qualification.md)
-uses this exact scheduler, transaction and packed cache representation. Image
-spans replace input embeddings and provide VL/Engram masks during prefill; they do
-not select another generation engine. Only new images are encoded on continuation.
-Protected worker cancellation drains before ownership release; an untransferred
-ready prefill is explicitly discarded/burned, not recycled or replayed.
+On OFF, `TargetGenerationSession` uses the first-party target-forward/all-layer
+transaction and state producer. Only after all mutated slots complete, the stream
+synchronizes and frontiers validate does consumed history advance. Sampled lookahead
+is uncommitted until consumed. Successful idle transfer returns the same live list;
+transaction failure invalidates state rather than publishing a partial continuation.
 
-## Commit and continuation invariants
+On MTP, the Scheduler's native batch retains the pinned proposal/verify/rollback/
+commit topology, with the authoritative consuming recipe guard. A completing
+prediction remains unforwarded until canonical consumption; ownership binds the
+generation and absolute response ordinal, not token-value equality. Quiescence may
+perform the permitted single canonical-token materialization when required, but
+must not sample a successor or create a new proposal/verification cycle.
 
-Prefill initializes persistent cache/token state. Incremental decode consumes and extends that state. M44 commits all-token history only after M45 completes all 40 cache mutations, materializes every mutated slot, synchronizes the owned stream and checks every frontier. Continuation reuses the exact list and layer objects. Invalid input fails preflight; any transaction failure burns every layer rather than publishing or rolling back partially mutated state.
+Both paths preserve one executable owner and zero hidden model-history replay or
+whole-cache repack on retained continuation. MTP idle/publication additionally
+requires aligned target/DSpark/canonical frontiers and retirement of transient
+predictions. Native extraction by itself is not a canonical settlement certificate.
 
-At idle committed boundaries there is one executable cache authority, prompt replay is zero, full-cache repack/reconstruction is zero, and all 40 cache offsets equal the committed frontier.
+## Recipe settlement versus transport
 
-## Upstream MTP boundary (M25)
+Official recipe processing owns reasoning/tool grammar, stop stashing, usage and
+finish projection. Backend finish, a valid JSON argument, an emitted tool delta or
+socket write alone proves neither canonical tool completion nor a representable
+ordinary continuation. No parallel parser, raw-token splice, invented tool result
+or extra sampling repairs unfinished source.
 
-Historical M25: the pinned V4.1 MTP loop owns a draft cache, pending anchors and an emission
-queue; its target frontier can lead or lag emitted history. Plain upstream row
-extraction is not a ds41f idle commit. [M25](archive/development/milestone-25-mtp-decision.md) records
-real-model verification/rollback and the failed extraction prerequisite. MTP
-was unsupported at M25. The later explicitly bounded M41 profile is separately qualified; M45 does not change it. Full-history
-upstream reconciliation is forbidden; no OFF evidence transfers to MTP.
-Current ordinary MTP execution/settlement follows [ordinary serving](mtp-production-serving.md)
-and [logical sessions](production-sessions.md), with its separately qualified
-[generation policy](generation-policy-investigation.md); the original M25
-extraction failure does not describe the current supported ordinary path.
+Canonical worker settlement/publication and transport delivery are different
+boundaries. OFF stateful chunks are projected after committed settlement; ordinary
+MTP can stream canonical events while its Scheduler owns generation, then freezes
+its settled outcome and reusable paired state. Logical session outcomes publish
+only after native retirement. Slow/lost transport cannot release a mutating owner
+or authorize replay. Detailed endpoint/retry contracts remain in the profile APIs.
 
-## Sampling and determinism
+## Termination and cancellation
 
-The release deterministic policy is backend-local: for a fixed checkpoint/runtime/backend/build/config/input/session state, deterministic greedy behavior is required relative to backend-produced logits. PyTorch or cross-backend RNG/bitstream parity is not claimed.
+- OFF DeepSeek EOS token **1** is consumed into cache/history once, suppressed from
+  protocol text by recipe and projected as finish reason `stop`.
+- Length termination is projected by recipe as `length`; model/tool/semantic
+  completion can end below the requested output ceiling.
+- Cancellation waits for protected in-flight native work, then settles or burns
+  the exact owner. It is not token-exact immediate abort or rollback to the last
+  bytes observed by a client. Cleanup/retirement failure fails closed.
+- Stateful endpoints reject unsupported non-empty/non-null request stop strings
+  before mutation. Stateless stop behavior remains recipe/profile-specific;
+  no arbitrary KV truncation/rollback feature is implied.
+- Unrecoverable protocol source grants no continuation or tool execution. Unknown
+  request/effect outcomes remain fenced; explicit fresh-session prefill is not
+  restore/replay of a retired native lifetime.
 
-## Termination
+## Sampling and reference boundaries
 
-DeepSeek V4.1 EOS token id `1` is configured as a TargetGenerationSession stop token. The EOS token is consumed into cache/all-token history exactly once, hidden from protocol text by the recipe layer, and reported as finish reason `stop`. Length termination reports `length`; cancellation must clean up ownership without creating a second authority.
+`generation-policy-v1` applies to OFF and ordinary MTP; defaults, ranges, request-
+owned sampling and retained-session reasoning live in capabilities and the
+[frontend contract](generation-policy-frontends.md). It does not change the separate
+bounded singleton's greedy/thinking-off contract.
 
-Arbitrary detokenized request stop strings are not a stateful release feature. Stateful session endpoints reject non-empty/non-null `stop` before mutation; stateless endpoints retain official recipe behavior for their qualified scope.
-
-## Reference native generation
-
-The native `TextGeneration` lifecycle remains retained as reference/qualification evidence and as reusable code where architecturally justified. It is not the selected production decode topology for the release path.
+Greedy determinism is backend-local for fixed checkpoint/runtime/backend/build/
+configuration/input/state. Cross-backend hidden/logit/greedy-token or RNG-bitstream
+identity is not promised. Seed is best-effort, not a stronger reproducibility claim.
+Reference `TextGeneration` and supplied-noise arithmetic tests remain useful
+qualification assets, not an alternative production selector or stochastic parity
+proof.
