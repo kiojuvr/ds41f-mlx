@@ -1,6 +1,7 @@
-"""Canonical current-source M37 evidence gates (no checkpoint needed)."""
+"""Canonical historical M37 evidence gates (no checkpoint needed)."""
 import hashlib
 import json
+import subprocess
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -12,9 +13,18 @@ def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 def test_current_source_and_evidence_hashes():
     q=load('qualification.json')
     assert q['decision']=='QUALIFIED_BOUNDED_INTERNAL_LOCAL_CLIENT'
-    for group in ['source_hashes','evidence_hashes','historical_evidence_hashes']:
-        for path,digest in q[group].items():assert sha(ROOT/path)==digest,path
-    for path,digest in load('workflow.json')['sources'].items():assert sha(ROOT/path)==digest,path
+    # Qualification and workflow source hashes bind the original final commit.
+    commit = subprocess.check_output(
+        ['git', 'log', '-1', '--format=%H', '--', 'artifacts/m37/qualification.json'],
+        cwd=ROOT, text=True).strip()
+    assert commit
+    for sources in [q['source_hashes'], load('workflow.json')['sources']]:
+        for path, digest in sources.items():
+            source = subprocess.check_output(['git', 'show', f'{commit}:{path}'], cwd=ROOT)
+            assert hashlib.sha256(source).hexdigest() == digest, path
+    for group in ['evidence_hashes', 'historical_evidence_hashes']:
+        for path, digest in q[group].items():
+            assert sha(ROOT/path) == digest, path
 
 
 def test_coherent_transcript_fencing_and_effects():

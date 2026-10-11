@@ -103,28 +103,28 @@ Rust iterator drop, with zero replay/repack. Explicit backend object injection
 only; no normal public/release selector. Matched direct/HTTP model-phase rates
 remain effectively equal.
 
-[M36](milestone-36-client-recovery-qualification.md) is
+[M36](archive/development/milestone-36-client-recovery-qualification.md) is
 **BLOCKED_CANONICAL_PROTOCOL_REPRESENTABILITY**: unfinished canonical tool DSML
 cannot be assumed to be an ordinary reconstructable assistant result. Internal
 settlement now poisons unfinished tool results; busy remains visible until cleanup
 settles. A real partial-UTF-8 text recovery and finite restrictive socket workload
 are observations, not full M36 qualification.
-[M36R](milestone-36r-recovery-admission.md) qualifies a narrower **bounded certified
+[M36R](archive/development/milestone-36r-recovery-admission.md) qualifies a narrower **bounded certified
 recovery** contract: official-recipe ordinary exact-prefix reconstruction plus
 canonical tool completion, local sequence/body outcome fencing, and a living
 single-client tool ledger. Negative certificates require DELETE/fresh session;
 partial DSML is not repaired. The normal release API and Rust client are unchanged.
-[M37](milestone-37-local-client-integration.md) integrates that contract in a reusable
+[M37](archive/development/milestone-37-local-client-integration.md) integrates that contract in a reusable
 experimental local Python client above the existing browser HTTP boundary: frozen
 requests, centralized certified reconciliation, bounded tool ownership and explicit
 DELETE/fresh/expired results. The public browser loop and Rust raw API stay unchanged.
 Current-source decision and exact scope are in its canonical artifact; release,
 longer-context and release gates remain separate.
-[M38](milestone-38-client-operational-soak.md) completes a 76-request living-client
+[M38](archive/development/milestone-38-client-operational-soak.md) completes a 76-request living-client
 soak and bounded fault/ledger matrix, but is **BLOCKED_OPERATIONAL_LIFETIME_RETENTION**:
 server closed records/diagnostic payloads have no lifetime cap. Client ambiguity
 now remains fenced across re-observation and lifecycle actions. This is not promotion.
-[M39](milestone-39-lifetime-admission.md) resolves that retention blocker by narrowing
+[M39](archive/development/milestone-39-lifetime-admission.md) resolves that retention blocker by narrowing
 internal IDs to server-issued process-namespace serial lifetimes. No-wrap issuance
 and live-only admission fence retired identities independently of 16 bounded summaries;
 closed records/payloads are discarded. 20,000-lifetime structural stress and checkpoint

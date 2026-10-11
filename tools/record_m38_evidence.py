@@ -86,7 +86,7 @@ for p in range(3):
         fresh_prefill_handoff_s=allturns[0]['trace']['prefill_handoff_s'],load_s=allturns[0]['trace']['load_s']))
 source_paths=unchanged+['ds41f_mlx/internal_local_client.py','ds41f_mlx/web_client.py',
     *[str(p.relative_to(ROOT)) for p in (ROOT/'tools').glob('*m38*.py')],
-    'tests/test_m38_client_faults.py','tests/test_m38_evidence.py','docs/milestone-38-client-operational-soak.md',
+    'tests/test_m38_client_faults.py','tests/test_m38_evidence.py','docs/archive/development/milestone-38-client-operational-soak.md',
     'docs/README.md','docs/implementation-plan.md','docs/qualification.md','docs/session-state.md','docs/doc-classification.json']
 result=dict(schema='ds41f.m38.qualification.v1',base_commit=subprocess.check_output(['git','rev-parse','daf429e'],text=True).strip(),
     decision=decision,bounded_workload='PASS_BOUNDED_WORKLOAD',release_promoted=False,

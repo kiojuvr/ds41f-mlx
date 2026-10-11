@@ -1,7 +1,8 @@
-"""M36R evidence and controlled negative admission gates."""
+"""Historical M36R evidence and current controlled negative admission gates."""
 import asyncio
 import hashlib
 import json
+import subprocess
 from pathlib import Path
 from types import SimpleNamespace
 import pytest
@@ -23,7 +24,7 @@ def test_recipe_matrix_semantics_not_json_or_parser_state_labels():
         if cert['representable']:assert cert['exact_prefix'] and cert['semantic_complete']
         if 'witness' in cert:
             from ds41f_mlx.serving.server import load_v41_tokenizer, prepare_request
-            ids=prepare_request('chat_completions',json.dumps(cert['witness']).encode(),tokenizer=load_v41_tokenizer(Path('/tmp/ds41f-m32-recipe'))).token_ids
+            ids=prepare_request('chat_completions',json.dumps(cert['witness']).encode(),tokenizer=load_v41_tokenizer()).token_ids
             assert cert['exact_prefix']==(len(ids)>len(row['canonical']) and ids[:len(row['canonical'])]==row['canonical'])
         if name.startswith('valid_json_canonical_prefix_'):
             assert cert['exact_prefix'] and not cert['semantic_complete'] and not cert['executable_tools']
@@ -69,6 +70,14 @@ def test_real_http_recovery_fence_tools_and_zero_replay():
 
 def test_final_qualification_current_sources_and_evidence():
     p=load('qualification.json');assert p['decision']=='QUALIFIED_BOUNDED_CERTIFIED_RECOVERY'
-    for key in ['source_hashes','evidence_hashes']:
-        for path,digest in p[key].items():assert hashlib.sha256((ROOT/path).read_bytes()).hexdigest()==digest,path
+    # Keep original SHA expectations; resolve the receipt's historical sources.
+    commit = subprocess.check_output(
+        ['git', 'log', '-1', '--format=%H', '--', 'artifacts/m36r/qualification.json'],
+        cwd=ROOT, text=True).strip()
+    assert commit
+    for path, digest in p['source_hashes'].items():
+        source = subprocess.check_output(['git', 'show', f'{commit}:{path}'], cwd=ROOT)
+        assert hashlib.sha256(source).hexdigest() == digest, path
+    for path, digest in p['evidence_hashes'].items():
+        assert hashlib.sha256((ROOT/path).read_bytes()).hexdigest() == digest, path
     assert p['gates']['m35_http_turns']==18 and p['gates']['native_interruption_cases']==16

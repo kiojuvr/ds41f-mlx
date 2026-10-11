@@ -44,7 +44,7 @@ identity=load('identities.log');assert identity['status']=='PASS' and all(identi
 source_paths=['ds41f_mlx/serving/internal_mtp.py','ds41f_mlx/serving/server.py','ds41f_mlx/serving/recovery_certificate.py',
               'ds41f_mlx/serving/request_fence.py','tools/run_m36r_http.py','tools/run_m36r_recipe_matrix.py',
               'tools/record_m36r_evidence.py','tests/test_m36r_recovery.py','tests/test_m36r_evidence.py',
-              'docs/milestone-36r-recovery-admission.md','docs/README.md','docs/doc-classification.json',
+              'docs/archive/development/milestone-36r-recovery-admission.md','docs/README.md','docs/doc-classification.json',
               'docs/implementation-plan.md','docs/qualification.md','docs/session-state.md']
 for path in ['ds41f_mlx/runtime/recipe_semantic_guard.py','ds41f_mlx/runtime/mtp_lifecycle.py']:
     assert subprocess.check_output(['git','show','df788d5:'+path])==(ROOT/path).read_bytes()

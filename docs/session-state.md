@@ -42,13 +42,13 @@ recorded session history commits at quiescence, and socket writes never acknowle
 model-token ordinals. Client-observed recipe events remain a canonical prefix;
 GET recovery followed by ordinary exact-prefix conversion consumes retained caches.
 Protected failures require termination rather than ambiguous idle recovery.
-[M36](milestone-36-client-recovery-qualification.md) establishes that native idle
+[M36](archive/development/milestone-36-client-recovery-qualification.md) establishes that native idle
 coherence alone does not certify protocol reconstructability: interrupted canonical
 DSML can produce an unfinished tool call whose ordinary encoding is non-prefix.
 The internal backend now poisons such settlement and reports busy until retirement
 releases the response lease. Its diagnostic partial tool response is not execution
 permission. Universal client recovery remains blocked.
-[M36R](milestone-36r-recovery-admission.md) qualifies only settled outcomes carrying
+[M36R](archive/development/milestone-36r-recovery-admission.md) qualifies only settled outcomes carrying
 an official-recipe ordinary reconstruction certificate and exact-prefix admission.
 Its `outcome_state` distinguishes not_admitted, active, recoverable, unrecoverable,
 and poisoned; the legacy `state=poisoned` label also contains protocol-unrecoverable
@@ -57,19 +57,19 @@ Opt-in internal sequence/body identity fencing makes observation/retry non-gener
 older identities reject after the next admitted turn. No second model-history
 owner, persisted fence, public MTP route or distributed exactly-once tool claim
 is introduced.
-[M37](milestone-37-local-client-integration.md) places the integrated workflow in an
+[M37](archive/development/milestone-37-local-client-integration.md) places the integrated workflow in an
 experimental reusable local client. Its transcript is ordinary application history,
 its ledger owns only living-client effects, and its frozen request/expected sequence
 are transport/admission observations, not token/cache authority. Negative outcomes
 omit the unrepresentable final assistant; explicit DELETE/fresh creation may prefill
 legitimate prior visible messages as a new session, never carry retired native state.
 Expired identities surface without regeneration.
-[M38](milestone-38-client-operational-soak.md) makes lifecycle response uncertainty
+[M38](archive/development/milestone-38-client-operational-soak.md) makes lifecycle response uncertainty
 sticky/stopped and reserved effects non-bypassable, including DELETE/fresh actions.
 No automatic resolution API is provided. Its finite living-client soak passes, but
 server retirement lifetime retention is BLOCKED: closed identities and payloads
 remain in an uncapped session map despite the bounded trace deque.
-[M39](milestone-39-lifetime-admission.md) replaces that explicitly internal ID
+[M39](archive/development/milestone-39-lifetime-admission.md) replaces that explicitly internal ID
 contract with server-issued process-namespace serial lifetimes. Retirement is
 permanent under the no-wrap issuance invariant, independent of diagnostic eviction.
 One live record/lease, two fixed-width identity scalars, 16 small retired summaries,

@@ -1,0 +1,109 @@
+.FF.............................FF...F...F..                             [100%]
+=================================== FAILURES ===================================
+_________________ test_current_sources_and_raw_evidence_match __________________
+
+    def test_current_sources_and_raw_evidence_match():
+        q = json.loads((OUT / 'qualification.json').read_text())
+        for name, digest in q['source_hashes'].items():
+>           assert hashlib.sha256((ROOT / name).read_bytes()).hexdigest() == digest, name
+E           AssertionError: ds41f_mlx/serving/internal_mtp.py
+E           assert '22a32a0ccc0a...a221df90224dc' == 'f642c3aeccbc...cefeca59e516b'
+E             
+E             - f642c3aeccbc3ebb56f80e5f513c3ee3fd2775b3c26ee5b50e4cefeca59e516b
+E             + 22a32a0ccc0aa1dfb57af01d7183f5d5adde15df48076458fc8a221df90224dc
+
+tests/test_m36_evidence.py:32: AssertionError
+_________ test_recipe_matrix_semantics_not_json_or_parser_state_labels _________
+
+    def test_recipe_matrix_semantics_not_json_or_parser_state_labels():
+        rows={r['name']:r for r in load('recipe-matrix.json')['rows']}
+        positive=['text','unicode_full','length','eos','marker_prefix','reasoning_transition_exact','complete_tool','complete_two_tools','complete_auto_tool']
+        assert len(rows)==28
+        for name,row in rows.items():
+            cert=row['certificate']
+            assert cert['representable']==(name in positive)
+            if cert['representable']:assert cert['exact_prefix'] and cert['semantic_complete']
+            if 'witness' in cert:
+                from ds41f_mlx.serving.server import load_v41_tokenizer, prepare_request
+>               ids=prepare_request('chat_completions',json.dumps(cert['witness']).encode(),tokenizer=load_v41_tokenizer(Path('/tmp/ds41f-m32-recipe'))).token_ids
+                                                                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_m36r_evidence.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+recipe_path = PosixPath('/tmp/ds41f-m32-recipe')
+
+    def load_v41_tokenizer(recipe_path: Path = DEFAULT_RECIPE) -> Any:
+>       return Tokenizer.from_file(str(Path(recipe_path) / 'static' / 'tokenizers' / 'v41' / 'tokenizer.json'))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       RuntimeError: No such file or directory (os error 2)
+
+ds41f_mlx/serving/server.py:41: RuntimeError
+____________ test_final_qualification_current_sources_and_evidence _____________
+
+    def test_final_qualification_current_sources_and_evidence():
+        p=load('qualification.json');assert p['decision']=='QUALIFIED_BOUNDED_CERTIFIED_RECOVERY'
+        for key in ['source_hashes','evidence_hashes']:
+>           for path,digest in p[key].items():assert hashlib.sha256((ROOT/path).read_bytes()).hexdigest()==digest,path
+                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: ds41f_mlx/serving/internal_mtp.py
+E           assert '22a32a0ccc0a...a221df90224dc' == 'afb3165e0b95...242430638509a'
+E             
+E             - afb3165e0b9516a8b0112fc504534e32e905b7b992e8209b763242430638509a
+E             + 22a32a0ccc0aa1dfb57af01d7183f5d5adde15df48076458fc8a221df90224dc
+
+tests/test_m36r_evidence.py:73: AssertionError
+___________________ test_current_source_and_evidence_hashes ____________________
+
+    def test_current_source_and_evidence_hashes():
+        q=load('qualification.json')
+        assert q['decision']=='QUALIFIED_BOUNDED_INTERNAL_LOCAL_CLIENT'
+        for group in ['source_hashes','evidence_hashes','historical_evidence_hashes']:
+>           for path,digest in q[group].items():assert sha(ROOT/path)==digest,path
+                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: ds41f_mlx/internal_local_client.py
+E           assert '398751eee3a6...efcc84a93a8c6' == '861aac3e4d80...b8dd4b4d381df'
+E             
+E             - 861aac3e4d80e7d5ea17bc9e3f535e5550a16d9cd2b42bbdc87b8dd4b4d381df
+E             + 398751eee3a6239a82f9a53bb4d4c4b9c048083e43d27aada82efcc84a93a8c6
+
+tests/test_m37_evidence.py:16: AssertionError
+_________________ test_current_receipt_hashes_and_nonpromotion _________________
+
+    def test_current_receipt_hashes_and_nonpromotion():
+        q=load('qualification.json')
+        assert q['decision']=='BLOCKED_OPERATIONAL_LIFETIME_RETENTION'
+        assert q['bounded_workload']=='PASS_BOUNDED_WORKLOAD' and not q['release_promoted']
+        for group in ['source_hashes','evidence_hashes','historical_evidence_hashes']:
+>           for path,digest in q[group].items():assert hashlib.sha256((ROOT/path).read_bytes()).hexdigest()==digest,path
+                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: ds41f_mlx/serving/internal_mtp.py
+E           assert '22a32a0ccc0a...a221df90224dc' == 'afb3165e0b95...242430638509a'
+E             
+E             - afb3165e0b9516a8b0112fc504534e32e905b7b992e8209b763242430638509a
+E             + 22a32a0ccc0aa1dfb57af01d7183f5d5adde15df48076458fc8a221df90224dc
+
+tests/test_m38_evidence.py:14: AssertionError
+_____________ test_m39_canonical_decision_sources_and_raw_evidence _____________
+
+    def test_m39_canonical_decision_sources_and_raw_evidence():
+        d=json.loads((OUT/'qualification.json').read_text())
+        assert d['decision']=='QUALIFIED_FINITE_PROCESS_LIFETIME_ADMISSION'
+        assert all(d['checks'].values())
+>       for p,h in d['sources'].items():assert hashlib.sha256((ROOT/p).read_bytes()).hexdigest()==h,p
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: ds41f_mlx/serving/internal_mtp.py
+E       assert '22a32a0ccc0a...a221df90224dc' == 'd5c1839ca8e8...8729a5fbe4de0'
+E         
+E         - d5c1839ca8e84c788f867c61f6214d8fa756a5dda3b7fa46fc78729a5fbe4de0
+E         + 22a32a0ccc0aa1dfb57af01d7183f5d5adde15df48076458fc8a221df90224dc
+
+tests/test_m39_evidence.py:12: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_m36_evidence.py::test_current_sources_and_raw_evidence_match
+FAILED tests/test_m36r_evidence.py::test_recipe_matrix_semantics_not_json_or_parser_state_labels
+FAILED tests/test_m36r_evidence.py::test_final_qualification_current_sources_and_evidence
+FAILED tests/test_m37_evidence.py::test_current_source_and_evidence_hashes - ...
+FAILED tests/test_m38_evidence.py::test_current_receipt_hashes_and_nonpromotion
+FAILED tests/test_m39_evidence.py::test_m39_canonical_decision_sources_and_raw_evidence
+6 failed, 38 passed in 0.50s

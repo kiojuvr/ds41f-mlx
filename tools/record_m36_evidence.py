@@ -67,7 +67,7 @@ identity = json.loads((OUT / 'identities.log').read_text())
 assert identity['status'] == 'PASS' and all(identity['checks'].values())
 source_paths = list(p['sources']) + ['tools/record_m36_evidence.py',
     'tests/test_m36_recovery_boundary.py', 'tests/test_m36_evidence.py',
-    'docs/milestone-36-client-recovery-qualification.md', 'docs/README.md',
+    'docs/archive/development/milestone-36-client-recovery-qualification.md', 'docs/README.md',
     'docs/doc-classification.json', 'docs/implementation-plan.md',
     'docs/qualification.md', 'docs/session-state.md']
 resource = {}

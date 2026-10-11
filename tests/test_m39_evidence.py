@@ -1,6 +1,7 @@
-"""Canonical M39 evidence consistency, not a substitute for runtime gates."""
+"""Historical M39 evidence consistency, not a substitute for current runtime gates."""
 import hashlib
 import json
+import subprocess
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'artifacts/m39'
@@ -9,7 +10,13 @@ def test_m39_canonical_decision_sources_and_raw_evidence():
     d=json.loads((OUT/'qualification.json').read_text())
     assert d['decision']=='QUALIFIED_FINITE_PROCESS_LIFETIME_ADMISSION'
     assert all(d['checks'].values())
-    for p,h in d['sources'].items():assert hashlib.sha256((ROOT/p).read_bytes()).hexdigest()==h,p
+    commit = subprocess.check_output(
+        ['git', 'log', '-1', '--format=%H', '--', 'artifacts/m39/qualification.json'],
+        cwd=ROOT, text=True).strip()
+    assert commit
+    for p, h in d['sources'].items():
+        source = subprocess.check_output(['git', 'show', f'{commit}:{p}'], cwd=ROOT)
+        assert hashlib.sha256(source).hexdigest() == h, p
     for p,h in d['evidence'].items():assert hashlib.sha256((OUT/p).read_bytes()).hexdigest()==h,p
 
 

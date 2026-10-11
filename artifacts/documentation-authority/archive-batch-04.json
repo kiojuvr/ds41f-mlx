@@ -1,0 +1,128 @@
+{
+  "base_commit": "2fa6b7f",
+  "scope": "Batch 4: M36-M39 client/recovery/lifetime history, including M36R (five documents)",
+  "moves": [
+    {
+      "old_path": "docs/milestone-36-client-recovery-qualification.md",
+      "new_path": "docs/archive/development/milestone-36-client-recovery-qualification.md",
+      "original_sha256": "acb07f6c5fecfb83846838144e644d779bb8d4608ed044437af5c42e3e1609a3",
+      "archived_sha256": "46ed397c387b331f261fef55c2803b0999e91ba17c5dcdeca014c7352c6e8ce7",
+      "allowed_change": "M33 relative link becomes a sibling link; all other bytes unchanged"
+    },
+    {
+      "old_path": "docs/milestone-36r-recovery-admission.md",
+      "new_path": "docs/archive/development/milestone-36r-recovery-admission.md",
+      "sha256": "1254b52577f5ec0782cb634ec43dd9f2744f3a8e76732733935a6840d87d458c",
+      "byte_identical": true
+    },
+    {
+      "old_path": "docs/milestone-37-local-client-integration.md",
+      "new_path": "docs/archive/development/milestone-37-local-client-integration.md",
+      "sha256": "5ae50677abd6b5b239009ca8b52a8088a581db29475f8f8aade06366ec63df20",
+      "byte_identical": true
+    },
+    {
+      "old_path": "docs/milestone-38-client-operational-soak.md",
+      "new_path": "docs/archive/development/milestone-38-client-operational-soak.md",
+      "sha256": "6ce7bdcbd3bf7495304b555f7548a9d4332c3fc621d84590a912bb36273eb9a8",
+      "byte_identical": true
+    },
+    {
+      "old_path": "docs/milestone-39-lifetime-admission.md",
+      "new_path": "docs/archive/development/milestone-39-lifetime-admission.md",
+      "sha256": "9d0c3ec2f84e18f76dfbd47ac11f5d7d2de13fac6f08e8b973b594b10389113f",
+      "byte_identical": true
+    }
+  ],
+  "current_contracts": {
+    "authority": "docs/final-runtime-target.md: Stable ds41f contracts from M33-M40",
+    "retained": [
+      "Canonical native history, certified ordinary protocol history, client transcript and transport observations are distinct",
+      "Positive official reconstruction certificate plus independent exact-prefix continuation; no replay/repack or guessed tool completion",
+      "Lifetime/sequence/exact-byte request fences; settled re-observation does not generate",
+      "Explicit negative versus poison; lifecycle/effect ambiguity stops automatic progress",
+      "Bounded living-client ledger reserves before effect; no distributed or crash-safe exactly-once claim",
+      "Server-issued no-wrap finite process identities; diagnostic eviction cannot revive retired execution; retirement clears closed payloads"
+    ],
+    "changes": "Existing contracts suffice; current doc bodies and index structure unchanged except historical citation paths. Internal singleton qualification is not relabelled current ordinary/public MTP qualification. Historical Production MTP OFF statements remain historical."
+  },
+  "classification_change": "Five path fields only; classification labels, reasons and policy preserved",
+  "recorder_path_changes": [
+    "tools/record_m36_evidence.py",
+    "tools/record_m36r_evidence.py",
+    "tools/record_m37_evidence.py",
+    "tools/record_m38_evidence.py",
+    "tools/record_m39_evidence.py"
+  ],
+  "recorders_executed": false,
+  "historical_test_corrections": {
+    "reason": "Five source hash tests failed against later HEAD before relocation. All original SHA values match the final evidence commits below. Compare original Git blobs rather than current checkout paths; keep saved evidence and historical evidence payload checks against working-tree files. No receipt or expected hash is rewritten; missing history/blobs still fail. Existing function names are retained for historical test selectors.",
+    "original_source_commits": {
+      "m36": "df788d5cbc02fb302abd7323178b12984f532951",
+      "m36r": "40e230357ff6d5281bf804de85f0700bcde81979",
+      "m37": "daf429e30928aa7c9af513737f0f9880c6115e58",
+      "m38": "998500be2ad5d72372d097529cc8bea644b5f6cc",
+      "m39": "ebccd8877d22e00ecbd765b67a665de2c04571de"
+    },
+    "m37_workflow_sources": "Also validated against original M37 final commit",
+    "m36r_tokenizer": "Pre-existing missing /tmp/ds41f-m32-recipe fixture changed to load_v41_tokenizer() default, matching prepare_request default recipe. Existing native witness re-encoding and exact-prefix assertions preserved; no skip or fake tokenizer."
+  },
+  "validation": {
+    "interpreter": "../ds41f-mlx_mtp-venv/bin/python",
+    "prechange_evidence_tests": {
+      "passed": 38,
+      "failed": 6,
+      "failures": "Five historical/current-source SHA mismatches plus one deleted /tmp tokenizer path",
+      "log": "artifacts/documentation-authority/archive-batch-04-baseline.log"
+    },
+    "batch4_evidence_and_current_regressions": {
+      "passed": 110,
+      "tests": [
+        "tests/test_m36_evidence.py",
+        "tests/test_m36r_evidence.py",
+        "tests/test_m37_evidence.py",
+        "tests/test_m38_evidence.py",
+        "tests/test_m39_evidence.py",
+        "tests/test_m36_recovery_boundary.py",
+        "tests/test_m36r_recovery.py",
+        "tests/test_m37_local_client.py",
+        "tests/test_m38_client_faults.py",
+        "tests/test_m39_lifetime_admission.py"
+      ]
+    },
+    "previous_batch_regressions_separate_process": {
+      "passed": 39,
+      "subtests_passed": 137,
+      "tests": [
+        "tests/test_m31_recipe_extension_evidence.py",
+        "tests/test_m32_recipe_native_evidence.py",
+        "tests/test_m33_protocol_evidence.py",
+        "tests/test_m34_operational_evidence.py",
+        "tests/test_m35_http_evidence.py",
+        "tests/test_m34_cache_release.py",
+        "tests/test_m35_transport_lease.py"
+      ],
+      "excluded_attempt": "Initial command used nonexistent M31/M32 test filenames and collected no tests; corrected command above passed."
+    },
+    "production_browser_packaging_separate_process": {
+      "passed": 28,
+      "warnings": 3,
+      "tests": [
+        "tests/test_production_sessions.py",
+        "tests/test_m19_web_client.py",
+        "tests/test_build_release_docs.py"
+      ]
+    },
+    "total_passed_in_separate_test_groups": 177,
+    "history_comparison": "Four exact byte matches; M36 exact match after only the declared M33 relative-link repair",
+    "markdown_missing_file_targets": [],
+    "stale_tracked_operational_doc_paths": [],
+    "classification_path_only_and_all_entry_paths_exist": true,
+    "recorder_ast_parse": "PASS for all five recorders; not executed",
+    "diff_check": "PASS",
+    "runtime_dependencies_and_original_receipts_changed": false,
+    "real_model_campaign_run": false,
+    "self_containment_checker": "Existing failure unchanged: canonical doc links to archive for normative definitions: README.md. No checker weakening."
+  },
+  "pending": "Batch 5 M40-M43 release/reference/promotion, then CURRENT consolidation and final index/classification/checker-policy reconciliation."
+}

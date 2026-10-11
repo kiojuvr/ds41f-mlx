@@ -266,7 +266,7 @@ issuance state, not permanent tombstones. One live authority/lease, 16 small ret
 summaries, no closed outcome payloads, fixed trace/request/sequence budgets. The
 20,000-lifetime stress and checkpoint/post-eviction integration pass. Exhaustion
 fails closed; arbitrary client IDs and restart/persistence are not qualified.
-See [M39](milestone-39-lifetime-admission.md) and its canonical evidence.
+See [M39](archive/development/milestone-39-lifetime-admission.md) and its canonical evidence.
 Next: one dedicated release/admission/provenance readiness evaluation, not another
 recovery micro-milestone. No public/default/release MTP promotion.
 
@@ -276,7 +276,7 @@ Decision: **BLOCKED_OPERATIONAL_LIFETIME_RETENTION**. The 76-request, three-sess
 checkpoint workload passes after sticky lifecycle-uncertainty and ambiguous-effect
 hardening. Default 128-entry ledger exhaustion fails before effect with no eviction.
 Closed server identities and diagnostic payloads still have no lifetime cap; trace
-deque bounds alone are insufficient. See [M38](milestone-38-client-operational-soak.md).
+deque bounds alone are insufficient. See [M38](archive/development/milestone-38-client-operational-soak.md).
 Next: operational lifetime/admission hardening, then a dedicated release-readiness
 evaluation. Production/public MTP remains OFF/disabled.
 
@@ -285,7 +285,7 @@ evaluation. Production/public MTP remains OFF/disabled.
 The reusable experimental local `InternalLocalClient` owns one frozen request,
 centralized certified transcript reconciliation and bounded living-client tool
 ownership. Explicit DELETE/fresh creation preserves only legitimate application
-messages; expired identities never regenerate. See [M37](milestone-37-local-client-integration.md)
+messages; expired identities never regenerate. See [M37](archive/development/milestone-37-local-client-integration.md)
 and its current-source evidence for decision/scope. No public/default promotion.
 Next: M38 bounded internal recovery-client operational soak/fault matrix, not release.
 
@@ -297,7 +297,7 @@ an ordinary official-recipe exact-prefix reconstruction certificate. A bounded
 in-process sequence/body fence prevents ambiguous retry from duplicating a turn;
 a single-client tool ledger prevents repeated canonical call execution. Partial
 DSML and other lossy parser/decoder boundaries remain intentionally unsupported
-and require DELETE, not transcript repair. See [M36R](milestone-36r-recovery-admission.md).
+and require DELETE, not transcript repair. See [M36R](archive/development/milestone-36r-recovery-admission.md).
 Next: bounded client integration of this internal contract, not public/default MTP.
 
 ## M36 — Client recovery investigation
@@ -307,7 +307,7 @@ can leave coherent native caches but an unfinished assistant tool result whose
 ordinary recipe encoding is not the canonical prefix. Internal settlement now
 fails closed for unfinished tools; poison remains busy until lease cleanup settles.
 One partial-UTF-8 transport recovery and finite genuine socket pressure are observed,
-not a complete recovery/admission contract. See [M36](milestone-36-client-recovery-qualification.md).
+not a complete recovery/admission contract. See [M36](archive/development/milestone-36-client-recovery-qualification.md).
 M36R now qualifies a certified subset above; the original counterexample remains
 blocking evidence against universal recovery, not a defect repaired by generation.
 

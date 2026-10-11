@@ -31,7 +31,7 @@ checks=dict(
 sources=['ds41f_mlx/serving/internal_mtp.py','ds41f_mlx/serving/server.py',
          'ds41f_mlx/serving/request_fence.py','ds41f_mlx/internal_local_client.py',
          'tests/test_m35_transport_lease.py','tests/test_m39_lifetime_admission.py',
-         'tests/test_m39_evidence.py','docs/milestone-39-lifetime-admission.md',
+         'tests/test_m39_evidence.py','docs/archive/development/milestone-39-lifetime-admission.md',
          'docs/README.md','docs/doc-classification.json','docs/session-state.md',
          'docs/qualification.md','docs/implementation-plan.md',
          *[str(p.relative_to(ROOT)) for p in sorted((ROOT/'tools').glob('*m39*.py'))]]

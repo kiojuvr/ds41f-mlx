@@ -1,6 +1,7 @@
-"""Current M36 blocker evidence, not inherited M35 source qualification."""
+"""Historical M36 blocker evidence, not current-source qualification."""
 import hashlib
 import json
+import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -28,7 +29,13 @@ def test_m36_stays_blocked_without_protocol_reconstruction_certificate():
 
 def test_current_sources_and_raw_evidence_match():
     q = json.loads((OUT / 'qualification.json').read_text())
+    # The receipt describes its original final commit, not today's checkout.
+    commit = subprocess.check_output(
+        ['git', 'log', '-1', '--format=%H', '--', 'artifacts/m36/qualification.json'],
+        cwd=ROOT, text=True).strip()
+    assert commit
     for name, digest in q['source_hashes'].items():
-        assert hashlib.sha256((ROOT / name).read_bytes()).hexdigest() == digest, name
+        source = subprocess.check_output(['git', 'show', f'{commit}:{name}'], cwd=ROOT)
+        assert hashlib.sha256(source).hexdigest() == digest, name
     for name, digest in q['evidence_hashes'].items():
         assert hashlib.sha256((OUT / name).read_bytes()).hexdigest() == digest, name

@@ -1,6 +1,7 @@
-"""Current-source M38 receipts; a finite passing run must not erase the blocker."""
+"""Historical M38 receipts; a finite passing run must not erase its blocker."""
 import hashlib
 import json
+import subprocess
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'artifacts/m38'
 def load(name):return json.loads((OUT/name).read_text())
@@ -10,8 +11,17 @@ def test_current_receipt_hashes_and_nonpromotion():
     q=load('qualification.json')
     assert q['decision']=='BLOCKED_OPERATIONAL_LIFETIME_RETENTION'
     assert q['bounded_workload']=='PASS_BOUNDED_WORKLOAD' and not q['release_promoted']
-    for group in ['source_hashes','evidence_hashes','historical_evidence_hashes']:
-        for path,digest in q[group].items():assert hashlib.sha256((ROOT/path).read_bytes()).hexdigest()==digest,path
+    # Original source qualification is checked separately from saved payloads.
+    commit = subprocess.check_output(
+        ['git', 'log', '-1', '--format=%H', '--', 'artifacts/m38/qualification.json'],
+        cwd=ROOT, text=True).strip()
+    assert commit
+    for path, digest in q['source_hashes'].items():
+        source = subprocess.check_output(['git', 'show', f'{commit}:{path}'], cwd=ROOT)
+        assert hashlib.sha256(source).hexdigest() == digest, path
+    for group in ['evidence_hashes', 'historical_evidence_hashes']:
+        for path, digest in q[group].items():
+            assert hashlib.sha256((ROOT/path).read_bytes()).hexdigest() == digest, path
     assert not q['blocker_fixed'] and len(q['defects_fixed'])==3
 
 

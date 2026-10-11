@@ -171,8 +171,8 @@ that the current public OFF API implements every internal feature.
   unforwarded until canonical emission; ownership binds generation and absolute
   response ordinal, not token identity. Permitted one-token quiescence repair
   materializes only the canonical terminal, with no successor sample/proposal/verify.
-- **Canonical versus representable state** ([M36](milestone-36-client-recovery-qualification.md),
-  [M36R](milestone-36r-recovery-admission.md)): sole canonical native history,
+- **Canonical versus representable state** ([M36](archive/development/milestone-36-client-recovery-qualification.md),
+  [M36R](archive/development/milestone-36r-recovery-admission.md)): sole canonical native history,
   certified ordinary protocol history, client transcript and transport observations
   are distinct. Coherent caches, valid JSON or delivered SSE do not prove an
   ordinary continuation is representable.
@@ -191,8 +191,8 @@ that the current public OFF API implements every internal feature.
   positive authoritative reconstruction certificate, then independently check
   the real continuation prefix. Writes/yields and absent observations are not ACKs.
 - **Conservative negative/poison handling** (M36–M36R,
-  [M37](milestone-37-local-client-integration.md),
-  [M38](milestone-38-client-operational-soak.md)): unrepresentable state is not
+  [M37](archive/development/milestone-37-local-client-integration.md),
+  [M38](archive/development/milestone-38-client-operational-soak.md)): unrepresentable state is not
   repaired by guessing, sampling onward, token splicing or invented tool results.
   Internal ownership failures poison; no ambiguous idle publication. Explicit
   retirement/fresh-session decisions preserve only legitimate application history;
@@ -203,7 +203,7 @@ that the current public OFF API implements every internal feature.
   before execution and reuses stored results; ambiguous effects never auto-repeat.
   This is not crash-safe or distributed exactly-once execution.
 - **Finite process-lifetime identity/admission and bounded diagnostics**
-  ([M39](milestone-39-lifetime-admission.md)): server-issued no-wrap identities,
+  ([M39](archive/development/milestone-39-lifetime-admission.md)): server-issued no-wrap identities,
   live-only execution authority and explicit exhaustion denial fence retired work
   independently of diagnostic eviction. Bounded summaries/traces are not an
   outcome archive; successful retirement releases closed payload/native authority.

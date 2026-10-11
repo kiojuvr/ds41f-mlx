@@ -59,7 +59,7 @@ ledger_times=[x['seconds'] for x in w['timings'] if x['action']=='tool_ledger_an
 assert len(ledger_times)==8
 source_paths=['ds41f_mlx/internal_local_client.py','ds41f_mlx/web_client.py','tools/run_m37_local_client.py',
               'tools/run_m37_gates.py','tools/record_m37_evidence.py','tests/test_m37_local_client.py','tests/test_m37_evidence.py',
-              'docs/milestone-37-local-client-integration.md','docs/README.md','docs/implementation-plan.md',
+              'docs/archive/development/milestone-37-local-client-integration.md','docs/README.md','docs/implementation-plan.md',
               'docs/qualification.md','docs/session-state.md','docs/doc-classification.json']
 result=dict(schema='ds41f.m37.qualification.v1',decision='QUALIFIED_BOUNDED_INTERNAL_LOCAL_CLIENT',base_commit='40e2303',
     final_commit_resolver='git log -1 --format=%H -- artifacts/m37/qualification.json',
