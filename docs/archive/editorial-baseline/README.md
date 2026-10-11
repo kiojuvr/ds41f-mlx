@@ -23,6 +23,14 @@ Before the second CURRENT compilation:
 - [Qualification source](qualification.md.txt)
 - [Performance source](performance.md.txt)
 
+## Policy and destination pages — `81f2fe0`
+
+Before the third CURRENT compilation:
+
+- [Serving-policy source and original SP1 assessment](production-serving-parity-closure.md.txt)
+- [M49R reset source and completed roadmap](mtp-architecture-reset.md.txt)
+- [Final-runtime-target source](final-runtime-target.md.txt)
+
 The `.md.txt` files are retained **source evidence**, not current instructions.
 Their Markdown, old relative links and paths are preserved verbatim; resolve
 relative references from each file's original location when studying that edition.
@@ -32,4 +40,5 @@ Current primary/specialist pages remain at the original paths;
 `docs/capabilities.md` owns the profile comparison. Editorial consolidation does
 not requalify runtime, reference or deployment artifacts. Preservation/mapping is
 recorded in `artifacts/documentation-authority/current-compilation-01.json` and
-`artifacts/documentation-authority/current-compilation-02.json`.
+`artifacts/documentation-authority/current-compilation-02.json` and
+`artifacts/documentation-authority/current-compilation-03.json`.

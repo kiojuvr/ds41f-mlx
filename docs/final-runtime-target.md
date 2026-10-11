@@ -2,246 +2,157 @@
 
 ## Authority and scope
 
-This is the canonical prospective architectural target for `ds41f-mlx`, independent
-of milestone scheduling or prior chat context. The final public form is a
-**self-contained source runtime repository** for the official
-DeepSeek-V4.1-Flash checkpoint on the documented Apple Silicon platform.
+This page defines the **prospective destination**, not present qualification or
+an implementation schedule: a self-contained source runtime repository for the
+official DeepSeek-V4.1-Flash checkpoint on the documented Apple Silicon platform.
 
-This document defines the destination, not an implementation plan or a claim that
-it has already been reached. **M48 completed the supported text-only standard-OFF
-production core; it did not complete the entire production implementation of
-DeepSeek-V4.1-Flash.** The authoritative [post-M48 roadmap](implementation-plan.md#post-m48-production-boundary-and-remaining-work-bounded-execution-scope)
-distinguishes the qualified 1M text core, the separately qualified bounded
-[first-party multimodal production capability](multimodal-production-qualification.md)
-(four inline images / 8,192 consumed positions), and later R1 regression proof
-and runtime promotion. These measured core boundaries do not imply unlimited
-context, universal visual quality or release/packaging completion. Implementation
-and operational qualification iterate as expanded scope exposes gaps. [Runtime strategy](runtime-strategy.md),
-[operations](operations.md), the [release manifest](../release/ds41f-release.json)
-and scoped qualification records continue to describe the current runtime.
-MTP, DSpark and speculation remain OFF **by default**. Explicit
-[`mtp-serving-v1`](mtp-production-serving.md) now provides ordinary production-facing
-MTP semantics; `mtp-singleton-v1` retains its separate bounded
-[setup/capability contract](mtp-local-release-candidate.md). The
-[production-semantics boundary and decision rule](production-serving-parity-closure.md#mtp-production-semantics-boundary)
-govern subsequent MTP serving decisions, without implying release/promotion,
-Internet/multi-user readiness or completion of this prospective target.
-
-The [reference release and promotion strategy](reference-release-and-promotion-strategy.md)
-refines the repository model: `ds41f-mlx` remains the sole development authority;
-`ds41f-runtime` is its qualified release history/projection, not a second
-implementation line or a continuously synchronized development mirror. M42
-semantic closure/Reference Release R1 and M43 deterministic extraction are
-established baselines. Ordinary milestones qualify affected implementation in
-`ds41f-mlx` with necessary real-model/lifecycle/performance evidence. Full R1
-regression re-verification is deferred to a sufficiently stable implementation
-and operational boundary under the current roadmap, not repeated after every
-intermediate milestone; multiple qualified milestones may accumulate without
-updating `ds41f-runtime`.
-Release promotion is a separate explicit checkpoint applying M43's existing
-projection, fresh independent setup, release-profile acceptance and receipt
-rules. A changed release surface alone does not trigger that checkpoint. No direct
-runtime feature development or release-only semantic fixes are allowed; runtime
-releases flow one-way from a qualified `ds41f-mlx` state. This does not schedule
-full oMLX replacement or weaken either qualification track.
+[Architecture](architecture.md), [capabilities](capabilities.md) and
+[operations](operations.md) describe what exists and is supported now.
+[Implementation plan](implementation-plan.md) owns remaining work;
+[qualification](qualification.md) governs evidence interpretation. Completed OFF
+text execution, bounded image qualification, explicit ordinary MTP semantics and
+a bounded singleton release do not mean this whole destination has been reached.
+MTP remains OFF by default. Internet/multi-user readiness, broader release and
+future projection are separate decisions.
 
 ## Fresh-clone expectation
 
 At the intended public state, a user or coding agent can:
 
-1. `git clone` **one** promoted `ds41f-runtime` source repository (developed in `ds41f-mlx`);
-2. read repository-owned README/setup and operations instructions;
-3. install ordinary reproducible package/system dependencies;
-4. obtain the official DeepSeek-V4.1-Flash checkpoint;
-5. build or configure the runtime using those instructions;
-6. run repository-owned provenance and qualification commands;
-7. start the runtime.
+1. clone **one documented source runtime repository**;
+2. read repository-owned setup and operations instructions;
+3. install reproducible package/system dependencies;
+4. obtain the official checkpoint;
+5. build/configure the runtime using those instructions;
+6. run repository-owned provenance and scoped qualification commands;
+7. start and operate the supported runtime.
 
-Hardware, platform, memory, storage and toolchain requirements must be explicit
-(the current primary target is Mac Studio M3 Ultra 512 GB with MLX/Metal and
-SSD-backed Engram). Checkpoint and storage locations remain legitimate operator
-configuration. No prior chat, historical qualification environment or undocumented
-local knowledge is a setup prerequisite.
+The repository may be the source-clone development repository or an explicitly
+qualified future projection. A permanent separate `ds41f-runtime` repository is
+not required. The existing directory of that name is unused old generation,
+not deployment or accepted release history. If projection is selected, it flows
+one-way from qualified `ds41f-mlx`; no independent implementation or release-only
+semantic fixes. Detailed rules belong to the
+[reference/promotion strategy](reference-release-and-promotion-strategy.md).
 
-Normal final installation must **not** require cloning multiple runtime
-implementation repositories, manually checking out magic historical commit hashes,
-maintaining locally patched development checkouts, using `/tmp` source authorities,
-reproducing undocumented patches, or setting environment variables to arbitrary
-development source trees. Historical qualification repositories/environments are
-evidence, not normal runtime dependencies.
+Hardware, platform, memory, storage and toolchain requirements must be explicit.
+The primary platform is Mac Studio M3 Ultra 512 GB with MLX/Metal and SSD-backed
+Engram. Checkpoint/cache/storage locations remain legitimate operator choices;
+prior chat, a historical qualification environment and undocumented local
+knowledge must not be setup prerequisites.
 
-Ordinary installable dependencies such as Python packages, MLX, FastAPI, system
-libraries and build tools remain acceptable; reproducible version locks are not
-prohibited. The official checkpoint is an intentionally external model asset.
+Normal final installation must not require multiple runtime implementation
+repositories, manual magic historical checkouts, locally patched developer trees,
+`/tmp` source authorities, undocumented patches or environment variables pointing
+to arbitrary donor source. Ordinary packages, system libraries/build tools and
+reproducible version locks remain acceptable. The official checkpoint is an
+intentionally external model asset, not a missing repository component.
 
 ## Dependency destination
 
-### First-party text execution and remaining dependencies
+### Execution ownership
 
-[M48](milestone-48-first-party-model-execution.md) establishes first-party official
-checkpoint loading, numerical/model execution, packed storage and SSD-backed
-Engram implementation in `ds41f_mlx/model_execution/` for standard-OFF. M44's
-generation authority, M45's all-40-layer target transaction, M46's state-production
-authority and M47's model-lifetime resource admission remain intact on the existing
-DENSE_P0_P7 / P5 continuation architecture. There is no donor model execution
-fallback on this supported path.
+Standard-OFF retains first-party checkpoint loading, model/numerical execution,
+packed storage, SSD-backed Engram and generation/state/resource authority.
+Lower-level attributed MLX/Metal or stateless acceleration primitives may remain
+reproducible dependencies; donor-count reduction is not permission to replace the
+qualified core. No donor model fallback is part of the supported OFF path.
 
-Remaining attributed MLX/Metal and stateless acceleration primitives are
-lower-level dependencies, not competing model, state or generation authorities.
-Release metadata/setup and separate guarded candidate profiles may retain donor
-identities or provisioning requirements; those do not reopen M48's text ownership
-or qualify broader capabilities. Reproducible dependency delivery remains part of
-the eventual self-contained destination, but dependency-count reduction is not a
-reason to weaken or replace the completed production core. Broader context and
-Vision implementation must follow measured gaps and existing ownership principles.
-MTP, DSpark and speculation remain separately scoped and OFF by default.
+MTP retains **pinned oMLX physical architecture authority**, DwarfStar-derived
+prefill topology with qualified MLX numerics, and ds41f semantic/application/
+lifecycle/resource authority. Self-contained delivery or source transfer must
+preserve physical topology, sole execution ownership and practical performance.
+Do not reimplement an algorithm and promise to recover speed later. The
+[MTP doctrine](mtp-architecture-reset.md) defines the structural conformance gate;
+this target does not reopen OFF implementation or revive the discarded M50–M56
+producer.
 
-### MTP physical architecture and semantic authority
+### Official recipe and semantic assets
 
-[M49R reset](mtp-architecture-reset.md) governs retained MTP execution architecture;
-the [current serving roadmap](implementation-plan.md#production-serving-closure-superseding-authority)
-governs subsequent production-facing work. The formal
-restart is `5e784d9`; M50–M56 are a superseded failed production architecture
-line, not a normal-profile candidate. Their correctness evidence remains usable;
-M54 application/semantic requirements remain mandatory.
+Official recipe conversion, tokenizer, prompt/tool/reasoning grammar, streaming,
+response projection and consuming semantics remain authoritative. The final
+delivery must provide required functionality and assets through normal reproducible
+packages, repository-owned functionality or another documented self-contained
+mechanism. This page does not preselect among them.
 
-**oMLX is the MTP/decode physical execution architecture authority**, not merely
-an algorithmic reference to reimplement independently. Prefill physical authority
-remains DwarfStar topology and qualified MLX numerical implementation. ds41f owns
-semantic/application/lifecycle/resource authority. Ownership transfer and eventual
-self-contained delivery must preserve physical topology; they do not authorize
-redesign. Candidate speed is an initial architecture gate, not a later optimization
-goal. Material unexplained matched-workload gaps BLOCK the milestone. The existing
-qualified standard-OFF implementation is not rolled back or reopened by this
-prospective MTP doctrine. No profile or release promotion occurs in M49R.
+Current installed execution admission is defined in
+[runtime admission](runtime-admission.md), and exact setup/assets in
+[operations](operations.md). A developer checkout or historical source archive is
+not runtime authority merely because it was used in an old qualification.
+Changing source ownership or package delivery never authorizes an independent
+guessed DeepSeek grammar, omitted semantic asset or weakened identity check.
 
-### deepseek-recipe: protocol authority, not a developer-checkout requirement
-
-Alongside oMLX's physical architecture authority, the current official recipe implementation remains an important
-protocol/prompt/response authority, including tokenizer, tools, thinking,
-streaming and semantic preview behavior. Current setup prefers an installed
-native recipe package but still requires a checkout for tokenizer/provenance;
-internal qualification uses an exact candidate native build. Merely installing
-a package in the OFF setup does not eliminate that checkout requirement. M41's
-separate source/native provisioning delivers the candidate and tokenizer without
-requiring a developer checkout; OFF migration remains separate.
-
-The final dependency must provide all required functionality and resources via
-**a normal reproducible package dependency, repository-owned functionality, or
-another self-contained reproducible mechanism**. This document does not choose
-among them now. Users must not manually clone a particular recipe development
-revision or reproduce undocumented local patches to run ds41f. Changing delivery
-or source ownership is not permission to replace official recipe semantics with
-an independent guessed grammar.
-
-## Authority and dependency direction
+## Public contract and authority direction
 
 ```text
 Public/local API and operator contract
-        ↓
-Admission / sessions / recovery / lifecycle
-        ↓
-ds41f runtime interfaces and ownership
-        ↓
-Qualified execution implementation
-(standard-OFF: ds41f; MTP/decode topology: oMLX;
- prefill: DwarfStar topology + qualified MLX numerics)
-        ↓
-MLX / ordinary system or package dependencies
-        ↓
-Official DeepSeek-V4.1-Flash checkpoint
+  -> admission / application continuity / recovery / lifecycle
+  -> ds41f state and execution interfaces
+  -> qualified execution implementation
+     OFF: first-party; MTP physical topology: pinned oMLX
+     prefill: DwarfStar-derived topology + qualified MLX numerics
+  -> MLX / ordinary reproducible dependencies
+  -> official checkpoint
 ```
 
-This is an authority/dependency boundary, not a rigid module or class design.
-Official checkpoint/reference semantics remain model authority. Temporary adapters
-may exist during development, but external runtime repositories, scheduler types,
-checkout paths and donor revision conventions must not leak into the final public
-contract. ds41f owns its interfaces, state transitions and qualification obligations.
+This is an authority boundary, not a predetermined class/module design.
+Checkpoint/model/protocol semantics remain authoritative. Temporary adapters may
+exist, but donor scheduler types, checkout paths and revision conventions must
+not become compulsory final application knowledge. Explicit capability and
+operational admission remain legitimate public controls.
 
-## Stable ds41f contracts from M33–M40
+## Contracts that delivery changes must preserve
 
-Implementation dependencies may change without reopening these established
-contracts unless new evidence requires a substantive architectural revision.
-Their qualified scopes remain bounded: internal guarded proofs are not claims
-that the current public OFF API implements every internal feature.
+These are present semantic constraints on future delivery work, not claims that
+every profile implements every historical internal feature. Current normative
+owners are linked here; exact historical proof scopes stay with their receipts.
 
-- **Semantic-horizon ownership** ([M33](archive/development/milestone-33-semantic-horizon.md),
-  [qualification](archive/development/milestone-33-protocol-qualification.md)): authoritative recipe
-  preview does not advance canonical state. A predicted completing response stays
-  unforwarded until canonical emission; ownership binds generation and absolute
-  response ordinal, not token identity. Permitted one-token quiescence repair
-  materializes only the canonical terminal, with no successor sample/proposal/verify.
-- **Canonical versus representable state** ([M36](archive/development/milestone-36-client-recovery-qualification.md),
-  [M36R](archive/development/milestone-36r-recovery-admission.md)): sole canonical native history,
-  certified ordinary protocol history, client transcript and transport observations
-  are distinct. Coherent caches, valid JSON or delivered SSE do not prove an
-  ordinary continuation is representable.
-- **Native/cache lifecycle and exact-prefix continuation**
-  ([M34](archive/development/milestone-34-operational-qualification.md),
-  [M35](archive/development/milestone-35-http-sse-qualification.md)): one executable cache authority;
-  ownership transfer survives prior-owner close without reviving revoked owners.
-  Shielded native phases and exact response leases govern coherent-boundary
-  cancellation, settlement and retirement. Actual ordinary recipe re-encoding
-  must strictly extend retained canonical IDs before mutation. Retained sessions
-  allow **zero hidden model-history replay, cache reconstruction or full repack**;
-  explicit fresh-session prefill is a different operation.
-- **Request/outcome fencing and certified recovery** (M36R): bind session lifetime,
-  monotonic sequence and exact body bytes; same-identity settlement observation
-  never generates again, changed/expired identities reject. Recover only from a
-  positive authoritative reconstruction certificate, then independently check
-  the real continuation prefix. Writes/yields and absent observations are not ACKs.
-- **Conservative negative/poison handling** (M36–M36R,
-  [M37](archive/development/milestone-37-local-client-integration.md),
-  [M38](archive/development/milestone-38-client-operational-soak.md)): unrepresentable state is not
-  repaired by guessing, sampling onward, token splicing or invented tool results.
-  Internal ownership failures poison; no ambiguous idle publication. Explicit
-  retirement/fresh-session decisions preserve only legitimate application history;
-  failed retirement blocks reuse. Unknown lifecycle/effect outcomes stop automatic
-  progress rather than triggering replacement or retries with new identities.
-- **Client-side effect ownership** (M37–M38): tools execute outside the server,
-  only from certified completed calls. A bounded living-client ledger reserves
-  before execution and reuses stored results; ambiguous effects never auto-repeat.
-  This is not crash-safe or distributed exactly-once execution.
-- **Finite process-lifetime identity/admission and bounded diagnostics**
-  ([M39](archive/development/milestone-39-lifetime-admission.md)): server-issued no-wrap identities,
-  live-only execution authority and explicit exhaustion denial fence retired work
-  independently of diagnostic eviction. Bounded summaries/traces are not an
-  outcome archive; successful retirement releases closed payload/native authority.
-  Restart does not restore that process's identity or recovery authority.
-- **Explicit capability profiles and local security assumptions**
-  ([M40](archive/development/milestone-40-release-readiness.md)): capability/dependency identity and
-  admission must be explicit, not implicit fallback or request-selected acceleration.
-  Profiles carry their own supported envelope and acceptance. Local/single-operator
-  operation trusts local operator peers; IDs are not authentication secrets and
-  loopback alone is not access control. Remote/multi-user serving requires a new
-  security design. M40's proposed profile, ingress and Host/Origin requirements
-  remain prospective release obligations, not implemented/qualified guarantees.
+| Contract | Current definition |
+| --- | --- |
+| One executable authority; consumed versus predicted history; same-live transfer and no retained-history replay/repack | [State and transfer](session-state.md), [generation](generation.md) |
+| Consuming semantic horizon bound to generation/ordinal; preview cannot advance canonical state or authorize effects | [Generation/settlement](generation.md) |
+| Canonical native state, recipe-representable history, transcript and transport observations are distinct | [State categories](session-state.md), [logical sessions](production-sessions.md) |
+| Immutable identity-bound outcomes; conservative unknown/poison disposition; no invented tool results or automatic uncertain retries | [Logical sessions](production-sessions.md), [application state](web-application.md) |
+| Model/allocator/KV/paired/Engram lifetimes, cleanup and finite identity/pin retention remain intentional | [Runtime strategy](runtime-strategy.md), [capabilities](capabilities.md) |
+| Explicit profiles and admission, no silent fallback or inherited scope; local IDs are not authentication | [Capabilities](capabilities.md), [operations](operations.md) |
 
-These are **ds41f contracts**, not properties defined by oMLX, even where oMLX
-currently implements part of them. Neither donor removal nor fresh packaging
-silently inherits broader qualification, persistence, concurrency or recovery scope.
+Retained native sessions, logical application sessions and ordinary independent
+requests have different continuation/retry/cache-miss rules. Exact-prefix
+retained continuation does not make every ordinary request append-only. A fresh
+independent-request miss is not permission to replay a retained session when its
+required pair is lost. Transport writes are not settlement or client ACKs.
 
-## Publication, packaging and historical evidence
+Tools execute in the client under the applicable completed-call/effect policy.
+Living-client reservations and stored results are not crash-safe or distributed
+exactly-once guarantees. Dependency replacement cannot silently broaden recovery,
+persistence, concurrency, security or multimodal scope.
 
-The temporary multi-repository development configuration must not be treated as
-the desired final public runtime architecture. Public/runtime completion is to be
-evaluated against this target as well as correctness, practical performance and
-capability qualification. Future milestones decide **when and how far** to move
-toward it; there is no dependency-removal milestone number or fixed date here.
-The destination is not reopened merely because an adapter remains useful.
+## Publication and qualification
 
-Self-containment means source-repository closure and reproducible documented setup,
-**not a general distribution system**. Wheels, installers, tarball distributions,
-Homebrew formulae, portable binaries and a fully vendored third-party ecosystem
-are not required. Existing bundle work remains valid scoped work, not a mandatory
-final delivery form. A normal clone plus documented environment construction is
-sufficient. M40's candidate delivery choices are scoped historical proposals, not
-universal packaging requirements for this target.
+Self-containment means source closure and reproducible documented setup,
+**not a general distribution system**. Wheels, installers, Homebrew formulae,
+portable binaries, tarball delivery and a fully vendored ecosystem are not
+mandatory. Existing bundle work remains valid scoped work, not the required final
+public form. A normal clone plus documented environment construction is sufficient.
 
-M33–M40 evidence remains valid for the architecture and behaviors it established,
-including negative results and superseded blockers. Dependency replacement should
-reuse it as specification/oracle where source ownership permits, with explicit
-identity/scope reconciliation and rerunning affected qualification when implementation
-changes. Preserve provenance and attribution. Do not rewrite historical milestone
-results, paths or dependency identities to look self-contained retroactively:
-this target is prospective architecture, not retroactive history.
+Implementation qualification, installed-payload admission, immutable R1 regression
+and release approval answer different questions. Full R1 re-verification belongs
+to an appropriate stable boundary, not every intermediate milestone. A later
+projection needs exact source/payload/reference identity, independent setup and
+its scoped receipt; historical extraction or source-clone approval does not
+certify later HEAD. This document schedules no package, model or release campaign.
+
+Preserve provenance, attribution, negative results and superseded blockers.
+Reuse historical evidence as scoped specification/oracle where identities and
+ownership permit, and validate the affected delta when implementation changes.
+Never rewrite old results, paths or dependency identities to make them appear
+self-contained retroactively.
+
+## Earlier target edition
+
+The [pre-compilation edition](archive/editorial-baseline/final-runtime-target.md.txt)
+retains the original milestone account, M33–M40 source pointers and former
+release-repository/checkout wording. It is source evidence, not an assertion that
+the current old `ds41f-runtime` directory is release history or that historical
+checkout requirements remain today's installed-execution contract. Current
+normative definitions are in the owners above; the destination is prospective.

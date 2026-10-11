@@ -1,0 +1,44 @@
+FF........                                                               [100%]
+=================================== FAILURES ===================================
+____________ test_reconstruction_archive_and_restored_active_paths _____________
+
+    def test_reconstruction_archive_and_restored_active_paths():
+        manifest = json.loads((ROOT / 'docs/archive/mtp-reconstruction/source-manifest.json').read_text())
+        assert manifest['restart_commit'] == BASE
+        assert len(manifest['entries']) == 57
+        baseline = set(git('ls-tree', '-r', '--name-only', BASE).decode().splitlines())
+        for entry in manifest['entries']:
+            data = (ROOT / entry['archive_path']).read_bytes()
+            assert hashlib.sha256(data).hexdigest() == entry['sha256']
+            assert data == git('show', f"{manifest['source_commit']}:{entry['original_path']}")
+            active = ROOT / entry['original_path']
+            if entry['original_path'] in baseline:
+>               assert active.read_bytes() == git('show', f"{BASE}:{entry['original_path']}")
+E               assert b'"""Fail-clo...n admission\n' == b'"""Fail-clo...n admission\n'
+E
+E                 At index 9228 diff: b'm' != b'l'
+E                 Use -v to get more diff
+
+tests/test_m49r_architecture_reset.py:32: AssertionError
+________ test_all_baseline_runtime_files_preserved_and_no_new_producer _________
+
+    def test_all_baseline_runtime_files_preserved_and_no_new_producer():
+        allowed = {'ds41f_mlx/runtime/mtp_lifecycle.py', 'ds41f_mlx/serving/internal_mtp.py'}
+        qualified = json.loads(gzip.decompress((ROOT / 'artifacts/m51r/qualification-identity.json.gz').read_bytes()))['identity']['runtime']
+        for path in git('ls-tree', '-r', '--name-only', BASE, '--', 'ds41f_mlx').decode().splitlines():
+            data = (ROOT / path).read_bytes()
+            if path in allowed:
+                assert hashlib.sha256(data).hexdigest() == qualified[path], path
+            else:
+>               assert data == git('show', f'{BASE}:{path}'), path
+E               AssertionError: ds41f_mlx/build_release.py
+E               assert b'"""Build a ...xit(main())\n' == b'"""Build a ...xit(main())\n'
+E
+E                 At index 3175 diff: b'#' != b'f'
+E                 Use -v to get more diff
+
+tests/test_m49r_architecture_reset.py:45: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_m49r_architecture_reset.py::test_reconstruction_archive_and_restored_active_paths
+FAILED tests/test_m49r_architecture_reset.py::test_all_baseline_runtime_files_preserved_and_no_new_producer
+2 failed, 8 passed in 0.47s
