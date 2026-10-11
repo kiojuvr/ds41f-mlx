@@ -133,7 +133,7 @@ reasoning turns and rejection of mode change. `real-deterministic-repeat.json`
 covers greedy repetition. These broad scenarios were not pointlessly rerun.
 Temporary acceptance drivers are local `/tmp` scripts, not new release machinery.
 
-## Regression checks and remaining frontend work
+## Core regression checks and subsequent frontend integration
 
 Separate pytest processes avoid pre-existing collection/import-origin fixture
 interference:
@@ -144,7 +144,9 @@ interference:
 - installed execution identity and numerical resource admission: **33 passed**.
 
 These groups overlap; no full-suite or summed-distinct-test claim is made.
-Frontend settings UI and Browser/TUI/OpenCode real acceptance remain next-stage
-work: consume the capability ranges/defaults, expose all eight controls and
-reasoning, enforce session reasoning ownership, preserve request policy through
-tools/cancel/reconciliation, and validate actual frontend-to-runtime execution.
+At this core milestone, frontend settings and Browser/TUI/OpenCode acceptance
+were the next stage. That work was subsequently completed in `d0b5925`; see
+[generation policy frontends](generation-policy-frontends.md) for the implemented
+eight sampling controls, reasoning ownership, workflow policy snapshots and
+separately scoped real-client acceptance. The core receipts and counts above
+remain unchanged; they are not relabeled as frontend acceptance.

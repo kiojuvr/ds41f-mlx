@@ -11,7 +11,9 @@ server.** The broader release decision is reopened because ordinary runtime-serv
 requirements were omitted from the previous scope. M50R–M55R remain authoritative
 within their qualified execution/application scope; M55R is a bounded
 `mtp-singleton-v1` release qualification, not general serving completion.
-`ds41f-runtime` promotion remains deferred.
+No active `ds41f-runtime` release repository is required. The existing directory
+is an unused old generated environment, not accepted release history; any future
+release projection remains a separate explicit checkpoint.
 
 **Current ordinary MTP serving:** `mtp-serving-v1` is implemented, with B1 paired
 target/DSpark checkpoint restoration and B2 Scheduler/P5 settlement, publication
@@ -230,8 +232,10 @@ determinism qualification, a promotion receipt, or a `ds41f-runtime` update.
 The M55R normal-local source-clone release does not require a runtime projection.
 At an explicit `ds41f-runtime` promotion checkpoint, M43's existing deterministic projection,
 fresh independent runtime setup, release-profile acceptance and receipt rules
-remain authoritative. `ds41f-runtime` is qualified release history, never a
-development mirror or a place for direct features/release-only semantic fixes.
+remain the retained delivery rules for a future explicitly requested projection.
+The existing `ds41f-runtime` directory is not accepted release history. A future
+qualified projection must never become a development mirror or a place for
+direct features/release-only semantic fixes.
 All releases flow one-way from a qualified `ds41f-mlx` state. M44 remains PASS;
 its completed release requalification is evidence actually performed, not a
 mandatory cadence for future milestones. See the

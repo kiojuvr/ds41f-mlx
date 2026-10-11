@@ -3,7 +3,9 @@
 Scope: `mtp-serving-v1` text Chat Server backend capability. Ordinary Chat
 Completions remains available without a session. Singleton qualification,
 standard-OFF, persistence/restore, images, long-context qualification and release
-promotion are not expanded by this milestone. TUI presentation is a separate WIP.
+promotion were not expanded by the original session milestone. TUI Chat and
+frontend generation controls were subsequently implemented; see
+[operator Chat](operator-chat.md) and [generation policy frontends](generation-policy-frontends.md).
 
 ## Ownership model
 
@@ -118,15 +120,20 @@ Server reservation/result observation remains authoritative for effect uncertain
 
 `/health` advertises `capabilities.stateful_chat = production-sessions-v1`, one
 live session, persist_restore=false and `chat_defaults` from current production
-admission: **temperature 0, top-p 1, reasoning none, Auto output**. Current MTP's
-actual qualified total envelope and 393216 output ceiling are reused unchanged.
-Unsupported sampling/thinking/images are rejected, never silently rewritten.
+admission: **temperature 1.0, top-p 0.95, reasoning none, Auto output**, together
+with the complete `generation-policy-v1` contract. Sampling is request-owned;
+reasoning mode/effort is retained-session-owned and changes are rejected. The
+qualified total envelope and 393216 output ceiling are reused unchanged.
+Unsupported controls, thinking token budgets and images are rejected, never
+silently rewritten. Explicit greedy uses temperature=0.
 
-Browser/TUI clients must consume these authoritative capabilities/defaults for a
-new MTP conversation. Historical Browser UI defaults 1.0/.95 are not an admitted
-MTP sampler. The existing Chat Server protocol passes supported requests without
-protocol changes; frontend default handling belongs to the subsequent Chat/TUI
-milestone, not a hidden backend normalization.
+Browser/TUI clients consume these runtime-advertised capabilities/defaults for a
+new MTP conversation. Implemented [frontend generation controls](generation-policy-frontends.md)
+snapshot all eight sampling fields for each user workflow and preserve that
+snapshot through tool results, continuation and cancellation/reconciliation.
+The current default is 1.0/.95, not the session milestone's earlier greedy
+qualification policy. The original acceptance below remains scoped to its source
+revision and does not by itself qualify the later generation-policy changes.
 
 ## Acceptance
 

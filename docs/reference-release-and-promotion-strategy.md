@@ -2,13 +2,22 @@
 
 ## Authority and scope
 
-This document defines the development, semantic-reference, and one-way release-repository model for `ds41f-mlx`.
+This document defines the development, semantic-reference, and prospective
+one-way release-repository model for `ds41f-mlx`.
+
+**Current repository status:** `ds41f-mlx` is the sole development repository.
+The existing `ds41f-runtime` directory is an unused old generated environment,
+not an active deployment or accepted release history. No permanent release
+repository is needed now. References below to its contents, release history and
+updates describe the intended future delivery model or original extraction
+evidence, not a requirement to maintain or use that existing directory.
 
 M42's executable result is [Reference Release R1](reference-release-r1.md), with
 [decision and evidence](milestone-42-reference-release.md). M42 itself performed
-no extraction. [M43](milestone-43-release-repository-extraction.md) now implements
-and qualifies this deterministic repository projection; broader feature completeness
-remains prospective.
+no extraction. [M43](milestone-43-release-repository-extraction.md) records the
+historical implementation and scoped qualification of deterministic projection;
+that evidence does not certify the current `ds41f-runtime` directory or later
+source states. Broader feature completeness remains prospective.
 
 It does not broaden qualified runtime scope. M41 established the explicit bounded
 `mtp-singleton-v1` candidate; [M54R/M55R](milestone-54r-55r-operational-release.md)
@@ -66,9 +75,14 @@ Development evidence, donor analysis and failed or superseded investigations are
 
 ### `ds41f-runtime`
 
-`ds41f-runtime` is a qualified release history/projection of `ds41f-mlx`, not an independent implementation, a peer development repository, or a continuously synchronized development mirror.
+A future explicitly qualified release projection of `ds41f-mlx` may use the
+`ds41f-runtime` name. It would not be an independent implementation, a peer
+development repository, or a continuously synchronized development mirror.
+The existing directory does not fulfill that release role.
 
-It contains only the source, build definitions, stable contracts, qualification surface and operator documentation required to build and operate the promoted runtime.
+Such a future projection would contain only the source, build definitions, stable
+contracts, qualification surface and operator documentation required to build and
+operate the promoted runtime.
 
 Conceptually:
 
@@ -414,7 +428,7 @@ The existence of `ds41f-runtime` therefore does not force premature donor-remova
 
 Once R1 and M43 one-way promotion are established, qualification has two distinct
 tracks. For the current post-M48 development phase, the authoritative
-[production roadmap](implementation-plan.md#post-m48-production-boundary-and-remaining-work-current-authority)
+[production roadmap](implementation-plan.md#post-m48-production-boundary-and-remaining-work-bounded-execution-scope)
 defers full R1 regression re-verification until implementation and operational
 behavior are sufficiently stable; “R1 conformance where applicable” below does not
 mandate repeated full R1 runs at each intermediate milestone. Runtime promotion,
@@ -488,8 +502,10 @@ The intended policy for `ds41f-runtime` is:
 
 This policy avoids two-way synchronization and prevents semantic divergence between development and release repositories.
 
-`ds41f-runtime` is a qualified release history, not a second development history
-or a mirror that must advance after every qualified development milestone.
+A future qualified projection would record explicitly accepted releases, not a
+second development history or a mirror that must advance after every qualified
+development milestone. This is not a description of the existing unused
+`ds41f-runtime` directory.
 
 ---
 

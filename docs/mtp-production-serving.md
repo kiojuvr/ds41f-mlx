@@ -66,8 +66,14 @@ interface and/or configure the host firewall as appropriate for your deployment.
 `standard-off` is unchanged. This removes historical singleton transport
 constraint leakage, not an execution or dependency admission requirement.
 
-This path keeps one worker, one executable native singleton and greedy/thinking-off
-text. Ordinary prompt + output is bounded by **1,048,576 tokens** (or a smaller
+This text-only path keeps one worker and one executable native singleton.
+`generation-policy-v1` supports request-owned sampling and recipe-owned reasoning;
+ordinary defaults are temperature **1.0**, top-p **0.95**, reasoning off. Explicit
+greedy uses temperature=0. Stateless reasoning is request-owned; retained logical
+sessions reject changes to their reasoning mode/effort. See the qualified
+[generation policy](generation-policy-investigation.md) and
+[frontend controls](generation-policy-frontends.md).
+Ordinary prompt + output is bounded by **1,048,576 tokens** (or a smaller
 checkpoint-configured range); maximum output is **393,216 tokens**. The old
 8192 total / 768 output ordinary bounds were historical bounded serving scope,
 not the model/runtime capability.
@@ -106,7 +112,8 @@ The [ordinary API authority audit](ordinary-api-boundary.md) records removed
 independent validation, retained constraints and the default-promotion gate. Multiple completed calls
 are supported within recipe capabilities and the existing body/context budgets.
 OpenCode's empty assistant `reasoning_content` is accepted through this same recipe
-path; generation remains thinking-off. OpenCode Plan's text-plus-reminder arrays
+path; reasoning follows the request's qualified generation policy rather than a
+forced thinking-off restriction. OpenCode Plan's text-plus-reminder arrays
 are accepted by authoritative recipe conversion, not a client-specific exception.
 Converted image sources are rejected before expansion on this text-only route.
 Ordinary history uses body/context budgets, not singleton fixture string limits
@@ -153,8 +160,9 @@ Only the wire request's `model` participates in ds41f admission. For OpenCode
 }
 ```
 
-Keep agent temperature zero and the complete encoded prompt plus output reservation
-within the advertised envelope. No reduced agent/tool schema is required merely
+For a deterministic/greedy agent run, explicitly set temperature zero; this is
+an operator choice, not a production admission requirement or default. Keep the
+complete encoded prompt plus output reservation within the advertised envelope. No reduced agent/tool schema is required merely
 to fit the obsolete 8K serving scope. Keep the provider local-only and fail closed;
 `enabled_providers` prevents fallback to an Internet provider.
 

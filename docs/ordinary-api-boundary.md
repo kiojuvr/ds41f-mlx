@@ -2,7 +2,10 @@
 
 Scope: `mtp-serving-v1` Chat Completions admission. This is an API boundary
 repair, not a new-client allowlist, implementation of every OpenAI feature,
-release promotion, or numerical MTP requalification.
+release promotion, or numerical MTP requalification. Current generation controls
+follow [generation-policy-v1](generation-policy-investigation.md); the original
+boundary acceptance and source-seal follow-ups below retain their historical scope.
+Current startup uses [installed execution admission](runtime-admission.md).
 
 ## Authority and order
 
@@ -39,7 +42,7 @@ responsibility. Tests use the installed authority rather than copying its schema
 | Call IDs, ordered results, duplicates, foreign or missing results | Recipe transform_messages |
 | Tool name, argument and tool-result fixture byte limits | Whole-body resource budget, converted security checks, actual encoded capacity |
 | Stream options must equal include_usage=true | Recipe streaming validation and include_usage projection |
-| Wire reasoning_effort must be none | Converted thinking_mode must be off (recipe resolves overrides) |
+| Wire reasoning_effort must be none | Recipe-owned thinking/effort conversion; stateless request policy and retained-session reasoning lock |
 | Wire max_tokens must be present | Converted default 128; ordinary output ceiling remains 393,216 |
 
 Tools, choice, response format and stop semantics remain recipe-owned. No
@@ -53,9 +56,11 @@ specifies, not flattened independently by ds41f.
   LocalBoundary trusted-network/resource policy. Body ceiling: 16 MiB.
 - JSON object, unique keys, finite numbers, UTF-8: ambiguity/security admission.
 - Model alias: fixed loaded model, not protocol grammar.
-- Temperature unset/zero; top_p unset/one; thinking off: qualified greedy MTP
-  execution. Unsupported values are rejected after conversion, not silently
-  replaced by Scheduler defaults.
+- Sampling uses the qualified eight-field `generation-policy-v1` contract;
+  omitted temperature/top-p resolve to 1.0/.95 before recipe conversion. Explicit
+  greedy uses temperature=0. Reasoning defaults off but supported recipe efforts
+  are not forced off; retained-session reasoning changes reject. Unsupported or
+  out-of-range controls are rejected, not silently replaced by Scheduler defaults.
 - Images rejected from converted message sources before rendering, expansion,
   fetching or model loading: ordinary MTP is text-only.
 - Text spelling/encoding is recipe-owned. Ordinary requests do **not** inherit
@@ -72,11 +77,12 @@ specifies, not flattened independently by ds41f.
   capability ceilings. Existing Scheduler admission/settlement remains unchanged.
 
 The recipe intentionally drops some caller-owned controls. These cannot be
-checked only on ConversationRequest: nonzero frequency/presence penalties,
-seed, parallel_tool_calls=false, thinking budget_tokens, JSON Schema constrained
-output and requested logprobs are explicitly rejected as unsupported runtime
-controls after authoritative conversion. Zero penalties, null controls and
-parallel_tool_calls=true do not require extra execution behavior. This is a
+checked only on ConversationRequest. Sampling penalties and seed are now
+preserved and validated by `generation-policy-v1`; seed remains best-effort, not
+a deterministic promise. `parallel_tool_calls=false`, thinking budget_tokens,
+JSON Schema constrained output and requested logprobs are explicitly rejected as
+unsupported runtime controls after authoritative conversion.
+`parallel_tool_calls=true` does not require an additional execution guarantee. This is a
 small deny-list of capability promises, **not** a request-field allowlist.
 Unknown extension fields still follow authoritative recipe semantics. Tool
 `strict` declaration metadata is recipe-owned; this change adds no constrained
@@ -87,6 +93,10 @@ placeholder 1; actual encoding resolves the reservation. Scheduler and the
 shared MTP execution start consume `request_max_tokens`, never that placeholder.
 
 ## Boundary acceptance / default-promotion gate
+
+The acceptance counts and deployment/review follow-ups below describe the original
+boundary repair, before installed-admission and generation-policy changes. They
+are not instructions to refresh local seals or evidence of all current controls.
 
 Required evidence is authority-based acceptance, not a count of clients:
 
@@ -122,7 +132,9 @@ admitted wheel; `ops inspect --profile mtp-serving-v1` passed with the official
 checkpoint. Inventory/ordinary grammar/tool tests passed 61 tests in that
 normal-local environment. A repository inventory regression now prevents source
 changes from shipping without the matching admission update. Other existing
-installations must refresh their local seal after updating the source clone.
+installations required local-seal refresh at that historical stage. Local seals
+have since been removed; current deployments install an admitted execution wheel
+and follow `runtime-admission.md`, not those source-clone refresh instructions.
 
 Repository-review follow-up: OpenCode's read of `mtp_profile.py` reproduced
 `raw special-token source unavailable`: the recipe preserved the source, but

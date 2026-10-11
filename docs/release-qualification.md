@@ -4,7 +4,17 @@
 [semantic conformance](reference-release-r1.md) above these separately qualified
 profiles. It does not change release admission or perform M43 extraction.: DS41F_TEXT_RUNTIME_RELEASE_QUALIFIED
 
-## Status
+## Historical release scope and current operation
+
+This page retains the original scoped OFF release evidence and its startup
+model. It is not current-at-HEAD qualification of every feature or the current
+installed deployment. Use [operations](operations.md) and
+[installed execution admission](runtime-admission.md) for current startup;
+[ordinary MTP serving](mtp-production-serving.md) has its own supported scope.
+
+The existing `ds41f-runtime` directory is an unused old generated environment,
+not an active deployment or accepted release history. M43/M44 receipts remain
+historical evidence about their exact payloads, not certification of that directory.
 
 `DS41F_TEXT_RUNTIME_RELEASE_QUALIFIED` for the **standard-off** scoped local text runtime below.
 The separate opt-in [M41 local MTP candidate](milestone-41-local-mtp-release-candidate.md)
@@ -15,7 +25,8 @@ M20 promotes exact upstream oMLX `v0.7.0` (`4d4f5a280bc1739ba2cf39c1cee44fd5cc89
 
 M21 adds the Rust-facing `ds41f_api` boundary over the unchanged local HTTP/SSE server. It does not alter model runtime bytes, prompt/protocol semantics, prefill/decode selectors, persistence format, or session ownership. Boundary-specific evidence is in `artifacts/m21/rust-boundary-qualification.json`; closeout real-server evidence is in `artifacts/m21/real-rust-boundary-acceptance.log`. Real-model endpoint behavior remains qualified by M20; M21 closeout only proves the Rust consumer boundary can drive that server with the qualified Python environment.
 
-M22 defines the release manifest and canonical operations/acceptance path. Active release metadata is `release/ds41f-release.json`; current qualification artifacts use `ds41f.release-qualification.v1` / `ds41f.release-acceptance.v1` schemas under `artifacts/release/` by default. M22 acceptance evidence is `artifacts/m22/release-acceptance.json`.
+M22 defined the historical release manifest and operations/acceptance path.
+`release/ds41f-release.json` records that release metadata; its qualification artifacts use `ds41f.release-qualification.v1` / `ds41f.release-acceptance.v1` schemas under `artifacts/release/` by default. M22 acceptance evidence is `artifacts/m22/release-acceptance.json`.
 
 M25 [rejects/defers upstream MTP](milestone-25-mtp-decision.md) after real-model
 boundary diagnostics; it does not qualify an optional serving mode. The M9
@@ -32,9 +43,10 @@ even when they change release-surface files.
 
 Release promotion is a separate explicit checkpoint: deterministic projection,
 fresh independent runtime setup, release-profile acceptance, a bound promotion
-receipt, and a `ds41f-runtime` update under M43's existing rules. The runtime
-repository is qualified release history, not a continuously synchronized mirror;
+receipt, and a future release projection under M43's retained delivery rules.
+Any such projection must not become a continuously synchronized mirror;
 no direct feature development or release-only semantic fixes belong there.
+This prospective model does not require maintaining the existing old directory.
 Every runtime release flows one-way from a qualified `ds41f-mlx` state.
 
 M44 remains PASS and its completed release requalification/promotion evidence is
@@ -67,16 +79,25 @@ See `docs/api.md`. Key release decisions:
 - stateful streaming emits official chunks only after a committed session boundary;
 - non-empty/non-null `stop` on stateful Chat Completions is rejected before mutation; arbitrary KV rollback is not part of the release.
 
-## Canonical startup
+## Historical checkout startup (not current operator instructions)
 
-From a clean shell with documented local dependencies available:
+The original release used the following checkout-based commands and dependency
+paths. They are retained for interpreting its evidence, not for current startup.
+Current operators use the installed environment's `bin/ds41f`; see
+[operations](operations.md).
+
+Original commands:
 
 ```bash
 python3 -m ds41f_mlx.provenance
 python3 -m ds41f_mlx.serve
 ```
 
-Machine-specific paths are configured through `DS41F_CHECKPOINT`, `DS41F_OMLX_PATH`, `DS41F_RECIPE_PATH`, and `DS41F_KV_ROOT`; host/port/session/diagnostic settings are documented in `docs/operations.md`. The launcher applies configured oMLX and recipe checkout paths before importing the FastAPI app, so manual `PYTHONPATH` setup is not the canonical path.
+That release configured paths through `DS41F_CHECKPOINT`, `DS41F_OMLX_PATH`,
+`DS41F_RECIPE_PATH`, and `DS41F_KV_ROOT`. Its launcher applied oMLX and recipe
+checkout paths before importing the FastAPI app. Current installed startup does
+not use mutable checkout paths as execution authority or accept `PYTHONPATH`
+overrides.
 
 Health lifecycle: `/health` returns `alive` before model load, `ready` after model load, and `unavailable` with `fatal_error` on fatal backend error. Rust `RuntimeProcess::spawn*` treats `alive` only as process startup; `wait_model_ready()` is required for inference readiness. Graceful shutdown/close must release live sessions, GenerationBatch ownership, and the single-thread executor. Rust `shutdown()` sends SIGTERM first and truthfully reports `Graceful`, `AlreadyExited`, or `Forced` if a kill fallback was required. Persisted artifacts remain on disk; live sessions do not remain active after shutdown.
 

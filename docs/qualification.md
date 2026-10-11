@@ -1,6 +1,22 @@
 # Qualification status
 
-This document records the current qualified state at HEAD. Historical milestone documents remain evidence, but this page is the canonical current-state summary.
+This document distinguishes current supported boundaries from scoped historical
+qualification. Original milestone receipts below are not qualification of every
+later HEAD or of a deployment merely bearing the same directory name.
+
+Current ordinary `mtp-serving-v1` provides Chat Completions, generic tools,
+Scheduler-owned paired prefix reuse and text [logical sessions](production-sessions.md).
+Its established envelope is 1,048,576 total tokens / 393,216 maximum output.
+OFF and ordinary MTP use the qualified request sampling and reasoning contract in
+[generation policy](generation-policy-investigation.md), with defaults 1.0/.95
+and reasoning off; [frontend integration](generation-policy-frontends.md) has its
+own acceptance. Standard-OFF remains default. MTP native persistence/restore and
+images remain unsupported; bounded OFF Vision is separately qualified in
+[multimodal production](multimodal-production-qualification.md).
+General-runtime release completion is not claimed. Startup authority is
+[installed execution admission](runtime-admission.md), not historical source seals.
+The existing `ds41f-runtime` directory is an unused old generated environment,
+not current deployment or accepted release history.
 
 Development qualification and runtime release promotion are separate. Ordinary
 `ds41f-mlx` milestones run affected tests, applicable R1 conformance and necessary
@@ -21,7 +37,11 @@ promotion statements below must not be read as reversing M41's scoped admission.
 semantics executable through [owned contracts and conformance](reference-release-r1.md).
 It neither broadens either profile nor promotes a new numerical backend.
 
-M20's promoted decode dependency is clean upstream oMLX `v0.7.0` at
+The following M20/M25 accounts retain their original dependency qualification
+and failure scope; they are not current installed admission or a blanket ban on
+ordinary MTP.
+
+M20's promoted decode dependency was clean upstream oMLX `v0.7.0` at
 `4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40`. Fresh bounded lifecycle,
 persistence/HTTP/tool/EOS, A/B, repeated-session and 200K endpoint evidence is
 recorded in `artifacts/m20/promotion.json`. Unchanged source/prefill ladder
@@ -61,7 +81,11 @@ RAM exhaustion, arbitrary prompt-quality proof or long HTTP/client/tool recovery
 The configured 1M model range is supported here only because actual operation
 reached it; no above-checkpoint extrapolation, new release or promotion is claimed.
 
-## Guarded MTP qualification (internal, not release promotion)
+## Historical guarded MTP qualification (M33–M39 original scope)
+
+Public-disabled and next-task statements in this section describe those original
+internal milestones, not current `mtp-serving-v1`. Their receipts and original
+protocol boundaries remain evidence.
 
 [M33](milestone-33-protocol-qualification.md) closed the protocol gate.
 [M34](milestone-34-operational-qualification.md) now qualifies **bounded guarded
@@ -110,7 +134,10 @@ readiness evaluation, not further recovery micro-qualification.
 Production/default MTP remains OFF; public MTP disabled; MTP persistence/restore,
 token-exact immediate abort and shared/concurrent MTP remain unsupported.
 
-## Qualified release scope
+## Standard-OFF scoped qualification and retained evidence
+
+This table is OFF evidence, not MTP feature parity or a general release-complete
+claim. Newer development/core extensions are separately scoped above.
 
 | Area | Status | Scope |
 | --- | --- | --- |
@@ -135,10 +162,12 @@ token-exact immediate abort and shared/concurrent MTP remain unsupported.
 
 ## Unqualified
 
-- Vision or image input.
+- Vision beyond the separately qualified four-image / 8,192-position OFF core;
+  MTP image input remains unsupported.
 - Arbitrary batching and distributed serving.
 - Sessionized Responses or Messages.
-- Default/implicit or generalized public MTP, DSpark, or speculative decode (explicit bounded M41 local profile is separately qualified).
+- Default/implicit MTP and MTP functionality beyond the documented opt-in
+  `mtp-serving-v1` and separate bounded `mtp-singleton-v1` contracts.
 - Server-side tool execution, MCP/plugins, web search, shell tools.
 - Cross-runtime/cross-backend KV artifact portability.
 - Arbitrary stateful request stop-string truncation/rollback.
@@ -153,8 +182,9 @@ token-exact immediate abort and shared/concurrent MTP remain unsupported.
 
 ## Historical / diagnostic evidence
 
-Current dependency-migration authority: `artifacts/m20/promotion.json` and its
-hashed gate artifacts. Historical artifacts retained or refreshed as classified
+Original M20 dependency-migration evidence: `artifacts/m20/promotion.json` and its
+hashed gate artifacts. Current deployment admission is defined separately by
+`runtime-admission.md`. Historical artifacts retained or refreshed as classified
 in M20 include:
 
 - `artifacts/m6/performance-qualification/result.json`

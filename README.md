@@ -8,14 +8,14 @@ production-release-complete as a general LLM runtime server.** The broader relea
 decision is reopened because the previous scope omitted ordinary runtime-server
 requirements. M50R–M55R evidence remains valid within its bounded scope; M55R
 qualified the constrained `mtp-singleton-v1` execution/application profile, not
-general production serving. `ds41f-runtime` promotion remains deferred.
+general production serving. No active `ds41f-runtime` release repository is required.
 
-**SP1 — Serving/API Authority Reconstruction: BLOCK**, on paired target/DSpark
-prefix restoration and scheduler/P5 settlement ownership. SP1 was intentionally
-narrowed to an authority/restoration decision: even PASS closes no serving
-functionality or release blockers. Findings and minimum additional evidence are
-recorded in the policy above. No restoration or SP2 implementation is authorized;
-historical execution cores and qualification evidence are retained.
+**Current ordinary MTP serving:** B1 paired target/DSpark checkpoint restoration
+and B2 Scheduler/P5 settlement, publication and retirement are implemented/closed
+for `mtp-serving-v1`. **SP1 BLOCK is the historical starting assessment**, not a
+current implementation prohibition. See [ordinary MTP serving](docs/mtp-production-serving.md).
+Broader general-runtime release requirements remain incomplete; the original
+assessment and qualification evidence are retained.
 
 ## Purpose
 
@@ -27,21 +27,18 @@ That requires both preserving the model semantics, precision boundaries, persist
 
 Correctness and performance are therefore not separate end goals. Correctness defines the boundary within which performance must be achieved. The text runtime now has a scoped release qualification for the target production path: dense P0-P7 prefill, P7 SSD-backed Engram, P5 zero-replay handoff, and ds41f-owned single-stream MTP-OFF decode behind local single-flight HTTP (M44/M45). ds41f owns the single-token forward and all-40-layer cache transaction. M46 adds ds41f-owned block state production, packed-slot mutation and compressed/index/candidate publication. M48 establishes first-party checkpoint loading, numerical/model execution, packed storage and SSD-backed Engram under those retained authorities; admitted MLX/Metal and stateless acceleration primitives remain lower-level dependencies.
 
-**M48 completed the supported text-only standard-OFF production core; it did not complete the entire production implementation of DeepSeek-V4.1-Flash.** See the authoritative [post-M48 roadmap](docs/implementation-plan.md#post-m48-production-boundary-and-remaining-work-current-authority) for the qualified 1M text core, bounded [first-party multimodal production capability](docs/multimodal-production-qualification.md) (four inline images / 8,192 consumed positions), and the iterative implementation/qualification cycle. Full R1 regression re-verification and runtime promotion remain later checkpoints, not immediate next steps.
+**M48 completed the supported text-only standard-OFF production core; it did not complete the entire production implementation of DeepSeek-V4.1-Flash.** See the authoritative [post-M48 roadmap](docs/implementation-plan.md#post-m48-production-boundary-and-remaining-work-bounded-execution-scope) for the qualified 1M text core, bounded [first-party multimodal production capability](docs/multimodal-production-qualification.md) (four inline images / 8,192 consumed positions), and the iterative implementation/qualification cycle. Full R1 regression re-verification and runtime promotion remain later checkpoints, not immediate next steps.
 
-The canonical [final runtime target](docs/final-runtime-target.md) defines the intended
-self-contained public source repository. **M43 release extraction is complete**:
-[deterministic promotion](docs/milestone-43-release-repository-extraction.md) delivers
-an independently qualified `ds41f-runtime` source projection without donor or
-`ds41f-mlx` checkout requirements. Development/qualification remains here;
-multiple qualified milestones may accumulate before a separate explicit release
-promotion checkpoint. Changing release-surface files does not automatically
-require independent release setup, repeated determinism qualification, a new
-receipt or a `ds41f-runtime` update. Runtime changes flow only from here through
-M43-governed promotion, never through direct runtime development or release-only
-semantic fixes. See the [development/promotion policy](docs/reference-release-and-promotion-strategy.md).
-The broader feature target remains
-incomplete and bounded MTP scope is unchanged.
+The canonical [final runtime target](docs/final-runtime-target.md) defines the
+intended self-contained public source repository. `ds41f-mlx` is the sole
+current development repository. The existing `ds41f-runtime` directory is an
+unused old generated environment, not an active deployment or accepted release
+history; it is not needed now. [M43 extraction evidence](docs/milestone-43-release-repository-extraction.md)
+remains historical proof within its original scope, not qualification of that
+directory or later HEAD. Any future source projection requires a separate explicit
+release checkpoint and must flow one-way from qualified development here. See the
+[development/promotion policy](docs/reference-release-and-promotion-strategy.md).
+The broader feature target remains incomplete.
 
 ## Project definition
 
@@ -249,28 +246,28 @@ python -m ds41f_mlx.reference --profile both --real-model --output artifacts/r1/
 Use the documented provisioned environment and explicit official checkpoint.
 This is a development oracle, not M43 extraction or expanded MTP admission.
 
-## Operations (standard-off)
+## Current local operation
 
-Configure machine-specific paths with environment variables instead of editing source:
+Use the separate installed environments documented in [operations](docs/operations.md).
+The repository's internal `.venv` is for development/application tooling, not
+installed runtime execution. Configure the external checkpoint and state paths:
 
 ```bash
 export DS41F_CHECKPOINT=/path/to/DeepSeek-V4.1-Flash
-export DS41F_OMLX_PATH=/path/to/omlx-0.7.0.release
-export DS41F_RECIPE_PATH=/path/to/deepseek-recipe
 export DS41F_KV_ROOT=/path/to/ds41f-kv
 ```
 
-Inspect release/provenance without loading the model:
+Inspect and start standard-OFF using its installed execution package:
 
 ```bash
-~/.venvs/omlx-0.7.0.release/bin/python -m ds41f_mlx.ops inspect
+/Volumes/SDXC-512/ds41f-mlx_off-venv/bin/ds41f inspect --profile standard-off
+/Volumes/SDXC-512/ds41f-mlx_off-venv/bin/ds41f start --profile standard-off
 ```
 
-Launch the qualified local runtime server:
-
-```bash
-~/.venvs/omlx-0.7.0.release/bin/python -m ds41f_mlx.ops start
-```
+For ordinary MTP, use `/Volumes/SDXC-512/ds41f-mlx_mtp-venv/bin/ds41f`
+with `--profile mtp-serving-v1`. Do not start both profiles on the same port.
+Mutable oMLX/recipe checkout paths and local seals are not execution authority;
+see [installed admission](docs/runtime-admission.md).
 
 For ordinary MTP operation, activate the provisioned MTP environment and run
 `ds41f` to open the local operator TUI (stdlib curses, no additional packages).
@@ -280,12 +277,13 @@ the runtime running; reopening rediscovers live state. Existing headless
 subcommands are unchanged. See [operator live observability](docs/operator-live-observability.md)
 for keys, snapshot schema, metric definitions and local acceptance results.
 
-Install the PDF extra in the existing runtime environment, then launch the optional
-browser client in a separate process:
+Install the PDF extra in the development/application environment, not by
+replacing the admitted runtime package, then launch the optional browser client
+in a separate process from this checkout:
 
 ```bash
-python3 -m pip install '.[web-binary]'
-python3 -m ds41f_mlx.web --runtime-url http://127.0.0.1:8000
+uv pip install --python .venv/bin/python '.[web-binary]'
+.venv/bin/python -m ds41f_mlx.web --runtime-url http://127.0.0.1:8000
 ```
 
 The Web client is a single-current-conversation Chat interface above the canonical
@@ -306,7 +304,9 @@ semantics are in [`docs/web-application.md`](docs/web-application.md).
 For trusted LAN PCs, opt in with `--host 0.0.0.0 --allow-private-lan`;
 see [LAN/HTTPS options and limitations](docs/private-lan.md).
 [Dynamic capability budgeting](docs/dynamic-capability-budget.md) documents runtime-authoritative
-Output Auto, default-100 Thinking, fetch continuation and tool/resource boundaries;
+Output Auto, fetch continuation and tool/resource boundaries. Current reasoning
+controls use runtime-advertised effort names and defaults, not the historical
+Thinking percentage; see [generation policy frontends](docs/generation-policy-frontends.md);
 its evidence is separate from the historical Chat/LAN gates.
 
 Build and test the Rust boundary:
@@ -315,7 +315,13 @@ Build and test the Rust boundary:
 cargo test
 ```
 
-Run bounded Rust-to-real-server acceptance with the qualified Python environment:
+### Historical M21–M23 acceptance and packaging (not current operation)
+
+The examples below retain the original checkout-based release procedure and
+its environment identities. They do not provision or admit today's installed
+runtime; use [operations](docs/operations.md) for current acceptance and deployment.
+
+M21 ran bounded Rust-to-real-server acceptance with its qualified Python environment:
 
 ```bash
 DS41F_PYTHON=$HOME/.venvs/omlx-0.7.0.release/bin/python \
@@ -342,7 +348,11 @@ Build a relocatable local release bundle:
 Unpack the bundle elsewhere, edit/source `config/ds41f.env`, then use `./bin/ds41f inspect`, `./bin/ds41f start`, and `./bin/ds41f-accept`.
 
 
-Use the qualified Python 3.13 release environment (`~/.venvs/omlx-0.7.0.release/bin/python`). The M22 release manifest (`release/ds41f-release.json`) is the active machine-readable release/dependency authority. M20 pins upstream `v0.7.0` at `4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40`; directory names are not identities. The versioned release checkout is the qualification authority, dev2 is preserved for rollback, and `~/omlx` is reserved for a separately constructed operational checkout matching that identity.
+These original procedures used Python 3.13 in `~/.venvs/omlx-0.7.0.release`.
+The M22 manifest (`release/ds41f-release.json`) records that historical release;
+it is not today's installed execution authority. M20 pinned upstream `v0.7.0`
+at `4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40`. The recorded checkout/rollback
+policy describes that milestone, not a requirement to retain those environments.
 
 See `docs/operations.md`, `docs/m22-release-packaging.md`, `docs/m23-relocatable-release.md`, and `docs/m20-omlx-release-migration.md` for configuration, packaging, distribution, qualification, and baseline evidence.
 
@@ -366,7 +376,10 @@ Historical provenance is recorded in provenance/archive documentation and is not
 
 Qualified/source-verified areas include checkpoint provenance, official primitive validators, source integrity, native source closure, checkpoint-free native build/tests, MLX-enabled native build/tests, bounded full-checkpoint native execution, backend-local correctness policy, dense production prefill through 200K, practical GenerationBatch decode, official recipe HTTP serving, long-session continuation, same-backend KV persistence/restore, repeated function-tool loops, and EOS termination.
 
-The standard-off release claim is intentionally scoped, not universal. Vision beyond the separately qualified bounded development/core envelope, batching, implicit/default MTP, distributed serving, authentication, server-side tool execution, sessionized Responses/Messages, cross-runtime KV portability, and arbitrary stateful stop strings remain unsupported or unqualified. Explicit guarded MTP/DSpark/speculation is confined to the separate bounded M41 candidate above.
+The standard-off release claim is intentionally scoped, not universal. Vision beyond the separately qualified bounded development/core envelope, batching, implicit/default MTP, distributed serving, authentication, server-side tool execution, sessionized Responses/Messages, cross-runtime KV portability, and arbitrary stateful stop strings remain unsupported or unqualified. The historical bounded M41 singleton contract remains separate from current
+opt-in ordinary MTP serving and [production logical sessions](docs/production-sessions.md).
+Ordinary OFF/MTP controls follow `generation-policy-v1`; this does not grant MTP
+images or native persistence, or declare general production-release completion.
 
 ## Canonical documentation
 
