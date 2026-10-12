@@ -112,9 +112,21 @@
       if (message.tool_calls?.length) { const details = element(node, 'details', 'toolcall'); text(element(details, 'summary'), results.length ? `Used ${results.length} tools${results.length < message.tool_calls.length ? ' · ' + (message.tool_calls.length - results.length) + ' requested' : ''}` : `Requested ${message.tool_calls.length} tools`);
         for (const call of message.tool_calls) { const row = element(details, 'div', 'toolrow'), result = results.find(m => m.tool_call_id === call.id); text(row, `${result ? '✓' : '●'} ${call.function?.name === 'web_search' ? 'Search web' : call.function?.name === 'fetch_url' ? 'Fetch URL' : call.function?.name === 'fetch_image' ? 'Fetch image' : call.function?.name === 'fetch_pdf' ? 'Fetch PDF' : call.function?.name || 'Tool'} `); try { const args = JSON.parse(call.function?.arguments || '{}'); const url = sourceURL(args.url); if (url) { const a = element(row, 'a'); a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer'; text(a, url); } else text(row, args.query || ''); } catch (_) { text(row, call.function?.arguments || ''); } if (result) toolResult(row, result); }
       }
+      if (live) { const status = element(node, 'div', 'generationStatus'); status.setAttribute?.('role', 'status'); text(status, 'Generating…'); }
       const body = element(node, 'div', 'responseBody');
       if (live) { element(body, 'div', 'liveBlocks'); text(element(body, 'div', 'prose liveContent'), message.content); node._stream = {consumed: 0, scanned: 0, searched: 0, fence: false, shown: String(message.content || '').length}; }
-      else content(body, message.content, role === 'assistant');
+      else if (role === 'user' && message.presentation) {
+        content(body, message.presentation.content, false);
+        for (const doc of message.presentation.documents || []) {
+          const card = element(body, 'button', 'contextAttachment'); card.type = 'button';
+          text(card, `📄 ${doc.name || 'PDF'} · ${doc.page_count || '?'} pages`);
+          card.onclick = () => window.dispatchEvent(new CustomEvent('ds41f-document-page', {detail: {artifact_id: doc.artifact_id, page: 1}}));
+        }
+        if (message.presentation.context) {
+          const details = element(body, 'details', 'internalContext'); text(element(details, 'summary'), 'Inspect context');
+          text(element(details, 'div', 'small'), message.presentation.context);
+        }
+      } else content(body, message.content, role === 'assistant');
       if (role === 'assistant' && !live && message.content) copyButton(node, String(message.content), 'Copy response');
     }
     return node;

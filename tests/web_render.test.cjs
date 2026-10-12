@@ -30,6 +30,34 @@ test('untrusted text, reasoning, code and calls stay text', () => {
   assert.ok(descendants(root).filter(n => n.tag === '#text' && n.value.includes(attack)).length >= 4);
   assert.equal(descendants(root).filter(n => n.tag === 'pre').length, 1);
 });
+test('user text and PDF context are separated without changing the model payload', () => {
+  const root = new Node('main');
+  const raw = 'Retained PDF: report.pdf; artifact_id=' + 'a'.repeat(64);
+  const message = {role: 'user', content: 'Summarize\n\n' + raw,
+    presentation: {content: 'Summarize', context: raw, documents: [{name: '<report>.pdf', page_count: 47, artifact_id: 'a'.repeat(64)}]}};
+  render.message(root, message);
+  const body = root.querySelector('.responseBody');
+  assert.equal(body.querySelector('.prose').firstChild.value, 'Summarize');
+  const inspect = body.querySelector('.internalContext');
+  assert.ok(inspect);
+  assert.ok(!inspect.open);
+  assert.equal(inspect.querySelector('.small').firstChild.value, raw);
+  assert.equal(body.querySelector('.contextAttachment').firstChild.value, '📄 <report>.pdf · 47 pages');
+  assert.equal(message.content, 'Summarize\n\n' + raw);
+});
+test('literal user PDF-like text is never heuristically removed', () => {
+  const root = new Node('main');
+  const value = 'Retained PDF: user-written text';
+  render.message(root, {role: 'user', content: value});
+  assert.equal(root.querySelector('.prose').firstChild.value, value);
+  assert.equal(root.querySelector('.internalContext'), undefined);
+});
+test('live generation status belongs to the assistant card', () => {
+  const root = new Node('main');
+  render.message(root, {role: 'assistant', content: '', reasoning_content: ''}, [], true);
+  assert.equal(root.querySelector('.generationStatus').firstChild.value, 'Generating…');
+  assert.ok(!root.querySelector('.reasoning').open);
+});
 test('links reject active schemes, relative URLs and credentials', () => {
   for (const url of ['javascript:alert(1)', 'data:text/html,<script>', '/relative', 'https://user:pass@example.com']) {
     assert.equal(render.sourceURL(url), null);

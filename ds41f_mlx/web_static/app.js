@@ -40,7 +40,7 @@ function policyDisplay() {
 }
 function controls() {
   for (const id of ['send', 'newSession', 'closeSession', 'saveSession', 'restoreSession', 'sessions', 'saves', 'images', 'pdfs', 'refreshDocuments']) $(id).disabled = state.busy;
-  for (const button of $('documents').querySelectorAll('[data-action="remove-document"]')) button.disabled = state.busy;
+  for (const button of document.querySelectorAll('[data-action="remove-document"]')) button.disabled = state.busy;
   $('send').disabled ||= !state.session || !!state.session.problem || !!state.session.pending || state.session.effects?.state === 'reserved' || state.session.toolAwaitingResponse || pendingCalls().length > 0;
   const active = state.busy || state.session?.record?.state === 'busy';
   $('send').hidden = active; $('stop').hidden = !active;
@@ -109,6 +109,7 @@ function render() {
       }
       display = {role: 'assistant', content: group.map(m => m.content || '').filter(Boolean).join('\n\n'), reasoning_content: group.map(m => m.reasoning_content || '').filter(Boolean).join('\n\n'), tool_calls: group.flatMap(m => m.tool_calls || [])};
     }
+    if (display.role === 'user' && state.session.userPresentation?.[key]) display = {...display, presentation: state.session.userPresentation[key]};
     const lateStop = state.session.lateStops?.includes(interruptionIndex), userStopped = state.session.interruptionKinds?.[interruptionIndex] === 'user';
     const results = (display.tool_calls || []).map(call => toolResults.get(call.id)).filter(Boolean);
     // User payloads are immutable; avoid serializing historical original image bytes on each paint boundary.
@@ -454,7 +455,8 @@ async function toolLoop(explicit = false) {
 async function send() {
   const newDocuments = (state.session?.documents || []).filter(d => !d.announced && d.state === 'retained');
   const reference = newDocuments.map(d => `Retained PDF: ${d.name}; artifact_id=${d.artifact_id}; pages=${d.page_count}. Use document_pdf to search/read/observe additional pages without reacquisition. Original PDF bytes are source authority; parser text and model observations are derived. Cite page numbers.`).join('\n');
-  const text = [$('input').value.trim(), reference].filter(Boolean).join('\n\n');
+  const userText = $('input').value.trim();
+  const text = [userText, reference].filter(Boolean).join('\n\n');
   if (!text && !state.attachments.length) return;
   await exclusive(async () => {
     settings(); await reconcile();
@@ -468,12 +470,15 @@ async function send() {
     for (const file of state.attachments) parts.push({type: 'image_url', image_url: {url: file.url}});
     s.generation = settings(); s.workflow = {...s.generation};
     s.toolPause = ''; s.toolError = ''; s.interrupted = false;
+    s.userPresentation ||= {};
+    s.userPresentation[s.messages.length] = {content: state.attachments.length ? [{type: 'text', text: userText}, ...parts.filter(p => p.type === 'image_url')] : userText,
+      documents: newDocuments.map(d => ({name: d.name, page_count: d.page_count, artifact_id: d.artifact_id})), context: reference};
     s.messages.push({role: 'user', content: state.attachments.length ? parts : text});
     for (const reference of newDocuments) {
       const doc = (s.documents || []).find(d => d.artifact_id === reference.artifact_id);
       if (doc) doc.announced = true;
     }
-    s.title ||= text.slice(0, 60) || 'Document conversation';
+    s.title ||= userText.slice(0, 60) || 'Document conversation';
     s.pending = {base: s.count, requestId: null, nonce: ChatPlatform.uuid(), addedUser: true};
     await save(); $('input').value = ''; resizeInput(); state.attachments = []; follow = true; preview(); render();
     await generate(); await toolLoop();
@@ -563,7 +568,7 @@ $('saveSession').onclick = () => exclusive(async () => {
   if (rec.state !== 'idle' || s.pending || s.problem || pendingCalls().length) throw new Error('Save requires a settled idle application/runtime frontier, with completed tool results');
   const result = rec.persisted_artifact?.frontier === s.frontier ? {artifact: rec.persisted_artifact} : await api(path(s.id) + '/persist', 'POST', {});
   if (result.artifact.frontier !== s.frontier) throw new Error('Native artifact frontier changed; application snapshot NOT paired. Reconcile before saving. Artifact: ' + result.artifact.path);
-  await ChatStore.put('saves', {id: s.id, title: s.title || 'Conversation', messages: s.messages, documents: s.documents || [], interruptions: s.interruptions || [], interruptionKinds: s.interruptionKinds || {}, lateStops: s.lateStops || [], endings: s.endings || {}, finishReason: s.finishReason, terminationReason: s.terminationReason, capacity: s.capacity, capacityStop: s.capacityStop, interrupted: !!s.interrupted, toolAwaitingResponse: !!s.toolAwaitingResponse, toolPause: s.toolPause || '', toolError: s.toolError || '', toolRounds: s.toolRounds || 0, protocol: s.protocol, generation: s.generation, workflow: s.workflow, policyVersion: s.policyVersion, frontier: s.frontier, artifact: result.artifact.path, savedAt: Date.now()});
+  await ChatStore.put('saves', {id: s.id, title: s.title || 'Conversation', messages: s.messages, userPresentation: s.userPresentation || {}, documents: s.documents || [], interruptions: s.interruptions || [], interruptionKinds: s.interruptionKinds || {}, lateStops: s.lateStops || [], endings: s.endings || {}, finishReason: s.finishReason, terminationReason: s.terminationReason, capacity: s.capacity, capacityStop: s.capacityStop, interrupted: !!s.interrupted, toolAwaitingResponse: !!s.toolAwaitingResponse, toolPause: s.toolPause || '', toolError: s.toolError || '', toolRounds: s.toolRounds || 0, protocol: s.protocol, generation: s.generation, workflow: s.workflow, policyVersion: s.policyVersion, frontier: s.frontier, artifact: result.artifact.path, savedAt: Date.now()});
   notice('Saved native idle artifact and matching original-byte browser history. Later chat does not change this snapshot. Keep this browser storage: native artifacts do not contain historical image bytes.');
 });
 $('restoreSession').onclick = () => exclusive(async () => {
@@ -578,7 +583,7 @@ $('restoreSession').onclick = () => exclusive(async () => {
     await ChatStore.remove('sessions', state.session.id); state.session = null; localStorage.removeItem('ds41f.selected');
   }
   const id = 'sess_' + ChatPlatform.uuid().replaceAll('-', '');
-  const journal = {id, title: snapshot.title + ' (restored)', messages: snapshot.messages, documents: snapshot.documents || [],
+  const journal = {id, title: snapshot.title + ' (restored)', messages: snapshot.messages, userPresentation: snapshot.userPresentation || {}, documents: snapshot.documents || [],
     interruptions: snapshot.interruptions || [], interruptionKinds: snapshot.interruptionKinds || {}, lateStops: snapshot.lateStops || [], endings: snapshot.endings || {}, finishReason: snapshot.finishReason, terminationReason: snapshot.terminationReason, capacity: snapshot.capacity, capacityStop: snapshot.capacityStop, interrupted: !!snapshot.interrupted, toolAwaitingResponse: !!snapshot.toolAwaitingResponse, toolPause: snapshot.toolPause || '', toolError: snapshot.toolError || '', toolRounds: snapshot.toolRounds || 0, protocol: snapshot.protocol, generation: snapshot.generation, workflow: snapshot.workflow, policyVersion: snapshot.policyVersion, count: 0,
     frontier: snapshot.frontier, pendingRestore: {frontier: snapshot.frontier, artifact: snapshot.artifact},
     problem: 'Restore pending; outcome must be reconciled before continuation'};
@@ -593,7 +598,7 @@ $('discardPending').onclick = () => exclusive(async () => {
   const rec = await api(path(s.id));
   if (!['empty', 'idle'].includes(rec.state) || rec.request_count !== s.pending.base) throw new Error('Runtime outcome is not unadmitted; reconcile rather than discard');
   if (!confirm('Discard only this UI request, which has no recorded committed turn? It will NOT be sent again.')) return;
-  if (s.pending.addedUser) s.messages.pop();
+  if (s.pending.addedUser) { s.messages.pop(); if (s.userPresentation) delete s.userPresentation[s.messages.length]; }
   s.pending = null; s.problem = ''; await save(); render(); notice('Unadmitted UI request discarded.');
 });
 $('reasoning').onchange = $('thinking').onchange = () => {

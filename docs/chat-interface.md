@@ -19,7 +19,7 @@ and acceptance matrix remain in the source edition linked below.
 ## Main surface
 
 One current conversation, no ordinary session sidebar. The header shows model
-and Ready/Generating/Using tool/Stopping/Recovering/Error, New chat and Settings.
+and Ready/Generating/Using tool/Stopping/Recovering/Error, New chat and Runtime / Details.
 Diagnostics/Recovery holds runtime IDs, frontiers and persistence metadata.
 New chat confirms retirement of the old conversation; DELETE must succeed or
 confirm absence before browser identity is forgotten. Active work disables
@@ -31,6 +31,23 @@ share original-byte preflight/removable previews, without canvas/transcoding.
 Ordinary MTP disables chat image acquisition. PDF upload/drop and retained page
 exploration are separate document operations: see [PDF workflow](pdf-document-workflow.md).
 A page preview does not automatically consume an image slot or run inference.
+
+Conversation takes precedence over composer, attachments and runtime/debug state.
+The composer keeps input, attachment pickers, Think, Tools and Send/Stop visible;
+effective workflow and sampling stay inside Runtime / Details. Retained PDFs have
+one-line filename/page-count cards that open a PDF context dialog. Referenced
+pages are summarized as ranges; the collapsed page list accepts number/range
+filters such as `12, 12-18`. Source previews remain separate from chat images.
+New user turns journal a UI-only `userPresentation` alongside exact ordinary
+messages: the bubble shows the user's text and attachment cards, while generated
+PDF instructions are collapsed under Inspect context. Save/Restore preserves this
+presentation without adding fields to model requests. Older journals without this
+metadata keep their literal bubbles; user text is never stripped heuristically.
+Generating is also shown inside the live assistant card; reasoning stays collapsed
+inside that card. The user restarted Chat Server and visually confirmed the UI
+improvements. Focused Python tests passed (15), as did the Node frontend tests
+(22). This user-reported visual check and developer regression coverage do not
+refresh the historical Browser gate.
 
 Send becomes Stop during active work. Stop observes/uses the authoritative ID,
 requests safe cancellation and reconciles canonical GET; it is not immediate GPU
@@ -76,7 +93,7 @@ reasoning/tool disclosures by kind. Empty live reasoning stays hidden; only publ
 results/errors and sources without becoming the main response. Display grouping
 never changes stored ordinary messages. Clipboard failures are reported.
 
-Following applies only near bottom. Scroll-up/disclosures detach; Latest explicitly
+Following applies only near bottom. Scroll-up/disclosures detach; Jump to latest explicitly
 reattaches. Layout/clamp/image/composer changes do not silently reattach a detached
 reader; real scrolling to bottom can. Boundary renders preserve visible anchors.
 The default last-100-message view expands in explicit 100-message increments:

@@ -5,9 +5,18 @@ function renderDocuments() {
   const docs = state.session?.documents || [];
   $('documentCount').textContent = docs.length ? `(${docs.length})` : '';
   $('documents').replaceChildren();
+  $('documentCards').replaceChildren();
   for (const doc of docs) {
     const row = document.createElement('div'), label = document.createElement('span'), open = document.createElement('button');
-    label.textContent = `${doc.name || 'PDF'} · ${doc.page_count || '?'} pages · ${doc.state || 'unknown'} · referenced pages: ${(doc.readPages || []).join(', ') || 'none'} · derived observations: ${(doc.pageStates || []).filter(p => p.observation_state === 'completed').length} `;
+    row.className = 'documentContext';
+    const pages = [...new Set(doc.readPages || [])].sort((a, b) => a - b);
+    const ranges = [];
+    for (let i = 0; i < pages.length; i++) {
+      const start = pages[i]; let end = start;
+      while (pages[i + 1] === end + 1) end = pages[++i];
+      ranges.push(start === end ? String(start) : `${start}–${end}`);
+    }
+    label.textContent = `${doc.name || 'PDF'} · ${doc.page_count || '?'} pages\n${doc.state || 'unknown'} · ${(doc.pageStates || []).filter(p => p.observation_state === 'completed').length} derived observations\nReferenced pages: ${ranges.join(', ') || 'none'}`;
     open.type = 'button'; open.textContent = 'Open / source';
     open.onclick = () => {
       selectedDocument = doc; $('documentTitle').textContent = `${doc.name || 'PDF'} · source SHA256 ${doc.sha256 || doc.artifact_id}`;
@@ -16,14 +25,37 @@ function renderDocuments() {
       $('documentPage').replaceChildren(); $('documentDialog').showModal();
     };
     row.append(label, open);
-    for (const number of doc.readPages || []) {
+    const pageDetails = document.createElement('details'), summary = document.createElement('summary');
+    summary.textContent = 'Referenced page list'; pageDetails.appendChild(summary);
+    const filter = document.createElement('input'); filter.placeholder = 'Pages: 12, 12-18'; filter.setAttribute('aria-label', 'Filter referenced pages by number or range'); pageDetails.appendChild(filter);
+    const links = document.createElement('div'); pageDetails.appendChild(links);
+    filter.oninput = () => {
+      const terms = filter.value.split(',').map(t => t.trim());
+      for (const link of links.children) {
+        const number = Number(link.dataset.page);
+        link.hidden = !!filter.value.trim() && !terms.some(term => {
+          const match = /^(\d+)(?:\s*[-–]\s*(\d+))?$/.exec(term);
+          return match && number >= Number(match[1]) && number <= Number(match[2] || match[1]);
+        });
+      }
+    };
+    for (const number of pages) {
       const pageLink = document.createElement('button'); pageLink.type = 'button'; pageLink.textContent = `p. ${number}`;
       pageLink.onclick = () => { open.onclick(); $('documentPageNumber').value = number; $('openDocumentPage').click(); };
-      row.appendChild(pageLink);
+      pageLink.dataset.page = number; links.appendChild(pageLink);
     }
+    row.appendChild(pageDetails);
     const remove = document.createElement('button'); remove.type = 'button'; remove.textContent = 'Remove reference'; remove.dataset.action = 'remove-document'; remove.disabled = state.busy;
     remove.onclick = () => exclusive(async () => { state.session.documents = state.session.documents.filter(d => d.artifact_id !== doc.artifact_id); await save(); renderDocuments(); });
     row.appendChild(remove); $('documents').appendChild(row);
+    const card = document.createElement('div'); card.className = 'documentCard';
+    const show = document.createElement('button'); show.type = 'button';
+    show.textContent = `📄 ${doc.name || 'PDF'} · ${doc.page_count || '?'} pages`;
+    show.onclick = () => $('documentsDrawer').showModal();
+    const detach = document.createElement('button'); detach.type = 'button'; detach.textContent = '×';
+    detach.setAttribute('aria-label', `Remove reference to ${doc.name || 'PDF'}`);
+    detach.dataset.action = 'remove-document'; detach.disabled = state.busy; detach.onclick = remove.onclick;
+    card.append(show, detach); $('documentCards').appendChild(card);
   }
 }
 async function refreshDocuments() {
@@ -54,7 +86,7 @@ async function addPDF(file) {
     try { await api('/api/documents', 'POST', {id, name: doc.name, data: btoa(binary)}); }
     catch (error) { notice('Upload unconfirmed: ' + error.message + '. Refresh observes receipt; no automatic retry.'); }
     await refreshDocuments();
-    $('documentsPanel').open = true;
+    // Keep the conversation visible; details are opened explicitly from the card.
   });
 }
 $('pdfs').onchange = async event => { const file = event.target.files[0]; event.target.value = ''; await addPDF(file); };
@@ -70,6 +102,7 @@ window.addEventListener('ds41f-document-page', event => {
   if (!$('documentDialog').open) $('documentDialog').showModal();
   $('openDocumentPage').click();
 });
+$('documentsClose').onclick = () => $('documentsDrawer').close();
 $('documentClose').onclick = () => $('documentDialog').close();
 $('openDocumentPage').onclick = async () => {
   if (!selectedDocument) return;
