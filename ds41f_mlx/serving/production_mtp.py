@@ -1,4 +1,4 @@
-"""Opt-in ordinary serving over the pinned Scheduler and qualified MTP core.
+"""Default ordinary serving over the pinned Scheduler and qualified MTP core.
 
 Scheduler queues/IDs/abort admission remain upstream. Only its model-specific
 external-prefill, decode, and completion hooks differ: qualified P5/recipe

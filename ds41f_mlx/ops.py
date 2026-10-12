@@ -35,7 +35,8 @@ def main(argv: list[str] | None = None) -> int:
         profiles = ['standard-off', 'mtp-singleton-v1']
         if command is sub.choices['start'] or command is sub.choices['inspect'] or command is sub.choices['accept']:
             profiles.append('mtp-serving-v1')
-        command.add_argument('--profile', choices=profiles, default='standard-off')
+        command.add_argument('--profile', choices=profiles,
+                             default='mtp-serving-v1' if 'mtp-serving-v1' in profiles else 'standard-off')
     args, rest = parser.parse_known_args(argv)
 
     if args.profile in ('mtp-singleton-v1', 'mtp-serving-v1'):
@@ -72,7 +73,7 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps({"schema":"ds41f.ops.inspect.v2", "status": provenance.get("status"), "release_manifest": load_release_manifest(), "admission": provenance}, indent=2, sort_keys=True))
         return 0 if provenance.get("status") in {"PASS", "WARNING"} else 2
     if args.cmd == "start":
-        os.execv(sys.executable, [sys.executable, '-I', '-m', 'ds41f_mlx.serve', *rest])
+        os.execv(sys.executable, [sys.executable, '-I', '-m', 'ds41f_mlx.serve', '--profile', args.profile, *rest])
     if (ROOT/'release/promotion.json').exists() and args.cmd in ('quick', 'full'):
         parser.error('Projected runtime qualification: use ds41f_mlx.reference --real-model, not historical development campaigns')
     if args.cmd == "quick":

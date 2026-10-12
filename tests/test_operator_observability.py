@@ -171,7 +171,8 @@ def test_restart_composes_shutdown_disappearance_and_canonical_start(monkeypatch
     assert events == ['GET', 'POST', 'GET', 'GET', ('launch', False, endpoint)]
 
 
-def test_canonical_launcher_registers_load_on_actual_fastapi_router(monkeypatch):
+@pytest.mark.parametrize('argv', [[], ['--profile', 'mtp-serving-v1']])
+def test_canonical_launcher_registers_load_on_actual_fastapi_router(monkeypatch, argv):
     import asyncio
     pytest.importorskip('omlx')
     fastapi = pytest.importorskip('fastapi')
@@ -206,9 +207,40 @@ def test_canonical_launcher_registers_load_on_actual_fastapi_router(monkeypatch)
                     pass
             asyncio.run(lifespan())
     projection = Projection()
-    assert serve._main(['--profile', 'mtp-serving-v1'], control=ControlFixture(), projection=projection) == 0
+    assert serve._main(argv, control=ControlFixture(), projection=projection) == 0
     assert events == ['reserve', 'load', 'retire', 'close']
     assert projection.snapshot()['state'] == 'READY'
+
+
+@pytest.mark.parametrize('argv, profile', [
+    (['start'], 'mtp-serving-v1'),
+    (['start', '--profile', 'standard-off'], 'standard-off'),
+    (['start', '--profile', 'mtp-singleton-v1'], 'mtp-singleton-v1'),
+])
+def test_ops_start_propagates_selected_profile(monkeypatch, argv, profile):
+    from ds41f_mlx import ops
+    calls = []
+    def execv(executable, args):
+        calls.append(args)
+        raise SystemExit(0)  # execv never returns
+    monkeypatch.setattr(ops.os, 'execv', execv)
+    with pytest.raises(SystemExit) as exited:
+        ops.main(argv)
+    assert exited.value.code == 0
+    assert calls == [[ops.sys.executable, '-I', '-m', 'ds41f_mlx.serve', '--profile', profile]]
+
+
+def test_ops_ordinary_accept_default_and_historical_qualification(monkeypatch):
+    from ds41f_mlx import ops
+    calls = []
+    monkeypatch.setattr(ops.subprocess, 'call', lambda args, **kwargs: calls.append(args) or 0)
+    assert ops.main(['accept']) == 0
+    assert calls[-1][1:] == ['-I', '-m', 'ds41f_mlx.production_acceptance']
+    monkeypatch.setattr(ops, '_run_module', lambda module, args: calls.append((module, args)) or 0)
+    assert ops.main(['quick']) == 0
+    assert calls[-1] == ('ds41f_mlx.qualify', ['--mode', 'quick'])
+    assert ops.main(['full']) == 0
+    assert calls[-1] == ('ds41f_mlx.qualify', ['--mode', 'full'])
 
 
 def test_service_reserved_before_loading():

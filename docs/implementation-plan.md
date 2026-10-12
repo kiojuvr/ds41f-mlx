@@ -57,13 +57,22 @@ cache/wired-residency ownership and retirement of passive P6 admission reference
 Do not discard these boundaries or replace actual runs with configured maxima.
 
 The separate bounded OFF image core uses the same packed state/generation stack,
-with new-image-only encoding and exact identity/restore behavior. It does not
-qualify MTP images, larger multimodal context or universal visual quality. These
-text/image results remain source-scoped core evidence, not a new long-HTTP/agent,
-release or promotion claim. Limits and evidence links live in capabilities rather
+with new-image-only encoding and exact identity/restore behavior. Its receipt alone
+does not qualify MTP images; the separate [ordinary Vision→MTP closure](mtp-vision-integration.md)
+now establishes that bounded ordinary path with real-image acceptance. Neither
+qualifies larger multimodal context or universal visual quality. These text/image
+results remain source-scoped core evidence, not a new long-HTTP/agent release claim. Limits and evidence links live in capabilities rather
 than being recopied here.
 
-## Remaining work
+## Runtime completeness and local default closure
+
+Required DeepSeek-V4.1-Flash model/runtime core is **COMPLETE**; no current local
+promotion blocker remains. `mtp-serving-v1` is the ordinary local default, with
+explicit OFF fallback. [Closure assessment](runtime-completeness.md) owns the
+model/ds4/oMLX comparison, operational decision and separated performance backlog.
+No new numerical execution topology or qualification campaign is required.
+
+## Remaining broader scope
 
 1. **Validate concrete ordinary-operation gaps.** Separate-machine direct-LAN
    acceptance remains pending. It needs an actual trusted remote client, not more
@@ -73,10 +82,10 @@ than being recopied here.
    execution core do not themselves prove all required configuration, operational,
    failure-isolation and product behavior. Maintain a concise, concrete closure
    assessment; do not infer completion from a bounded singleton release or test count.
-3. **Keep distinct decisions distinct.** Default-MTP promotion needs explicit
-   ordinary API/admission and release review. Broader application features, hosts,
-   context, security and concurrency need their own justified scope/evidence;
-   they are not automatically prerequisites for the current single-operator lane.
+3. **Keep distinct decisions distinct.** Local default-MTP promotion is closed
+   by the linked ordinary API/admission/failure/client review. Broader application
+   features, hosts, context, security and concurrency need their own justified
+   scope/evidence; they are not prerequisites for the current single-operator lane.
 4. **Defer delivery work until explicitly selected.** Full reference regression at
    an appropriate stable boundary and future release projection are separate
    checkpoints. Do not start packaging, clean-room environments, runtime-directory

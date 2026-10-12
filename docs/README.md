@@ -9,8 +9,10 @@
 - [Implementation decisions](implementation-plan.md) — remaining priorities.
 
 These are current owning pages, **not an at-HEAD qualification badge**.
-`standard-off` remains default; ordinary `mtp-serving-v1` is explicit and distinct
-from bounded singleton. General-runtime release remains incomplete and
+Ordinary `mtp-serving-v1` is the local default; `standard-off` remains an explicit
+fallback, distinct from bounded singleton. [Runtime completeness and promotion](runtime-completeness.md)
+records core COMPLETE, no current local blocker and separated upstream performance work.
+General-runtime release remains incomplete and
 separate-machine LAN acceptance pending. The old `ds41f-runtime` directory is
 unused generation, not current deployment or accepted release history.
 

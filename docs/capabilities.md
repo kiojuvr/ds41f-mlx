@@ -10,7 +10,7 @@ Architecture explains ownership; specialized documents explain endpoint semantic
 
 | Capability | `standard-off` | `mtp-serving-v1` | `mtp-singleton-v1` |
 | --- | --- | --- | --- |
-| Selection | CLI default; separate OFF package | Explicit; MTP package | Explicit; MTP package |
+| Selection | Explicit fallback; separate OFF package | Local CLI default; MTP package | Explicit; MTP package |
 | Physical execution | First-party target generation/model execution; MTP OFF | Pinned oMLX MTP topology, ProductionScheduler-owned | Bounded guarded singleton MTP |
 | Ordinary APIs | Text Chat Completions, Responses, Messages within documented scopes | Chat Completions (text and bounded inline Vision); health/models | Specialized session API, not ordinary stateless Chat Completions |
 | Independent conversations/edits | Stateless requests prefill fresh; retained sessions require exact extension | Ordinary requests may safely reuse paired prefixes or miss, including edits/branches | Exact session extension/frozen request fences |
@@ -147,8 +147,8 @@ the supported path. **General-runtime production release remains incomplete**;
 separate-machine direct-LAN acceptance is pending. Same-host LAN-IP requests do
 not prove firewall reachability or packets crossing the LAN.
 
-No implicit/default MTP, native MTP persistence/restart recovery, shared/batched
-MTP execution, sessionized Responses/Messages, cross-backend KV portability,
+Local default-MTP promotion is approved by the [runtime closure review](runtime-completeness.md).
+No native MTP persistence/restart recovery, shared/batched MTP execution, sessionized Responses/Messages, cross-backend KV portability,
 server-side arbitrary tools, distributed/crash-safe exactly-once effects,
 Internet/multi-tenant security or above-checkpoint context claim is granted.
 Ordinary trusted-LAN serving has no authentication or TLS; wildcard bind is not a
@@ -156,5 +156,5 @@ security boundary. Unsupported stateful stop-string rollback is not added.
 
 A local seal, build success, inspect success, old receipt or directory name is not
 fresh real-model/release acceptance. Full R1 verification, package publication,
-default-profile change and one-way release projection are separate checkpoints;
+and one-way release projection remain separate checkpoints;
 see [implementation decisions](implementation-plan.md).

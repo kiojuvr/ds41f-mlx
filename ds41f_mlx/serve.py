@@ -48,7 +48,7 @@ def main(argv: list[str] | None = None) -> int:
 
 def _main(argv, *, control=None, projection=None) -> int:
     parser = argparse.ArgumentParser(description="Launch ds41f local text runtime")
-    parser.add_argument('--profile', choices=['standard-off','mtp-singleton-v1','mtp-serving-v1'], default='standard-off')
+    parser.add_argument('--profile', choices=['standard-off','mtp-singleton-v1','mtp-serving-v1'], default='mtp-serving-v1')
     parser.add_argument("--host", help="override DS41F_HOST")
     parser.add_argument("--port", type=int, help="override DS41F_PORT")
     parser.add_argument("--print-config", action="store_true", help="print resolved config/provenance and exit")

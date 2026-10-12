@@ -137,10 +137,12 @@ and execution code were not changed to broaden this task.
 
 ## Promotion boundary
 
-This removes the ordinary API's bounded-image execution blocker to MTP as the
-normal production path. It does not approve an immediate default change: delivery
-of a newly qualified installed payload, application capability/UI policy alignment
-and the existing production/release promotion assessment remain separate gates.
+The original Vision delta did not change the default or installed package.
+The subsequent [runtime completeness/local promotion review](runtime-completeness.md)
+now approves ordinary MTP as the local default. Existing Browser/TUI text clients
+and isolated PDF OFF Vision policy require no image UI change for that decision;
+broader attachments/acquisition remain product scope. Installed delivery retains
+its separate immutable-payload boundary, not a source override.
 Historical-image cache expiry is an explicit availability limitation, not permission
 to replay. Broader contexts/protocols/persistence and universal visual quality
-remain unqualified. OFF is retained, and the default/profile selection is unchanged.
+remain unqualified. OFF is retained as an explicit fallback/profile.

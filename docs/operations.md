@@ -127,8 +127,13 @@ bound to unchanged file identity. Unrelated Homebrew installation is not a reaso
 to reseal. A host ABI failure needs an actually compatible host; a semantic/native
 payload failure needs an explicitly qualified package, not a bypass.
 
-Standard-OFF remains the CLI default but requires its **own** installed OFF
-package. A patched MTP package cannot start OFF, nor vice versa. Existing editable
+Ordinary `mtp-serving-v1` is the CLI default for `start`, `inspect` and `accept`;
+TUI already selects it. Use the MTP installed package for omitted-profile local
+operation. Standard-OFF is an explicit `--profile standard-off` fallback requiring
+its **own** installed OFF package. A patched MTP package cannot start OFF, nor vice
+versa. No automatic fallback is performed on MTP admission/execution failure.
+Historical OFF `quick/full` defaults are unchanged. The [runtime closure](runtime-completeness.md)
+records the promotion review; older installed wheels retain their old CLI defaults. Existing editable
 or source-sealed environments must be migrated, not made usable with
 `--no-validate`. The installed-admission migration's affected acceptance covers
 ordinary MTP; historical OFF/R1 semantic evidence is retained, not relabeled as

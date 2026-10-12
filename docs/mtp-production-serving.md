@@ -14,12 +14,13 @@ their recorded inputs, not later HEAD or every supported maximum workload.
 requires current rationales for restrictions, established capability rather than
 fixture bounds, qualified-core reuse and affected real-workload acceptance.
 B1/B2 are connected for the supported ordinary path; the original SP1 BLOCK is
-history. This is not general-runtime release completion, default-MTP promotion,
-full R1 re-verification or Internet/multi-user readiness.
+history. [Local default promotion](runtime-completeness.md) is now closed separately;
+this is not general-runtime release completion, full R1 re-verification or
+Internet/multi-user readiness.
 
-## Enable explicitly
+## Local default
 
-Standard-OFF remains default. Explicit `mtp-serving-v1` exposes ordinary health,
+`mtp-serving-v1` is the normal local default. It exposes ordinary health,
 models and Chat Completions, JSON/SSE, without compulsory session IDs, sequence
 headers or certificates. Independent conversations, edits, branches and tool
 round trips use compatible paired state or safe misses. Optional logical sessions

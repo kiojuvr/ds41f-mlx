@@ -25,11 +25,11 @@ or the currently installed package.
 
 ## Current scope
 
-- **`standard-off` remains the default.** First-party model execution, dense
+- **`standard-off` remains an explicit fallback/profile.** First-party model execution, dense
   DwarfStar-derived FP8/MLX prefill, SSD-backed Engram and target decode; stateless
   text Chat Completions/Responses/Messages and optional stateful Chat Completions.
   Idle persistence/restore is same-backend only. Bounded OFF Vision is separate.
-- **`mtp-serving-v1` is explicitly selected.** Ordinary text Chat Completions,
+- **`mtp-serving-v1` is the normal local default.** Ordinary text Chat Completions,
   generic client function tools, Scheduler-owned paired target/DSpark prefix reuse,
   edited/branched requests and optional logical sessions. Sampling and reasoning
   use `generation-policy-v1`, not the historical greedy-only singleton policy.
@@ -45,10 +45,11 @@ qualification distinctions in [capabilities](docs/capabilities.md).
 
 **General LLM-runtime production release is not complete.** Ordinary MTP's paired
 checkpoint and Scheduler settlement boundaries are implemented; the original SP1
-BLOCK is historical, not a current implementation hold. Broader release, separate-
-machine LAN acceptance, default-MTP promotion and product/security scope remain
-separate decisions. Neither a bounded release receipt nor this editorial update
-closes them.
+BLOCK is historical, not a current implementation hold. Required model/runtime
+core is **COMPLETE** and local default-MTP promotion is approved; see the
+[runtime closure and upstream disposition](docs/runtime-completeness.md).
+Broader release, separate-machine LAN acceptance and product/security scope remain
+separate decisions, not blockers for this single-operator local default.
 
 ## Start an installed runtime
 
@@ -59,18 +60,18 @@ is for development/application tooling. Configure the official external asset:
 export DS41F_CHECKPOINT=/absolute/official/DeepSeek-V4.1-Flash
 ```
 
-Default OFF:
+Explicit OFF fallback (requires the OFF package):
 
 ```sh
 /Volumes/SDXC-512/ds41f-mlx_off-venv/bin/ds41f inspect --profile standard-off
 /Volumes/SDXC-512/ds41f-mlx_off-venv/bin/ds41f start --profile standard-off
 ```
 
-Ordinary MTP, as an alternative launch:
+Default ordinary MTP (requires the MTP package):
 
 ```sh
-/Volumes/SDXC-512/ds41f-mlx_mtp-venv/bin/ds41f inspect --profile mtp-serving-v1
-/Volumes/SDXC-512/ds41f-mlx_mtp-venv/bin/ds41f start --profile mtp-serving-v1
+/Volumes/SDXC-512/ds41f-mlx_mtp-venv/bin/ds41f inspect
+/Volumes/SDXC-512/ds41f-mlx_mtp-venv/bin/ds41f start
 ```
 
 Do not start both on the same port. These paths describe the consolidated local
