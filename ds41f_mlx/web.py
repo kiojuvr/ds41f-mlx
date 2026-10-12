@@ -367,7 +367,10 @@ def main(argv=None):
         app = create_app(runtime_base_url=args.runtime_url, allow_private_lan=args.allow_private_lan)
         @app.on_event('startup')
         async def ready():
-            projection.lifecycle('READY', dict(host=args.host, port=args.port))
+            from .operator_network import chat_endpoint
+            projection.lifecycle('READY', chat_endpoint(args.host, args.port,
+                allow_private_lan=args.allow_private_lan, tls=bool(args.ssl_certfile),
+                runtime_url=args.runtime_url))
         control.run(app, host=args.host, port=args.port, proxy_headers=False,
                     ssl_certfile=args.ssl_certfile, ssl_keyfile=args.ssl_keyfile)
     finally:

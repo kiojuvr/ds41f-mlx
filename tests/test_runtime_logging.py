@@ -3,17 +3,71 @@ import asyncio
 import io
 import json
 import logging
+import os
+import time
 from urllib.request import urlopen, Request
 from urllib.error import HTTPError
 
 import pytest
 
-from ds41f_mlx.runtime_logging import History, RuntimeHandler, display, MESSAGE_LIMIT
+from ds41f_mlx.runtime_logging import History, RuntimeHandler, display, MESSAGE_LIMIT, timestamp, server_log_config
 from ds41f_mlx.observability import Projection
 from ds41f_mlx.operator_control import Control
 from ds41f_mlx.operator_dashboard import render_screen, Viewport
 from ds41f_mlx.operator_tui import Operator
 from test_operator_observability import free_port
+
+
+@pytest.fixture(autouse=True)
+def local_timezone():
+    previous = os.environ.get('TZ')
+    os.environ['TZ'] = 'UTC'
+    time.tzset()
+    try:
+        yield
+    finally:
+        if previous is None:
+            os.environ.pop('TZ', None)
+        else:
+            os.environ['TZ'] = previous
+        time.tzset()
+
+
+@pytest.mark.parametrize('zone,expected', [
+    ('UTC', '2026-10-12 15:02:17.381 UTC'),
+    ('Asia/Tokyo', '2026-10-13 00:02:17.381 JST'),
+    ('America/New_York', '2026-10-12 11:02:17.381 EDT'),
+])
+def test_human_timestamps_and_chat_access(zone, expected):
+    from datetime import datetime, timezone
+    os.environ['TZ'] = zone
+    time.tzset()
+    created = datetime(2026, 10, 12, 15, 2, 17, 381000, tzinfo=timezone.utc).timestamp()
+    assert timestamp(created) == expected
+    from ds41f_mlx.server_logging import ServerAccessFormatter, ServerFormatter
+    formatter = ServerAccessFormatter(fmt='%(levelprefix)s %(asctime)s  %(client_addr)s - "%(request_line)s" %(status_code)s', use_colors=False)
+    access = logging.LogRecord('uvicorn.access', logging.INFO, '', 0,
+        '%s - "%s %s HTTP/%s" %d', ('192.168.68.54:59527', 'GET', '/api/status', '1.1', 200), None)
+    access.created = created
+    assert formatter.format(access) == 'INFO:     ' + expected + '  192.168.68.54:59527 - "GET /api/status HTTP/1.1" 200 OK'
+    config = server_log_config()
+    assert config['formatters']['access']['()'] == 'ds41f_mlx.server_logging.ServerAccessFormatter'
+    coloured = ServerAccessFormatter(fmt=config['formatters']['access']['fmt'], use_colors=True).format(access)
+    assert '\x1b[32mINFO' in coloured and '\x1b[32m200 OK' in coloured
+    assert expected in coloured
+    record = logging.LogRecord('uvicorn.error', logging.INFO, '', 0, 'Started server process [%d]', (123,), None)
+    record.created = created
+    record.color_message = 'Started server process [\x1b[36m%d\x1b[0m]'
+    lifecycle = ServerFormatter(fmt=config['formatters']['default']['fmt'], use_colors=True).format(record)
+    assert '\x1b[32mINFO' in lifecycle and '\x1b[36m123' in lifecycle
+    assert expected in lifecycle
+    assert server_log_config()['loggers']['uvicorn.access']['propagate'] is False
+    history = History()
+    item = history.append(created, 'INFO', 'scheduler', 'request started')
+    assert display(item) == 'INFO    scheduler: ' + expected + '  request started #1'
+    assert item['timestamp'] == created
+    rows = render_screen({'state': 'READY'}, Viewport(132, 57), logs=[item])
+    assert any(expected in row.text and 'request started' in row.text for row in rows)
 
 
 def test_runtime_history_and_safe_logging():
@@ -28,7 +82,7 @@ def test_runtime_history_and_safe_logging():
     assert batch['gap'] and batch['oldest_sequence'] == 3
     assert [r['sequence'] for r in batch['records']] == [3, 4]
     assert batch['records'][0]['timestamp'] == 1236
-    assert '1970-01-01T00:20:36.000Z #3 INFO' in display(batch['records'][0])
+    assert display(batch['records'][0]) == 'INFO    ds41f.operator.test: 1970-01-01 00:20:36.000 UTC  event 2 #3'
     batch['records'][0]['message'] = 'mutated'
     assert history.retrieve(2)['records'][0]['message'] == 'event 2'
     handler.emit(logging.LogRecord('uvicorn.access', logging.INFO, '', 0, 'GET /SECRET', (), None))
@@ -95,7 +149,7 @@ def test_reconnect_restart_and_paused_dashboard(monkeypatch):
     assert any('event 59' in r.text for r in paused)
     assert not any('latest error' in r.text for r in paused)
     followed = render_screen(snapshot, Viewport(132, 57), logs=list(operator.logs))
-    assert len([r for r in followed if 'Z #' in r.text]) >= 25
+    assert len([r for r in followed if ' #' in r.text]) >= 25
     assert next(r for r in followed if 'latest error' in r.text).tone == 'red'
     assert next(r for r in followed if 'event 79' in r.text).tone == 'yellow'
     for width, height in ((40, 10), (60, 20), (80, 28)):

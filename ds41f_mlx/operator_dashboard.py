@@ -241,12 +241,21 @@ def render_screen(snapshot, viewport, *, now=None, mode='dashboard', conflict=Fa
     chat_state = (chat or {}).get('state', 'CONFLICT' if chat_conflict else 'STOPPED')
     if not compact:
         header.append(Line(f'{endpoint.get("profile", "MTP serving v1")} · API :{endpoint.get("port", "—")} · Chat {chat_state} :{((chat or {}).get("endpoint") or {}).get("port", 8080)}', 'dim'))
+    chat_endpoint = (chat or {}).get('endpoint') or {}
+    if chat_endpoint and (mode == 'diagnostics' or (not compact and viewport.height >= 34)):
+        host, port = chat_endpoint.get('host', '127.0.0.1'), chat_endpoint.get('port', 8080)
+        header.append(Line(f'Chat Listen {host}:{port} · Local {chat_endpoint.get("local_url", f"http://127.0.0.1:{port}")}', 'dim'))
+        if chat_endpoint.get('allow_private_lan'):
+            urls = chat_endpoint.get('lan_urls') or ['unavailable — check local network interface']
+            for url in urls:
+                header.append(Line(f'Chat LAN {url}', 'cyan'))
+            header.append(Line('LAN access enabled — trusted local network only', 'yellow'))
     if mode == 'diagnostics':
         return header + [Line()] + d.diagnostics()
     if mode == 'help':
         return header + [Line(), Line('KEYS', 'dim')] + [Line(s) for s in (
             'S  Start runtime', 'X  Graceful Stop', 'R  Restart runtime', 'C  Open Chat mode (F2 starts Chat Server)' ,
-            'V  Chat Server Stop', 'D  Toggle Diagnostics', '?  Toggle help', '↑↓ / PgUp/PgDn Scroll runtime logs; L / End follow latest',
+            'O  Open Chat in browser', 'V  Chat Server Stop', 'D  Toggle Diagnostics', '?  Toggle help', '↑↓ / PgUp/PgDn Scroll runtime logs; L / End follow latest',
             '↑↓ Scroll Diagnostics / help',
             'Q  Quit TUI; runtime remains running', '', 'Metrics: current request, otherwise last.',
             'MTP / alignment / frontier: last settled request.', '— means not published or not yet measured.')]
@@ -341,4 +350,4 @@ def command_strip(mode, width):
         return 'S Start X Stop R Restart Q Quit D/?'
     if width < 70:
         return 'S Start X Stop R Restart Q Quit C/V Chat D/?'
-    return 'S Start  X Stop  R Restart  C Chat  V Stop Server  D Details  ? Help  Q Quit' + ('  ↑↓ scroll' if mode != 'dashboard' else '  ↑↓ Logs L Latest')
+    return 'S Start  X Stop  R Restart  C Chat  O Browser  V Stop Server  D Details  ? Help  Q Quit' + ('  ↑↓ scroll' if mode != 'dashboard' else '  ↑↓ Logs L Latest')

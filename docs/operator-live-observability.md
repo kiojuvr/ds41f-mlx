@@ -45,6 +45,19 @@ Dashboard Start/Restart selects `mtp-serving-v1`, not a profile picker. Explicit
 OFF startup remains in operations; observing a ready OFF service does not change
 that launcher selection.
 
+Explicit TUI Chat Start (F2) defaults to `0.0.0.0:8080` with
+`--allow-private-lan`; `DS41F_CHAT_BIND=loopback` selects localhost-only, while
+`lan` is the default. `DS41F_WEB_PORT` selects the Chat port. This does not change
+Runtime bind or direct CLI Web defaults. Chat restart preserves the reported
+bind, LAN permission, port and runtime URL; HTTPS restart is refused before
+shutdown rather than silently downgrading to HTTP without certificate options.
+The tall dashboard and Diagnostics show Chat Listen, Local and best-effort IPv4
+LAN connection URLs, plus `LAN access enabled — trusted local network only`.
+`O` opens the local Browser URL; `V` stops Chat Server. LAN discovery uses hostname
+addresses and a local UDP route selection without transmitting packets; an
+unavailable address is reported, not fabricated. It is not exhaustive interface
+or reachability qualification. TLS and authentication are not added by LAN mode.
+
 Child processes use a new process session, no inherited terminal and canonical
 entry points. TUI owns no stdout/stderr pipe; Quit/crash does not signal services.
 Chat Quit's bounded own-session retirement is separate. Reopen discovers control
@@ -73,7 +86,10 @@ startup authority, not telemetry; historical load times are not an SLA.
 
 Runtime owns a **512-record** in-memory ring. Fields are occurrence `timestamp`,
 monotonic-increasing `sequence`, severity, component and single-line message capped
-at **1024 characters**. Occurrence epoch is rendered as UTC, not polling time.
+at **1024 characters**. Occurrence epoch is rendered in the host's local timezone,
+not polling time, as `YYYY-MM-DD HH:MM:SS.mmm ZONE` (for example,
+`2026-10-13 00:02:17.381 JST`). Set `TZ=Asia/Tokyo` at process launch to
+explicitly select Japan time. The API retains numeric epoch timestamps.
 Sequence orders records despite wall-clock changes; `runtime_id` distinguishes
 restart. Locks copy only bounded scalar records, never model/native work or I/O.
 
@@ -91,7 +107,17 @@ do not. Other warning/error entries carry content-free component/severity notice
 and exception type, not raw exceptions/tracebacks. Prompts, responses, reasoning,
 tools, token IDs and source/file contents are not newly logged there.
 
-Headless output preserves original diagnostics/access/tracebacks with UTC stamps.
+Headless output preserves original diagnostics/access/tracebacks with the same
+local-time stamps at the start of the message body, after severity/component;
+runtime sequence numbers appear at the end of safe log lines. Chat Server keeps
+Uvicorn's native level, request-line and HTTP-status colours, with the timestamp
+after the level prefix: `INFO:     2026-10-13 00:02:17.381 JST  …`.
+Colours are enabled for the respective terminal stream, not redirected files.
+TUI uses its native severity colours, never embedded ANSI in the log API.
+Traceback continuation lines remain standard Python tracebacks.
+Installed TUI packages must also be updated through the normal package delivery
+workflow: restarting an older installed wheel does not pick up checkout formatting
+changes, even if Chat Server is launched from the checkout.
 A daemon writer uses a bounded 512-item queue and 16 KiB/item ceiling; slow/broken
 stderr cannot block inference and may drop output. The independent safe ring is
 not that queue. Exit drains for at most 200ms; `--print-config` stays JSON.

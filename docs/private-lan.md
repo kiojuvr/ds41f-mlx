@@ -1,6 +1,11 @@
 # Explicit trusted private-LAN access
 
-Default Web binding and Host restrictions remain localhost-only. Opt in:
+Direct CLI Web binding and Host restrictions remain localhost-only. TUI's
+explicit Chat Start defaults to LAN binding and passes the opt-in flag;
+`DS41F_CHAT_BIND=loopback` restores TUI localhost-only launch. The TUI shows
+connection URLs and a trusted-network warning; see
+[operator control](operator-live-observability.md#process-and-control-boundary).
+For manual launch, opt in:
 
 ```sh
 python3 -m ds41f_mlx.web --host 0.0.0.0 --port 8080 --allow-private-lan \

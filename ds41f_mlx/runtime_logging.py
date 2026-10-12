@@ -12,11 +12,36 @@ BATCH_LIMIT = 128
 
 
 def timestamp(value):
-    return datetime.fromtimestamp(value, timezone.utc).isoformat(timespec='milliseconds').replace('+00:00', 'Z')
+    # Display in the host's local timezone (TZ may override it), at occurrence
+    # time rather than poll time. Epochs in the control API remain unchanged.
+    local = datetime.fromtimestamp(value, timezone.utc).astimezone()
+    return f'{local:%Y-%m-%d %H:%M:%S}.{local.microsecond // 1000:03d} {local:%Z}'
 
 
 def display(record):
-    return f'{timestamp(record["timestamp"])} #{record["sequence"]} {record["severity"]} {record["component"]}: {record["message"]}'
+    return f'{record["severity"]:<7} {record["component"]}: {timestamp(record["timestamp"])}  {record["message"]} #{record["sequence"]}'
+
+
+def server_log_config():
+    """Uvicorn configuration without changing application/root log ownership."""
+    return {
+        'version': 1, 'disable_existing_loggers': False,
+        'formatters': {
+            'default': {'()': 'ds41f_mlx.server_logging.ServerFormatter',
+                        'fmt': '%(levelprefix)s %(asctime)s  %(message)s'},
+            'access': {'()': 'ds41f_mlx.server_logging.ServerAccessFormatter',
+                       'fmt': '%(levelprefix)s %(asctime)s  %(client_addr)s - "%(request_line)s" %(status_code)s'},
+        },
+        'handlers': {
+            'default': {'class': 'logging.StreamHandler', 'formatter': 'default', 'stream': 'ext://sys.stderr'},
+            'access': {'class': 'logging.StreamHandler', 'formatter': 'access', 'stream': 'ext://sys.stdout'},
+        },
+        'loggers': {
+            'uvicorn': {'handlers': ['default'], 'level': 'INFO', 'propagate': False},
+            'uvicorn.error': {'level': 'INFO'},
+            'uvicorn.access': {'handlers': ['access'], 'level': 'INFO', 'propagate': False},
+        },
+    }
 
 
 class History:
@@ -96,7 +121,7 @@ class RuntimeHandler(logging.Handler):
                 item = self.history.append(record.created, record.levelname, record.name, message)
             # Preserve full existing headless diagnostics, but never wait on a
             # slow/broken stderr. Tracebacks stay headless, outside the log API.
-            prefix = display(item) if safe and item else f'{timestamp(record.created)} {record.levelname} {record.name}: {record.getMessage()}'
+            prefix = display(item) if safe and item else f'{record.levelname:<7} {record.name}: {timestamp(record.created)}  {record.getMessage()}'
             if record.exc_info:
                 prefix += '\n'+logging.Formatter().formatException(record.exc_info)
             try:

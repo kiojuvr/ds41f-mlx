@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 import subprocess
 import sys
 from time import monotonic
@@ -22,8 +23,21 @@ def call(port, path='/ds41f/status', method='GET'):
 
 def launch(chat=False, endpoint=None):
     args = ['ds41f_mlx.web'] if chat else ['ds41f_mlx.ops', 'start', '--profile', 'mtp-serving-v1']
+    if chat and endpoint is None:
+        bind = os.environ.get('DS41F_CHAT_BIND', 'lan')
+        if bind not in ('lan', 'loopback'):
+            raise ValueError('DS41F_CHAT_BIND must be lan or loopback')
+        endpoint = dict(host='0.0.0.0' if bind == 'lan' else '127.0.0.1',
+                        port=int(os.environ.get('DS41F_WEB_PORT', '8080')), allow_private_lan=bind == 'lan')
     if endpoint:
+        if chat and endpoint.get('scheme') == 'https':
+            raise ValueError('TLS Chat restart requires manual certificate/key options; refusing HTTP downgrade')
         args += ['--host', endpoint['host'], '--port', str(endpoint['port'])]
+        if chat:
+            if endpoint.get('allow_private_lan', endpoint['host'] not in ('127.0.0.1', 'localhost', '::1')):
+                args.append('--allow-private-lan')
+            if endpoint.get('runtime_url'):
+                args += ['--runtime-url', endpoint['runtime_url']]
     return subprocess.Popen([sys.executable, '-m', *args], stdin=subprocess.DEVNULL,
                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
                             start_new_session=True)
@@ -134,6 +148,8 @@ class Operator:
             except (OSError, URLError):
                 status = None
             endpoint = (status or {}).get('endpoint') or {}
+            if chat and action == 'restart' and endpoint.get('scheme') == 'https':
+                raise ValueError('TLS Chat restart requires manual certificate/key options; server kept running')
             if chat and action in ('stop', 'restart') and self.conversation.id:
                 # Retire our application session before taking its backend away.
                 await self.conversation.stop()
@@ -159,7 +175,7 @@ class Operator:
                 else:
                     # Protect against legacy/unrelated process on the service port.
                     import socket
-                    service_port = endpoint.get('port', 8080 if chat else 8000)
+                    service_port = endpoint.get('port', int(os.environ.get('DS41F_WEB_PORT', '8080')) if chat else 8000)
                     try:
                         with socket.create_connection(('127.0.0.1', service_port), timeout=.2):
                             raise RuntimeError('CONFLICT: service port occupied without ds41f control; no model load attempted')
@@ -319,6 +335,14 @@ class Operator:
                 if key in (ord('c'), ord('C')):
                     self.mode = 'chat'
                     continue
+                if key in (ord('o'), ord('O')):
+                    endpoint = (self.chat_snapshot or {}).get('endpoint') or {}
+                    if endpoint:
+                        import webbrowser
+                        webbrowser.open(endpoint.get('local_url') or f'http://127.0.0.1:{endpoint.get("port", 8080)}')
+                    else:
+                        self.message = 'Chat Server is stopped; use C then F2 to start'
+                    continue
                 if key in (ord('q'), ord('Q')):
                     break
                 if key in (ord('d'), ord('D'), ord('?')):
@@ -326,7 +350,7 @@ class Operator:
                     self.mode = 'dashboard' if self.mode == target else target
                     self.offset = 0
                 if self.mode == 'dashboard':
-                    page = max(1, sum(1 for line in lines if 'Z #' in line.text)-1)
+                    page = max(1, sum(1 for line in lines if ' #' in line.text)-1)
                     if key in (curses.KEY_UP, curses.KEY_PPAGE) and self.logs:
                         current = self.log_end if self.log_end is not None else self.logs[-1]['sequence']
                         self.log_end = max(self.logs[0]['sequence'], current-(page if key == curses.KEY_PPAGE else 1))

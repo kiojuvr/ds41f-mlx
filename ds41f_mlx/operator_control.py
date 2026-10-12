@@ -124,6 +124,9 @@ class Control:
         import uvicorn
         if self.logs is not None:
             kwargs['log_config'] = None
+        else:
+            from .runtime_logging import server_log_config
+            kwargs.setdefault('log_config', server_log_config())
         self.server = uvicorn.Server(uvicorn.Config(app, **kwargs))
         self.server.should_exit = self.shutdown_requested
         self.server.run(sockets=[self.service_socket] if hasattr(self, 'service_socket') else None)
