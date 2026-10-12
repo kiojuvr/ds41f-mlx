@@ -52,9 +52,9 @@ def main(argv: list[str] | None = None) -> int:
             from .mtp_identity import config, inspect
             cfg = config(profile=args.profile)
             report = inspect(cfg)
+            report['profile'] = report['serving_profile'] = args.profile
             if args.profile == 'mtp-serving-v1':
                 from .serving.capacity import context_envelope, ORDINARY_BODY_BYTES, ORDINARY_OUTPUT_CEILING
-                report['serving_profile'] = args.profile
                 report['serving_limits'] = dict(context_tokens=context_envelope(cfg.checkpoint_path),
                                                 output_tokens=ORDINARY_OUTPUT_CEILING, body_bytes=ORDINARY_BODY_BYTES)
             print(json.dumps(report, indent=2, sort_keys=True))

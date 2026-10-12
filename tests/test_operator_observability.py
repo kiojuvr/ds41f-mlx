@@ -243,6 +243,22 @@ def test_ops_ordinary_accept_default_and_historical_qualification(monkeypatch):
     assert calls[-1] == ('ds41f_mlx.qualify', ['--mode', 'full'])
 
 
+@pytest.mark.parametrize('argv, profile', [([], 'mtp-serving-v1'),
+    (['--profile', 'mtp-singleton-v1'], 'mtp-singleton-v1')])
+def test_launcher_inspection_reports_serving_profile(monkeypatch, capsys, argv, profile):
+    import json
+    from ds41f_mlx import serve, mtp_identity, ops
+    monkeypatch.setattr(mtp_identity, 'config', lambda *a, **kw: SimpleNamespace(checkpoint_path=None))
+    monkeypatch.setattr(mtp_identity, 'inspect', lambda cfg: {'profile': 'mtp-singleton-v1', 'status': 'PASS'})
+    assert serve._main([*argv, '--print-config']) == 0
+    assert json.loads(capsys.readouterr().out)['profile'] == profile
+    from ds41f_mlx.serving import capacity
+    monkeypatch.setattr(capacity, 'context_envelope', lambda path: 128)
+    assert ops.main(['inspect', *argv]) == 0
+    report = json.loads(capsys.readouterr().out)
+    assert report['profile'] == report['serving_profile'] == profile
+
+
 def test_service_reserved_before_loading():
     port = free_port()
     c = Control(Projection(), free_port())

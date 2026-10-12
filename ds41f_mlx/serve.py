@@ -64,6 +64,7 @@ def _main(argv, *, control=None, projection=None) -> int:
             if control is not None:
                 control.reserve_service(cfg.host, cfg.port)
             report = inspect(cfg)
+            report['profile'] = report['serving_profile'] = args.profile
         except (ValueError, OSError, ImportError) as exc:
             logger.error('admission failed: %s', type(exc).__name__)
             logging.getLogger('ds41f.diagnostic').error('admission detail: %s', exc)
