@@ -1,5 +1,9 @@
 # oMLX #4363: singleton context-copy evaluation
 
+**Retained initial evaluation at `4e2e862`:** the DEFER result and prototype
+findings below are historical evidence. The current source decision is
+**ADOPT / CLOSED**, documented in [production closure](context-copy-closure.md).
+
 **Decision: DEFER.** Applicability is demonstrated, but production adoption is
 not qualified. No production overlay, execution identity change, installed
 payload update, priming/UID transport, scheduler change, or other optimization

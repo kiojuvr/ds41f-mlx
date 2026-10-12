@@ -375,13 +375,16 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
         from mlx_lm.generate import generation_stream
         with mx.stream(generation_stream):
             t0 = perf_counter()
+            # Active cancellation removes the native row during quiescence;
+            # retain only its existing stats owner for post-settlement telemetry.
+            active_state = getattr(rec.owner._bg._generation_batch, '_omlx_mtp_state', None)
             quiet = rec.owner.quiesce()
             quiet.counters.require_m28_zeroes()
             rec.cache, rec.rings = quiet.target_cache, list(quiet.dspark_context.caches)
             rec.canonical = list(quiet.canonical_tokens)
             gb = rec.owner._bg._generation_batch
             h = getattr(gb, '_omlx_semantic_horizon', None)
-            state = None if h is None else h.last_state
+            state = (None if h is None else h.last_state) or active_state
             assert h is None or h.pending is None
             assert state is None or not state.queue
             if state is not None:
@@ -460,6 +463,12 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
         stats = trace.get('mtp_stats', {})
         metrics['considered_drafts'] = sum(stats.get('depth_drafted', []))
         metrics['accepted_drafts'] = sum(stats.get('depth_accepted', []))
+        if 'copy_verified' in stats:
+            for source in ('copy', 'native'):
+                for counter in ('proposed', 'verified', 'accepted'):
+                    metrics[f'{source}_{counter}'] = stats[f'{source}_{counter}']
+            metrics['considered_drafts'] = stats['copy_verified'] + stats['native_verified']
+            metrics['accepted_drafts'] = stats['copy_accepted'] + stats['native_accepted']
         metrics['settlement'] = trace.get('quiescence', {}).get('counters')
         return metrics
 

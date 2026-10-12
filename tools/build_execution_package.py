@@ -53,7 +53,7 @@ def main():
                 'omlx': old['omlx'], 'deepseek_recipe': old['recipe']}
     overlays = {}
     if args.profile == 'mtp':
-        for label in ('compressed-growth', 'bit-exact-kernels', 'template-reuse'):
+        for label in ('compressed-growth', 'bit-exact-kernels', 'template-reuse', 'context-copy'):
             overlay = json.loads((ROOT/f'third_party/mtp/{label}.json').read_text())
             if sha(ROOT/f'third_party/mtp/{label}.patch') != overlay['patch_sha256']:
                 raise ValueError(f'{label} patch drift')
@@ -120,7 +120,7 @@ def main():
                     checkpoint=old['checkpoint'], checkpoint_metadata=old['checkpoint_metadata'],
                     provenance=dict(compressed_growth=overlays.get('compressed-growth'),
                                     bit_exact_kernels=overlays.get('bit-exact-kernels'),
-                                    template_reuse=overlays.get('template-reuse'), source_commit_is_base=True, lockfiles={name: sha(ROOT/'third_party/mtp'/name) for name in ('sources.json', 'requirements.lock', 'requirements-normal-local.lock')},
+                                    template_reuse=overlays.get('template-reuse'), context_copy=overlays.get('context-copy'), source_commit_is_base=True, lockfiles={name: sha(ROOT/'third_party/mtp'/name) for name in ('sources.json', 'requirements.lock', 'requirements-normal-local.lock')},
                                     package_build_input_sha256=sha(ROOT/'pyproject.toml'),
                                     source_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
                                     source_payload_sha256=hashlib.sha256(json.dumps(payloads['ds41f_mlx'],sort_keys=True).encode()).hexdigest(),

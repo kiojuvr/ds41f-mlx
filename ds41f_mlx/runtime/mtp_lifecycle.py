@@ -279,7 +279,7 @@ def canonical_quiesce_native_singleton(
         raise MTPLifecycleError(f"unsupported target/history relation target={target_frontier} history={h_frontier} queue={len(queue)}")
 
     # Clear transient singleton scheduler state without interpreting it as idle authority.
-    for name in ("queue", "drafts", "next_main", "rollback_stash", "_rollback_stash", "anchor", "uid"):
+    for name in ("queue", "drafts", "next_main", "rollback_stash", "_rollback_stash", "anchor", "uid", "context_copy", "copy_drafts"):
         if hasattr(mtp_state, name):
             try:
                 val = [] if name == "queue" else None

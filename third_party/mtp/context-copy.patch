@@ -1,0 +1,284 @@
+--- a/omlx/patches/mlx_lm_mtp/batch_generator.py
++++ b/omlx/patches/mlx_lm_mtp/batch_generator.py
+@@ -768,6 +768,12 @@
+     productive on this model + sampler combo.
+     """
+ 
++    copy_proposed: int = 0
++    copy_verified: int = 0
++    copy_accepted: int = 0
++    native_proposed: int = 0
++    native_verified: int = 0
++    native_accepted: int = 0
+     cycles: int = 0  # number of verify cycles run
+     accepts: int = 0  # accepted draft tokens (depth-k: sum over positions)
+     rejects: int = 0  # cycles that ended in a rejection
+@@ -845,6 +851,8 @@
+     # from verify-forward hidden rows so the head sees a dense, committed-only
+     # timeline.
+     hist_offset: int = 0
++    context_copy: Optional[Any] = None
++    copy_drafts: bool = False
+     # A consumed priming context proves this request's hidden capture works.
+     head_history_primed: bool = False
+     # Sampler for draft tokens (lazily resolved). For stochastic target
+@@ -2887,6 +2895,7 @@
+     hidden_rows: Any,
+     committed: Any,
+     prev_buf: Optional[Any],
++    depth: Optional[int] = None,
+ ) -> None:
+     """Append committed target taps and sample one DSpark block.
+ 
+@@ -2900,7 +2909,9 @@
+     if host is None:
+         raise _MtpStepFallback("embedded DSpark host is unavailable")
+ 
+-    depth = state.controller.cur if state.controller is not None else state.depth
++    state.copy_drafts = False
++    if depth is None:
++        depth = state.controller.cur if state.controller is not None else state.depth
+     depth = min(int(depth), int(getattr(host.args, "dspark_block_size", depth)))
+     n = int(committed.shape[0])
+     if depth <= 0:
+@@ -2954,6 +2965,7 @@
+     state.drafts = mx.concatenate(draft_toks)
+     state.draft_lps = draft_lps
+     state.draft_accept_lps = draft_accept_lps
++    state.stats.native_proposed += depth
+     mx.async_eval(state.drafts)
+ 
+ 
+@@ -2963,6 +2975,7 @@
+     hidden_rows: Any,
+     committed: Any,
+     prev_buf: Optional[Any],
++    depth: Optional[int] = None,
+ ) -> None:
+     """Rebuild committed MTP-head history and draft the next chain.
+ 
+@@ -2993,6 +3006,7 @@
+             hidden_rows,
+             committed,
+             prev_buf,
++            depth,
+         )
+     sampler = _resolve_draft_sampler(gen_batch, state)
+     procs = _proc_list(gen_batch)
+@@ -3989,6 +4003,31 @@
+     return bool(predraft(gen_batch, state, captured, m_arr + 1, anchor))
+ 
+ 
++def _context_copy_drafts(gen_batch, state, committed_ids):
++    """Singleton committed-source lookup; pending anchor is query-only."""
++    from . import context_copy
++    from .semantic_horizon import SemanticGuardError
++    host = _dspark_host(gen_batch.model)
++    if not context_copy.ENABLED or host is None or len(gen_batch.uids) != 1:
++        return []
++    if state.context_copy is None:
++        state.context_copy = context_copy.ContextCopy(getattr(host.args, 'image_token_id', None))
++    # Confirmed target taps describe the consumed prefix, including the old
++    # anchor, but NOT committed_ids[-1], the new unconsumed prediction.
++    frontier = state.hist_offset + len(committed_ids)
++    try:
++        state.context_copy.sync(gen_batch.tokens[0], committed_ids, frontier)
++    except ValueError as exc:
++        raise SemanticGuardError(str(exc)) from exc
++    depth = state.controller.cur if state.controller is not None else state.depth
++    # Replace only a full DSpark block with the SAME currently selected verify
++    # width. Native adaptive small blocks remain native; no shape policy change.
++    room = gen_batch.max_tokens[0] - gen_batch._num_tokens[0] - len(committed_ids) - 1
++    if depth != state.depth or room < depth:
++        return []
++    return state.context_copy.propose(committed_ids[-1], depth)
++
++
+ def _run_verify_cycle_chain(
+     gen_batch: Any,
+     state: _MtpState,
+@@ -4027,6 +4066,7 @@
+     # Adaptive depth: the chain may have drafted fewer than state.depth
+     # tokens this cycle — the verify window follows the actual drafts.
+     k = int(state.drafts.shape[0])
++    copy_cycle = state.copy_drafts
+     cycle_t0 = time.perf_counter()
+ 
+     inputs = mx.concatenate([state.next_main, state.drafts])  # (k+1,)
+@@ -4258,6 +4298,13 @@
+         else:
+             break
+     state.stats.accepts += m
++    if copy_cycle:
++        state.stats.copy_verified += k
++        state.stats.copy_accepted += m
++        state.context_copy.observe(m)
++    elif _dspark_host(gen_batch.model) is not None:
++        state.stats.native_verified += k
++        state.stats.native_accepted += m
+     if m < k:
+         state.stats.rejects += 1
+     state.stats.sample_ms += (time.perf_counter() - t0) * 1000
+@@ -4265,6 +4312,7 @@
+     accept_ms = (time.perf_counter() - cycle_t0) * 1000
+ 
+     def draft_next():
++        state.copy_drafts = False
+         if terminal is not None:
+             host = _dspark_host(gen_batch.model)
+             if host is None:
+@@ -4278,9 +4326,8 @@
+         t0 = time.perf_counter()
+         if draft_jobs is None and not state.head_clone:
+             _mtp_head_trim_to(state.mtp_cache, state.hist_offset)
+-        committed = mx.array(
+-            [int(d) for d in draft_ids[:m]] + [int(emit_last_id)], dtype=mx.uint32
+-        )
++        committed_ids = [int(d) for d in draft_ids[:m]] + [int(emit_last_id)]
++        committed = mx.array(committed_ids, dtype=mx.uint32)
+         next_main = committed[-1:]
+         hidden_rows = hidden[:, : m + 1]
+         prev_buf = None
+@@ -4298,7 +4345,17 @@
+             else:
+                 draft_jobs.append(job)
+         elif draft_jobs is None:
+-            _chain_next_drafts(gen_batch, state, hidden_rows, committed, prev_buf)
++            copied = _context_copy_drafts(gen_batch, state, committed_ids)
++            _chain_next_drafts(gen_batch, state, hidden_rows, committed, prev_buf,
++                               depth=0 if copied else None)
++            if copied:
++                state.drafts = mx.array(copied, dtype=mx.uint32)
++                state.draft_lps = []
++                ids = mx.array(copied, dtype=mx.int32)[:, None]
++                state.draft_accept_lps = SparseDraftQ(ids, mx.zeros(ids.shape), combined_lp.shape[-1])
++                state.copy_drafts = True
++                state.stats.copy_proposed += len(copied)
++                mx.async_eval(state.drafts)
+         else:
+             draft_jobs.append((gen_batch, state, hidden_rows, committed, prev_buf))
+         state.next_main = next_main
+--- /dev/null
++++ b/omlx/patches/mlx_lm_mtp/context_copy.py
+@@ -0,0 +1,121 @@
++# SPDX-License-Identifier: Apache-2.0
++"""Singleton DSpark drafts from consumed target history, never pending anchors.
++
++Adapted from oMLX a2ee4a2c's context_copy (TensorFold suffix-lookup rule).
++This is derived, request-local metadata: the paired consumed frontier is the
++only authority. The pending anchor participates in the query, not the index.
++"""
++import sys
++import numpy as np
++
++ENABLED = True
++_BITS = 20
++_MATCH = 12
++_CAP = 64
++_CANDIDATES = 32
++
++
++def _key(a, b, c):
++    return (int(a) << (2 * _BITS)) | (int(b) << _BITS) | int(c)
++
++
++class ContextCopy:
++    def __init__(self, image_token_id=None):
++        self.ids = []
++        self.keys = np.empty(0, dtype=np.int64)
++        self.ends = np.empty(0, dtype=np.int64)
++        self.recent = {}
++        self.image_token_id = image_token_id
++        self.misses = self.quiet = 0
++
++    def _eligible(self, tokens):
++        return self.image_token_id is None or self.image_token_id not in tokens
++
++    def _build(self, history):
++        self.ids = list(history)
++        if len(history) < 3:
++            return
++        t = np.asarray(history, dtype=np.int64)
++        keys = (t[:-2] << (2 * _BITS)) | (t[1:-1] << _BITS) | t[2:]
++        ends = np.arange(2, len(t), dtype=np.int64)
++        if self.image_token_id is not None:
++            mask = (t[:-2] != self.image_token_id) & (t[1:-1] != self.image_token_id) & (t[2:] != self.image_token_id)
++            keys, ends = keys[mask], ends[mask]
++        order = np.argsort(keys, kind='stable')
++        self.keys, self.ends = keys[order], ends[order]
++
++    def sync(self, history, committed, frontier):
++        """Index only [0, frontier); committed[-1] is a query-only prediction.
++
++        Caller proves frontier = paired hist_offset + confirmed hidden rows,
++        after final acceptance/termination selection. A request's token history
++        is append-only; edits/branches acquire a fresh native state/index.
++        """
++        if frontier != len(history) + len(committed) - 1:
++            raise ValueError('copy frontier disagrees with settled target prefix')
++        if not self.ids:
++            self._build(history)
++        n = len(self.ids)
++        if n > len(history) or (n and self.ids[-1] != history[n - 1]):
++            raise ValueError('copy index outlived its consumed request prefix')
++        for token in [*history[n:], *committed[:-1]]:
++            self.ids.append(int(token))
++            end = len(self.ids) - 1
++            if end >= 2 and self._eligible(self.ids[end - 2:end + 1]):
++                self.recent.setdefault(_key(*self.ids[end - 2:end + 1]), []).append(end)
++        if len(self.ids) != frontier:
++            raise ValueError('copy index outran consumed frontier')
++
++    def propose(self, anchor, depth):
++        if self.quiet:
++            self.quiet -= 1
++            return []
++        query = self.ids[-(_CAP - 1):] + [int(anchor)]
++        if self.image_token_id in query:
++            query = query[len(query) - 1 - query[::-1].index(self.image_token_id) + 1:]
++        if depth < 1 or len(query) < _MATCH:
++            return []
++        key = _key(*query[-3:])
++        candidates = self.recent.get(key, ())[-_CANDIDATES:][::-1]
++        if len(candidates) < _CANDIDATES:
++            lo = int(np.searchsorted(self.keys, key, 'left'))
++            hi = int(np.searchsorted(self.keys, key, 'right'))
++            lo = max(lo, hi - (_CANDIDATES - len(candidates)))
++            candidates = list(candidates) + self.ends[lo:hi][::-1].tolist()
++        best_end, best_len = -1, 0
++        for end in candidates[:_CANDIDATES]:
++            # The complete source span, not just its matching suffix, must
++            # precede the consumed frontier. Never truncate into the anchor.
++            if end + 1 + depth > len(self.ids):
++                continue
++            length = 3
++            while length < min(len(query), end + 1, _CAP):
++                token = self.ids[end - length]
++                if token == self.image_token_id or token != query[-1 - length]:
++                    break
++                length += 1
++            if length > best_len:
++                copied = self.ids[end + 1:end + 1 + depth]
++                if not self._eligible(copied):
++                    continue
++                best_end, best_len = end, length
++                if length == _CAP:
++                    break
++        return self.ids[best_end + 1:best_end + 1 + depth] if best_len >= _MATCH else []
++
++    def observe(self, accepted):
++        self.misses = 0 if accepted else self.misses + 1
++        if self.misses >= 4:
++            self.misses, self.quiet = 0, 8
++
++    def resident_bytes(self):
++        """Host residency accounting for qualification, never in decode timing.
++
++        Includes even shared token int objects (a conservative attribution),
++        ndarray payloads/headers, dict keys, buckets and their end positions.
++        """
++        return (sys.getsizeof(self) + sys.getsizeof(self.__dict__) +
++                sys.getsizeof(self.ids) + sum(map(sys.getsizeof, self.ids)) +
++                sys.getsizeof(self.keys) + sys.getsizeof(self.ends) +
++                sys.getsizeof(self.recent) + sum(sys.getsizeof(k) + sys.getsizeof(v) +
++                sum(map(sys.getsizeof, v)) for k, v in self.recent.items()))

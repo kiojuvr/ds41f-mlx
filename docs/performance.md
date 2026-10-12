@@ -408,7 +408,7 @@ in-place operator patch. This remains a post-completion performance improvement.
 
 ## Post-completion context-copy evaluation (#4363)
 
-**DEFER; no production adoption or installed update.** The [evaluation and
+**Initial evaluation: DEFER, retained as historical scope.** The [evaluation and
 boundary report](context-copy-evaluation.md) records a process-local prototype
 against synchronized HEAD `3312ecc` / execution identity `927596fc...`.
 Two real-file rewrite runs improve mean wall **10.343 -> 8.914 s**, decode
@@ -425,3 +425,29 @@ is not applicable to the inspected singleton topology and was not used.
 Runtime remains COMPLETE, MTP default, oMLX 0.7.0. Earlier three performance
 adoptions remain unchanged; the identified backlog remains open for deferred
 #4363. No further upstream optimization was begun.
+
+## Context-copy production-safety closure (#4363)
+
+**ADOPT / CLOSED source optimization.** The [closure report](context-copy-closure.md)
+closes the initial DEFER without priming/UID/batching/scheduler changes. The
+lookup stores only target-consumed history, excludes image placeholders, and
+uses the pending anchor only as a query. Full copied blocks preserve the
+currently selected native width and feed the unchanged acceptance controller.
+Real ordinary sampling, EOS with later copied proposals, cancellation while
+acceptance/rollback is pending, complete cancelled-pair continuation and bounded
+post-image text reuse pass under an admitted isolated source-built candidate.
+Target/DSpark bytes match native greedy controls; replay/repack remain zero.
+
+After edge closure, the same rewrite improves mean wall **10.356 -> 8.969 s**,
+decode **10.140 -> 8.754 s**, throughput **37.87 -> 43.87 tokens/s**. Copies:
+**252 proposed/verified, 251 accepted**; native proposed/verified/accepted
+**305/302/279 -> 39/36/35**. Ordinary explanation generates no copies and has
+unchanged native **383/382/172**; decode delta **-0.27%**, non-material noise.
+The 200K-token host index adds ~**4.8 MB** retained / **11.4 MB** peak allocation
+and is released at canonical settlement; there is no persistent second cache.
+
+Runtime remains COMPLETE, ordinary MTP default, oMLX 0.7.0. Recommend a normal
+installed rebuild/update now that source is CLOSED; **operator payload was not
+updated here**. The known identified post-0.7.0 V4.1 performance backlog is now
+closed (#4365, partial #4360, selective #4354, singleton #4363). No other upstream
+optimization or new milestone was begun.
