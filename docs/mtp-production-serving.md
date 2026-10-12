@@ -64,7 +64,8 @@ supported calls and recipe-representable declaration schemas are not reduced to
 the singleton weather fixture. Text parts, reminders and empty assistant reasoning
 follow authoritative conversion, not client-specific exceptions. Actual body/
 encoded-capacity rules apply rather than singleton per-string limits or its
-blanket special-token spelling ban. Images reject before rendering/expansion.
+blanket special-token spelling ban. Bounded inline images use the existing multimodal preparation and P6 embedding
+merge before the same P5 handoff; see [Vision/MTP integration](mtp-vision-integration.md).
 
 **Tools execute in the client.** Send the completed assistant call message and
 matching ordered tool results in the next ordinary conversation request.
@@ -112,7 +113,7 @@ using its Scheduler/PagedCache does not require that extra server surface.
 ## Paired capture and restore
 
 A reusable pair binds admitted execution/tokenizer/recipe identity, complete
-encoded IDs through C, all forty target layers' seven physical slots and layout/
+encoded IDs and committed image identities through C, all forty target layers' seven physical slots and layout/
 padding metadata, and all three committed DSpark rings at **the same C**.
 Capacity-128 rings preserve absolute-modulo physical order, not chronological
 rotation. Draft KV, proposal/verify stashes, future predictions, pending semantic

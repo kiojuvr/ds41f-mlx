@@ -85,8 +85,8 @@ class ProductionSessions:
             raise RuntimeError('stale expected request_count; reconcile, no retry')
         if len(rec.used_applications) >= self.MAX_REQUESTS:
             raise RuntimeError('session request identity budget exhausted; close required')
-        if prepared.protocol != 'chat_completions' or prepared.image_sources:
-            raise ValueError('production sessions support text Chat Completions only')
+        if prepared.protocol != 'chat_completions':
+            raise ValueError('production sessions support Chat Completions only')
         incoming = body['messages']  # recipe schema/conversion has already validated it
         if not rec.request_count and any(m.get('role') in ('assistant', 'tool') for m in incoming):
             raise ValueError('new session cannot reconstruct prior assistant/tool history; no session replay')

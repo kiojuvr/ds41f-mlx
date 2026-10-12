@@ -223,7 +223,7 @@ class DeferredPrefillAppend:
         return cls(language_model=language_model, live_cache=live_cache, request_token_history=tuple(int(t) for t in request_token_history), plan=plan, mx=mx, image_embeddings=image_embeddings)
 
     @classmethod
-    def continue_from_commit(cls, language_model: Any, prior_commit: P6AppendCommit, request_token_history: Sequence[int], *, capacity: int = P6_CARRY_CAPACITY, mx: Any | None = None) -> "DeferredPrefillAppend":
+    def continue_from_commit(cls, language_model: Any, prior_commit: P6AppendCommit, request_token_history: Sequence[int], *, capacity: int = P6_CARRY_CAPACITY, mx: Any | None = None, image_embeddings: Any = None) -> "DeferredPrefillAppend":
         if not getattr(prior_commit, "sealed", False):
             raise P6AppendError("prior P6 commit is not sealed")
         C, E, D, T = int(prior_commit.C), int(prior_commit.E), int(prior_commit.D), int(prior_commit.T)
@@ -248,7 +248,7 @@ class DeferredPrefillAppend:
             if getattr(item, "_p6_owner_token", None) != prior_commit.owner_token:
                 raise P6AppendError("prior P6 owner token mismatch")
         plan = P6AppendPlanner(capacity=capacity).plan(C=T, T=len(request_token_history))
-        app = cls(language_model=language_model, live_cache=cache, request_token_history=tuple(int(t) for t in request_token_history), plan=plan, mx=mx)
+        app = cls(language_model=language_model, live_cache=cache, request_token_history=tuple(int(t) for t in request_token_history), plan=plan, mx=mx, image_embeddings=image_embeddings)
         app.state = AppendState.PENDING
         app.stale_generation += 1
         for item in cache:

@@ -61,6 +61,28 @@ def test_paired_checkpoint_copies_both_directions_and_physical_wrap():
     assert np.array_equal(again_rings[1].keys, pair()[1][1].keys)
 
 
+def test_image_identity_is_part_of_pair_and_upstream_hash():
+    pytest.importorskip('omlx')
+    from ds41f_mlx.serving.paired_checkpoint import PairedCheckpointAuthority
+    authority = PairedCheckpointAuthority('identity', MX)
+    images = [dict(start=10, length=40, sha256='corn', grid=[2, 2])]
+    saved = authority.capture(*pair(), images=images)
+    authority.publish(saved)
+    prompt = list(range(195))
+    assert authority.acquire(prompt, images=images)[2] == list(range(193))
+    changed = [dict(images[0], sha256='carrot')]
+    assert authority.acquire(prompt, images=changed) is None
+    assert authority.acquire(prompt) is None
+    # A failed image hash lookup must not invalidate the original pair.
+    lease = authority.retain(saved.tokens, saved.images)
+    assert authority.acquire_retained(lease, prompt, images=images)[2] == list(saved.tokens)
+    with pytest.raises(ValueError, match='image identity'):
+        authority.acquire_retained(lease, prompt, images=changed)
+    authority.release(lease)
+    with pytest.raises(ValueError, match='intersects'):
+        authority.capture(*pair(), images=[dict(images[0], start=180)])
+
+
 def test_pair_rejects_frontier_identity_and_branch_mismatch():
     target, rings, tokens = pair()
     saved = PairedCheckpoint.capture('identity', target, rings, tokens, MX)
@@ -378,7 +400,8 @@ def test_scheduler_adoption_settlement_publication_and_burn(monkeypatch, cancel,
     request.prompt_token_ids = list(range(202))
     request.execution = QualificationSession('ordinary')
     request.trace = dict(t0=perf_counter())
-    request.prepared, request.recipe_tokenizer = None, None
+    request.prepared, request.recipe_tokenizer = SimpleNamespace(multimodal=None), None
+    request.image_identities, request.native_started = (), False
     request.prompt_checkpoint, request.delivery_cursor = None, 0
     scheduler.requests[request.request_id] = request
     scheduler.waiting.append(request)

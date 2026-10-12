@@ -49,9 +49,12 @@ class MultimodalInput:
         if old != committed:
             raise ValueError('continuation changed committed image identity')
 
-    def encode_new(self, model: Any, frontier: int = 0) -> 'ImageEmbeddings':
-        from ds41f_mlx.runtime.resource_admission import resources_for
-        resources_for(model.language_model).validate_binding(model.language_model)
+    def encode_new(self, model: Any, frontier: int = 0, *, span_encoder=None) -> 'ImageEmbeddings':
+        # OFF owns its resource capability; ordinary MTP supplies its admitted
+        # pinned Model embedding adapter. Neither authority admits the other.
+        if span_encoder is None:
+            from ds41f_mlx.runtime.resource_admission import resources_for
+            resources_for(model.language_model).validate_binding(model.language_model)
         import mlx.core as mx
         start = perf_counter()
         rows = []
@@ -60,7 +63,8 @@ class MultimodalInput:
                 continue
             h, w = span.grid
             patches = mx.array(span.patches).astype(mx.bfloat16)
-            value = model.encode_image_span(patches, h, w, span.kinds)
+            encoder = model.encode_image_span if span_encoder is None else span_encoder
+            value = encoder(patches, h, w, span.kinds)
             mx.eval(value)
             rows.append((span.start, value))
         return ImageEmbeddings(tuple(rows), model.config.image_token_id, perf_counter() - start)

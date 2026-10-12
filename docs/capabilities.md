@@ -12,14 +12,14 @@ Architecture explains ownership; specialized documents explain endpoint semantic
 | --- | --- | --- | --- |
 | Selection | CLI default; separate OFF package | Explicit; MTP package | Explicit; MTP package |
 | Physical execution | First-party target generation/model execution; MTP OFF | Pinned oMLX MTP topology, ProductionScheduler-owned | Bounded guarded singleton MTP |
-| Ordinary APIs | Text Chat Completions, Responses, Messages within documented scopes | Text Chat Completions; health/models | Specialized session API, not ordinary stateless Chat Completions |
+| Ordinary APIs | Text Chat Completions, Responses, Messages within documented scopes | Chat Completions (text and bounded inline Vision); health/models | Specialized session API, not ordinary stateless Chat Completions |
 | Independent conversations/edits | Stateless requests prefill fresh; retained sessions require exact extension | Ordinary requests may safely reuse paired prefixes or miss, including edits/branches | Exact session extension/frozen request fences |
 | Active execution | Single-flight; overlap conflicts | One native active generation; independent ordinary requests may queue, no shared native batch | One response lease/live session |
-| Optional stateful Chat | Exact-prefix sessions, default maximum 4 | One logical session on the same Scheduler; text streaming only | One issued process-lifetime session with sequence/body fence |
+| Optional stateful Chat | Exact-prefix sessions, default maximum 4 | One logical session on the same Scheduler; streaming only | One issued process-lifetime session with sequence/body fence |
 | Function tools | Ordinary client function tools | Generic recipe-authoritative function tools/results | Pinned weather declaration and bounded dedicated-client contract |
 | Sampling/reasoning | `generation-policy-v1` | `generation-policy-v1` | Separate greedy/thinking-off qualification contract |
 | Native idle persistence/restore | Validated same-backend artifacts | Unsupported | Unsupported |
-| Images | Separate bounded OFF image extension below | Unsupported | Unsupported |
+| Images | Separate bounded OFF image extension below | Same bounded inline envelope; paired-state continuation, no persistence/history replay | Unsupported |
 | Network | See OFF configuration and application network policy | Loopback default; explicit trusted private LAN | Literal IPv4 loopback and exact Host policy |
 
 These profiles do not grant each other API, persistence, image, concurrency or
@@ -95,7 +95,7 @@ See [frontend contract and scoped evidence](generation-policy-frontends.md).
   not promise crash-safe or distributed exactly-once side effects. Unknown outcomes
   remain fenced; process restart is not effect reconciliation.
 
-## Bounded OFF images
+## Bounded inline images
 
 The separately qualified OFF Chat Completions core allows up to **four inline
 single-frame PNG/JPEG/WebP images**, 16 MiB encoded bytes and 4M source pixels each,
@@ -104,9 +104,18 @@ including reserved output**. Remote/file URLs, low detail, animations, multimoda
 Responses/Messages and excess context are outside this envelope.
 
 New images are encoded once; retained old image identities/spans must remain exact.
+Ordinary MTP uses this same input/output envelope. Image identity is included in
+upstream paired-cache hashes; after prefill only the existing target/DSpark pair
+is executable authority. Prior-message images require a compatible retained pair:
+eviction or an incompatible historical-image edit rejects without hidden replay
+or re-encoding. Fresh last-message images may prefill on a safe miss. MTP requires
+two terminal text tokens for the existing N-2 prompt capture/P5 handoff.
+See [Vision/MTP seam audit](mtp-vision-integration.md) for delta acceptance scope.
+The installed package is unchanged by this checkout implementation.
 OFF idle persistence and exact fresh-process restore do not re-run old images.
-This is not general visual-quality proof, larger-image/context support, MTP image
-support or broadened release/R1 qualification. See [OFF API](api.md#bounded-multimodal-developmentcore-extension)
+The original OFF receipt alone is not MTP qualification; the linked MTP delta
+acceptance is separate. Neither is general visual-quality proof, larger-image/
+context support or broadened release/R1 qualification. See [OFF API](api.md#bounded-multimodal-developmentcore-extension)
 and [original image qualification](multimodal-production-qualification.md).
 
 ## Applications

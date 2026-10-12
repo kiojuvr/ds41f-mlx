@@ -52,7 +52,7 @@ class ProductionScheduler(Scheduler):
         request = self.waiting.popleft()
         rec, trace = request.execution, request.trace
         def capture(target, rings, tokens):
-            request.prompt_checkpoint = self.checkpoints.capture(target, rings, tokens)
+            request.prompt_checkpoint = self.checkpoints.capture(target, rings, tokens, request.image_identities)
         try:
             phase(self.backend, trace, 'CACHE_LOOKUP')
             logical = getattr(request, 'logical_session', None)
@@ -62,18 +62,25 @@ class ProductionScheduler(Scheduler):
             observe = lambda name: phase(self.backend, trace, name)
             if logical is not None and logical.canonical:
                 restored = self.checkpoints.acquire_retained(self.session_leases.get(logical.session_id),
-                    request.prompt_token_ids, timings=trace, observe=observe)
+                    request.prompt_token_ids, timings=trace, observe=observe, images=request.image_identities)
             else:
-                restored = self.checkpoints.acquire(request.prompt_token_ids, timings=trace, observe=observe)
+                restored = self.checkpoints.acquire(request.prompt_token_ids, timings=trace, observe=observe,
+                                                    images=request.image_identities)
             if restored is not None:
                 rec.cache, rec.rings, rec.canonical = restored
             logical = getattr(request, 'logical_session', None)
             if logical is not None and logical.canonical and tuple(rec.canonical) != logical.canonical:
                 raise RuntimeError('canonical session pair unavailable or mismatched; prompt replay forbidden')
+            if request.prepared.multimodal is not None:
+                request.prepared.multimodal.validate_prefix(len(rec.canonical),
+                    [s for s in request.image_identities if s['start'] < len(rec.canonical)])
+                if len(rec.canonical) < request.required_image_frontier:
+                    raise ValueError('historical image pair unavailable; image replay/re-encode forbidden')
             request.cached_tokens = trace['cached_tokens'] = len(rec.canonical)
             request.remaining_tokens = request.prompt_token_ids[len(rec.canonical):]
             trace['remaining_suffix_tokens'] = len(request.remaining_tokens)
             metrics(self.backend, trace)
+            request.native_started = True
             self.backend._start(rec, request.prepared, request.recipe_tokenizer, trace,
                                 checkpoint_capture=capture, batch_generator_factory=self._new_batch)
             # P5 revoked the producer and inserted the held-out terminal into
@@ -109,7 +116,7 @@ class ProductionScheduler(Scheduler):
                     # extend this frontier with a genuine append, P5 holdout
                     # and at least one output token. Keep the earlier prompt
                     # pair instead. This is extendability, not an 8K limit.
-                    final = (self.checkpoints.capture(rec.cache, rec.rings, rec.canonical)
+                    final = (self.checkpoints.capture(rec.cache, rec.rings, rec.canonical, request.image_identities)
                              if len(rec.canonical) + 3 <= self.checkpoints.context_tokens else None)
                     if request.prompt_checkpoint is not None:
                         self.checkpoints.publish(request.prompt_checkpoint)
@@ -118,7 +125,7 @@ class ProductionScheduler(Scheduler):
                     publication = True
                     logical = getattr(request, 'logical_session', None)
                     if logical is not None and final is not None:
-                        lease = self.checkpoints.retain(rec.canonical)
+                        lease = self.checkpoints.retain(rec.canonical, final.images)
                         previous = self.session_leases.get(logical.session_id)
                         self.session_leases[logical.session_id] = lease
                         if previous is not None:
@@ -134,7 +141,7 @@ class ProductionScheduler(Scheduler):
                 error = error or exc
             # Even native retirement failure cannot leave an executable alias
             # eligible for the next request. Fail the engine, rather than replay.
-            if error is not None:
+            if error is not None and request.native_started:
                 self.backend.fatal_error = repr(error)
                 self.checkpoints.clear()
             self.waiting = type(self.waiting)(r for r in self.waiting if r.request_id != request.request_id)
@@ -273,6 +280,21 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
         from deepseek_recipe import ConversionOptions
         self.conversion_options = ConversionOptions(default_thinking_mode=False)
 
+    def _encode_new_images(self, multimodal, frontier):
+        import mlx.core as mx
+        from omlx.patches.deepseek_v41.model import Model
+        model = self._model
+        if type(model) is not Model or not model.config.preserve_mtp:
+            raise RuntimeError('Vision requires the admitted pinned MTP Model')
+        def encode_span(patches, height, width, kinds):
+            # Only this NEW span is embedded; no language forward, prompt
+            # replay, cache mutation, or second model/weight owner is involved.
+            ids = mx.full((1, len(kinds)), model.config.image_token_id, dtype=mx.int32)
+            return model.get_input_embeddings(ids, pixel_values=patches,
+                image_grids=[(height, width)], image_spans=[(0, len(kinds))],
+                image_types=[list(kinds)]).inputs_embeds[0]
+        return multimodal.encode_new(model, frontier, span_encoder=encode_span)
+
     def _prefill_tap_start(self, ids, frontier, rings):
         from ds41f_mlx.prefill_fp8_mlx.p6_append import P6_FINAL_TAIL_THRESHOLD
         capacity = rings[0].max_size
@@ -305,6 +327,13 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
         request = Request(request_id=request_id, prompt=list(prepared.token_ids),
                           sampling_params=policy.sampling_params(self.request_max_tokens(prepared)))
         request.prepared, request.recipe_tokenizer = prepared, tokenizer
+        request.native_started = False
+        request.image_identities = () if prepared.multimodal is None else tuple(prepared.multimodal.identities())
+        # Prior-message images require retained executable state, never replay.
+        messages = prepared.conversation_request.conversation.messages
+        historical = sum(len(m.image_sources) for m in messages[:-1])
+        request.required_image_frontier = max(
+            (s['start'] + s['length'] for s in request.image_identities[:historical]), default=0)
         request.execution = QualificationSession(request_id)
         request.logical_session = logical_session
         request.session_pair_retained = False
@@ -360,10 +389,17 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
     async def ordinary_response(self, prepared, *, tokenizer, http_request=None,
                                 request_id=None, logical_session=None, body=None, application_id=None):
         from .server import InferenceStreamingResponse, sse_frame
-        if prepared.protocol != 'chat_completions' or prepared.image_sources:
-            raise ValueError('ordinary MTP supports text Chat Completions only')
+        if prepared.protocol != 'chat_completions':
+            raise ValueError('ordinary MTP supports Chat Completions only')
+        if prepared.image_sources and prepared.multimodal is None:
+            raise ValueError('image input was not prepared')
+        if getattr(prepared, 'multimodal', None) is not None and any(
+                s.start + s.length > len(prepared.token_ids)-2 for s in prepared.multimodal.spans):
+            raise ValueError('Vision requires two terminal text tokens for paired P5 handoff')
         limit = self.request_max_tokens(prepared)
-        validate_ordinary_capacity(len(prepared.token_ids), limit, self.context_tokens)
+        envelope = (context_envelope(self.checkpoint, multimodal=True)
+                    if getattr(prepared, 'multimodal', None) is not None else self.context_tokens)
+        validate_ordinary_capacity(len(prepared.token_ids), limit, envelope)
         if len(prepared.token_ids) < 3:
             raise ValueError('encoded prompt must contain at least 3 tokens')
         rid = request_id or uuid4().hex

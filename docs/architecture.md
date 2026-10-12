@@ -55,7 +55,9 @@ The bounded OFF image extension uses the same generation/cache topology: CPU ima
 identity/preprocessing, first-party Vision/aligner encoding of **new images only**,
 sparse absolute embedding injection and command-local masks. Old image spans are
 not re-encoded during retained continuation or idle restore. Image identities do
-not create an independent cache engine or expand the text-only MTP scope.
+not create an independent cache engine. Ordinary MTP now connects that bounded
+preparation/embedding seam to its existing paired prefill/P5 path; its pinned
+Vision adapter and affected evidence are in [the seam audit](mtp-vision-integration.md).
 
 ## Ordinary MTP execution
 

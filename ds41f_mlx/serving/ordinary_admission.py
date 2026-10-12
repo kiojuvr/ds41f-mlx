@@ -23,7 +23,6 @@ def admit_capabilities(converted, payload):
     options = converted.inference_options
     from .generation_policy import normalize_policy
     normalize_policy(converted, payload)
-    conversation = converted.conversation
     validate_ordinary_output(128 if options.max_tokens is None else options.max_tokens)
 
     # These fields are intentionally omitted by the authoritative converter.
@@ -39,13 +38,7 @@ def admit_capabilities(converted, payload):
     if payload.get('logprobs') or payload.get('top_logprobs'):
         raise ValueError('ordinary MTP does not support logprobs')
 
-    # Text-only capability is checked BEFORE rendering/image expansion or I/O.
-    # Text spelling/encoding belongs to recipe, not singleton's string policy:
-    # source code and tool results legitimately contain '<|' and fullwidth pipes.
-    # Recipe still rejects unbacked image placeholders. Body and actual encoded
-    # capacity bound resources; no duplicate per-string grammar/security filter.
-    if any(message.image_sources for message in conversation.messages):
-        raise ValueError('ordinary MTP supports text Chat Completions only')
+    # Inline Vision uses the existing bounded multimodal preparation authority.
 
 
 def convert_ordinary(raw):

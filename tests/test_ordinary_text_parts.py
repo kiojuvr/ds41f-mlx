@@ -86,7 +86,6 @@ def test_recipe_rejections_propagate_unchanged(changes):
     (dict(response_format=dict(type='json_schema', json_schema={})), 'JSON Schema'),
     (dict(logprobs=True), 'logprobs'), (dict(top_logprobs=1), 'logprobs'),
     (dict(max_tokens=393217), 'output capability ceiling'),
-    (dict(messages=[dict(role='user', content=[dict(type='image_url', image_url=dict(url='https://example.com/a.png'))])]), 'text Chat'),
 ])
 def test_recipe_acceptance_does_not_override_runtime_limits(changes, match):
     value = body(**changes)

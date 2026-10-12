@@ -185,6 +185,9 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
             mx.synchronize(generation_stream)
             mx.clear_cache()
 
+    def _encode_new_images(self, multimodal, frontier):
+        return multimodal.encode_new(self._model, frontier)
+
     def _prefill_tap_start(self, ids, frontier, rings):
         return frontier
 
@@ -210,6 +213,10 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
                 rec.cache, rec.rings = lm.make_cache(), lm.make_mtp_cache()
             ids = request.token_ids
             C = len(rec.canonical)
+            embeddings = None
+            if request.multimodal is not None:
+                embeddings = self._encode_new_images(request.multimodal, C)
+                trace.update(vision_encoded_count=len(embeddings.rows), vision_s=embeddings.seconds)
             # Already proved pre-admission on the event-loop thread. Recheck
             # immediately before mutation under the singleton worker lease.
             assert ids[:C] == rec.canonical and len(ids) > C
@@ -249,9 +256,9 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
                         lm.layers[i] = Tap(i, layer) if observed else layer
                     if end > C:
                         if app is None:
-                            app = DeferredPrefillAppend.create(lm, rec.cache, ids[:end], committed_frontier=C, mx=mx)
+                            app = DeferredPrefillAppend.create(lm, rec.cache, ids[:end], committed_frontier=C, mx=mx, image_embeddings=embeddings)
                         else:
-                            app = DeferredPrefillAppend.continue_from_commit(lm, app.commit_certificate, ids[:end], mx=mx)
+                            app = DeferredPrefillAppend.continue_from_commit(lm, app.commit_certificate, ids[:end], mx=mx, image_embeddings=embeddings)
                         app.execute_all()
                         if observed:
                             hidden = mx.concatenate([mx.concatenate(taps[i], axis=1) for i in taps], axis=-1)
@@ -419,7 +426,7 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
                 completed = rec.guard.finished and rec.guard.tool_complete
                 rec.certificate = reconstruction_certificate(rec.reconstruction_body, trace['response'], rec.canonical,
                     tokenizer=rec.reconstruction_tokenizer, recipe_path=self.recipe_path, completed_tool_block=completed,
-                    options=getattr(self, 'conversion_options', None))
+                    options=getattr(self, 'conversion_options', None), checkpoint=self.checkpoint)
                 trace['certificate'] = rec.certificate
                 if not rec.certificate['representable']:
                     rec.unrecoverable = True

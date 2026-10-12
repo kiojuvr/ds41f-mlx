@@ -30,8 +30,10 @@ History, new input, full tool results, frozen reasoning/declarations and recipe
 structural tokens all count. No char/token estimate, frontier-only subtraction,
 above-checkpoint extrapolation or output-sized allocation is implied. Total
 context is prompt **plus** reserved output, not a maximum prompt plus unlimited
-generation. Invalid/exhausted capacity rejects before native mutation. MTP stays
-text-only; an image-bearing request cannot borrow the OFF envelope.
+generation. Invalid/exhausted capacity rejects before native mutation. Ordinary
+MTP image-bearing requests use the same bounded 8192-position inline envelope,
+not the long text envelope; [Vision/MTP integration](mtp-vision-integration.md)
+does not expand multimodal capacity or enable persistence.
 
 `POST /v1/sessions/{id}/budget` prepares the same complete request and checks the
 selected retained-session admission: alias, busy/recovery state, exact canonical

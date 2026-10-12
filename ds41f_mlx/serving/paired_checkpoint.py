@@ -5,6 +5,7 @@ qualified context envelope every extendable checkpoint is an upstream root tail.
 The payload is memory-only: losing either owner is a miss, never unprimed MTP.
 """
 from dataclasses import dataclass
+from copy import deepcopy
 from typing import Any
 from time import perf_counter
 
@@ -90,25 +91,40 @@ class RingSnapshot:
     keys: Any
 
 
+def image_keys(identities):
+    return tuple((s['start'], s['length'], s['sha256'], tuple(s['grid'])) for s in identities) or None
+
+
+def image_ranges(identities):
+    return [(s['start'], image_keys(identities[:i+1])) for i, s in enumerate(identities)]
+
+
 @dataclass(frozen=True)
 class PairedCheckpoint:
     identity: str
     tokens: tuple[int, ...]
     target: tuple[Any, ...]
     rings: tuple[Any, ...]
+    images: tuple = ()
 
     @classmethod
-    def capture(cls, identity, target, rings, tokens, mx):
+    def capture(cls, identity, target, rings, tokens, mx, images=()):
         tokens = tuple(map(int, tokens))
         validate_pair(target, rings, tokens)
+        if any(s['start'] < len(tokens) < s['start'] + s['length'] for s in images):
+            raise ValueError('paired frontier intersects image span')
+        images = tuple(deepcopy(s) for s in images if s['start'] < len(tokens))
         target, rings = clone_pair(target, rings, mx)
         validate_pair(target, rings, tokens)
         return cls(identity, tokens,
                    tuple(TargetSnapshot(type(c), tuple(c.cache), tuple(c.meta_state), c.compress_ratio,
                                         c.left_padding, c.lengths) for c in target),
-                   tuple(RingSnapshot(type(c), c.max_size, c.offset, c.keys) for c in rings))
+                   tuple(RingSnapshot(type(c), c.max_size, c.offset, c.keys) for c in rings), images)
 
-    def restore(self, identity, prompt, mx):
+    def restore(self, identity, prompt, mx, images=()):
+        old = tuple(s for s in images if s['start'] < len(self.tokens))
+        if old != self.images:
+            raise ValueError('paired image identity mismatch')
         if self.identity != identity or tuple(prompt[:len(self.tokens)]) != self.tokens:
             raise ValueError('paired checkpoint identity mismatch')
         validate_pair(self.target, self.rings, self.tokens)
@@ -138,17 +154,17 @@ class PairedCheckpointAuthority:
         if checkpoint is not None:
             self.paged.stats.total_tokens_cached -= len(checkpoint.tokens)
 
-    def capture(self, target, rings, tokens):
+    def capture(self, target, rings, tokens, images=()):
         if len(tokens) + 3 > self.context_tokens:
             raise ValueError('checkpoint cannot be extended within context envelope')
-        return PairedCheckpoint.capture(self.identity, target, rings, tokens, self.mx)
+        return PairedCheckpoint.capture(self.identity, target, rings, tokens, self.mx, images)
 
     def publish(self, checkpoint):
         if checkpoint.identity != self.identity or len(checkpoint.tokens) + 3 > self.context_tokens:
             raise ValueError('foreign or unextendable checkpoint publication')
         validate_pair(checkpoint.target, checkpoint.rings, checkpoint.tokens)
         tokens = list(checkpoint.tokens)
-        if self.paged.find_cached_block(tokens) is not None:
+        if self.paged.find_cached_block(tokens, extra_keys=image_keys(checkpoint.images)) is not None:
             return
         if not self.paged.get_stats().free_blocks:
             # Use the upstream LRU candidate/refcount policy, never a second
@@ -159,7 +175,7 @@ class PairedCheckpointAuthority:
         if block is None:
             return
         try:
-            self.paged.register_block_hash(block, tokens)
+            self.paged.register_block_hash(block, tokens, extra_keys=image_keys(checkpoint.images))
             block.token_count = len(tokens)
             self._payloads[block.block_hash] = checkpoint
             self.paged.stats.total_tokens_cached += len(tokens)
@@ -167,7 +183,7 @@ class PairedCheckpointAuthority:
         finally:
             self.paged.release_for_eviction([block.block_id])
 
-    def acquire(self, prompt, *, timings=None, observe=None):
+    def acquire(self, prompt, *, timings=None, observe=None, images=()):
         # Leave a genuine suffix append before P5's terminal holdout. In
         # particular, NEVER turn an exact N hit into N-1 by recurrent trimming.
         lookup_t0 = perf_counter()
@@ -176,7 +192,7 @@ class PairedCheckpointAuthority:
             timings.update(cache_lookup_s=0., paired_restore_s=0.)
         eligible = list(prompt[:-2])
         while eligible:
-            blocks, C = self.paged.get_computed_blocks(eligible)
+            blocks, C = self.paged.get_computed_blocks(eligible, extra_key_ranges=image_ranges(images))
             if not blocks:
                 break
             block = blocks[-1]
@@ -195,7 +211,7 @@ class PairedCheckpointAuthority:
                                 pass
                         restore_t0 = perf_counter()
                         try:
-                            target, rings, tokens = checkpoint.restore(self.identity, prompt, self.mx)
+                            target, rings, tokens = checkpoint.restore(self.identity, prompt, self.mx, images)
                         finally:
                             restore_s += perf_counter()-restore_t0
                             if observe is not None:
@@ -219,7 +235,7 @@ class PairedCheckpointAuthority:
                            cache_lookup_s=perf_counter()-lookup_t0-restore_s)
         return None
 
-    def acquire_retained(self, lease, prompt, *, timings=None, observe=None):
+    def acquire_retained(self, lease, prompt, *, timings=None, observe=None, images=()):
         """Restore a known refcounted pair, not a lossy prefix-index hint.
 
         Upstream's bounded root-tail hint table may forget a still-live pinned
@@ -239,7 +255,7 @@ class PairedCheckpointAuthority:
             if observe is not None:
                 observe('RESTORING')
             restore_t0 = perf_counter()
-            result = checkpoint.restore(self.identity, prompt, self.mx)
+            result = checkpoint.restore(self.identity, prompt, self.mx, images)
             if timings is not None:
                 timings.update(cache_lookup_s=restore_t0-t0, paired_restore_s=perf_counter()-restore_t0)
             return result
@@ -248,9 +264,9 @@ class PairedCheckpointAuthority:
             if observe is not None:
                 observe('CACHE_LOOKUP')
 
-    def retain(self, tokens):
+    def retain(self, tokens, images=()):
         """Opaque upstream refcount lease; no second physical cache owner."""
-        block = self.paged.find_cached_block(list(tokens))
+        block = self.paged.find_cached_block(list(tokens), extra_keys=image_keys(images))
         if block is None or block.block_hash not in self._payloads:
             raise RuntimeError('canonical session pair was not published; no replay')
         checkpoint = self._payloads[block.block_hash]
