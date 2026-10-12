@@ -1,0 +1,31 @@
+{
+  "scope": "post-completion performance-only #4365; finite seams, not renewed runtime qualification",
+  "base_commit": "e8fce7eaaee8937faac3bfcf4b71faf9a3f48c82",
+  "upstream_commit": "09be4f420c7409298656bcfa13699dee3a0ed938",
+  "host": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+  "slot_environment": "checkout .venv Python 3.13.14 / MLX 0.32.2; patched oMLX source built without dependency upgrades",
+  "production_environment": "isolated copy of installed ds41f-mlx_mtp-venv; new candidate wheel built from inherited admission plus explicit growth overlay",
+  "source_delta": "upstream source-only delta plus unchanged-length index-key handle preservation",
+  "tests": {
+    "affected": 46,
+    "upstream_existing_rollback_official_and_vision": 79,
+    "p5_p6_p7": 45,
+    "p5_p6_p7_subtests": 26
+  },
+  "excluded_attempts": [
+    "PYTHONPATH seam test run rejected by existing installed-origin checks; resolved by building patched oMLX into checkout venv",
+    "isolated production driver imported transformers LazyModule before admission (Path rather than string in spec); driver reordered admission before backend import, no runtime admission changes"
+  ],
+  "overlay_sha256": "32df19daac65589fb968a102cc52daa161aa4ec14282e0f9d9b0b39a84f37d74",
+  "candidate_wheel_sha256": "02c467e676a33af57d783a459b9d2f81bec07baf3f1c814cb20c93a84c4ec42d",
+  "candidate_installed_admission": "PASS in isolated Python 3.13.15 MTP environment",
+  "deployment": "Operator installed default environment was not modified; adopted by fresh MTP provisioning/build-time overlay, not an in-place unadmitted install",
+  "production_result": "Canonical tokens, projected output (except request ID/time), usage, MTP acceptance/depth counts and paired frontiers exact for seed plus two repeats; zero replay/repack",
+  "decision": "Adopt #4365 only: ~0.47% production decode timer change is within noise; 128K slot copy timing ~5x faster with ~2.13x resident packed slot storage",
+  "short_control": "4K slot control non-regressing; resident capacity overhead is higher",
+  "receipts": [
+    "production-before.json.gz",
+    "production-after.json.gz",
+    "candidate-build.log.gz"
+  ]
+}

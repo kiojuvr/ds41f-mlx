@@ -54,3 +54,23 @@ extracted normally. OFF uses its preserved release dependencies and does not imp
 these candidates implicitly. See `docs/mtp-local-release-candidate.md` and M41's
 identity/native-build/clean-clone evidence. New source/build/link identities require
 affected qualification; equal package version numbers are not equal execution.
+
+## Post-completion compressed growth overlay (#4365)
+
+`compressed-growth.patch` is the isolated MIT-licensed DeepSeek V4.1 delta from
+upstream `09be4f420c7409298656bcfa13699dee3a0ed938`, adapted to retain an unchanged
+index-key handle on ratio=2 tokens without a publication. `compressed-growth.json`
+binds the patch and the four before/after source identities. MTP provisioning
+applies it to the unchanged 0.7.0 source export before building; packaging inherits
+the old dependency inventory with only these four explicit replacements and
+records the overlay in the new installed manifest. Neither historical
+`normal-local.json` nor base archives nor OFF admission is rewritten.
+
+This is post-completion performance improvement, not runtime completion or an
+upstream release upgrade. Slots 2/3 keep logical views over two capacity buffers;
+singleton extraction shares the advisory registry, partial native rollback keeps
+its chain, external replacement breaks it, and paired cloning intentionally does
+not export it. MLX copy-on-write preserves held snapshots. The extra resident
+packed storage is deliberate, not a zero-memory-cost optimization. See
+[performance evidence](../../docs/performance.md#post-completion-compressed-growth-4365).
+No #4354/#4360/#4363 changes are included.

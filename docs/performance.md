@@ -87,3 +87,78 @@ non-target-host or generalized multimodal performance claim. Use source-scoped
 regression classes and workload-specific observations; stop investigating once the
 concrete question is answered. Release acceptance and performance measurement are
 distinct scopes, not interchangeable PASS labels.
+
+## Post-completion compressed growth (#4365)
+
+Runtime completeness remains **COMPLETE**, ordinary production remains MTP. This
+is an isolated **post-completion performance improvement**, not renewed runtime
+qualification. The 0.7.0 base, Scheduler, paired authority, pinned model topology,
+DwarfStar/P6/P5, DSpark semantics, Vision, recipe and session contracts are unchanged.
+No #4354/#4360/#4363 or upstream release upgrade is included.
+
+The [build-time overlay](../third_party/mtp/compressed-growth.json) adopts upstream
+`09be4f420c7409298656bcfa13699dee3a0ed938`: only compressed-KV slot 2, index-key
+slot 3, singleton extraction and native partial-rollback truncation. One adaptation
+preserves an already correctly sized index-key handle on ratio=2 no-publication
+tokens; otherwise slicing breaks the growth chain every other token. The patch
+adds 122 net dependency LOC; provisioning/admission construction adds 22 net LOC
+(about **+144 production LOC**, excluding tests, driver, metadata and docs).
+
+Two capacity buffers alternate. Short appends update only the missing tail in the
+idle buffer; capacity growth, long prefill appends, external replacement and fresh
+restore can still copy the prefix. Held MLX references force copy-on-write, never
+an unsafe destructive write. Singleton extraction shares this advisory registry,
+not a second execution owner. Multi-row extraction does not share it. Native
+partial rollback retains the chain and invalidates speculative rows logically;
+subsequent writes replace them. Paired capture/restore still copies only logical
+arrays/metadata, not capacity/registry, with unchanged format and frontiers. There
+is no replay, numeric pack/unpack or full-cache repack.
+
+### Finite evidence and trade-off
+
+[New evidence](../artifacts/compressed-growth/provenance.json) is separate from all
+historical immutable receipts. Affected tests compare old concatenation against
+new growth with **array-exact logits and all seven slots**, speculative rejection
+and continuation. A 128K-row packed fixture covers singleton extraction,
+truncation/overwrite, held snapshots and external replacement. Native MLX paired
+capture/acquisition remains stable after repeated live/restored growth, including
+image identity. Existing Scheduler cancellation/publication/reuse, wrapped rings,
+P5/P6/P7 and upstream official-output/rollback/Vision tests are reused; these are
+finite seam checks, not a new full-model numerical qualification.
+
+The [128K-context packed-slot probe](../artifacts/compressed-growth/slots-128k.json)
+uses the four production KV sources, ratios `(2,2,2,1)` and packed widths 288/80,
+64 synchronized updates after four warmups, in old/new/new/old order. Median
+slot-update time is approximately **1.30–1.32 ms → 0.24–0.26 ms**. This excludes
+model computation, index scoring and DSpark, and is not production tokens/sec.
+Live packed allocation at the end is **120.7 MB → 257.2 MB**: about 2.13x for these
+slots, due to two buffers plus capacity headroom. The benefit is eliminating
+context-sized repeated tail-publication copies/allocations, not reducing resident
+state. Snapshot/restore costs are not optimized. Capacity and registry are not
+checkpoint fields; the existing snapshot materialization/copy budget still applies.
+Do not infer zero-copy under every alias or a near-1M HTTP speedup from this probe.
+
+[Ordinary production before/after](../artifacts/compressed-growth/comparison.json)
+was measured serially in isolated copies of the installed MTP environment
+(Python 3.13.15, MLX 0.32.2). The candidate wheel passed unchanged installed
+admission with the explicitly recorded overlay; the operator's installed default
+was not modified. A genuine 32,762-token prompt generated 64 tokens, then two
+paired repeat requests per version restored 32,760 tokens and executed the real
+two-token suffix/P5/native decode. All three canonical token lists, projected
+responses (except request ID/time), acceptance/depth counts and target/DSpark
+frontiers **matched exactly**. Every pair settled/published at 32,826 with zero
+prompt replay/full-cache repack.
+
+Warm repeats' aggregate `decode_s` averaged **2.5514 s → 2.5394 s**, approximately
+**25.08 → 25.20 completion tokens per decode-second (+0.47%)**. This trace timer
+excludes prefill/restore/P5/settlement and is not wall-clock request throughput.
+With two repeats the difference is within noise: no significant end-to-end
+speedup is claimed. Seed/load/TTFT are not attributed to this optimization.
+The finite 4K slot control was also non-regressing (roughly 0.33 → 0.28–0.29 ms);
+short-session capacity overhead increases and is explicitly not a memory saving.
+There is no observed semantic/performance regression in these finite seams;
+Vision/cancellation coverage reuses existing affected regressions, not a new
+long-image/cancellation campaign. Structural copy improvement with this small,
+state-preserving delta justifies adoption despite the small production timing
+change. #4365 is closed independently; subsequent performance candidates may be
+evaluated separately, not bundled into this change.

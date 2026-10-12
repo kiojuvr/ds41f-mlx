@@ -1,0 +1,192 @@
+--- a/omlx/patches/deepseek_v41/cache.py
++++ b/omlx/patches/deepseek_v41/cache.py
+@@ -56,7 +56,17 @@
+ 
+     def extract(self, idx):
+         result = type(self)(self.compress_ratio)
+-        result.cache = [x[idx : idx + 1] if x is not None else None for x in self.cache]
++        if self.batch_size == 1 and idx in (0, -1):
++            # Forward passes run on extracted rows. Share the arrays and the
++            # growth registry so appends keep extending the same storage.
++            if getattr(self, "_ds41_buffers", None) is None:
++                self._ds41_buffers = {}
++            result.cache = list(self.cache)
++            result._ds41_buffers = self._ds41_buffers
++        else:
++            result.cache = [
++                x[idx : idx + 1] if x is not None else None for x in self.cache
++            ]
+         ratio = self.compress_ratio
+         if result.cache[0] is None or ratio is None:
+             return result
+--- /dev/null
++++ b/omlx/patches/deepseek_v41/growth.py
+@@ -0,0 +1,106 @@
++# SPDX-License-Identifier: MIT
++"""In-place growth for the packed compressed KV and index-key cache slots.
++
++Decode appends at most a few rows per token to slots that hold the whole
++context. A concatenation copies the full slot on every token, so each slot
++keeps two buffers instead:
++
++- The cache holds a view of the current buffer.
++- A short append writes the rows the idle buffer is missing (the previous
++  append and the new rows) into the idle buffer and makes it current.
++- Nothing else refers to the idle buffer by then, so MLX updates it in place.
++
++Values never change: if a stray reference blocks the in-place update, MLX
++copies instead. Replacing, slicing or extracting a slot outside this module
++breaks the chain; the next append then starts a new buffer from the prefix.
++"""
++
++import mlx.core as mx
++
++# Longer appends (prefill chunks) allocate one exact buffer, so prefill memory
++# is unchanged.
++_MAX_ROWS = 64
++
++
++def _capacity(end, rows):
++    if rows > _MAX_ROWS:
++        return (max(end, 256) + 255) // 256 * 256
++    return (end + max(4096, end // 16) + 255) // 256 * 256
++
++
++def _registry(cache):
++    buffers = getattr(cache, "_ds41_buffers", None)
++    if buffers is None:
++        buffers = cache._ds41_buffers = {}
++    return buffers
++
++
++def append(cache, slot, previous, values, start):
++    """Return ``previous[:, :start]`` followed by ``values`` as a buffer view."""
++    buffers = _registry(cache)
++    entry = buffers.get(slot)
++    chain = (
++        entry is not None
++        and cache[slot] is entry["view"]
++        and start <= entry["end"]
++        and previous.shape[1] >= start
++    )
++    if not values.shape[1]:
++        # Nothing to add: keep the current view so the chain continues.
++        if chain and start == entry["end"]:
++            return entry["view"]
++        return previous[:, :start]
++    end = start + values.shape[1]
++    short = values.shape[1] <= _MAX_ROWS
++    buffer = None
++    if chain and short:
++        idle, valid = entry["idle"], min(entry["valid"], start)
++        entry["idle"] = None
++        if (
++            idle is not None
++            and idle.shape[1] >= end
++            and idle.shape[0] == values.shape[0]
++            and idle.shape[2:] == values.shape[2:]
++            and idle.dtype == values.dtype
++        ):
++            update = (
++                values
++                if valid == start
++                else mx.concatenate([previous[:, valid:start], values], 1)
++            )
++            # The registry no longer holds ``idle``, so this update can reuse
++            # its storage.
++            idle[:, valid:end] = update
++            buffer = idle
++        del idle
++    if buffer is None:
++        parts = [previous[:, :start], values] if start else [values]
++        capacity = _capacity(end, values.shape[1])
++        if capacity > end:
++            parts.append(
++                mx.zeros(
++                    (values.shape[0], capacity - end, *values.shape[2:]), values.dtype
++                )
++            )
++        buffer = mx.concatenate(parts, 1)
++    keep = chain and short
++    view = buffer[:, :end]
++    buffers[slot] = {
++        "buffer": buffer,
++        "view": view,
++        "end": end,
++        # The buffer behind ``previous`` holds valid rows [0, start).
++        "idle": entry["buffer"] if keep else None,
++        "valid": start if keep else 0,
++    }
++    return view
++
++
++def truncate(cache, slot, length):
++    """Set ``cache[slot]`` to its first ``length`` rows and keep the chain."""
++    view = cache[slot][:, :length]
++    entry = _registry(cache).get(slot)
++    if entry is not None and cache[slot] is entry["view"] and length <= entry["end"]:
++        entry["view"], entry["end"] = view, length
++    cache[slot] = view
++    return view
+--- a/omlx/patches/deepseek_v41/language.py
++++ b/omlx/patches/deepseek_v41/language.py
+@@ -17,6 +17,7 @@
+ from omlx.custom_kernels.glm_moe_dsa import fast as glm_fast
+ 
+ from ..deepseek_v4.switch_layers import _block_config, _build_mxfp4_blocks
++from . import growth
+ from .activation import quantize_paired_swiglu_activation, quantize_swiglu_activation
+ from .cache import DeepseekV41Cache
+ from .engram import Engram, NgramHash, build_compressed_token_map
+@@ -190,7 +191,8 @@
+             )
+             previous = cache[3]
+             previous = (
+-                previous[:, : kv_start // ratio]
++                (previous if previous.shape[1] == kv_start // ratio
++                 else previous[:, : kv_start // ratio])
+                 if previous is not None
+                 else pack_activation(
+                     mx.zeros((1, 0, c.index_head_dim), x.dtype), bits=4
+@@ -201,7 +203,7 @@
+                 key = pack_activation(
+                     rope(self.k_norm(self.wk(latent)), pos, c, True), bits=4
+                 )
+-                previous = mx.concatenate([previous, key], 1)
++                previous = growth.append(cache, 3, previous, key, kv_start // ratio)
+             shared["index_k"] = cache[3] = previous
+         key = shared["index_k"]
+         q = self.wq_b(qr).reshape(1, x.shape[1], c.index_n_heads, c.index_head_dim)
+@@ -336,7 +338,9 @@
+                 compressed = pack_activation(
+                     compressed, bits=4, group_size=16, e4m3_scale=True
+                 )
+-                shared["kv"] = cache[2] = mx.concatenate([shared["kv"], compressed], 1)
++                shared["kv"] = cache[2] = growth.append(
++                    cache, 2, shared["kv"], compressed, kv_start // ratio
++                )
+             ci, pooled = shared["idx"], shared["kv"]
+         if (
+             length > 8
+--- a/omlx/patches/deepseek_v41/mtp.py
++++ b/omlx/patches/deepseek_v41/mtp.py
+@@ -2,6 +2,8 @@
+ """DSpark integration with oMLX's shared speculative acceptance loop."""
+ 
+ import mlx.core as mx
++
++from . import growth
+ 
+ 
+ class AcceptanceDepthController:
+@@ -132,8 +134,8 @@
+             ]
+             ratio = item.compress_ratio
+             if ratio:
+-                item[2] = item[2][:, : end // ratio]
+-                item[3] = item[3][:, : end // ratio]
++                growth.truncate(item, 2, end // ratio)
++                growth.truncate(item, 3, end // ratio)
+                 if ratio > 1:
+                     kv, gate = state["compressor"]
+                     projected_end = before % ratio + count
