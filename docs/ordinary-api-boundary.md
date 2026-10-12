@@ -100,7 +100,10 @@ current installation instructions. The unresolved status recorded there describe
 that dependency environment at that time, not every present runtime.
 
 [Mac production review](opencode-production-review.md) owns its source-scoped review
-disposition. Neither its completion nor admission regressions establish Windows
-end-to-end inference, separate-machine LAN, all API features, default-MTP approval
-or general-runtime release. Current production changes follow the
+disposition, including the **CLOSED** Windows OpenCode / Chat Server access
+follow-up based on user confirmation. That access confirmation does not qualify
+all API features or establish full Windows end-to-end inference, default-MTP
+approval or general-runtime release. Historical unverified Windows status in the
+archived audit is superseded for this access follow-up only. Current production
+changes follow the
 [serving decision policy](production-serving-parity-closure.md).

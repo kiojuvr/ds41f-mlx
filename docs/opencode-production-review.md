@@ -104,8 +104,11 @@ certificates). Server remains running from the reviewed source.
 ## Remaining boundary
 
 This closes the source-text blocker and completes one real repository review,
-not default promotion. Windows end-to-end smoke remains unverified; the existing
-separately scoped release/packaging, full R1 and promotion gates remain open.
+not default promotion. The Windows OpenCode / Chat Server access follow-up is
+**CLOSED** based on the user's confirmation that both are accessible from Windows.
+This is user-reported access confirmation, not an independently executed full
+API or inference qualification. The separately scoped release/packaging, full R1
+and promotion gates remain open.
 No additional genuine ordinary-production blocker was demonstrated by this
 workload. Do not convert speculative review concerns or the unrelated EOF
 qualification environment into new default-promotion blockers.
