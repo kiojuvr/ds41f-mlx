@@ -1,0 +1,32 @@
+{
+  "scope": "post-completion performance-only isolated #4360; #4365 remains enabled",
+  "base_commit": "f3ab28c07cd677ca790f2ea5f7607745ccc38a4c",
+  "upstream_commit": "f0d4cb53271456a474948edcdb38e0d2da347d79",
+  "host": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+  "device": "Apple M3 Ultra / applegpu_g15d",
+  "python": "3.13.15",
+  "mlx": "0.32.2",
+  "omlx": "unchanged pinned 0.7.0 with two isolated overlays",
+  "before_HEAD_python_source_drift": [],
+  "production_scope": "serial 4094-token prompt, 64 output tokens: seed + 2 greedy hits + one seeded default-sampling hit each; final 8-token candidate-only real GEMV operand audit outside measurements",
+  "cold_seed": "retained for numerical/state comparison only; cold first-call compilation/load cannot establish performance attribution; seam tests overlap load/seed only, not warm repeats",
+  "candidate_wheel_sha256": "5885904ea374488df6f6b12134753995ccb2d466a0e377b772bdfa5572f4d0b5",
+  "admission": "PASS: ordinary inspect/config production admission before real execution",
+  "tests": {
+    "affected": 39,
+    "seams": 98,
+    "baseline_fixture_failure": 1,
+    "prefill": 66,
+    "prefill_subtests": 26,
+    "upstream": 80
+  },
+  "excluded_attempts": [
+    "initial request missing explicit DS41F_CHECKPOINT rejected before execution",
+    "initial state-digest collector assumed all slots were MLX; NumPy metadata failed after seed; no measurement retained",
+    "unadapted upstream FP8 packing rejected on zero-group scale bytes",
+    "unadapted upstream GEMV failed reserved-code tests; port adapted to pinned decoder",
+    "pre-adaptation production rows not used in final comparison; candidate-only audit incorrectly required Python Sinkhorn tracing after hc_mixes compile-cache reuse; corrected diagnostic assertion, not runtime"
+  ],
+  "deployment": "operator installed payload untouched; fresh build delivers the MTP overlay after #4365, OFF and model_execution untouched",
+  "decision": "adopt GEMV with pinned decoder and lane Sinkhorn only; reject packing; omit unreachable native attention and long-prefill radix grouping"
+}

@@ -46,18 +46,19 @@ def main(argv=None):
         with tarfile.open(archive) as tar:
             tar.extractall(target, filter='data')
     if args.profile == 'mtp-singleton-v1':
-        overlay = json.loads((SOURCES/'compressed-growth.json').read_text())
-        patch = SOURCES/'compressed-growth.patch'
-        if sha(patch) != overlay['patch_sha256']:
-            raise ValueError('unapproved compressed growth patch')
-        for name, identity in overlay['files'].items():
-            path = build/'omlx/omlx'/name
-            if (sha(path) if path.exists() else None) != identity['before']:
-                raise ValueError(f'compressed growth base drift: {name}')
-        subprocess.run(['patch', '-p1', '-i', str(patch)], cwd=build/'omlx', check=True)
-        for name, identity in overlay['files'].items():
-            if sha(build/'omlx/omlx'/name) != identity['after']:
-                raise ValueError(f'compressed growth output drift: {name}')
+        for label in ('compressed-growth', 'bit-exact-kernels'):
+            overlay = json.loads((SOURCES/f'{label}.json').read_text())
+            patch = SOURCES/f'{label}.patch'
+            if sha(patch) != overlay['patch_sha256']:
+                raise ValueError(f'unapproved {label} patch')
+            for name, identity in overlay['files'].items():
+                path = build/'omlx/omlx'/name
+                if (sha(path) if path.exists() else None) != identity['before']:
+                    raise ValueError(f'{label} base drift: {name}')
+            subprocess.run(['patch', '-p1', '-i', str(patch)], cwd=build/'omlx', check=True)
+            for name, identity in overlay['files'].items():
+                if sha(build/'omlx/omlx'/name) != identity['after']:
+                    raise ValueError(f'{label} output drift: {name}')
     if venv.exists():
         raise ValueError('target venv must be absent; construct a fresh locked environment')
     run('uv', 'venv', '--python', '/opt/homebrew/opt/python@3.13/bin/python3.13', venv)

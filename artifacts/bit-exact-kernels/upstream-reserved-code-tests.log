@@ -1,0 +1,90 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+______________ test_gemv_all_fp8_codes_including_reserved[dtype0] ______________
+
+dtype = mlx.core.bfloat16
+
+    @pytest.mark.parametrize('dtype', [mx.bfloat16, mx.float16])
+    def test_gemv_all_fp8_codes_including_reserved(dtype):
+        # Ordinary quantize() does not produce reserved codes; source equivalence
+        # must cover them too. Pinned fp8.h decodes 0x7f/0xff as +/-480.
+        n, k = 256, 4096
+        raw = mx.broadcast_to(mx.arange(256, dtype=mx.uint8)[:, None], (n, k))
+        w = mx.contiguous(raw).view(mx.uint32)
+        scales = mx.full((n, k // 32), 127, mx.uint8)
+        for rows in (1, 4, 5):
+            x = mx.full((1, rows, k), 1 / 4096, dtype)
+            expected = mx.quantized_matmul(x, w, scales, group_size=32, bits=8, mode='mxfp8')
+            actual = gemv.mxfp8_gemv(x, w, scales)
+            assert mx.all(mx.isfinite(expected)).item()
+>           exact(actual, expected)
+
+tests/test_bit_exact_kernels.py:82: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+a = array([[[0, 0.00195312, 0.00390625, ..., -416, -448, nan]]], dtype=bfloat16)
+b = array([[[0, 0.00195312, 0.00390625, ..., -416, -448, -480]]], dtype=bfloat16)
+
+    def exact(a, b):
+        # Compare representation, not allclose (including signed zero).
+>       np.testing.assert_array_equal(np.asarray(a.view(mx.uint8)), np.asarray(b.view(mx.uint8)))
+E       AssertionError: 
+E       Arrays are not equal
+E       
+E       Mismatched elements: 4 / 512 (0.781%)
+E       Max absolute difference among violations: 68
+E       Max relative difference among violations: 0.89552239
+E        ACTUAL: array([[[  0,   0,   0,  59, 128,  59, 192,  59,   0,  60,  32,  60,
+E                 64,  60,  96,  60, 128,  60, 144,  60, 160,  60, 176,  60,
+E                192,  60, 208,  60, 224,  60, 240,  60,   0,  61,  16,  61,...
+E        DESIRED: array([[[  0,   0,   0,  59, 128,  59, 192,  59,   0,  60,  32,  60,
+E                 64,  60,  96,  60, 128,  60, 144,  60, 160,  60, 176,  60,
+E                192,  60, 208,  60, 224,  60, 240,  60,   0,  61,  16,  61,...
+
+tests/test_bit_exact_kernels.py:18: AssertionError
+______________ test_gemv_all_fp8_codes_including_reserved[dtype1] ______________
+
+dtype = mlx.core.float16
+
+    @pytest.mark.parametrize('dtype', [mx.bfloat16, mx.float16])
+    def test_gemv_all_fp8_codes_including_reserved(dtype):
+        # Ordinary quantize() does not produce reserved codes; source equivalence
+        # must cover them too. Pinned fp8.h decodes 0x7f/0xff as +/-480.
+        n, k = 256, 4096
+        raw = mx.broadcast_to(mx.arange(256, dtype=mx.uint8)[:, None], (n, k))
+        w = mx.contiguous(raw).view(mx.uint32)
+        scales = mx.full((n, k // 32), 127, mx.uint8)
+        for rows in (1, 4, 5):
+            x = mx.full((1, rows, k), 1 / 4096, dtype)
+            expected = mx.quantized_matmul(x, w, scales, group_size=32, bits=8, mode='mxfp8')
+            actual = gemv.mxfp8_gemv(x, w, scales)
+            assert mx.all(mx.isfinite(expected)).item()
+>           exact(actual, expected)
+
+tests/test_bit_exact_kernels.py:82: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+a = array([[[0, 0.00195312, 0.00390625, ..., -416, -448, nan]]], dtype=float16)
+b = array([[[0, 0.00195312, 0.00390625, ..., -416, -448, -480]]], dtype=float16)
+
+    def exact(a, b):
+        # Compare representation, not allclose (including signed zero).
+>       np.testing.assert_array_equal(np.asarray(a.view(mx.uint8)), np.asarray(b.view(mx.uint8)))
+E       AssertionError: 
+E       Arrays are not equal
+E       
+E       Mismatched elements: 4 / 512 (0.781%)
+E       Max absolute difference among violations: 128
+E       Max relative difference among violations: 1.
+E        ACTUAL: array([[[  0,   0,   0,  24,   0,  28,   0,  30,   0,  32,   0,  33,
+E                  0,  34,   0,  35,   0,  36, 128,  36,   0,  37, 128,  37,
+E                  0,  38, 128,  38,   0,  39, 128,  39,   0,  40, 128,  40,...
+E        DESIRED: array([[[  0,   0,   0,  24,   0,  28,   0,  30,   0,  32,   0,  33,
+E                  0,  34,   0,  35,   0,  36, 128,  36,   0,  37, 128,  37,
+E                  0,  38, 128,  38,   0,  39, 128,  39,   0,  40, 128,  40,...
+
+tests/test_bit_exact_kernels.py:18: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_bit_exact_kernels.py::test_gemv_all_fp8_codes_including_reserved[dtype0]
+FAILED tests/test_bit_exact_kernels.py::test_gemv_all_fp8_codes_including_reserved[dtype1]
+2 failed, 36 deselected in 0.90s

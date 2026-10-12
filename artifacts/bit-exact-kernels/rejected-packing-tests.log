@@ -1,0 +1,166 @@
+FFF.................................                                     [100%]
+=================================== FAILURES ===================================
+___________________ test_pack_boundaries_and_strides[dtype0] ___________________
+
+dtype = mlx.core.float32
+
+    @pytest.mark.parametrize('dtype', [mx.float32, mx.float16, mx.bfloat16])
+    def test_pack_boundaries_and_strides(dtype):
+        codes = np.asarray(mx.from_fp8(mx.arange(127, dtype=mx.uint8), dtype=mx.float32))
+        mid = (codes[:-1] + codes[1:]) / 2
+        edges = np.concatenate([mid, np.nextafter(mid, -np.inf), np.nextafter(mid, np.inf)])
+        rows = np.zeros((len(edges) * 2 + 2, 32), np.float32)
+        rows[:2 * len(edges), 0] = np.concatenate([edges, -edges])
+        rows[:2 * len(edges), -1] = 448
+        rows[-1] = -0.0
+        exponents = [-10, 0, 6] if dtype == mx.float16 else [-110, -10, 0, 10, 110]
+        for e in exponents:
+            x = mx.array(rows * np.float32(2.0**e)).astype(dtype)
+>           exact(quantization.pack_activation(x), baseline_quant.pack_activation(x))
+
+tests/test_bit_exact_kernels.py:33: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+a = array([[0, 0, 0, ..., 0, 126, 17],
+       [2, 0, 0, ..., 0, 126, 17],
+       [2, 0, 0, ..., 0, 126, 17],
+       ...,
+       [254, 0, 0, ..., 0, 126, 17],
+       [0, 0, 0, ..., 0, 0, 1],
+       [0, 0, 0, ..., 0, 0, 1]], dtype=uint8)
+b = array([[0, 0, 0, ..., 0, 126, 17],
+       [2, 0, 0, ..., 0, 126, 17],
+       [2, 0, 0, ..., 0, 126, 17],
+       ...,
+       [254, 0, 0, ..., 0, 126, 17],
+       [0, 0, 0, ..., 0, 0, 2],
+       [0, 0, 0, ..., 0, 0, 2]], dtype=uint8)
+
+    def exact(a, b):
+        # Compare representation, not allclose (including signed zero).
+>       np.testing.assert_array_equal(np.asarray(a.view(mx.uint8)), np.asarray(b.view(mx.uint8)))
+E       AssertionError: 
+E       Arrays are not equal
+E       
+E       Mismatched elements: 2 / 25014 (0.008%)
+E       Max absolute difference among violations: 1
+E       Max relative difference among violations: 0.5
+E        ACTUAL: array([[  0,   0,   0, ...,   0, 126,  17],
+E              [  2,   0,   0, ...,   0, 126,  17],
+E              [  2,   0,   0, ...,   0, 126,  17],...
+E        DESIRED: array([[  0,   0,   0, ...,   0, 126,  17],
+E              [  2,   0,   0, ...,   0, 126,  17],
+E              [  2,   0,   0, ...,   0, 126,  17],...
+
+tests/test_bit_exact_kernels.py:18: AssertionError
+___________________ test_pack_boundaries_and_strides[dtype1] ___________________
+
+dtype = mlx.core.float16
+
+    @pytest.mark.parametrize('dtype', [mx.float32, mx.float16, mx.bfloat16])
+    def test_pack_boundaries_and_strides(dtype):
+        codes = np.asarray(mx.from_fp8(mx.arange(127, dtype=mx.uint8), dtype=mx.float32))
+        mid = (codes[:-1] + codes[1:]) / 2
+        edges = np.concatenate([mid, np.nextafter(mid, -np.inf), np.nextafter(mid, np.inf)])
+        rows = np.zeros((len(edges) * 2 + 2, 32), np.float32)
+        rows[:2 * len(edges), 0] = np.concatenate([edges, -edges])
+        rows[:2 * len(edges), -1] = 448
+        rows[-1] = -0.0
+        exponents = [-10, 0, 6] if dtype == mx.float16 else [-110, -10, 0, 10, 110]
+        for e in exponents:
+            x = mx.array(rows * np.float32(2.0**e)).astype(dtype)
+>           exact(quantization.pack_activation(x), baseline_quant.pack_activation(x))
+
+tests/test_bit_exact_kernels.py:33: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+a = array([[0, 0, 0, ..., 0, 126, 117],
+       [2, 0, 0, ..., 0, 126, 117],
+       [2, 0, 0, ..., 0, 126, 117],
+       ...,
+       [254, 0, 0, ..., 0, 126, 117],
+       [0, 0, 0, ..., 0, 0, 1],
+       [0, 0, 0, ..., 0, 0, 1]], dtype=uint8)
+b = array([[0, 0, 0, ..., 0, 126, 117],
+       [2, 0, 0, ..., 0, 126, 117],
+       [2, 0, 0, ..., 0, 126, 117],
+       ...,
+       [254, 0, 0, ..., 0, 126, 117],
+       [0, 0, 0, ..., 0, 0, 2],
+       [0, 0, 0, ..., 0, 0, 2]], dtype=uint8)
+
+    def exact(a, b):
+        # Compare representation, not allclose (including signed zero).
+>       np.testing.assert_array_equal(np.asarray(a.view(mx.uint8)), np.asarray(b.view(mx.uint8)))
+E       AssertionError: 
+E       Arrays are not equal
+E       
+E       Mismatched elements: 2 / 25014 (0.008%)
+E       Max absolute difference among violations: 1
+E       Max relative difference among violations: 0.5
+E        ACTUAL: array([[  0,   0,   0, ...,   0, 126, 117],
+E              [  2,   0,   0, ...,   0, 126, 117],
+E              [  2,   0,   0, ...,   0, 126, 117],...
+E        DESIRED: array([[  0,   0,   0, ...,   0, 126, 117],
+E              [  2,   0,   0, ...,   0, 126, 117],
+E              [  2,   0,   0, ...,   0, 126, 117],...
+
+tests/test_bit_exact_kernels.py:18: AssertionError
+___________________ test_pack_boundaries_and_strides[dtype2] ___________________
+
+dtype = mlx.core.bfloat16
+
+    @pytest.mark.parametrize('dtype', [mx.float32, mx.float16, mx.bfloat16])
+    def test_pack_boundaries_and_strides(dtype):
+        codes = np.asarray(mx.from_fp8(mx.arange(127, dtype=mx.uint8), dtype=mx.float32))
+        mid = (codes[:-1] + codes[1:]) / 2
+        edges = np.concatenate([mid, np.nextafter(mid, -np.inf), np.nextafter(mid, np.inf)])
+        rows = np.zeros((len(edges) * 2 + 2, 32), np.float32)
+        rows[:2 * len(edges), 0] = np.concatenate([edges, -edges])
+        rows[:2 * len(edges), -1] = 448
+        rows[-1] = -0.0
+        exponents = [-10, 0, 6] if dtype == mx.float16 else [-110, -10, 0, 10, 110]
+        for e in exponents:
+            x = mx.array(rows * np.float32(2.0**e)).astype(dtype)
+>           exact(quantization.pack_activation(x), baseline_quant.pack_activation(x))
+
+tests/test_bit_exact_kernels.py:33: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+a = array([[0, 0, 0, ..., 0, 126, 17],
+       [2, 0, 0, ..., 0, 126, 17],
+       [2, 0, 0, ..., 0, 126, 17],
+       ...,
+       [254, 0, 0, ..., 0, 126, 17],
+       [0, 0, 0, ..., 0, 0, 1],
+       [0, 0, 0, ..., 0, 0, 1]], dtype=uint8)
+b = array([[0, 0, 0, ..., 0, 126, 17],
+       [2, 0, 0, ..., 0, 126, 17],
+       [2, 0, 0, ..., 0, 126, 17],
+       ...,
+       [254, 0, 0, ..., 0, 126, 17],
+       [0, 0, 0, ..., 0, 0, 2],
+       [0, 0, 0, ..., 0, 0, 2]], dtype=uint8)
+
+    def exact(a, b):
+        # Compare representation, not allclose (including signed zero).
+>       np.testing.assert_array_equal(np.asarray(a.view(mx.uint8)), np.asarray(b.view(mx.uint8)))
+E       AssertionError: 
+E       Arrays are not equal
+E       
+E       Mismatched elements: 2 / 25014 (0.008%)
+E       Max absolute difference among violations: 1
+E       Max relative difference among violations: 0.5
+E        ACTUAL: array([[  0,   0,   0, ...,   0, 126,  17],
+E              [  2,   0,   0, ...,   0, 126,  17],
+E              [  2,   0,   0, ...,   0, 126,  17],...
+E        DESIRED: array([[  0,   0,   0, ...,   0, 126,  17],
+E              [  2,   0,   0, ...,   0, 126,  17],
+E              [  2,   0,   0, ...,   0, 126,  17],...
+
+tests/test_bit_exact_kernels.py:18: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_bit_exact_kernels.py::test_pack_boundaries_and_strides[dtype0]
+FAILED tests/test_bit_exact_kernels.py::test_pack_boundaries_and_strides[dtype1]
+FAILED tests/test_bit_exact_kernels.py::test_pack_boundaries_and_strides[dtype2]
+3 failed, 33 passed in 6.52s

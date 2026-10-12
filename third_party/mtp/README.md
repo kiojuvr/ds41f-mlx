@@ -73,4 +73,23 @@ its chain, external replacement breaks it, and paired cloning intentionally does
 not export it. MLX copy-on-write preserves held snapshots. The extra resident
 packed storage is deliberate, not a zero-memory-cost optimization. See
 [performance evidence](../../docs/performance.md#post-completion-compressed-growth-4365).
-No #4354/#4360/#4363 changes are included.
+The growth overlay itself includes no #4354/#4360/#4363 changes.
+
+## Post-completion bit-exact kernel overlay (#4360)
+
+`bit-exact-kernels.patch` / `bit-exact-kernels.json` select only MXFP8 GEMV and
+short-row lane Sinkhorn from MIT-licensed upstream
+`f0d4cb53271456a474948edcdb38e0d2da347d79`. Apply AFTER #4365 to the same 0.7.0
+source export, for MTP only. Three explicit source identities are inherited at
+package build; the operator's installed payload and OFF sources are untouched.
+The GEMV byte decoder repeats pinned MLX 0.32.2 `fp8.h`, including reserved
+`0x7f/0xff` codes (+/-480); blindly copying upstream would change those values.
+Sinkhorn retains the pinned serial fallback's `ROWS` template/guard.
+
+FP8 packing was rejected: the current compiled graph encodes zero-group scale
+as byte 2, upstream's fused pack as byte 1. Native sparse-attention changes do
+not reach the qualified BF16 rounded path. Long-prefill radix top-k is not
+adopted: it adds grouped score materialization and host evaluation/scheduling,
+not an in-place kernel replacement within the retained P6 topology.
+See [bounded evidence](../../docs/performance.md#post-completion-bit-exact-kernels-4360).
+No #4354/#4363 work or broad upstream upgrade is included.

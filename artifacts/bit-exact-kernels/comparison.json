@@ -1,0 +1,117 @@
+{
+  "greedy_and_default_sampling": [
+    {
+      "label": "seed",
+      "checks": {
+        "canonical_generated": true,
+        "target_offsets": true,
+        "dspark_offsets": true,
+        "canonical_frontier": true,
+        "generation_policy": true,
+        "mtp_counts": true,
+        "output": true,
+        "usage": true,
+        "complete_retained_paired_state": true,
+        "zero_replay_repack": true
+      },
+      "decode_before_s": 2.502232671889942,
+      "decode_after_s": 2.666661915893201,
+      "prefill_before_s": 22.415482832991984,
+      "prefill_after_s": 22.506267375021707
+    },
+    {
+      "label": "hit",
+      "checks": {
+        "canonical_generated": true,
+        "target_offsets": true,
+        "dspark_offsets": true,
+        "canonical_frontier": true,
+        "generation_policy": true,
+        "mtp_counts": true,
+        "output": true,
+        "usage": true,
+        "complete_retained_paired_state": true,
+        "zero_replay_repack": true
+      },
+      "decode_before_s": 2.481264250294771,
+      "decode_after_s": 2.445705542108044,
+      "prefill_before_s": 0.12495487503474578,
+      "prefill_after_s": 0.11730779201025143
+    },
+    {
+      "label": "hit_2",
+      "checks": {
+        "canonical_generated": true,
+        "target_offsets": true,
+        "dspark_offsets": true,
+        "canonical_frontier": true,
+        "generation_policy": true,
+        "mtp_counts": true,
+        "output": true,
+        "usage": true,
+        "complete_retained_paired_state": true,
+        "zero_replay_repack": true
+      },
+      "decode_before_s": 2.482861415366642,
+      "decode_after_s": 2.4561778293573298,
+      "prefill_before_s": 0.11115345900179818,
+      "prefill_after_s": 0.11142066697357222
+    },
+    {
+      "label": "sampling",
+      "checks": {
+        "canonical_generated": true,
+        "target_offsets": true,
+        "dspark_offsets": true,
+        "canonical_frontier": true,
+        "generation_policy": true,
+        "mtp_counts": true,
+        "output": true,
+        "usage": true,
+        "complete_retained_paired_state": true,
+        "zero_replay_repack": true
+      },
+      "decode_before_s": 2.710939285752829,
+      "decode_after_s": 2.6249266232480295,
+      "prefill_before_s": 0.11302587494719774,
+      "prefill_after_s": 0.11165858298772946
+    }
+  ],
+  "warm_decode_mean_s": {
+    "before": 2.4820628328307066,
+    "after": 2.450941685732687,
+    "speed_change_percent": 1.2697628539748873
+  },
+  "completion_tokens_per_decode_second": {
+    "before": 25.78500397067314,
+    "after": 26.1124123729887
+  },
+  "warm_two_token_prefill_s": {
+    "before": 0.11115345900179818,
+    "after": 0.11142066697357222
+  },
+  "peak_memory_bytes": {
+    "before": 320323747776,
+    "after": 320323747776
+  },
+  "real_operand_audit": {
+    "prefill/gemv/1/1280/5120": 80,
+    "prefill/gemv/1/512/5120": 86,
+    "prefill/gemv/1/5120/8192": 80,
+    "prefill/gemv/1/2304/5120": 160,
+    "prefill/gemv/1/5120/15360": 2,
+    "decode/gemv/1/1280/5120": 83,
+    "decode/gemv/1/512/5120": 92,
+    "decode/gemv/1/5120/8192": 83,
+    "decode/gemv/1/2304/5120": 166,
+    "decode/gemv/1/5120/15360": 3,
+    "decode/gemv/4/1280/5120": 120,
+    "decode/gemv/4/512/5120": 120,
+    "decode/gemv/4/32768/1280": 120,
+    "decode/gemv/4/5120/8192": 120,
+    "decode/gemv/4/2304/5120": 240,
+    "decode/gemv/4/5120/2304": 120,
+    "decode/gemv/4/25600/6144": 6,
+    "decode/gemv/4/4096/1280": 24
+  }
+}

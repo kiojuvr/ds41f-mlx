@@ -1,0 +1,24 @@
+{
+  "upstream_commit": "f0d4cb53271456a474948edcdb38e0d2da347d79",
+  "base_commit": "f3ab28c07cd677ca790f2ea5f7607745ccc38a4c",
+  "scope": "MTP only: MXFP8 GEMV and lane Sinkhorn; FP8 packing rejected (zero-group scale bytes differ); no native sparse attention or radix index changes",
+  "patch_sha256": "d984305ea9ecde06770256ab0b3130cccca300816757cfddc2aa93454f33fdce",
+  "files": {
+    "patches/deepseek_v41/gemv.py": {
+      "before": null,
+      "after": "e9c4a2440b6697488c870ca2531cddafdff49d1dc8c7aca53ab86fee8215c7b9"
+    },
+    "patches/deepseek_v41/hyper_connection.py": {
+      "before": "9b1043dc8a85caaa6feebe90ae2f962b544ce709a281cad59358c588cf14086b",
+      "after": "529316b601641df7176a62b1041f687b75dd060cbc2d31f5f01c80bdd0650da9"
+    },
+    "patches/deepseek_v41/quantization.py": {
+      "before": "02e42848d40c8b0ef6a665d6d169abd0df38042b5bba6f55b631df92b5821950",
+      "after": "cafb5b7543b2f1e285f8dafdeae1e584c77d8366961146db67134e55359c7ecc"
+    }
+  },
+  "adaptations": [
+    "retain pinned ROWS template/guard for serial Sinkhorn fallback",
+    "FP8 GEMV decoder repeats pinned MLX 0.32.2 fp8.h, including reserved codes +/-480"
+  ]
+}

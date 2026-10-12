@@ -51,15 +51,17 @@ def main():
     shutil.copy2(ROOT/'release/ds41f-release.json', ROOT/'ds41f_mlx/runtime_release.json')
     payloads = {'ds41f_mlx': inventory(ROOT/'ds41f_mlx'),
                 'omlx': old['omlx'], 'deepseek_recipe': old['recipe']}
-    growth_overlay = None
+    overlays = {}
     if args.profile == 'mtp':
-        growth_overlay = json.loads((ROOT/'third_party/mtp/compressed-growth.json').read_text())
-        if sha(ROOT/'third_party/mtp/compressed-growth.patch') != growth_overlay['patch_sha256']:
-            raise ValueError('compressed growth patch drift')
-        for name, identity in growth_overlay['files'].items():
-            if payloads['omlx'].get(name) != identity['before']:
-                raise ValueError(f'compressed growth inherited base drift: {name}')
-            payloads['omlx'][name] = identity['after']
+        for label in ('compressed-growth', 'bit-exact-kernels'):
+            overlay = json.loads((ROOT/f'third_party/mtp/{label}.json').read_text())
+            if sha(ROOT/f'third_party/mtp/{label}.patch') != overlay['patch_sha256']:
+                raise ValueError(f'{label} patch drift')
+            for name, identity in overlay['files'].items():
+                if payloads['omlx'].get(name) != identity['before']:
+                    raise ValueError(f'{label} inherited base drift: {name}')
+                payloads['omlx'][name] = identity['after']
+            overlays[label] = overlay
     if args.profile == 'standard-off':
         if args.recipe_wheel is None:
             p.error('standard-off needs its built recipe wheel')
@@ -116,7 +118,8 @@ def main():
                     semantic_native=semantic,
                     tokenizer_sha256='81f64d1248a68ce3663e07ab3ee48b851e5df0e32d27cb98e4c9a268151e8d99',
                     checkpoint=old['checkpoint'], checkpoint_metadata=old['checkpoint_metadata'],
-                    provenance=dict(compressed_growth=growth_overlay, source_commit_is_base=True, lockfiles={name: sha(ROOT/'third_party/mtp'/name) for name in ('sources.json', 'requirements.lock', 'requirements-normal-local.lock')},
+                    provenance=dict(compressed_growth=overlays.get('compressed-growth'),
+                                    bit_exact_kernels=overlays.get('bit-exact-kernels'), source_commit_is_base=True, lockfiles={name: sha(ROOT/'third_party/mtp'/name) for name in ('sources.json', 'requirements.lock', 'requirements-normal-local.lock')},
                                     package_build_input_sha256=sha(ROOT/'pyproject.toml'),
                                     source_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
                                     source_payload_sha256=hashlib.sha256(json.dumps(payloads['ds41f_mlx'],sort_keys=True).encode()).hexdigest(),
