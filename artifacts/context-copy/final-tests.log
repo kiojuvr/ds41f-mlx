@@ -1,0 +1,26 @@
+.......F.............................................                    [100%]
+=================================== FAILURES ===================================
+________________________ test_actual_repository_closure ________________________
+
+    def test_actual_repository_closure():
+>       assert checker.check_documentation(checker.ROOT)['reviewed_noncurrent_references'] > 0
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_documentation_authority.py:45: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/check_repository_self_containment.py:164: in check_documentation
+    require(key in registered, f'unreviewed noncurrent dependency/reference: {source} -> {target}')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+ok = False
+message = 'unreviewed noncurrent dependency/reference: docs/performance.md -> ../artifacts/compressed-growth/provenance.json'
+
+    def require(ok: bool, message: str) -> None:
+        if not ok:
+>           raise ValueError(message)
+E           ValueError: unreviewed noncurrent dependency/reference: docs/performance.md -> ../artifacts/compressed-growth/provenance.json
+
+tools/check_repository_self_containment.py:42: ValueError
+=========================== short test summary info ============================
+FAILED tests/test_documentation_authority.py::test_actual_repository_closure
+1 failed, 52 passed in 0.54s

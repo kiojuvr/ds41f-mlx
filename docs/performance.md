@@ -405,3 +405,23 @@ pipeline variant count decreases (CPU pipeline memory itself was not measured).
 is CLOSED.** The operator's installed runtime was not modified. Candidate-only
 package construction/admission was used for acceptance; no ad-hoc reseal or
 in-place operator patch. This remains a post-completion performance improvement.
+
+## Post-completion context-copy evaluation (#4363)
+
+**DEFER; no production adoption or installed update.** The [evaluation and
+boundary report](context-copy-evaluation.md) records a process-local prototype
+against synchronized HEAD `3312ecc` / execution identity `927596fc...`.
+Two real-file rewrite runs improve mean wall **10.343 -> 8.914 s**, decode
+**10.099 -> 8.700 s**, and throughput **38.02 -> 44.14 tokens/s**. Each proposes
+252 copied tokens and accepts 251; native considered/accepted falls
+302/279 -> 36/35. Ordinary explanation proposes no copies, retains native
+382/172, and adds **0.17% decode / 0.33% wall** in this finite probe.
+Greedy output, canonical tokens and retained paired bytes match; replay/repack
+remain zero. This is not end-to-end candidate sampling/cancellation/Vision
+qualification. Upstream's lookup can include an unconsumed pending anchor,
+and skipping copied-cycle observations needs compatibility qualification with
+our acceptance-based target-shape controller. Per-request priming/UID plumbing
+is not applicable to the inspected singleton topology and was not used.
+Runtime remains COMPLETE, MTP default, oMLX 0.7.0. Earlier three performance
+adoptions remain unchanged; the identified backlog remains open for deferred
+#4363. No further upstream optimization was begun.
