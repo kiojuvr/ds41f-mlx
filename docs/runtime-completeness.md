@@ -73,6 +73,9 @@ mechanism in the supported lane follows from those upstream changes.
   its OFF default for OFF/reference callers; production launcher passes the
   selected profile explicitly. `ops` also propagates explicit OFF to the child,
   so the new launcher default cannot accidentally override fallback selection.
+  Inspect/print-config now reports the selected serving profile rather than the
+  legacy singleton identity label. The identity schema stays separate from serving
+  selection; execution identity still changes with the installed code payload.
 - **Ordinary API/clients:** health/models, ordinary Chat JSON/SSE, generic tools,
   generation-policy-v1, Browser/TUI logical continuity and accepted OpenCode
   configuration are connected. Supported client/version evidence remains scoped;
@@ -99,6 +102,24 @@ image/reasoning fields and the obsolete blanket ordinary-image rejection).
 All four reproduce unchanged at parent `fb6f1cd`; they are not production failures
 or introduced by the selector change. They were not used to reopen qualified core
 or weaken current image/reasoning admission.
+
+## Local installed delivery
+
+The stopped MTP environment `/Volumes/SDXC-512/ds41f-mlx_mtp-venv` was updated
+non-editably using the existing package builder and `uv pip --no-deps --reinstall`.
+OFF environment, dependencies and semantic-native payloads were not changed.
+Omitted-profile `ds41f inspect` and `ds41f start --print-config` both PASS installed
+admission and report `mtp-serving-v1`. These do not load/generate with the model;
+retained ordinary/real-image acceptance plus affected selector tests remains the
+execution basis, not a new full-core qualification.
+
+- Package code source: `39ab66029d0fb2f41495abfa07a1277388214024`.
+- Retained wheel: `build/local-default-mtp/ds41f_mlx-0.23.0-py3-none-any.whl`.
+- Wheel SHA256: `836b410381c966e6ed05d9fbf9f7f9886698c7a6b4ebec502ef810ff84ece031`.
+- Installed execution identity: `c5f04433942490f33880dd98255a47b4d3e8a2017c5b073290b98880544c066d`.
+
+Subsequent documentation-only commits do not require rebuilding this payload or
+changing its provenance. Historical receipts/archives were not refreshed.
 
 Progress is the completed default decision and retained correct fallback, not a
 new probe/receipt/test count. Future performance work can be selected independently:

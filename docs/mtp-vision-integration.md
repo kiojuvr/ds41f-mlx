@@ -6,7 +6,9 @@ and delivery gates listed below are not part of this closure.
 
 Scope: checkout production implementation and affected-boundary acceptance, not
 new release admission, Full R1, packaging, a new default, or removal of OFF.
-The installed package remains unchanged. Application image-acquisition UI and the
+At the original Vision delta the installed package remained unchanged; subsequent
+local delivery is recorded in [runtime closure](runtime-completeness.md).
+Application image-acquisition UI and the
 isolated PDF-observation policy are not changed by this API delta.
 
 ## Code audit: pinned oMLX 0.7.0 versus ordinary ds41f

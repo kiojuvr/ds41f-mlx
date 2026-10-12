@@ -137,8 +137,9 @@ records the promotion review; older installed wheels retain their old CLI defaul
 or source-sealed environments must be migrated, not made usable with
 `--no-validate`. The installed-admission migration's affected acceptance covers
 ordinary MTP; historical OFF/R1 semantic evidence is retained, not relabeled as
-new OFF deployment acceptance. This editorial update performs no acceptance or
-package publication.
+new OFF deployment acceptance. Subsequent local MTP default publication and its
+exact payload identity are recorded in the runtime closure; no OFF package was
+republished for that decision.
 
 ## Bounded production acceptance
 

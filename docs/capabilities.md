@@ -111,7 +111,8 @@ eviction or an incompatible historical-image edit rejects without hidden replay
 or re-encoding. Fresh last-message images may prefill on a safe miss. MTP requires
 two terminal text tokens for the existing N-2 prompt capture/P5 handoff.
 See [Vision/MTP seam audit](mtp-vision-integration.md) for delta acceptance scope.
-The installed package is unchanged by this checkout implementation.
+The original Vision delta did not publish an installed package; subsequent local
+MTP delivery is recorded in the [runtime closure](runtime-completeness.md).
 OFF idle persistence and exact fresh-process restore do not re-run old images.
 The original OFF receipt alone is not MTP qualification; the linked MTP delta
 acceptance is separate. Neither is general visual-quality proof, larger-image/
