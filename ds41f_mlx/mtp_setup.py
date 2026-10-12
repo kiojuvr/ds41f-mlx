@@ -46,7 +46,7 @@ def main(argv=None):
         with tarfile.open(archive) as tar:
             tar.extractall(target, filter='data')
     if args.profile == 'mtp-singleton-v1':
-        for label in ('compressed-growth', 'bit-exact-kernels'):
+        for label in ('compressed-growth', 'bit-exact-kernels', 'template-reuse'):
             overlay = json.loads((SOURCES/f'{label}.json').read_text())
             patch = SOURCES/f'{label}.patch'
             if sha(patch) != overlay['patch_sha256']:

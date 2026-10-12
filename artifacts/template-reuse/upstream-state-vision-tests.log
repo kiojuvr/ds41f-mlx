@@ -1,0 +1,55 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.13.15, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Volumes/SDXC-512/ds41f-mlx/artifacts/tmp/m45-deps/omlx
+configfile: pytest.ini (WARNING: ignoring pytest config in pyproject.toml!)
+plugins: anyio-4.15.1
+collected 131 items
+
+../../Volumes/SDXC-512/ds41f-mlx/artifacts/tmp/m45-deps/omlx/tests/test_deepseek_v41_mtp.py . [  0%]
+........................................................................ [ 55%]
+........                                                                 [ 61%]
+../../Volumes/SDXC-512/ds41f-mlx/artifacts/tmp/m45-deps/omlx/tests/test_deepseek_v41.py . [ 62%]
+............................F....................                        [100%]
+
+=================================== FAILURES ===================================
+_____________________ test_real_vlm_engine_text_and_images _____________________
+/Volumes/SDXC-512/ds41f-mlx/artifacts/tmp/m45-deps/omlx/tests/test_deepseek_v41.py:937: in test_real_vlm_engine_text_and_images
+    assert result.returncode == 0, result.stdout + result.stderr
+E   AssertionError: Testing converted checkpoint
+E     Traceback (most recent call last):
+E       File "<string>", line 16, in <module>
+E         asyncio.run(main())
+E         ~~~~~~~~~~~^^^^^^^^
+E       File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 196, in run
+E         return runner.run(main)
+E                ~~~~~~~~~~^^^^^^
+E       File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 119, in run
+E         return self._loop.run_until_complete(task)
+E                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+E       File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 726, in run_until_complete
+E         return future.result()
+E                ~~~~~~~~~~~~~^^
+E       File "<string>", line 14, in main
+E         await asyncio.wait_for(t._run_vlm_engine(root, direct), timeout=60)
+E       File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py", line 507, in wait_for
+E         return await fut
+E                ^^^^^^^^^
+E       File "/Volumes/SDXC-512/ds41f-mlx/artifacts/tmp/m45-deps/omlx/tests/test_deepseek_v41.py", line 776, in _run_vlm_engine
+E         from omlx.engine.vlm import VLMBatchedEngine
+E       File "/private/tmp/ds41f-4354-env/lib/python3.13/site-packages/omlx/engine/__init__.py", line 20, in <module>
+E         from .dflash import DFlashEngine
+E       File "/private/tmp/ds41f-4354-env/lib/python3.13/site-packages/omlx/engine/dflash.py", line 28, in <module>
+E         from ..adapter.output_parser import detect_output_parser
+E       File "/private/tmp/ds41f-4354-env/lib/python3.13/site-packages/omlx/adapter/__init__.py", line 9, in <module>
+E         from .harmony import HarmonyStreamingParser
+E       File "/private/tmp/ds41f-4354-env/lib/python3.13/site-packages/omlx/adapter/harmony.py", line 35, in <module>
+E         from openai_harmony import (
+E         ...<4 lines>...
+E         )
+E     ModuleNotFoundError: No module named 'openai_harmony'
+E     
+E   assert 1 == 0
+E    +  where 1 = CompletedProcess(args=['/private/tmp/ds41f-4354-env/bin/python', '-c', '\nimport asyncio\nimport sys\nfrom pathlib imp...  from openai_harmony import (\n    ...<4 lines>...\n    )\nModuleNotFoundError: No module named \'openai_harmony\'\n').returncode
+=========================== short test summary info ============================
+FAILED ../../Volumes/SDXC-512/ds41f-mlx/artifacts/tmp/m45-deps/omlx/tests/test_deepseek_v41.py::test_real_vlm_engine_text_and_images
+======================== 1 failed, 130 passed in 7.39s =========================

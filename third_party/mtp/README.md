@@ -92,4 +92,26 @@ not reach the qualified BF16 rounded path. Long-prefill radix top-k is not
 adopted: it adds grouped score materialization and host evaluation/scheduling,
 not an in-place kernel replacement within the retained P6 topology.
 See [bounded evidence](../../docs/performance.md#post-completion-bit-exact-kernels-4360).
-No #4354/#4363 work or broad upstream upgrade is included.
+The #4360 overlay itself includes no #4354/#4363 work or broad upstream upgrade.
+
+## Post-completion template identity overlay (#4354)
+
+`template-reuse.patch` / `template-reuse.json` selectively adopt MIT-licensed
+upstream `63917f5f6a9bd429621d8e615ba958269a2fcee6`, AFTER #4365 and #4360.
+Four hash-bound replacements remove token-dependent template counts in current
+index selection/merge, FP8 activation rounding, unpaired SwiGLU, Sinkhorn,
+hyperconnection post and sorted expert combine. Arithmetic/order, existing
+geometry/dispatch, output/state and pinned dependency/native versions stay intact.
+
+#4360's lane Sinkhorn already reads runtime rows but retained an unused caller
+`ROWS` template; this overlay removes it and adapts only the serial fallback's
+guard. GEMV and the rejected packing/radix/attention decisions are untouched.
+Unobserved paired-concat SwiGLU keeps its original generated source and `N`
+specialization; the upstream patch is not applied wholesale. Provisioning and
+package construction verify the full ordered overlay chain. OFF and historical
+execution authorities remain unchanged; no #4363 work is included.
+
+See [finite cold/shape-transition/warm evidence](../../docs/performance.md#post-completion-template-reuse-4354).
+Source adoption is CLOSED, as a post-completion performance improvement. An
+installed update is recommended through normal package construction/admission;
+only isolated acceptance environments were built here, not the operator payload.

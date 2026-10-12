@@ -279,3 +279,129 @@ recommended**, through normal package construction/admission, not an in-place
 patch or broad upstream upgrade. It was not performed here. #4360 is closed;
 subsequent candidates can be evaluated independently. No #4354/#4363 work was
 started.
+
+## Post-completion template reuse (#4354)
+
+**CLOSED: selective adoption** on HEAD
+`9fa18144a317c662c618b3bd227ec17980de0fe0`, independently of the completed
+#4360/#4365 work. Authority: upstream PR #4354, commit
+`63917f5f6a9bd429621d8e615ba958269a2fcee6`. Runtime remains **COMPLETE**, ordinary
+MTP remains default, oMLX remains **0.7.0**. No #4363, arithmetic, dispatch,
+state-owner, generation, Vision, native payload or architecture change.
+
+### Reachability, overlap and exact delta
+
+The [third overlay](../third_party/mtp/template-reuse.json) applies AFTER the
+existing #4365/#4360 overlays, checking every input/output hash. It changes only
+`activation.py`, `hyper_connection.py`, `kernels.py`, `routing.py`: 27 added /
+17 removed dependency lines; about **50 touched production LOC (+11 net)**
+including two provisioning/package-construction files. No base archive, historical
+manifest or OFF numerical source is changed.
+
+| Existing production kernel | Removed template input | Evidence / retained boundary |
+| --- | --- | --- |
+| Index tile selection | `K`, `NT` | Current packed-index path, including decode's growing source/candidate widths and P6 refreshes; integers now in existing metadata array |
+| Sorted top-k merge | `K` | Current bounded merges; metadata gains one integer; `GROUPED`/`FANIN` unchanged |
+| FP8 activation rounding | `N` | Actual target/DSpark projection activations; NOT #4360's rejected FP8 packing; element count from input shape |
+| Unpaired SwiGLU rounding | `N` | Actual routed/shared expert path; count from gate shape; weighting, limit and rounding unchanged |
+| Sinkhorn | `ROWS` | #4360 lane source already reads runtime shape but caller still specialized on UNUSED `ROWS`; remove it and adapt retained serial fallback guard; <=64 lane dispatch unchanged |
+| Hyperconnection post | `ROWS` | Actual prefill/decode mHC; runtime input-shape size, same FMA/order/casts |
+| Sorted expert combine | `ROWS` | Actual BF16 six-expert path; runtime shared shape, same expert summation order |
+| Paired-concat SwiGLU | **Not adopted** | Not observed on admitted checkpoint across production requests; original generated source and `N` specialization retained, independently exact-tested; negative-control churn remains |
+
+#4360 GEMV is untouched. Its rejected packing, omitted attention/radix work and
+pinned decoder adaptation remain unchanged. There is no template-driven array
+allocation, new reduction algorithm, padding, score grouping or host scheduling.
+All changed operations before the original arithmetic are integer count/guard
+calculations only. The same bounded tile, dtype, weighting, block/ratio, iteration,
+fan-in and lane/serial geometry still specializes where necessary.
+
+### Compiler identity and cold/transition evidence
+
+[Receipts and method](../artifacts/template-reuse/provenance.json),
+[comparison](../artifacts/template-reuse/comparison.json) and
+[leaf driver](../tools/bench_template_reuse.py) distinguish three scopes.
+Pinned MLX 0.32.2 source was inspected: generated template name, input dtype and
+scalar/constant (<8 elements)/device address spaces, output dtype and source hash
+feed `CustomKernel` -> `Device::get_library` / `get_kernel` cache keys. Counts are
+**new specialization identities, not intercepted compiler invocations or GPU
+execution counts**. First synchronous evaluation pays any missing library/pipeline
+work; Python tracing reuse alone is not used as proof of GPU reuse.
+
+Cold leaf processes use fresh UUID Metal function names, hence distinct generated
+source/compiler identities, without deleting the operator's compiler cache.
+Before/after/after/before initial probes were followed by two final-candidate
+probes after the unobserved paired branch was omitted. Each shape's first evaluation
+is synchronized, followed by 20 warm evaluations; input creation is outside timers.
+This isolates affected first-use cost, not full-model cold-start latency.
+
+| Representative leaf | Cold first shape, before -> after | Same-process next shape, before -> after |
+| --- | --- | --- |
+| FP8 activation, rows 1 -> 4 | 66.45 -> 67.82 ms | 31.90 -> 0.26 ms |
+| SwiGLU, rows 1 -> 4 | 32.20 -> 34.40 ms | 32.03 -> 0.24 ms |
+| Lane Sinkhorn, rows 1 -> 4 | 33.92 -> 34.43 ms | 33.68 -> 0.24 ms |
+| Serial Sinkhorn, rows 65 -> 129 | 38.72 -> 40.65 ms | 38.63 -> 0.28 ms |
+| Index selection, visible keys 257 -> 258 | 40.81 -> 41.63 ms | 40.39 -> 0.26 ms |
+| Multi-tile index, keys 2049 -> 3073 | 72.67 -> 75.31 ms | 39.93 -> 0.57 ms |
+
+The first genuinely new pipeline is **not eliminated or faster**; repeated shape
+compilation is eliminated within each retained geometry. Leaf specialization
+counts fall **43 -> 17**, including the six unadopted paired negative-control
+variants in both versions (**37 -> 11 selected variants**). HC post/expert combine
+still compile when their small input crosses MLX's constant/device boundary
+(rows 1 -> 4 here); subsequent row changes reuse. Tile-size, fan-in and dispatch
+geometry boundaries also intentionally remain. This is not a promise of one
+pipeline for every possible shape.
+
+### Actual production, warm/resource and semantic acceptance
+
+[Production driver](../artifacts/template-reuse/production-driver.py) executes
+serially in isolated admitted installed environments on Python 3.13.15 / MLX
+0.32.2 / M3 Ultra. One process per version serves real **505 -> 637 -> 1142-token**
+prompts, each with a seed, two paired greedy hits and a seeded ordinary default
+sampling hit (64 output tokens each). Hits restore prompt-minus-two tokens and
+execute genuine two-token suffix/P5/native MTP decode. New affected custom
+identities per seed are **92/48/26 -> 14/1/3**; none on greedy repeats. Actual
+source-count transitions reach top-k and activation/SwiGLU/Sinkhorn/post/combine;
+paired-concat does not appear. Remaining variants reflect bounded geometry or
+input address-space changes, not a missing removal of the selected counts.
+
+Same-process second/third prompt TTFT is **3.650 -> 3.428 s** and
+**6.001 -> 5.857 s** (wall **6.133 -> 5.869 s**, **8.450 -> 8.221 s**).
+These are finite illustrative request timings, not a compilation-only saving:
+request1 loads the real model, and production disk compiler cache is uncontrolled.
+Request1 TTFT **88.444 -> 91.142 s** is recorded but **not attributed** to this
+patch. The unique-name leaf first-use/transition control, not this model-load
+noise, demonstrates the removed stalls.
+
+Six warm greedy hits' mean decode time: **2.40695 -> 2.41188 s (+0.20%)**;
+**26.590 -> 26.535 completion tokens/decode-second**. Effectively unchanged;
+no material warm regression or steady-state speedup is claimed. Leaf warm timings
+are likewise non-material and host-submission dominated. No benchmark campaign
+or long-context extrapolation is justified.
+
+All 12 corresponding production rows have **identical canonical tokens, projected
+responses/usage/protocol, acceptance/depth counters, target/DSpark frontiers and
+retained paired target-slot/DSpark-ring bytes**. Replay/repack remain **zero**.
+80 operator/connected/delivery tests include byte-exact comparisons against the
+CURRENT #4360/#4365 baseline for all affected operators, strides, dtypes, tie
+ordering, block/explicit top-k, lane/serial Sinkhorn, verify/rejection/rollback
+and continuation. 118 serving/prefix/cancellation/Vision/P5/P6/P7 seam tests
+(+26 subtests) and 130 reused upstream official-output/DSpark/rollback/Vision
+small-model tests pass. Two unrelated failures are reproduced on baseline:
+an old cancellation mock lacks `conversation`; an upstream full-VLM-engine
+subprocess requires undeclared `openai_harmony`. Neither is repaired or counted
+as a pass; finite successful Vision coverage includes aligner/processor/loading,
+image identity, paired restore and cancellation seams, not a fresh full-image
+endurance campaign.
+
+Peak MLX allocation is **312,626,664,100 -> 312,626,648,876 bytes**, effectively
+identical; leaf peak **37,388,608 bytes** in both versions. No persistent arrays,
+KV capacity, model memory or score scratch are added. Top-k metadata gains only
+8 bytes per tile invocation / 4 bytes per merge plus normal shape uniforms;
+pipeline variant count decreases (CPU pipeline memory itself was not measured).
+
+**Recommend one normal installed-payload rebuild/update now that source adoption
+is CLOSED.** The operator's installed runtime was not modified. Candidate-only
+package construction/admission was used for acceptance; no ad-hoc reseal or
+in-place operator patch. This remains a post-completion performance improvement.

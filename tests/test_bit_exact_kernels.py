@@ -137,7 +137,7 @@ def test_delivery_overlay_chain(tmp_path):
     assert hashlib.sha256(archive.read_bytes()).hexdigest() == spec['sha256']
     with tarfile.open(archive) as tar:
         tar.extractall(tmp_path, filter='data')
-    for label in ('compressed-growth', 'bit-exact-kernels'):
+    for label in ('compressed-growth', 'bit-exact-kernels', 'template-reuse'):
         overlay = json.loads((sources/f'{label}.json').read_text())
         for name, identity in overlay['files'].items():
             path = tmp_path/'omlx'/name
@@ -149,9 +149,15 @@ def test_delivery_overlay_chain(tmp_path):
 
 def test_delivery_overlay_attribution():
     root = Path(__file__).resolve().parents[1]
-    overlay = json.loads((root/'third_party/mtp/bit-exact-kernels.json').read_text())
-    assert hashlib.sha256((root/'third_party/mtp/bit-exact-kernels.patch').read_bytes()).hexdigest() == overlay['patch_sha256']
+    expected = {}
+    for label in ('bit-exact-kernels', 'template-reuse'):
+        overlay = json.loads((root/f'third_party/mtp/{label}.json').read_text())
+        assert hashlib.sha256((root/f'third_party/mtp/{label}.patch').read_bytes()).hexdigest() == overlay['patch_sha256']
+        for name, identity in overlay['files'].items():
+            if name in expected:
+                assert expected[name] == identity['before']
+            expected[name] = identity['after']
     import omlx
     source = Path(omlx.__file__).parent
-    for name, identity in overlay['files'].items():
-        assert hashlib.sha256((source/name).read_bytes()).hexdigest() == identity['after']
+    for name, digest in expected.items():
+        assert hashlib.sha256((source/name).read_bytes()).hexdigest() == digest

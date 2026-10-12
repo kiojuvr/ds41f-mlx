@@ -1,0 +1,55 @@
+{
+  "status": "CLOSED_PARTIAL_ADOPTION",
+  "classification": "post-completion performance improvement; runtime COMPLETE unchanged",
+  "baseline_commit": "9fa18144a317c662c618b3bd227ec17980de0fe0",
+  "upstream_commit": "63917f5f6a9bd429621d8e615ba958269a2fcee6",
+  "omlx": "0.7.0 + #4365 + partial #4360; no upgrade",
+  "python": "3.13.15",
+  "mlx": "0.32.2",
+  "host": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+  "device": "Apple M3 Ultra / applegpu_g15d",
+  "candidate_wheel_sha256": "eaae47cbe337fb0a094426400e86331d951b70c6aa0e7661d8c16dd517c08b46",
+  "admission": "before/after inspect(config(profile=mtp-serving-v1)) succeeded; isolated installed test environments only",
+  "production_scope": "Serial processes: 505/637/1142-token prompts, each seed + two greedy real prefix hits + seeded default sampling, 64 outputs per request; retained target slots and DSpark ring bytes hashed outside timer",
+  "compiler_identity_evidence": "Source-derived specialization keys (not direct Metal compiler hooks): pinned CustomKernel uses generated name/source hash/options -> Device::get_library/get_kernel. Input scalar/constant(<8)/device and output dtype included. First synchronized GPU execution timed. UUID function names separate generated-source/compiler identities; disk cache not deleted. Production traces have normal names and uncontrolled disk cache, so request1 load is not attributed.",
+  "selected_inputs": [
+    "tile topk K/NT",
+    "merge topk K",
+    "FP8 activation N",
+    "unpaired SwiGLU N",
+    "Sinkhorn ROWS (both unchanged lane and serial dispatches)",
+    "HC post ROWS",
+    "expert combine ROWS"
+  ],
+  "omitted": "paired-concat SwiGLU N: never observed on admitted checkpoint; original paired generated source/template retained; negative control still specializes",
+  "tests": {
+    "operator_connected_delivery": 80,
+    "serving_prefill_vision_seams": 118,
+    "prefill_subtests": 26,
+    "upstream_official_dspark_rollback_vision": 130,
+    "baseline_reproduced_failures": 2
+  },
+  "failures": [
+    "Existing cancellation mock lacks conversation, reproduced on baseline",
+    "Upstream full-vlm engine subprocess imports undeclared openai_harmony, reproduced on baseline; no dependency upgrade; other actual small-model Vision/aligner/processor/load-path tests passed"
+  ],
+  "excluded_attempts": [
+    "Copied baseline pycache invalid after source replacement: admission refused before model execution; removed candidate bytecode only",
+    "Initial template recorder omitted kwargs and incorrectly expected routed int32 inverse eligibility; corrected to uint32 and factory kwargs",
+    "Initial leaf identity recorder omitted MLX constant/device address-space split; excluded receipts retained locally",
+    "Exploratory upstream paired-concat candidate omitted after no production reachability; final candidate rebuilt and all final measurements repeated"
+  ],
+  "production_loc": {
+    "dependency_added": 27,
+    "dependency_removed": 17,
+    "provision_packaging_touched": 4
+  },
+  "deployment": "Operator installed runtime and checked-in historical execution manifest untouched. Candidate-only admission build for acceptance. Recommend one installed rebuild/update after source CLOSED, not performed.",
+  "source_snapshot_sha256": {
+    "mlx-device.cpp": "008b67e599f5508ab670a91f2ea80372162a8767b5226fbbeb9f3d23c85cdb7c",
+    "mlx-fast.cpp": "29b31f96bdb02afdadbde3f2bcf42cf458fc69385a908bbde9fc3a14d23de077",
+    "mlx-custom-kernel.cpp": "92548fba86690996a30725ef96bb8e0e299b69a4559e71c60340e7e11c1cac5e",
+    "mlx-metal-kernel.h": "b64ca4cebcba530d8ec1e0a0f23b57313507a37d05e3615ded3796b563cc83fc",
+    "mlx-metal-kernel.cpp": "b4b36fae88cc3de926b423a82d44ab7de44c00e073c35784ff6b0034433c68b8"
+  }
+}

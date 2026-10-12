@@ -1,0 +1,161 @@
+--- a/omlx/patches/deepseek_v41/activation.py
++++ b/omlx/patches/deepseek_v41/activation.py
+@@ -21,13 +21,15 @@
+ 
+ _SOURCE = r"""
+     const uint i = thread_position_in_grid.x;
+-    const uint n = N;
++    uint n = 1;
++    for (int dim = 0; dim < x_ndim; ++dim) n *= x_shape[dim];
+     const float v = i < n ? float(x[i]) : 0.0f;
+ """ + _ROUND
+ 
+ _TAIL_SOURCE = r"""
+     const uint i = thread_position_in_grid.x;
+-    const uint n = N;
++    uint n = 1;
++    for (int dim = 0; dim < gate_ndim; ++dim) n *= gate_shape[dim];
+     float v = 0.0f;
+     if (i < n) {
+         float g = gate[i], u = up[i];
+@@ -52,7 +54,11 @@
+             name="v41_paired_swiglu_fp8_activation",
+             input_names=["pair", "weights", "limit"],
+             output_names=["y"],
++            # Preserve the unobserved paired-concat specialization unchanged.
+             source=_TAIL_SOURCE.replace(
++                "uint n = 1;\n    for (int dim = 0; dim < gate_ndim; ++dim) n *= gate_shape[dim];",
++                "const uint n = N;",
++            ).replace(
+                 "float g = gate[i], u = up[i];",
+                 "const uint j = (i / D) * (2 * D) + i % D; "
+                 "float g = pair[j], u = pair[j + D];",
+@@ -69,7 +75,7 @@
+ def quantize_fp8_activation(x):
+     return _kernel()(
+         inputs=[x],
+-        template=[("T", x.dtype), ("N", x.size)],
++        template=[("T", x.dtype)],
+         grid=(x.size, 1, 1),
+         threadgroup=(256, 1, 1),
+         output_shapes=[x.shape],
+@@ -87,7 +93,6 @@
+         ],
+         template=[
+             ("T", dtype),
+-            ("N", gate.size),
+             ("D", gate.shape[-1]),
+             ("WEIGHTED", weights is not None),
+         ],
+--- a/omlx/patches/deepseek_v41/hyper_connection.py
++++ b/omlx/patches/deepseek_v41/hyper_connection.py
+@@ -7,7 +7,9 @@
+ 
+ _SOURCE = r"""
+     const uint row = thread_position_in_grid.x;
+-    if (row >= ROWS) return;
++    uint rows = 1;
++    for (int dim = 0; dim + 2 < x_ndim; ++dim) rows *= x_shape[dim];
++    if (row >= rows) return;
+     float values[16];
+     for (int i = 0; i < 16; ++i) values[i] = x[row * 16 + i];
+     for (int iteration = 0; iteration < ITERS; ++iteration) {
+@@ -89,7 +91,7 @@
+     lanes = rows <= 64
+     return _sinkhorn_kernel(lanes)(
+         inputs=[comb, mx.array([eps], mx.float32)],
+-        template=[("ROWS", rows), ("ITERS", max(1, iters))],
++        template=[("ITERS", max(1, iters))],
+         grid=((rows + 1) // 2 * 32 if lanes else rows, 1, 1),
+         threadgroup=(32, 1, 1),
+         output_shapes=[comb.shape],
+@@ -99,7 +101,9 @@
+ 
+ _POST_SOURCE = r"""
+     const uint z = thread_position_in_grid.x;
+-    if (z >= ROWS * D) return;
++    uint size = D;
++    for (int dim = 0; dim + 1 < x_ndim; ++dim) size *= x_shape[dim];
++    if (z >= size) return;
+     const uint row = z / D, d = z % D;
+     float values[4];
+     for (uint i = 0; i < 4; ++i)
+@@ -129,7 +133,7 @@
+     """Mix four residual streams without expanding the residual to FP32."""
+     return _post_kernel()(
+         inputs=[x, residual, post, comb],
+-        template=[("T", x.dtype), ("ROWS", x.size // x.shape[-1]), ("D", x.shape[-1])],
++        template=[("T", x.dtype), ("D", x.shape[-1])],
+         grid=(x.size, 1, 1),
+         threadgroup=(256, 1, 1),
+         output_shapes=[residual.shape],
+--- a/omlx/patches/deepseek_v41/kernels.py
++++ b/omlx/patches/deepseek_v41/kernels.py
+@@ -460,6 +460,8 @@
+     const uint query = threadgroup_position_in_grid.y;
+     const uint tile = threadgroup_position_in_grid.x;
+     const int width = meta[0], base = meta[1];
++    // Runtime counts keep one pipeline as the causal key count grows.
++    const uint K = uint(meta[5]), NT = uint(meta[6]);
+     threadgroup float exchange_values[TILE];
+     threadgroup int exchange_ids[TILE];
+     float values[TILE / THREADS], next_values[TILE / THREADS];
+@@ -544,7 +546,7 @@
+     const uint pos = thread_position_in_grid.x;
+     const uint query = threadgroup_position_in_grid.y;
+     const uint group = threadgroup_position_in_grid.z;
+-    const uint na = meta[0], nb = meta[1], runs = meta[2];
++    const uint na = meta[0], nb = meta[1], runs = meta[2], K = meta[3];
+     const uint groups = GROUPED ? (runs + FANIN - 1) / FANIN : 1;
+     if (GROUPED) {
+         const uint source = pos / K, own = pos % K;
+@@ -628,8 +630,8 @@
+     width = fanin * count if runs else na + nb
+     return tuple(
+         _topk_merge_kernel()(
+-            inputs=[*a, *b, mx.array([na, nb, runs], mx.int32)],
+-            template=[("K", count), ("GROUPED", bool(runs)), ("FANIN", fanin)],
++            inputs=[*a, *b, mx.array([na, nb, runs, count], mx.int32)],
++            template=[("GROUPED", bool(runs)), ("FANIN", fanin)],
+             grid=((width + 255) // 256 * 256, a[0].shape[1], groups),
+             threadgroup=(256, 1, 1),
+             output_shapes=[(1, a[0].shape[1], groups * count)] * 2,
+@@ -688,12 +690,12 @@
+             inputs=[
+                 scores,
+                 ids if ids is not None else mx.zeros((1,), mx.int32),
+-                mx.array([width, offset, score_width, start, ratio], mx.int32),
++                mx.array(
++                    [width, offset, score_width, start, ratio, count, tiles], mx.int32
++                ),
+             ],
+             template=[
+                 ("TILE", tile),
+-                ("K", count),
+-                ("NT", tiles),
+                 ("EXPLICIT", ids is not None),
+                 ("BLOCK", block_size),
+                 ("FORCE", force_latest),
+--- a/omlx/patches/deepseek_v41/routing.py
++++ b/omlx/patches/deepseek_v41/routing.py
+@@ -7,7 +7,7 @@
+ 
+ _SOURCE = r"""
+     const uint i = thread_position_in_grid.x;
+-    if (i >= ROWS * D) return;
++    if (i >= shared_shape[0] * shared_shape[1] * D) return;
+     const uint row = i / D, d = i % D;
+     float sum = 0.0f;
+     for (uint j = 0; j < K; j++) {
+@@ -42,10 +42,9 @@
+     ):
+         return None
+     width = shared.shape[-1]
+-    rows = shared.size // width
+     return _kernel()(
+         inputs=[routed, inverse, shared],
+-        template=[("T", shared.dtype), ("ROWS", rows), ("D", width), ("K", 6)],
++        template=[("T", shared.dtype), ("D", width), ("K", 6)],
+         grid=(shared.size, 1, 1),
+         threadgroup=(256, 1, 1),
+         output_shapes=[shared.shape],

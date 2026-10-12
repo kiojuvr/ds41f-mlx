@@ -1,0 +1,29 @@
+{
+  "upstream_commit": "63917f5f6a9bd429621d8e615ba958269a2fcee6",
+  "base_commit": "9fa18144a317c662c618b3bd227ec17980de0fe0",
+  "scope": "MTP only: runtime counts out of existing template identities; no arithmetic, dispatch or state change",
+  "patch_sha256": "161790597a4c812784c2a0a14238bf918ed6c706798c3e91648db40c7c6d74bc",
+  "files": {
+    "patches/deepseek_v41/activation.py": {
+      "before": "a63e22498e8273551f7188e580383726981ae2eca47d09f0ed119055ceea8271",
+      "after": "bfb7385ee30f2478b4c5b7ccc91ce29cdf0fad2e747a06e144f606f4df3c164d"
+    },
+    "patches/deepseek_v41/hyper_connection.py": {
+      "before": "529316b601641df7176a62b1041f687b75dd060cbc2d31f5f01c80bdd0650da9",
+      "after": "773631aeb89ef646a6a3d68cb039d4d2de967fde36c19e2dd4d33ad545a32d25"
+    },
+    "patches/deepseek_v41/kernels.py": {
+      "before": "9f76d46359282c5fb23b0979dd8e550c9c1e355b9aca46a71fe97c842c376882",
+      "after": "29131233fc78374127f46c704b93cafa57e1ff6e3e055200b202a5e93e4df1ef"
+    },
+    "patches/deepseek_v41/routing.py": {
+      "before": "7bcabb327134ff0f42c9911b8e0c2d6d6f1e41f59740dddabfd010598c77767d",
+      "after": "7b1bce0d9df0549f54c7b32de1eee0f923e665558f0663f0cbb95e61309a06c3"
+    }
+  },
+  "adaptations": [
+    "Apply after #4360; remove unused ROWS from lane Sinkhorn call and use runtime shape in retained serial fallback",
+    "No #4360 packing, radix, attention changes; no #4363",
+    "Paired SwiGLU concat not observed on admitted checkpoint: preserve its original N specialization/source"
+  ]
+}

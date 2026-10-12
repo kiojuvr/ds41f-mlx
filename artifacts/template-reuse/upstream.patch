@@ -1,0 +1,263 @@
+From 63917f5f6a9bd429621d8e615ba958269a2fcee6 Mon Sep 17 00:00:00 2001
+From: Jun Kim <64250138+jundot@users.noreply.github.com>
+Date: Fri, 9 Oct 2026 14:10:06 +0900
+Subject: [PATCH] perf(deepseek_v41): stop recompiling Metal kernels as token
+ counts change (#4354)
+
+---
+ omlx/patches/deepseek_v41/activation.py       | 15 +++--
+ omlx/patches/deepseek_v41/hyper_connection.py | 12 ++--
+ omlx/patches/deepseek_v41/kernels.py          | 14 +++--
+ omlx/patches/deepseek_v41/routing.py          |  5 +-
+ tests/test_deepseek_v41_kernels.py            | 57 +++++++++++++++++++
+ 5 files changed, 84 insertions(+), 19 deletions(-)
+
+diff --git a/omlx/patches/deepseek_v41/activation.py b/omlx/patches/deepseek_v41/activation.py
+index a43860860f..cb1c1bac9b 100644
+--- a/omlx/patches/deepseek_v41/activation.py
++++ b/omlx/patches/deepseek_v41/activation.py
+@@ -21,13 +21,15 @@
+ 
+ _SOURCE = r"""
+     const uint i = thread_position_in_grid.x;
+-    const uint n = N;
++    uint n = 1;
++    for (int dim = 0; dim < x_ndim; ++dim) n *= x_shape[dim];
+     const float v = i < n ? float(x[i]) : 0.0f;
+ """ + _ROUND
+ 
+ _TAIL_SOURCE = r"""
+     const uint i = thread_position_in_grid.x;
+-    const uint n = N;
++    uint n = 1;
++    for (int dim = 0; dim < gate_ndim; ++dim) n *= gate_shape[dim];
+     float v = 0.0f;
+     if (i < n) {
+         float g = gate[i], u = up[i];
+@@ -52,7 +54,10 @@ def _kernel(tail=False, paired=False):
+             name="v41_paired_swiglu_fp8_activation",
+             input_names=["pair", "weights", "limit"],
+             output_names=["y"],
+-            source=_TAIL_SOURCE.replace(
++            source=_TAIL_SOURCE.replace("gate_ndim", "pair_ndim")
++            .replace("gate_shape", "pair_shape")
++            .replace("float v = 0.0f;", "n /= 2;\n    float v = 0.0f;")
++            .replace(
+                 "float g = gate[i], u = up[i];",
+                 "const uint j = (i / D) * (2 * D) + i % D; "
+                 "float g = pair[j], u = pair[j + D];",
+@@ -69,7 +74,7 @@ def _kernel(tail=False, paired=False):
+ def quantize_fp8_activation(x):
+     return _kernel()(
+         inputs=[x],
+-        template=[("T", x.dtype), ("N", x.size)],
++        template=[("T", x.dtype)],
+         grid=(x.size, 1, 1),
+         threadgroup=(256, 1, 1),
+         output_shapes=[x.shape],
+@@ -87,7 +92,6 @@ def quantize_swiglu_activation(gate, up, weights, dtype, limit):
+         ],
+         template=[
+             ("T", dtype),
+-            ("N", gate.size),
+             ("D", gate.shape[-1]),
+             ("WEIGHTED", weights is not None),
+         ],
+@@ -110,7 +114,6 @@ def quantize_paired_swiglu_activation(pair, weights, dtype, limit):
+         ],
+         template=[
+             ("T", dtype),
+-            ("N", size),
+             ("D", shape[-1]),
+             ("WEIGHTED", weights is not None),
+         ],
+diff --git a/omlx/patches/deepseek_v41/hyper_connection.py b/omlx/patches/deepseek_v41/hyper_connection.py
+index 14ae92c179..102589df01 100644
+--- a/omlx/patches/deepseek_v41/hyper_connection.py
++++ b/omlx/patches/deepseek_v41/hyper_connection.py
+@@ -7,7 +7,9 @@
+ 
+ _SOURCE = r"""
+     const uint row = thread_position_in_grid.x;
+-    if (row >= ROWS) return;
++    uint rows = 1;
++    for (int dim = 0; dim + 2 < x_ndim; ++dim) rows *= x_shape[dim];
++    if (row >= rows) return;
+     float values[16];
+     for (int i = 0; i < 16; ++i) values[i] = x[row * 16 + i];
+     for (int iteration = 0; iteration < ITERS; ++iteration) {
+@@ -61,7 +63,7 @@ def sinkhorn(comb, eps, iters):
+     rows = comb.size // 16
+     return _sinkhorn_kernel()(
+         inputs=[comb, mx.array([eps], mx.float32)],
+-        template=[("ROWS", rows), ("ITERS", max(1, iters))],
++        template=[("ITERS", max(1, iters))],
+         grid=(rows, 1, 1),
+         threadgroup=(32, 1, 1),
+         output_shapes=[comb.shape],
+@@ -71,7 +73,9 @@ def sinkhorn(comb, eps, iters):
+ 
+ _POST_SOURCE = r"""
+     const uint z = thread_position_in_grid.x;
+-    if (z >= ROWS * D) return;
++    uint size = D;
++    for (int dim = 0; dim + 1 < x_ndim; ++dim) size *= x_shape[dim];
++    if (z >= size) return;
+     const uint row = z / D, d = z % D;
+     float values[4];
+     for (uint i = 0; i < 4; ++i)
+@@ -101,7 +105,7 @@ def fused_hc_post(x, residual, post, comb):
+     """Mix four residual streams without expanding the residual to FP32."""
+     return _post_kernel()(
+         inputs=[x, residual, post, comb],
+-        template=[("T", x.dtype), ("ROWS", x.size // x.shape[-1]), ("D", x.shape[-1])],
++        template=[("T", x.dtype), ("D", x.shape[-1])],
+         grid=(x.size, 1, 1),
+         threadgroup=(256, 1, 1),
+         output_shapes=[residual.shape],
+diff --git a/omlx/patches/deepseek_v41/kernels.py b/omlx/patches/deepseek_v41/kernels.py
+index 66da845c3a..1b54171240 100644
+--- a/omlx/patches/deepseek_v41/kernels.py
++++ b/omlx/patches/deepseek_v41/kernels.py
+@@ -460,6 +460,8 @@ def packed_index_scores(
+     const uint query = threadgroup_position_in_grid.y;
+     const uint tile = threadgroup_position_in_grid.x;
+     const int width = meta[0], base = meta[1];
++    // Runtime counts keep one pipeline as the causal key count grows.
++    const uint K = uint(meta[5]), NT = uint(meta[6]);
+     threadgroup float exchange_values[TILE];
+     threadgroup int exchange_ids[TILE];
+     float values[TILE / THREADS], next_values[TILE / THREADS];
+@@ -544,7 +546,7 @@ def _topk_kernel():
+     const uint pos = thread_position_in_grid.x;
+     const uint query = threadgroup_position_in_grid.y;
+     const uint group = threadgroup_position_in_grid.z;
+-    const uint na = meta[0], nb = meta[1], runs = meta[2];
++    const uint na = meta[0], nb = meta[1], runs = meta[2], K = meta[3];
+     const uint groups = GROUPED ? (runs + FANIN - 1) / FANIN : 1;
+     if (GROUPED) {
+         const uint source = pos / K, own = pos % K;
+@@ -628,8 +630,8 @@ def _merge_topk(a, b, count, *, runs=0):
+     width = fanin * count if runs else na + nb
+     return tuple(
+         _topk_merge_kernel()(
+-            inputs=[*a, *b, mx.array([na, nb, runs], mx.int32)],
+-            template=[("K", count), ("GROUPED", bool(runs)), ("FANIN", fanin)],
++            inputs=[*a, *b, mx.array([na, nb, runs, count], mx.int32)],
++            template=[("GROUPED", bool(runs)), ("FANIN", fanin)],
+             grid=((width + 255) // 256 * 256, a[0].shape[1], groups),
+             threadgroup=(256, 1, 1),
+             output_shapes=[(1, a[0].shape[1], groups * count)] * 2,
+@@ -688,12 +690,12 @@ def _tile_topk(
+             inputs=[
+                 scores,
+                 ids if ids is not None else mx.zeros((1,), mx.int32),
+-                mx.array([width, offset, score_width, start, ratio], mx.int32),
++                mx.array(
++                    [width, offset, score_width, start, ratio, count, tiles], mx.int32
++                ),
+             ],
+             template=[
+                 ("TILE", tile),
+-                ("K", count),
+-                ("NT", tiles),
+                 ("EXPLICIT", ids is not None),
+                 ("BLOCK", block_size),
+                 ("FORCE", force_latest),
+diff --git a/omlx/patches/deepseek_v41/routing.py b/omlx/patches/deepseek_v41/routing.py
+index 36bba7686b..50a41d8394 100644
+--- a/omlx/patches/deepseek_v41/routing.py
++++ b/omlx/patches/deepseek_v41/routing.py
+@@ -7,7 +7,7 @@
+ 
+ _SOURCE = r"""
+     const uint i = thread_position_in_grid.x;
+-    if (i >= ROWS * D) return;
++    if (i >= shared_shape[0] * shared_shape[1] * D) return;
+     const uint row = i / D, d = i % D;
+     float sum = 0.0f;
+     for (uint j = 0; j < K; j++) {
+@@ -42,10 +42,9 @@ def combine_sorted_experts(routed, inverse, shared):
+     ):
+         return None
+     width = shared.shape[-1]
+-    rows = shared.size // width
+     return _kernel()(
+         inputs=[routed, inverse, shared],
+-        template=[("T", shared.dtype), ("ROWS", rows), ("D", width), ("K", 6)],
++        template=[("T", shared.dtype), ("D", width), ("K", 6)],
+         grid=(shared.size, 1, 1),
+         threadgroup=(256, 1, 1),
+         output_shapes=[shared.shape],
+diff --git a/tests/test_deepseek_v41_kernels.py b/tests/test_deepseek_v41_kernels.py
+index b27dbfbc86..ff4ad8744d 100644
+--- a/tests/test_deepseek_v41_kernels.py
++++ b/tests/test_deepseek_v41_kernels.py
+@@ -4,6 +4,7 @@
+ import numpy as np
+ import pytest
+ 
++from omlx.patches.deepseek_v41 import activation, hyper_connection, kernels, routing
+ from omlx.patches.deepseek_v41.kernels import (
+     packed_index_scores,
+     packed_sparse_attention,
+@@ -446,3 +447,59 @@ def test_sinkhorn_fused_exact(length, iters, eps):
+     np.testing.assert_array_equal(
+         sinkhorn(zeros, eps, iters), sinkhorn_reference(zeros, eps, iters)
+     )
++
++
++def test_kernel_templates_do_not_depend_on_token_counts(monkeypatch):
++    """Each distinct template compiles a new Metal pipeline. Selection counts,
++    tile counts and row counts change with prompt length and causal key count,
++    so they must reach the kernels as runtime data."""
++    templates = {}
++
++    def record(module, factory):
++        make = getattr(module, factory)
++
++        def wrapped(*args, **kwargs):
++            kernel = make(*args, **kwargs)
++            key = (module.__name__, factory, args, tuple(sorted(kwargs.items())))
++
++            def call(**call_kwargs):
++                templates.setdefault(key, set()).add(tuple(call_kwargs["template"]))
++                return kernel(**call_kwargs)
++
++            return call
++
++        monkeypatch.setattr(module, factory, wrapped)
++
++    record(kernels, "_topk_kernel")
++    record(kernels, "_topk_merge_kernel")
++    record(activation, "_kernel")
++    record(hyper_connection, "_sinkhorn_kernel")
++    record(hyper_connection, "_post_kernel")
++    record(routing, "_kernel")
++
++    mx.random.seed(509)
++    for count in (100, 101, 129):
++        # Two 1024-wide tiles: one tile sort, then one grouped merge.
++        values, ids = kernels._tile_topk(mx.random.normal((1, 2, 1500)), count)
++        assert values.shape == ids.shape == (1, 2, count)
++    for rows in (1, 3, 7):
++        x = mx.random.normal((1, rows, 128)).astype(mx.bfloat16)
++        activation.quantize_fp8_activation(x)
++        activation.quantize_swiglu_activation(x, x, None, mx.bfloat16, 0.0)
++        activation.quantize_paired_swiglu_activation(
++            mx.concatenate([x, x], -1), None, mx.bfloat16, 0.0
++        )
++        comb = mx.softmax(mx.random.normal((1, rows, 4, 4)), -1)
++        hyper_connection.sinkhorn(comb, 1e-6, 20)
++        hyper_connection.fused_hc_post(
++            x,
++            mx.random.normal((1, rows, 4, 128)).astype(mx.bfloat16),
++            mx.ones((1, rows, 4)),
++            comb,
++        )
++        routed = mx.random.normal((6 * rows, 1, 128)).astype(mx.bfloat16)
++        inverse = mx.arange(6 * rows, dtype=mx.uint32)
++        assert routing.combine_sorted_experts(routed, inverse, x) is not None
++
++    assert len(templates) == 8
++    assert {key: len(seen) for key, seen in templates.items() if len(seen) != 1} == {}
