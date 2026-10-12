@@ -2,7 +2,8 @@
 
 This page owns **local service control, content-free logs/snapshots and metric
 interpretation**. [Operations](operations.md) owns installed environment/startup;
-[operator Chat](operator-chat.md) owns the independent composer/session controls.
+[operator console](operator-chat.md) owns current keys/settings. Web Chat is the sole
+conversation frontend; TUI has no editor or session ownership.
 Observability is disposable projection, never execution, cache, settlement or
 application-history authority. Historical acceptance below is not current HEAD
 qualification or a deployment SLA.
@@ -14,11 +15,11 @@ The stdlib-curses terminal is optional-at-import; non-TTY/missing curses gives a
 actionable error without breaking headless start/inspect/accept. No UI framework
 or new model executor is added.
 
-**S** Start, **X** graceful Stop, **R** Restart, **C** Chat,
-**V** Chat Server Stop, **Q** Quit, **D** Diagnostics, **?** Help.
+**R** Start/Stop LLM Runtime, **W** Start/Stop Web Chat, **O** Open Web Chat,
+**S** Settings, **Q** Quit TUI, **D** Diagnostics, **?** Help.
 Dashboard arrows/PgUp/PgDn scroll the log pane; **L/End** returns to latest.
 Metrics stay fixed and footer remains visible. Scroll-up pauses at a sequence
-anchor; expired records show a gap. Chat has its own key mapping.
+anchor; expired records show a gap. No F-key or Chat Ctrl-key mapping remains.
 
 NOW/observed phase/elapsed/queues lead, then performance/context and last-settled
 integrity. Phase rails show only observed completed/current phases, not a presumed
@@ -38,29 +39,29 @@ WAITING FOR CLIENT means idle after last `tool_calls`, not proof of tool activit
 ```text
 TUI -> canonical ops start --profile mtp-serving-v1 -> runtime/backend
                                                    -> loopback control
-    -> independent existing Chat Server launcher when requested
+    -> independent Web Chat launcher when requested
 ```
 
-Dashboard Start/Restart selects `mtp-serving-v1`, not a profile picker. Explicit
+Dashboard Runtime Start selects `mtp-serving-v1`, not a profile picker. Explicit
 OFF startup remains in operations; observing a ready OFF service does not change
 that launcher selection.
 
-Explicit TUI Chat Start (F2) defaults to `0.0.0.0:8080` with
+TUI Web Chat Start (W) defaults to `0.0.0.0:8080` with
 `--allow-private-lan`; `DS41F_CHAT_BIND=loopback` selects localhost-only, while
 `lan` is the default. `DS41F_WEB_PORT` selects the Chat port. This does not change
-Runtime bind or direct CLI Web defaults. Chat restart preserves the reported
-bind, LAN permission, port and runtime URL; HTTPS restart is refused before
-shutdown rather than silently downgrading to HTTP without certificate options.
+LLM Runtime bind or direct CLI Web defaults. S Settings changes the next Web
+launch's bind/port; running services are not reconfigured. TUI does not implement
+TLS restart or certificate management; use the explicit Web CLI for HTTPS.
 The tall dashboard and Diagnostics show Chat Listen, Local and best-effort IPv4
 LAN connection URLs, plus `LAN access enabled — trusted local network only`.
-`O` opens the local Browser URL; `V` stops Chat Server. LAN discovery uses hostname
+`O` requests the local browser URL nonblocking via macOS open; `W` stops Web Chat. LAN discovery uses hostname
 addresses and a local UDP route selection without transmitting packets; an
 unavailable address is reported, not fabricated. It is not exhaustive interface
 or reachability qualification. TLS and authentication are not added by LAN mode.
 
 Child processes use a new process session, no inherited terminal and canonical
 entry points. TUI owns no stdout/stderr pipe; Quit/crash does not signal services.
-Chat Quit's bounded own-session retirement is separate. Reopen discovers control
+TUI owns no conversation to retire on Quit. Reopen discovers control
 state/recent runtime logs, not saved PIDs or execution ownership.
 
 Kernel listening sockets are singleton authority: runtime `127.0.0.1:18441`,
@@ -77,9 +78,9 @@ nothing. Trusted-LAN runtime bind does not expose remote operator administration
 
 Shutdown sets existing uvicorn `should_exit` and drains shielded retirement.
 Control keeps final log tail for 600ms **after execution retirement**, without
-consumer ACK or delaying settlement. Stop never force-kills. Restart waits for
-control disappearance, retaining discovered host/port; after 120s it refuses
-another Start rather than launch a competing model. Loading remains canonical
+consumer ACK or delaying settlement. Stop never force-kills. Stop waits for control disappearance; after 120s it
+reports pending shutdown rather than launching a competing process. A later
+Start uses explicit next-launch settings. Loading remains canonical
 startup authority, not telemetry; historical load times are not an SLA.
 
 ## Runtime logs: `ds41f.logs.v1`
@@ -109,7 +110,7 @@ tools, token IDs and source/file contents are not newly logged there.
 
 Headless output preserves original diagnostics/access/tracebacks with the same
 local-time stamps at the start of the message body, after severity/component;
-runtime sequence numbers appear at the end of safe log lines. Chat Server keeps
+runtime sequence numbers appear at the end of safe log lines. Web Chat keeps
 Uvicorn's native level, request-line and HTTP-status colours, with the timestamp
 after the level prefix: `INFO:     2026-10-13 00:02:17.381 JST  …`.
 Colours are enabled for the respective terminal stream, not redirected files.
@@ -117,7 +118,7 @@ TUI uses its native severity colours, never embedded ANSI in the log API.
 Traceback continuation lines remain standard Python tracebacks.
 Installed TUI packages must also be updated through the normal package delivery
 workflow: restarting an older installed wheel does not pick up checkout formatting
-changes, even if Chat Server is launched from the checkout.
+changes, even if Web Chat is launched from the checkout.
 A daemon writer uses a bounded 512-item queue and 16 KiB/item ceiling; slow/broken
 stderr cannot block inference and may drop output. The independent safe ring is
 not that queue. Exit drains for at most 200ms; `--print-config` stays JSON.

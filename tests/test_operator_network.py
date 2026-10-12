@@ -1,4 +1,4 @@
-"""TUI Chat LAN launch is explicit, scoped and has usable connection URLs."""
+"""Operator Web Chat LAN launch defaults and explicit endpoint configuration."""
 import pytest
 from ds41f_mlx import operator_tui as tui, operator_network as network
 from ds41f_mlx.operator_dashboard import render_screen, Viewport
@@ -19,7 +19,7 @@ def test_chat_launch_bind(monkeypatch, bind, host, lan):
     assert ('--allow-private-lan' in args) is lan
 
 
-def test_restart_preserves_endpoint_and_runtime(monkeypatch):
+def test_explicit_endpoint_preserves_network_and_runtime(monkeypatch):
     calls = []
     monkeypatch.setenv('DS41F_CHAT_BIND', 'lan')
     monkeypatch.setattr(tui.subprocess, 'Popen', lambda args, **kw: calls.append(args))
@@ -36,6 +36,23 @@ def test_restart_preserves_endpoint_and_runtime(monkeypatch):
     with pytest.raises(ValueError, match='HTTP downgrade'):
         tui.launch(True, dict(host='0.0.0.0', port=8080, scheme='https'))
     assert len(calls) == 3
+
+
+def test_runtime_launch_uses_admitted_interpreter_not_application_environment(monkeypatch):
+    monkeypatch.setenv('DS41F_OPERATOR_RUNTIME_PYTHON', '/installed/bin/python')
+    monkeypatch.setenv('DS41F_CHAT_BIND', 'lan')
+    monkeypatch.setenv('DS41F_WEB_PORT', '8090')
+    monkeypatch.setenv('DS41F_EXA_API_KEY', 'application-only-secret')
+    monkeypatch.setenv('DS41F_DOCUMENT_VISION_URL', 'http://127.0.0.1:8001')
+    monkeypatch.setenv('DS41F_CHECKPOINT', '/official/checkpoint')
+    calls = []
+    monkeypatch.setattr(tui.subprocess, 'Popen', lambda args, **kwargs: calls.append((args, kwargs)))
+    tui.launch()
+    args, options = calls[0]
+    assert args[:4] == ['/installed/bin/python', '-I', '-m', 'ds41f_mlx.ops']
+    assert options['env']['DS41F_CHECKPOINT'] == '/official/checkpoint'
+    assert not any(key in options['env'] for key in ('DS41F_CHAT_BIND', 'DS41F_WEB_PORT', 'DS41F_EXA_API_KEY', 'DS41F_DOCUMENT_VISION_URL', 'DS41F_OPERATOR_RUNTIME_PYTHON'))
+    assert options['start_new_session']
 
 
 def test_connection_urls_and_dashboard(monkeypatch):

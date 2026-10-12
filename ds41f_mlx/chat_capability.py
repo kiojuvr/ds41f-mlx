@@ -56,35 +56,3 @@ def validate(contract, values):
                 raise ValueError(name + ' out of runtime range')
     if values['reasoning_effort'] not in contract['reasoning']['efforts']:
         raise ValueError('Unsupported reasoning effort')
-
-
-class Settings:
-    def __init__(self, runtime, previous=None):
-        self.defaults = negotiate(runtime)
-        self.contract = deepcopy(runtime['generation_policy'])
-        self.values = deepcopy(previous or self.defaults)
-        validate(self.contract, self.values)
-        self.reasoning = None
-        self.workflow = None
-
-    def change(self, name, value):
-        if name not in PARAMETERS + ('reasoning_effort',):
-            raise ValueError('Unsupported generation setting: ' + name)
-        if name == 'reasoning_effort' and self.reasoning is not None and value != self.reasoning:
-            raise ValueError('Reasoning is session-owned. Ctrl-N: new chat to change it.')
-        candidate = self.values | {name: value}
-        validate(self.contract, candidate)
-        self.values = candidate
-
-    def begin_turn(self):
-        self.workflow = deepcopy(self.values)
-
-    def request(self):
-        values = deepcopy(self.workflow or self.values)
-        if self.reasoning is not None:
-            values['reasoning_effort'] = self.reasoning
-        return values
-
-    def freeze_reasoning(self):
-        # Submission with unknown outcome must stay fenced until retirement.
-        self.reasoning = self.request()['reasoning_effort']

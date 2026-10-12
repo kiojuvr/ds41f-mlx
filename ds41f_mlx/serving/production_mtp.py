@@ -6,7 +6,7 @@ settlement replaces generic prefill/parser/backend-finish cache publication.
 """
 import asyncio
 import logging
-from time import perf_counter
+from time import perf_counter, monotonic
 from uuid import uuid4
 
 from anyio import CancelScope
@@ -32,8 +32,11 @@ class ProductionScheduler(Scheduler):
                                          prefill_step_size=2048, decode_fairness=False,
                                          model_name=backend.dependency_identity), generation_stream)
         self.backend = backend
+        from .production_sessions import ProductionSessions
+        # One pin per retained logical conversation plus two publication slots.
+        # All pairs remain in the SAME upstream refcounted authority.
         self.checkpoints = PairedCheckpointAuthority(backend.dependency_identity, mx,
-                                                     context_tokens=backend.context_tokens)
+            retained_checkpoints=ProductionSessions.MAX_LIVE+2, context_tokens=backend.context_tokens)
         self.paged_cache_manager = self.checkpoints.paged
         self._completed = []
         self.last_settlement = None
@@ -273,6 +276,7 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
         self._deliveries = {}
         self._settled = {}
         self._pump_task = None
+        self._retirement_task = None
         self.serving_traces = self.session_traces
         from .production_sessions import ProductionSessions
         self.production_sessions = ProductionSessions(self)
@@ -349,6 +353,8 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
         request.trace['generation_policy'] = policy.to_json()
         request.trace['diagnostic_id'] = getattr(prepared, 'diagnostic_id', None)
         self.scheduler.add_request(request)
+        # Projection only: logical requests wait on the existing Scheduler lane.
+        phase(self, request.trace, 'QUEUED')
 
     async def _pump(self):
         try:
@@ -362,6 +368,7 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
                         for rec in self.sessions.values():
                             if rec.active_request_id == output.request_id:
                                 rec.active_request_id = None
+                                rec.touched_at = monotonic()
                         event = self._settled.get(output.request_id)
                         if event is not None:
                             event.set()
@@ -484,7 +491,28 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
             self._deliveries.pop(rid, None)
             self._settled.pop(rid, None)
 
+    def start_idle_retirement(self):
+        if self._retirement_task is None:
+            self._retirement_task = asyncio.create_task(self._retire_idle())
+
+    async def _retire_idle(self):
+        while True:
+            await asyncio.sleep(30)
+            await self.retire_idle_sessions()
+
+    async def retire_idle_sessions(self):
+        for sid in self.production_sessions.expired():
+            if sid not in self.production_sessions.expired():
+                continue  # A heartbeat may have arrived while another pin released.
+            # Expiry observes logical inactivity only. Never cancel active/queued
+            # work or evict a pin while it owns a canonical settlement.
+            try:
+                await self.close_stateful_session(sid)
+            except (KeyError, RuntimeError):
+                pass
+
     async def create_stateful_session(self, *, session_id=None):
+        await self.retire_idle_sessions()
         return self.production_sessions.create(session_id)
 
     def get_stateful_session(self, session_id):
@@ -548,6 +576,10 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
         raise RuntimeError('standard-OFF execution is not a production capability')
 
     async def shutdown_serving(self):
+        if self._retirement_task is not None:
+            self._retirement_task.cancel()
+            await asyncio.gather(self._retirement_task, return_exceptions=True)
+            self._retirement_task = None
         with CancelScope(shield=True):
             for rid in list(self._deliveries):
                 await self._cancel(rid)

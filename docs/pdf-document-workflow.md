@@ -101,19 +101,18 @@ expensive observations are best requested sequentially, one page per model turn.
 
 ## Real application acceptance
 
-See [PDF acceptance](pdf-document-acceptance.md). Reproducible collectors:
+See [PDF acceptance](pdf-document-acceptance.md) for unchanged historical source
+scope and original receipts. The old Python Chat frontend/qualification workflow
+has been removed; `tools/qualify_pdf_documents.py` retains only shared PDF fixtures.
+Current real-browser/operator multi-conversation acceptance includes a retained
+PDF tool loop:
 
 ```sh
-PYTHONPATH=. .venv/bin/python tools/qualify_pdf_documents.py \
-  --app http://127.0.0.1:8080 --phase text --public-paper
-# On a ready, existing standard-OFF Vision runtime:
-PYTHONPATH=. .venv/bin/python tools/qualify_pdf_documents.py \
-  --app http://127.0.0.1:8080 --phase scan --paper-artifact <retained-paper-id>
-# Dedicated headless Chrome/CDP, no npm/build framework:
-PYTHONPATH=. .venv/bin/python tools/qualify_pdf_browser.py \
-  --app http://127.0.0.1:8080 --chrome http://127.0.0.1:9223
+.venv/bin/python -m tools.accept_operator_console \
+  --phase full --output artifacts/operator-console/real-model
 ```
 
-Collectors save full local transcripts/receipts under ignored
-`artifacts/pdf-documents/`. They do not retry uncertain POSTs. This is document
-application acceptance, not runtime requalification or release promotion.
+This requires stopped services and an explicitly configured official checkpoint;
+it uses current-source UI and an admitted installed runtime. No uncertain POST is
+retried. It is product/application acceptance, not runtime requalification,
+Vision quality requalification or release promotion.

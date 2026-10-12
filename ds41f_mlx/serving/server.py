@@ -224,6 +224,10 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
     app.state.backend = backend
     app.state.recipe_tokenizer = tokenizer
     if ordinary_mtp:
+        @app.on_event('startup')
+        async def start_ordinary_retirement():
+            backend.start_idle_retirement()
+
         @app.on_event('shutdown')
         async def shutdown_ordinary():
             await backend.shutdown_serving()
@@ -315,7 +319,9 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
                          active_requests=0 if scheduler is None else len(scheduler.running),
                          prefix_cache=None if scheduler is None else scheduler.checkpoints.paged.get_stats().to_dict(),
                          capabilities={'stateful_chat': 'production-sessions-v1', 'persist_restore': False,
-                                       'max_live_sessions': 1},
+                                       'max_live_sessions': backend.production_sessions.MAX_LIVE,
+                                       'max_active_generations': 1,
+                                       'idle_retirement_seconds': backend.production_sessions.IDLE_SECONDS},
                          generation_policy=generation_capabilities,
                          chat_defaults=dict(generation_capabilities['defaults'], reasoning_effort='none', max_tokens='auto'))
         return JSONResponse(status_code=code, content=state)

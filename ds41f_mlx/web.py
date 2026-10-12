@@ -11,6 +11,7 @@ import copy
 import json
 import ipaddress
 import os
+from time import monotonic
 from pathlib import Path
 from urllib.parse import quote
 
@@ -68,6 +69,10 @@ def create_app(*, runtime_base_url: str | None = None, allow_private_lan: bool =
     # Bounded living-client tool effect ledger, NOT model/session authority.
     effects = {}
     effect_locks = {}
+    owned = {}  # Runtime correlations, not ordinary history or an archive.
+    app.state.owned_conversations = owned
+    retirement_task = None
+    idle_seconds = 600
     if not allow_private_lan:
         app.add_middleware(TrustedHostMiddleware, allowed_hosts=['127.0.0.1', 'localhost', '[::1]'])
 
@@ -199,10 +204,77 @@ def create_app(*, runtime_base_url: str | None = None, allow_private_lan: bool =
         artifact = await call(tools.tools['document_pdf'].store.get, identity, 'pdf')
         return Response(artifact.resource.data, media_type='application/pdf', headers={'Content-Disposition': 'attachment; filename="original.pdf"'})
 
+    async def retire_owned(force=False):
+        for sid, touched in list(owned.items()):
+            if owned.get(sid) != touched:
+                continue  # Renewed while another retirement awaited runtime.
+            if not force and monotonic()-touched < idle_seconds:
+                continue
+            if effect_locks.get(sid) and effect_locks[sid].locked():
+                continue  # In-flight effects must finish before ledger retirement.
+            try:
+                await call(runtime.close_session, sid)
+            except RuntimeHTTPError as exc:
+                if exc.status != 404:
+                    continue  # Busy/uncertain retirement is not resource release.
+            owned.pop(sid, None)
+            effects.pop(sid, None)
+            effect_locks.pop(sid, None)
+
+    app.state.retire_owned = retire_owned
+
+    @app.on_event('startup')
+    async def start_retirement():
+        nonlocal retirement_task
+        async def sweep():
+            while True:
+                await asyncio.sleep(30)
+                await retire_owned()
+        retirement_task = asyncio.create_task(sweep())
+
+    @app.on_event('shutdown')
+    async def stop_retirement():
+        if retirement_task:
+            retirement_task.cancel()
+            await asyncio.gather(retirement_task, return_exceptions=True)
+        await retire_owned(force=True)  # Busy work remains protected by runtime.
+
+    async def identities(request):
+        ids = (await body(request)).get('ids')
+        if (not isinstance(ids, list) or len(ids) > 32 or
+                any(not isinstance(sid, str) or not 1 <= len(sid) <= 128 for sid in ids)):
+            raise ToolError('bounded conversation identities required')
+        return ids
+
+    @app.post('/api/keepalive')
+    async def keepalive(request: Request):
+        alive = []
+        for sid in await identities(request):
+            if sid not in owned:
+                continue
+            owned[sid] = monotonic()
+            try:
+                await call(runtime.get_session, sid)  # Renew logical idle lease only.
+                alive.append(sid)
+            except RuntimeHTTPError:
+                pass  # No reconstruction or automatic create.
+        return JSONResponse(content={'alive': alive})
+
+    @app.post('/api/release')
+    async def release(request: Request):
+        for sid in await identities(request):
+            if sid in owned:
+                owned[sid] = 0
+        await retire_owned()
+        return JSONResponse(content={'release_requested': True})
+
     @app.post('/api/session')
     async def create_session(request: Request):
         value = await body(request)
-        return JSONResponse(content=await call(runtime.create_session, value.get('id')))
+        await retire_owned()
+        rec = await call(runtime.create_session, value.get('id'))
+        owned[rec['id']] = monotonic()
+        return JSONResponse(content=rec)
 
     @app.get('/api/session/{session_id}')
     async def get_session(session_id: str): return JSONResponse(content=await call(runtime.get_session, session_id))
@@ -213,9 +285,11 @@ def create_app(*, runtime_base_url: str | None = None, allow_private_lan: bool =
             record = await call(runtime.close_session, session_id)
         except RuntimeHTTPError as exc:
             if exc.status == 404:
+                owned.pop(session_id, None)
                 effects.pop(session_id, None)
                 effect_locks.pop(session_id, None)
             raise
+        owned.pop(session_id, None)
         effects.pop(session_id, None)
         effect_locks.pop(session_id, None)
         return JSONResponse(content=record)
@@ -275,10 +349,11 @@ def create_app(*, runtime_base_url: str | None = None, allow_private_lan: bool =
         sid, count = value.get('session_id'), value.get('request_count')
         if not isinstance(sid, str): raise ToolError('session_id required')
         if sid not in effect_locks:
-            if len(effect_locks) >= 32: raise ToolError('tool ledger capacity reached; close application sessions')
+            if len(effect_locks) >= 32: raise ToolError('tool ledger capacity reached; idle conversations retire automatically')
             effect_locks[sid] = asyncio.Lock()
         async with effect_locks[sid]:
             rec = await call(runtime.get_session, sid)
+            owned[sid] = monotonic()
             turn = rec.get('last_turn') or {}
             cert = turn.get('reconstruction') or {}
             if rec['state'] != 'idle' or rec['request_count'] != count or not cert.get('executable_tools'):
@@ -298,7 +373,7 @@ def create_app(*, runtime_base_url: str | None = None, allow_private_lan: bool =
                 raise ToolError(str(exc), code='tool_preflight_rejection') from exc
             ledger_used = sum(e.get('reserved_bytes', LEDGER_BATCH_RESERVATION) for key, e in effects.items() if key != sid)
             if ledger_used + LEDGER_BATCH_RESERVATION > MAX_LEDGER_BYTES:
-                raise ToolError('aggregate tool ledger resource ceiling; close other sessions before executing tools', code='resource_ceiling')
+                raise ToolError('aggregate tool ledger resource ceiling; wait for idle conversation retirement', code='resource_ceiling')
             entry = effects[sid] = {'identity': identity, 'result': None, 'reserved_bytes': LEDGER_BATCH_RESERVATION}  # reserve before effects
             messages, displays = await call(tools.execute_calls, calls, session_id=sid)
             # Publish actual effects before any budget fitting can fail. Never

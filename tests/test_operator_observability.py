@@ -115,7 +115,12 @@ time.sleep(60)
             child.kill(); child.wait()
 
 
-def test_tui_kernel_singleton():
+def test_tui_kernel_singleton(monkeypatch):
+    from ds41f_mlx import operator_control
+    with socket.socket() as probe:
+        probe.bind(('127.0.0.1', 0))
+        port = probe.getsockname()[1]
+    monkeypatch.setattr(operator_control, 'TUI_PORT', port)
     guard = tui_guard()
     try:
         with pytest.raises(OSError):
@@ -145,7 +150,7 @@ def test_update_failure_is_best_effort():
     p.finish('a'); p.lifecycle('READY'); p.cache_summary({'hits': 1})
 
 
-def test_restart_composes_shutdown_disappearance_and_canonical_start(monkeypatch):
+def test_toggle_composes_shutdown_then_canonical_start(monkeypatch):
     import asyncio
     from ds41f_mlx import operator_tui as tui
     endpoint = dict(host='0.0.0.0', port=8001)
@@ -167,8 +172,10 @@ def test_restart_composes_shutdown_disappearance_and_canonical_start(monkeypatch
     async def poll():
         pass
     monkeypatch.setattr(operator, 'poll', poll)
-    asyncio.run(operator.lifecycle('restart'))
-    assert events == ['GET', 'POST', 'GET', 'GET', ('launch', False, endpoint)]
+    monkeypatch.setattr(operator, 'poll_logs', poll)
+    asyncio.run(operator.lifecycle('toggle'))
+    asyncio.run(operator.lifecycle('toggle'))
+    assert events == ['GET', 'POST', 'GET', 'GET', ('launch', False, None)]
 
 
 @pytest.mark.parametrize('argv', [[], ['--profile', 'mtp-serving-v1']])

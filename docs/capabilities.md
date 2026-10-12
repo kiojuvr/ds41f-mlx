@@ -36,7 +36,7 @@ and [bounded singleton](mtp-local-release-candidate.md).
 | Ordinary MTP total admission | Actual recipe prompt + requested output must fit the total envelope |
 | Ordinary MTP body | **16 MiB** bounded JSON ingress; byte budget is not a token estimate |
 | Ordinary paired cache | Four complete immutable pairs, upstream lookup/refcount/LRU; no separate eviction authority |
-| Production logical-session identities | One live session; 4096 non-reusable lifetimes/process and 65536 reserved application correlations/session; exhaustion fails closed |
+| Production logical-session identities | 16 retained logical conversations, one native-active generation; 600-second nonbusy idle retirement (30-second sweep). 4096 non-reusable lifetimes/process and 65536 reserved application correlations/session; exhaustion fails closed |
 | Singleton | **8192 total / 768 output**, 1 MiB body; its specialized limits remain unchanged |
 
 The output ceiling is a capability, not mandatory generation or output-sized KV
@@ -121,13 +121,15 @@ and [original image qualification](multimodal-production-qualification.md).
 
 ## Applications
 
-- **Operator TUI:** Dashboard/runtime Start/Stop/Restart, live observability and
-  implemented text Chat/generation controls; [operator Chat](operator-chat.md),
-  [live metrics and controls](operator-live-observability.md). Quit leaves the
-  runtime running. TUI attachments and native MTP persistence are unsupported.
+- **Operator TUI:** LLM Runtime/Web Chat Start/Stop/Open, Settings, metrics/logs
+  and process diagnostics; [operator console](operator-chat.md),
+  [live metrics and controls](operator-live-observability.md). Q leaves both
+  services running. No TUI Chat frontend or conversation/session ownership.
 - **Browser Chat:** separate application server over canonical runtime APIs;
   [Chat interface](chat-interface.md), [application/state contract](web-application.md).
-  Application journals are not native KV restore or shared Browser/TUI history.
+  Multiple independent tab-memory conversations; New adds and Switch preserves.
+  Uncertainty journals are not an archive/native restore. Server idle/orphan
+  retirement, not user Close, releases internal resources.
 - **Acquisition/PDF:** bounded search/HTML/original-image/PDF tools are application
   effects. [PDF workflow](pdf-document-workflow.md) retains documents and uses
   separate fresh OFF page Vision, not main-chat MTP image admission.

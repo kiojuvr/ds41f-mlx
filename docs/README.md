@@ -24,7 +24,7 @@ unused generation, not current deployment or accepted release history.
 | Numerical fidelity | [Correctness](correctness.md), [attention](attention.md), [HC/MoE](moe-hc.md), [Engram](engram.md) |
 | Canonical state and generation | [Session state](session-state.md), [generation](generation.md), [policy implementation](generation-policy-investigation.md), [OFF live delivery](stateful-live-delivery.md) |
 | HTTP and sessions | [OFF API](api.md), [ordinary recipe admission](ordinary-api-boundary.md), [ordinary MTP ownership](mtp-production-serving.md), [logical sessions](production-sessions.md), [bounded singleton/setup](mtp-local-release-candidate.md) |
-| Application ownership | [Web application](web-application.md), [Browser interface](chat-interface.md), [Operator Chat](operator-chat.md), [policy snapshots](generation-policy-frontends.md) |
+| Application ownership | [Web application](web-application.md), [Browser interface](chat-interface.md), [Operator console](operator-chat.md), [policy snapshots](generation-policy-frontends.md) |
 | Application resources | [Actual-request fitting](dynamic-capability-budget.md), [retained PDF workflow](pdf-document-workflow.md), [trusted private LAN](private-lan.md), [operator observation](operator-live-observability.md) |
 | Proof and provenance | [Qualification](qualification.md), [performance interpretation](performance.md), [provenance](provenance.md), [release review](release-qualification.md) |
 | Development/delivery decisions | [Serving closure](production-serving-parity-closure.md), [MTP physical doctrine](mtp-architecture-reset.md), [reference/promotion strategy](reference-release-and-promotion-strategy.md), [R1 guide](reference-release-r1.md), [future target](final-runtime-target.md) |

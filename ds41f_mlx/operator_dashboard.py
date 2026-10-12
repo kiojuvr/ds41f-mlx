@@ -228,36 +228,57 @@ def metric_rows(title, values, width):
 
 
 def render_screen(snapshot, viewport, *, now=None, mode='dashboard', conflict=False,
-                  chat=None, chat_conflict=False, message='', logs=None, log_end=None, log_gap=False):
+                  chat=None, chat_conflict=False, message='', logs=None, log_end=None, log_gap=False,
+                  settings=None):
     """Return unwrapped rows; dashboard fits the viewport, details scroll separately."""
     d = Dashboard(snapshot, now, conflict)
     width = max(1, min(112, viewport.width-2))
     compact = viewport.layout == 'compact'
-    title = 'ds41f' if compact else 'ds41f / Diagnostics' if mode == 'diagnostics' else 'ds41f ─ DeepSeek-V4.1-Flash'
+    title = 'ds41f TUI' if compact else 'ds41f TUI / Diagnostics' if mode == 'diagnostics' else 'ds41f TUI ─ Operator Console'
     header_text = pair(title, d.state, width)
     header = [Line(header_text, bold=True,
                    accents=((len(header_text)-len(d.state), len(d.state), state_tone(d.state)),))]
     endpoint = d.s.get('endpoint') or {}
     chat_state = (chat or {}).get('state', 'CONFLICT' if chat_conflict else 'STOPPED')
+    runtime_action = 'Stop' if snapshot else 'Start'
+    web_action = 'Stop' if chat else 'Start'
+    runtime_label = f'LLM Runtime  {d.state.title()} · :{endpoint.get("port", 8000)}'
     if not compact:
-        header.append(Line(f'{endpoint.get("profile", "MTP serving v1")} · API :{endpoint.get("port", "—")} · Chat {chat_state} :{((chat or {}).get("endpoint") or {}).get("port", 8080)}', 'dim'))
+        runtime_label += ' · '+endpoint.get('profile', 'mtp-serving-v1')
+    header += [Line(runtime_label[:width], 'dim'),
+               Line(f'[R] {runtime_action} Runtime', bold=True)]
     chat_endpoint = (chat or {}).get('endpoint') or {}
+    network = 'LAN' if chat_endpoint.get('allow_private_lan') else 'Loopback' if chat_endpoint else (settings or {}).get('bind', 'lan').upper()
+    header += [Line(f'Web Chat  {"Running" if chat_state == "READY" else chat_state.title()} · {network} · :{chat_endpoint.get("port", (settings or {}).get("port", 8080))}'[:width], 'dim'),
+               Line(f'[W] {web_action} Web Chat   [O] Open Web Chat', bold=True)]
     if chat_endpoint and (mode == 'diagnostics' or (not compact and viewport.height >= 34)):
         host, port = chat_endpoint.get('host', '127.0.0.1'), chat_endpoint.get('port', 8080)
-        header.append(Line(f'Chat Listen {host}:{port} · Local {chat_endpoint.get("local_url", f"http://127.0.0.1:{port}")}', 'dim'))
+        header.append(Line(f'Web Chat Listen {host}:{port} · Local {chat_endpoint.get("local_url", f"http://127.0.0.1:{port}")}', 'dim'))
         if chat_endpoint.get('allow_private_lan'):
             urls = chat_endpoint.get('lan_urls') or ['unavailable — check local network interface']
             for url in urls:
-                header.append(Line(f'Chat LAN {url}', 'cyan'))
+                header.append(Line(f'Web Chat LAN {url}', 'cyan'))
             header.append(Line('LAN access enabled — trusted local network only', 'yellow'))
+    if mode == 'settings':
+        values = settings or {'bind': 'lan', 'port': 8080}
+        return header + [Line(), Line('TUI SETTINGS', bold=True),
+            Line(f'Web Chat next launch: {values["bind"]} · :{values["port"]}'),
+            Line('L: Toggle LAN / Loopback   +/-: Change Web Chat port'),
+            Line('Changes apply on next W Start; running services are unchanged.', 'dim'),
+            Line('LLM Runtime: ordinary mtp-serving-v1 · :8000 (installed environment)', 'dim'),
+            Line('Runtime Python: '+values.get('runtime_python', 'current installed environment'), 'dim'),
+            Line('Generation/reasoning settings belong to Web Chat.', 'dim'),
+            Line('LAN: trusted private network only; no authentication/TLS.', 'yellow'),
+            Line('TUI settings are process-local; environment supplies launch defaults.', 'dim'),
+            Line('S: Return to Dashboard'), Line(message)]
     if mode == 'diagnostics':
         return header + [Line()] + d.diagnostics()
     if mode == 'help':
         return header + [Line(), Line('KEYS', 'dim')] + [Line(s) for s in (
-            'S  Start runtime', 'X  Graceful Stop', 'R  Restart runtime', 'C  Open Chat mode (F2 starts Chat Server)' ,
-            'O  Open Chat in browser', 'V  Chat Server Stop', 'D  Toggle Diagnostics', '?  Toggle help', '↑↓ / PgUp/PgDn Scroll runtime logs; L / End follow latest',
+            'R  Start / Stop LLM Runtime', 'W  Start / Stop Web Chat',
+            'O  Open Web Chat in browser', 'S  Settings', 'D  Toggle Diagnostics', '?  Toggle help', '↑↓ / PgUp/PgDn Scroll runtime logs; L / End follow latest',
             '↑↓ Scroll Diagnostics / help',
-            'Q  Quit TUI; runtime remains running', '', 'Metrics: current request, otherwise last.',
+            'Q  Quit TUI; LLM Runtime and Web Chat remain running', '', 'Metrics: current request, otherwise last.',
             'MTP / alignment / frontier: last settled request.', '— means not published or not yet measured.')]
     now_rows = d.now_lines(width)
     metric_width = min(width, 56)  # keep stacked labels near their values
@@ -312,12 +333,13 @@ def render_screen(snapshot, viewport, *, now=None, mode='dashboard', conflict=Fa
         rail = []
         rows = compose()
     if len(rows) > budget:
-        rows = [header[0]] + notice + now_rows[1:3] + [d.health(True)]
+        rows = header[:5] + notice + now_rows[1:2] + [d.health(True)]
         if d.s.get('queued_requests'):
             rows.append(now_rows[-1])
-        rows += metric_rows('', d.performance[:3], metric_width)[1:]
+        rows += metric_rows('', d.performance[:1], metric_width)[1:]
         for text in (f'CTX {d.context[0][1]} · hit {d.context[3][1]}',
                      f'cached {d.context[1][1]} · new {d.context[2][1]}',
+                     f'PRE {d.performance[1][1]} · TTFT {d.performance[2][1]}',
                      f'MTP · last {d.performance[3][1]}'):
             rows.append(Line(text, values=numeric_spans(text)))
     # Logs consume only leftover space, never displace existing operator fields.
@@ -345,9 +367,9 @@ def render_screen(snapshot, viewport, *, now=None, mode='dashboard', conflict=Fa
     return rows[:budget]
 
 
-def command_strip(mode, width):
-    if width < 45:
-        return 'S Start X Stop R Restart Q Quit D/?'
+def command_strip(mode, width, runtime=None, web=None):
     if width < 70:
-        return 'S Start X Stop R Restart Q Quit C/V Chat D/?'
-    return 'S Start  X Stop  R Restart  C Chat  O Browser  V Stop Server  D Details  ? Help  Q Quit' + ('  ↑↓ scroll' if mode != 'dashboard' else '  ↑↓ Logs L Latest')
+        return 'R Runtime W Web Chat O Open S Settings Q Quit'
+    return (f'R {"Stop" if runtime else "Start"} Runtime  W {"Stop" if web else "Start"} Web Chat  '
+            'O Open Web Chat  S Settings  Q Quit  D Details  ? Help' +
+            ('  ↑↓ scroll' if mode != 'dashboard' else '  ↑↓ Logs L Latest'))

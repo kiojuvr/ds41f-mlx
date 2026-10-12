@@ -11,9 +11,9 @@ function context(r = runtime()) {
   const nodes = {};
   const c = vm.createContext({state: {runtime: r}, GenerationPolicy: policy, $: id => nodes[id] ||= {get value() { return this._value ?? ''; }, set value(v) { this._value = String(v); }}});
   vm.runInContext(source.slice(source.indexOf('function production()'), source.indexOf('async function createConversation()')), c);
-  vm.runInContext(source.slice(source.indexOf('function settings()'), source.indexOf('async function generate()')), c);
+  vm.runInContext(source.slice(source.indexOf('function settings()'), source.indexOf('async function generate(')), c);
   c.pendingCalls = () => [];
-  vm.runInContext(source.slice(source.indexOf('function policyDisplay()'), source.indexOf('function controls()')), c);
+  vm.runInContext(source.slice(source.indexOf('function policyDisplay()'), source.indexOf('function controls(')), c);
   vm.runInContext("$('reasoning'); applyDefaults(negotiate())", c);
   c.state.session = {generation: {...r.chat_defaults}, policyVersion: contract.version, messages: []};
   return {c, nodes};
@@ -23,7 +23,7 @@ test('Browser renders authoritative defaults and serializes all eight controls',
   const {c, nodes} = context(r);
   assert.equal(nodes.policy_temperature.value, '0.7');
   nodes.policy_top_k.value = '40'; nodes.policy_min_p.value = '.05';
-  const request = JSON.parse(vm.runInContext('JSON.stringify(generationRequest())', c));
+  const request = JSON.parse(vm.runInContext('state.session.generation = settings(); JSON.stringify(generationRequest())', c));
   assert.equal(request.top_k, 40); assert.equal(request.min_p, .05);
   for (const name of policy.parameters) assert.ok(name in request);
 });

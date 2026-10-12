@@ -42,16 +42,17 @@ To open the stdlib-curses operator interface in the MTP environment:
 /Volumes/SDXC-512/ds41f-mlx_mtp-venv/bin/ds41f
 ```
 
-Dashboard Start/Stop/Restart use the canonical launcher and loopback graceful
+Dashboard Start/Stop toggles use the canonical launcher and loopback graceful
 control. Quit leaves the runtime running; reopening rediscovers live state.
-Chat and Ctrl-O generation settings are implemented, not WIP. Read
-[operator Chat](operator-chat.md) and [live observability](operator-live-observability.md)
-for keys, readiness, canonical reconciliation and metric meanings. Stop/transport
+TUI is an operator console only: R Start/Stop LLM Runtime, W Start/Stop Web Chat,
+O Open Web Chat, S Settings, Q Quit TUI. Web Chat is the sole conversation frontend.
+Read [operator console](operator-chat.md) and [live observability](operator-live-observability.md)
+for keys, readiness and metric meanings. Stop/transport
 loss does not permit automatic generation resend. Protected native work must
 settle before ownership is released. Unknown effect/lifecycle outcomes require
 explicit application/operator decisions, not guessed retries.
 
-The optional Browser application runs separately from this checkout, above an
+Web Chat runs separately from this checkout, above an
 already READY runtime. Install application extras in the development/application
 `.venv`, never into the admitted model runtime:
 
@@ -60,7 +61,14 @@ uv pip install --python .venv/bin/python '.[web-binary]'
 .venv/bin/python -m ds41f_mlx.web --runtime-url http://127.0.0.1:8000
 ```
 
-See [Chat interface](chat-interface.md), [application state](web-application.md)
+For current-source UI validation before installation, run `.venv/bin/python -m
+ds41f_mlx.ops` from this checkout. It controls the existing installed MTP environment
+via the local sibling path, or explicit `DS41F_OPERATOR_RUNTIME_PYTHON`; it never
+loads the model in the application environment. Web Chat defaults to LAN from TUI
+W Start. S settings shows next-launch bind/port; Q leaves both services running.
+No TUI Chat mode, Ctrl Chat shortcuts or F2/F3 remain. Conversations live in browser
+tab memory; New adds and Switch retains independent histories. See
+[Chat interface](chat-interface.md), [application state](web-application.md)
 and [PDF workflow](pdf-document-workflow.md). PDF/page Vision uses separate bounded
 OFF execution, not MTP image admission. Application journals are not native
 persistence or shared TUI/Browser history. Tools/effects execute in applications,

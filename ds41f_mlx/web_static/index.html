@@ -2,7 +2,7 @@
 <html lang="en">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DeepSeek chat</title><link rel="stylesheet" href="/static/style.css"></head>
 <body>
-<header><h1>DeepSeek V4.1 Flash</h1><div id="status" role="status">Recovering</div><button id="newSession">New chat</button><button id="settingsButton" aria-label="Runtime settings and details" title="Runtime / Details">⚙ Runtime</button></header>
+<header><h1>DeepSeek V4.1 Flash</h1><div id="status" role="status">Recovering</div><select id="sessions" aria-label="Conversations"></select><button id="newSession">New chat</button><button id="settingsButton" aria-label="Runtime settings and details" title="Runtime / Details">⚙ Runtime</button></header>
 <main id="messages" aria-label="Conversation" tabindex="0"></main>
 <button id="latest" hidden>↓ Jump to latest</button>
 <form id="composer">
@@ -21,8 +21,8 @@
 <section><h3>Generation</h3><div id="samplingControls"></div><label>Output limit <select id="outputLimit"><option value="auto">Auto</option><option value="4096">4K</option><option value="8192">8K</option><option value="16384">16K</option><option value="32768">32K</option><option value="custom">Custom…</option></select></label><input id="maxTokens" aria-label="Custom output limit" type="number" min="1" max="4294967295" value="8192" hidden><p class="small">Auto uses the remaining qualified total context from actual runtime recipe/image admission (text and Vision have separate envelopes). Custom reserves the selected output budget.</p><button id="resetGeneration">Reset to runtime defaults</button></section>
 <section><h3>Thinking</h3><p>Use Think beside the message input. Thinking and effort are locked after the first request; start a new chat to change them.</p></section>
 <section><h3>Tools</h3><p>Auto runs until completion, Stop, admission/capacity or tool failure. A fixed 128-round runaway circuit breaker pauses with pending calls preserved; explicit Continue resets it.</p><p class="small">Ask pauses before execution. Off never executes tools.</p></section>
-<section><h3>Recovery</h3><button id="saveSession">Save current state</button><select id="saves" aria-label="Saved state"></select><button id="restoreSession">Restore saved state</button><button id="reconnect">Reconnect runtime</button><div id="recoveryActions"><button id="discardPending" hidden>Discard unadmitted request</button><button id="skipTools" hidden>Continue without result (no retry)</button></div><button id="closeSession">Close current conversation</button><p class="small">Saved states require this browser's original history and images. Restore creates a fresh native conversation and never replays prompts.</p></section>
-<section><details><summary>Diagnostics</summary><div id="sessionInfo" class="small"></div><pre id="diagnostics"></pre><select id="sessions" hidden aria-label="Internal conversation identity"></select></details></section>
+<section><h3>Recovery</h3><button id="reconnect">Reconnect runtime</button><div id="recoveryActions"><button id="discardPending" hidden>Discard unadmitted request</button><button id="skipTools" hidden>Continue without result (no retry)</button></div><button id="closeSession">Delete conversation</button><p class="small">Conversations live in this tab only. New chat adds a conversation; switching preserves other chats and their running requests. No archive or restart restore.</p></section>
+<section><details><summary>Diagnostics</summary><div id="sessionInfo" class="small"></div><pre id="diagnostics"></pre></details></section>
 </dialog>
 <script src="/static/render.js"></script><script src="/static/store.js"></script><script src="/static/platform.js"></script><script src="/static/policy.js"></script><script src="/static/app.js"></script><script src="/static/documents.js"></script>
 </body></html>

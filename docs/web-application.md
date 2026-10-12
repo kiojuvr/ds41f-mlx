@@ -1,144 +1,106 @@
-# Single-user localhost Web application
+# Local Web Chat application
 
-This page owns **Chat Server application state, tool effects and recovery**.
-[Chat interface](chat-interface.md) owns Browser interaction;
-[operator Chat](operator-chat.md) owns TUI interaction;
-[generation frontend policy](generation-policy-frontends.md) owns shared control
-ownership. [Operations](operations.md) owns launch/environment instructions.
-Application history/journals are not native state or fresh release qualification.
+Web Chat is the **sole Chat frontend**. The TUI is an [operator console](operator-chat.md).
+[Browser interface](chat-interface.md) owns controls; [generation policy](generation-policy-frontends.md)
+owns workflow snapshots; [operations](operations.md) owns deployment.
 
-## Status and scope
-
-Browser and TUI are separate frontends over the same Chat Server APIs. The server
-proxies the selected runtime: OFF retained native Chat or ordinary-MTP logical
-sessions. Profile capability is explicit, not inferred from an endpoint name.
-MTP remains text-only with no native persistence/restore; OFF has its separately
-bounded image/artifact contract. Runtime session limits still apply—equal
-frontends do not grant simultaneous independent sessions on the one-session MTP lane.
-
-Localhost is default. Explicit application `--allow-private-lan` has its own
-[network policy](private-lan.md); it is not authentication or Internet/multi-user
-qualification. Original OFF runtime/application and subsequent UI/frontend/PDF
-acceptances are distinct source-scoped records, not an automatic PASS for HEAD.
-
-## Architecture and launch
+## Product and ownership boundary
 
 ```text
-Browser: ordinary history, original images, workflow/request journals in IndexedDB
-TUI: in-process text history, draft and workflow/request reservations
-  -> Chat Server HTTP proxy / certified application-side tools and ledger
-  -> selected public runtime session API
-  -> runtime-owned execution, canonical settlement and retirement
+Browser tab: multiple conversations, per-conversation history/draft/workflow/journal
+  -> Web Chat: HTTP proxy, application tools, bounded effect ledger and idle leases
+  -> optional internal logical runtime session per conversation
+  -> existing ProductionScheduler queue, ONE native-active BatchGenerator
+  -> existing paired target+DSpark authority and canonical settlement
 ```
 
-The Web process does not load the model, tokenize independently, mirror KV,
-replay retained history or implement a sampler. HTTPX relays live bytes; blocking
-control/tool work runs off the event loop. No frontend framework/npm build is
-required. Use the separate application environment and already-ready installed
-runtime described in operations, not the old M19 checkout model launcher.
+Conversation is not an executable resource. New Chat adds a tab-memory conversation
+without destroying its predecessor or allocating native state. First Send creates
+an internal known-ID runtime correlation. Switch changes only the visible
+conversation; hidden requests continue, and all asynchronous outcomes, Stop intent,
+attachments, tools and history remain attached to their originating conversation.
+Delete removes an idle conversation from this tab; cleanup is an internal side
+effect, not a button required to free a native slot. Users do not manage session IDs.
 
-## Everyday workflow
+Ordinary MTP remains default. Logical retention allows **16** runtime conversations;
+generations from distinct conversations queue through the existing single-active
+lane. Each canonical conversation pin uses the SAME upstream paired authority,
+with 16 possible logical pins plus two publication slots. There is no second
+Scheduler/cache owner, batching, multi-active decode or numerical change. No pin
+is evicted to replay an existing conversation. Resource exhaustion refuses safely.
 
-Create a conversation, Send, then reconcile its canonical GET outcome. Live
-assistant content is provisional; full ordinary canonical history is submitted
-for exact continuation, not interpreted as client executable state. New chat
-explicitly retires the known old runtime conversation; failure does not forget it.
+## Lifetime and orphan cleanup
 
-Tools Auto/Ask/Off governs Browser execution of certified calls, not frozen
-protocol declarations. TUI uses Auto with explicit pause/continuation on errors.
-Search/HTML acquisition and retained PDF operations are application effects;
-[PDF workflow](pdf-document-workflow.md) owns the current document contract.
-[Original tool acceptance](tool-capability-completion.md) is source-scoped evidence,
-not a delegated current tool/limit definition. The
-[prior application edition](archive/editorial-baseline/web-application-730872f.md.txt)
-retains the earlier citation wording. Default document tools retain original
-PDFs and selected interpretations, not a growing series of chat images.
-Parser reads/search work on MTP. Fresh page observations require an existing OFF
-Vision runtime; they do not add image capability to main MTP Chat.
+Conversations, original images, drafts and request/effect uncertainty journals live
+in tab memory only. `store.js` no longer reads/writes IndexedDB history or native
+artifact saves; reload/close starts a fresh UI, with no archive or restart restore.
+Legacy browser storage is left untouched but is not read. No persistent database,
+accounts or native MTP persistence are introduced.
 
-OFF Browser image attachment preserves original bytes through subsequent turns.
-MTP does not acquire ordinary-chat images. OFF Save/Restore is exposed only where
-runtime capability permits it; a Browser journal alone cannot restore MTP sessions.
-Stop uses the known runtime request ID, waits for settlement and can recover a
-committed but undelivered suffix. Reload observes; it never automatically repeats
-a generation, restore or tool effect. Unsupported/unrepresentable continuation
-remains blocked. Exact controls and labels belong to the Chat interface.
+A living tab renews its internal correlations every 30 seconds through `/api/keepalive`.
+The Web process retires its idle/orphan correlations after **600 seconds**, checked
+every 30 seconds, removes the effect ledger only after confirmed retirement/404,
+and never retires while a tool effect lock is held. Busy runtime requests reject
+retirement. Web shutdown attempts idle cleanup; unknown/busy cleanup is deferred.
 
-## History, uncertainty and recovery
+The ordinary runtime independently retires nonbusy logical sessions after 600
+seconds of inactivity, every 30 seconds and before new session creation. GET/admission
+renews activity; active or queued requests are never idle candidates. This covers
+Web process crashes as well as lost tabs. A pagehide JSON beacon asks for immediate
+release, but delivery/DELETE success is never correctness authority. Lost beacons
+cannot permanently occupy a slot. Browser suspension beyond the lease can expire a
+conversation: keep history readable, refuse continuation and offer New Chat; never
+rebuild native state from old messages or automatically resend.
 
-Browser `store.js` retains ordinary messages/original images, protocol settings,
-workflow snapshots, pending-request journals, effect reservations, documents and
-artifact-linked saves. These are application data, not native proof. Lost history
-or old image bytes cannot be reconstructed from bounded GET `last_turn`.
-localStorage presentation/selection preferences cannot authorize execution.
-TUI has no shared IndexedDB or persistent transcript owner.
+## Canonical request and effect safety
 
-Before submission Browser durably freezes request body, base count and application
-UUID; TUI retains equivalent correlation in its process. Chat Server forwards
-expected-count/application-ID headers and the admitted native request ID.
-Reconciliation requires exact next count and matching application/native identity
-before canonical response enters history. OFF correlation and production-MTP
-reserved-UUID fencing remain distinct runtime contracts. An uncertain request
-cannot silently be retried or discarded; explicit nonadmission handling needs
-positive GET observation of unchanged/nonbusy state.
+Before submission, the tab freezes ordinary history, expected base count and a
+cryptographic application UUID. Creation also has a known ID before I/O. Unknown
+create/generation outcomes are never automatically repeated. Canonical GET must
+match the exact next count plus application/native request IDs before a response
+enters that conversation's history. Live SSE content remains provisional.
+Switch does not change a request's frozen workflow, protocol envelope or identity.
 
-Before effect POST, frontend reservation and the living Chat Server ledger fence
-`(session, count, native request ID)`. The server obtains completed calls and
-positive reconstruction permission from canonical GET, not supplied browser
-arguments or partial JSON. Duplicate/concurrent calls reuse known results or
-fail on uncertainty. Actual effect results publish before budget fitting; a
-fitting failure must not make completed I/O retryable. Reload/Reconcile observes
-`/api/tools/result` without effects. Missing ledger after server restart cannot
-prove nonexecution: block reexecution, with Browser's explicit unavailable-result
-path where valid. This is not crash-safe/distributed exactly-once execution.
+Stop targets only that conversation's known native request ID and waits for canonical
+settlement. Queued cancellation consumes its UUID but commits no invented turn.
+Missing/unrepresentable state remains blocked. Replay/repack remain zero; losing a
+paired pin cannot authorize prefill/reconstruction of retained history.
 
-For OFF native restore, Browser durably journals a known fresh ID before I/O.
-Lost acknowledgement is reconciled by that same ID/frontier, never another restore.
-Cold loading may exceed ordinary request expectations; the long restore timeout
-is not a loading SLA. Tab close cannot safely imply native restore abort.
-Missing/mismatched journals, artifacts, frontier or originals block continuation.
-Production MTP restart loses logical state; application history does not permit
-native replay/restore to recover it.
+Before tool POST, the tab records a reservation. The living Web effect ledger fences
+(session, count, native request ID); certified canonical GET, not browser arguments
+or partial JSON, grants execution. Duplicate calls reuse known results or fail on
+uncertainty. Effects publish before budget fitting. Result GET is observation only.
+Lost server ledger does not prove nonexecution: a reserved tab observes or explicitly
+returns unavailable results; it must not repeat the effect. This remains local
+living-client safety, not distributed/crash-safe exactly-once execution.
 
-IndexedDB write/quota failure prevents an unjournaled action. Preserve the same
-origin/profile, originals, native artifact and matching application save. Saves
-are explicit user-retained data, not automatic unlimited snapshots. Default DOM
-history bounds limit rendering, not stored history or native context.
+Tool Auto/Ask/Off, 128-round breaker, complete-request budget fitting, retained PDF
+source/derived-observation distinctions and isolated OFF page Vision remain intact.
+Main MTP Chat image acquisition and native persistence remain unsupported. Existing
+OFF API artifact support is not a persistent Browser product; Web UI Save/Restore
+and archive controls have been removed. Original-byte OFF image authority remains.
 
-## Security and limits
+## Security and scope
 
-- Default loopback/TrustedHost, same-origin JSON mutations, cross-site rejection
-  and CSP; application LAN opt-in is a separate documented boundary.
-- Text-node/DOM Markdown, no HTML execution, safe HTTP(S) links and original inline
-  transcript images; no automatic remote-image loading or client recompression.
-- Acquisition checks public DNS and actual peers, redirects, transfer/time/MIME
-  limits. PDF parsing is isolated/bounded with no action/form execution or
-  attachment extraction. Source bytes and derived observations remain distinct.
-- Runtime owns final image/request/sampling/capacity admission. Complete-request
-  fitting, not excerpts or character estimates, determines usable tool results.
-- Web ingress and aggregate effect ledger have explicit resource ceilings;
-  namespace exhaustion refuses rather than evicting unresolved outcomes.
-  Successful close removes that namespace. These bounds are not context limits.
-- Bounded diagnostic summaries are distinct from live delivery, latest canonical
-  outcome and user-retained data; no fixed total-memory promise is made.
+Stdlib/no-build UI, DOM/text Markdown, CSP, same-origin JSON mutations, private-LAN
+peer/Host policy, public acquisition validation and isolated PDF parser limits remain.
+TUI Web launch defaults to LAN; direct Web CLI defaults to loopback. No authentication,
+TLS, multi-user service, Internet deployment or new framework is introduced.
 
-Runtime profile values live in [capabilities](capabilities.md); acquisition and
-resource values in [budget policy](dynamic-capability-budget.md) and PDF workflow.
-Tools are not filesystem/shell/plugin execution. No application capability broadens
-native persistence, image, concurrency, security or effect guarantees implicitly.
+The old New Chat implementation awaited DELETE, removed old UI identity, then
+created a replacement. A successful delete released the old Scheduler pin; New Chat
+immediately occupied a new slot. Lack of orphan retirement and the now-removed TUI's
+failed-create state explained stranded/conflicting flows. These are separate from
+the new additive-conversation specification; obsolete TUI paths were removed, not
+expanded into another Chat implementation.
 
-## Qualification
+## Evidence
 
-The [original Web edition](archive/editorial-baseline/web-application.md.txt)
-retains the `133adc4` OFF baseline, matched artifact/image/frontier/soak results,
-failed collectors, false quota PASS and exact old paths/counts.
-[Original Web qualification](../artifacts/web-application/qualification.json)
-and its stateful-live receipts remain scoped evidence, not acceptance of later
-UI, MTP, policy or PDF changes.
-
-Later owners are [Browser UX](chat-interface.md#qualification),
-[frontend controls](generation-policy-frontends.md#installed-real-model-evidence),
-[operator acceptance](operator-chat-status.md) and
-[PDF acceptance](pdf-document-acceptance.md). Existing collectors are reproduction
-tools, not instructions for a fresh campaign during compilation. No model restart,
-R1, long-context, release or universal provider/browser/grammar claim is added.
+Current product checks: `artifacts/operator-console/`, collected with current-source
+`.venv` tooling and real Chrome/PTY/installed model. Historical Web/TUI/policy/PDF
+receipts retain their original source scope and are not rewritten. See
+[original Web qualification](../artifacts/web-application/qualification.json),
+[historical Browser gate](chat-interface.md#qualification),
+[historical TUI Chat acceptance](operator-chat-status.md) and
+[PDF acceptance](pdf-document-acceptance.md). This delta is not runtime-core
+requalification, a performance campaign, model execution or release promotion.

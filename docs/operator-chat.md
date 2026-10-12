@@ -1,106 +1,68 @@
-# Operator Chat mode
+# Operator console (TUI)
 
-This page owns **TUI Chat keys, process-local conversation and shutdown behavior**.
-Dashboard remains the runtime metrics/log home. Chat uses the existing Chat Server
-application contract; [application state](web-application.md) owns effects and
-[generation policy](generation-policy-frontends.md) owns shared controls.
-[Operations](operations.md) owns environment and service launch.
+The TUI is an **operator console, not a Chat client**. Web Chat is the sole
+conversation frontend. This retained documentation URL replaces the former TUI
+Chat page; historical receipts and archived editions are unchanged.
 
-Run `ds41f` in the matching installed environment. **C** enters Chat;
-**Ctrl-T** returns to Dashboard. Draft/conversation survive mode changes and resize;
-logs/status continue polling during asynchronous streaming actions.
-
-## Chat keys
+## Responsibilities and keys
 
 | Key | Action |
 | --- | --- |
-| F2 / F3 | Start / gracefully Stop Chat Server; F3 first retires this TUI's session, not Browser sessions or runtime |
-| Ctrl-N / Ctrl-W | New chat (close known old session first) / close chat |
-| Ctrl-G / Enter | Send / newline; no Shift-Enter assumption |
-| Ctrl-O | Open settings / return without losing the conversation draft |
-| Tab / Shift-Tab in settings | Select reasoning/sampling field; Ctrl-G applies validated value |
-| Ctrl-C | Stop safely and wait for canonical reconciliation |
-| Ctrl-R | Observe/reconcile request/tool outcome; no generation or effect resend |
-| Ctrl-E | Explicit pending tool/model-response continuation, not effect retry |
-| PgUp / PgDn / Ctrl-L | Scroll/pause latest follow / return to latest |
-| Ctrl-Q | Quit, attempt retirement of known TUI session, leave both services running |
+| R | Start / gracefully Stop **LLM Runtime** |
+| W | Start / gracefully Stop **Web Chat** |
+| O | Open **Web Chat** in the default browser |
+| S | Settings / return to Dashboard |
+| Q | Quit **TUI**, leaving both services running |
+| D / ? | Diagnostics / help |
+| ↑↓ / PgUp/PgDn / L / End | Scroll logs / follow latest |
 
-Footer `^` means Ctrl. Unicode input uses `get_wch`; Enter/IME confirmation and
-ordinary pasted newlines do not send. Bracketed paste suppresses action keys until
-its end marker. Arrows edit, Home/End use the logical line, Ctrl-A goes to line
-start and Ctrl-U deletes to line start. Wrapping follows terminal cells; resizing
-reflows without clearing input/history. Scroll remains paused after settlement.
-Terminal modes restore on exit. Content is plain text, never executable ANSI or
-terminal controls. Physical macOS IME behavior is not proved by UTF-8 PTY injection.
+Dashboard labels explicitly say Start Runtime, Stop Runtime, Start Web Chat or
+Stop Web Chat based on observed control state. F2/F3, Chat-mode Ctrl shortcuts,
+Chat editor/transcripts, conversation ownership, tool/reasoning rendering and
+New/Close/Continue workflows are removed from the TUI.
 
-## Controls and tool scope
+Metrics, logs, readiness/profile/network information and lifecycle diagnostics
+remain scalar projections, not execution authority. Settings controls the next
+Web Chat launch's LAN/loopback bind and port; it does not modify running services.
+Generation, reasoning and tool settings belong to Web Chat.
 
-New chat negotiates `/api/status`: READY, supported stateful capability and
-`generation-policy-v1`. No legacy sampler fallback; numeric fields use runtime
-types/ranges, nullable seed and advertised reasoning efforts. Preferences persist
-in this TUI process across new chats/modes. Sampling changes between user turns;
-reasoning locks at submission, including unknown outcomes. Workflow snapshots
-survive tools, Stop and GET. New chat retires the old identity before a new
-reasoning choice can be submitted.
+## Launch and process boundary
 
-TUI is text-first with no attachment picker, persistent transcript or native
-Save/Restore. It uses Chat Server Auto tools and the same 128-round breaker;
-errors/budget failures pause for explicit Ctrl-E. Generic calls/results and public
-reasoning render as text. Tools are selected on New chat and frozen for retained
-continuation; existing declarations are not rewritten.
+Use the installed environment for model execution. To check current source UI:
 
-Default PDF tools use [retained `document_pdf`](pdf-document-workflow.md), not
-legacy `fetch_pdf` chat rasters. URLs/artifact IDs can be supplied as text. Parser
-read/search works with main MTP Chat; fresh page Vision needs an explicitly
-available existing OFF runtime. This does not enable MTP images. Server tools
-execute effects and fit results, not the TUI or native runtime.
+```sh
+cd /Volumes/SDXC-512/ds41f-mlx
+export DS41F_CHECKPOINT=/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash
+.venv/bin/python -m ds41f_mlx.ops
+```
 
-## Authority and interruption
+The checkout `.venv` is application/development tooling. In this local layout,
+Runtime Start selects the sibling `ds41f-mlx_mtp-venv/bin/python`; alternatively
+set `DS41F_OPERATOR_RUNTIME_PYTHON` to an already provisioned interpreter. Its
+installed code is selected with `-I`. A normally installed TUI uses its own
+interpreter. No staging environment or second model executor is created.
+Web Chat uses the application interpreter. Application-only environment options
+are not forwarded to the admitted model launcher.
 
-`chat_application.py` uses Chat Server status/session/budget/stream/tools/result,
-cancel and DELETE, not `/api/chat`, the legacy run-turn helper or a direct runtime
-bypass. Browser and TUI are independent equal frontends, not shared transcripts
-or a grant of extra runtime sessions. OFF and production-MTP capabilities differ.
+Web Chat defaults to **LAN** (`0.0.0.0:8080`, explicit private-LAN permission).
+`DS41F_CHAT_BIND=loopback` restricts the next launch; `DS41F_WEB_PORT` changes its
+port. Direct `python -m ds41f_mlx.web` still defaults to loopback. The TUI discovers
+existing services; opening it does not reconfigure them. Stop then Start to apply
+launch settings. Private LAN has no authentication/TLS; do not expose to Internet.
 
-Generation freezes history, expected count, application UUID and admitted native
-ID. SSE is **UNSETTLED** preview. Every stream termination—including normal EOF
-and Stop—uses canonical GET/count/both identities before replacing it with ordinary
-history. Busy/missing/mismatched/unrepresentable outcomes block continuation.
-Unknown nonadmission requires observation or explicit close/new chat, never an
-automatic resend/discard. No preview becomes effect permission.
+On macOS, O uses nonblocking LaunchServices `/usr/bin/open`, not AppleScript.
+The bounded helper has detached/null terminal descriptors and a 10-second timeout.
+Success means an open request, not proof of browser display. The TUI never owns,
+waits for or kills the browser process itself. Failures show a manually usable URL.
 
-Reserve before tool POST. Unknown effects observe the server ledger; missing
-results stay blocked, never execute again. A recovered result appends once and
-explicit continuation advances after resolved error/uncertainty.
+Q retires no conversation and signals neither service. Service shutdown uses
+canonical graceful control and waits for disappearance, never force-kills.
+The kernel TUI guard prevents multiple operator consoles. Generation settings are
+not duplicated in the TUI.
 
-## Ownership boundary
-
-One history/draft lives only in the TUI process. No IndexedDB sharing, new store,
-native restore or historical prompt replay. New/close/normal quit use DELETE
-through Chat Server. Quit requests Stop, waits for action/reconciliation and
-retires only its known session, not either service; lifecycle work is not a
-second inference lock.
-
-Chat Server restart is not an empty conversation and cannot authorize resubmission.
-Its ledger can be lost even while the runtime retains the native session; unavailable
-effects remain blocked. Reconcile explicitly or retire/new chat.
-
-Backend unavailability or SIGKILL prevents guaranteed native retirement. Bounded
-quit reports known ID and **retirement unconfirmed; no retry** on failure, with
-no persistent/background recovery owner. Keep the backend available for confirmed
-close; after recovery use the existing session API for explicit retirement if
-needed, not a newly introduced direct-runtime failure-path bypass.
-
-## Qualification
-
-[Operator milestone status](operator-chat-status.md) and
-[acceptance receipt](operator-chat-acceptance.json) retain their original installed
-TUI/PTY/model scope; later frontend controls and PDFs have separate evidence.
-The [earlier operator edition](archive/editorial-baseline/operator-chat.md.txt)
-preserves original key/scope wording. Historical exclusions are not assertions
-that later generation settings or retained document tools are still absent.
-
-Focused tests cover canonical preview replacement, correlation fences, uncertain
-effects, Stop, Unicode/paste, wrapping, follow/resize and settings. PTY acceptance
-is not physical macOS IME acceptance; that remains a manual terminal check.
-No fresh TUI/model campaign, persistence, concurrency or release approval is added.
+See [operations](operations.md), [live observability](operator-live-observability.md),
+[Web application](web-application.md) and [Browser interface](chat-interface.md).
+[Historical TUI Chat acceptance](operator-chat-status.md) and its artifact JSON
+remain historical evidence of the removed interface, not current instructions.
+Current product-boundary receipt: `artifacts/operator-console/`;
+collector: `tools/accept_operator_console.py`.

@@ -72,8 +72,12 @@ activate them merely because shared server routes exist.
 
 Caller-chosen create IDs permit GET observation after lost acknowledgement.
 Create is **not idempotent retry**; issued IDs are never reusable in the process,
-even after close. One live logical session and finite process-lifetime/correlation
-budgets are intentional resource policy; exact values live in capabilities.
+even after close. Up to 16 live logical conversations and finite process-lifetime/
+correlation budgets are resource policy; exact values live in capabilities.
+Retention does not enable concurrent native decode: independent conversations queue
+through the same single-active Scheduler. Idle nonbusy records retire after 600
+seconds (30-second sweep); GET/admission renew activity. Active/queued work never
+expires as idle. Pins release through the existing Scheduler authority.
 Exhaustion fails closed without identity eviction/reuse. Process restart loses
 in-memory history and identity authority; there is no database or replay recovery.
 This is not another executable singleton: independent ordinary work still queues
@@ -114,7 +118,7 @@ result observation governs effect uncertainty.
 
 `/health` advertises `capabilities.stateful_chat = production-sessions-v1`,
 persistence support, live-session limit and current `generation-policy-v1` defaults.
-Browser/TUI consume runtime capabilities rather than inheriting the original
+Web Chat consumes runtime capabilities rather than inheriting the original
 milestone's greedy settings. Chat Auto output uses budget preview and admission
 rechecks. Unsupported images/controls and thinking budgets reject rather than
 silently rewriting policy.
@@ -123,7 +127,7 @@ A frontend workflow snapshots all eight sampling fields through tools, continuat
 and cancellation/reconciliation. Sampling is not hidden inheritance from the
 previous UI request; retained reasoning is a separate frozen protocol envelope.
 See [frontend contract](generation-policy-frontends.md) and
-[operator Chat](operator-chat.md).
+[operator console](operator-chat.md). TUI has no conversation/session ownership.
 
 ## Scoped acceptance and earlier edition
 

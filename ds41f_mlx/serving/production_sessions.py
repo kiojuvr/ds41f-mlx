@@ -7,7 +7,7 @@ POSTs are never replayed, including identical application IDs.
 """
 from copy import deepcopy
 from dataclasses import dataclass, field
-from time import time
+from time import time, monotonic
 from uuid import UUID, uuid4
 import re
 
@@ -26,6 +26,7 @@ class ProductionSession:
     created_at: float = field(default_factory=time)
     closed: bool = False
     closing: bool = False
+    touched_at: float = field(default_factory=monotonic)
 
     @property
     def busy(self):
@@ -45,6 +46,9 @@ class ProductionSession:
 
 
 class ProductionSessions:
+    # Logical retention is independent of the Scheduler's one executable lane.
+    MAX_LIVE = 16
+    IDLE_SECONDS = 600
     MAX_LIFETIMES = 4096  # bounded non-reusable requested-ID tombstones
     MAX_REQUESTS = 65536  # bounded correlation identities; no eviction/retry
 
@@ -56,8 +60,8 @@ class ProductionSessions:
     def create(self, session_id=None):
         if self.backend.fatal_error:
             raise RuntimeError('production engine failed; restart required')
-        if self.records:
-            raise RuntimeError('maximum live production sessions is one; close the current conversation')
+        if len(self.records) >= self.MAX_LIVE:
+            raise RuntimeError('conversation capacity reached; idle conversations retire automatically')
         if len(self.issued) >= self.MAX_LIFETIMES:
             raise RuntimeError('session lifetime identity budget exhausted; no eviction/reuse')
         sid = session_id if session_id is not None else 'sess_' + uuid4().hex
@@ -73,7 +77,14 @@ class ProductionSessions:
     def get(self, sid):
         if sid not in self.records:
             raise KeyError('session absent or retired; no restore/replay')
-        return self.records[sid]
+        rec = self.records[sid]
+        rec.touched_at = monotonic()
+        return rec
+
+    def expired(self, now=None):
+        now = monotonic() if now is None else now
+        return [sid for sid, rec in self.records.items()
+                if not rec.busy and now-rec.touched_at >= self.IDLE_SECONDS]
 
     def validate(self, sid, prepared, body, expected=None):
         rec = self.get(sid)

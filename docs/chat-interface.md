@@ -18,12 +18,14 @@ and acceptance matrix remain in the source edition linked below.
 
 ## Main surface
 
-One current conversation, no ordinary session sidebar. The header shows model
-and Ready/Generating/Using tool/Stopping/Recovering/Error, New chat and Runtime / Details.
-Diagnostics/Recovery holds runtime IDs, frontiers and persistence metadata.
-New chat confirms retirement of the old conversation; DELETE must succeed or
-confirm absence before browser identity is forgotten. Active work disables
-destructive actions; uncertain idle outcomes are not silently discarded.
+The header has a **conversation selector**, New chat and Runtime / Details,
+plus Ready/Queued / Generating/Using tool/Stopping/Recovering/Error.
+New chat adds an independent conversation without confirmation or destruction.
+Switch preserves each conversation's history, draft, attachments, workflow and
+running request. Hidden conversations continue and canonical outcomes return to
+their own history. Delete conversation removes it from this tab; internal cleanup
+is best-effort and not a user resource-management duty. IDs are internal diagnostics,
+not labels or user-managed resources. Generations queue on the single runtime lane.
 
 Enter sends; Shift+Enter inserts newline. IME composition/229 cannot send. The
 composer grows to 190px before internal scrolling. OFF image picker/paste/drop
@@ -40,9 +42,9 @@ pages are summarized as ranges; the collapsed page list accepts number/range
 filters such as `12, 12-18`. Source previews remain separate from chat images.
 New user turns journal a UI-only `userPresentation` alongside exact ordinary
 messages: the bubble shows the user's text and attachment cards, while generated
-PDF instructions are collapsed under Inspect context. Save/Restore preserves this
-presentation without adding fields to model requests. Older journals without this
-metadata keep their literal bubbles; user text is never stripped heuristically.
+PDF instructions are collapsed under Inspect context. Tab-local history preserves
+this presentation without adding fields to model requests; user text is never
+stripped heuristically.
 Generating is also shown inside the live assistant card; reasoning stays collapsed
 inside that card. The user restarted Chat Server and visually confirmed the UI
 improvements. Focused Python tests passed (15), as did the Node frontend tests
@@ -51,7 +53,7 @@ refresh the historical Browser gate.
 
 Send becomes Stop during active work. Stop observes/uses the authoritative ID,
 requests safe cancellation and reconciles canonical GET; it is not immediate GPU
-abort. Reload reconnects/observes without generation/effect POST replay.
+abort. Reload starts a fresh tab-lifetime UI, never restores or replays generation/effects.
 
 ## Model controls: exact mapping
 
@@ -97,7 +99,7 @@ Following applies only near bottom. Scroll-up/disclosures detach; Jump to latest
 reattaches. Layout/clamp/image/composer changes do not silently reattach a detached
 reader; real scrolling to bottom can. Boundary renders preserve visible anchors.
 The default last-100-message view expands in explicit 100-message increments:
-a DOM bound, not deletion/compaction of IndexedDB history or native state.
+a DOM bound, not deletion/compaction of tab-local history or native state.
 
 ## Termination and continuation
 
@@ -126,20 +128,19 @@ separate from generation abort. A Stop before submission starts no request.
 results require explicit Continue. Normal Send remains blocked while requests,
 calls/effects or their pending model response are unresolved.
 
-## Recovery and persistence
+## Recovery and lifetime
 
-Settings separates Generation, Thinking, Tools, Recovery and Diagnostics. OFF Save
-requires canonical idle settlement, matched native artifact/frontier/application
-snapshot and original images. Paused workflow/control/finish annotations survive,
-but do not manufacture reservations or permission. Locked reasoning reflects the
-saved conversation, not preferences of the one being retired.
+Settings separates Generation, Thinking, Tools, Recovery and Diagnostics.
+Reconcile observes known requests/effects; it never resends. Unadmitted-request
+discard requires positive unchanged-count/nonbusy GET. Continue without result is
+explicit and never reruns an uncertain effect. Sampling/reasoning snapshots remain
+per conversation while switching.
 
-OFF Restore selects a saved entry, confirms old-session close, journals a known
-fresh ID before I/O and reconciles that ID; never automatically repeat restore.
-MTP disables native Save/Restore. A lost runtime session is not rebuilt from the
-Browser journal. Recovery menus load metadata lazily, not all saved images/history
-on ordinary Send. Storage failure blocks unjournalled actions. The application
-state owner defines exact count/identity/effect/restore fences.
+No Save/Restore/archive controls remain. Ordinary history, original images and
+uncertainty journals are tab-memory data; Browser close/reload does not restore them.
+A living tab renews leases. Server-side bounded idle/orphan retirement, not browser
+DELETE or a Close button, prevents permanent occupation. A retired conversation
+remains readable but cannot reconstruct native state. See [application ownership](web-application.md).
 
 ## Qualification
 
@@ -149,8 +150,9 @@ collector/IME/composition attempts, old reasoning/round labels and historical M3
 pin observation. Those obsolete labels are not current controls or test failures.
 The screenshot is [historical Browser capture](../artifacts/chat-ux/browser.png).
 
-`tools/qualify_chat_ux.py` is the existing isolated-Chrome/current-static-boundary
-collector, not authorization for a new campaign here. Real Browser event injection
+`tools/accept_operator_console.py` owns current operator/multi-conversation checks.
+Older collectors such as `tools/qualify_chat_ux.py` describe their historical
+single-conversation/archive UI, not current acceptance instructions. Real Browser event injection
 proves tested handlers, not every OS IME/clipboard implementation; long-DOM data
 is display-only, never model history. Later generation/PDF/network changes have
 separate receipts. Renderer Node tests are developer tools, not runtime dependencies.

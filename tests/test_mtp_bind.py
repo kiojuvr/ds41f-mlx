@@ -3,12 +3,17 @@ import pytest
 from ds41f_mlx.mtp_identity import config
 
 
+@pytest.fixture(autouse=True)
+def clean_retention_environment(monkeypatch):
+    monkeypatch.delenv('DS41F_MAX_LIVE_SESSIONS', raising=False)
+
+
 @pytest.mark.parametrize('host', ['0.0.0.0', '192.168.68.56', '::', 'fd12::56', 'mac-studio.local'])
 def test_only_ordinary_mtp_accepts_nonloopback_bind(host):
     with pytest.raises(ValueError, match='literal 127.0.0.1'):
         config(host, 8000)
     cfg = config(host, 8000, profile='mtp-serving-v1')
-    assert (cfg.host, cfg.port, cfg.max_live_sessions, cfg.trace_history_limit) == (host, 8000, 1, 32)
+    assert (cfg.host, cfg.port, cfg.max_live_sessions, cfg.trace_history_limit) == (host, 8000, 16, 32)
 
 
 @pytest.mark.parametrize('profile', ['mtp-serving-v1', 'mtp-singleton-v1'])

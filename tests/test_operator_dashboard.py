@@ -190,7 +190,7 @@ def test_details_and_unknowns_are_honest():
     assert all(value == '—' for _, value in unknown.performance)
     assert unknown.health().text.startswith('alignment —')
     assert 'replay —' in unknown.health().text
-    assert 'Quit TUI; runtime remains running' in screen(p, mode='help')[1]
+    assert 'Quit TUI; LLM Runtime and Web Chat remain running' in screen(p, mode='help')[1]
 
 
 def test_content_never_enters_ui_projection():

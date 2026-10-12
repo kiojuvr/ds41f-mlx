@@ -20,8 +20,12 @@ def test_requested_ids_are_nonreusable_and_session_has_no_native_owner():
     rec = sessions.create('known-id')
     assert not any(hasattr(rec, name) for name in ('cache', 'rings', 'owner', 'guard', 'processor'))
     assert rec.to_json()['state'] == 'empty'
-    with pytest.raises(RuntimeError, match='maximum live'):
-        sessions.create('other')
+    other = sessions.create('other')
+    assert sessions.get(other.session_id) is other
+    for i in range(sessions.MAX_LIVE-2):
+        sessions.create(f'additional-{i}')
+    with pytest.raises(RuntimeError, match='capacity reached'):
+        sessions.create('overflow')
     del sessions.records[rec.session_id]
     with pytest.raises(RuntimeError, match='already issued'):
         sessions.create('known-id')

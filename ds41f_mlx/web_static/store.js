@@ -1,43 +1,17 @@
-/* Application history only. No KV, token frontier reconstruction or model truth. */
+/* Tab-lifetime ordinary history and uncertainty journals, never an archive.
+ * Losing the page never authorizes request/effect resend or native reconstruction.
+ */
 window.ChatStore = (() => {
-  const opened = new Promise((resolve, reject) => {
-    const request = indexedDB.open('ds41f.application', 1);
-    request.onupgradeneeded = () => {
-      for (const name of ['sessions', 'saves']) request.result.createObjectStore(name, {keyPath: 'id'});
-    };
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
-  async function operate(name, mode, method, value) {
-    const db = await opened;
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction(name, mode);
-      const request = transaction.objectStore(name)[method](value);
-      transaction.oncomplete = () => resolve(request.result);
-      transaction.onabort = () => reject(transaction.error || request.error);
-      transaction.onerror = () => reject(transaction.error || request.error);
-    });
-  }
-  async function metadata(name) {
-    const db = await opened;
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction(name, 'readonly'), items = [];
-      const request = transaction.objectStore(name).openCursor();
-      request.onsuccess = () => {
-        const cursor = request.result; if (!cursor) return;
-        const value = cursor.value;
-        items.push({id: value.id, title: value.title, savedAt: value.savedAt});
-        cursor.continue(); // Keep only small labels, not every snapshot/image payload.
-      };
-      transaction.oncomplete = () => resolve(items);
-      transaction.onabort = transaction.onerror = () => reject(transaction.error || request.error);
-    });
+  const sessions = new Map();
+  function table(name) {
+    if (name !== 'sessions') throw new Error('Persistent conversation archives are not supported');
+    return sessions;
   }
   return {
-    metadata,
-    all: name => operate(name, 'readonly', 'getAll'),
-    get: (name, id) => operate(name, 'readonly', 'get', id),
-    put: (name, value) => operate(name, 'readwrite', 'put', value),
-    remove: (name, id) => operate(name, 'readwrite', 'delete', id),
+    metadata: async name => [...table(name).values()].map(s => ({id: s.id, title: s.title})),
+    all: async name => [...table(name).values()],
+    get: async (name, id) => table(name).get(id),
+    put: async (name, value) => { table(name).set(value.id, value); },
+    remove: async (name, id) => { table(name).delete(id); },
   };
 })();

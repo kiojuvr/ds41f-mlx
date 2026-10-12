@@ -54,25 +54,25 @@ do not port-forward them. NAT/proxies that rewrite a public peer into a private
 peer cannot be distinguished from trusted LAN by this filter. The runtime wildcard
 bind itself has no new private-peer filter or authentication. HTTP is unencrypted.
 
-Browser history/saves belong to each browser profile and origin (scheme, IP and
-port). Another PC or switching HTTP→HTTPS does not automatically inherit a
-conversation, saved original images or recovery journal. There is no shared
-server-side conversation/history authority added here.
+Browser conversations, original images and uncertainty journals now live in each
+tab's memory only. Another PC/tab or reload does not inherit them. There is no
+shared persistent history/archive or runtime-restart restore. The Web process
+holds only bounded correlation leases/effect receipts, with idle/orphan retirement.
 
 ## HTTP browser capabilities
 
 Private-IP HTTP is usually an insecure context. Chat, original-byte image
-picker/paste/drop, streaming, Stop, reload and save/fresh restore work there.
+picker/paste/drop, multiple conversations, streaming and Stop work there.
+Reload starts a fresh UI; save/archive/fresh-restore controls have been removed.
 
 - UUIDs use `crypto.getRandomValues` when secure-context `randomUUID` is absent;
   there is no Math.random fallback.
-- Secure contexts keep Web Locks. Without Web Locks, a separate small IndexedDB
-  mutex database holds a readwrite transaction across the complete action.
-  Keepalive requests keep ownership active across network awaits. No expiring
-  lease or time-based stealing is used; another tab is rejected while occupied,
-  and action completion/exception/navigation releases the transaction. This
-  conservatively serializes all conversations in that browser origin. It is UI
-  exclusion, not native execution permission or another KV/session authority.
+- Each conversation has a tab-local busy fence. No origin-wide IndexedDB mutex
+  or shared persisted conversation remains. Different conversations/tabs may
+  submit concurrently; expected-count/application UUID fences and the existing
+  single-active Scheduler, not browser locks, own admission/queue/settlement.
+- Living tabs renew internal idle leases; lost cleanup beacons are covered by
+  server-side bounded nonbusy orphan retirement, never automatic resend.
 - Clipboard write may be unavailable: Copy reports **Copy unavailable**. Select
   the text and use Ctrl/Cmd+C, or use HTTPS. OS-provided paste events can still
   deliver original image files; no clipboard transcoding is introduced.

@@ -16,7 +16,8 @@ def test_missing_session_pair_never_reprefills_or_enters_native_start():
     scheduler = object.__new__(ProductionScheduler)
     errors = []
     request = NS(prompt_token_ids=list(range(212)), logical_session=NS(session_id='logical', canonical=tuple(range(210))),
-                 execution=QualificationSession('r'), trace={}, prepared=None, recipe_tokenizer=None)
+                 execution=QualificationSession('r'), trace={}, prepared=None, recipe_tokenizer=None,
+                 image_identities=())
     scheduler.waiting = deque([request]); scheduler.running = {}
     scheduler.checkpoints = NS(acquire_retained=lambda *a, **kw:None)
     scheduler.session_leases = {'logical': (1, 'known-hash')}
@@ -48,7 +49,8 @@ def test_session_outcome_is_published_only_by_scheduler_after_native_retirement(
     sessions = backend.production_sessions = ProductionSessions(backend)
     logical = sessions.create('logical-only')
     body = {'messages':[{'role':'user','content':'Hi'}]}
-    prepared = NS(token_ids=list(range(202)), protocol='chat_completions', image_sources=[], capacity={})
+    prepared = NS(token_ids=list(range(202)), protocol='chat_completions', image_sources=[], capacity={},
+                  multimodal=None, conversation_request=NS(conversation=NS(thinking_mode=False, reasoning_effort=None)))
     appid = str(uuid4())
     sessions.reserve(logical.session_id, prepared, body, 0, appid, 'r1')
     def start(rec, prepared, tokenizer, trace, *, checkpoint_capture, batch_generator_factory):
@@ -87,6 +89,9 @@ def test_session_outcome_is_published_only_by_scheduler_after_native_retirement(
     request.prepared, request.recipe_tokenizer = prepared, None
     request.session_body, request.application_id = body, appid
     request.session_pair_retained = False
+    request.image_identities = ()
+    request.required_image_frontier = 0
+    request.native_started = False
     request.trace = dict(t0=perf_counter())
     request.prompt_checkpoint, request.delivery_cursor = None, 0
     scheduler.requests['r1'] = request; scheduler.waiting.append(request)

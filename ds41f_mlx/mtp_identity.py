@@ -42,8 +42,10 @@ def config(host=None, port=None, *, profile=PROFILE):
         raise ValueError('MTP trace budget is fixed at 32')
     if os.environ.get('PYTHONPATH'):
         raise ValueError('PYTHONPATH unavailable in MTP')
-    if os.environ.get('DS41F_MAX_LIVE_SESSIONS', '1') != '1':
-        raise ValueError('MTP requires exactly one live session')
+    from .serving.production_sessions import ProductionSessions
+    live_limit = 1 if profile == PROFILE else ProductionSessions.MAX_LIVE
+    if os.environ.get('DS41F_MAX_LIVE_SESSIONS', str(live_limit)) != str(live_limit):
+        raise ValueError(f'{profile} logical conversation retention is fixed at {live_limit}; execution remains single-active')
     cfg = load_runtime_config()
     host = host if host is not None else cfg.host
     port = port if port is not None else cfg.port
@@ -61,7 +63,7 @@ def config(host=None, port=None, *, profile=PROFILE):
         raise ValueError('oMLX must be installed inside the selected environment')
     return replace(cfg, omlx_path=parent,
         recipe_path=Path(sys.prefix)/'share/ds41f-mtp/recipe', host=host, port=port,
-        max_live_sessions=1, trace_history_limit=32, mtp='ON', dspark='ON', speculative_decode='ON')
+        max_live_sessions=live_limit, trace_history_limit=32, mtp='ON', dspark='ON', speculative_decode='ON')
 
 
 def qualified():

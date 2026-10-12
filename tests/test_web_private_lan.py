@@ -56,6 +56,8 @@ def test_bind_option_requires_consent_and_disables_proxy_trust(monkeypatch):
     calls = []
     monkeypatch.setattr(web, 'RuntimeClient', Runtime)
     from ds41f_mlx.operator_control import Control
+    from ds41f_mlx import operator_control
+    monkeypatch.setattr(operator_control, 'CHAT_PORT', 0)
     monkeypatch.setattr(Control, 'reserve_service', lambda *args: None)
     monkeypatch.setattr(Control, 'run', lambda self, app, **kwargs: calls.append(kwargs))
     with pytest.raises(SystemExit): web.main(['--host', '0.0.0.0'])

@@ -1,0 +1,1076 @@
+{
+  "phase": "full",
+  "checks": {
+    "TUI current source starts": true,
+    "S Settings": true,
+    "R Start Runtime": true,
+    "W Start Web Chat": true,
+    "O macOS open nonblocking": true,
+    "TUI remains responsive after O": true,
+    "obsolete TUI Chat shortcuts absent": true,
+    "Q leaves services running": true,
+    "New adds independent conversation": true,
+    "Switch preserves draft A": true,
+    "Switch B has independent draft": true,
+    "simultaneous Browser conversations queue": true,
+    "one native-active execution lane": true,
+    "independent canonical histories": true,
+    "replay/repack zero": true,
+    "A-B-A retains A history": true,
+    "A continuation after B uses retained pair": true,
+    "cancellation reconciles without resend": true,
+    "no automatic archive / restore UI": true,
+    "real retained PDF tool loop settles": true,
+    "lost browser cleanup retires orphan": true,
+    "all final paired outcomes aligned with replay/repack zero": true,
+    "no browser JavaScript errors": true,
+    "W Stop Web Chat": true,
+    "R Stop Runtime": true,
+    "Q Quit TUI": true
+  },
+  "runtime_python": null,
+  "queue_samples": [
+    {
+      "active_requests": 1,
+      "queued_requests": 1
+    },
+    {
+      "active_requests": 1,
+      "queued_requests": 1
+    },
+    {
+      "active_requests": 1,
+      "queued_requests": 1
+    },
+    {
+      "active_requests": 1,
+      "queued_requests": 1
+    },
+    {
+      "active_requests": 1,
+      "queued_requests": 1
+    },
+    {
+      "active_requests": 1,
+      "queued_requests": 1
+    },
+    {
+      "active_requests": 1,
+      "queued_requests": 1
+    },
+    {
+      "active_requests": 1,
+      "queued_requests": 1
+    }
+  ],
+  "max_native_active": 1,
+  "concurrent_final_state": [
+    {
+      "busy": false,
+      "notice": "",
+      "count": 1,
+      "problem": ""
+    },
+    {
+      "busy": false,
+      "notice": "",
+      "count": 1,
+      "problem": ""
+    }
+  ],
+  "conversations": [
+    {
+      "id": "web-c5833926-c96c-402f-b995-a7780ec993a0",
+      "count": 1,
+      "messages": [
+        {
+          "role": "user",
+          "content": "Remember the word ALPHA for this conversation. Write 20 short numbered facts about the moon."
+        },
+        {
+          "role": "assistant",
+          "content": "I'll remember the word ALPHA for this conversation.\n\nHere are 20 short numbered facts about the moon:\n\n1. The Moon is Earth's only natural satellite.\n2. It is about 384,400 km (238,855 miles) from Earth on average.\n3. The Moon likely formed ~4.5 billion years ago from debris after a giant impact.\n4. Its diameter is about 3,475 km\u2014roughly one-quarter of Earth's.\n5. The same side always faces Earth due to synchronous rotation.\n6. The far side is often called the \"dark side,\" though it gets sunlight.\n7."
+        }
+      ],
+      "problem": ""
+    },
+    {
+      "id": "web-476123c4-1ace-4c12-be35-6db7ff53aec7",
+      "count": 1,
+      "messages": [
+        {
+          "role": "user",
+          "content": "Remember the word BETA for this conversation. Answer briefly: what is two plus two?"
+        },
+        {
+          "role": "assistant",
+          "content": "Four."
+        }
+      ],
+      "problem": ""
+    }
+  ],
+  "outcomes": [
+    {
+      "state": "idle",
+      "request_count": 1,
+      "last_turn": {
+        "request_id": "0062f97aa93640a287e6b9cf87296f19",
+        "application_request_id": "110464eb-fb60-41c3-8d30-ec2d804a9682",
+        "response_json": {
+          "id": "chatcmpl-0062f97aa93640a287e6b9cf87296f19",
+          "object": "chat.completion",
+          "created": 1791826275,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "I'll remember the word ALPHA for this conversation.\n\nHere are 20 short numbered facts about the moon:\n\n1. The Moon is Earth's only natural satellite.\n2. It is about 384,400 km (238,855 miles) from Earth on average.\n3. The Moon likely formed ~4.5 billion years ago from debris after a giant impact.\n4. Its diameter is about 3,475 km\u2014roughly one-quarter of Earth's.\n5. The same side always faces Earth due to synchronous rotation.\n6. The far side is often called the \"dark side,\" though it gets sunlight.\n7."
+              },
+              "logprobs": null,
+              "finish_reason": "length"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 833,
+            "completion_tokens": 128,
+            "total_tokens": 961,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 833
+          }
+        },
+        "cancelled": false,
+        "finish_reason": "length",
+        "termination_reason": "length",
+        "reconstruction": {
+          "version": 1,
+          "frontier": 961,
+          "canonical_sha256": "d5e1905bc7be24385f3c6894e986afc360a694886ca8ba5341f0df9d6a8787b3",
+          "representable": true,
+          "executable_tools": false,
+          "exact_prefix": true,
+          "semantic_complete": true,
+          "first_mismatch": null,
+          "encoded_length": 967
+        },
+        "capacity": {
+          "envelope_kind": "text",
+          "qualified_total_tokens": 1048576,
+          "prompt_tokens": 833,
+          "remaining_tokens": 1047743,
+          "max_tokens": 128,
+          "output_mode": "custom",
+          "model_output_ceiling": 393216,
+          "binding": true
+        },
+        "generation_policy": {
+          "temperature": 1.0,
+          "top_p": 0.949999988079071,
+          "top_k": 0,
+          "min_p": 0,
+          "repetition_penalty": 1,
+          "presence_penalty": 0,
+          "frequency_penalty": 0,
+          "seed": null
+        },
+        "metrics": {
+          "frontier": 961,
+          "cache_offsets_all": [
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961
+          ],
+          "dspark_offsets": [
+            961,
+            961,
+            961
+          ],
+          "all_cache_offsets_equal_frontier": true,
+          "total_prompt_replay_count": 0,
+          "total_full_cache_repack_count": 0,
+          "cached_tokens": 0,
+          "generated": 128,
+          "cache_published": true
+        }
+      },
+      "diagnostics": {
+        "m8": {
+          "frontier": 961,
+          "cache_offsets_all": [
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961,
+            961
+          ],
+          "dspark_offsets": [
+            961,
+            961,
+            961
+          ],
+          "all_cache_offsets_equal_frontier": true,
+          "total_prompt_replay_count": 0,
+          "total_full_cache_repack_count": 0
+        }
+      },
+      "last_error": null,
+      "id": "web-c5833926-c96c-402f-b995-a7780ec993a0",
+      "protocol": "chat_completions",
+      "active_request_id": null,
+      "created_at": 1791826268.855146,
+      "canonical_frontier": 961
+    },
+    {
+      "state": "idle",
+      "request_count": 1,
+      "last_turn": {
+        "request_id": "b62d929baa454cb8a29a438863226d90",
+        "application_request_id": "d68c989b-d8aa-482f-baff-e01999a5bc30",
+        "response_json": {
+          "id": "chatcmpl-b62d929baa454cb8a29a438863226d90",
+          "object": "chat.completion",
+          "created": 1791826284,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "Four."
+              },
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 831,
+            "completion_tokens": 2,
+            "total_tokens": 833,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 831
+          }
+        },
+        "cancelled": false,
+        "finish_reason": "stop",
+        "termination_reason": "stop",
+        "reconstruction": {
+          "version": 1,
+          "frontier": 834,
+          "canonical_sha256": "83ff1e0e6c7ef3a49898dcd28cd3b4c1083f5007a77f5936ab5183645ee7f5f7",
+          "representable": true,
+          "executable_tools": false,
+          "exact_prefix": true,
+          "semantic_complete": true,
+          "first_mismatch": null,
+          "encoded_length": 839
+        },
+        "capacity": {
+          "envelope_kind": "text",
+          "qualified_total_tokens": 1048576,
+          "prompt_tokens": 831,
+          "remaining_tokens": 1047745,
+          "max_tokens": 64,
+          "output_mode": "custom",
+          "model_output_ceiling": 393216,
+          "binding": true
+        },
+        "generation_policy": {
+          "temperature": 1.0,
+          "top_p": 0.949999988079071,
+          "top_k": 0,
+          "min_p": 0,
+          "repetition_penalty": 1,
+          "presence_penalty": 0,
+          "frequency_penalty": 0,
+          "seed": null
+        },
+        "metrics": {
+          "frontier": 834,
+          "cache_offsets_all": [
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834
+          ],
+          "dspark_offsets": [
+            834,
+            834,
+            834
+          ],
+          "all_cache_offsets_equal_frontier": true,
+          "total_prompt_replay_count": 0,
+          "total_full_cache_repack_count": 0,
+          "cached_tokens": 0,
+          "generated": 3,
+          "cache_published": true
+        }
+      },
+      "diagnostics": {
+        "m8": {
+          "frontier": 834,
+          "cache_offsets_all": [
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834,
+            834
+          ],
+          "dspark_offsets": [
+            834,
+            834,
+            834
+          ],
+          "all_cache_offsets_equal_frontier": true,
+          "total_prompt_replay_count": 0,
+          "total_full_cache_repack_count": 0
+        }
+      },
+      "last_error": null,
+      "id": "web-476123c4-1ace-4c12-be35-6db7ff53aec7",
+      "protocol": "chat_completions",
+      "active_request_id": null,
+      "created_at": 1791826270.21077,
+      "canonical_frontier": 834
+    }
+  ],
+  "tool_conversation": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "Use document_pdf to read page 1 of the attached retained PDF. Report the inventory and cite the page.\n\nRetained PDF: source.pdf; artifact_id=ee3e879fd13b5c8cdf48029c2d34a88fd3ec28b79ca2a55c8670bee07b36f594; pages=1. Use document_pdf to search/read/observe additional pages without reacquisition. Original PDF bytes are source authority; parser text and model observations are derived. Cite page numbers."
+      },
+      {
+        "role": "assistant",
+        "content": "I'll read page 1 of the retained PDF using the artifact ID.",
+        "tool_calls": [
+          {
+            "id": "call_chatcmpl-14bc33d9518b48899e0194c0f7736808_0",
+            "type": "function",
+            "function": {
+              "name": "document_pdf",
+              "arguments": "{\"action\": \"read\", \"artifact_id\": \"ee3e879fd13b5c8cdf48029c2d34a88fd3ec28b79ca2a55c8670bee07b36f594\", \"pages\": [1]}"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "call_chatcmpl-14bc33d9518b48899e0194c0f7736808_0",
+        "content": "{\"artifact_id\":\"ee3e879fd13b5c8cdf48029c2d34a88fd3ec28b79ca2a55c8670bee07b36f594\",\"sha256\":\"2c7462c74afa3aa49d50cd2329652195e1f3cc53080eb20621db87187acacb87\",\"url\":\"upload:///source.pdf\",\"source_url\":\"upload:///source.pdf\",\"content_type\":\"application/pdf\",\"acquired_bytes\":799,\"network_truncated\":false,\"redirects\":0,\"expires_at\":1792431086.9119081,\"tool\":\"document_pdf\",\"page_count\":1,\"filename\":\"source.pdf\",\"source_authority\":\"original-pdf-bytes\",\"text_authority\":\"parser-derived\",\"observation_authority\":\"model-derived-non-authoritative\",\"action\":\"read\",\"pages\":[{\"page\":1,\"width_points\":600.0,\"height_points\":780.0,\"text\":\"Operations manual page 1\\r\\nDepartment: Sector1. Inventory: 17 units.\\r\\nDocument control: Aurora retained workflow.\",\"interpretation\":\"text\",\"links\":[],\"offset\":0,\"total_chars\":112,\"returned_chars\":112,\"next_offset\":112,\"context_truncated\":false,\"has_more\":false,\"authority\":\"parser-derived\",\"observation\":null}]}"
+      },
+      {
+        "role": "assistant",
+        "content": "**Page 1 inventory (parser text, artifact `ee3e879f\u2026f594`, sha256 `2c7462c7\u2026acacb87`)**\n\nThe single retained page contains three lines of text:\n\n| Field | Value |\n|---|---|\n| Title | Operations manual page 1 |\n| Department | Sector1 |\n| **Inventory** | **17 units** |\n| Document control | Aurora retained workflow |\n\n**Citation:** source.pdf, page 1 (only page; `page_count` = 1, 600 \u00d7 780 pt).\n\n**Authority notes:** the inventory figure comes from parser-derived text (`text_authority: parser-derived`) read from the retained artifact; the original PDF bytes remain the source of authority. No `observe` call was needed since page 1's text layer extracted cleanly (`interpretation: text`, 112/112 chars returned, `has_more: false`), so there are no model-derived observations to qualify here. No additional pages exist in this artifact to search or read."
+      }
+    ],
+    "count": 2,
+    "problem": ""
+  },
+  "final_outcomes": [
+    {
+      "state": "idle",
+      "request_count": 2,
+      "last_turn": {
+        "request_id": "a0d22efb0ee94b66a019684a0a3d64cc",
+        "application_request_id": "d3bcceee-9183-4128-8d6d-d933c86ce701",
+        "response_json": {
+          "id": "chatcmpl-a0d22efb0ee94b66a019684a0a3d64cc",
+          "object": "chat.completion",
+          "created": 1791826285,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "ALPHA"
+              },
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 980,
+            "completion_tokens": 3,
+            "total_tokens": 983,
+            "prompt_tokens_details": {
+              "cached_tokens": 961
+            },
+            "prompt_cache_hit_tokens": 961,
+            "prompt_cache_miss_tokens": 19
+          }
+        },
+        "cancelled": false,
+        "finish_reason": "stop",
+        "termination_reason": "stop",
+        "reconstruction": {
+          "version": 1,
+          "frontier": 984,
+          "canonical_sha256": "9d441d9e22377aad4908a41e0a3a05b3f95943603d66033d53739c533b8b3797",
+          "representable": true,
+          "executable_tools": false,
+          "exact_prefix": true,
+          "semantic_complete": true,
+          "first_mismatch": null,
+          "encoded_length": 989
+        },
+        "capacity": {
+          "envelope_kind": "text",
+          "qualified_total_tokens": 1048576,
+          "prompt_tokens": 980,
+          "remaining_tokens": 1047596,
+          "max_tokens": 128,
+          "output_mode": "custom",
+          "model_output_ceiling": 393216,
+          "binding": true
+        },
+        "generation_policy": {
+          "temperature": 1.0,
+          "top_p": 0.949999988079071,
+          "top_k": 0,
+          "min_p": 0,
+          "repetition_penalty": 1,
+          "presence_penalty": 0,
+          "frequency_penalty": 0,
+          "seed": null
+        },
+        "metrics": {
+          "frontier": 984,
+          "cache_offsets_all": [
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984
+          ],
+          "dspark_offsets": [
+            984,
+            984,
+            984
+          ],
+          "all_cache_offsets_equal_frontier": true,
+          "total_prompt_replay_count": 0,
+          "total_full_cache_repack_count": 0,
+          "cached_tokens": 961,
+          "generated": 4,
+          "cache_published": true
+        }
+      },
+      "diagnostics": {
+        "m8": {
+          "frontier": 984,
+          "cache_offsets_all": [
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984,
+            984
+          ],
+          "dspark_offsets": [
+            984,
+            984,
+            984
+          ],
+          "all_cache_offsets_equal_frontier": true,
+          "total_prompt_replay_count": 0,
+          "total_full_cache_repack_count": 0
+        }
+      },
+      "last_error": null,
+      "id": "web-c5833926-c96c-402f-b995-a7780ec993a0",
+      "protocol": "chat_completions",
+      "active_request_id": null,
+      "created_at": 1791826268.855146,
+      "canonical_frontier": 984
+    },
+    {
+      "state": "idle",
+      "request_count": 2,
+      "last_turn": {
+        "request_id": "d1c27d94745c4e88b1df38a2eefdca33",
+        "application_request_id": "8794e57b-94ba-4e69-8a86-45e55bad3ce3",
+        "response_json": {
+          "id": "chatcmpl-d1c27d94745c4e88b1df38a2eefdca33",
+          "object": "chat.completion",
+          "created": 1791826285,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "I can't produce 500 genuinely distinct, accurate facts in a single response \u2014 that would mean"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        "cancelled": true,
+        "finish_reason": null,
+        "termination_reason": "user_stop",
+        "reconstruction": {
+          "version": 1,
+          "frontier": 864,
+          "canonical_sha256": "95eafc2fe68ec3c139e9e7daa7b2c6ccbc9ad4513dfc5384fc256e922a621d82",
+          "representable": true,
+          "executable_tools": false,
+          "exact_prefix": true,
+          "semantic_complete": true,
+          "first_mismatch": null,
+          "encoded_length": 870
+        },
+        "capacity": {
+          "envelope_kind": "text",
+          "qualified_total_tokens": 1048576,
+          "prompt_tokens": 845,
+          "remaining_tokens": 1047731,
+          "max_tokens": 512,
+          "output_mode": "custom",
+          "model_output_ceiling": 393216,
+          "binding": true
+        },
+        "generation_policy": {
+          "temperature": 1.0,
+          "top_p": 0.949999988079071,
+          "top_k": 0,
+          "min_p": 0,
+          "repetition_penalty": 1,
+          "presence_penalty": 0,
+          "frequency_penalty": 0,
+          "seed": null
+        },
+        "metrics": {
+          "frontier": 864,
+          "cache_offsets_all": [
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864
+          ],
+          "dspark_offsets": [
+            864,
+            864,
+            864
+          ],
+          "all_cache_offsets_equal_frontier": true,
+          "total_prompt_replay_count": 0,
+          "total_full_cache_repack_count": 0,
+          "cached_tokens": 834,
+          "generated": 19,
+          "cache_published": true
+        }
+      },
+      "diagnostics": {
+        "m8": {
+          "frontier": 864,
+          "cache_offsets_all": [
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864,
+            864
+          ],
+          "dspark_offsets": [
+            864,
+            864,
+            864
+          ],
+          "all_cache_offsets_equal_frontier": true,
+          "total_prompt_replay_count": 0,
+          "total_full_cache_repack_count": 0
+        }
+      },
+      "last_error": null,
+      "id": "web-476123c4-1ace-4c12-be35-6db7ff53aec7",
+      "protocol": "chat_completions",
+      "active_request_id": null,
+      "created_at": 1791826270.21077,
+      "canonical_frontier": 864
+    },
+    {
+      "state": "idle",
+      "request_count": 2,
+      "last_turn": {
+        "request_id": "842e5aa0e5234b4c9981a47dcd3a9687",
+        "application_request_id": "92e1c878-65c2-4742-93b8-597074154a7f",
+        "response_json": {
+          "id": "chatcmpl-842e5aa0e5234b4c9981a47dcd3a9687",
+          "object": "chat.completion",
+          "created": 1791826297,
+          "model": "deepseek-v4.1-flash",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "**Page 1 inventory (parser text, artifact `ee3e879f\u2026f594`, sha256 `2c7462c7\u2026acacb87`)**\n\nThe single retained page contains three lines of text:\n\n| Field | Value |\n|---|---|\n| Title | Operations manual page 1 |\n| Department | Sector1 |\n| **Inventory** | **17 units** |\n| Document control | Aurora retained workflow |\n\n**Citation:** source.pdf, page 1 (only page; `page_count` = 1, 600 \u00d7 780 pt).\n\n**Authority notes:** the inventory figure comes from parser-derived text (`text_authority: parser-derived`) read from the retained artifact; the original PDF bytes remain the source of authority. No `observe` call was needed since page 1's text layer extracted cleanly (`interpretation: text`, 112/112 chars returned, `has_more: false`), so there are no model-derived observations to qualify here. No additional pages exist in this artifact to search or read."
+              },
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 1356,
+            "completion_tokens": 213,
+            "total_tokens": 1569,
+            "prompt_tokens_details": {
+              "cached_tokens": 1052
+            },
+            "prompt_cache_hit_tokens": 1052,
+            "prompt_cache_miss_tokens": 304
+          }
+        },
+        "cancelled": false,
+        "finish_reason": "stop",
+        "termination_reason": "stop",
+        "reconstruction": {
+          "version": 1,
+          "frontier": 1570,
+          "canonical_sha256": "5eb9ff634257c48e33ac22b5ed92bd06bfd8d464dab01aac506ee6ce656efaa1",
+          "representable": true,
+          "executable_tools": false,
+          "exact_prefix": true,
+          "semantic_complete": true,
+          "first_mismatch": null,
+          "encoded_length": 1575
+        },
+        "capacity": {
+          "envelope_kind": "text",
+          "qualified_total_tokens": 1048576,
+          "prompt_tokens": 1356,
+          "remaining_tokens": 1047220,
+          "max_tokens": 256,
+          "output_mode": "custom",
+          "model_output_ceiling": 393216,
+          "binding": true
+        },
+        "generation_policy": {
+          "temperature": 1.0,
+          "top_p": 0.949999988079071,
+          "top_k": 0,
+          "min_p": 0,
+          "repetition_penalty": 1,
+          "presence_penalty": 0,
+          "frequency_penalty": 0,
+          "seed": null
+        },
+        "metrics": {
+          "frontier": 1570,
+          "cache_offsets_all": [
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570
+          ],
+          "dspark_offsets": [
+            1570,
+            1570,
+            1570
+          ],
+          "all_cache_offsets_equal_frontier": true,
+          "total_prompt_replay_count": 0,
+          "total_full_cache_repack_count": 0,
+          "cached_tokens": 1052,
+          "generated": 214,
+          "cache_published": true
+        }
+      },
+      "diagnostics": {
+        "m8": {
+          "frontier": 1570,
+          "cache_offsets_all": [
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570,
+            1570
+          ],
+          "dspark_offsets": [
+            1570,
+            1570,
+            1570
+          ],
+          "all_cache_offsets_equal_frontier": true,
+          "total_prompt_replay_count": 0,
+          "total_full_cache_repack_count": 0
+        }
+      },
+      "last_error": null,
+      "id": "web-8017424b-648b-4ee4-bebc-05ea6d5f26a5",
+      "protocol": "chat_completions",
+      "active_request_id": null,
+      "created_at": 1791826287.0328991,
+      "canonical_frontier": 1570
+    }
+  ],
+  "browser_errors": []
+}
