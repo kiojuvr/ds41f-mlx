@@ -77,7 +77,7 @@ def reasoning_policy(request):
                 reasoning_effort=conversation.reasoning_effort)
 
 
-def capability_contract():
+def capability_contract(default_reasoning_effort='none'):
     # Bounded OFF/MTP real-model acceptance; not distributional equivalence.
     return dict(version='generation-policy-v1', qualification='real-model-qualified',
                 execution_profiles=['standard-off', 'mtp-serving-v1'],
@@ -90,6 +90,7 @@ def capability_contract():
                     presence_penalty={'minimum': -2, 'maximum': 2, 'context_tokens': 20},
                     frequency_penalty={'minimum': -2, 'maximum': 2, 'context_tokens': 20},
                     seed={'type': 'integer', 'minimum': 0, 'maximum': 2**32-1, 'semantics': 'best-effort'}),
-                reasoning=dict(authority='deepseek-recipe', scope='session', stateless_scope='request', default_thinking_mode=False,
+                reasoning=dict(authority='deepseek-recipe', scope='session', stateless_scope='request', default_thinking_mode=default_reasoning_effort != 'none',
+                               default_reasoning_effort=default_reasoning_effort,
                                efforts=['none', 'low', 'high', 'xhigh', 'max'],
                                change='reject', thinking_budget_tokens=False))

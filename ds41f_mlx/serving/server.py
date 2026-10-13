@@ -41,7 +41,7 @@ def load_v41_tokenizer(recipe_path: Path = DEFAULT_RECIPE) -> Any:
     return Tokenizer.from_file(str(Path(recipe_path) / 'static' / 'tokenizers' / 'v41' / 'tokenizer.json'))
 
 
-def prepare_request(protocol: str, body: bytes, *, tokenizer: Any, recipe_path: Path = DEFAULT_RECIPE, options: ConversionOptions | None = None, checkpoint: Path | None = None, ordinary: bool = False) -> RecipePreparedRequest:
+def prepare_request(protocol: str, body: bytes, *, tokenizer: Any, recipe_path: Path = DEFAULT_RECIPE, options: ConversionOptions | None = None, checkpoint: Path | None = None, ordinary: bool = False, default_reasoning_effort: str = 'none') -> RecipePreparedRequest:
     prepare_t0 = perf_counter()
     from .generation_policy import normalize_policy, with_sampling_defaults
     policy_payload = json.loads(body)
@@ -50,11 +50,14 @@ def prepare_request(protocol: str, body: bytes, *, tokenizer: Any, recipe_path: 
         if protocol != 'chat_completions':
             raise RequestError('ordinary MTP supports Chat Completions only')
         from .ordinary_admission import convert_ordinary
-        converted, include_usage, automatic = convert_ordinary(body)
+        converted, include_usage, automatic = convert_ordinary(body, default_reasoning_effort=default_reasoning_effort)
         custom_tool_names = frozenset()
     else:
         # Runtime extension, resolved only after the real recipe/image expansion.
+        from .ordinary_admission import with_reasoning_default
         payload = with_sampling_defaults(policy_payload)
+        if protocol == 'chat_completions':
+            payload = with_reasoning_default(payload, default_reasoning_effort)
         automatic = isinstance(payload, dict) and payload.get('max_tokens') == 'auto'
         if automatic:
             payload['max_tokens'] = 1
@@ -262,7 +265,7 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
             if ordinary_mtp:
                 if protocol != 'chat_completions':
                     raise RequestError('ordinary MTP supports Chat Completions only')
-            prepared = await run_in_threadpool(prepare_request, protocol, body, tokenizer=tokenizer, recipe_path=recipe_path, options=options, checkpoint=getattr(backend, 'checkpoint', runtime_config.checkpoint_path), ordinary=ordinary_mtp)
+            prepared = await run_in_threadpool(prepare_request, protocol, body, tokenizer=tokenizer, recipe_path=recipe_path, options=options, checkpoint=getattr(backend, 'checkpoint', runtime_config.checkpoint_path), ordinary=ordinary_mtp, default_reasoning_effort=runtime_config.default_reasoning_effort)
             if ordinary_mtp:
                 prepared.diagnostic_id = diagnostic_id
                 if projection is not None:
@@ -293,7 +296,7 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
         return handler
 
     from .generation_policy import capability_contract
-    generation_capabilities = capability_contract()
+    generation_capabilities = capability_contract(runtime_config.default_reasoning_effort)
 
     @app.get('/health')
     async def health() -> Response:
@@ -311,7 +314,7 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
         code = 503 if fatal else 200
         state = {'status': status, 'profile': profile, 'process_alive': True, 'model_ready': ready, 'fatal_error': fatal,
                  'generation_policy': generation_capabilities,
-                 'chat_defaults': dict(generation_capabilities['defaults'], reasoning_effort='none', max_tokens='auto')}
+                 'chat_defaults': dict(generation_capabilities['defaults'], reasoning_effort=runtime_config.default_reasoning_effort, max_tokens='auto')}
         if ordinary_mtp:
             scheduler = getattr(backend, 'scheduler', None)
             state.update(profile=profile, dependency_identity=backend.dependency_identity,
@@ -323,7 +326,7 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
                                        'max_active_generations': 1,
                                        'idle_retirement_seconds': backend.production_sessions.IDLE_SECONDS},
                          generation_policy=generation_capabilities,
-                         chat_defaults=dict(generation_capabilities['defaults'], reasoning_effort='none', max_tokens='auto'))
+                         chat_defaults=dict(generation_capabilities['defaults'], reasoning_effort=runtime_config.default_reasoning_effort, max_tokens='auto'))
         return JSONResponse(status_code=code, content=state)
 
     @app.get('/v1/models')
@@ -376,7 +379,7 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
         body = await request.body()
         try:
             validate_stateful_chat_request_policy(body)
-            prepared = await run_in_threadpool(prepare_request, 'chat_completions', body, tokenizer=tokenizer, recipe_path=recipe_path, options=options, checkpoint=getattr(backend, 'checkpoint', runtime_config.checkpoint_path), ordinary=ordinary_mtp)
+            prepared = await run_in_threadpool(prepare_request, 'chat_completions', body, tokenizer=tokenizer, recipe_path=recipe_path, options=options, checkpoint=getattr(backend, 'checkpoint', runtime_config.checkpoint_path), ordinary=ordinary_mtp, default_reasoning_effort=runtime_config.default_reasoning_effort)
             rec = (backend.production_sessions.validate(session_id, prepared, json.loads(body)) if ordinary_mtp
                    else backend.validate_stateful_admission(session_id, prepared))
             expected = request.headers.get('X-DS41F-Expected-Request-Count')
@@ -398,7 +401,8 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
                 validate_stateful_chat_request_policy(body)
                 prepared = await run_in_threadpool(prepare_request, 'chat_completions', body,
                     tokenizer=tokenizer, recipe_path=recipe_path, options=options,
-                    checkpoint=backend.checkpoint, ordinary=True)
+                    checkpoint=backend.checkpoint, ordinary=True,
+                    default_reasoning_effort=runtime_config.default_reasoning_effort)
                 prepared.diagnostic_id = request.scope.get('ds41f.diagnostic_id')
                 release = request.scope.get('ds41f.release_preparation')
                 if release is not None:
@@ -427,7 +431,7 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
             validate_stateful_chat_request_policy(body)
         except ValueError as exc:
             raise RequestError(str(exc), 400)
-        prepared = await run_in_threadpool(prepare_request, 'chat_completions', body, tokenizer=tokenizer, recipe_path=recipe_path, options=options, checkpoint=getattr(backend, 'checkpoint', runtime_config.checkpoint_path))
+        prepared = await run_in_threadpool(prepare_request, 'chat_completions', body, tokenizer=tokenizer, recipe_path=recipe_path, options=options, checkpoint=getattr(backend, 'checkpoint', runtime_config.checkpoint_path), default_reasoning_effort=runtime_config.default_reasoning_effort)
         try:
             # Internal qualification and the explicit public process profile
             # share the same guarded owner, never a request/env mode selector.

@@ -31,7 +31,8 @@ def config(host=None, port=None, *, profile=PROFILE):
         raise ValueError('unknown MTP profile')
     allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
                'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
-               'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID'}
+               'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+               'DS41F_DEFAULT_REASONING_EFFORT'}
     unknown = sorted(k for k in os.environ if
         (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
     if unknown:

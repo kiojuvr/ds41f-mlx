@@ -49,6 +49,10 @@ def main(argv: list[str] | None = None) -> int:
 def _main(argv, *, control=None, projection=None) -> int:
     parser = argparse.ArgumentParser(description="Launch ds41f local text runtime")
     parser.add_argument('--profile', choices=['standard-off','mtp-singleton-v1','mtp-serving-v1'], default='mtp-serving-v1')
+    from .config import REASONING_EFFORTS
+    from dataclasses import replace
+    parser.add_argument('--default-reasoning-effort', choices=REASONING_EFFORTS,
+                        help='reasoning effort for requests without reasoning controls')
     parser.add_argument("--host", help="override DS41F_HOST")
     parser.add_argument("--port", type=int, help="override DS41F_PORT")
     parser.add_argument("--print-config", action="store_true", help="print resolved config/provenance and exit")
@@ -61,6 +65,10 @@ def _main(argv, *, control=None, projection=None) -> int:
         try:
             from .mtp_identity import config, inspect
             cfg = config(args.host, args.port, profile=args.profile)
+            if args.default_reasoning_effort is not None:
+                cfg = replace(cfg, default_reasoning_effort=args.default_reasoning_effort)
+            if args.profile == 'mtp-singleton-v1' and cfg.default_reasoning_effort != 'none':
+                raise ValueError('singleton profile requires reasoning none')
             if control is not None:
                 control.reserve_service(cfg.host, cfg.port)
             report = inspect(cfg)
@@ -72,7 +80,8 @@ def _main(argv, *, control=None, projection=None) -> int:
         if args.print_config:
             print(json.dumps(report,indent=2))
             return 0
-        logger.info('runtime admission passed profile=%s', args.profile)
+        logger.info('runtime admission passed profile=%s default_reasoning_effort=%s',
+                    args.profile, cfg.default_reasoning_effort)
         cfg.apply_environment()
         from .serving.mtp_public import LocalMTPBackend
         from .serving.server import create_app
@@ -117,6 +126,8 @@ def _main(argv, *, control=None, projection=None) -> int:
         return 0
 
     cfg = load_runtime_config()
+    if args.default_reasoning_effort is not None:
+        cfg = replace(cfg, default_reasoning_effort=args.default_reasoning_effort)
     if args.host is not None or args.port is not None:
         from dataclasses import replace
         cfg = replace(cfg, host=args.host or cfg.host, port=args.port or cfg.port)
@@ -148,7 +159,8 @@ def _main(argv, *, control=None, projection=None) -> int:
             logging.getLogger('ds41f.diagnostic').error('%s', json.dumps({'failures': failures, 'config': cfg.to_json()}))
             return 2
 
-    logger.info('STARTING; runtime admission passed profile=%s', args.profile)
+    logger.info('STARTING; runtime admission passed profile=%s default_reasoning_effort=%s',
+                args.profile, cfg.default_reasoning_effort)
     try:
         import uvicorn
     except Exception as exc:
@@ -160,7 +172,7 @@ def _main(argv, *, control=None, projection=None) -> int:
     # require undocumented PYTHONPATH state.
     from ds41f_mlx.serving.server import create_app
 
-    app = create_app(model_id=cfg.model_id, recipe_path=cfg.recipe_path)
+    app = create_app(model_id=cfg.model_id, recipe_path=cfg.recipe_path, runtime_config=cfg)
     if projection is not None:
         projection.lifecycle('READY', dict(host=cfg.host, port=cfg.port, profile=args.profile))
     control.run(app, host=cfg.host, port=cfg.port, proxy_headers=False)

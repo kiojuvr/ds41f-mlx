@@ -267,9 +267,11 @@ def render_screen(snapshot, viewport, *, now=None, mode='dashboard', conflict=Fa
             Line('Changes apply on next W Start; running services are unchanged.', 'dim'),
             Line('LLM Runtime: ordinary mtp-serving-v1 · :8000 (installed environment)', 'dim'),
             Line('Runtime Python: '+values.get('runtime_python', 'current installed environment'), 'dim'),
-            Line('Generation/reasoning settings belong to Web Chat.', 'dim'),
+            Line('Default Reasoning: '+values.get('default_reasoning_effort', 'max').title(), bold=True),
+            Line('T: Cycle None / Low / High / Xhigh / Max; applies on next R Start.', 'dim'),
+            Line('Omitted reasoning uses this default; explicit client controls override it.', 'dim'),
             Line('LAN: trusted private network only; no authentication/TLS.', 'yellow'),
-            Line('TUI settings are process-local; environment supplies launch defaults.', 'dim'),
+            Line('Runtime reasoning preference is saved; Web Chat settings are process-local.', 'dim'),
             Line('S: Return to Dashboard'), Line(message)]
     if mode == 'diagnostics':
         return header + [Line()] + d.diagnostics()

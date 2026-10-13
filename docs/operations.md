@@ -46,6 +46,27 @@ Dashboard Start/Stop toggles use the canonical launcher and loopback graceful
 control. Quit leaves the runtime running; reopening rediscovers live state.
 TUI is an operator console only: R Start/Stop LLM Runtime, W Start/Stop Web Chat,
 O Open Web Chat, S Settings, Q Quit TUI. Web Chat is the sole conversation frontend.
+Runtime Settings includes **Default Reasoning: Max** on first TUI launch.
+Press **S**, then **T** to cycle `none / low / high / xhigh / max`; the preference
+is saved in `${XDG_CONFIG_HOME:-~/.config}/ds41f/operator.json` and applies on the
+next **R Start**, not to an already running server. `DS41F_DEFAULT_REASONING_EFFORT`
+overrides the saved preference on TUI startup.
+
+Headless launches retain `none` unless configured explicitly:
+
+```sh
+python -m ds41f_mlx.serve --profile mtp-serving-v1 --default-reasoning-effort max
+# Or: DS41F_DEFAULT_REASONING_EFFORT=max python -m ds41f_mlx.serve
+```
+
+For Chat Completions, the runtime fills omitted reasoning controls before recipe
+conversion. Explicit `reasoning_effort` or `thinking` controls take precedence,
+including explicit Off; this is a default, not forced reasoning. `/health`
+reports the effective `chat_defaults.reasoning_effort`. Retained-session reasoning
+still cannot change mid-session. The singleton qualification profile only permits
+`none`. These changes require updating the installed runtime before restarting it;
+a source checkout change does not update a running/provisioned environment.
+
 Read [operator console](operator-chat.md) and [live observability](operator-live-observability.md)
 for keys, readiness and metric meanings. Stop/transport
 loss does not permit automatic generation resend. Protected native work must

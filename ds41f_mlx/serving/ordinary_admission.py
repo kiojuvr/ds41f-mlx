@@ -41,13 +41,23 @@ def admit_capabilities(converted, payload):
     # Inline Vision uses the existing bounded multimodal preparation authority.
 
 
-def convert_ordinary(raw):
+def with_reasoning_default(payload, effort):
+    """Only fill omitted controls; explicit recipe controls retain authority."""
+    from ds41f_mlx.config import REASONING_EFFORTS
+    if effort not in REASONING_EFFORTS:
+        raise ValueError('unsupported default reasoning effort')
+    if not any(key in payload for key in ('reasoning_effort', 'thinking')):
+        return payload | {'reasoning_effort': effort}
+    return payload
+
+
+def convert_ordinary(raw, *, default_reasoning_effort='none'):
     payload = admit_structure(raw)
     automatic = payload.get('max_tokens') == 'auto'
     # Defaults are resolved only AFTER strict wire admission, then converted by
     # recipe. Qualification callers must explicitly request their greedy policy.
     from .generation_policy import with_sampling_defaults
-    recipe_payload = with_sampling_defaults(payload)
+    recipe_payload = with_reasoning_default(with_sampling_defaults(payload), default_reasoning_effort)
     if automatic:
         recipe_payload = recipe_payload | {'max_tokens': 1}
     recipe_body = json.dumps(recipe_payload).encode()

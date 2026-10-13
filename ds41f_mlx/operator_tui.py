@@ -35,7 +35,7 @@ def runtime_python():
     return sys.executable
 
 
-def launch(chat=False, endpoint=None):
+def launch(chat=False, endpoint=None, *, default_reasoning_effort=None):
     args = ['ds41f_mlx.web'] if chat else ['ds41f_mlx.ops', 'start', '--profile', 'mtp-serving-v1']
     if chat and endpoint is None:
         bind = os.environ.get('DS41F_CHAT_BIND', 'lan')
@@ -52,6 +52,8 @@ def launch(chat=False, endpoint=None):
                 args.append('--allow-private-lan')
             if endpoint.get('runtime_url'):
                 args += ['--runtime-url', endpoint['runtime_url']]
+    if not chat and default_reasoning_effort is not None:
+        args += ['--default-reasoning-effort', default_reasoning_effort]
     environment = os.environ.copy()
     if not chat:
         for key in list(environment):
@@ -91,6 +93,8 @@ class Operator:
         self.message = ''
         self.offset = 0
         self.mode = 'dashboard'
+        from .operator_settings import load_reasoning
+        self.default_reasoning_effort = load_reasoning()
         self.web_bind = os.environ.get('DS41F_CHAT_BIND', 'lan')
         self.web_port = int(os.environ.get('DS41F_WEB_PORT', '8080'))
         self.conflicts = set()
@@ -194,7 +198,8 @@ class Operator:
                             raise ValueError('Web Chat bind must be lan or loopback')
                         endpoint = dict(host='0.0.0.0' if self.web_bind == 'lan' else '127.0.0.1',
                                         port=self.web_port, allow_private_lan=self.web_bind == 'lan')
-                    self.children[port] = launch(chat, endpoint if chat else None)
+                    self.children[port] = (launch(True, endpoint) if chat else
+                                           launch(default_reasoning_effort=self.default_reasoning_effort))
                     self.message = name+' canonical launcher started'
             await self.poll()
         except Exception as exc:
@@ -249,7 +254,8 @@ class Operator:
                     chat=self.chat_snapshot, chat_conflict=CHAT_PORT in self.conflicts,
                     message=self.message, logs=list(self.logs), log_end=self.log_end,
                     log_gap=self.log_gap, settings={'bind': self.web_bind, 'port': self.web_port,
-                                                  'runtime_python': runtime_python()})
+                                                  'runtime_python': runtime_python(),
+                                                  'default_reasoning_effort': self.default_reasoning_effort})
                 if self.mode == 'dashboard':
                     self.offset = 0
                     visible = lines
@@ -297,7 +303,17 @@ class Operator:
                     self.mode = 'dashboard' if self.mode == target else target
                     self.offset = 0
                 elif self.mode == 'settings':
-                    if key in ('l', 'L'):
+                    if key in ('t', 'T'):
+                        from .config import REASONING_EFFORTS
+                        from .operator_settings import save_reasoning
+                        value = REASONING_EFFORTS[(REASONING_EFFORTS.index(self.default_reasoning_effort) + 1) % len(REASONING_EFFORTS)]
+                        try:
+                            save_reasoning(value)
+                            self.default_reasoning_effort = value
+                            self.message = 'Default Reasoning saved; applies on next Runtime start'
+                        except OSError as exc:
+                            self.message = f'Could not save Runtime setting: {exc}'
+                    elif key in ('l', 'L'):
                         self.web_bind = 'loopback' if self.web_bind == 'lan' else 'lan'
                     elif key in ('+', '-'):
                         self.web_port = max(1024, min(65535, self.web_port + (1 if key == '+' else -1)))

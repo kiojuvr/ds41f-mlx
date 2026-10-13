@@ -23,6 +23,7 @@ if (Path(__file__).resolve().parents[1] == Path(sysconfig.get_paths()['purelib']
 DEFAULT_HOST = "127.0.0.1"
 DEFAULT_PORT = 8000
 DEFAULT_MODEL_ID = "deepseek-v4.1-flash"
+REASONING_EFFORTS = ('none', 'low', 'high', 'xhigh', 'max')
 
 ENV_VARS = {
     "checkpoint_path": "DS41F_CHECKPOINT",
@@ -35,6 +36,7 @@ ENV_VARS = {
     "trace_history_limit": "DS41F_TRACE_HISTORY_LIMIT",
     "enable_diagnostics": "DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS",
     "model_id": "DS41F_MODEL_ID",
+    "default_reasoning_effort": "DS41F_DEFAULT_REASONING_EFFORT",
 }
 
 
@@ -50,12 +52,15 @@ class RuntimeConfig:
     trace_history_limit: int = 32
     enable_diagnostics: bool = False
     model_id: str = DEFAULT_MODEL_ID
+    default_reasoning_effort: str = 'none'
     production_prefill_selector: str = "DENSE_P0_P7"
     mtp: str = "OFF"
     dspark: str = "OFF"
     speculative_decode: str = "OFF"
 
     def __post_init__(self) -> None:
+        if self.default_reasoning_effort not in REASONING_EFFORTS:
+            raise ValueError('unsupported default reasoning effort')
         for key in ("checkpoint_path", "omlx_path", "recipe_path", "kv_root"):
             value = getattr(self, key)
             if not isinstance(value, Path):
@@ -113,6 +118,7 @@ def load_runtime_config() -> RuntimeConfig:
         trace_history_limit=_int("trace_history_limit", 32),
         enable_diagnostics=_bool("enable_diagnostics", False),
         model_id=os.environ.get(ENV_VARS["model_id"], DEFAULT_MODEL_ID),
+        default_reasoning_effort=os.environ.get(ENV_VARS['default_reasoning_effort'], 'none'),
     )
 
 

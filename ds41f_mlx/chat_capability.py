@@ -28,12 +28,12 @@ def negotiate(runtime):
     reasoning = contract.get('reasoning', {})
     if (reasoning.get('scope') != 'session' or reasoning.get('stateless_scope') != 'request'
             or reasoning.get('change') != 'reject' or reasoning.get('thinking_budget_tokens') is not False
-            or reasoning.get('default_thinking_mode') is not False
+            or reasoning.get('default_thinking_mode') is not (defaults.get('reasoning_effort') != 'none')
             or not isinstance(reasoning.get('efforts'), list) or 'none' not in reasoning['efforts']):
         raise ValueError('Unsupported reasoning ownership contract')
     if (set(defaults) != set(PARAMETERS) | {'reasoning_effort', 'max_tokens'}
             or any(defaults[key] != value for key, value in contract['defaults'].items())
-            or defaults['reasoning_effort'] != 'none'):
+            or defaults['reasoning_effort'] != reasoning.get('default_reasoning_effort', 'none')):
         raise ValueError('Generation defaults disagree with runtime authority')
     validate(contract, defaults)
     return deepcopy(defaults)
