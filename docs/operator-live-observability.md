@@ -114,13 +114,31 @@ do not. Other warning/error entries carry content-free component/severity notice
 and exception type, not raw exceptions/tracebacks. Prompts, responses, reasoning,
 tools, token IDs and source/file contents are not newly logged there.
 
+The TUI log pane uses a fixed `level → timestamp → source → message` order:
+
+```text
+RUNTIME LOG · FOLLOW
+INFO    2026-10-13 00:02:17.381 JST  server  Application startup complete.
+```
+
+Display-only source aliases are `uvicorn.error` → `server` and
+`uvicorn.access` → `access`; `ds41f.operator.` is stripped from operator sources.
+`uvicorn.error` is a logger name, not evidence of ERROR severity. Access aliases
+apply only to records admitted by the safe-ring policy above, not raw access URLs.
+The API retains original component names. TUI hides `#sequence` in both FOLLOW
+and PAUSED views; internal sequence cursors, paused anchors and gap detection are
+unchanged. Level text is green for INFO, yellow for WARNING, red for ERROR/CRITICAL
+and cyan for DEBUG; source text is dim and messages remain neutral. Styling is
+reapplied semantically after wrapping, never stored as embedded ANSI in the ring
+or log API. Colours require a colour-capable terminal.
+
 Headless output preserves original diagnostics/access/tracebacks with the same
 local-time stamps at the start of the message body, after severity/component;
-runtime sequence numbers appear at the end of safe log lines. Web Chat keeps
+original logger names and runtime sequence numbers remain in safe headless log
+lines (`#sequence` at the end), unlike the TUI presentation. Web Chat keeps
 Uvicorn's native level, request-line and HTTP-status colours, with the timestamp
 after the level prefix: `INFO:     2026-10-13 00:02:17.381 JST  …`.
 Colours are enabled for the respective terminal stream, not redirected files.
-TUI uses its native severity colours, never embedded ANSI in the log API.
 Traceback continuation lines remain standard Python tracebacks.
 Installed TUI packages must also be updated through the normal package delivery
 workflow: restarting an older installed wheel does not pick up checkout formatting

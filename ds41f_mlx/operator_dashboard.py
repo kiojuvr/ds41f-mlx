@@ -227,6 +227,34 @@ def metric_rows(title, values, width):
     return rows
 
 
+def runtime_log_lines(record, width):
+    """Semantic TUI styling; keep raw logger names and sequences in history."""
+    from textwrap import wrap
+    from .runtime_logging import timestamp
+
+    component = record['component'].removeprefix('ds41f.operator.')
+    component = {'uvicorn.error': 'server', 'uvicorn.access': 'access'}.get(component, component)
+    severity = record['severity']
+    prefix = f'{severity:<7} {timestamp(record["timestamp"])}  '
+    text = f'{prefix}{component}  {record["message"]}'
+    tone = {'INFO': 'green', 'WARNING': 'yellow', 'ERROR': 'red',
+            'CRITICAL': 'red', 'DEBUG': 'cyan', 'TRACE': 'dim'}.get(severity, 'dim')
+    spans = ((0, len(severity), tone), (len(prefix), len(component), 'dim'))
+    rows, cursor = [], 0
+    for part in wrap(text, max(1, width), subsequent_indent=' '*min(2, max(0, width-1))):
+        content = part.lstrip()
+        start = text.index(content, cursor)
+        end = start+len(content)
+        indent = len(part)-len(content)
+        accents = tuple((max(left, start)-start+indent,
+                         min(left+length, end)-max(left, start), color)
+                        for left, length, color in spans
+                        if left < end and left+length > start)
+        rows.append(Line(part, accents=accents))
+        cursor = end
+    return rows
+
+
 def render_screen(snapshot, viewport, *, now=None, mode='dashboard', conflict=False,
                   chat=None, chat_conflict=False, message='', logs=None, log_end=None, log_gap=False,
                   settings=None):
@@ -347,7 +375,6 @@ def render_screen(snapshot, viewport, *, now=None, mode='dashboard', conflict=Fa
     # Logs consume only leftover space, never displace existing operator fields.
     available = budget-len(rows)
     if available >= 3:
-        from .runtime_logging import display
         label = 'RUNTIME LOG · '+('FOLLOW' if log_end is None else 'PAUSED · L latest')
         records = logs or []
         if log_gap or (records and log_end is not None and log_end < records[0]['sequence']):
@@ -356,13 +383,9 @@ def render_screen(snapshot, viewport, *, now=None, mode='dashboard', conflict=Fa
         if log_end is not None:
             anchor = max(log_end, records[0]['sequence']) if records else log_end
             records = [r for r in records if r['sequence'] <= anchor]
-        from textwrap import wrap
         log_rows = []
         for record in records[-(available-2):]:
-            projected = dict(record, component=record['component'].removeprefix('ds41f.operator.'))
-            tone = 'red' if record['severity'] in ('ERROR', 'CRITICAL') else 'yellow' if record['severity'] == 'WARNING' else ''
-            log_rows += [Line(text, tone) for text in wrap(display(projected), max(1, viewport.width-2),
-                                                        subsequent_indent='  ')]
+            log_rows += runtime_log_lines(record, viewport.width-2)
         rows += log_rows[-(available-2):]
         if not log_rows:
             rows.append(Line('waiting for runtime logs', 'dim'))

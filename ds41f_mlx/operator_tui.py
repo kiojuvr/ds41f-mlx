@@ -274,7 +274,7 @@ class Operator:
                         for start, length, tone in line.accents:
                             if start < width-2:
                                 screen.addnstr(row, 1+start, line.text[start:start+length],
-                                               min(length, width-2-start), styles.get(tone, 0) | curses.A_BOLD)
+                                               min(length, width-2-start), styles.get(tone, 0) | (0 if tone == 'dim' else curses.A_BOLD))
                     except curses.error:
                         pass
                 try:

@@ -13,7 +13,7 @@ import pytest
 from ds41f_mlx.runtime_logging import History, RuntimeHandler, display, MESSAGE_LIMIT, timestamp, server_log_config
 from ds41f_mlx.observability import Projection
 from ds41f_mlx.operator_control import Control
-from ds41f_mlx.operator_dashboard import render_screen, Viewport
+from ds41f_mlx.operator_dashboard import render_screen, runtime_log_lines, Viewport
 from ds41f_mlx.operator_tui import Operator
 from test_operator_observability import free_port
 
@@ -68,6 +68,38 @@ def test_human_timestamps_and_chat_access(zone, expected):
     assert item['timestamp'] == created
     rows = render_screen({'state': 'READY'}, Viewport(132, 57), logs=[item])
     assert any(expected in row.text and 'request started' in row.text for row in rows)
+
+
+@pytest.mark.parametrize('component,alias', [
+    ('uvicorn.error', 'server'), ('uvicorn.access', 'access'),
+    ('ds41f.operator.runtime', 'runtime'), ('scheduler', 'scheduler'),
+])
+@pytest.mark.parametrize('severity,tone', [
+    ('INFO', 'green'), ('WARNING', 'yellow'), ('ERROR', 'red'),
+    ('CRITICAL', 'red'), ('DEBUG', 'cyan'),
+])
+def test_tui_log_metadata_and_semantic_colors(component, alias, severity, tone):
+    item = History().append(0, severity, component, 'Application startup complete.')
+    original = item.copy()
+    rows = runtime_log_lines(item, 132)
+    assert len(rows) == 1
+    row = rows[0]
+    prefix = f'{severity:<7} 1970-01-01 00:00:00.000 UTC  '
+    assert row.text == prefix + alias + '  Application startup complete.'
+    assert row.accents == ((0, len(severity), tone), (len(prefix), len(alias), 'dim'))
+    assert item == original
+    assert '\x1b' not in row.text and '#1' not in row.text
+    assert component in display(item) and '#1' in display(item)  # headless unchanged
+    for width in (1, 8, 20, 40, 60):
+        wrapped = runtime_log_lines(item, width)
+        assert all(len(line.text) <= width for line in wrapped)
+        for line in wrapped:
+            assert all(0 <= start < start+length <= len(line.text)
+                       for start, length, _ in line.accents)
+        assert ''.join(line.text[start:start+length] for line in wrapped
+                       for start, length, color in line.accents if color == tone) == severity
+        assert ''.join(line.text[start:start+length] for line in wrapped
+                       for start, length, color in line.accents if color == 'dim') == alias
 
 
 def test_runtime_history_and_safe_logging():
@@ -149,9 +181,10 @@ def test_reconnect_restart_and_paused_dashboard(monkeypatch):
     assert any('event 59' in r.text for r in paused)
     assert not any('latest error' in r.text for r in paused)
     followed = render_screen(snapshot, Viewport(132, 57), logs=list(operator.logs))
-    assert len([r for r in followed if ' #' in r.text]) >= 25
-    assert next(r for r in followed if 'latest error' in r.text).tone == 'red'
-    assert next(r for r in followed if 'event 79' in r.text).tone == 'yellow'
+    assert len([r for r in followed if 'event ' in r.text or 'latest error' in r.text]) >= 25
+    assert not any(' #' in r.text for r in followed)
+    assert (0, 5, 'red') in next(r for r in followed if 'latest error' in r.text).accents
+    assert (0, 7, 'yellow') in next(r for r in followed if 'event 79' in r.text).accents
     for width, height in ((40, 10), (60, 20), (80, 28)):
         before = render_screen(snapshot, Viewport(width, height))
         after = render_screen(snapshot, Viewport(width, height), logs=list(operator.logs))
