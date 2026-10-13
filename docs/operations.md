@@ -46,7 +46,8 @@ Dashboard Start/Stop toggles use the canonical launcher and loopback graceful
 control. Quit leaves the runtime running; reopening rediscovers live state.
 TUI is an operator console only: R Start/Stop LLM Runtime, W Start/Stop Web Chat,
 O Open Web Chat, S Settings, Q Quit TUI. Web Chat is the sole conversation frontend.
-Runtime Settings includes **Default Reasoning: Max** on first TUI launch.
+Runtime Settings includes **Default Reasoning: Max** on first TUI launch (unless
+the environment explicitly supplies a default).
 Press **S**, then **T** to cycle `none / low / high / xhigh / max`; the preference
 is saved in `${XDG_CONFIG_HOME:-~/.config}/ds41f/operator.json` and applies on the
 next **R Start**, not to an already running server. `DS41F_DEFAULT_REASONING_EFFORT`
@@ -55,8 +56,10 @@ overrides the saved preference on TUI startup.
 Headless launches retain `none` unless configured explicitly:
 
 ```sh
-python -m ds41f_mlx.serve --profile mtp-serving-v1 --default-reasoning-effort max
-# Or: DS41F_DEFAULT_REASONING_EFFORT=max python -m ds41f_mlx.serve
+export DS41F_CHECKPOINT=/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash
+/Volumes/SDXC-512/ds41f-mlx_mtp-venv/bin/python -I -m ds41f_mlx.serve \
+  --profile mtp-serving-v1 --default-reasoning-effort max
+# Alternatively, omit the CLI option and export DS41F_DEFAULT_REASONING_EFFORT=max.
 ```
 
 For Chat Completions, the runtime fills omitted reasoning controls before recipe
@@ -101,8 +104,15 @@ Default runtime bind is `127.0.0.1:8000`. Ordinary MTP can explicitly bind a pri
 interface or `--host 0.0.0.0`; singleton retains literal IPv4 loopback. Ordinary
 trusted-LAN serving has no authentication/TLS and rejects browser Origin; wildcard
 bind listens on every interface, so choose a private interface/firewall policy.
-Separate-machine direct-LAN acceptance remains pending. Browser application LAN
-exposure is a different opt-in boundary: see [private LAN](private-lan.md).
+For OpenCode on another trusted LAN machine, export `DS41F_HOST=0.0.0.0`
+(or a specific private interface) **before starting the TUI**, then start Runtime.
+The default `127.0.0.1` bind cannot accept remote connections. Web Chat's LAN mode
+does not change Runtime bind. From the client, check
+`curl http://mac-studio:8000/health` and use `http://mac-studio:8000/v1` as the
+OpenCode base URL (replace the hostname if needed). A single observed greeting
+with public reasoning is a smoke check, not broad separate-machine direct-LAN
+acceptance. Browser application LAN exposure is a different opt-in boundary:
+see [private LAN](private-lan.md).
 
 Use TUI Stop or graceful SIGTERM for the owned runtime process; wait for protected
 native cleanup/retirement before replacement, package installation or model-asset

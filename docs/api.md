@@ -68,6 +68,17 @@ reservations and conflicts prevent competing mutation. Close retires its ownersh
 Sampling is request-owned under `generation-policy-v1`; retained reasoning cannot
 change silently. See [frontend controls](generation-policy-frontends.md).
 
+Chat Completions reasoning defaults are configured at Runtime launch via
+`--default-reasoning-effort {none,low,high,xhigh,max}` or
+`DS41F_DEFAULT_REASONING_EFFORT`; the CLI option takes precedence. Headless launches
+fall back to `none`; TUI launches use a saved preference, initially `max`.
+Only omitted reasoning controls receive the default: explicit `reasoning_effort`
+or `thinking` controls, including Off, remain authoritative. `/health` publishes
+`chat_defaults.reasoning_effort`, `generation_policy.reasoning.default_reasoning_effort`
+and the corresponding `default_thinking_mode`. Retained-session mode/effort still
+cannot change mid-session. Responses/Messages conversion is unchanged; the
+singleton profile only permits `none`. See [operations](operations.md) for setup.
+
 Streaming returns `X-DS41F-Request-ID`. Optional expected-count/application-UUID
 headers on OFF streaming provide observation/correlation; **they are not the
 mandatory reserved-UUID retry fence of production MTP logical sessions**.

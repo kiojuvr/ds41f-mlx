@@ -50,7 +50,13 @@ TUI Web Chat Start (W) defaults to `0.0.0.0:8080` with
 `--allow-private-lan`; `DS41F_CHAT_BIND=loopback` selects localhost-only, while
 `lan` is the default. `DS41F_WEB_PORT` selects the Chat port. This does not change
 LLM Runtime bind or direct CLI Web defaults. S Settings changes the next Web
-launch's bind/port; running services are not reconfigured. TUI does not implement
+launch's bind/port and the next Runtime launch's Default Reasoning (initially Max).
+T in Settings cycles and persists the reasoning preference; Web bind/port changes
+remain process-local. Explicit client reasoning controls override the default.
+For a LAN OpenCode client, set `DS41F_HOST=0.0.0.0` (or a private interface) before
+TUI launch; Runtime otherwise binds to loopback. Running services are not
+reconfigured. See [operations](operations.md) for configuration precedence.
+TUI does not implement
 TLS restart or certificate management; use the explicit Web CLI for HTTPS.
 The tall dashboard and Diagnostics show Chat Listen, Local and best-effort IPv4
 LAN connection URLs, plus `LAN access enabled — trusted local network only`.

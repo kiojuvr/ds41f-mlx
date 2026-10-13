@@ -33,6 +33,10 @@ or the currently installed package.
   generic client function tools, Scheduler-owned paired target/DSpark prefix reuse,
   edited/branched requests and optional logical sessions. Sampling and reasoning
   use `generation-policy-v1`, not the historical greedy-only singleton policy.
+  TUI Runtime launches use **Default Reasoning: Max** initially (saved preference);
+  headless launches default to `none` unless configured with
+  `--default-reasoning-effort` or `DS41F_DEFAULT_REASONING_EFFORT`. Explicit client
+  controls override the default. See [operations](docs/operations.md).
 - **`mtp-singleton-v1` remains a distinct bounded contract.** Its specialized
   session/fence protocol and 8192-total / 768-output weather-tool scope do not
   constrain ordinary MTP or grant it parity with OFF.

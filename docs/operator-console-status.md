@@ -22,7 +22,11 @@ Web Chat  Stopped · LAN · :8080
 [W] Start Web Chat   [O] Open Web Chat
 ```
 
-Settings changes the next Web launch bind/port; generation controls are Web-only.
+Settings changes the next Web launch bind/port and the next Runtime launch's
+Default Reasoning (initially Max). **T** in Settings cycles and saves the reasoning
+preference; explicit client controls still override this omission default.
+Per-conversation generation controls remain Web-only. See [operations](operations.md).
+The actual-host receipts below predate this Runtime-default addition.
 Mac O uses nonblocking standard open, with no browser lifecycle ownership. Q leaves
 both services running. Source tooling delegates model Start to the already provisioned
 installed environment; application-only options/credentials are not forwarded.

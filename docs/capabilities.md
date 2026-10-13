@@ -63,10 +63,19 @@ OFF and ordinary MTP advertise **`generation-policy-v1`**. Request defaults:
 | top_k / min_p | 0 / 0.0 |
 | repetition / presence / frequency penalty | 1.0 / 0.0 / 0.0 |
 | seed | null; best-effort, not a reproducibility guarantee |
-| reasoning | Off / effort `none` |
+| reasoning | Headless: Off / effort `none`; TUI Runtime launch: saved preference, initially `max` |
 
 Explicit greedy uses temperature zero. Advertised reasoning efforts are `none`,
 `low`, `high`, `xhigh`, `max`; no thinking token-budget control is supported.
+For Chat Completions, `--default-reasoning-effort` overrides
+`DS41F_DEFAULT_REASONING_EFFORT` (headless fallback `none`). The TUI passes its
+saved preference as that CLI option; the environment overrides the saved preference
+on TUI startup, and Settings can change it for the next launch. Omitted reasoning
+controls use the Runtime default; explicit `reasoning_effort` or `thinking`,
+including Off, takes precedence. `/health` advertises the effective default in
+`chat_defaults.reasoning_effort` and `generation_policy.reasoning`. This option
+does not change Responses/Messages reasoning conversion or the singleton's
+thinking-off contract. See [operations](operations.md).
 Sampling is request-owned. Retained session reasoning mode/effort is frozen and
 changes reject; stateless reasoning is request-owned. Retained production sessions
 also freeze tool declarations. Unsupported controls reject rather than silently
