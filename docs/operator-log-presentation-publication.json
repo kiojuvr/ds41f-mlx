@@ -1,0 +1,34 @@
+{
+  "schema": "ds41f.local-package-publication.v1",
+  "published_at_utc": "2026-10-13T09:02:56Z",
+  "status": "PASS",
+  "scope": "Local MTP package delivery for operator log presentation; no external registry publication or new model qualification",
+  "source_commit": "131fbedeff5786a2e2f371aaefd82d89d1929661",
+  "wheel": "build/operator-log-presentation-wheels/ds41f_mlx-0.23.0-py3-none-any.whl",
+  "wheel_sha256": "2ac72a9bc5b926cd4aee819fc35cd332a183a86ccc4ff46e4d9601ce83ce0d14",
+  "execution_manifest_sha256": "eb2b23a6c9ef14fc87ce780a92777f00674a503ea629ab6b9965556005cacd51",
+  "installed_environment": "/Volumes/SDXC-512/ds41f-mlx_mtp-venv",
+  "installed_identity_sha256": "9ed7ed19420e9827401e74ab51f5e962a29237d6cb13d76f37ab898c9925643d",
+  "installation": "uv pip install --no-deps --reinstall; non-editable wheel",
+  "qualification": {
+    "targeted_tests": {
+      "command": ".venv/bin/python -m pytest tests/test_runtime_logging.py tests/test_operator_dashboard.py tests/test_operator_keys.py tests/test_execution_identity.py -q",
+      "passed": 55,
+      "failed": 0
+    },
+    "installed_isolated_smoke": {
+      "status": "PASS",
+      "checks": ["source aliases", "level colors", "dim source", "wrapping bounds and accent spans", "FOLLOW and PAUSED hide sequence", "raw history and headless display unchanged"],
+      "package_origin": "/Volumes/SDXC-512/ds41f-mlx_mtp-venv/lib/python3.13/site-packages/ds41f_mlx/__init__.py"
+    },
+    "installed_inspect": {"status": "PASS", "profile": "mtp-serving-v1", "exit_code": 0},
+    "installed_start_print_config": {"status": "PASS", "profile": "mtp-serving-v1", "exit_code": 0},
+    "limitations": [
+      "No real-model load, generation or PTY color-rendering campaign was performed for this presentation-only delivery.",
+      "The earlier broader operator suite had 60 passes and 4 failures in test_operator_observability.py; this delivery does not claim a full-suite PASS."
+    ]
+  },
+  "unchanged": ["OFF environment", "dependency packages", "semantic-native payloads", "model and serving code"],
+  "runtime_restarted": false,
+  "local_logs": "artifacts/operator-log-presentation/"
+}

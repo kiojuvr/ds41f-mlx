@@ -207,6 +207,14 @@ projection. See [performance](performance.md) for comparison/measurement scope.
 
 ## Runtime log acceptance (installed package)
 
+The [log-presentation publication receipt](operator-log-presentation-publication.json)
+records the local MTP wheel built from `131fbedeff5786a2e2f371aaefd82d89d1929661`,
+its SHA, installed identity, 55 passing affected tests, installed isolated rendering
+checks and PASS `inspect` / `start --print-config`. This delivery updates only
+operator presentation; no dependencies or OFF environment were changed. The
+runtime was left stopped. This is not a new real-model, PTY colour-rendering or
+full-suite qualification, and does not supersede the historical acceptance below.
+
 [Runtime log receipt](operator-runtime-log-acceptance.json) records its installed
 wheel, actual PTY/model/request/shutdown timeline, privacy and rediscovery checks.
 The [earlier observability edition](archive/editorial-baseline/operator-live-observability.md.txt)
