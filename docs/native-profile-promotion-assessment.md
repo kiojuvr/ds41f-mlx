@@ -9,6 +9,13 @@ is the local MTP default; portable remains explicit. Current authority is
 [installed distribution admission](runtime-admission.md#glm-execution-distributions)
 and `release/execution-package.json`; the assessment evidence below is unchanged.
 
+OFF follow-up: **CONFIRMED_AUTHORITY_DRIFT — CLOSED BY BOUNDED PUBLICATION**,
+not “No further authority drift”. The [OFF publication](standard-off-native-publication.md)
+reuses the MTP GLM authority and exact retained M45/M47 recipe wheel (no recipe
+re-admission). Installed native/P5/P6 and production selected-path gates passed;
+standard-OFF now defaults to native, with portable explicit. The frozen assessment
+below still describes its historical revision.
+
 This is a distribution decision, not a continuation of the closed
 [long-frontier suffix investigation](long-context-suffix-investigation.md).
 No default, installed environment, execution manifest, resource pin, model math,

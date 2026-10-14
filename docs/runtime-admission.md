@@ -53,9 +53,9 @@ involved. Compatibility failure still refuses startup.
 
 ## GLM execution distributions
 
-Normal-local **MTP defaults to GLM native** on the supported M3 Ultra deployment.
-`third_party/mtp/execution-profiles.json` records the explicit decision; portable
-is an admitted explicit alternative. OFF publication/default is unchanged.
+Normal-local **MTP and standard-OFF default to GLM native** on the supported M3 Ultra deployment.
+`third_party/mtp/execution-profiles.json` records the explicit decisions and status;
+portable is an admitted explicit alternative.
 Serving mode (`mtp-serving-v1`/`standard-off`) and GLM execution profile are distinct.
 Provision with `--glm-profile portable` for the alternative; there is no request
 selector, hot switch or implicit fallback. Inspect, startup logs, operator status
@@ -78,7 +78,11 @@ symbols, array-caster ABI probe and bounded packed-attention GPU/metallib load.
 Native load/ABI/symbol/resource failure **refuses startup**, even if portable
 operations would be possible. Historical OFF resource pins are retained; installed
 OFF can consume the same publisher bundle owner, not an independent native owner.
-No OFF-native package is published by this MTP promotion.
+The subsequent [bounded OFF publication](standard-off-native-publication.md)
+reuses this same GLM owner. Its recipe artifact is the exact retained qualified
+M45/M47 wheel, delivered by `standard-off-recipe.json` without changing resource
+pins. `release/execution-package-standard-off.json` binds OFF native; the
+`-portable.json` sibling binds its explicit alternative.
 
 `artifacts/native-promotion/` binds current artifact provenance, four exact
 same-input primitive checks against the historical admitted native bundle,
@@ -102,7 +106,7 @@ is not relabeled as a new numerical/near-1M or general-runtime release campaign.
    Updating or deleting the development checkout/build scratch cannot change admission.
 
 `mtp_setup` follows this route for both MTP and standard-OFF; OFF uses its separate
-R1 base oMLX export and built base recipe wheel, not the patched MTP payload.
+R1 base oMLX export and frozen qualified base recipe wheel, not the patched MTP payload.
 Cross-profile startup is refused. This migration's fresh real-model acceptance is
 **ordinary MTP**, not fresh OFF or full long-context/release qualification.
 One-way repository promotion remains a source/build audit, not an installed

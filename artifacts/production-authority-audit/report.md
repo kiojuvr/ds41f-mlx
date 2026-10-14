@@ -5,7 +5,17 @@ Method: operator-path source inspection, package/manifest inspection, and target
 Git introduction/change history. This is audit evidence, not new execution,
 performance, installed-host, R1 or release qualification.
 
-## Answer
+## Correction after confirmed OFF finding
+
+The negative conclusion below is superseded for standard-OFF:
+**CONFIRMED_AUTHORITY_DRIFT**, now closed by bounded native publication.
+The prior exclusion of OFF from MTP promotion did not justify treating its
+portable publication as a permanent product decision. See
+[completed OFF publication](../../docs/standard-off-native-publication.md) and
+`release/execution-package-standard-off.json`. The historical audit text below is
+retained as evidence of the earlier conclusion, not current OFF authority.
+
+## Original answer (superseded for OFF)
 
 **No further POTENTIAL_AUTHORITY_DRIFT or CONFIRMED_AUTHORITY_DRIFT was found in
 the checked normal local production path.** No new correctness, performance or

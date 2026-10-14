@@ -11,7 +11,11 @@ from ds41f_mlx.runtime import resource_admission as admission
 
 def test_m3_ultra_local_default_is_explicit_native_with_portable_alternative():
     assert distribution.default_profile('mtp') == 'native'
-    assert distribution.default_profile('standard-off') == 'portable'
+    assert distribution.default_profile('standard-off') == 'native'
+    authority = json.loads((distribution.SOURCES/'execution-profiles.json').read_text())
+    for serving in ('mtp', 'standard-off'):
+        assert authority['status'][serving]['portable'] == 'explicit_alternative'
+        assert authority['status'][serving]['native'] == 'production_default'
 
 
 def test_repository_bundle_provisioning_is_exact_and_separate(tmp_path):

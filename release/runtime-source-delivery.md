@@ -4,13 +4,20 @@ This source tree contains the current ds41f runtime owners, Python-hosted native
 and Metal sources, the native structural build/test foundation, and the OFF Rust
 HTTP/SSE boundary. Native tests are source build/ownership gates, not a new backend
 or claim that every native experimental component is production-selected.
-Production remains DENSE_P0_P7/P5/P7 plus attributed oMLX GenerationBatch decode.
+Production retains DENSE_P0_P7/P5/P7, first-party OFF target execution and the
+separately admitted attributed oMLX MTP topology.
 
 The default OFF environment installs the R1-owned base execution source export
 (`reference/R1/off-source.tar.gz`). MTP installs the M41-delivered bounded patched
-export (`third_party/mtp/omlx-source.tar.gz`). Both build the delivered recipe
-source (`third_party/mtp/recipe-source.tar.gz`) with its own Cargo.lock and normal
-OpenCV image features. They are separate environments, not dynamic backend toggles.
+export (`third_party/mtp/omlx-source.tar.gz`). OFF provisions the exact retained
+M45/M47 qualified recipe wheel bound by `third_party/mtp/standard-off-recipe.json`;
+MTP provisions its separately qualified patched M52R wheel bound by
+`third_party/mtp/normal-local.json`. Neither setup recompiles the recipe or admits
+same-version substitute bytes. Delivered recipe source/Cargo.lock remain build
+provenance. Both profiles default to the single frozen GLM native bundle;
+portable remains an explicit separately admitted alternative. They are separate
+environments, not dynamic backend toggles. See
+`docs/standard-off-native-publication.md` for bounded OFF acceptance and receipts.
 Archive identities/revisions/patches are in `third_party/mtp/sources.json`, R1 and
 the promotion manifest. The official checkpoint remains external.
 

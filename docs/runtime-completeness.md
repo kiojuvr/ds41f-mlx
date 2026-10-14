@@ -122,7 +122,10 @@ binds exact current artifacts, installed identities and acceptance. Ordinary MTP
 actually entered native multi-row P6 attention and MoE dispatch; paired frontiers
 aligned with replay=0/repack=0. Load/ABI/symbol/resource failure refuses startup,
 never changes profile. Operator inspection/health/status expose `glm_profile`.
-OFF publication and general-runtime release status are unchanged. See
+The subsequent [bounded OFF publication](standard-off-native-publication.md) also
+makes native the standard-OFF GLM default, with exact retained recipe provisioning,
+installed native/P5/P6/production selected-path acceptance and explicit portable
+alternative. General-runtime release status is unchanged. See
 [distribution admission](runtime-admission.md#glm-execution-distributions).
 
 ### Prior installed publication (retained evidence)

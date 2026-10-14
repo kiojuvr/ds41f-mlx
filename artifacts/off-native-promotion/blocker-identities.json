@@ -1,0 +1,182 @@
+{
+  "resource_pin": {
+    "sha256": "c4b17870812f0f03f1d026b102e21e870335a7717768f3847256de8a6f7ee5ca",
+    "size": 14011072
+  },
+  "installed_sha256": "1c2637dba52a89288266cc288c36bfc5920b42bb284c15dad51f5088fb820a83",
+  "manifest_sha256": "1c2637dba52a89288266cc288c36bfc5920b42bb284c15dad51f5088fb820a83",
+  "bundle": {
+    "glm_extension": "_ext.cpython-313-darwin.so",
+    "glm_profiles": {
+      "native": {
+        "_ext.cpython-313-darwin.so": {
+          "sha256": "cf0e32a4b63148e57b796b7aab1397008c182f9acd1c7f1e0f4a502752b4633e",
+          "size": 170192
+        },
+        "libomlx_glm_kernel_ops.dylib": {
+          "sha256": "846d9c5cc2a2bce0c0ca2559dd1e6fbd81d4b19a0adf770458b3a772144cfdfd",
+          "size": 392448
+        },
+        "omlx_glm_kernels.metallib": {
+          "sha256": "3b3260a812b56faf8dd452676304a4ccf6e3bbaf3c28381a8c91905f8353204b",
+          "size": 3013512
+        }
+      },
+      "portable": {}
+    },
+    "profile": "native",
+    "provenance": {
+      "archive": "glm-native.tar.gz",
+      "archive_sha256": "f8bad84b71567588677e8e9bdf30cee42f67dd5b0f32e958369bc601d6f269ec",
+      "extension": "_ext.cpython-313-darwin.so",
+      "files": {
+        "_ext.cpython-313-darwin.so": {
+          "sha256": "cf0e32a4b63148e57b796b7aab1397008c182f9acd1c7f1e0f4a502752b4633e",
+          "size": 170192
+        },
+        "libomlx_glm_kernel_ops.dylib": {
+          "sha256": "846d9c5cc2a2bce0c0ca2559dd1e6fbd81d4b19a0adf770458b3a772144cfdfd",
+          "size": 392448
+        },
+        "omlx_glm_kernels.metallib": {
+          "sha256": "3b3260a812b56faf8dd452676304a4ccf6e3bbaf3c28381a8c91905f8353204b",
+          "size": 3013512
+        }
+      },
+      "profile": "native",
+      "provenance": {
+        "build_owner_sha256": "17a5a815596fdd24c5ffc73292665f86bb05096a233bac1f464a800dd6041519",
+        "cmake": "4.3.1",
+        "commands": [
+          [
+            "uv",
+            "venv",
+            "--python",
+            "/opt/homebrew/opt/python@3.13/bin/python3.13",
+            "/private/tmp/ds41f-native-production-build-b/env"
+          ],
+          [
+            "uv",
+            "pip",
+            "install",
+            "--python",
+            "/private/tmp/ds41f-native-production-build-b/env/bin/python",
+            "mlx==0.32.2",
+            "nanobind==2.15.0",
+            "cmake==4.3.1"
+          ],
+          [
+            "/private/tmp/ds41f-native-production-build-b/env/bin/cmake",
+            "-S",
+            "/private/tmp/ds41f-native-production-build-b/source/omlx/custom_kernels/glm_moe_dsa/csrc",
+            "-B",
+            "/private/tmp/ds41f-native-production-build-b/build",
+            "-DPython_EXECUTABLE=/private/tmp/ds41f-native-production-build-b/env/bin/python",
+            "-DCMAKE_BUILD_TYPE=Release",
+            "-DCMAKE_OSX_DEPLOYMENT_TARGET=15.0",
+            "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=/private/tmp/ds41f-native-production-build-b/bundle"
+          ],
+          [
+            "/private/tmp/ds41f-native-production-build-b/env/bin/cmake",
+            "--build",
+            "/private/tmp/ds41f-native-production-build-b/build",
+            "-j",
+            "4"
+          ],
+          [
+            "install_name_tool",
+            "-delete_rpath",
+            "/private/tmp/ds41f-native-production-build-b/bundle",
+            "/private/tmp/ds41f-native-production-build-b/bundle/_ext.cpython-313-darwin.so"
+          ],
+          [
+            "install_name_tool",
+            "-delete_rpath",
+            "/private/tmp/ds41f-native-production-build-b/env/lib/python3.13/site-packages/mlx/lib",
+            "/private/tmp/ds41f-native-production-build-b/bundle/_ext.cpython-313-darwin.so"
+          ],
+          [
+            "codesign",
+            "--force",
+            "--sign",
+            "-",
+            "/private/tmp/ds41f-native-production-build-b/bundle/_ext.cpython-313-darwin.so"
+          ],
+          [
+            "install_name_tool",
+            "-delete_rpath",
+            "/private/tmp/ds41f-native-production-build-b/env/lib/python3.13/site-packages/mlx/lib",
+            "/private/tmp/ds41f-native-production-build-b/bundle/libomlx_glm_kernel_ops.dylib"
+          ],
+          [
+            "codesign",
+            "--force",
+            "--sign",
+            "-",
+            "/private/tmp/ds41f-native-production-build-b/bundle/libomlx_glm_kernel_ops.dylib"
+          ]
+        ],
+        "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.5.0\nThread model: posix\nInstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin",
+        "deployment_target": "15.0",
+        "inputs": {
+          "omlx/custom_kernels/common/csrc/kernels/quantized_moe.h": "9e6440b6e5437e7671d9f399eb230058e4733567f0705015b94be79b8826fd39",
+          "omlx/custom_kernels/common/csrc/kernels/steel_attention_block_token.h": "e444b47b700b19b82428e88fa505a346b7b7dfcfbaf1e2d57119ebd4a4f03ad1",
+          "omlx/custom_kernels/common/csrc/mlx/backend/metal/kernels/steel/attn/params.h": "0061cfd417db17eb2f4166350b3c237e6967276a39519a7a7c31fd98fc4c49ed",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/CMakeLists.txt": "c0d83eb3236529ef11e597f9d2b90ef4bd8c978ba0ee56c8f79983767f2f9044",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/MLX_LICENSE.txt": "ccfab7ccb2ea306f71531c8ca77bb55507606cd90768b1e32b8b52ab5b48cf01",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/MLX_SERVE_LICENSE.txt": "dfe22e0f100fe7f2c2808f1af6f488e7339cf8deb7504153602b4169ed7d90b4",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/bindings.cpp": "b4f1901ae803a0de00897b0fa8c54a4813b466c0f2fede7cff8f50cb70f7736a",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/deepseek_moe.metal": "1d45282bbc667557eab4f07019b1414386bf9747154e017c4439faa4e0be335e",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/deepseek_v41_grouped_expert.cpp": "d15674ffce5d0c1a64952764adad1b2f645f21cc96bdfa2dcd8324ad1673f778",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/deepseek_v41_grouped_expert.h": "e13bd14ebcef5182a884e83000593cdec28ecf02f8c8f3ea57d45a85eb03f5a4",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/deepseek_v41_packed_attention.cpp": "8e5d4a58efac940ebf87e0f75266d09b57ea9648285bf05833361bfe8a1e9c8b",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/deepseek_v41_packed_attention.h": "1fb605ce4801dc3d90db7f98dc41125104a2d44f3d9696c402bbba4b2fb13662",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/deepseek_v41_packed_attention.metal": "ef7b4ba3f611b120b73dafae028a59d4b42e5ec8ee7f21468098f90db152a93a",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/deepseek_v4_sparse_attention.cpp": "7ed3c0ecdb59921e5398d2866c26639d6cff8fa5b13e4946fc6fd9824f3535e8",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/deepseek_v4_sparse_attention.h": "8cae39228f6031d4dc247e2bd2551e1c67ce7555fe4fd5ed5e2051eb2de25c34",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/deepseek_v4_sparse_attention.metal": "fe0768a49b2ab83c5db881b61e263b61f75c22ed704a84941735232d8ddd2837",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/dsa_indexer.cpp": "c7aacb2bfc00b342ce2be70620efc142571ee1dab0de14011042e6d4f97bc64b",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/dsa_indexer.h": "cadd127bbf1449bfaaea12511b57cdd0d3e08f4aa6ab699f447aab55f9636793",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/dsa_indexer.metal": "d5f18a9dabbda2aa59a97e84c4185a25ff0efe6463a30c40fb576754c17e6527",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/dspark_gemm.cpp": "19e54ad507a26dc6541b01d4282f04d045d560787294b618537adc385d9bc197",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/dspark_gemm.h": "3db1cfa462d415b1e42dc5c97531e855a7f893a99f89d4123d219bd478899e07",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/dspark_gemm.metal": "af3ce28407965543ca9acc6b4c8c89ecd9d4bd1af2c8622e785e0066f7dced6e",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/dspark_qmv.cpp": "40d5666c0cf670a6955eb2f1f48aed19d58d20355637918cbcb1c1b71145e2ad",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/dspark_qmv.h": "ed16e512c5f4d016b5b3c5c9b4784bdd81385f0611d52e6aed37bde33ba77da1",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/dspark_qmv.metal": "b00011015883db669d04c19d712539c0e834e94a0243bdf546d0874441f13e0a",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/exact_block_attention.cpp": "720fe13233030bae0bb705d20088397106797597cb588e3a43b2b22b88662d40",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/exact_block_attention.h": "83f5253b006e286f29262c9fca9d097a71bf6afc37cb3f319dcf2fe2830d0e60",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/exact_block_attention.metal": "d7ca63f9d3814edc173f6d7adb7acabc2012f89d3207feed0e0dcea302e34568",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/fused_moe.cpp": "682a66700f92cd2aef1a5e4f0d96ad951ba52389bb628e889e350ad9cb87b03b",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/fused_moe.h": "0d71ce2f5fb902879d01e529dd7f282b3de0fe6dcaf401bc00d7d1cde785f90c",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/fused_moe.metal": "645b5f5d6b55bf8a02bf8389a74419ed9bcded6d6d2e2c4fecaafbca86ff5685",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/kernels/mma_dsa_indexer_score.h": "60d2f80bc25a5e40cbd615e128bca06efd078846e92f5287fbb69bd2acc9510b",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/kernels/steel_deepseek_v41_packed_attention.h": "99e9a930f4aa9e3ff4c948cb4beed8f88ccd8426107a9dc1eae111755ec4c857",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/kernels/steel_deepseek_v4_sparse_attention.h": "550bad8ea897fd3f884c658ec6c823db9047308170459ea6159918a6bf0cecdc",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/kernels/steel_dsa_indexer_score.h": "4682ca3c0692b4a9a80cc67a255113dc03e79d1e7fb1137fb48b2c932fbbe6d8",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/kernels/steel_qwen4_qsa_sparse_gqa.h": "9ffcfb7a152341c6d201eda93aac938cb41390a79701d4511316e26bb07f6446",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/kernels/steel_sparse_mla.h": "c7b38831aee41d227bd56a4a9cc342ad2a051157d66a10f2683025bcdd55a3a9",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/qwen4_qsa_sparse_gqa.cpp": "bd120669e4a2c60ed42d6f3b5423f9600b6dec9f728edf58b94cc1de15ba6093",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/qwen4_qsa_sparse_gqa.h": "efca18985ff4243b9ef240a6838a80e42664e27cbe857f559fe97eb8b3d87b4b",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/qwen4_qsa_sparse_gqa.metal": "dbbbac0b0e672f40a2a27a132419998690e7d5401831d3e8bb61b74e5139c342",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/sparse_mla.cpp": "54cba18edd7fac917f4d34568595b150e0b98fc481ce62dc82e5c10868167e85",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/sparse_mla.h": "e74670e71e1554d6109a08f6449e12562dd7bdf471992bb3c85b17d0057ce015",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/sparse_mla.metal": "5bbe581b90442fa0fde2f7ebbd8adaf9e449166cc7feecb36411a4019236fbad"
+        },
+        "mlx": "0.32.2",
+        "nanobind": "2.15.0",
+        "python": "Python 3.13.15",
+        "sdk": "26.5",
+        "source": {
+          "archive": "omlx-source.tar.gz",
+          "evidence_candidate": "fbe18e8fe68e5bb7b9b1971652ed330f752b6afc",
+          "patch_sha256": "fb120b1ddc9120e69d71ce70f128db7e3bf19a7444b0f237d7661388c9b318d5",
+          "sha256": "26cc224a5fa77d8576589764a56ba8053ac31fe9f4904d8ba60305ed841f33e6",
+          "upstream_base": "4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40"
+        },
+        "xcode": "Xcode 26.6\nBuild version 17F113"
+      },
+      "schema": "ds41f.glm-bundle.v1"
+    }
+  }
+}

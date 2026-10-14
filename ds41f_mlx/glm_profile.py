@@ -14,7 +14,8 @@ PREFIX = 'custom_kernels/glm_moe_dsa/'
 def default_profile(serving_distribution):
     authority = json.loads((SOURCES/'execution-profiles.json').read_text())
     selected = authority['defaults'][serving_distribution]
-    if selected not in ('native', 'portable'):
+    if (selected not in ('native', 'portable')
+            or authority['status'][serving_distribution].get(selected) != 'production_default'):
         raise ValueError('invalid production GLM default')
     return selected
 

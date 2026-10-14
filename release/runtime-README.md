@@ -22,10 +22,17 @@ identifies the separately admitted explicit portable alternative. The exact GLM
 binary/metallib archive and build provenance ship in `third_party/mtp/glm-native.*`.
 Native-selected admission requires actual load/ABI/symbol/UUID/GPU-resource
 usability and refuses startup on failure; it never silently selects portable.
-Inspect, logs, health and operator status expose `glm_profile`. The included wheel is a
-published artifact, not an arbitrary generated binary. This migration freshly
-accepts **ordinary MTP**, not a new full OFF, long-context or general-runtime
-release. Historical R1/OFF and singleton semantic evidence remains unchanged.
+Installed identity inspection exposes `glm_profile`; MTP logs, health and operator
+status also report it. OFF's legacy health reflects lazy model loading, not GLM
+selected-path proof. Included wheels are published artifacts, not arbitrary
+generated binaries. The subsequent bounded OFF publication is bound by
+`release/execution-package-standard-off.json` (native default) and
+`release/execution-package-standard-off-portable.json` (explicit alternative).
+It reuses the same GLM bundle and the exact retained M45/M47 recipe wheel via
+`third_party/mtp/standard-off-recipe.json`, without recipe re-admission or pin changes.
+Installed native/P5/P6/selected-path acceptance is recorded in
+`docs/standard-off-native-publication.md`. This is not a new full long-context or
+general-runtime release; historical R1/OFF and singleton evidence is unchanged.
 A subsequent projection still requires its own explicit promotion qualification.
 
 ## Operation

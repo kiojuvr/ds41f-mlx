@@ -66,8 +66,8 @@ def main():
                 payloads['omlx'][name] = identity['after']
             overlays[label] = overlay
     if args.profile == 'standard-off':
-        if args.recipe_wheel is None:
-            p.error('standard-off needs its built recipe wheel')
+        from ds41f_mlx.off_recipe import artifact_authority
+        args.recipe_wheel, off_recipe = artifact_authority(args.recipe_wheel)
         import tarfile, zipfile
         with tarfile.open(ROOT/'reference/R1/off-source.tar.gz') as tar:
             payloads['omlx'] = {m.name.removeprefix('./').removeprefix('omlx/'): hashlib.sha256(tar.extractfile(m).read()).hexdigest()
@@ -135,7 +135,7 @@ def main():
                                     package_build_input_sha256=sha(ROOT/'pyproject.toml'),
                                     source_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
                                     source_payload_sha256=hashlib.sha256(json.dumps(payloads['ds41f_mlx'],sort_keys=True).encode()).hexdigest(),
-                                    native_build=old['build'] if args.profile == 'mtp' else dict(wheel_sha256=sha(args.recipe_wheel)),
+                                    native_build=old['build'] if args.profile == 'mtp' else dict(wheel_sha256=sha(args.recipe_wheel), artifact_authority=off_recipe),
                                     recipe_source=old['recipe_source'] if args.profile == 'mtp' else json.loads((ROOT/'third_party/mtp/sources.json').read_text())['sources']['recipe'],
                                     off_dependency_authority_sha256=sha(ROOT/'third_party/mtp/standard-off-dependencies.json') if args.profile == 'standard-off' else None),
                     evidence=dict(inherited_candidate_sha256=sha(legacy_path), reference='R1'))

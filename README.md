@@ -29,6 +29,8 @@ or the currently installed package.
   DwarfStar-derived FP8/MLX prefill, SSD-backed Engram and target decode; stateless
   text Chat Completions/Responses/Messages and optional stateful Chat Completions.
   Idle persistence/restore is same-backend only. Bounded OFF Vision is separate.
+  Its GLM distribution now defaults to **native**, with portable explicit; see
+  [bounded OFF publication](docs/standard-off-native-publication.md).
 - **`mtp-serving-v1` with GLM native is the normal M3 Ultra local default.**
   GLM portable remains an explicit separately admitted distribution, not a fallback
   on native admission failure; see [installed admission](docs/runtime-admission.md#glm-execution-distributions).

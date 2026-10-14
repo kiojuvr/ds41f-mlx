@@ -130,17 +130,24 @@ development checkout. Building a wheel is not acceptance; publishers must run
 affected qualification before promoting it. Native recipe rebuilds and semantic
 library changes require affected qualification, not a manifest refresh.
 
-The M3 Ultra local MTP distribution now defaults explicitly to **GLM native**;
+The M3 Ultra local MTP and standard-OFF distributions default explicitly to **GLM native**;
 `third_party/mtp/execution-profiles.json` owns that provisioning/build default.
 The exact three-member native archive and provenance receipt ship in
 `third_party/mtp/glm-native.*`. Setup deliberately installs that frozen overlay;
 operators do not rebuild it. Use `--glm-profile portable` at provisioning/package
 construction for the separately admitted alternative. Native startup failure
 never selects portable. Stop/settle before switching distributions and start new
-sessions; no pair migration, replay or repack is introduced. OFF's published
-portable package/default is unchanged by this MTP-only promotion.
+sessions; no pair migration, replay or repack is introduced. OFF setup consumes
+`standard-off-recipe.json` and its frozen exact M45/M47 qualified wheel, not a fresh
+recipe build. OFF receipts are `release/execution-package-standard-off.json` and
+`release/execution-package-standard-off-portable.json`; see
+[bounded OFF publication](standard-off-native-publication.md). Use separate OFF
+persistence namespaces for native/portable; do not claim cross-profile restore as
+same-trajectory continuity.
 
-`inspect`, startup logs, operator status and `/health` report `glm_profile`.
+Installed identity inspection reports `glm_profile`; MTP startup/status/health
+also expose it. OFF's legacy health model-ready field reflects lazy loading and
+is not a GLM selected-path proof.
 Native and portable have distinct manifests/digests and publication receipts:
 `release/execution-package.json` and `release/execution-package-portable.json`.
 See [GLM admission/provenance](runtime-admission.md#glm-execution-distributions).

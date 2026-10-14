@@ -14,6 +14,7 @@ from pathlib import Path
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--profile', choices=('mtp-serving-v1', 'standard-off'), default='mtp-serving-v1')
     args = p.parse_args()
     from ds41f_mlx.execution_identity import inspect_payload
     from ds41f_mlx.mtp_identity import snapshot
@@ -53,7 +54,7 @@ def main():
     result = None
     try:
         from ds41f_mlx.serve import main as serve
-        result = serve(['--profile', 'mtp-serving-v1'])
+        result = serve(['--profile', args.profile])
     finally:
         for name, original in originals.items():
             setattr(ext, name, original)

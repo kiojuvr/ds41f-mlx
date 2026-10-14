@@ -1,0 +1,72 @@
+{
+  "schema": "ds41f.off-native-publication.v1",
+  "status": "PASS",
+  "finding": "CONFIRMED_AUTHORITY_DRIFT_CLOSED",
+  "recipe_resolution": "A",
+  "recipe_readmission": false,
+  "recipe_sha256": "c4b17870812f0f03f1d026b102e21e870335a7717768f3847256de8a6f7ee5ca",
+  "recipe_authority": "third_party/mtp/standard-off-recipe.json",
+  "glm_authority": "third_party/mtp/glm-native.json",
+  "off_before": "portable",
+  "off_after": "native",
+  "mtp_default": "native (unchanged)",
+  "native_package": {
+    "schema": "ds41f.execution-package.v1",
+    "profile": "standard-off",
+    "glm_profile": "native",
+    "wheel": "release/execution-packages/standard-off-glm-native/ds41f_mlx-0.23.0-py3-none-any.whl",
+    "wheel_sha256": "e107322649be3ea789c8fbabdad30b0f9c92d9c762859aa53e7032b9ba0c22dc",
+    "manifest_sha256": "815fac618038cd2a98ce637ec067c22e0fe17959f79a37e7935faf8e4cc1c371",
+    "recipe_artifact_authority": "third_party/mtp/standard-off-recipe.json",
+    "recipe_artifact_authority_sha256": "29608021c8fc029e2b51220c0d83b15cd941b93d1bd9079137a64c6bc497205a",
+    "glm_artifact_authority": "third_party/mtp/glm-native.json",
+    "glm_artifact_authority_sha256": "46dc7de19bb3e559a05793791632ef1dd59e4be69968f41afde7682f917d6614",
+    "status": "production_default",
+    "qualification": "artifacts/off-native-promotion/production-acceptance.json",
+    "promotion_scope": "OFF execution-profile publication only; recipe exact historical artifact reused; MTP default unchanged"
+  },
+  "portable_package": {
+    "schema": "ds41f.execution-package.v1",
+    "profile": "standard-off",
+    "glm_profile": "portable",
+    "wheel": "release/execution-packages/standard-off-glm-portable/ds41f_mlx-0.23.0-py3-none-any.whl",
+    "wheel_sha256": "713e64f787bb1ab4d3ef0093a2c0ab13afbc73ad7cb5128259fdfe16f420c20b",
+    "manifest_sha256": "13d14d161e841d93e0a9c4d5e23b44cbf9852ae0cc76d13abbf21c573ac3409b",
+    "recipe_artifact_authority": "third_party/mtp/standard-off-recipe.json",
+    "recipe_artifact_authority_sha256": "29608021c8fc029e2b51220c0d83b15cd941b93d1bd9079137a64c6bc497205a",
+    "glm_artifact_authority": null,
+    "glm_artifact_authority_sha256": null,
+    "status": "explicit_alternative",
+    "qualification": "artifacts/off-native-promotion/portable-provision.log",
+    "promotion_scope": "OFF execution-profile publication only; recipe exact historical artifact reused; MTP default unchanged"
+  },
+  "p5_frontier": 264,
+  "p6_frontier": 289,
+  "same_state_list": true,
+  "replay": 0,
+  "repack": 0,
+  "retirement": {
+    "active_sessions": 0,
+    "allocator_cache_limit_bytes": 522268023193,
+    "wired_limit_bytes": 0
+  },
+  "production_native_calls": {
+    "deepseek_v41_grouped_expert": 720,
+    "deepseek_v41_packed_attention": 80,
+    "packed_attention_multirow": 80
+  },
+  "clean_shutdown": true,
+  "portable_fallback": false,
+  "receipts": {
+    "production-acceptance.json": "26f7fbc7cb3af5233423837a2931abc559148c1db1511d245bd7889f9dc4edec",
+    "production-installed.json": "1be39b52c8f26ee8e57dd5c69545cfb17f56a14575eef4c3ffb621c5d23d1ec5",
+    "production-selected-path.json": "56ecc54f4760956c71ea502ed68234f4763ff4e7b76fb5e4c4058e76b610e6c4",
+    "production-http.json": "ed4b1ad7d21fa96baf9db09c556bb8b7863fa8f46df3cb3b666097512aeaafd0",
+    "final-admission-negatives.json": "70c365feadc64c0568d482ae3d32ade345a6f7497c09afe81453b04238058f3d",
+    "recipe-validation.json": "c468e5045119ca26744524cbb87816d218328b6b1427a27315323dd35e0ab1a0",
+    "recipe-preview.json": "1b804eb2363a3b370572e9801a3e4b8582a3a7de3c58bb064307c6ac5037db26",
+    "recipe-source-comparison.json": "b71965e3f08f0053563be1c64f6c158d9c7549208328bf92b12ea0ed545c7aef",
+    "portable-installed.json": "f2ca9e0e9591df24ef47df9f8a17604719135f6b3412f5b35592f66493faa92c"
+  },
+  "remaining_blockers": []
+}

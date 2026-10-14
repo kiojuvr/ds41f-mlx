@@ -6,8 +6,10 @@ by `normal-local.json`, not an operator's investigation environment. `sources.js
 historical candidate evidence commits and delivered patch identities. No public
 setup command clones/checks out those candidate commits or applies undocumented
 patches. `ds41f_mlx.mtp_setup` verifies/extracts them in operator-owned build scratch,
-installs oMLX and the pinned native wheel into a fresh venv. OFF still builds its
-original recipe with the delivered Cargo.lock.
+installs oMLX and the pinned native wheel into a fresh venv. OFF provisions the
+exact retained M45/M47 qualified recipe wheel via `standard-off-recipe.json`,
+not a fresh same-source build. Its source export and Cargo.lock remain attribution
+inputs; delivery verifies the wheel against the unchanged OFF resource pin.
 
 - oMLX: https://github.com/jundot/omlx (Apache-2.0; `omlx-LICENSE`, also inside
   archive). Full clean source export of the M33 candidate on the pinned 0.7.0 base;
@@ -58,8 +60,7 @@ affected qualification; equal package version numbers are not equal execution.
 ## Explicit GLM native / portable distributions
 
 `execution-profiles.json` records **native as the supported M3 Ultra local MTP
-default**, with portable a separately admitted explicit alternative; OFF's
-published portable default is unchanged. `glm-native.tar.gz` contains the exact
+and standard-OFF default**, with portable a separately admitted explicit alternative. `glm-native.tar.gz` contains the exact
 current-built GLM extension, ops dylib and metallib. `glm-native.json` binds their
 sizes/SHA256 and the admitted source archive, 43 GLM/common inputs, toolchain and
 repository-owned `tools/build_glm_bundle.py` invocation. These oMLX-derived
@@ -73,8 +74,11 @@ Setup and package construction consume the same explicit bundle/profile owner.
 requires the selected profile's exact identity and native usability; load/ABI/
 symbol/resource failure refuses startup, never silently switches to portable.
 Current publication and bounded real-model selected-path evidence are recorded
-in `release/execution-package*.json` and `artifacts/native-promotion/promotion.json`.
-See [installed admission](../../docs/runtime-admission.md#glm-execution-distributions).
+in `release/execution-package*.json`, `artifacts/native-promotion/promotion.json`
+and `artifacts/off-native-promotion/publication.json`. OFF recipe delivery reuses
+`standard-off/deepseek_recipe-0.1.1-cp310-abi3-macosx_11_0_arm64.whl`; it does not
+re-admit or replace the historical binary. See [OFF publication](../../docs/standard-off-native-publication.md)
+and [installed admission](../../docs/runtime-admission.md#glm-execution-distributions).
 
 ## Post-completion compressed growth overlay (#4365)
 

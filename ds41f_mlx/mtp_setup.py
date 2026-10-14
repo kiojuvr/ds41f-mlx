@@ -71,6 +71,19 @@ def main(argv=None):
         raise ValueError('qualified setup requires Python 3.13.15; recreate the target venv')
     requirements = SOURCES/('requirements-normal-local.lock' if args.profile == 'mtp-singleton-v1'
                             else 'requirements.lock')
+    if args.profile == 'standard-off':
+        # The source-export lock predates the independently qualified OFF
+        # numerical distribution. Use its repository-owned versions, then let
+        # the package builder verify exact bytes (never enroll local inventory).
+        off = json.loads((SOURCES/'standard-off-dependencies.json').read_text())
+        lines = requirements.read_text().splitlines()
+        for name, version in off['versions'].items():
+            matches = [i for i, line in enumerate(lines) if line.startswith(name+'==')]
+            if len(matches) != 1:
+                raise ValueError(f'ambiguous OFF dependency requirement: {name}')
+            lines[matches[0]] = name+'=='+version
+        requirements = build/'requirements-standard-off.lock'
+        requirements.write_text('\n'.join(lines)+'\n')
     run('uv','pip','install','--python',python,'-r',requirements)
     env = dict(os.environ)
     for key in list(env):
@@ -85,15 +98,12 @@ def main(argv=None):
                CARGO_TARGET_DIR=str(build/'cargo'))
     if subprocess.check_output(['pkg-config','--modversion','opencv4'],env=env,text=True).strip() != '4.14.0':
         raise ValueError('qualified native build requires OpenCV 4.14.0')
-    if args.profile == 'standard-off' and not subprocess.check_output(['rustc','-V'],text=True).startswith('rustc 1.98.1 '):
-        raise ValueError('qualified native build requires Rust 1.98.1')
     if args.profile == 'standard-off':
-        run(venv/'bin/maturin','build','--release','--locked','--skip-auditwheel',
-            '--manifest-path',build/'recipe/deepseek-recipe-python/Cargo.toml',
-            '-i',python,'-o',build/'wheels',env=env)
-        wheels = list((build/'wheels').glob('*.whl'))
-        if len(wheels) != 1:
-            raise ValueError('exactly one native recipe wheel required')
+        # Reuse the exact M45/M47 admitted artifact. A fresh same-source build
+        # is path-sensitive and is not authorization to replace its resource pin.
+        from .off_recipe import artifact_authority
+        wheel, _ = artifact_authority()
+        wheels = [wheel]
     else:
         # Obtain the exact M52R artifact, not a path-dependent substitute build.
         # Full patched sources/Cargo.lock and original toolchain provenance ship

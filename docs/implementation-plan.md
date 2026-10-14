@@ -69,8 +69,10 @@ than being recopied here.
 Required DeepSeek-V4.1-Flash model/runtime core is **COMPLETE**; no current local
 promotion blocker remains. `mtp-serving-v1` is the ordinary local default, with
 explicit OFF fallback. The bounded GLM distribution promotion is also closed:
-native is the M3 Ultra local MTP default, portable is explicit, and native
-admission failure never changes profile. No further kernel/performance campaign
+native is the M3 Ultra local MTP and standard-OFF GLM default, portable is explicit,
+and native admission failure never changes profile. The
+[bounded OFF publication](standard-off-native-publication.md) reuses the exact
+qualified recipe artifact and closes its prior authority drift. No further kernel/performance campaign
 is authorized by that packaging work. See [distribution admission](runtime-admission.md#glm-execution-distributions).
 [Closure assessment](runtime-completeness.md) owns the
 model/ds4/oMLX comparison, operational decision and final closed performance dispositions.
