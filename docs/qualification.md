@@ -83,5 +83,6 @@ without relabelling them as current success.
 
 These reports retain their dates, identities and limits. They are source-scoped
 proof, not a new all-repository/current-deployment certificate. General-runtime
-release, separate-machine LAN acceptance, default-profile decisions and future
-one-way promotion remain separately assessed; this document performs none of them.
+release and future one-way promotion remain separate assessments. Local ordinary
+MTP default and separate-machine trusted-LAN acceptance are closed in the current
+runtime/capability owners; this guide performs or renews none of those decisions.

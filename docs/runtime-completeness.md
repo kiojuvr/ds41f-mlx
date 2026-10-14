@@ -31,10 +31,11 @@ are implementations of those semantics, not required local execution modes.
 | COMPLETE | SSD Engram/hash/history and image exclusion; dense DwarfStar/P6 prefill/continuation, exact consumed frontier and same-live P5 transfer. Long text core and ordinary MTP serving evidence have distinct retained scopes. |
 | COMPLETE | ViT/aligner/new-span embedding merge, image masks/VL routing, bounded ordinary Vision→DSpark/native MTP and image-discriminated paired reuse. Real-image ordinary closure is separate from the original OFF receipt. |
 | COMPLETE | Native DSpark proposal/verification/rollback/commit, request-owned sampling, recipe tools/reasoning/JSON/SSE, paired snapshots, edits/branches/cancellation/retirement and optional logical sessions. No second executable owner, replay repair or backend-finish publication. |
-| DEFERRED CAPABILITY | Multi-request native batching/fairness, larger multi-user admission, multiple logical sessions and restart-crossing MTP persistence. Not needed by one active native generation with ordinary queued requests. Persistence would need complete target+DSpark and application-outcome ownership, not target-only SSD reuse. |
-| DEFERRED CAPABILITY | Broader multimodal context/input/API, ordinary MTP Responses/Messages, attachments/product UI and separate-machine LAN acceptance. Current clients use ordinary Chat Completions; OFF retains its separate protocols/persistence and isolated PDF Vision. No automatic cross-profile routing. |
+| DEFERRED CAPABILITY | Multi-request native batching/fairness, larger multi-user admission and restart-crossing MTP persistence. Not needed by one active native generation with ordinary queued requests. Persistence would need complete target+DSpark and application-outcome ownership, not target-only SSD reuse. |
+| DEFERRED CAPABILITY | Broader multimodal context/input/API, ordinary MTP Responses/Messages and broader attachment/product UI scope. Current clients use ordinary Chat Completions; OFF retains its separate protocols/persistence and isolated PDF Vision. No automatic cross-profile routing. |
 | ALTERNATE MODE / OUT OF SCOPE | Multi-Mac/TP/RDMA, CUDA/DGX Spark, GGUF/affine/oQ quantized checkpoints, MoE expert offload and other hosts/models. SSD Engram is implemented; expert offload is a different residency mode, unnecessary for the admitted full-resident backbone on M3 Ultra/512 GB. |
-| PERFORMANCE BACKLOG | Kernel compilation amortization, exact fused kernels, copied proposals and compressed/index growth discussed below; no missing operator or execution capability. |
+| CLOSED PERFORMANCE WORK | Known identified post-0.7.0 work below is closed: #4365, partial #4360, selective #4354 and singleton #4363. Omitted/rejected deltas are not an automatic backlog or completeness blocker; further research requires explicit scope selection. |
+| CLOSED ACCEPTANCE | Separate-machine trusted-LAN **CLOSED / PASS**, real Windows → Mac LAN with operator correlation; see [acceptance](remote-lan-windows-acceptance.md). No authentication/TLS/Internet/multi-user claim. |
 | ACTUAL BLOCKER | None remaining for current primary local operation. OFF-only protocol/persistence users must continue selecting OFF explicitly. |
 
 Comparison inspected ds4 at `0aaea5a` (`ds4.c`, model/server documentation) and
@@ -46,15 +47,18 @@ recipe authority and forbids historical-image/session replay on unavailable stat
 
 ## oMLX 0.7.0+ delta disposition
 
-No upstream dependency/numerical payload is changed by this promotion.
+The original default promotion itself changed no upstream dependency/numerical
+payload. The table below gives the **final/current disposition** of subsequent
+post-completion work; the original candidate ordering is not a current backlog.
+[Performance](performance.md) retains the intermediate decisions and evidence.
 
 | Change | Classification and ds41f relevance |
 | --- | --- |
-| `63917f5f` / #4354: fewer Metal recompilations | Semantics-preserving PERFORMANCE BACKLOG (category 3). Runtime shapes replace changing token/row counts in template keys for FP8 activation, HC, routing and top-k. Applicable ideas to pinned decode and first-party modules, but DwarfStar prefill dispatch is separate; not a missing capability or correctness repair. |
-| `f0d4cb53` / #4360: bit-exact decode/long-prefill kernels | PERFORMANCE BACKLOG (3). Packed FP8 activation, MXFP8 GEMV, lane Sinkhorn and attention/index dispatch preserve arithmetic/storage boundaries and retain fallbacks. Decode ideas are relevant; generic long-prefill kernels do not automatically replace ds41f's dense/suffix topology. Upstream bit-exact tests are evidence for upstream inputs, not permission to silently replace admitted kernels here. |
-| `a2ee4a2c` / #4363: DSpark context-copy drafts | **ADOPT / CLOSED singleton performance optimization** (not completeness): consumed-source-only index, query-only pending anchor, same selected full depth and ordinary acceptance-controller feedback. Source-built production sampling, EOS inside copy, in-flight cancellation/full-pair continuation and bounded Vision reuse qualify; safe rewrite decode improves ~13.67%, ordinary overhead is non-material. Priming/UID/batching plumbing is excluded. Installed operator remains unchanged. See [closure](context-copy-closure.md); [initial evaluation](context-copy-evaluation.md) is retained history. |
+| `63917f5f` / #4354: fewer Metal recompilations | **CLOSED: selective adoption**. Runtime shapes replace changing counts in selected FP8 activation, HC, routing and top-k template keys. Unobserved paired-concat branch stays unchanged. Arithmetic and dispatch topology are preserved; not a missing capability or correctness repair. |
+| `f0d4cb53` / #4360: bit-exact decode/long-prefill kernels | **CLOSED: partial adoption**. MXFP8 GEMV (with pinned byte decoder) and lane Sinkhorn adopted. FP8 packing rejected on byte mismatch; sparse attention and radix changes omitted as non-selected/topology-changing. Upstream bit-exact assertions do not override admitted arithmetic/storage boundaries. |
+| `a2ee4a2c` / #4363: DSpark context-copy drafts | **ADOPT / CLOSED singleton performance optimization** (not completeness): consumed-source-only index, query-only pending anchor, same selected full depth and ordinary acceptance-controller feedback. Source-built production sampling, EOS inside copy, in-flight cancellation/full-pair continuation and bounded Vision reuse qualify; safe rewrite decode improves ~13.67%, ordinary overhead is non-material. Priming/UID/batching plumbing is excluded. Subsequent installed publication includes this overlay (see current delivery note below). See [closure](context-copy-closure.md); [initial evaluation](context-copy-evaluation.md) is retained history. |
 | Same change: per-request priming | Correctness/isolation fix for upstream interleaved request/UID priming (1), topology-inapplicable in the current ds41f lane (4), not missing capability (2). `ProductionScheduler(max_num_seqs=1)` starts only when no request is running; qualified P6 taps populate that request's rings, P5 installs complete committed context into the sole batch, and retirement drops context before another request starts. Waiting requests do not prime shared host slots. Multi-active generic upstream prefill is not selected. |
-| `09be4f42` / #4365: compressed KV/index in-place growth | Semantics-preserving PERFORMANCE BACKLOG (3), particularly long-context decode. Alternating buffers avoid full-context concatenation on short appends; values and fallback copies remain unchanged. Adoption must reconcile single-row extract registry sharing, rollback/truncate and immutable paired capture/acquisition; no mutable alias or unbudgeted double-buffer authority may leak into snapshots. Current concatenation is correct, though slower. |
+| `09be4f42` / #4365: compressed KV/index in-place growth | **ADOPT / CLOSED**. Alternating capacity buffers avoid full-context concatenation on short appends. Singleton extraction, rollback/truncate and immutable paired capture/acquisition are covered; snapshots retain logical arrays, not mutable capacity/registry authority. Extra capacity memory and fallback copies remain explicit trade-offs. |
 | `0eb8df1f` / #4311: MLX 0.32.3 compatibility | Conditional correctness/ABI compatibility (1) for an MLX upgrade, currently inapplicable (4): ds41f admits its exact locked MLX/native payload. Upgrading upstream is not promotion work. |
 | `3f99250d`: replay `ced_tail` in oQ sensitivity | Correctness fix (1) in alternate quantization/calibration tooling, inapplicable (4) to official-weight serving. ds41f does not run oQ sensitivity replay in production. |
 
@@ -99,11 +103,27 @@ Affected dispatch/lifespan and ordinary API/state/identity regressions pass.
 The broader selected test run also exposed four stale fixtures in
 `test_production_session_owner.py` / `test_runtime_capacity.py` (missing prepared
 image/reasoning fields and the obsolete blanket ordinary-image rejection).
-All four reproduce unchanged at parent `fb6f1cd`; they are not production failures
-or introduced by the selector change. They were not used to reopen qualified core
-or weaken current image/reasoning admission.
+All four reproduced unchanged at parent `fb6f1cd`; they were not production failures
+or introduced by the selector change. This is the original finding, not current
+fixture debt. The two session-owner fixtures were corrected subsequently; hygiene
+cleanup corrects the remaining external-image expectation and reasoning-policy
+mock, plus the cancellation conversation and operator-launch mocks. Production
+semantics and original failure receipts are unchanged. The upstream full-VLM
+subprocess's undeclared `openai_harmony` is upstream/environment evidence, not a
+repository-owned production defect; no dependency or upstream fixture is changed.
 
-## Local installed delivery
+## Current installed disposition
+
+The later [local MTP publication receipt](operator-log-presentation-publication.json)
+records source `131fbedeff5786a2e2f371aaefd82d89d1929661` and installed identity
+`9ed7ed19420e9827401e74ab51f5e962a29237d6cb13d76f37ab898c9925643d`.
+Its retained wheel's execution manifest includes `compressed_growth`,
+`bit_exact_kernels`, `template_reuse` and `context_copy` provenance. Thus the old
+performance rebuild/update recommendations have been fulfilled by subsequent
+publication; they are not pending tasks. This hygiene pass publishes nothing and
+renews no qualification. [Operations](operations.md) remains the deployment owner.
+
+## Original local default installed delivery
 
 The stopped MTP environment `/Volumes/SDXC-512/ds41f-mlx_mtp-venv` was updated
 non-editably using the existing package builder and `uv pip --no-deps --reinstall`.
@@ -122,7 +142,7 @@ Subsequent documentation-only commits do not require rebuilding this payload or
 changing its provenance. Historical receipts/archives were not refreshed.
 
 Progress is the completed default decision and retained correct fallback, not a
-new probe/receipt/test count. Future performance work can be selected independently:
-prioritize long-context compressed/index growth and top-k pipeline amortization,
-then exact decode kernels and copied proposals only with affected ownership,
-numerical and workload validation. Promotion does not wait for that campaign.
+new probe/receipt/test count. The originally identified performance candidates are
+now closed with the bounded dispositions above. Further performance research,
+deferred capabilities and unsupported scope are not current production blockers
+or required work before general-runtime release boundary assessment.

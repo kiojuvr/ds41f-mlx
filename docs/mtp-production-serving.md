@@ -54,8 +54,10 @@ adversarial multi-user isolation or Internet exposure claim. Wildcard bind is no
 a security boundary; choose the private interface/firewall deliberately.
 Singleton retains its literal IPv4-loopback/exact-Host contract; OFF is separate.
 See [network operations](operations.md) and [application LAN policy](private-lan.md).
-Separate-machine acceptance remains pending; same-host LAN-IP requests do not
-prove packets crossing the LAN or firewall reachability.
+Separate-machine acceptance is **CLOSED / PASS**, with real Windows → Mac
+transport and operator correlation; see the current disposition under
+[direct-LAN evidence](#direct-lan-transport-fix-checks-2026-10-09).
+Original same-host LAN-IP checks alone did not prove remote reachability.
 
 ## Ordinary function tools and OpenCode
 
@@ -262,8 +264,11 @@ client-effect exactly-once or broader feature approval is inferred.
 The original same-host loopback/LAN-IP requests demonstrated ordinary Host/bind,
 repeat reuse, disconnect/re-entry and unchanged singleton rejection. Recorded
 OFF-native-pin failures and parent reproduction remain in the earlier edition.
-**Separate-machine LAN acceptance is still incomplete**; no remote-client run or
-host-firewall reachability is inferred from those checks.
+At that stage separate-machine LAN acceptance was incomplete; no remote-client
+run or host-firewall reachability follows from those original checks.
+**Current disposition: CLOSED / PASS**, separately established by
+[Windows-to-Mac trusted-LAN acceptance](remote-lan-windows-acceptance.md), not a
+relabelling of the 2026-10-09 evidence.
 
 ### Existing ordinary execution acceptance
 

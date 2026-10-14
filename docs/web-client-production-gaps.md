@@ -5,6 +5,20 @@ The original findings and receipts below are not rewritten as passes. Current
 architecture, operations and qualification are tracked in
 [Web application](web-application.md) and [live delivery](stateful-live-delivery.md).
 
+## Supersession / current disposition
+
+The baseline's “Items 1–6 remain unresolved”, “Required next work”, “R1 ...
+blocked”, pending and not-complete statements below apply only to `2fe40a9`.
+They **do not define current backlog, release blockers or authorization** to
+repeat the old campaign. Subsequent implementation and scoped closure are owned
+by [Web application](web-application.md), [Chat interface](chat-interface.md),
+[live delivery](stateful-live-delivery.md) and [capabilities](capabilities.md).
+Use [implementation decisions](implementation-plan.md) for current work and
+[qualification](qualification.md) for evidence boundaries. General-runtime release
+assessment and full R1 are separate decisions; this baseline neither blocks nor
+certifies them today. Original failures, partial fixes and reproduction commands
+are retained as provenance, not current startup instructions.
+
 **Status at the investigation stage: NOT COMPLETE / NOT QUALIFIED as a production-facing Web application.**
 This is not a closeout or authorization to proceed to R1. Baseline is master
 `2fe40a9af2da8cbeab8a9543a6925a91c4452e6d`.

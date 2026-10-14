@@ -167,15 +167,17 @@ def test_toggle_composes_shutdown_then_canonical_start(monkeypatch):
         return {'endpoint': endpoint}
     monkeypatch.setattr(tui, 'call', call)
     monkeypatch.setattr(socket, 'create_connection', lambda *a, **kw: (_ for _ in ()).throw(ConnectionRefusedError()))
-    monkeypatch.setattr(tui, 'launch', lambda chat, cfg: events.append(('launch', chat, cfg)) or SimpleNamespace(poll=lambda: None))
+    monkeypatch.setattr(tui, 'launch', lambda *, default_reasoning_effort:
+                        events.append(('launch', default_reasoning_effort)) or SimpleNamespace(poll=lambda: None))
     operator = tui.Operator()
+    operator.default_reasoning_effort = 'max'
     async def poll():
         pass
     monkeypatch.setattr(operator, 'poll', poll)
     monkeypatch.setattr(operator, 'poll_logs', poll)
     asyncio.run(operator.lifecycle('toggle'))
     asyncio.run(operator.lifecycle('toggle'))
-    assert events == ['GET', 'POST', 'GET', 'GET', ('launch', False, None)]
+    assert events == ['GET', 'POST', 'GET', 'GET', ('launch', 'max')]
 
 
 @pytest.mark.parametrize('argv', [[], ['--profile', 'mtp-serving-v1']])
@@ -186,7 +188,8 @@ def test_canonical_launcher_registers_load_on_actual_fastapi_router(monkeypatch,
     from ds41f_mlx import serve, mtp_identity
     from ds41f_mlx.serving import server, production_mtp
     events = []
-    cfg = SimpleNamespace(host='127.0.0.1', port=8000, apply_environment=lambda: None)
+    cfg = SimpleNamespace(host='127.0.0.1', port=8000, default_reasoning_effort='none',
+                          apply_environment=lambda: None)
     monkeypatch.setattr(mtp_identity, 'config', lambda *args, **kwargs: cfg)
     monkeypatch.setattr(mtp_identity, 'inspect', lambda cfg: {'identity_sha256': 'fixture'})
     monkeypatch.setattr(server, 'create_app', lambda **kwargs: fastapi.FastAPI())
@@ -255,7 +258,7 @@ def test_ops_ordinary_accept_default_and_historical_qualification(monkeypatch):
 def test_launcher_inspection_reports_serving_profile(monkeypatch, capsys, argv, profile):
     import json
     from ds41f_mlx import serve, mtp_identity, ops
-    monkeypatch.setattr(mtp_identity, 'config', lambda *a, **kw: SimpleNamespace(checkpoint_path=None))
+    monkeypatch.setattr(mtp_identity, 'config', lambda *a, **kw: SimpleNamespace(checkpoint_path=None, default_reasoning_effort='none'))
     monkeypatch.setattr(mtp_identity, 'inspect', lambda cfg: {'profile': 'mtp-singleton-v1', 'status': 'PASS'})
     assert serve._main([*argv, '--print-config']) == 0
     assert json.loads(capsys.readouterr().out)['profile'] == profile

@@ -15,7 +15,7 @@ Architecture explains ownership; specialized documents explain endpoint semantic
 | Ordinary APIs | Text Chat Completions, Responses, Messages within documented scopes | Chat Completions (text and bounded inline Vision); health/models | Specialized session API, not ordinary stateless Chat Completions |
 | Independent conversations/edits | Stateless requests prefill fresh; retained sessions require exact extension | Ordinary requests may safely reuse paired prefixes or miss, including edits/branches | Exact session extension/frozen request fences |
 | Active execution | Single-flight; overlap conflicts | One native active generation; independent ordinary requests may queue, no shared native batch | One response lease/live session |
-| Optional stateful Chat | Exact-prefix sessions, default maximum 4 | One logical session on the same Scheduler; streaming only | One issued process-lifetime session with sequence/body fence |
+| Optional stateful Chat | Exact-prefix sessions, default maximum 4 | Up to 16 logical conversations on the same Scheduler; streaming only | One issued process-lifetime session with sequence/body fence |
 | Function tools | Ordinary client function tools | Generic recipe-authoritative function tools/results | Pinned weather declaration and bounded dedicated-client contract |
 | Sampling/reasoning | `generation-policy-v1` | `generation-policy-v1` | Separate greedy/thinking-off qualification contract |
 | Native idle persistence/restore | Validated same-backend artifacts | Unsupported | Unsupported |

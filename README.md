@@ -52,7 +52,8 @@ checkpoint and Scheduler settlement boundaries are implemented; the original SP1
 BLOCK is historical, not a current implementation hold. Required model/runtime
 core is **COMPLETE** and local default-MTP promotion is approved; see the
 [runtime closure and upstream disposition](docs/runtime-completeness.md).
-Broader release, separate-machine LAN acceptance and product/security scope remain
+Separate-machine trusted-LAN acceptance is **CLOSED / PASS**, as recorded in
+capabilities. Broader release and unsupported product/security scope remain
 separate decisions, not blockers for this single-operator local default.
 
 ## Start an installed runtime

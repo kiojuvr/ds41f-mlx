@@ -9,7 +9,8 @@ from ds41f_mlx.serving.deepseek_recipe_backend import DeepSeekRecipeRuntimeBacke
 
 
 def request():
-    return RecipePreparedRequest('chat_completions',SimpleNamespace(model=None,stream=False,inference_options=SimpleNamespace(max_tokens=8)),None,[1,2],[])
+    return RecipePreparedRequest('chat_completions',SimpleNamespace(model=None,stream=False,inference_options=SimpleNamespace(max_tokens=8),
+        conversation=SimpleNamespace(thinking_mode=False,reasoning_effort=None)),None,[1,2],[])
 
 
 async def entered(event):

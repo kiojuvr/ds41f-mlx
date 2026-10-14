@@ -90,15 +90,14 @@ def test_ordinary_auto_uses_resolved_budget_for_execution():
     assert backend.request_max_tokens(prepared) == 393216
 
 
-def test_ordinary_rejects_images_before_render_or_expansion(monkeypatch):
-    from ds41f_mlx.serving import server
-    def forbidden():
-        pytest.fail('rejected image request reached rendering/expansion')
-    monkeypatch.setattr(server, 'DeepseekV41Encoding', forbidden)
+def test_ordinary_rejects_external_images_without_network_access():
+    cfg = load_runtime_config(); cfg.apply_import_paths()
+    tokenizer = load_v41_tokenizer(cfg.recipe_path)
     value = {'model': 'deepseek-v4.1-flash', 'messages': [{'role': 'user', 'content': [
         {'type': 'image_url', 'image_url': {'url': 'https://example.com/a.png'}}]}]}
-    with pytest.raises(ValueError, match='text Chat'):
-        prepare_request('chat_completions', json.dumps(value).encode(), tokenizer=None, ordinary=True)
+    with pytest.raises(RequestError, match='external image URLs/files are unsupported'):
+        prepare_request('chat_completions', json.dumps(value).encode(), tokenizer=tokenizer,
+                        checkpoint=cfg.checkpoint_path, ordinary=True)
 
 
 def test_qualified_boundary_and_model_boundary_are_total_and_separate(tmp_path):
@@ -135,7 +134,8 @@ def test_ordinary_output_and_total_capacity(tmp_path, prompt, maximum, accepted)
 
 def test_budget_prefix_guard_never_mutates_count_or_authority(monkeypatch):
     backend = DeepSeekRecipeRuntimeBackend(runtime_config=load_runtime_config())
-    rec = SimpleNamespace(busy=False, recovery_state='ready', request_count=7, m11=SimpleNamespace(m8=SimpleNamespace(token_history=[1,2,3]), image_identities=[]))
+    rec = SimpleNamespace(busy=False, recovery_state='ready', request_count=7, reasoning_policy=None,
+                          m11=SimpleNamespace(m8=SimpleNamespace(token_history=[1,2,3]), image_identities=[]))
     monkeypatch.setattr(backend, 'get_stateful_session', lambda _: rec)
     request = SimpleNamespace(model=None, multimodal=None, image_sources=[], token_ids=[1,2,3,4])
     assert backend.validate_stateful_admission('s', request) is rec

@@ -5,6 +5,28 @@ It is not a benchmark diary, a second capability matrix or an installed-deployme
 SLA. [Capabilities](capabilities.md) owns support/limits; [architecture](architecture.md)
 owns selected topology; [qualification](qualification.md) explains proof scope.
 
+## Current disposition of recorded recommendations
+
+The sections below retain each investigation's source-pinned decisions, failures
+and recommendations **as of that stage**, not current work instructions.
+Known identified post-0.7.0 work is **CLOSED**: #4365, partial #4360, selective
+#4354 and singleton #4363. Initial #4363 DEFER is superseded by its subsequent
+production-safety closure. Rejected/omitted upstream deltas do not become required
+work merely because they were investigated.
+
+The old “recommend rebuild/update now” recommendations were subsequently fulfilled:
+[runtime closure/current delivery](runtime-completeness.md#current-installed-disposition)
+identifies the published wheel and its manifest containing all four overlays.
+“Operator unchanged” / “not performed here” below describe the original runs only.
+The recorded cancellation fixture failure is now cleaned up in repository tests;
+original receipts still record failure. The undeclared upstream `openai_harmony`
+subprocess dependency remains upstream/environment evidence, not a repository
+production blocker or instruction to mutate the admitted environment.
+
+No new optimization, qualification, publication or release task follows from these
+historical recommendations. Current work selection belongs to
+[implementation decisions](implementation-plan.md).
+
 ## Compare the same work
 
 Performance is part of useful runtime completion, but must preserve official

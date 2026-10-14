@@ -139,8 +139,10 @@ Production blocker? | Owner/path | Closure evidence
 Classify as REQUIRED, REQUIRED_BUT_PARTIAL, DEFERRED_BY_SCOPE or NOT_APPLICABLE.
 Record only distinctions that affect the real supported scope; do not create a
 large compatibility catalog or infer a blocker merely from absent broad testing.
-Separate-machine LAN acceptance remains pending; same-host LAN-IP checks are not
-remote-client evidence. Internet/multi-user readiness is not established.
+Separate-machine trusted-LAN acceptance is **CLOSED / PASS**: the
+[Windows-to-Mac acceptance](remote-lan-windows-acceptance.md) records real remote
+transport and operator correlation. Original same-host LAN-IP checks alone were
+not remote-client evidence. Internet/multi-user readiness is not established.
 Broader release closure needs its own explicit assessment, not a singleton PASS
 or B1/B2 closure extrapolated to every row.
 

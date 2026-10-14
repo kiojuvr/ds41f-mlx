@@ -12,8 +12,9 @@ These are current owning pages, **not an at-HEAD qualification badge**.
 Ordinary `mtp-serving-v1` is the local default; `standard-off` remains an explicit
 fallback, distinct from bounded singleton. [Runtime completeness and promotion](runtime-completeness.md)
 records core COMPLETE, no current local blocker and separated upstream performance work.
-General-runtime release remains incomplete and
-separate-machine LAN acceptance pending. The old `ds41f-runtime` directory is
+General-runtime release boundary assessment remains separate;
+separate-machine trusted-LAN acceptance is **CLOSED / PASS** (real Windows → Mac,
+with operator correlation), as recorded in capabilities. The old `ds41f-runtime` directory is
 unused generation, not current deployment or accepted release history.
 
 ## Specialist contracts

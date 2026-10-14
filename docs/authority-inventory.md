@@ -1,5 +1,21 @@
 # Documentation authority inventory — proposal only
 
+## Supersession / current disposition
+
+This inventory is **EVIDENCE at its original baseline**, not current authority.
+Its proposed classifications, conflict findings, movement candidates and “Next
+stages” below preserve the original editorial plan; they are **not current release
+blockers or automatically selected tasks**. Later authority compilation and this
+hygiene cleanup supersede that plan without rewriting the snapshot or artifacts.
+
+[Documentation policy](documentation-policy.md) and the
+[classification map](doc-classification.json) own CURRENT / HISTORICAL / EVIDENCE /
+RELEASE roles. [The current index](README.md) routes to implementation decisions,
+capabilities, architecture, operations and explicit closure owners. Qualification
+reports and immutable JSON/artifact receipts establish only their recorded scope;
+superseded plans retain provenance, not task authority. No archive relocation is
+required to achieve convergence; existing links and tooling paths are retained.
+
 ## Scope and method
 
 This is the first, inventory-only stage of documentation cleanup. It does not

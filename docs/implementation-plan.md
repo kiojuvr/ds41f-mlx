@@ -69,8 +69,30 @@ than being recopied here.
 Required DeepSeek-V4.1-Flash model/runtime core is **COMPLETE**; no current local
 promotion blocker remains. `mtp-serving-v1` is the ordinary local default, with
 explicit OFF fallback. [Closure assessment](runtime-completeness.md) owns the
-model/ds4/oMLX comparison, operational decision and separated performance backlog.
+model/ds4/oMLX comparison, operational decision and final closed performance dispositions.
 No new numerical execution topology or qualification campaign is required.
+
+## Documentation hygiene / authority convergence closure
+
+**COMPLETE; ready for general-runtime release boundary assessment.** Current
+owners distinguish closed model/runtime core, ordinary MTP default and real
+separate-machine trusted-LAN PASS from deferred capabilities, unsupported scope
+and optional research. Known identified post-0.7.0 performance work and its
+subsequent installed delivery are closed, not a pre-assessment backlog.
+
+Historical Web gaps, inventory next stages and intermediate performance
+recommendations retain provenance with supersession notes; they do not select
+current tasks. No document was relocated and no immutable receipt was refreshed.
+Repository-owned capacity/reasoning/cancellation/operator mocks are cleaned up;
+40 focused tests pass across the four affected/session-owner modules. The two
+previously stale session-owner cases already pass. Upstream full-VLM's undeclared
+`openai_harmony` remains upstream/environment evidence, not repository fixture debt
+or an established supported-lane production blocker.
+
+This cleanup found **no new concrete production blocker**. It performs no new
+qualification campaign, performance research, packaging/publication, full R1 or
+release assessment. The next assessment evaluates current implementation and its
+supported scope, not old closed work or historical TODO wording.
 
 ## Remaining broader scope
 

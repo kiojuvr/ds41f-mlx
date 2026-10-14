@@ -1,5 +1,16 @@
 # Singleton context-copy source closure (#4363)
 
+## Subsequent current disposition
+
+The source-closure account below retains its original payload identities and
+“operator unchanged” / rebuild recommendation **at that stage**. The recommendation
+was fulfilled by subsequent local MTP publication;
+[current installed disposition](runtime-completeness.md#current-installed-disposition)
+identifies the published payload and all four overlay provenance entries. It is
+not a pending task. The cancellation mock's missing conversation has also been
+corrected in repository tests; original failed evidence below remains unchanged.
+No core requalification, new performance campaign or publication is requested here.
+
 **ADOPT — CLOSED source performance optimization.** Runtime remains **COMPLETE**,
 ordinary MTP remains default, and oMLX remains pinned to **0.7.0**. The installed
 operator payload is unchanged. This closes the deferred boundaries from the

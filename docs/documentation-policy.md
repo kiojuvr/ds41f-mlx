@@ -66,6 +66,23 @@ may explain an old finding without depending on its old status. Blanket archive/
 chronology rejection is replaced by explicit roles/contextual edges, not a blanket
 archive allowlist. Negative tests cover the fail-closed boundaries.
 
+## Historical task language is not current authorization
+
+Historical plans, milestone closeouts, investigations and intermediate performance
+reports preserve their baseline's `unresolved`, `blocked`, `required next work`,
+`recommend`, `pending`, `backlog` and `not complete` wording. None by itself selects
+current work. Check the baseline, subsequent closure and CURRENT owner before
+promoting a finding into a present task. Current contradictions must be corrected,
+not dismissed as history. Qualification evidence is source-scoped; immutable
+receipts are never rewritten to qualify later HEAD.
+
+[Implementation decisions](implementation-plan.md), [capabilities](capabilities.md),
+[architecture](architecture.md), [operations](operations.md) and explicit current
+closure pages own today's state. Deferred capability, unsupported product scope,
+optional performance research and an actual supported-lane production defect are
+different classifications. Editorial/archive candidates are not release blockers;
+physical relocation is optional and must preserve links/tooling.
+
 ## Editorial closure is not runtime qualification
 
 No new model/native/package build, full R1, client/model campaign, deployment,

@@ -134,5 +134,6 @@ and above-qualified envelopes are not inherited by package publication or projec
 
 The old packaging/acceleration next-task paragraph is history. Current priorities
 are [implementation decisions](implementation-plan.md), including general-serving
-release assessment and pending separate-machine LAN acceptance. This editorial
+release boundary assessment. Separate-machine trusted-LAN acceptance is
+**CLOSED / PASS** as recorded in capabilities; it is not pending release work. This editorial
 unit authorizes no new milestone, clean-room/model campaign, default change or release.
