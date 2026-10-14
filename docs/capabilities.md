@@ -155,9 +155,12 @@ by mutating an admitted runtime package. See operations for Browser launch and t
 ## Completion and unsupported scope
 
 Ordinary MTP's paired restore and Scheduler/P5 settlement boundaries are closed for
-the supported path. **General-runtime production release remains incomplete**;
-separate-machine direct-LAN acceptance is pending. Same-host LAN-IP requests do
-not prove firewall reachability or packets crossing the LAN.
+the supported path. **General-runtime production release remains incomplete**.
+**Separate-machine trusted-LAN acceptance PASS**: the
+[Windows-to-Mac evidence](remote-lan-windows-acceptance.md) records real LAN
+health/models, ordinary Chat JSON/SSE and Mac operator correlation.
+This remains a trusted-LAN / single-operator boundary; authentication, TLS,
+Internet exposure and multi-user serving are unsupported.
 
 Local default-MTP promotion is approved by the [runtime closure review](runtime-completeness.md).
 No native MTP persistence/restart recovery, shared/batched MTP execution, sessionized Responses/Messages, cross-backend KV portability,

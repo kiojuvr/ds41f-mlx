@@ -74,9 +74,10 @@ No new numerical execution topology or qualification campaign is required.
 
 ## Remaining broader scope
 
-1. **Validate concrete ordinary-operation gaps.** Separate-machine direct-LAN
-   acceptance remains pending. It needs an actual trusted remote client, not more
-   same-host LAN-IP requests. Other API/resource/observability/client gaps must be
+1. **Validate concrete ordinary-operation gaps.** Separate-machine trusted-LAN
+   acceptance is **closed**: [Windows-to-Mac acceptance](remote-lan-windows-acceptance.md)
+   records PASS over the real LAN with Mac operator correlation.
+   Other API/resource/observability/client gaps must be
    identified against supported real operation before being called blockers.
 2. **Finish the general-runtime release boundary.** The supported ordinary API and
    execution core do not themselves prove all required configuration, operational,
