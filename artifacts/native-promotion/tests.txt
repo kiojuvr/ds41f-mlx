@@ -1,0 +1,87 @@
+............F...................F..................                      [100%]
+=================================== FAILURES ===================================
+______ test_compatible_header_altered_official_shard_rejected_before_load ______
+
+tmp_path = PosixPath('/private/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/pytest-of-kioju/pytest-190/test_compatible_header_altered0')
+
+    def test_compatible_header_altered_official_shard_rejected_before_load(tmp_path):
+        import struct
+        from ds41f_mlx.config import load_runtime_config
+        from ds41f_mlx.runtime.omlx_core import OmlxRuntime, OmlxRuntimeConfig
+        cfg = load_runtime_config()
+        for name in ('config.json', 'model.safetensors.index.json', 'tokenizer.json', 'tokenizer_config.json'):
+            (tmp_path/name).symlink_to(cfg.checkpoint_path/name)
+        name = 'model-00001-of-00048.safetensors'
+        source = cfg.checkpoint_path/name
+        with source.open('rb') as reader:
+            prefix = reader.read(8)
+            header = reader.read(struct.unpack('<Q', prefix)[0])
+        # Only one <=1GiB sparse fault artifact; never copy/reconstruct the checkpoint.
+        with (tmp_path/name).open('wb') as stream:
+            stream.write(prefix+header); stream.seek(source.stat().st_size-1); stream.write(b'\0')
+        runtime = OmlxRuntime(OmlxRuntimeConfig(omlx_path=cfg.omlx_path, checkpoint_path=tmp_path,
+                                              recipe_path=cfg.recipe_path, preserve_mtp=False))
+        _, gen = session(); cache = gen.initial_cache
+        try:
+            with pytest.raises(a.ResourceAdmissionError, match=f'checkpoint/{name}'):
+>               runtime.load_model()
+
+tests/test_m47_resource_admission.py:99:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ds41f_mlx/runtime/omlx_core.py:55: in load_model
+    admission = prepare_resources(self.config.checkpoint_path, self.config.recipe_path)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ds41f_mlx/runtime/resource_admission.py:497: in prepare_resources
+    recipe_tokenizer = (Path(recipe_path)/'static/tokenizers/v41/tokenizer.json').resolve(strict=True)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/pathlib/_local.py:670: in resolve
+    return self.with_segments(os.path.realpath(self, strict=strict))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+filename = '/Volumes/SDXC-512/deepseek-v41-flash-mlx/third_party/deepseek-recipe/static/tokenizers/v41/tokenizer.json'
+strict = True
+
+>   ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Volumes/SDXC-512/deepseek-v41-flash-mlx'
+
+<frozen posixpath>:451: FileNotFoundError
+_______________ test_protocol_resource_positive_and_substitution _______________
+
+tmp_path = PosixPath('/private/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/pytest-of-kioju/pytest-190/test_protocol_resource_positiv0')
+
+    def test_protocol_resource_positive_and_substitution(tmp_path):
+        from ds41f_mlx.config import DEFAULT_RECIPE
+>       tokenizer = a.load_protocol_tokenizer(DEFAULT_RECIPE)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_m47_resource_admission.py:266:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ds41f_mlx/runtime/resource_admission.py:471: in load_protocol_tokenizer
+    data = path.read_bytes()
+           ^^^^^^^^^^^^^^^^^
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/pathlib/_abc.py:625: in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = PosixPath('/Volumes/SDXC-512/deepseek-v41-flash-mlx/third_party/deepseek-recipe/static/tokenizers/v41/tokenizer.json')
+mode = 'rb', buffering = -1, encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/Volumes/SDXC-512/deepseek-v41-flash-mlx/third_party/deepseek-recipe/static/tokenizers/v41/tokenizer.json'
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/pathlib/_local.py:537: FileNotFoundError
+=========================== short test summary info ============================
+FAILED tests/test_m47_resource_admission.py::test_compatible_header_altered_official_shard_rejected_before_load
+FAILED tests/test_m47_resource_admission.py::test_protocol_resource_positive_and_substitution
+2 failed, 49 passed in 11.59s

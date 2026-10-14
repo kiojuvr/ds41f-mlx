@@ -1,0 +1,32 @@
+Scope: scratch-only GLM build/load audit at bd75badee968e955d7c99e25a556ffc3462da219.
+No installed model environment or admission policy changed; no model loaded.
+
+Extract regular files under omlx/custom_kernels from the SHA-pinned
+third_party/mtp/omlx-source.tar.gz to /tmp/ds41f-native-promotion-audit/source.
+Compare GLM/common csrc bytes against /Users/kioju/omlx-0.7.0.release;
+source-comparison.json records all 43 inputs and archive SHA, not binary provenance.
+
+uv venv --python /opt/homebrew/opt/python@3.13/bin/python3.13 /tmp/ds41f-native-promotion-audit/env
+uv pip install --python /tmp/ds41f-native-promotion-audit/env/bin/python mlx==0.32.2 nanobind==2.15.0 cmake==4.3.1
+/tmp/ds41f-native-promotion-audit/env/bin/cmake -S /tmp/ds41f-native-promotion-audit/source/omlx/custom_kernels/glm_moe_dsa/csrc -B /tmp/ds41f-native-promotion-audit/build -DPython_EXECUTABLE=/tmp/ds41f-native-promotion-audit/env/bin/python -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_DEPLOYMENT_TARGET=15.0 -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=/tmp/ds41f-native-promotion-audit/bundle
+/tmp/ds41f-native-promotion-audit/env/bin/cmake --build /tmp/ds41f-native-promotion-audit/build -j 4
+
+Copy fast.py and the three built files into scratch env site-packages
+omlx/custom_kernels/glm_moe_dsa; create empty parent package __init__.py files.
+This is a load smoke, NOT a complete attributed oMLX or ds41f package/install.
+Hash the bundle and scratch MLX against admitted_resources.json. Call abi_probe.
+Rename source, build, bundle to source-hidden, build-hidden, bundle-hidden.
+/tmp/ds41f-native-promotion-audit/env/bin/python -I artifacts/native-promotion/relocated-smoke.py
+The measured GPU entry loads sibling metallib with original source/output absent.
+
+Second independent configure/build uses source-hidden, build2 and bundle2 with
+otherwise identical flags and interpreter. build-audit.json records both identities,
+compiler/SDK, symbol list and Mach-O links. The extension includes build-dependent
+rpaths; byte-reproducible extension identity is NOT claimed. No binary admitted.
+
+Initial tests (raw failures retained in tests.txt):
+.venv/bin/python -m pytest -q tests/test_execution_identity.py tests/test_m47_resource_admission.py tests/test_m48_model_execution.py
+Configured boundary tests (tests-configured.txt):
+DS41F_RECIPE_PATH=/Volumes/SDXC-512/ds41f-mlx_mtp-venv/share/ds41f-mtp/recipe .venv/bin/python -m pytest -q tests/test_execution_identity.py tests/test_m47_resource_admission.py tests/test_m48_model_execution.py -k 'not protocol_resource_positive_and_substitution'
+One DEFAULT_RECIPE-only historical-path test remains deselected, not passing.
+No edits to tests/config/source to conceal the old-path failures.

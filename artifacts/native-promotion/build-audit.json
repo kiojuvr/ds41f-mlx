@@ -1,0 +1,62 @@
+{
+  "python": "3.13.15",
+  "macos": "26.5.2",
+  "native_loaded": true,
+  "symbols": [
+    "dsa_decode_scores",
+    "dsa_indexer_scores",
+    "qwen4_qsa_indexer_scores",
+    "qwen4_qsa_topk_indices",
+    "qwen4_qsa_sparse_gqa_attention",
+    "dsa_topk_indices",
+    "dspark_fp32_topk_indices",
+    "dspark_exact_mxfp8_qmv_pair",
+    "glm_dsa_sparse_mla_attention",
+    "glm_dsa_exact_block_attention",
+    "deepseek_v4_sparse_attention",
+    "deepseek_v41_packed_attention",
+    "deepseek_v41_grouped_expert",
+    "dspark_ring_gemm",
+    "dspark_rowwise_gemm",
+    "glm_dsa_q8_vup_flat",
+    "glm_moe_weighted_sum",
+    "deepseek_mxfp4_gather_qmm_blocks",
+    "deepseek_mxfp4_gather_qmm_pair_blocks",
+    "deepseek_mxfp4_gather_qmm_pair_concat_blocks",
+    "deepseek_mxfp4_gather_qmm_expert",
+    "deepseek_affine_gather_qmm_blocks",
+    "deepseek_affine_gather_qmm_pair_concat_blocks"
+  ],
+  "bundle": {
+    "libomlx_glm_kernel_ops.dylib": "de3cb565f1cea080d1a2a10ef9803d80f1e7ca21dc6df9d3e7ce8c5ef4af68cd",
+    "_ext.cpython-313-darwin.so": "5846fc67c4420ed9879a92c1b6743c0ec26989eb9161c11969221d7108eb5359",
+    "omlx_glm_kernels.metallib": "3b3260a812b56faf8dd452676304a4ccf6e3bbaf3c28381a8c91905f8353204b"
+  },
+  "mlx_resources_match": {
+    "lib/libmlx.dylib": true,
+    "lib/mlx.metallib": true
+  },
+  "toolchain": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.5.0\nThread model: posix\nInstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin\n",
+  "sdk": "26.5\n",
+  "matches_historical_native_pin": {
+    "libomlx_glm_kernel_ops.dylib": false,
+    "_ext.cpython-313-darwin.so": false,
+    "omlx_glm_kernels.metallib": false
+  },
+  "abi_probe": "PASS",
+  "independent_second_build": {
+    "bundle": {
+      "libomlx_glm_kernel_ops.dylib": "de3cb565f1cea080d1a2a10ef9803d80f1e7ca21dc6df9d3e7ce8c5ef4af68cd",
+      "_ext.cpython-313-darwin.so": "ce62006ce1f2bd507b2adffe2f206496027b10b875c5fa077fd86f0a268a60f1",
+      "omlx_glm_kernels.metallib": "3b3260a812b56faf8dd452676304a4ccf6e3bbaf3c28381a8c91905f8353204b"
+    },
+    "matches_first": {
+      "libomlx_glm_kernel_ops.dylib": true,
+      "_ext.cpython-313-darwin.so": false,
+      "omlx_glm_kernels.metallib": true
+    },
+    "different_source_and_output_paths": true
+  },
+  "mach_o_links": "/tmp/ds41f-native-promotion-audit/bundle2/_ext.cpython-313-darwin.so:\n\t@rpath/libomlx_glm_kernel_ops.dylib (compatibility version 0.0.0, current version 0.0.0)\n\t@rpath/libmlx.dylib (compatibility version 0.0.0, current version 0.0.0)\n\t/System/Library/Frameworks/Metal.framework/Versions/A/Metal (compatibility version 1.0.0, current version 373.2.0)\n\t/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation (compatibility version 300.0.0, current version 5026.5.4)\n\t/System/Library/Frameworks/QuartzCore.framework/Versions/A/QuartzCore (compatibility version 1.2.0, current version 1195.14.4)\n\t/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate (compatibility version 1.0.0, current version 4.0.0)\n\t/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2100.43.0)\n\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)\n/tmp/ds41f-native-promotion-audit/bundle2/libomlx_glm_kernel_ops.dylib:\n\t@rpath/libomlx_glm_kernel_ops.dylib (compatibility version 0.0.0, current version 0.0.0)\n\t@rpath/libmlx.dylib (compatibility version 0.0.0, current version 0.0.0)\n\t/System/Library/Frameworks/Metal.framework/Versions/A/Metal (compatibility version 1.0.0, current version 373.2.0)\n\t/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation (compatibility version 300.0.0, current version 5026.5.4)\n\t/System/Library/Frameworks/QuartzCore.framework/Versions/A/QuartzCore (compatibility version 1.2.0, current version 1195.14.4)\n\t/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate (compatibility version 1.0.0, current version 4.0.0)\n\t/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2100.43.0)\n\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)\n\t/usr/lib/libobjc.A.dylib (compatibility version 1.0.0, current version 228.0.0)\n",
+  "admission": "NOT_ADMITTED: all three identities differ from historical pin; no policy modified"
+}

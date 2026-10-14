@@ -41,6 +41,9 @@ The following links are **evidence/navigation**, not normative definitions or
 instructions to repeat qualification. Results apply to their recorded inputs;
 source changes need explicit affected-scope reconciliation, not inherited badges.
 
+- Distribution assessment: [GLM native promotion](native-profile-promotion-assessment.md)
+  — viable with bounded artifact/admission/selected-path work; no default or publication change.
+
 - OFF cores: [200K](standard-off-200k-production-qualification.md),
   [very long context](very-long-context-production-qualification.md),
   [bounded multimodal](multimodal-production-qualification.md).
