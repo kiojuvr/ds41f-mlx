@@ -1,0 +1,57 @@
+{
+  "status": "CLOSED_DIFFERENT_GLM_EXECUTION_PROFILES_NOT_SAME_PATH_REGRESSION",
+  "runtime_repair": false,
+  "installed_payload_change": false,
+  "owner": "dependency export/provisioning and GLM execution-profile interpretation/disclosure",
+  "first_execution_divergence": "P6 target layer-0 multi-row Attention native-symbol dispatch; before DSpark/checkpoint/P5",
+  "current_portable_matched": {
+    "frontier": 209004,
+    "suffix_tokens": 1769,
+    "appended_tokens": 1768,
+    "off_terminal_ready_s": 10.169761208002456,
+    "mtp_terminal_ready_s": 10.204947583959438,
+    "mtp_append_s": 10.124270708998665,
+    "displayed_tok_s": 174.6298623197189,
+    "net_mtp_increment_s": 0.035186375956982374
+  },
+  "historical_native_matched": {
+    "frontier": 214239,
+    "suffix_tokens": 2049,
+    "appended_tokens": 2048,
+    "past_bootstrap_s": 8.636446084012277,
+    "current_bootstrap_s": 5.636404999997467,
+    "warm_next_bootstrap_s": 5.632463624991942,
+    "saved_slots_exact": true,
+    "probe_tokens_exact": 32,
+    "probe_slots_exact": true,
+    "preceding_turn_tokens_exact": 768
+  },
+  "original_request_replayed": false,
+  "no_native_promotion": true,
+  "git_head": "6f340d6bbe9555000bdbf0db17b17004e8ce3734",
+  "native_control_command": {
+    "python": "/Users/kioju/.venvs/omlx-0.7.0.release/bin/python",
+    "tool": "tools/diagnose_historical_suffix.py",
+    "args": [
+      "--source",
+      "artifacts/standard-off-200k/initial.json",
+      "--expected",
+      "artifacts/standard-off-200k/restored.json",
+      "--output",
+      "artifacts/suffix-continuation/historical-native.json",
+      "--expect-glm-profile",
+      "native"
+    ],
+    "environment": {
+      "DS41F_RECIPE_PATH": "/Volumes/SDXC-512/ds41f-mlx_off-venv/share/ds41f-mtp/recipe",
+      "PYTHONPATH": "/Users/kioju/.cache/uv/archive-v0/qNW4Fusz6WYDrarC:/Users/kioju/.cache/uv/archive-v0/MT-HoEVYbiUOm9yX:/Users/kioju/.cache/uv/archive-v0/zQgJGopb3zjA5B6T:/Volumes/SDXC-512/ds41f-mlx"
+    }
+  },
+  "evidence_sha256": {
+    "historical-native.json": "ce4f77b5bc725302681fc827b03d6459e3e9995b43753719478ce1c0c1a5cedc",
+    "profile-audit.json": "b20f583f829368b673a40b1382203bc7075d8debdac0231873a3290d7e92d399",
+    "mtp.json": "3d32cd1ee7fc1cf44fe477cd2a118db1c1230b1b148442b41d8b3aec0c58e8e7",
+    "off.json": "f5a1d3f88c2dd59e856a32379b9cf7b87fa8a23ff9c13ffea03361bf62081be6",
+    "historical-matched.json": "c885ba6c3ca14717b6df0a2b90ae3b2d8ec7f532a559e6ce8292dc18d654154f"
+  }
+}

@@ -34,6 +34,13 @@ precision/state/protocol contracts. Record source/package/dependency and checkpo
 tokenizer identity, hardware, profile, prompt/actual output lengths, sampler,
 cache state and timer boundaries before comparing results.
 
+Record **GLM native versus portable execution** separately from the serving profile
+name. Admission PASS or `mtp-serving-v1` does not establish native packed-attention
+and expert-kernel availability. An admitted source-only payload can use MLX GPU
+fallbacks; those are not CPU inference, but are not bit-identical to the GLM native
+path. Identical saved slots therefore do not prove cross-profile numerical
+continuity, and historical native throughput is not a portable-profile promise.
+
 Keep model load, initial prefill, retained suffix bootstrap, P5, native decode,
 recipe preparation, queueing, transport, canonical settlement, lookup/reconciliation
 and retirement separate. Distinguish cold/shape compilation from warm operation,
@@ -69,6 +76,7 @@ turn those observations into an SLA or an automatic optimization campaign.
 
 | Report | Recorded scope / interpretation |
 | --- | --- |
+| [Long-frontier suffix comparison](long-context-suffix-investigation.md) | Bounded installed portable OFF/MTP comparison and exact historical-native control; profile mismatch explains the comparison gap, not a same-path regression or new native publication |
 | [First-party OFF 200K core](standard-off-200k-production-qualification.md) | Real long prefill/decode/continuation/restore and allocator-lifetime repair; not a new long-HTTP tool-loop claim |
 | [Very-long OFF core](very-long-context-production-qualification.md) | Real 512K/768K/near-1M maintenance ingestion, continuation/restore/resource behavior; initial ingestion is not interactive latency or physical-RAM exhaustion proof |
 | [Target prefill investigation](target-prefill-investigation.md) | Shape occupancy, P6 work elimination, dispatch and source/tail amortization; the packed-attention candidate was not selected despite a prefill gain, because retained decode regressed |

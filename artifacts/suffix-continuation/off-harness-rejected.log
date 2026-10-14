@@ -1,0 +1,51 @@
+Traceback (most recent call last):
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/diagnose_suffix_continuation.py", line 192, in <module>
+    main()
+    ~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/diagnose_suffix_continuation.py", line 184, in main
+    asyncio.run(run())
+    ~~~~~~~~~~~^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 196, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 119, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 726, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/diagnose_suffix_continuation.py", line 178, in run
+    await backend._call(core)
+  File "/Volumes/SDXC-512/ds41f-mlx_off-venv/lib/python3.13/site-packages/ds41f_mlx/serving/deepseek_recipe_backend.py", line 227, in _call
+    return await asyncio.shield(future)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/concurrent/futures/thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/Volumes/SDXC-512/ds41f-mlx_off-venv/lib/python3.13/site-packages/ds41f_mlx/serving/deepseek_recipe_backend.py", line 225, in <lambda>
+    future = loop.run_in_executor(self._executor, lambda: fn(*args))
+                                                          ~~^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/diagnose_suffix_continuation.py", line 141, in core
+    session.begin_turn_from_suffix(suffix, max_tokens=2)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx_off-venv/lib/python3.13/site-packages/ds41f_mlx/runtime/continuation_session.py", line 166, in begin_turn_from_suffix
+    self._append_suffix_and_start(suffix, max_tokens=max_tokens)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx_off-venv/lib/python3.13/site-packages/ds41f_mlx/runtime/continuation_session.py", line 190, in _append_suffix_and_start
+    app.execute_all()
+    ~~~~~~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/diagnose_suffix_continuation.py", line 49, in call
+    return old(*args, **kwargs)
+  File "/Volumes/SDXC-512/ds41f-mlx_off-venv/lib/python3.13/site-packages/ds41f_mlx/prefill_fp8_mlx/p6_append.py", line 281, in execute_all
+    self.execute_segment(segment)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx_off-venv/lib/python3.13/site-packages/ds41f_mlx/prefill_fp8_mlx/p6_append.py", line 297, in execute_segment
+    execn.runner.execute_batch(segment.commands, execn.arena)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx_off-venv/lib/python3.13/site-packages/ds41f_mlx/prefill_fp8_mlx/block_runner.py", line 125, in execute_batch
+    result = self.execute_command(command, arena)
+  File "/Volumes/SDXC-512/ds41f-mlx_off-venv/lib/python3.13/site-packages/ds41f_mlx/prefill_fp8_mlx/block_runner.py", line 135, in execute_command
+    self._assert_p6_cache_capability()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx_off-venv/lib/python3.13/site-packages/ds41f_mlx/prefill_fp8_mlx/block_runner.py", line 308, in _assert_p6_cache_capability
+    raise BlockExecutionError("cache is sealed; prefill execution is revoked")
+ds41f_mlx.prefill_fp8_mlx.block_runner.BlockExecutionError: cache is sealed; prefill execution is revoked

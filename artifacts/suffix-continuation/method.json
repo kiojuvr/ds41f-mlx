@@ -1,0 +1,23 @@
+{
+  "git_head": "6f340d6bbe9555000bdbf0db17b17004e8ce3734",
+  "original_observation": {
+    "frontier": "approximately 209K",
+    "suffix_tokens": 1773,
+    "append_s": 11.29,
+    "displayed_tok_s": 157,
+    "source": "operator report, raw request/phase receipt not available in this investigation"
+  },
+  "mtp_harness_note": "Runtime request settled successfully; observer then rejected its expected-209000-frontier assertion because canonical generated checkpoint matched four more fixture IDs. No runtime mutation/settlement error. OFF uses that actual prefix/suffix.",
+  "off_rejected_note": "Initial harness incorrectly attempted idle continuation directly from sealed fresh prefill rather than P5 retirement. Rejected/burned before execution; process exited. Not a production regression or repair.",
+  "fixture_relation": {
+    "original_prefix": 209000,
+    "actual_restored_prefix": 209004,
+    "original_suffix": 1773,
+    "actual_remaining_suffix": 1769,
+    "appended_prefill_tokens": 1768
+  },
+  "sha256": {
+    "fixture.json": "afdc7bed62317453fed1489427dc0e5ae964538cd6b0e1add2c83a888e42bca4",
+    "fixture-original.json": "7c41b9bedfe9ce6ffe63c932d7195e2e63256ff628d9fde4845c5b45a5579391"
+  }
+}
