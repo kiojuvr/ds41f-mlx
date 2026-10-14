@@ -130,6 +130,21 @@ development checkout. Building a wheel is not acceptance; publishers must run
 affected qualification before promoting it. Native recipe rebuilds and semantic
 library changes require affected qualification, not a manifest refresh.
 
+The M3 Ultra local MTP distribution now defaults explicitly to **GLM native**;
+`third_party/mtp/execution-profiles.json` owns that provisioning/build default.
+The exact three-member native archive and provenance receipt ship in
+`third_party/mtp/glm-native.*`. Setup deliberately installs that frozen overlay;
+operators do not rebuild it. Use `--glm-profile portable` at provisioning/package
+construction for the separately admitted alternative. Native startup failure
+never selects portable. Stop/settle before switching distributions and start new
+sessions; no pair migration, replay or repack is introduced. OFF's published
+portable package/default is unchanged by this MTP-only promotion.
+
+`inspect`, startup logs, operator status and `/health` report `glm_profile`.
+Native and portable have distinct manifests/digests and publication receipts:
+`release/execution-package.json` and `release/execution-package-portable.json`.
+See [GLM admission/provenance](runtime-admission.md#glm-execution-distributions).
+
 For an already provisioned MTP candidate, from the development checkout:
 
 ```sh

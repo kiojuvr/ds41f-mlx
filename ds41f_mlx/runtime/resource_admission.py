@@ -215,7 +215,7 @@ def check_loaded_image(path):
     require(matching == [disk], 'missing/stale/mixed loaded native image UUID')
 
 
-def check_native(modules, pin, verified=None):
+def check_native(modules, pin, verified=None, *, selected=None):
     core = Path(modules['mlx.core'].__file__).resolve()
     mlx_root = core.parent
     for name, identity in pin['mlx_resources'].items():
@@ -226,14 +226,54 @@ def check_native(modules, pin, verified=None):
             images = [p for p in loaded_images() if p.name == path.name]
             require(images == [path.resolve()], f'mixed/redirected native image: {name}')
     fast = modules['omlx.custom_kernels.glm_moe_dsa.fast']
+    return check_glm_bundle(fast, pin, selected=selected, verified=verified)
+
+
+def check_glm_bundle(fast, pin, *, selected=None, verified=None):
+    """Shared loaded-bundle gate; selected profile is authority, not capability."""
     directory = Path(fast.__file__).resolve().parent
     found = {p.name for p in directory.iterdir() if p.suffix in ('.so', '.dylib', '.metallib')}
     profile = 'native' if fast._ext is not None else 'portable'
+    if selected is not None:
+        require(selected in ('native', 'portable'), 'unknown selected GLM profile')
+        require(profile == selected, f'selected GLM {selected} unavailable; fallback refused')
     expected = pin['glm_profiles'][profile]
     require(found == set(expected), 'missing/stale/mixed GLM native bundle')
     for name, identity in expected.items():
         check_file(directory / name, identity, f'glm/{name}', verified)
     if profile == 'native':
+        # Check the extension itself, never mx.fast capability aliases. All
+        # declared dispatch entries must exist; ABI-disabled import is refusal.
+        require(all(hasattr(fast._ext, name) for name in fast.NATIVE_SYMBOLS),
+                'required GLM native symbols missing')
+        require(hasattr(fast._ext, 'abi_probe'), 'GLM ABI probe missing')
+        try:
+            import mlx.core as mx
+            fast._ext.abi_probe(mx.zeros((1,)))
+        except Exception as exc:
+            raise ResourceAdmissionError('GLM array ABI incompatible') from exc
+        if selected is not None:
+            # Bounded GPU resource-load prerequisite. No model/cache mutation;
+            # exercise the exact sibling metallib through the native entry.
+            try:
+                mlx_root = Path(mx.__file__).resolve().parent
+                require(mlx_root == directory.parents[2]/'mlx', 'redirected GLM MLX origin')
+                check_loaded_image(mx.__file__)
+                mlx_library = mlx_root/'lib/libmlx.dylib'
+                check_loaded_image(mlx_library)
+                require([p for p in loaded_images() if p.name == mlx_library.name] == [mlx_library.resolve()],
+                        'mixed/redirected GLM MLX library')
+                q = mx.zeros((1, 64, 2, 512), dtype=mx.bfloat16)
+                out = fast._ext.deepseek_v41_packed_attention(q,
+                    mx.zeros((1, 1, 2, 528), dtype=mx.uint8),
+                    mx.zeros((1, 1, 288), dtype=mx.uint8),
+                    mx.full((1, 1, 2, 1), 0xffffffff, dtype=mx.uint32),
+                    mx.zeros((64,), dtype=mx.float32), 512**-0.5, 0, 4, 128)
+                mx.eval(out)
+                require(out.shape == q.shape and bool(mx.all(mx.isfinite(out)).item()),
+                        'GLM metallib smoke invalid')
+            except Exception as exc:
+                raise ResourceAdmissionError('GLM native GPU resource unavailable') from exc
         check_loaded_image(fast._ext.__file__)
         check_loaded_image(directory/'libomlx_glm_kernel_ops.dylib')
         require(Path(fast._ext.__file__).resolve() == (directory / pin['glm_extension']).resolve(),
@@ -478,6 +518,19 @@ def prepare_resources(checkpoint, recipe_path):
     """Verify the qualified implementation and all checkpoint bytes before allocation."""
     pin_bytes = PIN.read_bytes()
     pin = json.loads(pin_bytes)
+    selected = None
+    import sysconfig
+    if Path(__file__).resolve().parents[1] == Path(sysconfig.get_paths()['purelib']).resolve()/'ds41f_mlx':
+        # Installed OFF consumes the same publisher bundle authority as MTP;
+        # immutable R1 source/numerical qualification remains unchanged.
+        from ds41f_mlx.execution_identity import inspect_payload
+        authority, compatibility = inspect_payload()
+        require(authority['profile'] == 'standard-off', 'OFF execution package required')
+        selected = compatibility['glm_profile']
+        if 'glm' in authority:
+            pin.update(glm_profiles=authority['glm']['glm_profiles'],
+                       glm_extension=authority['glm']['glm_extension'])
+            pin_bytes = json.dumps(pin, sort_keys=True).encode()
     require(sys.implementation.cache_tag == pin['python_abi'], 'unqualified Python ABI')
     files = {}
     modules = {name: check_module(name, identity, files) for name, identity in pin['modules'].items()}
@@ -487,7 +540,7 @@ def prepare_resources(checkpoint, recipe_path):
         root = Path(importlib.import_module(package).__file__).resolve().parent
         for name, identity in resources.items():
             check_file(root/name, identity, f'{package}/{name}', files)
-    profile = check_native(modules, pin, files)
+    profile = check_native(modules, pin, files, selected=selected)
     for module in modules.values():
         if Path(module.__file__).suffix == '.so':
             check_loaded_image(module.__file__)

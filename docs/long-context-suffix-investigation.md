@@ -2,6 +2,11 @@
 
 Status: **CLOSED — DIFFERENT GLM EXECUTION PROFILES, NOT A SAME-PATH RUNTIME REGRESSION**.
 
+The installed-profile statements and measurements below are frozen investigation
+evidence. Subsequent bounded promotion made GLM native the local MTP default;
+OFF publication remains portable. See [current distribution admission](runtime-admission.md#glm-execution-distributions).
+No historical measurements or correctness conclusions are requalified here.
+
 The historical native suffix path has not lost performance in the bounded exact
 control. Current installed MTP/OFF use the admitted **portable** GLM profile;
 the historical long-context authorities used **native** GLM. Their target

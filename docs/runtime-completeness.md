@@ -114,6 +114,19 @@ repository-owned production defect; no dependency or upstream fixture is changed
 
 ## Current installed disposition
 
+The bounded GLM distribution promotion now makes **native the M3 Ultra local MTP
+default**, with portable a separately admitted explicit alternative. The current
+publication authorities are `release/execution-package.json` (native) and
+`release/execution-package-portable.json`; `artifacts/native-promotion/promotion.json`
+binds exact current artifacts, installed identities and acceptance. Ordinary MTP
+actually entered native multi-row P6 attention and MoE dispatch; paired frontiers
+aligned with replay=0/repack=0. Load/ABI/symbol/resource failure refuses startup,
+never changes profile. Operator inspection/health/status expose `glm_profile`.
+OFF publication and general-runtime release status are unchanged. See
+[distribution admission](runtime-admission.md#glm-execution-distributions).
+
+### Prior installed publication (retained evidence)
+
 The later [local MTP publication receipt](operator-log-presentation-publication.json)
 records source `131fbedeff5786a2e2f371aaefd82d89d1929661` and installed identity
 `9ed7ed19420e9827401e74ab51f5e962a29237d6cb13d76f37ab898c9925643d`.

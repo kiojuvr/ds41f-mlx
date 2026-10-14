@@ -24,6 +24,12 @@ export DS41F_CHECKPOINT=/absolute/official/DeepSeek-V4.1-Flash
 /absolute/new-env/bin/ds41f start --profile mtp-singleton-v1
 ```
 
+This shared MTP distribution now defaults to **GLM native**. Use
+`--glm-profile portable` during setup for the separately admitted explicit
+alternative. Native admission failure does not change profile; inspect/health
+report `glm_profile`. The bounded promotion acceptance is ordinary MTP, not a
+new singleton protocol qualification; see [distribution admission](runtime-admission.md#glm-execution-distributions).
+
 Supported MTP hardware remains M3 Ultra/512 GB with SSD-backed official Engram
 assets. The recipe extension, model/tokenizer, executed Python/kernels and
 reachable image/numerical native payload are exact. Host platform/uninvoked link

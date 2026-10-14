@@ -1,5 +1,23 @@
 # Tools
 
+## Bounded GLM native distribution promotion
+
+`build_glm_bundle.py` is the publisher-only current-source GLM build owner; setup
+installs its frozen SHA-bound archive, not a new operator compilation.
+`check_glm_build_fidelity.py` compares finite same-input native GPU primitives in
+separate processes. `qualify_glm_admission.py` exercises installed fail-closed
+negatives in a stopped owned candidate, including restored metallib mutations.
+`observe_native_selection.py` wraps the canonical installed launcher with
+forwarding model-call counters (excluding admission smoke); it is an acceptance
+observer, not a second runtime owner. `accept_native_mtp.py` reuses ordinary
+HTTP tools/append/branch/SSE and checks paired-session frontiers.
+
+These are bounded affected-boundary tools, not a benchmark/near-1M campaign or
+runtime selectors. Use deployment Python for installed probes and never mutate
+a live environment. Current scope, exact artifacts and invocation evidence:
+[GLM distribution admission](../docs/runtime-admission.md#glm-execution-distributions)
+and `artifacts/native-promotion/production-method.txt`.
+
 ## `bench_target_prefill.py` / `summarize_target_prefill.py`
 
 Completed first-party real-model P6 length ladder, same-cache P5/decode and optional

@@ -1,0 +1,84 @@
+Bounded implementation following dd3fcbd15f0a17ff9f1568d93fca685a684074fe.
+Result: PASS. GLM native is now the M3 Ultra local MTP default; portable is an
+explicit admitted alternative. OFF publication/default and general-runtime
+release status are unchanged. No numerical/runtime/kernel/cache redesign.
+
+Artifact owner: tools/build_glm_bundle.py. It extracts the SHA-admitted current
+omlx source, builds only GLM/common (43 unchanged inputs), pins MLX 0.32.2,
+nanobind 2.15.0 and CMake 4.3.1, uses Release / deployment target 15.0, strips
+transient absolute rpaths, ad-hoc signs and freezes three output members.
+third_party/mtp/glm-native.json and glm-native.tar.gz own the exact accepted
+production bytes. production-build-b.log and production-build-d.log are two
+successful independent builds; rebuild-comparison.json binds both provenances.
+Metallib bytes match; extension/dylib bytes need not reproduce across paths.
+No identity was loosened to admit regenerated binaries. Provisioning copies
+frozen bytes, never recompiles/reseals its local observation.
+
+check_glm_build_fidelity.py used separate processes and the same admitted MLX
+for current and historical SHA-pinned native bundles. Four small GPU cases
+(packed attention, MoE projection, paired projection, grouped expert graph)
+produce identical finite same-input output hashes. See current-primitives.json,
+historical-primitives.json and primitive-fidelity.json. This is affected native
+build fidelity, not a numerical/model ladder. Historical numerical/model and
+long-context evidence is reused unchanged.
+
+Fresh native and portable environments were constructed via mtp_setup. Package
+inventories inherit existing attributed sources/overlays/dependencies and consume
+the same GLM bundle owner as provisioning. Final wheels are separately located
+under release/execution-packages/glm-native and glm-portable. Wheel membership
+was checked by the existing builder. The normal installed MTP environment was
+stopped, its extension-absent oMLX tree checked against the inherited base,
+then deliberately provisioned with the exact overlay and final native wheel.
+production-installed.json binds the final installed identity. Original build,
+source/bundle and candidate provisioning directories were hidden before final
+native load and ordinary acceptance; no donor path is a runtime resource.
+
+The shared existing resource-admission owner now requires the selected GLM
+profile, exact members and hashes, origin, loaded extension/ops/MLX UUIDs,
+unique installed numerical dylibs, all 23 declared native symbols, array-caster
+ABI and bounded packed-attention GPU/metallib loading. Installed MTP and OFF
+consume this same mechanism; no OFF-native package is published here.
+admission-negatives.json tests injected extension import failure, disabled
+native selection, missing symbols, ABI failure, metallib load failure, loaded
+UUID/MLX redirection, and actual owned metallib byte drift/missing member.
+All refuse. Simulation/injection cases are labeled; no shared/model file was
+mutated. Byte mutation occurred only in a stopped candidate environment and
+was restored. Native failure never starts portable execution.
+
+Final actual-selected-path and ordinary acceptance used the exact final wheel
+in /Volumes/SDXC-512/ds41f-mlx_mtp-venv. observe_native_selection.py forwards
+unchanged arguments to original admitted nanobind functions and records only
+successful calls with model/P6 callers (excluding admission/synthetic smoke).
+The canonical serve.main launcher owns admission, model loading and shutdown.
+final-selected-path.json binds the installed identity, P6 caller/operand-shape
+proof, multi-row native attention and later native MoE entries. No observer was
+added to the production runtime. final-ordinary-acceptance.json reuses the
+existing ordinary generic-tools/append/branch/SSE fixture plus two small
+canonical production-session turns. All published target/DSpark frontiers
+align; MTP drafts are proposed and accepted; replay=0 and repack=0. Existing
+ownership, resource-policy and lifecycle qualification remains authority.
+
+portable-health.json records the exact final published portable mtp-serving-v1
+READY startup; final-portable-server.log records its graceful retirement.
+final-portable-installed.json binds that wheel's separate exact admission.
+Portable numerical execution is unchanged.
+Inspect, startup log, health and operator status expose glm_profile.
+The normal MTP installation is native now and was gracefully stopped after
+acceptance; the next normal start selects native, not a diagnostic runtime owner.
+
+Final gates: 51 profile/package/dispatch/ordinary tests; 85 P5/P6/resource/model
+ownership tests (one known historical DEFAULT_RECIPE-only path test deselected,
+not counted PASS), plus 26 subtests; 47 documentation tests; containment PASS.
+No near-1M runs, broad numerical qualification or performance campaign.
+
+Retained early harness/build attempts are not acceptance: production-build.log
+used the wrong predicted extension suffix; provision.log exposed a local import
+binding error, fixed before candidate admission; production-build-c/initial
+portable provisioning were interrupted by a harness command timeout; the first
+ordinary observer sampled the fixture's deliberately rejected malformed request
+instead of its preceding SSE settlement. These were corrected in publisher/test
+code, not bypassed in admission. A first portable inspection timed out during
+fresh-install checkpoint hashing; its later ordinary startup completed that
+required verification and reached READY. No native correctness/operational
+blocker occurred. promotion.json and release/execution-package*.json bind final
+identities and evidence. No general-runtime release approval is claimed.

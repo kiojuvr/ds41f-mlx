@@ -73,8 +73,9 @@ def qualified():
 
 def snapshot():
     from .execution_identity import inspect_payload
-    authority, _ = inspect_payload()
-    return dict(schema='ds41f.execution-identity.v2', profile=PROFILE, limits=LIMITS,
+    authority, compatibility = inspect_payload()
+    return dict(schema='ds41f.execution-identity.v2', profile=PROFILE,
+                glm_profile=compatibility['glm_profile'], limits=LIMITS,
                 tool=WEATHER, files=authority['files'], payloads=authority['payloads'],
                 semantic_native=authority['semantic_native'], tokenizer_sha256=authority['tokenizer_sha256'])
 
@@ -104,11 +105,12 @@ def inspect(cfg, *, checkpoint=True):
             raise ValueError('unqualified checkpoint shard identity')
         verify_checkpoint_bytes(cfg.checkpoint_path, assets)
         assets = dict(assets, verification='full-byte SHA256; installation cache only for unchanged file identity')
-    actual = dict(schema='ds41f.execution-identity.v2', profile=PROFILE, limits=LIMITS,
+    actual = dict(schema='ds41f.execution-identity.v2', profile=PROFILE,
+                  glm_profile=compatibility['glm_profile'], limits=LIMITS,
                   tool=WEATHER, files=authority['files'], payloads=authority['payloads'], semantic_native=authority['semantic_native'],
                   tokenizer_sha256=authority['tokenizer_sha256'])
     identity_digest = hashlib.sha256(json.dumps(actual,sort_keys=True).encode()).hexdigest()
-    return dict(status='PASS', profile=PROFILE, environment_valid=True,
+    return dict(status='PASS', profile=PROFILE, glm_profile=compatibility['glm_profile'], environment_valid=True,
                 release_qualified=False, identity_sha256=identity_digest,
                 config=cfg.to_json(), identity=actual, checkpoint=assets,
                 build=authority['provenance'], compatibility=compatibility,

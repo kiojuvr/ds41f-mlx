@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/accept_native_mtp.py", line 90, in <module>
+    main()
+    ~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/accept_native_mtp.py", line 39, in main
+    settlement()  # final ordinary SSE
+    ~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/accept_native_mtp.py", line 22, in settlement
+    assert last['finish_reason'] != 'error', last
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'request_id': '6312137a61c5460696c7bd139745efca', 'request_received_at': 1791971879.676898, 'request_started_at': 1791971879.676898, 'request_started_mono': 521761.748254375, 'current_phase': 'ERROR', 'phase_started_at': 1791971879.6772869, 'phase_started_mono': 521761.748642666, 'last_progress_at': 1791971879.6772869, 'completed_phase_durations': {'received_ms': 0.07483299123123288, 'encoding_ms': 0.31345797469839454}, 'metrics': {}, 'finish_reason': 'error', 'finished_at': 1791971879.6772878, 'finished_mono': 521761.748644}

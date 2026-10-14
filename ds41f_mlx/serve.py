@@ -80,8 +80,8 @@ def _main(argv, *, control=None, projection=None) -> int:
         if args.print_config:
             print(json.dumps(report,indent=2))
             return 0
-        logger.info('runtime admission passed profile=%s default_reasoning_effort=%s',
-                    args.profile, cfg.default_reasoning_effort)
+        logger.info('runtime admission passed profile=%s glm_profile=%s default_reasoning_effort=%s',
+                    args.profile, report['glm_profile'], cfg.default_reasoning_effort)
         cfg.apply_environment()
         from .serving.mtp_public import LocalMTPBackend
         from .serving.server import create_app
@@ -91,9 +91,11 @@ def _main(argv, *, control=None, projection=None) -> int:
         else:
             backend = LocalMTPBackend(runtime_config=cfg)
         backend.dependency_identity = report['identity_sha256']
+        backend.glm_profile = report['glm_profile']
         backend.telemetry = projection
         if projection is not None:
             projection.lifecycle('STARTING', dict(host=cfg.host, port=cfg.port, profile=args.profile,
+                glm_profile=report['glm_profile'],
                 context_tokens=backend.context_tokens if args.profile == 'mtp-serving-v1' else None))
         app = create_app(backend=backend, runtime_config=cfg, profile=args.profile)
         if args.profile == 'mtp-serving-v1':

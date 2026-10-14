@@ -51,6 +51,45 @@ features require reclassification and qualification before package publication.
 No pcre2-specific exception, approved replacement hash, or Homebrew rollback is
 involved. Compatibility failure still refuses startup.
 
+## GLM execution distributions
+
+Normal-local **MTP defaults to GLM native** on the supported M3 Ultra deployment.
+`third_party/mtp/execution-profiles.json` records the explicit decision; portable
+is an admitted explicit alternative. OFF publication/default is unchanged.
+Serving mode (`mtp-serving-v1`/`standard-off`) and GLM execution profile are distinct.
+Provision with `--glm-profile portable` for the alternative; there is no request
+selector, hot switch or implicit fallback. Inspect, startup logs, operator status
+endpoint and MTP health expose `glm_profile` without performance inference.
+
+`tools/build_glm_bundle.py` owns the GLM-only Release build from the SHA-pinned
+current oMLX export (43 unchanged GLM/common inputs). It removes transient absolute
+rpaths and freezes `_ext.cpython-313-darwin.so`, `libomlx_glm_kernel_ops.dylib` and
+`omlx_glm_kernels.metallib` in `third_party/mtp/glm-native.tar.gz`. The adjacent
+`glm-native.json` binds exact sizes/hashes and source/toolchain/build provenance.
+Independent builds need not reproduce binary hashes: provisioning installs the
+frozen accepted bytes, never observes or reseals a local rebuild. Portable ships
+none of these members. Package inventories consume the same bundle authority.
+
+Installed admission extends the existing `resource_admission.check_glm_bundle`:
+selected profile, exact bundle membership/bytes, imported extension origin,
+loaded extension/dylib and MLX core/library UUIDs, unique installed MLX and
+sibling GLM dylibs, all 23 declared extension
+symbols, array-caster ABI probe and bounded packed-attention GPU/metallib load.
+Native load/ABI/symbol/resource failure **refuses startup**, even if portable
+operations would be possible. Historical OFF resource pins are retained; installed
+OFF can consume the same publisher bundle owner, not an independent native owner.
+No OFF-native package is published by this MTP promotion.
+
+`artifacts/native-promotion/` binds current artifact provenance, four exact
+same-input primitive checks against the historical admitted native bundle,
+installed negative gates, actual model native-entry/P6 dispatch observation,
+bounded ordinary tools/append/branch/SSE and paired-session acceptance. Final
+publication is `release/execution-package.json`; the separately identified
+portable alternative is `release/execution-package-portable.json`. P5/P6,
+paired-frontier ownership, replay=0/repack=0, numerical precision, allocator/wired
+policy and long-context semantics are unchanged. Reusable historical qualification
+is not relabeled as a new numerical/near-1M or general-runtime release campaign.
+
 ## One-way delivery
 
 1. Develop and qualify in `ds41f-mlx`; retain attributed source/lock/toolchain inputs.

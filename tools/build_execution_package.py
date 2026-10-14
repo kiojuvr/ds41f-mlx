@@ -43,7 +43,10 @@ def main():
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--profile', choices=['mtp', 'standard-off'], default='mtp')
     p.add_argument('--recipe-wheel', type=Path)
+    p.add_argument('--glm-profile', choices=['native', 'portable'])
     args = p.parse_args()
+    from ds41f_mlx.glm_profile import default_profile
+    args.glm_profile = args.glm_profile or default_profile(args.profile)
     legacy_path = ROOT/'third_party/mtp/normal-local.json'
     old = json.loads(legacy_path.read_text())
     site = Path(sysconfig.get_paths()['purelib'])
@@ -79,6 +82,14 @@ def main():
                              and m.name.endswith(('.py', '.pyi'))}
         if {name: digest for name,digest in payloads['deepseek_recipe'].items() if name.endswith(('.py','.pyi'))} != source_python:
             raise ValueError('OFF recipe wheel attribution differs from delivered base source')
+    from ds41f_mlx.glm_profile import bundle_authority, PREFIX
+    glm = dict(profile=args.glm_profile, glm_profiles={'portable': {}, 'native': {}}, glm_extension=None)
+    if args.glm_profile == 'native':
+        bundle = bundle_authority()
+        glm.update(glm_profiles={'portable': {}, 'native': bundle['files']},
+                   glm_extension=bundle['extension'], provenance=bundle)
+        for name, identity in bundle['files'].items():
+            payloads['omlx'][PREFIX+name] = identity['sha256']
     for name in {path.split('/')[0] for path in old['dependency_payload']}:
         payloads[name] = {path[len(name)+1:]: digest for path, digest in old['dependency_payload'].items()
                           if path.startswith(name+'/')}
@@ -114,7 +125,7 @@ def main():
             visit(target)
     for module in ('core', 'imgproc', 'imgcodecs'):
         visit(Path('/opt/homebrew/opt/opencv@4/lib')/f'libopencv_{module}.414.dylib')
-    manifest = dict(schema='ds41f.installed-admission.v2', profile=args.profile, payloads=payloads, files=files,
+    manifest = dict(schema='ds41f.installed-admission.v2', profile=args.profile, glm=glm, payloads=payloads, files=files,
                     semantic_native=semantic,
                     tokenizer_sha256='81f64d1248a68ce3663e07ab3ee48b851e5df0e32d27cb98e4c9a268151e8d99',
                     checkpoint=old['checkpoint'], checkpoint_metadata=old['checkpoint_metadata'],

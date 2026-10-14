@@ -1,0 +1,71 @@
+Using CPython 3.13.15 interpreter at: /opt/homebrew/opt/python@3.13/bin/python3.13
+Creating virtual environment at: /private/tmp/ds41f-native-production-build/env
+Activate with: source /private/tmp/ds41f-native-production-build/env/bin/activate
+Using Python 3.13.15 environment at: /private/tmp/ds41f-native-production-build/env
+Resolved 4 packages in 53ms
+Installed 4 packages in 27ms
+ + cmake==4.3.1
+ + mlx==0.32.2
+ + mlx-metal==0.32.2
+ + nanobind==2.15.0
+-- The CXX compiler identification is AppleClang 21.0.0.21000101
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found Python: /private/tmp/ds41f-native-production-build/env/bin/python (found suitable version "3.13.15", minimum required is "3.8") found components: Interpreter Development.Module
+-- Found MLX: /private/tmp/ds41f-native-production-build/env/lib/python3.13/site-packages/mlx/lib/libmlx.dylib
+-- Configuring done (1.1s)
+-- Generating done (0.0s)
+-- Build files have been written to: /private/tmp/ds41f-native-production-build/build
+[ 11%] Building deepseek_moe.air
+[ 11%] Building CXX object CMakeFiles/nanobind-static.dir/private/tmp/ds41f-native-production-build/env/lib/python3.13/site-packages/nanobind/src/nb_func.cpp.o
+[ 11%] Building CXX object CMakeFiles/nanobind-static.dir/private/tmp/ds41f-native-production-build/env/lib/python3.13/site-packages/nanobind/src/nb_internals.cpp.o
+[ 11%] Building sparse_mla.air
+[ 14%] Building deepseek_v4_sparse_attention.air
+[ 17%] Building CXX object CMakeFiles/nanobind-static.dir/private/tmp/ds41f-native-production-build/env/lib/python3.13/site-packages/nanobind/src/nb_type.cpp.o
+[ 20%] Building CXX object CMakeFiles/nanobind-static.dir/private/tmp/ds41f-native-production-build/env/lib/python3.13/site-packages/nanobind/src/nb_enum.cpp.o
+[ 22%] Building deepseek_v41_packed_attention.air
+[ 25%] Building dspark_gemm.air
+[ 28%] Building CXX object CMakeFiles/nanobind-static.dir/private/tmp/ds41f-native-production-build/env/lib/python3.13/site-packages/nanobind/src/nb_ndarray.cpp.o
+[ 31%] Building dspark_qmv.air
+[ 34%] Building dsa_indexer.air
+[ 37%] Building CXX object CMakeFiles/nanobind-static.dir/private/tmp/ds41f-native-production-build/env/lib/python3.13/site-packages/nanobind/src/nb_static_property.cpp.o
+[ 40%] Building exact_block_attention.air
+[ 42%] Building CXX object CMakeFiles/nanobind-static.dir/private/tmp/ds41f-native-production-build/env/lib/python3.13/site-packages/nanobind/src/common.cpp.o
+[ 45%] Building fused_moe.air
+[ 48%] Building qwen4_qsa_sparse_gqa.air
+[ 51%] Building CXX object CMakeFiles/nanobind-static.dir/private/tmp/ds41f-native-production-build/env/lib/python3.13/site-packages/nanobind/src/error.cpp.o
+[ 54%] Building CXX object CMakeFiles/nanobind-static.dir/private/tmp/ds41f-native-production-build/env/lib/python3.13/site-packages/nanobind/src/trampoline.cpp.o
+[ 57%] Building CXX object CMakeFiles/nanobind-static.dir/private/tmp/ds41f-native-production-build/env/lib/python3.13/site-packages/nanobind/src/implicit.cpp.o
+[ 60%] Linking CXX static library libnanobind-static.a
+[ 60%] Built target nanobind-static
+[ 62%] Building omlx_glm_kernels.metallib
+[ 62%] Built target omlx_glm_kernels_metallib
+[ 74%] Building CXX object CMakeFiles/omlx_glm_kernel_ops.dir/deepseek_v41_packed_attention.cpp.o
+[ 74%] Building CXX object CMakeFiles/omlx_glm_kernel_ops.dir/dsa_indexer.cpp.o
+[ 74%] Building CXX object CMakeFiles/omlx_glm_kernel_ops.dir/deepseek_v4_sparse_attention.cpp.o
+[ 74%] Building CXX object CMakeFiles/omlx_glm_kernel_ops.dir/deepseek_v41_grouped_expert.cpp.o
+[ 77%] Building CXX object CMakeFiles/omlx_glm_kernel_ops.dir/dspark_gemm.cpp.o
+[ 80%] Building CXX object CMakeFiles/omlx_glm_kernel_ops.dir/dspark_qmv.cpp.o
+[ 82%] Building CXX object CMakeFiles/omlx_glm_kernel_ops.dir/exact_block_attention.cpp.o
+[ 85%] Building CXX object CMakeFiles/omlx_glm_kernel_ops.dir/fused_moe.cpp.o
+[ 88%] Building CXX object CMakeFiles/omlx_glm_kernel_ops.dir/qwen4_qsa_sparse_gqa.cpp.o
+[ 91%] Building CXX object CMakeFiles/omlx_glm_kernel_ops.dir/sparse_mla.cpp.o
+[ 94%] Linking CXX shared library /private/tmp/ds41f-native-production-build/bundle/libomlx_glm_kernel_ops.dylib
+ld: warning: search path '/Applications/Xcode_26.6.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks' not found
+ld: warning: building for macOS-15.0, but linking with dylib '@rpath/libmlx.dylib' which was built for newer version 26.2
+[ 94%] Built target omlx_glm_kernel_ops
+[ 97%] Building CXX object CMakeFiles/_ext.dir/bindings.cpp.o
+[100%] Linking CXX shared module /private/tmp/ds41f-native-production-build/bundle/_ext.cpython-313-darwin.so
+ld: warning: search path '/Applications/Xcode_26.6.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks' not found
+ld: warning: building for macOS-15.0, but linking with dylib '@rpath/libmlx.dylib' which was built for newer version 26.2
+[100%] Built target _ext
+Traceback (most recent call last):
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/build_glm_bundle.py", line 88, in <module>
+    main()
+    ~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/build_glm_bundle.py", line 57, in main
+    raise ValueError('unexpected GLM build output')
+ValueError: unexpected GLM build output

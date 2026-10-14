@@ -2,6 +2,13 @@
 
 Status: **CLOSED — NATIVE IS VIABLE, WITH BOUNDED PROMOTION WORK; IMPLEMENTATION DEFERRED**.
 
+This is the frozen pre-implementation assessment. Its statements about installed
+portable defaults and missing promotion gates describe that assessment revision,
+not today's distribution. The subsequent bounded promotion is complete: native
+is the local MTP default; portable remains explicit. Current authority is
+[installed distribution admission](runtime-admission.md#glm-execution-distributions)
+and `release/execution-package.json`; the assessment evidence below is unchanged.
+
 This is a distribution decision, not a continuation of the closed
 [long-frontier suffix investigation](long-context-suffix-investigation.md).
 No default, installed environment, execution manifest, resource pin, model math,

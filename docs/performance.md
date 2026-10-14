@@ -35,10 +35,13 @@ tokenizer identity, hardware, profile, prompt/actual output lengths, sampler,
 cache state and timer boundaries before comparing results.
 
 Record **GLM native versus portable execution** separately from the serving profile
-name. Admission PASS or `mtp-serving-v1` does not establish native packed-attention
-and expert-kernel availability. An admitted source-only payload can use MLX GPU
-fallbacks; those are not CPU inference, but are not bit-identical to the GLM native
-path. Identical saved slots therefore do not prove cross-profile numerical
+name. A serving-profile name or generic admission PASS alone does not establish
+native dispatch. Current explicit `glm_profile=native` admission checks loaded
+native identity/ABI/symbol/resource usability; bounded model-call evidence proves
+actual selection. Native is now the M3 Ultra local MTP default, with portable an
+explicit alternative; see [distribution admission](runtime-admission.md#glm-execution-distributions).
+An admitted portable payload uses MLX GPU paths, not CPU inference, and is not
+bit-identical to the GLM native path. Identical saved slots therefore do not prove cross-profile numerical
 continuity, and historical native throughput is not a portable-profile promise.
 
 Keep model load, initial prefill, retained suffix bootstrap, P5, native decode,

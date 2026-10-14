@@ -1,0 +1,56 @@
+{
+  "status": "PASS",
+  "cases": {
+    "native_load": {
+      "status": "PASS"
+    },
+    "extension_import_failure_injection": {
+      "status": "REJECT",
+      "reason": "fallback refused",
+      "portable_fallback": false
+    },
+    "mlx_loaded_image_redirect_simulation": {
+      "status": "REJECT",
+      "reason": "redirected GLM MLX library",
+      "portable_fallback": false
+    },
+    "load_disabled_simulation": {
+      "status": "REJECT",
+      "reason": "fallback refused",
+      "portable_fallback": false
+    },
+    "symbol_missing_simulation": {
+      "status": "REJECT",
+      "reason": "symbols missing",
+      "portable_fallback": false
+    },
+    "abi_failure_simulation": {
+      "status": "REJECT",
+      "reason": "array ABI incompatible",
+      "portable_fallback": false
+    },
+    "metallib_load_failure_simulation": {
+      "status": "REJECT",
+      "reason": "GPU resource unavailable",
+      "portable_fallback": false
+    },
+    "uuid_failure_simulation": {
+      "status": "REJECT",
+      "reason": "native image UUID",
+      "portable_fallback": false
+    },
+    "metallib_byte_drift": {
+      "status": "REJECT",
+      "reason": "executable payload drift",
+      "portable_fallback": false
+    },
+    "missing_metallib": {
+      "status": "REJECT",
+      "reason": "executable payload drift",
+      "portable_fallback": false
+    },
+    "restored_native": {
+      "status": "PASS"
+    }
+  }
+}

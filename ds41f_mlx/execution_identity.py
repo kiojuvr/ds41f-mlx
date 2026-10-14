@@ -121,6 +121,13 @@ def inspect_payload():
         if roots != [str(site/name)]:
             raise ValueError(f'non-installed executable origin: {name}')
         verify_tree(site/name, expected, name)
+    # GLM dispatch is a separate explicit distribution identity from serving
+    # mode. Legacy extension-absent manifests are strictly portable.
+    from .runtime.resource_admission import check_glm_bundle
+    glm = authority.get('glm', dict(profile='portable',
+        glm_profiles={'portable': {}, 'native': {}}, glm_extension=None))
+    fast = importlib.import_module('omlx.custom_kernels.glm_moe_dsa.fast')
+    selected = check_glm_bundle(fast, glm, selected=glm['profile'])
     import deepseek_recipe
     from deepseek_recipe import _native
     native = Path(_native.__file__).resolve()
@@ -152,4 +159,5 @@ def inspect_payload():
     if sha(tokenizer) != authority['tokenizer_sha256']:
         raise ValueError('recipe tokenizer drift')
     return authority, dict(status='PASS', python=platform.python_version(),
-                           macos=platform.mac_ver()[0], native_images=closure)
+                           macos=platform.mac_ver()[0], native_images=closure,
+                           glm_profile=selected, glm_native_symbols=list(fast.native_symbols()))

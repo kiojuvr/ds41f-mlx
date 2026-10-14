@@ -9,7 +9,10 @@
 - [Implementation decisions](implementation-plan.md) — remaining priorities.
 
 These are current owning pages, **not an at-HEAD qualification badge**.
-Ordinary `mtp-serving-v1` is the local default; `standard-off` remains an explicit
+Ordinary `mtp-serving-v1` with **GLM native** is the M3 Ultra local default;
+GLM portable is an explicit alternative, never an admission-failure fallback
+([distribution authority](runtime-admission.md#glm-execution-distributions)).
+`standard-off` remains an explicit
 fallback, distinct from bounded singleton. [Runtime completeness and promotion](runtime-completeness.md)
 records core COMPLETE, no current local blocker and separated upstream performance work.
 General-runtime release boundary assessment remains separate;
@@ -42,7 +45,8 @@ instructions to repeat qualification. Results apply to their recorded inputs;
 source changes need explicit affected-scope reconciliation, not inherited badges.
 
 - Distribution assessment: [GLM native promotion](native-profile-promotion-assessment.md)
-  — viable with bounded artifact/admission/selected-path work; no default or publication change.
+  — the closed pre-implementation assessment, not current publication authority;
+  bounded MTP promotion is recorded in [installed admission](runtime-admission.md#glm-execution-distributions).
 
 - OFF cores: [200K](standard-off-200k-production-qualification.md),
   [very long context](very-long-context-production-qualification.md),

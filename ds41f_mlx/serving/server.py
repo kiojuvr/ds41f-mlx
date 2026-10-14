@@ -308,7 +308,8 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
                 'process_alive':True, 'model_ready':ready, 'profile':PROFILE,
                 'limits':LIMITS, 'mtp':'ON', 'dspark':'ON', 'depth':5,
                 'qualification':'release-candidate; see M41 evidence',
-                'dependency_identity':getattr(backend, 'dependency_identity', None)})
+                'dependency_identity':getattr(backend, 'dependency_identity', None),
+                'glm_profile':getattr(backend, 'glm_profile', None)})
         ready = getattr(backend, '_model', None) is not None
         status = 'unavailable' if fatal else ('ready' if ready else 'alive')
         code = 503 if fatal else 200
@@ -318,6 +319,7 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
         if ordinary_mtp:
             scheduler = getattr(backend, 'scheduler', None)
             state.update(profile=profile, dependency_identity=backend.dependency_identity,
+                         glm_profile=getattr(backend, 'glm_profile', None),
                          queued_requests=0 if scheduler is None else len(scheduler.waiting),
                          active_requests=0 if scheduler is None else len(scheduler.running),
                          prefix_cache=None if scheduler is None else scheduler.checkpoints.paged.get_stats().to_dict(),

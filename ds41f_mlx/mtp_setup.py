@@ -24,9 +24,13 @@ def run(*args, env=None):
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--profile', choices=['standard-off', 'mtp-singleton-v1'], default='mtp-singleton-v1')
+    p.add_argument('--glm-profile', choices=['native', 'portable'],
+                   help='explicit execution distribution; no fallback')
     p.add_argument('--venv', type=Path, required=True)
     p.add_argument('--build-dir', type=Path, required=True)
     args = p.parse_args(argv)
+    from .glm_profile import default_profile
+    args.glm_profile = args.glm_profile or default_profile('mtp' if args.profile == 'mtp-singleton-v1' else 'standard-off')
     if platform.system() != 'Darwin' or platform.machine() != 'arm64':
         p.error('qualified setup requires Apple Silicon macOS')
     venv, build = args.venv.resolve(), args.build_dir.resolve()
@@ -109,7 +113,10 @@ def main(argv=None):
         shutil.rmtree(site/'omlx')
         with tarfile.open(ROOT/'reference/R1/off-source.tar.gz') as archive:
             archive.extractall(site, filter='data')
-    package_args = ['--output', build/'runtime-wheels']
+    site = Path(subprocess.check_output([str(python), '-c', 'import sysconfig; print(sysconfig.get_paths()["purelib"])'], text=True).strip())
+    from .glm_profile import provision
+    provision(site, args.glm_profile)
+    package_args = ['--output', build/'runtime-wheels', '--glm-profile', args.glm_profile]
     if args.profile == 'standard-off':
         package_args += ['--profile', 'standard-off', '--recipe-wheel', wheels[0]]
     run(python, ROOT/'tools/build_execution_package.py', *package_args)

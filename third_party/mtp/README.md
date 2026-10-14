@@ -55,6 +55,27 @@ these candidates implicitly. See `docs/mtp-local-release-candidate.md` and M41's
 identity/native-build/clean-clone evidence. New source/build/link identities require
 affected qualification; equal package version numbers are not equal execution.
 
+## Explicit GLM native / portable distributions
+
+`execution-profiles.json` records **native as the supported M3 Ultra local MTP
+default**, with portable a separately admitted explicit alternative; OFF's
+published portable default is unchanged. `glm-native.tar.gz` contains the exact
+current-built GLM extension, ops dylib and metallib. `glm-native.json` binds their
+sizes/SHA256 and the admitted source archive, 43 GLM/common inputs, toolchain and
+repository-owned `tools/build_glm_bundle.py` invocation. These oMLX-derived
+artifacts retain the attribution/license of their source export, distinct from
+the MIT recipe wheel. Provisioning copies the frozen accepted bundle rather than
+rebuilding or resealing local binaries. The historical `normal-local.json` and
+base archives are not rewritten.
+
+Setup and package construction consume the same explicit bundle/profile owner.
+`--glm-profile portable` provisions no GLM native members. Installed admission
+requires the selected profile's exact identity and native usability; load/ABI/
+symbol/resource failure refuses startup, never silently switches to portable.
+Current publication and bounded real-model selected-path evidence are recorded
+in `release/execution-package*.json` and `artifacts/native-promotion/promotion.json`.
+See [installed admission](../../docs/runtime-admission.md#glm-execution-distributions).
+
 ## Post-completion compressed growth overlay (#4365)
 
 `compressed-growth.patch` is the isolated MIT-licensed DeepSeek V4.1 delta from

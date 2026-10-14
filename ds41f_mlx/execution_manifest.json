@@ -307,6 +307,180 @@
   "files": {
     "typing_extensions.py": "4040ca1a1ecbee00d1385c12a93084d1c5bd46f0b774f07e5ae7e91c4f55e696"
   },
+  "glm": {
+    "glm_extension": "_ext.cpython-313-darwin.so",
+    "glm_profiles": {
+      "native": {
+        "_ext.cpython-313-darwin.so": {
+          "sha256": "cf0e32a4b63148e57b796b7aab1397008c182f9acd1c7f1e0f4a502752b4633e",
+          "size": 170192
+        },
+        "libomlx_glm_kernel_ops.dylib": {
+          "sha256": "846d9c5cc2a2bce0c0ca2559dd1e6fbd81d4b19a0adf770458b3a772144cfdfd",
+          "size": 392448
+        },
+        "omlx_glm_kernels.metallib": {
+          "sha256": "3b3260a812b56faf8dd452676304a4ccf6e3bbaf3c28381a8c91905f8353204b",
+          "size": 3013512
+        }
+      },
+      "portable": {}
+    },
+    "profile": "native",
+    "provenance": {
+      "archive": "glm-native.tar.gz",
+      "archive_sha256": "f8bad84b71567588677e8e9bdf30cee42f67dd5b0f32e958369bc601d6f269ec",
+      "extension": "_ext.cpython-313-darwin.so",
+      "files": {
+        "_ext.cpython-313-darwin.so": {
+          "sha256": "cf0e32a4b63148e57b796b7aab1397008c182f9acd1c7f1e0f4a502752b4633e",
+          "size": 170192
+        },
+        "libomlx_glm_kernel_ops.dylib": {
+          "sha256": "846d9c5cc2a2bce0c0ca2559dd1e6fbd81d4b19a0adf770458b3a772144cfdfd",
+          "size": 392448
+        },
+        "omlx_glm_kernels.metallib": {
+          "sha256": "3b3260a812b56faf8dd452676304a4ccf6e3bbaf3c28381a8c91905f8353204b",
+          "size": 3013512
+        }
+      },
+      "profile": "native",
+      "provenance": {
+        "build_owner_sha256": "17a5a815596fdd24c5ffc73292665f86bb05096a233bac1f464a800dd6041519",
+        "cmake": "4.3.1",
+        "commands": [
+          [
+            "uv",
+            "venv",
+            "--python",
+            "/opt/homebrew/opt/python@3.13/bin/python3.13",
+            "/private/tmp/ds41f-native-production-build-b/env"
+          ],
+          [
+            "uv",
+            "pip",
+            "install",
+            "--python",
+            "/private/tmp/ds41f-native-production-build-b/env/bin/python",
+            "mlx==0.32.2",
+            "nanobind==2.15.0",
+            "cmake==4.3.1"
+          ],
+          [
+            "/private/tmp/ds41f-native-production-build-b/env/bin/cmake",
+            "-S",
+            "/private/tmp/ds41f-native-production-build-b/source/omlx/custom_kernels/glm_moe_dsa/csrc",
+            "-B",
+            "/private/tmp/ds41f-native-production-build-b/build",
+            "-DPython_EXECUTABLE=/private/tmp/ds41f-native-production-build-b/env/bin/python",
+            "-DCMAKE_BUILD_TYPE=Release",
+            "-DCMAKE_OSX_DEPLOYMENT_TARGET=15.0",
+            "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=/private/tmp/ds41f-native-production-build-b/bundle"
+          ],
+          [
+            "/private/tmp/ds41f-native-production-build-b/env/bin/cmake",
+            "--build",
+            "/private/tmp/ds41f-native-production-build-b/build",
+            "-j",
+            "4"
+          ],
+          [
+            "install_name_tool",
+            "-delete_rpath",
+            "/private/tmp/ds41f-native-production-build-b/bundle",
+            "/private/tmp/ds41f-native-production-build-b/bundle/_ext.cpython-313-darwin.so"
+          ],
+          [
+            "install_name_tool",
+            "-delete_rpath",
+            "/private/tmp/ds41f-native-production-build-b/env/lib/python3.13/site-packages/mlx/lib",
+            "/private/tmp/ds41f-native-production-build-b/bundle/_ext.cpython-313-darwin.so"
+          ],
+          [
+            "codesign",
+            "--force",
+            "--sign",
+            "-",
+            "/private/tmp/ds41f-native-production-build-b/bundle/_ext.cpython-313-darwin.so"
+          ],
+          [
+            "install_name_tool",
+            "-delete_rpath",
+            "/private/tmp/ds41f-native-production-build-b/env/lib/python3.13/site-packages/mlx/lib",
+            "/private/tmp/ds41f-native-production-build-b/bundle/libomlx_glm_kernel_ops.dylib"
+          ],
+          [
+            "codesign",
+            "--force",
+            "--sign",
+            "-",
+            "/private/tmp/ds41f-native-production-build-b/bundle/libomlx_glm_kernel_ops.dylib"
+          ]
+        ],
+        "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.5.0\nThread model: posix\nInstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin",
+        "deployment_target": "15.0",
+        "inputs": {
+          "omlx/custom_kernels/common/csrc/kernels/quantized_moe.h": "9e6440b6e5437e7671d9f399eb230058e4733567f0705015b94be79b8826fd39",
+          "omlx/custom_kernels/common/csrc/kernels/steel_attention_block_token.h": "e444b47b700b19b82428e88fa505a346b7b7dfcfbaf1e2d57119ebd4a4f03ad1",
+          "omlx/custom_kernels/common/csrc/mlx/backend/metal/kernels/steel/attn/params.h": "0061cfd417db17eb2f4166350b3c237e6967276a39519a7a7c31fd98fc4c49ed",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/CMakeLists.txt": "c0d83eb3236529ef11e597f9d2b90ef4bd8c978ba0ee56c8f79983767f2f9044",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/MLX_LICENSE.txt": "ccfab7ccb2ea306f71531c8ca77bb55507606cd90768b1e32b8b52ab5b48cf01",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/MLX_SERVE_LICENSE.txt": "dfe22e0f100fe7f2c2808f1af6f488e7339cf8deb7504153602b4169ed7d90b4",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/bindings.cpp": "b4f1901ae803a0de00897b0fa8c54a4813b466c0f2fede7cff8f50cb70f7736a",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/deepseek_moe.metal": "1d45282bbc667557eab4f07019b1414386bf9747154e017c4439faa4e0be335e",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/deepseek_v41_grouped_expert.cpp": "d15674ffce5d0c1a64952764adad1b2f645f21cc96bdfa2dcd8324ad1673f778",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/deepseek_v41_grouped_expert.h": "e13bd14ebcef5182a884e83000593cdec28ecf02f8c8f3ea57d45a85eb03f5a4",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/deepseek_v41_packed_attention.cpp": "8e5d4a58efac940ebf87e0f75266d09b57ea9648285bf05833361bfe8a1e9c8b",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/deepseek_v41_packed_attention.h": "1fb605ce4801dc3d90db7f98dc41125104a2d44f3d9696c402bbba4b2fb13662",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/deepseek_v41_packed_attention.metal": "ef7b4ba3f611b120b73dafae028a59d4b42e5ec8ee7f21468098f90db152a93a",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/deepseek_v4_sparse_attention.cpp": "7ed3c0ecdb59921e5398d2866c26639d6cff8fa5b13e4946fc6fd9824f3535e8",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/deepseek_v4_sparse_attention.h": "8cae39228f6031d4dc247e2bd2551e1c67ce7555fe4fd5ed5e2051eb2de25c34",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/deepseek_v4_sparse_attention.metal": "fe0768a49b2ab83c5db881b61e263b61f75c22ed704a84941735232d8ddd2837",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/dsa_indexer.cpp": "c7aacb2bfc00b342ce2be70620efc142571ee1dab0de14011042e6d4f97bc64b",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/dsa_indexer.h": "cadd127bbf1449bfaaea12511b57cdd0d3e08f4aa6ab699f447aab55f9636793",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/dsa_indexer.metal": "d5f18a9dabbda2aa59a97e84c4185a25ff0efe6463a30c40fb576754c17e6527",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/dspark_gemm.cpp": "19e54ad507a26dc6541b01d4282f04d045d560787294b618537adc385d9bc197",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/dspark_gemm.h": "3db1cfa462d415b1e42dc5c97531e855a7f893a99f89d4123d219bd478899e07",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/dspark_gemm.metal": "af3ce28407965543ca9acc6b4c8c89ecd9d4bd1af2c8622e785e0066f7dced6e",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/dspark_qmv.cpp": "40d5666c0cf670a6955eb2f1f48aed19d58d20355637918cbcb1c1b71145e2ad",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/dspark_qmv.h": "ed16e512c5f4d016b5b3c5c9b4784bdd81385f0611d52e6aed37bde33ba77da1",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/dspark_qmv.metal": "b00011015883db669d04c19d712539c0e834e94a0243bdf546d0874441f13e0a",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/exact_block_attention.cpp": "720fe13233030bae0bb705d20088397106797597cb588e3a43b2b22b88662d40",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/exact_block_attention.h": "83f5253b006e286f29262c9fca9d097a71bf6afc37cb3f319dcf2fe2830d0e60",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/exact_block_attention.metal": "d7ca63f9d3814edc173f6d7adb7acabc2012f89d3207feed0e0dcea302e34568",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/fused_moe.cpp": "682a66700f92cd2aef1a5e4f0d96ad951ba52389bb628e889e350ad9cb87b03b",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/fused_moe.h": "0d71ce2f5fb902879d01e529dd7f282b3de0fe6dcaf401bc00d7d1cde785f90c",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/fused_moe.metal": "645b5f5d6b55bf8a02bf8389a74419ed9bcded6d6d2e2c4fecaafbca86ff5685",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/kernels/mma_dsa_indexer_score.h": "60d2f80bc25a5e40cbd615e128bca06efd078846e92f5287fbb69bd2acc9510b",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/kernels/steel_deepseek_v41_packed_attention.h": "99e9a930f4aa9e3ff4c948cb4beed8f88ccd8426107a9dc1eae111755ec4c857",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/kernels/steel_deepseek_v4_sparse_attention.h": "550bad8ea897fd3f884c658ec6c823db9047308170459ea6159918a6bf0cecdc",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/kernels/steel_dsa_indexer_score.h": "4682ca3c0692b4a9a80cc67a255113dc03e79d1e7fb1137fb48b2c932fbbe6d8",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/kernels/steel_qwen4_qsa_sparse_gqa.h": "9ffcfb7a152341c6d201eda93aac938cb41390a79701d4511316e26bb07f6446",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/kernels/steel_sparse_mla.h": "c7b38831aee41d227bd56a4a9cc342ad2a051157d66a10f2683025bcdd55a3a9",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/qwen4_qsa_sparse_gqa.cpp": "bd120669e4a2c60ed42d6f3b5423f9600b6dec9f728edf58b94cc1de15ba6093",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/qwen4_qsa_sparse_gqa.h": "efca18985ff4243b9ef240a6838a80e42664e27cbe857f559fe97eb8b3d87b4b",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/qwen4_qsa_sparse_gqa.metal": "dbbbac0b0e672f40a2a27a132419998690e7d5401831d3e8bb61b74e5139c342",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/sparse_mla.cpp": "54cba18edd7fac917f4d34568595b150e0b98fc481ce62dc82e5c10868167e85",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/sparse_mla.h": "e74670e71e1554d6109a08f6449e12562dd7bdf471992bb3c85b17d0057ce015",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/sparse_mla.metal": "5bbe581b90442fa0fde2f7ebbd8adaf9e449166cc7feecb36411a4019236fbad"
+        },
+        "mlx": "0.32.2",
+        "nanobind": "2.15.0",
+        "python": "Python 3.13.15",
+        "sdk": "26.5",
+        "source": {
+          "archive": "omlx-source.tar.gz",
+          "evidence_candidate": "fbe18e8fe68e5bb7b9b1971652ed330f752b6afc",
+          "patch_sha256": "fb120b1ddc9120e69d71ce70f128db7e3bf19a7444b0f237d7661388c9b318d5",
+          "sha256": "26cc224a5fa77d8576589764a56ba8053ac31fe9f4904d8ba60305ed841f33e6",
+          "upstream_base": "4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40"
+        },
+        "xcode": "Xcode 26.6\nBuild version 17F113"
+      },
+      "schema": "ds41f.glm-bundle.v1"
+    }
+  },
   "payloads": {
     "PIL": {
       ".dylibs/libXau.6.dylib": "002a604dc76919d6606c610be703a6547d78dd0f401639c9e95e5a79227190bf",
@@ -565,7 +739,8 @@
       "dwarfstar_prefill_slice.py": "f999d14a059f7ba4b008be786e81c78eb337a8fcbc728fdd85fe755db2adb605",
       "dwarfstar_semantics.py": "9fd4142dc9404fc4147e03ddf9289936bb11e71fa2e52e4626e47c57f784b9b2",
       "dwarfstar_v41_sweep.py": "ffa80551acc7ddbaa46ec1dd6061b96a7faa2fca8bf82019afca2ed55d99a222",
-      "execution_identity.py": "3a62aaf5d5bf65296c24c9c73197f7a3daf71c89453e9305f44382e6197e66b5",
+      "execution_identity.py": "af140dfba7f1da7a314359cca806a8ce2e30954c6baf82a1092c7b0cddeb1f28",
+      "glm_profile.py": "8644cb3a53182389ffa3f36737f27cc3d463dbdd075d9346410f53d012dfd219",
       "internal_local_client.py": "398751eee3a6239a82f9a53bb4d4c4b9c048083e43d27aada82efcc84a93a8c6",
       "local_client.py": "0b611324e6460026c9ec9fe7dbea5fe8ebd232851bb0876e513eab1954cb93ed",
       "m2_layer_major.py": "cbef65f7b0527121518178e33d51170561d24148d634f493aabde7713aae1b53",
@@ -593,9 +768,9 @@
       "model_execution/switch_layers.py": "e01bf309fa9cfda7ab92d727288659e0cb43a6c4c2ca668c72519082d845bdb3",
       "model_execution/vision.py": "dcaf449e199cfa16ecb4b08c7b17c75d3f80ed46a7bab82a64cdd03db3264f05",
       "mtp_acceptance.py": "1b3587d01ad62eef299cfbb4ea8b1b2fbc048fdee1860a9fdd7a3efee05aee46",
-      "mtp_identity.py": "26d53da8cff6e2b158d11bb12b26cba5f74deda63dd10de95befef7e5a878df1",
+      "mtp_identity.py": "6118a6bed9a3145babe15870009ded64b135f83a1d4215f2081cd49f24aeffe5",
       "mtp_profile.py": "e45a7475be0e88e7d7151f8021c0528f58c65b2390c3253c938b31cf31bd8472",
-      "mtp_setup.py": "a28ec9e7d2bea81aadfcf840f8c2cedc5f595db072370d9923c4e0b1aa6e89a9",
+      "mtp_setup.py": "b596e2440dbe08c32ad7f87f418ff261636a6425246647b498e03905b9ae7f01",
       "native/ds41f_prefill_kernels.metal": "98c34ceac81c28bf62d26042db8759e76200927bf7d6984322ae0cb1547f1102",
       "native/ds41f_prefill_native.c": "2fb444347bf43469684bcae5aefc3cf19848ad587635ed4a39c8c8ab0621e03e",
       "native/ds41f_prefill_native.h": "92c99c7995d31c303377f5e15cd4f1b74dcbd6ad8755ae98a0dca09090de284f",
@@ -646,14 +821,14 @@
       "runtime/omlx_generation.py": "4555c2dc0ac619d6663b703d24415117a71a30e282eff5dd73485dd6a7d93e73",
       "runtime/omlx_worker.py": "fb4945986f2a10c578d3cb05a7a8228d2e34a8bedee6c01aefe36d38f9e3f4ea",
       "runtime/recipe_semantic_guard.py": "4265b277676cc2b367992950d7b8236fd1465d2010f5db3db07f5ccf67485d29",
-      "runtime/resource_admission.py": "99615720e19b83e2874186a73167bf38d17a2b8614a03f650c46d031bf58d9db",
+      "runtime/resource_admission.py": "f496fe6d436dec02535dfb835289aaccb8e3905868dad35b8ac84e556d6034e8",
       "runtime/state_production.py": "e96dc97d6142f29be8b2de5d2fed1b21411f328c7092241d4197734c840b4832",
       "runtime/target_forward.py": "2a9ed7a8df85dfb8901ab73278377602561f28b2a686b2f3fd82c9cd18c9357b",
       "runtime/target_generation.py": "69b93c4a9e74faed04c5e044624f0f93a7c888200276b24fc92a381b0d7991c8",
       "runtime/tool_boundary_session.py": "900ea24babb5ed92a7b0679f915ed902a91c38696305b9ea07233a00df763f2c",
       "runtime_logging.py": "6702a17f6e0cf134169f7e26d7f208c8e5805b2642bf0bc1820176e2dd620992",
       "runtime_release.json": "d9e45f0b9d8027dd4e8f489d7c6047af398723b76786e5eb2f0cf4d731d4b88c",
-      "serve.py": "2d231c5a2ad9511cb64e47de2eb6e238135e40c1e772c518c64017efd7270211",
+      "serve.py": "96aa4aa8c3b8d327b6244b2ee13b4130171974be95dc49de67e1a5c3d75feabe",
       "server.py": "9175afd50782d38e342a4395e1398860dbc1eb2cbdfdc038df725d34573243fd",
       "server_logging.py": "0db4268c424bc0075cfed8ac3c9f1a72c7dea9100dc8223c62379e71906c1271",
       "serving/__init__.py": "e9291b77a9a3a117a1728b6f4c746b5c449f78796abee21c15a399d59091a91b",
@@ -670,7 +845,7 @@
       "serving/recovery_certificate.py": "93d13b6dc2654311264e6fc9d23dd07dab61009d3331d980a3823a85cc3c7f45",
       "serving/request_fence.py": "76e3b7071f5616d1cf76baabab8a20c6878e2f51637552cdb71066c9bcfece56",
       "serving/request_policy.py": "b7ed71c1aff93bf9e017e85494f96cd79b748d8253ae1278b4250b3920b1ce93",
-      "serving/server.py": "528ec1eca66d8adaf2710a5f09f7a30e3a2b931e4fcdf02b7fb49d1d85040a04",
+      "serving/server.py": "707852988f5e41d603919e5423cdfb3744f2b033c9ed1704787d85db2fc030ae",
       "serving/stateful_stream.py": "208f379a610f558cd40fbb65e2911e6fa157223d16e7ac8b421d58797e8d66f3",
       "source_incremental_executor.py": "b5fd49e200fe9cf4042514ccf5b35c0f8e2243e10f802fff6b3d4d191b012596",
       "web.py": "3eb736fa3780519ca68e6ac0269c2c7348363fad2857e24d80624afa4ba1e8a4",
@@ -4318,7 +4493,10 @@
       "custom_kernels/decode_fast/__init__.py": "90cf834c0cf06eade49357d152751233b9f2d7a32662711acd55f0e73b9c6ea6",
       "custom_kernels/decode_fast/fast.py": "bc67637d16775ef2900a2181c03c7addb6d672380827954f8c0a439d82b4d92d",
       "custom_kernels/glm_moe_dsa/__init__.py": "8d0f9d0e263e35a623f5fc5a6ef65524062c264e3001e13b775e92cca1e7bd6a",
+      "custom_kernels/glm_moe_dsa/_ext.cpython-313-darwin.so": "cf0e32a4b63148e57b796b7aab1397008c182f9acd1c7f1e0f4a502752b4633e",
       "custom_kernels/glm_moe_dsa/fast.py": "a5c31c6ee7e9197e44488ac2b520d2dea40cbc0e38b197f27190ff231b0cddcd",
+      "custom_kernels/glm_moe_dsa/libomlx_glm_kernel_ops.dylib": "846d9c5cc2a2bce0c0ca2559dd1e6fbd81d4b19a0adf770458b3a772144cfdfd",
+      "custom_kernels/glm_moe_dsa/omlx_glm_kernels.metallib": "3b3260a812b56faf8dd452676304a4ccf6e3bbaf3c28381a8c91905f8353204b",
       "custom_kernels/minimax_m3/__init__.py": "0b6b441a56cb7b611eeae7d7f2f330edd5d1c70c49f637076dd418809649aed4",
       "custom_kernels/minimax_m3/fast.py": "ffa76452026b2677ffbde5c2acf909bfba328ff0990c159674503da19ac893b6",
       "custom_kernels/nax.py": "a8b99c77f82a1efff7e7258b0e18590b7fd81b3d380072e7a6dcd450cb4f9dac",
@@ -8400,9 +8578,9 @@
       "patch_sha256": "560a791ff684a60ad366c3f46b961cb004f7819cfab95b4400bd0aa0d43b3794",
       "sha256": "1f4d42fd700b876ef36dd71a95db40cf88c3fa948dedc603e0676cd16e1db66b"
     },
-    "source_commit": "131fbedeff5786a2e2f371aaefd82d89d1929661",
+    "source_commit": "dd3fcbd15f0a17ff9f1568d93fca685a684074fe",
     "source_commit_is_base": true,
-    "source_payload_sha256": "4543d4b18efff27962f68271654d7bdd661c7159bb301586ad642c41262eabd1",
+    "source_payload_sha256": "f11227c43cd180ace535da023a26ce2a51062a53a49ef14042b53325e7362817",
     "template_reuse": {
       "adaptations": [
         "Apply after #4360; remove unused ROWS from lane Sinkhorn call and use runtime shape in retained serial fallback",

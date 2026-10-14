@@ -15,8 +15,14 @@ separate host ABI compatibility, and non-authoritative build/source provenance
 and historical qualification evidence. No editable install, local seal, whole
 Homebrew closure SHA equality, or source checkout equality is startup authority.
 
-`release/execution-package.json` identifies the published MTP wheel and its SHA,
-accepted execution digest and bounded acceptance. The included wheel is a
+`release/execution-package.json` identifies the published **GLM native** MTP
+wheel and its SHA, accepted execution digest and bounded acceptance. Native is
+the supported M3 Ultra local default; `release/execution-package-portable.json`
+identifies the separately admitted explicit portable alternative. The exact GLM
+binary/metallib archive and build provenance ship in `third_party/mtp/glm-native.*`.
+Native-selected admission requires actual load/ABI/symbol/UUID/GPU-resource
+usability and refuses startup on failure; it never silently selects portable.
+Inspect, logs, health and operator status expose `glm_profile`. The included wheel is a
 published artifact, not an arbitrary generated binary. This migration freshly
 accepts **ordinary MTP**, not a new full OFF, long-context or general-runtime
 release. Historical R1/OFF and singleton semantic evidence remains unchanged.
@@ -27,10 +33,15 @@ A subsequent projection still requires its own explicit promotion qualification.
 Provision locked dependencies and the recipe tokenizer using the source/build
 setup route. `mtp_setup` constructs installed packages for separate MTP and OFF
 environments; profile crossing is refused. Build/inspection is not acceptance.
-Alternatively install the published wheel into an already provisioned environment:
+The setup default deliberately provisions the exact frozen native overlay;
+`--glm-profile portable` selects the explicit alternative. Do not install the
+native execution wheel into an extension-absent portable environment: the wheel
+alone does not provision its GLM dependency bundle. Alternatively install the
+published wheel into an already **native-profile provisioned** environment:
 
 ```sh
-uv pip install --python /absolute/mtp-env/bin/python --no-deps release/execution-packages/ds41f_mlx-*.whl
+uv pip install --python /absolute/mtp-env/bin/python --no-deps --reinstall \
+  release/execution-packages/glm-native/ds41f_mlx-0.23.0-py3-none-any.whl
 export DS41F_CHECKPOINT=/absolute/official/DeepSeek-V4.1-Flash
 /absolute/mtp-env/bin/ds41f inspect --profile mtp-serving-v1
 /absolute/mtp-env/bin/ds41f start --profile mtp-serving-v1

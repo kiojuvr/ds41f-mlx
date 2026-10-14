@@ -12,6 +12,7 @@ Architecture explains ownership; specialized documents explain endpoint semantic
 | --- | --- | --- | --- |
 | Selection | Explicit fallback; separate OFF package | Local CLI default; MTP package | Explicit; MTP package |
 | Physical execution | First-party target generation/model execution; MTP OFF | Pinned oMLX MTP topology, ProductionScheduler-owned | Bounded guarded singleton MTP |
+| GLM distribution | Published portable package unchanged | Native local default; portable explicit alternative | Same profile-specific MTP package; singleton protocol unchanged |
 | Ordinary APIs | Text Chat Completions, Responses, Messages within documented scopes | Chat Completions (text and bounded inline Vision); health/models | Specialized session API, not ordinary stateless Chat Completions |
 | Independent conversations/edits | Stateless requests prefill fresh; retained sessions require exact extension | Ordinary requests may safely reuse paired prefixes or miss, including edits/branches | Exact session extension/frozen request fences |
 | Active execution | Single-flight; overlap conflicts | One native active generation; independent ordinary requests may queue, no shared native batch | One response lease/live session |
@@ -26,6 +27,10 @@ These profiles do not grant each other API, persistence, image, concurrency or
 application qualification. Protocol detail: OFF [API](api.md),
 [ordinary MTP](mtp-production-serving.md), [production logical sessions](production-sessions.md)
 and [bounded singleton](mtp-local-release-candidate.md).
+GLM selection is fixed by the installed distribution, not a request option or
+performance inference. Native admission failure refuses startup, never switches
+to portable. See [exact distribution admission](runtime-admission.md#glm-execution-distributions).
+This bounded native promotion does not enlarge API/image/long-context qualification.
 
 ## Capacity, resource policy and defaults
 

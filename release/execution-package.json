@@ -1,12 +1,248 @@
 {
-  "schema": "ds41f.execution-package.v1",
+  "boundary": "artifacts/native-promotion/admission-negatives.json",
+  "default_local_m3_ultra": true,
+  "execution_identity_sha256": "a5f91c8c32f5929a261bbe5bd9c6e9fb1b0737fd7cd6403a4179e7e9a74b6d0d",
+  "glm_distribution": {
+    "glm_extension": "_ext.cpython-313-darwin.so",
+    "glm_profiles": {
+      "native": {
+        "_ext.cpython-313-darwin.so": {
+          "sha256": "cf0e32a4b63148e57b796b7aab1397008c182f9acd1c7f1e0f4a502752b4633e",
+          "size": 170192
+        },
+        "libomlx_glm_kernel_ops.dylib": {
+          "sha256": "846d9c5cc2a2bce0c0ca2559dd1e6fbd81d4b19a0adf770458b3a772144cfdfd",
+          "size": 392448
+        },
+        "omlx_glm_kernels.metallib": {
+          "sha256": "3b3260a812b56faf8dd452676304a4ccf6e3bbaf3c28381a8c91905f8353204b",
+          "size": 3013512
+        }
+      },
+      "portable": {}
+    },
+    "profile": "native",
+    "provenance": {
+      "archive": "glm-native.tar.gz",
+      "archive_sha256": "f8bad84b71567588677e8e9bdf30cee42f67dd5b0f32e958369bc601d6f269ec",
+      "extension": "_ext.cpython-313-darwin.so",
+      "files": {
+        "_ext.cpython-313-darwin.so": {
+          "sha256": "cf0e32a4b63148e57b796b7aab1397008c182f9acd1c7f1e0f4a502752b4633e",
+          "size": 170192
+        },
+        "libomlx_glm_kernel_ops.dylib": {
+          "sha256": "846d9c5cc2a2bce0c0ca2559dd1e6fbd81d4b19a0adf770458b3a772144cfdfd",
+          "size": 392448
+        },
+        "omlx_glm_kernels.metallib": {
+          "sha256": "3b3260a812b56faf8dd452676304a4ccf6e3bbaf3c28381a8c91905f8353204b",
+          "size": 3013512
+        }
+      },
+      "profile": "native",
+      "provenance": {
+        "build_owner_sha256": "17a5a815596fdd24c5ffc73292665f86bb05096a233bac1f464a800dd6041519",
+        "cmake": "4.3.1",
+        "commands": [
+          [
+            "uv",
+            "venv",
+            "--python",
+            "/opt/homebrew/opt/python@3.13/bin/python3.13",
+            "/private/tmp/ds41f-native-production-build-b/env"
+          ],
+          [
+            "uv",
+            "pip",
+            "install",
+            "--python",
+            "/private/tmp/ds41f-native-production-build-b/env/bin/python",
+            "mlx==0.32.2",
+            "nanobind==2.15.0",
+            "cmake==4.3.1"
+          ],
+          [
+            "/private/tmp/ds41f-native-production-build-b/env/bin/cmake",
+            "-S",
+            "/private/tmp/ds41f-native-production-build-b/source/omlx/custom_kernels/glm_moe_dsa/csrc",
+            "-B",
+            "/private/tmp/ds41f-native-production-build-b/build",
+            "-DPython_EXECUTABLE=/private/tmp/ds41f-native-production-build-b/env/bin/python",
+            "-DCMAKE_BUILD_TYPE=Release",
+            "-DCMAKE_OSX_DEPLOYMENT_TARGET=15.0",
+            "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=/private/tmp/ds41f-native-production-build-b/bundle"
+          ],
+          [
+            "/private/tmp/ds41f-native-production-build-b/env/bin/cmake",
+            "--build",
+            "/private/tmp/ds41f-native-production-build-b/build",
+            "-j",
+            "4"
+          ],
+          [
+            "install_name_tool",
+            "-delete_rpath",
+            "/private/tmp/ds41f-native-production-build-b/bundle",
+            "/private/tmp/ds41f-native-production-build-b/bundle/_ext.cpython-313-darwin.so"
+          ],
+          [
+            "install_name_tool",
+            "-delete_rpath",
+            "/private/tmp/ds41f-native-production-build-b/env/lib/python3.13/site-packages/mlx/lib",
+            "/private/tmp/ds41f-native-production-build-b/bundle/_ext.cpython-313-darwin.so"
+          ],
+          [
+            "codesign",
+            "--force",
+            "--sign",
+            "-",
+            "/private/tmp/ds41f-native-production-build-b/bundle/_ext.cpython-313-darwin.so"
+          ],
+          [
+            "install_name_tool",
+            "-delete_rpath",
+            "/private/tmp/ds41f-native-production-build-b/env/lib/python3.13/site-packages/mlx/lib",
+            "/private/tmp/ds41f-native-production-build-b/bundle/libomlx_glm_kernel_ops.dylib"
+          ],
+          [
+            "codesign",
+            "--force",
+            "--sign",
+            "-",
+            "/private/tmp/ds41f-native-production-build-b/bundle/libomlx_glm_kernel_ops.dylib"
+          ]
+        ],
+        "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.5.0\nThread model: posix\nInstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin",
+        "deployment_target": "15.0",
+        "inputs": {
+          "omlx/custom_kernels/common/csrc/kernels/quantized_moe.h": "9e6440b6e5437e7671d9f399eb230058e4733567f0705015b94be79b8826fd39",
+          "omlx/custom_kernels/common/csrc/kernels/steel_attention_block_token.h": "e444b47b700b19b82428e88fa505a346b7b7dfcfbaf1e2d57119ebd4a4f03ad1",
+          "omlx/custom_kernels/common/csrc/mlx/backend/metal/kernels/steel/attn/params.h": "0061cfd417db17eb2f4166350b3c237e6967276a39519a7a7c31fd98fc4c49ed",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/CMakeLists.txt": "c0d83eb3236529ef11e597f9d2b90ef4bd8c978ba0ee56c8f79983767f2f9044",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/MLX_LICENSE.txt": "ccfab7ccb2ea306f71531c8ca77bb55507606cd90768b1e32b8b52ab5b48cf01",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/MLX_SERVE_LICENSE.txt": "dfe22e0f100fe7f2c2808f1af6f488e7339cf8deb7504153602b4169ed7d90b4",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/bindings.cpp": "b4f1901ae803a0de00897b0fa8c54a4813b466c0f2fede7cff8f50cb70f7736a",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/deepseek_moe.metal": "1d45282bbc667557eab4f07019b1414386bf9747154e017c4439faa4e0be335e",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/deepseek_v41_grouped_expert.cpp": "d15674ffce5d0c1a64952764adad1b2f645f21cc96bdfa2dcd8324ad1673f778",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/deepseek_v41_grouped_expert.h": "e13bd14ebcef5182a884e83000593cdec28ecf02f8c8f3ea57d45a85eb03f5a4",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/deepseek_v41_packed_attention.cpp": "8e5d4a58efac940ebf87e0f75266d09b57ea9648285bf05833361bfe8a1e9c8b",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/deepseek_v41_packed_attention.h": "1fb605ce4801dc3d90db7f98dc41125104a2d44f3d9696c402bbba4b2fb13662",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/deepseek_v41_packed_attention.metal": "ef7b4ba3f611b120b73dafae028a59d4b42e5ec8ee7f21468098f90db152a93a",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/deepseek_v4_sparse_attention.cpp": "7ed3c0ecdb59921e5398d2866c26639d6cff8fa5b13e4946fc6fd9824f3535e8",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/deepseek_v4_sparse_attention.h": "8cae39228f6031d4dc247e2bd2551e1c67ce7555fe4fd5ed5e2051eb2de25c34",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/deepseek_v4_sparse_attention.metal": "fe0768a49b2ab83c5db881b61e263b61f75c22ed704a84941735232d8ddd2837",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/dsa_indexer.cpp": "c7aacb2bfc00b342ce2be70620efc142571ee1dab0de14011042e6d4f97bc64b",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/dsa_indexer.h": "cadd127bbf1449bfaaea12511b57cdd0d3e08f4aa6ab699f447aab55f9636793",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/dsa_indexer.metal": "d5f18a9dabbda2aa59a97e84c4185a25ff0efe6463a30c40fb576754c17e6527",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/dspark_gemm.cpp": "19e54ad507a26dc6541b01d4282f04d045d560787294b618537adc385d9bc197",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/dspark_gemm.h": "3db1cfa462d415b1e42dc5c97531e855a7f893a99f89d4123d219bd478899e07",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/dspark_gemm.metal": "af3ce28407965543ca9acc6b4c8c89ecd9d4bd1af2c8622e785e0066f7dced6e",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/dspark_qmv.cpp": "40d5666c0cf670a6955eb2f1f48aed19d58d20355637918cbcb1c1b71145e2ad",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/dspark_qmv.h": "ed16e512c5f4d016b5b3c5c9b4784bdd81385f0611d52e6aed37bde33ba77da1",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/dspark_qmv.metal": "b00011015883db669d04c19d712539c0e834e94a0243bdf546d0874441f13e0a",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/exact_block_attention.cpp": "720fe13233030bae0bb705d20088397106797597cb588e3a43b2b22b88662d40",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/exact_block_attention.h": "83f5253b006e286f29262c9fca9d097a71bf6afc37cb3f319dcf2fe2830d0e60",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/exact_block_attention.metal": "d7ca63f9d3814edc173f6d7adb7acabc2012f89d3207feed0e0dcea302e34568",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/fused_moe.cpp": "682a66700f92cd2aef1a5e4f0d96ad951ba52389bb628e889e350ad9cb87b03b",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/fused_moe.h": "0d71ce2f5fb902879d01e529dd7f282b3de0fe6dcaf401bc00d7d1cde785f90c",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/fused_moe.metal": "645b5f5d6b55bf8a02bf8389a74419ed9bcded6d6d2e2c4fecaafbca86ff5685",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/kernels/mma_dsa_indexer_score.h": "60d2f80bc25a5e40cbd615e128bca06efd078846e92f5287fbb69bd2acc9510b",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/kernels/steel_deepseek_v41_packed_attention.h": "99e9a930f4aa9e3ff4c948cb4beed8f88ccd8426107a9dc1eae111755ec4c857",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/kernels/steel_deepseek_v4_sparse_attention.h": "550bad8ea897fd3f884c658ec6c823db9047308170459ea6159918a6bf0cecdc",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/kernels/steel_dsa_indexer_score.h": "4682ca3c0692b4a9a80cc67a255113dc03e79d1e7fb1137fb48b2c932fbbe6d8",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/kernels/steel_qwen4_qsa_sparse_gqa.h": "9ffcfb7a152341c6d201eda93aac938cb41390a79701d4511316e26bb07f6446",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/kernels/steel_sparse_mla.h": "c7b38831aee41d227bd56a4a9cc342ad2a051157d66a10f2683025bcdd55a3a9",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/qwen4_qsa_sparse_gqa.cpp": "bd120669e4a2c60ed42d6f3b5423f9600b6dec9f728edf58b94cc1de15ba6093",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/qwen4_qsa_sparse_gqa.h": "efca18985ff4243b9ef240a6838a80e42664e27cbe857f559fe97eb8b3d87b4b",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/qwen4_qsa_sparse_gqa.metal": "dbbbac0b0e672f40a2a27a132419998690e7d5401831d3e8bb61b74e5139c342",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/sparse_mla.cpp": "54cba18edd7fac917f4d34568595b150e0b98fc481ce62dc82e5c10868167e85",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/sparse_mla.h": "e74670e71e1554d6109a08f6449e12562dd7bdf471992bb3c85b17d0057ce015",
+          "omlx/custom_kernels/glm_moe_dsa/csrc/sparse_mla.metal": "5bbe581b90442fa0fde2f7ebbd8adaf9e449166cc7feecb36411a4019236fbad"
+        },
+        "mlx": "0.32.2",
+        "nanobind": "2.15.0",
+        "python": "Python 3.13.15",
+        "sdk": "26.5",
+        "source": {
+          "archive": "omlx-source.tar.gz",
+          "evidence_candidate": "fbe18e8fe68e5bb7b9b1971652ed330f752b6afc",
+          "patch_sha256": "fb120b1ddc9120e69d71ce70f128db7e3bf19a7444b0f237d7661388c9b318d5",
+          "sha256": "26cc224a5fa77d8576589764a56ba8053ac31fe9f4904d8ba60305ed841f33e6",
+          "upstream_base": "4d4f5a280bc1739ba2cf39c1cee44fd5cc89cb40"
+        },
+        "xcode": "Xcode 26.6\nBuild version 17F113"
+      },
+      "schema": "ds41f.glm-bundle.v1"
+    }
+  },
+  "glm_profile": "native",
+  "manifest_sha256": "ac33f8ae534ee3bc6f75815df822ee1f8e642c8564fe0070b855bbd398ba5ae9",
   "profile": "mtp",
-  "wheel": "release/execution-packages/ds41f_mlx-0.23.0-py3-none-any.whl",
-  "wheel_sha256": "ffe1ee801d3cc325e7e89abfd084368fe86f3ca52fa6dd3ef8a1ffa5e73fdbdf",
-  "execution_identity_sha256": "75efdd16673a95643e1f7d55b75a88ff9b115c39d224acc413b864a6b15c9e68",
-  "qualification": "artifacts/execution-admission/acceptance.json",
-  "boundary": "artifacts/execution-admission/boundary.json",
+  "promotion_scope": "GLM execution distribution only; OFF and general-runtime release unchanged",
   "provenance": {
+    "bit_exact_kernels": {
+      "adaptations": [
+        "retain pinned ROWS template/guard for serial Sinkhorn fallback",
+        "FP8 GEMV decoder repeats pinned MLX 0.32.2 fp8.h, including reserved codes +/-480"
+      ],
+      "base_commit": "f3ab28c07cd677ca790f2ea5f7607745ccc38a4c",
+      "files": {
+        "patches/deepseek_v41/gemv.py": {
+          "after": "e9c4a2440b6697488c870ca2531cddafdff49d1dc8c7aca53ab86fee8215c7b9",
+          "before": null
+        },
+        "patches/deepseek_v41/hyper_connection.py": {
+          "after": "529316b601641df7176a62b1041f687b75dd060cbc2d31f5f01c80bdd0650da9",
+          "before": "9b1043dc8a85caaa6feebe90ae2f962b544ce709a281cad59358c588cf14086b"
+        },
+        "patches/deepseek_v41/quantization.py": {
+          "after": "cafb5b7543b2f1e285f8dafdeae1e584c77d8366961146db67134e55359c7ecc",
+          "before": "02e42848d40c8b0ef6a665d6d169abd0df38042b5bba6f55b631df92b5821950"
+        }
+      },
+      "patch_sha256": "d984305ea9ecde06770256ab0b3130cccca300816757cfddc2aa93454f33fdce",
+      "scope": "MTP only: MXFP8 GEMV and lane Sinkhorn; FP8 packing rejected (zero-group scale bytes differ); no native sparse attention or radix index changes",
+      "upstream_commit": "f0d4cb53271456a474948edcdb38e0d2da347d79"
+    },
+    "compressed_growth": {
+      "files": {
+        "patches/deepseek_v41/cache.py": {
+          "after": "00d1ceaf1bb1a8de9fe531f6cb311092c831378343341925d7c844503030e38b",
+          "before": "d571a1bc2baec0df52ec4a651dc6627221950aefe9b471b5bce64ee19f08ad04"
+        },
+        "patches/deepseek_v41/growth.py": {
+          "after": "31bedac8a1886b5f65a9f209a673a77a55beb316abc81d91c870b2d94dd736e4",
+          "before": null
+        },
+        "patches/deepseek_v41/language.py": {
+          "after": "f5a0637eaca63967ec2a1bf057870e87d9f05237fa4bc3900e5eda601a1cfe10",
+          "before": "9377537e16b5978ed3aeddc998f772d8e27546d2444db95454df760f74572c43"
+        },
+        "patches/deepseek_v41/mtp.py": {
+          "after": "5c6d10bdc1eb646835866d2b09201fef2481b7cd1950f1592d42490142d5514f",
+          "before": "f22d25151c4006aac378d11cc4bb54e22b254878355f3a5904598ed9dbc83005"
+        }
+      },
+      "patch_sha256": "32df19daac65589fb968a102cc52daa161aa4ec14282e0f9d9b0b39a84f37d74",
+      "upstream_commit": "09be4f420c7409298656bcfa13699dee3a0ed938"
+    },
+    "context_copy": {
+      "base_commit": "4e2e862b4146be4bbc897511dd50a25cb65f7942",
+      "files": {
+        "patches/mlx_lm_mtp/batch_generator.py": {
+          "after": "f2440e98ec97ce7e373b8edf4298d44d3459de344f516ed0eefab3e68d7cf22e",
+          "before": "6f878936757cf0e66b9b06afd784120ab17f763a333e69ec7ada83de93ba9a51"
+        },
+        "patches/mlx_lm_mtp/context_copy.py": {
+          "after": "3382655b390b386dd46afe1552a1762b6c4f3997027b9437610185901781b36d",
+          "before": null
+        }
+      },
+      "patch_sha256": "b81906b7547cc3a6236520667c0a0fc113a4cff5618affee1bc2a69545cd2084",
+      "scope": "Singleton V4.1: consumed-source suffix lookup, pending query only, same selected full depth, ordinary acceptance controller feedback; no priming/batching",
+      "upstream_commit": "a2ee4a2c658d287cc6ff23ba1171b0f40119ddbf"
+    },
     "lockfiles": {
       "requirements-normal-local.lock": "db10f5721036d5186acde04a2608a4657ffed6c50ec9c110c3af0d3b6e9c267f",
       "requirements.lock": "cf60accd810914c43510b919ee8d03e5ce1b2544a8afc16a06be63a2e6383daf",
@@ -21,6 +257,7 @@
       "wheel_sha256": "439d9eaab77a0edb45ad250cb937ecf425e2b315370489085eb02e2315e592e2",
       "xcode": "Xcode 26.6\nBuild version 17F113\n"
     },
+    "off_dependency_authority_sha256": null,
     "package_build_input_sha256": "7393810c32620816480e23268334304e91057df37c49ce6f6a23a432c1c87eb7",
     "recipe_source": {
       "archive": "recipe-m52r-source.tar.gz",
@@ -29,8 +266,41 @@
       "patch_sha256": "560a791ff684a60ad366c3f46b961cb004f7819cfab95b4400bd0aa0d43b3794",
       "sha256": "1f4d42fd700b876ef36dd71a95db40cf88c3fa948dedc603e0676cd16e1db66b"
     },
-    "source_commit": "1dfeed66d9cbb528a1abfdb7649abf3343a50b47",
+    "source_commit": "dd3fcbd15f0a17ff9f1568d93fca685a684074fe",
     "source_commit_is_base": true,
-    "source_payload_sha256": "7f5496286026e993551c6138e0f3e74b4d9712a7f2058abaa68fe4239f594f53"
-  }
+    "source_payload_sha256": "f11227c43cd180ace535da023a26ce2a51062a53a49ef14042b53325e7362817",
+    "template_reuse": {
+      "adaptations": [
+        "Apply after #4360; remove unused ROWS from lane Sinkhorn call and use runtime shape in retained serial fallback",
+        "No #4360 packing, radix, attention changes; no #4363",
+        "Paired SwiGLU concat not observed on admitted checkpoint: preserve its original N specialization/source"
+      ],
+      "base_commit": "9fa18144a317c662c618b3bd227ec17980de0fe0",
+      "files": {
+        "patches/deepseek_v41/activation.py": {
+          "after": "bfb7385ee30f2478b4c5b7ccc91ce29cdf0fad2e747a06e144f606f4df3c164d",
+          "before": "a63e22498e8273551f7188e580383726981ae2eca47d09f0ed119055ceea8271"
+        },
+        "patches/deepseek_v41/hyper_connection.py": {
+          "after": "773631aeb89ef646a6a3d68cb039d4d2de967fde36c19e2dd4d33ad545a32d25",
+          "before": "529316b601641df7176a62b1041f687b75dd060cbc2d31f5f01c80bdd0650da9"
+        },
+        "patches/deepseek_v41/kernels.py": {
+          "after": "29131233fc78374127f46c704b93cafa57e1ff6e3e055200b202a5e93e4df1ef",
+          "before": "9f76d46359282c5fb23b0979dd8e550c9c1e355b9aca46a71fe97c842c376882"
+        },
+        "patches/deepseek_v41/routing.py": {
+          "after": "7b1bce0d9df0549f54c7b32de1eee0f923e665558f0663f0cbb95e61309a06c3",
+          "before": "7bcabb327134ff0f42c9911b8e0c2d6d6f1e41f59740dddabfd010598c77767d"
+        }
+      },
+      "patch_sha256": "161790597a4c812784c2a0a14238bf918ed6c706798c3e91648db40c7c6d74bc",
+      "scope": "MTP only: runtime counts out of existing template identities; no arithmetic, dispatch or state change",
+      "upstream_commit": "63917f5f6a9bd429621d8e615ba958269a2fcee6"
+    }
+  },
+  "qualification": "artifacts/native-promotion/final-ordinary-acceptance.json",
+  "schema": "ds41f.execution-package.v1",
+  "wheel": "release/execution-packages/glm-native/ds41f_mlx-0.23.0-py3-none-any.whl",
+  "wheel_sha256": "f183ff0c3e0a6b5eedb8e4c2e789373618b69d261c5f61929f982736fecdb15f"
 }

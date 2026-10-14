@@ -5,7 +5,7 @@ from pathlib import Path
 import httpx
 
 
-def run(url='http://127.0.0.1:8000', *, context=''):
+def run(url='http://127.0.0.1:8000', *, context='', on_settlement=None):
     tools = [dict(type='function', function=dict(name=name, description=description,
         parameters=dict(type='object', properties=dict(path=dict(type='string')), required=['path'])))
         for name, description in [('read_file', 'Read a file.'), ('stat_file', 'Get file metadata.')]]
@@ -17,6 +17,8 @@ def run(url='http://127.0.0.1:8000', *, context=''):
             r = client.post('/v1/chat/completions', json=request)
             r.raise_for_status()
             receipt[label] = r.json()
+            if on_settlement is not None:
+                on_settlement()
             return r.json()
         first = post('call', body)
         message = first['choices'][0]['message']
@@ -44,6 +46,8 @@ def run(url='http://127.0.0.1:8000', *, context=''):
         with client.stream('POST', '/v1/chat/completions', json=body | dict(stream=True)) as r:
             r.raise_for_status()
             events = [line[6:] for line in r.iter_lines() if line.startswith('data: ')]
+        if on_settlement is not None:
+            on_settlement()
         receipt['sse'] = events
         assert events[-1] == '[DONE]'
         chunks = [json.loads(e) for e in events[:-1]]

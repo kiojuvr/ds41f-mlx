@@ -1,0 +1,106 @@
+{
+  "status": "ready",
+  "profile": "mtp-serving-v1",
+  "process_alive": true,
+  "model_ready": true,
+  "fatal_error": null,
+  "generation_policy": {
+    "version": "generation-policy-v1",
+    "qualification": "real-model-qualified",
+    "execution_profiles": [
+      "standard-off",
+      "mtp-serving-v1"
+    ],
+    "sampler_authority": "omlx.utils.sampling.make_sampler",
+    "defaults": {
+      "temperature": 1.0,
+      "top_p": 0.95,
+      "top_k": 0,
+      "min_p": 0.0,
+      "repetition_penalty": 1.0,
+      "presence_penalty": 0.0,
+      "frequency_penalty": 0.0,
+      "seed": null
+    },
+    "scope": "request",
+    "parameters": {
+      "temperature": {
+        "minimum": 0,
+        "maximum": 2
+      },
+      "top_p": {
+        "exclusiveMinimum": 0,
+        "maximum": 1
+      },
+      "top_k": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 129279
+      },
+      "min_p": {
+        "minimum": 0,
+        "maximum": 1
+      },
+      "repetition_penalty": {
+        "exclusiveMinimum": 0,
+        "context_tokens": 20
+      },
+      "presence_penalty": {
+        "minimum": -2,
+        "maximum": 2,
+        "context_tokens": 20
+      },
+      "frequency_penalty": {
+        "minimum": -2,
+        "maximum": 2,
+        "context_tokens": 20
+      },
+      "seed": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 4294967295,
+        "semantics": "best-effort"
+      }
+    },
+    "reasoning": {
+      "authority": "deepseek-recipe",
+      "scope": "session",
+      "stateless_scope": "request",
+      "default_thinking_mode": false,
+      "default_reasoning_effort": "none",
+      "efforts": [
+        "none",
+        "low",
+        "high",
+        "xhigh",
+        "max"
+      ],
+      "change": "reject",
+      "thinking_budget_tokens": false
+    }
+  },
+  "chat_defaults": {
+    "temperature": 1.0,
+    "top_p": 0.95,
+    "top_k": 0,
+    "min_p": 0.0,
+    "repetition_penalty": 1.0,
+    "presence_penalty": 0.0,
+    "frequency_penalty": 0.0,
+    "seed": null,
+    "reasoning_effort": "none",
+    "max_tokens": "auto"
+  },
+  "dependency_identity": "7aacac28dc29fb27d2fda539528e895b5bd44bf2cb16b59f4de3b91a18a064bb",
+  "glm_profile": "portable",
+  "queued_requests": 0,
+  "active_requests": 0,
+  "prefix_cache": null,
+  "capabilities": {
+    "stateful_chat": "production-sessions-v1",
+    "persist_restore": false,
+    "max_live_sessions": 16,
+    "max_active_generations": 1,
+    "idle_retirement_seconds": 600
+  }
+}
