@@ -138,6 +138,11 @@ neither their existence nor deferring broader re-verification certifies later HE
 6. Stop confidence-building when the concrete blocker is closed. Progress is
    removed production blockers, not probes, artifacts, tests or milestones.
 
+Temporary absence from artifacts, packages or provisioning does not authorize
+permanent capability removal, default/profile demotion or non-distribution;
+those changes require an explicit decision with rationale, not inheritance of
+the reduced artifact inventory.
+
 Before structural replacement, name the blocker, explain why existing seams cannot
 satisfy it, compare directly against preserved semantics/performance, and choose
 the smallest justified change. Do not weaken official precision/state contracts,
