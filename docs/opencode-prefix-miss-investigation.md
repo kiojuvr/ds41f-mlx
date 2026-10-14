@@ -1,6 +1,6 @@
 # OpenCode final → next-turn prefix miss investigation
 
-## Status — 暫定CLOSE / provisionally closed (non-blocking)
+## Status — Provisionally closed (non-blocking)
 
 Provisionally closed at the user's direction on 2026-10-14. This investigation
 is **not a blocker** for ordinary runtime operation or release readiness, and
