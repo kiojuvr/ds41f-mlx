@@ -1,11 +1,117 @@
 # OpenCode final → next-turn prefix miss investigation
 
-## Status — CLOSED
+## Status — 暫定CLOSE / provisionally closed (non-blocking)
 
-Closed at the user's direction: the captured OpenCode next-turn requests change
-an existing historical token prefix. No server paired-retention/lookup defect
-was demonstrated, and no runtime fix is warranted for this investigation.
-Identifying the exact OpenCode field/rendering rule is outside this closed scope.
+Provisionally closed at the user's direction on 2026-10-14. This investigation
+is **not a blocker** for ordinary runtime operation or release readiness, and
+is **not a declaration that prefix/cache continuity is fully resolved**.
+Retain the attributed Plan-path evidence and the unresolved boundaries below;
+stop further investigation here and return to ordinary runtime operation.
+Existing independent release/qualification gates are unchanged.
+
+The continuation investigation on 2026-10-14 identifies a first divergence and
+owner on a real OpenCode Plan final → human follow-up path (below). That miss is
+legitimate: the client moves a historical instruction to a different message.
+No runtime workaround was introduced. **This does not establish the owner of
+all clients' misses, or retrospectively identify the unrecorded messages in the
+2026-10-13 112K-token incident.** The older token-only evidence remains limited
+as described below; its previous administrative closeout was not ownership proof.
+
+## 2026-10-14 reproduction and first divergence
+
+Normal admitted `mtp-serving-v1`, official external checkpoint, default reasoning
+`none`, unmodified OpenCode 1.18.35 built-in Plan agent/provider/tool set.
+Only the existing `tools/observe_prefix_frontier.py` observation launcher was
+extended; no serving/model/template/cache implementation was edited.
+Session: `ses_ec702acd8ffeUKqgEK6T9wdsOJ`.
+
+```sh
+opencode run --agent plan -m ds41f-mlx/deepseek-v4.1-flash --format json \
+  'README.md を一度だけ読み、このプロジェクトの目的を一文で答えてください。ほかの調査や変更は不要です。'
+opencode run --session ses_ec702acd8ffeUKqgEK6T9wdsOJ --agent plan \
+  -m ds41f-mlx/deepseek-v4.1-flash --format json \
+  'その説明を、専門外の人向けに一文で言い換えてください。追加の調査やツール実行は不要です。'
+```
+
+The first human turn reads README and returns final text; the second returns
+final text without additional tools. External turn order is confirmed by the
+same session ID in both CLI streams, not inferred from adjacent server calls.
+The automatic title request is separate and is not the transition of interest.
+
+Evidence: `artifacts/opencode-prefix-miss/continuation-structure.jsonl`,
+`direct-public-control.json`, and `reproduction-summary.json` in that directory.
+The observer records no conversation text or field fingerprints. Fingerprints
+are keyed per process, retained only in memory, and compare parsed incoming JSON
+**before** request conversion with recipe-converted messages. Message attribution
+uses two truncated renders from the actual recipe and their stable LCP with the
+full prompt, not a locally invented template or additive token-length estimate.
+
+| Boundary | Finding |
+| --- | --- |
+| Previous request/final | Request 9306 tokens; canonical 9357; prior tool continuation reused 7725 |
+| Next request | 9389 tokens; cached=0; request LCP and canonical LCP both **7361** |
+| First token mismatch | Zero-based index 7361: 67487 → 41272 |
+| API/public history | First changed field is **messages[1].content**, the original human user message |
+| Recipe-converted history | Same first changed message/field; role=user; stable before/through boundaries 7331/7364 contain the mismatch |
+| Specific input change | Old content 1543 chars, new 57; old Plan reminder removed; non-reminder text equal; identical reminder on a later message |
+| Retention/lookup | Old 9357 frontier remains live; zero lookup removals; no compatible live/observed publication |
+
+The first divergence is at the original user's text ending/reminder separator
+(BPE can merge the separator with the preceding text), **not** at the new
+assistant final or its settlement. System/tools/config fingerprints have not
+changed. The recipe faithfully renders the changed historical user content;
+there is already divergence at the incoming OpenAI-compatible API boundary.
+The public-history comparison (prior request messages + returned assistant
+message) finds that same earlier user-field change before reaching the returned
+assistant message. Raw optional-field differences alone are not classified as
+token divergence; the independently measured token LCP is the authority.
+
+### Root cause and owning layer
+
+The installed OpenCode bundle contains `SessionReminders.apply`, which selects
+`e.messages.findLast((y)=>y.info.role==="user")` and, for non-experimental Plan
+mode, pushes the synthetic Plan reminder onto that user's `parts`. The reminder
+is not persisted in the original user's parts. On the next human turn it is
+therefore absent from that historical message and added to the new latest user.
+This rule, plus identical-reminder relocation in actual incoming requests,
+identifies **client conversation/history reconstruction** as owner on this path.
+The bundle is `/opt/homebrew/Cellar/opencode/1.18.35/bin/opencode`, SHA256
+`8c3c351b138cfe35905ab11846a1373f1beea590aee7eda412fb765b72c79d82`.
+No reasoning round-trip is needed for this reproduction.
+
+These are instructions, not cache-ignorable decoration. Moving them changes the
+canonical token history and can change their semantic scope. Restoring the old
+9357-row state into the new request would be incorrect. Removing the reminder,
+ignoring the mismatch, or rewriting the old canonical state on the server is
+not a repair. A client-side change would need to keep previously supplied
+instructions stably represented without changing its intended instruction
+semantics; no external client source/config was patched in this investigation.
+
+### Affected-path acceptance and operational disposition
+
+- Actual Plan path: tool continuation hits canonical 7725; final→new human miss
+  is explained by the exact input change; both final responses settle normally;
+  **replay=0, repack=0**, no cancellation. No false cache hit is manufactured.
+- Independent direct Chat Completions control retains a reminder in its original
+  message, appends the actual returned public assistant message and a human
+  follow-up, and hits **cached_tokens=36**, the entire prior canonical frontier.
+  Canonical LCP=36, no wire/converted/public historical change; replay/repack=0.
+  Responses are the requested `OK` then `DONE`, both stop. Usage total=35 is not
+  the canonical frontier: settlement also retains the terminal token.
+- Small observer regressions: `python -m pytest -q tests/test_prefix_frontier_observer.py`.
+  These validate observation helpers, not a new release qualification campaign.
+
+**Repair decision: no ds41f runtime repair for the attributed Plan path.** Its
+human-follow-up latency remains until the owning client stabilizes history;
+longer sessions amplify the same loss. This evidence does not certify every
+ordinary long-session/client path or close the exact old 112K incident without
+its missing structural input. No new model execution/replay/repack or release
+admission change is made; no broad release-readiness claim follows from this
+bounded investigation. Stop here rather than expand qualification or redesign
+settlement. The temporary observation server is shut down after capture; the
+pre-existing wire observer and external client configuration are untouched.
+
+## Earlier 2026-10-13 token-only capture
 
 Captured on 2026-10-13 in `artifacts/opencode-prefix-miss/events.jsonl`.
 The user confirms sending a new implementation request after the final answer
@@ -69,7 +175,15 @@ wait for the final assistant answer, then send a new user message in the same
 session. Record the external session identity/turn order separately without
 prompt text. Avoid concurrent unrelated clients for this single capture.
 
-The observer logs:
+The observer now additionally logs parsed API/public and recipe-converted
+first changed field paths, Plan-reminder relocation booleans, stable recipe
+message brackets for text mismatches, and settlement replay/repack counters.
+Its keyed field fingerprints are never written. Reminder stripping is solely
+a diagnostic equality comparison, never a serving normalization or cache rule.
+Text message attribution is not claimed for image-expanded prompts. Truncated
+renders occur only for a changed converted message, not on every token/turn.
+
+The original observer logs:
 
 - previous request and settled canonical history vs next encoded request LCP;
 - token counts and only the two token IDs at each divergence (no decoded text);
@@ -84,7 +198,8 @@ change lookup, or normalize OpenCode requests. It requires an interpreter in
 which the production imports are already admitted; it does not bypass sealing
 or dependency validation. Observe ordinary OpenCode calls, not the separate
 logical-session retained-lease path. Helper LCP checks and syntax compilation
-passed; the launcher has not yet been exercised with a real loaded model.
+passed. The extended launcher was exercised with the admitted loaded production
+model on the 2026-10-14 path above.
 
 ## Interpretation
 
