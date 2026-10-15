@@ -121,6 +121,13 @@ model process to diagnose a busy one, or interpret a forced kill as session rest
 
 ## Provision / publish
 
+The released single-operator local / explicitly trusted-private-LAN runtime is
+**DS41F-SCOPED-LOCAL-20261015**, sourced from `0cd1428` (runtime implementation
+`79e96fd`). The [authoritative release record](../release/scoped-local-20261015/release.json)
+binds separate MTP/OFF native wheels, digests, inherited evidence and fresh installed
+acceptance. Those exact packages are installed at the local environment paths above;
+all acceptance servers are retired. No source projection or broader scope is implied.
+
 Use a locked provisioned environment. `python -m ds41f_mlx.mtp_setup --profile
 mtp-singleton-v1 --venv /absolute/new-env --build-dir /absolute/new-build` builds
 and installs a non-editable execution wheel; the resulting MTP package supports

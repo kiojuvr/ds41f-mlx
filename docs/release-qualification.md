@@ -19,8 +19,12 @@ release scope as the current repository's capability policy.
 Explicit ordinary MTP, bounded OFF images, applications and generation controls
 have their own later evidence. Singleton M54R/M55R release approval remains bounded;
 no profile inherits another's API, persistence, images, sampling or release proof.
-General-runtime production release is still incomplete. The old `ds41f-runtime`
-directory is unused generation, not deployment or accepted release history.
+The general-runtime assessment is **READY_FOR_SCOPED_RELEASE** at implementation
+`79e96fdd3d12165caf40a885ef3773a768efbcda`; see [runtime completeness](runtime-completeness.md).
+Assessment is not publication. The selected installed-package publication decision
+and exact payload status are recorded in [the scoped release record](../release/scoped-local-20261015/release.json).
+Historical qualified payloads do not qualify different current bytes; publication
+does not expand supported scope. The old `ds41f-runtime` directory remains unused.
 
 ## Development qualification versus release promotion
 
@@ -130,10 +134,14 @@ old "MTP/Vision/Web unsupported" list for today's repository. Internet/multi-use
 security, cross-backend native state, distributed/crash-safe exactly-once effects
 and above-qualified envelopes are not inherited by package publication or projection.
 
-## Recommended next milestone
+## Current release decision
 
-The old packaging/acceleration next-task paragraph is history. Current priorities
-are [implementation decisions](implementation-plan.md), including general-serving
-release boundary assessment. Separate-machine trusted-LAN acceptance is
-**CLOSED / PASS** as recorded in capabilities; it is not pending release work. This editorial
-unit authorizes no new milestone, clean-room/model campaign, default change or release.
+The general-serving assessment is closed / ready within its declared scope, not
+pending development. The selected publication uses operations' existing separate
+non-editable MTP/OFF package route; source projection is not selected. Full R1 is
+not an automatic package-publication gate: reuse the stable baseline's explicit
+reference reconciliation plus qualified sampling/output-policy deltas, and bind
+new exact packages through release-profile acceptance. No unmodified full-R1 PASS
+is claimed. The [release record](../release/scoped-local-20261015/release.json) owns
+publication status. Separate-machine trusted-LAN acceptance remains **CLOSED / PASS**;
+no new model campaign, default change or implementation work is selected.

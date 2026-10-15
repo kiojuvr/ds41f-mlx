@@ -142,8 +142,12 @@ separate decision under [current priorities](implementation-plan.md), not a full
 campaign after every milestone. Source-scoped old receipts remain valid for their
 inputs; neither deferring regression nor passing mechanics qualifies later HEAD.
 
-A future promotion needs deterministic projection, fresh independent setup,
-release-profile acceptance and bound receipt. Broader feature/security/default-MTP
+A future source-projection promotion needs deterministic projection, fresh
+independent setup, release-profile acceptance and bound receipt. Installed-package
+publication may instead use operations' existing route without source projection;
+its selected source, exact wheels and installed acceptance must be bound explicitly.
+The scoped local 20261015 publication selects that route and fresh separate setups,
+not M43 extraction (see [release record](../release/scoped-local-20261015/release.json)). Broader feature/security/default-MTP
 approval remains separate. New semantics outside R1 require authority review and
 potential R2, not invented inherited coverage.
 

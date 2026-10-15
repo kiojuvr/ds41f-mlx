@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "baseline": "release/stable-e8c719c/baseline.json",
+  "delta": {
+    "mtp": {
+      "added": [
+        "sampling.py"
+      ],
+      "changed": [
+        "serving/capacity.py",
+        "serving/deepseek_recipe_backend.py",
+        "serving/generation_policy.py",
+        "serving/internal_mtp.py",
+        "serving/ordinary_admission.py"
+      ],
+      "removed": [],
+      "frozen_dependencies_and_native_graph_unchanged": true
+    },
+    "off": {
+      "added": [
+        "sampling.py"
+      ],
+      "changed": [
+        "serving/capacity.py",
+        "serving/deepseek_recipe_backend.py",
+        "serving/generation_policy.py",
+        "serving/internal_mtp.py",
+        "serving/ordinary_admission.py"
+      ],
+      "removed": [],
+      "frozen_dependencies_and_native_graph_unchanged": true
+    }
+  },
+  "mechanism": "tools/build_execution_package.py inventories full package and checks exact wheel membership; projection allowlist is not used.",
+  "release_surface_sha256": "7a36595c3a5900a18c4e880fbabed89a2d0764ec1a906bd85155fcd8c6fb2213",
+  "surface_policy": "No source projection; do not relabel stale historical projection receipts or widen allowlist to evidence/investigations. All new current production owners are present in accepted wheels. Non-runtime documentation changes do not change selected package bytes."
+}

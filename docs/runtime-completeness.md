@@ -2,6 +2,10 @@
 
 ## General local runtime release assessment
 
+Publication following this assessment is recorded separately as
+[DS41F-SCOPED-LOCAL-20261015](../release/scoped-local-20261015/release.json).
+The assessment below retains its original evidence and is not itself publication.
+
 **READY_FOR_SCOPED_RELEASE** at implementation commit
 `79e96fdd3d12165caf40a885ef3773a768efbcda`, assessed from a clean worktree.
 No concrete blocker remains for the declared single-operator local / explicitly
@@ -101,9 +105,9 @@ Scheduler substrate, BatchGenerator, PagedCache and physical MTP implementation
 ownership causes no demonstrated supported-runtime defect; feasibility transfer
 classifications are maintenance choices, not release gates. No transfer is selected.
 
-**Recommended next task: an explicit scoped release/publication decision using
-this assessment and the existing delivery route, not further runtime development
-or another confidence campaign.** This assessment performs no promotion.
+The recommended explicit scoped publication decision has now been executed through
+the existing installed-package route; see the release record above. This assessment
+itself performed no promotion. No further runtime-development objective is selected.
 
 ## Prior model-core and local-default decision
 

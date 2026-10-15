@@ -115,10 +115,12 @@ and its supported scope, not old closed work or historical TODO wording.
    context, security and concurrency need their own justified scope/evidence; they
    are not prerequisites for this single-operator release boundary. Implementation
    ownership feasibility does not authorize a transfer or create a release gate.
-3. **Next task: explicit scoped release/publication decision.** Delivery remains a
-   separately selected action through operations' existing route. This assessment
-   performs no packaging, promotion, clean-room setup, runtime-directory update,
-   full reference regression or new core confidence campaign.
+3. **Scoped publication executed separately.**
+   [DS41F-SCOPED-LOCAL-20261015](../release/scoped-local-20261015/release.json)
+   records the exact installed MTP/OFF payloads, fresh acceptance and publication
+   through operations' existing route. Assessment and publication do not expand
+   supported scope. No further implementation ownership work is selected;
+   post-release maintenance needs an explicit new objective.
 
 This is a priorities/decision boundary, not authorization to implement every
 reference-server feature, run a broad benchmark ladder or create a new milestone

@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "checks": {
+    "disconnect_settled_cancelled_without_replay_repack": true,
+    "fresh_request_after_cancel_settled": true,
+    "scheduler_shutdown_completed": true,
+    "application_shutdown_completed": true,
+    "server_process_finished": true
+  },
+  "service_port_released": true,
+  "process_absent": true,
+  "harness_observation": "Initial harness waited for launcher text \"shutdown complete; runtime retired\" and asserted after 240 seconds. SIGTERM completed Uvicorn/Scheduler cleanup and process exit instead (Uvicorn re-raises captured SIGTERM, also observed OFF exit -15). The log-string predicate was incorrect, not a runtime failure. Actual protected cancellation, re-entry and graceful-retirement predicates above are verified from the retained original log; no runtime change or forced kill.",
+  "evidence": "mtp-server.log"
+}
