@@ -38,10 +38,15 @@ def resolve_capacity(prepared, *, checkpoint: Path, automatic: bool = False, ord
     prompt = len(prepared.token_ids)
     remaining = envelope - prompt
     requested = prepared.inference_options.max_tokens
-    requested = 128 if requested is None else int(requested)
-    maximum = remaining if automatic else requested
+    if automatic:
+        maximum = min(remaining, ORDINARY_OUTPUT_CEILING) if ordinary else remaining
+    elif ordinary:
+        # Protocol policy resolves semantics; capacity only enforces the result.
+        from .ordinary_admission import resolve_output_budget
+        maximum = resolve_output_budget(prepared)
+    else:
+        maximum = 128 if requested is None else int(requested)  # Non-ordinary behavior.
     if ordinary:
-        maximum = min(remaining, ORDINARY_OUTPUT_CEILING) if automatic else maximum
         validate_ordinary_capacity(prompt, maximum, envelope)
     if maximum < 1 or maximum > remaining:
         raise ValueError('context capacity exhausted: actual recipe prompt plus output reservation exceeds qualified total envelope')

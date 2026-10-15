@@ -72,7 +72,31 @@ not deterministic reproduction. Defaults and advertised efforts live in
 `max_tokens: "auto"` is an explicit ds41f extension. Recipe receives placeholder
 `1`; actual tokenization resolves the real reservation. Scheduler/execution use
 `request_max_tokens`, never the placeholder. Missing `max_tokens` resolves to the
-ordinary default, not Auto or the output ceiling.
+[effective-reasoning-dependent default](capabilities.md#capacity-resource-policy-and-defaults),
+not Auto or the output ceiling. `ordinary_admission.resolve_output_budget` is
+the sole ordinary omission owner, consuming canonical
+`generation_policy.reasoning_policy` state only after conversion.
+`capacity.resolve_capacity` enforces that result against actual expanded tokens.
+Admission validates explicit numeric limits without inventing an omission value. The official [DeepSeek Chat Completions contract](https://api-docs.deepseek.com/api/create-chat-completion)
+specifies 8192 non-thinking, 65,536 thinking low/high and 131,072 thinking max.
+Resolved defaults, like explicit budgets, must fit the actual recipe-expanded
+prompt plus qualified context envelope; they are not silently reduced to fit.
+
+### Omitted-budget correction provenance
+
+The original recipe-serving seam (`59e5dd2`) used a 128-token missing-output
+fallback. Auto capacity (`c8e1ee5`) inherited it; ordinary admission (`e05bee8`)
+independently validated the same fallback. Those historical defaults do not own
+ordinary production output policy. The current named `mtp-singleton-v1`
+qualification contract requires explicit numeric 1..768 limits; it is unchanged
+and supplies no authority for ordinary omission to mean 128. Other non-ordinary
+protocol/qualification paths are not changed by this ordinary API correction.
+Headless `none` and saved TUI initial `max` reasoning defaults are unchanged.
+
+[Focused acceptance receipt](ordinary-output-budget-acceptance.json) records
+source tests, installed ordinary MTP execution, explicit length termination,
+and Aider v0.86.2 chat and `/commit` with actual wire omission and no workaround.
+This is a scoped compatibility correction, not a new numerical qualification.
 
 ## Boundary acceptance / default-promotion gate
 

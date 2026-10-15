@@ -47,6 +47,17 @@ def test_recipe_normalized_reasoning_aliases_cannot_bypass_session_envelope():
         sessions.validate(rec.session_id, on, {'messages':[{'role':'user','content':'Hi'}]})
 
 
+def test_xhigh_and_high_share_the_canonical_session_envelope():
+    sessions = ProductionSessions(NS(fatal_error=None))
+    rec = sessions.create()
+    high = NS(conversation_request=converted(reasoning_effort='high'))
+    xhigh = NS(protocol='chat_completions', image_sources=[], token_ids=[1, 2],
+               conversation_request=converted(reasoning_effort='xhigh'))
+    rec.envelope = dict(tools=None, reasoning=reasoning_policy(high))
+    assert reasoning_policy(xhigh) == reasoning_policy(high)
+    sessions.validate(rec.session_id, xhigh, {'messages': [{'role': 'user', 'content': 'Hi'}]})
+
+
 def test_contract_records_bounded_acceptance_and_upstream_context_semantics():
     contract = capability_contract()
     assert contract['qualification'] == 'real-model-qualified'
@@ -54,6 +65,9 @@ def test_contract_records_bounded_acceptance_and_upstream_context_semantics():
     assert contract['defaults']['temperature'] == 1.0
     assert contract['defaults']['top_p'] == .95
     assert contract['reasoning']['scope'] == 'session'
+    assert 'xhigh' in contract['reasoning']['efforts']  # accepted compatibility spelling
+    assert contract['reasoning']['effective_efforts'] == ['none', 'low', 'high', 'max']
+    assert contract['reasoning']['compatibility_aliases'] == {'xhigh': 'high'}
     assert contract['parameters']['presence_penalty']['context_tokens'] == 20
 
 

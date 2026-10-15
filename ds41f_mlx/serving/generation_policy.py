@@ -72,9 +72,20 @@ def policy_for(request):
 
 
 def reasoning_policy(request):
-    conversation = request.conversation_request.conversation
+    """Canonical effective state after recipe conversion, not wire spellings.
+
+    The recipe already normalizes minimal/medium. Its retained xhigh spelling
+    is DeepSeek's compatibility alias for high, not a separate model effort.
+    Accept both converted and prepared requests so production policy shares
+    this authority without changing the recipe's protocol/rendering objects.
+    """
+    converted = getattr(request, 'conversation_request', request)
+    conversation = converted.conversation
+    effort = conversation.reasoning_effort
+    if effort == 'xhigh':
+        effort = 'high'
     return dict(thinking_mode=conversation.thinking_mode,
-                reasoning_effort=conversation.reasoning_effort)
+                reasoning_effort=effort)
 
 
 def capability_contract(default_reasoning_effort='none'):
@@ -93,4 +104,7 @@ def capability_contract(default_reasoning_effort='none'):
                 reasoning=dict(authority='deepseek-recipe', scope='session', stateless_scope='request', default_thinking_mode=default_reasoning_effort != 'none',
                                default_reasoning_effort=default_reasoning_effort,
                                efforts=['none', 'low', 'high', 'xhigh', 'max'],
+                               effective_efforts=['none', 'low', 'high', 'max'],
+                               compatibility_aliases={'xhigh': 'high'},
+                               effective_authority='ds41f_mlx.serving.generation_policy.reasoning_policy',
                                change='reject', thinking_budget_tokens=False))

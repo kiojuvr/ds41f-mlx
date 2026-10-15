@@ -1,0 +1,80 @@
+{
+  "scope": "Focused ordinary mtp-serving-v1 omitted-output compatibility acceptance; not a new release or numerical qualification",
+  "status": "PASS",
+  "source_base": "40784c358db968f18e8d3c3028f49799b5466a93",
+  "installed_wheel_sha256": "f3fc0f9c0c49086eddc3ec69eeb411ec781c741d36c1257be3244a012e5c2c39",
+  "installed_execution_identity_sha256": "7d74372a821a27674ec935545b7ec77f28c50244c5cbbadb2f388b726184a923",
+  "installation": "Non-editable wheel built by tools/build_execution_package.py, installed into /Volumes/SDXC-512/ds41f-mlx_mtp-venv; isolated module launch with normal admission, official external checkpoint, native GLM",
+  "verified_installed_source_sha256": {
+    "serving/generation_policy.py": "a65ba4ab523c7e48db84db9b6acb8bee3a28d45f4c52125ac54cf37e9aa0b479",
+    "serving/ordinary_admission.py": "81fb590fda4b753166d955e3932d4f1bd8334d72b2841485b88612c412212a59",
+    "serving/capacity.py": "4b0d2669176cecd20bb048b5f5ba3bc7cdf1fb1263aebbc854c38f4d5a6d1389"
+  },
+  "focused_tests": {
+    "budget_reasoning_capacity": {
+      "passed": 99,
+      "files": ["test_ordinary_output_defaults.py", "test_generation_policy.py", "test_runtime_reasoning_default.py", "test_runtime_capacity.py", "test_production_context.py"],
+      "invocation": "DS41F_RECIPE_PATH=/Volumes/SDXC-512/ds41f-mlx_mtp-venv/share/ds41f-mtp/recipe .venv/bin/python -m pytest -q <files under tests/>"
+    },
+    "ordinary_and_bounded_singleton_protocol": {
+      "passed": 105,
+      "files": ["test_production_mtp.py", "test_m41_profile.py"],
+      "invocation": ".venv/bin/python -m pytest -q <files under tests/>"
+    },
+    "production_sessions": {"passed": 10, "invocation": ".venv/bin/python -m pytest -q tests/test_production_sessions.py"},
+    "environment_note": "The first combined invocation set DS41F_RECIPE_PATH for all tests: seven profile-environment guards correctly rejected that development override. Split invocations above passed without changing those guards. Combining singleton and production-session tests in one process also exposed an existing singleton environment leak (DS41F_MAX_LIVE_SESSIONS=1 versus ordinary 16); both groups pass in separate processes. No unrelated test-environment cleanup was included."
+  },
+  "installed_preparation_omission_budgets": {
+    "none": 8192,
+    "minimal_to_low": 65536,
+    "low": 65536,
+    "medium_to_high": 65536,
+    "high": 65536,
+    "xhigh_to_high": 65536,
+    "max": 131072
+  },
+  "live_ordinary_http": {
+    "prompt": "Write the integers from 1 to 180, one per line. Do not skip any. Output only those numbers.",
+    "temperature": 0,
+    "reasoning_controls": "omitted; runtime default none",
+    "nonstream_omitted": {"completion_tokens": 359, "finish_reason": "stop"},
+    "stream_omitted": {"completion_tokens": 359, "finish_reason": "stop"},
+    "nonstream_explicit_8": {"completion_tokens": 8, "finish_reason": "length"},
+    "stream_explicit_8": {"completion_tokens": 8, "finish_reason": "length"},
+    "explicit_393217": {"http_status": 400},
+    "prompt_tokens": 28
+  },
+  "existing_installed_production_acceptance": {
+    "command": "DS41F_CHECKPOINT=<official checkpoint> <MTP env>/bin/python -I -m ds41f_mlx.production_acceptance --runtime-url http://127.0.0.1:8000 --output <receipt>",
+    "status": "PASS",
+    "cases": ["installed admission", "generic tool call", "paired continuation", "branch", "SSE tool calls and DONE", "malformed request refusal"]
+  },
+  "aider": {
+    "version": "0.86.2",
+    "model": "openai/deepseek-v4.1-flash",
+    "weak_model": "openai/deepseek-v4.1-flash",
+    "configuration": "Isolated temporary Git repository, no model-settings override, no extra_params.max_tokens, no max_output_tokens metadata substitute",
+    "transport": "Existing tools/observe_client_wire.py byte-preserving observer on unused port 8002 forwarding to the ordinary installed server on 8000",
+    "trivial_request": {
+      "prompt": "What is 2+2? Reply briefly.",
+      "response": "2+2は4です。",
+      "reported_tokens_sent": 600,
+      "reported_tokens_received": 7,
+      "wire_keys": ["messages", "model", "stream", "temperature"],
+      "max_tokens": "omitted",
+      "stream": true,
+      "status": "PASS"
+    },
+    "slash_commit": {
+      "command": "--message /commit",
+      "fixture_change": "Add a docstring to an isolated example.py add function",
+      "wire_keys": ["messages", "model", "temperature"],
+      "max_tokens": "omitted",
+      "stream": false,
+      "result": "068147a feat: 加算関数にdocstringを追加",
+      "fixture_worktree_clean_after_commit": true,
+      "status": "PASS"
+    }
+  },
+  "remaining_independent_compatibility_issue": null
+}

@@ -23,7 +23,10 @@ def admit_capabilities(converted, payload):
     options = converted.inference_options
     from .generation_policy import normalize_policy
     normalize_policy(converted, payload)
-    validate_ordinary_output(128 if options.max_tokens is None else options.max_tokens)
+    # Validate explicit limits here; resolve_output_budget owns omission.
+    # Actual capacity is checked after recipe-expanded prompt accounting.
+    if options.max_tokens is not None:
+        validate_ordinary_output(options.max_tokens)
 
     # These fields are intentionally omitted by the authoritative converter.
     # Do not silently claim unsupported sampling/constrained decoding controls.
@@ -39,6 +42,22 @@ def admit_capabilities(converted, payload):
         raise ValueError('ordinary MTP does not support logprobs')
 
     # Inline Vision uses the existing bounded multimodal preparation authority.
+
+
+def resolve_output_budget(request):
+    """Ordinary Chat Completions semantics after canonical reasoning resolution.
+
+    Explicit Auto is handled separately after actual prompt expansion; its
+    recipe placeholder must never be interpreted as an omitted output limit.
+    """
+    requested = request.inference_options.max_tokens
+    if requested is not None:
+        return requested
+    from .generation_policy import reasoning_policy
+    reasoning = reasoning_policy(request)
+    if not reasoning['thinking_mode']:
+        return 8192
+    return dict(low=65_536, high=65_536, max=131_072)[reasoning['reasoning_effort']]
 
 
 def with_reasoning_default(payload, effort):

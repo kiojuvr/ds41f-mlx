@@ -48,7 +48,8 @@ or the currently installed package.
 
 The text-core envelope is **1,048,576 total tokens**, subject to the checkpoint's
 range. Ordinary MTP has a **393,216 output ceiling** and a missing-`max_tokens`
-default of **128**. Capacity is not guaranteed workload performance or advance
+default of **8192** (non-thinking), **65,536** (thinking low/high), or **131,072**
+(thinking max), based on the effective reasoning policy. Capacity is not guaranteed workload performance or advance
 allocation; prompt plus requested output must fit. See the profile matrix and
 qualification distinctions in [capabilities](docs/capabilities.md).
 

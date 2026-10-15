@@ -37,7 +37,7 @@ This bounded native promotion does not enlarge API/image/long-context qualificat
 | Boundary | Current contract |
 | --- | --- |
 | Text core | At most **1,048,576 total tokens**, or the smaller checkpoint-configured range |
-| Ordinary MTP output | Integer **1..393,216**; missing `max_tokens` resolves to **128** |
+| Ordinary MTP output | Integer **1..393,216**; omitted: **8192** non-thinking, **65,536** thinking low/high, **131,072** thinking max |
 | Ordinary MTP total admission | Actual recipe prompt + requested output must fit the total envelope |
 | Ordinary MTP body | **16 MiB** bounded JSON ingress; byte budget is not a token estimate |
 | Ordinary paired cache | Four complete immutable pairs, upstream lookup/refcount/LRU; no separate eviction authority |
@@ -71,7 +71,11 @@ OFF and ordinary MTP advertise **`generation-policy-v1`**. Request defaults:
 | reasoning | Headless: Off / effort `none`; TUI Runtime launch: saved preference, initially `max` |
 
 Explicit greedy uses temperature zero. Advertised reasoning efforts are `none`,
-`low`, `high`, `xhigh`, `max`; no thinking token-budget control is supported.
+`low`, `high`, `xhigh`, `max`; `xhigh` is an accepted compatibility spelling for
+canonical effective `high`, not an independent model effort. Recipe conversion
+already maps `minimal` to `low` and `medium` to `high`; ds41f's post-conversion
+`generation_policy.reasoning_policy` canonicalizes retained `xhigh` to `high`.
+No thinking token-budget control is supported.
 For Chat Completions, `--default-reasoning-effort` overrides
 `DS41F_DEFAULT_REASONING_EFFORT` (headless fallback `none`). The TUI passes its
 saved preference as that CLI option; the environment overrides the saved preference
