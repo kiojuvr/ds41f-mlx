@@ -293,6 +293,34 @@ failure semantics. Implementation lives in `ds41f_mlx/`; `native/` contains the
 C++ reference core, `rust/` the bounded Rust integration, and `reference/R1/`
 immutable semantic reference material.
 
+## Acknowledgements
+
+`ds41f-mlx` builds on substantial upstream work:
+
+- **[DeepSeek](https://github.com/deepseek-ai)** — the official
+  DeepSeek-V4.1-Flash checkpoint, architecture and reference implementation define
+  the model semantics this runtime aims to preserve. Official
+  [deepseek-recipe](https://github.com/deepseek-ai/deepseek-recipe) provides message,
+  tool and reasoning conversion, encoding and response projection.
+- **[DwarfStar](https://github.com/antirez/ds4)** — prefill execution topology,
+  lifetime/sweep design and long-context implementation ideas materially informed
+  the ds41f prefill path; it is not the model-math or checkpoint-format authority.
+- **[oMLX](https://github.com/jundot/omlx)** — qualified MLX numerical/decode/MTP
+  implementation work and the pinned physical execution topology underpin the
+  ordinary MTP path; attributed numerical algorithms and acceleration primitives
+  also support the first-party non-MTP path.
+- **[MLX](https://github.com/ml-explore/mlx)** — Apple Silicon tensor, GPU,
+  compilation and runtime primitives underlying model execution.
+
+Formal attribution and source identity are documented in
+[Provenance](docs/provenance.md) and the
+[third-party source manifests and licenses](third_party/mtp/README.md).
+Derived model code retains its [component attribution](ds41f_mlx/model_execution/README.md)
+and MIT/Apache licenses; adapted prefill math retains its
+[license notice](ds41f_mlx/prefill_fp8_mlx/OMLX_MATH_LICENSE).
+These acknowledgements supplement, rather than replace, those notices and the
+licenses supplied with upstream dependency distributions.
+
 ## Documentation map
 
 | Need | Start here |
