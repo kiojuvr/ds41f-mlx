@@ -1,0 +1,413 @@
+{
+  "schema": "ds41f.stable-baseline.v1",
+  "baseline_id": "DS41F-STABLE-e8c719c",
+  "status": "PASS",
+  "date": "2026-10-15",
+  "source": {
+    "source_commit": "e8c719c8a91bd40d92257608c303100e90c7854a",
+    "source_tree": "fb1fca97c5a302bf54e8389a276c015b6efdd15b",
+    "initial_tracked_and_untracked_status": "",
+    "runtime_subtree": "1376a66213c7c1d588e88ae8484c5b5a1a9a0ff4",
+    "host": {
+      "system": "Darwin",
+      "architecture": "arm64",
+      "macos": "26.5.2",
+      "build": "25F84",
+      "chip": "Apple M3 Ultra",
+      "memory_gib": 512,
+      "model": "Mac15,14"
+    },
+    "qualification_application_python": "3.13.14",
+    "runtime_python": "3.13.15",
+    "note": "Source was clean before any qualification output. Only new release/evidence files are added; generated execution manifests were constructed in a detached e8c719c worktree, never patched in the candidate source."
+  },
+  "runtime_code_changed": false,
+  "structural_change": false,
+  "supported_scope": "Single-operator Apple M3 Ultra 512 GiB local / explicitly trusted private LAN; official DeepSeek-V4.1-Flash; normal mtp-serving-v1 and separate explicit standard-off; existing bounded capabilities only.",
+  "supported_platform": "arm64; supported macOS 26 ABI family; observed macOS 26.5.2 (25F84), Python 3.13.15; exact admitted MLX/native/protocol packages.",
+  "architecture": {
+    "mtp_decode": "pinned oMLX physical topology and sole ProductionScheduler",
+    "prefill": "qualified DwarfStar-derived DENSE_P0_P7/P5 with MLX numerics",
+    "semantics": "DeepSeek recipe conversion/encoding/parsing/projection",
+    "ownership": "existing ds41f lifecycle/resource/state/application owners"
+  },
+  "packages": [
+    {
+      "path": "release/stable-e8c719c/wheels/mtp-native/ds41f_mlx-0.23.0-py3-none-any.whl",
+      "wheel_sha256": "7c3447dfc3f06f03aaaf4978190c058979ecff63e804c43379cbc1bdcf98168d",
+      "manifest_sha256": "1e8c7115fa32e830c1dc179f5dd87fc62871b33230ed04eac29f658327867a67",
+      "source_payload_sha256": "7cc04a28629414e1c9827727d8e914aa202e18be45959dbe2950916ad5e28981",
+      "source_commit": "e8c719c8a91bd40d92257608c303100e90c7854a",
+      "profile": "mtp",
+      "glm": "native",
+      "dependencies_sha256": "ed30ac23de6fc4b8d6cb8d97da006ee24e64677414fe9b40bf097fe2db028155",
+      "recipe_native_sha256": "b4aef7e5749024f3dab8aac44c0dc10aa5fe3f8fe1068dd543a15493c34b567c",
+      "execution_manifest_member": "ds41f_mlx/execution_manifest.json",
+      "dependency_identity_authority": "complete byte inventory embedded in this manifest, not version labels",
+      "runtime_execution_identity_sha256": "08bd03e86e32e0dc191d4c95f4fe5afb3a54e6d58406b564aaa6cbf7a4911504"
+    },
+    {
+      "path": "release/stable-e8c719c/wheels/mtp-portable/ds41f_mlx-0.23.0-py3-none-any.whl",
+      "wheel_sha256": "86f31e34f184a6270c048c1d58bd26ffa1b12b2c6eef91daccfbaff2654fc52e",
+      "manifest_sha256": "d6f36f0417c6a8e7f60fd8de2f3800f28b8e94862c5791938288e0aa2ce59afb",
+      "source_payload_sha256": "7cc04a28629414e1c9827727d8e914aa202e18be45959dbe2950916ad5e28981",
+      "source_commit": "e8c719c8a91bd40d92257608c303100e90c7854a",
+      "profile": "mtp",
+      "glm": "portable",
+      "dependencies_sha256": "4c19e5e4dd8ca2b781ded0854978e700edba36d62581e49aa1062587f8fe458f",
+      "recipe_native_sha256": "b4aef7e5749024f3dab8aac44c0dc10aa5fe3f8fe1068dd543a15493c34b567c",
+      "execution_manifest_member": "ds41f_mlx/execution_manifest.json",
+      "dependency_identity_authority": "complete byte inventory embedded in this manifest, not version labels",
+      "runtime_execution_identity_sha256": "9bc7a64d16e758505bec55b69d01086da8a7aa6ebfe54f2443eea379605e069d"
+    },
+    {
+      "path": "release/stable-e8c719c/wheels/off-native/ds41f_mlx-0.23.0-py3-none-any.whl",
+      "wheel_sha256": "68527910ffcbf4e625c47b5ede9eb3aaf013773a66b6de42f3646f44905ab16e",
+      "manifest_sha256": "c70f610f06c32afa7c5f1718460531093b24046e069febf189ac2e410ad23d59",
+      "source_payload_sha256": "7cc04a28629414e1c9827727d8e914aa202e18be45959dbe2950916ad5e28981",
+      "source_commit": "e8c719c8a91bd40d92257608c303100e90c7854a",
+      "profile": "standard-off",
+      "glm": "native",
+      "dependencies_sha256": "3babb2d69155f0d1ea7020abb10ceddbf316010a31a72a40f6764191cc39034f",
+      "recipe_native_sha256": "c4b17870812f0f03f1d026b102e21e870335a7717768f3847256de8a6f7ee5ca",
+      "execution_manifest_member": "ds41f_mlx/execution_manifest.json",
+      "dependency_identity_authority": "complete byte inventory embedded in this manifest, not version labels"
+    },
+    {
+      "path": "release/stable-e8c719c/wheels/off-portable/ds41f_mlx-0.23.0-py3-none-any.whl",
+      "wheel_sha256": "6ece7972b5678135618718ea0ce9ab6dc064ed1ba202a74cb91fbf5c25f02a74",
+      "manifest_sha256": "b62d7c0bbe76bcd5994fcc64beffcdad3bb8d9f8bf4f4eb2807f6861506a035f",
+      "source_payload_sha256": "7cc04a28629414e1c9827727d8e914aa202e18be45959dbe2950916ad5e28981",
+      "source_commit": "e8c719c8a91bd40d92257608c303100e90c7854a",
+      "profile": "standard-off",
+      "glm": "portable",
+      "dependencies_sha256": "5e16e821ba1a13a362f8d805cc07df77f5c6db1c9aea7f6083c3a038d630909c",
+      "recipe_native_sha256": "c4b17870812f0f03f1d026b102e21e870335a7717768f3847256de8a6f7ee5ca",
+      "execution_manifest_member": "ds41f_mlx/execution_manifest.json",
+      "dependency_identity_authority": "complete byte inventory embedded in this manifest, not version labels"
+    }
+  ],
+  "source_payload_sha256": "7cc04a28629414e1c9827727d8e914aa202e18be45959dbe2950916ad5e28981",
+  "native_bundle": {
+    "authority": "third_party/mtp/glm-native.json",
+    "authority_sha256": "46dc7de19bb3e559a05793791632ef1dd59e4be69968f41afde7682f917d6614",
+    "archive": "third_party/mtp/glm-native.tar.gz",
+    "archive_sha256": "f8bad84b71567588677e8e9bdf30cee42f67dd5b0f32e958369bc601d6f269ec",
+    "fallback": "none; startup refusal"
+  },
+  "checkpoint": {
+    "id": "deepseek-ai/DeepSeek-V4.1-Flash",
+    "revision": "dba1be0a40aa45a94ad051997016db3960a90277",
+    "shards": 48,
+    "recipe_tokenizer_sha256": "81f64d1248a68ce3663e07ab3ee48b851e5df0e32d27cb98e4c9a268151e8d99",
+    "checkpoint_tokenizer_sha256": "c90dfa01249db1be4245780a052ede752e1361c612ac6d08e2bdada7d599476b",
+    "complete_authority": "embedded wheel manifests and evidence/asset-identities.json"
+  },
+  "delta": {
+    "mtp": "Only glm_profile.py, mtp_setup.py and added off_recipe.py differ from the last published qualified MTP wheels; no serving/model/application/physical execution delta.",
+    "off": "All ds41f package member bytes and dependencies identical to published qualified OFF wheels; fresh manifest binds clean e8c719c provenance.",
+    "dependencies": "All dependency payloads, semantic native assets, GLM bundle, checkpoint and tokenizer identities exactly match respective retained native/portable authorities."
+  },
+  "newly_performed": {
+    "packaging": "HEAD-bound four profile/distribution wheels via existing builder, installed non-editably in existing provisioned candidate environments; repeat MTP build has identical member bytes, differing ZIP timestamps only.",
+    "admission": "Native installed inspect on MTP and OFF; portable installed payload admission; cross-profile refusal and no-validation-bypass refusal.",
+    "mtp": "Real default launch; generic client tools/results, branch, JSON/SSE; exact paired logical-session continuation; high reasoning; disconnect/canonical settlement/replay refusal/continuation; graceful shutdown.",
+    "off": "Real installed qualified OFF prefill, P5 once, same-list P6 suffix, native dispatch, replay=0/repack=0 and allocator/wired restoration.",
+    "reference": "All frozen R1 seam modules plus exact protocol/preview/recovery check and existing maintained equivalent fixtures; explicit reconciliation, not unmodified full R1 PASS."
+  },
+  "reference": {
+    "reference": "R1",
+    "manifest_sha256": "45653bd63c6a924c42dcdf0871cd950decb5efaabacce7b3c78ecf6b47f8b4ca",
+    "material_and_verifier_exact": true,
+    "unmodified_verifier": "FAIL; five frozen fixture interface mismatches, all accounted for by pre-existing maintained tests. Expected protocol/recovery records exact.",
+    "release_disposition": "Applicable predicates satisfied through reviewed maintained equivalents and installed model acceptance. No reference expected values or runtime code changed. Historical singleton/source-export real-model drivers not rerun; no full unmodified R1 conformance claim.",
+    "reconciliation": "evidence/reference-reconciliation.json"
+  },
+  "predicate_matrix": [
+    {
+      "boundary": "installed provisioning/admission and selectors",
+      "result": "PASS",
+      "evidence": [
+        "evidence/delta-reconciliation.json",
+        "evidence/inspect-mtp.json",
+        "evidence/inspect-off.json",
+        "evidence/mtp-portable-admission.json",
+        "evidence/off-portable-admission.json",
+        "evidence/cross-profile-mtp-off.log",
+        "evidence/cross-profile-off-mtp.log",
+        "evidence/no-validate.log"
+      ],
+      "retained": "qualified provisioning and negative resource gates"
+    },
+    {
+      "boundary": "real model, prefill/P5/decode and paired reuse",
+      "result": "PASS",
+      "evidence": [
+        "evidence/mtp-acceptance.json",
+        "evidence/off-acceptance.json"
+      ]
+    },
+    {
+      "boundary": "recipe tools/reasoning and JSON/SSE",
+      "result": "PASS",
+      "evidence": [
+        "evidence/mtp-acceptance.json",
+        "evidence/mtp-reasoning-cancellation.json",
+        "evidence/r1-protocol-mtp.json",
+        "evidence/r1-recovery-mtp.json"
+      ],
+      "retained": "OFF HTTP and frontend generation-policy acceptance"
+    },
+    {
+      "boundary": "cancellation/settlement/failure isolation/retirement",
+      "result": "PASS",
+      "evidence": [
+        "evidence/mtp-reasoning-cancellation.json",
+        "evidence/mtp-stop.json",
+        "evidence/off-acceptance.json",
+        "evidence/stable-boundary-regression.log"
+      ],
+      "retained": "actual native admission failures and session/operator lifecycle acceptance"
+    },
+    {
+      "boundary": "Browser/OpenCode/operator/trusted private LAN",
+      "result": "PASS via retained scope/identity reconciliation",
+      "retained": "operator-console, generation-policy/OpenCode and Windows LAN receipts; no fresh physical client or LAN campaign"
+    }
+  ],
+  "performance": {
+    "result": "No material regression in established bounded practical envelope; no optimization work.",
+    "comparison": "evidence/performance-comparison.json",
+    "matched_counts_and_draft_statistics": true,
+    "note": "Single observations, not an SLA/statistical campaign. Candidate decode times are lower on all four matched requests; first uncached TTFT 3.73s vs 3.40s, reused/branch/SSE TTFT 0.41/0.38/0.17s vs 0.48/0.46/0.24s. Physical source/dependency topology unchanged."
+  },
+  "retained_evidence": {
+    "artifacts/native-promotion/promotion.json": {
+      "sha256": "759a2b7644be5b1018b9506c89861f415c12bde75351b596f6c3dcbf02c39de3",
+      "applicability": "Qualified native MTP topology/distribution, actual native entry, paired state, provisioning and refusal; all dependencies/native/semantic assets exactly inherited."
+    },
+    "artifacts/native-promotion/final-ordinary-acceptance.json": {
+      "sha256": "9cce2ff3ae1a66c93cc26eb0c3f95e38233e299a733db2b81217a1e71a3ea392",
+      "applicability": "Matched short-workload practical performance reference; canonical/draft counts match the fresh run."
+    },
+    "artifacts/native-promotion/admission-negatives.json": {
+      "sha256": "70c365feadc64c0568d482ae3d32ade345a6f7497c09afe81453b04238058f3d",
+      "applicability": "Actual native load/symbol/resource/drift refusal, not fallback; gate implementation unchanged."
+    },
+    "artifacts/native-promotion/portable-health.json": {
+      "sha256": "74edff560b2e3d8f0100796af42b4b2265eae966c2489b60f506ad41aaaf3602",
+      "applicability": "Explicit portable real READY, prior ordinary path and clean retirement; execution dependencies unchanged."
+    },
+    "artifacts/off-native-promotion/publication.json": {
+      "sha256": "949568f3cef107a71bcbb3f260882784814b3aab03472e56d6fc59580276ecf2",
+      "applicability": "OFF publication/provisioning and same-live P5/P6/resource acceptance; all ds41f package files and dependencies identical."
+    },
+    "artifacts/off-native-promotion/production-http.json": {
+      "sha256": "ed4b1ad7d21fa96baf9db09c556bb8b7863fa8f46df3cb3b666097512aeaafd0",
+      "applicability": "OFF installed HTTP behavior; all runtime/application and dependency bytes identical, only new package provenance."
+    },
+    "artifacts/off-native-promotion/final-provision.log": {
+      "sha256": "8d272e56f1e56429fa98be18ad25b762f0742b274f27f704676141dae9a4d9e8",
+      "applicability": "Fresh OFF native provisioning of exact retained recipe; same provisioning implementation as candidate."
+    },
+    "artifacts/off-native-promotion/portable-provision.log": {
+      "sha256": "e692962a980713efd0fcb98672d982e631c02ccf0e2d7b9fd5c39e9b56290dfc",
+      "applicability": "Explicit OFF portable provisioning and admission; same source and execution dependencies."
+    },
+    "docs/production-sessions-acceptance.json": {
+      "sha256": "19337885cb30357befbc7d1563d4ce3320996c1897acf62f67c31dcb22f9a56b",
+      "applicability": "Canonical sessions, tools/results, cancellation, pin pressure and negative correlations; later conversation capacity covered by operator-console acceptance."
+    },
+    "artifacts/operator-console/real-model/receipt.json": {
+      "sha256": "5419b0701ba7f0b748604ca5aa54eb8d2f8647a1fc2c1acea813ab65c19a54d4",
+      "applicability": "Current Browser/operator product, independent queued conversations, real tools, cancellation, orphan cleanup and stop; app and Scheduler/session owners last changed at 1c7ecbab556a417f5b1395725451b18980d0e173."
+    },
+    "artifacts/operator-console/final-source-ui/receipt.json": {
+      "sha256": "bb1e3c23a02c245e26590262019c42c5a86a5af0eee9c1e2c2757471c5826b89",
+      "applicability": "Current source Browser/TUI controls and attachment-switch ownership."
+    },
+    "docs/generation-policy-frontend-acceptance.json": {
+      "sha256": "ae4e143aaf0f9f774da77b948e21ca3b93b6bc0b41ca00614f4dc7711f004c17",
+      "applicability": "Real generation controls and OpenCode 1.18.35 tool/cancel/recovery; scoped historical client evidence, not arbitrary-client qualification."
+    },
+    "docs/opencode-production-review.md": {
+      "sha256": "f3cfb4f4b5f81e07477469bc0411f32031a9914d5e5b48b07bba9962b7074210",
+      "applicability": "Real ordinary OpenCode repository/tool path and source-text admission closure; no client grammar replacement."
+    },
+    "docs/operator-runtime-log-acceptance.json": {
+      "sha256": "6b37bd409ee113e9243e462e0ffa83980359ecd5b22b202ec52dc48e99d12c24",
+      "applicability": "Operator readiness/logs/discovery and shutdown evidence; presentation-only later publication retained separately."
+    },
+    "docs/remote-lan-windows-acceptance.md": {
+      "sha256": "3eed80b3dab5701f0bd9094333b361373c9963060ae5d2c80794e5cbabca20c9",
+      "applicability": "Physical Windows-to-Mac trusted private LAN JSON/SSE and operator correlation; transport boundary unchanged."
+    },
+    "docs/mtp-vision-acceptance.json": {
+      "sha256": "1d6cbf6433e3dd533d2c016d184b470f1f439a10f73743df100cb4bc62e5b454",
+      "applicability": "Existing bounded inline ordinary Vision; unchanged bytes/owners, no enlarged envelope."
+    },
+    "docs/very-long-context-production-qualification.md": {
+      "sha256": "371764d2bb7210b001e28e8a5d1f7684ec4b8df789b8008cb9a6d02933d227ad",
+      "applicability": "Closed text-core/continuation evidence at its source scope; no new maximum-workload or endurance claim."
+    },
+    "docs/standard-off-200k-production-qualification.md": {
+      "sha256": "6af709ec6ae9800bf1dc24ebca166d93d694c6dc80d1342b73f88e9d8d3903e9",
+      "applicability": "Closed OFF resource/long-context qualification, no rerun or relabeling."
+    },
+    "ds41f_mlx/runtime/admitted_resources.json": {
+      "sha256": "de2fab3b871868f45c51fe338adefad403c1ba2284aded6c616d5c369314113a",
+      "applicability": "Exact inherited OFF numerical/model/checkpoint/resource authority."
+    }
+  },
+  "new_evidence": {
+    "evidence/asset-identities.json": {
+      "sha256": "27d913cd56389de34c08c8da17b0e7887e1ebf2648dec784ba8249d699d68527",
+      "bytes": 15640
+    },
+    "evidence/candidate-payloads.json": {
+      "sha256": "f27c42e50c5e381d0b92cb4a2d6b3a771cf54e48cb767774deb1f8d5c180623d",
+      "bytes": 2345
+    },
+    "evidence/checkpoint-byte-admission.json": {
+      "sha256": "008d933332b8c1fe0e4c3eb9f2bc1e7a5fcabda8fc2297401deb8a04e27da141",
+      "bytes": 667
+    },
+    "evidence/cross-profile-mtp-off.log": {
+      "sha256": "23a162c5a70026d6529df7752dc2790400d8f754b8a0e49519fdc0812e91ba1a",
+      "bytes": 110
+    },
+    "evidence/cross-profile-off-mtp.log": {
+      "sha256": "607c8d1bbdf36f7003b1bc9af2b29eaa7dbc1c64a823100d6ae4b23ce36176a7",
+      "bytes": 98
+    },
+    "evidence/current-checks.txt": {
+      "sha256": "60466f9642ff1b84c90224ff3c42d10f9aa99d7b7328be9cd4f20ea28f1ee7f6",
+      "bytes": 299
+    },
+    "evidence/delta-reconciliation.json": {
+      "sha256": "0d9a93a00f88de5a9745fe6300ec9e400b4594ba08f5f1de20ef133faaf72008",
+      "bytes": 5743
+    },
+    "evidence/inspect-mtp.json": {
+      "sha256": "ace96d554c31db983c40b5fff0f2b486b2a55188547dd122c76e4536a877f76b",
+      "bytes": 920740
+    },
+    "evidence/inspect-off.json": {
+      "sha256": "5492cf979c9ee42f6c02d7bfd8e2acf37dada5b4706e2caaea8c5fb9e45778cd",
+      "bytes": 53148
+    },
+    "evidence/mtp-acceptance.json": {
+      "sha256": "3e3eb75b2d39b7f32012dce9ac6b591219b23b7a5e720089c37b19c346c88b61",
+      "bytes": 31634
+    },
+    "evidence/mtp-final-status.json": {
+      "sha256": "f935e993b8477e74d52cb60fcd5037ffa6638572e59017314ce12cb06847ad13",
+      "bytes": 2695
+    },
+    "evidence/mtp-health.json": {
+      "sha256": "9c1fd2671022badad7ae2d8a362fd2adc09378e3e2073e2cd94b9cd53fbe07f8",
+      "bytes": 2475
+    },
+    "evidence/mtp-portable-admission.json": {
+      "sha256": "3953f6d9c62a9d0cbd2b1ac28589ea8799be09675309fc154c948ec7e09f59f5",
+      "bytes": 20082
+    },
+    "evidence/mtp-reasoning-cancellation.json": {
+      "sha256": "59228f5ef7e9351ed2eeab898732db09efb3726e705454819c2dca2ec86adc6c",
+      "bytes": 8732
+    },
+    "evidence/mtp-server.log": {
+      "sha256": "000555533e899352a2eb643d6df68861789b53a3faae3ce794ed0dfc20039b29",
+      "bytes": 24910
+    },
+    "evidence/mtp-stop.json": {
+      "sha256": "c9b201ea487642ee4c959812edbab2c6cc080418ff04e2ec9667ddbbddbc144c",
+      "bytes": 247
+    },
+    "evidence/no-validate.log": {
+      "sha256": "f85ea513006eacce440540f05e38e2145ebaa03dc6a1d456322a14936617d9ab",
+      "bytes": 304
+    },
+    "evidence/off-acceptance.json": {
+      "sha256": "3db63090f9af9a8d6bfa9e76b2c92bac90e0517aa061b89b0d98c3a4448de5eb",
+      "bytes": 76038
+    },
+    "evidence/off-portable-admission.json": {
+      "sha256": "a3850f5132c43ada3baa80fe448ed25f839fe9371a440fae276fd112ebfe174f",
+      "bytes": 20089
+    },
+    "evidence/performance-comparison.json": {
+      "sha256": "206984a71f7b4302f4294c1573f7315eae109a3a8b34bbd405312f55a3635feb",
+      "bytes": 3078
+    },
+    "evidence/r1-candidate-checks.txt": {
+      "sha256": "acdb328fb96be2bd812c415018feaf97acf26cec9c9526d6ed6221aea33b5fbd",
+      "bytes": 548
+    },
+    "evidence/r1-preview-mtp.json": {
+      "sha256": "2121f7bf61e4d2a248bdded1dcbfcda9dd8dbeaf76d2358f097cb5dd3c1638f5",
+      "bytes": 48782
+    },
+    "evidence/r1-protocol-mtp.json": {
+      "sha256": "324367b843f4e1100626fd1b375f568fbab3ac664b7dbcd0c07f2f33b67ffb12",
+      "bytes": 459530
+    },
+    "evidence/r1-recovery-mtp.json": {
+      "sha256": "99f40d7d8d0c78972ebfff76fef1ada11eb0b1ca42edee0e4507d87908f27f6e",
+      "bytes": 148226
+    },
+    "evidence/r1-recovery.log": {
+      "sha256": "bdc0df0f7c1fdf78428afb7208f2d6f83e3e03520dd1298595bc843e472cd879",
+      "bytes": 702
+    },
+    "evidence/r1-seams.json": {
+      "sha256": "9d5daf209b0069a13f979cf10224948486d76e1f3af569cea177a296df2acaed",
+      "bytes": 16616
+    },
+    "evidence/reference-reconciliation.json": {
+      "sha256": "db01c50fdf928fc688370ee5b94ed4a39a812bb907d48e7d17b36a974ea0e6d9",
+      "bytes": 6343
+    },
+    "evidence/reproducible-build.json": {
+      "sha256": "185bcdd2c2c2086a7f7277b2decf437998404b093363e0216f81c1191d1b8f40",
+      "bytes": 2223
+    },
+    "evidence/runtime-versions.json": {
+      "sha256": "ba6050cd6ab4a6c710940027be4ef66e3988927a3a7a67ab4599767497fab324",
+      "bytes": 535
+    },
+    "evidence/source-host.json": {
+      "sha256": "8b7cafb6261066b03e89184ca90629282b3bf38160f0df5bfe3cb5013764ed07",
+      "bytes": 734
+    },
+    "evidence/stable-boundary-regression.log": {
+      "sha256": "c1802b4f3f2674cb827bc6e3164fecef5218a9cfea4cddb76aafb2fbb4b5a345",
+      "bytes": 29052
+    },
+    "evidence/stable-regression.log": {
+      "sha256": "21d0996a14b0378038d26e5695b0644c41221dc777ea17656bcbde6ad9ead073",
+      "bytes": 52901
+    }
+  },
+  "exclusions": [
+    "multi-active batching",
+    "native MTP restart persistence",
+    "ordinary MTP Responses/Messages parity",
+    "broader multimodal scope",
+    "authentication/TLS/Internet exposure",
+    "multi-user service",
+    "other hardware",
+    "distributed execution",
+    "experimental native execution",
+    "crash-safe/distributed exactly-once external effects"
+  ],
+  "qualification_notes": [
+    "Preliminary development-environment combined tests exposed mock/import-path pollution and an old native recipe lacking consuming EOF. The selected maintained modules were rerun independently in admitted MTP Python: all PASS; exact native recipe protocol/recovery checks PASS. Preliminary failures are preserved, not runtime patches.",
+    "An initial OFF inspect exceeded the harness 120-second deadline during full 510 GB asset verification. The subsequent installed inspect completed PASS without a bypass.",
+    "Polling the closing MTP control socket saw a connection reset; final native-retirement log, process exit and closed socket confirmed graceful shutdown. No generation resend or forced kill.",
+    "Original publication receipts remain immutable. Stable wheels are newly published here; existing operator environments were not reinstalled. Qualified candidate environments contain the accepted new wheels; all model processes started by this task are retired."
+  ],
+  "future_work": "Self-contained/ds41f-owned work is not prohibited in principle. It must start separately after this baseline as an architecture-preserving ownership-transfer investigation, compare against these frozen identities and contracts, and cannot infer permission to redesign physical execution merely from reducing external ownership. No such investigation started.",
+  "canonical_reference": "release/stable-e8c719c/baseline.json",
+  "resource_pin_sha256": "de2fab3b871868f45c51fe338adefad403c1ba2284aded6c616d5c369314113a"
+}

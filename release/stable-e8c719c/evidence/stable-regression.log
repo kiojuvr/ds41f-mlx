@@ -1,0 +1,908 @@
+........................................................................ [ 39%]
+...........F...................F..F............FFFF..........F......F... [ 78%]
+..............FFFFF.....................                                 [100%]
+=================================== FAILURES ===================================
+_________________ test_http_rejections_do_not_issue_or_mutate __________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x123b52c10>
+
+    def test_http_rejections_do_not_issue_or_mutate(monkeypatch):
+        # Real recipe tokenizer/conversion; no model/native owner execution.
+        import sys
+        recipe=__import__('pathlib').Path(sys.prefix)/'share/ds41f-mtp/recipe'
+>       cfg=replace(config(),port=8000,recipe_path=recipe)
+                    ^^^^^^^^
+
+tests/test_m41_profile.py:62: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = '127.0.0.1', port = 8000, profile = 'mtp-singleton-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+            raise ValueError(f'unqualified profile environment settings: {unknown}')
+        if os.environ.get('WEB_CONCURRENCY', '1') != '1':
+            raise ValueError('MTP requires one worker')
+        if os.environ.get('DS41F_TRACE_HISTORY_LIMIT', '32') != '32':
+            raise ValueError('MTP trace budget is fixed at 32')
+        if os.environ.get('PYTHONPATH'):
+            raise ValueError('PYTHONPATH unavailable in MTP')
+        from .serving.production_sessions import ProductionSessions
+        live_limit = 1 if profile == PROFILE else ProductionSessions.MAX_LIVE
+        if os.environ.get('DS41F_MAX_LIVE_SESSIONS', str(live_limit)) != str(live_limit):
+            raise ValueError(f'{profile} logical conversation retention is fixed at {live_limit}; execution remains single-active')
+        cfg = load_runtime_config()
+        host = host if host is not None else cfg.host
+        port = port if port is not None else cfg.port
+        if type(port) is not int or not 1 <= port <= 65535:
+            raise ValueError('MTP requires a fixed port')
+        if profile == PROFILE and host != '127.0.0.1':
+            raise ValueError('MTP requires literal 127.0.0.1 and a fixed port')
+        if cfg.enable_diagnostics or cfg.model_id != 'deepseek-v4.1-flash':
+            raise ValueError('diagnostics/custom model configuration unavailable in MTP')
+        spec = importlib.util.find_spec('omlx')
+        if spec is None or not spec.origin:
+            raise ValueError('install MTP execution dependencies first')
+        parent = Path(spec.origin).resolve().parent.parent
+        if not parent.is_relative_to(Path(sys.prefix).resolve()):
+>           raise ValueError('oMLX must be installed inside the selected environment')
+E           ValueError: oMLX must be installed inside the selected environment
+
+ds41f_mlx/mtp_identity.py:64: ValueError
+________________ test_mtp_fence_conflict_codes_are_pre_mutation ________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x123b68600>
+
+    def test_mtp_fence_conflict_codes_are_pre_mutation(monkeypatch):
+>       c=TestClient(create_app(profile=PROFILE,runtime_config=config(),backend=LocalMTPBackend(runtime_config=config())),base_url='http://127.0.0.1:8000')
+                                                               ^^^^^^^^
+
+tests/test_m41_profile.py:223: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = '127.0.0.1', port = 8000, profile = 'mtp-singleton-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+            raise ValueError(f'unqualified profile environment settings: {unknown}')
+        if os.environ.get('WEB_CONCURRENCY', '1') != '1':
+            raise ValueError('MTP requires one worker')
+        if os.environ.get('DS41F_TRACE_HISTORY_LIMIT', '32') != '32':
+            raise ValueError('MTP trace budget is fixed at 32')
+        if os.environ.get('PYTHONPATH'):
+            raise ValueError('PYTHONPATH unavailable in MTP')
+        from .serving.production_sessions import ProductionSessions
+        live_limit = 1 if profile == PROFILE else ProductionSessions.MAX_LIVE
+        if os.environ.get('DS41F_MAX_LIVE_SESSIONS', str(live_limit)) != str(live_limit):
+            raise ValueError(f'{profile} logical conversation retention is fixed at {live_limit}; execution remains single-active')
+        cfg = load_runtime_config()
+        host = host if host is not None else cfg.host
+        port = port if port is not None else cfg.port
+        if type(port) is not int or not 1 <= port <= 65535:
+            raise ValueError('MTP requires a fixed port')
+        if profile == PROFILE and host != '127.0.0.1':
+            raise ValueError('MTP requires literal 127.0.0.1 and a fixed port')
+        if cfg.enable_diagnostics or cfg.model_id != 'deepseek-v4.1-flash':
+            raise ValueError('diagnostics/custom model configuration unavailable in MTP')
+        spec = importlib.util.find_spec('omlx')
+        if spec is None or not spec.origin:
+            raise ValueError('install MTP execution dependencies first')
+        parent = Path(spec.origin).resolve().parent.parent
+        if not parent.is_relative_to(Path(sys.prefix).resolve()):
+>           raise ValueError('oMLX must be installed inside the selected environment')
+E           ValueError: oMLX must be installed inside the selected environment
+
+ds41f_mlx/mtp_identity.py:64: ValueError
+_______ test_unsupported_completed_output_is_negative_profile_not_repair _______
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x123b68280>
+
+    def test_unsupported_completed_output_is_negative_profile_not_repair(monkeypatch):
+        from types import SimpleNamespace
+        from ds41f_mlx.serving.internal_mtp import InternalMTPQualificationBackend
+>       b=LocalMTPBackend(runtime_config=config())
+                                         ^^^^^^^^
+
+tests/test_m41_profile.py:259: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = '127.0.0.1', port = 8000, profile = 'mtp-singleton-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+            raise ValueError(f'unqualified profile environment settings: {unknown}')
+        if os.environ.get('WEB_CONCURRENCY', '1') != '1':
+            raise ValueError('MTP requires one worker')
+        if os.environ.get('DS41F_TRACE_HISTORY_LIMIT', '32') != '32':
+            raise ValueError('MTP trace budget is fixed at 32')
+        if os.environ.get('PYTHONPATH'):
+            raise ValueError('PYTHONPATH unavailable in MTP')
+        from .serving.production_sessions import ProductionSessions
+        live_limit = 1 if profile == PROFILE else ProductionSessions.MAX_LIVE
+        if os.environ.get('DS41F_MAX_LIVE_SESSIONS', str(live_limit)) != str(live_limit):
+            raise ValueError(f'{profile} logical conversation retention is fixed at {live_limit}; execution remains single-active')
+        cfg = load_runtime_config()
+        host = host if host is not None else cfg.host
+        port = port if port is not None else cfg.port
+        if type(port) is not int or not 1 <= port <= 65535:
+            raise ValueError('MTP requires a fixed port')
+        if profile == PROFILE and host != '127.0.0.1':
+            raise ValueError('MTP requires literal 127.0.0.1 and a fixed port')
+        if cfg.enable_diagnostics or cfg.model_id != 'deepseek-v4.1-flash':
+            raise ValueError('diagnostics/custom model configuration unavailable in MTP')
+        spec = importlib.util.find_spec('omlx')
+        if spec is None or not spec.origin:
+            raise ValueError('install MTP execution dependencies first')
+        parent = Path(spec.origin).resolve().parent.parent
+        if not parent.is_relative_to(Path(sys.prefix).resolve()):
+>           raise ValueError('oMLX must be installed inside the selected environment')
+E           ValueError: oMLX must be installed inside the selected environment
+
+ds41f_mlx/mtp_identity.py:64: ValueError
+_ test_ordinary_http_recipe_route_has_no_compulsory_public_session[127.0.0.1-127.0.0.1:8000] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1709d7af0>
+host = '127.0.0.1', authority = '127.0.0.1:8000'
+
+    @pytest.mark.parametrize('host,authority', [
+        ('127.0.0.1', '127.0.0.1:8000'),
+        ('0.0.0.0', '192.168.68.56:8000'),
+        ('192.168.68.56', 'mac-studio.local:8000'),
+        ('::', '[fd12::56]:8000'),
+    ])
+    def test_ordinary_http_recipe_route_has_no_compulsory_public_session(monkeypatch, host, authority):
+        pytest.importorskip('mlx.core')
+        pytest.importorskip('omlx')
+        import os
+        from fastapi.testclient import TestClient
+        from fastapi.responses import JSONResponse
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+        from ds41f_mlx.serving.server import create_app
+        previous = dict(os.environ)
+>       backend = ProductionMTPBackend(runtime_config=config(host, profile='mtp-serving-v1'))
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_production_mtp.py:222: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = '127.0.0.1', port = 8000, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+            raise ValueError(f'unqualified profile environment settings: {unknown}')
+        if os.environ.get('WEB_CONCURRENCY', '1') != '1':
+            raise ValueError('MTP requires one worker')
+        if os.environ.get('DS41F_TRACE_HISTORY_LIMIT', '32') != '32':
+            raise ValueError('MTP trace budget is fixed at 32')
+        if os.environ.get('PYTHONPATH'):
+            raise ValueError('PYTHONPATH unavailable in MTP')
+        from .serving.production_sessions import ProductionSessions
+        live_limit = 1 if profile == PROFILE else ProductionSessions.MAX_LIVE
+        if os.environ.get('DS41F_MAX_LIVE_SESSIONS', str(live_limit)) != str(live_limit):
+            raise ValueError(f'{profile} logical conversation retention is fixed at {live_limit}; execution remains single-active')
+        cfg = load_runtime_config()
+        host = host if host is not None else cfg.host
+        port = port if port is not None else cfg.port
+        if type(port) is not int or not 1 <= port <= 65535:
+            raise ValueError('MTP requires a fixed port')
+        if profile == PROFILE and host != '127.0.0.1':
+            raise ValueError('MTP requires literal 127.0.0.1 and a fixed port')
+        if cfg.enable_diagnostics or cfg.model_id != 'deepseek-v4.1-flash':
+            raise ValueError('diagnostics/custom model configuration unavailable in MTP')
+        spec = importlib.util.find_spec('omlx')
+        if spec is None or not spec.origin:
+            raise ValueError('install MTP execution dependencies first')
+        parent = Path(spec.origin).resolve().parent.parent
+        if not parent.is_relative_to(Path(sys.prefix).resolve()):
+>           raise ValueError('oMLX must be installed inside the selected environment')
+E           ValueError: oMLX must be installed inside the selected environment
+
+ds41f_mlx/mtp_identity.py:64: ValueError
+_ test_ordinary_http_recipe_route_has_no_compulsory_public_session[0.0.0.0-192.168.68.56:8000] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x17d39f2a0>
+host = '0.0.0.0', authority = '192.168.68.56:8000'
+
+    @pytest.mark.parametrize('host,authority', [
+        ('127.0.0.1', '127.0.0.1:8000'),
+        ('0.0.0.0', '192.168.68.56:8000'),
+        ('192.168.68.56', 'mac-studio.local:8000'),
+        ('::', '[fd12::56]:8000'),
+    ])
+    def test_ordinary_http_recipe_route_has_no_compulsory_public_session(monkeypatch, host, authority):
+        pytest.importorskip('mlx.core')
+        pytest.importorskip('omlx')
+        import os
+        from fastapi.testclient import TestClient
+        from fastapi.responses import JSONResponse
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+        from ds41f_mlx.serving.server import create_app
+        previous = dict(os.environ)
+>       backend = ProductionMTPBackend(runtime_config=config(host, profile='mtp-serving-v1'))
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_production_mtp.py:222: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = '0.0.0.0', port = 8000, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+            raise ValueError(f'unqualified profile environment settings: {unknown}')
+        if os.environ.get('WEB_CONCURRENCY', '1') != '1':
+            raise ValueError('MTP requires one worker')
+        if os.environ.get('DS41F_TRACE_HISTORY_LIMIT', '32') != '32':
+            raise ValueError('MTP trace budget is fixed at 32')
+        if os.environ.get('PYTHONPATH'):
+            raise ValueError('PYTHONPATH unavailable in MTP')
+        from .serving.production_sessions import ProductionSessions
+        live_limit = 1 if profile == PROFILE else ProductionSessions.MAX_LIVE
+        if os.environ.get('DS41F_MAX_LIVE_SESSIONS', str(live_limit)) != str(live_limit):
+            raise ValueError(f'{profile} logical conversation retention is fixed at {live_limit}; execution remains single-active')
+        cfg = load_runtime_config()
+        host = host if host is not None else cfg.host
+        port = port if port is not None else cfg.port
+        if type(port) is not int or not 1 <= port <= 65535:
+            raise ValueError('MTP requires a fixed port')
+        if profile == PROFILE and host != '127.0.0.1':
+            raise ValueError('MTP requires literal 127.0.0.1 and a fixed port')
+        if cfg.enable_diagnostics or cfg.model_id != 'deepseek-v4.1-flash':
+            raise ValueError('diagnostics/custom model configuration unavailable in MTP')
+        spec = importlib.util.find_spec('omlx')
+        if spec is None or not spec.origin:
+            raise ValueError('install MTP execution dependencies first')
+        parent = Path(spec.origin).resolve().parent.parent
+        if not parent.is_relative_to(Path(sys.prefix).resolve()):
+>           raise ValueError('oMLX must be installed inside the selected environment')
+E           ValueError: oMLX must be installed inside the selected environment
+
+ds41f_mlx/mtp_identity.py:64: ValueError
+_ test_ordinary_http_recipe_route_has_no_compulsory_public_session[192.168.68.56-mac-studio.local:8000] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x17d39fe70>
+host = '192.168.68.56', authority = 'mac-studio.local:8000'
+
+    @pytest.mark.parametrize('host,authority', [
+        ('127.0.0.1', '127.0.0.1:8000'),
+        ('0.0.0.0', '192.168.68.56:8000'),
+        ('192.168.68.56', 'mac-studio.local:8000'),
+        ('::', '[fd12::56]:8000'),
+    ])
+    def test_ordinary_http_recipe_route_has_no_compulsory_public_session(monkeypatch, host, authority):
+        pytest.importorskip('mlx.core')
+        pytest.importorskip('omlx')
+        import os
+        from fastapi.testclient import TestClient
+        from fastapi.responses import JSONResponse
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+        from ds41f_mlx.serving.server import create_app
+        previous = dict(os.environ)
+>       backend = ProductionMTPBackend(runtime_config=config(host, profile='mtp-serving-v1'))
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_production_mtp.py:222: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = '192.168.68.56', port = 8000, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+            raise ValueError(f'unqualified profile environment settings: {unknown}')
+        if os.environ.get('WEB_CONCURRENCY', '1') != '1':
+            raise ValueError('MTP requires one worker')
+        if os.environ.get('DS41F_TRACE_HISTORY_LIMIT', '32') != '32':
+            raise ValueError('MTP trace budget is fixed at 32')
+        if os.environ.get('PYTHONPATH'):
+            raise ValueError('PYTHONPATH unavailable in MTP')
+        from .serving.production_sessions import ProductionSessions
+        live_limit = 1 if profile == PROFILE else ProductionSessions.MAX_LIVE
+        if os.environ.get('DS41F_MAX_LIVE_SESSIONS', str(live_limit)) != str(live_limit):
+            raise ValueError(f'{profile} logical conversation retention is fixed at {live_limit}; execution remains single-active')
+        cfg = load_runtime_config()
+        host = host if host is not None else cfg.host
+        port = port if port is not None else cfg.port
+        if type(port) is not int or not 1 <= port <= 65535:
+            raise ValueError('MTP requires a fixed port')
+        if profile == PROFILE and host != '127.0.0.1':
+            raise ValueError('MTP requires literal 127.0.0.1 and a fixed port')
+        if cfg.enable_diagnostics or cfg.model_id != 'deepseek-v4.1-flash':
+            raise ValueError('diagnostics/custom model configuration unavailable in MTP')
+        spec = importlib.util.find_spec('omlx')
+        if spec is None or not spec.origin:
+            raise ValueError('install MTP execution dependencies first')
+        parent = Path(spec.origin).resolve().parent.parent
+        if not parent.is_relative_to(Path(sys.prefix).resolve()):
+>           raise ValueError('oMLX must be installed inside the selected environment')
+E           ValueError: oMLX must be installed inside the selected environment
+
+ds41f_mlx/mtp_identity.py:64: ValueError
+_ test_ordinary_http_recipe_route_has_no_compulsory_public_session[::-[fd12::56]:8000] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x17d39f620>
+host = '::', authority = '[fd12::56]:8000'
+
+    @pytest.mark.parametrize('host,authority', [
+        ('127.0.0.1', '127.0.0.1:8000'),
+        ('0.0.0.0', '192.168.68.56:8000'),
+        ('192.168.68.56', 'mac-studio.local:8000'),
+        ('::', '[fd12::56]:8000'),
+    ])
+    def test_ordinary_http_recipe_route_has_no_compulsory_public_session(monkeypatch, host, authority):
+        pytest.importorskip('mlx.core')
+        pytest.importorskip('omlx')
+        import os
+        from fastapi.testclient import TestClient
+        from fastapi.responses import JSONResponse
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+        from ds41f_mlx.serving.server import create_app
+        previous = dict(os.environ)
+>       backend = ProductionMTPBackend(runtime_config=config(host, profile='mtp-serving-v1'))
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_production_mtp.py:222: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = '::', port = 8000, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+            raise ValueError(f'unqualified profile environment settings: {unknown}')
+        if os.environ.get('WEB_CONCURRENCY', '1') != '1':
+            raise ValueError('MTP requires one worker')
+        if os.environ.get('DS41F_TRACE_HISTORY_LIMIT', '32') != '32':
+            raise ValueError('MTP trace budget is fixed at 32')
+        if os.environ.get('PYTHONPATH'):
+            raise ValueError('PYTHONPATH unavailable in MTP')
+        from .serving.production_sessions import ProductionSessions
+        live_limit = 1 if profile == PROFILE else ProductionSessions.MAX_LIVE
+        if os.environ.get('DS41F_MAX_LIVE_SESSIONS', str(live_limit)) != str(live_limit):
+            raise ValueError(f'{profile} logical conversation retention is fixed at {live_limit}; execution remains single-active')
+        cfg = load_runtime_config()
+        host = host if host is not None else cfg.host
+        port = port if port is not None else cfg.port
+        if type(port) is not int or not 1 <= port <= 65535:
+            raise ValueError('MTP requires a fixed port')
+        if profile == PROFILE and host != '127.0.0.1':
+            raise ValueError('MTP requires literal 127.0.0.1 and a fixed port')
+        if cfg.enable_diagnostics or cfg.model_id != 'deepseek-v4.1-flash':
+            raise ValueError('diagnostics/custom model configuration unavailable in MTP')
+        spec = importlib.util.find_spec('omlx')
+        if spec is None or not spec.origin:
+            raise ValueError('install MTP execution dependencies first')
+        parent = Path(spec.origin).resolve().parent.parent
+        if not parent.is_relative_to(Path(sys.prefix).resolve()):
+>           raise ValueError('oMLX must be installed inside the selected environment')
+E           ValueError: oMLX must be installed inside the selected environment
+
+ds41f_mlx/mtp_identity.py:64: ValueError
+______________ test_failed_cleanup_keeps_admitted_identity_fenced ______________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x123b68d00>
+
+    def test_failed_cleanup_keeps_admitted_identity_fenced(monkeypatch):
+        pytest.importorskip('omlx')
+        from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+        from ds41f_mlx.mtp_identity import config
+        async def check():
+            backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+            rec = await backend.create_stateful_session()
+            backend.scheduler = NS(requests={})
+            async def failed(prepared, **kwargs):
+                rid = kwargs['request_id']
+                backend.scheduler.requests[rid] = True
+                raise RuntimeError('uncertain admitted cleanup')
+            monkeypatch.setattr(backend, 'ordinary_response', failed)
+            req = prepared(); req.stream = True
+            try:
+                with pytest.raises(RuntimeError, match='uncertain admitted'):
+                    await backend.production_session_response(rec.session_id, req, tokenizer=None,
+                        body=json.dumps({'messages':[{'role':'user','content':'Hi'}]}).encode(),
+                        expected_count=0, application_id=str(uuid4()))
+                assert rec.busy and rec.publication['state'] == 'unrecoverable' and rec.request_count == 0
+                with pytest.raises(RuntimeError, match='active request'):
+                    await backend.close_stateful_session(rec.session_id)
+            finally:
+                # Synthetic owner has no native payload. Never production recovery.
+                backend.sessions.clear(); backend.close()
+>       asyncio.run(check())
+
+tests/test_production_sessions.py:70: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/asyncio/runners.py:196: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/asyncio/runners.py:119: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/asyncio/base_events.py:725: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests/test_production_sessions.py:50: in check
+    backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = '127.0.0.1', port = 8000, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+            raise ValueError(f'unqualified profile environment settings: {unknown}')
+        if os.environ.get('WEB_CONCURRENCY', '1') != '1':
+            raise ValueError('MTP requires one worker')
+        if os.environ.get('DS41F_TRACE_HISTORY_LIMIT', '32') != '32':
+            raise ValueError('MTP trace budget is fixed at 32')
+        if os.environ.get('PYTHONPATH'):
+            raise ValueError('PYTHONPATH unavailable in MTP')
+        from .serving.production_sessions import ProductionSessions
+        live_limit = 1 if profile == PROFILE else ProductionSessions.MAX_LIVE
+        if os.environ.get('DS41F_MAX_LIVE_SESSIONS', str(live_limit)) != str(live_limit):
+            raise ValueError(f'{profile} logical conversation retention is fixed at {live_limit}; execution remains single-active')
+        cfg = load_runtime_config()
+        host = host if host is not None else cfg.host
+        port = port if port is not None else cfg.port
+        if type(port) is not int or not 1 <= port <= 65535:
+            raise ValueError('MTP requires a fixed port')
+        if profile == PROFILE and host != '127.0.0.1':
+            raise ValueError('MTP requires literal 127.0.0.1 and a fixed port')
+        if cfg.enable_diagnostics or cfg.model_id != 'deepseek-v4.1-flash':
+            raise ValueError('diagnostics/custom model configuration unavailable in MTP')
+        spec = importlib.util.find_spec('omlx')
+        if spec is None or not spec.origin:
+            raise ValueError('install MTP execution dependencies first')
+        parent = Path(spec.origin).resolve().parent.parent
+        if not parent.is_relative_to(Path(sys.prefix).resolve()):
+>           raise ValueError('oMLX must be installed inside the selected environment')
+E           ValueError: oMLX must be installed inside the selected environment
+
+ds41f_mlx/mtp_identity.py:64: ValueError
+____ test_production_dispatch_never_qualification_and_budget_is_observation ____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x123bb5780>
+
+    def test_production_dispatch_never_qualification_and_budget_is_observation(monkeypatch):
+        pytest.importorskip('omlx')
+        from fastapi.testclient import TestClient
+        from fastapi.responses import StreamingResponse
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+        from ds41f_mlx.serving.server import create_app
+>       backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_production_sessions.py:158: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = '127.0.0.1', port = 8000, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+            raise ValueError(f'unqualified profile environment settings: {unknown}')
+        if os.environ.get('WEB_CONCURRENCY', '1') != '1':
+            raise ValueError('MTP requires one worker')
+        if os.environ.get('DS41F_TRACE_HISTORY_LIMIT', '32') != '32':
+            raise ValueError('MTP trace budget is fixed at 32')
+        if os.environ.get('PYTHONPATH'):
+            raise ValueError('PYTHONPATH unavailable in MTP')
+        from .serving.production_sessions import ProductionSessions
+        live_limit = 1 if profile == PROFILE else ProductionSessions.MAX_LIVE
+        if os.environ.get('DS41F_MAX_LIVE_SESSIONS', str(live_limit)) != str(live_limit):
+            raise ValueError(f'{profile} logical conversation retention is fixed at {live_limit}; execution remains single-active')
+        cfg = load_runtime_config()
+        host = host if host is not None else cfg.host
+        port = port if port is not None else cfg.port
+        if type(port) is not int or not 1 <= port <= 65535:
+            raise ValueError('MTP requires a fixed port')
+        if profile == PROFILE and host != '127.0.0.1':
+            raise ValueError('MTP requires literal 127.0.0.1 and a fixed port')
+        if cfg.enable_diagnostics or cfg.model_id != 'deepseek-v4.1-flash':
+            raise ValueError('diagnostics/custom model configuration unavailable in MTP')
+        spec = importlib.util.find_spec('omlx')
+        if spec is None or not spec.origin:
+            raise ValueError('install MTP execution dependencies first')
+        parent = Path(spec.origin).resolve().parent.parent
+        if not parent.is_relative_to(Path(sys.prefix).resolve()):
+>           raise ValueError('oMLX must be installed inside the selected environment')
+E           ValueError: oMLX must be installed inside the selected environment
+
+ds41f_mlx/mtp_identity.py:64: ValueError
+___________ test_only_ordinary_mtp_accepts_nonloopback_bind[0.0.0.0] ___________
+
+host = '0.0.0.0'
+
+    @pytest.mark.parametrize('host', ['0.0.0.0', '192.168.68.56', '::', 'fd12::56', 'mac-studio.local'])
+    def test_only_ordinary_mtp_accepts_nonloopback_bind(host):
+        with pytest.raises(ValueError, match='literal 127.0.0.1'):
+            config(host, 8000)
+>       cfg = config(host, 8000, profile='mtp-serving-v1')
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_mtp_bind.py:15: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = '0.0.0.0', port = 8000, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+            raise ValueError(f'unqualified profile environment settings: {unknown}')
+        if os.environ.get('WEB_CONCURRENCY', '1') != '1':
+            raise ValueError('MTP requires one worker')
+        if os.environ.get('DS41F_TRACE_HISTORY_LIMIT', '32') != '32':
+            raise ValueError('MTP trace budget is fixed at 32')
+        if os.environ.get('PYTHONPATH'):
+            raise ValueError('PYTHONPATH unavailable in MTP')
+        from .serving.production_sessions import ProductionSessions
+        live_limit = 1 if profile == PROFILE else ProductionSessions.MAX_LIVE
+        if os.environ.get('DS41F_MAX_LIVE_SESSIONS', str(live_limit)) != str(live_limit):
+            raise ValueError(f'{profile} logical conversation retention is fixed at {live_limit}; execution remains single-active')
+        cfg = load_runtime_config()
+        host = host if host is not None else cfg.host
+        port = port if port is not None else cfg.port
+        if type(port) is not int or not 1 <= port <= 65535:
+            raise ValueError('MTP requires a fixed port')
+        if profile == PROFILE and host != '127.0.0.1':
+            raise ValueError('MTP requires literal 127.0.0.1 and a fixed port')
+        if cfg.enable_diagnostics or cfg.model_id != 'deepseek-v4.1-flash':
+            raise ValueError('diagnostics/custom model configuration unavailable in MTP')
+        spec = importlib.util.find_spec('omlx')
+        if spec is None or not spec.origin:
+            raise ValueError('install MTP execution dependencies first')
+        parent = Path(spec.origin).resolve().parent.parent
+        if not parent.is_relative_to(Path(sys.prefix).resolve()):
+>           raise ValueError('oMLX must be installed inside the selected environment')
+E           ValueError: oMLX must be installed inside the selected environment
+
+ds41f_mlx/mtp_identity.py:64: ValueError
+________ test_only_ordinary_mtp_accepts_nonloopback_bind[192.168.68.56] ________
+
+host = '192.168.68.56'
+
+    @pytest.mark.parametrize('host', ['0.0.0.0', '192.168.68.56', '::', 'fd12::56', 'mac-studio.local'])
+    def test_only_ordinary_mtp_accepts_nonloopback_bind(host):
+        with pytest.raises(ValueError, match='literal 127.0.0.1'):
+            config(host, 8000)
+>       cfg = config(host, 8000, profile='mtp-serving-v1')
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_mtp_bind.py:15: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = '192.168.68.56', port = 8000, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+            raise ValueError(f'unqualified profile environment settings: {unknown}')
+        if os.environ.get('WEB_CONCURRENCY', '1') != '1':
+            raise ValueError('MTP requires one worker')
+        if os.environ.get('DS41F_TRACE_HISTORY_LIMIT', '32') != '32':
+            raise ValueError('MTP trace budget is fixed at 32')
+        if os.environ.get('PYTHONPATH'):
+            raise ValueError('PYTHONPATH unavailable in MTP')
+        from .serving.production_sessions import ProductionSessions
+        live_limit = 1 if profile == PROFILE else ProductionSessions.MAX_LIVE
+        if os.environ.get('DS41F_MAX_LIVE_SESSIONS', str(live_limit)) != str(live_limit):
+            raise ValueError(f'{profile} logical conversation retention is fixed at {live_limit}; execution remains single-active')
+        cfg = load_runtime_config()
+        host = host if host is not None else cfg.host
+        port = port if port is not None else cfg.port
+        if type(port) is not int or not 1 <= port <= 65535:
+            raise ValueError('MTP requires a fixed port')
+        if profile == PROFILE and host != '127.0.0.1':
+            raise ValueError('MTP requires literal 127.0.0.1 and a fixed port')
+        if cfg.enable_diagnostics or cfg.model_id != 'deepseek-v4.1-flash':
+            raise ValueError('diagnostics/custom model configuration unavailable in MTP')
+        spec = importlib.util.find_spec('omlx')
+        if spec is None or not spec.origin:
+            raise ValueError('install MTP execution dependencies first')
+        parent = Path(spec.origin).resolve().parent.parent
+        if not parent.is_relative_to(Path(sys.prefix).resolve()):
+>           raise ValueError('oMLX must be installed inside the selected environment')
+E           ValueError: oMLX must be installed inside the selected environment
+
+ds41f_mlx/mtp_identity.py:64: ValueError
+_____________ test_only_ordinary_mtp_accepts_nonloopback_bind[::] ______________
+
+host = '::'
+
+    @pytest.mark.parametrize('host', ['0.0.0.0', '192.168.68.56', '::', 'fd12::56', 'mac-studio.local'])
+    def test_only_ordinary_mtp_accepts_nonloopback_bind(host):
+        with pytest.raises(ValueError, match='literal 127.0.0.1'):
+            config(host, 8000)
+>       cfg = config(host, 8000, profile='mtp-serving-v1')
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_mtp_bind.py:15: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = '::', port = 8000, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+            raise ValueError(f'unqualified profile environment settings: {unknown}')
+        if os.environ.get('WEB_CONCURRENCY', '1') != '1':
+            raise ValueError('MTP requires one worker')
+        if os.environ.get('DS41F_TRACE_HISTORY_LIMIT', '32') != '32':
+            raise ValueError('MTP trace budget is fixed at 32')
+        if os.environ.get('PYTHONPATH'):
+            raise ValueError('PYTHONPATH unavailable in MTP')
+        from .serving.production_sessions import ProductionSessions
+        live_limit = 1 if profile == PROFILE else ProductionSessions.MAX_LIVE
+        if os.environ.get('DS41F_MAX_LIVE_SESSIONS', str(live_limit)) != str(live_limit):
+            raise ValueError(f'{profile} logical conversation retention is fixed at {live_limit}; execution remains single-active')
+        cfg = load_runtime_config()
+        host = host if host is not None else cfg.host
+        port = port if port is not None else cfg.port
+        if type(port) is not int or not 1 <= port <= 65535:
+            raise ValueError('MTP requires a fixed port')
+        if profile == PROFILE and host != '127.0.0.1':
+            raise ValueError('MTP requires literal 127.0.0.1 and a fixed port')
+        if cfg.enable_diagnostics or cfg.model_id != 'deepseek-v4.1-flash':
+            raise ValueError('diagnostics/custom model configuration unavailable in MTP')
+        spec = importlib.util.find_spec('omlx')
+        if spec is None or not spec.origin:
+            raise ValueError('install MTP execution dependencies first')
+        parent = Path(spec.origin).resolve().parent.parent
+        if not parent.is_relative_to(Path(sys.prefix).resolve()):
+>           raise ValueError('oMLX must be installed inside the selected environment')
+E           ValueError: oMLX must be installed inside the selected environment
+
+ds41f_mlx/mtp_identity.py:64: ValueError
+__________ test_only_ordinary_mtp_accepts_nonloopback_bind[fd12::56] ___________
+
+host = 'fd12::56'
+
+    @pytest.mark.parametrize('host', ['0.0.0.0', '192.168.68.56', '::', 'fd12::56', 'mac-studio.local'])
+    def test_only_ordinary_mtp_accepts_nonloopback_bind(host):
+        with pytest.raises(ValueError, match='literal 127.0.0.1'):
+            config(host, 8000)
+>       cfg = config(host, 8000, profile='mtp-serving-v1')
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_mtp_bind.py:15: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = 'fd12::56', port = 8000, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+            raise ValueError(f'unqualified profile environment settings: {unknown}')
+        if os.environ.get('WEB_CONCURRENCY', '1') != '1':
+            raise ValueError('MTP requires one worker')
+        if os.environ.get('DS41F_TRACE_HISTORY_LIMIT', '32') != '32':
+            raise ValueError('MTP trace budget is fixed at 32')
+        if os.environ.get('PYTHONPATH'):
+            raise ValueError('PYTHONPATH unavailable in MTP')
+        from .serving.production_sessions import ProductionSessions
+        live_limit = 1 if profile == PROFILE else ProductionSessions.MAX_LIVE
+        if os.environ.get('DS41F_MAX_LIVE_SESSIONS', str(live_limit)) != str(live_limit):
+            raise ValueError(f'{profile} logical conversation retention is fixed at {live_limit}; execution remains single-active')
+        cfg = load_runtime_config()
+        host = host if host is not None else cfg.host
+        port = port if port is not None else cfg.port
+        if type(port) is not int or not 1 <= port <= 65535:
+            raise ValueError('MTP requires a fixed port')
+        if profile == PROFILE and host != '127.0.0.1':
+            raise ValueError('MTP requires literal 127.0.0.1 and a fixed port')
+        if cfg.enable_diagnostics or cfg.model_id != 'deepseek-v4.1-flash':
+            raise ValueError('diagnostics/custom model configuration unavailable in MTP')
+        spec = importlib.util.find_spec('omlx')
+        if spec is None or not spec.origin:
+            raise ValueError('install MTP execution dependencies first')
+        parent = Path(spec.origin).resolve().parent.parent
+        if not parent.is_relative_to(Path(sys.prefix).resolve()):
+>           raise ValueError('oMLX must be installed inside the selected environment')
+E           ValueError: oMLX must be installed inside the selected environment
+
+ds41f_mlx/mtp_identity.py:64: ValueError
+______ test_only_ordinary_mtp_accepts_nonloopback_bind[mac-studio.local] _______
+
+host = 'mac-studio.local'
+
+    @pytest.mark.parametrize('host', ['0.0.0.0', '192.168.68.56', '::', 'fd12::56', 'mac-studio.local'])
+    def test_only_ordinary_mtp_accepts_nonloopback_bind(host):
+        with pytest.raises(ValueError, match='literal 127.0.0.1'):
+            config(host, 8000)
+>       cfg = config(host, 8000, profile='mtp-serving-v1')
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_mtp_bind.py:15: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = 'mac-studio.local', port = 8000, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+            raise ValueError(f'unqualified profile environment settings: {unknown}')
+        if os.environ.get('WEB_CONCURRENCY', '1') != '1':
+            raise ValueError('MTP requires one worker')
+        if os.environ.get('DS41F_TRACE_HISTORY_LIMIT', '32') != '32':
+            raise ValueError('MTP trace budget is fixed at 32')
+        if os.environ.get('PYTHONPATH'):
+            raise ValueError('PYTHONPATH unavailable in MTP')
+        from .serving.production_sessions import ProductionSessions
+        live_limit = 1 if profile == PROFILE else ProductionSessions.MAX_LIVE
+        if os.environ.get('DS41F_MAX_LIVE_SESSIONS', str(live_limit)) != str(live_limit):
+            raise ValueError(f'{profile} logical conversation retention is fixed at {live_limit}; execution remains single-active')
+        cfg = load_runtime_config()
+        host = host if host is not None else cfg.host
+        port = port if port is not None else cfg.port
+        if type(port) is not int or not 1 <= port <= 65535:
+            raise ValueError('MTP requires a fixed port')
+        if profile == PROFILE and host != '127.0.0.1':
+            raise ValueError('MTP requires literal 127.0.0.1 and a fixed port')
+        if cfg.enable_diagnostics or cfg.model_id != 'deepseek-v4.1-flash':
+            raise ValueError('diagnostics/custom model configuration unavailable in MTP')
+        spec = importlib.util.find_spec('omlx')
+        if spec is None or not spec.origin:
+            raise ValueError('install MTP execution dependencies first')
+        parent = Path(spec.origin).resolve().parent.parent
+        if not parent.is_relative_to(Path(sys.prefix).resolve()):
+>           raise ValueError('oMLX must be installed inside the selected environment')
+E           ValueError: oMLX must be installed inside the selected environment
+
+ds41f_mlx/mtp_identity.py:64: ValueError
+=============================== warnings summary ===============================
+.venv/lib/python3.13/site-packages/fastapi/testclient.py:1
+  /Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_conversation_lifetime.py::test_web_orphan_release_defers_busy_and_clears_only_confirmed_retirement
+  /Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/web.py:226: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event('startup')
+
+tests/test_conversation_lifetime.py::test_web_orphan_release_defers_busy_and_clears_only_confirmed_retirement
+tests/test_conversation_lifetime.py::test_web_orphan_release_defers_busy_and_clears_only_confirmed_retirement
+  /Volumes/SDXC-512/ds41f-mlx/.venv/lib/python3.13/site-packages/fastapi/applications.py:4744: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    return self.router.on_event(event_type)  # ty: ignore[deprecated]
+
+tests/test_conversation_lifetime.py::test_web_orphan_release_defers_busy_and_clears_only_confirmed_retirement
+  /Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/web.py:235: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event('shutdown')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_m41_profile.py::test_http_rejections_do_not_issue_or_mutate
+FAILED tests/test_m41_profile.py::test_mtp_fence_conflict_codes_are_pre_mutation
+FAILED tests/test_m41_profile.py::test_unsupported_completed_output_is_negative_profile_not_repair
+FAILED tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[127.0.0.1-127.0.0.1:8000]
+FAILED tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[0.0.0.0-192.168.68.56:8000]
+FAILED tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[192.168.68.56-mac-studio.local:8000]
+FAILED tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[::-[fd12::56]:8000]
+FAILED tests/test_production_sessions.py::test_failed_cleanup_keeps_admitted_identity_fenced
+FAILED tests/test_production_sessions.py::test_production_dispatch_never_qualification_and_budget_is_observation
+FAILED tests/test_mtp_bind.py::test_only_ordinary_mtp_accepts_nonloopback_bind[0.0.0.0]
+FAILED tests/test_mtp_bind.py::test_only_ordinary_mtp_accepts_nonloopback_bind[192.168.68.56]
+FAILED tests/test_mtp_bind.py::test_only_ordinary_mtp_accepts_nonloopback_bind[::]
+FAILED tests/test_mtp_bind.py::test_only_ordinary_mtp_accepts_nonloopback_bind[fd12::56]
+FAILED tests/test_mtp_bind.py::test_only_ordinary_mtp_accepts_nonloopback_bind[mac-studio.local]
+14 failed, 170 passed, 5 warnings in 9.39s

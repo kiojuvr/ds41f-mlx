@@ -1,0 +1,147 @@
+{
+  "unmodified_r1_verifier": "FAIL; frozen fixture interface drift, not relabeled PASS",
+  "reference_sha256": "45653bd63c6a924c42dcdf0871cd950decb5efaabacce7b3c78ecf6b47f8b4ca",
+  "material_and_verifier_exact": true,
+  "checks": [
+    {
+      "module": "test_engram_integer_state",
+      "exit": 0,
+      "summary": "1 passed in 0.13s",
+      "log_sha256": "e596cce97643441f2f2c7ef01ee068b6705ce1e028a07a32ba3bd3b3d35d7353"
+    },
+    {
+      "module": "test_m11_tool_boundary_contract",
+      "exit": 0,
+      "summary": "2 passed in 0.38s",
+      "log_sha256": "95d1b84fbee7021823149cdb8fa68be6e6175dcdacb7db00ebbe6b1f65801141"
+    },
+    {
+      "module": "test_m14_termination_contract",
+      "exit": 0,
+      "summary": "1 passed in 0.04s",
+      "log_sha256": "f4c77b58e2280613a49ba18da1c4a02d440e862c49a6c8fe5daaf277333ff99d"
+    },
+    {
+      "module": "test_m29_mtp_lifecycle",
+      "exit": 0,
+      "summary": "5 passed in 0.04s",
+      "log_sha256": "ad430bcd751b836a91fab4ff65c168e7e4f252c79243c40745308b866b554cb7"
+    },
+    {
+      "module": "test_m34_cache_release",
+      "exit": 1,
+      "summary": "1 failed in 0.06s",
+      "log_sha256": "7c8268dd843658809dafdfb3fdd42903b96968be1dc6838b1ddefb5142fda205",
+      "maintained_fixture": "tests/test_m34_cache_release.py",
+      "maintained_summary": "2 passed in 0.07s",
+      "disposition": "Frozen object.__new__ mock omits CanonicalPhysicalConnection; maintained fixture initializes the real host-only owner and retains original cache-transfer assertions plus removal-fault containment."
+    },
+    {
+      "module": "test_m35_transport_lease",
+      "exit": 1,
+      "summary": "1 failed, 9 passed in 1.23s",
+      "log_sha256": "248374a04cac9bd1543d521f1e8d32effb693b25805c7a1dbd919621773360ab",
+      "maintained_fixture": "tests/test_m35_transport_lease.py",
+      "maintained_summary": "11 passed in 1.09s",
+      "disposition": "Frozen fake owner omits settled connection/frontier/fence fields now read by settlement. Maintained fixture supplies them and retains serialization-before-append assertions."
+    },
+    {
+      "module": "test_m36_recovery_boundary",
+      "exit": 1,
+      "summary": "1 failed, 5 passed in 0.09s",
+      "log_sha256": "0b06d3f81b0e47596fea48cefd8d4f7a492646ced753c3c0c0ee315592ba8298",
+      "maintained_fixture": "tests/test_m36_recovery_boundary.py",
+      "maintained_summary": "6 passed in 0.08s",
+      "disposition": "Frozen guard mock omits consuming tool_complete authority. Maintained mock supplies it; incomplete/malformed output remains negative."
+    },
+    {
+      "module": "test_m36r_recovery",
+      "exit": 0,
+      "summary": "8 passed in 0.35s",
+      "log_sha256": "1da86f31fc86a3d17f9384a446f9a48244186e9d2603f2ca69b7c6c681a19768"
+    },
+    {
+      "module": "test_m37_local_client",
+      "exit": 0,
+      "summary": "27 passed in 0.03s",
+      "log_sha256": "b76a25b9bace467a461a954838009fbc615ad866fc35bf7da4d44f0a7a634f56"
+    },
+    {
+      "module": "test_m38_client_faults",
+      "exit": 0,
+      "summary": "18 passed in 4.69s",
+      "log_sha256": "f1045321446a66e677f99df70c4e4a0f8208342b27a2cbaeb89d775e33f42ddf"
+    },
+    {
+      "module": "test_m39_lifetime_admission",
+      "exit": 1,
+      "summary": "1 failed, 6 passed in 0.38s",
+      "log_sha256": "c56593da0b5a0a743d6ca8c81d8e209fbe2e44cf670777ded23a7beda74c5a97",
+      "maintained_fixture": "tests/test_m39_lifetime_admission.py",
+      "maintained_summary": "7 passed in 0.39s",
+      "disposition": "Frozen retry expects JSON without requesting outcome_projection=True; maintained test requests canonical outcome projection and retains counter/identity assertions."
+    },
+    {
+      "module": "test_m41_profile",
+      "exit": 1,
+      "summary": "1 failed, 80 passed, 1 warning in 0.74s",
+      "log_sha256": "715661c8e1e717e77800f34441882af65448a2c9a04ed8969db49715e5d45b53",
+      "maintained_fixture": "tests/test_m41_profile.py",
+      "maintained_summary": "83 passed, 1 warning in 0.77s",
+      "disposition": "Frozen negative test patches _settle and bypasses the specialized final-certificate hook. Maintained test invokes that hook directly; unsupported singleton tools remain negative."
+    },
+    {
+      "module": "test_m8_continuation_contract",
+      "exit": 0,
+      "summary": "4 passed in 0.07s",
+      "log_sha256": "cf0c2cc2867610db68ff0a051d55d0e206ddaa505c66c6ee68075be937872047"
+    },
+    {
+      "module": "test_prefill_fp8_mlx_p1_p2",
+      "exit": 0,
+      "summary": "27 passed in 0.91s",
+      "log_sha256": "56ff8bea488985fa9d1ce356c9e1e2f0a9b01a78940ebdb35fe5e7a63d93f1bc"
+    },
+    {
+      "module": "test_prefill_fp8_mlx_p5",
+      "exit": 0,
+      "summary": "14 passed, 12 subtests passed in 0.78s",
+      "log_sha256": "16c0f1d9d70b391d361ff0033a3e66fba876b76e24cd59859aa4aa54489df454"
+    },
+    {
+      "module": "test_prefill_fp8_mlx_p6",
+      "exit": 0,
+      "summary": "18 passed, 12 subtests passed in 0.27s",
+      "log_sha256": "36f594ce57b99b9951b823c6b380acc49f084a8ce0a3efeaae7650896363d747"
+    },
+    {
+      "module": "test_prefill_fp8_mlx_p7",
+      "exit": 0,
+      "summary": "6 passed in 0.10s",
+      "log_sha256": "0b7ede8c8682c95da8ee490cf24dab3160596fde2b4a9c8da2658980b3dec7fc"
+    },
+    {
+      "module": "test_quiescence_negatives",
+      "exit": 0,
+      "summary": "5 passed in 0.04s",
+      "log_sha256": "ad430bcd751b836a91fab4ff65c168e7e4f252c79243c40745308b866b554cb7"
+    },
+    {
+      "module": "test_stateful_request_policy",
+      "exit": 0,
+      "summary": "2 passed, 8 subtests passed in 0.01s",
+      "log_sha256": "d08b58d4000568b7dd29f079a4d4449f07e0d785985c28487ea9a234bb775c69"
+    },
+    {
+      "module": "test_suffix_math_regressions",
+      "exit": 0,
+      "summary": "6 passed in 0.78s",
+      "log_sha256": "c706c44da365ed4dd50a8b473b274867d633c3c0bebb74c9ac39bb8ef80d7afa"
+    }
+  ],
+  "protocol_expected_exact": true,
+  "preview": "PASS in admitted MTP environment",
+  "recovery_expected_exact": true,
+  "real_model_policy": "Fresh installed ordinary MTP and OFF qualified-owner acceptance plus retained identity-reconciled core evidence; not the historical R1 singleton/source-export model drivers.",
+  "decision": "Applicable predicates reconciled; no reference material or runtime code modified. Not full unmodified R1 conformance."
+}

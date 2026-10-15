@@ -1,0 +1,514 @@
+=== candidate-test_engram_integer_state.log ===
+.                                                                        [100%]
+1 passed in 0.13s
+
+=== candidate-test_m11_tool_boundary_contract.log ===
+..                                                                       [100%]
+2 passed in 0.38s
+
+=== candidate-test_m14_termination_contract.log ===
+.                                                                        [100%]
+1 passed in 0.04s
+
+=== candidate-test_m29_mtp_lifecycle.log ===
+.....                                                                    [100%]
+5 passed in 0.04s
+
+=== candidate-test_m34_cache_release.log ===
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_________ test_cancelled_cache_survives_native_owner_removal_and_close _________
+
+    def test_cancelled_cache_survives_native_owner_removal_and_close():
+        caches=target(3);slots=tuple(caches);st=state(3,[(99,None,'future')])
+        for item in caches:item._p6_append_sealed=True
+        extracted=[]
+        def extract_cache(index):
+            assert index==0
+            row=target(3);extracted.append(tuple(row));return row
+        for ring in st.mtp_cache:ring.keys=None
+        batch=NS(prompt_cache=caches,_omlx_mtp_state=st,extract_cache=extract_cache)
+        # Match the actual pinned GenerationBatch.filter([]) lifecycle seam.
+        bg=NS(_generation_batch=batch,remove=lambda uids:caches.clear(),close=lambda:caches.clear())
+        mx=FakeMX();mx.stream=lambda stream:nullcontext();mx.eval=lambda *a:None;mx.synchronize=lambda stream:None
+        sess=object.__new__(OMLXMTPGenerationSession)
+        sess._operation_lock=RLock();sess._operation_failed=False;sess._closed=False
+        sess._bg=bg;sess.uid=7;sess.semantic_guard=None;sess.language_model=FakeLM();sess.mx=mx;sess.stream=None
+        sess.history=CanonicalTransportHistory(prompt_tokens=(1,2,3))
+>       quiet=sess.cancel();sess.close()
+              ^^^^^^^^^^^^^
+
+reference/R1/checks/test_m34_cache_release.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+ds41f_mlx/runtime/mtp_lifecycle.py:378: in operation
+    return method(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <[AttributeError("'OMLXMTPGenerationSession' object has no attribute 'config'") raised in repr()] OMLXMTPGenerationSession object at 0x106e33620>
+
+    @_serialized_mtp_operation
+    def quiesce(self) -> CanonicalQuiescenceResult:
+        gb = getattr(self._bg, "_generation_batch", None)
+        if gb is None:
+            raise MTPLifecycleError("no active native generation batch to quiesce")
+        horizon = getattr(gb, '_omlx_semantic_horizon', None)
+        state = getattr(gb, "_omlx_mtp_state", None)
+        cache = getattr(gb, "prompt_cache", None)
+        # Backend finish filters the row. The optional horizon retains only
+        # the exact idle-transition owners, never a reconstructed target cache.
+        if horizon is not None and horizon.last_state is not None:
+            state, cache = horizon.last_state, horizon.last_cache
+        if state is None and self.semantic_guard is not None and cache:
+            # External cancellation before lazy MTP activation: adopt only the
+            # existing committed prompt rings and discard the standard pending
+            # response. No forward, sample, proposal or verification is needed.
+            from collections import deque
+            from types import SimpleNamespace
+            take = getattr(self.language_model, 'mtp_take_committed_context', None)
+            pending = getattr(gb, '_next_tokens', None)
+            if not callable(take) or pending is None or any(c.size() != self.history.canonical_frontier for c in cache):
+                raise MTPLifecycleError('preactivation committed context is unavailable')
+            rings, offset = take(cache)
+            state = SimpleNamespace(mtp_cache=rings, queue=deque([(int(pending.tolist()[0]), None, 'pending')]))
+        if state is None:
+            raise MTPLifecycleError("native MTP state unavailable")
+        if not cache:
+            raise MTPLifecycleError("native target cache unavailable")
+        observe = None if self.semantic_guard is None else lambda token: self.semantic_guard.observe_canonical_emit(token, None)
+        with self.mx.stream(self.stream):
+            # Match native completed-response ownership transfer for active
+            # cancellation too. filter([]) clears the batch's cache container;
+            # retaining its objects also retains the old P6 sealed capability.
+            # Native singleton extraction transfers row views, not repacked
+            # arrays or reconstructed history. The old prefill owner stays revoked.
+            if cache is getattr(gb, 'prompt_cache', None):
+                cache = gb.extract_cache(0)
+            result = canonical_quiesce_native_singleton(language_model=self.language_model, target_cache=cache, mtp_state=state, history=self.history, mx=self.mx,
+                                                       queue_pop=lambda q: q.popleft() if hasattr(q, 'popleft') else q.pop(0), observe_canonical=observe)
+            self.mx.eval(*[c.keys for c in result.dspark_context.caches if c.keys is not None])
+            self.mx.synchronize(self.stream)
+        if horizon is not None:
+            # Any un-emitted future terminal was discarded, not canonically
+            # observed. Its ordinal ownership cannot leak into the next turn.
+            horizon.pending = None
+        if self.uid is not None:
+            self._bg.remove([self.uid])
+            self.uid = None
+>       self.connection.bind(self.history, result.dspark_context.caches, None)
+        ^^^^^^^^^^^^^^^
+E       AttributeError: 'OMLXMTPGenerationSession' object has no attribute 'connection'
+
+ds41f_mlx/runtime/mtp_lifecycle.py:603: AttributeError
+=========================== short test summary info ============================
+FAILED reference/R1/checks/test_m34_cache_release.py::test_cancelled_cache_survives_native_owner_removal_and_close
+1 failed in 0.06s
+
+=== candidate-test_m35_transport_lease.log ===
+....F.....                                                               [100%]
+=================================== FAILURES ===================================
+___ LeaseTests.test_native_chunk_transfer_serializes_before_response_append ____
+
+self = <test_m35_transport_lease.LeaseTests testMethod=test_native_chunk_transfer_serializes_before_response_append>
+
+    def test_native_chunk_transfer_serializes_before_response_append(self):
+        import deepseek_recipe as d
+        processor = d.StreamProcessor(d.ChatCompletionChunkGenerator('x', 'v41', False, False), d.ParsingOptions())
+        events = processor.push(d.InferenceChunk.text('hello', 1))
+        self.assertTrue(events)
+        class Cache:
+            def size(self): return 3
+        class Quiet:
+            target_cache = [Cache() for _ in range(40)]
+            dspark_context = SimpleNamespace(caches=[SimpleNamespace(offset=3) for _ in range(3)])
+            canonical_tokens = (1, 2, 3)
+            counters = SimpleNamespace(require_m28_zeroes=lambda: None)
+            def to_json(self): return {'canonical_frontier': 3}
+        class Owner:
+            calls = 0
+            _bg = SimpleNamespace(_generation_batch=SimpleNamespace())
+            history = SimpleNamespace(canonical_generated_tokens=[3])
+            def quiesce(self):
+                self.calls += 1
+                assert self.calls == 1
+                return Quiet()
+            def close(self): pass
+        b = FixtureBackend()
+        owner = Owner()
+        rec = SimpleNamespace(owner=owner, guard=SimpleNamespace(events=events, matches=[]), processor=processor)
+        trace = {'response_id': 'x'}
+>       InternalMTPQualificationBackend._settle(b, rec, trace)
+
+reference/R1/checks/test_m35_transport_lease.py:229: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_m35_transport_lease.FixtureBackend object at 0x10a90a8b0>
+rec = namespace(owner=<test_m35_transport_lease.LeaseTests.test_native_chunk_transfer_serializes_before_response_append.<loc...he object at 0x10a9f0870>], rings=[namespace(offset=3), namespace(offset=3), namespace(offset=3)], canonical=[1, 2, 3])
+trace = {'response_id': 'x', 'quiescence': {'canonical_frontier': 3}}
+
+    def _settle(self, rec, trace):
+        import deepseek_recipe as d
+        import mlx.core as mx
+        from mlx_lm.generate import generation_stream
+        with mx.stream(generation_stream):
+            t0 = perf_counter()
+            # Active cancellation removes the native row during quiescence;
+            # retain only its existing stats owner for post-settlement telemetry.
+            active_state = getattr(rec.owner._bg._generation_batch, '_omlx_mtp_state', None)
+            quiet = rec.owner.quiesce()
+            quiet.counters.require_m28_zeroes()
+            rec.cache, rec.rings = quiet.target_cache, list(quiet.dspark_context.caches)
+            rec.canonical = list(quiet.canonical_tokens)
+            gb = rec.owner._bg._generation_batch
+            h = getattr(gb, '_omlx_semantic_horizon', None)
+            state = (None if h is None else h.last_state) or active_state
+            assert h is None or h.pending is None
+            assert state is None or not state.queue
+            if state is not None:
+                import dataclasses
+                trace['mtp_stats'] = dataclasses.asdict(state.stats)
+            # Finish native runtime ownership exactly once, before protocol
+            # accumulation (which can itself fail). No second quiescence on a
+            # drained/retired owner is permitted during exception cleanup.
+            trace['quiescence'] = quiet.to_json()
+>           connection = rec.owner.connection
+                         ^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: 'Owner' object has no attribute 'connection'
+
+ds41f_mlx/serving/internal_mtp.py:397: AttributeError
+=========================== short test summary info ============================
+FAILED reference/R1/checks/test_m35_transport_lease.py::LeaseTests::test_native_chunk_transfer_serializes_before_response_append
+1 failed, 9 passed in 1.23s
+
+=== candidate-test_m36_recovery_boundary.log ===
+...F..                                                                   [100%]
+=================================== FAILURES ===================================
+________________ test_complete_recipe_tool_remains_recoverable _________________
+
+    def test_complete_recipe_tool_remains_recoverable():
+        rec, trace = fixture(True, '{"city":"Berlin"}')
+        Backend._qualify_settled_protocol(rec, trace)
+>       assert not rec.poisoned
+E       assert not True
+E        +  where True = namespace(guard=namespace(finished=True), poisoned=True).poisoned
+
+reference/R1/checks/test_m36_recovery_boundary.py:40: AssertionError
+=========================== short test summary info ============================
+FAILED reference/R1/checks/test_m36_recovery_boundary.py::test_complete_recipe_tool_remains_recoverable
+1 failed, 5 passed in 0.09s
+
+=== candidate-test_m36r_recovery.log ===
+........                                                                 [100%]
+8 passed in 0.35s
+
+=== candidate-test_m37_local_client.log ===
+...........................                                              [100%]
+27 passed in 0.03s
+
+=== candidate-test_m38_client_faults.log ===
+..................                                                       [100%]
+18 passed in 4.69s
+
+=== candidate-test_m39_lifetime_admission.log ===
+.....F.                                                                  [100%]
+=================================== FAILURES ===================================
+_____________ test_fixed_counter_exhaustion_and_last_settled_retry _____________
+
+    def test_fixed_counter_exhaustion_and_last_settled_retry():
+        async def run():
+            b = backend()
+            try:
+                b._issued = b.MAX_LIFETIMES-1
+                rec = await b.create_stateful_session()
+                assert rec.session_id.endswith('f'*32)
+                reserve(rec,b.MAX_SEQUENCE,b'{}'); rec.last_turn = {'response': {'choices': []}}
+                rec.certificate = {'representable': True}; finish(rec)
+                before = deepcopy(rec.to_json())
+                for _ in range(3):
+                    out = await b.qualification_response(rec.session_id,request(),tokenizer=None,body=b'{}',sequence=b.MAX_SEQUENCE)
+                    assert json.loads(out.body)['outcome_state'] == 'recoverable'
+                assert before == rec.to_json()
+                with pytest.raises(ValueError):
+                    await b.qualification_response(rec.session_id,request(),tokenizer=None,body=b'{}',sequence=b.MAX_SEQUENCE+1)
+                rec.fence = None  # synthetic legacy ceiling, independently bounded
+                with pytest.raises(RuntimeError,match='exhausted'):
+                    await b.qualification_response(rec.session_id,request(),tokenizer=None,body=b'{}')
+                await b.close_stateful_session(rec.session_id)
+                with pytest.raises(RuntimeError,match='exhausted'): await b.create_stateful_session()
+                assert not b.sessions and b._issued == b.MAX_LIFETIMES
+            finally: b.close()
+>       asyncio.run(run())
+
+reference/R1/checks/test_m39_lifetime_admission.py:100: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:196: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:119: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py:726: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def run():
+        b = backend()
+        try:
+            b._issued = b.MAX_LIFETIMES-1
+            rec = await b.create_stateful_session()
+            assert rec.session_id.endswith('f'*32)
+            reserve(rec,b.MAX_SEQUENCE,b'{}'); rec.last_turn = {'response': {'choices': []}}
+            rec.certificate = {'representable': True}; finish(rec)
+            before = deepcopy(rec.to_json())
+            for _ in range(3):
+                out = await b.qualification_response(rec.session_id,request(),tokenizer=None,body=b'{}',sequence=b.MAX_SEQUENCE)
+>               assert json.loads(out.body)['outcome_state'] == 'recoverable'
+                                  ^^^^^^^^
+E               AttributeError: 'InferenceStreamingResponse' object has no attribute 'body'
+
+reference/R1/checks/test_m39_lifetime_admission.py:89: AttributeError
+=========================== short test summary info ============================
+FAILED reference/R1/checks/test_m39_lifetime_admission.py::test_fixed_counter_exhaustion_and_last_settled_retry
+1 failed, 6 passed in 0.38s
+
+=== candidate-test_m41_profile.log ===
+........................................................................ [ 88%]
+........F                                                                [100%]
+=================================== FAILURES ===================================
+_______ test_unsupported_completed_output_is_negative_profile_not_repair _______
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x11f0358b0>
+
+    def test_unsupported_completed_output_is_negative_profile_not_repair(monkeypatch):
+        from types import SimpleNamespace
+        from ds41f_mlx.serving.internal_mtp import InternalMTPQualificationBackend
+        b=LocalMTPBackend(runtime_config=config())
+        try:
+            monkeypatch.setattr(InternalMTPQualificationBackend,'_settle',lambda *_:None)
+            for message in (dict(role='assistant',content='raw <|source|>'),
+                            dict(role='assistant',content=None),
+                            dict(role='assistant',content=None,tool_calls=[dict(id='c',type='function',
+                                function=dict(name='unqualified',arguments='{"city":"Paris"}'))])):
+                rec=SimpleNamespace(certificate={'representable':True,'executable_tools':True},poisoned=False,unrecoverable=False)
+                trace={'response':{'choices':[{'message':message}]}}
+                b._settle(rec,trace)
+>               assert rec.unrecoverable and rec.poisoned and rec.certificate['representable'] is False
+E               AssertionError: assert (False)
+E                +  where False = namespace(certificate={'representable': True, 'executable_tools': True}, poisoned=False, unrecoverable=False).unrecoverable
+
+reference/R1/checks/test_m41_profile.py:269: AssertionError
+=============================== warnings summary ===============================
+../ds41f-native-candidate-venv/lib/python3.13/site-packages/fastapi/testclient.py:1
+  /Volumes/SDXC-512/ds41f-native-candidate-venv/lib/python3.13/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED reference/R1/checks/test_m41_profile.py::test_unsupported_completed_output_is_negative_profile_not_repair
+1 failed, 80 passed, 1 warning in 0.74s
+
+=== candidate-test_m8_continuation_contract.log ===
+....                                                                     [100%]
+4 passed in 0.07s
+
+=== candidate-test_prefill_fp8_mlx_p1_p2.log ===
+...........................                                              [100%]
+27 passed in 0.91s
+
+=== candidate-test_prefill_fp8_mlx_p5.log ===
+..............                                               [100%]
+14 passed, 12 subtests passed in 0.78s
+
+=== candidate-test_prefill_fp8_mlx_p6.log ===
+..................                                           [100%]
+18 passed, 12 subtests passed in 0.27s
+
+=== candidate-test_prefill_fp8_mlx_p7.log ===
+......                                                                   [100%]
+6 passed in 0.10s
+
+=== candidate-test_quiescence_negatives.log ===
+.....                                                                    [100%]
+5 passed in 0.04s
+
+=== candidate-test_stateful_request_policy.log ===
+..                                                               [100%]
+2 passed, 8 subtests passed in 0.01s
+
+=== candidate-test_suffix_math_regressions.log ===
+......                                                                   [100%]
+6 passed in 0.78s
+
+=== current-conversation_lifetime.log ===
+...                                                                      [100%]
+=============================== warnings summary ===============================
+tests/test_conversation_lifetime.py::test_web_orphan_release_defers_busy_and_clears_only_confirmed_retirement
+  /Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/web.py:226: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event('startup')
+
+tests/test_conversation_lifetime.py::test_web_orphan_release_defers_busy_and_clears_only_confirmed_retirement
+tests/test_conversation_lifetime.py::test_web_orphan_release_defers_busy_and_clears_only_confirmed_retirement
+  /Volumes/SDXC-512/ds41f-native-candidate-venv/lib/python3.13/site-packages/fastapi/applications.py:4744: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    return self.router.on_event(event_type)  # ty: ignore[deprecated]
+
+tests/test_conversation_lifetime.py::test_web_orphan_release_defers_busy_and_clears_only_confirmed_retirement
+  /Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/web.py:235: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event('shutdown')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+3 passed, 4 warnings in 1.03s
+
+=== current-glm_profile.log ===
+......                                                                   [100%]
+6 passed in 0.10s
+
+=== current-m34_cache_release.log ===
+..                                                                       [100%]
+2 passed in 0.07s
+
+=== current-m35_transport_lease.log ===
+...........                                                              [100%]
+11 passed in 1.09s
+
+=== current-m36_recovery_boundary.log ===
+......                                                                   [100%]
+6 passed in 0.08s
+
+=== current-m39_lifetime_admission.log ===
+.......                                                                  [100%]
+7 passed in 0.39s
+
+=== current-m41_profile.log ===
+........................................................................ [ 86%]
+...........                                                              [100%]
+=============================== warnings summary ===============================
+../ds41f-native-candidate-venv/lib/python3.13/site-packages/fastapi/testclient.py:1
+  /Volumes/SDXC-512/ds41f-native-candidate-venv/lib/python3.13/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+83 passed, 1 warning in 0.77s
+
+=== current-mtp_bind.log ===
+.......                                                                  [100%]
+7 passed in 0.07s
+
+=== current-off_dependency_identity.log ===
+....                                                                     [100%]
+4 passed in 0.08s
+
+=== current-off_recipe_artifact.log ===
+....                                                                     [100%]
+4 passed in 0.19s
+
+=== current-operator_control_disconnect.log ===
+...........                                                              [100%]
+11 passed in 7.15s
+
+=== current-production_mtp.log ===
+......................                                                   [100%]
+=============================== warnings summary ===============================
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[127.0.0.1-127.0.0.1:8000]
+  /Volumes/SDXC-512/ds41f-native-candidate-venv/lib/python3.13/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[127.0.0.1-127.0.0.1:8000]
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[0.0.0.0-192.168.68.56:8000]
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[192.168.68.56-mac-studio.local:8000]
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[::-[fd12::56]:8000]
+  /Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/server.py:230: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event('startup')
+
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[127.0.0.1-127.0.0.1:8000]
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[127.0.0.1-127.0.0.1:8000]
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[0.0.0.0-192.168.68.56:8000]
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[0.0.0.0-192.168.68.56:8000]
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[192.168.68.56-mac-studio.local:8000]
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[192.168.68.56-mac-studio.local:8000]
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[::-[fd12::56]:8000]
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[::-[fd12::56]:8000]
+  /Volumes/SDXC-512/ds41f-native-candidate-venv/lib/python3.13/site-packages/fastapi/applications.py:4744: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    return self.router.on_event(event_type)  # ty: ignore[deprecated]
+
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[127.0.0.1-127.0.0.1:8000]
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[0.0.0.0-192.168.68.56:8000]
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[192.168.68.56-mac-studio.local:8000]
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[::-[fd12::56]:8000]
+  /Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/server.py:234: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event('shutdown')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+22 passed, 17 warnings in 2.05s
+
+=== current-production_sessions.log ===
+..........                                                               [100%]
+=============================== warnings summary ===============================
+tests/test_production_sessions.py::test_production_dispatch_never_qualification_and_budget_is_observation
+  /Volumes/SDXC-512/ds41f-native-candidate-venv/lib/python3.13/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_production_sessions.py::test_production_dispatch_never_qualification_and_budget_is_observation
+  /Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/server.py:230: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event('startup')
+
+tests/test_production_sessions.py::test_production_dispatch_never_qualification_and_budget_is_observation
+tests/test_production_sessions.py::test_production_dispatch_never_qualification_and_budget_is_observation
+  /Volumes/SDXC-512/ds41f-native-candidate-venv/lib/python3.13/site-packages/fastapi/applications.py:4744: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    return self.router.on_event(event_type)  # ty: ignore[deprecated]
+
+tests/test_production_sessions.py::test_production_dispatch_never_qualification_and_budget_is_observation
+  /Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/server.py:234: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event('shutdown')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+10 passed, 5 warnings in 1.28s
+
+=== current-runtime_reasoning_default.log ===
+........                                                                 [100%]
+8 passed in 0.30s

@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Volumes/SDXC-512/ds41f-mlx/reference/R1/recovery.py", line 49, in <module>
+    run(name,plain,source,finish=finish)
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/reference/R1/recovery.py", line 28, in run
+    g = RecipeSemanticGuard(p, control_token_ids=request.stop_token_ids)
+  File "/Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/runtime/recipe_semantic_guard.py", line 46, in __init__
+    raise RuntimeError('qualification consuming EOF native recipe required')
+RuntimeError: qualification consuming EOF native recipe required
