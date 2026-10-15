@@ -16,10 +16,15 @@ GLM portable is an explicit alternative, never an admission-failure fallback
 serving alternative, distinct from bounded singleton; its GLM distribution also
 defaults to native after [bounded OFF publication](standard-off-native-publication.md). [Runtime completeness and promotion](runtime-completeness.md)
 records core COMPLETE, no current local blocker and separated upstream performance work.
-General-runtime release boundary assessment remains separate;
-separate-machine trusted-LAN acceptance is **CLOSED / PASS** (real Windows → Mac,
-with operator correlation), as recorded in capabilities. The old `ds41f-runtime` directory is
-unused generation, not current deployment or accepted release history.
+**DS41F-SCOPED-LOCAL-20261015 is released** for the declared single-operator
+M3 Ultra / 512 GB local and explicitly trusted-private-LAN scope; the
+[release record](../release/scoped-local-20261015/release.json) binds exact installed
+MTP/OFF packages and acceptance. Broader product/security scope is not implied.
+Separate-machine trusted-LAN acceptance is **CLOSED / PASS** (real Windows → Mac,
+with operator correlation), as recorded in capabilities. This repository is the
+public/source entry point; no separate public/runtime repository is planned.
+The old `ds41f-runtime` directory is unused generation, not current deployment or
+accepted release history.
 
 ## Specialist contracts
 
