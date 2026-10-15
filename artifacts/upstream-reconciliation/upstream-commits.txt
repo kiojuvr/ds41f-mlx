@@ -1,0 +1,78 @@
+oMLX: 3f99250d..f82821e2ba750cd7cad14e5152d6b4559960457d (new screening interval)
+60fb1ea6dbe10a333c034aec3a1f6dd74cb16de8 fix(scheduler): stop strings end the answer, not the reasoning (#4352)
+d34d17c24267f8bec9838ebc5417d4c67641e345 fix(scheduler): stop strings skip only the leading think block
+cd48a83c43391658fd3c242058396ab690cf0eca docs: sync Chinese README with English (#3329)
+2dc6bea927ed1e266a8d4c5ea5b2ad447f2a48a6 perf(reranker): forward the shared instruction and query run once per request (#4407)
+1a270b9dc0fc8ab6660da777cd69deb26c662d6f fix(cache): pin deduplicated prefix blocks before reuse, plus oQ, TTL and download id fixes (#4443)
+df7fa9ebe31adc4f9e01c7f5b8f19968ea56f111 fix: return a standard context overflow error so clients can compact
+bafc6837ce8bd274818e5c8e56ce4ea0d9b4d2ee feat(integrations): add Mistral Vibe launcher (#4367)
+310a90b6f166f08bfd53ff211e190f5907309214 docs: require Vibe 2.26.0 and fold Vibe tests into test_integrations
+bd7fe733e7a0e3d40d702b6d47971bc195ef73f7 feat(admin): chat composer controls for model, reasoning level and sampling profiles (#4446)
+e18ea99b32e43e206dd4e9081362509c6b7df670 fix(qwen4): reserve QSA KV capacity for the whole prompt
+88c8203e7f16621479f119dd13d7a44f2079175a feat(qwen35): YaRN context extension past the native window (#3347)
+3b6b5e5c2ea9d1c6bd6cb475692d2dde5713b61b feat(embeddings): accept OpenAI content parts and fix EmbeddingGemma 2 PIL layout (#4419)
+ec99121b02f8c52b954201e10369d9f604cda1c6 fix(embeddings): reject strings mixed with content parts and null text parts
+93c49d63d44353d111ac63d2c80fcc491fc6a5dc feat(oq): add V4.1 oQ2-oQ2.7 and keep lookup tables at 4 bits
+7d7c4cf8a49783e0562e3316053731c873600875 feat(uploader): add the oQ bit distribution to generated model cards
+8dfaba37eb658223a5b9cc8fd4a9b27a85a885dc feat(engine): serve Qwen3.8/3.6 models through Splash as an external engine (#4447)
+d128c118e24f488f6f803809ed8ab6824d70d544 fix(mtp): scope speculative command-buffer caps to Qwen targets (#4386)
+0c6fd953d3476cefc76fd55170edfd897b57edd3 perf(sampling): share one sampler between requests with equal parameters (#4376)
+10e675bef8ef5dce4d7ed37b09ab2be69b526936 perf(turboquant): simdgroup-matrix attention for one-sequence decode and MTP verify (#4408)
+4987e7ffed7d3660a0e61f8f3674fa30d357b9e0 fix(scheduler): prefill long suffixes over a dense copy of a restored TurboQuant prefix (#4442)
+26add75462145d1631c6d8c3a37ebaefd576d36c fix(scheduler): use a quantized embedding's output dtype for the dense TQ prefix (#4442)
+f3e82d2110549519258ef16eb11d88a2302a7f8a chore: trim #4376, #4386, #4408 and #4442 comments, tests and switches
+952f2b15052b03783b82c01d5a2ce88bc2c2657a perf(qwen4): keep fused attention rows under YaRN
+8e1e3869f239197778807efd64ddf8a847458aec fix(omlx-mac): reload the API key for menubar status polls (#4450)
+125ca6819ed78212cacdf70fbbbfb25c25dd5f3f perf(moe): invert large route permutations with a scatter (#4366)
+62aafd6a4383195ac86cae18e6f86379069831da fix(i18n): spell PP, TG and TTFT as abbreviations (#4451)
+fabc0c855afec480b6d937b8a077ceae9790ffba fix(i18n): spell PP and TG TPS in the remaining locale values
+f3ad34d2fcaeb85b0469e291ab370a7f01bc8d64 fix(turboquant): keep left-padded batch rows on their own KV in Qwen3.5/3.6 decode (#4453)
+b13aa5524d14092a6dc1405118266206a1296621 fix(web): focus the API key field on the admin login page (#4497)
+5f8b5f05675122efc211a4ae99482366605f9cf2 fix(web): inset native select chevrons away from the right edge (#4498)
+2e685f5497a77fa453a7a575762e8b18feea74f8 fix(web): refocus the API key field after a failed login
+89a40d11317eab3ef6831fb890621cb7a8455ac3 fix(qwen4): keep fp16 Flash-Next in fp16 when PLE reads from SSD (#4493)
+1c390a5cd4210de7bc113a39a859d9f8bd0ceec5 feat: Decision 3.0 (d3) decision models via /v1/systemone (#4470)
+20d6a1bd38ce18ba8c1ccc80f365bced74c8eb0d feat(admin): recommend oQ models that fit this Mac for first-time users (#4468)
+b7f366b7e79afd63bde0d9e466f392a48c253a0a fix(admin): list the d3 readout in model card storage tables
+aeb88a32d7dc252babc7fa25577af4963e23c0b4 feat(oq): support EmbeddingGemma 2
+a789c89ac0cd77b325fcc505d0c351fcba6f9592 fix(cache): admit sub-block prompts so the freshness gate defers for a tail (#4428)
+c756df2a5a2e7a4cfffe7e4e003d6b3762453559 fix(cache): keep sub-block tail snapshots on scheduler-side stops
+ff0326bae58a009de2faece2ce64fa61417115ef perf(ple): remove the second mmap row copy (#4464)
+98c7a2a54b697f9184da5ec4edde966a96b98934 perf(ple): bound page prefetch tasks to the worker count (#4472)
+41166afa2570b5e5a54061c6c72486643a579fbe fix: bound ArraysCache padding metadata graphs in batched decode
+64bf5d1ba6336b45955c00f7fe0e46acd5c85095 fix(api): merge back-to-back messages for VLM models
+a35135c8a23f64b987b02eaf5d06bcaeb6b82dec fix(i18n): translate the Czech console values still in English (#4522)
+981ebcc956b509906ee7f44d694b7d10a90187ad feat(api): add the OpenAI Decisions API (/v1/decisions) for any chat model (#4436)
+32bfc4942d55507125a90705b6afbb2654a87aa5 fix(deepseek_v41): continue a partial assistant message instead of raising
+1b96f67783e96aef2a55b5b01d953f62f0e01885 fix(api): apply the context limit and cache stats to /v1/decisions
+2c53654fdd6e5676ff7628e3d01e08bac5e44cd3 perf(mtp): share large 8-bit projections across partial row tiles (#4475)
+3c39990450d24c3a6fa48bf4428adb8f9e25cd15 feat: move Qwen4 extended fused decode to model settings
+7a4ea39902a944732b4aee62fe19cc12f8f2119a feat(dflash): run DFlash in the batched engines and remove dflash-mlx (#4508)
+0268dd1fe78e35c294ef6a696413edacdea05659 fix(qwen): preserve GDN state during padded prefill (#4526)
+f2230ce27456bbe0ee68e659c5ebc0f25b7d9deb feat(web): copy model name from every model row (#4521)
+d59a2f10b5c5aa1ea2ef45b72edc6095df780cf7 fix(web): copy the model alias from every model copy button
+6d175229323d5b7a7359e811b97cc0a8756876c0 feat(scheduler): requeue requests under memory pressure and cache cancelled prompts (#4509)
+a987407f0262e449653740c3fb19e9fa82bcfea1 fix: reset memory admission timeout on progress
+7b9e49acee5f445925f67d19d2c65f7f59db00c3 perf: speed up GLM-5.3 sparse decode with split-K attention (#4523)
+da4f316e5fecd5d7708135d2a69210c31c2660ae test(glm5): fold split-K decode coverage into existing GLM tests
+ec13b9ecad8a36fa532ab157551e8f3e759ecc88 feat(sampling): apply no_repeat_ngram_size and ngram_window instead of dropping them (#4510)
+da9eef044aa13a8326cc6743c1d185738559d317 test(sampling): trim no-repeat-ngram tests and comments
+ab29ab358808131234f270f441cddc5f6bfb94be feat(mac): read the log screen as records, with a raw view beside it (#4514)
+e05ef2fba2031729434e841cd580972d30aa62ed fix(mac): key Logs rows by file line and match the web UI viewer
+101920102c7f63fc098ed6f0778e0c19e5b01931 perf(mtp): keep the GLM batch cache in place under boundary alignment (#4517)
+6feea9f95de86c772235af765914e4abb82b236f test(mtp): apply the KV capacity patch before the rollback recovery test
+1c3adf2a6ca8d3d30ea96f7a065a820a8aaabacb feat(auth): add a keyless inference toggle to settings (#4528)
+8be91344ff39e6e7e5df79a0d7734d7579fb4654 chore: bump mlx-vlm to 9790231 (v0.7.8) (#4529)
+2ffe875ff5d358f20c3c5d7a1719d7424aedb4f6 fix(eval): grade LiveCodeBench functional problems by return value (#4545)
+f82821e2ba750cd7cad14e5152d6b4559960457d chore(eval): trim LiveCodeBench functional grader comments and tests
+
+DwarfStar: 0aaea5a238fb41a35106a551e73c8409dfb751ac..fc80bd695da76ee14bcb86820bf900a5cdfda806
+962ac1913db2056de34d04d7f9bc89615083a1ba Improve V4.1 CUDA attention and Spark RDMA exchanges
+77570b465cf9becc52cb3d77b479300ff3961ec1 Add two-host CUDA tensor parallelism for DeepSeek V4 Flash
+43a91aaa3b68237f9668f3356b45a402d5ae3644 Distribute and accelerate Flash speculative decoding on Spark
+63059b654c7a662be13aa7442d9d44e9535fb2bb Optimize Spark attention and support native MXFP4 DSpark experts
+b3afc8e9917bccc069e52c2b716c852ff6026c2a Document dual-Spark inference and its release checks
+f0962e375731c02c4cd6ad1d35f15b2dc5fa9d23 Stop tensor-parallel inference after a transport failure
+b14bf6220f753d2dbd4780eb61715d6e85bf658b Repair DSpark and ROCm regression tests
+d6b516abb4a286a423fdb4071a19f86a3d9ab9c0 Score API top choices independently of alternative order
+fc80bd695da76ee14bcb86820bf900a5cdfda806 Avoid full context rebuilds at DSpark response boundaries

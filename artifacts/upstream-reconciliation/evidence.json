@@ -1,0 +1,41 @@
+{
+  "schema": "ds41f.final-upstream-reconciliation.v1",
+  "started_utc": "2026-10-15T01:52:16Z",
+  "starting_head": "68efc635754199cf1252b46ae0ec84fba6477598",
+  "starting_tree_clean": true,
+  "stable_tag": "DS41F-STABLE-e8c719c",
+  "stable_tag_object": "b7151db160df3af8d4743f86e8dbc1f6add43eca",
+  "stable_peeled_commit": "68efc635754199cf1252b46ae0ec84fba6477598",
+  "cutoffs": {
+    "omlx": "f82821e2ba750cd7cad14e5152d6b4559960457d",
+    "dwarfstar": "fc80bd695da76ee14bcb86820bf900a5cdfda806"
+  },
+  "new_adoptions": [],
+  "production_changes": [],
+  "tests": {
+    "command": ".venv/bin/python -m pytest -q tests/test_production_mtp.py tests/test_m29_mtp_lifecycle.py tests/test_prefill_fp8_mlx_p5.py tests/test_prefill_fp8_mlx_p6.py tests/test_prefill_fp8_mlx_p7.py tests/test_generation_policy.py tests/test_production_sessions.py tests/test_production_session_owner.py",
+    "passed": 107,
+    "subtests_passed": 26,
+    "warnings": 21,
+    "elapsed_seconds": 5.39,
+    "scope": "existing boundary regression tests, not real-model qualification"
+  },
+  "route_probe": {
+    "classification": "NON_QUALIFYING_PRIMITIVE_PROBE",
+    "mlx": "0.32.2",
+    "device": "Apple M3 Ultra",
+    "seed": 41,
+    "method": "For each rows count, create uint32 random expert IDs in [0,384) of length rows*6; evaluate order=argsort(ids). Compare argsort(order) to put_along_axis(zeros_like(order), order, arange(order.size,dtype=order.dtype),axis=0). Require array_equal; warm each operation five times; record median of 40 perf_counter/mx.eval invocations, including host submission. Operations measured separately; no model loaded.",
+    "iterations": 40,
+    "results": [
+      {"rows": 2048, "routes": 12288, "bit_equal": true, "argsort_median_ms": 0.3481454332359135, "scatter_median_ms": 0.24960446171462536},
+      {"rows": 4096, "routes": 24576, "bit_equal": true, "argsort_median_ms": 0.3760000108741224, "scatter_median_ms": 0.2567504998296499},
+      {"rows": 8192, "routes": 49152, "bit_equal": true, "argsort_median_ms": 0.385688035748899, "scatter_median_ms": 0.23787550162523985}
+    ],
+    "conclusion": "Small primitive gain observed, no material end-to-end benefit established; reference-only, no adoption. Not a real-model speedup or numerical qualification."
+  },
+  "inference_architecture": "logical concurrency with serialized model inference",
+  "ownership_transfer_started": false,
+  "dsflash_repository_created": false,
+  "ready_for_later_architecture_preserving_transfer": true
+}
