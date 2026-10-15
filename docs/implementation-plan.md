@@ -8,9 +8,13 @@ not present authorization or a required sequence of new milestones.
 
 ## Production-serving closure (superseding authority)
 
-**ds41f is not production-release-complete as a general LLM runtime server.**
-The bounded singleton release decision remains valid within its original scope;
-it did not close ordinary serving or all product/security requirements.
+**READY_FOR_SCOPED_RELEASE** for the current single-operator local / explicitly
+trusted-private-LAN general runtime, assessed at implementation commit
+`79e96fdd3d12165caf40a885ef3773a768efbcda`.
+[Runtime completeness](runtime-completeness.md#general-local-runtime-release-assessment)
+owns the supported scope, evidence and findings: no concrete blocker remains.
+This supersedes the pending general-runtime assessment, not the unsupported
+Internet/multi-user scope or historical singleton qualification boundaries.
 
 `mtp-serving-v1` is now the production-semantics boundary. Paired target/DSpark
 restoration and Scheduler/P5 settlement/publication/retirement are implemented for
@@ -80,7 +84,7 @@ No new numerical execution topology or qualification campaign is required.
 
 ## Documentation hygiene / authority convergence closure
 
-**COMPLETE; ready for general-runtime release boundary assessment.** Current
+**COMPLETE; general-runtime release assessment is now closed separately.** Current
 owners distinguish closed model/runtime core, ordinary MTP default and real
 separate-machine trusted-LAN PASS from deferred capabilities, unsupported scope
 and optional research. Known identified post-0.7.0 performance work and its
@@ -97,28 +101,24 @@ or an established supported-lane production blocker.
 
 This cleanup found **no new concrete production blocker**. It performs no new
 qualification campaign, performance research, packaging/publication, full R1 or
-release assessment. The next assessment evaluates current implementation and its
-supported scope, not old closed work or historical TODO wording.
+release assessment. The subsequent assessment above evaluates current implementation
+and its supported scope, not old closed work or historical TODO wording.
 
-## Remaining broader scope
+## Release disposition and deferred scope
 
-1. **Validate concrete ordinary-operation gaps.** Separate-machine trusted-LAN
-   acceptance is **closed**: [Windows-to-Mac acceptance](remote-lan-windows-acceptance.md)
-   records PASS over the real LAN with Mac operator correlation.
-   Other API/resource/observability/client gaps must be
-   identified against supported real operation before being called blockers.
-2. **Finish the general-runtime release boundary.** The supported ordinary API and
-   execution core do not themselves prove all required configuration, operational,
-   failure-isolation and product behavior. Maintain a concise, concrete closure
-   assessment; do not infer completion from a bounded singleton release or test count.
-3. **Keep distinct decisions distinct.** Local default-MTP promotion is closed
-   by the linked ordinary API/admission/failure/client review. Broader application
-   features, hosts, context, security and concurrency need their own justified
-   scope/evidence; they are not prerequisites for the current single-operator lane.
-4. **Defer delivery work until explicitly selected.** Full reference regression at
-   an appropriate stable boundary and future release projection are separate
-   checkpoints. Do not start packaging, clean-room environments, runtime-directory
-   updates or another core confidence campaign merely because documentation changed.
+1. **General-runtime assessment: closed / ready within scope.** Current API,
+   installed admission/operation, ownership, failure containment, supported clients
+   and observability were reviewed against implementation and retained acceptance.
+   Separate-machine trusted-LAN PASS and the Aider omitted-output correction remain
+   closed. No concrete production repair task was selected.
+2. **Keep distinct decisions distinct.** Broader application features, hosts,
+   context, security and concurrency need their own justified scope/evidence; they
+   are not prerequisites for this single-operator release boundary. Implementation
+   ownership feasibility does not authorize a transfer or create a release gate.
+3. **Next task: explicit scoped release/publication decision.** Delivery remains a
+   separately selected action through operations' existing route. This assessment
+   performs no packaging, promotion, clean-room setup, runtime-directory update,
+   full reference regression or new core confidence campaign.
 
 This is a priorities/decision boundary, not authorization to implement every
 reference-server feature, run a broad benchmark ladder or create a new milestone

@@ -12,7 +12,7 @@ Architecture explains ownership; specialized documents explain endpoint semantic
 | --- | --- | --- | --- |
 | Selection | Explicit fallback; separate OFF package | Local CLI default; MTP package | Explicit; MTP package |
 | Physical execution | First-party target generation/model execution; MTP OFF | Pinned oMLX MTP topology, ProductionScheduler-owned | Bounded guarded singleton MTP |
-| GLM distribution | Published portable package unchanged | Native local default; portable explicit alternative | Same profile-specific MTP package; singleton protocol unchanged |
+| GLM distribution | Native local default; portable explicit alternative | Native local default; portable explicit alternative | Same profile-specific MTP package; singleton protocol unchanged |
 | Ordinary APIs | Text Chat Completions, Responses, Messages within documented scopes | Chat Completions (text and bounded inline Vision); health/models | Specialized session API, not ordinary stateless Chat Completions |
 | Independent conversations/edits | Stateless requests prefill fresh; retained sessions require exact extension | Ordinary requests may safely reuse paired prefixes or miss, including edits/branches | Exact session extension/frozen request fences |
 | Active execution | Single-flight; overlap conflicts | One native active generation; independent ordinary requests may queue, no shared native batch | One response lease/live session |
@@ -40,7 +40,7 @@ This bounded native promotion does not enlarge API/image/long-context qualificat
 | Ordinary MTP output | Integer **1..393,216**; omitted: **8192** non-thinking, **65,536** thinking low/high, **131,072** thinking max |
 | Ordinary MTP total admission | Actual recipe prompt + requested output must fit the total envelope |
 | Ordinary MTP body | **16 MiB** bounded JSON ingress; byte budget is not a token estimate |
-| Ordinary paired cache | Four complete immutable pairs, upstream lookup/refcount/LRU; no separate eviction authority |
+| Ordinary paired cache | 18 complete immutable pairs shared with logical-session pins (16 conversations + two publication slots), plus reserved null block; upstream lookup/refcount/LRU, no separate eviction authority. Active/restored handles are additional |
 | Production logical-session identities | 16 retained logical conversations, one native-active generation; 600-second nonbusy idle retirement (30-second sweep). 4096 non-reusable lifetimes/process and 65536 reserved application correlations/session; exhaustion fails closed |
 | Singleton | **8192 total / 768 output**, 1 MiB body; its specialized limits remain unchanged |
 
@@ -164,7 +164,11 @@ by mutating an admitted runtime package. See operations for Browser launch and t
 ## Completion and unsupported scope
 
 Ordinary MTP's paired restore and Scheduler/P5 settlement boundaries are closed for
-the supported path. **General-runtime production release remains incomplete**.
+the supported path. **READY_FOR_SCOPED_RELEASE** for the declared single-operator
+local / explicitly trusted-private-LAN runtime, assessed at implementation
+`79e96fdd3d12165caf40a885ef3773a768efbcda`; see the
+[release assessment](runtime-completeness.md#general-local-runtime-release-assessment).
+No broader scope or package promotion follows from that decision.
 **Separate-machine trusted-LAN acceptance PASS**: the
 [Windows-to-Mac evidence](remote-lan-windows-acceptance.md) records real LAN
 health/models, ordinary Chat JSON/SSE and Mac operator correlation.

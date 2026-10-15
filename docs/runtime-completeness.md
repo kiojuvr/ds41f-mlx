@@ -1,6 +1,111 @@
-# DeepSeek-V4.1-Flash runtime closure and local default decision
+# DeepSeek-V4.1-Flash runtime closure and release boundary
 
-## Decision
+## General local runtime release assessment
+
+**READY_FOR_SCOPED_RELEASE** at implementation commit
+`79e96fdd3d12165caf40a885ef3773a768efbcda`, assessed from a clean worktree.
+No concrete blocker remains for the declared single-operator local / explicitly
+trusted-private-LAN runtime. This supersedes earlier statements that the general
+runtime boundary still awaited assessment; it does not approve Internet or
+multi-user service, publish a package, or renew historical qualification.
+
+### Scope and findings
+
+- **Supported execution:** official DeepSeek-V4.1-Flash on the admitted Apple
+  M3 Ultra/512 GB, macOS 26/Python 3.13 host contract; ordinary `mtp-serving-v1`
+  default and separately installed, explicitly selected `standard-off` fallback.
+  Native GLM is the local distribution default; portable is explicitly provisioned.
+  Failure never selects another distribution or serving profile.
+- **API and clients:** ordinary Chat Completions JSON/SSE, recipe-owned grammar,
+  tools and response semantics, current generation-policy-v1 controls, independent
+  conversations/edits/branches and optional logical sessions agree with admitted
+  call sites. No known unresolved supported-client defect remains after the Aider
+  omission correction; this is not universal client compatibility.
+- **Capacity and defaults:** canonical effective reasoning owns `xhigh -> high`.
+  Ordinary omitted output is 8192 non-thinking, 65536 low/high, 131072 max;
+  explicit numeric budgets remain authoritative and explicit Auto retains capacity
+  semantics. The 393216 output ceiling is not a default or advance allocation.
+  Actual recipe-expanded prompt plus output must fit the qualified total envelope
+  (text at most 1048576; bounded Vision 8192). Vision callers must choose an
+  output budget that fits; an omitted default is not silently reduced. Health's
+  `chat_defaults.max_tokens="auto"` is the negotiated everyday Browser policy,
+  serialized explicitly, not ordinary API omission semantics
+  ([budget contract](dynamic-capability-budget.md)).
+- **Operation and admission:** `ops` launches isolated installed Python; execution,
+  semantic assets and native identity are exact, host ABI compatibility is separate,
+  and checkout/import overrides and validation bypasses refuse admission. Existing
+  provisioning, model-ready startup, ordinary use, stop/restart and process-conflict
+  evidence covers unchanged owners without requiring a development checkout.
+  Restart starts new in-memory MTP/session authority, not recovery.
+- **Failure and ownership:** one serialized native-active Scheduler, shielded worker
+  mutation and same-ID cancellation/settlement precede paired/logical publication.
+  Immutable complete target/DSpark pairs use one upstream hash/refcount/LRU owner;
+  exact session pins cannot become replay misses. Uncertain native retirement burns
+  reuse and fails the engine; historical-image loss rejects rather than re-encodes.
+  Finite ingress, transport, queue, session and correlation bounds contain failures
+  sufficiently for the trusted single-operator lane, not hostile-network isolation.
+- **Observability:** inspect/admission diagnostics, readiness/fatal health,
+  loopback operator lifecycle/queue/phase/cache/integrity snapshots, bounded logs
+  and shutdown tail provide the supported operator contract. Logs and SSE delivery
+  confer no execution, effect or settlement authority. OFF retains its documented
+  lazy-ready/less-detailed telemetry, not MTP's full request projection.
+
+The capability table's old four-pair statement was stale: production explicitly
+constructs `ProductionSessions.MAX_LIVE + 2` slots, **18 complete retained pairs**,
+plus the reserved null block. Session pins and ordinary reuse share these slots;
+active/restored handles are additional. The current capability table is corrected
+rather than treating the helper's four-pair default as production policy. This is
+an authority correction to existing bounded behavior, not new cache/resource work.
+The profile table also now reflects the already-published native OFF default,
+consistent with operations/admission and its retained publication acceptance.
+
+### Evidence reused and focused checks
+
+The [stable baseline](../release/stable-e8c719c/baseline.json) already reconciles
+installed native/portable admission and refusal, real MTP/OFF execution,
+reasoning/cancellation, session/operator/client evidence and exact assets.
+Production deltas since its runtime source are limited to the qualified
+[shared sampling transfer](shared-sampling-transfer.md) and
+[ordinary output correction](ordinary-output-budget-acceptance.json). Their
+installed affected-boundary acceptances close those deltas; physical execution,
+state/resource owners, dependencies and semantic assets are unchanged.
+
+Retained [session acceptance](production-sessions-acceptance.json),
+[Vision acceptance](mtp-vision-integration.md#delta-evidence),
+[long-text qualification](very-long-context-production-qualification.md),
+[OFF native publication](standard-off-native-publication.md),
+[operator logs](operator-runtime-log-acceptance.json) and
+[physical Windows LAN acceptance](remote-lan-windows-acceptance.md) retain their
+original scopes. Maximum-workload endurance and arbitrary visual quality are not
+claimed. Aider 0.86.2 streaming chat and nonstreaming `/commit` passed with real
+wire omission and no workaround; that receipt reports no independent remaining
+compatibility issue. Existing OpenCode/Browser acceptance is also source/version
+scoped, not an all-client promise.
+
+New checks were limited to isolated `ops inspect` from `/tmp` for the existing MTP
+and OFF operator environments with the explicit official checkpoint: both PASS,
+both native. MTP identity is
+`7d74372a821a27674ec935545b7ec77f28c50244c5cbbadb2f388b726184a923`,
+matching the output-correction receipt. Every current source-package member
+matches that admitted installed MTP payload. This establishes present installed
+identity/host admission, not another model run. No broad tests, model campaign,
+performance run, rebuild, installation or receipt rewrite was necessary.
+
+### Non-blocking exclusions and next action
+
+Multi-user/Internet/hostile-network security, multi-active batching, distributed
+inference, transparent replay/resume, MTP restart persistence, broader multimodal
+or Vision context, other model families/hosts and maximum-workload SLAs remain
+unsupported/deferred. They are not required by the evaluated scope. External
+Scheduler substrate, BatchGenerator, PagedCache and physical MTP implementation
+ownership causes no demonstrated supported-runtime defect; feasibility transfer
+classifications are maintenance choices, not release gates. No transfer is selected.
+
+**Recommended next task: an explicit scoped release/publication decision using
+this assessment and the existing delivery route, not further runtime development
+or another confidence campaign.** This assessment performs no promotion.
+
+## Prior model-core and local-default decision
 
 **COMPLETE** for the official checkpoint's model/runtime core in the current
 single-operator Apple Silicon lane. **No current default-MTP promotion blocker
@@ -86,7 +191,7 @@ mechanism in the supported lane follows from those upstream changes.
   no claim for Rust's OFF seam, Responses/Messages or arbitrary clients is added.
 - **Resources:** installed exact execution/semantic assets and host ABI/capacity
   admission remain fail closed. Prompt+reserved output, bounded inline images,
-  body limits, four-pair retention, one active native batch and wired lease remain
+  body limits, bounded shared paired retention, one active native batch and wired lease remain
   unchanged. Large output is a termination budget, not advance KV allocation.
 - **Failures:** cancellation shields mutation and settles the same Scheduler ID;
   uncertain retirement burns reuse and fails the engine. Historical-image expiry
