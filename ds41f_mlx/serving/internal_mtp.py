@@ -314,7 +314,7 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
                 max_tokens=self.request_max_tokens(request), sampler=self.make_sampler(policy), session_factory=Factory)
             from omlx.patches.mlx_lm_mtp.batch_generator import _is_greedy
             trace['execution_sampling'] = ('greedy' if _is_greedy(rec.owner._bg._generation_batch) else 'stochastic')
-            trace['sampler_authority'] = 'omlx.utils.sampling.make_sampler'
+            trace['sampler_authority'] = 'ds41f_mlx.sampling.make_sampler'
             trace.update(p5_handoff_s=perf_counter()-handoff_t0,
                          prefill_handoff_s=perf_counter()-t0, prompt_replay=rec.owner.prompt_replay_count,
                          full_cache_repack=app.final_execution.runner.full_cache_repack_count)

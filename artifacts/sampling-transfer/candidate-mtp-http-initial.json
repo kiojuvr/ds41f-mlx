@@ -1,0 +1,1107 @@
+{
+  "status": "PASS",
+  "requests": [
+    {
+      "temperature": 0.0,
+      "repeat": 0,
+      "warmup": true,
+      "body": {
+        "model": "deepseek-v4.1-flash",
+        "reasoning_effort": "none",
+        "temperature": 0.0,
+        "top_p": 0.95,
+        "top_k": 40,
+        "min_p": 0.02,
+        "seed": 713,
+        "max_tokens": 64,
+        "messages": [
+          {
+            "role": "user",
+            "content": "Explain why committed cache frontiers must align. Give four concise points."
+          }
+        ]
+      },
+      "response": {
+        "id": "chatcmpl-d9022e4364f4426cb781184cc529fd78",
+        "object": "chat.completion",
+        "created": 1792036605,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Committed cache frontiers must align because:\n\n1. **Consistency across replicas** \u2014 If different nodes commit different frontiers, they may serve divergent views of the same data, breaking linearizability or snapshot consistency guarantees.\n\n2. **Correct invalidation ordering** \u2014 A cache entry can only be safely committed once all prior"
+            },
+            "logprobs": null,
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 17,
+          "completion_tokens": 64,
+          "total_tokens": 81,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 17
+        }
+      },
+      "elapsed_s": 2.7602627080632374,
+      "settlement": {
+        "request_id": "505e928408f241b7a3ae02e80718e30f",
+        "request_received_at": 1792036605.62168,
+        "request_started_at": 1792036605.62168,
+        "request_started_mono": 586487.56500825,
+        "current_phase": "DONE",
+        "phase_started_at": 1792036608.380718,
+        "phase_started_mono": 586490.3240375,
+        "last_progress_at": 1792036608.380718,
+        "completed_phase_durations": {
+          "received_ms": 0.08700008038431406,
+          "encoding_ms": 0.49241597298532724,
+          "queued_ms": 0.2847500145435333,
+          "cache_lookup_ms": 0.4527090350165963,
+          "suffix_append_ms": 197.62012490537018,
+          "checkpoint_capture_ms": 2.475791028700769,
+          "p5_handoff_ms": 46.50454199872911,
+          "decoding_ms": 2505.3163330303505,
+          "settling_ms": 5.795583943836391
+        },
+        "metrics": {
+          "recipe_convert_s": 9.29159577935934e-05,
+          "recipe_render_s": 6.708083674311638e-06,
+          "recipe_encode_s": 0.0001151250908151269,
+          "request_prepare_s": 0.000505708041600883,
+          "prompt_tokens": 17,
+          "cached_tokens": 0,
+          "remaining_suffix_tokens": 17,
+          "generated": 64,
+          "decode_s": 2.446813707239926,
+          "cache_lookup_s": 2.0707957446575165e-05,
+          "paired_restore_s": 0.0,
+          "prompt_checkpoint_capture_s": 0.0024693749146535993,
+          "suffix_append_s": 0.19761883316095918,
+          "p5_handoff_s": 0.04648441693279892,
+          "prompt_replay": 0,
+          "full_cache_repack": 0,
+          "first_decode_call_s": 0.05770716699771583,
+          "first_native_decode_s": 0.05768679198808968,
+          "total_ttft_s": 0.3056883329991251,
+          "canonical_frontier": 81,
+          "aligned": true,
+          "accepted_drafts": 31,
+          "proposed_drafts": 51
+        },
+        "queue_entered_at": 1792036605.622259,
+        "queue_entered_mono": 586487.565587666,
+        "queue_reason": "scheduler_worker",
+        "first_token_at": 1792036605.927454,
+        "last_token_at": 1792036608.3268962,
+        "finish_reason": "length",
+        "finished_at": 1792036608.3807192,
+        "finished_mono": 586490.324039
+      },
+      "rss_kib": 7760576
+    },
+    {
+      "temperature": 0.0,
+      "repeat": 1,
+      "warmup": false,
+      "body": {
+        "model": "deepseek-v4.1-flash",
+        "reasoning_effort": "none",
+        "temperature": 0.0,
+        "top_p": 0.95,
+        "top_k": 40,
+        "min_p": 0.02,
+        "seed": 713,
+        "max_tokens": 64,
+        "messages": [
+          {
+            "role": "user",
+            "content": "Explain why committed cache frontiers must align. Give four concise points."
+          }
+        ]
+      },
+      "response": {
+        "id": "chatcmpl-becbd46fc6a04faeb39822e5219df203",
+        "object": "chat.completion",
+        "created": 1792036608,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Committed cache frontiers must align because:\n\n1. **Consistency across replicas** \u2014 If different nodes commit different frontiers, they may serve divergent views of the same data, breaking linearizability or snapshot consistency guarantees.\n\n2. **Correct invalidation ordering** \u2014 A cache entry can only be safely committed once all prior"
+            },
+            "logprobs": null,
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 17,
+          "completion_tokens": 64,
+          "total_tokens": 81,
+          "prompt_tokens_details": {
+            "cached_tokens": 15
+          },
+          "prompt_cache_hit_tokens": 15,
+          "prompt_cache_miss_tokens": 2
+        }
+      },
+      "elapsed_s": 2.6060252499300987,
+      "settlement": {
+        "request_id": "d150a296a7224c6c87cef397348ec7f2",
+        "request_received_at": 1792036608.39093,
+        "request_started_at": 1792036608.39093,
+        "request_started_mono": 586490.334250166,
+        "current_phase": "DONE",
+        "phase_started_at": 1792036610.9953432,
+        "phase_started_mono": 586492.938654416,
+        "last_progress_at": 1792036610.9953432,
+        "completed_phase_durations": {
+          "received_ms": 0.1489170826971531,
+          "encoding_ms": 0.4302079323679209,
+          "queued_ms": 0.28820906300097704,
+          "cache_lookup_ms": 0.4099160432815552,
+          "restoring_ms": 1.40766694676131,
+          "suffix_append_ms": 51.9722510362044,
+          "checkpoint_capture_ms": 0.9146659867838025,
+          "p5_handoff_ms": 46.247457969002426,
+          "decoding_ms": 2497.4007919663563,
+          "settling_ms": 5.184166016988456
+        },
+        "metrics": {
+          "recipe_convert_s": 9.091699030250311e-05,
+          "recipe_render_s": 7.750000804662704e-06,
+          "recipe_encode_s": 5.870801396667957e-05,
+          "request_prepare_s": 0.0004467919934540987,
+          "prompt_tokens": 17,
+          "cached_tokens": 15,
+          "remaining_suffix_tokens": 2,
+          "generated": 64,
+          "decode_s": 2.4388975442852825,
+          "cache_lookup_s": 2.5290995836257935e-05,
+          "paired_restore_s": 0.0014053339837118983,
+          "prompt_checkpoint_capture_s": 0.0009132910054177046,
+          "suffix_append_s": 0.05196741793770343,
+          "p5_handoff_s": 0.04622737504541874,
+          "prompt_replay": 0,
+          "full_cache_repack": 0,
+          "first_decode_call_s": 0.05791029194369912,
+          "first_native_decode_s": 0.0578920419793576,
+          "total_ttft_s": 0.15972391690593213,
+          "canonical_frontier": 81,
+          "aligned": true,
+          "accepted_drafts": 31,
+          "proposed_drafts": 51
+        },
+        "queue_entered_at": 1792036608.39151,
+        "queue_entered_mono": 586490.334829291,
+        "queue_reason": "scheduler_worker",
+        "first_token_at": 1792036608.5507982,
+        "last_token_at": 1792036610.9420412,
+        "finish_reason": "length",
+        "finished_at": 1792036610.9953449,
+        "finished_mono": 586492.938656625
+      },
+      "rss_kib": 7761248
+    },
+    {
+      "temperature": 0.0,
+      "repeat": 2,
+      "warmup": false,
+      "body": {
+        "model": "deepseek-v4.1-flash",
+        "reasoning_effort": "none",
+        "temperature": 0.0,
+        "top_p": 0.95,
+        "top_k": 40,
+        "min_p": 0.02,
+        "seed": 713,
+        "max_tokens": 64,
+        "messages": [
+          {
+            "role": "user",
+            "content": "Explain why committed cache frontiers must align. Give four concise points."
+          }
+        ]
+      },
+      "response": {
+        "id": "chatcmpl-1ad3837f20f7404199a744795a740462",
+        "object": "chat.completion",
+        "created": 1792036611,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Committed cache frontiers must align because:\n\n1. **Consistency across replicas** \u2014 If different nodes commit different frontiers, they may serve divergent views of the same data, breaking linearizability or snapshot consistency guarantees.\n\n2. **Correct invalidation ordering** \u2014 A cache entry can only be safely committed once all prior"
+            },
+            "logprobs": null,
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 17,
+          "completion_tokens": 64,
+          "total_tokens": 81,
+          "prompt_tokens_details": {
+            "cached_tokens": 15
+          },
+          "prompt_cache_hit_tokens": 15,
+          "prompt_cache_miss_tokens": 2
+        }
+      },
+      "elapsed_s": 2.6549055409850553,
+      "settlement": {
+        "request_id": "1c2dc04b4a404879a4b13e27b6e74460",
+        "request_received_at": 1792036611.004201,
+        "request_started_at": 1792036611.004201,
+        "request_started_mono": 586492.947512625,
+        "current_phase": "DONE",
+        "phase_started_at": 1792036613.605257,
+        "phase_started_mono": 586495.548560208,
+        "last_progress_at": 1792036613.605257,
+        "completed_phase_durations": {
+          "received_ms": 0.1413749996572733,
+          "encoding_ms": 0.4339580191299319,
+          "queued_ms": 0.28729194309562445,
+          "cache_lookup_ms": 0.40237512439489365,
+          "restoring_ms": 1.3647079467773438,
+          "suffix_append_ms": 51.34704092051834,
+          "checkpoint_capture_ms": 0.8156669791787863,
+          "p5_handoff_ms": 46.39833408873528,
+          "decoding_ms": 2494.9182079872116,
+          "settling_ms": 4.938624915666878
+        },
+        "metrics": {
+          "recipe_convert_s": 8.679099846631289e-05,
+          "recipe_render_s": 5.207955837249756e-06,
+          "recipe_encode_s": 5.829194560647011e-05,
+          "request_prepare_s": 0.00045137503184378147,
+          "prompt_tokens": 17,
+          "cached_tokens": 15,
+          "remaining_suffix_tokens": 2,
+          "generated": 64,
+          "decode_s": 2.436608957592398,
+          "cache_lookup_s": 2.8125010430812836e-05,
+          "paired_restore_s": 0.0013625830179080367,
+          "prompt_checkpoint_capture_s": 0.0008143340237438679,
+          "suffix_append_s": 0.05134304100647569,
+          "p5_handoff_s": 0.04638029111083597,
+          "prompt_replay": 0,
+          "full_cache_repack": 0,
+          "first_decode_call_s": 0.05780066701117903,
+          "first_native_decode_s": 0.05778266699053347,
+          "total_ttft_s": 0.15899129095487297,
+          "canonical_frontier": 81,
+          "aligned": true,
+          "accepted_drafts": 31,
+          "proposed_drafts": 51
+        },
+        "queue_entered_at": 1792036611.004776,
+        "queue_entered_mono": 586492.948087958,
+        "queue_reason": "scheduler_worker",
+        "first_token_at": 1792036611.163327,
+        "last_token_at": 1792036613.5521338,
+        "finish_reason": "length",
+        "finished_at": 1792036613.605258,
+        "finished_mono": 586495.548561916
+      },
+      "rss_kib": 7761792
+    },
+    {
+      "temperature": 0.0,
+      "repeat": 3,
+      "warmup": false,
+      "body": {
+        "model": "deepseek-v4.1-flash",
+        "reasoning_effort": "none",
+        "temperature": 0.0,
+        "top_p": 0.95,
+        "top_k": 40,
+        "min_p": 0.02,
+        "seed": 713,
+        "max_tokens": 64,
+        "messages": [
+          {
+            "role": "user",
+            "content": "Explain why committed cache frontiers must align. Give four concise points."
+          }
+        ]
+      },
+      "response": {
+        "id": "chatcmpl-d0c2ceda3adc4708bba8a45510dab55a",
+        "object": "chat.completion",
+        "created": 1792036613,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Committed cache frontiers must align because:\n\n1. **Consistency across replicas** \u2014 If different nodes commit different frontiers, they may serve divergent views of the same data, breaking linearizability or snapshot consistency guarantees.\n\n2. **Correct invalidation ordering** \u2014 A cache entry can only be safely committed once all prior"
+            },
+            "logprobs": null,
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 17,
+          "completion_tokens": 64,
+          "total_tokens": 81,
+          "prompt_tokens_details": {
+            "cached_tokens": 15
+          },
+          "prompt_cache_hit_tokens": 15,
+          "prompt_cache_miss_tokens": 2
+        }
+      },
+      "elapsed_s": 2.6639286659192294,
+      "settlement": {
+        "request_id": "df4510c612dd43a1a25ee482436f557c",
+        "request_received_at": 1792036613.665874,
+        "request_started_at": 1792036613.665874,
+        "request_started_mono": 586495.6091775,
+        "current_phase": "DONE",
+        "phase_started_at": 1792036616.2753751,
+        "phase_started_mono": 586498.218670125,
+        "last_progress_at": 1792036616.2753751,
+        "completed_phase_durations": {
+          "received_ms": 0.1719159772619605,
+          "encoding_ms": 0.5720839835703373,
+          "queued_ms": 0.36708300467580557,
+          "cache_lookup_ms": 0.48629206139594316,
+          "restoring_ms": 1.5309159643948078,
+          "suffix_append_ms": 54.63862605392933,
+          "checkpoint_capture_ms": 0.9862079750746489,
+          "p5_handoff_ms": 47.20274999272078,
+          "decoding_ms": 2498.2280409894884,
+          "settling_ms": 5.30870899092406
+        },
+        "metrics": {
+          "recipe_convert_s": 0.00012287497520446777,
+          "recipe_render_s": 7.041962817311287e-06,
+          "recipe_encode_s": 7.508299313485622e-05,
+          "request_prepare_s": 0.0005932080093771219,
+          "prompt_tokens": 17,
+          "cached_tokens": 15,
+          "remaining_suffix_tokens": 2,
+          "generated": 64,
+          "decode_s": 2.4396184175275266,
+          "cache_lookup_s": 3.5501085221767426e-05,
+          "paired_restore_s": 0.0015283329412341118,
+          "prompt_checkpoint_capture_s": 0.000984625075943768,
+          "suffix_append_s": 0.05463424988556653,
+          "p5_handoff_s": 0.0471828329609707,
+          "prompt_replay": 0,
+          "full_cache_repack": 0,
+          "first_decode_call_s": 0.058309042011387646,
+          "first_native_decode_s": 0.058288667001761496,
+          "total_ttft_s": 0.164242957951501,
+          "canonical_frontier": 81,
+          "aligned": true,
+          "accepted_drafts": 31,
+          "proposed_drafts": 51
+        },
+        "queue_entered_at": 1792036613.666618,
+        "queue_entered_mono": 586495.6099215,
+        "queue_reason": "scheduler_worker",
+        "first_token_at": 1792036613.8302798,
+        "last_token_at": 1792036616.222037,
+        "finish_reason": "length",
+        "finished_at": 1792036616.275376,
+        "finished_mono": 586498.218671833
+      },
+      "rss_kib": 7761888
+    },
+    {
+      "temperature": 1.0,
+      "repeat": 0,
+      "warmup": true,
+      "body": {
+        "model": "deepseek-v4.1-flash",
+        "reasoning_effort": "none",
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "top_k": 40,
+        "min_p": 0.02,
+        "seed": 713,
+        "max_tokens": 64,
+        "messages": [
+          {
+            "role": "user",
+            "content": "Explain why committed cache frontiers must align. Give four concise points."
+          }
+        ]
+      },
+      "response": {
+        "id": "chatcmpl-16105ae0b52b43f5a626deca8812be73",
+        "object": "chat.completion",
+        "created": 1792036616,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Committed cache frontiers must align because:\n\n1. **Coherence guarantees require a single ordering point** \u2014 If different components commit at different frontiers, they may observe conflicting versions of the same data, breaking cache coherence.\n\n2. **Rollback and recovery correctness** \u2014 A consistent recovery point demands that all caches agree on"
+            },
+            "logprobs": null,
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 17,
+          "completion_tokens": 64,
+          "total_tokens": 81,
+          "prompt_tokens_details": {
+            "cached_tokens": 15
+          },
+          "prompt_cache_hit_tokens": 15,
+          "prompt_cache_miss_tokens": 2
+        }
+      },
+      "elapsed_s": 2.8603318330133334,
+      "settlement": {
+        "request_id": "7aaa848399de46ecaa2e5781ba5280d9",
+        "request_received_at": 1792036616.341831,
+        "request_started_at": 1792036616.341831,
+        "request_started_mono": 586498.285126041,
+        "current_phase": "DONE",
+        "phase_started_at": 1792036619.200195,
+        "phase_started_mono": 586501.143481208,
+        "last_progress_at": 1792036619.200195,
+        "completed_phase_durations": {
+          "received_ms": 0.17179199494421482,
+          "encoding_ms": 0.6832079961895943,
+          "queued_ms": 0.4385419888421893,
+          "cache_lookup_ms": 0.69883291143924,
+          "restoring_ms": 2.114917035214603,
+          "suffix_append_ms": 59.583417139947414,
+          "checkpoint_capture_ms": 1.0889999102801085,
+          "p5_handoff_ms": 47.42437496315688,
+          "decoding_ms": 2740.491040982306,
+          "settling_ms": 5.660042050294578
+        },
+        "metrics": {
+          "recipe_convert_s": 0.00012808304745703936,
+          "recipe_render_s": 7.583992555737495e-06,
+          "recipe_encode_s": 9.450002107769251e-05,
+          "request_prepare_s": 0.0007042499491944909,
+          "prompt_tokens": 17,
+          "cached_tokens": 15,
+          "remaining_suffix_tokens": 2,
+          "generated": 64,
+          "decode_s": 2.681940043810755,
+          "cache_lookup_s": 4.7666020691394806e-05,
+          "paired_restore_s": 0.002112208981998265,
+          "prompt_checkpoint_capture_s": 0.0010872080456465483,
+          "suffix_append_s": 0.05957741697784513,
+          "p5_handoff_s": 0.04740358400158584,
+          "prompt_replay": 0,
+          "full_cache_repack": 0,
+          "first_decode_call_s": 0.06008295901119709,
+          "first_native_decode_s": 0.06006399996113032,
+          "total_ttft_s": 0.17226612498052418,
+          "canonical_frontier": 81,
+          "aligned": true,
+          "accepted_drafts": 28,
+          "proposed_drafts": 50
+        },
+        "queue_entered_at": 1792036616.342686,
+        "queue_entered_mono": 586498.285981041,
+        "queue_reason": "scheduler_worker",
+        "first_token_at": 1792036616.5142589,
+        "last_token_at": 1792036619.1464489,
+        "finish_reason": "length",
+        "finished_at": 1792036619.2001972,
+        "finished_mono": 586501.143483041
+      },
+      "rss_kib": 7871936
+    },
+    {
+      "temperature": 1.0,
+      "repeat": 1,
+      "warmup": false,
+      "body": {
+        "model": "deepseek-v4.1-flash",
+        "reasoning_effort": "none",
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "top_k": 40,
+        "min_p": 0.02,
+        "seed": 713,
+        "max_tokens": 64,
+        "messages": [
+          {
+            "role": "user",
+            "content": "Explain why committed cache frontiers must align. Give four concise points."
+          }
+        ]
+      },
+      "response": {
+        "id": "chatcmpl-952f5e99767c4e0490acc5b486b28b14",
+        "object": "chat.completion",
+        "created": 1792036619,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Committed cache frontiers must align because:\n\n1. **Coherence guarantees require a single ordering point** \u2014 If different components commit at different frontiers, they may observe conflicting versions of the same data, breaking cache coherence.\n\n2. **Rollback and recovery correctness** \u2014 A consistent recovery point demands that all caches agree on"
+            },
+            "logprobs": null,
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 17,
+          "completion_tokens": 64,
+          "total_tokens": 81,
+          "prompt_tokens_details": {
+            "cached_tokens": 15
+          },
+          "prompt_cache_hit_tokens": 15,
+          "prompt_cache_miss_tokens": 2
+        }
+      },
+      "elapsed_s": 2.84688487497624,
+      "settlement": {
+        "request_id": "927eb1826bd949829b3562c3f9cc57d6",
+        "request_received_at": 1792036619.20957,
+        "request_started_at": 1792036619.20957,
+        "request_started_mono": 586501.152856625,
+        "current_phase": "DONE",
+        "phase_started_at": 1792036622.054858,
+        "phase_started_mono": 586503.99813525,
+        "last_progress_at": 1792036622.054858,
+        "completed_phase_durations": {
+          "received_ms": 0.1421249471604824,
+          "encoding_ms": 0.4527909914031625,
+          "queued_ms": 0.31625002156943083,
+          "cache_lookup_ms": 0.41716801933944225,
+          "restoring_ms": 1.3771660160273314,
+          "suffix_append_ms": 52.29483195580542,
+          "checkpoint_capture_ms": 0.8468340383842587,
+          "p5_handoff_ms": 46.73824994824827,
+          "decoding_ms": 2736.86699999962,
+          "settling_ms": 5.826208973303437
+        },
+        "metrics": {
+          "recipe_convert_s": 9.487499482929707e-05,
+          "recipe_render_s": 7.333001121878624e-06,
+          "recipe_encode_s": 6.408290937542915e-05,
+          "request_prepare_s": 0.000469875056296587,
+          "prompt_tokens": 17,
+          "cached_tokens": 15,
+          "remaining_suffix_tokens": 2,
+          "generated": 64,
+          "decode_s": 2.6782607873901725,
+          "cache_lookup_s": 2.9333052225410938e-05,
+          "paired_restore_s": 0.0013748339843004942,
+          "prompt_checkpoint_capture_s": 0.0008455000352114439,
+          "suffix_append_s": 0.05229062493890524,
+          "p5_handoff_s": 0.04671658296138048,
+          "prompt_replay": 0,
+          "full_cache_repack": 0,
+          "first_decode_call_s": 0.05994900001678616,
+          "first_native_decode_s": 0.059929874958470464,
+          "total_ttft_s": 0.16253175004385412,
+          "canonical_frontier": 81,
+          "aligned": true,
+          "accepted_drafts": 28,
+          "proposed_drafts": 50
+        },
+        "queue_entered_at": 1792036619.210165,
+        "queue_entered_mono": 586501.153451541,
+        "queue_reason": "scheduler_worker",
+        "first_token_at": 1792036619.372267,
+        "last_token_at": 1792036622.00108,
+        "finish_reason": "length",
+        "finished_at": 1792036622.05486,
+        "finished_mono": 586503.998137083
+      },
+      "rss_kib": 7872224
+    },
+    {
+      "temperature": 1.0,
+      "repeat": 2,
+      "warmup": false,
+      "body": {
+        "model": "deepseek-v4.1-flash",
+        "reasoning_effort": "none",
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "top_k": 40,
+        "min_p": 0.02,
+        "seed": 713,
+        "max_tokens": 64,
+        "messages": [
+          {
+            "role": "user",
+            "content": "Explain why committed cache frontiers must align. Give four concise points."
+          }
+        ]
+      },
+      "response": {
+        "id": "chatcmpl-0c68e70018604081878f24304429d2f1",
+        "object": "chat.completion",
+        "created": 1792036622,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Committed cache frontiers must align because:\n\n1. **Coherence guarantees require a single ordering point** \u2014 If different components commit at different frontiers, they may observe conflicting versions of the same data, breaking cache coherence.\n\n2. **Rollback and recovery correctness** \u2014 A consistent recovery point demands that all caches agree on"
+            },
+            "logprobs": null,
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 17,
+          "completion_tokens": 64,
+          "total_tokens": 81,
+          "prompt_tokens_details": {
+            "cached_tokens": 15
+          },
+          "prompt_cache_hit_tokens": 15,
+          "prompt_cache_miss_tokens": 2
+        }
+      },
+      "elapsed_s": 2.848637792048976,
+      "settlement": {
+        "request_id": "9c53bea6e26e411ab838864ab4616f5c",
+        "request_received_at": 1792036622.062552,
+        "request_started_at": 1792036622.062552,
+        "request_started_mono": 586504.005829666,
+        "current_phase": "DONE",
+        "phase_started_at": 1792036624.909645,
+        "phase_started_mono": 586506.852913458,
+        "last_progress_at": 1792036624.909645,
+        "completed_phase_durations": {
+          "received_ms": 0.13820896856486797,
+          "encoding_ms": 0.4327909555286169,
+          "queued_ms": 0.29025005642324686,
+          "cache_lookup_ms": 0.4262079019099474,
+          "restoring_ms": 1.356417080387473,
+          "suffix_append_ms": 51.10075103584677,
+          "checkpoint_capture_ms": 0.8415409829467535,
+          "p5_handoff_ms": 46.89004202373326,
+          "decoding_ms": 2740.0904579553753,
+          "settling_ms": 5.517125013284385
+        },
+        "metrics": {
+          "recipe_convert_s": 9.012501686811447e-05,
+          "recipe_render_s": 4.917033948004246e-06,
+          "recipe_encode_s": 6.02079089730978e-05,
+          "request_prepare_s": 0.0004492909647524357,
+          "prompt_tokens": 17,
+          "cached_tokens": 15,
+          "remaining_suffix_tokens": 2,
+          "generated": 64,
+          "decode_s": 2.6818362104240805,
+          "cache_lookup_s": 2.820801455527544e-05,
+          "paired_restore_s": 0.0013540840009227395,
+          "prompt_checkpoint_capture_s": 0.0008400420192629099,
+          "suffix_append_s": 0.05109554098453373,
+          "p5_handoff_s": 0.04686962498817593,
+          "prompt_replay": 0,
+          "full_cache_repack": 0,
+          "first_decode_call_s": 0.059874042053706944,
+          "first_native_decode_s": 0.05982079193927348,
+          "total_ttft_s": 0.16135695797856897,
+          "canonical_frontier": 81,
+          "aligned": true,
+          "accepted_drafts": 28,
+          "proposed_drafts": 50
+        },
+        "queue_entered_at": 1792036622.063123,
+        "queue_entered_mono": 586504.006400666,
+        "queue_reason": "scheduler_worker",
+        "first_token_at": 1792036622.224043,
+        "last_token_at": 1792036624.856384,
+        "finish_reason": "length",
+        "finished_at": 1792036624.909646,
+        "finished_mono": 586506.852915041
+      },
+      "rss_kib": 7872384
+    },
+    {
+      "temperature": 1.0,
+      "repeat": 3,
+      "warmup": false,
+      "body": {
+        "model": "deepseek-v4.1-flash",
+        "reasoning_effort": "none",
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "top_k": 40,
+        "min_p": 0.02,
+        "seed": 713,
+        "max_tokens": 64,
+        "messages": [
+          {
+            "role": "user",
+            "content": "Explain why committed cache frontiers must align. Give four concise points."
+          }
+        ]
+      },
+      "response": {
+        "id": "chatcmpl-e27a82d5c23c4907a70c5528166c34f4",
+        "object": "chat.completion",
+        "created": 1792036624,
+        "model": "deepseek-v4.1-flash",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Committed cache frontiers must align because:\n\n1. **Coherence guarantees require a single ordering point** \u2014 If different components commit at different frontiers, they may observe conflicting versions of the same data, breaking cache coherence.\n\n2. **Rollback and recovery correctness** \u2014 A consistent recovery point demands that all caches agree on"
+            },
+            "logprobs": null,
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 17,
+          "completion_tokens": 64,
+          "total_tokens": 81,
+          "prompt_tokens_details": {
+            "cached_tokens": 15
+          },
+          "prompt_cache_hit_tokens": 15,
+          "prompt_cache_miss_tokens": 2
+        }
+      },
+      "elapsed_s": 2.851329957949929,
+      "settlement": {
+        "request_id": "c8e56b4ef7ba4403b8923262387a8d76",
+        "request_received_at": 1792036624.918129,
+        "request_started_at": 1792036624.918129,
+        "request_started_mono": 586506.86139725,
+        "current_phase": "DONE",
+        "phase_started_at": 1792036627.767891,
+        "phase_started_mono": 586509.711150958,
+        "last_progress_at": 1792036627.767891,
+        "completed_phase_durations": {
+          "received_ms": 0.14991604257375002,
+          "encoding_ms": 0.4385419888421893,
+          "queued_ms": 0.2959170378744602,
+          "cache_lookup_ms": 0.41370897088199854,
+          "restoring_ms": 1.267540967091918,
+          "suffix_append_ms": 51.91516689956188,
+          "checkpoint_capture_ms": 0.8655830752104521,
+          "p5_handoff_ms": 46.90358298830688,
+          "decoding_ms": 2741.862833034247,
+          "settling_ms": 5.640916991978884
+        },
+        "metrics": {
+          "recipe_convert_s": 9.912496898323298e-05,
+          "recipe_render_s": 5.00003807246685e-06,
+          "recipe_encode_s": 5.708297248929739e-05,
+          "request_prepare_s": 0.00045479205437004566,
+          "prompt_tokens": 17,
+          "cached_tokens": 15,
+          "remaining_suffix_tokens": 2,
+          "generated": 64,
+          "decode_s": 2.683239667559974,
+          "cache_lookup_s": 2.716702874749899e-05,
+          "paired_restore_s": 0.0012655409518629313,
+          "prompt_checkpoint_capture_s": 0.0008642500033602118,
+          "suffix_append_s": 0.051910209003835917,
+          "p5_handoff_s": 0.04688333300873637,
+          "prompt_replay": 0,
+          "full_cache_repack": 0,
+          "first_decode_call_s": 0.05987670796457678,
+          "first_native_decode_s": 0.059855083003640175,
+          "total_ttft_s": 0.16211870801635087,
+          "canonical_frontier": 81,
+          "aligned": true,
+          "accepted_drafts": 28,
+          "proposed_drafts": 50
+        },
+        "queue_entered_at": 1792036624.918717,
+        "queue_entered_mono": 586506.861985708,
+        "queue_reason": "scheduler_worker",
+        "first_token_at": 1792036625.080391,
+        "last_token_at": 1792036627.714304,
+        "finish_reason": "length",
+        "finished_at": 1792036627.767893,
+        "finished_mono": 586509.711152833
+      },
+      "rss_kib": 7872720
+    }
+  ],
+  "health": {
+    "status": "ready",
+    "profile": "mtp-serving-v1",
+    "process_alive": true,
+    "model_ready": true,
+    "fatal_error": null,
+    "generation_policy": {
+      "version": "generation-policy-v1",
+      "qualification": "real-model-qualified",
+      "execution_profiles": [
+        "standard-off",
+        "mtp-serving-v1"
+      ],
+      "sampler_authority": "ds41f_mlx.sampling.make_sampler",
+      "defaults": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "top_k": 0,
+        "min_p": 0.0,
+        "repetition_penalty": 1.0,
+        "presence_penalty": 0.0,
+        "frequency_penalty": 0.0,
+        "seed": null
+      },
+      "scope": "request",
+      "parameters": {
+        "temperature": {
+          "minimum": 0,
+          "maximum": 2
+        },
+        "top_p": {
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        },
+        "top_k": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 129279
+        },
+        "min_p": {
+          "minimum": 0,
+          "maximum": 1
+        },
+        "repetition_penalty": {
+          "exclusiveMinimum": 0,
+          "context_tokens": 20
+        },
+        "presence_penalty": {
+          "minimum": -2,
+          "maximum": 2,
+          "context_tokens": 20
+        },
+        "frequency_penalty": {
+          "minimum": -2,
+          "maximum": 2,
+          "context_tokens": 20
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295,
+          "semantics": "best-effort"
+        }
+      },
+      "reasoning": {
+        "authority": "deepseek-recipe",
+        "scope": "session",
+        "stateless_scope": "request",
+        "default_thinking_mode": false,
+        "default_reasoning_effort": "none",
+        "efforts": [
+          "none",
+          "low",
+          "high",
+          "xhigh",
+          "max"
+        ],
+        "change": "reject",
+        "thinking_budget_tokens": false
+      }
+    },
+    "chat_defaults": {
+      "temperature": 1.0,
+      "top_p": 0.95,
+      "top_k": 0,
+      "min_p": 0.0,
+      "repetition_penalty": 1.0,
+      "presence_penalty": 0.0,
+      "frequency_penalty": 0.0,
+      "seed": null,
+      "reasoning_effort": "none",
+      "max_tokens": "auto"
+    },
+    "dependency_identity": "d4bd5c595b522769ab9d4aa22711349ab69f2497204c30c4ab5dd7f717c2fb66",
+    "glm_profile": "native",
+    "queued_requests": 0,
+    "active_requests": 0,
+    "prefix_cache": {
+      "hits": 7,
+      "misses": 10,
+      "evictions": 0,
+      "total_blocks": 19,
+      "allocated_blocks": 11,
+      "free_blocks": 8,
+      "shared_blocks": 0,
+      "total_tokens_cached": 2433,
+      "cow_copies": 0,
+      "total_queries": 17,
+      "hit_rate": 0.4117647058823529,
+      "utilization": 0.5789473684210527
+    },
+    "capabilities": {
+      "stateful_chat": "production-sessions-v1",
+      "persist_restore": false,
+      "max_live_sessions": 16,
+      "max_active_generations": 1,
+      "idle_retirement_seconds": 600
+    }
+  },
+  "cancel_settlement": {
+    "request_id": "b202a32f787c445d8ee99e0b6c53f9a5",
+    "request_received_at": 1792036627.777447,
+    "request_started_at": 1792036627.777447,
+    "request_started_mono": 586509.720707083,
+    "current_phase": "DONE",
+    "phase_started_at": 1792036628.181769,
+    "phase_started_mono": 586510.125027166,
+    "last_progress_at": 1792036628.181769,
+    "completed_phase_durations": {
+      "received_ms": 0.1403329661116004,
+      "encoding_ms": 0.48566702753305435,
+      "queued_ms": 0.46716700308024883,
+      "cache_lookup_ms": 0.42924995068460703,
+      "suffix_append_ms": 197.73595815058798,
+      "checkpoint_capture_ms": 3.039957955479622,
+      "p5_handoff_ms": 47.74204199202359,
+      "decoding_ms": 148.5953329829499,
+      "settling_ms": 5.6843749480322
+    },
+    "metrics": {
+      "recipe_convert_s": 9.941705502569675e-05,
+      "recipe_render_s": 5.083042196929455e-06,
+      "recipe_encode_s": 9.454099927097559e-05,
+      "request_prepare_s": 0.0005022080149501562,
+      "prompt_tokens": 17,
+      "cached_tokens": 0,
+      "remaining_suffix_tokens": 17,
+      "generated": 3,
+      "decode_s": 0.1477643329417333,
+      "cache_lookup_s": 2.1707965061068535e-05,
+      "paired_restore_s": 0.0,
+      "prompt_checkpoint_capture_s": 0.003031708998605609,
+      "suffix_append_s": 0.19773695792537183,
+      "p5_handoff_s": 0.047716874978505075,
+      "prompt_replay": 0,
+      "full_cache_repack": 0,
+      "first_decode_call_s": 0.06048320804256946,
+      "first_native_decode_s": 0.060462916968390346,
+      "total_ttft_s": 0.3105396250030026,
+      "canonical_frontier": 20,
+      "aligned": true,
+      "accepted_drafts": 1,
+      "proposed_drafts": 2
+    },
+    "queue_entered_at": 1792036627.778073,
+    "queue_entered_mono": 586509.721333083,
+    "queue_reason": "scheduler_worker",
+    "first_token_at": 1792036628.0881221,
+    "last_token_at": 1792036628.175871,
+    "finish_reason": "abort",
+    "finished_at": 1792036628.18177,
+    "finished_mono": 586510.12502875
+  },
+  "recovery": {
+    "id": "chatcmpl-158f614e3f7b4aa489f32b33a471d1a0",
+    "object": "chat.completion",
+    "created": 1792036629,
+    "model": "deepseek-v4.1-flash",
+    "system_fingerprint": null,
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "RECOVERY_OK"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 12,
+      "completion_tokens": 4,
+      "total_tokens": 16,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 12
+    }
+  },
+  "recovery_settlement": {
+    "request_id": "49f3e0ad53464002a3a0a06c0fba67ba",
+    "request_received_at": 1792036629.21964,
+    "request_started_at": 1792036629.21964,
+    "request_started_mono": 586511.162895875,
+    "current_phase": "DONE",
+    "phase_started_at": 1792036629.655951,
+    "phase_started_mono": 586511.599205208,
+    "last_progress_at": 1792036629.655951,
+    "completed_phase_durations": {
+      "received_ms": 0.7639159448444843,
+      "encoding_ms": 2.124416991136968,
+      "queued_ms": 0.8493330096825957,
+      "cache_lookup_ms": 2.235625055618584,
+      "suffix_append_ms": 187.83216690644622,
+      "checkpoint_capture_ms": 3.2730000093579292,
+      "p5_handoff_ms": 48.27033297624439,
+      "decoding_ms": 186.18266703560948,
+      "settling_ms": 4.77787503041327
+    },
+    "metrics": {
+      "recipe_convert_s": 0.0004038750194013119,
+      "recipe_render_s": 2.4708104319870472e-05,
+      "recipe_encode_s": 0.0003095419378951192,
+      "request_prepare_s": 0.0022140839137136936,
+      "prompt_tokens": 12,
+      "cached_tokens": 0,
+      "remaining_suffix_tokens": 12,
+      "generated": 5,
+      "decode_s": 0.14035233203321695,
+      "cache_lookup_s": 3.412493970245123e-05,
+      "paired_restore_s": 0.0,
+      "prompt_checkpoint_capture_s": 0.003266667015850544,
+      "suffix_append_s": 0.1878265410196036,
+      "p5_handoff_s": 0.048246624995954335,
+      "prompt_replay": 0,
+      "full_cache_repack": 0,
+      "first_decode_call_s": 0.05629783298354596,
+      "first_native_decode_s": 0.056277666008099914,
+      "total_ttft_s": 0.30111274996306747,
+      "canonical_frontier": 17,
+      "aligned": true,
+      "accepted_drafts": 2,
+      "proposed_drafts": 3
+    },
+    "queue_entered_at": 1792036629.222529,
+    "queue_entered_mono": 586511.165784208,
+    "queue_reason": "scheduler_worker",
+    "first_token_at": 1792036629.5214431,
+    "last_token_at": 1792036629.606139,
+    "finish_reason": "stop",
+    "finished_at": 1792036629.655953,
+    "finished_mono": 586511.599206666
+  }
+}

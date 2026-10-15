@@ -1,4 +1,4 @@
-"""Request policy normalization; sampling mathematics remain upstream-owned."""
+"""Request policy normalization; sampling uses the attributed owned source copy."""
 from dataclasses import asdict, dataclass
 import math
 
@@ -81,7 +81,7 @@ def capability_contract(default_reasoning_effort='none'):
     # Bounded OFF/MTP real-model acceptance; not distributional equivalence.
     return dict(version='generation-policy-v1', qualification='real-model-qualified',
                 execution_profiles=['standard-off', 'mtp-serving-v1'],
-                sampler_authority='omlx.utils.sampling.make_sampler',
+                sampler_authority='ds41f_mlx.sampling.make_sampler',
                 defaults=GenerationPolicy().to_json(), scope='request',
                 parameters=dict(temperature={'minimum': 0, 'maximum': 2},
                     top_p={'exclusiveMinimum': 0, 'maximum': 1},

@@ -119,6 +119,9 @@ identities is compulsory for an ordinary Chat Completions request.
 
 ## Reference and component boundaries
 
+- `ds41f_mlx/sampling.py`: ds41f-maintained, attributed verbatim shared sampling
+  for OFF and MTP; MLX still owns numerical/RNG primitives. See the bounded
+  [ownership-transfer qualification](shared-sampling-transfer.md), not a new stable release.
 - `ds41f_mlx/model_execution/`: first-party OFF model, packed state and SSD Engram.
 - `ds41f_mlx/prefill_fp8_mlx/`: selected dense prefill, append and P5 handoff.
 - `ds41f_mlx/runtime/`: generation/state/resource lifetimes and physical adapters.

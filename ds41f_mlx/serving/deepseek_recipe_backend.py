@@ -253,9 +253,9 @@ class DeepSeekRecipeRuntimeBackend:
         # MTP uses the callable's upstream metadata and sampling-density hooks
         # for greedy detection, acceptance and residual sampling. Stock MLX
         # callables omit that contract and are treated as greedy by oMLX.
-        # Share oMLX's existing implementation with standard-OFF; never attach
-        # guessed metadata or recreate the speculative sampling distribution.
-        sample_utils = importlib.import_module('omlx.utils.sampling')
+        # Share the verbatim, attributed ds41f-owned implementation with OFF;
+        # never recreate the speculative sampling distribution or metadata.
+        sample_utils = importlib.import_module('ds41f_mlx.sampling')
         return sample_utils.make_sampler(temp=temp, top_p=top_p,
                                          top_k=getattr(options, 'top_k', 0),
                                          min_p=getattr(options, 'min_p', 0.0))

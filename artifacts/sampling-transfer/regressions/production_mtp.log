@@ -1,0 +1,156 @@
+........F.....F.......                                                   [100%]
+=================================== FAILURES ===================================
+_____________ test_checkout_is_not_production_execution_authority ______________
+
+    def test_checkout_is_not_production_execution_authority():
+        from ds41f_mlx.execution_identity import inspect_payload
+>       with pytest.raises(ValueError, match='installed ds41f package'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'installed ds41f package'
+E         Actual message: 'mixed/redirected native images'
+
+tests/test_production_mtp.py:188: AssertionError
+_ test_json_delivery_stops_disconnect_probe_even_when_probe_consumes_cancellation _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x12f11a2b0>
+
+    def test_json_delivery_stops_disconnect_probe_even_when_probe_consumes_cancellation(monkeypatch):
+        pytest.importorskip('mlx.core')
+        pytest.importorskip('omlx')
+        import asyncio
+        import sys
+        import time
+        from pathlib import Path
+        from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+        async def run():
+            backend = ProductionMTPBackend(omlx_path=Path(sys.prefix)/'lib/python3.13/site-packages')
+            scheduler = SimpleNamespace(requests={})
+            def enqueue(prepared, tokenizer, rid):
+                scheduler.requests[rid] = True
+            def step():
+                time.sleep(.03)
+                rid = next(iter(scheduler.requests))
+                scheduler.requests.clear()
+                return SimpleNamespace(outputs=[SimpleNamespace(request_id=rid, finished=True, error=None,
+                    recipe_events=(), recipe_response={'choices': []})])
+            scheduler.step = step
+            backend.scheduler = scheduler
+            monkeypatch.setattr(backend, '_enqueue', enqueue)
+            class Probe:
+                async def is_disconnected(self):
+                    try:
+                        await asyncio.sleep(.1)
+                    except asyncio.CancelledError:
+                        pass  # Models Starlette's inner cancelling AnyIO scope.
+                    return False
+            prepared = SimpleNamespace(protocol='chat_completions', image_sources=None, token_ids=[1,2,3],
+                                       stream=False, inference_options=SimpleNamespace(max_tokens=16))
+            try:
+                response = await asyncio.wait_for(backend.ordinary_response(prepared, tokenizer=None, http_request=Probe()), 2)
+                assert response.body == b'{"choices":[]}'
+                assert not backend._deliveries and not backend._settled
+            finally:
+                backend.close()
+>       asyncio.run(run())
+
+tests/test_production_mtp.py:350: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:196: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:119: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py:726: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests/test_production_mtp.py:345: in run
+    response = await asyncio.wait_for(backend.ordinary_response(prepared, tokenizer=None, http_request=Probe()), 2)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py:507: in wait_for
+    return await fut
+           ^^^^^^^^^
+../ds41f-native-candidate-venv/lib/python3.13/site-packages/ds41f_mlx/serving/production_mtp.py:408: in ordinary_response
+    if getattr(prepared, 'multimodal', None) is not None else self.context_tokens)
+                                                              ^^^^^^^^^^^^^^^^^^^
+../ds41f-native-candidate-venv/lib/python3.13/site-packages/ds41f_mlx/serving/production_mtp.py:315: in context_tokens
+    return context_envelope(self.checkpoint)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../ds41f-native-candidate-venv/lib/python3.13/site-packages/ds41f_mlx/serving/capacity.py:30: in context_envelope
+    config = json.loads((checkpoint / 'config.json').read_text())
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py:546: in read_text
+    return PathBase.read_text(self, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_abc.py:632: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/official-checkpoint-must-be-explicitly-configured/config.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/official-checkpoint-must-be-explicitly-configured/config.json'
+
+/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py:537: FileNotFoundError
+=============================== warnings summary ===============================
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[127.0.0.1-127.0.0.1:8000]
+  /Volumes/SDXC-512/ds41f-native-candidate-venv/lib/python3.13/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[127.0.0.1-127.0.0.1:8000]
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[0.0.0.0-192.168.68.56:8000]
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[192.168.68.56-mac-studio.local:8000]
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[::-[fd12::56]:8000]
+  /Volumes/SDXC-512/ds41f-native-candidate-venv/lib/python3.13/site-packages/ds41f_mlx/serving/server.py:230: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event('startup')
+
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[127.0.0.1-127.0.0.1:8000]
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[127.0.0.1-127.0.0.1:8000]
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[0.0.0.0-192.168.68.56:8000]
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[0.0.0.0-192.168.68.56:8000]
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[192.168.68.56-mac-studio.local:8000]
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[192.168.68.56-mac-studio.local:8000]
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[::-[fd12::56]:8000]
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[::-[fd12::56]:8000]
+  /Volumes/SDXC-512/ds41f-native-candidate-venv/lib/python3.13/site-packages/fastapi/applications.py:4744: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    return self.router.on_event(event_type)  # ty: ignore[deprecated]
+
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[127.0.0.1-127.0.0.1:8000]
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[0.0.0.0-192.168.68.56:8000]
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[192.168.68.56-mac-studio.local:8000]
+tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[::-[fd12::56]:8000]
+  /Volumes/SDXC-512/ds41f-native-candidate-venv/lib/python3.13/site-packages/ds41f_mlx/serving/server.py:234: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event('shutdown')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_production_mtp.py::test_checkout_is_not_production_execution_authority
+FAILED tests/test_production_mtp.py::test_json_delivery_stops_disconnect_probe_even_when_probe_consumes_cancellation
+2 failed, 20 passed, 17 warnings in 43.19s
