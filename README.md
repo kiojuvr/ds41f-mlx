@@ -339,9 +339,8 @@ licenses supplied with upstream dependency distributions.
 ## Development and qualification
 
 This repository contains both the runtime and its development/correctness evidence.
-The old generated `ds41f-runtime` environment is unused, not a deployment or a
-separate accepted release history. Source authority, installed admission, reference
-verification and release approval are distinct; historical receipts qualify their
+Source authority, installed admission, reference verification and release approval
+are distinct; historical receipts qualify their
 recorded inputs, not every later checkout.
 
 Checkpoint-free reference checks:
