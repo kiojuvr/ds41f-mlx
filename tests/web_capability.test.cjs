@@ -5,12 +5,12 @@ const vm = require('node:vm');
 const {execFileSync} = require('node:child_process');
 const policy = require('../ds41f_mlx/web_static/policy.js');
 const contract = JSON.parse(execFileSync('.venv/bin/python', ['-c', 'import json; from ds41f_mlx.serving.generation_policy import capability_contract; print(json.dumps(capability_contract()))']));
-const runtime = () => ({status: 'ready', capabilities: {stateful_chat: 'production-sessions-v1'}, generation_policy: structuredClone(contract), chat_defaults: {...contract.defaults, reasoning_effort: 'none', max_tokens: 'auto'}});
+const runtime = () => ({status: 'ready', capabilities: {stateful_chat: 'production-sessions-v1', chat_vision: 'bounded-inline-v1'}, generation_policy: structuredClone(contract), chat_defaults: {...contract.defaults, reasoning_effort: 'none', max_tokens: 'auto'}});
 const source = fs.readFileSync('ds41f_mlx/web_static/app.js', 'utf8');
 function context(r = runtime()) {
   const nodes = {};
   const c = vm.createContext({state: {runtime: r}, GenerationPolicy: policy, $: id => nodes[id] ||= {get value() { return this._value ?? ''; }, set value(v) { this._value = String(v); }}});
-  vm.runInContext(source.slice(source.indexOf('function production()'), source.indexOf('async function createConversation()')), c);
+  vm.runInContext(source.slice(source.indexOf('function negotiate()'), source.indexOf('async function createConversation()')), c);
   vm.runInContext(source.slice(source.indexOf('function settings()'), source.indexOf('async function generate(')), c);
   c.pendingCalls = () => [];
   vm.runInContext(source.slice(source.indexOf('function policyDisplay()'), source.indexOf('function controls(')), c);

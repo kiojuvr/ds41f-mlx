@@ -28,9 +28,11 @@ is best-effort and not a user resource-management duty. IDs are internal diagnos
 not labels or user-managed resources. Generations queue on the single runtime lane.
 
 Enter sends; Shift+Enter inserts newline. IME composition/229 cannot send. The
-composer grows to 190px before internal scrolling. OFF image picker/paste/drop
+composer grows to 190px before internal scrolling. Image picker/paste/drop
 share original-byte preflight/removable previews, without canvas/transcoding.
-Ordinary MTP disables chat image acquisition. PDF upload/drop and retained page
+Controls require READY `chat_vision: bounded-inline-v1`, advertised by ordinary
+MTP and standard-OFF. Requests use the connected runtime, with unchanged image
+bounds and retained-state rejection rules; there is no automatic OFF fallback. PDF upload/drop and retained page
 exploration are separate document operations: see [PDF workflow](pdf-document-workflow.md).
 A page preview does not automatically consume an image slot or run inference.
 

@@ -243,6 +243,7 @@ def test_ordinary_http_recipe_route_has_no_compulsory_public_session(monkeypatch
     try:
         app = create_app(profile='mtp-serving-v1', runtime_config=backend.runtime_config, backend=backend)
         with TestClient(app, base_url=f'http://{authority}') as client:
+            assert client.get('/health').json()['capabilities']['chat_vision'] == 'bounded-inline-v1'
             advertised = client.get('/v1/models')
             assert advertised.status_code == 200
             assert advertised.json()['data'][0]['context_length'] == backend.context_tokens

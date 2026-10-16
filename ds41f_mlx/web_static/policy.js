@@ -23,6 +23,9 @@ const GenerationPolicy = (() => {
     if (parameters.some(name => defaults[name] !== contract.defaults[name]) || defaults.reasoning_effort !== 'none') throw new Error('Generation defaults disagree with runtime authority');
     return validate(contract, defaults);
   }
-  return {parameters, validate, negotiate};
+  function visionAvailable(runtime) {
+    return runtime?.status === 'ready' && runtime.capabilities?.chat_vision === 'bounded-inline-v1';
+  }
+  return {parameters, validate, negotiate, visionAvailable};
 })();
 if (typeof module !== 'undefined') module.exports = GenerationPolicy;

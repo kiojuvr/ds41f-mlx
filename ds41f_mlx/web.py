@@ -23,6 +23,7 @@ from starlette.concurrency import run_in_threadpool
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from anyio import CancelScope
 
+from ds41f_mlx.chat_capability import vision_available
 from ds41f_mlx.web_client import RuntimeClient, RuntimeHTTPError, StatefulToolChatClient
 from ds41f_mlx.web_tools import registry_from_env, ToolError, TOOL_CALL_BYTES, TOOL_RESULT_BYTES, _json_dumps
 
@@ -111,7 +112,7 @@ def create_app(*, runtime_base_url: str | None = None, allow_private_lan: bool =
                 return JSONResponse(status_code=415, content={'error': {'message': 'application/json required'}})
             try:
                 if (await call(runtime.health)).get('profile') == 'mtp-singleton-v1':
-                    return JSONResponse(status_code=400, content={'error': {'message': 'Web application supports standard-OFF only'}})
+                    return JSONResponse(status_code=400, content={'error': {'message': 'Web application requires an ordinary Chat runtime, not singleton qualification'}})
             except RuntimeHTTPError as exc:
                 return JSONResponse(status_code=502, content={'error': {'message': str(exc)}})
         response = await call_next(request)
@@ -143,9 +144,9 @@ def create_app(*, runtime_base_url: str | None = None, allow_private_lan: bool =
                 vision_health = {'status': 'unreachable'}
             documents = dict(architecture='retained-pdf-v1', historical_image_slots_used=0,
                              observation_request='bounded-stateless',
-                             vision_available=vision_health.get('status') == 'ready' and vision_health.get('profile') == 'standard-off',
+                             vision_available=vision_available(vision_health),
                              vision_profile=vision_health.get('profile'),
-                             vision_notice='Scanned/figure observations require an existing standard-OFF Vision runtime. Production text-only limits are unchanged.')
+                             vision_notice='Page observations require ready bounded inline Chat Vision on the selected runtime; no automatic backend fallback.')
         return JSONResponse(content={'runtime': health, 'runtime_base_url': runtime.base_url, 'tools': tools.declarations, 'documents': documents})
 
     @app.post('/api/documents')

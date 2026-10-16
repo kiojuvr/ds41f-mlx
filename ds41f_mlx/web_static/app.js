@@ -64,11 +64,10 @@ function controls(ctx = state) {
   $('status').textContent = state.stop && state.busy ? 'Stopping' : phase || (state.busy ? 'Recovering' : state.session?.record?.state === 'busy' ? 'Generating' : state.session?.problem || state.session?.toolPause === 'error' || state.session?.effects?.state === 'reserved' ? 'Error' : state.runtime?.status === 'ready' ? 'Ready' : ['error', 'unreachable', 'unavailable'].includes(state.runtime?.status) ? 'Error' : 'Recovering');
   const locked = !!state.session?.protocol;
   if (locked) { const effort = state.session.protocol.reasoning; $('thinking').value = effort === 'none' ? 'off' : 'on'; if (effort !== 'none') $('reasoning').value = effort; }
-  const restricted = production();
   const workflowLocked = state.busy || !!state.session?.pending || pendingCalls().length > 0 || !!state.session?.toolAwaitingResponse;
   for (const name of GenerationPolicy.parameters) { if ($('policy_' + name)) $('policy_' + name).disabled = workflowLocked || !state.runtime?.generation_policy; }
   for (const id of ['outputLimit', 'maxTokens', 'resetGeneration']) $(id).disabled = workflowLocked;
-  $('images').disabled ||= restricted;
+  $('images').disabled ||= !GenerationPolicy.visionAvailable(state.runtime);
   $('thinking').disabled = locked || workflowLocked;
   $('reasoning').disabled = locked || workflowLocked || $('thinking').value === 'off';
   $('thinkLabel').textContent = $('thinking').value === 'off' ? 'Think Off' : 'Think ' + $('reasoning').value;
@@ -186,7 +185,6 @@ async function select(id) {
   if (state.session?.generation) applyDefaults(state.session.generation);
   notice(state.notice); preview(); render(); await menus();
 }
-function production() { return state.runtime?.capabilities?.stateful_chat === 'production-sessions-v1'; }
 function negotiate() { return GenerationPolicy.negotiate(state.runtime); }
 function buildPolicyControls() {
   negotiate();
@@ -246,7 +244,7 @@ async function status(ctx = state) {
   for (const item of conversations.values()) item.runtime = result.runtime;
   if (ctx !== state) return;
   $('documentCapability').textContent = result.documents?.vision_available ? 'Retained PDF · isolated page Vision available · no chat image slots used' : 'Retained PDF text/search available. ' + (result.documents?.vision_notice || 'Isolated Vision unavailable.');
-  state.tools = (result.tools || []).filter(tool => tool.function?.name !== 'fetch_pdf' && (!production() || tool.function?.name !== 'fetch_image'));
+  state.tools = (result.tools || []).filter(tool => tool.function?.name !== 'fetch_pdf' && (GenerationPolicy.visionAvailable(state.runtime) || tool.function?.name !== 'fetch_image'));
   buildPolicyControls();
   if (!state.session) applyDefaults(state.policyPreference || negotiate());
   controls();
@@ -497,7 +495,7 @@ async function send() {
     if (pendingCalls().length || s.toolAwaitingResponse) throw new Error('Continue the pending tool response before another user turn');
     const parts = [];
     if (text) parts.push({type: 'text', text});
-    if (ctx.runtime?.capabilities?.stateful_chat === 'production-sessions-v1' && state.attachments.length) throw new Error('Images unsupported by runtime');
+    if (state.attachments.length && !GenerationPolicy.visionAvailable(ctx.runtime)) throw new Error('Connected runtime does not advertise ready bounded inline Chat Vision');
     for (const file of state.attachments) parts.push({type: 'image_url', image_url: {url: file.url}});
     s.generation = settings(); s.workflow = {...s.generation};
     s.toolPause = ''; s.toolError = ''; s.interrupted = false;
@@ -523,7 +521,7 @@ async function attach(files, ctx = state) {
   if (state.busy) return;
   try {
     GenerationPolicy.negotiate(ctx.runtime);
-    if (ctx.runtime?.capabilities?.stateful_chat === 'production-sessions-v1') throw new Error('Images unsupported by runtime');
+    if (!GenerationPolicy.visionAvailable(ctx.runtime)) throw new Error('Connected runtime does not advertise ready bounded inline Chat Vision');
     const historical = (state.session?.messages || []).flatMap(m => Array.isArray(m.content) ? m.content : []).filter(p => p.type === 'image_url').length;
     if (historical + state.attachments.length + files.length > 4) throw new Error('At most four images in the full conversation');
     const additions = [];

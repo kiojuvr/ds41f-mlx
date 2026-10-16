@@ -315,6 +315,7 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
         code = 503 if fatal else 200
         state = {'status': status, 'profile': profile, 'process_alive': True, 'model_ready': ready, 'fatal_error': fatal,
                  'generation_policy': generation_capabilities,
+                 'capabilities': {'chat_vision': 'bounded-inline-v1'},
                  'chat_defaults': dict(generation_capabilities['defaults'], reasoning_effort=runtime_config.default_reasoning_effort, max_tokens='auto')}
         if ordinary_mtp:
             scheduler = getattr(backend, 'scheduler', None)
@@ -324,6 +325,7 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
                          active_requests=0 if scheduler is None else len(scheduler.running),
                          prefix_cache=None if scheduler is None else scheduler.checkpoints.paged.get_stats().to_dict(),
                          capabilities={'stateful_chat': 'production-sessions-v1', 'persist_restore': False,
+                                       'chat_vision': 'bounded-inline-v1',
                                        'max_live_sessions': backend.production_sessions.MAX_LIVE,
                                        'max_active_generations': 1,
                                        'idle_retirement_seconds': backend.production_sessions.IDLE_SECONDS},

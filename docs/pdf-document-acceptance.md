@@ -109,16 +109,18 @@ speculation was not treated as a proven defect. The Chrome collector's initial
 DOM-node/return-by-value wait was fixed in the collector, not by changing the app
 or injecting browser behavior; the final real-browser run passed.
 
-## Validation / current service
+## Historical validation / service at original acceptance
 
 Focused Python tests: **138 passed**. Renderer/platform/policy Node tests:
 **19 passed**. No npm dependencies/build system or new document database was added.
 The existing artifact SQLite store owns derived material; runtime owns sessions.
 
 At acceptance, canonical Chat Server: **http://127.0.0.1:8080**, with the existing qualified
-**standard-OFF** runtime at :8000 for fresh Vision. Production MTP remains text-only;
-use an explicitly available standard-OFF endpoint for new page observations when
-main chat runs production. No release default/profile promotion is claimed.
+**standard-OFF** runtime at :8000 for fresh Vision. The original application
+routing treated production MTP as text-only and required OFF page observations.
+That routing is historical: the current [PDF workflow](pdf-document-workflow.md)
+uses isolated stateless ordinary MTP Vision by default when advertised. These
+original receipts are not evidence for that later integration.
 
 Full local receipts: `artifacts/pdf-documents/{text,mtp-cancel,scan,transient,tool-stop,acquire,browser}.json`,
 `off-execution.jsonl`, `opencode-review.jsonl`. Runtime/source bytes, policy, canonical

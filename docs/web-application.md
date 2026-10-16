@@ -75,10 +75,13 @@ returns unavailable results; it must not repeat the effect. This remains local
 living-client safety, not distributed/crash-safe exactly-once execution.
 
 Tool Auto/Ask/Off, 128-round breaker, complete-request budget fitting, retained PDF
-source/derived-observation distinctions and isolated OFF page Vision remain intact.
-Main MTP Chat image acquisition and native persistence remain unsupported. Existing
-OFF API artifact support is not a persistent Browser product; Web UI Save/Restore
-and archive controls have been removed. Original-byte OFF image authority remains.
+source/derived-observation distinctions and isolated stateless page Vision remain
+intact. Browser image acquisition and PDF observation use the connected runtime's
+advertised bounded Chat Vision, including ordinary MTP; no separate OFF endpoint
+or fallback is required. See [application Vision integration](web-mtp-vision-integration.md).
+Native MTP persistence remains unsupported. Existing OFF API artifact support is
+not a persistent Browser product; Web UI Save/Restore and archive controls have
+been removed. Original-byte image authority is unchanged.
 
 ## Security and scope
 

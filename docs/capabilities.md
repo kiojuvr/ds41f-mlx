@@ -150,7 +150,10 @@ and [original image qualification](multimodal-production-qualification.md).
   retirement, not user Close, releases internal resources.
 - **Acquisition/PDF:** bounded search/HTML/original-image/PDF tools are application
   effects. [PDF workflow](pdf-document-workflow.md) retains documents and uses
-  separate fresh OFF page Vision, not main-chat MTP image admission.
+  isolated stateless page Vision on the connected Vision-capable runtime (ordinary
+  MTP by default), not accumulated main-chat image slots. Health advertises
+  `capabilities.chat_vision: bounded-inline-v1` for OFF and ordinary MTP; missing
+  or unknown capability disables acquisition/observation, with no automatic fallback.
 - **Ordinary clients/OpenCode:** standard Chat Completions and generic client-owned
   tools; no compulsory singleton session/fence protocol. Client acceptance is
   source/version-scoped, not a universal all-client compatibility certificate.

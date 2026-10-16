@@ -10,6 +10,12 @@ PARAMETERS = ('temperature', 'top_p', 'top_k', 'min_p', 'repetition_penalty',
               'presence_penalty', 'frequency_penalty', 'seed')
 
 
+def vision_available(runtime):
+    """Execution capability, not application preview or retained-state authority."""
+    return (runtime.get('status') == 'ready' and
+            (runtime.get('capabilities') or {}).get('chat_vision') == 'bounded-inline-v1')
+
+
 def negotiate(runtime):
     if runtime.get('status') != 'ready':
         raise ValueError('Runtime is not READY: ' + str(runtime.get('status')))

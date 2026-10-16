@@ -117,16 +117,18 @@ class DocumentPDFTool:
         if blocked:
             return blocked
         health = self.runtime.health()
-        from .chat_capability import negotiate
+        from .chat_capability import negotiate, vision_available
+        if not vision_available(health):
+            raise ToolError('Connected runtime does not advertise ready bounded inline Chat Vision.', code='document_vision_unavailable')
         defaults = negotiate(health)
-        if health.get('profile') != 'standard-off':
-            raise ToolError('Isolated PDF Vision requires an existing standard-OFF Vision runtime; configure DS41F_DOCUMENT_VISION_URL. Production text-only capability is not expanded.', code='document_vision_unavailable')
         image, raster_identity, parser_policy = self.raster(artifact, page)
         provenance = dict(authority='model-derived-non-authoritative', artifact_id=artifact.id,
                           source_sha256=artifact.resource.sha256, page=page,
                           model='deepseek-v4.1-flash', policy=OBSERVATION_POLICY,
                           raster_identity=raster_identity,
                           runtime_dependency_identity=health.get('dependency_identity'),
+                          runtime_profile=health.get('profile'),
+                          vision_capability=health['capabilities']['chat_vision'],
                           generation_policy=health['generation_policy']['version'],
                           generation_settings=dict(defaults, max_tokens=2048, reasoning_effort='none'),
                           parser_policy=parser_policy)

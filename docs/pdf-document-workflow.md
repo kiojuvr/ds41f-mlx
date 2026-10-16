@@ -1,7 +1,8 @@
 # Retained PDF document chat
 
 PDFs are document resources, not a sequence of conversation images. This is an
-application change; no runtime/session/cache/generation policy was changed.
+application integration; execution, session, cache and generation policy are
+unchanged. Runtime health advertises the existing bounded Vision capability.
 
 ## Architecture and authority
 
@@ -51,13 +52,16 @@ compaction, replay, recurrent cache repack or historical image rewriting is adde
 
 ## Vision profiles and the four-image envelope
 
-Production `mtp-serving-v1` is still text-only. Parser reads/search and reuse of
-already retained observations work there. **Fresh page Vision requires the existing
-standard-OFF Vision runtime**, either the Chat Server's runtime or explicitly
-`DS41F_DOCUMENT_VISION_URL=http://…`. The status/UI exposes availability; an
-unsupported profile fails before inference reservation. This configuration does
-not expand production capability or relax any qualified limit. A configured
-endpoint is trusted operator configuration, never a document-provided URL.
+Fresh page observations default to the connected Chat runtime, including ordinary
+`mtp-serving-v1`. Availability requires READY `chat_vision: bounded-inline-v1`;
+missing/unknown capability rejects before rasterization or inference reservation.
+Parser reads/search and reuse of retained observations do not require Vision.
+`DS41F_DOCUMENT_VISION_URL=http://…` remains an explicit operator override for
+compatibility/diagnostics, not a fallback or a requirement to provision OFF.
+It is trusted operator configuration, never a document-provided URL. No backend
+migration, historical-image replay or relaxation of qualified bounds is added.
+Earlier OFF-only application receipts describe historical routing, not the default
+product path.
 
 A stateless page request has one image and no historical image messages. It uses
 existing Vision preparation/envelopes unchanged. Main retained chat's image count

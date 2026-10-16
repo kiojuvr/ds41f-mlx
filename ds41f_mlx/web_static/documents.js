@@ -122,7 +122,7 @@ $('openDocumentPage').onclick = async () => {
     if (result.raster_error) label.textContent = 'Raster unavailable: ' + result.raster_error + '. Parser text shown below.';
     if (result.image) {
       const image = document.createElement('img'); image.src = result.image; image.alt = `PDF page ${page}`; image.style.maxWidth = '100%'; box.appendChild(image);
-      if (!production()) {
+      if (GenerationPolicy.visionAvailable(state.runtime)) {
         const confirm = document.createElement('button'); confirm.type = 'button'; confirm.textContent = 'Add this page to ordinary chat Vision (uses one of 4 history slots)';
         confirm.onclick = async () => {
           const binary = atob(result.image.split(',')[1]), bytes = Uint8Array.from(binary, c => c.charCodeAt(0));

@@ -30,11 +30,15 @@ class Vision:
     fail = False
     def health(self):
         contract = capability_contract()
-        return dict(status='ready', profile='standard-off', generation_policy=contract,
+        return dict(status='ready', profile='mtp-serving-v1',
+                    capabilities=dict(stateful_chat='production-sessions-v1', chat_vision='bounded-inline-v1'),
+                    generation_policy=contract,
                     chat_defaults=dict(contract['defaults'], reasoning_effort='none', max_tokens='auto'))
     def request(self, method, path, request):
         self.calls += 1
         assert path == '/v1/chat/completions'
+        assert 'session_id' not in request and 'tools' not in request
+        assert request['stream'] is False
         assert len(request['messages']) == 1
         assert sum(p['type'] == 'image_url' for p in request['messages'][0]['content']) == 1
         assert request['max_tokens'] == 2048 and request['reasoning_effort'] == 'none'
@@ -88,6 +92,8 @@ def test_observation_reuses_across_tool_instances(tmp_path):
     assert observation['authority'] == 'model-derived-non-authoritative'
     assert observation['source_sha256'] == artifact.resource.sha256
     assert observation['state'] == 'completed'
+    assert observation['runtime_profile'] == 'mtp-serving-v1'
+    assert observation['vision_capability'] == 'bounded-inline-v1'
     second = DocumentPDFTool(ArtifactStore(store.path), vision).run(dict(artifact_id=artifact.id, action='observe'))
     assert result.content == second.content and vision.calls == 1
     search = tool.run(dict(artifact_id=artifact.id, action='search', query='needleVisual')).display
@@ -110,6 +116,20 @@ def test_uncertain_and_process_death_never_retry(tmp_path):
     assert not store.reserve_interpretation(artifact.id, key, dict(state='reserved', page=2))
     assert tool.run(dict(args, pages=[2])).display['error_code'] == 'uncertain_document_observation'
     assert vision.calls == 1
+
+
+@pytest.mark.parametrize('capability,status', [(None, 'ready'), ('future', 'ready'), ('bounded-inline-v1', 'alive')])
+def test_observation_unavailable_fails_before_raster_or_reservation(tmp_path, capability, status, monkeypatch):
+    store, artifact, tool, vision = retained(tmp_path)
+    health = vision.health()
+    health['status'] = status
+    health['capabilities']['chat_vision'] = capability
+    monkeypatch.setattr(vision, 'health', lambda: health)
+    monkeypatch.setattr(tool, 'raster', lambda *args: pytest.fail('raster must not run'))
+    with pytest.raises(ToolError, match='does not advertise'):
+        tool.run(dict(artifact_id=artifact.id, action='observe'))
+    assert vision.calls == 0
+    assert store.unsettled_observation(artifact.id, 1) is None
 
 
 def test_policy_change_does_not_bypass_uncertain_page_fence(tmp_path):
@@ -152,6 +172,23 @@ def test_validation_and_expiry(tmp_path):
     with pytest.raises(ToolError): tool.run(dict(artifact_id=artifact.id, action='info'))
 
 
+def test_default_pdf_uses_selected_chat_runtime_not_separate_off(tmp_path, monkeypatch):
+    import ds41f_mlx.web as web
+    monkeypatch.delenv('DS41F_DOCUMENT_VISION_URL', raising=False)
+    tool = DocumentPDFTool(ArtifactStore(tmp_path / 'a.db'))
+    monkeypatch.setattr(web, 'registry_from_env', lambda: ToolRegistry([tool]))
+    app = web.create_app(runtime_base_url='http://127.0.0.1:18073')
+    assert tool.runtime is app.state.runtime
+    assert tool.runtime.base_url == 'http://127.0.0.1:18073'
+    # An explicit diagnostic endpoint remains selected, never an automatic fallback.
+    monkeypatch.setenv('DS41F_DOCUMENT_VISION_URL', 'http://127.0.0.1:18075')
+    override = DocumentPDFTool(tool.store)
+    monkeypatch.setattr(web, 'registry_from_env', lambda: ToolRegistry([override]))
+    app = web.create_app(runtime_base_url='http://127.0.0.1:18073')
+    assert override.runtime is not app.state.runtime
+    assert override.runtime.base_url == 'http://127.0.0.1:18075'
+
+
 def test_upload_receipt_and_ui_preview_not_model(tmp_path, monkeypatch):
     from fastapi.testclient import TestClient
     import ds41f_mlx.web as web
@@ -161,6 +198,10 @@ def test_upload_receipt_and_ui_preview_not_model(tmp_path, monkeypatch):
     monkeypatch.setattr(web, 'registry_from_env', lambda: ToolRegistry([tool]))
     monkeypatch.setattr(web.RuntimeClient, 'health', lambda self: vision.health())
     with TestClient(web.create_app(), base_url='http://127.0.0.1') as client:
+        status = client.get('/api/status').json()['documents']
+        assert status['vision_available'] and status['vision_profile'] == 'mtp-serving-v1'
+        assert status['observation_request'] == 'bounded-stateless'
+        assert status['historical_image_slots_used'] == 0
         identity = 'a' * 64
         data = pdf_bytes()
         value = dict(id=identity, name='source.pdf', data=base64.b64encode(data).decode())

@@ -83,11 +83,12 @@ PTY bytes/collector screen projection do not prove physical macOS IME compositio
 Browser handler events likewise do not certify every OS input implementation.
 Collectors' terminal-model repairs are evidence tooling, not delivered TUI changes.
 
-Unknown contracts, thinking budgets, unversioned journals and main-chat MTP
-images/native restore remain unsupported. TUI Chat has been removed. Retained PDF
-parser tools and separate OFF page Vision now have their own
-[document workflow](pdf-document-workflow.md); the old integration's blanket PDF
-exclusion must not erase that later application capability. Seed stays best-effort.
+Unknown contracts, thinking budgets, unversioned journals and native MTP restore
+remain unsupported. TUI Chat has been removed. Browser images and isolated
+stateless PDF page observations now use advertised bounded Chat Vision, including
+ordinary MTP: see [application Vision integration](web-mtp-vision-integration.md)
+and [document workflow](pdf-document-workflow.md). The old integration's image/PDF
+exclusions are historical, not current application restrictions. Seed stays best-effort.
 Missing history and uncertain effects cannot be repaired by automatic resend.
 Unit/renderer gates supplement source-scoped model receipts; neither compilation
 nor test counts broaden runtime core, R1 or release qualification.

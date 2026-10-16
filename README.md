@@ -190,8 +190,9 @@ uv pip install --python .venv/bin/python '.[web-binary]'
 
 Browser conversations and images live in **tab memory**; reload does not restore
 them. New/Switch preserves independent conversations within the living tab.
-Search/HTML/image/PDF acquisition is application-owned; PDF page Vision uses
-separate fresh non-MTP execution, not the main-chat MTP image envelope. See the
+Search/HTML/image/PDF acquisition is application-owned. Browser images use the
+connected runtime's bounded Chat Vision; PDF page observations use isolated,
+stateless requests on that runtime and return derived text, not chat images. See the
 [Chat interface](docs/chat-interface.md) and [PDF workflow](docs/pdf-document-workflow.md).
 
 ### Trusted-private-LAN use
