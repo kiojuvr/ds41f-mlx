@@ -238,12 +238,12 @@ from `7c5c42c`, measured 2026-10-16. All requests generated **256 tokens** using
 ordinary sampling defaults (temperature 1.0, top-p 0.95), reasoning `none`.
 [Benchmark receipt, exact wheel/commands and raw results](docs/public-performance.md).
 
-| Context (actual prompt tokens) | State | TTFT¹ | Decode² | MTP acceptance |
-| ---: | --- | ---: | ---: | ---: |
-| 8K (8,178) | cold | 19.8 s | 24.5 tok/s | 53% |
-| 32K (32,764) | cold | 39.0 s | 24.1 tok/s | 55% |
-| 256K (262,132) | cold | 321.5 s | 20.4 tok/s | 54% |
-| **~256K (262,429–263,023)** | **paired continuation** | **0.84 s** | **20.8 tok/s** | **54%** |
+| Context (actual prompt tokens) | State | Prefill³ (P6 execution) | TTFT¹ | Decode² | MTP acceptance |
+| ---: | --- | ---: | ---: | ---: | ---: |
+| 8K (8,178) | cold | 8.9 s / 921 tok/s | 19.8 s | 24.5 tok/s | 53% |
+| 32K (32,764) | cold | 33.3 s / 983 tok/s | 39.0 s | 24.1 tok/s | 55% |
+| 256K (262,132) | cold | 315.5 s / 831 tok/s | 321.5 s | 20.4 tok/s | 54% |
+| **~256K (262,429–263,023)** | **paired continuation** | **40 new tokens / 0.25 s** | **0.84 s** | **20.8 tok/s** | **54%** |
 
 ¹ Handler entry to first canonical generated token in the ordinary production
 HTTP app, measured in-process; not client-network/SSE latency. Cold means no
@@ -251,6 +251,12 @@ compatible conversation cache, with model already loaded. ² Generated tokens /
 accumulated decode-call time; excludes preparation, prefix restore, prefill/P5 and
 settlement. Cold rows are single runs; continuation values are per-metric medians
 of **three consecutive turns**. Acceptance is accepted / verified draft tokens.
+³ Separate synchronized diagnostic pass, same wheel/prompts: P6 transaction
+execution processes prompt-minus-one tokens (one terminal token goes to P5).
+Excludes DSpark ring completion, checkpoint capture and P5; not total prefill
+latency or context / TTFT. Retained timing is one incremental continuation.
+The [receipt](docs/public-performance.md#authoritative-prefill-execution-added-diagnostic-pass)
+records both execution-only and inclusive prefill/P5 intervals.
 
 **256K is the practical-performance focus because this runtime targets long-running
 agent/session workloads.** The retained-prefix row is the representative
@@ -258,6 +264,12 @@ continuation: each turn restored the preceding settled paired frontier and added
 only **41 prompt tokens**, with aligned target/DSpark state and **zero history
 replay or full-cache repack**. Median prefill/P5 was 0.55 s; total request time
 was 13.3 s. Prefix reuse still includes recipe preparation and real suffix work.
+
+**The historical 40+ tok/s gap is explained, not a recovered production headline:**
+the exact historical rewrite workload still reaches **43.8 tok/s** on this current
+ordinary path (99% acceptance), versus **44.0 tok/s** on the reconstructed historical
+wheel. The journal remains ~25 tok/s even with greedy sampling (~55% acceptance).
+See the [matched diagnosis](docs/public-performance.md#historical-gap-diagnosis-expected--explained).
 
 These are workload-specific measurements on this M3 Ultra / 512 GB configuration,
 not universal hardware guarantees, an SLA or a matched MTP/OFF speedup claim.

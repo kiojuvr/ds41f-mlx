@@ -11,8 +11,14 @@ The [2026-10-16 ordinary MTP benchmark](public-performance.md) measures the curr
 native default on M3 Ultra / 512 GB: 8K, 32K and 256K cold prompts plus three
 consecutive **~256K retained paired-prefix continuations**, all generating 256
 tokens under ordinary stochastic defaults. It owns the README's current table,
-exact fresh installed-wheel identity, raw receipts and timer definitions. It is
-not a new release promotion, OFF speedup comparison or 1M latency benchmark.
+exact fresh installed-wheel identity, raw receipts and timer definitions. Its
+[matched historical-gap diagnosis](public-performance.md#historical-gap-diagnosis-expected--explained)
+adds synchronized P6 execution rates and reproduces the exact historical rewrite
+on both current and reconstructed historical wheels: **43.8 vs 44.0 tok/s** with
+identical canonical tokens/acceptance work. The journal's ~25 tok/s and ~55%
+acceptance persist with greedy sampling; 40+ tok/s was not an all-workload
+historical property. Classification: **EXPECTED / EXPLAINED**, not a new release
+promotion, universal MTP/OFF speedup claim or 1M latency benchmark.
 
 ## Current disposition of recorded recommendations
 
