@@ -230,27 +230,42 @@ A specialized opt-in `mtp-singleton-v1` contract also exists for its dedicated
 session/fence client and weather-tool qualification (**8192 total / 768 output**).
 Those fixture bounds and protocol do not constrain or define ordinary MTP.
 
-## Performance and measured characteristics
+## Measured performance
 
-MTP, dense FP8/MLX prefill, SSD-backed Engram and compatible paired-prefix reuse
-are the selected mechanisms for practical local inference. A prefix hit still
-requires recipe preparation, suffix work and model handoff; it is not zero-cost
-or constant-latency generation.
+**Mac Studio M3 Ultra / 512 GB**, official **DeepSeek-V4.1-Flash**, native GLM,
+ordinary **`mtp-serving-v1` with MTP enabled**; current-source installed package
+from `7c5c42c`, measured 2026-10-16. All requests generated **256 tokens** using
+ordinary sampling defaults (temperature 1.0, top-p 0.95), reasoning `none`.
+[Benchmark receipt, exact wheel/commands and raw results](docs/public-performance.md).
 
-There is **no release-bound public throughput/TTFT table here**. The repository
-retains source-scoped measurements with different profiles, distributions,
-workloads and timer boundaries; they do not establish a universal speedup or SLA
-for this release. [Performance evidence](docs/performance.md) explains those
-measurements and links the underlying reports.
+| Context (actual prompt tokens) | State | TTFT¹ | Decode² | MTP acceptance |
+| ---: | --- | ---: | ---: | ---: |
+| 8K (8,178) | cold | 19.8 s | 24.5 tok/s | 53% |
+| 32K (32,764) | cold | 39.0 s | 24.1 tok/s | 55% |
+| 256K (262,132) | cold | 321.5 s | 20.4 tok/s | 54% |
+| **~256K (262,429–263,023)** | **paired continuation** | **0.84 s** | **20.8 tok/s** | **54%** |
 
-Long-context evidence reached the **1M consumed text frontier in the non-MTP core**;
-ordinary MTP combines retained execution/state evidence with affected serving
-acceptance. This is not a new near-1M HTTP/agent endurance test. The measured
-maintenance/document-ingestion class accepts long initial prefill latency; neither
-the 1M capacity nor the 393,216-output ceiling promises interactive latency or
-arbitrary maximum-length workload performance. Future public measurements should
-bind package, distribution, hardware, prompt/output lengths, cache state and timer
-boundaries before reporting prefill, decode or end-to-end results.
+¹ Handler entry to first canonical generated token in the ordinary production
+HTTP app, measured in-process; not client-network/SSE latency. Cold means no
+compatible conversation cache, with model already loaded. ² Generated tokens /
+accumulated decode-call time; excludes preparation, prefix restore, prefill/P5 and
+settlement. Cold rows are single runs; continuation values are per-metric medians
+of **three consecutive turns**. Acceptance is accepted / verified draft tokens.
+
+**256K is the practical-performance focus because this runtime targets long-running
+agent/session workloads.** The retained-prefix row is the representative
+continuation: each turn restored the preceding settled paired frontier and added
+only **41 prompt tokens**, with aligned target/DSpark state and **zero history
+replay or full-cache repack**. Median prefill/P5 was 0.55 s; total request time
+was 13.3 s. Prefix reuse still includes recipe preparation and real suffix work.
+
+These are workload-specific measurements on this M3 Ultra / 512 GB configuration,
+not universal hardware guarantees, an SLA or a matched MTP/OFF speedup claim.
+**Capacity/correctness validation up to 1,048,576 tokens is separate from this
+256K retained-session latency benchmark**; 1M does not imply comparable latency.
+See [performance evidence](docs/performance.md) for historical measurements and
+their distinct boundaries. This fresh benchmark package is not a new release
+promotion or a replacement for the release's qualification record.
 
 ## Current limitations
 

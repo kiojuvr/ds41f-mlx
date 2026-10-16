@@ -5,6 +5,15 @@ It is not a benchmark diary, a second capability matrix or an installed-deployme
 SLA. [Capabilities](capabilities.md) owns support/limits; [architecture](architecture.md)
 owns selected topology; [qualification](qualification.md) explains proof scope.
 
+## Current public practical-performance benchmark
+
+The [2026-10-16 ordinary MTP benchmark](public-performance.md) measures the current
+native default on M3 Ultra / 512 GB: 8K, 32K and 256K cold prompts plus three
+consecutive **~256K retained paired-prefix continuations**, all generating 256
+tokens under ordinary stochastic defaults. It owns the README's current table,
+exact fresh installed-wheel identity, raw receipts and timer definitions. It is
+not a new release promotion, OFF speedup comparison or 1M latency benchmark.
+
 ## Current disposition of recorded recommendations
 
 The sections below retain each investigation's source-pinned decisions, failures
