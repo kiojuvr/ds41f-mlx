@@ -234,7 +234,7 @@ Those fixture bounds and protocol do not constrain or define ordinary MTP.
 
 **Mac Studio M3 Ultra / 512 GB**, official **DeepSeek-V4.1-Flash**, native GLM,
 ordinary **`mtp-serving-v1` with MTP enabled**; current-source installed package
-from `7c5c42c`, measured 2026-10-16. All requests generated **256 tokens** using
+from `7c5c42c`, measured 2026-10-16. The four benchmark cases generated **256 tokens** using
 ordinary sampling defaults (temperature 1.0, top-p 0.95), reasoning `none`.
 [Benchmark receipt, exact wheel/commands and raw results](docs/public-performance.md).
 
@@ -258,18 +258,29 @@ latency or context / TTFT. Retained timing is one incremental continuation.
 The [receipt](docs/public-performance.md#authoritative-prefill-execution-added-diagnostic-pass)
 records both execution-only and inclusive prefill/P5 intervals.
 
+**MTP decode throughput is workload-dependent because speculative acceptance
+depends on the generated trajectory.** Controlled observations on the same
+current ordinary implementation illustrate the difference:
+
+| Diagnostic workload | Generation policy / output | Decode | MTP acceptance |
+| --- | --- | ---: | ---: |
+| 8K journal (paired prompt hit) | ordinary defaults / 256 tokens | **24.9 tok/s** | **55.9%** |
+| Historical file-rewrite workload | greedy / 384 tokens | **43.78 tok/s** | **99.3%** |
+
+The rewrite delivers 4.0 canonical tokens per verification cycle versus about
+2.2 for the journal. Greedy sampling alone leaves the journal at 25.2 tok/s and
+55.5% acceptance. Thus the historical ~44 tok/s result remains reproducible—the
+rewrite measures 44.0 tok/s on the reconstructed historical wheel—but is not an
+all-workload rate. The table's 20–25 tok/s does not by itself show that MTP is
+ineffective; neither comparison is an MTP-OFF speedup measurement. See the
+[matched diagnosis](docs/public-performance.md#historical-gap-diagnosis-expected--explained).
+
 **256K is the practical-performance focus because this runtime targets long-running
 agent/session workloads.** The retained-prefix row is the representative
 continuation: each turn restored the preceding settled paired frontier and added
 only **41 prompt tokens**, with aligned target/DSpark state and **zero history
 replay or full-cache repack**. Median prefill/P5 was 0.55 s; total request time
 was 13.3 s. Prefix reuse still includes recipe preparation and real suffix work.
-
-**The historical 40+ tok/s gap is explained, not a recovered production headline:**
-the exact historical rewrite workload still reaches **43.8 tok/s** on this current
-ordinary path (99% acceptance), versus **44.0 tok/s** on the reconstructed historical
-wheel. The journal remains ~25 tok/s even with greedy sampling (~55% acceptance).
-See the [matched diagnosis](docs/public-performance.md#historical-gap-diagnosis-expected--explained).
 
 These are workload-specific measurements on this M3 Ultra / 512 GB configuration,
 not universal hardware guarantees, an SLA or a matched MTP/OFF speedup claim.
