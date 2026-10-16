@@ -13,6 +13,29 @@ for fallback and its additional API/persistence contracts.
 [Quick Start](#quick-start) · [Capabilities and limits](docs/capabilities.md) ·
 [Operations](docs/operations.md) · [Documentation index](docs/README.md)
 
+## Why ds41f-mlx?
+
+oMLX already provides a strong MLX implementation of DeepSeek-V4.1-Flash decode
+and MTP. `ds41f-mlx` does not replace that work; its ordinary MTP path deliberately
+retains the qualified oMLX physical decode topology.
+
+The focus is the **runtime around the model**: keeping very long sessions correct
+across prefill, continuation, paired target/draft state reuse, branching,
+cancellation and canonical settlement—without hidden history replay or silent
+reconstruction of retained model state.
+
+`ds41f-mlx` therefore combines:
+
+- **DeepSeek's official checkpoint and recipe semantics**,
+- **DwarfStar-derived long-context prefill topology**,
+- **oMLX's qualified MLX/MTP decode topology**,
+- and **its own state, lifecycle, admission and application contracts**.
+
+The goal is not another generic MLX server. It is a **DeepSeek-V4.1-Flash runtime
+built for correct long-lived local sessions on the M3 Ultra**. See
+[Architecture](docs/architecture.md) for execution ownership and
+[Acknowledgements](#acknowledgements) for the upstream foundations.
+
 ## Highlights and key specifications
 
 - **Long-context text:** up to **1,048,576 total tokens**, within the checkpoint's
