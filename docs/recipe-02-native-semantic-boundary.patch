@@ -1,0 +1,971 @@
+diff --git a/deepseek-recipe/src/protocol/openai/chat_completion/response/chunk_generator.rs b/deepseek-recipe/src/protocol/openai/chat_completion/response/chunk_generator.rs
+index ab2832d..7d9f41a 100644
+--- a/deepseek-recipe/src/protocol/openai/chat_completion/response/chunk_generator.rs
++++ b/deepseek-recipe/src/protocol/openai/chat_completion/response/chunk_generator.rs
+@@ -1,6 +1,8 @@
+ use std::time::{SystemTime, UNIX_EPOCH};
+ 
+-use crate::protocol::tool_call_id::new_tool_call_id;
++use rand::{SeedableRng, rngs::StdRng};
++
++use crate::protocol::tool_call_id::new_tool_call_id_with_rng;
+ use crate::stream::{ChunkGenerator, OutputChunk, PromptUsage, TokenLogprob};
+ 
+ use super::schema::{
+@@ -25,8 +27,9 @@ fn token_logprobs(logprobs: &[TokenLogprob]) -> Vec<ChatCompletionTokenLogprob>
+ ///
+ /// [`ChatCompletionRequest::chunk_generator`]:
+ ///     crate::request::ProtocolRequest::chunk_generator
+-#[derive(Debug)]
++#[derive(Debug, Clone)]
+ pub struct ChatCompletionChunkGenerator {
++    tool_id_rng: StdRng,
+     response_id: String,
+     model: String,
+     created: u64,
+@@ -50,6 +53,7 @@ impl ChatCompletionChunkGenerator {
+         thinking_mode: bool,
+     ) -> Self {
+         Self {
++            tool_id_rng: StdRng::from_os_rng(),
+             response_id,
+             model,
+             created: SystemTime::now()
+@@ -166,7 +170,11 @@ impl ChunkGenerator for ChatCompletionChunkGenerator {
+                     tool_calls: Some(vec![ChatCompletionToolCallDelta::Start {
+                         index,
+                         call: ChatCompletionResponseToolCall {
+-                            id: new_tool_call_id(index as usize, empty_thinking),
++                            id: new_tool_call_id_with_rng(
++                                index as usize,
++                                empty_thinking,
++                                &mut self.tool_id_rng,
++                            ),
+                             r#type: ChatCompletionToolCallType::Function,
+                             function: ChatCompletionResponseFunctionCall {
+                                 name: tool_name,
+diff --git a/deepseek-recipe/src/protocol/tool_call_id.rs b/deepseek-recipe/src/protocol/tool_call_id.rs
+index 105a9d5..9e1366e 100644
+--- a/deepseek-recipe/src/protocol/tool_call_id.rs
++++ b/deepseek-recipe/src/protocol/tool_call_id.rs
+@@ -23,7 +23,16 @@ fn tool_call_id_checksum(id_without_checksum: &str) -> u64 {
+ 
+ /// Generate a tool call ID for `index`, marking rounds with empty thinking.
+ pub(crate) fn new_tool_call_id(index: usize, empty_thinking: bool) -> String {
+-    let random_part: String = rand::rng()
++    new_tool_call_id_with_rng(index, empty_thinking, &mut rand::rng())
++}
++
++/// Use request-owned random state so a snapshot preserves future identities.
++pub(crate) fn new_tool_call_id_with_rng(
++    index: usize,
++    empty_thinking: bool,
++    rng: &mut impl Rng,
++) -> String {
++    let random_part: String = rng
+         .sample_iter(&Alphanumeric)
+         .take(20)
+         .map(char::from)
+diff --git a/deepseek-recipe/src/stream/decoder.rs b/deepseek-recipe/src/stream/decoder.rs
+index befc292..0ae87ab 100644
+--- a/deepseek-recipe/src/stream/decoder.rs
++++ b/deepseek-recipe/src/stream/decoder.rs
+@@ -20,6 +20,9 @@ const REPLACEMENT_CHARACTER: char = '\u{FFFD}';
+ ///
+ /// # Implementor obligations
+ ///
++/// Attached tokenizers are shared across semantic forks. Decoding and counting
++/// must be read-only and independent of request/parser state.
++///
+ /// - [`decode_ids`](Self::decode_ids) must decode an incomplete UTF-8 sequence
+ ///   at the end of `ids` as U+FFFD, so that the stream processor buffers the
+ ///   token IDs until the character is complete.
+@@ -119,8 +122,9 @@ pub(super) struct DecodedText {
+ }
+ 
+ /// Buffer token IDs until they decode into text.
++#[derive(Clone)]
+ pub(super) struct StreamDecoder {
+-    tokenizer: Box<dyn StreamTokenizer>,
++    tokenizer: Arc<dyn StreamTokenizer + Sync>,
+     ids: Vec<u32>,
+     /// Log probabilities of the token IDs buffered since the last decoded
+     /// text; `None` when one of those token IDs had no log probability.
+@@ -128,7 +132,7 @@ pub(super) struct StreamDecoder {
+ }
+ 
+ impl StreamDecoder {
+-    pub(super) fn new(tokenizer: Box<dyn StreamTokenizer>) -> Self {
++    pub(super) fn new(tokenizer: Arc<dyn StreamTokenizer + Sync>) -> Self {
+         Self {
+             tokenizer,
+             ids: Vec::new(),
+diff --git a/deepseek-recipe/src/stream/mod.rs b/deepseek-recipe/src/stream/mod.rs
+index ce2f60e..74874fe 100644
+--- a/deepseek-recipe/src/stream/mod.rs
++++ b/deepseek-recipe/src/stream/mod.rs
+@@ -8,7 +8,7 @@ pub use inference::{
+ };
+ pub use logprobs::{InferenceTokenLogprob, TokenLogprob, TopLogprob};
+ pub use output_parser::{ParsingOptions, ThinkingInitialStage};
+-pub use processor::StreamProcessor;
++pub use processor::{CompletedCall, SemanticState, StreamProcessor};
+ 
+ mod decoder;
+ mod inference;
+@@ -16,6 +16,9 @@ mod logprobs;
+ mod output_parser;
+ mod processor;
+ 
++#[cfg(test)]
++mod native_boundary_tests;
++
+ /// An error that ends stream processing before normal completion.
+ #[derive(Debug, Clone, PartialEq, Eq)]
+ pub enum StreamError {
+diff --git a/deepseek-recipe/src/stream/native_boundary_tests.rs b/deepseek-recipe/src/stream/native_boundary_tests.rs
+new file mode 100644
+index 0000000..6da576d
+--- /dev/null
++++ b/deepseek-recipe/src/stream/native_boundary_tests.rs
+@@ -0,0 +1,266 @@
++//! Focused executable proof of the Recipe 0.2 consuming snapshot boundary.
++use super::*;
++use crate::protocol::openai::chat_completion::response::{
++    ChatCompletionChunkGenerator, ChatCompletionResponse,
++};
++use crate::response::{Accumulate, ProtocolResponse};
++use tokenizers::Tokenizer;
++
++fn tokenizer() -> &'static Tokenizer {
++    static TOKENIZER: std::sync::OnceLock<Tokenizer> = std::sync::OnceLock::new();
++    TOKENIZER.get_or_init(|| {
++        Tokenizer::from_file(concat!(
++            env!("CARGO_MANIFEST_DIR"),
++            "/../static/tokenizers/v41/tokenizer.json"
++        ))
++        .unwrap()
++    })
++}
++
++fn state(thinking: bool) -> SemanticState<ChatCompletionChunkGenerator> {
++    StreamProcessor::new(
++        ChatCompletionChunkGenerator::new("response".into(), "model".into(), true, thinking),
++        ParsingOptions {
++            thinking_initial_stage: thinking.then_some(ThinkingInitialStage::ReasoningStart),
++            ..Default::default()
++        },
++    )
++    .with_tokenizer(tokenizer().clone())
++    .into_state()
++}
++
++fn tokens(ids: &[u32]) -> InferenceChunk {
++    InferenceChunk::Tokens {
++        token_ids: ids.to_vec(),
++        logprobs: None,
++    }
++}
++
++fn encode(text: &str) -> Vec<u32> {
++    tokenizer().encode(text, false).unwrap().get_ids().to_vec()
++}
++
++fn json(value: &impl serde::Serialize) -> serde_json::Value {
++    serde_json::to_value(value).unwrap()
++}
++
++fn response() -> ChatCompletionResponse {
++    ChatCompletionResponse::new("response".into(), "model".into(), 0, 0, 0)
++}
++
++const PREFIX: &str =
++    "<｜DSML｜tool_calls><｜DSML｜invoke name=\"f\"><｜DSML｜parameter name=\"x\" string=\"true\">";
++const END: &str = "</｜DSML｜parameter></｜DSML｜invoke>";
++
++#[tokio::test]
++async fn native_boundary_repeated_preview_exact_prefix_response_and_completion() {
++    let text = format!(
++        "</think>{PREFIX}Tokyo🤭{END}<｜DSML｜invoke name=\"g\"></｜DSML｜invoke></｜DSML｜tool_calls>"
++    );
++    let ids = encode(&text);
++    let mut canonical = state(true);
++    // Full candidate repeated before any canonical consumption draws no global IDs.
++    let full = canonical
++        .preview(ids.iter().map(|id| tokens(&[*id])))
++        .await
++        .unwrap();
++    let rejected = canonical.preview([tokens(&encode(
++        "</think><｜DSML｜tool_calls><｜DSML｜invoke name=\"rejected\"></｜DSML｜invoke></｜DSML｜tool_calls>"
++    ))]).await.unwrap();
++    assert_eq!(rejected.1.len(), 1);
++    let bulk = canonical.preview([tokens(&ids)]).await.unwrap();
++    assert_eq!(bulk.1, full.1);
++    let mut bulk_response = response();
++    for chunk in bulk.0 {
++        bulk_response.accumulate(chunk);
++    }
++    let again = canonical
++        .preview(ids.iter().map(|id| tokens(&[*id])))
++        .await
++        .unwrap();
++    assert_eq!(json(&full.0), json(&again.0));
++    assert_eq!(full.1, again.1);
++    assert_eq!(full.1.len(), 2);
++    // Official 0.2 ends arguments at the closing </ + DSML token, before
++    // reading the literal `invoke>` suffix; certify that action exactly.
++    assert_eq!(
++        full.1[0].source_end,
++        text.find(END).unwrap() + END.len() - "invoke>".len()
++    );
++    assert_eq!(
++        full.1[1].source_end,
++        text.rfind("</｜DSML｜invoke>").unwrap() + "</｜DSML｜".len()
++    );
++    assert!(canonical.completed_calls().is_empty());
++
++    let mut projected_response = response();
++    let mut canonical_response = response();
++    let mut emitted = Vec::new();
++    for id in ids {
++        let before = canonical.completed_calls().to_vec();
++        let (projected, completions) = canonical.preview([tokens(&[id])]).await.unwrap();
++        let repeated = canonical.preview([tokens(&[id])]).await.unwrap();
++        assert_eq!(json(&projected), json(&repeated.0));
++        assert_eq!(completions, repeated.1);
++        assert_eq!(canonical.completed_calls(), before);
++        // A divergent named call/EOF on a fork must not affect canonical identity,
++        // response, pending markers, or subsequent completion.
++        let _ = canonical.preview([
++            tokens(&encode("divergent</｜DSML｜parameter></｜DSML｜invoke><｜DSML｜invoke name=\"rejected\"></｜DSML｜invoke>")),
++            InferenceChunk::Finish { finish_reason: InferenceFinishReason::Stop },
++        ]).await.unwrap();
++        let actual = canonical.consume(tokens(&[id])).await.unwrap();
++        assert_eq!(json(&projected), json(&actual));
++        assert_eq!(&canonical.completed_calls()[before.len()..], completions);
++        for chunk in projected {
++            projected_response.accumulate(chunk);
++        }
++        for chunk in actual {
++            emitted.push(json(&chunk));
++            canonical_response.accumulate(chunk);
++        }
++        assert_eq!(json(&projected_response), json(&canonical_response));
++    }
++    assert_eq!(json(&emitted), json(&full.0));
++    assert_eq!(json(&projected_response), json(&canonical_response));
++    assert_eq!(json(&bulk_response), json(&canonical_response));
++    let calls = canonical_response.choices[0]
++        .message
++        .tool_calls
++        .as_ref()
++        .unwrap();
++    assert_eq!(calls.len(), 2);
++    assert_eq!(calls[0].call.function.arguments, "{\"x\": \"Tokyo🤭\"}");
++    assert_eq!(calls[1].call.function.arguments, "{}");
++    assert_ne!(calls[0].call.id, calls[1].call.id);
++    for (index, call) in calls.iter().enumerate() {
++        let id = &call.call.id;
++        assert_eq!(id.len(), 35);
++        assert!(id.starts_with(&format!("call_{index:02}_ET_")));
++        assert!(id[11..31].bytes().all(|b| b.is_ascii_alphanumeric()));
++        let input = id[..31].replace('_', "");
++        assert_eq!(
++            &id[31..],
++            format!(
++                "{:04}",
++                xxhash_rust::xxh3::xxh3_64(input.as_bytes()) % 10000
++            )
++        );
++    }
++    assert!(
++        !canonical.is_finished(),
++        "call completion is not assistant-turn EOF"
++    );
++}
++
++#[tokio::test]
++async fn native_boundary_partial_arguments_and_rejected_closure() {
++    let mut canonical = state(false);
++    canonical
++        .consume(tokens(&encode(&format!("{PREFIX}partial"))))
++        .await
++        .unwrap();
++    assert!(
++        canonical.completed_calls().is_empty(),
++        "a named tool is not completed"
++    );
++    // A valid-looking JSON value and a partial special-token marker do not
++    // complete an invoke.
++    assert!(
++        canonical
++            .preview([tokens(&encode("{}"))])
++            .await
++            .unwrap()
++            .1
++            .is_empty()
++    );
++    let partial = encode("</｜DSML｜parameter></");
++    assert!(
++        canonical
++            .preview([tokens(&partial)])
++            .await
++            .unwrap()
++            .1
++            .is_empty()
++    );
++    let done = canonical.preview([tokens(&encode(END))]).await.unwrap();
++    assert_eq!(done.1.len(), 1);
++    assert!(canonical.completed_calls().is_empty());
++    // Reject that completed projection and choose a different argument suffix.
++    canonical
++        .consume(tokens(&encode(" alternative")))
++        .await
++        .unwrap();
++    assert!(canonical.completed_calls().is_empty());
++    let fork = canonical.clone();
++    assert_eq!(
++        canonical
++            .preview([tokens(&encode(END))])
++            .await
++            .unwrap()
++            .1
++            .len(),
++        1
++    );
++    // Even a consuming EOF on a fork must not synthesize argument-end.
++    let mut eof_fork = fork;
++    eof_fork.finish().await;
++    assert!(eof_fork.completed_calls().is_empty());
++    canonical.consume(tokens(&encode(END))).await.unwrap();
++    assert_eq!(canonical.completed_calls().len(), 1);
++}
++
++#[tokio::test]
++async fn native_boundary_plain_markers_utf8_and_failed_preview() {
++    let tok = tokenizer();
++    let text = format!("{PREFIX}value{END}</｜DSML｜tool_calls>");
++    // Separately encode each character: all DSML spellings are ordinary tokens.
++    let plain: Vec<u32> = text
++        .chars()
++        .flat_map(|c| tok.encode(c.to_string(), false).unwrap().get_ids().to_vec())
++        .collect();
++    let mut canonical = state(false);
++    let ordinary = canonical
++        .preview(plain.iter().map(|id| tokens(&[*id])))
++        .await
++        .unwrap();
++    assert!(ordinary.1.is_empty());
++    assert!(!json(&ordinary.0).to_string().contains("call_00_"));
++    // A rejected invalid logprob chunk must not poison the live decoder.
++    assert!(
++        canonical
++            .preview([InferenceChunk::Tokens {
++                token_ids: vec![1],
++                logprobs: Some(vec![]),
++            }])
++            .await
++            .is_err()
++    );
++    assert!(!canonical.is_finished());
++    // Split the real UTF-8 bytes of an emoji over tokens, previewing while the
++    // official decoder has buffered an incomplete sequence.
++    let emoji = encode("🤭");
++    assert!(emoji.len() > 1);
++    for id in &emoji[..emoji.len() - 1] {
++        let p = canonical.preview([tokens(&[*id])]).await.unwrap();
++        let a = canonical.consume(tokens(&[*id])).await.unwrap();
++        assert_eq!(json(&p.0), json(&a));
++    }
++    let rest = [emoji[emoji.len() - 1]];
++    let p = canonical.preview([tokens(&rest)]).await.unwrap();
++    assert_eq!(
++        json(&p.0),
++        json(&canonical.consume(tokens(&rest)).await.unwrap())
++    );
++    assert!(json(&p.0).to_string().contains('🤭'));
++    // Also fork with incomplete UTF-8 immediately before a special token: the
++    // official forced U+FFFD flush must be identical, without touching live state.
++    let mut fragmented = state(true);
++    fragmented.consume(tokens(&emoji[..1])).await.unwrap();
++    let special = encode("</think>");
++    let p = fragmented.preview([tokens(&special)]).await.unwrap();
++    assert_eq!(
++        json(&p.0),
++        json(&fragmented.consume(tokens(&special)).await.unwrap())
++    );
++}
+diff --git a/deepseek-recipe/src/stream/output_parser.rs b/deepseek-recipe/src/stream/output_parser.rs
+index 99a3491..af302d5 100644
+--- a/deepseek-recipe/src/stream/output_parser.rs
++++ b/deepseek-recipe/src/stream/output_parser.rs
+@@ -95,6 +95,7 @@ pub(super) enum ChunkKind {
+ 
+ /// An incremental parser of model output. Each segment it returns assigns an
+ /// [`OutputAction`] to a number of input bytes.
++#[derive(Clone)]
+ pub(super) struct OutputParser {
+     options: ParsingOptions,
+     state: State,
+@@ -259,14 +260,14 @@ enum Stage {
+     Finished,
+ }
+ 
+-#[derive(Debug)]
++#[derive(Debug, Clone)]
+ struct MatchBranch {
+     state: MatchState,
+     next_stage: Stage,
+     action_on_matched: ActionOnMatched,
+ }
+ 
+-#[derive(Debug)]
++#[derive(Debug, Clone)]
+ struct MatchBranches(Vec<MatchBranch>);
+ 
+ impl MatchBranches {
+@@ -372,7 +373,7 @@ fn unit_matches((pattern_byte, is_special): (u8, bool), byte: u8, kind: ChunkKin
+         }
+ }
+ 
+-#[derive(Debug)]
++#[derive(Debug, Clone)]
+ struct State {
+     stage: Stage,
+     /// The markers of this stage, in priority order: when several branches
+@@ -722,7 +723,7 @@ fn kmp_table<T: PartialEq>(pattern: &[T]) -> KmpTable {
+     table
+ }
+ 
+-#[derive(Debug)]
++#[derive(Debug, Clone)]
+ enum MatchState {
+     Marker {
+         pattern: Pattern,
+diff --git a/deepseek-recipe/src/stream/processor.rs b/deepseek-recipe/src/stream/processor.rs
+index 870a419..1f07db0 100644
+--- a/deepseek-recipe/src/stream/processor.rs
++++ b/deepseek-recipe/src/stream/processor.rs
+@@ -50,8 +50,8 @@ where
+     /// the stream with [`StreamError::MissingTokenizer`]. In thinking mode, the
+     /// tokenizer also counts the reasoning tokens of the emitted reasoning
+     /// content.
+-    pub fn with_tokenizer(mut self, tokenizer: impl StreamTokenizer + 'static) -> Self {
+-        self.decoder = Some(StreamDecoder::new(Box::new(tokenizer)));
++    pub fn with_tokenizer(mut self, tokenizer: impl StreamTokenizer + Sync + 'static) -> Self {
++        self.decoder = Some(StreamDecoder::new(Arc::new(tokenizer)));
+         self
+     }
+ 
+@@ -79,156 +79,263 @@ where
+     where
+         G::Chunk: Send,
+     {
+-        let mut generator = self.generator;
+-        let options = self.options;
+-        let thinking_mode = options.thinking_initial_stage.is_some();
+-        let mut decoder = self.decoder;
++        let mut state = self.into_state();
+         stream! {
+             let mut inference = pin!(inference);
+-            let mut parser = OutputParser::new(options);
+-            let mut pending = PendingOutput::new();
+-
+-            let mut started = false;
+-            let mut prompt_usage = PromptUsage::default();
+-            let mut completion_usage = CompletionUsage::default();
+-            let mut backend_finish_reason = None;
+-            // The finish reason is decided after the parser's final flush.
+-            // Record whether a tool call was named by the time the backend
+-            // finished, so that what the flush emits afterwards does not turn
+-            // `stop` into `tool_calls`.
+-            let mut had_tool_calls_at_finish = false;
+-            let mut stop_sequence = None;
+-
+             while let Some(chunk) = inference.next().await {
+-                let pieces = match chunk {
+-                    InferenceChunk::Ready {
++                match state.consume(chunk).await {
++                    Ok(chunks) => for chunk in chunks { yield Ok(chunk); },
++                    Err(error) => { yield Err(error); return; }
++                }
++                if state.is_finished() { return; }
++            }
++            for chunk in state.finish().await { yield Ok(chunk); }
++        }
++    }
++
++    /// Transfer the full consuming pipeline to an explicit request owner.
++    pub fn into_state(self) -> SemanticState<G> {
++        SemanticState {
++            thinking_mode: self.options.thinking_initial_stage.is_some(),
++            parser: Some(OutputParser::new(self.options)),
++            generator: self.generator,
++            decoder: self.decoder,
++            pending: PendingOutput::new(),
++            started: false,
++            prompt_usage: PromptUsage::default(),
++            completion_usage: CompletionUsage::default(),
++            backend_finish_reason: None,
++            had_tool_calls_at_finish: false,
++            stop_sequence: None,
++            failed: false,
++        }
++    }
++}
++
++/// A completion witnessed by the consuming argument-end action, not JSON validity
++/// or permission to end the assistant turn. Offsets count decoded source bytes.
++#[derive(Debug, Clone, PartialEq, Eq)]
++pub struct CompletedCall {
++    pub index: usize,
++    pub source_end: usize,
++}
++
++/// Request-owned incremental official decoder, parser, pending actions and
++/// protocol generator. Clones are forks of this request, not new responses.
++#[derive(Clone)]
++pub struct SemanticState<G> {
++    generator: G,
++    decoder: Option<StreamDecoder>,
++    parser: Option<OutputParser>,
++    pending: PendingOutput,
++    thinking_mode: bool,
++    started: bool,
++    prompt_usage: PromptUsage,
++    completion_usage: CompletionUsage,
++    backend_finish_reason: Option<InferenceFinishReason>,
++    had_tool_calls_at_finish: bool,
++    stop_sequence: Option<String>,
++    failed: bool,
++}
++
++impl<G: ChunkGenerator> SemanticState<G> {
++    pub fn is_finished(&self) -> bool {
++        self.parser.is_none() || self.failed
++    }
++
++    pub fn completed_calls(&self) -> &[CompletedCall] {
++        &self.pending.completed_calls
++    }
++
++    /// Consume exactly one backend chunk. For per-token frontiers, supply one
++    /// token per chunk. Errors poison this state, as they terminate the stream.
++    pub async fn consume(&mut self, chunk: InferenceChunk) -> Result<Vec<G::Chunk>, StreamError> {
++        let mut output = Vec::new();
++        if self.is_finished() {
++            return Ok(output);
++        }
++        let pieces = match chunk {
++            InferenceChunk::Ready {
++                system_fingerprint,
++                prompt_usage: ready_usage,
++            } => {
++                self.prompt_usage = ready_usage;
++                if !self.started {
++                    let start = OutputChunk::Start {
+                         system_fingerprint,
+-                        prompt_usage: ready_usage,
+-                    } => {
+-                        prompt_usage = ready_usage;
+-                        if !started {
+-                            let start = OutputChunk::Start { system_fingerprint, prompt_usage };
+-                            for protocol_chunk in generator.generate(start).await {
+-                                yield Ok(protocol_chunk);
+-                            }
+-                            started = true;
+-                        }
+-                        continue;
+-                    }
+-                    InferenceChunk::Finish { finish_reason } => {
+-                        if !started {
+-                            let start = OutputChunk::Start {
+-                                system_fingerprint: None,
+-                                prompt_usage,
+-                            };
+-                            for protocol_chunk in generator.generate(start).await {
+-                                yield Ok(protocol_chunk);
+-                            }
+-                            started = true;
+-                        }
+-                        backend_finish_reason = Some(finish_reason);
+-                        had_tool_calls_at_finish = pending.has_tool_calls;
+-                        break;
++                        prompt_usage: self.prompt_usage,
++                    };
++                    for protocol_chunk in self.generator.generate(start).await {
++                        output.push(protocol_chunk);
+                     }
+-                    InferenceChunk::Text {
+-                        content,
+-                        token_count,
+-                    } => vec![OutputPiece {
+-                        content,
+-                        token_count,
+-                        logprobs: None,
+-                        kind: ChunkKind::Text,
+-                    }],
+-                    InferenceChunk::Tokens { token_ids, logprobs } => {
+-                        let Some(decoder) = decoder.as_mut() else {
+-                            yield Err(StreamError::MissingTokenizer);
+-                            return;
+-                        };
+-                        match decoder.decode_incrementally(&token_ids, logprobs) {
+-                            Ok(decoded) => decoded
+-                                .into_iter()
+-                                .map(|decoded| OutputPiece {
+-                                    content: decoded.content,
+-                                    token_count: decoded.token_count,
+-                                    logprobs: decoded.logprobs.map(Arc::from),
+-                                    kind: if decoded.is_special_token {
+-                                        ChunkKind::SpecialToken
+-                                    } else {
+-                                        ChunkKind::PlainTokens
+-                                    },
+-                                })
+-                                .collect(),
+-                            Err(error) => {
+-                                yield Err(error);
+-                                return;
+-                            }
+-                        }
+-                    }
+-                };
+-                if pieces.is_empty() {
+-                    continue;
++                    self.started = true;
+                 }
+-                if !started {
+-                    let start = OutputChunk::Start { system_fingerprint: None, prompt_usage };
+-                    for protocol_chunk in generator.generate(start).await {
+-                        yield Ok(protocol_chunk);
++                return Ok(output);
++            }
++            InferenceChunk::Finish { finish_reason } => {
++                if !self.started {
++                    let start = OutputChunk::Start {
++                        system_fingerprint: None,
++                        prompt_usage: self.prompt_usage,
++                    };
++                    for protocol_chunk in self.generator.generate(start).await {
++                        output.push(protocol_chunk);
+                     }
+-                    started = true;
++                    self.started = true;
+                 }
+-                for piece in pieces {
+-                    completion_usage.completion_tokens += piece.token_count;
+-                    let actions = parser.feed(&piece.content, piece.kind);
+-                    pending.push(piece.content, piece.logprobs);
+-                    for protocol_chunk in pending.apply_actions(actions, &mut generator).await {
+-                        yield Ok(protocol_chunk);
+-                    }
+-                    stop_sequence = pending.take_stop_sequence();
+-                    if stop_sequence.is_some() {
+-                        break;
++                self.backend_finish_reason = Some(finish_reason);
++                self.had_tool_calls_at_finish = self.pending.has_tool_calls;
++                output.extend(self.finish().await);
++                return Ok(output);
++            }
++            InferenceChunk::Text {
++                content,
++                token_count,
++            } => vec![OutputPiece {
++                content,
++                token_count,
++                logprobs: None,
++                kind: ChunkKind::Text,
++            }],
++            InferenceChunk::Tokens {
++                token_ids,
++                logprobs,
++            } => {
++                let Some(decoder) = self.decoder.as_mut() else {
++                    self.failed = true;
++                    return Err(StreamError::MissingTokenizer);
++                };
++                match decoder.decode_incrementally(&token_ids, logprobs) {
++                    Ok(decoded) => decoded
++                        .into_iter()
++                        .map(|decoded| OutputPiece {
++                            content: decoded.content,
++                            token_count: decoded.token_count,
++                            logprobs: decoded.logprobs.map(Arc::from),
++                            kind: if decoded.is_special_token {
++                                ChunkKind::SpecialToken
++                            } else {
++                                ChunkKind::PlainTokens
++                            },
++                        })
++                        .collect(),
++                    Err(error) => {
++                        self.failed = true;
++                        return Err(error);
+                     }
+                 }
+-                if stop_sequence.is_some() {
+-                    break;
+-                }
+             }
+-
+-            if !started {
+-                let start = OutputChunk::Start { system_fingerprint: None, prompt_usage };
+-                for protocol_chunk in generator.generate(start).await {
+-                    yield Ok(protocol_chunk);
+-                }
++        };
++        if pieces.is_empty() {
++            return Ok(output);
++        }
++        if !self.started {
++            let start = OutputChunk::Start {
++                system_fingerprint: None,
++                prompt_usage: self.prompt_usage,
++            };
++            for protocol_chunk in self.generator.generate(start).await {
++                output.push(protocol_chunk);
+             }
+-            let actions = parser.finish();
+-            for protocol_chunk in pending.apply_actions(actions, &mut generator).await {
+-                yield Ok(protocol_chunk);
++            self.started = true;
++        }
++        for piece in pieces {
++            self.completion_usage.completion_tokens += piece.token_count;
++            let actions = self
++                .parser
++                .as_mut()
++                .expect("live parser")
++                .feed(&piece.content, piece.kind);
++            self.pending.push(piece.content, piece.logprobs);
++            for protocol_chunk in self
++                .pending
++                .apply_actions(actions, &mut self.generator)
++                .await
++            {
++                output.push(protocol_chunk);
+             }
+-            let finish_reason = if stop_sequence.is_some() {
+-                FinishReason::StopSequence
+-            } else {
+-                match backend_finish_reason {
+-                    Some(InferenceFinishReason::Stop) if had_tool_calls_at_finish => {
+-                        FinishReason::ToolCalls
+-                    }
+-                    Some(InferenceFinishReason::Stop) => FinishReason::Stop,
+-                    Some(InferenceFinishReason::Length) => FinishReason::Length,
+-                    Some(InferenceFinishReason::ContentFilter) => FinishReason::ContentFilter,
+-                    None => FinishReason::EndOfStream,
+-                }
+-            };
+-            if thinking_mode {
+-                completion_usage.reasoning_tokens = decoder.as_ref().and_then(|decoder| {
+-                    decoder.tokenizer().count_tokens(&pending.reasoning_content)
+-                });
++            self.stop_sequence = self.pending.take_stop_sequence();
++            if self.stop_sequence.is_some() {
++                break;
+             }
+-            let finish = OutputChunk::Finish {
+-                finish_reason,
+-                stop_sequence,
+-                completion_usage,
++        }
++        if self.stop_sequence.is_some() {
++            output.extend(self.finish().await);
++        }
++        Ok(output)
++    }
++
++    /// Consuming EOF flush. Never use this on live canonical state to probe EOF.
++    pub async fn finish(&mut self) -> Vec<G::Chunk> {
++        let mut output = Vec::new();
++        if self.is_finished() {
++            return output;
++        }
++
++        if !self.started {
++            let start = OutputChunk::Start {
++                system_fingerprint: None,
++                prompt_usage: self.prompt_usage,
+             };
+-            for protocol_chunk in generator.generate(finish).await {
+-                yield Ok(protocol_chunk);
++            for protocol_chunk in self.generator.generate(start).await {
++                output.push(protocol_chunk);
++            }
++        }
++        let actions = self.parser.take().expect("live self.parser").finish();
++        for protocol_chunk in self
++            .pending
++            .apply_actions(actions, &mut self.generator)
++            .await
++        {
++            output.push(protocol_chunk);
++        }
++        let finish_reason = if self.stop_sequence.is_some() {
++            FinishReason::StopSequence
++        } else {
++            match self.backend_finish_reason {
++                Some(InferenceFinishReason::Stop) if self.had_tool_calls_at_finish => {
++                    FinishReason::ToolCalls
++                }
++                Some(InferenceFinishReason::Stop) => FinishReason::Stop,
++                Some(InferenceFinishReason::Length) => FinishReason::Length,
++                Some(InferenceFinishReason::ContentFilter) => FinishReason::ContentFilter,
++                None => FinishReason::EndOfStream,
+             }
++        };
++        if self.thinking_mode {
++            self.completion_usage.reasoning_tokens = self.decoder.as_ref().and_then(|decoder| {
++                decoder
++                    .tokenizer()
++                    .count_tokens(&self.pending.reasoning_content)
++            });
++        }
++        let finish = OutputChunk::Finish {
++            finish_reason,
++            stop_sequence: self.stop_sequence.take(),
++            completion_usage: self.completion_usage,
++        };
++        for protocol_chunk in self.generator.generate(finish).await {
++            output.push(protocol_chunk);
++        }
++        output
++    }
++}
++
++impl<G: ChunkGenerator + Clone> SemanticState<G> {
++    /// Run candidates on an isolated fork. The generator must be clone-local
++    /// and side-effect-free (as the Chat Completions generator is); Clone alone
++    /// cannot enforce this for third-party generators. No EOF is implied.
++    pub async fn preview(
++        &self,
++        chunks: impl IntoIterator<Item = InferenceChunk>,
++    ) -> Result<(Vec<G::Chunk>, Vec<CompletedCall>), StreamError> {
++        let mut fork = self.clone();
++        let mut output = Vec::new();
++        let first = fork.completed_calls().len();
++        for chunk in chunks {
++            output.extend(fork.consume(chunk).await?);
+         }
++        Ok((output, fork.completed_calls()[first..].to_vec()))
+     }
+ }
+ 
+@@ -243,6 +350,7 @@ struct OutputPiece {
+ 
+ /// Output text waiting for its parsing actions, with the log probabilities of
+ /// the text it was split from.
++#[derive(Clone)]
+ struct BufferedChunk {
+     content: String,
+     logprobs: Option<Arc<[TokenLogprob]>>,
+@@ -250,7 +358,11 @@ struct BufferedChunk {
+ 
+ /// Output text that the parser has not fully assigned yet, and the state
+ /// gathered while applying actions to it.
++#[derive(Clone)]
+ struct PendingOutput {
++    source_taken: usize,
++    named_calls: usize,
++    completed_calls: Vec<CompletedCall>,
+     chunks: VecDeque<BufferedChunk>,
+     /// The last segment of the previous [`Self::apply_actions`] call, kept
+     /// open so that a following segment with the same action extends it.
+@@ -270,6 +382,9 @@ struct PendingOutput {
+ impl PendingOutput {
+     fn new() -> Self {
+         Self {
++            source_taken: 0,
++            named_calls: 0,
++            completed_calls: Vec::new(),
+             chunks: VecDeque::new(),
+             pending_segment: None,
+             tool_name_buffer: String::new(),
+@@ -292,7 +407,11 @@ impl PendingOutput {
+     /// convert them by the segment's action. `segment.byte_len` must not exceed
+     /// the length of the front chunk. Text split off from a chunk keeps the
+     /// chunk's log probabilities.
+-    fn take_piece(&mut self, segment: OutputActionSegment) -> Option<OutputChunk> {
++    fn take_piece(
++        &mut self,
++        segment: OutputActionSegment,
++        action_end: usize,
++    ) -> Option<OutputChunk> {
+         let BufferedChunk {
+             content: mut piece,
+             logprobs,
+@@ -304,6 +423,7 @@ impl PendingOutput {
+                 logprobs: logprobs.clone(),
+             });
+         }
++        self.source_taken += piece.len();
+         let is_first_piece = self.previous_piece_action != segment.action;
+         self.previous_piece_action = segment.action;
+ 
+@@ -337,6 +457,7 @@ impl PendingOutput {
+             }
+             OutputAction::ToolNameEnd => is_first_piece.then(|| {
+                 self.has_tool_calls = true;
++                self.named_calls += 1;
+                 OutputChunk::ToolCallNamed {
+                     tool_name: std::mem::take(&mut self.tool_name_buffer),
+                 }
+@@ -354,11 +475,18 @@ impl PendingOutput {
+                 };
+                 Some(OutputChunk::ToolCallArgumentsDelta { arguments })
+             }
+-            OutputAction::ToolCallArgumentsEnd { closing_text } => {
+-                is_first_piece.then(|| OutputChunk::ToolCallArgumentsDelta {
++            OutputAction::ToolCallArgumentsEnd { closing_text } => is_first_piece.then(|| {
++                self.completed_calls.push(CompletedCall {
++                    index: self
++                        .named_calls
++                        .checked_sub(1)
++                        .expect("arguments follow name"),
++                    source_end: action_end,
++                });
++                OutputChunk::ToolCallArgumentsDelta {
+                     arguments: closing_text.to_string(),
+-                })
+-            }
++                }
++            }),
+             OutputAction::Label(label) => is_first_piece.then(|| OutputChunk::Content {
+                 content: label.to_string(),
+                 logprobs,
+@@ -373,15 +501,17 @@ impl PendingOutput {
+         segment: &mut OutputActionSegment,
+         outputs: &mut Vec<OutputChunk>,
+     ) {
++        let action_end = self.source_taken + segment.byte_len;
+         while let Some(front_len) = self
+             .chunks
+             .front()
+             .map(|chunk| chunk.content.len())
+             .filter(|&front_len| front_len <= segment.byte_len)
+         {
+-            if let Some(chunk) =
+-                self.take_piece(OutputActionSegment::new(segment.action, front_len))
+-            {
++            if let Some(chunk) = self.take_piece(
++                OutputActionSegment::new(segment.action, front_len),
++                action_end,
++            ) {
+                 outputs.push(chunk);
+             }
+             segment.byte_len -= front_len;
+@@ -409,7 +539,10 @@ impl PendingOutput {
+                 } else {
+                     self.apply_whole_chunks(pending_segment, &mut outputs);
+                     if pending_segment.byte_len > 0
+-                        && let Some(chunk) = self.take_piece(pending_segment.clone())
++                        && let Some(chunk) = self.take_piece(
++                            pending_segment.clone(),
++                            self.source_taken + pending_segment.byte_len,
++                        )
+                     {
+                         outputs.push(chunk);
+                     }

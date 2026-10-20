@@ -205,28 +205,30 @@ and deployed/protected environments are outside this change.
   performance, visual quality or release certification. Historical evidence is
   not fresh acceptance of this branch.
 
-## Recipe 0.2 migration investigation — stopped at semantic ownership boundary
+## Recipe 0.2 — native semantic ownership boundary
 
 ### Source and outcome
 
-- Requested baseline: `DeepInfer`, `83a5fe1213d1214eb75343ead03f6b7a98c63ac7`.
+- Original investigation baseline: `DeepInfer`, `83a5fe1213d1214eb75343ead03f6b7a98c63ac7`.
+  Native-boundary follow-up baseline: `DeepInfer`,
+  `8d152be4ebec70bcfb1eca3a10f04d6eea9e437c`.
 - Inspected official `deepseek-ai/deepseek-recipe` **0.2.0**, release commit
   `93b0fd229cc9ffa6b1a8c63d42b0bf741bbec170`, in a separate scratch clone.
   Read `CHANGELOG.md` (including "Migrating from 0.1"), `server-py/main.py`,
   the Rust consuming processor/parser/decoder, Python response bindings and
   Chat Completions generator/tool-ID implementation.
-- **Migration not implemented.** Invoke the task's explicit stop condition:
-  preserving certified speculative termination needs a reviewed extension of
-  the new consuming-state and tool-identity architecture, not just the published
-  Python API migration. This section records an incompatibility investigation,
-  not successful Recipe 0.2 installation or Runtime qualification.
+- **Migration not implemented.** The original investigation stopped because
+  certified speculative termination needed native consuming-state and tool-ID
+  ownership, not just the published Python API migration. The follow-up below
+  demonstrates that ownership with a small executable Rust extension. Neither
+  investigation establishes Recipe 0.2 installation or Runtime qualification.
 - No active dependency, packaging input, admission rule, scheduler, checkpoint,
   paired-cache implementation, deployed installation or protected branch was
   changed. The old MTP delivery remains in place pending resolution; no 0.1
   compatibility layer or partial 0.2 lane was added. Standard-OFF is untouched.
   No source/package hash authority was regenerated or introduced.
 
-### Concrete incompatibility
+### Concrete incompatibility in unmodified 0.2
 
 The existing `runtime/recipe_semantic_guard.py` does more than find a closing
 marker. `preview()` projects candidate tokens from the actual canonical native
@@ -284,8 +286,9 @@ Recipe-generated tool identities across repeated previews, rejected candidates,
 canonical emission and rollback. It must preserve Recipe's ID semantics and
 certify only native consuming argument-end actions. Neither an independent
 parser, EOF-on-live-state probe, speculative execution, string matching nor
-response-ID normalization is an acceptable substitute. No such architecture or
-workaround was introduced here, and no scheduler redesign was attempted.
+response-ID normalization is an acceptable substitute. The original investigation
+introduced no such architecture; the native follow-up below resolves this source
+boundary without a second parser or scheduler redesign.
 
 ### API and delivery changes identified but deliberately not applied
 
@@ -310,7 +313,7 @@ owners together, not create another installer, manifest authority or source-hash
 registry. The selected upstream revision above is an investigation reference,
 not a newly admitted dependency.
 
-### Focused verification and remaining limitation
+### Original focused verification and limitation
 
 On the unmodified upstream scratch checkout:
 
@@ -335,6 +338,101 @@ cargo test --locked --manifest-path /tmp/ds41f-recipe-02/Cargo.toml \
   provisioning, Runtime tool-effect/continuation test or model execution was
   claimed. The immediate limitation is implementation/ownership design, not a
   failed model benchmark or missing checkpoint. No Vision work was initiated.
+
+### Native boundary follow-up — executable feasibility established
+
+Retained **`docs/recipe-02-native-semantic-boundary.patch`** against exactly the
+0.2.0 release commit above, rather than vendoring Recipe or changing any active
+build/dependency owner. It contains the reusable Rust extraction and three focused
+native unit tests, not a standalone experimental runner or alternate inference
+path. The upstream Rust implementation was inspected before this extraction.
+
+Selected ownership design:
+
+- `StreamProcessor::into_state()` transfers its official pipeline into explicit
+  `SemanticState<G>`. The existing `into_protocol_stream` now drives that same
+  state's `consume`/`finish` methods. State owns Decoder UTF-8/logprob buffers,
+  OutputParser match branches, PendingOutput action segments/chunks, metadata,
+  usage, finish/stop handling and the protocol generator. No token history is
+  replayed and no DSML grammar is duplicated or changed.
+- Parser/matcher/pending buffers become cloneable. Decoder clones its private
+  buffers and shares only a read-only tokenizer through `Arc`; attached
+  tokenizers now require `Sync`. The actual upstream V4.1 `Tokenizer` is used in
+  the proof. Custom tokenizers must likewise be read-only across forks.
+- Chat Completions generator owns an OS-seeded, cloneable `rand::rngs::StdRng`.
+  Cloning preserves both its current state and future random draws. Naming uses
+  the existing official ID algorithm with this RNG: unchanged index, 20 random
+  alphanumerics, `ET_` rule and XXH3 checksum. No response-ID normalization,
+  replacement formatter, global ID reservation or identity exemption is used.
+  Rejected forks spend only their own RNG. A clone is the *same request's fork*,
+  never a newly seeded response. Other protocol generators are not made
+  preview-capable here; Messages/Responses serving remains outside scope.
+- `preview(&self, chunks)` clones state and consumes only the candidates, with
+  no implied EOF. Canonical state and external response accumulation remain
+  untouched. Explicit consuming EOF/Finish is available on the fork; errors
+  poison only that fork. Third-party generators cannot gain side-effect safety
+  merely by implementing `Clone`; this proof uses the clone-local official Chat
+  Completions generator, not an externally effectful generator.
+- `CompletedCall { index, source_end }` is recorded only in PendingOutput's
+  first consumption of `OutputAction::ToolCallArgumentsEnd`, alongside the
+  official closing-argument delta. The absolute decoded-byte endpoint covers
+  the entire action even when it spans buffered chunks. Feeding one token per
+  `consume`/preview step supplies exact per-token certification frontiers;
+  special-vs-plain distinctions and forced incomplete-UTF-8 flushes still come
+  solely from the official Decoder. Bulk chunks can contain multiple calls.
+
+**Important native semantics:** upstream `Stage::ToolCallArguments` recognizes
+`</` plus the special DSML token, not the entire literal `invoke>` suffix, as
+argument-end. The tests assert that exact earlier endpoint. This is official
+consuming completion, not JSON validity, strict XML validation, assistant-turn
+termination or permission to execute tools. A partial argument, a named tool,
+ordinary-token marker spelling, partial marker, or EOF without argument-end
+produces no call completion. No extra syntax heuristic was added to delay or
+advance the official action.
+
+Executable evidence: the retained patch passed `git apply --check`, was applied
+to a fresh detached worktree at the exact release revision, and all three commands
+below passed there (with a shared Cargo build cache only):
+
+```sh
+# In a clean checkout of 93b0fd229cc9ffa6b1a8c63d42b0bf741bbec170:
+git apply /path/to/ds41f-mlx/docs/recipe-02-native-semantic-boundary.patch
+cargo test --locked -p deepseek-recipe native_boundary -- --nocapture
+cargo test --locked -p deepseek-recipe stream::processor::tests::
+cargo test --locked -p deepseek-recipe protocol::
+```
+
+- **3 native-boundary tests passed** using actual V4.1 tokenization, official
+  consuming components, Chat Completions generation and response accumulation.
+  Repeated whole-candidate and every-token previews equal canonical protocol
+  chunks and accumulated prefix responses exactly, including IDs. Bulk versus
+  single-token consumption produces identical accumulated response and call
+  endpoints for fragmented arguments and multiple calls (including an empty
+  call and a split UTF-8 emoji).
+- Divergent named calls, rejected completed projections, speculative Finish,
+  incomplete markers/arguments, ordinary-token DSML spellings and invalid
+  logprob candidates leave canonical state usable and unchanged. EOF on an
+  incomplete fork does not invent completion. Buffered UTF-8 continuation and
+  forced replacement before a special token agree between preview and consume.
+  Tests check ID format, index, empty-thinking marker, checksum and distinct IDs
+  for successive calls; existing protocol tests also cover nonempty reasoning.
+- **20 existing processor tests and 25 existing protocol tests passed** after
+  extraction, retaining stop/EOF, truncation, usage and special-token behavior.
+  This is focused native evidence only, not a model, rollback, package, Python
+  binding, Messages API or deployed-environment qualification.
+
+Remaining integration boundary: these native completion observations are not
+Runtime admission certificates. The existing guard must still bind request /
+processor lifetime, revision, token frontier and candidate ownership, fork the
+response accumulator, compare exact canonical prefix responses (IDs included),
+and distinguish call completion from consuming Stop/EOF. The minimal next step
+is to expose this state through the existing native Python semantic-session
+owner and adapt that guard to 0.2's response accumulator and exact token-step
+inputs, with explicit isolated EOF probes. No guard checks should be relaxed.
+Prompt/request API and coherent build/provisioning migration remain separate;
+this patch is not selected by any installer or active dependency. No substantive
+native architectural blocker remains for the demonstrated Chat Completions
+boundary, but full Runtime compatibility is not yet claimed.
 
 ## Metadata-first, cache-aware Vision preparation
 
