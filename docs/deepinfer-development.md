@@ -204,3 +204,134 @@ and deployed/protected environments are outside this change.
   real checkpoint-byte scan, full-model execution/benchmarks, OFF publication,
   performance, visual quality or release certification. Historical evidence is
   not fresh acceptance of this branch.
+
+## Recipe 0.2 migration investigation — stopped at semantic ownership boundary
+
+### Source and outcome
+
+- Requested baseline: `DeepInfer`, `83a5fe1213d1214eb75343ead03f6b7a98c63ac7`.
+- Inspected official `deepseek-ai/deepseek-recipe` **0.2.0**, release commit
+  `93b0fd229cc9ffa6b1a8c63d42b0bf741bbec170`, in a separate scratch clone.
+  Read `CHANGELOG.md` (including "Migrating from 0.1"), `server-py/main.py`,
+  the Rust consuming processor/parser/decoder, Python response bindings and
+  Chat Completions generator/tool-ID implementation.
+- **Migration not implemented.** Invoke the task's explicit stop condition:
+  preserving certified speculative termination needs a reviewed extension of
+  the new consuming-state and tool-identity architecture, not just the published
+  Python API migration. This section records an incompatibility investigation,
+  not successful Recipe 0.2 installation or Runtime qualification.
+- No active dependency, packaging input, admission rule, scheduler, checkpoint,
+  paired-cache implementation, deployed installation or protected branch was
+  changed. The old MTP delivery remains in place pending resolution; no 0.1
+  compatibility layer or partial 0.2 lane was added. Standard-OFF is untouched.
+  No source/package hash authority was regenerated or introduced.
+
+### Concrete incompatibility
+
+The existing `runtime/recipe_semantic_guard.py` does more than find a closing
+marker. `preview()` projects candidate tokens from the actual canonical native
+state and forks the accumulated response. It records the exact per-prefix
+response and consuming Stop/EOF outcome. `observe_canonical_emit()` checks
+processor/lifetime/revision/frontier/token ownership and exact response equality
+before certifying calls. A call certificate is not permission to terminate the
+assistant turn. Tool effects remain application-owned.
+
+The retained M52R extension in `recipe-m52r-source.tar.gz`, including
+`docs/m52r-recipe-consuming-eof.patch`, depends on three properties:
+
+1. The canonical parser/decoder lives in `SemanticSessionHandle`, with a
+   cloneable incremental state and absolute terminal source spans.
+2. `CanonicalPreviewHandle` snapshots that state **together with** consuming
+   stashing, usage and the protocol generator at the next-input boundary.
+   `ToolCallArgumentsEnd` consumption, not a JSON/text heuristic, certifies a
+   completed call at each projected prefix.
+3. Cloning the generator preserves future tool IDs: the old generator derives
+   them deterministically from response ID and call index. Projected response
+   equality therefore includes exactly the IDs later emitted canonically.
+
+Official 0.2 supplies none of the Python preview/snapshot/certification methods.
+More importantly, simply restoring methods and adding `Clone` is insufficient:
+
+- `deepseek-recipe/src/stream/processor.rs::into_protocol_stream` owns
+  `OutputParser`, `StreamDecoder`, `PendingOutput`, generator and usage inside
+  its async stream. The Python binding holds an opaque stream and input channel,
+  not a canonical snapshot. `PendingOutput` now carries action segments,
+  logprobs and reasoning content; it has no completed/open-call certification
+  state. Its `has_tool_calls` records naming, not argument completion.
+- `stream/output_parser.rs` replaces the former state machine. Terminal parsing
+  is internal, with no semantic terminal/span API. Its marker matching now
+  distinguishes special-token pieces from plain-token spellings.
+  `stream/decoder.rs` can emit multiple pieces for one token chunk and forcibly
+  flush incomplete plain UTF-8 before a special token. Reusing the old semantic
+  decoder/parser alongside it would not certify the actual 0.2 consuming path.
+- **Tool identity is no longer a clone-local deterministic transition.**
+  `protocol/openai/chat_completion/response/chunk_generator.rs` invokes
+  `new_tool_call_id` on `ToolCallNamed`.
+  `protocol/tool_call_id.rs::new_tool_call_id` draws 20 characters from
+  `rand::rng()` at that point, outside generator state. A projected call and
+  its later canonical counterpart would draw independently even if every
+  generator field were cloned. The guard's exact prefix-response comparison
+  would fail before certification. Ignoring/replacing IDs would weaken existing
+  ownership guarantees, not migrate them.
+- These IDs also encode empty-thinking (`ET_`) and a checksum. Conversion uses
+  the marker when processing later assistant/tool-result history. Reverting to
+  the old ID formatter or treating IDs as incidental could change continuation
+  semantics as well as break certificate equality.
+
+A safe continuation requires review of a native, token-aware snapshot boundary
+covering the entire new consuming pipeline, and fork-stable ownership of future
+Recipe-generated tool identities across repeated previews, rejected candidates,
+canonical emission and rollback. It must preserve Recipe's ID semantics and
+certify only native consuming argument-end actions. Neither an independent
+parser, EOF-on-live-state probe, speculative execution, string matching nor
+response-ID normalization is an acceptable substitute. No such architecture or
+workaround was introduced here, and no scheduler redesign was attempted.
+
+### API and delivery changes identified but deliberately not applied
+
+The ordinary path also needs explicit V4.1 model alias registration and model
+name ownership on the protocol request; 0.2 conversion/response options;
+Recipe's explicit-special-range prompt encoding; resolved reasoning/sampling
+settings; `InferenceChunk.tokens`; `accumulate` and renamed SSE methods.
+Request-owned chunk generators now apply response settings, replacing the old
+usage/custom-tool-name post-configuration. Runtime capability admission must
+still reject unsupported constrained decoding rather than advertise enforcement
+of 0.2's output constraints. Existing image conversion/order and capacity limits
+must remain independently tested.
+
+Read the current `mtp_setup.py`, `tools/build_execution_package.py`, ordinary
+conversion/server, installed admission, semantic guard and relevant packaging,
+tool-result, semantic-preview and synthetic rollback tests before deciding to
+stop. The provisioning owner currently selects the retained M52R wheel and
+source export through `normal-local.json`; the package owner also inherits its
+Recipe native payload/version. Replacing only one of those inputs would leave
+an incoherent installation. Future implementation must update these existing
+owners together, not create another installer, manifest authority or source-hash
+registry. The selected upstream revision above is an investigation reference,
+not a newly admitted dependency.
+
+### Focused verification and remaining limitation
+
+On the unmodified upstream scratch checkout:
+
+```sh
+cargo test --manifest-path /tmp/ds41f-recipe-02/Cargo.toml \
+  -p deepseek-recipe stream::processor::tests:: -- --nocapture
+cargo test --locked --manifest-path /tmp/ds41f-recipe-02/Cargo.toml \
+  -p deepseek-recipe protocol:: -- --nocapture
+```
+
+- **20 processor tests passed**: ordinary completion, stop-prefix handling,
+  reasoning, multiple/fragmented tool arguments, truncation, special-vs-plain
+  tokens and UTF-8 buffering, usage and backend finish reasons.
+- **25 protocol tests passed**, including tool-ID checksum/empty-thinking marker,
+  continuation reasoning handling and Chat Completions tool-ID generation.
+- Source inspection confirmed the absence of `preview_tokens`,
+  `preview_certified_eof_tokens`, `semantic_snapshot`, `semantic_terminal` and
+  `preview_revision` from the published Python processor, and the external RNG
+  call in native tool-ID generation. These are upstream tests/source findings,
+  **not** a successful MTP guard port or rollback qualification.
+- No native Python binding build, MTP package construction against 0.2, complete
+  provisioning, Runtime tool-effect/continuation test or model execution was
+  claimed. The immediate limitation is implementation/ownership design, not a
+  failed model benchmark or missing checkpoint. No Vision work was initiated.
