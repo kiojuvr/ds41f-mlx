@@ -16,7 +16,7 @@ def test_missing_session_pair_never_reprefills_or_enters_native_start():
     scheduler = object.__new__(ProductionScheduler)
     errors = []
     request = NS(prompt_token_ids=list(range(212)), logical_session=NS(session_id='logical', canonical=tuple(range(210))),
-                 execution=QualificationSession('r'), trace={}, prepared=None, recipe_tokenizer=None,
+                 execution=QualificationSession('r'), trace={}, prepared=NS(multimodal=None), recipe_tokenizer=None,
                  image_identities=())
     scheduler.waiting = deque([request]); scheduler.running = {}
     scheduler.checkpoints = NS(acquire_retained=lambda *a, **kw:None)

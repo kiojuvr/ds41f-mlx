@@ -79,8 +79,13 @@ def plan_image_grid(width: int, height: int, args):
     )
 
 
+def image_token_kinds(n_llm_h: int, n_llm_w: int) -> list[int]:
+    """Delimiter/feature ordering shared by metadata planning and patch packing."""
+    return [0] + ([1] * n_llm_w + [2]) * n_llm_h + [3]
+
+
 def image_patch_array(image, config):
-    """CPU-only request representation; no inference-thread stream ownership."""
+    """CPU normalization/packing for one image; callers own its short lifetime."""
     image = image.convert("RGB")
     nh, nw, height, width = plan_image_grid(image.width, image.height, config)
     if (
@@ -109,7 +114,7 @@ def image_patch_array(image, config):
         .transpose(0, 2, 4, 1, 3)
         .reshape(-1, 3, p, p)
     )
-    types = [0] + ([1] * nw + [2]) * nh + [3]
+    types = image_token_kinds(nh, nw)
     return patches, height // p, width // p, types
 
 

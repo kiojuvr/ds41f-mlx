@@ -52,7 +52,8 @@ def test_http_preprocessing_is_cpu_owned(monkeypatch):
     def forbidden(*a,**k): raise AssertionError('GPU allocation on input thread')
     monkeypatch.setattr(mx,'array',forbidden)
     inp=prepare_multimodal([1,config().image_token_id,2],[src],config())
-    assert isinstance(inp.spans[0].patches,np.ndarray)
+    assert not hasattr(inp.spans[0], 'patches')
+    assert all(isinstance(data, bytes) for data in inp._sources.values())
 
 
 def test_counts_missing_terminal_and_disabled_tower():

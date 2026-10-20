@@ -431,6 +431,10 @@ class DeferredPrefillAppend:
             self.commit_certificate = commit
             self.live_setup = setup
             self.state = AppendState.SEALED
+            # All segment setup consumers have finished. Evaluated setup/cache
+            # graphs own their dependencies; a passive certificate must not keep
+            # the request's sparse Vision rows alive through generation.
+            self.image_embeddings = None
             return setup
         except Exception as exc:
             self.fail(f"final seal failed: {exc}")
@@ -439,6 +443,7 @@ class DeferredPrefillAppend:
     def fail(self, reason: str) -> None:
         self.state = AppendState.FAILED
         self.failed_reason = reason
+        self.image_embeddings = None
         self.stale_generation += 1
         for cache in self.live_cache:
             try:

@@ -194,7 +194,9 @@ def test_image_tool_part_passes_real_recipe_and_runtime_preparation(store, monke
         {'role':'assistant','content':'','tool_calls':[{'id':'a','type':'function','function':{'name':'fetch_image','arguments':'{}'}}]},
         {'role':'tool','tool_call_id':'a','content':result.content}]
     request = {'model':'deepseek-v4.1-flash','messages':messages,'tools':[tool.schema],'max_tokens':'auto'}
-    prepared = prepare_request('chat_completions',json.dumps(request).encode(),tokenizer=load_v41_tokenizer())
+    from ds41f_mlx.config import load_runtime_config
+    prepared = prepare_request('chat_completions',json.dumps(request).encode(),
+                               tokenizer=load_v41_tokenizer(load_runtime_config().recipe_path))
     assert prepared.multimodal is not None
     assert prepared.multimodal.identities()[0]['sha256'] == payload(result)['sha256']
 

@@ -4,7 +4,7 @@ Only inline encoded images are accepted: no implicit filesystem/network access.
 Committed images are identified by encoded-byte digest + expanded span, never
 re-encoded on continuation/restore. Their executable representation is the KV.
 """
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from hashlib import sha256
 from io import BytesIO
 import base64
@@ -27,7 +27,6 @@ class ImageSpan:
     digest: str
     grid: tuple[int, int]
     kinds: tuple[int, ...]
-    patches: Any
 
     def identity(self) -> dict:
         return dict(start=self.start, length=self.length, sha256=self.digest,
@@ -38,6 +37,14 @@ class ImageSpan:
 class MultimodalInput:
     token_ids: tuple[int, ...]
     spans: tuple[ImageSpan, ...]
+    # Only encoded immutable bytes wait in the request queue. This request-owned
+    # transport storage is discarded after encoding/admission failure; identities
+    # and geometry remain available to publication and reconstruction.
+    _sources: dict[int, bytes] = field(repr=False, compare=False)
+    _config: Any = field(repr=False, compare=False)
+
+    def release_sources(self) -> None:
+        self._sources.clear()
 
     def identities(self) -> list[dict]:
         return [s.identity() for s in self.spans]
@@ -50,24 +57,59 @@ class MultimodalInput:
             raise ValueError('continuation changed committed image identity')
 
     def encode_new(self, model: Any, frontier: int = 0, *, span_encoder=None) -> 'ImageEmbeddings':
-        # OFF owns its resource capability; ordinary MTP supplies its admitted
-        # pinned Model embedding adapter. Neither authority admits the other.
-        if span_encoder is None:
-            from ds41f_mlx.runtime.resource_admission import resources_for
-            resources_for(model.language_model).validate_binding(model.language_model)
-        import mlx.core as mx
+        """Consume request sources once, preparing only spans beyond the frontier."""
+        # The caller owns the admitted paired/idle frontier. Never turn a
+        # partially covered image into a cache hit or an implicit replay.
         start = perf_counter()
         rows = []
-        for span in self.spans:
-            if span.start < frontier:
-                continue
-            h, w = span.grid
-            patches = mx.array(span.patches).astype(mx.bfloat16)
-            encoder = model.encode_image_span if span_encoder is None else span_encoder
-            value = encoder(patches, h, w, span.kinds)
-            mx.eval(value)
-            rows.append((span.start, value))
-        return ImageEmbeddings(tuple(rows), model.config.image_token_id, perf_counter() - start)
+        try:
+            if frontier < 0 or any(s.start < frontier < s.start + s.length for s in self.spans):
+                raise ValueError('committed frontier intersects an image span')
+            # OFF owns its resource capability; ordinary MTP supplies its admitted
+            # pinned Model embedding adapter. Neither authority admits the other.
+            if span_encoder is None:
+                from ds41f_mlx.runtime.resource_admission import resources_for
+                resources_for(model.language_model).validate_binding(model.language_model)
+            for span in self.spans:
+                if span.start < frontier:
+                    self._sources.pop(span.start, None)
+                    continue
+                data = self._sources.pop(span.start, None)
+                try:
+                    if data is None or sha256(data).hexdigest() != span.digest:
+                        raise ValueError('new image source unavailable or changed')
+                    encoder = model.encode_image_span if span_encoder is None else span_encoder
+                    value = _encode_span(data, span, self._config, encoder)
+                    rows.append((span.start, value))
+                finally:
+                    data = value = None
+            return ImageEmbeddings(tuple(rows), model.config.image_token_id, perf_counter() - start)
+        finally:
+            self.release_sources()
+            rows.clear()
+
+
+def _encode_span(data: bytes, span: ImageSpan, config: Any, encoder) -> Any:
+    """Worker-local patch lifetime, ending only after MLX consumes the graph."""
+    import mlx.core as mx
+    from PIL import Image
+    from ds41f_mlx.model_execution.processing import image_patch_array
+    patches = pixels = value = None
+    try:
+        # Admission already verified/decoded this exact immutable byte sequence.
+        # Use the original checkpoint processor, not a metadata-only substitute.
+        with Image.open(BytesIO(data)) as image:
+            patches, h, w, kinds = image_patch_array(image, config)
+        if (h, w) != span.grid or tuple(kinds) != span.kinds:
+            raise ValueError('image preparation differs from admitted geometry')
+        pixels = mx.array(patches).astype(mx.bfloat16)
+        value = encoder(pixels, h, w, span.kinds)
+        mx.eval(value)
+        return value
+    finally:
+        # Also drop large inputs from exception tracebacks; no request, span or
+        # passive prefill certificate owns normalized CPU patches.
+        data = patches = pixels = value = None
 
 
 @dataclass(frozen=True)
@@ -148,15 +190,15 @@ def validate_encoded_image(data: bytes, media_type: str | None = None) -> dict:
 
 
 def prepare_multimodal(token_ids: list[int], sources: list[Any], config: Any) -> MultimodalInput:
-    from PIL import Image
-    from ds41f_mlx.model_execution.processing import image_patch_array
+    """Fully validate sources and plan geometry, without normalized patch arrays."""
+    from ds41f_mlx.model_execution.processing import plan_image_grid, image_token_kinds
     if not config.vision_enabled:
         raise ValueError('checkpoint has no vision encoder')
     if not 0 < len(sources) <= MAX_IMAGES:
         raise ValueError(f'inline image count must be 1..{MAX_IMAGES}')
     if token_ids.count(config.image_token_id) != len(sources):
         raise ValueError('image placeholder/source count mismatch')
-    expanded, spans = [], []
+    expanded, spans, encoded = [], [], {}
     sources = iter(sources)
     for token in token_ids:
         if token != config.image_token_id:
@@ -164,26 +206,22 @@ def prepare_multimodal(token_ids: list[int], sources: list[Any], config: Any) ->
             continue
         data = image_bytes(next(sources))
         try:
-            validate_encoded_image(data)
-            with warnings.catch_warnings():
-                warnings.simplefilter('error', Image.DecompressionBombWarning)
-                with Image.open(BytesIO(data)) as image:
-                    if image.format not in ('PNG', 'JPEG', 'WEBP') or getattr(image, 'n_frames', 1) != 1:
-                        raise ValueError('unsupported or animated image')
-                    if not 0 < image.width * image.height <= MAX_PIXELS:
-                        raise ValueError('image pixel limit exceeded')
-                    if not 0.5 <= image.width / image.height <= 2.0:
-                        raise ValueError('image aspect ratio outside supported 1:2..2:1 envelope')
-                    patches, h, w, kinds = image_patch_array(image, config)
-                    if len(kinds) > MAX_IMAGE_TOKENS:
-                        raise ValueError('expanded image exceeds qualified token envelope')
+            # Retain full container/pixel validation even on a later cache hit.
+            # Decoded pixels are transient here; no resize/normalization/patching.
+            metadata = validate_encoded_image(data)
+            nh, nw, height, width = plan_image_grid(metadata['width'], metadata['height'], config)
+            h, w = height // config.vision_patch_size, width // config.vision_patch_size
+            kinds = image_token_kinds(nh, nw)
+            if len(kinds) > MAX_IMAGE_TOKENS:
+                raise ValueError('expanded image exceeds qualified token envelope')
         except Exception as exc:
             raise ValueError(f'invalid image: {exc}') from exc
-        spans.append(ImageSpan(len(expanded), len(kinds), sha256(data).hexdigest(),
-                               (h, w), tuple(kinds), patches))
+        encoded[len(expanded)] = data
+        spans.append(ImageSpan(len(expanded), len(kinds), metadata['sha256'],
+                               (h, w), tuple(kinds)))
         expanded.extend([token] * len(kinds))
     if len(expanded) > MAX_MULTIMODAL_CONTEXT:
         raise ValueError('expanded multimodal context exceeds qualified envelope')
     if expanded[-1] == config.image_token_id:
         raise ValueError('held-out terminal must be a text token')
-    return MultimodalInput(tuple(expanded), tuple(spans))
+    return MultimodalInput(tuple(expanded), tuple(spans), encoded, config)

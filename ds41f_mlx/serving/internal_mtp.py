@@ -283,6 +283,10 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
                         phase(self, trace, 'SUFFIX_APPEND')
             finally:
                 for i, layer in original.items(): lm.layers[i] = layer
+                # No more suffix segments consume sparse image rows. P6 drops
+                # its own input reference on seal/failure; worker graph/retirement
+                # ownership still covers any pending MLX work on failure.
+                embeddings = None
             trace['prompt_checkpoint_capture_s'] = capture_s
             trace['suffix_append_s'] = perf_counter()-append_t0-capture_s
             phase(self, trace, 'P5_HANDOFF')

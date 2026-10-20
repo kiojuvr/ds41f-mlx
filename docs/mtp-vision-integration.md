@@ -4,6 +4,12 @@ Status: **CLOSED** — bounded ordinary Vision integration into the existing pai
 MTP production path, with real-image delta acceptance. The separate promotion
 and delivery gates listed below are not part of this closure.
 
+DeepInfer follow-up: request preparation is now metadata-first. Full encoded-image
+validation remains, but normalized patches are created on the worker only after
+paired lookup, for uncached spans. See [development notes](deepinfer-development.md#metadata-first-cache-aware-vision-preparation)
+for the focused verification; the historical model-acceptance receipt below was
+not regenerated.
+
 Scope: checkout production implementation and affected-boundary acceptance, not
 new release admission, Full R1, packaging, a new default, or removal of OFF.
 At the original Vision delta the installed package remained unchanged; subsequent
@@ -65,9 +71,9 @@ interface mismatch rather than pretending an MTP model owns an OFF lease.
 ```text
 ordinary /v1/chat/completions
  → recipe conversion/render/encode
- → existing inline CPU preparation, identity and bounded expanded capacity
+ → inline CPU validation + geometry/identity metadata + bounded expanded capacity
  → ProductionScheduler paired lookup (IDs + image discriminator)
- → encode_new via pinned Model embedding API, only spans beyond restored C
+ → patch preparation + encode_new via pinned Model API, only spans beyond restored C
  → existing P6 absolute embedding merge + image masks
  → existing target-layer taps → native committed DSpark rings at the same C
  → N-2 paired capture → N-1 sealed append → existing P5 terminal transfer

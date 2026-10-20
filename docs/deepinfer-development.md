@@ -335,3 +335,121 @@ cargo test --locked --manifest-path /tmp/ds41f-recipe-02/Cargo.toml \
   provisioning, Runtime tool-effect/continuation test or model execution was
   claimed. The immediate limitation is implementation/ownership design, not a
   failed model benchmark or missing checkpoint. No Vision work was initiated.
+
+## Metadata-first, cache-aware Vision preparation
+
+### Scope and architectural change
+
+- Baseline: `DeepInfer`, `3dfbe3d261b567d79081867aecdcfa24d58f3402`.
+  Official DeepInfer architecture reference:
+  `8b16149741a4935e1dec8cea27853f273b374c5b`.
+- Recipe 0.2 remains **deferred** because of the confirmed semantic-state and
+  tool-ID ownership incompatibility described above. No Recipe API, dependency
+  or speculative semantic-guard change accompanies this Vision improvement.
+- Previously, `prepare_multimodal` allocated normalized float32 patches for
+  **every** image before Scheduler lookup. `encode_new` skipped cached Vision
+  calls, but historical images still paid for resize/patch preparation and held
+  those arrays throughout queueing.
+- Preparation now fully validates the encoded image, then calls the existing
+  `model_execution/processing.py::plan_image_grid` for geometry. The delimiter/
+  feature-kind expression was factored into `image_token_kinds`, shared with
+  `image_patch_array`; there is no alternate layout, resize or packing recipe.
+  Frozen spans retain identical absolute start/length, digest, patch grid and
+  ordered kinds. Expanded IDs and the `{start,length,sha256,grid}` cache identity
+  are unchanged. Request transport storage holds encoded bytes, not patches.
+- The existing paired authority still selects and validates the restored token
+  frontier before `_start`. Fully covered images never enter patch preparation
+  or Vision. `encode_new` rejects an intersecting frontier; only new spans reopen
+  their validated immutable bytes and invoke the original `image_patch_array`
+  followed by the existing pinned MTP Model/MLX ViT/aligner adapter. Packed grid
+  and kinds are checked against metadata before executing the encoder.
+- No cached embeddings are reconstructed, stored or replayed. A missing,
+  incomplete or identity-incompatible historical pair still rejects before
+  native start. A genuinely fresh last-message image can still encode on a safe
+  miss. There is no change to the stateless historical-cache-miss policy.
+
+### Validation, lifetime and unchanged boundaries
+
+Full `validate_encoded_image` verification **and pixel decoding** remain in
+CPU admission for all supplied images, including cached ones. This is not a
+header-only trust shortcut: malformed/truncated files, animation, invalid inline
+transport/detail, format, byte/pixel/aspect excess and count/capacity errors still
+reject. Cached images avoid resize/normalization/patch extraction and Vision,
+not input security validation. Checkpoint geometry and existing four-image,
+1,014-position-per-image and 8,192-total-position limits are unchanged.
+
+Patch arrays are local to one worker span and released after `mx.eval` of its
+encoded rows, before preparing the next image. Explicit local cleanup also
+removes large inputs from our exception frames. Request-owned encoded-byte
+copies are cleared after encoding, admission failure, waiting cancellation or
+retirement (including fatal retirement before start). Metadata survives for
+cache publication and reconstruction. Original protocol conversation/body data
+may still be retained by the existing tool/session reconstruction owner; it is
+not a retained patch/embedding authority.
+
+P6 releases its sparse image-input reference on seal/failure; `_start` releases
+its reference after the last suffix append, before P5/generation. MLX graphs own
+any outstanding dependencies, and existing same-worker synchronization,
+protected cancellation and retirement ownership remain unchanged. No new memory
+manager or embedding cache was added. OFF resource admission, Flash-1017 math,
+Target/DSpark consistency, Recipe prompt semantics and PDF application behavior
+were not changed. No deployed installation, delivery registry or source/package
+hash authority was modified.
+
+### Focused verification
+
+**239 passed, 12 subtests passed** in the existing development `.venv` (Python
+3.13.14, real Pillow/NumPy/MLX). Twenty-nine existing FastAPI/Starlette deprecation
+warnings remain. Tests were run in two groups because generic preparation tests
+need a configured tokenizer path, while ordinary MTP correctly rejects that
+path-override environment variable:
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m pytest -q -p no:cacheprovider \
+  tests/test_metadata_first_vision.py tests/test_multimodal_contract.py \
+  tests/test_multimodal_cancellation.py tests/test_multimodal_restore_ownership.py \
+  tests/test_production_mtp.py tests/test_production_session_owner.py \
+  tests/test_ordinary_text_parts.py tests/test_web_documents.py \
+  tests/test_prefill_fp8_mlx_p6.py tests/test_flash_1017_qualification.py \
+  tests/test_suffix_math_regressions.py
+# 202 passed, 12 subtests passed
+DS41F_RECIPE_PATH="$PWD/.venv/share/ds41f-mtp/recipe" \
+  PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m pytest -q -p no:cacheprovider \
+  tests/test_runtime_capacity.py tests/test_web_binary_tools.py
+# 37 passed
+```
+
+Coverage includes:
+
+- Exact metadata/expanded-ID parity with the existing eager patch function for
+  PNG/JPEG/WebP across tiny, irregular, square, portrait and landscape sizes,
+  including 4M pixels; no normalized-array allocation during preparation.
+- Real upstream paired lookup plus Scheduler admission: complete hits, mixed
+  historical/new images, fresh-image misses, changed identity, missing payload
+  and missing historical pair. Patch spies verify lookup precedes new patches
+  and fully cached images never resize, allocate patches or invoke Vision.
+- Four-image mixed ordering and sparse absolute merges. New normalized patches
+  match the existing BF16 transport exactly. A tiny synthetic-weight **real
+  pinned Model/MLX ViT/aligner** run produces the same embeddings as the eager
+  reference through the unchanged MTP adapter; this is not checkpoint acceptance.
+- Malformed/truncated images and missing/changed new source rejection; partial
+  image frontiers; patch/encoder/evaluation failures; waiting abort and fatal
+  retirement; cancellation retaining inputs until the worker completes;
+  weak-reference checks for patch and P6 sparse-input lifetime.
+- Existing Recipe image/tool-part conversion, capacity, paired restore/session
+  ownership, P6, Flash-1017 numerical and PDF workflow regressions. Two fixtures
+  were made realistic: the early session-miss request has prepared metadata, and
+  the binary-image conversion test uses its configured tokenizer path rather
+  than a missing historical checkout default.
+
+### Remaining limitations
+
+No full-model execution, benchmark, installed-package qualification or new
+acceptance campaign was run. The historical default Recipe checkout path is
+absent on this host; generic preparation tests used the existing provisioned
+0.1 tokenizer through normal configuration, with no installation changes or
+admission bypass. Development tests do not claim production Python/native
+admission. Historical cache expiry still means an explicit availability error,
+not permission to replay images. Full CPU image validation and protocol-body
+retention remain intentional; broader capacity, video, PDF redesign, scheduler
+optimization and Recipe 0.2 migration are outside this change.

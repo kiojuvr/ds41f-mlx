@@ -101,9 +101,16 @@ class ProductionScheduler(Scheduler):
         except BaseException as exc:
             self._retire(request, error=exc)
             return [], []
+        finally:
+            if request.prepared.multimodal is not None:
+                request.prepared.multimodal.release_sources()
 
     def _retire(self, request, *, error=None, cancelled=False):
         rec, trace = request.execution, request.trace
+        # This worker has no remaining image-input consumer, including when a
+        # fatal engine retires requests still waiting for cache admission.
+        if request.prepared.multimodal is not None:
+            request.prepared.multimodal.release_sources()
         publication = False
         phase(self.backend, trace, 'SETTLING')
         try:
@@ -209,6 +216,8 @@ class ProductionScheduler(Scheduler):
         if request is None:
             return False
         if request_id not in self.running:
+            if request.prepared.multimodal is not None:
+                request.prepared.multimodal.release_sources()
             self.waiting = type(self.waiting)(r for r in self.waiting if r.request_id != request_id)
             self.requests.pop(request_id, None)
             projection = getattr(self.backend, 'telemetry', None)
