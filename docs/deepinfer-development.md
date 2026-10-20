@@ -525,3 +525,97 @@ installation for a new model acceptance run. Existing bounded real-model receipt
 remain scoped to their original inputs. Expanded-capacity memory use, practical
 long-context latency/stability and visual quality remain unverified; no new
 qualification campaign, benchmark or release promotion is implied.
+
+## Minimal installed Flash-1017 integration acceptance (2026-10-20 UTC)
+
+**PASS, bounded integration only.** Source: clean `DeepInfer` at
+`98e4347ae9268a3c2009c0643d67abeb43aa5d67`. No implementation correction or
+production blocker was found. New evidence is in
+[`artifacts/deepinfer-integration-98e4347`](../artifacts/deepinfer-integration-98e4347/);
+no historical receipt was regenerated.
+
+### Installation and admission
+
+- Read-only inspection found deployed MTP/OFF packages from `0cd1428`, a separate
+  Flash-1017 installation from `1dc9fda`, and an incomplete scratch package from
+  `7a001a7`; none was reused or modified. Development `.venv` was not used for
+  model execution. No active model service was displaced.
+- Used the existing owner, with fresh scratch destinations:
+  `/opt/homebrew/opt/python@3.13/bin/python3.13 -m ds41f_mlx.mtp_setup --venv /private/tmp/deepinfer-integration.kGjZrb/venv --build-dir /private/tmp/deepinfer-integration.kGjZrb/build`.
+  Provisioning, strict ordered overlays, non-editable wheel installation and final
+  installed admission all passed. Source comparison found no differences between
+  installed Runtime `.py` files and this source (observation, not a new hash seal).
+- Runtime `0.23.0`, wheel SHA256
+  `57ff6b240353895f6b0b6cd4174964329a20b0ada78a6486fb764a26ed5327a4`;
+  execution identity
+  `3ee9c79737d6389d9693fcdc6a4de4d0b820707deb24f2c775362ed15b309fed`.
+  Python **3.13.15**, macOS **26.5.2**, Apple M3 Ultra, **549755813888** memory bytes;
+  OpenCV **4.14.0**, MLX **0.32.2**, mlx-lm **0.31.4.dev132+g94cdcae13**,
+  oMLX **0.7.0**, retained M52R Recipe **0.1.1**, NumPy **2.3.5**, Pillow **12.3.0**.
+  Full locked dependency/origin, Recipe semantic/native, MLX/GLM native bundle,
+  23-symbol/ABI/GPU resource admission passed; exact identities and origins are
+  retained in `inspect.json`. No Recipe 0.2 substitution or portable fallback.
+- Checkpoint:
+  `/Volumes/KIOXIA-PRO-2/models/deepseek-ai/DeepSeek-V4.1-Flash-1017`, revision
+  `1bae0e1088993b9b82de08f59de5be5a34e42170`, numerical profile
+  `flash-1017-pre-woa-fp8-v1`. Metadata (including optional ModelScope
+  `configuration.json`), 48-shard inventory/sizes and all 48 full-byte SHA256s
+  passed. The fresh installation subsequently reused only the normal unchanged
+  file-identity verification cache; no cache or HF receipt was fabricated.
+- Canonical isolated `python -I -m ds41f_mlx.serve --profile mtp-serving-v1
+  --host 127.0.0.1 --port 18017`, with scratch `DS41F_KV_ROOT`, reached **READY**;
+  `/health` confirmed model-ready and `/v1/models` succeeded. Model-ready was
+  distinguished from process-alive. The acceptance process shut down gracefully.
+
+### Cases and trace observations
+
+All requests used ordinary `/v1/chat/completions`, `temperature: 0`,
+`reasoning_effort: none`, explicit `max_tokens: 16`; success means HTTP 200,
+settled generation, published paired state and no fatal error, not answer quality.
+
+| Case | Result | Actual observations |
+| --- | --- | --- |
+| Short text | PASS | 11 prompt positions; stop; canonical frontier 14; real prefill and MTP generation |
+| Expanded Vision | PASS | Six valid inline JPEG occurrences, 9,353 expanded prompt positions, 16 output tokens; bounded length finish; frontier 9,369; `vision_encoded_count=6` |
+| Historical image follow-up | PASS | Same six historical images plus returned assistant message and short text follow-up; 9,378 prompt positions, 9,369 cached, only 9 suffix positions; stop; frontier 9,380; `vision_encoded_count=0` |
+
+Vision reused the checkpoint's existing `inference/examples/images/corn.jpeg`
+(450×308, SHA256 `251fe7ad58f44db139a6af5ed489e027eca93ae60878b83f3e709c7d6f0112a1`),
+six occurrences in one user message, followed by `' x' * 8200` and
+`Describe these images in one short sentence.` The ordinary JSON body was
+466,041 bytes. Expansion beyond 8192 here includes text padding, not >8192
+image-only positions. Follow-up text was `Name the food briefly.`
+
+For every case, all 40 Target offsets and all three DSpark offsets matched the
+canonical frontier; cache publication succeeded, cancellation was false,
+`prompt_replay=full_cache_repack=0`. Quiescence reported no new proposals/verify
+cycles, no history replay, drained queues and settled consumed/emitted authority
+frontiers with no pending prediction. Expanded Vision drafted at depths 1–3;
+paired reuse encoded **zero** historical spans. Public completion-token counts
+exclude terminal tokens, so they need not equal canonical generated counts.
+
+The three cases first ran through the canonical launcher (`serve.log`). Since
+its operator projection omits Vision counts, the same three bounded cases were
+repeated using the existing `tools/accept_mtp_vision.py` real-socket/backend-trace
+pattern against the **installed** package, with canonical admission-before-import,
+startup loading and local H11 settings. `traces.json` retains those direct trace
+projections. No new acceptance framework or installed-file edit was introduced.
+Two preliminary observation attempts failed before requests: importing the backend
+before admission triggered `non-installed executable origin: transformers`, and
+omitting canonical startup loading correctly left `model_ready=false`. Both logs
+are retained; correcting the observation ordering/loading to match `serve.py`
+required no admission bypass or Runtime repair. The first foreground checkpoint
+scan also exceeded a 200-second command timeout; a subsequent uninterrupted normal
+inspection completed successfully. None is relabeled as a production/model defect.
+
+### Verified boundary / remaining limits
+
+Direct real-model evidence now covers ordinary Flash-1017 text, **six images /
+9,353 expanded prompt positions + 16 reserved output positions**, and compatible
+historical paired reuse. This does not qualify maximum image count, aggregate
+byte/pixel/patch budgets, 1M-context Vision, near-capacity memory, long-run stability,
+latency or visual quality. `/health` still conservatively reports expanded-capacity
+model execution as `unverified`; this scoped observation is not blanket capacity
+promotion. No benchmark suite, OFF cleanup, Recipe migration, scheduler redesign,
+protected-branch change or deployed installation mutation was performed. All
+acceptance servers are retired; scratch installation/logs remain for inspection.
