@@ -421,18 +421,107 @@ cargo test --locked -p deepseek-recipe protocol::
   This is focused native evidence only, not a model, rollback, package, Python
   binding, Messages API or deployed-environment qualification.
 
-Remaining integration boundary: these native completion observations are not
-Runtime admission certificates. The existing guard must still bind request /
-processor lifetime, revision, token frontier and candidate ownership, fork the
-response accumulator, compare exact canonical prefix responses (IDs included),
-and distinguish call completion from consuming Stop/EOF. The minimal next step
-is to expose this state through the existing native Python semantic-session
-owner and adapt that guard to 0.2's response accumulator and exact token-step
-inputs, with explicit isolated EOF probes. No guard checks should be relaxed.
-Prompt/request API and coherent build/provisioning migration remain separate;
-this patch is not selected by any installer or active dependency. No substantive
-native architectural blocker remains for the demonstrated Chat Completions
-boundary, but full Runtime compatibility is not yet claimed.
+### Python/native boundary follow-up — demonstrated, not Runtime migration
+
+The same consolidated patch now also exposes
+`deepseek_recipe.ChatCompletionSemanticSession(generator, options, tokenizer)`.
+Baseline ds41f: `6136069508d7f6972dc726f220cd4df43bacbdb2`; upstream base remains
+`93b0fd229cc9ffa6b1a8c63d42b0bf741bbec170`. Python tests are retained inside the
+patch at `deepseek-recipe-python/tests/test_semantic_session.py`; public typing
+and exports are updated alongside the binding. No new patch layer or installer.
+
+API and ownership:
+
+- Construction consumes the existing official Chat Completions generator exactly
+  once, copies parsing options, and retains the native read-only tokenizer Arc.
+  A frozen PyO3 object with a Mutex owns one canonical `SemanticState`, revision
+  and token frontier. There is no separately advancing stream/parser or Python
+  DSML implementation. The existing generic `StreamProcessor` remains available.
+- `push(InferenceChunk)` accepts Ready, exactly one token (optional official
+  logprobs), or backend Finish. Text and bulk token chunks are rejected without
+  mutation so callers cannot lose per-token attribution. A successful operation
+  increments revision; only token input increments frontier, including buffered
+  UTF-8 and special tokens. Native consumption errors release/close state.
+- Each operation returns `(revision, frontier, chunks, completed, finished)`.
+  `chunks` are the existing native `ChatCompletionChunk` objects, consumed by
+  official `ChatCompletionResponse.accumulate`. `completed` contains newly
+  observed `(call_index, absolute_source_byte_end)` pairs. These byte endpoints
+  are observations, NEVER a conversion from text offsets to token ownership.
+- `preview_tokens(ids, *, finish=None, eof=False)` returns
+  `(base_revision, base_frontier, exact_ids, rows)`. It snapshots the full owner
+  once and drives the fork one input token per row, with no implicit EOF and no
+  logprobs. Optional `finish=InferenceChunk.finish(reason)` adds isolated backend
+  Finish; `eof=True` instead adds actual isolated EOF. Both together, or a
+  non-Finish chunk, reject. Terminal state before remaining operations raises
+  rather than silently accepting an unconsumed candidate suffix. Row revisions
+  and frontiers are projections, not live authority. Rejected/failed previews
+  cannot spend canonical RNG draws or mutate decoder/parser/pending state.
+- `finish()` is explicit canonical EOF, not backend Stop. `status` returns
+  `(revision, frontier, finished, closed)`. Operations after completion/close
+  raise, including repeated EOF; `close()` is idempotent, releases native state
+  without successful protocol completion, and GC also drops the owner. These
+  deliberately stricter terminal rules prevent silent canonical no-op feeds.
+- Python retains session object identity and request lifetime alongside proofs;
+  returned metadata is not a certificate or a new sealing mechanism. Accumulated
+  responses remain caller-owned, using official native accumulation. Callers
+  must compare exact chunks/prefix responses before consuming their chunk objects.
+  Token-only previews compare to canonical input with the same absent logprobs.
+
+Verification in a fresh detached scratch worktree
+`/private/tmp/ds41f-recipe-02-python-src` and fresh Python **3.14** venv
+`/private/tmp/ds41f-recipe-02-python-venv` (maturin **1.15.0**, pytest **9.1.1**):
+
+```sh
+# Apply the consolidated patch to the exact upstream revision, then:
+PKG_CONFIG_PATH=/opt/homebrew/opt/opencv@4/lib/pkgconfig \
+  CARGO_TARGET_DIR=/private/tmp/ds41f-recipe-02/target \
+  /private/tmp/ds41f-recipe-02-python-venv/bin/maturin build --locked \
+  --skip-auditwheel --manifest-path deepseek-recipe-python/Cargo.toml \
+  -o /private/tmp/ds41f-recipe-02-python-wheels
+# Install that wheel into the scratch venv, then from the scratch source:
+/private/tmp/ds41f-recipe-02-python-venv/bin/python -m pytest -q \
+  deepseek-recipe-python/tests/test_semantic_session.py \
+  deepseek-recipe-python/tests/test_bindings.py
+cargo test --locked -p deepseek-recipe native_boundary -- --nocapture
+cargo test --locked -p deepseek-recipe stream::processor::tests::
+cargo test --locked -p deepseek-recipe protocol::
+```
+
+The final consolidated patch also passed `git apply --check` in a second clean
+worktree at the exact upstream release. Results: **52 Python tests passed** (4 focused cases, including parameterized
+ordinary/special marker cases, plus 48 existing binding tests); **3 reused native
+boundary, 20 existing processor and 25 existing protocol tests passed**. Exact
+repeated whole-candidate and incremental preview/canonical chunks, official IDs,
+and accumulated prefix responses match. Divergent rejected calls, fragmented
+arguments/multiple calls, exact earlier argument-end byte endpoint, incomplete
+markers/arguments, special-vs-ordinary DSML, partial UTF-8, explicit candidate
+Finish/EOF, premature terminal failure, failed-preview non-mutation, one-use
+generator ownership, canonical native-error release, close and GC paths are
+covered. Reused native tests additionally exercise failed logprob preview and
+forced UTF-8 replacement before a special token. Ordinary official 0.2 processor
+accumulation matches equivalent canonical input after removing ONLY independent
+request RNG tool IDs and wall-clock creation timestamps; same-session comparisons
+remove nothing. Official ID format/checksum remains covered by the native tests.
+
+Initial build attempts exposed host packaging constraints: default pkg-config
+selected unsupported OpenCV 5; explicitly selecting existing Homebrew OpenCV 4
+built the extension. Maturin wheel repair then could not locate transitive
+`@rpath/libabsl_cordz_handle.2608.0.0.dylib`; `--skip-auditwheel` produced the
+locally loadable test wheel. This is an isolated native/Python development proof,
+NOT a portable wheel or installed-package/deployment qualification. No dependency
+source was patched to bypass either issue; active ds41f dependencies are unchanged.
+
+Remaining integration boundary: these observations are not Runtime admission
+certificates. The unchanged `RecipeSemanticGuard` must later bind request/session
+identity and lifetime, canonical revision/frontier and exact candidate IDs, fork
+its response accumulator, compare exact preview/canonical prefix responses with
+IDs included, and reject stale/foreign/mismatched or premature proofs. It must
+still distinguish argument completion from backend Stop, assistant-turn finish
+and permission to execute a tool. The official early argument-end endpoint is
+unchanged. No existing guard check was removed or weakened. Prompt/request API,
+Runtime/serving and coherent provisioning migration remain separate. No Messages,
+Harness, numerical, Vision, Scheduler, Cache, full-model or stable Flash-1017
+branch changes; no new qualification campaign. Stop at this demonstrated boundary.
 
 ## Metadata-first, cache-aware Vision preparation
 

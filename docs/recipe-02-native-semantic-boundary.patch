@@ -1,3 +1,474 @@
+diff --git a/deepseek-recipe-python/python/deepseek_recipe/__init__.py b/deepseek-recipe-python/python/deepseek_recipe/__init__.py
+index bb3879f..691766e 100644
+--- a/deepseek-recipe-python/python/deepseek_recipe/__init__.py
++++ b/deepseek-recipe-python/python/deepseek_recipe/__init__.py
+@@ -48,6 +48,7 @@ from ._native import (
+     SpecialToken,
+     SpecialTokens,
+     StreamProcessor,
++    ChatCompletionSemanticSession,
+     SystemMessage,
+     ThinkingInitialStage,
+     Tokenizer,
+@@ -108,6 +109,7 @@ __all__ = [
+     "SpecialToken",
+     "SpecialTokens",
+     "StreamProcessor",
++    "ChatCompletionSemanticSession",
+     "SystemMessage",
+     "ThinkingInitialStage",
+     "Tokenizer",
+diff --git a/deepseek-recipe-python/python/deepseek_recipe/_native.pyi b/deepseek-recipe-python/python/deepseek_recipe/_native.pyi
+index 856de40..268ed08 100644
+--- a/deepseek-recipe-python/python/deepseek_recipe/_native.pyi
++++ b/deepseek-recipe-python/python/deepseek_recipe/_native.pyi
+@@ -1002,6 +1002,51 @@ class Tokenizer:
+         prompt encoding.
+         """
+ 
++# revision, token frontier, official chunks, (call index, source byte end), finished
++SemanticRow = tuple[int, int, list[ChatCompletionChunk], list[tuple[int, int]], bool]
++
++class ChatCompletionSemanticSession:
++    """Single request owner; preview forks the full canonical native pipeline.
++
++    Call completion is only an argument-end observation, NOT tool-execution
++    authority, backend Stop, or assistant-turn completion. Retain this object's
++    identity and request lifetime alongside revision/frontier/candidate proofs.
++    """
++
++    def __init__(self, generator: ChatCompletionChunkGenerator,
++                 options: ParsingOptions, tokenizer: Tokenizer) -> None:
++        """Consume generator, snapshot options, retain read-only tokenizer."""
++
++    @property
++    def status(self) -> tuple[int, int, bool, bool]:
++        """(canonical revision, token frontier, finished, closed)."""
++
++    def push(self, chunk: InferenceChunk) -> SemanticRow:
++        """Consume Ready, one token, or Finish. Native errors release state.
++
++        Revision advances once per successful operation; frontier advances only
++        for the single input token, including buffered UTF-8 and special tokens.
++        Text and multi-token input raise TypeError without mutation.
++        """
++
++    def preview_tokens(self, token_ids: list[int], *,
++                       finish: InferenceChunk | None = None,
++                       eof: bool = False
++                       ) -> tuple[int, int, list[int], list[SemanticRow]]:
++        """Return base revision/frontier, exact candidates, per-operation rows.
++
++        One isolated native fork, no implicit EOF. Optionally append a backend
++        Finish row OR a true EOF row. Tokens use no logprobs. Terminal state
++        before remaining operations raises RuntimeError; rejected/failed previews
++        never mutate canonical state. Rows carry projected revisions/frontiers.
++        """
++
++    def finish(self) -> SemanticRow:
++        """Canonical EOF (not Stop). Raises after finish/close, like push."""
++
++    def close(self) -> None:
++        """Idempotent release without successful completion. GC also releases."""
++
+ class StreamProcessor:
+     """Adapt Python inference chunks to the Rust processor's input stream."""
+ 
+diff --git a/deepseek-recipe-python/src/lib.rs b/deepseek-recipe-python/src/lib.rs
+index 6fb85bd..b97695f 100644
+--- a/deepseek-recipe-python/src/lib.rs
++++ b/deepseek-recipe-python/src/lib.rs
+@@ -91,6 +91,7 @@ fn _native(m: &Bound<'_, PyModule>) -> PyResult<()> {
+     m.add_class::<PyMessagesResponse>()?;
+     m.add_class::<PyTokenizer>()?;
+     m.add_class::<PyStreamProcessor>()?;
++    m.add_class::<response::PyChatCompletionSemanticSession>()?;
+     m.add_class::<PyConversation>()?;
+     m.add_class::<PyRenderedPrompt>()?;
+     m.add_class::<PyMessage>()?;
+diff --git a/deepseek-recipe-python/src/response.rs b/deepseek-recipe-python/src/response.rs
+index cee290c..c22caa8 100644
+--- a/deepseek-recipe-python/src/response.rs
++++ b/deepseek-recipe-python/src/response.rs
+@@ -32,6 +32,9 @@ use crate::inference::PyInferenceChunk;
+ use crate::parsing::PyParsingOptions;
+ use crate::tokenizer::PyTokenizer;
+ 
++mod semantic;
++pub(crate) use semantic::PyChatCompletionSemanticSession;
++
+ /// A Rust Chat Completions generator consumed by a stream processor.
+ #[pyclass(
+     name = "ChatCompletionChunkGenerator",
+diff --git a/deepseek-recipe-python/src/response/semantic.rs b/deepseek-recipe-python/src/response/semantic.rs
+new file mode 100644
+index 0000000..4ccb092
+--- /dev/null
++++ b/deepseek-recipe-python/src/response/semantic.rs
+@@ -0,0 +1,181 @@
++use super::*;
++
++// Each row is one actual input operation, never a text-offset token estimate.
++type SemanticRow = (u64, u64, Vec<Py<PyAny>>, Vec<(usize, usize)>, bool);
++type SemanticPreview = (u64, u64, Vec<u32>, Vec<SemanticRow>);
++
++#[derive(Clone)]
++struct ChatSemanticOwner {
++    core: Option<deepseek_recipe::stream::SemanticState<ChatCompletionChunkGenerator>>,
++    revision: u64,
++    frontier: u64,
++}
++
++impl ChatSemanticOwner {
++    fn live(&self) -> PyResult<()> {
++        match &self.core {
++            Some(core) if !core.is_finished() => Ok(()),
++            _ => Err(PyRuntimeError::new_err(
++                "semantic session is closed or finished",
++            )),
++        }
++    }
++
++    fn step(
++        &mut self,
++        chunk: Option<InferenceChunk>,
++    ) -> PyResult<(Vec<ChatCompletionChunk>, Vec<(usize, usize)>, bool)> {
++        self.live()?;
++        let core = self.core.as_mut().unwrap();
++        let first = core.completed_calls().len();
++        let token = matches!(&chunk, Some(InferenceChunk::Tokens { .. }));
++        let output = match chunk {
++            Some(chunk) => match block_on(core.consume(chunk)) {
++                Ok(output) => output,
++                Err(error) => {
++                    self.core = None;
++                    return Err(PyRuntimeError::new_err(error.to_string()));
++                }
++            },
++            None => block_on(core.finish()),
++        };
++        self.revision += 1;
++        self.frontier += u64::from(token);
++        let calls = core.completed_calls()[first..]
++            .iter()
++            .map(|c| (c.index, c.source_end))
++            .collect();
++        Ok((output, calls, core.is_finished()))
++    }
++
++    fn row(&mut self, py: Python<'_>, chunk: Option<InferenceChunk>) -> PyResult<SemanticRow> {
++        let (chunks, calls, finished) = self.step(chunk)?;
++        let chunks = chunks
++            .into_iter()
++            .map(|c| ProtocolChunk::ChatCompletion(c).into_python(py))
++            .collect::<PyResult<_>>()?;
++        Ok((self.revision, self.frontier, chunks, calls, finished))
++    }
++}
++
++/// One request's official Chat Completions consuming pipeline. No history replay.
++#[pyclass(
++    name = "ChatCompletionSemanticSession",
++    module = "deepseek_recipe._native",
++    frozen
++)]
++pub(crate) struct PyChatCompletionSemanticSession {
++    owner: Mutex<ChatSemanticOwner>,
++}
++
++#[pymethods]
++impl PyChatCompletionSemanticSession {
++    #[new]
++    fn new(
++        generator: &mut PyChatCompletionChunkGenerator,
++        options: &PyParsingOptions,
++        tokenizer: &PyTokenizer,
++    ) -> PyResult<Self> {
++        let core =
++            StreamProcessor::new(take_generator(&mut generator.inner)?, options.inner.clone())
++                .with_tokenizer(tokenizer.inner.clone())
++                .into_state();
++        Ok(Self {
++            owner: Mutex::new(ChatSemanticOwner {
++                core: Some(core),
++                revision: 0,
++                frontier: 0,
++            }),
++        })
++    }
++
++    /// Consume Ready, exactly one token (with optional logprobs), or backend Finish.
++    /// Returns (revision, token_frontier, native_chunks, new_completed_calls, finished).
++    /// Completed calls are (index, absolute decoded source byte endpoint), NOT tool authority.
++    fn push(&self, py: Python<'_>, chunk: &PyInferenceChunk) -> PyResult<SemanticRow> {
++        let chunk = chunk.to_core();
++        match &chunk {
++            InferenceChunk::Tokens { token_ids, .. } if token_ids.len() == 1 => (),
++            InferenceChunk::Ready { .. } | InferenceChunk::Finish { .. } => (),
++            _ => return Err(PyTypeError::new_err("expected Ready, one token, or Finish")),
++        }
++        self.owner
++            .lock()
++            .map_err(|_| PyRuntimeError::new_err("semantic lock poisoned"))?
++            .row(py, Some(chunk))
++    }
++
++    /// Fork once, feed candidates one token per row, optionally Finish or EOF.
++    /// Returns (base_revision, base_frontier, exact_candidate_ids, rows).
++    /// No implicit EOF. A terminal row before remaining tokens raises; no live mutation.
++    #[pyo3(signature = (token_ids, *, finish = None, eof = false))]
++    fn preview_tokens(
++        &self,
++        py: Python<'_>,
++        token_ids: Vec<u32>,
++        finish: Option<&PyInferenceChunk>,
++        eof: bool,
++    ) -> PyResult<SemanticPreview> {
++        let finish = finish.map(PyInferenceChunk::to_core);
++        if (finish.is_some() && eof)
++            || finish
++                .as_ref()
++                .is_some_and(|c| !matches!(c, InferenceChunk::Finish { .. }))
++        {
++            return Err(PyTypeError::new_err("choose backend Finish or EOF"));
++        }
++        let mut fork = self
++            .owner
++            .lock()
++            .map_err(|_| PyRuntimeError::new_err("semantic lock poisoned"))?
++            .clone();
++        fork.live()?;
++        let (revision, frontier) = (fork.revision, fork.frontier);
++        let mut rows = Vec::new();
++        for id in &token_ids {
++            rows.push(fork.row(
++                py,
++                Some(InferenceChunk::Tokens {
++                    token_ids: vec![*id],
++                    logprobs: None,
++                }),
++            )?);
++        }
++        if finish.is_some() || eof {
++            rows.push(fork.row(py, finish)?);
++        }
++        Ok((revision, frontier, token_ids, rows))
++    }
++
++    /// Explicit canonical EOF; does not invent a backend Stop.
++    fn finish(&self, py: Python<'_>) -> PyResult<SemanticRow> {
++        self.owner
++            .lock()
++            .map_err(|_| PyRuntimeError::new_err("semantic lock poisoned"))?
++            .row(py, None)
++    }
++
++    /// (revision, token_frontier, finished, closed). Close is not successful EOF.
++    #[getter]
++    fn status(&self) -> PyResult<(u64, u64, bool, bool)> {
++        let owner = self
++            .owner
++            .lock()
++            .map_err(|_| PyRuntimeError::new_err("semantic lock poisoned"))?;
++        Ok((
++            owner.revision,
++            owner.frontier,
++            owner.core.as_ref().is_some_and(|c| c.is_finished()),
++            owner.core.is_none(),
++        ))
++    }
++
++    /// Idempotent release without protocol output; also released by Python GC.
++    fn close(&self) -> PyResult<()> {
++        self.owner
++            .lock()
++            .map_err(|_| PyRuntimeError::new_err("semantic lock poisoned"))?
++            .core = None;
++        Ok(())
++    }
++}
+diff --git a/deepseek-recipe-python/tests/test_semantic_session.py b/deepseek-recipe-python/tests/test_semantic_session.py
+new file mode 100644
+index 0000000..3a9f164
+--- /dev/null
++++ b/deepseek-recipe-python/tests/test_semantic_session.py
+@@ -0,0 +1,176 @@
++"""Focused Python/native boundary proof; no Runtime/guard substitution."""
++import gc
++import json
++import re
++from pathlib import Path
++
++import pytest
++import deepseek_recipe as d
++
++PATH = Path(__file__).resolve().parents[2] / 'static/tokenizers/v41/tokenizer.json'
++PREFIX = '<｜DSML｜tool_calls><｜DSML｜invoke name="f"><｜DSML｜parameter name="x" string="true">'
++END = '</｜DSML｜parameter></｜DSML｜invoke>'
++
++
++def setup(stop_sequences=None):
++    tok = d.Tokenizer.from_file(str(PATH))
++    converted = d.ChatCompletionRequest({
++        'model': 'DeepSeek-V4.1-Flash', 'messages': [{'role': 'user', 'content': 'hi'}],
++        'thinking': {'type': 'disabled'},
++        'tools': [{'type': 'function', 'function': {'name': 'f'}},
++                  {'type': 'function', 'function': {'name': 'g'}}],
++    }).convert(d.ConversionOptions())
++    def generator():
++        return d.ChatCompletionRequest.chunk_generator(converted, 'response', 'model')
++    options = converted.parsing_options
++    if stop_sequences is not None:
++        options.stop_sequences = stop_sequences
++    session = d.ChatCompletionSemanticSession(generator(), options, tok)
++    return tok, converted, generator, session
++
++
++def encode(tok, text):
++    # Encode added vocabulary units explicitly, including the DSML unit (whose
++    # HF `special` flag is false but Recipe correctly treats it as special).
++    added = {t['content']: t['id'] for t in json.loads(PATH.read_text())['added_tokens']}
++    pattern = '(' + '|'.join(re.escape(s) for s in sorted(added, key=len, reverse=True)) + ')'
++    return [i for part in re.split(pattern, text) if part
++            for i in ([added[part]] if part in added else tok.encode(part))]
++
++
++def row_value(row):
++    rev, frontier, chunks, calls, done = row
++    return rev, frontier, [c.to_json() for c in chunks], calls, done
++
++
++def response():
++    return d.ChatCompletionResponse('response', 'model', 0, 0, 0)
++
++
++def append(resp, chunks):
++    for chunk in chunks:
++        resp.accumulate(chunk)
++
++
++def test_repeat_divergent_prefixes_and_official_accumulation():
++    tok, converted, generator, session = setup()
++    text = PREFIX + 'Tokyo🤭' + END + '<｜DSML｜invoke name="g"></｜DSML｜invoke></｜DSML｜tool_calls>'
++    ids = encode(tok, text)
++    before = session.status
++    projected = session.preview_tokens(ids)
++    rejected = session.preview_tokens(encode(tok, '<｜DSML｜tool_calls><｜DSML｜invoke name="reject"></｜DSML｜invoke>'))
++    assert any(r[3] for r in rejected[3])
++    assert [row_value(r) for r in projected[3]] == [row_value(r) for r in session.preview_tokens(ids)[3]]
++    assert session.status == before
++    assert projected[:3] == (0, 0, ids)
++    actual_response, predicted_response = response(), response()
++    completions = []
++    for n, token in enumerate(ids):
++        single = session.preview_tokens([token])
++        assert single[:3] == (n, n, [token])
++        actual = session.push(d.InferenceChunk.tokens([token]))
++        assert row_value(actual) == row_value(single[3][0]) == row_value(projected[3][n])
++        assert actual[:2] == (n + 1, n + 1)
++        completions.extend((n + 1, c) for c in actual[3])
++        append(actual_response, actual[2])
++        append(predicted_response, projected[3][n][2])
++        assert actual_response.to_json() == predicted_response.to_json()
++    assert len(completions) == 2
++    assert completions[0][1] == (0, len((PREFIX + 'Tokyo🤭' + END[:-len('invoke>')]).encode()))
++    assert not session.status[2]
++    stop = d.InferenceChunk.finish(d.InferenceFinishReason.Stop)
++    preview_stop = session.preview_tokens([], finish=stop)[3][0]
++    canonical_stop = session.push(stop)
++    assert row_value(preview_stop) == row_value(canonical_stop)
++    append(actual_response, canonical_stop[2])
++    body = json.loads(actual_response.to_json())
++    calls = body['choices'][0]['message']['tool_calls']
++    assert [c['function']['arguments'] for c in calls] == ['{"x": "Tokyo🤭"}', '{}']
++    assert all(re.fullmatch(r'call_\d{2}_[A-Za-z0-9]{24}', c['id']) for c in calls)
++    assert len({c['id'] for c in calls}) == 2
++    assert body['choices'][0]['finish_reason'] == 'tool_calls'
++
++    # Ordinary official 0.2 StreamProcessor, equivalent input. Requests have
++    # independently random IDs/timestamps; compare after only those removals.
++    ordinary = d.StreamProcessor(generator(), converted.parsing_options, tok)
++    official_response = response()
++    for token in ids:
++        append(official_response, ordinary.push(d.InferenceChunk.tokens([token])))
++    append(official_response, ordinary.push(stop))
++    official = json.loads(official_response.to_json())
++    for value in (body, official):
++        value.pop('created')
++        for call in value['choices'][0]['message']['tool_calls']:
++            call.pop('id')
++    assert body == official
++    ordinary.close()
++    session.close()
++    assert session.status[3]
++
++
++@pytest.mark.parametrize('special', [False, True])
++def test_markers_incomplete_arguments_and_candidate_eof(special):
++    tok, _, _, session = setup()
++    text = PREFIX + 'partial'
++    ids = encode(tok, text) if special else [i for c in text for i in tok.encode(c)]
++    for token in ids:
++        assert not session.push(d.InferenceChunk.tokens([token]))[3]
++    before = session.status
++    assert not any(r[3] for r in session.preview_tokens(encode(tok, '{}'))[3])
++    assert not any(r[3] for r in session.preview_tokens(encode(tok, '</｜DSML｜parameter></'))[3])
++    assert not any(r[3] for r in session.preview_tokens([], eof=True)[3])
++    stop = d.InferenceChunk.finish(d.InferenceFinishReason.Stop)
++    isolated_stop = session.preview_tokens([], finish=stop)
++    assert not any(r[3] for r in isolated_stop[3])
++    assert isolated_stop[3][-1][4]
++    assert [row_value(r) for r in isolated_stop[3]] == [
++        row_value(r) for r in session.preview_tokens([], finish=stop)[3]]
++    closing = session.preview_tokens(encode(tok, END))
++    assert sum(len(r[3]) for r in closing[3]) == int(special)
++    assert session.status == before
++    session.close()
++
++
++def test_utf8_failed_preview_finish_and_cleanup():
++    tok, _, _, session = setup(['halt'])
++    emoji = tok.encode('🤭')
++    assert len(emoji) > 1
++    assert not session.push(d.InferenceChunk.tokens(emoji[:1]))[2]
++    before = session.status
++    baseline = [row_value(r) for r in session.preview_tokens(emoji[1:], eof=True)[3]]
++    # A native stop token ends the fork; trailing candidates must fail closed.
++    terminal = tok.encode('halt')
++    with pytest.raises(RuntimeError):
++        session.preview_tokens(terminal + tok.encode('after'))
++    assert session.status == before
++    with pytest.raises(TypeError):
++        session.preview_tokens([], finish=d.InferenceChunk.text('bad', 1))
++    assert session.status == before
++    projected = session.preview_tokens(emoji[1:], eof=True)
++    assert [row_value(r) for r in projected[3]] == baseline
++    for i, token in enumerate(emoji[1:]):
++        assert row_value(session.push(d.InferenceChunk.tokens([token]))) == row_value(projected[3][i])
++    assert row_value(session.finish()) == row_value(projected[3][-1])
++    assert session.status[2:4] == (True, False)
++    with pytest.raises(RuntimeError):
++        session.preview_tokens([])
++    session.close()
++    session.close()
++    with pytest.raises(RuntimeError):
++        session.finish()
++    # Core errors release canonical state. Rejected API misuse doesn't consume.
++    _, _, generator, other = setup()
++    with pytest.raises(TypeError):
++        other.push(d.InferenceChunk.tokens([1, 2]))
++    assert other.status == (0, 0, False, False)
++    with pytest.raises(RuntimeError):
++        other.push(d.InferenceChunk.tokens([1], logprobs=[]))
++    assert other.status[3]
++    # Generator ownership is transferred, not copied; GC releases live sessions.
++    g = generator()
++    _, converted, _, _ = setup()
++    s = d.ChatCompletionSemanticSession(g, converted.parsing_options, tok)
++    with pytest.raises(RuntimeError):
++        d.ChatCompletionSemanticSession(g, converted.parsing_options, tok)
++    del s
++    gc.collect()
 diff --git a/deepseek-recipe/src/protocol/openai/chat_completion/response/chunk_generator.rs b/deepseek-recipe/src/protocol/openai/chat_completion/response/chunk_generator.rs
 index ab2832d..7d9f41a 100644
 --- a/deepseek-recipe/src/protocol/openai/chat_completion/response/chunk_generator.rs
