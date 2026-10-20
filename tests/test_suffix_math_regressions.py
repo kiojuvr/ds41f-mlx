@@ -152,6 +152,15 @@ class SuffixMathRegressions(unittest.TestCase):
     @classmethod
     def tearDownClass(cls): cls.tmp.cleanup()
 
+    def setUp(self):
+        # These row/operation doubles are not BF16 tensors. Numerical conformance
+        # is exercised by the transferred Flash-1017 primitive test, not here.
+        from unittest.mock import patch
+        boundary = patch('ds41f_mlx.model_execution.activation.quantize_pre_woa',
+                         side_effect=lambda x: x)
+        self.pre_woa = boundary.start()
+        self.addCleanup(boundary.stop)
+
     def test_no_ordinary_block_fallback(self):
         calls = []
         class Unknown:
@@ -173,6 +182,7 @@ class SuffixMathRegressions(unittest.TestCase):
         self.assertEqual([event[0] for event in ops.events], ['hc_pre_norm', 'input_projections', 'kv_norm', 'rope', 'pack'])
         shared = {'kv': Tensor(1000), 'idx': Tensor(1)}
         math.execute_suffix_query(layer_id=21, h_chunk=Tensor(1, values=[627]), pre_chunk=Tensor(1), cache=cache, shared=shared, absolute_start=627, image_mask=None)
+        self.pre_woa.assert_called_once()
         self.assertEqual(math.query_old_lengths, [(21, 627, 127)])
         self.assertEqual(ops.attended[-1][0].values, list(range(500, 628)))
         self.assertEqual(ops.attended[-1][0].shape[1], 128)

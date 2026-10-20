@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from ds41f_mlx.execution_identity import inventory, links
 from ds41f_mlx.mtp_setup import sha
+from ds41f_mlx.mtp_identity import flash_1017_inventory
 
 
 def off_dependency_payloads(off, pin):
@@ -128,7 +129,7 @@ def main():
     manifest = dict(schema='ds41f.installed-admission.v2', profile=args.profile, glm=glm, payloads=payloads, files=files,
                     semantic_native=semantic,
                     tokenizer_sha256='81f64d1248a68ce3663e07ab3ee48b851e5df0e32d27cb98e4c9a268151e8d99',
-                    checkpoint=old['checkpoint'], checkpoint_metadata=old['checkpoint_metadata'],
+                    checkpoint=flash_1017_inventory(old['checkpoint']), checkpoint_metadata=old['checkpoint_metadata'],
                     provenance=dict(compressed_growth=overlays.get('compressed-growth'),
                                     bit_exact_kernels=overlays.get('bit-exact-kernels'),
                                     template_reuse=overlays.get('template-reuse'), context_copy=overlays.get('context-copy'), source_commit_is_base=True, lockfiles={name: sha(ROOT/'third_party/mtp'/name) for name in ('sources.json', 'requirements.lock', 'requirements-normal-local.lock')},

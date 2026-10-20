@@ -12,7 +12,7 @@ import sys
 import sysconfig
 import tarfile
 
-from .mtp_identity import CHECKPOINT, checkpoint_inventory, verify_checkpoint_bytes
+from .mtp_identity import CHECKPOINT, checkpoint_inventory, verify_checkpoint_bytes, admit_checkpoint
 from .execution_identity import MANIFEST, inventory, verify_tree
 from .mtp_setup import ROOT, sha
 
@@ -85,18 +85,7 @@ def inspect(cfg):
     site, recipe = paths()
     if cfg.omlx_path.resolve() != site.resolve() or cfg.recipe_path.resolve() != recipe.resolve():
         raise ValueError('OFF imports must use provisioned installed resources')
-    metadata = {**CHECKPOINT, **authority['checkpoint_metadata']}
-    if {p.name for p in cfg.checkpoint_path.glob('*.json')} != set(metadata):
-        raise ValueError('OFF checkpoint metadata set drift')
-    for name, digest in metadata.items():
-        if sha(cfg.checkpoint_path/name) != digest:
-            raise ValueError(f'checkpoint metadata drift: {name}')
-    if any((cfg.checkpoint_path/name).exists() for name in ('chat_template.jinja', 'chat_templates')):
-        raise ValueError('OFF checkpoint template override')
-    assets = checkpoint_inventory(cfg.checkpoint_path)
-    if assets != authority['checkpoint']:
-        raise ValueError('checkpoint shard identity drift')
-    verify_checkpoint_bytes(cfg.checkpoint_path, assets)
+    assets = admit_checkpoint(cfg.checkpoint_path, authority)
     from .config import validate_runtime_config
     validation = validate_runtime_config(cfg)
     if any(v['status'] == 'FAIL' for v in validation):

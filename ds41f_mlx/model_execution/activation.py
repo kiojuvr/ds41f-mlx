@@ -66,6 +66,34 @@ def _kernel(tail=False, paired=False):
     )
 
 
+@cache
+def _pre_woa_kernel():
+    # Official act_quant: FP32 amax floor and bitwise ceil-log2(a * (1/448)).
+    # Keep this separate: the original V4.1 projection quantizer has no such floor.
+    source = _SOURCE.replace(
+        'const float amax = max(simd_max(abs(v)), 0x1.cp-118f);',
+        'const float amax = max(simd_max(abs(v)), 1e-4f);',
+    ).replace(
+        'const int scale_exponent = max(int(ceil(log2(amax / 448.0f))), -126);',
+        'const uint bits = as_type<uint>(amax * (1.0f / 448.0f));\n'
+        '    const int scale_exponent = int((bits >> 23) & 255) - 127 + '
+        'int((bits & 0x7fffff) != 0);',
+    ).replace('sign(scaled)', 'copysign(1.0f, scaled)')
+    return mx.fast.metal_kernel(name='flash1017_pre_woa_fp8', input_names=['x'],
+                                output_names=['y'], source=source)
+
+
+def quantize_pre_woa(x):
+    """Post-inverse-RoPE BF16 E4M3 Q/DQ, independent 32-feature blocks."""
+    if x.dtype != mx.bfloat16 or x.shape[-1] % 32:
+        raise ValueError('pre-wo_a requires BF16 and complete 32-feature blocks')
+    return _pre_woa_kernel()(
+        inputs=[x], template=[('T', x.dtype), ('N', x.size)],
+        grid=(x.size, 1, 1), threadgroup=(256, 1, 1),
+        output_shapes=[x.shape], output_dtypes=[x.dtype],
+    )[0]
+
+
 def quantize_fp8_activation(x):
     return _kernel()(
         inputs=[x],

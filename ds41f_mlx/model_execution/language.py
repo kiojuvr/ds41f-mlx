@@ -360,7 +360,8 @@ class Attention(nn.Module):
                 q, kv, pooled, idx, ci, self.attn_sink, c.head_dim**-0.5
             )
         out = rope(out, positions, c, bool(ratio), inverse=True)
-        grouped = out.reshape(1, length, c.o_groups, -1)
+        from .activation import quantize_pre_woa
+        grouped = quantize_pre_woa(out.reshape(1, length, c.o_groups, -1))
         weight = self.wo_a.weight.reshape(c.o_groups, c.o_lora_rank, -1)
         return self.wo_b(mx.einsum("bsgd,grd->bsgr", grouped, weight).flatten(-2))
 
