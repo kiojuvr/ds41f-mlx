@@ -25,16 +25,34 @@ def validate_ordinary_capacity(prompt, maximum, envelope):
 ORDINARY_BODY_BYTES = 16 * TEXT_QUALIFIED_ENVELOPE
 
 
-def context_envelope(checkpoint: Path, *, multimodal: bool = False):
+def context_envelope(checkpoint: Path, *, multimodal: bool = False, ordinary: bool = False):
     from ds41f_mlx.runtime.multimodal import MAX_MULTIMODAL_CONTEXT
     config = json.loads((checkpoint / 'config.json').read_text())
     model_context = int(config.get('text_config', config)['max_position_embeddings'])
+    if multimodal and ordinary:
+        return model_context
     qualified = MAX_MULTIMODAL_CONTEXT if multimodal else TEXT_QUALIFIED_ENVELOPE
     return min(model_context, qualified)
 
 
+def vision_capacity(checkpoint: Path):
+    """Ordinary implementation capability; not full-model acceptance evidence."""
+    from ds41f_mlx.runtime.multimodal import (
+        MAX_IMAGE_BYTES, MAX_PIXELS, MAX_IMAGE_TOKENS,
+        MAX_REQUEST_IMAGE_BYTES, MAX_REQUEST_PIXELS, MAX_REQUEST_PATCHES,
+    )
+    return dict(implemented_total_tokens=context_envelope(checkpoint, multimodal=True, ordinary=True),
+                output_reservation_required=True, max_images=None,
+                max_image_bytes=MAX_IMAGE_BYTES, max_image_pixels=MAX_PIXELS,
+                max_image_tokens=MAX_IMAGE_TOKENS,
+                max_request_image_bytes=MAX_REQUEST_IMAGE_BYTES,
+                max_request_pixels=MAX_REQUEST_PIXELS, max_request_patches=MAX_REQUEST_PATCHES,
+                historical_images_require_paired_cache=True,
+                expanded_capacity_model_execution='unverified')
+
+
 def resolve_capacity(prepared, *, checkpoint: Path, automatic: bool = False, ordinary: bool = False):
-    envelope = context_envelope(checkpoint, multimodal=prepared.multimodal is not None)
+    envelope = context_envelope(checkpoint, multimodal=prepared.multimodal is not None, ordinary=ordinary)
     prompt = len(prepared.token_ids)
     remaining = envelope - prompt
     requested = prepared.inference_options.max_tokens
@@ -55,6 +73,10 @@ def resolve_capacity(prepared, *, checkpoint: Path, automatic: bool = False, ord
               'remaining_tokens': remaining, 'max_tokens': maximum,
               'output_mode': 'auto' if automatic else 'custom',
               'model_output_ceiling': ORDINARY_OUTPUT_CEILING if ordinary else None, 'binding': False}
+    if ordinary and prepared.multimodal is not None:
+        # Do not label an implemented checkpoint range as model-qualified.
+        budget.pop('qualified_total_tokens')
+        budget.update(implemented_total_tokens=envelope, expanded_capacity_model_execution='unverified')
     prepared.capacity = budget
     prepared.resolved_max_tokens = maximum
     return budget

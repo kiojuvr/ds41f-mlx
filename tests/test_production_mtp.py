@@ -248,6 +248,11 @@ def test_ordinary_http_recipe_route_has_no_compulsory_public_session(monkeypatch
             assert advertised.status_code == 200
             assert advertised.json()['data'][0]['context_length'] == backend.context_tokens
             assert advertised.json()['data'][0]['max_output_tokens'] == 393216
+            vision = advertised.json()['data'][0]['vision_admission']
+            assert vision == client.get('/health').json()['capabilities']['vision_admission']
+            assert vision['max_images'] is None
+            assert vision['implemented_total_tokens'] == backend.context_tokens
+            assert vision['expanded_capacity_model_execution'] == 'unverified'
             for headers in ({'Host': ''}, {'Host': 'bad host'}, {'Origin': 'http://other.invalid'}):
                 assert client.get('/v1/models', headers=headers).status_code == 400
             assert client.get('/v1/models', headers=[('Host', authority), ('Host', authority)]).status_code == 400

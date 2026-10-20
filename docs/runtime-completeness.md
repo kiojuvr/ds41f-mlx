@@ -29,8 +29,11 @@ multi-user service, publish a package, or renew historical qualification.
   Ordinary omitted output is 8192 non-thinking, 65536 low/high, 131072 max;
   explicit numeric budgets remain authoritative and explicit Auto retains capacity
   semantics. The 393216 output ceiling is not a default or advance allocation.
-  Actual recipe-expanded prompt plus output must fit the qualified total envelope
-  (text at most 1048576; bounded Vision 8192). Vision callers must choose an
+  Actual recipe-expanded prompt plus output must fit the profile envelope
+  (text at most 1048576; ordinary Vision uses checkpoint context and preparation
+  resource budgets; legacy OFF Vision remains 8192/four images). Expanded ordinary
+  Vision capacity is source/synthetic verified, not full-model qualified; see
+  [current bounds](capabilities.md#bounded-inline-images). Vision callers must choose an
   output budget that fits; an omitted default is not silently reduced. Health's
   `chat_defaults.max_tokens="auto"` is the negotiated everyday Browser policy,
   serialized explicitly, not ordinary API omission semantics

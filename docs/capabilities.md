@@ -122,7 +122,26 @@ including reserved output**. Remote/file URLs, low detail, animations, multimoda
 Responses/Messages and excess context are outside this envelope.
 
 New images are encoded once; retained old image identities/spans must remain exact.
-Ordinary MTP uses this same input/output envelope. Image identity is included in
+Ordinary MTP removes the four-image and 8192-position development caps: actual
+expanded prompt + requested output must fit the checkpoint context. Output remains
+1..393,216 (Auto reserves the lesser of remaining context and that ceiling).
+Per-image format/detail/aspect, 16 MiB, 4,194,304 pixels and 1014 expanded-position
+bounds remain. Aggregate preparation admits at most **64 MiB encoded image bytes,
+16,777,216 decoded source pixels and 36,864 planned ViT patches**; images are
+validated/processed individually. The existing **16 MiB JSON body** bound also
+applies, including base64/history. These are finite resource budgets, not a new
+image-count ceiling or memory reservation. All supplied images, including cached
+ones, consume preparation budgets. Ordinary text and legacy OFF limits are unchanged.
+
+`/health` and `/v1/models` expose ordinary `vision_admission` resource bounds,
+`implemented_total_tokens` and `expanded_capacity_model_execution: unverified`.
+The ordinary Vision budget response uses `implemented_total_tokens`, not
+`qualified_total_tokens`. Source/synthetic MLX tests cover >4 images and >8192
+positions; **no expanded-capacity full-model acceptance or long-context/memory
+qualification was performed**. Existing bounded real-model receipts do not qualify
+these larger requests.
+
+Image identity is included in
 upstream paired-cache hashes; after prefill only the existing target/DSpark pair
 is executable authority. Prior-message images require a compatible retained pair:
 eviction or an incompatible historical-image edit rejects without hidden replay
@@ -134,7 +153,7 @@ MTP delivery is recorded in the [runtime closure](runtime-completeness.md).
 OFF idle persistence and exact fresh-process restore do not re-run old images.
 The original OFF receipt alone is not MTP qualification; the linked MTP delta
 acceptance is separate. Neither is general visual-quality proof, larger-image/
-context support or broadened release/R1 qualification. See [OFF API](api.md#bounded-multimodal-developmentcore-extension)
+context qualification or broadened release/R1 qualification. See [OFF API](api.md#bounded-multimodal-developmentcore-extension)
 and [original image qualification](multimodal-production-qualification.md).
 
 ## Applications

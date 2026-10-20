@@ -62,7 +62,7 @@ The following specifications describe the **ordinary default MTP path**:
 | Execution concurrency | **One native-active generation**; independent ordinary requests may queue, not batch |
 | Optional logical sessions | **16** retained conversations; streaming only; **600 s** nonbusy idle retirement |
 | Request body | **16 MiB** JSON; bytes are not a token estimate |
-| Inline Vision | Up to **4** single-frame PNG/JPEG/WebP images; **8192 expanded multimodal positions including reserved output** |
+| Inline Vision | Ordinary MTP: expanded prompt + reserved output ≤ checkpoint context; resource-budgeted image count. Expanded capacity is **not full-model verified**. Legacy OFF: **4 images / 8192 positions**. [Bounds](docs/capabilities.md#bounded-inline-images) |
 | Default endpoint | `http://127.0.0.1:8000/v1` |
 
 These are **capability ceilings, not throughput or maximum-workload guarantees**.

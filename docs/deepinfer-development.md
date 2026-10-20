@@ -453,3 +453,75 @@ admission. Historical cache expiry still means an explicit availability error,
 not permission to replay images. Full CPU image validation and protocol-body
 retention remain intentional; broader capacity, video, PDF redesign, scheduler
 optimization and Recipe 0.2 migration are outside this change.
+
+## Ordinary Vision resource-aware capacity (after `0baedcf`)
+
+Removed the ordinary MTP four-image and 8192-expanded-position development limits.
+The existing metadata-first planner now has an explicit ordinary mode; OFF callers
+and persisted OFF history retain their original four-image / 8192 contract.
+Ordinary Vision admits actual expanded Recipe prompt + requested output reservation
+up to checkpoint `max_position_embeddings`. Numeric output remains 1..393,216;
+omission defaults are unchanged and never silently reduced. Auto uses
+`min(checkpoint context - expanded prompt, 393216)`. Ordinary text remains capped
+at the lesser of checkpoint context and 1,048,576. No scheduler/cache owner,
+Vision encoder, numerical kernel, PDF workflow or image-processing pipeline changed.
+
+Remaining bounds:
+
+- Inline single-frame PNG/JPEG/WebP, high/auto, aspect 1:2..2:1; per image 16 MiB,
+  4,194,304 source pixels and 1014 expanded positions.
+- Per preparation: 64 MiB encoded image bytes, 16,777,216 decoded source pixels,
+  36,864 planned ViT patches. These retain the old four-maximum-image byte/pixel
+  budget and a four-times-9216 patch-work budget, without counting images. Small
+  images still incur the checkpoint minimum patch work. Pixel excess rejects
+  before decoding the offending image; patch/context excess rejects before any
+  normalized patch arrays or Vision execution. Processing remains one image at
+  a time. All supplied images, including cached history, consume these budgets.
+- Existing ordinary 16 MiB JSON body admission (including base64/history), one
+  serialized active generation and existing session/queue ownership remain.
+  These are bounded input/work admission rules, not physical-memory reservations.
+- Two terminal text tokens remain required for N-2/P5. Absolute ordered spans and
+  identity hashes are unchanged. Historical images still require a compatible
+  target/DSpark pair: misses, missing payloads and changed identity reject without
+  re-encoding history. Cached complete spans skip patches and Vision entirely.
+
+Ordinary `/health` and `/v1/models` now expose `vision_admission`, including resource
+bounds, `max_images: null`, checkpoint-backed `implemented_total_tokens` and
+`expanded_capacity_model_execution: unverified`. Ordinary Vision budget responses
+also use implemented rather than qualified total tokens. Legacy OFF capability
+and budget behavior are unchanged.
+
+### Verification and limits of evidence
+
+Development `.venv`, real Pillow/NumPy/MLX: **253 passed, 12 subtests passed** across
+the following two groups (29 existing FastAPI/Starlette deprecation warnings):
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m pytest -q -p no:cacheprovider \
+  tests/test_expanded_vision_capacity.py tests/test_metadata_first_vision.py \
+  tests/test_multimodal_contract.py tests/test_multimodal_cancellation.py \
+  tests/test_multimodal_restore_ownership.py tests/test_production_mtp.py \
+  tests/test_production_session_owner.py tests/test_ordinary_text_parts.py \
+  tests/test_web_documents.py tests/test_prefill_fp8_mlx_p6.py \
+  tests/test_flash_1017_qualification.py tests/test_suffix_math_regressions.py
+DS41F_RECIPE_PATH="$PWD/.venv/share/ds41f-mtp/recipe" \
+  PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m pytest -q -p no:cacheprovider \
+  tests/test_runtime_capacity.py tests/test_web_binary_tools.py
+```
+
+Coverage adds six-image actual Recipe admission beyond 8192 positions, six-image
+ordered sparse merges with two cached/four new spans, and real upstream paired
+lookup with six historical images plus a new image above 8192. Hit/miss/changed
+identity/missing-payload cases assert patch and Vision call counts. Partial image
+frontiers reject. Tests cover actual aggregate pixel/patch excess, injected byte
+budget excess, preparation checkpoint overflow, output-reservation overflow, Auto,
+API declarations and unchanged text/OFF limits. The prior tiny synthetic-weight
+pinned Model/MLX ViT/aligner parity test remains passing; it is not full-model
+acceptance. No source/package hash or installed payload authority was changed.
+
+**No expanded-capacity full-model execution was performed.** The provisioned
+checkout/test environment is not evidence of a suitable isolated admitted
+installation for a new model acceptance run. Existing bounded real-model receipts
+remain scoped to their original inputs. Expanded-capacity memory use, practical
+long-context latency/stability and visual quality remain unverified; no new
+qualification campaign, benchmark or release promotion is implied.

@@ -413,7 +413,7 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
                 s.start + s.length > len(prepared.token_ids)-2 for s in prepared.multimodal.spans):
             raise ValueError('Vision requires two terminal text tokens for paired P5 handoff')
         limit = self.request_max_tokens(prepared)
-        envelope = (context_envelope(self.checkpoint, multimodal=True)
+        envelope = (context_envelope(self.checkpoint, multimodal=True, ordinary=True)
                     if getattr(prepared, 'multimodal', None) is not None else self.context_tokens)
         validate_ordinary_capacity(len(prepared.token_ids), limit, envelope)
         if len(prepared.token_ids) < 3:

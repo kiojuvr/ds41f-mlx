@@ -163,6 +163,26 @@ def test_auto_vision_uses_expanded_original_bytes_and_separate_envelope():
     assert len(custom.token_ids) > 100  # actual expanded image, not one placeholder
 
 
+def test_ordinary_vision_expanded_recipe_admission():
+    from test_metadata_first_vision import source
+    cfg = load_runtime_config(); cfg.apply_import_paths()
+    tokenizer = load_v41_tokenizer(cfg.recipe_path)
+    url = 'data:image/png;base64,' + base64.b64encode(source().data).decode()
+    value = {'model': cfg.model_id, 'max_tokens': 32, 'messages': [{'role': 'user', 'content':
+        [{'type': 'text', 'text': 'ledger ' * 9000}] +
+        [{'type': 'image_url', 'image_url': {'url': url}}] * 6 +
+        [{'type': 'text', 'text': 'Describe the images.'}]}]}
+    prepared = prepare_request('chat_completions', json.dumps(value).encode(), tokenizer=tokenizer,
+                               checkpoint=cfg.checkpoint_path, ordinary=True)
+    assert len(prepared.multimodal.spans) == 6 and len(prepared.token_ids) > 8192
+    assert prepared.resolved_max_tokens == 32
+    assert prepared.capacity['implemented_total_tokens'] == 1048576
+    assert prepared.capacity['expanded_capacity_model_execution'] == 'unverified'
+    with pytest.raises(RequestError, match='count'):
+        prepare_request('chat_completions', json.dumps(value).encode(), tokenizer=tokenizer,
+                        checkpoint=cfg.checkpoint_path)
+
+
 def test_budget_http_is_observation_only_and_count_fenced():
     import asyncio
     import httpx

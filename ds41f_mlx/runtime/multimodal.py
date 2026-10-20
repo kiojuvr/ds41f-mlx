@@ -17,7 +17,11 @@ MAX_IMAGES = 4
 MAX_IMAGE_BYTES = 16 * 1024 * 1024
 MAX_PIXELS = 2048 * 2048
 MAX_IMAGE_TOKENS = 1014
-MAX_MULTIMODAL_CONTEXT = 8192
+MAX_MULTIMODAL_CONTEXT = 8192  # Legacy standard-OFF only.
+# Request preparation budgets, not image-count or model-context qualifications.
+MAX_REQUEST_IMAGE_BYTES = 64 * 1024 * 1024
+MAX_REQUEST_PIXELS = 16 * 1024 * 1024
+MAX_REQUEST_PATCHES = 36_864
 
 
 @dataclass(frozen=True)
@@ -155,7 +159,7 @@ class ImageConstraintError(ValueError):
     """Valid image outside the qualified Vision resource envelope."""
 
 
-def validate_encoded_image(data: bytes, media_type: str | None = None) -> dict:
+def validate_encoded_image(data: bytes, media_type: str | None = None, *, remaining_pixels: int | None = None) -> dict:
     """CPU validation shared by manual and acquired images; never transforms bytes.
 
     Expanded positions and full-conversation capacity remain prepare/admission
@@ -178,6 +182,8 @@ def validate_encoded_image(data: bytes, media_type: str | None = None) -> dict:
                 raise ImageConstraintError('animated image outside the qualified single-frame Vision envelope')
             if not 0 < image.width * image.height <= MAX_PIXELS:
                 raise ImageConstraintError(f'image pixel limit {MAX_PIXELS} exceeded ({image.width}x{image.height})')
+            if remaining_pixels is not None and image.width * image.height > remaining_pixels:
+                raise ImageConstraintError('aggregate decoded pixel budget exceeded')
             if not 0.5 <= image.width / image.height <= 2.0:
                 raise ImageConstraintError('image aspect ratio outside supported 1:2..2:1 envelope')
             metadata = dict(content_type=magic, width=image.width, height=image.height,
@@ -189,38 +195,54 @@ def validate_encoded_image(data: bytes, media_type: str | None = None) -> dict:
     return metadata
 
 
-def prepare_multimodal(token_ids: list[int], sources: list[Any], config: Any) -> MultimodalInput:
+def prepare_multimodal(token_ids: list[int], sources: list[Any], config: Any, *, ordinary: bool = False) -> MultimodalInput:
     """Fully validate sources and plan geometry, without normalized patch arrays."""
     from ds41f_mlx.model_execution.processing import plan_image_grid, image_token_kinds
     if not config.vision_enabled:
         raise ValueError('checkpoint has no vision encoder')
-    if not 0 < len(sources) <= MAX_IMAGES:
-        raise ValueError(f'inline image count must be 1..{MAX_IMAGES}')
+    if not sources or (not ordinary and len(sources) > MAX_IMAGES):
+        raise ValueError(f'inline image count must be 1..{MAX_IMAGES}' if not ordinary else 'inline images required')
     if token_ids.count(config.image_token_id) != len(sources):
         raise ValueError('image placeholder/source count mismatch')
     expanded, spans, encoded = [], [], {}
+    total_bytes = total_pixels = total_patches = expansion = 0
+    # Bound expansion before allocation; output reservation is checked by serving.
+    context = config.max_seq_len if ordinary else MAX_MULTIMODAL_CONTEXT
+    if len(token_ids) > context:
+        raise ValueError('expanded multimodal context exceeds context envelope')
     sources = iter(sources)
     for token in token_ids:
         if token != config.image_token_id:
             expanded.append(token)
             continue
         data = image_bytes(next(sources))
+        total_bytes += len(data)
+        if total_bytes > MAX_REQUEST_IMAGE_BYTES:
+            raise ValueError('aggregate encoded image byte budget exceeded')
         try:
             # Retain full container/pixel validation even on a later cache hit.
             # Decoded pixels are transient here; no resize/normalization/patching.
-            metadata = validate_encoded_image(data)
+            metadata = validate_encoded_image(data, remaining_pixels=MAX_REQUEST_PIXELS-total_pixels)
+            total_pixels += metadata['width'] * metadata['height']
             nh, nw, height, width = plan_image_grid(metadata['width'], metadata['height'], config)
             h, w = height // config.vision_patch_size, width // config.vision_patch_size
             kinds = image_token_kinds(nh, nw)
             if len(kinds) > MAX_IMAGE_TOKENS:
                 raise ValueError('expanded image exceeds qualified token envelope')
+            total_patches += h * w
+            if total_patches > MAX_REQUEST_PATCHES:
+                raise ValueError('aggregate image patch budget exceeded')
+            # Include all as-yet unexpanded tokens in the lower bound.
+            expansion += len(kinds) - 1
+            if len(token_ids) + expansion > context:
+                raise ValueError('expanded multimodal context exceeds context envelope')
         except Exception as exc:
             raise ValueError(f'invalid image: {exc}') from exc
         encoded[len(expanded)] = data
         spans.append(ImageSpan(len(expanded), len(kinds), metadata['sha256'],
                                (h, w), tuple(kinds)))
         expanded.extend([token] * len(kinds))
-    if len(expanded) > MAX_MULTIMODAL_CONTEXT:
+    if len(expanded) > context:
         raise ValueError('expanded multimodal context exceeds qualified envelope')
     if expanded[-1] == config.image_token_id:
         raise ValueError('held-out terminal must be a text token')

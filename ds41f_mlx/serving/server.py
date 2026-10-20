@@ -22,6 +22,7 @@ from starlette.concurrency import run_in_threadpool
 from starlette.types import Receive, Scope, Send
 
 from ds41f_mlx.config import load_runtime_config
+from .capacity import vision_capacity
 from ds41f_mlx.serving.deepseek_recipe_backend import DeepSeekRecipeRuntimeBackend, RecipePreparedRequest, DEFAULT_RECIPE, DEFAULT_MODEL_ID, MODEL_ALIASES
 from ds41f_mlx.serving.request_policy import validate_stateful_chat_request_policy
 
@@ -86,7 +87,7 @@ def prepare_request(protocol: str, body: bytes, *, tokenizer: Any, recipe_path: 
         from ds41f_mlx.runtime.multimodal import prepare_multimodal
         config = ModelConfig.from_dict(json.loads(((checkpoint or load_runtime_config().checkpoint_path) / 'config.json').read_text()))
         try:
-            multimodal = prepare_multimodal(token_ids, list(rendered.image_sources), config)
+            multimodal = prepare_multimodal(token_ids, list(rendered.image_sources), config, ordinary=ordinary)
         except ValueError as error:
             raise RequestError(str(error), 400) from error
         token_ids = list(multimodal.token_ids)
@@ -326,6 +327,7 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
                          prefix_cache=None if scheduler is None else scheduler.checkpoints.paged.get_stats().to_dict(),
                          capabilities={'stateful_chat': 'production-sessions-v1', 'persist_restore': False,
                                        'chat_vision': 'bounded-inline-v1',
+                                       'vision_admission': vision_capacity(backend.checkpoint),
                                        'max_live_sessions': backend.production_sessions.MAX_LIVE,
                                        'max_active_generations': 1,
                                        'idle_retirement_seconds': backend.production_sessions.IDLE_SECONDS},
@@ -338,7 +340,8 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
         model = {'id': model_id, 'object': 'model', 'owned_by': 'ds41f', 'aliases': sorted(MODEL_ALIASES)}
         if ordinary_mtp:
             from .capacity import ORDINARY_OUTPUT_CEILING
-            model.update(context_length=backend.context_tokens, max_output_tokens=ORDINARY_OUTPUT_CEILING)
+            model.update(context_length=backend.context_tokens, max_output_tokens=ORDINARY_OUTPUT_CEILING,
+                         vision_admission=vision_capacity(backend.checkpoint))
         return JSONResponse(content={'object': 'list', 'data': [model]})
 
     @app.post('/v1/sessions')

@@ -22,13 +22,13 @@ def source(size=(400, 300), color='red', format='PNG'):
     return NS(kind='bytes', data=stream.getvalue())
 
 
-def prepare(sources):
-    config = ModelConfig(vision_n_layers=1)
-    ids = [7]
+def prepare(sources, *, ordinary=False, prefix=1):
+    config = ModelConfig(vision_n_layers=1, max_seq_len=1_048_576)
+    ids = [7] * prefix
     for i in range(len(sources)):
         ids.extend([config.image_token_id, 100+i])
     ids.append(8)
-    return prepare_multimodal(ids, sources, config)
+    return prepare_multimodal(ids, sources, config, ordinary=ordinary)
 
 
 def forbidden(*args, **kwargs):
@@ -70,8 +70,8 @@ def test_cached_images_do_not_resize_patch_or_encode(monkeypatch):
 
 
 def test_mixed_cached_and_new_images_use_original_patches_in_absolute_order(monkeypatch):
-    sources = [source(color=color) for color in ('red', 'blue', 'green', 'white')]
-    inp = prepare(sources)
+    sources = [source(color=color) for color in ('red', 'blue', 'green', 'white', 'black', 'yellow')]
+    inp = prepare(sources, ordinary=True, prefix=8200)
     frontier = inp.spans[2].start  # Two admitted historical images, two new.
     inp.validate_prefix(frontier, inp.identities()[:2])
     expected = []
@@ -97,7 +97,7 @@ def test_mixed_cached_and_new_images_use_original_patches_in_absolute_order(monk
     monkeypatch.setattr(processing, 'image_patch_array', patch)
     embeddings = inp.encode_new(NS(config=inp._config), frontier, span_encoder=encode)
     assert [start for start, _ in embeddings.rows] == [s.start for s in inp.spans[2:]]
-    assert len(calls) == len(patch_refs) == 2
+    assert len(calls) == len(patch_refs) == 4
     assert all(ref() is None for ref in patch_refs) and not inp._sources
     # Existing sparse merge keeps absolute positions and text between images.
     merged = embeddings.merge(mx.zeros((1, len(inp.token_ids), 4)), 0)
@@ -216,13 +216,15 @@ def scheduler_request(inp, authority):
     return scheduler, request
 
 
+@pytest.mark.parametrize('count', [1, 6])
 @pytest.mark.parametrize('case', ['hit', 'mixed', 'fresh_miss', 'miss', 'changed', 'target_only'])
-def test_paired_lookup_precedes_patch_preparation(monkeypatch, case):
+def test_paired_lookup_precedes_patch_preparation(monkeypatch, case, count):
     from ds41f_mlx.serving.paired_checkpoint import PairedCheckpointAuthority
     from test_production_mtp import MX, pair
-    old = prepare([source()])
-    inp = prepare([source(color='blue' if case == 'changed' else 'red')] +
-                  ([source(color='green')] if case == 'mixed' else []))
+    prefix = 8200 if count > 1 else 1
+    old = prepare([source()] * count, ordinary=True, prefix=prefix)
+    inp = prepare([source(color='blue' if case == 'changed' else 'red')] * count +
+                  ([source(color='green')] if case == 'mixed' else []), ordinary=True, prefix=prefix)
     C = len(old.token_ids)-2
     assert C >= 128
     authority = PairedCheckpointAuthority('identity', MX)
@@ -247,8 +249,8 @@ def test_paired_lookup_precedes_patch_preparation(monkeypatch, case):
         starts.append(len(rec.canonical))
         embeddings = prepared.multimodal.encode_new(NS(config=inp._config), len(rec.canonical),
             span_encoder=lambda pixels, h, w, kinds: mx.ones((len(kinds), 4)))
-        expected_starts = ([inp.spans[1].start] if case == 'mixed' else
-                           [inp.spans[0].start] if case == 'fresh_miss' else [])
+        expected_starts = ([inp.spans[-1].start] if case == 'mixed' else
+                           [s.start for s in inp.spans] if case == 'fresh_miss' else [])
         assert [p for p, _ in embeddings.rows] == expected_starts
         scheduler.batch_generator = object()
         rec.owner = NS(uid=17, _bg=scheduler.batch_generator)
@@ -259,7 +261,7 @@ def test_paired_lookup_precedes_patch_preparation(monkeypatch, case):
     if case in ('hit', 'mixed', 'fresh_miss'):
         assert not errors, errors
         assert scheduled == [request] and starts == [expected_frontier]
-        assert len(patches) == (0 if case == 'hit' else 1)
+        assert len(patches) == (0 if case == 'hit' else count if case == 'fresh_miss' else 1)
     else:
         assert not scheduled and not starts and not patches
         assert len(errors) == 1 and 'historical image pair unavailable' in str(errors[0])

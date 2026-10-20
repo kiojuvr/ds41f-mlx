@@ -97,9 +97,15 @@ that Scheduler request. Logical sessions use their existing exact leased pair,
 with image identity validation and the same recipe reconstruction certificate
 (preparation only, no historical Vision execution).
 
-Envelope is the existing OFF bound: inline PNG/JPEG/WebP, at most four images,
-16 MiB and 4M pixels each, aspect 1:2..2:1, high/auto, at most 1014 expanded tokens
-per image and **8192 total prompt + reserved output positions**. No URL/video,
+The original delta below used the OFF four-image / 8192-position bound.
+Ordinary MTP now admits actual expanded prompt + output reservation up to checkpoint
+context, without a count cap. Per-image limits remain 16 MiB, 4,194,304 pixels,
+1014 expanded tokens, inline PNG/JPEG/WebP, aspect 1:2..2:1 and high/auto detail.
+Aggregate preparation is bounded by 64 MiB encoded bytes, 16,777,216 source pixels
+and 36,864 planned ViT patches, including cached inputs. See [current capability
+bounds](capabilities.md#bounded-inline-images). This expanded implementation has
+source/synthetic verification only; the retained real-model delta below does
+**not** qualify expanded capacity. Legacy OFF remains four images / 8192 positions. No URL/video,
 batch Vision, Responses/Messages multimodal or MTP persistence is enabled. Existing ordinary JSON body admission remains 16 MiB
 in total, independently of per-image resource ceilings.
 

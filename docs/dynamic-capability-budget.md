@@ -18,7 +18,8 @@ everyday Chat negotiates Auto from runtime defaults.
 `serving/capacity.py` owns the profile-aware decision:
 
 ```text
-total = min(checkpoint range, qualified text or OFF-image envelope)
+total = checkpoint range for ordinary MTP Vision
+        min(checkpoint range, qualified text or OFF-image envelope) otherwise
 prompt = actual expanded recipe token count
 remaining = total - prompt
 OFF Auto = remaining
@@ -31,9 +32,10 @@ structural tokens all count. No char/token estimate, frontier-only subtraction,
 above-checkpoint extrapolation or output-sized allocation is implied. Total
 context is prompt **plus** reserved output, not a maximum prompt plus unlimited
 generation. Invalid/exhausted capacity rejects before native mutation. Ordinary
-MTP image-bearing requests use the same bounded 8192-position inline envelope,
-not the long text envelope; [Vision/MTP integration](mtp-vision-integration.md)
-does not expand multimodal capacity or enable persistence.
+MTP image-bearing requests use checkpoint context plus aggregate preparation
+budgets, not the legacy OFF 8192-position envelope. This is implemented capacity,
+not full-model-qualified expanded capacity; [current bounds](capabilities.md#bounded-inline-images).
+Persistence and historical-image replay are not enabled.
 
 `POST /v1/sessions/{id}/budget` prepares the same complete request and checks the
 selected retained-session admission: alias, busy/recovery state, exact canonical
