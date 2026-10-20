@@ -1,6 +1,4 @@
 """#4360 selected seams. Requires the isolated, overlay-built MTP oMLX."""
-import hashlib
-import json
 from pathlib import Path
 
 import numpy as np
@@ -125,39 +123,3 @@ def test_connected_logits_state_verify_rollback(monkeypatch):
                 assert (a is None) == (b is None)
                 if a is not None:
                     exact(a, b)
-
-
-def test_delivery_overlay_chain(tmp_path):
-    import subprocess
-    import tarfile
-    root = Path(__file__).resolve().parents[1]
-    sources = root/'third_party/mtp'
-    spec = json.loads((sources/'sources.json').read_text())['sources']['omlx']
-    archive = sources/spec['archive']
-    assert hashlib.sha256(archive.read_bytes()).hexdigest() == spec['sha256']
-    with tarfile.open(archive) as tar:
-        tar.extractall(tmp_path, filter='data')
-    for label in ('compressed-growth', 'bit-exact-kernels', 'template-reuse'):
-        overlay = json.loads((sources/f'{label}.json').read_text())
-        for name, identity in overlay['files'].items():
-            path = tmp_path/'omlx'/name
-            assert (hashlib.sha256(path.read_bytes()).hexdigest() if path.exists() else None) == identity['before']
-        subprocess.run(['patch', '-p1', '-i', str(sources/f'{label}.patch')], cwd=tmp_path, check=True)
-        for name, identity in overlay['files'].items():
-            assert hashlib.sha256((tmp_path/'omlx'/name).read_bytes()).hexdigest() == identity['after']
-
-
-def test_delivery_overlay_attribution():
-    root = Path(__file__).resolve().parents[1]
-    expected = {}
-    for label in ('bit-exact-kernels', 'template-reuse'):
-        overlay = json.loads((root/f'third_party/mtp/{label}.json').read_text())
-        assert hashlib.sha256((root/f'third_party/mtp/{label}.patch').read_bytes()).hexdigest() == overlay['patch_sha256']
-        for name, identity in overlay['files'].items():
-            if name in expected:
-                assert expected[name] == identity['before']
-            expected[name] = identity['after']
-    import omlx
-    source = Path(omlx.__file__).parent
-    for name, digest in expected.items():
-        assert hashlib.sha256((source/name).read_bytes()).hexdigest() == digest

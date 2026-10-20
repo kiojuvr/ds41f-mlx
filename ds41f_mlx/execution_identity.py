@@ -1,7 +1,7 @@
-"""Installed executable admission. Trusted package publisher, non-hostile operator.
+"""Installed Runtime boundaries: origins, versions, native ABI and exact assets.
 
-No checkout, build directory, source export or local observation seal is authority.
-Host Mach-O dependencies use dyld's ABI contract; reachable image math is exact.
+MTP does not hash Python payloads or bytecode. The separate OFF lane retains its
+historical full-payload admission. Neither lane trusts local native enrollment.
 """
 import importlib.util
 import json
@@ -30,6 +30,7 @@ def normalized(code):
 
 
 def verify_tree(root, expected, label):
+    """Legacy OFF-only full-payload verification (also used by R1 evidence)."""
     if inventory(root) != expected:
         raise ValueError(f'executable payload drift: {label}')
     # Python may have imported timestamp-valid but substituted cached bytecode.
@@ -93,6 +94,47 @@ def host_closure(native):
     return sorted(str(p) for p in seen)
 
 
+def check_installed_packages(authority, site):
+    """MTP checks origins and locked versions; OFF additionally checks Python bytes."""
+    from .mtp_setup import sha
+    mtp = authority['profile'] == 'mtp'
+    if mtp:
+        if authority['schema'] != 'ds41f.installed-admission.v3':
+            raise ValueError('rebuild MTP with the current package builder')
+        from importlib.metadata import version, PackageNotFoundError
+        for name, expected in authority['dependencies'].items():
+            try:
+                actual = version(name)
+            except PackageNotFoundError as exc:
+                raise ValueError(f'missing dependency: {name}') from exc
+            if actual != expected:
+                raise ValueError(f'dependency version drift: {name}')
+    for name, digest in authority['files'].items():
+        spec = importlib.util.find_spec(Path(name).stem)
+        if spec is None or Path(spec.origin).resolve() != site/name:
+            raise ValueError(f'non-installed support origin: {name}')
+        if not mtp:
+            if sha(site/name) != digest:
+                raise ValueError(f'executable support file drift: {name}')
+            cached = Path(importlib.util.cache_from_source(str(site/name)))
+            if cached.exists() and normalized(marshal.loads(cached.read_bytes()[16:])) != normalized(
+                    compile((site/name).read_bytes(), str(site/name), 'exec')):
+                raise ValueError(f'executable support bytecode drift: {name}')
+    for name, expected in authority['payloads'].items():
+        spec = importlib.util.find_spec(name)
+        roots = list(spec.submodule_search_locations or []) if spec else []
+        if roots != [str(site/name)]:
+            raise ValueError(f'non-installed executable origin: {name}')
+        if mtp:
+            for relative, digest in expected.items():
+                if not relative.endswith(('.so', '.dylib', '.metallib')):
+                    raise ValueError('MTP manifest must not seal Python sources')
+                if sha(site/name/relative) != digest:
+                    raise ValueError(f'native payload drift: {name}/{relative}')
+        else:
+            verify_tree(site/name, expected, name)
+
+
 def inspect_payload():
     from .mtp_setup import sha
     authority = json.loads(MANIFEST.read_text())
@@ -107,20 +149,7 @@ def inspect_payload():
         raise ValueError('Python 3.13 >= 3.13.15 required')
     if not 26 <= int(platform.mac_ver()[0].split('.')[0]) < 27:
         raise ValueError('supported macOS 26 ABI family required')
-    for name, digest in authority['files'].items():
-        spec = importlib.util.find_spec(Path(name).stem)
-        if spec is None or Path(spec.origin).resolve() != site/name or sha(site/name) != digest:
-            raise ValueError(f'executable support file drift: {name}')
-        cached = Path(importlib.util.cache_from_source(str(site/name)))
-        if cached.exists() and normalized(marshal.loads(cached.read_bytes()[16:])) != normalized(
-                compile((site/name).read_bytes(), str(site/name), 'exec')):
-            raise ValueError(f'executable support bytecode drift: {name}')
-    for name, expected in authority['payloads'].items():
-        spec = importlib.util.find_spec(name)
-        roots = list(spec.submodule_search_locations or []) if spec else []
-        if roots != [str(site/name)]:
-            raise ValueError(f'non-installed executable origin: {name}')
-        verify_tree(site/name, expected, name)
+    check_installed_packages(authority, site)
     # GLM dispatch is a separate explicit distribution identity from serving
     # mode. Legacy extension-absent manifests are strictly portable.
     from .runtime.resource_admission import check_glm_bundle

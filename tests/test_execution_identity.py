@@ -5,7 +5,7 @@ import pytest
 from ds41f_mlx.execution_identity import inventory, verify_tree, links, host_closure
 
 
-def test_payload_add_change_remove_are_rejected(tmp_path):
+def test_off_payload_add_change_remove_are_rejected(tmp_path):
     file = tmp_path/'execution.py'
     file.write_text('value = 1\n')
     expected = inventory(tmp_path)

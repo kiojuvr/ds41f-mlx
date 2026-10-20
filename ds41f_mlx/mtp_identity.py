@@ -17,7 +17,7 @@ import sys
 from .config import load_runtime_config
 from .mtp_setup import sha
 from .mtp_profile import PROFILE, LIMITS, WEATHER
-from .execution_identity import MANIFEST, inventory
+from .execution_identity import MANIFEST
 
 CHECKPOINT_CACHE = Path(sys.prefix)/'share/ds41f-mtp/checkpoint-bytes.json'
 CHECKPOINT_REVISION = '1bae0e1088993b9b82de08f59de5be5a34e42170'
@@ -167,7 +167,8 @@ def snapshot():
     authority, compatibility = inspect_payload()
     return dict(schema='ds41f.execution-identity.v2', profile=PROFILE,
                 glm_profile=compatibility['glm_profile'], limits=LIMITS,
-                tool=WEATHER, files=authority['files'], payloads=authority['payloads'],
+                tool=WEATHER, dependencies=authority['dependencies'],
+                files=authority['files'], payloads=authority['payloads'],
                 semantic_native=authority['semantic_native'], tokenizer_sha256=authority['tokenizer_sha256'])
 
 
@@ -188,7 +189,8 @@ def inspect(cfg, *, checkpoint=True):
         assets = dict(assets, verification='full-byte SHA256; installation cache only for unchanged file identity')
     actual = dict(schema='ds41f.execution-identity.v2', profile=PROFILE,
                   glm_profile=compatibility['glm_profile'], limits=LIMITS,
-                  tool=WEATHER, files=authority['files'], payloads=authority['payloads'], semantic_native=authority['semantic_native'],
+                  tool=WEATHER, dependencies=authority['dependencies'],
+                  files=authority['files'], payloads=authority['payloads'], semantic_native=authority['semantic_native'],
                   tokenizer_sha256=authority['tokenizer_sha256'])
     if checkpoint:
         # Paired state must never cross checkpoint or numerical-profile identities.
