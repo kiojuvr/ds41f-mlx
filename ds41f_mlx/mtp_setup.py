@@ -51,7 +51,8 @@ def main(argv=None):
     build.mkdir(parents=True, exist_ok=True)
     for name, spec in lock['sources'].items():
         archive = SOURCES/spec['archive']
-        if (args.profile == 'standard-off' or name == 'recipe') and sha(archive) != spec['sha256']:
+        # Ordinary MTP sources have revision provenance, not SHA admission.
+        if args.profile == 'standard-off' and sha(archive) != spec['sha256']:
             raise ValueError('unapproved dependency source archive')
         target = build/name
         if target.exists():
@@ -62,8 +63,6 @@ def main(argv=None):
     if args.profile == 'mtp-singleton-v1':
         apply_mtp_patches(build/'omlx')
         patch = ROOT/normal['recipe_source']['patch']
-        if sha(patch) != normal['recipe_source']['patch_sha256']:
-            raise ValueError('unapproved consolidated Recipe patch')
         subprocess.run(['git', 'apply', '--check', str(patch)], cwd=build/'recipe', check=True)
         subprocess.run(['git', 'apply', str(patch)], cwd=build/'recipe', check=True)
     if venv.exists():

@@ -974,3 +974,152 @@ owner/generator and protocol conversion/stream/tool-result/cancellation settleme
 validation, then affected application admission. Chat's tested owner is not
 Messages or Harness authority. Messages connectivity, Harness and broader
 real-model qualification are deliberately not implemented here.
+
+## Recipe 0.2 real-model acceptance and source-seal correction (2026-10-21)
+
+Baseline: `DeepInfer`, `bce83fbf5a0ebe71b83adabbe1abec6d779edffd`.
+**PASS — bounded ordinary Chat evidence**, not release promotion.
+
+### Permanent source policy correction
+
+Removed the accidentally reintroduced Recipe archive and consolidated-patch SHA
+admission from `ds41f_mlx/mtp_setup.py`, and removed their now-unused authority
+fields from `third_party/mtp/normal-local.json::recipe_source`. Archive/patch paths
+and explicit upstream revision `93b0fd229cc9ffa6b1a8c63d42b0bf741bbec170`
+remain provenance. Dependency-version locks remain unchanged. Recipe patching
+still requires successful `git apply --check` followed by `git apply`; the four
+oMLX overlays retain their existing strict application. No replacement source
+fingerprint, generated lock, installed source seal or verification framework.
+
+Native Recipe wheel/artifact SHA, installed native hashes/origins/ABI, tokenizer,
+checkpoint assets and all 48 shard hashes are unchanged. Standard-OFF archive
+checks and its separate admission remain unchanged; historical OFF inventories
+were neither cleaned up nor resealed.
+
+Focused checks only: **8 passed** in `tests/test_mtp_packaging.py`, using the
+unchanged development `.venv` with `PYTHONDONTWRITEBYTECODE=1` and
+`-p no:cacheprovider`. A temporary provisioning probe extracted the real archives,
+changed the Recipe archive's trailing bytes and patch's trailing newline, and
+made any source SHA invocation fail: MTP successfully applied all patches and
+reached the existing venv-creation boundary (stopped before dependency changes).
+Strict Recipe reapplication and damaged-context checks rejected; Standard-OFF
+still rejected a changed archive digest. This is source-policy testing, not a new
+provisioning qualification. `git diff --check` passed.
+
+### Reused installed environment and admission
+
+Reused `/private/tmp/ds41f-recipe02-ordinary-final-install`, built by the baseline's
+existing workflow; no reinstall, native rebuild, installed-file edit or admission
+bypass. Read-only comparison found all installed Runtime Python files equal to
+current source except the provisioning-only `mtp_setup.py` correction. Existing
+build metadata still records base source commit `5ae964c34c451f9aa1bf10fd9d0378ac3ebe5bb6`
+and historical source hashes; those are not new source admission authorities and
+were not rewritten to disguise reuse.
+
+- Runtime **0.23.0**, original Runtime wheel SHA256
+  `12d822ae966a221b8fcfbd73157a35e8c2cadb8fb39452e0ee7ed1711631e1df`.
+- Execution identity `dd246d8a40a19bd44a89fdd8c65bb2580609dc3fa04d912888ee65ec612c9782`.
+  The existing identity report labels its shared identity `mtp-singleton-v1`;
+  actual serving config/app/backend used **`mtp-serving-v1`**, not the singleton
+  endpoint restrictions.
+- Python **3.13.15**, macOS **26.5.2**, Apple **M3 Ultra**, memory
+  **549755813888** bytes; native GLM profile. MLX **0.32.2**, mlx-lm
+  **0.31.4.dev132+g94cdcae13**, oMLX **0.7.0**, NumPy **2.3.5**, Pillow **12.3.0**.
+- Official Recipe **0.2.0** with the consolidated native semantic extension;
+  retained wheel SHA256
+  `9161b73430f82eb542e83da141a12b37ad9a325fdc56bd47af38dc6c69282611`.
+  Installed origin/version/native/ABI/loaded-image admission passed for the
+  **264-image** wheel-owned closure and native GLM resources. Build provenance
+  retains OpenCV **4.14.0**, Rust/Cargo **1.98.1**; no Homebrew native substitution.
+- Exact checkpoint at
+  `/Volumes/KIOXIA-PRO-2/models/deepseek-ai/DeepSeek-V4.1-Flash-1017`, revision
+  `1bae0e1088993b9b82de08f59de5be5a34e42170`, profile
+  `flash-1017-pre-woa-fp8-v1`. Installed inspection completed all 48 full-byte
+  shard hashes and metadata admission; subsequent processes reused only the
+  normal unchanged-file-identity cache. No receipt/cache was fabricated.
+
+Execution used installed `python -I` from `/tmp`, explicit `DS41F_CHECKPOINT` above,
+`DS41F_KV_ROOT=/tmp/recipe02-acceptance-bce83fb/kv`, and isolated loopback port
+**18027**. Reused `tools/accept_mtp_vision.py`'s real-socket/backend-trace pattern,
+with admission **before** serving imports, canonical startup model loading and
+`serve.py`'s local H11 settings. Each process reached model **READY** before any
+request. No new repository acceptance framework. Stable Flash-1017 installations,
+active services and Harness deployment were untouched.
+
+### Actual model cases and canonical evidence
+
+All cases used `temperature: 0`, `reasoning_effort: none`; text/Vision reserved
+32 output tokens, call/continuation 128. A used `/v1/chat/completions`; B/C used
+ordinary production session Chat Completions with streaming and the existing
+expected-count/application-ID headers, to observe application certification.
+D used `/v1/chat/completions`. Official native response accumulation is retained
+in each backend trace; nonstream HTTP responses equal that settled response.
+B/C SSE completed with `[DONE]` and official terminal deltas.
+
+| Case | Actual result | Prompt / cached / suffix positions | Canonical generated / frontier | Finish |
+| --- | --- | --- | --- | --- |
+| A — short text | `Hello` | 10 / 0 / 10 | 2 / **12** | stop |
+| B — real function call | `read_file`, complete JSON `{"path": "/tmp/example.txt"}` | 327 / 0 / 327 | 48 / **375** | tool_calls |
+| C — synthetic tool-result continuation | Response reports **RECIPE02_OK** | 403 / 375 / 28 | 20 / **423** | stop |
+| D — one small image | `Corn` | 199 / 0 / 199 | 2 / **201** | stop |
+| D — cached-history follow-up | `Yellow and green` | 209 / 201 / 8 | 4 / **213** | stop |
+
+For **every row**, all **40 Target** and **3 DSpark** offsets equal its listed
+canonical frontier; authority disposition is `settled`, consumed/emitted
+frontiers agree, queues are empty, prediction is retired and no pending prediction
+remains. `cancelled=false`, `cache_published=true`, `fatal_error=null`,
+`prompt_replay=0`, `full_cache_repack=0`; no recovery error. Quiescence added zero
+proposals/verify cycles and performed zero history replay/repack. Terminal tokens
+are counted canonically, so public completion usage need not equal generated.
+
+B reused the established `accept_generic_mtp_tools.py` prompt/schema:
+`Call read_file with path /tmp/example.txt. Do not answer until you receive the file content.`,
+with `read_file` and `stat_file` tools. The actual official ID was
+**`call_00_DxxRaS1ma7bvMXYKW8gD5514`**. It matches the SSE naming delta, native
+call certificate, consuming response and final response exactly. Native
+argument-end was observed at absolute frontier **369**, revision **43**; it did
+not terminate the turn. The full tool-block terminal was
+`CONSUMING_TOOL_EOF`, ordinal **47**, revision **48**, frontier **375**.
+Only after canonical settlement/reconstruction did the session publish `idle`,
+`representable=true`, `exact_prefix=true`, `semantic_complete=true`,
+`executable_tools=true`. Native generation exercised **13** speculative cycles,
+**33** accepted drafts and **2** rejects; this was not controlled-token injection.
+
+C returned a **synthetic** tool result with that exact generated ID:
+`Synthetic tool result: the file contains RECIPE02_OK. Report this exact marker.`
+No file was read/written and no external tool was executed. Official Recipe 0.2
+history conversion/reconstruction accepted the exact canonical prefix; all **375**
+positions were restored from the paired cache, with only **28** suffix positions.
+Final session count **2**, state `idle`, reconstruction `representable=true`,
+`exact_prefix=true`, `semantic_complete=true`, `executable_tools=false`.
+
+D used the previously supported checkpoint `inference/examples/images/corn.jpeg`
+(450×308, SHA256 `251fe7ad58f44db139a6af5ed489e027eca93ae60878b83f3e709c7d6f0112a1`)
+with `Name this food briefly.`, then returned assistant history plus
+`What color is it?`. New-image `vision_encoded_count=1`; historical continuation
+`vision_encoded_count=0`. No expanded-capacity qualification was attempted.
+
+### Evidence, probe errors and remaining limits
+
+Raw installed inspection, HTTP responses/SSE, complete backend traces and session
+snapshots are retained locally in `/private/tmp/recipe02-acceptance-bce83fb/`:
+`inspect.json`, `run-inspect.json`, `results.json` (**PASS**, server retired),
+`first-attempt.json`/`.log`, `chat-results.json`, `chat-run.log`, `run.log`, and
+`source-check.log`. Temporary probes stayed outside the repository; this section
+records their concrete results rather than introducing an acceptance framework.
+
+Two observation-format mistakes stopped temporary drivers, not model execution:
+a nonstream production-session POST correctly returned 400 (streaming required),
+and a DELETE without required `Content-Type: application/json` correctly returned
+400 at ingress. A ran once before the first rejection; B/C ran once before the
+DELETE rejection; a fresh process then ran only D. No failed generation was
+relabeled or call manufactured. Initial inspection without explicit checkpoint
+environment correctly rejected before checkpoint I/O. All acceptance processes
+shut down; no live model service remains from this run.
+
+No concrete implementation defect was found. This establishes minimal direct
+Flash-1017 Recipe 0.2 ordinary text/tool/continuation and small-image evidence,
+not full qualification, capacity/performance/soak, arbitrary tool execution,
+Messages or Harness authority. No scheduler, kernel, Vision redesign, OFF cleanup,
+deployment, new source/package fingerprint infrastructure or release promotion.
+**Stop here; Messages and Harness implementation has not begun.**
