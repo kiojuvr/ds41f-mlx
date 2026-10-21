@@ -8,7 +8,7 @@ import json
 from deepseek_recipe import ChatCompletionRequest, ConversionOptions
 
 from ds41f_mlx.mtp_profile import ALIASES, strict_json
-from .capacity import ORDINARY_BODY_BYTES, validate_ordinary_output
+from .capacity import ORDINARY_BODY_BYTES, ORDINARY_OUTPUT_CEILING, validate_ordinary_output
 
 
 def admit_structure(raw):
@@ -18,7 +18,7 @@ def admit_structure(raw):
 
 
 def admit_capabilities(converted, payload):
-    if converted.model not in ALIASES:
+    if payload.get('model') not in ALIASES:
         raise ValueError('fixed model alias required')
     options = converted.inference_options
     from .generation_policy import normalize_policy
@@ -36,8 +36,10 @@ def admit_capabilities(converted, payload):
     if isinstance(thinking, dict) and thinking.get('budget_tokens') is not None:
         raise ValueError('ordinary MTP does not support thinking budget_tokens')
     response_format = payload.get('response_format')
-    if isinstance(response_format, dict) and response_format.get('type') == 'json_schema':
-        raise ValueError('ordinary MTP does not support constrained JSON Schema output')
+    if isinstance(response_format, dict) and response_format.get('type') in ('json_schema', 'regex'):
+        raise ValueError('ordinary MTP does not support constrained JSON Schema or regex output')
+    # Recipe describes constraints; the native sampler does not enforce them.
+    # Existing prompt-based JSON/tool selection is not constrained decoding.
     if payload.get('logprobs') or payload.get('top_logprobs'):
         raise ValueError('ordinary MTP does not support logprobs')
 
@@ -50,14 +52,11 @@ def resolve_output_budget(request):
     Explicit Auto is handled separately after actual prompt expansion; its
     recipe placeholder must never be interpreted as an omitted output limit.
     """
-    requested = request.inference_options.max_tokens
-    if requested is not None:
-        return requested
-    from .generation_policy import reasoning_policy
-    reasoning = reasoning_policy(request)
-    if not reasoning['thinking_mode']:
-        return 8192
-    return dict(low=65_536, high=65_536, max=131_072)[reasoning['reasoning_effort']]
+    # Ask Recipe for its semantic default without silently lowering an omitted
+    # reservation to the physical context left. Existing capacity admission
+    # below remains the owner of prompt + resolved-output enforcement.
+    prompt = len(request.token_ids)
+    return request.conversation_request.resolve_max_tokens(prompt, prompt + ORDINARY_OUTPUT_CEILING)
 
 
 def with_reasoning_default(payload, effort):
@@ -71,6 +70,7 @@ def with_reasoning_default(payload, effort):
 
 
 def convert_ordinary(raw, *, default_reasoning_effort='none'):
+    from deepseek_recipe import ModelVersion
     payload = admit_structure(raw)
     automatic = payload.get('max_tokens') == 'auto'
     # Defaults are resolved only AFTER strict wire admission, then converted by
@@ -81,7 +81,9 @@ def convert_ordinary(raw, *, default_reasoning_effort='none'):
         recipe_payload = recipe_payload | {'max_tokens': 1}
     recipe_body = json.dumps(recipe_payload).encode()
     request = ChatCompletionRequest(recipe_body)
-    include_usage = request.include_usage()
-    converted = request.convert(ConversionOptions(default_thinking_mode=False))
+    converted = request.convert(ConversionOptions(default_thinking_mode=False).with_model_versions_by_name(
+        {alias: ModelVersion.DeepseekV41Flash for alias in ALIASES}))
+    # The generator reads authoritative response options from `converted`.
+    include_usage = bool((recipe_payload.get('stream_options') or {}).get('include_usage', False))
     admit_capabilities(converted, payload)
     return converted, include_usage, automatic

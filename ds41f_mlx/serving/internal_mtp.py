@@ -176,9 +176,11 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
             if rec.owner is not None:
                 rec.owner.close()
                 rec.owner = None
-            if rec.processor is not None:
+            if rec.guard is not None:
+                rec.guard.close()
+            elif rec.processor is not None:
                 rec.processor.close()
-                rec.processor = None
+            rec.processor = None
             rec.cache = rec.rings = None
             if self._model is not None:
                 prompt_priming.drop_ctx(self._model.language_model)
@@ -296,8 +298,8 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
             live = LivePrefillResult.from_committed(app.commit_certificate, prefix_token_ids=ids[:-1])
             live.dspark_committed_context = context
             generator = d.ChatCompletionRequest.chunk_generator(request.conversation_request, trace['response_id'], request.model or self.model_id)
-            generator = generator.with_include_usage(request.include_usage)
-            rec.processor = d.StreamProcessor(generator, request.conversation_request.parsing_options, tokenizer)
+            # Recipe 0.2's converted response options own usage and streaming.
+            rec.processor = d.ChatCompletionSemanticSession(generator, request.conversation_request.parsing_options, tokenizer)
             rec.guard = RecipeSemanticGuard(rec.processor, control_token_ids=request.stop_token_ids,
                 frontier=len(ids), response=d.ChatCompletionResponse(trace['response_id'], self.model_id, int(time()), 0, 0))
             rec.guard._push(d.InferenceChunk.ready(prompt_usage=d.PromptUsage(prompt_tokens=len(ids), prompt_cache_hit_tokens=trace.get('cached_tokens', 0))))
@@ -354,6 +356,10 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
         remains fail closed through the existing retirement path.
         """
         token = self._next(rec, trace)
+        if token is None and not rec.guard.finished:
+            # EOF is consumed only after quiescence drains any already-committed
+            # safe suffix. Cancellation does not set this backend observation.
+            trace['backend_eof'] = True
         # The existing last_turn owner accumulates immutable call segments while
         # its request fence remains active. No task outcome/effect reservation is
         # published until full official response settlement.
@@ -366,6 +372,9 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
             consuming_outcome=c.consuming_outcome) for c in certificates)
         rec.last_turn = trace
         new_events = rec.guard.events[len(rec.pending_delivery):]
+        import deepseek_recipe as d
+        if any(d.ChatCompletionResponse.sse_event_name(event) is not None for event in new_events):
+            raise RuntimeError('unexpected named Chat Completions SSE event')
         encoded = tuple(event.to_json() for event in new_events)
         rec.pending_delivery += encoded
         if rec.guard.finished or token is None:
@@ -407,6 +416,8 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
                 pending_prediction=connection.pending_prediction, rng_draws=connection.rng_draws)
             canonical_generated = list(rec.owner.history.canonical_generated_tokens)
             rec.owner.close(); rec.owner = None
+            if trace.get('backend_eof') and not rec.guard.finished:
+                rec.guard.finish_eof()
             assert len(rec.cache) == 40 and all(c.size() == len(rec.canonical) for c in rec.cache)
             assert all(c.offset == len(rec.canonical) for c in rec.rings)
             # Native response.append transfers chunk ownership. Serialize the
@@ -417,10 +428,7 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
             encoded_events = tuple(e.to_json() for e in rec.guard.events)
             rec.pending_delivery = encoded_events
             protocol_events = [json.loads(e) for e in encoded_events]
-            response = getattr(rec.guard, 'response', None)
-            if response is None:
-                response = d.ChatCompletionResponse(trace['response_id'], self.model_id, int(time()), 0, 0)
-                for event in rec.guard.events: response.append(event)
+            response = rec.guard.response
             trace.update(quiescence=quiet.to_json(), canonical_frontier=len(rec.canonical),
                          target_offsets=[c.size() for c in rec.cache], dspark_offsets=[c.offset for c in rec.rings],
                          terminal_matches=list(rec.guard.matches), response=json.loads(response.to_json()),
@@ -433,14 +441,14 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
                 completed = rec.guard.finished and rec.guard.tool_complete
                 rec.certificate = reconstruction_certificate(rec.reconstruction_body, trace['response'], rec.canonical,
                     tokenizer=rec.reconstruction_tokenizer, recipe_path=self.recipe_path, completed_tool_block=completed,
-                    options=getattr(self, 'conversion_options', None), checkpoint=self.checkpoint)
+                    options=getattr(self, 'conversion_options', None), checkpoint=self.checkpoint, ordinary=True)
                 trace['certificate'] = rec.certificate
                 if not rec.certificate['representable']:
                     rec.unrecoverable = True
                     rec.poisoned = True  # legacy containment/retirement label, not internal-failure outcome
                     trace['recovery_error'] = 'no official-recipe reconstruction certificate; DELETE required'
             self._finalize_application_certificate(rec, trace)
-            rec.processor.close(); rec.processor = None
+            rec.guard.close(); rec.processor = None
             trace['cleanup_s'] = perf_counter()-t0
             # Single immutable application authority, published on the consuming
             # worker. Transport cleanup cannot change this known disposition.

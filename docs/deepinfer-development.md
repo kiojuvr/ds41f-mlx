@@ -806,3 +806,171 @@ model execution as `unverified`; this scoped observation is not blanket capacity
 promotion. No benchmark suite, OFF cleanup, Recipe migration, scheduler redesign,
 protected-branch change or deployed installation mutation was performed. All
 acceptance servers are retired; scratch installation/logs remain for inspection.
+
+## Ordinary MTP Chat migration to Recipe 0.2
+
+Baseline: `DeepInfer`, `5ae964c34c451f9aa1bf10fd9d0378ac3ebe5bb6`.
+Upstream: Recipe **0.2.0**, `93b0fd229cc9ffa6b1a8c63d42b0bf741bbec170`.
+This supersedes the earlier *deferred Runtime migration* status above, not the
+historical acceptance records. No deployed installation was modified.
+
+### Semantic ownership and termination
+
+The existing ordinary MTP `_start` now transfers the official Chat generator to
+one `ChatCompletionSemanticSession`; there is no parallel processor or Runtime
+path. `RecipeSemanticGuard` owns that session for one request lifetime. Proofs
+bind object identity, lifetime, native revision/frontier, canonical emitted
+ordinal/absolute frontier, exact candidate IDs, official chunks and exact official
+accumulated prefix responses. Tool Call IDs are never removed from comparisons.
+Canonical input uses `InferenceChunk.tokens([id])`. Backend control IDs remain
+suppressed protocol input, with separate canonical accounting and exact matching.
+
+Preview forks the existing native owner, never canonical history or a Python
+markup parser. Prefix previews stop at the first authoritative terminal (the
+binding intentionally rejects a suffix after protocol completion). Rejected
+candidates/repeated previews cannot spend canonical generator RNG draws. The
+consolidated patch exposes Chat-only accumulator `fork` and `accumulate_copy`:
+these clone official response/chunk values, retaining streaming payloads without
+reimplementing accumulation. The guard checks both chunks and accumulated
+responses before acquiring authority. Stale, foreign, divergent-token/response
+proofs and errors fail closed, close native state and invalidate speculation.
+Cancellation closes without inventing successful completion.
+
+**Four boundaries remain distinct:**
+
+1. `ToolCallArgumentsEnd` certifies the completed arguments for a particular
+   official indexed call. It occurs at `</` plus the DSML token, before the
+   remaining `invoke>` suffix, and is **not** an assistant-turn terminal.
+2. The complete enclosing tool-block marker is now an explicit native row
+   observation. The minimal parser change distinguishes the existing terminal
+   transition reached from `Stage::ToolCalls` from a stop-sequence transition;
+   its matching/actions/output are unchanged. Rows expose a sixth
+   `tool_block_finished` boolean, separate from protocol `finished`. No second
+   matcher, markup parser or terminal string search was introduced.
+3. At that canonically owned full marker the guard supplies official backend
+   Stop and compares the exact finished response to its fork. A natural backend
+   Stop/Length or actual EOF is separately consumed. Stop can produce the
+   official `tool_calls` finish reason for an *incomplete* block; this does not
+   establish `tool_complete`. EOF is not Stop; Length cannot authorize tools.
+   An observed backend EOF is consumed only after canonical quiescence has
+   drained already-committed safe input; cancellation never synthesizes EOF.
+4. Existing native quiescence, reconstruction/certification and application
+   settlement still precede tool-effect permission. Argument certificates alone
+   confer no execution permission. Final calls must equal the certified calls,
+   including their IDs. No Scheduler, cache, Target/DSpark, numerical, Vision,
+   budget or application tool-permission owner was changed.
+
+### Ordinary Chat API and dependency owners
+
+- `ConversionOptions.with_model_versions_by_name` maps only the established local
+  aliases to `ModelVersion.DeepseekV41Flash`. The requested transport model name
+  is retained separately; Recipe 0.2 no longer retains it on the converted object.
+- The official V4.1 renderer/encoder preserves explicit special-token ranges;
+  literal special/image spellings in source remain plain text. EOS comes from
+  official parsing special tokens. There is no invented tokenizer/parser.
+- The generator reads converted official response options: no old
+  `with_include_usage` call. Recipe 0.2 always emits its final usage snapshot;
+  requested usage additionally supplies null usage on preceding deltas.
+  Streaming retains official chunks, official SSE event names and done data.
+- Official generation resolution is retained: V4.1 nonthinking `top_p=1`, thinking
+  temperature `1` and minimum `top_p=.95`. Runtime extensions and their existing
+  admission remain owned by Runtime. `resolve_max_tokens` supplies semantic
+  output defaults; existing capacity admission still rejects an insufficient
+  reservation rather than silently shrinking an omitted default. Ordinary
+  health metadata distinguishes Recipe resolution and unverified model execution.
+- JSON Schema/regex/logprobs limitations remain fail closed. Recipe's
+  `output_constraint` is a description, not sampler enforcement. Existing
+  prompt-based JSON/tool capabilities are not advertised as constrained decoding.
+- The existing `third_party/mtp/normal-local.json` dependency/artifact owner now
+  points to a clean upstream 0.2 export and the **one consolidated patch**. Setup
+  verifies/applies that patch and installs the retained repaired 0.2 wheel;
+  package construction and installed release metadata use the same version/base.
+  No second installer, source-hash registry, dependency authority or 0.1 MTP
+  compatibility path was added. Preserved OFF artifacts/metadata and historical
+  numerical/checkpoint/evidence inventories are not replaced.
+
+### Supported Python wheel and isolated installation
+
+The actual release wheel was built with **Python 3.13.15**, maturin **1.15.0**,
+Rust/Cargo **1.98.1**, OpenCV **4.14.0**, and the upstream locked Cargo graph:
+
+```sh
+# From the clean 0.2 export with the consolidated patch applied:
+PKG_CONFIG_PATH=/opt/homebrew/opt/opencv@4/lib/pkgconfig \
+OpenCV_DIR=/opt/homebrew/opt/opencv@4/lib/cmake/opencv4 \
+CMAKE_PREFIX_PATH=/opt/homebrew/opt/opencv@4 \
+LIBCLANG_PATH=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib \
+DYLD_FALLBACK_LIBRARY_PATH=/opt/homebrew/lib:/opt/homebrew/opt/opencv@4/lib:/opt/homebrew/opt/gcc/lib/gcc/current \
+maturin build --locked --release --auditwheel repair -i /path/to/python3.13 \
+  --manifest-path deepseek-recipe-python/Cargo.toml -o /scratch/wheels
+
+python -m ds41f_mlx.mtp_setup \
+  --venv /tmp/ds41f-recipe02-ordinary-final-install \
+  --build-dir /tmp/ds41f-recipe02-ordinary-final-build
+```
+
+The previously unresolved Abseil library exists in Homebrew's common library
+directory. Making it visible to repair then exposed `libgcc_s.1.1.dylib`, resolved
+from the existing GCC `lib/gcc/current` directory. Both were resolved normally,
+not hidden, removed or stubbed. **No `--skip-auditwheel`** was used. The retained
+wheel is `deepseek_recipe-0.2.0-cp310-abi3-macosx_11_0_arm64.whl` (SHA256
+`9161b73430f82eb542e83da141a12b37ad9a325fdc56bd47af38dc6c69282611`).
+The abi3/platform filename is not a qualification of older Python/macOS hosts;
+Runtime continues requiring Python 3.13 >= 3.13.15 and supported macOS 26 arm64.
+
+The existing setup/package workflow successfully built and installed the ordinary
+Runtime wheel in that **new isolated installation**, with the native GLM profile.
+`python -I` installed inspection passed: installed Runtime and Recipe origins,
+0.2 release metadata/base revision, locked package versions, tokenizer, exact
+native hashes, ABI versions and loaded-image UUIDs. Recipe's entire **264-image
+non-system closure** (extension plus repaired libraries) is wheel-owned, with
+**zero Homebrew links**. Loader-relative subdirectories are resolved explicitly;
+missing or additional native dependencies still reject. The manifest takes
+native payloads from the already-authorized wheel, not observed host enrollment.
+The supported installation is load/ABI inspected, not a new real-model acceptance.
+
+### Focused results and limits
+
+- **PASS — 198 tests**, 21 existing FastAPI/Starlette deprecation warnings, against
+  the final installed Runtime from `/tmp` under `python -I` (not checkout imports):
+  `test_recipe02_semantic_guard.py`, `test_recipe02_chat_boundary.py`,
+  `test_ordinary_text_parts.py`, `test_ordinary_output_defaults.py`,
+  `test_production_mtp.py`, `test_production_session_owner.py`,
+  `test_production_sessions.py`, `test_generation_policy.py`.
+- **PASS — 11** source packaging/identity unit tests (`test_mtp_packaging.py`,
+  `test_execution_identity.py`); **PASS — 52** actual patched-extension Python
+  tests (`test_semantic_session.py`, `test_bindings.py`).
+- **PASS — all 53** native Recipe crate tests, including the 3 native-boundary,
+  20 processor and 25 protocol cases. Fresh setup also passed patch applicability
+  against the exact clean upstream export.
+- Coverage includes single/multiple calls, fragmented UTF-8/arguments/markers,
+  early argument completion, full terminal recognition, repeated/rejected
+  previews, partial acceptance/new candidates (rollback without spending parser
+  state/RNG), stable IDs, exact chunks/responses, divergent responses/candidates,
+  stale/foreign proofs, official stream accumulation/SSE, exact-prefix tool-result
+  continuation/reconstruction, user stop, backend control Stop, Length, real EOF,
+  cancellation and cleanup. Two adapter cases use controlled quiescence metadata
+  with actual Recipe/MLX to check drain-before-EOF and cancellation without a
+  synthetic finish; they do not qualify numerical cache execution. Native tests
+  also cover failed fork non-mutation.
+- **PASS — 25** focused preserved-OFF artifact/dependency/allocator/wired/default
+  policy tests in the existing Recipe 0.1 environment. An additional legacy M47
+  resource-audit attempt reported **6 FAIL / 46 PASS** across that combined run:
+  five failures are blocked by pre-existing admitted-resource hashes for
+  `model_execution.activation`/`language`, one by the missing historical default
+  tokenizer checkout. Both source files equal this task's baseline HEAD; neither
+  pins nor historical evidence were resealed or repaired. This is not an ordinary
+  0.2 packaging/semantic failure and does not establish new OFF model admission.
+
+No ordinary packaging or exact semantic-terminal blocker remains in these focused
+checks. Real-model execution after this migration, real native speculative-cache
+rollback under sampled generation, performance/soak, long-context and Vision
+execution with 0.2 remain **unverified**, not inferred from controlled-token tests
+or earlier acceptance. Legacy qualification scripts that directly use 0.1 parser
+APIs were not migrated or requalified. No broader evidence campaign was created.
+
+**Next boundary:** official Messages integration needs its own native semantic
+owner/generator and protocol conversion/stream/tool-result/cancellation settlement
+validation, then affected application admission. Chat's tested owner is not
+Messages or Harness authority. Messages connectivity, Harness and broader
+real-model qualification are deliberately not implemented here.

@@ -98,10 +98,8 @@ def test_off_still_checks_installed_python_payload(tmp_path, monkeypatch):
 
 def test_mtp_manifest_has_no_python_seals(monkeypatch):
     old = json.loads((SOURCES/'normal-local.json').read_text())
-    # Avoid requiring Homebrew on a test host; real construction checks this graph.
-    monkeypatch.setattr(packaging, 'links', lambda path: [])
-    by_name = {Path(path).name: digest for path, digest in old['native_links'].items()}
-    monkeypatch.setattr(packaging, 'sha', lambda path: by_name[Path(path).name])
+    # Recipe native payloads come from the retained repaired wheel, not Homebrew.
+    monkeypatch.setattr(packaging, 'links', lambda path: pytest.fail('host graph enrollment'))
     manifest = packaging.mtp_manifest(old, 'portable')
     assert manifest['payloads']['ds41f_mlx'] == {}
     assert manifest['payloads']['omlx'] == {}
@@ -115,7 +113,8 @@ def test_mtp_manifest_has_no_python_seals(monkeypatch):
 
 def test_staged_build_does_not_rewrite_checkout(tmp_path, monkeypatch):
     before = identity.MANIFEST.read_bytes()
-    manifest = dict(profile='mtp', fixture=True)
+    manifest = dict(profile='mtp', fixture=True, dependencies={'deepseek-recipe': '0.2.0'},
+                    provenance={'recipe_source': {'revision': '93b0fd229cc9ffa6b1a8c63d42b0bf741bbec170'}})
     def fake_build(command, check):
         stage = Path(command[-1])
         assert json.loads((stage/'ds41f_mlx/execution_manifest.json').read_text()) == manifest

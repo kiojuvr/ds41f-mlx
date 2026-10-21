@@ -1,8 +1,11 @@
 # Attributed source exports for the bounded local MTP profile
 
 The base archives remain repository-owned **source** for the preserved OFF lane.
-Normal-local MTP obtains the repository-delivered exact M52R native wheel, bound
-by `normal-local.json`, not an operator's investigation environment. `sources.json` binds their exact SHA256, official upstream bases,
+Ordinary MTP obtains the repository-delivered Recipe **0.2.0** repaired native
+wheel, bound by the existing `normal-local.json`, not an operator's investigation
+environment. Its clean `recipe-02-source.tar.gz` is upstream
+`93b0fd229cc9ffa6b1a8c63d42b0bf741bbec170`; provisioning applies the single
+`docs/recipe-02-native-semantic-boundary.patch` forward-only. `sources.json` binds their exact SHA256, official upstream bases,
 historical candidate evidence commits and delivered patch identities. No public
 setup command clones/checks out those candidate commits or applies undocumented
 patches. `ds41f_mlx.mtp_setup` verifies/extracts them in operator-owned build scratch,
@@ -17,21 +20,28 @@ inputs; delivery verifies the wheel against the unchanged OFF resource pin.
   admission/lifecycle/recovery contracts. This remains a temporary implementation
   substrate, not the final ds41f execution-ownership destination.
 - deepseek-recipe: https://github.com/deepseek-ai/deepseek-recipe (MIT, copyright
-  DeepSeek; `recipe-LICENSE`, also inside archive). Full clean source export of
-  the M32/M33 official-recipe semantic preview/native diagnostic candidate. No new
-  guessed protocol parser or tokenizer has been substituted. Cargo.lock and the
-  official V41 tokenizer are delivered in this export.
+  DeepSeek; `recipe-LICENSE`, also inside archives). Ordinary MTP uses the clean
+  official 0.2 export plus the consolidated native-session patch. The older
+  M32/M33/M52R exports remain historical/OFF attribution, not a second MTP
+  dependency. No guessed parser or tokenizer is substituted. Both exports carry
+  their Cargo.lock and official V41 tokenizer.
 - `requirements.lock`: exact ordinary Python package versions from the qualified
   candidate namespace (including a normal pinned upstream mlx-lm package build).
   It contains **no local filesystem URLs/development checkouts**. Build tools and
   unused transitive packages remain explicitly locked for reproducibility; this
   does not promote their optional audio/vision/network/oMLX-server capabilities.
 
-`normal-local.json` preserves the historical M52R/M53R qualification inventory:
-source/patch/native/wheel/build, observed host closure, old source inventory and
-checkpoint evidence. It is **not** read at production startup. Package construction
-inherits its exact executable dependency and reachable semantic-native hashes;
-observed unused host closure and checkout hashes are evidence only.
+`normal-local.json` is still the ordinary dependency/artifact owner. Its active
+Recipe source/patch/wheel/build/version fields now describe the Python 3.13.15
+release build with **auditwheel repair**, not the earlier `--skip-auditwheel`
+artifact. Abseil and GCC were resolved from their existing Homebrew library
+locations during repair; all 264 non-system native images are delivered in the
+wheel. Package construction binds those exact wheel-native resources, and installed
+admission checks their hashes, ABI, loaded UUIDs and complete loader-relative
+closure. It does not enroll the local host graph or seal Python sources.
+Historical numerical/checkpoint inventories, old host links and acceptance
+records are unchanged; they are not new Recipe 0.2 execution evidence.
+`normal-local.json` is **not** read at production startup.
 For standard-OFF only, `standard-off-dependencies.json` overrides the MTP
 NumPy/Transformers inventory with the exact cached payloads used by the existing
 200K OFF qualification (NumPy 2.5.3 / Transformers 5.18.0). Its provenance records
@@ -66,8 +76,8 @@ sizes/SHA256 and the admitted source archive, 43 GLM/common inputs, toolchain an
 repository-owned `tools/build_glm_bundle.py` invocation. These oMLX-derived
 artifacts retain the attribution/license of their source export, distinct from
 the MIT recipe wheel. Provisioning copies the frozen accepted bundle rather than
-rebuilding or resealing local binaries. The historical `normal-local.json` and
-base archives are not rewritten.
+rebuilding or resealing local binaries. Recipe migration does not change the
+GLM bundle authority or the preserved OFF base archives.
 
 Setup and package construction consume the same explicit bundle/profile owner.
 `--glm-profile portable` provisions no GLM native members. Installed admission

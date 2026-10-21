@@ -2,6 +2,7 @@
 import json
 
 import pytest
+from deepseek_recipe import ConversionError
 
 from ds41f_mlx.config import load_runtime_config
 from ds41f_mlx.serving.capacity import resolve_capacity
@@ -79,7 +80,7 @@ def test_resolved_omission_reserves_actual_recipe_prompt(preparation, tmp_path):
 
 
 def test_explicit_ceiling_still_rejects_in_admission(preparation):
-    with pytest.raises(ValueError, match='output capability ceiling'):
+    with pytest.raises(ConversionError, match='max_tokens'):
         preparation({'max_tokens': 393217})
 
 

@@ -56,10 +56,13 @@ class RecipePreparedRequest:
     multimodal: Any = None
     resolved_max_tokens: int | None = None
     capacity: dict[str, Any] | None = None
+    requested_model: str | None = None
 
     @property
     def model(self) -> str | None:
-        return self.conversation_request.model
+        # Ordinary Recipe 0.2 resolves the model version during conversion;
+        # transport identity stays request metadata. OFF retains its own API.
+        return self.requested_model if self.requested_model is not None else self.conversation_request.model
 
     @property
     def stream(self) -> bool:

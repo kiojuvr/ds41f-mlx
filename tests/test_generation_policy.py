@@ -2,26 +2,27 @@ import json
 from types import SimpleNamespace as NS
 
 import pytest
-from deepseek_recipe import ChatCompletionRequest, ConversionOptions
+from ds41f_mlx.serving.ordinary_admission import convert_ordinary
 from ds41f_mlx.serving.generation_policy import normalize_policy, reasoning_policy, capability_contract
 from ds41f_mlx.serving.production_sessions import ProductionSessions
 
 
 def converted(**changes):
     body = dict(model='deepseek-v4.1-flash', messages=[{'role':'user','content':'Hi'}]) | changes
-    return ChatCompletionRequest(json.dumps(body).encode()).convert(ConversionOptions(default_thinking_mode=False))
+    return convert_ordinary(json.dumps(body).encode())[0]
 
 
 def test_effective_policy_retains_recipe_values_and_runtime_extensions():
     payload = dict(temperature=1, top_p=.95, top_k=40, min_p=.05,
                    repetition_penalty=1.1, presence_penalty=.2, frequency_penalty=.3, seed=123)
     policy = normalize_policy(converted(**payload), payload)
-    assert policy.to_json() == pytest.approx(payload)
+    effective = payload | {'top_p': 1.0}  # Recipe 0.2 V4.1 nonthinking resolution
+    assert policy.to_json() == pytest.approx(effective)
     params = policy.sampling_params(32)
-    assert all(getattr(params, key) == pytest.approx(value) for key, value in payload.items())
+    assert all(getattr(params, key) == pytest.approx(value) for key, value in effective.items())
     from ds41f_mlx.serving.deepseek_recipe_backend import DeepSeekRecipeRuntimeBackend
     sampler = DeepSeekRecipeRuntimeBackend.make_sampler(None, policy)
-    assert sampler.temp == 1 and sampler.top_p == pytest.approx(.95) and sampler.top_k == 40 and sampler.min_p == .05
+    assert sampler.temp == 1 and sampler.top_p == 1 and sampler.top_k == 40 and sampler.min_p == .05
     assert len(policy.processors()) == 3
 
 
@@ -71,11 +72,10 @@ def test_contract_records_bounded_acceptance_and_upstream_context_semantics():
     assert contract['parameters']['presence_penalty']['context_tokens'] == 20
 
 
-@pytest.mark.parametrize('ordinary', [False, True])
-@pytest.mark.parametrize('changes,temperature,top_p', [({}, 1, .95),
-    ({'temperature': None, 'top_p': None}, 1, .95),
+@pytest.mark.parametrize('changes,temperature,top_p', [({}, 1, 1),
+    ({'temperature': None, 'top_p': None}, 1, 1),
     ({'temperature': 0, 'top_p': 1}, 0, 1)])
-def test_production_defaults_are_recipe_converted_and_greedy_is_explicit(monkeypatch, ordinary, changes, temperature, top_p):
+def test_production_defaults_are_recipe_converted_and_greedy_is_explicit(monkeypatch, changes, temperature, top_p):
     from ds41f_mlx.serving import server, capacity
     class Encoding:
         def with_tokenizer(self, tokenizer): return self
@@ -85,7 +85,7 @@ def test_production_defaults_are_recipe_converted_and_greedy_is_explicit(monkeyp
     monkeypatch.setattr(capacity, 'resolve_capacity', lambda *a, **k: None)
     body = dict(model='deepseek-v4.1-flash', messages=[{'role':'user','content':'Hi'}]) | changes
     request = server.prepare_request('chat_completions', json.dumps(body).encode(),
-        tokenizer=NS(encode=lambda text: [1]), ordinary=ordinary)
+        tokenizer=NS(encode=lambda text: [1]), ordinary=True)
     assert request.generation_policy.temperature == request.inference_options.temperature == temperature
     assert request.generation_policy.top_p == request.inference_options.top_p == pytest.approx(top_p)
     assert reasoning_policy(request)['thinking_mode'] is False

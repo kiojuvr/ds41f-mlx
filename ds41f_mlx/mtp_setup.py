@@ -51,7 +51,7 @@ def main(argv=None):
     build.mkdir(parents=True, exist_ok=True)
     for name, spec in lock['sources'].items():
         archive = SOURCES/spec['archive']
-        if args.profile == 'standard-off' and sha(archive) != spec['sha256']:
+        if (args.profile == 'standard-off' or name == 'recipe') and sha(archive) != spec['sha256']:
             raise ValueError('unapproved dependency source archive')
         target = build/name
         if target.exists():
@@ -61,6 +61,11 @@ def main(argv=None):
             tar.extractall(target, filter='data')
     if args.profile == 'mtp-singleton-v1':
         apply_mtp_patches(build/'omlx')
+        patch = ROOT/normal['recipe_source']['patch']
+        if sha(patch) != normal['recipe_source']['patch_sha256']:
+            raise ValueError('unapproved consolidated Recipe patch')
+        subprocess.run(['git', 'apply', '--check', str(patch)], cwd=build/'recipe', check=True)
+        subprocess.run(['git', 'apply', str(patch)], cwd=build/'recipe', check=True)
     if venv.exists():
         raise ValueError('target venv must be absent; construct a fresh locked environment')
     run('uv', 'venv', '--python', '/opt/homebrew/opt/python@3.13/bin/python3.13', venv)
@@ -103,9 +108,9 @@ def main(argv=None):
         wheel, _ = artifact_authority()
         wheels = [wheel]
     else:
-        # Obtain the exact M52R artifact, not a path-dependent substitute build.
-        # Full patched sources/Cargo.lock and original toolchain provenance ship
-        # alongside it. Runtime separates semantic payload from host ABI.
+        # Existing retained-wheel authority now delivers the Recipe 0.2 release
+        # build, auditwheel-repaired with its complete native graph. The clean
+        # upstream export plus the consolidated patch above are its source.
         wheel = SOURCES/normal['wheel']['file']
         if sha(wheel) != normal['wheel']['sha256']:
             raise ValueError('unapproved normal-local native wheel')

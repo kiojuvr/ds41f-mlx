@@ -290,8 +290,6 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
         from .production_sessions import ProductionSessions
         self.production_sessions = ProductionSessions(self)
         self.sessions = self.production_sessions.records
-        from deepseek_recipe import ConversionOptions
-        self.conversion_options = ConversionOptions(default_thinking_mode=False)
 
     def _encode_new_images(self, multimodal, frontier):
         import mlx.core as mx
@@ -465,7 +463,10 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
                         completed = True
                         if output.error:
                             raise RuntimeError(output.error)
-                        yield sse_frame(None, '[DONE]')
+                        from deepseek_recipe import ChatCompletionResponse
+                        done = ChatCompletionResponse.sse_done_data()
+                        if done is not None:
+                            yield sse_frame(None, done)
                         break
             finally:
                 if not completed:

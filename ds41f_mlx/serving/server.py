@@ -13,7 +13,7 @@ from typing import Any
 from anyio import CancelScope
 from deepseek_recipe import (
     ChatCompletionRequest, ChatCompletionResponse, ConversationRequest, ConversionError,
-    ConversionOptions, DeepseekV41Encoding, EOS_TOKEN, InferenceChunk, MessagesRequest, MessagesResponse,
+    ConversionOptions, DeepseekV41Encoding, InferenceChunk, MessagesRequest, MessagesResponse,
     ResponsesRequest, ResponsesResponse, StreamProcessor, Tokenizer,
 )
 from fastapi import FastAPI, Request
@@ -72,6 +72,10 @@ def prepare_request(protocol: str, body: bytes, *, tokenizer: Any, recipe_path: 
         converted = request.convert(options if options is not None else ConversionOptions(default_thinking_mode=False))
     policy = normalize_policy(converted, policy_payload)
     convert_s = perf_counter() - prepare_t0
+    if ordinary:
+        from deepseek_recipe import ModelVersion
+        if converted.model_version != ModelVersion.DeepseekV41Flash:
+            raise RequestError('ordinary MTP requires DeepSeek V4.1 Flash')
     encoding = DeepseekV41Encoding().with_tokenizer(tokenizer)
     render_t0 = perf_counter()
     rendered = encoding.render_conversation(converted.conversation)
@@ -95,11 +99,21 @@ def prepare_request(protocol: str, body: bytes, *, tokenizer: Any, recipe_path: 
         raise RequestError('missing image source for image placeholder', 400)
     if len(token_ids) < 2:
         raise RequestError(f'encoded prompt must contain at least 2 tokens, got {len(token_ids)}', 400)
-    try:
-        stop_token_ids = tuple(int(t) for t in tokenizer.encode(EOS_TOKEN))
-    except Exception:
-        stop_token_ids = ()
+    if ordinary:
+        from deepseek_recipe import SpecialToken
+        eos = converted.parsing_options.special_tokens.token(SpecialToken.Eos)
+        stop_token_ids = tuple(map(int, tokenizer.encode(eos)))
+        if len(stop_token_ids) != 1:
+            raise RequestError('backend EOS must encode to exactly one control token')
+    else:
+        from deepseek_recipe import EOS_TOKEN
+        try:
+            stop_token_ids = tuple(int(t) for t in tokenizer.encode(EOS_TOKEN))
+        except Exception:
+            stop_token_ids = ()
     prepared = RecipePreparedRequest(protocol, converted, converted, token_ids, list(rendered.image_sources), include_usage, custom_tool_names, stop_token_ids, multimodal)
+    if ordinary:
+        prepared.requested_model = policy_payload['model']
     prepared.generation_policy = policy
     from .capacity import resolve_capacity
     try:
@@ -217,7 +231,6 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
         options = ConversionOptions(default_thinking_mode=False)
     if ordinary_mtp:
         from .mtp_public import LocalBoundary
-        options = ConversionOptions(default_thinking_mode=False)
     app = FastAPI(title='ds41f-deepseek-recipe', version='0.1.0',
                   docs_url=None if local_mtp else '/docs',
                   redoc_url=None if local_mtp else '/redoc',
@@ -298,6 +311,15 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
 
     from .generation_policy import capability_contract
     generation_capabilities = capability_contract(runtime_config.default_reasoning_effort)
+    if ordinary_mtp:
+        generation_capabilities = generation_capabilities | {
+            'recipe_version': '0.2.0',
+            'effective_settings_authority': 'Recipe ModelVersion.DeepseekV41Flash',
+            'recipe_resolution': {'nonthinking_top_p': 1.0, 'thinking_temperature': 1.0,
+                                  'thinking_top_p_minimum': 0.95},
+            'constrained_decoding': False,
+            'protocol_migration_qualification': 'controlled-token boundary; real-model path unverified',
+        }
 
     @app.get('/health')
     async def health() -> Response:

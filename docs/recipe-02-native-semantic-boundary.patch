@@ -19,15 +19,27 @@ index bb3879f..691766e 100644
      "ThinkingInitialStage",
      "Tokenizer",
 diff --git a/deepseek-recipe-python/python/deepseek_recipe/_native.pyi b/deepseek-recipe-python/python/deepseek_recipe/_native.pyi
-index 856de40..268ed08 100644
+index 856de40..528de94 100644
 --- a/deepseek-recipe-python/python/deepseek_recipe/_native.pyi
 +++ b/deepseek-recipe-python/python/deepseek_recipe/_native.pyi
-@@ -1002,6 +1002,51 @@ class Tokenizer:
+@@ -927,6 +927,10 @@ class ChatCompletionResponse:
+     ) -> None: ...
+     def accumulate(self, chunk: ChatCompletionChunk) -> None:
+         """Consume this chunk and apply its delta to the response."""
++    def accumulate_copy(self, chunk: ChatCompletionChunk) -> None:
++        """Apply the official delta while retaining its streaming payload."""
++    def fork(self) -> ChatCompletionResponse:
++        """Clone the official accumulator, including canonical tool IDs."""
+ 
+     def to_json(self) -> str: ...
+     @staticmethod
+@@ -1002,6 +1006,52 @@ class Tokenizer:
          prompt encoding.
          """
  
-+# revision, token frontier, official chunks, (call index, source byte end), finished
-+SemanticRow = tuple[int, int, list[ChatCompletionChunk], list[tuple[int, int]], bool]
++# revision, token frontier, official chunks, (call index, source byte end),
++# protocol finished, full tool-block marker recognized by the live official parser
++SemanticRow = tuple[int, int, list[ChatCompletionChunk], list[tuple[int, int]], bool, bool]
 +
 +class ChatCompletionSemanticSession:
 +    """Single request owner; preview forks the full canonical native pipeline.
@@ -87,7 +99,7 @@ index 6fb85bd..b97695f 100644
      m.add_class::<PyRenderedPrompt>()?;
      m.add_class::<PyMessage>()?;
 diff --git a/deepseek-recipe-python/src/response.rs b/deepseek-recipe-python/src/response.rs
-index cee290c..c22caa8 100644
+index cee290c..c22d563 100644
 --- a/deepseek-recipe-python/src/response.rs
 +++ b/deepseek-recipe-python/src/response.rs
 @@ -32,6 +32,9 @@ use crate::inference::PyInferenceChunk;
@@ -100,16 +112,53 @@ index cee290c..c22caa8 100644
  /// A Rust Chat Completions generator consumed by a stream processor.
  #[pyclass(
      name = "ChatCompletionChunkGenerator",
+@@ -184,6 +187,7 @@ macro_rules! response_bindings {
+     (
+         $py_chunk:ident, $chunk:ident, $chunk_name:literal,
+         $py_response:ident, $response:ident, $response_name:literal
++        $(, $extra:item)*
+     ) => {
+         /// A protocol chunk consumed by response accumulation.
+         #[pyclass(name = $chunk_name, module = "deepseek_recipe._native")]
+@@ -245,6 +249,8 @@ macro_rules! response_bindings {
+                 Ok(())
+             }
+ 
++            $($extra)*
++
+             /// Serialize the current Rust response, including partial state.
+             fn to_json(&self) -> PyResult<String> {
+                 to_json(&self.inner)
+@@ -273,7 +279,18 @@ response_bindings!(
+     "ChatCompletionChunk",
+     PyChatCompletionResponse,
+     ChatCompletionResponse,
+-    "ChatCompletionResponse"
++    "ChatCompletionResponse",
++    /// Fork the official accumulator, including tool IDs.
++    fn fork(&self) -> Self {
++        Self {
++            inner: self.inner.clone(),
++        }
++    },
++    /// Retain an official chunk for streaming while accumulating its delta.
++    fn accumulate_copy(&mut self, chunk: &PyChatCompletionChunk) -> PyResult<()> {
++        self.inner.accumulate(chunk.as_core()?.clone());
++        Ok(())
++    }
+ );
+ response_bindings!(
+     PyResponsesStreamEvent,
 diff --git a/deepseek-recipe-python/src/response/semantic.rs b/deepseek-recipe-python/src/response/semantic.rs
 new file mode 100644
-index 0000000..4ccb092
+index 0000000..5e68b48
 --- /dev/null
 +++ b/deepseek-recipe-python/src/response/semantic.rs
-@@ -0,0 +1,181 @@
+@@ -0,0 +1,189 @@
 +use super::*;
 +
 +// Each row is one actual input operation, never a text-offset token estimate.
-+type SemanticRow = (u64, u64, Vec<Py<PyAny>>, Vec<(usize, usize)>, bool);
++type SemanticRow = (u64, u64, Vec<Py<PyAny>>, Vec<(usize, usize)>, bool, bool);
 +type SemanticPreview = (u64, u64, Vec<u32>, Vec<SemanticRow>);
 +
 +#[derive(Clone)]
@@ -162,7 +211,15 @@ index 0000000..4ccb092
 +            .into_iter()
 +            .map(|c| ProtocolChunk::ChatCompletion(c).into_python(py))
 +            .collect::<PyResult<_>>()?;
-+        Ok((self.revision, self.frontier, chunks, calls, finished))
++        let tool_block_finished = self.core.as_ref().is_some_and(|c| c.tool_block_finished());
++        Ok((
++            self.revision,
++            self.frontier,
++            chunks,
++            calls,
++            finished,
++            tool_block_finished,
++        ))
 +    }
 +}
 +
@@ -198,7 +255,7 @@ index 0000000..4ccb092
 +    }
 +
 +    /// Consume Ready, exactly one token (with optional logprobs), or backend Finish.
-+    /// Returns (revision, token_frontier, native_chunks, new_completed_calls, finished).
++    /// Returns (revision, token_frontier, native_chunks, new_completed_calls, finished, tool_block_finished).
 +    /// Completed calls are (index, absolute decoded source byte endpoint), NOT tool authority.
 +    fn push(&self, py: Python<'_>, chunk: &PyInferenceChunk) -> PyResult<SemanticRow> {
 +        let chunk = chunk.to_core();
@@ -289,10 +346,10 @@ index 0000000..4ccb092
 +}
 diff --git a/deepseek-recipe-python/tests/test_semantic_session.py b/deepseek-recipe-python/tests/test_semantic_session.py
 new file mode 100644
-index 0000000..3a9f164
+index 0000000..a9d4d7b
 --- /dev/null
 +++ b/deepseek-recipe-python/tests/test_semantic_session.py
-@@ -0,0 +1,176 @@
+@@ -0,0 +1,183 @@
 +"""Focused Python/native boundary proof; no Runtime/guard substitution."""
 +import gc
 +import json
@@ -334,8 +391,8 @@ index 0000000..3a9f164
 +
 +
 +def row_value(row):
-+    rev, frontier, chunks, calls, done = row
-+    return rev, frontier, [c.to_json() for c in chunks], calls, done
++    rev, frontier, chunks, calls, done, block_done = row
++    return rev, frontier, [c.to_json() for c in chunks], calls, done, block_done
 +
 +
 +def response():
@@ -371,6 +428,12 @@ index 0000000..3a9f164
 +        append(predicted_response, projected[3][n][2])
 +        assert actual_response.to_json() == predicted_response.to_json()
 +    assert len(completions) == 2
++    assert not any(r[5] for r in projected[3][:-1])
++    assert projected[3][-1][5]
++    assert all(not r[4] for r in projected[3])
++    # Official argument completion precedes the closing invoke suffix and full
++    # block. It must never stand in for a generation-terminal observation.
++    assert all(not projected[3][n - 1][5] for n, _ in completions)
 +    assert completions[0][1] == (0, len((PREFIX + 'Tokyo🤭' + END[:-len('invoke>')]).encode()))
 +    assert not session.status[2]
 +    stop = d.InferenceChunk.finish(d.InferenceFinishReason.Stop)
@@ -422,6 +485,7 @@ index 0000000..3a9f164
 +        row_value(r) for r in session.preview_tokens([], finish=stop)[3]]
 +    closing = session.preview_tokens(encode(tok, END))
 +    assert sum(len(r[3]) for r in closing[3]) == int(special)
++    assert not any(r[5] for r in closing[3])
 +    assert session.status == before
 +    session.close()
 +
@@ -515,6 +579,173 @@ index ab2832d..7d9f41a 100644
                              r#type: ChatCompletionToolCallType::Function,
                              function: ChatCompletionResponseFunctionCall {
                                  name: tool_name,
+diff --git a/deepseek-recipe/src/protocol/openai/chat_completion/response/schema.rs b/deepseek-recipe/src/protocol/openai/chat_completion/response/schema.rs
+index 017e5a5..4f43635 100644
+--- a/deepseek-recipe/src/protocol/openai/chat_completion/response/schema.rs
++++ b/deepseek-recipe/src/protocol/openai/chat_completion/response/schema.rs
+@@ -12,7 +12,7 @@ pub(crate) const CHAT_COMPLETION_CHUNK_OBJECT: &str = "chat.completion.chunk";
+ /// A complete response, also usable as an accumulator for generated chunks.
+ /// Chunks are accumulated in inference order. Tool argument deltas extend the
+ /// tool call identified by their index.
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ pub struct ChatCompletionResponse {
+     pub id: String,
+     pub object: &'static str,
+@@ -24,7 +24,7 @@ pub struct ChatCompletionResponse {
+     pub system_fingerprint: Option<String>,
+ }
+ 
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ pub struct ChatCompletionChoice {
+     pub index: u32,
+     pub message: ChatCompletionResponseMessage,
+@@ -32,7 +32,7 @@ pub struct ChatCompletionChoice {
+     pub finish_reason: Option<ChatCompletionFinishReason>,
+ }
+ 
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ pub struct ChatCompletionChunk {
+     pub id: String,
+     pub object: &'static str,
+@@ -44,7 +44,7 @@ pub struct ChatCompletionChunk {
+     pub usage: Option<Option<ChatCompletionUsage>>,
+ }
+ 
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ pub struct ChatCompletionChunkChoice {
+     pub index: u32,
+     pub delta: ChatCompletionMessageDelta,
+@@ -53,7 +53,7 @@ pub struct ChatCompletionChunkChoice {
+ }
+ 
+ /// A complete assistant message accumulated from response deltas.
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ pub struct ChatCompletionResponseMessage {
+     pub role: ChatCompletionRole,
+     pub content: Option<String>,
+@@ -64,7 +64,7 @@ pub struct ChatCompletionResponseMessage {
+ }
+ 
+ /// A tool call in an accumulated assistant message, with its position.
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ pub struct ChatCompletionIndexedToolCall {
+     pub index: u32,
+     #[serde(flatten)]
+@@ -72,7 +72,7 @@ pub struct ChatCompletionIndexedToolCall {
+ }
+ 
+ /// An incremental update to an assistant message.
+-#[derive(Debug, Default, Serialize)]
++#[derive(Debug, Clone, Default, Serialize)]
+ pub struct ChatCompletionMessageDelta {
+     #[serde(skip_serializing_if = "Option::is_none")]
+     pub role: Option<ChatCompletionRole>,
+@@ -85,28 +85,28 @@ pub struct ChatCompletionMessageDelta {
+     pub tool_calls: Option<Vec<ChatCompletionToolCallDelta>>,
+ }
+ 
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ #[serde(rename_all = "snake_case")]
+ pub enum ChatCompletionRole {
+     Assistant,
+ }
+ 
+ /// A complete tool call in an assistant response message.
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ pub struct ChatCompletionResponseToolCall {
+     pub id: String,
+     pub r#type: ChatCompletionToolCallType,
+     pub function: ChatCompletionResponseFunctionCall,
+ }
+ 
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ pub struct ChatCompletionResponseFunctionCall {
+     pub name: String,
+     pub arguments: String,
+ }
+ 
+ /// An initial tool call or an update to its arguments.
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ #[serde(untagged)]
+ pub enum ChatCompletionToolCallDelta {
+     Start {
+@@ -120,13 +120,13 @@ pub enum ChatCompletionToolCallDelta {
+     },
+ }
+ 
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ #[serde(rename_all = "snake_case")]
+ pub enum ChatCompletionToolCallType {
+     Function,
+ }
+ 
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ pub struct ChatCompletionFunctionArgumentsDelta {
+     pub arguments: String,
+ }
+@@ -154,7 +154,7 @@ impl From<FinishReason> for ChatCompletionFinishReason {
+ }
+ 
+ /// Log probabilities of answer content and reasoning content tokens.
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ pub struct ChatCompletionLogprobs {
+     #[serde(skip_serializing_if = "Option::is_none")]
+     pub content: Option<Vec<ChatCompletionTokenLogprob>>,
+@@ -169,7 +169,7 @@ impl Accumulate<ChatCompletionLogprobs> for ChatCompletionLogprobs {
+     }
+ }
+ 
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ pub struct ChatCompletionTokenLogprob {
+     pub token: String,
+     pub logprob: f32,
+@@ -177,7 +177,7 @@ pub struct ChatCompletionTokenLogprob {
+     pub top_logprobs: Vec<ChatCompletionTopLogprob>,
+ }
+ 
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ pub struct ChatCompletionTopLogprob {
+     pub token: String,
+     pub logprob: f32,
+@@ -203,7 +203,7 @@ impl From<&TokenLogprob> for ChatCompletionTokenLogprob {
+     }
+ }
+ 
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ pub struct ChatCompletionUsage {
+     pub prompt_tokens: usize,
+     pub completion_tokens: usize,
+@@ -215,12 +215,12 @@ pub struct ChatCompletionUsage {
+     pub prompt_cache_miss_tokens: usize,
+ }
+ 
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ pub struct ChatCompletionInputTokenUsage {
+     pub cached_tokens: usize,
+ }
+ 
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ pub struct ChatCompletionOutputTokenUsage {
+     pub reasoning_tokens: usize,
+ }
 diff --git a/deepseek-recipe/src/protocol/tool_call_id.rs b/deepseek-recipe/src/protocol/tool_call_id.rs
 index 105a9d5..9e1366e 100644
 --- a/deepseek-recipe/src/protocol/tool_call_id.rs
@@ -867,7 +1098,7 @@ index 0000000..6da576d
 +    );
 +}
 diff --git a/deepseek-recipe/src/stream/output_parser.rs b/deepseek-recipe/src/stream/output_parser.rs
-index 99a3491..af302d5 100644
+index 99a3491..92b9481 100644
 --- a/deepseek-recipe/src/stream/output_parser.rs
 +++ b/deepseek-recipe/src/stream/output_parser.rs
 @@ -95,6 +95,7 @@ pub(super) enum ChunkKind {
@@ -878,8 +1109,27 @@ index 99a3491..af302d5 100644
  pub(super) struct OutputParser {
      options: ParsingOptions,
      state: State,
-@@ -259,14 +260,14 @@ enum Stage {
+@@ -135,6 +136,11 @@ impl OutputParser {
+         self.state.feed(content, kind, &self.options)
+     }
+ 
++    /// Full enclosing tool block, not the earlier argument-end action.
++    pub(super) fn tool_block_finished(&self) -> bool {
++        matches!(self.state.stage, Stage::ToolBlockFinished)
++    }
++
+     /// Return one segment for the bytes still buffered at the end of input,
+     /// with the current stage's action for unmatched text.
+     pub(super) fn finish(self) -> Vec<OutputActionSegment> {
+@@ -255,18 +261,20 @@ enum Stage {
+     ToolCallArgumentValue { is_string_value: bool },
+     /// Reasoning content. See [`Stage::Content`] for `strips_leading_newlines`.
+     Reasoning { strips_leading_newlines: bool },
+-    /// After a stop sequence or the end of the tool-call block.
++    /// After a stop sequence.
      Finished,
++    /// After the complete enclosing tool-call block marker.
++    ToolBlockFinished,
  }
  
 -#[derive(Debug)]
@@ -895,7 +1145,7 @@ index 99a3491..af302d5 100644
  struct MatchBranches(Vec<MatchBranch>);
  
  impl MatchBranches {
-@@ -372,7 +373,7 @@ fn unit_matches((pattern_byte, is_special): (u8, bool), byte: u8, kind: ChunkKin
+@@ -372,7 +380,7 @@ fn unit_matches((pattern_byte, is_special): (u8, bool), byte: u8, kind: ChunkKin
          }
  }
  
@@ -904,7 +1154,25 @@ index 99a3491..af302d5 100644
  struct State {
      stage: Stage,
      /// The markers of this stage, in priority order: when several branches
-@@ -722,7 +723,7 @@ fn kmp_table<T: PartialEq>(pattern: &[T]) -> KmpTable {
+@@ -486,7 +494,7 @@ impl State {
+                 for marker in &tool_calls_close_markers {
+                     match_branches.add_segmented_branch(
+                         marker,
+-                        Stage::Finished,
++                        Stage::ToolBlockFinished,
+                         ActionOnMatched::Skip,
+                     );
+                 }
+@@ -588,7 +596,7 @@ impl State {
+                 );
+                 ActionOnUnmatched::Reasoning
+             }
+-            Stage::Finished => ActionOnUnmatched::SkipInvalid {
++            Stage::Finished | Stage::ToolBlockFinished => ActionOnUnmatched::SkipInvalid {
+                 kind: InvalidTokenKind::ContentAfterFinished,
+             },
+         };
+@@ -722,7 +730,7 @@ fn kmp_table<T: PartialEq>(pattern: &[T]) -> KmpTable {
      table
  }
  
@@ -914,7 +1182,7 @@ index 99a3491..af302d5 100644
      Marker {
          pattern: Pattern,
 diff --git a/deepseek-recipe/src/stream/processor.rs b/deepseek-recipe/src/stream/processor.rs
-index 870a419..1f07db0 100644
+index 870a419..db97437 100644
 --- a/deepseek-recipe/src/stream/processor.rs
 +++ b/deepseek-recipe/src/stream/processor.rs
 @@ -50,8 +50,8 @@ where
@@ -928,7 +1196,7 @@ index 870a419..1f07db0 100644
          self
      }
  
-@@ -79,156 +79,263 @@ where
+@@ -79,156 +79,271 @@ where
      where
          G::Chunk: Send,
      {
@@ -1016,6 +1284,14 @@ index 870a419..1f07db0 100644
 +        self.parser.is_none() || self.failed
 +    }
 +
++    /// Authoritative full marker observation while the official parser is live.
++    /// Backend Finish/EOF remains a separate operation.
++    pub fn tool_block_finished(&self) -> bool {
++        self.parser
++            .as_ref()
++            .is_some_and(OutputParser::tool_block_finished)
++    }
++
 +    pub fn completed_calls(&self) -> &[CompletedCall] {
 +        &self.pending.completed_calls
 +    }
@@ -1062,11 +1338,7 @@ index 870a419..1f07db0 100644
 -                        backend_finish_reason = Some(finish_reason);
 -                        had_tool_calls_at_finish = pending.has_tool_calls;
 -                        break;
-+                        prompt_usage: self.prompt_usage,
-+                    };
-+                    for protocol_chunk in self.generator.generate(start).await {
-+                        output.push(protocol_chunk);
-                     }
+-                    }
 -                    InferenceChunk::Text {
 -                        content,
 -                        token_count,
@@ -1100,7 +1372,11 @@ index 870a419..1f07db0 100644
 -                                return;
 -                            }
 -                        }
--                    }
++                        prompt_usage: self.prompt_usage,
++                    };
++                    for protocol_chunk in self.generator.generate(start).await {
++                        output.push(protocol_chunk);
+                     }
 -                };
 -                if pieces.is_empty() {
 -                    continue;
@@ -1265,8 +1541,8 @@ index 870a419..1f07db0 100644
 -                yield Ok(protocol_chunk);
 +            for protocol_chunk in self.generator.generate(start).await {
 +                output.push(protocol_chunk);
-+            }
-+        }
+             }
+         }
 +        let actions = self.parser.take().expect("live self.parser").finish();
 +        for protocol_chunk in self
 +            .pending
@@ -1286,7 +1562,7 @@ index 870a419..1f07db0 100644
 +                Some(InferenceFinishReason::Length) => FinishReason::Length,
 +                Some(InferenceFinishReason::ContentFilter) => FinishReason::ContentFilter,
 +                None => FinishReason::EndOfStream,
-             }
++            }
 +        };
 +        if self.thinking_mode {
 +            self.completion_usage.reasoning_tokens = self.decoder.as_ref().and_then(|decoder| {
@@ -1320,12 +1596,12 @@ index 870a419..1f07db0 100644
 +        let first = fork.completed_calls().len();
 +        for chunk in chunks {
 +            output.extend(fork.consume(chunk).await?);
-         }
++        }
 +        Ok((output, fork.completed_calls()[first..].to_vec()))
      }
  }
  
-@@ -243,6 +350,7 @@ struct OutputPiece {
+@@ -243,6 +358,7 @@ struct OutputPiece {
  
  /// Output text waiting for its parsing actions, with the log probabilities of
  /// the text it was split from.
@@ -1333,7 +1609,7 @@ index 870a419..1f07db0 100644
  struct BufferedChunk {
      content: String,
      logprobs: Option<Arc<[TokenLogprob]>>,
-@@ -250,7 +358,11 @@ struct BufferedChunk {
+@@ -250,7 +366,11 @@ struct BufferedChunk {
  
  /// Output text that the parser has not fully assigned yet, and the state
  /// gathered while applying actions to it.
@@ -1345,7 +1621,7 @@ index 870a419..1f07db0 100644
      chunks: VecDeque<BufferedChunk>,
      /// The last segment of the previous [`Self::apply_actions`] call, kept
      /// open so that a following segment with the same action extends it.
-@@ -270,6 +382,9 @@ struct PendingOutput {
+@@ -270,6 +390,9 @@ struct PendingOutput {
  impl PendingOutput {
      fn new() -> Self {
          Self {
@@ -1355,7 +1631,7 @@ index 870a419..1f07db0 100644
              chunks: VecDeque::new(),
              pending_segment: None,
              tool_name_buffer: String::new(),
-@@ -292,7 +407,11 @@ impl PendingOutput {
+@@ -292,7 +415,11 @@ impl PendingOutput {
      /// convert them by the segment's action. `segment.byte_len` must not exceed
      /// the length of the front chunk. Text split off from a chunk keeps the
      /// chunk's log probabilities.
@@ -1368,7 +1644,7 @@ index 870a419..1f07db0 100644
          let BufferedChunk {
              content: mut piece,
              logprobs,
-@@ -304,6 +423,7 @@ impl PendingOutput {
+@@ -304,6 +431,7 @@ impl PendingOutput {
                  logprobs: logprobs.clone(),
              });
          }
@@ -1376,7 +1652,7 @@ index 870a419..1f07db0 100644
          let is_first_piece = self.previous_piece_action != segment.action;
          self.previous_piece_action = segment.action;
  
-@@ -337,6 +457,7 @@ impl PendingOutput {
+@@ -337,6 +465,7 @@ impl PendingOutput {
              }
              OutputAction::ToolNameEnd => is_first_piece.then(|| {
                  self.has_tool_calls = true;
@@ -1384,7 +1660,7 @@ index 870a419..1f07db0 100644
                  OutputChunk::ToolCallNamed {
                      tool_name: std::mem::take(&mut self.tool_name_buffer),
                  }
-@@ -354,11 +475,18 @@ impl PendingOutput {
+@@ -354,11 +483,18 @@ impl PendingOutput {
                  };
                  Some(OutputChunk::ToolCallArgumentsDelta { arguments })
              }
@@ -1407,7 +1683,7 @@ index 870a419..1f07db0 100644
              OutputAction::Label(label) => is_first_piece.then(|| OutputChunk::Content {
                  content: label.to_string(),
                  logprobs,
-@@ -373,15 +501,17 @@ impl PendingOutput {
+@@ -373,15 +509,17 @@ impl PendingOutput {
          segment: &mut OutputActionSegment,
          outputs: &mut Vec<OutputChunk>,
      ) {
@@ -1428,7 +1704,7 @@ index 870a419..1f07db0 100644
                  outputs.push(chunk);
              }
              segment.byte_len -= front_len;
-@@ -409,7 +539,10 @@ impl PendingOutput {
+@@ -409,7 +547,10 @@ impl PendingOutput {
                  } else {
                      self.apply_whole_chunks(pending_segment, &mut outputs);
                      if pending_segment.byte_len > 0

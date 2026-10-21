@@ -3,7 +3,9 @@ import json
 from pathlib import Path
 
 import pytest
-from deepseek_recipe import ChatCompletionRequest, ConversionError, ConversionOptions, IMAGE_SPECIAL_TOKEN
+from deepseek_recipe import ChatCompletionRequest, ConversionError, ConversionOptions, ModelVersion, SpecialToken
+
+IMAGE_SPECIAL_TOKEN = SpecialToken.Image.default_str()
 
 from ds41f_mlx.mtp_profile import validate_chat
 from ds41f_mlx.serving.ordinary_admission import convert_ordinary
@@ -19,7 +21,10 @@ def convert(value):
 
 
 def recipe(value):
-    return ChatCompletionRequest(value).convert(ConversionOptions(default_thinking_mode=False))
+    from ds41f_mlx.mtp_profile import ALIASES
+    options = ConversionOptions(default_thinking_mode=False).with_model_versions_by_name(
+        {alias: ModelVersion.DeepseekV41Flash for alias in ALIASES})
+    return ChatCompletionRequest(value).convert(options)
 
 
 def parts():
@@ -63,9 +68,8 @@ def test_recipe_accepted_grammar_is_not_redefined(changes):
     dict(messages=[dict(role='user', content=None)]),
     dict(messages=[dict(role='user', content=[dict(type='text', text=None)])]),
     dict(messages=[dict(role='assistant', content=None)]),
-    dict(n=2), dict(max_tokens=0), dict(temperature=-1),
+    dict(n=2), dict(max_tokens=0), dict(max_tokens=393217), dict(temperature=-1), dict(model='other'),
     dict(stream=False, stream_options={}), dict(stop=['x'] * 17),
-    dict(response_format=dict(type='regex', regex='.*')),
     dict(tools=[{}]), dict(tool_choice='invalid'),
 ])
 def test_recipe_rejections_propagate_unchanged(changes):
@@ -78,14 +82,13 @@ def test_recipe_rejections_propagate_unchanged(changes):
 
 
 @pytest.mark.parametrize('changes,match', [
-    (dict(model='other'), 'model alias'),
     (dict(top_k=-1), 'top_k'),
     (dict(min_p=2), 'min_p'),
     (dict(parallel_tool_calls=False), 'parallel_tool_calls'),
     (dict(thinking=dict(type='disabled', budget_tokens=10)), 'budget_tokens'),
-    (dict(response_format=dict(type='json_schema', json_schema={})), 'JSON Schema'),
-    (dict(logprobs=True), 'logprobs'), (dict(top_logprobs=1), 'logprobs'),
-    (dict(max_tokens=393217), 'output capability ceiling'),
+    (dict(response_format=dict(type='json_schema', json_schema={'name': 'result', 'schema': {'type': 'object'}})), 'JSON Schema'),
+    (dict(response_format=dict(type='regex', regex='.*')), 'regex'),
+    (dict(logprobs=True), 'logprobs'), (dict(logprobs=True, top_logprobs=1), 'logprobs'),
 ])
 def test_recipe_acceptance_does_not_override_runtime_limits(changes, match):
     value = body(**changes)
@@ -130,10 +133,11 @@ def test_token_like_text_is_recipe_owned_on_all_prompt_surfaces(surface):
     if surface in ('system', 'user', 'assistant', 'latest_reminder'):
         value['messages'] = [dict(role=surface, content=text), dict(role='user', content='Continue')]
     elif surface == 'reasoning':
+        value['reasoning_effort'] = 'high'
         value['messages'] = [dict(role='assistant', content='Previous reply', reasoning_content=text),
                              dict(role='user', content='Continue')]
     elif surface in ('tool', 'arguments'):
-        value['messages'] += [dict(role='assistant', content=None, tool_calls=[dict(id='read-1',
+        value['messages'] += [dict(role='assistant', content=None, tool_calls=[dict(id='read-1', type='function',
             function=dict(name='read', arguments=json.dumps({'path': text if surface == 'arguments' else 'a'})))]),
             dict(role='tool', tool_call_id='read-1', content=text if surface == 'tool' else 'OK')]
     else:
@@ -153,12 +157,12 @@ def test_token_like_text_is_recipe_owned_on_all_prompt_surfaces(surface):
 
 
 @pytest.mark.parametrize('surface', ['user', 'tool', 'arguments', 'description', 'parameters'])
-def test_unbacked_image_placeholder_remains_authoritative_rejection(surface):
+def test_literal_image_spelling_stays_plain_text_in_recipe02(surface):
     value = body()
     if surface == 'user':
         value['messages'][0]['content'] = IMAGE_SPECIAL_TOKEN
     elif surface in ('tool', 'arguments'):
-        value['messages'] += [dict(role='assistant', content=None, tool_calls=[dict(id='read-1',
+        value['messages'] += [dict(role='assistant', content=None, tool_calls=[dict(id='read-1', type='function',
             function=dict(name='read', arguments=json.dumps({'path': IMAGE_SPECIAL_TOKEN if surface == 'arguments' else 'a'}, ensure_ascii=False)))]),
             dict(role='tool', tool_call_id='read-1', content=IMAGE_SPECIAL_TOKEN if surface == 'tool' else 'OK')]
     else:
@@ -168,11 +172,10 @@ def test_unbacked_image_placeholder_remains_authoritative_rejection(surface):
         else:
             function['parameters']['description'] = IMAGE_SPECIAL_TOKEN
         value['tools'] = [dict(type='function', function=function)]
-    with pytest.raises(ConversionError) as expected:
-        recipe(value)
-    with pytest.raises(ConversionError) as actual:
-        convert(value)
-    assert str(actual.value) == str(expected.value)
+    # 0.2 rendering carries explicit special ranges. Literal source is not an
+    # executable image placeholder and must not be rejected by a second parser.
+    assert convert(value).conversation.messages
+    assert recipe(value).conversation.messages
 
 
 def test_singleton_still_rejects_token_like_source():
@@ -182,7 +185,7 @@ def test_singleton_still_rejects_token_like_source():
 
 def test_tool_results_have_body_budget_not_historical_fixture_limit():
     value = body(messages=[dict(role='assistant', content=None, tool_calls=[dict(
-        id='call-1', function=dict(name='read', arguments='{}'))]),
+        id='call-1', type='function', function=dict(name='read', arguments='{}'))]),
         dict(role='tool', tool_call_id='call-1', content=[dict(type='text', text='あ' * 30000)])])
     assert convert(value).conversation.messages[-1].content == 'あ' * 30000
 

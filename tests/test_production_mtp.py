@@ -183,10 +183,11 @@ def test_pinned_mlx_native_arrays_and_wrapped_ring_snapshot_are_stable(frontier)
     assert np.all(np.array(restored[0].cache[1]) == 1)
 
 
-def test_checkout_is_not_production_execution_authority():
-    from ds41f_mlx.execution_identity import inspect_payload
+def test_checkout_is_not_production_execution_authority(monkeypatch, tmp_path):
+    from ds41f_mlx import execution_identity
+    monkeypatch.setattr(execution_identity, '__file__', str(tmp_path/'checkout/ds41f_mlx/execution_identity.py'))
     with pytest.raises(ValueError, match='installed ds41f package'):
-        inspect_payload()
+        execution_identity.inspect_payload()
 
 
 def test_ordinary_request_has_no_session_sequence_and_keeps_execution_bounds():
@@ -268,7 +269,7 @@ def test_ordinary_http_recipe_route_has_no_compulsory_public_session(monkeypatch
                 'model': 'deepseek-v4.1-flash', 'max_tokens': 393217,
                 'messages': [{'role': 'user', 'content': 'Hello'}]})
             assert result.status_code == 400
-            assert 'output capability ceiling' in result.json()['error']['message']
+            assert 'max_tokens' in result.json()['error']['message']
             for changes in (
                 {'messages': [{'role': 'user', 'content': [
                     {'type': 'text', 'text': 'こんにちは'},
@@ -325,7 +326,8 @@ def test_json_delivery_stops_disconnect_probe_even_when_probe_consumes_cancellat
     from pathlib import Path
     from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
     async def run():
-        backend = ProductionMTPBackend(omlx_path=Path(sys.prefix)/'lib/python3.13/site-packages')
+        from ds41f_mlx.mtp_identity import config
+        backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
         scheduler = SimpleNamespace(requests={})
         def enqueue(prepared, tokenizer, rid):
             scheduler.requests[rid] = True

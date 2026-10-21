@@ -58,7 +58,9 @@ def links(path):
             continue  # dyld shared cache / OS framework contract
         if name.startswith('/opt/homebrew/'):
             target = Path(name)
-        elif name.startswith(('@rpath/', '@loader_path/')):
+        elif name.startswith('@loader_path/'):
+            target = path.parent/name.removeprefix('@loader_path/')
+        elif name.startswith('@rpath/'):
             target = path.parent/Path(name).name
         else:
             raise ValueError(f'unsupported native search path: {name}')
@@ -163,9 +165,8 @@ def inspect_payload():
     expected_native = site/'deepseek_recipe'/native.name
     if native != expected_native or sha(native) != authority['payloads']['deepseek_recipe'].get(native.name):
         raise ValueError('redirected/unadmitted recipe extension')
-    if authority['profile'] == 'mtp' and not all(hasattr(deepseek_recipe.StreamProcessor, name) for name in
-               ('preview_tokens', 'semantic_snapshot', 'preview_eof_tokens',
-                'preview_certified_eof_tokens', 'semantic_terminal')):
+    if authority['profile'] == 'mtp' and not all(hasattr(deepseek_recipe.ChatCompletionSemanticSession, name) for name in
+               ('push', 'preview_tokens', 'finish', 'status', 'close')):
         raise ValueError('recipe semantic capabilities missing')
     closure = host_closure(native)
     by_name = {Path(p).name: Path(p) for p in closure}
@@ -179,6 +180,15 @@ def inspect_payload():
            and not str(p).startswith(('/usr/lib/', '/System/Library/')) for p in loaded):
         raise ValueError('mixed/redirected native images')
     check_loaded_image(native)
+    if authority['profile'] == 'mtp':
+        # Auditwheel-repaired Recipe libraries are exact wheel payloads, not
+        # an unsealed Homebrew graph. Every resolved image must be that payload.
+        expected = {(site/'deepseek_recipe'/name).resolve() for name in
+                    authority['payloads']['deepseek_recipe']}
+        if set(by_name.values()) != expected:
+            raise ValueError('Recipe native closure differs from repaired wheel payload')
+        for image in expected:
+            check_loaded_image(image)
     for name, digest in authority['semantic_native'].items():
         path = by_name.get(name)
         if path is None or sha(path) != digest:

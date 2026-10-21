@@ -51,7 +51,14 @@ def build_wheel(manifest, output):
         shutil.copy2(ROOT/'pyproject.toml', stage/'pyproject.toml')
         shutil.copytree(ROOT/'ds41f_mlx', stage/'ds41f_mlx',
                         ignore=shutil.ignore_patterns('__pycache__', '*.pyc', '.DS_Store'))
-        shutil.copy2(ROOT/'release/ds41f-release.json', stage/'ds41f_mlx/runtime_release.json')
+        if manifest['profile'] == 'mtp':
+            release = json.loads((ROOT/'release/ds41f-release.json').read_text())
+            release['dependencies']['deepseek_recipe'].update(
+                version=manifest['dependencies']['deepseek-recipe'],
+                revision=manifest['provenance']['recipe_source']['revision'])
+            (stage/'ds41f_mlx/runtime_release.json').write_text(json.dumps(release, indent=2)+'\n')
+        else:
+            shutil.copy2(ROOT/'release/ds41f-release.json', stage/'ds41f_mlx/runtime_release.json')
         (stage/'ds41f_mlx/execution_manifest.json').write_text(json.dumps(manifest, indent=2, sort_keys=True)+'\n')
         subprocess.run(['uv', 'build', '--wheel', '--out-dir', str(output), str(stage)], check=True)
     wheels = list(output.glob('ds41f_mlx-*.whl'))
@@ -84,7 +91,19 @@ def mtp_manifest(old, glm_profile):
     from ds41f_mlx.glm_profile import bundle_authority
     # Keep module names for installed-origin checks, but never Python fingerprints.
     support = json.loads((ROOT/'third_party/mtp/runtime-support-payload.json').read_text())['files']
-    payloads = {'ds41f_mlx': {}, 'omlx': {}, 'deepseek_recipe': old['recipe']}
+    # The existing retained-wheel authority owns all repaired native resources.
+    # Read exact artifact bytes, never enroll a locally installed library graph.
+    import zipfile
+    recipe_wheel = ROOT/'third_party/mtp'/old['wheel']['file']
+    if sha(recipe_wheel) != old['wheel']['sha256']:
+        raise ValueError('unapproved Recipe 0.2 wheel')
+    with zipfile.ZipFile(recipe_wheel) as wheel:
+        recipe_native = {
+            (name.removeprefix('deepseek_recipe/') if name.startswith('deepseek_recipe/') else '../'+name):
+                hashlib.sha256(wheel.read(name)).hexdigest()
+            for name in wheel.namelist() if name.endswith(('.so', '.dylib')) and
+            name.startswith(('deepseek_recipe/', 'deepseek_recipe.dylibs/'))}
+    payloads = {'ds41f_mlx': {}, 'omlx': {}, 'deepseek_recipe': recipe_native}
     for source in (old['dependency_payload'], support):
         for path, digest in source.items():
             if '/' in path:
@@ -110,7 +129,7 @@ def mtp_manifest(old, glm_profile):
             versions[name] = version
     return dict(schema='ds41f.installed-admission.v3', profile='mtp', glm=glm,
                 payloads=payloads, files={path: None for path in support if '/' not in path},
-                dependencies=versions, semantic_native=semantic_native(old),
+                dependencies=versions, semantic_native={},
                 tokenizer_sha256='81f64d1248a68ce3663e07ab3ee48b851e5df0e32d27cb98e4c9a268151e8d99',
                 checkpoint=flash_1017_inventory(old['checkpoint']), checkpoint_metadata=old['checkpoint_metadata'],
                 provenance=dict(source_commit=subprocess.check_output(
