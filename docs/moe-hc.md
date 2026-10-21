@@ -3,7 +3,7 @@
 This page owns **HC/MoE math, state classification and storage/dispatch boundaries**.
 [Correctness](correctness.md) outranks implementation lineage;
 [architecture](architecture.md) selects execution. The
-[source edition](archive/editorial-baseline/moe-hc.md.txt) preserves the former
+source edition (`c1d1f716:docs/archive/editorial-baseline/moe-hc.md.txt` in Git) preserves the former
 native-import production/residency descriptions and rejected candidates.
 
 ## HC ownership

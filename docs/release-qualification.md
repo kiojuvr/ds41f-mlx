@@ -11,7 +11,7 @@ owns source/reference/delivery authority. Compilation publishes no release.
 `DS41F_TEXT_RUNTIME_RELEASE_QUALIFIED` is the original scoped local OFF text
 release designation, not a universal project-complete claim. Earlier M20/M21/M22
 and later M44 evidence binds its exact dependency/runtime/client/payload inputs.
-The [original release edition](archive/editorial-baseline/release-qualification.md.txt)
+The original release edition (`c1d1f716:docs/archive/editorial-baseline/release-qualification.md.txt` in Git)
 retains the full PASS matrix, upstream revisions, commands, paths, performance
 class and old exclusions. Do not reinterpret M25's MTP rejection or that OFF-only
 release scope as the current repository's capability policy.

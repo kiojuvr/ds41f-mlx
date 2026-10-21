@@ -14,7 +14,7 @@ No core requalification, new performance campaign or publication is requested he
 **ADOPT — CLOSED source performance optimization.** Runtime remains **COMPLETE**,
 ordinary MTP remains default, and oMLX remains pinned to **0.7.0**. The installed
 operator payload is unchanged. This closes the deferred boundaries from the
-[initial evaluation](context-copy-evaluation.md), not a new runtime capability
+initial evaluation (`c1d1f716:docs/context-copy-evaluation.md` in Git), not a new runtime capability
 or a rewrite of native MTP.
 
 Source baseline: `4e2e862b4146be4bbc897511dd50a25cb65f7942`.

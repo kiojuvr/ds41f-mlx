@@ -72,7 +72,7 @@ Exact profile identities live in admission/package material, not a duplicated
 checkout-path/revision list here. Operators use installed environments, not
 external editable donor checkouts or source overrides.
 
-The [source edition](archive/editorial-baseline/provenance.md.txt) retains former
+The source edition (`c1d1f716:docs/archive/editorial-baseline/provenance.md.txt` in Git) retains former
 M18/M20 worktree/path requirements, explicit revisions and M45–M47 attribution/
 admission narrative. Historical native and oMLX origins remain evidence, not
 current startup instruction or automatic approval of later payloads.

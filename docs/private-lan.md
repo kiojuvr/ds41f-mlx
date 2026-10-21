@@ -22,5 +22,5 @@ The following retained paragraph records the former Browser LAN documentation;
 it does not authorize old module/profile launches. Source remains in Git history.
 
 Do not substitute direct development-checkout execution or refresh a local seal.
-The [source edition](archive/editorial-baseline/private-lan.md.txt) retains the
+The source edition (`c1d1f716:docs/archive/editorial-baseline/private-lan.md.txt` in Git) retains the
 earlier generic module-launch example; LAN opt-in does not bypass admission.

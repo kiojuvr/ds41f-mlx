@@ -3,7 +3,7 @@
 This page owns **attention topology, persistent material and fidelity boundaries**.
 [Correctness](correctness.md) defines authority; [session state](session-state.md)
 owns publication/continuation; [architecture](architecture.md) selects execution.
-The [source edition](archive/editorial-baseline/attention.md.txt) preserves the
+The source edition (`c1d1f716:docs/archive/editorial-baseline/attention.md.txt` in Git) preserves the
 former native-import production description and its import-environment status.
 
 ## Topology

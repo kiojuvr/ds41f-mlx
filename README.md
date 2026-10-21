@@ -347,9 +347,6 @@ The official checkpoint and admitted semantic assets feed **official
   proposal/verify/rollback/commit topology. Reusable checkpoints bind complete
   target state and DSpark rings at the same frontier; a target-only hit is not an
   MTP hit. Publication follows canonical settlement and native retirement.
-- **Non-MTP:** first-party model execution owns load, attention/HC/MoE, packed
-  state and SSD Engram, with DwarfStar-derived dense FP8/MLX prefill and target
-  decode. Idle restore is validated within the same backend/distribution.
 - **Applications:** transport, transcripts and external tool effects are separate
   from executable model state. MLX/Metal and admitted native primitives remain
   dependencies; the native reference engine is not the production executor.
@@ -395,7 +392,6 @@ licenses supplied with upstream dependency distributions.
 | Install, inspect, launch, stop, publish | [Operations](docs/operations.md) |
 | Supported APIs, capacities, images and resource limits | [Capabilities](docs/capabilities.md) |
 | Default MTP API/state and logical conversations | [Ordinary MTP](docs/mtp-production-serving.md), [logical sessions](docs/production-sessions.md) |
-| Historical non-MTP contracts (retired) | [OFF API](docs/api.md), [live delivery](docs/stateful-live-delivery.md) |
 | Operator controls and networking | [Operator console](docs/operator-chat.md), [private LAN](docs/private-lan.md) |
 | Structure, state and numerical fidelity | [Architecture](docs/architecture.md), [correctness](docs/correctness.md) |
 | Release identity and measurement interpretation | [Released package record](release/scoped-local-20261015/release.json), [performance](docs/performance.md) |

@@ -1,93 +1,36 @@
 # Documentation authority policy
 
-## Roles, not approval badges
+[The index](README.md) routes to present-day owners. The small
+[classification map](doc-classification.json) lists **CURRENT** contracts, guides
+and navigation; unlisted retained documents are **EVIDENCE**, scoped to their
+recorded source, experiment or release. CURRENT is not an at-HEAD qualification
+badge. Historical plans and acceptance results do not authorize new work or
+qualify later HEAD.
 
-[The index](README.md) routes to a few primary owners and specialist contracts.
-[The classification map](doc-classification.json) covers root README and every
-file under `docs/`, including JSON/patch/source evidence and literal editions.
+Keep documents only for a concrete Runtime/development contract, numerical
+reference, attribution, reproducibility input or necessary acceptance/release
+proof. Git history is the record for superseded milestones, abandoned experiments
+and retired product contracts; no duplicate editorial editions or exhaustive
+historical registry are required. `git show c1d1f716:<path>` retrieves documents
+pruned before master integration.
 
-- **CURRENT**: present policy, contract, guide, future-plan owner or navigation.
-  Future conditions remain prospective; CURRENT never means fresh qualification.
-- **HISTORICAL**: milestone/decision/superseded architecture or archive navigation.
-  Preserve original inputs, outcomes and chronology; not current instructions.
-- **EVIDENCE**: source-scoped qualification/audit/receipt, imported source, literal
-  edition or migration record. Evidence is not normative runtime/startup authority.
-- **RELEASE**: immutable release material, if present in this documentation scope.
-  A release review/strategy/guide is CURRENT, not itself a qualified payload;
-  historical extraction reports are HISTORICAL. Actual R1/release material outside
-  `docs/` remains unchanged and governed by its own manifests/verifiers.
+Current definitions must be self-contained or delegated to another current
+owner. Links to retained evidence are citations, not startup authority. Review
+that distinction in prose; paragraph hashes and a registry of every historical
+citation are not maintained. Standard-OFF, Browser Chat, server-side Web Tool and
+PDF application workflows are retired; their surviving release-bound evidence
+must not be read as a current product contract.
 
-This replaces older CANONICAL/ABSORBED/KEEP_REFERENCE labels. The prior map and
-index are byte-preserved editorial editions. The original authority inventory
-remains a frozen baseline; the final map is not a rewritten inventory/receipt.
-Physical relocation is not required for historical classification.
+`python tools/check_repository_self_containment.py` checks required present-day
+owners, duplicate/stale/noncanonical owner paths, repository-contained live inline
+Markdown links in root README, `docs/` and `tools/README.md`, current-boundary
+anchors, original native-origin/dependency statements and retained provenance
+import/reconciliation destinations. Current owners use inline links. Literal
+source snapshots and patch files are inert inputs, not live Markdown.
 
-## Current definitions versus evidence references
-
-CURRENT definitions must be self-contained or delegated to another CURRENT owner.
-They must not delegate current normative definitions/startup to archives, old
-milestones, source-pinned acceptance or frozen reproduction instructions.
-
-Every Markdown link from CURRENT to classified non-CURRENT material, or to
-`artifacts/` receipt/evidence material outside the documentation map, requires an
-explicit `noncurrent_references` entry: source, literal target (including fragment),
-relationship, review reason and SHA256 of the containing blank-line-delimited
-paragraph. Allowed relationships are `history`, `evidence`, `source-edition` and
-`navigation`; **normative is forbidden**. Navigation is restricted to navigation
-pages. Source-edition links must target literal editorial evidence.
-
-The contextual hash prevents an approved historical citation being silently
-reworded into a current command/definition while keeping its URL. A new link,
-changed paragraph, removed link, duplicate/stale entry or undeclared relation
-fails closed. Review meaning, not only the URL, before updating the registry.
-This is an auditable publisher review, not automated natural-language proof;
-a trusted reviewer can still misclassify prose. Inline code/plain-text paths and
-procedural semantics need human review; the checker is not a model/semantic oracle.
-
-CURRENT uses inline Markdown links; reference-style/HTML links are rejected
-rather than silently escaping the contextual registry.
-
-Literal `.txt` editions preserve original relative links verbatim. They are not
-parsed as active Markdown. Live `.md` file targets remain repository-contained;
-CURRENT outgoing and all incoming anchors to CURRENT pages are checked. Old
-historical-internal anchors are reproduction data, not automatically rewritten.
-
-## Static and retained checks
-
-`python tools/check_repository_self_containment.py` checks exact classification
-coverage/no duplicates/stale paths, required current owners, live Markdown file
-links, current anchor boundaries, typed contextual references, no live dependency
-on the historical native repository, original native-origin/dependency statements,
-selected native CMake exclusions and retained import/reconciliation destinations.
-Use native import/dependency tools for their separate stronger source/hash checks.
-
-Historical milestone words are not inherently forbidden: qualified current prose
-may explain an old finding without depending on its old status. Blanket archive/
-chronology rejection is replaced by explicit roles/contextual edges, not a blanket
-archive allowlist. Negative tests cover the fail-closed boundaries.
-
-## Historical task language is not current authorization
-
-Historical plans, milestone closeouts, investigations and intermediate performance
-reports preserve their baseline's `unresolved`, `blocked`, `required next work`,
-`recommend`, `pending`, `backlog` and `not complete` wording. None by itself selects
-current work. Check the baseline, subsequent closure and CURRENT owner before
-promoting a finding into a present task. Current contradictions must be corrected,
-not dismissed as history. Qualification evidence is source-scoped; immutable
-receipts are never rewritten to qualify later HEAD.
-
-[Implementation decisions](implementation-plan.md), [capabilities](capabilities.md),
-[architecture](architecture.md), [operations](operations.md) and explicit current
-closure pages own today's state. Deferred capability, unsupported product scope,
-optional performance research and an actual supported-lane production defect are
-different classifications. Editorial/archive candidates are not release blockers;
-physical relocation is optional and must preserve links/tooling.
-
-## Editorial closure is not runtime qualification
-
-No new model/native/package build, full R1, client/model campaign, deployment,
-receipt renewal, release-surface promotion or default change follows from this
-policy. Source-scoped failures/exclusions remain explicit. Exact selected payload,
-installed assets/native identity and host compatibility still follow
-[runtime admission](runtime-admission.md); release gates still follow
-[qualification](qualification.md) and [release review](release-qualification.md).
+The checker does not replace source/hash verification, native provenance,
+checkpoint inventory, installed admission or release gates. Use the separate
+source/import verifiers and [Runtime admission](runtime-admission.md);
+[qualification](qualification.md) and [release review](release-qualification.md)
+retain their own proof scopes. Release records and hashed source assets are not
+rewritten merely because the deployment or application was retired.

@@ -19,7 +19,7 @@ not a present branch-reset instruction or a successful M49 promotion.
 The reconstructed one-token transactions, prefix journals and owned proposal
 execution are not the adopted solution. Subsequent M50R–M53R established a
 bounded topology-preserving candidate and application/admission connection;
-[M54R/M55R](milestone-54r-55r-operational-release.md) approved the explicit
+M54R/M55R (`c1d1f716:docs/milestone-54r-55r-operational-release.md` in Git) approved the explicit
 normal-local source-clone singleton release, with portable promotion deferred.
 Ordinary `mtp-serving-v1` subsequently connected Scheduler-owned execution and
 paired reuse. Default MTP remains OFF; singleton evidence does not implicitly
@@ -130,7 +130,7 @@ reset action, **not current byte equality of every runtime file to the restart**
 Later qualified implementation changes do not authorize reviving the discarded
 producer or weakening dependency admission.
 
-The [original reset edition](archive/editorial-baseline/mtp-architecture-reset.md.txt)
+The original reset edition (`c1d1f716:docs/archive/editorial-baseline/mtp-architecture-reset.md.txt` in Git)
 retains the complete commit audit, restoration wording, salvaged-asset source map,
 matched M56 negative measurements, gate/stop tables and exact reset validation
 claims. Those historical rates and counts are neither present performance nor
@@ -139,11 +139,11 @@ fresh HEAD qualification.
 | Completed boundary | Owning historical record |
 | --- | --- |
 | M49R reset | [Reset evidence and commands](../artifacts/m49r/README.md) |
-| M50R candidate identity/topology baseline | [Candidate baseline](milestone-50r-omlx-candidate-baseline.md) |
-| M51R minimal canonical/lifecycle connection | [Lifecycle connection](milestone-51r-canonical-lifecycle-connection.md) |
-| M52R consuming-EOF/application integration | [Application integration](milestone-52r-application-integration.md) |
-| M53R normal-local dependency/admission | [Normal-local setup](milestone-53r-normal-local.md) |
-| M54R/M55R bounded operational/release decision | [Scoped source-clone release](milestone-54r-55r-operational-release.md) |
+| M50R candidate identity/topology baseline | Git `c1d1f716:docs/milestone-50r-omlx-candidate-baseline.md` |
+| M51R minimal canonical/lifecycle connection | Git `c1d1f716:docs/milestone-51r-canonical-lifecycle-connection.md` |
+| M52R consuming-EOF/application integration | Git `c1d1f716:docs/milestone-52r-application-integration.md` |
+| M53R normal-local dependency/admission | Git `c1d1f716:docs/milestone-53r-normal-local.md` |
+| M54R/M55R bounded operational/release decision | Git `c1d1f716:docs/milestone-54r-55r-operational-release.md` |
 
 Their original authorizations, baseline equality checks and PASS/BLOCK decisions
 belong to those times and inputs. No reset, native installation, new producer,

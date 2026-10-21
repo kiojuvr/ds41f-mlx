@@ -57,7 +57,7 @@ satisfied by any current installed OFF/MTP package. A replacement must implement
 or explicitly adapt observed seams and qualify affected math/state; no fake-cache
 PASS establishes a new numerical backend.
 
-The [earlier R1 guide](archive/editorial-baseline/reference-release-r1.md.txt)
+The earlier R1 guide (`c1d1f716:docs/archive/editorial-baseline/reference-release-r1.md.txt` in Git)
 retains original editable-checkout and `mtp_identity seal` commands for historical
 reproduction. Seal is no longer a supported startup/qualification repair action;
 do not reinstall, copy payloads, weaken pins or alter reference material to make

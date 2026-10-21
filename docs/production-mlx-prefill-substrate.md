@@ -4,7 +4,7 @@ This page owns **the selected prefill facade and hot-path handoff boundary**.
 [Architecture](architecture.md) owns profile execution;
 [session state](session-state.md) owns coherent frontiers;
 [runtime strategy](runtime-strategy.md) owns resource lifetimes. The
-[source edition](archive/editorial-baseline/production-mlx-prefill-substrate.md.txt)
+source edition (`c1d1f716:docs/archive/editorial-baseline/production-mlx-prefill-substrate.md.txt` in Git)
 preserves the earlier practical one-chunk/oMLX-operation substrate description,
 not current missing-work instructions.
 

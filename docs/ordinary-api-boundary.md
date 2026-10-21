@@ -116,7 +116,7 @@ scope; admission repair alone does not require numerical core requalification.
 
 ## Historical audit and deployment follow-ups
 
-The [original audit edition](archive/editorial-baseline/ordinary-api-boundary.md.txt)
+The original audit edition (`c1d1f716:docs/archive/editorial-baseline/ordinary-api-boundary.md.txt` in Git)
 retains removed-rule comparisons, original acceptance counts, the M30 native-API
 environment failure, source-inventory/seal refresh instructions and real OpenCode
 source-read reproducer. Those local paths and refresh steps are history, not

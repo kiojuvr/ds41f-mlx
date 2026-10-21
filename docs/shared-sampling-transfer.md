@@ -1,6 +1,6 @@
 # Shared sampling ownership transfer — candidate qualification
 
-Authority: [implementation-ownership feasibility](implementation-ownership-feasibility.md)
+Authority: implementation-ownership feasibility (`c1d1f716:docs/implementation-ownership-feasibility.md` in Git)
 and `DS41F-STABLE-e8c719c`. This is one source/maintenance transfer, not stable
 promotion or removal of the external oMLX engine.
 

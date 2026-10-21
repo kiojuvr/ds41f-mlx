@@ -1,6 +1,10 @@
-# Public API contract
+# Historical Standard-OFF API evidence
 
-This page owns the **standard-OFF HTTP contract and client boundary**. Explicit
+> Standard-OFF is retired. This release-surface-referenced account is retained
+> as historical evidence, not a supported API or startup contract. Current
+> Chat/Messages contracts belong to [ordinary MTP](mtp-production-serving.md).
+
+At its recorded baseline, this page owned the **standard-OFF HTTP contract and client boundary**. Explicit
 ordinary MTP shares recipe-facing Chat Completions but has different scheduling,
 state and recovery semantics: see [ordinary serving](mtp-production-serving.md),
 [admission](ordinary-api-boundary.md) and [production sessions](production-sessions.md).
@@ -42,7 +46,7 @@ policy/defaults describe the selected runtime, not a cross-profile guarantee.
 | `POST /v1/sessions/restore` | Restore an idle same-backend artifact; required `artifact_path`, optional `id` |
 
 The retained historical release scope and original endpoint account are preserved
-in the [earlier API edition](archive/editorial-baseline/api.md.txt). Current budget,
+in the earlier API edition (`c1d1f716:docs/archive/editorial-baseline/api.md.txt` in Git). Current budget,
 stream cancellation and generation controls are not inferred from old release
 receipts. Sessionized Responses/Messages are unsupported.
 
@@ -66,7 +70,7 @@ OFF's live-session limit is configurable through `DS41F_MAX_LIVE_SESSIONS`
 (default four). Native execution is single-flight; active response/session
 reservations and conflicts prevent competing mutation. Close retires its ownership.
 Sampling is request-owned under `generation-policy-v1`; retained reasoning cannot
-change silently. See [frontend controls](generation-policy-frontends.md).
+change silently. See historical frontend controls (`c1d1f716:docs/generation-policy-frontends.md` in Git).
 
 Chat Completions reasoning defaults are configured at Runtime launch via
 `--default-reasoning-effort {none,low,high,xhigh,max}` or

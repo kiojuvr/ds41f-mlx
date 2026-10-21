@@ -126,7 +126,7 @@ External clients own workflow settings and tool-result continuation. An ordinary
 request that omits fields gets defaults for **that request**, not hidden
 inheritance of previous UI choices. Browser workflow snapshots are retired; the
 TUI retains only Runtime launch default reasoning settings. See
-[generation controls and historical evidence](generation-policy-frontends.md).
+[generation controls](generation-policy-investigation.md).
 
 ## Streaming, recovery and effects
 

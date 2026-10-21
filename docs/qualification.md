@@ -77,7 +77,7 @@ without relabelling them as current success.
 - Ordinary MTP state/transport/tools: [serving account](mtp-production-serving.md);
   logical outcome protocol: [production sessions](production-sessions.md).
 - Sampling/application controls: [generation core evidence](generation-policy-investigation.md)
-  and [frontend acceptance](generation-policy-frontends.md).
+  and frontend acceptance (Git `c1d1f716:docs/generation-policy-frontends.md`).
 - Owned oracle: [Reference R1](reference-release-r1.md). Historical milestones,
   literal pre-compilation editions and original artifacts remain in archive/evidence.
 

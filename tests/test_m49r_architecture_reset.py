@@ -47,16 +47,11 @@ def test_all_baseline_runtime_files_preserved_and_no_new_producer():
         assert not (ROOT / 'ds41f_mlx/runtime' / f'{name}.py').exists()
 
 
-def test_historical_docs_unmodified_but_not_current_authority():
+def test_reset_owner_and_retained_source_evidence_policy():
     classification = json.loads((ROOT / 'docs/doc-classification.json').read_text())
-    entries = {e['path']: e for e in classification['entries']}
-    assert len(entries) == len(classification['entries'])
-    historical = sorted(ROOT.glob('docs/milestone-5[0-6]-*.md'))
-    assert len(historical) == 10
-    for path in historical:
-        rel = path.relative_to(ROOT).as_posix()
-        assert path.read_bytes() == git('show', f'cfe3c82:{rel}')
-        assert entries[rel]['classification'] == 'SUPERSEDED_HISTORICAL'
-        assert entries[rel]['evidence_preserved']
-        assert entries[rel]['absorbed_into'] == ['docs/mtp-architecture-reset.md']
-    assert entries['docs/mtp-architecture-reset.md']['classification'] == 'CANONICAL'
+    assert classification['schema'] == 'ds41f.docs_classification.v3'
+    assert classification['default'] == 'EVIDENCE'
+    assert 'docs/mtp-architecture-reset.md' in classification['current']
+    assert not any(path.startswith('docs/archive/') for path in classification['current'])
+    # Literal reconstruction assets are still verified above. Superseded milestone
+    # prose lives in Git, without requiring duplicate in-tree editions or receipts.

@@ -246,7 +246,7 @@ TTFT bound, maximum-workload performance or default-promotion approval follows.
 
 These subsections retain historical navigation anchors, not current test totals
 or commands to rerun model campaigns. Full narratives and old paths/seal steps
-are in the [pre-compilation edition](archive/editorial-baseline/mtp-production-serving.md.txt).
+are in the pre-compilation edition (`c1d1f716:docs/archive/editorial-baseline/mtp-production-serving.md.txt` in Git).
 Current installation follows operations/admission, not historical resealing.
 
 ### Long-context production-path acceptance (2026-10-09)

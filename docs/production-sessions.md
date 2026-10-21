@@ -124,14 +124,14 @@ API, canonical settlement and protocol rules. Unsupported images/controls and
 thinking budgets reject rather than silently rewriting policy.
 
 External clients own history and workflow settings; retained reasoning remains a
-separate frozen protocol envelope. See [generation controls](generation-policy-frontends.md)
+separate frozen protocol envelope. See [generation controls](capabilities.md#generation-controls)
 and [operator console](operator-chat.md). TUI has no conversation/session ownership.
 
 ## Scoped acceptance and earlier edition
 
 [Production session acceptance](production-sessions-acceptance.json) records its
 exact installed-payload scope. The
-[original edition](archive/editorial-baseline/production-sessions.md.txt) preserves
+original edition (`c1d1f716:docs/archive/editorial-baseline/production-sessions.md.txt` in Git) preserves
 canonical/cache-pressure/Chat Server turn counts, original regression results,
 installation paths and failed root-tail-hint attempt. Those results are not fresh
 HEAD approval or later generation-policy qualification. They do not broaden OFF,

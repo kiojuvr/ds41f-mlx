@@ -18,7 +18,7 @@ Starting or inspecting a package is not fresh qualification of this checkout.
 
 Current admission is [installed execution admission](runtime-admission.md), not
 checkout provenance or a local environment seal. Historical M20/source-delivery
-instructions are preserved in [the archive](archive/operations-source-seal.md)
+instructions are preserved in Git (`c1d1f716:docs/archive/operations-source-seal.md`)
 and are not production launch instructions.
 
 ## Local environment layout

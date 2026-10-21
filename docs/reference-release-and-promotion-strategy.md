@@ -60,7 +60,7 @@ reference where needed, not expected outputs patched to fit a candidate.
 This is a **completed historical boundary**, not the next work request.
 M42 established repository-owned R1 material, independent of historical donor
 checkouts for its declared conformance scope. It performed no M43 extraction.
-The [earlier strategy edition](archive/editorial-baseline/reference-release-and-promotion-strategy.md.txt)
+The earlier strategy edition (`c1d1f716:docs/archive/editorial-baseline/reference-release-and-promotion-strategy.md.txt` in Git)
 retains the original proposed gate, scope inventory, examples and chronology.
 
 ### Reference Release R1

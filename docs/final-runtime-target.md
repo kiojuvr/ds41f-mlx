@@ -112,7 +112,7 @@ owners are linked here; exact historical proof scopes stay with their receipts.
 | One executable authority; consumed versus predicted history; same-live transfer and no retained-history replay/repack | [State and transfer](session-state.md), [generation](generation.md) |
 | Consuming semantic horizon bound to generation/ordinal; preview cannot advance canonical state or authorize effects | [Generation/settlement](generation.md) |
 | Canonical native state, recipe-representable history, transcript and transport observations are distinct | [State categories](session-state.md), [logical sessions](production-sessions.md) |
-| Immutable identity-bound outcomes; conservative unknown/poison disposition; no invented tool results or automatic uncertain retries | [Logical sessions](production-sessions.md), [application state](web-application.md) |
+| Immutable identity-bound outcomes; conservative unknown/poison disposition; no invented tool results or automatic uncertain retries | [Logical sessions](production-sessions.md), historical application state (`c1d1f716:docs/web-application.md` in Git) |
 | Model/allocator/KV/paired/Engram lifetimes, cleanup and finite identity/pin retention remain intentional | [Runtime strategy](runtime-strategy.md), [capabilities](capabilities.md) |
 | Explicit profiles and admission, no silent fallback or inherited scope; local IDs are not authentication | [Capabilities](capabilities.md), [operations](operations.md) |
 
@@ -150,7 +150,7 @@ self-contained retroactively.
 
 ## Earlier target edition
 
-The [pre-compilation edition](archive/editorial-baseline/final-runtime-target.md.txt)
+The pre-compilation edition (`c1d1f716:docs/archive/editorial-baseline/final-runtime-target.md.txt` in Git)
 retains the original milestone account, M33–M40 source pointers and former
 release-repository/checkout wording. It is source evidence, not an assertion that
 the current old `ds41f-runtime` directory is release history or that historical

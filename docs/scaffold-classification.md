@@ -22,7 +22,7 @@ A useful scaffold/reference does not become a production selector by being retai
 | `ds41f_mlx/runtime/omlx_*` | Shared configuration/model/state compatibility and legacy comparison adapters; module prefix alone does not select an engine or supersede OFF target-generation/MTP ownership |
 | `ds41f_mlx/server.py` | Earlier reference vertical-slice server, not selected recipe production serving; official recipe delegation is already implemented, not a future task |
 
-[Original classification edition](archive/editorial-baseline/scaffold-classification.md.txt)
+Original classification edition (`c1d1f716:docs/archive/editorial-baseline/scaffold-classification.md.txt` in Git)
 retains former unfinished-prefill/API-restoration language. Do not develop a duplicate
 model core in scaffolds or replace qualified physical topology for ownership aesthetics.
 Role review and affected tests are not promotion; [delivery strategy](reference-release-and-promotion-strategy.md)

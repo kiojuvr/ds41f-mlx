@@ -11,7 +11,7 @@ Use [installed execution admission](runtime-admission.md) and [operations](opera
 Setup installs an execution wheel, not an editable source clone. Development
 checkout, source exports and build scratch are not startup prerequisites. No
 local seal is created or refreshed. Historical M55R source-clone/closure equality
-instructions have been [archived](archive/mtp-local-source-clone.md) and must not
+instructions have been retained in Git (`c1d1f716:docs/archive/mtp-local-source-clone.md`) and must not
 be used to restore runtime after host library updates.
 
 Provision a fresh MTP environment from the source/build repository:
@@ -80,10 +80,10 @@ The current executable contract is `mtp_profile`, its bounded HTTP boundary and
   Unknown create/DELETE and failed retirement remain blocked. No crash-safe or
   distributed exactly-once, client-restart recovery or native persistence.
 
-The [historical protocol account](archive/mtp-local-source-clone.md#capability-and-admission-v1)
-and [M41 qualification](archive/development/milestone-41-local-mtp-release-candidate.md)
+The historical protocol account (`c1d1f716:docs/archive/mtp-local-source-clone.md` in Git)
+and M41 qualification (`c1d1f716:docs/archive/development/milestone-41-local-mtp-release-candidate.md` in Git)
 are reproduction/evidence citations only; current scope/ownership is defined above.
-The [prior guide edition](archive/editorial-baseline/mtp-local-release-candidate.md.txt)
+The prior guide edition (`c1d1f716:docs/archive/editorial-baseline/mtp-local-release-candidate.md.txt` in Git)
 preserves its original delegation wording. Old setup/seal sections describe the
 former architecture only. Source-owned
 R1 native fixtures remain qualification tools; installed ordinary acceptance is

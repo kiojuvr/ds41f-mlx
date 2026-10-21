@@ -67,7 +67,7 @@ or authorize replay. Detailed endpoint/retry contracts remain in the profile API
 
 `generation-policy-v1` applies to OFF and ordinary MTP; defaults, ranges, request-
 owned sampling and retained-session reasoning live in capabilities and the
-[frontend contract](generation-policy-frontends.md). It does not change the separate
+[Runtime generation contract](capabilities.md#generation-controls). It does not change the separate
 bounded singleton's greedy/thinking-off contract.
 
 Greedy determinism is backend-local for fixed checkpoint/runtime/backend/build/

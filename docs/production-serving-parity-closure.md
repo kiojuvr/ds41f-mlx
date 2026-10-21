@@ -112,7 +112,7 @@ multi-tenant authentication are not automatically local-runtime requirements.
 | Execution transparency | Profile selection does not silently change ordinary semantics or inherit unsupported capabilities | [Capabilities](capabilities.md) |
 | Streaming/cancellation | Delivery ambiguity, native mutation, settlement, outcome retention and failure disposition are distinct | [Generation](generation.md) |
 | Scheduling/concurrency | Distinguish one active generation, model, conversation, cache entry and connection; define the admitted envelope | [Architecture](architecture.md) |
-| Sampling | Supported controls execute correctly; unsupported controls reject predictably, without execution-profile surprises | [Generation policy](generation-policy-frontends.md) |
+| Sampling | Supported controls execute correctly; unsupported controls reject predictably, without execution-profile surprises | [Generation policy](capabilities.md#generation-controls) |
 | Tools | Recipe-authoritative generic tools and ID-bound continuations; client execution and effect scope explicit | [Ordinary tools](mtp-production-serving.md#ordinary-function-tools-and-opencode) |
 | Resources | Model/KV/paired/allocator/Engram/artifact lifetimes, ceilings, cleanup and eviction are intentional | [Runtime strategy](runtime-strategy.md) |
 | Configuration | Documented setup/defaults, operator checkpoint/cache/host controls, diagnostics and clear unsupported choices | [Operations](operations.md) |
@@ -168,7 +168,7 @@ new implementation nor a broad confidence campaign by itself.
 
 ## Historical SP1 assessment
 
-The [pre-compilation source edition](archive/editorial-baseline/production-serving-parity-closure.md.txt)
+The pre-compilation source edition (`c1d1f716:docs/archive/editorial-baseline/production-serving-parity-closure.md.txt` in Git)
 retains the complete original rationale, SP1 baseline
 `55d1c0ae4d236313d5ab888a988ffcbc82cb969e`, dependency hashes/source anchors,
 B1/B2 findings, conditional responsibility map, M52R guarantee analysis and proposed

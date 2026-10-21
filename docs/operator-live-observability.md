@@ -201,7 +201,7 @@ full-suite qualification, and does not supersede the historical acceptance below
 
 [Runtime log receipt](operator-runtime-log-acceptance.json) records its installed
 wheel, actual PTY/model/request/shutdown timeline, privacy and rediscovery checks.
-The [earlier observability edition](archive/editorial-baseline/operator-live-observability.md.txt)
+The earlier observability edition (`c1d1f716:docs/archive/editorial-baseline/operator-live-observability.md.txt` in Git)
 retains all exact sequences/frontiers/rates, regression counts, terminal sizes,
 source/seal steps, failure handling and prior acceptance narratives. These are
 historical inputs, not fresh later-package approval.

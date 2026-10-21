@@ -4,7 +4,7 @@ This page owns **model fidelity and numerical authority**, not qualification at
 HEAD. [Architecture](architecture.md) selects execution;
 [session state](session-state.md) owns lifecycle;
 [qualification](qualification.md) separates proof scopes. Historical M4 closure
-is retained in the [source edition](archive/editorial-baseline/correctness.md.txt)
+is retained in the source edition (`c1d1f716:docs/archive/editorial-baseline/correctness.md.txt` in Git)
 as `M4_CORRECTNESS_COMPLETE_BACKEND_LOCAL_FIDELITY_POLICY`; it is not a current
 release, API, persistence, long-session or performance completion claim.
 

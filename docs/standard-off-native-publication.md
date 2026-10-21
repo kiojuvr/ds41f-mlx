@@ -1,5 +1,9 @@
 # Standard-OFF native publication — COMPLETE
 
+> Historical publication evidence retained for release/provenance consumers.
+> Standard-OFF is retired on `merge`; this recorded completion does not admit
+> OFF execution or qualify current HEAD. See [current admission](runtime-admission.md).
+
 Classification: **CONFIRMED_AUTHORITY_DRIFT — CLOSED BY BOUNDED PUBLICATION**.
 The earlier “No further authority drift” conclusion was incorrect for OFF.
 Portable is still an admitted official-precision alternative, not a correctness

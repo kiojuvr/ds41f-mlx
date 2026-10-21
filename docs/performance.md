@@ -456,8 +456,8 @@ in-place operator patch. This remains a post-completion performance improvement.
 
 ## Post-completion context-copy evaluation (#4363)
 
-**Initial evaluation: DEFER, retained as historical scope.** The [evaluation and
-boundary report](context-copy-evaluation.md) records a process-local prototype
+**Initial evaluation: DEFER, retained as historical scope.** The evaluation and
+boundary report (`c1d1f716:docs/context-copy-evaluation.md` in Git) records a process-local prototype
 against synchronized HEAD `3312ecc` / execution identity `927596fc...`.
 Two real-file rewrite runs improve mean wall **10.343 -> 8.914 s**, decode
 **10.099 -> 8.700 s**, and throughput **38.02 -> 44.14 tokens/s**. Each proposes

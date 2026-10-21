@@ -2,7 +2,7 @@
 
 This page owns **normalization, execution authority and advertised parameter
 bounds for `generation-policy-v1`**. [Capabilities](capabilities.md) owns current
-defaults/profile scope; [frontend policy](generation-policy-frontends.md) owns
+defaults/profile scope; [operator policy](operator-chat.md) owns
 workflow snapshots and controls. Historical package repair and real-model acceptance
 below remain evidence for their recorded inputs, not fresh approval of HEAD.
 
@@ -14,7 +14,7 @@ payload, and correctly failed admission. The repair preserved the OFF pin and
 separated builder inputs rather than bypassing the gate or redefining numerical
 identity. It was not a sampling/reasoning defect.
 
-The [original core edition](archive/editorial-baseline/generation-policy-investigation.md.txt)
+The original core edition (`c1d1f716:docs/archive/editorial-baseline/generation-policy-investigation.md.txt` in Git)
 retains exact versions, file inventories, native hashes, receipt/source/wheel
 identities, local repair procedure and the corrected prompt-frontier collector
 assertion. Those environment actions are not instructions to copy packages today.
@@ -68,7 +68,7 @@ explicitly, not redefine production defaults around their fixtures.
 
 Temperature/top-p defaults are inserted after strict ordinary wire admission and
 before recipe conversion. Other fields normalize through the shared policy.
-Output reservation is a separate [capacity contract](dynamic-capability-budget.md):
+Output reservation is a separate [Runtime capacity contract](capabilities.md):
 API omission is not Auto or the maximum-output ceiling.
 
 `/health` publishes policy version, bounds/defaults, execution profiles, upstream
@@ -96,7 +96,7 @@ process-separated counts overlap and remain in the edition, not a summed full
 suite. Model-free seams complement, never replace, actual model evidence.
 
 The original next-stage Browser/TUI/OpenCode integration subsequently completed;
-[frontend contract and evidence](generation-policy-frontends.md) owns it now.
+[operator contract](operator-chat.md) owns it now.
 Do not reopen that completed stage or relabel core receipts as frontend approval.
 Structural sampling/numerical/native changes still need affected qualification;
 a documentation edit alone does not authorize a new campaign.

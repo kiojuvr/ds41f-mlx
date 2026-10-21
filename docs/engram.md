@@ -2,7 +2,7 @@
 
 This page owns **token-history-conditioned lookup, storage and numerical authority**.
 [Session state](session-state.md) owns continuation; [runtime strategy](runtime-strategy.md)
-owns model lifetime/P7. The [source edition](archive/editorial-baseline/engram.md.txt)
+owns model lifetime/P7. The source edition (`c1d1f716:docs/archive/editorial-baseline/engram.md.txt` in Git)
 retains the native-import backbone/components and historical numerical observations.
 
 ## Production components
