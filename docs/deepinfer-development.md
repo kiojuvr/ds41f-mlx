@@ -1425,3 +1425,117 @@ model alias and inline-image mode, disable Files and unsupported extensions/tool
 removals, and run its own end-to-end permission/replay/cancellation checks. No
 Harness adapter/plugin changes, production-session migration, deployment, stable
 branch modification or performance campaign was attempted.
+
+## Direct official Harness acceptance — reviewed original evidence
+
+**PASS, bounded application E2E**, reported at DeepInfer **`1042063`**, official
+Harness provider/CLI **0.2.1-rc.2**, Runtime **0.23.0**, Recipe **0.2.0**, native
+GLM. Final Runtime wheel SHA256:
+`a21fc243672b1c78507fd8f2617374f6251266396ea01a3a3d687c59d2191231`.
+This supersedes the preceding Harness deferral; no code changes were needed.
+
+Original evidence remains in `/private/tmp/ds41f-direct-harness-e2e/`. This daily
+operation task reviewed `local.yml`, `composed.yml`, installed `inspect.json`,
+`runtime.log`, Harness text/tool JSONL and tool-session events, and final health.
+This is review of the available original logs, **not a repeated Harness run** or
+independent reconstruction of its CLI version/source HEAD from wire events.
+
+- Direct **`POST /v1/messages`**, alias **`deepseek-flash`**, thinking disabled,
+  256 output budget, text modality, in-history system updates, `addition-only`
+  tool policy. Disabled unsupported `dsh_session_log` and `dsh_plugin_packages`
+  (`session-log-deepseek` / `plugin-package-inventory-deepseek`). Read-only
+  permission/sandbox presets; filesystem read enabled, other effectful tools off.
+- Text returned **HARNESS_TEXT_OK**. Harness actually read
+  `workspace/acceptance.txt`, not a synthetic Runtime-side result. Native ID
+  **`call_00_81AYjlZranyky3VGQpne1140`** matches the Harness call, actual tool result
+  and continuation; final text was **HARNESS_DIRECT_MTP_OK**. Harness stream logs
+  contain successful finish/turn completion, consistent with native Messages SSE
+  terminal completion (no Chat `[DONE]` requirement).
+- Runtime logged canonical frontiers **654 / 754 / 834**, with **754** restored
+  for the result continuation; publication succeeded, cancellation false,
+  `replay=0`, `repack=0`, no settlement error. Final health: no fatal error,
+  zero active/queued requests. Original server shutdown completed normally.
+- **Not exercised:** image/Files workflows, cancellation, dynamic tool updates.
+  The `addition-only` setting is not a dynamic-update acceptance. Socket-option
+  callback warnings (`SO_SNDBUF`, `EINVAL`) occurred during readiness; health and
+  all requests subsequently succeeded. This is neither general release nor
+  deployment qualification, unrestricted tool compatibility or real-Harness Vision
+  acceptance. Web Chat/TUI behavior was not changed.
+
+## Persistent DeepInfer daily installation — independent acceptance (2026-10-21)
+
+**PASS, installed admission and minimal real-model operation only.** Started from
+clean `DeepInfer` **`1042063dcac4c3474a7650cbcc93b3151aecbbd2`**. The only other
+live repository process was the old wire observer on port 8001; no competing
+model/development task was visible. Existing single-worktree source isolation was
+retained (the stale detached worktree registration was not changed). Both new
+destinations were absent and unowned before provisioning:
+
+- Environment: `/Volumes/SDXC-512/ds41f-mlx_deepinfer-venv`.
+- Build: `/Volumes/SDXC-512/ds41f-mlx_deepinfer-build`.
+- Existing owner command: `/opt/homebrew/opt/python@3.13/bin/python3.13 -m ds41f_mlx.mtp_setup --venv /Volumes/SDXC-512/ds41f-mlx_deepinfer-venv --build-dir /Volumes/SDXC-512/ds41f-mlx_deepinfer-build`.
+- Runtime **0.23.0**, non-editable wheel
+  `runtime-wheels/ds41f_mlx-0.23.0-py3-none-any.whl` under that build, SHA256
+  **`634a8772d2356ac3c23d99cada461197d1c76b71abad8e75223975c504c9555b`**.
+- Recipe **0.2.0**, upstream **`93b0fd229cc9ffa6b1a8c63d42b0bf741bbec170`**,
+  retained `deepseek_recipe-0.2.0-cp310-abi3-macosx_11_0_arm64.whl` SHA256
+  **`11bda3355c2f48b99d04f6a2179b283add3f6d1218f34e4707bd5a29b304ab03`**;
+  installed `_native.abi3.so` SHA256
+  **`eae10c9494744ff2b32d60f3b5f44a66e1029fd32ebcd82868fb9082dc28f3d2`**.
+- Python **3.13.15**, macOS **26.5.2**, Apple **M3 Ultra / 549755813888 bytes**,
+  **native GLM**; MLX **0.32.2**, mlx-lm **0.31.4.dev132+g94cdcae13**, oMLX **0.7.0**.
+  Recipe build provenance retains OpenCV **4.14.0**; installed Python
+  `opencv-python` **5.0.0.93** is a separate locked distribution, not Recipe's
+  wheel-owned native OpenCV graph.
+- Official checkpoint reused in place, no shard copies:
+  `/Volumes/KIOXIA-PRO-2/models/deepseek-ai/DeepSeek-V4.1-Flash-1017`, revision
+  **`1bae0e1088993b9b82de08f59de5be5a34e42170`**, numerical identity
+  **`flash-1017-pre-woa-fp8-v1`**. Metadata/inventory and all **48 full-byte SHA256s**
+  passed on fresh installed inspection; later startup used only the normal
+  unchanged-file-identity cache. Checkpoint files/manifests were not modified.
+- Execution identity **`4d9f94540a1bafd06cc2ac4bdd91624f2427e2b7cc7dd2471f9040fbd74ec7ca`**.
+  Setup's installed payload inspection and isolated `ops inspect --profile
+  mtp-serving-v1` both passed, including native closure/ABI/GLM checks. Reported
+  Runtime, oMLX, Recipe/native and mlx-lm origins are all under the new environment's
+  `lib/python3.13/site-packages`; tokenizer is under its `share/ds41f-mtp/recipe`.
+  Full versions, native identities and origins remain in local `inspect.json`.
+
+The fresh Runtime wheel SHA differs from the earlier Harness wheel because it is
+an independently built artifact with current source provenance. Read-only comparison
+found **no Runtime Python differences** from the actual Harness installation;
+Recipe/native bytes and the complete execution identity object match. No material
+semantic/configuration delta called for repeating Harness permissions/tool workflow.
+Only the new installed layout/admission and ordinary short-request boundary was
+exercised. These comparisons are observations, not source/package admission seals.
+
+Canonical installed `python -I -m ds41f_mlx.serve --profile mtp-serving-v1 --host
+127.0.0.1 --port 18047`, explicit checkpoint above and scratch `DS41F_KV_ROOT`,
+reported **READY**, then accepted one nonstream request per protocol. Both used
+`Say Hello briefly.`, alias `deepseek-flash`, temperature 0, 32 output tokens,
+and explicit thinking off (Chat `reasoning_effort:none`, Messages
+`thinking:{type:disabled}`). Both returned **HTTP 200, `Hello! 👋`**: Chat `stop`,
+Messages `end_turn`. Canonical frontier **13** in both cases; Chat cached **0**,
+Messages cached **6**. Both logged published paired state, cancellation false,
+no settlement error, **replay=0 / repack=0**. Final health had no fatal error and
+zero active/queued requests. Graceful **SIGTERM** completed application/Scheduler
+shutdown; process exited and both runtime **18047** and control **18441** ports
+were independently bindable. No socket-option warnings occurred in this run.
+
+Local evidence: `/private/tmp/ds41f-deepinfer-daily/` retains provision/inspect and
+runtime logs, requests/headers/responses, ready/final health, equivalence observation
+and retirement result. A before/after read-only filesystem-metadata comparison of
+**55,018 entries** found the original MTP/OFF and historical Flash-1017 environments
+unchanged (same modes/sizes/mtimes/inodes/symlink targets; no entries added/removed).
+No historical environment was launched, repaired or repackaged.
+
+Documentation-only follow-up aligns current owners and preserves old records.
+The existing documentation check initially found six pre-existing unclassified
+files; only missing classification/reference entries were added/reconciled, with
+no inventory regeneration. No code change, full R1, benchmark, capacity/Vision
+campaign, OFF/singleton suite or repeated Harness campaign was performed. This
+installation acceptance is distinct from the reviewed earlier Harness E2E and
+from general release/deployment qualification. Documentation checks: existing
+`tools/check_repository_self_containment.py` **PASS**; existing
+`tests/test_documentation_authority.py` **46 passed** in unchanged development
+`.venv` with `PYTHONDONTWRITEBYTECODE=1` / `-p no:cacheprovider`; `git diff --check`
+**PASS**. No Runtime rebuild follows these documentation-only changes.

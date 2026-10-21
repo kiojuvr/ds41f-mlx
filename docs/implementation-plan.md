@@ -6,6 +6,22 @@ exists; [capabilities](capabilities.md) owns support/limits; [operations](operat
 owns deployment. Historical plans and receipts retain their original decisions,
 not present authorization or a required sequence of new milestones.
 
+## DeepInfer current disposition
+
+DeepInfer has integrated official Flash-1017, Recipe 0.2 native Chat/Messages,
+metadata-first resource-budgeted inline Vision and direct official Harness
+text/read-only-tool continuation. Dedicated installed operation and acceptance are
+recorded in [operations](operations.md#deepinfer-daily-operation-and-harness) and
+the [development record](deepinfer-development.md). Historical Recipe/Messages
+investigation deferrals are not current blockers; broader release qualification,
+Harness images/Files, cancellation and dynamic tool updates are not implied.
+The original-Flash release assessment below retains its own source/payload scope.
+
+Making Harness the standard application and eventually replacing TUI Web Chat
+launch controls is only a possible future ownership decision, **not approved or
+implemented work**. Web Chat, its Vision/PDF workflow and TUI controls remain;
+no Harness process management is selected by this task.
+
 ## Production-serving closure (superseding authority)
 
 **READY_FOR_SCOPED_RELEASE** for the current single-operator local / explicitly

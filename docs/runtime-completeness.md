@@ -1,5 +1,21 @@
 # DeepSeek-V4.1-Flash runtime closure and release boundary
 
+## DeepInfer current installed boundary
+
+Current DeepInfer selects official Flash-1017, Recipe 0.2 native Chat Completions
+and Messages, with the existing MTP Scheduler/Target/DSpark/PagedCache settlement
+owners and native GLM. Direct official Harness text/read-only-file/result
+continuation has passed; a separate persistent installation has bounded admission
+and Chat/Messages acceptance. [Operations](operations.md#deepinfer-daily-operation-and-harness)
+owns paths/configuration; [development evidence](deepinfer-development.md) keeps
+these scopes distinct. Production sessions remain Chat-only. Inline Messages
+Vision is implemented but real Harness image/Files workflows, cancellation and
+dynamic tool updates were not exercised. No expanded/max-capacity or release
+qualification follows. Web Chat/TUI remain unchanged.
+
+The original-Flash assessment and installed publication identities below are
+retained release-specific evidence, **not a qualification of DeepInfer**.
+
 ## General local runtime release assessment
 
 Publication following this assessment is recorded separately as
@@ -144,7 +160,7 @@ are implementations of those semantics, not required local execution modes.
 | COMPLETE | ViT/aligner/new-span embedding merge, image masks/VL routing, bounded ordinary Vision→DSpark/native MTP and image-discriminated paired reuse. Real-image ordinary closure is separate from the original OFF receipt. |
 | COMPLETE | Native DSpark proposal/verification/rollback/commit, request-owned sampling, recipe tools/reasoning/JSON/SSE, paired snapshots, edits/branches/cancellation/retirement and optional logical sessions. No second executable owner, replay repair or backend-finish publication. |
 | DEFERRED CAPABILITY | Multi-request native batching/fairness, larger multi-user admission and restart-crossing MTP persistence. Not needed by one active native generation with ordinary queued requests. Persistence would need complete target+DSpark and application-outcome ownership, not target-only SSD reuse. |
-| DEFERRED CAPABILITY | Broader multimodal context/input/API, ordinary MTP Responses/Messages and broader attachment/product UI scope. Current clients use ordinary Chat Completions; OFF retains its separate protocols/persistence and isolated PDF Vision. No automatic cross-profile routing. |
+| DEFERRED CAPABILITY | Ordinary MTP Responses and broader attachment/product UI scope. DeepInfer now implements Recipe 0.2 Messages with explicit exclusions; optional production sessions remain Chat-only. OFF retains its separate protocols/persistence. No automatic cross-profile routing. |
 | ALTERNATE MODE / OUT OF SCOPE | Multi-Mac/TP/RDMA, CUDA/DGX Spark, GGUF/affine/oQ quantized checkpoints, MoE expert offload and other hosts/models. SSD Engram is implemented; expert offload is a different residency mode, unnecessary for the admitted full-resident backbone on M3 Ultra/512 GB. |
 | CLOSED PERFORMANCE WORK | Known identified post-0.7.0 work below is closed: #4365, partial #4360, selective #4354 and singleton #4363. Omitted/rejected deltas are not an automatic backlog or completeness blocker; further research requires explicit scope selection. |
 | CLOSED ACCEPTANCE | Separate-machine trusted-LAN **CLOSED / PASS**, real Windows → Mac LAN with operator correlation; see [acceptance](remote-lan-windows-acceptance.md). No authentication/TLS/Internet/multi-user claim. |
@@ -191,7 +207,8 @@ mechanism in the supported lane follows from those upstream changes.
   so the new launcher default cannot accidentally override fallback selection.
   Inspect/print-config now reports the selected serving profile rather than the
   legacy singleton identity label. The identity schema stays separate from serving
-  selection; execution identity still changes with the installed code payload.
+  selection; the original sealed-payload identity described here is historical; current DeepInfer
+  MTP identity retains dependency/native/checkpoint boundaries without Python-source sealing.
 - **Ordinary API/clients:** health/models, ordinary Chat JSON/SSE, generic tools,
   generation-policy-v1, Browser/TUI logical continuity and accepted OpenCode
   configuration are connected. Supported client/version evidence remains scoped;

@@ -27,6 +27,26 @@ host ABI compatibility are distinct responsibilities. Source/build provenance an
 historical receipts support reproduction; they are not startup equality with the
 checkout. See [installed admission](runtime-admission.md).
 
+## DeepInfer protocol and delivery boundary
+
+Ordinary DeepInfer selects official Flash-1017 and Recipe 0.2. Chat and Messages
+use their respective native semantic sessions/official accumulators over the same
+Recipe consuming pipeline. Forked previews retain RNG/tool IDs, parser/decoder,
+usage and exact protocol state; canonical revision/frontier/lifetime equality
+precedes terminal certification. Argument completion, complete outer tool block,
+protocol completion and application tool permission remain distinct.
+
+Both protocols use the existing Scheduler, Target/DSpark, PagedCache and canonical
+settlement; Messages is not translated to Chat or a second inference backend.
+Production logical sessions remain Chat-only. Applications (including external
+Harness) own tool effects; TUI/Web Chat ownership is unchanged. Contracts and
+bounded evidence are in [capabilities](capabilities.md#deepinfer-current-implementation)
+and [the development record](deepinfer-development.md).
+
+Ordinary MTP delivery uses version/source locks and strict patching, not source/
+Python-package SHA sealing. Exact installed origins, native/tokenizer/checkpoint
+integrity and host ABI admission remain; preserved OFF admission is separate.
+
 ## Standard-OFF execution
 
 ```text
@@ -84,7 +104,8 @@ same frontier. Rings have capacity 128 and preserve absolute-modulo physical
 order. Transient draft/proposal/verification/prediction and request RNG state are
 not reusable checkpoints. A target-only hit is not an MTP hit.
 
-Upstream PagedCache owns lookup, pins and four-pair retention/eviction; ds41f owns
+Upstream PagedCache owns lookup, pins and retention/eviction (18 complete pairs
+plus the reserved null block in ordinary production); ds41f owns
 paired payload integrity. Immutable snapshots never share mutable cache/ring
 containers with active work. Ordinary lookup uses eligible checkpoints through
 N-2, leaving a genuine suffix-prefill token and P5 terminal; it does not rewind

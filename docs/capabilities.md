@@ -6,6 +6,30 @@ qualification of every later HEAD or the currently installed package**. Deploy o
 an explicitly qualified installed payload; see [operations](operations.md).
 Architecture explains ownership; specialized documents explain endpoint semantics.
 
+## DeepInfer current implementation
+
+DeepInfer selects official **DeepSeek-V4.1-Flash-1017**, Recipe **0.2.0** with the
+consolidated native semantic extension, and native GLM. The published original-Flash
+release and historical Flash-1017/Recipe 0.1 installations remain separate;
+[operations](operations.md#deepinfer-daily-operation-and-harness) owns selection.
+Bounded installed Chat/Messages and direct official Harness acceptance are recorded
+in the [development record](deepinfer-development.md); neither renews release scope.
+
+Ordinary `POST /v1/messages` uses official Recipe conversion, native Messages
+semantic ownership/accumulation and JSON/SSE, not Messages-to-Chat translation.
+It supports text/thinking/signatures, client tools, exact-ID results, in-history
+system updates, Recipe-supported additions and inline base64 PNG/JPEG/WebP.
+Successful streaming terminates with **`message_stop`**, not Chat's `[DONE]`.
+Tool suffix delivery waits for canonical settlement; a `tool_use` stop reason or
+argument-end observation alone never authorizes effects. Production sessions
+remain **Chat-only**; Messages has no logical-session or persistence contract.
+
+Messages intentionally rejects Files/documents, URL/file image sources, server/
+web-search tools/results, tool-reference results, unknown extensions (including
+Harness `dsh_session_log` / `dsh_plugin_packages`), tool removal, constrained output,
+thinking budgets, `tool_choice:any` and enforced serial selection. Prompt-based
+named selection is not constrained decoding. No Responses parity is added.
+
 ## Profiles
 
 | Capability | `standard-off` | `mtp-serving-v1` | `mtp-singleton-v1` |
@@ -13,14 +37,14 @@ Architecture explains ownership; specialized documents explain endpoint semantic
 | Selection | Explicit fallback; separate OFF package | Local CLI default; MTP package | Explicit; MTP package |
 | Physical execution | First-party target generation/model execution; MTP OFF | Pinned oMLX MTP topology, ProductionScheduler-owned | Bounded guarded singleton MTP |
 | GLM distribution | Native local default; portable explicit alternative | Native local default; portable explicit alternative | Same profile-specific MTP package; singleton protocol unchanged |
-| Ordinary APIs | Text Chat Completions, Responses, Messages within documented scopes | Chat Completions (text and bounded inline Vision); health/models | Specialized session API, not ordinary stateless Chat Completions |
+| Ordinary APIs | Text Chat Completions, Responses, Messages within documented scopes | Chat Completions and Recipe 0.2 Messages (text and bounded inline Vision); health/models | Specialized session API, not ordinary stateless Chat Completions |
 | Independent conversations/edits | Stateless requests prefill fresh; retained sessions require exact extension | Ordinary requests may safely reuse paired prefixes or miss, including edits/branches | Exact session extension/frozen request fences |
 | Active execution | Single-flight; overlap conflicts | One native active generation; independent ordinary requests may queue, no shared native batch | One response lease/live session |
 | Optional stateful Chat | Exact-prefix sessions, default maximum 4 | Up to 16 logical conversations on the same Scheduler; streaming only | One issued process-lifetime session with sequence/body fence |
 | Function tools | Ordinary client function tools | Generic recipe-authoritative function tools/results | Pinned weather declaration and bounded dedicated-client contract |
 | Sampling/reasoning | `generation-policy-v1` | `generation-policy-v1` | Separate greedy/thinking-off qualification contract |
 | Native idle persistence/restore | Validated same-backend artifacts | Unsupported | Unsupported |
-| Images | Separate bounded OFF image extension below | Same bounded inline envelope; paired-state continuation, no persistence/history replay | Unsupported |
+| Images | Separate bounded OFF image extension below | Resource-budgeted inline Chat/Messages; paired-state continuation, no persistence/history replay | Unsupported |
 | Network | See OFF configuration and application network policy | Loopback default; explicit trusted private LAN | Literal IPv4 loopback and exact Host policy |
 
 These profiles do not grant each other API, persistence, image, concurrency or
@@ -85,6 +109,10 @@ including Off, takes precedence. `/health` advertises the effective default in
 `chat_defaults.reasoning_effort` and `generation_policy.reasoning`. This option
 does not change Responses/Messages reasoning conversion or the singleton's
 thinking-off contract. See [operations](operations.md).
+DeepInfer ordinary Recipe 0.2 additionally resolves nonthinking `top_p=1` and
+thinking temperature `1` / minimum `top_p=.95`; these are official converted
+settings, not a change to the retained original-Flash release's default evidence.
+
 Sampling is request-owned. Retained session reasoning mode/effort is frozen and
 changes reject; stateless reasoning is request-owned. Retained production sessions
 also freeze tool declarations. Unsupported controls reject rather than silently
@@ -137,9 +165,12 @@ ones, consume preparation budgets. Ordinary text and legacy OFF limits are uncha
 `implemented_total_tokens` and `expanded_capacity_model_execution: unverified`.
 The ordinary Vision budget response uses `implemented_total_tokens`, not
 `qualified_total_tokens`. Source/synthetic MLX tests cover >4 images and >8192
-positions; **no expanded-capacity full-model acceptance or long-context/memory
-qualification was performed**. Existing bounded real-model receipts do not qualify
-these larger requests.
+positions. DeepInfer has bounded real-model evidence for six images / 9,353 expanded
+prompt positions with the earlier Recipe 0.1 package, then one small Chat image
+and cached follow-up with Recipe 0.2. See the [scoped development evidence](deepinfer-development.md).
+This is not maximum-capacity, long-context/memory or visual-quality qualification;
+real Harness image/Files workflows have not been exercised. Health's conservative
+`unverified` field is not a claim that no bounded model case has ever passed.
 
 Image identity is included in
 upstream paired-cache hashes; after prefill only the existing target/DSpark pair
@@ -176,6 +207,11 @@ and [original image qualification](multimodal-production-qualification.md).
 - **Ordinary clients/OpenCode:** standard Chat Completions and generic client-owned
   tools; no compulsory singleton session/fence protocol. Client acceptance is
   source/version-scoped, not a universal all-client compatibility certificate.
+- **Official Harness 0.2.1-rc.2:** direct native Messages text and actual read-only
+  file-tool/result continuation passed with supported option exclusions. No image/
+  Files, cancellation or dynamic tool-update workflow acceptance; see
+  [connection configuration](operations.md#deepinfer-daily-operation-and-harness).
+  Web Chat/TUI controls are unchanged; Harness is not process-managed by the TUI.
 - **Rust:** raw OFF HTTP/SSE/process boundary; no Rust model/KV/parser owner and no
   claim of a supported Rust MTP application seam.
 

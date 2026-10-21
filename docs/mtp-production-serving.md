@@ -21,16 +21,23 @@ Internet/multi-user readiness.
 ## Local default
 
 `mtp-serving-v1` is the normal local default. It exposes ordinary health,
-models and Chat Completions, JSON/SSE, without compulsory session IDs, sequence
+models, Chat Completions and (on DeepInfer) official Recipe 0.2 Messages,
+JSON/SSE, without compulsory session IDs, sequence
 headers or certificates. Independent conversations, edits, branches and tool
 round trips use compatible paired state or safe misses. Optional logical sessions
 use the **same Scheduler**, not the singleton qualification execution path.
+They remain Chat-only. Messages uses its own native semantic owner/accumulator,
+exact tool IDs and `message_stop` terminal, with tool suffixes withheld until
+canonical settlement. Capability exclusions and direct Harness acceptance scope
+are in [capabilities](capabilities.md#deepinfer-current-implementation) and
+[operations](operations.md#deepinfer-daily-operation-and-harness).
 
 Use the installed MTP package with [current execution admission](runtime-admission.md).
 Current startup instructions and environment paths live in operations; for example:
 
 ```sh
-export DS41F_CHECKPOINT=/absolute/official/DeepSeek-V4.1-Flash
+# DeepInfer; original-model installations retain their own checkpoint selection.
+export DS41F_CHECKPOINT=/Volumes/KIOXIA-PRO-2/models/deepseek-ai/DeepSeek-V4.1-Flash-1017
 /path/to/mtp-env/bin/ds41f inspect --profile mtp-serving-v1
 /path/to/mtp-env/bin/ds41f start --profile mtp-serving-v1
 ```

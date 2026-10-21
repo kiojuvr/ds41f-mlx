@@ -1,6 +1,13 @@
 # ds41f-mlx
 
 **Run the official DeepSeek-V4.1-Flash checkpoint locally on Apple Silicon.**
+
+**DeepInfer branch:** current source selects official **Flash-1017**, Recipe
+**0.2.0**, native Messages alongside Chat Completions, and a dedicated installed
+runtime. [Daily setup and direct Harness connection](docs/operations.md#deepinfer-daily-operation-and-harness)
+and [scoped acceptance record](docs/deepinfer-development.md) distinguish it from
+the unchanged original-Flash release below.
+
 `ds41f-mlx` is a native runtime targeting the **Mac Studio M3 Ultra with 512 GB
 unified memory**. It exists to combine model fidelity, correct long-context state
 and practical local inference performance—not to substitute a reduced or
@@ -55,7 +62,7 @@ The following specifications describe the **ordinary default MTP path**:
 
 | Specification | Supported boundary |
 | --- | --- |
-| Model / release hardware | Official DeepSeek-V4.1-Flash / admitted Apple M3 Ultra, 512 GB |
+| Model / hardware | Official Flash-1017 on DeepInfer (original Flash in the published release) / Apple M3 Ultra, 512 GB |
 | Total text capacity | **1,048,576 tokens**, or the smaller checkpoint-configured range |
 | Requested output | **1–393,216 tokens**; actual recipe prompt + requested output must fit |
 | Output when omitted | **8192** without thinking; **65,536** with low/high thinking; **131,072** with max thinking |
@@ -95,8 +102,9 @@ service. See [current limitations](#current-limitations) before exposing it.
 
 - **Mac Studio M3 Ultra, 512 GB unified memory**, with an admitted Apple Silicon
   macOS host/native ABI. Other hardware and hosts are outside this release scope.
-- The **official external DeepSeek-V4.1-Flash checkpoint**, including the official
-  SSD-backed Engram assets; configure its directory with `DS41F_CHECKPOINT`.
+- The **official external DeepSeek-V4.1-Flash-1017 checkpoint** for DeepInfer
+  (published original-Flash installations retain their original checkpoint),
+  including official SSD-backed Engram assets; configure its directory with `DS41F_CHECKPOINT`.
 - A **locked, non-editable installed runtime environment**, with exact admitted
   dependencies, recipe tokenizer and numerical/native assets. The development
   `.venv` is not the production model environment.
@@ -136,7 +144,7 @@ skip this step.
 ### 2. Inspect and start
 
 ```sh
-export DS41F_CHECKPOINT=/absolute/path/to/official/DeepSeek-V4.1-Flash
+export DS41F_CHECKPOINT=/Volumes/KIOXIA-PRO-2/models/deepseek-ai/DeepSeek-V4.1-Flash-1017
 "$DS41F_ENV/bin/ds41f" inspect
 "$DS41F_ENV/bin/ds41f" start
 ```
@@ -169,8 +177,10 @@ troubleshooting instructions; no validation bypass or automatic resend is suppor
 
 Configure an OpenAI-compatible client with base URL
 `http://127.0.0.1:8000/v1` and wire model ID `deepseek-v4.1-flash` (or an advertised
-alias from `/v1/models`). Ordinary MTP serves Chat Completions, health and models;
-Responses and Messages are separate non-MTP contracts, not default-path parity.
+alias from `/v1/models`). DeepInfer ordinary MTP serves Chat Completions and
+native Recipe 0.2 Messages (`POST /v1/messages`), health and models. Responses
+remains a separate non-MTP contract. Messages capability exclusions and the
+verified Harness configuration are in [operations](docs/operations.md#deepinfer-daily-operation-and-harness).
 [OpenCode/client guidance](docs/mtp-production-serving.md#ordinary-function-tools-and-opencode)
 is source/version-scoped, not a universal-client compatibility certificate.
 
@@ -241,7 +251,7 @@ fallback or state migration occurs.
 
 | Profile | Role and distinctive boundary |
 | --- | --- |
-| `mtp-serving-v1` | Normal CLI/TUI default; ordinary Chat Completions, bounded inline Vision, tools, paired reuse and optional logical sessions; no native restart restore |
+| `mtp-serving-v1` | Normal CLI/TUI default; Chat Completions and Recipe 0.2 Messages, bounded inline Vision, tools and paired reuse; optional logical sessions are Chat-only; no native restart restore |
 | `standard-off` | Explicit non-MTP fallback; first-party target execution; documented text Chat Completions/Responses/Messages, bounded Chat Vision, optional exact-prefix stateful Chat (default maximum 4 sessions), validated same-backend idle persistence/restore; single-flight overlap conflicts |
 
 Both local distributions default to **GLM native**. GLM portable is a separately
@@ -254,6 +264,8 @@ session/fence client and weather-tool qualification (**8192 total / 768 output**
 Those fixture bounds and protocol do not constrain or define ordinary MTP.
 
 ## Measured performance
+
+**Retained original-Flash measurements, not DeepInfer benchmarks.**
 
 **Mac Studio M3 Ultra / 512 GB**, official **DeepSeek-V4.1-Flash**, native GLM,
 ordinary **`mtp-serving-v1` with MTP enabled**; current-source installed package
@@ -320,7 +332,9 @@ promotion or a replacement for the release's qualification record.
   inference or multi-active/shared native batching.
 - No MTP native persistence, restart recovery, transparent replay/resume or
   cross-backend KV portability. Logical conversations are not durable sessions.
-- No multimodal Responses/Messages, remote/file image URLs, low-detail images,
+- No multimodal Responses or OFF Messages; DeepInfer Messages supports bounded
+  inline base64 images, not Files/documents or real-Harness image qualification.
+  No remote/file image URLs, low-detail images,
   animations or universal multimodal/visual-quality claim. MTP prior-message
   images need a compatible retained pair; eviction or incompatible historical
   image edits reject rather than silently replay/re-encode history.

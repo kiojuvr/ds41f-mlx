@@ -17,8 +17,17 @@ The development repository is `/Volumes/SDXC-512/ds41f-mlx`; its internal
 `.venv` is for development, not installed production execution. Local installed
 runtime environments are:
 
-- MTP: `/Volumes/SDXC-512/ds41f-mlx_mtp-venv`
-- Standard-OFF / bounded Vision: `/Volumes/SDXC-512/ds41f-mlx_off-venv`
+- Previously qualified **original Flash**, MTP: `/Volumes/SDXC-512/ds41f-mlx_mtp-venv`
+- Previously qualified **original Flash**, Standard-OFF: `/Volumes/SDXC-512/ds41f-mlx_off-venv`
+- Historical **Flash-1017 branch**, Recipe 0.1.1: `/Volumes/SDXC-512/ds41f-flash1017-mtp-venv`
+  (source `1dc9fda`; not the DeepInfer installation).
+- **DeepInfer**, Flash-1017 / Recipe 0.2.0: `/Volumes/SDXC-512/ds41f-mlx_deepinfer-venv`.
+  Independent build: `/Volumes/SDXC-512/ds41f-mlx_deepinfer-build`.
+
+The first two retain the published scoped-local payloads from `0cd1428`; DeepInfer
+is a separate bounded installed acceptance, not their replacement. Do not update
+one line's environment from another checkout. Existing source isolation is retained;
+the current checkout is `DeepInfer`, not the historical Flash-1017 branch.
 
 Use the matching environment's `bin/ds41f`, or `bin/python -I -m ds41f_mlx.ops`.
 For example:
@@ -34,6 +43,66 @@ records identify the original runs, not current launch instructions. They are
 not rewritten in historical receipts. See [environment consolidation](environment-consolidation.md)
 for migration details and completed legacy OFF retirement.
 
+## DeepInfer daily operation and Harness
+
+The supported fresh provisioning command, from the DeepInfer checkout, is:
+
+```sh
+/opt/homebrew/opt/python@3.13/bin/python3.13 -m ds41f_mlx.mtp_setup \
+  --venv /Volumes/SDXC-512/ds41f-mlx_deepinfer-venv \
+  --build-dir /Volumes/SDXC-512/ds41f-mlx_deepinfer-build
+```
+
+These destinations are now occupied: **do not rerun provisioning into them**.
+Setup uses Python 3.13.15, locked dependencies, the retained Recipe 0.2.0 wheel
+with the consolidated native semantic patch, and native GLM. It installs Runtime
+non-editably. No source/package SHA seal is required; exact native/tokenizer and
+checkpoint admission remains mandatory. Reuse the external weights, never copy
+48 shards into the environment or build directory.
+
+```sh
+export DS41F_CHECKPOINT=/Volumes/KIOXIA-PRO-2/models/deepseek-ai/DeepSeek-V4.1-Flash-1017
+/Volumes/SDXC-512/ds41f-mlx_deepinfer-venv/bin/python -I -m ds41f_mlx.ops inspect --profile mtp-serving-v1
+/Volumes/SDXC-512/ds41f-mlx_deepinfer-venv/bin/python -I -m ds41f_mlx.serve \
+  --profile mtp-serving-v1 --host 127.0.0.1 --port 8000
+```
+
+Wait for **READY** / `model_ready:true`; stop the owned process with graceful
+SIGTERM and wait for retirement/port release. This Runtime owns port 8000; Harness
+is a separate application/client, not another model server. Never start the
+original MTP/OFF runtime on that port concurrently. Acceptance used isolated port
+18047; the earlier direct Harness run used 18037. Those are not running services.
+
+Official Harness provider/CLI **0.2.1-rc.2** connected directly to `POST /v1/messages`
+with model **`deepseek-flash`**, without an adapter. Its `llm-deepseek` config used
+`baseURL: http://127.0.0.1:18037` (use `http://127.0.0.1:8000` for the launch above,
+**without `/v1`**), `apiKeyEnv: DS41F_LOCAL_API_KEY`, `thinking: disabled`,
+`reasoningEffort: off`, `maxTokens: 256`; the model entry used
+`inputModalities: [text]`, `contextWindow: 1048576`, `maxTokens: 256`,
+`systemPromptUpdate: in-history`, `toolUpdate: addition-only`. A local placeholder
+key satisfies the client; it does not add Runtime authentication.
+
+Disable unsupported **`dsh_session_log`** and **`dsh_plugin_packages`** extensions
+(`session-log-deepseek.config.enabled: false` and
+`plugin-package-inventory-deepseek.config.enabled: false`). Do not send tool
+removals; keep `addition-only`. The accepted run enabled only read-only filesystem
+reads (`tool-fs`: read true; readImage/write/edit false), disabled other effectful
+tools, and used Harness read-only permission/sandbox presets. Files/document/URL
+image transport and server tools are unsupported, not automatically downgraded.
+Inline base64 Vision is implemented, but real Harness image/Files workflows,
+cancellation and dynamic tool updates were **not exercised**. Read-only tool/result
+continuation passed; this is not unrestricted Harness compatibility or deployment
+qualification. Original logs and independently observed persistent-installation
+acceptance are distinguished in the [development record](deepinfer-development.md).
+
+The TUI still manages Runtime and Web Chat, **not Harness**. From the application
+checkout, explicitly select DeepInfer before launching the TUI:
+
+```sh
+DS41F_OPERATOR_RUNTIME_PYTHON=/Volumes/SDXC-512/ds41f-mlx_deepinfer-venv/bin/python \
+  .venv/bin/python -m ds41f_mlx.ops
+```
+
 ## Operator TUI and applications
 
 To open the stdlib-curses operator interface in the MTP environment:
@@ -45,7 +114,8 @@ To open the stdlib-curses operator interface in the MTP environment:
 Dashboard Start/Stop toggles use the canonical launcher and loopback graceful
 control. Quit leaves the runtime running; reopening rediscovers live state.
 TUI is an operator console only: R Start/Stop LLM Runtime, W Start/Stop Web Chat,
-O Open Web Chat, S Settings, Q Quit TUI. Web Chat is the sole conversation frontend.
+O Open Web Chat, S Settings, Q Quit TUI. Web Chat remains the bundled conversation
+frontend; external Harness is independently launched.
 Runtime Settings includes **Default Reasoning: Max** on first TUI launch (unless
 the environment explicitly supplies a default).
 Press **S**, then **T** to cycle `none / low / high / xhigh / max`; the preference
@@ -93,8 +163,9 @@ W Start. S settings shows next-launch bind/port; Q leaves both services running.
 No TUI Chat mode, Ctrl Chat shortcuts or F2/F3 remain. Conversations live in browser
 tab memory; New adds and Switch retains independent histories. See
 [Chat interface](chat-interface.md), [application state](web-application.md)
-and [PDF workflow](pdf-document-workflow.md). PDF/page Vision uses separate bounded
-OFF execution, not MTP image admission. Application journals are not native
+and [PDF workflow](pdf-document-workflow.md). PDF/page Vision uses isolated stateless
+requests on the connected Vision-capable runtime (ordinary MTP by default), not
+accumulated main-chat image slots. Application journals are not native
 persistence or shared TUI/Browser history. Tools/effects execute in applications,
 not the model server. Their scope is summarized in capabilities.
 
@@ -125,7 +196,7 @@ The released single-operator local / explicitly trusted-private-LAN runtime is
 **DS41F-SCOPED-LOCAL-20261015**, sourced from `0cd1428` (runtime implementation
 `79e96fd`). The [authoritative release record](../release/scoped-local-20261015/release.json)
 binds separate MTP/OFF native wheels, digests, inherited evidence and fresh installed
-acceptance. Those exact packages are installed at the local environment paths above;
+acceptance. Those exact packages remain installed at the original MTP/OFF paths above;
 all acceptance servers are retired. No source projection or broader scope is implied.
 
 Use a locked provisioned environment. `python -m ds41f_mlx.mtp_setup --profile
@@ -175,7 +246,8 @@ static for the model lifetime. Do not manually edit/reseal admitted payloads.
 ## Inspect / ordinary MTP launch
 
 ```sh
-export DS41F_CHECKPOINT=/absolute/official/DeepSeek-V4.1-Flash
+# Current DeepInfer package; original-model installations retain their own checkpoint.
+export DS41F_CHECKPOINT=/Volumes/KIOXIA-PRO-2/models/deepseek-ai/DeepSeek-V4.1-Flash-1017
 /path/to/env/bin/ds41f inspect --profile mtp-serving-v1
 /path/to/env/bin/ds41f start --profile mtp-serving-v1 --host 127.0.0.1 --port 8000
 ```

@@ -26,6 +26,15 @@ public/source entry point; no separate public/runtime repository is planned.
 The old `ds41f-runtime` directory is unused generation, not current deployment or
 accepted release history.
 
+## DeepInfer branch
+
+Current DeepInfer uses official Flash-1017 and Recipe 0.2 native Chat/Messages.
+[Operations](operations.md#deepinfer-daily-operation-and-harness) owns the dedicated
+persistent environment and direct Harness configuration; [capabilities](capabilities.md#deepinfer-current-implementation)
+owns supported/unsupported Messages and Vision scope. The [development record](deepinfer-development.md)
+separates reviewed original Harness evidence from fresh installed acceptance.
+The published original-Flash scope above is unchanged; Web Chat/TUI remain implemented.
+
 ## Specialist contracts
 
 | Responsibility | Owning pages |

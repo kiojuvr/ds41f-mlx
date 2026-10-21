@@ -1,5 +1,25 @@
 # Installed execution admission
 
+## DeepInfer ordinary MTP admission
+
+DeepInfer ordinary MTP permanently discontinues source/archive/patch and generated
+Python-package SHA sealing. Version/source dependency locks, strict ordered patch
+application, installed non-editable module/support-file origins and exact native,
+tokenizer and Flash-1017 checkpoint integrity remain mandatory. No installed file
+may be manually edited; no bypass or future source-seal finalization is required.
+The source/payload equality descriptions below retain the original admission
+migration / preserved OFF boundary, not ordinary DeepInfer Python-source checks.
+
+Recipe 0.2.0 comes from the retained auditwheel-repaired Chat/Messages wheel and
+one consolidated semantic patch. Its 264-image non-system native closure is
+wheel-owned with zero Homebrew links; exact bytes, origins, resolved loaded images
+and Mach-O ABI still admit execution. The older Homebrew-linked Recipe discussion
+below describes the original/preserved distribution, not this new wheel.
+Build/source commit and wheel SHA are provenance, not equality with today's checkout.
+[Operations](operations.md#deepinfer-daily-operation-and-harness) owns the separate
+persistent installation; [development evidence](deepinfer-development.md) records
+installed identity and acceptance without broad release qualification.
+
 ## Trust boundary
 
 The release publisher and local operator are trusted. Deployment packages and
@@ -12,19 +32,20 @@ in isolated mode. Direct checkout execution, external import overrides, and
 
 | Responsibility | Authority / treatment |
 | --- | --- |
-| Execution identity | `execution_manifest.json`: complete installed ds41f, attributed oMLX/recipe, numerical/tokenizer and reachable protocol-support package payloads, including bundled extensions/Metal kernels; exact content and Python bytecode checks |
+| Execution identity | `execution_manifest.json`: DeepInfer MTP dependency versions and installed module/support-file origins plus exact native/asset payloads; preserved OFF also retains full Python payload/bytecode checks |
 | Semantic assets | Exact checkpoint metadata, 48 shard byte hashes and recipe tokenizer; existing file-identity cache avoids rescanning unchanged weight files, never trusts LFS metadata alone |
-| Semantic native | Recipe image calls reach OpenCV core/imgproc/imgcodecs; their Homebrew subgraph is exact, conservatively including codecs, compression, OpenBLAS, TBB and Fortran support. Hashes inherit the previous qualified candidate, not today's observation |
+| Semantic native | Recipe 0.2 wheel-owned native graph is exact; original/preserved Recipe uses the qualified Homebrew semantic subgraph. Native hashes come from artifact authorities, not today's observation |
 | Host compatibility | Apple Silicon, supported macOS 26 ABI family, Python 3.13 >= 3.13.15, M3 Ultra/512 GB MTP capacity; successfully loaded native recipe with required semantic methods; resolved native graph and consumer/provider Mach-O ABI contracts. No OS patch equality, unrelated distribution inventory or host-closure SHA equality |
 | Build provenance | Source commit plus package-input digest (including uncommitted input), attributed exports/patches, native wheel/toolchain provenance and lockfiles. Retained for audit/reproduction; never compared to today's checkout, compiler or SDK at startup |
 | Qualification evidence | R1, historical `normal-local.json` runtime/closure/environment hashes and support-package candidate evidence. Build qualification inputs only; absent from runtime admission paths |
 
 MLX is platform support **and** model execution. Its executed package, native
 library and kernels remain exact; calling it a host dependency does not excuse
-numerical drift. Likewise tokenizers, Transformers, Pillow and recipe image
-codecs can alter model inputs, so their installed payloads remain exact.
-Transport/protocol Python dependencies are exact where they execute the admitted
-behavior. Unrelated packages, compiler tools and test runners are not inventoried
+numerical drift. Tokenizers, Transformers, Pillow and protocol Python dependencies
+remain version-locked with installed origins in ordinary MTP; this is not a
+Python-source hash seal. Native numerical payloads, tokenizer assets and Recipe
+image-codec libraries remain byte-exact. Preserved OFF retains its stronger Python
+payload/bytecode equality checks. Unrelated packages, compiler tools and test runners are not inventoried
 as executable authority. Stdlib/system frameworks use the supported host ABI
 contract rather than an inventory of the macOS shared cache.
 
@@ -98,8 +119,9 @@ is not relabeled as a new numerical/near-1M or general-runtime release campaign.
 
 1. Develop and qualify in `ds41f-mlx`; retain attributed source/lock/toolchain inputs.
 2. `tools/build_execution_package.py` constructs a profile-specific wheel. It
-   inherits admitted dependency/native identities, refuses candidate drift, and
-   verifies that the wheel ships precisely its declared ds41f payload.
+   inherits admitted dependency/native identities. DeepInfer MTP stages ordinary
+   source and delivery metadata without Python-source sealing; preserved OFF still
+   verifies exact declared payload equality.
 3. Publish the wheel with its SHA and affected qualification. Install non-editably
    into a provisioned environment; never copy a mutable checkout into import paths.
 4. Startup verifies installed execution and assets separately from host compatibility.
