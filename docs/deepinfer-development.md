@@ -1123,3 +1123,129 @@ not full qualification, capacity/performance/soak, arbitrary tool execution,
 Messages or Harness authority. No scheduler, kernel, Vision redesign, OFF cleanup,
 deployment, new source/package fingerprint infrastructure or release promotion.
 **Stop here; Messages and Harness implementation has not begun.**
+
+## Recipe 0.2 — native Messages semantic ownership
+
+Follow-up to the preceding boundary, based on DeepInfer
+`ac457c2a754098734fbf33724cbe9dbac2b8d522`. Extended only the existing consolidated
+`docs/recipe-02-native-semantic-boundary.patch`, still against official Recipe
+0.2.0 `93b0fd229cc9ffa6b1a8c63d42b0bf741bbec170`. This establishes the
+native/Python Messages boundary, **not Messages HTTP or application authority**.
+
+### Ownership and protocol design
+
+Inspected the official Messages generator, schema/accumulator, request conversion,
+Python response bindings and existing Chat semantic extension before changing them.
+Messages now owns an OS-seeded, cloneable `StdRng`, using the same existing
+`new_tool_call_id_with_rng` as Chat. The official index, 20 random alphanumerics,
+empty-thinking `ET_` rule and four-digit XXH3 checksum are unchanged. A snapshot
+preserves future draws; rejected candidates spend only their fork's RNG. It is
+not a newly seeded request, identity normalization or global ID reservation.
+
+- `MessagesChunkGenerator` is cloneable, including active block/index, signature,
+  reasoning content, usage and lifecycle. It runs through the existing
+  `SemanticState<G>` Decoder/OutputParser/PendingOutput pipeline. No Messages
+  parser, DSML recognizer, alternate finish logic or MTP ownership was added.
+- The Python owner became `SemanticOwner<G>` with one shared session-method macro
+  for the two official, request-local generators. Chat's public API, lifecycle
+  and proof rules are unchanged; arbitrary externally effectful generators are
+  not admitted by this binding. `MessagesSemanticSession(generator, options,
+  tokenizer)` transfers the official generator once and retains the tokenizer.
+- Messages exposes the same `push`, `preview_tokens`, explicit EOF `finish`,
+  `status` and idempotent cancellation `close`. Rows remain `(revision,
+  token_frontier, native_events, new_argument_ends, finished,
+  tool_block_finished)`; previews return base revision/frontier, exact candidate
+  IDs and projected per-operation rows. One token per push/preview row preserves
+  token attribution. Ready and backend Finish are separate operations. No
+  implicit EOF, token-history replay, silent trailing candidates or live mutation
+  on rejected previews. Canonical native errors close the owner.
+- Events are official `MessagesStreamEvent` objects: `message_start`, thinking
+  deltas/signatures, text, `tool_use`, fragmented `input_json_delta`, block stops,
+  final usage/stop reason and `message_stop` (including official `ping`). No Chat
+  response structures or event normalization are used for Messages.
+- `MessagesResponse.fork()` clones the official accumulator **including its
+  private pending JSON-fragment map**. `accumulate_copy(event)` retains the native
+  streaming payload while invoking official accumulation; existing consuming
+  `accumulate` remains available. Truncated/invalid JSON retains upstream `{}`
+  behavior, not an invented validity or execution guarantee. Python exports and
+  typing accompany the binding.
+
+Argument-end observations retain the official early `</` + special DSML endpoint,
+not the complete `invoke>` suffix. Complete arguments, the full outer tool-block
+marker, assistant-response completion and application permission remain separate.
+The tool-block bit is the existing **live-parser** observation, not sticky history:
+Finish/EOF releases the parser and the bit becomes false. Callers must retain the
+canonical pre-Finish observation/proof. In particular, upstream backend Stop can
+report Messages `tool_use` even for an incomplete block; this is NOT proof that
+the outer block completed. Length reports `max_tokens`; actual EOF is not backend
+Stop. No certification check was weakened to accept these terminal events.
+
+### Isolated validation
+
+Fresh detached source `/private/tmp/ds41f-messages-src`, fresh Python 3.14 venv
+`/private/tmp/ds41f-messages-venv`, local wheel output
+`/private/tmp/ds41f-messages-wheels`. Built with the existing scratch maturin and
+shared Cargo target only, OpenCV 4 selected through `PKG_CONFIG_PATH`, and
+`--skip-auditwheel` as in the previous local boundary proof. No installed Runtime,
+deployment or dependency-source modification. Final patch passed `git apply
+--check` in a second clean detached worktree at the exact upstream release.
+
+Commands/results (logs `/private/tmp/ds41f-messages-{build,python-tests,all-native,runtime-tests}.log`):
+
+```sh
+# In patched official source; CARGO_TARGET_DIR=/private/tmp/ds41f-recipe-02/target
+cargo test --locked -p deepseek-recipe
+# 54 passed: previous native-boundary, processor and protocol tests included
+/private/tmp/ds41f-messages-venv/bin/python -m pytest -q \
+  deepseek-recipe-python/tests/test_messages_semantic_session.py \
+  deepseek-recipe-python/tests/test_semantic_session.py \
+  deepseek-recipe-python/tests/test_bindings.py
+# 65 passed: 13 Messages cases plus all 52 previous Python cases
+# In ds41f, read-only existing scratch omlx source on PYTHONPATH:
+PYTHONPATH="$PWD:/private/tmp/ds41f-recipe02-runtime313-omlx" \
+  /private/tmp/ds41f-messages-venv/bin/python -m pytest -q \
+  tests/test_recipe02_semantic_guard.py tests/test_recipe02_chat_boundary.py
+# 24 passed; unchanged Chat guard and boundary
+```
+
+The Messages native test uses **one request's cloned generator** to compare exact
+full standard-processor versus semantic-state event streams and accumulated
+responses, IDs/signatures included, for empty/nonempty thinking and Stop/Length/
+actual EOF. It checks ID format, index, `ET_`, checksum, repeated previews,
+rejected complete candidates and native-error forks. All three previous native
+boundary tests are reused unchanged except registration of the Messages submodule.
+
+Python tests compare repeated whole and incremental previews to canonical rows
+and prefix accumulators with **nothing removed**. They cover multiple/fragmented
+calls, accumulator forks with pending JSON, exact argument endpoints, complete
+versus incomplete outer blocks, completed arguments without a completed block,
+Stop/Length/EOF, user stop, rejected/failed previews, one-use ownership, close/GC,
+special versus ordinary-token marker spelling, UTF-8 splitting and forced
+replacement before a special token. Official thinking signatures and tool IDs
+round-trip through strict Messages continuation conversion; `ET_` permits omitted
+empty thinking, while omitted nonempty thinking correctly rejects. A separate
+Python standard-processor comparison removes ONLY independently seeded tool IDs;
+the native same-request comparison removes nothing. Early test assumptions about
+constructor keyword arguments, the released parser bit and incomplete-block Stop
+were corrected to assert official behavior, not patched around in production.
+
+Initial ds41f regression attempts in the fresh venv lacked numpy/omlx/MLX/MLX-LM;
+installed test dependencies only there, and referenced existing scratch omlx source
+read-only. Final result is the complete 24-test pass, without model loading or
+inference. No checkpoint scan, model execution, portable-wheel qualification or
+deployed-installation claim accompanies these protocol-only tests.
+
+### Remaining integration boundary — stop here
+
+Messages HTTP admission, prompt/request policy, SSE transport/cancellation,
+response reconstruction and continuation ownership remain future work. Application
+integration must bind request/session lifetime, revision/frontier and exact candidate
+IDs, fork the **Messages** accumulator, compare exact projected/canonical events
+and prefix responses with IDs/signatures intact, reject stale/foreign/mismatched
+proofs, and preserve the pre-Finish full-block observation separately from
+argument completion and Stop/Length/EOF. Tool schema/argument validation, permission,
+side-effect execution and result submission remain application decisions, never
+native observations or a `tool_use` stop reason. No Messages HTTP endpoint, Harness,
+Files API, second MTP owner, Scheduler/Target/DSpark/Vision/numerical/cache redesign,
+new patch layer/installer/hash seal, stable Flash-1017 branch or deployment change.
+**Stop at this native/Python boundary; no application integration begun.**

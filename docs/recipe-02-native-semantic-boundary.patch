@@ -1,25 +1,27 @@
 diff --git a/deepseek-recipe-python/python/deepseek_recipe/__init__.py b/deepseek-recipe-python/python/deepseek_recipe/__init__.py
-index bb3879f..691766e 100644
+index bb3879f..2eda66d 100644
 --- a/deepseek-recipe-python/python/deepseek_recipe/__init__.py
 +++ b/deepseek-recipe-python/python/deepseek_recipe/__init__.py
-@@ -48,6 +48,7 @@ from ._native import (
+@@ -48,6 +48,8 @@ from ._native import (
      SpecialToken,
      SpecialTokens,
      StreamProcessor,
 +    ChatCompletionSemanticSession,
++    MessagesSemanticSession,
      SystemMessage,
      ThinkingInitialStage,
      Tokenizer,
-@@ -108,6 +109,7 @@ __all__ = [
+@@ -108,6 +110,8 @@ __all__ = [
      "SpecialToken",
      "SpecialTokens",
      "StreamProcessor",
 +    "ChatCompletionSemanticSession",
++    "MessagesSemanticSession",
      "SystemMessage",
      "ThinkingInitialStage",
      "Tokenizer",
 diff --git a/deepseek-recipe-python/python/deepseek_recipe/_native.pyi b/deepseek-recipe-python/python/deepseek_recipe/_native.pyi
-index 856de40..528de94 100644
+index 856de40..6aff438 100644
 --- a/deepseek-recipe-python/python/deepseek_recipe/_native.pyi
 +++ b/deepseek-recipe-python/python/deepseek_recipe/_native.pyi
 @@ -927,6 +927,10 @@ class ChatCompletionResponse:
@@ -33,7 +35,18 @@ index 856de40..528de94 100644
  
      def to_json(self) -> str: ...
      @staticmethod
-@@ -1002,6 +1006,52 @@ class Tokenizer:
+@@ -961,6 +965,10 @@ class MessagesResponse:
+     ) -> None: ...
+     def accumulate(self, chunk: MessagesStreamEvent) -> None:
+         """Consume this event and apply its delta to the response."""
++    def accumulate_copy(self, chunk: MessagesStreamEvent) -> None:
++        """Apply the official event while retaining its streaming payload."""
++    def fork(self) -> MessagesResponse:
++        """Clone the official accumulator, including buffered partial JSON."""
+ 
+     def to_json(self) -> str: ...
+     @staticmethod
+@@ -1002,6 +1010,74 @@ class Tokenizer:
          prompt encoding.
          """
  
@@ -83,23 +96,46 @@ index 856de40..528de94 100644
 +    def close(self) -> None:
 +        """Idempotent release without successful completion. GC also releases."""
 +
++MessagesSemanticRow = tuple[int, int, list[MessagesStreamEvent], list[tuple[int, int]], bool, bool]
++
++class MessagesSemanticSession:
++    """Official Messages owner with ChatCompletionSemanticSession's lifecycle
++    and preview rules, but native Messages events and accumulation only.
++    Argument-end and tool-block completion are NOT execution permission.
++    """
++
++    def __init__(self, generator: MessagesChunkGenerator,
++                 options: ParsingOptions, tokenizer: Tokenizer) -> None: ...
++    @property
++    def status(self) -> tuple[int, int, bool, bool]: ...
++    def push(self, chunk: InferenceChunk) -> MessagesSemanticRow: ...
++    def preview_tokens(self, token_ids: list[int], *,
++                       finish: InferenceChunk | None = None,
++                       eof: bool = False
++                       ) -> tuple[int, int, list[int], list[MessagesSemanticRow]]: ...
++    def finish(self) -> MessagesSemanticRow:
++        """Explicit canonical EOF, not backend Stop."""
++    def close(self) -> None:
++        """Idempotent cancellation without successful protocol completion."""
++
  class StreamProcessor:
      """Adapt Python inference chunks to the Rust processor's input stream."""
  
 diff --git a/deepseek-recipe-python/src/lib.rs b/deepseek-recipe-python/src/lib.rs
-index 6fb85bd..b97695f 100644
+index 6fb85bd..b2e422c 100644
 --- a/deepseek-recipe-python/src/lib.rs
 +++ b/deepseek-recipe-python/src/lib.rs
-@@ -91,6 +91,7 @@ fn _native(m: &Bound<'_, PyModule>) -> PyResult<()> {
+@@ -91,6 +91,8 @@ fn _native(m: &Bound<'_, PyModule>) -> PyResult<()> {
      m.add_class::<PyMessagesResponse>()?;
      m.add_class::<PyTokenizer>()?;
      m.add_class::<PyStreamProcessor>()?;
 +    m.add_class::<response::PyChatCompletionSemanticSession>()?;
++    m.add_class::<response::PyMessagesSemanticSession>()?;
      m.add_class::<PyConversation>()?;
      m.add_class::<PyRenderedPrompt>()?;
      m.add_class::<PyMessage>()?;
 diff --git a/deepseek-recipe-python/src/response.rs b/deepseek-recipe-python/src/response.rs
-index cee290c..c22d563 100644
+index cee290c..334a6ee 100644
 --- a/deepseek-recipe-python/src/response.rs
 +++ b/deepseek-recipe-python/src/response.rs
 @@ -32,6 +32,9 @@ use crate::inference::PyInferenceChunk;
@@ -107,7 +143,7 @@ index cee290c..c22d563 100644
  use crate::tokenizer::PyTokenizer;
  
 +mod semantic;
-+pub(crate) use semantic::PyChatCompletionSemanticSession;
++pub(crate) use semantic::{PyChatCompletionSemanticSession, PyMessagesSemanticSession};
 +
  /// A Rust Chat Completions generator consumed by a stream processor.
  #[pyclass(
@@ -149,26 +185,64 @@ index cee290c..c22d563 100644
  );
  response_bindings!(
      PyResponsesStreamEvent,
+@@ -289,7 +306,18 @@ response_bindings!(
+     "MessagesStreamEvent",
+     PyMessagesResponse,
+     MessagesResponse,
+-    "MessagesResponse"
++    "MessagesResponse",
++    /// Fork the official accumulator, including buffered partial tool inputs.
++    fn fork(&self) -> Self {
++        Self {
++            inner: self.inner.clone(),
++        }
++    },
++    /// Retain an official event for streaming while accumulating its delta.
++    fn accumulate_copy(&mut self, chunk: &PyMessagesStreamEvent) -> PyResult<()> {
++        self.inner.accumulate(chunk.as_core()?.clone());
++        Ok(())
++    }
+ );
+ 
+ enum ProtocolChunk {
 diff --git a/deepseek-recipe-python/src/response/semantic.rs b/deepseek-recipe-python/src/response/semantic.rs
 new file mode 100644
-index 0000000..5e68b48
+index 0000000..59700ae
 --- /dev/null
 +++ b/deepseek-recipe-python/src/response/semantic.rs
-@@ -0,0 +1,189 @@
+@@ -0,0 +1,223 @@
 +use super::*;
 +
 +// Each row is one actual input operation, never a text-offset token estimate.
 +type SemanticRow = (u64, u64, Vec<Py<PyAny>>, Vec<(usize, usize)>, bool, bool);
 +type SemanticPreview = (u64, u64, Vec<u32>, Vec<SemanticRow>);
 +
++// Only the official, request-local generators are admitted here. Clone alone
++// does not guarantee speculative safety for externally effectful generators.
++trait SemanticGenerator: ChunkGenerator + Clone {
++    fn protocol_chunk(chunk: Self::Chunk) -> ProtocolChunk;
++}
++
++impl SemanticGenerator for ChatCompletionChunkGenerator {
++    fn protocol_chunk(chunk: Self::Chunk) -> ProtocolChunk {
++        ProtocolChunk::ChatCompletion(chunk)
++    }
++}
++
++impl SemanticGenerator for MessagesChunkGenerator {
++    fn protocol_chunk(chunk: Self::Chunk) -> ProtocolChunk {
++        ProtocolChunk::Messages(chunk)
++    }
++}
++
 +#[derive(Clone)]
-+struct ChatSemanticOwner {
-+    core: Option<deepseek_recipe::stream::SemanticState<ChatCompletionChunkGenerator>>,
++struct SemanticOwner<G: SemanticGenerator> {
++    core: Option<deepseek_recipe::stream::SemanticState<G>>,
 +    revision: u64,
 +    frontier: u64,
 +}
 +
-+impl ChatSemanticOwner {
++impl<G: SemanticGenerator> SemanticOwner<G> {
 +    fn live(&self) -> PyResult<()> {
 +        match &self.core {
 +            Some(core) if !core.is_finished() => Ok(()),
@@ -181,7 +255,7 @@ index 0000000..5e68b48
 +    fn step(
 +        &mut self,
 +        chunk: Option<InferenceChunk>,
-+    ) -> PyResult<(Vec<ChatCompletionChunk>, Vec<(usize, usize)>, bool)> {
++    ) -> PyResult<(Vec<G::Chunk>, Vec<(usize, usize)>, bool)> {
 +        self.live()?;
 +        let core = self.core.as_mut().unwrap();
 +        let first = core.completed_calls().len();
@@ -209,7 +283,7 @@ index 0000000..5e68b48
 +        let (chunks, calls, finished) = self.step(chunk)?;
 +        let chunks = chunks
 +            .into_iter()
-+            .map(|c| ProtocolChunk::ChatCompletion(c).into_python(py))
++            .map(|c| G::protocol_chunk(c).into_python(py))
 +            .collect::<PyResult<_>>()?;
 +        let tool_block_finished = self.core.as_ref().is_some_and(|c| c.tool_block_finished());
 +        Ok((
@@ -223,127 +297,375 @@ index 0000000..5e68b48
 +    }
 +}
 +
-+/// One request's official Chat Completions consuming pipeline. No history replay.
-+#[pyclass(
-+    name = "ChatCompletionSemanticSession",
-+    module = "deepseek_recipe._native",
-+    frozen
-+)]
-+pub(crate) struct PyChatCompletionSemanticSession {
-+    owner: Mutex<ChatSemanticOwner>,
-+}
++// Both protocols use exactly the same lifecycle, frontier and preview rules.
++macro_rules! semantic_session {
++    ($session:ident, $name:literal, $generator:ident, $core:ty) => {
++        /// One request's official consuming pipeline. No history replay.
++        #[pyclass(name = $name, module = "deepseek_recipe._native", frozen)]
++        pub(crate) struct $session {
++            owner: Mutex<SemanticOwner<$core>>,
++        }
 +
-+#[pymethods]
-+impl PyChatCompletionSemanticSession {
-+    #[new]
-+    fn new(
-+        generator: &mut PyChatCompletionChunkGenerator,
-+        options: &PyParsingOptions,
-+        tokenizer: &PyTokenizer,
-+    ) -> PyResult<Self> {
-+        let core =
-+            StreamProcessor::new(take_generator(&mut generator.inner)?, options.inner.clone())
++        #[pymethods]
++        impl $session {
++            #[new]
++            fn new(
++                generator: &mut $generator,
++                options: &PyParsingOptions,
++                tokenizer: &PyTokenizer,
++            ) -> PyResult<Self> {
++                let core = StreamProcessor::new(
++                    take_generator(&mut generator.inner)?,
++                    options.inner.clone(),
++                )
 +                .with_tokenizer(tokenizer.inner.clone())
 +                .into_state();
-+        Ok(Self {
-+            owner: Mutex::new(ChatSemanticOwner {
-+                core: Some(core),
-+                revision: 0,
-+                frontier: 0,
-+            }),
-+        })
-+    }
++                Ok(Self {
++                    owner: Mutex::new(SemanticOwner {
++                        core: Some(core),
++                        revision: 0,
++                        frontier: 0,
++                    }),
++                })
++            }
 +
-+    /// Consume Ready, exactly one token (with optional logprobs), or backend Finish.
-+    /// Returns (revision, token_frontier, native_chunks, new_completed_calls, finished, tool_block_finished).
-+    /// Completed calls are (index, absolute decoded source byte endpoint), NOT tool authority.
-+    fn push(&self, py: Python<'_>, chunk: &PyInferenceChunk) -> PyResult<SemanticRow> {
-+        let chunk = chunk.to_core();
-+        match &chunk {
-+            InferenceChunk::Tokens { token_ids, .. } if token_ids.len() == 1 => (),
-+            InferenceChunk::Ready { .. } | InferenceChunk::Finish { .. } => (),
-+            _ => return Err(PyTypeError::new_err("expected Ready, one token, or Finish")),
++            /// Consume Ready, exactly one token (with optional logprobs), or backend Finish.
++            /// Returns (revision, token_frontier, native_chunks, new_completed_calls, finished, tool_block_finished).
++            /// Completed calls are (index, absolute decoded source byte endpoint), NOT tool authority.
++            fn push(&self, py: Python<'_>, chunk: &PyInferenceChunk) -> PyResult<SemanticRow> {
++                let chunk = chunk.to_core();
++                match &chunk {
++                    InferenceChunk::Tokens { token_ids, .. } if token_ids.len() == 1 => (),
++                    InferenceChunk::Ready { .. } | InferenceChunk::Finish { .. } => (),
++                    _ => return Err(PyTypeError::new_err("expected Ready, one token, or Finish")),
++                }
++                self.owner
++                    .lock()
++                    .map_err(|_| PyRuntimeError::new_err("semantic lock poisoned"))?
++                    .row(py, Some(chunk))
++            }
++
++            /// Fork once, feed candidates one token per row, optionally Finish or EOF.
++            /// Returns (base_revision, base_frontier, exact_candidate_ids, rows).
++            /// No implicit EOF. A terminal row before remaining tokens raises; no live mutation.
++            #[pyo3(signature = (token_ids, *, finish = None, eof = false))]
++            fn preview_tokens(
++                &self,
++                py: Python<'_>,
++                token_ids: Vec<u32>,
++                finish: Option<&PyInferenceChunk>,
++                eof: bool,
++            ) -> PyResult<SemanticPreview> {
++                let finish = finish.map(PyInferenceChunk::to_core);
++                if (finish.is_some() && eof)
++                    || finish
++                        .as_ref()
++                        .is_some_and(|c| !matches!(c, InferenceChunk::Finish { .. }))
++                {
++                    return Err(PyTypeError::new_err("choose backend Finish or EOF"));
++                }
++                let mut fork = self
++                    .owner
++                    .lock()
++                    .map_err(|_| PyRuntimeError::new_err("semantic lock poisoned"))?
++                    .clone();
++                fork.live()?;
++                let (revision, frontier) = (fork.revision, fork.frontier);
++                let mut rows = Vec::new();
++                for id in &token_ids {
++                    rows.push(fork.row(
++                        py,
++                        Some(InferenceChunk::Tokens {
++                            token_ids: vec![*id],
++                            logprobs: None,
++                        }),
++                    )?);
++                }
++                if finish.is_some() || eof {
++                    rows.push(fork.row(py, finish)?);
++                }
++                Ok((revision, frontier, token_ids, rows))
++            }
++
++            /// Explicit canonical EOF; does not invent a backend Stop.
++            fn finish(&self, py: Python<'_>) -> PyResult<SemanticRow> {
++                self.owner
++                    .lock()
++                    .map_err(|_| PyRuntimeError::new_err("semantic lock poisoned"))?
++                    .row(py, None)
++            }
++
++            /// (revision, token_frontier, finished, closed). Close is not successful EOF.
++            #[getter]
++            fn status(&self) -> PyResult<(u64, u64, bool, bool)> {
++                let owner = self
++                    .owner
++                    .lock()
++                    .map_err(|_| PyRuntimeError::new_err("semantic lock poisoned"))?;
++                Ok((
++                    owner.revision,
++                    owner.frontier,
++                    owner.core.as_ref().is_some_and(|c| c.is_finished()),
++                    owner.core.is_none(),
++                ))
++            }
++
++            /// Idempotent release without protocol output; also released by Python GC.
++            fn close(&self) -> PyResult<()> {
++                self.owner
++                    .lock()
++                    .map_err(|_| PyRuntimeError::new_err("semantic lock poisoned"))?
++                    .core = None;
++                Ok(())
++            }
 +        }
-+        self.owner
-+            .lock()
-+            .map_err(|_| PyRuntimeError::new_err("semantic lock poisoned"))?
-+            .row(py, Some(chunk))
-+    }
-+
-+    /// Fork once, feed candidates one token per row, optionally Finish or EOF.
-+    /// Returns (base_revision, base_frontier, exact_candidate_ids, rows).
-+    /// No implicit EOF. A terminal row before remaining tokens raises; no live mutation.
-+    #[pyo3(signature = (token_ids, *, finish = None, eof = false))]
-+    fn preview_tokens(
-+        &self,
-+        py: Python<'_>,
-+        token_ids: Vec<u32>,
-+        finish: Option<&PyInferenceChunk>,
-+        eof: bool,
-+    ) -> PyResult<SemanticPreview> {
-+        let finish = finish.map(PyInferenceChunk::to_core);
-+        if (finish.is_some() && eof)
-+            || finish
-+                .as_ref()
-+                .is_some_and(|c| !matches!(c, InferenceChunk::Finish { .. }))
-+        {
-+            return Err(PyTypeError::new_err("choose backend Finish or EOF"));
-+        }
-+        let mut fork = self
-+            .owner
-+            .lock()
-+            .map_err(|_| PyRuntimeError::new_err("semantic lock poisoned"))?
-+            .clone();
-+        fork.live()?;
-+        let (revision, frontier) = (fork.revision, fork.frontier);
-+        let mut rows = Vec::new();
-+        for id in &token_ids {
-+            rows.push(fork.row(
-+                py,
-+                Some(InferenceChunk::Tokens {
-+                    token_ids: vec![*id],
-+                    logprobs: None,
-+                }),
-+            )?);
-+        }
-+        if finish.is_some() || eof {
-+            rows.push(fork.row(py, finish)?);
-+        }
-+        Ok((revision, frontier, token_ids, rows))
-+    }
-+
-+    /// Explicit canonical EOF; does not invent a backend Stop.
-+    fn finish(&self, py: Python<'_>) -> PyResult<SemanticRow> {
-+        self.owner
-+            .lock()
-+            .map_err(|_| PyRuntimeError::new_err("semantic lock poisoned"))?
-+            .row(py, None)
-+    }
-+
-+    /// (revision, token_frontier, finished, closed). Close is not successful EOF.
-+    #[getter]
-+    fn status(&self) -> PyResult<(u64, u64, bool, bool)> {
-+        let owner = self
-+            .owner
-+            .lock()
-+            .map_err(|_| PyRuntimeError::new_err("semantic lock poisoned"))?;
-+        Ok((
-+            owner.revision,
-+            owner.frontier,
-+            owner.core.as_ref().is_some_and(|c| c.is_finished()),
-+            owner.core.is_none(),
-+        ))
-+    }
-+
-+    /// Idempotent release without protocol output; also released by Python GC.
-+    fn close(&self) -> PyResult<()> {
-+        self.owner
-+            .lock()
-+            .map_err(|_| PyRuntimeError::new_err("semantic lock poisoned"))?
-+            .core = None;
-+        Ok(())
-+    }
++    };
 +}
++
++semantic_session!(
++    PyChatCompletionSemanticSession,
++    "ChatCompletionSemanticSession",
++    PyChatCompletionChunkGenerator,
++    ChatCompletionChunkGenerator
++);
++semantic_session!(
++    PyMessagesSemanticSession,
++    "MessagesSemanticSession",
++    PyMessagesChunkGenerator,
++    MessagesChunkGenerator
++);
+diff --git a/deepseek-recipe-python/tests/test_messages_semantic_session.py b/deepseek-recipe-python/tests/test_messages_semantic_session.py
+new file mode 100644
+index 0000000..62f1e1e
+--- /dev/null
++++ b/deepseek-recipe-python/tests/test_messages_semantic_session.py
+@@ -0,0 +1,226 @@
++"""Native Messages boundary, not HTTP/application execution authority."""
++import gc
++import json
++import re
++
++import pytest
++import deepseek_recipe as d
++import test_semantic_session as shared
++from test_semantic_session import PATH, PREFIX, END, encode, row_value
++
++
++def setup(stop_sequences=None, thinking=False, signature=None):
++    tok = d.Tokenizer.from_file(str(PATH))
++    converted = d.MessagesRequest({
++        'model': 'DeepSeek-V4.1-Flash', 'max_tokens': 256,
++        'messages': [{'role': 'user', 'content': 'hi'}],
++        'thinking': {'type': 'enabled' if thinking else 'disabled'},
++        'tools': [{'name': 'f', 'input_schema': {'type': 'object'}},
++                  {'name': 'g', 'input_schema': {'type': 'object'}}],
++    }).convert(d.ConversionOptions())
++    def generator():
++        g = d.MessagesRequest.chunk_generator(converted, 'response', 'model')
++        return g if signature is None else g.with_signature(signature)
++    options = converted.parsing_options
++    if stop_sequences is not None:
++        options.stop_sequences = stop_sequences
++    return tok, converted, generator, d.MessagesSemanticSession(generator(), options, tok)
++
++
++def response():
++    return d.MessagesResponse('response', 'model', 0, 0, 0)
++
++
++def apply(resp, chunks):
++    for chunk in chunks:
++        before = chunk.to_json()
++        resp.accumulate_copy(chunk)
++        assert chunk.to_json() == before
++
++
++@pytest.mark.parametrize('thinking,reasoning,signature', [
++    (False, '', None), (True, '', None), (True, 'inspect carefully', 'opaque-signature'),
++])
++def test_exact_events_ids_and_official_accumulation(thinking, reasoning, signature):
++    tok, converted, generator, session = setup(thinking=thinking, signature=signature)
++    text = ((reasoning + '</think>') if thinking else '') + 'intro ' + PREFIX + 'Tokyo🤭' + END
++    text += '<｜DSML｜invoke name="g"></｜DSML｜invoke></｜DSML｜tool_calls>'
++    ids = encode(tok, text)
++    ready = d.InferenceChunk.ready(prompt_usage=d.PromptUsage(prompt_tokens=20, prompt_cache_hit_tokens=7))
++    apply_response = response()
++    start = session.push(ready)
++    start_events = [json.loads(c.to_json()) for c in start[2]]
++    assert start_events[0]['type'] == 'message_start'
++    apply(apply_response, start[2])
++    before = session.status
++    projected = session.preview_tokens(ids)
++    rejected = session.preview_tokens(encode(tok, (('</think>') if thinking else '') +
++        '<｜DSML｜tool_calls><｜DSML｜invoke name="rejected"></｜DSML｜invoke>'))
++    assert any(r[3] for r in rejected[3])
++    assert [row_value(r) for r in projected[3]] == [row_value(r) for r in session.preview_tokens(ids)[3]]
++    assert session.status == before
++    predicted = apply_response.fork()
++    calls, events = [], []
++    partial_fork = None
++    for n, token in enumerate(ids):
++        one = session.preview_tokens([token])
++        actual = session.push(d.InferenceChunk.tokens([token]))
++        assert row_value(actual) == row_value(one[3][0]) == row_value(projected[3][n])
++        calls.extend(actual[3])
++        events.extend(json.loads(c.to_json()) for c in actual[2])
++        apply(apply_response, actual[2])
++        apply(predicted, projected[3][n][2])
++        assert apply_response.to_json() == predicted.to_json()
++        # Fork while the official accumulator has unparsed JSON fragments.
++        if partial_fork is None and any(e.get('delta', {}).get('type') == 'input_json_delta'
++                                        for e in events):
++            partial_fork = apply_response.fork()
++        elif partial_fork is not None:
++            apply(partial_fork, actual[2])
++            assert partial_fork.to_json() == apply_response.to_json()
++    assert len(calls) == 2
++    assert calls[0] == (0, len((text[:text.index(END)] + END[:-len('invoke>')]).encode()))
++    assert not any(r[5] for r in projected[3][:-1]) and projected[3][-1][5]
++    assert all(not r[4] for r in projected[3])
++    stop = d.InferenceChunk.finish(d.InferenceFinishReason.Stop)
++    p = session.preview_tokens([], finish=stop)[3][0]
++    a = session.push(stop)
++    assert row_value(p) == row_value(a)
++    assert a[4] and not a[5]  # live parser released at Finish, not a sticky bit
++    events.extend(json.loads(c.to_json()) for c in a[2])
++    apply(apply_response, a[2])
++    apply(partial_fork, a[2])
++    assert partial_fork.to_json() == apply_response.to_json()
++    body = json.loads(apply_response.to_json())
++    tools = [c for c in body['content'] if c['type'] == 'tool_use']
++    assert [c['input'] for c in tools] == [{'x': 'Tokyo🤭'}, {}]
++    et = 'ET_' if thinking and not reasoning else ''
++    for index, tool in enumerate(tools):
++        assert re.fullmatch(rf'call_{index:02}_{et}[A-Za-z0-9]{{20}}[0-9]{{4}}', tool['id'])
++    assert tools[0]['id'] != tools[1]['id']
++    assert body['stop_reason'] == 'tool_use'
++    assert body['usage']['input_tokens'] == 13
++    assert body['usage']['cache_read_input_tokens'] == 7
++    assert body['usage']['output_tokens'] == len(ids)
++    assert events[-1]['type'] == 'message_stop'
++    assert any(e['type'] == 'content_block_stop' for e in events)
++    if thinking:
++        block = body['content'][0]
++        assert block == {'type': 'thinking', 'thinking': reasoning,
++                         'signature': signature or 'response'}
++        assert any(e.get('delta', {}).get('type') == 'signature_delta' for e in events)
++    # Standard upstream processor has independent randomness. Only independent
++    # tool IDs differ; no event structure, usage, signature or metadata is removed.
++    ordinary = d.StreamProcessor(generator(), converted.parsing_options, tok)
++    official = response()
++    ordinary_events = ordinary.push(ready)
++    # Include message_start separately, already canonically consumed above.
++    all_actual = start_events + events
++    for token in ids:
++        ordinary_events += ordinary.push(d.InferenceChunk.tokens([token]))
++    ordinary_events += ordinary.push(stop)
++    for c in ordinary_events:
++        official.accumulate_copy(c)
++    expected_events = [json.loads(c.to_json()) for c in ordinary_events]
++    def independent_ids(value):
++        if isinstance(value, dict):
++            return {k: ('INDEPENDENT_ID' if k == 'id' and value.get('type') == 'tool_use'
++                        else independent_ids(v)) for k, v in value.items()}
++        if isinstance(value, list):
++            return [independent_ids(v) for v in value]
++        return value
++    assert independent_ids(all_actual) == independent_ids(expected_events)
++    assert independent_ids(body) == independent_ids(json.loads(official.to_json()))
++    ordinary.close()
++    session.close()
++
++    # Feed official output straight back through official Messages conversion.
++    # ET_ is continuation metadata, not cosmetic identity normalization.
++    continuation = {
++        'model': 'DeepSeek-V4.1-Flash', 'max_tokens': 256,
++        'thinking': {'type': 'enabled' if thinking else 'disabled'},
++        'tools': [{'name': 'f', 'input_schema': {'type': 'object'}},
++                  {'name': 'g', 'input_schema': {'type': 'object'}}],
++        'messages': [
++            {'role': 'user', 'content': 'hi'},
++            {'role': 'assistant', 'content': body['content']},
++            {'role': 'user', 'content': [
++                {'type': 'tool_result', 'tool_use_id': t['id'], 'content': 'ok'}
++                for t in tools]},
++        ],
++    }
++    strict = d.ConversionOptions(reasoning_content_behavior=d.ReasoningContentBehavior.Reject)
++    continued = d.MessagesRequest(continuation).convert(strict)
++    assistant = next(m for m in continued.conversation.messages if m.role == 'assistant')
++    assert assistant.reasoning_content == (reasoning if thinking else None)
++    assert [t.id for t in assistant.tool_calls] == [t['id'] for t in tools]
++    if thinking:
++        continuation['messages'][1]['content'] = [b for b in body['content'] if b['type'] != 'thinking']
++        if reasoning:
++            with pytest.raises(d.ConversionError):
++                d.MessagesRequest(continuation).convert(strict)
++        else:
++            continued = d.MessagesRequest(continuation).convert(strict)
++            assistant = next(m for m in continued.conversation.messages if m.role == 'assistant')
++            assert assistant.reasoning_content == ''
++
++
++@pytest.mark.parametrize('special', [False, True])
++def test_reuse_incomplete_and_special_marker_proof(monkeypatch, special):
++    monkeypatch.setattr(shared, 'setup', setup)
++    shared.test_markers_incomplete_arguments_and_candidate_eof(special)
++
++
++def test_reuse_failure_utf8_and_cancellation_proof(monkeypatch):
++    # Reuse the exact established Chat proof against the shared session engine.
++    monkeypatch.setattr(shared, 'setup', setup)
++    monkeypatch.setattr(shared.d, 'ChatCompletionSemanticSession', d.MessagesSemanticSession)
++    shared.test_utf8_failed_preview_finish_and_cleanup()
++
++
++@pytest.mark.parametrize('ending,reason', [('stop', 'tool_use'), ('length', 'max_tokens'), ('eof', 'end_turn')])
++@pytest.mark.parametrize('arguments_complete', [False, True])
++def test_explicit_terminal_and_incomplete_block(ending, reason, arguments_complete):
++    tok, _, _, session = setup()
++    calls = []
++    for token in encode(tok, PREFIX + 'unfinished' + (END if arguments_complete else '')):
++        row = session.push(d.InferenceChunk.tokens([token]))
++        calls.extend(row[3])
++        assert not row[4] and not row[5]
++    assert len(calls) == int(arguments_complete)
++    finish = None if ending == 'eof' else d.InferenceChunk.finish(
++        d.InferenceFinishReason.Stop if ending == 'stop' else d.InferenceFinishReason.Length)
++    before = session.status
++    projected = session.preview_tokens([], finish=finish, eof=ending == 'eof')[3][0]
++    assert session.status == before
++    assert projected[4] and not projected[3] and not projected[5]
++    actual = session.finish() if finish is None else session.push(finish)
++    assert row_value(actual) == row_value(projected)
++    events = [json.loads(c.to_json()) for c in actual[2]]
++    assert events[-1]['type'] == 'message_stop'
++    assert events[-2]['delta']['stop_reason'] == reason
++    with pytest.raises(RuntimeError):
++        session.push(d.InferenceChunk.tokens([1]))
++    session.close()
++    gc.collect()
++
++
++def test_forced_utf8_flush_before_special_and_close():
++    tok, converted, generator, session = setup(thinking=True)
++    session.push(d.InferenceChunk.tokens(tok.encode('🤭')[:1]))
++    ids = encode(tok, '</think>')
++    p = session.preview_tokens(ids)
++    for i, token in enumerate(ids):
++        assert row_value(session.push(d.InferenceChunk.tokens([token]))) == row_value(p[3][i])
++    assert any('�' in c.to_json() for r in p[3] for c in r[2])
++    session.close()
++    assert session.status[2:] == (False, True)
++    with pytest.raises(RuntimeError):
++        session.preview_tokens(ids)
++    # One-use official generator ownership applies to Messages too.
++    g = generator()
++    owner = d.MessagesSemanticSession(g, converted.parsing_options, tok)
++    with pytest.raises(RuntimeError):
++        d.MessagesSemanticSession(g, converted.parsing_options, tok)
++    del owner
++    gc.collect()
 diff --git a/deepseek-recipe-python/tests/test_semantic_session.py b/deepseek-recipe-python/tests/test_semantic_session.py
 new file mode 100644
 index 0000000..a9d4d7b
@@ -533,6 +855,151 @@ index 0000000..a9d4d7b
 +        d.ChatCompletionSemanticSession(g, converted.parsing_options, tok)
 +    del s
 +    gc.collect()
+diff --git a/deepseek-recipe/src/protocol/anthropic/messages/response/chunk_generator.rs b/deepseek-recipe/src/protocol/anthropic/messages/response/chunk_generator.rs
+index b06f882..25be5e8 100644
+--- a/deepseek-recipe/src/protocol/anthropic/messages/response/chunk_generator.rs
++++ b/deepseek-recipe/src/protocol/anthropic/messages/response/chunk_generator.rs
+@@ -1,4 +1,6 @@
+-use crate::protocol::tool_call_id::new_tool_call_id;
++use rand::SeedableRng;
++
++use crate::protocol::tool_call_id::new_tool_call_id_with_rng;
+ use crate::response::ProtocolResponse;
+ use crate::stream::{ChunkGenerator, OutputChunk, PromptUsage};
+ 
+@@ -8,8 +10,10 @@ use super::schema::{
+ };
+ 
+ /// A chunk generator that converts parsed output into Messages events.
+-#[derive(Debug)]
++#[derive(Debug, Clone)]
+ pub struct MessagesChunkGenerator {
++    // Request-local state: forks preserve future IDs without spending live draws.
++    rng: rand::rngs::StdRng,
+     response_id: String,
+     model: String,
+     thinking_mode: bool,
+@@ -23,7 +27,7 @@ pub struct MessagesChunkGenerator {
+     finished: bool,
+ }
+ 
+-#[derive(Debug, PartialEq, Eq)]
++#[derive(Debug, Clone, PartialEq, Eq)]
+ enum MessagesContentBlockKind {
+     Text,
+     Thinking,
+@@ -41,6 +45,7 @@ impl MessagesChunkGenerator {
+     ) -> Self {
+         let response_id = response_id.into();
+         Self {
++            rng: rand::rngs::StdRng::from_os_rng(),
+             signature: response_id.clone(),
+             response_id,
+             model: model.into(),
+@@ -168,7 +173,11 @@ impl ChunkGenerator for MessagesChunkGenerator {
+             }
+             OutputChunk::ToolCallNamed { tool_name } => {
+                 let empty_thinking = self.thinking_mode && self.reasoning_content.is_empty();
+-                let id = new_tool_call_id(self.next_tool_call_index, empty_thinking);
++                let id = new_tool_call_id_with_rng(
++                    self.next_tool_call_index,
++                    empty_thinking,
++                    &mut self.rng,
++                );
+                 self.next_tool_call_index += 1;
+                 self.open_block(
+                     MessagesContentBlockKind::ToolUse,
+diff --git a/deepseek-recipe/src/protocol/anthropic/messages/response/schema.rs b/deepseek-recipe/src/protocol/anthropic/messages/response/schema.rs
+index dbe8f94..0e7f3b7 100644
+--- a/deepseek-recipe/src/protocol/anthropic/messages/response/schema.rs
++++ b/deepseek-recipe/src/protocol/anthropic/messages/response/schema.rs
+@@ -14,7 +14,7 @@ use super::chunk_generator::MessagesChunkGenerator;
+ /// Tool argument fragments are parsed when their content block stops. Invalid
+ /// or truncated JSON produces `{}`. Events with invalid indices or incompatible
+ /// delta types leave the response unchanged.
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ pub struct MessagesResponse {
+     pub id: String,
+     #[serde(rename = "type")]
+@@ -29,20 +29,20 @@ pub struct MessagesResponse {
+     partial_tool_inputs: BTreeMap<usize, String>,
+ }
+ 
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ #[serde(rename_all = "snake_case")]
+ pub enum MessagesResponseType {
+     Message,
+ }
+ 
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ #[serde(rename_all = "snake_case")]
+ pub enum MessagesRole {
+     Assistant,
+ }
+ 
+ /// A complete content block, distinct from the delta applied to it.
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ #[serde(tag = "type", rename_all = "snake_case")]
+ pub enum MessagesResponseContentBlock {
+     Text {
+@@ -60,7 +60,7 @@ pub enum MessagesResponseContentBlock {
+ }
+ 
+ /// The delta of a `content_block_delta` event.
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ #[serde(tag = "type", rename_all = "snake_case")]
+ pub enum MessagesContentBlockDelta {
+     TextDelta { text: String },
+@@ -69,7 +69,7 @@ pub enum MessagesContentBlockDelta {
+     InputJsonDelta { partial_json: String },
+ }
+ 
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ #[serde(rename_all = "snake_case")]
+ pub enum MessagesStopReason {
+     EndTurn,
+@@ -92,7 +92,7 @@ impl From<FinishReason> for MessagesStopReason {
+ }
+ 
+ /// The delta of a `message_delta` event.
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ pub struct MessagesMessageDelta {
+     pub stop_reason: Option<MessagesStopReason>,
+     pub stop_sequence: Option<String>,
+@@ -100,7 +100,7 @@ pub struct MessagesMessageDelta {
+ 
+ /// Token usage in Messages format. `input_tokens` excludes prompt cache hits,
+ /// which `cache_read_input_tokens` reports.
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ pub struct MessagesUsage {
+     pub input_tokens: usize,
+     pub cache_creation_input_tokens: usize,
+@@ -109,7 +109,7 @@ pub struct MessagesUsage {
+     pub service_tier: MessagesServiceTier,
+ }
+ 
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ #[serde(rename_all = "snake_case")]
+ pub enum MessagesServiceTier {
+     Standard,
+@@ -131,7 +131,7 @@ impl From<(PromptUsage, CompletionUsage)> for MessagesUsage {
+ 
+ /// A Messages stream event. Serialize it as JSON and obtain its SSE event name
+ /// with [`Self::event_type`]. The caller supplies SSE framing and transport.
+-#[derive(Debug, Serialize)]
++#[derive(Debug, Clone, Serialize)]
+ #[serde(tag = "type", rename_all = "snake_case")]
+ pub enum MessagesStreamEvent {
+     MessageStart {
 diff --git a/deepseek-recipe/src/protocol/openai/chat_completion/response/chunk_generator.rs b/deepseek-recipe/src/protocol/openai/chat_completion/response/chunk_generator.rs
 index ab2832d..7d9f41a 100644
 --- a/deepseek-recipe/src/protocol/openai/chat_completion/response/chunk_generator.rs
@@ -827,11 +1294,12 @@ index ce2f60e..74874fe 100644
  pub enum StreamError {
 diff --git a/deepseek-recipe/src/stream/native_boundary_tests.rs b/deepseek-recipe/src/stream/native_boundary_tests.rs
 new file mode 100644
-index 0000000..6da576d
+index 0000000..aa95cd7
 --- /dev/null
 +++ b/deepseek-recipe/src/stream/native_boundary_tests.rs
-@@ -0,0 +1,266 @@
+@@ -0,0 +1,267 @@
 +//! Focused executable proof of the Recipe 0.2 consuming snapshot boundary.
++mod messages;
 +use super::*;
 +use crate::protocol::openai::chat_completion::response::{
 +    ChatCompletionChunkGenerator, ChatCompletionResponse,
@@ -1096,6 +1564,161 @@ index 0000000..6da576d
 +        json(&p.0),
 +        json(&fragmented.consume(tokens(&special)).await.unwrap())
 +    );
++}
+diff --git a/deepseek-recipe/src/stream/native_boundary_tests/messages.rs b/deepseek-recipe/src/stream/native_boundary_tests/messages.rs
+new file mode 100644
+index 0000000..da754f9
+--- /dev/null
++++ b/deepseek-recipe/src/stream/native_boundary_tests/messages.rs
+@@ -0,0 +1,149 @@
++//! Same engine and official Messages events; no protocol identity exemption.
++use super::*;
++use crate::protocol::anthropic::messages::response::{MessagesChunkGenerator, MessagesResponse};
++use tokio_stream::StreamExt;
++
++fn copy_input(input: &InferenceChunk) -> InferenceChunk {
++    match input {
++        InferenceChunk::Ready {
++            prompt_usage,
++            system_fingerprint,
++        } => InferenceChunk::Ready {
++            prompt_usage: *prompt_usage,
++            system_fingerprint: system_fingerprint.clone(),
++        },
++        InferenceChunk::Tokens {
++            token_ids,
++            logprobs: None,
++        } => tokens(token_ids),
++        InferenceChunk::Finish { finish_reason } => InferenceChunk::Finish {
++            finish_reason: *finish_reason,
++        },
++        _ => unreachable!("only the test's Ready/token/Finish inputs"),
++    }
++}
++
++#[tokio::test]
++async fn native_boundary_messages_exact_standard_stream_and_checksum() {
++    for reasoning in ["", "inspect carefully"] {
++        for ending in [
++            None,
++            Some(InferenceFinishReason::Stop),
++            Some(InferenceFinishReason::Length),
++        ] {
++            let generator = MessagesChunkGenerator::new("response", "model", true)
++                .with_signature("opaque-signature");
++            let options = ParsingOptions {
++                thinking_initial_stage: Some(ThinkingInitialStage::ReasoningStart),
++                ..Default::default()
++            };
++            // A clone is this request's fork, not an independently seeded request.
++            let mut canonical = StreamProcessor::new(generator.clone(), options.clone())
++                .with_tokenizer(tokenizer().clone())
++                .into_state();
++            let processor =
++                StreamProcessor::new(generator, options).with_tokenizer(tokenizer().clone());
++            let ids = encode(&format!(
++                "{reasoning}</think>intro {PREFIX}Tokyo🤭{END}<｜DSML｜invoke name=\"g\"></｜DSML｜invoke></｜DSML｜tool_calls>"
++            ));
++            let ready = InferenceChunk::Ready {
++                prompt_usage: PromptUsage {
++                    prompt_tokens: 20,
++                    prompt_cache_hit_tokens: 7,
++                },
++                system_fingerprint: None,
++            };
++            let mut inputs = vec![ready];
++            inputs.extend(ids.iter().map(|id| tokens(&[*id])));
++            if let Some(reason) = ending {
++                inputs.push(InferenceChunk::Finish {
++                    finish_reason: reason,
++                });
++            }
++            let official_inputs = inputs.iter().map(copy_input).collect::<Vec<_>>();
++            let stream = processor.into_protocol_stream(tokio_stream::iter(official_inputs));
++            tokio::pin!(stream);
++            let official: Vec<_> = stream.collect::<Result<Vec<_>, _>>().await.unwrap();
++            let mut actual = Vec::new();
++            let mut accumulated = MessagesResponse::new("response".into(), "model".into(), 0, 0, 0);
++            let mut predicted = accumulated.clone();
++            for input in inputs {
++                let preview = canonical.preview([copy_input(&input)]).await.unwrap();
++                assert_eq!(
++                    json(&preview.0),
++                    json(&canonical.preview([copy_input(&input)]).await.unwrap().0)
++                );
++                // Reject an error and a complete divergent tool candidate.
++                assert!(
++                    canonical
++                        .preview([InferenceChunk::Tokens {
++                            token_ids: vec![1],
++                            logprobs: Some(vec![])
++                        }])
++                        .await
++                        .is_err()
++                );
++                let _ = canonical.preview([tokens(&encode("</think><｜DSML｜tool_calls><｜DSML｜invoke name=\"reject\"></｜DSML｜invoke>"))]).await.unwrap();
++                let chunks = canonical.consume(input).await.unwrap();
++                assert_eq!(json(&preview.0), json(&chunks));
++                for chunk in preview.0 {
++                    predicted.accumulate(chunk);
++                }
++                for chunk in chunks {
++                    accumulated.accumulate(chunk.clone());
++                    actual.push(chunk);
++                }
++                assert_eq!(json(&accumulated), json(&predicted));
++            }
++            if ending.is_none() {
++                let mut fork = canonical.clone();
++                let preview = fork.finish().await;
++                let eof = canonical.finish().await;
++                assert_eq!(json(&preview), json(&eof));
++                for chunk in eof {
++                    accumulated.accumulate(chunk.clone());
++                    actual.push(chunk);
++                }
++            }
++            // Exact full events and accumulated responses, IDs/signatures included.
++            assert_eq!(json(&actual), json(&official));
++            let mut standard = MessagesResponse::new("response".into(), "model".into(), 0, 0, 0);
++            for chunk in official {
++                standard.accumulate(chunk);
++            }
++            assert_eq!(json(&accumulated), json(&standard));
++            assert_eq!(canonical.completed_calls().len(), 2);
++            assert!(canonical.is_finished());
++            // The tool-block bit is a live-parser observation, not sticky state.
++            assert!(!canonical.tool_block_finished());
++            let body = json(&accumulated);
++            let tools: Vec<_> = body["content"]
++                .as_array()
++                .unwrap()
++                .iter()
++                .filter(|b| b["type"] == "tool_use")
++                .collect();
++            for (index, tool) in tools.iter().enumerate() {
++                let id = tool["id"].as_str().unwrap();
++                let mark = if reasoning.is_empty() { "ET_" } else { "" };
++                let prefix = format!("call_{index:02}_{mark}");
++                assert!(id.starts_with(&prefix));
++                assert_eq!(id.len(), prefix.len() + 24);
++                assert!(
++                    id[prefix.len()..id.len() - 4]
++                        .bytes()
++                        .all(|b| b.is_ascii_alphanumeric())
++                );
++                assert_eq!(
++                    &id[id.len() - 4..],
++                    format!(
++                        "{:04}",
++                        xxhash_rust::xxh3::xxh3_64(id[..id.len() - 4].replace('_', "").as_bytes())
++                            % 10000
++                    )
++                );
++            }
++            assert_eq!(body["content"][0]["signature"], "opaque-signature");
++        }
++    }
 +}
 diff --git a/deepseek-recipe/src/stream/output_parser.rs b/deepseek-recipe/src/stream/output_parser.rs
 index 99a3491..92b9481 100644
