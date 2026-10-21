@@ -37,7 +37,10 @@ records do not qualify both variants automatically.
 persistent environment and direct Harness configuration; [capabilities](capabilities.md#deepinfer-current-implementation)
 owns supported/unsupported Messages and Vision scope. The [development record](deepinfer-development.md)
 separates reviewed original Harness evidence from fresh installed acceptance.
-The published original-Flash scope above is unchanged; Web Chat/TUI remain implemented.
+Browser Chat and its Chat Server are retired. The TUI is solely a Runtime
+operator console; native Chat Completions and Messages remain available to external
+clients. No replacement Harness is bundled. Successful model inference does not
+constitute comprehensive Agent/Harness compatibility.
 
 ## Specialist contracts
 
@@ -47,8 +50,8 @@ The published original-Flash scope above is unchanged; Web Chat/TUI remain imple
 | Numerical fidelity | [Correctness](correctness.md), [attention](attention.md), [HC/MoE](moe-hc.md), [Engram](engram.md) |
 | Canonical state and generation | [Session state](session-state.md), [generation](generation.md), [policy implementation](generation-policy-investigation.md), [OFF live delivery](stateful-live-delivery.md) |
 | HTTP and sessions | [OFF API](api.md), [ordinary recipe admission](ordinary-api-boundary.md), [ordinary MTP ownership](mtp-production-serving.md), [logical sessions](production-sessions.md), [bounded singleton/setup](mtp-local-release-candidate.md) |
-| Application ownership | [Web application](web-application.md), [Browser interface](chat-interface.md), [Operator console](operator-chat.md), [policy snapshots](generation-policy-frontends.md) |
-| Application resources | [Actual-request fitting](dynamic-capability-budget.md), [retained PDF workflow](pdf-document-workflow.md), [trusted private LAN](private-lan.md), [operator observation](operator-live-observability.md) |
+| Operator and clients | [Operator console](operator-chat.md), [generation controls](generation-policy-frontends.md), [trusted private LAN](private-lan.md), [operator observation](operator-live-observability.md) |
+| Retired application boundary | [Web retirement](web-application.md), [Browser retirement](chat-interface.md), [application budget retirement](dynamic-capability-budget.md), [PDF retirement](pdf-document-workflow.md) |
 | Proof and provenance | [Qualification](qualification.md), [current public benchmark](public-performance.md), [performance interpretation](performance.md), [provenance](provenance.md), [release review](release-qualification.md) |
 | Development/delivery decisions | [Serving closure](production-serving-parity-closure.md), [MTP physical doctrine](mtp-architecture-reset.md), [reference/promotion strategy](reference-release-and-promotion-strategy.md), [R1 guide](reference-release-r1.md), [future target](final-runtime-target.md) |
 

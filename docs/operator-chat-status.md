@@ -1,5 +1,9 @@
 # Operator Chat milestone acceptance
 
+**Historical evidence only.** Browser Chat and Chat Server are retired. The TUI
+is solely a Runtime operator console; old Chat/Web controls and collectors below
+are not current supported actions or Runtime/Harness qualification.
+
 Base backend: `086adf4` (production sessions). Backend execution/session ownership
 and numerical semantics are unchanged. The previous pre-milestone protocol blocker
 is superseded by runtime-advertised `production-sessions-v1`.

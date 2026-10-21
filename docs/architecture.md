@@ -48,7 +48,10 @@ protocol completion and application tool permission remain distinct.
 Both protocols use the existing Scheduler, Target/DSpark, PagedCache and canonical
 settlement; Messages is not translated to Chat or a second inference backend.
 Production logical sessions remain Chat-only. Applications (including external
-Harness) own tool effects; TUI/Web Chat ownership is unchanged. Contracts and
+Harness) own tool effects. The bundled Browser Chat/Chat Server is retired;
+the TUI is solely a Runtime operator console. No replacement Harness, tool
+executor, conversation history or PDF acquisition was moved into Runtime.
+Successful inference is not comprehensive Agent/Harness compatibility. Contracts and
 bounded evidence are in [capabilities](capabilities.md#deepinfer-current-implementation)
 and [the development record](deepinfer-development.md).
 

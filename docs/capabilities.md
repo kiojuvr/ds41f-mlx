@@ -122,11 +122,11 @@ changes reject; stateless reasoning is request-owned. Retained production sessio
 also freeze tool declarations. Unsupported controls reject rather than silently
 changing semantics.
 
-Browser/TUI snapshot all eight sampling fields for a user workflow, retaining that
-snapshot through tool results, continuation and cancellation/reconciliation. A new
-user turn can choose new sampling settings. An ordinary request that omits fields
-gets defaults for **that request**, not hidden inheritance of previous UI choices.
-See [frontend contract and scoped evidence](generation-policy-frontends.md).
+External clients own workflow settings and tool-result continuation. An ordinary
+request that omits fields gets defaults for **that request**, not hidden
+inheritance of previous UI choices. Browser workflow snapshots are retired; the
+TUI retains only Runtime launch default reasoning settings. See
+[generation controls and historical evidence](generation-policy-frontends.md).
 
 ## Streaming, recovery and effects
 
@@ -193,21 +193,13 @@ and [original image qualification](multimodal-production-qualification.md).
 
 ## Applications
 
-- **Operator TUI:** LLM Runtime/Web Chat Start/Stop/Open, Settings, metrics/logs
-  and process diagnostics; [operator console](operator-chat.md),
-  [live metrics and controls](operator-live-observability.md). Q leaves both
-  services running. No TUI Chat frontend or conversation/session ownership.
-- **Browser Chat:** separate application server over canonical runtime APIs;
-  [Chat interface](chat-interface.md), [application/state contract](web-application.md).
-  Multiple independent tab-memory conversations; New adds and Switch preserves.
-  Uncertainty journals are not an archive/native restore. Server idle/orphan
-  retirement, not user Close, releases internal resources.
-- **Acquisition/PDF:** bounded search/HTML/original-image/PDF tools are application
-  effects. [PDF workflow](pdf-document-workflow.md) retains documents and uses
-  isolated stateless page Vision on the connected Vision-capable runtime (ordinary
-  MTP by default), not accumulated main-chat image slots. Health advertises
-  `capabilities.chat_vision: bounded-inline-v1` for OFF and ordinary MTP; missing
-  or unknown capability disables acquisition/observation, with no automatic fallback.
+- **Operator TUI:** Runtime Start/Stop, launch Settings, readiness, metrics/logs
+  and diagnostics; [operator console](operator-chat.md),
+  [live metrics and controls](operator-live-observability.md). Q leaves Runtime
+  running. No conversations, Web control, Browser launcher or tool executor.
+- **Browser Chat / acquisition / PDF:** retired, including the application server,
+  assets, workflows, leases and effect ledger. These were not moved into Runtime.
+  Bounded inline Runtime Vision and production logical sessions remain supported.
 - **Ordinary clients/OpenCode:** standard Chat Completions and generic client-owned
   tools; no compulsory singleton session/fence protocol. Client acceptance is
   source/version-scoped, not a universal all-client compatibility certificate.
@@ -215,13 +207,15 @@ and [original image qualification](multimodal-production-qualification.md).
   file-tool/result continuation passed with supported option exclusions. No image/
   Files, cancellation or dynamic tool-update workflow acceptance; see
   [connection configuration](operations.md#deepinfer-daily-operation-and-harness).
-  Web Chat/TUI controls are unchanged; Harness is not process-managed by the TUI.
+  This historical observation is not comprehensive Agent/Harness compatibility;
+  no replacement Harness is bundled or process-managed by the TUI.
 - **Rust:** raw OFF HTTP/SSE/process boundary; no Rust model/KV/parser owner and no
   claim of a supported Rust MTP application seam.
 
-Application extras belong in a separate development/application environment, not
-by mutating an admitted runtime package. See operations for Browser launch and the
-[private-LAN application policy](private-lan.md) for opt-in network exposure.
+External clients retain native Chat Completions and Messages and generic
+client-side function-tool protocols. Model-specific orchestration, history and
+tool execution belong to those clients or a future dedicated Harness, not Runtime.
+Do not mutate an admitted runtime environment to install application dependencies.
 
 ## Completion and unsupported scope
 

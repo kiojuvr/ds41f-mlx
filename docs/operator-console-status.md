@@ -1,5 +1,10 @@
 # Operator console / multi-conversation product boundary
 
+**Historical acceptance only.** Browser Chat and its Chat Server are now retired.
+The current TUI controls only Runtime; Web launch paths, workflows and collectors
+below no longer exist. This record qualifies only its original source/inputs,
+not current Runtime or external Agent/Harness compatibility.
+
 ## Current result
 
 **TUI = operator console. Web Chat = sole Chat frontend. Multiple conversations

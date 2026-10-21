@@ -1,5 +1,9 @@
 # Tool Capability Completion — source-pinned milestone accepted
 
+**Retired application evidence only.** Browser Chat, acquisition/PDF tools and
+server-side application execution are removed. Commands/collectors below are
+historical, not current operation or Runtime/Harness qualification.
+
 ## Evidence authority
 
 This is a **source-pinned acceptance report**, not the current global capability,

@@ -11,7 +11,9 @@ owns paths/configuration; [development evidence](deepinfer-development.md) keeps
 these scopes distinct. Production sessions remain Chat-only. Inline Messages
 Vision is implemented but real Harness image/Files workflows, cancellation and
 dynamic tool updates were not exercised. No expanded/max-capacity or release
-qualification follows. Web Chat/TUI remain unchanged.
+qualification follows. Browser Chat/Chat Server are retired; TUI is solely a
+Runtime operator console. No replacement Harness is bundled and successful
+inference is not comprehensive Agent/Harness compatibility.
 
 The original-Flash assessment and installed publication identities below are
 retained release-specific evidence, **not a qualification of DeepInfer**.

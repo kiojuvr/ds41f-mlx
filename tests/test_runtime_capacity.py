@@ -12,7 +12,6 @@ from ds41f_mlx.config import load_runtime_config
 from ds41f_mlx.serving.capacity import resolve_capacity
 from ds41f_mlx.serving.server import prepare_request, load_v41_tokenizer, RequestError
 from ds41f_mlx.serving.deepseek_recipe_backend import DeepSeekRecipeRuntimeBackend
-from ds41f_mlx.web_tools import readable_text
 
 
 @pytest.fixture(autouse=True)
@@ -208,7 +207,3 @@ def test_budget_http_is_observation_only_and_count_fenced():
             assert exhausted.json()['error']['code'] == 'context_capacity_exhausted'
         assert backend._model is None and rec.m11 is None and rec.to_json() == before
     asyncio.run(run())
-
-
-def test_readable_fetch_text_does_not_feed_scripts_or_html_markup():
-    assert readable_text('<h1>Title</h1><script>attack()</script><style>hidden</style><p>Hello &amp; world</p>', 'text/html') == 'Title Hello & world'

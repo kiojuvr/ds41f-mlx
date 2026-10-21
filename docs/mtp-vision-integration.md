@@ -17,6 +17,7 @@ local delivery is recorded in [runtime closure](runtime-completeness.md).
 Application image-acquisition UI and the
 isolated PDF-observation policy were not changed by this API delta. Their later
 capability-driven promotion is recorded in [application Vision integration](web-mtp-vision-integration.md).
+That application is now retired; direct bounded Runtime Vision is unchanged.
 
 ## Code audit: pinned oMLX 0.7.0 versus ordinary ds41f
 
@@ -156,8 +157,9 @@ The original Vision delta did not change the default or installed package.
 The subsequent [runtime completeness/local promotion review](runtime-completeness.md)
 now approves ordinary MTP as the local default. At that decision, Browser image
 acquisition and isolated PDF Vision still retained historical OFF-only routing.
-The later [application integration](web-mtp-vision-integration.md) closes that gap
-without reopening this execution qualification. Installed delivery retains
+The later [application integration](web-mtp-vision-integration.md) historically closed that gap;
+Browser Chat/PDF workflows are now retired, without changing direct Runtime Vision.
+Installed delivery retains
 its separate immutable-payload boundary, not a source override.
 Historical-image cache expiry is an explicit availability limitation, not permission
 to replay. Broader contexts/protocols/persistence and universal visual quality

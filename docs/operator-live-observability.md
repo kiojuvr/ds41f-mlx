@@ -2,8 +2,8 @@
 
 This page owns **local service control, content-free logs/snapshots and metric
 interpretation**. [Operations](operations.md) owns installed environment/startup;
-[operator console](operator-chat.md) owns current keys/settings. Web Chat is the sole
-conversation frontend; TUI has no editor or session ownership.
+[operator console](operator-chat.md) owns current keys/settings. Browser Chat and
+its Chat Server are retired; TUI has no editor, tool executor or session ownership.
 Observability is disposable projection, never execution, cache, settlement or
 application-history authority. Historical acceptance below is not current HEAD
 qualification or a deployment SLA.
@@ -15,8 +15,8 @@ The stdlib-curses terminal is optional-at-import; non-TTY/missing curses gives a
 actionable error without breaking headless start/inspect/accept. No UI framework
 or new model executor is added.
 
-**R** Start/Stop LLM Runtime, **W** Start/Stop Web Chat, **O** Open Web Chat,
-**S** Settings, **Q** Quit TUI, **D** Diagnostics, **?** Help.
+**R** Start/Stop LLM Runtime, **S** Runtime launch Settings, **Q** Quit TUI,
+**D** Diagnostics, **?** Help.
 Dashboard arrows/PgUp/PgDn scroll the log pane; **L/End** returns to latest.
 Metrics stay fixed and footer remains visible. Scroll-up pauses at a sequence
 anchor; expired records show a gap. No F-key or Chat Ctrl-key mapping remains.
@@ -39,31 +39,17 @@ WAITING FOR CLIENT means idle after last `tool_calls`, not proof of tool activit
 ```text
 TUI -> canonical ops start --profile mtp-serving-v1 -> runtime/backend
                                                    -> loopback control
-    -> independent Web Chat launcher when requested
 ```
 
-Dashboard Runtime Start selects `mtp-serving-v1`, not a profile picker. Explicit
-OFF startup remains in operations; observing a ready OFF service does not change
-that launcher selection.
-
-TUI Web Chat Start (W) defaults to `0.0.0.0:8080` with
-`--allow-private-lan`; `DS41F_CHAT_BIND=loopback` selects localhost-only, while
-`lan` is the default. `DS41F_WEB_PORT` selects the Chat port. This does not change
-LLM Runtime bind or direct CLI Web defaults. S Settings changes the next Web
-launch's bind/port and the next Runtime launch's Default Reasoning (initially Max).
-T in Settings cycles and persists the reasoning preference; Web bind/port changes
-remain process-local. Explicit client reasoning controls override the default.
-For a LAN OpenCode client, set `DS41F_HOST=0.0.0.0` (or a private interface) before
-TUI launch; Runtime otherwise binds to loopback. Running services are not
+Dashboard Runtime Start selects `mtp-serving-v1`, not a profile picker.
+Standard-OFF startup is retired. S Settings changes the next Runtime launch's
+Default Reasoning (initially Max). T cycles and persists the preference;
+explicit client controls override it. Installed-runtime interpreter selection
+is unchanged. No Browser launcher, Web settings or Web process ownership remains.
+For a LAN client, set `DS41F_HOST=0.0.0.0` (or a private interface) before TUI
+launch; Runtime otherwise binds to loopback. Running services are not
 reconfigured. See [operations](operations.md) for configuration precedence.
-TUI does not implement
-TLS restart or certificate management; use the explicit Web CLI for HTTPS.
-The tall dashboard and Diagnostics show Chat Listen, Local and best-effort IPv4
-LAN connection URLs, plus `LAN access enabled — trusted local network only`.
-`O` requests the local browser URL nonblocking via macOS open; `W` stops Web Chat. LAN discovery uses hostname
-addresses and a local UDP route selection without transmitting packets; an
-unavailable address is reported, not fabricated. It is not exhaustive interface
-or reachability qualification. TLS and authentication are not added by LAN mode.
+Runtime has no authentication/TLS; no bundled proxy changes that boundary.
 
 Child processes use a new process session, no inherited terminal and canonical
 entry points. TUI owns no stdout/stderr pipe; Quit/crash does not signal services.
@@ -71,7 +57,7 @@ TUI owns no conversation to retire on Quit. Reopen discovers control
 state/recent runtime logs, not saved PIDs or execution ownership.
 
 Kernel listening sockets are singleton authority: runtime `127.0.0.1:18441`,
-TUI guard `:18442`, Chat control `:18443`. No daemon, PID/lock file, database,
+TUI guard `:18442`. No daemon, PID/lock file, database,
 registry or multi-instance/ATTACH mode. Service bind is reserved before model load;
 an occupied service port without control is conflict, not permission to take it.
 SO_REUSEADDR allows restart after TIME_WAIT; no SO_REUSEPORT. SIGKILL releasing a
@@ -135,14 +121,12 @@ or log API. Colours require a colour-capable terminal.
 Headless output preserves original diagnostics/access/tracebacks with the same
 local-time stamps at the start of the message body, after severity/component;
 original logger names and runtime sequence numbers remain in safe headless log
-lines (`#sequence` at the end), unlike the TUI presentation. Web Chat keeps
-Uvicorn's native level, request-line and HTTP-status colours, with the timestamp
-after the level prefix: `INFO:     2026-10-13 00:02:17.381 JST  …`.
+lines (`#sequence` at the end), unlike the TUI presentation.
 Colours are enabled for the respective terminal stream, not redirected files.
 Traceback continuation lines remain standard Python tracebacks.
 Installed TUI packages must also be updated through the normal package delivery
 workflow: restarting an older installed wheel does not pick up checkout formatting
-changes, even if Web Chat is launched from the checkout.
+changes.
 A daemon writer uses a bounded 512-item queue and 16 KiB/item ceiling; slow/broken
 stderr cannot block inference and may drop output. The independent safe ring is
 not that queue. Exit drains for at most 200ms; `--print-config` stays JSON.

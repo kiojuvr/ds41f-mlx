@@ -9,6 +9,12 @@ each installation has one fixed checkpoint and numerical identity. Existing
 installations are not migrated. Standard-OFF is retired; prior release/OFF records
 below are historical, not qualification of this branch.
 
+**Browser Chat and its Chat Server are retired.** The TUI is solely a Runtime
+operator console. External clients retain native Chat Completions and Messages;
+model-specific agent orchestration belongs to clients or a future dedicated
+Harness. No bundled replacement Harness exists. Successful model inference is
+not comprehensive Agent/Harness compatibility.
+
 `ds41f-mlx` is a native runtime targeting the **Mac Studio M3 Ultra with 512 GB
 unified memory**. It exists to combine model fidelity, correct long-context state
 and practical local inference performance—not to substitute a reduced or
@@ -53,10 +59,9 @@ built for correct long-lived local sessions on the M3 Ultra**. See
   edits and branches; optional logical conversations on the same scheduler.
 - **Bounded Vision:** inline images within the qualified envelope below—not
   unrestricted multimodal inference.
-- **Local applications:** operator TUI for service control, metrics and logs;
-  Browser Chat for conversations, images and application-owned tools.
+- **Operator TUI:** Runtime control, readiness, diagnostics, metrics and logs.
 - **Single-operator access:** loopback by default; explicitly trusted-private-LAN
-  runtime and Browser Chat access are supported within separate network policies.
+  Runtime access is supported.
 
 The following specifications describe the **ordinary default MTP path**:
 
@@ -182,7 +187,7 @@ Configure an OpenAI-compatible client with base URL
 alias from `/v1/models`). Unified ordinary MTP serves Chat Completions and
 native Recipe 0.2 Messages (`POST /v1/messages`), health and models. Responses
 is not a supported production API on this branch. Messages capability exclusions and the
-verified Harness configuration are in [operations](docs/operations.md#deepinfer-daily-operation-and-harness).
+historically observed client configuration are in [operations](docs/operations.md#deepinfer-daily-operation-and-harness).
 [OpenCode/client guidance](docs/mtp-production-serving.md#ordinary-function-tools-and-opencode)
 is source/version-scoped, not a universal-client compatibility certificate.
 
@@ -205,30 +210,18 @@ compatible paired prefix or miss safely. Optional
 identity and outcomes, freeze reasoning/tool declarations and use the same
 single-active scheduler—not extra model workers or restart persistence.
 
-### Operator TUI and Browser Chat
+### Operator TUI
 
 Run `"$DS41F_ENV/bin/ds41f"` without a subcommand for the operator console:
-**R** controls Runtime, **W** controls Web Chat, **O** opens Web Chat, **S** opens
-Settings, **Q** quits the TUI while leaving services running. The TUI owns service
-control and observation, not conversations. For a custom environment layout,
-configure `DS41F_OPERATOR_RUNTIME_PYTHON` as described in
+**R** controls Runtime, **S** opens Settings, **D** shows diagnostics, **Q** quits
+while leaving Runtime running. The TUI owns control and observation, not
+conversations or tool effects. For a custom environment layout, configure
+`DS41F_OPERATOR_RUNTIME_PYTHON` as described in
 [Operations](docs/operations.md#operator-tui-and-applications).
 
-Browser Chat is a separate application above a READY runtime. Install its extras
-in a separate development/application environment, not the admitted runtime:
-
-```sh
-uv venv --python python3.13 .venv
-uv pip install --python .venv/bin/python '.[web-binary]'
-.venv/bin/python -m ds41f_mlx.web --runtime-url http://127.0.0.1:8000
-```
-
-Browser conversations and images live in **tab memory**; reload does not restore
-them. New/Switch preserves independent conversations within the living tab.
-Search/HTML/image/PDF acquisition is application-owned. Browser images use the
-connected runtime's bounded Chat Vision; PDF page observations use isolated,
-stateless requests on that runtime and return derived text, not chat images. See the
-[Chat interface](docs/chat-interface.md) and [PDF workflow](docs/pdf-document-workflow.md).
+The bundled Browser Chat, tool execution, search/acquisition and PDF workflows
+are retired. Historical acceptance records remain evidence of their recorded
+inputs, not a supported application or qualification of an external Harness.
 
 ### Trusted-private-LAN use
 
@@ -238,11 +231,8 @@ Separate-machine Windows-to-Mac runtime acceptance is recorded in the supported
 scope. **The runtime has no authentication or TLS; wildcard bind is not a private
 peer filter.** Use deliberate firewall policy; never port-forward it.
 
-Browser Chat has a separate opt-in LAN policy and can proxy a loopback runtime.
-Manual CLI launch is loopback by default; TUI **W Start defaults Web Chat to LAN**
-with a warning. Review [private-LAN operations](docs/private-lan.md) before launch,
-including numeric private-IP Host restrictions and browser HTTP limitations.
-Browser TLS configuration does not add runtime authentication or Internet support.
+There is no bundled Browser proxy or application LAN listener. Review
+[private-LAN operations](docs/private-lan.md) before exposing Runtime.
 
 ## Runtime profiles
 
@@ -406,7 +396,7 @@ licenses supplied with upstream dependency distributions.
 | Supported APIs, capacities, images and resource limits | [Capabilities](docs/capabilities.md) |
 | Default MTP API/state and logical conversations | [Ordinary MTP](docs/mtp-production-serving.md), [logical sessions](docs/production-sessions.md) |
 | Historical non-MTP contracts (retired) | [OFF API](docs/api.md), [live delivery](docs/stateful-live-delivery.md) |
-| Applications, controls and networking | [Browser Chat](docs/chat-interface.md), [operator console](docs/operator-chat.md), [private LAN](docs/private-lan.md) |
+| Operator controls and networking | [Operator console](docs/operator-chat.md), [private LAN](docs/private-lan.md) |
 | Structure, state and numerical fidelity | [Architecture](docs/architecture.md), [correctness](docs/correctness.md) |
 | Release identity and measurement interpretation | [Released package record](release/scoped-local-20261015/release.json), [performance](docs/performance.md) |
 | Qualification and development decisions | [Qualification](docs/qualification.md), [release review](docs/release-qualification.md), [implementation plan](docs/implementation-plan.md) |

@@ -5,6 +5,11 @@ package-fixed installations with shared Recipe 0.2 Chat/Messages semantics.
 Standard-OFF production startup, admission and provisioning are retired. Historical
 release receipts and occupied installations below are not migrated or requalified.
 
+The bundled Browser Chat application and Chat Server are retired. No bundled
+replacement Harness exists. External clients use the existing native Chat
+Completions and Messages APIs; successful inference does not establish
+comprehensive Agent/Harness compatibility.
+
 This page owns installation, publication and everyday operation. Use
 [capabilities](capabilities.md) for profile support/limits,
 [architecture](architecture.md) for state/execution ownership and
@@ -100,8 +105,8 @@ continuation passed; this is not unrestricted Harness compatibility or deploymen
 qualification. Original logs and independently observed persistent-installation
 acceptance are distinguished in the [development record](deepinfer-development.md).
 
-The TUI still manages Runtime and Web Chat, **not Harness**. From the application
-checkout, explicitly select DeepInfer before launching the TUI:
+The TUI manages only Runtime, **not Harness or Browser Chat**. From the
+checkout, explicitly select the installed interpreter before launching the TUI:
 
 ```sh
 DS41F_OPERATOR_RUNTIME_PYTHON=/Volumes/SDXC-512/ds41f-mlx_deepinfer-venv/bin/python \
@@ -118,9 +123,9 @@ To open the stdlib-curses operator interface in the MTP environment:
 
 Dashboard Start/Stop toggles use the canonical launcher and loopback graceful
 control. Quit leaves the runtime running; reopening rediscovers live state.
-TUI is an operator console only: R Start/Stop LLM Runtime, W Start/Stop Web Chat,
-O Open Web Chat, S Settings, Q Quit TUI. Web Chat remains the bundled conversation
-frontend; external Harness is independently launched.
+TUI is solely an operator console: R Start/Stop LLM Runtime, S Settings,
+D Diagnostics, Q Quit TUI. Readiness, status, metrics and logs remain available.
+There is no Web Start/Stop, Open Browser, application listener or tool executor.
 Runtime Settings includes **Default Reasoning: Max** on first TUI launch (unless
 the environment explicitly supplies a default).
 Press **S**, then **T** to cycle `none / low / high / xhigh / max`; the preference
@@ -151,28 +156,13 @@ loss does not permit automatic generation resend. Protected native work must
 settle before ownership is released. Unknown effect/lifecycle outcomes require
 explicit application/operator decisions, not guessed retries.
 
-Web Chat runs separately from this checkout, above an
-already READY runtime. Install application extras in the development/application
-`.venv`, never into the admitted model runtime:
-
-```sh
-uv pip install --python .venv/bin/python '.[web-binary]'
-.venv/bin/python -m ds41f_mlx.web --runtime-url http://127.0.0.1:8000
-```
-
-For current-source UI validation before installation, run `.venv/bin/python -m
-ds41f_mlx.ops` from this checkout. It controls the existing installed MTP environment
-via the local sibling path, or explicit `DS41F_OPERATOR_RUNTIME_PYTHON`; it never
-loads the model in the application environment. Web Chat defaults to LAN from TUI
-W Start. S settings shows next-launch bind/port; Q leaves both services running.
-No TUI Chat mode, Ctrl Chat shortcuts or F2/F3 remain. Conversations live in browser
-tab memory; New adds and Switch retains independent histories. See
-[Chat interface](chat-interface.md), [application state](web-application.md)
-and [PDF workflow](pdf-document-workflow.md). PDF/page Vision uses isolated stateless
-requests on the connected Vision-capable runtime (ordinary MTP by default), not
-accumulated main-chat image slots. Application journals are not native
-persistence or shared TUI/Browser history. Tools/effects execute in applications,
-not the model server. Their scope is summarized in capabilities.
+For current-source operator validation before installation, run
+`.venv/bin/python -m ds41f_mlx.ops` from this checkout. It controls the installed
+MTP environment via the existing sibling path or explicit
+`DS41F_OPERATOR_RUNTIME_PYTHON`; it never loads the model in the operator
+environment. Q leaves Runtime running. Browser conversations, leases, effect
+ledgers, Tool Loop, search/acquisition and PDF workflows were removed, not moved
+into Runtime. Tool execution and conversation history belong to external clients.
 
 ## Network and shutdown
 
@@ -182,13 +172,11 @@ trusted-LAN serving has no authentication/TLS and rejects browser Origin; wildca
 bind listens on every interface, so choose a private interface/firewall policy.
 For OpenCode on another trusted LAN machine, export `DS41F_HOST=0.0.0.0`
 (or a specific private interface) **before starting the TUI**, then start Runtime.
-The default `127.0.0.1` bind cannot accept remote connections. Web Chat's LAN mode
-does not change Runtime bind. From the client, check
+The default `127.0.0.1` bind cannot accept remote connections. From the client, check
 `curl http://mac-studio:8000/health` and use `http://mac-studio:8000/v1` as the
 OpenCode base URL (replace the hostname if needed). A single observed greeting
 with public reasoning is a smoke check, not broad separate-machine direct-LAN
-acceptance. Browser application LAN exposure is a different opt-in boundary:
-see [private LAN](private-lan.md).
+acceptance. See [private LAN](private-lan.md); no bundled Browser listener remains.
 
 Use TUI Stop or graceful SIGTERM for the owned runtime process; wait for protected
 native cleanup/retirement before replacement, package installation or model-asset

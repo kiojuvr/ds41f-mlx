@@ -242,17 +242,6 @@ def test_living_frozen_retry_when_previous_slot_is_still_latest():
     # This observation never advances or substitutes a third identity.
 
 
-def test_legacy_python_tool_client_refuses_mtp_before_inference():
-    from ds41f_mlx.web_client import StatefulToolChatClient
-    from ds41f_mlx.web_tools import ToolRegistry, ToolError
-    class Runtime:
-        def health(self):return {'profile':PROFILE}
-        def chat(self,*_):raise AssertionError('unqualified mutation')
-    with pytest.raises(ToolError):
-        StatefulToolChatClient(Runtime(),ToolRegistry()).run_turn(
-            session_id='s',transcript=[],user_message='hi')
-
-
 def test_unsupported_completed_output_is_negative_profile_not_repair(monkeypatch):
     from types import SimpleNamespace
     from ds41f_mlx.serving.internal_mtp import InternalMTPQualificationBackend

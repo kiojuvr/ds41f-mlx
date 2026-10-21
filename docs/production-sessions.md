@@ -118,16 +118,14 @@ result observation governs effect uncertainty.
 
 `/health` advertises `capabilities.stateful_chat = production-sessions-v1`,
 persistence support, live-session limit and current `generation-policy-v1` defaults.
-Web Chat consumes runtime capabilities rather than inheriting the original
-milestone's greedy settings. Chat Auto output uses budget preview and admission
-rechecks. Unsupported images/controls and thinking budgets reject rather than
-silently rewriting policy.
+Browser Chat and its application leases/workflows are retired, not moved into
+production logical sessions. External clients retain the same logical-session
+API, canonical settlement and protocol rules. Unsupported images/controls and
+thinking budgets reject rather than silently rewriting policy.
 
-A frontend workflow snapshots all eight sampling fields through tools, continuation
-and cancellation/reconciliation. Sampling is not hidden inheritance from the
-previous UI request; retained reasoning is a separate frozen protocol envelope.
-See [frontend contract](generation-policy-frontends.md) and
-[operator console](operator-chat.md). TUI has no conversation/session ownership.
+External clients own history and workflow settings; retained reasoning remains a
+separate frozen protocol envelope. See [generation controls](generation-policy-frontends.md)
+and [operator console](operator-chat.md). TUI has no conversation/session ownership.
 
 ## Scoped acceptance and earlier edition
 

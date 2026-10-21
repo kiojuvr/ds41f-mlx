@@ -17,12 +17,11 @@ def record(value):
     with Path(%r).open('a') as f: f.write(value + '\\n')
 async def poll(): pass
 op.poll = poll
-async def lifecycle(action, chat=False): record(('Web Chat' if chat else 'LLM Runtime')+':'+action)
-async def browser(): record('open')
-op.lifecycle = lifecycle; op.open_browser = browser
+async def lifecycle(action): record('LLM Runtime:'+action)
+op.lifecycle = lifecycle
 curses.wrapper(lambda screen: asyncio.run(op.run(screen, curses)))
-record('exit:'+op.mode+':'+op.web_bind)
-assert not hasattr(op, 'conversation') and not hasattr(op, 'chat_view')
+record('exit:'+op.mode)
+assert not any(hasattr(op, name) for name in ('conversation', 'chat_view', 'open_browser', 'chat_snapshot', 'web_port'))
 ''' % str(journal)
     master, slave = pty.openpty()
     fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack('HHHH', 32, 110, 0, 0))
@@ -44,7 +43,7 @@ assert not hasattr(op, 'conversation') and not hasattr(op, 'chat_view')
             os.write(master, key); pump()
         child.wait(timeout=5)
         assert child.returncode == 0
-        assert journal.read_text().splitlines() == ['LLM Runtime:toggle', 'Web Chat:toggle', 'open', 'exit:dashboard:loopback']
+        assert journal.read_text().splitlines() == ['LLM Runtime:toggle', 'exit:dashboard']
         assert b'TUI SETTINGS' in output and b'Composer' not in output
     finally:
         if child.poll() is None: child.kill(); child.wait()

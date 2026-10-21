@@ -17,10 +17,11 @@ investigation deferrals are not current blockers; broader release qualification,
 Harness images/Files, cancellation and dynamic tool updates are not implied.
 The original-Flash release assessment below retains its own source/payload scope.
 
-Making Harness the standard application and eventually replacing TUI Web Chat
-launch controls is only a possible future ownership decision, **not approved or
-implemented work**. Web Chat, its Vision/PDF workflow and TUI controls remain;
-no Harness process management is selected by this task.
+The bundled Browser Chat/Chat Server and application Vision/PDF workflows are
+retired. The existing TUI is solely a Runtime operator console; no Web launch
+controls remain. External clients own model-specific orchestration and tool
+effects. No replacement Harness is bundled or qualified by this retirement;
+successful inference is not comprehensive Agent/Harness compatibility.
 
 ## Production-serving closure (superseding authority)
 

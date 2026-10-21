@@ -1,5 +1,9 @@
 # PDF document application acceptance
 
+**Historical evidence only:** the Browser PDF application and collectors are
+retired. The observations below do not describe current supported workflows or
+Runtime/Agent/Harness qualification.
+
 This is **retrospective application evidence** for its recorded source/runtime
 inputs. Counts, ports and service statements are acceptance-time observations,
 not present process readiness or later-HEAD qualification. Current behavior and

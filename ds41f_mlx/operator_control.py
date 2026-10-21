@@ -9,7 +9,6 @@ from threading import Thread
 
 RUNTIME_PORT = 18441
 TUI_PORT = 18442
-CHAT_PORT = 18443
 
 
 def tui_guard():

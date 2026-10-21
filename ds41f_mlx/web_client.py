@@ -1,32 +1,15 @@
-"""HTTP client and tool loop for the local ds41f browser client."""
+"""Shared HTTP transport for local MTP clients and acceptance tooling.
+
+The historical module name is retained for active non-Web consumers. There is
+no application server, conversation manager or tool executor here.
+"""
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 import json
 import urllib.error
 import urllib.request
 from urllib.parse import quote
 from typing import Any
-
-from ds41f_mlx.web_tools import ToolRegistry, ToolError
-
-
-@dataclass
-class ChatStep:
-    kind: str
-    data: dict[str, Any]
-
-
-@dataclass
-class ChatLoopResult:
-    session_id: str
-    messages: list[dict[str, Any]]
-    steps: list[ChatStep] = field(default_factory=list)
-    final_response: dict[str, Any] | None = None
-
-    def to_json(self) -> dict[str, Any]:
-        return {"session_id": self.session_id, "messages": self.messages, "steps": [{"kind": s.kind, "data": s.data} for s in self.steps], "final_response": self.final_response}
-
 
 class RuntimeHTTPError(RuntimeError):
     def __init__(self, status: int, body: str) -> None:
@@ -55,8 +38,6 @@ class RuntimeClient:
 
     def internal_fenced_request(self, session_id: str, body: bytes, sequence: int, *, outcome_projection=False):
         """Exact-byte fenced transport; reused by the explicit local MTP helper.
-
-        Not used by the public browser loop.
 
         The caller owns/ closes the returned response even on interrupted reads.
         No serialization, retry, or sequence allocation occurs here.
@@ -102,64 +83,3 @@ class RuntimeClient:
         body: dict[str, Any] = {"artifact_path": artifact_path}
         if session_id: body["id"] = session_id
         return self.request("POST", "/v1/sessions/restore", body, timeout=1800)
-
-
-def _message(response: dict[str, Any]) -> dict[str, Any]:
-    choices = response.get("choices") or []
-    if not choices or not isinstance(choices[0], dict):
-        raise RuntimeError("runtime response did not contain choices[0]")
-    return choices[0].get("message") or {}
-
-
-def _finish_reason(response: dict[str, Any]) -> str | None:
-    choices = response.get("choices") or []
-    return choices[0].get("finish_reason") if choices and isinstance(choices[0], dict) else None
-
-
-def _assistant_protocol_message(message: dict[str, Any]) -> dict[str, Any]:
-    out = {"role": "assistant", "content": message.get("content") or ""}
-    if message.get("tool_calls"):
-        out["tool_calls"] = message["tool_calls"]
-    if message.get("reasoning_content"):
-        out["reasoning_content"] = message["reasoning_content"]
-    return out
-
-
-class StatefulToolChatClient:
-    def __init__(self, runtime: RuntimeClient, registry: ToolRegistry) -> None:
-        self.runtime = runtime; self.registry = registry
-
-    def run_turn(self, *, session_id: str, transcript: list[dict[str, Any]], user_message: str, max_tokens: int | str = 'auto', temperature: float | None = None, generation_settings: dict[str, Any] | None = None, tools_enabled: bool = True, max_tool_rounds: int = 128) -> ChatLoopResult:
-        handshake = getattr(self.runtime, 'health', None)
-        if handshake is not None and handshake().get('profile') == 'mtp-singleton-v1':
-            raise ToolError('StatefulToolChatClient does not support the explicit local MTP profile')
-        from .chat_capability import PARAMETERS
-        policy = dict(generation_settings or {})
-        if set(policy) - set(PARAMETERS + ('reasoning_effort',)):
-            raise ToolError('Unsupported generation setting')
-        if temperature is not None:
-            policy['temperature'] = temperature
-        messages = list(transcript) + [{"role": "user", "content": user_message}]
-        result = ChatLoopResult(session_id=session_id, messages=messages)
-        for round_idx in range(max_tool_rounds + 1):
-            body: dict[str, Any] = {"model": "deepseek-v4.1-flash", "messages": messages, "max_tokens": max_tokens, **policy, "stream": False}
-            if tools_enabled:
-                body["tools"] = self.registry.declarations
-                body["tool_choice"] = "auto"
-            response = self.runtime.chat(session_id, body)
-            msg = _message(response)
-            finish = _finish_reason(response)
-            result.steps.append(ChatStep("assistant", {"finish_reason": finish, "message": msg}))
-            messages.append(_assistant_protocol_message(msg))
-            if finish != "tool_calls":
-                result.messages = messages; result.final_response = response
-                return result
-            calls = msg.get("tool_calls") or []
-            if not isinstance(calls, list) or not calls:
-                raise ToolError("finish_reason=tool_calls but no tool_calls were present")
-            if round_idx >= max_tool_rounds:
-                raise ToolError("maximum client tool rounds exceeded")
-            tool_messages, displays = self.registry.execute_calls(calls, session_id=session_id)
-            messages.extend(tool_messages)
-            result.steps.append(ChatStep("tools", {"calls": calls, "results": displays}))
-        raise ToolError("unreachable tool loop exit")

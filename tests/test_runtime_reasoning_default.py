@@ -4,8 +4,6 @@ import pytest
 
 from ds41f_mlx.config import RuntimeConfig, load_runtime_config
 from ds41f_mlx.serving.ordinary_admission import convert_ordinary
-from ds41f_mlx.serving.generation_policy import capability_contract
-from ds41f_mlx.chat_capability import negotiate
 
 
 @pytest.mark.parametrize('controls,mode,effort', [
@@ -37,13 +35,6 @@ def test_saved_tui_default(monkeypatch, tmp_path):
     assert load_reasoning() == 'low'
     monkeypatch.setenv('DS41F_DEFAULT_REASONING_EFFORT', 'none')
     assert load_reasoning() == 'none'
-
-
-def test_frontend_accepts_runtime_max_default():
-    contract = capability_contract('max')
-    runtime = dict(status='ready', profile='standard-off', generation_policy=contract,
-                   chat_defaults=dict(contract['defaults'], reasoning_effort='max', max_tokens='auto'))
-    assert negotiate(runtime)['reasoning_effort'] == 'max'
 
 
 def test_launch_passes_default(monkeypatch):

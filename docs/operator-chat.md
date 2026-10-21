@@ -1,78 +1,37 @@
-# Operator console (TUI)
+# Operator console
 
-The TUI is an **operator console, not a Chat client**. Web Chat is the sole
-conversation frontend. This retained documentation URL replaces the former TUI
-Chat page; historical receipts and archived editions are unchanged.
-
-## Responsibilities and keys
+The TUI is solely a **Runtime operator console**, not a Chat/Agent application.
+The bundled Browser Chat and Chat Server are retired; there is no replacement
+Harness. External clients use Runtime's native Chat Completions and Messages.
 
 | Key | Action |
 | --- | --- |
-| R | Start / gracefully Stop **LLM Runtime** |
-| W | Start / gracefully Stop **Web Chat** |
-| O | Open **Web Chat** in the default browser |
-| S | Settings / return to Dashboard |
-| Q | Quit **TUI**, leaving both services running |
-| D / ? | Diagnostics / help |
-| ↑↓ / PgUp/PgDn / L / End | Scroll logs / follow latest |
+| R | Start / gracefully Stop Runtime |
+| S | Runtime launch settings |
+| D | Diagnostics |
+| ? | Help |
+| Up/Down, PgUp/PgDn | Scroll logs or details |
+| L / End | Follow latest logs |
+| Q | Quit console; leave Runtime running |
 
-Dashboard labels explicitly say Start Runtime, Stop Runtime, Start Web Chat or
-Stop Web Chat based on observed control state. F2/F3, Chat-mode Ctrl shortcuts,
-Chat editor/transcripts, conversation ownership, tool/reasoning rendering and
-New/Close/Continue workflows are removed from the TUI.
+Readiness, status, metrics and logs are observed through the existing loopback
+Runtime control service. Conflict detection prevents launching over an occupied
+service port. Shutdown waits for protected native work and retirement; it is not
+a force-kill or permission to resend uncertain requests.
 
-Metrics, logs, readiness/profile/network information and lifecycle diagnostics
-remain scalar projections, not execution authority. Settings controls the next
-Web Chat launch's LAN/loopback bind and port, and the next Runtime launch's
-**Default Reasoning**. It does not modify running services. In Settings, **T**
-cycles `none / low / high / xhigh / max`; the initial Runtime preference is **Max**.
-The reasoning preference persists in `${XDG_CONFIG_HOME:-~/.config}/ds41f/operator.json`;
-`DS41F_DEFAULT_REASONING_EFFORT` overrides it on TUI startup. Web bind/port changes
-remain process-local. Per-conversation generation, thinking and tool controls
-still belong to Web Chat. Explicit client reasoning controls override the Runtime
-default; see [operations](operations.md) for CLI/environment configuration.
+Runtime launches use the installed interpreter selected by
+`DS41F_OPERATOR_RUNTIME_PYTHON`, the existing sibling installed MTP environment
+when discovered from the development `.venv`, or the current interpreter.
+The canonical isolated launcher is `python -I -m ds41f_mlx.ops start --profile
+mtp-serving-v1`. Headless `ds41f start` and `ds41f_mlx.serve` remain available.
 
-## Launch and process boundary
+Settings preserves Default Reasoning (initially Max, unless overridden).
+S then T cycles none/low/high/xhigh/max; the saved preference applies at next
+Runtime start. Explicit request controls override the default. There are no Web
+bind/port settings, Web child processes, Browser launch actions or Chat controls.
 
-Use the installed environment for model execution. To check current source UI:
-
-```sh
-cd /Volumes/SDXC-512/ds41f-mlx
-export DS41F_CHECKPOINT=/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash
-.venv/bin/python -m ds41f_mlx.ops
-```
-
-The checkout `.venv` is application/development tooling. In this local layout,
-Runtime Start selects the sibling `ds41f-mlx_mtp-venv/bin/python`; alternatively
-set `DS41F_OPERATOR_RUNTIME_PYTHON` to an already provisioned interpreter. Its
-installed code is selected with `-I`. A normally installed TUI uses its own
-interpreter. No staging environment or second model executor is created.
-Web Chat uses the application interpreter. Application-only environment options
-are not forwarded to the admitted model launcher.
-
-Web Chat defaults to **LAN** (`0.0.0.0:8080`, explicit private-LAN permission).
-`DS41F_CHAT_BIND=loopback` restricts the next launch; `DS41F_WEB_PORT` changes its
-port. Direct `python -m ds41f_mlx.web` still defaults to loopback. The TUI discovers
-existing services; opening it does not reconfigure them. Stop then Start to apply
-launch settings. Runtime bind is separate: it defaults to `127.0.0.1:8000`.
-For OpenCode on another trusted LAN machine, set `DS41F_HOST=0.0.0.0` before
-opening the TUI (or use a specific private interface). This is independent of
-Web Chat LAN mode. Private LAN has no authentication/TLS; do not expose to Internet.
-
-On macOS, O uses nonblocking LaunchServices `/usr/bin/open`, not AppleScript.
-The bounded helper has detached/null terminal descriptors and a 10-second timeout.
-Success means an open request, not proof of browser display. The TUI never owns,
-waits for or kills the browser process itself. Failures show a manually usable URL.
-
-Q retires no conversation and signals neither service. Service shutdown uses
-canonical graceful control and waits for disappearance, never force-kills.
-The kernel TUI guard prevents multiple operator consoles. Per-conversation
-generation settings are not duplicated in the TUI; Default Reasoning is a
-Runtime launch preference, not a conversation editor.
-
-See [operations](operations.md), [live observability](operator-live-observability.md),
-[Web application](web-application.md) and [Browser interface](chat-interface.md).
-[Historical TUI Chat acceptance](operator-chat-status.md) and its artifact JSON
-remain historical evidence of the removed interface, not current instructions.
-Current product-boundary receipt: `artifacts/operator-console/`;
-collector: `tools/accept_operator_console.py`.
+See [operations](operations.md#operator-tui-and-applications) and
+[live observability](operator-live-observability.md) for operational details.
+Historical Web/TUI Chat receipts qualify only their original inputs, not this
+operator-only surface or any external Harness. Successful inference does not
+establish comprehensive Agent/Harness compatibility.

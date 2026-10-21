@@ -10,7 +10,7 @@ from time import monotonic
 from urllib.request import Request, urlopen
 from urllib.error import URLError
 
-from .operator_control import RUNTIME_PORT, CHAT_PORT, tui_guard
+from .operator_control import RUNTIME_PORT, tui_guard
 from .operator_dashboard import Viewport, render_screen, command_strip
 
 
@@ -35,33 +35,16 @@ def runtime_python():
     return sys.executable
 
 
-def launch(chat=False, endpoint=None, *, default_reasoning_effort=None):
-    args = ['ds41f_mlx.web'] if chat else ['ds41f_mlx.ops', 'start', '--profile', 'mtp-serving-v1']
-    if chat and endpoint is None:
-        bind = os.environ.get('DS41F_CHAT_BIND', 'lan')
-        if bind not in ('lan', 'loopback'):
-            raise ValueError('DS41F_CHAT_BIND must be lan or loopback')
-        endpoint = dict(host='0.0.0.0' if bind == 'lan' else '127.0.0.1',
-                        port=int(os.environ.get('DS41F_WEB_PORT', '8080')), allow_private_lan=bind == 'lan')
-    if endpoint:
-        if chat and endpoint.get('scheme') == 'https':
-            raise ValueError('TLS Web Chat restart requires manual certificate/key options; refusing HTTP downgrade')
-        args += ['--host', endpoint['host'], '--port', str(endpoint['port'])]
-        if chat:
-            if endpoint.get('allow_private_lan', endpoint['host'] not in ('127.0.0.1', 'localhost', '::1')):
-                args.append('--allow-private-lan')
-            if endpoint.get('runtime_url'):
-                args += ['--runtime-url', endpoint['runtime_url']]
-    if not chat and default_reasoning_effort is not None:
+def launch(*, default_reasoning_effort=None):
+    args = ['ds41f_mlx.ops', 'start', '--profile', 'mtp-serving-v1']
+    if default_reasoning_effort is not None:
         args += ['--default-reasoning-effort', default_reasoning_effort]
     environment = os.environ.copy()
-    if not chat:
-        for key in list(environment):
-            if (key in ('DS41F_CHAT_BIND', 'DS41F_RUNTIME_URL', 'DS41F_OPERATOR_RUNTIME_PYTHON')
-                    or key.startswith(('DS41F_WEB_', 'DS41F_DOCUMENT_', 'DS41F_EXA_', 'DS41F_PARALLEL_'))):
-                environment.pop(key, None)
-    interpreter = sys.executable if chat else runtime_python()
-    return subprocess.Popen([interpreter, *([] if chat else ['-I']), '-m', *args],
+    for key in list(environment):
+        if (key in ('DS41F_CHAT_BIND', 'DS41F_RUNTIME_URL', 'DS41F_OPERATOR_RUNTIME_PYTHON')
+                or key.startswith(('DS41F_WEB_', 'DS41F_DOCUMENT_', 'DS41F_EXA_', 'DS41F_PARALLEL_'))):
+            environment.pop(key, None)
+    return subprocess.Popen([runtime_python(), '-I', '-m', *args],
                             stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
                             stderr=subprocess.DEVNULL, start_new_session=True, env=environment)
 
@@ -87,7 +70,7 @@ def terminal_styles(curses):
 
 class Operator:
     def __init__(self):
-        self.snapshot = self.chat_snapshot = None
+        self.snapshot = None
         self.operation = False
         self.children = {}
         self.message = ''
@@ -95,8 +78,6 @@ class Operator:
         self.mode = 'dashboard'
         from .operator_settings import load_reasoning
         self.default_reasoning_effort = load_reasoning()
-        self.web_bind = os.environ.get('DS41F_CHAT_BIND', 'lan')
-        self.web_port = int(os.environ.get('DS41F_WEB_PORT', '8080'))
         self.conflicts = set()
         from collections import deque
         from .runtime_logging import CAPACITY
@@ -135,7 +116,7 @@ class Operator:
                 return await asyncio.to_thread(call, port)
             except (OSError, URLError, ValueError):
                 return None
-        self.snapshot, self.chat_snapshot = await asyncio.gather(get(RUNTIME_PORT), get(CHAT_PORT))
+        self.snapshot = await get(RUNTIME_PORT)
         await self.poll_logs()
         def occupied(port):
             import socket
@@ -144,8 +125,7 @@ class Operator:
                     return True
             except OSError:
                 return False
-        for control_port, snapshot, service_port in ((RUNTIME_PORT, self.snapshot, 8000),
-                                                     (CHAT_PORT, self.chat_snapshot, self.web_port)):
+        for control_port, snapshot, service_port in ((RUNTIME_PORT, self.snapshot, 8000),):
             if snapshot is None and await asyncio.to_thread(occupied, service_port):
                 self.conflicts.add(control_port)
             else:
@@ -156,11 +136,11 @@ class Operator:
                     self.message = f'FAILED/CONFLICT: launcher exited {child.returncode}; use headless CLI for startup logs'
                 del self.children[port]
 
-    async def lifecycle(self, action, chat=False):
+    async def lifecycle(self, action):
         if self.operation:
             return
         self.operation = True
-        port, name = (CHAT_PORT, 'Web Chat') if chat else (RUNTIME_PORT, 'LLM Runtime')
+        port, name = RUNTIME_PORT, 'LLM Runtime'
         self.message = f'{name}: {action} requested'
         try:
             try:
@@ -169,7 +149,6 @@ class Operator:
                 status = None
             if action == 'toggle':
                 action = 'stop' if status else 'start'
-            endpoint = (status or {}).get('endpoint') or {}
             if action == 'stop' and status:
                 await asyncio.to_thread(call, port, '/ds41f/control/shutdown', 'POST')
                 self.message = name+' graceful shutdown requested'
@@ -187,19 +166,13 @@ class Operator:
                     self.message = name+' already running'
                 else:
                     import socket
-                    service_port = self.web_port if chat else 8000
+                    service_port = 8000
                     try:
                         with socket.create_connection(('127.0.0.1', service_port), timeout=.2):
                             raise RuntimeError('CONFLICT: service port occupied without ds41f control; no launch attempted')
                     except ConnectionRefusedError:
                         pass
-                    if chat:
-                        if self.web_bind not in ('lan', 'loopback'):
-                            raise ValueError('Web Chat bind must be lan or loopback')
-                        endpoint = dict(host='0.0.0.0' if self.web_bind == 'lan' else '127.0.0.1',
-                                        port=self.web_port, allow_private_lan=self.web_bind == 'lan')
-                    self.children[port] = (launch(True, endpoint) if chat else
-                                           launch(default_reasoning_effort=self.default_reasoning_effort))
+                    self.children[port] = launch(default_reasoning_effort=self.default_reasoning_effort)
                     self.message = name+' canonical launcher started'
             await self.poll()
         except Exception as exc:
@@ -207,38 +180,13 @@ class Operator:
         finally:
             self.operation = False
 
-    async def open_browser(self):
-        endpoint = (self.chat_snapshot or {}).get('endpoint') or {}
-        if not endpoint:
-            self.message = 'Web Chat is stopped; W: Start Web Chat'
-            return
-        url = endpoint.get('local_url') or f'http://127.0.0.1:{endpoint.get("port", 8080)}'
-        self.message = f'Opening Web Chat: {url}'
-        try:
-            args = (['/usr/bin/open', url] if sys.platform == 'darwin' else
-                    [sys.executable, '-m', 'webbrowser', '-t', url])
-            process = await asyncio.create_subprocess_exec(
-                *args, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL, start_new_session=True)
-            try:
-                code = await asyncio.wait_for(process.wait(), 10)
-            except asyncio.TimeoutError:
-                process.kill()  # Launch helper only; never the browser.
-                await process.wait()
-                raise RuntimeError('browser launch helper timed out')
-            if code:
-                raise RuntimeError(f'browser launch helper exited {code}')
-            self.message = f'Web Chat browser open requested: {url}'
-        except Exception as exc:
-            self.message = f'Browser launch failed: {exc}; open manually: {url}'
-
     async def run(self, screen, curses):
         curses.raw()  # No Ctrl-key workflows, including accidental SIGINT.
         curses.set_escdelay(25)
         screen.nodelay(True)
         screen.keypad(True)
         styles = terminal_styles(curses)
-        poll_task = action_task = browser_task = None
+        poll_task = action_task = None
         last_poll = -1.
         try:
             while True:
@@ -251,10 +199,8 @@ class Operator:
                 height, width = screen.getmaxyx()
                 lines = render_screen(self.snapshot, Viewport(width, height), now=now,
                     mode=self.mode, conflict=RUNTIME_PORT in self.conflicts,
-                    chat=self.chat_snapshot, chat_conflict=CHAT_PORT in self.conflicts,
                     message=self.message, logs=list(self.logs), log_end=self.log_end,
-                    log_gap=self.log_gap, settings={'bind': self.web_bind, 'port': self.web_port,
-                                                  'runtime_python': runtime_python(),
+                    log_gap=self.log_gap, settings={'runtime_python': runtime_python(),
                                                   'default_reasoning_effort': self.default_reasoning_effort})
                 if self.mode == 'dashboard':
                     self.offset = 0
@@ -279,7 +225,7 @@ class Operator:
                         pass
                 try:
                     screen.addnstr(max(0, height-1), 0,
-                        command_strip(self.mode, width, self.snapshot, self.chat_snapshot), max(0, width-1), curses.A_DIM)
+                        command_strip(self.mode, width, self.snapshot), max(0, width-1), curses.A_DIM)
                     curses.curs_set(0)
                 except curses.error:
                     pass
@@ -290,14 +236,11 @@ class Operator:
                     key = None
                 if key in ('q', 'Q'):
                     break
-                if key in ('r', 'R', 'w', 'W'):
+                if key in ('r', 'R'):
                     if action_task is None or action_task.done():
-                        action_task = asyncio.create_task(self.lifecycle('toggle', key in ('w', 'W')))
+                        action_task = asyncio.create_task(self.lifecycle('toggle'))
                     else:
                         self.message = 'Service control already in progress'
-                elif key in ('o', 'O'):
-                    if browser_task is None or browser_task.done():
-                        browser_task = asyncio.create_task(self.open_browser())
                 elif key in ('s', 'S', 'd', 'D', '?'):
                     target = 'settings' if key in ('s', 'S') else 'diagnostics' if key in ('d', 'D') else 'help'
                     self.mode = 'dashboard' if self.mode == target else target
@@ -313,10 +256,6 @@ class Operator:
                             self.message = 'Default Reasoning saved; applies on next Runtime start'
                         except OSError as exc:
                             self.message = f'Could not save Runtime setting: {exc}'
-                    elif key in ('l', 'L'):
-                        self.web_bind = 'loopback' if self.web_bind == 'lan' else 'lan'
-                    elif key in ('+', '-'):
-                        self.web_port = max(1024, min(65535, self.web_port + (1 if key == '+' else -1)))
                 elif self.mode == 'dashboard':
                     page = max(1, sum(1 for line in lines if ' #' in line.text)-1)
                     if key in (curses.KEY_UP, curses.KEY_PPAGE) and self.logs:
@@ -334,8 +273,6 @@ class Operator:
                     self.offset += 1 if key == curses.KEY_DOWN else max(1, height-3)
                 await asyncio.sleep(.04)
         finally:
-            if browser_task is not None:
-                await browser_task  # Bounded launch helper; browser is not owned.
             for task in (poll_task, action_task):
                 if task is not None:
                     task.cancel()
