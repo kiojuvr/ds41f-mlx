@@ -62,7 +62,7 @@ def test_xhigh_and_high_share_the_canonical_session_envelope():
 def test_contract_records_bounded_acceptance_and_upstream_context_semantics():
     contract = capability_contract()
     assert contract['qualification'] == 'real-model-qualified'
-    assert contract['execution_profiles'] == ['standard-off', 'mtp-serving-v1']
+    assert contract['execution_profiles'] == ['mtp-serving-v1']
     assert contract['defaults']['temperature'] == 1.0
     assert contract['defaults']['top_p'] == .95
     assert contract['reasoning']['scope'] == 'session'

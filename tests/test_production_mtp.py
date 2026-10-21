@@ -245,6 +245,30 @@ def test_ordinary_request_has_no_session_sequence_and_keeps_execution_bounds():
             ProductionMTPBackend.validate_ordinary(json.dumps(body | unsupported).encode())
 
 
+def test_health_generation_policy_advertises_only_supported_execution_profile():
+    pytest.importorskip('mlx.core')
+    pytest.importorskip('omlx')
+    import os
+    from fastapi.testclient import TestClient
+    from ds41f_mlx.mtp_identity import config
+    from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+    from ds41f_mlx.serving.server import create_app
+    previous = dict(os.environ)
+    backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+    backend.dependency_identity = 'fixture-admitted-identity'
+    try:
+        app = create_app(profile='mtp-serving-v1', runtime_config=backend.runtime_config, backend=backend)
+        with TestClient(app, base_url='http://127.0.0.1:8000') as client:
+            health = client.get('/health')
+            assert health.status_code == 200
+            assert health.json()['generation_policy']['execution_profiles'] == ['mtp-serving-v1']
+            assert 'standard-off' not in health.text.lower()
+    finally:
+        backend.close()
+        os.environ.clear()
+        os.environ.update(previous)
+
+
 @pytest.mark.parametrize('host,authority', [
     ('127.0.0.1', '127.0.0.1:8000'),
     ('0.0.0.0', '192.168.68.56:8000'),

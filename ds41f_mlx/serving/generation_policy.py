@@ -89,9 +89,9 @@ def reasoning_policy(request):
 
 
 def capability_contract(default_reasoning_effort='none'):
-    # Bounded OFF/MTP real-model acceptance; not distributional equivalence.
+    # Bounded MTP real-model acceptance; not distributional equivalence.
     return dict(version='generation-policy-v1', qualification='real-model-qualified',
-                execution_profiles=['standard-off', 'mtp-serving-v1'],
+                execution_profiles=['mtp-serving-v1'],
                 sampler_authority='ds41f_mlx.sampling.make_sampler',
                 defaults=GenerationPolicy().to_json(), scope='request',
                 parameters=dict(temperature={'minimum': 0, 'maximum': 2},
