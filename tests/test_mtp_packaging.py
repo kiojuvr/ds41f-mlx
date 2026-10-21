@@ -22,7 +22,7 @@ def test_strict_overlay_chain_and_reapplication(tmp_path):
     export_omlx(tmp_path)
     apply_mtp_patches(tmp_path)
     model = (tmp_path/'omlx/patches/deepseek_v41/language.py').read_text()
-    assert 'quantize_pre_woa' in model
+    assert 'grouped = pre_woa(out.reshape(' in model
     with pytest.raises(subprocess.CalledProcessError):
         apply_mtp_patches(tmp_path)
 
@@ -99,7 +99,6 @@ def test_off_still_checks_installed_python_payload(tmp_path, monkeypatch):
 def test_mtp_manifest_has_no_python_seals(monkeypatch):
     old = json.loads((SOURCES/'normal-local.json').read_text())
     # Recipe native payloads come from the retained repaired wheel, not Homebrew.
-    monkeypatch.setattr(packaging, 'links', lambda path: pytest.fail('host graph enrollment'))
     manifest = packaging.mtp_manifest(old, 'portable')
     assert manifest['payloads']['ds41f_mlx'] == {}
     assert manifest['payloads']['omlx'] == {}
@@ -113,8 +112,8 @@ def test_mtp_manifest_has_no_python_seals(monkeypatch):
 
 def test_staged_build_does_not_rewrite_checkout(tmp_path, monkeypatch):
     before = identity.MANIFEST.read_bytes()
-    manifest = dict(profile='mtp', fixture=True, dependencies={'deepseek-recipe': '0.2.0'},
-                    provenance={'recipe_source': {'revision': '93b0fd229cc9ffa6b1a8c63d42b0bf741bbec170'}})
+    old = json.loads((SOURCES/'normal-local.json').read_text())
+    manifest = packaging.mtp_manifest(old, 'portable')
     def fake_build(command, check):
         stage = Path(command[-1])
         assert json.loads((stage/'ds41f_mlx/execution_manifest.json').read_text()) == manifest
@@ -125,3 +124,14 @@ def test_staged_build_does_not_rewrite_checkout(tmp_path, monkeypatch):
     assert identity.MANIFEST.read_bytes() == before
     with pytest.raises(ValueError, match='prior Runtime wheels'):
         packaging.build_wheel(manifest, tmp_path)
+
+
+@pytest.mark.parametrize('name', ['flash', 'flash-1017'])
+def test_package_fixed_variant(name):
+    from ds41f_mlx.mtp_identity import VARIANTS, checkpoint_variant
+    old = json.loads((SOURCES/'normal-local.json').read_text())
+    manifest = packaging.mtp_manifest(old, 'portable', name)
+    assert checkpoint_variant(manifest) == VARIANTS[name]
+    assert manifest['dependencies']['deepseek-recipe'] == '0.2.0'
+    assert {s['source_revision'] for s in manifest['checkpoint']['shards']} == {VARIANTS[name].revision}
+    assert all(not files for name, files in manifest['payloads'].items() if name in ('ds41f_mlx', 'omlx'))

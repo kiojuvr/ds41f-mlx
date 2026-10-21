@@ -80,9 +80,15 @@ def test_gemv_all_fp8_codes_including_reserved(dtype):
         exact(actual, expected)
 
 
-def test_connected_logits_state_verify_rollback(monkeypatch):
+@pytest.mark.parametrize('variant', ['flash', 'flash-1017'])
+def test_connected_logits_state_verify_rollback(monkeypatch, variant):
+    from ds41f_mlx import execution_identity
+    from ds41f_mlx.mtp_identity import VARIANTS
+    monkeypatch.setattr(execution_identity, '_admitted_variant', VARIANTS[variant])
     from test_compressed_growth import small_model
     model = small_model()
+    # Released attention inputs are BF16; random nn weights default to FP32.
+    model.set_dtype(mx.bfloat16)
     model.configure_mtp(True, 3)
     def run():
         cache = model.make_cache()

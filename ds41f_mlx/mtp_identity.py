@@ -4,7 +4,7 @@ Build provenance and historical qualification are reported, never startup equali
 There is no local executable seal or checkout source authority.
 """
 import argparse
-from dataclasses import replace
+from dataclasses import dataclass, replace
 import hashlib
 import importlib.util
 import json
@@ -21,6 +21,40 @@ from .execution_identity import MANIFEST
 
 CHECKPOINT_CACHE = Path(sys.prefix)/'share/ds41f-mtp/checkpoint-bytes.json'
 CHECKPOINT_REVISION = '1bae0e1088993b9b82de08f59de5be5a34e42170'
+
+
+@dataclass(frozen=True)
+class CheckpointVariant:
+    name: str
+    revision: str
+    numerics: str
+    inventory_sha256: str
+
+
+# Exact retained checkpoint inventories, not executable/source seals.
+VARIANTS = {
+    'flash': CheckpointVariant('flash', 'dba1be0a40aa45a94ad051997016db3960a90277',
+        'flash-original-woa-v1', '2255235524fc9bece85f2cda7f002bb0e15fc4aa69f95e24b29b86f2a87a442b'),
+    'flash-1017': CheckpointVariant('flash-1017', CHECKPOINT_REVISION,
+        'flash-1017-pre-woa-fp8-v1', '6f72f6259eae6d8ae64eb4d2c6707f9c6568b1b146e672f9a953570756c7c1d6'),
+}
+DEFAULT_VARIANT = 'flash-1017'
+
+
+def checkpoint_variant(authority):
+    """Validate the package-fixed checkpoint/profile tuple; never infer or fall back."""
+    variant = VARIANTS.get(authority.get('checkpoint_variant'))
+    if variant is None or authority.get('numerics') != variant.numerics:
+        raise ValueError('unapproved checkpoint variant/numerical profile')
+    assets = authority.get('checkpoint', {})
+    digest = hashlib.sha256(json.dumps(assets, sort_keys=True).encode()).hexdigest()
+    if digest != variant.inventory_sha256:
+        raise ValueError('checkpoint inventory is not admitted for the selected variant')
+    if authority.get('checkpoint_metadata') != {
+            'tokenizer_config.json': '6ac8c8dc065ed118161d02dd532749ae3f52c243deac27872134fae2f50d8547'}:
+        raise ValueError('unapproved checkpoint metadata authority')
+    return variant
+
 CHECKPOINT = {'config.json':'8be45ce0476004a3f529fd896115a4a2e800a129ad2d3ec05b16050f52e21879',
     'model.safetensors.index.json':'74b0686a3d2891980d5e303251b075a3bccae2c2ff650747db2620a649b98fa8',
     'tokenizer.json':'c90dfa01249db1be4245780a052ede752e1361c612ac6d08e2bdada7d599476b'}
@@ -90,25 +124,25 @@ def flash_1017_inventory(original):
 
 
 def admit_checkpoint(root, authority):
-    """Admit only Flash-1017, including ModelScope's pinned auxiliary file.
+    """Admit exactly the package's selected official checkpoint, with full bytes.
 
-    Optional HF receipts never substitute for full-byte verification. The installed
-    package must explicitly admit the fixed 1017 inventory; no legacy fallback.
+    Optional HF receipts never substitute for verification. No variant detection,
+    legacy fallback, or user-supplied inventory enrollment is permitted.
     """
+    variant = checkpoint_variant(authority)
     assets = authority['checkpoint']
-    if assets != flash_1017_inventory(assets):
-        raise ValueError('Flash-1017 checkpoint is not admitted by this installed package')
+    auxiliary = FLASH_1017_AUXILIARY if variant.name == 'flash-1017' else {}
     metadata = {**CHECKPOINT, **authority['checkpoint_metadata']}
     names = {p.name for p in root.glob('*.json')}
-    if names not in (set(metadata), set(metadata) | set(FLASH_1017_AUXILIARY)) or any(
+    if names not in (set(metadata), set(metadata) | set(auxiliary)) or any(
             (root/name).exists() for name in ('chat_template.jinja', 'chat_templates')):
         raise ValueError('unqualified checkpoint/tokenizer configuration files')
-    for name, digest in {**metadata, **{k:v for k,v in FLASH_1017_AUXILIARY.items() if k in names}}.items():
+    for name, digest in {**metadata, **{k:v for k,v in auxiliary.items() if k in names}}.items():
         if sha(root/name) != digest:
             raise ValueError(f'unqualified checkpoint metadata: {name}')
     for shard in assets['shards']:
         receipt = root/'.cache/huggingface/download'/(shard['name']+'.metadata')
-        if receipt.exists() and receipt.read_text().splitlines()[:2] != [CHECKPOINT_REVISION, shard['lfs_sha256']]:
+        if receipt.exists() and receipt.read_text().splitlines()[:2] != [variant.revision, shard['lfs_sha256']]:
             raise ValueError('unqualified checkpoint source revision/LFS metadata')
     if {p.name for p in root.glob('*.safetensors')} != {s['name'] for s in assets['shards']} or any(
             (root/s['name']).stat().st_size != s['bytes'] for s in assets['shards']):
@@ -167,6 +201,7 @@ def snapshot():
     authority, compatibility = inspect_payload()
     return dict(schema='ds41f.execution-identity.v2', profile=PROFILE,
                 glm_profile=compatibility['glm_profile'], limits=LIMITS,
+                checkpoint_variant=authority['checkpoint_variant'], numerics=authority['numerics'],
                 tool=WEATHER, dependencies=authority['dependencies'],
                 files=authority['files'], payloads=authority['payloads'],
                 semantic_native=authority['semantic_native'], tokenizer_sha256=authority['tokenizer_sha256'])
@@ -189,13 +224,13 @@ def inspect(cfg, *, checkpoint=True):
         assets = dict(assets, verification='full-byte SHA256; installation cache only for unchanged file identity')
     actual = dict(schema='ds41f.execution-identity.v2', profile=PROFILE,
                   glm_profile=compatibility['glm_profile'], limits=LIMITS,
+                  checkpoint_variant=authority['checkpoint_variant'], numerics=authority['numerics'],
                   tool=WEATHER, dependencies=authority['dependencies'],
                   files=authority['files'], payloads=authority['payloads'], semantic_native=authority['semantic_native'],
                   tokenizer_sha256=authority['tokenizer_sha256'])
     if checkpoint:
         # Paired state must never cross checkpoint or numerical-profile identities.
         actual['checkpoint'] = assets
-        actual['numerics'] = 'flash-1017-pre-woa-fp8-v1'
     identity_digest = hashlib.sha256(json.dumps(actual,sort_keys=True).encode()).hexdigest()
     return dict(status='PASS', profile=PROFILE, glm_profile=compatibility['glm_profile'], environment_valid=True,
                 release_qualified=False, identity_sha256=identity_digest,

@@ -156,7 +156,7 @@ class SuffixMathRegressions(unittest.TestCase):
         # These row/operation doubles are not BF16 tensors. Numerical conformance
         # is exercised by the transferred Flash-1017 primitive test, not here.
         from unittest.mock import patch
-        boundary = patch('ds41f_mlx.model_execution.activation.quantize_pre_woa',
+        boundary = patch('ds41f_mlx.model_execution.activation.pre_woa',
                          side_effect=lambda x: x)
         self.pre_woa = boundary.start()
         self.addCleanup(boundary.stop)

@@ -12,6 +12,8 @@ PREFIX = 'custom_kernels/glm_moe_dsa/'
 
 
 def default_profile(serving_distribution):
+    if serving_distribution != 'mtp':
+        raise ValueError('unsupported production distribution; Standard-OFF is retired')
     authority = json.loads((SOURCES/'execution-profiles.json').read_text())
     selected = authority['defaults'][serving_distribution]
     if (selected not in ('native', 'portable')

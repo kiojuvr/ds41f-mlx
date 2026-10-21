@@ -1,11 +1,26 @@
 # Installed execution admission
 
-## DeepInfer ordinary MTP admission
+## Unified MTP-only admission
+
+Production supports only `mtp-serving-v1` and the explicit singleton MTP profile.
+Standard-OFF startup/admission/provisioning/package selection is retired. OFF
+migration descriptions and receipts below are historical, not current instructions.
+Existing qualified installations are unchanged and are not migrated automatically.
+
+`--checkpoint-variant flash|flash-1017` fixes one variant per newly built package
+(default: `flash-1017`). Its manifest binds the exact approved 48-shard inventory,
+official revision, metadata, numerical profile and execution dependencies. Original
+Flash uses `flash-original-woa-v1` (unchanged inverse-RoPE output); 1017 retains
+`flash-1017-pre-woa-fp8-v1`. Tuple validation rejects unknown/mixed inventories or
+profiles. The selection is bound once by installed admission, cannot change within
+the process and has no hot-path filesystem access. Both checkpoint inventory and
+numerical profile participate in paired-cache execution identity.
+
 
 DeepInfer ordinary MTP permanently discontinues source/archive/patch and generated
 Python-package SHA sealing. Version/source dependency locks, strict ordered patch
 application, installed non-editable module/support-file origins and exact native,
-tokenizer and Flash-1017 checkpoint integrity remain mandatory. No installed file
+tokenizer and selected official checkpoint integrity remain mandatory. No installed file
 may be manually edited; no bypass or future source-seal finalization is required.
 The source/payload equality descriptions below retain the original admission
 migration / preserved OFF boundary, not ordinary DeepInfer Python-source checks.
@@ -74,10 +89,10 @@ involved. Compatibility failure still refuses startup.
 
 ## GLM execution distributions
 
-Normal-local **MTP and standard-OFF default to GLM native** on the supported M3 Ultra deployment.
+Both unified **MTP checkpoint variants default to GLM native** on the supported M3 Ultra deployment.
 `third_party/mtp/execution-profiles.json` records the explicit decisions and status;
 portable is an admitted explicit alternative.
-Serving mode (`mtp-serving-v1`/`standard-off`) and GLM execution profile are distinct.
+MTP serving mode, checkpoint variant and GLM execution profile are distinct.
 Provision with `--glm-profile portable` for the alternative; there is no request
 selector, hot switch or implicit fallback. Inspect, startup logs, operator status
 endpoint and MTP health expose `glm_profile` without performance inference.
@@ -127,8 +142,8 @@ is not relabeled as a new numerical/near-1M or general-runtime release campaign.
 4. Startup verifies installed execution and assets separately from host compatibility.
    Updating or deleting the development checkout/build scratch cannot change admission.
 
-`mtp_setup` follows this route for both MTP and standard-OFF; OFF uses its separate
-R1 base oMLX export and frozen qualified base recipe wheel, not the patched MTP payload.
+`mtp_setup` now follows this route for MTP only. The former OFF provisioning path
+is retired; its R1 base exports and qualified artifact records remain archival.
 Cross-profile startup is refused. This migration's fresh real-model acceptance is
 **ordinary MTP**, not fresh OFF or full long-context/release qualification.
 One-way repository promotion remains a source/build audit, not an installed

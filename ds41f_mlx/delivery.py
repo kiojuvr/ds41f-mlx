@@ -74,25 +74,8 @@ def inspect_reference_execution(cfg):
 
 
 def inspect(cfg):
-    from .execution_identity import inspect_payload
-    authority, compatibility = inspect_payload()
-    if authority['profile'] != 'standard-off':
-        raise ValueError('standard-off requires its separate installed execution package')
-    if not os.environ.get('DS41F_CHECKPOINT'):
-        raise ValueError('explicit official external DS41F_CHECKPOINT required')
-    if any(os.environ.get(key) for key in ('DS41F_OMLX_PATH','DS41F_RECIPE_PATH','PYTHONPATH')):
-        raise ValueError('external import paths unavailable in installed OFF')
-    site, recipe = paths()
-    if cfg.omlx_path.resolve() != site.resolve() or cfg.recipe_path.resolve() != recipe.resolve():
-        raise ValueError('OFF imports must use provisioned installed resources')
-    assets = admit_checkpoint(cfg.checkpoint_path, authority)
-    from .config import validate_runtime_config
-    validation = validate_runtime_config(cfg)
-    if any(v['status'] == 'FAIL' for v in validation):
-        raise ValueError('OFF configuration invalid')
-    return dict(schema='ds41f.off.delivery.v2', status='PASS', profile='standard-off',
-                config=cfg.to_json(), validation=validation, compatibility=compatibility,
-                build=authority['provenance'], checkpoint=assets)
+    """Historical OFF production entry point; never enroll or launch a payload."""
+    raise ValueError('Standard-OFF production admission is retired; provision an MTP package')
 
 
 def main():

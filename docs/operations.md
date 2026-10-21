@@ -1,5 +1,10 @@
 # Production operations
 
+`merge` is **MTP-only**. Original Flash and Flash-1017 use separate fresh
+package-fixed installations with shared Recipe 0.2 Chat/Messages semantics.
+Standard-OFF production startup, admission and provisioning are retired. Historical
+release receipts and occupied installations below are not migrated or requalified.
+
 This page owns installation, publication and everyday operation. Use
 [capabilities](capabilities.md) for profile support/limits,
 [architecture](architecture.md) for state/execution ownership and
@@ -27,17 +32,17 @@ runtime environments are:
 The first two retain the published scoped-local payloads from `0cd1428`; DeepInfer
 is a separate bounded installed acceptance, not their replacement. Do not update
 one line's environment from another checkout. Existing source isolation is retained;
-the current checkout is `DeepInfer`, not the historical Flash-1017 branch.
+the unified working branch is `merge`, not the historical Flash-1017 branch.
 
 Use the matching environment's `bin/ds41f`, or `bin/python -I -m ds41f_mlx.ops`.
 For example:
 
 ```sh
 /Volumes/SDXC-512/ds41f-mlx_mtp-venv/bin/ds41f start --profile mtp-serving-v1
-/Volumes/SDXC-512/ds41f-mlx_off-venv/bin/ds41f start --profile standard-off
 ```
 
-These are alternative launches, not concurrent servers on the same port.
+Use the matching package/checkpoint; never run two servers on the same port.
+The listed OFF installation is historical, not a supported unified-runtime launch.
 Historical `m53r-*-venv` and `ds41f-generation-policy*-venv` paths in qualification
 records identify the original runs, not current launch instructions. They are
 not rewritten in historical receipts. See [environment consolidation](environment-consolidation.md)
@@ -45,7 +50,7 @@ for migration details and completed legacy OFF retirement.
 
 ## DeepInfer daily operation and Harness
 
-The supported fresh provisioning command, from the DeepInfer checkout, is:
+The retained DeepInfer provisioning record (occupied destinations; do not rerun) is:
 
 ```sh
 /opt/homebrew/opt/python@3.13/bin/python3.13 -m ds41f_mlx.mtp_setup \
@@ -202,26 +207,24 @@ all acceptance servers are retired. No source projection or broader scope is imp
 Use a locked provisioned environment. `python -m ds41f_mlx.mtp_setup --profile
 mtp-singleton-v1 --venv /absolute/new-env --build-dir /absolute/new-build` builds
 and installs a non-editable execution wheel; the resulting MTP package supports
-both singleton and ordinary profiles. Standard-OFF uses `--profile standard-off`
-and its separate base recipe/oMLX package. Never point production at a donor or
+both singleton and ordinary profiles. Select `--checkpoint-variant flash` for
+original Flash or `--checkpoint-variant flash-1017` (default) for 1017. Use fresh,
+separate environment/build directories for each; neither existing qualified
+installation is an upgrade target. Standard-OFF selection is rejected. Never point production at a donor or
 development checkout. Building a wheel is not acceptance; publishers must run
 affected qualification before promoting it. Native recipe rebuilds and semantic
 library changes require affected qualification, not a manifest refresh.
 
-The M3 Ultra local MTP and standard-OFF distributions default explicitly to **GLM native**;
+Both package-fixed MTP checkpoint variants default explicitly to **GLM native**;
 `third_party/mtp/execution-profiles.json` owns that provisioning/build default.
 The exact three-member native archive and provenance receipt ship in
 `third_party/mtp/glm-native.*`. Setup deliberately installs that frozen overlay;
 operators do not rebuild it. Use `--glm-profile portable` at provisioning/package
 construction for the separately admitted alternative. Native startup failure
 never selects portable. Stop/settle before switching distributions and start new
-sessions; no pair migration, replay or repack is introduced. OFF setup consumes
-`standard-off-recipe.json` and its frozen exact M45/M47 qualified wheel, not a fresh
-recipe build. OFF receipts are `release/execution-package-standard-off.json` and
-`release/execution-package-standard-off-portable.json`; see
-[bounded OFF publication](standard-off-native-publication.md). Use separate OFF
-persistence namespaces for native/portable; do not claim cross-profile restore as
-same-trajectory continuity.
+sessions; no pair migration, replay or repack is introduced. OFF receipts such as
+`release/execution-package-standard-off.json` remain historical only; their old
+provisioning and persistence instructions do not apply to the unified runtime.
 
 Installed identity inspection reports `glm_profile`; MTP startup/status/health
 also expose it. OFF's legacy health model-ready field reflects lazy loading and
@@ -230,11 +233,12 @@ Native and portable have distinct manifests/digests and publication receipts:
 `release/execution-package.json` and `release/execution-package-portable.json`.
 See [GLM admission/provenance](runtime-admission.md#glm-execution-distributions).
 
-For an already provisioned MTP candidate, from the development checkout:
+For a fresh, isolated MTP candidate only, from the development checkout (use
+`flash` instead for original Flash; never modify a qualified installation):
 
 ```sh
-/path/to/env/bin/python tools/build_execution_package.py --output /absolute/wheels
-uv pip install --python /path/to/env/bin/python --no-deps --reinstall /absolute/wheels/ds41f_mlx-*.whl
+/path/to/env/bin/python tools/build_execution_package.py --checkpoint-variant flash-1017 --output /absolute/new-wheels
+uv pip install --python /path/to/new-env/bin/python --no-deps /absolute/new-wheels/ds41f_mlx-*.whl
 ```
 
 Retain the produced wheel SHA, source/build provenance and qualification receipt
@@ -269,10 +273,9 @@ payload failure needs an explicitly qualified package, not a bypass.
 
 Ordinary `mtp-serving-v1` is the CLI default for `start`, `inspect` and `accept`;
 TUI already selects it. Use the MTP installed package for omitted-profile local
-operation. Standard-OFF is an explicit `--profile standard-off` fallback requiring
-its **own** installed OFF package. A patched MTP package cannot start OFF, nor vice
-versa. No automatic fallback is performed on MTP admission/execution failure.
-Historical OFF `quick/full` defaults are unchanged. The [runtime closure](runtime-completeness.md)
+operation. `--profile standard-off` is rejected by startup, operations, provisioning
+and package construction. Historical OFF `quick/full` campaigns are no longer
+operator CLI commands. No automatic fallback is performed on MTP failure. The [runtime closure](runtime-completeness.md)
 records the promotion review; older installed wheels retain their old CLI defaults. Existing editable
 or source-sealed environments must be migrated, not made usable with
 `--no-validate`. The installed-admission migration's affected acceptance covers

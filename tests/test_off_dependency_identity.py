@@ -1,39 +1,40 @@
-"""OFF must not inherit MTP's different numerical dependency identity."""
-from copy import deepcopy
+"""Retired OFF production boundaries must fail before allocation or delivery."""
 import json
-from pathlib import Path
+import subprocess
+import sys
 
 import pytest
 
-from tools.build_execution_package import off_dependency_payloads
-
-ROOT = Path(__file__).resolve().parents[1]
-
-
-def authorities():
-    return (json.loads((ROOT/'third_party/mtp/standard-off-dependencies.json').read_text()),
-            json.loads((ROOT/'ds41f_mlx/runtime/admitted_resources.json').read_text()))
+from ds41f_mlx import execution_identity as identity
+from tools import build_execution_package as packaging
 
 
-def test_off_payload_matches_existing_numerical_authority_not_mtp():
-    off, pin = authorities()
-    payloads = off_dependency_payloads(off, pin)
-    mtp = json.loads((ROOT/'third_party/mtp/normal-local.json').read_text())
-    assert payloads['numpy']['__init__.py'] == pin['modules']['numpy']['sha256']
-    assert payloads['numpy']['__init__.py'] != mtp['dependency_payload']['numpy/__init__.py']
-    assert off['versions'] == {'numpy': '2.5.3', 'transformers': '5.18.0'}
+@pytest.mark.parametrize('module,args', [
+    ('ds41f_mlx.serve', ['--profile', 'standard-off', '--print-config']),
+    ('ds41f_mlx.ops', ['start', '--profile', 'standard-off']),
+    ('ds41f_mlx.mtp_setup', ['--profile', 'standard-off', '--venv', '/unused', '--build-dir', '/unused']),
+    ('tools.build_execution_package', ['--profile', 'standard-off', '--output', '/unused']),
+])
+def test_retired_off_cli_rejected(module, args):
+    proc = subprocess.run([sys.executable, '-m', module, *args], text=True, capture_output=True)
+    assert proc.returncode != 0
+    assert 'invalid choice' in proc.stderr and 'standard-off' in proc.stderr
 
 
-@pytest.mark.parametrize('kind', ['version', 'module', 'native'])
-def test_off_authority_drift_fails_closed(kind):
-    off, pin = authorities()
-    off = deepcopy(off)
-    if kind == 'version':
-        off['versions']['numpy'] = '2.3.5'
-    elif kind == 'module':
-        off['payloads']['numpy']['__init__.py'] = '0'*64
-    else:
-        path = next(iter(pin['package_resources']['numpy']))
-        off['payloads']['numpy'][path] = '0'*64
-    with pytest.raises(ValueError, match='OFF dependency authority'):
-        off_dependency_payloads(off, pin)
+def test_retired_off_admission_and_app_rejected(tmp_path, monkeypatch):
+    from ds41f_mlx.delivery import inspect
+    with pytest.raises(ValueError, match='retired'):
+        inspect(None)
+    authority = tmp_path/'manifest.json'
+    authority.write_text(json.dumps(dict(profile='standard-off')))
+    monkeypatch.setattr(identity, 'MANIFEST', authority)
+    with pytest.raises(ValueError, match='retired'):
+        identity.inspect_payload()
+    with pytest.raises(ValueError, match='retired'):
+        packaging.build_wheel(dict(profile='standard-off'), tmp_path)
+    from ds41f_mlx.serving.server import create_app
+    with pytest.raises(ValueError, match='retired'):
+        create_app(profile='standard-off')
+    from ds41f_mlx.release_acceptance import main
+    with pytest.raises(SystemExit, match='retired'):
+        main([])

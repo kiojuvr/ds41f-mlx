@@ -96,6 +96,46 @@ def test_pair_rejects_frontier_identity_and_branch_mismatch():
         validate_pair(target, rings, tokens)
 
 
+def test_checkpoint_variants_have_distinct_execution_and_paired_identities(monkeypatch):
+    import json
+    from ds41f_mlx import execution_identity, mtp_identity
+    from ds41f_mlx.mtp_setup import SOURCES
+    from tools.build_execution_package import mtp_manifest
+    from ds41f_mlx.serving.paired_checkpoint import PairedCheckpointAuthority
+    old = json.loads((SOURCES/'normal-local.json').read_text())
+    monkeypatch.setenv('DS41F_CHECKPOINT', '/fixture')
+    monkeypatch.setattr(mtp_identity.subprocess, 'check_output', lambda args, **kw:
+        'Apple M3 Ultra\n' if args[-1] == 'machdep.cpu.brand_string' else '549755813888\n')
+    monkeypatch.setattr(mtp_identity.importlib.util, 'find_spec', lambda name: SimpleNamespace(origin='fixture'))
+    monkeypatch.setattr(mtp_identity, 'admit_checkpoint', lambda root, authority: authority['checkpoint'])
+    cfg = SimpleNamespace(checkpoint_path=Path('/fixture'), to_json=lambda: {})
+    identities = []
+    for name in ('flash', 'flash-1017'):
+        authority = mtp_manifest(old, 'portable', name)
+        monkeypatch.setattr(execution_identity, 'inspect_payload', lambda: (authority, {'glm_profile': 'portable'}))
+        report = mtp_identity.inspect(cfg)
+        assert report['identity']['checkpoint_variant'] == name
+        assert report['identity']['numerics'] == mtp_identity.VARIANTS[name].numerics
+        identities.append(report['identity_sha256'])
+    assert identities[0] != identities[1]
+    first = PairedCheckpointAuthority(identities[0], MX)
+    second = PairedCheckpointAuthority(identities[1], MX)
+    saved = first.capture(*pair())
+    first.publish(saved)
+    prompt = list(saved.tokens) + [999, 1000]
+    assert first.acquire(prompt) is not None
+    assert second.acquire(prompt) is None
+    with pytest.raises(ValueError, match='identity mismatch'):
+        saved.restore(identities[1], prompt, MX)
+    with pytest.raises(ValueError, match='foreign'):
+        second.publish(saved)
+    lease = first.retain(saved.tokens)
+    with pytest.raises(RuntimeError, match='lease lost; no replay'):
+        second.acquire_retained(lease, prompt)
+    first.release(lease)
+    first.clear(); second.clear()
+
+
 def test_session_pin_is_only_upstream_refcount_and_survives_ordinary_cache_pressure():
     pytest.importorskip('mlx.core'); pytest.importorskip('omlx')
     from ds41f_mlx.serving.paired_checkpoint import PairedCheckpointAuthority

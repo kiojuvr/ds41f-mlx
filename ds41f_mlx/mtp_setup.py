@@ -1,4 +1,4 @@
-"""Target-native source-clone provisioning; build inputs are repository authority."""
+"""Provision a fresh package-fixed MTP installation from repository build inputs."""
 import argparse
 import hashlib
 import json
@@ -32,61 +32,44 @@ def apply_mtp_patches(source):
 
 
 def main(argv=None):
+    from .mtp_identity import DEFAULT_VARIANT, VARIANTS
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument('--profile', choices=['standard-off', 'mtp-singleton-v1'], default='mtp-singleton-v1')
+    p.add_argument('--profile', choices=['mtp-singleton-v1'], default='mtp-singleton-v1',
+                   help='MTP installation for singleton/ordinary serving; Standard-OFF is retired')
+    p.add_argument('--checkpoint-variant', choices=VARIANTS, default=DEFAULT_VARIANT)
     p.add_argument('--glm-profile', choices=['native', 'portable'],
                    help='explicit execution distribution; no fallback')
     p.add_argument('--venv', type=Path, required=True)
     p.add_argument('--build-dir', type=Path, required=True)
     args = p.parse_args(argv)
     from .glm_profile import default_profile
-    args.glm_profile = args.glm_profile or default_profile('mtp' if args.profile == 'mtp-singleton-v1' else 'standard-off')
+    args.glm_profile = args.glm_profile or default_profile('mtp')
     if platform.system() != 'Darwin' or platform.machine() != 'arm64':
         p.error('qualified setup requires Apple Silicon macOS')
     venv, build = args.venv.resolve(), args.build_dir.resolve()
+    if venv.exists():
+        raise ValueError('target venv must be absent; construct a fresh locked environment')
     lock = json.loads((SOURCES/'sources.json').read_text())
     normal = json.loads((SOURCES/'normal-local.json').read_text())
-    if args.profile == 'mtp-singleton-v1':
-        lock['sources']['recipe'] = normal['recipe_source']
+    lock['sources']['recipe'] = normal['recipe_source']
     build.mkdir(parents=True, exist_ok=True)
     for name, spec in lock['sources'].items():
-        archive = SOURCES/spec['archive']
-        # Ordinary MTP sources have revision provenance, not SHA admission.
-        if args.profile == 'standard-off' and sha(archive) != spec['sha256']:
-            raise ValueError('unapproved dependency source archive')
         target = build/name
         if target.exists():
             raise ValueError('build-dir must have no prior dependency source exports')
         target.mkdir()
-        with tarfile.open(archive) as tar:
+        # Ordinary MTP sources have revision provenance, not SHA admission.
+        with tarfile.open(SOURCES/spec['archive']) as tar:
             tar.extractall(target, filter='data')
-    if args.profile == 'mtp-singleton-v1':
-        apply_mtp_patches(build/'omlx')
-        patch = ROOT/normal['recipe_source']['patch']
-        subprocess.run(['git', 'apply', '--check', str(patch)], cwd=build/'recipe', check=True)
-        subprocess.run(['git', 'apply', str(patch)], cwd=build/'recipe', check=True)
-    if venv.exists():
-        raise ValueError('target venv must be absent; construct a fresh locked environment')
+    apply_mtp_patches(build/'omlx')
+    patch = ROOT/normal['recipe_source']['patch']
+    subprocess.run(['git', 'apply', '--check', str(patch)], cwd=build/'recipe', check=True)
+    subprocess.run(['git', 'apply', str(patch)], cwd=build/'recipe', check=True)
     run('uv', 'venv', '--python', '/opt/homebrew/opt/python@3.13/bin/python3.13', venv)
     python = venv/'bin/python'
     if subprocess.check_output([str(python),'-c','import platform; print(platform.python_version())'],text=True).strip() != '3.13.15':
         raise ValueError('qualified setup requires Python 3.13.15; recreate the target venv')
-    requirements = SOURCES/('requirements-normal-local.lock' if args.profile == 'mtp-singleton-v1'
-                            else 'requirements.lock')
-    if args.profile == 'standard-off':
-        # The source-export lock predates the independently qualified OFF
-        # numerical distribution. Use its repository-owned versions, then let
-        # the package builder verify exact bytes (never enroll local inventory).
-        off = json.loads((SOURCES/'standard-off-dependencies.json').read_text())
-        lines = requirements.read_text().splitlines()
-        for name, version in off['versions'].items():
-            matches = [i for i, line in enumerate(lines) if line.startswith(name+'==')]
-            if len(matches) != 1:
-                raise ValueError(f'ambiguous OFF dependency requirement: {name}')
-            lines[matches[0]] = name+'=='+version
-        requirements = build/'requirements-standard-off.lock'
-        requirements.write_text('\n'.join(lines)+'\n')
-    run('uv','pip','install','--python',python,'-r',requirements)
+    run('uv','pip','install','--python',python,'-r',SOURCES/'requirements-normal-local.lock')
     env = dict(os.environ)
     for key in list(env):
         if key in ('DOCS_RS','PYTHONPATH','WEB_CONCURRENCY','RUSTFLAGS','CARGO_ENCODED_RUSTFLAGS',
@@ -100,47 +83,27 @@ def main(argv=None):
                CARGO_TARGET_DIR=str(build/'cargo'))
     if subprocess.check_output(['pkg-config','--modversion','opencv4'],env=env,text=True).strip() != '4.14.0':
         raise ValueError('qualified native build requires OpenCV 4.14.0')
-    if args.profile == 'standard-off':
-        # Reuse the exact M45/M47 admitted artifact. A fresh same-source build
-        # is path-sensitive and is not authorization to replace its resource pin.
-        from .off_recipe import artifact_authority
-        wheel, _ = artifact_authority()
-        wheels = [wheel]
-    else:
-        # Existing retained-wheel authority now delivers the Recipe 0.2 release
-        # build, auditwheel-repaired with its complete native graph. The clean
-        # upstream export plus the consolidated patch above are its source.
-        wheel = SOURCES/normal['wheel']['file']
-        if sha(wheel) != normal['wheel']['sha256']:
-            raise ValueError('unapproved normal-local native wheel')
-        wheels = [wheel]
-    run('uv','pip','install','--reinstall','--no-deps','--python',python,wheels[0],build/'omlx')
+    wheel = SOURCES/normal['wheel']['file']
+    if sha(wheel) != normal['wheel']['sha256']:
+        raise ValueError('unapproved normal-local native wheel')
+    run('uv','pip','install','--reinstall','--no-deps','--python',python,wheel,build/'omlx')
     resource = venv/'share/ds41f-mtp/recipe/static/tokenizers/v41'
     resource.mkdir(parents=True, exist_ok=True)
     import shutil
     shutil.copy2(build/'recipe/static/tokenizers/v41/tokenizer.json',resource/'tokenizer.json')
-    # Standard OFF uses the unchanged R1 attributed base source, not the MTP patches.
-    if args.profile == 'standard-off':
-        site = Path(subprocess.check_output([str(python), '-c', 'import sysconfig; print(sysconfig.get_paths()["purelib"])'], text=True).strip())
-        shutil.rmtree(site/'omlx')
-        with tarfile.open(ROOT/'reference/R1/off-source.tar.gz') as archive:
-            archive.extractall(site, filter='data')
     site = Path(subprocess.check_output([str(python), '-c', 'import sysconfig; print(sysconfig.get_paths()["purelib"])'], text=True).strip())
     from .glm_profile import provision
     provision(site, args.glm_profile)
-    package_args = ['--output', build/'runtime-wheels', '--glm-profile', args.glm_profile]
-    if args.profile == 'standard-off':
-        package_args += ['--profile', 'standard-off', '--recipe-wheel', wheels[0]]
-    run(python, ROOT/'tools/build_execution_package.py', *package_args)
+    run(python, ROOT/'tools/build_execution_package.py', '--output', build/'runtime-wheels',
+        '--glm-profile', args.glm_profile, '--checkpoint-variant', args.checkpoint_variant)
     runtime_wheels = list((build/'runtime-wheels').glob('ds41f_mlx-*.whl'))
     if len(runtime_wheels) != 1:
         raise ValueError('exactly one execution package required')
     run('uv','pip','install','--no-deps','--python',python,runtime_wheels[0])
-    # Check installed origins, dependency versions, native ABI/resources and capabilities.
     subprocess.run([str(python), '-I', '-c',
                     'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
                    check=True, env=env)
-    print(f'Provisioned {venv}. Runtime needs neither donor checkouts nor build-dir.')
+    print(f'Provisioned {venv} ({args.checkpoint_variant}). Runtime needs neither donor checkouts nor build-dir.')
 
 
 if __name__ == '__main__':

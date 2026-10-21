@@ -12,9 +12,11 @@ These are current owning pages, **not an at-HEAD qualification badge**.
 Ordinary `mtp-serving-v1` with **GLM native** is the M3 Ultra local default;
 GLM portable is an explicit alternative, never an admission-failure fallback
 ([distribution authority](runtime-admission.md#glm-execution-distributions)).
-`standard-off` remains an explicit
-serving alternative, distinct from bounded singleton; its GLM distribution also
-defaults to native after [bounded OFF publication](standard-off-native-publication.md). [Runtime completeness and promotion](runtime-completeness.md)
+The unified `merge` runtime is **MTP-only**, with original Flash and Flash-1017
+selected at package construction (`flash` / `flash-1017`, default 1017).
+Both share Recipe 0.2 native Chat/Messages; each installation has a fixed checkpoint
+and numerical identity. `standard-off` production is retired; its publication
+records remain historical. Existing qualified installations are not migrated. [Runtime completeness and promotion](runtime-completeness.md)
 records core COMPLETE, no current local blocker and separated upstream performance work.
 **DS41F-SCOPED-LOCAL-20261015 is released** for the declared single-operator
 M3 Ultra / 512 GB local and explicitly trusted-private-LAN scope; the
@@ -26,9 +28,11 @@ public/source entry point; no separate public/runtime repository is planned.
 The old `ds41f-runtime` directory is unused generation, not current deployment or
 accepted release history.
 
-## DeepInfer branch
+## DeepInfer baseline and unified branch
 
-Current DeepInfer uses official Flash-1017 and Recipe 0.2 native Chat/Messages.
+DeepInfer supplied Flash-1017 and Recipe 0.2 native Chat/Messages; `merge` restores
+original Flash selection within the same MTP implementation. Historical acceptance
+records do not qualify both variants automatically.
 [Operations](operations.md#deepinfer-daily-operation-and-harness) owns the dedicated
 persistent environment and direct Harness configuration; [capabilities](capabilities.md#deepinfer-current-implementation)
 owns supported/unsupported Messages and Vision scope. The [development record](deepinfer-development.md)

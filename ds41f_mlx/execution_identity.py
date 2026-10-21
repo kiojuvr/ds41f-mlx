@@ -14,6 +14,21 @@ import sys
 import sysconfig
 
 MANIFEST = Path(__file__).with_name('execution_manifest.json')
+_admitted_variant = None
+
+
+def numerical_profile():
+    """Already-admitted immutable selection; no I/O in numerical execution."""
+    if _admitted_variant is None:
+        raise RuntimeError('numerical execution requires installed MTP admission')
+    return _admitted_variant.numerics
+
+
+def _bind_variant(variant):
+    global _admitted_variant
+    if _admitted_variant is not None and _admitted_variant != variant:
+        raise ValueError('installed checkpoint variant changed within the process')
+    _admitted_variant = variant
 
 
 def inventory(root):
@@ -140,9 +155,13 @@ def check_installed_packages(authority, site):
 def inspect_payload():
     from .mtp_setup import sha
     authority = json.loads(MANIFEST.read_text())
+    if authority.get('profile') != 'mtp':
+        raise ValueError('Standard-OFF is retired; an installed MTP package is required')
     site = Path(sysconfig.get_paths()['purelib']).resolve()
     if Path(__file__).resolve().parent != site/'ds41f_mlx':
         raise ValueError('production requires installed ds41f package; checkout execution refused')
+    from .mtp_identity import checkpoint_variant
+    variant = checkpoint_variant(authority)
     if sys.flags.optimize:
         raise ValueError('optimized Python unavailable in admitted profile')
     if platform.system() != 'Darwin' or platform.machine() != 'arm64':
@@ -202,6 +221,7 @@ def inspect_payload():
     tokenizer = Path(sys.prefix)/'share/ds41f-mtp/recipe/static/tokenizers/v41/tokenizer.json'
     if sha(tokenizer) != authority['tokenizer_sha256']:
         raise ValueError('recipe tokenizer drift')
+    _bind_variant(variant)
     return authority, dict(status='PASS', python=platform.python_version(),
                            macos=platform.mac_ver()[0], native_images=closure,
                            glm_profile=selected, glm_native_symbols=list(fast.native_symbols()))

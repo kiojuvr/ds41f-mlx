@@ -141,8 +141,8 @@ class DecodeStateProducer:
             ci, pooled = shared['idx'], shared['kv']
         out = m.packed_sparse_attention(q, kv, pooled, idx, ci, module.attn_sink, c.head_dim**-0.5)
         out = m.rope(out, positions, c, bool(ratio), inverse=True)
-        from ds41f_mlx.model_execution.activation import quantize_pre_woa
-        grouped = quantize_pre_woa(out.reshape(1, length, c.o_groups, -1))
+        from ds41f_mlx.model_execution.activation import pre_woa
+        grouped = pre_woa(out.reshape(1, length, c.o_groups, -1))
         weight = module.wo_a.weight.reshape(c.o_groups, c.o_lora_rank, -1)
         return module.wo_b(mx.einsum('bsgd,grd->bsgr', grouped, weight).flatten(-2))
 

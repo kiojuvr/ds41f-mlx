@@ -49,13 +49,13 @@ def test_pinned_target_and_dspark_use_the_shared_boundary(tmp_path):
                        capture_output=True)
     for name in ('language', 'dspark'):
         source = (tmp_path/f'omlx/patches/deepseek_v41/{name}.py').read_text()
-        boundary = source.index('grouped = quantize_pre_woa(out.reshape(')
+        boundary = source.index('grouped = pre_woa(out.reshape(')
         assert source.rindex('inverse=True)', 0, boundary) < boundary < source.index('mx.einsum(', boundary)
-        assert 'from ds41f_mlx.model_execution.activation import quantize_pre_woa' in source
+        assert 'from ds41f_mlx.model_execution.activation import pre_woa' in source
     for path in ('model_execution/language.py', 'runtime/state_production.py',
                  'prefill_fp8_mlx/omlx_suffix_math.py'):
         source = (root/'ds41f_mlx'/path).read_text()
-        boundary = source.index('grouped = quantize_pre_woa(out.reshape(')
+        boundary = source.index('grouped = pre_woa(out.reshape(')
         assert source.rindex('inverse=True)', 0, boundary) < boundary < source.index('mx.einsum(', boundary)
     # No checkpoint-toggle/configuration shim is needed for the selected baseline.
     assert 'pre_woa_fp8' not in (tmp_path/'omlx/patches/deepseek_v41/config.py').read_text()
@@ -75,19 +75,31 @@ def test_checkpoint_byte_cache_rejects_replacement(tmp_path, monkeypatch):
         identity.verify_checkpoint_bytes(tmp_path, assets)
 
 
+@pytest.mark.parametrize('variant', ['flash', 'flash-1017'])
 @pytest.mark.parametrize('receipts', [False, True])
-def test_checkpoint_selection_requires_exact_assets(tmp_path, monkeypatch, receipts):
+def test_checkpoint_selection_requires_exact_assets(tmp_path, monkeypatch, receipts, variant):
     import hashlib
+    from dataclasses import replace
     from ds41f_mlx import mtp_identity as identity
     digest = hashlib.sha256(b'{}').hexdigest()
     monkeypatch.setattr(identity, 'CHECKPOINT', {'config.json': digest})
     (tmp_path/'config.json').write_bytes(b'{}')
-    original = dict(metadata=identity.CHECKPOINT, shards=[
-        dict(name=f'model-{i:05d}.safetensors', bytes=1, source_revision=identity.CHECKPOINT_REVISION,
-             lfs_sha256='0'*64) for i in range(48)],
+    selected = identity.VARIANTS[variant]
+    expected = dict(metadata=identity.CHECKPOINT, shards=[
+        dict(name=f'model-{i:05d}.safetensors', bytes=1, source_revision=selected.revision,
+             lfs_sha256=hashlib.sha256(b'x').hexdigest()) for i in range(48)],
         verification='metadata/source inventory only; weights not freshly rehashed')
-    authority = dict(checkpoint=identity.flash_1017_inventory(original), checkpoint_metadata={})
-    expected = authority['checkpoint']
+    # Tiny asset fixture; production fingerprints are tested separately below.
+    selected = replace(selected, inventory_sha256=hashlib.sha256(
+        json.dumps(expected, sort_keys=True).encode()).hexdigest())
+    monkeypatch.setitem(identity.VARIANTS, variant, selected)
+    metadata = {'tokenizer_config.json': '6ac8c8dc065ed118161d02dd532749ae3f52c243deac27872134fae2f50d8547'}
+    (tmp_path/'tokenizer_config.json').write_bytes(b'{}')
+    authority = dict(checkpoint=expected, checkpoint_metadata=metadata,
+                     checkpoint_variant=variant, numerics=selected.numerics)
+    real_sha = identity.sha
+    monkeypatch.setattr(identity, 'sha', lambda path:
+        metadata['tokenizer_config.json'] if path.name == 'tokenizer_config.json' else real_sha(path))
     for s in expected['shards']:
         (tmp_path/s['name']).write_bytes(b'x')
         if receipts:
@@ -103,11 +115,11 @@ def test_checkpoint_selection_requires_exact_assets(tmp_path, monkeypatch, recei
         identity.admit_checkpoint(tmp_path, authority)
     (tmp_path/'foreign.json').unlink()
     (tmp_path/'configuration.json').write_text('{}')
-    with pytest.raises(ValueError, match='checkpoint metadata'):
+    with pytest.raises(ValueError, match='checkpoint metadata|configuration files'):
         identity.admit_checkpoint(tmp_path, authority)
     (tmp_path/'configuration.json').unlink()
     with pytest.raises(ValueError, match='not admitted'):
-        identity.admit_checkpoint(tmp_path, dict(authority, checkpoint=original))
+        identity.admit_checkpoint(tmp_path, dict(authority, checkpoint=dict(expected, shards=[])))
     receipt = tmp_path/'.cache/huggingface/download'/(expected['shards'][0]['name']+'.metadata')
     receipt.parent.mkdir(parents=True, exist_ok=True)
     receipt.write_text('foreign-revision\n'+'0'*64+'\n')
@@ -141,3 +153,50 @@ def test_pre_woa_metal_boundary_is_distinct_from_generic_quantization():
     np.testing.assert_array_equal(np.asarray(actual.astype(mx.float32)), np.asarray(chunked.astype(mx.float32)))
     with pytest.raises(ValueError, match='BF16'):
         quantize_pre_woa(a.astype(mx.float32))
+
+
+@pytest.mark.parametrize('name', ['flash', 'flash-1017'])
+def test_approved_manifest_tuple_rejects_mixed_or_foreign_inventory(name):
+    from copy import deepcopy
+    from ds41f_mlx.mtp_identity import VARIANTS, checkpoint_variant, flash_1017_inventory
+    old = json.loads((Path(__file__).resolve().parents[1]/'third_party/mtp/normal-local.json').read_text())
+    assets = old['checkpoint'] if name == 'flash' else flash_1017_inventory(old['checkpoint'])
+    authority = dict(checkpoint_variant=name, numerics=VARIANTS[name].numerics,
+                     checkpoint=assets, checkpoint_metadata=old['checkpoint_metadata'])
+    assert checkpoint_variant(authority) is VARIANTS[name]
+    for field, value in [('checkpoint_variant', 'unknown'), ('numerics', 'foreign'),
+                         ('checkpoint_variant', 'flash-1017' if name == 'flash' else 'flash')]:
+        with pytest.raises(ValueError):
+            checkpoint_variant(dict(authority, **{field: value}))
+    for key in ('lfs_sha256', 'source_revision', 'name', 'bytes'):
+        foreign = deepcopy(authority)
+        foreign['checkpoint']['shards'][0][key] = 0 if key == 'bytes' else 'foreign'
+        with pytest.raises(ValueError, match='not admitted'):
+            checkpoint_variant(foreign)
+    with pytest.raises(ValueError):
+        checkpoint_variant(dict(authority, checkpoint_metadata={}))
+
+
+def test_shared_boundary_is_fail_closed_immutable_and_io_free(monkeypatch):
+    from dataclasses import FrozenInstanceError
+    from ds41f_mlx import execution_identity as identity
+    from ds41f_mlx.mtp_identity import VARIANTS
+    from ds41f_mlx.model_execution import activation
+    monkeypatch.setattr(identity, '_admitted_variant', None)
+    with pytest.raises(RuntimeError, match='admission'):
+        activation.pre_woa(object())
+    identity._bind_variant(VARIANTS['flash'])
+    with pytest.raises(FrozenInstanceError):
+        identity._admitted_variant.numerics = 'foreign'
+    with pytest.raises(ValueError, match='changed'):
+        identity._bind_variant(VARIANTS['flash-1017'])
+    monkeypatch.setattr(Path, 'read_text', lambda *a, **k: pytest.fail('hot-path I/O'))
+    x = object()
+    monkeypatch.setattr(activation, 'quantize_pre_woa', lambda x: pytest.fail('original quantization'))
+    assert activation.pre_woa(x) is x
+    monkeypatch.setattr(identity, '_admitted_variant', VARIANTS['flash-1017'])
+    calls = []
+    result = object()
+    monkeypatch.setattr(activation, 'quantize_pre_woa', lambda value: calls.append(value) or result)
+    assert activation.pre_woa(x) is result
+    assert calls == [x]

@@ -197,9 +197,9 @@ def _chat_sse_events(events: list[dict[str, Any]] | tuple[dict[str, Any], ...]) 
     return gen()
 
 
-def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_path: Path | None = None, options: ConversionOptions | None = None, model_id: str | None = None, runtime_config=None, profile='standard-off') -> FastAPI:
-    if profile not in ('standard-off', 'mtp-singleton-v1', 'mtp-serving-v1'):
-        raise ValueError('unknown capability profile')
+def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_path: Path | None = None, options: ConversionOptions | None = None, model_id: str | None = None, runtime_config=None, profile='mtp-serving-v1') -> FastAPI:
+    if profile not in ('mtp-singleton-v1', 'mtp-serving-v1'):
+        raise ValueError('unsupported capability profile; Standard-OFF production is retired')
     local_mtp = profile == 'mtp-singleton-v1'
     ordinary_mtp = profile == 'mtp-serving-v1'
     if ordinary_mtp:
@@ -221,12 +221,7 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
     runtime_config.apply_import_paths()
     recipe_path = Path(recipe_path) if recipe_path is not None else runtime_config.recipe_path
     model_id = model_id if model_id is not None else runtime_config.model_id
-    backend = backend or DeepSeekRecipeRuntimeBackend(recipe_path=recipe_path, model_id=model_id, runtime_config=runtime_config)
-    if not (local_mtp or ordinary_mtp) and isinstance(backend, DeepSeekRecipeRuntimeBackend):
-        from ds41f_mlx.runtime.resource_admission import load_protocol_tokenizer
-        tokenizer = load_protocol_tokenizer(recipe_path)
-    else:
-        tokenizer = load_v41_tokenizer(recipe_path)  # unchanged MTP/fixture path
+    tokenizer = load_v41_tokenizer(recipe_path)
     if local_mtp:
         from ds41f_mlx.mtp_profile import PROFILE, LIMITS, validate_chat, strict_json
         from .mtp_public import LocalBoundary, public_record

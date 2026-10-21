@@ -1539,3 +1539,68 @@ from general release/deployment qualification. Documentation checks: existing
 `tests/test_documentation_authority.py` **46 passed** in unchanged development
 `.venv` with `PYTHONDONTWRITEBYTECODE=1` / `-p no:cacheprovider`; `git diff --check`
 **PASS**. No Runtime rebuild follows these documentation-only changes.
+
+## Unified original Flash / Flash-1017 MTP integration (2026-10-21)
+
+Source: `merge`, based on `c46750f`; **bounded integration PASS**, not release
+promotion. The tested wheels record that base commit and were built from the
+uncommitted implementation. Read-only comparison found every installed Runtime
+Python file byte-equal to the completed source in both fresh installations.
+
+- `--checkpoint-variant flash|flash-1017` fixes checkpoint inventory, official
+  revision and numerical profile in the built package; default remains 1017.
+- One admitted immutable in-process descriptor selects `activation.pre_woa` at
+  all five owned Target/decode/P6 and packaged oMLX Target/DSpark sites. Original
+  Flash returns the inverse-RoPE output unchanged; the existing 1017 primitive
+  and kernel are unchanged. No numerical hot-path manifest access or model switch.
+- Exact installed dependencies/native/tokenizer admission, full 48-shard SHA256,
+  optional receipt checks and unchanged-file-identity verification cache remain.
+  Checkpoint variant and numerical profile are part of paired execution identity.
+- Standard-OFF production CLI/app/startup/admission/provisioning/package/default
+  distribution selection is retired. The public `ds41f-accept` entry now uses
+  bounded ordinary MTP acceptance. Historical reference/resource/Target components,
+  OFF artifacts and evidence remain; no OFF requalification or second Recipe stack.
+
+Fresh environments/builds are `/private/tmp/ds41f-unified-{flash,1017}-{install,build}`;
+KV roots and ports **18147 / 18148** are separate. Both ran installed `python -I`
+with native GLM, locked Recipe **0.2.0**, and checkpoints reused read-only in place.
+Full verification covered **48 shards / 510,296,708,312 bytes per checkpoint**.
+Opposite-checkpoint inspection failed before model loading (original package:
+foreign configuration set; 1017 package: foreign revision/LFS receipt).
+
+| Variant | Numerical profile | Execution identity |
+| --- | --- | --- |
+| Original | `flash-original-woa-v1` | `adc79e79862f5b6cb5e00e6b71c5c566e620a00ad1c6a9e0befbc8895115cce5` |
+| 1017 | `flash-1017-pre-woa-fp8-v1` | `9c439d3fb9ad730996ecca821234bba1ce8817d7b46a2744e171c10a4d7d2ca2` |
+
+Each variant passed genuine native Messages and Chat text/tool generation,
+exact-ID tool-result continuation, one corn image and cached-history follow-up,
+and one **8,408-token** tiled P6 prompt. Both tool continuations restored **330**
+positions; image continuation restored **201** without re-encoding the image.
+All nine cases per variant settled all **40 Target / 3 DSpark** frontiers, published
+paired state, retired prediction and emptied queues with replay/repack **0/0**.
+Both servers retired normally. Tool results were synthetic; no tool effect ran.
+
+Observation-only wrappers compared the first token row of the first real invocation
+at each oMLX Target, DSpark and P6 suffix boundary, bit-for-bit: original input
+identity/pass-through and 1017 against the retained source-derived CPU oracle.
+This is not an executed official-kernel oracle or whole-model hidden/logit/trajectory
+comparison. The two retained owned Target/decode sites are source/unit-covered,
+not full-model exercised by selected MTP serving. No capacity/soak/benchmark,
+Harness rerun, OFF acceptance or general release qualification is claimed.
+
+Existing focused suites: **276 passed, 12 subtests passed**; output-default suite
+separately **50 passed** with its explicit scratch tokenizer path. Initial probes
+exposed the development `.venv`'s older Recipe API and fixtures' legacy tokenizer
+path/FP32 random weights; testing used fresh Recipe 0.2 and explicit BF16 tiny-model
+fixtures, without modifying the development or qualified environments. Both
+numerical profiles pass connected tiny-model verification/rollback regressions.
+Cross-identity lookup misses safely; foreign restoration/publication and retained
+continuation reject without replay. Documentation closure and strict overlays pass.
+
+A before/after metadata comparison of **32,451 files** found the protected original
+MTP and DeepInfer installations unchanged (size/mtime/ctime/inode; no added/removed
+files). All checkpoint file identities still matched their verified pre-run cache.
+Raw receipts, numerical observations, rejected inspections, test logs and wheel
+identities are retained in [bounded integration evidence](../artifacts/unified-mtp/summary.json).
+Existing installations are not migrated; master integration review is separate.

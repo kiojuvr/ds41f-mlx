@@ -2,11 +2,12 @@
 
 **Run the official DeepSeek-V4.1-Flash checkpoint locally on Apple Silicon.**
 
-**DeepInfer branch:** current source selects official **Flash-1017**, Recipe
-**0.2.0**, native Messages alongside Chat Completions, and a dedicated installed
-runtime. [Daily setup and direct Harness connection](docs/operations.md#deepinfer-daily-operation-and-harness)
-and [scoped acceptance record](docs/deepinfer-development.md) distinguish it from
-the unchanged original-Flash release below.
+**Unified `merge` branch:** MTP-only production for official **Flash** and
+**Flash-1017**, sharing Recipe **0.2.0** native Chat/Messages semantics. Select
+`--checkpoint-variant flash` or `flash-1017` (default) during provisioning;
+each installation has one fixed checkpoint and numerical identity. Existing
+installations are not migrated. Standard-OFF is retired; prior release/OFF records
+below are historical, not qualification of this branch.
 
 `ds41f-mlx` is a native runtime targeting the **Mac Studio M3 Ultra with 512 GB
 unified memory**. It exists to combine model fidelity, correct long-context state
@@ -14,8 +15,7 @@ and practical local inference performance—not to substitute a reduced or
 requantized model.
 
 The normal serving path uses **MTP (multi-token prediction)** with coherent target
-and draft-model state reuse. A separately installed, non-MTP path is available
-for fallback and its additional API/persistence contracts.
+and draft-model state reuse. There is no supported non-MTP production fallback.
 
 [Quick Start](#quick-start) · [Capabilities and limits](docs/capabilities.md) ·
 [Operations](docs/operations.md) · [Documentation index](docs/README.md)
@@ -62,14 +62,14 @@ The following specifications describe the **ordinary default MTP path**:
 
 | Specification | Supported boundary |
 | --- | --- |
-| Model / hardware | Official Flash-1017 on DeepInfer (original Flash in the published release) / Apple M3 Ultra, 512 GB |
+| Model / hardware | Official original Flash or Flash-1017, fixed per package / Apple M3 Ultra, 512 GB |
 | Total text capacity | **1,048,576 tokens**, or the smaller checkpoint-configured range |
 | Requested output | **1–393,216 tokens**; actual recipe prompt + requested output must fit |
 | Output when omitted | **8192** without thinking; **65,536** with low/high thinking; **131,072** with max thinking |
 | Execution concurrency | **One native-active generation**; independent ordinary requests may queue, not batch |
 | Optional logical sessions | **16** retained conversations; streaming only; **600 s** nonbusy idle retirement |
 | Request body | **16 MiB** JSON; bytes are not a token estimate |
-| Inline Vision | Ordinary MTP: expanded prompt + reserved output ≤ checkpoint context; resource-budgeted image count. Expanded capacity is **not full-model verified**. Legacy OFF: **4 images / 8192 positions**. [Bounds](docs/capabilities.md#bounded-inline-images) |
+| Inline Vision | Ordinary MTP: expanded prompt + reserved output ≤ checkpoint context; resource-budgeted image count. Expanded capacity is **not full-model verified**. [Bounds](docs/capabilities.md#bounded-inline-images) |
 | Default endpoint | `http://127.0.0.1:8000/v1` |
 
 These are **capability ceilings, not throughput or maximum-workload guarantees**.
@@ -80,14 +80,14 @@ include **16 MiB encoded bytes and 4M source pixels per image**, aspect ratio
 [complete profile and resource matrix](docs/capabilities.md) for admission,
 retention and image-continuation rules.
 
-## Supported release scope
+## Historical published release scope
 
 **DS41F-SCOPED-LOCAL-20261015 is released** for the official checkpoint on the
 admitted M3 Ultra / 512 GB host, for a **single operator locally or over an
 explicitly trusted private LAN**. It covers ordinary MTP Chat Completions,
 JSON/SSE, tools, logical sessions, branching/continuation, cancellation/settlement,
 qualified text and bounded Vision, generation controls and operator lifecycle.
-The explicit non-MTP alternative is separately packaged and accepted.
+Its separately accepted non-MTP alternative is historical and retired on `merge`.
 
 The [release record](release/scoped-local-20261015/release.json) binds the exact
 MTP/OFF native wheels, digests and installed acceptance to their source and
@@ -102,8 +102,8 @@ service. See [current limitations](#current-limitations) before exposing it.
 
 - **Mac Studio M3 Ultra, 512 GB unified memory**, with an admitted Apple Silicon
   macOS host/native ABI. Other hardware and hosts are outside this release scope.
-- The **official external DeepSeek-V4.1-Flash-1017 checkpoint** for DeepInfer
-  (published original-Flash installations retain their original checkpoint),
+- The **official external DeepSeek-V4.1-Flash or Flash-1017 checkpoint** matching
+  the package-fixed variant,
   including official SSD-backed Engram assets; configure its directory with `DS41F_CHECKPOINT`.
 - A **locked, non-editable installed runtime environment**, with exact admitted
   dependencies, recipe tokenizer and numerical/native assets. The development
@@ -132,6 +132,8 @@ python3.13 -m ds41f_mlx.mtp_setup \
   --venv "$DS41F_ENV" --build-dir "$DS41F_BUILD"
 ```
 
+Add `--checkpoint-variant flash` for original Flash in a separate fresh environment;
+otherwise `flash-1017` is selected. Point `DS41F_CHECKPOINT` at the matching weights.
 The provisioner's default builds the shared MTP distribution with native GLM;
 ordinary serving is the runtime default below. It installs a non-editable wheel
 and locked dependencies. **Provisioning is not release acceptance:** the released
@@ -177,9 +179,9 @@ troubleshooting instructions; no validation bypass or automatic resend is suppor
 
 Configure an OpenAI-compatible client with base URL
 `http://127.0.0.1:8000/v1` and wire model ID `deepseek-v4.1-flash` (or an advertised
-alias from `/v1/models`). DeepInfer ordinary MTP serves Chat Completions and
+alias from `/v1/models`). Unified ordinary MTP serves Chat Completions and
 native Recipe 0.2 Messages (`POST /v1/messages`), health and models. Responses
-remains a separate non-MTP contract. Messages capability exclusions and the
+is not a supported production API on this branch. Messages capability exclusions and the
 verified Harness configuration are in [operations](docs/operations.md#deepinfer-daily-operation-and-harness).
 [OpenCode/client guidance](docs/mtp-production-serving.md#ordinary-function-tools-and-opencode)
 is source/version-scoped, not a universal-client compatibility certificate.
@@ -188,7 +190,7 @@ Function tools execute **in the client/application**, not the model server. Send
 completed assistant tool calls and matching ordered results on the next request;
 partial tool deltas do not authorize effects or replay.
 
-Ordinary MTP and the non-MTP path support `generation-policy-v1`: temperature,
+Ordinary MTP supports `generation-policy-v1`: temperature,
 top-p/top-k/min-p, repetition/presence/frequency penalties and best-effort seed.
 Defaults include temperature **1.0**, top-p **0.95**; temperature zero selects
 greedy generation. Reasoning efforts are `none`, `low`, `high`, `max`, with `xhigh`
@@ -244,17 +246,16 @@ Browser TLS configuration does not add runtime authentication or Internet suppor
 
 ## Runtime profiles
 
-In user terms: **use MTP normally** for speculative local Chat Completions and
-paired reuse. Choose **non-MTP explicitly** when its API or same-backend idle
-persistence contract is needed. They are separate installed packages; no automatic
-fallback or state migration occurs.
+Use **MTP** for speculative local inference and paired reuse. Checkpoint selection
+is fixed during package construction, not by requests or a numerical environment
+variable. Cross-variant checkpoint admission and paired-state restoration fail
+closed. No automatic fallback, model switching or installation migration occurs.
 
 | Profile | Role and distinctive boundary |
 | --- | --- |
 | `mtp-serving-v1` | Normal CLI/TUI default; Chat Completions and Recipe 0.2 Messages, bounded inline Vision, tools and paired reuse; optional logical sessions are Chat-only; no native restart restore |
-| `standard-off` | Explicit non-MTP fallback; first-party target execution; documented text Chat Completions/Responses/Messages, bounded Chat Vision, optional exact-prefix stateful Chat (default maximum 4 sessions), validated same-backend idle persistence/restore; single-flight overlap conflicts |
 
-Both local distributions default to **GLM native**. GLM portable is a separately
+Both checkpoint variants default to **GLM native**. GLM portable is a separately
 admitted, explicitly provisioned alternative—not a request option or fallback on
 native admission failure. Distribution identity is distinct from serving profile.
 See [Capabilities](docs/capabilities.md) and [distribution admission](docs/runtime-admission.md#glm-execution-distributions).
@@ -404,7 +405,7 @@ licenses supplied with upstream dependency distributions.
 | Install, inspect, launch, stop, publish | [Operations](docs/operations.md) |
 | Supported APIs, capacities, images and resource limits | [Capabilities](docs/capabilities.md) |
 | Default MTP API/state and logical conversations | [Ordinary MTP](docs/mtp-production-serving.md), [logical sessions](docs/production-sessions.md) |
-| Non-MTP endpoints and persistence | [OFF API](docs/api.md), [live delivery](docs/stateful-live-delivery.md) |
+| Historical non-MTP contracts (retired) | [OFF API](docs/api.md), [live delivery](docs/stateful-live-delivery.md) |
 | Applications, controls and networking | [Browser Chat](docs/chat-interface.md), [operator console](docs/operator-chat.md), [private LAN](docs/private-lan.md) |
 | Structure, state and numerical fidelity | [Architecture](docs/architecture.md), [correctness](docs/correctness.md) |
 | Release identity and measurement interpretation | [Released package record](release/scoped-local-20261015/release.json), [performance](docs/performance.md) |

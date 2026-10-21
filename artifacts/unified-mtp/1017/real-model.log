@@ -1,0 +1,36 @@
+INFO:     Started server process [68713]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:18148 (Press CTRL+C to quit)
+INFO:     127.0.0.1:50926 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50926 - "POST /v1/messages HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50926 - "GET /health HTTP/1.1" 200 OK
+text {'id': 'chatcmpl-8e413acd2a624954a9a16a74e4391d7f', 'type': 'message', 'role': 'assistant', 'model': 'deepseek-flash', 'content': [{'type': 'text', 'text': 'Hello! 👋'}], 'stop_reason': 'end_turn', 'stop_sequence': None, 'usage': {'input_tokens': 8, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'output_tokens': 4, 'service_tier': 'standard'}}
+INFO:     127.0.0.1:50926 - "POST /v1/messages HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50926 - "GET /health HTTP/1.1" 200 OK
+tool {'id': 'chatcmpl-a4cad46a6b8a4765bc8212e16c34e039', 'type': 'message', 'role': 'assistant', 'model': 'deepseek-flash', 'content': [{'type': 'text', 'text': "I'll read that file for you."}, {'type': 'tool_use', 'id': 'call_00_I657U0RLDll7HkpQRxsg8183', 'name': 'read_file', 'input': {'path': '/tmp/example.txt'}}], 'stop_reason': 'tool_use', 'stop_sequence': None, 'usage': {'input_tokens': 282, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'output_tokens': 48, 'service_tier': 'standard'}}
+INFO:     127.0.0.1:50926 - "POST /v1/messages HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50926 - "GET /health HTTP/1.1" 200 OK
+continuation {'id': 'chatcmpl-db549cd9a06d45348bf6cec36e115c6f', 'type': 'message', 'role': 'assistant', 'model': 'deepseek-flash', 'content': [{'type': 'text', 'text': 'The file `/tmp/example.txt` contains the exact marker: **MESSAGES_OK**'}], 'stop_reason': 'end_turn', 'stop_sequence': None, 'usage': {'input_tokens': 28, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 330, 'output_tokens': 19, 'service_tier': 'standard'}}
+INFO:     127.0.0.1:50926 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50926 - "GET /health HTTP/1.1" 200 OK
+chat_text {'id': 'chatcmpl-c845fa41f60e4eddb15453023a05a756', 'object': 'chat.completion', 'created': 1792595997, 'model': 'deepseek-v4.1-flash', 'choices': [{'index': 0, 'message': {'role': 'assistant', 'content': 'Hello! 👋'}, 'logprobs': None, 'finish_reason': 'stop'}], 'usage': {'prompt_tokens': 8, 'completion_tokens': 4, 'total_tokens': 12, 'prompt_tokens_details': {'cached_tokens': 6}, 'prompt_cache_hit_tokens': 6, 'prompt_cache_miss_tokens': 2}, 'system_fingerprint': None}
+INFO:     127.0.0.1:50926 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50926 - "GET /health HTTP/1.1" 200 OK
+chat_tool {'id': 'chatcmpl-0bb7968a275c4917aa8d72aaa7626f6b', 'object': 'chat.completion', 'created': 1792595997, 'model': 'deepseek-v4.1-flash', 'choices': [{'index': 0, 'message': {'role': 'assistant', 'content': "I'll read that file for you.", 'tool_calls': [{'index': 0, 'id': 'call_00_dVfmpD021hx0pX3kBxSG4388', 'type': 'function', 'function': {'name': 'read_file', 'arguments': '{"path": "/tmp/example.txt"}'}}]}, 'logprobs': None, 'finish_reason': 'tool_calls'}], 'usage': {'prompt_tokens': 282, 'completion_tokens': 48, 'total_tokens': 330, 'prompt_tokens_details': {'cached_tokens': 280}, 'prompt_cache_hit_tokens': 280, 'prompt_cache_miss_tokens': 2}, 'system_fingerprint': None}
+INFO:     127.0.0.1:50926 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50926 - "GET /health HTTP/1.1" 200 OK
+chat_continuation {'id': 'chatcmpl-fd9df87222874aafad5e5dae6fd9f3b2', 'object': 'chat.completion', 'created': 1792595999, 'model': 'deepseek-v4.1-flash', 'choices': [{'index': 0, 'message': {'role': 'assistant', 'content': 'The file `/tmp/example.txt` contains the exact marker: **UNIFIED_OK**'}, 'logprobs': None, 'finish_reason': 'stop'}], 'usage': {'prompt_tokens': 357, 'completion_tokens': 18, 'total_tokens': 375, 'prompt_tokens_details': {'cached_tokens': 330}, 'prompt_cache_hit_tokens': 330, 'prompt_cache_miss_tokens': 27}, 'system_fingerprint': None}
+INFO:     127.0.0.1:50926 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50926 - "GET /health HTTP/1.1" 200 OK
+image {'id': 'chatcmpl-0159def582bb49b8be6e2d513d58e9d4', 'object': 'chat.completion', 'created': 1792596001, 'model': 'deepseek-v4.1-flash', 'choices': [{'index': 0, 'message': {'role': 'assistant', 'content': 'Corn'}, 'logprobs': None, 'finish_reason': 'stop'}], 'usage': {'prompt_tokens': 199, 'completion_tokens': 1, 'total_tokens': 200, 'prompt_tokens_details': {'cached_tokens': 0}, 'prompt_cache_hit_tokens': 0, 'prompt_cache_miss_tokens': 199}, 'system_fingerprint': None}
+INFO:     127.0.0.1:50926 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50926 - "GET /health HTTP/1.1" 200 OK
+image_continuation {'id': 'chatcmpl-884b09109f44490a991f89030d401328', 'object': 'chat.completion', 'created': 1792596001, 'model': 'deepseek-v4.1-flash', 'choices': [{'index': 0, 'message': {'role': 'assistant', 'content': 'Yellow and green'}, 'logprobs': None, 'finish_reason': 'stop'}], 'usage': {'prompt_tokens': 209, 'completion_tokens': 3, 'total_tokens': 212, 'prompt_tokens_details': {'cached_tokens': 201}, 'prompt_cache_hit_tokens': 201, 'prompt_cache_miss_tokens': 8}, 'system_fingerprint': None}
+INFO:     127.0.0.1:50926 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50926 - "GET /health HTTP/1.1" 200 OK
+p6_tiled {'id': 'chatcmpl-9d1d2a3ba17f48f5acb2113af9679208', 'object': 'chat.completion', 'created': 1792596013, 'model': 'deepseek-v4.1-flash', 'choices': [{'index': 0, 'message': {'role': 'assistant', 'content': 'OK'}, 'logprobs': None, 'finish_reason': 'stop'}], 'usage': {'prompt_tokens': 8408, 'completion_tokens': 1, 'total_tokens': 8409, 'prompt_tokens_details': {'cached_tokens': 0}, 'prompt_cache_hit_tokens': 0, 'prompt_cache_miss_tokens': 8408}, 'system_fingerprint': None}
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [68713]

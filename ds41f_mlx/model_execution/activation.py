@@ -94,6 +94,17 @@ def quantize_pre_woa(x):
     )[0]
 
 
+def pre_woa(x):
+    """The sole package-selected attention output boundary, after inverse RoPE."""
+    from ds41f_mlx.execution_identity import numerical_profile
+    profile = numerical_profile()
+    if profile == 'flash-original-woa-v1':
+        return x
+    if profile == 'flash-1017-pre-woa-fp8-v1':
+        return quantize_pre_woa(x)
+    raise RuntimeError('unadmitted attention numerical profile')
+
+
 def quantize_fp8_activation(x):
     return _kernel()(
         inputs=[x],

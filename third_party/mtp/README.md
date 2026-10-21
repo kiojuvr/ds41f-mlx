@@ -1,6 +1,11 @@
 # Attributed source exports for the bounded local MTP profile
 
-The base archives remain repository-owned **source** for the preserved OFF lane.
+The unified `merge` Runtime is **MTP-only**. Standard-OFF production delivery is
+retired; its retained exports, locks and receipts below are archival, not setup
+instructions. `--checkpoint-variant flash|flash-1017` fixes the exact checkpoint
+inventory and numerical identity per package (default 1017). Both variants use the
+same Recipe 0.2 wheel, overlays, GLM owner and Scheduler; no installation migration.
+The base archives remain repository-owned attribution and reference material.
 Ordinary MTP obtains the repository-delivered Recipe **0.2.0** repaired native
 wheel, bound by the existing `normal-local.json`, not an operator's investigation
 environment. Its clean `recipe-02-source.tar.gz` is upstream
@@ -9,10 +14,9 @@ environment. Its clean `recipe-02-source.tar.gz` is upstream
 historical candidate evidence commits and delivered patch identities. No public
 setup command clones/checks out those candidate commits or applies undocumented
 patches. `ds41f_mlx.mtp_setup` verifies/extracts them in operator-owned build scratch,
-installs oMLX and the pinned native wheel into a fresh venv. OFF provisions the
-exact retained M45/M47 qualified recipe wheel via `standard-off-recipe.json`,
-not a fresh same-source build. Its source export and Cargo.lock remain attribution
-inputs; delivery verifies the wheel against the unchanged OFF resource pin.
+installs oMLX and the pinned native wheel into a fresh venv. Historical OFF
+artifacts and Cargo.lock remain attribution inputs; the unified provisioner and
+package builder no longer offer OFF selection.
 
 - oMLX: https://github.com/jundot/omlx (Apache-2.0; `omlx-LICENSE`, also inside
   archive). Full clean source export of the M33 candidate on the pinned 0.7.0 base;
@@ -42,7 +46,7 @@ closure. It does not enroll the local host graph or seal Python sources.
 Historical numerical/checkpoint inventories, old host links and acceptance
 records are unchanged; they are not new Recipe 0.2 execution evidence.
 `normal-local.json` is **not** read at production startup.
-For standard-OFF only, `standard-off-dependencies.json` overrides the MTP
+Historically, for standard-OFF only, `standard-off-dependencies.json` overrode the MTP
 NumPy/Transformers inventory with the exact cached payloads used by the existing
 200K OFF qualification (NumPy 2.5.3 / Transformers 5.18.0). Its provenance records
 the historical environment receipt digest. All numerical module/native hashes
@@ -69,8 +73,7 @@ affected qualification; equal package version numbers are not equal execution.
 
 ## Explicit GLM native / portable distributions
 
-`execution-profiles.json` records **native as the supported M3 Ultra local MTP
-and standard-OFF default**, with portable a separately admitted explicit alternative. `glm-native.tar.gz` contains the exact
+`execution-profiles.json` records **native as the supported M3 Ultra local MTP default**, with portable a separately admitted explicit alternative. `glm-native.tar.gz` contains the exact
 current-built GLM extension, ops dylib and metallib. `glm-native.json` binds their
 sizes/SHA256 and the admitted source archive, 43 GLM/common inputs, toolchain and
 repository-owned `tools/build_glm_bundle.py` invocation. These oMLX-derived

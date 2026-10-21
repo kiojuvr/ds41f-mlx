@@ -1,12 +1,11 @@
 {
   "schema": "ds41f.glm-distribution-defaults.v1",
-  "defaults": {"mtp": "native", "standard-off": "native"},
+  "defaults": {"mtp": "native"},
   "status": {
-    "mtp": {"native": "production_default", "portable": "explicit_alternative"},
-    "standard-off": {"native": "production_default", "portable": "explicit_alternative"}
+    "mtp": {"native": "production_default", "portable": "explicit_alternative"}
   },
   "supported_local_host": "Apple M3 Ultra / 512 GB / admitted macOS and Python",
-  "decision": "Native is the normal local MTP and standard-OFF execution distribution after bounded profile-specific acceptance. Portable remains an explicit admitted alternative. OFF reuses the single MTP GLM bundle authority and the exact retained qualified OFF recipe artifact.",
+  "decision": "Native is the local MTP default for both package-fixed checkpoint variants. Portable remains explicit. Standard-OFF production is retired; its evidence is historical.",
   "capability_preservation": "Temporary artifact/manifest/provisioning omission is not a permanent capability removal or default-demotion decision. Pending acceptance is temporarily_deferred_pending_acceptance, not explicit_alternative or deletion; changes require an explicit decision and affected acceptance.",
   "failure": "Refuse startup; never change execution profile on admission failure.",
   "evidence": "artifacts/native-promotion/ordinary-acceptance.json",

@@ -8,9 +8,13 @@ Architecture explains ownership; specialized documents explain endpoint semantic
 
 ## DeepInfer current implementation
 
-DeepInfer selects official **DeepSeek-V4.1-Flash-1017**, Recipe **0.2.0** with the
-consolidated native semantic extension, and native GLM. The published original-Flash
-release and historical Flash-1017/Recipe 0.1 installations remain separate;
+The unified `merge` branch supports official **original Flash and Flash-1017**
+with Recipe **0.2.0**, one consolidated native semantic extension, and native GLM.
+`--checkpoint-variant flash|flash-1017` selects the immutable package identity;
+1017 remains the default. Wrong-checkpoint admission and cross-variant paired
+state fail closed. Standard-OFF is retired from production; all OFF descriptions
+and evidence retained later on this page are historical, not active capabilities.
+The published original-Flash release and historical Recipe 0.1 installations remain separate;
 [operations](operations.md#deepinfer-daily-operation-and-harness) owns selection.
 Bounded installed Chat/Messages and direct official Harness acceptance are recorded
 in the [development record](deepinfer-development.md); neither renews release scope.
@@ -32,23 +36,23 @@ named selection is not constrained decoding. No Responses parity is added.
 
 ## Profiles
 
-| Capability | `standard-off` | `mtp-serving-v1` | `mtp-singleton-v1` |
-| --- | --- | --- | --- |
-| Selection | Explicit fallback; separate OFF package | Local CLI default; MTP package | Explicit; MTP package |
-| Physical execution | First-party target generation/model execution; MTP OFF | Pinned oMLX MTP topology, ProductionScheduler-owned | Bounded guarded singleton MTP |
-| GLM distribution | Native local default; portable explicit alternative | Native local default; portable explicit alternative | Same profile-specific MTP package; singleton protocol unchanged |
-| Ordinary APIs | Text Chat Completions, Responses, Messages within documented scopes | Chat Completions and Recipe 0.2 Messages (text and bounded inline Vision); health/models | Specialized session API, not ordinary stateless Chat Completions |
-| Independent conversations/edits | Stateless requests prefill fresh; retained sessions require exact extension | Ordinary requests may safely reuse paired prefixes or miss, including edits/branches | Exact session extension/frozen request fences |
-| Active execution | Single-flight; overlap conflicts | One native active generation; independent ordinary requests may queue, no shared native batch | One response lease/live session |
-| Optional stateful Chat | Exact-prefix sessions, default maximum 4 | Up to 16 logical conversations on the same Scheduler; streaming only | One issued process-lifetime session with sequence/body fence |
-| Function tools | Ordinary client function tools | Generic recipe-authoritative function tools/results | Pinned weather declaration and bounded dedicated-client contract |
-| Sampling/reasoning | `generation-policy-v1` | `generation-policy-v1` | Separate greedy/thinking-off qualification contract |
-| Native idle persistence/restore | Validated same-backend artifacts | Unsupported | Unsupported |
-| Images | Separate bounded OFF image extension below | Resource-budgeted inline Chat/Messages; paired-state continuation, no persistence/history replay | Unsupported |
-| Network | See OFF configuration and application network policy | Loopback default; explicit trusted private LAN | Literal IPv4 loopback and exact Host policy |
+| Capability | `mtp-serving-v1` | `mtp-singleton-v1` |
+| --- | --- | --- |
+| Selection | CLI default; either package-fixed checkpoint variant | Explicit; same MTP package |
+| Physical execution | Pinned oMLX Target/DSpark, ProductionScheduler-owned | Bounded guarded singleton MTP |
+| GLM distribution | Native default; portable explicit alternative | Same installed distribution |
+| Ordinary APIs | Recipe 0.2 Chat Completions and native Messages, JSON/SSE; health/models | Specialized session API |
+| Independent conversations/edits | Safe paired-prefix reuse or miss, including branches | Exact session extension/frozen fences |
+| Active execution | One native-active generation; independent requests queue, not batch | One response lease/live session |
+| Optional stateful Chat | 16 logical conversations; streaming only | One process-lifetime session |
+| Function tools | Recipe-authoritative calls and exact-ID results | Pinned weather/dedicated-client contract |
+| Sampling/reasoning | `generation-policy-v1` | Greedy/thinking-off contract |
+| Native persistence/restore | Unsupported | Unsupported |
+| Images | Resource-budgeted inline Chat/Messages; paired continuation | Unsupported |
+| Network | Loopback default; explicit trusted private LAN | Literal IPv4 loopback/exact Host |
 
 These profiles do not grant each other API, persistence, image, concurrency or
-application qualification. Protocol detail: OFF [API](api.md),
+application qualification. Historical retired OFF [API](api.md); current protocols:
 [ordinary MTP](mtp-production-serving.md), [production logical sessions](production-sessions.md)
 and [bounded singleton](mtp-local-release-candidate.md).
 GLM selection is fixed by the installed distribution, not a request option or
@@ -84,7 +88,7 @@ and [ordinary serving](mtp-production-serving.md#long-context-promotion-evidence
 
 ## Generation controls
 
-OFF and ordinary MTP advertise **`generation-policy-v1`**. Request defaults:
+Ordinary MTP advertises **`generation-policy-v1`**. Request defaults:
 
 | Parameter | Default |
 | --- | --- |

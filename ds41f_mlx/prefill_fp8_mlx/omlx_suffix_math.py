@@ -173,7 +173,7 @@ class OmlxV41SuffixMath:
         # long-prefill kernel assumes a full old window and is not used here.
         out = lang.packed_sparse_attention(q, kv, pooled, idx, ci, attn.attn_sink, c.head_dim**-0.5)
         out = lang.rope(out, positions, c, bool(ratio), inverse=True)
-        from ds41f_mlx.model_execution.activation import quantize_pre_woa
-        grouped = quantize_pre_woa(out.reshape(1, length, c.o_groups, -1))
+        from ds41f_mlx.model_execution.activation import pre_woa
+        grouped = pre_woa(out.reshape(1, length, c.o_groups, -1))
         weight = attn.wo_a.weight.reshape(c.o_groups, c.o_lora_rank, -1)
         return attn.wo_b(mx.einsum("bsgd,grd->bsgr", grouped, weight).flatten(-2))

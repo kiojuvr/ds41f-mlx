@@ -29,7 +29,16 @@ checkout. See [installed admission](runtime-admission.md).
 
 ## DeepInfer protocol and delivery boundary
 
-Ordinary DeepInfer selects official Flash-1017 and Recipe 0.2. Chat and Messages
+Unified `merge` selects original Flash or Flash-1017 at package construction,
+sharing Recipe 0.2. The installed manifest binds exact checkpoint inventory,
+revision, numerical profile and execution dependencies; there is no runtime model
+switch or numerical environment override. After installed admission, one immutable
+in-process selection controls the shared `activation.pre_woa` boundary at owned
+Target/decode/P6 and packaged oMLX Target/DSpark sites. Original Flash passes the
+inverse-RoPE output unchanged; 1017 uses the existing BF16/E4M3/BF16 primitive.
+Numerical hot paths do not read manifests or rebuild configuration.
+
+ Chat and Messages
 use their respective native semantic sessions/official accumulators over the same
 Recipe consuming pipeline. Forked previews retain RNG/tool IDs, parser/decoder,
 usage and exact protocol state; canonical revision/frontier/lifetime equality
@@ -45,9 +54,10 @@ and [the development record](deepinfer-development.md).
 
 Ordinary MTP delivery uses version/source locks and strict patching, not source/
 Python-package SHA sealing. Exact installed origins, native/tokenizer/checkpoint
-integrity and host ABI admission remain; preserved OFF admission is separate.
+integrity and host ABI admission remain. Standard-OFF production entry points
+are retired. Its retained internals/fixtures are not a supported fallback.
 
-## Standard-OFF execution
+## Historical Standard-OFF execution (retired)
 
 ```text
 first-party model_execution: load / projections / attention / HC / MoE / SSD Engram
@@ -98,7 +108,7 @@ ds41f owns semantic, lifecycle, application and resource integration. The
 subordinate `OMLXMTPGenerationSession` is not a second Scheduler or prefix cache.
 Do not reconstruct this physical topology and promise to recover its speed later.
 
-A reusable pair binds execution/tokenizer/recipe identity, complete prefix IDs,
+A reusable pair binds checkpoint variant/numerical profile and execution/tokenizer/recipe identity, complete prefix IDs,
 all 40 target layers' physical slots and all three committed DSpark rings at the
 same frontier. Rings have capacity 128 and preserve absolute-modulo physical
 order. Transient draft/proposal/verification/prediction and request RNG state are
@@ -143,7 +153,8 @@ identities is compulsory for an ordinary Chat Completions request.
 - `ds41f_mlx/sampling.py`: ds41f-maintained, attributed verbatim shared sampling
   for OFF and MTP; MLX still owns numerical/RNG primitives. See the bounded
   [ownership-transfer qualification](shared-sampling-transfer.md), not a new stable release.
-- `ds41f_mlx/model_execution/`: first-party OFF model, packed state and SSD Engram.
+- `ds41f_mlx/model_execution/`: retained first-party Target/numerical/Vision primitives,
+  packed state and SSD Engram; not a second production execution selector.
 - `ds41f_mlx/prefill_fp8_mlx/`: selected dense prefill, append and P5 handoff.
 - `ds41f_mlx/runtime/`: generation/state/resource lifetimes and physical adapters.
 - `ds41f_mlx/serving/`: recipe HTTP integration, ordinary scheduling/cache/session

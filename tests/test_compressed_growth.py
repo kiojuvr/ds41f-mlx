@@ -12,6 +12,8 @@ from omlx.patches.deepseek_v41.config import ModelConfig
 def equal(a, b):
     assert (a is None) == (b is None)
     if a is not None:
+        if a.dtype == mx.bfloat16:
+            a, b = a.astype(mx.float32), b.astype(mx.float32)
         np.testing.assert_array_equal(np.asarray(a), np.asarray(b))
 
 
@@ -106,8 +108,14 @@ def small_model():
         compress_ratios=(0, 2, 2, 1, 1, 0, 0, 0)))
 
 
-def test_logits_verify_rollback_continuation_equal(monkeypatch):
+@pytest.mark.parametrize('variant', ['flash', 'flash-1017'])
+def test_logits_verify_rollback_continuation_equal(monkeypatch, variant):
+    from ds41f_mlx import execution_identity
+    from ds41f_mlx.mtp_identity import VARIANTS
+    monkeypatch.setattr(execution_identity, '_admitted_variant', VARIANTS[variant])
     model = small_model()
+    # Match the released BF16 activation boundary rather than nn's FP32 default.
+    model.set_dtype(mx.bfloat16)
     model.configure_mtp(True, 3)
 
     def run():

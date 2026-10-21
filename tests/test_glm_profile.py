@@ -11,9 +11,11 @@ from ds41f_mlx.runtime import resource_admission as admission
 
 def test_m3_ultra_local_default_is_explicit_native_with_portable_alternative():
     assert distribution.default_profile('mtp') == 'native'
-    assert distribution.default_profile('standard-off') == 'native'
+    with pytest.raises(ValueError, match='retired'):
+        distribution.default_profile('standard-off')
     authority = json.loads((distribution.SOURCES/'execution-profiles.json').read_text())
-    for serving in ('mtp', 'standard-off'):
+    assert 'standard-off' not in authority['defaults']
+    for serving in ('mtp',):
         assert authority['status'][serving]['portable'] == 'explicit_alternative'
         assert authority['status'][serving]['native'] == 'production_default'
 

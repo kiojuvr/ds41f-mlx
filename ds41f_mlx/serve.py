@@ -8,7 +8,7 @@ import sys
 
 logger = logging.getLogger('ds41f.operator.launcher')
 
-from ds41f_mlx.config import load_runtime_config, validate_runtime_config
+# Production execution is MTP-only; historical OFF internals are not dispatched.
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -48,7 +48,7 @@ def main(argv: list[str] | None = None) -> int:
 
 def _main(argv, *, control=None, projection=None) -> int:
     parser = argparse.ArgumentParser(description="Launch ds41f local text runtime")
-    parser.add_argument('--profile', choices=['standard-off','mtp-singleton-v1','mtp-serving-v1'], default='mtp-serving-v1')
+    parser.add_argument('--profile', choices=['mtp-singleton-v1','mtp-serving-v1'], default='mtp-serving-v1')
     from .config import REASONING_EFFORTS
     from dataclasses import replace
     parser.add_argument('--default-reasoning-effort', choices=REASONING_EFFORTS,
@@ -127,58 +127,7 @@ def _main(argv, *, control=None, projection=None) -> int:
         backend.close()
         return 0
 
-    cfg = load_runtime_config()
-    if args.default_reasoning_effort is not None:
-        cfg = replace(cfg, default_reasoning_effort=args.default_reasoning_effort)
-    if args.host is not None or args.port is not None:
-        from dataclasses import replace
-        cfg = replace(cfg, host=args.host or cfg.host, port=args.port or cfg.port)
-    cfg.apply_environment()
-    cfg.apply_import_paths()
-    if control is not None:
-        try:
-            control.reserve_service(cfg.host, cfg.port)
-        except OSError:
-            logger.error('CONFLICT: service socket already in use')
-            return 2
-
-    from .delivery import inspect as inspect_installed_off
-    if args.no_validate:
-        parser.error('installed execution admission cannot be disabled')
-    try:
-        report = inspect_installed_off(cfg)
-    except (ValueError, OSError, ImportError) as exc:
-        logger.error('admission failed: %s', type(exc).__name__)
-        logging.getLogger('ds41f.diagnostic').error('admission detail: %s', exc)
-        return 2
-    if args.print_config:
-        print(json.dumps(report, indent=2, sort_keys=True))
-        return 0 if report["status"] in {"PASS", "WARNING"} else 2
-    if not args.no_validate:
-        failures = [f for f in validate_runtime_config(cfg) if f["status"] == "FAIL"]
-        if failures:
-            logger.error('runtime configuration validation failed')
-            logging.getLogger('ds41f.diagnostic').error('%s', json.dumps({'failures': failures, 'config': cfg.to_json()}))
-            return 2
-
-    logger.info('STARTING; runtime admission passed profile=%s default_reasoning_effort=%s',
-                args.profile, cfg.default_reasoning_effort)
-    try:
-        import uvicorn
-    except Exception as exc:
-        logger.error('uvicorn is required to launch the server')
-        logging.getLogger('ds41f.diagnostic').error('%s', exc)
-        return 2
-
-    # Import after cfg.apply_import_paths() so deepseek-recipe/oMLX checkouts do not
-    # require undocumented PYTHONPATH state.
-    from ds41f_mlx.serving.server import create_app
-
-    app = create_app(model_id=cfg.model_id, recipe_path=cfg.recipe_path, runtime_config=cfg)
-    if projection is not None:
-        projection.lifecycle('READY', dict(host=cfg.host, port=cfg.port, profile=args.profile))
-    control.run(app, host=cfg.host, port=cfg.port, proxy_headers=False)
-    return 0
+    parser.error('Standard-OFF production execution is retired')
 
 
 if __name__ == "__main__":
