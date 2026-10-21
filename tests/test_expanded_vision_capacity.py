@@ -63,6 +63,7 @@ def test_actual_expansion_output_checkpoint_and_text_limits(tmp_path):
     prompt = len(inp.token_ids)
     (tmp_path/'config.json').write_text(json.dumps({'max_position_embeddings': prompt+32}))
     request = NS(token_ids=inp.token_ids, multimodal=inp, inference_options=NS(max_tokens=32))
+    request.conversation_request = NS(resolve_max_tokens=lambda *_: request.inference_options.max_tokens)
     budget = resolve_capacity(request, checkpoint=tmp_path, ordinary=True)
     assert budget['implemented_total_tokens'] == prompt+32
     assert 'qualified_total_tokens' not in budget

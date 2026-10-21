@@ -1249,3 +1249,179 @@ native observations or a `tool_use` stop reason. No Messages HTTP endpoint, Harn
 Files API, second MTP owner, Scheduler/Target/DSpark/Vision/numerical/cache redesign,
 new patch layer/installer/hash seal, stable Flash-1017 branch or deployment change.
 **Stop at this native/Python boundary; no application integration begun.**
+
+## Ordinary Recipe 0.2 Messages HTTP integration (2026-10-21)
+
+Baseline `DeepInfer` `6e0601f9f740d55596551dcf6c90386152ad0ad6`; upstream remains
+`93b0fd229cc9ffa6b1a8c63d42b0bf741bbec170`. This section supersedes the preceding
+HTTP deferral, not its native semantics. No Harness or deployed service changed.
+
+### Implemented contract and limits
+
+- Ordinary **`mtp-serving-v1` `POST /v1/messages`** now uses official
+  `MessagesRequest.convert`, V4.1-Flash rendering/encoding, converted reasoning/
+  sampling options, and the existing expanded-context/output-reservation policy.
+  All three fixed aliases, including `deepseek-flash`, remain admitted. Numeric
+  limits, omitted output defaults and the Runtime `max_tokens: "auto"` extension
+  use the existing capacity authority. No Messages-to-Chat translation.
+- Streaming preserves native event JSON and names: `message_start`,
+  `content_block_start`, `content_block_delta`, `content_block_stop`,
+  `message_delta`, `message_stop` (and native `ping` if present). Thinking text/
+  signatures, `tool_use`, fragmented `input_json_delta`, usage, `stop_sequence`,
+  `end_turn`, `tool_use` and `max_tokens` retain Recipe semantics. There is no
+  Messages `[DONE]`. Nonstreaming returns official accumulated Messages JSON.
+- Native top-level/in-history system messages, thinking/signature history,
+  client tool schemas, exact-ID results, deferred declarations and supported
+  `tool_addition` updates are converted by Recipe. `metadata.user_id` is accepted
+  as official advisory metadata, not an executable/correlation authority.
+- Inline base64 PNG/JPEG/WebP uses the existing metadata-first Vision preparation,
+  aggregate byte/pixel/patch limits, expanded capacity and paired historical-image
+  requirements. No URL fetch, Files service or new multimodal transport. Historical
+  image misses still forbid replay/re-encoding; two terminal text positions remain
+  required for P5. Vision encoding itself is unchanged.
+- Explicit capability rejection covers unknown request/nested extension fields,
+  documents (which upstream otherwise degrades), server/web-search tools/results,
+  tool references as result text, file/URL image sources, `tool_removal` (not in
+  Recipe 0.2), constrained output config, thinking budgets, `tool_choice:any`
+  (upstream degrades to auto), and enforced serial tool selection. Native schema
+  validation still owns malformed requests. Prompt-based named tool selection is
+  not constrained decoding. The wire gate only rejects unsupported/ignored
+  capabilities; it neither parses DSML nor constructs conversations.
+- Existing HTTP middleware/body/resource bounds, request preparation lease,
+  Scheduler queue/request IDs, disconnect watcher, shielded abort/cleanup and
+  fail-closed retirement remain owners. Production-session routes remain **Chat
+  only**; direct Messages session admission rejects before logical reservation.
+  Health advertises this distinction. Standard-OFF/singleton capabilities are not
+  extended.
+
+### Protocol-specific semantic ownership
+
+`MessagesSemanticGuard` shares the Chat guard's preview/consume, lifetime,
+revision/frontier/candidate, exact chunks/prefix-response/terminal equality,
+backend-control suppression and fail-closed proof engine. Its only protocol
+specialization is official tool-block extraction/final validation. It owns one
+`MessagesSemanticSession` over the same native `SemanticState`; there is no new
+parser, speculative scheduler, inference backend or cache authority.
+
+Unlike Chat, the official Messages accumulator keeps JSON fragments privately and
+finalizes `input` at `content_block_stop`. Argument-end certificates preserve their
+exact native prefix snapshots, revision/frontier and candidate IDs (where `input`
+can still be `{}`). After exact canonical/preview terminal equality, final call
+validation checks unchanged ID/name/type/index and records the official finalized
+block, without parsing argument strings or altering IDs/signatures. Final input
+comes exclusively from the same native accumulator and certified canonical event
+sequence. Argument end is still the earlier native endpoint, not full tool-block
+completion or permission to execute.
+
+The existing Target/DSpark/P5 owner, `ProductionScheduler`, paired KV publication,
+canonical settlement and retirement are reused unchanged numerically. Settlement
+and finish/status mapping branch explicitly on protocol, never on Chat `choices`
+for Messages. A `tool_use` stop reason alone cannot qualify a call: incomplete
+blocks poison continuation/publication and fail delivery. The Scheduler streams
+ordinary text/thinking normally but retains the entire suffix beginning with the
+first `tool_use` block until canonical settlement. Cancellation/error/incomplete
+retirement cannot release its successful terminal events. A transport lost before
+`message_stop` is incomplete, not a successful tool turn; consumers must require
+that terminal (as official Harness translation does). No application effect owner
+or side-effect executor was added; final native tool input is not schema validation
+or user permission.
+
+### Matching artifact and isolated installed admission
+
+Built the **unchanged consolidated native patch**, now including Messages, with
+the supported Python **3.13.15** locked release/auditwheel-repair workflow above
+(maturin 1.15.0, Rust/Cargo 1.98.1, OpenCV 4.14.0). Read-only comparison confirmed
+the build checkout's complete diff equals the retained patch at the exact upstream
+base. No skip-auditwheel or dependency source changes. The existing retained wheel
+and `normal-local.json` artifact owner were updated together; no source/archive/
+patch SHA gates were restored.
+
+- Recipe wheel `deepseek_recipe-0.2.0-cp310-abi3-macosx_11_0_arm64.whl` SHA256:
+  **`11bda3355c2f48b99d04f6a2179b283add3f6d1218f34e4707bd5a29b304ab03`**.
+- Native extension SHA256:
+  `eae10c9494744ff2b32d60f3b5f44a66e1029fd32ebcd82868fb9082dc28f3d2`.
+- Fresh ordinary provisioning through `ds41f_mlx.mtp_setup` to
+  `/private/tmp/ds41f-messages-http-install`, build directory
+  `/private/tmp/ds41f-messages-http-provision`, passed installed admission. No
+  existing/deployed installation was modified. Later Runtime-only refreshes used
+  the same supported package builder, only in this isolated installation and never
+  while its model service was active.
+- Final Runtime wheel SHA256:
+  `a21fc243672b1c78507fd8f2617374f6251266396ea01a3a3d687c59d2191231`.
+  The real-model run used the preceding Runtime build
+  `6842c4c45e3be2345d1fda107a146e6d7ae8d519686f8658ed85298ba89fe4c6`;
+  subsequent changes only strengthen Messages capability/session rejection,
+  preserve the Chat exception type and advertise health capabilities.
+- Both installed inspections passed with execution identity
+  `4d9f94540a1bafd06cc2ac4bdd91624f2427e2b7cc7dd2471f9040fbd74ec7ca`.
+  Native wheel closure/hash/origin, loaded-image/ABI, native GLM and exact 48-shard
+  Flash-1017 checkpoint verification remain enforced. The shared identity report
+  retains its historical `mtp-singleton-v1` label; actual app/config/backend used
+  ordinary `mtp-serving-v1` on isolated port **18037**.
+
+### Focused verification (controlled evidence)
+
+- **54 native Rust tests passed**, full `cargo test --locked -p deepseek-recipe`.
+- **65 installed Python binding tests passed**: official patched Messages session,
+  Chat session and bindings suites from the upstream build checkout.
+- **156 source/focused tests passed**, 37 existing deprecation warnings:
+  `test_recipe02_messages_serving`, `test_recipe02_semantic_guard`,
+  `test_recipe02_chat_boundary`, `test_production_mtp`, `test_mtp_packaging`,
+  `test_execution_identity`, `test_production_sessions`,
+  `test_production_session_owner`, `test_metadata_first_vision`,
+  `test_expanded_vision_capacity`, `test_off_dependency_identity`.
+- **80 installed-runtime tests passed**, 33 existing deprecation warnings: the
+  first four suites above copied to scratch, run from `/tmp` with `python -I`,
+  explicit checkpoint configuration and no checkout import path. They include
+  real ingress/preparation/ordinary-response/pump/SSE/JSON/cleanup with controlled
+  native token output, not a fake Messages formatter or numerical-model claim.
+- Coverage: official prompt encoding, expanded image reservation, text/thinking,
+  fragmented/multiple calls, exact IDs/signatures and result continuation,
+  system/tool updates, rejected/stale/divergent/foreign candidates, native
+  argument-end versus outer-block completion, Stop/Length/EOF/user-stop/control
+  suppression, cancellation/retirement, tool-suffix withholding, Chat regression
+  and installed-native/package admission. Native same-request comparisons remove
+  nothing; the separate independently seeded processor test normalizes only its
+  independent tool IDs, as documented in the previous native proof.
+- Early test runs exposed fixture issues, not numerical failures: copied tests
+  lacked explicit checkpoint configuration and used a checkout-relative tool
+  fixture path; Scheduler fakes omitted the now-required protocol; an older
+  capacity fake lacked Recipe's `resolve_max_tokens`; all-deferred tools correctly
+  failed native admission. Fixtures were corrected without weakening production
+  checks. An image-reservation test initially changed the outer config rather
+  than checkpoint `text_config`; the corrected actual-expansion test passes.
+
+Logs are `/private/tmp/ds41f-messages-http-{native-tests,official-tests,installed-final-tests,final-source-tests4}.log`.
+
+### Separate bounded real-model evidence
+
+**PASS**, ordinary installed HTTP with Flash-1017 revision
+`1bae0e1088993b9b82de08f59de5be5a34e42170`, native GLM, `temperature:0`, thinking
+explicitly disabled. Checkpoint full-byte verification completed before model
+loading. Evidence, requests, native events/responses, complete settlement traces,
+installed inspections and the bounded driver are retained in
+[`artifacts/deepinfer-messages-http`](../artifacts/deepinfer-messages-http/).
+
+| Case | Actual response | Prompt / cached / suffix | Canonical frontier | Stop |
+| --- | --- | --- | --- | --- |
+| Nonstream text, 32 reserved | `Hello! 👋` | 8 / 0 / 8 | 13 | `end_turn` |
+| Streaming tool, 128 reserved | `read_file`, `{"path":"/tmp/example.txt"}` | 282 / 0 / 282 | 330 | `tool_use` |
+| Synthetic exact-ID result, 128 reserved | Reports **MESSAGES_OK** | 358 / 330 / 28 | 378 | `end_turn` |
+
+Tool ID **`call_00_YW0srlFqeLBXVg2Bctck4347`** matches native SSE, final official
+response, call certificate and continuation exactly. Argument end: revision **43**,
+frontier **324**; full-block `CONSUMING_TOOL_EOF`: revision **48**, frontier **330**.
+The call exercised 13 speculative cycles, 33 accepted drafts and 2 rejects. SSE
+matched the canonical native event sequence byte-for-byte. No actual file/tool
+side effect occurred; the submitted result was synthetic. Every case published
+paired state with 40 Target and 3 DSpark offsets equal to its canonical frontier,
+settled authority, no pending prediction/queue, zero replay/repack, no cancellation,
+no recovery/fatal error. The isolated server retired normally.
+
+This is bounded text/tool/continuation evidence, not real-model thinking, Vision,
+maximum capacity, performance, soak or general qualification. Direct Harness
+connection remains a subsequent task: configure its existing Messages endpoint /
+model alias and inline-image mode, disable Files and unsupported extensions/tool
+removals, and run its own end-to-end permission/replay/cancellation checks. No
+Harness adapter/plugin changes, production-session migration, deployment, stable
+branch modification or performance campaign was attempted.

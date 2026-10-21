@@ -61,12 +61,16 @@ def fail_closed(method):
 
 
 class RecipeSemanticGuard:
+    protocol = 'chat_completions'
+
     def __init__(self, processor, *, diagnostic=False, control_token_ids=(), response=None, frontier=0):
         import deepseek_recipe as d
-        if not isinstance(processor, d.ChatCompletionSemanticSession):
+        session_type, response_type = ((d.ChatCompletionSemanticSession, d.ChatCompletionResponse)
+            if self.protocol == 'chat_completions' else (d.MessagesSemanticSession, d.MessagesResponse))
+        if not isinstance(processor, session_type):
             raise RuntimeError('Recipe 0.2 native semantic session required')
         self._processor = processor
-        self.response = response or d.ChatCompletionResponse('guard', 'guard', 0, 0, 0)
+        self.response = response or response_type('guard', 'guard', 0, 0, 0)
         self.lifetime = uuid4().hex
         self.frontier = frontier
         self.control_token_ids = frozenset(map(int, control_token_ids))
@@ -230,27 +234,31 @@ class RecipeSemanticGuard:
             self._eof_proof = None
         return None
 
+    def _response_calls(self):
+        data = json.loads(self.response.to_json())
+        choices = data.get('choices', [])
+        if any(c.get('message', {}).get('tool_calls') for c in choices) and len(choices) != 1:
+            from omlx.patches.mlx_lm_mtp.semantic_horizon import SemanticGuardError
+            raise SemanticGuardError('call completion lacks unique official choice')
+        return [(c['index'], i, call) for c in choices
+                for i, call in enumerate(c.get('message', {}).get('tool_calls', []))]
+
     def _certify_calls(self, completed, proof, offset):
         from omlx.patches.mlx_lm_mtp.semantic_horizon import SemanticGuardError
-        data = json.loads(self.response.to_json())
+        calls = self._response_calls()
         for index, _source_end in completed:
-            choices = data.get('choices', [])
-            if len(choices) != 1:
-                raise SemanticGuardError('call completion lacks unique official choice')
-            choice = choices[0]
-            calls = choice.get('message', {}).get('tool_calls', [])
-            if index != len(self.call_certificates) or index >= len(calls):
+            if index != len(self.call_certificates) or index >= len(calls) or calls[index][1] != index:
                 raise SemanticGuardError('noncanonical call completion index')
+            choice, _, call = calls[index]
             self.call_certificates += (CallCertificate(self.processor, self.lifetime,
-                proof.revision+offset+1, self.frontier+self.emitted, choice['index'], index,
-                json.dumps(calls[index], sort_keys=True), proof.candidate_ids[:offset+1],
+                proof.revision+offset+1, self.frontier+self.emitted, choice, index,
+                json.dumps(call, sort_keys=True), proof.candidate_ids[:offset+1],
                 proof.response_snapshot, self.response.to_json()),)
 
     def _check_final_calls(self):
         from omlx.patches.mlx_lm_mtp.semantic_horizon import SemanticGuardError
-        calls = [(c['index'], i, json.dumps(call, sort_keys=True))
-                 for c in json.loads(self.response.to_json()).get('choices', [])
-                 for i, call in enumerate(c.get('message', {}).get('tool_calls', []))]
+        calls = [(choice, i, json.dumps(call, sort_keys=True))
+                 for choice, i, call in self._response_calls()]
         if calls != [(c.choice, c.index, c.call) for c in self.call_certificates]:
             raise SemanticGuardError('final response contains changed/uncertified calls')
 
@@ -291,3 +299,32 @@ class RecipeSemanticGuard:
         self.tool_complete = reason == 'stop' and self._block_complete and bool(self.call_certificates)
         self.finished = True
         self._eof_proof = None
+
+
+class MessagesSemanticGuard(RecipeSemanticGuard):
+    """Same consuming proofs; Messages finalizes pending JSON at block stop.
+
+    Argument-end certificates retain the exact official prefix snapshot. Input
+    is finalized by the official accumulator, never parsed by this guard. Only
+    after exact terminal projection equality and full-block observation can the
+    final block replace the prefix's pending-input representation.
+    """
+    protocol = 'messages'
+
+    def _response_calls(self):
+        return [(0, i, block) for i, block in enumerate(
+            b for b in json.loads(self.response.to_json())['content'] if b['type'] == 'tool_use')]
+
+    def _check_final_calls(self):
+        from dataclasses import replace
+        calls = self._response_calls()
+        if len(calls) != len(self.call_certificates):
+            raise RuntimeError('final Messages response contains uncertified calls')
+        final = []
+        for (choice, index, block), certificate in zip(calls, self.call_certificates):
+            prior = json.loads(certificate.call)
+            if (choice, index) != (certificate.choice, certificate.index) or any(
+                    block[k] != prior[k] for k in ('type', 'id', 'name')):
+                raise RuntimeError('final Messages call identity changed')
+            final.append(replace(certificate, call=json.dumps(block, sort_keys=True)))
+        self.call_certificates = tuple(final)

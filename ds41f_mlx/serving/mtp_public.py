@@ -140,7 +140,7 @@ class LocalBoundary:
         supported = create or chat or lifecycle or (method == 'GET' and path in ('/health','/v1/models'))
         if self.ordinary:
             session_control = method == 'POST' and re.fullmatch(r'/v1/sessions/[^/]+/(budget|cancel)', path)
-            supported = ((method == 'POST' and path == '/v1/chat/completions') or
+            supported = ((method == 'POST' and path in ('/v1/chat/completions', '/v1/messages')) or
                          (method == 'GET' and path in ('/health','/v1/models')) or
                          (self.production_sessions and (create or chat or lifecycle or session_control)))
         known = path in ('/v1/chat/completions','/v1/responses','/v1/messages','/v1/sessions/restore',
@@ -182,7 +182,7 @@ class LocalBoundary:
                 return await deny(400, 'invalid_content_length')
             if cl and int(cl[0]) > body_limit:
                 return await deny(413, 'body_limit')
-            if self.telemetry is not None and self.ordinary and (chat or path == '/v1/chat/completions'):
+            if self.telemetry is not None and self.ordinary and (chat or path in ('/v1/chat/completions', '/v1/messages')):
                 from uuid import uuid4
                 scope['ds41f.diagnostic_id'] = uuid4().hex
                 self.telemetry.begin(scope['ds41f.diagnostic_id'])

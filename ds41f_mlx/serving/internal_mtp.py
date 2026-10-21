@@ -297,11 +297,17 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
             context = DSparkCommittedContext.from_native(rec.rings, frontier=len(ids)-1, target_layer_ids=lm._config.dspark_target_layer_ids)
             live = LivePrefillResult.from_committed(app.commit_certificate, prefix_token_ids=ids[:-1])
             live.dspark_committed_context = context
-            generator = d.ChatCompletionRequest.chunk_generator(request.conversation_request, trace['response_id'], request.model or self.model_id)
-            # Recipe 0.2's converted response options own usage and streaming.
-            rec.processor = d.ChatCompletionSemanticSession(generator, request.conversation_request.parsing_options, tokenizer)
-            rec.guard = RecipeSemanticGuard(rec.processor, control_token_ids=request.stop_token_ids,
-                frontier=len(ids), response=d.ChatCompletionResponse(trace['response_id'], self.model_id, int(time()), 0, 0))
+            from ds41f_mlx.runtime.recipe_semantic_guard import MessagesSemanticGuard
+            messages = request.protocol == 'messages'
+            request_type = d.MessagesRequest if messages else d.ChatCompletionRequest
+            response_type = d.MessagesResponse if messages else d.ChatCompletionResponse
+            session_type = d.MessagesSemanticSession if messages else d.ChatCompletionSemanticSession
+            guard_type = MessagesSemanticGuard if messages else RecipeSemanticGuard
+            trace['protocol'] = request.protocol
+            generator = request_type.chunk_generator(request.conversation_request, trace['response_id'], request.model or self.model_id)
+            rec.processor = session_type(generator, request.conversation_request.parsing_options, tokenizer)
+            rec.guard = guard_type(rec.processor, control_token_ids=request.stop_token_ids,
+                frontier=len(ids), response=response_type(trace['response_id'], self.model_id, int(time()), 0, 0))
             rec.guard._push(d.InferenceChunk.ready(prompt_usage=d.PromptUsage(prompt_tokens=len(ids), prompt_cache_hit_tokens=trace.get('cached_tokens', 0))))
             from .generation_policy import policy_for
             policy = policy_for(request)
@@ -373,7 +379,7 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
         rec.last_turn = trace
         new_events = rec.guard.events[len(rec.pending_delivery):]
         import deepseek_recipe as d
-        if any(d.ChatCompletionResponse.sse_event_name(event) is not None for event in new_events):
+        if trace.get('protocol') != 'messages' and any(d.ChatCompletionResponse.sse_event_name(event) is not None for event in new_events):
             raise RuntimeError('unexpected named Chat Completions SSE event')
         encoded = tuple(event.to_json() for event in new_events)
         rec.pending_delivery += encoded
@@ -494,11 +500,16 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
         # canonical. Never advertise that partial call as an idle agent result,
         # even if its current arguments happen to be valid JSON. Only the native
         # recipe terminal/finish owner can establish a complete call.
-        choices = trace['response'].get('choices', [])
-        has_calls = any(c.get('message', {}).get('tool_calls') for c in choices)
+        response = trace['response']
+        if trace.get('protocol') == 'messages':
+            has_calls = any(b['type'] == 'tool_use' for b in response['content'])
+            tool_stop = response['stop_reason'] == 'tool_use'
+        else:
+            choices = response.get('choices', [])
+            has_calls = any(c.get('message', {}).get('tool_calls') for c in choices)
+            tool_stop = all(c.get('finish_reason') == 'tool_calls' for c in choices)
         completed_block = getattr(rec.guard, 'tool_complete', False)
-        if has_calls and not (rec.guard.finished and completed_block and
-                              all(c.get('finish_reason') == 'tool_calls' for c in choices)):
+        if has_calls and not (rec.guard.finished and completed_block and tool_stop):
             rec.poisoned = True
             trace['recovery_error'] = 'unfinished canonical tool protocol; ordinary continuation not qualified'
 

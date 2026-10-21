@@ -205,7 +205,7 @@ def scheduler_request(inp, authority):
     scheduler.batch_generator = None
     request = Request(request_id='image', prompt=list(inp.token_ids), sampling_params=SamplingParams())
     request.prompt_token_ids = list(inp.token_ids)
-    request.prepared, request.recipe_tokenizer = NS(multimodal=inp), None
+    request.prepared, request.recipe_tokenizer = NS(protocol='chat_completions', multimodal=inp), None
     request.execution = QualificationSession('image')
     request.image_identities = tuple(inp.identities())
     request.required_image_frontier = inp.spans[0].start + inp.spans[0].length

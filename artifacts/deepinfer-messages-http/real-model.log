@@ -1,0 +1,18 @@
+INFO:     Started server process [61446]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:18037 (Press CTRL+C to quit)
+INFO:     127.0.0.1:63747 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63747 - "POST /v1/messages HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63747 - "GET /health HTTP/1.1" 200 OK
+text {'id': 'chatcmpl-1d5fc67e509047a6b3ad678b2eebfc3d', 'type': 'message', 'role': 'assistant', 'model': 'deepseek-flash', 'content': [{'type': 'text', 'text': 'Hello! 👋'}], 'stop_reason': 'end_turn', 'stop_sequence': None, 'usage': {'input_tokens': 8, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'output_tokens': 4, 'service_tier': 'standard'}}
+INFO:     127.0.0.1:63747 - "POST /v1/messages HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63747 - "GET /health HTTP/1.1" 200 OK
+tool {'id': 'chatcmpl-799cbe99b1144af9a71a714148239c28', 'type': 'message', 'role': 'assistant', 'model': 'deepseek-flash', 'content': [{'type': 'text', 'text': "I'll read that file for you."}, {'type': 'tool_use', 'id': 'call_00_YW0srlFqeLBXVg2Bctck4347', 'name': 'read_file', 'input': {'path': '/tmp/example.txt'}}], 'stop_reason': 'tool_use', 'stop_sequence': None, 'usage': {'input_tokens': 282, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'output_tokens': 48, 'service_tier': 'standard'}}
+INFO:     127.0.0.1:63747 - "POST /v1/messages HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63747 - "GET /health HTTP/1.1" 200 OK
+continuation {'id': 'chatcmpl-fe9e6a0c1ee446f68ef9892ea67a9607', 'type': 'message', 'role': 'assistant', 'model': 'deepseek-flash', 'content': [{'type': 'text', 'text': 'The file `/tmp/example.txt` contains the exact marker: **MESSAGES_OK**'}], 'stop_reason': 'end_turn', 'stop_sequence': None, 'usage': {'input_tokens': 28, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 330, 'output_tokens': 19, 'service_tier': 'standard'}}
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [61446]

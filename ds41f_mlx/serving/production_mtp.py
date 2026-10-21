@@ -162,10 +162,16 @@ class ProductionScheduler(Scheduler):
             self.running.pop(request.request_id, None)
             self.requests.pop(request.request_id, None)
             request.prompt_checkpoint = None
-            choices = (trace.get('response') or {}).get('choices') or []
-            semantic_finish = (choices[0].get('finish_reason') if choices else None) or 'stop'
+            response = trace.get('response') or {}
+            if request.prepared.protocol == 'messages':
+                semantic_finish = response.get('stop_reason') or 'end_turn'
+                length_capped = semantic_finish == 'max_tokens'
+            else:
+                choices = response.get('choices') or []
+                semantic_finish = (choices[0].get('finish_reason') if choices else None) or 'stop'
+                length_capped = semantic_finish == 'length'
             request.status = (RequestStatus.FINISHED_ABORTED if cancelled else
-                              RequestStatus.FINISHED_LENGTH_CAPPED if semantic_finish == 'length' else
+                              RequestStatus.FINISHED_LENGTH_CAPPED if length_capped else
                               RequestStatus.FINISHED_STOPPED)
             request.output_token_ids = list(trace.get('canonical_generated', ()))
             self.total_completion_tokens += len(request.output_token_ids)
@@ -203,7 +209,9 @@ class ProductionScheduler(Scheduler):
             output = RequestOutput(request_id=request.request_id, finished=True,
                                    finish_reason='error' if error else 'abort' if cancelled else semantic_finish,
                                    error=str(error) if error else None)
-            output.recipe_events = rec.pending_delivery[request.delivery_cursor:]
+            if request.prepared.protocol == 'messages' and (cancelled or rec.poisoned):
+                output.error = str(error or trace.get('recovery_error') or 'Messages request cancelled')
+            output.recipe_events = (() if output.error or cancelled else rec.pending_delivery[request.delivery_cursor:])
             output.recipe_response = trace.get('response')
             output.serving_trace = trace
             self._completed.append(output)
@@ -252,8 +260,18 @@ class ProductionScheduler(Scheduler):
                     if request.trace.get('application_terminal'):
                         self._retire(request)
                     else:
-                        events = rec.pending_delivery[request.delivery_cursor:]
-                        request.delivery_cursor = len(rec.pending_delivery)
+                        end = len(rec.pending_delivery)
+                        if request.prepared.protocol == 'messages':
+                            # A tool block stop is not effect authority. Hold the
+                            # tool suffix until the SAME worker canonically settles.
+                            import json
+                            for i in range(request.delivery_cursor, end):
+                                event = json.loads(rec.pending_delivery[i])
+                                if event.get('content_block', {}).get('type') == 'tool_use':
+                                    end = i
+                                    break
+                        events = rec.pending_delivery[request.delivery_cursor:end]
+                        request.delivery_cursor = end
                         item = RequestOutput(request_id=request.request_id)
                         item.recipe_events, item.recipe_response = events, None
                         output.outputs.append(item)
@@ -403,8 +421,10 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
     async def ordinary_response(self, prepared, *, tokenizer, http_request=None,
                                 request_id=None, logical_session=None, body=None, application_id=None):
         from .server import InferenceStreamingResponse, sse_frame
-        if prepared.protocol != 'chat_completions':
-            raise ValueError('ordinary MTP supports Chat Completions only')
+        if prepared.protocol not in ('chat_completions', 'messages'):
+            raise ValueError('ordinary MTP supports Chat Completions and Messages only')
+        if logical_session is not None and prepared.protocol != 'chat_completions':
+            raise ValueError('production sessions support Chat Completions only')
         if prepared.image_sources and prepared.multimodal is None:
             raise ValueError('image input was not prepared')
         if getattr(prepared, 'multimodal', None) is not None and any(
@@ -457,14 +477,21 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
             try:
                 while True:
                     output = await queue.get()
+                    if output.error:
+                        completed = output.finished
+                        raise RuntimeError(output.error)
                     for event in output.recipe_events:
-                        yield sse_frame(None, event)
+                        if prepared.protocol == 'messages':
+                            import json
+                            name = json.loads(event)['type']  # Native serialized event, unchanged.
+                        else:
+                            name = None
+                        yield sse_frame(name, event)
                     if output.finished:
                         completed = True
-                        if output.error:
-                            raise RuntimeError(output.error)
-                        from deepseek_recipe import ChatCompletionResponse
-                        done = ChatCompletionResponse.sse_done_data()
+                        from deepseek_recipe import ChatCompletionResponse, MessagesResponse
+                        response_type = MessagesResponse if prepared.protocol == 'messages' else ChatCompletionResponse
+                        done = response_type.sse_done_data()
                         if done is not None:
                             yield sse_frame(None, done)
                         break
@@ -549,6 +576,8 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
     async def production_session_response(self, session_id, prepared, *, tokenizer, body,
                                           expected_count, application_id, http_request=None):
         import json
+        if prepared.protocol != 'chat_completions':
+            raise ValueError('production sessions support Chat Completions only')
         if not prepared.stream:
             raise ValueError('production session Chat Completions requires streaming; no legacy turn path')
         payload = json.loads(body)

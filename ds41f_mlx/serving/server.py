@@ -48,10 +48,12 @@ def prepare_request(protocol: str, body: bytes, *, tokenizer: Any, recipe_path: 
     policy_payload = json.loads(body)
     request_type, _ = PROTOCOL_TYPES[protocol]
     if ordinary:
-        if protocol != 'chat_completions':
-            raise RequestError('ordinary MTP supports Chat Completions only')
         from .ordinary_admission import convert_ordinary
-        converted, include_usage, automatic = convert_ordinary(body, default_reasoning_effort=default_reasoning_effort)
+        from .messages_admission import convert_messages
+        if protocol not in ('chat_completions', 'messages'):
+            raise RequestError('ordinary MTP supports Chat Completions and Messages only')
+        convert = convert_messages if protocol == 'messages' else convert_ordinary
+        converted, include_usage, automatic = convert(body, default_reasoning_effort=default_reasoning_effort)
         custom_tool_names = frozenset()
     else:
         # Runtime extension, resolved only after the real recipe/image expansion.
@@ -85,7 +87,7 @@ def prepare_request(protocol: str, body: bytes, *, tokenizer: Any, recipe_path: 
     encode_s = perf_counter() - encode_t0
     multimodal = None
     if rendered.image_sources:
-        if protocol != 'chat_completions':
+        if protocol != 'chat_completions' and not (ordinary and protocol == 'messages'):
             raise RequestError('multimodal support is qualified for Chat Completions only', 400)
         from ds41f_mlx.model_execution.config import ModelConfig
         from ds41f_mlx.runtime.multimodal import prepare_multimodal
@@ -277,8 +279,8 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
             if projection is not None:
                 projection.phase(diagnostic_id, 'ENCODING')
             if ordinary_mtp:
-                if protocol != 'chat_completions':
-                    raise RequestError('ordinary MTP supports Chat Completions only')
+                if protocol not in ('chat_completions', 'messages'):
+                    raise RequestError('ordinary MTP supports Chat Completions and Messages only')
             prepared = await run_in_threadpool(prepare_request, protocol, body, tokenizer=tokenizer, recipe_path=recipe_path, options=options, checkpoint=getattr(backend, 'checkpoint', runtime_config.checkpoint_path), ordinary=ordinary_mtp, default_reasoning_effort=runtime_config.default_reasoning_effort)
             if ordinary_mtp:
                 prepared.diagnostic_id = diagnostic_id
@@ -348,6 +350,8 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
                          active_requests=0 if scheduler is None else len(scheduler.running),
                          prefix_cache=None if scheduler is None else scheduler.checkpoints.paged.get_stats().to_dict(),
                          capabilities={'stateful_chat': 'production-sessions-v1', 'persist_restore': False,
+                                       'messages': 'recipe-0.2-native', 'messages_sessions': False,
+                                       'messages_vision': 'bounded-inline-base64-v1',
                                        'chat_vision': 'bounded-inline-v1',
                                        'vision_admission': vision_capacity(backend.checkpoint),
                                        'max_live_sessions': backend.production_sessions.MAX_LIVE,

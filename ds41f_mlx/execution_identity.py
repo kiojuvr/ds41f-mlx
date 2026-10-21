@@ -165,6 +165,11 @@ def inspect_payload():
     expected_native = site/'deepseek_recipe'/native.name
     if native != expected_native or sha(native) != authority['payloads']['deepseek_recipe'].get(native.name):
         raise ValueError('redirected/unadmitted recipe extension')
+    if authority['profile'] == 'mtp' and not (
+            all(hasattr(getattr(deepseek_recipe, 'MessagesSemanticSession', None), name)
+                for name in ('push', 'preview_tokens', 'finish', 'status', 'close')) and
+            all(hasattr(deepseek_recipe.MessagesResponse, name) for name in ('fork', 'accumulate_copy'))):
+        raise ValueError('recipe Messages semantic capabilities missing')
     if authority['profile'] == 'mtp' and not all(hasattr(deepseek_recipe.ChatCompletionSemanticSession, name) for name in
                ('push', 'preview_tokens', 'finish', 'status', 'close')):
         raise ValueError('recipe semantic capabilities missing')

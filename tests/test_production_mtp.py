@@ -4,6 +4,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
+from ds41f_mlx import mtp_profile
 from ds41f_mlx.serving.paired_checkpoint import PairedCheckpoint, validate_pair
 from ds41f_mlx.serving.capacity import TEXT_QUALIFIED_ENVELOPE
 
@@ -283,8 +284,8 @@ def test_ordinary_http_recipe_route_has_no_compulsory_public_session(monkeypatch
                     {'role': 'assistant', 'content': None, 'tool_calls': [
                         {'id': 'read-source', 'type': 'function', 'function': {
                             'name': 'read', 'arguments': '{"filePath":"ds41f_mlx/mtp_profile.py"}'}}]},
-                    {'role': 'tool', 'tool_call_id': 'read-source', 'content': (
-                        Path(__file__).resolve().parents[1] / 'ds41f_mlx/mtp_profile.py').read_text()},
+                    {'role': 'tool', 'tool_call_id': 'read-source', 'content':
+                        Path(mtp_profile.__file__).read_text()},
                 ]},
             ):
                 before = len(parsed)
@@ -362,7 +363,8 @@ def test_json_delivery_stops_disconnect_probe_even_when_probe_consumes_cancellat
     (False, False, 200), (True, False, 32768), (False, True, 32768),
     (False, False, 8192), (False, False, TEXT_QUALIFIED_ENVELOPE - 3),
     (False, False, TEXT_QUALIFIED_ENVELOPE - 2), (False, False, TEXT_QUALIFIED_ENVELOPE)])
-def test_scheduler_adoption_settlement_publication_and_burn(monkeypatch, cancel, fail, frontier):
+@pytest.mark.parametrize('protocol', ['chat_completions', 'messages'])
+def test_scheduler_adoption_settlement_publication_and_burn(monkeypatch, cancel, fail, frontier, protocol):
     pytest.importorskip('mlx.core')
     pytest.importorskip('omlx')
     from collections import deque
@@ -396,9 +398,15 @@ def test_scheduler_adoption_settlement_publication_and_burn(monkeypatch, cancel,
         rec.cache, rec.rings, rec.canonical = pair(frontier)
         rec.owner = None
         trace['quiescence'], trace['canonical_frontier'] = {}, len(rec.canonical)
-        trace['response'] = {'choices': [{'finish_reason': 'length' if frontier == TEXT_QUALIFIED_ENVELOPE else 'stop'}]}
+        trace['response'] = ({'stop_reason': 'max_tokens' if frontier == TEXT_QUALIFIED_ENVELOPE else 'tool_use'}
+                             if protocol == 'messages' else
+                             {'choices': [{'finish_reason': 'length' if frontier == TEXT_QUALIFIED_ENVELOPE else 'stop'}]})
     def advance(rec, trace):
         transitions.append('generation')
+        if protocol == 'messages':
+            rec.pending_delivery = ('{"type":"message_start"}',
+                '{"type":"content_block_start","content_block":{"type":"tool_use"}}',
+                '{"type":"content_block_stop"}', '{"type":"message_stop"}')
     def retire(rec):
         transitions.append('retirement')
         rec.owner = None
@@ -408,12 +416,15 @@ def test_scheduler_adoption_settlement_publication_and_burn(monkeypatch, cancel,
     request.prompt_token_ids = list(range(202))
     request.execution = QualificationSession('ordinary')
     request.trace = dict(t0=perf_counter())
-    request.prepared, request.recipe_tokenizer = SimpleNamespace(multimodal=None), None
+    request.prepared, request.recipe_tokenizer = SimpleNamespace(protocol=protocol, multimodal=None), None
     request.image_identities, request.native_started = (), False
     request.prompt_checkpoint, request.delivery_cursor = None, 0
     scheduler.requests[request.request_id] = request
     scheduler.waiting.append(request)
-    scheduler.step()
+    initial = scheduler.step()
+    if protocol == 'messages':
+        assert initial.outputs[0].recipe_events == ('{"type":"message_start"}',)
+        assert request.delivery_cursor == 1  # No successful tool-block delivery before settlement.
     assert transitions == ['P5/native', 'generation']
     assert scheduler.batch_generator is request.execution.owner._bg
     assert scheduler.request_id_to_uid == {'ordinary': 17}
@@ -425,11 +436,13 @@ def test_scheduler_adoption_settlement_publication_and_burn(monkeypatch, cancel,
     output = scheduler.step()
     assert transitions[-2:] == ['settlement', 'retirement']
     assert output.outputs[-1].finished
-    assert bool(output.outputs[-1].error) == fail
+    assert bool(output.outputs[-1].error) == (fail or (cancel and protocol == 'messages'))
+    if protocol == 'messages':
+        assert bool(output.outputs[-1].recipe_events) == (not fail and not cancel)
     if frontier == TEXT_QUALIFIED_ENVELOPE:
         from omlx.request import RequestStatus
         assert request.status == RequestStatus.FINISHED_LENGTH_CAPPED
-        assert output.outputs[-1].finish_reason == 'length'
+        assert output.outputs[-1].finish_reason == ('max_tokens' if protocol == 'messages' else 'length')
     assert not scheduler.requests and not scheduler.running
     assert not scheduler.request_id_to_uid and not scheduler.uid_to_request_id
     assert scheduler.batch_generator is None and request.execution.owner is None
