@@ -2,7 +2,7 @@
 
 **Run the official DeepSeek-V4.1-Flash checkpoint locally on Apple Silicon.**
 
-**Unified `merge` branch:** MTP-only production for official **Flash** and
+**Unified Runtime on `master`:** MTP-only production for official **Flash** and
 **Flash-1017**, sharing Recipe **0.2.0** native Chat/Messages semantics. Select
 `--checkpoint-variant flash` or `flash-1017` (default) during provisioning;
 each installation has one fixed checkpoint and numerical identity. Existing
@@ -193,6 +193,109 @@ Use `"stream": true` for SSE. Stop via the operator TUI or graceful SIGTERM and
 wait for native cleanup before replacing the process, package or assets.
 [Operations](docs/operations.md) owns full installation, readiness, shutdown and
 troubleshooting instructions; no validation bypass or automatic resend is supported.
+
+## Using DeepSeek Harness
+
+These are **Harness deployment recommendations**, not Runtime API restrictions:
+both checkpoints implement Chat Completions and native Recipe 0.2 Messages.
+
+| Checkpoint | Recommended Harness route | Protocol |
+| --- | --- | --- |
+| DeepSeek-V4.1-Flash-1017 | `deepseek-official` | Native DeepSeek Messages |
+| DeepSeek-V4.1-Flash (original) | Custom OpenAI provider through `dsh-llm-pi-ai` | OpenAI Chat Completions |
+
+Start the correctly provisioned, checkpoint-fixed **`mtp-serving-v1`** Runtime;
+verify **`model_ready: true`** at `/health`. For Windows-to-Mac access, explicitly
+bind a trusted private LAN interface and use the Mac's reachable address (examples
+below use `mac-studio`). Runtime has **no authentication or TLS**: never expose
+port 8000 to the public Internet. See [operations](docs/operations.md) and
+[private-LAN setup](docs/private-lan.md), rather than reprovisioning an existing install.
+
+### Flash-1017: native DeepSeek Messages
+
+The tested route uses **DeepSeek Harness 0.2.1-rc.2 (Windows installer)**,
+provider **`deepseek-official`**, adapter **`@deepseek-ai/dsh-llm-deepseek-api-key`**,
+and model **`deepseek-flash`**. Its base URL has **no `/v1`** (unlike generic
+OpenAI-compatible clients). Merge these entries into the existing profile's
+`cordis.patch.yml`; do **not** replace the whole profile or discard other entries:
+
+```yaml
+- id: llm-deepseek
+  name: '@deepseek-ai/dsh-llm-deepseek-api-key'
+  config:
+    baseURL: http://mac-studio:8000
+    apiKeyEnv: DS41F_LOCAL_API_KEY
+    reasoningEffort: high
+    maxTokens: 32768
+    streamIdleTimeoutMs: 1800000
+    models:
+      - id: deepseek-flash
+        inputModalities: [text]
+        contextWindow: 1048576
+        maxTokens: 32768
+        systemPromptUpdate: in-history
+        toolUpdate: addition-only
+- id: session-log-deepseek
+  name: '@deepseek-ai/dsh-session-log-deepseek'
+  config:
+    enabled: false
+```
+
+Resolve `DS41F_LOCAL_API_KEY` to a **local-only placeholder** in Harness's credential
+settings/environment; that suffices for today's unauthenticated Runtime. **Never
+reuse or transmit a real DeepSeek API key over HTTP.** Disable **Settings → General →
+Upload Session Log when using the official model API** (or the `enabled: false`
+setting above): Runtime intentionally rejects `dsh_session_log`. Keep
+**`plugin-package-inventory-deepseek` enabled** by default; Runtime accepts and
+ignores `dsh_plugin_packages`.
+
+Choose reasoning effort per workload: **`off`, `low`, `high`, `max`**; High completed
+a long-running review. Remove any existing `thinking: disabled` restriction to use
+higher efforts. Set a practical output-token cap: **32,768 is a configurable
+recommendation**, not a universally qualified optimum; prompt + output must fit.
+The **1,800,000 ms** idle timeout accommodates long local prefill without requiring
+Runtime heartbeats. Preserve native tool IDs/results, in-history system updates
+and addition-only tool updates; tool removal is unsupported.
+
+### Original Flash: OpenAI Chat Completions
+
+Use a separate custom route through **`@deepseek-ai/dsh-llm-pi-ai`**, not the
+Flash-1017 `deepseek-official` configuration. Select **OpenAI Chat Completions**
+(`openai-completions`), **not Anthropic Messages**, with **`/v1`** in the base URL.
+Use an alias advertised by the selected Runtime's `/v1/models`; replace the example
+model ID below if needed. Merge this provider into the existing `llm-pi-ai` entry's
+`providers` map without removing other providers, then select `ds41f-local`:
+
+```yaml
+- id: llm-pi-ai
+  name: '@deepseek-ai/dsh-llm-pi-ai'
+  config:
+    providers:
+      ds41f-local:
+        api: openai-completions
+        baseURL: http://mac-studio:8000/v1
+        apiKeyEnv: DS41F_LOCAL_API_KEY
+        models:
+          - id: deepseek-v4.1-flash
+            contextWindow: 1048576
+            maxTokens: 32768
+```
+
+### Observed scope and limits
+
+Windows Harness with Flash-1017 confirmed native Messages, repeated tool-use/result
+continuation, and a successful long-running **High-reasoning read-only repository
+review**. A subsequent task exercised editing, but **Harness-side problems were
+observed**. These observations are not unrestricted production compatibility or
+fresh acceptance of the current `master` HEAD; earlier bounded acceptance remains
+in [operations](docs/operations.md#deepinfer-daily-operation-and-harness).
+
+End-to-end Harness image attachments/Files API workflows remain unqualified;
+Runtime already supports **bounded inline Vision for both variants**. Server-side
+tools, unsupported Messages extensions, multi-active inference and restart-persistent
+KV-cache restoration are unsupported; parallel subagent workflows remain unqualified.
+Original Flash lacks broad, equivalently qualified Windows Harness workflow evidence.
+See [capability boundaries](docs/capabilities.md).
 
 ## APIs and applications
 

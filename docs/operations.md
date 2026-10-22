@@ -1,7 +1,7 @@
 # Production operations
 
-`merge` is **MTP-only**. Original Flash and Flash-1017 use separate fresh
-package-fixed installations with shared Recipe 0.2 Chat/Messages semantics.
+The unified Runtime on `master` is **MTP-only**. Original Flash and Flash-1017 use
+separate fresh package-fixed installations with shared Recipe 0.2 Chat/Messages semantics.
 Standard-OFF production startup, admission and provisioning are retired. Historical
 release receipts and occupied installations below are not migrated or requalified.
 
@@ -25,7 +25,7 @@ and are not production launch instructions.
 
 The development repository is `/Volumes/SDXC-512/ds41f-mlx`; its internal
 `.venv` is for development, not installed production execution. The designated
-persistent installed Runtime environments for `merge` are:
+persistent installed Runtime environments for `master` are:
 
 | Variant | Environment | Separate build directory |
 | --- | --- | --- |
@@ -53,7 +53,7 @@ they are not the designated unified Runtime destinations:
 The first two retain the published scoped-local payloads from `0cd1428`; DeepInfer
 is a separate bounded installed acceptance, not their replacement. Do not update
 one line's environment from another checkout. Existing source isolation is retained;
-the unified working branch is `merge`, not the historical Flash-1017 branch.
+the unified work is integrated into `master`, not the historical Flash-1017 branch.
 
 The historical original-Flash launch example is retained as a record, not current
 unified Runtime guidance:
@@ -71,6 +71,8 @@ for migration details and completed legacy OFF retirement.
 
 ## DeepInfer daily operation and Harness
 
+For current checkpoint-specific Harness setup, see
+[Using DeepSeek Harness](../README.md#using-deepseek-harness).
 This section preserves historical DeepInfer installation commands and bounded
 acceptance evidence. It does not qualify either newly designated environment;
 its paths are historical, not current unified Runtime launch guidance.

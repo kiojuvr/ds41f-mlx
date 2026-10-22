@@ -8,14 +8,14 @@ Architecture explains ownership; specialized documents explain endpoint semantic
 
 ## DeepInfer current implementation
 
-The unified `merge` branch supports official **original Flash and Flash-1017**
+The unified Runtime on `master` supports official **original Flash and Flash-1017**
 with Recipe **0.2.0**, one consolidated native semantic extension, and native GLM.
 `--checkpoint-variant flash|flash-1017` selects the immutable package identity;
 1017 remains the default. Wrong-checkpoint admission and cross-variant paired
 state fail closed. Standard-OFF is retired from production; all OFF descriptions
 and evidence retained later on this page are historical, not active capabilities.
 The published original-Flash release and historical Recipe 0.1 installations remain separate;
-[operations](operations.md#deepinfer-daily-operation-and-harness) owns selection.
+[operations](operations.md#local-environment-layout) owns installation selection.
 Bounded installed Chat/Messages and direct official Harness acceptance are recorded
 in the [development record](deepinfer-development.md); neither renews release scope.
 
@@ -207,7 +207,9 @@ and [original image qualification](multimodal-production-qualification.md).
 - **Official Harness 0.2.1-rc.2:** direct native Messages text and actual read-only
   file-tool/result continuation passed with supported option exclusions. No image/
   Files, cancellation or dynamic tool-update workflow acceptance; see
-  [connection configuration](operations.md#deepinfer-daily-operation-and-harness).
+  [historical acceptance](operations.md#deepinfer-daily-operation-and-harness).
+  Current checkpoint-specific setup and later Windows observations are in
+  [Using DeepSeek Harness](../README.md#using-deepseek-harness).
   This historical observation is not comprehensive Agent/Harness compatibility;
   no replacement Harness is bundled or process-managed by the TUI.
 - **Rust:** raw OFF HTTP/SSE/process boundary; no Rust model/KV/parser owner and no
