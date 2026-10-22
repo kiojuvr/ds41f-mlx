@@ -24,8 +24,24 @@ and are not production launch instructions.
 ## Local environment layout
 
 The development repository is `/Volumes/SDXC-512/ds41f-mlx`; its internal
-`.venv` is for development, not installed production execution. Local installed
-runtime environments are:
+`.venv` is for development, not installed production execution. The designated
+persistent installed Runtime environments for `merge` are:
+
+| Variant | Environment | Separate build directory |
+| --- | --- | --- |
+| Original Flash (`flash`) | `/Volumes/SDXC-512/ds41f-0910` | `/Volumes/SDXC-512/ds41f-0910-build` |
+| Flash-1017 (`flash-1017`) | `/Volumes/SDXC-512/ds41f-1017` | `/Volumes/SDXC-512/ds41f-1017-build` |
+
+These are designated destinations, **not independently verified provisioned or
+qualified installations**. Provision only into absent environment/build targets;
+see [Provision / publish](#provision--publish). Keep disposable source-test
+environments and builds separate as specified in [source verification](verification.md).
+No existing installation is migrated or modified by this path designation.
+
+### Historical installations and evidence
+
+The following paths retain their original installation and qualification history;
+they are not the designated unified Runtime destinations:
 
 - Previously qualified **original Flash**, MTP: `/Volumes/SDXC-512/ds41f-mlx_mtp-venv`
 - Previously qualified **original Flash**, Standard-OFF: `/Volumes/SDXC-512/ds41f-mlx_off-venv`
@@ -39,8 +55,8 @@ is a separate bounded installed acceptance, not their replacement. Do not update
 one line's environment from another checkout. Existing source isolation is retained;
 the unified working branch is `merge`, not the historical Flash-1017 branch.
 
-Use the matching environment's `bin/ds41f`, or `bin/python -I -m ds41f_mlx.ops`.
-For example:
+The historical original-Flash launch example is retained as a record, not current
+unified Runtime guidance:
 
 ```sh
 /Volumes/SDXC-512/ds41f-mlx_mtp-venv/bin/ds41f start --profile mtp-serving-v1
@@ -54,6 +70,10 @@ not rewritten in historical receipts. See [environment consolidation](environmen
 for migration details and completed legacy OFF retirement.
 
 ## DeepInfer daily operation and Harness
+
+This section preserves historical DeepInfer installation commands and bounded
+acceptance evidence. It does not qualify either newly designated environment;
+its paths are historical, not current unified Runtime launch guidance.
 
 The retained DeepInfer provisioning record (occupied destinations; do not rerun) is:
 
@@ -115,11 +135,19 @@ DS41F_OPERATOR_RUNTIME_PYTHON=/Volumes/SDXC-512/ds41f-mlx_deepinfer-venv/bin/pyt
 
 ## Operator TUI and applications
 
-To open the stdlib-curses operator interface in the MTP environment:
+After independent provisioning/admission, select the matching persistent
+environment and checkpoint (original Flash shown):
 
 ```sh
-/Volumes/SDXC-512/ds41f-mlx_mtp-venv/bin/ds41f
+export DS41F_ENV=/Volumes/SDXC-512/ds41f-0910
+export DS41F_OPERATOR_RUNTIME_PYTHON="$DS41F_ENV/bin/python"
+export DS41F_CHECKPOINT=/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash
+"$DS41F_ENV/bin/ds41f"
 ```
+
+For Flash-1017, use `/Volumes/SDXC-512/ds41f-1017` and the matching
+`/Volumes/KIOXIA-PRO-2/models/deepseek-ai/DeepSeek-V4.1-Flash-1017` checkpoint.
+These launch examples do not establish provisioning or qualification.
 
 Dashboard Start/Stop toggles use the canonical launcher and loopback graceful
 control. Quit leaves the runtime running; reopening rediscovers live state.
@@ -137,7 +165,7 @@ Headless launches retain `none` unless configured explicitly:
 
 ```sh
 export DS41F_CHECKPOINT=/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash
-/Volumes/SDXC-512/ds41f-mlx_mtp-venv/bin/python -I -m ds41f_mlx.serve \
+/Volumes/SDXC-512/ds41f-0910/bin/python -I -m ds41f_mlx.serve \
   --profile mtp-serving-v1 --default-reasoning-effort max
 # Alternatively, omit the CLI option and export DS41F_DEFAULT_REASONING_EFFORT=max.
 ```
@@ -158,9 +186,10 @@ explicit application/operator decisions, not guessed retries.
 
 For current-source operator validation before installation, run
 `.venv/bin/python -m ds41f_mlx.ops` from this checkout. It controls the installed
-MTP environment via the existing sibling path or explicit
-`DS41F_OPERATOR_RUNTIME_PYTHON`; it never loads the model in the operator
-environment. Q leaves Runtime running. Browser conversations, leases, effect
+MTP environment via an explicit
+`DS41F_OPERATOR_RUNTIME_PYTHON="$DS41F_ENV/bin/python"` set before launching;
+do not rely on legacy sibling-path discovery for the new layout. It never loads
+the model in the operator environment. Q leaves Runtime running. Browser conversations, leases, effect
 ledgers, Tool Loop, search/acquisition and PDF workflows were removed, not moved
 into Runtime. Tool execution and conversation history belong to external clients.
 
@@ -203,6 +232,27 @@ development checkout. Building a wheel is not acceptance; publishers must run
 affected qualification before promoting it. Native recipe rebuilds and semantic
 library changes require affected qualification, not a manifest refresh.
 
+For the designated persistent destinations, the prospective provisioning commands
+from this checkout are below. Run each only if its environment **and** build
+directory are absent; do not rerun into occupied paths. These examples are not
+provisioning or qualification receipts:
+
+```sh
+# Original Flash
+/opt/homebrew/opt/python@3.13/bin/python3.13 -m ds41f_mlx.mtp_setup \
+  --venv /Volumes/SDXC-512/ds41f-0910 \
+  --build-dir /Volumes/SDXC-512/ds41f-0910-build --checkpoint-variant flash
+
+# Flash-1017
+/opt/homebrew/opt/python@3.13/bin/python3.13 -m ds41f_mlx.mtp_setup \
+  --venv /Volumes/SDXC-512/ds41f-1017 \
+  --build-dir /Volumes/SDXC-512/ds41f-1017-build --checkpoint-variant flash-1017
+```
+
+Use the matching external checkpoint shown in the
+[Quick Start](../README.md#1-provision-the-mtp-runtime). Disposable source-test
+provisioning remains separate under [source verification](verification.md).
+
 Both package-fixed MTP checkpoint variants default explicitly to **GLM native**;
 `third_party/mtp/execution-profiles.json` owns that provisioning/build default.
 The exact three-member native archive and provenance receipt ship in
@@ -238,17 +288,18 @@ static for the model lifetime. Do not manually edit/reseal admitted payloads.
 ## Inspect / ordinary MTP launch
 
 ```sh
-# Current DeepInfer package; original-model installations retain their own checkpoint.
+# Flash-1017 example, only after independent provisioning/admission.
+export DS41F_ENV=/Volumes/SDXC-512/ds41f-1017
 export DS41F_CHECKPOINT=/Volumes/KIOXIA-PRO-2/models/deepseek-ai/DeepSeek-V4.1-Flash-1017
-/path/to/env/bin/ds41f inspect --profile mtp-serving-v1
-/path/to/env/bin/ds41f start --profile mtp-serving-v1 --host 127.0.0.1 --port 8000
+"$DS41F_ENV/bin/ds41f" inspect --profile mtp-serving-v1
+"$DS41F_ENV/bin/ds41f" start --profile mtp-serving-v1 --host 127.0.0.1 --port 8000
 ```
 
 Module invocation must select installed code, even when the current directory is
 an unrelated development checkout:
 
 ```sh
-/path/to/env/bin/python -I -m ds41f_mlx.ops start --profile mtp-serving-v1
+"$DS41F_ENV/bin/python" -I -m ds41f_mlx.ops start --profile mtp-serving-v1
 ```
 
 `inspect` reports separate execution digest, host compatibility, provenance,

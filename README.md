@@ -127,18 +127,34 @@ to unchanged file identities.
 
 ### 1. Provision the MTP runtime
 
+The designated persistent installed Runtime paths are below; this designation
+is **not verification that either environment is provisioned or qualified**.
 From this checkout, with the provisioning prerequisites above satisfied, choose
-**new absolute directories** outside the development environment:
+one variant. Run provisioning only when both its environment and build directory
+are absent; never overwrite an existing installation.
+
+Original Flash (`flash`):
 
 ```sh
-export DS41F_ENV="$HOME/.local/share/ds41f/mtp-venv"
-export DS41F_BUILD="$HOME/.local/share/ds41f/mtp-build"
+export DS41F_ENV=/Volumes/SDXC-512/ds41f-0910
+export DS41F_BUILD=/Volumes/SDXC-512/ds41f-0910-build
+export DS41F_CHECKPOINT=/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash
 python3.13 -m ds41f_mlx.mtp_setup \
-  --venv "$DS41F_ENV" --build-dir "$DS41F_BUILD"
+  --venv "$DS41F_ENV" --build-dir "$DS41F_BUILD" --checkpoint-variant flash
 ```
 
-Add `--checkpoint-variant flash` for original Flash in a separate fresh environment;
-otherwise `flash-1017` is selected. Point `DS41F_CHECKPOINT` at the matching weights.
+Flash-1017 (`flash-1017`):
+
+```sh
+export DS41F_ENV=/Volumes/SDXC-512/ds41f-1017
+export DS41F_BUILD=/Volumes/SDXC-512/ds41f-1017-build
+export DS41F_CHECKPOINT=/Volumes/KIOXIA-PRO-2/models/deepseek-ai/DeepSeek-V4.1-Flash-1017
+python3.13 -m ds41f_mlx.mtp_setup \
+  --venv "$DS41F_ENV" --build-dir "$DS41F_BUILD" --checkpoint-variant flash-1017
+```
+
+Keep disposable [source-test environments](docs/verification.md) separate from
+these persistent installations and their build directories.
 The provisioner's default builds the shared MTP distribution with native GLM;
 ordinary serving is the runtime default below. It installs a non-editable wheel
 and locked dependencies. **Provisioning is not release acceptance:** the released
@@ -151,7 +167,7 @@ skip this step.
 ### 2. Inspect and start
 
 ```sh
-export DS41F_CHECKPOINT=/Volumes/KIOXIA-PRO-2/models/deepseek-ai/DeepSeek-V4.1-Flash-1017
+# Keep DS41F_ENV and DS41F_CHECKPOINT paired as selected above.
 "$DS41F_ENV/bin/ds41f" inspect
 "$DS41F_ENV/bin/ds41f" start
 ```
@@ -212,7 +228,14 @@ single-active scheduler—not extra model workers or restart persistence.
 
 ### Operator TUI
 
-Run `"$DS41F_ENV/bin/ds41f"` without a subcommand for the operator console:
+Explicitly select the installed Runtime interpreter for this layout, then open
+the operator console:
+
+```sh
+export DS41F_OPERATOR_RUNTIME_PYTHON="$DS41F_ENV/bin/python"
+"$DS41F_ENV/bin/ds41f"
+```
+
 **R** controls Runtime, **S** opens Settings, **D** shows diagnostics, **Q** quits
 while leaving Runtime running. The TUI owns control and observation, not
 conversations or tool effects. For a custom environment layout, configure
