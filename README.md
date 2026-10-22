@@ -7,10 +7,6 @@ native Chat/Messages semantics. Select `--checkpoint-variant flash` or `flash-10
 (default) during provisioning; each installation has one fixed checkpoint and
 numerical identity. Existing installations are not migrated.
 
-The TUI is solely a Runtime operator console. External clients use native Chat
-Completions and Messages and own agent orchestration and tool execution. No Harness
-or Browser Chat application is bundled; client compatibility is bounded.
-
 `ds41f-mlx` is a native runtime targeting the **Mac Studio M3 Ultra with 512 GB
 unified memory**. It exists to combine model fidelity, correct long-context state
 and practical local inference performance—not to substitute a reduced or
