@@ -2,18 +2,14 @@
 
 **Run the official DeepSeek-V4.1-Flash checkpoint locally on Apple Silicon.**
 
-**Unified Runtime on `master`:** MTP-only production for official **Flash** and
-**Flash-1017**, sharing Recipe **0.2.0** native Chat/Messages semantics. Select
-`--checkpoint-variant flash` or `flash-1017` (default) during provisioning;
-each installation has one fixed checkpoint and numerical identity. Existing
-installations are not migrated. Standard-OFF is retired; prior release/OFF records
-below are historical, not qualification of this branch.
+**MTP-only Runtime for official Flash and Flash-1017**, sharing Recipe **0.2.0**
+native Chat/Messages semantics. Select `--checkpoint-variant flash` or `flash-1017`
+(default) during provisioning; each installation has one fixed checkpoint and
+numerical identity. Existing installations are not migrated.
 
-**Browser Chat and its Chat Server are retired.** The TUI is solely a Runtime
-operator console. External clients retain native Chat Completions and Messages;
-model-specific agent orchestration belongs to clients or a future dedicated
-Harness. No bundled replacement Harness exists. Successful model inference is
-not comprehensive Agent/Harness compatibility.
+The TUI is solely a Runtime operator console. External clients use native Chat
+Completions and Messages and own agent orchestration and tool execution. No Harness
+or Browser Chat application is bundled; client compatibility is bounded.
 
 `ds41f-mlx` is a native runtime targeting the **Mac Studio M3 Ultra with 512 GB
 unified memory**. It exists to combine model fidelity, correct long-context state
@@ -57,7 +53,7 @@ built for correct long-lived local sessions on the M3 Ultra**. See
   client-side function tools, sampling and reasoning controls.
 - **Conversation reuse:** safe paired-prefix reuse across ordinary requests,
   edits and branches; optional logical conversations on the same scheduler.
-- **Bounded Vision:** inline images within the qualified envelope below—not
+- **Bounded Vision:** inline images within the resource limits below—not
   unrestricted multimodal inference.
 - **Operator TUI:** Runtime control, readiness, diagnostics, metrics and logs.
 - **Single-operator access:** loopback by default; explicitly trusted-private-LAN
@@ -85,28 +81,10 @@ include **16 MiB encoded bytes and 4M source pixels per image**, aspect ratio
 [complete profile and resource matrix](docs/capabilities.md) for admission,
 retention and image-continuation rules.
 
-## Historical published release scope
-
-**DS41F-SCOPED-LOCAL-20261015 is released** for the official checkpoint on the
-admitted M3 Ultra / 512 GB host, for a **single operator locally or over an
-explicitly trusted private LAN**. It covers ordinary MTP Chat Completions,
-JSON/SSE, tools, logical sessions, branching/continuation, cancellation/settlement,
-qualified text and bounded Vision, generation controls and operator lifecycle.
-Its separately accepted non-MTP alternative is historical and retired on `merge`.
-
-The [release record](release/scoped-local-20261015/release.json) binds the exact
-MTP/OFF native wheels, digests and installed acceptance to their source and
-inherited evidence. A later checkout, successful build or `inspect` result is not
-fresh release qualification. This repository is the public entry point and sole
-source/development authority; no separate public/runtime repository is planned.
-
-This is not an Internet-facing, multi-user, distributed or batched inference
-service. See [current limitations](#current-limitations) before exposing it.
-
 ## Requirements
 
 - **Mac Studio M3 Ultra, 512 GB unified memory**, with an admitted Apple Silicon
-  macOS host/native ABI. Other hardware and hosts are outside this release scope.
+  macOS host/native ABI. Other hardware and hosts are unsupported.
 - The **official external DeepSeek-V4.1-Flash or Flash-1017 checkpoint** matching
   the package-fixed variant,
   including official SSD-backed Engram assets; configure its directory with `DS41F_CHECKPOINT`.
@@ -157,8 +135,7 @@ Keep disposable [source-test environments](docs/verification.md) separate from
 these persistent installations and their build directories.
 The provisioner's default builds the shared MTP distribution with native GLM;
 ordinary serving is the runtime default below. It installs a non-editable wheel
-and locked dependencies. **Provisioning is not release acceptance:** the released
-payload identities and the publication/qualification procedure are in
+and locked dependencies. **Provisioning is not release acceptance:** see
 [Operations → Provision / publish](docs/operations.md#provision--publish).
 Do not replace this with an editable install or mutate an admitted environment.
 For an already provisioned installation, set `DS41F_ENV` to its environment and
@@ -213,7 +190,7 @@ port 8000 to the public Internet. See [operations](docs/operations.md) and
 
 ### Flash-1017: native DeepSeek Messages
 
-The tested route uses **DeepSeek Harness 0.2.1-rc.2 (Windows installer)**,
+For **DeepSeek Harness 0.2.1-rc.2 (Windows installer)**, use
 provider **`deepseek-official`**, adapter **`@deepseek-ai/dsh-llm-deepseek-api-key`**,
 and model **`deepseek-flash`**. Its base URL has **no `/v1`** (unlike generic
 OpenAI-compatible clients). Merge these entries into the existing profile's
@@ -230,7 +207,7 @@ OpenAI-compatible clients). Merge these entries into the existing profile's
     streamIdleTimeoutMs: 1800000
     models:
       - id: deepseek-flash
-        inputModalities: [text]
+        inputModalities: [text, image]
         contextWindow: 1048576
         maxTokens: 32768
         systemPromptUpdate: in-history
@@ -249,10 +226,10 @@ setting above): Runtime intentionally rejects `dsh_session_log`. Keep
 **`plugin-package-inventory-deepseek` enabled** by default; Runtime accepts and
 ignores `dsh_plugin_packages`.
 
-Choose reasoning effort per workload: **`off`, `low`, `high`, `max`**; High completed
-a long-running review. Remove any existing `thinking: disabled` restriction to use
-higher efforts. Set a practical output-token cap: **32,768 is a configurable
-recommendation**, not a universally qualified optimum; prompt + output must fit.
+Choose reasoning effort per workload: **`off`, `low`, `high`, `max`**. Remove any
+existing `thinking: disabled` restriction to use higher efforts. Set a practical
+output-token cap: **32,768 is a configurable recommendation**, not a universally
+qualified optimum; prompt + output must fit.
 The **1,800,000 ms** idle timeout accommodates long local prefill without requiring
 Runtime heartbeats. Preserve native tool IDs/results, in-history system updates
 and addition-only tool updates; tool removal is unsupported.
@@ -281,20 +258,13 @@ model ID below if needed. Merge this provider into the existing `llm-pi-ai` entr
             maxTokens: 32768
 ```
 
-### Observed scope and limits
-
-Windows Harness with Flash-1017 confirmed native Messages, repeated tool-use/result
-continuation, and a successful long-running **High-reasoning read-only repository
-review**. A subsequent task exercised editing, but **Harness-side problems were
-observed**. These observations are not unrestricted production compatibility or
-fresh acceptance of the current `master` HEAD; earlier bounded acceptance remains
-in [operations](docs/operations.md#deepinfer-daily-operation-and-harness).
+### Compatibility limits
 
 End-to-end Harness image attachments/Files API workflows remain unqualified;
 Runtime already supports **bounded inline Vision for both variants**. Server-side
 tools, unsupported Messages extensions, multi-active inference and restart-persistent
 KV-cache restoration are unsupported; parallel subagent workflows remain unqualified.
-Original Flash lacks broad, equivalently qualified Windows Harness workflow evidence.
+Broad Windows Harness compatibility for original Flash remains unqualified.
 See [capability boundaries](docs/capabilities.md).
 
 ## APIs and applications
@@ -305,8 +275,8 @@ Configure an OpenAI-compatible client with base URL
 `http://127.0.0.1:8000/v1` and wire model ID `deepseek-v4.1-flash` (or an advertised
 alias from `/v1/models`). Unified ordinary MTP serves Chat Completions and
 native Recipe 0.2 Messages (`POST /v1/messages`), health and models. Responses
-is not a supported production API on this branch. Messages capability exclusions and the
-historically observed client configuration are in [operations](docs/operations.md#deepinfer-daily-operation-and-harness).
+is not a supported production API. See [Messages capability exclusions](docs/capabilities.md#deepinfer-current-implementation)
+and [Harness configuration](#using-deepseek-harness).
 [OpenCode/client guidance](docs/mtp-production-serving.md#ordinary-function-tools-and-opencode)
 is source/version-scoped, not a universal-client compatibility certificate.
 
@@ -345,16 +315,11 @@ conversations or tool effects. For a custom environment layout, configure
 `DS41F_OPERATOR_RUNTIME_PYTHON` as described in
 [Operations](docs/operations.md#operator-tui-and-applications).
 
-The bundled Browser Chat, tool execution, search/acquisition and PDF workflows
-are retired. Historical acceptance records remain evidence of their recorded
-inputs, not a supported application or qualification of an external Harness.
-
 ### Trusted-private-LAN use
 
 The runtime defaults to loopback. Ordinary MTP may explicitly bind a private
 interface (or `--host 0.0.0.0`); remote clients use `http://<mac-private-IP>:8000/v1`.
-Separate-machine Windows-to-Mac runtime acceptance is recorded in the supported
-scope. **The runtime has no authentication or TLS; wildcard bind is not a private
+**The runtime has no authentication or TLS; wildcard bind is not a private
 peer filter.** Use deliberate firewall policy; never port-forward it.
 
 There is no bundled Browser proxy or application LAN listener. Review
@@ -376,16 +341,13 @@ admitted, explicitly provisioned alternative—not a request option or fallback 
 native admission failure. Distribution identity is distinct from serving profile.
 See [Capabilities](docs/capabilities.md) and [distribution admission](docs/runtime-admission.md#glm-execution-distributions).
 
-A specialized opt-in `mtp-singleton-v1` contract also exists for its dedicated
-session/fence client and weather-tool qualification (**8192 total / 768 output**).
-Those fixture bounds and protocol do not constrain or define ordinary MTP.
+The specialized opt-in [`mtp-singleton-v1`](docs/mtp-local-release-candidate.md)
+requires its dedicated session/fence client; its bounds do not apply to ordinary MTP.
 
 ## Measured performance
 
-**Retained original-Flash measurements, not DeepInfer benchmarks.**
-
-**Mac Studio M3 Ultra / 512 GB**, official **DeepSeek-V4.1-Flash**, native GLM,
-ordinary **`mtp-serving-v1` with MTP enabled**; current-source installed package
+**Mac Studio M3 Ultra / 512 GB**, official **DeepSeek-V4.1-Flash** (original), native GLM,
+ordinary **`mtp-serving-v1` with MTP enabled**; installed package
 from `7c5c42c`, measured 2026-10-16. The four benchmark cases generated **256 tokens** using
 ordinary sampling defaults (temperature 1.0, top-p 0.95), reasoning `none`.
 [Benchmark receipt, exact wheel/commands and raw results](docs/public-performance.md).
@@ -406,51 +368,30 @@ of **three consecutive turns**. Acceptance is accepted / verified draft tokens.
 ³ Separate synchronized diagnostic pass, same wheel/prompts: P6 transaction
 execution processes prompt-minus-one tokens (one terminal token goes to P5).
 Excludes DSpark ring completion, checkpoint capture and P5; not total prefill
-latency or context / TTFT. Retained timing is one incremental continuation.
+latency or context / TTFT. Continuation prefill timing is one incremental continuation.
 The [receipt](docs/public-performance.md#authoritative-prefill-execution-added-diagnostic-pass)
 records both execution-only and inclusive prefill/P5 intervals.
 
 **MTP decode throughput is workload-dependent because speculative acceptance
-depends on the generated trajectory.** Controlled observations on the same
-current ordinary implementation illustrate the difference:
+depends on the generated trajectory.** The paired-continuation row illustrates
+long-running session reuse, not cold-prefill performance: each turn added **41
+prompt tokens**, with median prefill/P5 of **0.55 s** and total request time of
+**13.3 s**. Prefix reuse still includes recipe preparation and suffix work.
 
-| Diagnostic workload | Generation policy / output | Decode | MTP acceptance |
-| --- | --- | ---: | ---: |
-| 8K journal (paired prompt hit) | ordinary defaults / 256 tokens | **24.9 tok/s** | **55.9%** |
-| Historical file-rewrite workload | greedy / 384 tokens | **43.78 tok/s** | **99.3%** |
-
-The rewrite delivers 4.0 canonical tokens per verification cycle versus about
-2.2 for the journal. Greedy sampling alone leaves the journal at 25.2 tok/s and
-55.5% acceptance. Thus the historical ~44 tok/s result remains reproducible—the
-rewrite measures 44.0 tok/s on the reconstructed historical wheel—but is not an
-all-workload rate. The table's 20–25 tok/s does not by itself show that MTP is
-ineffective; neither comparison is an MTP-OFF speedup measurement. See the
-[matched diagnosis](docs/public-performance.md#historical-gap-diagnosis-expected--explained).
-
-**256K is the practical-performance focus because this runtime targets long-running
-agent/session workloads.** The retained-prefix row is the representative
-continuation: each turn restored the preceding settled paired frontier and added
-only **41 prompt tokens**, with aligned target/DSpark state and **zero history
-replay or full-cache repack**. Median prefill/P5 was 0.55 s; total request time
-was 13.3 s. Prefix reuse still includes recipe preparation and real suffix work.
-
-These are workload-specific measurements on this M3 Ultra / 512 GB configuration,
-not universal hardware guarantees, an SLA or a matched MTP/OFF speedup claim.
-**Capacity/correctness validation up to 1,048,576 tokens is separate from this
-256K retained-session latency benchmark**; 1M does not imply comparable latency.
-See [performance evidence](docs/performance.md) for historical measurements and
-their distinct boundaries. This fresh benchmark package is not a new release
-promotion or a replacement for the release's qualification record.
+These measurements are specific to the stated checkpoint, package, hardware and
+workload, not universal throughput guarantees or an SLA. The **1,048,576-token
+capacity ceiling does not imply latency comparable to the 256K benchmark**.
+See [performance evidence](docs/performance.md) for measurement scope.
 
 ## Current limitations
 
-- Only the stated model/host and single-operator local/trusted-LAN scope are
-  released: no Internet/hostile-network security, multi-user service, distributed
-  inference or multi-active/shared native batching.
+- Supported deployment is limited to the stated model/host and a single operator
+  locally or on a trusted private LAN: no Internet/hostile-network security,
+  multi-user service, distributed inference or multi-active/shared native batching.
 - No MTP native persistence, restart recovery, transparent replay/resume or
   cross-backend KV portability. Logical conversations are not durable sessions.
-- No multimodal Responses or OFF Messages; DeepInfer Messages supports bounded
-  inline base64 images, not Files/documents or real-Harness image qualification.
+- Messages supports bounded inline base64 images, not Files/documents.
+  End-to-end Harness image attachment workflows remain unqualified.
   No remote/file image URLs, low-detail images,
   animations or universal multimodal/visual-quality claim. MTP prior-message
   images need a compatible retained pair; eviction or incompatible historical
@@ -497,8 +438,7 @@ immutable semantic reference material.
   the ds41f prefill path; it is not the model-math or checkpoint-format authority.
 - **[oMLX](https://github.com/jundot/omlx)** — qualified MLX numerical/decode/MTP
   implementation work and the pinned physical execution topology underpin the
-  ordinary MTP path; attributed numerical algorithms and acceleration primitives
-  also support the first-party non-MTP path.
+  ordinary MTP path.
 - **[MLX](https://github.com/ml-explore/mlx)** — Apple Silicon tensor, GPU,
   compilation and runtime primitives underlying model execution.
 
@@ -522,27 +462,7 @@ licenses supplied with upstream dependency distributions.
 | Structure, state and numerical fidelity | [Architecture](docs/architecture.md), [correctness](docs/correctness.md) |
 | Release identity and measurement interpretation | [Released package record](release/scoped-local-20261015/release.json), [performance](docs/performance.md) |
 | Qualification and development decisions | [Qualification](docs/qualification.md), [release review](docs/release-qualification.md), [implementation plan](docs/implementation-plan.md) |
-| Specialist contracts, receipts and historical milestones | [Full documentation index](docs/README.md), [documentation policy](docs/documentation-policy.md) |
+| Specialist contracts and documentation ownership | [Full documentation index](docs/README.md), [documentation policy](docs/documentation-policy.md) |
 
-## Development and qualification
-
-This repository contains both the runtime and its development/correctness evidence.
-Source authority, installed admission, reference verification and release approval
-are distinct; historical receipts qualify their
-recorded inputs, not every later checkout.
-
-Checkpoint-free reference checks:
-
-```sh
-cmake -S native -B native/build
-cmake --build native/build
-ctest --test-dir native/build --output-on-failure
-cargo test
-```
-
-These are not real-model or release qualification. Use affected tests and
-scope-specific acceptance for changes; full reference verification and publication
-are explicit checkpoints, not a mandatory cadence for each edit. The
-[implementation plan](docs/implementation-plan.md) owns work selection and closure;
-linked milestone reports and receipts preserve execution ownership decisions,
-historical results and release evidence without redefining the supported user path.
+Development checks and qualification procedures are documented in
+[source verification](docs/verification.md) and [qualification](docs/qualification.md).
