@@ -7,12 +7,7 @@ import pytest
 
 mx = pytest.importorskip("mlx.core")
 nn = pytest.importorskip("mlx.nn")
-from ds41f_mlx.config import DEFAULT_OMLX
-ROOT = Path(os.environ.get("DS41F_OMLX_PATH", str(DEFAULT_OMLX)))
-if not ROOT.exists():
-    pytest.skip("explicit oMLX checkout unavailable", allow_module_level=True)
-import sys
-sys.path.insert(0, str(ROOT))
+from verification_support import SITE as ROOT
 from omlx.patches.deepseek_v41.cache import DeepseekV41Cache
 from ds41f_mlx.runtime.omlx_decode import OMLXDecodeConfig
 from ds41f_mlx.runtime.target_generation import TargetGenerationSession as OMLXGenerationSession

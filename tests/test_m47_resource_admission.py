@@ -18,11 +18,18 @@ PIN = json.loads(a.PIN.read_bytes())
 MATH = 'ds41f_mlx.model_execution.language'
 
 
-def test_current_numerical_and_native_resource_identity_positive():
-    modules = {n: a.check_module(n, identity) for n, identity in PIN['modules'].items()}
-    assert a.check_native(modules, PIN) == 'native'
+def test_current_native_resource_identity_positive(installed_test_variant):
+    # The session fixture executes strict installed MTP admission, not the retired
+    # OFF/Recipe 0.1 Python-source pin. No checkpoint payload is read.
+    assert installed_test_variant.name == 'flash'
     a.check_dispatch(PIN)
-    assert PIN['checkpoint']['config.json']['sha256'] == '8be45ce0476004a3f529fd896115a4a2e800a129ad2d3ec05b16050f52e21879'
+
+
+def source_fixture_identity(name):
+    # Unit-test input for the legacy definition/bytecode primitive, not enrollment
+    # in a production manifest or a claim that current Python is source-sealed.
+    path = Path(importlib.import_module(name).__file__)
+    return dict(size=path.stat().st_size, sha256=sha256(path.read_bytes()).hexdigest())
 
 
 def test_import_substitution_fails_before_existing_state_mutation(tmp_path, monkeypatch):
@@ -45,7 +52,7 @@ def test_live_definition_substitution_even_with_correct_source(monkeypatch):
     module = importlib.import_module(MATH)
     monkeypatch.setattr(module, 'hc_pre_norm', lambda *args: None)
     with pytest.raises(a.ResourceAdmissionError, match='substituted'):
-        a.check_module(MATH, PIN['modules'][MATH])
+        a.check_module(MATH, source_fixture_identity(MATH))
 
 
 def test_cache_class_primitive_substitution_with_correct_source(monkeypatch):
@@ -63,7 +70,7 @@ def test_stale_bytecode_even_with_correct_source(tmp_path, monkeypatch):
     wrong.write_bytes(b'\0'*16 + marshal.dumps(compile('x = 1', str(module.__file__), 'exec')))
     monkeypatch.setattr(module, '__cached__', str(wrong))
     with pytest.raises(a.ResourceAdmissionError, match='stale bytecode'):
-        a.check_module(MATH, PIN['modules'][MATH])
+        a.check_module(MATH, source_fixture_identity(MATH))
 
 
 @pytest.mark.parametrize('resource', ['config.json', 'model.safetensors.index.json', 'tokenizer.json', 'payload'])
@@ -76,40 +83,15 @@ def test_same_size_altered_resource_is_not_identity(tmp_path, resource):
         a.check_file(path, identity, resource)
 
 
-def test_compatible_header_altered_official_shard_rejected_before_load(tmp_path):
-    import struct
-    from ds41f_mlx.config import load_runtime_config
-    from ds41f_mlx.runtime.omlx_core import OmlxRuntime, OmlxRuntimeConfig
-    cfg = load_runtime_config()
-    for name in ('config.json', 'model.safetensors.index.json', 'tokenizer.json', 'tokenizer_config.json'):
-        (tmp_path/name).symlink_to(cfg.checkpoint_path/name)
-    name = 'model-00001-of-00048.safetensors'
-    source = cfg.checkpoint_path/name
-    with source.open('rb') as reader:
-        prefix = reader.read(8)
-        header = reader.read(struct.unpack('<Q', prefix)[0])
-    # Only one <=1GiB sparse fault artifact; never copy/reconstruct the checkpoint.
-    with (tmp_path/name).open('wb') as stream:
-        stream.write(prefix+header); stream.seek(source.stat().st_size-1); stream.write(b'\0')
-    runtime = OmlxRuntime(OmlxRuntimeConfig(omlx_path=cfg.omlx_path, checkpoint_path=tmp_path,
-                                          recipe_path=cfg.recipe_path, preserve_mtp=False))
-    _, gen = session(); cache = gen.initial_cache
-    try:
-        with pytest.raises(a.ResourceAdmissionError, match=f'checkpoint/{name}'):
-            runtime.load_model()
-        assert runtime.model is None and runtime.admission is None
-        assert all(c.size() == 2 and not getattr(c,'_p6_append_pending',False) for c in cache)
-    finally:
-        runtime.close(); gen.close()
-
-
-def test_dependency_version_drift_rejected_before_checkpoint(monkeypatch):
-    from ds41f_mlx.config import load_runtime_config
-    cfg = load_runtime_config()
-    version = a.importlib.metadata.version
-    monkeypatch.setattr(a.importlib.metadata, 'version', lambda name: 'wrong' if name == 'mlx-lm' else version(name))
-    with pytest.raises(a.ResourceAdmissionError, match='version mismatch'):
-        a.prepare_resources(cfg.checkpoint_path, cfg.recipe_path)
+def test_mtp_dependency_version_drift_rejected_before_checkpoint(monkeypatch):
+    import importlib.metadata
+    from verification_support import SITE
+    from ds41f_mlx.execution_identity import check_installed_packages
+    authority = json.loads((SITE/'ds41f_mlx/execution_manifest.json').read_text())
+    version = importlib.metadata.version
+    monkeypatch.setattr(importlib.metadata, 'version', lambda name: 'wrong' if name == 'mlx-lm' else version(name))
+    with pytest.raises(ValueError, match='dependency version drift: mlx-lm'):
+        check_installed_packages(authority, SITE)
 
 
 def test_paths_and_symlinks_are_not_identity(tmp_path):
@@ -262,12 +244,14 @@ def test_locator_redirection_detected_even_when_original_inode_unchanged(tmp_pat
 
 
 def test_protocol_resource_positive_and_substitution(tmp_path):
-    from ds41f_mlx.config import DEFAULT_RECIPE
-    tokenizer = a.load_protocol_tokenizer(DEFAULT_RECIPE)
+    from verification_support import RECIPE, SITE
     from deepseek_recipe import Tokenizer
-    control = Tokenizer.from_file(str(DEFAULT_RECIPE/'static/tokenizers/v41/tokenizer.json'))
-    for text in ('hello', '工具调用', '<｜end▁of▁sentence｜>'):
-        assert tokenizer.encode(text) == control.encode(text)
-    p = tmp_path/'static/tokenizers/v41/tokenizer.json'; p.parent.mkdir(parents=True); p.write_text('{}')
-    with pytest.raises(a.ResourceAdmissionError, match='tokenizer identity'):
-        a.load_protocol_tokenizer(tmp_path)
+    path = RECIPE/'static/tokenizers/v41/tokenizer.json'
+    manifest = json.loads((SITE/'ds41f_mlx/execution_manifest.json').read_text())
+    expected = dict(size=path.stat().st_size, sha256=manifest['tokenizer_sha256'])
+    a.check_file(path, expected, 'Recipe 0.2 tokenizer')
+    tokenizer = Tokenizer.from_file(str(path))
+    assert tokenizer.encode('工具调用') and tokenizer.encode('hello')
+    p = tmp_path/'tokenizer.json'; p.write_bytes(path.read_bytes()+b' ')
+    with pytest.raises(a.ResourceAdmissionError, match='identity mismatch'):
+        a.check_file(p, expected, 'Recipe 0.2 tokenizer')

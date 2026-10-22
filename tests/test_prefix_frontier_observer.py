@@ -33,7 +33,8 @@ def test_actual_recipe_message_region():
     from types import SimpleNamespace
     from deepseek_recipe import Conversation, SystemMessage, UserMessage, DeepseekV41Encoding
     from ds41f_mlx.serving.server import load_v41_tokenizer
-    tokenizer = load_v41_tokenizer()
+    from verification_support import tokenizer as provisioned_tokenizer
+    tokenizer = provisioned_tokenizer()
     encoding = DeepseekV41Encoding().with_tokenizer(tokenizer)
     old = Conversation([SystemMessage('policy'), UserMessage('question\n\nreminder')], thinking_mode=False)
     new = Conversation([SystemMessage('policy'), UserMessage('question')], thinking_mode=False)

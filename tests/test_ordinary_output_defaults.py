@@ -4,7 +4,7 @@ import json
 import pytest
 from deepseek_recipe import ConversionError
 
-from ds41f_mlx.config import load_runtime_config
+from verification_support import runtime_config as load_runtime_config
 from ds41f_mlx.serving.capacity import resolve_capacity
 from ds41f_mlx.serving.generation_policy import reasoning_policy
 from ds41f_mlx.serving.ordinary_admission import convert_ordinary

@@ -1,7 +1,6 @@
 """Cheap real-MLX dependency seam tests; never loads checkpoint weights.
 
-Run in a separate process per dependency, with DS41F_OMLX_PATH and PYTHONPATH
-pointing at the explicit versioned checkout. Not real-model qualification.
+Uses the canonical provisioned oMLX dependency. Not real-model qualification.
 """
 import importlib
 import os
@@ -11,11 +10,7 @@ import pytest
 
 mx = pytest.importorskip("mlx.core")
 nn = pytest.importorskip("mlx.nn")
-ROOT = Path(os.environ.get("DS41F_OMLX_PATH", str(Path.home() / "omlx-0.7.0.release")))
-if not ROOT.exists():
-    pytest.skip("explicit oMLX checkout unavailable", allow_module_level=True)
-import sys
-sys.path.insert(0, str(ROOT))
+from verification_support import SITE as ROOT
 from omlx.patches.deepseek_v41.cache import DeepseekV41Cache
 from ds41f_mlx.runtime.omlx_decode import OMLXDecodeConfig
 from ds41f_mlx.runtime.omlx_generation import OMLXGenerationSession

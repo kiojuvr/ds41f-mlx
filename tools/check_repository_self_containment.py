@@ -9,6 +9,9 @@ from urllib.parse import unquote, urlsplit
 import unicodedata
 
 ROOT = Path(__file__).resolve().parents[1]
+import sys
+sys.path.insert(0, str(ROOT))
+from tools.check_legacy_import_integrity import retained_path
 REQUIRED_CURRENT = {'README.md', 'docs/README.md', 'docs/doc-classification.json'} | {
     f'docs/{name}.md' for name in (
         'architecture', 'capabilities', 'correctness', 'documentation-policy',
@@ -119,13 +122,13 @@ def check_retained_provenance(root: Path) -> None:
     for imp in manifest.get('imports', []):
         dest = imp.get('destination_path')
         if dest and imp.get('import_mode') != 'not_imported':
-            require(contained(root, root / dest).exists(), f'imported provenance destination missing: {dest}')
+            require(contained(root, retained_path(root, dest)).exists(), f'imported provenance destination missing: {dest}')
     recon = root / 'artifacts/legacy-evidence-boundary-reconciliation.json'
     if recon.exists():
         for entry in json.loads(recon.read_text()).get('local_legacy_import_resolution', {}).get('entries', []):
             local = entry.get('local_path')
             if local:
-                require(contained(root, root / local).exists(), f'legacy proof graph local path missing: {local}')
+                require(contained(root, retained_path(root, local)).exists(), f'legacy proof graph local path missing: {local}')
 
 
 def main() -> int:

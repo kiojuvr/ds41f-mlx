@@ -10,8 +10,6 @@ from __future__ import annotations
 
 import argparse
 import re
-import subprocess
-import sys
 from pathlib import Path
 
 DEFAULT_ROOTS = ["README.md", "docs", "ds41f_mlx", "tools"]
@@ -50,10 +48,12 @@ def main() -> int:
     args = ap.parse_args()
 
     failures: list[str] = []
+    checked = 0
     for path in iter_files(args.paths):
         rel = path.as_posix()
         if rel in ALLOW_PATHS:
             continue
+        checked += 1
         try:
             text = path.read_text(errors="ignore")
         except UnicodeDecodeError:
@@ -67,18 +67,17 @@ def main() -> int:
                 if pat.search(line):
                     failures.append(f"{rel}:{i}: {line.strip()}")
                     break
+    if not checked:
+        failures.append('no wording inputs examined')
     if failures:
         print("authority-label check failed:")
         for f in failures:
             print(f)
         return 1
 
-    source_check = Path(__file__).with_name("check_source_identity_hashes.py")
-    if source_check.exists() and Path("artifacts").exists():
-        rc = subprocess.run([sys.executable, str(source_check)], check=False).returncode
-        if rc != 0:
-            return rc
-    print("authority-label check passed")
+    # Wording scope and source-integrity scope have different authorities.
+    # Run check_source_identity_hashes.py independently for reference evidence.
+    print(f"authority-label check passed: {checked} files examined (wording only; no source-integrity claim)")
     return 0
 
 

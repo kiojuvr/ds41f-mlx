@@ -8,11 +8,13 @@ trailing newline after the final line of a node.
 """
 from __future__ import annotations
 
+import ast
 import hashlib
 from pathlib import Path
 
 DEFAULT_CHECKPOINT = Path('/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash')
 SOURCE_HASH_METHOD = 'raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1'
+AST_HASH_METHOD = 'python_ast_get_source_segment_v1'
 
 
 def file_sha256(path: str | Path) -> str:
@@ -22,14 +24,27 @@ def file_sha256(path: str | Path) -> str:
 def raw_inclusive_line_span(path: str | Path, start_line: int, end_line: int) -> str:
     if start_line < 1 or end_line < start_line:
         raise ValueError(f'invalid source line span: {start_line}-{end_line}')
-    lines = Path(path).read_text().splitlines(keepends=True)
+    lines = Path(path).read_bytes().decode('utf-8').splitlines(keepends=True)
     if end_line > len(lines):
         raise ValueError(f'end line {end_line} beyond file length {len(lines)}: {path}')
     return ''.join(lines[start_line - 1:end_line])
 
 
-def source_sha256(path: str | Path, start_line: int, end_line: int) -> str:
-    return hashlib.sha256(raw_inclusive_line_span(path, start_line, end_line).encode('utf-8')).hexdigest()
+def source_sha256(path: str | Path, start_line: int, end_line: int,
+                  method: str = SOURCE_HASH_METHOD) -> str:
+    if method == SOURCE_HASH_METHOD:
+        text = raw_inclusive_line_span(path, start_line, end_line)
+    elif method == AST_HASH_METHOD:
+        source = Path(path).read_bytes().decode('utf-8')
+        nodes = [node for node in ast.walk(ast.parse(source))
+                 if isinstance(node, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef))
+                 and (node.lineno, node.end_lineno) == (start_line, end_line)]
+        if len(nodes) != 1:
+            raise ValueError(f'expected exactly one AST source node: {path}:{start_line}-{end_line}')
+        text = ast.get_source_segment(source, nodes[0])
+    else:
+        raise ValueError(f'unsupported source hash method: {method}')
+    return hashlib.sha256(text.encode('utf-8')).hexdigest()
 
 
 def official_source_path(file_name: str, checkpoint: str | Path = DEFAULT_CHECKPOINT) -> Path:

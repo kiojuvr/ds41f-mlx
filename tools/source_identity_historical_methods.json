@@ -1,0 +1,45 @@
+{
+  "schema": "ds41f.historical-source-methods.v1",
+  "description": "Extraction methods reproduced against each receipt's existing file_sha256 and source_sha256. No receipt or digest is replaced. See docs/verification.md.",
+  "artifacts": {
+    "artifacts/boundary10-closeout.json": {
+      "revision": "3eebd769ba8dbe1d0a08c590a8ce5de7f826894c",
+      "source_files": {"inference/model.py": "4e9ae23620edc8028ccc5d5fef552ab7fdc7dcd6f79608754fe9f67644056f65"},
+      "methods": {}
+    },
+    "artifacts/compressed-kv-official-reference-fixture.json": {
+      "revision": "14ae7418fe3cc0b27fd10fa4916b8c7cd3d06ad0",
+      "methods": {
+        "inference/kernel.py:184:204": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+        "inference/model.py:429:485": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+        "inference/model.py:458:485": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+        "inference/model.py:739:763": "python_ast_get_source_segment_v1"
+      }
+    },
+    "artifacts/native-compressed-kv-official-reference-validation.json": {
+      "revision": "14ae7418fe3cc0b27fd10fa4916b8c7cd3d06ad0",
+      "methods": {
+        "inference/kernel.py:184:204": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+        "inference/model.py:429:485": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+        "inference/model.py:458:485": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+        "inference/model.py:739:763": "python_ast_get_source_segment_v1"
+      }
+    },
+    "artifacts/candidate-consumer-official-reference-fixture.json": {
+      "revision": "5cd291a552c87aec50bf91c64dd2d9dad7454c52",
+      "methods": {
+        "inference/model.py:488:580": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+        "inference/model.py:496:525": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+        "inference/model.py:527:580": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1"
+      }
+    },
+    "artifacts/native-candidate-consumer-official-reference-validation.json": {
+      "revision": "5cd291a552c87aec50bf91c64dd2d9dad7454c52",
+      "methods": {
+        "inference/model.py:488:580": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+        "inference/model.py:496:525": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1",
+        "inference/model.py:527:580": "raw_utf8_inclusive_1indexed_line_span_preserve_line_endings_v1"
+      }
+    }
+  }
+}

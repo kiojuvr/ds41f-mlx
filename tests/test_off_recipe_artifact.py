@@ -33,11 +33,7 @@ def test_artifact_receipt_cannot_override_resource_pin(tmp_path, monkeypatch):
         off_recipe.artifact_authority()
 
 
-def test_pending_acceptance_is_not_a_production_default(tmp_path, monkeypatch):
-    a = json.loads((glm_profile.SOURCES/'execution-profiles.json').read_text())
-    a['status']['standard-off']['native'] = 'temporarily_deferred_pending_acceptance'
-    (tmp_path/'execution-profiles.json').write_text(json.dumps(a))
-    monkeypatch.setattr(glm_profile, 'SOURCES', tmp_path)
-    with pytest.raises(ValueError, match='production GLM default'):
+def test_retired_off_is_not_a_production_default():
+    with pytest.raises(ValueError, match='retired'):
         glm_profile.default_profile('standard-off')
     assert glm_profile.default_profile('mtp') == 'native'

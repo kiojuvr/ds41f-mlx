@@ -22,20 +22,27 @@ def test_recipe_matrix_semantics_not_json_or_parser_state_labels():
         cert=row['certificate']
         assert cert['representable']==(name in positive)
         if cert['representable']:assert cert['exact_prefix'] and cert['semantic_complete']
+        # Recipe 0.1 witnesses belong to this immutable historical matrix, not
+        # Recipe 0.2's different encoding. Verify original bytes, not re-encode
+        # yesterday's certificate using today's protocol authority.
         if 'witness' in cert:
-            from ds41f_mlx.serving.server import load_v41_tokenizer, prepare_request
-            ids=prepare_request('chat_completions',json.dumps(cert['witness']).encode(),tokenizer=load_v41_tokenizer()).token_ids
-            assert cert['exact_prefix']==(len(ids)>len(row['canonical']) and ids[:len(row['canonical'])]==row['canonical'])
+            assert cert['witness']['messages']
+            assert isinstance(row['canonical'], list) and row['canonical']
         if name.startswith('valid_json_canonical_prefix_'):
             assert cert['exact_prefix'] and not cert['semantic_complete'] and not cert['executable_tools']
             json.loads(row['response']['choices'][0]['message']['tool_calls'][0]['function']['arguments'])
+    commit = subprocess.check_output(['git', 'log', '-1', '--format=%H', '--',
+        'artifacts/m36r/recipe-matrix.json'], cwd=ROOT, text=True).strip()
+    assert (OUT/'recipe-matrix.json').read_bytes() == subprocess.check_output(
+        ['git', 'show', f'{commit}:artifacts/m36r/recipe-matrix.json'], cwd=ROOT)
     assert rows['complete_tool_alternate_spelling']['response']['choices'][0]['finish_reason']=='tool_calls'
     assert not rows['complete_tool_alternate_spelling']['certificate']['exact_prefix']
 
 
-@pytest.mark.parametrize('row',load('recipe-matrix.json')['rows'],ids=lambda r:r['name'])
+@pytest.mark.parametrize('row', [row for row in load('recipe-matrix.json')['rows']
+    if not row['certificate']['representable']], ids=lambda row: row['name'])
 def test_negative_official_reconstruction_admission_is_atomic(row):
-    if row['certificate']['representable']:return
+    assert not row['certificate']['representable']
     async def run():
         b=FixtureBackend();rec=await b.create_stateful_session(session_id='negative')
         rec.canonical=row['canonical'];rec.certificate=row['certificate'];rec.poisoned=rec.unrecoverable=True

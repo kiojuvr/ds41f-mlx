@@ -15,6 +15,18 @@ ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "artifacts/provenance/legacy-import.json"
 RECONCILIATION = ROOT / "artifacts/legacy-evidence-boundary-reconciliation.json"
 
+# Retired orchestration test: its benchmark driver was never imported. Preserve
+# the original bytes and verify the original receipt digests at this archive path.
+RETIRED_IMPORTS = {
+    'native/tests/engram/test_runner.py':
+        'docs/archive/validation/retired-tests/engram-test-runner.py.txt',
+}
+
+
+def retained_path(root: Path, relative: str) -> Path:
+    return root / RETIRED_IMPORTS.get(str(relative), str(relative))
+
+
 REJECTED_NAME_FRAGMENTS = [
     "padded-rank3",
     "rank-3",
@@ -77,7 +89,7 @@ def main() -> int:
             require(imp["transformed"] is False, f"byte_copy must not be transformed: {imp['destination_path']}")
         dest_rel = Path(imp["destination_path"])
         require(not dest_rel.is_absolute(), f"destination must be relative: {dest_rel}")
-        dest = ROOT / dest_rel
+        dest = retained_path(ROOT, str(dest_rel))
         require(inside_repo(dest), f"destination escapes repo: {dest_rel}")
         require(dest.exists(), f"missing imported file: {dest_rel}")
         digest = sha256(dest)
@@ -106,7 +118,7 @@ def main() -> int:
     for entry in local.get("entries", []):
         lp = entry.get("local_path")
         require(lp, "local resolution entry missing local_path")
-        dest = ROOT / lp
+        dest = retained_path(ROOT, lp)
         require(inside_repo(dest), f"local proof path escapes repo: {lp}")
         require(dest.exists(), f"local proof path missing: {lp}")
         if "sha256" in entry:

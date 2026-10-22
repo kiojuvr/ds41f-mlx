@@ -32,7 +32,7 @@ class FakeAppend:
         self.commit_certificate = None
         self.segment_records = []
     @classmethod
-    def create(cls, lm, cache, ids, *, committed_frontier, mx):
+    def create(cls, lm, cache, ids, *, committed_frontier, mx, image_embeddings=None, image_positions=None):
         inst = cls(lm, cache, ids, committed_frontier, mx)
         cls.created.append((lm, cache, tuple(ids), committed_frontier, mx))
         return inst

@@ -43,7 +43,7 @@ class OmlxV41SuffixMath:
         try:
             return importlib.import_module(type(layer).__module__), importlib.import_module("mlx.core")
         except ImportError as exc:
-            raise SuffixMathError("official oMLX/MLX operations unavailable") from exc
+            raise SuffixMathError("attributed oMLX/MLX operations unavailable") from exc
 
     @_fail_closed
     def prepare_local_window(self, *, layer_id, h_rows, pre_rows, cache, absolute_start, rows):

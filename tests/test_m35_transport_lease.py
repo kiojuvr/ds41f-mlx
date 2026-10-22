@@ -7,8 +7,23 @@ import unittest
 from ds41f_mlx.serving.internal_mtp import InternalMTPQualificationBackend
 
 
-class Event:
-    def to_json(self): return '{"choices":[{"delta":{"content":"x"}}]}'
+def _event_fixture():
+    import deepseek_recipe as d
+    converted = d.ChatCompletionRequest(dict(model='DeepSeek-V4.1-Flash',
+        messages=[dict(role='user', content='lease')], reasoning_effort='none')).convert(d.ConversionOptions())
+    processor = d.StreamProcessor(d.ChatCompletionRequest.chunk_generator(converted, 'lease', 'model'),
+                                  converted.parsing_options)
+    event = processor.push(d.InferenceChunk.text('x', 1))[-1]
+    processor.close()
+    return event
+
+
+_EVENT = _event_fixture()
+
+
+def Event():
+    # Transport fixture uses a real immutable native chunk, not a protocol duck type.
+    return _EVENT
 
 
 class FixtureBackend(InternalMTPQualificationBackend):
@@ -257,10 +272,12 @@ class LeaseTests(unittest.TestCase):
             b.close()
         self.run_async(test)
 
-    def test_native_chunk_transfer_serializes_before_response_append(self):
-        import deepseek_recipe as d
-        processor = d.StreamProcessor(d.ChatCompletionChunkGenerator('x', 'v41', False, False), d.ParsingOptions())
-        events = processor.push(d.InferenceChunk.text('hello', 1))
+    def test_native_settlement_preserves_serializable_canonical_chunks(self):
+        from test_recipe02_semantic_guard import owner, encode, feed
+        tok, guard = owner()
+        feed(guard, encode(tok, 'hello'))
+        events = guard.events
+        before = tuple(event.to_json() for event in events)
         self.assertTrue(events)
         class Cache:
             def size(self): return 3
@@ -283,14 +300,15 @@ class LeaseTests(unittest.TestCase):
             def close(self): pass
         b = FixtureBackend()
         owner = Owner()
-        rec = SimpleNamespace(owner=owner, guard=SimpleNamespace(events=events, matches=[]), processor=processor, fence=None)
+        rec = SimpleNamespace(owner=owner, guard=guard, processor=guard.processor, fence=None)
         trace = {'response_id': 'x'}
         InternalMTPQualificationBackend._settle(b, rec, trace)
         self.assertEqual(owner.calls, 1)
         self.assertIsNone(rec.owner)
         self.assertTrue(trace['protocol_events'])
-        with self.assertRaisesRegex(RuntimeError, 'consumed'):
-            events[0].to_json()
+        self.assertEqual(tuple(event.to_json() for event in events), before)
+        self.assertEqual(rec.pending_delivery, before)
+        self.assertEqual(trace['response'], json.loads(guard.response.to_json()))
         b.close()
 
     def test_protocol_failure_after_quiescence_cannot_settle_owner_twice(self):

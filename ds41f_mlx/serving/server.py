@@ -459,7 +459,7 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
             validate_stateful_chat_request_policy(body)
         except ValueError as exc:
             raise RequestError(str(exc), 400)
-        prepared = await run_in_threadpool(prepare_request, 'chat_completions', body, tokenizer=tokenizer, recipe_path=recipe_path, options=options, checkpoint=getattr(backend, 'checkpoint', runtime_config.checkpoint_path), default_reasoning_effort=runtime_config.default_reasoning_effort)
+        prepared = await run_in_threadpool(prepare_request, 'chat_completions', body, tokenizer=tokenizer, recipe_path=recipe_path, options=options, checkpoint=getattr(backend, 'checkpoint', runtime_config.checkpoint_path), ordinary=True, default_reasoning_effort=runtime_config.default_reasoning_effort)
         try:
             # Internal qualification and the explicit public process profile
             # share the same guarded owner, never a request/env mode selector.

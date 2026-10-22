@@ -83,7 +83,10 @@ def test_shapes_chunking_and_helpers(frozen, dtype, shape):
     values = (mx.arange(math.prod(shape)).reshape(shape) % 11).astype(dtype)
     lp = values - mx.logsumexp(values.astype(mx.float32), axis=-1, keepdims=True)
     lp = lp.astype(dtype)
-    cases = [('apply_top_p', (p,)) for p in (0., .5, .95, 1.)]
+    # Zero means filter disabled in make_sampler, not a valid direct helper call:
+    # mass_above >= 0 yields num_dropped == vocab and an out-of-bounds gather.
+    # Do not compare undefined GPU reads. POLICIES still exercises top_p=0.
+    cases = [('apply_top_p', (p,)) for p in (.5, .95, 1.)]
     cases += [('top_k_indices', (k,)) for k in (1, 4, 64, 65, shape[-1]-1)]
     cases += [('apply_top_k', (k,)) for k in (0, -1, 1, 4, shape[-1], shape[-1]+1, 1.5)]
     cases += [('apply_top_p_top_k', (.95, k)) for k in (1, 4, 64, 65, shape[-1], shape[-1]+1)]
@@ -91,8 +94,26 @@ def test_shapes_chunking_and_helpers(frozen, dtype, shape):
     cases += [('apply_xtc', (p, t, special)) for p, t, special in
               itertools.product((0., .5, 1., -1., 2.), (0., .1, .5, .6), ([], [0]))]
     for name, args in cases:
-        exact(observe(lambda: getattr(frozen, name)(lp, *args)),
-              observe(lambda: getattr(owned, name)(lp, *args)))
+        try:
+            exact(observe(lambda: getattr(frozen, name)(lp, *args)),
+                  observe(lambda: getattr(owned, name)(lp, *args)))
+        except AssertionError as exc:
+            raise AssertionError(f'{name}{args}, dtype={dtype}, shape={shape}') from exc
+
+
+def test_zero_top_p_does_not_dispatch_undefined_helper(frozen, monkeypatch):
+    def forbidden(*args):
+        pytest.fail('top_p=0 must disable the filter, not gather past vocabulary')
+    monkeypatch.setattr(owned, 'apply_top_p', forbidden)
+    monkeypatch.setattr(frozen, 'apply_top_p', forbidden)
+    lp = mx.array([[-2., -1., 0.]])
+    probs = mx.exp(mx.sort(lp, axis=-1).astype(mx.float32))
+    mass_above = mx.cumsum(probs, axis=-1, reverse=True, inclusive=False)
+    assert (mass_above >= 0).sum(axis=-1).item() == lp.shape[-1]
+    actual = observe(lambda: owned.make_sampler(temp=1., top_p=0.)(lp))
+    expected = observe(lambda: frozen.make_sampler(temp=1., top_p=0.)(lp))
+    exact(actual, expected)
+    assert actual[2] is None and actual[0].shape == (1,)
 
 
 def test_draw_order_stream_and_worker(frozen, monkeypatch):

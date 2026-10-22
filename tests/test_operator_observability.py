@@ -191,7 +191,7 @@ def test_canonical_launcher_registers_load_on_actual_fastapi_router(monkeypatch,
     cfg = SimpleNamespace(host='127.0.0.1', port=8000, default_reasoning_effort='none',
                           apply_environment=lambda: None)
     monkeypatch.setattr(mtp_identity, 'config', lambda *args, **kwargs: cfg)
-    monkeypatch.setattr(mtp_identity, 'inspect', lambda cfg: {'identity_sha256': 'fixture'})
+    monkeypatch.setattr(mtp_identity, 'inspect', lambda cfg: {'identity_sha256': 'fixture', 'glm_profile': 'native'})
     monkeypatch.setattr(server, 'create_app', lambda **kwargs: fastapi.FastAPI())
     class Backend:
         context_tokens = 128
@@ -224,7 +224,6 @@ def test_canonical_launcher_registers_load_on_actual_fastapi_router(monkeypatch,
 
 @pytest.mark.parametrize('argv, profile', [
     (['start'], 'mtp-serving-v1'),
-    (['start', '--profile', 'standard-off'], 'standard-off'),
     (['start', '--profile', 'mtp-singleton-v1'], 'mtp-singleton-v1'),
 ])
 def test_ops_start_propagates_selected_profile(monkeypatch, argv, profile):
@@ -240,17 +239,17 @@ def test_ops_start_propagates_selected_profile(monkeypatch, argv, profile):
     assert calls == [[ops.sys.executable, '-I', '-m', 'ds41f_mlx.serve', '--profile', profile]]
 
 
-def test_ops_ordinary_accept_default_and_historical_qualification(monkeypatch):
+def test_ops_ordinary_accept_and_reject_retired_commands(monkeypatch):
     from ds41f_mlx import ops
     calls = []
     monkeypatch.setattr(ops.subprocess, 'call', lambda args, **kwargs: calls.append(args) or 0)
     assert ops.main(['accept']) == 0
     assert calls[-1][1:] == ['-I', '-m', 'ds41f_mlx.production_acceptance']
-    monkeypatch.setattr(ops, '_run_module', lambda module, args: calls.append((module, args)) or 0)
-    assert ops.main(['quick']) == 0
-    assert calls[-1] == ('ds41f_mlx.qualify', ['--mode', 'quick'])
-    assert ops.main(['full']) == 0
-    assert calls[-1] == ('ds41f_mlx.qualify', ['--mode', 'full'])
+    for argv in (['quick'], ['full'], ['start', '--profile', 'standard-off'], ['chat-server']):
+        with pytest.raises(SystemExit) as exc:
+            ops.main(argv)
+        assert exc.value.code == 2
+    assert len(calls) == 1
 
 
 @pytest.mark.parametrize('argv, profile', [([], 'mtp-serving-v1'),

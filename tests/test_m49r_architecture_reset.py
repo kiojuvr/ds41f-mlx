@@ -1,10 +1,8 @@
-"""M49R restart integrity outside the explicitly qualified M51R source delta.
+"""Historical reconstruction integrity, not a freeze of today's implementation.
 
-The two connection files use their M51R evidence hashes instead of restart bytes.
-All other runtime files and archived-producer exclusions keep the reset guard.
-Physical/state/performance qualification is recorded separately in M51R receipts.
+Current owner/resource/transaction invariants live in the MTP, execution identity,
+state producer and target transaction tests.
 """
-import gzip
 import hashlib
 import json
 from pathlib import Path
@@ -18,31 +16,17 @@ def git(*args):
     return subprocess.check_output(['git', *args], cwd=ROOT)
 
 
-def test_reconstruction_archive_and_restored_active_paths():
+def test_reconstruction_archive_against_recorded_historical_authority():
     manifest = json.loads((ROOT / 'docs/archive/mtp-reconstruction/source-manifest.json').read_text())
     assert manifest['restart_commit'] == BASE
     assert len(manifest['entries']) == 57
-    baseline = set(git('ls-tree', '-r', '--name-only', BASE).decode().splitlines())
     for entry in manifest['entries']:
         data = (ROOT / entry['archive_path']).read_bytes()
         assert hashlib.sha256(data).hexdigest() == entry['sha256']
         assert data == git('show', f"{manifest['source_commit']}:{entry['original_path']}")
-        active = ROOT / entry['original_path']
-        if entry['original_path'] in baseline:
-            assert active.read_bytes() == git('show', f"{BASE}:{entry['original_path']}")
-        else:
-            assert not active.exists()
 
 
-def test_all_baseline_runtime_files_preserved_and_no_new_producer():
-    allowed = {'ds41f_mlx/runtime/mtp_lifecycle.py', 'ds41f_mlx/serving/internal_mtp.py'}
-    qualified = json.loads(gzip.decompress((ROOT / 'artifacts/m51r/qualification-identity.json.gz').read_bytes()))['identity']['runtime']
-    for path in git('ls-tree', '-r', '--name-only', BASE, '--', 'ds41f_mlx').decode().splitlines():
-        data = (ROOT / path).read_bytes()
-        if path in allowed:
-            assert hashlib.sha256(data).hexdigest() == qualified[path], path
-        else:
-            assert data == git('show', f'{BASE}:{path}'), path
+def test_no_archived_experimental_producer_reintroduced():
     for name in ('accepted_prefix', 'dspark_proposal', 'hidden_taps', 'semantic_cycle'):
         assert not (ROOT / 'ds41f_mlx/runtime' / f'{name}.py').exists()
 

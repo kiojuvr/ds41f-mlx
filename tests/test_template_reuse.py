@@ -1,5 +1,7 @@
-"""#4354: compare representation to the CURRENT #4360/#4365 baseline.
-Run with DS41F_TEMPLATE_BASELINE pointing to the preserved baseline omlx directory.
+"""Compare template reuse to its exact pre-overlay source baseline.
+
+Reconstructed from the retained oMLX archive plus its two preceding overlays.
+No donor installation, model or undocumented local source directory is used.
 """
 import importlib.util
 import os
@@ -12,10 +14,25 @@ mx = pytest.importorskip('mlx.core')
 from omlx.patches.deepseek_v41 import activation, hyper_connection, kernels, routing
 
 
+@pytest.fixture(scope='module', autouse=True)
+def template_baseline(tmp_path_factory):
+    import json
+    import subprocess
+    import tarfile
+    from ds41f_mlx.mtp_setup import SOURCES, OVERLAYS
+    global _BASELINE
+    root = tmp_path_factory.mktemp('template-baseline')
+    spec = json.loads((SOURCES/'sources.json').read_text())['sources']['omlx']
+    with tarfile.open(SOURCES/spec['archive']) as archive:
+        archive.extractall(root, filter='data')
+    for label in OVERLAYS[:2]:
+        subprocess.run(['patch', '--batch', '--forward', '--fuzz=0', '-p1', '-i',
+                        str(SOURCES/f'{label}.patch')], cwd=root, check=True)
+    _BASELINE = root/'omlx'
+
+
 def old(name):
-    root = os.environ.get('DS41F_TEMPLATE_BASELINE')
-    if not root:
-        pytest.skip('explicit current baseline source required')
+    root = _BASELINE
     spec = importlib.util.spec_from_file_location(
         f'omlx.patches.deepseek_v41._4354_baseline_{name}',
         Path(root)/'patches/deepseek_v41'/f'{name}.py')

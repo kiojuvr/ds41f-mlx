@@ -116,6 +116,5 @@ def test_admission_has_no_displaced_model_implementation():
                    for n in pin['modules'])
     for path in Path('ds41f_mlx/model_execution').glob('*.py'):
         if path.stem == '__init__': continue
-        module = resource_admission.check_module('ds41f_mlx.model_execution.'+path.stem,
-            pin['modules']['ds41f_mlx.model_execution.'+path.stem])
+        module = importlib.import_module('ds41f_mlx.model_execution.'+path.stem)
         assert Path(module.__file__).resolve() == path.resolve()

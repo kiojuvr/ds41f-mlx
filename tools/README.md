@@ -16,9 +16,11 @@ mutation/admission probes against a live or already qualified environment.
 - `check_repository_self_containment.py`: current documentation owners, live links
   and retained provenance destinations; no model execution.
 - `check_legacy_import_integrity.py`, `check_native_import_dependencies.py`,
-  `check_source_identity_hashes.py`, `audit_source_identity_hashes.py`,
-  `source_identity.py`, `check_authority_labels.py`: source identity, attribution
-  and imported evidence integrity. Their scopes are distinct from model acceptance.
+  `check_source_identity_hashes.py`, `source_identity.py`, `check_authority_labels.py`:
+  source identity, attribution and imported evidence integrity. Source checks and
+  wording checks execute independently. See the [verification baseline](../docs/verification.md).
+  `audit_source_identity_hashes.py` is a historical receipt-normalization utility,
+  not a supported verification step; do not use it to rewrite acceptance evidence.
 - `promote_release.py` and R1 establish/finalize/qualification tools: retained
   reference/release construction and verification. Not routine cleanup commands.
 

@@ -1,0 +1,66 @@
+........................................................................ [  5%]
+........................................................................ [ 10%]
+............................................................................... [ 16%]
+........................................................................ [ 21%]
+........................................................................ [ 26%]
+........................................................................ [ 31%]
+........................................................................ [ 36%]
+........................................................................ [ 42%]
+........................................................................ [ 47%]
+........................................................................ [ 52%]
+........................................................................ [ 57%]
+........................................................................ [ 62%]
+........................................................................ [ 68%]
+........................................................................ [ 73%]
+...................................................................................................................... [ 81%]
+........................................................................ [ 87%]
+........................................................................ [ 92%]
+................................................................ [ 96%]
+..........................................                               [100%]
+=============================== warnings summary ===============================
+../../../private/tmp/ds41f-unified-flash-install/lib/python3.13/site-packages/fastapi/testclient.py:1
+  /private/tmp/ds41f-unified-flash-install/lib/python3.13/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_context_copy.py::test_actual_dspark_target_rejects_copies_and_feeds_controller[0]
+  /private/tmp/ds41f-unified-flash-install/lib/python3.13/site-packages/omlx/api/openai_models.py:269: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class ResponseFormatJsonSchema(BaseModel):
+
+tests/test_production_mtp.py: 5 warnings
+tests/test_production_sessions.py: 1 warning
+tests/test_recipe02_messages_serving.py: 4 warnings
+tests/test_runtime_capacity.py: 1 warning
+  /Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/server.py:241: DeprecationWarning:
+          on_event is deprecated, use lifespan event handlers instead.
+
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+
+    @app.on_event('startup')
+
+tests/test_production_mtp.py: 10 warnings
+tests/test_production_sessions.py: 2 warnings
+tests/test_recipe02_messages_serving.py: 8 warnings
+tests/test_runtime_capacity.py: 2 warnings
+  /private/tmp/ds41f-unified-flash-install/lib/python3.13/site-packages/fastapi/applications.py:4744: DeprecationWarning:
+          on_event is deprecated, use lifespan event handlers instead.
+
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+
+    return self.router.on_event(event_type)  # ty: ignore[deprecated]
+
+tests/test_production_mtp.py: 5 warnings
+tests/test_production_sessions.py: 1 warning
+tests/test_recipe02_messages_serving.py: 4 warnings
+tests/test_runtime_capacity.py: 1 warning
+  /Volumes/SDXC-512/ds41f-mlx/ds41f_mlx/serving/server.py:245: DeprecationWarning:
+          on_event is deprecated, use lifespan event handlers instead.
+
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+
+    @app.on_event('shutdown')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+1383 passed, 46 warnings, 171 subtests passed in 127.48s (0:02:07)
