@@ -2,7 +2,7 @@
 
 **Run the official DeepSeek-V4.1-Flash checkpoint locally on Apple Silicon.**
 
-**MTP-only Runtime for official Flash and Flash-1017**, sharing Recipe **0.2.0**
+**Runtime for official Flash and Flash-1017**, sharing Recipe **0.2.0**
 native Chat/Messages semantics. Select `--checkpoint-variant flash` or `flash-1017`
 (default) during provisioning; each installation has one fixed checkpoint and
 numerical identity. Existing installations are not migrated.
