@@ -3,7 +3,8 @@
 The unified Runtime on `master` is **MTP-only**. Original Flash and Flash-1017 use
 separate fresh package-fixed installations with shared Recipe 0.2 Chat/Messages semantics.
 Standard-OFF production startup, admission and provisioning are retired. Historical
-release receipts and occupied installations below are not migrated or requalified.
+release receipts remain source-scoped evidence; the obsolete installations were
+removed during the approved 2026-10-22 cleanup, not migrated or requalified.
 
 The bundled Browser Chat application and Chat Server are retired. No bundled
 replacement Harness exists. External clients use the existing native Chat
@@ -24,24 +25,33 @@ and are not production launch instructions.
 ## Local environment layout
 
 The development repository is `/Volumes/SDXC-512/ds41f-mlx`; its internal
-`.venv` is for development, not installed production execution. The designated
-persistent installed Runtime environments for `master` are:
+`.venv` is for development, not installed production execution. The persistent
+installed Runtime environments for `master` are:
 
-| Variant | Environment | Separate build directory |
+| Variant | Environment | Observed state after cleanup (2026-10-22) |
 | --- | --- | --- |
-| Original Flash (`flash`) | `/Volumes/SDXC-512/ds41f-0910` | `/Volumes/SDXC-512/ds41f-0910-build` |
-| Flash-1017 (`flash-1017`) | `/Volumes/SDXC-512/ds41f-1017` | `/Volumes/SDXC-512/ds41f-1017-build` |
+| Original Flash (`flash`) | `/Volumes/SDXC-512/ds41f-0910` | Populated; no running model process observed |
+| Flash-1017 (`flash-1017`) | `/Volumes/SDXC-512/ds41f-1017` | Populated; ordinary Runtime active at cleanup verification |
 
-These are designated destinations, **not independently verified provisioned or
-qualified installations**. Provision only into absent environment/build targets;
-see [Provision / publish](#provision--publish). Keep disposable source-test
-environments and builds separate as specified in [source verification](verification.md).
-No existing installation is migrated or modified by this path designation.
+This is a filesystem/process snapshot, **not fresh admission or qualification**.
+Do not reprovision either existing environment. The Flash-1017 build directory
+`/Volumes/SDXC-512/ds41f-1017-build` was removed; original Flash retains only
+`/Volumes/SDXC-512/ds41f-0910-build/runtime-wheels` for publication provenance.
+The active Flash-1017 package's recorded wheel source,
+`/private/tmp/ds41f-harness-inventory-wheel.NxZ0BY`, was also retained.
+
+Dependency source exports and build outputs are not installed Runtime execution
+dependencies: provisioning copies packages, native assets and the Recipe tokenizer
+into the selected environment. A missing build directory is **not** a reason to
+recreate or modify an installed Runtime. Provision only into absent environment/build
+targets; see [Provision / publish](#provision--publish). Keep disposable source-test
+environments separate as specified in [source verification](verification.md).
+[Environment consolidation](environment-consolidation.md) records cleanup scope.
 
 ### Historical installations and evidence
 
-The following paths retain their original installation and qualification history;
-they are not the designated unified Runtime destinations:
+The following installations and the DeepInfer build were **removed on 2026-10-22**.
+Their paths identify historical runs only, not available launch or provisioning targets:
 
 - Previously qualified **original Flash**, MTP: `/Volumes/SDXC-512/ds41f-mlx_mtp-venv`
 - Previously qualified **original Flash**, Standard-OFF: `/Volumes/SDXC-512/ds41f-mlx_off-venv`
@@ -50,65 +60,33 @@ they are not the designated unified Runtime destinations:
 - **DeepInfer**, Flash-1017 / Recipe 0.2.0: `/Volumes/SDXC-512/ds41f-mlx_deepinfer-venv`.
   Independent build: `/Volumes/SDXC-512/ds41f-mlx_deepinfer-build`.
 
-The first two retain the published scoped-local payloads from `0cd1428`; DeepInfer
-is a separate bounded installed acceptance, not their replacement. Do not update
-one line's environment from another checkout. Existing source isolation is retained;
-the unified work is integrated into `master`, not the historical Flash-1017 branch.
-
-The historical original-Flash launch example is retained as a record, not current
-unified Runtime guidance:
-
-```sh
-/Volumes/SDXC-512/ds41f-mlx_mtp-venv/bin/ds41f start --profile mtp-serving-v1
-```
-
-Use the matching package/checkpoint; never run two servers on the same port.
-The listed OFF installation is historical, not a supported unified-runtime launch.
-Historical `m53r-*-venv` and `ds41f-generation-policy*-venv` paths in qualification
-records identify the original runs, not current launch instructions. They are
-not rewritten in historical receipts. See [environment consolidation](environment-consolidation.md)
-for migration details and completed legacy OFF retirement.
+The first two formerly held the published scoped-local payloads from `0cd1428`;
+DeepInfer had a separate bounded installed acceptance. Retained release packages,
+receipts and historical path identities were not rewritten by cleanup. Historical
+`m53r-*-venv` and `ds41f-generation-policy*-venv` paths likewise identify original
+runs, not current launch instructions. Use only the matching current installation
+and checkpoint; never run two servers on the same port.
 
 ## DeepInfer daily operation and Harness
 
 For current checkpoint-specific Harness setup, see
 [Using DeepSeek Harness](../README.md#using-deepseek-harness).
-This section preserves historical DeepInfer installation commands and bounded
-acceptance evidence. It does not qualify either newly designated environment;
-its paths are historical, not current unified Runtime launch guidance.
-
-The retained DeepInfer provisioning record (occupied destinations; do not rerun) is:
-
-```sh
-/opt/homebrew/opt/python@3.13/bin/python3.13 -m ds41f_mlx.mtp_setup \
-  --venv /Volumes/SDXC-512/ds41f-mlx_deepinfer-venv \
-  --build-dir /Volumes/SDXC-512/ds41f-mlx_deepinfer-build
-```
-
-These destinations are now occupied: **do not rerun provisioning into them**.
-Setup uses Python 3.13.15, locked dependencies, the retained Recipe 0.2.0 wheel
-with the consolidated native semantic patch, and native GLM. It installs Runtime
-non-editably. No source/package SHA seal is required; exact native/tokenizer and
-checkpoint admission remains mandatory. Reuse the external weights, never copy
-48 shards into the environment or build directory.
-
-```sh
-export DS41F_CHECKPOINT=/Volumes/KIOXIA-PRO-2/models/deepseek-ai/DeepSeek-V4.1-Flash-1017
-/Volumes/SDXC-512/ds41f-mlx_deepinfer-venv/bin/python -I -m ds41f_mlx.ops inspect --profile mtp-serving-v1
-/Volumes/SDXC-512/ds41f-mlx_deepinfer-venv/bin/python -I -m ds41f_mlx.serve \
-  --profile mtp-serving-v1 --host 127.0.0.1 --port 8000
-```
+The bounded DeepInfer acceptance below is historical; its dedicated environment
+and build were removed. Original commands/results remain in the
+[development record](deepinfer-development.md), not as current launch instructions.
+Current Flash-1017 operation uses `/Volumes/SDXC-512/ds41f-1017`; see
+[Inspect / ordinary MTP launch](#inspect--ordinary-mtp-launch).
 
 Wait for **READY** / `model_ready:true`; stop the owned process with graceful
-SIGTERM and wait for retirement/port release. This Runtime owns port 8000; Harness
-is a separate application/client, not another model server. Never start the
-original MTP/OFF runtime on that port concurrently. Acceptance used isolated port
-18047; the earlier direct Harness run used 18037. Those are not running services.
+SIGTERM and wait for retirement/port release. Harness is a separate client, not
+another model server. Never start two Runtimes on port 8000. Historical acceptance
+used isolated port 18047; the earlier direct Harness run used 18037. Those runs
+are not current services.
 
 Official Harness provider/CLI **0.2.1-rc.2** connected directly to `POST /v1/messages`
 with model **`deepseek-flash`**, without an adapter. Its `llm-deepseek` config used
-`baseURL: http://127.0.0.1:18037` (use `http://127.0.0.1:8000` for the launch above,
-**without `/v1`**), `apiKeyEnv: DS41F_LOCAL_API_KEY`, `thinking: disabled`,
+`baseURL: http://127.0.0.1:18037` (**without `/v1`**),
+`apiKeyEnv: DS41F_LOCAL_API_KEY`, `thinking: disabled`,
 `reasoningEffort: off`, `maxTokens: 256`; the model entry used
 `inputModalities: [text]`, `contextWindow: 1048576`, `maxTokens: 256`,
 `systemPromptUpdate: in-history`, `toolUpdate: addition-only`. A local placeholder
@@ -131,7 +109,8 @@ The TUI manages only Runtime, **not Harness or Browser Chat**. From the
 checkout, explicitly select the installed interpreter before launching the TUI:
 
 ```sh
-DS41F_OPERATOR_RUNTIME_PYTHON=/Volumes/SDXC-512/ds41f-mlx_deepinfer-venv/bin/python \
+DS41F_CHECKPOINT=/Volumes/KIOXIA-PRO-2/models/deepseek-ai/DeepSeek-V4.1-Flash-1017 \
+  DS41F_OPERATOR_RUNTIME_PYTHON=/Volumes/SDXC-512/ds41f-1017/bin/python \
   .venv/bin/python -m ds41f_mlx.ops
 ```
 
@@ -216,12 +195,14 @@ model process to diagnose a busy one, or interpret a forced kill as session rest
 
 ## Provision / publish
 
-The released single-operator local / explicitly trusted-private-LAN runtime is
+The historical single-operator local / explicitly trusted-private-LAN release was
 **DS41F-SCOPED-LOCAL-20261015**, sourced from `0cd1428` (runtime implementation
 `79e96fd`). The [authoritative release record](../release/scoped-local-20261015/release.json)
 binds separate MTP/OFF native wheels, digests, inherited evidence and fresh installed
-acceptance. Those exact packages remain installed at the original MTP/OFF paths above;
-all acceptance servers are retired. No source projection or broader scope is implied.
+acceptance. Its original MTP/OFF installations were removed during cleanup; retained
+release wheels and receipts remain available in the repository. All acceptance servers
+are retired. This historical release does not identify the current installed unified
+Runtime payloads, imply a source projection or expand qualified scope.
 
 Use a locked provisioned environment. `python -m ds41f_mlx.mtp_setup --profile
 mtp-singleton-v1 --venv /absolute/new-env --build-dir /absolute/new-build` builds

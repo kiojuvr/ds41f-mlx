@@ -101,11 +101,16 @@ to unchanged file identities.
 
 ### 1. Provision the MTP runtime
 
-The designated persistent installed Runtime paths are below; this designation
-is **not verification that either environment is provisioned or qualified**.
-From this checkout, with the provisioning prerequisites above satisfied, choose
+The persistent Runtime paths are below. On the project Mac Studio, **both
+installations were populated and retained after the 2026-10-22 cleanup**; skip
+provisioning for either existing installation. See the dated
+[local environment layout](docs/operations.md#local-environment-layout) for observed
+state and retained publication wheels. This filesystem/process observation is
+**not fresh admission or qualification**.
+For a fresh deployment, with the provisioning prerequisites above satisfied, choose
 one variant. Run provisioning only when both its environment and build directory
-are absent; never overwrite an existing installation.
+are absent; never overwrite an existing installation. A removed build directory
+does not mean the installed Runtime needs reprovisioning.
 
 Original Flash (`flash`):
 
@@ -128,7 +133,7 @@ python3.13 -m ds41f_mlx.mtp_setup \
 ```
 
 Keep disposable [source-test environments](docs/verification.md) separate from
-these persistent installations and their build directories.
+these persistent installations and their disposable provisioning builds.
 The provisioner's default builds the shared MTP distribution with native GLM;
 ordinary serving is the runtime default below. It installs a non-editable wheel
 and locked dependencies. **Provisioning is not release acceptance:** see

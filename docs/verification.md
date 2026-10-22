@@ -25,6 +25,9 @@ PYTHONDONTWRITEBYTECODE=1 "$TEST_ENV/bin/python" -m pytest tests native/tests -q
 The recorded correction run reused the disposable environment
 `/tmp/ds41f-unified-flash-install`, previously constructed by that workflow.
 Its identities/results are recorded in `artifacts/verification-baseline/`.
+That disposable installation was removed during the approved 2026-10-22 cleanup;
+recreate a separate source-test environment through the workflow above, not by
+reusing either production installation. Retained baseline receipts were not rewritten.
 Run from a shell without `DS41F_*`, `OMLX_*`, `DYLD_*`, `PYTHONPATH`, pytest addopts
 or production-server overrides; admission tests intentionally reject these.
 No additional test dependencies or donor checkout are needed. Tokenizers come
@@ -37,8 +40,10 @@ synthetic native/HTTP owners are not real-model qualification.
 The explicit roots cover all active repository Python source tests, without
 failure-based selection, deselection, skip/xfail additions, or discovery changes.
 `reference/R1/checks` is the frozen release's own verification lane, not a second
-copy of current-source tests. `artifacts/` contains imported upstream repositories
-and historical test snapshots, not current source discovery roots. Native C++
+copy of current-source tests. `artifacts/` retains fixtures, provenance and
+source-scoped evidence, not additional current source discovery roots. Imported
+scratch repositories, large captures and obsolete generated outputs were removed
+where no current contract consumed them. Native C++
 structural/model-qualification tools retain their separately recorded build and
 fixture prerequisites; these pytest commands do not claim to execute those lanes.
 The corrected source baseline has no dependency-driven skips. Full-model serving,
