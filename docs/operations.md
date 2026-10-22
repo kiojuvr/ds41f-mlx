@@ -112,9 +112,9 @@ with model **`deepseek-flash`**, without an adapter. Its `llm-deepseek` config u
 `systemPromptUpdate: in-history`, `toolUpdate: addition-only`. A local placeholder
 key satisfies the client; it does not add Runtime authentication.
 
-Disable unsupported **`dsh_session_log`** and **`dsh_plugin_packages`** extensions
-(`session-log-deepseek.config.enabled: false` and
-`plugin-package-inventory-deepseek.config.enabled: false`). Do not send tool
+Disable unsupported **`dsh_session_log`** upload through the Harness UI
+(`session-log-deepseek.config.enabled: false`). **`dsh_plugin_packages`** is
+accepted and ignored. Do not send tool
 removals; keep `addition-only`. The accepted run enabled only read-only filesystem
 reads (`tool-fs`: read true; readImage/write/edit false), disabled other effectful
 tools, and used Harness read-only permission/sandbox presets. Files/document/URL

@@ -42,6 +42,9 @@ def convert_messages(raw, *, default_reasoning_effort='none'):
     from ds41f_mlx.mtp_profile import ALIASES
     from .generation_policy import with_sampling_defaults
     payload = admit_structure(raw)
+    # Harness inventory is non-semantic metadata, not a Recipe extension.
+    # Remove only after bounded, strict JSON admission has checked the full body.
+    payload.pop('dsh_plugin_packages', None)
     recipe_payload = with_sampling_defaults(payload)
     if 'thinking' not in payload and 'output_config' not in payload:
         recipe_payload['output_config'] = {'effort': default_reasoning_effort}

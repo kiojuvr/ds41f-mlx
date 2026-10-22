@@ -30,8 +30,9 @@ remain **Chat-only**; Messages has no logical-session or persistence contract.
 
 Messages intentionally rejects Files/documents, URL/file image sources, server/
 web-search tools/results, tool-reference results, unknown extensions (including
-Harness `dsh_session_log` / `dsh_plugin_packages`), tool removal, constrained output,
-thinking budgets, `tool_choice:any` and enforced serial selection. Prompt-based
+Harness `dsh_session_log`), tool removal, constrained output,
+thinking budgets, `tool_choice:any` and enforced serial selection.
+Harness `dsh_plugin_packages` is accepted and ignored. Prompt-based
 named selection is not constrained decoding. No Responses parity is added.
 
 ## Profiles

@@ -22,6 +22,41 @@ def convert(body):
     return convert_messages(json.dumps(body).encode())[0]
 
 
+@pytest.mark.parametrize('inventory', [None, False, 42, 'opaque', [],
+    {'packages': [{'name': 'example', 'version': '1'}], 'unknown': {'model': 'ignored'}}])
+def test_plugin_inventory_is_excluded_before_recipe(monkeypatch, inventory):
+    native_request = d.MessagesRequest
+    admitted = []
+    def request(raw):
+        admitted.append(raw)
+        return native_request(raw)
+    monkeypatch.setattr(d, 'MessagesRequest', request)
+    baseline = convert(payload())
+    decorated = convert(payload(dsh_plugin_packages=inventory))
+    assert len(admitted) == 2 and admitted[0] == admitted[1]
+    assert 'dsh_plugin_packages' not in json.loads(admitted[1])
+    encoding = d.DeepseekV41Encoding()
+    assert encoding.render_conversation(baseline.conversation).prompt == encoding.render_conversation(decorated.conversation).prompt
+
+
+@pytest.mark.parametrize('metadata,reason', [
+    ('{"x": 1, "x": 2}', 'duplicate JSON key'),
+    ('NaN', 'nonfinite JSON number'),
+    ('1e999', 'nonfinite JSON number'),
+])
+def test_plugin_inventory_still_obeys_json_admission(metadata, reason):
+    raw = json.dumps(payload())[:-1] + ', "dsh_plugin_packages": ' + metadata + '}'
+    with pytest.raises(ValueError, match=reason):
+        convert_messages(raw.encode())
+
+
+def test_plugin_inventory_still_counts_toward_body_limit():
+    from ds41f_mlx.serving.capacity import ORDINARY_BODY_BYTES
+    raw = json.dumps(payload(dsh_plugin_packages='x' * ORDINARY_BODY_BYTES)).encode()
+    with pytest.raises(ValueError, match='body limit exceeded'):
+        convert_messages(raw)
+
+
 def owner(thinking=False):
     body = payload(tools=[{'name': n, 'input_schema': {'type': 'object'}} for n in ('f', 'g')])
     body['thinking']['type'] = 'enabled' if thinking else 'disabled'
@@ -156,7 +191,10 @@ def test_incomplete_block_never_certifies_tools(end, reason):
 
 
 @pytest.mark.parametrize('extension', [
-    {'unknown': True}, {'output_config': {'format': {'type': 'json_schema'}}},
+    {'unknown': True}, {'dsh_session_log': {}},
+    {'dsh_session_log': {}, 'dsh_plugin_packages': []},
+    {'unknown': True, 'dsh_plugin_packages': []},
+    {'output_config': {'format': {'type': 'json_schema'}}},
     {'thinking': {'type': 'enabled', 'budget_tokens': 10}},
     {'tool_choice': {'type': 'any'}},
     {'tool_choice': {'type': 'auto', 'disable_parallel_tool_use': True}},
@@ -231,9 +269,10 @@ def test_official_prompt_encoding_and_expanded_image_capacity(tmp_path):
     prepared.multimodal.release_sources()
 
 
+@pytest.mark.parametrize('inventory', [False, True])
 @pytest.mark.parametrize('stream', [False, True])
 @pytest.mark.parametrize('thinking', [False, True])
-def test_ordinary_http_native_transport(monkeypatch, stream, thinking):
+def test_ordinary_http_native_transport(monkeypatch, stream, thinking, inventory):
     # Real ingress/preparation/ordinary_response/pump/cleanup, controlled native
     # output only. No claim of checkpoint or numerical Scheduler execution.
     import os
@@ -272,6 +311,8 @@ def test_ordinary_http_native_transport(monkeypatch, stream, thinking):
         app = create_app(profile='mtp-serving-v1', backend=backend, runtime_config=backend.runtime_config)
         with TestClient(app, base_url='http://127.0.0.1:8000') as client:
             body = payload(stream=stream)
+            if inventory:
+                body['dsh_plugin_packages'] = {'packages': [{'name': 'example'}]}
             body['thinking']['type'] = 'enabled' if thinking else 'disabled'
             result = client.post('/v1/messages', json=body)
             assert result.status_code == 200, result.text
@@ -282,6 +323,8 @@ def test_ordinary_http_native_transport(monkeypatch, stream, thinking):
                 assert result.json() == expected['body']
             assert not backend._deliveries and not backend._settled
             assert client.post('/v1/messages', json=body | {'extension': True}).status_code == 400
+            assert client.post('/v1/messages', json=body | {'dsh_session_log': {}}).status_code == 400
+            assert client.post('/v1/messages', json=body | {'model': 'unadmitted'}).status_code == 400
             assert client.post('/v1/sessions/x/messages', json=body).status_code == 400
     finally:
         backend.scheduler = None
