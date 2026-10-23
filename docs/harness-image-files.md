@@ -1,0 +1,180 @@
+# Bounded native Messages image Files API (Gate W2)
+
+Implemented for ordinary `mtp-serving-v1` only; **model-free verification, not
+Windows or official Harness execution qualification**. The wire authority is
+Harness 0.2.1-rc.2 source `687f282e8625c6b8d11ff58211a90524be2e4317`,
+correlated in the [Gate W1 audit](flash-1017-harness-files-compatibility.md).
+No provider modification, second Messages translator, Vision processor or KV
+owner is introduced. Existing Phase 0–3 evidence remains unchanged.
+
+## Supported operations
+
+### `POST /v1/files`
+
+Uncompressed `multipart/form-data` with exactly these three fields (any order):
+
+- `file`: binary PNG/JPEG/WebP, declared `Content-Type` and nonempty UTF-8 filename
+  (at most 512 characters, no control characters).
+- `expires_after[anchor]`: `created_at`.
+- `expires_after[seconds]`: decimal integer **3600..2592000**, inclusive.
+
+No `purpose` field is required or accepted. Multipart header/part counts and
+sizes are bounded; duplicate/unknown fields, incomplete bodies, transfer-encoded
+parts, wrong MIME/format and unsupported expiry fail. The shared Runtime
+`validate_encoded_image` verifies actual format, complete decoding, single frame,
+pixels and aspect ratio. Admitted encoded bytes are retained **exactly**, without
+recompression, normalization or filesystem interpretation of filenames.
+
+Success: HTTP 200 with exactly this schema (values are examples):
+
+```json
+{"id":"file_opaque_server_id","type":"file","mime_type":"image/png","size_bytes":24147,"created_at":"2026-10-24T00:00:00Z","filename":"original.png"}
+```
+
+IDs are random server-issued UUID-based opaque tokens, not hashes, paths or
+filenames. Creation timestamps are actual UTC RFC3339 whole-second timestamps.
+Expiry is `created_at + requested seconds`; no `expires_at` response is required.
+
+### `DELETE /v1/files/{id}`
+
+No body or Content-Type is required. Success: HTTP 200 with exactly:
+
+```json
+{"id":"file_opaque_server_id","type":"file_deleted"}
+```
+
+Unknown, deleted, expired or other-instance IDs return HTTP 404, including repeated
+deletes. Deletion makes new resolutions unavailable. Acquired immutable request
+snapshots remain valid through concurrent deletion/expiry. Neither deletion nor
+cleanup accesses Scheduler, model state or paired KV.
+
+### Native `POST /v1/messages` references
+
+```json
+{"type":"image","source":{"type":"file","file_id":"file_opaque_server_id"}}
+```
+
+Supported only in user-message image content, or image content inside a user
+`tool_result`. Not assistant/system images, recursively nested tool results,
+documents, paths or URLs. Image blocks accept exactly `type,source`; file sources
+accept exactly `type,file_id`. All other native field/capability rejection remains
+in force. Arbitrary tool-input JSON and ignored inventory metadata are not scanned
+for images or interpreted as file references.
+
+Strict duplicate-key/depth/raw-body admission and native Recipe deserialization
+validate the original structure. The request-local resolver replaces only admitted
+file sources with existing base64 sources, retaining block order, wire message
+positions, result nesting and exact tool IDs. The **same resolved tree** feeds
+conversion, policy, origin classification and existing image admission. Recipe
+still owns semantic source ordering (including result reordering to call order).
+No expanded internal JSON is submitted to the raw network-body limit again.
+
+Missing references fail before inference with the ordinary error envelope:
+
+```json
+{"error":{"type":"invalid_request_error","code":"file_not_found","message":"file not found or expired: file_opaque_server_id","param":null}}
+```
+
+This matches rc.2 `providerRejectedFileId` text classification and names the exact
+ID for bounded mapping invalidation/reupload. Other errors are non-2xx as well:
+invalid form/schema/image/expiry 400, excessive upload 413, retained-storage quota
+429 (`file_storage_quota`), busy upload 503 (`upload_busy`). No inference retry,
+blank image substitution, history removal or filename reconstruction is performed.
+
+## Ownership, memory and lifecycle
+
+Ownership is **one app/process's existing trusted deployment scope**. Runtime has
+no authentication/TLS or per-user isolation: loopback or explicitly trusted private
+LAN, single operator. Auth-looking client headers do not create authenticated
+accounts or separate namespaces. Everyone admitted to that deployment can use or
+delete its IDs; a different app instance cannot. Do not expose this as a secure
+multi-tenant Files service. Multiple worker processes do not share IDs: use the
+existing single-process deployment.
+
+Storage is a bounded in-memory mapping of immutable bytes; no upload directories,
+user paths, weights, caches or temporary disk files are opened. Publish occurs
+atomically only after the complete multipart body and image have passed admission.
+Malformed, oversized, disconnected and otherwise incomplete uploads publish
+nothing; their request buffers are released on unwinding. A complete admitted
+upload whose response is lost can remain until deletion/expiry (an uncertain
+receipt is not a partial image). There is no persistent file-ID availability.
+Graceful shutdown clears the mapping; process exit/restart loses all IDs. Passive
+expired entries are swept every 30 seconds, and every upload/resolve/delete also
+checks expiry immediately. Request-held snapshots may outlive that sweep.
+
+| Bound | Enforced default/ceiling |
+| --- | --- |
+| Encoded bytes per file | 16 MiB |
+| Retained files per deployment | 128 |
+| Aggregate retained encoded bytes | 64 MiB |
+| Concurrent uploads | 1; reuse the existing HTTP preparation lease, reject busy uploads rather than queue their bodies |
+| Multipart wire bytes | 16 MiB + 64 KiB (includes form overhead); enforced before buffering, including chunked bodies |
+| Multipart shape | 3 parts, 2 headers/part, 2048 bytes/header, 32 bytes/expiry field, 70-byte boundary |
+| HTTP body timeout | Existing 30 seconds; no new unbounded upload wait |
+| Actual Messages JSON wire bytes | Unchanged 16 MiB |
+| Files-mode image occurrences | 128 including inline images and repeated IDs |
+| Resolved encoded image bytes | 64 MiB aggregate; counted per occurrence before base64 expansion |
+| Resolved source pixels | 16,777,216 aggregate, counting repeated images; existing Vision admission includes inline images |
+
+`create_app(files_limits=FileLimits(file_bytes=..., count=..., storage_bytes=...))`
+can **lower only** the first three storage ceilings; no new CLI/environment or
+request-level limit override exists. Multipart ingress remains under its fixed
+ceiling even with lower per-file configuration. Parsing uses the already pinned
+`python-multipart` dependency with bounded headers/parts and 64 KiB parser chunks.
+Buffering is bounded, not zero-copy: raw body, parser bytes and decoding have
+finite transient overhead in the one shared preparation slot. Resolution checks
+occurrence/encoded budgets before allocating base64 copies; at most 64 MiB encoded
+bytes become approximately 86 MiB base64 plus bounded JSON/native-parser copies.
+This is not a zero-cost memory path or expanded model capacity.
+
+After resolution, the existing shared Vision path still enforces **16 MiB/image,
+4,194,304 pixels/image, 1:2..2:1 aspect, 1014 expanded positions/image,
+36,864 aggregate ViT patches**, aggregate encoded/pixel limits, terminal-text,
+context expansion and output reservation. All occurrences, including history and
+repeated references to one stored file, consume budgets. Inline-only admission
+is unchanged. Files does not allocate model KV on upload or resolution.
+
+## Identity, cache and compatibility exclusions
+
+The existing encoded-byte SHA-256/span/grid identity and paired cache remain
+authoritative. Same bytes at the same occurrence produce the same Recipe tokens
+and image identities for inline input, a file reference and a replacement ID.
+A live file **does not** restore missing historical Target/DSpark paired state:
+cache misses/eviction/edits retain explicit historical-image rejection; no silent
+re-encoding/replay is allowed. File lifetime and paired-KV lifetime are independent.
+
+**Unsupported:** list/pagination, metadata retrieval, content/download endpoints,
+OpenAI `purpose`/Files variants, arbitrary documents, remote URLs, persistent IDs,
+account emulation and general file management. In particular, upstream quota
+recovery that lists/reclaims oldest files is **not implemented**. Upload quota
+failure may cause Harness's existing bounded Files failure/inline fallback; this
+is not complete upstream quota handling. Operators can explicitly delete known
+IDs, wait for expiry, or restart (which also loses paired state).
+
+Supported Harness configuration requires native Messages/image modality, Runtime
+image bounds, stable/addition-only tools, and explicitly:
+
+```text
+session-log-deepseek.enabled=false
+```
+
+`dsh_session_log` remains rejected; no incremental ingestion/watermarks/session
+service is added. `dsh_plugin_packages` handling is unchanged (bounded admission,
+then ignored). Tool removal and other unsupported provider extensions remain off.
+
+## Verification and next gate
+
+`tests/test_image_files.py` exercises actual HTTP parsing/resolution and native
+Recipe/Vision preparation with a controlled backend response, plus the real paired
+admission rejection fence with synthetic owners. No weights/model loading or
+real-model inference is used. The focused suite covers binary formats, multipart
+contract/limits/cancellation, deletion, stale/scope/expiry errors, nested tool IDs,
+order/identity equivalence, repeated historical references and resource fences.
+
+Windows normal-operation qualification remains separately authorized: retain exact
+installed rc.2/provider/config identities and sanitized wire traces; test ordinary
+GUI upload **and** official tool-image continuation, stale-ID reupload, paired
+continuation and explicit cache-miss rejection in the installed Runtime. Also
+qualify the finite memory envelope under the selected bounded workload. No Windows
+or macOS Harness run, Phase 4, package promotion or broad compatibility claim is
+implied by these model-free checks.

@@ -36,12 +36,15 @@ def blocks(content):
             fields(block.get('tool'), 'type name')
 
 
-def convert_messages(raw, *, default_reasoning_effort='none'):
+def convert_messages(raw, *, default_reasoning_effort='none', _resolved_payload=None):
     import json
     import deepseek_recipe as d
     from ds41f_mlx.mtp_profile import ALIASES
     from .generation_policy import with_sampling_defaults
     payload = admit_structure(raw)
+    if _resolved_payload is not None:
+        # Only the server's admitted, bounded file resolver supplies this view.
+        payload = _resolved_payload
     # Harness inventory is non-semantic metadata, not a Recipe extension.
     # Remove only after bounded, strict JSON admission has checked the full body.
     payload.pop('dsh_plugin_packages', None)

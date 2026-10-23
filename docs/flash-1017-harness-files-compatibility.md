@@ -1,6 +1,46 @@
 # Phase 3B / Gate W1 — Harness image and Files source audit
 
-## Outcome and scope
+## Gate W2 implementation update
+
+The W1 audit below remains historical/static evidence at its recorded revision.
+Gate W2 now implements the bounded image upload/delete and native Messages
+reference subset: [API, storage, bounds and configuration](harness-image-files.md).
+This supersedes W1's implementation-gap descriptions, **not** its Windows unknowns
+or retained Phase 0–3 evidence. No official Harness execution was performed.
+
+Model-free verification used the admitted disposable
+`/tmp/ds41f-phase1-1017-tests` environment (Python 3.13.15, pinned Recipe 0.2.0;
+actual isolated installed-payload admission passed). The repository `.venv` first
+failed the fixture's isolated package-import prerequisite; it was not bypassed or
+modified. Final affected checks:
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 /tmp/ds41f-phase1-1017-tests/bin/python -m pytest -q \
+  tests/test_image_files.py tests/test_recipe02_messages_serving.py \
+  tests/test_multimodal_contract.py tests/test_metadata_first_vision.py \
+  tests/test_expanded_vision_capacity.py
+# 162 passed
+PYTHONDONTWRITEBYTECODE=1 /tmp/ds41f-phase1-1017-tests/bin/python -m pytest -q \
+  tests/test_production_mtp.py tests/test_m41_profile.py tests/test_recipe02_chat_boundary.py
+# 121 passed
+```
+
+Inline/file/replacement-ID requests produced equal tokens, encoded sources and
+multimodal identities. Nested original call IDs and repeated historical occurrence
+ordering were preserved. A live historical file still failed actual paired
+admission when historical KV was unavailable. Uploads use the existing bounded
+preparation lease and shared image validator; no model loading or real inference
+was performed. Deprecation warnings concern existing FastAPI lifecycle/TestClient
+APIs; no test skips or xfails were introduced.
+
+**W2 implementation/model-free scope: PASS. Windows qualification: NOT RUN.**
+Ready for a separately authorized installed official Harness acceptance test,
+with `session-log-deepseek.enabled=false`, the documented bounds and stable/
+addition-only tools. No list/quota-reclamation parity or persistent file IDs.
+Windows GUI upload/tool-image/paired continuation and selected workload memory
+qualification remain mandatory before claiming normal-operation compatibility.
+
+## Outcome and scope (historical Gate W1)
 
 **PARTIAL overall; source contracts sufficient for a bounded Files development task.**
 The official rc.2 source, installed macOS packages, shared browser/Desktop client,

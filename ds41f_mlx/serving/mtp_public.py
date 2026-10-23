@@ -137,10 +137,12 @@ class LocalBoundary:
         create = path == '/v1/sessions' and method == 'POST'
         chat = re.fullmatch(r'/v1/sessions/[^/]+/chat/completions', path) and method == 'POST'
         lifecycle = re.fullmatch(r'/v1/sessions/[^/]+', path) and path != '/v1/sessions/restore' and method in ('GET','DELETE')
+        file_upload = self.ordinary and method == 'POST' and path == '/v1/files'
+        file_delete = self.ordinary and method == 'DELETE' and re.fullmatch(r'/v1/files/[^/]+', path)
         supported = create or chat or lifecycle or (method == 'GET' and path in ('/health','/v1/models'))
         if self.ordinary:
             session_control = method == 'POST' and re.fullmatch(r'/v1/sessions/[^/]+/(budget|cancel)', path)
-            supported = ((method == 'POST' and path in ('/v1/chat/completions', '/v1/messages')) or
+            supported = (file_upload or file_delete or (method == 'POST' and path in ('/v1/chat/completions', '/v1/messages')) or
                          (method == 'GET' and path in ('/health','/v1/models')) or
                          (self.production_sessions and (create or chat or lifecycle or session_control)))
         known = path in ('/v1/chat/completions','/v1/responses','/v1/messages','/v1/sessions/restore',
@@ -153,7 +155,13 @@ class LocalBoundary:
             return await deny(400, 'json_uncompressed_required')
         if method == 'GET' and (values(b'transfer-encoding') or values(b'content-length') not in ([], [b'0'])):
             return await deny(400, 'get_body_unavailable')
-        if method in ('POST','DELETE'):
+        if file_upload:
+            ct = values(b'content-type')
+            if len(ct) != 1 or len(ct[0]) > 1024 or not ct[0].lower().startswith(b'multipart/form-data;'):
+                return await deny(400, 'multipart_required')
+        elif file_delete:
+            pass  # rc.2 DELETE has no Content-Type or body.
+        elif method in ('POST','DELETE'):
             if values(b'content-type') != [b'application/json'] or values(b'content-encoding'):
                 return await deny(400, 'json_uncompressed_required')
         if chat:
@@ -176,6 +184,9 @@ class LocalBoundary:
             scope['ds41f.release_preparation'] = release_preparation
         from .capacity import ORDINARY_BODY_BYTES
         body_limit = ORDINARY_BODY_BYTES if self.ordinary else LIMITS['body_bytes']
+        if file_upload:
+            from .image_files import UPLOAD_BODY_BYTES
+            body_limit = UPLOAD_BODY_BYTES
         if method in ('POST','DELETE'):
             cl = values(b'content-length')
             if len(cl) > 1 or (cl and not re.fullmatch(rb'[0-9]+', cl[0])):
@@ -188,6 +199,8 @@ class LocalBoundary:
                 self.telemetry.begin(scope['ds41f.diagnostic_id'])
                 if self.preparation_lock.locked():
                     self.telemetry.phase(scope['ds41f.diagnostic_id'], 'QUEUED', queue_reason='http_preparation')
+            if file_upload and self.preparation_lock.locked():
+                return await deny(503, 'upload_busy')
             if self.preparation_lock is not None:
                 # Transport/tokenizer capacity lease only, released immediately
                 # after recipe conversion. Executable requests queue exclusively

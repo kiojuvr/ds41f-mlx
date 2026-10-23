@@ -42,10 +42,14 @@ def load_v41_tokenizer(recipe_path: Path = DEFAULT_RECIPE) -> Any:
     return Tokenizer.from_file(str(Path(recipe_path) / 'static' / 'tokenizers' / 'v41' / 'tokenizer.json'))
 
 
-def prepare_request(protocol: str, body: bytes, *, tokenizer: Any, recipe_path: Path = DEFAULT_RECIPE, options: ConversionOptions | None = None, checkpoint: Path | None = None, ordinary: bool = False, default_reasoning_effort: str = 'none') -> RecipePreparedRequest:
+def prepare_request(protocol: str, body: bytes, *, tokenizer: Any, recipe_path: Path = DEFAULT_RECIPE, options: ConversionOptions | None = None, checkpoint: Path | None = None, ordinary: bool = False, default_reasoning_effort: str = 'none', image_files=None) -> RecipePreparedRequest:
     prepare_t0 = perf_counter()
     from .generation_policy import normalize_policy, with_sampling_defaults
     policy_payload = json.loads(body)
+    if ordinary and protocol == 'messages' and image_files is not None:
+        from .ordinary_admission import admit_structure
+        from .image_files import resolve_messages
+        policy_payload = resolve_messages(admit_structure(body), image_files)
     request_type, _ = PROTOCOL_TYPES[protocol]
     if ordinary:
         from .ordinary_admission import convert_ordinary
@@ -53,7 +57,8 @@ def prepare_request(protocol: str, body: bytes, *, tokenizer: Any, recipe_path: 
         if protocol not in ('chat_completions', 'messages'):
             raise RequestError('ordinary MTP supports Chat Completions and Messages only')
         convert = convert_messages if protocol == 'messages' else convert_ordinary
-        converted, include_usage, automatic = convert(body, default_reasoning_effort=default_reasoning_effort)
+        kwargs = {'_resolved_payload': policy_payload} if protocol == 'messages' and image_files is not None else {}
+        converted, include_usage, automatic = convert(body, default_reasoning_effort=default_reasoning_effort, **kwargs)
         custom_tool_names = frozenset()
     else:
         # Runtime extension, resolved only after the real recipe/image expansion.
@@ -210,7 +215,7 @@ def _chat_sse_events(events: list[dict[str, Any]] | tuple[dict[str, Any], ...]) 
     return gen()
 
 
-def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_path: Path | None = None, options: ConversionOptions | None = None, model_id: str | None = None, runtime_config=None, profile='mtp-serving-v1') -> FastAPI:
+def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_path: Path | None = None, options: ConversionOptions | None = None, model_id: str | None = None, runtime_config=None, profile='mtp-serving-v1', files_limits=None) -> FastAPI:
     if profile not in ('mtp-singleton-v1', 'mtp-serving-v1'):
         raise ValueError('unsupported capability profile; Standard-OFF production is retired')
     local_mtp = profile == 'mtp-singleton-v1'
@@ -251,6 +256,43 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
     app.state.backend = backend
     app.state.recipe_tokenizer = tokenizer
     if ordinary_mtp:
+        from .image_files import ImageFiles, FileError
+        import asyncio
+        app.state.image_files = ImageFiles(files_limits)
+
+        @app.exception_handler(FileError)
+        async def file_error_handler(_request, exc):
+            return JSONResponse(status_code=exc.status_code, content={'error': {
+                'type': 'invalid_request_error', 'code': exc.code, 'message': str(exc), 'param': None}})
+
+        @app.post('/v1/files')
+        async def upload_image(request: Request):
+            return JSONResponse(await run_in_threadpool(app.state.image_files.upload,
+                await request.body(), request.headers.get('content-type')))
+
+        @app.delete('/v1/files/{file_id}')
+        async def delete_image(file_id: str):
+            return JSONResponse(app.state.image_files.delete(file_id))
+
+        async def retire_files():
+            while True:
+                await asyncio.sleep(30)
+                app.state.image_files.sweep()
+
+        @app.on_event('startup')
+        async def start_files_retirement():
+            app.state.files_retirement = asyncio.create_task(retire_files())
+
+        @app.on_event('shutdown')
+        async def shutdown_files():
+            task = app.state.files_retirement
+            task.cancel()
+            try:
+                await task
+            except asyncio.CancelledError:
+                pass
+            app.state.image_files.clear()
+    if ordinary_mtp:
         @app.on_event('startup')
         async def start_ordinary_retirement():
             backend.start_idle_retirement()
@@ -289,7 +331,7 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
             if ordinary_mtp:
                 if protocol not in ('chat_completions', 'messages'):
                     raise RequestError('ordinary MTP supports Chat Completions and Messages only')
-            prepared = await run_in_threadpool(prepare_request, protocol, body, tokenizer=tokenizer, recipe_path=recipe_path, options=options, checkpoint=getattr(backend, 'checkpoint', runtime_config.checkpoint_path), ordinary=ordinary_mtp, default_reasoning_effort=runtime_config.default_reasoning_effort)
+            prepared = await run_in_threadpool(prepare_request, protocol, body, tokenizer=tokenizer, recipe_path=recipe_path, options=options, checkpoint=getattr(backend, 'checkpoint', runtime_config.checkpoint_path), ordinary=ordinary_mtp, default_reasoning_effort=runtime_config.default_reasoning_effort, image_files=getattr(app.state, 'image_files', None))
             if ordinary_mtp:
                 prepared.diagnostic_id = diagnostic_id
                 if projection is not None:
@@ -359,7 +401,7 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
                          prefix_cache=None if scheduler is None else scheduler.checkpoints.paged.get_stats().to_dict(),
                          capabilities={'stateful_chat': 'production-sessions-v1', 'persist_restore': False,
                                        'messages': 'recipe-0.2-native', 'messages_sessions': False,
-                                       'messages_vision': 'bounded-inline-base64-v1',
+                                       'messages_vision': 'bounded-inline-and-files-v1',
                                        'chat_vision': 'bounded-inline-v1',
                                        'vision_admission': vision_capacity(backend.checkpoint),
                                        'max_live_sessions': backend.production_sessions.MAX_LIVE,

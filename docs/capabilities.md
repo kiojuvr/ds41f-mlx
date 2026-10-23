@@ -28,7 +28,15 @@ Tool suffix delivery waits for canonical settlement; a `tool_use` stop reason or
 argument-end observation alone never authorizes effects. Production sessions
 remain **Chat-only**; Messages has no logical-session or persistence contract.
 
-Messages intentionally rejects Files/documents, URL/file image sources, server/
+Ordinary Messages additionally implements bounded image Files upload/delete and
+user/tool-result file-ID resolution; see [Files API scope](harness-image-files.md).
+This is model-free verified, **not official Harness Files or Windows execution
+qualification**. IDs/bytes are process-local, deployment-owned and expiry-bounded;
+Files lifetime does not extend paired KV lifetime. List/retrieval/download and
+full upstream quota recovery are unsupported. Harness must explicitly set
+`session-log-deepseek.enabled=false` and keep unsupported tool removal disabled.
+
+Messages intentionally rejects documents, URL/path image sources, server/
 web-search tools/results, tool-reference results, unknown extensions (including
 Harness `dsh_session_log`), tool removal, constrained output,
 thinking budgets, `tool_choice:any` and enforced serial selection.
@@ -49,7 +57,7 @@ named selection is not constrained decoding. No Responses parity is added.
 | Function tools | Recipe-authoritative calls and exact-ID results | Pinned weather/dedicated-client contract |
 | Sampling/reasoning | `generation-policy-v1` | Greedy/thinking-off contract |
 | Native persistence/restore | Unsupported | Unsupported |
-| Images | Resource-budgeted inline Chat/Messages; paired continuation | Unsupported |
+| Images | Resource-budgeted inline Chat/Messages and bounded Messages file IDs; paired continuation | Unsupported |
 | Network | Loopback default; explicit trusted private LAN | Literal IPv4 loopback/exact Host |
 
 These profiles do not grant each other API, persistence, image, concurrency or
@@ -162,7 +170,10 @@ Per-image format/detail/aspect, 16 MiB, 4,194,304 pixels and 1014 expanded-posit
 bounds remain. Aggregate preparation admits at most **64 MiB encoded image bytes,
 16,777,216 decoded source pixels and 36,864 planned ViT patches**; images are
 validated/processed individually. The existing **16 MiB JSON body** bound also
-applies, including base64/history. These are finite resource budgets, not a new
+applies to actual ingress, including base64/history. Bounded Files references
+resolve under separate occurrence/encoded-byte limits and the same downstream
+Vision budgets; they do not expand numerical capacity. See [Files bounds](harness-image-files.md).
+These are finite resource budgets, not a new
 image-count ceiling or memory reservation. All supplied images, including cached
 ones, consume preparation budgets. Ordinary text and legacy OFF limits are unchanged.
 
