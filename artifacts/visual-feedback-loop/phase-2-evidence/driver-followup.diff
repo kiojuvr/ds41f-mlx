@@ -1,0 +1,109 @@
+--- executed-driver
++++ committed-driver
+@@ -9,0 +10 @@
++from dataclasses import replace
+@@ -89,0 +91,4 @@
++class ModelFailure(ValueError):
++    """A settled model response violates this bounded task, not Runtime safety."""
++
++
+@@ -94 +99 @@
+-        raise ValueError('one tool call per response required')
++        raise ModelFailure('one tool call per response required')
+@@ -97 +102 @@
+-            raise ValueError('missing/duplicate Tool Call ID')
++            raise ModelFailure('missing/duplicate Tool Call ID')
+@@ -100 +105 @@
+-            raise ValueError('malformed tool arguments')
++            raise ModelFailure('malformed tool arguments')
+@@ -102 +107,4 @@
+-            validate_html(args['html'])
++            try:
++                validate_html(args['html'])
++            except ValueError as exc:
++                raise ModelFailure(str(exc)) from exc
+@@ -104 +112 @@
+-            raise ValueError('unknown tool or malformed arguments')
++            raise ModelFailure('unknown tool or malformed arguments')
+@@ -179 +187,20 @@
+-        os.killpg(process.pid, signal.SIGKILL)
++        # Chromium can create its own process group. Snapshot only this child's
++        # descendants before terminating; a group-only kill can orphan browsers.
++        pairs = [tuple(map(int, line.split())) for line in subprocess.check_output(
++            ['ps','-axo','pid=,ppid='],text=True).splitlines()]
++        owned = {process.pid}
++        while True:
++            expanded = owned | {pid for pid, parent in pairs if parent in owned}
++            if expanded == owned:
++                break
++            owned = expanded
++        process.terminate()
++        try:
++            process.communicate(timeout=5)
++        except subprocess.TimeoutExpired:
++            process.kill()
++        for pid in owned - {process.pid}:
++            try:
++                os.kill(pid, signal.SIGKILL)
++            except ProcessLookupError:
++                pass
+@@ -184,0 +212,11 @@
++
++
++def bind_execution_process(expected_variant, expected_source):
++    """Admission in a subprocess cannot bind this process's numerical profile."""
++    from ds41f_mlx.execution_identity import inspect_payload, numerical_profile
++    authority, _ = inspect_payload()
++    if (authority['checkpoint_variant'] != expected_variant or
++            authority['provenance']['source_commit'] != expected_source):
++        raise ValueError('execution-process identity differs from isolated admission')
++    return dict(checkpoint_variant=authority['checkpoint_variant'],
++                numerics=numerical_profile(), source_commit=authority['provenance']['source_commit'])
+@@ -224 +262,3 @@
+-    cfg = config(port=port, profile='mtp-serving-v1')
++    cfg = replace(config(port=port, profile='mtp-serving-v1'),
++                  kv_root=Path(workspace.name)/'runtime-kv')
++    receipt['effective_config'] = cfg.to_json()
+@@ -253,0 +294,2 @@
++        receipt['execution_process_admission'] = bind_execution_process(
++            identity['identity']['checkpoint_variant'], identity['build']['source_commit'])
+@@ -296 +338,2 @@
+-                    with client.stream('POST','/v1/messages',content=raw,headers={'Content-Type':'application/json'}) as response:
++                    with client.stream('POST','/v1/messages',content=raw,headers={'Content-Type':'application/json'},
++                        timeout=min(BUDGETS['generation_s'], deadline-time.monotonic())) as response:
+@@ -338 +381 @@
+-                        raise ValueError('unsettled/truncated assistant outcome')
++                        raise ModelFailure('truncated assistant outcome')
+@@ -342 +385 @@
+-                    raise ValueError('tool call without native tool_use stop reason')
++                    raise ModelFailure('tool call without native tool_use stop reason')
+@@ -344 +387 @@
+-                    raise ValueError('tool execution budget exhausted')
++                    raise ModelFailure('tool execution budget exhausted')
+@@ -354 +397 @@
+-                        raise ValueError('maximum corrections reached')
++                        raise ModelFailure('maximum corrections reached')
+@@ -357 +400 @@
+-                        raise ValueError('unchanged artifact is not a correction')
++                        raise ModelFailure('unchanged artifact is not a correction')
+@@ -370 +413 @@
+-                        raise ValueError('invalid artifact: index.html missing')
++                        raise ModelFailure('invalid artifact: index.html missing')
+@@ -372 +415 @@
+-                        raise ValueError('render without a new artifact revision')
++                        raise ModelFailure('render without a new artifact revision')
+@@ -408 +451,2 @@
+-        receipt.update(status='BLOCKED', failure=dict(type=type(exc).__name__,message=str(exc)))
++        receipt.update(status='FAIL' if isinstance(exc, ModelFailure) else 'BLOCKED',
++            failure=dict(type=type(exc).__name__,message=str(exc)))
+@@ -433 +477,9 @@
+-    run(a.output,a.renderer_python,a.port)
++    def expire(signum, frame):
++        raise TimeoutError('total-task budget/cancellation; no retry authorized')
++    signal.signal(signal.SIGALRM, expire)
++    signal.signal(signal.SIGTERM, expire)
++    signal.alarm(BUDGETS['total_s'])
++    try:
++        run(a.output,a.renderer_python,a.port)
++    finally:
++        signal.alarm(0)

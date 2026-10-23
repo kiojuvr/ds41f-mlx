@@ -1,0 +1,54 @@
+{
+  "status": "BLOCKED",
+  "budgets": {
+    "total_s": 5400,
+    "startup_s": 1200,
+    "generation_s": 600,
+    "render_s": 25,
+    "settlement_s": 60,
+    "requests": 16,
+    "tools": 18,
+    "max_tokens": 2600,
+    "correction_iterations": 5,
+    "source_bytes": 65536
+  },
+  "requests": [
+    {
+      "number": 0,
+      "state": "POST_PENDING",
+      "body_bytes": 3050,
+      "body_sha256": "5d1536eb5620680ecbe6c342ad3623c29bb7e4b1bc8ba4cff7435929d0b1ec14",
+      "prompt_tokens": 976,
+      "image_identities": [],
+      "image_is_historical": [],
+      "tool_result_ids": [],
+      "http_status": 200,
+      "message_stop": false
+    }
+  ],
+  "effects": [],
+  "renders": [],
+  "outcomes": {
+    "transport": "NOT_ESTABLISHED",
+    "loop": "NOT_ESTABLISHED",
+    "quality": "NOT_EVALUATED"
+  },
+  "completed_corrections": 0,
+  "pid": 31172,
+  "source_revision": "2fdea4fe7367e540300d7c81d4fed402d716a274",
+  "workspace": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-phase2-workspace-pj_wzcif",
+  "runtime_source_hashes": {
+    "serving/server.py": "ad54035a9076b2dbe608f24da6965c0d77b32f6a0ac0d68770b82e03d5454152",
+    "serving/production_mtp.py": "1ef8663f70f36d3591c921c0dc0a1c4bff4f9dd69efd253f97c86192c20a3d6b",
+    "serving/deepseek_recipe_backend.py": "42676e28b0e2a14c867cebe6550dda43d81cd4a19c888553cc322c58ae7cf2f4"
+  },
+  "failure": {
+    "type": "RemoteProtocolError",
+    "message": "peer closed connection without sending complete message body (incomplete chunked read)"
+  },
+  "shutdown": {
+    "server_thread_alive": false,
+    "workspace_removed": true,
+    "elapsed_s": 115.63341962500272
+  }
+}

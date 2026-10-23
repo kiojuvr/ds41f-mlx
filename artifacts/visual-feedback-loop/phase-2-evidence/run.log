@@ -1,0 +1,132 @@
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/fastapi/applications.py", line 1215, in __call__
+    await super().__call__(scope, receive, send)
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/fastapi/telemetry/_asgi.py", line 151, in __call__
+    await self.app(scope, receive, send)
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/ds41f_mlx/serving/mtp_public.py", line 244, in __call__
+    await self.app(scope, bounded_receive if owned else receive, bounded_send)
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/starlette/routing.py", line 676, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/fastapi/routing.py", line 2786, in app
+    await route.handle(scope, receive, send)
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/fastapi/routing.py", line 1310, in handle
+    await super().handle(scope, receive, send)
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/starlette/routing.py", line 282, in handle
+    await self.app(scope, receive, send)
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/fastapi/routing.py", line 165, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/fastapi/routing.py", line 152, in app
+    await response(scope, receive, send)
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/ds41f_mlx/serving/production_mtp.py", line 515, in __call__
+    await super().__call__(scope, receive, send)
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/ds41f_mlx/serving/server.py", line 150, in __call__
+    await super().__call__(scope, receive, send)
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/starlette/responses.py", line 275, in __call__
+    async with create_collapsing_task_group() as task_group:
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 235, in __aexit__
+    await self.gen.athrow(value)
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/starlette/_utils.py", line 115, in create_collapsing_task_group
+    raise exc from exc.__cause__ or context
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/anyio/_core/_tasks.py", line 327, in _run_coro
+    retval = await self._coro
+             ^^^^^^^^^^^^^^^^
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/starlette/responses.py", line 278, in wrap
+    await func()
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/starlette/responses.py", line 252, in stream_response
+    async for chunk in self.body_iterator:
+    ...<2 lines>...
+        await send({"type": "http.response.body", "body": chunk, "more_body": True})
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/ds41f_mlx/serving/production_mtp.py", line 488, in chunks
+    raise RuntimeError(output.error)
+RuntimeError: numerical execution requires installed MTP admission
+Traceback (most recent call last):
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/httpx/_transports/default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/httpx/_transports/default.py", line 127, in __iter__
+    for part in self._httpcore_stream:
+                ^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/httpcore/_sync/connection_pool.py", line 407, in __iter__
+    raise exc from None
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/httpcore/_sync/connection_pool.py", line 403, in __iter__
+    for part in self._stream:
+                ^^^^^^^^^^^^
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/httpcore/_sync/http11.py", line 342, in __iter__
+    raise exc
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/httpcore/_sync/http11.py", line 334, in __iter__
+    for chunk in self._connection._receive_response_body(**kwargs):
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/httpcore/_sync/http11.py", line 203, in _receive_response_body
+    event = self._receive_event(timeout=timeout)
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/httpcore/_sync/http11.py", line 213, in _receive_event
+    with map_exceptions({h11.RemoteProtocolError: RemoteProtocolError}):
+         ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.RemoteProtocolError: peer closed connection without sending complete message body (incomplete chunked read)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/accept_visual_feedback_loop.py", line 433, in <module>
+    run(a.output,a.renderer_python,a.port)
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/accept_visual_feedback_loop.py", line 301, in run
+    for line in response.iter_lines():
+                ~~~~~~~~~~~~~~~~~~~^^
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/httpx/_models.py", line 929, in iter_lines
+    for text in self.iter_text():
+                ~~~~~~~~~~~~~~^^
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/httpx/_models.py", line 916, in iter_text
+    for byte_content in self.iter_bytes():
+                        ~~~~~~~~~~~~~~~^^
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/httpx/_models.py", line 897, in iter_bytes
+    for raw_bytes in self.iter_raw():
+                     ~~~~~~~~~~~~~^^
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/httpx/_models.py", line 951, in iter_raw
+    for raw_stream_bytes in self.stream:
+                            ^^^^^^^^^^^
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/httpx/_client.py", line 153, in __iter__
+    for chunk in self._stream:
+                 ^^^^^^^^^^^^
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/httpx/_transports/default.py", line 126, in __iter__
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/httpx/_transports/default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.RemoteProtocolError: peer closed connection without sending complete message body (incomplete chunked read)
