@@ -1,16 +1,18 @@
 # Flash-1017 Visual Feedback Loop — Investigation and Implementation Plan
 
-Status: **Proposal; not end-to-end qualification.** No Runtime implementation or installed environment was changed by this review. This document replaces the preliminary investigation with an English plan including the official Harness source review.
+Status: **Phase 0 bounded PASS; complete visual feedback loop not yet qualified.** This documentation update changes no implementation or installed environment. The original source review remains historical; subsequent transport acceptance is scoped below.
 
 ## 1. Decision
 
 Evaluate Vision as an agent capability: **create → render → observe → compare with the goal → edit → render again**, not merely image description.
 
-The necessary building blocks already exist. The first milestone should connect the official Harness's existing `read_image`/attachment pipeline to native Messages, bounded Vision and paired MTP, then retain reproducible evidence of at least two model-directed edit/render iterations. Do not start by adding another Vision executor, a browser inside Runtime, Files API, URL fetching or persistent KV.
+The current priority is to establish the complete loop using the already demonstrated **inline transport**, in this order: **Inline Vision correctness → Direct HTTP visual loop → Official Harness inline loop → Windows normal-operation compatibility → Quality and endurance.** Phases 1–3 do not depend on implementing Files API. Existing Files-to-inline fallback is acceptable for the initial official Harness MVP within request-size, image-history and cache constraints.
 
-Source inspection establishes an image-return path, **not that the installed Harness and Runtime have successfully exercised it**. The highest-priority integration issues are Files-first transport, image-history mutation/offload, and the Runtime's distinction between new and historical images after Recipe conversion.
+**Observed acceptance:** commit `ca2d4ed` retains the [Phase 0 report](../artifacts/visual-feedback-loop/phase-0-report.md) and [acceptance receipt](../artifacts/visual-feedback-loop/phase-0-evidence/receipt.json). Official macOS headless Harness **0.2.1-rc.2** used its existing `read_image` attachment pipeline: `/v1/files` returned **HTTP 404**, existing inline fallback succeeded, native Messages received the base64 image, and Flash-1017 correctly interpreted the screenshot. The exact Tool Call ID and completed Harness turn were preserved. Completion is supported by Harness events; a direct wire `message_stop` was not retained. This does **not** qualify Windows GUI, ordinary image attachments/UI uploads, image history, Thinking ON or the complete visual feedback loop.
 
-## 2. Reviewed revisions and evidence scope
+Existing Runtime Vision preparation, Recipe conversion, native Messages semantics and paired MTP remain execution authorities. Do not add a second image-processing engine, Messages converter, cache implementation or rendering service inside Runtime. Files compatibility is a later evidence-driven milestone, not an inline-MVP prerequisite.
+
+## 2. Historical source review and evidence scope
 
 | Repository | Reviewed revision |
 | --- | --- |
@@ -20,7 +22,7 @@ Source inspection establishes an image-return path, **not that the installed Har
 | official deepseek-harness | `687f282e8625c6b8d11ff58211a90524be2e4317` |
 | packaged Recipe 0.2 upstream base | `93b0fd229cc9ffa6b1a8c63d42b0bf741bbec170`, recorded in `third_party/mtp/normal-local.json` |
 
-Official checkouts were inspected under `/tmp/ds41f-visual-review`. Upstream HEAD is not the packaged Recipe/native payload or necessarily the user's installed Harness. Run conversion regressions against the pinned installed payload before implementing a fix.
+At the original source review, official checkouts were inspected under `/tmp/ds41f-visual-review`. These revisions describe that historical review, not the later Phase 0 installation; the report records its installed identities. Upstream HEAD is not the packaged Recipe/native payload or necessarily the user's installed Harness. Reproduce conversion behavior against the actual packaged Recipe 0.2 implementation before implementing a fix.
 
 Primary official references, pinned to the reviewed revisions:
 
@@ -33,7 +35,7 @@ Primary official references, pinned to the reviewed revisions:
 - [Harness adapter](https://github.com/deepseek-ai/deepseek-harness/blob/687f282e8625c6b8d11ff58211a90524be2e4317/packages/llm/llm-deepseek/src/adapter.ts), [image preparation](https://github.com/deepseek-ai/deepseek-harness/blob/687f282e8625c6b8d11ff58211a90524be2e4317/packages/llm/llm-deepseek/src/images.ts), and [Files resolution](https://github.com/deepseek-ai/deepseek-harness/blob/687f282e8625c6b8d11ff58211a90524be2e4317/packages/llm/llm-deepseek/src/request-files.ts): Files-first requests and bounded inline fallback.
 - [Harness image-offload integration test](https://github.com/deepseek-ai/deepseek-harness/blob/687f282e8625c6b8d11ff58211a90524be2e4317/apps/cli/tests/profiles/acp/tests/image-offload.expected.e2e.ts): expected image results and inline fallback; this is upstream test source, not a ds41f acceptance receipt.
 
-Existing local evidence is scoped by [capabilities](capabilities.md), [Vision integration](mtp-vision-integration.md) and the [development record](deepinfer-development.md). Small Chat-image/cached-follow-up and text/read-only Harness tool receipts do not establish the proposed creation loop.
+Runtime contracts and limits remain scoped by [capabilities](capabilities.md), [Vision integration](mtp-vision-integration.md) and the [development record](deepinfer-development.md). Their historical Harness image-acceptance statements precede the Phase 0 report above; that report is the authority for the later bounded transport PASS, not broader capability expansion. Neither earlier receipts nor Phase 0 establish the proposed creation loop.
 
 The preliminary draft recorded failed local probes: missing `ConversionOptions.with_model_versions_by_name`, and 111 setup errors in four targeted suites because isolated installed-payload checks could not import `ds41f_mlx`. These are environment failures, not passed regressions or reproduced image defects. They were not rerun in this source-only review. Prepare a disposable, admitted installation following [verification](verification.md); do not bypass admission or modify the everyday installation to obtain a green result.
 
@@ -43,14 +45,14 @@ The preliminary draft recorded failed local probes: missing `ConversionOptions.w
 | --- | --- | --- |
 | Image-return tool | Harness `read_image` reads through its filesystem service, commits an attachment and returns text plus an image block; the active model route must advertise image input | Existing Harness tool is the preferred MVP path. A screenshot pathname in ordinary tool text alone is not image feedback |
 | Native wire encoding | Harness serializes tool images as `user.content[].tool_result.content[]`; image source is base64 or file ID | `serving/messages_admission.py:blocks` recursively permits base64 images and rejects Files/URL sources |
-| Transport selection | Adapter tries Files resolution first; `FileResolutionFailure` switches to inline and rechecks image budgets | Local Files failure may already activate compatible fallback. Capture actual requests/statuses before proposing an adapter change; no explicit inline-only switch was established by this review |
+| Transport selection | Adapter tries Files resolution first; `FileResolutionFailure` switches to inline and rechecks image budgets | Phase 0 observed HTTP 404 followed by successful inline Messages delivery; the exception classification is source-correlated, not directly instrumented. No provider fix or explicit inline-only switch was required for that path |
 | Protocol ownership | Recipe converts nested image/text results to Tool messages, with image sources retained | Keep native Messages conversion, thinking/signatures, exact IDs and JSON/SSE. No Messages-to-Chat translation or second parser |
 | Vision execution | DeepInfer expands image placeholders from processor configuration and skips only completely cached spans | `runtime/multimodal.py`, existing MTP adapter and paired Target/DSpark path are the implementation owners. Verify geometry and source order rather than porting GPU workers |
 | Historical image reuse | DeepInfer computes cache coverage using complete image spans | ds41f additionally requires a retained compatible pair for historical images; eviction/edit rejects rather than silently re-encoding history |
 | History management | Harness can normalize request images and offload older occurrences, replacing images with text; serializer merges adjacent user/tool turns | Both transformations affect exact prompt/image identity. They must be tested against paired continuation, not assumed compatible |
 | Render/iterate | Harness owns tools and workflow; protocol/engine code alone does not define a production task | Use external deterministic rendering and the existing image-return tool. Runtime remains an inference service |
 
-### Confirmed source path
+### Source path; Phase 0 qualifies only read_image-to-observation
 
 ```text
 Harness creates/edits workspace files
@@ -64,7 +66,7 @@ Harness creates/edits workspace files
   → completed assistant response → next edit/render/read_image
 ```
 
-A combined render-and-return-image tool can follow later if needed. Reuse the official attachment service rather than inventing a path-to-image interpretation inside Runtime. UI uploads and tool-returned images require separate transport probes.
+The create/edit and repeated render/observe stages above remain proposed; Phase 0 used one externally rendered screenshot. A combined render-and-return-image tool can follow later if needed. Reuse the official attachment service rather than inventing a path-to-image interpretation inside Runtime. Ordinary UI uploads remain unverified; Windows uploads and tool images require separate probes in Phase 3B.
 
 ## 4. Priority gaps
 
@@ -76,24 +78,23 @@ Recipe can expand one wire user message containing multiple tool results into se
 
 Implementation approach:
 
-1. Reproduce conversion with the packaged Recipe, including tool-result ordering and image-source ordering.
-2. Define freshness by the latest wire input turn, not the last normalized message.
+1. Reproduce with the actual packaged Recipe 0.2 implementation, covering multiple tool results, source ordering, trailing text, historical image reuse and paired-cache constraints.
+2. Only if a real defect is reproduced, implement the smallest correction so freshness follows the latest wire input turn rather than merely the last normalized message.
 3. Investigate Recipe-provided origin/source metadata first. If needed, carry minimal non-executable origin metadata through request preparation, with explicit source-count/order assertions. Do not reimplement Recipe normalization or infer freshness from image bytes alone.
-4. Retain complete-span/digest checks for every earlier image; new-image admission must not weaken historical-image fences.
-5. Cover Chat, system updates, branches and mixed result ordering as regressions.
+4. Retain complete-span/digest checks and all historical-image identity/compatibility fences. Add only directly affected Chat/system/branch regressions; this is not a general Vision refactor or full regression campaign.
 
 Likely owners: `serving/messages_admission.py`, `serving/server.py` preparation, `serving/production_mtp.py`, and the prepared-request representation selected after the reproduction.
 
 ### P0 — Files-first behavior and real wire compatibility
 
-The source path is no longer unknown, but its installed behavior is unqualified. Record the exact Harness/provider/plugin revisions and observe:
+Phase 0 qualifies one installed macOS headless tool-image path, including Files 404 and inline fallback; it does not qualify all attachment/history behavior. Reuse its recorded Harness/provider/plugin identities and wire facts. In subsequent loop receipts, retain:
 
 - Files requests against the local endpoint, failure classification, latency, and the subsequent Messages request.
 - Inline base64 inside the actual tool result, not a local path, `file_id`, URL or stringified JSON.
 - MIME after normalization, decoded dimensions, serialized body size and normalized-image digest.
 - Stable historical image bytes/variant across requests, preserved thinking/signatures and exact tool IDs.
 
-First test the existing fallback. If it is unreliable or repeats costly Files probes, propose a small explicit **inline-only route policy in the Harness provider**, with provider tests and no Runtime Files emulation. Do not claim such a setting already exists. Distinguish pre-generation Files fallback from generation POST retry: the latter must not be used to hide an unknown execution outcome.
+Use the demonstrated fallback first; no source fix is indicated for the Phase 0 path. Only if further evidence shows unreliability or costly repeated Files probes, separately propose a small explicit **inline-only route policy in the Harness provider**, with provider tests and no Runtime Files emulation. No such setting is established. Distinguish pre-generation Files fallback from generation POST retry: the latter must not hide an unknown execution outcome. Windows normal-operation contracts are a separate Phase 3B gap.
 
 ### P1 — Offload, compaction and availability
 
@@ -131,61 +132,70 @@ The existing P5 handoff requires two terminal text tokens after all image spans.
 
 ## 6. Implementation phases and exit gates
 
-### Phase 0 — Reproducible environment and transport capture
+### Phase 0 — Reproducible environment and transport capture — bounded PASS
 
-- Prepare an isolated admitted Flash-1017 installation; record checkpoint, wheel, Recipe/native identities and Harness/provider/plugin inventory.
-- Reuse the documented `deepseek-official` native Messages route, image capability advertisement, session-log restrictions and supported tool additions.
-- Capture one UI image and one `read_image` tool result, including Files-to-inline behavior and normalization metadata. Redact credentials/base64 bodies from ordinary logs.
-- Verify that render tools can write a screenshot and `read_image` can read it in the same execution filesystem.
+The [report](../artifacts/visual-feedback-loop/phase-0-report.md) and [receipt](../artifacts/visual-feedback-loop/phase-0-evidence/receipt.json), retained by `ca2d4ed`, record the admitted installation, dependency identities, isolated official macOS headless Harness 0.2.1-rc.2 profile, actual Files 404 → inline delivery, accessible external screenshot and correct observation. No provider source fix was indicated for this tested path.
 
-**Exit:** actual installed image transport is known, image bytes reach nested Messages content, and the need (or lack of need) for a provider patch is established. This is not model-quality acceptance.
+**Exit met, narrowly:** one `read_image` result reached nested native Messages as base64 with exact tool ID and a completed Harness turn. The original UI-image probe ambition was not completed; ordinary uploads and Windows remain separate scope. Historical evidence and its SSE-tail limitation remain unchanged. This is transport/image-informed inference acceptance, not loop or artifact-quality acceptance.
 
-### Phase 1 — Contract regressions and minimal correctness fixes
+### Phase 1 — Inline image correctness and minimal fixes
 
-Extend `tests/test_recipe02_messages_serving.py`, `tests/test_multimodal_contract.py`, `tests/test_metadata_first_vision.py` and `tests/test_expanded_vision_capacity.py` plus paired-cache regressions as appropriate.
+Investigate new versus historical images after conversion using the actual packaged Recipe 0.2 implementation. The suspected new-image misclassification is **not yet a reproduced defect**. Add focused cases to `tests/test_recipe02_messages_serving.py`, `tests/test_multimodal_contract.py`, `tests/test_metadata_first_vision.py`, `tests/test_expanded_vision_capacity.py` and paired-cache tests only where relevant:
 
-Required cases:
+- Multiple results in one wire turn; new image first/middle/last; source ordering, trailing text and tool-call versus returned-result ordering.
+- Historical image plus fresh screenshot; cached old spans plus uncached new spans; identical bytes in distinct occurrences.
+- Historical identity/normalization changes and unavailable/evicted pairs must retain existing rejection fences; validate image-last terminal-text constraints.
 
-- Text+image, image-only, multiple images, text before/after images.
-- Multiple results in one wire turn; new image first/middle/last; trailing user text; tool-call versus returned-result ordering.
-- Historical target image plus fresh screenshot; cached old spans plus uncached new spans.
-- Thinking on/off, signatures, exact IDs, JSON and SSE completion.
-- Invalid base64/MIME, unknown/duplicate IDs, unsupported URL/file sources, resource excess and special-token-like tool text.
-- Same image bytes in different occurrences; changed pixels with identical placeholder tokens; changed historical image; cancellation and pair eviction.
-- Harness normalization stability, Files fallback and offload/compaction boundary behavior.
+Implement the smallest correction only if a real defect is reproduced. Preserve Recipe semantics, exact tool IDs, historical digest/grid/span identity, compatibility fences and existing cache/Vision/MTP ownership. Use focused affected regressions, not a general Vision refactor or full regression campaign. Thinking ON and broader negative/compatibility coverage are not implied by this gate.
 
-Fix origin classification only after reproducing the problematic conversion. Keep the existing cache owner, Vision executor and native semantic owner.
-
-**Exit:** ordered sources, digest/grid/span and required frontier are consistent; new images do not require an old pair; incompatible old images still reject. Existing Chat/text/paired regressions pass in the admitted environment.
+**Exit:** retained reproduction/test evidence establishes consistent ordered sources and required frontier; newly supplied images do not incorrectly require an old pair, and incompatible historical images still reject. Any correction passes directly affected regressions in an admitted environment; no speculative fix is required if the risk is not reproduced.
 
 ### Phase 2 — Direct-HTTP real-model loop
 
 Proposed new evaluation driver: `tools/accept_visual_feedback_loop.py`, following the real-socket, trace and durable-receipt pattern in `tools/accept_mtp_vision.py`. This isolates Runtime correctness; it is not a substitute Harness product.
 
-- One conversation, bounded tool set, maximum five correction iterations and fixed time/token budgets.
-- Model creates or edits code, renders, receives the image, judges discrepancies and chooses the next edit. The driver must not inject the correct patch or describe the visual defect for it.
-- Include a controlled initial mismatch and retain at least two actual model-directed correction/render iterations.
+- One bounded conversation, deterministic rendering environment, bounded tool set, maximum five correction iterations and fixed time/token budgets. Use inline images; Files API is not a dependency.
+- Model creates or edits an artifact; an external renderer produces the actual screenshot; the driver delivers it as image content through native Messages. The model independently observes the result and chooses subsequent changes. The driver must not inject the correct patch or describe the visual discrepancy to it.
+- Include a controlled initial mismatch and retain at least two actual model-directed edit/render correction iterations, each guided by delivered image content.
+- Preflight the entire JSON body (16 MiB), aggregate image/context budgets and paired-cache availability, including history. Preserve historical identities; stop or explicitly restart rather than silently replaying after eviction/projection changes. Execute tools only after settled native completion as required in §8.
 - Check old-image encode count is zero on reuse, new-image encoding corresponds to uncached spans, Target/DSpark frontiers agree, and forbidden historical replay/full repack does not occur. Add narrow trace fields if existing telemetry cannot prove these facts.
 - Separate negative cases: SSE disconnect/cancel, tool timeout/error, blank screenshot, oversized body and pair eviction. Fence unknown tool outcomes; do not rerun effects automatically.
 
-**Exit:** images, tool IDs, code diffs, renders and Runtime traces form one auditable loop. No claim of official Harness acceptance yet.
+**Minimum inline MVP exit:** image identities (raw and transmitted), exact tool IDs, source revisions/diffs, rendered artifacts and Runtime traces prove at least two model-directed correction iterations in one bounded conversation. Record transport success, loop execution success and independently assessed artifact-quality success separately; a completed loop does not itself prove quality. No official Harness acceptance is claimed yet.
 
-### Phase 3 — Official Harness end-to-end acceptance
+### Phase 3 — Official Harness inline MVP
 
-- Run the same Web task through the actual official Harness using its existing render/write tools and `read_image`; add only the smallest provider change justified by Phase 0.
-- Run a fixed-camera 3D task next.
-- Verify actual wire traffic, not only Harness UI previews or attachment metadata.
-- Require multiple image-guided edits/renders without human image descriptions or patches. Record provider version and OS scope.
+- Run the same bounded Web loop through the official Harness, initially in the qualified macOS environment, using its existing tools and `read_image`/attachment architecture with external rendering.
+- Reuse Phase 0's demonstrated Files-to-inline fallback, not new Files infrastructure. Observe whole-request, image-history and cache constraints; Phase 3 has no Files API implementation dependency.
+- Verify actual wire traffic, not only UI previews or attachment metadata. Require at least two image-guided edit/render correction iterations without human/driver descriptions of discrepancies or supplied patches.
+- Retain the same auditable images, exact tool IDs, source revisions, rendered artifacts and Runtime traces as Phase 2. Record transport, loop and artifact-quality outcomes separately. Run a fixed-camera 3D task next as additional scoped evidence.
 
-**Exit:** a durable receipt proves the complete official-Harness loop. Only then narrowly update README/[capabilities](capabilities.md) image-workflow qualification language.
+**Exit:** a durable receipt proves the bounded inline loop and explicitly identifies the tested OS, Harness/provider versions, image transport and Runtime installation. Only then narrowly update README/[capabilities](capabilities.md) image-workflow qualification language. macOS headless acceptance does not establish Windows normal-operation support.
+
+### Phase 3B — Windows normal-operation compatibility
+
+**Known failure (user observation):** ordinary image handling in Windows DeepSeek Harness currently fails. The precise failing protocol boundary has not yet been established by a retained Windows wire trace. A successful macOS inline fallback does not remove this compatibility requirement.
+
+After the inline MVP:
+
+1. Reproduce and characterize actual Windows ordinary image-upload and tool-image behavior through its normal interaction flow; retain sanitized wire evidence and installation identities.
+2. Identify the API/transport contracts actually required by those workflows rather than inferring them from macOS headless behavior.
+3. Evaluate Files API upload, file-ID references, Messages file-reference resolution, required lifecycle operations and any other observed missing boundaries together. Do not assume `POST /v1/files` alone is sufficient.
+4. Define a separate evidence-driven design and implementation task, then implement only the subset necessary for supported Windows workflows under that task's authorization. This plan does not pre-authorize a full Files API, storage architecture, persistent KV or unrelated protocol extensions.
+5. Resolve any supported file-backed images into existing Vision preparation and paired MTP, preserving Recipe/native Messages ownership and image/cache fences; do not create another Vision executor.
+6. Re-run the same bounded visual feedback task through Windows Harness's normal interaction flow, including at least two image-guided correction iterations and auditable evidence.
+
+**Exit:** required Windows contracts and the supported workflow scope are explicit; a version/transport/Runtime-scoped receipt demonstrates normal-operation compatibility and the same loop. Unimplemented or untested boundaries remain excluded, not implied by upload success.
 
 ### Phase 4 — Quality and endurance
+
+The planned integrated progression follows Phase 3B for Windows workflow claims. Independent quality/endurance experiments may proceed on the qualified macOS inline path without waiting for Windows compatibility; scope each result to its actual environment and transport.
 
 - Measure 10–20 iterations, competing conversations/cache pressure, history/body growth, normalization/preparation/Vision time, prefill/TTFT, total task time and failure rate.
 - Preflight whole-body bytes, image count/bytes, pixels, patches and expanded context. Current limits include aspect 1:2–2:1, 4,194,304 source pixels and 1014 expanded positions per image; aggregate preparation limits remain authoritative in [capabilities](capabilities.md).
 - Start with one PNG/JPEG per iteration, targeting at most 512 KiB when readable; this is a proposed operating target, not a new Runtime limit. Use viewport captures or explicit crops rather than unsupported tall full-page screenshots. Record crop coordinates and scale.
 - Compare overview-plus-crop for small UI text within existing budgets. Qualify any resolution/preprocessing/limit changes separately.
-- Exercise explicit fresh-conversation checkpoints. Evaluate Files/URL support, Messages session semantics or persistence only in separate designs justified by measurements.
+- Exercise explicit fresh-conversation checkpoints. Phase 3B owns evidence-driven Windows Files-contract evaluation; broader Files/URL support, Messages session semantics or persistence still require separate designs justified by measurements.
 
 ## 7. Evaluate agency, not just transport
 
@@ -209,4 +219,4 @@ Persist RUNNING/FAIL/PASS receipts with dependency identities, task/goal hashes,
 - No silent image deletion/replacement, automatic historical re-encoding, speculative effect execution or generation retries to mask uncertain outcomes.
 - Do not revive retired Browser/server-side Web Tool applications or embed a renderer in Runtime.
 
-**First deliverable:** reproducible evidence that Flash-1017, running through the official Harness, observes its own rendered output and performs at least two subsequent code-edit/render iterations. Capability claims remain bounded by that receipt, not by source inspection alone.
+**Next development gate:** Phase 1's focused inline correctness investigation, only under a separately authorized task. The first complete-loop deliverables remain Direct HTTP followed by official Harness inline evidence of at least two model-directed correction iterations, then Windows normal-operation compatibility and quality/endurance. Phase 0 is complete only within its recorded scope; capability claims remain bounded by receipts. This plan update does not start implementation.
