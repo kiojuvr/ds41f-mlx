@@ -1,0 +1,598 @@
+.FF.FFFFFFF.FFF.F.                                                       [100%]
+=================================== FAILURES ===================================
+__ test_wire_image_origin_survives_recipe_expansion[slots1-False-False-False] __
+
+slots = ['red', None, None], trailing = False, historical = False
+identical = False
+
+    @pytest.mark.parametrize('slots,trailing,historical,identical', [
+        (['red'], False, False, False),
+        (['red', None, None], False, False, False),
+        ([None, 'red', None], False, False, False),
+        ([None, None, 'red'], False, False, False),
+        (['red', None], False, False, False),
+        (['red'], True, False, False),
+        (['blue', None], False, True, False),
+        (['red', None], True, True, True),
+        (['blue', 'green', 'red'], True, True, False),
+    ])
+    def test_wire_image_origin_survives_recipe_expansion(slots, trailing, historical, identical):
+        from hashlib import sha256
+        from ds41f_mlx.runtime.multimodal import image_bytes
+        body, ids = image_results_body(slots, trailing=trailing, historical=historical, identical=identical)
+        # Return order need not be tool-call order. Exact opaque IDs survive.
+        body['messages'][1]['content'].reverse()
+        prepared, request = enqueue_images(body)
+        converted = prepared.conversation_request.conversation.messages
+        assert [m.tool_call_id for m in converted if m.role == 'tool'] == ids
+        assert [c.id for m in converted if m.role == 'assistant' for c in m.tool_calls] == ids[::-1]
+        sources = [s for m in converted for s in m.image_sources]
+        old_paths = ['messages.0.content[0]'] if historical else []
+        new_paths = [f'messages.2.content.{i}.tool_result' for i, color in enumerate(slots) if color]
+        assert [s.path for s in sources] == old_paths + new_paths
+        # Recipe renders results in tool-call order, not returned-result order.
+        # Multimodal identities and origin metadata must follow RENDERED sources.
+        assert [s.path for s in prepared.image_sources] == old_paths + new_paths[::-1]
+        assert [sha256(image_bytes(s)).hexdigest() for s in prepared.image_sources] == [
+            s['sha256'] for s in request.image_identities]
+        assert prepared.image_is_historical == (True,) * int(historical) + (False,) * sum(bool(c) for c in slots)
+        expected = request.image_identities[0]['start'] + request.image_identities[0]['length'] if historical else 0
+>       assert request.required_image_frontier == expected
+E       AssertionError: assert 493 == 0
+E        +  where 493 = Request(request_id='image', prompt=[0, 128799, 271, 372, 27193, 271, 3476, 611, 3278, 304, 260, 1341, 294, 6704, 304, ...che_corruption_retries=0, generation_overflow_retries=0, prefill_oom_retries=0, prefill_eviction_retries=0, tools=None).required_image_frontier
+
+tests/test_recipe02_messages_serving.py:341: AssertionError
+__ test_wire_image_origin_survives_recipe_expansion[slots2-False-False-False] __
+
+slots = [None, 'red', None], trailing = False, historical = False
+identical = False
+
+    @pytest.mark.parametrize('slots,trailing,historical,identical', [
+        (['red'], False, False, False),
+        (['red', None, None], False, False, False),
+        ([None, 'red', None], False, False, False),
+        ([None, None, 'red'], False, False, False),
+        (['red', None], False, False, False),
+        (['red'], True, False, False),
+        (['blue', None], False, True, False),
+        (['red', None], True, True, True),
+        (['blue', 'green', 'red'], True, True, False),
+    ])
+    def test_wire_image_origin_survives_recipe_expansion(slots, trailing, historical, identical):
+        from hashlib import sha256
+        from ds41f_mlx.runtime.multimodal import image_bytes
+        body, ids = image_results_body(slots, trailing=trailing, historical=historical, identical=identical)
+        # Return order need not be tool-call order. Exact opaque IDs survive.
+        body['messages'][1]['content'].reverse()
+        prepared, request = enqueue_images(body)
+        converted = prepared.conversation_request.conversation.messages
+        assert [m.tool_call_id for m in converted if m.role == 'tool'] == ids
+        assert [c.id for m in converted if m.role == 'assistant' for c in m.tool_calls] == ids[::-1]
+        sources = [s for m in converted for s in m.image_sources]
+        old_paths = ['messages.0.content[0]'] if historical else []
+        new_paths = [f'messages.2.content.{i}.tool_result' for i, color in enumerate(slots) if color]
+        assert [s.path for s in sources] == old_paths + new_paths
+        # Recipe renders results in tool-call order, not returned-result order.
+        # Multimodal identities and origin metadata must follow RENDERED sources.
+        assert [s.path for s in prepared.image_sources] == old_paths + new_paths[::-1]
+        assert [sha256(image_bytes(s)).hexdigest() for s in prepared.image_sources] == [
+            s['sha256'] for s in request.image_identities]
+        assert prepared.image_is_historical == (True,) * int(historical) + (False,) * sum(bool(c) for c in slots)
+        expected = request.image_identities[0]['start'] + request.image_identities[0]['length'] if historical else 0
+>       assert request.required_image_frontier == expected
+E       AssertionError: assert 484 == 0
+E        +  where 484 = Request(request_id='image', prompt=[0, 128799, 271, 372, 27193, 271, 3476, 611, 3278, 304, 260, 1341, 294, 6704, 304, ...che_corruption_retries=0, generation_overflow_retries=0, prefill_oom_retries=0, prefill_eviction_retries=0, tools=None).required_image_frontier
+
+tests/test_recipe02_messages_serving.py:341: AssertionError
+__ test_wire_image_origin_survives_recipe_expansion[slots4-False-False-False] __
+
+slots = ['red', None], trailing = False, historical = False, identical = False
+
+    @pytest.mark.parametrize('slots,trailing,historical,identical', [
+        (['red'], False, False, False),
+        (['red', None, None], False, False, False),
+        ([None, 'red', None], False, False, False),
+        ([None, None, 'red'], False, False, False),
+        (['red', None], False, False, False),
+        (['red'], True, False, False),
+        (['blue', None], False, True, False),
+        (['red', None], True, True, True),
+        (['blue', 'green', 'red'], True, True, False),
+    ])
+    def test_wire_image_origin_survives_recipe_expansion(slots, trailing, historical, identical):
+        from hashlib import sha256
+        from ds41f_mlx.runtime.multimodal import image_bytes
+        body, ids = image_results_body(slots, trailing=trailing, historical=historical, identical=identical)
+        # Return order need not be tool-call order. Exact opaque IDs survive.
+        body['messages'][1]['content'].reverse()
+        prepared, request = enqueue_images(body)
+        converted = prepared.conversation_request.conversation.messages
+        assert [m.tool_call_id for m in converted if m.role == 'tool'] == ids
+        assert [c.id for m in converted if m.role == 'assistant' for c in m.tool_calls] == ids[::-1]
+        sources = [s for m in converted for s in m.image_sources]
+        old_paths = ['messages.0.content[0]'] if historical else []
+        new_paths = [f'messages.2.content.{i}.tool_result' for i, color in enumerate(slots) if color]
+        assert [s.path for s in sources] == old_paths + new_paths
+        # Recipe renders results in tool-call order, not returned-result order.
+        # Multimodal identities and origin metadata must follow RENDERED sources.
+        assert [s.path for s in prepared.image_sources] == old_paths + new_paths[::-1]
+        assert [sha256(image_bytes(s)).hexdigest() for s in prepared.image_sources] == [
+            s['sha256'] for s in request.image_identities]
+        assert prepared.image_is_historical == (True,) * int(historical) + (False,) * sum(bool(c) for c in slots)
+        expected = request.image_identities[0]['start'] + request.image_identities[0]['length'] if historical else 0
+>       assert request.required_image_frontier == expected
+E       AssertionError: assert 472 == 0
+E        +  where 472 = Request(request_id='image', prompt=[0, 128799, 271, 372, 27193, 271, 3476, 611, 3278, 304, 260, 1341, 294, 6704, 304, ...che_corruption_retries=0, generation_overflow_retries=0, prefill_oom_retries=0, prefill_eviction_retries=0, tools=None).required_image_frontier
+
+tests/test_recipe02_messages_serving.py:341: AssertionError
+__ test_wire_image_origin_survives_recipe_expansion[slots5-True-False-False] ___
+
+slots = ['red'], trailing = True, historical = False, identical = False
+
+    @pytest.mark.parametrize('slots,trailing,historical,identical', [
+        (['red'], False, False, False),
+        (['red', None, None], False, False, False),
+        ([None, 'red', None], False, False, False),
+        ([None, None, 'red'], False, False, False),
+        (['red', None], False, False, False),
+        (['red'], True, False, False),
+        (['blue', None], False, True, False),
+        (['red', None], True, True, True),
+        (['blue', 'green', 'red'], True, True, False),
+    ])
+    def test_wire_image_origin_survives_recipe_expansion(slots, trailing, historical, identical):
+        from hashlib import sha256
+        from ds41f_mlx.runtime.multimodal import image_bytes
+        body, ids = image_results_body(slots, trailing=trailing, historical=historical, identical=identical)
+        # Return order need not be tool-call order. Exact opaque IDs survive.
+        body['messages'][1]['content'].reverse()
+        prepared, request = enqueue_images(body)
+        converted = prepared.conversation_request.conversation.messages
+        assert [m.tool_call_id for m in converted if m.role == 'tool'] == ids
+        assert [c.id for m in converted if m.role == 'assistant' for c in m.tool_calls] == ids[::-1]
+        sources = [s for m in converted for s in m.image_sources]
+        old_paths = ['messages.0.content[0]'] if historical else []
+        new_paths = [f'messages.2.content.{i}.tool_result' for i, color in enumerate(slots) if color]
+        assert [s.path for s in sources] == old_paths + new_paths
+        # Recipe renders results in tool-call order, not returned-result order.
+        # Multimodal identities and origin metadata must follow RENDERED sources.
+        assert [s.path for s in prepared.image_sources] == old_paths + new_paths[::-1]
+        assert [sha256(image_bytes(s)).hexdigest() for s in prepared.image_sources] == [
+            s['sha256'] for s in request.image_identities]
+        assert prepared.image_is_historical == (True,) * int(historical) + (False,) * sum(bool(c) for c in slots)
+        expected = request.image_identities[0]['start'] + request.image_identities[0]['length'] if historical else 0
+>       assert request.required_image_frontier == expected
+E       AssertionError: assert 451 == 0
+E        +  where 451 = Request(request_id='image', prompt=[0, 128799, 271, 372, 27193, 271, 3476, 611, 3278, 304, 260, 1341, 294, 6704, 304, ...che_corruption_retries=0, generation_overflow_retries=0, prefill_oom_retries=0, prefill_eviction_retries=0, tools=None).required_image_frontier
+
+tests/test_recipe02_messages_serving.py:341: AssertionError
+__ test_wire_image_origin_survives_recipe_expansion[slots6-False-True-False] ___
+
+slots = ['blue', None], trailing = False, historical = True, identical = False
+
+    @pytest.mark.parametrize('slots,trailing,historical,identical', [
+        (['red'], False, False, False),
+        (['red', None, None], False, False, False),
+        ([None, 'red', None], False, False, False),
+        ([None, None, 'red'], False, False, False),
+        (['red', None], False, False, False),
+        (['red'], True, False, False),
+        (['blue', None], False, True, False),
+        (['red', None], True, True, True),
+        (['blue', 'green', 'red'], True, True, False),
+    ])
+    def test_wire_image_origin_survives_recipe_expansion(slots, trailing, historical, identical):
+        from hashlib import sha256
+        from ds41f_mlx.runtime.multimodal import image_bytes
+        body, ids = image_results_body(slots, trailing=trailing, historical=historical, identical=identical)
+        # Return order need not be tool-call order. Exact opaque IDs survive.
+        body['messages'][1]['content'].reverse()
+        prepared, request = enqueue_images(body)
+        converted = prepared.conversation_request.conversation.messages
+        assert [m.tool_call_id for m in converted if m.role == 'tool'] == ids
+        assert [c.id for m in converted if m.role == 'assistant' for c in m.tool_calls] == ids[::-1]
+        sources = [s for m in converted for s in m.image_sources]
+        old_paths = ['messages.0.content[0]'] if historical else []
+        new_paths = [f'messages.2.content.{i}.tool_result' for i, color in enumerate(slots) if color]
+        assert [s.path for s in sources] == old_paths + new_paths
+        # Recipe renders results in tool-call order, not returned-result order.
+        # Multimodal identities and origin metadata must follow RENDERED sources.
+        assert [s.path for s in prepared.image_sources] == old_paths + new_paths[::-1]
+        assert [sha256(image_bytes(s)).hexdigest() for s in prepared.image_sources] == [
+            s['sha256'] for s in request.image_identities]
+        assert prepared.image_is_historical == (True,) * int(historical) + (False,) * sum(bool(c) for c in slots)
+        expected = request.image_identities[0]['start'] + request.image_identities[0]['length'] if historical else 0
+>       assert request.required_image_frontier == expected
+E       AssertionError: assert 657 == 420
+E        +  where 657 = Request(request_id='image', prompt=[0, 128799, 271, 372, 27193, 271, 3476, 611, 3278, 304, 260, 1341, 294, 6704, 304, ...che_corruption_retries=0, generation_overflow_retries=0, prefill_oom_retries=0, prefill_eviction_retries=0, tools=None).required_image_frontier
+
+tests/test_recipe02_messages_serving.py:341: AssertionError
+___ test_wire_image_origin_survives_recipe_expansion[slots7-True-True-True] ____
+
+slots = ['red', None], trailing = True, historical = True, identical = True
+
+    @pytest.mark.parametrize('slots,trailing,historical,identical', [
+        (['red'], False, False, False),
+        (['red', None, None], False, False, False),
+        ([None, 'red', None], False, False, False),
+        ([None, None, 'red'], False, False, False),
+        (['red', None], False, False, False),
+        (['red'], True, False, False),
+        (['blue', None], False, True, False),
+        (['red', None], True, True, True),
+        (['blue', 'green', 'red'], True, True, False),
+    ])
+    def test_wire_image_origin_survives_recipe_expansion(slots, trailing, historical, identical):
+        from hashlib import sha256
+        from ds41f_mlx.runtime.multimodal import image_bytes
+        body, ids = image_results_body(slots, trailing=trailing, historical=historical, identical=identical)
+        # Return order need not be tool-call order. Exact opaque IDs survive.
+        body['messages'][1]['content'].reverse()
+        prepared, request = enqueue_images(body)
+        converted = prepared.conversation_request.conversation.messages
+        assert [m.tool_call_id for m in converted if m.role == 'tool'] == ids
+        assert [c.id for m in converted if m.role == 'assistant' for c in m.tool_calls] == ids[::-1]
+        sources = [s for m in converted for s in m.image_sources]
+        old_paths = ['messages.0.content[0]'] if historical else []
+        new_paths = [f'messages.2.content.{i}.tool_result' for i, color in enumerate(slots) if color]
+        assert [s.path for s in sources] == old_paths + new_paths
+        # Recipe renders results in tool-call order, not returned-result order.
+        # Multimodal identities and origin metadata must follow RENDERED sources.
+        assert [s.path for s in prepared.image_sources] == old_paths + new_paths[::-1]
+        assert [sha256(image_bytes(s)).hexdigest() for s in prepared.image_sources] == [
+            s['sha256'] for s in request.image_identities]
+        assert prepared.image_is_historical == (True,) * int(historical) + (False,) * sum(bool(c) for c in slots)
+        expected = request.image_identities[0]['start'] + request.image_identities[0]['length'] if historical else 0
+>       assert request.required_image_frontier == expected
+E       AssertionError: assert 657 == 420
+E        +  where 657 = Request(request_id='image', prompt=[0, 128799, 271, 372, 27193, 271, 3476, 611, 3278, 304, 260, 1341, 294, 6704, 304, ...che_corruption_retries=0, generation_overflow_retries=0, prefill_oom_retries=0, prefill_eviction_retries=0, tools=None).required_image_frontier
+
+tests/test_recipe02_messages_serving.py:341: AssertionError
+___ test_wire_image_origin_survives_recipe_expansion[slots8-True-True-False] ___
+
+slots = ['blue', 'green', 'red'], trailing = True, historical = True
+identical = False
+
+    @pytest.mark.parametrize('slots,trailing,historical,identical', [
+        (['red'], False, False, False),
+        (['red', None, None], False, False, False),
+        ([None, 'red', None], False, False, False),
+        ([None, None, 'red'], False, False, False),
+        (['red', None], False, False, False),
+        (['red'], True, False, False),
+        (['blue', None], False, True, False),
+        (['red', None], True, True, True),
+        (['blue', 'green', 'red'], True, True, False),
+    ])
+    def test_wire_image_origin_survives_recipe_expansion(slots, trailing, historical, identical):
+        from hashlib import sha256
+        from ds41f_mlx.runtime.multimodal import image_bytes
+        body, ids = image_results_body(slots, trailing=trailing, historical=historical, identical=identical)
+        # Return order need not be tool-call order. Exact opaque IDs survive.
+        body['messages'][1]['content'].reverse()
+        prepared, request = enqueue_images(body)
+        converted = prepared.conversation_request.conversation.messages
+        assert [m.tool_call_id for m in converted if m.role == 'tool'] == ids
+        assert [c.id for m in converted if m.role == 'assistant' for c in m.tool_calls] == ids[::-1]
+        sources = [s for m in converted for s in m.image_sources]
+        old_paths = ['messages.0.content[0]'] if historical else []
+        new_paths = [f'messages.2.content.{i}.tool_result' for i, color in enumerate(slots) if color]
+        assert [s.path for s in sources] == old_paths + new_paths
+        # Recipe renders results in tool-call order, not returned-result order.
+        # Multimodal identities and origin metadata must follow RENDERED sources.
+        assert [s.path for s in prepared.image_sources] == old_paths + new_paths[::-1]
+        assert [sha256(image_bytes(s)).hexdigest() for s in prepared.image_sources] == [
+            s['sha256'] for s in request.image_identities]
+        assert prepared.image_is_historical == (True,) * int(historical) + (False,) * sum(bool(c) for c in slots)
+        expected = request.image_identities[0]['start'] + request.image_identities[0]['length'] if historical else 0
+>       assert request.required_image_frontier == expected
+E       AssertionError: assert 1044 == 420
+E        +  where 1044 = Request(request_id='image', prompt=[0, 128799, 271, 372, 27193, 271, 3476, 611, 3278, 304, 260, 1341, 294, 6704, 304, ...che_corruption_retries=0, generation_overflow_retries=0, prefill_oom_retries=0, prefill_eviction_retries=0, tools=None).required_image_frontier
+
+tests/test_recipe02_messages_serving.py:341: AssertionError
+_________ test_multiple_occurrences_in_one_result_keep_rendered_order __________
+
+    def test_multiple_occurrences_in_one_result_keep_rendered_order():
+        from hashlib import sha256
+        from ds41f_mlx.runtime.multimodal import image_bytes
+        body, _ = image_results_body(['red', None], historical=True, identical=True)
+        body['messages'][-1]['content'][0]['content'] += [inline_image('blue'), inline_image()]
+        prepared, request = enqueue_images(body)
+        assert prepared.image_is_historical == (True, False, False, False)
+        assert [s.path for s in prepared.image_sources] == ['messages.0.content[0]'] + [
+            'messages.2.content.0.tool_result'] * 3
+        identities = request.image_identities
+        assert [i['sha256'] for i in identities] == [sha256(image_bytes(s)).hexdigest() for s in prepared.image_sources]
+        assert identities[0]['sha256'] == identities[1]['sha256'] == identities[3]['sha256']
+        assert identities[0]['sha256'] != identities[2]['sha256']
+        assert [i['start'] for i in identities] == sorted({i['start'] for i in identities})
+>       assert request.required_image_frontier == identities[0]['start'] + identities[0]['length']
+E       AssertionError: assert 1018 == (236 + 184)
+E        +  where 1018 = Request(request_id='image', prompt=[0, 128799, 271, 372, 27193, 271, 3476, 611, 3278, 304, 260, 1341, 294, 6704, 304, ...che_corruption_retries=0, generation_overflow_retries=0, prefill_oom_retries=0, prefill_eviction_retries=0, tools=None).required_image_frontier
+
+tests/test_recipe02_messages_serving.py:360: AssertionError
+____ test_converted_image_frontier_at_real_paired_admission[missing-False] _____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x16a850590>
+historical = False, cache = 'missing'
+
+    @pytest.mark.parametrize('historical', [False, True])
+    @pytest.mark.parametrize('cache', ['missing', 'retained', 'evicted', 'changed'])
+    def test_converted_image_frontier_at_real_paired_admission(monkeypatch, historical, cache):
+        from types import SimpleNamespace as NS
+        import mlx.core as mx
+        from ds41f_mlx.serving.paired_checkpoint import PairedCheckpointAuthority
+        from test_metadata_first_vision import scheduler_request
+        from test_production_mtp import MX, pair
+        body, _ = image_results_body(['red', None], historical=historical, identical=True)
+        retained_images = None
+        if historical and cache == 'changed':
+            previous, _ = enqueue_images(body)
+            retained_images = previous.multimodal.identities()[:1]
+            previous.multimodal.release_sources()
+            # A real wire-history edit, converted by Recipe, not just a forged hash.
+            body['messages'][0]['content'][0] = inline_image('blue')
+        prepared, enqueued = enqueue_images(body)
+        inp = prepared.multimodal
+        authority = PairedCheckpointAuthority('identity', MX)
+        frontier = inp.spans[-1].start
+        if cache != 'missing':
+            images = inp.identities()[:int(historical)] if retained_images is None else retained_images
+            authority.publish(authority.capture(*pair(frontier)[:2], inp.token_ids[:frontier], images))
+            if cache == 'evicted':
+                authority.clear()
+        scheduler, request = scheduler_request(inp, authority)
+        request.prepared = prepared
+        request.required_image_frontier = enqueued.required_image_frontier
+        errors, starts, encoded = [], [], []
+        def start(rec, prepared, tokenizer, trace, **kwargs):
+            starts.append(len(rec.canonical))
+            rows = inp.encode_new(NS(config=inp._config), len(rec.canonical),
+                span_encoder=lambda pixels, h, w, kinds: mx.ones((len(kinds), 4)))
+            encoded.extend(s for s, _ in rows.rows)
+            scheduler.batch_generator = object()
+            rec.owner = NS(uid=17, _bg=scheduler.batch_generator)
+        scheduler.backend = NS(_start=start)
+        scheduler._retire = lambda req, *, error: errors.append(error)
+        scheduled, _ = scheduler._schedule_waiting()
+        if historical and cache != 'retained':
+            assert not scheduled and not starts and not encoded
+            assert len(errors) == 1 and 'historical image pair unavailable' in str(errors[0])
+            assert not request.native_started
+        else:
+>           assert not errors, errors
+E           AssertionError: [ValueError('historical image pair unavailable; image replay/re-encode forbidden')]
+E           assert not [ValueError('historical image pair unavailable; image replay/re-encode forbidden')]
+
+tests/test_recipe02_messages_serving.py:424: AssertionError
+____ test_converted_image_frontier_at_real_paired_admission[retained-False] ____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x16ac44050>
+historical = False, cache = 'retained'
+
+    @pytest.mark.parametrize('historical', [False, True])
+    @pytest.mark.parametrize('cache', ['missing', 'retained', 'evicted', 'changed'])
+    def test_converted_image_frontier_at_real_paired_admission(monkeypatch, historical, cache):
+        from types import SimpleNamespace as NS
+        import mlx.core as mx
+        from ds41f_mlx.serving.paired_checkpoint import PairedCheckpointAuthority
+        from test_metadata_first_vision import scheduler_request
+        from test_production_mtp import MX, pair
+        body, _ = image_results_body(['red', None], historical=historical, identical=True)
+        retained_images = None
+        if historical and cache == 'changed':
+            previous, _ = enqueue_images(body)
+            retained_images = previous.multimodal.identities()[:1]
+            previous.multimodal.release_sources()
+            # A real wire-history edit, converted by Recipe, not just a forged hash.
+            body['messages'][0]['content'][0] = inline_image('blue')
+        prepared, enqueued = enqueue_images(body)
+        inp = prepared.multimodal
+        authority = PairedCheckpointAuthority('identity', MX)
+        frontier = inp.spans[-1].start
+        if cache != 'missing':
+            images = inp.identities()[:int(historical)] if retained_images is None else retained_images
+            authority.publish(authority.capture(*pair(frontier)[:2], inp.token_ids[:frontier], images))
+            if cache == 'evicted':
+                authority.clear()
+        scheduler, request = scheduler_request(inp, authority)
+        request.prepared = prepared
+        request.required_image_frontier = enqueued.required_image_frontier
+        errors, starts, encoded = [], [], []
+        def start(rec, prepared, tokenizer, trace, **kwargs):
+            starts.append(len(rec.canonical))
+            rows = inp.encode_new(NS(config=inp._config), len(rec.canonical),
+                span_encoder=lambda pixels, h, w, kinds: mx.ones((len(kinds), 4)))
+            encoded.extend(s for s, _ in rows.rows)
+            scheduler.batch_generator = object()
+            rec.owner = NS(uid=17, _bg=scheduler.batch_generator)
+        scheduler.backend = NS(_start=start)
+        scheduler._retire = lambda req, *, error: errors.append(error)
+        scheduled, _ = scheduler._schedule_waiting()
+        if historical and cache != 'retained':
+            assert not scheduled and not starts and not encoded
+            assert len(errors) == 1 and 'historical image pair unavailable' in str(errors[0])
+            assert not request.native_started
+        else:
+>           assert not errors, errors
+E           AssertionError: [ValueError('historical image pair unavailable; image replay/re-encode forbidden')]
+E           assert not [ValueError('historical image pair unavailable; image replay/re-encode forbidden')]
+
+tests/test_recipe02_messages_serving.py:424: AssertionError
+____ test_converted_image_frontier_at_real_paired_admission[retained-True] _____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x16a737e90>
+historical = True, cache = 'retained'
+
+    @pytest.mark.parametrize('historical', [False, True])
+    @pytest.mark.parametrize('cache', ['missing', 'retained', 'evicted', 'changed'])
+    def test_converted_image_frontier_at_real_paired_admission(monkeypatch, historical, cache):
+        from types import SimpleNamespace as NS
+        import mlx.core as mx
+        from ds41f_mlx.serving.paired_checkpoint import PairedCheckpointAuthority
+        from test_metadata_first_vision import scheduler_request
+        from test_production_mtp import MX, pair
+        body, _ = image_results_body(['red', None], historical=historical, identical=True)
+        retained_images = None
+        if historical and cache == 'changed':
+            previous, _ = enqueue_images(body)
+            retained_images = previous.multimodal.identities()[:1]
+            previous.multimodal.release_sources()
+            # A real wire-history edit, converted by Recipe, not just a forged hash.
+            body['messages'][0]['content'][0] = inline_image('blue')
+        prepared, enqueued = enqueue_images(body)
+        inp = prepared.multimodal
+        authority = PairedCheckpointAuthority('identity', MX)
+        frontier = inp.spans[-1].start
+        if cache != 'missing':
+            images = inp.identities()[:int(historical)] if retained_images is None else retained_images
+            authority.publish(authority.capture(*pair(frontier)[:2], inp.token_ids[:frontier], images))
+            if cache == 'evicted':
+                authority.clear()
+        scheduler, request = scheduler_request(inp, authority)
+        request.prepared = prepared
+        request.required_image_frontier = enqueued.required_image_frontier
+        errors, starts, encoded = [], [], []
+        def start(rec, prepared, tokenizer, trace, **kwargs):
+            starts.append(len(rec.canonical))
+            rows = inp.encode_new(NS(config=inp._config), len(rec.canonical),
+                span_encoder=lambda pixels, h, w, kinds: mx.ones((len(kinds), 4)))
+            encoded.extend(s for s, _ in rows.rows)
+            scheduler.batch_generator = object()
+            rec.owner = NS(uid=17, _bg=scheduler.batch_generator)
+        scheduler.backend = NS(_start=start)
+        scheduler._retire = lambda req, *, error: errors.append(error)
+        scheduled, _ = scheduler._schedule_waiting()
+        if historical and cache != 'retained':
+            assert not scheduled and not starts and not encoded
+            assert len(errors) == 1 and 'historical image pair unavailable' in str(errors[0])
+            assert not request.native_started
+        else:
+>           assert not errors, errors
+E           AssertionError: [ValueError('historical image pair unavailable; image replay/re-encode forbidden')]
+E           assert not [ValueError('historical image pair unavailable; image replay/re-encode forbidden')]
+
+tests/test_recipe02_messages_serving.py:424: AssertionError
+____ test_converted_image_frontier_at_real_paired_admission[evicted-False] _____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x16a70e150>
+historical = False, cache = 'evicted'
+
+    @pytest.mark.parametrize('historical', [False, True])
+    @pytest.mark.parametrize('cache', ['missing', 'retained', 'evicted', 'changed'])
+    def test_converted_image_frontier_at_real_paired_admission(monkeypatch, historical, cache):
+        from types import SimpleNamespace as NS
+        import mlx.core as mx
+        from ds41f_mlx.serving.paired_checkpoint import PairedCheckpointAuthority
+        from test_metadata_first_vision import scheduler_request
+        from test_production_mtp import MX, pair
+        body, _ = image_results_body(['red', None], historical=historical, identical=True)
+        retained_images = None
+        if historical and cache == 'changed':
+            previous, _ = enqueue_images(body)
+            retained_images = previous.multimodal.identities()[:1]
+            previous.multimodal.release_sources()
+            # A real wire-history edit, converted by Recipe, not just a forged hash.
+            body['messages'][0]['content'][0] = inline_image('blue')
+        prepared, enqueued = enqueue_images(body)
+        inp = prepared.multimodal
+        authority = PairedCheckpointAuthority('identity', MX)
+        frontier = inp.spans[-1].start
+        if cache != 'missing':
+            images = inp.identities()[:int(historical)] if retained_images is None else retained_images
+            authority.publish(authority.capture(*pair(frontier)[:2], inp.token_ids[:frontier], images))
+            if cache == 'evicted':
+                authority.clear()
+        scheduler, request = scheduler_request(inp, authority)
+        request.prepared = prepared
+        request.required_image_frontier = enqueued.required_image_frontier
+        errors, starts, encoded = [], [], []
+        def start(rec, prepared, tokenizer, trace, **kwargs):
+            starts.append(len(rec.canonical))
+            rows = inp.encode_new(NS(config=inp._config), len(rec.canonical),
+                span_encoder=lambda pixels, h, w, kinds: mx.ones((len(kinds), 4)))
+            encoded.extend(s for s, _ in rows.rows)
+            scheduler.batch_generator = object()
+            rec.owner = NS(uid=17, _bg=scheduler.batch_generator)
+        scheduler.backend = NS(_start=start)
+        scheduler._retire = lambda req, *, error: errors.append(error)
+        scheduled, _ = scheduler._schedule_waiting()
+        if historical and cache != 'retained':
+            assert not scheduled and not starts and not encoded
+            assert len(errors) == 1 and 'historical image pair unavailable' in str(errors[0])
+            assert not request.native_started
+        else:
+>           assert not errors, errors
+E           AssertionError: [ValueError('historical image pair unavailable; image replay/re-encode forbidden')]
+E           assert not [ValueError('historical image pair unavailable; image replay/re-encode forbidden')]
+
+tests/test_recipe02_messages_serving.py:424: AssertionError
+____ test_converted_image_frontier_at_real_paired_admission[changed-False] _____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x16a84ea30>
+historical = False, cache = 'changed'
+
+    @pytest.mark.parametrize('historical', [False, True])
+    @pytest.mark.parametrize('cache', ['missing', 'retained', 'evicted', 'changed'])
+    def test_converted_image_frontier_at_real_paired_admission(monkeypatch, historical, cache):
+        from types import SimpleNamespace as NS
+        import mlx.core as mx
+        from ds41f_mlx.serving.paired_checkpoint import PairedCheckpointAuthority
+        from test_metadata_first_vision import scheduler_request
+        from test_production_mtp import MX, pair
+        body, _ = image_results_body(['red', None], historical=historical, identical=True)
+        retained_images = None
+        if historical and cache == 'changed':
+            previous, _ = enqueue_images(body)
+            retained_images = previous.multimodal.identities()[:1]
+            previous.multimodal.release_sources()
+            # A real wire-history edit, converted by Recipe, not just a forged hash.
+            body['messages'][0]['content'][0] = inline_image('blue')
+        prepared, enqueued = enqueue_images(body)
+        inp = prepared.multimodal
+        authority = PairedCheckpointAuthority('identity', MX)
+        frontier = inp.spans[-1].start
+        if cache != 'missing':
+            images = inp.identities()[:int(historical)] if retained_images is None else retained_images
+            authority.publish(authority.capture(*pair(frontier)[:2], inp.token_ids[:frontier], images))
+            if cache == 'evicted':
+                authority.clear()
+        scheduler, request = scheduler_request(inp, authority)
+        request.prepared = prepared
+        request.required_image_frontier = enqueued.required_image_frontier
+        errors, starts, encoded = [], [], []
+        def start(rec, prepared, tokenizer, trace, **kwargs):
+            starts.append(len(rec.canonical))
+            rows = inp.encode_new(NS(config=inp._config), len(rec.canonical),
+                span_encoder=lambda pixels, h, w, kinds: mx.ones((len(kinds), 4)))
+            encoded.extend(s for s, _ in rows.rows)
+            scheduler.batch_generator = object()
+            rec.owner = NS(uid=17, _bg=scheduler.batch_generator)
+        scheduler.backend = NS(_start=start)
+        scheduler._retire = lambda req, *, error: errors.append(error)
+        scheduled, _ = scheduler._schedule_waiting()
+        if historical and cache != 'retained':
+            assert not scheduled and not starts and not encoded
+            assert len(errors) == 1 and 'historical image pair unavailable' in str(errors[0])
+            assert not request.native_started
+        else:
+>           assert not errors, errors
+E           AssertionError: [ValueError('historical image pair unavailable; image replay/re-encode forbidden')]
+E           assert not [ValueError('historical image pair unavailable; image replay/re-encode forbidden')]
+
+tests/test_recipe02_messages_serving.py:424: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_recipe02_messages_serving.py::test_wire_image_origin_survives_recipe_expansion[slots1-False-False-False]
+FAILED tests/test_recipe02_messages_serving.py::test_wire_image_origin_survives_recipe_expansion[slots2-False-False-False]
+FAILED tests/test_recipe02_messages_serving.py::test_wire_image_origin_survives_recipe_expansion[slots4-False-False-False]
+FAILED tests/test_recipe02_messages_serving.py::test_wire_image_origin_survives_recipe_expansion[slots5-True-False-False]
+FAILED tests/test_recipe02_messages_serving.py::test_wire_image_origin_survives_recipe_expansion[slots6-False-True-False]
+FAILED tests/test_recipe02_messages_serving.py::test_wire_image_origin_survives_recipe_expansion[slots7-True-True-True]
+FAILED tests/test_recipe02_messages_serving.py::test_wire_image_origin_survives_recipe_expansion[slots8-True-True-False]
+FAILED tests/test_recipe02_messages_serving.py::test_multiple_occurrences_in_one_result_keep_rendered_order
+FAILED tests/test_recipe02_messages_serving.py::test_converted_image_frontier_at_real_paired_admission[missing-False]
+FAILED tests/test_recipe02_messages_serving.py::test_converted_image_frontier_at_real_paired_admission[retained-False]
+FAILED tests/test_recipe02_messages_serving.py::test_converted_image_frontier_at_real_paired_admission[retained-True]
+FAILED tests/test_recipe02_messages_serving.py::test_converted_image_frontier_at_real_paired_admission[evicted-False]
+FAILED tests/test_recipe02_messages_serving.py::test_converted_image_frontier_at_real_paired_admission[changed-False]
+13 failed, 5 passed, 47 deselected in 42.53s

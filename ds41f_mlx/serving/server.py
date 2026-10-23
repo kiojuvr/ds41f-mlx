@@ -116,6 +116,19 @@ def prepare_request(protocol: str, body: bytes, *, tokenizer: Any, recipe_path: 
     prepared = RecipePreparedRequest(protocol, converted, converted, token_ids, list(rendered.image_sources), include_usage, custom_tool_names, stop_token_ids, multimodal)
     if ordinary:
         prepared.requested_model = policy_payload['model']
+        if protocol == 'messages':
+            # Recipe preserves wire origin on every source, including sources
+            # in expanded Tool messages. Never infer freshness from bytes or
+            # the position of a converted message.
+            import re
+            latest = len(policy_payload['messages']) - 1
+            historical = []
+            for source in prepared.image_sources:
+                origin = re.match(r'^messages\.(\d+)(?:\.|$)', source.path)
+                if origin is None or not 0 <= int(origin[1]) <= latest:
+                    raise RequestError('Messages image source origin unavailable', 400)
+                historical.append(int(origin[1]) < latest)
+            prepared.image_is_historical = tuple(historical)
     prepared.generation_policy = policy
     from .capacity import resolve_capacity
     try:

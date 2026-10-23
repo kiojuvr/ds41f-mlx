@@ -269,6 +269,165 @@ def test_official_prompt_encoding_and_expanded_image_capacity(tmp_path):
     prepared.multimodal.release_sources()
 
 
+def inline_image(color='red'):
+    import base64
+    from io import BytesIO
+    from PIL import Image
+    stream = BytesIO()
+    Image.new('RGB', (32, 32), color).save(stream, format='PNG')
+    return dict(type='image', source=dict(type='base64', media_type='image/png',
+        data=base64.b64encode(stream.getvalue()).decode()))
+
+
+def image_results_body(slots, *, trailing=False, historical=False, identical=False):
+    ids = ['Read:Exact-A', 'Read:Exact-B', 'Read:Exact-C'][:len(slots)]
+    body = payload(tools=[dict(name='read_image', input_schema=dict(type='object'))])
+    body['messages'] = [dict(role='user', content=(
+        [inline_image(), dict(type='text', text='inspect')] if historical else 'inspect')),
+        dict(role='assistant', content=[dict(type='tool_use', id=i, name='read_image', input={}) for i in ids]),
+        dict(role='user', content=[dict(type='tool_result', tool_use_id=i,
+            content=[inline_image('red' if identical else color)] if color else 'done')
+            for i, color in zip(ids, slots)])]
+    if trailing:
+        body['messages'][-1]['content'].append(dict(type='text', text='compare now'))
+    return body, ids
+
+
+def enqueue_images(body):
+    from types import SimpleNamespace as NS
+    from ds41f_mlx.serving.server import prepare_request
+    from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+    tok = d.Tokenizer.from_file(str(TOKENIZER))
+    prepared = prepare_request('messages', json.dumps(body).encode(), tokenizer=tok, ordinary=True)
+    queued = []
+    backend = NS(fatal_error=None, load=lambda: None,
+                 scheduler=NS(add_request=queued.append), request_max_tokens=lambda p: 256)
+    ProductionMTPBackend._enqueue(backend, prepared, tok, 'image')
+    return prepared, queued[0]
+
+
+@pytest.mark.parametrize('slots,trailing,historical,identical', [
+    (['red'], False, False, False),
+    (['red', None, None], False, False, False),
+    ([None, 'red', None], False, False, False),
+    ([None, None, 'red'], False, False, False),
+    (['red', None], False, False, False),
+    (['red'], True, False, False),
+    (['blue', None], False, True, False),
+    (['red', None], True, True, True),
+    (['blue', 'green', 'red'], True, True, False),
+])
+def test_wire_image_origin_survives_recipe_expansion(slots, trailing, historical, identical):
+    from hashlib import sha256
+    from ds41f_mlx.runtime.multimodal import image_bytes
+    body, ids = image_results_body(slots, trailing=trailing, historical=historical, identical=identical)
+    # Return order need not be tool-call order. Exact opaque IDs survive.
+    body['messages'][1]['content'].reverse()
+    prepared, request = enqueue_images(body)
+    converted = prepared.conversation_request.conversation.messages
+    assert [m.tool_call_id for m in converted if m.role == 'tool'] == ids
+    assert [c.id for m in converted if m.role == 'assistant' for c in m.tool_calls] == ids[::-1]
+    sources = [s for m in converted for s in m.image_sources]
+    old_paths = ['messages.0.content[0]'] if historical else []
+    new_paths = [f'messages.2.content.{i}.tool_result' for i, color in enumerate(slots) if color]
+    assert [s.path for s in sources] == old_paths + new_paths
+    # Recipe renders results in tool-call order, not returned-result order.
+    # Multimodal identities and origin metadata must follow RENDERED sources.
+    assert [s.path for s in prepared.image_sources] == old_paths + new_paths[::-1]
+    assert [sha256(image_bytes(s)).hexdigest() for s in prepared.image_sources] == [
+        s['sha256'] for s in request.image_identities]
+    assert prepared.image_is_historical == (True,) * int(historical) + (False,) * sum(bool(c) for c in slots)
+    expected = request.image_identities[0]['start'] + request.image_identities[0]['length'] if historical else 0
+    assert request.required_image_frontier == expected
+    assert all(s.start + s.length <= len(prepared.token_ids)-2 for s in prepared.multimodal.spans)
+    prepared.multimodal.release_sources()
+
+
+def test_multiple_occurrences_in_one_result_keep_rendered_order():
+    from hashlib import sha256
+    from ds41f_mlx.runtime.multimodal import image_bytes
+    body, _ = image_results_body(['red', None], historical=True, identical=True)
+    body['messages'][-1]['content'][0]['content'] += [inline_image('blue'), inline_image()]
+    prepared, request = enqueue_images(body)
+    assert prepared.image_is_historical == (True, False, False, False)
+    assert [s.path for s in prepared.image_sources] == ['messages.0.content[0]'] + [
+        'messages.2.content.0.tool_result'] * 3
+    identities = request.image_identities
+    assert [i['sha256'] for i in identities] == [sha256(image_bytes(s)).hexdigest() for s in prepared.image_sources]
+    assert identities[0]['sha256'] == identities[1]['sha256'] == identities[3]['sha256']
+    assert identities[0]['sha256'] != identities[2]['sha256']
+    assert [i['start'] for i in identities] == sorted({i['start'] for i in identities})
+    assert request.required_image_frontier == identities[0]['start'] + identities[0]['length']
+    prepared.multimodal.release_sources()
+
+
+@pytest.mark.parametrize('origins', [None, (), (False, False)])
+def test_missing_or_misaligned_messages_origins_reject_before_queue(origins):
+    from types import SimpleNamespace as NS
+    from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+    body, _ = image_results_body(['red'])
+    prepared, _ = enqueue_images(body)
+    prepared.image_is_historical = origins
+    queued = []
+    backend = NS(fatal_error=None, load=lambda: None,
+                 scheduler=NS(add_request=queued.append), request_max_tokens=lambda p: 256)
+    with pytest.raises(ValueError):
+        ProductionMTPBackend._enqueue(backend, prepared, None, 'invalid-origin')
+    assert not queued
+    prepared.multimodal.release_sources()
+
+
+@pytest.mark.parametrize('historical', [False, True])
+@pytest.mark.parametrize('cache', ['missing', 'retained', 'evicted', 'changed'])
+def test_converted_image_frontier_at_real_paired_admission(monkeypatch, historical, cache):
+    from types import SimpleNamespace as NS
+    import mlx.core as mx
+    from ds41f_mlx.serving.paired_checkpoint import PairedCheckpointAuthority
+    from test_metadata_first_vision import scheduler_request
+    from test_production_mtp import MX, pair
+    body, _ = image_results_body(['red', None], historical=historical, identical=True)
+    retained_images = None
+    if historical and cache == 'changed':
+        previous, _ = enqueue_images(body)
+        retained_images = previous.multimodal.identities()[:1]
+        previous.multimodal.release_sources()
+        # A real wire-history edit, converted by Recipe, not just a forged hash.
+        body['messages'][0]['content'][0] = inline_image('blue')
+    prepared, enqueued = enqueue_images(body)
+    inp = prepared.multimodal
+    authority = PairedCheckpointAuthority('identity', MX)
+    frontier = inp.spans[-1].start
+    if cache != 'missing':
+        images = inp.identities()[:int(historical)] if retained_images is None else retained_images
+        authority.publish(authority.capture(*pair(frontier)[:2], inp.token_ids[:frontier], images))
+        if cache == 'evicted':
+            authority.clear()
+    scheduler, request = scheduler_request(inp, authority)
+    request.prepared = prepared
+    request.required_image_frontier = enqueued.required_image_frontier
+    errors, starts, encoded = [], [], []
+    def start(rec, prepared, tokenizer, trace, **kwargs):
+        starts.append(len(rec.canonical))
+        rows = inp.encode_new(NS(config=inp._config), len(rec.canonical),
+            span_encoder=lambda pixels, h, w, kinds: mx.ones((len(kinds), 4)))
+        encoded.extend(s for s, _ in rows.rows)
+        scheduler.batch_generator = object()
+        rec.owner = NS(uid=17, _bg=scheduler.batch_generator)
+    scheduler.backend = NS(_start=start)
+    scheduler._retire = lambda req, *, error: errors.append(error)
+    scheduled, _ = scheduler._schedule_waiting()
+    if historical and cache != 'retained':
+        assert not scheduled and not starts and not encoded
+        assert len(errors) == 1 and 'historical image pair unavailable' in str(errors[0])
+        assert not request.native_started
+    else:
+        assert not errors, errors
+        assert scheduled == [request]
+        assert encoded == [inp.spans[-1].start]
+    assert not inp._sources
+    authority.clear()
+
+
 @pytest.mark.parametrize('inventory', [False, True])
 @pytest.mark.parametrize('stream', [False, True])
 @pytest.mark.parametrize('thinking', [False, True])

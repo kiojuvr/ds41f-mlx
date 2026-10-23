@@ -1,0 +1,63 @@
+{
+  "starting_source": "3e910238f22f9c2ce3d4d31b90e38dc27aae09ef",
+  "branch": "Visual-Feedback-Loop",
+  "initial_tree": "clean",
+  "concurrent_work": "one visible pi process; no visible serving/pytest process; no other worktree",
+  "python": "3.13.15 (main, Aug  5 2026, 12:25:43) [Clang 21.0.0 (clang-2100.1.1.101)]",
+  "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+  "executable": "/private/tmp/ds41f-phase1-1017-tests/bin/python",
+  "variant": "flash-1017",
+  "glm_profile": "native",
+  "checkpoint": "/Volumes/KIOXIA-PRO-1/models/deepseek-ai/DeepSeek-V4.1-Flash",
+  "checkpoint_config_sha256": "8be45ce0476004a3f529fd896115a4a2e800a129ad2d3ec05b16050f52e21879",
+  "packages": {
+    "ds41f-mlx": "0.23.0",
+    "deepseek-recipe": "0.2.0",
+    "omlx": "0.7.0",
+    "pytest": "9.1.1",
+    "mlx": "0.32.2",
+    "mlx-lm": "0.31.4.dev132+g94cdcae13"
+  },
+  "recipe_source": {
+    "archive": "recipe-02-source.tar.gz",
+    "revision": "93b0fd229cc9ffa6b1a8c63d42b0bf741bbec170",
+    "patch": "docs/recipe-02-native-semantic-boundary.patch"
+  },
+  "recipe_wheel": {
+    "file": "deepseek_recipe-0.2.0-cp310-abi3-macosx_11_0_arm64.whl",
+    "sha256": "11bda3355c2f48b99d04f6a2179b283add3f6d1218f34e4707bd5a29b304ab03"
+  },
+  "recipe_patch_sha256": "9d0b08e9b88de0bf41fb237db04f45205addbd7fb412d81eacc6d05955a383f2",
+  "normal_local_sha256": "78267acacd82b91eb72b99c269afb42dee7366bcbd7949389930232c253c5146",
+  "installed_manifest_sha256": "358d684f4a97ff301a40eadd85f7031684a7e2b2592727ab4e45f1a83e00a4af",
+  "source_files": {
+    "ds41f_mlx/serving/server.py": "ad54035a9076b2dbe608f24da6965c0d77b32f6a0ac0d68770b82e03d5454152",
+    "ds41f_mlx/serving/deepseek_recipe_backend.py": "42676e28b0e2a14c867cebe6550dda43d81cd4a19c888553cc322c58ae7cf2f4",
+    "ds41f_mlx/serving/production_mtp.py": "1ef8663f70f36d3591c921c0dc0a1c4bff4f9dd69efd253f97c86192c20a3d6b",
+    "tests/test_recipe02_messages_serving.py": "2f7a07ec549db9234a2ebf76de96f819bfde4e62170c7416f3cae7161448fb88"
+  },
+  "tokenizer_sha256": "81f64d1248a68ce3663e07ab3ee48b851e5df0e32d27cb98e4c9a268151e8d99",
+  "test_results": {
+    "corrected_passed": 166,
+    "corrected_failed": 0,
+    "original_method_failed": 13,
+    "original_method_passed": 5,
+    "original_method_deselected": 47
+  },
+  "model_weights_loaded": false,
+  "installed_runtime_wheel_sha256": "2ba73b4150dee3d4bf8fe76f2f16e2b8485d379298f86e8b63a6e9186f4bfbc8",
+  "provision_command": "/opt/homebrew/opt/python@3.13/bin/python3.13 -m ds41f_mlx.mtp_setup --venv /tmp/ds41f-phase1-1017-tests --build-dir /tmp/ds41f-phase1-1017-build --checkpoint-variant flash-1017 --glm-profile native",
+  "evidence_files": {
+    "after.json": "746aea91b1b2e737e3bc4f57eef0094f03fa53e9cf41f7299f92208744468038",
+    "before.json": "0fd03783fe30b44b5dd88a2d7d87ab76a6fc0bd10127abacb6048fe923091c9f",
+    "check_authority_labels.log": "8f28e6007ea268256931c4c34e14631e8cad21bb09728d24693137aafa12e6fd",
+    "check_legacy_import_integrity.log": "27dba8f55a8ba4daaa4d221a4b76acdf62e32dcd0555146ddc52ea3502888cdc",
+    "check_native_import_dependencies.log": "fda4bb9142435a39e30a51398d11e3096656a0298e21784895fbb58ad33db316",
+    "check_repository_self_containment.log": "8dd6707523090ab545a66bd8ee7ce1216d85250e1021e77fd1f3a488b14653e7",
+    "check_source_identity_hashes.log": "773eb26ad7319cfdb075516fd8a0930255dbd4f58931499aa9de10665f4ce7d0",
+    "installed-admission.json": "946779a1f4544a3f22429eb0b1f11aff3cee5b0606a8dcd08ea63727aefa853a",
+    "regressions.log": "ea957753035b245a116557f0ba3d1cf4e0e15baf1acb131dae37559fcc13b79b",
+    "reproduction-tests.log": "eeece3695c0fc17f9f14fde8ea0d917cdb161e780caefbf75fd917184f476417"
+  },
+  "log_normalization": "Trailing whitespace stripped from retained log lines; diagnostic content unchanged."
+}

@@ -1,0 +1,1417 @@
+[
+  {
+    "case": "single",
+    "boundaries": {
+      "missing": {
+        "accepted": true,
+        "restored": [
+          0
+        ],
+        "errors": []
+      },
+      "compatible_prefix": {
+        "accepted": true,
+        "restored": [
+          267
+        ],
+        "errors": []
+      },
+      "evicted": {
+        "accepted": true,
+        "restored": [
+          0
+        ],
+        "errors": []
+      },
+      "edited_history": {
+        "accepted": true,
+        "restored": [
+          267
+        ],
+        "errors": []
+      }
+    },
+    "wire": {
+      "model": "deepseek-flash",
+      "max_tokens": 256,
+      "thinking": {
+        "type": "disabled"
+      },
+      "tools": [
+        {
+          "name": "read_image",
+          "input_schema": {
+            "type": "object"
+          }
+        }
+      ],
+      "messages": [
+        {
+          "role": "user",
+          "content": "inspect"
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "tool_use",
+              "id": "Read:Exact-A",
+              "name": "read_image",
+              "input": {}
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "tool_result",
+              "tool_use_id": "Read:Exact-A",
+              "content": [
+                {
+                  "type": "image",
+                  "source": {
+                    "type": "base64",
+                    "media_type": "image/png",
+                    "data": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAANUlEQVR4nO3QsQ0AMAzDsLT//9yeoCkbeYAN6LzZdZf3x0GSKEmUJEoSJYmSREmiJFGSaMoHo8QBPwYSAhsAAAAASUVORK5CYII="
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "converted": [
+      {
+        "role": "user",
+        "tool_call_id": null,
+        "sources": []
+      },
+      {
+        "role": "assistant",
+        "tool_call_id": null,
+        "sources": []
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "Read:Exact-A",
+        "sources": [
+          "messages.2.content.0.tool_result"
+        ]
+      }
+    ],
+    "sources": [
+      "messages.2.content.0.tool_result"
+    ],
+    "identities": [
+      {
+        "start": 267,
+        "length": 184,
+        "sha256": "68eb562430b8508f014985a342ffc9f43e30a0f13577658c86260df838785d6c",
+        "grid": [
+          39,
+          39
+        ]
+      }
+    ],
+    "actual": 0,
+    "expected": 0,
+    "terminal_text_tokens": 6
+  },
+  {
+    "case": "first",
+    "boundaries": {
+      "missing": {
+        "accepted": true,
+        "restored": [
+          0
+        ],
+        "errors": []
+      },
+      "compatible_prefix": {
+        "accepted": true,
+        "restored": [
+          291
+        ],
+        "errors": []
+      },
+      "evicted": {
+        "accepted": true,
+        "restored": [
+          0
+        ],
+        "errors": []
+      },
+      "edited_history": {
+        "accepted": true,
+        "restored": [
+          291
+        ],
+        "errors": []
+      }
+    },
+    "wire": {
+      "model": "deepseek-flash",
+      "max_tokens": 256,
+      "thinking": {
+        "type": "disabled"
+      },
+      "tools": [
+        {
+          "name": "read_image",
+          "input_schema": {
+            "type": "object"
+          }
+        }
+      ],
+      "messages": [
+        {
+          "role": "user",
+          "content": "inspect"
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "tool_use",
+              "id": "Read:Exact-A",
+              "name": "read_image",
+              "input": {}
+            },
+            {
+              "type": "tool_use",
+              "id": "Read:Exact-B",
+              "name": "read_image",
+              "input": {}
+            },
+            {
+              "type": "tool_use",
+              "id": "Read:Exact-C",
+              "name": "read_image",
+              "input": {}
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "tool_result",
+              "tool_use_id": "Read:Exact-A",
+              "content": [
+                {
+                  "type": "image",
+                  "source": {
+                    "type": "base64",
+                    "media_type": "image/png",
+                    "data": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAANUlEQVR4nO3QsQ0AMAzDsLT//9yeoCkbeYAN6LzZdZf3x0GSKEmUJEoSJYmSREmiJFGSaMoHo8QBPwYSAhsAAAAASUVORK5CYII="
+                  }
+                }
+              ]
+            },
+            {
+              "type": "tool_result",
+              "tool_use_id": "Read:Exact-B",
+              "content": "done"
+            },
+            {
+              "type": "tool_result",
+              "tool_use_id": "Read:Exact-C",
+              "content": "done"
+            }
+          ]
+        }
+      ]
+    },
+    "converted": [
+      {
+        "role": "user",
+        "tool_call_id": null,
+        "sources": []
+      },
+      {
+        "role": "assistant",
+        "tool_call_id": null,
+        "sources": []
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "Read:Exact-A",
+        "sources": [
+          "messages.2.content.0.tool_result"
+        ]
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "Read:Exact-B",
+        "sources": []
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "Read:Exact-C",
+        "sources": []
+      }
+    ],
+    "sources": [
+      "messages.2.content.0.tool_result"
+    ],
+    "identities": [
+      {
+        "start": 291,
+        "length": 184,
+        "sha256": "68eb562430b8508f014985a342ffc9f43e30a0f13577658c86260df838785d6c",
+        "grid": [
+          39,
+          39
+        ]
+      }
+    ],
+    "actual": 0,
+    "expected": 0,
+    "terminal_text_tokens": 24
+  },
+  {
+    "case": "middle",
+    "boundaries": {
+      "missing": {
+        "accepted": true,
+        "restored": [
+          0
+        ],
+        "errors": []
+      },
+      "compatible_prefix": {
+        "accepted": true,
+        "restored": [
+          300
+        ],
+        "errors": []
+      },
+      "evicted": {
+        "accepted": true,
+        "restored": [
+          0
+        ],
+        "errors": []
+      },
+      "edited_history": {
+        "accepted": true,
+        "restored": [
+          300
+        ],
+        "errors": []
+      }
+    },
+    "wire": {
+      "model": "deepseek-flash",
+      "max_tokens": 256,
+      "thinking": {
+        "type": "disabled"
+      },
+      "tools": [
+        {
+          "name": "read_image",
+          "input_schema": {
+            "type": "object"
+          }
+        }
+      ],
+      "messages": [
+        {
+          "role": "user",
+          "content": "inspect"
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "tool_use",
+              "id": "Read:Exact-A",
+              "name": "read_image",
+              "input": {}
+            },
+            {
+              "type": "tool_use",
+              "id": "Read:Exact-B",
+              "name": "read_image",
+              "input": {}
+            },
+            {
+              "type": "tool_use",
+              "id": "Read:Exact-C",
+              "name": "read_image",
+              "input": {}
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "tool_result",
+              "tool_use_id": "Read:Exact-A",
+              "content": "done"
+            },
+            {
+              "type": "tool_result",
+              "tool_use_id": "Read:Exact-B",
+              "content": [
+                {
+                  "type": "image",
+                  "source": {
+                    "type": "base64",
+                    "media_type": "image/png",
+                    "data": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAANUlEQVR4nO3QsQ0AMAzDsLT//9yeoCkbeYAN6LzZdZf3x0GSKEmUJEoSJYmSREmiJFGSaMoHo8QBPwYSAhsAAAAASUVORK5CYII="
+                  }
+                }
+              ]
+            },
+            {
+              "type": "tool_result",
+              "tool_use_id": "Read:Exact-C",
+              "content": "done"
+            }
+          ]
+        }
+      ]
+    },
+    "converted": [
+      {
+        "role": "user",
+        "tool_call_id": null,
+        "sources": []
+      },
+      {
+        "role": "assistant",
+        "tool_call_id": null,
+        "sources": []
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "Read:Exact-A",
+        "sources": []
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "Read:Exact-B",
+        "sources": [
+          "messages.2.content.1.tool_result"
+        ]
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "Read:Exact-C",
+        "sources": []
+      }
+    ],
+    "sources": [
+      "messages.2.content.1.tool_result"
+    ],
+    "identities": [
+      {
+        "start": 300,
+        "length": 184,
+        "sha256": "68eb562430b8508f014985a342ffc9f43e30a0f13577658c86260df838785d6c",
+        "grid": [
+          39,
+          39
+        ]
+      }
+    ],
+    "actual": 0,
+    "expected": 0,
+    "terminal_text_tokens": 15
+  },
+  {
+    "case": "last",
+    "boundaries": {
+      "missing": {
+        "accepted": true,
+        "restored": [
+          0
+        ],
+        "errors": []
+      },
+      "compatible_prefix": {
+        "accepted": true,
+        "restored": [
+          309
+        ],
+        "errors": []
+      },
+      "evicted": {
+        "accepted": true,
+        "restored": [
+          0
+        ],
+        "errors": []
+      },
+      "edited_history": {
+        "accepted": true,
+        "restored": [
+          309
+        ],
+        "errors": []
+      }
+    },
+    "wire": {
+      "model": "deepseek-flash",
+      "max_tokens": 256,
+      "thinking": {
+        "type": "disabled"
+      },
+      "tools": [
+        {
+          "name": "read_image",
+          "input_schema": {
+            "type": "object"
+          }
+        }
+      ],
+      "messages": [
+        {
+          "role": "user",
+          "content": "inspect"
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "tool_use",
+              "id": "Read:Exact-A",
+              "name": "read_image",
+              "input": {}
+            },
+            {
+              "type": "tool_use",
+              "id": "Read:Exact-B",
+              "name": "read_image",
+              "input": {}
+            },
+            {
+              "type": "tool_use",
+              "id": "Read:Exact-C",
+              "name": "read_image",
+              "input": {}
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "tool_result",
+              "tool_use_id": "Read:Exact-A",
+              "content": "done"
+            },
+            {
+              "type": "tool_result",
+              "tool_use_id": "Read:Exact-B",
+              "content": "done"
+            },
+            {
+              "type": "tool_result",
+              "tool_use_id": "Read:Exact-C",
+              "content": [
+                {
+                  "type": "image",
+                  "source": {
+                    "type": "base64",
+                    "media_type": "image/png",
+                    "data": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAANUlEQVR4nO3QsQ0AMAzDsLT//9yeoCkbeYAN6LzZdZf3x0GSKEmUJEoSJYmSREmiJFGSaMoHo8QBPwYSAhsAAAAASUVORK5CYII="
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "converted": [
+      {
+        "role": "user",
+        "tool_call_id": null,
+        "sources": []
+      },
+      {
+        "role": "assistant",
+        "tool_call_id": null,
+        "sources": []
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "Read:Exact-A",
+        "sources": []
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "Read:Exact-B",
+        "sources": []
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "Read:Exact-C",
+        "sources": [
+          "messages.2.content.2.tool_result"
+        ]
+      }
+    ],
+    "sources": [
+      "messages.2.content.2.tool_result"
+    ],
+    "identities": [
+      {
+        "start": 309,
+        "length": 184,
+        "sha256": "68eb562430b8508f014985a342ffc9f43e30a0f13577658c86260df838785d6c",
+        "grid": [
+          39,
+          39
+        ]
+      }
+    ],
+    "actual": 0,
+    "expected": 0,
+    "terminal_text_tokens": 6
+  },
+  {
+    "case": "text_result",
+    "boundaries": {
+      "missing": {
+        "accepted": true,
+        "restored": [
+          0
+        ],
+        "errors": []
+      },
+      "compatible_prefix": {
+        "accepted": true,
+        "restored": [
+          279
+        ],
+        "errors": []
+      },
+      "evicted": {
+        "accepted": true,
+        "restored": [
+          0
+        ],
+        "errors": []
+      },
+      "edited_history": {
+        "accepted": true,
+        "restored": [
+          279
+        ],
+        "errors": []
+      }
+    },
+    "wire": {
+      "model": "deepseek-flash",
+      "max_tokens": 256,
+      "thinking": {
+        "type": "disabled"
+      },
+      "tools": [
+        {
+          "name": "read_image",
+          "input_schema": {
+            "type": "object"
+          }
+        }
+      ],
+      "messages": [
+        {
+          "role": "user",
+          "content": "inspect"
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "tool_use",
+              "id": "Read:Exact-A",
+              "name": "read_image",
+              "input": {}
+            },
+            {
+              "type": "tool_use",
+              "id": "Read:Exact-B",
+              "name": "read_image",
+              "input": {}
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "tool_result",
+              "tool_use_id": "Read:Exact-A",
+              "content": [
+                {
+                  "type": "image",
+                  "source": {
+                    "type": "base64",
+                    "media_type": "image/png",
+                    "data": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAANUlEQVR4nO3QsQ0AMAzDsLT//9yeoCkbeYAN6LzZdZf3x0GSKEmUJEoSJYmSREmiJFGSaMoHo8QBPwYSAhsAAAAASUVORK5CYII="
+                  }
+                }
+              ]
+            },
+            {
+              "type": "tool_result",
+              "tool_use_id": "Read:Exact-B",
+              "content": "done"
+            }
+          ]
+        }
+      ]
+    },
+    "converted": [
+      {
+        "role": "user",
+        "tool_call_id": null,
+        "sources": []
+      },
+      {
+        "role": "assistant",
+        "tool_call_id": null,
+        "sources": []
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "Read:Exact-A",
+        "sources": [
+          "messages.2.content.0.tool_result"
+        ]
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "Read:Exact-B",
+        "sources": []
+      }
+    ],
+    "sources": [
+      "messages.2.content.0.tool_result"
+    ],
+    "identities": [
+      {
+        "start": 279,
+        "length": 184,
+        "sha256": "68eb562430b8508f014985a342ffc9f43e30a0f13577658c86260df838785d6c",
+        "grid": [
+          39,
+          39
+        ]
+      }
+    ],
+    "actual": 0,
+    "expected": 0,
+    "terminal_text_tokens": 15
+  },
+  {
+    "case": "user_text",
+    "boundaries": {
+      "missing": {
+        "accepted": true,
+        "restored": [
+          0
+        ],
+        "errors": []
+      },
+      "compatible_prefix": {
+        "accepted": true,
+        "restored": [
+          267
+        ],
+        "errors": []
+      },
+      "evicted": {
+        "accepted": true,
+        "restored": [
+          0
+        ],
+        "errors": []
+      },
+      "edited_history": {
+        "accepted": true,
+        "restored": [
+          267
+        ],
+        "errors": []
+      }
+    },
+    "wire": {
+      "model": "deepseek-flash",
+      "max_tokens": 256,
+      "thinking": {
+        "type": "disabled"
+      },
+      "tools": [
+        {
+          "name": "read_image",
+          "input_schema": {
+            "type": "object"
+          }
+        }
+      ],
+      "messages": [
+        {
+          "role": "user",
+          "content": "inspect"
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "tool_use",
+              "id": "Read:Exact-A",
+              "name": "read_image",
+              "input": {}
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "tool_result",
+              "tool_use_id": "Read:Exact-A",
+              "content": [
+                {
+                  "type": "image",
+                  "source": {
+                    "type": "base64",
+                    "media_type": "image/png",
+                    "data": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAANUlEQVR4nO3QsQ0AMAzDsLT//9yeoCkbeYAN6LzZdZf3x0GSKEmUJEoSJYmSREmiJFGSaMoHo8QBPwYSAhsAAAAASUVORK5CYII="
+                  }
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "text": "compare now"
+            }
+          ]
+        }
+      ]
+    },
+    "converted": [
+      {
+        "role": "user",
+        "tool_call_id": null,
+        "sources": []
+      },
+      {
+        "role": "assistant",
+        "tool_call_id": null,
+        "sources": []
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "Read:Exact-A",
+        "sources": [
+          "messages.2.content.0.tool_result"
+        ]
+      },
+      {
+        "role": "user",
+        "tool_call_id": null,
+        "sources": []
+      }
+    ],
+    "sources": [
+      "messages.2.content.0.tool_result"
+    ],
+    "identities": [
+      {
+        "start": 267,
+        "length": 184,
+        "sha256": "68eb562430b8508f014985a342ffc9f43e30a0f13577658c86260df838785d6c",
+        "grid": [
+          39,
+          39
+        ]
+      }
+    ],
+    "actual": 0,
+    "expected": 0,
+    "terminal_text_tokens": 8
+  },
+  {
+    "case": "history_fresh",
+    "boundaries": {
+      "missing": {
+        "accepted": false,
+        "restored": [],
+        "errors": [
+          "historical image pair unavailable; image replay/re-encode forbidden"
+        ]
+      },
+      "compatible_prefix": {
+        "accepted": true,
+        "restored": [
+          464
+        ],
+        "errors": []
+      },
+      "evicted": {
+        "accepted": false,
+        "restored": [],
+        "errors": [
+          "historical image pair unavailable; image replay/re-encode forbidden"
+        ]
+      },
+      "edited_history": {
+        "accepted": false,
+        "restored": [],
+        "errors": [
+          "historical image pair unavailable; image replay/re-encode forbidden"
+        ]
+      }
+    },
+    "wire": {
+      "model": "deepseek-flash",
+      "max_tokens": 256,
+      "thinking": {
+        "type": "disabled"
+      },
+      "tools": [
+        {
+          "name": "read_image",
+          "input_schema": {
+            "type": "object"
+          }
+        }
+      ],
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "image",
+              "source": {
+                "type": "base64",
+                "media_type": "image/png",
+                "data": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAANUlEQVR4nO3QsQ0AMAzDsLT//9yeoCkbeYAN6LzZdZf3x0GSKEmUJEoSJYmSREmiJFGSaMoHo8QBPwYSAhsAAAAASUVORK5CYII="
+              }
+            },
+            {
+              "type": "text",
+              "text": "inspect"
+            }
+          ]
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "tool_use",
+              "id": "Read:Exact-A",
+              "name": "read_image",
+              "input": {}
+            },
+            {
+              "type": "tool_use",
+              "id": "Read:Exact-B",
+              "name": "read_image",
+              "input": {}
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "tool_result",
+              "tool_use_id": "Read:Exact-A",
+              "content": [
+                {
+                  "type": "image",
+                  "source": {
+                    "type": "base64",
+                    "media_type": "image/png",
+                    "data": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAAN0lEQVR4nO3RMQ0AMAzEQLf8OacQ3CWbD8BHcg4Mm+7qOh340A9UiVSJVIlUiVSJVIlUiVSJMA+hxgE/8m7SpQAAAABJRU5ErkJggg=="
+                  }
+                }
+              ]
+            },
+            {
+              "type": "tool_result",
+              "tool_use_id": "Read:Exact-B",
+              "content": "done"
+            }
+          ]
+        }
+      ]
+    },
+    "converted": [
+      {
+        "role": "user",
+        "tool_call_id": null,
+        "sources": [
+          "messages.0.content[0]"
+        ]
+      },
+      {
+        "role": "user",
+        "tool_call_id": null,
+        "sources": []
+      },
+      {
+        "role": "assistant",
+        "tool_call_id": null,
+        "sources": []
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "Read:Exact-A",
+        "sources": [
+          "messages.2.content.0.tool_result"
+        ]
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "Read:Exact-B",
+        "sources": []
+      }
+    ],
+    "sources": [
+      "messages.0.content[0]",
+      "messages.2.content.0.tool_result"
+    ],
+    "identities": [
+      {
+        "start": 236,
+        "length": 184,
+        "sha256": "68eb562430b8508f014985a342ffc9f43e30a0f13577658c86260df838785d6c",
+        "grid": [
+          39,
+          39
+        ]
+      },
+      {
+        "start": 464,
+        "length": 184,
+        "sha256": "80f25a8f7d3b0f0516ac4a63b7311963fd3abf03a435e168d8b8b525fcae12ca",
+        "grid": [
+          39,
+          39
+        ]
+      }
+    ],
+    "actual": 420,
+    "expected": 420,
+    "terminal_text_tokens": 15
+  },
+  {
+    "case": "identical_occurrences",
+    "boundaries": {
+      "missing": {
+        "accepted": false,
+        "restored": [],
+        "errors": [
+          "historical image pair unavailable; image replay/re-encode forbidden"
+        ]
+      },
+      "compatible_prefix": {
+        "accepted": true,
+        "restored": [
+          464
+        ],
+        "errors": []
+      },
+      "evicted": {
+        "accepted": false,
+        "restored": [],
+        "errors": [
+          "historical image pair unavailable; image replay/re-encode forbidden"
+        ]
+      },
+      "edited_history": {
+        "accepted": false,
+        "restored": [],
+        "errors": [
+          "historical image pair unavailable; image replay/re-encode forbidden"
+        ]
+      }
+    },
+    "wire": {
+      "model": "deepseek-flash",
+      "max_tokens": 256,
+      "thinking": {
+        "type": "disabled"
+      },
+      "tools": [
+        {
+          "name": "read_image",
+          "input_schema": {
+            "type": "object"
+          }
+        }
+      ],
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "image",
+              "source": {
+                "type": "base64",
+                "media_type": "image/png",
+                "data": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAANUlEQVR4nO3QsQ0AMAzDsLT//9yeoCkbeYAN6LzZdZf3x0GSKEmUJEoSJYmSREmiJFGSaMoHo8QBPwYSAhsAAAAASUVORK5CYII="
+              }
+            },
+            {
+              "type": "text",
+              "text": "inspect"
+            }
+          ]
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "tool_use",
+              "id": "Read:Exact-A",
+              "name": "read_image",
+              "input": {}
+            },
+            {
+              "type": "tool_use",
+              "id": "Read:Exact-B",
+              "name": "read_image",
+              "input": {}
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "tool_result",
+              "tool_use_id": "Read:Exact-A",
+              "content": [
+                {
+                  "type": "image",
+                  "source": {
+                    "type": "base64",
+                    "media_type": "image/png",
+                    "data": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAANUlEQVR4nO3QsQ0AMAzDsLT//9yeoCkbeYAN6LzZdZf3x0GSKEmUJEoSJYmSREmiJFGSaMoHo8QBPwYSAhsAAAAASUVORK5CYII="
+                  }
+                }
+              ]
+            },
+            {
+              "type": "tool_result",
+              "tool_use_id": "Read:Exact-B",
+              "content": "done"
+            },
+            {
+              "type": "text",
+              "text": "compare now"
+            }
+          ]
+        }
+      ]
+    },
+    "converted": [
+      {
+        "role": "user",
+        "tool_call_id": null,
+        "sources": [
+          "messages.0.content[0]"
+        ]
+      },
+      {
+        "role": "user",
+        "tool_call_id": null,
+        "sources": []
+      },
+      {
+        "role": "assistant",
+        "tool_call_id": null,
+        "sources": []
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "Read:Exact-A",
+        "sources": [
+          "messages.2.content.0.tool_result"
+        ]
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "Read:Exact-B",
+        "sources": []
+      },
+      {
+        "role": "user",
+        "tool_call_id": null,
+        "sources": []
+      }
+    ],
+    "sources": [
+      "messages.0.content[0]",
+      "messages.2.content.0.tool_result"
+    ],
+    "identities": [
+      {
+        "start": 236,
+        "length": 184,
+        "sha256": "68eb562430b8508f014985a342ffc9f43e30a0f13577658c86260df838785d6c",
+        "grid": [
+          39,
+          39
+        ]
+      },
+      {
+        "start": 464,
+        "length": 184,
+        "sha256": "68eb562430b8508f014985a342ffc9f43e30a0f13577658c86260df838785d6c",
+        "grid": [
+          39,
+          39
+        ]
+      }
+    ],
+    "actual": 420,
+    "expected": 420,
+    "terminal_text_tokens": 17
+  },
+  {
+    "case": "rendered_order",
+    "boundaries": {
+      "missing": {
+        "accepted": false,
+        "restored": [],
+        "errors": [
+          "historical image pair unavailable; image replay/re-encode forbidden"
+        ]
+      },
+      "compatible_prefix": {
+        "accepted": false,
+        "restored": [],
+        "errors": [
+          "historical image pair unavailable; image replay/re-encode forbidden"
+        ]
+      },
+      "evicted": {
+        "accepted": false,
+        "restored": [],
+        "errors": [
+          "historical image pair unavailable; image replay/re-encode forbidden"
+        ]
+      },
+      "edited_history": {
+        "accepted": false,
+        "restored": [],
+        "errors": [
+          "historical image pair unavailable; image replay/re-encode forbidden"
+        ]
+      }
+    },
+    "wire": {
+      "model": "deepseek-flash",
+      "max_tokens": 256,
+      "thinking": {
+        "type": "disabled"
+      },
+      "tools": [
+        {
+          "name": "read_image",
+          "input_schema": {
+            "type": "object"
+          }
+        }
+      ],
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "image",
+              "source": {
+                "type": "base64",
+                "media_type": "image/png",
+                "data": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAANUlEQVR4nO3QsQ0AMAzDsLT//9yeoCkbeYAN6LzZdZf3x0GSKEmUJEoSJYmSREmiJFGSaMoHo8QBPwYSAhsAAAAASUVORK5CYII="
+              }
+            },
+            {
+              "type": "text",
+              "text": "inspect"
+            }
+          ]
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "tool_use",
+              "id": "Read:Exact-C",
+              "name": "read_image",
+              "input": {}
+            },
+            {
+              "type": "tool_use",
+              "id": "Read:Exact-B",
+              "name": "read_image",
+              "input": {}
+            },
+            {
+              "type": "tool_use",
+              "id": "Read:Exact-A",
+              "name": "read_image",
+              "input": {}
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "tool_result",
+              "tool_use_id": "Read:Exact-A",
+              "content": [
+                {
+                  "type": "image",
+                  "source": {
+                    "type": "base64",
+                    "media_type": "image/png",
+                    "data": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAAN0lEQVR4nO3RMQ0AMAzEQLf8OacQ3CWbD8BHcg4Mm+7qOh340A9UiVSJVIlUiVSJVIlUiVSJMA+hxgE/8m7SpQAAAABJRU5ErkJggg=="
+                  }
+                }
+              ]
+            },
+            {
+              "type": "tool_result",
+              "tool_use_id": "Read:Exact-B",
+              "content": [
+                {
+                  "type": "image",
+                  "source": {
+                    "type": "base64",
+                    "media_type": "image/png",
+                    "data": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAANUlEQVR4nO3RQQ0AAAjDwIFypCOhr/16AkZSJpeq7c7HA8wfIBMhEyETIRMhEyETIRMhE4U8n4kAwL5zJ1AAAAAASUVORK5CYII="
+                  }
+                }
+              ]
+            },
+            {
+              "type": "tool_result",
+              "tool_use_id": "Read:Exact-C",
+              "content": [
+                {
+                  "type": "image",
+                  "source": {
+                    "type": "base64",
+                    "media_type": "image/png",
+                    "data": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAANUlEQVR4nO3QsQ0AMAzDsLT//9yeoCkbeYAN6LzZdZf3x0GSKEmUJEoSJYmSREmiJFGSaMoHo8QBPwYSAhsAAAAASUVORK5CYII="
+                  }
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "text": "compare now"
+            }
+          ]
+        }
+      ]
+    },
+    "converted": [
+      {
+        "role": "user",
+        "tool_call_id": null,
+        "sources": [
+          "messages.0.content[0]"
+        ]
+      },
+      {
+        "role": "user",
+        "tool_call_id": null,
+        "sources": []
+      },
+      {
+        "role": "assistant",
+        "tool_call_id": null,
+        "sources": []
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "Read:Exact-A",
+        "sources": [
+          "messages.2.content.0.tool_result"
+        ]
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "Read:Exact-B",
+        "sources": [
+          "messages.2.content.1.tool_result"
+        ]
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "Read:Exact-C",
+        "sources": [
+          "messages.2.content.2.tool_result"
+        ]
+      },
+      {
+        "role": "user",
+        "tool_call_id": null,
+        "sources": []
+      }
+    ],
+    "sources": [
+      "messages.0.content[0]",
+      "messages.2.content.2.tool_result",
+      "messages.2.content.1.tool_result",
+      "messages.2.content.0.tool_result"
+    ],
+    "identities": [
+      {
+        "start": 236,
+        "length": 184,
+        "sha256": "68eb562430b8508f014985a342ffc9f43e30a0f13577658c86260df838785d6c",
+        "grid": [
+          39,
+          39
+        ]
+      },
+      {
+        "start": 476,
+        "length": 184,
+        "sha256": "68eb562430b8508f014985a342ffc9f43e30a0f13577658c86260df838785d6c",
+        "grid": [
+          39,
+          39
+        ]
+      },
+      {
+        "start": 668,
+        "length": 184,
+        "sha256": "5e9b3f5ff4f410f39d23b172105883ea1387d6ae5032c5688e064112ff07e78f",
+        "grid": [
+          39,
+          39
+        ]
+      },
+      {
+        "start": 860,
+        "length": 184,
+        "sha256": "80f25a8f7d3b0f0516ac4a63b7311963fd3abf03a435e168d8b8b525fcae12ca",
+        "grid": [
+          39,
+          39
+        ]
+      }
+    ],
+    "actual": 420,
+    "expected": 420,
+    "terminal_text_tokens": 8
+  }
+]

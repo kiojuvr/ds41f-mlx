@@ -358,11 +358,17 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
         request.prepared, request.recipe_tokenizer = prepared, tokenizer
         request.native_started = False
         request.image_identities = () if prepared.multimodal is None else tuple(prepared.multimodal.identities())
-        # Prior-message images require retained executable state, never replay.
-        messages = prepared.conversation_request.conversation.messages
-        historical = sum(len(m.image_sources) for m in messages[:-1])
+        # Prior-turn images require retained executable state, never replay.
+        origins = prepared.image_is_historical
+        if origins is None:
+            if prepared.protocol == 'messages' and request.image_identities:
+                raise ValueError('Messages image source origin unavailable')
+            messages = prepared.conversation_request.conversation.messages
+            historical = sum(len(m.image_sources) for m in messages[:-1])
+            origins = tuple(i < historical for i in range(len(request.image_identities)))
         request.required_image_frontier = max(
-            (s['start'] + s['length'] for s in request.image_identities[:historical]), default=0)
+            (s['start'] + s['length'] for s, historical in
+             zip(request.image_identities, origins, strict=True) if historical), default=0)
         request.execution = QualificationSession(request_id)
         request.logical_session = logical_session
         request.session_pair_retained = False

@@ -57,6 +57,8 @@ class RecipePreparedRequest:
     resolved_max_tokens: int | None = None
     capacity: dict[str, Any] | None = None
     requested_model: str | None = None
+    # Ordered Recipe source origins; Messages may expand one wire turn.
+    image_is_historical: tuple[bool, ...] | None = None
 
     @property
     def model(self) -> str | None:
