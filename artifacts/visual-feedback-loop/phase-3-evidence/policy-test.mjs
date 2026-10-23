@@ -1,0 +1,26 @@
+// Offline deployment guard tests. No tool execution or LLM calls.
+import assert from 'node:assert/strict';
+import {apply} from './executed/phase3_harness_guard.mjs';
+import {readFileSync} from 'node:fs';
+let guard;
+apply({tools:{guard(fn){guard=fn;}}});
+const policy=JSON.parse(readFileSync(process.env.PHASE3_POLICY));
+let n=0;
+const check=(name,args,denied)=>{const r=guard({name,arguments:args,callId:'offline-'+(++n)});assert.equal(typeof r==='string',denied,name+': '+JSON.stringify(args));};
+check('write',{file_path:'index.html',content:'x'},false);
+check('write',{file_path:'/tmp/escape.html',content:'x'},true);
+check('write',{file_path:'../escape.html',content:'x'},true);
+check('write',{file_path:'index.html',content:'x'.repeat(65537)},true);
+check('edit',{file_path:'index.html',old_string:'x',new_string:'y'},false);
+check('read',{file_path:'/etc/passwd'},true);
+check('bash',{command:policy.command},false);
+check('bash',{command:policy.command+'; id'},true);
+check('bash',{command:'id'},true);
+check('bash',{command:policy.command,workdir:'/'},true);
+check('bash',{command:policy.command,run_in_background:true},true);
+check('bash',{command:policy.command,timeoutMs:26000},true);
+check('bash',{command:policy.command,sandbox_permissions:'danger-full-access'},true);
+check('read_image',{file_path:'/etc/passwd'},true);
+check('read_image',{file_path:'render-99.png'},true);
+check('unknown',{},true);
+console.log(JSON.stringify({checks:n,passed:true,no_effects_executed:true}));

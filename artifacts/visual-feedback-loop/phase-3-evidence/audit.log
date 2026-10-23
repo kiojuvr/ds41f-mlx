@@ -1,0 +1,50 @@
+{
+  "status": "PASS_OFFLINE_EVIDENCE_CHECKS",
+  "generation_requests": 9,
+  "native_message_stop": 9,
+  "official_tool_calls": 8,
+  "official_tool_results": 8,
+  "allowed_policy_calls": 4,
+  "denied_policy_calls": 4,
+  "actual_render_attempts": 2,
+  "completed_task_renders": 0,
+  "read_image_calls": 0,
+  "completed_image_guided_corrections": 0,
+  "max_request_body_bytes": 25842,
+  "output_tokens": 2653,
+  "artifacts": [
+    {
+      "file": "artifact-01.html",
+      "call_id": "call_00_Bb4r0xeOxEdLuZo8ci5A1897",
+      "bytes": 1053,
+      "sha256": "809b4b0fe00fe3e2b19f36ed7c2d624b192487e170fb0f0cff31330c7f9c19f5",
+      "basis": "completed official write argument; no screenshot"
+    },
+    {
+      "file": "artifact-02.html",
+      "call_id": "call_00_EOTquGXafxZ7RE6d9sL24223",
+      "bytes": 2154,
+      "sha256": "54e755b2bba3c1cdc1b41a3726b299633d2d5c83f0a7a9935debdf9210e77e40",
+      "basis": "completed official write argument; no screenshot"
+    }
+  ],
+  "phase0_package_comparisons": {
+    "dsh": true,
+    "dsh-base": true,
+    "dsh-headless": true,
+    "dsh-llm-deepseek": true,
+    "dsh-llm-deepseek-api-key": true,
+    "dsh-tool-fs": true,
+    "dsh-attachment-local": true
+  },
+  "runtime_execution_identity_matches_phase2": true,
+  "image_transport": "NOT_EXERCISED",
+  "quality": "NOT_EVALUATED",
+  "cache_image_history": "NOT_EXERCISED",
+  "native_settlement": "9 direct observer message_stop events, exact canonical-response matches and settled Runtime traces",
+  "limitations": [
+    "No task screenshot was produced. Preflight-render.png was a host smoke test, not a Harness result.",
+    "The final write was text/spec-driven, not an image-guided correction.",
+    "Allowed render calls returned official status=completed with a nonzero process exit; they were NOT successful renders."
+  ]
+}
