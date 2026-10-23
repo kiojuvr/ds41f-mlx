@@ -176,7 +176,24 @@ Proposed new evaluation driver: `tools/accept_visual_feedback_loop.py`, followin
 
 **Known failure (user observation):** ordinary image handling in Windows DeepSeek Harness currently fails. The precise failing protocol boundary has not yet been established by a retained Windows wire trace. A successful macOS inline fallback does not remove this compatibility requirement.
 
-After the inline MVP:
+**Gate W1 — static audit: PARTIAL overall, contracts mapped.** The
+[rc.2 source audit](flash-1017-harness-files-compatibility.md) establishes the
+Files upload/reference contract and conditional lifecycle calls, common user/tool
+image preparation, and the independent default-on `dsh_session_log` admission gap.
+Windows-specific source is available, but the failing Windows installation's
+identity/configuration and wire boundary remain unknown. No Windows or macOS
+execution was performed, and Phase 0–3 acceptance evidence is unchanged.
+
+**Proposed next implementation gate W2 (separate authorization required):** bounded
+image Files upload/storage plus owned file-reference resolution into existing
+native Messages/Recipe Vision and paired-cache execution, including narrow delete
+support; list/quota recovery must be explicitly included or deferred. Keep
+session-log support a separate decision (disable it in the minimum supported
+composition). No general Files parity, second converter/image processor or KV
+implementation. The audit is sufficient to scope W2, not to attribute or qualify
+the reported Windows failure.
+
+After the inline MVP and static audit:
 
 1. Reproduce and characterize actual Windows ordinary image-upload and tool-image behavior through its normal interaction flow; retain sanitized wire evidence and installation identities.
 2. Identify the API/transport contracts actually required by those workflows rather than inferring them from macOS headless behavior.
