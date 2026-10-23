@@ -1,0 +1,46 @@
+{
+  "gate": "BLOCKED — final Runtime trace not retained; no observed Harness/Runtime incompatibility",
+  "basis": "Independent direct inspection of the three retained PNGs, compared with canonical observed native assistant blocks in sequence.json. No expected descriptions, source HTML, rubric or corrective prompt reached the evaluated model.",
+  "A_official_harness_transport": "PASS",
+  "B_messages_history_continuity": "PASS",
+  "C_runtime_paired_cache_continuation": "NOT ESTABLISHED for all four requests; partial real-model evidence passes for first three requests",
+  "D_model_visual_interpretation": "PASS",
+  "E_phase3_full_visual_feedback_loop": "NOT TESTED",
+  "observations": [
+    {
+      "image": "A",
+      "verified": ["Visual Transport Check heading", "red circle, blue square, green triangle in left-to-right order", "Marker: K7M4", "white rounded panel on pale blue-gray background"],
+      "model": "All these undisclosed details correctly identified after the first image-bearing continuation."
+    },
+    {
+      "image": "B",
+      "verified": ["Field Notes / Weekly project overview", "orange-red header", "three yellow panels stacked vertically on the left", "12, 84, 24 with correct labels and captions", "large white region on right; lower panel reaches viewport bottom"],
+      "model": "Correctly distinguishes the dashboard from the geometric marker image; identifies palette, arrangement, text and numbers."
+    },
+    {
+      "image": "C",
+      "verified": ["inset rounded dark navy header", "three white rounded statistic cards in one horizontal row", "pale gray background", "same statistic labels, numbers and captions", "visible Updated today · All systems operational footer"],
+      "model": "Correctly describes the dashboard revision and meaningful B-to-C changes, then compares all three."
+    }
+  ],
+  "minor_inaccuracies": [
+    "B actually has a narrow top/left margin and small gaps between panels; the model's flush-to-top-left and touching descriptions are imprecise.",
+    "The model's guessed B header hex value is not established by visual inspection and is not used as acceptance evidence.",
+    "B and C share the main dashboard content, not literally every visible string: C additionally has a visible footer. The model independently identifies that footer difference."
+  ],
+  "paired_cache_evidence": {
+    "retained_vision_encoded_count": [0, 1, 1],
+    "retained_historical_reuse": "A reused on the A+B continuation without an extra encoding",
+    "missing": "Final A+B+C trace: third fresh encode, both historical reuses, final canonical frontier, Target/DSpark offsets, replay/repack counters and cache publication cannot be established.",
+    "cause": "The byte-identical reused runtime.py watcher samples every 250 ms while not server.should_exit. Harness completion is followed immediately by supervisor SIGTERM. Runtime exit records four traces in memory, but only trace-00 through trace-02 reached disk. A missed final polling window is consistent with this code and evidence; exact thread timing was not instrumented.",
+    "boundary": "External trace retention/owned-process shutdown; not evidence of a Messages, Recipe, Vision or paired-cache incompatibility.",
+    "recipe_identity_limitation": "Wire paths/digests/order are directly retained. Exact Recipe-expanded span identities and fresh/historical flags were not separately captured by this reused trace projection. Successful prefix restoration plus fresh counts establishes partial historical reuse, but no full-span audit is claimed."
+  },
+  "limitations": [
+    "One official session, one turn, four generation requests, three effects; no rerun or corrective follow-up.",
+    "Files requests all return 404 and request-wide inline fallback succeeds. No Files implementation added.",
+    "All four native message_stop events captured. Three cloned-reader AbortErrors occur after capture; wire request 5 reaches EOF normally. Observer EOF is not required for settlement acceptance.",
+    "No ablation establishes exclusive causal dependence on images. Accurate undisclosed visual details support bounded interpretation acceptance.",
+    "No rendering, HTML editing, browser execution, Windows, Thinking ON, long-context, eviction or autonomous correction loop."
+  ]
+}

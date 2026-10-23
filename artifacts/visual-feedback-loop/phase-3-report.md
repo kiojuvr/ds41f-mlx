@@ -368,3 +368,191 @@ after verified retention. Persistent operator installations, Runtime/Recipe/MTP,
 checkpoint, permissions and official packages were unchanged. No capability or
 README claim is expanded. **Stop: BLOCKED; no push, replacement conversation,
 Phase 3B/4 or 3D follow-up.**
+
+---
+
+## Gate P — official Harness multi-image Messages continuation
+
+**Protocol/history PASS; overall qualification BLOCKED by incomplete Runtime
+trace retention.** One official session completed the requested three sequential
+image observations. No Harness/Runtime protocol incompatibility was observed.
+The final Runtime trace was not archived, so complete three-image paired-cache
+acceptance is **not established**. This is an evidence-collection limitation,
+not model task failure or evidence of a cache defect. No second conversation
+was run to replace the incomplete evidence.
+
+| Acceptance | Result | Direct basis |
+| --- | --- | --- |
+| A. Official Harness transport | **PASS** | Three completed official `read_image` results arrived as native nested inline images; subsequent responses identify undisclosed visual details. |
+| B. Messages history continuity | **PASS** | Successive wire requests retain A, A+B, A+B+C in the same locations/order with unchanged PNG bytes/dimensions and original opaque call IDs. All four native responses completed. |
+| C. Runtime paired-cache continuation | **NOT ESTABLISHED — partial evidence passes** | First three traces establish fresh A/B encoding, A historical reuse, exact prefix restoration, Target/DSpark agreement and zero replay/repack. Final A+B+C trace missing. |
+| D. Model visual interpretation | **PASS** | Correct marker/shapes for A and meaningful dashboard layout/palette/footer differences for B/C; minor geometric/color-description imprecision retained. |
+| E. Phase 3 full Visual Feedback Loop | **NOT TESTED** | No HTML writes, rendering, browser execution or autonomous correction. Earlier BLOCKED attempts above remain unchanged. |
+
+### Isolation, identities and fixed budgets
+
+Starting clean branch `Visual-Feedback-Loop`, HEAD
+`92f5f762bbacda74530b5510ad4f9017cd83387e`. Evidence:
+[protocol-gate/](phase-3-evidence/protocol-gate/).
+
+- Installed official CLI/base/headless/provider/filesystem/attachment packages
+  **0.2.1-rc.2**, Node **v24.5.0**. All 17 retained package versions/entrypoint
+  hashes match the previously qualified installation. Upstream build Git SHA
+  remains unavailable in installed manifests. [Identity receipt](phase-3-evidence/protocol-gate/identities.json).
+- Disposable `/tmp/ds41f-phase1-1017-tests`: Runtime **0.23.0**, provenance
+  **`2fdea4fe7367e540300d7c81d4fed402d716a274`**, Recipe **0.2.0**;
+  execution identity **`9c439d3fb9ad730996ecca821234bba1ce8817d7b46a2744e171c10a4d7d2ca2`**
+  equals Phase 2/3. All **113** installed Runtime Python files match this checkout.
+- Original Flash-1017 checkpoint, revision
+  `1bae0e1088993b9b82de08f59de5be5a34e42170`, numerics
+  `flash-1017-pre-woa-fp8-v1`, native paired MTP/GLM, Thinking **OFF**.
+  The byte-identical Phase 3 Runtime bootstrap preserves in-process admission
+  **before backend imports**, environment application, executor-owned eager
+  loading, and ready health. [Admission](phase-3-evidence/protocol-gate/runtime-admission.json),
+  [full identity](phase-3-evidence/protocol-gate/runtime-identity.json).
+- Fresh isolated Harness home/profile/agents/session/workspace; official `dsh`
+  headless/native DeepSeek provider, official attachments/preparation and
+  Files-first fallback. Only model-facing tool: **`read_image`**. Read/write/edit,
+  Bash/PowerShell, web, subagents, generation retries and plan-mode disabled.
+  Official **read-only** sandbox retained. No installed package modified.
+- The previous Bash/rendering guard was **not loaded**. A minimal monotonic
+  `tools.guard()` fence admits at most three image effects on the supplied
+  paths, solely to enforce the required effect budget. It registers/dispatches
+  no tools, enforces no image ordering, and changes no arguments, results or
+  conversation history. Normal Harness scheduling selected the observed order.
+- Budgets saved before generation: **one conversation, four generation requests,
+  three image effects, 1200 output tokens/request, 180 s generation deadline,
+  900 s conversation deadline, 1200 s startup, 16 MiB body**. The passive Phase 3
+  observer adds only a pre-fetch request/token/body budget fence. No prompt
+  correction, generation retry, synthetic tool result or direct generation POST.
+- One pre-generation bootstrap was rejected because the Harness-only
+  `DS41F_LOCAL_API_KEY` environment-variable **name** reached Runtime's strict
+  profile configuration. Its log/zero-conversation receipt are retained in
+  [startup-rejected/](phase-3-evidence/protocol-gate/startup-rejected/).
+  Removing that Harness-only variable from the Runtime child environment
+  resolved startup without changing admission. No model was loaded or request
+  generated by that rejected bootstrap.
+
+### Immutable images and actual sequence
+
+Copied all three supplied PNGs before the conversation, chmod 0444; original,
+copy, transmitted and final-copy hashes agree. No image transformation or new
+image generation was performed by the supervisor. Full hashes and paths:
+[images.json](phase-3-evidence/protocol-gate/images.json). All were **1280×720 PNG**.
+
+| Image | Retained source | Bytes | Original = copy = transmitted SHA-256 |
+| --- | --- | ---: | --- |
+| A | Phase 0 `probe.png` | 24,147 | `7f594ec2e888cf9777a8a9bddc1baacc03df39459e30a43f37eaa9d7dd41f08a` |
+| B | Phase 2 continuation `render-00.png` | 35,329 | `fc6dd2f551cb196b84eb64d1bd0c91b01633ce881403d4bc4f0a1d602c1176d9` |
+| C | Phase 2 continuation `render-01.png` | 32,710 | `0c03c9f7a75a5a3a653b38a2df900f4ad533abba9dbc6d4a98af0116d7ac359f` |
+
+Single headless turn, **49.39 s**, **1095 output tokens**, Harness exit **0**.
+[Exact prompt](phase-3-evidence/protocol-gate/task.json) contains filenames and
+observation/sequence instructions, not expected visual content or source descriptions.
+[Official events](phase-3-evidence/protocol-gate/harness-events.jsonl),
+[canonical observed sequence](phase-3-evidence/protocol-gate/sequence.json):
+
+1. `call_00_ZcIiwOa0qAg79gyq4jIk1628`: official `read_image(A)`, completed.
+2. After receiving A, model describes its heading, **red circle → blue square →
+   green triangle**, **K7M4** marker; requests B with
+   `call_00_2ISyN0qhwm2ZzKm11Hb63652`, completed.
+3. After receiving B, model describes the orange-red header, stacked yellow
+   statistic panels and **12 / 84 / 24**, distinguishes A; requests C with
+   `call_00_kYn7jJHefVNkvz1d28sE1848`, completed.
+4. After C, model describes inset navy rounded header, horizontal white cards,
+   pale background and visible status footer, then compares all three and ends.
+
+Independent direct PNG review:
+[independent-review.json](phase-3-evidence/protocol-gate/independent-review.json).
+The model overstates B's header as flush to the edge and tiles as touching;
+there are narrow margins/gaps. Its guessed hex color is not an acceptance fact.
+These do not invalidate the meaningful, accurately observed distinctions.
+
+### Actual native transport/history contract
+
+[Sanitized wire events](phase-3-evidence/protocol-gate/wire.jsonl) retain complete
+serialized body sizes/hashes, native SSE completion, image facts and call IDs;
+no credential headers or full base64 bodies are retained.
+
+| Generation / wire request | Images | Complete body bytes | Native outcome |
+| --- | --- | ---: | --- |
+| 1 / 1 | none | 6,509 | 200, `message_stop`, request A |
+| 2 / 3 | A | 39,947 | 200, `message_stop`, interpret A/request B |
+| 3 / 5 | A, B | 88,681 | 200, `message_stop`, interpret B/request C |
+| 4 / 7 | A, B, C | 134,604 | 200, `message_stop`, interpret C/final comparison |
+
+Every image is `source.type=base64`, MIME `image/png`, **inside** official
+`tool_result.content`, not an attachment string or offloaded reference.
+Nested locations are respectively
+`messages.2.content.0.tool_result.2`,
+`messages.4.content.0.tool_result.2`,
+`messages.6.content.0.tool_result.2`; each corresponding result has content
+`[text,text,image]`, `is_error=false`, and its original model-generated ID.
+Historical image locations, order, hashes, lengths and dimensions remain stable
+on every subsequent request. No removal, replacement or normalization drift
+was observed. Each tool admission follows its corresponding direct native
+`message_stop`; results complete before the next image-bearing request.
+
+Three actual `/v1/files` requests (wire 2/4/6) returned **404 `not_found`**.
+Each uploaded A's prepared bytes: the unresolved first historical attachment
+was retried before request-wide inline fallback. B/C therefore were not
+individually uploaded via Files; they were successfully delivered inline with
+all preceding images. This is observed official behavior, not an implemented
+Files API or transport override. All four native `message_stop` events were
+captured. Three cloned-reader `AbortError` events occur **after** persisted
+`message_stop`; wire request 5 reached observer EOF normally.
+
+### Paired-cache coverage and exact remaining limitation
+
+[Cache summary](phase-3-evidence/protocol-gate/cache-summary.json):
+
+| Generation | Images | Restored → settled frontier | Fresh encodes | Coverage |
+| --- | --- | --- | ---: | --- |
+| 1 | none | 0 → 741 | 0 | Full retained trace |
+| 2 | A | 741 → 1805 | 1 | Full retained trace |
+| 3 | A+B | 1805 → 3017 | 1 | Full retained trace; A historical reuse |
+| 4 | A+B+C | **not retained** | **unknown** | Native completion exists; final Runtime trace missing |
+
+For all **three retained** real-model traces, all 40 Target and three DSpark
+frontiers agree, preceding canonical prefixes restore exactly, authority settles,
+queues/predictions retire and cache publishes; prompt replay, full-cache repack
+and quiescence replay/repack counters are zero. Two fresh image encodes and one
+historical reuse are directly established. **Do not report aggregate fresh=3**:
+that is expected, not measured by the retained evidence.
+
+The reused watcher polls `backend.serving_traces` every 250 ms only while
+`not server.should_exit`; the supervisor retires Runtime immediately after
+Harness exits. [Runtime exit](phase-3-evidence/protocol-gate/runtime-exit.json)
+records **four traces in memory**, but disk retains only `trace-00` through
+`trace-02`. A missed final polling window is consistent with this shutdown
+sequence; exact thread timing was not instrumented. The final trace cannot be
+recovered from the removed owned workspace. No replacement conversation was run.
+
+**Boundary: external trace retention/owned-process shutdown**, not an observed
+Harness attachment, Messages serialization, Runtime admission, multimodal
+preparation or paired-cache incompatibility. Exact Recipe-expanded span identities
+and historical flags were also not separately recorded by this reused trace
+projection; the wire occurrence identities/order are direct evidence, but no
+complete Recipe-span identity audit is claimed. Native 200/completed final text
+cannot substitute for the missing Target/DSpark/cache-publication evidence.
+No Runtime, Recipe, Vision, Scheduler or cache authority was changed, and no
+speculative correction is implemented.
+
+### Audit, retention and cleanup
+
+[Offline audit](phase-3-evidence/protocol-gate/audit-results.json) passes checks of
+retained wire/history/call IDs/settlement and all three available canonical
+traces, while explicitly reporting the coverage gap rather than a gate PASS.
+It adapts the existing Phase 3 audit, makes no HTTP/model/tool requests, and does
+not reconstruct or alter model history. Raw traces are losslessly compressed;
+[retention manifest](phase-3-evidence/protocol-gate/retention-manifest.json)
+records retained file hashes. No new general testing framework was introduced.
+
+Harness PID **84265** and owned Runtime PID **72175** both exited **0**; startup
+rejection also retired. Final process verification found owned PIDs gone,
+**18083 free**, both temporary roots removed, all copied image bytes unchanged
+before removal. [Cleanup](phase-3-evidence/protocol-gate/cleanup.json).
+Persistent operator Runtime/installations/checkpoint and official Harness packages
+were not changed. No browser/renderer was started or debugged, no push, and no
+full-loop/Windows/Phase 3B work. **Stop: protocol/history demonstrated; overall
+Gate P remains BLOCKED on missing paired-cache acceptance evidence.**

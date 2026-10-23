@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/Volumes/SDXC-512/ds41f-mlx/artifacts/visual-feedback-loop/phase-3-evidence/protocol-gate/runtime.py", line 84, in <module>
+    main()
+    ~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/artifacts/visual-feedback-loop/phase-3-evidence/protocol-gate/runtime.py", line 28, in main
+    cfg = replace(config(port=PORT, profile='mtp-serving-v1'), kv_root=WORK/'kv')
+                  ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/ds41f_mlx/mtp_identity.py", line 164, in config
+    raise ValueError(f'unqualified profile environment settings: {unknown}')
+ValueError: unqualified profile environment settings: ['DS41F_LOCAL_API_KEY']
