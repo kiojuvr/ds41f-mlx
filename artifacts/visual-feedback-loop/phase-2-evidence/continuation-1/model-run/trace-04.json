@@ -1,0 +1,201 @@
+{
+  "response_id": "chatcmpl-5cc0f1699f084479ae7023555494c6d2",
+  "t0": 53637.750154083,
+  "generated": 772,
+  "decode_s": 19.704808989066805,
+  "first_canonical_s": 4.878518500001519,
+  "canonical_emitted": 772,
+  "request_prepare_s": 0.01558445800037589,
+  "recipe_convert_s": 0.0006929169976501726,
+  "recipe_render_s": 5.0125003326684237e-05,
+  "recipe_encode_s": 0.001695708000625018,
+  "recipe_convert_or_encode_s": 0.002438750001601875,
+  "generation_policy": {
+    "temperature": 0.0,
+    "top_p": 1.0,
+    "top_k": 0,
+    "min_p": 0.0,
+    "repetition_penalty": 1.0,
+    "presence_penalty": 0.0,
+    "frequency_penalty": 0.0,
+    "seed": null
+  },
+  "diagnostic_id": null,
+  "cache_lookup_s": 0.00046333399950526655,
+  "paired_restore_s": 0.0023567079988424666,
+  "cached_tokens": 2952,
+  "remaining_suffix_tokens": 695,
+  "load_s": 2.090018824674189e-07,
+  "vision_encoded_count": 1,
+  "vision_s": 0.8300797080009943,
+  "prompt_checkpoint_capture_s": 0.0014933749989722855,
+  "suffix_append_s": 2.623375083996507,
+  "protocol": "messages",
+  "execution_sampling": "greedy",
+  "sampler_authority": "ds41f_mlx.sampling.make_sampler",
+  "p5_handoff_s": 0.05036974999529775,
+  "prefill_handoff_s": 3.968113709001045,
+  "prompt_replay": 0,
+  "full_cache_repack": 0,
+  "first_native_decode_s": 0.060728750002454035,
+  "first_decode_call_s": 0.060833249997813255,
+  "total_ttft_s": 4.878518500001519,
+  "call_certificates": [
+    {
+      "processor_identity": 37907116032,
+      "lifetime": "1f315c0773a54d4599beaa0800e32a8e",
+      "revision": 767,
+      "consumed_frontier": 4413,
+      "choice": 0,
+      "index": 0,
+      "call": {
+        "id": "call_00_BY0vil9saPaK67ahGqQN0875",
+        "input": {
+          "html": "<!doctype html><html><head><style>\n*{box-sizing:border-box}\nhtml,body{margin:0;padding:0}\nbody{background:#f1f5f9;color:#0f172a;font-family:\"Segoe UI\",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}\n#page{width:1280px;height:720px;padding:48px;overflow:hidden}\n#header{width:1184px;height:120px;background:#0f172a;color:#ffffff;padding:24px 32px;border-radius:16px;display:flex;flex-direction:column;justify-content:center}\nh1{margin:0;font-size:32px;font-weight:700;letter-spacing:-0.5px;line-height:1.15}\n#header p{margin:6px 0 0;font-size:15px;color:#cbd5e1;line-height:1.3}\n#cards{display:flex;flex-direction:row;gap:24px;margin-top:32px}\n.card{flex:1 1 0;min-width:0;height:220px;background:#ffffff;padding:26px 28px;border-radius:16px;border:1px solid #e2e8f0;box-shadow:0 1px 2px rgba(15,23,42,.06);display:flex;flex-direction:column}\nh2{margin:0;font-size:13px;font-weight:600;color:#64748b;letter-spacing:.08em;text-transform:uppercase}\n.value{font-size:46px;font-weight:700;margin:14px 0 0;color:#0f172a;line-height:1.05;letter-spacing:-1px}\n.card p:last-child{margin:auto 0 0;font-size:14px;color:#64748b;line-height:1.4}\n#footer{margin-top:36px;font-size:14px;color:#64748b;letter-spacing:.01em}\n</style></head><body><main id=\"page\"><header id=\"header\"><h1>Field Notes</h1><p>Weekly project overview</p></header>\n<section id=\"cards\"><article class=\"card\" id=\"card-1\"><h2>Active projects</h2><p class=\"value\">12</p><p>Across all teams</p></article>\n<article class=\"card\" id=\"card-2\"><h2>Tasks completed</h2><p class=\"value\">84</p><p>This week</p></article>\n<article class=\"card\" id=\"card-3\"><h2>Team members</h2><p class=\"value\">24</p><p>Working together</p></article></section>\n<footer id=\"footer\">Updated today \u00b7 All systems operational</footer></main></body></html>"
+        },
+        "name": "write_html",
+        "type": "tool_use"
+      },
+      "candidate_ids": [
+        1718,
+        128825
+      ],
+      "response_snapshot": "{\"id\":\"chatcmpl-5cc0f1699f084479ae7023555494c6d2\",\"type\":\"message\",\"role\":\"assistant\",\"model\":\"deepseek-v4.1-flash\",\"content\":[{\"type\":\"text\",\"text\":\"**Evidence:** Layout now matches the spec \u2014 header at (48,48) 1184\u00d7120, three equal cards in one row with 24px gaps starting at y=200, footer visible, no overflow. Remaining issues are spacing/typography polish: the large empty gap inside cards (caption pinned to bottom looks disconnected), and the footer sits a bit tight under the cards. I'll tighten card internals and give the footer more breathing room.\"},{\"type\":\"tool_use\",\"id\":\"call_00_BY0vil9saPaK67ahGqQN0875\",\"name\":\"write_html\",\"input\":{}}],\"stop_reason\":null,\"stop_sequence\":null,\"usage\":{\"input_tokens\":695,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":2952,\"output_tokens\":0,\"service_tier\":\"standard\"}}",
+      "consuming_outcome": "{\"id\":\"chatcmpl-5cc0f1699f084479ae7023555494c6d2\",\"type\":\"message\",\"role\":\"assistant\",\"model\":\"deepseek-v4.1-flash\",\"content\":[{\"type\":\"text\",\"text\":\"**Evidence:** Layout now matches the spec \u2014 header at (48,48) 1184\u00d7120, three equal cards in one row with 24px gaps starting at y=200, footer visible, no overflow. Remaining issues are spacing/typography polish: the large empty gap inside cards (caption pinned to bottom looks disconnected), and the footer sits a bit tight under the cards. I'll tighten card internals and give the footer more breathing room.\"},{\"type\":\"tool_use\",\"id\":\"call_00_BY0vil9saPaK67ahGqQN0875\",\"name\":\"write_html\",\"input\":{}}],\"stop_reason\":null,\"stop_sequence\":null,\"usage\":{\"input_tokens\":695,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":2952,\"output_tokens\":0,\"service_tier\":\"standard\"}}"
+    }
+  ],
+  "mtp_stats": {
+    "copy_proposed": 408,
+    "copy_verified": 408,
+    "copy_accepted": 392,
+    "native_proposed": 201,
+    "native_verified": 201,
+    "native_accepted": 158,
+    "cycles": 220,
+    "accepts": 550,
+    "rejects": 31,
+    "init_emits": 2,
+    "draft_emits": 550,
+    "bonus_emits": 189,
+    "verify_emits": 31,
+    "depth_drafted": [
+      220,
+      198,
+      163
+    ],
+    "depth_accepted": [
+      208,
+      181,
+      161
+    ],
+    "zero_cycles": 0,
+    "backbone_ms": 18554.155628939043,
+    "mtp_head_ms": 301.4226259838324,
+    "sample_ms": 26.489245967241004,
+    "cache_ops_ms": 29.693081982259173
+  },
+  "quiescence": {
+    "canonical_frontier": 4419,
+    "discarded_future_token": null,
+    "counters": {
+      "new_verify_cycles": 0,
+      "new_proposals": 0,
+      "target_forwards": 1,
+      "history_replay": 0,
+      "full_cache_repack": 0,
+      "dspark_appends": 1
+    },
+    "latency_s": 0.02347045899659861,
+    "queue_drained_tokens": [],
+    "dspark": {
+      "frontier": 4419,
+      "offsets": [
+        4419,
+        4419,
+        4419
+      ],
+      "target_layer_ids": [
+        37,
+        38,
+        39
+      ],
+      "stage_count": 3,
+      "window_size": 5,
+      "authority": "bounded committed DSpark context; not executable target truth"
+    }
+  },
+  "authority_connection": {
+    "lifetime": "298a42d6e50b46978335e0da3b927956",
+    "revision": 774,
+    "disposition": "settled",
+    "consumed_frontier": 4419,
+    "emitted_frontier": 4419,
+    "queue_ahead": [],
+    "pending_prediction": null,
+    "rng_draws": 0
+  },
+  "canonical_frontier": 4419,
+  "target_offsets": [
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419,
+    4419
+  ],
+  "dspark_offsets": [
+    4419,
+    4419,
+    4419
+  ],
+  "terminal_matches": [
+    {
+      "ordinal": 771,
+      "token_id": 32,
+      "identity": "CONSUMING_TOOL_EOF",
+      "consuming_revision": 769,
+      "consuming_frontier": 4419
+    }
+  ],
+  "prediction_retired": true,
+  "queue_empty": true,
+  "cleanup_s": 0.0668331249980838,
+  "application_terminal": true,
+  "cancelled": false,
+  "cache_published": true,
+  "elapsed_s": 24.719415250001475
+}

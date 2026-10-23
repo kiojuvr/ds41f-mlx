@@ -91,10 +91,26 @@ v=runpy.run_path(SCRIPT)
 a=json.loads(MANIFEST.read_text())
 r=v['bind_execution_process'](a['checkpoint_variant'],a['provenance']['source_commit'])
 assert numerical_profile()==a['numerics']==r['numerics']
+from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+assert numerical_profile()==r['numerics']
 print(json.dumps(r))
 '''.replace('SCRIPT', repr(str(ROOT/'tools/accept_visual_feedback_loop.py')))
     result=subprocess.run([sys.executable,'-I','-c',script],capture_output=True,text=True,timeout=120)
     assert result.returncode==0,result.stderr
+
+
+def test_execution_admission_precedes_backend_imports():
+    # Reproduce the real run() import boundary, not just the isolated helper.
+    # Upstream transformers lazy imports change spec path entries to Path objects;
+    # canonical serve.py authenticates before activating those imports.
+    import ast
+    import inspect
+    tree=ast.parse(inspect.getsource(v.run))
+    bind_line=next(n.lineno for n in ast.walk(tree) if isinstance(n,ast.Call)
+        and isinstance(n.func,ast.Name) and n.func.id=='bind_execution_process')
+    backend_lines=[n.lineno for n in ast.walk(tree) if isinstance(n,ast.ImportFrom)
+        and n.module in {'ds41f_mlx.serving.production_mtp','ds41f_mlx.serving.server'}]
+    assert backend_lines and all(line>bind_line for line in backend_lines)
 
 
 def test_blank_and_oversized_images(tmp_path):

@@ -1,68 +1,108 @@
 # Phase 2 — Direct HTTP visual loop
 
-**BLOCKED — one real-model attempt, zero completed image-guided corrections.** The evaluation driver is implemented, but the attempt stopped before the first assistant/tool response. This is not a model-quality failure or visual-loop qualification. No generation was retried, and no history was discarded.
+**PASS, bounded native-Messages static Web loop.** Continuing from `f0f29be87b189c477d3777041cdcdf8b66e16446`, the real original Flash-1017 model completed **five image-guided edit/render iterations** in one conversation. No task goal, rubric, threshold or generation budget was changed. Earlier failures remain retained, not replaced by favorable results.
 
 ## Separate outcomes
 
-| Criterion | Outcome | Evidence |
+| Criterion | Outcome | Independent evidence |
 | --- | --- | --- |
-| A. Screenshot transport and interpretation | **Not established / BLOCKED** | No screenshot reached inference; HTTP 200 was followed by incomplete SSE, without `message_stop`. |
-| B. Closed-loop execution | **Not established / BLOCKED; 0 iterations** | No completed assistant response, tool call, model artifact revision, or correction/render pair. |
-| C. Artifact quality | **Not evaluated** | No model-created artifact exists. The retained renderer-control screenshot is not model output. |
-| Real-model paired image continuation | **Not evaluated** | The only request was text-only initialization. Historical image reuse and encode counts cannot be inferred from this failure. |
+| A. Actual screenshot transport and interpretation | **PASS** | Six rendered PNGs were inline native tool results and encoded once each. Canonical responses identify visible colors, stacking, clipping and card spacing. Every request body and native assistant response reconstructs exactly. |
+| B. Closed-loop execution | **PASS — five completed iterations** | Six model-created artifact revisions, six screenshots, all 13 native `message_stop` boundaries, 12 original tool IDs and paired canonical settlements retained. |
+| C. Artifact quality | **PASS under the unchanged bounded rubric: 1/9 → 9/9** | Independent layout/palette/visibility checks and final screenshot review. **Not literal full-goal compliance:** subtitle remains light slate rather than white; later polish is not monotonically better. |
+| Real-model paired continuation | **PASS for this observed conversation** | Six fresh spans encoded; 30 historical image occurrences reused without encoding. Exact prefix restoration, Target/DSpark agreement and cache publication on every request; replay/repack zero. |
 
-Durable, unmodified attempt receipt: [run/receipt.json](phase-2-evidence/run/receipt.json). Supporting trace: [run/failure-traces.json](phase-2-evidence/run/failure-traces.json); SSE capture: [run/sse-00.json](phase-2-evidence/run/sse-00.json); server/client error: [run.log](phase-2-evidence/run.log).
+Authoritative reviewed summary: [receipt](phase-2-evidence/receipt.json). Original automatic run receipt is [model-run/receipt.json](phase-2-evidence/continuation-1/model-run/receipt.json); its transport field intentionally remains `REVIEW_OBSERVATIONS`. Independent external review is [review.json](phase-2-evidence/continuation-1/review.json), not the evaluated model's completion declaration.
 
-## Starting state and identities
+## Starting state and execution identities
 
-- Branch `Visual-Feedback-Loop`, clean initial HEAD `2fdea4fe7367e540300d7c81d4fed402d716a274`. No concurrent Python/model-serving process was observed initially. LM Studio's existing listener on 1234 and other operator services were left alone. Port **18079** was free and bound only on loopback.
-- Apple M3 Ultra, 549,755,813,888 bytes RAM; macOS 26.5.2 arm64. Initial memory inspection showed roughly 404 GB free plus reclaimable file-backed memory; no competing model process was observed. Later checkpoint hashing increased inactive file-backed pages, not a second model allocation.
-- Reused only the **disposable** `/tmp/ds41f-phase1-1017-tests` environment provisioned by the documented Phase 1 workflow. Rebuilt its Runtime wheel using `tools/build_execution_package.py --checkpoint-variant flash-1017 --glm-profile native`, then replaced only that disposable installation's Runtime package. Neither persistent operator installation was rebuilt, reinstalled, stopped, or modified.
-- Runtime **0.23.0**, package provenance **2fdea4f**, numerical selection `flash-1017-pre-woa-fp8-v1`, GLM `native`. The three installed request-preparation/backend source files were byte-compared against this checkout before loading. The receipt retains their hashes, including the Phase 1 corrected preparation and enqueue implementations.
-- Checkpoint: `/Volumes/KIOXIA-PRO-2/models/deepseek-ai/DeepSeek-V4.1-Flash-1017`, original Flash-1017, source revision **`1bae0e1088993b9b82de08f59de5be5a34e42170`**, 48 official shards. Full-byte checkpoint admission succeeded in isolated Python before the attempt. No original-Flash substitution or checkpoint edits.
-- Python **3.13.15**, Recipe **0.2.0**, oMLX **0.7.0**, MLX **0.32.2**, MLX-LM **0.31.4.dev132+g94cdcae13**, httpx **0.28.1**, uvicorn **0.54.0**. Exact locked dependencies, native origins, checkpoint inventory and compatibility are retained once in [run/identity.json](phase-2-evidence/run/identity.json). Recipe uses the retained repaired wheel/source/patch authority, not an upstream substitution.
-- Renderer: installed Chrome **155.0.8059.85**, Playwright **1.64.1**, separate renderer Python 3.13.15 with Pillow **13.0.0**. [Renderer dependencies](phase-2-evidence/renderer-dependencies.txt), font SHA and browser version in [renderer-smoke.json](phase-2-evidence/renderer-smoke.json). Runtime's independently pinned Pillow remains 12.3.0.
-- Wheel/source hashes: [source-identities.json](phase-2-evidence/source-identities.json). Admission summary: [initial-admission-summary.json](phase-2-evidence/initial-admission-summary.json). [Pre-run process/memory inspection](phase-2-evidence/pre-run.txt) also records test-owned renderer setup processes; these were subsequently cleaned up.
+- Branch `Visual-Feedback-Loop`; clean initial HEAD **f0f29be**. No competing Python/model/browser process observed; loopback **18079** free. Apple M3 Ultra, 549,755,813,888 bytes RAM, macOS 26.5.2 arm64; about 324 GB free plus reclaimable memory. Existing operator listeners were not modified. [Preflight](phase-2-evidence/continuation-1/preflight.txt).
+- Reused only disposable `/tmp/ds41f-phase1-1017-tests`, provisioned by `mtp_setup` per `docs/verification.md`. **No rebuild/reinstall was needed**: installed Runtime **0.23.0**, provenance **`2fdea4fe7367e540300d7c81d4fed402d716a274`**, still exactly matches the checkout's corrected request preparation/backend files. f0f29be changes the external driver/evidence, not those Runtime files. [Source/package check](phase-2-evidence/continuation-1/package-check.json).
+- Original **DeepSeek-V4.1-Flash-1017**, checkpoint `/Volumes/KIOXIA-PRO-2/models/deepseek-ai/DeepSeek-V4.1-Flash-1017`, revision **`1bae0e1088993b9b82de08f59de5be5a34e42170`**, 48 official shards; numerical profile **`flash-1017-pre-woa-fp8-v1`**, GLM `native`, MTP/DSpark ON. Isolated checkpoint admission used the existing full-byte SHA authority with its unchanged-file identity cache, not an original-Flash substitution or a new checkpoint enrollment.
+- Python **3.13.15**, Recipe **0.2.0**, repaired Recipe wheel SHA `11bda3355c2f48b99d04f6a2179b283add3f6d1218f34e4707bd5a29b304ab03`, oMLX **0.7.0**, MLX **0.32.2**, MLX-LM **0.31.4.dev132+g94cdcae13**. Full native origins, dependency/checkpoint identities and admission: [identity.json](phase-2-evidence/continuation-1/model-run/identity.json).
+- Execution-process admission is recorded **before backend construction**. Runtime source hashes include the Phase 1 wire-origin correction. External client hashes actually executed: [executed-client-hashes.json](phase-2-evidence/continuation-1/executed-client-hashes.json).
+- Separate disposable renderer environment: Chrome **155.0.8059.85**, Playwright **1.64.1**, Python **3.13.15**, Pillow **13.0.0** (Runtime retains its pinned Pillow 12.3.0). [Renderer dependencies, executable/framework/font hashes](phase-2-evidence/continuation-1/renderer-identity.json). All six renders record the same browser version and Arial hash.
 
-## Driver and fixed evaluation
+Neither persistent operator Runtime installation was rebuilt, reinstalled, stopped or modified. No checkpoint files were edited.
 
-`tools/accept_visual_feedback_loop.py` is an external evaluation client. It reuses the production backend/app, isolated admission convention, real socket, health settlement and serving traces from `accept_mtp_vision.py`; native/paired acceptance utilities and Recipe Messages tests were inspected. Preflight calls the **existing** `prepare_request('messages', ..., ordinary=True)` for complete-body Recipe conversion, image geometry/aggregate budgets and expanded-context capacity. No Runtime protocol converter, Vision executor or cache authority was added.
+## Bootstrap correction and retained failures
 
-The two client tools are `write_html({html})`, replacing one fixed workspace file, and `render({})`, invoking the external one-shot renderer and returning its actual PNG inline inside the matching native `tool_result`. Tool inputs come only from completed model output. No generated shell commands or arbitrary paths are accepted. Static HTML validation, CSP, disabled page JavaScript, aborted page network requests, DNS denial, a fresh sandboxed browser context and subprocess deadlines constrain rendering. All model files would live in a disposable workspace; evidence revisions/diffs would survive workspace deletion. The final driver additionally explicitly relocates its Runtime KV root into that workspace; the attempted run's default KV directory did not exist, and no persistence tool was used.
+| Stage | Actual outcome | Retained evidence |
+| --- | --- | --- |
+| Original attempt, before f0f29be | One native POST, zero generated tokens, no settled assistant/tool effect. Child-only admission did not bind the serving process. | [Original immutable receipt](phase-2-evidence/run/receipt.json), [error](phase-2-evidence/run.log); original report remains in Git at f0f29be. |
+| Continuation startup using unchanged f0f29be | **Zero HTTP generation requests and no model loading.** In-process admission rejected `transformers` after early backend imports changed import-spec search entries from strings to `Path` objects. | [Startup receipt](phase-2-evidence/continuation-1/run/receipt.json), [error](phase-2-evidence/continuation-1/run.log), [controlled import-order diagnosis](phase-2-evidence/continuation-1/import-order-diagnosis.json). |
+| Corrected continuation | One actual conversation, **13 successful generation requests**, no retry, five corrections, clean completion. | [Run receipt](phase-2-evidence/continuation-1/model-run/receipt.json). |
 
-The fixed task and tool schemas are retained in [run/task.json](phase-2-evidence/run/task.json): a Field Notes dashboard with navy header, pale slate background, three equal white horizontal cards, 48 px margins, 24 px gaps, visible footer and no overflow. A deliberately mismatched starter is supplied; the model is asked to save/render it, then choose coherent, screenshot-grounded corrections. No discrepancy description, corrective patch or independent score is included in tool feedback.
+The smallest correction is **driver-only**: move the backend/server imports after actual in-process admission, matching the supported order in `ds41f_mlx/serve.py`. No Runtime origin check was weakened, private numerical binding assigned, protocol converted, or cache authority changed. The regression now checks both actual admission followed by backend import and the real `run()` import ordering. The previous helper-only check missed that ordering issue.
 
-Before starting, independent checks were fixed for element presence, overflow, header geometry, horizontal equal-width cards, card gaps, card geometry, palette, viewport visibility and footer placement. Quality requires all nine checks and improvement over the first render; the checks are a bounded layout/palette rubric, not a comprehensive typography assessment. The model's declaration is not a score.
+This startup correction happened before any generation request. After it, only one actual model conversation was started; no uncertain generation or tool effect was resubmitted. The user explicitly authorized this continuation from f0f29be.
 
-Fixed render settings: **1280×720, DPR 1**, local embedded Arial with retained font hash, sRGB, light scheme, en-US, UTC, reduced motion, no external assets. Renderer failures, blank images and invalid artifacts are distinct from successful image observations. The controlled starter render succeeded: [renderer-control.png](phase-2-evidence/renderer-control.png), [source](phase-2-evidence/renderer-control.html). PNG SHA-256 `fc6dd2f551cb196b84eb64d1bd0c91b01633ce881403d4bc4f0a1d602c1176d9`. **This image was never transmitted to the model.**
+## Fixed task, tools, rendering and budgets
 
-## Budgets and actual attempt
+The [exact task/tool schemas](phase-2-evidence/continuation-1/model-run/task.json) equal the earlier task byte-for-byte as structured data; the offline audit asserts this. Goal: a Field Notes dashboard with a pale slate background, navy header, three equal white cards in one horizontal row, 48 px margins, 24 px gaps, readable content/footer and no overflow. The model saves the supplied mismatched starter, renders it, then independently chooses changes from screenshots. There are no injected discrepancy descriptions, corrective patches, hidden scores, or extra follow-up prompts.
 
-Budgets saved as RUNNING before admission/generation:
+Only `write_html({html})` and `render({})` execute. Actual complete model arguments create the HTML; every retained revision equals its canonical tool argument. The renderer receives one fixed workspace file, not a shell command. It uses static HTML/CSS validation, CSP, disabled page JavaScript, aborted page network requests, DNS denial, no external assets, sandboxed headless Chromium, embedded local Arial, **1280×720/DPR 1**, fixed sRGB/en-US/UTC/light/reduced-motion settings and a subprocess deadline. Failed, invalid or blank renders cannot become successful image observations. Artifact/KV paths are disposable; model revisions/diffs and screenshots survive in evidence.
 
-- Total task: **5400 s**; startup/admission bound: **1200 s**.
-- Each generation: **600 s**, **2600 output tokens**, temperature 0, Thinking OFF.
-- **16** generation requests, **18** client tool effects, maximum **five** correction iterations.
-- Each renderer subprocess: **25 s**; canonical settlement: **60 s**; HTML source: **65,536 bytes**.
-- Complete serialized JSON: **16 MiB**, with existing Runtime image/pixel/patch/context admission applied to every preflight.
+Budgets saved before execution, unchanged from f0f29be:
 
-Only **one POST** occurred. Native `/v1/messages`, model alias `deepseek-v4.1-flash`, 3050 serialized bytes, 976 expanded prompt tokens, zero images. The receipt records its complete-body hash. HTTP headers reported 200, but the stream yielded **no native events** and closed incompletely. In particular there was no `message_stop`, no completed argument object, and **no tool effect was authorized**. Total attempt elapsed **115.63 s** including setup and cleanup.
+- **5400 s** total; **1200 s** admission/startup bound; **600 s / 2600 output tokens** per generation; temperature 0, Thinking OFF.
+- Maximum **16 requests**, **18 client effects**, **five correction iterations**, **65,536 source bytes**.
+- **25 s** per render subprocess, **60 s** canonical settlement, **16 MiB** entire JSON body.
+- Existing Recipe/Vision source, pixel, patch, expanded-context and output-reservation admission before every POST; no second converter or Vision implementation.
 
-The retained trace records `generated=0`, `cached_tokens=0`, `remaining_suffix_tokens=976`, `cache_published=false`, `cancelled=false`. Canonical frontier agreement, replay/repack counters and image-encoding metrics are absent at this early failure; **their absence is not evidence of correctness or zero replay**.
+Actual run: **324.77 s**, **13 requests**, **12 effects**, **4642 output tokens total**. Maximum request body **278,814 bytes** and expanded prompt **9848 tokens**. At six images: 5,529,600 source pixels and 28,704 grid patches; each image grid `[52,92]`, span length **578** (below 1014). All fresh image-last prompts retain **six terminal text tokens**. This qualifies only the observed prompt sizes, **not** the Runtime's entire implemented 1,048,576-token multimodal envelope.
 
-## Diagnosis and smallest local correction
+## Complete revision/render trajectory
 
-The server raised **`numerical execution requires installed MTP admission`**. The new driver initially copied the older helper's subprocess-only admission pattern. `execution_identity.inspect_payload()` binds an immutable `_admitted_variant` **in the process calling it**; the isolated child could admit the checkpoint/dependencies, but could not bind the parent serving process. Setting `backend.dependency_identity` alone does not initialize that binding. The numerical fence correctly refused execution. This is an **evaluation-driver bootstrap defect**, not a reproduced Phase 1 image classification defect or a reason to weaken Runtime admission.
+All source files, diffs, screenshots, complete hashes and original IDs are retained under [model-run/](phase-2-evidence/continuation-1/model-run/). Hashes below are prefixes; full SHA-256 values are in its receipt. Raw screenshot bytes equal transmitted PNG bytes and the Runtime-admitted source digest; variant is original PNG with **no client normalization**.
 
-The committed driver now calls the existing `inspect_payload()` in its execution process, compares its variant/source to the isolated admission, and verifies `numerical_profile()` **before constructing the backend**. No private binding override, Runtime patch, cache workaround or protocol change was made. [Controlled diagnosis](phase-2-evidence/bootstrap-diagnosis.json) reproduces the rejection in fresh isolated Python, then demonstrates the existing admission call binding Flash-1017 successfully, without loading weights.
+| Iteration | Previously observed | Model revision / SHA prefix | Subsequent screenshot / SHA prefix | Independent review |
+| --- | --- | --- | --- | --- |
+| Initial creation | None | `artifact-01.html` / `eb299db3f019` | `render-00.png` / `fc6dd2f551cb` | Actual model tool saves starter; orange header, stacked yellow cards and clipped footer. Score 1/9. |
+| 1 | render-00 | `artifact-02.html` / `3431705607ca` | `render-01.png` / `0c03c9f7a75a` | Corrects visible layout, palette, margins and overflow. Score 9/9. |
+| 2 | render-01 | `artifact-03.html` / `6e7218b9891e` | `render-02.png` / `407264f3f63e` | Changes heading/value typography, padding and footer spacing. Claimed caption-gap correction remains incomplete (`auto` margin retained). |
+| 3 | render-02 | `artifact-04.html` / `06466d3d6f0b` | `render-03.png` / `a694c0cd7b20` | Actually groups caption closer to value; substantial visible card-composition change. |
+| 4 | render-03 | `artifact-05.html` / `4e84eb80bdbd` | `render-04.png` / `142fda327438` | Reverses centered content to top alignment with bottom divider: preference oscillation, not demonstrated quality improvement. |
+| 5 | render-04 | `artifact-06.html` / `5794b3bfe9b7` | `render-05.png` / `12efe39fe582` | Small divider/padding refinement; model then ends naturally. Final score 9/9. |
 
-**No second real-model attempt was made.** The correction is controlled-test verified only. [driver-followup.diff](phase-2-evidence/driver-followup.diff) and hashes distinguish the executed driver from the committed follow-up, which also strengthens deadlines, model-error classification, renderer cleanup and explicit disposable KV configuration. The retained failed receipt was not rewritten to imply this follow-up ran.
+[Assistant 02](phase-2-evidence/continuation-1/model-run/assistant-02.json) independently identifies the orange header, yellow vertical cards, viewport overflow and off-screen footer. [Assistant 04](phase-2-evidence/continuation-1/model-run/assistant-04.json) identifies disconnected card captions and tight footer spacing; [assistant 06](phase-2-evidence/continuation-1/model-run/assistant-06.json) follows the still-visible caption gap with the actual composition correction. Iterations 1 and 3 are particularly clear substantive examples, independently exceeding the minimum two; the weaker/oscillatory cycles were not deleted or presented as monotonic improvements. All five edit/render cycles use prior delivered screenshots, not driver-generated patches or forced no-op changes.
 
-Renderer setup initially hung on style injection with page JavaScript disabled. Moving fixed font CSS into the initial HTML resolved that controlled smoke test. Early forced control timeouts left test-owned detached Chrome processes; those exact processes were terminated, and timeout cleanup was strengthened to handle descendants plus graceful renderer termination. These were renderer-only setup probes, not additional model tasks.
+## Independent quality and interpretation
 
-## Focused verification and paired-cache limits
+The **unchanged nine-check rubric** covers element presence, overflow, header geometry, equal horizontal cards, card gaps, card geometry, palette, viewport visibility and footer placement. Scores across **every** screenshot: **`[1, 9, 9, 9, 9, 9]`**. Final artifact, not a selected intermediate, passes all nine and improves over baseline. No model declaration is used in scoring.
 
-Final controlled verification:
+Final independent metrics: header `(48,48,1184,120)`; cards start at y=200, height 220, widths about 378.67, gaps 24; footer box y=456..472; no document overflow. Screenshot pixel samples confirm slate `[241,245,249]`, navy `[15,23,42]` and white `[255,255,255]`. Adjacent screenshots differ in 747,783 / 13,177 / 12,735 / 14,076 / 3021 pixels. These pixel facts confirm actual changed renders, **not** an aesthetic quality metric.
+
+Limitations are material: subtitle is **`#cbd5e1`, not literal white**; the fixed rubric does not inspect that foreground. Most objective gains occur in iteration 1. The caption correction takes two attempts, and later layout preferences oscillate. The model overstates complete specification compliance. This is bounded quality improvement, not perfect goal satisfaction or general design quality. No withheld-image/text-only ablation establishes exclusive causal dependence on Vision; acceptance rests on actual image encoding, accurate visual observations and their completed edits/renders.
+
+## Image history, paired cache and settlement evidence
+
+[Offline audit](phase-2-evidence/continuation-1/audit.py) performs **no generation, model loading, HTTP or client-tool effects**. It rebuilds complete request bodies in memory from original goal, canonical assistant blocks, exact tool results/IDs and raw PNGs, without storing base64 bodies. All 13 reconstructed hashes/sizes match. Every reconstructed client assistant equals the Runtime's complete canonical native response, and the actual SSE events end in `message_stop`. Results: [audit-results.json](phase-2-evidence/continuation-1/audit-results.json), [audit log](phase-2-evidence/continuation-1/audit.log).
+
+| Request | Images (historical + fresh) | Restored cached frontier | Final canonical frontier | Newly encoded spans |
+| ---: | ---: | ---: | ---: | ---: |
+| 0 | 0 | 0 | 1383 | 0 |
+| 1 | 0 | 1383 | 1456 | 0 |
+| 2 | 0 + 1 | 1456 | 2872 | 1 |
+| 3 | 1 + 0 | 2872 | 2952 | 0 |
+| 4 | 1 + 1 | 2952 | 4419 | 1 |
+| 5 | 2 + 0 | 4419 | 4499 | 0 |
+| 6 | 2 + 1 | 4499 | 5974 | 1 |
+| 7 | 3 + 0 | 5974 | 6051 | 0 |
+| 8 | 3 + 1 | 6051 | 7524 | 1 |
+| 9 | 4 + 0 | 7524 | 7599 | 0 |
+| 10 | 4 + 1 | 7599 | 9076 | 1 |
+| 11 | 5 + 0 | 9076 | 9158 | 0 |
+| 12 | 5 + 1 | 9158 | 10093 | 1 |
+
+For **all 13 requests**: cached frontier equals the preceding complete canonical frontier; all 40 Target offsets and three DSpark offsets agree with the new canonical frontier. Authority disposition is `settled`, consumed/emitted/quiescence frontiers agree, pending predictions/queues retire, cache publishes and cancellation is false. Existing `prompt_replay`, `full_cache_repack` and quiescence history-replay/repack counters are **zero**. Historical image spans stay covered by restored paired state and are never re-encoded. New screenshot spans alone are encoded. No speculative historical reconstruction or hidden full-prompt replay was used.
+
+Wire source occurrence ordering is invariant: `messages.4/8/12/16/20/24.content.0.tool_result`; exact image digests/grids/spans persist across every continuation. Original tool IDs match model calls, native call certificates, executed effects and reconstructed results. There is no Chat Completions projection, image deletion/replacement or normalization drift.
+
+For compact retention, complete raw traces/SSE are **losslessly gzip-compressed** with original byte hashes in [retention-manifest.json](phase-2-evidence/continuation-1/retention-manifest.json). Readable `trace-*.json` files omit duplicated `protocol_events`, `response`, `canonical_generated` and `quiescence.recovery_suffix_tokens`; those remain intact in `trace-*.raw.json.gz`. The audit verifies the archive hashes and reads the originals. This is external evidence projection, not Runtime instrumentation or execution/cache architecture change.
+
+## Focused verification, cleanup and limits
+
+**26 passed** in the final focused run: 18 client/bootstrap/error-boundary checks plus eight existing Recipe/paired-admission cases. [Log](phase-2-evidence/continuation-1/final-tests.log). Cases cover IDs, malformed arguments, active/invalid artifacts, oversized body/image pixels, incomplete SSE, renderer failure/timeout, blank screenshots, process-local admission and import ordering. Missing, evicted and incompatible historical pairs reject in the controlled eight-case lane; **no destructive real-model eviction test** was added. Phase 0/1 broad suites were not repeated.
 
 ```sh
 PYTHONDONTWRITEBYTECODE=1 /tmp/ds41f-phase1-1017-tests/bin/python -m pytest \
@@ -70,12 +110,6 @@ PYTHONDONTWRITEBYTECODE=1 /tmp/ds41f-phase1-1017-tests/bin/python -m pytest \
   tests/test_recipe02_messages_serving.py::test_converted_image_frontier_at_real_paired_admission -q
 ```
 
-**25 passed**: 17 client/bootstrap safety checks and eight existing focused Recipe/paired-admission cases. [Log](phase-2-evidence/final-tests.log). Checks cover missing/duplicate/mismatched opaque IDs, malformed arguments, forbidden active artifact output, oversized body/image pixels, incomplete/cancelled SSE (including tool blocks without `message_stop`), renderer failure/timeout, blank screenshot and process-local admission. The eight paired cases exercise fresh versus historical images with retained, missing, cleared/evicted and wire-mutated historical state; unavailable/incompatible historical pairs reject before encoding. These controlled checks are **not real-model paired-cache acceptance**, and the broad Phase 0/1 suites were not repeated.
+The owned server/backend shut down gracefully, model-run PID **97870** exited, both startup/model workspaces were removed, no test browser remains and **18079 is free**. [Final process/state record](phase-2-evidence/continuation-1/final-state.json). No credentials or full base64 request bodies retained; only the dedicated disposable workspace accepted model writes.
 
-The driver retains original native history and IDs, preflights all occurrences, records raw/transmitted PNG hashes and original-PNG variant, and checks existing trace encode counts against uncached spans, historical span coverage, canonical Target/DSpark offsets, cache publication, replay and repack. **None of those multi-image execution assertions was reached in this attempt.** Phase 1's first real-model continuation opportunity therefore remains open.
-
-## Cleanup and stopping point
-
-The owned server thread stopped, backend closed, driver PID 31172 exited and its disposable artifact workspace was removed. The previously default KV directory was absent. No listener remains on 18079 and no test-owned browser/model process remains; [final process check](phase-2-evidence/final-processes.txt). No credentials or base64 request bodies are retained. No changes to persistent operator installations, checkpoint files, Recipe, Runtime cache authority or model execution architecture.
-
-Remaining gate: separately review the corrected driver bootstrap and authorize a new bounded real-model evaluation. Transport, two meaningful screenshot-guided corrections, independent final quality and real-model historical paired-state behavior are all still unqualified. No official Harness integration, Files API, Windows work, Phase 3, push or additional model attempt was started.
+Remaining limitations: one static task, one viewport, Thinking OFF, isolated single conversation, no competing-cache pressure; multiple-result freshness remains controlled-test rather than real-model coverage. No broad context, endurance, 3D, official Harness, Files API, Windows or Phase 3 qualification is implied. **No further model attempt, operator installation change, or push. Stop at this Phase 2 report.**

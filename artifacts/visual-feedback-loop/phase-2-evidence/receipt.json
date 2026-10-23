@@ -1,29 +1,58 @@
 {
-  "status": "BLOCKED",
-  "scope": "Phase 2 direct native Messages visual feedback loop; one attempt, no generation retry",
-  "starting_revision": "2fdea4fe7367e540300d7c81d4fed402d716a274",
-  "attempt_receipt": "run/receipt.json",
-  "identity": "run/identity.json",
-  "completed_image_guided_corrections": 0,
-  "generation_requests": 1,
-  "completed_assistant_messages": 0,
-  "tool_effects": 0,
-  "model_artifact_revisions": 0,
-  "model_render_observations": 0,
+  "status": "PASS",
+  "scope": "Phase 2 bounded direct native-Messages static Web loop, reviewed continuation from f0f29be; no broader Harness/product qualification",
+  "base_revision": "f0f29be87b189c477d3777041cdcdf8b66e16446",
+  "runtime_revision": "2fdea4fe7367e540300d7c81d4fed402d716a274",
+  "runtime_version": "0.23.0",
+  "model": "DeepSeek-V4.1-Flash-1017",
+  "checkpoint_revision": "1bae0e1088993b9b82de08f59de5be5a34e42170",
+  "recipe_version": "0.2.0",
+  "thinking": "OFF",
+  "attempt_receipt": "continuation-1/model-run/receipt.json",
+  "independent_review": "continuation-1/review.json",
+  "offline_exact_wire_audit": "continuation-1/audit-results.json",
+  "identity": "continuation-1/model-run/identity.json",
+  "executed_client_hashes": "continuation-1/executed-client-hashes.json",
+  "task_and_budgets_unchanged": true,
+  "completed_image_guided_edit_render_iterations": 5,
+  "actual_conversation_generation_requests": 13,
+  "completed_assistant_messages": 13,
+  "tool_effects": 12,
+  "model_artifact_revisions": 6,
+  "model_render_observations": 6,
+  "elapsed_s": 324.7696335829969,
   "outcomes": {
-    "transport": "BLOCKED_NOT_ESTABLISHED",
-    "closed_loop": "BLOCKED_NOT_ESTABLISHED",
-    "artifact_quality": "NOT_EVALUATED",
-    "real_model_paired_image_continuation": "NOT_EVALUATED"
+    "transport": "PASS",
+    "closed_loop": "PASS",
+    "artifact_quality": "PASS_BOUNDED_PREDETERMINED_RUBRIC",
+    "real_model_paired_image_continuation": "PASS_FOR_OBSERVED_CONVERSATION"
   },
-  "failure": "Serving process lacked its own installed numerical-profile admission; HTTP 200 stream closed before any native event or message_stop",
-  "diagnosis": "Evaluation-driver bootstrap defect; Runtime admission fence correctly rejected execution",
-  "committed_followup": "Existing in-process inspect_payload admission added and controlled-test verified; NOT real-model retried",
-  "controlled_checks": {
-    "result": "25 passed",
-    "log": "final-tests.log",
-    "renderer_control": "renderer-control.png; never transmitted to model"
+  "quality": {
+    "scores": [1, 9, 9, 9, 9, 9],
+    "final_artifact": "continuation-1/model-run/artifact-06.html",
+    "final_screenshot": "continuation-1/model-run/render-05.png",
+    "literal_full_goal_match": false,
+    "limitations": "Subtitle is light slate rather than literal white; later polish oscillates and does not improve the fixed nine-check score."
   },
-  "shutdown": "Owned server/backend stopped; driver exited; workspace removed; renderer setup processes cleaned; port 18079 free",
-  "report": "../phase-2-report.md"
+  "paired_cache": {
+    "fresh_spans_encoded": 6,
+    "historical_occurrences_reused_without_encoding": 30,
+    "all_target_dspark_frontiers_aligned": true,
+    "all_canonical_settlements_published": true,
+    "prompt_replay": 0,
+    "full_cache_repack": 0,
+    "historical_rejection_coverage": "Controlled missing/evicted/incompatible-pair checks, not real-model destructive eviction"
+  },
+  "controlled_checks": {"result": "26 passed", "log": "continuation-1/final-tests.log"},
+  "retained_failures": [
+    {"receipt": "run/receipt.json", "generation_requests": 1, "outcome": "BLOCKED: original child-only numerical admission; no settled response or effects"},
+    {"receipt": "continuation-1/run/receipt.json", "generation_requests": 0, "outcome": "BLOCKED before model loading: driver backend imports preceded admission"}
+  ],
+  "driver_correction": "Match supported serve.py order: admit/bind execution process before backend/server imports; no Runtime admission weakening or cache changes",
+  "raw_evidence_retention": "continuation-1/retention-manifest.json; exact raw traces/SSE losslessly compressed, no full base64 request bodies",
+  "shutdown_evidence": "continuation-1/final-state.json",
+  "report": "../phase-2-report.md",
+  "exclusions": ["official Harness", "Files API", "Windows", "Phase 3", "3D", "Thinking ON", "endurance", "full multimodal context envelope"],
+  "further_model_attempts": false,
+  "pushed": false
 }

@@ -245,8 +245,6 @@ def run(output, renderer_python, port):
     import httpx
     import uvicorn
     from ds41f_mlx.mtp_identity import config
-    from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
-    from ds41f_mlx.serving.server import create_app, load_v41_tokenizer, prepare_request
     start = time.monotonic()
     deadline = start + BUDGETS['total_s']
     output.mkdir(parents=True, exist_ok=False)
@@ -298,6 +296,10 @@ def run(output, renderer_python, port):
             rubric='tools/accept_visual_feedback_loop.py::quality; 9 boolean checks; final all checks and score improvement required',
             task_sha256=sha((GOAL+STARTER).encode())))
         save()
+        # Match serve.py: authenticate/bind before backend imports activate
+        # upstream lazy modules and alter their import-spec path representation.
+        from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+        from ds41f_mlx.serving.server import create_app, load_v41_tokenizer, prepare_request
         backend = ProductionMTPBackend(runtime_config=cfg)
         backend.dependency_identity = identity['identity_sha256']
         app = create_app(profile='mtp-serving-v1', runtime_config=cfg, backend=backend)

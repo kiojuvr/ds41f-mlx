@@ -1,0 +1,49 @@
+{
+  "status": "PASS",
+  "scope": "Independent external-client review of this single bounded native-Messages static Web conversation; not the evaluated model's completion declaration",
+  "transport": {
+    "outcome": "PASS",
+    "evidence": "Six actual rendered PNGs reached prepared Vision spans, each encoded once; subsequent canonical assistant responses interpreted the supplied layouts, colors, clipping and card spacing. Offline reconstruction matches all exact request hashes and canonical native assistant responses.",
+    "limitation": "No withheld-image or text-only ablation; this does not establish exclusive causal dependence on Vision."
+  },
+  "closed_loop": {
+    "outcome": "PASS",
+    "completed_image_guided_edit_render_iterations": 5,
+    "minimum_two_substantive_examples": [1, 3],
+    "iterations": [
+      {"iteration": 1, "observed": "render-00", "artifact": "artifact-02.html", "verification": "render-01", "review": "Corrects the visible stacked yellow cards, orange header, wrong margins and overflow. Substantial goal-related improvement."},
+      {"iteration": 2, "observed": "render-01", "artifact": "artifact-03.html", "verification": "render-02", "review": "Real heading/value typography, padding and footer spacing changes; claimed caption-gap fix is not achieved because auto margin remains. No rubric score improvement."},
+      {"iteration": 3, "observed": "render-02", "artifact": "artifact-04.html", "verification": "render-03", "review": "Actually groups caption with value, addressing the visible disconnected caption spacing. A substantive card-composition correction; no additional nine-check rubric gain."},
+      {"iteration": 4, "observed": "render-03", "artifact": "artifact-05.html", "verification": "render-04", "review": "Reverses centered composition in favor of top alignment and a bottom divider. Visible autonomous preference oscillation, not proven quality improvement."},
+      {"iteration": 5, "observed": "render-04", "artifact": "artifact-06.html", "verification": "render-05", "review": "Small divider-contrast and bottom-padding refinement. No rubric score improvement."}
+    ],
+    "effect_authority": "Every effect follows the corresponding settled message_stop and canonical cache publication; original opaque Tool Call IDs preserved. No injected corrections or follow-up discrepancy prompts."
+  },
+  "artifact_quality": {
+    "outcome": "PASS_BOUNDED_PREDETERMINED_RUBRIC",
+    "scores": [1, 9, 9, 9, 9, 9],
+    "maximum_score": 9,
+    "criterion": "The unchanged f0f29be rubric requires all nine final checks and improvement over the initial screenshot.",
+    "final_artifact": "artifact-06.html",
+    "final_screenshot": "render-05.png",
+    "literal_full_goal_match": false,
+    "limitations": [
+      "Subtitle remains light slate #cbd5e1, not the literal white requested; the fixed rubric does not inspect subtitle foreground color.",
+      "Most objective improvement occurs in iteration 1; later composition changes are not monotonically better.",
+      "No typography quality metric, responsive viewport, accessibility suite or general Web-quality acceptance."
+    ]
+  },
+  "paired_cache": {
+    "outcome": "PASS_FOR_OBSERVED_CONTINUATION",
+    "settled_requests": 13,
+    "fresh_spans_encoded": 6,
+    "historical_image_occurrences_reused_without_encoding": 30,
+    "prompt_replay": 0,
+    "full_cache_repack": 0,
+    "evidence": "All cached frontiers equal the preceding canonical frontier; all Target/DSpark offsets agree, queues and predictions retire, authority settles and cache publishes. Exact original image history reconstructs every body hash.",
+    "limitation": "Missing/evicted/incompatible historical pairs are controlled-test checks, not destructive eviction experiments on this real conversation."
+  },
+  "automated_audit": "audit-results.json",
+  "attempt_receipt": "model-run/receipt.json",
+  "historical_failures_retained": ["../run/receipt.json", "run/receipt.json"]
+}

@@ -1,0 +1,199 @@
+{
+  "response_id": "chatcmpl-82869832a6ba41e380190a92d535179b",
+  "t0": 53609.145913375,
+  "generated": 20,
+  "decode_s": 0.5302742080239113,
+  "first_canonical_s": 0.5030087909981376,
+  "canonical_emitted": 20,
+  "request_prepare_s": 0.010016957996413112,
+  "recipe_convert_s": 0.00020933400082867593,
+  "recipe_render_s": 2.8124995878897607e-05,
+  "recipe_encode_s": 0.0014735420045326464,
+  "recipe_convert_or_encode_s": 0.00171100100124022,
+  "generation_policy": {
+    "temperature": 0.0,
+    "top_p": 1.0,
+    "top_k": 0,
+    "min_p": 0.0,
+    "repetition_penalty": 1.0,
+    "presence_penalty": 0.0,
+    "frequency_penalty": 0.0,
+    "seed": null
+  },
+  "diagnostic_id": null,
+  "cache_lookup_s": 9.887499618344009e-05,
+  "paired_restore_s": 0.0070764580013928935,
+  "cached_tokens": 1383,
+  "remaining_suffix_tokens": 53,
+  "load_s": 5.00003807246685e-07,
+  "prompt_checkpoint_capture_s": 0.0008751670029596426,
+  "suffix_append_s": 0.37346758299827343,
+  "protocol": "messages",
+  "execution_sampling": "greedy",
+  "sampler_authority": "ds41f_mlx.sampling.make_sampler",
+  "p5_handoff_s": 0.05124649999925168,
+  "prefill_handoff_s": 0.4258495829999447,
+  "prompt_replay": 0,
+  "full_cache_repack": 0,
+  "first_native_decode_s": 0.05922116599685978,
+  "first_decode_call_s": 0.05926616600481793,
+  "total_ttft_s": 0.5030087909981376,
+  "call_certificates": [
+    {
+      "processor_identity": 37905292288,
+      "lifetime": "409d35d3e940466e9d2e3bbd61cb4ba9",
+      "revision": 15,
+      "consumed_frontier": 1450,
+      "choice": 0,
+      "index": 0,
+      "call": {
+        "id": "call_00_TR8yu0y7KqbygbMEGUjH0852",
+        "input": {},
+        "name": "render",
+        "type": "tool_use"
+      },
+      "candidate_ids": [
+        28324,
+        32572,
+        1718,
+        128825
+      ],
+      "response_snapshot": "{\"id\":\"chatcmpl-82869832a6ba41e380190a92d535179b\",\"type\":\"message\",\"role\":\"assistant\",\"model\":\"deepseek-v4.1-flash\",\"content\":[],\"stop_reason\":null,\"stop_sequence\":null,\"usage\":{\"input_tokens\":53,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":1383,\"output_tokens\":0,\"service_tier\":\"standard\"}}",
+      "consuming_outcome": "{\"id\":\"chatcmpl-82869832a6ba41e380190a92d535179b\",\"type\":\"message\",\"role\":\"assistant\",\"model\":\"deepseek-v4.1-flash\",\"content\":[{\"type\":\"tool_use\",\"id\":\"call_00_TR8yu0y7KqbygbMEGUjH0852\",\"name\":\"render\",\"input\":{}}],\"stop_reason\":null,\"stop_sequence\":null,\"usage\":{\"input_tokens\":53,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":1383,\"output_tokens\":0,\"service_tier\":\"standard\"}}"
+    }
+  ],
+  "mtp_stats": {
+    "copy_proposed": 0,
+    "copy_verified": 0,
+    "copy_accepted": 0,
+    "native_proposed": 15,
+    "native_verified": 15,
+    "native_accepted": 13,
+    "cycles": 5,
+    "accepts": 13,
+    "rejects": 1,
+    "init_emits": 2,
+    "draft_emits": 13,
+    "bonus_emits": 4,
+    "verify_emits": 1,
+    "depth_drafted": [
+      5,
+      5,
+      4
+    ],
+    "depth_accepted": [
+      5,
+      4,
+      4
+    ],
+    "zero_cycles": 0,
+    "backbone_ms": 425.26037499919767,
+    "mtp_head_ms": 9.76770899433177,
+    "sample_ms": 0.5070409824838862,
+    "cache_ops_ms": 0.6645839966950007
+  },
+  "quiescence": {
+    "canonical_frontier": 1456,
+    "discarded_future_token": null,
+    "counters": {
+      "new_verify_cycles": 0,
+      "new_proposals": 0,
+      "target_forwards": 1,
+      "history_replay": 0,
+      "full_cache_repack": 0,
+      "dspark_appends": 1
+    },
+    "latency_s": 0.020228166002198122,
+    "queue_drained_tokens": [],
+    "dspark": {
+      "frontier": 1456,
+      "offsets": [
+        1456,
+        1456,
+        1456
+      ],
+      "target_layer_ids": [
+        37,
+        38,
+        39
+      ],
+      "stage_count": 3,
+      "window_size": 5,
+      "authority": "bounded committed DSpark context; not executable target truth"
+    }
+  },
+  "authority_connection": {
+    "lifetime": "b5a20ff8db184164823b5f0c340ab8ef",
+    "revision": 22,
+    "disposition": "settled",
+    "consumed_frontier": 1456,
+    "emitted_frontier": 1456,
+    "queue_ahead": [],
+    "pending_prediction": null,
+    "rng_draws": 0
+  },
+  "canonical_frontier": 1456,
+  "target_offsets": [
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456,
+    1456
+  ],
+  "dspark_offsets": [
+    1456,
+    1456,
+    1456
+  ],
+  "terminal_matches": [
+    {
+      "ordinal": 19,
+      "token_id": 32,
+      "identity": "CONSUMING_TOOL_EOF",
+      "consuming_revision": 19,
+      "consuming_frontier": 1456
+    }
+  ],
+  "prediction_retired": true,
+  "queue_empty": true,
+  "cleanup_s": 0.047165291995042935,
+  "application_terminal": true,
+  "cancelled": false,
+  "cache_published": true,
+  "elapsed_s": 1.0289241659993422
+}

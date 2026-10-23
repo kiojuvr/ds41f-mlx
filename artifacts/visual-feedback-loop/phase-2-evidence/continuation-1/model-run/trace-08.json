@@ -1,0 +1,203 @@
+{
+  "response_id": "chatcmpl-0031ae949ce74f1b9e4ab6b4577f18b3",
+  "t0": 53690.773036375,
+  "generated": 789,
+  "decode_s": 19.849913704078062,
+  "first_canonical_s": 2.3751907909972942,
+  "canonical_emitted": 789,
+  "request_prepare_s": 0.021188790997257456,
+  "recipe_convert_s": 0.0010716670003603213,
+  "recipe_render_s": 6.608300463994965e-05,
+  "recipe_encode_s": 0.00203108400455676,
+  "recipe_convert_or_encode_s": 0.003168834009557031,
+  "generation_policy": {
+    "temperature": 0.0,
+    "top_p": 1.0,
+    "top_k": 0,
+    "min_p": 0.0,
+    "repetition_penalty": 1.0,
+    "presence_penalty": 0.0,
+    "frequency_penalty": 0.0,
+    "seed": null
+  },
+  "diagnostic_id": null,
+  "cache_lookup_s": 0.000569501004065387,
+  "paired_restore_s": 0.002191790998040233,
+  "cached_tokens": 6051,
+  "remaining_suffix_tokens": 684,
+  "load_s": 2.079978003166616e-07,
+  "vision_encoded_count": 1,
+  "vision_s": 0.37397287500061793,
+  "prompt_checkpoint_capture_s": 0.0014884580014040694,
+  "suffix_append_s": 1.8611661670001922,
+  "protocol": "messages",
+  "execution_sampling": "greedy",
+  "sampler_authority": "ds41f_mlx.sampling.make_sampler",
+  "p5_handoff_s": 0.05108987499988871,
+  "prefill_handoff_s": 1.9143976670020493,
+  "prompt_replay": 0,
+  "full_cache_repack": 0,
+  "first_native_decode_s": 0.06155520799802616,
+  "first_decode_call_s": 0.061719375000393484,
+  "total_ttft_s": 2.3751907909972942,
+  "call_certificates": [
+    {
+      "processor_identity": 37996134400,
+      "lifetime": "21677af999e24fceb08a97dfecadbe80",
+      "revision": 784,
+      "consumed_frontier": 7518,
+      "choice": 0,
+      "index": 0,
+      "call": {
+        "id": "call_00_mGrXK7Osr0X3sOTSfLhM6256",
+        "input": {
+          "html": "<!doctype html><html><head><style>\n*{box-sizing:border-box}\nhtml,body{margin:0;padding:0}\nbody{background:#f1f5f9;color:#0f172a;font-family:\"Segoe UI\",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}\n#page{width:1280px;height:720px;padding:48px;overflow:hidden}\n#header{width:1184px;height:120px;background:#0f172a;color:#ffffff;padding:24px 32px;border-radius:16px;display:flex;flex-direction:column;justify-content:center}\nh1{margin:0;font-size:32px;font-weight:700;letter-spacing:-0.5px;line-height:1.15}\n#header p{margin:6px 0 0;font-size:15px;color:#cbd5e1;line-height:1.3}\n#cards{display:flex;flex-direction:row;gap:24px;margin-top:32px}\n.card{flex:1 1 0;min-width:0;height:220px;background:#ffffff;padding:24px 28px;border-radius:16px;border:1px solid #e2e8f0;box-shadow:0 1px 2px rgba(15,23,42,.06);display:flex;flex-direction:column}\nh2{margin:0;font-size:13px;font-weight:600;color:#64748b;letter-spacing:.08em;text-transform:uppercase}\n.value{font-size:48px;font-weight:700;margin:12px 0 0;color:#0f172a;line-height:1.05;letter-spacing:-1.5px}\n.card p:last-child{margin:auto 0 0;padding-top:12px;font-size:14px;color:#64748b;line-height:1.4;border-top:1px solid #f1f5f9}\n#footer{margin-top:36px;font-size:14px;color:#64748b;letter-spacing:.01em}\n</style></head><body><main id=\"page\"><header id=\"header\"><h1>Field Notes</h1><p>Weekly project overview</p></header>\n<section id=\"cards\"><article class=\"card\" id=\"card-1\"><h2>Active projects</h2><p class=\"value\">12</p><p>Across all teams</p></article>\n<article class=\"card\" id=\"card-2\"><h2>Tasks completed</h2><p class=\"value\">84</p><p>This week</p></article>\n<article class=\"card\" id=\"card-3\"><h2>Team members</h2><p class=\"value\">24</p><p>Working together</p></article></section>\n<footer id=\"footer\">Updated today \u00b7 All systems operational</footer></main></body></html>"
+        },
+        "name": "write_html",
+        "type": "tool_use"
+      },
+      "candidate_ids": [
+        10767,
+        1018,
+        1718,
+        128825
+      ],
+      "response_snapshot": "{\"id\":\"chatcmpl-0031ae949ce74f1b9e4ab6b4577f18b3\",\"type\":\"message\",\"role\":\"assistant\",\"model\":\"deepseek-v4.1-flash\",\"content\":[{\"type\":\"text\",\"text\":\"**Evidence:** The card content is now vertically centered as a tight group (label \u2192 value \u2192 caption), which reads cleanly, but it leaves a noticeable empty band at the bottom of each card and the group sits slightly low. A better composition is top-aligned content with the caption anchored at the bottom, which is the standard dashboard card pattern and fills the card height evenly. I'll restore that with a slightly larger value and balanced padding.\"},{\"type\":\"tool_use\",\"id\":\"call_00_mGrXK7Osr0X3sOTSfLhM6256\",\"name\":\"write_html\",\"input\":{}}],\"stop_reason\":null,\"stop_sequence\":null,\"usage\":{\"input_tokens\":684,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":6051,\"output_tokens\":0,\"service_tier\":\"standard\"}}",
+      "consuming_outcome": "{\"id\":\"chatcmpl-0031ae949ce74f1b9e4ab6b4577f18b3\",\"type\":\"message\",\"role\":\"assistant\",\"model\":\"deepseek-v4.1-flash\",\"content\":[{\"type\":\"text\",\"text\":\"**Evidence:** The card content is now vertically centered as a tight group (label \u2192 value \u2192 caption), which reads cleanly, but it leaves a noticeable empty band at the bottom of each card and the group sits slightly low. A better composition is top-aligned content with the caption anchored at the bottom, which is the standard dashboard card pattern and fills the card height evenly. I'll restore that with a slightly larger value and balanced padding.\"},{\"type\":\"tool_use\",\"id\":\"call_00_mGrXK7Osr0X3sOTSfLhM6256\",\"name\":\"write_html\",\"input\":{}}],\"stop_reason\":null,\"stop_sequence\":null,\"usage\":{\"input_tokens\":684,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":6051,\"output_tokens\":0,\"service_tier\":\"standard\"}}"
+    }
+  ],
+  "mtp_stats": {
+    "copy_proposed": 459,
+    "copy_verified": 459,
+    "copy_accepted": 447,
+    "native_proposed": 160,
+    "native_verified": 160,
+    "native_accepted": 119,
+    "cycles": 221,
+    "accepts": 566,
+    "rejects": 32,
+    "init_emits": 2,
+    "draft_emits": 566,
+    "bonus_emits": 189,
+    "verify_emits": 32,
+    "depth_drafted": [
+      221,
+      201,
+      176
+    ],
+    "depth_accepted": [
+      209,
+      188,
+      169
+    ],
+    "zero_cycles": 0,
+    "backbone_ms": 18791.272335060057,
+    "mtp_head_ms": 253.08900303207338,
+    "sample_ms": 26.090457940881606,
+    "cache_ops_ms": 29.61636704276316
+  },
+  "quiescence": {
+    "canonical_frontier": 7524,
+    "discarded_future_token": null,
+    "counters": {
+      "new_verify_cycles": 0,
+      "new_proposals": 0,
+      "target_forwards": 1,
+      "history_replay": 0,
+      "full_cache_repack": 0,
+      "dspark_appends": 1
+    },
+    "latency_s": 0.02484395799547201,
+    "queue_drained_tokens": [],
+    "dspark": {
+      "frontier": 7524,
+      "offsets": [
+        7524,
+        7524,
+        7524
+      ],
+      "target_layer_ids": [
+        37,
+        38,
+        39
+      ],
+      "stage_count": 3,
+      "window_size": 5,
+      "authority": "bounded committed DSpark context; not executable target truth"
+    }
+  },
+  "authority_connection": {
+    "lifetime": "1ab50f03b1234a0eb6aa187bca7f74a7",
+    "revision": 791,
+    "disposition": "settled",
+    "consumed_frontier": 7524,
+    "emitted_frontier": 7524,
+    "queue_ahead": [],
+    "pending_prediction": null,
+    "rng_draws": 0
+  },
+  "canonical_frontier": 7524,
+  "target_offsets": [
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524,
+    7524
+  ],
+  "dspark_offsets": [
+    7524,
+    7524,
+    7524
+  ],
+  "terminal_matches": [
+    {
+      "ordinal": 788,
+      "token_id": 32,
+      "identity": "CONSUMING_TOOL_EOF",
+      "consuming_revision": 788,
+      "consuming_frontier": 7524
+    }
+  ],
+  "prediction_retired": true,
+  "queue_empty": true,
+  "cleanup_s": 0.06843179100542329,
+  "application_terminal": true,
+  "cancelled": false,
+  "cache_published": true,
+  "elapsed_s": 22.36171541600197
+}

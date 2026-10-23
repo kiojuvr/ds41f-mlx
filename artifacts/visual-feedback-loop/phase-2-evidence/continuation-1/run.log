@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/accept_visual_feedback_loop.py", line 483, in <module>
+    run(a.output,a.renderer_python,a.port)
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/accept_visual_feedback_loop.py", line 294, in run
+    receipt['execution_process_admission'] = bind_execution_process(
+                                             ~~~~~~~~~~~~~~~~~~~~~~^
+        identity['identity']['checkpoint_variant'], identity['build']['source_commit'])
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/accept_visual_feedback_loop.py", line 217, in bind_execution_process
+    authority, _ = inspect_payload()
+                   ~~~~~~~~~~~~~~~^^
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/ds41f_mlx/execution_identity.py", line 173, in inspect_payload
+    check_installed_packages(authority, site)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/private/tmp/ds41f-phase1-1017-tests/lib/python3.13/site-packages/ds41f_mlx/execution_identity.py", line 144, in check_installed_packages
+    raise ValueError(f'non-installed executable origin: {name}')
+ValueError: non-installed executable origin: transformers

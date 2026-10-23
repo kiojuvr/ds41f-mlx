@@ -1,0 +1,201 @@
+{
+  "response_id": "chatcmpl-d062eeda17354e0987788907b35ac9da",
+  "t0": 53662.505936125,
+  "generated": 20,
+  "decode_s": 0.5350010019828915,
+  "first_canonical_s": 0.5230689159943722,
+  "canonical_emitted": 20,
+  "request_prepare_s": 0.015610540998750366,
+  "recipe_convert_s": 0.0006875000035506673,
+  "recipe_render_s": 4.9708003643900156e-05,
+  "recipe_encode_s": 0.0018334580017835833,
+  "recipe_convert_or_encode_s": 0.002570666008978151,
+  "generation_policy": {
+    "temperature": 0.0,
+    "top_p": 1.0,
+    "top_k": 0,
+    "min_p": 0.0,
+    "repetition_penalty": 1.0,
+    "presence_penalty": 0.0,
+    "frequency_penalty": 0.0,
+    "seed": null
+  },
+  "diagnostic_id": null,
+  "cache_lookup_s": 0.00024866599414963275,
+  "paired_restore_s": 0.0015802920024725609,
+  "cached_tokens": 4419,
+  "remaining_suffix_tokens": 60,
+  "load_s": 2.079978003166616e-07,
+  "vision_encoded_count": 0,
+  "vision_s": 1.7500060494057834e-06,
+  "prompt_checkpoint_capture_s": 0.0010966670015477575,
+  "suffix_append_s": 0.39190208299987717,
+  "protocol": "messages",
+  "execution_sampling": "greedy",
+  "sampler_authority": "ds41f_mlx.sampling.make_sampler",
+  "p5_handoff_s": 0.050566167003125884,
+  "prefill_handoff_s": 0.4438487500010524,
+  "prompt_replay": 0,
+  "full_cache_repack": 0,
+  "first_native_decode_s": 0.060964083997532725,
+  "first_decode_call_s": 0.061091333998774644,
+  "total_ttft_s": 0.5230689159943722,
+  "call_certificates": [
+    {
+      "processor_identity": 37907119104,
+      "lifetime": "2d880214f1fb41e5ad8568dd865f16b7",
+      "revision": 15,
+      "consumed_frontier": 4493,
+      "choice": 0,
+      "index": 0,
+      "call": {
+        "id": "call_00_w9JZdhUTBbztt6KGza8k8090",
+        "input": {},
+        "name": "render",
+        "type": "tool_use"
+      },
+      "candidate_ids": [
+        28324,
+        32572,
+        1718,
+        128825
+      ],
+      "response_snapshot": "{\"id\":\"chatcmpl-d062eeda17354e0987788907b35ac9da\",\"type\":\"message\",\"role\":\"assistant\",\"model\":\"deepseek-v4.1-flash\",\"content\":[],\"stop_reason\":null,\"stop_sequence\":null,\"usage\":{\"input_tokens\":60,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":4419,\"output_tokens\":0,\"service_tier\":\"standard\"}}",
+      "consuming_outcome": "{\"id\":\"chatcmpl-d062eeda17354e0987788907b35ac9da\",\"type\":\"message\",\"role\":\"assistant\",\"model\":\"deepseek-v4.1-flash\",\"content\":[{\"type\":\"tool_use\",\"id\":\"call_00_w9JZdhUTBbztt6KGza8k8090\",\"name\":\"render\",\"input\":{}}],\"stop_reason\":null,\"stop_sequence\":null,\"usage\":{\"input_tokens\":60,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":4419,\"output_tokens\":0,\"service_tier\":\"standard\"}}"
+    }
+  ],
+  "mtp_stats": {
+    "copy_proposed": 12,
+    "copy_verified": 12,
+    "copy_accepted": 10,
+    "native_proposed": 3,
+    "native_verified": 3,
+    "native_accepted": 3,
+    "cycles": 5,
+    "accepts": 13,
+    "rejects": 1,
+    "init_emits": 2,
+    "draft_emits": 13,
+    "bonus_emits": 4,
+    "verify_emits": 1,
+    "depth_drafted": [
+      5,
+      5,
+      4
+    ],
+    "depth_accepted": [
+      5,
+      4,
+      4
+    ],
+    "zero_cycles": 0,
+    "backbone_ms": 463.3906670133001,
+    "mtp_head_ms": 1.8556239956524223,
+    "sample_ms": 0.8252909901784733,
+    "cache_ops_ms": 1.1344990125508048
+  },
+  "quiescence": {
+    "canonical_frontier": 4499,
+    "discarded_future_token": null,
+    "counters": {
+      "new_verify_cycles": 0,
+      "new_proposals": 0,
+      "target_forwards": 1,
+      "history_replay": 0,
+      "full_cache_repack": 0,
+      "dspark_appends": 1
+    },
+    "latency_s": 0.02653262500098208,
+    "queue_drained_tokens": [],
+    "dspark": {
+      "frontier": 4499,
+      "offsets": [
+        4499,
+        4499,
+        4499
+      ],
+      "target_layer_ids": [
+        37,
+        38,
+        39
+      ],
+      "stage_count": 3,
+      "window_size": 5,
+      "authority": "bounded committed DSpark context; not executable target truth"
+    }
+  },
+  "authority_connection": {
+    "lifetime": "105805582e8b464a809330ce22828e10",
+    "revision": 22,
+    "disposition": "settled",
+    "consumed_frontier": 4499,
+    "emitted_frontier": 4499,
+    "queue_ahead": [],
+    "pending_prediction": null,
+    "rng_draws": 0
+  },
+  "canonical_frontier": 4499,
+  "target_offsets": [
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499,
+    4499
+  ],
+  "dspark_offsets": [
+    4499,
+    4499,
+    4499
+  ],
+  "terminal_matches": [
+    {
+      "ordinal": 19,
+      "token_id": 32,
+      "identity": "CONSUMING_TOOL_EOF",
+      "consuming_revision": 19,
+      "consuming_frontier": 4499
+    }
+  ],
+  "prediction_retired": true,
+  "queue_empty": true,
+  "cleanup_s": 0.05598337500123307,
+  "application_terminal": true,
+  "cancelled": false,
+  "cache_published": true,
+  "elapsed_s": 1.0653021249963786
+}
