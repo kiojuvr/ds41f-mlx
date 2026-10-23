@@ -1,0 +1,92 @@
+{
+  "status": "PASS",
+  "scope": "one installed official macOS headless Harness read_image delivery to local native Messages Runtime",
+  "created_utc": "2026-10-23T01:50:51.541618+00:00",
+  "repository_head": "64364270c14271a6cf710712e88e8e03b70a5dfe",
+  "branch": "Visual-Feedback-Loop",
+  "session_id": "session-dce7fe33-8372-4e9c-b68f-bffcc1441d04",
+  "harness_pid": 44103,
+  "harness_exit_code": 0,
+  "harness_elapsed_seconds": 11.0,
+  "run_directory": "/tmp/ds41f-phase0-harness.oLw1RR",
+  "runtime_pid": 37982,
+  "runtime_final_state": "gracefully stopped after probe; shutdown HTTP 202; owned process retired; no 8000/18441 listener",
+  "checks": {
+    "actual_official_harness_tool_called_once": true,
+    "official_tool_result_completed": true,
+    "exact_request_sequence": true,
+    "original_tool_id_preserved": true,
+    "actual_nested_base64_image": true,
+    "raw_upload_inline_image_hashes_match": true,
+    "correct_image_observation": true,
+    "official_harness_completed_turn": true,
+    "no_session_log_extension": true,
+    "only_two_generation_posts": true
+  },
+  "whole_image_messages_body_bytes": 39828,
+  "image": {
+    "location": "messages[2].content[0].content[2]",
+    "source_type": "base64",
+    "media_type": "image/png",
+    "bytes": 24147,
+    "sha256": "7f594ec2e888cf9777a8a9bddc1baacc03df39459e30a43f37eaa9d7dd41f08a",
+    "width": 1280,
+    "height": 720,
+    "format": "png"
+  },
+  "observation_limitations": {
+    "direct_wire_message_stop_retained": false,
+    "cloned_sse_observer_errors": [
+      {
+        "at": "2026-10-23T01:46:03.022Z",
+        "kind": "observer_error",
+        "request": 1,
+        "error_class": "AbortError"
+      },
+      {
+        "at": "2026-10-23T01:46:07.766Z",
+        "kind": "observer_error",
+        "request": 3,
+        "error_class": "AbortError"
+      }
+    ],
+    "completion_basis": "official committed tool/final events, turn_end completed, CLI exit 0; installed translator requires message_stop"
+  },
+  "unqualified": [
+    "Windows image transport",
+    "UI upload",
+    "thinking/signatures with images",
+    "multi-result/new-image classification",
+    "offload/compaction/history normalization",
+    "paired eviction/restart",
+    "visual feedback edit/render iterations"
+  ],
+  "provider_source_fix_required_for_this_probe": false,
+  "phase_1_started": false,
+  "invocation": {
+    "launcher": "/Users/kioju/.local/share/deepseek-harness/node_modules/@deepseek-ai/dsh/lib/bin.js",
+    "node_flags": [
+      "--import",
+      "/tmp/ds41f-phase0-harness.oLw1RR/observe.mjs"
+    ],
+    "cli_flags": [
+      "--profile",
+      "headless",
+      "--json"
+    ],
+    "DSH_HOME": "/tmp/ds41f-phase0-harness.oLw1RR/home",
+    "DSH_AGENTS_HOME": "/tmp/ds41f-phase0-harness.oLw1RR/agents",
+    "DSH_PERMISSION_MODE": "read-only",
+    "credential_reference": "DS41F_LOCAL_API_KEY (local placeholder; value not retained)",
+    "prompt": "Transport probe only. Call read_image exactly once with file_path=\"/tmp/ds41f-phase0-harness.oLw1RR/workspace/probe.png\". After receiving its image, briefly report the visible marker and the shapes and their colors from left to right. Do not call any other tool, do not repeat read_image, do not edit files, and finish after the observation."
+  },
+  "evidence_sha256": {
+    "harness-events.jsonl": "56e423728b629a61e8cd94b83be0ef67ac43e976da3b1ff04ed77e068b67429f",
+    "identities.json": "ab9746f0533c115253758c4dd7e25cbf13a9821ccb8056507eab41d433c6ff9a",
+    "observer.mjs": "ac092b4cefcf43a9824b9dec4a23c23b2a28db369927a806aeb88c63631bb783",
+    "probe.html": "dad106e7c27304c035b48c681e91325537036f19a940b01b13b7bc088dfa2a48",
+    "probe.png": "7f594ec2e888cf9777a8a9bddc1baacc03df39459e30a43f37eaa9d7dd41f08a",
+    "profile.patch.yml": "aea19b7b134f6183d6fefec885fc2cea385d5fc6c8375ef81abff1b16af108ba",
+    "wire-summary.jsonl": "74682820d428f5f538f3eabfbe1c0a445d9d7aba2d616a1467d180c344108f54"
+  }
+}
