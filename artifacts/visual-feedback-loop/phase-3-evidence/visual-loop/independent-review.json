@@ -1,0 +1,238 @@
+{
+  "status": "PASS",
+  "transport": "PASS",
+  "closed_loop": "PASS",
+  "artifact_quality": "PASS_BOUNDED_RUBRIC_NOT_LITERAL_FULL_COMPLIANCE",
+  "paired_cache": "PASS_OBSERVED_SCOPE",
+  "completed_confirmed_corrections": 4,
+  "total_edit_render_cycles": 5,
+  "explicit_positive_substantive_examples": [
+    2,
+    4
+  ],
+  "cycles": [
+    {
+      "cycle": 1,
+      "prior_image": 0,
+      "verified_image": 1,
+      "counted": false,
+      "reason": "Large correct palette/layout rewrite after actual image delivery, but no explicit screenshot observation was verbalized. Conservatively exclude from confirmed correction count."
+    },
+    {
+      "cycle": 2,
+      "prior_image": 1,
+      "verified_image": 2,
+      "counted": true,
+      "reason": "Explicitly observes caption/value separation and ~240px footer gap; groups card text and moves footer from y631 to y452. Substantive visible improvement."
+    },
+    {
+      "cycle": 3,
+      "prior_image": 2,
+      "verified_image": 3,
+      "counted": true,
+      "reason": "Observes bottom empty area and chooses distributed spacing. Substantive image-guided change, but regresses card position to y291.5 and rubric to8/9. Not an objective improvement."
+    },
+    {
+      "cycle": 4,
+      "prior_image": 3,
+      "verified_image": 4,
+      "counted": true,
+      "reason": "Observes oversized header/card gap and cards floating too low; three official edits restore cards y200 and footer y476. Clear substantive correction; rubric8→9."
+    },
+    {
+      "cycle": 5,
+      "prior_image": 4,
+      "verified_image": 5,
+      "counted": true,
+      "reason": "Observes caption pinned far below number, centers compact text group. Visible correction, but same edit unexpectedly restores footer margin:auto (footer y635), reversing earlier footer refinement."
+    }
+  ],
+  "renders": [
+    {
+      "id": 0,
+      "source_sha256": "809b4b0fe00fe3e2b19f36ed7c2d624b192487e170fb0f0cff31330c7f9c19f5",
+      "image_sha256": "fc6dd2f551cb196b84eb64d1bd0c91b01633ce881403d4bc4f0a1d602c1176d9",
+      "quality_score": 1,
+      "quality": {
+        "elements_present": true,
+        "no_overflow": false,
+        "header_geometry": false,
+        "horizontal_equal_cards": false,
+        "card_spacing": false,
+        "card_geometry": false,
+        "palette": false,
+        "visible": false,
+        "footer_below_cards": false
+      },
+      "mime": "image/png",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "normalization": "original PNG; source = transmitted = Recipe identity",
+      "card_y": 170,
+      "footer_y": 828
+    },
+    {
+      "id": 1,
+      "source_sha256": "c47c9bd8b6ba876a44d90ef9dbfcb82079c7b5ff877b7302bdd0b32e6c6ac101",
+      "image_sha256": "5568878756fa6c6791d97e6e6e3d0bb032bb1aae240921acd6ec6d8dc383ab2b",
+      "quality_score": 9,
+      "quality": {
+        "elements_present": true,
+        "no_overflow": true,
+        "header_geometry": true,
+        "horizontal_equal_cards": true,
+        "card_spacing": true,
+        "card_geometry": true,
+        "palette": true,
+        "visible": true,
+        "footer_below_cards": true
+      },
+      "mime": "image/png",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "normalization": "original PNG; source = transmitted = Recipe identity",
+      "card_y": 200,
+      "footer_y": 631,
+      "changed_pixels": 747988
+    },
+    {
+      "id": 2,
+      "source_sha256": "9e3fb4127cabd0b042a286664fadb5331a5695b34e52312f1dc8bbda0bda2f84",
+      "image_sha256": "30713595023fa599b6a88a3fe96d81e9ca6a6f67be1b241f13dc12908a69a628",
+      "quality_score": 9,
+      "quality": {
+        "elements_present": true,
+        "no_overflow": true,
+        "header_geometry": true,
+        "horizontal_equal_cards": true,
+        "card_spacing": true,
+        "card_geometry": true,
+        "palette": true,
+        "visible": true,
+        "footer_below_cards": true
+      },
+      "mime": "image/png",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "normalization": "original PNG; source = transmitted = Recipe identity",
+      "card_y": 200,
+      "footer_y": 452,
+      "changed_pixels": 19398
+    },
+    {
+      "id": 3,
+      "source_sha256": "dde3a16565db9e730ee3f43caa78b65fc01b11623d3ce152adcb55e8a1af0dea",
+      "image_sha256": "ce6bd39d49ccf3d868a624f0ec3c9ad6f48330a2f7691beb6c6fcc037fe25425",
+      "quality_score": 8,
+      "quality": {
+        "elements_present": true,
+        "no_overflow": true,
+        "header_geometry": true,
+        "horizontal_equal_cards": true,
+        "card_spacing": true,
+        "card_geometry": false,
+        "palette": true,
+        "visible": true,
+        "footer_below_cards": true
+      },
+      "mime": "image/png",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "normalization": "original PNG; source = transmitted = Recipe identity",
+      "card_y": 291.5,
+      "footer_y": 635,
+      "changed_pixels": 267032
+    },
+    {
+      "id": 4,
+      "source_sha256": "732cb4d1fbcf1bec542d17cd67921dc02fa1d2a594182990298e3d8597a0a7b0",
+      "image_sha256": "9e99a14f4dd250b4bc87ea83ed1249f3a1c4030b419ba4e773c2f7cbbb68f238",
+      "quality_score": 9,
+      "quality": {
+        "elements_present": true,
+        "no_overflow": true,
+        "header_geometry": true,
+        "horizontal_equal_cards": true,
+        "card_spacing": true,
+        "card_geometry": true,
+        "palette": true,
+        "visible": true,
+        "footer_below_cards": true
+      },
+      "mime": "image/png",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "normalization": "original PNG; source = transmitted = Recipe identity",
+      "card_y": 200,
+      "footer_y": 476,
+      "changed_pixels": 267021
+    },
+    {
+      "id": 5,
+      "source_sha256": "b379fd9c87aa03f9d8dc999f7c2f9bb9354b741054bb48c0338ff90b11868cbb",
+      "image_sha256": "0b0af998ced89e7d89fc6b0cf6db54df944235437ea604f18c2d35a1f1bb9eea",
+      "quality_score": 9,
+      "quality": {
+        "elements_present": true,
+        "no_overflow": true,
+        "header_geometry": true,
+        "horizontal_equal_cards": true,
+        "card_spacing": true,
+        "card_geometry": true,
+        "palette": true,
+        "visible": true,
+        "footer_below_cards": true
+      },
+      "mime": "image/png",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "normalization": "original PNG; source = transmitted = Recipe identity",
+      "card_y": 200,
+      "footer_y": 635,
+      "changed_pixels": 17288
+    }
+  ],
+  "literal_mismatches": [
+    "Subtitle #94a3b8 is not requested white."
+  ],
+  "quality_limitations": [
+    "Spacing preferences oscillate; cycle3 regresses card geometry.",
+    "Final edit returns footer to bottom despite previous effort to remove large gap.",
+    "overflow:hidden alone would not prove content visibility; actual screenshot and unchanged DOM rubric were independently reviewed.",
+    "No ablation establishes exclusive causal dependence on Vision; acceptance is accurate observations, actual image encoding, and subsequent source changes."
+  ],
+  "transport_facts": {
+    "image_bearing_continuations": 18,
+    "files_attempts": 18,
+    "files_status": 404,
+    "files_uploads": "all retried first historical screenshot before official request-wide inline fallback",
+    "read_image_original_ids": [
+      "call_00_1mMNMtGIupeteejhA0y20110",
+      "call_00_rTkas24JoZhW9KJoY6hm1426",
+      "call_00_yajXW4VYDZFJy6ojiSz92784",
+      "call_00_gIVRcns0NcX8lmYhDE374897",
+      "call_00_nKyOjBKHMVzP4EO1SdZ75555",
+      "call_00_Hud1vLgNUe6pc5bGayqp6052"
+    ],
+    "normalization": "none; six raw screenshot hashes equal transmitted hashes and Recipe identities"
+  },
+  "trace_retention": {
+    "in_memory": 21,
+    "archived": 21,
+    "complete": 21,
+    "final_generation_retained": true
+  },
+  "injection": "No corrective follow-up, scores, screenshot descriptions or expected patches supplied to model; no generation/effect retries."
+}

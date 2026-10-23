@@ -1,5 +1,212 @@
 # Phase 3 — Official Harness visual loop
 
+## Final completion — external-renderer attempt
+
+**PASS, bounded macOS official-Harness screenshot-guided static Web loop.**
+Starting clean `Visual-Feedback-Loop` at
+`16bf0ef18f12daa816e1960e8d2dbaa001333842`, one official conversation completed
+six renders and five edit/render cycles. **Four cycles have explicit prior-image
+observations and completed source changes/verification renders**; at least two
+are clear substantive improvements. The first rewrite lacks an explicit visual
+observation statement and is conservatively excluded from that four-count.
+All **21/21 complete Runtime traces**, including the final six-image generation,
+were archived. Earlier BLOCKED attempts and Gate P receipts below are unchanged.
+No Gate P replacement, second evaluation conversation, push or Phase 3B work.
+
+| Independent result | Outcome | Evidence |
+| --- | --- | --- |
+| Transport | **PASS** | Six actual rendered PNGs, six official `read_image` results with original IDs; 18 image-bearing native Messages continuations retain stable nested image occurrences. |
+| Closed-loop execution | **PASS — four explicitly grounded correction cycles** | Observations → model-chosen official write/edit → explicit request → host render → official image inspection. Cycles 2 and 4 are particularly clear positive corrections. |
+| Artifact quality | **PASS under unchanged nine-check rubric: 1/9 → 9/9** | Scores `[1,9,9,8,9,9]`; final screenshot independently reviewed. **Not literal full-goal compliance:** subtitle is slate `#94a3b8`, not white; later spacing choices oscillate. |
+| Paired Cache | **PASS for all observed continuations** | Six fresh encodes, 53 historical image occurrences reused, exact paired-prefix restoration, Target/DSpark frontier agreement, native completion/settlement/cache publication; all replay/repack counters zero. |
+
+Evidence is isolated in [visual-loop/](phase-3-evidence/visual-loop/).
+Authoritative independent assessment: [review](phase-3-evidence/visual-loop/independent-review.json).
+Offline boundary checks: [audit](phase-3-evidence/visual-loop/audit-results.json),
+[cache summary](phase-3-evidence/visual-loop/cache-summary.json).
+Tool success, HTTP 200 and the model's own completion declaration are not the
+acceptance criteria.
+
+### Execution identities and pre-generation setup
+
+- Official Harness **0.2.1-rc.2**, Node **v24.5.0**; all 17 inspected package
+  versions/entrypoint hashes match the prior qualified installation. Official
+  native Messages provider, filesystem tools, attachments and Files-to-inline
+  fallback remain owners. No custom provider or replacement tool dispatcher.
+- Disposable Runtime **0.23.0**, provenance **`2fdea4f`**, Recipe **0.2.0**,
+  original Flash-1017 revision `1bae0e1088993b9b82de08f59de5be5a34e42170`,
+  native paired MTP/GLM, Thinking OFF. Execution identity
+  `9c439d3fb9ad730996ecca821234bba1ce8817d7b46a2744e171c10a4d7d2ca2`
+  equals Phase 2/3. All **113 installed Runtime Python sources** match the
+  checkout. Admission precedes numerical backend imports, environment binding,
+  backend construction and executor-owned eager loading; ready health retained.
+- Chrome **155.0.8059.85**, Playwright **1.64.1**, renderer Python **3.13.15**,
+  Pillow **13.0.0**. Current Chrome executable/framework/Arial hashes match
+  Phase 2. Runtime retains its own pinned dependencies. No installation,
+  checkpoint, production Runtime, Scheduler, Recipe, Vision or cache logic changed.
+- One startup was deliberately stopped **during identity admission, before
+  backend construction/model loading and with zero conversations/requests**.
+  Inspection found `shutdown_serving()` itself calls `close()`, so final flushing
+  was moved before that call, not just before the explicit final `close()`.
+  [Stopped bootstrap](phase-3-evidence/visual-loop/startup-stopped/) and exact
+  original bytes remain retained. This was not a replacement evaluation run.
+
+### Rendering boundary and model-free preflight
+
+The unchanged official monotonic `tools.guard()` policy admits workspace
+`index.html`, produced screenshot paths and only this exact foreground Bash
+command (25 s maximum, no escalation/background execution):
+
+```text
+/tmp/ds41f-phase2-renderer/bin/python /Volumes/SDXC-512/ds41f-mlx/tools/phase3_render_handoff.py request
+```
+
+**That command never launches Chromium.** It exclusively reserves one pending
+request, identifies current HTML bytes by SHA-256, publishes a numbered request
+under the workspace and waits at most 24 s for the corresponding completion.
+A timeout/failure is explicit and leaves the reservation, preventing an uncertain
+retry. Six total render IDs are allowed. Successful output contains only PNG
+path/source hash/image hash—no metrics, rubric score or hint.
+
+The separately launched host supervisor only services explicit requests. It
+checks the requested source bytes, snapshots them exclusively, applies unchanged
+Phase 2 static validation, runs the unchanged renderer on that exact snapshot
+with a 22 s subprocess deadline, verifies the live revision has not changed,
+and publishes completion only after the actual PNG exists. Evidence/metrics
+remain outside the admitted tool paths. No LLM calls, source generation,
+corrective decisions, tool-result rewriting or generic service/RPC framework.
+Chromium runs **outside Seatbelt**, with its own sandbox enabled, unchanged CSP,
+network/DNS denial, page JS disabled, local Arial and fixed 1280×720/DPR1 settings.
+No permission widening or Chromium/Sandbox investigation occurred.
+
+[Preflight](phase-3-evidence/visual-loop/preflight/result.json) passed **before
+model loading** using installed official `LocalSandboxProvider.confine()` and
+its unmodified returned argv, matching the supported Bash sandbox boundary.
+The confined requester and host supervisor exchanged the exact starter revision
+`eb299db3f019…`; host screenshot `fc6dd2f551cb…` is a valid 1280×720 PNG.
+The confined requester opened/hashed that workspace PNG; completion/source/image
+hashes agree. A separate confined repository-write probe was denied with
+`Operation not permitted`. Both processes retired and the temporary root was
+archived/removed; no browser remained. No Harness conversation/model was needed.
+
+**Executed-source disclosure:** after the host supervisor started but before
+any confined render request, atomic publication on disk was strengthened from
+`replace()` to exclusive hard-link publication. The supervisor and preflight
+used the original bytes; every confined request used the newer bytes. Both
+variants, hashes and exact timestamps are retained in
+[execution-variants.json](phase-3-evidence/visual-loop/execution-variants.json).
+There was one supervisor and no overwrite/retry in the run; source association,
+renderer, completion data and model history were unchanged. The final exclusive
+publication behavior has a focused no-overwrite regression. This implementation
+difference is disclosed rather than claiming one byte-identical helper throughout.
+
+### Fixed task, budgets and actual trajectory
+
+[Task](phase-3-evidence/visual-loop/task.json) reuses the exact Phase 2 visual goal,
+starter and unchanged nine-check rubric. Only official tool instructions and the
+approved render command differ. No expected CSS, image descriptions, DOM scores
+or corrective follow-ups reached the model. Filesystem and render operations
+remain selected by the model. It was not forced to make additional corrections.
+
+[Budgets](phase-3-evidence/visual-loop/budgets.json): 5400 s total, 1200 s startup,
+600 s generation/stream idle, 2600 output tokens/request, 24 generation requests,
+30 admitted tools, five correction renders/six total, 65,536 source bytes,
+16 MiB whole body. Official sampling defaults (not Phase 2's temperature 0),
+Thinking OFF. Actual conversation: **193.14 s, 21 generations, 20 tools, 5804
+output tokens**, maximum body **337,023 bytes**. No POST/effect retry.
+
+| Cycle | Screenshot evidence → model action → verification | Independent assessment |
+| --- | --- | --- |
+| Initial | Official write saves exact starter; request/read `render-00` | Orange header, yellow stacked cards, clipped footer; 1/9. |
+| 1 | After `render-00`, broad source rewrite; request/read `render-01` | Correct layout/palette; 9/9. **Excluded from confirmed four-count:** no explicit observation text precedes this rewrite. |
+| 2 | Describes large footer gap and disconnected captions in `render-01`; groups card text and moves footer; request/read `render-02` | Substantive visible correction; footer y631→452; 9/9. |
+| 3 | Describes empty lower area in `render-02`; distributes vertical space; request/read `render-03` | Real grounded cycle, but regresses card y200→291.5; 8/9. Not objective improvement. |
+| 4 | Identifies oversized header/card gap and floating cards in `render-03`; three official edits; request/read `render-04` | Clear substantive correction, cards restored y200 and footer y476; 9/9. |
+| 5 | Identifies caption/number separation in `render-04`; official edit centers compact text group; request/read `render-05` | Visible grouping correction, 9/9; same edit reverts footer margin to auto (y635), reversing earlier refinement. Model ends naturally. |
+
+Every source effect—including three intermediate edits in cycle 4—is reconstructed
+from original canonical tool arguments and verified against actual render
+snapshots/final workspace. Full call IDs/results and sequence are retained in
+[tool-sequence.json](phase-3-evidence/visual-loop/tool-sequence.json);
+[revisions/](phase-3-evidence/visual-loop/revisions/) and
+[renders/](phase-3-evidence/visual-loop/renders/) retain sources/diffs/PNGs/hashes.
+Final actual screenshot has header (48,48,1184,120), equal white cards at y200,
+height 220, 24 px gaps and visible footer. All texts/IDs remain in source.
+Subtitle remains `#94a3b8`, not literal white. The model overstates full compliance;
+we do not infer universal aesthetics, monotonic progress or exclusive Vision
+causality without an ablation.
+
+### Native image history and complete paired-cache evidence
+
+[Wire](phase-3-evidence/visual-loop/wire.jsonl) records six original official
+`read_image` IDs and actual base64 PNGs **nested inside native `tool_result`**,
+not textual attachment references. All are 1280×720 `image/png`, original PNG
+variant: rendered byte SHA = transmitted SHA = Recipe identity SHA. Occurrences
+retain identical locations/order/identity throughout every continuation, growing
+from one through six images. No history deletion/replacement/normalization drift.
+
+There were **18 Files-first attempts**, each 404 `not_found`; official Harness
+retried the first unresolved historical screenshot before request-wide inline
+fallback. Later screenshots were delivered inline, not individually uploaded.
+No Files API was added. All 21 native `message_stop` records equal the Runtime's
+canonical assistant blocks; original call IDs match official calls/results and
+follow their corresponding native completion. Cloned-reader `AbortError` records,
+where present, occur after the directly persisted stop, not instead of one.
+
+A passive external-bootstrap preparation projection calls the original
+`prepare_request` exactly once and returns the same object unchanged. It retains
+only request-body hash, prompt length, Recipe span identities and historical
+flags—no base64 bodies. [Prepared spans](phase-3-evidence/visual-loop/prepared-images.jsonl)
+and the offline audit verify correct new/historical classification, stable
+span starts/lengths/grids/digests, and source/wire identity agreement.
+
+All **18 image-bearing continuations**, and all 21 requests overall, show exact
+preceding canonical-prefix restoration, all 40 Target and three DSpark offsets
+agreeing, settled authority, retired predictions/queues, `message_stop`, and
+cache publication. Fresh-only Vision counts are **6**, historical reused
+occurrences **53**; historical spans are wholly covered by the restored frontier.
+Prompt replay/full repack and quiescence history replay/repack are zero.
+Final generation restores **14197** and settles at **15230**, encodes only the
+sixth fresh image, reuses five historical images and publishes its pair.
+No compatibility boundary was encountered or silently rewritten.
+
+### Trace lifecycle, focused tests and cleanup
+
+The correction is **external evaluation retention only**: after `server.run()`
+has settled serving, stop/join the poller, synchronously flush every remaining
+`backend.serving_traces` entry **before `shutdown_serving()`/backend destruction**,
+validate complete `message_stop`, atomically publish lossless gzip archives,
+read them back, and assert archived count = final in-memory count. Any mismatch
+is an explicit evidence-retention failure. Trace contents/order are unchanged.
+[Coverage](phase-3-evidence/visual-loop/trace-retention.json): **21 memory = 21
+archived = 21 complete**, including `trace-20.raw.json.gz`, not Gate P's missing
+trace. Gate P was not rerun or repaired post hoc.
+
+**Six model-free focused tests passed**, covering the immediate-before-shutdown
+trace, flush-before-destruction ordering, incomplete trace rejection, request
+timeout/pending lock, no-overwrite publication and changed-source rejection.
+[Log](phase-3-evidence/visual-loop/tests.log). Offline audit also reconstructs
+all source revisions and checks all image/Runtime boundaries without generating.
+
+Owned Harness **21480**, Runtime **9396**, renderer supervisor **21479** and run
+supervisor **9394** exited; Runtime/Harness/renderer exits are 0. Port **18083 is
+free**, no renderer/Chrome/Playwright process remains, and both startup and task
+temporary roots are removed after hash-verified workspace retention.
+[Cleanup](phase-3-evidence/visual-loop/cleanup.json),
+[final state](phase-3-evidence/visual-loop/final-state.json).
+No credentials, unrelated sessions or complete base64 request bodies retained.
+Persistent operator installations/processes and checkpoint files were untouched.
+
+Qualification is **one static task, one viewport, macOS/M3 Ultra 512 GB,
+Harness 0.2.1-rc.2, Runtime 0.23.0 (`2fdea4f`), Recipe 0.2.0, original Flash-1017,
+Thinking OFF and native paired MTP/GLM**. It is not general browser automation,
+Chromium-inside-Seatbelt support, Files API, Windows, cancellation/eviction,
+maximum-context, endurance, Phase 3B or 3D acceptance. Stop after this local commit.
+
+---
+
+## Original attempt (retained unchanged)
+
 **BLOCKED — renderer evidence-path configuration violated the workspace sandbox.**
 One official Harness conversation ran on macOS, created the supplied starter,
 attempted rendering, and ended naturally explaining the blocker. **Zero task

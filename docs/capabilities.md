@@ -174,8 +174,9 @@ positions. DeepInfer has bounded real-model evidence for six images / 9,353 expa
 prompt positions with the earlier Recipe 0.1 package, then one small Chat image
 and cached follow-up with Recipe 0.2. See the [scoped development evidence](deepinfer-development.md).
 This is not maximum-capacity, long-context/memory or visual-quality qualification;
-real Harness image/Files workflows have not been exercised. Health's conservative
-`unverified` field is not a claim that no bounded model case has ever passed.
+a later bounded official Harness screenshot loop passed in the specific macOS
+scope below, not the Files API. Health's conservative `unverified` field is not
+a claim that no bounded model case has ever passed.
 
 Image identity is included in
 upstream paired-cache hashes; after prefill only the existing target/DSpark pair
@@ -205,9 +206,16 @@ and [original image qualification](multimodal-production-qualification.md).
   tools; no compulsory singleton session/fence protocol. Client acceptance is
   source/version-scoped, not a universal all-client compatibility certificate.
 - **Official Harness 0.2.1-rc.2:** direct native Messages text and actual read-only
-  file-tool/result continuation passed with supported option exclusions. No image/
-  Files, cancellation or dynamic tool-update workflow acceptance; see
+  file-tool/result continuation passed with supported option exclusions; see
   [historical acceptance](operations.md#deepinfer-daily-operation-and-harness).
+  A later **macOS/M3 Ultra 512 GB, Runtime 0.23.0 (`2fdea4f`), Recipe 0.2.0,
+  original Flash-1017, Thinking OFF/native paired MTP/GLM** static Web task passed
+  official write/edit → external host render → read_image/native Messages,
+  with four explicitly grounded correction cycles and complete paired traces.
+  Chromium stayed outside Seatbelt; actual PNGs used official Files-to-inline
+  fallback. This is not Files API, Windows image, Chromium-inside-Seatbelt,
+  cancellation or dynamic tool-update acceptance.
+  [Phase 3 report](../artifacts/visual-feedback-loop/phase-3-report.md).
   Current checkpoint-specific setup and later Windows observations are in
   [Using DeepSeek Harness](../README.md#using-deepseek-harness).
   This historical observation is not comprehensive Agent/Harness compatibility;

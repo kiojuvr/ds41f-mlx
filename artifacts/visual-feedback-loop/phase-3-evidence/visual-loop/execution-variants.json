@@ -1,0 +1,14 @@
+{
+  "supervisor_and_preflight": {
+    "file": "executed/phase3_render_handoff.supervisor.py",
+    "sha256": "09e4ef12e1a1af7c455ed86d3cbb1d34e5e15e656464c66d998fcf6851586918",
+    "started_at": "2026-10-23T17:48:23Z"
+  },
+  "requests": {
+    "file": "executed/phase3_render_handoff.request.py",
+    "sha256": "38b7f1a7573ae5d433b7eb465860fa3f0c454a3fc905e45adf9fffb9d23db62b",
+    "source_updated_at": "2026-10-23T17:48:32Z",
+    "first_request_admitted_at": "2026-10-23T17:48:46.101Z"
+  },
+  "change": "While host supervisor was already started, exclusive hard-link atomic publication replaced replace() on disk. All confined request commands ran the newer variant; preflight and host supervisor ran the original. No change to source snapshots, renderer, outputs, task, tool results, or model history. One supervisor, no retry/overwrite occurred. Final no-overwrite publication covered by focused regression."
+}

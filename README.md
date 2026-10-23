@@ -261,8 +261,13 @@ model ID below if needed. Merge this provider into the existing `llm-pi-ai` entr
 
 ### Compatibility limits
 
-End-to-end Harness image attachments/Files API workflows remain unqualified;
-Runtime already supports **bounded inline Vision for both variants**. Server-side
+A bounded screenshot-guided static Web loop passed on **macOS/M3 Ultra 512 GB,
+Harness 0.2.1-rc.2, Runtime 0.23.0 (`2fdea4f`), Recipe 0.2.0 and original
+Flash-1017**, Thinking OFF/native paired MTP/GLM. Official tools use an external
+renderer outside Seatbelt and Files-to-inline fallback; this does **not** qualify
+the Files API, Chromium inside Seatbelt or Windows image workflows.
+[Phase 3 evidence](artifacts/visual-feedback-loop/phase-3-report.md).
+Runtime supports **bounded inline Vision for both variants**. Server-side
 tools, unsupported Messages extensions, multi-active inference and restart-persistent
 KV-cache restoration are unsupported; parallel subagent workflows remain unqualified.
 Broad Windows Harness compatibility for original Flash remains unqualified.
@@ -392,7 +397,8 @@ See [performance evidence](docs/performance.md) for measurement scope.
 - No MTP native persistence, restart recovery, transparent replay/resume or
   cross-backend KV portability. Logical conversations are not durable sessions.
 - Messages supports bounded inline base64 images, not Files/documents.
-  End-to-end Harness image attachment workflows remain unqualified.
+  Only the scoped macOS Harness screenshot loop above is qualified, not general
+  attachment/Files workflows.
   No remote/file image URLs, low-detail images,
   animations or universal multimodal/visual-quality claim. MTP prior-message
   images need a compatible retained pair; eviction or incompatible historical

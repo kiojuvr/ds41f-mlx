@@ -1,0 +1,23 @@
+{
+  "total_s": 5400,
+  "startup_s": 1200,
+  "generation_idle_s": 600,
+  "generation_wall_s": 600,
+  "requests": 24,
+  "max_tokens": 2600,
+  "thinking": "disabled",
+  "sampling": "Official Harness/native defaults; not the Phase 2 temperature-0 driver",
+  "render_s": 25,
+  "max_correction_iterations": 5,
+  "max_renders": 6,
+  "tools": 30,
+  "note": "Official render and read_image are separate calls; 30 permits bounded filesystem reads/edits as well as 18 basic effects.",
+  "source_bytes": 65536,
+  "body_limit_bytes": 16777216,
+  "policy": {
+    "command": "/tmp/ds41f-phase2-renderer/bin/python /Volumes/SDXC-512/ds41f-mlx/tools/phase3_render_handoff.py request",
+    "tools": 30,
+    "deadline_ms": 1792782889170,
+    "audit": "/Volumes/SDXC-512/ds41f-mlx/artifacts/visual-feedback-loop/phase-3-evidence/visual-loop/tool-policy.jsonl"
+  }
+}
