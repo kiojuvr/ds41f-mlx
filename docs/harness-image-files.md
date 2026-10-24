@@ -7,6 +7,23 @@ correlated in the [Gate W1 audit](flash-1017-harness-files-compatibility.md).
 No provider modification, second Messages translator, Vision processor or KV
 owner is introduced. Existing Phase 0–3 evidence remains unchanged.
 
+## Gate F0 observed qualification
+
+**PASS — bounded macOS official Harness File-ID acceptance**, tested checkout
+`6766b652fd3293f7523533decc102a9697168af1`. One unmodified official Harness
+0.2.1-rc.2 native Messages conversation used only official `read_image`: two
+successful Files uploads, A then A+B nested file-reference histories, meaningful
+visual recognition, two fresh Vision encodes and one historical reuse. All three
+native completions and complete paired-cache traces were retained, including
+final synchronous flush; Target/DSpark continuity, settlement and zero replay/
+repack passed. Fresh disposable installation, original Flash-1017, Recipe 0.2.0,
+native MTP/GLM, Thinking OFF, read-only sandbox and session log disabled.
+See [report and evidence](../artifacts/harness-files/gate-f0-report.md).
+This adds only two-image macOS tool-path qualification: not Windows/GUI,
+persistent or multi-user Files, lifecycle/quota recovery, eviction/restart,
+maximum-capacity, endurance or production promotion. The W2 model-free scope
+and historical Phase 0–3 receipts remain unchanged.
+
 ## Supported operations
 
 ### `POST /v1/files`

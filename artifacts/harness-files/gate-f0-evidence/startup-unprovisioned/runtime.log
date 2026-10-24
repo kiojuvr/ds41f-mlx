@@ -1,0 +1,17 @@
+Traceback (most recent call last):
+  File "/Volumes/SDXC-512/ds41f-mlx/artifacts/harness-files/gate-f0-evidence/runtime.py", line 108, in <module>
+    main()
+    ~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/artifacts/harness-files/gate-f0-evidence/runtime.py", line 29, in main
+    identity = inspect(cfg)
+  File "/private/tmp/ds41f-f0-runtime/lib/python3.13/site-packages/ds41f_mlx/mtp_identity.py", line 214, in inspect
+    authority, compatibility = inspect_payload()
+                               ~~~~~~~~~~~~~~~^^
+  File "/private/tmp/ds41f-f0-runtime/lib/python3.13/site-packages/ds41f_mlx/execution_identity.py", line 180, in inspect_payload
+    selected = check_glm_bundle(fast, glm, selected=glm['profile'])
+  File "/private/tmp/ds41f-f0-runtime/lib/python3.13/site-packages/ds41f_mlx/runtime/resource_admission.py", line 239, in check_glm_bundle
+    require(profile == selected, f'selected GLM {selected} unavailable; fallback refused')
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/ds41f-f0-runtime/lib/python3.13/site-packages/ds41f_mlx/runtime/resource_admission.py", line 52, in require
+    raise ResourceAdmissionError(message)
+ds41f_mlx.runtime.resource_admission.ResourceAdmissionError: selected GLM native unavailable; fallback refused
