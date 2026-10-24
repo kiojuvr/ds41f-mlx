@@ -184,14 +184,21 @@ Windows-specific source is available, but the failing Windows installation's
 identity/configuration and wire boundary remain unknown. No Windows or macOS
 execution was performed, and Phase 0–3 acceptance evidence is unchanged.
 
-**Proposed next implementation gate W2 (separate authorization required):** bounded
-image Files upload/storage plus owned file-reference resolution into existing
-native Messages/Recipe Vision and paired-cache execution, including narrow delete
-support; list/quota recovery must be explicitly included or deferred. Keep
-session-log support a separate decision (disable it in the minimum supported
-composition). No general Files parity, second converter/image processor or KV
-implementation. The audit is sufficient to scope W2, not to attribute or qualify
-the reported Windows failure.
+**Gate W2 — bounded model-free implementation work completed:** image Files
+upload/delete and native Messages file-reference resolution are implemented and
+model-free verified; see [W2 scope](harness-image-files.md). This in-memory work
+is a bounded prototype, not official Harness Files/Windows qualification or a
+finalized session-lifecycle design. Existing support and qualification exclusions
+remain unchanged.
+
+**Separate future Files campaign:** defer Files redesign/full implementation,
+Windows Files qualification and `dsh_session_log` compatibility decisions. The
+known Windows failure remains unresolved. Prefer **session-scoped, volatile file
+ownership**, not general durable persistence; this is a future direction, not an
+implemented guarantee. Process-local storage is not session-owned storage.
+Completion/cancellation, active request snapshots, forks, expiry and cache
+eviction require explicit ownership rules. File-byte lifetime must remain
+independent of paired KV validity. Do not redesign W2 in the endurance campaign.
 
 After the inline MVP and static audit:
 
@@ -205,6 +212,14 @@ After the inline MVP and static audit:
 **Exit:** required Windows contracts and the supported workflow scope are explicit; a version/transport/Runtime-scoped receipt demonstrates normal-operation compatibility and the same loop. Unimplemented or untested boundaries remain excluded, not implied by upload success.
 
 ### Phase 4 — Quality and endurance
+
+**Current gate Q1 — capacity investigation:** quantify the qualified Phase 3
+inline path from retained evidence and current admission/history source, without
+another model conversation or production changes. The [Q1 envelope](flash-1017-visual-endurance-envelope.md)
+finds six images observed, seven admissible at the measured geometry, and eight
+rejected by aggregate patches. Its bounded Gate Q2 proposal is not authorization
+to run it; 10–20 full-size uninterrupted observations are not currently supported.
+Files redesign/full implementation and Windows qualification remain separate.
 
 The planned integrated progression follows Phase 3B for Windows workflow claims. Independent quality/endurance experiments may proceed on the qualified macOS inline path without waiting for Windows compatibility; scope each result to its actual environment and transport.
 
@@ -236,4 +251,9 @@ Persist RUNNING/FAIL/PASS receipts with dependency identities, task/goal hashes,
 - No silent image deletion/replacement, automatic historical re-encoding, speculative effect execution or generation retries to mask uncertain outcomes.
 - Do not revive retired Browser/server-side Web Tool applications or embed a renderer in Runtime.
 
-**Next development gate:** Phase 1's focused inline correctness investigation, only under a separately authorized task. The first complete-loop deliverables remain Direct HTTP followed by official Harness inline evidence of at least two model-directed correction iterations, then Windows normal-operation compatibility and quality/endurance. Phase 0 is complete only within its recorded scope; capability claims remain bounded by receipts. This plan update does not start implementation.
+**Current development gate:** Phase 4 / Gate Q1, the model-free endurance-envelope
+investigation linked above, using the retained qualified Phase 3 official Harness
+inline loop. W2 records model-free implementation only; Files redesign/full
+implementation, Windows qualification and session-log decisions are deferred to
+the separate Files campaign. Gate Q2 requires subsequent authorization; this
+update starts no live experiment or implementation.
