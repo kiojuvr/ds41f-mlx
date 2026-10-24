@@ -1,0 +1,68 @@
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/private/tmp/ds41f-visual-capacity-test/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/private/tmp/ds41f-visual-capacity-test/lib/python3.13/site-packages/fastapi/applications.py", line 1215, in __call__
+    await super().__call__(scope, receive, send)
+  File "/private/tmp/ds41f-visual-capacity-test/lib/python3.13/site-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/private/tmp/ds41f-visual-capacity-test/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/private/tmp/ds41f-visual-capacity-test/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/private/tmp/ds41f-visual-capacity-test/lib/python3.13/site-packages/fastapi/telemetry/_asgi.py", line 151, in __call__
+    await self.app(scope, receive, send)
+  File "/private/tmp/ds41f-visual-capacity-test/lib/python3.13/site-packages/ds41f_mlx/serving/mtp_public.py", line 257, in __call__
+    await self.app(scope, bounded_receive if owned else receive, bounded_send)
+  File "/private/tmp/ds41f-visual-capacity-test/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/private/tmp/ds41f-visual-capacity-test/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/private/tmp/ds41f-visual-capacity-test/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/private/tmp/ds41f-visual-capacity-test/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/private/tmp/ds41f-visual-capacity-test/lib/python3.13/site-packages/starlette/routing.py", line 676, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/private/tmp/ds41f-visual-capacity-test/lib/python3.13/site-packages/fastapi/routing.py", line 2786, in app
+    await route.handle(scope, receive, send)
+  File "/private/tmp/ds41f-visual-capacity-test/lib/python3.13/site-packages/fastapi/routing.py", line 1310, in handle
+    await super().handle(scope, receive, send)
+  File "/private/tmp/ds41f-visual-capacity-test/lib/python3.13/site-packages/starlette/routing.py", line 282, in handle
+    await self.app(scope, receive, send)
+  File "/private/tmp/ds41f-visual-capacity-test/lib/python3.13/site-packages/fastapi/routing.py", line 165, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/private/tmp/ds41f-visual-capacity-test/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/private/tmp/ds41f-visual-capacity-test/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/private/tmp/ds41f-visual-capacity-test/lib/python3.13/site-packages/fastapi/routing.py", line 152, in app
+    await response(scope, receive, send)
+  File "/private/tmp/ds41f-visual-capacity-test/lib/python3.13/site-packages/ds41f_mlx/serving/production_mtp.py", line 541, in __call__
+    await super().__call__(scope, receive, send)
+  File "/private/tmp/ds41f-visual-capacity-test/lib/python3.13/site-packages/ds41f_mlx/serving/server.py", line 158, in __call__
+    await super().__call__(scope, receive, send)
+  File "/private/tmp/ds41f-visual-capacity-test/lib/python3.13/site-packages/starlette/responses.py", line 275, in __call__
+    async with create_collapsing_task_group() as task_group:
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 235, in __aexit__
+    await self.gen.athrow(value)
+  File "/private/tmp/ds41f-visual-capacity-test/lib/python3.13/site-packages/starlette/_utils.py", line 115, in create_collapsing_task_group
+    raise exc from exc.__cause__ or context
+  File "/private/tmp/ds41f-visual-capacity-test/lib/python3.13/site-packages/anyio/_core/_tasks.py", line 327, in _run_coro
+    retval = await self._coro
+             ^^^^^^^^^^^^^^^^
+  File "/private/tmp/ds41f-visual-capacity-test/lib/python3.13/site-packages/starlette/responses.py", line 278, in wrap
+    await func()
+  File "/private/tmp/ds41f-visual-capacity-test/lib/python3.13/site-packages/starlette/responses.py", line 252, in stream_response
+    async for chunk in self.body_iterator:
+    ...<2 lines>...
+        await send({"type": "http.response.body", "body": chunk, "more_body": True})
+  File "/private/tmp/ds41f-visual-capacity-test/lib/python3.13/site-packages/ds41f_mlx/serving/production_mtp.py", line 514, in chunks
+    raise RuntimeError(output.error)
+RuntimeError: unfinished canonical tool protocol; ordinary continuation not qualified
