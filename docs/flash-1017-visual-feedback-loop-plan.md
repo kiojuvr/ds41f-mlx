@@ -4,6 +4,24 @@ Status: **Phase 0 bounded PASS; complete visual feedback loop not yet qualified.
 
 ## 1. Decision
 
+**Policy adoption / next boundary:** follow the authoritative
+[Upstream-first architecture and compatibility policy](implementation-plan.md#upstream-first-architecture-and-compatibility-policy).
+Harness owns orchestration, history, attachments, offload and compaction; Recipe
+owns protocol semantics; DeepInfer supplies the reference execution architecture;
+ds41f-mlx owns necessary MLX integration and safety admission. The next permitted
+activity is an **upstream-versus-local source audit**, not implementation or a live
+campaign. The phase proposals below are retained context, not immediate authorization.
+
+Compare the pinned official cached-image, offload and compaction sources with
+existing metadata-first preparation, fresh-only Vision encoding and paired-cache
+guards. The geometry-dependent **7-image admission limit**, all-history versus
+active-work cached-image resource accounting, and official offload/cache-recovery
+integration are **open technical questions**. Cached-image skipping already exists
+locally; it does not by itself justify raising the 36,864-patch budget. Existing
+historical replay/re-encoding rejection remains enforced, not a universal DeepInfer
+limitation. Any future change needs the policy's divergence evidence and independent
+numerical, semantic and lifecycle verification.
+
 Evaluate Vision as an agent capability: **create → render → observe → compare with the goal → edit → render again**, not merely image description.
 
 The current priority is to establish the complete loop using the already demonstrated **inline transport**, in this order: **Inline Vision correctness → Direct HTTP visual loop → Official Harness inline loop → Windows normal-operation compatibility → Quality and endurance.** Phases 1–3 do not depend on implementing Files API. Existing Files-to-inline fallback is acceptable for the initial official Harness MVP within request-size, image-history and cache constraints.
@@ -213,12 +231,13 @@ After the inline MVP and static audit:
 
 ### Phase 4 — Quality and endurance
 
-**Current gate Q1 — capacity investigation:** quantify the qualified Phase 3
-inline path from retained evidence and current admission/history source, without
-another model conversation or production changes. The [Q1 envelope](flash-1017-visual-endurance-envelope.md)
-finds six images observed, seven admissible at the measured geometry, and eight
-rejected by aggregate patches. Its bounded Gate Q2 proposal is not authorization
-to run it; 10–20 full-size uninterrupted observations are not currently supported.
+**Retained Q1/Q2 capacity evidence:** the
+[envelope](flash-1017-visual-endurance-envelope.md) finds six images observed,
+seven admissible at the measured geometry, and eight rejected by aggregate patches.
+The subsequently authorized [Q2 report](../artifacts/visual-feedback-loop/phase-4-q2-report.md)
+records four task screenshots and partial grounding evidence, not seven-image
+execution. These results authorize no further run; 10–20 full-size uninterrupted
+observations are not currently supported. The next source-audit boundary is §1.
 Files redesign/full implementation and Windows qualification remain separate.
 
 The planned integrated progression follows Phase 3B for Windows workflow claims. Independent quality/endurance experiments may proceed on the qualified macOS inline path without waiting for Windows compatibility; scope each result to its actual environment and transport.
@@ -251,9 +270,14 @@ Persist RUNNING/FAIL/PASS receipts with dependency identities, task/goal hashes,
 - No silent image deletion/replacement, automatic historical re-encoding, speculative effect execution or generation retries to mask uncertain outcomes.
 - Do not revive retired Browser/server-side Web Tool applications or embed a renderer in Runtime.
 
-**Current development gate:** Phase 4 / Gate Q1, the model-free endurance-envelope
-investigation linked above, using the retained qualified Phase 3 official Harness
-inline loop. W2 records model-free implementation only; Files redesign/full
-implementation, Windows qualification and session-log decisions are deferred to
-the separate Files campaign. Gate Q2 requires subsequent authorization; this
-update starts no live experiment or implementation.
+**Current development gate:** upstream-versus-local source audit under the
+[authoritative policy](implementation-plan.md#upstream-first-architecture-and-compatibility-policy),
+starting with cached-image admission accounting, then official offload/compaction
+and paired-cache recovery semantics. No implementation, guard relaxation, numerical
+test, model loading, Harness execution or benchmark is authorized by this update.
+Retained Q2 evidence is unchanged. W2 remains a bounded process-local store;
+[Gate F0](../artifacts/harness-files/gate-f0-report.md) adds limited real-model
+File-ID transport evidence, not session ownership, cancellation cleanup, fork or
+expiry synchronization qualification. Files redesign/full implementation, Windows
+qualification and session-log decisions remain a separate campaign; attachment-byte
+lifetime stays independent of executable paired-KV lifetime.

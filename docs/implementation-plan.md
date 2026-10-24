@@ -6,6 +6,164 @@ exists; [capabilities](capabilities.md) owns support/limits; [operations](operat
 owns deployment. Historical plans and receipts retain their original decisions,
 not present authorization or a required sequence of new milestones.
 
+## Upstream-first architecture and compatibility policy
+
+**Follow official DeepSeek Harness, DeepSeek Recipe and DeepInfer architecture
+wherever feasible. Implement only the integration and execution differences
+necessary for Apple Silicon / MLX.** This section owns development decisions,
+not a new capability, execution or operation contract; those remain with
+[architecture](architecture.md), [capabilities](capabilities.md),
+[Runtime strategy](runtime-strategy.md) and [operations](operations.md).
+
+### Authority and responsibility boundaries
+
+- **Official DeepSeek Harness** owns agent/tool orchestration, conversation
+  history and session projection, attachment references and tool-image
+  acquisition, image offload decisions, conversation compaction, session forks,
+  resume and user-facing lifecycle semantics. Prefer its official extension
+  points, event model and request projection. Do not reproduce these inside
+  ds41f-mlx merely to compensate for an integration gap.
+- **Official DeepSeek Recipe** owns protocol conversion, message/tool semantics,
+  content ordering and multimodal placeholders, canonical encoding/decoding,
+  response and tool-call accumulation. Do not add a competing Messages parser,
+  serializer or semantic translation layer. Existing bounded Runtime admission
+  still owns security and supported capabilities.
+- **Official DeepInfer** is the reference architecture for multimodal request
+  preparation, cache-aware image preprocessing, KV Cache hit/miss behavior,
+  scheduler/prefill responsibilities, model execution semantics, image/token
+  alignment and cache-aware resource accounting where applicable. Its code is
+  not necessarily directly portable: follow architecture and numerical semantics,
+  not CUDA-specific mechanisms.
+- **ds41f-mlx** retains MLX/Metal numerical execution, pinned oMLX Target/DSpark
+  integration, Apple Silicon memory/resource admission, Runtime lifecycle and
+  installed package admission, compatibility glue between Recipe, DeepInfer
+  semantics and the selected MLX backend, provenance, numerical verification and
+  fail-closed consistency checks. Do not construct competing high-level agent,
+  session or protocol architectures. Existing Runtime canonical-state and paired
+  cache safeguards are not a replacement for Harness session ownership.
+
+### Departures from upstream
+
+Every proposed architectural divergence must establish:
+
+1. The exact upstream revision and source behavior.
+2. The corresponding existing local implementation.
+3. Whether upstream already supplies the capability or extension point.
+4. The concrete incompatibility or Apple Silicon-specific constraint.
+5. Why configuration, an adapter or a small integration change is insufficient.
+6. The minimum justified local deviation.
+7. Required numerical, semantic and lifecycle acceptance evidence.
+8. Conditions under which the deviation can later be removed.
+
+Prefer adapting an existing implementation over a parallel framework. Avoid
+duplicate ownership, compatibility shims without demonstrated need, speculative
+abstractions and permanent forks of official semantics. Prior qualification does
+not by itself make a local implementation an architectural requirement. Existing
+safety constraints nevertheless remain enforced until a replacement is explicitly
+verified; this policy authorizes no replay, recovery or other implementation.
+
+### Compatibility versus currently qualified restrictions
+
+**Conservative Runtime guards protect the currently qualified implementation;
+they do not automatically define permanent model or upstream architectural
+limitations.** In particular, rejection of historical image replay/re-encoding is
+a current local safeguard, not a universal restriction of official DeepInfer.
+Changing it requires an independently justified, numerically correct cache-recovery
+design. Existing guards are unchanged.
+
+The same distinction applies to context/multimodal resource limits, KV Cache
+eviction/reconstruction, stateful Messages support, file ownership/lifecycle,
+compaction and historical request projection. Current no-replay rules in
+[architecture](architecture.md), [Runtime strategy](runtime-strategy.md) and
+[Vision integration](mtp-vision-integration.md) continue to govern execution;
+they are not permanent prohibitions on investigating upstream-compatible designs.
+
+### Immediate official-source investigation priorities
+
+Use these already reviewed reference snapshots, not claims about current upstream
+HEAD or equality with installed packages:
+
+| Project | Pinned revision |
+| --- | --- |
+| DeepSeek Harness | `687f282e8625c6b8d11ff58211a90524be2e4317` |
+| DeepInfer | `9bd9cf243fc53ef9afbf8f04d391d989117d6ab9` |
+| DeepSeek Recipe source review | `935817c66f5d6e64838f419692545f06787e485f` |
+
+Pinned source links and packaged Recipe distinctions are retained in the
+[Visual Feedback Loop source review](flash-1017-visual-feedback-loop-plan.md#2-historical-source-review-and-evidence-scope).
+The next permitted activity is an **upstream-versus-local source audit**, not
+implementation, prototyping, benchmarking or a new live acceptance campaign:
+
+- **A — Cached images:** compare DeepInfer's
+  `deepinfer/ve/multimodal_processor.py`,
+  `deepinfer/model_executor/models/deepseek_vl.py` and
+  `deepinfer/ve/prepare_tensor_input_vl.py`. Official code identifies image spans
+  fully covered by KV Cache, omits their binary payloads from subsequent
+  preprocessing and excludes them from active Vision tensor work. Local
+  `runtime/multimodal.py:prepare_multimodal/encode_new` and
+  `serving/production_mtp.py` already provide metadata-first validation and
+  fresh-only encoding after paired lookup; cached-image skipping is not missing.
+  Admission currently charges all occurrences against **36,864 planned ViT
+  patches**, including historical images. The open question is whether this must
+  remain an all-history budget or a narrower active-work budget can preserve
+  metadata validation, numerical identity, resource bounds and paired-cache
+  guarantees. Skipping encoding alone does not justify raising the limit.
+  The measured **7-image admission limit** is geometry-dependent, not a universal
+  model limit; [Q1/Q2 envelope](flash-1017-visual-endurance-envelope.md) retains
+  six-image live evidence and seven-image model-free admission only.
+- **B — Harness offload:** inspect
+  `packages/compaction/compaction-image-offload/`,
+  `packages/llm/llm/src/content.ts` and
+  `packages/llm/llm-deepseek/src/images.ts`. Harness retains attachments and records
+  `image/offload` selections, replacing selected request images with deterministic
+  text placeholders. This changes the canonical prefix and may invalidate provider
+  cache reuse. Audit integration with ds41f-mlx, not a competing image-history manager.
+- **C — Harness compaction:** inspect `packages/compaction/compaction-basic/`.
+  Harness already owns summarization-based history compaction. Determine what a
+  compatible Runtime must support after official projection changes the canonical
+  prompt; do not implement Runtime-side conversation compaction.
+- **D — Paired Target/DSpark cache recovery:** compare official DeepInfer cache
+  misses/recomputation with local paired integrity, distinguishing a complete hit,
+  partial text-prefix hit, fully cached historical image span, partially covered
+  historical image span, changed image or historical prompt, and complete miss.
+  Any future replay/recovery must preserve Target/DSpark numerical consistency,
+  canonical settlement and exactly-once tool-effect boundaries. Current paired
+  integrity rules remain in force; this investigation does not authorize recovery
+  implementation.
+
+The 7-image admission boundary, cached-image resource accounting and official
+offload/cache-recovery integration remain **open technical questions**, not
+proposed behavior promoted into implemented capability. The
+[Q2 report](../artifacts/visual-feedback-loop/phase-4-q2-report.md) retains its
+partial grounding and four-image continuity scope; it did not test seven images.
+
+### Files and session lifetime
+
+Files redesign and full implementation belong to a separate campaign. Prefer
+volatile, session-associated attachment lifetimes over general durable storage
+where official Harness semantics permit. The current W2 process-local Files store
+is bounded, not the finalized lifecycle design; see [W2 scope](harness-image-files.md).
+[Gate F0](../artifacts/harness-files/gate-f0-report.md) establishes limited real-model
+File-ID transport compatibility, not general session ownership or storage
+qualification. Session ownership, cancellation cleanup, fork behavior and expiry
+synchronization are not established as implemented. Attachment-byte lifetime must
+remain separate from executable paired-KV lifetime.
+
+### Development sequencing and approval
+
+**Official source inspection → local implementation comparison → concrete gap
+identification → minimal design decision → focused verification → implementation
+only when justified.** Before adding a feature, determine whether official
+architecture already supplies it. Before changing a conservative guard, establish
+the exact safety condition it protects. Before claiming compatibility, verify the
+real installed package and target execution path.
+
+Preserve scope-qualified evidence: historical PASS does not qualify a changed
+implementation. Prioritize architectural compatibility and reduced long-term
+maintenance over feature-specific workarounds. Performance regressions and
+numerical correctness remain independent approval criteria. This documentation
+policy changes no implementation, supported limits, classification or qualification.
+
 ## DeepInfer current disposition
 
 DeepInfer has integrated official Flash-1017, Recipe 0.2 native Chat/Messages,
