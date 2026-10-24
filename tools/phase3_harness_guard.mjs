@@ -9,7 +9,17 @@ export function apply(ctx) {
   const policy = JSON.parse(readFileSync(process.env.PHASE3_POLICY, 'utf8'));
   let effects = 0, imageReads = 0;
   const maxRenders = policy.max_renders ?? 6;
-  const allowedPath = p => typeof p === 'string' && resolve(workspace, p) === workspace + '/index.html';
+  const sourcePath = workspace + '/index.html';
+  const allowedPath = p => typeof p === 'string' && resolve(workspace, p) === sourcePath && (!existsSync(sourcePath) || realpathSync(sourcePath) === sourcePath);
+  // A small shell grammar, not arbitrary shell: no substitutions, pipes, redirects,
+  // alternate paths, network, mutation, or background jobs. Output remains capped
+  // by the official bash sandbox. sed ranges cover at most 40 source lines.
+  const inspection = command => {
+    if (!allowedPath('index.html')) return false;
+    if (['pwd', 'ls index.html', 'wc -lc index.html'].includes(command)) return true;
+    const m = /^sed -n '([1-9][0-9]{0,3}),([1-9][0-9]{0,3})p' index\.html$/.exec(command);
+    return !!m && Number(m[2]) >= Number(m[1]) && Number(m[2]) - Number(m[1]) < 40;
+  };
   ctx.tools.guard(exec => {
     const a = exec.arguments ?? {};
     let reason;
@@ -23,7 +33,9 @@ export function apply(ctx) {
         if (typeof a.old_string !== 'string' || typeof a.new_string !== 'string' || Buffer.byteLength(source.replace(a.old_string, a.new_string)) > 65536) reason = 'Phase 3 source-size limit';
       }
     } else if (exec.name === 'bash') {
-      if (a.command !== policy.command || (a.workdir !== undefined && realpathSync(a.workdir) !== workspace) || a.run_in_background === true || (a.timeoutMs !== undefined && a.timeoutMs > 25000)) reason = 'Phase 3 permits only the exact approved foreground renderer';
+      let workdirOK = a.workdir === undefined;
+      try { if (a.workdir !== undefined) workdirOK = realpathSync(a.workdir) === workspace; } catch {}
+      if ((a.command !== policy.command && !inspection(a.command)) || !workdirOK || a.run_in_background === true || (a.timeoutMs !== undefined && (!Number.isFinite(a.timeoutMs) || a.timeoutMs <= 0 || a.timeoutMs > 25000))) reason = 'Phase 3 permits only the approved foreground renderer or bounded read-only source inspection';
     } else if (exec.name === 'read_image') {
       const p = typeof a.file_path === 'string' ? resolve(workspace, a.file_path) : '';
       const index = /^render-(\d{2})\.png$/.exec(p.slice(workspace.length + 1));

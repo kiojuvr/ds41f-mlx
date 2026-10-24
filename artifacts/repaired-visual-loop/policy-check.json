@@ -1,0 +1,167 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "label": "read source",
+      "allowed": true
+    },
+    {
+      "label": "edit outside",
+      "allowed": false,
+      "reason": "Phase 3 permits only workspace/index.html"
+    },
+    {
+      "label": "read outside",
+      "allowed": false,
+      "reason": "Phase 3 permits only workspace/index.html"
+    },
+    {
+      "label": "pwd",
+      "allowed": true
+    },
+    {
+      "label": "listing",
+      "allowed": true
+    },
+    {
+      "label": "size",
+      "allowed": true
+    },
+    {
+      "label": "source range",
+      "allowed": true
+    },
+    {
+      "label": "huge range",
+      "allowed": false,
+      "reason": "Phase 3 permits only the approved foreground renderer or bounded read-only source inspection"
+    },
+    {
+      "label": "rm index.html",
+      "allowed": false,
+      "reason": "Phase 3 permits only the approved foreground renderer or bounded read-only source inspection"
+    },
+    {
+      "label": "cat /etc/passwd",
+      "allowed": false,
+      "reason": "Phase 3 permits only the approved foreground renderer or bounded read-only source inspection"
+    },
+    {
+      "label": "curl https://example.com",
+      "allowed": false,
+      "reason": "Phase 3 permits only the approved foreground renderer or bounded read-only source inspection"
+    },
+    {
+      "label": "sudo true",
+      "allowed": false,
+      "reason": "Phase 3 permits only the approved foreground renderer or bounded read-only source inspection"
+    },
+    {
+      "label": "pwd &",
+      "allowed": false,
+      "reason": "Phase 3 permits only the approved foreground renderer or bounded read-only source inspection"
+    },
+    {
+      "label": "pwd; rm index.html",
+      "allowed": false,
+      "reason": "Phase 3 permits only the approved foreground renderer or bounded read-only source inspection"
+    },
+    {
+      "label": "sed -n '1,2p' index.html > /tmp/probe",
+      "allowed": false,
+      "reason": "Phase 3 permits only the approved foreground renderer or bounded read-only source inspection"
+    },
+    {
+      "label": "$(pwd)",
+      "allowed": false,
+      "reason": "Phase 3 permits only the approved foreground renderer or bounded read-only source inspection"
+    },
+    {
+      "label": "sleep 999",
+      "allowed": false,
+      "reason": "Phase 3 permits only the approved foreground renderer or bounded read-only source inspection"
+    },
+    {
+      "label": "wrong cwd",
+      "allowed": false,
+      "reason": "Phase 3 permits only the approved foreground renderer or bounded read-only source inspection"
+    },
+    {
+      "label": "background",
+      "allowed": false,
+      "reason": "Phase 3 permits only the approved foreground renderer or bounded read-only source inspection"
+    },
+    {
+      "label": "escalate",
+      "allowed": false,
+      "reason": "Phase 3 forbids escalation"
+    },
+    {
+      "label": "timeout",
+      "allowed": false,
+      "reason": "Phase 3 permits only the approved foreground renderer or bounded read-only source inspection"
+    },
+    {
+      "label": "renderer",
+      "allowed": true
+    }
+  ],
+  "runs": [
+    {
+      "label": "inspection",
+      "confined": {
+        "argv": [
+          "sandbox-exec",
+          "-p",
+          "(version 1) (allow default) (deny file-write*) (allow file-write* (literal \"/dev/null\")) (allow file-write* (subpath \"/private/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-visual-loop-_72in725/workspace\") (subpath \"/private/tmp\") (subpath \"/private/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T\"))",
+          "--",
+          "bash",
+          "-c",
+          "sed -n '1,20p' index.html"
+        ],
+        "enforcement": "full",
+        "denialSignatures": [
+          "operation not permitted"
+        ],
+        "runnerFailureRules": [
+          {
+            "fatalSignatures": [
+              "sandbox-exec: "
+            ]
+          }
+        ]
+      },
+      "status": 0,
+      "stdout": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Northstar Conference Operations</title>\n<style>\n*{box-sizing:border-box}\nbody{margin:0;background:#eef2f7;color:#1c2b42;font:14px Arial}\n#page{width:1216px;margin:18px auto}\n#header{background:#102c49;color:white;padding:12px 24px;height:80px}\nh1{font-size:26px;margin:0 0 6px}\n.subtitle{color:#b8c9dc;margin:0}\n#cards{display:flex;gap:13px;margin:25px 0 12px}\n.card{background:white;padding:12px;width:25%;height:86px;border-left:5px solid #278d90}\n.card:nth-child(2){height:110px;padding-top:26px}\n.card:nth-child(3){margin-top:15px}\n.card strong{display:block;font-size:29px}\n.label{color:#61718a}\n#content{display:grid;grid-template-columns:875px 350px;gap:20px}\nsection{background:white;padding:16px}\n",
+      "stderr": ""
+    },
+    {
+      "label": "outside-write",
+      "confined": {
+        "argv": [
+          "sandbox-exec",
+          "-p",
+          "(version 1) (allow default) (deny file-write*) (allow file-write* (literal \"/dev/null\")) (allow file-write* (subpath \"/private/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-visual-loop-_72in725/workspace\") (subpath \"/private/tmp\") (subpath \"/private/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T\"))",
+          "--",
+          "bash",
+          "-c",
+          "/tmp/ds41f-phase2-renderer/bin/python -c 'from pathlib import Path; Path(\"/Volumes/SDXC-512/ds41f-mlx/artifacts/repaired-visual-loop/denial-probe.txt\").write_text(\"must not write\")'"
+        ],
+        "enforcement": "full",
+        "denialSignatures": [
+          "operation not permitted"
+        ],
+        "runnerFailureRules": [
+          {
+            "fatalSignatures": [
+              "sandbox-exec: "
+            ]
+          }
+        ]
+      },
+      "status": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n    from pathlib import Path; Path(\"/Volumes/SDXC-512/ds41f-mlx/artifacts/repaired-visual-loop/denial-probe.txt\").write_text(\"must not write\")\n                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py\", line 555, in write_text\n    return PathBase.write_text(self, data, encoding, errors, newline)\n           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_abc.py\", line 651, in write_text\n    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:\n         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py\", line 537, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nPermissionError: [Errno 1] Operation not permitted: '/Volumes/SDXC-512/ds41f-mlx/artifacts/repaired-visual-loop/denial-probe.txt'\n"
+    }
+  ]
+}

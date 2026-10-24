@@ -1,0 +1,43 @@
+{
+  "assessed_after_conversation": true,
+  "assessment_returned_to_model": false,
+  "method": "Direct inspection of all eight actual retained PNGs plus frozen rubric, source revisions and official event receipts. Not the renderer's unrelated legacy quality score. No new agent images or generations.",
+  "classification": "PARTIAL",
+  "evaluation_restrictions_removed": true,
+  "official_harness_files_vision_transport": "PASS for seven encoded/consumed images; eighth Files acquisition and preparation succeed but execution admission rejects",
+  "image_grounded_corrective_edits": "PASS: explicit contemporaneous image observations precede official edits and model verification, notably initial functional repair and correction of the later registration alignment regression",
+  "independent_visual_improvement": "PASS, not perfect completion: original 4/9 rubric checks; final 8/9 with residual outer-right alignment inconsistency",
+  "cached_image_continuation": "PASS through seven retained image occurrences",
+  "extended_discounted_admission": "NOT QUALIFIED: eighth occurrence request rejected by paired-byte fallback before restore/native generation",
+  "executed_edits": 7,
+  "model_verified_edit_render_cycles": 6,
+  "final_edit_render_cycle": "Seventh revision rendered and independently inspected, but the model could not consume/verify its screenshot because request 28 was rejected",
+  "clear_functional_repair_chains": [
+    {
+      "prior_image": "render-00.png, acquired G4, consumed G5",
+      "diagnosis": "G6: misaligned cards (card 2 taller, card 3 dropped), clipped titles/names, footer below viewport, excessive registration spacing",
+      "edit": "G6 official edit call_00_TPwFno4W8IsqtKtUqPJt2028, completed; 1241 output tokens",
+      "verification": "render-01.png acquired G8, consumed G9; model explicitly notes complete text, aligned cards and visible footer",
+      "independent_result": "Major visible improvement: all eight titles/names wrap completely, four cards align, and both footer messages fit. The model's additional phrase about a missing Session width/unicode character is unsupported and not credited. Source inspection also informed the edit; exclusive Vision causality is not claimed."
+    },
+    {
+      "prior_image": "render-03.png, acquired G14, consumed G15",
+      "diagnosis": "G15 correctly locates registration at y approximately 340 versus schedule approximately 184",
+      "edit": "G15 official edit call_00_405slcxMwIS94FNHyTgL6070 removes auto top margin",
+      "verification": "render-04.png acquired G17, consumed G18; model notes restored top/bottom alignment",
+      "independent_result": "Correctly repairs the obvious regression introduced by G12; schedule and registration headers align again."
+    }
+  ],
+  "screenshots": [
+    {"id":0,"checks_passed":[1,2,5,9],"assessment":"All original text is present in source, but cards are unequal/offset, schedule titles and names clip, footer is absent, and panel/card spacing is inconsistent."},
+    {"id":1,"checks_passed":[1,2,3,4,5,6,7,9],"assessment":"Functional repair: complete readable schedule and names, equal aligned cards, compact registration, visible footer. Registration's right edge still extends beyond header/cards/footer; substantial blank registration area remains."},
+    {"id":2,"checks_passed":[1,2,3,4,5,6,7,9],"assessment":"Registration content distributed vertically; full text retained. This is a layout experiment/refinement, not another major functional fix. Model notices excessive row gaps."},
+    {"id":3,"checks_passed":[1,2,3,4,5,6,7,9],"assessment":"Regression: registration panel is visibly dropped to approximately y340. Text still fits, but section alignment/spacing is incoherent. Font minima remain satisfied."},
+    {"id":4,"checks_passed":[1,2,3,4,5,6,7,9],"assessment":"Registration top alignment repaired. A large internal gap remains above desk hours."},
+    {"id":5,"checks_passed":[1,2,3,4,5,6,7,9],"assessment":"Summary rows now have more comfortable even padding. Internal whitespace decreases, all required information preserved."},
+    {"id":6,"checks_passed":[1,2,3,4,5,6,7,9],"assessment":"Reduced table padding shortens both panels while keeping complete readable text. Footer fully visible. This is a density/spacing refinement, not evidence that another required section was previously missing."},
+    {"id":7,"checks_passed":[1,2,3,4,5,6,7,9],"assessment":"Minor pill line-height change only; no meaningful additional visual defect repair established. All required content remains readable, including registration hours/support and both footer messages. Outer-right panel alignment remains inconsistent."}
+  ],
+  "residual_defect": "Page/header/cards/footer width is 1216px starting x32; content grid is 875+20+350=1245px and ends x1277, 29px beyond their right edge. This remains inside the 1280px viewport but fails strict cross-section spacing consistency. No follow-on correction attempted.",
+  "limitations": "G12 introduces a real regression, so not every image-associated edit improves quality. G24 edit is rejected before mutation because its old string matches twice; G25 uses a specific selector after that explicit no-effect result, not an uncertain-effect retry. Eighth image was genuinely revised and transported but never Vision-encoded or model-verified. No full-task completion or successful eight-image boundary is claimed."
+}

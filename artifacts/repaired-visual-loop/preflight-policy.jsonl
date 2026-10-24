@@ -1,0 +1,23 @@
+{"at":"2026-10-24T17:09:41.130Z","call_id":"preflight-read source","name":"read","decision":"allow"}
+{"at":"2026-10-24T17:09:41.131Z","call_id":"preflight-edit outside","name":"edit","decision":"deny","reason":"Phase 3 permits only workspace/index.html"}
+{"at":"2026-10-24T17:09:41.131Z","call_id":"preflight-read outside","name":"read","decision":"deny","reason":"Phase 3 permits only workspace/index.html"}
+{"at":"2026-10-24T17:09:41.132Z","call_id":"preflight-pwd","name":"bash","decision":"allow"}
+{"at":"2026-10-24T17:09:41.133Z","call_id":"preflight-listing","name":"bash","decision":"allow"}
+{"at":"2026-10-24T17:09:41.133Z","call_id":"preflight-size","name":"bash","decision":"allow"}
+{"at":"2026-10-24T17:09:41.134Z","call_id":"preflight-source range","name":"bash","decision":"allow"}
+{"at":"2026-10-24T17:09:41.134Z","call_id":"preflight-huge range","name":"bash","decision":"deny","reason":"Phase 3 permits only the approved foreground renderer or bounded read-only source inspection"}
+{"at":"2026-10-24T17:09:41.135Z","call_id":"preflight-rm index.html","name":"bash","decision":"deny","reason":"Phase 3 permits only the approved foreground renderer or bounded read-only source inspection"}
+{"at":"2026-10-24T17:09:41.136Z","call_id":"preflight-cat /etc/passwd","name":"bash","decision":"deny","reason":"Phase 3 permits only the approved foreground renderer or bounded read-only source inspection"}
+{"at":"2026-10-24T17:09:41.136Z","call_id":"preflight-curl https://example.com","name":"bash","decision":"deny","reason":"Phase 3 permits only the approved foreground renderer or bounded read-only source inspection"}
+{"at":"2026-10-24T17:09:41.137Z","call_id":"preflight-sudo true","name":"bash","decision":"deny","reason":"Phase 3 permits only the approved foreground renderer or bounded read-only source inspection"}
+{"at":"2026-10-24T17:09:41.137Z","call_id":"preflight-pwd &","name":"bash","decision":"deny","reason":"Phase 3 permits only the approved foreground renderer or bounded read-only source inspection"}
+{"at":"2026-10-24T17:09:41.138Z","call_id":"preflight-pwd; rm index.html","name":"bash","decision":"deny","reason":"Phase 3 permits only the approved foreground renderer or bounded read-only source inspection"}
+{"at":"2026-10-24T17:09:41.139Z","call_id":"preflight-sed -n '1,2p' index.html > /tmp/probe","name":"bash","decision":"deny","reason":"Phase 3 permits only the approved foreground renderer or bounded read-only source inspection"}
+{"at":"2026-10-24T17:09:41.139Z","call_id":"preflight-$(pwd)","name":"bash","decision":"deny","reason":"Phase 3 permits only the approved foreground renderer or bounded read-only source inspection"}
+{"at":"2026-10-24T17:09:41.140Z","call_id":"preflight-sleep 999","name":"bash","decision":"deny","reason":"Phase 3 permits only the approved foreground renderer or bounded read-only source inspection"}
+{"at":"2026-10-24T17:09:41.140Z","call_id":"preflight-wrong cwd","name":"bash","decision":"deny","reason":"Phase 3 permits only the approved foreground renderer or bounded read-only source inspection"}
+{"at":"2026-10-24T17:09:41.141Z","call_id":"preflight-background","name":"bash","decision":"deny","reason":"Phase 3 permits only the approved foreground renderer or bounded read-only source inspection"}
+{"at":"2026-10-24T17:09:41.142Z","call_id":"preflight-escalate","name":"bash","decision":"deny","reason":"Phase 3 forbids escalation"}
+{"at":"2026-10-24T17:09:41.142Z","call_id":"preflight-timeout","name":"bash","decision":"deny","reason":"Phase 3 permits only the approved foreground renderer or bounded read-only source inspection"}
+{"at":"2026-10-24T17:09:41.143Z","call_id":"preflight-renderer","name":"bash","decision":"allow"}
+{"at":"2026-10-24T17:09:41.143Z","call_id":"symlink","name":"read_image","decision":"deny","reason":"Phase 3 permits only budgeted produced workspace screenshots"}
