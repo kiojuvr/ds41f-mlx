@@ -350,3 +350,42 @@ Vision limit change.
 
 No capability promotion, production modification, Gate Q2 execution or automatic
 follow-on campaign is implied by Q1 PASS.
+
+## 8. Observed Gate Q2 result (subsequently authorized)
+
+[Q2 report](../artifacts/visual-feedback-loop/phase-4-q2-report.md) and
+[retained evidence](../artifacts/visual-feedback-loop/phase-4-q2-evidence/)
+record one official Harness conversation from `9c113a9`, using the verified
+**pre-W2 Phase 3 Runtime**, Recipe 0.2.0, original Flash-1017, native paired MTP,
+Thinking OFF and unchanged Files-404 → native inline fallback. No W2 File-ID
+transport or persistent installation change.
+
+- **A Agent loop: PARTIAL.** Three actual image → edit → verification sequences,
+  two substantive image-associated changes, but **zero confirmed explicitly
+  screenshot-grounded corrections** under Phase 3's conservative standard:
+  no contemporaneous image interpretation preceded the edits. Image reception
+  and source-visible repairs alone do not prove visual causality.
+- **B Artifact: PASS**, independently frozen nine checks **4/9 → 9/9**;
+  four transmitted screenshots reviewed, all fixed content preserved, readable
+  full schedule, aligned cards, complete registration and visible footer.
+- **C Historical continuity: PASS** for all observed requests; **four fresh
+  encodes, 22 historical reuses**, stable identities/spans/grids and compatible
+  paired prefixes, all Target/DSpark offsets settled, no replay/repack.
+- **D Seven-image execution: NOT TESTED.** Natural completion after **15
+  generations / four task screenshots**, not a budget stop or resource failure.
+  One separate setup-preflight capture was byte-identical to task image 00;
+  five physical captures total. No artificial follow-up or eighth request.
+- **E Retention: PASS**, **15/15** native completions and complete Runtime traces,
+  including final synchronous flush before backend destruction.
+
+Peak observed body **937316 B**, expanded prompt **13667**, source **6128 B**,
+PNG **175913 B**; aggregate output **5740 tokens**. Conversation **187.88s**,
+launch through cleanup approximately **353.04s**. Sampled Runtime RSS maximum
+**16153680 KiB (~15.41 GiB)** is not a complete unified-memory/Metal or startup
+high-water measurement. All owned processes/workspaces retired; no production
+execution implementation changed.
+
+**Envelope unchanged:** six remains the highest real-model-qualified image count
+across retained experiments; seven remains model-free admission only. Q2 does
+not qualify seven-image resumed inference, extended sessions, transparent
+compaction/offload, Windows or Files transport.

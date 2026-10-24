@@ -1,0 +1,73 @@
+{
+  "method": "installed LocalSandboxProvider.confine -> unmodified returned argv -> spawnSync",
+  "policy": {
+    "mode": "workspace-write",
+    "workspaceRoot": "/private/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-handoff-preflight-7ncxp42y/workspace"
+  },
+  "writableRoots": [
+    "/private/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-handoff-preflight-7ncxp42y/workspace",
+    "/private/tmp",
+    "/private/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T"
+  ],
+  "command": "/tmp/ds41f-phase2-renderer/bin/python /Volumes/SDXC-512/ds41f-mlx/tools/phase3_render_handoff.py request",
+  "runs": [
+    {
+      "label": "renderer",
+      "confined": {
+        "argv": [
+          "sandbox-exec",
+          "-p",
+          "(version 1) (allow default) (deny file-write*) (allow file-write* (literal \"/dev/null\")) (allow file-write* (subpath \"/private/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-handoff-preflight-7ncxp42y/workspace\") (subpath \"/private/tmp\") (subpath \"/private/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T\"))",
+          "--",
+          "bash",
+          "-c",
+          "/tmp/ds41f-phase2-renderer/bin/python /Volumes/SDXC-512/ds41f-mlx/tools/phase3_render_handoff.py request"
+        ],
+        "enforcement": "full",
+        "denialSignatures": [
+          "operation not permitted"
+        ],
+        "runnerFailureRules": [
+          {
+            "fatalSignatures": [
+              "sandbox-exec: "
+            ]
+          }
+        ]
+      },
+      "status": 0,
+      "signal": null,
+      "stdout": "{\"screenshot\": \"/private/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-handoff-preflight-7ncxp42y/workspace/render-00.png\", \"source_sha256\": \"cd93716b9125972360139479f959b875fee2ef40facfca237f9ffb96ddf2ab91\", \"image_sha256\": \"468e14f7490ec77e4ad583f762bda73a5d499bb23cd5801ec7b3c710b077fe7b\"}\n",
+      "stderr": ""
+    },
+    {
+      "label": "repository-write-denial",
+      "confined": {
+        "argv": [
+          "sandbox-exec",
+          "-p",
+          "(version 1) (allow default) (deny file-write*) (allow file-write* (literal \"/dev/null\")) (allow file-write* (subpath \"/private/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-handoff-preflight-7ncxp42y/workspace\") (subpath \"/private/tmp\") (subpath \"/private/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T\"))",
+          "--",
+          "bash",
+          "-c",
+          "/tmp/ds41f-phase2-renderer/bin/python -c 'from pathlib import Path; Path(\"/Volumes/SDXC-512/ds41f-mlx/artifacts/visual-feedback-loop/phase-4-q2-evidence/denial-probe.txt\").write_text(\"must be denied\")'"
+        ],
+        "enforcement": "full",
+        "denialSignatures": [
+          "operation not permitted"
+        ],
+        "runnerFailureRules": [
+          {
+            "fatalSignatures": [
+              "sandbox-exec: "
+            ]
+          }
+        ]
+      },
+      "status": 1,
+      "signal": null,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n    from pathlib import Path; Path(\"/Volumes/SDXC-512/ds41f-mlx/artifacts/visual-feedback-loop/phase-4-q2-evidence/denial-probe.txt\").write_text(\"must be denied\")\n                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py\", line 555, in write_text\n    return PathBase.write_text(self, data, encoding, errors, newline)\n           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_abc.py\", line 651, in write_text\n    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:\n         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py\", line 537, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nPermissionError: [Errno 1] Operation not permitted: '/Volumes/SDXC-512/ds41f-mlx/artifacts/visual-feedback-loop/phase-4-q2-evidence/denial-probe.txt'\n"
+    }
+  ]
+}

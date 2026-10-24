@@ -1,0 +1,110 @@
+- id: llm-deepseek
+  name: '@deepseek-ai/dsh-llm-deepseek-api-key'
+  config:
+    baseURL: http://127.0.0.1:18083
+    apiKeyEnv: DS41F_LOCAL_API_KEY
+    thinking: disabled
+    reasoningEffort: off
+    maxTokens: 2600
+    streamIdleTimeoutMs: 600000
+    models:
+      - id: deepseek-flash
+        inputModalities: [text, image]
+        contextWindow: 1048576
+        maxTokens: 2600
+        systemPromptUpdate: in-history
+        toolUpdate: addition-only
+- id: agent-default-model
+  config:
+    provider: deepseek-official
+    model: deepseek-flash
+- id: session-log-deepseek
+  config:
+    enabled: false
+- id: tool-fs
+  config:
+    read: true
+    readImage: true
+    write: true
+    edit: true
+- id: tools
+  config:
+    mode: native
+- id: sandbox-policy
+  config:
+    mode: workspace-write
+    workspaceRoot: /var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-visual-loop-n_6d8xjq/workspace
+- id: permission
+  config:
+    presets:
+      bounded:
+        sandbox: workspace-write
+        approval: never
+    defaultPreset: bounded
+- id: session-title-llm
+  disabled: true
+- id: llm-retry
+  disabled: true
+- id: llm-pi-ai
+  disabled: true
+- id: llm-deepseek-account
+  disabled: true
+- id: otel
+  disabled: true
+- id: session-telemetry-otel
+  disabled: true
+- id: tool-working-directory
+  disabled: true
+- id: tool-bash
+  disabled: false
+  config:
+    enableRunInBackground: false
+    promoteOnTimeout: false
+- id: tool-pwsh
+  disabled: true
+- id: tool-jobs
+  disabled: true
+- id: tool-fs-search
+  disabled: true
+- id: agent-instructions
+  disabled: true
+- id: skill-filesystem
+  disabled: true
+- id: tool-skill
+  disabled: true
+- id: tool-subagent-control
+  disabled: true
+- id: tool-subagent-list-agents
+  disabled: true
+- id: tool-subagent
+  disabled: true
+- id: tool-subagent-fork
+  disabled: true
+- id: tool-workflow
+  disabled: true
+- id: tool-todo
+  disabled: true
+- id: tool-goal
+  disabled: true
+- id: tool-web
+  disabled: true
+- id: web-search-deepseek
+  disabled: true
+- id: web-deepseek-api
+  disabled: true
+- id: web-fetch-http
+  disabled: true
+- id: bash-sandbox
+  config:
+    timeoutMs: 25000
+    maxTimeoutMs: 25000
+    maxOutputBytes: 4096
+- id: approval
+  config:
+    policy: never
+- id: agent-loop
+  config:
+    maxParallelToolCalls: 1
+- insert:
+    - id: phase3-bounded-policy
+      name: /Volumes/SDXC-512/ds41f-mlx/tools/phase3_harness_guard.mjs

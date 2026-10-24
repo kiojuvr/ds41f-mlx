@@ -32,8 +32,8 @@ def request(workspace, timeout=24):
     lock = stage / 'pending'
     lock.mkdir()
     n = len(list(stage.glob('request-*.json')))
-    if n >= 6:
-        raise ValueError('six-render budget exhausted')
+    if n >= int(os.environ.get('PHASE3_MAX_RENDERS', '6')):
+        raise ValueError('render budget exhausted')
     source = (workspace / 'index.html').read_bytes()
     record = dict(id=n, source_sha256=sha(source), source_bytes=len(source))
     atomic(stage / f'request-{n:02}.json', record)
@@ -63,7 +63,7 @@ def serve_one(workspace, evidence, record):
     n = record['id']
     result = dict(id=n, source_sha256=record['source_sha256'], status='ERROR')
     try:
-        assert type(n) is int and 0 <= n < 6
+        assert type(n) is int and 0 <= n < int(os.environ.get('PHASE3_MAX_RENDERS', '6'))
         source = (workspace / 'index.html').read_bytes()
         assert sha(source) == record['source_sha256'] and len(source) == record['source_bytes'], 'source revision changed before snapshot'
         validate_html(source.decode())
@@ -76,6 +76,7 @@ def serve_one(workspace, evidence, record):
         assert (workspace / 'index.html').read_bytes() == source, 'source changed while rendering'
         assert not (stage / f'timeout-{n:02}.json').exists(), 'request timed out'
         image = output.read_bytes()
+        assert len(image) <= 512 * 1024, 'screenshot byte budget exceeded'
         with (evidence / output.name).open('xb') as f:
             f.write(image)
         atomic(evidence / f'metrics-{n:02}.json', dict(renderer=renderer, quality=quality(renderer['metrics'])))
