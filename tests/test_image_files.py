@@ -244,6 +244,9 @@ def test_resolution_budget_and_unrelated_extensions(http):
     client, store, prepared = http
     key = upload(client)['id']
     assert client.post('/v1/messages', json=body([ref(key)] * (MAX_OCCURRENCES + 1))).status_code == 400
+    # 600 is a request count budget, not a physical execution guarantee.
+    assert MAX_OCCURRENCES == 600
+    assert client.post('/v1/messages', json=body([ref(key)] * MAX_OCCURRENCES)).status_code == 400
     # Pre-materialization aggregate pixel budget counts repeat occurrences.
     out = BytesIO()
     Image.new('RGB', (2048, 2048)).save(out, format='PNG')

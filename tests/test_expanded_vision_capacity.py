@@ -80,6 +80,8 @@ def test_actual_expansion_output_checkpoint_and_text_limits(tmp_path):
     assert context_envelope(tmp_path, multimodal=True) == 8192
     assert context_envelope(tmp_path, multimodal=True, ordinary=True) == 2_097_152
     capability = vision_capacity(tmp_path)
-    assert capability['max_images'] is None
+    assert capability['max_images'] == 600
+    assert capability['pixel_patch_budget_scope'] == 'all_history_physical_guard_and_fresh_workload'
+    assert capability['historical_discount_qualified'] is False
     assert capability['expanded_capacity_model_execution'] == 'unverified'
     assert capability['max_request_patches'] == mm.MAX_REQUEST_PATCHES

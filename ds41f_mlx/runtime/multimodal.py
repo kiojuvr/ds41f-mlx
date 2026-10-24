@@ -18,7 +18,11 @@ MAX_IMAGE_BYTES = 16 * 1024 * 1024
 MAX_PIXELS = 2048 * 2048
 MAX_IMAGE_TOKENS = 1014
 MAX_MULTIMODAL_CONTEXT = 8192  # Legacy standard-OFF only.
-# Request preparation budgets, not image-count or model-context qualifications.
+# Harness rc.2 occurrence envelope; not a model execution guarantee.
+MAX_REQUEST_IMAGES = 600
+# Physical all-history preparation/residency guards, also used for fresh work.
+# Do not discount cached history until restore/capture/queue peaks are qualified.
+# These are not Harness request byte budgets.
 MAX_REQUEST_IMAGE_BYTES = 64 * 1024 * 1024
 MAX_REQUEST_PIXELS = 16 * 1024 * 1024
 MAX_REQUEST_PATCHES = 36_864
@@ -31,6 +35,7 @@ class ImageSpan:
     digest: str
     grid: tuple[int, int]
     kinds: tuple[int, ...]
+    source_pixels: int
 
     def identity(self) -> dict:
         return dict(start=self.start, length=self.length, sha256=self.digest,
@@ -60,6 +65,16 @@ class MultimodalInput:
         if old != committed:
             raise ValueError('continuation changed committed image identity')
 
+    def validate_workload(self, frontier: int = 0) -> None:
+        """Physical fresh workload, only after the caller validates paired restore."""
+        if frontier < 0 or any(s.start < frontier < s.start + s.length for s in self.spans):
+            raise ValueError('committed frontier intersects an image span')
+        fresh = [s for s in self.spans if s.start >= frontier]
+        if sum(s.source_pixels for s in fresh) > MAX_REQUEST_PIXELS:
+            raise ValueError('aggregate decoded pixel budget exceeded (fresh Vision workload)')
+        if sum(s.grid[0] * s.grid[1] for s in fresh) > MAX_REQUEST_PATCHES:
+            raise ValueError('aggregate image patch budget exceeded (fresh Vision workload)')
+
     def encode_new(self, model: Any, frontier: int = 0, *, span_encoder=None) -> 'ImageEmbeddings':
         """Consume request sources once, preparing only spans beyond the frontier."""
         # The caller owns the admitted paired/idle frontier. Never turn a
@@ -67,8 +82,7 @@ class MultimodalInput:
         start = perf_counter()
         rows = []
         try:
-            if frontier < 0 or any(s.start < frontier < s.start + s.length for s in self.spans):
-                raise ValueError('committed frontier intersects an image span')
+            self.validate_workload(frontier)
             # OFF owns its resource capability; ordinary MTP supplies its admitted
             # pinned Model embedding adapter. Neither authority admits the other.
             if span_encoder is None:
@@ -202,6 +216,8 @@ def prepare_multimodal(token_ids: list[int], sources: list[Any], config: Any, *,
         raise ValueError('checkpoint has no vision encoder')
     if not sources or (not ordinary and len(sources) > MAX_IMAGES):
         raise ValueError(f'inline image count must be 1..{MAX_IMAGES}' if not ordinary else 'inline images required')
+    if ordinary and len(sources) > MAX_REQUEST_IMAGES:
+        raise ValueError('image occurrence budget exceeded (600)')
     if token_ids.count(config.image_token_id) != len(sources):
         raise ValueError('image placeholder/source count mismatch')
     expanded, spans, encoded = [], [], {}
@@ -240,7 +256,7 @@ def prepare_multimodal(token_ids: list[int], sources: list[Any], config: Any, *,
             raise ValueError(f'invalid image: {exc}') from exc
         encoded[len(expanded)] = data
         spans.append(ImageSpan(len(expanded), len(kinds), metadata['sha256'],
-                               (h, w), tuple(kinds)))
+                               (h, w), tuple(kinds), metadata['width'] * metadata['height']))
         expanded.extend([token] * len(kinds))
     if len(expanded) > context:
         raise ValueError('expanded multimodal context exceeds qualified envelope')

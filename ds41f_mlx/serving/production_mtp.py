@@ -79,6 +79,7 @@ class ProductionScheduler(Scheduler):
                     [s for s in request.image_identities if s['start'] < len(rec.canonical)])
                 if len(rec.canonical) < request.required_image_frontier:
                     raise ValueError('historical image pair unavailable; image replay/re-encode forbidden')
+                request.prepared.multimodal.validate_workload(len(rec.canonical))
             request.cached_tokens = trace['cached_tokens'] = len(rec.canonical)
             request.remaining_tokens = request.prompt_token_ids[len(rec.canonical):]
             trace['remaining_suffix_tokens'] = len(request.remaining_tokens)

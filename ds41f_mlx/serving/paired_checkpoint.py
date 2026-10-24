@@ -96,7 +96,10 @@ def image_keys(identities):
 
 
 def image_ranges(identities):
-    return [(s['start'], image_keys(identities[:i+1])) for i, s in enumerate(identities)]
+    # Upstream needs every exact prefix tuple. Share immutable leaf keys rather
+    # than rebuilding their grids/digests for every prefix; hash bytes unchanged.
+    keys = image_keys(identities) or ()
+    return [(s['start'], keys[:i+1]) for i, s in enumerate(identities)]
 
 
 @dataclass(frozen=True)

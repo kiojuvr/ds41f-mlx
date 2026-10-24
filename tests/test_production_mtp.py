@@ -316,7 +316,7 @@ def test_ordinary_http_recipe_route_has_no_compulsory_public_session(monkeypatch
             assert advertised.json()['data'][0]['max_output_tokens'] == 393216
             vision = advertised.json()['data'][0]['vision_admission']
             assert vision == client.get('/health').json()['capabilities']['vision_admission']
-            assert vision['max_images'] is None
+            assert vision['max_images'] == 600
             assert vision['implemented_total_tokens'] == backend.context_tokens
             assert vision['expanded_capacity_model_execution'] == 'unverified'
             for headers in ({'Host': ''}, {'Host': 'bad host'}, {'Origin': 'http://other.invalid'}):

@@ -103,11 +103,12 @@ implementation, prototyping, benchmarking or a new live acceptance campaign:
   `runtime/multimodal.py:prepare_multimodal/encode_new` and
   `serving/production_mtp.py` already provide metadata-first validation and
   fresh-only encoding after paired lookup; cached-image skipping is not missing.
-  Admission currently charges all occurrences against **36,864 planned ViT
-  patches**, including historical images. The open question is whether this must
-  remain an all-history budget or a narrower active-work budget can preserve
-  metadata validation, numerical identity, resource bounds and paired-cache
-  guarantees. Skipping encoding alone does not justify raising the limit.
+  Admission retains the **36,864 planned ViT patches** and aggregate pixel
+  all-history guards. Actual fresh work is independently checked after validated
+  paired restoration. [Model-free evidence](../artifacts/harness-image-capacity/report.md)
+  establishes compatible lower-allocation image keys at the Harness 600-occurrence
+  reference, but does not qualify enlarged queue/restore/capture peaks. Physical
+  admission was not relaxed; cached-history discounting remains blocked there.
   The measured **7-image admission limit** is geometry-dependent, not a universal
   model limit; [Q1/Q2 envelope](flash-1017-visual-endurance-envelope.md) retains
   six-image live evidence and seven-image model-free admission only.
@@ -131,9 +132,13 @@ implementation, prototyping, benchmarking or a new live acceptance campaign:
   integrity rules remain in force; this investigation does not authorize recovery
   implementation.
 
-The 7-image admission boundary, cached-image resource accounting and official
-offload/cache-recovery integration remain **open technical questions**, not
-proposed behavior promoted into implemented capability. The
+Explicit fresh-work accounting and compatible key allocation are implemented;
+all-history physical admission remains unchanged. Full Harness compatibility remains
+**PARTIAL** at concrete transport/storage and canonical-prefix recovery boundaries.
+Official rc.2 offload does not recover arbitrary Runtime 400 errors. Its projection
+and summary compaction can invalidate paired state, and historical misses still
+reject without replay. No replacement history/cache owner or follow-on campaign
+is introduced. The
 [Q2 report](../artifacts/visual-feedback-loop/phase-4-q2-report.md) retains its
 partial grounding and four-image continuity scope; it did not test seven images.
 

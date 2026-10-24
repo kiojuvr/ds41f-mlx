@@ -14,12 +14,12 @@ from time import time
 from uuid import uuid4
 
 from ds41f_mlx.runtime.multimodal import (
-    MAX_IMAGE_BYTES, MAX_REQUEST_IMAGE_BYTES, MAX_REQUEST_PIXELS,
+    MAX_IMAGE_BYTES, MAX_REQUEST_IMAGE_BYTES, MAX_REQUEST_IMAGES, MAX_REQUEST_PIXELS,
     validate_encoded_image,
 )
 
 UPLOAD_BODY_BYTES = MAX_IMAGE_BYTES + 64 * 1024
-MAX_OCCURRENCES = 128
+MAX_OCCURRENCES = MAX_REQUEST_IMAGES
 
 
 class FileError(ValueError):
@@ -254,6 +254,8 @@ def resolve_messages(payload, store):
                     image = store.snapshot(source['file_id'])
                     encoded += len(image.data)
                     pixels += image.pixels
+                    # Physical all-history guards remain independent of Harness
+                    # request budgets and actual fresh encoder work.
                     # Check BEFORE allocating the base64 request-local copy.
                     if encoded > MAX_REQUEST_IMAGE_BYTES or pixels > MAX_REQUEST_PIXELS:
                         raise FileError('aggregate image budget exceeded')

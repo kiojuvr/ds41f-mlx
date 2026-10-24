@@ -129,9 +129,9 @@ checks expiry immediately. Request-held snapshots may outlive that sweep.
 | Multipart shape | 3 parts, 2 headers/part, 2048 bytes/header, 32 bytes/expiry field, 70-byte boundary |
 | HTTP body timeout | Existing 30 seconds; no new unbounded upload wait |
 | Actual Messages JSON wire bytes | Unchanged 16 MiB |
-| Files-mode image occurrences | 128 including inline images and repeated IDs |
+| Files-mode image occurrences | 600 including inline images and repeated IDs; independent of the 128 distinct storage slots |
 | Resolved encoded image bytes | 64 MiB aggregate; counted per occurrence before base64 expansion |
-| Resolved source pixels | 16,777,216 aggregate, counting repeated images; existing Vision admission includes inline images |
+| Resolved source pixels | 16,777,216 all-history physical guard, counting repeated images; downstream preparation also includes inline images |
 
 `create_app(files_limits=FileLimits(file_bytes=..., count=..., storage_bytes=...))`
 can **lower only** the first three storage ceilings; no new CLI/environment or
@@ -146,10 +146,21 @@ This is not a zero-cost memory path or expanded model capacity.
 
 After resolution, the existing shared Vision path still enforces **16 MiB/image,
 4,194,304 pixels/image, 1:2..2:1 aspect, 1014 expanded positions/image,
-36,864 aggregate ViT patches**, aggregate encoded/pixel limits, terminal-text,
-context expansion and output reservation. All occurrences, including history and
-repeated references to one stored file, consume budgets. Inline-only admission
-is unchanged. Files does not allocate model KV on upload or resolution.
+36,864 all-history ViT patches**, encoded residency, terminal-text, context expansion
+and output reservation. Historical occurrences still undergo complete decoding
+validation and identity accounting. Only fresh spans invoke Vision after paired
+restoration; that does not exempt cached history from physical admission.
+Fresh-only admission remains unqualified pending queue/restore/capture residency
+evidence. Missing/changed/partial historical pairs reject, not replay. Files does
+not allocate model KV on upload or resolution.
+
+Harness rc.2's default 600 occurrences / 128 MiB raw / 20 MiB base64-image budgets
+are request policies, not these physical storage/transport limits. Full-envelope
+compatibility remains **PARTIAL**. Runtime 400 is `INVALID_REQUEST`, not
+`IMAGE_OFFLOAD_REQUIRED`: it does not cause the official image-offload plugin to
+log a projection or retry. Offload/summary compaction can invalidate the canonical
+prefix; no automatic paired reconstruction is implemented. See the
+[assessment](../artifacts/harness-image-capacity/report.md).
 
 ## Identity, cache and compatibility exclusions
 

@@ -22,6 +22,29 @@ checkout provenance or a local environment seal. Historical M20/source-delivery
 instructions are preserved in Git (`c1d1f716:docs/archive/operations-source-seal.md`)
 and are not production launch instructions.
 
+## Visual-session capacity and recovery
+
+Ordinary image admission now distinguishes 600 request occurrences from fresh
+Vision work after validated Target/DSpark restoration. All history is still fully
+validated and charged against the unchanged physical pixel/patch guards. Fresh
+work is independently checked before native start; cached-history discounting is
+not qualified. Compatible key construction reduces allocation at 600, but does
+not qualify 600-image metadata admission or model execution.
+The 16 MiB JSON body, 64 MiB encoded request/storage, 128 distinct Files, context,
+output, queue and paired-cache limits remain independent. See
+[capability limits](capabilities.md#bounded-inline-images) and the
+[compatibility assessment](../artifacts/harness-image-capacity/report.md).
+
+Do not expect a Runtime 400 to cause Harness offload. Official rc.2 offload is
+triggered by its adapter's `IMAGE_OFFLOAD_REQUIRED`, not arbitrary HTTP errors.
+Offload or summary compaction changes canonical tokens: a surviving historical
+image needs an exactly compatible paired prefix or safely rejects. Do not resend
+an unsettled generation or re-encode old images to conceal a miss. When no pair
+covers the projected history, an explicit fresh conversation without historical
+images (using the client's existing history/compaction facilities) is necessary;
+automatic recovery of that case is not supported. Existing deployed packages were
+not updated by this source change.
+
 ## Local environment layout
 
 The development repository is `/Volumes/SDXC-512/ds41f-mlx`; its internal
