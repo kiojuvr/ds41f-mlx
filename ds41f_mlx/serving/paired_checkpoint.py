@@ -21,6 +21,59 @@ def _copy(value, mx):
     return copier() if copier is not None else mx.array(value)
 
 
+# Patch-discount execution qualification, not cache capacity or context policy.
+# Logical bytes deliberately count shared backing repeatedly. See the admission
+# receipt for physical peaks with retained roots + active + two captures.
+PATCH_DISCOUNT_PAIR_BYTES = 12 * 1024**2
+PATCH_DISCOUNT_ROOT_BYTES = 192 * 1024**2
+
+
+def pair_bytes(checkpoint):
+    return sum(v.nbytes for layer in checkpoint.target
+               for v in (*layer.cache, layer.left_padding, layer.lengths) if v is not None) + sum(
+                   r.keys.nbytes for r in checkpoint.rings if r.keys is not None)
+
+
+def projected_pair_bytes(checkpoint, end):
+    """Upper bound for the pinned singleton layout, including compressor tails.
+
+    Uses actual packed row strides, not tokens-as-memory or image equivalents.
+    Absent shared slots stay absent. Source compressor tails must have typed
+    arrays (even at zero length), otherwise this narrow qualification declines.
+    """
+    total = 0
+    for layer in checkpoint.target:
+        ratio = layer.compress_ratio
+        if ratio not in (0, 1, 2) or len(checkpoint.tokens) < 128:
+            raise ValueError('unqualified paired compression layout')
+        for i, value in enumerate(layer.cache):
+            if value is None:
+                if i in (4, 5) and ratio > 1 and layer.cache[2] is not None:
+                    raise ValueError('unqualified compressor tail layout')
+                continue
+            if i in (1, 2, 3, 4, 5):
+                if value.ndim != 3 or value.shape[0] != 1:
+                    raise ValueError('unqualified paired array layout')
+                # Pinned window/rings are 128 rows. Compressed slots are
+                # cumulative; allow a full extra row for block rounding.
+                if i in (2, 3) and value.shape[1] == 0:
+                    # Pinned shared layers carry typed empty placeholders; with
+                    # C >= 128 every cumulative source is already nonempty.
+                    rows = 0
+                else:
+                    rows = (128 if i == 1 else (end // ratio + 1 if i in (2, 3) and ratio else ratio))
+                row_bytes = value.shape[2] * value.itemsize
+                total += max(value.nbytes, rows * row_bytes)
+            else:
+                total += value.nbytes
+        total += sum(v.nbytes for v in (layer.left_padding, layer.lengths) if v is not None)
+    for ring in checkpoint.rings:
+        if ring.keys is None or ring.keys.shape[2] != 128:
+            raise ValueError('unqualified DSpark ring layout')
+        total += ring.keys.nbytes
+    return total
+
+
 def _arrays(target, rings):
     return [v for layer in target for v in layer.cache if v is not None] + [r.keys for r in rings if r.keys is not None]
 
@@ -186,7 +239,7 @@ class PairedCheckpointAuthority:
         finally:
             self.paged.release_for_eviction([block.block_id])
 
-    def acquire(self, prompt, *, timings=None, observe=None, images=()):
+    def acquire(self, prompt, *, timings=None, observe=None, images=(), admit=None):
         # Leave a genuine suffix append before P5's terminal holdout. In
         # particular, NEVER turn an exact N hit into N-1 by recurrent trimming.
         lookup_t0 = perf_counter()
@@ -206,6 +259,8 @@ class PairedCheckpointAuthority:
                 break
             try:
                 if checkpoint is not None and len(checkpoint.tokens) == C:
+                    if admit is not None:
+                        admit(checkpoint)
                     try:
                         if observe is not None:
                             try:
@@ -238,7 +293,7 @@ class PairedCheckpointAuthority:
                            cache_lookup_s=perf_counter()-lookup_t0-restore_s)
         return None
 
-    def acquire_retained(self, lease, prompt, *, timings=None, observe=None, images=()):
+    def acquire_retained(self, lease, prompt, *, timings=None, observe=None, images=(), admit=None):
         """Restore a known refcounted pair, not a lossy prefix-index hint.
 
         Upstream's bounded root-tail hint table may forget a still-live pinned
@@ -255,6 +310,8 @@ class PairedCheckpointAuthority:
         try:
             if checkpoint is None:
                 raise RuntimeError('canonical paired payload missing; no replay')
+            if admit is not None:
+                admit(checkpoint)
             if observe is not None:
                 observe('RESTORING')
             restore_t0 = perf_counter()

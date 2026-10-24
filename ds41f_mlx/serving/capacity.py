@@ -41,14 +41,19 @@ def vision_capacity(checkpoint: Path):
         MAX_IMAGE_BYTES, MAX_PIXELS, MAX_IMAGE_TOKENS, MAX_REQUEST_IMAGES,
         MAX_REQUEST_IMAGE_BYTES, MAX_REQUEST_PIXELS, MAX_REQUEST_PATCHES,
     )
+    from .paired_checkpoint import PATCH_DISCOUNT_PAIR_BYTES, PATCH_DISCOUNT_ROOT_BYTES
     return dict(implemented_total_tokens=context_envelope(checkpoint, multimodal=True, ordinary=True),
                 output_reservation_required=True, max_images=MAX_REQUEST_IMAGES,
                 max_image_bytes=MAX_IMAGE_BYTES, max_image_pixels=MAX_PIXELS,
                 max_image_tokens=MAX_IMAGE_TOKENS,
                 max_request_image_bytes=MAX_REQUEST_IMAGE_BYTES,
                 max_request_pixels=MAX_REQUEST_PIXELS, max_request_patches=MAX_REQUEST_PATCHES,
-                pixel_patch_budget_scope='all_history_physical_guard_and_fresh_workload',
-                historical_discount_qualified=False,
+                pixel_patch_budget_scope='all_history_pixels; fresh_patches_with_paired_byte_fallback',
+                historical_discount_qualified=True,
+                historical_patch_discount=dict(numerical_profile='flash-1017-pre-woa-fp8-v1',
+                    max_projected_pair_bytes=PATCH_DISCOUNT_PAIR_BYTES,
+                    max_retained_pair_bytes=PATCH_DISCOUNT_ROOT_BYTES,
+                    fallback='all_history_patch_limit'),
                 historical_images_require_paired_cache=True,
                 expanded_capacity_model_execution='unverified')
 

@@ -170,19 +170,24 @@ Per-image format/detail/aspect, 16 MiB, 4,194,304 pixels and 1014 expanded-posit
 bounds remain. Ordinary requests admit at most **600 image occurrences**, matching
 Harness rc.2's default request count, with an independent **64 MiB encoded-byte
 residency** ceiling. Every occurrence is fully validated and identity-accounted.
-The existing **16,777,216 source-pixel / 36,864 planned ViT-patch** physical
-all-history guards remain authoritative, including cached images. Actual encoder
-work is fresh-only after validated paired restoration, and is independently
-rechecked before native start. Discounting cached history in physical admission
-is **not qualified**: enlarged worst-byte queues, large retained roots and running-cancellation
-peaks remain unqualified. A later [physical-memory probe](../artifacts/visual-history-memory/report.md)
-executed twelve 1280×720 occurrences with short prompts in one isolated session
-(12 fresh encodes / 95 historical reuses), using a test-only preparation override.
-Its maximum sampled footprint was 297.29 GiB; this is not deployed admission,
-continuous process high-water or qualification of the full context/queue envelope.
-600 is therefore a request compatibility reference, not an execution capability;
-a 600-image request currently rejects by physical admission. Partial spans and
-historical misses still reject; no historical Vision replay is introduced.
+The **16,777,216 source-pixel** guard still charges every occurrence, cached or
+fresh. The **36,864 planned ViT-patch** limit always bounds fresh encoder work.
+For Flash-1017 only, historical patches may be deferred until paired lookup:
+complete historical coverage, unchanged identities and a conservative packed-array
+byte projection must pass **before restoration**. Retained roots must total at
+most **192 MiB logical array bytes**, and the projected active pair (including
+requested output and the speculative block) must fit **12 MiB**. The projection
+also bounds each of the two unpublished captures; shared bytes are counted again,
+not assumed free. Outside this qualification, the existing all-history patch
+rejection remains. There is no new Vision context window or screenshot-count cap.
+Cold fresh work and historical misses receive no discount or replay.
+
+[Isolated qualification](../artifacts/cached-image-admission/report.md) executes
+12 screenshot occurrences and cached continuations without admission overrides,
+including native running cancellation. It separately measures maximum-body,
+near-1M-position, 600-occurrence queued metadata; that is **not** 600-image model
+execution. Harness's 600 is a request compatibility reference, not an execution
+promise. Partial spans and historical misses still reject.
 
 The existing **16 MiB entire JSON body**, **128 distinct stored Files / 64 MiB
 storage**, queue serialization, checkpoint context/output and paired-cache residency
@@ -193,10 +198,10 @@ compaction can change the prefix and invalidate the pair; surviving historical
 images then require an independently compatible pair or reject safely.
 See [Files bounds](harness-image-files.md) and the
 [compatibility assessment](../artifacts/harness-image-capacity/report.md).
-600-occurrence key construction and official offload are model-free tested;
-physical metadata admission remains bounded by the unchanged history guards.
-This is not real-model or maximum-memory qualification. Ordinary text and legacy OFF limits
-are unchanged.
+600-occurrence key construction, queued metadata and official offload are
+model-free tested; source-pixel, source-byte and body guards remain independent.
+This does not qualify arbitrary maximum-context visual execution. Ordinary text
+and legacy OFF limits are unchanged.
 
 `/health` and `/v1/models` expose ordinary `vision_admission` resource bounds,
 `implemented_total_tokens` and `expanded_capacity_model_execution: unverified`.

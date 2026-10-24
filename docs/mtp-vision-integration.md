@@ -100,14 +100,16 @@ with image identity validation and the same recipe reconstruction certificate
 
 The original delta below used the OFF four-image / 8192-position bound.
 Ordinary MTP now admits actual expanded prompt + output reservation up to checkpoint
-context, without a count cap. Per-image limits remain 16 MiB, 4,194,304 pixels,
+context, without OFF's four-image cap (ordinary occurrence ceiling: 600). Per-image limits remain 16 MiB, 4,194,304 pixels,
 1014 expanded tokens, inline PNG/JPEG/WebP, aspect 1:2..2:1 and high/auto detail.
-Aggregate preparation is bounded by 64 MiB encoded bytes, 16,777,216 source pixels
-and 36,864 planned ViT patches, including cached inputs. See [current capability
-bounds](capabilities.md#bounded-inline-images). This expanded implementation has
-source/synthetic verification only; the retained real-model delta below does
-**not** qualify expanded capacity. Legacy OFF remains four images / 8192 positions. No URL/video,
-batch Vision, Responses/Messages multimodal or MTP persistence is enabled. Existing ordinary JSON body admission remains 16 MiB
+Aggregate preparation is bounded by 64 MiB encoded bytes and 16,777,216 source
+pixels, including cached inputs. Fresh work is bounded by 36,864 planned ViT
+patches. Flash-1017 historical patches may be deferred only within the pre-restore
+paired-byte qualification; otherwise the all-history patch rejection remains.
+See [current capability bounds](capabilities.md#bounded-inline-images) and the
+[narrow physical qualification](../artifacts/cached-image-admission/report.md).
+The retained original real-model delta below does **not** qualify expanded capacity. Legacy OFF remains four images / 8192 positions. No URL/video,
+batch Vision, Responses multimodal or MTP persistence is enabled. Existing ordinary JSON body admission remains 16 MiB
 in total, independently of per-image resource ceilings.
 
 ## Delta evidence

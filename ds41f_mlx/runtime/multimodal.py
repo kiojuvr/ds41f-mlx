@@ -20,8 +20,8 @@ MAX_IMAGE_TOKENS = 1014
 MAX_MULTIMODAL_CONTEXT = 8192  # Legacy standard-OFF only.
 # Harness rc.2 occurrence envelope; not a model execution guarantee.
 MAX_REQUEST_IMAGES = 600
-# Physical all-history preparation/residency guards, also used for fresh work.
-# Do not discount cached history until restore/capture/queue peaks are qualified.
+# Independent source-residency guards; patches also bound fresh encoder work.
+# Ordinary historical patch deferral requires pre-restore paired-byte admission.
 # These are not Harness request byte budgets.
 MAX_REQUEST_IMAGE_BYTES = 64 * 1024 * 1024
 MAX_REQUEST_PIXELS = 16 * 1024 * 1024
@@ -209,7 +209,8 @@ def validate_encoded_image(data: bytes, media_type: str | None = None, *, remain
     return metadata
 
 
-def prepare_multimodal(token_ids: list[int], sources: list[Any], config: Any, *, ordinary: bool = False) -> MultimodalInput:
+def prepare_multimodal(token_ids: list[int], sources: list[Any], config: Any, *, ordinary: bool = False,
+                       historical: tuple[bool, ...] = ()) -> MultimodalInput:
     """Fully validate sources and plan geometry, without normalized patch arrays."""
     from ds41f_mlx.model_execution.processing import plan_image_grid, image_token_kinds
     if not config.vision_enabled:
@@ -222,6 +223,9 @@ def prepare_multimodal(token_ids: list[int], sources: list[Any], config: Any, *,
         raise ValueError('image placeholder/source count mismatch')
     expanded, spans, encoded = [], [], {}
     total_bytes = total_pixels = total_patches = expansion = 0
+    if historical and (not ordinary or len(historical) != len(sources)):
+        raise ValueError('invalid historical image origins')
+    origins = iter(historical or (False,) * len(sources))
     # Bound expansion before allocation; output reservation is checked by serving.
     context = config.max_seq_len if ordinary else MAX_MULTIMODAL_CONTEXT
     if len(token_ids) > context:
@@ -232,6 +236,7 @@ def prepare_multimodal(token_ids: list[int], sources: list[Any], config: Any, *,
             expanded.append(token)
             continue
         data = image_bytes(next(sources))
+        is_historical = next(origins)
         total_bytes += len(data)
         if total_bytes > MAX_REQUEST_IMAGE_BYTES:
             raise ValueError('aggregate encoded image byte budget exceeded')
@@ -245,7 +250,9 @@ def prepare_multimodal(token_ids: list[int], sources: list[Any], config: Any, *,
             kinds = image_token_kinds(nh, nw)
             if len(kinds) > MAX_IMAGE_TOKENS:
                 raise ValueError('expanded image exceeds qualified token envelope')
-            total_patches += h * w
+            # Deferral is not a cache hit. Scheduler must still prove complete
+            # paired coverage and the bounded physical envelope before cloning.
+            total_patches += 0 if is_historical else h * w
             if total_patches > MAX_REQUEST_PATCHES:
                 raise ValueError('aggregate image patch budget exceeded')
             # Include all as-yet unexpanded tokens in the lower bound.

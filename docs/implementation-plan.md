@@ -103,15 +103,17 @@ implementation, prototyping, benchmarking or a new live acceptance campaign:
   `runtime/multimodal.py:prepare_multimodal/encode_new` and
   `serving/production_mtp.py` already provide metadata-first validation and
   fresh-only encoding after paired lookup; cached-image skipping is not missing.
-  Admission retains the **36,864 planned ViT patches** and aggregate pixel
-  all-history guards. Actual fresh work is independently checked after validated
-  paired restoration. [Model-free evidence](../artifacts/harness-image-capacity/report.md)
-  establishes compatible lower-allocation image keys at the Harness 600-occurrence
-  reference, but does not qualify enlarged queue/restore/capture peaks. Physical
-  admission was not relaxed; cached-history discounting remains blocked there.
-  The measured **7-image admission limit** is geometry-dependent, not a universal
-  model limit; [Q1/Q2 envelope](flash-1017-visual-endurance-envelope.md) retains
-  six-image live evidence and seven-image model-free admission only.
+  Admission retains all-history source-byte/pixel guards and **36,864 fresh ViT
+  patches**. The [narrow cached-image admission qualification](../artifacts/cached-image-admission/report.md)
+  now permits Flash-1017 historical patch deferral only after complete paired
+  coverage and pre-restore packed-array byte checks: 192 MiB retained roots and
+  12 MiB per projected active/captured pair. Outside those bounds the existing
+  all-history patch rejection remains. Maximum-body/near-1M-position queued
+  metadata is tested separately from bounded physical model execution; there is
+  no new Vision context, token-equivalent accounting or image-count policy.
+  Twelve screenshot occurrences execute without overrides. The historical
+  [Q1/Q2 envelope](flash-1017-visual-endurance-envelope.md) retains its own
+  geometry-dependent seven-image admission and visual-quality scope.
 - **B — Harness offload:** inspect
   `packages/compaction/compaction-image-offload/`,
   `packages/llm/llm/src/content.ts` and
@@ -132,8 +134,9 @@ implementation, prototyping, benchmarking or a new live acceptance campaign:
   integrity rules remain in force; this investigation does not authorize recovery
   implementation.
 
-Explicit fresh-work accounting and compatible key allocation are implemented;
-all-history physical admission remains unchanged. Full Harness compatibility remains
+Explicit fresh-work accounting, compatible key allocation and narrowly qualified
+historical patch admission are implemented. No automatic follow-on work is selected.
+Full Harness compatibility remains
 **PARTIAL** at concrete transport/storage and canonical-prefix recovery boundaries.
 Official rc.2 offload does not recover arbitrary Runtime 400 errors. Its projection
 and summary compaction can invalidate paired state, and historical misses still

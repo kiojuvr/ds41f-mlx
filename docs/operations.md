@@ -24,17 +24,21 @@ and are not production launch instructions.
 
 ## Visual-session capacity and recovery
 
-Ordinary image admission now distinguishes 600 request occurrences from fresh
-Vision work after validated Target/DSpark restoration. All history is still fully
-validated and charged against the unchanged physical pixel/patch guards. Fresh
-work is independently checked before native start; cached-history discounting is
-not qualified. Compatible key construction reduces allocation at 600, but does
-not qualify 600-image metadata admission or model execution.
-A subsequent [isolated physical-memory probe](../artifacts/visual-history-memory/report.md)
-executed twelve short-prompt screenshot occurrences under a process-local test
-preparation override. It did not qualify worst-byte queues, large retained roots
-or running cancellation; production guards and installed environments are unchanged.
-Do not copy that evaluation override into a deployed Runtime.
+Ordinary image admission distinguishes Harness's 600 request occurrences from
+fresh Vision work. Every image is still fully validated and charged against the
+unchanged source-byte/pixel guards. Flash-1017 can omit genuinely paired-cached
+historical patches from the fresh-work charge only inside the
+[qualified paired-byte envelope](../artifacts/cached-image-admission/report.md):
+192 MiB retained logical array bytes and 12 MiB per projected active/captured
+pair, including output/speculation (228 MiB combined roots + active + two captures). These are conservative
+execution qualification guards, not a new cache owner, context window or image
+count policy. Requests outside them retain the all-history patch rejection.
+The installed isolated path demonstrates twelve screenshot occurrences without
+admission overrides, paired continuity, native cancellation and fail-closed misses.
+Maximum-body/near-1M-position queued metadata is model-free tested, not model
+execution. Neither this nor Harness's count reference promises arbitrary visual
+context or 600-image residency. Do not apply the older experiment's test override
+to any installed Runtime. No deployed package was changed by this work.
 The 16 MiB JSON body, 64 MiB encoded request/storage, 128 distinct Files, context,
 output, queue and paired-cache limits remain independent. See
 [capability limits](capabilities.md#bounded-inline-images) and the

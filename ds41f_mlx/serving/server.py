@@ -91,6 +91,19 @@ def prepare_request(protocol: str, body: bytes, *, tokenizer: Any, recipe_path: 
     token_ids = [int(x) for x in encoding.encode(converted.conversation)]
     encode_s = perf_counter() - encode_t0
     multimodal = None
+    historical = ()
+    if ordinary and rendered.image_sources:
+        if protocol == 'messages':
+            # Recipe wire origins include images expanded from Tool messages.
+            import re
+            latest = len(policy_payload['messages']) - 1
+            origins = [re.match(r'^messages\.(\d+)(?:\.|$)', s.path) for s in rendered.image_sources]
+            if any(m is None or not 0 <= int(m[1]) <= latest for m in origins):
+                raise RequestError('Messages image source origin unavailable', 400)
+            historical = tuple(int(m[1]) < latest for m in origins)
+        else:
+            count = sum(len(m.image_sources) for m in converted.conversation.messages[:-1])
+            historical = tuple(i < count for i in range(len(rendered.image_sources)))
     if rendered.image_sources:
         if protocol != 'chat_completions' and not (ordinary and protocol == 'messages'):
             raise RequestError('multimodal support is qualified for Chat Completions only', 400)
@@ -98,7 +111,8 @@ def prepare_request(protocol: str, body: bytes, *, tokenizer: Any, recipe_path: 
         from ds41f_mlx.runtime.multimodal import prepare_multimodal
         config = ModelConfig.from_dict(json.loads(((checkpoint or load_runtime_config().checkpoint_path) / 'config.json').read_text()))
         try:
-            multimodal = prepare_multimodal(token_ids, list(rendered.image_sources), config, ordinary=ordinary)
+            multimodal = prepare_multimodal(token_ids, list(rendered.image_sources), config,
+                                            ordinary=ordinary, historical=historical)
         except ValueError as error:
             raise RequestError(str(error), 400) from error
         token_ids = list(multimodal.token_ids)
@@ -121,19 +135,8 @@ def prepare_request(protocol: str, body: bytes, *, tokenizer: Any, recipe_path: 
     prepared = RecipePreparedRequest(protocol, converted, converted, token_ids, list(rendered.image_sources), include_usage, custom_tool_names, stop_token_ids, multimodal)
     if ordinary:
         prepared.requested_model = policy_payload['model']
-        if protocol == 'messages':
-            # Recipe preserves wire origin on every source, including sources
-            # in expanded Tool messages. Never infer freshness from bytes or
-            # the position of a converted message.
-            import re
-            latest = len(policy_payload['messages']) - 1
-            historical = []
-            for source in prepared.image_sources:
-                origin = re.match(r'^messages\.(\d+)(?:\.|$)', source.path)
-                if origin is None or not 0 <= int(origin[1]) <= latest:
-                    raise RequestError('Messages image source origin unavailable', 400)
-                historical.append(int(origin[1]) < latest)
-            prepared.image_is_historical = tuple(historical)
+        if rendered.image_sources:
+            prepared.image_is_historical = historical
     prepared.generation_policy = policy
     from .capacity import resolve_capacity
     try:

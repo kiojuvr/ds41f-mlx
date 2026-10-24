@@ -12,6 +12,12 @@ admission only. Eight fail the aggregate ViT patch budget.** Uninterrupted
 10–20-screenshot sessions at this geometry are not supportable today. This is
 not an image-count limit independent of resolution, nor a memory guarantee.
 
+**Current admission supersession:** the seven-image decision above is historical.
+[Narrow paired-byte qualification](../artifacts/cached-image-admission/report.md)
+now demonstrates twelve occurrences without overrides and conditionally discounts
+cached historical patches. All source-byte/pixel guards and historical miss
+restrictions remain; this does not expand Q1/Q2's visual-agent quality claims.
+
 ## 1. Authoritative baseline and scope
 
 Use the successful external-renderer section of the [Phase 3 report](../artifacts/visual-feedback-loop/phase-3-report.md),
@@ -404,3 +410,6 @@ visual-agent task or deployment. Outcome **PARTIAL**: worst-byte queues, large
 independent retained roots, unsampled transients and running cancellation still
 prevent production all-history guard relaxation. Q1/Q2 historical counts and
 quality assessments above are unchanged; no 600-image capability is established.
+The subsequent [cached-image admission qualification](../artifacts/cached-image-admission/report.md)
+closes those gaps only for its explicit paired-byte envelope and conservative
+fallback. It supersedes the no-relaxation decision, not this historical receipt.
