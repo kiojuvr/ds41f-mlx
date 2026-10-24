@@ -389,3 +389,18 @@ execution implementation changed.
 across retained experiments; seven remains model-free admission only. Q2 does
 not qualify seven-image resumed inference, extended sessions, transparent
 compaction/offload, Windows or Files transport.
+
+## 9. Subsequent isolated physical-memory evidence
+
+The [physical-memory qualification](../artifacts/visual-history-memory/report.md)
+subsequently executed **twelve 1280×720 screenshot occurrences**, cycling six
+retained real PNGs twice, with twelve fresh encodes and 95 historical reuses across
+15 successful short-prompt native Messages generations. Seven was executed under
+unchanged admission; eight through twelve used an isolated, process-local test
+preparation override. All paired/canonical invariants passed; maximum successful
+prompt was 7,222 positions, sampled footprint 297.29 GiB, zero swap growth.
+This is direct Scheduler/executor resource evidence, not a new official Harness
+visual-agent task or deployment. Outcome **PARTIAL**: worst-byte queues, large
+independent retained roots, unsampled transients and running cancellation still
+prevent production all-history guard relaxation. Q1/Q2 historical counts and
+quality assessments above are unchanged; no 600-image capability is established.

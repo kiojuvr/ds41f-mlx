@@ -30,6 +30,11 @@ validated and charged against the unchanged physical pixel/patch guards. Fresh
 work is independently checked before native start; cached-history discounting is
 not qualified. Compatible key construction reduces allocation at 600, but does
 not qualify 600-image metadata admission or model execution.
+A subsequent [isolated physical-memory probe](../artifacts/visual-history-memory/report.md)
+executed twelve short-prompt screenshot occurrences under a process-local test
+preparation override. It did not qualify worst-byte queues, large retained roots
+or running cancellation; production guards and installed environments are unchanged.
+Do not copy that evaluation override into a deployed Runtime.
 The 16 MiB JSON body, 64 MiB encoded request/storage, 128 distinct Files, context,
 output, queue and paired-cache limits remain independent. See
 [capability limits](capabilities.md#bounded-inline-images) and the

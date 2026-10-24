@@ -1,0 +1,23 @@
+Using Python 3.13.15 environment at: /private/tmp/ds41f-visual-capacity-test
+Traceback (most recent call last):
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/qualify_visual_history_memory.py", line 260, in <module>
+    main()
+    ~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/qualify_visual_history_memory.py", line 239, in main
+    asyncio.run(campaign())
+    ~~~~~~~~~~~^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 196, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 119, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 726, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/qualify_visual_history_memory.py", line 205, in campaign
+    check()
+    ~~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/qualify_visual_history_memory.py", line 101, in check
+    raise RuntimeError('SAFETY STOP: '+repr(unsafe))
+RuntimeError: SAFETY STOP: ['free pages below 100 GiB reserve', 'free pages below 100 GiB reserve', 'free pages below 100 GiB reserve', 'free pages below 100 GiB reserve', 'free pages below 100 GiB reserve', 'free pages below 100 GiB reserve', 'free pages below 100 GiB reserve', 'free pages below 100 GiB reserve', 'free pages below 100 GiB reserve', 'free pages below 100 GiB reserve', 'free pages below 100 GiB reserve', 'free pages below 100 GiB reserve', 'free pages below 100 GiB reserve', 'free pages below 100 GiB reserve', 'free pages below 100 GiB reserve', 'free pages below 100 GiB reserve', 'free pages below 100 GiB reserve', 'free pages below 100 GiB reserve', 'free pages below 100 GiB reserve', 'free pages below 100 GiB reserve']

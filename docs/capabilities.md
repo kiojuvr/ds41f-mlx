@@ -174,7 +174,12 @@ The existing **16,777,216 source-pixel / 36,864 planned ViT-patch** physical
 all-history guards remain authoritative, including cached images. Actual encoder
 work is fresh-only after validated paired restoration, and is independently
 rechecked before native start. Discounting cached history in physical admission
-is **not qualified**: enlarged queue/restore/capture peaks remain unmeasured.
+is **not qualified**: enlarged worst-byte queues, large retained roots and running-cancellation
+peaks remain unqualified. A later [physical-memory probe](../artifacts/visual-history-memory/report.md)
+executed twelve 1280×720 occurrences with short prompts in one isolated session
+(12 fresh encodes / 95 historical reuses), using a test-only preparation override.
+Its maximum sampled footprint was 297.29 GiB; this is not deployed admission,
+continuous process high-water or qualification of the full context/queue envelope.
 600 is therefore a request compatibility reference, not an execution capability;
 a 600-image request currently rejects by physical admission. Partial spans and
 historical misses still reject; no historical Vision replay is introduced.
