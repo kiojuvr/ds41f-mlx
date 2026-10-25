@@ -38,7 +38,8 @@ def test_layer0_live_prefix_measurement_detects_one_changed_retained_byte():
 
 
 @pytest.mark.parametrize('fail', [False, True])
-def test_layer0_hooks_preserve_values_and_restore_on_exception(fail):
+@pytest.mark.parametrize('has_engram', [False, True])
+def test_layer0_hooks_preserve_values_and_restore_on_exception(fail, has_engram):
     import mlx.core as mx
     import mlx.nn as nn
     import omlx.patches.deepseek_v41.language as lang
@@ -60,14 +61,17 @@ def test_layer0_hooks_preserve_values_and_restore_on_exception(fail):
         def __call__(self, x):
             return lang.pack_activation(self.kv_norm(self.wkv.project_quantized(lang.quantize_activation(x))))
     e, attn = Engram(), Attention()
-    lm = SimpleNamespace(layers=[SimpleNamespace(engram=e, attn=attn)])
+    layer = SimpleNamespace(attn=attn)
+    if has_engram:
+        layer.engram = e
+    lm = SimpleNamespace(layers=[layer])
     x = mx.ones((1, 11, 32), mx.bfloat16)
-    baseline = attn(e(x))
+    baseline = attn(e(x) if has_engram else x)
     originals = (Engram.__call__, Attention.__call__, lang.QuantizedProjection.__call__,
                  lang.QuantizedProjection.project_quantized, lang.RMSNorm.__call__, lang.pack_activation)
     try:
         with layer0_numerical_handles(lm) as handles:
-            out = attn(e(x))
+            out = attn(e(x) if has_engram else x)
             if fail:
                 raise RuntimeError('intentional observer unwind')
     except RuntimeError as exc:
@@ -78,8 +82,24 @@ def test_layer0_hooks_preserve_values_and_restore_on_exception(fail):
     prepack = handles['prepack']
     changed = prepack + mx.array(1, prepack.dtype)
     assert physical_tensor_metrics(prepack, changed)['mismatches'] == prepack.size
-    assert handles['engram_input'] is x
+    if has_engram:
+        assert handles['engram_input'] is x
+    else:
+        assert not any(name.startswith('engram') for name in handles)
+        assert handles['attention_input'] is x
     assert handles['attention_wkv_qdq'].shape == (1, 11, 32)
+
+
+def test_admitted_checkpoint_has_no_layer0_engram():
+    # Metadata only: the full-model attempt exposed an assumption hidden by
+    # the old all-Engram tiny fixture. No weights or model instance needed.
+    from pathlib import Path
+    from omlx.patches.deepseek_v41.config import ModelConfig
+    config = ModelConfig.from_dict(json.loads(Path(
+        '/Volumes/KIOXIA-PRO-2/models/deepseek-ai/DeepSeek-V4.1-Flash-1017/config.json'
+    ).read_text()))
+    assert list(config.engram_layer_ids) == [1, 14]
+    assert 0 not in config.engram_layer_ids
 
 
 def test_metrics_are_chunk_bounded_and_match_direct_reductions():

@@ -418,8 +418,12 @@ def layer0_numerical_handles(lm):
     """
     import omlx.patches.deepseek_v41.language as lang
     layer = lm.layers[0]
-    engram, attn = layer.engram, layer.attn
-    projections = {id(engram.wkv): 'engram_wkv', id(attn.wkv): 'attention_wkv'}
+    # The admitted Flash-1017 checkpoint has Engram at layers 1/14, not 0.
+    # Tiny controls may include it at L0; never require an absent operation.
+    engram, attn = getattr(layer, 'engram', None), layer.attn
+    projections = {id(attn.wkv): 'attention_wkv'}
+    if engram is not None:
+        projections[id(engram.wkv)] = 'engram_wkv'
     handles, active = {}, [False]
     def keep(name, value):
         if name in handles:
@@ -478,9 +482,10 @@ def layer0_numerical_handles(lm):
             if active[0] and x.shape[1]:
                 keep('prepack', x)
             return out
-        wrap(type(engram), '__call__', engram_call)
-        if not isinstance(engram.wkv, lang.QuantizedProjection):
-            wrap(type(engram.wkv), '__call__', projection_call)
+        if engram is not None:
+            wrap(type(engram), '__call__', engram_call)
+            if not isinstance(engram.wkv, lang.QuantizedProjection):
+                wrap(type(engram.wkv), '__call__', projection_call)
         wrap(lang.QuantizedProjection, '__call__', projection_call)
         wrap(lang.QuantizedProjection, 'project_quantized', project)
         wrap(type(attn), '__call__', attention_call)

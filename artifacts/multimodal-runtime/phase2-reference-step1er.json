@@ -1,0 +1,283 @@
+{
+  "starting_head": "5354f7ec1c67fc5067f6bacc1224a83e801f6bfc",
+  "pid": 48856,
+  "model_load_attempts": 1,
+  "completed_model_loads": 1,
+  "admission": {
+    "status": "PASS",
+    "identity_sha256": "9c439d3fb9ad730996ecca821234bba1ce8817d7b46a2744e171c10a4d7d2ca2",
+    "build": {
+      "native_build": {
+        "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05) (Homebrew)\n",
+        "cmake": "cmake version 4.3.3\n\nCMake suite maintained and supported by Kitware (kitware.com/cmake).\n",
+        "host_linked": false,
+        "opencv": "4.14.0\n",
+        "rustc": "rustc 1.98.1 (48a229cea 2026-09-01) (Homebrew)\nbinary: rustc\ncommit-hash: 48a229ceaefd4985c50990b14116b6d856af0985\ncommit-date: 2026-09-01\nhost: aarch64-apple-darwin\nrelease: 1.98.1\nLLVM version: 22.1.8\n",
+        "wheel_sha256": "11bda3355c2f48b99d04f6a2179b283add3f6d1218f34e4707bd5a29b304ab03",
+        "xcode": "Xcode 26.6\nBuild version 17F113\n"
+      },
+      "overlays": [
+        "compressed-growth",
+        "bit-exact-kernels",
+        "template-reuse",
+        "context-copy"
+      ],
+      "recipe_source": {
+        "archive": "recipe-02-source.tar.gz",
+        "patch": "docs/recipe-02-native-semantic-boundary.patch",
+        "revision": "93b0fd229cc9ffa6b1a8c63d42b0bf741bbec170"
+      },
+      "source_commit": "aa8c5717b42aa0a216fef3134e72c6db7ca49287"
+    },
+    "actual_origins": {
+      "ds41f_mlx": "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/ds41f_mlx/__init__.py",
+      "omlx": "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/omlx/__init__.py",
+      "deepseek_recipe": "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/deepseek_recipe/__init__.py",
+      "deepseek_recipe._native": "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/deepseek_recipe/_native.abi3.so",
+      "mlx_lm": "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/mlx_lm/__init__.py"
+    },
+    "checkpoint": {
+      "metadata": {
+        "config.json": "8be45ce0476004a3f529fd896115a4a2e800a129ad2d3ec05b16050f52e21879",
+        "model.safetensors.index.json": "74b0686a3d2891980d5e303251b075a3bccae2c2ff650747db2620a649b98fa8",
+        "tokenizer.json": "c90dfa01249db1be4245780a052ede752e1361c612ac6d08e2bdada7d599476b"
+      },
+      "verification": "full-byte SHA256; installation cache only for unchanged file identity",
+      "shards_omitted": "48-shard admission unchanged from Step 1E; same identity SHA256. Verification cache only for unchanged file identity, not a fresh independent full rehash."
+    }
+  },
+  "numerics": "flash-1017-pre-woa-fp8-v1",
+  "packages": {
+    "ds41f-mlx": {
+      "version": "0.23.0",
+      "direct_url": "{\"url\":\"file:///tmp/ds41f-harness-inventory-wheel.NxZ0BY/ds41f_mlx-0.23.0-py3-none-any.whl\",\"archive_info\":{}}"
+    },
+    "omlx": {
+      "version": "0.7.0",
+      "direct_url": "{\"url\":\"file:///Volumes/SDXC-512/ds41f-1017-build/omlx\",\"dir_info\":{}}"
+    },
+    "mlx": {
+      "version": "0.32.2",
+      "direct_url": null
+    },
+    "mlx-lm": {
+      "version": "0.31.4.dev132+g94cdcae13",
+      "direct_url": "{\"url\":\"https://github.com/ml-explore/mlx-lm\",\"vcs_info\":{\"vcs\":\"git\",\"commit_id\":\"94cdcae13b266c337bcaca09b97b9c5a9c0e2cde\",\"requested_revision\":\"94cdcae13b266c337bcaca09b97b9c5a9c0e2cde\"}}"
+    },
+    "deepseek-recipe": {
+      "version": "0.2.0",
+      "direct_url": "{\"url\":\"file:///Volumes/SDXC-512/ds41f-mlx/third_party/mtp/deepseek_recipe-0.2.0-cp310-abi3-macosx_11_0_arm64.whl\",\"archive_info\":{}}"
+    }
+  },
+  "installed_hashes": {
+    "ds41f_mlx/serving/internal_mtp.py": "21800084ee6519ea73790ee8c46ad7fcf9a7183c37aabaae4ed8da4b2ca9edd1",
+    "ds41f_mlx/serving/paired_checkpoint.py": "61d2a7f5fe5a4aa646356223eae37e30378b257b170c9c473de0b957f5070d16",
+    "ds41f_mlx/prefill_fp8_mlx/p6_append.py": "34e3326c2472a9a7717f69bb335bec8d5a4c98addecab39ff3bc863b4b17f184",
+    "ds41f_mlx/prefill_fp8_mlx/block_runner.py": "979d20d0c7e39c1fd2cc0604b28103d20407239f6d37d9ca09fba35fa3a13809",
+    "omlx/patches/deepseek_v41/language.py": "702b8a1c872eee645e6633140787a5947dc4bb7aace16384475a90151a4c5276",
+    "omlx/patches/deepseek_v41/cache.py": "00d1ceaf1bb1a8de9fe531f6cb311092c831378343341925d7c844503030e38b",
+    "omlx/patches/deepseek_v41/quantization.py": "cafb5b7543b2f1e285f8dafdeae1e584c77d8366961146db67134e55359c7ecc",
+    "omlx/patches/deepseek_v41/engram.py": "10ee6e12298adcb095836206840fd66d170cbf63db617f19232a9f6f94c438be",
+    "omlx/patches/deepseek_v41/activation.py": "bfb7385ee30f2478b4c5b7ccc91ce29cdf0fad2e747a06e144f606f4df3c164d",
+    "omlx/patches/deepseek_v41/gemv.py": "e9c4a2440b6697488c870ca2531cddafdff49d1dc8c7aca53ab86fee8215c7b9",
+    "omlx/patches/deepseek_v41/hyper_connection.py": "773631aeb89ef646a6a3d68cb039d4d2de967fde36c19e2dd4d33ad545a32d25",
+    "omlx/patches/deepseek_v41/loading.py": "104408ea7dfa05b886bd0d8ecc0359c31317f581f4538b5860cd1951edc062a1",
+    "omlx/patches/deepseek_v41/mtp.py": "5c6d10bdc1eb646835866d2b09201fef2481b7cd1950f1592d42490142d5514f"
+  },
+  "checkout_hashes": {
+    "ds41f_mlx/serving/internal_mtp.py": "21800084ee6519ea73790ee8c46ad7fcf9a7183c37aabaae4ed8da4b2ca9edd1",
+    "ds41f_mlx/serving/paired_checkpoint.py": "7e1565a3c8b1ed73801c6bd1c6eebc8eea876f09b72d4fe4c9dbf8ff4037646b",
+    "ds41f_mlx/prefill_fp8_mlx/p6_append.py": "34e3326c2472a9a7717f69bb335bec8d5a4c98addecab39ff3bc863b4b17f184",
+    "ds41f_mlx/prefill_fp8_mlx/block_runner.py": "979d20d0c7e39c1fd2cc0604b28103d20407239f6d37d9ca09fba35fa3a13809"
+  },
+  "canonical": [
+    {
+      "body": {
+        "model": "deepseek-v4.1-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Explain immutable checkpoints in one short sentence."
+          }
+        ],
+        "temperature": 0,
+        "max_tokens": 1,
+        "reasoning_effort": "none"
+      },
+      "ids": [
+        0,
+        128803,
+        65106,
+        104124,
+        4085,
+        20819,
+        295,
+        834,
+        3107,
+        10175,
+        16,
+        128804,
+        128822
+      ],
+      "sha256": "8ce125c769d4a95f97bceac24a7c6aa2f8bbf36a1f0c4ff1d1c4a9ab82d79fb2",
+      "N": 13,
+      "frontier": 11
+    },
+    {
+      "body": {
+        "model": "deepseek-v4.1-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Explain immutable checkpoints in one short sentence. Then state one benefit."
+          }
+        ],
+        "temperature": 0,
+        "max_tokens": 1,
+        "reasoning_effort": "none"
+      },
+      "ids": [
+        0,
+        128803,
+        65106,
+        104124,
+        4085,
+        20819,
+        295,
+        834,
+        3107,
+        10175,
+        16,
+        5715,
+        2501,
+        834,
+        8200,
+        16,
+        128804,
+        128822
+      ],
+      "sha256": "9059c79e53e40e13f60272e37226a6f5d99f2d5d6f53879d4dbaff1ff91c4c1b",
+      "N": 18,
+      "frontier": 16
+    }
+  ],
+  "diagnostic_sha256": "6eaedb0c7f9dc64bf1da3147d8bbe2de7520831ebae265e202caebf25992e9e2",
+  "load_s": 62.93514675000915,
+  "loaded_memory": {
+    "active": 309151331760,
+    "cache": 5590977818,
+    "peak": 311557023676
+  },
+  "error": "Traceback (most recent call last):\n  File \"/tmp/ds41f-step1er/worker.py\", line 52, in <module>\n    hook_targets=[(type(lm.layers[0].engram),'__call__'),(type(lm.layers[0].engram.wkv),'__call__'),(lang.QuantizedProjection,'__call__'),(lang.QuantizedProjection,'project_quantized'),(type(lm.layers[0].attn),'__call__'),(type(lm.layers[0].attn.kv_norm),'__call__'),(lang,'pack_activation')]\n                        ^^^^^^^^^^^^^^^^^^^\n  File \"/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/mlx/nn/layers/base.py\", line 103, in __getattr__\n    super(Module, self).__getattribute__(key)\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^\nAttributeError: 'Block' object has no attribute 'engram'\n",
+  "outcome": "BLOCKED",
+  "cleanup": {
+    "runtime_close": "model.close and backend.close returned; backend model/tokenizer references cleared, GC/synchronize/cache-clear ran",
+    "active": 308180784560,
+    "cache": 0,
+    "peak": 311557023676,
+    "remaining_alias": "scratch global lm retained language-model weights until process exit; MLX active remained 308180784560 bytes. Not successful near-zero Runtime reclamation.",
+    "os_reclamation": "worker exit verified; process-owned weights and residual aliases reclaimed by OS. No reusable pair/native generation owner created."
+  },
+  "classifications": [
+    "BLOCKED",
+    "PARTIAL",
+    "UNRESOLVED"
+  ],
+  "numerical_executions": 0,
+  "numerical_comparisons": {
+    "A_B0": null,
+    "B0_B1": null,
+    "A_B1": null,
+    "A_C": null,
+    "C_D": null,
+    "B1_C": null
+  },
+  "earliest_new_numerical_difference": null,
+  "fixed_input_operation_comparison": null,
+  "leaf_attributed": false,
+  "blocking_boundary": "Post-load scratch worker hook-restoration baseline, before observe_case_c_n2 invocation: unconditional lm.layers[0].engram access. Existing layer0_numerical_handles has the same incompatible assumption.",
+  "loaded_checkpoint_topology": {
+    "engram_layer_ids": [
+      1,
+      14
+    ],
+    "layer0_engram": false,
+    "source": "admitted config.json and installed Block.__init__; live AttributeError"
+  },
+  "hooks_installed": false,
+  "no_reload": true,
+  "execution_environment": {
+    "python": "3.13.15 (main, Aug  5 2026, 12:25:43) [Clang 21.0.0 (clang-2100.1.1.101)]",
+    "executable": "/Volumes/SDXC-512/ds41f-1017/bin/python",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O"
+  },
+  "protocol": "chat_completions",
+  "ordinary_preparation": true,
+  "frontiers": {
+    "seed_N": 13,
+    "seed_C": 11,
+    "current_N": 18,
+    "current_N_minus_2": 16,
+    "append_positions": [
+      11,
+      16
+    ],
+    "append_length": 5,
+    "common_first_11_ids": true
+  },
+  "deepinfer_authority": {
+    "revision": "9bd9cf243fc53ef9afbf8f04d391d989117d6ab9",
+    "reused_step1d": true,
+    "new_audit": false
+  },
+  "supervision": {
+    "supervisor_pid": 48853,
+    "worker_pid": 48856,
+    "worker_returncode": 1,
+    "stop_reason": null,
+    "auxiliary_statistics_readers": false,
+    "preflight_competition_selftest": "PASS: unrelated Python detected; owned worker SIGTERM; competitor untouched until fixture cleanup"
+  },
+  "scratch_sha256": {
+    "worker.py": "8e9a1141eeaea001fa02ac82f7b3218b24b9f87f533ca92ba17ff16499bae8f7",
+    "supervisor.py": "85c23d86190b3ddca21e743edfc663af197f7db25598c9e5894e09116b1bcbe7"
+  },
+  "final_diagnostic_sha256": "0e7c83c7a1bc8ace349fd77f0815e9ff07a3437311bf6656092318287cc3e6db",
+  "focused_correction": "Diagnostic-only optional Engram hooks; new absent-Engram success/exception controls plus actual checkpoint metadata topology assertion. Not executed with real model after correction.",
+  "validation": {
+    "before_load": "44 passed, 12 subtests passed in 41.70s",
+    "after_focused_correction": "47 passed, 12 subtests passed in 42.32s",
+    "diff_check": "PASS",
+    "self_containment": "PASS: 35 owners, 153 Markdown files, 585 live links",
+    "real_model_after_correction": false
+  },
+  "historical_receipt_sha256": {
+    "phase2-reference-step1e-run.log": "a2a069120545c159afde7413c136ec86324415ee8277572c183762808d62968a",
+    "phase2-reference-step1e.json": "23a1000660b58e3b2343480aa66c4151c463b77138423700cee6292226477841",
+    "phase2-reference-step1e-resources.json": "b9423370c575cce07cd1174392c42ddfbac543f88aff04dfa9103e7efe57adb1",
+    "phase2-reference-step1e-tests.log": "95e9347f17a1c994bc5004edde9bf45229b75f54737f87315b9463134042eb56",
+    "phase2-reference-step1e-preflight-error.json": "ff1085869f70c5e70d8ee2fb5dea2241a9882b8e2b12561bb5d8cc85c69141ef"
+  },
+  "limits": "No packed/decoded live prefix or cold-shape numerical observation. No input identity attribution, tolerance or numerical PASS; Phase 2/C2 not complete.",
+  "postflight": {
+    "time": 1792930093.322068,
+    "owned_pids_absent": {
+      "42767": true,
+      "42773": true,
+      "42776": true,
+      "48853": true,
+      "48856": true,
+      "50690": true,
+      "52640": true
+    },
+    "available": 525130039296,
+    "swap_used": 0,
+    "pressure": "1",
+    "vm_stat_swap_lines": [
+      "Swapins:                                           0.",
+      "Swapouts:                                          0."
+    ],
+    "endpoint1234": false,
+    "competitors": []
+  }
+}

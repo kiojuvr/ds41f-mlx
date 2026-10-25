@@ -1,0 +1,13 @@
+READY: installed identities, admission, chat_completions and exact canonical digests verified
+MODEL LOAD
+MODEL LOADED
+Traceback (most recent call last):
+  File "/tmp/ds41f-step1er/worker.py", line 52, in <module>
+    hook_targets=[(type(lm.layers[0].engram),'__call__'),(type(lm.layers[0].engram.wkv),'__call__'),(lang.QuantizedProjection,'__call__'),(lang.QuantizedProjection,'project_quantized'),(type(lm.layers[0].attn),'__call__'),(type(lm.layers[0].attn.kv_norm),'__call__'),(lang,'pack_activation')]
+                        ^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/mlx/nn/layers/base.py", line 103, in __getattr__
+    super(Module, self).__getattribute__(key)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+AttributeError: 'Block' object has no attribute 'engram'
+
+WORKER EXIT

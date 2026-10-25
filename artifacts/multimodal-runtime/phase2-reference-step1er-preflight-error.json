@@ -1,0 +1,7 @@
+{
+  "pid": 42776,
+  "model_load_attempts": 0,
+  "completed_model_loads": 0,
+  "error": "Traceback (most recent call last):\n  File \"/tmp/ds41f-step1er/worker.py\", line 33, in <module>\n    req=prepare_request('chat_completions',json.dumps(expected['body']).encode(),tokenizer=tok,recipe_path=cfg.recipe_path,checkpoint=cfg.checkpoint_path)\n  File \"/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/ds41f_mlx/serving/server.py\", line 72, in prepare_request\n    include_usage = request.include_usage() if protocol == 'chat_completions' else False\n                    ^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'deepseek_recipe._native.ChatCompletionRequest' object has no attribute 'include_usage'\n",
+  "cleanup": null
+}

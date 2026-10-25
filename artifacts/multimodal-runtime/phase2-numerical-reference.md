@@ -1662,3 +1662,156 @@ established. C2, P5, continuation, production reuse and Harness remain unqualifi
 rows survive genuine live restore and append exactly? The operational prerequisite
 for any separately authorized attempt is avoiding the telemetry false positive;
 this task does not start another attempt. **Stop after Step 1E.**
+
+## 15. Step 1E-R — supervised resume, post-load diagnostic blocker (2026-10-25)
+
+**Disposition: BLOCKED / PARTIAL / UNRESOLVED.** The one authorized weight load
+**completed**, but the scratch worker failed immediately afterward, before calling
+`observe_case_c_n2(..., layer0=True)`. No seed forward, live restore/append,
+checkpoint capture, cold control or numerical handle capture ran. The primary
+question remains **unanswered**, not PREFIX_PRESERVED or PREFIX_MODIFIED. No
+COLD_SHAPE_DIFFERENCE, P6_ORDINARY_DIFFERENCE, LEAF_ATTRIBUTED or numerical PASS
+is claimed. No second load/reload was attempted. Phase 2/C2 remain unqualified.
+
+Evidence: [compact receipt](phase2-reference-step1er.json),
+[resource report](phase2-reference-step1er-resources.json),
+[worker log](phase2-reference-step1er-run.log),
+[focused tests](phase2-reference-step1er-tests.log), and
+[zero-load preparation error](phase2-reference-step1er-preflight-error.json).
+Previous Cases A/B/C, Step 1D and Step 1E evidence are unchanged; this section is
+append-only. Step 1D's DeepInfer review at
+`9bd9cf243fc53ef9afbf8f04d391d989117d6ab9` was reused, not repeated.
+
+### Preflight, identity and canonical inputs
+
+Clean `Multimodal-Runtime`, actual full starting HEAD
+**`5354f7ec1c67fc5067f6bacc1224a83e801f6bfc`**, matches the task's explicit
+verification value; its earlier “Expected HEAD” string differs. Reviewed the
+requested CURRENT policy/execution/verification documents, §§12–14, Step 1E
+receipts/log and diagnostic/tests. No source/package identity conflict was found.
+
+Isolated installed interpreter `/Volumes/SDXC-512/ds41f-1017/bin/python -I`:
+Python 3.13.15, ds41f 0.23.0/build
+`aa8c5717b42aa0a216fef3134e72c6db7ca49287`, oMLX 0.7.0/four admitted overlays,
+MLX 0.32.2, mlx-lm `0.31.4.dev132+g94cdcae13`, Recipe 0.2.0/native GLM.
+Installed origins, package/direct-URL identities and every recorded Step 1E
+installed numerical/checkout source hash matched. Checkpoint admission passed
+for the required KIOXIA-PRO-2 `DeepSeek-V4.1-Flash-1017`; identity SHA256
+**`9c439d3fb9ad730996ecca821234bba1ce8817d7b46a2744e171c10a4d7d2ca2`**,
+numerical profile **`flash-1017-pre-woa-fp8-v1`**. The unchanged-file verification
+cache caveat still applies; no independent new full rehash of 48 shards is claimed.
+The executed diagnostic hash was the final committed Step 1E hash
+`6eaedb0c7f9dc64bf1da3147d8bbe2de7520831ebae265e202caebf25992e9e2`.
+
+Before opening the load gate, installed Recipe used **`chat_completions`** and
+**`ordinary=True`** on the exact original bodies (temperature 0, max_tokens 1,
+reasoning none). IDs and ordered little-endian int32 digests matched Step 1E:
+
+| Request | N / N-2 | SHA256 |
+| --- | --- | --- |
+| `Explain immutable checkpoints in one short sentence.` | 13 / 11 | `8ce125c769d4a95f97bceac24a7c6aa2f8bbf36a1f0c4ff1d1c4a9ab82d79fb2` |
+| `Explain immutable checkpoints in one short sentence. Then state one benefit.` | 18 / 16 | `9059c79e53e40e13f60272e37226a6f5d99f2d5d6f53879d4dbaff1ff91c4c1b` |
+
+The first eleven IDs were identical; positive append was planned at **[11,16)**,
+five tokens. No handcrafted IDs. A preceding scratch preparation omitted
+`ordinary=True`; the installed nonordinary converter rejected missing Recipe
+`include_usage`. That worker **42776** exited before backend construction and
+**zero** load calls. Its error is retained separately. This was corrected before
+the sole model-loading worker, not a reload or package modification.
+
+### Supervisor correction and observed failure
+
+The disposable supervisor owned its samples and wrote resource JSON directly.
+**No separate Python statistics reader was launched while the worker was active.**
+One supervisor **48853** launched one loading worker **48856** with isolated
+installed Python; transient installed-admission descendants were task-owned, not
+additional model loaders. The detector excluded only supervisor/owned worker
+ancestry, not all Python processes. No unexpected loader or LM Studio/1234
+endpoint was present. Before loading, a real independent Python sleep fixture
+was detected; the competition stop terminated only a separately owned harmless
+worker via SIGTERM, leaving the detected fixture untouched until explicit fixture
+cleanup. Reserve, pressure, swap and footprint negative controls also passed.
+No unrelated process was terminated or permanent supervisor framework introduced.
+
+Model load returned in **62.94 s**. The scratch worker then tried to record original
+hook methods using `lm.layers[0].engram` and raised **AttributeError: Block has no
+attribute engram**. This occurred **before the diagnostic call**, not during P6,
+restore or append. The existing Step 1E `layer0_numerical_handles` makes the same
+unconditional access; removing only the scratch check would not fix the actual
+observation. No hooks were installed and no native generation owner/pair existed.
+
+A narrowly scoped source/metadata check explains the blocker: admitted checkpoint
+`text_config.engram_layer_ids` is **[1,14]**, and installed `Block.__init__` creates
+Engram only at those indices. Layer 0 has no Engram operation. The earlier
+§13/§14 description of a Layer-0 Engram arithmetic path was therefore an incorrect
+source assumption for this checkpoint; exact integer cache history does not imply
+an Engram arithmetic operation at L0. Historical evidence is not rewritten.
+No new DeepInfer investigation was needed.
+
+After worker exit, the diagnostic was minimally corrected to hook Engram **only
+when present**; attention/projection/norm/pre-pack hooks are unchanged. Tiny
+controls now cover absent-Engram success/exception restoration, alongside the
+existing present-Engram controls, and assert the real checkpoint metadata topology
+without constructing a model. **The corrected diagnostic has not run on the real
+model.** No additional load was authorized or performed. Production kernels,
+quantization, cache authority, guards, execution selection and packages are unchanged.
+
+### Numerical stopping boundary
+
+| Required comparison | Result |
+| --- | --- |
+| A versus B0 | **Not executed** — failed before seed/P6/hook entry |
+| B0 versus B1 original prefix | **Not executed** |
+| A versus B1 original prefix | **Not executed** |
+| Conditional A/C, C/D, B1/C | **Not executed** — preservation prerequisite unobserved |
+| Pre-pack boundaries / fixed-input attribution | **Not executed** |
+
+No new numerical shapes, dtypes, absolute-row comparisons or first differing
+values were measured. There is no new earliest numerical boundary. §12's stored
+L0 KV position-0/channel-11 difference remains inherited evidence only; neither
+its mechanism nor live-prefix modification follows from this failed attempt.
+No tolerance, general chunk invariance or numerical defect is established.
+
+### Resources, retirement and validation
+
+Conservative gates unchanged: preload **455.226 GiB**, reserve **64 GiB**,
+physical-footprint stop **425 GiB** before **430 GiB** ceiling, normal pressure,
+no increased swap/use or swapouts, stop on competition, **1800 s** total and
+**600 s** no progress. Supervisor sampled approximately every two seconds,
+retaining approximately ten-second samples and every-check extrema; libproc
+rusage-v4 physical footprint used SDK offsets 72/240. No resource/time/competition
+stop fired; **no supervisor stop reason**. Worker exited **1** through Python
+exception/finally, not SIGTERM. Total supervised worker time **101.77 s**.
+
+- Preload available **492.653 GiB**; minimum sampled host reserve **234.118 GiB**.
+- Maximum health-sampled lifetime physical footprint **300.584 GiB**. It is a
+  sampled high-water, not a guarantee against unsampled final transients.
+- Pressure **1 (normal)**; swap use, swapins and swapouts **0** throughout.
+- Overlapping MLX measures after completed load: active **287.920 GiB**, cache
+  **5.207 GiB**, peak **290.160 GiB**; do not add these to physical footprint.
+- `model.close()` and backend/executor shutdown returned; backend model/tokenizer
+  references were cleared, GC, synchronization and allocator clear ran. However,
+  the scratch global **`lm` alias retained language-model weights**: post-cleanup
+  MLX active remained **287.016 GiB**, cache **0**. This is **not** successful
+  near-zero Runtime reclamation. Residual model ownership ended with worker exit
+  and **OS reclamation**, not the Python close calls alone.
+- Worker/supervisor and sampled admission descendants were verified absent after
+  exit and tests. Final available **489.065 GiB**, normal pressure, zero swap,
+  no competing Python/model process or endpoint. Host available memory is not a
+  process-leak metric. No tensors/model assets were saved. Scratch scripts/gates
+  were removed after recording hashes; no task-owned temporary resources retained.
+
+Before load, affected measurement-integrity/method-restoration/P6 controls:
+**44 passed, 12 subtests passed, 41.70 s**. After the focused correction, the same
+files (`tests/test_prefill_numerical_reference.py`,
+`tests/test_prefill_fp8_mlx_p6.py`): **47 passed, 12 subtests passed, 42.32 s**.
+These are model-free controls, not numerical qualification. `git diff --check`
+and `python tools/check_repository_self_containment.py`: **PASS** (35 current
+owners, 153 Markdown files, 585 live links). Previous evidence was checked
+unchanged. Changes are limited to the diagnostic, its focused controls and this
+new evidence. Local commit SHA reported separately; no push or deployment.
+
+**Smallest remaining numerical question:** do the original eleven live L0 packed
+rows survive genuine restore and five-token append bit-for-bit? It requires a
+separately authorized model run with the corrected no-L0-Engram observer; no
+numerical observation from this attempt answers it. **Stop after Step 1E-R.**
