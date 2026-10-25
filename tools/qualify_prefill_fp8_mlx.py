@@ -377,6 +377,105 @@ def observe_case_a_n2(backend, request, tokenizer, *, identity):
     return result
 
 
+def observe_case_c_n2(backend, seed_request, request, tokenizer, *, identity):
+    """Diagnostic paired restore + positive append, NOT a Scheduler lookup.
+
+    Cold seed execution only constructs the checkpoint. The ordinary reference
+    consumes the entire current N-2 prefix on fresh factories, never the pair.
+    """
+    import numpy as np
+    import mlx.core as mx
+    from mlx_lm.generate import generation_stream
+    from ds41f_mlx.runtime.mtp_resources import MTPWiredLimitLease
+    from ds41f_mlx.serving.internal_mtp import QualificationSession
+    from ds41f_mlx.serving.paired_checkpoint import PairedCheckpoint, validate_pair
+    from ds41f_mlx.prefill_fp8_mlx import DeferredPrefillAppend
+
+    seed_ids, ids = tuple(seed_request.token_ids), tuple(request.token_ids)
+    C, end = len(seed_ids)-2, len(ids)-2
+    if any(r.multimodal is not None for r in (seed_request, request)) or not 0 < C < end <= 4094:
+        raise ValueError('Case C requires bounded text and a positive missing suffix')
+    if ids[:C] != seed_ids[:C]:
+        raise ValueError('Case C incompatible canonical prefix')
+    lm = backend._model.language_model
+    original_layers = tuple(lm.layers)
+    executions = []
+    execute = DeferredPrefillAppend.execute_all
+    def observed_execute(app):
+        executions.append(dict(start=app.C, end=app.T, rows=app.T-app.C))
+        return execute(app)
+    class CaptureComplete(Exception):
+        pass
+    def run(rec, req):
+        saved = None
+        def capture(target, rings, consumed):
+            nonlocal saved
+            if tuple(consumed) != tuple(req.token_ids[:-2]):
+                raise ValueError('candidate capture is not canonical N-2')
+            saved = PairedCheckpoint.capture(identity, target, rings, consumed, mx)
+            print(f'Case C: captured N-2 frontier {len(consumed)}', flush=True)
+            raise CaptureComplete()
+        try:
+            backend._start(rec, req, tokenizer, {}, checkpoint_capture=capture)
+        except CaptureComplete:
+            pass
+        if saved is None or rec.owner is not None or any(a is not b for a, b in zip(lm.layers, original_layers)):
+            raise RuntimeError('Case C capture/unwind failed')
+        return saved
+    def fingerprint(saved):
+        # Bounded exact value digest; BF16->FP32 is lossless, not normalization.
+        h = hashlib.sha256()
+        h.update(repr((saved.identity, saved.tokens, saved.images,
+                       [(c.meta_state, c.compress_ratio) for c in saved.target],
+                       [(r.max_size, r.offset) for r in saved.rings])).encode())
+        for value in [v for c in saved.target for v in (*c.cache, c.left_padding, c.lengths)] + [r.keys for r in saved.rings]:
+            h.update(repr(None if value is None else (value.shape, str(value.dtype))).encode())
+            if value is not None:
+                flat = value.reshape(-1)
+                for start in range(0, flat.size, 65536):
+                    chunk = flat[start:start+65536]
+                    if str(chunk.dtype).endswith('bfloat16'):
+                        chunk = chunk.astype(mx.float32)
+                    h.update(np.asarray(chunk).tobytes())
+        return h.hexdigest()
+    with patch.object(DeferredPrefillAppend, 'execute_all', observed_execute):
+        seed_rec = QualificationSession('phase2-step1c-seed')
+        seed = run(seed_rec, seed_request)
+        seed_rec.cache = seed_rec.rings = None
+        before = fingerprint(seed)
+        rec = QualificationSession('phase2-step1c-append')
+        rec.cache, rec.rings, rec.canonical = seed.restore(identity, ids, mx)
+        validate_pair(rec.cache, rec.rings, rec.canonical)
+        if len(rec.canonical) != C or tuple(rec.canonical) != ids[:C]:
+            raise ValueError('incorrect restored frontier')
+        distinct = all(a is not b and a.cache is not b.cache for a, b in zip(rec.cache, seed.target)) and all(a is not b for a, b in zip(rec.rings, seed.rings))
+        if not distinct:
+            raise ValueError('restored mutable containers alias checkpoint')
+        restore_metrics = paired_physical_metrics(
+            dict(target=rec.cache, rings=rec.rings), dict(target=seed.target, rings=seed.rings))
+        seed_executions = list(executions)
+        executions.clear()
+        candidate = run(rec, request)
+        after = fingerprint(seed)
+        if before != after:
+            raise ValueError('seed checkpoint mutated during append')
+    if executions != [dict(start=C, end=end, rows=end-C)]:
+        raise ValueError('unexpected append execution boundaries')
+    print('Case C: append unwound; fresh full-current-prefix ordinary reference', flush=True)
+    with mx.stream(generation_stream), MTPWiredLimitLease(mx, generation_stream):
+        reference = ordinary_prefill_reference(backend._model, mx.array([ids[:-2]], mx.int32))
+        result = paired_boundary_metrics(
+            dict(target=candidate.target, rings=candidate.rings, token_ids=candidate.tokens),
+            reference, boundary='n-2-capture', config=lm._config)
+        mx.synchronize(generation_stream)
+    result['restore'] = dict(kind='diagnostic PairedCheckpoint.restore', identity=seed.identity,
+        saved_frontier=len(seed.tokens), restored_frontier=C, appended_length=end-C,
+        distinct_mutable_containers=distinct, snapshot_before=before, snapshot_after=after,
+        snapshot_unchanged=before == after, seed_executions=seed_executions,
+        append_executions=executions, metrics=restore_metrics)
+    return result
+
+
 def observe_case_b_n2(backend, request, tokenizer, *, identity, source_bytes):
     """Single-image observation; direct _start, NOT Scheduler/HTTP acceptance.
 

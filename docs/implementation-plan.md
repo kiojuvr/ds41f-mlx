@@ -101,9 +101,10 @@ retention evidence boundaries.
 
 The [Multimodal Runtime plan](multimodal-runtime-plan.md) owns the project-specific
 goal, C1–C9 completion criteria, phases, dependencies and progress under the policy
-above. Only its Phase 0 documentation is complete; Phase 1 requires a separate
-explicit task. Current historical misses still reject without replay or unverified
-reconstruction. The plan changes no execution or logical-session contract.
+above. Phases 0–1 are complete; Phase 2 has bounded N-2 numerical observations
+for Cases A/B/C, not reconstruction acceptance or C2 qualification. Current
+historical misses still reject without replay or unverified reconstruction.
+The plan changes no execution or logical-session contract.
 
 ### Future official-source investigation priorities
 

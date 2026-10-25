@@ -1,0 +1,18 @@
+DS41F_CHECKPOINT=/Volumes/KIOXIA-PRO-2/models/deepseek-ai/DeepSeek-V4.1-Flash-1017
+Interpreter: /Volumes/SDXC-512/ds41f-1017/bin/python
+
+Before model loading:
+python -m pytest -q tests/test_prefill_numerical_reference.py tests/test_production_mtp.py
+.................................................                        [100%]
+49 passed, 41 warnings in 43.80s
+
+Warning detail condensed: existing Starlette httpx TestClient deprecation and
+FastAPI on_event/lifespan deprecations in serving/server.py and applications.py.
+No skips, failures or xfails.
+
+P6 focused regression after worker exit:
+python -m pytest -q tests/test_prefill_fp8_mlx_p6.py
+....................                                         [100%]
+20 passed, 12 subtests passed in 35.94s
+
+No checkpoint weights loaded by these tests.

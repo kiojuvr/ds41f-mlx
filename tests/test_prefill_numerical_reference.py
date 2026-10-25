@@ -373,3 +373,60 @@ def test_reference_image_embedding_is_recomputed_and_input_bounds_fail_closed():
     model.language_model.make_cache = lambda: [SimpleNamespace(size=lambda: 2)] * 40
     with pytest.raises(ValueError, match='fresh'):
         ordinary_prefill_reference(model, ids)
+
+
+@pytest.mark.parametrize('fault', [None, 'prefix', 'suffix', 'frontier', 'mutation'])
+def test_case_c_real_restore_adapter_boundaries_and_snapshot(monkeypatch, fault):
+    import tools.qualify_prefill_fp8_mlx as tool
+    from ds41f_mlx.prefill_fp8_mlx import DeferredPrefillAppend
+    from ds41f_mlx.serving.paired_checkpoint import PairedCheckpoint
+    seed, config = native_meaningful_pair(11)
+    current, _ = native_meaningful_pair(17)
+    independent, _ = native_meaningful_pair(17)
+    layers = tuple(object() for _ in range(40))
+    lm = SimpleNamespace(layers=list(layers), _config=config)
+    seed_request = SimpleNamespace(token_ids=list(range(13)), multimodal=None)
+    request = SimpleNamespace(token_ids=list(range(19)), multimodal=None)
+    if fault == 'prefix':
+        request.token_ids[0] = -1
+    if fault == 'suffix':
+        request.token_ids = seed_request.token_ids
+    events, retained = [], []
+    restore = PairedCheckpoint.restore
+    def tracked_restore(saved, *args, **kwargs):
+        retained.append(saved)
+        target, rings, tokens = restore(saved, *args, **kwargs)
+        if fault == 'frontier':
+            tokens.pop()
+        return target, rings, tokens
+    monkeypatch.setattr(PairedCheckpoint, 'restore', tracked_restore)
+    monkeypatch.setattr(DeferredPrefillAppend, 'execute_all', lambda app: None)
+    class Backend:
+        _model = SimpleNamespace(language_model=lm)
+        def _start(self, rec, req, tokenizer, trace, *, checkpoint_capture):
+            start, end = len(rec.canonical), len(req.token_ids)-2
+            events.append((start, end))
+            if start:
+                assert start == 11 and all(c.size() == 11 for c in rec.cache)
+                assert all(r.offset == 11 for r in rec.rings)
+                if fault == 'mutation':
+                    retained[0].target[0].cache[1][0, 0, 0] = 255
+            DeferredPrefillAppend.execute_all(SimpleNamespace(C=start, T=end))
+            state = seed if start == 0 else current
+            checkpoint_capture(state['target'], state['rings'], req.token_ids[:-2])
+    def reference(model, input_ids):
+        assert events == [(0, 11), (11, 17)]
+        assert input_ids.tolist() == [list(range(17))]
+        return independent
+    monkeypatch.setattr(tool, 'ordinary_prefill_reference', reference)
+    if fault:
+        with pytest.raises(ValueError):
+            tool.observe_case_c_n2(Backend(), seed_request, request, None, identity='test')
+        if fault in ('prefix', 'suffix'):
+            assert events == []
+    else:
+        got = tool.observe_case_c_n2(Backend(), seed_request, request, None, identity='test')
+        assert got['comparable'] and got['frontiers'] == [[17, 17], [17, 17]]
+        assert got['restore']['snapshot_unchanged']
+        assert got['restore']['distinct_mutable_containers']
+        assert got['restore']['append_executions'] == [dict(start=11, end=17, rows=6)]

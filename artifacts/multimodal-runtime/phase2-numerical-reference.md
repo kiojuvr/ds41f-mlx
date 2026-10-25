@@ -1,11 +1,12 @@
 # Phase 2 / Step 1 — ordinary numerical prefill reference
 
-**Latest bounded result: [§10](#10-step-1a--completed-case-a-comparison-2026-10-25)
-is OBSERVED for Case A at N-2 only (40/40 Target layers, 3/3 rings).** The earlier
-BLOCKED reports below remain historical evidence. General numerical acceptance,
-full Step 1, Phase 2 and C2 remain unqualified.
+**Latest bounded result: [§12](#12-step-1c--compatible-restored-prefix-append-2026-10-25)
+is OBSERVED for restored-prefix Case C at N-2 (40/40 Target layers, 3/3 rings),
+with floating differences.** Cases A/B observed exact agreement in §§10–11.
+Earlier BLOCKED reports below remain historical evidence. General numerical
+acceptance, full Step 1, Phase 2 and C2 remain unqualified.
 
-**Disposition: BLOCKED for real-model qualification.** Source-level construction
+**Initial disposition (historical): BLOCKED for real-model qualification.** Source-level construction
 and model-free observation tests are available; the numerical reference is **not
 qualified**. No historical-image reconstruction, C2 completion, guard change,
 release admission or production behavior change is implied.
@@ -1040,3 +1041,182 @@ matched logits, changed/history projections, cache recovery and longer schedules
 No independent floating acceptance envelope is established by this exact sample.
 Case C, reconstruction, Harness lifecycle and general C2 remain unqualified and
 were not started. **Stop after Case B; no automatic follow-on work.**
+
+## 12. Step 1C — compatible restored-prefix append (2026-10-25)
+
+**Disposition: OBSERVED, with meaningful floating differences.** A real seed pair
+was saved/restored at **C=11**, then exactly **5** missing positions **[11,16)**
+executed to current **N-2=16**. Fresh full-current-prefix ordinary prefill from
+zero was compared across **40/40 Target layers and 3/3 DSpark rings**. Restore
+values, snapshot immutability and cross-schedule exact structural invariants held.
+Floating agreement did **not** hold; no general floating envelope exists under §4,
+so this is neither numerical PASS nor an established tolerance violation. It does
+not qualify reconstruction, Phase 2/C2, P5, Scheduler reuse or continuation.
+Cases A/B were not rerun as qualification experiments.
+
+### Review, identity and minimal integration
+
+Started on clean `Multimodal-Runtime`, expected HEAD
+`667158ca8802489049e7f5d9bc661d00ab52a018`, one worktree, sole observed coding
+agent PID 2432; no competing inference loader or LM Studio/1234 endpoint. Reviewed
+documentation policy, upstream-first sequencing, Phase 2/C2, ordinary MTP,
+verification, Phase 1 §§4–6 and reference construction/acceptance/Cases A/B above.
+Inspected native `_start`, paired capture/restore, production Scheduler and span
+adapter, P6 append/committed APIs, installed ordinary `_forward`/Target and ring
+factories/native DSpark append, and existing collector/paired/P6 tests. Reused
+Phase 1 findings without repeating the upstream audit.
+
+The missing capability was a **Case C observation adapter**, not a cache lookup,
+prefill engine or model loader. Added `observe_case_c_n2` in the existing tool:
+normal cold seed capture/unwind; diagnostic `PairedCheckpoint.restore` against the
+current prompt; direct `_start` append/capture/unwind; then unchanged
+`ordinary_prefill_reference` and existing physical/meaningful collectors. A passive
+`execute_all` wrapper records actual P6 C/T without changing the plan/operations.
+A bounded digest covers retained seed values/metadata before and after append;
+BF16-to-FP32 digest conversion is exact. Mutable Target/cache/ring containers are
+checked distinct; same-operation restore metrics cover the complete pair.
+**No ProductionScheduler lookup, HTTP request execution, publication or settlement
+occurred.** There is no new cache authority, numerical engine or production
+selector. No P6 scheduling, quantization, native DSpark or P5 behavior changed.
+
+[Full evidence](phase2-reference-step1c.json), [run log](phase2-reference-step1c-run.log)
+and [resources](phase2-reference-step1c-resources.json) bind this single execution.
+Interpreter: `/Volumes/SDXC-512/ds41f-1017/bin/python -I`. Installed admission
+completed before loading checkout verification code by path; Runtime remained
+installed ds41f **0.23.0**, build `aa8c5717b42aa0a216fef3134e72c6db7ca49287`.
+Identity SHA256: `9c439d3fb9ad730996ecca821234bba1ce8817d7b46a2744e171c10a4d7d2ca2`.
+Python 3.13.15, oMLX 0.7.0 with the four admitted overlays, MLX 0.32.2,
+mlx-lm `0.31.4.dev132+g94cdcae13`, Recipe 0.2.0/native revision
+`93b0fd229cc9ffa6b1a8c63d42b0bf741bbec170` plus semantic patch;
+`glm_profile=native`, numerics `flash-1017-pre-woa-fp8-v1`.
+Required Flash-1017 checkpoint on KIOXIA-PRO-2: 48 admitted shards, same identities
+as §10; unchanged-file weight-verification cache caveat remains, not a fresh
+independent full-weight rehash. Executed tool SHA256:
+`b1a92a874648eda3d1d1fa210d3197e589fb46a8464c6c7e62c7a259e8e86bbf`.
+Installed `_start` and P6 source matched checkout. Other whole modules are not
+assumed identical. Nothing was installed, replaced or deployed.
+
+### Canonical compatibility, real restore and execution
+
+Before weights, installed Recipe ordinary Chat preparation produced both requests
+with temperature 0, max_tokens 1, reasoning none. User text:
+
+- Seed: `Explain immutable checkpoints in one short sentence.`
+- Current: `Explain immutable checkpoints in one short sentence. Then state one benefit.`
+
+The instruction was appended **inside the user message before Recipe framing**;
+no hand-built token concatenation/delimiters or matching-rule change. Actual IDs:
+
+```text
+seed:    [0,128803,65106,104124,4085,20819,295,834,3107,10175,16,128804,128822]
+current: [0,128803,65106,104124,4085,20819,295,834,3107,10175,16,5715,2501,834,8200,16,128804,128822]
+```
+
+Ordered little-endian int32 SHA256:
+seed `8ce125c769d4a95f97bceac24a7c6aa2f8bbf36a1f0c4ff1d1c4a9ab82d79fb2`;
+current `9059c79e53e40e13f60272e37226a6f5d99f2d5d6f53879d4dbaff1ff91c4c1b`.
+Seed N=13/digest exactly matched Case A. Both first-eleven canonical IDs match;
+current N=18, N-2=16>11. Existing ordinary admission resolved the one-output
+reservation; even N+1+5 speculative positions is below 4096 and native context.
+No image inputs/masks are applicable. No continuation suffix was selected.
+
+**One model load**, via existing backend (`preserve_mtp=True`,
+`engram_ssd_offload=True`). Cold seed executed **[0,11)** once and native capture
+validated all 40 Target/seven-slot states and three rings at C=11. The captured
+checkpoint bound those exact eleven IDs and the admitted execution digest above.
+`restore` validated the current prompt and cloned/materialized the complete pair:
+actual restored Target/ring frontiers **11/11**, all same-operation restore
+structures/values equal, all mutable containers distinct from retained snapshots.
+Actual P6 execution records are seed `{start:0,end:11,rows:11}`, append
+`{start:11,end:16,rows:5}`. No append execution started at zero, no prefix replay
+was observed, and neither N-1 nor P5 was reached. Diagnostic capture exceptions
+unwound the native layer wrappers/lease before reference execution.
+
+Retained seed digest before/after append was exactly
+`4a41611c277fd2cea0f8b9b5a90b48956289d09889c97d4c9e8231e19ed82d3c`.
+No snapshot mutation or unintended mutable state sharing was observed. The seed
+snapshot, restored candidate and fresh reference coexisted under supervision;
+small-case memory was measured, not inferred from A/B.
+
+Reference consumed **all sixteen current canonical IDs [0,16)**, starting at zero,
+using fresh ordinary Target/ring factories and independently recomputed embeddings
+and hidden taps. It received no restored pair, candidate Target/rings, embeddings,
+taps or outputs. Shared weights, kernels, MLX primitives, Engram/native DSpark math
+and diagnostic unpacker limit independence as in §2: independent schedule/state,
+not independently implemented math.
+
+### Structural and numerical observation
+
+| Observation | Result |
+| --- | --- |
+| Matched boundary | Exact consumed current IDs; candidate/reference Target/rings all **16** |
+| Target structures | **40 layers × 7 slots**; presence, shapes, primitive dtypes, offsets, metadata/compression, lengths and padding equal |
+| Exact Engram | Layer 0 three int64 entries, mismatch count 0; NumPy/MLX representations disclosed; other histories empty |
+| Window KV | All 40 layers, 16 meaningful rows, absolute **[0,16)**; 8-bit/group-32 decoding |
+| Compressed KV/index | Layers 2/8/14: 8 rows each (ratio 2); layer 20: 16 (ratio 1); other source rows inapplicable; 4-bit/group-16/E4M3 and 4-bit/group-32 decoding |
+| Compressor/gate tails | No meaningful tail rows at even C=16; empty structures still compared |
+| Target floating coverage | **48 chunks, 353,280 scalar pairs**; **230,446** differing values, nonfinite pairs **0** |
+| Target extrema over meaningful chunks | Max-absolute **2.0** (layer 39 window); largest RMS-relative **0.2095074462**, smallest cosine **0.9780551779** (layer 37 window) |
+| Rings | All 3 `[1,1,16,512]` BF16, 8,192 scalar pairs each; capacity 128, offsets 16, physical slots map exactly to absolute **0–15** |
+| Ring 0 | Max-absolute **0.5**, RMS-relative **0.1298231648**, cosine **0.9915448918**; 6,055 mismatches |
+| Ring 1 | Max-absolute **0.484375**, RMS-relative **0.1549562178**, cosine **0.9879770956**; 6,254 mismatches |
+| Ring 2 | Max-absolute **0.53125**, RMS-relative **0.1707380970**, cosine **0.9854016948**; 6,463 mismatches |
+| Ring nonfinites / mapping | Zero nonfinite pairs; exact mapping, no rotation normalization |
+
+**First meaningful discrepancy:** layer **0**, slot **1** window KV, first decoded
+flat index **11** = absolute row **0**, channel **11**: candidate **0.0234375**,
+reference **0.025390625**. That chunk has max-absolute **0.125**, RMS-relative
+**0.0081874600**, cosine **0.9999664847**, 319 differing decoded values. Thus even
+retained-prefix floating rows differ from fresh full-current-prefill; append
+execution records nevertheless show no prefix replay. Every Target layer's window
+has differences. Packed-byte differences are recorded separately, not interpreted
+as floating error. Quantized source/index differences also occur. No meaningful
+rows were excluded and no tolerance was selected/fitted. The cause is **not
+established by this observation**; exact A/B cold results cannot establish
+cross-chunk append equality. No corrective reload or automatic follow-on diagnosis
+was performed. Complete traversal supports OBSERVED, not an approved envelope.
+
+### Safety, cleanup and validation
+
+The disposable external supervisor reused psutil available reserve, vm_stat
+swapout/use, pressure sysctl, process-ancestry/competitor and port-1234 checks,
+and libproc rusage-v4 current/lifetime physical footprint (SDK offsets 72/240).
+Health samples approximately every 2 seconds, retained samples approximately every
+10; minima/maxima tracked at each health check. Owned admission descendants were
+excluded from competitor detection. Fresh pre-load gate reserve **493.259 GiB**
+exceeded **455.226 GiB**; minimum reserve **199.269 GiB** exceeded **64 GiB**.
+Lifetime physical-footprint maximum **300.583 GiB**, below **425 GiB** trigger and
+430 GiB ceiling. Worker **68526** elapsed **106.91 s**, supervisor **108.66 s**,
+below 30-minute/10-minute-no-progress limits. Pressure **1 (normal)**, swap use,
+swapins/swapouts **0** throughout; no competitor/endpoint or stop threshold.
+Only task-owned workers could be terminated; no termination was necessary.
+
+Overlapping measures, not additive: after load MLX active **287.920 GiB**, cache
+**5.207 GiB**, peak **290.160 GiB**; after comparison active **287.920 GiB**, cache
+**5.395 GiB**, same peak. Model close, backend/executor shutdown, GC, stream sync
+and allocator clear left MLX active **3,256 bytes**, cache **0**. Post-close process
+footprint was not separately sampled, so no allocator-leak verdict. Worker exited
+code **0**, exit verified; supervisor exited. Host reserve returned to **493.509
+GiB**. Final process/listener inspection after tests found no worker, competing
+inference loader or 1234 listener, normal pressure and zero swap/use. Temporary
+scripts/gates were removed; only hashes/compact metrics/logs retained, no tensors
+or duplicate assets.
+
+Focused validation ([log](phase2-reference-step1c-tests.log)):
+`tests/test_prefill_numerical_reference.py tests/test_production_mtp.py` — **49
+passed**, 41 existing warnings, 43.80 s (before load);
+`tests/test_prefill_fp8_mlx_p6.py` — **20 passed, 12 subtests passed**, 35.94 s
+(after worker exit). Five new adapter cases cover successful restoration/full
+reference, incompatible prefix, missing suffix, incorrect restored frontier and
+snapshot mutation; existing paired tests cover identity and wrapped-ring snapshot
+negatives. No weights loaded by tests; unchanged image/A/B campaigns not repeated.
+`git diff --check` and `python tools/check_repository_self_containment.py`: PASS.
+Review found only the small adapter/tests, evidence and factual stale progress
+corrections; no duplicate authority/framework or unnecessary production change.
+Committed locally; SHA reported separately. No push/deployment.
+
+**Unqualified:** general floating accuracy envelope; N-1/P5, teacher forcing and
+matched-logit continuation; ProductionScheduler cache-hit lifecycle; changed-image
+or history reconstruction; Harness lifecycle; Phase 2/C2 acceptance. The observed
+floating differences remain unresolved evidence, not hidden by a tolerance.
+**Stop after Case C. No follow-on work is authorized or started.**
