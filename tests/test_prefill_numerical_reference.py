@@ -12,6 +12,76 @@ from tools.qualify_prefill_fp8_mlx import (
 from test_production_mtp import pair
 
 
+def test_layer0_live_prefix_measurement_detects_one_changed_retained_byte():
+    import mlx.core as mx
+    from omlx.patches.deepseek_v41.cache import DeepseekV41Cache
+    from omlx.patches.deepseek_v41.quantization import pack_activation
+    from tools.qualify_prefill_fp8_mlx import layer0_window_observation, layer0_prefix_metrics
+    cfg = SimpleNamespace(window_size=128, head_dim=32)
+    cache = DeepseekV41Cache(0)
+    cache[0] = mx.array([11], mx.int32)
+    cache[1] = pack_activation(mx.ones((1, 11, 32)))
+    a = layer0_window_observation(cache, cfg)
+    cache[0] = mx.array([16], mx.int32)
+    cache[1] = mx.concatenate([cache[1], pack_activation(mx.ones((1, 5, 32)))], 1)
+    b = layer0_window_observation(cache, cfg)
+    assert layer0_prefix_metrics(a, b, 11)['packed']['mismatches'] == 0
+    cache[1][0, 0, 11] = cache[1][0, 0, 11] ^ mx.array(1, mx.uint8)
+    changed = layer0_window_observation(cache, cfg)
+    got = layer0_prefix_metrics(a, changed, 11)
+    assert got['packed']['mismatches'] == got['decoded']['mismatches'] == 1
+    assert got['decoded']['samples'][0]['flat_index'] == 11
+    assert a['packed'][0, 0, 11] != changed['packed'][0, 0, 11]
+    changed['absolute_positions'][0] = 1
+    with pytest.raises(ValueError, match='same absolute'):
+        layer0_prefix_metrics(a, changed, 11)
+
+
+@pytest.mark.parametrize('fail', [False, True])
+def test_layer0_hooks_preserve_values_and_restore_on_exception(fail):
+    import mlx.core as mx
+    import mlx.nn as nn
+    import omlx.patches.deepseek_v41.language as lang
+    from tools.qualify_prefill_fp8_mlx import layer0_numerical_handles
+    def projection(n, k):
+        w, s = mx.quantize(mx.ones((n, k)), group_size=32, bits=8, mode='mxfp8')
+        return lang.QuantizedProjection(w, s, 8, 'mxfp8')
+    class Engram(nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.wkv = projection(32, 32)
+        def __call__(self, h):
+            return self.wkv(h)
+    class Attention(nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.wkv = projection(32, 32)
+            self.kv_norm = lang.RMSNorm(32, 1e-6)
+        def __call__(self, x):
+            return lang.pack_activation(self.kv_norm(self.wkv.project_quantized(lang.quantize_activation(x))))
+    e, attn = Engram(), Attention()
+    lm = SimpleNamespace(layers=[SimpleNamespace(engram=e, attn=attn)])
+    x = mx.ones((1, 11, 32), mx.bfloat16)
+    baseline = attn(e(x))
+    originals = (Engram.__call__, Attention.__call__, lang.QuantizedProjection.__call__,
+                 lang.QuantizedProjection.project_quantized, lang.RMSNorm.__call__, lang.pack_activation)
+    try:
+        with layer0_numerical_handles(lm) as handles:
+            out = attn(e(x))
+            if fail:
+                raise RuntimeError('intentional observer unwind')
+    except RuntimeError as exc:
+        assert fail and 'intentional' in str(exc)
+    assert originals == (Engram.__call__, Attention.__call__, lang.QuantizedProjection.__call__,
+                         lang.QuantizedProjection.project_quantized, lang.RMSNorm.__call__, lang.pack_activation)
+    assert physical_tensor_metrics(out, baseline)['mismatches'] == 0
+    prepack = handles['prepack']
+    changed = prepack + mx.array(1, prepack.dtype)
+    assert physical_tensor_metrics(prepack, changed)['mismatches'] == prepack.size
+    assert handles['engram_input'] is x
+    assert handles['attention_wkv_qdq'].shape == (1, 11, 32)
+
+
 def test_metrics_are_chunk_bounded_and_match_direct_reductions():
     a = np.arange(101, dtype=np.float32) / 10
     b = a + np.float32(.01)
@@ -373,6 +443,70 @@ def test_reference_image_embedding_is_recomputed_and_input_bounds_fail_closed():
     model.language_model.make_cache = lambda: [SimpleNamespace(size=lambda: 2)] * 40
     with pytest.raises(ValueError, match='fresh'):
         ordinary_prefill_reference(model, ids)
+
+
+@pytest.mark.parametrize('changed', [False, True, 'restore'])
+def test_case_c_layer0_lane_observes_live_restore_and_stops_on_modified_prefix(monkeypatch, changed):
+    from contextlib import nullcontext
+    import tools.qualify_prefill_fp8_mlx as tool
+    from ds41f_mlx.prefill_fp8_mlx import DeferredPrefillAppend
+    from ds41f_mlx.serving.paired_checkpoint import PairedCheckpoint
+    if changed == 'restore':
+        restore = PairedCheckpoint.restore
+        def modified_restore(*args, **kwargs):
+            target, rings, tokens = restore(*args, **kwargs)
+            target[0][1][0, 0, 0] = 0
+            return target, rings, tokens
+        monkeypatch.setattr(PairedCheckpoint, 'restore', modified_restore)
+    seed, cfg = native_meaningful_pair(11)
+    current, _ = native_meaningful_pair(16)
+    independent, _ = native_meaningful_pair(16)
+    for state in (seed, current, independent):
+        c = state['target'][0]
+        c[1] = c[1][:, :c.size()]
+    lm = SimpleNamespace(layers=[object() for _ in range(40)], _config=cfg)
+    backend = SimpleNamespace(_model=SimpleNamespace(language_model=lm))
+    seed_request = SimpleNamespace(token_ids=list(range(13)), multimodal=None)
+    request = SimpleNamespace(token_ids=list(range(18)), multimodal=None)
+    events = []
+    def start(rec, req, tokenizer, trace, *, checkpoint_capture):
+        C, end = len(rec.canonical), len(req.token_ids)-2
+        events.append((C, end))
+        DeferredPrefillAppend.execute_all(SimpleNamespace(C=C, T=end))
+        if not C:
+            state = seed if end == 11 else current
+            rec.cache, rec.rings = state['target'], state['rings']
+        else:
+            # Simulate a live append, never alter the immutable saved seed.
+            rec.cache[:], rec.rings[:] = current['target'], current['rings']
+            if changed:
+                rec.cache[0][1][0, 0, 0] = 0
+        checkpoint_capture(rec.cache, rec.rings, req.token_ids[:-2])
+    backend._start = start
+    monkeypatch.setattr(DeferredPrefillAppend, 'execute_all', lambda app: None)
+    monkeypatch.setattr(tool, 'layer0_numerical_handles', lambda lm: nullcontext({}))
+    def reference(model, ids):
+        assert not changed and events == [(0, 11), (11, 16), (0, 16)]
+        assert ids.tolist() == [list(range(16))]
+        return independent
+    monkeypatch.setattr(tool, 'ordinary_prefill_reference', reference)
+    got = tool.observe_case_c_n2(backend, seed_request, request, None, identity='test', layer0=True)
+    if changed == 'restore':
+        assert got['comparisons']['A_B0']['packed']['mismatches'] == 1
+        assert got['classifications'] == ['UNRESOLVED', 'PARTIAL']
+        assert events == [(0, 11)]
+        return
+    assert got['comparisons']['A_B0']['packed']['mismatches'] == 0
+    assert got['comparisons']['A_B1']['packed']['mismatches'] == int(changed)
+    if changed:
+        assert got['classifications'] == ['PREFIX_MODIFIED', 'PARTIAL']
+        assert events == [(0, 11), (11, 16)]
+        assert 'C' not in got['observations']
+    else:
+        assert got['classifications'] == ['PREFIX_PRESERVED']
+        assert set(got['observations']) == {'A', 'B0', 'B1', 'C', 'D'}
+        assert got['executions']['C'] == [dict(start=0, end=16, rows=16)]
+        assert got['comparisons']['C_D']['decoded']['mismatches'] == 0
 
 
 @pytest.mark.parametrize('fault', [None, 'prefix', 'suffix', 'frontier', 'mutation'])

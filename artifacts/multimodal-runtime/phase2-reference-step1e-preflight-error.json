@@ -1,0 +1,112 @@
+{
+  "starting_head": "fee0ef98f52168feb819d75f6b47e5d0d9b1da73",
+  "pid": 12228,
+  "model_loads": 0,
+  "outcome": "PARTIAL",
+  "error": "Traceback (most recent call last):\n  File \"/tmp/step1e-worker.py\", line 31, in <module>\n    body=entry['body']; req=prepare_request('chat',json.dumps(body).encode(),tokenizer=tokenizer,recipe_path=cfg.recipe_path,checkpoint=cfg.checkpoint_path,ordinary=True)\n                            ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/ds41f_mlx/serving/server.py\", line 49, in prepare_request\n    request_type, _ = PROTOCOL_TYPES[protocol]\n                      ~~~~~~~~~~~~~~^^^^^^^^^^\nKeyError: 'chat'\n",
+  "after_cleanup": {
+    "active": 8,
+    "cache": 0,
+    "peak": 458888
+  },
+  "elapsed_s": 35.951393167022616,
+  "reason": "Scratch-driver protocol key chat was rejected before canonical preparation/load gate; corrected to installed chat_completions",
+  "admission_identity_sha256": "9c439d3fb9ad730996ecca821234bba1ce8817d7b46a2744e171c10a4d7d2ca2",
+  "resources": {
+    "thresholds": {
+      "preload_gib": 455.226,
+      "reserve_gib": 64,
+      "footprint_stop_gib": 425,
+      "ceiling_gib": 430,
+      "total_s": 1800,
+      "no_progress_s": 600
+    },
+    "samples": [
+      {
+        "time": 1792928218.337174,
+        "available": 529318133760,
+        "swap_used": 0,
+        "swapouts": 0,
+        "swapins": 0,
+        "pressure": 1,
+        "competitors": [],
+        "endpoint1234": false,
+        "footprint": {
+          "current": 11878856,
+          "lifetime_max": 11878856
+        }
+      },
+      {
+        "time": 1792928228.501281,
+        "available": 529025777664,
+        "swap_used": 0,
+        "swapouts": 0,
+        "swapins": 0,
+        "pressure": 1,
+        "competitors": [],
+        "endpoint1234": false,
+        "footprint": {
+          "current": 370984208,
+          "lifetime_max": 745735368
+        }
+      },
+      {
+        "time": 1792928238.678357,
+        "available": 529678827520,
+        "swap_used": 0,
+        "swapouts": 0,
+        "swapins": 0,
+        "pressure": 1,
+        "competitors": [],
+        "endpoint1234": false,
+        "footprint": {
+          "current": 76039248,
+          "lifetime_max": 745735368
+        }
+      },
+      {
+        "time": 1792928248.851894,
+        "available": 529337270272,
+        "swap_used": 0,
+        "swapouts": 0,
+        "swapins": 0,
+        "pressure": 1,
+        "competitors": [],
+        "endpoint1234": false,
+        "footprint": {
+          "current": 76186704,
+          "lifetime_max": 745735368
+        }
+      }
+    ],
+    "baseline": {
+      "time": 1792928218.310646,
+      "available": 529332617216,
+      "swap_used": 0,
+      "swapouts": 0,
+      "swapins": 0,
+      "pressure": 1,
+      "competitors": [],
+      "endpoint1234": false,
+      "footprint": null
+    },
+    "worker_pid": 12228,
+    "min_available": 528264560640,
+    "max_lifetime_footprint": 745735368,
+    "elapsed_s": 36.65162758299266,
+    "worker_returncode": 0,
+    "worker_exit_verified": true,
+    "final": {
+      "time": 1792928254.979018,
+      "available": 528415834112,
+      "swap_used": 0,
+      "swapouts": 0,
+      "swapins": 0,
+      "pressure": 1,
+      "competitors": [],
+      "endpoint1234": false,
+      "footprint": null
+    }
+  },
+  "log": "Traceback (most recent call last):\n  File \"/tmp/step1e-worker.py\", line 31, in <module>\n    body=entry['body']; req=prepare_request('chat',json.dumps(body).encode(),tokenizer=tokenizer,recipe_path=cfg.recipe_path,checkpoint=cfg.checkpoint_path,ordinary=True)\n                            ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/ds41f_mlx/serving/server.py\", line 49, in prepare_request\n    request_type, _ = PROTOCOL_TYPES[protocol]\n                      ~~~~~~~~~~~~~~^^^^^^^^^^\nKeyError: 'chat'\n\nWORKER CLEANUP COMPLETE\n"
+}

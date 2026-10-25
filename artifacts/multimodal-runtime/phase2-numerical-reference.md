@@ -1498,3 +1498,167 @@ fact changed. Local commit SHA reported separately; no push or deployment.
 exactly as source specifies, and, if so, which pre-pack operation first separates
 cold 11-row from cold 16-row prefix production. Cause remains unresolved, not a
 new acceptance condition. **Stop after Step 1D; no follow-on task started.**
+
+## 14. Step 1E — Layer 0 prefix preservation attempt (2026-10-25)
+
+**Disposition: BLOCKED / PARTIAL / UNRESOLVED.** The single real-model loading
+attempt was stopped by the task supervisor **before `backend.load()` returned**.
+No Case C forward, capture/restore, append, cold control, pre-pack observation or
+leaf replay ran. There is **no new numerical result**, and no numerical PASS,
+PREFIX_PRESERVED, PREFIX_MODIFIED, COLD_SHAPE_DIFFERENCE,
+P6_ORDINARY_DIFFERENCE or LEAF_ATTRIBUTED claim. The unanswered numerical
+questions from §13 remain unanswered. No automatic model reload was performed.
+
+### Review, identities and canonical preparation
+
+Started at the expected clean `fee0ef98f52168feb819d75f6b47e5d0d9b1da73`,
+`Multimodal-Runtime`, one worktree. Point-in-time process inspection found the
+existing coding agent but no other coding/model worker or port-1234 endpoint.
+Read documentation policy, upstream-first/sequencing, Phase 2/C2, ordinary MTP,
+verification, §§10–13 and Step 1C/1D structured evidence. Reused Step 1D's official
+DeepInfer audit at **`9bd9cf243fc53ef9afbf8f04d391d989117d6ab9`**; no new source
+question required repeating that audit. Its lack of an established bitwise
+11+5/16 invariant neither accepts arbitrary divergence nor establishes a defect.
+
+Before designing hooks, inspected checkout `_start`, paired clone/capture/restore,
+P6 append/planning/publication and block-runner execution, and actual installed
+oMLX `language.py`, `cache.py`, `quantization.py`, `engram.py`, activation Q/DQ,
+projection dispatch, HC/pre-normalization, norm/RoPE and ordinary `_forward`.
+The installed Target path remains **oMLX**, not first-party model execution.
+Installed `_start`, P6 and block runner equal checkout; paired module differences
+remain budget/lookup additions outside the capture/restore operations reviewed
+in §13. No installation or production numerical code was modified.
+
+[Identity/preparation receipt](phase2-reference-step1e.json) records actual origins,
+installed numerical source hashes, checkout hashes, package direct-URL identities,
+build provenance and full installed checkpoint admission. Interpreter was
+`/Volumes/SDXC-512/ds41f-1017/bin/python -I`; checkpoint was the required
+KIOXIA-PRO-2 `DeepSeek-V4.1-Flash-1017`. Admission **PASS**, identity SHA256
+`9c439d3fb9ad730996ecca821234bba1ce8817d7b46a2744e171c10a4d7d2ca2`,
+profile **`flash-1017-pre-woa-fp8-v1`**, native GLM. Installed ds41f 0.23.0/build
+`aa8c5717b42aa0a216fef3134e72c6db7ca49287`, oMLX 0.7.0 with the four admitted
+overlays, MLX 0.32.2, mlx-lm `0.31.4.dev132+g94cdcae13`, Recipe 0.2.0/native
+revision `93b0fd229cc9ffa6b1a8c63d42b0bf741bbec170` plus semantic patch.
+The unchanged-file checkpoint-verification-cache caveat still applies; this is
+not a new independent rehash of all 48 weight shards.
+
+Installed Recipe prepared the **exact Step 1C bodies** before the load gate:
+
+| Request | Actual N / N-2 | Actual ordered little-endian int32 SHA256 |
+| --- | --- | --- |
+| `Explain immutable checkpoints in one short sentence.` | 13 / 11 | `8ce125c769d4a95f97bceac24a7c6aa2f8bbf36a1f0c4ff1d1c4a9ab82d79fb2` |
+| `Explain immutable checkpoints in one short sentence. Then state one benefit.` | 18 / 16 | `9059c79e53e40e13f60272e37226a6f5d99f2d5d6f53879d4dbaff1ff91c4c1b` |
+
+Temperature 0, max_tokens 1, reasoning none; exact IDs matched Step 1C, common
+prefix length 11 and planned append [11,16). No handcrafted IDs or altered text.
+An earlier **zero-load preflight** used the wrong scratch-driver protocol key
+`chat`; installed `prepare_request` rejected it. The failure and cleanup are
+retained in [preflight evidence](phase2-reference-step1e-preflight-error.json).
+Correcting it to the inspected `chat_completions` key preceded successful
+canonical verification and the sole weight-loading attempt.
+
+### Focused diagnostic preparation, not real-model qualification
+
+Extended **the existing `observe_case_c_n2`**, opt-in only, instead of adding a
+second execution owner. The missing interface was a live L0 observation before
+`PairedCheckpoint.capture`, and B0 before `_start`; the former snapshot digest
+cannot supply these. Prepared mode copies packed bytes and meaningful FP32-decoded
+values from live cache boundaries A/B0/B1, records primitive layout, absolute row
+mapping, metadata/offsets and MLX memory, and compares all three prefix relations.
+A restore difference stops before append; a live append difference stops before
+cold arithmetic attribution. With exact preservation it reuses the same `_start`
+and ordinary-reference interfaces for C/D, with genuine capture/restore and
+separate P6/ordinary schedules. Existing default Case C behavior remains intact.
+
+Narrow temporary installed-oMLX hooks retain original L0 Engram input/output,
+Engram projection input/output, attention input, projection post-input-Q/DQ/output,
+KV norm output and immediate pre-pack input. They perform **no tensor operations,
+slicing, host reads, eval or synchronization inside numerical calls**, substitute
+no values, and restore methods through `ExitStack`, including exceptions.
+They extend graph lifetime; compiled interiors and the internal Engram gate are
+not separately traced. Additional gated-contribution instrumentation would only
+be justified if these initial boundaries left that specific question unresolved.
+There is no claim that their full-model scheduling neutrality was experimentally
+validated: **the hooks were never installed in the real worker**. Duplicate L0
+calls fail rather than silently merge shapes. Post-run review removed an
+unnecessary planned all-cache eval at the ordinary measurement boundary; executed
+and final diagnostic hashes are distinguished in the receipt.
+
+These helpers are diagnostic-only, bounded to short singleton non-wrapped L0
+windows; they are removable after investigation. They create no inference engine,
+cache/session authority, quantizer, arithmetic correction or acceptance threshold.
+Retained handles increase lifetime/resource costs; the attempted run did **not**
+reach checkpoint/candidate/cold/reference coexistence, so those costs remain
+unmeasured. Model-free tiny controls are measurement-integrity evidence only.
+
+### Interruption, resources and cleanup
+
+[Run log](phase2-reference-step1e-run.log) and
+[supervision evidence](phase2-reference-step1e-resources.json) show one worker
+**18316**, one invocation of the existing model loader, **zero completed loads**
+and **zero numerical executions**. Supervision sampled about every two seconds,
+retaining compact samples about every ten; libproc rusage-v4 current/lifetime
+footprint used SDK offsets 72/240. Thresholds stayed at preload 455.226 GiB,
+reserve 64 GiB, stop footprint 425 GiB before ceiling 430 GiB, normal pressure,
+no swap-use increase/swapouts, no competing inference/1234 endpoint, and
+1800-second total/600-second no-progress limits.
+
+**The stop was a supervisor false positive caused by this task**, not evidence of
+a competing inference loader: while loading, the assistant launched a short
+read-only Python process **24444** to print resource JSON. The conservative
+process-name detector treated every non-descendant Python process as competition;
+it did not recognize this task-owned reader. At the next sample it sent SIGTERM
+to **only the owned model worker**. The worker exited **-15**, verified absent;
+no reload followed. No unrelated service or process was terminated or changed.
+A future supervisor must recognize explicitly owned telemetry processes (or avoid
+launching them), without weakening detection of actual competing model activity.
+No supervisor framework or admission change was added to the repository.
+
+- Pre-load gated available memory **493.071 GiB**; health-sampled minimum reserve
+  **241.216 GiB**. Available includes reclaimable pages, not only free pages.
+- Sampled lifetime physical-footprint high-water **252.313 GiB** during incomplete
+  loading, below 425 GiB. This is not the unsampled final allocation peak or a
+  completed-model memory bound. No post-load MLX active/cache/peak sample exists.
+- Attempt elapsed **92.44 s**, including admission/gate wait; preceding zero-load
+  preflight **35.95 s**. No time, pressure, reserve or swap threshold fired.
+- Pressure **1 (normal)**; swap use, vm_stat swapins/swapouts **0** throughout.
+  No LM Studio/1234 endpoint or actual competing model activity was observed.
+- SIGTERM bypassed Python `finally`, so model-close/allocator-clear metrics do
+  **not** exist for the interrupted worker. OS process exit reclaimed its resources;
+  final host available memory **493.337 GiB**. Hooks had not been entered and no
+  reusable pair, native generation owner or published cache existed to retire.
+  Supervisor/worker/reader exit and absence of port 1234 were rechecked after tests.
+  Task-owned scratch scripts/gates were removed after retaining hashes; no tensors
+  or extra model assets were retained.
+
+### Validation and numerical stopping boundary
+
+Before loading: affected collector/adapter/P6 tests **41 passed, 12 subtests
+passed**. Final [focused validation](phase2-reference-step1e-tests.log) additionally
+covers the optional live-boundary lane and restore-before-append failure guard.
+Controls detect an intentionally changed retained packed byte and its decoded
+value, a changed pre-pack value, wrong absolute-position mapping, modified restore,
+and modified live append; verify genuine clone/restore isolation, C/D sequencing,
+no cold controls after prefix modification, and exact method restoration on
+success/exception. These tests load **no model weights**. Final command:
+`tests/test_prefill_numerical_reference.py tests/test_prefill_fp8_mlx_p6.py` —
+**44 passed, 12 subtests passed in 41.97 s**. `git diff --check`: PASS.
+`python tools/check_repository_self_containment.py`: PASS (35 current owners,
+153 Markdown files, 585 live links). Final diff review found only the existing
+diagnostic tool/tests and appended evidence: no production changes, duplicated
+execution authority, historical evidence edits or unsupported acceptance claims.
+Validated changes/evidence committed locally; SHA reported separately. No push
+or deployment.
+
+A/B0/B1 packed/decoded prefix comparisons: **not executed**. A/C and C/D:
+**not executed**. Actual real-model operation shapes, first differing values,
+positions/dtypes/metrics and fixed-input leaf attribution: **not observed**.
+Only §13's source/planner shape evidence (11/5/16 rows) remains; it is not a new
+numerical measurement. Cases A/B/C and Step 1D remain unchanged historical
+receipts. No production defect, tolerance, correction or numerical acceptance is
+established. C2, P5, continuation, production reuse and Harness remain unqualified.
+
+**Smallest remaining numerical question:** do the original eleven L0 packed KV
+rows survive genuine live restore and append exactly? The operational prerequisite
+for any separately authorized attempt is avoiding the telemetry false positive;
+this task does not start another attempt. **Stop after Step 1E.**

@@ -13,7 +13,7 @@ have no numerical acceptance thresholds; see the Phase 2 reference report.
 from __future__ import annotations
 
 import argparse
-from contextlib import ExitStack
+from contextlib import ExitStack, contextmanager, nullcontext
 import hashlib
 import importlib.metadata
 import inspect
@@ -377,11 +377,126 @@ def observe_case_a_n2(backend, request, tokenizer, *, identity):
     return result
 
 
-def observe_case_c_n2(backend, seed_request, request, tokenizer, *, identity):
+def layer0_window_observation(cache, config):
+    """Copy live, already committed L0 bytes; never mistake a checkpoint for live state."""
+    import numpy as np
+    import mlx.core as mx
+    from omlx.patches.deepseek_v41.quantization import unpack_activation
+    end, value = cache.size(), cache.cache[1]
+    if not 0 < end <= config.window_size or value.shape != (1, end, config.head_dim + config.head_dim//32) or value.dtype != mx.uint8:
+        raise ValueError('Layer 0 observer requires a short unpadded FP8 window')
+    for name in ('left_padding', 'lengths'):
+        v = getattr(cache, name, None)
+        if v is not None and (v.size != 1 or int(v.item()) != (0 if name == 'left_padding' else end)):
+            raise ValueError('Layer 0 observer requires unpadded committed state')
+    packed = np.array(value, copy=True)
+    decoded = np.array(unpack_activation(value, dtype=mx.float32), copy=True)
+    return dict(packed=packed, decoded=decoded, frontier=end,
+                absolute_positions=list(range(end)), meta_state=list(cache.meta_state),
+                compress_ratio=cache.compress_ratio,
+                offset=np.asarray(cache.cache[0]).tolist(),
+                left_padding=None if cache.left_padding is None else np.asarray(cache.left_padding).tolist(),
+                lengths=None if cache.lengths is None else np.asarray(cache.lengths).tolist(),
+                memory=dict(active=mx.get_active_memory(), cache=mx.get_cache_memory(), peak=mx.get_peak_memory()))
+
+
+def layer0_prefix_metrics(a, b, rows):
+    if rows <= 0 or any(o['absolute_positions'][:rows] != list(range(rows)) for o in (a, b)):
+        raise ValueError('prefix rows are not the same absolute positions')
+    return {key: physical_tensor_metrics(a[key][:, :rows], b[key][:, :rows])
+            for key in ('packed', 'decoded')}
+
+
+@contextmanager
+def layer0_numerical_handles(lm):
+    """Temporary installed-oMLX L0 hooks: retain original handles, no tensor ops.
+
+    No eval, slicing, copies or host reads inside calls. Read handles only after
+    the original execution has synchronized/unwound. Retention extends graph
+    lifetime; compiled internals are deliberately not instrumented. This focused
+    diagnostic is removable, not a general tracer or a numerical implementation.
+    """
+    import omlx.patches.deepseek_v41.language as lang
+    layer = lm.layers[0]
+    engram, attn = layer.engram, layer.attn
+    projections = {id(engram.wkv): 'engram_wkv', id(attn.wkv): 'attention_wkv'}
+    handles, active = {}, [False]
+    def keep(name, value):
+        if name in handles:
+            raise ValueError('unexpected repeated Layer 0 observation: ' + name)
+        handles[name] = value
+    with ExitStack() as stack:
+        def wrap(cls, name, factory):
+            original = getattr(cls, name)
+            stack.enter_context(patch.object(cls, name, factory(original)))
+        def engram_call(original):
+            def call(self, h, *args, **kwargs):
+                out = original(self, h, *args, **kwargs)
+                if self is engram:
+                    keep('engram_input', h)
+                    keep('engram_output', out)
+                return out
+            return call
+        def projection_call(original):
+            def call(self, x, *args, **kwargs):
+                out = original(self, x, *args, **kwargs)
+                if id(self) in projections:
+                    keep(projections[id(self)] + '_input', x)
+                    if not isinstance(self, lang.QuantizedProjection):
+                        keep(projections[id(self)] + '_output', out)
+                return out
+            return call
+        def project(original):
+            def call(self, x, *args, **kwargs):
+                out = original(self, x, *args, **kwargs)
+                if id(self) in projections:
+                    keep(projections[id(self)] + '_qdq', x)
+                    keep(projections[id(self)] + '_output', out)
+                return out
+            return call
+        def attention_call(original):
+            def call(self, x, *args, **kwargs):
+                if self is not attn:
+                    return original(self, x, *args, **kwargs)
+                keep('attention_input', x)
+                active[0] = True
+                try:
+                    return original(self, x, *args, **kwargs)
+                finally:
+                    active[0] = False
+            return call
+        def norm_call(original):
+            def call(self, x):
+                out = original(self, x)
+                if self is attn.kv_norm:
+                    keep('kv_norm_output', out)
+                return out
+            return call
+        pack = lang.pack_activation
+        def observed_pack(x, *args, **kwargs):
+            out = pack(x, *args, **kwargs)
+            if active[0] and x.shape[1]:
+                keep('prepack', x)
+            return out
+        wrap(type(engram), '__call__', engram_call)
+        if not isinstance(engram.wkv, lang.QuantizedProjection):
+            wrap(type(engram.wkv), '__call__', projection_call)
+        wrap(lang.QuantizedProjection, '__call__', projection_call)
+        wrap(lang.QuantizedProjection, 'project_quantized', project)
+        wrap(type(attn), '__call__', attention_call)
+        wrap(type(attn.kv_norm), '__call__', norm_call)
+        stack.enter_context(patch.object(lang, 'pack_activation', observed_pack))
+        yield handles
+
+
+def observe_case_c_n2(backend, seed_request, request, tokenizer, *, identity, layer0=False):
     """Diagnostic paired restore + positive append, NOT a Scheduler lookup.
 
     Cold seed execution only constructs the checkpoint. The ordinary reference
     consumes the entire current N-2 prefix on fresh factories, never the pair.
+    Optional Step 1E mode returns live L0 observations and original tensor handles
+    instead of repeating the all-layer comparison. Caller owns handle retirement;
+    this mode has model-free coverage, not completed real-model validation.
     """
     import numpy as np
     import mlx.core as mx
@@ -406,19 +521,27 @@ def observe_case_c_n2(backend, seed_request, request, tokenizer, *, identity):
         return execute(app)
     class CaptureComplete(Exception):
         pass
-    def run(rec, req):
+    observations = {}
+    def run(rec, req, label):
         saved = None
         def capture(target, rings, consumed):
             nonlocal saved
             if tuple(consumed) != tuple(req.token_ids[:-2]):
                 raise ValueError('candidate capture is not canonical N-2')
+            if layer0:
+                observations[label] = dict(window=layer0_window_observation(target[0], lm._config),
+                    pair_logical_bytes=sum(v.nbytes for c in target for v in (*c.cache, c.left_padding, c.lengths) if v is not None)
+                        + sum(r.keys.nbytes for r in rings if r.keys is not None))
             saved = PairedCheckpoint.capture(identity, target, rings, consumed, mx)
             print(f'Case C: captured N-2 frontier {len(consumed)}', flush=True)
             raise CaptureComplete()
-        try:
-            backend._start(rec, req, tokenizer, {}, checkpoint_capture=capture)
-        except CaptureComplete:
-            pass
+        with layer0_numerical_handles(lm) if layer0 else nullcontext() as handles:
+            try:
+                backend._start(rec, req, tokenizer, {}, checkpoint_capture=capture)
+            except CaptureComplete:
+                pass
+        if layer0:
+            observations[label]['handles'] = handles
         if saved is None or rec.owner is not None or any(a is not b for a, b in zip(lm.layers, original_layers)):
             raise RuntimeError('Case C capture/unwind failed')
         return saved
@@ -440,7 +563,7 @@ def observe_case_c_n2(backend, seed_request, request, tokenizer, *, identity):
         return h.hexdigest()
     with patch.object(DeferredPrefillAppend, 'execute_all', observed_execute):
         seed_rec = QualificationSession('phase2-step1c-seed')
-        seed = run(seed_rec, seed_request)
+        seed = run(seed_rec, seed_request, 'A')
         seed_rec.cache = seed_rec.rings = None
         before = fingerprint(seed)
         rec = QualificationSession('phase2-step1c-append')
@@ -451,16 +574,52 @@ def observe_case_c_n2(backend, seed_request, request, tokenizer, *, identity):
         distinct = all(a is not b and a.cache is not b.cache for a, b in zip(rec.cache, seed.target)) and all(a is not b for a, b in zip(rec.rings, seed.rings))
         if not distinct:
             raise ValueError('restored mutable containers alias checkpoint')
-        restore_metrics = paired_physical_metrics(
-            dict(target=rec.cache, rings=rec.rings), dict(target=seed.target, rings=seed.rings))
+        if layer0:
+            observations['B0'] = dict(window=layer0_window_observation(rec.cache[0], lm._config))
+            restored_prefix = layer0_prefix_metrics(observations['A']['window'], observations['B0']['window'], C)
+            if any(m['mismatches'] for m in restored_prefix.values()):
+                return dict(classifications=['UNRESOLVED', 'PARTIAL'],
+                            comparisons=dict(A_B0=restored_prefix), observations=observations,
+                            executions=dict(A=list(executions), B1=[]))
+            restore_metrics = None
+        else:
+            restore_metrics = paired_physical_metrics(
+                dict(target=rec.cache, rings=rec.rings), dict(target=seed.target, rings=seed.rings))
         seed_executions = list(executions)
         executions.clear()
-        candidate = run(rec, request)
+        candidate = run(rec, request, 'B1')
         after = fingerprint(seed)
         if before != after:
             raise ValueError('seed checkpoint mutated during append')
     if executions != [dict(start=C, end=end, rows=end-C)]:
         raise ValueError('unexpected append execution boundaries')
+    if layer0:
+        comparisons = {name: layer0_prefix_metrics(observations[a]['window'], observations[b]['window'], C)
+                       for name, a, b in (('A_B0', 'A', 'B0'), ('B0_B1', 'B0', 'B1'), ('A_B1', 'A', 'B1'))}
+        result = dict(comparisons=comparisons, executions=dict(A=seed_executions, B1=list(executions)),
+                      restore=dict(identity=seed.identity, distinct_mutable_containers=distinct,
+                                   snapshot_before=before, snapshot_after=after))
+        if any(m['packed']['mismatches'] for m in comparisons.values()):
+            result.update(classifications=['PREFIX_MODIFIED', 'PARTIAL'], observations=observations)
+            return result
+        with patch.object(DeferredPrefillAppend, 'execute_all', observed_execute):
+            executions.clear()
+            cold_rec = QualificationSession('phase2-step1e-cold16')
+            cold = run(cold_rec, request, 'C')
+            result['executions']['C'] = list(executions)
+        with mx.stream(generation_stream), MTPWiredLimitLease(mx, generation_stream):
+            with layer0_numerical_handles(lm) as handles:
+                reference = ordinary_prefill_reference(backend._model, mx.array([ids[:-2]], mx.int32))
+                mx.synchronize(generation_stream)
+            observations['D'] = dict(window=layer0_window_observation(reference['target'][0], lm._config), handles=handles)
+        for name, a, b in (('A_C', 'A', 'C'), ('C_D', 'C', 'D'), ('B1_C', 'B1', 'C')):
+            comparisons[name] = layer0_prefix_metrics(observations[a]['window'], observations[b]['window'], C)
+        result.update(observations=observations, classifications=['PREFIX_PRESERVED'])
+        if comparisons['A_C']['packed']['mismatches']:
+            result['classifications'].append('COLD_SHAPE_DIFFERENCE')
+        if comparisons['C_D']['packed']['mismatches']:
+            result['classifications'].append('P6_ORDINARY_DIFFERENCE')
+        return result
     print('Case C: append unwound; fresh full-current-prefix ordinary reference', flush=True)
     with mx.stream(generation_stream), MTPWiredLimitLease(mx, generation_stream):
         reference = ordinary_prefill_reference(backend._model, mx.array([ids[:-2]], mx.int32))
