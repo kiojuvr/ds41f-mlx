@@ -1,0 +1,18 @@
+Phase 2 / Step 1 continuation — model-free validation
+Interpreter: /Volumes/SDXC-512/ds41f-1017/bin/python
+DS41F_CHECKPOINT=/Volumes/KIOXIA-PRO-2/models/deepseek-ai/DeepSeek-V4.1-Flash-1017
+Command: python -m pytest -q tests/test_prefill_numerical_reference.py tests/test_prefill_fp8_mlx_p6.py tests/test_production_mtp.py tests/test_m29_mtp_lifecycle.py tests/test_prefill_fp8_mlx_p5.py
+
+87 passed, 41 warnings, 26 subtests passed in 44.18s
+Warnings: existing python_multipart and FastAPI on_event/lifespan deprecations.
+Model loads: 0. Synthetic coverage is not real-model coverage.
+
+python tools/check_repository_self_containment.py
+PASS repository self-containment: {'current_owners': 35, 'markdown_files': 153, 'live_links': 584}; live links/owners and retained provenance verified (not qualification)
+
+Final process check: no task-owned Python/inference worker; pi PID 2432 remains.
+No LM Studio/llmster or port-1234 listener observed.
+vm.swapusage: total = 0.00M used = 0.00M free = 0.00M (encrypted)
+Pages free: 29256907 (16 KiB pages)
+Swapins: 0
+Swapouts: 0

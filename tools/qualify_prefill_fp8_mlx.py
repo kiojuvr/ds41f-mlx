@@ -105,7 +105,8 @@ def ordinary_prefill_reference(model, input_ids, *, pixel_values=None,
     end = input_ids.shape[1]
     if any(c.size() != end for c in cache) or any(r.offset != end for r in rings):
         raise ValueError('reference Target/DSpark frontier mismatch')
-    return dict(target=cache, rings=rings, logits=logits, embeddings=embeddings)
+    return dict(target=cache, rings=rings, logits=logits, embeddings=embeddings,
+                token_ids=tuple(int(t) for t in input_ids.tolist()[0]))
 
 
 def physical_tensor_metrics(actual, reference, *, chunk_elements=65536):
@@ -128,7 +129,7 @@ def physical_tensor_metrics(actual, reference, *, chunk_elements=65536):
         return out
     floating = 'float' in str(actual.dtype)
     a, b = actual.reshape(-1), reference.reshape(-1)
-    mismatches, samples, nonfinite = 0, [], 0
+    mismatches, samples, nonfinite, nonfinite_mismatches = 0, [], 0, 0
     delta2 = ref2 = actual2 = dot = maximum = 0.0
     for start in range(0, a.size, chunk_elements):
         def host(value):
@@ -145,6 +146,9 @@ def physical_tensor_metrics(actual, reference, *, chunk_elements=65536):
         if floating:
             x, y = x.astype(np.float64), y.astype(np.float64)
             nonfinite += int(np.count_nonzero(~(np.isfinite(x) & np.isfinite(y))))
+            nonfinite_mismatches += int(np.count_nonzero(
+                (~(np.isfinite(x) & np.isfinite(y))) &
+                ~((np.isnan(x) & np.isnan(y)) | (x == y))))
             if np.all(np.isfinite(x)) and np.all(np.isfinite(y)):
                 delta = x-y
                 maximum = max(maximum, float(np.max(np.abs(delta), initial=0)))
@@ -154,19 +158,98 @@ def physical_tensor_metrics(actual, reference, *, chunk_elements=65536):
                 dot += float(np.sum(x*y))
     out.update(elements=int(a.size), mismatches=mismatches, samples=samples)
     if floating:
-        out.update(nonfinite_pairs=nonfinite,
+        out.update(nonfinite_pairs=nonfinite, nonfinite_mismatches=nonfinite_mismatches,
                    max_absolute=None if nonfinite else maximum,
                    rms_relative=None if nonfinite or ref2 == 0 else (delta2/ref2)**0.5,
                    cosine=None if nonfinite or ref2 == 0 or actual2 == 0 else dot/(ref2*actual2)**0.5)
     return out
 
 
-def paired_physical_metrics(actual, reference, *, chunk_elements=65536):
+def meaningful_target_metrics(actual, reference, layer, config, *, chunk_elements=65536):
+    """Singleton committed-state masks, derived from installed ordinary owners.
+
+    Each decoded diagnostic is at most 16 rows; no full decoded cache survives.
+    Physical shape/byte diagnostics remain separate in paired_physical_metrics.
+    Refuse unsupported padding/layouts instead of silently trimming them.
+    """
+    import mlx.core as mx
+    from omlx.patches.deepseek_v41.quantization import unpack_activation
+
+    def selection(cache):
+        end = cache.size()
+        ratio = config.compress_ratios[layer] if layer in config.kv_source_layers else 0
+        offset = cache.cache[0]
+        if offset is None or offset.shape != (1,) or offset.dtype != mx.int32:
+            raise ValueError('meaningful collector requires exact singleton offset layout')
+        if end < 0 or cache.compress_ratio != ratio:
+            raise ValueError('unsupported committed compression layout')
+        for name in ('left_padding', 'lengths'):
+            value = getattr(cache, name, None)
+            if value is not None and (value.size != 1 or int(value.item()) != (0 if name == 'left_padding' else end)):
+                raise ValueError('meaningful collector requires unpadded singleton state')
+        rows = [None, min(end, config.window_size), end // ratio if ratio else 0,
+                end // ratio if ratio and layer in config.index_source_layers else 0,
+                end % ratio if ratio > 1 else 0, end % ratio if ratio > 1 else 0,
+                config.engram_max_ngram_size - 1 if layer == 0 and config.engram_layer_ids else 0]
+        # Slot 6 is exact integer history (including -1 sentinels), not floats.
+        for slot, count in enumerate(rows[1:], 1):
+            value = cache.cache[slot]
+            expected_rank = 2 if slot == 6 else 3
+            if value is None:
+                if count:
+                    raise ValueError(f'layer {layer} slot {slot}: missing meaningful rows')
+            elif value.ndim != expected_rank or value.shape[0] != 1 or value.shape[1] < count:
+                raise ValueError(f'layer {layer} slot {slot}: unsupported meaningful layout')
+            if value is not None and slot in (1, 2, 3):
+                width = config.index_head_dim if slot == 3 else config.head_dim
+                bits, group = {1: (8, 32), 2: (4, 16), 3: (4, 32)}[slot]
+                if width % group or value.shape[-1] != width*bits//8 + width//group or value.dtype != mx.uint8:
+                    raise ValueError(f'layer {layer} slot {slot}: unsupported packed layout')
+            if value is not None and slot == 6 and (value.shape[1] != count or value.dtype != mx.int64):
+                raise ValueError('unsupported exact Engram history layout')
+        return dict(frontier=end, rows=rows,
+                    window_positions=[max(0, end-config.window_size), end],
+                    compressed_source=layer in config.kv_source_layers,
+                    index_owner=layer in config.kv_source_layers and layer in config.index_source_layers)
+
+    left, right = selection(actual), selection(reference)
+    result = dict(selectors=[left, right], selectors_equal=left == right, slots=[])
+    if left != right:
+        return result  # different frontiers are not numerical comparisons
+    for slot, (a, b) in enumerate(zip(actual.cache, reference.cache)):
+        count = left['rows'][slot]
+        item = dict(slot=slot, meaningful_rows=count)
+        result['slots'].append(item)
+        if slot == 0 or slot == 6:
+            item['exact'] = physical_tensor_metrics(a, b, chunk_elements=chunk_elements)
+            continue
+        if a is None or b is None:
+            item['presence_equal'] = a is None and b is None
+            continue
+        if a.dtype != b.dtype or a.shape[-1] != b.shape[-1]:
+            item['layout_equal'] = False
+            continue
+        item['layout_equal'] = True
+        item['chunks'] = []
+        for start in range(0, count, 16):
+            x, y = a[:, start:min(start+16, count)], b[:, start:min(start+16, count)]
+            if slot in (1, 2, 3):
+                bits, group, e4m3 = {1: (8, 32, False), 2: (4, 16, True), 3: (4, 32, False)}[slot]
+                if a.dtype != mx.uint8 or a.shape[-1] % (group*bits//8+1):
+                    raise ValueError('unsupported packed activation geometry')
+                x = unpack_activation(x, bits, group, e4m3, dtype=mx.float32)
+                y = unpack_activation(y, bits, group, e4m3, dtype=mx.float32)
+            item['chunks'].append(dict(row_start=start, metrics=physical_tensor_metrics(x, y, chunk_elements=chunk_elements)))
+    return result
+
+
+def paired_physical_metrics(actual, reference, *, chunk_elements=65536, config=None):
     """Observe ALL 40 x 7 slots and 3 native rings; no acceptance inference.
 
     Inputs are dictionaries returned by ordinary_prefill_reference or equivalent
     candidate observation adapters. Metadata and physical bytes are retained as
-    compact metrics. Packed-value numerical equivalence is NOT established.
+    compact metrics. With admitted config, also decode bounded meaningful rows.
+    This remains observation, not a numerical acceptance authority.
     """
     if any(len(p['target']) != 40 or len(p['rings']) != 3 for p in (actual, reference)):
         raise ValueError('incomplete 40-layer/3-ring observation')
@@ -178,11 +261,15 @@ def paired_physical_metrics(actual, reference, *, chunk_elements=65536):
             raise ValueError(f'layer {index}: incomplete seven-slot observation')
         result['target'].append(dict(
             layer=index, offsets=[a.size(), b.size()],
+            metadata_equal=(a.size() == b.size() and tuple(a.meta_state) == tuple(b.meta_state) and a.compress_ratio == b.compress_ratio),
             meta_state=[list(a.meta_state), list(b.meta_state)],
             compress_ratio=[a.compress_ratio, b.compress_ratio],
             left_padding=metric(getattr(a, 'left_padding', None), getattr(b, 'left_padding', None)),
             lengths=metric(getattr(a, 'lengths', None), getattr(b, 'lengths', None)),
             slots=[metric(x, y) for x, y in zip(a.cache, b.cache)]))
+        if config is not None:
+            result['target'][-1]['meaningful'] = meaningful_target_metrics(
+                a, b, index, config, chunk_elements=chunk_elements)
     for index, (a, b) in enumerate(zip(actual['rings'], reference['rings'])):
         def physical_positions(ring):
             if ring.max_size <= 0 or ring.offset < 0:
@@ -192,8 +279,49 @@ def paired_physical_metrics(actual, reference, *, chunk_elements=65536):
         result['rings'].append(dict(ring=index, capacity=[a.max_size, b.max_size],
                                     offsets=[a.offset, b.offset],
                                     physical_positions=[physical_positions(a), physical_positions(b)],
+                                    mapping_equal=(a.max_size == b.max_size and a.offset == b.offset and physical_positions(a) == physical_positions(b)),
                                     keys=metric(a.keys, b.keys)))
+        for ring in (a, b):
+            count = min(ring.offset, ring.max_size)
+            if (ring.keys is None and count) or (ring.keys is not None and
+                    (ring.keys.ndim != 4 or ring.keys.shape[:3] != (1, 1, count))):
+                raise ValueError(f'ring {index}: invalid committed physical layout')
     return result
+
+
+def paired_boundary_metrics(actual, reference, *, boundary, config, chunk_elements=65536):
+    """Read-only boundary guard for existing capture/P6/P5 diagnostic seams.
+
+    P5 may use independently recomputed ordinary Target(N) and rings(N-1).
+    Never advance/settle either side to manufacture frontier equivalence.
+    Require canonical consumed token identities, not only integer offsets.
+    Image identities/metadata must additionally be bound by the case adapter.
+    """
+    if boundary not in ('n-2-capture', 'n-1-seal', 'p5-terminal'):
+        raise ValueError('unknown numerical observation boundary')
+    def frontiers(pair):
+        if len(pair['target']) != 40 or len(pair['rings']) != 3:
+            raise ValueError('incomplete 40-layer/3-ring observation')
+        target = [c.size() for c in pair['target']]
+        rings = [r.offset for r in pair['rings']]
+        if len(set(target)) != 1 or len(set(rings)) != 1:
+            raise ValueError('unaligned state within an observation')
+        return [target[0], rings[0]]
+    left, right = frontiers(actual), frontiers(reference)
+    for pair, (target, ring) in zip((actual, reference), (left, right)):
+        if 'token_ids' not in pair or len(pair['token_ids']) != target or not 0 <= ring <= target:
+            raise ValueError('observation lacks complete canonical consumed identity')
+    identity_equal = tuple(actual['token_ids']) == tuple(reference['token_ids'])
+    out = dict(boundary=boundary, frontiers=[left, right], comparable=left == right and identity_equal,
+               token_identity_equal=identity_equal,
+               status='OBSERVED_ONLY')
+    valid_deltas = (0, 1) if boundary == 'p5-terminal' else (0,)
+    if any(t-r not in valid_deltas for t, r in (left, right)):
+        out['comparable'] = False
+    if out['comparable']:
+        out['metrics'] = paired_physical_metrics(actual, reference, config=config,
+                                                 chunk_elements=chunk_elements)
+    return out
 
 
 def qualify(args, report):

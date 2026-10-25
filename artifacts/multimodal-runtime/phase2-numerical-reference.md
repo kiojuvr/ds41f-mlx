@@ -361,3 +361,187 @@ settlement, kernel, installed payload, official Harness/Recipe semantics or defa
 profile was changed. The 36,864 fresh-patch, 12 MiB projected-pair and 192 MiB
 retained-root guards are untouched. CURRENT plan/progress remains unchanged.
 Stop here; no push, deployment or follow-on implementation.
+
+## 8. Continuation — 2026-10-25 (HEAD ff0daa3)
+
+**Disposition: BLOCKED; Step 1 remains incomplete.** The earlier LM Studio
+observations above are historical and unchanged. Its termination resolves the
+previously observed serving conflict, but this continuation does **not** complete
+the required execution harness. No weights were loaded. This is a remaining
+verification-tool prerequisite, not a demonstrated model defect or a claim that
+the environment is still blocked by LM Studio.
+
+### New preflight and identities
+
+Started on required `Multimodal-Runtime`, exact expected HEAD
+`ff0daa397c93664aa8dfd39638363fc7dea4971b`, clean working tree. Read-only process
+inspection found no LM Studio application, connector, llmster, Python inference
+worker, Ollama or other observed external inference loader. One coding agent,
+`pi` PID 2432, remained. `lsof` found **no listener on port 1234**; the complete
+listener list contained only rapportd, ControlCenter (5000/7000) and GitHub.
+`launchctl list` had no matching inference service; the user/system LaunchAgents
+and LaunchDaemons directories contained Google/Chrome Remote Desktop and Docker
+network/socket helpers, not a discovered inference launcher. No Docker VM/model
+worker was observed. No `lms` command was needed or invoked. No service or
+unrelated workload was stopped, reconfigured or restarted. These inspections are
+point-in-time observations, not an enforceable system-wide model-loading lock.
+
+[Continuation preflight](phase2-reference-continuation-preflight.json) records a
+new **isolated installed** `mtp_identity.inspect(load_runtime_config())` PASS,
+without model loading. Interpreter and dependency versions, installed source
+hashes, installed build provenance and identity digest all match §1. The 48-shard
+checkpoint admission and metadata remain available; corn fixture was rehashed and
+matches `251fe7ad58f44db139a6af5ed489e027eca93ae60878b83f3e709c7d6f0112a1`.
+Checkpoint verification retains the installed unchanged-file cache caveat; no
+claim of independently rehashing every shard. No installed asset was modified.
+
+Checkout tests are **not** installed Runtime verification: pytest authenticates
+the installed dependency payload in an isolated subprocess, selects its admitted
+variant, then imports the checkout helper/Runtime. Installed ds41f remains 0.23.0,
+source `aa8c5717b42aa0a216fef3134e72c6db7ca49287`; the test changes are not installed.
+The archive ordinary layer-loop hash is
+`9377537e16b5978ed3aeddc998f772d8e27546d2444db95454df760f74572c43`, different from
+installed `702b8a1c...`: inspected diff contains compressed-growth append/reuse and
+admitted pre-WO-A activation selection. The native DSpark archive/installed source
+hashes agree. Archive equality is not substituted for installed identity.
+
+Host sample: 512 GiB physical; 98% free from `memory_pressure`; about 446.6 GiB
+free pages and 47.3 GiB inactive/speculative pages (reclaimability is not reserved
+memory). Swap use, swapins and swapouts remain zero. Temporary/repository/model
+storage available: 789 GiB / 190 GiB / 1.1 TiB. The conservative load condition
+remains **359.226 + 96 = 455.226 GiB available**, not an RSS allowance. Free pages
+alone are below that figure; an actual launch must freshly establish available
+reserve, including defensible reclaimable accounting. No load-admission or
+capacity guarantee is inferred from this idle sample. All §5 stop thresholds
+remain unchanged; no supervised real-model execution window was activated.
+
+### Collector improvements and model-free coverage
+
+Extended the existing helper in `tools/qualify_prefill_fp8_mlx.py`; did not create
+another reference implementation or change its historical CLI loader settings.
+`ordinary_prefill_reference` still independently constructs fresh ordinary
+40/3 state and now returns consumed token IDs for boundary identity checks.
+
+- `paired_physical_metrics(..., config=...)` retains all physical diagnostics and
+  adds meaningful selectors/numerical chunks for all 40 layers and seven slots.
+  Selectors derive from admitted config and committed offsets, not discrepancy.
+  Source ownership follows `make_cache`/ordinary Attention/Indexer. Slot 1 retains
+  chronological `[max(0,C-window),C)`; source compressed/index rows use `C//ratio`;
+  incomplete compressor/gate tails use `C%ratio`. Non-source slots have zero
+  meaningful rows. Slot 6 compares complete exact integer Engram history,
+  including sentinels, and applicable empty histories on other layers.
+- Verified installed `quantization.py`, `language.py` and `cache.py`: slot 1 is
+  8-bit/group-32; slot 2 is 4-bit/group-16/E4M3-scale; slot 3 is 4-bit/group-32.
+  Existing `unpack_activation` decodes only selected slices of **at most 16 rows**,
+  FP32 diagnostic output. No full decoded persistent-cache duplicate is created.
+  Metrics are retained per bounded meaningful chunk, not a fabricated aggregate
+  acceptance tolerance. Physical packed-byte differences remain separate.
+- Explicit singleton offset, packing width/dtype, history layout and padding
+  validation refuses unknown layouts. Physical shapes, metadata, lengths/padding,
+  presence and integer values remain exact diagnostics, including padding
+  differences; numerical meaningful-row metrics do not erase those differences.
+- All three rings retain exact capacity/offset/mapping diagnostics, with committed
+  tensor-layout checks and numerical keys metrics in original physical order.
+  No ring is rotated or normalized to improve agreement.
+- `paired_boundary_metrics` refuses unequal canonical consumed IDs/frontiers and
+  unaligned layers/rings. For P5 it permits separately matched Target and ring
+  frontiers, e.g. Target N versus independently recomputed Target N, rings N-1
+  versus independently recomputed rings N-1. It never settles or advances state.
+  It is a boundary **guard**, not a wired native lifecycle observation adapter.
+- Added native-small-array tests for padding exclusion, last meaningful packed
+  index row in layer 39, bounded decoder calls, source/non-source/tail masks,
+  malformed layouts, ring-2 rotation/mapping/layout negatives, transient P5
+  frontiers and wrong consumed identity. Tests verify array identity/offsets remain
+  unchanged by observation. Existing freshness/independence tests remain intact.
+  Nonfinite diagnostics now distinguish all nonfinite pairs from mismatched
+  nonfinite values; nonfinite numerical metrics still remain undefined.
+
+This is synthetic **40 x 7 / 3** collector traversal, not real-model execution.
+
+### Native lifecycle and continuation limitations
+
+Inspected `_start` and existing P6 matched-control collectors again. The existing
+`checkpoint_capture` callback identifies N-2; P6 committed certificate and
+`handoff_to_generation` identify N-1; `batch_generator_factory` and native
+`OMLXMTPGenerationSession.start` provide the P5 construction/bootstrap seams.
+These are reusable without a production API change. The new guard is **not yet
+connected to those seams in an A/B/C runner**. In particular, no captured native
+P5 Target/ring pair was compared here, and no independently recomputed image
+embedding/canonical Recipe case adapter was executed. Reading lifecycle source
+or testing synthetic boundary dictionaries is not completion of collector C.
+
+`OMLXMTPGenerationSession.next_token` exposes `bound_observation` with lifetime,
+revision, consumed prefix, token and original native **logprobs**, not an explicit
+raw-logit/teacher-force transaction. Its sampler is also used by native proposal,
+verification and bonus paths, including multirow calls; replacing it with a
+call-count-based fixed-token iterator would not establish matched absolute
+positions. Configured logits processors alter the distribution and are not a
+validated passive raw-logit observation seam. No ready-made deterministic
+teacher-forcing control with matched committed frontiers was identified in the
+inspected lifecycle interfaces/tests. This is **not proof that it requires a
+production scheduler change**: a position-bound diagnostic adapter may be possible,
+but it has not been implemented/validated in this task. No such production change
+was attempted. Teacher-forced continuation remains PARTIAL/unimplemented.
+
+The missing wired case/lifecycle observations and external resource supervisor
+are pre-load prerequisites from §5. Rather than load the 359-GiB-class model for
+an incomplete or misleading comparison, execution was not started. This leaves
+the requested task incomplete even though the previous service conflict is gone.
+No automatic retry, historical-image reconstruction or follow-on work occurred.
+
+### Frozen policy, actual results and remaining gates
+
+The **pre-observation §4 policy is unchanged**: exact structural/metadata/mask and
+same-operation snapshot equality; numerical measurement for different schedules;
+independent calibration before accepting Target/ring/logit tolerances. No
+Vision-only threshold was imported and no threshold selected from these tests.
+Max-absolute/RMS-relative/cosine/nonfinite meaningful-chunk and per-ring metrics
+are available; **no real numerical error envelope or matched-position logit
+difference was measured**. A/B/C might remain PARTIAL even after execution if
+independent calibration is insufficient. Shared checkpoint/operators, Vision,
+quantization and native DSpark math retain all §2 independence limitations.
+
+| Case | Actual model execution | Target coverage | DSpark coverage | P5 / continuation |
+| --- | --- | --- | --- | --- |
+| A cold text | NOT RUN | **0/40** | **0/3** | NOT RUN |
+| B corn single image | NOT RUN; fixture hash verified | **0/40** | **0/3** | NOT RUN |
+| C supported prefix append | NOT RUN; no restored frontier | **0/40** | **0/3** | NOT RUN |
+
+No model allocator active/cache/peak, physical-footprint peak or loaded-model
+cleanup measurements exist for this continuation. Model-free test processes
+exited; no task-owned inference loader was created. No weight/tensor dumps,
+duplicate environments or checkpoint/installed-payload changes were made.
+Future launch must repeat exclusivity/memory inspection and wire external
+supervision with the unchanged reserve/swap/pressure/430-GiB/budget stop rules.
+
+Remaining Step 1 gates: wire existing lifecycle seams and Recipe/image adapters;
+finish or precisely scope native matched-position continuation; validate the
+supervisor; then execute bounded A/B/C in one admitted load, establish meaningful
+40/3 numerical envelopes at equivalent boundaries, and measure cleanup. C2 is
+not complete. Historical-image reconstruction and all later phases still need
+separate authorization.
+
+### Continuation validation and cleanup
+
+Using `/Volumes/SDXC-512/ds41f-1017/bin/python`, with the explicit Flash-1017
+`DS41F_CHECKPOINT`, ran `python -m pytest -q` on:
+
+- `tests/test_prefill_numerical_reference.py`
+- `tests/test_prefill_fp8_mlx_p6.py`
+- `tests/test_production_mtp.py`
+- `tests/test_m29_mtp_lifecycle.py`
+- `tests/test_prefill_fp8_mlx_p5.py`
+
+Result: **87 passed, 26 subtests passed**, 41 existing deprecation warnings,
+44.18 s. [Compact test log](phase2-reference-continuation-tests.log).
+`git diff --check`: PASS. `python tools/check_repository_self_containment.py`
+using the same interpreter: PASS (35 current owners, 153 Markdown files, 584
+live links). These checks are not real-model qualification.
+
+Final read-only process/listener check found no task-owned Python/inference
+worker, no LM Studio/llmster and no listener on 1234. Swap used remained zero;
+Swapins/Swapouts remained zero. No model cleanup/cancellation claim is made for
+an unexecuted load. Only verification tools/tests and compact evidence changed;
+no production behavior, protected admission guard or numerical operator changed.
+One focused local collector/evidence commit; SHA is in the final response.
+No push, deployment or follow-on work.

@@ -7,6 +7,7 @@ import pytest
 
 from tools.qualify_prefill_fp8_mlx import (
     ordinary_prefill_reference, paired_physical_metrics, physical_tensor_metrics,
+    meaningful_target_metrics, paired_boundary_metrics,
 )
 from test_production_mtp import pair
 
@@ -82,6 +83,117 @@ def test_collector_covers_every_layer_slot_and_preserves_ring_rotation():
     target[39].cache.pop()
     with pytest.raises(ValueError, match='seven-slot'):
         paired_physical_metrics(dict(target=target, rings=rings), dict(target=other_target, rings=other_rings))
+
+
+def native_meaningful_pair(end=193):
+    import mlx.core as mx
+    from omlx.patches.deepseek_v41.cache import DeepseekV41Cache
+    from omlx.patches.deepseek_v41.quantization import pack_activation
+    from omlx.patches.mlx_lm_mtp.deepseek_v4_dspark import DSparkContextCache
+    config = SimpleNamespace(window_size=128, compress_ratios=[4]*40,
+                             kv_source_layers=(0, 39), index_source_layers=(0, 39),
+                             engram_layer_ids=(0,), engram_max_ngram_size=3,
+                             head_dim=64, index_head_dim=32)
+    caches = []
+    for layer in range(40):
+        ratio = 4 if layer in config.kv_source_layers else 0
+        c = DeepseekV41Cache(ratio)
+        c[0] = mx.array([end], mx.int32)
+        for slot, bits, group, scale, width, rows in (
+                (1, 8, 32, False, 64, min(end, 128)),
+                (2, 4, 16, True, 64, end//4 if ratio else 0),
+                (3, 4, 32, False, 32, end//4 if ratio else 0)):
+            # Explicit allocation padding, not meaningful committed rows.
+            c[slot] = pack_activation(mx.ones((1, rows+3, width)), bits, group, scale)
+        for slot in (4, 5):
+            c[slot] = mx.ones((1, end%4 if ratio else 0, 64), mx.bfloat16)
+        c[6] = mx.zeros((1, 2 if layer == 0 else 0), mx.int64)
+        caches.append(c)
+    rings = [DSparkContextCache(128) for _ in range(3)]
+    for ring in rings:
+        ring.append(mx.arange(end, dtype=mx.float32).reshape(1, 1, end, 1))
+    return dict(target=caches, rings=rings, token_ids=tuple(range(end))), config
+
+
+def test_meaningful_decoding_masks_padding_and_catches_final_source(monkeypatch):
+    import mlx.core as mx
+    import omlx.patches.deepseek_v41.quantization as quant
+    a, cfg = native_meaningful_pair()
+    b, _ = native_meaningful_pair()
+    # Padding must differ physically without becoming meaningful numerical error.
+    b['target'][39][2][:, -1] = 0
+    # Last meaningful index row of last layer must NOT be hidden by padding.
+    b['target'][39][3][:, 47] = quant.pack_activation(mx.full((1, 32), 2.), 4, 32)
+    calls = []
+    original = quant.unpack_activation
+    def bounded(packed, *args, **kwargs):
+        calls.append(packed.shape[1])
+        assert packed.shape[1] <= 16
+        return original(packed, *args, **kwargs)
+    monkeypatch.setattr(quant, 'unpack_activation', bounded)
+    got = paired_physical_metrics(a, b, config=cfg, chunk_elements=11)
+    assert calls and max(calls) == 16
+    assert len(got['target']) == 40 and len(got['rings']) == 3
+    last = got['target'][39]
+    assert last['slots'][2]['mismatches'] > 0
+    meaningful = last['meaningful']
+    assert meaningful['selectors_equal']
+    assert meaningful['selectors'][0]['window_positions'] == [65, 193]
+    assert meaningful['slots'][2]['meaningful_rows'] == 48
+    assert all(c['metrics']['max_absolute'] == 0 for c in meaningful['slots'][2]['chunks'])
+    assert meaningful['slots'][3]['chunks'][-1]['metrics']['max_absolute'] > 0
+    assert meaningful['slots'][4]['meaningful_rows'] == 1
+    assert got['target'][38]['meaningful']['slots'][2]['meaningful_rows'] == 0
+    assert got['rings'][2]['mapping_equal']
+    assert int(b['target'][39][2][0, -1, 0].item()) == 0
+    json.dumps(got, allow_nan=False)
+
+
+def test_meaningful_layout_frontier_and_final_ring_negatives():
+    import mlx.core as mx
+    a, cfg = native_meaningful_pair()
+    b, _ = native_meaningful_pair()
+    b['rings'][2].keys = mx.concatenate([b['rings'][2].keys[:, :, 1:], b['rings'][2].keys[:, :, :1]], axis=2)
+    got = paired_physical_metrics(a, b, config=cfg)
+    assert got['rings'][2]['keys']['mismatches'] == 128
+    b['rings'][2].offset += 1
+    assert not paired_physical_metrics(a, b)['rings'][2]['mapping_equal']
+    b['rings'][2].keys = b['rings'][2].keys[:, :, :-1]
+    with pytest.raises(ValueError, match='ring 2'):
+        paired_physical_metrics(a, b)
+    b['target'][39][3] = b['target'][39][3][:, :47]
+    with pytest.raises(ValueError, match='slot 3'):
+        meaningful_target_metrics(a['target'][39], b['target'][39], 39, cfg)
+    b['target'][39][3] = a['target'][39][3]
+    b['target'][39][0] = mx.array([192], mx.int32)
+    assert not meaningful_target_metrics(a['target'][39], b['target'][39], 39, cfg)['selectors_equal']
+    b['target'][39].left_padding = mx.array([1])
+    with pytest.raises(ValueError, match='unpadded singleton'):
+        meaningful_target_metrics(a['target'][39], b['target'][39], 39, cfg)
+
+
+def test_boundary_guard_preserves_transient_frontiers_without_settlement():
+    a, cfg = native_meaningful_pair(193)
+    target_ref, _ = native_meaningful_pair(193)
+    earlier, _ = native_meaningful_pair(192)
+    # P5 transient: Target consumed terminal, native rings still own N-1.
+    a['rings'] = earlier['rings']
+    earlier_ref, _ = native_meaningful_pair(192)
+    reference = dict(target=target_ref['target'], rings=earlier_ref['rings'], token_ids=target_ref['token_ids'])
+    arrays = [tuple(c.cache) for c in a['target']]
+    ring_keys = [r.keys for r in a['rings']]
+    got = paired_boundary_metrics(a, target_ref, boundary='p5-terminal', config=cfg)
+    assert not got['comparable'] and 'metrics' not in got
+    got = paired_boundary_metrics(a, reference, boundary='p5-terminal', config=cfg)
+    assert got['comparable'] and got['frontiers'] == [[193, 192], [193, 192]]
+    assert not paired_boundary_metrics(a, reference, boundary='n-1-seal', config=cfg)['comparable']
+    wrong = dict(reference, token_ids=(*reference['token_ids'][:-1], -1))
+    assert not paired_boundary_metrics(a, wrong, boundary='p5-terminal', config=cfg)['comparable']
+    with pytest.raises(ValueError, match='canonical consumed identity'):
+        paired_boundary_metrics(a, dict(reference, token_ids=()), boundary='p5-terminal', config=cfg)
+    for c, before in zip(a['target'], arrays):
+        assert all(x is y for x, y in zip(c.cache, before))
+    assert all(r.keys is k and r.offset == 192 for r, k in zip(a['rings'], ring_keys))
 
 
 def reference_model():

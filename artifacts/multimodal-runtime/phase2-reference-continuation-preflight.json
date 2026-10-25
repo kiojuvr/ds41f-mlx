@@ -1,0 +1,142 @@
+{
+  "timestamp": "2026-10-25T17:17:31.518586+09:00",
+  "model_loads": 0,
+  "head": "ff0daa397c93664aa8dfd39638363fc7dea4971b",
+  "python": {
+    "executable": "/Volumes/SDXC-512/ds41f-1017/bin/python",
+    "version": "3.13.15 (main, Aug  5 2026, 12:25:43) [Clang 21.0.0 (clang-2100.1.1.101)]"
+  },
+  "packages": {
+    "ds41f-mlx": {
+      "version": "0.23.0",
+      "root": "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages"
+    },
+    "omlx": {
+      "version": "0.7.0",
+      "root": "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages"
+    },
+    "mlx": {
+      "version": "0.32.2",
+      "root": "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages"
+    },
+    "mlx-lm": {
+      "version": "0.31.4.dev132+g94cdcae13",
+      "root": "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages"
+    },
+    "deepseek-recipe": {
+      "version": "0.2.0",
+      "root": "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages"
+    },
+    "numpy": {
+      "version": "2.3.5",
+      "root": "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages"
+    },
+    "pytest": {
+      "version": "9.1.1",
+      "root": "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages"
+    }
+  },
+  "admission": {
+    "status": "PASS",
+    "identity_sha256": "9c439d3fb9ad730996ecca821234bba1ce8817d7b46a2744e171c10a4d7d2ca2",
+    "actual_origins": {
+      "ds41f_mlx": "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/ds41f_mlx/__init__.py",
+      "omlx": "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/omlx/__init__.py",
+      "deepseek_recipe": "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/deepseek_recipe/__init__.py",
+      "deepseek_recipe._native": "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/deepseek_recipe/_native.abi3.so",
+      "mlx_lm": "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/mlx_lm/__init__.py"
+    },
+    "build": {
+      "native_build": {
+        "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05) (Homebrew)\n",
+        "cmake": "cmake version 4.3.3\n\nCMake suite maintained and supported by Kitware (kitware.com/cmake).\n",
+        "host_linked": false,
+        "opencv": "4.14.0\n",
+        "rustc": "rustc 1.98.1 (48a229cea 2026-09-01) (Homebrew)\nbinary: rustc\ncommit-hash: 48a229ceaefd4985c50990b14116b6d856af0985\ncommit-date: 2026-09-01\nhost: aarch64-apple-darwin\nrelease: 1.98.1\nLLVM version: 22.1.8\n",
+        "wheel_sha256": "11bda3355c2f48b99d04f6a2179b283add3f6d1218f34e4707bd5a29b304ab03",
+        "xcode": "Xcode 26.6\nBuild version 17F113\n"
+      },
+      "overlays": [
+        "compressed-growth",
+        "bit-exact-kernels",
+        "template-reuse",
+        "context-copy"
+      ],
+      "recipe_source": {
+        "archive": "recipe-02-source.tar.gz",
+        "patch": "docs/recipe-02-native-semantic-boundary.patch",
+        "revision": "93b0fd229cc9ffa6b1a8c63d42b0bf741bbec170"
+      },
+      "source_commit": "aa8c5717b42aa0a216fef3134e72c6db7ca49287"
+    },
+    "hardware": {
+      "cpu": "Apple M3 Ultra",
+      "memory_bytes": 549755813888
+    }
+  },
+  "identity_unchanged": true,
+  "installed_sources": {
+    "omlx/patches/deepseek_v41/model.py": "77c7012b5ce2aa757157b350eb38e1a3694c0b3fb7730ce1be2ac4fe99b43a24",
+    "omlx/patches/deepseek_v41/language.py": "702b8a1c872eee645e6633140787a5947dc4bb7aace16384475a90151a4c5276",
+    "omlx/patches/deepseek_v41/mtp.py": "5c6d10bdc1eb646835866d2b09201fef2481b7cd1950f1592d42490142d5514f",
+    "omlx/patches/deepseek_v41/cache.py": "00d1ceaf1bb1a8de9fe531f6cb311092c831378343341925d7c844503030e38b",
+    "omlx/patches/deepseek_v41/loading.py": "104408ea7dfa05b886bd0d8ecc0359c31317f581f4538b5860cd1951edc062a1",
+    "omlx/patches/deepseek_v41/growth.py": "31bedac8a1886b5f65a9f209a673a77a55beb316abc81d91c870b2d94dd736e4",
+    "omlx/patches/deepseek_v41/vision.py": "dcaf449e199cfa16ecb4b08c7b17c75d3f80ed46a7bab82a64cdd03db3264f05",
+    "omlx/patches/mlx_lm_mtp/deepseek_v4_dspark.py": "6cd25674acf3329e0c5a0234cfdb1fbc2df702b5f3c9261a98b05b7e9d9ea99e",
+    "ds41f_mlx/execution_manifest.json": "39a39c45df3a5bb61bca0e5147298b7849efc85a3d34c037c1641dd7672511b5",
+    "omlx/patches/deepseek_v41/activation.py": "bfb7385ee30f2478b4c5b7ccc91ce29cdf0fad2e747a06e144f606f4df3c164d",
+    "omlx/patches/deepseek_v41/quantization.py": "cafb5b7543b2f1e285f8dafdeae1e584c77d8366961146db67134e55359c7ecc",
+    "omlx/patches/deepseek_v41/processing.py": "55ca42a0e3e4b79e6fc84687f987b31f63e1816ed6b1d578275170d74d9b8b57",
+    "omlx/patches/deepseek_v41/dspark.py": "eaf27747cdb0a84c17ef21ca6b2dbbbcbec2dd84f3cc6b8e9a0e544acf3d5d62"
+  },
+  "installed_sources_unchanged": true,
+  "pinned": {
+    "omlx/patches/deepseek_v41/language.py": {
+      "sha256": "9377537e16b5978ed3aeddc998f772d8e27546d2444db95454df760f74572c43",
+      "equals_installed": false
+    },
+    "omlx/patches/mlx_lm_mtp/deepseek_v4_dspark.py": {
+      "sha256": "6cd25674acf3329e0c5a0234cfdb1fbc2df702b5f3c9261a98b05b7e9d9ea99e",
+      "equals_installed": true
+    }
+  },
+  "checkpoint_metadata": {
+    "config.json": "8be45ce0476004a3f529fd896115a4a2e800a129ad2d3ec05b16050f52e21879",
+    "model.safetensors.index.json": "74b0686a3d2891980d5e303251b075a3bccae2c2ff650747db2620a649b98fa8",
+    "tokenizer.json": "c90dfa01249db1be4245780a052ede752e1361c612ac6d08e2bdada7d599476b"
+  },
+  "checkpoint_shards": 48,
+  "fixture_sha256": "251fe7ad58f44db139a6af5ed489e027eca93ae60878b83f3e709c7d6f0112a1",
+  "listeners": {
+    "code": 0,
+    "stdout": "COMMAND    PID  USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME\nrapportd   759 kioju   10u  IPv4 0x6a69c6b85ae910d2      0t0  TCP *:49154 (LISTEN)\nrapportd   759 kioju   11u  IPv6 0xc2b146f1463d75b9      0t0  TCP *:49154 (LISTEN)\nControlCe  831 kioju    9u  IPv4 0x610b110cab3c31f6      0t0  TCP *:7000 (LISTEN)\nControlCe  831 kioju   10u  IPv6 0x5534cfcdfbcc09d3      0t0  TCP *:7000 (LISTEN)\nControlCe  831 kioju   11u  IPv4 0xbdb0c9862fd1ec8e      0t0  TCP *:5000 (LISTEN)\nControlCe  831 kioju   12u  IPv6 0x18bf2a73bf84ec4e      0t0  TCP *:5000 (LISTEN)\nGitHub    1013 kioju   26u  IPv4 0x9e3d8d8dee599f6d      0t0  TCP 127.0.0.1:49155 (LISTEN)",
+    "stderr": ""
+  },
+  "port1234": {
+    "code": 1,
+    "stdout": "",
+    "stderr": ""
+  },
+  "launchctl_matches": [],
+  "memory_pressure": {
+    "code": 0,
+    "stdout": "The system has 549755813888 (33554432 pages with a page size of 16384).\n\nStats: \nPages free: 29265344 \nPages purgeable: 5827 \nPages purged: 7334921 \n\nSwap I/O:\nSwapins: 0 \nSwapouts: 0 \n\nPage Q counts:\nPages active: 745445 \nPages inactive: 299807 \nPages speculative: 2803214 \nPages throttled: 0 \nPages wired down: 371316 \n\nCompressor Stats:\nPages used by compressor: 11579 \nPages decompressed: 606650 \nPages compressed: 1739566 \n\nFile I/O:\nPageins: 367917048 \nPageouts: 915 \n\nSystem-wide memory free percentage: 98%",
+    "stderr": ""
+  },
+  "swap": {
+    "code": 0,
+    "stdout": "vm.swapusage: total = 0.00M  used = 0.00M  free = 0.00M  (encrypted)",
+    "stderr": ""
+  },
+  "vm_stat": {
+    "code": 0,
+    "stdout": "Mach Virtual Memory Statistics: (page size of 16384 bytes)\nPages free:                                 29265390.\nPages active:                                 745444.\nPages inactive:                               299808.\nPages speculative:                           2803214.\nPages throttled:                                   0.\nPages wired down:                             371316.\nPages purgeable:                                5827.\n\"Translation faults\":                     1369516176.\nPages copy-on-write:                       131930764.\nPages zero filled:                        1642333164.\nPages reactivated:                           2529262.\nPages purged:                                7334921.\nFile-backed pages:                           3411884.\nAnonymous pages:                              436582.\nPages stored in compressor:                    44057.\nPages occupied by compressor:                  11579.\nDecompressions:                               606650.\nCompressions:                                1739566.\nPageins:                                   367917050.\nPageouts:                                        915.\nSwapins:                                           0.\nSwapouts:                                          0.",
+    "stderr": ""
+  },
+  "storage": {
+    "code": 0,
+    "stdout": "Filesystem      Size    Used   Avail Capacity iused ifree %iused  Mounted on\n/dev/disk3s5   1.8Ti   1.0Ti   789Gi    57%    1.7M  8.3G    0%   /System/Volumes/Data\n/dev/disk7s1   477Gi   287Gi   190Gi    61%    334k  2.0G    0%   /Volumes/SDXC-512\n/dev/disk9s1   1.9Ti   787Gi   1.1Ti    42%     508   12G    0%   /Volumes/KIOXIA-PRO-2",
+    "stderr": ""
+  }
+}
