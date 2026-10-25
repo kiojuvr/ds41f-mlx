@@ -1,5 +1,10 @@
 # Phase 2 / Step 1 — ordinary numerical prefill reference
 
+**Latest bounded result: [§10](#10-step-1a--completed-case-a-comparison-2026-10-25)
+is OBSERVED for Case A at N-2 only (40/40 Target layers, 3/3 rings).** The earlier
+BLOCKED reports below remain historical evidence. General numerical acceptance,
+full Step 1, Phase 2 and C2 remain unqualified.
+
 **Disposition: BLOCKED for real-model qualification.** Source-level construction
 and model-free observation tests are available; the numerical reference is **not
 qualified**. No historical-image reconstruction, C2 completion, guard change,
@@ -696,3 +701,171 @@ NumPy/MLX exact-integer observation schema at the same N-2 boundary. That requir
 separate authorization for another load; this task did not automatically retry.
 Step 1A is BLOCKED, full Step 1 and C2 remain unqualified. No B/C, reconstruction,
 P5/teacher forcing, tolerance campaign, push, deployment or follow-on work.
+
+## 10. Step 1A — completed Case A comparison (2026-10-25)
+
+**Disposition: OBSERVED.** The authorized repeat completed meaningful numerical
+observation of **40/40 Target layers and 3/3 DSpark rings** at the identical
+canonical **N-2 = 11** frontier. Every compared meaningful floating chunk and ring
+was exactly equal in this execution: max-absolute **0**, RMS-relative **0**, cosine
+**1**, nonfinite pairs **0**. This is a measured single-case result, **not an
+independently approved accuracy tolerance**, comprehensive acceptance, Phase 2
+completion or C2 qualification. The failed §9 attempt and its artifacts are intact.
+
+### Review, scope and execution identity
+
+Started on required `Multimodal-Runtime`, exact expected HEAD
+`a07d559f1f9bf81ea55a80c41fc51833c5145ae1`, clean tree, one worktree and the same
+single coding agent (PID 2432). No concurrent tracked changes or inference workers
+were observed. Reviewed documentation policy, upstream-first sequencing, CURRENT
+Phase 2/C2 criteria, Phase 1 §6, this report and verification guidance, then the
+existing collector/tests, native `_start`, paired capture/clone, P6/P5 interfaces
+and installed ordinary embedding/layer-loop/DSpark operations. Reused Phase 1;
+no repeated upstream audit or new execution design was needed.
+
+The missing capability was **real-model validation of the already corrected
+history observation**, not a missing prefill implementation. Existing
+`observe_case_a_n2`, `ordinary_prefill_reference`, `paired_boundary_metrics` and
+`paired_physical_metrics` supplied the required execution and traversal unchanged.
+**No repository code or test changes were necessary.** A disposable task-local
+worker/supervisor used the prior approach. A passive wrapper serialized only the
+three actual/reference Engram history integers before delegating to the unchanged
+boundary collector; it did not substitute values or execute another comparison.
+No new persistent helper, framework, fixture, loader or inference engine was added.
+
+[Full numerical evidence](phase2-reference-step1a-comparison.json) records exact
+import origins, package/build/checkpoint/source hashes, canonical input, every
+layer/slot/chunk and ring metric. [Execution log](phase2-reference-step1a-comparison-run.log)
+records capture, unwind, reference and cleanup. Execution used the existing
+`/Volumes/SDXC-512/ds41f-1017/bin/python -I`; installed admission completed before
+loading checkout verification code by path. Installed Runtime binding remained
+in place. Identity SHA256 was
+`9c439d3fb9ad730996ecca821234bba1ce8817d7b46a2744e171c10a4d7d2ca2`;
+installed ds41f 0.23.0/build `aa8c5717b42aa0a216fef3134e72c6db7ca49287`,
+oMLX 0.7.0, MLX 0.32.2, mlx-lm `0.31.4.dev132+g94cdcae13`, Recipe 0.2.0,
+`glm_profile=native`, numerical selection `flash-1017-pre-woa-fp8-v1`.
+Checkpoint remained the admitted 48-shard Flash-1017 on KIOXIA-PRO-2. Metadata and
+installed native candidate/P6/paired source hashes matched §9; installed `_start`
+and P6 append were also byte-identical to checkout. Installed weight admission
+retains its unchanged-file verification-cache caveat, not a fresh independent
+rehash of all weights. Nothing was installed, replaced or deployed.
+
+Executed verification SHA256 was
+`ec6865bd7c2ba5c3098449b0793e93f1029f0d487b7e1ecd0c8276f94225e1d0`,
+the exact post-correction hash recorded in §9. This evidence binds that checkout
+tool and the installed numerical payload, not all mutable checkout production
+code or a later installed release. CURRENT contracts/progress were not changed.
+
+### Canonical boundary and numerical observations
+
+Recipe actually prepared the same ordinary Chat request/body as §9 before weights
+loaded: `Explain immutable checkpoints in one short sentence.`, temperature 0,
+max_tokens 1, reasoning none. Actual **N=13**, first-eleven frontier **11**, full
+ordered little-endian int32 SHA256
+`8ce125c769d4a95f97bceac24a7c6aa2f8bbf36a1f0c4ff1d1c4a9ab82d79fb2`.
+Actual IDs were exactly §9's thirteen IDs; consumed IDs on both sides were
+`[0,128803,65106,104124,4085,20819,295,834,3107,10175,16]`.
+
+**Actual model load count: 1** in this task, no failed preliminary worker or retry.
+The existing `InternalMTPQualificationBackend.load` retained `preserve_mtp=True`
+and `engram_ssd_offload=True`. Native cold prefill reached the real N-2 callback;
+existing `PairedCheckpoint.capture` validated/snapshotted the 40/3 pair. The
+adapter unwound normally through its diagnostic exception, restoring layer wrappers
+and releasing the candidate lease before reference execution. No N-1, P5, sampling,
+settlement or publication was performed. Reference used fresh ordinary 40-layer
+Target/three-ring factories over the same eleven IDs, independently recomputed
+embeddings/hidden taps and native DSpark append from offset zero. It consumed no
+candidate Target state, taps, embeddings or restored checkpoint.
+
+| Observation | Actual result |
+| --- | --- |
+| Canonical identity / frontiers | Exact IDs; candidate/reference Target/rings all 11; boundary comparable |
+| Target coverage | **40/40**; all **280** physical slots observed, all meaningful selectors equal |
+| Integer/structural state | All slot shapes, primitive dtypes, presence, metadata/compression, offsets, lengths and padding agree; zero physical value mismatches |
+| Meaningful window KV, slot 1 | All 40 layers, 11 rows each, absolute positions 0–10; decoded 8-bit/group-32 |
+| Meaningful compressed KV/index, slots 2/3 | Layers 2/8/14: five rows each (ratio 2); layer 20: eleven rows (ratio 1); other layers have zero applicable rows |
+| Meaningful compressor/gate tails, slots 4/5 | Layers 2/8/14: one row each; applicable empty state elsewhere |
+| Exact Engram, slot 6 | Layer 0 `[[2638,8324,16]]` on both sides; NumPy `int64` versus MLX `int64` disclosed, exact mismatch count 0; other layers empty |
+| Target floating observations | **54** bounded meaningful chunks, **244,992** decoded/tail scalar pairs; every chunk max-absolute 0, RMS-relative 0, cosine 1, nonfinite pairs/mismatches 0 |
+| DSpark coverage | **3/3**; each keys shape `[1,1,11,512]`, BF16, 5,632 scalar pairs; each max-absolute 0, RMS-relative 0, cosine 1, nonfinite pairs/mismatches 0 |
+| Ring mapping | Each capacity 128, offsets `[11,11]`, physical slot 0–10 maps exactly to absolute position 0–10; no rotation or alignment normalization |
+| Structural/semantic mismatches | **None observed**; no threshold selected, changed or fitted |
+
+Packed physical bytes also matched exactly, separately from decoded numerical
+metrics. Existing `unpack_activation` decoded only meaningful selected slices of
+at most 16 rows: slot 2 uses 4-bit/group-16/E4M3 scale; slot 3 uses 4-bit/group-32.
+Empty/non-source state is recorded, not counted as populated numerical coverage.
+No full decoded persistent-state copy or tensor dump was retained. Exact history
+comparison tolerates only the verified backend representation difference; it does
+not mask different primitive types or integer values.
+
+Independence remains limited by shared checkpoint weights, Recipe/tokenizer,
+loaded modules, MLX/Metal operators, quantization/diagnostic decoder, Engram data
+and native DSpark projection/append/ring operations. Fresh ordinary layer-loop
+state/dataflow versus candidate scheduling is the independent boundary. Exact
+agreement here does not independently validate those shared operations, longer
+chunk schedules, wrapped rings, Vision, P5 or continuation. Reference logits were
+not compared against a candidate logit stream; none is claimed.
+
+### Resource supervision and cleanup
+
+Read-only preflight found no LM Studio/llmster, Ollama, Python inference worker,
+on-demand model server, Docker VM or port-1234 listener. Listener inspection found
+only rapportd, ControlCenter and GitHub. No inference launchctl job/LaunchAgent was
+found; Docker's existing network/socket helpers are not a model worker. No unrelated
+workload required intervention, and none was terminated, restarted or reconfigured.
+These are point-in-time inspections plus ongoing competition checks, not a global
+model-load lock. System/repository/model free storage was 789 GiB/190 GiB/1.1 TiB.
+
+[Resource evidence](phase2-reference-step1a-comparison-resources.json) records the
+same psutil available-memory, vm_stat swapout, pressure sysctl, process-ancestry and
+libproc rusage-v4 footprint approach used previously. Owned admission descendants
+were excluded from competitor checks. The supervisor withheld its load gate until
+admission/canonical preparation completed and a fresh health sample passed. Health
+checks ran about every two seconds, with compact samples about every ten seconds;
+reserve minimum and lifetime footprint maximum were tracked at every health check.
+All requested thresholds remained fixed: preload 455.226 GiB, reserve 64 GiB,
+425-GiB footprint trigger before the 430-GiB ceiling, normal pressure, no increased
+swap/use or swapouts, no competitor/1234 listener, 1,800-s total/600-s no-progress
+budgets. Only the owned worker could be stopped. **No stop condition fired.**
+
+- Pre-load gated available reserve: **493.421 GiB** (includes reclaimable memory,
+  not free pages alone); minimum health-sampled reserve **203.108 GiB**.
+- Lifetime physical-footprint high-water: **300.585 GiB**. Worker elapsed
+  **108.19 s**, including admission and gate wait; supervisor exit sample 109.32 s.
+- Pressure level **1 (normal)** throughout; swap use, swapins and swapouts **0**;
+  no competing inference loader or 1234 listener appeared.
+- Separate overlapping measures, not summed: after load MLX active **287.920 GiB**,
+  cache **5.207 GiB**, peak **290.160 GiB**, footprint **293.746 GiB**. After
+  comparison active **287.920 GiB**, cache **5.299 GiB**, footprint **293.899 GiB**;
+  MLX peak remained **290.160 GiB**.
+- After `model.close`, backend/executor shutdown, GC, stream synchronization and
+  cache clear: MLX active **2,052 bytes**, cache **0**; pre-exit footprint
+  **136.021 GiB**. This transient retained footprint is not a leak verdict. Worker
+  PID 19318 then exited with code 0; host available returned to **493.669 GiB**.
+- Final inspection after focused tests found no worker/watcher/inference process,
+  no port-1234 listener, normal pressure and zero swapins/swapouts/use. Disposable
+  worker/supervisor/gate files were removed; only compact evidence remains.
+
+### Validation and remaining boundary
+
+No preparatory test campaign or diagnostic correction was needed. Post-observation
+focused collector/adapter validation using the admitted interpreter and explicit
+`DS41F_CHECKPOINT`: `python -m pytest -q tests/test_prefill_numerical_reference.py`
+— **11 passed in 41.21 s**, no weights loaded by tests.
+[Focused test log](phase2-reference-step1a-comparison-tests.log).
+`git diff --check`: PASS. `python tools/check_repository_self_containment.py`:
+PASS (35 current owners, 153 Markdown files, 584 live links). Diff review found
+only this report and four evidence files; no duplicated execution code, unused
+helper, extra fixtures or permanent supervision infrastructure. Full per-layer
+metrics are retained despite repetition so the 40/3 result is independently
+inspectable rather than merely an aggregate claim. Changes committed locally;
+commit SHA/working-tree status reported separately. No push or deployment.
+
+**Smallest remaining numerical qualification gap:** independently justify the
+accuracy/acceptance criterion beyond this one exact short-text N-2 observation.
+This execution closes the §9 dtype-observation blocker, not the broader reference
+qualification/continuation gaps. Cases B/C, P5, teacher-forced continuation,
+images, prefix append, historical-image reconstruction and guard changes were
+not executed or automatically selected. Phase 2/C2 remain incomplete. Stop after
+Case A; any further model execution or work item requires separate authorization.
