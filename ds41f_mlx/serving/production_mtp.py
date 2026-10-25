@@ -49,6 +49,9 @@ class ProductionScheduler(Scheduler):
         self.batch_generator = BatchGenerator(*args, **kwargs)
         return self.batch_generator
 
+    def _historical_images_covered(self, request, frontier):
+        return frontier >= request.required_image_frontier
+
     def _schedule_waiting(self):
         if self.running or not self.waiting:
             return [], []
@@ -102,7 +105,7 @@ class ProductionScheduler(Scheduler):
             if request.prepared.multimodal is not None:
                 request.prepared.multimodal.validate_prefix(len(rec.canonical),
                     [s for s in request.image_identities if s['start'] < len(rec.canonical)])
-                if len(rec.canonical) < request.required_image_frontier:
+                if not self._historical_images_covered(request, len(rec.canonical)):
                     raise ValueError('historical image pair unavailable; image replay/re-encode forbidden')
                 request.prepared.multimodal.validate_workload(len(rec.canonical))
             request.cached_tokens = trace['cached_tokens'] = len(rec.canonical)

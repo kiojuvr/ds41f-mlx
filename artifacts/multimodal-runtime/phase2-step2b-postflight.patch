@@ -1,0 +1,44 @@
+--- executed/tools/qualify_cold_messages_continuation.py
++++ validated/tools/qualify_cold_messages_continuation.py
+@@ -13,5 +13,9 @@
+ def verify_fixture(prepared):
+     """Verify actual Recipe output and current source; no tokens are constructed."""
++    from ds41f_mlx.serving.generation_policy import policy_for
++    policy = policy_for(prepared)
++    if policy.temperature != 0 or getattr(prepared, 'resolved_max_tokens', None) != 1:
++        raise ValueError('qualification requires greedy sampling and one output token')
+     mm = prepared.multimodal
+     ids = prepared.token_ids
+     if (prepared.protocol != 'messages' or prepared.image_is_historical != (True,) or
+@@ -43,7 +47,8 @@
+             list(scheduler.requests.values()) != [request] or scheduler.batch_generator is not None or
+             scheduler.session_leases or scheduler.checkpoints._payloads or
+             request.logical_session is not None or request.execution.canonical or
+-            request.execution.owner is not None or request.required_image_frontier != 191):
++            request.execution.owner is not None or request.execution.cache is not None or
++            request.execution.rings is not None or request.required_image_frontier != 191):
+         raise ValueError('requires isolated C=0 request without retained logical sessions')
+     verify_fixture(request.prepared)
+     original = scheduler._historical_images_covered
+@@ -52,7 +57,8 @@
+     def covered(candidate, frontier):
+         if candidate is not request:
+             return original(candidate, frontier)
+-        if (frontier != 0 or candidate.execution.canonical or candidate.logical_session is not None or
++        if (frontier != 0 or candidate.execution.canonical or candidate.execution.cache is not None or
++                candidate.execution.rings is not None or candidate.logical_session is not None or
+                 scheduler.session_leases or scheduler.checkpoints._payloads or
+                 candidate.image_identities != tuple(candidate.prepared.multimodal.identities())):
+             raise ValueError('qualification requires genuine unchanged C=0 miss')
+@@ -86,6 +92,11 @@
+     from ds41f_mlx.serving.paired_checkpoint import validate_pair
+     from tools.qualify_prefill_fp8_mlx import (ordinary_prefill_reference,
+         paired_boundary_metrics, physical_tensor_metrics)
++    # Fail BEFORE load if a caller lost the installed identity binding while
++    # switching to checkout execution glue. Never enroll/bind a guessed profile.
++    from ds41f_mlx.execution_identity import numerical_profile
++    if numerical_profile() != 'flash-1017-pre-woa-fp8-v1':
++        raise ValueError('qualification requires admitted Flash-1017 numerics')
+     verify_fixture(prepared)
+     receipt['worker_thread'] = threading.current_thread().name
+     data = prepared.multimodal._sources[2]
