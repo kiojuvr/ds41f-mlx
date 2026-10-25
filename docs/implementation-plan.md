@@ -99,24 +99,19 @@ paired-byte admission rejected it. [Capabilities](capabilities.md#applications)
 owns the measured scope, residual visual defect and unresolved byte-guard/trace
 retention evidence boundaries.
 
-The current development objective is **long-running multimodal inference
-continuity when official Harness history projection changes**. The central
-unresolved issue is safe cache miss / canonical prefill / paired Target-DSpark
-reconstruction after image offload, compaction or another legitimate history
-change. Current historical misses reject without replay or unverified
-reconstruction; neither completed milestone changes that execution contract.
-Harness remains the history/attachment/offload/compaction/lifecycle owner, Recipe
-the semantics/encoding owner, DeepInfer the cache-aware multimodal/recomputation
-reference, and ds41f-mlx the MLX execution, resource-admission, paired-integrity
-and minimal-integration owner. No competing image manager, conversation authority,
-session framework or cache subsystem is selected.
+The [Multimodal Runtime plan](multimodal-runtime-plan.md) owns the project-specific
+goal, C1–C9 completion criteria, phases, dependencies and progress under the policy
+above. Only its Phase 0 documentation is complete; Phase 1 requires a separate
+explicit task. Current historical misses still reject without replay or unverified
+reconstruction. The plan changes no execution or logical-session contract.
 
 ### Future official-source investigation priorities
 
-These priorities identify unresolved comparisons, **not permission to implement,
-prototype, benchmark or start another live acceptance campaign**. Use these already
-reviewed reference snapshots, not claims about current upstream HEAD or equality
-with installed packages:
+These comparisons are retained technical context for
+[Phase 1](multimodal-runtime-plan.md#phases-dependencies-and-exits), not a separate
+project sequence or permission to start investigation, implementation, prototyping,
+benchmarking or acceptance. Use these already reviewed reference snapshots, not
+claims about current upstream HEAD or equality with installed packages:
 
 | Project | Pinned revision |
 | --- | --- |

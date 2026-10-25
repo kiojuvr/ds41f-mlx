@@ -19,8 +19,8 @@ retired. Historical acceptance does not qualify either variant at later HEAD.
 | Measurements | [Public benchmark](public-performance.md), [performance interpretation](performance.md) |
 | Development boundaries | [Implementation decisions](implementation-plan.md), [Runtime strategy](runtime-strategy.md), [scaffold roles](scaffold-classification.md) |
 
-The [implementation plan](implementation-plan.md#completed-milestone-and-current-multimodal-runtime-objective)
-owns the current Multimodal Runtime continuity objective after the completed,
+The [Multimodal Runtime plan](multimodal-runtime-plan.md)
+owns the project goal, completion criteria, phases and progress after the completed,
 scope-qualified Visual Feedback Loop milestone. [Capabilities](capabilities.md#applications)
 scopes the later Gate F0 and repaired-loop evidence; neither is comprehensive
 Harness qualification or authorization for follow-on implementation.
