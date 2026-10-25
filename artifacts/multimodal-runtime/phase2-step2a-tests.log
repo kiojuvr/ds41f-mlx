@@ -1,0 +1,12 @@
+Environment: /tmp/ds41f-phase1-1017-tests/bin/python (disposable source-test environment)
+DS41F_CHECKPOINT=/Volumes/KIOXIA-PRO-2/models/deepseek-ai/DeepSeek-V4.1-Flash-1017
+python -m pytest -q tests/test_cold_messages_reconstruction.py tests/test_prefill_numerical_reference.py tests/test_production_mtp.py tests/test_metadata_first_vision.py tests/test_expanded_vision_capacity.py tests/test_multimodal_cancellation.py tests/test_prefill_fp8_mlx_p6.py
+150 passed, 41 existing deprecation warnings, 12 subtests passed in 46.56s
+New Step 2A cases: 17 passed (included above).
+No test weights loaded. Session fixture executed isolated installed dependency admission.
+
+git diff --check: PASS
+python tools/check_repository_self_containment.py:
+PASS repository self-containment: {'current_owners': 35, 'markdown_files': 153, 'live_links': 585}; live links/owners and retained provenance verified (not qualification)
+
+Earlier preparatory results: 16 fixture failures (explicit packaged tokenizer path missing), then 2 covered-image mock failures (model.config missing); corrected before loading. Next 129 affected tests passed before the one model load. Post-observation 149 passed / 12 subtests, then added conditional-admission short-pair negative; final 150 / 12 above.

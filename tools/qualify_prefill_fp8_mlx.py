@@ -649,6 +649,42 @@ def observe_case_c_n2(backend, seed_request, request, tokenizer, *, identity, la
     return result
 
 
+def observe_cold_messages_n2(backend, request, tokenizer, *, source_bytes):
+    """Qualification ONLY: genuine paired miss -> existing cold image observer.
+
+    Never called by serving. Ends at unpublished N-2, not settlement/C2 PASS.
+    No retained logical-session input, partial-hit reconstruction or guard override.
+    """
+    from hashlib import sha256
+    scheduler = backend.scheduler
+    mm = request.multimodal
+    try:
+        if (request.protocol != 'messages' or request.image_is_historical != (True,) or
+                mm is None or len(mm.spans) != 1):
+            raise ValueError('qualification requires one historical Messages image')
+        if scheduler.requests or scheduler.waiting or scheduler.running or scheduler.session_leases:
+            raise ValueError('qualification requires an idle Scheduler without logical leases')
+        lookup = {}
+        restored = scheduler.checkpoints.acquire(request.token_ids, images=mm.identities(), timings=lookup)
+        if restored is not None:
+            raise ValueError('qualification requires a genuine complete paired miss')
+        mm.validate_prefix(0, [])
+        mm.validate_workload(0)  # Wire age never discounts fresh work on a miss.
+        span = mm.spans[0]
+        if (sha256(source_bytes).hexdigest() != span.digest or
+                mm._sources.get(span.start) != source_bytes):
+            raise ValueError('new image source unavailable or changed')
+        result = observe_case_b_n2(backend, request, tokenizer,
+            identity=backend.dependency_identity, source_bytes=source_bytes)
+        result['cache_miss'] = dict(frontier=0, hit_identity=None,
+            fresh_images=1, covered_images=0, fresh_patches=span.grid[0]*span.grid[1],
+            fresh_pixels=span.source_pixels, published=False, **lookup)
+        return result
+    finally:
+        if mm is not None:
+            mm.release_sources()
+
+
 def observe_case_b_n2(backend, request, tokenizer, *, identity, source_bytes):
     """Single-image observation; direct _start, NOT Scheduler/HTTP acceptance.
 
