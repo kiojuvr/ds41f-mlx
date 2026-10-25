@@ -5,6 +5,10 @@ Requires both real structural smokes to have passed before invocation. No
 serving selection, timing, decoder handoff, or independent transformer loop.
 Exactness here applies only to packed state produced by identical loaded
 operators on identical input, not to whole-model backend trajectories.
+
+Reusable Phase 2 helpers below construct fresh ordinary observations and collect
+bounded physical diagnostics. They are not selected by this historical CLI and
+have no numerical acceptance thresholds; see the Phase 2 reference report.
 """
 from __future__ import annotations
 
@@ -63,6 +67,133 @@ def runtime_authority(lang):
         'git_revision': git('rev-parse', 'HEAD'), 'git_status': git('status', '--porcelain'),
         'operation_contracts': checks,
     }
+
+
+def ordinary_prefill_reference(model, input_ids, *, pixel_values=None,
+                               image_grids=(), image_spans=(), image_types=()):
+    """Test-only fresh ordinary layer loop; caller owns admission/resources.
+
+    No candidate cache, sparse embedding, prefix lookup, CED flag, or P6 plan
+    is accepted. Pixel preparation and native DSpark math remain shared. This
+    helper is not a production executor or a numerical acceptance authority.
+    Returned arrays are live observations, not immutable checkpoints.
+    """
+    if input_ids.ndim != 2 or input_ids.shape[0] != 1 or not 0 < input_ids.shape[1] <= 4096:
+        raise ValueError('reference requires 1..4096 unpadded singleton positions')
+    if len(image_spans) > 1 or not (len(image_grids) == len(image_spans) == len(image_types)):
+        raise ValueError('reference requires at most one complete image')
+    if (pixel_values is None) != (len(image_spans) == 0):
+        raise ValueError('reference pixels/image metadata mismatch')
+    for (start, length), kinds in zip(image_spans, image_types):
+        if start < 0 or length <= 0 or start + length > input_ids.shape[1] or length != len(kinds):
+            raise ValueError('reference image span is incomplete')
+    lm = model.language_model
+    if len(lm.layers) != 40 or len(lm._config.dspark_target_layer_ids) != 3:
+        raise ValueError('reference requires Flash 40-layer/3-tap topology')
+    cache, rings = lm.make_cache(), lm.make_mtp_cache()
+    if len(cache) != 40 or len(rings) != 3 or any(c.size() != 0 for c in cache) or any(r.offset != 0 or r.keys is not None for r in rings):
+        raise ValueError('reference factories did not provide fresh 40/3 state')
+    embeddings = model.get_input_embeddings(
+        input_ids, pixel_values=pixel_values, image_grids=image_grids,
+        image_spans=image_spans, image_types=image_types).inputs_embeds
+    # Bypass DSparkMixin.__call__ too: no implicit primed-context owner is used.
+    logits, hidden = lm._forward(
+        input_ids, cache=cache,
+        inputs_embeds=embeddings if pixel_values is not None else None,
+        return_dspark_hidden=True)
+    lm.dspark_append_context(hidden, rings, start_offset=0)
+    end = input_ids.shape[1]
+    if any(c.size() != end for c in cache) or any(r.offset != end for r in rings):
+        raise ValueError('reference Target/DSpark frontier mismatch')
+    return dict(target=cache, rings=rings, logits=logits, embeddings=embeddings)
+
+
+def physical_tensor_metrics(actual, reference, *, chunk_elements=65536):
+    """Bounded host diagnostics, never a fitted tolerance or PASS decision.
+
+    Integer/packed values get exact mismatch counts, NOT misleading numerical
+    errors on quantized bytes. Floating metrics cover full physical arrays;
+    meaningful-row selection/packed decoding belongs to the recorded boundary.
+    No ring rotation, padding removal, or state mutation is performed here.
+    """
+    import numpy as np
+    if chunk_elements <= 0:
+        raise ValueError('chunk_elements must be positive')
+    if actual is None or reference is None:
+        return dict(structure_equal=actual is None and reference is None,
+                    actual_present=actual is not None, reference_present=reference is not None)
+    out = dict(actual=geometry(actual), reference=geometry(reference))
+    out['structure_equal'] = actual.shape == reference.shape and actual.dtype == reference.dtype
+    if not out['structure_equal']:
+        return out
+    floating = 'float' in str(actual.dtype)
+    a, b = actual.reshape(-1), reference.reshape(-1)
+    mismatches, samples, nonfinite = 0, [], 0
+    delta2 = ref2 = actual2 = dot = maximum = 0.0
+    for start in range(0, a.size, chunk_elements):
+        def host(value):
+            if str(value.dtype).endswith('bfloat16'):
+                import mlx.core as mx
+                value = value.astype(mx.float32)
+            return np.asarray(value)
+        x, y = host(a[start:start+chunk_elements]), host(b[start:start+chunk_elements])
+        different = x != y
+        mismatches += int(np.count_nonzero(different))
+        for index in np.flatnonzero(different)[:max(0, 4-len(samples))]:
+            # Strings keep nonfinite samples valid in strict JSON evidence.
+            samples.append(dict(flat_index=start+int(index), actual=str(x[index]), reference=str(y[index])))
+        if floating:
+            x, y = x.astype(np.float64), y.astype(np.float64)
+            nonfinite += int(np.count_nonzero(~(np.isfinite(x) & np.isfinite(y))))
+            if np.all(np.isfinite(x)) and np.all(np.isfinite(y)):
+                delta = x-y
+                maximum = max(maximum, float(np.max(np.abs(delta), initial=0)))
+                delta2 += float(np.sum(delta*delta))
+                ref2 += float(np.sum(y*y))
+                actual2 += float(np.sum(x*x))
+                dot += float(np.sum(x*y))
+    out.update(elements=int(a.size), mismatches=mismatches, samples=samples)
+    if floating:
+        out.update(nonfinite_pairs=nonfinite,
+                   max_absolute=None if nonfinite else maximum,
+                   rms_relative=None if nonfinite or ref2 == 0 else (delta2/ref2)**0.5,
+                   cosine=None if nonfinite or ref2 == 0 or actual2 == 0 else dot/(ref2*actual2)**0.5)
+    return out
+
+
+def paired_physical_metrics(actual, reference, *, chunk_elements=65536):
+    """Observe ALL 40 x 7 slots and 3 native rings; no acceptance inference.
+
+    Inputs are dictionaries returned by ordinary_prefill_reference or equivalent
+    candidate observation adapters. Metadata and physical bytes are retained as
+    compact metrics. Packed-value numerical equivalence is NOT established.
+    """
+    if any(len(p['target']) != 40 or len(p['rings']) != 3 for p in (actual, reference)):
+        raise ValueError('incomplete 40-layer/3-ring observation')
+    result = dict(status='OBSERVED_ONLY', target=[], rings=[])
+    def metric(a, b):
+        return physical_tensor_metrics(a, b, chunk_elements=chunk_elements)
+    for index, (a, b) in enumerate(zip(actual['target'], reference['target'])):
+        if len(a.cache) != 7 or len(b.cache) != 7:
+            raise ValueError(f'layer {index}: incomplete seven-slot observation')
+        result['target'].append(dict(
+            layer=index, offsets=[a.size(), b.size()],
+            meta_state=[list(a.meta_state), list(b.meta_state)],
+            compress_ratio=[a.compress_ratio, b.compress_ratio],
+            left_padding=metric(getattr(a, 'left_padding', None), getattr(b, 'left_padding', None)),
+            lengths=metric(getattr(a, 'lengths', None), getattr(b, 'lengths', None)),
+            slots=[metric(x, y) for x, y in zip(a.cache, b.cache)]))
+    for index, (a, b) in enumerate(zip(actual['rings'], reference['rings'])):
+        def physical_positions(ring):
+            if ring.max_size <= 0 or ring.offset < 0:
+                raise ValueError('invalid ring capacity/offset')
+            return [ring.offset-1-((ring.offset-1-slot) % ring.max_size)
+                    for slot in range(min(ring.offset, ring.max_size))]
+        result['rings'].append(dict(ring=index, capacity=[a.max_size, b.max_size],
+                                    offsets=[a.offset, b.offset],
+                                    physical_positions=[physical_positions(a), physical_positions(b)],
+                                    keys=metric(a.keys, b.keys)))
+    return result
 
 
 def qualify(args, report):

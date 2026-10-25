@@ -1,0 +1,8 @@
+Model-free collector check, before correction:
+58 tests: 1 failed, 57 passed, 41 warnings, 12 subtests passed in 39.12s.
+Failing test: test_mlx_bfloat_metrics_use_bounded_fp32_host_conversion.
+Cause: str(MLX dtype) is 'mlx.core.bfloat16', not 'bfloat16'; the intended
+per-chunk FP32 conversion was not selected and NumPy rejected BF16 buffers.
+Correction: recognize the bfloat16 suffix before host conversion.
+No model execution, numerical kernel change, tolerance adjustment, or model retry.
+Final validation is retained in phase2-reference-installed-tests.log.

@@ -1,0 +1,13 @@
+Initial model-free test attempt (compacted failure log; no model load):
+PATH="$PWD/.venv/bin:$PATH" python -m pytest -q tests/test_prefill_numerical_reference.py tests/test_prefill_fp8_mlx_p6.py tests/test_production_mtp.py
+Result: 57 setup errors in 0.72s; no test body executed.
+
+All errors originated from tests/conftest.py:24, installed_test_variant:
+subprocess.run([sys.executable, '-I', '-c',
+    'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'], check=True)
+ModuleNotFoundError: No module named 'ds41f_mlx'
+
+Development .venv has no installed ds41f payload and Recipe 0.1.1.
+No fixture bypass, package install, or dependency change was made.
+Selected the existing admitted /Volumes/SDXC-512/ds41f-1017 environment instead.
+Successful results retained in phase2-reference-installed-tests.log.
