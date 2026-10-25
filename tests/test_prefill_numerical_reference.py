@@ -240,6 +240,79 @@ def test_case_a_adapter_uses_capture_then_fresh_reference_after_unwind(monkeypat
         observe_case_a_n2(Backend(), request, None, identity='synthetic')
 
 
+@pytest.mark.parametrize('patch_delta', [0., .25])
+def test_case_b_production_vision_independent_inputs_and_unwind(monkeypatch, patch_delta):
+    from io import BytesIO
+    import mlx.core as mx
+    from PIL import Image
+    from omlx.patches.deepseek_v41 import model as native
+    from omlx.patches.deepseek_v41.config import ModelConfig
+    from ds41f_mlx.runtime.multimodal import prepare_multimodal
+    from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+    from ds41f_mlx.model_execution import processing
+    import tools.qualify_prefill_fp8_mlx as tool
+    config = ModelConfig(vision_n_layers=1, vision_dim=16, vision_n_heads=4,
+        vision_inter_dim=32, dim=8, vision_min_pixels=42*42, preserve_mtp=True)
+    buf = BytesIO()
+    Image.new('RGB', (42, 42), (100, 80, 60)).save(buf, format='PNG')
+    data = buf.getvalue()
+    mm = prepare_multimodal([7, config.image_token_id, 8, 9],
+        [SimpleNamespace(kind='bytes', data=data)], config)
+    ids = list(mm.token_ids)
+    candidate, state_config = native_meaningful_pair(len(ids)-2)
+    independent, _ = native_meaningful_pair(len(ids)-2)
+    original_layers = tuple(object() for _ in range(40))
+    lm = SimpleNamespace(layers=list(original_layers), _config=state_config,
+                        embed=lambda ids: mx.zeros((*ids.shape, config.dim)))
+    monkeypatch.setattr(native, 'LanguageModel', lambda c: lm)
+    model = native.Model(config)
+    events = []
+    class Backend:
+        _model = model
+        _encode_new_images = ProductionMTPBackend._encode_new_images
+        def _start(self, rec, request, tokenizer, trace, *, checkpoint_capture):
+            events.append('candidate')
+            self._encode_new_images(mm, 0)
+            lm.layers[0] = object()
+            try:
+                checkpoint_capture(candidate['target'], candidate['rings'], ids[:-2])
+                pytest.fail('must stop at N-2')
+            finally:
+                lm.layers[:] = original_layers
+                events.append('unwound')
+    original_patch = processing.image_patch_array
+    calls = []
+    def patches(*args):
+        p, h, w, kinds = original_patch(*args)
+        calls.append(p)
+        return (p + patch_delta if len(calls) == 2 else p), h, w, kinds
+    monkeypatch.setattr(processing, 'image_patch_array', patches)
+    def reference(model, input_ids, **kwargs):
+        assert events == ['candidate', 'unwound']
+        assert all(a is b for a, b in zip(lm.layers, original_layers))
+        assert input_ids.tolist()[0] == ids[:-2]
+        assert kwargs['image_spans'] == [(mm.spans[0].start, mm.spans[0].length)]
+        independent['token_ids'] = tuple(ids[:-2])
+        return dict(independent, embeddings=model.get_input_embeddings(input_ids, **kwargs).inputs_embeds)
+    monkeypatch.setattr(tool, 'ordinary_prefill_reference', reference)
+    request = SimpleNamespace(token_ids=ids, multimodal=mm)
+    got = tool.observe_case_b_n2(Backend(), request, None, identity='synthetic', source_bytes=data)
+    assert len(calls) == 2 and calls[0] is not calls[1]
+    assert got['boundary']['comparable']
+    assert len(got['boundary']['metrics']['target']) == 40
+    assert len(got['boundary']['metrics']['rings']) == 3
+    assert got['image']['patches']['geometry_equal']
+    assert (got['image']['patches']['patches']['mismatches'] == 0) == (patch_delta == 0)
+    assert (got['image']['embeddings']['max_absolute'] == 0) == (patch_delta == 0)
+    assert [m['kind'] for m in got['image']['embeddings_by_kind']] == [0, 1, 2, 3]
+    assert not mm._sources
+    with pytest.raises(ValueError, match='source identity'):
+        tool.observe_case_b_n2(Backend(), request, None, identity='synthetic', source_bytes=b'wrong')
+    request.token_ids = ids[:mm.spans[0].start+mm.spans[0].length+1]
+    with pytest.raises(ValueError, match='boundary mismatch'):
+        tool.observe_case_b_n2(Backend(), request, None, identity='synthetic', source_bytes=data)
+
+
 def reference_model():
     calls = []
     class Cache:

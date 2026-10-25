@@ -1,0 +1,13 @@
+Case B model-free pre-load focused validation (compact output; warning bodies summarized)
+DS41F_CHECKPOINT=/Volumes/KIOXIA-PRO-2/models/deepseek-ai/DeepSeek-V4.1-Flash-1017
+/Volumes/SDXC-512/ds41f-1017/bin/python -m pytest -q \
+  tests/test_prefill_numerical_reference.py tests/test_metadata_first_vision.py \
+  tests/test_prefill_fp8_mlx_p6.py tests/test_production_mtp.py
+
+................................................................. [ 61%]
+.........................................                           [100%]
+106 passed, 41 warnings, 12 subtests passed in 45.81s
+
+Existing warnings: Starlette TestClient/httpx deprecation; FastAPI on_event
+startup/shutdown deprecations in server.py and FastAPI applications.py.
+No dependency installation or model weight load by tests.

@@ -377,6 +377,105 @@ def observe_case_a_n2(backend, request, tokenizer, *, identity):
     return result
 
 
+def observe_case_b_n2(backend, request, tokenizer, *, identity, source_bytes):
+    """Single-image observation; direct _start, NOT Scheduler/HTTP acceptance.
+
+    Reuse the production span encoder unchanged. Passive wrappers retain its
+    rows and compare its CPU patches to independently prepared reference pixels.
+    Reference never receives candidate embeddings, taps or cache state.
+    """
+    from hashlib import sha256
+    from io import BytesIO
+    import mlx.core as mx
+    from PIL import Image
+    from mlx_lm.generate import generation_stream
+    from ds41f_mlx.model_execution import processing
+    from ds41f_mlx.runtime.mtp_resources import MTPWiredLimitLease
+    from ds41f_mlx.serving.internal_mtp import QualificationSession
+    from ds41f_mlx.serving.paired_checkpoint import PairedCheckpoint
+    from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+
+    mm, ids = request.multimodal, tuple(request.token_ids)
+    if mm is None or len(mm.spans) != 1 or not 3 <= len(ids) <= 4096:
+        raise ValueError('Case B requires one bounded complete image')
+    span = mm.spans[0]
+    if (tuple(mm.token_ids) != ids or span.start < 0 or
+            span.start + span.length > len(ids)-2 or
+            span.length != len(span.kinds) or
+            any(t == mm._config.image_token_id for t in ids[-2:]) or
+            any(t != mm._config.image_token_id for t in ids[span.start:span.start+span.length])):
+        raise ValueError('Case B image/canonical N-2 boundary mismatch')
+    if sha256(source_bytes).hexdigest() != span.digest or mm._sources.get(span.start) != source_bytes:
+        raise ValueError('Case B independent source identity mismatch')
+    if getattr(backend._encode_new_images, '__func__', None) is not ProductionMTPBackend._encode_new_images:
+        raise ValueError('Case B requires the existing production image encoder')
+    # Separate decode/resize/normalize/patch construction from verified bytes.
+    with Image.open(BytesIO(source_bytes)) as image:
+        patches, h, w, kinds = processing.image_patch_array(image, mm._config)
+    if (h, w) != span.grid or tuple(kinds) != span.kinds:
+        raise ValueError('Case B independent geometry mismatch')
+    reference_pixels = mx.array(patches).astype(mx.bfloat16)
+    pixels_observed, candidate_rows = [], []
+    original_patch = processing.image_patch_array
+    original_encoder = backend._encode_new_images
+    def observe_patches(*args, **kwargs):
+        result = original_patch(*args, **kwargs)
+        value, ch, cw, ck = result
+        pixels_observed.append(dict(
+            geometry_equal=(ch, cw) == (h, w) and tuple(ck) == tuple(kinds),
+            patches=physical_tensor_metrics(value, patches),
+            prepared_bfloat16=physical_tensor_metrics(mx.array(value).astype(mx.bfloat16), reference_pixels)))
+        return result
+    def observe_encoder(*args, **kwargs):
+        result = original_encoder(*args, **kwargs)
+        candidate_rows.extend(result.rows)
+        return result
+    lm = backend._model.language_model
+    original_layers, saved = tuple(lm.layers), None
+    class CaptureComplete(Exception):
+        pass
+    def capture(target, rings, consumed):
+        nonlocal saved
+        if tuple(consumed) != ids[:-2]:
+            raise ValueError('candidate capture is not canonical N-2')
+        saved = PairedCheckpoint.capture(identity, target, rings, consumed, mx, images=mm.identities())
+        print(f'Case B: captured native N-2 frontier {len(consumed)}', flush=True)
+        raise CaptureComplete()
+    rec = QualificationSession('phase2-step1b')
+    trace = {}
+    with patch.object(processing, 'image_patch_array', observe_patches), patch.object(backend, '_encode_new_images', observe_encoder):
+        try:
+            backend._start(rec, request, tokenizer, trace, checkpoint_capture=capture)
+        except CaptureComplete:
+            pass
+    if saved is None or rec.owner is not None or any(a is not b for a, b in zip(lm.layers, original_layers)):
+        raise RuntimeError('Case B capture/unwind did not restore native boundary')
+    if len(pixels_observed) != 1 or len(candidate_rows) != 1 or candidate_rows[0][0] != span.start:
+        raise RuntimeError('Case B did not observe exactly one production Vision span')
+    print('Case B: candidate unwound; independent image ordinary reference', flush=True)
+    candidate = dict(target=saved.target, rings=saved.rings, token_ids=saved.tokens)
+    with mx.stream(generation_stream), MTPWiredLimitLease(mx, generation_stream):
+        reference = ordinary_prefill_reference(backend._model, mx.array([ids[:-2]], mx.int32),
+            pixel_values=reference_pixels, image_grids=[(h, w)],
+            image_spans=[(span.start, span.length)], image_types=[list(kinds)])
+        result = dict(image=dict(identity=span.identity(), kinds=list(kinds),
+            absolute_positions=list(range(span.start, span.start+span.length)),
+            mask_positions=[i for i, t in enumerate(ids[:-2]) if t == mm._config.image_token_id],
+            patches=pixels_observed[0], embeddings_by_kind=[]), trace=trace)
+        a, b = candidate_rows[0][1], reference['embeddings'][0, span.start:span.start+span.length]
+        result['image']['embeddings'] = physical_tensor_metrics(a, b)
+        for kind in sorted(set(kinds)):
+            positions = [i for i, k in enumerate(kinds) if k == kind]
+            ix = mx.array(positions, mx.int32)
+            result['image']['embeddings_by_kind'].append(dict(kind=kind,
+                absolute_positions=[span.start+i for i in positions],
+                metrics=physical_tensor_metrics(a[ix], b[ix])))
+        result['boundary'] = paired_boundary_metrics(candidate, reference,
+            boundary='n-2-capture', config=lm._config)
+        mx.synchronize(generation_stream)
+    return result
+
+
 def qualify(args, report):
     import mlx.core as mx
     import omlx.patches.deepseek_v41.language as lang

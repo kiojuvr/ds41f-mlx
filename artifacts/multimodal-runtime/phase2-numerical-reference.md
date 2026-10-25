@@ -869,3 +869,174 @@ qualification/continuation gaps. Cases B/C, P5, teacher-forced continuation,
 images, prefix append, historical-image reconstruction and guard changes were
 not executed or automatically selected. Phase 2/C2 remain incomplete. Stop after
 Case A; any further model execution or work item requires separate authorization.
+
+## 11. Step 1B — single-image cold prefill (2026-10-25)
+
+**Disposition: OBSERVED for Case B at N-2 = 200.** Independently prepared image
+patches and Vision embeddings, **40/40 Target layers** and **3/3 DSpark rings**
+were compared. All measured values agreed exactly in this execution. This is
+numerical observation, not a fitted tolerance, general qualification or C2 PASS.
+Case A was not rerun; §§1–10 and their historical evidence are unchanged.
+
+### Review, identities and smallest observation seam
+
+Started on clean `Multimodal-Runtime`, exact expected HEAD
+`971a0a6bd98d8a26e1bde39785e1f86a4501146f`, one worktree. Process/listener and
+launch-service inspection found no competing inference loader, LM Studio endpoint
+or concurrent tracked work. This is observation plus ongoing supervision, not a
+system-wide exclusion lock. No unrelated service/process was changed.
+
+Reviewed CURRENT documentation policy, upstream-first sequencing, Phase 2/C2,
+Vision integration and verification/admission guidance; Phase 1 §6 and Case A §10;
+then Recipe preparation, multimodal preparation/merge, native `_start`, P6,
+production span encoding, installed `Model.get_input_embeddings`/ordinary loop,
+Engram masking and existing Vision/MTP tests. The internal backend's default image
+encoder requires OFF resource ownership and is **not** the correct MTP adapter.
+The existing **ProductionMTPBackend** supplies the admitted pinned span encoder.
+Its `_encode_new_images` source is identical between checkout and installation;
+whole production modules are **not** identical. `_start`, P6 and CPU processing
+are byte-identical. Installed multimodal code predates `validate_workload` and
+`ImageSpan.source_pixels`; preparation and explicit fresh-budget checks were used,
+not assumptions of checkout equality or modifications to the installation.
+
+Added only `observe_case_b_n2` to the existing numerical tool and two parametrized
+model-free cases in its existing test module. The helper follows Case A's native
+capture/unwind pattern, preserving image identities in `PairedCheckpoint.capture`.
+It calls **production `_start` directly**, not ProductionScheduler or HTTP. The
+production image encoder is reused unchanged; passive wrappers observe its patches
+and returned sparse rows. Native N-2 capture ends via diagnostic exception, allowing
+existing finally/lease handling to restore wrappers before the ordinary reference.
+No N-1, P5, generation, settlement, publication or Scheduler acceptance is claimed.
+No candidate state was advanced for inspection. Production inference semantics,
+protected guards, numerical operators and the historical tool CLI are unchanged.
+
+[Machine-readable evidence](phase2-reference-step1b.json) binds actual imported
+origins, installed admission/build/checkpoint identities, executed source hashes,
+canonical IDs, patch/Vision metrics, every Target slot/chunk and every ring.
+Execution used `/Volumes/SDXC-512/ds41f-1017/bin/python -I`; installed admission
+completed before loading the checkout verification file by path. Runtime remained
+bound to installed ds41f **0.23.0**, source
+`aa8c5717b42aa0a216fef3134e72c6db7ca49287`; installed identity SHA256
+`9c439d3fb9ad730996ecca821234bba1ce8817d7b46a2744e171c10a4d7d2ca2`.
+Python 3.13.15, oMLX 0.7.0, MLX 0.32.2, mlx-lm
+`0.31.4.dev132+g94cdcae13`, Recipe 0.2.0 and native GLM were admitted with
+`flash-1017-pre-woa-fp8-v1`. Checkpoint was the required KIOXIA-PRO-2 Flash-1017,
+48 admitted shards; unchanged-file verification-cache caveat remains, not a new
+independent full-weight rehash. No assets/dependencies were installed or changed.
+Executed tool SHA256:
+`14ce943f882d8edee82ed6af92f79a0b34aadce2bf28dffd183c38894850af5e`.
+
+### Canonical input, independent preparation and numerical results
+
+Before weights, existing Recipe ordinary Chat preparation processed one user
+content list: corn image, then `Identify this food in one short sentence.`
+Temperature 0, max_tokens 1, reasoning none; no output token was generated.
+Canonical Recipe ordering required no change. Actual input:
+
+- `corn.jpeg`, **56,122 bytes**, **450×308** source pixels; verified SHA256
+  `251fe7ad58f44db139a6af5ed489e027eca93ae60878b83f3e709c7d6f0112a1`.
+- **N=202**, canonical frontier **200**. Expanded image occurrence 0 is
+  **[2,191)**, length **189**; grid **(33,47)**, **1,551** ViT patches.
+  Kinds: start 0 ×1, features 1 ×176, newline 2 ×11, end 3 ×1. All image
+  positions precede N-2; terminal IDs **128804,128822** are non-image text/control
+  positions under the existing convention. No span truncation or frontier split.
+- Exact IDs are retained in JSON. Compact notation (not a handcrafted input):
+  `[0,128803] + [129264]×189 +
+  [271,71343,566,3344,295,834,3107,10175,16,128804,128822]`.
+  Full little-endian int32 SHA256:
+  `96c66aaf8db245ad3a5cd247bb74fa87c3892b376a33e2573d4449b8df986597`.
+- Existing full-container/pixel validation and preparation enforced image byte,
+  pixel, aspect, token and aggregate budgets. Explicit fresh checks confirmed
+  1,551 <36,864 patches and 138,600 <16,777,216 source pixels. Encoded JSON body
+  **75,115 bytes** <16 MiB. Expanded prompt plus one reserved output fits both
+  checkpoint context and the 4,096-position experiment bound.
+
+Reference pixels were constructed by a separate PIL decode and installed
+`image_patch_array` invocation from the independently re-read, digest-verified
+source bytes. Candidate preparation independently consumed its request-owned
+source through the existing production span encoder. CPU patches and BF16
+conversion were compared without substituting either input. The reference then
+called **ordinary_prefill_reference** with exact canonical first-200 IDs, its own
+pixels, grid, absolute span and kinds. Fresh 40-layer Target/three-ring factories,
+ordinary `_forward`, recomputed hidden taps and native append from offset zero
+received **no candidate embedding, Target state, tap or checkpoint**.
+
+| Observation | Actual result |
+| --- | --- |
+| Prepared patches | Both `[1551,3,14,14]`; float32 and BF16, 911,988 scalar pairs each; exact layout/value equality |
+| Vision embeddings | Candidate per-span versus independent full-prefix reference: `[189,5120]` BF16, 967,680 pairs; all rows equal, including start/newline/end groups at recorded absolute positions |
+| Image masks | Passive native Engram-hasher observation saw exactly two `[1,200]` calls: candidate/reference IDs and Boolean masks equal; true exactly at **[2,191)**, including delimiters; native hasher masks these IDs to sentinel -1 |
+| Boundary | Both Target/ring frontiers `[200,200]`; exact consumed canonical IDs |
+| Target coverage | **40/40**, all **280 physical slots**, presence/shapes/primitive dtypes/metadata/compression/offsets/padding/lengths equal; zero physical value mismatches |
+| Meaningful window KV | All 40 layers, 128 chronological rows, absolute **[72,200)**; existing 8-bit/group-32 decoder |
+| Compressed KV / index | Layers 2/8/14: 100 rows each, ratio 2; layer 20: 200 rows, ratio 1; non-source rows inapplicable; existing 4-bit/group-16/E4M3 and 4-bit/group-32 decoders |
+| Compressor/gate tails | Zero applicable rows at this even frontier; empty structures observed, not populated numerical coverage |
+| Engram history | Layer 0 three int64 integers equal, zero mismatches; NumPy versus MLX representation disclosed; applicable empty state elsewhere |
+| Target meaningful floating metrics | **388** chunks, **2,941,440** scalar pairs; every chunk max-absolute **0**, RMS-relative **0**, cosine **1**, nonfinite pairs/mismatches **0** |
+| DSpark coverage | **3/3**, each `[1,1,128,512]` BF16, 65,536 pairs; max-absolute **0**, RMS-relative **0**, cosine **1**, nonfinite pairs/mismatches **0** |
+| Wrapped ring mapping | All capacities 128/offsets 200; physical slots map to **[128,200) then [72,128)**, identically, without rotation normalization |
+| First meaningful divergence | **None observed**, including packed physical bytes, masks, image metadata and meaningful decoded values |
+
+Packed decoding remained bounded to at most 16 selected rows, with no persistent
+full decoded-cache copy or tensor dump. Actual floating equality was not assumed
+in advance and sets **no acceptance tolerance**. Shared checkpoint/modules,
+Recipe/tokenizer, CPU recipe, Vision kernels, MLX/Metal, quantization decoder,
+Engram and native DSpark math limit independence: this compares fresh ordinary
+state/dataflow against P6 scheduling, not independent implementations of all math.
+The 202-position case does not exercise the ≥8192 deferred bulk/tail branch.
+
+### Supervision, cleanup, validation and stopping boundary
+
+**One model load**, no retry or diagnostic failure after load. Existing backend
+loader retained `preserve_mtp=True`, `engram_ssd_offload=True` and native profile.
+The [short log](phase2-reference-step1b-run.log) records real capture/unwind,
+independent reference and cleanup. The disposable external supervisor followed
+Case A: psutil available reserve, vm_stat swapouts, pressure sysctl, process
+ancestry/competitor checks and libproc rusage-v4 current/lifetime footprint.
+Owned admission descendants were excluded; a fresh healthy load gate was required.
+Health sampling was approximately two seconds, compact samples approximately ten
+seconds, with minima/maxima tracked at each health check. No threshold fired.
+
+[Resource evidence](phase2-reference-step1b-resources.json):
+
+- Pre-load gated reserve **493.163 GiB**, above **455.226 GiB**; minimum reserve
+  **197.763 GiB**, above **64 GiB**. Available includes reclaimable pages, not a
+  memory reservation or free-pages-only claim.
+- Lifetime physical-footprint high-water **300.576 GiB**, below the conservative
+  **425 GiB** trigger / **430 GiB** ceiling. Worker/supervisor elapsed **110.55 s**,
+  below 30-minute total and 10-minute no-progress limits.
+- Pressure level **1 (normal)**, swap use/swapins/swapouts **0** throughout;
+  no competing loader or 1234 serving listener appeared. Only owned worker could
+  have been terminated; none required termination.
+- Separate overlapping MLX metrics, not summed with footprint: after load active
+  **287.920 GiB**, cache **5.207 GiB**, peak **290.160 GiB**; after comparison
+  active **287.920 GiB**, cache **7.327 GiB**, peak **290.160 GiB**.
+- After model close, backend/executor shutdown, GC, stream synchronization/cache
+  clear: MLX active **2,058 bytes**, cache **0**. Post-close physical footprint was
+  not separately sampled before exit; no claim of allocator-leak measurement.
+  Worker **55993** exited code 0 and supervisor **55988** exited; host reserve
+  returned to **493.671 GiB**. Final process/listener inspection confirmed absence,
+  normal pressure and zero swap. Temporary worker/supervisor/gate files removed;
+  their hashes remain in evidence. No duplicate model/image asset was retained.
+
+Before loading, affected focused tests using the specified interpreter/checkpoint:
+`tests/test_prefill_numerical_reference.py`, `tests/test_metadata_first_vision.py`,
+`tests/test_prefill_fp8_mlx_p6.py`, `tests/test_production_mtp.py` — **106 passed,
+12 subtests passed**, 41 existing warnings, 45.81 s. New tests exercise real tiny
+native Vision through the unchanged production adapter, independent patch
+construction, image/delimiter metrics, N-2 unwind-before-reference, source/frontier
+negatives and deliberate candidate patch divergence without masking it. Existing
+reference freshness and full-state collector negatives remain. No weights loaded
+by tests. [Focused log](phase2-reference-step1b-tests.log).
+
+`git diff --check` and `python tools/check_repository_self_containment.py`: PASS.
+Policy/diff review: only verification tool/tests and appended compact evidence;
+no competing execution owner, guard relaxation, production change, installed
+payload modification or CURRENT qualification/progress update. One focused local
+commit; SHA reported separately. No push or deployment.
+
+Unobserved: production Scheduler/HTTP admission/lifecycle, N-1/P5, continuation and
+matched logits, changed/history projections, cache recovery and longer schedules.
+No independent floating acceptance envelope is established by this exact sample.
+Case C, reconstruction, Harness lifecycle and general C2 remain unqualified and
+were not started. **Stop after Case B; no automatic follow-on work.**
