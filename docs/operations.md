@@ -115,7 +115,8 @@ another model server. Never start two Runtimes on port 8000. Historical acceptan
 used isolated port 18047; the earlier direct Harness run used 18037. Those runs
 are not current services.
 
-Official Harness provider/CLI **0.2.1-rc.2** connected directly to `POST /v1/messages`
+In the original **text-only/read-only-tool acceptance**, official Harness
+provider/CLI **0.2.1-rc.2** connected directly to `POST /v1/messages`
 with model **`deepseek-flash`**, without an adapter. Its `llm-deepseek` config used
 `baseURL: http://127.0.0.1:18037` (**without `/v1`**),
 `apiKeyEnv: DS41F_LOCAL_API_KEY`, `thinking: disabled`,
@@ -129,13 +130,25 @@ Disable unsupported **`dsh_session_log`** upload through the Harness UI
 accepted and ignored. Do not send tool
 removals; keep `addition-only`. The accepted run enabled only read-only filesystem
 reads (`tool-fs`: read true; readImage/write/edit false), disabled other effectful
-tools, and used Harness read-only permission/sandbox presets. Files/document/URL
-image transport and server tools are unsupported, not automatically downgraded.
-Inline base64 Vision is implemented, but real Harness image/Files workflows,
-cancellation and dynamic tool updates were **not exercised**. Read-only tool/result
-continuation passed; this is not unrestricted Harness compatibility or deployment
-qualification. Original logs and independently observed persistent-installation
-acceptance are distinguished in the [development record](deepinfer-development.md).
+tools, and used Harness read-only permission/sandbox presets. Files/image transport
+was outside that original test's accepted scope; document/URL image transport and
+server tools remain unsupported, not automatically downgraded. Real Harness
+image/Files workflows, cancellation and dynamic tool updates were **not exercised
+in that test**. Read-only tool/result continuation passed; this is not unrestricted
+Harness compatibility or deployment qualification. Original logs and independently
+observed historical persistent-installation acceptance are distinguished in the
+[development record](deepinfer-development.md).
+
+Later [Gate F0](../artifacts/harness-files/gate-f0-report.md) demonstrated bounded
+real-model official File-ID/nested-tool-result transport on macOS. The
+[repaired Visual Loop](../artifacts/repaired-visual-loop/report.md) subsequently
+completed 27 native generations and six screenshot-verified correction cycles
+through seven executed images; the eighth transferred/prepared image was rejected
+before inference at conditional paired-byte fallback. Overall qualification is
+**PARTIAL**, not general Files lifecycle, persistent attachment storage or arbitrary
+multimodal continuity. See [capabilities](capabilities.md#applications) for evidence
+limits. These isolated historical installations do not identify or requalify the
+currently installed packages; the dated environment layout above remains separate.
 
 The TUI manages only Runtime, **not Harness or Browser Chat**. From the
 checkout, explicitly select the installed interpreter before launching the TUI:

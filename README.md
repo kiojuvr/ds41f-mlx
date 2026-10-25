@@ -261,12 +261,22 @@ model ID below if needed. Merge this provider into the existing `llm-pi-ai` entr
 
 ### Compatibility limits
 
-A bounded screenshot-guided static Web loop passed on **macOS/M3 Ultra 512 GB,
-Harness 0.2.1-rc.2, Runtime 0.23.0 (`2fdea4f`), Recipe 0.2.0 and original
-Flash-1017**, Thinking OFF/native paired MTP/GLM. Official tools use an external
-renderer outside Seatbelt and Files-to-inline fallback; this does **not** qualify
-the Files API, Chromium inside Seatbelt or Windows image workflows.
-[Phase 3 evidence](artifacts/visual-feedback-loop/phase-3-report.md).
+The completed Visual Feedback Loop milestone has bounded **macOS/M3 Ultra 512 GB,
+Harness 0.2.1-rc.2, Recipe 0.2.0, original Flash-1017, Thinking OFF/native paired
+MTP/GLM** evidence. [Phase 3](artifacts/visual-feedback-loop/phase-3-report.md)
+used Files-to-inline fallback and did not qualify Files. Later
+[Gate F0](artifacts/harness-files/gate-f0-report.md) demonstrated real-model
+official File-ID/nested-tool-result transport. The
+[repaired loop](artifacts/repaired-visual-loop/report.md) completed **27 native
+generations**, **six screenshot-verified correction cycles**, **seven distinct
+Vision encodes** and **85 historical-image occurrence reuses**. Eight distinct
+screenshots transferred through Files; the eighth was not executed by the model.
+Independent final visual evaluation improved **4/9 → 8/9**, with a remaining
+**29px grid discrepancy**. Overall qualification is **PARTIAL**: request 28 failed
+before inference at conditional paired-byte admission, with the exact byte
+subcondition unrecorded. Long-term arbitrary-image continuity, full official
+Files/document lifecycle compatibility, persistent Files storage, PDF ingestion,
+Chromium inside Seatbelt and Windows image workflows are not qualified.
 Runtime supports **bounded inline Vision for both variants**. Server-side
 tools, unsupported Messages extensions, multi-active inference and restart-persistent
 KV-cache restoration are unsupported; parallel subagent workflows remain unqualified.
@@ -396,9 +406,11 @@ See [performance evidence](docs/performance.md) for measurement scope.
   multi-user service, distributed inference or multi-active/shared native batching.
 - No MTP native persistence, restart recovery, transparent replay/resume or
   cross-backend KV portability. Logical conversations are not durable sessions.
-- Messages supports bounded inline base64 images, not Files/documents.
-  Only the scoped macOS Harness screenshot loop above is qualified, not general
-  attachment/Files workflows.
+- Messages supports bounded inline base64 images and process-local image Files
+  upload/delete with File-ID resolution, not PDF/document ingestion, persistent
+  attachment storage or full official Files lifecycle compatibility. The bounded
+  macOS Files/Vision evidence above is not general Harness compatibility or
+  long-term arbitrary-image continuity qualification.
   No remote/file image URLs, low-detail images,
   animations or universal multimodal/visual-quality claim. MTP prior-message
   images need a compatible retained pair; eviction or incompatible historical

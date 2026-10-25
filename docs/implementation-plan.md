@@ -78,10 +78,45 @@ compaction and historical request projection. Current no-replay rules in
 [Vision integration](mtp-vision-integration.md) continue to govern execution;
 they are not permanent prohibitions on investigating upstream-compatible designs.
 
-### Immediate official-source investigation priorities
+### Completed milestone and current Multimodal Runtime objective
 
-Use these already reviewed reference snapshots, not claims about current upstream
-HEAD or equality with installed packages:
+Conditional cached-image admission is implemented and narrowly qualified for
+Flash-1017: fresh work remains bounded by **36,864 ViT patches**; historical
+patch discount requires compatible complete paired coverage and pre-restore
+checks of **12 MiB per projected complete pair** and **192 MiB retained logical
+roots**. Independent source-byte, pixel, body, context and queue guards remain.
+The [cached-image admission report](../artifacts/cached-image-admission/report.md)
+establishes twelve screenshot occurrences without overrides, not an image-count
+ceiling or 600-occurrence simultaneous model execution.
+
+The **Visual Feedback Loop milestone is complete within its demonstrated scope**,
+not an ongoing demonstration campaign. [Gate F0](../artifacts/harness-files/gate-f0-report.md)
+established bounded real-model official File-ID/nested-tool-result transport on
+macOS. The [repaired loop](../artifacts/repaired-visual-loop/report.md) established
+image-grounded correction and cached continuation, but remains **PARTIAL**: the
+eighth transferred screenshot did not reach inference because conditional
+paired-byte admission rejected it. [Capabilities](capabilities.md#applications)
+owns the measured scope, residual visual defect and unresolved byte-guard/trace
+retention evidence boundaries.
+
+The current development objective is **long-running multimodal inference
+continuity when official Harness history projection changes**. The central
+unresolved issue is safe cache miss / canonical prefill / paired Target-DSpark
+reconstruction after image offload, compaction or another legitimate history
+change. Current historical misses reject without replay or unverified
+reconstruction; neither completed milestone changes that execution contract.
+Harness remains the history/attachment/offload/compaction/lifecycle owner, Recipe
+the semantics/encoding owner, DeepInfer the cache-aware multimodal/recomputation
+reference, and ds41f-mlx the MLX execution, resource-admission, paired-integrity
+and minimal-integration owner. No competing image manager, conversation authority,
+session framework or cache subsystem is selected.
+
+### Future official-source investigation priorities
+
+These priorities identify unresolved comparisons, **not permission to implement,
+prototype, benchmark or start another live acceptance campaign**. Use these already
+reviewed reference snapshots, not claims about current upstream HEAD or equality
+with installed packages:
 
 | Project | Pinned revision |
 | --- | --- |
@@ -91,29 +126,21 @@ HEAD or equality with installed packages:
 
 Pinned source links and packaged Recipe distinctions are retained in the
 [Visual Feedback Loop source review](flash-1017-visual-feedback-loop-plan.md#2-historical-source-review-and-evidence-scope).
-The next permitted activity is an **upstream-versus-local source audit**, not
-implementation, prototyping, benchmarking or a new live acceptance campaign:
+Future upstream-versus-local comparisons should distinguish completed cached-image
+skipping/admission from recovery after a changed canonical projection:
 
-- **A — Cached images:** compare DeepInfer's
+- **A — Cached images versus reconstruction:** DeepInfer's
   `deepinfer/ve/multimodal_processor.py`,
   `deepinfer/model_executor/models/deepseek_vl.py` and
-  `deepinfer/ve/prepare_tensor_input_vl.py`. Official code identifies image spans
-  fully covered by KV Cache, omits their binary payloads from subsequent
-  preprocessing and excludes them from active Vision tensor work. Local
+  `deepinfer/ve/prepare_tensor_input_vl.py` identify fully cached image spans,
+  omit their binary payloads and skip active Vision work. Local
   `runtime/multimodal.py:prepare_multimodal/encode_new` and
-  `serving/production_mtp.py` already provide metadata-first validation and
-  fresh-only encoding after paired lookup; cached-image skipping is not missing.
-  Admission retains all-history source-byte/pixel guards and **36,864 fresh ViT
-  patches**. The [narrow cached-image admission qualification](../artifacts/cached-image-admission/report.md)
-  now permits Flash-1017 historical patch deferral only after complete paired
-  coverage and pre-restore packed-array byte checks: 192 MiB retained roots and
-  12 MiB per projected active/captured pair. Outside those bounds the existing
-  all-history patch rejection remains. Maximum-body/near-1M-position queued
-  metadata is tested separately from bounded physical model execution; there is
-  no new Vision context, token-equivalent accounting or image-count policy.
-  Twelve screenshot occurrences execute without overrides. The historical
-  [Q1/Q2 envelope](flash-1017-visual-endurance-envelope.md) retains its own
-  geometry-dependent seven-image admission and visual-quality scope.
+  `serving/production_mtp.py` already supply metadata-first validation and
+  fresh-only encoding after paired lookup. Compare remaining recovery semantics,
+  not a missing cached-image skip. [Capabilities](capabilities.md#bounded-inline-images)
+  owns the implemented conditional admission contract; the historical
+  [Q1/Q2 envelope](flash-1017-visual-endurance-envelope.md) retains only its
+  original geometry/admission and visual-quality scope.
 - **B — Harness offload:** inspect
   `packages/compaction/compaction-image-offload/`,
   `packages/llm/llm/src/content.ts` and
@@ -134,9 +161,7 @@ implementation, prototyping, benchmarking or a new live acceptance campaign:
   integrity rules remain in force; this investigation does not authorize recovery
   implementation.
 
-Explicit fresh-work accounting, compatible key allocation and narrowly qualified
-historical patch admission are implemented. No automatic follow-on work is selected.
-Full Harness compatibility remains
+No automatic follow-on work is selected. Full Harness compatibility remains
 **PARTIAL** at concrete transport/storage and canonical-prefix recovery boundaries.
 Official rc.2 offload does not recover arbitrary Runtime 400 errors. Its projection
 and summary compaction can invalidate paired state, and historical misses still
@@ -180,7 +205,8 @@ text/read-only-tool continuation. Dedicated installed operation and acceptance a
 recorded in [operations](operations.md#deepinfer-daily-operation-and-harness) and
 the [development record](deepinfer-development.md). Historical Recipe/Messages
 investigation deferrals are not current blockers; broader release qualification,
-Harness images/Files, cancellation and dynamic tool updates are not implied.
+general Harness images/Files lifecycle, cancellation and dynamic tool updates are
+not implied; later bounded Files/Vision evidence is scoped above.
 The original-Flash release assessment below retains its own source/payload scope.
 
 The bundled Browser Chat/Chat Server and application Vision/PDF workflows are

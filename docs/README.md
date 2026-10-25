@@ -19,6 +19,12 @@ retired. Historical acceptance does not qualify either variant at later HEAD.
 | Measurements | [Public benchmark](public-performance.md), [performance interpretation](performance.md) |
 | Development boundaries | [Implementation decisions](implementation-plan.md), [Runtime strategy](runtime-strategy.md), [scaffold roles](scaffold-classification.md) |
 
+The [implementation plan](implementation-plan.md#completed-milestone-and-current-multimodal-runtime-objective)
+owns the current Multimodal Runtime continuity objective after the completed,
+scope-qualified Visual Feedback Loop milestone. [Capabilities](capabilities.md#applications)
+scopes the later Gate F0 and repaired-loop evidence; neither is comprehensive
+Harness qualification or authorization for follow-on implementation.
+
 ## Retained evidence
 
 The [scoped release record](../release/scoped-local-20261015/release.json) binds

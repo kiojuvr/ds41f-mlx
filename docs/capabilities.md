@@ -30,9 +30,12 @@ remain **Chat-only**; Messages has no logical-session or persistence contract.
 
 Ordinary Messages additionally implements bounded image Files upload/delete and
 user/tool-result file-ID resolution; see [Files API scope](harness-image-files.md).
-This is model-free verified, **not official Harness Files or Windows execution
-qualification**. IDs/bytes are process-local, deployment-owned and expiry-bounded;
-Files lifetime does not extend paired KV lifetime. List/retrieval/download and
+Model-free verification is supplemented by [Gate F0](../artifacts/harness-files/gate-f0-report.md):
+bounded real-model official Harness File-ID/nested-tool-result transport on macOS.
+This is **not general Files lifecycle, complete upstream compatibility or Windows
+execution qualification**. IDs/bytes are process-local, deployment-owned and
+expiry-bounded, with no persistent attachment storage contract. Files lifetime
+does not extend paired KV lifetime. List/retrieval/download and
 full upstream quota recovery are unsupported. Harness must explicitly set
 `session-log-deepseek.enabled=false` and keep unsupported tool removal disabled.
 
@@ -211,9 +214,9 @@ positions. DeepInfer has bounded real-model evidence for six images / 9,353 expa
 prompt positions with the earlier Recipe 0.1 package, then one small Chat image
 and cached follow-up with Recipe 0.2. See the [scoped development evidence](deepinfer-development.md).
 This is not maximum-capacity, long-context/memory or visual-quality qualification;
-a later bounded official Harness screenshot loop passed in the specific macOS
-scope below, not the Files API. Health's conservative `unverified` field is not
-a claim that no bounded model case has ever passed.
+later bounded official Harness Files/Vision execution is recorded below, separate
+from the historical Phase 3 inline-fallback result. Health's conservative
+`unverified` field is not a claim that no bounded model case has ever passed.
 
 Image identity is included in
 upstream paired-cache hashes; after prefill only the existing target/DSpark pair
@@ -250,9 +253,23 @@ and [original image qualification](multimodal-production-qualification.md).
   official write/edit → external host render → read_image/native Messages,
   with four explicitly grounded correction cycles and complete paired traces.
   Chromium stayed outside Seatbelt; actual PNGs used official Files-to-inline
-  fallback. This is not Files API, Windows image, Chromium-inside-Seatbelt,
-  cancellation or dynamic tool-update acceptance.
+  fallback. That historical run did not qualify Files API, Windows image,
+  Chromium-inside-Seatbelt, cancellation or dynamic tool updates.
   [Phase 3 report](../artifacts/visual-feedback-loop/phase-3-report.md).
+  Subsequently [Gate F0](../artifacts/harness-files/gate-f0-report.md) qualified a
+  bounded real-model macOS File-ID/nested-tool-result path. The completed milestone's
+  [repaired loop](../artifacts/repaired-visual-loop/report.md) records 27 native
+  generations, six screenshot-verified correction cycles, seven distinct Vision
+  encodes and 85 historical-image occurrence reuses. Eight distinct screenshots
+  transferred through Files; the eighth was prepared but not encoded or executed.
+  Independent visual evaluation improved 4/9 → 8/9, with a 29px grid discrepancy.
+  Overall **PARTIAL**: request 28 (17,471 prompt positions, 2,600 reserved output,
+  seven historical plus one fresh image, 38,272 aggregate / 4,784 fresh patches)
+  rejected before inference at conditional paired-byte fallback. Which guard
+  failed—12 MiB projected pair or 192 MiB retained roots—was not recorded. Its
+  unarchived in-memory rejection trace is an evidence-retention gap, not demonstrated
+  paired numerical corruption. This does not qualify eight-image execution,
+  long-term arbitrary-image continuity or general Files/document lifecycle.
   Current checkpoint-specific setup and later Windows observations are in
   [Using DeepSeek Harness](../README.md#using-deepseek-harness).
   This historical observation is not comprehensive Agent/Harness compatibility;
