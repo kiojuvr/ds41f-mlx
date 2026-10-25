@@ -1,0 +1,6 @@
+Curated summary of initial model-free preflight (not raw pytest output).
+Command: PYTHONDONTWRITEBYTECODE=1 /tmp/ds41f-step2br/bin/python -m pytest -q tests/test_installed_diagnostic_admission.py tests/test_cold_messages_continuation.py tests/test_cold_messages_reconstruction.py tests/test_production_mtp.py tests/test_production_sessions.py tests/test_prefill_fp8_mlx_p5.py tests/test_prefill_fp8_mlx_p6.py
+1 failed, 115 passed, 49 warnings, 26 subtests passed in 81.28s.
+Failure: test_isolated_installed_diagnostic_numerics subprocess exited 1.
+The initial gate requested full checkpoint admission without DS41F_CHECKPOINT.
+Corrected the subprocess unit gate to checkpoint=False; real worker retains full checkpoint admission with explicit external checkpoint configuration.

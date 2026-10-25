@@ -8,6 +8,38 @@ from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
 from tools.qualify_cold_messages_continuation import cold_miss_scope, verify_fixture
 
 
+def test_p5_observation_uses_actual_dspark_offsets_property():
+    from ds41f_mlx.runtime.mtp_lifecycle import DSparkCommittedContext
+    from tools.qualify_cold_messages_continuation import p5_observation
+    context = DSparkCommittedContext.from_native([NS(offset=212) for _ in range(3)],
+        frontier=212, target_layer_ids=(0, 1, 2))
+    batch = object()
+    owner = NS(uid=17, _bg=batch, history=NS(prompt_tokens=(1, 2, 3)),
+        active_cache_offsets=lambda: (213,)*40, dspark_context=context)
+    result = p5_observation(NS(_state='started'), owner, NS(batch_generator=batch))
+    assert result['dspark_offsets'] == (212,)*3
+    assert result['target_offsets'] == (213,)*40
+    assert result['uid'] == 17 and result['scheduler_batch']
+
+
+def test_candidate_precedes_independent_reference(monkeypatch):
+    import tools.qualify_prefill_fp8_mlx as reference_tool
+    from tools.qualify_cold_messages_continuation import observe_continuation
+    prepared, tokenizer, _, _ = prepare_fixture()
+    calls = []
+    def enqueue(*args):
+        calls.append('enqueue')
+        raise RuntimeError('controlled pre-native stop')
+    backend = NS(load=lambda: calls.append('load'),
+        _model=NS(language_model=NS()), _enqueue=enqueue)
+    monkeypatch.setattr(reference_tool, 'ordinary_prefill_reference',
+        lambda *a, **k: pytest.fail('reference ran before Candidate settlement'))
+    with pytest.raises(RuntimeError, match='controlled pre-native stop'):
+        observe_continuation(backend, prepared, tokenizer, {})
+    assert calls == ['load', 'enqueue']
+    prepared.multimodal.release_sources()
+
+
 def queued():
     from omlx.request import Request, SamplingParams
     from ds41f_mlx.serving.internal_mtp import QualificationSession
@@ -81,7 +113,7 @@ def test_recheck_and_scope_exit_keep_normal_refusal(fault):
     assert '_historical_images_covered' not in scheduler.__dict__
 
 
-@pytest.mark.parametrize('fault', ['none', 'cancel', 'mutation', 'settlement', 'incomplete'])
+@pytest.mark.parametrize('fault', ['none', 'cancel', 'mutation', 'settlement', 'incomplete', 'post_handoff_observation'])
 def test_existing_start_scheduler_route(monkeypatch, fault):
     import mlx.core as mx
     import importlib
@@ -129,7 +161,10 @@ def test_existing_start_scheduler_route(monkeypatch, fault):
         transitions.append(('P5', terminal_prompt_token))
         assert transitions[-2] == ('append', 211, 212)
         assert not scheduler.checkpoints._payloads
-        return NS(uid=17, _bg=scheduler._new_batch(None), prompt_replay_count=0)
+        owner = NS(uid=17, _bg=scheduler._new_batch(None), prompt_replay_count=0)
+        if fault == 'post_handoff_observation':
+            raise TypeError("'tuple' object is not callable")
+        return owner
     monkeypatch.setattr(p6, 'handoff_to_generation', handoff)
     def settle(rec, trace):
         transitions.append('settle')
@@ -155,7 +190,7 @@ def test_existing_start_scheduler_route(monkeypatch, fault):
         if fault == 'cancel': scheduler._do_abort_request('step2b')
         else:
             result = scheduler.step()
-            if fault != 'mutation':
+            if fault not in ('mutation', 'post_handoff_observation'):
                 assert not result.outputs or not result.outputs[-1].error, result.outputs[-1].error
                 assert request.prompt_checkpoint is not None, scheduler.last_settlement
                 assert request.prompt_checkpoint.tokens == tuple(request.prompt_token_ids[:-2])
@@ -172,5 +207,10 @@ def test_existing_start_scheduler_route(monkeypatch, fault):
         assert scheduler.checkpoints.acquire(request.prompt_token_ids, images=request.image_identities)[2] == request.prompt_token_ids[:-2]
     if fault == 'cancel': assert transitions == []
     if fault == 'mutation': assert transitions == [('vision', 0), ('append', 0, 211)]
-    assert bool(backend.fatal_error) == (fault in ('mutation', 'settlement', 'incomplete'))
+    if fault == 'post_handoff_observation':
+        assert "'tuple' object is not callable" in backend.fatal_error
+        assert transitions[-1] == ('P5', request.prompt_token_ids[-1])
+        assert transitions.count(('append', 211, 212)) == 1
+        assert request.prompt_checkpoint is None
+    assert bool(backend.fatal_error) == (fault in ('mutation', 'settlement', 'incomplete', 'post_handoff_observation'))
     scheduler.checkpoints.clear()

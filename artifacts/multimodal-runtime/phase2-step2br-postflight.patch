@@ -1,0 +1,42 @@
+--- artifacts/multimodal-runtime/phase2-step2br-executed-diagnostic.py.txt	2026-10-26 01:30:34
++++ tools/qualify_cold_messages_continuation.py	2026-10-26 01:37:11
+@@ -75,0 +76,8 @@
++def p5_observation(live, owner, scheduler):
++    """Read existing owners only; DSpark offsets is a tuple-valued property."""
++    return dict(event='P5', producer_state=live._state, uid=owner.uid,
++        scheduler_batch=owner._bg is scheduler.batch_generator,
++        prompt_tokens=list(owner.history.prompt_tokens),
++        target_offsets=owner.active_cache_offsets(), dspark_offsets=owner.dspark_context.offsets)
++
++
+@@ -110 +118 @@
+-    reference = candidate_n1 = candidate_embeddings = None
++    reference = candidate_n1 = candidate_embeddings = candidate_live = None
+@@ -132 +140,2 @@
+-        nonlocal candidate_n1
++        nonlocal candidate_n1, candidate_live
++        candidate_live = live
+@@ -137,5 +146,3 @@
+-        result = handoff(live, model, **kwargs)
+-        transitions.append(dict(event='P5', producer_state=live._state, uid=result.uid,
+-            scheduler_batch=result._bg is scheduler.batch_generator, prompt_tokens=list(result.history.prompt_tokens),
+-            target_offsets=result.active_cache_offsets(), dspark_offsets=result.dspark_context.offsets()))
+-        return result
++        # Do not perform fallible receipt work between native transfer and
++        # _start assigning rec.owner. Observe only after Scheduler registration.
++        return handoff(live, model, **kwargs)
+@@ -179,0 +187 @@
++            transitions.append(p5_observation(candidate_live, request.execution.owner, scheduler))
+@@ -235 +243 @@
+-        reference = observations = candidate_n1 = candidate_embeddings = None
++        reference = observations = candidate_n1 = candidate_embeddings = candidate_live = None
+@@ -236,0 +245,9 @@
++        receipt['exit_state'] = dict(fatal_error=backend.fatal_error,
++            requests=list(scheduler.requests), running=list(scheduler.running),
++            waiting=len(scheduler.waiting), uid_mapping=dict(scheduler.request_id_to_uid),
++            reverse_mapping=dict(scheduler.uid_to_request_id),
++            native_batch=scheduler.batch_generator is not None,
++            owner=request.execution.owner is not None,
++            pending_capture=request.prompt_checkpoint is not None,
++            published_pairs=len(scheduler.checkpoints._payloads),
++            predicate_restored='_historical_images_covered' not in scheduler.__dict__)

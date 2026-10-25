@@ -1,0 +1,60 @@
+import sys, json, hashlib, traceback, asyncio, gc, weakref, time
+from pathlib import Path
+ROOT = Path('/Volumes/SDXC-512/ds41f-mlx')
+OUT = ROOT/'artifacts/multimodal-runtime'
+# Installed site remains ahead of task-owned diagnostics. No package purge,
+# shadow, reload, numerical binding injection or editable installation.
+sys.path.append(str(ROOT))
+from tools.qualify_installed_admission import prove_installed_admission
+proof = prove_installed_admission()
+from ds41f_mlx.mtp_identity import config, inspect
+identity = inspect(config(profile='mtp-serving-v1'))
+proof['checkpoint_admission'] = identity
+(OUT/'phase2-step2br-admission.json').write_text(json.dumps(proof, indent=2, default=str)+'\n')
+sys.path.append(str(ROOT/'tests'))
+from test_cold_messages_reconstruction import prepare_fixture
+from tools.qualify_cold_messages_continuation import verify_fixture, observe_continuation
+from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+prepared, tokenizer, data, body = prepare_fixture()
+verify_fixture(prepared)
+report = dict(starting_head='1da72d4609cfbfa78bed6889e8f044f0032eabe4',
+    canonical=dict(N=213,N2=211,N1=212,token_sha256=hashlib.sha256(__import__('struct').pack('<213i',*prepared.token_ids)).hexdigest(),image_sha256=hashlib.sha256(data).hexdigest(),historical=prepared.image_is_historical),
+    diagnostic_sha256={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in [ROOT/'tools/qualify_cold_messages_continuation.py',ROOT/'tools/qualify_installed_admission.py']})
+Path('/tmp/step2br-ready').write_text('admitted numerical execution and canonical fixture; zero loads\n')
+print('progress: pre-load gate', flush=True)
+while not Path('/tmp/step2br-go').exists(): time.sleep(.1)
+backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+backend.dependency_identity = identity['identity_sha256']
+async def run():
+    await backend._call(observe_continuation, backend, prepared, tokenizer, report)
+model_ref = None
+try:
+    asyncio.run(run())
+    report['outcome'] = 'completed'
+except BaseException as exc:
+    report['outcome'] = 'failed'
+    report['error'] = repr(exc)
+    traceback.print_exc()
+finally:
+    import mlx.core as mx
+    from mlx_lm.generate import generation_stream
+    if backend._model is not None: model_ref = weakref.ref(backend._model)
+    if backend.scheduler is not None:
+        backend.scheduler.close_serving()
+        backend.scheduler = None
+    model = backend._model
+    backend._model = backend._execution_tokenizer = None
+    if model is not None: model.close()
+    model = None
+    backend.close()
+    backend._executor.shutdown(wait=True, cancel_futures=True)
+    prepared.multimodal.release_sources()
+    prepared = tokenizer = data = body = None
+    gc.collect(); mx.synchronize(generation_stream); mx.clear_cache(); gc.collect()
+    report['cleanup'] = dict(model_weakref_dead=model_ref is None or model_ref() is None,
+        active=mx.get_active_memory(),cache=mx.get_cache_memory(),peak=mx.get_peak_memory(),executor_shutdown=backend._executor._shutdown)
+    from ds41f_mlx.execution_identity import numerical_profile
+    report['post_execution_profile'] = numerical_profile()
+    (OUT/'phase2-step2br-observation.json').write_text(json.dumps(report,indent=2,default=str)+'\n')
+    print('progress: cleanup', report['cleanup'], flush=True)
+raise SystemExit(0 if report['outcome']=='completed' else 1)

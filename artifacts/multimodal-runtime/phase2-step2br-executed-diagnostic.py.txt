@@ -1,0 +1,238 @@
+"""Step 2B qualification scope, never imported by serving or exposed by HTTP.
+
+Uses the real Scheduler and worker lifecycle. No alternate executor/publication.
+"""
+from contextlib import contextmanager
+from hashlib import sha256
+import struct
+
+IMAGE_SHA256 = '251fe7ad58f44db139a6af5ed489e027eca93ae60878b83f3e709c7d6f0112a1'
+TOKEN_SHA256 = '1404aff686564032b070e09adb2a91974760625c945d06b2fa74d35f156f73ae'
+
+
+def verify_fixture(prepared):
+    """Verify actual Recipe output and current source; no tokens are constructed."""
+    from ds41f_mlx.serving.generation_policy import policy_for
+    policy = policy_for(prepared)
+    if policy.temperature != 0 or getattr(prepared, 'resolved_max_tokens', None) != 1:
+        raise ValueError('qualification requires greedy sampling and one output token')
+    mm = prepared.multimodal
+    ids = prepared.token_ids
+    if (prepared.protocol != 'messages' or prepared.image_is_historical != (True,) or
+            len(ids) != 213 or sha256(struct.pack('<213i', *ids)).hexdigest() != TOKEN_SHA256 or
+            mm is None or tuple(ids) != mm.token_ids or len(mm.spans) != 1):
+        raise ValueError('not the exact Step 2B canonical fixture')
+    span = mm.spans[0]
+    if (span.start != 2 or span.length != 189 or span.grid != (33, 47) or
+            span.source_pixels != 138600 or span.digest != IMAGE_SHA256):
+        raise ValueError('changed qualification image identity')
+    data = mm._sources.get(2)
+    if data is None or sha256(data).hexdigest() != IMAGE_SHA256:
+        raise ValueError('qualification image source unavailable or changed')
+    mm.validate_prefix(0, [])
+    mm.validate_workload(0)
+
+
+@contextmanager
+def cold_miss_scope(scheduler, request):
+    """One already queued, isolated request; restore the predicate on every exit.
+
+    Paired lookup is NOT replaced. A hit, logical lease, changed input or different
+    request cannot receive this exception. All other production guards still run.
+    """
+    from ds41f_mlx.serving.production_mtp import ProductionScheduler
+    if type(scheduler) is not ProductionScheduler:
+        raise ValueError('requires the existing ProductionScheduler')
+    if (list(scheduler.waiting) != [request] or scheduler.running or
+            list(scheduler.requests.values()) != [request] or scheduler.batch_generator is not None or
+            scheduler.session_leases or scheduler.checkpoints._payloads or
+            request.logical_session is not None or request.execution.canonical or
+            request.execution.owner is not None or request.execution.cache is not None or
+            request.execution.rings is not None or request.required_image_frontier != 191):
+        raise ValueError('requires isolated C=0 request without retained logical sessions')
+    verify_fixture(request.prepared)
+    original = scheduler._historical_images_covered
+    if '_historical_images_covered' in scheduler.__dict__:
+        raise ValueError('nested qualification scope forbidden')
+    def covered(candidate, frontier):
+        if candidate is not request:
+            return original(candidate, frontier)
+        if (frontier != 0 or candidate.execution.canonical or candidate.execution.cache is not None or
+                candidate.execution.rings is not None or candidate.logical_session is not None or
+                scheduler.session_leases or scheduler.checkpoints._payloads or
+                candidate.image_identities != tuple(candidate.prepared.multimodal.identities())):
+            raise ValueError('qualification requires genuine unchanged C=0 miss')
+        verify_fixture(candidate.prepared)
+        candidate.trace['qualification_cold_miss'] = dict(frontier=0, fresh_patches=1551,
+            fresh_images=1, covered_images=0, hit_identity=None)
+        return True
+    scheduler._historical_images_covered = covered
+    try:
+        yield
+    finally:
+        del scheduler._historical_images_covered
+
+
+def observe_continuation(backend, prepared, tokenizer, receipt):
+    """Run on backend._call's sole worker. Observers delegate all mutations.
+
+    The independent ordinary reference has fresh factories and image preparation.
+    Its one-row continuation is an ordinary forward, NOT native MTP equivalence.
+    """
+    from io import BytesIO
+    import json
+    import threading
+    from unittest.mock import patch
+    import mlx.core as mx
+    from PIL import Image
+    from mlx_lm.generate import BatchGenerator, generation_stream
+    from ds41f_mlx import prefill_fp8_mlx as p6
+    from ds41f_mlx.model_execution.processing import image_patch_array
+    from ds41f_mlx.runtime.mtp_resources import MTPWiredLimitLease
+    from ds41f_mlx.serving.paired_checkpoint import validate_pair
+    from tools.qualify_prefill_fp8_mlx import (ordinary_prefill_reference,
+        paired_boundary_metrics, physical_tensor_metrics)
+    # Fail BEFORE load if a caller lost the installed identity binding while
+    # switching to checkout execution glue. Never enroll/bind a guessed profile.
+    from ds41f_mlx.execution_identity import numerical_profile
+    if numerical_profile() != 'flash-1017-pre-woa-fp8-v1':
+        raise ValueError('qualification requires admitted Flash-1017 numerics')
+    verify_fixture(prepared)
+    receipt['worker_thread'] = threading.current_thread().name
+    data = prepared.multimodal._sources[2]
+    print('progress: model load', flush=True)
+    backend.load()
+    lm = backend._model.language_model
+    receipt['loaded_mlx'] = dict(active=mx.get_active_memory(), cache=mx.get_cache_memory(), peak=mx.get_peak_memory())
+    ids = tuple(prepared.token_ids)
+    # Candidate owns execution priority. Preserve source bytes read-only for the
+    # later reference, independently of production's source retirement.
+    reference = candidate_n1 = candidate_embeddings = None
+    backend._enqueue(prepared, tokenizer, 'phase2-step2b')
+    scheduler = backend.scheduler
+    request = scheduler.requests['phase2-step2b']
+    trace = request.trace
+    receipt['transitions'] = transitions = []
+    capture, publish = scheduler.checkpoints.capture, scheduler.checkpoints.publish
+    handoff, insert, next_token = p6.handoff_to_generation, BatchGenerator.insert, backend._next
+    encoder = backend._encode_new_images
+    def encode(*args, **kwargs):
+        nonlocal candidate_embeddings
+        result = encoder(*args, **kwargs)
+        receipt['vision_encode_calls'] = receipt.get('vision_encode_calls', 0) + 1
+        candidate_embeddings = result.rows[0][1]
+        return result
+    def captured(target, rings, tokens, images=()):
+        validate_pair(target, rings, tokens)
+        transitions.append(dict(event='capture', frontier=len(tokens), target=[c.size() for c in target], dspark=[r.offset for r in rings], discoverable=len(scheduler.checkpoints._payloads)))
+        return capture(target, rings, tokens, images)
+    def handed(live, model, **kwargs):
+        print('progress: N-1/P5', flush=True)
+        candidate = dict(target=live.live_cache, rings=live.dspark_committed_context.caches, token_ids=ids[:-1])
+        nonlocal candidate_n1
+        # Immutable diagnostic snapshot; not published or executable ownership.
+        saved = capture(candidate['target'], candidate['rings'], ids[:-1], request.image_identities)
+        candidate_n1 = dict(target=saved.target, rings=saved.rings, token_ids=ids[:-1])
+        transitions.append(dict(event='N-1', target=[c.size() for c in candidate['target']], dspark=[r.offset for r in candidate['rings']], terminal=kwargs['terminal_prompt_token']))
+        result = handoff(live, model, **kwargs)
+        transitions.append(dict(event='P5', producer_state=live._state, uid=result.uid,
+            scheduler_batch=result._bg is scheduler.batch_generator, prompt_tokens=list(result.history.prompt_tokens),
+            target_offsets=result.active_cache_offsets(), dspark_offsets=result.dspark_context.offsets()))
+        return result
+    def inserted(bg, prompts, *args, **kwargs):
+        transitions.append(dict(event='native_insert', prompts=prompts, all_tokens=kwargs.get('all_tokens')))
+        return insert(bg, prompts, *args, **kwargs)
+    observations = []
+    def decoded(rec, trace):
+        owner = rec.owner
+        token = next_token(rec, trace)
+        obs = dict(token=token, uid=owner.uid,
+            uid_mapping=dict(scheduler.request_id_to_uid),
+            scheduler_batch=owner._bg is scheduler.batch_generator,
+            canonical_generated=list(owner.history.canonical_generated_tokens),
+            canonical_frontier=owner.history.canonical_frontier,
+            target_offsets=owner.active_cache_offsets(), connection_disposition=owner.connection.disposition)
+        if owner.bound_observation is not None:
+            row = owner.bound_observation[-1]
+            if row is not None:
+                # Keep only the existing distribution row until the independent
+                # terminal forward. Never retain full intermediate model tensors.
+                observations.append(row)
+                obs['logprobs_shape'] = list(row.shape)
+                obs['selected_logprob'] = float(row[token].item())
+        transitions.append(dict(event='native_next', **obs))
+        print('progress: native token', token, flush=True)
+        return token
+    def published(checkpoint):
+        assert request.execution.owner is None and 'quiescence' in trace
+        assert trace.get('prediction_retired') and trace.get('queue_empty')
+        transitions.append(dict(event='publish', frontier=len(checkpoint.tokens), quiescent=True))
+        return publish(checkpoint)
+    try:
+        with patch.object(scheduler.checkpoints, 'capture', captured), patch.object(scheduler.checkpoints, 'publish', published), patch.object(p6, 'handoff_to_generation', handed), patch.object(BatchGenerator, 'insert', inserted), patch.object(backend, '_next', decoded), patch.object(backend, '_encode_new_images', encode), cold_miss_scope(scheduler, request):
+            # Same worker and Scheduler hooks as Production. Separating startup
+            # allows a read-only UID-map receipt before a one-token terminal step.
+            scheduled, _ = scheduler._schedule_waiting()
+            receipt['registered'] = dict(request_id_to_uid=dict(scheduler.request_id_to_uid),
+                uid_to_request_id=dict(scheduler.uid_to_request_id), running=list(scheduler.running))
+            if not scheduled:
+                raise RuntimeError(scheduler._completed[-1].error)
+            outputs = []
+            for _ in range(4):
+                result = scheduler.step()
+                outputs.extend(result.outputs)
+                if not scheduler.requests:
+                    break
+            receipt['outputs'] = [dict(finished=o.finished, error=o.error, finish_reason=o.finish_reason,
+                recipe_events=[json.loads(e) for e in o.recipe_events], response=o.recipe_response) for o in outputs]
+            receipt['trace'] = dict(trace)
+            if scheduler.requests:
+                raise RuntimeError('bounded worker did not retire request')
+            if not outputs or outputs[-1].error:
+                raise RuntimeError(outputs[-1].error if outputs else 'no final output')
+        receipt['retired'] = dict(requests=list(scheduler.requests), running=list(scheduler.running),
+            waiting=len(scheduler.waiting), uid_mapping=dict(scheduler.request_id_to_uid),
+            reverse_mapping=dict(scheduler.uid_to_request_id), native_batch=scheduler.batch_generator is not None,
+            owner=request.execution.owner is not None, sources=len(prepared.multimodal._sources),
+            predicate_restored='_historical_images_covered' not in scheduler.__dict__, fatal_error=backend.fatal_error)
+        receipt['published_pairs'] = []
+        for saved in scheduler.checkpoints._payloads.values():
+            validate_pair(saved.target, saved.rings, saved.tokens)
+            # Discoverability via SAME authority, never direct publication.
+            restored = scheduler.checkpoints.acquire(list(saved.tokens)+[ids[-2], ids[-1]], images=saved.images)
+            receipt['published_pairs'].append(dict(frontier=len(saved.tokens), target_layers=len(saved.target),
+                dspark_rings=len(saved.rings), images=saved.images,
+                discoverable=restored is not None and tuple(restored[2]) == saved.tokens))
+            restored = None
+        receipt['candidate_settled'] = True
+        print('progress: settled; fresh independent ordinary N-1 reference', flush=True)
+        with Image.open(BytesIO(data)) as image:
+            patches, h, w, kinds = image_patch_array(image, prepared.multimodal._config)
+        pixels = mx.array(patches).astype(mx.bfloat16)
+        with mx.stream(generation_stream), MTPWiredLimitLease(mx, generation_stream):
+            reference = ordinary_prefill_reference(backend._model, mx.array([ids[:-1]], mx.int32),
+                pixel_values=pixels, image_grids=[(h, w)], image_spans=[(2, 189)], image_types=[list(kinds)])
+            mx.eval(reference['logits'], reference['embeddings'], *[r.keys for r in reference['rings']])
+        patches = pixels = None
+        receipt['independent_image_embeddings'] = physical_tensor_metrics(candidate_embeddings, reference['embeddings'][0, 2:191])
+        receipt['n1_comparison'] = paired_boundary_metrics(candidate_n1, reference, boundary='n-1-seal', config=lm._config)
+        print('progress: independent ordinary terminal forward', flush=True)
+        with mx.stream(generation_stream), MTPWiredLimitLease(mx, generation_stream):
+            logits, hidden = lm._forward(mx.array([[ids[-1]]], mx.int32), cache=reference['target'], return_dspark_hidden=True)
+            lm.dspark_append_context(hidden, reference['rings'], start_offset=212)
+            mx.eval(logits, *[r.keys for r in reference['rings']])
+            row = logits[0, -1].astype(mx.float32)
+            distribution = row - mx.logsumexp(row)
+            first = int(mx.argmax(row).item())
+            receipt['reference_continuation'] = dict(kind='fresh ordinary one-row terminal forward; not native speculative continuation',
+                first_greedy_token=first, selected_logprob=float(distribution[first].item()),
+                target_offsets=[c.size() for c in reference['target']], dspark_offsets=[r.offset for r in reference['rings']],
+                token_match=trace.get('canonical_generated', [])[:1] == [first])
+            if observations:
+                receipt['reference_continuation']['distribution'] = physical_tensor_metrics(observations[0], distribution)
+        receipt['post_execution_mlx'] = dict(active=mx.get_active_memory(), cache=mx.get_cache_memory(), peak=mx.get_peak_memory())
+    finally:
+        reference = observations = candidate_n1 = candidate_embeddings = None
+        receipt['trace'] = dict(trace)
+        scheduler.close_serving()
+        backend.scheduler = None

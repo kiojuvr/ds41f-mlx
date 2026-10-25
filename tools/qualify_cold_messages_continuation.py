@@ -73,6 +73,14 @@ def cold_miss_scope(scheduler, request):
         del scheduler._historical_images_covered
 
 
+def p5_observation(live, owner, scheduler):
+    """Read existing owners only; DSpark offsets is a tuple-valued property."""
+    return dict(event='P5', producer_state=live._state, uid=owner.uid,
+        scheduler_batch=owner._bg is scheduler.batch_generator,
+        prompt_tokens=list(owner.history.prompt_tokens),
+        target_offsets=owner.active_cache_offsets(), dspark_offsets=owner.dspark_context.offsets)
+
+
 def observe_continuation(backend, prepared, tokenizer, receipt):
     """Run on backend._call's sole worker. Observers delegate all mutations.
 
@@ -105,15 +113,9 @@ def observe_continuation(backend, prepared, tokenizer, receipt):
     lm = backend._model.language_model
     receipt['loaded_mlx'] = dict(active=mx.get_active_memory(), cache=mx.get_cache_memory(), peak=mx.get_peak_memory())
     ids = tuple(prepared.token_ids)
-    print('progress: fresh independent ordinary N-1 reference', flush=True)
-    with Image.open(BytesIO(data)) as image:
-        patches, h, w, kinds = image_patch_array(image, prepared.multimodal._config)
-    pixels = mx.array(patches).astype(mx.bfloat16)
-    with mx.stream(generation_stream), MTPWiredLimitLease(mx, generation_stream):
-        reference = ordinary_prefill_reference(backend._model, mx.array([ids[:-1]], mx.int32),
-            pixel_values=pixels, image_grids=[(h, w)], image_spans=[(2, 189)], image_types=[list(kinds)])
-        mx.eval(reference['logits'], reference['embeddings'], *[r.keys for r in reference['rings']])
-    patches = pixels = None
+    # Candidate owns execution priority. Preserve source bytes read-only for the
+    # later reference, independently of production's source retirement.
+    reference = candidate_n1 = candidate_embeddings = candidate_live = None
     backend._enqueue(prepared, tokenizer, 'phase2-step2b')
     scheduler = backend.scheduler
     request = scheduler.requests['phase2-step2b']
@@ -123,8 +125,10 @@ def observe_continuation(backend, prepared, tokenizer, receipt):
     handoff, insert, next_token = p6.handoff_to_generation, BatchGenerator.insert, backend._next
     encoder = backend._encode_new_images
     def encode(*args, **kwargs):
+        nonlocal candidate_embeddings
         result = encoder(*args, **kwargs)
-        receipt['independent_image_embeddings'] = physical_tensor_metrics(result.rows[0][1], reference['embeddings'][0, 2:191])
+        receipt['vision_encode_calls'] = receipt.get('vision_encode_calls', 0) + 1
+        candidate_embeddings = result.rows[0][1]
         return result
     def captured(target, rings, tokens, images=()):
         validate_pair(target, rings, tokens)
@@ -133,13 +137,15 @@ def observe_continuation(backend, prepared, tokenizer, receipt):
     def handed(live, model, **kwargs):
         print('progress: N-1/P5', flush=True)
         candidate = dict(target=live.live_cache, rings=live.dspark_committed_context.caches, token_ids=ids[:-1])
-        receipt['n1_comparison'] = paired_boundary_metrics(candidate, reference, boundary='n-1-seal', config=lm._config)
+        nonlocal candidate_n1, candidate_live
+        candidate_live = live
+        # Immutable diagnostic snapshot; not published or executable ownership.
+        saved = capture(candidate['target'], candidate['rings'], ids[:-1], request.image_identities)
+        candidate_n1 = dict(target=saved.target, rings=saved.rings, token_ids=ids[:-1])
         transitions.append(dict(event='N-1', target=[c.size() for c in candidate['target']], dspark=[r.offset for r in candidate['rings']], terminal=kwargs['terminal_prompt_token']))
-        result = handoff(live, model, **kwargs)
-        transitions.append(dict(event='P5', producer_state=live._state, uid=result.uid,
-            scheduler_batch=result._bg is scheduler.batch_generator, prompt_tokens=list(result.history.prompt_tokens),
-            target_offsets=result.active_cache_offsets(), dspark_offsets=result.dspark_context.offsets()))
-        return result
+        # Do not perform fallible receipt work between native transfer and
+        # _start assigning rec.owner. Observe only after Scheduler registration.
+        return handoff(live, model, **kwargs)
     def inserted(bg, prompts, *args, **kwargs):
         transitions.append(dict(event='native_insert', prompts=prompts, all_tokens=kwargs.get('all_tokens')))
         return insert(bg, prompts, *args, **kwargs)
@@ -178,6 +184,7 @@ def observe_continuation(backend, prepared, tokenizer, receipt):
                 uid_to_request_id=dict(scheduler.uid_to_request_id), running=list(scheduler.running))
             if not scheduled:
                 raise RuntimeError(scheduler._completed[-1].error)
+            transitions.append(p5_observation(candidate_live, request.execution.owner, scheduler))
             outputs = []
             for _ in range(4):
                 result = scheduler.step()
@@ -205,7 +212,19 @@ def observe_continuation(backend, prepared, tokenizer, receipt):
                 dspark_rings=len(saved.rings), images=saved.images,
                 discoverable=restored is not None and tuple(restored[2]) == saved.tokens))
             restored = None
-        print('progress: settled; independent ordinary terminal forward', flush=True)
+        receipt['candidate_settled'] = True
+        print('progress: settled; fresh independent ordinary N-1 reference', flush=True)
+        with Image.open(BytesIO(data)) as image:
+            patches, h, w, kinds = image_patch_array(image, prepared.multimodal._config)
+        pixels = mx.array(patches).astype(mx.bfloat16)
+        with mx.stream(generation_stream), MTPWiredLimitLease(mx, generation_stream):
+            reference = ordinary_prefill_reference(backend._model, mx.array([ids[:-1]], mx.int32),
+                pixel_values=pixels, image_grids=[(h, w)], image_spans=[(2, 189)], image_types=[list(kinds)])
+            mx.eval(reference['logits'], reference['embeddings'], *[r.keys for r in reference['rings']])
+        patches = pixels = None
+        receipt['independent_image_embeddings'] = physical_tensor_metrics(candidate_embeddings, reference['embeddings'][0, 2:191])
+        receipt['n1_comparison'] = paired_boundary_metrics(candidate_n1, reference, boundary='n-1-seal', config=lm._config)
+        print('progress: independent ordinary terminal forward', flush=True)
         with mx.stream(generation_stream), MTPWiredLimitLease(mx, generation_stream):
             logits, hidden = lm._forward(mx.array([[ids[-1]]], mx.int32), cache=reference['target'], return_dspark_hidden=True)
             lm.dspark_append_context(hidden, reference['rings'], start_offset=212)
@@ -221,7 +240,16 @@ def observe_continuation(backend, prepared, tokenizer, receipt):
                 receipt['reference_continuation']['distribution'] = physical_tensor_metrics(observations[0], distribution)
         receipt['post_execution_mlx'] = dict(active=mx.get_active_memory(), cache=mx.get_cache_memory(), peak=mx.get_peak_memory())
     finally:
-        reference = observations = None
+        reference = observations = candidate_n1 = candidate_embeddings = candidate_live = None
         receipt['trace'] = dict(trace)
+        receipt['exit_state'] = dict(fatal_error=backend.fatal_error,
+            requests=list(scheduler.requests), running=list(scheduler.running),
+            waiting=len(scheduler.waiting), uid_mapping=dict(scheduler.request_id_to_uid),
+            reverse_mapping=dict(scheduler.uid_to_request_id),
+            native_batch=scheduler.batch_generator is not None,
+            owner=request.execution.owner is not None,
+            pending_capture=request.prompt_checkpoint is not None,
+            published_pairs=len(scheduler.checkpoints._payloads),
+            predicate_restored='_historical_images_covered' not in scheduler.__dict__)
         scheduler.close_serving()
         backend.scheduler = None
