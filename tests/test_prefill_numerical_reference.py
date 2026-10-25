@@ -102,6 +102,46 @@ def test_admitted_checkpoint_has_no_layer0_engram():
     assert 0 not in config.engram_layer_ids
 
 
+@pytest.mark.parametrize('fail', [False, True])
+def test_installed_layer0_constructor_and_shared_projection_hooks(monkeypatch, fail):
+    """Real constructor/dispatch contracts; replace allocation-heavy leaves only."""
+    import mlx.core as mx
+    import mlx.nn as nn
+    import omlx.patches.deepseek_v41.language as lang
+    from pathlib import Path
+    from omlx.patches.deepseek_v41.config import ModelConfig
+    from tools.qualify_prefill_fp8_mlx import layer0_numerical_handles
+    config = ModelConfig.from_dict(json.loads(Path(
+        '/Volumes/KIOXIA-PRO-2/models/deepseek-ai/DeepSeek-V4.1-Flash-1017/config.json'
+    ).read_text()))
+    def linear(*args, **kwargs):
+        w, s = mx.quantize(mx.ones((32, 32)), group_size=32, bits=8, mode='mxfp8')
+        return lang.QuantizedProjection(w, s, 8, 'mxfp8')
+    with monkeypatch.context() as m:
+        m.setattr(lang.nn, 'Linear', linear)
+        m.setattr(lang, 'MoE', lambda c: nn.Module())
+        layer = lang.Block(config, 0)
+    assert not any(hasattr(layer, name) for name in ('engram',))
+    assert not any(hasattr(layer.attn, name) for name in ('compressor', 'indexer'))
+    originals = (lang.Block.__call__, lang.Attention.__call__,
+                 lang.QuantizedProjection.project_quantized, lang.pack_activation)
+    x = mx.ones((1, 11, 32), mx.bfloat16)
+    baseline = layer.attn._input_projections(x)
+    try:
+        with layer0_numerical_handles(SimpleNamespace(layers=[layer])) as handles:
+            actual = layer.attn._input_projections(x)
+            if fail:
+                raise RuntimeError('intentional')
+    except RuntimeError as exc:
+        assert fail and str(exc) == 'intentional'
+    assert originals == (lang.Block.__call__, lang.Attention.__call__,
+                         lang.QuantizedProjection.project_quantized, lang.pack_activation)
+    assert all(physical_tensor_metrics(a, b)['mismatches'] == 0
+               for a, b in zip(actual, baseline))
+    assert handles['attention_wkv_qdq'].shape == x.shape
+    assert handles['attention_wkv_output'] is actual[1]
+
+
 def test_metrics_are_chunk_bounded_and_match_direct_reductions():
     a = np.arange(101, dtype=np.float32) / 10
     b = a + np.float32(.01)

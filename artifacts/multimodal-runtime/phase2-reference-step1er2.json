@@ -1,0 +1,2050 @@
+{
+  "starting_head": "3d9c229335292c2e73549a8532a3dd06fc1ff069",
+  "pid": 73611,
+  "model_load_attempts": 1,
+  "admission": {
+    "status": "PASS",
+    "identity_sha256": "9c439d3fb9ad730996ecca821234bba1ce8817d7b46a2744e171c10a4d7d2ca2",
+    "numerics": "flash-1017-pre-woa-fp8-v1",
+    "build": {
+      "native_build": {
+        "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05) (Homebrew)\n",
+        "cmake": "cmake version 4.3.3\n\nCMake suite maintained and supported by Kitware (kitware.com/cmake).\n",
+        "host_linked": false,
+        "opencv": "4.14.0\n",
+        "rustc": "rustc 1.98.1 (48a229cea 2026-09-01) (Homebrew)\nbinary: rustc\ncommit-hash: 48a229ceaefd4985c50990b14116b6d856af0985\ncommit-date: 2026-09-01\nhost: aarch64-apple-darwin\nrelease: 1.98.1\nLLVM version: 22.1.8\n",
+        "wheel_sha256": "11bda3355c2f48b99d04f6a2179b283add3f6d1218f34e4707bd5a29b304ab03",
+        "xcode": "Xcode 26.6\nBuild version 17F113\n"
+      },
+      "overlays": [
+        "compressed-growth",
+        "bit-exact-kernels",
+        "template-reuse",
+        "context-copy"
+      ],
+      "recipe_source": {
+        "archive": "recipe-02-source.tar.gz",
+        "patch": "docs/recipe-02-native-semantic-boundary.patch",
+        "revision": "93b0fd229cc9ffa6b1a8c63d42b0bf741bbec170"
+      },
+      "source_commit": "aa8c5717b42aa0a216fef3134e72c6db7ca49287"
+    },
+    "actual_origins": {
+      "ds41f_mlx": "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/ds41f_mlx/__init__.py",
+      "omlx": "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/omlx/__init__.py",
+      "deepseek_recipe": "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/deepseek_recipe/__init__.py",
+      "deepseek_recipe._native": "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/deepseek_recipe/_native.abi3.so",
+      "mlx_lm": "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/mlx_lm/__init__.py"
+    },
+    "checkpoint": {
+      "metadata": {
+        "config.json": "8be45ce0476004a3f529fd896115a4a2e800a129ad2d3ec05b16050f52e21879",
+        "model.safetensors.index.json": "74b0686a3d2891980d5e303251b075a3bccae2c2ff650747db2620a649b98fa8",
+        "tokenizer.json": "c90dfa01249db1be4245780a052ede752e1361c612ac6d08e2bdada7d599476b"
+      },
+      "verification": "full-byte SHA256; installation cache only for unchanged file identity",
+      "shards_omitted": "Same 48-shard identity as Step 1E-R; unchanged-file verification cache, not independent fresh full rehash."
+    }
+  },
+  "structural_preflight": {
+    "status": "PASS",
+    "engram_layers": [
+      1,
+      14
+    ],
+    "layer0": {
+      "block": "<class 'omlx.patches.deepseek_v41.language.Block'>",
+      "attention": "<class 'omlx.patches.deepseek_v41.language.Attention'>",
+      "engram": false,
+      "compressor": false,
+      "indexer": false,
+      "ratio": 0,
+      "head_dim": 512,
+      "window": 128
+    },
+    "contracts": {
+      "<class 'omlx.patches.deepseek_v41.language.Block'>.__call__": "(self, h, pre, cache, shared, start, image_mask, ced_tail=None)",
+      "<class 'omlx.patches.deepseek_v41.language.Attention'>.__call__": "(self, x, cache, shared, start, ced_kv=None, ced_kv_start=None)",
+      "<class 'omlx.patches.deepseek_v41.language.Attention'>._input_projections": "(self, x)",
+      "<class 'omlx.patches.deepseek_v41.quantization.QuantizedProjection'>.__call__": "(self, x, indices=None, sorted_indices=False, block_plan=None)",
+      "<class 'omlx.patches.deepseek_v41.quantization.QuantizedProjection'>.project_quantized": "(self, x, indices=None, sorted_indices=False, block_plan=None)",
+      "<class 'omlx.patches.deepseek_v41.language.RMSNorm'>.__call__": "(self, x)",
+      "<module 'omlx.patches.deepseek_v41.language' from '/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/omlx/patches/deepseek_v41/language.py'>.pack_activation": "(x, bits=8, group_size=32, e4m3_scale=False)"
+    },
+    "header_only": {
+      "layers.0.attn.wkv.weight": {
+        "dtype": "F8_E4M3",
+        "shape": [
+          512,
+          5120
+        ],
+        "data_offsets": [
+          432723416,
+          435344856
+        ]
+      },
+      "layers.0.attn.wkv.scale": {
+        "dtype": "F8_E8M0",
+        "shape": [
+          16,
+          160
+        ],
+        "data_offsets": [
+          7891928,
+          7894488
+        ]
+      },
+      "layers.0.attn.wq_a.weight": {
+        "dtype": "F8_E4M3",
+        "shape": [
+          1280,
+          5120
+        ],
+        "data_offsets": [
+          510842328,
+          517395928
+        ]
+      }
+    },
+    "actual_constructor_stubs": true,
+    "hook_success_exception_restoration": true,
+    "shared_qdq_branch_exercised": true,
+    "pack_binding_exact": true,
+    "layout": [
+      1,
+      11,
+      528
+    ],
+    "limitations": "Real loaded projection attributes and no-repeat hooks revalidated after load; leaf stubs do not validate full forward numerics."
+  },
+  "installed_hashes": {
+    "ds41f_mlx/serving/internal_mtp.py": "21800084ee6519ea73790ee8c46ad7fcf9a7183c37aabaae4ed8da4b2ca9edd1",
+    "ds41f_mlx/serving/paired_checkpoint.py": "61d2a7f5fe5a4aa646356223eae37e30378b257b170c9c473de0b957f5070d16",
+    "ds41f_mlx/prefill_fp8_mlx/p6_append.py": "34e3326c2472a9a7717f69bb335bec8d5a4c98addecab39ff3bc863b4b17f184",
+    "ds41f_mlx/prefill_fp8_mlx/block_runner.py": "979d20d0c7e39c1fd2cc0604b28103d20407239f6d37d9ca09fba35fa3a13809",
+    "omlx/patches/deepseek_v41/language.py": "702b8a1c872eee645e6633140787a5947dc4bb7aace16384475a90151a4c5276",
+    "omlx/patches/deepseek_v41/cache.py": "00d1ceaf1bb1a8de9fe531f6cb311092c831378343341925d7c844503030e38b",
+    "omlx/patches/deepseek_v41/quantization.py": "cafb5b7543b2f1e285f8dafdeae1e584c77d8366961146db67134e55359c7ecc",
+    "omlx/patches/deepseek_v41/engram.py": "10ee6e12298adcb095836206840fd66d170cbf63db617f19232a9f6f94c438be",
+    "omlx/patches/deepseek_v41/activation.py": "bfb7385ee30f2478b4c5b7ccc91ce29cdf0fad2e747a06e144f606f4df3c164d",
+    "omlx/patches/deepseek_v41/gemv.py": "e9c4a2440b6697488c870ca2531cddafdff49d1dc8c7aca53ab86fee8215c7b9",
+    "omlx/patches/deepseek_v41/hyper_connection.py": "773631aeb89ef646a6a3d68cb039d4d2de967fde36c19e2dd4d33ad545a32d25",
+    "omlx/patches/deepseek_v41/loading.py": "104408ea7dfa05b886bd0d8ecc0359c31317f581f4538b5860cd1951edc062a1",
+    "omlx/patches/deepseek_v41/mtp.py": "5c6d10bdc1eb646835866d2b09201fef2481b7cd1950f1592d42490142d5514f"
+  },
+  "diagnostic_sha256": "c4d80d925d0ba9faaef9699101d71aa8ed783e1a41e237c6290bedc739296923",
+  "canonical": [
+    {
+      "body": {
+        "model": "deepseek-v4.1-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Explain immutable checkpoints in one short sentence."
+          }
+        ],
+        "temperature": 0,
+        "max_tokens": 1,
+        "reasoning_effort": "none"
+      },
+      "ids": [
+        0,
+        128803,
+        65106,
+        104124,
+        4085,
+        20819,
+        295,
+        834,
+        3107,
+        10175,
+        16,
+        128804,
+        128822
+      ],
+      "sha256": "8ce125c769d4a95f97bceac24a7c6aa2f8bbf36a1f0c4ff1d1c4a9ab82d79fb2",
+      "N": 13,
+      "frontier": 11
+    },
+    {
+      "body": {
+        "model": "deepseek-v4.1-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Explain immutable checkpoints in one short sentence. Then state one benefit."
+          }
+        ],
+        "temperature": 0,
+        "max_tokens": 1,
+        "reasoning_effort": "none"
+      },
+      "ids": [
+        0,
+        128803,
+        65106,
+        104124,
+        4085,
+        20819,
+        295,
+        834,
+        3107,
+        10175,
+        16,
+        5715,
+        2501,
+        834,
+        8200,
+        16,
+        128804,
+        128822
+      ],
+      "sha256": "9059c79e53e40e13f60272e37226a6f5d99f2d5d6f53879d4dbaff1ff91c4c1b",
+      "N": 18,
+      "frontier": 16
+    }
+  ],
+  "preparation": "PASS",
+  "load_s": 85.93218745899503,
+  "completed_model_loads": 1,
+  "loaded_memory": {
+    "active": 309151335572,
+    "cache": 5591115210,
+    "peak": 311557027488
+  },
+  "observer_restored": true,
+  "layers_restored": true,
+  "numerical": {
+    "comparisons": {
+      "A_B0": {
+        "packed": {
+          "actual": {
+            "shape": [
+              1,
+              11,
+              528
+            ],
+            "dtype": "uint8"
+          },
+          "reference": {
+            "shape": [
+              1,
+              11,
+              528
+            ],
+            "dtype": "uint8"
+          },
+          "structure_equal": true,
+          "elements": 5808,
+          "mismatches": 0,
+          "samples": []
+        },
+        "decoded": {
+          "actual": {
+            "shape": [
+              1,
+              11,
+              512
+            ],
+            "dtype": "float32"
+          },
+          "reference": {
+            "shape": [
+              1,
+              11,
+              512
+            ],
+            "dtype": "float32"
+          },
+          "structure_equal": true,
+          "elements": 5632,
+          "mismatches": 0,
+          "samples": [],
+          "nonfinite_pairs": 0,
+          "nonfinite_mismatches": 0,
+          "max_absolute": 0.0,
+          "rms_relative": 0.0,
+          "cosine": 1.0
+        }
+      },
+      "B0_B1": {
+        "packed": {
+          "actual": {
+            "shape": [
+              1,
+              11,
+              528
+            ],
+            "dtype": "uint8"
+          },
+          "reference": {
+            "shape": [
+              1,
+              11,
+              528
+            ],
+            "dtype": "uint8"
+          },
+          "structure_equal": true,
+          "elements": 5808,
+          "mismatches": 0,
+          "samples": []
+        },
+        "decoded": {
+          "actual": {
+            "shape": [
+              1,
+              11,
+              512
+            ],
+            "dtype": "float32"
+          },
+          "reference": {
+            "shape": [
+              1,
+              11,
+              512
+            ],
+            "dtype": "float32"
+          },
+          "structure_equal": true,
+          "elements": 5632,
+          "mismatches": 0,
+          "samples": [],
+          "nonfinite_pairs": 0,
+          "nonfinite_mismatches": 0,
+          "max_absolute": 0.0,
+          "rms_relative": 0.0,
+          "cosine": 1.0
+        }
+      },
+      "A_B1": {
+        "packed": {
+          "actual": {
+            "shape": [
+              1,
+              11,
+              528
+            ],
+            "dtype": "uint8"
+          },
+          "reference": {
+            "shape": [
+              1,
+              11,
+              528
+            ],
+            "dtype": "uint8"
+          },
+          "structure_equal": true,
+          "elements": 5808,
+          "mismatches": 0,
+          "samples": []
+        },
+        "decoded": {
+          "actual": {
+            "shape": [
+              1,
+              11,
+              512
+            ],
+            "dtype": "float32"
+          },
+          "reference": {
+            "shape": [
+              1,
+              11,
+              512
+            ],
+            "dtype": "float32"
+          },
+          "structure_equal": true,
+          "elements": 5632,
+          "mismatches": 0,
+          "samples": [],
+          "nonfinite_pairs": 0,
+          "nonfinite_mismatches": 0,
+          "max_absolute": 0.0,
+          "rms_relative": 0.0,
+          "cosine": 1.0
+        }
+      },
+      "A_C": {
+        "packed": {
+          "actual": {
+            "shape": [
+              1,
+              11,
+              528
+            ],
+            "dtype": "uint8"
+          },
+          "reference": {
+            "shape": [
+              1,
+              11,
+              528
+            ],
+            "dtype": "uint8"
+          },
+          "structure_equal": true,
+          "elements": 5808,
+          "mismatches": 210,
+          "samples": [
+            {
+              "flat_index": 11,
+              "actual": "84",
+              "reference": "85"
+            },
+            {
+              "flat_index": 12,
+              "actual": "99",
+              "reference": "98"
+            },
+            {
+              "flat_index": 18,
+              "actual": "89",
+              "reference": "88"
+            },
+            {
+              "flat_index": 25,
+              "actual": "44",
+              "reference": "46"
+            }
+          ]
+        },
+        "decoded": {
+          "actual": {
+            "shape": [
+              1,
+              11,
+              512
+            ],
+            "dtype": "float32"
+          },
+          "reference": {
+            "shape": [
+              1,
+              11,
+              512
+            ],
+            "dtype": "float32"
+          },
+          "structure_equal": true,
+          "elements": 5632,
+          "mismatches": 210,
+          "samples": [
+            {
+              "flat_index": 11,
+              "actual": "0.0234375",
+              "reference": "0.025390625"
+            },
+            {
+              "flat_index": 12,
+              "actual": "0.0859375",
+              "reference": "0.078125"
+            },
+            {
+              "flat_index": 18,
+              "actual": "0.03515625",
+              "reference": "0.03125"
+            },
+            {
+              "flat_index": 25,
+              "actual": "0.0007324219",
+              "reference": "0.0008544922"
+            }
+          ],
+          "nonfinite_pairs": 0,
+          "nonfinite_mismatches": 0,
+          "max_absolute": 0.03125,
+          "rms_relative": 0.006141681209326608,
+          "cosine": 0.999981151822089
+        }
+      },
+      "C_D": {
+        "packed": {
+          "actual": {
+            "shape": [
+              1,
+              11,
+              528
+            ],
+            "dtype": "uint8"
+          },
+          "reference": {
+            "shape": [
+              1,
+              11,
+              528
+            ],
+            "dtype": "uint8"
+          },
+          "structure_equal": true,
+          "elements": 5808,
+          "mismatches": 0,
+          "samples": []
+        },
+        "decoded": {
+          "actual": {
+            "shape": [
+              1,
+              11,
+              512
+            ],
+            "dtype": "float32"
+          },
+          "reference": {
+            "shape": [
+              1,
+              11,
+              512
+            ],
+            "dtype": "float32"
+          },
+          "structure_equal": true,
+          "elements": 5632,
+          "mismatches": 0,
+          "samples": [],
+          "nonfinite_pairs": 0,
+          "nonfinite_mismatches": 0,
+          "max_absolute": 0.0,
+          "rms_relative": 0.0,
+          "cosine": 1.0
+        }
+      },
+      "B1_C": {
+        "packed": {
+          "actual": {
+            "shape": [
+              1,
+              11,
+              528
+            ],
+            "dtype": "uint8"
+          },
+          "reference": {
+            "shape": [
+              1,
+              11,
+              528
+            ],
+            "dtype": "uint8"
+          },
+          "structure_equal": true,
+          "elements": 5808,
+          "mismatches": 210,
+          "samples": [
+            {
+              "flat_index": 11,
+              "actual": "84",
+              "reference": "85"
+            },
+            {
+              "flat_index": 12,
+              "actual": "99",
+              "reference": "98"
+            },
+            {
+              "flat_index": 18,
+              "actual": "89",
+              "reference": "88"
+            },
+            {
+              "flat_index": 25,
+              "actual": "44",
+              "reference": "46"
+            }
+          ]
+        },
+        "decoded": {
+          "actual": {
+            "shape": [
+              1,
+              11,
+              512
+            ],
+            "dtype": "float32"
+          },
+          "reference": {
+            "shape": [
+              1,
+              11,
+              512
+            ],
+            "dtype": "float32"
+          },
+          "structure_equal": true,
+          "elements": 5632,
+          "mismatches": 210,
+          "samples": [
+            {
+              "flat_index": 11,
+              "actual": "0.0234375",
+              "reference": "0.025390625"
+            },
+            {
+              "flat_index": 12,
+              "actual": "0.0859375",
+              "reference": "0.078125"
+            },
+            {
+              "flat_index": 18,
+              "actual": "0.03515625",
+              "reference": "0.03125"
+            },
+            {
+              "flat_index": 25,
+              "actual": "0.0007324219",
+              "reference": "0.0008544922"
+            }
+          ],
+          "nonfinite_pairs": 0,
+          "nonfinite_mismatches": 0,
+          "max_absolute": 0.03125,
+          "rms_relative": 0.006141681209326608,
+          "cosine": 0.999981151822089
+        }
+      }
+    },
+    "executions": {
+      "A": [
+        {
+          "start": 0,
+          "end": 11,
+          "rows": 11
+        }
+      ],
+      "B1": [
+        {
+          "start": 11,
+          "end": 16,
+          "rows": 5
+        }
+      ],
+      "C": [
+        {
+          "start": 0,
+          "end": 16,
+          "rows": 16
+        }
+      ]
+    },
+    "restore": {
+      "identity": "9c439d3fb9ad730996ecca821234bba1ce8817d7b46a2744e171c10a4d7d2ca2",
+      "distinct_mutable_containers": true,
+      "snapshot_before": "4a41611c277fd2cea0f8b9b5a90b48956289d09889c97d4c9e8231e19ed82d3c",
+      "snapshot_after": "4a41611c277fd2cea0f8b9b5a90b48956289d09889c97d4c9e8231e19ed82d3c"
+    },
+    "classifications": [
+      "PREFIX_PRESERVED",
+      "COLD_SHAPE_DIFFERENCE"
+    ],
+    "observations": {
+      "A": {
+        "packed": {
+          "shape": [
+            1,
+            11,
+            528
+          ],
+          "dtype": "uint8",
+          "sha256": "0ed0919e9353d847259bdd47e7e74695b224732830b0581b01085646d023bc2e"
+        },
+        "decoded": {
+          "shape": [
+            1,
+            11,
+            512
+          ],
+          "dtype": "float32",
+          "sha256": "7bf36af3b887dee86a37ecf419d7dc158aa46743f54c3e884a5b21ddb512b2f8"
+        },
+        "frontier": 11,
+        "absolute_positions": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "meta_state": [
+          "deepseek_v41",
+          "3",
+          "0"
+        ],
+        "compress_ratio": 0,
+        "offset": [
+          11
+        ],
+        "left_padding": null,
+        "lengths": null,
+        "memory": {
+          "active": 309159462252,
+          "cache": 5675045457,
+          "peak": 311557027488
+        },
+        "handles": {
+          "block_input": {
+            "shape": [
+              1,
+              11,
+              4,
+              5120
+            ],
+            "dtype": "mlx.core.bfloat16"
+          },
+          "block_pre": {
+            "shape": [
+              1,
+              11,
+              4
+            ],
+            "dtype": "mlx.core.float32"
+          },
+          "attention_input": {
+            "shape": [
+              1,
+              11,
+              5120
+            ],
+            "dtype": "mlx.core.bfloat16"
+          },
+          "attention_wkv_qdq": {
+            "shape": [
+              1,
+              11,
+              5120
+            ],
+            "dtype": "mlx.core.bfloat16"
+          },
+          "attention_wkv_output": {
+            "shape": [
+              1,
+              11,
+              512
+            ],
+            "dtype": "mlx.core.bfloat16"
+          },
+          "kv_norm_output": {
+            "shape": [
+              1,
+              11,
+              512
+            ],
+            "dtype": "mlx.core.bfloat16"
+          },
+          "prepack": {
+            "shape": [
+              1,
+              11,
+              512
+            ],
+            "dtype": "mlx.core.bfloat16"
+          }
+        }
+      },
+      "B0": {
+        "packed": {
+          "shape": [
+            1,
+            11,
+            528
+          ],
+          "dtype": "uint8",
+          "sha256": "0ed0919e9353d847259bdd47e7e74695b224732830b0581b01085646d023bc2e"
+        },
+        "decoded": {
+          "shape": [
+            1,
+            11,
+            512
+          ],
+          "dtype": "float32",
+          "sha256": "7bf36af3b887dee86a37ecf419d7dc158aa46743f54c3e884a5b21ddb512b2f8"
+        },
+        "frontier": 11,
+        "absolute_positions": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "meta_state": [
+          "deepseek_v41",
+          "3",
+          "0"
+        ],
+        "compress_ratio": 0,
+        "offset": [
+          11
+        ],
+        "left_padding": null,
+        "lengths": null,
+        "memory": {
+          "active": 309152547920,
+          "cache": 5682151177,
+          "peak": 311557027488
+        },
+        "handles": {}
+      },
+      "B1": {
+        "packed": {
+          "shape": [
+            1,
+            16,
+            528
+          ],
+          "dtype": "uint8",
+          "sha256": "7bf8cf5474d0be34696ae816f3605511fe01294824b2b53e4d661f96e3d52e52"
+        },
+        "decoded": {
+          "shape": [
+            1,
+            16,
+            512
+          ],
+          "dtype": "float32",
+          "sha256": "82160f2168fb472a1d55da24d141f725f3c5041f48df16c4eed6721a9b5bb1da"
+        },
+        "frontier": 16,
+        "absolute_positions": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "meta_state": [
+          "deepseek_v41",
+          "3",
+          "0"
+        ],
+        "compress_ratio": 0,
+        "offset": [
+          16
+        ],
+        "left_padding": null,
+        "lengths": null,
+        "memory": {
+          "active": 309159546908,
+          "cache": 5724838861,
+          "peak": 311557027488
+        },
+        "handles": {
+          "block_input": {
+            "shape": [
+              1,
+              5,
+              4,
+              5120
+            ],
+            "dtype": "mlx.core.bfloat16"
+          },
+          "block_pre": {
+            "shape": [
+              1,
+              5,
+              4
+            ],
+            "dtype": "mlx.core.float32"
+          },
+          "attention_input": {
+            "shape": [
+              1,
+              5,
+              5120
+            ],
+            "dtype": "mlx.core.bfloat16"
+          },
+          "attention_wkv_qdq": {
+            "shape": [
+              1,
+              5,
+              5120
+            ],
+            "dtype": "mlx.core.bfloat16"
+          },
+          "attention_wkv_output": {
+            "shape": [
+              1,
+              5,
+              512
+            ],
+            "dtype": "mlx.core.bfloat16"
+          },
+          "kv_norm_output": {
+            "shape": [
+              1,
+              5,
+              512
+            ],
+            "dtype": "mlx.core.bfloat16"
+          },
+          "prepack": {
+            "shape": [
+              1,
+              5,
+              512
+            ],
+            "dtype": "mlx.core.bfloat16"
+          }
+        }
+      },
+      "C": {
+        "packed": {
+          "shape": [
+            1,
+            16,
+            528
+          ],
+          "dtype": "uint8",
+          "sha256": "9a19d841e96492021252ce2f347695e6b8e0e0c66a722de892f266f7f95b0f13"
+        },
+        "decoded": {
+          "shape": [
+            1,
+            16,
+            512
+          ],
+          "dtype": "float32",
+          "sha256": "561179dc21d43085bc9956d9155c5f26ab47d71b86478e0a69c5ec5dae05d87f"
+        },
+        "frontier": 16,
+        "absolute_positions": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "meta_state": [
+          "deepseek_v41",
+          "3",
+          "0"
+        ],
+        "compress_ratio": 0,
+        "offset": [
+          16
+        ],
+        "left_padding": null,
+        "lengths": null,
+        "memory": {
+          "active": 309168471376,
+          "cache": 5786653241,
+          "peak": 311557027488
+        },
+        "handles": {
+          "block_input": {
+            "shape": [
+              1,
+              16,
+              4,
+              5120
+            ],
+            "dtype": "mlx.core.bfloat16"
+          },
+          "block_pre": {
+            "shape": [
+              1,
+              16,
+              4
+            ],
+            "dtype": "mlx.core.float32"
+          },
+          "attention_input": {
+            "shape": [
+              1,
+              16,
+              5120
+            ],
+            "dtype": "mlx.core.bfloat16"
+          },
+          "attention_wkv_qdq": {
+            "shape": [
+              1,
+              16,
+              5120
+            ],
+            "dtype": "mlx.core.bfloat16"
+          },
+          "attention_wkv_output": {
+            "shape": [
+              1,
+              16,
+              512
+            ],
+            "dtype": "mlx.core.bfloat16"
+          },
+          "kv_norm_output": {
+            "shape": [
+              1,
+              16,
+              512
+            ],
+            "dtype": "mlx.core.bfloat16"
+          },
+          "prepack": {
+            "shape": [
+              1,
+              16,
+              512
+            ],
+            "dtype": "mlx.core.bfloat16"
+          }
+        }
+      },
+      "D": {
+        "packed": {
+          "shape": [
+            1,
+            16,
+            528
+          ],
+          "dtype": "uint8",
+          "sha256": "9a19d841e96492021252ce2f347695e6b8e0e0c66a722de892f266f7f95b0f13"
+        },
+        "decoded": {
+          "shape": [
+            1,
+            16,
+            512
+          ],
+          "dtype": "float32",
+          "sha256": "561179dc21d43085bc9956d9155c5f26ab47d71b86478e0a69c5ec5dae05d87f"
+        },
+        "frontier": 16,
+        "absolute_positions": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "meta_state": [
+          "deepseek_v41",
+          "3",
+          "0"
+        ],
+        "compress_ratio": 0,
+        "offset": [
+          16
+        ],
+        "left_padding": null,
+        "lengths": null,
+        "memory": {
+          "active": 309173916708,
+          "cache": 5786079589,
+          "peak": 311557027488
+        },
+        "handles": {
+          "block_input": {
+            "shape": [
+              1,
+              16,
+              4,
+              5120
+            ],
+            "dtype": "mlx.core.bfloat16"
+          },
+          "block_pre": {
+            "shape": [
+              1,
+              16,
+              4
+            ],
+            "dtype": "mlx.core.float32"
+          },
+          "attention_input": {
+            "shape": [
+              1,
+              16,
+              5120
+            ],
+            "dtype": "mlx.core.bfloat16"
+          },
+          "attention_wkv_qdq": {
+            "shape": [
+              1,
+              16,
+              5120
+            ],
+            "dtype": "mlx.core.bfloat16"
+          },
+          "attention_wkv_output": {
+            "shape": [
+              1,
+              16,
+              512
+            ],
+            "dtype": "mlx.core.bfloat16"
+          },
+          "kv_norm_output": {
+            "shape": [
+              1,
+              16,
+              512
+            ],
+            "dtype": "mlx.core.bfloat16"
+          },
+          "prepack": {
+            "shape": [
+              1,
+              16,
+              512
+            ],
+            "dtype": "mlx.core.bfloat16"
+          }
+        }
+      }
+    },
+    "boundaries": {
+      "A_C": {
+        "block_input": {
+          "full_geometry": [
+            {
+              "shape": [
+                1,
+                11,
+                4,
+                5120
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            {
+              "shape": [
+                1,
+                16,
+                4,
+                5120
+              ],
+              "dtype": "mlx.core.bfloat16"
+            }
+          ],
+          "prefix": {
+            "actual": {
+              "shape": [
+                1,
+                11,
+                4,
+                5120
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            "reference": {
+              "shape": [
+                1,
+                11,
+                4,
+                5120
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            "structure_equal": true,
+            "elements": 225280,
+            "mismatches": 0,
+            "samples": [],
+            "nonfinite_pairs": 0,
+            "nonfinite_mismatches": 0,
+            "max_absolute": 0.0,
+            "rms_relative": 0.0,
+            "cosine": 1.0
+          }
+        },
+        "block_pre": {
+          "full_geometry": [
+            {
+              "shape": [
+                1,
+                11,
+                4
+              ],
+              "dtype": "mlx.core.float32"
+            },
+            {
+              "shape": [
+                1,
+                16,
+                4
+              ],
+              "dtype": "mlx.core.float32"
+            }
+          ],
+          "prefix": {
+            "actual": {
+              "shape": [
+                1,
+                11,
+                4
+              ],
+              "dtype": "mlx.core.float32"
+            },
+            "reference": {
+              "shape": [
+                1,
+                11,
+                4
+              ],
+              "dtype": "mlx.core.float32"
+            },
+            "structure_equal": true,
+            "elements": 44,
+            "mismatches": 0,
+            "samples": [],
+            "nonfinite_pairs": 0,
+            "nonfinite_mismatches": 0,
+            "max_absolute": 0.0,
+            "rms_relative": 0.0,
+            "cosine": 1.0
+          }
+        },
+        "attention_input": {
+          "full_geometry": [
+            {
+              "shape": [
+                1,
+                11,
+                5120
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            {
+              "shape": [
+                1,
+                16,
+                5120
+              ],
+              "dtype": "mlx.core.bfloat16"
+            }
+          ],
+          "prefix": {
+            "actual": {
+              "shape": [
+                1,
+                11,
+                5120
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            "reference": {
+              "shape": [
+                1,
+                11,
+                5120
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            "structure_equal": true,
+            "elements": 56320,
+            "mismatches": 0,
+            "samples": [],
+            "nonfinite_pairs": 0,
+            "nonfinite_mismatches": 0,
+            "max_absolute": 0.0,
+            "rms_relative": 0.0,
+            "cosine": 1.0
+          }
+        },
+        "attention_wkv_qdq": {
+          "full_geometry": [
+            {
+              "shape": [
+                1,
+                11,
+                5120
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            {
+              "shape": [
+                1,
+                16,
+                5120
+              ],
+              "dtype": "mlx.core.bfloat16"
+            }
+          ],
+          "prefix": {
+            "actual": {
+              "shape": [
+                1,
+                11,
+                5120
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            "reference": {
+              "shape": [
+                1,
+                11,
+                5120
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            "structure_equal": true,
+            "elements": 56320,
+            "mismatches": 0,
+            "samples": [],
+            "nonfinite_pairs": 0,
+            "nonfinite_mismatches": 0,
+            "max_absolute": 0.0,
+            "rms_relative": 0.0,
+            "cosine": 1.0
+          }
+        },
+        "attention_wkv_output": {
+          "full_geometry": [
+            {
+              "shape": [
+                1,
+                11,
+                512
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            {
+              "shape": [
+                1,
+                16,
+                512
+              ],
+              "dtype": "mlx.core.bfloat16"
+            }
+          ],
+          "prefix": {
+            "actual": {
+              "shape": [
+                1,
+                11,
+                512
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            "reference": {
+              "shape": [
+                1,
+                11,
+                512
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            "structure_equal": true,
+            "elements": 5632,
+            "mismatches": 1627,
+            "samples": [
+              {
+                "flat_index": 0,
+                "actual": "-0.012084961",
+                "reference": "-0.012023926"
+              },
+              {
+                "flat_index": 5,
+                "actual": "0.012023926",
+                "reference": "0.011962891"
+              },
+              {
+                "flat_index": 9,
+                "actual": "0.0016860962",
+                "reference": "0.001701355"
+              },
+              {
+                "flat_index": 11,
+                "actual": "0.009033203",
+                "reference": "0.009155273"
+              }
+            ],
+            "nonfinite_pairs": 0,
+            "nonfinite_mismatches": 0,
+            "max_absolute": 0.001953125,
+            "rms_relative": 0.0017173652414532413,
+            "cosine": 0.9999985254570121
+          }
+        },
+        "kv_norm_output": {
+          "full_geometry": [
+            {
+              "shape": [
+                1,
+                11,
+                512
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            {
+              "shape": [
+                1,
+                16,
+                512
+              ],
+              "dtype": "mlx.core.bfloat16"
+            }
+          ],
+          "prefix": {
+            "actual": {
+              "shape": [
+                1,
+                11,
+                512
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            "reference": {
+              "shape": [
+                1,
+                11,
+                512
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            "structure_equal": true,
+            "elements": 5632,
+            "mismatches": 1540,
+            "samples": [
+              {
+                "flat_index": 0,
+                "actual": "-0.032714844",
+                "reference": "-0.032470703"
+              },
+              {
+                "flat_index": 5,
+                "actual": "0.032714844",
+                "reference": "0.032470703"
+              },
+              {
+                "flat_index": 9,
+                "actual": "0.0047302246",
+                "reference": "0.004760742"
+              },
+              {
+                "flat_index": 11,
+                "actual": "0.024169922",
+                "reference": "0.024536133"
+              }
+            ],
+            "nonfinite_pairs": 0,
+            "nonfinite_mismatches": 0,
+            "max_absolute": 0.0078125,
+            "rms_relative": 0.0017452591471260256,
+            "cosine": 0.9999984786450554
+          }
+        },
+        "prepack": {
+          "full_geometry": [
+            {
+              "shape": [
+                1,
+                11,
+                512
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            {
+              "shape": [
+                1,
+                16,
+                512
+              ],
+              "dtype": "mlx.core.bfloat16"
+            }
+          ],
+          "prefix": {
+            "actual": {
+              "shape": [
+                1,
+                11,
+                512
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            "reference": {
+              "shape": [
+                1,
+                11,
+                512
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            "structure_equal": true,
+            "elements": 5632,
+            "mismatches": 1525,
+            "samples": [
+              {
+                "flat_index": 0,
+                "actual": "-0.032714844",
+                "reference": "-0.032470703"
+              },
+              {
+                "flat_index": 5,
+                "actual": "0.032714844",
+                "reference": "0.032470703"
+              },
+              {
+                "flat_index": 9,
+                "actual": "0.0047302246",
+                "reference": "0.004760742"
+              },
+              {
+                "flat_index": 11,
+                "actual": "0.024169922",
+                "reference": "0.024536133"
+              }
+            ],
+            "nonfinite_pairs": 0,
+            "nonfinite_mismatches": 0,
+            "max_absolute": 0.0078125,
+            "rms_relative": 0.001820976910734423,
+            "cosine": 0.9999983452073143
+          }
+        }
+      },
+      "C_D": {
+        "block_input": {
+          "full_geometry": [
+            {
+              "shape": [
+                1,
+                16,
+                4,
+                5120
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            {
+              "shape": [
+                1,
+                16,
+                4,
+                5120
+              ],
+              "dtype": "mlx.core.bfloat16"
+            }
+          ],
+          "prefix": {
+            "actual": {
+              "shape": [
+                1,
+                11,
+                4,
+                5120
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            "reference": {
+              "shape": [
+                1,
+                11,
+                4,
+                5120
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            "structure_equal": true,
+            "elements": 225280,
+            "mismatches": 0,
+            "samples": [],
+            "nonfinite_pairs": 0,
+            "nonfinite_mismatches": 0,
+            "max_absolute": 0.0,
+            "rms_relative": 0.0,
+            "cosine": 1.0
+          }
+        },
+        "block_pre": {
+          "full_geometry": [
+            {
+              "shape": [
+                1,
+                16,
+                4
+              ],
+              "dtype": "mlx.core.float32"
+            },
+            {
+              "shape": [
+                1,
+                16,
+                4
+              ],
+              "dtype": "mlx.core.float32"
+            }
+          ],
+          "prefix": {
+            "actual": {
+              "shape": [
+                1,
+                11,
+                4
+              ],
+              "dtype": "mlx.core.float32"
+            },
+            "reference": {
+              "shape": [
+                1,
+                11,
+                4
+              ],
+              "dtype": "mlx.core.float32"
+            },
+            "structure_equal": true,
+            "elements": 44,
+            "mismatches": 0,
+            "samples": [],
+            "nonfinite_pairs": 0,
+            "nonfinite_mismatches": 0,
+            "max_absolute": 0.0,
+            "rms_relative": 0.0,
+            "cosine": 1.0
+          }
+        },
+        "attention_input": {
+          "full_geometry": [
+            {
+              "shape": [
+                1,
+                16,
+                5120
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            {
+              "shape": [
+                1,
+                16,
+                5120
+              ],
+              "dtype": "mlx.core.bfloat16"
+            }
+          ],
+          "prefix": {
+            "actual": {
+              "shape": [
+                1,
+                11,
+                5120
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            "reference": {
+              "shape": [
+                1,
+                11,
+                5120
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            "structure_equal": true,
+            "elements": 56320,
+            "mismatches": 0,
+            "samples": [],
+            "nonfinite_pairs": 0,
+            "nonfinite_mismatches": 0,
+            "max_absolute": 0.0,
+            "rms_relative": 0.0,
+            "cosine": 1.0
+          }
+        },
+        "attention_wkv_qdq": {
+          "full_geometry": [
+            {
+              "shape": [
+                1,
+                16,
+                5120
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            {
+              "shape": [
+                1,
+                16,
+                5120
+              ],
+              "dtype": "mlx.core.bfloat16"
+            }
+          ],
+          "prefix": {
+            "actual": {
+              "shape": [
+                1,
+                11,
+                5120
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            "reference": {
+              "shape": [
+                1,
+                11,
+                5120
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            "structure_equal": true,
+            "elements": 56320,
+            "mismatches": 0,
+            "samples": [],
+            "nonfinite_pairs": 0,
+            "nonfinite_mismatches": 0,
+            "max_absolute": 0.0,
+            "rms_relative": 0.0,
+            "cosine": 1.0
+          }
+        },
+        "attention_wkv_output": {
+          "full_geometry": [
+            {
+              "shape": [
+                1,
+                16,
+                512
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            {
+              "shape": [
+                1,
+                16,
+                512
+              ],
+              "dtype": "mlx.core.bfloat16"
+            }
+          ],
+          "prefix": {
+            "actual": {
+              "shape": [
+                1,
+                11,
+                512
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            "reference": {
+              "shape": [
+                1,
+                11,
+                512
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            "structure_equal": true,
+            "elements": 5632,
+            "mismatches": 0,
+            "samples": [],
+            "nonfinite_pairs": 0,
+            "nonfinite_mismatches": 0,
+            "max_absolute": 0.0,
+            "rms_relative": 0.0,
+            "cosine": 1.0
+          }
+        },
+        "kv_norm_output": {
+          "full_geometry": [
+            {
+              "shape": [
+                1,
+                16,
+                512
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            {
+              "shape": [
+                1,
+                16,
+                512
+              ],
+              "dtype": "mlx.core.bfloat16"
+            }
+          ],
+          "prefix": {
+            "actual": {
+              "shape": [
+                1,
+                11,
+                512
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            "reference": {
+              "shape": [
+                1,
+                11,
+                512
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            "structure_equal": true,
+            "elements": 5632,
+            "mismatches": 0,
+            "samples": [],
+            "nonfinite_pairs": 0,
+            "nonfinite_mismatches": 0,
+            "max_absolute": 0.0,
+            "rms_relative": 0.0,
+            "cosine": 1.0
+          }
+        },
+        "prepack": {
+          "full_geometry": [
+            {
+              "shape": [
+                1,
+                16,
+                512
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            {
+              "shape": [
+                1,
+                16,
+                512
+              ],
+              "dtype": "mlx.core.bfloat16"
+            }
+          ],
+          "prefix": {
+            "actual": {
+              "shape": [
+                1,
+                11,
+                512
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            "reference": {
+              "shape": [
+                1,
+                11,
+                512
+              ],
+              "dtype": "mlx.core.bfloat16"
+            },
+            "structure_equal": true,
+            "elements": 5632,
+            "mismatches": 0,
+            "samples": [],
+            "nonfinite_pairs": 0,
+            "nonfinite_mismatches": 0,
+            "max_absolute": 0.0,
+            "rms_relative": 0.0,
+            "cosine": 1.0
+          }
+        }
+      }
+    }
+  },
+  "cleanup": {
+    "model_close_returned": true,
+    "backend_close_returned": true,
+    "model_weakref_dead_before_gc": true,
+    "after_scope_gc_allocator_retirement": {
+      "active": 3292,
+      "cache": 0,
+      "peak": 311557027488
+    },
+    "os_exit_required_for_weights": false,
+    "scope": "model.close then backend.close, clear backend references, exit model-owning scopes and exception scope, GC, generation/default stream synchronization, allocator clear, GC. No production cleanup edits.",
+    "os_reclamation": "Worker exit code 0 and both worker/supervisor PIDs absent. Weights already released before exit; only residual 3292-byte MLX activity and process/allocator overhead left for exit. OS-only allocation bytes were not measured."
+  },
+  "packages": {
+    "ds41f-mlx": {
+      "version": "0.23.0",
+      "direct_url": "{\"url\":\"file:///tmp/ds41f-harness-inventory-wheel.NxZ0BY/ds41f_mlx-0.23.0-py3-none-any.whl\",\"archive_info\":{}}"
+    },
+    "omlx": {
+      "version": "0.7.0",
+      "direct_url": "{\"url\":\"file:///Volumes/SDXC-512/ds41f-1017-build/omlx\",\"dir_info\":{}}"
+    },
+    "mlx": {
+      "version": "0.32.2",
+      "direct_url": null
+    },
+    "mlx-lm": {
+      "version": "0.31.4.dev132+g94cdcae13",
+      "direct_url": "{\"url\":\"https://github.com/ml-explore/mlx-lm\",\"vcs_info\":{\"vcs\":\"git\",\"commit_id\":\"94cdcae13b266c337bcaca09b97b9c5a9c0e2cde\",\"requested_revision\":\"94cdcae13b266c337bcaca09b97b9c5a9c0e2cde\"}}"
+    },
+    "deepseek-recipe": {
+      "version": "0.2.0",
+      "direct_url": "{\"url\":\"file:///Volumes/SDXC-512/ds41f-mlx/third_party/mtp/deepseek_recipe-0.2.0-cp310-abi3-macosx_11_0_arm64.whl\",\"archive_info\":{}}"
+    }
+  },
+  "execution_environment": {
+    "executable": "/Volumes/SDXC-512/ds41f-1017/bin/python",
+    "python": "3.13.15 (main, Aug  5 2026, 12:25:43) [Clang 21.0.0 (clang-2100.1.1.101)]"
+  },
+  "deepinfer_authority": {
+    "revision": "9bd9cf243fc53ef9afbf8f04d391d989117d6ab9",
+    "reused_step1d": true,
+    "new_audit": false
+  },
+  "classifications": [
+    "PREFIX_PRESERVED",
+    "COLD_SHAPE_DIFFERENCE",
+    "UNRESOLVED"
+  ],
+  "earliest_verified_difference": {
+    "comparison": "A_C, shared [0,11)",
+    "boundary": "attention_wkv_output",
+    "primitive_dtype": "bfloat16",
+    "full_shapes": [
+      [
+        1,
+        11,
+        512
+      ],
+      [
+        1,
+        16,
+        512
+      ]
+    ],
+    "prefix_mismatches": 1627,
+    "max_absolute": 0.001953125,
+    "first": {
+      "absolute_position": 0,
+      "channel": 0,
+      "A": -0.0120849609375,
+      "C": -0.01202392578125
+    },
+    "upstream_inputs_equal": [
+      "block_input",
+      "block_pre",
+      "attention_input",
+      "attention_wkv_qdq"
+    ],
+    "leaf_attributed": false,
+    "scope": "Projection output boundary localized, not a kernel-defect certificate. Both 11/16 bypass specialized mxfp8_gemv. No fixed-input replay needed to localize first meaningful differing operation; MLX internal attribution remains unmeasured."
+  },
+  "measurement_integrity": {
+    "live_cache_before_capture": true,
+    "immutable_seed_digest_equal": true,
+    "observer_restored": true,
+    "layers_restored": true,
+    "projection_input_note": "Installed Attention._input_projections passes attention_input directly to shared activation Q/DQ, then calls wkv.project_quantized. No separate attention_wkv_input handle is produced on this actual path; attention_input is its exact pre-Q/DQ source, not a synthesized operation.",
+    "prefix_elements": {
+      "packed": 5808,
+      "decoded": 5632
+    },
+    "metadata_note": "No wrap, truncate, reshape, row rotation, dtype normalization or fitted tolerance. Whole physical windows 11/16 rows recorded separately; corresponding first 11 rows compared."
+  },
+  "scratch_sha256": {
+    "worker.py": "44b38ed75496555ba5abb90d0e664788299ed0983db2b14d859eb82c771261e6",
+    "supervisor.py": "47ea4735cdd0ce02e749857defc1dde9b16d41eb885dd05d186c1b32e02365af"
+  },
+  "supervision": {
+    "supervisor_pid": 73608,
+    "stop_reason": null,
+    "limits": {
+      "preload_GiB": 455.226,
+      "reserve_GiB": 64,
+      "footprint_stop_GiB": 425,
+      "footprint_ceiling_GiB": 430,
+      "total_s": 1800,
+      "no_progress_s": 600
+    },
+    "auxiliary_statistics_readers": false,
+    "initial": {
+      "time": 1792938009.2927392,
+      "available": 529574559744,
+      "swap_used": 0,
+      "pressure": 1,
+      "Swapins": 0,
+      "Swapouts": 0,
+      "competitors": [],
+      "endpoint1234": false,
+      "footprint": null
+    },
+    "worker_pid": 73611,
+    "minimum_available": 215962714112,
+    "maximum_lifetime_footprint": 322763015712,
+    "preload": {
+      "time": 1792938045.9228501,
+      "available": 529072046080,
+      "swap_used": 0,
+      "pressure": 1,
+      "Swapins": 0,
+      "Swapouts": 0,
+      "competitors": [],
+      "endpoint1234": false,
+      "footprint": {
+        "current": 581600600,
+        "lifetime": 749585608
+      }
+    },
+    "worker_returncode": 0,
+    "elapsed_s": 130.4607130829827,
+    "postflight": {
+      "time": 1792938139.7981,
+      "available": 529140432896,
+      "swap_used": 0,
+      "pressure": 1,
+      "Swapins": 0,
+      "Swapouts": 0,
+      "competitors": [],
+      "endpoint1234": false,
+      "footprint": null
+    },
+    "worker_absent": true
+  },
+  "validation": {
+    "focused_tests": "49 passed, 12 subtests passed in 44.08s",
+    "command": "PYTHONDONTWRITEBYTECODE=1 /tmp/ds41f-phase1-1017-tests/bin/python -m pytest tests/test_prefill_numerical_reference.py tests/test_prefill_fp8_mlx_p6.py -q",
+    "model_free": true,
+    "final_focused_tests": "49 passed, 12 subtests passed in 42.44s",
+    "diff_check": "PASS",
+    "self_containment": "PASS: 35 current owners, 153 Markdown files, 585 live links",
+    "historical_evidence": "Previous receipts unchanged; numerical-reference.md append-only",
+    "post_test_activity": "No Python/model worker; pressure 1; swap used/swapins/swapouts zero",
+    "scratch_removed": "/tmp/ds41f-step1er2 removed; worker and supervisor PIDs absent"
+  },
+  "final_diagnostic_sha256": "702d6357bcb289b26df44e00ebbbe3e02b15851a7845ec648f28be763f443b63",
+  "final_diagnostic_change": "Only observation docstring qualification wording changed after execution; executed hash above covers numerical hooks used.",
+  "limits": "No numerical PASS, tolerance, general chunk invariance, kernel defect or full 40-layer/three-ring requalification. Phase 2/C2, P5, continuation, historical-image reconstruction and Harness lifecycle remain unqualified."
+}

@@ -1815,3 +1815,229 @@ new evidence. Local commit SHA reported separately; no push or deployment.
 rows survive genuine restore and five-token append bit-for-bit? It requires a
 separately authorized model run with the corrected no-L0-Engram observer; no
 numerical observation from this attempt answers it. **Stop after Step 1E-R.**
+
+## 16. Step 1E-R2 — completed live Layer 0 prefix observation (2026-10-25)
+
+**Disposition: PREFIX_PRESERVED / COLD_SHAPE_DIFFERENCE / UNRESOLVED.** The
+original eleven live Layer 0 packed KV rows survived exact paired restoration and
+five-token append **bit-for-bit**. Cold 11 and cold 16 already differ in that
+shared prefix; cold P6 16 and ordinary 16 agree there. The first captured differing
+operation boundary is **`wkv` projection output**, with identical corresponding
+attention inputs and activation Q/DQ values. This is not a numerical PASS, general
+chunk-invariance guarantee, established kernel defect or full-discrepancy causal
+certificate. No tolerance was introduced. Phase 2/C2, P5, continuation,
+historical-image reconstruction and Harness lifecycle remain unqualified.
+
+Evidence: [compact receipt](phase2-reference-step1er2.json),
+[resource samples](phase2-reference-step1er2-resources.json),
+[worker log](phase2-reference-step1er2-run.log) and
+[focused tests](phase2-reference-step1er2-tests.log). Earlier sections/receipts are
+unchanged. **One new load attempt, one completed load, no reload or retry.**
+
+### Authority, structural preflight and canonical identity
+
+Started on clean `Multimodal-Runtime` at the exact full expected HEAD
+`3d9c229335292c2e73549a8532a3dd06fc1ff069`, one worktree. Initial process
+inspection found no competing Python/model worker or inference service. Reviewed
+CURRENT documentation policy, upstream-first sequencing, Phase 2/C2, ordinary MTP
+ownership and verification; reference Steps 1C/1D/1E/1E-R and machine receipts;
+existing `_start`, paired capture/restore, P6 and numerical interfaces. Reused the
+completed official DeepInfer analysis at
+`9bd9cf243fc53ef9afbf8f04d391d989117d6ab9`; no new upstream audit was needed.
+
+Before any weight-loading worker, isolated installed Python completed a separate
+**zero-weight preflight**. It read the actual checkpoint config, installed
+`ModelConfig`, `Block`/`Attention` constructors and dispatch, loading/conversion,
+quantization, cache and model-close source. Header-only safetensors inspection
+read projection dtype/shape metadata, not tensor payloads. Findings/checks:
+
+- Engram layers **[1,14]**; Layer 0 is actual installed **Block → Attention**,
+  **without Engram, compressor or indexer**, ratio 0. Global Engram lookback in
+  Layer 0 cache slot 6 does not imply an Engram operation at Layer 0.
+- Real installed constructors ran with only allocation-heavy Linear/MoE leaves
+  replaced by tiny objects. No second model construction/loading path was added.
+  Concrete attention attributes `wq_a`, `wkv`, `kv_norm` and class contracts were
+  checked. Signatures of every diagnostic method, including Block/Attention calls,
+  `_input_projections`, quantized calls/`project_quantized`, RMSNorm and packing,
+  were bound before loading.
+- Official-source FP8 weight/E8M0 scale headers select installed
+  `QuantizedProjection` through `iter_source_weights`/loader replacement. The
+  installed attention's shared activation Q/DQ branch was exercised with actual
+  methods and tiny projections. `language.pack_activation` is the quantization
+  module's bound operation. Actual loaded projection classes/flags and absent
+  Layer 0 Engram were revalidated after loading, without unconditional optional
+  component access.
+- Class-level patches applied to the actual installed classes and restored
+  exactly after success and intentional exceptions. The collector was exercised
+  on real cache/packing classes at `[1,11,528]` uint8, decoding to `[1,11,512]`
+  FP32; admitted window=128, head_dim=512, unpadded singleton, no wrap/compression.
+  Layout violations remain errors, not requests to reshape/normalize.
+- A minimal addition to existing hooks retains **Block input and initial HC pre**,
+  needed to distinguish earlier input differences. It performs no tensor operation
+  or evaluation in the hook. Engram remains optional; no synthetic Engram exists.
+  Remaining runtime prerequisites were single-call behavior, real tensor layout
+  and successful full forward; these were observed, not inferred from stubs.
+
+Installed admission passed with identity
+`9c439d3fb9ad730996ecca821234bba1ce8817d7b46a2744e171c10a4d7d2ca2`, required
+KIOXIA-PRO-2 Flash-1017 checkpoint and **flash-1017-pre-woa-fp8-v1** profile.
+Interpreter `/Volumes/SDXC-512/ds41f-1017/bin/python -I`; installed ds41f 0.23.0,
+build `aa8c5717b42aa0a216fef3134e72c6db7ca49287`, oMLX 0.7.0/four admitted
+overlays, MLX 0.32.2, mlx-lm `0.31.4.dev132+g94cdcae13`, Recipe 0.2.0/native
+GLM. Actual package origins/direct URLs and numerical source hashes are recorded;
+all installed source hashes matched Step 1E-R. Admission's unchanged-file
+verification cache is not an independent new full rehash of the 48 shards.
+Execution remained on installed oMLX Target/native DSpark, not checkout model math.
+No dependency, production cleanup, guard, kernel or deployment changed.
+
+Installed Recipe prepared the **unchanged original requests** before the load
+gate: `chat_completions`, `ordinary=True`, temperature 0, max_tokens 1,
+`reasoning_effort=none`. Ordered little-endian int32 identities exactly matched
+Step 1E-R, including all IDs (not merely lengths):
+
+| User message | N / N-2 | SHA256 |
+| --- | --- | --- |
+| `Explain immutable checkpoints in one short sentence.` | 13 / 11 | `8ce125c769d4a95f97bceac24a7c6aa2f8bbf36a1f0c4ff1d1c4a9ab82d79fb2` |
+| `Explain immutable checkpoints in one short sentence. Then state one benefit.` | 18 / 16 | `9059c79e53e40e13f60272e37226a6f5d99f2d5d6f53879d4dbaff1ff91c4c1b` |
+
+Exact common first eleven IDs; genuine positive suffix **[11,16)**, five tokens.
+No manufactured IDs, framing change or prompt adjustment. Structural/canonical
+preparation and focused tests passed before the single supervised loading attempt.
+
+### Primary measurement: A / B0 / B1
+
+The unchanged `observe_case_c_n2(..., layer0=True)` execution lane captured A from
+**live cold P6 state before immutable capture**, observed B0 immediately after
+real `PairedCheckpoint.restore`, and observed B1 from **live appended Target**
+before capture. This is not an inference from seed-snapshot immutability.
+
+| Comparison, absolute [0,11) | Packed uint8 mismatches / 5,808 bytes | Decoded FP32 mismatches / 5,632 values |
+| --- | ---: | ---: |
+| A vs B0 — restoration | **0** | **0** |
+| B0 vs B1 — retained live prefix after append | **0** | **0** |
+| A vs B1 — end-to-end preservation | **0** | **0** |
+
+Compared prefix shapes/dtypes are identical: `[1,11,528]` uint8 and
+`[1,11,512]` float32. Whole windows have 11 rows at A/B0 and 16 at B1, absolute
+positions respectively 0–10 and 0–15 in unchanged chronological order. Offsets
+are `[11]`, `[11]`, `[16]`; metadata remains `['deepseek_v41','3','0']`, compression
+0, lengths and left padding absent. No physical capacity normalization, rotation,
+truncation or prefix repacking was used. Metadata changes only as expected for
+frontier advance; whole-window shapes are recorded separately from prefix metrics.
+
+P6 execution records: A **[0,11)** once; B1 **[11,16)** once, **five rows only**.
+B1's numerical handles also contain exactly five rows. Seed/restored mutable
+containers were distinct. Immutable seed digest before/after was unchanged:
+`4a41611c277fd2cea0f8b9b5a90b48956289d09889c97d4c9e8231e19ed82d3c`.
+No restoration discrepancy or retained-prefix modification occurred.
+
+### Conditional cold-shape controls and earliest boundary
+
+With successful preservation and ample supervised headroom, the same loaded
+process computed C via cold P6 **[0,16)** and D via fresh ordinary layer-loop
+state on those same sixteen canonical IDs. No N-1/P5 or continuation ran; no
+repeat full 40-layer/three-ring numerical qualification was performed.
+
+| Comparison, absolute [0,11) | Packed-byte mismatches | Decoded-value mismatches / max absolute |
+| --- | ---: | ---: |
+| A vs C | **210** | **210 / 0.03125** |
+| C vs D | **0** | **0 / 0** |
+| B1 vs C | **210** | **210 / 0.03125** |
+
+First stored difference: absolute position **0**, channel **11**; packed byte
+**84 vs 85**, decoded **0.0234375 vs 0.025390625** (A/B1 vs C/D). Cold scheduling
+already separates these values; append did not modify the old eleven rows.
+No `P6_ORDINARY_DIFFERENCE` was observed over this selected prefix.
+
+Existing focused handles, plus initial Block/HC input, localize A/C as follows.
+All corresponding comparisons use the original first eleven absolute rows; full
+11/16-row shapes and original primitive dtypes are separately recorded.
+
+| Boundary | A/C differing values | Max absolute |
+| --- | ---: | ---: |
+| Block hidden/HC input `[1,T,4,5120]` BF16 | 0 | 0 |
+| Initial HC pre `[1,T,4]` FP32 | 0 | 0 |
+| Post-pre-normalization attention input `[1,T,5120]` BF16 | 0 | 0 |
+| `wkv` activation Q/DQ `[1,T,5120]` BF16 | 0 | 0 |
+| **`wkv` projection output `[1,T,512]` BF16** | **1,627** | **0.001953125** |
+| KV norm output `[1,T,512]` BF16 | 1,540 | 0.0078125 |
+| Post-RoPE immediate pack input `[1,T,512]` BF16 | 1,525 | 0.0078125 |
+
+Earliest captured difference is projection output position **0/channel 0**:
+A **-0.0120849609375**, C **-0.01202392578125**. C/D corresponding captured
+boundaries are all exact over [0,11). Installed shared `_input_projections` passes
+attention input directly to activation Q/DQ and calls `wkv.project_quantized`;
+there is no separate `wkv.__call__` pre-input handle on this dispatch. The exact
+attention input is its source, not a synthesized or missing numerical operation.
+
+Both 11/16-row projections bypass specialized `mxfp8_gemv` and reach
+`mx.quantized_matmul` by inspected dispatch. The five-row append may use a
+specialized path, but cannot explain already-preserved prefix rows. This evidence
+localizes the first meaningful difference to the **projection output boundary**;
+it does not attribute a specific MLX kernel/internal reduction or establish a
+kernel defect. No fixed-input leaf replay was necessary for this boundary
+localization, and none ran; **LEAF_ATTRIBUTED is not claimed**. Later norm/RoPE/
+pack differences already have differing inputs and are not independently proven
+shape-sensitive operators. No claim explains all later layers/rings.
+
+### Measurement integrity, resources and ownership retirement
+
+Load completed in **85.93 s**; total supervised elapsed **130.46 s**. Supervisor
+**73608** owned/wrote statistics directly; loading worker **73611** was the only
+model worker. No separate Python statistics reader ran during execution. Only
+verified supervisor/worker ancestry was exempted; unrelated Python processes were
+not broadly exempted. No competing inference, endpoint or safety stop occurred.
+No unrelated worker/service was stopped. Existing thresholds remained preload
+455.226 GiB, reserve >64 GiB, normal pressure, no swap-use/swapout increase,
+425-GiB physical-footprint trigger before 430-GiB ceiling, total 30 minutes and
+no-progress 10 minutes. Approximately two-second health checks retained ten-second
+samples and every-check extrema; libproc rusage-v4 offsets 72/240 were reused.
+
+- Preload available **492.737 GiB**; minimum available reserve **201.131 GiB**.
+- Maximum health-sampled lifetime physical footprint **300.596 GiB**; a sampled
+  lifetime high-water, not proof against every possible unsampled transient.
+- Pressure **1 (normal)**; swap used, swapins and swapouts **0** throughout.
+- Loaded MLX active/cache/peak **287.920 / 5.207 / 290.160 GiB**; at D observation
+  **287.941 / 5.389 / 290.160 GiB**. These overlap physical footprint, not additive.
+- Exact class-method/binding restoration and original layer-wrapper identity
+  were verified after all observations. No observer tensor operations or host
+  reads occurred inside hooked numerical calls. Retention extends graph lifetime;
+  this is not an instrumented/uninstrumented full-model neutrality certificate.
+
+Scratch ownership was fixed **before loading**, without production changes:
+model/backend/language-model access, original layers, numerical handles and live/
+restored states were confined to bounded function scopes. Only host metrics left
+those scopes. `model.close()` returned first, then backend executor close; backend
+model/tokenizer references were cleared. The model weakref was already dead before
+GC. No global `lm`, retained loader or exception traceback held model locals.
+After leaving model-owning and exception scopes: GC, generation/default-stream
+synchronization, allocator clear and GC returned MLX active **3,292 bytes**, cache
+**0**, peak **311,557,027,488 bytes**, **before process exit**. This is measured
+weight reclamation, not an inference from close returning or worker exit.
+
+Worker exited **0**; worker and supervisor PIDs were verified absent. OS exit
+retired process/allocator overhead and residual activity; OS-only allocation bytes
+were not measured, and no model-weight release was deferred to OS exit. Postflight
+available **492.800 GiB**, normal pressure, zero swap/competition/1234 endpoint.
+All task-owned scratch scripts/gate/logs were removed after recording hashes;
+no tensors, model copies or alternate runtime were retained.
+
+### Validation, scope and stop
+
+Focused model-free tests in the existing disposable source-test environment:
+`tests/test_prefill_numerical_reference.py tests/test_prefill_fp8_mlx_p6.py` —
+**49 passed, 12 subtests passed, 44.08 s** before loading. New cases exercise real
+installed constructor topology/shared-QDQ dispatch and patch restoration rather
+than relying only on synthetic attention classes. Existing success/exception and
+live-prefix mutation negatives remain. Worker ownership was additionally checked
+by actual model weakref death and near-zero post-scope MLX memory. Final focused
+validation, `git diff --check` and repository self-containment checks passed
+(recorded in receipt/log). Review found only diagnostic hooks/docstring, focused
+tests and append-only evidence; no production modifications or tracing framework.
+Validated changes/evidence committed locally; no push/deployment.
+
+**Smallest remaining unresolved question:** which internal MLX quantized projection
+arithmetic/dispatch choice accounts for the observed 11-versus-16-row `wkv` output
+difference given equal shared-prefix Q/DQ inputs? That is not needed to answer
+this task's now-completed live-prefix preservation question. No follow-on work
+or automatic reload is authorized here. **Stop after Step 1E-R2.**

@@ -433,6 +433,13 @@ def layer0_numerical_handles(lm):
         def wrap(cls, name, factory):
             original = getattr(cls, name)
             stack.enter_context(patch.object(cls, name, factory(original)))
+        def block_call(original):
+            def call(self, h, pre, *args, **kwargs):
+                if self is layer:
+                    keep('block_input', h)
+                    keep('block_pre', pre)
+                return original(self, h, pre, *args, **kwargs)
+            return call
         def engram_call(original):
             def call(self, h, *args, **kwargs):
                 out = original(self, h, *args, **kwargs)
@@ -482,6 +489,8 @@ def layer0_numerical_handles(lm):
             if active[0] and x.shape[1]:
                 keep('prepack', x)
             return out
+        if isinstance(layer, lang.Block):
+            wrap(type(layer), '__call__', block_call)
         if engram is not None:
             wrap(type(engram), '__call__', engram_call)
             if not isinstance(engram.wkv, lang.QuantizedProjection):
@@ -501,7 +510,7 @@ def observe_case_c_n2(backend, seed_request, request, tokenizer, *, identity, la
     consumes the entire current N-2 prefix on fresh factories, never the pair.
     Optional Step 1E mode returns live L0 observations and original tensor handles
     instead of repeating the all-layer comparison. Caller owns handle retirement;
-    this mode has model-free coverage, not completed real-model validation.
+    this is focused observation, not general numerical qualification.
     """
     import numpy as np
     import mlx.core as mx
