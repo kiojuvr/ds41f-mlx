@@ -1220,3 +1220,281 @@ matched-logit continuation; ProductionScheduler cache-hit lifecycle; changed-ima
 or history reconstruction; Harness lifecycle; Phase 2/C2 acceptance. The observed
 floating differences remain unresolved evidence, not hidden by a tolerance.
 **Stop after Case C. No follow-on work is authorized or started.**
+
+## 13. Step 1D — DeepInfer-first numerical attribution (2026-10-25)
+
+**Disposition: UNRESOLVED for Case C; source-level attribution narrowed.** No
+specific violation of an established DeepInfer invariant, local numerical defect,
+correction or acceptance envelope is established. Historical fixed-input effects
+remain **SHAPE_DEPENDENCE_OBSERVED** within their original fixtures, not a cause
+certificate for this case. **Zero model loads and zero new numerical replays.**
+Stage A establishes the supported execution behavior and excludes the prior L0
+leaves as direct producers of the observed KV difference; that is sufficient to
+stop without an unnecessary full-model repetition. Stages B/C were not invoked.
+No production code, guard, tolerance, dependency or execution selector changed.
+Cases A/B/C and their receipts remain immutable; Phase 2/C2 remain unqualified.
+
+### Authority, checkout and installed identity
+
+Started on clean `Multimodal-Runtime` at the exact expected
+`4d8bc6fefcb1d088805592deb0522c7b4dd9cb4d`; one worktree. Process inspection
+found no competing coding work/model loader; no LM Studio/port-1234 listener.
+These are point-in-time checks, not a system-wide lock. Reviewed CURRENT
+`documentation-policy.md`, `implementation-plan.md` (upstream-first and sequencing),
+`multimodal-runtime-plan.md` (Phase 2/C2), `mtp-production-serving.md` and
+`verification.md`, then §§10–12 and the full structured Step 1C receipt.
+
+Cloned **https://github.com/deepseek-ai/DeepInfer** read-only for review. Actual
+fetched HEAD and inspected revision are both
+**`9bd9cf243fc53ef9afbf8f04d391d989117d6ab9`**, identical to the requested
+reference; no newer local revision was mixed in. Primary inspected paths:
+
+- `README.md`, `deepinfer/environ.py`, `deepinfer/worker/runtime_config.py`;
+- `deepinfer/model_executor/models/v4_modules/attn.py`;
+- `deepinfer/model_executor/layers/attention_backend.py` and `linear.py`;
+- `tests/models/test_batch_invariant.py`, `doc/inference_deployment_qa.md`.
+
+Followed golden-token plumbing in `engine/llm_engine.py`, `sampling_params.py`,
+`csrc/engine/{pybind_sequence.cpp,sequence.hpp,prepare_sample.cpp}` and searched
+model tests for explicit chunk/cache-equivalence coverage. Vendor submodules were
+not initialized or executed: the tree pins DeepGEMM
+`1fc9c66975ee322d628b3288534ca0e9ce12a64d` and FlashMLA
+`2e5429fc5653bab6e081f09477126f731882a6a9`. Findings below describe the official
+configuration/call contracts, not independently verified kernel internals or a
+new run of upstream tests.
+
+[Compact source evidence](phase2-reference-step1d.json) records hashes, package
+origins/build provenance, historical Git blob identities and planner assertions.
+Isolated `/Volumes/SDXC-512/ds41f-1017/bin/python -I` installed payload inspection
+passed without checkpoint/weight admission or loading: Python 3.13.15, macOS
+26.5.2, ds41f 0.23.0, oMLX 0.7.0, MLX 0.32.2, mlx-lm
+`0.31.4.dev132+g94cdcae13`, Recipe 0.2.0, native GLM,
+`flash-1017-pre-woa-fp8-v1`. Installed build remains
+`aa8c5717b42aa0a216fef3134e72c6db7ca49287`, with compressed-growth,
+bit-exact-kernels, template-reuse and context-copy overlays. The oMLX direct-URL
+build directory no longer exists; its pathname/version alone is not source proof.
+Actual installed files were inspected and hashed instead. Executed Step 1C
+`internal_mtp`, paired-checkpoint, P6, oMLX language and MTP hashes still match;
+all overlapping installed numerical hashes checked against the earlier preflight
+also match. The old complete execution identity/checkpoint digest in §12 is
+inherited evidence, **not freshly re-admitted 48-shard evidence here**.
+
+Checkout P6, block runner, `_start` and first-party quantization match their
+installed ds41f copies. Whole paired/production modules differ; the exercised
+paired copy/clone/restore/validation semantics agree (AST comparison), while newer
+byte-budget/lookup-admission additions are not assumed installed. Actual Target
+execution uses **oMLX `patches/deepseek_v41/language.py`**, not first-party
+`model_execution/language.py` or generic mlx-lm `deepseek_v41.py`.
+
+### Official invariant coverage versus local properties
+
+Classifications describe the inspected upstream evidence, not unsupported-feature
+defects. All upstream references in this table use the revision above. Local
+references use the installed identity above and the checkout hashes in the receipt.
+
+| Numerical property | Official implementation / evidence class | Local equivalent and Case C relevance |
+| --- | --- | --- |
+| Request-batch composition invariance | **IMPLEMENTED_AND_TESTED**, bounded by the published generation fixture. `runtime_config.configure_worker_kernels` enables deterministic DeepGEMM/TileKernels; `attn.py:89` changes selected fusion eligibility; decode wrapper forwards FlashMLA `enable_batch_invariant`. README explicitly NVIDIA-only for this mode. | No equivalent composition-invariant mode established in this admitted MLX path. Ordinary production does not combine independent requests into one native batch; Case C compares singleton row geometries, not different request batches. Missing global guarantee is not a demonstrated Case C defect. |
+| Prompt-chunk-boundary bitwise invariance | **NOT_ESTABLISHED**. Budgeted chunking is described in Q&A; neither that scheduler architecture nor the batch test explicitly compares fixed chunk partitions. | P6 and ordinary implement contiguous causal execution, not a documented chunk-invariant arithmetic contract. No correction follows from comparing 11+5 against 16. |
+| Prefill versus decode numerical equivalence | **NOT_ESTABLISHED** as an exact invariant. `attn.py` retains distinct prompt/decode paths and cache representations. | Local packed/native attention and projection dispatch also depend on row count. Case C ends before P5/decode, so decode equivalence would not settle it. |
+| Cached-prefix continuation equals full-prefix recomputation | **NOT_ESTABLISHED** as bitwise distributions or cache-state equality. Cache reuse/recompute architecture is supported, but no matching 11+5/16 test was found. | Compatible exact restore is measured in §12; fresh full-current execution equality is not. Structural/frontier identity is insufficient. |
+| Reuse of existing KV / immutable retained state | Reuse without recomputing/overwriting block KV in bounded replay is **DESIGN_OR_SOURCE_ONLY** here (`inference_deployment_qa.md`; attention load/store mappings). An externally retained immutable snapshot/clone contract is **NOT_ESTABLISHED** by the public batch test; full KV storage service is not published. | **UPSTREAM_ALIGNED**, narrowly: existing paired authority restores values without numerical repack, independent mutable containers and immutable retained seed were observed in §12. Live restored-prefix preservation during append is a distinct, not yet measured assertion. No replacement cache/checkpoint owner is needed. |
+| Quantized KV / sparse-attention numerical consistency | **IMPLEMENTED_WITH_LIMITED_EVIDENCE**: `_prepare_swa_kv` applies norm/RoPE/E4M3 with UE8M0 scales; prompt casts back, decode stores packed; compressed KV/index formats are documented. Batch test indirectly exercises numerical outputs, not all internal state or every layout relation. Exact chunk/prefill/decode equivalence remains **NOT_ESTABLISHED**. | Existing pack/unpack, group-32 FP8 SWA, group-16 E4M3-scale FP4 compressed KV, group-32 FP4 index, absolute positions and causal sparse indices already supply corresponding format/history properties. Format correspondence is not CUDA bitwise conformance. No new quantizer or CUDA kernel translation is justified. |
+| Deterministic output distributions / committed state | Returned token logprobs and top-5 IDs/logprobs on the **fixed reference trajectory** are **IMPLEMENTED_AND_TESTED** across the tested batch compositions. Full vocabulary distributions and committed Target/DSpark arrays are **NOT_ESTABLISHED** by this test. README's fixed-`seq_seed` deterministic sampling recipe additionally disables variable-length MTP; it is not this test's autonomous-rollout proof. | Existing sampler/RNG and paired committed-state ownership do not establish equality of distributions across Case C schedules. No logits or generation were compared in §12; do not infer them from cache metrics. |
+
+**Actual batch-invariant test:** one model case, EP=8, maximum nextn=5,
+64 random non-special-token prompts per DP rank (lengths around 2500±1000),
+max batched/model tokens 16384. It generates 50 tokens at temperature 1/top-p .7,
+ignore-EOS, then runs each request singly with `golden_token_ids` copied from its
+batched result. Python equality compares token IDs, selected token logprobs,
+top-token IDs and top logprobs (top-5). The singly executed continuation is thus
+conditioned on the same reference-generated history; token equality alone is not
+independent seeded-sampling equivalence. No prompt-logprob comparison, forced
+11/5 partition, external restore, all-layer cache comparison or full-distribution
+array comparison is present. Tests being published is not a claim they were run
+on this host or that every possible batch has been verified.
+
+Upstream deliberately bounded replay is **not exact recovery**: Q&A rebuilds
+SWA using keys `max(s,i−127)..i` for a replay starting at s, explicitly yielding
+approximate SWA. Encoder replay reuses block KV unchanged; decoder replay's
+approximate SWA is used for decode and never enters prefix cache. Stored SWA
+alignment (128), first-20-layer storage, backtracking reserve and missing external
+cache service differ from the local complete 40-layer/three-ring checkpoint.
+These are not a license to accept Case C error or implement local replay. Case C
+uses no bounded-replay/CED approximation branch.
+
+### Historical evidence, not a present acceptance contract
+
+Used `git show e36779ab5a6765a982cbfa618c6b705e454db71c:<path>` for
+`docs/flash-1017-cross-route-investigation.md`, its JSON, and
+`docs/flash-1017-l0-leaf-attribution.md`, its JSON. Their five-token MTP-OFF
+fixture executed four rows versus four one-row segments. Fixed-input leaf replay
+isolated `wq_b` max-absolute **1.52587890625e-5** (one value) and `wo_b`
+**0.000244140625** (three values), even with the activation round trip removed
+from the comparison. Fixed-input RoPE, grouped `wo_a` and input Q/DQ controls
+were exact there. Independently, L2 compact versus padded sparse slots changed
+online-softmax/BF16-PV results by **0.0078125 after inverse RoPE**, with identical
+Q/KV/sink/ordered valid rows. Compact single-query versus compact batched was
+exact. Historical L0 packed KV was exact, unlike present Case C.
+
+That proves **SHAPE_DEPENDENCE_OBSERVED** for those operations/inputs and multiple
+historical mechanisms, not **MULTIPLE_MECHANISMS** causing present Case C or its
+full Target/DSpark discrepancy. Neither later amplification nor full-logit causal
+sufficiency was demonstrated. Numerical profile, MTP ownership, row geometry and
+some installed projection dispatch now differ.
+
+Also reviewed `df234dd37df550c063456231137d36a70e68f2f3` CUDA sparse comparison
+report/receipt. Its isolated Python lacked Torch/TileLang and its frozen raw L2
+fixture was absent: no official CUDA compilation/execution or cross-backend
+numerical comparison completed. Driver/hardware visibility was not conformance.
+That historical **BLOCKED** does not make current MLX execution blocked, and its
+old MTP prohibitions are not the current serving contract. No CUDA work was begun.
+
+### Actual A/B/C/D shapes and Layer 0 dependency graph
+
+Inspected P6 planner, command runner, installed ordinary `_forward`, production
+`_prefill_tap_start`, native `_start`, DSpark append and paired clone path. Ran
+**planner-only** assertions using the installed P6 implementation: all 40 layers
+have one `ENCODE_ROWS` command of the indicated size in each plan. This checks
+below the logical segment boundary; no weights or model instance were needed.
+
+| Path | Target execution through observed frontier | Shapes relevant to L0 |
+| --- | --- | --- |
+| A seed (historically executed) | `[0,11)`, one `ORDINARY_COMPLETE_RANGE` | One 11-row block/projection batch; attention input `[1,11,5120]`, new window bytes `[1,11,528]` |
+| B restored append (historically executed) | Restore 11; `[11,16)`, one `ORDINARY_COMPLETE_RANGE` | One 5-row block/projection batch; new packed rows `[1,5,528]` concatenated to 11 old rows |
+| C cold P6 control (**not numerically executed**) | Planner `[0,16)`, one `ORDINARY_COMPLETE_RANGE` | One 16-row block/projection batch, no restored cache |
+| D fresh ordinary (historically executed) | `_forward` on `[1,16]` IDs; one singleton row, each layer receives all 16 positions | One 16-row block/projection batch, separate fresh Target/rings |
+
+These short P6 plans do **not** use the `remaining<=3` one-row rule from the
+historical four-versus-one fixture, the 8192 encoder tile split, source-only
+publication, decoder cone, CED suffix reconstruction or bulk/ring-tail bridge.
+Ordinary D does not enable `_ced_prefill` and its >=256-row backpressure is off.
+P6's command materialization/publication and ordinary's extract/merge/lazy loop
+still differ; equal 16-row command geometry would not prove identical arithmetic.
+A/D 11/16-row attention satisfy the installed native packed-attention `length>8`
+branch (admitted symbol present), while B's five-row attention uses the other
+packed sparse path. This can affect appended/later-layer results, **not already
+produced L0 prefix KV**.
+
+The actual L0 KV-producing graph is:
+
+```text
+IDs -> embedding -> repeat HC streams
+    -> Layer-0 Engram (hash history/table -> Engram.wkv -> gating/add)
+    -> hc_pre_norm(h, initial pre, attn_norm) -> attention input x
+    -> Attention._input_projections(x): activation Q/DQ -> wkv projection
+    -> kv_norm -> RoPE at absolute positions -> pack_activation (FP8/group32)
+    -> concatenate retained packed window rows -> retain last 128 rows
+```
+
+The exact Engram integer history in §12 does not prove equal Engram projection,
+gate/hidden values, `hc_pre_norm` output or attention projection input. The HC
+mixes also produce attention residual/next-pre coefficients; they do not feed the
+current L0 KV through `wq_b`/`wo_b`. L0 `wq_b` is a sibling query branch, while
+attention, inverse RoPE, pre-`wo_a`, `wo_b`, FFN and all later layers are downstream
+of this KV store. Thus historical `wq_b`, `wo_b` and L2 padding cannot directly
+cause the present L0 position-0 KV value. Shape sensitivity in **earlier** Engram
+projection, HC/pre-norm, activation conversion or `wkv` remains plausible but
+unmeasured; different numerical inputs must be excluded before calling any leaf
+comparison a fixed-input shape effect.
+
+Important installed distinction: oMLX `QuantizedProjection.project_quantized`
+tries `gemv.mxfp8_gemv` before `mx.quantized_matmul`, unlike the first-party
+projection read above. Its guarded specialized path accepts eligible 1/4/5 rows;
+11/16 fall back. The kernel claims matching MLX arithmetic for each corresponding
+shape, not invariance between shapes. This is an existing capability, not a
+proposed alternative path. It cannot by itself change seed-prefix rows on append;
+it is a possible separate appended-row boundary requiring fixed inputs before
+attribution. Pack/unpack function ASTs match the first-party implementation;
+projection dispatch does not. No kernel was modified or replayed.
+
+`pack_activation` computes amax/scales within each row's 32-channel group, not
+across tokens. It packs **new** KV only. In this case installed attention reads
+`old_len=min(11,128,11)`, concatenates `old[:,:11]` and new rows, then slices the
+last 128 of 16: no old-row decode/repack or truncation is specified. P6 publication
+advances offsets/history and preserves persistent handles; no L0 window rewrite
+is introduced by these ordinary-complete commands. Snapshot restore/capture only
+clones/materializes arrays. This establishes **source behavior**, not a measured
+live-prefix equality certificate or proof against a backend/store bug.
+
+DSpark independently projects reduced Target hidden taps via its own `wkv`,
+normalization/RoPE/Q-DQ and absolute-offset ring append. Its shared-prefix hidden
+inputs, append values and row geometries were not separately isolated. Target
+error magnitude does not explain DSpark error magnitude; no common cause for all
+40 layers/three rings is established.
+
+### What is proven, what remains open, and minimum action
+
+The earliest **proven differing observed boundary** remains §12's decoded stored
+**L0 window KV, absolute position 0/channel 11**: **0.0234375 versus
+0.025390625**. This is after packing/state update, not the earliest arithmetic
+operation. L0 window max-absolute **0.125**, RMS-relative **0.0081874600**;
+overall Target **2.0 / 0.2095074462**, DSpark **0.53125 / 0.1707380970**
+(max-absolute / largest RMS-relative) are inherited measurements, not new ones.
+
+| Immediate distinction | Present evidence |
+| --- | --- |
+| A seed prefix preserved in live B after append? | Source says yes for this short non-truncating window; **not directly compared** in Step 1C. Retained snapshot digest equality proves a different property. |
+| A cold P6 11 versus C cold P6 16, shared first 11 rows? | **Unmeasured.** Different leading projection geometry is established, numerical effect is not. |
+| C cold P6 16 versus D ordinary 16? | **Unmeasured.** Same row widths, distinct scheduling/state plumbing. |
+| Differences only in new five rows? | **No** for B versus D: observed mismatch is at position 0. Appended-only metrics and contributors are not isolated. |
+| Inputs already differ before quantization/suspected matmul? | **Unknown.** No L0 Engram/attention-input, pre-pack or projected-KV tensors were retained. The packed difference cannot distinguish pre-quantization propagation, quantization, or unexpected live-state update. |
+
+**Minimum upstream-aligned action now: no numerical correction.** Keep the
+existing cache/segment/quantizer authorities and fail-closed qualification status.
+A deterministic-MLX mode cannot be justified as a fix by copying a CUDA flag, nor
+can compacting indices, forcing one-row execution, changing scales or fitting a
+tolerance be justified from these maxima. Upstream does not supply an established
+11+5/16 exact-state invariant to import. This is not evidence that the difference
+is acceptable, or that chunk invariance is impossible.
+
+If further attribution is separately selected, the smallest useful observation
+is **L0 prefix preservation and the A/C/D pre-pack boundary**, not another 40-layer
+campaign: reuse `observe_case_c_n2` and existing collectors; compare seed L0 window
+rows `[0,11)` against live B at 16 in both packed bytes and meaningful decoded
+values; compare A/C shared rows and C/D before attributing an append mutation.
+Restrict passive captures to L0 Engram output/attention input, `wkv` input Q/DQ and
+output, and norm/RoPE output immediately before pack. Use original arrays/shapes,
+no substituted values or extra inference calls inside observers. Check observer
+restoration, no changed execution plan/cache authority, canonical IDs, absolute
+positions, dtypes, model/profile/source identities and numerical input equality
+first. Replay a **fixed already captured input** at 11/16 shapes through only the
+first implicated operation; otherwise it is propagation, not isolated kernel
+shape sensitivity. Quantizer-only leaf replay requires pre-pack values, which
+the existing compact receipts do not retain. Assess selected-tensor leaf recovery
+before authorizing any full-model load. No diagnostic infrastructure or tensor
+fixture was added speculatively here, and none of these proposed observations
+was performed.
+
+Any eventual correction needs a demonstrated semantic gap, fixed-input and
+state-ownership regression, affected real Case C comparisons and prospectively
+justified numerical/continuation evidence; CUDA output equivalence, whole Phase
+2/C2 acceptance and production adoption remain separate. **LOCAL_NUMERICAL_GAP**,
+Case C **MULTIPLE_MECHANISMS**, numerical PASS and full-discrepancy causal claims
+are not supported by this audit.
+
+### Resources, validation and stop
+
+No checkpoint tensors read, model instance, inference worker, CUDA process or
+supervised load was launched. Installed payload inspection and planner imports
+are not a model load. Consequently the 455.226-GiB preload gate, 64-GiB reserve,
+425/430-GiB footprint limits and 30/10-minute execution supervision were not
+exercised; no future allocation upper bound is inferred from §12. Point-in-time
+pressure was **1 (normal)**, swap use/swapins/swapouts **0**, no port-1234 listener
+or competing loader. No unrelated process or service was changed. Review scratch
+sources/scripts were task-owned, outside the repository, and removed after use;
+no weights, tensors, dependency upgrades or persistent alternate engine retained.
+
+Validation: installed payload inspection **PASS**; planner assertions verify one
+11/5/16-row command per layer across all 40 layers; paired-operation and quantizer
+source assertions recorded in the receipt. No code changed, so no new inference
+or pytest campaign was required. `git diff --check` and
+`python tools/check_repository_self_containment.py`: **PASS**. Diff review contains
+only this appended section and compact source evidence, with existing report
+prefix and all previous receipts unchanged. No CURRENT contract/qualification
+fact changed. Local commit SHA reported separately; no push or deployment.
+
+**Smallest unresolved issue:** whether seed L0 prefix bytes survive in live B
+exactly as source specifies, and, if so, which pre-pack operation first separates
+cold 11-row from cold 16-row prefix production. Cause remains unresolved, not a
+new acceptance condition. **Stop after Step 1D; no follow-on task started.**

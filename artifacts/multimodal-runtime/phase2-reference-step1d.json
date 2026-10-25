@@ -1,0 +1,222 @@
+{
+  "schema": "ds41f.phase2-step1d-source-attribution.v1",
+  "starting_head": "4d8bc6fefcb1d088805592deb0522c7b4dd9cb4d",
+  "branch": "Multimodal-Runtime",
+  "scope": "Stage A source attribution only; no new numerical execution",
+  "model_loads": 0,
+  "disposition": "UNRESOLVED",
+  "deepinfer": {
+    "remote": "https://github.com/deepseek-ai/DeepInfer",
+    "revision": "9bd9cf243fc53ef9afbf8f04d391d989117d6ab9",
+    "worktree": "",
+    "source_sha256": {
+      "README.md": "b55624158ada4dc21b882d24ded06bf82f65350b44d170877b68395712cd670d",
+      "deepinfer/environ.py": "fe2c531989c419f0b51b169a07f5ed826dcec7f95c0c5bc3a351805923c4f218",
+      "deepinfer/worker/runtime_config.py": "1b24e906ad44ee0906683f0c0567a0802346e657180d7d9e1e2fe9f7a7dcca59",
+      "deepinfer/model_executor/models/v4_modules/attn.py": "cb228c8fd4c76200e2ec266c51872107cfe7b384fdc88458b3d1c0ff101f3116",
+      "deepinfer/model_executor/layers/attention_backend.py": "0ad1c371863524dacf199e2e8be25b02033221c3c85c9922d39d9696c6a247d3",
+      "tests/models/test_batch_invariant.py": "10ceb7fec656188623de450fab4dfffed98bc2ffe9510f8f545dff6f0b5dd887",
+      "doc/inference_deployment_qa.md": "55d428d9958aa35ac863d7f5a2eb21528e683226784b1ac334e8068e21f2326f",
+      "deepinfer/model_executor/layers/linear.py": "a8ca60074a1c868e87662240073c6c3648d66ceae953befa3b08772da2225967"
+    },
+    "submodules_not_initialized": [
+      "-f6aa38fe06cd4a0489e7730365d4e0114970a2f3 vendor/DeepEP",
+      "-3b25377d04b24fc6154698ded78a2bcb2c59afff vendor/DeepEP-Ascend",
+      "-1fc9c66975ee322d628b3288534ca0e9ce12a64d vendor/DeepGEMM",
+      "-3a35326271b069b8b5bf1a754435acd6cc91575b vendor/DeepGEMM-Ascend",
+      "-bfa4507d935f17ebfc3d0f00ff7d3c9a4d0e5c18 vendor/DeepSelect",
+      "-2e5429fc5653bab6e081f09477126f731882a6a9 vendor/FlashMLA"
+    ]
+  },
+  "packages": {
+    "ds41f-mlx": {
+      "version": "0.23.0",
+      "direct_url": {
+        "url": "file:///tmp/ds41f-harness-inventory-wheel.NxZ0BY/ds41f_mlx-0.23.0-py3-none-any.whl",
+        "archive_info": {}
+      }
+    },
+    "omlx": {
+      "version": "0.7.0",
+      "direct_url": {
+        "url": "file:///Volumes/SDXC-512/ds41f-1017-build/omlx",
+        "dir_info": {}
+      }
+    },
+    "mlx": {
+      "version": "0.32.2",
+      "direct_url": null
+    },
+    "mlx-lm": {
+      "version": "0.31.4.dev132+g94cdcae13",
+      "direct_url": {
+        "url": "https://github.com/ml-explore/mlx-lm",
+        "vcs_info": {
+          "vcs": "git",
+          "commit_id": "94cdcae13b266c337bcaca09b97b9c5a9c0e2cde",
+          "requested_revision": "94cdcae13b266c337bcaca09b97b9c5a9c0e2cde"
+        }
+      }
+    },
+    "deepseek-recipe": {
+      "version": "0.2.0",
+      "direct_url": {
+        "url": "file:///Volumes/SDXC-512/ds41f-mlx/third_party/mtp/deepseek_recipe-0.2.0-cp310-abi3-macosx_11_0_arm64.whl",
+        "archive_info": {}
+      }
+    }
+  },
+  "installed": {
+    "origin": "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/ds41f_mlx/__init__.py",
+    "status": "PASS",
+    "python": "3.13.15",
+    "macos": "26.5.2",
+    "glm_profile": "native",
+    "numerics": "flash-1017-pre-woa-fp8-v1",
+    "build": {
+      "native_build": {
+        "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05) (Homebrew)\n",
+        "cmake": "cmake version 4.3.3\n\nCMake suite maintained and supported by Kitware (kitware.com/cmake).\n",
+        "host_linked": false,
+        "opencv": "4.14.0\n",
+        "rustc": "rustc 1.98.1 (48a229cea 2026-09-01) (Homebrew)\nbinary: rustc\ncommit-hash: 48a229ceaefd4985c50990b14116b6d856af0985\ncommit-date: 2026-09-01\nhost: aarch64-apple-darwin\nrelease: 1.98.1\nLLVM version: 22.1.8\n",
+        "wheel_sha256": "11bda3355c2f48b99d04f6a2179b283add3f6d1218f34e4707bd5a29b304ab03",
+        "xcode": "Xcode 26.6\nBuild version 17F113\n"
+      },
+      "overlays": [
+        "compressed-growth",
+        "bit-exact-kernels",
+        "template-reuse",
+        "context-copy"
+      ],
+      "recipe_source": {
+        "archive": "recipe-02-source.tar.gz",
+        "patch": "docs/recipe-02-native-semantic-boundary.patch",
+        "revision": "93b0fd229cc9ffa6b1a8c63d42b0bf741bbec170"
+      },
+      "source_commit": "aa8c5717b42aa0a216fef3134e72c6db7ca49287"
+    },
+    "checkpoint_admission_repeated": false,
+    "step1c_source_checks": {
+      "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/ds41f_mlx/serving/internal_mtp.py": {
+        "sha256": "21800084ee6519ea73790ee8c46ad7fcf9a7183c37aabaae4ed8da4b2ca9edd1",
+        "matches_step1c": true
+      },
+      "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/ds41f_mlx/serving/paired_checkpoint.py": {
+        "sha256": "61d2a7f5fe5a4aa646356223eae37e30378b257b170c9c473de0b957f5070d16",
+        "matches_step1c": true
+      },
+      "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/ds41f_mlx/prefill_fp8_mlx/p6_append.py": {
+        "sha256": "34e3326c2472a9a7717f69bb335bec8d5a4c98addecab39ff3bc863b4b17f184",
+        "matches_step1c": true
+      },
+      "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/omlx/patches/deepseek_v41/language.py": {
+        "sha256": "702b8a1c872eee645e6633140787a5947dc4bb7aace16384475a90151a4c5276",
+        "matches_step1c": true
+      },
+      "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/omlx/patches/deepseek_v41/mtp.py": {
+        "sha256": "5c6d10bdc1eb646835866d2b09201fef2481b7cd1950f1592d42490142d5514f",
+        "matches_step1c": true
+      }
+    },
+    "source_sha256": {
+      "omlx/patches/deepseek_v41/language.py": "702b8a1c872eee645e6633140787a5947dc4bb7aace16384475a90151a4c5276",
+      "omlx/patches/deepseek_v41/cache.py": "00d1ceaf1bb1a8de9fe531f6cb311092c831378343341925d7c844503030e38b",
+      "omlx/patches/deepseek_v41/quantization.py": "cafb5b7543b2f1e285f8dafdeae1e584c77d8366961146db67134e55359c7ecc",
+      "omlx/patches/deepseek_v41/packed_attention.py": "77974fe61e28ba3a83f042cf1e9abbea4443f7508ae91d3c6b7db92a0f5745e5",
+      "omlx/patches/deepseek_v41/engram.py": "10ee6e12298adcb095836206840fd66d170cbf63db617f19232a9f6f94c438be",
+      "omlx/patches/deepseek_v41/dspark.py": "eaf27747cdb0a84c17ef21ca6b2dbbbcbec2dd84f3cc6b8e9a0e544acf3d5d62",
+      "omlx/patches/deepseek_v41/loading.py": "104408ea7dfa05b886bd0d8ecc0359c31317f581f4538b5860cd1951edc062a1",
+      "omlx/patches/deepseek_v41/mtp.py": "5c6d10bdc1eb646835866d2b09201fef2481b7cd1950f1592d42490142d5514f",
+      "omlx/patches/mlx_lm_mtp/deepseek_v4_dspark.py": "6cd25674acf3329e0c5a0234cfdb1fbc2df702b5f3c9261a98b05b7e9d9ea99e"
+    },
+    "matches_preflight": {
+      "omlx/patches/deepseek_v41/language.py": true,
+      "omlx/patches/deepseek_v41/cache.py": true,
+      "omlx/patches/deepseek_v41/quantization.py": true,
+      "omlx/patches/deepseek_v41/dspark.py": true,
+      "omlx/patches/deepseek_v41/loading.py": true,
+      "omlx/patches/deepseek_v41/mtp.py": true,
+      "omlx/patches/mlx_lm_mtp/deepseek_v4_dspark.py": true
+    }
+  },
+  "checkout_source_sha256": {
+    "ds41f_mlx/prefill_fp8_mlx/p6_append.py": "34e3326c2472a9a7717f69bb335bec8d5a4c98addecab39ff3bc863b4b17f184",
+    "ds41f_mlx/prefill_fp8_mlx/block_runner.py": "979d20d0c7e39c1fd2cc0604b28103d20407239f6d37d9ca09fba35fa3a13809",
+    "ds41f_mlx/serving/internal_mtp.py": "21800084ee6519ea73790ee8c46ad7fcf9a7183c37aabaae4ed8da4b2ca9edd1",
+    "ds41f_mlx/serving/paired_checkpoint.py": "7e1565a3c8b1ed73801c6bd1c6eebc8eea876f09b72d4fe4c9dbf8ff4037646b",
+    "ds41f_mlx/serving/production_mtp.py": "d91e1422ef437b7019494cf610cf7dd19b6f233fadbdd6eaf95f188e50ff2af8",
+    "ds41f_mlx/model_execution/quantization.py": "8d6d81761942d2b657c5493f1335ddc334626c3314a976221f4a54f61b7df5ee",
+    "ds41f_mlx/model_execution/language.py": "d5643ab405f20321f6252e2c430601123626cd6196536367314587f407fc4f78",
+    "tools/qualify_prefill_fp8_mlx.py": "b1a92a874648eda3d1d1fa210d3197e589fb46a8464c6c7e62c7a259e8e86bbf"
+  },
+  "installed_checkout_equal": {
+    "ds41f_mlx/prefill_fp8_mlx/p6_append.py": true,
+    "ds41f_mlx/prefill_fp8_mlx/block_runner.py": true,
+    "ds41f_mlx/serving/internal_mtp.py": true,
+    "ds41f_mlx/serving/paired_checkpoint.py": false,
+    "ds41f_mlx/serving/production_mtp.py": false,
+    "ds41f_mlx/model_execution/quantization.py": true,
+    "ds41f_mlx/model_execution/language.py": true
+  },
+  "planner_only": {
+    "A_seed": [
+      {
+        "start": 0,
+        "end": 11,
+        "mode": "ORDINARY_COMPLETE_RANGE",
+        "layer0_encode_rows": [11]
+      }
+    ],
+    "B_append": [
+      {
+        "start": 11,
+        "end": 16,
+        "mode": "ORDINARY_COMPLETE_RANGE",
+        "layer0_encode_rows": [5]
+      }
+    ],
+    "C_cold_control_not_executed": [
+      {
+        "start": 0,
+        "end": 16,
+        "mode": "ORDINARY_COMPLETE_RANGE",
+        "layer0_encode_rows": [16]
+      }
+    ]
+  },
+  "ordinary_D_source_shape": {
+    "batch": 1,
+    "rows": 16,
+    "start": 0,
+    "ced": false,
+    "prefill_backpressure": false
+  },
+  "historical_git_blob_sha256": {
+    "e36779ab5a6765a982cbfa618c6b705e454db71c": {
+      "docs/flash-1017-cross-route-investigation.md": "03c67bc5cfb2f730a3ac26253911ac73672bfd601d6ccc9397828263b861f113",
+      "docs/flash-1017-cross-route-evidence.json": "7a56341a2732436b7847386fa573c58b2198515ed63410137830248e07d1bff3",
+      "docs/flash-1017-l0-leaf-attribution.md": "ff778b7f2dce087275da59c8f519b537536166ad06a516820039ca1ff211dec5",
+      "docs/flash-1017-l0-leaf-attribution-evidence.json": "a8ba2c60ad8d7d4f0fa80c8c50db29ad8f6f6e4700bcf14763148b8665feba22"
+    },
+    "df234dd37df550c063456231137d36a70e68f2f3": {
+      "docs/flash-1017-cuda-sparse-leaf-comparison.md": "c96299b663a7c29c7d3745c1b3c163aa8a1127f2a37cd474018b566652d080ef",
+      "docs/flash-1017-cuda-sparse-leaf-comparison-evidence.json": "e2991dec0816df5de1cdd6fe2fb08dc289fdf2c5a49c44bcbdc170cb092d2d03"
+    }
+  },
+  "immutable_casec_sha256": "eeaea91704962452ff3344778061acc95ca9466892fb12a879f30c5c19d021f5",
+  "unmeasured": [
+    "live appended prefix versus seed values",
+    "cold P6 11 versus cold P6 16 shared rows",
+    "cold P6 16 versus ordinary 16",
+    "Layer 0 pre-pack inputs and projection outputs"
+  ],
+  "new_numerical_metrics": null,
+  "source_assertions": {
+    "planner_all_40_layers_single_encode_rows": [11, 5, 16],
+    "paired_copy_clone_capture_restore_validate_ast_equal": true,
+    "quantization_pack_unpack_ast_equal": true,
+    "quantization_project_quantized_ast_equal": false,
+    "installed_gemv_sha256": "e9c4a2440b6697488c870ca2531cddafdff49d1dc8c7aca53ab86fee8215c7b9"
+  }
+}
