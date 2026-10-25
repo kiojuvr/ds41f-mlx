@@ -545,3 +545,154 @@ an unexecuted load. Only verification tools/tests and compact evidence changed;
 no production behavior, protected admission guard or numerical operator changed.
 One focused local collector/evidence commit; SHA is in the final response.
 No push, deployment or follow-on work.
+
+## 9. Step 1A — first real-model Case A attempt (2026-10-25)
+
+**BLOCKED: the meaningful-state collector rejected the candidate's NumPy int64
+Engram history before completing the first layer's observation.** One real model
+load, candidate prefill and fresh ordinary reference were executed; **no completed
+40/3 numerical comparison was retained**. This is an observation-schema error,
+not evidence of a Target/DSpark numerical invariant violation. No second load or
+numerical/lifecycle retry was performed. Earlier BLOCKED results remain historical.
+
+### Scope, identities and adapter
+
+Started on clean `Multimodal-Runtime`, expected HEAD
+`f3ebdd846844a30cedba7c3a30786cf7991a88e5`. LM Studio/llmster remained absent and
+1234 had no listener. Other listeners remained rapportd, ControlCenter and GitHub;
+no external inference worker/service or matching launchctl job was observed.
+No unrelated process/service, installed package or checkpoint was changed.
+
+Used `/Volumes/SDXC-512/ds41f-1017/bin/python` with `-I` for the task worker.
+Installed admission ran **before** importing the checkout verification file by
+path. Installed Runtime module binding was preserved; this was **installed
+candidate execution**, not a claim to qualify all mutable checkout production code.
+Identity digest remains `9c439d3fb9ad730996ecca821234bba1ce8817d7b46a2744e171c10a4d7d2ca2`;
+versions/build/checkpoint/numerics remain those in §1, including native GLM,
+`flash-1017-pre-woa-fp8-v1` and the 48-shard Flash-1017 checkpoint on KIOXIA-PRO-2.
+Installed `_start` and P6 append sources were byte-identical to checkout. Installed
+paired capture/clone code was reused; checkout's later image-byte projection
+helpers were not exercised. Exact source/checkpoint hashes and imported origins
+are in [Case A evidence](phase2-reference-step1a.json).
+
+Added only `observe_case_a_n2` in the existing verification tool. It calls the
+existing `InternalMTPQualificationBackend._start` on an empty QualificationSession,
+snapshots via the actual N-2 `checkpoint_capture` callback and existing
+`PairedCheckpoint.capture`, then uses a private diagnostic exception to **end the
+task at that boundary**. Native `_start`'s existing `finally` restores layer wrappers
+and its resource stack releases the lease. This deliberately terminates the
+qualification call, not a normal production request completion: no N-1/P5,
+native generation, settlement or cache publication is claimed. Execution up to
+N-2 is unchanged. The reference runs only after wrapper restoration, on fresh
+ordinary factories, under the existing wired-limit lease/generation stream.
+No candidate cache, hidden state, embeddings or restored pair feeds the reference.
+
+Before weights, the adapter passed the existing small native-cache fixture test,
+including capture/frontier alignment, unwind-before-reference, no input mutation,
+all-40/3 collector consumption and rejection of images. The original fixture
+used MLX histories and therefore missed the real NumPy-history representation.
+No new framework, model loader, generic case runner or production API was added.
+
+### Canonical input and actual execution
+
+Existing Recipe `prepare_request('chat_completions', ..., ordinary=True)` prepared
+one user message, `Explain immutable checkpoints in one short sentence.`,
+`reasoning_effort=none`, temperature 0, max_tokens 1 (no output was generated).
+Canonical **N=13**, observed **N-2=11**. Ordered IDs:
+
+```text
+[0,128803,65106,104124,4085,20819,295,834,3107,10175,16,128804,128822]
+```
+
+Full prompt little-endian int32 SHA256:
+`8ce125c769d4a95f97bceac24a7c6aa2f8bbf36a1f0c4ff1d1c4a9ab82d79fb2`.
+Candidate callback required the exact first eleven IDs. Ordinary reference used
+that identical prefix, with fresh 40-layer Target and three native ring factories.
+The existing boundary guard checked canonical IDs and aligned Target/ring
+frontiers before entering the detailed collector. The console records the native
+capture and the independent reference invocation in the
+[short execution log](phase2-reference-step1a-run.log).
+
+| Observation | Actual coverage/result |
+| --- | --- |
+| Model loads | **1**, `preserve_mtp=True`, `engram_ssd_offload=True`, native MTP via existing backend |
+| Candidate N-2 | Captured real 40-layer/3-ring pair at 11; native pair validation succeeded |
+| Ordinary reference | Executed fresh `_forward` and native DSpark append at 11; frontier checks succeeded |
+| Completed meaningful Target numerical metrics | **0/40** retained; rejected while selecting layer 0 slot 6 |
+| Completed DSpark numerical metrics | **0/3** retained; collector never reached rings |
+| Numerical max-absolute/RMS-relative/cosine | **Unavailable**, no completed metrics serialized |
+| Structural discrepancy | Collector's backend-specific dtype-object check rejected history; not a demonstrated primitive dtype/value mismatch |
+| P5, logits/continuation, B/C, images | Explicitly not executed/required in Step 1A |
+
+Source diagnosis: P6 `_make_segment_tensors` obtains NumPy history from the hasher
+and `_set_cache_history` retains it; ordinary `_forward` explicitly publishes
+`mx.array(history, mx.int64)`. The collector required `value.dtype == mx.int64`,
+rejecting NumPy int64 despite the existing P5 validator's exact primitive dtype
+contract. The run did not retain a tensor dump, so **no numerical history equality
+or divergence is inferred from this diagnosis**.
+
+After the failed observation and worker exit, corrected only the test collector
+to reuse P5's existing `_dtype` spelling normalization. Both original dtype
+representations remain disclosed in geometry; int32 versus int64 remains rejected,
+and no state array is converted/mutated for agreement. Extended the same adapter
+fixture with P6-style NumPy history and an int32 negative. **This correction has
+model-free validation only; it was not rerun on weights.** The executed verification
+source hash in the JSON intentionally identifies the pre-correction tool.
+
+No cross-schedule floating tolerance was selected or enlarged. Shared checkpoint,
+MLX/Metal, quantized operators, loaded layer modules, Engram data and native DSpark
+projection/append operations retain §2's independence limitations. The independent
+boundary is fresh ordinary dataflow/state versus candidate scheduling, not an
+independent implementation of those numerical operators.
+
+### Resources, safety and cleanup
+
+Used a disposable external utility loop, not a persistent service or new repository
+monitoring framework: existing psutil available-memory accounting, `vm_stat`,
+`sysctl kern.memorystatus_vm_pressure_level`, process inspection and the existing
+libproc rusage-v4 footprint offsets. Health checked about every two seconds;
+compact samples retained about every ten seconds in
+[resource evidence](phase2-reference-step1a-resources.json). Only the owned worker
+could be terminated. Pre-load available reserve was **493.326 GiB**, above the
+455.226 GiB start condition; this includes reclaimable pages, not free pages alone.
+Memory pressure was normal (level 1), swap use and vm_stat swapouts zero throughout,
+no external loader appeared. Minimum retained sampled reserve was **226.303 GiB**,
+well above 64 GiB. Task lifetime maximum physical footprint **300.585 GiB**, below
+the conservative 425-GiB stop used to stay before 430 GiB. No stop threshold fired
+during the model run; elapsed worker time **124.52 s**, below all budgets.
+
+Separate overlapping metrics (do not add): after load MLX active **287.920 GiB**,
+cache **5.207 GiB**, peak **290.160 GiB**; physical footprint **293.743 GiB**.
+After `model.close`, backend executor close, GC/synchronization/cache clear:
+MLX active **2,052 bytes**, cache zero; process footprint still **178.208 GiB**.
+That pre-exit footprint is not a leak verdict: worker then exited, host available
+returned to **493.006 GiB**, and task worker/watcher were absent on final inspection.
+
+One **pre-load** supervision false alarm is retained separately in resource JSON:
+the initial disposable watcher treated a task-owned transient Python admission
+child as an external loader and terminated only its own worker at installed
+admission (no model load). Read-only inspection subsequently observed such a child
+with the owned worker as parent. Ownership handling was corrected to exclude owned
+descendants before the sole model load. This was not a numerical/lifecycle retry;
+no service or unrelated process was terminated. The initial alert did not preserve
+the triggering PID, so its ancestry attribution is source/process diagnosis, not
+a retained PID-level proof. All temporary task scripts were removed after evidence.
+
+### Validation and stopping point
+
+Focused affected tests: `tests/test_prefill_numerical_reference.py`,
+`tests/test_production_mtp.py`, `tests/test_prefill_fp8_mlx_p6.py`, using the admitted
+interpreter and explicit checkpoint environment: **62 passed, 12 subtests passed**,
+41 existing deprecation warnings, 43.63 s. `git diff --check`: PASS.
+`python tools/check_repository_self_containment.py`: PASS (35 owners, 153 Markdown
+files, 584 live links). Final process/port inspection found neither owned worker
+nor watcher, no inference loader and no 1234 listener; pressure level 1 and zero
+swapins/swapouts/use persisted. No unrelated verification stage was added. Only
+the existing verification tool, its focused test and this report/compact evidence
+changed. One focused local commit; SHA reported in the task response.
+
+The **next smallest unresolved issue** is real-model validation of the corrected
+NumPy/MLX exact-integer observation schema at the same N-2 boundary. That requires
+separate authorization for another load; this task did not automatically retry.
+Step 1A is BLOCKED, full Step 1 and C2 remain unqualified. No B/C, reconstruction,
+P5/teacher forcing, tolerance campaign, push, deployment or follow-on work.

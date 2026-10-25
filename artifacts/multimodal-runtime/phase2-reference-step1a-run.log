@@ -1,0 +1,27 @@
+Loading admitted Flash-1017 once
+Loaded; Case A only
+Case A: captured native N-2 frontier 11
+Case A: candidate unwound; fresh ordinary reference
+Traceback (most recent call last):
+  File "/tmp/phase2-step1a-worker.py", line 42, in <module>
+    report['observation']=tool.observe_case_a_n2(backend,request,tokenizer,identity=identity['identity_sha256'])
+                          ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/qualify_prefill_fp8_mlx.py", line 370, in observe_case_a_n2
+    result = paired_boundary_metrics(candidate, reference, boundary='n-2-capture', config=lm._config)
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/qualify_prefill_fp8_mlx.py", line 322, in paired_boundary_metrics
+    out['metrics'] = paired_physical_metrics(actual, reference, config=config,
+                     ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                             chunk_elements=chunk_elements)
+                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/qualify_prefill_fp8_mlx.py", line 271, in paired_physical_metrics
+    result['target'][-1]['meaningful'] = meaningful_target_metrics(
+                                         ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        a, b, index, config, chunk_elements=chunk_elements)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/qualify_prefill_fp8_mlx.py", line 215, in meaningful_target_metrics
+    left, right = selection(actual), selection(reference)
+                  ~~~~~~~~~^^^^^^^^
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/qualify_prefill_fp8_mlx.py", line 209, in selection
+    raise ValueError('unsupported exact Engram history layout')
+ValueError: unsupported exact Engram history layout
+BLOCKED ValueError: unsupported exact Engram history layout

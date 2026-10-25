@@ -7,7 +7,7 @@ import pytest
 
 from tools.qualify_prefill_fp8_mlx import (
     ordinary_prefill_reference, paired_physical_metrics, physical_tensor_metrics,
-    meaningful_target_metrics, paired_boundary_metrics,
+    meaningful_target_metrics, paired_boundary_metrics, observe_case_a_n2,
 )
 from test_production_mtp import pair
 
@@ -194,6 +194,50 @@ def test_boundary_guard_preserves_transient_frontiers_without_settlement():
     for c, before in zip(a['target'], arrays):
         assert all(x is y for x, y in zip(c.cache, before))
     assert all(r.keys is k and r.offset == 192 for r, k in zip(a['rings'], ring_keys))
+
+
+def test_case_a_adapter_uses_capture_then_fresh_reference_after_unwind(monkeypatch):
+    import tools.qualify_prefill_fp8_mlx as tool
+    candidate, config = native_meaningful_pair()
+    independent, _ = native_meaningful_pair()
+    # Actual P6 _set_cache_history retains the hasher's NumPy int64 array;
+    # ordinary _forward explicitly converts history to MLX int64.
+    candidate['target'][0][6] = np.zeros((1, 2), np.int64)
+    original_layers = tuple(object() for _ in range(40))
+    lm = SimpleNamespace(layers=list(original_layers), _config=config)
+    events = []
+    class Backend:
+        _model = SimpleNamespace(language_model=lm)
+        def _start(self, rec, request, tokenizer, trace, *, checkpoint_capture):
+            assert rec.cache is None and rec.canonical == []
+            lm.layers[0] = object()  # stand-in for native temporary tap wrapper
+            try:
+                events.append('candidate')
+                checkpoint_capture(candidate['target'], candidate['rings'], request.token_ids[:-2])
+                pytest.fail('adapter must stop before N-1/P5')
+            finally:
+                lm.layers[:] = original_layers
+                events.append('unwound')
+    def reference(model, input_ids):
+        assert all(a is b for a, b in zip(lm.layers, original_layers))
+        assert input_ids.tolist()[0] == list(range(193))
+        assert events == ['candidate', 'unwound']
+        events.append('reference')
+        return independent
+    monkeypatch.setattr(tool, 'ordinary_prefill_reference', reference)
+    before = [tuple(c.cache) for c in candidate['target']]
+    request = SimpleNamespace(token_ids=list(range(195)), multimodal=None)
+    result = observe_case_a_n2(Backend(), request, None, identity='synthetic')
+    assert result['comparable'] and len(result['metrics']['target']) == 40
+    assert len(result['metrics']['rings']) == 3 and events[-1] == 'reference'
+    history = result['metrics']['target'][0]['meaningful']['slots'][6]['exact']
+    assert history['structure_equal'] and history['mismatches'] == 0
+    assert not physical_tensor_metrics(candidate['target'][0][6].astype(np.int32),
+                                       independent['target'][0][6])['structure_equal']
+    assert all(x is y for c, old in zip(candidate['target'], before) for x, y in zip(c.cache, old))
+    request.multimodal = object()
+    with pytest.raises(ValueError, match='canonical text'):
+        observe_case_a_n2(Backend(), request, None, identity='synthetic')
 
 
 def reference_model():

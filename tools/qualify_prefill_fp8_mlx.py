@@ -30,6 +30,7 @@ sys.path.insert(0, str(ROOT))
 from ds41f_mlx.native_prefill import compile_native_prefill_library, load_native_prefill_library
 from ds41f_mlx.prefill_fp8_mlx import DwarfStarFP8MLXPrefillExecutorSetup, SweepPlanner, SweepCommandKind, SweepPhase
 from tools.run_prefill_fp8_mlx_smoke import geometry
+from ds41f_mlx.prefill_fp8_mlx.handoff import _dtype
 
 
 def runtime_authority(lang):
@@ -124,7 +125,10 @@ def physical_tensor_metrics(actual, reference, *, chunk_elements=65536):
         return dict(structure_equal=actual is None and reference is None,
                     actual_present=actual is not None, reference_present=reference is not None)
     out = dict(actual=geometry(actual), reference=geometry(reference))
-    out['structure_equal'] = actual.shape == reference.shape and actual.dtype == reference.dtype
+    # P6 retains NumPy Engram history while ordinary _forward publishes MLX
+    # history. Compare exact primitive dtype names, not backend dtype objects;
+    # keep both original representations in geometry for disclosure.
+    out['structure_equal'] = actual.shape == reference.shape and _dtype(actual) == _dtype(reference)
     if not out['structure_equal']:
         return out
     floating = 'float' in str(actual.dtype)
@@ -205,7 +209,8 @@ def meaningful_target_metrics(actual, reference, layer, config, *, chunk_element
                 bits, group = {1: (8, 32), 2: (4, 16), 3: (4, 32)}[slot]
                 if width % group or value.shape[-1] != width*bits//8 + width//group or value.dtype != mx.uint8:
                     raise ValueError(f'layer {layer} slot {slot}: unsupported packed layout')
-            if value is not None and slot == 6 and (value.shape[1] != count or value.dtype != mx.int64):
+            if value is not None and slot == 6 and (
+                    value.shape[1] != count or _dtype(value) != 'int64'):
                 raise ValueError('unsupported exact Engram history layout')
         return dict(frontier=end, rows=rows,
                     window_positions=[max(0, end-config.window_size), end],
@@ -322,6 +327,54 @@ def paired_boundary_metrics(actual, reference, *, boundary, config, chunk_elemen
         out['metrics'] = paired_physical_metrics(actual, reference, config=config,
                                                  chunk_elements=chunk_elements)
     return out
+
+
+def observe_case_a_n2(backend, request, tokenizer, *, identity):
+    """Single cold-text experiment using the existing native capture callback.
+
+    The task ends at capture via normal exception unwinding, before N-1/P5.
+    No production state is advanced for observation. Reference runs only after
+    _start has restored its temporary layer wrappers and released its lease.
+    Caller owns the admitted backend/model, external supervision and cleanup.
+    """
+    import mlx.core as mx
+    from mlx_lm.generate import generation_stream
+    from ds41f_mlx.runtime.mtp_resources import MTPWiredLimitLease
+    from ds41f_mlx.serving.internal_mtp import QualificationSession
+    from ds41f_mlx.serving.paired_checkpoint import PairedCheckpoint
+
+    ids = tuple(request.token_ids)
+    if request.multimodal is not None or not 3 <= len(ids) <= 4096:
+        raise ValueError('Case A requires bounded canonical text only')
+    lm = backend._model.language_model
+    original_layers = tuple(lm.layers)
+    saved = None
+    class CaptureComplete(Exception):
+        pass
+    def capture(target, rings, consumed):
+        nonlocal saved
+        if tuple(consumed) != ids[:-2]:
+            raise ValueError('candidate capture is not canonical N-2')
+        saved = PairedCheckpoint.capture(identity, target, rings, consumed, mx)
+        print(f'Case A: captured native N-2 frontier {len(consumed)}', flush=True)
+        raise CaptureComplete()
+    rec = QualificationSession('phase2-step1a')
+    try:
+        backend._start(rec, request, tokenizer, {}, checkpoint_capture=capture)
+    except CaptureComplete:
+        pass
+    if saved is None or rec.owner is not None:
+        raise RuntimeError('N-2 capture did not stop before native generation')
+    if any(a is not b for a, b in zip(lm.layers, original_layers)):
+        raise RuntimeError('candidate layer wrappers were not restored')
+    candidate = dict(target=saved.target, rings=saved.rings, token_ids=saved.tokens)
+    print('Case A: candidate unwound; fresh ordinary reference', flush=True)
+    with mx.stream(generation_stream), MTPWiredLimitLease(mx, generation_stream):
+        reference = ordinary_prefill_reference(model=backend._model,
+                                               input_ids=mx.array([ids[:-2]], mx.int32))
+        result = paired_boundary_metrics(candidate, reference, boundary='n-2-capture', config=lm._config)
+        mx.synchronize(generation_stream)
+    return result
 
 
 def qualify(args, report):

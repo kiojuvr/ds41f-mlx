@@ -1,0 +1,151 @@
+{
+  "status": "BLOCKED",
+  "stage": "closed",
+  "model_loaded": true,
+  "started": 1792918252.819407,
+  "identity": {
+    "identity_sha256": "9c439d3fb9ad730996ecca821234bba1ce8817d7b46a2744e171c10a4d7d2ca2",
+    "actual_origins": {
+      "ds41f_mlx": "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/ds41f_mlx/__init__.py",
+      "omlx": "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/omlx/__init__.py",
+      "deepseek_recipe": "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/deepseek_recipe/__init__.py",
+      "deepseek_recipe._native": "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/deepseek_recipe/_native.abi3.so",
+      "mlx_lm": "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/mlx_lm/__init__.py"
+    },
+    "build": {
+      "native_build": {
+        "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05) (Homebrew)\n",
+        "cmake": "cmake version 4.3.3\n\nCMake suite maintained and supported by Kitware (kitware.com/cmake).\n",
+        "host_linked": false,
+        "opencv": "4.14.0\n",
+        "rustc": "rustc 1.98.1 (48a229cea 2026-09-01) (Homebrew)\nbinary: rustc\ncommit-hash: 48a229ceaefd4985c50990b14116b6d856af0985\ncommit-date: 2026-09-01\nhost: aarch64-apple-darwin\nrelease: 1.98.1\nLLVM version: 22.1.8\n",
+        "wheel_sha256": "11bda3355c2f48b99d04f6a2179b283add3f6d1218f34e4707bd5a29b304ab03",
+        "xcode": "Xcode 26.6\nBuild version 17F113\n"
+      },
+      "overlays": [
+        "compressed-growth",
+        "bit-exact-kernels",
+        "template-reuse",
+        "context-copy"
+      ],
+      "recipe_source": {
+        "archive": "recipe-02-source.tar.gz",
+        "patch": "docs/recipe-02-native-semantic-boundary.patch",
+        "revision": "93b0fd229cc9ffa6b1a8c63d42b0bf741bbec170"
+      },
+      "source_commit": "aa8c5717b42aa0a216fef3134e72c6db7ca49287"
+    },
+    "hardware": {
+      "cpu": "Apple M3 Ultra",
+      "memory_bytes": 549755813888
+    },
+    "glm_profile": "native"
+  },
+  "checkpoint": "/Volumes/KIOXIA-PRO-2/models/deepseek-ai/DeepSeek-V4.1-Flash-1017",
+  "checkpoint_metadata": {
+    "config.json": "8be45ce0476004a3f529fd896115a4a2e800a129ad2d3ec05b16050f52e21879",
+    "model.safetensors.index.json": "74b0686a3d2891980d5e303251b075a3bccae2c2ff650747db2620a649b98fa8",
+    "tokenizer.json": "c90dfa01249db1be4245780a052ede752e1361c612ac6d08e2bdada7d599476b"
+  },
+  "packages": {
+    "ds41f-mlx": "0.23.0",
+    "omlx": "0.7.0",
+    "mlx": "0.32.2",
+    "mlx-lm": "0.31.4.dev132+g94cdcae13",
+    "deepseek-recipe": "0.2.0"
+  },
+  "sources": {
+    "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/ds41f_mlx/serving/internal_mtp.py": "21800084ee6519ea73790ee8c46ad7fcf9a7183c37aabaae4ed8da4b2ca9edd1",
+    "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/ds41f_mlx/serving/paired_checkpoint.py": "61d2a7f5fe5a4aa646356223eae37e30378b257b170c9c473de0b957f5070d16",
+    "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/ds41f_mlx/prefill_fp8_mlx/p6_append.py": "34e3326c2472a9a7717f69bb335bec8d5a4c98addecab39ff3bc863b4b17f184"
+  },
+  "verification_sha256": "0f5c506c820fd208396d2049d31511f98c3cf5726dbb39b930deb278837ffa18",
+  "runtime_authority": {
+    "omlx_version": "0.7.0",
+    "distribution_version": "0.7.0",
+    "mlx_version": "0.32.2",
+    "python_executable": "/Volumes/SDXC-512/ds41f-1017/bin/python",
+    "language_path": "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/omlx/patches/deepseek_v41/language.py",
+    "language_sha256": "702b8a1c872eee645e6633140787a5947dc4bb7aace16384475a90151a4c5276",
+    "git_revision": null,
+    "git_status": null,
+    "operation_contracts": {
+      "hc_mixes": "compatible",
+      "hc_pre_norm": "compatible",
+      "hc_post": "compatible",
+      "rope": "compatible",
+      "pack_activation": "compatible",
+      "quantize_activation": "compatible",
+      "packed_index_topk": "compatible",
+      "packed_index_scores": "compatible",
+      "packed_sparse_attention": "compatible"
+    }
+  },
+  "input": {
+    "body": {
+      "model": "deepseek-v4.1-flash",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Explain immutable checkpoints in one short sentence."
+        }
+      ],
+      "temperature": 0,
+      "max_tokens": 1,
+      "reasoning_effort": "none"
+    },
+    "ids": [
+      0,
+      128803,
+      65106,
+      104124,
+      4085,
+      20819,
+      295,
+      834,
+      3107,
+      10175,
+      16,
+      128804,
+      128822
+    ],
+    "ids_le_int32_sha256": "8ce125c769d4a95f97bceac24a7c6aa2f8bbf36a1f0c4ff1d1c4a9ab82d79fb2",
+    "N": 13,
+    "frontier": 11
+  },
+  "memory_after_load": {
+    "mlx_active": 309151331760,
+    "mlx_cache": 5590977818,
+    "mlx_peak": 311557023676,
+    "footprint": 315404431864,
+    "lifetime_max_footprint": 322750875096
+  },
+  "error": "ValueError: unsupported exact Engram history layout",
+  "memory_after_close": {
+    "mlx_active": 2052,
+    "mlx_cache": 0,
+    "mlx_peak": 311557023676,
+    "footprint": 191349510536,
+    "lifetime_max_footprint": 322750875096
+  },
+  "elapsed_s": 124.51922702789307,
+  "code_base_head": "f3ebdd846844a30cedba7c3a30786cf7991a88e5",
+  "model_load_count": 1,
+  "actual_numerical_coverage": {
+    "target_layers": 0,
+    "dspark_rings": 0,
+    "reason": "collector rejected Engram dtype before completing first meaningful layer; no completed metrics serialized"
+  },
+  "captured_frontier": 11,
+  "post_execution_diagnosis": "P6 _set_cache_history retains numpy.int64 from the hasher; ordinary _forward converts to mlx.core.int64. Original collector compared backend dtype objects. Corrected after this run using exact primitive dtype names; correction has model-free validation only. No second model load or numerical retry.",
+  "post_correction_verification_sha256": "ec6865bd7c2ba5c3098449b0793e93f1029f0d487b7e1ecd0c8276f94225e1d0",
+  "numerical_profile": "flash-1017-pre-woa-fp8-v1",
+  "validation": {
+    "focused_tests_passed": 62,
+    "subtests_passed": 12,
+    "warnings": 41,
+    "seconds": 43.63,
+    "diff_check": "PASS",
+    "self_containment": "PASS"
+  }
+}
