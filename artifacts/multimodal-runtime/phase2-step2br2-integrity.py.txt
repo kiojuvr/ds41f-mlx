@@ -1,0 +1,22 @@
+"""Reuse Step 2B-R's exact 817-path inventory; no weight rehash."""
+import hashlib, json, sys
+from pathlib import Path
+ROOT = Path('/Volumes/SDXC-512/ds41f-mlx')
+OUT = ROOT/'artifacts/multimodal-runtime'
+INSTALL = Path('/Volumes/SDXC-512/ds41f-1017')
+from ds41f_mlx.mtp_identity import config, inspect
+identity = inspect(config(profile='mtp-serving-v1'), checkpoint=False)
+paths = json.loads((OUT/'phase2-step2br-original-before.json').read_text())['files']
+files = {}
+for relative in paths:
+    p = INSTALL/relative
+    stat = p.stat()
+    files[relative] = dict(sha256=hashlib.sha256(p.read_bytes()).hexdigest(),
+        size=stat.st_size, mtime_ns=stat.st_mtime_ns, inode=stat.st_ino)
+report = dict(executable=sys.executable, identity=identity, files=files)
+if sys.argv[1] == 'after':
+    before = json.loads((OUT/'phase2-step2br2-original-before.json').read_text())
+    report['unchanged'] = files == before['files']
+    report['identity_unchanged'] = identity['identity_sha256'] == before['identity']['identity_sha256']
+(OUT/f'phase2-step2br2-original-{sys.argv[1]}.json').write_text(json.dumps(report, indent=2, default=str)+'\n')
+if sys.argv[1] == 'after': assert report['unchanged'] and report['identity_unchanged']

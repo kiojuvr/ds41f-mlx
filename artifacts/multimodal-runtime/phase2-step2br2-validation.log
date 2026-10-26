@@ -1,0 +1,28 @@
+Step 2B-R2 validation (command/result summary)
+
+Before sole model load:
+/tmp/ds41f-step2br2/bin/python -m pytest tests/test_cold_messages_continuation.py tests/test_cold_messages_reconstruction.py tests/test_installed_diagnostic_admission.py tests/test_production_mtp.py tests/test_production_sessions.py tests/test_cached_image_admission.py tests/test_prefill_fp8_mlx_p5.py tests/test_prefill_fp8_mlx_p6.py tests/test_m29_mtp_lifecycle.py tests/test_recipe02_messages_serving.py tests/test_recipe02_semantic_guard.py tests/test_m35_transport_lease.py -q --tb=short
+234 passed, 113 warnings, 26 subtests passed in 122.63s
+
+After execution, same command on final source:
+234 passed, 113 warnings, 26 subtests passed in 123.64s
+
+Initial git diff --check found one trailing space, no semantic error.
+No code changed while model worker ran. Exact executed source retained in gzip.
+Postflight: removed only that trailing space.
+Final git diff --check and git diff --cached --check: PASS
+Bare `python tools/check_repository_self_containment.py`: shell has no python alias (command not found).
+Equivalent /opt/homebrew/opt/python@3.13/bin/python3.13 tools/check_repository_self_containment.py: PASS, same counts below.
+/tmp/ds41f-step2br2/bin/python tools/check_repository_self_containment.py
+PASS repository self-containment: {'current_owners': 35, 'markdown_files': 153, 'live_links': 585}; live links/owners and retained provenance verified (not qualification)
+
+Original installed inventory: 817 paths, hashes/size/mtime/inode unchanged; admitted identity unchanged.
+Installed production_mtp.py/internal_mtp.py/paired_checkpoint.py/mtp_lifecycle.py byte-equal to checkout Runtime source hashes recorded in observation.
+Wheel SHA256: a5d0c4451199c3087782e2d5687514b16e85b78a9eb4c8f10f6b4274db4e2f14
+Decompressed executed diagnostic SHA256: 56a6a66fd77d0316c6f5da25b577a45a11624d27162b284390b67d72b749b876
+
+Postflight ps -p 35038,35041: neither Supervisor nor worker present.
+sysctl vm.swapusage: total=0 used=0 free=0
+sysctl kern.memorystatus_vm_pressure_level: 1
+vm_stat: Swapins=0, Swapouts=0
+Diff review: only qualification diagnostics, focused regressions and new Step 2B-R2 evidence; no Production or numerical execution source changes.

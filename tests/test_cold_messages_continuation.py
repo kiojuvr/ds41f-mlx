@@ -113,7 +113,8 @@ def test_recheck_and_scope_exit_keep_normal_refusal(fault):
     assert '_historical_images_covered' not in scheduler.__dict__
 
 
-@pytest.mark.parametrize('fault', ['none', 'cancel', 'mutation', 'settlement', 'incomplete', 'post_handoff_observation'])
+@pytest.mark.parametrize('fault', ['none', 'cancel', 'mutation', 'settlement', 'incomplete', 'post_handoff_observation',
+    'registered_observation', 'generation_observation', 'publication_observation'])
 def test_existing_start_scheduler_route(monkeypatch, fault):
     import mlx.core as mx
     import importlib
@@ -186,7 +187,19 @@ def test_existing_start_scheduler_route(monkeypatch, fault):
             backend._settle(rec, trace)
             trace['application_terminal'] = True
     backend._advance_application = advance
+    diagnostic = {}
+    def broken_optional():
+        # Exact previous diagnostic error, never an execution operation.
+        offsets = (212, 212, 212)
+        return offsets()
+    from tools.qualify_cold_messages_continuation import optional_observation
     with cold_miss_scope(scheduler, request):
+        if fault == 'registered_observation':
+            scheduled, _ = scheduler._schedule_waiting()
+            assert scheduled == [request]
+            optional_observation(diagnostic, 'registered', broken_optional)
+            assert request.execution.owner.uid == 17
+            assert scheduler.request_id_to_uid == {'step2b': 17}
         if fault == 'cancel': scheduler._do_abort_request('step2b')
         else:
             result = scheduler.step()
@@ -195,14 +208,23 @@ def test_existing_start_scheduler_route(monkeypatch, fault):
                 assert request.prompt_checkpoint is not None, scheduler.last_settlement
                 assert request.prompt_checkpoint.tokens == tuple(request.prompt_token_ids[:-2])
                 assert not scheduler.checkpoints._payloads
+                if fault == 'generation_observation':
+                    optional_observation(diagnostic, 'generated', broken_optional)
+                    assert request.execution.owner is not None
                 scheduler.step()
+                if fault == 'publication_observation':
+                    optional_observation(diagnostic, 'published', broken_optional)
+                    assert scheduler.checkpoints._payloads
+    success = fault in ('none', 'registered_observation', 'generation_observation', 'publication_observation')
+    if fault.endswith('_observation') and fault != 'post_handoff_observation':
+        assert list(diagnostic['unavailable'].values()) == ['TypeError']
     assert '_historical_images_covered' not in scheduler.__dict__
     assert not request.prepared.multimodal._sources
     assert not scheduler.requests and not scheduler.running and not scheduler.waiting
     assert not scheduler.request_id_to_uid and not scheduler.uid_to_request_id
     assert scheduler.batch_generator is None and request.execution.owner is None
-    assert bool(scheduler.checkpoints._payloads) == (fault == 'none')
-    if fault == 'none':
+    assert bool(scheduler.checkpoints._payloads) == success
+    if success:
         assert transitions[:4] == [('vision', 0), ('append', 0, 211), ('append', 211, 212), ('P5', request.prompt_token_ids[-1])]
         assert scheduler.checkpoints.acquire(request.prompt_token_ids, images=request.image_identities)[2] == request.prompt_token_ids[:-2]
     if fault == 'cancel': assert transitions == []

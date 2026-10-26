@@ -81,6 +81,15 @@ def p5_observation(live, owner, scheduler):
         target_offsets=owner.active_cache_offsets(), dspark_offsets=owner.dspark_context.offsets)
 
 
+def optional_observation(receipt, name, observe):
+    """Only read-only diagnostics go here; production calls stay outside."""
+    try:
+        return observe()
+    except Exception as exc:
+        receipt.setdefault('unavailable', {})[name] = type(exc).__name__
+        return None
+
+
 def observe_continuation(backend, prepared, tokenizer, receipt):
     """Run on backend._call's sole worker. Observers delegate all mutations.
 
@@ -93,7 +102,7 @@ def observe_continuation(backend, prepared, tokenizer, receipt):
     from unittest.mock import patch
     import mlx.core as mx
     from PIL import Image
-    from mlx_lm.generate import BatchGenerator, generation_stream
+    from mlx_lm.generate import generation_stream
     from ds41f_mlx import prefill_fp8_mlx as p6
     from ds41f_mlx.model_execution.processing import image_patch_array
     from ds41f_mlx.runtime.mtp_resources import MTPWiredLimitLease
@@ -121,83 +130,75 @@ def observe_continuation(backend, prepared, tokenizer, receipt):
     request = scheduler.requests['phase2-step2b']
     trace = request.trace
     receipt['transitions'] = transitions = []
-    capture, publish = scheduler.checkpoints.capture, scheduler.checkpoints.publish
-    handoff, insert, next_token = p6.handoff_to_generation, BatchGenerator.insert, backend._next
+    capture = scheduler.checkpoints.capture
+    handoff = p6.handoff_to_generation
     encoder = backend._encode_new_images
     def encode(*args, **kwargs):
         nonlocal candidate_embeddings
         result = encoder(*args, **kwargs)
-        receipt['vision_encode_calls'] = receipt.get('vision_encode_calls', 0) + 1
-        candidate_embeddings = result.rows[0][1]
+        def observe():
+            nonlocal candidate_embeddings
+            receipt['vision_encode_calls'] = receipt.get('vision_encode_calls', 0) + 1
+            candidate_embeddings = result.rows[0][1]
+        optional_observation(receipt, 'vision', observe)
         return result
-    def captured(target, rings, tokens, images=()):
-        validate_pair(target, rings, tokens)
-        transitions.append(dict(event='capture', frontier=len(tokens), target=[c.size() for c in target], dspark=[r.offset for r in rings], discoverable=len(scheduler.checkpoints._payloads)))
-        return capture(target, rings, tokens, images)
     def handed(live, model, **kwargs):
-        print('progress: N-1/P5', flush=True)
-        candidate = dict(target=live.live_cache, rings=live.dspark_committed_context.caches, token_ids=ids[:-1])
-        nonlocal candidate_n1, candidate_live
-        candidate_live = live
-        # Immutable diagnostic snapshot; not published or executable ownership.
-        saved = capture(candidate['target'], candidate['rings'], ids[:-1], request.image_identities)
-        candidate_n1 = dict(target=saved.target, rings=saved.rings, token_ids=ids[:-1])
-        transitions.append(dict(event='N-1', target=[c.size() for c in candidate['target']], dspark=[r.offset for r in candidate['rings']], terminal=kwargs['terminal_prompt_token']))
+        def snapshot():
+            nonlocal candidate_n1, candidate_live
+            candidate_live = live
+            # Bounded immutable 212-row snapshot, before native ownership transfer.
+            saved = capture(live.live_cache, live.dspark_committed_context.caches,
+                ids[:-1], request.image_identities)
+            candidate_n1 = dict(target=saved.target, rings=saved.rings, token_ids=ids[:-1])
+            transitions.append(dict(event='N-1', target=[c.size() for c in saved.target],
+                dspark=[r.offset for r in saved.rings], terminal=kwargs['terminal_prompt_token']))
+        optional_observation(receipt, 'n1_snapshot', snapshot)
         # Do not perform fallible receipt work between native transfer and
         # _start assigning rec.owner. Observe only after Scheduler registration.
         return handoff(live, model, **kwargs)
-    def inserted(bg, prompts, *args, **kwargs):
-        transitions.append(dict(event='native_insert', prompts=prompts, all_tokens=kwargs.get('all_tokens')))
-        return insert(bg, prompts, *args, **kwargs)
-    observations = []
-    def decoded(rec, trace):
-        owner = rec.owner
-        token = next_token(rec, trace)
-        obs = dict(token=token, uid=owner.uid,
-            uid_mapping=dict(scheduler.request_id_to_uid),
-            scheduler_batch=owner._bg is scheduler.batch_generator,
-            canonical_generated=list(owner.history.canonical_generated_tokens),
-            canonical_frontier=owner.history.canonical_frontier,
-            target_offsets=owner.active_cache_offsets(), connection_disposition=owner.connection.disposition)
-        if owner.bound_observation is not None:
-            row = owner.bound_observation[-1]
-            if row is not None:
-                # Keep only the existing distribution row until the independent
-                # terminal forward. Never retain full intermediate model tensors.
-                observations.append(row)
-                obs['logprobs_shape'] = list(row.shape)
-                obs['selected_logprob'] = float(row[token].item())
-        transitions.append(dict(event='native_next', **obs))
-        print('progress: native token', token, flush=True)
-        return token
-    def published(checkpoint):
-        assert request.execution.owner is None and 'quiescence' in trace
-        assert trace.get('prediction_retired') and trace.get('queue_empty')
-        transitions.append(dict(event='publish', frontier=len(checkpoint.tokens), quiescent=True))
-        return publish(checkpoint)
+    registered_owner = None
+    reference_started = False
+    receipt['unavailable'] = dict(candidate_distribution='not retained: Candidate lifecycle takes priority')
     try:
-        with patch.object(scheduler.checkpoints, 'capture', captured), patch.object(scheduler.checkpoints, 'publish', published), patch.object(p6, 'handoff_to_generation', handed), patch.object(BatchGenerator, 'insert', inserted), patch.object(backend, '_next', decoded), patch.object(backend, '_encode_new_images', encode), cold_miss_scope(scheduler, request):
+        with patch.object(p6, 'handoff_to_generation', handed), patch.object(backend, '_encode_new_images', encode), cold_miss_scope(scheduler, request):
             # Same worker and Scheduler hooks as Production. Separating startup
             # allows a read-only UID-map receipt before a one-token terminal step.
             scheduled, _ = scheduler._schedule_waiting()
-            receipt['registered'] = dict(request_id_to_uid=dict(scheduler.request_id_to_uid),
-                uid_to_request_id=dict(scheduler.uid_to_request_id), running=list(scheduler.running))
             if not scheduled:
                 raise RuntimeError(scheduler._completed[-1].error)
-            transitions.append(p5_observation(candidate_live, request.execution.owner, scheduler))
+            registered_owner = request.execution.owner
+            def registered():
+                receipt['registered'] = dict(request_id_to_uid=dict(scheduler.request_id_to_uid),
+                    uid_to_request_id=dict(scheduler.uid_to_request_id), running=list(scheduler.running))
+                saved = request.prompt_checkpoint
+                transitions.append(dict(event='pending_capture', frontier=len(saved.tokens),
+                    target=[c.size() for c in saved.target], dspark=[r.offset for r in saved.rings],
+                    discoverable=len(scheduler.checkpoints._payloads)))
+                transitions.append(p5_observation(candidate_live, registered_owner, scheduler))
+            optional_observation(receipt, 'registered', registered)
             outputs = []
             for _ in range(4):
                 result = scheduler.step()
                 outputs.extend(result.outputs)
                 if not scheduler.requests:
                     break
-            receipt['outputs'] = [dict(finished=o.finished, error=o.error, finish_reason=o.finish_reason,
-                recipe_events=[json.loads(e) for e in o.recipe_events], response=o.recipe_response) for o in outputs]
-            receipt['trace'] = dict(trace)
+            def completed():
+                receipt['outputs'] = [dict(finished=o.finished, error=o.error, finish_reason=o.finish_reason,
+                    recipe_events=[json.loads(e) for e in o.recipe_events], response=o.recipe_response) for o in outputs]
+                receipt['trace'] = dict(trace)
+            optional_observation(receipt, 'completed', completed)
             if scheduler.requests:
                 raise RuntimeError('bounded worker did not retire request')
             if not outputs or outputs[-1].error:
                 raise RuntimeError(outputs[-1].error if outputs else 'no final output')
+        # All production transitions are complete. These are qualification
+        # postconditions, never interposed in settlement/publication.
+        receipt['candidate_settled'] = bool('quiescence' in trace and trace.get('cache_published'))
+        assert receipt['candidate_settled'] and trace.get('prediction_retired') and trace.get('queue_empty')
+        assert request.execution.owner is None
+        receipt['native_retired'] = dict(closed=registered_owner._closed,
+            quiesced=registered_owner._quiesced, uid=registered_owner.uid,
+            batch=registered_owner._bg, disposition=registered_owner.connection.disposition)
         receipt['retired'] = dict(requests=list(scheduler.requests), running=list(scheduler.running),
             waiting=len(scheduler.waiting), uid_mapping=dict(scheduler.request_id_to_uid),
             reverse_mapping=dict(scheduler.uid_to_request_id), native_batch=scheduler.batch_generator is not None,
@@ -212,8 +213,12 @@ def observe_continuation(backend, prepared, tokenizer, receipt):
                 dspark_rings=len(saved.rings), images=saved.images,
                 discoverable=restored is not None and tuple(restored[2]) == saved.tokens))
             restored = None
-        receipt['candidate_settled'] = True
-        print('progress: settled; fresh independent ordinary N-1 reference', flush=True)
+        print('progress: Candidate settled and retired', flush=True)
+        if candidate_n1 is None or candidate_embeddings is None:
+            receipt['reference_incomplete'] = 'optional Candidate snapshot unavailable'
+            return
+        reference_started = True
+        print('progress: fresh independent ordinary N-1 reference', flush=True)
         with Image.open(BytesIO(data)) as image:
             patches, h, w, kinds = image_patch_array(image, prepared.multimodal._config)
         pixels = mx.array(patches).astype(mx.bfloat16)
@@ -236,20 +241,35 @@ def observe_continuation(backend, prepared, tokenizer, receipt):
                 first_greedy_token=first, selected_logprob=float(distribution[first].item()),
                 target_offsets=[c.size() for c in reference['target']], dspark_offsets=[r.offset for r in reference['rings']],
                 token_match=trace.get('canonical_generated', [])[:1] == [first])
-            if observations:
-                receipt['reference_continuation']['distribution'] = physical_tensor_metrics(observations[0], distribution)
+            receipt['reference_continuation']['candidate_distribution'] = 'unavailable: not retained'
         receipt['post_execution_mlx'] = dict(active=mx.get_active_memory(), cache=mx.get_cache_memory(), peak=mx.get_peak_memory())
+    except Exception as exc:
+        if not reference_started:
+            raise
+        receipt['reference_incomplete'] = repr(exc)
     finally:
-        reference = observations = candidate_n1 = candidate_embeddings = candidate_live = None
-        receipt['trace'] = dict(trace)
-        receipt['exit_state'] = dict(fatal_error=backend.fatal_error,
-            requests=list(scheduler.requests), running=list(scheduler.running),
-            waiting=len(scheduler.waiting), uid_mapping=dict(scheduler.request_id_to_uid),
-            reverse_mapping=dict(scheduler.uid_to_request_id),
-            native_batch=scheduler.batch_generator is not None,
-            owner=request.execution.owner is not None,
-            pending_capture=request.prompt_checkpoint is not None,
-            published_pairs=len(scheduler.checkpoints._payloads),
-            predicate_restored='_historical_images_covered' not in scheduler.__dict__)
-        scheduler.close_serving()
-        backend.scheduler = None
+        reference = candidate_n1 = candidate_embeddings = candidate_live = registered_owner = None
+        def exit_observation():
+            receipt['trace'] = dict(trace)
+            receipt['exit_state'] = dict(fatal_error=backend.fatal_error,
+                requests=list(scheduler.requests), running=list(scheduler.running),
+                waiting=len(scheduler.waiting), uid_mapping=dict(scheduler.request_id_to_uid),
+                reverse_mapping=dict(scheduler.uid_to_request_id),
+                native_batch=scheduler.batch_generator is not None,
+                owner=request.execution.owner is not None,
+                pending_capture=request.prompt_checkpoint is not None,
+                published_pairs=len(scheduler.checkpoints._payloads),
+                predicate_restored='_historical_images_covered' not in scheduler.__dict__)
+        optional_observation(receipt, 'exit_state', exit_observation)
+        # Cleanup is a production operation: preserve its exception, and never
+        # replace an earlier execution error with cleanup/receipt formatting.
+        import sys
+        failing = sys.exc_info()[1]
+        try:
+            scheduler.close_serving()
+        except BaseException as exc:
+            if failing is None:
+                raise
+            receipt['cleanup_error_type'] = type(exc).__name__
+        finally:
+            backend.scheduler = None

@@ -1,0 +1,17 @@
+.........................................F.                              [100%]
+=================================== FAILURES ===================================
+_________________ test_isolated_installed_diagnostic_numerics __________________
+tests/test_installed_diagnostic_admission.py:19: in test_isolated_installed_diagnostic_numerics
+    result = subprocess.run([sys.executable, '-I', '-B', '-c', code],
+/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/subprocess.py:577: in run
+    raise CalledProcessError(retcode, process.args,
+E   subprocess.CalledProcessError: Command '['/private/tmp/ds41f-phase1-1017-tests/bin/python', '-I', '-B', '-c', "\nimport sys, json\nsys.path.append('/Volumes/SDXC-512/ds41f-mlx')\nfrom tools.qualify_installed_admission import prove_installed_admission\nproof = prove_installed_admission()\nassert proof['identity_object_preserved']\nassert proof['actual_pre_woa_materialized']\nprint(json.dumps(proof, default=str))\n"]' returned non-zero exit status 1.
+=============================== warnings summary ===============================
+tests/test_cold_messages_continuation.py:193
+  /Volumes/SDXC-512/ds41f-mlx/tests/test_cold_messages_continuation.py:193: SyntaxWarning: 'tuple' object is not callable; perhaps you missed a comma?
+    return (212, 212, 212)()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_installed_diagnostic_admission.py::test_isolated_installed_diagnostic_numerics
+1 failed, 42 passed, 1 warning in 115.40s (0:01:55)

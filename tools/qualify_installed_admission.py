@@ -56,7 +56,20 @@ def prove_installed_admission(*, checkpoint=False):
     assert 'if C < request.required_image_frontier:' in schedule
     from tools.qualify_cold_messages_continuation import cold_miss_scope
     assert cold_miss_scope.__module__ == 'tools.qualify_cold_messages_continuation'
-    return dict(runtime=runtime, host=host, profile=profile, origins=origins,
+    from ds41f_mlx.runtime.mtp_lifecycle import DSparkCommittedContext, OMLXMTPGenerationSession
+    from mlx_lm.generate import BatchGenerator
+    from ds41f_mlx.prefill_fp8_mlx import handoff_to_generation
+    assert isinstance(inspect.getattr_static(DSparkCommittedContext, 'offsets'), property)
+    lifecycle = {name: str(inspect.signature(method)) for name, method in {
+        'P5': handoff_to_generation, 'insert': BatchGenerator.insert,
+        'next': BatchGenerator.next, 'remove': BatchGenerator.remove, 'close': BatchGenerator.close,
+        'owner_start': OMLXMTPGenerationSession.start,
+        'owner_next': OMLXMTPGenerationSession.next_token,
+        'owner_quiesce': OMLXMTPGenerationSession.quiesce,
+        'owner_close': OMLXMTPGenerationSession.close}.items()}
+    lifecycle['dspark_offsets_type'] = 'property returning tuple (source inspected)'
+    lifecycle['bound_observation'] = '(lifetime, revision, prefix, token, native logprobs); deliberately not retained'
+    return dict(runtime=runtime, host=host, profile=profile, origins=origins, lifecycle=lifecycle,
                 identity_object_preserved=True, actual_pre_woa_materialized=True,
                 result_sha256=hashlib.sha256(struct.pack('<256f', *values)).hexdigest(),
                 predicate=predicate, scope_path=inspect.getfile(cold_miss_scope))
