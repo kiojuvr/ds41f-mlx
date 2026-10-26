@@ -1,0 +1,252 @@
+"""One installed, two-request qualification. No native wrappers or replay."""
+import asyncio, base64, gc, hashlib, json, sys, time, traceback, weakref
+from pathlib import Path
+ROOT = Path('/Volumes/SDXC-512/ds41f-mlx')
+OUT = ROOT/'artifacts/multimodal-runtime'
+sys.path.append(str(ROOT))
+from tools.qualify_installed_admission import prove_installed_admission
+# Admission MUST precede every serving import and Recipe preparation.
+proof = prove_installed_admission(checkpoint='--preflight-only' not in sys.argv)
+(OUT/'phase2-step2dr1-admission.json').write_text(json.dumps(proof, indent=2, default=str)+'\n')
+from ds41f_mlx import execution_identity as identity
+from ds41f_mlx.model_execution import activation
+authenticated_identity, authenticated_pre_woa = identity, activation.pre_woa
+authenticated_modules = {name: sys.modules[name] for name in proof['origins']}
+profile = identity.numerical_profile()
+from tools.qualify_transformers_import_order import transformers_origin
+from tools.qualify_cold_messages_continuation import optional_observation
+from ds41f_mlx.serving.server import prepare_request, load_v41_tokenizer
+from ds41f_mlx.mtp_identity import config
+from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+from ds41f_mlx.serving.paired_checkpoint import validate_pair
+CP = Path('/Volumes/KIOXIA-PRO-2/models/deepseek-ai/DeepSeek-V4.1-Flash-1017')
+tokenizer = load_v41_tokenizer(Path(sys.prefix)/'share/ds41f-mtp/recipe')
+def image(name):
+    return dict(type='image', source=dict(type='base64', media_type='image/jpeg',
+        data=base64.b64encode((CP/f'inference/examples/images/{name}.jpeg').read_bytes()).decode()))
+head = dict(role='user', content=[image('corn'), dict(type='text', text='Identify this food in one short sentence.')])
+def body(messages):
+    return dict(model='deepseek-v4.1-flash', max_tokens=1, temperature=0, messages=messages)
+def prepare(b):
+    return prepare_request('messages', json.dumps(b).encode(), tokenizer=tokenizer, checkpoint=CP, ordinary=True)
+def suffix(content):
+    # Consecutive user turns are real supplied inputs; Recipe owns their projection.
+    # The image is in the prior wire message, not relabelled by the diagnostic.
+    return [head, dict(role='assistant', content=content),
+        dict(role='user', content=[image('carrots'), dict(type='text', text='Inspect this image.')]),
+        dict(role='user', content='State one visible feature.')]
+seed = prepare(body([head]))
+projection = prepare(body(suffix([dict(type='text', text='Projection placeholder; replaced by actual response.')])) )
+C = len(seed.token_ids)-2
+assert C == 200 and seed.token_ids[:C] == projection.token_ids[:C]
+assert projection.image_is_historical == (True, True)
+a, b = projection.multimodal.spans
+assert a.start+a.length <= C < b.start
+projection.multimodal.validate_prefix(C, [a.identity()])
+projection.multimodal.validate_sources(C)
+projection.multimodal.validate_workload(C)
+assert sum(s.grid[0]*s.grid[1] for s in projection.multimodal.spans) <= 36_864
+report = dict(starting_head='ae78f7c84da1b2741d4012053f41a66b7130ed64',
+    preflight=dict(seed_N=len(seed.token_ids), eligible_prompt_C=C,
+        exact_prefix=seed.token_ids[:C], images=projection.multimodal.identities(),
+        historical=projection.image_is_historical, fresh_patches=b.grid[0]*b.grid[1],
+        aggregate_patches=sum(s.grid[0]*s.grid[1] for s in projection.multimodal.spans),
+        rationale='C ends inside unchanged first user message, before assistant header/content; actual response cannot change these canonical IDs. Later image position is revalidated with actual response before enqueue.'))
+projection.multimodal.release_sources(); projection = None
+assert sys.modules['ds41f_mlx.execution_identity'] is authenticated_identity
+assert activation.pre_woa is authenticated_pre_woa
+assert identity.numerical_profile() == profile == 'flash-1017-pre-woa-fp8-v1'
+assert all(sys.modules[name] is module for name, module in authenticated_modules.items())
+report['preserved_admission'] = dict(identity_object=True, numerical_function=True,
+    all_authenticated_modules=True, profile=profile, transformers=transformers_origin(),
+    actual_pre_woa_materialized=proof['actual_pre_woa_materialized'], origins=proof['origins'])
+(OUT/'phase2-step2dr1-preflight.json').write_text(json.dumps(report,indent=2)+'\n')
+print('progress: admission, zero-weight pre_woa and canonical preflight passed, zero loads', flush=True)
+if '--preflight-only' in sys.argv:
+    raise SystemExit(0)
+Path('/tmp/step2dr1-ready').write_text('installed admission and projection passed\n')
+while not Path('/tmp/step2dr1-go').exists(): time.sleep(.1)
+backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+backend.dependency_identity = proof['runtime']['identity_sha256']
+
+def pair_digest(saved):
+    import mlx.core as mx
+    import numpy as np
+    h = hashlib.sha256()
+    for layer in saved.target:
+        h.update(repr(layer.meta_state).encode())
+        for value in (*layer.cache, layer.left_padding, layer.lengths):
+            if value is not None:
+                h.update(str((value.shape, value.dtype)).encode())
+                h.update(np.asarray(value.view(mx.uint8)).tobytes())
+    for ring in saved.rings:
+        h.update(str((ring.offset, ring.max_size)).encode())
+        h.update(np.asarray(ring.keys.view(mx.uint8)).tobytes())
+    return h.hexdigest()
+
+def check_restored(prepared):
+    # Read-only normal acquisition before enqueue, never patched lookup results.
+    import mlx.core as mx
+    scheduler = backend.scheduler
+    images = prepared.multimodal.identities()
+    restored = scheduler.checkpoints.acquire(prepared.token_ids, images=images)
+    if restored is None: raise RuntimeError('planned second request has no paired hit; stop')
+    target, rings, tokens = restored
+    hit = len(tokens)
+    first, later = prepared.multimodal.spans
+    assert 0 < hit < later.start and first.start+first.length <= hit
+    assert tokens == prepared.token_ids[:hit]
+    saved = next(s for s in scheduler.checkpoints._payloads.values() if s.tokens == tuple(tokens))
+    validate_pair(target, rings, tokens)
+    assert list(saved.images) == [first.identity()]
+    comparisons = []
+    for a, b in zip(target, saved.target, strict=True):
+        assert a is not b and tuple(a.meta_state) == tuple(b.meta_state)
+        for x, y in zip((*a.cache, a.left_padding, a.lengths),
+                        (*b.cache, b.left_padding, b.lengths), strict=True):
+            assert (x is None) == (y is None)
+            if x is not None:
+                assert x.shape == y.shape and x.dtype == y.dtype
+                comparisons.append(mx.array_equal(x, y))
+    for a, b in zip(rings, saved.rings, strict=True):
+        assert a is not b and a.offset == b.offset and a.max_size == b.max_size
+        comparisons.append(mx.array_equal(a.keys, b.keys))
+    mx.eval(*comparisons)
+    assert all(bool(v.item()) for v in comparisons)
+    prepared.multimodal.validate_prefix(hit, list(saved.images))
+    prepared.multimodal.validate_workload(hit)
+    prepared.multimodal.validate_sources(hit)
+    report['restore'] = dict(C=hit, exact_tokens=tokens, images=saved.images,
+        target=[c.size() for c in target], rings=[r.offset for r in rings],
+        exact_array_comparisons=len(comparisons), all_equal=True,
+        fresh_patches=later.grid[0]*later.grid[1], fresh_pixels=later.source_pixels,
+        covered_patches=first.grid[0]*first.grid[1], covered_pixels=first.source_pixels,
+        fresh_absolute_span=[later.start, later.start+later.length],
+        committed_state_sha256=pair_digest(saved))
+    return saved
+
+def execute(prepared, name):
+    observation = report[name] = dict(token_ids=prepared.token_ids)
+    backend._enqueue(prepared, tokenizer, name)
+    scheduler = backend.scheduler
+    request = scheduler.requests[name]
+    scheduled, _ = scheduler._schedule_waiting()
+    if not scheduled:
+        observation['trace'] = dict(request.trace)
+        raise RuntimeError(scheduler._completed[-1].error)
+    owner = request.execution.owner
+    def registered():
+        pending = request.prompt_checkpoint
+        observation.update(cached_tokens=request.cached_tokens, N=len(prepared.token_ids),
+            images=request.image_identities, historical=prepared.image_is_historical,
+            pending_C=len(pending.tokens), pending_target=[c.size() for c in pending.target],
+            pending_rings=[r.offset for r in pending.rings],
+            P5_target=owner.active_cache_offsets(), P5_rings=owner.dspark_context.offsets,
+            P5_prompt=list(owner.history.prompt_tokens),
+            uid=owner.uid, scheduler_batch=owner._bg is scheduler.batch_generator,
+            forward_mapping=dict(scheduler.request_id_to_uid), reverse_mapping=dict(scheduler.uid_to_request_id),
+            P6_plan=[request.cached_tokens, len(prepared.token_ids)-2, len(prepared.token_ids)-1])
+    optional_observation(observation, 'registered', registered)
+    outputs = []
+    for _ in range(8):
+        outputs.extend(scheduler.step().outputs)
+        if not scheduler.requests: break
+    if scheduler.requests or not outputs or outputs[-1].error:
+        raise RuntimeError(outputs[-1].error if outputs else 'no terminal output')
+    observation.update(trace=dict(request.trace), response=outputs[-1].recipe_response,
+        events=[json.loads(e) for output in outputs for e in output.recipe_events],
+        retired=dict(requests=list(scheduler.requests), running=list(scheduler.running),
+            waiting=len(scheduler.waiting), mappings=dict(scheduler.request_id_to_uid),
+            reverse_mapping=dict(scheduler.uid_to_request_id), pending_capture=request.prompt_checkpoint is not None,
+            batch=scheduler.batch_generator is not None, owner=request.execution.owner is not None,
+            native_closed=owner._closed, native_quiesced=owner._quiesced, native_uid=owner.uid,
+            native_batch=owner._bg is not None,
+            sources=len(prepared.multimodal._sources), fatal=backend.fatal_error),
+        published=[])
+    for saved in scheduler.checkpoints._payloads.values():
+        validate_pair(saved.target, saved.rings, saved.tokens)
+        observation['published'].append(dict(C=len(saved.tokens), images=saved.images,
+            target=[c.size() for c in saved.target], rings=[r.offset for r in saved.rings]))
+    assert request.trace['cache_published'] and request.trace['prediction_retired'] and request.trace['queue_empty']
+    assert not observation.get('unavailable')
+    assert observation['events'][-1]['type'] == 'message_stop'
+    assert observation['P5_prompt'] == prepared.token_ids
+    assert observation['pending_C'] == len(prepared.token_ids)-2
+    assert observation['pending_target'] == [len(prepared.token_ids)-2]*40
+    assert observation['pending_rings'] == [len(prepared.token_ids)-2]*3
+    assert observation['P5_target'] == (len(prepared.token_ids),)*40
+    assert observation['P5_rings'] == (len(prepared.token_ids),)*3
+    assert observation['scheduler_batch']
+    assert not scheduler.requests and not scheduler.running and not scheduler.waiting
+    assert not scheduler.request_id_to_uid and not scheduler.uid_to_request_id
+    assert scheduler.batch_generator is None and request.execution.owner is None
+    assert owner._closed and owner._quiesced and owner.uid is None and owner._bg is None
+    print('progress:', name, 'settled', request.trace.get('canonical_frontier'), flush=True)
+    return observation
+
+def sequence():
+    print('progress: sole model load', flush=True)
+    backend.load()
+    import mlx.core as mx
+    report['loaded_mlx'] = dict(active=mx.get_active_memory(), cache=mx.get_cache_memory(), peak=mx.get_peak_memory())
+    report['seed'] = execute(seed, 'seed')
+    response = report['seed']['response']
+    if isinstance(response, str): response = json.loads(response)
+    assert response['content']
+    current = prepare(body(suffix(response['content'])))
+    assert current.token_ids[:C] == seed.token_ids[:C]
+    assert current.image_is_historical == (True, True)
+    assert current.multimodal.spans[1].start > C
+    report['actual_second'] = dict(N=len(current.token_ids), images=current.multimodal.identities(),
+        historical=current.image_is_historical)
+    saved = check_restored(current)
+    report['partial'] = execute(current, 'partial')
+    hit = report['partial']['cached_tokens']
+    assert hit == report['restore']['C']
+    assert hit > 0 and hit < current.multimodal.spans[1].start
+    report['restore']['committed_state_preserved'] = pair_digest(saved) == report['restore']['committed_state_sha256']
+    assert report['restore']['committed_state_preserved']
+    assert hit >= current.multimodal.spans[0].start+current.multimodal.spans[0].length
+    assert report['partial']['trace']['vision_encoded_count'] == 1
+    assert report['seed']['cached_tokens'] == 0
+    assert identity.numerical_profile() == profile
+    assert sys.modules['ds41f_mlx.execution_identity'] is authenticated_identity
+    report['post_execution_mlx'] = dict(active=mx.get_active_memory(), cache=mx.get_cache_memory(), peak=mx.get_peak_memory())
+
+model_ref = None
+try:
+    async def run(): await backend._call(sequence)
+    asyncio.run(run())
+    report['outcome'] = 'completed'
+except BaseException as exc:
+    report['outcome'] = 'failed'; report['error'] = repr(exc); traceback.print_exc()
+finally:
+    import mlx.core as mx
+    from mlx_lm.generate import generation_stream
+    if backend._model is not None: model_ref = weakref.ref(backend._model)
+    cleanup_errors = []
+    if backend.scheduler is not None:
+        try: backend.scheduler.close_serving()
+        except BaseException as exc: cleanup_errors.append(repr(exc))
+        backend.scheduler = None
+    model = backend._model
+    backend._model = backend._execution_tokenizer = None
+    if model is not None:
+        try: model.close()
+        except BaseException as exc: cleanup_errors.append(repr(exc))
+    model = None
+    try: backend.close()
+    except BaseException as exc: cleanup_errors.append(repr(exc))
+    backend._executor.shutdown(wait=True, cancel_futures=True)
+    seed.multimodal.release_sources(); seed = tokenizer = None
+    if cleanup_errors:
+        report.setdefault('error', cleanup_errors[0])
+        report['cleanup_errors'] = cleanup_errors
+        report['outcome'] = 'failed'
+    gc.collect(); mx.synchronize(generation_stream); mx.clear_cache(); gc.collect()
+    report['cleanup'] = dict(model_weakref_dead=model_ref is None or model_ref() is None,
+        active=mx.get_active_memory(), cache=mx.get_cache_memory(), peak=mx.get_peak_memory(),
+        executor_shutdown=backend._executor._shutdown, profile=identity.numerical_profile())
+    (OUT/'phase2-step2dr1-observation.json').write_text(json.dumps(report,indent=2,default=str)+'\n')
+    print('progress: cleanup', report['cleanup'], flush=True)
+raise SystemExit(0 if report['outcome']=='completed' else 1)

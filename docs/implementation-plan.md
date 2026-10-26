@@ -108,9 +108,11 @@ above. Phases 0–1 are complete; Phase 2/C2 remains **PARTIAL**. Step 2B-R2
 exercised C=0 native reconstruction through settlement/publication; Step 2C
 model-free verifies normal independent Messages C=0 admission to that unchanged
 cold path. Step 2D model-free verifies whole-image-safe C>0 paired suffix reconstruction;
-its sole supervised installed gate stopped on identity admission before loading
-weights. These source changes are undeployed. Cross-partition floating equivalence,
-fresh native partial-hit qualification and Harness lifecycle transitions remain unqualified;
+its initial installed gate stopped before loading weights. Step 2D-R1 corrected
+diagnostic import ordering and completed one bounded native C=203 continuation
+through settlement/publication. These source changes are undeployed.
+Cross-partition floating equivalence, broader partial-hit/changed-history cases
+and Harness lifecycle transitions remain unqualified;
 logical-session exact leases are unchanged.
 
 ### Future official-source investigation priorities

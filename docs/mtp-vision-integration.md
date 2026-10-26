@@ -94,9 +94,10 @@ bytes, charging every image fresh through the same cold MTP path. It introduces
 no alternative numerical schedule or forward algorithm. **Undeployed Step 2D**
 also admits independent Messages at a genuinely restored C>0 whole-image-safe
 pair: covered occurrences skip encoding; uncovered historical occurrences encode
-in full. Model-free qualification only; its supervised installed gate stopped
-before weight loading. The aggregate patch-discount callback still requires its
-existing historical coverage and paired-byte qualification. A selected pair is
+in full. Step 2D model-free qualification is supplemented by one Step 2D-R1
+native C=203 corn/carrot continuation through settlement/publication; its initial
+pre-load identity failure was corrected only by diagnostic import ordering.
+The aggregate patch-discount callback still requires its existing historical coverage and paired-byte qualification. A selected pair is
 never discarded to force C=0. Fresh last-message images
 retain their safe-miss path. Branches never rewind live rings. See the
 [ordinary admission contract](mtp-production-serving.md#paired-capture-and-restore)

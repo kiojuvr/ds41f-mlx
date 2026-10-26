@@ -176,8 +176,13 @@ unqualified cross-partition floating equivalence and MTP/full-forward diagnostic
 equality; [C2](multimodal-runtime-plan.md#c2-numerical-acceptance-distinctions)
 remains PARTIAL. [Step 2D](../artifacts/multimodal-runtime/phase2-step2d-reconstruction.md)
 verifies whole-image-safe C>0 admission and same-schedule lifecycle model-free.
-Its sole supervised real-model gate stopped on installed identity admission before
-loading weights; no fresh native acceptance or Harness lifecycle acceptance follows.
+Its initial real-model gate stopped on installed identity admission before loading
+weights. [Step 2D-R1](../artifacts/multimodal-runtime/phase2-step2dr1-continuation.md)
+corrected diagnostic import order and completed one normally admitted native
+C=203 continuation with covered corn and fresh historical carrots, settlement at
+663 and complete paired publication/retirement. This is bounded undeployed
+execution evidence, not cross-partition numerical equivalence or Harness lifecycle
+acceptance; C2 remains PARTIAL.
 
 ## Lifecycle and publication
 

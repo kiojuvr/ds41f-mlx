@@ -187,8 +187,9 @@ Cold fresh work and historical misses receive no discount. The undeployed
 [Steps 2C–2D source rules](mtp-production-serving.md#paired-capture-and-restore)
 admit independent Messages actual C=0 misses or genuine whole-image-safe C>0
 pairs, charging every uncovered occurrence fresh and verifying its source before
-native start. Model-free qualification, not deployment or fresh native acceptance;
-the Step 2D installed gate stopped on identity admission before weight loading.
+native start. Model-free qualification plus one bounded native Step 2D-R1 C=203
+corn/carrot continuation, not deployment or general C2 acceptance. The initial
+Step 2D pre-load gate failure was corrected by diagnostic import ordering only.
 These rules reuse ordinary MTP, not tool replay.
 
 [Isolated qualification](../artifacts/cached-image-admission/report.md) executes
