@@ -120,13 +120,14 @@ def test_existing_start_scheduler_route(monkeypatch, fault):
     assert historical == fresh
 
 
-def run_start_scheduler_route(monkeypatch, fault, *, historical, prepared_and_tokenizer=None, frontier=0):
+def run_start_scheduler_route(monkeypatch, fault, *, historical, prepared_and_tokenizer=None, frontier=0,
+                              queued_request=None):
     import mlx.core as mx
     import importlib
     from ds41f_mlx import prefill_fp8_mlx as p6
     from ds41f_mlx.runtime import mtp_lifecycle as lifecycle
-    scheduler, request = queued(prepared_and_tokenizer)
-    if prepared_and_tokenizer is None:
+    scheduler, request = queued(prepared_and_tokenizer) if queued_request is None else queued_request
+    if prepared_and_tokenizer is None and queued_request is None:
         verify_fixture(request.prepared)
     if not historical:
         request.prepared.image_is_historical = (False,) * len(request.image_identities)
@@ -138,9 +139,16 @@ def run_start_scheduler_route(monkeypatch, fault, *, historical, prepared_and_to
     saved_prefix = None
     if frontier:
         from test_cold_messages_reconstruction import publish
-        saved_prefix = publish(scheduler, request.prepared, frontier)
+        if queued_request is None:
+            saved_prefix = publish(scheduler, request.prepared, frontier)
+        else:
+            # Expected-state assertion only, not an alternate cache selector.
+            # The real Scheduler still performs its own unmodified acquisition.
+            saved_prefix = next(s for s in scheduler.checkpoints._payloads.values()
+                                if len(s.tokens) == frontier and s.tokens == ids[:frontier])
         prefix_values = ([tuple(v.tobytes() for v in c.cache) for c in saved_prefix.target],
                          [r.keys.tobytes() for r in saved_prefix.rings])
+    initial_pairs = list(scheduler.checkpoints._payloads.values())
     embeddings = None
     transitions = []
     lm = NS(_config=NS(dspark_target_layer_ids=(0, 1, 2)), layers=[lambda h: h]*40,
@@ -200,7 +208,7 @@ def run_start_scheduler_route(monkeypatch, fault, *, historical, prepared_and_to
     def handoff(live, model, *, terminal_prompt_token, **kw):
         transitions.append(('P5', terminal_prompt_token))
         assert transitions[-2] == ('append', n2, n1)
-        assert list(scheduler.checkpoints._payloads.values()) == ([] if saved_prefix is None else [saved_prefix])
+        assert list(scheduler.checkpoints._payloads.values()) == initial_pairs
         owner = NS(uid=17, _bg=scheduler._new_batch(None), prompt_replay_count=0)
         if fault == 'post_handoff_observation':
             raise TypeError("'tuple' object is not callable")
@@ -252,7 +260,7 @@ def run_start_scheduler_route(monkeypatch, fault, *, historical, prepared_and_to
             assert [r.offset for r in saved.rings] == [n2]*3
             assert [c.size() for c in request.execution.cache] == [n1]*40
             assert [r.offset for r in request.execution.rings] == [n1]*3
-            assert list(scheduler.checkpoints._payloads.values()) == ([] if saved_prefix is None else [saved_prefix])
+            assert list(scheduler.checkpoints._payloads.values()) == initial_pairs
             if fault == 'generation_observation':
                 optional_observation(diagnostic, 'generated', broken_optional)
                 assert request.execution.owner is not None
@@ -267,7 +275,7 @@ def run_start_scheduler_route(monkeypatch, fault, *, historical, prepared_and_to
     assert not scheduler.requests and not scheduler.running and not scheduler.waiting
     assert not scheduler.request_id_to_uid and not scheduler.uid_to_request_id
     assert scheduler.batch_generator is None and request.execution.owner is None
-    assert bool(scheduler.checkpoints._payloads) == (success or (fault == 'cancel' and frontier > 0))
+    assert bool(scheduler.checkpoints._payloads) == (success or (fault == 'cancel' and bool(initial_pairs)))
     if saved_prefix is not None and (success or fault == 'cancel'):
         assert [c.size() for c in saved_prefix.target] == [frontier]*40
         assert [r.offset for r in saved_prefix.rings] == [frontier]*3
@@ -275,7 +283,8 @@ def run_start_scheduler_route(monkeypatch, fault, *, historical, prepared_and_to
                                  [r.keys.tobytes() for r in saved_prefix.rings])
     if success:
         assert request.cached_tokens == frontier
-        assert transitions[:4] == [('vision', frontier), ('append', frontier, n2), ('append', n2, n1), ('P5', request.prompt_token_ids[-1])]
+        expected = ([('append', frontier, n2)] if frontier < n2 else []) + [('append', n2, n1)]
+        assert transitions[:len(expected)+2] == [('vision', frontier), *expected, ('P5', request.prompt_token_ids[-1])]
         assert scheduler.checkpoints.acquire(request.prompt_token_ids, images=request.image_identities)[2] == request.prompt_token_ids[:-2]
     if fault == 'cancel': assert transitions == []
     if fault == 'mutation': assert transitions == [('vision', frontier), ('append', frontier, n2)]

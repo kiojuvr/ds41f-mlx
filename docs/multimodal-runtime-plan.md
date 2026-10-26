@@ -20,9 +20,13 @@ aggregate patch envelope. Its initial installed gate failed before loading weigh
 [Step 2D-R1](../artifacts/multimodal-runtime/phase2-step2dr1-continuation.md)
 corrected diagnostic import ordering and completed one native two-request sequence:
 C=203 paired restoration, covered corn, fresh historical carrots, settlement and
-publication at 663. This bounded case is undeployed; true image-intersecting
-execution, broader conditional-discount reconstruction, changed/reordered-history
-execution and Harness offload/compaction/reacquisition remain unqualified. The
+publication at 663. [Step 2E](../artifacts/multimodal-runtime/phase2-step2e-projection-reconstruction.md)
+adds model-free changed-byte/order/position, shortened and rewritten projection
+selection and controlled continuation through publication, with no Production
+change or weight load. These bounded cases are undeployed. True image-intersecting
+execution, broader conditional-discount reconstruction, changed-projection native
+numerical/resource qualification and Harness offload/compaction/reacquisition
+remain unqualified. The
 [Phase 1 source audit](../artifacts/multimodal-runtime/phase1-gap-audit.md) identifies
 revision-bound guards, reusable execution paths, numerical-reference requirements
 and supported official lifecycle controls. Source inspection does not qualify
@@ -152,8 +156,9 @@ leaves the affected criterion blocked, not silently excluded to declare completi
   observation does not generalize. Original receipts remain unchanged.
 
 These distinctions correct the earlier reference requirement, not the complete
-C2 case matrix. Partial-hit/changed-projection transitions and broader lifecycle
-and resource qualification remain required; C2 is **PARTIAL**, not PASS. No
+C2 case matrix. Step 2E supplies bounded model-free changed-projection selection
+and lifecycle evidence, not a native numerical accuracy or resource certificate.
+Broader lifecycle and resource qualification remain required; C2 is **PARTIAL**, not PASS. No
 new full-forward comparison or general numerical correctness claim follows.
 
 C1 and C6 have bounded existing evidence; C7 has narrow resource evidence. None

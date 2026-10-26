@@ -111,8 +111,10 @@ cold path. Step 2D model-free verifies whole-image-safe C>0 paired suffix recons
 its initial installed gate stopped before loading weights. Step 2D-R1 corrected
 diagnostic import ordering and completed one bounded native C=203 continuation
 through settlement/publication. These source changes are undeployed.
-Cross-partition floating equivalence, broader partial-hit/changed-history cases
-and Harness lifecycle transitions remain unqualified;
+Step 2E adds model-free changed-byte/order/position, shortened and rewritten
+projection selection/continuation evidence with no Production change or weights.
+Cross-partition floating equivalence, changed-projection native numerical/resource
+qualification and Harness lifecycle transitions remain unqualified;
 logical-session exact leases are unchanged.
 
 ### Future official-source investigation priorities

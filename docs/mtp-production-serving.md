@@ -184,6 +184,17 @@ C=203 continuation with covered corn and fresh historical carrots, settlement at
 execution evidence, not cross-partition numerical equivalence or Harness lifecycle
 acceptance; C2 remains PARTIAL.
 
+For independent Messages the **current Recipe projection** is authoritative.
+Incompatible longer token/image prefixes are excluded by the same paired
+authority; a compatible shorter pair stays eligible, otherwise lookup misses.
+Only complete uncovered occurrences in the current suffix require fresh encoding;
+removed images need no obsolete source bytes. [Step 2E](../artifacts/multimodal-runtime/phase2-step2e-projection-reconstruction.md)
+verifies changed bytes/order/position and shortened/rewritten history through
+controlled settlement/publication, without Production changes or weight loading.
+This is model-free integration evidence, not Harness offload/compaction or native
+changed-projection numerical/resource qualification. Exact logical Chat leases
+and all existing refusal/burn boundaries are unchanged.
+
 ## Lifecycle and publication
 
 ```text
