@@ -183,14 +183,18 @@ requested output and the speculative block) must fit **12 MiB**. The projection
 also bounds each of the two unpublished captures; shared bytes are counted again,
 not assumed free. Outside this qualification, the existing all-history patch
 rejection remains. There is no new Vision context window or screenshot-count cap.
-Cold fresh work and historical misses receive no discount or replay.
+Cold fresh work and historical misses receive no discount. The undeployed
+[Step 2C source rule](mtp-production-serving.md#paired-capture-and-restore) admits
+only independent Messages actual C=0 misses with all images charged fresh and
+sources verified before native start; it reuses ordinary MTP, not tool replay.
 
 [Isolated qualification](../artifacts/cached-image-admission/report.md) executes
 12 screenshot occurrences and cached continuations without admission overrides,
 including native running cancellation. It separately measures maximum-body,
 near-1M-position, 600-occurrence queued metadata; that is **not** 600-image model
 execution. Harness's 600 is a request compatibility reference, not an execution
-promise. Partial spans and historical misses still reject.
+promise. Intersecting image spans and uncovered historical spans at C>0 still
+reject; no earlier paired state is discarded to force a cold miss.
 
 The existing **16 MiB entire JSON body**, **128 distinct stored Files / 64 MiB
 storage**, queue serialization, checkpoint context/output and paired-cache residency
@@ -198,7 +202,9 @@ limits remain independent. These are not full compatibility with Harness's
 **128 MiB raw Files / 20 MiB represented inline-image** budgets. In particular,
 Runtime 400 does **not** trigger official image offload. Official projection and
 compaction can change the prefix and invalidate the pair; surviving historical
-images then require an independently compatible pair or reject safely.
+images require an independently compatible pair or the narrow independent
+Messages C=0 source admission. Broader Harness transitions remain unqualified;
+the operational installed Runtime is unchanged.
 See [Files bounds](harness-image-files.md) and the
 [compatibility assessment](../artifacts/harness-image-capacity/report.md).
 600-occurrence key construction, queued metadata and official offload are
@@ -220,9 +226,10 @@ from the historical Phase 3 inline-fallback result. Health's conservative
 
 Image identity is included in
 upstream paired-cache hashes; after prefill only the existing target/DSpark pair
-is executable authority. Prior-message images require a compatible retained pair:
-eviction or an incompatible historical-image edit rejects without hidden replay
-or re-encoding. Fresh last-message images may prefill on a safe miss. MTP requires
+is executable authority. Prior-message images require compatible paired coverage
+except for the narrow independent Messages C=0 source rule above. An uncovered
+C>0 historical image still rejects; fresh last-message images retain safe-miss
+prefill. Logical Chat lease loss never falls back to reconstruction. MTP requires
 two terminal text tokens for the existing N-2 prompt capture/P5 handoff.
 See [Vision/MTP seam audit](mtp-vision-integration.md) for delta acceptance scope.
 The original Vision delta did not publish an installed package; subsequent local

@@ -69,7 +69,9 @@ they do not automatically define permanent model or upstream architectural
 limitations.** In particular, rejection of historical image replay/re-encoding is
 a current local safeguard, not a universal restriction of official DeepInfer.
 Changing it requires an independently justified, numerically correct cache-recovery
-design. Existing guards are unchanged.
+design. The narrow independent Messages C=0 source rule now reuses the existing
+MTP cold execution schedule; all other uncovered-history safeguards remain.
+It is model-free admission verification, not deployed or general C2 acceptance.
 
 The same distinction applies to context/multimodal resource limits, KV Cache
 eviction/reconstruction, stateful Messages support, file ownership/lifecycle,
@@ -101,10 +103,12 @@ retention evidence boundaries.
 
 The [Multimodal Runtime plan](multimodal-runtime-plan.md) owns the project-specific
 goal, C1–C9 completion criteria, phases, dependencies and progress under the policy
-above. Phases 0–1 are complete; Phase 2 has bounded N-2 numerical observations
-for Cases A/B/C, not reconstruction acceptance or C2 qualification. Current
-historical misses still reject without replay or unverified reconstruction.
-The plan changes no execution or logical-session contract.
+above. Phases 0–1 are complete; Phase 2/C2 remains **PARTIAL**. Step 2B-R2
+exercised C=0 native reconstruction through settlement/publication; Step 2C
+model-free verifies normal independent Messages C=0 admission to that unchanged
+cold path. The source change is undeployed. Cross-partition floating equivalence,
+partial-hit reconstruction and Harness lifecycle transitions remain unqualified;
+logical-session exact leases are unchanged.
 
 ### Future official-source investigation priorities
 
@@ -160,8 +164,9 @@ skipping/admission from recovery after a changed canonical projection:
 No automatic follow-on work is selected. Full Harness compatibility remains
 **PARTIAL** at concrete transport/storage and canonical-prefix recovery boundaries.
 Official rc.2 offload does not recover arbitrary Runtime 400 errors. Its projection
-and summary compaction can invalidate paired state, and historical misses still
-reject without replay. No replacement history/cache owner or follow-on campaign
+and summary compaction can invalidate paired state. The narrow undeployed
+Messages C=0 admission does not qualify those Harness transitions; uncovered
+historical spans at C>0 still reject. No replacement history/cache owner or follow-on campaign
 is introduced. The
 [Q2 report](../artifacts/visual-feedback-loop/phase-4-q2-report.md) retains its
 partial grounding and four-image continuity scope; it did not test seven images.

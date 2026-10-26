@@ -1,8 +1,7 @@
-"""Step 2B qualification scope, never imported by serving or exposed by HTTP.
+"""Bounded Step 2B numerical/lifecycle observer, never imported by serving.
 
 Uses the real Scheduler and worker lifecycle. No alternate executor/publication.
 """
-from contextlib import contextmanager
 from hashlib import sha256
 import struct
 
@@ -31,46 +30,6 @@ def verify_fixture(prepared):
         raise ValueError('qualification image source unavailable or changed')
     mm.validate_prefix(0, [])
     mm.validate_workload(0)
-
-
-@contextmanager
-def cold_miss_scope(scheduler, request):
-    """One already queued, isolated request; restore the predicate on every exit.
-
-    Paired lookup is NOT replaced. A hit, logical lease, changed input or different
-    request cannot receive this exception. All other production guards still run.
-    """
-    from ds41f_mlx.serving.production_mtp import ProductionScheduler
-    if type(scheduler) is not ProductionScheduler:
-        raise ValueError('requires the existing ProductionScheduler')
-    if (list(scheduler.waiting) != [request] or scheduler.running or
-            list(scheduler.requests.values()) != [request] or scheduler.batch_generator is not None or
-            scheduler.session_leases or scheduler.checkpoints._payloads or
-            request.logical_session is not None or request.execution.canonical or
-            request.execution.owner is not None or request.execution.cache is not None or
-            request.execution.rings is not None or request.required_image_frontier != 191):
-        raise ValueError('requires isolated C=0 request without retained logical sessions')
-    verify_fixture(request.prepared)
-    original = scheduler._historical_images_covered
-    if '_historical_images_covered' in scheduler.__dict__:
-        raise ValueError('nested qualification scope forbidden')
-    def covered(candidate, frontier):
-        if candidate is not request:
-            return original(candidate, frontier)
-        if (frontier != 0 or candidate.execution.canonical or candidate.execution.cache is not None or
-                candidate.execution.rings is not None or candidate.logical_session is not None or
-                scheduler.session_leases or scheduler.checkpoints._payloads or
-                candidate.image_identities != tuple(candidate.prepared.multimodal.identities())):
-            raise ValueError('qualification requires genuine unchanged C=0 miss')
-        verify_fixture(candidate.prepared)
-        candidate.trace['qualification_cold_miss'] = dict(frontier=0, fresh_patches=1551,
-            fresh_images=1, covered_images=0, hit_identity=None)
-        return True
-    scheduler._historical_images_covered = covered
-    try:
-        yield
-    finally:
-        del scheduler._historical_images_covered
 
 
 def p5_observation(live, owner, scheduler):
@@ -160,7 +119,7 @@ def observe_continuation(backend, prepared, tokenizer, receipt):
     reference_started = False
     receipt['unavailable'] = dict(candidate_distribution='not retained: Candidate lifecycle takes priority')
     try:
-        with patch.object(p6, 'handoff_to_generation', handed), patch.object(backend, '_encode_new_images', encode), cold_miss_scope(scheduler, request):
+        with patch.object(p6, 'handoff_to_generation', handed), patch.object(backend, '_encode_new_images', encode):
             # Same worker and Scheduler hooks as Production. Separating startup
             # allows a read-only UID-map receipt before a one-token terminal step.
             scheduled, _ = scheduler._schedule_waiting()
@@ -203,7 +162,7 @@ def observe_continuation(backend, prepared, tokenizer, receipt):
             waiting=len(scheduler.waiting), uid_mapping=dict(scheduler.request_id_to_uid),
             reverse_mapping=dict(scheduler.uid_to_request_id), native_batch=scheduler.batch_generator is not None,
             owner=request.execution.owner is not None, sources=len(prepared.multimodal._sources),
-            predicate_restored='_historical_images_covered' not in scheduler.__dict__, fatal_error=backend.fatal_error)
+            fatal_error=backend.fatal_error)
         receipt['published_pairs'] = []
         for saved in scheduler.checkpoints._payloads.values():
             validate_pair(saved.target, saved.rings, saved.tokens)
@@ -258,8 +217,7 @@ def observe_continuation(backend, prepared, tokenizer, receipt):
                 native_batch=scheduler.batch_generator is not None,
                 owner=request.execution.owner is not None,
                 pending_capture=request.prompt_checkpoint is not None,
-                published_pairs=len(scheduler.checkpoints._payloads),
-                predicate_restored='_historical_images_covered' not in scheduler.__dict__)
+                published_pairs=len(scheduler.checkpoints._payloads))
         optional_observation(receipt, 'exit_state', exit_observation)
         # Cleanup is a production operation: preserve its exception, and never
         # replace an earlier execution error with cleanup/receipt formatting.

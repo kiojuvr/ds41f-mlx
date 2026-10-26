@@ -10,7 +10,12 @@ second architecture policy or a claim that the goal is already implemented.
 **Progress: Phases 0–1 complete; Phase 2 numerical-reference work in progress;
 Phases 3–4 not started.** Bounded [N-2 observations](../artifacts/multimodal-runtime/phase2-numerical-reference.md#12-step-1c--compatible-restored-prefix-append-2026-10-25)
 cover Cases A/B/C; Case C has floating differences, with no approved accuracy
-envelope. Reconstruction acceptance and C2 remain unqualified. The
+envelope. **C2 remains PARTIAL**: [Step 2B-R2](../artifacts/multimodal-runtime/phase2-step2br2-continuation.md)
+exercised native C=0 reconstruction through settlement/publication; [Step 2C](../artifacts/multimodal-runtime/phase2-step2c-admission.md)
+model-free verifies normal independent Messages C=0 admission using the unchanged
+MTP cold path. This source change is undeployed, not fresh real-model acceptance.
+Partial-hit reconstruction and Harness offload/compaction/reacquisition remain
+unqualified. The
 [Phase 1 source audit](../artifacts/multimodal-runtime/phase1-gap-audit.md) identifies
 revision-bound guards, reusable execution paths, numerical-reference requirements
 and supported official lifecycle controls. Source inspection does not qualify
@@ -93,9 +98,11 @@ retained logical-root** guards retain their current conditional meanings. Comple
 compatible historical coverage is required for the patch discount; projected
 output/speculation and capture coexistence remain accounted. Independent source
 bytes, pixels, entire body, Files storage, context/output, queue and cache limits
-remain enforced. No guard relaxation is authorized. Current historical misses
-still reject without replay or unverified reconstruction; future criteria below
-are requirements, not changes to that contract or permanent model limitations.
+remain enforced. Independent Messages C=0 source admission charges all images
+fresh and checks source availability before native start. C>0 with uncovered
+historical images still refuses; a legitimate earlier pair is not discarded to
+force C=0. Exact logical Chat leases remain mandatory. The installed Runtime is
+unchanged; see the [execution contract](mtp-production-serving.md#paired-capture-and-restore).
 
 ## Observable completion criteria
 
@@ -107,7 +114,7 @@ leaves the affected criterion blocked, not silently excluded to declare completi
 | ID | Required observable behavior and acceptance basis |
 | --- | --- |
 | **C1 — Compatible reuse** | An unchanged canonical prefix restores a compatible complete pair; wholly covered historical images incur no redundant Vision encoding. Trace joins show exact image identities, token spans, geometry and common canonical frontier across all **40 Target layers / 3 DSpark rings**, followed by settled publication and valid continuation. A target-only hint is not a hit. |
-| **C2 — Safe reconstruction** | A legitimate current projection lacking a reusable complete pair, with available image inputs and admitted resources, constructs numerically valid state and continues. Record separate cases for complete miss, partial text-prefix hit, partial image coverage, changed historical occurrence, and shortened/rewritten prefix; do not assume a common solution. No mismatched prefix is reported as a hit. Compare reconstructed state and continuation against an independently established canonical-prefill reference under the same admitted numerical semantics; frontier agreement or plausible output alone is insufficient numerical proof. Phase 1 must identify the reference, comparisons and justified tolerances before implementation acceptance. Unsupported/missing-input cases reject without publishing invalid state. |
+| **C2 — Safe reconstruction** | A legitimate current projection lacking a reusable complete pair, with available image inputs and admitted resources, constructs numerically valid state and continues. Record separate cases for complete miss, partial text-prefix hit, partial image coverage, changed historical occurrence, and shortened/rewritten prefix; do not assume a common solution. No mismatched prefix is reported as a hit. Apply the comparison classes below, not bitwise equality across different execution schedules; frontier agreement or plausible output alone is insufficient proof. Preserve unresolved historical numerical evidence and qualify each required transition separately. Unsupported/missing-input cases reject without publishing invalid state. |
 | **C3 — Offload** | After official Harness offloads older occurrences and changes the canonical Messages projection, inference completes using valid state without requiring the obsolete complete prefix to remain resident. Wire/preparation/cache traces establish the changed prefix. Runtime neither selects offloaded images nor rewrites history. |
 | **C4 — Compaction** | After official Harness replaces earlier history with its projected summary, subsequent inference and continuation complete from valid state. Evidence includes a genuine prefix invalidation/miss; the previous unmodified token prefix is not a hidden dependency. |
 | **C5 — Reacquisition** | Where the attachment remains available, an offloaded image can be read again through official Harness attachments/tools and actually consumed by Vision/model inference as a new occurrence. Bind source identity, new occurrence position and original tool IDs; do not resurrect the removed occurrence or count upload/preparation as inference. |
@@ -115,6 +122,30 @@ leaves the affected criterion blocked, not silently excluded to declare completi
 | **C7 — Resources** | Cold prefill, Vision, paired-state construction/restoration/retention, queued/running cancellation and cleanup stay within declared limits. Measure MLX active/cache/peaks, host reserve/pressure, swap and lifetime physical footprint, including startup/transients and active/capture coexistence. Report overlapping measures separately, not as additive memory or an RSS-only claim. Requests/leases/sources/native ownership retire through settlement or burn; loaded weights and allocator retention are distinguished from leaks. Boundary refusals publish no invalid pair and preserve documented failure containment. |
 | **C8 — Session usability** | A finite official Harness session repeatedly acquires/inspects new images, uses cached images, offloads older occurrences, compacts, continues after changed projections and reacquires an earlier image. At least one offload and one compaction transition must demonstrably require reconstruction rather than only cache hits. Continue beyond the initial fixed image set within bounded simultaneous residency; apply the finite workload below, not an unbounded endurance claim. |
 | **C9 — Recovery/failure** | Document and observe which history/cache transitions can reconstruct, how compatible upstream mechanisms initiate them, and when operator/client intervention is necessary. Missing attachment inputs, resource refusal, malformed/incomplete protocol and uncertain effects have explicit safe outcomes. Arbitrary Runtime HTTP 400 must not be represented as automatic Harness offload: official offload follows its adapter policy. If a required upstream-compatible recovery mechanism is absent, record the precise blocker rather than inventing a proprietary retry protocol. |
+
+### C2 numerical acceptance distinctions
+
+- **A — Same MTP schedule:** hold canonical IDs, image bytes/embedding identity,
+  admitted profile, C=0 state, P6 boundaries, Target/DSpark initialization,
+  N-2/N-1, P5 and sampling fixed. Historical wire origin is admission metadata,
+  not a numerical input. Reconstruction must invoke the existing cold MTP path,
+  not an alternative forward algorithm. Step 2C verifies this routing model-free;
+  Step 2B-R2 supplies bounded prior real-model downstream lifecycle evidence.
+- **B — Different prefix partitions:** compatible reuse changes the append
+  schedule. Shape-dependent arithmetic precludes assuming bitwise equivalence.
+  Require compatible paired identity, exact preserved committed prefix, valid
+  whole-image coverage and genuine suffix execution. No general floating tolerance
+  or cross-partition numerical equivalence is established.
+- **C — MTP versus ordinary full-sequence forward:** an independent numerical
+  diagnostic, not a bitwise acceptance oracle for reconstruction. Step 2B-R2's
+  significant state/first-token differences remain unresolved historical evidence;
+  they are not proof of a reconstruction-specific defect. Step 2A's bounded exact
+  observation does not generalize. Original receipts remain unchanged.
+
+These distinctions correct the earlier reference requirement, not the complete
+C2 case matrix. Partial-hit/changed-projection transitions and broader lifecycle
+and resource qualification remain required; C2 is **PARTIAL**, not PASS. No
+new full-forward comparison or general numerical correctness claim follows.
 
 C1 and C6 have bounded existing evidence; C7 has narrow resource evidence. None
 is newly qualified by this plan. C2–C5, C8 and C9's general recovery behavior
@@ -172,7 +203,7 @@ links to scoped evidence; this is not a second milestone registry.
 | --- | --- | --- | --- | --- | --- | --- |
 | **0 — Contract / complete** | Define usable completion before solutions | Existing policy, execution contracts and scoped proof | Technical answers deferred to Phase 1 | This CURRENT goal, C1–C9 and phased plan | Internally consistent, testable plan and documentation validation; depends on existing owners/evidence | Source investigation, implementation, experiments or acceptance |
 | **1 — Gap analysis / complete** | Compare pinned and relevant current Harness, Recipe, DeepInfer and oMLX with local behavior | Existing source-review revisions in the governing implementation plan; metadata preparation, cold prefill/P6/P5, Scheduler and paired authority | Offload/summary projections; hits/partial hits/misses; fresh/cached spans; source-image availability; paired reconstruction; logical-session restrictions; admission/rejection and upstream recovery initiation | [Revision-bound source audit](../artifacts/multimodal-runtime/phase1-gap-audit.md): case matrix, exact guards, reusable seams, independent-prefill reference strategy, resource evidence requirements and official workload feasibility | Source exit satisfied; numerical tolerances/baseline, changed-path execution/resources and installed lifecycle remain explicitly unverified. Depends on Phase 0 and separately authorized Phase 1 task | Prescribing a new Scheduler, cache/image/session owner or implementing a speculative solution |
-| **2 — Reconstruction / numerical reference in progress; reconstruction unqualified** | Close only verified reconstruction gaps | Canonical prefill/P6/P5, existing Scheduler and Target/DSpark machinery | Which C2 cases need which paths; numerical equivalence and fail-closed unsupported cases | Minimal justified changes and scoped numerical/semantic reconstruction evidence | Relevant changed-prefix cases qualified without weakening paired-MTP guarantees; depends on Phase 1 findings/reference and separate approval | Redesigning execution topology, tool replay, guard relaxation or general recovery promises |
+| **2 — Reconstruction / PARTIAL; narrow C=0 admission model-free verified, undeployed** | Close only verified reconstruction gaps | Canonical prefill/P6/P5, existing Scheduler and Target/DSpark machinery | Which C2 cases need which paths; numerical equivalence and fail-closed unsupported cases | Minimal justified changes and scoped numerical/semantic reconstruction evidence | Relevant changed-prefix cases qualified without weakening paired-MTP guarantees; depends on Phase 1 findings/reference and separate approval | Redesigning execution topology, tool replay, guard relaxation or general recovery promises |
 | **3 — Harness lifecycle / not started** | Connect official offload, compaction and reacquisition | Official Harness history/attachments/tools and native Recipe Messages/Files | Supported triggering/continuation mechanisms; attachment availability/expiry; operator intervention boundaries | Official lifecycle evidence for C3–C6/C9 and precise blockers | Official session continues across qualified changes without external-effect replay; depends on Phase 1 mechanism findings and Phase 2 qualified paths | Runtime conversation/attachment management or proprietary recovery protocol; absence of upstream mechanism is a blocker |
 | **4 — Resource qualification / not started** | Establish bounded long-running usability and completion | Existing admission, cancellation/retirement and finite evidence tooling | Cumulative acquisition, cache churn, reconstruction/cancellation peaks and cleanup under pressure | Frozen-workload receipts, C1–C9 completion dispositions and documented operating/failure envelope | All C1–C9 evidence-supported and agreed end-to-end acceptance passes; depends on Phases 2–3 and separately authorized resource-safe execution | Unbounded endurance, unrelated optimization or repeated Visual Feedback Loop demos unless an affected component needs regression |
 
@@ -189,5 +220,6 @@ ingestion claim. General Files lifecycle compatibility remains separately scoped
 
 Completion of this project will not itself promote a package or renew historical
 release/numerical qualification. Existing CURRENT execution owners must be updated
-only when separately qualified implementation changes their contracts. Until then,
-the existing no-historical-miss-replay safeguards remain authoritative.
+only at their evidenced scope. Step 2C changes only independent Messages C=0
+admission in source; uncovered partial hits and exact logical leases retain their
+safe refusals. No general reconstruction or installed release qualification follows.

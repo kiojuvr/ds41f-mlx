@@ -49,9 +49,6 @@ class ProductionScheduler(Scheduler):
         self.batch_generator = BatchGenerator(*args, **kwargs)
         return self.batch_generator
 
-    def _historical_images_covered(self, request, frontier):
-        return frontier >= request.required_image_frontier
-
     def _schedule_waiting(self):
         if self.running or not self.waiting:
             return [], []
@@ -105,9 +102,18 @@ class ProductionScheduler(Scheduler):
             if request.prepared.multimodal is not None:
                 request.prepared.multimodal.validate_prefix(len(rec.canonical),
                     [s for s in request.image_identities if s['start'] < len(rec.canonical)])
-                if not self._historical_images_covered(request, len(rec.canonical)):
+                # Wire age is not a numerical input. Only an independent
+                # Messages miss may enter the existing cold MTP path; never
+                # discard a selected earlier pair to manufacture such a miss.
+                cold_messages = (request.prepared.protocol == 'messages' and logical is None
+                                 and restored is None and not rec.canonical
+                                 and rec.cache is None and rec.rings is None and rec.owner is None)
+                if len(rec.canonical) < request.required_image_frontier and not cold_messages:
                     raise ValueError('historical image pair unavailable; image replay/re-encode forbidden')
                 request.prepared.multimodal.validate_workload(len(rec.canonical))
+                # Validate every fresh source before _start can create native
+                # state. Preparation already decoded these immutable bytes.
+                request.prepared.multimodal.validate_sources(len(rec.canonical))
             request.cached_tokens = trace['cached_tokens'] = len(rec.canonical)
             request.remaining_tokens = request.prompt_token_ids[len(rec.canonical):]
             trace['remaining_suffix_tokens'] = len(request.remaining_tokens)

@@ -48,14 +48,6 @@ def prove_installed_admission(*, checkpoint=False):
     assert bool(mx.all(mx.isfinite(result)).item())
     assert identity.numerical_profile() == profile
     assert all(sys.modules[name] is module for name, module in modules.items())
-    from ds41f_mlx.serving.production_mtp import ProductionScheduler
-    predicate = inspect.getsource(ProductionScheduler._historical_images_covered)
-    schedule = inspect.getsource(ProductionScheduler._schedule_waiting)
-    assert 'return frontier >= request.required_image_frontier' in predicate
-    assert 'self._historical_images_covered(request, len(rec.canonical))' in schedule
-    assert 'if C < request.required_image_frontier:' in schedule
-    from tools.qualify_cold_messages_continuation import cold_miss_scope
-    assert cold_miss_scope.__module__ == 'tools.qualify_cold_messages_continuation'
     from ds41f_mlx.runtime.mtp_lifecycle import DSparkCommittedContext, OMLXMTPGenerationSession
     from mlx_lm.generate import BatchGenerator
     from ds41f_mlx.prefill_fp8_mlx import handoff_to_generation
@@ -71,5 +63,4 @@ def prove_installed_admission(*, checkpoint=False):
     lifecycle['bound_observation'] = '(lifetime, revision, prefix, token, native logprobs); deliberately not retained'
     return dict(runtime=runtime, host=host, profile=profile, origins=origins, lifecycle=lifecycle,
                 identity_object_preserved=True, actual_pre_woa_materialized=True,
-                result_sha256=hashlib.sha256(struct.pack('<256f', *values)).hexdigest(),
-                predicate=predicate, scope_path=inspect.getfile(cold_miss_scope))
+                result_sha256=hashlib.sha256(struct.pack('<256f', *values)).hexdigest())

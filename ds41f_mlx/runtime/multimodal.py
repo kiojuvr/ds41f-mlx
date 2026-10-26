@@ -75,6 +75,14 @@ class MultimodalInput:
         if sum(s.grid[0] * s.grid[1] for s in fresh) > MAX_REQUEST_PATCHES:
             raise ValueError('aggregate image patch budget exceeded (fresh Vision workload)')
 
+    def validate_sources(self, frontier: int = 0) -> None:
+        """Recheck all fresh immutable sources before any native work starts."""
+        for span in self.spans:
+            if span.start >= frontier:
+                data = self._sources.get(span.start)
+                if data is None or sha256(data).hexdigest() != span.digest:
+                    raise ValueError('new image source unavailable or changed')
+
     def encode_new(self, model: Any, frontier: int = 0, *, span_encoder=None) -> 'ImageEmbeddings':
         """Consume request sources once, preparing only spans beyond the frontier."""
         # The caller owns the admitted paired/idle frontier. Never turn a

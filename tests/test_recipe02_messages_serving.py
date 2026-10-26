@@ -416,14 +416,13 @@ def test_converted_image_frontier_at_real_paired_admission(monkeypatch, historic
     scheduler.backend = NS(_start=start)
     scheduler._retire = lambda req, *, error: errors.append(error)
     scheduled, _ = scheduler._schedule_waiting()
-    if historical and cache != 'retained':
-        assert not scheduled and not starts and not encoded
-        assert len(errors) == 1 and 'historical image pair unavailable' in str(errors[0])
-        assert not request.native_started
-    else:
-        assert not errors, errors
-        assert scheduled == [request]
-        assert encoded == [inp.spans[-1].start]
+    assert not errors, errors
+    assert scheduled == [request]
+    reused = cache == 'retained' or (not historical and cache != 'missing' and cache != 'evicted')
+    assert starts == [frontier if reused else 0]
+    assert encoded == [s.start for s in inp.spans if s.start >= starts[0]]
+    if historical and cache == 'changed':
+        assert starts == [0]  # Same placeholder IDs never conceal changed bytes.
     assert not inp._sources
     authority.clear()
 

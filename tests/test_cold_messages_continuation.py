@@ -1,11 +1,11 @@
-"""Step 2B: narrow scope plus existing production lifecycle, no weights."""
+"""Normal C=0 admission and existing MTP lifecycle, no weights."""
 from types import SimpleNamespace as NS
 import pytest
 
 from test_cold_messages_reconstruction import prepare_fixture, idle_scheduler
 from test_production_mtp import pair
 from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
-from tools.qualify_cold_messages_continuation import cold_miss_scope, verify_fixture
+from tools.qualify_cold_messages_continuation import verify_fixture
 
 
 def test_p5_observation_uses_actual_dspark_offsets_property():
@@ -62,26 +62,39 @@ def queued():
     return scheduler, request
 
 
-@pytest.mark.parametrize('fault', ['missing', 'modified', 'identity', 'budget', 'logical', 'lease', 'target_only', 'output_budget'])
-def test_scope_refuses_before_start(fault):
+@pytest.mark.parametrize('fault', ['missing', 'modified', 'identity', 'budget', 'pixel', 'logical', 'target_only', 'short_pair', 'intersection', 'chat'])
+def test_normal_admission_refuses_before_start(fault):
     from dataclasses import replace
     scheduler, request = queued()
     mm = request.prepared.multimodal
     if fault == 'missing': mm.release_sources()
     if fault == 'modified': mm._sources[2] = b'changed'
-    if fault in ('identity', 'budget'):
-        field = dict(digest='changed') if fault == 'identity' else dict(grid=(200, 200))
+    if fault in ('identity', 'budget', 'pixel'):
+        field = (dict(digest='changed') if fault == 'identity' else
+                 dict(grid=(200, 200)) if fault == 'budget' else dict(source_pixels=17*1024**2))
         request.prepared.multimodal = replace(mm, spans=(replace(mm.spans[0], **field),))
-    if fault == 'logical': request.logical_session = NS(canonical=(1,))
-    if fault == 'lease': scheduler.session_leases['lost'] = (0, b'lost')
+    if fault == 'logical':
+        request.logical_session = NS(canonical=(1,), session_id='lost')
+        scheduler.backend.production_sessions = NS(publish=lambda *a: None)
     if fault == 'target_only': request.execution.cache = pair(211)[0]
-    if fault == 'output_budget': request.prepared.resolved_max_tokens = 2
-    with pytest.raises(ValueError):
-        with cold_miss_scope(scheduler, request):
-            pytest.fail('invalid exception')
-    assert not request.native_started and not scheduler.checkpoints._payloads
-    assert '_historical_images_covered' not in scheduler.__dict__
-    request.prepared.multimodal.release_sources()
+    if fault == 'short_pair':
+        from test_cold_messages_reconstruction import publish
+        publish(scheduler, request.prepared, 2, images=())
+    if fault == 'intersection':
+        scheduler.checkpoints.acquire = lambda *a, **k: pair(190)[:2] + (request.prompt_token_ids[:190],)
+    if fault == 'chat': request.prepared.protocol = 'chat'
+    scheduler.backend._start = lambda *a, **k: pytest.fail('native start on invalid admission')
+    scheduler._schedule_waiting()
+    assert not request.native_started
+    error = scheduler._completed[-1].error
+    assert error
+    if fault == 'logical': assert error == 'canonical session pair is not retained; no replay'
+    if fault == 'intersection': assert 'intersects' in error
+    if fault in ('budget', 'pixel'): assert 'budget exceeded' in error
+    assert not scheduler.requests and not scheduler.waiting and not scheduler.running
+    assert scheduler.backend.fatal_error is None
+    assert not request.prepared.multimodal._sources
+    scheduler.checkpoints.clear()
 
 
 def test_observer_requires_identity_before_load(monkeypatch):
@@ -97,34 +110,31 @@ def test_observer_requires_identity_before_load(monkeypatch):
     assert calls == []
 
 
-@pytest.mark.parametrize('fault', ['source', 'identity', 'lease', 'scope_exit'])
-def test_recheck_and_scope_exit_keep_normal_refusal(fault):
-    scheduler, request = queued()
-    with cold_miss_scope(scheduler, request):
-        if fault == 'source': request.prepared.multimodal._sources[2] = b'changed'
-        if fault == 'identity': request.image_identities = ()
-        if fault == 'lease': scheduler.session_leases['late'] = (0, b'lost')
-        if fault != 'scope_exit': scheduler._schedule_waiting()
-    if fault == 'scope_exit': scheduler._schedule_waiting()
-    assert not request.native_started
-    assert scheduler._completed[-1].error
-    assert not scheduler.checkpoints._payloads and scheduler.backend.fatal_error is None
-    assert not request.prepared.multimodal._sources
-    assert '_historical_images_covered' not in scheduler.__dict__
-
-
 @pytest.mark.parametrize('fault', ['none', 'cancel', 'mutation', 'settlement', 'incomplete', 'post_handoff_observation',
     'registered_observation', 'generation_observation', 'publication_observation'])
 def test_existing_start_scheduler_route(monkeypatch, fault):
+    historical = run_start_scheduler_route(monkeypatch, fault, historical=True)
+    fresh = run_start_scheduler_route(monkeypatch, fault, historical=False)
+    # Deterministic same-schedule controls, not sampled numerical trajectories.
+    assert historical == fresh
+
+
+def run_start_scheduler_route(monkeypatch, fault, *, historical):
     import mlx.core as mx
     import importlib
     from ds41f_mlx import prefill_fp8_mlx as p6
     from ds41f_mlx.runtime import mtp_lifecycle as lifecycle
     scheduler, request = queued()
     verify_fixture(request.prepared)
+    if not historical:
+        request.prepared.image_is_historical = (False,)
+        request.required_image_frontier = 0
+    ids = tuple(request.prompt_token_ids)
+    source = request.prepared.multimodal._sources[2]
+    embeddings = NS(rows=[(2, mx.array([[1., 2., 3.]]))], seconds=0)
     transitions = []
     lm = NS(_config=NS(dspark_target_layer_ids=(0, 1, 2)), layers=[lambda h: h]*40,
-            make_cache=lambda: pair(0)[0], make_mtp_cache=lambda: pair(211)[1])
+            make_cache=lambda: pair(0)[0], make_mtp_cache=lambda: pair(0)[1])
     # Controlled math/native interfaces, NOT an alternative lifecycle. _start,
     # _schedule_waiting, step and _retire themselves remain the real methods.
     def append_hidden(hidden, rings, start_offset):
@@ -134,7 +144,12 @@ def test_existing_start_scheduler_route(monkeypatch, fault):
     backend._model = NS(language_model=lm)
     backend.load = lambda: None
     backend._prefill_tap_start = lambda *a: 0
-    backend._encode_new_images = lambda mm, C: (mm.validate_workload(C), transitions.append(('vision', C)), NS(rows=[(2, None)], seconds=0))[-1]
+    def encode(mm, C):
+        assert C == 0 and mm._sources[2] == source and tuple(mm.token_ids) == ids
+        mm.validate_workload(C)
+        transitions.append(('vision', C))
+        return embeddings
+    backend._encode_new_images = encode
     backend._retire = lambda rec: setattr(rec, 'owner', None)
     backend.fatal_error = None
     backend.make_sampler = lambda policy: None
@@ -143,6 +158,8 @@ def test_existing_start_scheduler_route(monkeypatch, fault):
     scheduler.backend = backend
     def create(model, cache, ids, *, committed_frontier=0, **kw):
         C, end = committed_frontier, len(ids)
+        assert tuple(ids) == tuple(request.prompt_token_ids[:end])
+        assert kw['image_embeddings'] is embeddings
         app = NS(commit_certificate=NS(cache=cache, end=end), final_execution=NS(runner=NS(full_cache_repack_count=0)))
         def execute():
             transitions.append(('append', C, end))
@@ -193,32 +210,35 @@ def test_existing_start_scheduler_route(monkeypatch, fault):
         offsets = (212, 212, 212)
         return offsets()
     from tools.qualify_cold_messages_continuation import optional_observation
-    with cold_miss_scope(scheduler, request):
-        if fault == 'registered_observation':
-            scheduled, _ = scheduler._schedule_waiting()
-            assert scheduled == [request]
-            optional_observation(diagnostic, 'registered', broken_optional)
-            assert request.execution.owner.uid == 17
-            assert scheduler.request_id_to_uid == {'step2b': 17}
-        if fault == 'cancel': scheduler._do_abort_request('step2b')
-        else:
-            result = scheduler.step()
-            if fault not in ('mutation', 'post_handoff_observation'):
-                assert not result.outputs or not result.outputs[-1].error, result.outputs[-1].error
-                assert request.prompt_checkpoint is not None, scheduler.last_settlement
-                assert request.prompt_checkpoint.tokens == tuple(request.prompt_token_ids[:-2])
-                assert not scheduler.checkpoints._payloads
-                if fault == 'generation_observation':
-                    optional_observation(diagnostic, 'generated', broken_optional)
-                    assert request.execution.owner is not None
-                scheduler.step()
-                if fault == 'publication_observation':
-                    optional_observation(diagnostic, 'published', broken_optional)
-                    assert scheduler.checkpoints._payloads
+    if fault == 'registered_observation':
+        scheduled, _ = scheduler._schedule_waiting()
+        assert scheduled == [request]
+        optional_observation(diagnostic, 'registered', broken_optional)
+        assert request.execution.owner.uid == 17
+        assert scheduler.request_id_to_uid == {'step2b': 17}
+    if fault == 'cancel': scheduler._do_abort_request('step2b')
+    else:
+        result = scheduler.step()
+        if fault not in ('mutation', 'post_handoff_observation'):
+            assert not result.outputs or not result.outputs[-1].error, result.outputs[-1].error
+            saved = request.prompt_checkpoint
+            assert saved is not None, scheduler.last_settlement
+            assert saved.tokens == tuple(request.prompt_token_ids[:-2])
+            assert [c.size() for c in saved.target] == [211]*40
+            assert [r.offset for r in saved.rings] == [211]*3
+            assert [c.size() for c in request.execution.cache] == [212]*40
+            assert [r.offset for r in request.execution.rings] == [212]*3
+            assert not scheduler.checkpoints._payloads
+            if fault == 'generation_observation':
+                optional_observation(diagnostic, 'generated', broken_optional)
+                assert request.execution.owner is not None
+            scheduler.step()
+            if fault == 'publication_observation':
+                optional_observation(diagnostic, 'published', broken_optional)
+                assert scheduler.checkpoints._payloads
     success = fault in ('none', 'registered_observation', 'generation_observation', 'publication_observation')
     if fault.endswith('_observation') and fault != 'post_handoff_observation':
         assert list(diagnostic['unavailable'].values()) == ['TypeError']
-    assert '_historical_images_covered' not in scheduler.__dict__
     assert not request.prepared.multimodal._sources
     assert not scheduler.requests and not scheduler.running and not scheduler.waiting
     assert not scheduler.request_id_to_uid and not scheduler.uid_to_request_id
@@ -235,4 +255,14 @@ def test_existing_start_scheduler_route(monkeypatch, fault):
         assert transitions.count(('append', 211, 212)) == 1
         assert request.prompt_checkpoint is None
     assert bool(backend.fatal_error) == (fault in ('mutation', 'settlement', 'incomplete', 'post_handoff_observation'))
+    # Compare every controlled physical value, canonical input and lifecycle
+    # transition across the two wire-origin classifications.
+    pairs = [(s.tokens, s.images,
+              tuple(tuple(v.tobytes() for v in c.cache) for c in s.target),
+              tuple((r.offset, r.keys.tobytes()) for r in s.rings))
+             for s in scheduler.checkpoints._payloads.values()]
+    result = (ids, source, embeddings.rows[0][1].tolist(), transitions, pairs,
+              request.trace.get('generation_policy'), request.trace.get('execution_sampling'),
+              request.cached_tokens, bool(backend.fatal_error))
     scheduler.checkpoints.clear()
+    return result

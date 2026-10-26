@@ -87,12 +87,16 @@ After retirement only target/DSpark pairs and non-executable image identity
 metadata remain reusable. Capture clones metadata and arrays; restore validates
 both. Text-only cache hashes and numerical decode are unchanged.
 
-Historical (prior-message) images require an eligible paired prefix covering
-those complete spans. A lost/evicted pair or incompatible historical-image edit
-rejects without replay/re-encoding, before native start, and does not burn the
-healthy engine. Fresh last-message images can encode on a safe miss. Branches
-reuse a compatible pair or reject if their required image pair has expired; they
-never rewind live rings. The normal N-2/P5 seam requires two terminal text tokens.
+Historical (prior-message) images ordinarily require an eligible paired prefix
+covering those complete spans. The **undeployed Step 2C source change** also
+admits independent Messages on an actual C=0 miss with complete validated source
+bytes, charging every image fresh through the same cold MTP path. It introduces
+no alternative numerical schedule or forward algorithm. A selected C>0 pair with
+uncovered historical images still rejects before native start without burning
+the healthy engine; it is never discarded to force C=0. Fresh last-message images
+retain their safe-miss path. Branches never rewind live rings. See the
+[ordinary admission contract](mtp-production-serving.md#paired-capture-and-restore)
+for scope and model-free versus prior native evidence. The normal N-2/P5 seam requires two terminal text tokens.
 Cancellation still shields the same worker mutation and then settles or burns
 that Scheduler request. Logical sessions use their existing exact leased pair,
 with image identity validation and the same recipe reconstruction certificate
@@ -163,6 +167,7 @@ The later historical application integration (`c1d1f716:docs/web-mtp-vision-inte
 Browser Chat/PDF workflows are now retired, without changing direct Runtime Vision.
 Installed delivery retains
 its separate immutable-payload boundary, not a source override.
-Historical-image cache expiry is an explicit availability limitation, not permission
-to replay. Broader contexts/protocols/persistence and universal visual quality
+Historical-image cache expiry remains an availability limitation outside the
+narrow independent Messages C=0 source rule. It is not permission to replay tools,
+recover a lost exact logical lease or retry uncertain state. Broader contexts/protocols/persistence and universal visual quality
 remain unqualified. OFF is retained as an explicit fallback/profile.

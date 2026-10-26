@@ -150,6 +150,27 @@ or safe miss. A target-only hash hit is not an MTP hit; edits/branches never rew
 live rings. Retained logical sessions instead require their exact leased pair
 and fail before native start if it is lost—no historical-session prefill fallback.
 
+**Undeployed Step 2C source admission:** ordinary independent Recipe-canonical
+Messages with an actual selected C=0 miss, no restored/native state and all
+required image bytes available may use the same ordinary MTP cold `_start` path.
+Wire-image age changes only admission, not numerical inputs or the P6/Vision/
+DSpark/N-2/N-1/P5/Scheduler algorithm. Source digests and the full fresh workload
+are checked before native start. Every current image counts fresh at C=0: no
+cached-image patch discount, no use of the conditional paired-byte allowance.
+C>0 with uncovered historical images still refuses, even if discarding an earlier
+pair could manufacture a cold miss. Image intersections, changed identities,
+missing bytes, budgets, exact logical leases and post-mutation burn remain guarded.
+No historical tool or external effect is executed by prefill.
+
+[Step 2C](../artifacts/multimodal-runtime/phase2-step2c-admission.md) verifies the
+new admission and same-path lifecycle with controlled model-free doubles, not
+fresh model acceptance or deployment. Prior Step 2B-R2 exercised the native cold
+lifecycle with one historical image. Same-schedule MTP routing is distinct from
+unqualified cross-partition floating equivalence and MTP/full-forward diagnostic
+equality; [C2](multimodal-runtime-plan.md#c2-numerical-acceptance-distinctions)
+remains PARTIAL. No partial-hit reconstruction or Harness lifecycle acceptance
+is implied.
+
 ## Lifecycle and publication
 
 ```text

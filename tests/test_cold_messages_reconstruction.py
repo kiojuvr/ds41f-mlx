@@ -152,7 +152,7 @@ def test_genuine_pair_selection(case):
     scheduler.checkpoints.clear()
 
 
-@pytest.mark.parametrize('case', ['miss', 'discount_miss', 'discount_short_pair', 'retained_missing', 'cancel'])
+@pytest.mark.parametrize('case', ['discount_miss', 'discount_short_pair', 'retained_missing', 'cancel'])
 def test_external_guard_and_premutation_retirement(case):
     from omlx.request import Request, SamplingParams
     prepared, _, _, _ = prepare_fixture()
@@ -184,6 +184,7 @@ def test_external_guard_and_premutation_retirement(case):
         scheduler._schedule_waiting()  # A missing _start would expose any accidental admission.
         error = scheduler._completed[-1].error
         assert ('not retained; no replay' if case == 'retained_missing' else
+                'patch budget exceeded' if case == 'discount_miss' else
                 'historical image pair unavailable') in error
     assert not request.native_started
     assert not prepared.multimodal._sources
