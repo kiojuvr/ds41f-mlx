@@ -184,17 +184,21 @@ also bounds each of the two unpublished captures; shared bytes are counted again
 not assumed free. Outside this qualification, the existing all-history patch
 rejection remains. There is no new Vision context window or screenshot-count cap.
 Cold fresh work and historical misses receive no discount. The undeployed
-[Step 2C source rule](mtp-production-serving.md#paired-capture-and-restore) admits
-only independent Messages actual C=0 misses with all images charged fresh and
-sources verified before native start; it reuses ordinary MTP, not tool replay.
+[Steps 2C–2D source rules](mtp-production-serving.md#paired-capture-and-restore)
+admit independent Messages actual C=0 misses or genuine whole-image-safe C>0
+pairs, charging every uncovered occurrence fresh and verifying its source before
+native start. Model-free qualification, not deployment or fresh native acceptance;
+the Step 2D installed gate stopped on identity admission before weight loading.
+These rules reuse ordinary MTP, not tool replay.
 
 [Isolated qualification](../artifacts/cached-image-admission/report.md) executes
 12 screenshot occurrences and cached continuations without admission overrides,
 including native running cancellation. It separately measures maximum-body,
 near-1M-position, 600-occurrence queued metadata; that is **not** 600-image model
 execution. Harness's 600 is a request compatibility reference, not an execution
-promise. Intersecting image spans and uncovered historical spans at C>0 still
-reject; no earlier paired state is discarded to force a cold miss.
+promise. Intersecting image spans still reject; no earlier paired state is
+discarded to force a cold miss. Broader conditional-discount reconstruction
+retains the original historical-coverage and paired-byte refusal.
 
 The existing **16 MiB entire JSON body**, **128 distinct stored Files / 64 MiB
 storage**, queue serialization, checkpoint context/output and paired-cache residency
@@ -203,7 +207,7 @@ limits remain independent. These are not full compatibility with Harness's
 Runtime 400 does **not** trigger official image offload. Official projection and
 compaction can change the prefix and invalidate the pair; surviving historical
 images require an independently compatible pair or the narrow independent
-Messages C=0 source admission. Broader Harness transitions remain unqualified;
+Messages C=0 / whole-image-safe C>0 source admission. Broader Harness transitions remain unqualified;
 the operational installed Runtime is unchanged.
 See [Files bounds](harness-image-files.md) and the
 [compatibility assessment](../artifacts/harness-image-capacity/report.md).
@@ -227,8 +231,9 @@ from the historical Phase 3 inline-fallback result. Health's conservative
 Image identity is included in
 upstream paired-cache hashes; after prefill only the existing target/DSpark pair
 is executable authority. Prior-message images require compatible paired coverage
-except for the narrow independent Messages C=0 source rule above. An uncovered
-C>0 historical image still rejects; fresh last-message images retain safe-miss
+except for the narrow independent Messages source rules above. A genuine
+whole-image-safe C>0 pair can reconstruct uncovered historical occurrences within
+the normal aggregate patch envelope; fresh last-message images retain safe-miss
 prefill. Logical Chat lease loss never falls back to reconstruction. MTP requires
 two terminal text tokens for the existing N-2 prompt capture/P5 handoff.
 See [Vision/MTP seam audit](mtp-vision-integration.md) for delta acceptance scope.

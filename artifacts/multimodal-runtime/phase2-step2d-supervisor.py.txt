@@ -1,0 +1,67 @@
+import ctypes,json,subprocess,time,os,hashlib,re
+from pathlib import Path
+import psutil
+ROOT=Path('/Volumes/SDXC-512/ds41f-mlx'); OUT=ROOT/'artifacts/multimodal-runtime'
+G=1024**3
+lib=ctypes.CDLL('/usr/lib/libproc.dylib')
+lib.proc_pid_rusage.argtypes=[ctypes.c_int,ctypes.c_int,ctypes.c_void_p]
+for p in ['/tmp/step2d-ready','/tmp/step2d-go']: Path(p).unlink(missing_ok=True)
+worker_source=OUT/'phase2-step2d-worker.py.txt'
+log=OUT/'phase2-step2d-run.log'
+receipt=dict(samples=[],stop=None,worker_sha256=hashlib.sha256(worker_source.read_bytes()).hexdigest(),supervisor_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest())
+start=time.monotonic(); worker=None
+def sample():
+ b=(ctypes.c_uint64*64)(); rc=-1 if worker is None else lib.proc_pid_rusage(worker.pid,4,ctypes.byref(b))
+ vm=subprocess.check_output(['/usr/bin/vm_stat'],text=True)
+ swapouts=int(re.search(r'Swapouts:\s+(\d+)',vm)[1])
+ pressure=int(subprocess.check_output(['/usr/sbin/sysctl','-n','kern.memorystatus_vm_pressure_level'],text=True))
+ competitors=[]
+ for p in psutil.process_iter(['pid','name','cmdline']):
+  try:
+   if p.pid in [os.getpid(),None if worker is None else worker.pid]: continue
+   name=(p.info['name'] or '').lower(); cmd=p.info['cmdline'] or []
+   if 'python' in name or name in ('omlx','ds41f'):
+    competitors.append(dict(pid=p.pid,name=name,cmd=cmd))
+  except psutil.Error: pass
+ return dict(elapsed=time.monotonic()-start,available=psutil.virtual_memory().available,swap_used=psutil.swap_memory().used,swapouts=swapouts,pressure=pressure,footprint=0 if rc else b[9],lifetime_footprint=0 if rc else b[30],competitors=competitors)
+def save():
+ (OUT/'phase2-step2d-resources.json').write_text(json.dumps(receipt,indent=2)+'\n')
+base=sample();receipt['initial']=base
+if base['competitors'] or base['pressure']!=1 or base['available']<455.226*G:
+ receipt['stop']='pre-launch resource refusal';save();raise SystemExit(1)
+with log.open('w') as f:
+ env=dict(os.environ,DS41F_CHECKPOINT='/Volumes/KIOXIA-PRO-2/models/deepseek-ai/DeepSeek-V4.1-Flash-1017')
+ worker=subprocess.Popen(['/tmp/ds41f-step2d/bin/python','-I','-B',str(worker_source)],stdout=f,stderr=subprocess.STDOUT,env=env)
+ receipt['worker_pid']=worker.pid;receipt['supervisor_pid']=os.getpid()
+ last_progress=start;last_size=0;preload=False
+ try:
+  while worker.poll() is None:
+   s=sample(); receipt['samples'].append(s)
+   receipt['min_available']=min(receipt.get('min_available',s['available']),s['available'])
+   receipt['peak_lifetime_footprint']=max(receipt.get('peak_lifetime_footprint',0),s['lifetime_footprint'])
+   size=log.stat().st_size
+   if size!=last_size: last_size=size;last_progress=time.monotonic()
+   reason=None
+   if s['competitors']: reason='competing worker'
+   elif s['pressure']!=1: reason='memory pressure'
+   elif s['swap_used']>base['swap_used'] or s['swapouts']>base['swapouts']: reason='swap increase'
+   elif s['available']<=64*G: reason='host reserve'
+   elif max(s['footprint'],s['lifetime_footprint'])>=425*G: reason='physical footprint stop'
+   elif s['elapsed']>=1800: reason='30 minute total'
+   elif time.monotonic()-last_progress>=600: reason='10 minute no progress'
+   if not preload and Path('/tmp/step2d-ready').exists():
+    receipt['preload']=s
+    if s['available']<455.226*G: reason='pre-load available below 455.226 GiB'
+    if reason is None: Path('/tmp/step2d-go').write_text('supervisor admitted\n');preload=True
+   if reason:
+    receipt['stop']=reason;worker.terminate()
+    try:worker.wait(timeout=15)
+    except subprocess.TimeoutExpired: worker.kill();worker.wait()
+    break
+   save();time.sleep(2)
+ finally:
+  if worker.poll() is None: worker.kill();worker.wait()
+ receipt['returncode']=worker.wait();receipt['elapsed']=time.monotonic()-start
+ receipt['postflight']=sample();save()
+print(json.dumps({k:v for k,v in receipt.items() if k!='samples'},indent=2))
+raise SystemExit(0 if receipt['returncode']==0 and receipt['stop'] is None else 1)

@@ -40,11 +40,14 @@ def test_candidate_precedes_independent_reference(monkeypatch):
     prepared.multimodal.release_sources()
 
 
-def queued():
+def queued(prepared_and_tokenizer=None):
     from omlx.request import Request, SamplingParams
     from ds41f_mlx.serving.internal_mtp import QualificationSession
     from time import perf_counter
-    prepared, tokenizer, _, _ = prepare_fixture()
+    if prepared_and_tokenizer is None:
+        prepared, tokenizer, _, _ = prepare_fixture()
+    else:
+        prepared, tokenizer = prepared_and_tokenizer
     scheduler = idle_scheduler()
     scheduler._pending_abort_ids = set()
     request = Request(request_id='step2b', prompt=prepared.token_ids, sampling_params=SamplingParams())
@@ -52,7 +55,8 @@ def queued():
     request.prepared, request.recipe_tokenizer = prepared, tokenizer
     request.execution = QualificationSession('step2b')
     request.logical_session = None
-    request.required_image_frontier = 191
+    request.required_image_frontier = max((s.start + s.length for s, historical in
+        zip(prepared.multimodal.spans, prepared.image_is_historical, strict=True) if historical), default=0)
     request.image_identities = tuple(prepared.multimodal.identities())
     request.native_started = False
     request.prompt_checkpoint, request.delivery_cursor = None, 0
@@ -62,7 +66,7 @@ def queued():
     return scheduler, request
 
 
-@pytest.mark.parametrize('fault', ['missing', 'modified', 'identity', 'budget', 'pixel', 'logical', 'target_only', 'short_pair', 'intersection', 'chat'])
+@pytest.mark.parametrize('fault', ['missing', 'modified', 'identity', 'budget', 'pixel', 'logical', 'target_only', 'intersection', 'chat'])
 def test_normal_admission_refuses_before_start(fault):
     from dataclasses import replace
     scheduler, request = queued()
@@ -77,9 +81,6 @@ def test_normal_admission_refuses_before_start(fault):
         request.logical_session = NS(canonical=(1,), session_id='lost')
         scheduler.backend.production_sessions = NS(publish=lambda *a: None)
     if fault == 'target_only': request.execution.cache = pair(211)[0]
-    if fault == 'short_pair':
-        from test_cold_messages_reconstruction import publish
-        publish(scheduler, request.prepared, 2, images=())
     if fault == 'intersection':
         scheduler.checkpoints.acquire = lambda *a, **k: pair(190)[:2] + (request.prompt_token_ids[:190],)
     if fault == 'chat': request.prepared.protocol = 'chat'
@@ -119,34 +120,55 @@ def test_existing_start_scheduler_route(monkeypatch, fault):
     assert historical == fresh
 
 
-def run_start_scheduler_route(monkeypatch, fault, *, historical):
+def run_start_scheduler_route(monkeypatch, fault, *, historical, prepared_and_tokenizer=None, frontier=0):
     import mlx.core as mx
     import importlib
     from ds41f_mlx import prefill_fp8_mlx as p6
     from ds41f_mlx.runtime import mtp_lifecycle as lifecycle
-    scheduler, request = queued()
-    verify_fixture(request.prepared)
+    scheduler, request = queued(prepared_and_tokenizer)
+    if prepared_and_tokenizer is None:
+        verify_fixture(request.prepared)
     if not historical:
-        request.prepared.image_is_historical = (False,)
+        request.prepared.image_is_historical = (False,) * len(request.image_identities)
         request.required_image_frontier = 0
     ids = tuple(request.prompt_token_ids)
-    source = request.prepared.multimodal._sources[2]
-    embeddings = NS(rows=[(2, mx.array([[1., 2., 3.]]))], seconds=0)
+    n2, n1, settled = len(ids)-2, len(ids)-1, len(ids)+1
+    mm = request.prepared.multimodal
+    source = tuple(mm._sources.items())
+    saved_prefix = None
+    if frontier:
+        from test_cold_messages_reconstruction import publish
+        saved_prefix = publish(scheduler, request.prepared, frontier)
+        prefix_values = ([tuple(v.tobytes() for v in c.cache) for c in saved_prefix.target],
+                         [r.keys.tobytes() for r in saved_prefix.rings])
+    embeddings = None
     transitions = []
     lm = NS(_config=NS(dspark_target_layer_ids=(0, 1, 2)), layers=[lambda h: h]*40,
             make_cache=lambda: pair(0)[0], make_mtp_cache=lambda: pair(0)[1])
     # Controlled math/native interfaces, NOT an alternative lifecycle. _start,
     # _schedule_waiting, step and _retire themselves remain the real methods.
     def append_hidden(hidden, rings, start_offset):
-        for ring in rings: ring.offset = start_offset + hidden.shape[1]
+        end = start_offset + hidden.shape[1]
+        for ring, advanced in zip(rings, pair(end)[1], strict=True):
+            ring.offset, ring.keys = end, advanced.keys
     lm.dspark_append_context = append_hidden
     backend = object.__new__(ProductionMTPBackend)
     backend._model = NS(language_model=lm)
     backend.load = lambda: None
-    backend._prefill_tap_start = lambda *a: 0
+    backend._prefill_tap_start = lambda ids, C, rings: C
     def encode(mm, C):
-        assert C == 0 and mm._sources[2] == source and tuple(mm.token_ids) == ids
-        mm.validate_workload(C)
+        nonlocal embeddings
+        assert C == frontier and tuple(mm._sources.items()) == source and tuple(mm.token_ids) == ids
+        if saved_prefix is not None:
+            assert request.execution.canonical == list(saved_prefix.tokens)
+            for restored, saved in zip(request.execution.cache, saved_prefix.target, strict=True):
+                assert all(a.tobytes() == b.tobytes() for a, b in zip(restored.cache, saved.cache))
+            for restored, saved in zip(request.execution.rings, saved_prefix.rings, strict=True):
+                assert restored.offset == saved.offset and restored.keys.tobytes() == saved.keys.tobytes()
+        embeddings = mm.encode_new(NS(config=mm._config), C,
+            span_encoder=lambda pixels, h, w, kinds: mx.ones((len(kinds), 3)))
+        assert [(start, v.shape) for start, v in embeddings.rows] == [
+            (s.start, (s.length, 3)) for s in mm.spans if s.start >= C]
         transitions.append(('vision', C))
         return embeddings
     backend._encode_new_images = encode
@@ -177,8 +199,8 @@ def run_start_scheduler_route(monkeypatch, fault, *, historical):
     monkeypatch.setattr(generate, 'BatchGenerator', lambda *a, **kw: NS(_generation_batch=NS(samplers=[], fallback_sampler=None)))
     def handoff(live, model, *, terminal_prompt_token, **kw):
         transitions.append(('P5', terminal_prompt_token))
-        assert transitions[-2] == ('append', 211, 212)
-        assert not scheduler.checkpoints._payloads
+        assert transitions[-2] == ('append', n2, n1)
+        assert list(scheduler.checkpoints._payloads.values()) == ([] if saved_prefix is None else [saved_prefix])
         owner = NS(uid=17, _bg=scheduler._new_batch(None), prompt_replay_count=0)
         if fault == 'post_handoff_observation':
             raise TypeError("'tuple' object is not callable")
@@ -187,7 +209,9 @@ def run_start_scheduler_route(monkeypatch, fault, *, historical):
     def settle(rec, trace):
         transitions.append('settle')
         if fault == 'settlement': raise RuntimeError('failed settlement')
-        rec.cache, rec.rings, _ = pair(214)
+        for layer in rec.cache: layer.cache[0][0] = settled
+        for ring, advanced in zip(rec.rings, pair(settled)[1], strict=True):
+            ring.offset, ring.keys = settled, advanced.keys
         rec.canonical = request.prompt_token_ids + [42]
         rec.owner = None
         if fault != 'incomplete': trace['quiescence'] = {}
@@ -224,11 +248,11 @@ def run_start_scheduler_route(monkeypatch, fault, *, historical):
             saved = request.prompt_checkpoint
             assert saved is not None, scheduler.last_settlement
             assert saved.tokens == tuple(request.prompt_token_ids[:-2])
-            assert [c.size() for c in saved.target] == [211]*40
-            assert [r.offset for r in saved.rings] == [211]*3
-            assert [c.size() for c in request.execution.cache] == [212]*40
-            assert [r.offset for r in request.execution.rings] == [212]*3
-            assert not scheduler.checkpoints._payloads
+            assert [c.size() for c in saved.target] == [n2]*40
+            assert [r.offset for r in saved.rings] == [n2]*3
+            assert [c.size() for c in request.execution.cache] == [n1]*40
+            assert [r.offset for r in request.execution.rings] == [n1]*3
+            assert list(scheduler.checkpoints._payloads.values()) == ([] if saved_prefix is None else [saved_prefix])
             if fault == 'generation_observation':
                 optional_observation(diagnostic, 'generated', broken_optional)
                 assert request.execution.owner is not None
@@ -243,16 +267,22 @@ def run_start_scheduler_route(monkeypatch, fault, *, historical):
     assert not scheduler.requests and not scheduler.running and not scheduler.waiting
     assert not scheduler.request_id_to_uid and not scheduler.uid_to_request_id
     assert scheduler.batch_generator is None and request.execution.owner is None
-    assert bool(scheduler.checkpoints._payloads) == success
+    assert bool(scheduler.checkpoints._payloads) == (success or (fault == 'cancel' and frontier > 0))
+    if saved_prefix is not None and (success or fault == 'cancel'):
+        assert [c.size() for c in saved_prefix.target] == [frontier]*40
+        assert [r.offset for r in saved_prefix.rings] == [frontier]*3
+        assert prefix_values == ([tuple(v.tobytes() for v in c.cache) for c in saved_prefix.target],
+                                 [r.keys.tobytes() for r in saved_prefix.rings])
     if success:
-        assert transitions[:4] == [('vision', 0), ('append', 0, 211), ('append', 211, 212), ('P5', request.prompt_token_ids[-1])]
+        assert request.cached_tokens == frontier
+        assert transitions[:4] == [('vision', frontier), ('append', frontier, n2), ('append', n2, n1), ('P5', request.prompt_token_ids[-1])]
         assert scheduler.checkpoints.acquire(request.prompt_token_ids, images=request.image_identities)[2] == request.prompt_token_ids[:-2]
     if fault == 'cancel': assert transitions == []
-    if fault == 'mutation': assert transitions == [('vision', 0), ('append', 0, 211)]
+    if fault == 'mutation': assert transitions == [('vision', frontier), ('append', frontier, n2)]
     if fault == 'post_handoff_observation':
         assert "'tuple' object is not callable" in backend.fatal_error
         assert transitions[-1] == ('P5', request.prompt_token_ids[-1])
-        assert transitions.count(('append', 211, 212)) == 1
+        assert transitions.count(('append', n2, n1)) == 1
         assert request.prompt_checkpoint is None
     assert bool(backend.fatal_error) == (fault in ('mutation', 'settlement', 'incomplete', 'post_handoff_observation'))
     # Compare every controlled physical value, canonical input and lifecycle
@@ -261,7 +291,7 @@ def run_start_scheduler_route(monkeypatch, fault, *, historical):
               tuple(tuple(v.tobytes() for v in c.cache) for c in s.target),
               tuple((r.offset, r.keys.tobytes()) for r in s.rings))
              for s in scheduler.checkpoints._payloads.values()]
-    result = (ids, source, embeddings.rows[0][1].tolist(), transitions, pairs,
+    result = (ids, source, None if embeddings is None else [(start, value.tolist()) for start, value in embeddings.rows], transitions, pairs,
               request.trace.get('generation_policy'), request.trace.get('execution_sampling'),
               request.cached_tokens, bool(backend.fatal_error))
     scheduler.checkpoints.clear()

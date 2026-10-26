@@ -102,13 +102,14 @@ class ProductionScheduler(Scheduler):
             if request.prepared.multimodal is not None:
                 request.prepared.multimodal.validate_prefix(len(rec.canonical),
                     [s for s in request.image_identities if s['start'] < len(rec.canonical)])
-                # Wire age is not a numerical input. Only an independent
-                # Messages miss may enter the existing cold MTP path; never
-                # discard a selected earlier pair to manufacture such a miss.
-                cold_messages = (request.prepared.protocol == 'messages' and logical is None
-                                 and restored is None and not rec.canonical
-                                 and rec.cache is None and rec.rings is None and rec.owner is None)
-                if len(rec.canonical) < request.required_image_frontier and not cold_messages:
+                # Wire age is not a numerical input. Independent Messages may
+                # reconstruct from a genuine miss or the actual validated pair,
+                # never a fractional image or an already executable owner.
+                reconstruct_messages = (request.prepared.protocol == 'messages' and logical is None
+                    and rec.owner is None and
+                    ((restored is None and not rec.canonical and rec.cache is None and rec.rings is None)
+                     or (restored is not None and bool(rec.canonical))))
+                if len(rec.canonical) < request.required_image_frontier and not reconstruct_messages:
                     raise ValueError('historical image pair unavailable; image replay/re-encode forbidden')
                 request.prepared.multimodal.validate_workload(len(rec.canonical))
                 # Validate every fresh source before _start can create native

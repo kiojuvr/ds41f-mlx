@@ -14,8 +14,12 @@ envelope. **C2 remains PARTIAL**: [Step 2B-R2](../artifacts/multimodal-runtime/p
 exercised native C=0 reconstruction through settlement/publication; [Step 2C](../artifacts/multimodal-runtime/phase2-step2c-admission.md)
 model-free verifies normal independent Messages C=0 admission using the unchanged
 MTP cold path. This source change is undeployed, not fresh real-model acceptance.
-Partial-hit reconstruction and Harness offload/compaction/reacquisition remain
-unqualified. The
+[Step 2D](../artifacts/multimodal-runtime/phase2-step2d-reconstruction.md) model-free
+verifies whole-image-safe C>0 paired suffix reconstruction within the normal
+aggregate patch envelope. Its supervised installed gate failed identity admission
+before loading weights. Fresh native partial-hit qualification, true image-intersecting
+execution, broader conditional-discount reconstruction and Harness
+offload/compaction/reacquisition remain unqualified. The
 [Phase 1 source audit](../artifacts/multimodal-runtime/phase1-gap-audit.md) identifies
 revision-bound guards, reusable execution paths, numerical-reference requirements
 and supported official lifecycle controls. Source inspection does not qualify
@@ -99,10 +103,11 @@ compatible historical coverage is required for the patch discount; projected
 output/speculation and capture coexistence remain accounted. Independent source
 bytes, pixels, entire body, Files storage, context/output, queue and cache limits
 remain enforced. Independent Messages C=0 source admission charges all images
-fresh and checks source availability before native start. C>0 with uncovered
-historical images still refuses; a legitimate earlier pair is not discarded to
-force C=0. Exact logical Chat leases remain mandatory. The installed Runtime is
-unchanged; see the [execution contract](mtp-production-serving.md#paired-capture-and-restore).
+fresh and checks source availability before native start. Step 2D additionally
+admits whole-image-safe C>0 independent Messages with a real restored pair and
+validated fresh sources/workload. A legitimate earlier pair is not discarded to
+force C=0; the separate conditional historical discount remains unchanged.
+Exact logical Chat leases remain mandatory. The installed Runtime is unchanged; see the [execution contract](mtp-production-serving.md#paired-capture-and-restore).
 
 ## Observable completion criteria
 
@@ -126,10 +131,10 @@ leaves the affected criterion blocked, not silently excluded to declare completi
 ### C2 numerical acceptance distinctions
 
 - **A — Same MTP schedule:** hold canonical IDs, image bytes/embedding identity,
-  admitted profile, C=0 state, P6 boundaries, Target/DSpark initialization,
-  N-2/N-1, P5 and sampling fixed. Historical wire origin is admission metadata,
-  not a numerical input. Reconstruction must invoke the existing cold MTP path,
-  not an alternative forward algorithm. Step 2C verifies this routing model-free;
+  admitted profile, selected C and restored state, P6 boundaries, Target/DSpark
+  initialization, N-2/N-1, P5 and sampling fixed. Historical wire origin is admission metadata,
+  not a numerical input. Reconstruction must invoke the existing MTP path,
+  not an alternative forward algorithm. Steps 2C–2D verify this routing model-free;
   Step 2B-R2 supplies bounded prior real-model downstream lifecycle evidence.
 - **B — Different prefix partitions:** compatible reuse changes the append
   schedule. Shape-dependent arithmetic precludes assuming bitwise equivalence.
@@ -203,7 +208,7 @@ links to scoped evidence; this is not a second milestone registry.
 | --- | --- | --- | --- | --- | --- | --- |
 | **0 — Contract / complete** | Define usable completion before solutions | Existing policy, execution contracts and scoped proof | Technical answers deferred to Phase 1 | This CURRENT goal, C1–C9 and phased plan | Internally consistent, testable plan and documentation validation; depends on existing owners/evidence | Source investigation, implementation, experiments or acceptance |
 | **1 — Gap analysis / complete** | Compare pinned and relevant current Harness, Recipe, DeepInfer and oMLX with local behavior | Existing source-review revisions in the governing implementation plan; metadata preparation, cold prefill/P6/P5, Scheduler and paired authority | Offload/summary projections; hits/partial hits/misses; fresh/cached spans; source-image availability; paired reconstruction; logical-session restrictions; admission/rejection and upstream recovery initiation | [Revision-bound source audit](../artifacts/multimodal-runtime/phase1-gap-audit.md): case matrix, exact guards, reusable seams, independent-prefill reference strategy, resource evidence requirements and official workload feasibility | Source exit satisfied; numerical tolerances/baseline, changed-path execution/resources and installed lifecycle remain explicitly unverified. Depends on Phase 0 and separately authorized Phase 1 task | Prescribing a new Scheduler, cache/image/session owner or implementing a speculative solution |
-| **2 — Reconstruction / PARTIAL; narrow C=0 admission model-free verified, undeployed** | Close only verified reconstruction gaps | Canonical prefill/P6/P5, existing Scheduler and Target/DSpark machinery | Which C2 cases need which paths; numerical equivalence and fail-closed unsupported cases | Minimal justified changes and scoped numerical/semantic reconstruction evidence | Relevant changed-prefix cases qualified without weakening paired-MTP guarantees; depends on Phase 1 findings/reference and separate approval | Redesigning execution topology, tool replay, guard relaxation or general recovery promises |
+| **2 — Reconstruction / PARTIAL; C=0 and whole-image-safe C>0 admission model-free verified, undeployed** | Close only verified reconstruction gaps | Canonical prefill/P6/P5, existing Scheduler and Target/DSpark machinery | Which C2 cases need which paths; numerical equivalence and fail-closed unsupported cases | Minimal justified changes and scoped numerical/semantic reconstruction evidence | Relevant changed-prefix cases qualified without weakening paired-MTP guarantees; depends on Phase 1 findings/reference and separate approval | Redesigning execution topology, tool replay, guard relaxation or general recovery promises |
 | **3 — Harness lifecycle / not started** | Connect official offload, compaction and reacquisition | Official Harness history/attachments/tools and native Recipe Messages/Files | Supported triggering/continuation mechanisms; attachment availability/expiry; operator intervention boundaries | Official lifecycle evidence for C3–C6/C9 and precise blockers | Official session continues across qualified changes without external-effect replay; depends on Phase 1 mechanism findings and Phase 2 qualified paths | Runtime conversation/attachment management or proprietary recovery protocol; absence of upstream mechanism is a blocker |
 | **4 — Resource qualification / not started** | Establish bounded long-running usability and completion | Existing admission, cancellation/retirement and finite evidence tooling | Cumulative acquisition, cache churn, reconstruction/cancellation peaks and cleanup under pressure | Frozen-workload receipts, C1–C9 completion dispositions and documented operating/failure envelope | All C1–C9 evidence-supported and agreed end-to-end acceptance passes; depends on Phases 2–3 and separately authorized resource-safe execution | Unbounded endurance, unrelated optimization or repeated Visual Feedback Loop demos unless an affected component needs regression |
 
@@ -220,6 +225,7 @@ ingestion claim. General Files lifecycle compatibility remains separately scoped
 
 Completion of this project will not itself promote a package or renew historical
 release/numerical qualification. Existing CURRENT execution owners must be updated
-only at their evidenced scope. Step 2C changes only independent Messages C=0
-admission in source; uncovered partial hits and exact logical leases retain their
-safe refusals. No general reconstruction or installed release qualification follows.
+only at their evidenced scope. Steps 2C–2D change independent Messages C=0 and
+whole-image-safe C>0 admission in source; true image intersections, broader
+conditional-discount reconstruction and lost exact logical leases retain safe
+refusals. No general reconstruction or installed release qualification follows.

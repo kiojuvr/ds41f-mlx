@@ -1,0 +1,13 @@
+progress: canonical preflight passed, zero loads
+Traceback (most recent call last):
+  File "/Volumes/SDXC-512/ds41f-mlx/artifacts/multimodal-runtime/phase2-step2d-worker.py.txt", line 50, in <module>
+    proof = prove_installed_admission(checkpoint=True)
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/qualify_installed_admission.py", line 18, in prove_installed_admission
+    authority, host = identity.inspect_payload()
+                      ~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/private/tmp/ds41f-step2d/lib/python3.13/site-packages/ds41f_mlx/execution_identity.py", line 173, in inspect_payload
+    check_installed_packages(authority, site)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/private/tmp/ds41f-step2d/lib/python3.13/site-packages/ds41f_mlx/execution_identity.py", line 144, in check_installed_packages
+    raise ValueError(f'non-installed executable origin: {name}')
+ValueError: non-installed executable origin: transformers

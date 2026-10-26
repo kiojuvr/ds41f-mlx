@@ -1,0 +1,136 @@
+"""One installed, two-request qualification. No native wrappers or replay."""
+import asyncio, base64, gc, hashlib, json, sys, time, traceback, weakref
+from pathlib import Path
+ROOT = Path('/Volumes/SDXC-512/ds41f-mlx')
+OUT = ROOT/'artifacts/multimodal-runtime'
+sys.path.append(str(ROOT))
+from tools.qualify_installed_admission import prove_installed_admission
+from ds41f_mlx.serving.server import prepare_request, load_v41_tokenizer
+from ds41f_mlx.mtp_identity import config
+from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+from ds41f_mlx.serving.paired_checkpoint import validate_pair
+CP = Path('/Volumes/KIOXIA-PRO-2/models/deepseek-ai/DeepSeek-V4.1-Flash-1017')
+tokenizer = load_v41_tokenizer(Path(sys.prefix)/'share/ds41f-mtp/recipe')
+def image(name):
+    return dict(type='image', source=dict(type='base64', media_type='image/jpeg',
+        data=base64.b64encode((CP/f'inference/examples/images/{name}.jpeg').read_bytes()).decode()))
+head = dict(role='user', content=[image('corn'), dict(type='text', text='Identify this food in one short sentence.')])
+def body(messages):
+    return dict(model='deepseek-v4.1-flash', max_tokens=1, temperature=0, messages=messages)
+def prepare(b):
+    return prepare_request('messages', json.dumps(b).encode(), tokenizer=tokenizer, checkpoint=CP, ordinary=True)
+def suffix(content):
+    # Consecutive user turns are real supplied inputs; Recipe owns their projection.
+    # The image is in the prior wire message, not relabelled by the diagnostic.
+    return [head, dict(role='assistant', content=content),
+        dict(role='user', content=[image('carrots'), dict(type='text', text='Inspect this image.')]),
+        dict(role='user', content='State one visible feature.')]
+seed = prepare(body([head]))
+projection = prepare(body(suffix([dict(type='text', text='Projection placeholder; replaced by actual response.')])) )
+C = len(seed.token_ids)-2
+assert C == 200 and seed.token_ids[:C] == projection.token_ids[:C]
+assert projection.image_is_historical == (True, True)
+a, b = projection.multimodal.spans
+assert a.start+a.length <= C < b.start
+projection.multimodal.validate_prefix(C, [a.identity()])
+projection.multimodal.validate_sources(C)
+projection.multimodal.validate_workload(C)
+assert sum(s.grid[0]*s.grid[1] for s in projection.multimodal.spans) <= 36_864
+report = dict(starting_head='bba0d41818cf8f134ca5a7dcb469d2c8c031a1cb',
+    preflight=dict(seed_N=len(seed.token_ids), eligible_prompt_C=C,
+        exact_prefix=seed.token_ids[:C], images=projection.multimodal.identities(),
+        historical=projection.image_is_historical, fresh_patches=b.grid[0]*b.grid[1],
+        aggregate_patches=sum(s.grid[0]*s.grid[1] for s in projection.multimodal.spans),
+        rationale='C ends inside unchanged first user message, before assistant header/content; actual response cannot change these canonical IDs. Later image position is revalidated with actual response before enqueue.'))
+projection.multimodal.release_sources(); projection = None
+(OUT/'phase2-step2d-preflight.json').write_text(json.dumps(report,indent=2)+'\n')
+print('progress: canonical preflight passed, zero loads', flush=True)
+if '--preflight-only' in sys.argv:
+    raise SystemExit(0)
+proof = prove_installed_admission(checkpoint=True)
+(OUT/'phase2-step2d-admission.json').write_text(json.dumps(proof,indent=2,default=str)+'\n')
+Path('/tmp/step2d-ready').write_text('installed admission and projection passed\n')
+while not Path('/tmp/step2d-go').exists(): time.sleep(.1)
+backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+backend.dependency_identity = proof['runtime']['identity_sha256']
+def execute(prepared, name):
+    backend._enqueue(prepared, tokenizer, name)
+    scheduler = backend.scheduler
+    request = scheduler.requests[name]
+    scheduled, _ = scheduler._schedule_waiting()
+    if not scheduled: raise RuntimeError(scheduler._completed[-1].error)
+    owner = request.execution.owner
+    pending = request.prompt_checkpoint
+    observation = dict(cached_tokens=request.cached_tokens, N=len(prepared.token_ids),
+        images=request.image_identities, historical=prepared.image_is_historical,
+        pending_C=len(pending.tokens), pending_target=[c.size() for c in pending.target],
+        pending_rings=[r.offset for r in pending.rings],
+        P5_target=owner.active_cache_offsets(), P5_rings=owner.dspark_context.offsets,
+        uid=owner.uid, scheduler_batch=owner._bg is scheduler.batch_generator)
+    outputs = []
+    for _ in range(8):
+        outputs.extend(scheduler.step().outputs)
+        if not scheduler.requests: break
+    if scheduler.requests or not outputs or outputs[-1].error:
+        raise RuntimeError(outputs[-1].error if outputs else 'no terminal output')
+    observation.update(trace=dict(request.trace), response=outputs[-1].recipe_response,
+        retired=dict(requests=list(scheduler.requests), running=list(scheduler.running),
+            waiting=len(scheduler.waiting), mappings=dict(scheduler.request_id_to_uid),
+            batch=scheduler.batch_generator is not None, owner=request.execution.owner is not None,
+            native_closed=owner._closed, native_quiesced=owner._quiesced, native_uid=owner.uid,
+            sources=len(prepared.multimodal._sources), fatal=backend.fatal_error),
+        published=[])
+    for saved in scheduler.checkpoints._payloads.values():
+        validate_pair(saved.target, saved.rings, saved.tokens)
+        observation['published'].append(dict(C=len(saved.tokens), images=saved.images,
+            target=[c.size() for c in saved.target], rings=[r.offset for r in saved.rings]))
+    assert request.trace['cache_published'] and request.trace['prediction_retired'] and request.trace['queue_empty']
+    print('progress:', name, 'settled', request.trace.get('canonical_frontier'), flush=True)
+    return observation
+
+def sequence():
+    print('progress: sole model load', flush=True)
+    backend.load()
+    report['seed'] = execute(seed, 'step2d-seed')
+    response = report['seed']['response']
+    if isinstance(response, str): response = json.loads(response)
+    assert response['content']
+    current = prepare(body(suffix(response['content'])))
+    assert current.token_ids[:C] == seed.token_ids[:C]
+    assert current.image_is_historical == (True, True)
+    assert current.multimodal.spans[1].start > C
+    report['actual_second'] = dict(N=len(current.token_ids), images=current.multimodal.identities(),
+        historical=current.image_is_historical)
+    report['partial'] = execute(current, 'step2d-partial')
+    hit = report['partial']['cached_tokens']
+    assert hit > 0 and hit <= current.multimodal.spans[1].start
+    assert hit >= current.multimodal.spans[0].start+current.multimodal.spans[0].length
+    assert report['partial']['trace']['vision_encoded_count'] == 1
+    assert report['seed']['cached_tokens'] == 0
+
+model_ref = None
+try:
+    async def run(): await backend._call(sequence)
+    asyncio.run(run())
+    report['outcome'] = 'completed'
+except BaseException as exc:
+    report['outcome'] = 'failed'; report['error'] = repr(exc); traceback.print_exc()
+finally:
+    import mlx.core as mx
+    from mlx_lm.generate import generation_stream
+    if backend._model is not None: model_ref = weakref.ref(backend._model)
+    if backend.scheduler is not None:
+        backend.scheduler.close_serving(); backend.scheduler = None
+    model = backend._model
+    backend._model = backend._execution_tokenizer = None
+    if model is not None: model.close()
+    model = None
+    backend.close(); backend._executor.shutdown(wait=True, cancel_futures=True)
+    seed.multimodal.release_sources(); seed = tokenizer = None
+    gc.collect(); mx.synchronize(generation_stream); mx.clear_cache(); gc.collect()
+    report['cleanup'] = dict(model_weakref_dead=model_ref is None or model_ref() is None,
+        active=mx.get_active_memory(), cache=mx.get_cache_memory(), peak=mx.get_peak_memory(),
+        executor_shutdown=backend._executor._shutdown)
+    (OUT/'phase2-step2d-observation.json').write_text(json.dumps(report,indent=2,default=str)+'\n')
+    print('progress: cleanup', report['cleanup'], flush=True)
+raise SystemExit(0 if report['outcome']=='completed' else 1)

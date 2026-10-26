@@ -91,9 +91,13 @@ Historical (prior-message) images ordinarily require an eligible paired prefix
 covering those complete spans. The **undeployed Step 2C source change** also
 admits independent Messages on an actual C=0 miss with complete validated source
 bytes, charging every image fresh through the same cold MTP path. It introduces
-no alternative numerical schedule or forward algorithm. A selected C>0 pair with
-uncovered historical images still rejects before native start without burning
-the healthy engine; it is never discarded to force C=0. Fresh last-message images
+no alternative numerical schedule or forward algorithm. **Undeployed Step 2D**
+also admits independent Messages at a genuinely restored C>0 whole-image-safe
+pair: covered occurrences skip encoding; uncovered historical occurrences encode
+in full. Model-free qualification only; its supervised installed gate stopped
+before weight loading. The aggregate patch-discount callback still requires its
+existing historical coverage and paired-byte qualification. A selected pair is
+never discarded to force C=0. Fresh last-message images
 retain their safe-miss path. Branches never rewind live rings. See the
 [ordinary admission contract](mtp-production-serving.md#paired-capture-and-restore)
 for scope and model-free versus prior native evidence. The normal N-2/P5 seam requires two terminal text tokens.
@@ -168,6 +172,6 @@ Browser Chat/PDF workflows are now retired, without changing direct Runtime Visi
 Installed delivery retains
 its separate immutable-payload boundary, not a source override.
 Historical-image cache expiry remains an availability limitation outside the
-narrow independent Messages C=0 source rule. It is not permission to replay tools,
+narrow independent Messages C=0 / whole-image-safe C>0 source rules. It is not permission to replay tools,
 recover a lost exact logical lease or retry uncertain state. Broader contexts/protocols/persistence and universal visual quality
 remain unqualified. OFF is retained as an explicit fallback/profile.

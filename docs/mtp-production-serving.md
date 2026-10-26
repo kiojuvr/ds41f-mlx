@@ -157,9 +157,15 @@ Wire-image age changes only admission, not numerical inputs or the P6/Vision/
 DSpark/N-2/N-1/P5/Scheduler algorithm. Source digests and the full fresh workload
 are checked before native start. Every current image counts fresh at C=0: no
 cached-image patch discount, no use of the conditional paired-byte allowance.
-C>0 with uncovered historical images still refuses, even if discarding an earlier
-pair could manufacture a cold miss. Image intersections, changed identities,
-missing bytes, budgets, exact logical leases and post-mutation burn remain guarded.
+**Undeployed Step 2D source admission** additionally admits independent Messages
+with an actual compatible complete C>0 pair at a whole-image-safe frontier.
+The selected pair is preserved, covered images skip Vision, and every uncovered
+occurrence is encoded completely at its absolute position regardless of wire age.
+Fresh workload and all fresh source digests are checked before native start.
+The separate aggregate-patch discount callback is unchanged: uncovered historical
+images cannot obtain its conditional paired-byte allowance. Image intersections,
+changed identities, missing bytes, budgets, exact logical leases and post-mutation
+burn remain guarded; no pair is discarded to force a cold miss.
 No historical tool or external effect is executed by prefill.
 
 [Step 2C](../artifacts/multimodal-runtime/phase2-step2c-admission.md) verifies the
@@ -168,8 +174,10 @@ fresh model acceptance or deployment. Prior Step 2B-R2 exercised the native cold
 lifecycle with one historical image. Same-schedule MTP routing is distinct from
 unqualified cross-partition floating equivalence and MTP/full-forward diagnostic
 equality; [C2](multimodal-runtime-plan.md#c2-numerical-acceptance-distinctions)
-remains PARTIAL. No partial-hit reconstruction or Harness lifecycle acceptance
-is implied.
+remains PARTIAL. [Step 2D](../artifacts/multimodal-runtime/phase2-step2d-reconstruction.md)
+verifies whole-image-safe C>0 admission and same-schedule lifecycle model-free.
+Its sole supervised real-model gate stopped on installed identity admission before
+loading weights; no fresh native acceptance or Harness lifecycle acceptance follows.
 
 ## Lifecycle and publication
 
