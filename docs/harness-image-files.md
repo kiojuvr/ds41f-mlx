@@ -24,6 +24,20 @@ persistent or multi-user Files, lifecycle/quota recovery, eviction/restart,
 maximum-capacity, endurance or production promotion. The W2 model-free scope
 and historical Phase 0–3 receipts remain unchanged.
 
+## Bounded offload/reacquisition follow-up
+
+[Phase 3 / Step 3A](../artifacts/multimodal-runtime/phase3-step3a-offload-reacquisition.md)
+adds one undeployed official macOS session: count budget 3 / quantum 1 produces
+two durable offloads; ordinary changed Messages restore C=711 and freshly encode
+surviving historical images. A new official `read_image` of accessible A preserves
+its old omitted occurrence and consumes the new occurrence through Vision,
+settlement and publication. C3/C5 positive cases pass for this session only;
+overall acceptance is PARTIAL because a post-shutdown diagnostic failure prevented
+cleanup weakref/MLX/executor measurements. No Files durability or arbitrary Runtime
+400 recovery is established. Historical W2 refusal descriptions below retain their
+original scope; current independent Messages reconstruction is governed by
+[ordinary paired admission](mtp-production-serving.md#paired-capture-and-restore).
+
 ## Supported operations
 
 ### `POST /v1/files`

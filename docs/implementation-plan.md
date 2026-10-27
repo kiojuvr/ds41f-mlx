@@ -113,9 +113,15 @@ diagnostic import ordering and completed one bounded native C=203 continuation
 through settlement/publication. These source changes are undeployed.
 Step 2E adds model-free changed-byte/order/position, shortened and rewritten
 projection selection/continuation evidence with no Production change or weights.
-Cross-partition floating equivalence, changed-projection native numerical/resource
-qualification and Harness lifecycle transitions remain unqualified;
-logical-session exact leases are unchanged.
+Cross-partition floating equivalence remains unqualified; changed-projection
+native execution/resource evidence is bounded, not general numerical qualification.
+Logical-session exact leases are unchanged.
+[Phase 3 / Step 3A](../artifacts/multimodal-runtime/phase3-step3a-offload-reacquisition.md)
+observed two official Harness offloads and a new reacquisition occurrence, with
+C=711 fresh historical Vision, native completion and settled publication. C3/C5
+positive cases pass only for that session; overall acceptance is PARTIAL because
+a post-shutdown diagnostic error prevented cleanup weakref/MLX/executor measurement.
+No Production change or deployment; compaction and full endurance remain unqualified.
 
 ### Future official-source investigation priorities
 
@@ -172,8 +178,9 @@ No automatic follow-on work is selected. Full Harness compatibility remains
 **PARTIAL** at concrete transport/storage and canonical-prefix recovery boundaries.
 Official rc.2 offload does not recover arbitrary Runtime 400 errors. Its projection
 and summary compaction can invalidate paired state. The narrow undeployed
-Messages C=0 / whole-image-safe C>0 admission does not qualify those Harness
-transitions; true image intersections and broader conditional-discount reconstruction
+Messages C=0 / whole-image-safe C>0 admission does not generally qualify Harness
+transitions; Step 3A adds only the bounded offload/reacquisition evidence above.
+True image intersections and broader conditional-discount reconstruction
 remain unqualified. No replacement history/cache owner or follow-on campaign
 is introduced. The
 [Q2 report](../artifacts/visual-feedback-loop/phase-4-q2-report.md) retains its

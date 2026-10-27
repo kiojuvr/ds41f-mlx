@@ -208,8 +208,15 @@ limits remain independent. These are not full compatibility with Harness's
 Runtime 400 does **not** trigger official image offload. Official projection and
 compaction can change the prefix and invalidate the pair; surviving historical
 images require an independently compatible pair or the narrow independent
-Messages C=0 / whole-image-safe C>0 source admission. Broader Harness transitions remain unqualified;
-the operational installed Runtime is unchanged.
+Messages C=0 / whole-image-safe C>0 source admission.
+[Phase 3 / Step 3A](../artifacts/multimodal-runtime/phase3-step3a-offload-reacquisition.md)
+observed two genuine official offloads and new `read_image` reacquisition in one
+macOS session: C=711 restoration, three fresh image encodes per changed projection,
+six settled native completions/publications. These C3/C5 positive cases pass within
+that session; overall Step 3A remains PARTIAL because the post-shutdown diagnostic
+failed before cleanup weakref/MLX/executor measurements. Compaction, full endurance
+and broader recovery remain unqualified; no Production change or operational
+installation update.
 See [Files bounds](harness-image-files.md) and the
 [compatibility assessment](../artifacts/harness-image-capacity/report.md).
 600-occurrence key construction, queued metadata and official offload are

@@ -293,7 +293,8 @@ def test_disconnect_partial_upload_releases_lease(http):
     upload(client)  # lease was released; no partial object ever published
 
 
-def test_historical_file_still_requires_paired_state(http):
+@pytest.mark.parametrize('missing_source', [False, True])
+def test_historical_file_miss_requires_current_sources(http, missing_source):
     from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
     from ds41f_mlx.serving.paired_checkpoint import PairedCheckpointAuthority
     from test_metadata_first_vision import scheduler_request
@@ -313,13 +314,24 @@ def test_historical_file_still_requires_paired_state(http):
     request.prepared = p
     request.required_image_frontier = queued[0].required_image_frontier
     errors = []
-    def forbidden_start(*args, **kwargs):
-        pytest.fail('historical images must not start inference on a missing pair')
-    scheduler.backend = NS(_start=forbidden_start)
+    starts = []
+    sentinel = RuntimeError('stop after observing ordinary cold-path admission')
+    def observed_start(*args, **kwargs):
+        starts.append(args)
+        raise sentinel  # No native execution in this transport/admission test.
+    scheduler.backend = NS(_start=observed_start)
     scheduler._retire = lambda req, *, error: errors.append(error)
+    if missing_source:
+        p.multimodal.release_sources()
     scheduled, _ = scheduler._schedule_waiting()
-    assert not scheduled and not request.native_started
-    assert len(errors) == 1 and 'historical image pair unavailable' in str(errors[0])
+    assert not scheduled and len(errors) == 1
+    if missing_source:
+        assert not starts and not request.native_started
+        assert errors[0] is not sentinel
+    else:
+        assert len(starts) == 1 and request.native_started
+        assert request.cached_tokens == 0 and errors == [sentinel]
+    assert not authority._payloads
     authority.clear()
 
 

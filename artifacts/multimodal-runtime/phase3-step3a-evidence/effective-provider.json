@@ -1,0 +1,55 @@
+{
+  "provider": "@deepseek-ai/dsh-llm-deepseek-api-key",
+  "resolved": {
+    "baseURL": "http://127.0.0.1:18083",
+    "defaults": {
+      "thinking": "disabled",
+      "reasoningEffort": "off"
+    },
+    "maxTokens": 1200,
+    "defaultContextWindow": 1000000,
+    "models": [
+      {
+        "id": "deepseek-flash",
+        "contextWindow": 1048576,
+        "maxTokens": 1200,
+        "systemPromptUpdate": "in-history",
+        "toolUpdate": "addition-only",
+        "inputModalities": [
+          "text",
+          "image"
+        ],
+        "imageMaxBytes": 2097152
+      }
+    ],
+    "streamIdleTimeoutMs": 180000,
+    "maxRequestFilesBytes": 134217728,
+    "maxInlineRequestImageBytes": 20971520,
+    "maxImagesPerRequest": 3,
+    "imageOffloadByteQuantum": 67108864,
+    "inlineImageOffloadByteQuantum": 10485760,
+    "imageOffloadCountQuantum": 1,
+    "filesApiTimeoutMs": 60000,
+    "filePolicy": {
+      "expiresAfterSeconds": 604800,
+      "refreshMarginSeconds": 3600,
+      "quotaCleanupBatch": 100
+    },
+    "retryPolicy": {
+      "mode": "normal",
+      "maxRetries": 5,
+      "retryableCodes": [
+        "EMPTY_RESPONSE",
+        "RATE_LIMIT",
+        "SERVER",
+        "TIMEOUT",
+        "TRANSPORT"
+      ],
+      "initialDelayMs": 500,
+      "maxDelayMs": 10000,
+      "jitterRatio": 0.1
+    }
+  },
+  "officialOffloadPluginEnabled": true,
+  "weightsLoaded": false
+}

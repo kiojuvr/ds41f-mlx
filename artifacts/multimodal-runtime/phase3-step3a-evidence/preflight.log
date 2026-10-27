@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/Volumes/SDXC-512/ds41f-mlx/artifacts/multimodal-runtime/phase3-step3a-evidence/runtime.py", line 86, in <module>
+    if __name__=='__main__':main()
+                            ~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/artifacts/multimodal-runtime/phase3-step3a-evidence/runtime.py", line 11, in main
+    proof=prove_installed_admission(checkpoint=True); save('admission.json',proof)
+  File "/Volumes/SDXC-512/ds41f-mlx/tools/qualify_installed_admission.py", line 19, in prove_installed_admission
+    runtime = inspect_runtime(config(profile='mtp-serving-v1'), checkpoint=checkpoint)
+  File "/private/tmp/ds41f-step3a/lib/python3.13/site-packages/ds41f_mlx/mtp_identity.py", line 213, in inspect
+    raise ValueError('DS41F_CHECKPOINT must explicitly identify the official external asset')
+ValueError: DS41F_CHECKPOINT must explicitly identify the official external asset

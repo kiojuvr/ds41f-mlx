@@ -1,0 +1,10 @@
+progress: installed admission, actual pre_woa and serving imports passed; waiting for supervisor
+progress: model loaded once
+Traceback (most recent call last):
+  File "/Volumes/SDXC-512/ds41f-mlx/artifacts/multimodal-runtime/phase3-step3a-evidence/runtime.py", line 94, in <module>
+    if __name__=='__main__':main()
+                            ~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/artifacts/multimodal-runtime/phase3-step3a-evidence/runtime.py", line 89, in main
+    save('retirement.json',dict(requests=list(scheduler.requests),waiting=len(scheduler.waiting),running=len(scheduler.running)))
+                                              ^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'requests'
