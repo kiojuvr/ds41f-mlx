@@ -134,7 +134,16 @@ human-command dispatch. A task-local exact-model policy resolves to 4,096 pressu
 / 1,024 retained tokens with a 512-token summary cap, leaving declared capacity
 unchanged. Controlled summary failure is not successful compaction. C4 remains
 unqualified; native summary/replacement/reconstruction and cleanup require separate
-authorization. No weights, Production change, deployment or Phase 4 work.
+authorization. That model-free step loaded no weights.
+[Step 3B-R2](../artifacts/multimodal-runtime/phase3-step3br2-native-compaction.md)
+executed one native session: two real image reads and compatible reuse, then
+5,068 meter tokens triggered the official pressure listener. The single genuine
+summary hit its fixed 512-token cap and was rejected as incomplete. The safe
+pre-step fence prevented another attempt; no summary/replacement or changed-prefix
+continuation occurred. **C4 remains BLOCKED/unqualified**. Six actual requests
+settled/published; Runtime exited normally, but final backend/model weakrefs stayed
+live, so cleanup is PARTIAL rather than a demonstrated leak or reclamation PASS.
+No Production change, policy rescue, deployment or Phase 4 work.
 
 ### Future official-source investigation priorities
 
