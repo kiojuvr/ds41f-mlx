@@ -1,0 +1,899 @@
+{
+  "kind": "ANALYTICAL_POSSIBLE_SURFACES_NO_SESSION_REPLACEMENT",
+  "pass": true,
+  "weights_loaded": 0,
+  "effective": {
+    "adapter": {
+      "baseURL": "http://127.0.0.1:18083",
+      "defaults": {
+        "thinking": "disabled",
+        "reasoningEffort": "off"
+      },
+      "maxTokens": 1200,
+      "defaultContextWindow": 1000000,
+      "models": [
+        {
+          "id": "deepseek-flash",
+          "contextWindow": 1048576,
+          "maxTokens": 1200,
+          "systemPromptUpdate": "in-history",
+          "toolUpdate": "addition-only",
+          "inputModalities": [
+            "text",
+            "image"
+          ],
+          "imageMaxBytes": 2097152
+        }
+      ],
+      "streamIdleTimeoutMs": 180000,
+      "maxRequestFilesBytes": 134217728,
+      "maxInlineRequestImageBytes": 20971520,
+      "maxImagesPerRequest": 3,
+      "imageOffloadByteQuantum": 67108864,
+      "inlineImageOffloadByteQuantum": 10485760,
+      "imageOffloadCountQuantum": 1,
+      "filesApiTimeoutMs": 60000,
+      "filePolicy": {
+        "expiresAfterSeconds": 604800,
+        "refreshMarginSeconds": 3600,
+        "quotaCleanupBatch": 100
+      },
+      "retryPolicy": {
+        "mode": "normal",
+        "maxRetries": 0,
+        "retryableCodes": [
+          "EMPTY_RESPONSE",
+          "RATE_LIMIT",
+          "SERVER",
+          "TIMEOUT",
+          "TRANSPORT"
+        ],
+        "initialDelayMs": 500,
+        "maxDelayMs": 10000,
+        "jitterRatio": 0.1
+      }
+    },
+    "system_prompt_config": {
+      "personaPrefix": "You are a coding agent powered by the {{model}} model."
+    },
+    "actual_system_text": [
+      {
+        "type": "text",
+        "text": "You are an AI agent powered by DeepSeek Harness.\n\nYou are a coding agent powered by the deepseek-flash model."
+      }
+    ],
+    "actual_context_sections": [
+      {
+        "name": "working-directory:current",
+        "text": "Current working directory: \"/private/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-4ar1-representative-9iddlath/workspace\"."
+      },
+      {
+        "name": "sandbox:policy",
+        "text": "Current DSH file policy: read-only. Any available operation enforced by the DSH file sandbox cannot modify files in the standing mode. Do not refuse a required modification from this policy alone: try an available tool normally and follow any denial and escalation guidance it returns."
+      },
+      {
+        "name": "approval:policy",
+        "text": "Approval policy: ask. Operations that require approval may ask through the configured answerers; without an available answerer, the request fails closed."
+      }
+    ],
+    "actual_tool": {
+      "name": "read_image",
+      "description": "Read a PNG/JPEG/WebP/GIF file and return the image itself. Large images are downscaled automatically; do not install image libraries or create thumbnails to inspect an image.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "file_path": {
+            "type": "string",
+            "description": "Path to the image file, resolved by the filesystem backend."
+          }
+        },
+        "required": [
+          "file_path"
+        ]
+      }
+    },
+    "actual_request_header": {
+      "config": {
+        "provider": "deepseek-official",
+        "model": "deepseek-flash",
+        "maxTokens": 1200,
+        "reasoningEffort": "off"
+      },
+      "adapterDefaults": {
+        "reasoningEffort": true,
+        "maxTokens": true
+      },
+      "tools": [
+        {
+          "name": "read_image",
+          "description": "Read a PNG/JPEG/WebP/GIF file and return the image itself. Large images are downscaled automatically; do not install image libraries or create thumbnails to inspect an image.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "file_path": {
+                "type": "string",
+                "description": "Path to the image file, resolved by the filesystem backend."
+              }
+            },
+            "required": [
+              "file_path"
+            ]
+          }
+        }
+      ]
+    },
+    "actual_context_meter_cost": 173,
+    "trigger_task_meter_cost": 30,
+    "round3_task_meter_cost": 111,
+    "compatible_task_meter_cost": 33
+  },
+  "projections": [
+    {
+      "scenario": "concise",
+      "pressure": 8373,
+      "selected_tokens": 6909,
+      "selected": [
+        8,
+        9,
+        13,
+        15,
+        18,
+        20,
+        23,
+        25,
+        28,
+        36,
+        38,
+        40,
+        46,
+        48,
+        54,
+        56,
+        62,
+        70,
+        72,
+        80,
+        82,
+        90,
+        92
+      ],
+      "retained": [
+        7,
+        100,
+        102
+      ],
+      "balanced_groups": [
+        {
+          "result": 15,
+          "call": 13
+        },
+        {
+          "result": 20,
+          "call": 18
+        },
+        {
+          "result": 25,
+          "call": 23
+        },
+        {
+          "result": 40,
+          "call": 38
+        },
+        {
+          "result": 48,
+          "call": 46
+        },
+        {
+          "result": 56,
+          "call": 54
+        }
+      ],
+      "remaining_base_including_protected_header_and_anchor_excess": 1464,
+      "post_compaction_possible": [
+        {
+          "summary": "small plausible complete (not predicted)",
+          "framed_meter_tokens": 600,
+          "pressure": 2064
+        },
+        {
+          "summary": "prior REAL complete 1053-output reference",
+          "framed_meter_tokens": 1241,
+          "pressure": 2705
+        },
+        {
+          "summary": "larger density extrapolation (not universal upper bound)",
+          "framed_meter_tokens": 2205,
+          "pressure": 3669
+        }
+      ],
+      "strict_shrink_candidate_2205": true,
+      "notes": "Official measure = repriced surface + tools + eligible usage excess. A valid replacement removes selected tokens and adds framed summary; neither header nor any positive usage excess may be silently dropped."
+    },
+    {
+      "scenario": "representative",
+      "pressure": 9546,
+      "selected_tokens": 7495,
+      "selected": [
+        8,
+        9,
+        13,
+        15,
+        18,
+        20,
+        23,
+        25,
+        28,
+        36,
+        38,
+        40,
+        46,
+        48,
+        54,
+        56,
+        62,
+        70,
+        72,
+        80,
+        82
+      ],
+      "retained": [
+        7,
+        90,
+        92
+      ],
+      "balanced_groups": [
+        {
+          "result": 15,
+          "call": 13
+        },
+        {
+          "result": 20,
+          "call": 18
+        },
+        {
+          "result": 25,
+          "call": 23
+        },
+        {
+          "result": 40,
+          "call": 38
+        },
+        {
+          "result": 48,
+          "call": 46
+        },
+        {
+          "result": 56,
+          "call": 54
+        }
+      ],
+      "remaining_base_including_protected_header_and_anchor_excess": 2051,
+      "post_compaction_possible": [
+        {
+          "summary": "small plausible complete (not predicted)",
+          "framed_meter_tokens": 600,
+          "pressure": 2651
+        },
+        {
+          "summary": "prior REAL complete 1053-output reference",
+          "framed_meter_tokens": 1241,
+          "pressure": 3292
+        },
+        {
+          "summary": "larger density extrapolation (not universal upper bound)",
+          "framed_meter_tokens": 2205,
+          "pressure": 4256
+        }
+      ],
+      "strict_shrink_candidate_2205": true,
+      "notes": "Official measure = repriced surface + tools + eligible usage excess. A valid replacement removes selected tokens and adds framed summary; neither header nor any positive usage excess may be silently dropped."
+    },
+    {
+      "scenario": "large",
+      "pressure": 8563,
+      "selected_tokens": 6989,
+      "selected": [
+        8,
+        9,
+        13,
+        15,
+        18,
+        20,
+        23,
+        25,
+        28,
+        36,
+        38,
+        40
+      ],
+      "retained": [
+        7,
+        46,
+        48
+      ],
+      "balanced_groups": [
+        {
+          "result": 15,
+          "call": 13
+        },
+        {
+          "result": 20,
+          "call": 18
+        },
+        {
+          "result": 25,
+          "call": 23
+        },
+        {
+          "result": 40,
+          "call": 38
+        },
+        {
+          "result": 48,
+          "call": 46
+        }
+      ],
+      "remaining_base_including_protected_header_and_anchor_excess": 1574,
+      "post_compaction_possible": [
+        {
+          "summary": "small plausible complete (not predicted)",
+          "framed_meter_tokens": 600,
+          "pressure": 2174
+        },
+        {
+          "summary": "prior REAL complete 1053-output reference",
+          "framed_meter_tokens": 1241,
+          "pressure": 2815
+        },
+        {
+          "summary": "larger density extrapolation (not universal upper bound)",
+          "framed_meter_tokens": 2205,
+          "pressure": 3779
+        }
+      ],
+      "strict_shrink_candidate_2205": true,
+      "notes": "Official measure = repriced surface + tools + eligible usage excess. A valid replacement removes selected tokens and adds framed summary; neither header nor any positive usage excess may be silently dropped."
+    },
+    {
+      "scenario": "usage-low",
+      "pressure": 8706,
+      "selected_tokens": 6975,
+      "selected": [
+        8,
+        9,
+        13,
+        15,
+        18,
+        20,
+        23,
+        25,
+        28,
+        36,
+        38,
+        40,
+        46,
+        48,
+        54,
+        56,
+        62,
+        70,
+        72,
+        80,
+        82
+      ],
+      "retained": [
+        7,
+        90,
+        92
+      ],
+      "balanced_groups": [
+        {
+          "result": 15,
+          "call": 13
+        },
+        {
+          "result": 20,
+          "call": 18
+        },
+        {
+          "result": 25,
+          "call": 23
+        },
+        {
+          "result": 40,
+          "call": 38
+        },
+        {
+          "result": 48,
+          "call": 46
+        },
+        {
+          "result": 56,
+          "call": 54
+        }
+      ],
+      "remaining_base_including_protected_header_and_anchor_excess": 1731,
+      "post_compaction_possible": [
+        {
+          "summary": "small plausible complete (not predicted)",
+          "framed_meter_tokens": 600,
+          "pressure": 2331
+        },
+        {
+          "summary": "prior REAL complete 1053-output reference",
+          "framed_meter_tokens": 1241,
+          "pressure": 2972
+        },
+        {
+          "summary": "larger density extrapolation (not universal upper bound)",
+          "framed_meter_tokens": 2205,
+          "pressure": 3936
+        }
+      ],
+      "strict_shrink_candidate_2205": true,
+      "notes": "Official measure = repriced surface + tools + eligible usage excess. A valid replacement removes selected tokens and adds framed summary; neither header nor any positive usage excess may be silently dropped."
+    },
+    {
+      "scenario": "usage-high",
+      "pressure": 10275,
+      "selected_tokens": 4178,
+      "selected": [
+        8,
+        9,
+        13,
+        15,
+        18,
+        20,
+        23,
+        25,
+        28,
+        36,
+        38,
+        40,
+        46,
+        48,
+        54,
+        56,
+        62
+      ],
+      "retained": [
+        7,
+        70,
+        72
+      ],
+      "balanced_groups": [
+        {
+          "result": 15,
+          "call": 13
+        },
+        {
+          "result": 20,
+          "call": 18
+        },
+        {
+          "result": 25,
+          "call": 23
+        },
+        {
+          "result": 40,
+          "call": 38
+        },
+        {
+          "result": 48,
+          "call": 46
+        },
+        {
+          "result": 56,
+          "call": 54
+        }
+      ],
+      "remaining_base_including_protected_header_and_anchor_excess": 6097,
+      "post_compaction_possible": [
+        {
+          "summary": "small plausible complete (not predicted)",
+          "framed_meter_tokens": 600,
+          "pressure": 6697
+        },
+        {
+          "summary": "prior REAL complete 1053-output reference",
+          "framed_meter_tokens": 1241,
+          "pressure": 7338
+        },
+        {
+          "summary": "larger density extrapolation (not universal upper bound)",
+          "framed_meter_tokens": 2205,
+          "pressure": 8302
+        }
+      ],
+      "strict_shrink_candidate_2205": true,
+      "notes": "Official measure = repriced surface + tools + eligible usage excess. A valid replacement removes selected tokens and adds framed summary; neither header nor any positive usage excess may be silently dropped."
+    }
+  ],
+  "round3": [
+    {
+      "name": "concise with grounded summary",
+      "start": 2966,
+      "replacementPressure": 2705,
+      "post_compaction_continuation_chars": 200,
+      "post_compaction_continuation_cost": 58,
+      "trigger_cost": 30,
+      "entry_screen_pass": true,
+      "assumed_assistant_text_chars": {
+        "four_tool_generations_each": 200,
+        "final_comparison": 800,
+        "compatible": 200
+      },
+      "steps": [
+        {
+          "at": "immediate replacement before pending trigger (analytical)",
+          "pressure": 2705
+        },
+        {
+          "at": "entry AFTER ordinary changed-projection trigger continuation + refreshed context",
+          "pressure": 2966
+        },
+        {
+          "at": "claimed Round3 task (context already current)",
+          "pressure": 3077
+        },
+        {
+          "at": "after G result, next pre-step BEFORE any budget offload",
+          "pressure": 3521,
+          "tool_result_meter_cost": 372
+        },
+        {
+          "at": "after H result, next pre-step BEFORE any budget offload",
+          "pressure": 3965,
+          "tool_result_meter_cost": 372
+        },
+        {
+          "at": "after I result, next pre-step BEFORE any budget offload",
+          "pressure": 4409,
+          "tool_result_meter_cost": 372
+        },
+        {
+          "at": "after A result, next pre-step BEFORE any budget offload",
+          "pressure": 4853,
+          "tool_result_meter_cost": 372
+        },
+        {
+          "at": "official oldest-image offload retry if reached",
+          "pressure": 4672
+        },
+        {
+          "at": "final comparison settled; next followup pre-step",
+          "pressure": 4880
+        },
+        {
+          "at": "compatible followup completed",
+          "pressure": 4971
+        }
+      ],
+      "max_pressure": 4971,
+      "credible_no_second_pressure_trigger": true,
+      "uncertainty": "ASCII fixed-density analytical text lengths, not bounds on arbitrary native token-to-character ratio or predictions of actual model output. Native 1200-token cap and actual pressure fence remain authoritative."
+    },
+    {
+      "name": "representative with grounded summary",
+      "start": 3853,
+      "replacementPressure": 3292,
+      "post_compaction_continuation_chars": 1400,
+      "post_compaction_continuation_cost": 358,
+      "trigger_cost": 30,
+      "entry_screen_pass": true,
+      "assumed_assistant_text_chars": {
+        "four_tool_generations_each": 800,
+        "final_comparison": 2400,
+        "compatible": 400
+      },
+      "steps": [
+        {
+          "at": "immediate replacement before pending trigger (analytical)",
+          "pressure": 3292
+        },
+        {
+          "at": "entry AFTER ordinary changed-projection trigger continuation + refreshed context",
+          "pressure": 3853
+        },
+        {
+          "at": "claimed Round3 task (context already current)",
+          "pressure": 3964
+        },
+        {
+          "at": "after G result, next pre-step BEFORE any budget offload",
+          "pressure": 4558,
+          "tool_result_meter_cost": 372
+        },
+        {
+          "at": "after H result, next pre-step BEFORE any budget offload",
+          "pressure": 5152,
+          "tool_result_meter_cost": 372
+        },
+        {
+          "at": "after I result, next pre-step BEFORE any budget offload",
+          "pressure": 5746,
+          "tool_result_meter_cost": 372
+        },
+        {
+          "at": "after A result, next pre-step BEFORE any budget offload",
+          "pressure": 6340,
+          "tool_result_meter_cost": 372
+        },
+        {
+          "at": "official oldest-image offload retry if reached",
+          "pressure": 6159
+        },
+        {
+          "at": "final comparison settled; next followup pre-step",
+          "pressure": 6767
+        },
+        {
+          "at": "compatible followup completed",
+          "pressure": 6908
+        }
+      ],
+      "max_pressure": 6908,
+      "credible_no_second_pressure_trigger": true,
+      "uncertainty": "ASCII fixed-density analytical text lengths, not bounds on arbitrary native token-to-character ratio or predictions of actual model output. Native 1200-token cap and actual pressure fence remain authoritative."
+    },
+    {
+      "name": "larger summary plus representative continuation",
+      "start": 4817,
+      "replacementPressure": 4256,
+      "post_compaction_continuation_chars": 1400,
+      "post_compaction_continuation_cost": 358,
+      "trigger_cost": 30,
+      "entry_screen_pass": false,
+      "assumed_assistant_text_chars": {
+        "four_tool_generations_each": 800,
+        "final_comparison": 2400,
+        "compatible": 400
+      },
+      "steps": [
+        {
+          "at": "immediate replacement before pending trigger (analytical)",
+          "pressure": 4256
+        },
+        {
+          "at": "entry AFTER ordinary changed-projection trigger continuation + refreshed context",
+          "pressure": 4817
+        },
+        {
+          "at": "claimed Round3 task (context already current)",
+          "pressure": 4928
+        },
+        {
+          "at": "after G result, next pre-step BEFORE any budget offload",
+          "pressure": 5522,
+          "tool_result_meter_cost": 372
+        },
+        {
+          "at": "after H result, next pre-step BEFORE any budget offload",
+          "pressure": 6116,
+          "tool_result_meter_cost": 372
+        },
+        {
+          "at": "after I result, next pre-step BEFORE any budget offload",
+          "pressure": 6710,
+          "tool_result_meter_cost": 372
+        },
+        {
+          "at": "after A result, next pre-step BEFORE any budget offload",
+          "pressure": 7304,
+          "tool_result_meter_cost": 372
+        },
+        {
+          "at": "official oldest-image offload retry if reached",
+          "pressure": 7123
+        },
+        {
+          "at": "final comparison settled; next followup pre-step",
+          "pressure": 7731
+        },
+        {
+          "at": "compatible followup completed",
+          "pressure": 7872
+        }
+      ],
+      "max_pressure": 7872,
+      "credible_no_second_pressure_trigger": false,
+      "uncertainty": "ASCII fixed-density analytical text lengths, not bounds on arbitrary native token-to-character ratio or predictions of actual model output. Native 1200-token cap and actual pressure fence remain authoritative."
+    },
+    {
+      "name": "larger summary plus concise continuation",
+      "start": 4517,
+      "replacementPressure": 4256,
+      "post_compaction_continuation_chars": 200,
+      "post_compaction_continuation_cost": 58,
+      "trigger_cost": 30,
+      "entry_screen_pass": true,
+      "assumed_assistant_text_chars": {
+        "four_tool_generations_each": 800,
+        "final_comparison": 2400,
+        "compatible": 400
+      },
+      "steps": [
+        {
+          "at": "immediate replacement before pending trigger (analytical)",
+          "pressure": 4256
+        },
+        {
+          "at": "entry AFTER ordinary changed-projection trigger continuation + refreshed context",
+          "pressure": 4517
+        },
+        {
+          "at": "claimed Round3 task (context already current)",
+          "pressure": 4628
+        },
+        {
+          "at": "after G result, next pre-step BEFORE any budget offload",
+          "pressure": 5222,
+          "tool_result_meter_cost": 372
+        },
+        {
+          "at": "after H result, next pre-step BEFORE any budget offload",
+          "pressure": 5816,
+          "tool_result_meter_cost": 372
+        },
+        {
+          "at": "after I result, next pre-step BEFORE any budget offload",
+          "pressure": 6410,
+          "tool_result_meter_cost": 372
+        },
+        {
+          "at": "after A result, next pre-step BEFORE any budget offload",
+          "pressure": 7004,
+          "tool_result_meter_cost": 372
+        },
+        {
+          "at": "official oldest-image offload retry if reached",
+          "pressure": 6823
+        },
+        {
+          "at": "final comparison settled; next followup pre-step",
+          "pressure": 7431
+        },
+        {
+          "at": "compatible followup completed",
+          "pressure": 7572
+        }
+      ],
+      "max_pressure": 7572,
+      "credible_no_second_pressure_trigger": true,
+      "uncertainty": "ASCII fixed-density analytical text lengths, not bounds on arbitrary native token-to-character ratio or predictions of actual model output. Native 1200-token cap and actual pressure fence remain authoritative."
+    },
+    {
+      "name": "larger permitted Round3 descriptions",
+      "start": 3853,
+      "replacementPressure": 3292,
+      "post_compaction_continuation_chars": 1400,
+      "post_compaction_continuation_cost": 358,
+      "trigger_cost": 30,
+      "entry_screen_pass": true,
+      "assumed_assistant_text_chars": {
+        "four_tool_generations_each": 1800,
+        "final_comparison": 3600,
+        "compatible": 800
+      },
+      "steps": [
+        {
+          "at": "immediate replacement before pending trigger (analytical)",
+          "pressure": 3292
+        },
+        {
+          "at": "entry AFTER ordinary changed-projection trigger continuation + refreshed context",
+          "pressure": 3853
+        },
+        {
+          "at": "claimed Round3 task (context already current)",
+          "pressure": 3964
+        },
+        {
+          "at": "after G result, next pre-step BEFORE any budget offload",
+          "pressure": 4808,
+          "tool_result_meter_cost": 372
+        },
+        {
+          "at": "after H result, next pre-step BEFORE any budget offload",
+          "pressure": 5652,
+          "tool_result_meter_cost": 372
+        },
+        {
+          "at": "after I result, next pre-step BEFORE any budget offload",
+          "pressure": 6496,
+          "tool_result_meter_cost": 372
+        },
+        {
+          "at": "after A result, next pre-step BEFORE any budget offload",
+          "pressure": 7340,
+          "tool_result_meter_cost": 372
+        },
+        {
+          "at": "official oldest-image offload retry if reached",
+          "pressure": 7159
+        },
+        {
+          "at": "final comparison settled; next followup pre-step",
+          "pressure": 8067
+        },
+        {
+          "at": "compatible followup completed",
+          "pressure": 8308
+        }
+      ],
+      "max_pressure": 8308,
+      "credible_no_second_pressure_trigger": false,
+      "uncertainty": "ASCII fixed-density analytical text lengths, not bounds on arbitrary native token-to-character ratio or predictions of actual model output. Native 1200-token cap and actual pressure fence remain authoritative."
+    },
+    {
+      "name": "cap-equivalent ASCII output sensitivity",
+      "start": 4608,
+      "replacementPressure": null,
+      "post_compaction_continuation_chars": null,
+      "post_compaction_continuation_cost": 0,
+      "trigger_cost": 30,
+      "entry_screen_pass": true,
+      "assumed_assistant_text_chars": {
+        "four_tool_generations_each": 4800,
+        "final_comparison": 4800,
+        "compatible": 4800
+      },
+      "steps": [
+        {
+          "at": "immediate replacement before pending trigger (analytical)",
+          "pressure": null
+        },
+        {
+          "at": "entry AFTER ordinary changed-projection trigger continuation + refreshed context",
+          "pressure": 4608
+        },
+        {
+          "at": "claimed Round3 task (context already current)",
+          "pressure": 4719
+        },
+        {
+          "at": "after G result, next pre-step BEFORE any budget offload",
+          "pressure": 6313,
+          "tool_result_meter_cost": 372
+        },
+        {
+          "at": "after H result, next pre-step BEFORE any budget offload",
+          "pressure": 7907,
+          "tool_result_meter_cost": 372
+        },
+        {
+          "at": "after I result, next pre-step BEFORE any budget offload",
+          "pressure": 9501,
+          "tool_result_meter_cost": 372
+        },
+        {
+          "at": "after A result, next pre-step BEFORE any budget offload",
+          "pressure": 11095,
+          "tool_result_meter_cost": 372
+        },
+        {
+          "at": "official oldest-image offload retry if reached",
+          "pressure": 10914
+        },
+        {
+          "at": "final comparison settled; next followup pre-step",
+          "pressure": 12122
+        },
+        {
+          "at": "compatible followup completed",
+          "pressure": 13363
+        }
+      ],
+      "max_pressure": 13363,
+      "credible_no_second_pressure_trigger": false,
+      "uncertainty": "ASCII fixed-density analytical text lengths, not bounds on arbitrary native token-to-character ratio or predictions of actual model output. Native 1200-token cap and actual pressure fence remain authoritative."
+    }
+  ],
+  "summary_completion_unknown": true,
+  "native_only": [
+    "actual complete summary text and framed size",
+    "actual committed replacement and persistence",
+    "actual post-compaction pressure/usage anchor excess",
+    "native historical Vision, paired selection and settlement"
+  ]
+}

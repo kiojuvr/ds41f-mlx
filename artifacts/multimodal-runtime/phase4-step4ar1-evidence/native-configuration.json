@@ -1,0 +1,119 @@
+{
+  "kind": "NORMAL_CLI_GUARD_COMPOSITION_WITHOUT_CONTROLS",
+  "exit": 0,
+  "composed_sha256": "c2cff188442e0aceffb07c7af3412ea32ea4685789a50dacec3651bf3caf6de2",
+  "rows": [
+    {
+      "id": "session-log-deepseek",
+      "name": "@deepseek-ai/dsh-session-log-deepseek",
+      "config": {
+        "enabled": false
+      }
+    },
+    {
+      "id": "llm-retry",
+      "name": "@deepseek-ai/dsh-llm-retry",
+      "disabled": true
+    },
+    {
+      "id": "sandbox-policy",
+      "name": "@deepseek-ai/dsh-sandbox-policy",
+      "config": {
+        "mode": "read-only",
+        "workspaceRoot": "/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/phase4-guard-compose-only-_cwjfxfe/workspace"
+      }
+    },
+    {
+      "id": "permission",
+      "name": "@deepseek-ai/dsh-permission-presets",
+      "config": {
+        "presets": {
+          "read-only": {
+            "sandbox": "read-only",
+            "approval": "ask"
+          }
+        },
+        "defaultPreset": "read-only"
+      }
+    },
+    {
+      "id": "tool-fs",
+      "name": "@deepseek-ai/dsh-tool-fs",
+      "config": {
+        "read": false,
+        "readImage": true,
+        "write": false,
+        "edit": false
+      }
+    },
+    {
+      "id": "compaction-basic",
+      "name": "@deepseek-ai/dsh-compaction-basic",
+      "config": {
+        "auto": true,
+        "modelPolicies": [
+          {
+            "provider": "deepseek-official",
+            "model": "deepseek-flash",
+            "thresholdRatio": 0.0078125,
+            "headroomTokens": 2048,
+            "retainTokens": 1024,
+            "maxTokens": 2048,
+            "compactionRetries": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "system-prompt",
+      "name": "@deepseek-ai/dsh-system-prompt",
+      "config": {
+        "personaPrefix": "You are a coding agent powered by the {{model}} model."
+      }
+    },
+    {
+      "id": "agent-loop",
+      "name": "@deepseek-ai/dsh-agent-loop",
+      "config": {
+        "maxParallelToolCalls": 1
+      }
+    },
+    {
+      "id": "llm-deepseek",
+      "name": "@deepseek-ai/dsh-llm-deepseek-api-key",
+      "config": {
+        "baseURL": "http://127.0.0.1:18083",
+        "apiKeyEnv": "DS41F_LOCAL_API_KEY",
+        "maxImagesPerRequest": 3,
+        "imageOffloadCountQuantum": 1,
+        "thinking": "disabled",
+        "reasoningEffort": "off",
+        "maxTokens": 1200,
+        "retryPolicy": {
+          "mode": "normal",
+          "maxRetries": 0
+        },
+        "streamIdleTimeoutMs": 180000,
+        "models": [
+          {
+            "id": "deepseek-flash",
+            "inputModalities": [
+              "text",
+              "image"
+            ],
+            "contextWindow": 1048576,
+            "maxTokens": 1200,
+            "systemPromptUpdate": "in-history",
+            "toolUpdate": "addition-only"
+          }
+        ]
+      }
+    },
+    {
+      "id": "phase4-budget",
+      "name": "file:///Volumes/SDXC-512/ds41f-mlx/artifacts/multimodal-runtime/phase4-step4ar1-evidence/guard.mjs"
+    }
+  ],
+  "weights_loaded": 0,
+  "agent_started": false
+}

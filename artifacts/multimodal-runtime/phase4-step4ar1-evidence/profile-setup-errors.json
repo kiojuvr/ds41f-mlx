@@ -1,0 +1,251 @@
+{
+  "kind": "MODEL_FREE_TEST_SETUP_ERRORS_NOT_NATIVE_FAILURES",
+  "cases": [
+    {
+      "scenario": "concise",
+      "error": "dsh: UNKNOWN: Unexpected end of JSON input\n",
+      "gate": {
+        "effects": [
+          {
+            "label": "A",
+            "id": "controlled-0"
+          },
+          {
+            "label": "B",
+            "id": "controlled-1"
+          },
+          {
+            "label": "C",
+            "id": "controlled-2"
+          },
+          {
+            "label": "D",
+            "id": "controlled-3"
+          },
+          {
+            "label": "E",
+            "id": "controlled-4"
+          },
+          {
+            "label": "F",
+            "id": "controlled-5"
+          }
+        ],
+        "pending": null,
+        "ordinary": 12,
+        "summary": 0,
+        "attempts": 12,
+        "http": 0,
+        "httpOrdinary": 0,
+        "httpSummary": 0,
+        "allocation": 14400,
+        "offloads": 3,
+        "starts": 0,
+        "round3Entered": false,
+        "stopped": null,
+        "lastAttempt": {
+          "purpose": "ordinary",
+          "http": 0,
+          "refunded": false
+        }
+      }
+    },
+    {
+      "scenario": "representative",
+      "error": "",
+      "gate": {
+        "effects": [
+          {
+            "label": "A",
+            "id": "controlled-0"
+          },
+          {
+            "label": "B",
+            "id": "controlled-1"
+          },
+          {
+            "label": "C",
+            "id": "controlled-2"
+          },
+          {
+            "label": "D",
+            "id": "controlled-3"
+          },
+          {
+            "label": "E",
+            "id": "controlled-4"
+          },
+          {
+            "label": "F",
+            "id": "controlled-5"
+          }
+        ],
+        "pending": null,
+        "ordinary": 14,
+        "summary": 1,
+        "attempts": 15,
+        "http": 0,
+        "httpOrdinary": 0,
+        "httpSummary": 0,
+        "allocation": 18848,
+        "offloads": 3,
+        "starts": 1,
+        "round3Entered": false,
+        "stopped": "failed/unclosed compaction",
+        "lastAttempt": {
+          "purpose": "compaction",
+          "http": 0,
+          "refunded": false
+        }
+      }
+    },
+    {
+      "scenario": "large",
+      "error": "",
+      "gate": {
+        "effects": [
+          {
+            "label": "A",
+            "id": "controlled-0"
+          },
+          {
+            "label": "B",
+            "id": "controlled-1"
+          },
+          {
+            "label": "C",
+            "id": "controlled-2"
+          },
+          {
+            "label": "D",
+            "id": "controlled-3"
+          },
+          {
+            "label": "E",
+            "id": "controlled-4"
+          }
+        ],
+        "pending": null,
+        "ordinary": 7,
+        "summary": 1,
+        "attempts": 8,
+        "http": 0,
+        "httpOrdinary": 0,
+        "httpSummary": 0,
+        "allocation": 10448,
+        "offloads": 1,
+        "starts": 1,
+        "round3Entered": false,
+        "stopped": "failed/unclosed compaction",
+        "lastAttempt": {
+          "purpose": "compaction",
+          "http": 0,
+          "refunded": false
+        }
+      }
+    },
+    {
+      "scenario": "usage-low",
+      "error": "",
+      "gate": {
+        "effects": [
+          {
+            "label": "A",
+            "id": "controlled-0"
+          },
+          {
+            "label": "B",
+            "id": "controlled-1"
+          },
+          {
+            "label": "C",
+            "id": "controlled-2"
+          },
+          {
+            "label": "D",
+            "id": "controlled-3"
+          },
+          {
+            "label": "E",
+            "id": "controlled-4"
+          },
+          {
+            "label": "F",
+            "id": "controlled-5"
+          }
+        ],
+        "pending": null,
+        "ordinary": 14,
+        "summary": 1,
+        "attempts": 15,
+        "http": 0,
+        "httpOrdinary": 0,
+        "httpSummary": 0,
+        "allocation": 18848,
+        "offloads": 3,
+        "starts": 1,
+        "round3Entered": false,
+        "stopped": "failed/unclosed compaction",
+        "lastAttempt": {
+          "purpose": "compaction",
+          "http": 0,
+          "refunded": false
+        }
+      }
+    },
+    {
+      "scenario": "usage-high",
+      "error": "dsh: UNKNOWN: Unexpected end of JSON input\n",
+      "gate": {
+        "effects": [
+          {
+            "label": "A",
+            "id": "controlled-0"
+          },
+          {
+            "label": "B",
+            "id": "controlled-1"
+          },
+          {
+            "label": "C",
+            "id": "controlled-2"
+          },
+          {
+            "label": "D",
+            "id": "controlled-3"
+          },
+          {
+            "label": "E",
+            "id": "controlled-4"
+          },
+          {
+            "label": "F",
+            "id": "controlled-5"
+          }
+        ],
+        "pending": null,
+        "ordinary": 11,
+        "summary": 0,
+        "attempts": 11,
+        "http": 0,
+        "httpOrdinary": 0,
+        "httpSummary": 0,
+        "allocation": 13200,
+        "offloads": 3,
+        "starts": 0,
+        "round3Entered": false,
+        "stopped": null,
+        "lastAttempt": {
+          "purpose": "ordinary",
+          "http": 0,
+          "refunded": false
+        }
+      }
+    }
+  ],
+  "corrections": [
+    "prepareCall uses generate, not stream; control intercept moved to generate",
+    "Supervisor receipt writes made atomic",
+    "request-error observer must prepend so official offload recovery cannot short circuit attempt accounting"
+  ]
+}

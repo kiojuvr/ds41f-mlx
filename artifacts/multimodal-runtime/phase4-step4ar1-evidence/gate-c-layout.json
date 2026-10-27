@@ -1,0 +1,154 @@
+{
+  "kind": "MODEL_FREE_PACKED_LAYOUT_CALCULATION_NOT_NATIVE_PEAK",
+  "weights_loaded": 0,
+  "pass_": true,
+  "config_sha256": "8be45ce0476004a3f529fd896115a4a2e800a129ad2d3ec05b16050f52e21879",
+  "target_layers": 40,
+  "dspark_rings": 3,
+  "packed_row_bytes": {
+    "window": 528,
+    "compressed_kv": 288,
+    "index": 68
+  },
+  "window_rows": 128,
+  "ring_shape": [
+    1,
+    1,
+    128,
+    512
+  ],
+  "ring_dtype": "bfloat16",
+  "compressor_tail_dtype": "float32",
+  "kv_sources": [
+    2,
+    8,
+    14,
+    20
+  ],
+  "calculated_three_image_payloads": {
+    "fresh_patches": 4563,
+    "image_embedding_rows": 552,
+    "bf16_embedding_payload_bytes": 5652480,
+    "float32_normalized_patch_payload_bytes": 10732176,
+    "not_vision_arena_or_native_peak": true
+  },
+  "logical_conditional_limits": {
+    "pair": 12582912,
+    "roots": 201326592
+  },
+  "cases": [
+    {
+      "purpose": "ordinary",
+      "input_positions": 31568,
+      "reservation": 1200,
+      "pinned_speculative_positions": 5,
+      "end": 32773,
+      "logical_complete_pair_bytes": 32276804,
+      "existing_projected_pair_bytes": 32292564,
+      "calculated_padded_pair_capacity_bytes": 73846664,
+      "per_source": [
+        {
+          "layer": 2,
+          "ratio": 2,
+          "logical_rows": 16386,
+          "capacity_rows": 20736,
+          "two_buffers_bytes": 14764032
+        },
+        {
+          "layer": 8,
+          "ratio": 2,
+          "logical_rows": 16386,
+          "capacity_rows": 20736,
+          "two_buffers_bytes": 14764032
+        },
+        {
+          "layer": 14,
+          "ratio": 2,
+          "logical_rows": 16386,
+          "capacity_rows": 20736,
+          "two_buffers_bytes": 14764032
+        },
+        {
+          "layer": 20,
+          "ratio": 1,
+          "logical_rows": 32773,
+          "capacity_rows": 37120,
+          "two_buffers_bytes": 26429440
+        }
+      ],
+      "retained_roots": 18,
+      "retained_logical_bytes": 581266152,
+      "active_plus_two_pending_logical_bytes": 96877692,
+      "retained_active_two_capture_logical_bytes": 678143844,
+      "conservative_padded_23_equivalents_bytes": 1698473272,
+      "conservative_python_token_metadata_bytes": 33167196,
+      "coexistence_components": {
+        "retained": 18,
+        "active_restored": 1,
+        "pending_prompt_and_final": 2,
+        "transient_restore_copy": 1,
+        "verify_predecessor_allowance": 1
+      }
+    },
+    {
+      "purpose": "summary",
+      "input_positions": 30720,
+      "reservation": 2048,
+      "pinned_speculative_positions": 5,
+      "end": 32773,
+      "logical_complete_pair_bytes": 32276804,
+      "existing_projected_pair_bytes": 32292564,
+      "calculated_padded_pair_capacity_bytes": 73846664,
+      "per_source": [
+        {
+          "layer": 2,
+          "ratio": 2,
+          "logical_rows": 16386,
+          "capacity_rows": 20736,
+          "two_buffers_bytes": 14764032
+        },
+        {
+          "layer": 8,
+          "ratio": 2,
+          "logical_rows": 16386,
+          "capacity_rows": 20736,
+          "two_buffers_bytes": 14764032
+        },
+        {
+          "layer": 14,
+          "ratio": 2,
+          "logical_rows": 16386,
+          "capacity_rows": 20736,
+          "two_buffers_bytes": 14764032
+        },
+        {
+          "layer": 20,
+          "ratio": 1,
+          "logical_rows": 32773,
+          "capacity_rows": 37120,
+          "two_buffers_bytes": 26429440
+        }
+      ],
+      "retained_roots": 18,
+      "retained_logical_bytes": 581266152,
+      "active_plus_two_pending_logical_bytes": 96877692,
+      "retained_active_two_capture_logical_bytes": 678143844,
+      "conservative_padded_23_equivalents_bytes": 1698473272,
+      "conservative_python_token_metadata_bytes": 33167196,
+      "coexistence_components": {
+        "retained": 18,
+        "active_restored": 1,
+        "pending_prompt_and_final": 2,
+        "transient_restore_copy": 1,
+        "verify_predecessor_allowance": 1
+      }
+    }
+  ],
+  "sources": {
+    "serving/paired_checkpoint.py": "7e1565a3c8b1ed73801c6bd1c6eebc8eea876f09b72d4fe4c9dbf8ff4037646b",
+    "serving/production_mtp.py": "27b0f2e814ac11cfcb0027d32fe688c9b812d9639bf2472730704f899472873c",
+    "serving/internal_mtp.py": "21800084ee6519ea73790ee8c46ad7fcf9a7183c37aabaae4ed8da4b2ca9edd1",
+    "runtime/multimodal.py": "ee69fcbb95160a1bdcc01049f4c8c670828184a634a4868eed4368a0c4de1593"
+  },
+  "limits": "Logical/capacity arithmetic only. Model weights, Vision/prefill/verify logits/workspaces, allocator cache and process footprint separately monitored. No sum of overlapping host/MLX counters."
+}
