@@ -1,0 +1,19 @@
+...F...                                                                  [100%]
+=================================== FAILURES ===================================
+_________________ test_existing_event_shutdown_owner_runs_once _________________
+
+tmp_path = PosixPath('/private/var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/pytest-of-kioju/pytest-77/test_existing_event_shutdown_o0')
+
+    def test_existing_event_shutdown_owner_runs_once(tmp_path):
+        # Match create_app's existing on_event shutdown route, without importing
+        # serving or loading weights. The observer wraps, never duplicates, it.
+        backend = Backend()
+        app = Starlette()
+>       app.add_event_handler('shutdown', backend.shutdown)
+        ^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'Starlette' object has no attribute 'add_event_handler'. Did you mean: 'add_exception_handler'?
+
+tests/test_compaction_diagnostic_lifecycle.py:115: AttributeError
+=========================== short test summary info ============================
+FAILED tests/test_compaction_diagnostic_lifecycle.py::test_existing_event_shutdown_owner_runs_once
+1 failed, 6 passed in 36.04s

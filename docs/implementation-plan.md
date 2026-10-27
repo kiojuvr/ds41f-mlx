@@ -122,6 +122,12 @@ C=711 fresh historical Vision, native completion and settled publication. C3/C5
 positive cases pass only for that session; overall acceptance is PARTIAL because
 a post-shutdown diagnostic error prevented cleanup weakref/MLX/executor measurement.
 No Production change or deployment; compaction and full endurance remain unqualified.
+[Step 3B](../artifacts/multimodal-runtime/phase3-step3b-compaction.md) stopped before
+provisioning/loading: installed rc.2 headless composes `command-compact` but has no
+supported human-command invocation adapter (task text is always a user followup).
+The corrected passive shutdown diagnostic passes model-free regressions; no native
+compaction/cleanup qualification follows. An official command-capable surface
+must be agreed before a later execution; no local dispatcher was added.
 
 ### Future official-source investigation priorities
 

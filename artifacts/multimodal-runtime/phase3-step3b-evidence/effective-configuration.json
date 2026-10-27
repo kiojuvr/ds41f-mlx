@@ -1,0 +1,105 @@
+{
+  "provider": {
+    "baseURL": "http://127.0.0.1:18083",
+    "defaults": {
+      "thinking": "disabled",
+      "reasoningEffort": "off"
+    },
+    "maxTokens": 1200,
+    "defaultContextWindow": 1000000,
+    "models": [
+      {
+        "id": "deepseek-flash",
+        "contextWindow": 1048576,
+        "maxTokens": 1200,
+        "systemPromptUpdate": "in-history",
+        "toolUpdate": "addition-only",
+        "inputModalities": [
+          "text",
+          "image"
+        ],
+        "imageMaxBytes": 2097152
+      }
+    ],
+    "streamIdleTimeoutMs": 180000,
+    "maxRequestFilesBytes": 134217728,
+    "maxInlineRequestImageBytes": 20971520,
+    "maxImagesPerRequest": 3,
+    "imageOffloadByteQuantum": 67108864,
+    "inlineImageOffloadByteQuantum": 10485760,
+    "imageOffloadCountQuantum": 1,
+    "filesApiTimeoutMs": 60000,
+    "filePolicy": {
+      "expiresAfterSeconds": 604800,
+      "refreshMarginSeconds": 3600,
+      "quotaCleanupBatch": 100
+    },
+    "retryPolicy": {
+      "mode": "normal",
+      "maxRetries": 5,
+      "retryableCodes": [
+        "EMPTY_RESPONSE",
+        "RATE_LIMIT",
+        "SERVER",
+        "TIMEOUT",
+        "TRANSPORT"
+      ],
+      "initialDelayMs": 500,
+      "maxDelayMs": 10000,
+      "jitterRatio": 0.1
+    }
+  },
+  "plugins": [
+    {
+      "id": "commands",
+      "name": "@deepseek-ai/dsh-commands"
+    },
+    {
+      "id": "command-compact",
+      "name": "@deepseek-ai/dsh-command-compact"
+    },
+    {
+      "id": "compaction-basic",
+      "name": "@deepseek-ai/dsh-compaction-basic"
+    },
+    {
+      "id": "token-meter",
+      "name": "@deepseek-ai/dsh-token-meter"
+    },
+    {
+      "id": "headless-runner",
+      "name": "@deepseek-ai/dsh-headless",
+      "inject": [
+        "headlessStartup"
+      ],
+      "config": {
+        "task": "ctx.headlessStartup.task",
+        "sessionId": "ctx.headlessStartup.sessionId",
+        "json": "ctx.headlessStartup.json"
+      }
+    },
+    {
+      "id": "tool-fs",
+      "name": "@deepseek-ai/dsh-tool-fs",
+      "config": {
+        "read": false,
+        "readImage": true,
+        "write": false,
+        "edit": false
+      }
+    },
+    {
+      "id": "attachment-local",
+      "name": "@deepseek-ai/dsh-attachment-local"
+    }
+  ],
+  "compactionExplicitConfiguration": {},
+  "compactionDefaultsSource": "installed dsh-compaction-basic/lib/index.js: resolveConfig (source inspection, not engine execution)",
+  "summarizerMaxTokensDefault": 65536,
+  "manualRetentionTokens": 0,
+  "manualRetentionSource": "compactNow passes literal 0, independent of automatic retainRatio",
+  "commandRegisteredInComposition": true,
+  "commandDispatchExposedByHeadless": false,
+  "executionAuthorized": false,
+  "reason": "headless task positional/stdin always calls agent.followup(createUserMessage); no human-command adapter"
+}
