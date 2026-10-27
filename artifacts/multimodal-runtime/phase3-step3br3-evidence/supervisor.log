@@ -1,0 +1,442 @@
+{
+  "starting_head": "d7b1d37ff0e00c0011b324eef309534d01947e44",
+  "invocations": [
+    {
+      "index": 0,
+      "kind": "initial",
+      "pid": 90557,
+      "session_id": "session-6c57807d-625b-43c4-8790-d8b11afc3a79",
+      "prompt_sha256": "008c6520db924145ef0a69ddfafa44c9974f103ccd430dc391c638a86d433e16",
+      "args": [
+        "node",
+        "/Users/kioju/.local/share/deepseek-harness/node_modules/@deepseek-ai/dsh/lib/bin.js",
+        "--profile",
+        "headless",
+        "--json"
+      ],
+      "exit": 0,
+      "pressure": 2115
+    },
+    {
+      "index": 1,
+      "kind": "pressure-1",
+      "pid": 90623,
+      "session_id": "session-6c57807d-625b-43c4-8790-d8b11afc3a79",
+      "prompt_sha256": "5415ad80fdb9ad559fbe3001ac48b06a91682b3002b95ad4d65c3b82fbbd02fa",
+      "args": [
+        "node",
+        "/Users/kioju/.local/share/deepseek-harness/node_modules/@deepseek-ai/dsh/lib/bin.js",
+        "--profile",
+        "headless",
+        "--json",
+        "--session-id",
+        "session-6c57807d-625b-43c4-8790-d8b11afc3a79"
+      ],
+      "exit": 0,
+      "pressure": 3316
+    },
+    {
+      "index": 2,
+      "kind": "pressure-2",
+      "pid": 90674,
+      "session_id": "session-6c57807d-625b-43c4-8790-d8b11afc3a79",
+      "prompt_sha256": "4a46afa260a10e15668b636417530db40d97ecde3d001b5a9ce3d6854ac66cb9",
+      "args": [
+        "node",
+        "/Users/kioju/.local/share/deepseek-harness/node_modules/@deepseek-ai/dsh/lib/bin.js",
+        "--profile",
+        "headless",
+        "--json",
+        "--session-id",
+        "session-6c57807d-625b-43c4-8790-d8b11afc3a79"
+      ],
+      "exit": 0,
+      "pressure": 4820
+    },
+    {
+      "index": 3,
+      "kind": "trigger",
+      "pid": 90723,
+      "session_id": "session-6c57807d-625b-43c4-8790-d8b11afc3a79",
+      "prompt_sha256": "4f47c7a367fa9a4ba2793ceace02c89521e867876101aa95b4b91c8640365ce3",
+      "args": [
+        "node",
+        "/Users/kioju/.local/share/deepseek-harness/node_modules/@deepseek-ai/dsh/lib/bin.js",
+        "--profile",
+        "headless",
+        "--json",
+        "--session-id",
+        "session-6c57807d-625b-43c4-8790-d8b11afc3a79"
+      ],
+      "exit": 0,
+      "pressure": 3506
+    },
+    {
+      "index": 4,
+      "kind": "compatible",
+      "pid": 90845,
+      "session_id": "session-6c57807d-625b-43c4-8790-d8b11afc3a79",
+      "prompt_sha256": "0c103e58497c4bfca91f4921c856248129caebf4020355eea343f987c15a4692",
+      "args": [
+        "node",
+        "/Users/kioju/.local/share/deepseek-harness/node_modules/@deepseek-ai/dsh/lib/bin.js",
+        "--profile",
+        "headless",
+        "--json",
+        "--session-id",
+        "session-6c57807d-625b-43c4-8790-d8b11afc3a79"
+      ],
+      "exit": 0,
+      "pressure": 3643
+    }
+  ],
+  "stop": null,
+  "model_load_budget": 1,
+  "summary_attempt_budget": 1,
+  "initial": {
+    "elapsed": 0.0213605830213055,
+    "available": 530634768384,
+    "pressure": 1,
+    "swap_used": 0,
+    "swapouts": 0,
+    "footprint": 0,
+    "lifetime_footprint": 0,
+    "competitors": []
+  },
+  "runtime_pid": 78297,
+  "supervisor_pid": 78294,
+  "preload": {
+    "elapsed": 73.02443812502315,
+    "available": 530045894656,
+    "pressure": 1,
+    "swap_used": 0,
+    "swapouts": 0,
+    "footprint": 516539712,
+    "lifetime_footprint": 761808168,
+    "competitors": []
+  },
+  "health_before": {
+    "status": "ready",
+    "profile": "mtp-serving-v1",
+    "process_alive": true,
+    "model_ready": true,
+    "fatal_error": null,
+    "generation_policy": {
+      "version": "generation-policy-v1",
+      "qualification": "real-model-qualified",
+      "execution_profiles": [
+        "mtp-serving-v1"
+      ],
+      "sampler_authority": "ds41f_mlx.sampling.make_sampler",
+      "defaults": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "top_k": 0,
+        "min_p": 0.0,
+        "repetition_penalty": 1.0,
+        "presence_penalty": 0.0,
+        "frequency_penalty": 0.0,
+        "seed": null
+      },
+      "scope": "request",
+      "parameters": {
+        "temperature": {
+          "minimum": 0,
+          "maximum": 2
+        },
+        "top_p": {
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        },
+        "top_k": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 129279
+        },
+        "min_p": {
+          "minimum": 0,
+          "maximum": 1
+        },
+        "repetition_penalty": {
+          "exclusiveMinimum": 0,
+          "context_tokens": 20
+        },
+        "presence_penalty": {
+          "minimum": -2,
+          "maximum": 2,
+          "context_tokens": 20
+        },
+        "frequency_penalty": {
+          "minimum": -2,
+          "maximum": 2,
+          "context_tokens": 20
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295,
+          "semantics": "best-effort"
+        }
+      },
+      "reasoning": {
+        "authority": "deepseek-recipe",
+        "scope": "session",
+        "stateless_scope": "request",
+        "default_thinking_mode": false,
+        "default_reasoning_effort": "none",
+        "efforts": [
+          "none",
+          "low",
+          "high",
+          "xhigh",
+          "max"
+        ],
+        "effective_efforts": [
+          "none",
+          "low",
+          "high",
+          "max"
+        ],
+        "compatibility_aliases": {
+          "xhigh": "high"
+        },
+        "effective_authority": "ds41f_mlx.serving.generation_policy.reasoning_policy",
+        "change": "reject",
+        "thinking_budget_tokens": false
+      },
+      "recipe_version": "0.2.0",
+      "effective_settings_authority": "Recipe ModelVersion.DeepseekV41Flash",
+      "recipe_resolution": {
+        "nonthinking_top_p": 1.0,
+        "thinking_temperature": 1.0,
+        "thinking_top_p_minimum": 0.95
+      },
+      "constrained_decoding": false,
+      "protocol_migration_qualification": "controlled-token boundary; real-model path unverified"
+    },
+    "capabilities": {
+      "stateful_chat": "production-sessions-v1",
+      "persist_restore": false,
+      "messages": "recipe-0.2-native",
+      "messages_sessions": false,
+      "messages_vision": "bounded-inline-and-files-v1",
+      "chat_vision": "bounded-inline-v1",
+      "vision_admission": {
+        "implemented_total_tokens": 1048576,
+        "output_reservation_required": true,
+        "max_images": 600,
+        "max_image_bytes": 16777216,
+        "max_image_pixels": 4194304,
+        "max_image_tokens": 1014,
+        "max_request_image_bytes": 67108864,
+        "max_request_pixels": 16777216,
+        "max_request_patches": 36864,
+        "pixel_patch_budget_scope": "all_history_pixels; fresh_patches_with_paired_byte_fallback",
+        "historical_discount_qualified": true,
+        "historical_patch_discount": {
+          "numerical_profile": "flash-1017-pre-woa-fp8-v1",
+          "max_projected_pair_bytes": 12582912,
+          "max_retained_pair_bytes": 201326592,
+          "fallback": "all_history_patch_limit"
+        },
+        "historical_images_require_paired_cache": true,
+        "expanded_capacity_model_execution": "unverified"
+      },
+      "max_live_sessions": 16,
+      "max_active_generations": 1,
+      "idle_retirement_seconds": 600
+    },
+    "chat_defaults": {
+      "temperature": 1.0,
+      "top_p": 0.95,
+      "top_k": 0,
+      "min_p": 0.0,
+      "repetition_penalty": 1.0,
+      "presence_penalty": 0.0,
+      "frequency_penalty": 0.0,
+      "seed": null,
+      "reasoning_effort": "none",
+      "max_tokens": "auto"
+    },
+    "dependency_identity": "9c439d3fb9ad730996ecca821234bba1ce8817d7b46a2744e171c10a4d7d2ca2",
+    "glm_profile": "native",
+    "queued_requests": 0,
+    "active_requests": 0,
+    "prefix_cache": null
+  },
+  "completed": true,
+  "health_after": {
+    "status": "ready",
+    "profile": "mtp-serving-v1",
+    "process_alive": true,
+    "model_ready": true,
+    "fatal_error": null,
+    "generation_policy": {
+      "version": "generation-policy-v1",
+      "qualification": "real-model-qualified",
+      "execution_profiles": [
+        "mtp-serving-v1"
+      ],
+      "sampler_authority": "ds41f_mlx.sampling.make_sampler",
+      "defaults": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "top_k": 0,
+        "min_p": 0.0,
+        "repetition_penalty": 1.0,
+        "presence_penalty": 0.0,
+        "frequency_penalty": 0.0,
+        "seed": null
+      },
+      "scope": "request",
+      "parameters": {
+        "temperature": {
+          "minimum": 0,
+          "maximum": 2
+        },
+        "top_p": {
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        },
+        "top_k": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 129279
+        },
+        "min_p": {
+          "minimum": 0,
+          "maximum": 1
+        },
+        "repetition_penalty": {
+          "exclusiveMinimum": 0,
+          "context_tokens": 20
+        },
+        "presence_penalty": {
+          "minimum": -2,
+          "maximum": 2,
+          "context_tokens": 20
+        },
+        "frequency_penalty": {
+          "minimum": -2,
+          "maximum": 2,
+          "context_tokens": 20
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295,
+          "semantics": "best-effort"
+        }
+      },
+      "reasoning": {
+        "authority": "deepseek-recipe",
+        "scope": "session",
+        "stateless_scope": "request",
+        "default_thinking_mode": false,
+        "default_reasoning_effort": "none",
+        "efforts": [
+          "none",
+          "low",
+          "high",
+          "xhigh",
+          "max"
+        ],
+        "effective_efforts": [
+          "none",
+          "low",
+          "high",
+          "max"
+        ],
+        "compatibility_aliases": {
+          "xhigh": "high"
+        },
+        "effective_authority": "ds41f_mlx.serving.generation_policy.reasoning_policy",
+        "change": "reject",
+        "thinking_budget_tokens": false
+      },
+      "recipe_version": "0.2.0",
+      "effective_settings_authority": "Recipe ModelVersion.DeepseekV41Flash",
+      "recipe_resolution": {
+        "nonthinking_top_p": 1.0,
+        "thinking_temperature": 1.0,
+        "thinking_top_p_minimum": 0.95
+      },
+      "constrained_decoding": false,
+      "protocol_migration_qualification": "controlled-token boundary; real-model path unverified"
+    },
+    "capabilities": {
+      "stateful_chat": "production-sessions-v1",
+      "persist_restore": false,
+      "messages": "recipe-0.2-native",
+      "messages_sessions": false,
+      "messages_vision": "bounded-inline-and-files-v1",
+      "chat_vision": "bounded-inline-v1",
+      "vision_admission": {
+        "implemented_total_tokens": 1048576,
+        "output_reservation_required": true,
+        "max_images": 600,
+        "max_image_bytes": 16777216,
+        "max_image_pixels": 4194304,
+        "max_image_tokens": 1014,
+        "max_request_image_bytes": 67108864,
+        "max_request_pixels": 16777216,
+        "max_request_patches": 36864,
+        "pixel_patch_budget_scope": "all_history_pixels; fresh_patches_with_paired_byte_fallback",
+        "historical_discount_qualified": true,
+        "historical_patch_discount": {
+          "numerical_profile": "flash-1017-pre-woa-fp8-v1",
+          "max_projected_pair_bytes": 12582912,
+          "max_retained_pair_bytes": 201326592,
+          "fallback": "all_history_patch_limit"
+        },
+        "historical_images_require_paired_cache": true,
+        "expanded_capacity_model_execution": "unverified"
+      },
+      "max_live_sessions": 16,
+      "max_active_generations": 1,
+      "idle_retirement_seconds": 600
+    },
+    "chat_defaults": {
+      "temperature": 1.0,
+      "top_p": 0.95,
+      "top_k": 0,
+      "min_p": 0.0,
+      "repetition_penalty": 1.0,
+      "presence_penalty": 0.0,
+      "frequency_penalty": 0.0,
+      "seed": null,
+      "reasoning_effort": "none",
+      "max_tokens": "auto"
+    },
+    "dependency_identity": "9c439d3fb9ad730996ecca821234bba1ce8817d7b46a2744e171c10a4d7d2ca2",
+    "glm_profile": "native",
+    "queued_requests": 0,
+    "active_requests": 0,
+    "prefix_cache": {
+      "hits": 6,
+      "misses": 16,
+      "evictions": 0,
+      "total_blocks": 19,
+      "allocated_blocks": 17,
+      "free_blocks": 2,
+      "shared_blocks": 0,
+      "total_tokens_cached": 42655,
+      "cow_copies": 0,
+      "total_queries": 22,
+      "hit_rate": 0.2727272727272727,
+      "utilization": 0.8947368421052632
+    }
+  },
+  "runtime_exit": 0,
+  "elapsed_s": 295.3352792499936,
+  "postflight": {
+    "elapsed": 295.3540367500391,
+    "available": 531626409984,
+    "pressure": 1,
+    "swap_used": 0,
+    "swapouts": 0,
+    "footprint": 0,
+    "lifetime_footprint": 0,
+    "competitors": []
+  }
+}

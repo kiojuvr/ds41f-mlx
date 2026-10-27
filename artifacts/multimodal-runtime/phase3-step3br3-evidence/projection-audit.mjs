@@ -1,0 +1,41 @@
+// Offline read-only verification using official estimator/framing and retained Sessions.
+import {readFileSync,writeFileSync,readdirSync} from 'node:fs';
+import assert from 'node:assert/strict';
+const out=new URL('.',import.meta.url),load=n=>JSON.parse(readFileSync(new URL(n,out),'utf8'));
+const names=readdirSync(out).filter(n=>/^persisted-\d+.json$/.test(n)).sort();
+const latest=load(names.at(-1)),events=latest.events;
+const summaries=events.filter(e=>e.type==='compaction/summary');
+const starts=events.filter(e=>e.type==='compaction/start'),ends=events.filter(e=>e.type==='compaction/end');
+assert.equal(starts.length,1);assert.equal(ends.length,1);
+const life=readFileSync(new URL('lifecycle.jsonl',out),'utf8').trim().split('\n').map(JSON.parse);
+const before=life.find(r=>r.kind==='surface'&&r.at_seq===starts[0].seq);
+const trigger=life.filter(r=>r.kind==='pre_step'&&r.measurement.totalTokens>=4096)[0];
+assert(trigger);
+let result={session_id:latest.session_id,trigger,start:starts[0],end:ends[0],summary_complete:false,durable_replacement:false};
+if(summaries.length){
+ assert.equal(summaries.length,1);assert.equal(ends[0].data.error,undefined);
+ const summary=summaries[0],checkpoint=events.find(e=>e.surfaceOp?.op==='replace'&&e.sourceEventSeqs?.includes(summary.seq));
+ assert(checkpoint);assert(checkpoint.data.content.every(b=>b.type==='text'));
+ const selected=summary.data.shadowedSeqs;
+ assert(selected.length>0&&selected.every(s=>events.some(e=>e.seq===s)&&!latest.nodes.includes(s)));
+ const install=process.env.HOME+'/.local/share/deepseek-harness/node_modules/@deepseek-ai/';
+ const src=readFileSync(install+'dsh-token-meter/lib/index.js','utf8');
+ const estimate=new Function(src.slice(src.indexOf('const CHARS_PER_TOKEN'),src.indexOf('function estimateToolsTokens'))+';return estimateMessage;')();
+ const framed=estimate(checkpoint.data);
+ const selectedTokens=before.measurement.nodes.filter(n=>selected.includes(n.seq)).reduce((s,n)=>s+n.tokens,0);
+ assert(framed<selectedTokens);
+ const protectedHead=before.nodes[0];assert(events.find(e=>e.seq===protectedHead).type==='system/message');
+ assert(!selected.includes(protectedHead)&&latest.nodes.includes(protectedHead));
+ const tail=before.nodes.filter(s=>s!==protectedHead&&!selected.includes(s));
+ assert(tail.every(s=>latest.nodes.includes(s)));
+ const original=names.map(load).find(s=>!s.compaction.some(e=>e.type==='compaction/summary')&&s.nodes.includes(selected.at(-1)));
+ assert(original&&JSON.stringify(original.messages)!==JSON.stringify(latest.messages));
+ for(const e of life.filter(r=>r.kind==='session_event').map(r=>r.event))assert.deepEqual(events.find(x=>x.seq===e.seq),e);
+ const calls=events.filter(e=>e.type==='tool/call'),results=events.filter(e=>e.type==='tool/result');
+ assert.equal(calls.length,2);assert.equal(results.length,2);
+ const groups=calls.map(c=>[events.find(e=>e.type==='assistant/message'&&e.data.message.content.some(b=>b.type==='tool-call'&&b.id===c.data.callId)).seq,results.find(r=>r.data.message.toolCallId===c.data.callId).seq]);
+ assert(groups.every(g=>selected.includes(g[0])===selected.includes(g[1])));
+ result={...result,summary_complete:true,durable_replacement:true,summary,checkpoint,selected,retained_tail:tail,protected_system:protectedHead,balanced_tool_groups:groups,selected_route_tokens:selectedTokens,official_framed_summary_tokens:framed,strict_shrink:true,source_events_preserved:true,previous_projection:original.messages,replacement_projection:latest.messages,adoption_snapshots:names};
+}
+writeFileSync(new URL('compaction-result.json',out),JSON.stringify(result,null,2)+'\n');
+console.log('PASS: durable transaction audit; replacement='+result.durable_replacement);

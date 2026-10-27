@@ -1,0 +1,145 @@
+{
+  "retained_by_live_application": {
+    "backend": {
+      "dead": false,
+      "referrers": [
+        {
+          "type": "builtins.dict",
+          "keys_pointing_to_target": [
+            "backend"
+          ]
+        },
+        {
+          "type": "builtins.method"
+        },
+        {
+          "type": "builtins.cell",
+          "closure_functions": [
+            {
+              "function": "__main__.application.<locals>.health",
+              "owners": [
+                {
+                  "type": "builtins.list"
+                },
+                {
+                  "type": "builtins.dict",
+                  "keys": [
+                    "endpoint"
+                  ]
+                },
+                {
+                  "type": "fastapi.dependencies.models.Dependant"
+                },
+                {
+                  "type": "fastapi.dependencies.models._CallIdentity"
+                },
+                {
+                  "type": "fastapi.dependencies.models._CallIdentity"
+                },
+                {
+                  "type": "fastapi.dependencies.models._CallIdentity"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "bounded": false
+    },
+    "model": {
+      "dead": false,
+      "referrers": [
+        {
+          "type": "__main__.Backend"
+        }
+      ],
+      "bounded": false
+    },
+    "task_roots": {
+      "app": true,
+      "server": true
+    }
+  },
+  "after_dropping_task_roots": {
+    "backend": {
+      "dead": false,
+      "referrers": [
+        {
+          "type": "builtins.cell",
+          "closure_functions": [
+            {
+              "function": "__main__.application.<locals>.health",
+              "owners": [
+                {
+                  "type": "builtins.list"
+                },
+                {
+                  "type": "fastapi.dependencies.models._CallIdentity"
+                },
+                {
+                  "type": "fastapi.dependencies.models._CallIdentity"
+                },
+                {
+                  "type": "fastapi.dependencies.models._CallIdentity"
+                },
+                {
+                  "type": "builtins.dict",
+                  "keys": [
+                    "endpoint"
+                  ]
+                },
+                {
+                  "type": "fastapi.dependencies.models.Dependant"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "builtins.dict",
+          "keys_pointing_to_target": [
+            "backend"
+          ]
+        },
+        {
+          "type": "builtins.method"
+        }
+      ],
+      "bounded": false
+    },
+    "model": {
+      "dead": false,
+      "referrers": [
+        {
+          "type": "__main__.Backend"
+        }
+      ],
+      "bounded": false
+    },
+    "task_roots": {
+      "app": true,
+      "server": false
+    }
+  },
+  "model_free_cache_isolation": {
+    "backend": {
+      "dead": true,
+      "referrers": []
+    },
+    "model": {
+      "dead": true,
+      "referrers": []
+    },
+    "task_roots": {
+      "app": false,
+      "server": false
+    }
+  },
+  "classification_caches": {
+    "_is_gen_callable_cached": "CacheInfo(hits=0, misses=1, maxsize=4096, currsize=1)",
+    "_is_async_gen_callable_cached": "CacheInfo(hits=0, misses=1, maxsize=4096, currsize=1)",
+    "_is_coroutine_callable_cached": "CacheInfo(hits=0, misses=1, maxsize=4096, currsize=1)"
+  },
+  "passed": true,
+  "weights_loaded": 0
+}

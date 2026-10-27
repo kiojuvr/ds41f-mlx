@@ -144,6 +144,14 @@ continuation occurred. **C4 remains BLOCKED/unqualified**. Six actual requests
 settled/published; Runtime exited normally, but final backend/model weakrefs stayed
 live, so cleanup is PARTIAL rather than a demonstrated leak or reclamation PASS.
 No Production change, policy rescue, deployment or Phase 4 work.
+[Step 3B-R3](../artifacts/multimodal-runtime/phase3-step3br3-compaction-cleanup.md)
+completes scoped **C4**: a normally finished 1,053-token official summary produces
+strictly smaller durable replacement, native changed-projection C=0 completion,
+and adopted compatible C=3,120 continuation. The replacement is text-only;
+historical Vision after compaction is not qualified. Cleanup ownership is located
+in FastAPI callable-classification LRU references to endpoint closures; Backend/
+Model remain live after task roots are dropped, so reclamation and C7 remain
+PARTIAL. No Production/framework change, deployment or Phase 4 work.
 
 ### Future official-source investigation priorities
 

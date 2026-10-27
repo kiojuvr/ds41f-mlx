@@ -1,0 +1,27 @@
+{
+  "framework": "FastAPI 0.142.2",
+  "cache_capacity_per_function": 4096,
+  "native_owner_paths": [
+    "fastapi.dependencies.models._is_*_callable_cached LRU key -> _CallIdentity.call -> create_app endpoint function -> closure cell -> ProductionMTPBackend -> _model",
+    "classification cache -> endpoint capturing app -> app.state.backend; app.router event handlers -> backend closure",
+    "backend -> ProductionSessions -> backend (collectible cycle, not independent global authority)"
+  ],
+  "task_strong_roots_dropped": [
+    "app",
+    "server",
+    "backend",
+    "load",
+    "flush",
+    "watch",
+    "watcher",
+    "stop",
+    "stop_server; restored prior signal handlers"
+  ],
+  "native_framework_caches_not_cleared": true,
+  "production_shutdown_not_changed": true,
+  "model_free_cache_isolation_only": true,
+  "framework_cache_retention_explains_observation": true,
+  "backend_model_weakrefs_dead": false,
+  "model_reclamation": "PARTIAL",
+  "not_proven": "No independent Production native-owner leak demonstrated; no native in-process model reclamation proof"
+}
