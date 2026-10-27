@@ -126,8 +126,15 @@ No Production change or deployment; compaction and full endurance remain unquali
 provisioning/loading: installed rc.2 headless composes `command-compact` but has no
 supported human-command invocation adapter (task text is always a user followup).
 The corrected passive shutdown diagnostic passes model-free regressions; no native
-compaction/cleanup qualification follows. An official command-capable surface
-must be agreed before a later execution; no local dispatcher was added.
+compaction/cleanup qualification follows; no local dispatcher was added.
+[Step 3B-R1](../artifacts/multimodal-runtime/phase3-step3br1-auto-compaction-feasibility.md)
+is **FEASIBLE model-free**: the installed automatic `agent/pre-step` pressure path
+reaches official balanced selection and the summary-request boundary without
+human-command dispatch. A task-local exact-model policy resolves to 4,096 pressure
+/ 1,024 retained tokens with a 512-token summary cap, leaving declared capacity
+unchanged. Controlled summary failure is not successful compaction. C4 remains
+unqualified; native summary/replacement/reconstruction and cleanup require separate
+authorization. No weights, Production change, deployment or Phase 4 work.
 
 ### Future official-source investigation priorities
 

@@ -1,0 +1,757 @@
+{
+  "kind": "MODEL_FREE_CONTROLS_NOT_NATIVE_SESSION_EVIDENCE",
+  "config": {
+    "auto": true,
+    "modelPolicies": [
+      {
+        "provider": "deepseek-official",
+        "model": "deepseek-flash",
+        "thresholdRatio": 0.00390625,
+        "headroomTokens": 2048,
+        "retainTokens": 1024,
+        "maxTokens": 512,
+        "compactionRetries": 0
+      }
+    ]
+  },
+  "resolved": {
+    "thresholdRatio": 0.8,
+    "headroomTokens": 65536,
+    "retainRatio": 0.16,
+    "summarizationProvider": "",
+    "summarizationModel": "",
+    "maxTokens": 65536,
+    "compactionRetries": 1,
+    "maxOverflowRetries": 1,
+    "modelPolicies": [
+      {
+        "provider": "deepseek-official",
+        "model": "deepseek-flash",
+        "thresholdRatio": 0.00390625,
+        "headroomTokens": 2048,
+        "retainTokens": 1024,
+        "maxTokens": 512,
+        "compactionRetries": 0
+      }
+    ],
+    "auto": true
+  },
+  "targetPolicy": {
+    "target": {
+      "provider": "deepseek-official",
+      "model": "deepseek-flash"
+    },
+    "thresholdRatio": 0.00390625,
+    "headroomTokens": 2048,
+    "retainTokens": 1024,
+    "summarizationProvider": "",
+    "summarizationModel": "",
+    "maxTokens": 512,
+    "compactionRetries": 0,
+    "maxOverflowRetries": 1
+  },
+  "adapterInfo": {
+    "provider": "deepseek-official",
+    "id": "deepseek-flash",
+    "name": "deepseek-flash",
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "context": {
+      "contextWindow": 1048576
+    },
+    "defaultMaxTokens": 1200,
+    "systemPromptUpdate": "in-history",
+    "toolUpdate": "addition-only",
+    "reasoning": {
+      "efforts": [
+        {
+          "id": "off",
+          "name": "Off",
+          "description": "Use for simple tasks that do not need reasoning."
+        }
+      ],
+      "defaultEffort": "off"
+    }
+  },
+  "messageBudgetTokens": 1047376,
+  "pressureBudgetTokens": 1045328,
+  "spec": {
+    "target": {
+      "provider": "deepseek-official",
+      "model": "deepseek-flash"
+    },
+    "contextWindow": 1048576,
+    "thresholdRatio": 0.00390625,
+    "thresholdTokens": 4096,
+    "retainTokens": 1024,
+    "summarizationProvider": "",
+    "summarizationModel": "",
+    "maxTokens": 512,
+    "compactionRetries": 0,
+    "maxOverflowRetries": 1
+  },
+  "compositionMountedInRetainedNormalProfile": true,
+  "policySourceSha256": "a73f7ba7f49d06f41263e6127feebfb223f16b85c8a04b81ebd83e4676a2dd46",
+  "hooks": [
+    {
+      "turn": 1,
+      "step": 1,
+      "header": null,
+      "toolDone": false,
+      "measurement": {
+        "logRevision": 3,
+        "baseline": {
+          "kind": "none",
+          "tokens": 0
+        },
+        "surfaceDeltaTokens": 0,
+        "totalTokens": 0,
+        "surfaceTokens": 0,
+        "nodes": []
+      },
+      "surface": []
+    },
+    {
+      "turn": 1,
+      "step": 2,
+      "header": {
+        "provider": "deepseek-official",
+        "model": "deepseek-flash",
+        "maxTokens": 1200,
+        "reasoningEffort": "off"
+      },
+      "toolDone": true,
+      "measurement": {
+        "logRevision": 12,
+        "baseline": {
+          "kind": "estimated",
+          "tokens": 61
+        },
+        "surfaceDeltaTokens": 14,
+        "totalTokens": 75,
+        "surfaceTokens": 44,
+        "nodes": [
+          {
+            "seq": 4,
+            "tokens": 0,
+            "heuristicTokens": 0
+          },
+          {
+            "seq": 5,
+            "tokens": 20,
+            "heuristicTokens": 20
+          },
+          {
+            "seq": 8,
+            "tokens": 10,
+            "heuristicTokens": 10
+          },
+          {
+            "seq": 10,
+            "tokens": 14,
+            "heuristicTokens": 14
+          }
+        ]
+      },
+      "surface": [
+        4,
+        5,
+        8,
+        10
+      ]
+    },
+    {
+      "turn": 2,
+      "step": 1,
+      "header": {
+        "provider": "deepseek-official",
+        "model": "deepseek-flash",
+        "maxTokens": 1200,
+        "reasoningEffort": "off"
+      },
+      "toolDone": true,
+      "measurement": {
+        "logRevision": 19,
+        "baseline": {
+          "kind": "estimated",
+          "tokens": 94
+        },
+        "surfaceDeltaTokens": 0,
+        "totalTokens": 94,
+        "surfaceTokens": 63,
+        "nodes": [
+          {
+            "seq": 4,
+            "tokens": 0,
+            "heuristicTokens": 0
+          },
+          {
+            "seq": 5,
+            "tokens": 20,
+            "heuristicTokens": 20
+          },
+          {
+            "seq": 8,
+            "tokens": 10,
+            "heuristicTokens": 10
+          },
+          {
+            "seq": 10,
+            "tokens": 14,
+            "heuristicTokens": 14
+          },
+          {
+            "seq": 13,
+            "tokens": 19,
+            "heuristicTokens": 19
+          }
+        ]
+      },
+      "surface": [
+        4,
+        5,
+        8,
+        10,
+        13
+      ]
+    },
+    {
+      "turn": 3,
+      "step": 1,
+      "header": {
+        "provider": "deepseek-official",
+        "model": "deepseek-flash",
+        "maxTokens": 1200,
+        "reasoningEffort": "off"
+      },
+      "toolDone": true,
+      "measurement": {
+        "logRevision": 27,
+        "baseline": {
+          "kind": "estimated",
+          "tokens": 1780
+        },
+        "surfaceDeltaTokens": 0,
+        "totalTokens": 1780,
+        "surfaceTokens": 1749,
+        "nodes": [
+          {
+            "seq": 4,
+            "tokens": 0,
+            "heuristicTokens": 0
+          },
+          {
+            "seq": 5,
+            "tokens": 20,
+            "heuristicTokens": 20
+          },
+          {
+            "seq": 8,
+            "tokens": 10,
+            "heuristicTokens": 10
+          },
+          {
+            "seq": 10,
+            "tokens": 14,
+            "heuristicTokens": 14
+          },
+          {
+            "seq": 13,
+            "tokens": 19,
+            "heuristicTokens": 19
+          },
+          {
+            "seq": 20,
+            "tokens": 1667,
+            "heuristicTokens": 1667
+          },
+          {
+            "seq": 21,
+            "tokens": 19,
+            "heuristicTokens": 19
+          }
+        ]
+      },
+      "surface": [
+        4,
+        5,
+        8,
+        10,
+        13,
+        20,
+        21
+      ]
+    },
+    {
+      "turn": 4,
+      "step": 1,
+      "header": {
+        "provider": "deepseek-official",
+        "model": "deepseek-flash",
+        "maxTokens": 1200,
+        "reasoningEffort": "off"
+      },
+      "toolDone": true,
+      "measurement": {
+        "logRevision": 35,
+        "baseline": {
+          "kind": "estimated",
+          "tokens": 3466
+        },
+        "surfaceDeltaTokens": 0,
+        "totalTokens": 3466,
+        "surfaceTokens": 3435,
+        "nodes": [
+          {
+            "seq": 4,
+            "tokens": 0,
+            "heuristicTokens": 0
+          },
+          {
+            "seq": 5,
+            "tokens": 20,
+            "heuristicTokens": 20
+          },
+          {
+            "seq": 8,
+            "tokens": 10,
+            "heuristicTokens": 10
+          },
+          {
+            "seq": 10,
+            "tokens": 14,
+            "heuristicTokens": 14
+          },
+          {
+            "seq": 13,
+            "tokens": 19,
+            "heuristicTokens": 19
+          },
+          {
+            "seq": 20,
+            "tokens": 1667,
+            "heuristicTokens": 1667
+          },
+          {
+            "seq": 21,
+            "tokens": 19,
+            "heuristicTokens": 19
+          },
+          {
+            "seq": 28,
+            "tokens": 1667,
+            "heuristicTokens": 1667
+          },
+          {
+            "seq": 29,
+            "tokens": 19,
+            "heuristicTokens": 19
+          }
+        ]
+      },
+      "surface": [
+        4,
+        5,
+        8,
+        10,
+        13,
+        20,
+        21,
+        28,
+        29
+      ]
+    },
+    {
+      "turn": 5,
+      "step": 1,
+      "header": {
+        "provider": "deepseek-official",
+        "model": "deepseek-flash",
+        "maxTokens": 1200,
+        "reasoningEffort": "off"
+      },
+      "toolDone": true,
+      "measurement": {
+        "logRevision": 45,
+        "baseline": {
+          "kind": "estimated",
+          "tokens": 5152
+        },
+        "surfaceDeltaTokens": 0,
+        "totalTokens": 5152,
+        "surfaceTokens": 5121,
+        "nodes": [
+          {
+            "seq": 4,
+            "tokens": 0,
+            "heuristicTokens": 0
+          },
+          {
+            "seq": 5,
+            "tokens": 20,
+            "heuristicTokens": 20
+          },
+          {
+            "seq": 8,
+            "tokens": 10,
+            "heuristicTokens": 10
+          },
+          {
+            "seq": 10,
+            "tokens": 14,
+            "heuristicTokens": 14
+          },
+          {
+            "seq": 13,
+            "tokens": 19,
+            "heuristicTokens": 19
+          },
+          {
+            "seq": 20,
+            "tokens": 1667,
+            "heuristicTokens": 1667
+          },
+          {
+            "seq": 21,
+            "tokens": 19,
+            "heuristicTokens": 19
+          },
+          {
+            "seq": 28,
+            "tokens": 1667,
+            "heuristicTokens": 1667
+          },
+          {
+            "seq": 29,
+            "tokens": 19,
+            "heuristicTokens": 19
+          },
+          {
+            "seq": 36,
+            "tokens": 1667,
+            "heuristicTokens": 1667
+          },
+          {
+            "seq": 37,
+            "tokens": 19,
+            "heuristicTokens": 19
+          }
+        ]
+      },
+      "surface": [
+        4,
+        5,
+        8,
+        10,
+        13,
+        20,
+        21,
+        28,
+        29,
+        36,
+        37
+      ]
+    },
+    {
+      "turn": 6,
+      "step": 1,
+      "header": {
+        "provider": "deepseek-official",
+        "model": "deepseek-flash",
+        "maxTokens": 1200,
+        "reasoningEffort": "off"
+      },
+      "toolDone": true,
+      "measurement": {
+        "logRevision": 55,
+        "baseline": {
+          "kind": "estimated",
+          "tokens": 5188
+        },
+        "surfaceDeltaTokens": 0,
+        "totalTokens": 5188,
+        "surfaceTokens": 5157,
+        "nodes": [
+          {
+            "seq": 4,
+            "tokens": 0,
+            "heuristicTokens": 0
+          },
+          {
+            "seq": 5,
+            "tokens": 20,
+            "heuristicTokens": 20
+          },
+          {
+            "seq": 8,
+            "tokens": 10,
+            "heuristicTokens": 10
+          },
+          {
+            "seq": 10,
+            "tokens": 14,
+            "heuristicTokens": 14
+          },
+          {
+            "seq": 13,
+            "tokens": 19,
+            "heuristicTokens": 19
+          },
+          {
+            "seq": 20,
+            "tokens": 1667,
+            "heuristicTokens": 1667
+          },
+          {
+            "seq": 21,
+            "tokens": 19,
+            "heuristicTokens": 19
+          },
+          {
+            "seq": 28,
+            "tokens": 1667,
+            "heuristicTokens": 1667
+          },
+          {
+            "seq": 29,
+            "tokens": 19,
+            "heuristicTokens": 19
+          },
+          {
+            "seq": 36,
+            "tokens": 1667,
+            "heuristicTokens": 1667
+          },
+          {
+            "seq": 37,
+            "tokens": 19,
+            "heuristicTokens": 19
+          },
+          {
+            "seq": 46,
+            "tokens": 17,
+            "heuristicTokens": 17
+          },
+          {
+            "seq": 47,
+            "tokens": 19,
+            "heuristicTokens": 19
+          }
+        ]
+      },
+      "surface": [
+        4,
+        5,
+        8,
+        10,
+        13,
+        20,
+        21,
+        28,
+        29,
+        36,
+        37,
+        46,
+        47
+      ]
+    }
+  ],
+  "requests": [
+    {
+      "purpose": "ordinary",
+      "messages": 1
+    },
+    {
+      "purpose": "ordinary",
+      "messages": 3
+    },
+    {
+      "purpose": "ordinary",
+      "messages": 5
+    },
+    {
+      "purpose": "ordinary",
+      "messages": 7
+    },
+    {
+      "purpose": "ordinary",
+      "messages": 9
+    },
+    {
+      "purpose": "ordinary",
+      "messages": 11
+    },
+    {
+      "purpose": "ordinary",
+      "messages": 13
+    }
+  ],
+  "summaryAttempts": [
+    {
+      "purpose": "compaction",
+      "maxTokens": 512,
+      "messages": 9,
+      "selected": [
+        5,
+        8,
+        10,
+        13,
+        20,
+        21,
+        28,
+        29
+      ],
+      "retained": [
+        4,
+        36,
+        37
+      ]
+    },
+    {
+      "purpose": "compaction",
+      "maxTokens": 512,
+      "messages": 9,
+      "selected": [
+        5,
+        8,
+        10,
+        13,
+        20,
+        21,
+        28,
+        29
+      ],
+      "retained": [
+        4,
+        36,
+        37,
+        46,
+        47
+      ]
+    }
+  ],
+  "completedHeaderSurvivesSnapshot": {
+    "config": {
+      "provider": "deepseek-official",
+      "model": "deepseek-flash",
+      "maxTokens": 1200,
+      "reasoningEffort": "off"
+    },
+    "adapterDefaults": {
+      "reasoningEffort": true,
+      "maxTokens": true
+    },
+    "tools": [
+      {
+        "name": "work",
+        "description": "Controlled no-effect tool.",
+        "parameters": {
+          "type": "object",
+          "properties": {}
+        }
+      }
+    ]
+  },
+  "aboveThresholdMeasurement": {
+    "logRevision": 40,
+    "baseline": {
+      "kind": "estimated",
+      "tokens": 5152
+    },
+    "surfaceDeltaTokens": 0,
+    "totalTokens": 5152,
+    "surfaceTokens": 5121,
+    "nodes": [
+      {
+        "seq": 4,
+        "tokens": 0,
+        "heuristicTokens": 0
+      },
+      {
+        "seq": 5,
+        "tokens": 20,
+        "heuristicTokens": 20
+      },
+      {
+        "seq": 8,
+        "tokens": 10,
+        "heuristicTokens": 10
+      },
+      {
+        "seq": 10,
+        "tokens": 14,
+        "heuristicTokens": 14
+      },
+      {
+        "seq": 13,
+        "tokens": 19,
+        "heuristicTokens": 19
+      },
+      {
+        "seq": 20,
+        "tokens": 1667,
+        "heuristicTokens": 1667
+      },
+      {
+        "seq": 21,
+        "tokens": 19,
+        "heuristicTokens": 19
+      },
+      {
+        "seq": 28,
+        "tokens": 1667,
+        "heuristicTokens": 1667
+      },
+      {
+        "seq": 29,
+        "tokens": 19,
+        "heuristicTokens": 19
+      },
+      {
+        "seq": 36,
+        "tokens": 1667,
+        "heuristicTokens": 1667
+      },
+      {
+        "seq": 37,
+        "tokens": 19,
+        "heuristicTokens": 19
+      }
+    ]
+  },
+  "realCompactRegionReached": true,
+  "realSummaryRequestReached": true,
+  "summarySucceeded": false,
+  "replacement": false,
+  "protectedSystemSeq": 4,
+  "balancedSelectedToolPair": [
+    8,
+    10
+  ],
+  "selectedRouteTokens": 3435,
+  "pressureFailureRetriesOnLaterHook": true,
+  "failedAttemptClosed": true,
+  "ordinaryTurnContinued": true,
+  "counts": {
+    "hooks": 7,
+    "ordinaryRequests": 7,
+    "summaryAttempts": 2
+  },
+  "checks": [
+    "missing initial routed header skips",
+    "below threshold skips",
+    "completed tool boundary reached",
+    "completed header snapshot persistence",
+    "pending followup not yet priced",
+    "above threshold selects actual compactRegion",
+    "real range validation and input assembly",
+    "512 summary cap",
+    "summary failure closes attempt; turn continues",
+    "no summary or replacement",
+    "protected system and balanced selected tool pair",
+    "later hook retries failed pressure compaction",
+    "invalid retention/headroom rejected"
+  ]
+}
