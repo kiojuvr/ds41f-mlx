@@ -10,7 +10,8 @@ second architecture policy or a claim that the goal is already implemented.
 **Progress: Phases 0–1 complete; Phase 2 numerical-reference work in progress;
 Phase 3 / Step 3A PARTIAL, Step 3B manual route BLOCKED, Step 3B-R1 automatic
 route FEASIBLE model-free; Step 3B-R2 capped summary BLOCKED; Step 3B-R3 scoped
-C4 PASS, model reclamation/C7 PARTIAL; Phase 4 not started.** Bounded [N-2 observations](../artifacts/multimodal-runtime/phase2-numerical-reference.md#12-step-1c--compatible-restored-prefix-append-2026-10-25)
+C4 PASS, model reclamation/C7 PARTIAL; Phase 4 / Step 4A proposed acceptance
+contract PARTIAL (model-free; no native authorization).** Bounded [N-2 observations](../artifacts/multimodal-runtime/phase2-numerical-reference.md#12-step-1c--compatible-restored-prefix-append-2026-10-25)
 cover Cases A/B/C; Case C has floating differences, with no approved accuracy
 envelope. **C2 remains PARTIAL**: [Step 2B-R2](../artifacts/multimodal-runtime/phase2-step2br2-continuation.md)
 exercised native C=0 reconstruction through settlement/publication; [Step 2C](../artifacts/multimodal-runtime/phase2-step2c-admission.md)
@@ -63,7 +64,17 @@ is not exercised. Framework callable-classification LRU references retain endpoi
 closures/app/backend/model after task root release. Ownership diagnosis passes;
 in-process model reclamation remains PARTIAL. No Production/framework changes.
 C2/C7 remain PARTIAL, C3/C5 retain prior scope, full C8 remains unqualified and
-Phase 4 has not started.
+Phase 4 native acceptance has not started.
+[Phase 4 / Step 4A](../artifacts/multimodal-runtime/phase4-step4a-acceptance-contract.md)
+freezes a proposed nine-source/ten-read, three-round contract with a supported
+8,192-token automatic pressure policy, 1,024 retention and 2,048 summary cap.
+Controlled installed Agent execution reaches three official offloads before the
+summary boundary; actual Recipe/source admission controls pass without weights.
+Readiness is **PARTIAL**, not C8 PASS: the existing two-effect/4K task guard needs
+scoped extension/qualification, full-profile pressure and Round-3 headroom remain
+unverified, and an integrated layout-bound ordinary paired-byte envelope is still
+required. No Production change or Step 4B authorization; C7 same-process model
+reclamation remains a separate qualification requirement.
 The [Phase 1 source audit](../artifacts/multimodal-runtime/phase1-gap-audit.md) identifies
 revision-bound guards, reusable execution paths, numerical-reference requirements
 and supported official lifecycle controls. Source inspection does not qualify
@@ -208,8 +219,10 @@ of uncertain mutable state, or permission to resend an unsettled generation.
 
 The planned end-to-end workload is **one official Harness session, three rounds,
 three new distinct images per round**, with cached continuations in each round.
-Between rounds use official offload and compaction to retire older projected
-occurrences and continue on the changed projection. In the final round reacquire
+Official image-count offload occurs on a request exceeding the configured adapter
+budget, including inside rounds; automatic compaction occurs at the real pre-step
+pressure hook after sufficient completed history. Neither is a manually scheduled
+round-boundary action. Continue on each changed projection. In the final round reacquire
 one first-round image through official tools, then infer and continue. This gives
 nine distinct source images plus a separate reacquisition occurrence, not nine
 simultaneously resident images. The workload must demonstrate both cache reuse
@@ -256,7 +269,7 @@ links to scoped evidence; this is not a second milestone registry.
 | **1 — Gap analysis / complete** | Compare pinned and relevant current Harness, Recipe, DeepInfer and oMLX with local behavior | Existing source-review revisions in the governing implementation plan; metadata preparation, cold prefill/P6/P5, Scheduler and paired authority | Offload/summary projections; hits/partial hits/misses; fresh/cached spans; source-image availability; paired reconstruction; logical-session restrictions; admission/rejection and upstream recovery initiation | [Revision-bound source audit](../artifacts/multimodal-runtime/phase1-gap-audit.md): case matrix, exact guards, reusable seams, independent-prefill reference strategy, resource evidence requirements and official workload feasibility | Source exit satisfied; numerical tolerances/baseline, changed-path execution/resources and installed lifecycle remain explicitly unverified. Depends on Phase 0 and separately authorized Phase 1 task | Prescribing a new Scheduler, cache/image/session owner or implementing a speculative solution |
 | **2 — Reconstruction / PARTIAL; model-free admission and bounded C>0 native continuation verified, undeployed** | Close only verified reconstruction gaps | Canonical prefill/P6/P5, existing Scheduler and Target/DSpark machinery | Which C2 cases need which paths; numerical equivalence and fail-closed unsupported cases | Minimal justified changes and scoped numerical/semantic reconstruction evidence | Relevant changed-prefix cases qualified without weakening paired-MTP guarantees; depends on Phase 1 findings/reference and separate approval | Redesigning execution topology, tool replay, guard relaxation or general recovery promises |
 | **3 — Harness lifecycle / Step 3A PARTIAL; Step 3B manual BLOCKED; Step 3B-R1 auto FEASIBLE; Step 3B-R2 capped summary BLOCKED; Step 3B-R3 scoped C4 PASS / reclamation PARTIAL** | Connect official offload, compaction and reacquisition | Official Harness history/attachments/tools and native Recipe Messages/Files | Supported triggering/continuation mechanisms; attachment availability/expiry; operator intervention boundaries | [Step 3A](../artifacts/multimodal-runtime/phase3-step3a-offload-reacquisition.md): bounded C3/C5 positive PASS, C6/C9 observed successful boundaries; overall PARTIAL for missing cleanup measurements. [Step 3B](../artifacts/multimodal-runtime/phase3-step3b-compaction.md) blocked before weights: installed headless lacks supported human-command dispatch; corrected diagnostic model-free regressions pass. [Step 3B-R1](../artifacts/multimodal-runtime/phase3-step3br1-auto-compaction-feasibility.md) demonstrates installed automatic pressure selection through real Agent hooks, with controlled failure before summary generation. [Step 3B-R2](../artifacts/multimodal-runtime/phase3-step3br2-native-compaction.md) reached native pressure compaction, but its sole 512-token summary truncated; no replacement or changed-projection continuation. C4 BLOCKED, cleanup PARTIAL (live final weakrefs); no retry or Production change. [Step 3B-R3](../artifacts/multimodal-runtime/phase3-step3br3-compaction-cleanup.md) completes scoped C4 with durable strict-shrink summary and native C=0/adopted C=3,120 continuation; text-only projection, framework LRU retention identified, model reclamation/C7 PARTIAL | Official session continues across qualified changes without external-effect replay; depends on Phase 1 mechanism findings and Phase 2 qualified paths | Runtime conversation/attachment management or proprietary recovery protocol; absence of upstream mechanism is a blocker |
-| **4 — Resource qualification / not started** | Establish bounded long-running usability and completion | Existing admission, cancellation/retirement and finite evidence tooling | Cumulative acquisition, cache churn, reconstruction/cancellation peaks and cleanup under pressure | Frozen-workload receipts, C1–C9 completion dispositions and documented operating/failure envelope | All C1–C9 evidence-supported and agreed end-to-end acceptance passes; depends on Phases 2–3 and separately authorized resource-safe execution | Unbounded endurance, unrelated optimization or repeated Visual Feedback Loop demos unless an affected component needs regression |
+| **4 — Resource qualification / Step 4A PARTIAL, native not started** | Establish bounded long-running usability and completion | Existing admission, cancellation/retirement and finite evidence tooling | Cumulative acquisition, cache churn, reconstruction/cancellation peaks and cleanup under pressure | [Step 4A proposed frozen contract](../artifacts/multimodal-runtime/phase4-step4a-acceptance-contract.md), nine-image manifest, model-free ordering/admission receipts and C1–C9 matrix; guard/full-profile ordering/paired-envelope closeout required before Step 4B | All C1–C9 evidence-supported and agreed end-to-end acceptance passes; depends on Phases 2–3 and separately authorized resource-safe execution | Unbounded endurance, unrelated optimization or repeated Visual Feedback Loop demos unless an affected component needs regression |
 
 ## Exclusions
 

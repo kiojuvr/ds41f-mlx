@@ -1,0 +1,96 @@
+{
+  "kind": "NORMAL_INSTALLED_CLI_COMPOSITION_NO_AGENT",
+  "exit": 0,
+  "composed_sha256": "28304a5c8dc5e04d6b0590b0bf980e323abc9c1566de95c2a0d0ba9d81281301",
+  "selected_rows": [
+    {
+      "id": "session-log-deepseek",
+      "name": "@deepseek-ai/dsh-session-log-deepseek",
+      "config": {
+        "enabled": false
+      }
+    },
+    {
+      "id": "llm-retry",
+      "name": "@deepseek-ai/dsh-llm-retry",
+      "disabled": true
+    },
+    {
+      "id": "tool-fs",
+      "name": "@deepseek-ai/dsh-tool-fs",
+      "config": {
+        "read": false,
+        "readImage": true,
+        "write": false,
+        "edit": false
+      }
+    },
+    {
+      "id": "token-meter",
+      "name": "@deepseek-ai/dsh-token-meter"
+    },
+    {
+      "id": "compaction-basic",
+      "name": "@deepseek-ai/dsh-compaction-basic",
+      "config": {
+        "auto": true,
+        "modelPolicies": [
+          {
+            "provider": "deepseek-official",
+            "model": "deepseek-flash",
+            "thresholdRatio": 0.0078125,
+            "headroomTokens": 2048,
+            "retainTokens": 1024,
+            "maxTokens": 2048,
+            "compactionRetries": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "llm-deepseek",
+      "name": "@deepseek-ai/dsh-llm-deepseek-api-key",
+      "config": {
+        "baseURL": "http://127.0.0.1:18083",
+        "apiKeyEnv": "DS41F_LOCAL_API_KEY",
+        "maxImagesPerRequest": 3,
+        "imageOffloadCountQuantum": 1,
+        "thinking": "disabled",
+        "reasoningEffort": "off",
+        "maxTokens": 1200,
+        "retryPolicy": {
+          "mode": "normal",
+          "maxRetries": 0
+        },
+        "streamIdleTimeoutMs": 180000,
+        "models": [
+          {
+            "id": "deepseek-flash",
+            "inputModalities": [
+              "text",
+              "image"
+            ],
+            "contextWindow": 1048576,
+            "maxTokens": 1200,
+            "systemPromptUpdate": "in-history",
+            "toolUpdate": "addition-only"
+          }
+        ]
+      }
+    },
+    {
+      "id": "headless-runner",
+      "name": "@deepseek-ai/dsh-headless",
+      "inject": [
+        "headlessStartup"
+      ],
+      "config": {
+        "task": "ctx.headlessStartup.task",
+        "sessionId": "ctx.headlessStartup.sessionId",
+        "json": "ctx.headlessStartup.json"
+      }
+    }
+  ],
+  "task_guard_not_yet_extended": true,
+  "weights_loaded": 0
+}

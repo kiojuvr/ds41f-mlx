@@ -1,0 +1,1075 @@
+{
+  "kind": "CONTROLLED_RESPONSES_NOT_NATIVE_SESSION_EVIDENCE",
+  "weights_loaded": 0,
+  "options": {
+    "baseURL": "http://127.0.0.1:18083",
+    "defaults": {
+      "thinking": "disabled",
+      "reasoningEffort": "off"
+    },
+    "maxTokens": 1200,
+    "defaultContextWindow": 1000000,
+    "models": [
+      {
+        "id": "deepseek-flash",
+        "contextWindow": 1048576,
+        "maxTokens": 1200,
+        "systemPromptUpdate": "in-history",
+        "toolUpdate": "addition-only",
+        "inputModalities": [
+          "text",
+          "image"
+        ],
+        "imageMaxBytes": 2097152
+      }
+    ],
+    "streamIdleTimeoutMs": 180000,
+    "maxRequestFilesBytes": 134217728,
+    "maxInlineRequestImageBytes": 20971520,
+    "maxImagesPerRequest": 3,
+    "imageOffloadByteQuantum": 67108864,
+    "inlineImageOffloadByteQuantum": 10485760,
+    "imageOffloadCountQuantum": 1,
+    "filesApiTimeoutMs": 60000,
+    "filePolicy": {
+      "expiresAfterSeconds": 604800,
+      "refreshMarginSeconds": 3600,
+      "quotaCleanupBatch": 100
+    },
+    "retryPolicy": {
+      "mode": "normal",
+      "maxRetries": 0,
+      "retryableCodes": [
+        "EMPTY_RESPONSE",
+        "RATE_LIMIT",
+        "SERVER",
+        "TIMEOUT",
+        "TRANSPORT"
+      ],
+      "initialDelayMs": 500,
+      "maxDelayMs": 10000,
+      "jitterRatio": 0.1
+    }
+  },
+  "info": {
+    "provider": "deepseek-official",
+    "id": "deepseek-flash",
+    "name": "deepseek-flash",
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "context": {
+      "contextWindow": 1048576
+    },
+    "defaultMaxTokens": 1200,
+    "systemPromptUpdate": "in-history",
+    "toolUpdate": "addition-only",
+    "reasoning": {
+      "efforts": [
+        {
+          "id": "off",
+          "name": "Off",
+          "description": "Use for simple tasks that do not need reasoning."
+        }
+      ],
+      "defaultEffort": "off"
+    }
+  },
+  "records": [
+    {
+      "threshold": 4096,
+      "config": {
+        "auto": true,
+        "modelPolicies": [
+          {
+            "provider": "deepseek-official",
+            "model": "deepseek-flash",
+            "thresholdRatio": 0.00390625,
+            "headroomTokens": 2048,
+            "retainTokens": 1024,
+            "maxTokens": 2048,
+            "compactionRetries": 0
+          }
+        ]
+      },
+      "spec": {
+        "target": {
+          "provider": "deepseek-official",
+          "model": "deepseek-flash"
+        },
+        "contextWindow": 1048576,
+        "thresholdRatio": 0.00390625,
+        "thresholdTokens": 4096,
+        "retainTokens": 1024,
+        "summarizationProvider": "",
+        "summarizationModel": "",
+        "maxTokens": 2048,
+        "compactionRetries": 0,
+        "maxOverflowRetries": 1
+      },
+      "round1": 1213,
+      "round2": 1824,
+      "hooks": [
+        {
+          "reads": 0,
+          "pressure": 0,
+          "header": false,
+          "offloads": 0
+        },
+        {
+          "reads": 1,
+          "pressure": 417,
+          "header": true,
+          "offloads": 0
+        },
+        {
+          "reads": 2,
+          "pressure": 691,
+          "header": true,
+          "offloads": 0
+        },
+        {
+          "reads": 3,
+          "pressure": 965,
+          "header": true,
+          "offloads": 0
+        },
+        {
+          "reads": 3,
+          "pressure": 1213,
+          "header": true,
+          "offloads": 0
+        },
+        {
+          "reads": 4,
+          "pressure": 1568,
+          "header": true,
+          "offloads": 0
+        },
+        {
+          "reads": 5,
+          "pressure": 1662,
+          "header": true,
+          "offloads": 1
+        },
+        {
+          "reads": 6,
+          "pressure": 1756,
+          "header": true,
+          "offloads": 2
+        },
+        {
+          "reads": 6,
+          "pressure": 1824,
+          "header": true,
+          "offloads": 3
+        },
+        {
+          "reads": 6,
+          "pressure": 3433,
+          "header": true,
+          "offloads": 3
+        },
+        {
+          "reads": 6,
+          "pressure": 5101,
+          "header": true,
+          "offloads": 3
+        }
+      ],
+      "attempts": [
+        {
+          "reads": 6,
+          "selected": [
+            5,
+            8,
+            10,
+            13,
+            15,
+            18,
+            20,
+            23,
+            30,
+            31,
+            33,
+            39,
+            41,
+            47,
+            49,
+            55,
+            62,
+            63
+          ],
+          "retained": [
+            4,
+            70,
+            71
+          ],
+          "selected_tokens": 3390,
+          "measurement": {
+            "logRevision": 78,
+            "baseline": {
+              "kind": "estimated",
+              "tokens": 5101
+            },
+            "surfaceDeltaTokens": 0,
+            "totalTokens": 5101,
+            "surfaceTokens": 5058,
+            "nodes": [
+              {
+                "seq": 4,
+                "tokens": 0,
+                "heuristicTokens": 0
+              },
+              {
+                "seq": 5,
+                "tokens": 100,
+                "heuristicTokens": 100
+              },
+              {
+                "seq": 8,
+                "tokens": 12,
+                "heuristicTokens": 12
+              },
+              {
+                "seq": 10,
+                "tokens": 82,
+                "heuristicTokens": 77
+              },
+              {
+                "seq": 13,
+                "tokens": 12,
+                "heuristicTokens": 12
+              },
+              {
+                "seq": 15,
+                "tokens": 82,
+                "heuristicTokens": 77
+              },
+              {
+                "seq": 18,
+                "tokens": 12,
+                "heuristicTokens": 12
+              },
+              {
+                "seq": 20,
+                "tokens": 82,
+                "heuristicTokens": 77
+              },
+              {
+                "seq": 23,
+                "tokens": 248,
+                "heuristicTokens": 248
+              },
+              {
+                "seq": 30,
+                "tokens": 81,
+                "heuristicTokens": 81
+              },
+              {
+                "seq": 31,
+                "tokens": 12,
+                "heuristicTokens": 12
+              },
+              {
+                "seq": 33,
+                "tokens": 262,
+                "heuristicTokens": 77
+              },
+              {
+                "seq": 39,
+                "tokens": 12,
+                "heuristicTokens": 12
+              },
+              {
+                "seq": 41,
+                "tokens": 262,
+                "heuristicTokens": 77
+              },
+              {
+                "seq": 47,
+                "tokens": 12,
+                "heuristicTokens": 12
+              },
+              {
+                "seq": 49,
+                "tokens": 262,
+                "heuristicTokens": 77
+              },
+              {
+                "seq": 55,
+                "tokens": 248,
+                "heuristicTokens": 248
+              },
+              {
+                "seq": 62,
+                "tokens": 1361,
+                "heuristicTokens": 1361
+              },
+              {
+                "seq": 63,
+                "tokens": 248,
+                "heuristicTokens": 248
+              },
+              {
+                "seq": 70,
+                "tokens": 1420,
+                "heuristicTokens": 1420
+              },
+              {
+                "seq": 71,
+                "tokens": 248,
+                "heuristicTokens": 248
+              }
+            ]
+          },
+          "maxTokens": 2048,
+          "message_count": 19
+        }
+      ],
+      "offloads": [
+        {
+          "type": "image/offload",
+          "seq": 37,
+          "time": 1793112646249,
+          "data": {
+            "targets": [
+              {
+                "seq": 10,
+                "imageIndexes": [
+                  0
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "type": "image/offload",
+          "seq": 45,
+          "time": 1793112646250,
+          "data": {
+            "targets": [
+              {
+                "seq": 15,
+                "imageIndexes": [
+                  0
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "type": "image/offload",
+          "seq": 53,
+          "time": 1793112646252,
+          "data": {
+            "targets": [
+              {
+                "seq": 20,
+                "imageIndexes": [
+                  0
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "requests": [
+        {
+          "reads": 0,
+          "images": 0
+        },
+        {
+          "reads": 1,
+          "images": 1
+        },
+        {
+          "reads": 2,
+          "images": 2
+        },
+        {
+          "reads": 3,
+          "images": 3
+        },
+        {
+          "reads": 3,
+          "images": 3
+        },
+        {
+          "reads": 4,
+          "images": 3
+        },
+        {
+          "reads": 5,
+          "images": 3
+        },
+        {
+          "reads": 6,
+          "images": 3
+        },
+        {
+          "reads": 6,
+          "images": 3
+        },
+        {
+          "reads": 6,
+          "images": 3
+        },
+        {
+          "reads": 6,
+          "images": 3
+        }
+      ],
+      "balanced_groups": [
+        [
+          8,
+          10
+        ],
+        [
+          13,
+          15
+        ],
+        [
+          18,
+          20
+        ],
+        [
+          31,
+          33
+        ],
+        [
+          39,
+          41
+        ],
+        [
+          47,
+          49
+        ]
+      ],
+      "header_survives_snapshot": true,
+      "summary_success": false,
+      "replacement": false,
+      "failed_transaction_events": [
+        {
+          "type": "compaction/start",
+          "seq": 77,
+          "time": 1793112646256,
+          "data": {
+            "compactionId": "1a39537a-b2cf-4025-a7f8-728104eb2203",
+            "turn": 5
+          }
+        },
+        {
+          "type": "compaction/end",
+          "seq": 78,
+          "time": 1793112646257,
+          "data": {
+            "compactionId": "1a39537a-b2cf-4025-a7f8-728104eb2203",
+            "turn": 5,
+            "error": "MODEL_FREE_STOP_BEFORE_SUMMARY"
+          }
+        }
+      ],
+      "budget_refusal_events": [
+        {
+          "type": "assistant/attempt",
+          "seq": 36,
+          "time": 1793112646249,
+          "data": {
+            "turn": 2,
+            "step": 2,
+            "stream": [
+              {
+                "type": "chunk",
+                "time": 1793112646249,
+                "chunk": {
+                  "type": "finish",
+                  "reason": {
+                    "kind": "error",
+                    "failure": {
+                      "message": "Controlled adapter applies official count budget",
+                      "code": "IMAGE_OFFLOAD_REQUIRED",
+                      "offloadImages": 1
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "assistant/attempt",
+          "seq": 44,
+          "time": 1793112646250,
+          "data": {
+            "turn": 2,
+            "step": 3,
+            "stream": [
+              {
+                "type": "chunk",
+                "time": 1793112646250,
+                "chunk": {
+                  "type": "finish",
+                  "reason": {
+                    "kind": "error",
+                    "failure": {
+                      "message": "Controlled adapter applies official count budget",
+                      "code": "IMAGE_OFFLOAD_REQUIRED",
+                      "offloadImages": 1
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "assistant/attempt",
+          "seq": 52,
+          "time": 1793112646252,
+          "data": {
+            "turn": 2,
+            "step": 4,
+            "stream": [
+              {
+                "type": "chunk",
+                "time": 1793112646251,
+                "chunk": {
+                  "type": "finish",
+                  "reason": {
+                    "kind": "error",
+                    "failure": {
+                      "message": "Controlled adapter applies official count budget",
+                      "code": "IMAGE_OFFLOAD_REQUIRED",
+                      "offloadImages": 1
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "threshold": 8192,
+      "config": {
+        "auto": true,
+        "modelPolicies": [
+          {
+            "provider": "deepseek-official",
+            "model": "deepseek-flash",
+            "thresholdRatio": 0.0078125,
+            "headroomTokens": 2048,
+            "retainTokens": 1024,
+            "maxTokens": 2048,
+            "compactionRetries": 0
+          }
+        ]
+      },
+      "spec": {
+        "target": {
+          "provider": "deepseek-official",
+          "model": "deepseek-flash"
+        },
+        "contextWindow": 1048576,
+        "thresholdRatio": 0.0078125,
+        "thresholdTokens": 8192,
+        "retainTokens": 1024,
+        "summarizationProvider": "",
+        "summarizationModel": "",
+        "maxTokens": 2048,
+        "compactionRetries": 0,
+        "maxOverflowRetries": 1
+      },
+      "round1": 1213,
+      "round2": 1824,
+      "hooks": [
+        {
+          "reads": 0,
+          "pressure": 0,
+          "header": false,
+          "offloads": 0
+        },
+        {
+          "reads": 1,
+          "pressure": 417,
+          "header": true,
+          "offloads": 0
+        },
+        {
+          "reads": 2,
+          "pressure": 691,
+          "header": true,
+          "offloads": 0
+        },
+        {
+          "reads": 3,
+          "pressure": 965,
+          "header": true,
+          "offloads": 0
+        },
+        {
+          "reads": 3,
+          "pressure": 1213,
+          "header": true,
+          "offloads": 0
+        },
+        {
+          "reads": 4,
+          "pressure": 1568,
+          "header": true,
+          "offloads": 0
+        },
+        {
+          "reads": 5,
+          "pressure": 1662,
+          "header": true,
+          "offloads": 1
+        },
+        {
+          "reads": 6,
+          "pressure": 1756,
+          "header": true,
+          "offloads": 2
+        },
+        {
+          "reads": 6,
+          "pressure": 1824,
+          "header": true,
+          "offloads": 3
+        },
+        {
+          "reads": 6,
+          "pressure": 3433,
+          "header": true,
+          "offloads": 3
+        },
+        {
+          "reads": 6,
+          "pressure": 5101,
+          "header": true,
+          "offloads": 3
+        },
+        {
+          "reads": 6,
+          "pressure": 6738,
+          "header": true,
+          "offloads": 3
+        },
+        {
+          "reads": 6,
+          "pressure": 8258,
+          "header": true,
+          "offloads": 3
+        }
+      ],
+      "attempts": [
+        {
+          "reads": 6,
+          "selected": [
+            5,
+            8,
+            10,
+            13,
+            15,
+            18,
+            20,
+            23,
+            30,
+            31,
+            33,
+            39,
+            41,
+            47,
+            49,
+            55,
+            62,
+            63,
+            70,
+            71,
+            78,
+            79
+          ],
+          "retained": [
+            4,
+            86,
+            87
+          ],
+          "selected_tokens": 6695,
+          "measurement": {
+            "logRevision": 94,
+            "baseline": {
+              "kind": "estimated",
+              "tokens": 8258
+            },
+            "surfaceDeltaTokens": 0,
+            "totalTokens": 8258,
+            "surfaceTokens": 8215,
+            "nodes": [
+              {
+                "seq": 4,
+                "tokens": 0,
+                "heuristicTokens": 0
+              },
+              {
+                "seq": 5,
+                "tokens": 100,
+                "heuristicTokens": 100
+              },
+              {
+                "seq": 8,
+                "tokens": 12,
+                "heuristicTokens": 12
+              },
+              {
+                "seq": 10,
+                "tokens": 82,
+                "heuristicTokens": 77
+              },
+              {
+                "seq": 13,
+                "tokens": 12,
+                "heuristicTokens": 12
+              },
+              {
+                "seq": 15,
+                "tokens": 82,
+                "heuristicTokens": 77
+              },
+              {
+                "seq": 18,
+                "tokens": 12,
+                "heuristicTokens": 12
+              },
+              {
+                "seq": 20,
+                "tokens": 82,
+                "heuristicTokens": 77
+              },
+              {
+                "seq": 23,
+                "tokens": 248,
+                "heuristicTokens": 248
+              },
+              {
+                "seq": 30,
+                "tokens": 81,
+                "heuristicTokens": 81
+              },
+              {
+                "seq": 31,
+                "tokens": 12,
+                "heuristicTokens": 12
+              },
+              {
+                "seq": 33,
+                "tokens": 262,
+                "heuristicTokens": 77
+              },
+              {
+                "seq": 39,
+                "tokens": 12,
+                "heuristicTokens": 12
+              },
+              {
+                "seq": 41,
+                "tokens": 262,
+                "heuristicTokens": 77
+              },
+              {
+                "seq": 47,
+                "tokens": 12,
+                "heuristicTokens": 12
+              },
+              {
+                "seq": 49,
+                "tokens": 262,
+                "heuristicTokens": 77
+              },
+              {
+                "seq": 55,
+                "tokens": 248,
+                "heuristicTokens": 248
+              },
+              {
+                "seq": 62,
+                "tokens": 1361,
+                "heuristicTokens": 1361
+              },
+              {
+                "seq": 63,
+                "tokens": 248,
+                "heuristicTokens": 248
+              },
+              {
+                "seq": 70,
+                "tokens": 1420,
+                "heuristicTokens": 1420
+              },
+              {
+                "seq": 71,
+                "tokens": 248,
+                "heuristicTokens": 248
+              },
+              {
+                "seq": 78,
+                "tokens": 1389,
+                "heuristicTokens": 1389
+              },
+              {
+                "seq": 79,
+                "tokens": 248,
+                "heuristicTokens": 248
+              },
+              {
+                "seq": 86,
+                "tokens": 1272,
+                "heuristicTokens": 1272
+              },
+              {
+                "seq": 87,
+                "tokens": 248,
+                "heuristicTokens": 248
+              }
+            ]
+          },
+          "maxTokens": 2048,
+          "message_count": 23
+        }
+      ],
+      "offloads": [
+        {
+          "type": "image/offload",
+          "seq": 37,
+          "time": 1793112646267,
+          "data": {
+            "targets": [
+              {
+                "seq": 10,
+                "imageIndexes": [
+                  0
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "type": "image/offload",
+          "seq": 45,
+          "time": 1793112646267,
+          "data": {
+            "targets": [
+              {
+                "seq": 15,
+                "imageIndexes": [
+                  0
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "type": "image/offload",
+          "seq": 53,
+          "time": 1793112646268,
+          "data": {
+            "targets": [
+              {
+                "seq": 20,
+                "imageIndexes": [
+                  0
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "requests": [
+        {
+          "reads": 0,
+          "images": 0
+        },
+        {
+          "reads": 1,
+          "images": 1
+        },
+        {
+          "reads": 2,
+          "images": 2
+        },
+        {
+          "reads": 3,
+          "images": 3
+        },
+        {
+          "reads": 3,
+          "images": 3
+        },
+        {
+          "reads": 4,
+          "images": 3
+        },
+        {
+          "reads": 5,
+          "images": 3
+        },
+        {
+          "reads": 6,
+          "images": 3
+        },
+        {
+          "reads": 6,
+          "images": 3
+        },
+        {
+          "reads": 6,
+          "images": 3
+        },
+        {
+          "reads": 6,
+          "images": 3
+        },
+        {
+          "reads": 6,
+          "images": 3
+        },
+        {
+          "reads": 6,
+          "images": 3
+        }
+      ],
+      "balanced_groups": [
+        [
+          8,
+          10
+        ],
+        [
+          13,
+          15
+        ],
+        [
+          18,
+          20
+        ],
+        [
+          31,
+          33
+        ],
+        [
+          39,
+          41
+        ],
+        [
+          47,
+          49
+        ]
+      ],
+      "header_survives_snapshot": true,
+      "summary_success": false,
+      "replacement": false,
+      "failed_transaction_events": [
+        {
+          "type": "compaction/start",
+          "seq": 93,
+          "time": 1793112646272,
+          "data": {
+            "compactionId": "c1fad077-69d2-475e-8e24-11210ff0e504",
+            "turn": 7
+          }
+        },
+        {
+          "type": "compaction/end",
+          "seq": 94,
+          "time": 1793112646273,
+          "data": {
+            "compactionId": "c1fad077-69d2-475e-8e24-11210ff0e504",
+            "turn": 7,
+            "error": "MODEL_FREE_STOP_BEFORE_SUMMARY"
+          }
+        }
+      ],
+      "budget_refusal_events": [
+        {
+          "type": "assistant/attempt",
+          "seq": 36,
+          "time": 1793112646266,
+          "data": {
+            "turn": 2,
+            "step": 2,
+            "stream": [
+              {
+                "type": "chunk",
+                "time": 1793112646266,
+                "chunk": {
+                  "type": "finish",
+                  "reason": {
+                    "kind": "error",
+                    "failure": {
+                      "message": "Controlled adapter applies official count budget",
+                      "code": "IMAGE_OFFLOAD_REQUIRED",
+                      "offloadImages": 1
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "assistant/attempt",
+          "seq": 44,
+          "time": 1793112646267,
+          "data": {
+            "turn": 2,
+            "step": 3,
+            "stream": [
+              {
+                "type": "chunk",
+                "time": 1793112646267,
+                "chunk": {
+                  "type": "finish",
+                  "reason": {
+                    "kind": "error",
+                    "failure": {
+                      "message": "Controlled adapter applies official count budget",
+                      "code": "IMAGE_OFFLOAD_REQUIRED",
+                      "offloadImages": 1
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "assistant/attempt",
+          "seq": 52,
+          "time": 1793112646268,
+          "data": {
+            "turn": 2,
+            "step": 4,
+            "stream": [
+              {
+                "type": "chunk",
+                "time": 1793112646268,
+                "chunk": {
+                  "type": "finish",
+                  "reason": {
+                    "kind": "error",
+                    "failure": {
+                      "message": "Controlled adapter applies official count budget",
+                      "code": "IMAGE_OFFLOAD_REQUIRED",
+                      "offloadImages": 1
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

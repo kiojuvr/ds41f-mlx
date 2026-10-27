@@ -1,0 +1,11 @@
+- id: compaction-basic
+  config:
+    auto: true
+    modelPolicies:
+      - provider: deepseek-official
+        model: deepseek-flash
+        thresholdRatio: 0.0078125
+        headroomTokens: 2048
+        retainTokens: 1024
+        maxTokens: 2048
+        compactionRetries: 0
