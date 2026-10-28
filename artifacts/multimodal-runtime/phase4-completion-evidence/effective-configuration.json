@@ -1,0 +1,149 @@
+{
+  "provider": {
+    "baseURL": "http://127.0.0.1:18083",
+    "defaults": {
+      "thinking": "disabled",
+      "reasoningEffort": "off"
+    },
+    "maxTokens": 1200,
+    "defaultContextWindow": 1000000,
+    "models": [
+      {
+        "id": "deepseek-flash",
+        "contextWindow": 1048576,
+        "maxTokens": 1200,
+        "systemPromptUpdate": "in-history",
+        "toolUpdate": "addition-only",
+        "inputModalities": [
+          "text",
+          "image"
+        ],
+        "imageMaxBytes": 2097152
+      }
+    ],
+    "streamIdleTimeoutMs": 180000,
+    "maxRequestFilesBytes": 134217728,
+    "maxInlineRequestImageBytes": 20971520,
+    "maxImagesPerRequest": 3,
+    "imageOffloadByteQuantum": 67108864,
+    "inlineImageOffloadByteQuantum": 10485760,
+    "imageOffloadCountQuantum": 1,
+    "filesApiTimeoutMs": 60000,
+    "filePolicy": {
+      "expiresAfterSeconds": 604800,
+      "refreshMarginSeconds": 3600,
+      "quotaCleanupBatch": 100
+    },
+    "retryPolicy": {
+      "mode": "normal",
+      "maxRetries": 0,
+      "retryableCodes": [
+        "EMPTY_RESPONSE",
+        "RATE_LIMIT",
+        "SERVER",
+        "TIMEOUT",
+        "TRANSPORT"
+      ],
+      "initialDelayMs": 500,
+      "maxDelayMs": 10000,
+      "jitterRatio": 0.1
+    }
+  },
+  "config": {
+    "thresholdRatio": 0.8,
+    "headroomTokens": 65536,
+    "retainRatio": 0.16,
+    "summarizationProvider": "",
+    "summarizationModel": "",
+    "maxTokens": 65536,
+    "compactionRetries": 1,
+    "maxOverflowRetries": 1,
+    "modelPolicies": [
+      {
+        "provider": "deepseek-official",
+        "model": "deepseek-flash",
+        "thresholdRatio": 0.0078125,
+        "headroomTokens": 2048,
+        "retainTokens": 1024,
+        "maxTokens": 2048,
+        "compactionRetries": 0
+      }
+    ],
+    "auto": true
+  },
+  "policy": {
+    "target": {
+      "provider": "deepseek-official",
+      "model": "deepseek-flash"
+    },
+    "thresholdRatio": 0.0078125,
+    "headroomTokens": 2048,
+    "retainTokens": 1024,
+    "summarizationProvider": "",
+    "summarizationModel": "",
+    "maxTokens": 2048,
+    "compactionRetries": 0,
+    "maxOverflowRetries": 1
+  },
+  "info": {
+    "provider": "deepseek-official",
+    "id": "deepseek-flash",
+    "name": "deepseek-flash",
+    "inputModalities": [
+      "text",
+      "image"
+    ],
+    "context": {
+      "contextWindow": 1048576
+    },
+    "defaultMaxTokens": 1200,
+    "systemPromptUpdate": "in-history",
+    "toolUpdate": "addition-only",
+    "reasoning": {
+      "efforts": [
+        {
+          "id": "off",
+          "name": "Off",
+          "description": "Use for simple tasks that do not need reasoning."
+        }
+      ],
+      "defaultEffort": "off"
+    }
+  },
+  "spec": {
+    "target": {
+      "provider": "deepseek-official",
+      "model": "deepseek-flash"
+    },
+    "contextWindow": 1048576,
+    "thresholdRatio": 0.0078125,
+    "thresholdTokens": 8192,
+    "retainTokens": 1024,
+    "summarizationProvider": "",
+    "summarizationModel": "",
+    "maxTokens": 2048,
+    "compactionRetries": 0,
+    "maxOverflowRetries": 1
+  },
+  "tool": {
+    "name": "read_image",
+    "description": "Read a PNG/JPEG/WebP/GIF file and return the image itself. Large images are downscaled automatically; do not install image libraries or create thumbnails to inspect an image.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "file_path": {
+          "type": "string",
+          "description": "Path to the image file, resolved by the filesystem backend."
+        }
+      },
+      "required": [
+        "file_path"
+      ]
+    }
+  },
+  "guard_registered": true,
+  "passive_registered": true,
+  "weights_loaded": 0,
+  "sessions_created": 0,
+  "tool_effects": 0
+}

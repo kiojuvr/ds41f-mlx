@@ -1,0 +1,286 @@
+{
+  "C8": "BLOCKED",
+  "checks": {
+    "completed": false,
+    "one_load_session": true,
+    "ordered_ten_effects": false,
+    "ten_unique_effect_ids": false,
+    "nine_sources": false,
+    "offload_historical_vision": true,
+    "automatic_compaction": true,
+    "strict_durable_replacement": true,
+    "post_compaction": true,
+    "reacquisition_vision": false,
+    "final_compatible": false,
+    "native_integrity": true,
+    "no_uncertainty": true,
+    "budgets": true,
+    "retirement": true
+  },
+  "driver_stop": "AssertionError('missing new A effect')",
+  "all_observed_effect_ids_unique": true,
+  "observed_effect_order": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G"
+  ],
+  "session_id": "session-d74623b0-3598-4f79-b964-b754c83bca75",
+  "effects": [
+    {
+      "label": "A",
+      "sha256": "c1b1e6f9900e7d04b2c2c4f093d979f87265a8f25989e81e2c07ae70e3d8f47c",
+      "result_seq": 15,
+      "tool_id": "call_00_apTYTCUYFv1k8iXtZ8de0879",
+      "attachment": {
+        "attachmentId": "sha256:c1b1e6f9900e7d04b2c2c4f093d979f87265a8f25989e81e2c07ae70e3d8f47c",
+        "mediaType": "image/png",
+        "bytes": 3460,
+        "width": 384,
+        "height": 384,
+        "name": "image-A.png"
+      }
+    },
+    {
+      "label": "B",
+      "sha256": "4cb9983707cf91cb56ebd6243f47968db43a7e52531f694a7b52f89d90df895a",
+      "result_seq": 20,
+      "tool_id": "call_00_0xYRJkXwECuAMTw4Vrng9418",
+      "attachment": {
+        "attachmentId": "sha256:4cb9983707cf91cb56ebd6243f47968db43a7e52531f694a7b52f89d90df895a",
+        "mediaType": "image/png",
+        "bytes": 3073,
+        "width": 384,
+        "height": 384,
+        "name": "image-B.png"
+      }
+    },
+    {
+      "label": "C",
+      "sha256": "9a312f66237d41000f27a7fc6f603ddab3d1c546950303f94a4838fce7bc8a4b",
+      "result_seq": 25,
+      "tool_id": "call_00_Y3iosAOLmduDnJuS7CxL3009",
+      "attachment": {
+        "attachmentId": "sha256:9a312f66237d41000f27a7fc6f603ddab3d1c546950303f94a4838fce7bc8a4b",
+        "mediaType": "image/png",
+        "bytes": 4304,
+        "width": 384,
+        "height": 384,
+        "name": "image-C.png"
+      }
+    },
+    {
+      "label": "D",
+      "sha256": "0b46186e69f3ccf1b4f7836f27b146d90f907e8c12e5c9230067671534dc8abc",
+      "result_seq": 40,
+      "tool_id": "call_00_Wla9p2o4PU4YuAg0BQtY1693",
+      "attachment": {
+        "attachmentId": "sha256:0b46186e69f3ccf1b4f7836f27b146d90f907e8c12e5c9230067671534dc8abc",
+        "mediaType": "image/png",
+        "bytes": 2767,
+        "width": 384,
+        "height": 384,
+        "name": "image-D.png"
+      }
+    },
+    {
+      "label": "E",
+      "sha256": "3bd05e26dfef00ac2e89de01ba75bdd060f07ad7d4da0eba8ad93aec5fb98f54",
+      "result_seq": 48,
+      "tool_id": "call_00_B632yxYnX7BTmZIdxrxk0912",
+      "attachment": {
+        "attachmentId": "sha256:3bd05e26dfef00ac2e89de01ba75bdd060f07ad7d4da0eba8ad93aec5fb98f54",
+        "mediaType": "image/png",
+        "bytes": 3632,
+        "width": 384,
+        "height": 384,
+        "name": "image-E.png"
+      }
+    },
+    {
+      "label": "F",
+      "sha256": "94d049f1cf7a8d76e784c1f5511228d9be018bc1a1741c1d9bc675af8d97ad20",
+      "result_seq": 56,
+      "tool_id": "call_00_V9lred2vWXtADgn1Tskr3568",
+      "attachment": {
+        "attachmentId": "sha256:94d049f1cf7a8d76e784c1f5511228d9be018bc1a1741c1d9bc675af8d97ad20",
+        "mediaType": "image/png",
+        "bytes": 3847,
+        "width": 384,
+        "height": 384,
+        "name": "image-F.png"
+      }
+    },
+    {
+      "label": "G",
+      "sha256": "272ea2720fb65d2c595de49dbe689dbf93241db107128944ba2f493dd13da0c8",
+      "result_seq": 119,
+      "tool_id": "call_00_zTOPBsNYiq5rP8um2veL4808",
+      "attachment": {
+        "attachmentId": "sha256:272ea2720fb65d2c595de49dbe689dbf93241db107128944ba2f493dd13da0c8",
+        "mediaType": "image/png",
+        "bytes": 4209,
+        "width": 384,
+        "height": 384,
+        "name": "image-G.png"
+      }
+    }
+  ],
+  "offload_joins": [
+    {
+      "event_seq": 44,
+      "targets": {
+        "targets": [
+          {
+            "seq": 15,
+            "imageIndexes": [
+              0
+            ]
+          }
+        ]
+      },
+      "request_index": 5,
+      "qualified": true,
+      "reason": null,
+      "C": 0,
+      "fresh": 3,
+      "sources": [
+        "B",
+        "C",
+        "D"
+      ]
+    },
+    {
+      "event_seq": 52,
+      "targets": {
+        "targets": [
+          {
+            "seq": 20,
+            "imageIndexes": [
+              0
+            ]
+          }
+        ]
+      },
+      "request_index": 6,
+      "qualified": true,
+      "reason": null,
+      "C": 0,
+      "fresh": 3,
+      "sources": [
+        "C",
+        "D",
+        "E"
+      ]
+    },
+    {
+      "event_seq": 60,
+      "targets": {
+        "targets": [
+          {
+            "seq": 25,
+            "imageIndexes": [
+              0
+            ]
+          }
+        ]
+      },
+      "request_index": 7,
+      "qualified": true,
+      "reason": null,
+      "C": 0,
+      "fresh": 3,
+      "sources": [
+        "D",
+        "E",
+        "F"
+      ]
+    }
+  ],
+  "compaction": {
+    "start_seq": 99,
+    "summary_seq": 100,
+    "replacement_seq": 101,
+    "end_seq": 102,
+    "selected_seqs": [
+      8,
+      9,
+      13,
+      15,
+      18,
+      20,
+      23,
+      25,
+      28,
+      36,
+      38,
+      40,
+      46,
+      48,
+      54,
+      56,
+      62,
+      70,
+      72,
+      80,
+      82
+    ],
+    "selected_route_tokens": 7005,
+    "framed_summary_tokens": 963,
+    "strict_shrink": true,
+    "pre_pressure": 8996,
+    "summary_usage": {
+      "inputTokens": 381,
+      "outputTokens": 822,
+      "cacheReadTokens": 7000,
+      "cacheWriteTokens": 0,
+      "totalTokens": 8203
+    },
+    "shadowed_absent": true,
+    "replacement_visible": true,
+    "post_native": {
+      "request_index": 12,
+      "N": 2775,
+      "C": 0,
+      "fresh": 0,
+      "qualified": true,
+      "reason": null
+    }
+  },
+  "reacquisition": [],
+  "full_wire_native_event_equality": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "resource": {
+    "min_available": 207436431360,
+    "max_footprint": 322353226560,
+    "max_lifetime_footprint": 322784642736,
+    "pressures": [
+      1
+    ],
+    "swap_growth": 0,
+    "swapout_growth": 0
+  },
+  "remaining_independent_criteria": {
+    "C2": "PARTIAL: numerical/case obligations unchanged",
+    "C7": "PARTIAL: same-process model destruction and broader resource negatives unqualified",
+    "C6_C9": "broader negative/recovery cases remain separate"
+  }
+}
