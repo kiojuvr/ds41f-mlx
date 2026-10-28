@@ -1,0 +1,15 @@
+{
+  "kind": "PRELOAD_TASK_DIAGNOSTICS_NOT_NATIVE_GENERATIONS",
+  "command_timeouts": [
+    {"script": "preflight.py", "tool_timeout_seconds": 200, "log": "preflight-interrupted.log", "weights_loaded": 0, "sessions_created": 0, "resolution": "Unchanged read-only admission collected detached; PASS in preflight.json."},
+    {"script": "runtime.py --preflight-only", "tool_timeout_seconds": 60, "log": "worker-preflight-interrupted.log", "weights_loaded": 0, "sessions_created": 0, "resolution": "Actual supervised worker subsequently completed its own installed/source/function gates before the single load permission."}
+  ],
+  "before_load_wrapper_corrections": [
+    "guard-tests data-URL wrapper: use hierarchical file URLs for installed module imports",
+    "config-preflight assertion: official defineTool normalizes file_path under parameters.properties and required array"
+  ],
+  "after_stop_audit_correction": "Official event surfaceOp can be a string, not only a replacement-operation object. Corrected only read-only audit parser.",
+  "production_changes": false,
+  "native_retries": 0,
+  "frozen_guard_or_observer_edits": false
+}

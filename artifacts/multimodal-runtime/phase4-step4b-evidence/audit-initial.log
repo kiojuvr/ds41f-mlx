@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/Volumes/SDXC-512/ds41f-mlx/artifacts/multimodal-runtime/phase4-step4b-evidence/audit.py", line 21, in <module>
+    selected=[e for e in events if e['type'] in ('image/offload','compaction/start','compaction/summary','compaction/end') or e.get('surfaceOp',{}).get('op')=='replace']
+                                                                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'get'
