@@ -1,0 +1,172 @@
+{
+  "pass_": true,
+  "child": {
+    "ownership": "task",
+    "chain": [
+      {
+        "pid": 19932,
+        "ppid": 19931,
+        "created": 1793161280.605495,
+        "name": "Python",
+        "cmd": [
+          "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+          "-c",
+          "import time; time.sleep(30)"
+        ],
+        "rss": 15073280,
+        "pgid": 19932
+      },
+      {
+        "pid": 19931,
+        "ppid": 19924,
+        "created": 1793161280.556447,
+        "name": "Python",
+        "cmd": [
+          "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+          "-B",
+          "artifacts/multimodal-runtime/phase4-integrated-evidence/monitor_test.py"
+        ],
+        "rss": 27492352,
+        "pgid": 19924
+      }
+    ]
+  },
+  "pid_reuse": {
+    "ownership": "unknown",
+    "chain": [
+      {
+        "pid": 19932,
+        "ppid": 19931,
+        "created": 1793161280.605495,
+        "name": "Python",
+        "cmd": [
+          "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+          "-c",
+          "import time; time.sleep(30)"
+        ],
+        "rss": 15073280,
+        "pgid": 19932
+      },
+      {
+        "pid": 19931,
+        "ppid": 19924,
+        "created": 1793161280.556447,
+        "name": "Python",
+        "cmd": [
+          "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+          "-B",
+          "artifacts/multimodal-runtime/phase4-integrated-evidence/monitor_test.py"
+        ],
+        "rss": 27492352,
+        "pgid": 19924
+      }
+    ]
+  },
+  "unrelated": {
+    "ownership": "unknown",
+    "chain": [
+      {
+        "pid": 19924,
+        "ppid": 2432,
+        "created": 1793161280.166382,
+        "name": "bash",
+        "cmd": [
+          "/bin/bash",
+          "-c",
+          "git status --short; git check-ignore artifacts/multimodal-runtime/phase4-integrated-evidence/run.py artifacts/multimodal-runtime/phase4-integrated-native.md; git diff --check; python3 -B tools/check_repository_self_containment.py; python3 -B artifacts/multimodal-runtime/phase4-integrated-evidence/integrity.py after; /tmp/ds41f-step4ar1-tests/bin/python -B artifacts/multimodal-runtime/phase4-integrated-evidence/audit.py > artifacts/multimodal-runtime/phase4-integrated-evidence/audit.log; /tmp/ds41f-step4ar1-tests/bin/python -B artifacts/multimodal-runtime/phase4-integrated-evidence/monitor_test.py"
+        ],
+        "rss": 2342912,
+        "pgid": 19924
+      },
+      {
+        "pid": 2432,
+        "ppid": 903,
+        "created": 1792712694.701032,
+        "name": "node",
+        "cmd": [
+          "pi",
+          "",
+          "",
+          ""
+        ],
+        "rss": 635207680,
+        "pgid": 2432
+      },
+      {
+        "pid": 903,
+        "ppid": 892,
+        "created": 1792712608.820515,
+        "name": "zsh",
+        "cmd": [
+          "-zsh"
+        ],
+        "rss": 3948544,
+        "pgid": 903
+      }
+    ],
+    "error": "psutil.AccessDenied(pid=892, name='login')"
+  },
+  "sample": {
+    "elapsed": 0.2684854580438696,
+    "available": 531589824512,
+    "pressure": 1,
+    "swap_used": 0,
+    "swapouts": 0,
+    "footprint": 0,
+    "lifetime_footprint": 0,
+    "competitors": [],
+    "process_candidates": [
+      {
+        "ownership": "task",
+        "chain": [
+          {
+            "pid": 19931,
+            "ppid": 19924,
+            "created": 1793161280.556447,
+            "name": "Python",
+            "cmd": [
+              "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+              "-B",
+              "artifacts/multimodal-runtime/phase4-integrated-evidence/monitor_test.py"
+            ],
+            "rss": 27967488,
+            "pgid": 19924
+          }
+        ],
+        "pid": 19931
+      },
+      {
+        "ownership": "task",
+        "chain": [
+          {
+            "pid": 19932,
+            "ppid": 19931,
+            "created": 1793161280.605495,
+            "name": "Python",
+            "cmd": [
+              "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+              "-c",
+              "import time; time.sleep(30)"
+            ],
+            "rss": 15073280,
+            "pgid": 19932
+          },
+          {
+            "pid": 19931,
+            "ppid": 19924,
+            "created": 1793161280.556447,
+            "name": "Python",
+            "cmd": [
+              "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+              "-B",
+              "artifacts/multimodal-runtime/phase4-integrated-evidence/monitor_test.py"
+            ],
+            "rss": 27967488,
+            "pgid": 19924
+          }
+        ],
+        "pid": 19932
+      }
+    ]
+  }
+}

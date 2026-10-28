@@ -1,0 +1,319 @@
+{
+  "starting_head": "bc8af59d0f8d07cd8a9161917625cbb1ca21156b",
+  "invocations": [
+    {
+      "index": 0,
+      "phase": "round1",
+      "prompt_sha256": "30191075c1f8c4bb2fc301ad304d36099d3b085c6accdf1213ff710519e98399",
+      "args": [
+        "node",
+        "/Users/kioju/.local/share/deepseek-harness/node_modules/@deepseek-ai/dsh/lib/bin.js",
+        "--profile",
+        "headless",
+        "--json"
+      ],
+      "session_id": "session-91663bd1-4ee1-4e07-8568-757a381cd94c",
+      "exit": 0,
+      "pressure": 2705
+    },
+    {
+      "index": 1,
+      "phase": "round2",
+      "prompt_sha256": "2255caddc88f9d4ab553bcca2843041aac472b14fe03ccc778120d95a5f4364e",
+      "args": [
+        "node",
+        "/Users/kioju/.local/share/deepseek-harness/node_modules/@deepseek-ai/dsh/lib/bin.js",
+        "--profile",
+        "headless",
+        "--json",
+        "--session-id",
+        "session-91663bd1-4ee1-4e07-8568-757a381cd94c"
+      ],
+      "session_id": "session-91663bd1-4ee1-4e07-8568-757a381cd94c",
+      "exit": 0,
+      "pressure": 4472
+    }
+  ],
+  "stop": "AssertionError('official persistence inspection failed')",
+  "loads": 1,
+  "session_id": "session-91663bd1-4ee1-4e07-8568-757a381cd94c",
+  "initial": {
+    "elapsed": 0.014392292010597885,
+    "available": 531825016832,
+    "pressure": 1,
+    "swap_used": 0,
+    "swapouts": 0,
+    "footprint": 0,
+    "lifetime_footprint": 0,
+    "competitors": [],
+    "process_candidates": [
+      {
+        "ownership": "task",
+        "chain": [
+          {
+            "pid": 7106,
+            "ppid": 1,
+            "created": 1793160437.01165,
+            "name": "Python",
+            "cmd": [
+              "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+              "-B",
+              "artifacts/multimodal-runtime/phase4-integrated-evidence/run.py"
+            ],
+            "rss": 28655616,
+            "pgid": 7103
+          }
+        ],
+        "pid": 7106
+      }
+    ]
+  },
+  "runtime_pid": 7111,
+  "supervisor_pid": 7106,
+  "preload": {
+    "elapsed": 277.58348145801574,
+    "available": 530995953664,
+    "pressure": 1,
+    "swap_used": 0,
+    "swapouts": 0,
+    "footprint": 287622464,
+    "lifetime_footprint": 761431360,
+    "competitors": [],
+    "process_candidates": [
+      {
+        "ownership": "task",
+        "chain": [
+          {
+            "pid": 7106,
+            "ppid": 1,
+            "created": 1793160437.01165,
+            "name": "Python",
+            "cmd": [
+              "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+              "-B",
+              "artifacts/multimodal-runtime/phase4-integrated-evidence/run.py"
+            ],
+            "rss": 36061184,
+            "pgid": 7103
+          }
+        ],
+        "pid": 7106
+      },
+      {
+        "ownership": "task",
+        "chain": [
+          {
+            "pid": 7111,
+            "ppid": 7106,
+            "created": 1793160437.09636,
+            "name": "Python",
+            "cmd": [
+              "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+              "-I",
+              "-B",
+              "/Volumes/SDXC-512/ds41f-mlx/artifacts/multimodal-runtime/phase4-integrated-evidence/runtime.py"
+            ],
+            "rss": 365608960,
+            "pgid": 7111
+          },
+          {
+            "pid": 7106,
+            "ppid": 1,
+            "created": 1793160437.01165,
+            "name": "Python",
+            "cmd": [
+              "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+              "-B",
+              "artifacts/multimodal-runtime/phase4-integrated-evidence/run.py"
+            ],
+            "rss": 36061184,
+            "pgid": 7103
+          }
+        ],
+        "pid": 7111
+      }
+    ]
+  },
+  "health_before": {
+    "status": "ready",
+    "profile": "mtp-serving-v1",
+    "process_alive": true,
+    "model_ready": true,
+    "fatal_error": null,
+    "generation_policy": {
+      "version": "generation-policy-v1",
+      "qualification": "real-model-qualified",
+      "execution_profiles": [
+        "mtp-serving-v1"
+      ],
+      "sampler_authority": "ds41f_mlx.sampling.make_sampler",
+      "defaults": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "top_k": 0,
+        "min_p": 0.0,
+        "repetition_penalty": 1.0,
+        "presence_penalty": 0.0,
+        "frequency_penalty": 0.0,
+        "seed": null
+      },
+      "scope": "request",
+      "parameters": {
+        "temperature": {
+          "minimum": 0,
+          "maximum": 2
+        },
+        "top_p": {
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        },
+        "top_k": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 129279
+        },
+        "min_p": {
+          "minimum": 0,
+          "maximum": 1
+        },
+        "repetition_penalty": {
+          "exclusiveMinimum": 0,
+          "context_tokens": 20
+        },
+        "presence_penalty": {
+          "minimum": -2,
+          "maximum": 2,
+          "context_tokens": 20
+        },
+        "frequency_penalty": {
+          "minimum": -2,
+          "maximum": 2,
+          "context_tokens": 20
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295,
+          "semantics": "best-effort"
+        }
+      },
+      "reasoning": {
+        "authority": "deepseek-recipe",
+        "scope": "session",
+        "stateless_scope": "request",
+        "default_thinking_mode": false,
+        "default_reasoning_effort": "none",
+        "efforts": [
+          "none",
+          "low",
+          "high",
+          "xhigh",
+          "max"
+        ],
+        "effective_efforts": [
+          "none",
+          "low",
+          "high",
+          "max"
+        ],
+        "compatibility_aliases": {
+          "xhigh": "high"
+        },
+        "effective_authority": "ds41f_mlx.serving.generation_policy.reasoning_policy",
+        "change": "reject",
+        "thinking_budget_tokens": false
+      },
+      "recipe_version": "0.2.0",
+      "effective_settings_authority": "Recipe ModelVersion.DeepseekV41Flash",
+      "recipe_resolution": {
+        "nonthinking_top_p": 1.0,
+        "thinking_temperature": 1.0,
+        "thinking_top_p_minimum": 0.95
+      },
+      "constrained_decoding": false,
+      "protocol_migration_qualification": "controlled-token boundary; real-model path unverified"
+    },
+    "capabilities": {
+      "stateful_chat": "production-sessions-v1",
+      "persist_restore": false,
+      "messages": "recipe-0.2-native",
+      "messages_sessions": false,
+      "messages_vision": "bounded-inline-and-files-v1",
+      "chat_vision": "bounded-inline-v1",
+      "vision_admission": {
+        "implemented_total_tokens": 1048576,
+        "output_reservation_required": true,
+        "max_images": 600,
+        "max_image_bytes": 16777216,
+        "max_image_pixels": 4194304,
+        "max_image_tokens": 1014,
+        "max_request_image_bytes": 67108864,
+        "max_request_pixels": 16777216,
+        "max_request_patches": 36864,
+        "pixel_patch_budget_scope": "all_history_pixels; fresh_patches_with_paired_byte_fallback",
+        "historical_discount_qualified": true,
+        "historical_patch_discount": {
+          "numerical_profile": "flash-1017-pre-woa-fp8-v1",
+          "max_projected_pair_bytes": 12582912,
+          "max_retained_pair_bytes": 201326592,
+          "fallback": "all_history_patch_limit"
+        },
+        "historical_images_require_paired_cache": true,
+        "expanded_capacity_model_execution": "unverified"
+      },
+      "max_live_sessions": 16,
+      "max_active_generations": 1,
+      "idle_retirement_seconds": 600
+    },
+    "chat_defaults": {
+      "temperature": 1.0,
+      "top_p": 0.95,
+      "top_k": 0,
+      "min_p": 0.0,
+      "repetition_penalty": 1.0,
+      "presence_penalty": 0.0,
+      "frequency_penalty": 0.0,
+      "seed": null,
+      "reasoning_effort": "none",
+      "max_tokens": "auto"
+    },
+    "dependency_identity": "9c439d3fb9ad730996ecca821234bba1ce8817d7b46a2744e171c10a4d7d2ca2",
+    "glm_profile": "native",
+    "queued_requests": 0,
+    "active_requests": 0,
+    "prefix_cache": null
+  },
+  "runtime_exit": 0,
+  "elapsed_s": 444.41762887500226,
+  "postflight": {
+    "elapsed": 444.43253191700205,
+    "available": 531248005120,
+    "pressure": 1,
+    "swap_used": 0,
+    "swapouts": 0,
+    "footprint": 0,
+    "lifetime_footprint": 0,
+    "competitors": [],
+    "process_candidates": [
+      {
+        "ownership": "task",
+        "chain": [
+          {
+            "pid": 7106,
+            "ppid": 1,
+            "created": 1793160437.01165,
+            "name": "Python",
+            "cmd": [
+              "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+              "-B",
+              "artifacts/multimodal-runtime/phase4-integrated-evidence/run.py"
+            ],
+            "rss": 44023808,
+            "pgid": 7103
+          }
+        ],
+        "pid": 7106
+      }
+    ]
+  }
+}
