@@ -53,7 +53,8 @@ No `purpose` field is required or accepted. Multipart header/part counts and
 sizes are bounded; duplicate/unknown fields, incomplete bodies, transfer-encoded
 parts, wrong MIME/format and unsupported expiry fail. The shared Runtime
 `validate_encoded_image` verifies actual format, complete decoding, single frame,
-pixels and aspect ratio. Admitted encoded bytes are retained **exactly**, without
+pixels. Aspect ratios use the existing checkpoint resize planner, subject to
+expanded-token and patch budgets, not a fixed 2:1 guard. Admitted encoded bytes are retained **exactly**, without
 recompression, normalization or filesystem interpretation of filenames.
 
 Success: HTTP 200 with exactly this schema (values are examples):
@@ -159,7 +160,7 @@ bytes become approximately 86 MiB base64 plus bounded JSON/native-parser copies.
 This is not a zero-cost memory path or expanded model capacity.
 
 After resolution, the existing shared Vision path still enforces **16 MiB/image,
-4,194,304 pixels/image, 1:2..2:1 aspect, 1014 expanded positions/image,
+4,194,304 pixels/image, processor-planned aspect ratios, 1014 expanded positions/image,
 36,864 all-history ViT patches**, encoded residency, terminal-text, context expansion
 and output reservation. Historical occurrences still undergo complete decoding
 validation and identity accounting. Only fresh spans invoke Vision after paired

@@ -13,9 +13,9 @@ import pytest
 from ds41f_mlx.serving.image_files import FileError, FileLimits, ImageFiles, MAX_OCCURRENCES
 
 
-def png(color='red'):
+def png(color='red', size=(32, 32)):
     out = BytesIO()
-    Image.new('RGB', (32, 32), color).save(out, format='PNG')
+    Image.new('RGB', size, color).save(out, format='PNG')
     return out.getvalue()
 
 
@@ -175,9 +175,11 @@ def test_inline_file_and_replacement_identity_and_origins(http):
     assert [i['start'] for i in ids] == sorted(i['start'] for i in ids)
 
 
-def test_nested_exact_tool_id_and_equivalent_order(http):
+@pytest.mark.parametrize('size', [(32,32), (1600,200), (200,1600), (4096,1), (1,128)])
+def test_nested_exact_tool_id_and_equivalent_order(http, size):
     client, _, prepared = http
-    key = upload(client)['id']
+    data = png(size=size)
+    key = upload(client, data=data)['id']
     call = 'opaque:original-call-123'
     def request(image):
         b = body([])
@@ -186,7 +188,7 @@ def test_nested_exact_tool_id_and_equivalent_order(http):
             dict(role='user', content=[dict(type='tool_result', tool_use_id=call,
                 content=[dict(type='text', text='result'), image]), dict(type='text', text='describe')])]
         return b
-    for image in [inline(png()), ref(key)]:
+    for image in [inline(data), ref(key)]:
         r = client.post('/v1/messages', json=request(image))
         assert r.status_code == 200, r.text
     a, b = prepared

@@ -161,7 +161,7 @@ TUI retains only Runtime launch default reasoning settings. See
 
 The separately qualified OFF Chat Completions core allows up to **four inline
 single-frame PNG/JPEG/WebP images**, 16 MiB encoded bytes and 4M source pixels each,
-aspect 1:2–2:1, high/default/auto detail, within **8192 expanded multimodal positions
+processor-planned aspect ratios (no fixed 1:2–2:1 guard), high/default/auto detail, within **8192 expanded multimodal positions
 including reserved output**. Remote/file URLs, low detail, animations, multimodal
 Responses/Messages and excess context are outside this envelope.
 
@@ -169,7 +169,7 @@ New images are encoded once; retained old image identities/spans must remain exa
 Ordinary MTP removes the four-image and 8192-position development caps: actual
 expanded prompt + requested output must fit the checkpoint context. Output remains
 1..393,216 (Auto reserves the lesser of remaining context and that ceiling).
-Per-image format/detail/aspect, 16 MiB, 4,194,304 pixels and 1014 expanded-position
+Per-image format/detail, planned geometry, 16 MiB, 4,194,304 pixels and 1014 expanded-position
 bounds remain. Ordinary requests admit at most **600 image occurrences**, matching
 Harness rc.2's default request count, with an independent **64 MiB encoded-byte
 residency** ceiling. Every occurrence is fully validated and identity-accounted.

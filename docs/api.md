@@ -97,7 +97,7 @@ This is a separately qualified bounded core extension, not universal Vision,
 multimodal Responses/Messages, MTP images or release/R1 promotion.
 
 [Capabilities](capabilities.md#bounded-inline-images) owns format/count/byte/pixel/
-aspect/context limits; [image qualification](multimodal-production-qualification.md)
+planned-geometry/context limits; [image qualification](multimodal-production-qualification.md)
 owns measured evidence. Invalid or unsupported images reject before native cache
 mutation. Expanded image positions count toward capacity and reserved output.
 

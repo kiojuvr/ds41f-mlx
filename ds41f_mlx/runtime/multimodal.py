@@ -206,8 +206,6 @@ def validate_encoded_image(data: bytes, media_type: str | None = None, *, remain
                 raise ImageConstraintError(f'image pixel limit {MAX_PIXELS} exceeded ({image.width}x{image.height})')
             if remaining_pixels is not None and image.width * image.height > remaining_pixels:
                 raise ImageConstraintError('aggregate decoded pixel budget exceeded')
-            if not 0.5 <= image.width / image.height <= 2.0:
-                raise ImageConstraintError('image aspect ratio outside supported 1:2..2:1 envelope')
             metadata = dict(content_type=magic, width=image.width, height=image.height,
                             sha256=sha256(data).hexdigest())
             image.verify()

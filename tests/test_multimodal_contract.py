@@ -164,9 +164,43 @@ def test_encoder_failure_releases_request_lease(monkeypatch):
 
 def test_size_count_and_detail_boundaries():
     with pytest.raises(ValueError,match='1..4'): prepare_multimodal([1,2],[source()]*5,config())
-    with pytest.raises(ValueError,match='aspect'): prepare_multimodal([1,129264,2],[source(size=(200,50))],config())
     src=source();src.detail='low'
     with pytest.raises(ValueError,match='low-detail'): prepare_multimodal([1,129264,2],[src],config())
+
+
+@pytest.mark.parametrize('size', [(400,400), (800,400), (400,800),
+    (800,200), (1600,200), (200,800), (200,1600),
+    (1,1), (128,1), (1,128), (4096,1)])
+def test_anyres_admission_matches_prepared_geometry(size):
+    from hashlib import sha256
+    from ds41f_mlx.model_execution.processing import image_patch_array, plan_image_grid
+    c = config()
+    src = source(size=size)
+    data = image_bytes(src)
+    inp = prepare_multimodal([1,c.image_token_id,2], [src], c)
+    span, = inp.spans
+    nh,nw,height,width = plan_image_grid(*size,c)
+    with Image.open(BytesIO(data)) as image:
+        patches,h,w,kinds = image_patch_array(image,c)
+    assert min(nh,nw,h,w) > 0
+    assert span.grid == (h,w) == (height//14,width//14)
+    assert patches.shape == (h*w,3,14,14)
+    assert tuple(kinds) == span.kinds
+    assert span.length == nh*(nw+1)+2 <= 1014
+    assert span.digest == sha256(data).hexdigest()
+    assert inp._sources[span.start] == data
+    assert np.isfinite(patches).all()
+
+
+@pytest.mark.parametrize('size,limit', [((1,4096),'token envelope'),
+    ((100000,1),'token envelope'), ((1,100000),'token envelope'),
+    ((2049,2048),'pixel limit')])
+def test_anyres_real_limits_before_patch_allocation(monkeypatch,size,limit):
+    def forbidden(*args,**kwargs):
+        raise AssertionError('patch allocation before admission')
+    monkeypatch.setattr('ds41f_mlx.model_execution.processing.image_patch_array',forbidden)
+    with pytest.raises(ValueError,match=limit):
+        prepare_multimodal([1,129264,2], [source(size=size)], config())
 
 
 def test_animated_image_rejected():
