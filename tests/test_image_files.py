@@ -175,7 +175,7 @@ def test_inline_file_and_replacement_identity_and_origins(http):
     assert [i['start'] for i in ids] == sorted(i['start'] for i in ids)
 
 
-@pytest.mark.parametrize('size', [(32,32), (1600,200), (200,1600), (4096,1), (1,128)])
+@pytest.mark.parametrize('size', [(32,32), (1600,200), (200,1600), (4096,1), (1,128), (1,512)])
 def test_nested_exact_tool_id_and_equivalent_order(http, size):
     client, _, prepared = http
     data = png(size=size)

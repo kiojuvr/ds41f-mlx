@@ -170,7 +170,7 @@ def test_size_count_and_detail_boundaries():
 
 @pytest.mark.parametrize('size', [(400,400), (800,400), (400,800),
     (800,200), (1600,200), (200,800), (200,1600),
-    (1,1), (128,1), (1,128), (4096,1)])
+    (1,1), (128,1), (1,128), (512,1), (1,512), (4096,1)])
 def test_anyres_admission_matches_prepared_geometry(size):
     from hashlib import sha256
     from ds41f_mlx.model_execution.processing import image_patch_array, plan_image_grid
@@ -201,6 +201,30 @@ def test_anyres_real_limits_before_patch_allocation(monkeypatch,size,limit):
     monkeypatch.setattr('ds41f_mlx.model_execution.processing.image_patch_array',forbidden)
     with pytest.raises(ValueError,match=limit):
         prepare_multimodal([1,129264,2], [source(size=size)], config())
+
+
+@pytest.mark.parametrize('budget', ['bytes', 'aggregate_bytes', 'aggregate_pixels', 'patches'])
+def test_anyres_resource_limits_still_precede_native_work(monkeypatch, budget):
+    from ds41f_mlx.runtime.multimodal import MAX_IMAGE_BYTES
+    def forbidden(*args, **kwargs):
+        raise AssertionError('native/patch work before admission')
+    monkeypatch.setattr(mx, 'array', forbidden)
+    monkeypatch.setattr('ds41f_mlx.model_execution.processing.image_patch_array', forbidden)
+    c = config()
+    c.max_seq_len = 1048576
+    if budget in ('bytes', 'aggregate_bytes'):
+        data = image_bytes(source(size=(800,200)))
+        data += b'\0' * (MAX_IMAGE_BYTES + (1 if budget == 'bytes' else -1) - len(data))
+        sources = [SimpleNamespace(kind='bytes', data=data)] * (1 if budget == 'bytes' else 5)
+        error = 'oversized image bytes' if budget == 'bytes' else 'aggregate encoded image byte'
+    elif budget == 'aggregate_pixels':
+        sources = [source(size=(2048,2048))] * 5
+        error = 'aggregate decoded pixel'
+    else:
+        sources = [source(size=(1600,200))] * 24
+        error = 'aggregate image patch'
+    with pytest.raises(ValueError, match=error):
+        prepare_multimodal([1]+[c.image_token_id]*len(sources)+[2], sources, c, ordinary=True)
 
 
 def test_animated_image_rejected():

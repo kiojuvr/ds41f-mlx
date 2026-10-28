@@ -169,6 +169,13 @@ New images are encoded once; retained old image identities/spans must remain exa
 Ordinary MTP removes the four-image and 8192-position development caps: actual
 expanded prompt + requested output must fit the checkpoint context. Output remains
 1..393,216 (Auto reserves the lesser of remaining context and that ceiling).
+The independent [aspect-ratio Production correction](../artifacts/extreme-aspect-ratio/report.md)
+removes the fixed 2:1 admission guard. An 8:1 Files-backed image and ordinary
+tool-result paired continuation passed native acceptance; 4:1/1:4, 8:1/1:8 and
+selected one-pixel shapes have model-free packing coverage only. Extreme shapes
+may still exceed the unchanged 1014-position bound (for example, 1×4096 plans
+1024 positions and is rejected).
+
 Per-image format/detail, planned geometry, 16 MiB, 4,194,304 pixels and 1014 expanded-position
 bounds remain. Ordinary requests admit at most **600 image occurrences**, matching
 Harness rc.2's default request count, with an independent **64 MiB encoded-byte
