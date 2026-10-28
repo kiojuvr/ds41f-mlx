@@ -240,7 +240,12 @@ class LocalBoundary:
             if event['type'] == 'http.response.start':
                 started = True
                 release_preparation()
-            await asyncio.wait_for(send(event), self.send_timeout)
+            try:
+                await asyncio.wait_for(send(event), self.send_timeout)
+            except Exception as exc:
+                if self.telemetry is not None:
+                    self.telemetry.failure(scope.get('ds41f.diagnostic_id'), exc, stage='delivery')
+                raise
         try:
             # DELETE bodies are unsupported, but still read under the ingress bound.
             if method == 'DELETE':
@@ -256,6 +261,8 @@ class LocalBoundary:
             else:
                 await self.app(scope, bounded_receive if owned else receive, bounded_send)
         except IngressError as exc:
+            if self.telemetry is not None:
+                self.telemetry.failure(scope.get('ds41f.diagnostic_id'), exc, stage='admission')
             if not started:
                 await deny(exc.status, exc.code)
             else:

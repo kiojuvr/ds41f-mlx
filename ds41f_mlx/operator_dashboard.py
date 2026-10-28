@@ -109,6 +109,8 @@ class Dashboard:
             rows += [Line('IDLE', bold=True), Line('ready for request', 'dim')]
             if self.last:
                 rows.append(Line(f'last request {elapsed(self.now, self.last.get("finished_mono"))} ago', 'dim'))
+                if self.last.get('finish_reason') == 'error':
+                    rows.append(Line('LAST REQUEST FAILED · Runtime remains ready', 'red'))
                 if self.last.get('finish_reason') == 'tool_calls':
                     rows.append(Line('WAITING FOR CLIENT', 'dim'))
         else:
@@ -173,6 +175,14 @@ class Dashboard:
                   ('control', f'127.0.0.1:{RUNTIME_PORT}'), ('active', number(self.s.get('active_requests'))),
                   ('queued', number(self.s.get('queued_requests'))), ('lifecycle elapsed', '— (not published)')]
         rows += [Line(f'{k:<24} {v}') for k, v in values]
+        failures = self.s.get('failures') or []
+        if failures:
+            f = next((f for f in reversed(failures) if not f.get('secondary')), failures[-1])
+            rows += [Line(), Line('LAST REQUEST FAILURE', 'red')]
+            rows += [Line(f'{key:<24} {f.get(key)}') for key in
+                     ('request_id', 'scheduler_request_id', 'stage', 'exception_type',
+                      'category', 'source', 'native_started', 'canonical_settled',
+                      'cache_published', 'runtime_fatal')]
         rows += [Line(), Line('STATE INTEGRITY · last settled alignment/frontier', 'dim'), self.health()]
         # The projection exposes combined alignment, not individual offset arrays.
         rows += [Line(), Line('CURRENT REQUEST TIMINGS' if self.r else 'LAST REQUEST TIMINGS', 'dim')]

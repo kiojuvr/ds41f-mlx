@@ -249,6 +249,10 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
         options = ConversionOptions(default_thinking_mode=False)
     if ordinary_mtp:
         from .mtp_public import LocalBoundary
+    projection = getattr(backend, 'telemetry', None)
+    if ordinary_mtp and projection is not None:
+        projection.health = lambda: (getattr(backend, '_model', None) is not None,
+                                     bool(getattr(backend, 'fatal_error', None)))
     app = FastAPI(title='ds41f-deepseek-recipe', version='0.1.0',
                   docs_url=None if local_mtp else '/docs',
                   redoc_url=None if local_mtp else '/redoc',
@@ -334,7 +338,13 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
             if ordinary_mtp:
                 if protocol not in ('chat_completions', 'messages'):
                     raise RequestError('ordinary MTP supports Chat Completions and Messages only')
-            prepared = await run_in_threadpool(prepare_request, protocol, body, tokenizer=tokenizer, recipe_path=recipe_path, options=options, checkpoint=getattr(backend, 'checkpoint', runtime_config.checkpoint_path), ordinary=ordinary_mtp, default_reasoning_effort=runtime_config.default_reasoning_effort, image_files=getattr(app.state, 'image_files', None))
+            try:
+                prepared = await run_in_threadpool(prepare_request, protocol, body, tokenizer=tokenizer, recipe_path=recipe_path, options=options, checkpoint=getattr(backend, 'checkpoint', runtime_config.checkpoint_path), ordinary=ordinary_mtp, default_reasoning_effort=runtime_config.default_reasoning_effort, image_files=getattr(app.state, 'image_files', None))
+            except Exception as exc:
+                if ordinary_mtp and projection is not None:
+                    projection.failure(diagnostic_id, exc, stage='preparation',
+                                       fatal=bool(getattr(backend, 'fatal_error', None)))
+                raise
             if ordinary_mtp:
                 prepared.diagnostic_id = diagnostic_id
                 if projection is not None:
@@ -348,10 +358,17 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
                 try:
                     return await backend.ordinary_response(prepared, tokenizer=tokenizer, http_request=request)
                 except ValueError as exc:
+                    if projection is not None:
+                        projection.failure(diagnostic_id, exc, stage='admission')
                     raise RequestError(str(exc)) from exc
                 except RuntimeError as exc:
+                    if projection is not None:
+                        projection.failure(diagnostic_id, exc, stage='admission',
+                                           fatal=bool(getattr(backend, 'fatal_error', None)))
                     raise RequestError(str(exc), 503) from exc
                 except Exception as exc:
+                    if projection is not None:
+                        projection.failure(diagnostic_id, exc, stage='admission')
                     from omlx.exceptions import SchedulerQueueFullError
                     if isinstance(exc, SchedulerQueueFullError):
                         return JSONResponse({'error': {'message': str(exc), 'code': 'queue_full'}},
@@ -391,7 +408,7 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
         ready = getattr(backend, '_model', None) is not None
         status = 'unavailable' if fatal else ('ready' if ready else 'alive')
         code = 503 if fatal else 200
-        state = {'status': status, 'profile': profile, 'process_alive': True, 'model_ready': ready, 'fatal_error': fatal,
+        state = {'status': status, 'profile': profile, 'process_alive': True, 'model_ready': ready, 'fatal_error': ('backend_fatal' if fatal else None) if ordinary_mtp else fatal,
                  'generation_policy': generation_capabilities,
                  'capabilities': {'chat_vision': 'bounded-inline-v1'},
                  'chat_defaults': dict(generation_capabilities['defaults'], reasoning_effort=runtime_config.default_reasoning_effort, max_tokens='auto')}

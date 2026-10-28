@@ -17,7 +17,7 @@ from omlx.request import Request, RequestOutput, RequestStatus, SamplingParams
 from .internal_mtp import InternalMTPQualificationBackend, QualificationSession
 from .paired_checkpoint import PairedCheckpointAuthority
 from .capacity import context_envelope, validate_ordinary_capacity
-from ds41f_mlx.observability import phase, metrics
+from ds41f_mlx.observability import phase, metrics, failure
 
 logger = logging.getLogger('ds41f.operator.settlement')
 
@@ -54,6 +54,7 @@ class ProductionScheduler(Scheduler):
             return [], []
         request = self.waiting.popleft()
         rec, trace = request.execution, request.trace
+        primary_failed = False
         def capture(target, rings, tokens):
             request.prompt_checkpoint = self.checkpoints.capture(target, rings, tokens, request.image_identities)
         try:
@@ -69,6 +70,7 @@ class ProductionScheduler(Scheduler):
                 from ds41f_mlx.runtime.multimodal import MAX_REQUEST_PATCHES
                 if sum(s.grid[0] * s.grid[1] for s in mm.spans) > MAX_REQUEST_PATCHES:
                     def admit(checkpoint):
+                        trace['failure_stage'] = 'admission'
                         from .paired_checkpoint import (pair_bytes, projected_pair_bytes,
                             PATCH_DISCOUNT_PAIR_BYTES, PATCH_DISCOUNT_ROOT_BYTES)
                         from ds41f_mlx.execution_identity import numerical_profile
@@ -100,6 +102,7 @@ class ProductionScheduler(Scheduler):
             if logical is not None and logical.canonical and tuple(rec.canonical) != logical.canonical:
                 raise RuntimeError('canonical session pair unavailable or mismatched; prompt replay forbidden')
             if request.prepared.multimodal is not None:
+                trace['failure_stage'] = 'historical_image'
                 request.prepared.multimodal.validate_prefix(len(rec.canonical),
                     [s for s in request.image_identities if s['start'] < len(rec.canonical)])
                 # Wire age is not a numerical input. Independent Messages may
@@ -119,7 +122,10 @@ class ProductionScheduler(Scheduler):
             request.remaining_tokens = request.prompt_token_ids[len(rec.canonical):]
             trace['remaining_suffix_tokens'] = len(request.remaining_tokens)
             metrics(self.backend, trace)
+            trace['failure_stage'] = 'native_start'
             request.native_started = True
+            trace['native_started'] = True
+            metrics(self.backend, trace)
             self.backend._start(rec, request.prepared, request.recipe_tokenizer, trace,
                                 checkpoint_capture=capture, batch_generator_factory=self._new_batch)
             # P5 revoked the producer and inserted the held-out terminal into
@@ -135,18 +141,36 @@ class ProductionScheduler(Scheduler):
             self.total_prompt_tokens += request.num_prompt_tokens
             return [request], []
         except BaseException as exc:
+            primary_failed = True
             self._retire(request, error=exc)
             return [], []
         finally:
             if request.prepared.multimodal is not None:
-                request.prepared.multimodal.release_sources()
+                try:
+                    request.prepared.multimodal.release_sources()
+                except BaseException as exc:
+                    if primary_failed:
+                        failure(self.backend, dict(trace, failure_stage='cleanup'), exc,
+                                scheduler_id=request.request_id, secondary=True,
+                                native_started=request.native_started,
+                                fatal=bool(self.backend.fatal_error))
+                    else:
+                        trace['failure_stage'] = 'cleanup'
+                        self._retire(request, error=exc)
 
     def _retire(self, request, *, error=None, cancelled=False):
         rec, trace = request.execution, request.trace
-        # This worker has no remaining image-input consumer, including when a
-        # fatal engine retires requests still waiting for cache admission.
-        if request.prepared.multimodal is not None:
-            request.prepared.multimodal.release_sources()
+        primary_stage = trace.get('failure_stage', 'unexpected')
+        secondary = []
+        # Release failures must not erase the original admission/execution error.
+        try:
+            if request.prepared.multimodal is not None:
+                request.prepared.multimodal.release_sources()
+        except BaseException as exc:
+            if error is not None:
+                secondary.append(exc)
+            else:
+                error, primary_stage = exc, 'cleanup'
         publication = False
         phase(self.backend, trace, 'SETTLING')
         try:
@@ -162,6 +186,7 @@ class ProductionScheduler(Scheduler):
                     # extend this frontier with a genuine append, P5 holdout
                     # and at least one output token. Keep the earlier prompt
                     # pair instead. This is extendability, not an 8K limit.
+                    trace['failure_stage'] = 'publication'
                     final = (self.checkpoints.capture(rec.cache, rec.rings, rec.canonical, request.image_identities)
                              if len(rec.canonical) + 3 <= self.checkpoints.context_tokens else None)
                     if request.prompt_checkpoint is not None:
@@ -178,18 +203,27 @@ class ProductionScheduler(Scheduler):
                             self.checkpoints.release(previous)
                         request.session_pair_retained = True
         except BaseException as exc:
-            error = exc
+            if error is not None:
+                secondary.append(exc)
+            else:
+                error, primary_stage = exc, trace.get('failure_stage', 'settlement')
             rec.poisoned = True
         finally:
             try:
                 self.backend._retire(rec)
             except BaseException as exc:
-                error = error or exc
+                if error is not None:
+                    secondary.append(exc)
+                else:
+                    error, primary_stage = exc, 'cleanup'
             # Even native retirement failure cannot leave an executable alias
             # eligible for the next request. Fail the engine, rather than replay.
             if error is not None and request.native_started:
                 self.backend.fatal_error = repr(error)
-                self.checkpoints.clear()
+                try:
+                    self.checkpoints.clear()
+                except BaseException as exc:
+                    secondary.append(exc)
             self.waiting = type(self.waiting)(r for r in self.waiting if r.request_id != request.request_id)
             self.batch_generator = None
             uid = self.request_id_to_uid.pop(request.request_id, None)
@@ -212,6 +246,7 @@ class ProductionScheduler(Scheduler):
             request.output_token_ids = list(trace.get('canonical_generated', ()))
             self.total_completion_tokens += len(request.output_token_ids)
             trace.update(cancelled=cancelled, cache_published=publication,
+                         native_started=request.native_started, canonical_settled='quiescence' in trace,
                          elapsed_s=perf_counter()-trace['t0'])
             self.last_settlement = trace
             if getattr(request, 'logical_session', None) is not None:
@@ -220,10 +255,27 @@ class ProductionScheduler(Scheduler):
                 try:
                     self.backend.production_sessions.publish(request, error)
                 except BaseException as exc:
-                    error = exc
+                    if error is not None:
+                        secondary.append(exc)
+                    else:
+                        error, primary_stage = exc, 'publication'
                     self.backend.fatal_error = repr(exc)
-                    self.checkpoints.clear()
-                    self.backend.production_sessions.publish(request, exc)
+                    try:
+                        self.checkpoints.clear()
+                    except BaseException as cleanup:
+                        secondary.append(cleanup)
+                    try:
+                        self.backend.production_sessions.publish(request, error)
+                    except BaseException as cleanup:
+                        secondary.append(cleanup)
+            if error is not None:
+                context = dict(scheduler_id=request.request_id,
+                    native_started=request.native_started, settled='quiescence' in trace,
+                    published=publication, fatal=bool(self.backend.fatal_error))
+                failure(self.backend, dict(trace, failure_stage=primary_stage), error, **context)
+                for exc in secondary[:4]:
+                    failure(self.backend, dict(trace, failure_stage='cleanup'), exc,
+                            secondary=True, **context)
             metrics(self.backend, trace)
             projection = getattr(self.backend, 'telemetry', None)
             if projection is not None:
@@ -233,7 +285,7 @@ class ProductionScheduler(Scheduler):
                     pass
                 projection.finish(trace.get('diagnostic_id'),
                                   'error' if error else 'abort' if cancelled else semantic_finish)
-                if error:
+                if self.backend.fatal_error:
                     projection.lifecycle('FAILED')
             try:
                 logger.info('MTP settled request=%s cached=%d canonical=%s published=%s cancelled=%s error=%s replay=%s repack=%s',
@@ -292,6 +344,7 @@ class ProductionScheduler(Scheduler):
             for request in list(self.running.values()):
                 rec = request.execution
                 try:
+                    request.trace['failure_stage'] = 'native_execution'
                     self.backend._advance_application(rec, request.trace)
                     if request.trace.get('application_terminal'):
                         self._retire(request)
@@ -419,6 +472,11 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
         request.trace.update(getattr(prepared, 'phase_timings', {}))
         request.trace['generation_policy'] = policy.to_json()
         request.trace['diagnostic_id'] = getattr(prepared, 'diagnostic_id', None)
+        projection = getattr(self, 'telemetry', None)
+        if projection is not None:
+            projection.correlate(getattr(prepared, 'diagnostic_id', None), request_id)
+        request.trace['scheduler_request_id'] = request_id
+        request.trace['failure_stage'] = 'admission'
         self.scheduler.add_request(request)
         # Projection only: logical requests wait on the existing Scheduler lane.
         phase(self, request.trace, 'QUEUED')
@@ -487,8 +545,14 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
                     await self._call(self._enqueue, prepared, tokenizer, rid)
                 else:
                     await self._call(self._enqueue, prepared, tokenizer, rid, logical_session, body, application_id)
-        except BaseException:
-            await self._cancel(rid)
+        except BaseException as exc:
+            failure(self, dict(diagnostic_id=getattr(prepared, 'diagnostic_id', None),
+                               failure_stage='admission'), exc, scheduler_id=rid)
+            try:
+                await self._cancel(rid)
+            except BaseException as cleanup:
+                failure(self, dict(diagnostic_id=getattr(prepared, 'diagnostic_id', None),
+                                   failure_stage='cleanup'), cleanup, scheduler_id=rid, secondary=True)
             raise
         if self._pump_task is None:
             self._pump_task = asyncio.create_task(self._pump())
@@ -514,6 +578,19 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
                 watcher.cancel()
                 with CancelScope(shield=True):
                     await asyncio.gather(watcher, return_exceptions=True)
+        async def cleanup_delivery(primary):
+            try:
+                if not completed:
+                    await self._cancel(rid)
+                await stop_watcher()
+                self._deliveries.pop(rid, None)
+                self._settled.pop(rid, None)
+            except BaseException as exc:
+                failure(self, dict(diagnostic_id=getattr(prepared, 'diagnostic_id', None),
+                                   failure_stage='cleanup'), exc, scheduler_id=rid,
+                        secondary=primary is not None, fatal=bool(self.fatal_error))
+                if primary is None:
+                    raise
         async def chunks():
             nonlocal completed
             try:
@@ -537,12 +614,14 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
                         if done is not None:
                             yield sse_frame(None, done)
                         break
+            except Exception as exc:
+                failure(self, dict(diagnostic_id=getattr(prepared, 'diagnostic_id', None),
+                                   failure_stage='delivery'), exc, scheduler_id=rid,
+                        fatal=bool(self.fatal_error))
+                raise
             finally:
-                if not completed:
-                    await self._cancel(rid)
-                await stop_watcher()
-                self._deliveries.pop(rid, None)
-                self._settled.pop(rid, None)
+                import sys
+                await cleanup_delivery(sys.exception())
         if prepared.stream:
             backend = self
             class OwnedResponse(InferenceStreamingResponse):
@@ -550,9 +629,8 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
                     try:
                         await super().__call__(scope, receive, send)
                     finally:
-                        if not completed:
-                            await backend._cancel(rid)
-                        await stop_watcher()
+                        import sys
+                        await cleanup_delivery(sys.exception())
             return OwnedResponse(chunks(), media_type='text/event-stream', headers={
                 'X-DS41F-Request-ID': rid, 'Cache-Control': 'no-store', 'X-Accel-Buffering': 'no'})
         try:
@@ -563,12 +641,14 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
                     if output.error:
                         raise RuntimeError(output.error)
                     return JSONResponse(output.recipe_response)
+        except Exception as exc:
+            failure(self, dict(diagnostic_id=getattr(prepared, 'diagnostic_id', None),
+                               failure_stage='delivery'), exc, scheduler_id=rid,
+                    fatal=bool(self.fatal_error))
+            raise
         finally:
-            if not completed:
-                await self._cancel(rid)
-            await stop_watcher()
-            self._deliveries.pop(rid, None)
-            self._settled.pop(rid, None)
+            import sys
+            await cleanup_delivery(sys.exception())
 
     def start_idle_retirement(self):
         if self._retirement_task is None:

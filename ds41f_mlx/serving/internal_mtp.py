@@ -217,8 +217,10 @@ class InternalMTPQualificationBackend(DeepSeekRecipeRuntimeBackend):
             C = len(rec.canonical)
             embeddings = None
             if request.multimodal is not None:
+                trace['failure_stage'] = 'vision_preparation'
                 embeddings = self._encode_new_images(request.multimodal, C)
                 trace.update(vision_encoded_count=len(embeddings.rows), vision_s=embeddings.seconds)
+            trace['failure_stage'] = 'native_start'
             # Already proved pre-admission on the event-loop thread. Recheck
             # immediately before mutation under the singleton worker lease.
             assert ids[:C] == rec.canonical and len(ids) > C
