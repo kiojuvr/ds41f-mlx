@@ -1,0 +1,107 @@
+{
+  "pass": true,
+  "node": "v24.5.0",
+  "adapterIdentity": {
+    "path": "/Users/kioju/.local/share/deepseek-harness/node_modules/@deepseek-ai/dsh-llm-deepseek/lib/index.js",
+    "sha256": "eba35025ed1eedda89c51f2da46a3a968f7be1d59719f2ceeadfc4518dff37d6"
+  },
+  "tests": [
+    {
+      "name": "T1 retained exact terminal then clone AbortError",
+      "pass": true
+    },
+    {
+      "name": "T2 complete normal EOF",
+      "pass": true
+    },
+    {
+      "name": "T3 ordinary end_turn cleanup",
+      "pass": true
+    },
+    {
+      "name": "T5 abort before terminal",
+      "pass": true
+    },
+    {
+      "name": "T6 EOF before terminal",
+      "pass": true
+    },
+    {
+      "name": "T7 missing stop reason",
+      "pass": true
+    },
+    {
+      "name": "T8 unclosed block",
+      "pass": true
+    },
+    {
+      "name": "T9 malformed completed tool JSON",
+      "pass": true
+    },
+    {
+      "name": "T10 malformed SSE JSON before terminal",
+      "pass": true
+    },
+    {
+      "name": "T11 duplicated terminal sequence",
+      "pass": true
+    },
+    {
+      "name": "T12 preterminal timeout and transport failure",
+      "pass": true
+    },
+    {
+      "name": "T13 unexpected exception after terminal and logging failure",
+      "pass": true
+    },
+    {
+      "name": "T14 existing sticky stop never cleared",
+      "pass": true
+    },
+    {
+      "name": "extra invalid terminal ordering / stop reason / duplicate tool identity",
+      "pass": true
+    },
+    {
+      "name": "extra malformed JSON after terminal",
+      "pass": true
+    },
+    {
+      "name": "extra truncated tool JSON under max_tokens",
+      "pass": true
+    },
+    {
+      "name": "extra duplicated index / wrong delta / event identity / tail",
+      "pass": true
+    },
+    {
+      "name": "installed adapter tool response terminal/finally",
+      "pass": true
+    },
+    {
+      "name": "installed adapter ordinary text terminal/finally",
+      "pass": true
+    },
+    {
+      "name": "T4 installed Agent registered guard authenticated A no-effect race",
+      "pass": true
+    },
+    {
+      "name": "installed idle timeout before semantic terminal; no resubmission",
+      "pass": true
+    },
+    {
+      "name": "malformed clone cancellation preserves original bytes and EOF",
+      "pass": true
+    },
+    {
+      "name": "observer tasks retired; no unhandled promises",
+      "pass": true
+    }
+  ],
+  "count": 23,
+  "model_loads": 0,
+  "runtime_requests": 0,
+  "controlled_adapter_submissions": 4,
+  "unhandled": []
+}

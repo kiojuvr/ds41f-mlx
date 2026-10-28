@@ -1,0 +1,134 @@
+{
+  "kind": "OFFLINE_COUNTERFACTUAL_ONLY",
+  "pass": true,
+  "event_sha256": "aee9b299c5893c754477a8bedfc82fbf16b5fc0e824449d97a98a6f27d7962ad",
+  "event_count": 33,
+  "original_error": {
+    "at": "2026-10-27T23:57:54.761Z",
+    "kind": "observer_read_error",
+    "request": "00:1",
+    "error_class": "AbortError",
+    "message_stop_already_captured": true
+  },
+  "terminal": {
+    "kind": "native_message_stop",
+    "request": "00:1",
+    "events": [
+      "message_start",
+      "content_block_start",
+      "ping",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_stop",
+      "content_block_start",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_stop",
+      "message_delta",
+      "message_stop"
+    ],
+    "usage": [
+      {
+        "input_tokens": 571,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "output_tokens": 0,
+        "service_tier": "standard"
+      },
+      {
+        "input_tokens": 571,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "output_tokens": 52,
+        "service_tier": "standard"
+      }
+    ],
+    "stop_reason": "tool_use",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "I'll read the three images in sequence, one per response."
+      },
+      {
+        "type": "tool_use",
+        "id": "call_00_EfDhGzLxRvQtPa4qAFWc2726",
+        "name": "read_image",
+        "input": {
+          "file_path": "image-A.png"
+        }
+      }
+    ],
+    "finish": {
+      "type": "finish",
+      "reason": {
+        "kind": "tool-calls"
+      },
+      "replayState": {
+        "response": {
+          "kind": "deepseek-messages",
+          "version": 1,
+          "model": "deepseek-flash"
+        },
+        "blocks": [
+          {
+            "type": "text"
+          },
+          {
+            "type": "tool-call"
+          }
+        ]
+      }
+    },
+    "translated_usage": {
+      "inputTokens": 571,
+      "outputTokens": 52,
+      "cacheReadTokens": 0,
+      "cacheWriteTokens": 0,
+      "totalTokens": 623
+    },
+    "terminal_validated": true
+  },
+  "classification": "POST_TERMINAL_CLONE_ABORT",
+  "gate": {
+    "effects": [],
+    "pending": null,
+    "ordinary": 1,
+    "summary": 0,
+    "attempts": 1,
+    "http": 0,
+    "httpOrdinary": 0,
+    "httpSummary": 0,
+    "allocation": 1200,
+    "offloads": 0,
+    "starts": 0,
+    "round3Entered": false,
+    "stopped": null,
+    "lastAttempt": {
+      "purpose": "ordinary",
+      "http": 0,
+      "refunded": false
+    }
+  },
+  "historical_disposition": "BLOCKED; denied tool remains failed; no C8 PASS"
+}

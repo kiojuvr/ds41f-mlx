@@ -1,0 +1,46 @@
+{
+  "elapsed": 0.041772249969653785,
+  "available": 530569773056,
+  "pressure": 1,
+  "swap_used": 0,
+  "swapouts": 0,
+  "footprint": 0,
+  "lifetime_footprint": 0,
+  "competitors": [
+    {
+      "pid": 78153,
+      "cmd": [
+        "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+        "-B",
+        "-m",
+        "ds41f_mlx.mtp_setup",
+        "--checkpoint-variant",
+        "flash-1017",
+        "--glm-profile",
+        "native",
+        "--venv",
+        "/tmp/ds41f-step4br2-runtime",
+        "--build-dir",
+        "/tmp/ds41f-step4br2-build"
+      ]
+    },
+    {
+      "pid": 78195,
+      "cmd": [
+        "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+        "-I",
+        "-c",
+        "from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()"
+      ]
+    },
+    {
+      "pid": 78203,
+      "cmd": [
+        "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+        "-I",
+        "-B",
+        "artifacts/multimodal-runtime/phase4-step4br2-evidence/preflight.py"
+      ]
+    }
+  ]
+}

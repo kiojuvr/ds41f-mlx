@@ -1,0 +1,120 @@
+- id: llm-deepseek
+  name: '@deepseek-ai/dsh-llm-deepseek-api-key'
+  config:
+    baseURL: http://127.0.0.1:18083
+    apiKeyEnv: DS41F_LOCAL_API_KEY
+    maxImagesPerRequest: 3
+    imageOffloadCountQuantum: 1
+    thinking: disabled
+    reasoningEffort: off
+    maxTokens: 1200
+    retryPolicy: {mode: normal, maxRetries: 0}
+    streamIdleTimeoutMs: 180000
+    models:
+      - id: deepseek-flash
+        inputModalities: [text, image]
+        contextWindow: 1048576
+        maxTokens: 1200
+        systemPromptUpdate: in-history
+        toolUpdate: addition-only
+- id: agent-default-model
+  config:
+    provider: deepseek-official
+    model: deepseek-flash
+- id: session-log-deepseek
+  config:
+    enabled: false
+- id: tool-fs
+  config:
+    read: false
+    readImage: true
+    write: false
+    edit: false
+- id: tools
+  config:
+    mode: native
+- id: sandbox-policy
+  config:
+    mode: read-only
+    workspaceRoot: /var/folders/jk/0kx3l0t93zj6gwlgth99c6lc0000gn/T/ds41f-step4br2-session-rwf4lecu/workspace
+- id: permission
+  config:
+    presets:
+      read-only:
+        sandbox: read-only
+        approval: ask
+    defaultPreset: read-only
+- id: session-title-llm
+  disabled: true
+- id: llm-retry
+  disabled: true
+- id: llm-pi-ai
+  disabled: true
+- id: llm-deepseek-account
+  disabled: true
+- id: otel
+  disabled: true
+- id: session-telemetry-otel
+  disabled: true
+- id: tool-working-directory
+  disabled: true
+- id: tool-bash
+  disabled: true
+- id: tool-pwsh
+  disabled: true
+- id: tool-jobs
+  disabled: true
+- id: tool-fs-search
+  disabled: true
+- id: agent-instructions
+  disabled: true
+- id: skill-filesystem
+  disabled: true
+- id: tool-skill
+  disabled: true
+- id: tool-subagent-control
+  disabled: true
+- id: tool-subagent-list-agents
+  disabled: true
+- id: tool-subagent
+  disabled: true
+- id: tool-subagent-fork
+  disabled: true
+- id: tool-workflow
+  disabled: true
+- id: tool-todo
+  disabled: true
+- id: tool-goal
+  disabled: true
+- id: tool-web
+  disabled: true
+- id: web-search-deepseek
+  disabled: true
+- id: web-deepseek-api
+  disabled: true
+- id: web-fetch-http
+  disabled: true
+- id: plan-mode
+  disabled: true
+- id: approval
+  config:
+    policy: never
+- id: agent-loop
+  config:
+    maxParallelToolCalls: 1
+- id: compaction-basic
+  config:
+    auto: true
+    modelPolicies:
+      - provider: deepseek-official
+        model: deepseek-flash
+        thresholdRatio: 0.0078125
+        headroomTokens: 2048
+        retainTokens: 1024
+        maxTokens: 2048
+        compactionRetries: 0
+- insert:
+    - id: phase4-budget
+      name: /Volumes/SDXC-512/ds41f-mlx/artifacts/multimodal-runtime/phase4-step4ar1-evidence/guard.mjs
+    - id: phase4-native-passive
+      name: /Volumes/SDXC-512/ds41f-mlx/artifacts/multimodal-runtime/phase4-step4br2-evidence/passive.mjs
