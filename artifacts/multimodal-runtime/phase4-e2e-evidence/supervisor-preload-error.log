@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/Volumes/SDXC-512/ds41f-mlx/artifacts/multimodal-runtime/phase4-e2e-evidence/run.py", line 9, in <module>
+    base=module('provenance_monitor',OUT/'monitor.py');safe=module('qualified_safety',R1/'safety.py')
+  File "/Volumes/SDXC-512/ds41f-mlx/artifacts/multimodal-runtime/phase4-e2e-evidence/run.py", line 8, in module
+    s=importlib.util.spec_from_file_location(name,path);m=importlib.util.module_from_spec(s);s.loader.exec_module(m);return m
+                                                                                             ~~~~~~~~~~~~~~~~~~~~^^^
+  File "<frozen importlib._bootstrap_external>", line 1023, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Volumes/SDXC-512/ds41f-mlx/artifacts/multimodal-runtime/phase4-e2e-evidence/monitor.py", line 6, in <module>
+    import psutil
+ModuleNotFoundError: No module named 'psutil'
