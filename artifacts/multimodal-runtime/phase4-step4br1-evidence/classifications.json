@@ -1,0 +1,1829 @@
+[
+  {
+    "events": [
+      "message_start",
+      "content_block_start",
+      "ping",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_stop",
+      "content_block_start",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_stop",
+      "message_delta",
+      "message_stop"
+    ],
+    "fixture": {
+      "ending": "abort"
+    },
+    "terminal": {
+      "kind": "native_message_stop",
+      "request": "00:1",
+      "events": [
+        "message_start",
+        "content_block_start",
+        "ping",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_stop",
+        "content_block_start",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_stop",
+        "message_delta",
+        "message_stop"
+      ],
+      "usage": [
+        {
+          "input_tokens": 571,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "output_tokens": 0,
+          "service_tier": "standard"
+        },
+        {
+          "input_tokens": 571,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "output_tokens": 52,
+          "service_tier": "standard"
+        }
+      ],
+      "stop_reason": "tool_use",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "I'll read the three images in sequence, one per response."
+        },
+        {
+          "type": "tool_use",
+          "id": "call_00_EfDhGzLxRvQtPa4qAFWc2726",
+          "name": "read_image",
+          "input": {
+            "file_path": "image-A.png"
+          }
+        }
+      ],
+      "finish": {
+        "type": "finish",
+        "reason": {
+          "kind": "tool-calls"
+        },
+        "replayState": {
+          "response": {
+            "kind": "deepseek-messages",
+            "version": 1,
+            "model": "deepseek-flash"
+          },
+          "blocks": [
+            {
+              "type": "text"
+            },
+            {
+              "type": "tool-call"
+            }
+          ]
+        }
+      },
+      "translated_usage": {
+        "inputTokens": 571,
+        "outputTokens": 52,
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "totalTokens": 623
+      },
+      "terminal_validated": true
+    },
+    "outcomes": [
+      {
+        "kind": "observer_read_error",
+        "request": "00:1",
+        "error_class": "AbortError",
+        "message_stop_already_captured": true,
+        "classification": "POST_TERMINAL_CLONE_ABORT",
+        "transport_cleanup_after_terminal": true
+      }
+    ],
+    "gate": {
+      "effects": [],
+      "pending": null,
+      "ordinary": 1,
+      "summary": 0,
+      "attempts": 1,
+      "http": 0,
+      "httpOrdinary": 0,
+      "httpSummary": 0,
+      "allocation": 1200,
+      "offloads": 0,
+      "starts": 0,
+      "round3Entered": false,
+      "stopped": null,
+      "lastAttempt": {
+        "purpose": "ordinary",
+        "http": 0,
+        "refunded": false
+      }
+    }
+  },
+  {
+    "events": [
+      "message_start",
+      "content_block_start",
+      "ping",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_stop",
+      "content_block_start",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_stop",
+      "message_delta",
+      "message_stop"
+    ],
+    "fixture": {},
+    "terminal": {
+      "kind": "native_message_stop",
+      "request": "00:1",
+      "events": [
+        "message_start",
+        "content_block_start",
+        "ping",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_stop",
+        "content_block_start",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_stop",
+        "message_delta",
+        "message_stop"
+      ],
+      "usage": [
+        {
+          "input_tokens": 571,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "output_tokens": 0,
+          "service_tier": "standard"
+        },
+        {
+          "input_tokens": 571,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "output_tokens": 52,
+          "service_tier": "standard"
+        }
+      ],
+      "stop_reason": "tool_use",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "I'll read the three images in sequence, one per response."
+        },
+        {
+          "type": "tool_use",
+          "id": "call_00_EfDhGzLxRvQtPa4qAFWc2726",
+          "name": "read_image",
+          "input": {
+            "file_path": "image-A.png"
+          }
+        }
+      ],
+      "finish": {
+        "type": "finish",
+        "reason": {
+          "kind": "tool-calls"
+        },
+        "replayState": {
+          "response": {
+            "kind": "deepseek-messages",
+            "version": 1,
+            "model": "deepseek-flash"
+          },
+          "blocks": [
+            {
+              "type": "text"
+            },
+            {
+              "type": "tool-call"
+            }
+          ]
+        }
+      },
+      "translated_usage": {
+        "inputTokens": 571,
+        "outputTokens": 52,
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "totalTokens": 623
+      },
+      "terminal_validated": true
+    },
+    "outcomes": [
+      {
+        "kind": "observer_eof",
+        "request": "00:1",
+        "message_stop": true,
+        "classification": "VALIDATED_TERMINAL_EOF"
+      }
+    ],
+    "gate": {
+      "effects": [],
+      "pending": null,
+      "ordinary": 1,
+      "summary": 0,
+      "attempts": 1,
+      "http": 0,
+      "httpOrdinary": 0,
+      "httpSummary": 0,
+      "allocation": 1200,
+      "offloads": 0,
+      "starts": 0,
+      "round3Entered": false,
+      "stopped": null,
+      "lastAttempt": {
+        "purpose": "ordinary",
+        "http": 0,
+        "refunded": false
+      }
+    }
+  },
+  {
+    "events": [
+      "message_start",
+      "content_block_start",
+      "content_block_delta",
+      "content_block_stop",
+      "message_delta",
+      "message_stop"
+    ],
+    "fixture": {
+      "ending": "abort"
+    },
+    "terminal": {
+      "kind": "native_message_stop",
+      "request": "00:1",
+      "events": [
+        "message_start",
+        "content_block_start",
+        "content_block_delta",
+        "content_block_stop",
+        "message_delta",
+        "message_stop"
+      ],
+      "usage": [
+        {
+          "input_tokens": 571,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "output_tokens": 0,
+          "service_tier": "standard"
+        },
+        {
+          "output_tokens": 5
+        }
+      ],
+      "stop_reason": "end_turn",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Model-free ordinary text."
+        }
+      ],
+      "finish": {
+        "type": "finish",
+        "reason": {
+          "kind": "stop"
+        },
+        "replayState": {
+          "response": {
+            "kind": "deepseek-messages",
+            "version": 1,
+            "model": "deepseek-flash"
+          },
+          "blocks": [
+            {
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "translated_usage": {
+        "inputTokens": 571,
+        "outputTokens": 5,
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "totalTokens": 576
+      },
+      "terminal_validated": true
+    },
+    "outcomes": [
+      {
+        "kind": "observer_read_error",
+        "request": "00:1",
+        "error_class": "AbortError",
+        "message_stop_already_captured": true,
+        "classification": "POST_TERMINAL_CLONE_ABORT",
+        "transport_cleanup_after_terminal": true
+      }
+    ],
+    "gate": {
+      "effects": [],
+      "pending": null,
+      "ordinary": 1,
+      "summary": 0,
+      "attempts": 1,
+      "http": 0,
+      "httpOrdinary": 0,
+      "httpSummary": 0,
+      "allocation": 1200,
+      "offloads": 0,
+      "starts": 0,
+      "round3Entered": false,
+      "stopped": null,
+      "lastAttempt": {
+        "purpose": "ordinary",
+        "http": 0,
+        "refunded": false
+      }
+    }
+  },
+  {
+    "events": [
+      "message_start",
+      "content_block_start",
+      "ping",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_stop",
+      "content_block_start",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_stop",
+      "message_delta"
+    ],
+    "fixture": {
+      "ending": "abort"
+    },
+    "outcomes": [
+      {
+        "kind": "observer_read_error",
+        "request": "00:1",
+        "error_class": "AbortError",
+        "message_stop_already_captured": false,
+        "classification": "OBSERVER_FAILURE",
+        "detail": "fixture cleanup"
+      }
+    ],
+    "gate": {
+      "effects": [],
+      "pending": null,
+      "ordinary": 1,
+      "summary": 0,
+      "attempts": 1,
+      "http": 0,
+      "httpOrdinary": 0,
+      "httpSummary": 0,
+      "allocation": 1200,
+      "offloads": 0,
+      "starts": 0,
+      "round3Entered": false,
+      "stopped": "native protocol observer failure",
+      "lastAttempt": {
+        "purpose": "ordinary",
+        "http": 0,
+        "refunded": false
+      }
+    }
+  },
+  {
+    "events": [
+      "message_start",
+      "content_block_start",
+      "ping",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_stop",
+      "content_block_start",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_stop",
+      "message_delta"
+    ],
+    "fixture": {},
+    "outcomes": [
+      {
+        "kind": "observer_eof",
+        "request": "00:1",
+        "message_stop": false,
+        "classification": "INCOMPLETE_SSE"
+      }
+    ],
+    "gate": {
+      "effects": [],
+      "pending": null,
+      "ordinary": 1,
+      "summary": 0,
+      "attempts": 1,
+      "http": 0,
+      "httpOrdinary": 0,
+      "httpSummary": 0,
+      "allocation": 1200,
+      "offloads": 0,
+      "starts": 0,
+      "round3Entered": false,
+      "stopped": "incomplete native SSE",
+      "lastAttempt": {
+        "purpose": "ordinary",
+        "http": 0,
+        "refunded": false
+      }
+    }
+  },
+  {
+    "events": [
+      "message_start",
+      "content_block_start",
+      "ping",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_stop",
+      "content_block_start",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_stop",
+      "message_stop"
+    ],
+    "fixture": {
+      "ending": "abort"
+    },
+    "outcomes": [
+      {
+        "kind": "observer_read_error",
+        "request": "00:1",
+        "error_class": "LlmError",
+        "message_stop_already_captured": false,
+        "classification": "OBSERVER_FAILURE",
+        "detail": "DeepSeek Messages stream: message_stop without settled blocks and stop reason"
+      }
+    ],
+    "gate": {
+      "effects": [],
+      "pending": null,
+      "ordinary": 1,
+      "summary": 0,
+      "attempts": 1,
+      "http": 0,
+      "httpOrdinary": 0,
+      "httpSummary": 0,
+      "allocation": 1200,
+      "offloads": 0,
+      "starts": 0,
+      "round3Entered": false,
+      "stopped": "native protocol observer failure",
+      "lastAttempt": {
+        "purpose": "ordinary",
+        "http": 0,
+        "refunded": false
+      }
+    }
+  },
+  {
+    "events": [
+      "message_start",
+      "content_block_start",
+      "ping",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_stop",
+      "content_block_start",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "message_delta",
+      "message_stop"
+    ],
+    "fixture": {
+      "ending": "abort"
+    },
+    "outcomes": [
+      {
+        "kind": "observer_read_error",
+        "request": "00:1",
+        "error_class": "LlmError",
+        "message_stop_already_captured": false,
+        "classification": "OBSERVER_FAILURE",
+        "detail": "DeepSeek Messages stream: message_stop without settled blocks and stop reason"
+      }
+    ],
+    "gate": {
+      "effects": [],
+      "pending": null,
+      "ordinary": 1,
+      "summary": 0,
+      "attempts": 1,
+      "http": 0,
+      "httpOrdinary": 0,
+      "httpSummary": 0,
+      "allocation": 1200,
+      "offloads": 0,
+      "starts": 0,
+      "round3Entered": false,
+      "stopped": "native protocol observer failure",
+      "lastAttempt": {
+        "purpose": "ordinary",
+        "http": 0,
+        "refunded": false
+      }
+    }
+  },
+  {
+    "events": [
+      "message_start",
+      "content_block_start",
+      "ping",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_stop",
+      "content_block_start",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_stop",
+      "message_delta",
+      "message_stop"
+    ],
+    "fixture": {
+      "ending": "abort"
+    },
+    "outcomes": [
+      {
+        "kind": "observer_read_error",
+        "request": "00:1",
+        "error_class": "LlmError",
+        "message_stop_already_captured": false,
+        "classification": "OBSERVER_FAILURE",
+        "detail": "DeepSeek Messages stream: tool input is invalid JSON"
+      }
+    ],
+    "gate": {
+      "effects": [],
+      "pending": null,
+      "ordinary": 1,
+      "summary": 0,
+      "attempts": 1,
+      "http": 0,
+      "httpOrdinary": 0,
+      "httpSummary": 0,
+      "allocation": 1200,
+      "offloads": 0,
+      "starts": 0,
+      "round3Entered": false,
+      "stopped": "native protocol observer failure",
+      "lastAttempt": {
+        "purpose": "ordinary",
+        "http": 0,
+        "refunded": false
+      }
+    }
+  },
+  {
+    "events": [],
+    "fixture": {
+      "raw": "data: {bad}\n\nevent: message_start\ndata: {\"type\":\"message_start\",\"message\":{\"id\":\"chatcmpl-92dac8e8d6bb44caa52f6dae53c1fc42\",\"type\":\"message\",\"role\":\"assistant\",\"model\":\"deepseek-flash\",\"content\":[],\"stop_reason\":null,\"stop_sequence\":null,\"usage\":{\"input_tokens\":571,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":0,\"output_tokens\":0,\"service_tier\":\"standard\"}}}\n\nevent: content_block_start\ndata: {\"type\":\"content_block_start\",\"index\":0,\"content_block\":{\"type\":\"text\",\"text\":\"\"}}\n\nevent: ping\ndata: {\"type\":\"ping\"}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\"I\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\"'ll\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" read\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" the\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" three\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" images\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" in\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" sequence\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\",\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" one\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" per\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" response\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\".\"}}\n\nevent: content_block_stop\ndata: {\"type\":\"content_block_stop\",\"index\":0}\n\nevent: content_block_start\ndata: {\"type\":\"content_block_start\",\"index\":1,\"content_block\":{\"type\":\"tool_use\",\"id\":\"call_00_EfDhGzLxRvQtPa4qAFWc2726\",\"name\":\"read_image\",\"input\":{}}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"{\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"\\\"\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"file\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"_path\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"\\\"\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\": \"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"\\\"\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"image\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"-A\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\".png\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"\\\"\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"}\"}}\n\nevent: content_block_stop\ndata: {\"type\":\"content_block_stop\",\"index\":1}\n\nevent: message_delta\ndata: {\"type\":\"message_delta\",\"delta\":{\"stop_reason\":\"tool_use\",\"stop_sequence\":null},\"usage\":{\"input_tokens\":571,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":0,\"output_tokens\":52,\"service_tier\":\"standard\"}}\n\nevent: message_stop\ndata: {\"type\":\"message_stop\"}\n\n",
+      "ending": "abort"
+    },
+    "outcomes": [
+      {
+        "kind": "observer_read_error",
+        "request": "00:1",
+        "error_class": "SyntaxError",
+        "message_stop_already_captured": false,
+        "classification": "OBSERVER_FAILURE",
+        "detail": "Expected property name or '}' in JSON at position 1 (line 1 column 2)"
+      }
+    ],
+    "gate": {
+      "effects": [],
+      "pending": null,
+      "ordinary": 1,
+      "summary": 0,
+      "attempts": 1,
+      "http": 0,
+      "httpOrdinary": 0,
+      "httpSummary": 0,
+      "allocation": 1200,
+      "offloads": 0,
+      "starts": 0,
+      "round3Entered": false,
+      "stopped": "native protocol observer failure",
+      "lastAttempt": {
+        "purpose": "ordinary",
+        "http": 0,
+        "refunded": false
+      }
+    }
+  },
+  {
+    "events": [
+      "message_start",
+      "content_block_start",
+      "ping",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_stop",
+      "content_block_start",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_stop",
+      "message_delta",
+      "message_stop",
+      "message_stop"
+    ],
+    "fixture": {
+      "ending": "abort"
+    },
+    "terminal": {
+      "kind": "native_message_stop",
+      "request": "00:1",
+      "events": [
+        "message_start",
+        "content_block_start",
+        "ping",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_stop",
+        "content_block_start",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_stop",
+        "message_delta",
+        "message_stop"
+      ],
+      "usage": [
+        {
+          "input_tokens": 571,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "output_tokens": 0,
+          "service_tier": "standard"
+        },
+        {
+          "input_tokens": 571,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "output_tokens": 52,
+          "service_tier": "standard"
+        }
+      ],
+      "stop_reason": "tool_use",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "I'll read the three images in sequence, one per response."
+        },
+        {
+          "type": "tool_use",
+          "id": "call_00_EfDhGzLxRvQtPa4qAFWc2726",
+          "name": "read_image",
+          "input": {
+            "file_path": "image-A.png"
+          }
+        }
+      ],
+      "finish": {
+        "type": "finish",
+        "reason": {
+          "kind": "tool-calls"
+        },
+        "replayState": {
+          "response": {
+            "kind": "deepseek-messages",
+            "version": 1,
+            "model": "deepseek-flash"
+          },
+          "blocks": [
+            {
+              "type": "text"
+            },
+            {
+              "type": "tool-call"
+            }
+          ]
+        }
+      },
+      "translated_usage": {
+        "inputTokens": 571,
+        "outputTokens": 52,
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "totalTokens": 623
+      },
+      "terminal_validated": true
+    },
+    "outcomes": [
+      {
+        "kind": "observer_read_error",
+        "request": "00:1",
+        "error_class": "Error",
+        "message_stop_already_captured": true,
+        "classification": "OBSERVER_FAILURE",
+        "detail": "Event after validated message_stop"
+      }
+    ],
+    "gate": {
+      "effects": [],
+      "pending": null,
+      "ordinary": 1,
+      "summary": 0,
+      "attempts": 1,
+      "http": 0,
+      "httpOrdinary": 0,
+      "httpSummary": 0,
+      "allocation": 1200,
+      "offloads": 0,
+      "starts": 0,
+      "round3Entered": false,
+      "stopped": "native protocol observer failure",
+      "lastAttempt": {
+        "purpose": "ordinary",
+        "http": 0,
+        "refunded": false
+      }
+    }
+  },
+  {
+    "events": [
+      "message_start",
+      "content_block_start",
+      "ping"
+    ],
+    "fixture": {
+      "ending": "TimeoutError"
+    },
+    "outcomes": [
+      {
+        "kind": "observer_read_error",
+        "request": "00:1",
+        "error_class": "Error",
+        "message_stop_already_captured": false,
+        "classification": "OBSERVER_FAILURE",
+        "detail": "TimeoutError"
+      }
+    ],
+    "gate": {
+      "effects": [],
+      "pending": null,
+      "ordinary": 1,
+      "summary": 0,
+      "attempts": 1,
+      "http": 0,
+      "httpOrdinary": 0,
+      "httpSummary": 0,
+      "allocation": 1200,
+      "offloads": 0,
+      "starts": 0,
+      "round3Entered": false,
+      "stopped": "native protocol observer failure",
+      "lastAttempt": {
+        "purpose": "ordinary",
+        "http": 0,
+        "refunded": false
+      }
+    }
+  },
+  {
+    "events": [
+      "message_start",
+      "content_block_start",
+      "ping"
+    ],
+    "fixture": {
+      "ending": "socket reset"
+    },
+    "outcomes": [
+      {
+        "kind": "observer_read_error",
+        "request": "00:1",
+        "error_class": "Error",
+        "message_stop_already_captured": false,
+        "classification": "OBSERVER_FAILURE",
+        "detail": "socket reset"
+      }
+    ],
+    "gate": {
+      "effects": [],
+      "pending": null,
+      "ordinary": 1,
+      "summary": 0,
+      "attempts": 1,
+      "http": 0,
+      "httpOrdinary": 0,
+      "httpSummary": 0,
+      "allocation": 1200,
+      "offloads": 0,
+      "starts": 0,
+      "round3Entered": false,
+      "stopped": "native protocol observer failure",
+      "lastAttempt": {
+        "purpose": "ordinary",
+        "http": 0,
+        "refunded": false
+      }
+    }
+  },
+  {
+    "events": [
+      "message_start",
+      "content_block_start",
+      "ping",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_stop",
+      "content_block_start",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_stop",
+      "message_delta",
+      "message_stop"
+    ],
+    "fixture": {
+      "ending": "unexpected observer exception"
+    },
+    "terminal": {
+      "kind": "native_message_stop",
+      "request": "00:1",
+      "events": [
+        "message_start",
+        "content_block_start",
+        "ping",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_stop",
+        "content_block_start",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_stop",
+        "message_delta",
+        "message_stop"
+      ],
+      "usage": [
+        {
+          "input_tokens": 571,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "output_tokens": 0,
+          "service_tier": "standard"
+        },
+        {
+          "input_tokens": 571,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "output_tokens": 52,
+          "service_tier": "standard"
+        }
+      ],
+      "stop_reason": "tool_use",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "I'll read the three images in sequence, one per response."
+        },
+        {
+          "type": "tool_use",
+          "id": "call_00_EfDhGzLxRvQtPa4qAFWc2726",
+          "name": "read_image",
+          "input": {
+            "file_path": "image-A.png"
+          }
+        }
+      ],
+      "finish": {
+        "type": "finish",
+        "reason": {
+          "kind": "tool-calls"
+        },
+        "replayState": {
+          "response": {
+            "kind": "deepseek-messages",
+            "version": 1,
+            "model": "deepseek-flash"
+          },
+          "blocks": [
+            {
+              "type": "text"
+            },
+            {
+              "type": "tool-call"
+            }
+          ]
+        }
+      },
+      "translated_usage": {
+        "inputTokens": 571,
+        "outputTokens": 52,
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "totalTokens": 623
+      },
+      "terminal_validated": true
+    },
+    "outcomes": [
+      {
+        "kind": "observer_read_error",
+        "request": "00:1",
+        "error_class": "Error",
+        "message_stop_already_captured": true,
+        "classification": "OBSERVER_FAILURE",
+        "detail": "unexpected observer exception"
+      }
+    ],
+    "gate": {
+      "effects": [],
+      "pending": null,
+      "ordinary": 1,
+      "summary": 0,
+      "attempts": 1,
+      "http": 0,
+      "httpOrdinary": 0,
+      "httpSummary": 0,
+      "allocation": 1200,
+      "offloads": 0,
+      "starts": 0,
+      "round3Entered": false,
+      "stopped": "native protocol observer failure",
+      "lastAttempt": {
+        "purpose": "ordinary",
+        "http": 0,
+        "refunded": false
+      }
+    }
+  },
+  {
+    "events": [
+      "message_stop"
+    ],
+    "fixture": {
+      "ending": "abort"
+    },
+    "outcomes": [
+      {
+        "kind": "observer_read_error",
+        "request": "00:1",
+        "error_class": "LlmError",
+        "message_stop_already_captured": false,
+        "classification": "OBSERVER_FAILURE",
+        "detail": "DeepSeek Messages stream: event precedes message_start"
+      }
+    ],
+    "gate": {
+      "effects": [],
+      "pending": null,
+      "ordinary": 1,
+      "summary": 0,
+      "attempts": 1,
+      "http": 0,
+      "httpOrdinary": 0,
+      "httpSummary": 0,
+      "allocation": 1200,
+      "offloads": 0,
+      "starts": 0,
+      "round3Entered": false,
+      "stopped": "native protocol observer failure",
+      "lastAttempt": {
+        "purpose": "ordinary",
+        "http": 0,
+        "refunded": false
+      }
+    }
+  },
+  {
+    "events": [
+      "message_start",
+      "content_block_start",
+      "ping",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_stop",
+      "content_block_start",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_stop",
+      "message_delta",
+      "message_stop"
+    ],
+    "fixture": {
+      "ending": "abort"
+    },
+    "outcomes": [
+      {
+        "kind": "observer_read_error",
+        "request": "00:1",
+        "error_class": "LlmError",
+        "message_stop_already_captured": false,
+        "classification": "OBSERVER_FAILURE",
+        "detail": "DeepSeek Messages stream: unsupported stop reason invalid"
+      }
+    ],
+    "gate": {
+      "effects": [],
+      "pending": null,
+      "ordinary": 1,
+      "summary": 0,
+      "attempts": 1,
+      "http": 0,
+      "httpOrdinary": 0,
+      "httpSummary": 0,
+      "allocation": 1200,
+      "offloads": 0,
+      "starts": 0,
+      "round3Entered": false,
+      "stopped": "native protocol observer failure",
+      "lastAttempt": {
+        "purpose": "ordinary",
+        "http": 0,
+        "refunded": false
+      }
+    }
+  },
+  {
+    "events": [
+      "message_start",
+      "content_block_start",
+      "ping",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_stop",
+      "content_block_start",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_stop",
+      "content_block_start",
+      "content_block_stop",
+      "message_delta",
+      "message_stop"
+    ],
+    "fixture": {
+      "ending": "abort"
+    },
+    "outcomes": [
+      {
+        "kind": "observer_read_error",
+        "request": "00:1",
+        "error_class": "Error",
+        "message_stop_already_captured": false,
+        "classification": "OBSERVER_FAILURE",
+        "detail": "Duplicate Tool Call identity"
+      }
+    ],
+    "gate": {
+      "effects": [],
+      "pending": null,
+      "ordinary": 1,
+      "summary": 0,
+      "attempts": 1,
+      "http": 0,
+      "httpOrdinary": 0,
+      "httpSummary": 0,
+      "allocation": 1200,
+      "offloads": 0,
+      "starts": 0,
+      "round3Entered": false,
+      "stopped": "native protocol observer failure",
+      "lastAttempt": {
+        "purpose": "ordinary",
+        "http": 0,
+        "refunded": false
+      }
+    }
+  },
+  {
+    "events": [],
+    "fixture": {
+      "raw": "event: message_start\ndata: {\"type\":\"message_start\",\"message\":{\"id\":\"chatcmpl-92dac8e8d6bb44caa52f6dae53c1fc42\",\"type\":\"message\",\"role\":\"assistant\",\"model\":\"deepseek-flash\",\"content\":[],\"stop_reason\":null,\"stop_sequence\":null,\"usage\":{\"input_tokens\":571,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":0,\"output_tokens\":0,\"service_tier\":\"standard\"}}}\n\nevent: content_block_start\ndata: {\"type\":\"content_block_start\",\"index\":0,\"content_block\":{\"type\":\"text\",\"text\":\"\"}}\n\nevent: ping\ndata: {\"type\":\"ping\"}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\"I\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\"'ll\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" read\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" the\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" three\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" images\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" in\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" sequence\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\",\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" one\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" per\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" response\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\".\"}}\n\nevent: content_block_stop\ndata: {\"type\":\"content_block_stop\",\"index\":0}\n\nevent: content_block_start\ndata: {\"type\":\"content_block_start\",\"index\":1,\"content_block\":{\"type\":\"tool_use\",\"id\":\"call_00_EfDhGzLxRvQtPa4qAFWc2726\",\"name\":\"read_image\",\"input\":{}}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"{\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"\\\"\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"file\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"_path\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"\\\"\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\": \"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"\\\"\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"image\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"-A\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\".png\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"\\\"\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"}\"}}\n\nevent: content_block_stop\ndata: {\"type\":\"content_block_stop\",\"index\":1}\n\nevent: message_delta\ndata: {\"type\":\"message_delta\",\"delta\":{\"stop_reason\":\"tool_use\",\"stop_sequence\":null},\"usage\":{\"input_tokens\":571,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":0,\"output_tokens\":52,\"service_tier\":\"standard\"}}\n\nevent: message_stop\ndata: {\"type\":\"message_stop\"}\n\ndata: {bad}\n\n",
+      "ending": "abort"
+    },
+    "terminal": {
+      "kind": "native_message_stop",
+      "request": "00:1",
+      "events": [
+        "message_start",
+        "content_block_start",
+        "ping",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_stop",
+        "content_block_start",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_delta",
+        "content_block_stop",
+        "message_delta",
+        "message_stop"
+      ],
+      "usage": [
+        {
+          "input_tokens": 571,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "output_tokens": 0,
+          "service_tier": "standard"
+        },
+        {
+          "input_tokens": 571,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "output_tokens": 52,
+          "service_tier": "standard"
+        }
+      ],
+      "stop_reason": "tool_use",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "I'll read the three images in sequence, one per response."
+        },
+        {
+          "type": "tool_use",
+          "id": "call_00_EfDhGzLxRvQtPa4qAFWc2726",
+          "name": "read_image",
+          "input": {
+            "file_path": "image-A.png"
+          }
+        }
+      ],
+      "finish": {
+        "type": "finish",
+        "reason": {
+          "kind": "tool-calls"
+        },
+        "replayState": {
+          "response": {
+            "kind": "deepseek-messages",
+            "version": 1,
+            "model": "deepseek-flash"
+          },
+          "blocks": [
+            {
+              "type": "text"
+            },
+            {
+              "type": "tool-call"
+            }
+          ]
+        }
+      },
+      "translated_usage": {
+        "inputTokens": 571,
+        "outputTokens": 52,
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "totalTokens": 623
+      },
+      "terminal_validated": true
+    },
+    "outcomes": [
+      {
+        "kind": "observer_read_error",
+        "request": "00:1",
+        "error_class": "SyntaxError",
+        "message_stop_already_captured": true,
+        "classification": "OBSERVER_FAILURE",
+        "detail": "Expected property name or '}' in JSON at position 1 (line 1 column 2)"
+      }
+    ],
+    "gate": {
+      "effects": [],
+      "pending": null,
+      "ordinary": 1,
+      "summary": 0,
+      "attempts": 1,
+      "http": 0,
+      "httpOrdinary": 0,
+      "httpSummary": 0,
+      "allocation": 1200,
+      "offloads": 0,
+      "starts": 0,
+      "round3Entered": false,
+      "stopped": "native protocol observer failure",
+      "lastAttempt": {
+        "purpose": "ordinary",
+        "http": 0,
+        "refunded": false
+      }
+    }
+  },
+  {
+    "events": [
+      "message_start",
+      "content_block_start",
+      "ping",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_stop",
+      "content_block_start",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_stop",
+      "message_delta",
+      "message_stop"
+    ],
+    "fixture": {
+      "ending": "abort"
+    },
+    "outcomes": [
+      {
+        "kind": "observer_read_error",
+        "request": "00:1",
+        "error_class": "SyntaxError",
+        "message_stop_already_captured": false,
+        "classification": "OBSERVER_FAILURE",
+        "detail": "Expected ',' or '}' after property value in JSON at position 27 (line 1 column 28)"
+      }
+    ],
+    "gate": {
+      "effects": [],
+      "pending": null,
+      "ordinary": 1,
+      "summary": 0,
+      "attempts": 1,
+      "http": 0,
+      "httpOrdinary": 0,
+      "httpSummary": 0,
+      "allocation": 1200,
+      "offloads": 0,
+      "starts": 0,
+      "round3Entered": false,
+      "stopped": "native protocol observer failure",
+      "lastAttempt": {
+        "purpose": "ordinary",
+        "http": 0,
+        "refunded": false
+      }
+    }
+  },
+  {
+    "events": [
+      "message_start",
+      "content_block_start",
+      "content_block_start",
+      "ping",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_stop",
+      "content_block_start",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_stop",
+      "message_delta",
+      "message_stop"
+    ],
+    "fixture": {},
+    "outcomes": [
+      {
+        "kind": "observer_read_error",
+        "request": "00:1",
+        "error_class": "LlmError",
+        "message_stop_already_captured": false,
+        "classification": "OBSERVER_FAILURE",
+        "detail": "DeepSeek Messages stream: block starts after settlement or repeats an index"
+      }
+    ],
+    "gate": {
+      "effects": [],
+      "pending": null,
+      "ordinary": 1,
+      "summary": 0,
+      "attempts": 1,
+      "http": 0,
+      "httpOrdinary": 0,
+      "httpSummary": 0,
+      "allocation": 1200,
+      "offloads": 0,
+      "starts": 0,
+      "round3Entered": false,
+      "stopped": "native protocol observer failure",
+      "lastAttempt": {
+        "purpose": "ordinary",
+        "http": 0,
+        "refunded": false
+      }
+    }
+  },
+  {
+    "events": [
+      "message_start",
+      "content_block_start",
+      "ping",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_stop",
+      "content_block_start",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_delta",
+      "content_block_stop",
+      "message_delta",
+      "message_stop"
+    ],
+    "fixture": {},
+    "outcomes": [
+      {
+        "kind": "observer_read_error",
+        "request": "00:1",
+        "error_class": "LlmError",
+        "message_stop_already_captured": false,
+        "classification": "OBSERVER_FAILURE",
+        "detail": "DeepSeek Messages stream: delta/stop without an open block"
+      }
+    ],
+    "gate": {
+      "effects": [],
+      "pending": null,
+      "ordinary": 1,
+      "summary": 0,
+      "attempts": 1,
+      "http": 0,
+      "httpOrdinary": 0,
+      "httpSummary": 0,
+      "allocation": 1200,
+      "offloads": 0,
+      "starts": 0,
+      "round3Entered": false,
+      "stopped": "native protocol observer failure",
+      "lastAttempt": {
+        "purpose": "ordinary",
+        "http": 0,
+        "refunded": false
+      }
+    }
+  },
+  {
+    "events": [],
+    "fixture": {
+      "raw": "event: message_start\ndata: {\"type\":\"message_start\",\"message\":{\"id\":\"chatcmpl-92dac8e8d6bb44caa52f6dae53c1fc42\",\"type\":\"message\",\"role\":\"assistant\",\"model\":\"deepseek-flash\",\"content\":[],\"stop_reason\":null,\"stop_sequence\":null,\"usage\":{\"input_tokens\":571,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":0,\"output_tokens\":0,\"service_tier\":\"standard\"}}}\n\nevent: content_block_start\ndata: {\"type\":\"content_block_start\",\"index\":0,\"content_block\":{\"type\":\"text\",\"text\":\"\"}}\n\nevent: ping\ndata: {\"type\":\"ping\"}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\"I\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\"'ll\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" read\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" the\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" three\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" images\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" in\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" sequence\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\",\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" one\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" per\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" response\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\".\"}}\n\nevent: content_block_stop\ndata: {\"type\":\"content_block_stop\",\"index\":0}\n\nevent: content_block_start\ndata: {\"type\":\"content_block_start\",\"index\":1,\"content_block\":{\"type\":\"tool_use\",\"id\":\"call_00_EfDhGzLxRvQtPa4qAFWc2726\",\"name\":\"read_image\",\"input\":{}}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"{\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"\\\"\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"file\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"_path\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"\\\"\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\": \"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"\\\"\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"image\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"-A\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\".png\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"\\\"\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"}\"}}\n\nevent: content_block_stop\ndata: {\"type\":\"content_block_stop\",\"index\":1}\n\nevent: message_delta\ndata: {\"type\":\"message_delta\",\"delta\":{\"stop_reason\":\"tool_use\",\"stop_sequence\":null},\"usage\":{\"input_tokens\":571,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":0,\"output_tokens\":52,\"service_tier\":\"standard\"}}\n\nevent: other\ndata: {\"type\":\"message_stop\"}\n\n"
+    },
+    "outcomes": [
+      {
+        "kind": "observer_read_error",
+        "request": "00:1",
+        "error_class": "Error",
+        "message_stop_already_captured": false,
+        "classification": "OBSERVER_FAILURE",
+        "detail": "Malformed SSE event identity"
+      }
+    ],
+    "gate": {
+      "effects": [],
+      "pending": null,
+      "ordinary": 1,
+      "summary": 0,
+      "attempts": 1,
+      "http": 0,
+      "httpOrdinary": 0,
+      "httpSummary": 0,
+      "allocation": 1200,
+      "offloads": 0,
+      "starts": 0,
+      "round3Entered": false,
+      "stopped": "native protocol observer failure",
+      "lastAttempt": {
+        "purpose": "ordinary",
+        "http": 0,
+        "refunded": false
+      }
+    }
+  },
+  {
+    "events": [],
+    "fixture": {
+      "raw": "event: message_start\ndata: {\"type\":\"message_start\",\"message\":{\"id\":\"chatcmpl-92dac8e8d6bb44caa52f6dae53c1fc42\",\"type\":\"message\",\"role\":\"assistant\",\"model\":\"deepseek-flash\",\"content\":[],\"stop_reason\":null,\"stop_sequence\":null,\"usage\":{\"input_tokens\":571,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":0,\"output_tokens\":0,\"service_tier\":\"standard\"}}}\n\nevent: content_block_start\ndata: {\"type\":\"content_block_start\",\"index\":0,\"content_block\":{\"type\":\"text\",\"text\":\"\"}}\n\nevent: ping\ndata: {\"type\":\"ping\"}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\"I\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\"'ll\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" read\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" the\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" three\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" images\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" in\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" sequence\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\",\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" one\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" per\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\" response\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\".\"}}\n\nevent: content_block_stop\ndata: {\"type\":\"content_block_stop\",\"index\":0}\n\nevent: content_block_start\ndata: {\"type\":\"content_block_start\",\"index\":1,\"content_block\":{\"type\":\"tool_use\",\"id\":\"call_00_EfDhGzLxRvQtPa4qAFWc2726\",\"name\":\"read_image\",\"input\":{}}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"{\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"\\\"\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"file\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"_path\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"\\\"\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\": \"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"\\\"\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"image\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"-A\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\".png\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"\\\"\"}}\n\nevent: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"}\"}}\n\nevent: content_block_stop\ndata: {\"type\":\"content_block_stop\",\"index\":1}\n\nevent: message_delta\ndata: {\"type\":\"message_delta\",\"delta\":{\"stop_reason\":\"tool_use\",\"stop_sequence\":null},\"usage\":{\"input_tokens\":571,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":0,\"output_tokens\":52,\"service_tier\":\"standard\"}}\n\nevent: message_stop\ndata: {\"type\":\"message_stop\"}"
+    },
+    "outcomes": [
+      {
+        "kind": "observer_read_error",
+        "request": "00:1",
+        "error_class": "Error",
+        "message_stop_already_captured": false,
+        "classification": "OBSERVER_FAILURE",
+        "detail": "Unterminated SSE frame"
+      }
+    ],
+    "gate": {
+      "effects": [],
+      "pending": null,
+      "ordinary": 1,
+      "summary": 0,
+      "attempts": 1,
+      "http": 0,
+      "httpOrdinary": 0,
+      "httpSummary": 0,
+      "allocation": 1200,
+      "offloads": 0,
+      "starts": 0,
+      "round3Entered": false,
+      "stopped": "native protocol observer failure",
+      "lastAttempt": {
+        "purpose": "ordinary",
+        "http": 0,
+        "refunded": false
+      }
+    }
+  }
+]

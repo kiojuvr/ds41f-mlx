@@ -1,0 +1,49 @@
+Phase4 clone cancellation: AbortError
+PASS T1 retained exact terminal then clone AbortError
+PASS T2 complete normal EOF
+Phase4 clone cancellation: AbortError
+PASS T3 ordinary end_turn cleanup
+Phase4 clone cancellation: AbortError
+PASS T5 abort before terminal
+PASS T6 EOF before terminal
+PASS T7 missing stop reason
+PASS T8 unclosed block
+PASS T9 malformed completed tool JSON
+PASS T10 malformed SSE JSON before terminal
+PASS T11 duplicated terminal sequence
+Phase4 clone cancellation: Error
+Phase4 clone cancellation: Error
+PASS T12 preterminal timeout and transport failure
+Phase4 clone cancellation: Error
+PASS T13 unexpected exception after terminal and logging failure
+Phase4 clone cancellation: AbortError
+PASS T14 existing sticky stop never cleared
+PASS extra malformed JSON after terminal
+PASS extra truncated tool JSON under max_tokens
+PASS extra duplicated index / wrong delta / event identity / tail
+file:///Users/kioju/.local/share/deepseek-harness/node_modules/@deepseek-ai/dsh-llm-deepseek/lib/index.js:1366
+		throw new LlmError(`DeepSeek request extension preparation failed: ${errorChain(error)}`, "REQUEST_EXTENSION", { cause: error });
+		      ^
+
+LlmError: DeepSeek request extension preparation failed: prepare is not a function
+    at prepareRequestExtensions (file:///Users/kioju/.local/share/deepseek-harness/node_modules/@deepseek-ai/dsh-llm-deepseek/lib/index.js:1366:9)
+    at DeepSeekAdapter.request (file:///Users/kioju/.local/share/deepseek-harness/node_modules/@deepseek-ai/dsh-llm-deepseek/lib/index.js:2197:30)
+    ... 5 lines matching cause stack trace ...
+    at async file:///Volumes/SDXC-512/ds41f-mlx/artifacts/multimodal-runtime/phase4-step4br1-evidence/tests.mjs:99:2 {
+  code: 'REQUEST_EXTENSION',
+  failure: {
+    message: 'DeepSeek request extension preparation failed: prepare is not a function',
+    code: 'REQUEST_EXTENSION'
+  },
+  [cause]: TypeError: prepare is not a function
+      at prepareRequestExtensions (file:///Users/kioju/.local/share/deepseek-harness/node_modules/@deepseek-ai/dsh-llm-deepseek/lib/index.js:1361:22)
+      at DeepSeekAdapter.request (file:///Users/kioju/.local/share/deepseek-harness/node_modules/@deepseek-ai/dsh-llm-deepseek/lib/index.js:2197:30)
+      at async Object.next (file:///Users/kioju/.local/share/deepseek-harness/node_modules/@deepseek-ai/dsh-timeout/lib/index.js:113:12)
+      at async DeepSeekAdapter.generate (file:///Users/kioju/.local/share/deepseek-harness/node_modules/@deepseek-ai/dsh-llm-deepseek/lib/index.js:2148:19)
+      at async adapterCase (file:///Volumes/SDXC-512/ds41f-mlx/artifacts/multimodal-runtime/phase4-step4br1-evidence/tests.mjs:90:36)
+      at async file:///Volumes/SDXC-512/ds41f-mlx/artifacts/multimodal-runtime/phase4-step4br1-evidence/tests.mjs:99:83
+      at async check (file:///Volumes/SDXC-512/ds41f-mlx/artifacts/multimodal-runtime/phase4-step4br1-evidence/tests.mjs:25:31)
+      at async file:///Volumes/SDXC-512/ds41f-mlx/artifacts/multimodal-runtime/phase4-step4br1-evidence/tests.mjs:99:2
+}
+
+Node.js v24.5.0

@@ -1,0 +1,49 @@
+Phase4 clone cancellation: AbortError
+PASS T1 retained exact terminal then clone AbortError
+PASS T2 complete normal EOF
+Phase4 clone cancellation: AbortError
+PASS T3 ordinary end_turn cleanup
+Phase4 clone cancellation: AbortError
+PASS T5 abort before terminal
+PASS T6 EOF before terminal
+PASS T7 missing stop reason
+PASS T8 unclosed block
+PASS T9 malformed completed tool JSON
+PASS T10 malformed SSE JSON before terminal
+PASS T11 duplicated terminal sequence
+Phase4 clone cancellation: Error
+Phase4 clone cancellation: Error
+PASS T12 preterminal timeout and transport failure
+Phase4 clone cancellation: Error
+PASS T13 unexpected exception after terminal and logging failure
+Phase4 clone cancellation: AbortError
+PASS T14 existing sticky stop never cleared
+PASS extra malformed JSON after terminal
+PASS extra truncated tool JSON under max_tokens
+PASS extra duplicated index / wrong delta / event identity / tail
+Phase4 clone cancellation: AbortError
+PASS installed adapter tool response terminal/finally
+Phase4 clone cancellation: AbortError
+PASS installed adapter ordinary text terminal/finally
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
++ actual - expected
+
++ false
+- undefined
+
+    at adapterCase (file:///Volumes/SDXC-512/ds41f-mlx/artifacts/multimodal-runtime/phase4-step4br1-evidence/tests.mjs:87:164)
+    at async file:///Volumes/SDXC-512/ds41f-mlx/artifacts/multimodal-runtime/phase4-step4br1-evidence/tests.mjs:101:101
+    at async check (file:///Volumes/SDXC-512/ds41f-mlx/artifacts/multimodal-runtime/phase4-step4br1-evidence/tests.mjs:25:31)
+    at async file:///Volumes/SDXC-512/ds41f-mlx/artifacts/multimodal-runtime/phase4-step4br1-evidence/tests.mjs:101:2 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: undefined,
+  operator: 'strictEqual'
+}
+
+Node.js v24.5.0

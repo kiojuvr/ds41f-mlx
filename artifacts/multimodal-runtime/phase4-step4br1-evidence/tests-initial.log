@@ -1,0 +1,38 @@
+Phase4 clone cancellation: AbortError
+PASS T1 retained exact terminal then clone AbortError
+PASS T2 complete normal EOF
+Phase4 clone cancellation: AbortError
+PASS T3 ordinary end_turn cleanup
+Phase4 clone cancellation: AbortError
+PASS T5 abort before terminal
+PASS T6 EOF before terminal
+PASS T7 missing stop reason
+PASS T8 unclosed block
+PASS T9 malformed completed tool JSON
+PASS T10 malformed SSE JSON before terminal
+PASS T11 duplicated terminal sequence
+Phase4 clone cancellation: Error
+Phase4 clone cancellation: Error
+PASS T12 preterminal timeout and transport failure
+Phase4 clone cancellation: Error
+PASS T13 unexpected exception after terminal and logging failure
+Phase4 clone cancellation: AbortError
+PASS T14 existing sticky stop never cleared
+PASS extra malformed JSON after terminal
+PASS extra truncated tool JSON under max_tokens
+node:internal/webstreams/readablestream:1068
+      throw new ERR_INVALID_STATE.TypeError('Controller is already closed');
+            ^
+
+TypeError [ERR_INVALID_STATE]: Invalid state: Controller is already closed
+    at ReadableStreamDefaultController.close (node:internal/webstreams/readablestream:1068:13)
+    at task (file:///Volumes/SDXC-512/ds41f-mlx/artifacts/multimodal-runtime/phase4-step4br1-evidence/tests.mjs:29:153)
+    at async Promise.all (index 1)
+    at async run (file:///Volumes/SDXC-512/ds41f-mlx/artifacts/multimodal-runtime/phase4-step4br1-evidence/tests.mjs:34:68)
+    at async file:///Volumes/SDXC-512/ds41f-mlx/artifacts/multimodal-runtime/phase4-step4br1-evidence/tests.mjs:56:246
+    at async check (file:///Volumes/SDXC-512/ds41f-mlx/artifacts/multimodal-runtime/phase4-step4br1-evidence/tests.mjs:25:31)
+    at async file:///Volumes/SDXC-512/ds41f-mlx/artifacts/multimodal-runtime/phase4-step4br1-evidence/tests.mjs:56:2 {
+  code: 'ERR_INVALID_STATE'
+}
+
+Node.js v24.5.0
