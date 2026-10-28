@@ -183,14 +183,14 @@ requested output and the speculative block) must fit **12 MiB**. The projection
 also bounds each of the two unpublished captures; shared bytes are counted again,
 not assumed free. Outside this qualification, the existing all-history patch
 rejection remains. There is no new Vision context window or screenshot-count cap.
-Cold fresh work and historical misses receive no discount. The undeployed
-[Steps 2C–2D source rules](mtp-production-serving.md#paired-capture-and-restore)
-admit independent Messages actual C=0 misses or genuine whole-image-safe C>0
-pairs, charging every uncovered occurrence fresh and verifying its source before
-native start. Model-free qualification plus one bounded native Step 2D-R1 C=203
-corn/carrot continuation, not deployment or general C2 acceptance. The initial
-Step 2D pre-load gate failure was corrected by diagnostic import ordering only.
-These rules reuse ordinary MTP, not tool replay.
+Cold fresh work and historical misses receive no discount. The deployed
+[independent Messages rules](mtp-production-serving.md#paired-capture-and-restore)
+admit actual C=0 misses or genuine whole-image-safe C>0 pairs, charging uncovered
+occurrences fresh and verifying sources before native start. Native offload,
+automatic compaction and reacquisition exercise this path in the finite C8 PASS;
+see the [operational completion contract](multimodal-runtime-plan.md) and
+[promoted installed acceptance](../artifacts/multimodal-runtime/production-completion.md).
+C2 remains PARTIAL overall. These rules reuse ordinary MTP, not tool replay.
 
 [Isolated qualification](../artifacts/cached-image-admission/report.md) executes
 12 screenshot occurrences and cached continuations without admission overrides,
@@ -209,14 +209,13 @@ Runtime 400 does **not** trigger official image offload. Official projection and
 compaction can change the prefix and invalidate the pair; surviving historical
 images require an independently compatible pair or the narrow independent
 Messages C=0 / whole-image-safe C>0 source admission.
-[Phase 3 / Step 3A](../artifacts/multimodal-runtime/phase3-step3a-offload-reacquisition.md)
-observed two genuine official offloads and new `read_image` reacquisition in one
-macOS session: C=711 restoration, three fresh image encodes per changed projection,
-six settled native completions/publications. These C3/C5 positive cases pass within
-that session; overall Step 3A remains PARTIAL because the post-shutdown diagnostic
-failed before cleanup weakref/MLX/executor measurements. Compaction, full endurance
-and broader recovery remain unqualified; no Production change or operational
-installation update.
+The [finite integrated E2E](../artifacts/multimodal-runtime/phase4-e2e-native.md)
+passes nine-source/ten-read official acquisition, compatible reuse, four offloads,
+automatic strict-shrink durable compaction, C=0 and whole-image-safe C>0
+reconstruction, new-occurrence reacquisition and continuation. This is scoped
+C1/C3/C4/C5/C8 and normal C6 evidence, not indefinite endurance or general recovery.
+C2/C7 and broader C6/C9 remain PARTIAL. One loaded application/model per process
+is supported; same-process model reclamation/reload is not qualified.
 See [Files bounds](harness-image-files.md) and the
 [compatibility assessment](../artifacts/harness-image-capacity/report.md).
 600-occurrence key construction, queued metadata and official offload are
@@ -265,7 +264,15 @@ and [original image qualification](multimodal-production-qualification.md).
 - **Ordinary clients/OpenCode:** standard Chat Completions and generic client-owned
   tools; no compulsory singleton session/fence protocol. Client acceptance is
   source/version-scoped, not a universal all-client compatibility certificate.
-- **Official Harness 0.2.1-rc.2:** direct native Messages text and actual read-only
+- **Official Harness 0.2.1-rc.2:** Multimodal-Runtime is operationally complete
+  within the [declared Production envelope](multimodal-runtime-plan.md#supported-production-envelope):
+  macOS/M3 Ultra 512 GB, Flash-1017, Recipe 0.2.0, native GLM/paired MTP,
+  **Thinking OFF**, three current image occurrences, aggregate reconstruction
+  patches within 36,864, automatic pressure/retention/summary cap 8192/1024/2048,
+  ordinary output 1200 and generic retries zero. Other reasoning/output
+  recommendations do not inherit this integrated qualification. Windows Harness
+  qualification is post-closure operation, not an implementation blocker.
+  Earlier direct native Messages text and actual read-only
   file-tool/result continuation passed with supported option exclusions; see
   [historical acceptance](operations.md#deepinfer-daily-operation-and-harness).
   A later **macOS/M3 Ultra 512 GB, Runtime 0.23.0 (`2fdea4f`), Recipe 0.2.0,

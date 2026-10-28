@@ -72,7 +72,7 @@ Changing it requires an independently justified, numerically correct cache-recov
 design. Independent Messages C=0 and whole-image-safe C>0 source rules now reuse
 the existing MTP execution schedule with genuine selected paired state where
 present; aggregate conditional-discount and exact logical-lease safeguards remain.
-It is model-free admission verification, not deployed or general C2 acceptance.
+The bounded reconstruction path is now deployed; general C2 qualification remains PARTIAL. See the [operational completion contract](multimodal-runtime-plan.md).
 
 The same distinction applies to context/multimodal resource limits, KV Cache
 eviction/reconstruction, stateful Messages support, file ownership/lifecycle,
@@ -102,61 +102,22 @@ paired-byte admission rejected it. [Capabilities](capabilities.md#applications)
 owns the measured scope, residual visual defect and unresolved byte-guard/trace
 retention evidence boundaries.
 
-The [Multimodal Runtime plan](multimodal-runtime-plan.md) owns the project-specific
-goal, C1–C9 completion criteria, phases, dependencies and progress under the policy
-above. Phases 0–1 are complete; Phase 2/C2 remains **PARTIAL**. Step 2B-R2
-exercised C=0 native reconstruction through settlement/publication; Step 2C
-model-free verifies normal independent Messages C=0 admission to that unchanged
-cold path. Step 2D model-free verifies whole-image-safe C>0 paired suffix reconstruction;
-its initial installed gate stopped before loading weights. Step 2D-R1 corrected
-diagnostic import ordering and completed one bounded native C=203 continuation
-through settlement/publication. These source changes are undeployed.
-Step 2E adds model-free changed-byte/order/position, shortened and rewritten
-projection selection/continuation evidence with no Production change or weights.
-Cross-partition floating equivalence remains unqualified; changed-projection
-native execution/resource evidence is bounded, not general numerical qualification.
-Logical-session exact leases are unchanged.
-[Phase 3 / Step 3A](../artifacts/multimodal-runtime/phase3-step3a-offload-reacquisition.md)
-observed two official Harness offloads and a new reacquisition occurrence, with
-C=711 fresh historical Vision, native completion and settled publication. C3/C5
-positive cases pass only for that session; overall acceptance is PARTIAL because
-a post-shutdown diagnostic error prevented cleanup weakref/MLX/executor measurement.
-No Production change or deployment; compaction and full endurance remain unqualified.
-[Step 3B](../artifacts/multimodal-runtime/phase3-step3b-compaction.md) stopped before
-provisioning/loading: installed rc.2 headless composes `command-compact` but has no
-supported human-command invocation adapter (task text is always a user followup).
-The corrected passive shutdown diagnostic passes model-free regressions; no native
-compaction/cleanup qualification follows; no local dispatcher was added.
-[Step 3B-R1](../artifacts/multimodal-runtime/phase3-step3br1-auto-compaction-feasibility.md)
-is **FEASIBLE model-free**: the installed automatic `agent/pre-step` pressure path
-reaches official balanced selection and the summary-request boundary without
-human-command dispatch. A task-local exact-model policy resolves to 4,096 pressure
-/ 1,024 retained tokens with a 512-token summary cap, leaving declared capacity
-unchanged. Controlled summary failure is not successful compaction. C4 remains
-unqualified; native summary/replacement/reconstruction and cleanup require separate
-authorization. That model-free step loaded no weights.
-[Step 3B-R2](../artifacts/multimodal-runtime/phase3-step3br2-native-compaction.md)
-executed one native session: two real image reads and compatible reuse, then
-5,068 meter tokens triggered the official pressure listener. The single genuine
-summary hit its fixed 512-token cap and was rejected as incomplete. The safe
-pre-step fence prevented another attempt; no summary/replacement or changed-prefix
-continuation occurred. **C4 remains BLOCKED/unqualified**. Six actual requests
-settled/published; Runtime exited normally, but final backend/model weakrefs stayed
-live, so cleanup is PARTIAL rather than a demonstrated leak or reclamation PASS.
-No Production change, policy rescue, deployment or Phase 4 work.
-[Step 3B-R3](../artifacts/multimodal-runtime/phase3-step3br3-compaction-cleanup.md)
-completes scoped **C4**: a normally finished 1,053-token official summary produces
-strictly smaller durable replacement, native changed-projection C=0 completion,
-and adopted compatible C=3,120 continuation. The replacement is text-only;
-historical Vision after compaction is not qualified. Cleanup ownership is located
-in FastAPI callable-classification LRU references to endpoint closures; Backend/
-Model remain live after task roots are dropped, so reclamation and C7 remain
-PARTIAL. No Production/framework change, deployment or Phase 4 work.
+**Multimodal-Runtime is operationally complete and promoted to the existing
+Flash-1017 Production installation.** The [project contract](multimodal-runtime-plan.md)
+explicitly distinguishes achieved operation from the original broader C1–C9
+qualification; the [completion record](../artifacts/multimodal-runtime/production-completion.md)
+binds source, wheel, rollback and installed acceptance. Official Harness acquisition,
+paired reuse, offload, automatic compaction, reconstruction and reacquisition pass
+the finite C8 workload. No concrete implementation blocker remains within the
+Thinking OFF Production envelope. C2/C7 and broader C6/C9 remain PARTIAL; no
+historical failed attempt is relabeled. Same-process model reclamation, general
+numerical equivalence and Windows Harness qualification do not block this closure.
+Windows operation is post-closure work; no new phase/campaign is selected.
 
 ### Future official-source investigation priorities
 
 These comparisons are retained technical context for
-[Phase 1](multimodal-runtime-plan.md#phases-dependencies-and-exits), not a separate
+[closed phases](multimodal-runtime-plan.md#closed-phases-and-remaining-non-blocking-work), not a separate
 project sequence or permission to start investigation, implementation, prototyping,
 benchmarking or acceptance. Use these already reviewed reference snapshots, not
 claims about current upstream HEAD or equality with installed packages:
@@ -204,15 +165,14 @@ skipping/admission from recovery after a changed canonical projection:
   integrity rules remain in force; this investigation does not authorize recovery
   implementation.
 
-No automatic follow-on work is selected. Full Harness compatibility remains
-**PARTIAL** at concrete transport/storage and canonical-prefix recovery boundaries.
-Official rc.2 offload does not recover arbitrary Runtime 400 errors. Its projection
-and summary compaction can invalidate paired state. The narrow undeployed
-Messages C=0 / whole-image-safe C>0 admission does not generally qualify Harness
-transitions; Step 3A adds only the bounded offload/reacquisition evidence above.
-True image intersections and broader conditional-discount reconstruction
-remain unqualified. No replacement history/cache owner or follow-on campaign
-is introduced. The
+No automatic follow-on investigation is selected. General Harness compatibility
+remains bounded at transport/storage and unsupported recovery boundaries, not a
+missing normal offload/compaction reconstruction implementation. Official rc.2
+offload does not recover arbitrary Runtime 400 errors. Independent Messages C=0
+and whole-image-safe C>0 reconstruction is deployed and exercised through the
+finite integrated workload. True image intersections and broader conditional-
+discount reconstruction remain unqualified. No replacement history/cache owner
+or follow-on campaign is introduced. The
 [Q2 report](../artifacts/visual-feedback-loop/phase-4-q2-report.md) retains its
 partial grounding and four-image continuity scope; it did not test seven images.
 

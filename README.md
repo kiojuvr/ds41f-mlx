@@ -5,7 +5,9 @@
 **Runtime for official Flash and Flash-1017**, sharing Recipe **0.2.0**
 native Chat/Messages semantics. Select `--checkpoint-variant flash` or `flash-1017`
 (default) during provisioning; each installation has one fixed checkpoint and
-numerical identity. Existing installations are not migrated.
+numerical identity. Flash-1017's existing Production installation has received the
+[Multimodal-Runtime promotion](artifacts/multimodal-runtime/production-completion.md);
+original Flash is unchanged.
 
 `ds41f-mlx` is a native runtime targeting the **Mac Studio M3 Ultra with 512 GB
 unified memory**. It exists to combine model fidelity, correct long-context state
@@ -138,7 +140,9 @@ The provisioner's default builds the shared MTP distribution with native GLM;
 ordinary serving is the runtime default below. It installs a non-editable wheel
 and locked dependencies. **Provisioning is not release acceptance:** see
 [Operations → Provision / publish](docs/operations.md#provision--publish).
-Do not replace this with an editable install or mutate an admitted environment.
+Do not replace this with an editable install or make unapproved changes to an
+admitted environment. Authorized in-place wheel updates use the migration and
+rollback procedure in Operations, never this fresh-only provisioner.
 For an already provisioned installation, set `DS41F_ENV` to its environment and
 skip this step.
 
@@ -203,14 +207,15 @@ OpenAI-compatible clients). Merge these entries into the existing profile's
   config:
     baseURL: http://mac-studio:8000
     apiKeyEnv: DS41F_LOCAL_API_KEY
-    reasoningEffort: high
-    maxTokens: 32768
+    thinking: disabled
+    reasoningEffort: off
+    maxTokens: 1200
     streamIdleTimeoutMs: 1800000
     models:
       - id: deepseek-flash
         inputModalities: [text, image]
         contextWindow: 1048576
-        maxTokens: 32768
+        maxTokens: 1200
         systemPromptUpdate: in-history
         toolUpdate: addition-only
 - id: session-log-deepseek
@@ -227,10 +232,16 @@ setting above): Runtime intentionally rejects `dsh_session_log`. Keep
 **`plugin-package-inventory-deepseek` enabled** by default; Runtime accepts and
 ignores `dsh_plugin_packages`.
 
-Choose reasoning effort per workload: **`off`, `low`, `high`, `max`**. Remove any
-existing `thinking: disabled` restriction to use higher efforts. Set a practical
-output-token cap: **32,768 is a configurable recommendation**, not a universally
-qualified optimum; prompt + output must fit.
+This conservative baseline uses **Thinking OFF / output 1200**, matching the
+integrated macOS qualification, not Windows qualification. Configure the official
+image-count/offload and automatic-compaction policy from
+[operations](docs/operations.md#visual-session-capacity-and-recovery): count 3,
+quantum 1, pressure 8192, retention 1024, summary cap 2048, generic retries zero.
+The full executed configuration is linked there; no custom Harness is required.
+Other supported efforts **`low`, `high`, `max`** require removing `thinking: disabled`.
+Higher reasoning and **32,768 output** remain optional workload recommendations,
+**not settings that inherited the integrated multimodal qualification**; prompt
+plus reserved output must fit.
 The **1,800,000 ms** idle timeout accommodates long local prefill without requiring
 Runtime heartbeats. Preserve native tool IDs/results, in-history system updates
 and addition-only tool updates; tool removal is unsupported.
@@ -261,7 +272,18 @@ model ID below if needed. Merge this provider into the existing `llm-pi-ai` entr
 
 ### Compatibility limits
 
-The completed Visual Feedback Loop milestone has bounded **macOS/M3 Ultra 512 GB,
+**Multimodal-Runtime is operationally complete** in the declared macOS/M3 Ultra
+512 GB, Flash-1017/native GLM/paired MTP, Recipe 0.2.0, Harness rc.2 **Thinking OFF**
+envelope. Acquisition, compatible reuse, official offload, automatic compaction,
+changed-projection reconstruction, continuation and reacquisition passed the finite
+C8 workload. The [closure contract](docs/multimodal-runtime-plan.md) and
+[installed promotion record](artifacts/multimodal-runtime/production-completion.md)
+preserve broader C2/C7/C6/C9 PARTIAL qualifications. Windows Harness qualification
+is **post-closure ordinary operational work**, not an implementation blocker.
+This does not qualify indefinite endurance, arbitrary numerical equivalence or
+general durable Files storage.
+
+The earlier completed Visual Feedback Loop milestone has bounded **macOS/M3 Ultra 512 GB,
 Harness 0.2.1-rc.2, Recipe 0.2.0, original Flash-1017, Thinking OFF/native paired
 MTP/GLM** evidence. [Phase 3](artifacts/visual-feedback-loop/phase-3-report.md)
 used Files-to-inline fallback and did not qualify Files. Later
@@ -413,8 +435,10 @@ See [performance evidence](docs/performance.md) for measurement scope.
   long-term arbitrary-image continuity qualification.
   No remote/file image URLs, low-detail images,
   animations or universal multimodal/visual-quality claim. MTP prior-message
-  images need a compatible retained pair; eviction or incompatible historical
-  image edits reject rather than silently replay/re-encode history.
+  images use compatible complete paired coverage or bounded independent Messages
+  reconstruction at C=0 / whole-image-safe C>0 with available sources and admitted
+  fresh work. Image intersections, missing bytes and unsupported discount cases
+  safely refuse. No historical tool replay or lost exact Chat-lease recovery.
 - No sessionized Responses/Messages, arbitrary server-side tool executor,
   crash-safe/distributed exactly-once effects or universal-client compatibility.
   Partial SSE and HTTP success are not canonical-state acknowledgements or

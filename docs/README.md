@@ -20,10 +20,12 @@ retired. Historical acceptance does not qualify either variant at later HEAD.
 | Development boundaries | [Implementation decisions](implementation-plan.md), [Runtime strategy](runtime-strategy.md), [scaffold roles](scaffold-classification.md) |
 
 The [Multimodal Runtime plan](multimodal-runtime-plan.md)
-owns the project goal, completion criteria, phases and progress after the completed,
-scope-qualified Visual Feedback Loop milestone. [Capabilities](capabilities.md#applications)
-scopes the later Gate F0 and repaired-loop evidence; neither is comprehensive
-Harness qualification or authorization for follow-on implementation.
+owns the operational completion contract and preserved broader C1–C9 limits.
+**Operationally complete and promoted**: the
+[completion record](../artifacts/multimodal-runtime/production-completion.md) binds
+installed identity, acceptance and rollback. [Capabilities](capabilities.md#applications)
+scopes finite Harness continuity evidence; Windows qualification is post-closure
+operation. No further development phase or campaign is selected.
 
 ## Retained evidence
 

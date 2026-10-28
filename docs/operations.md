@@ -1,7 +1,10 @@
 # Production operations
 
 The unified Runtime on `master` is **MTP-only**. Original Flash and Flash-1017 use
-separate fresh package-fixed installations with shared Recipe 0.2 Chat/Messages semantics.
+separate package-fixed installations with shared Recipe 0.2 Chat/Messages semantics.
+Flash-1017 has received the authorized in-place Multimodal-Runtime promotion;
+[completion and rollback](../artifacts/multimodal-runtime/production-completion.md)
+record its exact installed payload and acceptance.
 Standard-OFF production startup, admission and provisioning are retired. Historical
 release receipts remain source-scoped evidence; the obsolete installations were
 removed during the approved 2026-10-22 cleanup, not migrated or requalified.
@@ -38,7 +41,8 @@ admission overrides, paired continuity, native cancellation and fail-closed miss
 Maximum-body/near-1M-position queued metadata is model-free tested, not model
 execution. Neither this nor Harness's count reference promises arbitrary visual
 context or 600-image residency. Do not apply the older experiment's test override
-to any installed Runtime. No deployed package was changed by this work.
+to any installed Runtime. That historical qualification did not change Production;
+the later Multimodal-Runtime promotion is recorded above.
 The 16 MiB JSON body, 64 MiB encoded request/storage, 128 distinct Files, context,
 output, queue and paired-cache limits remain independent. See
 [capability limits](capabilities.md#bounded-inline-images) and the
@@ -46,13 +50,36 @@ output, queue and paired-cache limits remain independent. See
 
 Do not expect a Runtime 400 to cause Harness offload. Official rc.2 offload is
 triggered by its adapter's `IMAGE_OFFLOAD_REQUIRED`, not arbitrary HTTP errors.
-Offload or summary compaction changes canonical tokens: a surviving historical
-image needs an exactly compatible paired prefix or safely rejects. Do not resend
-an unsettled generation or re-encode old images to conceal a miss. When no pair
-covers the projected history, an explicit fresh conversation without historical
-images (using the client's existing history/compaction facilities) is necessary;
-automatic recovery of that case is not supported. Existing deployed packages were
-not updated by this source change.
+Offload or automatic summary compaction changes canonical tokens. The promoted
+Runtime selects an actually compatible complete pair or reconstructs independent
+Messages at C=0 / a whole-image-safe C>0 prefix, with available current sources
+and normal fresh-work admission. Removed occurrences need no obsolete bytes.
+This is current-projection execution, not historical tool replay or uncertain
+request retry. Logical Chat leases and broader conditional-discount refusals
+remain unchanged.
+
+The integrated **Thinking OFF** policy is the
+[executed Harness configuration](../artifacts/multimodal-runtime/phase4-e2e-evidence/effective-configuration.json):
+Harness 0.2.1-rc.2, `deepseek-official` / native Messages, image count **3**,
+quantum **1**, automatic pressure **8192**, retention **1024**, summary cap **2048**,
+ordinary output **1200**, generic provider retries **0**, session-log upload off
+and addition-only tools. Use current sources whose aggregate reconstruction work
+fits **36,864 patches**; count three alone does not ensure this. Other recommended
+reasoning/output settings have not inherited integrated qualification. Headless
+rc.2 automatic pressure compaction is supported; `/compact` as task text is not
+a human-command dispatch mechanism.
+
+Keep one application/model lifetime per process and monitor physical reserve,
+pressure and swap. Files are process-local/expiry-bounded (128 IDs /64 MiB), not
+purged by offload; inline fallback must fit the smaller Runtime body limit.
+Unavailable attachment bytes require reattachment/operator action. Summaries can
+truncate or fail strict shrink without replacing history. Resource refusals are
+not guaranteed automatic recovery. Stop and reconcile incomplete protocol or
+uncertain effects; never resend an unsettled generation. Gracefully stop/restart
+for model replacement; same-process model reclamation and native restart
+persistence are not supported guarantees. C2/C7 and broader C6/C9 qualification
+remain PARTIAL; see the [closure scope](multimodal-runtime-plan.md). Windows
+Harness qualification is post-closure ordinary operational work.
 
 ## Local environment layout
 
@@ -60,17 +87,19 @@ The development repository is `/Volumes/SDXC-512/ds41f-mlx`; its internal
 `.venv` is for development, not installed production execution. The persistent
 installed Runtime environments for `master` are:
 
-| Variant | Environment | Observed state after cleanup (2026-10-22) |
+| Variant | Environment | State / evidence |
 | --- | --- | --- |
-| Original Flash (`flash`) | `/Volumes/SDXC-512/ds41f-0910` | Populated; no running model process observed |
-| Flash-1017 (`flash-1017`) | `/Volumes/SDXC-512/ds41f-1017` | Populated; ordinary Runtime active at cleanup verification |
+| Original Flash (`flash`) | `/Volumes/SDXC-512/ds41f-0910` | Retained unchanged; 2026-10-22 cleanup snapshot only |
+| Flash-1017 (`flash-1017`) | `/Volumes/SDXC-512/ds41f-1017` | Promoted in place; installed acceptance passed; acceptance process gracefully retired |
 
-This is a filesystem/process snapshot, **not fresh admission or qualification**.
+Flash-1017's 2026-10-28 admission/acceptance is bound by the completion record;
+original Flash's older snapshot is **not fresh admission or qualification**.
 Do not reprovision either existing environment. The Flash-1017 build directory
 `/Volumes/SDXC-512/ds41f-1017-build` was removed; original Flash retains only
 `/Volumes/SDXC-512/ds41f-0910-build/runtime-wheels` for publication provenance.
-The active Flash-1017 package's recorded wheel source,
-`/private/tmp/ds41f-harness-inventory-wheel.NxZ0BY`, was also retained.
+The former Flash-1017 package's recorded temporary wheel directory was no longer
+present at promotion. A verified RECORD-owned rollback snapshot and the new wheel
+are retained at the paths in the completion record.
 
 Dependency source exports and build outputs are not installed Runtime execution
 dependencies: provisioning copies packages, native assets and the Recipe tokenizer
@@ -254,8 +283,9 @@ mtp-singleton-v1 --venv /absolute/new-env --build-dir /absolute/new-build` build
 and installs a non-editable execution wheel; the resulting MTP package supports
 both singleton and ordinary profiles. Select `--checkpoint-variant flash` for
 original Flash or `--checkpoint-variant flash-1017` (default) for 1017. Use fresh,
-separate environment/build directories for each; neither existing qualified
-installation is an upgrade target. Standard-OFF selection is rejected. Never point production at a donor or
+separate environment/build directories for each. This provisioner is fresh-only,
+not an upgrade command. The authorized Flash-1017 in-place wheel migration below
+is distinct from provisioning. Standard-OFF selection is rejected. Never point production at a donor or
 development checkout. Building a wheel is not acceptance; publishers must run
 affected qualification before promoting it. Native recipe rebuilds and semantic
 library changes require affected qualification, not a manifest refresh.
@@ -299,8 +329,14 @@ Native and portable have distinct manifests/digests and publication receipts:
 `release/execution-package.json` and `release/execution-package-portable.json`.
 See [GLM admission/provenance](runtime-admission.md#glm-execution-distributions).
 
-For a fresh, isolated MTP candidate only, from the development checkout (use
-`flash` instead for original Flash; never modify a qualified installation):
+For a wheel candidate, from the development checkout (use `flash` instead for
+original Flash). Installation into an occupied Production environment requires
+explicit migration authorization, idle/gracefully stopped owned processes,
+verified dependency/native/checkpoint identity compatibility and retained rollback.
+Do not run `mtp_setup` into that environment. The authorized Flash-1017 procedure
+used this builder and `uv pip install --no-deps --reinstall` into its existing venv;
+see the completion record for exact commands and rollback. Otherwise use a fresh,
+isolated candidate:
 
 ```sh
 /path/to/env/bin/python tools/build_execution_package.py --checkpoint-variant flash-1017 --output /absolute/new-wheels

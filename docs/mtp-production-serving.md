@@ -150,14 +150,14 @@ or safe miss. A target-only hash hit is not an MTP hit; edits/branches never rew
 live rings. Retained logical sessions instead require their exact leased pair
 and fail before native start if it is lost—no historical-session prefill fallback.
 
-**Undeployed Step 2C source admission:** ordinary independent Recipe-canonical
+**Deployed independent Messages C=0 admission:** ordinary independent Recipe-canonical
 Messages with an actual selected C=0 miss, no restored/native state and all
 required image bytes available may use the same ordinary MTP cold `_start` path.
 Wire-image age changes only admission, not numerical inputs or the P6/Vision/
 DSpark/N-2/N-1/P5/Scheduler algorithm. Source digests and the full fresh workload
 are checked before native start. Every current image counts fresh at C=0: no
 cached-image patch discount, no use of the conditional paired-byte allowance.
-**Undeployed Step 2D source admission** additionally admits independent Messages
+**Deployed whole-image-safe C>0 admission** additionally admits independent Messages
 with an actual compatible complete C>0 pair at a whole-image-safe frontier.
 The selected pair is preserved, covered images skip Vision, and every uncovered
 occurrence is encoded completely at its absolute position regardless of wire age.
@@ -168,21 +168,17 @@ changed identities, missing bytes, budgets, exact logical leases and post-mutati
 burn remain guarded; no pair is discarded to force a cold miss.
 No historical tool or external effect is executed by prefill.
 
-[Step 2C](../artifacts/multimodal-runtime/phase2-step2c-admission.md) verifies the
-new admission and same-path lifecycle with controlled model-free doubles, not
-fresh model acceptance or deployment. Prior Step 2B-R2 exercised the native cold
-lifecycle with one historical image. Same-schedule MTP routing is distinct from
-unqualified cross-partition floating equivalence and MTP/full-forward diagnostic
-equality; [C2](multimodal-runtime-plan.md#c2-numerical-acceptance-distinctions)
-remains PARTIAL. [Step 2D](../artifacts/multimodal-runtime/phase2-step2d-reconstruction.md)
-verifies whole-image-safe C>0 admission and same-schedule lifecycle model-free.
-Its initial real-model gate stopped on installed identity admission before loading
-weights. [Step 2D-R1](../artifacts/multimodal-runtime/phase2-step2dr1-continuation.md)
-corrected diagnostic import order and completed one normally admitted native
-C=203 continuation with covered corn and fresh historical carrots, settlement at
-663 and complete paired publication/retirement. This is bounded undeployed
-execution evidence, not cross-partition numerical equivalence or Harness lifecycle
-acceptance; C2 remains PARTIAL.
+The [finite integrated Harness E2E](../artifacts/multimodal-runtime/phase4-e2e-native.md)
+exercises C=0 offload/compaction reconstruction and C=3394 whole-image-safe
+surviving-history/new-occurrence reconstruction through settled paired publication.
+The [Production promotion](../artifacts/multimodal-runtime/production-completion.md)
+records installed admission and bounded continuation acceptance. Earlier
+[Step 2C](../artifacts/multimodal-runtime/phase2-step2c-admission.md),
+[Step 2D](../artifacts/multimodal-runtime/phase2-step2d-reconstruction.md) and
+[Step 2D-R1](../artifacts/multimodal-runtime/phase2-step2dr1-continuation.md)
+retain their original model-free/native scopes and failures. Same-schedule routing
+is distinct from cross-partition floating equivalence or MTP/full-forward equality;
+[C2](multimodal-runtime-plan.md#c2-numerical-acceptance-distinctions) remains PARTIAL.
 
 For independent Messages the **current Recipe projection** is authoritative.
 Incompatible longer token/image prefixes are excluded by the same paired
@@ -191,8 +187,9 @@ Only complete uncovered occurrences in the current suffix require fresh encoding
 removed images need no obsolete source bytes. [Step 2E](../artifacts/multimodal-runtime/phase2-step2e-projection-reconstruction.md)
 verifies changed bytes/order/position and shortened/rewritten history through
 controlled settlement/publication, without Production changes or weight loading.
-This is model-free integration evidence, not Harness offload/compaction or native
-changed-projection numerical/resource qualification. Exact logical Chat leases
+Step 2E itself is model-free integration evidence. Later finite native Harness
+transitions above demonstrate bounded operation, not general changed-projection
+numerical/resource qualification. Exact logical Chat leases
 and all existing refusal/burn boundaries are unchanged.
 
 ## Lifecycle and publication

@@ -88,15 +88,16 @@ metadata remain reusable. Capture clones metadata and arrays; restore validates
 both. Text-only cache hashes and numerical decode are unchanged.
 
 Historical (prior-message) images ordinarily require an eligible paired prefix
-covering those complete spans. The **undeployed Step 2C source change** also
+covering those complete spans. The **deployed independent Messages path** also
 admits independent Messages on an actual C=0 miss with complete validated source
 bytes, charging every image fresh through the same cold MTP path. It introduces
-no alternative numerical schedule or forward algorithm. **Undeployed Step 2D**
+no alternative numerical schedule or forward algorithm. Whole-image-safe reconstruction
 also admits independent Messages at a genuinely restored C>0 whole-image-safe
 pair: covered occurrences skip encoding; uncovered historical occurrences encode
-in full. Step 2D model-free qualification is supplemented by one Step 2D-R1
-native C=203 corn/carrot continuation through settlement/publication; its initial
-pre-load identity failure was corrected only by diagnostic import ordering.
+in full. The [finite integrated E2E](../artifacts/multimodal-runtime/phase4-e2e-native.md)
+exercises official offload, automatic compaction and reacquisition through paired
+settlement/publication. The [promotion record](../artifacts/multimodal-runtime/production-completion.md)
+binds installed acceptance; broader C2 qualification remains PARTIAL.
 The aggregate patch-discount callback still requires its existing historical coverage and paired-byte qualification. A selected pair is
 never discarded to force C=0. Fresh last-message images
 retain their safe-miss path. Branches never rewind live rings. See the

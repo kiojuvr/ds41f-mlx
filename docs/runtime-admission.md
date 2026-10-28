@@ -5,7 +5,10 @@
 Production supports only `mtp-serving-v1` and the explicit singleton MTP profile.
 Standard-OFF startup/admission/provisioning/package selection is retired. OFF
 migration descriptions and receipts below are historical, not current instructions.
-Existing qualified installations are unchanged and are not migrated automatically.
+Installations are not migrated automatically. The explicitly authorized
+[Multimodal-Runtime promotion](../artifacts/multimodal-runtime/production-completion.md)
+updated only the existing Flash-1017 Runtime wheel, preserving the admitted
+dependency/native/checkpoint identities and a verified rollback snapshot.
 
 `--checkpoint-variant flash|flash-1017` fixes one variant per newly built package
 (default: `flash-1017`). Its manifest binds the exact approved 48-shard inventory,
