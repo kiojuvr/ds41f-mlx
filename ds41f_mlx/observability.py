@@ -17,7 +17,12 @@ TRACE_FIELDS = ('cached_tokens', 'remaining_suffix_tokens', 'generated', 'decode
                 'request_prepare_s', 'cache_lookup_s', 'paired_restore_s',
                 'prompt_checkpoint_capture_s', 'suffix_append_s', 'p5_handoff_s',
                 'first_decode_call_s', 'first_native_decode_s', 'total_ttft_s',
-                'prompt_replay', 'full_cache_repack', 'canonical_frontier')
+                'prompt_replay', 'full_cache_repack', 'canonical_frontier',
+                'historical_patch_discount', 'historical_planned_patches', 'fresh_encoder_patches',
+                'selected_pair_frontier', 'selected_pair_bytes', 'retained_pair_bytes',
+                'projected_pair_bytes', 'requested_pair_frontier', 'retained_pair_roots',
+                'paired_free_blocks', 'paired_evictable_blocks',
+                'legacy_pair_bytes_exceeded', 'legacy_root_bytes_exceeded')
 
 
 class Projection:

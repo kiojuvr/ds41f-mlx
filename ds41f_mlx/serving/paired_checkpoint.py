@@ -21,13 +21,6 @@ def _copy(value, mx):
     return copier() if copier is not None else mx.array(value)
 
 
-# Patch-discount execution qualification, not cache capacity or context policy.
-# Logical bytes deliberately count shared backing repeatedly. See the admission
-# receipt for physical peaks with retained roots + active + two captures.
-PATCH_DISCOUNT_PAIR_BYTES = 12 * 1024**2
-PATCH_DISCOUNT_ROOT_BYTES = 192 * 1024**2
-
-
 def pair_bytes(checkpoint):
     return sum(v.nbytes for layer in checkpoint.target
                for v in (*layer.cache, layer.left_padding, layer.lengths) if v is not None) + sum(
@@ -35,11 +28,11 @@ def pair_bytes(checkpoint):
 
 
 def projected_pair_bytes(checkpoint, end):
-    """Upper bound for the pinned singleton layout, including compressor tails.
+    """Validate the supported layout and project logical bytes, not allocations.
 
     Uses actual packed row strides, not tokens-as-memory or image equivalents.
     Absent shared slots stay absent. Source compressor tails must have typed
-    arrays (even at zero length), otherwise this narrow qualification declines.
+    arrays (even at zero length). No memory admission ceiling is implied.
     """
     total = 0
     for layer in checkpoint.target:

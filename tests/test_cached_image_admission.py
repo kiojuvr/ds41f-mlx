@@ -1,4 +1,4 @@
-"""Patch deferral is conditional paired-byte admission, never historical replay."""
+"""Historical discount requires complete physical pairs, never wire age alone."""
 from dataclasses import replace
 from types import SimpleNamespace as NS
 
@@ -37,7 +37,7 @@ def test_only_historical_patches_defer_not_cold_pixels_bytes_or_off(monkeypatch)
     inp.release_sources()
 
 
-@pytest.mark.parametrize('case', ['hit', 'miss', 'changed', 'partial', 'pair_bytes', 'root_bytes', 'fresh_work', 'profile'])
+@pytest.mark.parametrize('case', ['hit', 'miss', 'changed', 'partial', 'pair_bytes', 'root_bytes', 'both_bytes', 'evicted_roots', 'fresh_work', 'profile', 'compressor', 'ring', 'missing_pair', 'projection', 'compacted'])
 def test_discount_checks_before_clone_and_native_start(monkeypatch, case):
     monkeypatch.setattr('ds41f_mlx.execution_identity.numerical_profile',
                         lambda: 'unqualified' if case == 'profile' else 'flash-1017-pre-woa-fp8-v1')
@@ -47,19 +47,49 @@ def test_discount_checks_before_clone_and_native_start(monkeypatch, case):
     authority = pc.PairedCheckpointAuthority('identity', MX)
     target, rings, _ = pair(C)
     saved = authority.capture(target, rings, inp.token_ids[:C], images)
-    authority.publish(saved)
+    if case in ('pair_bytes', 'both_bytes'):
+        import numpy as np
+        # Supported singleton window layout; real logical arrays, not a
+        # patched estimator or raised admission constant.
+        saved = replace(saved, target=tuple(replace(layer,
+            cache=(layer.cache[0], np.zeros((1, 128, 4096), dtype=np.uint8), *layer.cache[2:]))
+            for layer in saved.target))
+    if case == 'compressor':
+        saved = replace(saved, target=(replace(saved.target[0], compress_ratio=4),) + saved.target[1:])
+    if case == 'ring':
+        import numpy as np
+        saved = replace(saved, rings=(replace(saved.rings[0], keys=np.zeros((1, 1, 64, 1))),) + saved.rings[1:])
+    if case != 'ring':
+        authority.publish(saved)
+    else:
+        # Corrupted retained payload after a valid publication.
+        authority.publish(authority.capture(target, rings, inp.token_ids[:C], images))
+        key = next(iter(authority._payloads))
+        authority._payloads[key] = saved
+    if case in ('root_bytes', 'both_bytes', 'evicted_roots'):
+        import numpy as np
+        # Unrelated old root: large logical auxiliary array, no sharing credit.
+        other = authority.capture(*pair(256))
+        layer = other.target[0]
+        other = replace(other, target=(replace(layer, cache=(*layer.cache[:6],
+            np.zeros((1, 193 * 1024**2), dtype=np.uint8))),) + other.target[1:])
+        authority.publish(other)
+        if case == 'evicted_roots':
+            authority.paged.evict(next(k for k, v in authority._payloads.items() if v is other))
+    if case == 'missing_pair':
+        authority._payloads.clear()
     if case == 'miss':
         authority.clear()
     if case == 'changed':
         inp = replace(inp, spans=(replace(inp.spans[0], digest='b'*64),) + inp.spans[1:])
     if case == 'partial':
         inp = replace(inp, spans=(replace(inp.spans[0], start=C-1, length=2),) + inp.spans[1:])
-    if case == 'pair_bytes':
-        monkeypatch.setattr(pc, 'PATCH_DISCOUNT_PAIR_BYTES', 1)
-    if case == 'root_bytes':
-        monkeypatch.setattr(pc, 'PATCH_DISCOUNT_ROOT_BYTES', 1)
     scheduler, request = scheduler_request(inp, authority)
     request.required_image_frontier = max(s.start+s.length for s in inp.spans)
+    if case == 'projection':
+        request.prompt_token_ids[0] += 1
+    if case == 'compacted':
+        request.prompt_token_ids = request.prompt_token_ids[1:]
     if case == 'fresh_work':
         # A formerly cached suffix is not automatically fresh-admissible.
         request.required_image_frontier = 0
@@ -74,17 +104,50 @@ def test_discount_checks_before_clone_and_native_start(monkeypatch, case):
         starts.append(True)
         scheduler.batch_generator = object()
         rec.owner = NS(uid=17, _bg=scheduler.batch_generator)
-    scheduler.backend = NS(_start=start, request_max_tokens=lambda p: 64)
+    from ds41f_mlx.observability import Projection
+    projection = Projection()
+    projection.begin('bounded-id')
+    request.trace['diagnostic_id'] = 'bounded-id'
+    scheduler.backend = NS(_start=start, request_max_tokens=lambda p: 64, telemetry=projection)
     scheduler._retire = lambda req, *, error: errors.append(error)
     scheduler._schedule_waiting()
-    if case == 'hit':
+    if case in ('hit', 'pair_bytes', 'root_bytes', 'both_bytes', 'evicted_roots'):
         assert starts == restores == [True] and not errors
-        assert request.trace['historical_patch_discount']
+        trace = request.trace
+        assert trace['historical_patch_discount']
+        assert trace['selected_pair_frontier'] == C
+        assert trace['fresh_encoder_patches'] == 0
+        assert trace['historical_planned_patches'] == 38272
+        assert trace['legacy_pair_bytes_exceeded'] == (case in ('pair_bytes', 'both_bytes'))
+        assert trace['legacy_root_bytes_exceeded'] == (case in ('root_bytes', 'both_bytes'))
+        assert trace['selected_pair_bytes'] == pc.pair_bytes(saved)
+        observed = projection.snapshot()['current_request']['metrics']
+        assert observed['selected_pair_bytes'] == trace['selected_pair_bytes']
+        assert observed['legacy_pair_bytes_exceeded'] == trace['legacy_pair_bytes_exceeded']
+        assert all(isinstance(v, (int, float, bool)) for v in observed.values())
+        assert trace['retained_pair_roots'] == (2 if case in ('root_bytes', 'both_bytes') else 1)
+        if case in ('pair_bytes', 'root_bytes', 'both_bytes', 'evicted_roots'):
+            import json
+            from ds41f_mlx.observability import TRACE_FIELDS
+            print(json.dumps(dict(case=case, **{k: trace[k] for k in TRACE_FIELDS if k in trace})))
     else:
         assert not starts and not restores and len(errors) == 1
         assert not request.native_started
     assert not inp._sources
     authority.clear()
+
+
+def test_real_uncovered_work_still_exceeds_fresh_budget():
+    # Wire age permits preparation deferral, never an encoder-budget bypass.
+    inp = history(16)
+    try:
+        frontier = inp.spans[8].start
+        assert sum(s.grid[0]*s.grid[1] for s in inp.spans if s.start >= frontier) == 38272
+        with pytest.raises(ValueError, match='patch budget'):
+            inp.validate_workload(frontier)
+        inp.validate_workload(inp.spans[9].start)  # seven remaining are within budget
+    finally:
+        inp.release_sources()
 
 
 def test_deferred_history_still_validates_every_container(monkeypatch):
@@ -125,7 +188,7 @@ def test_projection_bounds_packed_growth_tails_and_output_without_allocating():
     old = checkpoint(256)
     for end in (257, 1024, 8193, 1048576):
         assert pc.projected_pair_bytes(old, end) >= pc.pair_bytes(checkpoint(end))
-    assert pc.projected_pair_bytes(old, 1048576) > pc.PATCH_DISCOUNT_PAIR_BYTES
+    assert pc.projected_pair_bytes(old, 1048576) > 12 * 1024**2
     old.target[-1].cache[4] = None
     with pytest.raises(ValueError, match='tail layout'):
         pc.projected_pair_bytes(old, 257)

@@ -156,14 +156,16 @@ required image bytes available may use the same ordinary MTP cold `_start` path.
 Wire-image age changes only admission, not numerical inputs or the P6/Vision/
 DSpark/N-2/N-1/P5/Scheduler algorithm. Source digests and the full fresh workload
 are checked before native start. Every current image counts fresh at C=0: no
-cached-image patch discount, no use of the conditional paired-byte allowance.
+cached-image patch discount or paired-history allowance.
 **Deployed whole-image-safe C>0 admission** additionally admits independent Messages
 with an actual compatible complete C>0 pair at a whole-image-safe frontier.
 The selected pair is preserved, covered images skip Vision, and every uncovered
 occurrence is encoded completely at its absolute position regardless of wire age.
 Fresh workload and all fresh source digests are checked before native start.
-The separate aggregate-patch discount callback is unchanged: uncovered historical
-images cannot obtain its conditional paired-byte allowance. Image intersections,
+The separate aggregate-patch discount callback still requires complete historical
+coverage; uncovered historical images cannot obtain its discount. The independent
+[paired-byte bugfix](../artifacts/paired-byte-qualification/report.md) removes only
+its qualification-era fixed byte ceilings, retaining supported-layout validation. Image intersections,
 changed identities, missing bytes, budgets, exact logical leases and post-mutation
 burn remain guarded; no pair is discarded to force a cold miss.
 No historical tool or external effect is executed by prefill.

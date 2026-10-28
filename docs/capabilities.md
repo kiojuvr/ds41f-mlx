@@ -183,13 +183,14 @@ residency** ceiling. Every occurrence is fully validated and identity-accounted.
 The **16,777,216 source-pixel** guard still charges every occurrence, cached or
 fresh. The **36,864 planned ViT-patch** limit always bounds fresh encoder work.
 For Flash-1017 only, historical patches may be deferred until paired lookup:
-complete historical coverage, unchanged identities and a conservative packed-array
-byte projection must pass **before restoration**. Retained roots must total at
-most **192 MiB logical array bytes**, and the projected active pair (including
-requested output and the speculative block) must fit **12 MiB**. The projection
-also bounds each of the two unpublished captures; shared bytes are counted again,
-not assumed free. Outside this qualification, the existing all-history patch
-rejection remains. There is no new Vision context window or screenshot-count cap.
+complete historical coverage, unchanged identities and supported packed-array
+layouts must pass **before restoration**. The independent
+[paired-byte bugfix](../artifacts/paired-byte-qualification/report.md) removes the
+qualification-only 12 MiB projected-pair and 192 MiB retained-root rejection.
+Projection remains a structural validator and logical-byte measurement, not a
+physical-memory reservation. Finite isolated native continuation reached 26,481
+canonical positions with 38,272 historical patches; this is not arbitrary visual
+context or image-count qualification. There is no new Vision context window or screenshot-count cap.
 Cold fresh work and historical misses receive no discount. The deployed
 [independent Messages rules](mtp-production-serving.md#paired-capture-and-restore)
 admit actual C=0 misses or genuine whole-image-safe C>0 pairs, charging uncovered
@@ -206,7 +207,7 @@ near-1M-position, 600-occurrence queued metadata; that is **not** 600-image mode
 execution. Harness's 600 is a request compatibility reference, not an execution
 promise. Intersecting image spans still reject; no earlier paired state is
 discarded to force a cold miss. Broader conditional-discount reconstruction
-retains the original historical-coverage and paired-byte refusal.
+retains complete historical-coverage and supported-paired-layout requirements.
 
 The existing **16 MiB entire JSON body**, **128 distinct stored Files / 64 MiB
 storage**, queue serialization, checkpoint context/output and paired-cache residency

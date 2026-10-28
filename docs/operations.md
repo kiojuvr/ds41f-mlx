@@ -30,12 +30,14 @@ and are not production launch instructions.
 Ordinary image admission distinguishes Harness's 600 request occurrences from
 fresh Vision work. Every image is still fully validated and charged against the
 unchanged source-byte/pixel guards. Flash-1017 can omit genuinely paired-cached
-historical patches from the fresh-work charge only inside the
-[qualified paired-byte envelope](../artifacts/cached-image-admission/report.md):
-192 MiB retained logical array bytes and 12 MiB per projected active/captured
-pair, including output/speculation (228 MiB combined roots + active + two captures). These are conservative
-execution qualification guards, not a new cache owner, context window or image
-count policy. Requests outside them retain the all-history patch rejection.
+historical patches from the fresh-work charge only with complete compatible
+paired coverage and supported physical layouts. The independent
+[paired-byte bugfix](../artifacts/paired-byte-qualification/report.md) removes the
+old 12 MiB projected-pair / 192 MiB retained-root qualification ceilings.
+Logical-byte diagnostics are not MLX allocations or process footprint; snapshots
+and restores are not assumed free. Existing cache ownership/eviction remains.
+The finite 26,481-position native qualification does not promise arbitrary
+context, host load or image counts.
 The installed isolated path demonstrates twelve screenshot occurrences without
 admission overrides, paired continuity, native cancellation and fail-closed misses.
 Maximum-body/near-1M-position queued metadata is model-free tested, not model

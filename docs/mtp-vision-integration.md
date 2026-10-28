@@ -98,7 +98,8 @@ in full. The [finite integrated E2E](../artifacts/multimodal-runtime/phase4-e2e-
 exercises official offload, automatic compaction and reacquisition through paired
 settlement/publication. The [promotion record](../artifacts/multimodal-runtime/production-completion.md)
 binds installed acceptance; broader C2 qualification remains PARTIAL.
-The aggregate patch-discount callback still requires its existing historical coverage and paired-byte qualification. A selected pair is
+The aggregate patch-discount callback still requires complete historical coverage and supported paired-array layouts. The independent
+[paired-byte bugfix](../artifacts/paired-byte-qualification/report.md) removes only the former fixed logical-byte ceilings. A selected pair is
 never discarded to force C=0. Fresh last-message images
 retain their safe-miss path. Branches never rewind live rings. See the
 [ordinary admission contract](mtp-production-serving.md#paired-capture-and-restore)
@@ -114,8 +115,8 @@ context, without OFF's four-image cap (ordinary occurrence ceiling: 600). Per-im
 1014 expanded tokens, inline PNG/JPEG/WebP, aspect 1:2..2:1 and high/auto detail.
 Aggregate preparation is bounded by 64 MiB encoded bytes and 16,777,216 source
 pixels, including cached inputs. Fresh work is bounded by 36,864 planned ViT
-patches. Flash-1017 historical patches may be deferred only within the pre-restore
-paired-byte qualification; otherwise the all-history patch rejection remains.
+patches. Flash-1017 historical patches may be deferred only after complete
+compatible paired coverage and supported-layout validation before restoration.
 See [current capability bounds](capabilities.md#bounded-inline-images) and the
 [narrow physical qualification](../artifacts/cached-image-admission/report.md).
 The retained original real-model delta below does **not** qualify expanded capacity. Legacy OFF remains four images / 8192 positions. No URL/video,

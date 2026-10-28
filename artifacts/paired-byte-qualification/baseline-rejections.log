@@ -1,0 +1,268 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+________ test_discount_checks_before_clone_and_native_start[pair_bytes] ________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109b4f360>
+case = 'pair_bytes'
+
+    @pytest.mark.parametrize('case', ['hit', 'miss', 'changed', 'partial', 'pair_bytes', 'root_bytes', 'both_bytes', 'evicted_roots', 'fresh_work', 'profile', 'compressor', 'ring', 'missing_pair', 'projection', 'compacted'])
+    def test_discount_checks_before_clone_and_native_start(monkeypatch, case):
+        monkeypatch.setattr('ds41f_mlx.execution_identity.numerical_profile',
+                            lambda: 'unqualified' if case == 'profile' else 'flash-1017-pre-woa-fp8-v1')
+        inp = history()
+        C = len(inp.token_ids)-2
+        images = inp.identities()
+        authority = pc.PairedCheckpointAuthority('identity', MX)
+        target, rings, _ = pair(C)
+        saved = authority.capture(target, rings, inp.token_ids[:C], images)
+        if case in ('pair_bytes', 'both_bytes'):
+            import numpy as np
+            # Supported singleton window layout; real logical arrays, not a
+            # patched estimator or raised admission constant.
+            saved = replace(saved, target=tuple(replace(layer,
+                cache=(layer.cache[0], np.zeros((1, 128, 4096), dtype=np.uint8), *layer.cache[2:]))
+                for layer in saved.target))
+        if case == 'compressor':
+            saved = replace(saved, target=(replace(saved.target[0], compress_ratio=4),) + saved.target[1:])
+        if case == 'ring':
+            import numpy as np
+            saved = replace(saved, rings=(replace(saved.rings[0], keys=np.zeros((1, 1, 64, 1))),) + saved.rings[1:])
+        if case != 'ring':
+            authority.publish(saved)
+        else:
+            # Corrupted retained payload after a valid publication.
+            authority.publish(authority.capture(target, rings, inp.token_ids[:C], images))
+            key = next(iter(authority._payloads))
+            authority._payloads[key] = saved
+        if case in ('root_bytes', 'both_bytes', 'evicted_roots'):
+            import numpy as np
+            # Unrelated old root: large logical auxiliary array, no sharing credit.
+            other = authority.capture(*pair(256))
+            layer = other.target[0]
+            other = replace(other, target=(replace(layer, cache=(*layer.cache[:6],
+                np.zeros((1, 193 * 1024**2), dtype=np.uint8))),) + other.target[1:])
+            authority.publish(other)
+            if case == 'evicted_roots':
+                authority.paged.evict(next(k for k, v in authority._payloads.items() if v is other))
+        if case == 'missing_pair':
+            authority._payloads.clear()
+        if case == 'miss':
+            authority.clear()
+        if case == 'changed':
+            inp = replace(inp, spans=(replace(inp.spans[0], digest='b'*64),) + inp.spans[1:])
+        if case == 'partial':
+            inp = replace(inp, spans=(replace(inp.spans[0], start=C-1, length=2),) + inp.spans[1:])
+        scheduler, request = scheduler_request(inp, authority)
+        request.required_image_frontier = max(s.start+s.length for s in inp.spans)
+        if case == 'projection':
+            request.prompt_token_ids[0] += 1
+        if case == 'compacted':
+            request.prompt_token_ids = request.prompt_token_ids[1:]
+        if case == 'fresh_work':
+            # A formerly cached suffix is not automatically fresh-admissible.
+            request.required_image_frontier = 0
+            monkeypatch.setattr(mm.MultimodalInput, 'validate_workload', lambda *a: (_ for _ in ()).throw(ValueError('fresh Vision workload')))
+        errors, starts, restores = [], [], []
+        original = pc.PairedCheckpoint.restore
+        def restore(self, *args, **kw):
+            restores.append(True)
+            return original(self, *args, **kw)
+        monkeypatch.setattr(pc.PairedCheckpoint, 'restore', restore)
+        def start(rec, *args, **kwargs):
+            starts.append(True)
+            scheduler.batch_generator = object()
+            rec.owner = NS(uid=17, _bg=scheduler.batch_generator)
+        from ds41f_mlx.observability import Projection
+        projection = Projection()
+        projection.begin('bounded-id')
+        request.trace['diagnostic_id'] = 'bounded-id'
+        scheduler.backend = NS(_start=start, request_max_tokens=lambda p: 64, telemetry=projection)
+        scheduler._retire = lambda req, *, error: errors.append(error)
+        scheduler._schedule_waiting()
+        if case in ('hit', 'pair_bytes', 'root_bytes', 'both_bytes', 'evicted_roots'):
+>           assert starts == restores == [True] and not errors
+E           assert ([] == [True]
+E             
+E             Right contains one more item: True
+E             Use -v to get more diff)
+
+tests/test_cached_image_admission.py:115: AssertionError
+________ test_discount_checks_before_clone_and_native_start[root_bytes] ________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109b4cc30>
+case = 'root_bytes'
+
+    @pytest.mark.parametrize('case', ['hit', 'miss', 'changed', 'partial', 'pair_bytes', 'root_bytes', 'both_bytes', 'evicted_roots', 'fresh_work', 'profile', 'compressor', 'ring', 'missing_pair', 'projection', 'compacted'])
+    def test_discount_checks_before_clone_and_native_start(monkeypatch, case):
+        monkeypatch.setattr('ds41f_mlx.execution_identity.numerical_profile',
+                            lambda: 'unqualified' if case == 'profile' else 'flash-1017-pre-woa-fp8-v1')
+        inp = history()
+        C = len(inp.token_ids)-2
+        images = inp.identities()
+        authority = pc.PairedCheckpointAuthority('identity', MX)
+        target, rings, _ = pair(C)
+        saved = authority.capture(target, rings, inp.token_ids[:C], images)
+        if case in ('pair_bytes', 'both_bytes'):
+            import numpy as np
+            # Supported singleton window layout; real logical arrays, not a
+            # patched estimator or raised admission constant.
+            saved = replace(saved, target=tuple(replace(layer,
+                cache=(layer.cache[0], np.zeros((1, 128, 4096), dtype=np.uint8), *layer.cache[2:]))
+                for layer in saved.target))
+        if case == 'compressor':
+            saved = replace(saved, target=(replace(saved.target[0], compress_ratio=4),) + saved.target[1:])
+        if case == 'ring':
+            import numpy as np
+            saved = replace(saved, rings=(replace(saved.rings[0], keys=np.zeros((1, 1, 64, 1))),) + saved.rings[1:])
+        if case != 'ring':
+            authority.publish(saved)
+        else:
+            # Corrupted retained payload after a valid publication.
+            authority.publish(authority.capture(target, rings, inp.token_ids[:C], images))
+            key = next(iter(authority._payloads))
+            authority._payloads[key] = saved
+        if case in ('root_bytes', 'both_bytes', 'evicted_roots'):
+            import numpy as np
+            # Unrelated old root: large logical auxiliary array, no sharing credit.
+            other = authority.capture(*pair(256))
+            layer = other.target[0]
+            other = replace(other, target=(replace(layer, cache=(*layer.cache[:6],
+                np.zeros((1, 193 * 1024**2), dtype=np.uint8))),) + other.target[1:])
+            authority.publish(other)
+            if case == 'evicted_roots':
+                authority.paged.evict(next(k for k, v in authority._payloads.items() if v is other))
+        if case == 'missing_pair':
+            authority._payloads.clear()
+        if case == 'miss':
+            authority.clear()
+        if case == 'changed':
+            inp = replace(inp, spans=(replace(inp.spans[0], digest='b'*64),) + inp.spans[1:])
+        if case == 'partial':
+            inp = replace(inp, spans=(replace(inp.spans[0], start=C-1, length=2),) + inp.spans[1:])
+        scheduler, request = scheduler_request(inp, authority)
+        request.required_image_frontier = max(s.start+s.length for s in inp.spans)
+        if case == 'projection':
+            request.prompt_token_ids[0] += 1
+        if case == 'compacted':
+            request.prompt_token_ids = request.prompt_token_ids[1:]
+        if case == 'fresh_work':
+            # A formerly cached suffix is not automatically fresh-admissible.
+            request.required_image_frontier = 0
+            monkeypatch.setattr(mm.MultimodalInput, 'validate_workload', lambda *a: (_ for _ in ()).throw(ValueError('fresh Vision workload')))
+        errors, starts, restores = [], [], []
+        original = pc.PairedCheckpoint.restore
+        def restore(self, *args, **kw):
+            restores.append(True)
+            return original(self, *args, **kw)
+        monkeypatch.setattr(pc.PairedCheckpoint, 'restore', restore)
+        def start(rec, *args, **kwargs):
+            starts.append(True)
+            scheduler.batch_generator = object()
+            rec.owner = NS(uid=17, _bg=scheduler.batch_generator)
+        from ds41f_mlx.observability import Projection
+        projection = Projection()
+        projection.begin('bounded-id')
+        request.trace['diagnostic_id'] = 'bounded-id'
+        scheduler.backend = NS(_start=start, request_max_tokens=lambda p: 64, telemetry=projection)
+        scheduler._retire = lambda req, *, error: errors.append(error)
+        scheduler._schedule_waiting()
+        if case in ('hit', 'pair_bytes', 'root_bytes', 'both_bytes', 'evicted_roots'):
+>           assert starts == restores == [True] and not errors
+E           assert ([] == [True]
+E             
+E             Right contains one more item: True
+E             Use -v to get more diff)
+
+tests/test_cached_image_admission.py:115: AssertionError
+________ test_discount_checks_before_clone_and_native_start[both_bytes] ________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x113f19370>
+case = 'both_bytes'
+
+    @pytest.mark.parametrize('case', ['hit', 'miss', 'changed', 'partial', 'pair_bytes', 'root_bytes', 'both_bytes', 'evicted_roots', 'fresh_work', 'profile', 'compressor', 'ring', 'missing_pair', 'projection', 'compacted'])
+    def test_discount_checks_before_clone_and_native_start(monkeypatch, case):
+        monkeypatch.setattr('ds41f_mlx.execution_identity.numerical_profile',
+                            lambda: 'unqualified' if case == 'profile' else 'flash-1017-pre-woa-fp8-v1')
+        inp = history()
+        C = len(inp.token_ids)-2
+        images = inp.identities()
+        authority = pc.PairedCheckpointAuthority('identity', MX)
+        target, rings, _ = pair(C)
+        saved = authority.capture(target, rings, inp.token_ids[:C], images)
+        if case in ('pair_bytes', 'both_bytes'):
+            import numpy as np
+            # Supported singleton window layout; real logical arrays, not a
+            # patched estimator or raised admission constant.
+            saved = replace(saved, target=tuple(replace(layer,
+                cache=(layer.cache[0], np.zeros((1, 128, 4096), dtype=np.uint8), *layer.cache[2:]))
+                for layer in saved.target))
+        if case == 'compressor':
+            saved = replace(saved, target=(replace(saved.target[0], compress_ratio=4),) + saved.target[1:])
+        if case == 'ring':
+            import numpy as np
+            saved = replace(saved, rings=(replace(saved.rings[0], keys=np.zeros((1, 1, 64, 1))),) + saved.rings[1:])
+        if case != 'ring':
+            authority.publish(saved)
+        else:
+            # Corrupted retained payload after a valid publication.
+            authority.publish(authority.capture(target, rings, inp.token_ids[:C], images))
+            key = next(iter(authority._payloads))
+            authority._payloads[key] = saved
+        if case in ('root_bytes', 'both_bytes', 'evicted_roots'):
+            import numpy as np
+            # Unrelated old root: large logical auxiliary array, no sharing credit.
+            other = authority.capture(*pair(256))
+            layer = other.target[0]
+            other = replace(other, target=(replace(layer, cache=(*layer.cache[:6],
+                np.zeros((1, 193 * 1024**2), dtype=np.uint8))),) + other.target[1:])
+            authority.publish(other)
+            if case == 'evicted_roots':
+                authority.paged.evict(next(k for k, v in authority._payloads.items() if v is other))
+        if case == 'missing_pair':
+            authority._payloads.clear()
+        if case == 'miss':
+            authority.clear()
+        if case == 'changed':
+            inp = replace(inp, spans=(replace(inp.spans[0], digest='b'*64),) + inp.spans[1:])
+        if case == 'partial':
+            inp = replace(inp, spans=(replace(inp.spans[0], start=C-1, length=2),) + inp.spans[1:])
+        scheduler, request = scheduler_request(inp, authority)
+        request.required_image_frontier = max(s.start+s.length for s in inp.spans)
+        if case == 'projection':
+            request.prompt_token_ids[0] += 1
+        if case == 'compacted':
+            request.prompt_token_ids = request.prompt_token_ids[1:]
+        if case == 'fresh_work':
+            # A formerly cached suffix is not automatically fresh-admissible.
+            request.required_image_frontier = 0
+            monkeypatch.setattr(mm.MultimodalInput, 'validate_workload', lambda *a: (_ for _ in ()).throw(ValueError('fresh Vision workload')))
+        errors, starts, restores = [], [], []
+        original = pc.PairedCheckpoint.restore
+        def restore(self, *args, **kw):
+            restores.append(True)
+            return original(self, *args, **kw)
+        monkeypatch.setattr(pc.PairedCheckpoint, 'restore', restore)
+        def start(rec, *args, **kwargs):
+            starts.append(True)
+            scheduler.batch_generator = object()
+            rec.owner = NS(uid=17, _bg=scheduler.batch_generator)
+        from ds41f_mlx.observability import Projection
+        projection = Projection()
+        projection.begin('bounded-id')
+        request.trace['diagnostic_id'] = 'bounded-id'
+        scheduler.backend = NS(_start=start, request_max_tokens=lambda p: 64, telemetry=projection)
+        scheduler._retire = lambda req, *, error: errors.append(error)
+        scheduler._schedule_waiting()
+        if case in ('hit', 'pair_bytes', 'root_bytes', 'both_bytes', 'evicted_roots'):
+>           assert starts == restores == [True] and not errors
+E           assert ([] == [True]
+E             
+E             Right contains one more item: True
+E             Use -v to get more diff)
+
+tests/test_cached_image_admission.py:115: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_cached_image_admission.py::test_discount_checks_before_clone_and_native_start[pair_bytes]
+FAILED tests/test_cached_image_admission.py::test_discount_checks_before_clone_and_native_start[root_bytes]
+FAILED tests/test_cached_image_admission.py::test_discount_checks_before_clone_and_native_start[both_bytes]
+3 failed, 16 deselected in 43.51s

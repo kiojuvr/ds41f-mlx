@@ -71,8 +71,7 @@ class ProductionScheduler(Scheduler):
                 if sum(s.grid[0] * s.grid[1] for s in mm.spans) > MAX_REQUEST_PATCHES:
                     def admit(checkpoint):
                         trace['failure_stage'] = 'admission'
-                        from .paired_checkpoint import (pair_bytes, projected_pair_bytes,
-                            PATCH_DISCOUNT_PAIR_BYTES, PATCH_DISCOUNT_ROOT_BYTES)
+                        from .paired_checkpoint import pair_bytes, projected_pair_bytes
                         from ds41f_mlx.execution_identity import numerical_profile
                         if numerical_profile() != 'flash-1017-pre-woa-fp8-v1':
                             raise ValueError('aggregate image patch budget exceeded (unqualified numerical profile)')
@@ -86,10 +85,21 @@ class ProductionScheduler(Scheduler):
                         end = len(request.prompt_token_ids) + self.backend.request_max_tokens(request.prepared) + 5
                         roots = sum(pair_bytes(c) for c in self.checkpoints._payloads.values())
                         projected = projected_pair_bytes(checkpoint, end)
-                        if roots > PATCH_DISCOUNT_ROOT_BYTES or projected > PATCH_DISCOUNT_PAIR_BYTES:
-                            raise ValueError('aggregate image patch budget exceeded (paired-byte qualification fallback)')
-                        trace.update(historical_patch_discount=True, retained_pair_bytes=roots,
-                                     projected_pair_bytes=projected)
+                        stats = self.checkpoints.paged.get_stats()
+                        # Logical nbytes are not allocator reservations or process
+                        # footprint. Keep the layout validator, not the obsolete
+                        # qualification ceilings. Selection/leases stay upstream.
+                        trace.update(historical_patch_discount=True,
+                            historical_planned_patches=sum(s.grid[0] * s.grid[1] for s in mm.spans),
+                            fresh_encoder_patches=sum(s.grid[0] * s.grid[1] for s in mm.spans if s.start >= C),
+                            selected_pair_frontier=C, selected_pair_bytes=pair_bytes(checkpoint),
+                            retained_pair_bytes=roots, projected_pair_bytes=projected,
+                            requested_pair_frontier=end, retained_pair_roots=len(self.checkpoints._payloads),
+                            paired_free_blocks=stats.free_blocks,
+                            paired_evictable_blocks=len(self.checkpoints.paged.get_evictable_blocks(len(self.checkpoints._payloads))),
+                            legacy_pair_bytes_exceeded=projected > 12 * 1024**2,
+                            legacy_root_bytes_exceeded=roots > 192 * 1024**2)
+                        metrics(self.backend, trace)
             if logical is not None and logical.canonical:
                 restored = self.checkpoints.acquire_retained(self.session_leases.get(logical.session_id),
                     request.prompt_token_ids, timings=trace, observe=observe, images=request.image_identities, admit=admit)

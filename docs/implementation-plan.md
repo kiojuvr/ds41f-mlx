@@ -86,8 +86,10 @@ they are not permanent prohibitions on investigating upstream-compatible designs
 Conditional cached-image admission is implemented and narrowly qualified for
 Flash-1017: fresh work remains bounded by **36,864 ViT patches**; historical
 patch discount requires compatible complete paired coverage and pre-restore
-checks of **12 MiB per projected complete pair** and **192 MiB retained logical
-roots**. Independent source-byte, pixel, body, context and queue guards remain.
+layout validation. The independent [paired-byte bugfix](../artifacts/paired-byte-qualification/report.md)
+removes the former 12 MiB projected-pair and 192 MiB retained-root qualification
+ceilings, with finite native evidence, not a reopened milestone.
+Independent source-byte, pixel, body, context and queue guards remain.
 The [cached-image admission report](../artifacts/cached-image-admission/report.md)
 establishes twelve screenshot occurrences without overrides, not an image-count
 ceiling or 600-occurrence simultaneous model execution.
