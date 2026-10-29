@@ -61,11 +61,14 @@ zero replay/repack and graceful exit. Dependencies/checkpoint are unchanged;
 encoded-byte, per-image, fresh-work and other independent limits remain. This
 finite installation acceptance is not a new Harness/endurance campaign.
 
-The subsequent [per-image expanded-token source correction](../artifacts/per-image-expanded-token-admission/report.md)
-is isolated-native-qualified but **not installed**. It replaces the ordinary
-checkout's historical 1014-position ceiling with the checkpoint Processor limit
-(1024 for Flash-1017). Installed b2f7654 still has the 1014 ceiling; do not infer
-current Production behavior from the newer source capability reporting.
+The [per-image expanded-token correction](../artifacts/per-image-expanded-token-admission/report.md)
+was subsequently promoted as `Multimodal-Runtime` source `69689d5` into the same
+Production environment. [Installation and rollback](../artifacts/production-multimodal-69689d5/report.md)
+record installed HTTP Files/Messages acceptance of 1014/1016/1024-position images
+and genuine paired continuations, plus safe fresh-budget refusal. Ordinary
+per-image positions now follow the checkpoint Processor limit (1024 for
+Flash-1017), not the old 1014 portrait qualification. Other resource limits,
+dependencies, checkpoint assets and retired OFF qualification remain unchanged.
 
 Do not expect a Runtime 400 to cause Harness offload. Official rc.2 offload is
 triggered by its adapter's `IMAGE_OFFLOAD_REQUIRED`, not arbitrary HTTP errors.

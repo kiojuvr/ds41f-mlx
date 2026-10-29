@@ -96,7 +96,9 @@ evidence and a separately authorized [b2f7654 Production installation](../artifa
 This maintenance and bounded installed acceptance do not reopen phases.
 The independent [per-image token admission correction](../artifacts/per-image-expanded-token-admission/report.md)
 derives ordinary image spans from the checkpoint Processor limit, with focused
-1016/1024-position isolated native evidence only; no Production promotion follows.
+1016/1024-position isolated native evidence and a separately authorized
+[69689d5 Production installation](../artifacts/production-multimodal-69689d5/report.md).
+This maintenance does not reopen the completed campaign.
 The [cached-image admission report](../artifacts/cached-image-admission/report.md)
 establishes twelve screenshot occurrences without overrides, not an image-count
 ceiling or 600-occurrence simultaneous model execution.

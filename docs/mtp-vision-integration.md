@@ -116,7 +116,9 @@ inline PNG/JPEG/WebP, processor-planned aspect ratios and high/auto detail.
 The ordinary checkout's per-image expanded-position limit now comes from the
 Processor configuration (1024 for Flash-1017), not the historical 1014 portrait
 qualification. [Isolated native 1016/1024 evidence](../artifacts/per-image-expanded-token-admission/report.md)
-qualifies this focused source correction; Production was not modified by that task.
+qualifies this focused source correction; subsequent
+[69689d5 installed acceptance](../artifacts/production-multimodal-69689d5/report.md)
+promotes it through HTTP Files/Messages without changing the execution seam.
 Aggregate encoded residency is bounded by 64 MiB, including cached inputs.
 Per-image validation/decoding remains sequential and fully checked. Fresh work
 is bounded by 16,777,216 source pixels and 36,864 planned ViT patches at the

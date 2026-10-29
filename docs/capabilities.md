@@ -178,8 +178,10 @@ checkout now follows the checkpoint Processor's per-image expanded-position limi
 The [per-image token-boundary correction](../artifacts/per-image-expanded-token-admission/report.md)
 executes the reported 1582×1084 / 1016-position case and a Processor-planned
 3024×588 / 1024-position image in an isolated native candidate, including paired
-reuse. This is **not promoted**: installed Production b2f7654 still enforces 1014.
-Other extreme 1024-position grids have geometry coverage, not new native acceptance.
+reuse. The subsequent [69689d5 Production installation](../artifacts/production-multimodal-69689d5/report.md)
+passes the same boundary through installed HTTP Files/Messages; Production now
+uses the Processor-defined limit. Other extreme 1024-position grids have geometry
+coverage, not new native acceptance.
 
 Per-image format/detail, planned geometry, 16 MiB and 4,194,304 pixels remain
 independent of that Processor-defined position limit. Retired nonordinary/OFF

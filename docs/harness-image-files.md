@@ -164,8 +164,10 @@ After resolution, the shared Vision path still enforces **16 MiB/image,
 (1024/image for the Flash-1017 Processor in the ordinary checkout), encoded
 residency, terminal-text, context expansion and output reservation. The separate
 [per-image token correction](../artifacts/per-image-expanded-token-admission/report.md)
-has isolated native 1016/1024-position evidence, not Production promotion;
-installed b2f7654 retains its 1014-position limit.
+has isolated native 1016/1024-position evidence and subsequent
+[69689d5 installed Production acceptance](../artifacts/production-multimodal-69689d5/report.md)
+through HTTP Files/Messages. The installed ordinary per-image ceiling now comes
+from Processor configuration, not the historical 1014 qualification.
 Historical occurrences still undergo complete sequential decoding validation and
 identity accounting, but decoded buffers are not queued. **16,777,216 source
 pixels / 36,864 ViT patches** bound actual fresh work after validated paired
