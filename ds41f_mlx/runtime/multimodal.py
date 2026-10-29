@@ -16,7 +16,7 @@ from typing import Any
 MAX_IMAGES = 4
 MAX_IMAGE_BYTES = 16 * 1024 * 1024
 MAX_PIXELS = 2048 * 2048
-MAX_IMAGE_TOKENS = 1014
+MAX_IMAGE_TOKENS = 1014  # Retired nonordinary/OFF qualification; not an MTP limit.
 MAX_MULTIMODAL_CONTEXT = 8192  # Legacy standard-OFF only.
 # Harness rc.2 occurrence envelope; not a model execution guarantee.
 MAX_REQUEST_IMAGES = 600
@@ -235,6 +235,7 @@ def prepare_multimodal(token_ids: list[int], sources: list[Any], config: Any, *,
     origins = iter(historical or (False,) * len(sources))
     # Bound expansion before allocation; output reservation is checked by serving.
     context = config.max_seq_len if ordinary else MAX_MULTIMODAL_CONTEXT
+    image_token_limit = config.vision_max_n_token if ordinary else MAX_IMAGE_TOKENS
     if len(token_ids) > context:
         raise ValueError('expanded multimodal context exceeds context envelope')
     sources = iter(sources)
@@ -259,8 +260,9 @@ def prepare_multimodal(token_ids: list[int], sources: list[Any], config: Any, *,
             nh, nw, height, width = plan_image_grid(metadata['width'], metadata['height'], config)
             h, w = height // config.vision_patch_size, width // config.vision_patch_size
             kinds = image_token_kinds(nh, nw)
-            if len(kinds) > MAX_IMAGE_TOKENS:
-                raise ValueError('expanded image exceeds qualified token envelope')
+            if len(kinds) > image_token_limit:
+                raise ValueError('expanded image exceeds processor token envelope' if ordinary
+                                 else 'expanded image exceeds qualified token envelope')
             # Deferral is not a cache hit. Scheduler still validates complete
             # physical paired coverage and the actual fresh workload.
             total_patches += 0 if is_historical else h * w

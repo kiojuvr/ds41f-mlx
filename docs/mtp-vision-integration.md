@@ -112,7 +112,11 @@ with image identity validation and the same recipe reconstruction certificate
 The original delta below used the OFF four-image / 8192-position bound.
 Ordinary MTP now admits actual expanded prompt + output reservation up to checkpoint
 context, without OFF's four-image cap (ordinary occurrence ceiling: 600). Per-image limits remain 16 MiB, 4,194,304 pixels,
-1014 expanded tokens, inline PNG/JPEG/WebP, aspect 1:2..2:1 and high/auto detail.
+inline PNG/JPEG/WebP, processor-planned aspect ratios and high/auto detail.
+The ordinary checkout's per-image expanded-position limit now comes from the
+Processor configuration (1024 for Flash-1017), not the historical 1014 portrait
+qualification. [Isolated native 1016/1024 evidence](../artifacts/per-image-expanded-token-admission/report.md)
+qualifies this focused source correction; Production was not modified by that task.
 Aggregate encoded residency is bounded by 64 MiB, including cached inputs.
 Per-image validation/decoding remains sequential and fully checked. Fresh work
 is bounded by 16,777,216 source pixels and 36,864 planned ViT patches at the

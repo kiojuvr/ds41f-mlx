@@ -172,12 +172,18 @@ expanded prompt + requested output must fit the checkpoint context. Output remai
 The independent [aspect-ratio Production correction](../artifacts/extreme-aspect-ratio/report.md)
 removes the fixed 2:1 admission guard. An 8:1 Files-backed image and ordinary
 tool-result paired continuation passed native acceptance; 4:1/1:4, 8:1/1:8 and
-selected one-pixel shapes have model-free packing coverage only. Extreme shapes
-may still exceed the unchanged 1014-position bound (for example, 1×4096 plans
-1024 positions and is rejected).
+selected one-pixel shapes have model-free packing coverage only. The ordinary
+checkout now follows the checkpoint Processor's per-image expanded-position limit
+(**1024 for Flash-1017**), not the earlier portrait qualification value 1014.
+The [per-image token-boundary correction](../artifacts/per-image-expanded-token-admission/report.md)
+executes the reported 1582×1084 / 1016-position case and a Processor-planned
+3024×588 / 1024-position image in an isolated native candidate, including paired
+reuse. This is **not promoted**: installed Production b2f7654 still enforces 1014.
+Other extreme 1024-position grids have geometry coverage, not new native acceptance.
 
-Per-image format/detail, planned geometry, 16 MiB, 4,194,304 pixels and 1014 expanded-position
-bounds remain. Ordinary requests admit at most **600 image occurrences**, matching
+Per-image format/detail, planned geometry, 16 MiB and 4,194,304 pixels remain
+independent of that Processor-defined position limit. Retired nonordinary/OFF
+preparation/restore retains its separate 1014-position qualification guard. Ordinary requests admit at most **600 image occurrences**, matching
 Harness rc.2's default request count, with an independent **64 MiB encoded-byte
 residency** ceiling. Every occurrence is fully validated and identity-accounted.
 The **16,777,216 source-pixel** and **36,864 planned ViT-patch** budgets bound

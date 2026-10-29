@@ -38,13 +38,15 @@ def context_envelope(checkpoint: Path, *, multimodal: bool = False, ordinary: bo
 def vision_capacity(checkpoint: Path):
     """Ordinary implementation capability; not full-model acceptance evidence."""
     from ds41f_mlx.runtime.multimodal import (
-        MAX_IMAGE_BYTES, MAX_PIXELS, MAX_IMAGE_TOKENS, MAX_REQUEST_IMAGES,
+        MAX_IMAGE_BYTES, MAX_PIXELS, MAX_REQUEST_IMAGES,
         MAX_REQUEST_IMAGE_BYTES, MAX_REQUEST_PIXELS, MAX_REQUEST_PATCHES,
     )
+    from ds41f_mlx.model_execution.config import ModelConfig
+    model_config = ModelConfig.from_dict(json.loads((checkpoint / 'config.json').read_text()))
     return dict(implemented_total_tokens=context_envelope(checkpoint, multimodal=True, ordinary=True),
                 output_reservation_required=True, max_images=MAX_REQUEST_IMAGES,
                 max_image_bytes=MAX_IMAGE_BYTES, max_image_pixels=MAX_PIXELS,
-                max_image_tokens=MAX_IMAGE_TOKENS,
+                max_image_tokens=model_config.vision_max_n_token,
                 max_request_image_bytes=MAX_REQUEST_IMAGE_BYTES,
                 max_request_pixels=MAX_REQUEST_PIXELS, max_request_patches=MAX_REQUEST_PATCHES,
                 pixel_patch_budget_scope='fresh_pixels_and_patches_with_complete_pair',
