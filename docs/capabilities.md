@@ -187,7 +187,8 @@ one at a time; queued sources remain encoded bytes, not decoded images. Wire age
 can defer early work charges but cannot authorize a cache hit or bypass the actual
 fresh-work checks. The [historical-image aggregate fix](../artifacts/historical-image-aggregate-admission/report.md)
 passed isolated native continuation with 20 occurrences / 16,955,588 source pixels;
-**this source fix has not been installed in Production**. Existing byte, occurrence,
+the [b2f7654 Production installation](../artifacts/production-multimodal-b2f7654/report.md)
+subsequently passed the same boundary through installed HTTP Files/Messages. Existing byte, occurrence,
 body, context and cache limits are unchanged. For Flash-1017 only, historical
 patches beyond the aggregate patch threshold may be deferred until paired lookup:
 complete historical coverage, unchanged identities and supported packed-array

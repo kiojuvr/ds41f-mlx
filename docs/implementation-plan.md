@@ -91,8 +91,9 @@ removes the former 12 MiB projected-pair and 192 MiB retained-root qualification
 ceilings, with finite native evidence, not a reopened milestone.
 Independent source-byte, fresh-pixel, body, context and queue guards remain.
 The post-completion [historical-image aggregate bugfix](../artifacts/historical-image-aggregate-admission/report.md)
-removes cumulative covered-history pixel charging in the checkout, with focused
-isolated native evidence only; it does not promote Production or reopen phases.
+removes cumulative covered-history pixel charging, with focused isolated native
+evidence and a separately authorized [b2f7654 Production installation](../artifacts/production-multimodal-b2f7654/report.md).
+This maintenance and bounded installed acceptance do not reopen phases.
 The [cached-image admission report](../artifacts/cached-image-admission/report.md)
 establishes twelve screenshot occurrences without overrides, not an image-count
 ceiling or 600-occurrence simultaneous model execution.

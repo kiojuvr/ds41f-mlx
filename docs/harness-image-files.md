@@ -146,7 +146,7 @@ checks expiry immediately. Request-held snapshots may outlive that sweep.
 | Actual Messages JSON wire bytes | Unchanged 16 MiB |
 | Files-mode image occurrences | 600 including inline images and repeated IDs; independent of the 128 distinct storage slots |
 | Resolved encoded image bytes | 64 MiB aggregate; counted per occurrence before base64 expansion |
-| Fresh source pixels | 16,777,216 after verified paired coverage; no cumulative covered-history pixel charge during resolution (isolated-qualified source fix, not yet promoted) |
+| Fresh source pixels | 16,777,216 after verified paired coverage; no cumulative covered-history pixel charge during resolution (bounded Production acceptance linked below) |
 
 `create_app(files_limits=FileLimits(file_bytes=..., count=..., storage_bytes=...))`
 can **lower only** the first three storage ceilings; no new CLI/environment or
@@ -170,7 +170,10 @@ Conditional aggregate-patch discount still requires complete compatible historic
 coverage and supported pair layouts. Existing independent Messages reconstruction
 rules are unchanged; no new replay/recovery path is added. Files does not allocate
 model KV on upload or resolution. The [20-occurrence source correction](../artifacts/historical-image-aggregate-admission/report.md)
-has isolated native evidence; Production was deliberately not modified.
+has isolated native evidence; the subsequent
+[b2f7654 Production installation](../artifacts/production-multimodal-b2f7654/report.md)
+passes the affected HTTP Files/Messages boundary. The earlier source-task report
+remains unchanged.
 
 Harness rc.2's default 600 occurrences / 128 MiB raw / 20 MiB base64-image budgets
 are request policies, not these physical storage/transport limits. Full-envelope

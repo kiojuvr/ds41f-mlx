@@ -118,7 +118,8 @@ Per-image validation/decoding remains sequential and fully checked. Fresh work
 is bounded by 16,777,216 source pixels and 36,864 planned ViT patches at the
 validated paired frontier; historical wire age alone never grants this discount.
 The [historical-image aggregate correction](../artifacts/historical-image-aggregate-admission/report.md)
-is isolated-native-qualified source behavior, not a Production promotion. Flash-1017 historical patches may be deferred only after complete
+has isolated native evidence and subsequent
+[b2f7654 installed Production acceptance](../artifacts/production-multimodal-b2f7654/report.md). Flash-1017 historical patches may be deferred only after complete
 compatible paired coverage and supported-layout validation before restoration.
 See [current capability bounds](capabilities.md#bounded-inline-images) and the
 [narrow physical qualification](../artifacts/cached-image-admission/report.md).

@@ -29,7 +29,8 @@ and are not production launch instructions.
 
 Ordinary image admission distinguishes Harness's 600 request occurrences from
 fresh Vision work. Every image is still fully validated and charged against the
-unchanged source-byte/pixel guards. Flash-1017 can omit genuinely paired-cached
+unchanged source-byte and per-image pixel guards; aggregate pixel/patch budgets
+charge actual fresh work at the verified paired frontier. Flash-1017 can omit genuinely paired-cached
 historical patches from the fresh-work charge only with complete compatible
 paired coverage and supported physical layouts. The independent
 [paired-byte bugfix](../artifacts/paired-byte-qualification/report.md) removes the
@@ -50,11 +51,15 @@ output, queue and paired-cache limits remain independent. See
 [capability limits](capabilities.md#bounded-inline-images) and the
 [compatibility assessment](../artifacts/harness-image-capacity/report.md).
 
-The separate [historical-image aggregate source fix](../artifacts/historical-image-aggregate-admission/report.md)
-is isolated-native-qualified but **not installed/promoted** by that task.
-It changes the checkout's pixel budget to actual fresh work after verified paired
-coverage; the existing Production installation still has the all-history pixel
-preparation guard. Do not infer installed behavior from checkout capability docs.
+The [historical-image aggregate source fix](../artifacts/historical-image-aggregate-admission/report.md)
+was subsequently promoted with `Multimodal-Runtime` source `b2f7654` into the
+existing `/Volumes/SDXC-512/ds41f-1017` installation. The
+[installed acceptance and rollback record](../artifacts/production-multimodal-b2f7654/report.md)
+verifies HTTP Files/Messages continuation with 20 occurrences / 16,955,588 source
+pixels, then cached-only continuation, aligned paired settlement/publication,
+zero replay/repack and graceful exit. Dependencies/checkpoint are unchanged;
+encoded-byte, per-image, fresh-work and other independent limits remain. This
+finite installation acceptance is not a new Harness/endurance campaign.
 
 Do not expect a Runtime 400 to cause Harness offload. Official rc.2 offload is
 triggered by its adapter's `IMAGE_OFFLOAD_REQUIRED`, not arbitrary HTTP errors.
