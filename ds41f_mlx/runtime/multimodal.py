@@ -20,8 +20,9 @@ MAX_IMAGE_TOKENS = 1014
 MAX_MULTIMODAL_CONTEXT = 8192  # Legacy standard-OFF only.
 # Harness rc.2 occurrence envelope; not a model execution guarantee.
 MAX_REQUEST_IMAGES = 600
-# Independent source-residency guards; patches also bound fresh encoder work.
-# Ordinary historical patch deferral requires pre-restore paired-byte admission.
+# Encoded bytes bound queued source residency. Pixels/patches bound fresh work.
+# Ordinary wire history can defer early work charges, never prove a cache hit:
+# the validated physical paired frontier decides actual fresh work before start.
 # These are not Harness request byte budgets.
 MAX_REQUEST_IMAGE_BYTES = 64 * 1024 * 1024
 MAX_REQUEST_PIXELS = 16 * 1024 * 1024
@@ -228,7 +229,7 @@ def prepare_multimodal(token_ids: list[int], sources: list[Any], config: Any, *,
     if token_ids.count(config.image_token_id) != len(sources):
         raise ValueError('image placeholder/source count mismatch')
     expanded, spans, encoded = [], [], {}
-    total_bytes = total_pixels = total_patches = expansion = 0
+    total_bytes = fresh_pixels = total_patches = expansion = 0
     if historical and (not ordinary or len(historical) != len(sources)):
         raise ValueError('invalid historical image origins')
     origins = iter(historical or (False,) * len(sources))
@@ -247,17 +248,21 @@ def prepare_multimodal(token_ids: list[int], sources: list[Any], config: Any, *,
         if total_bytes > MAX_REQUEST_IMAGE_BYTES:
             raise ValueError('aggregate encoded image byte budget exceeded')
         try:
-            # Retain full container/pixel validation even on a later cache hit.
-            # Decoded pixels are transient here; no resize/normalization/patching.
-            metadata = validate_encoded_image(data, remaining_pixels=MAX_REQUEST_PIXELS-total_pixels)
-            total_pixels += metadata['width'] * metadata['height']
+            # Fully validate/decode one source at a time, even on a later hit;
+            # only encoded bytes/metadata survive. Wire age defers an early
+            # charge, not actual admission: validate_workload uses the verified
+            # paired frontier (or genuine miss) before any native start.
+            metadata = validate_encoded_image(data, remaining_pixels=(
+                None if is_historical else MAX_REQUEST_PIXELS-fresh_pixels))
+            if not is_historical:
+                fresh_pixels += metadata['width'] * metadata['height']
             nh, nw, height, width = plan_image_grid(metadata['width'], metadata['height'], config)
             h, w = height // config.vision_patch_size, width // config.vision_patch_size
             kinds = image_token_kinds(nh, nw)
             if len(kinds) > MAX_IMAGE_TOKENS:
                 raise ValueError('expanded image exceeds qualified token envelope')
-            # Deferral is not a cache hit. Scheduler must still prove complete
-            # paired coverage and the bounded physical envelope before cloning.
+            # Deferral is not a cache hit. Scheduler still validates complete
+            # physical paired coverage and the actual fresh workload.
             total_patches += 0 if is_historical else h * w
             if total_patches > MAX_REQUEST_PATCHES:
                 raise ValueError('aggregate image patch budget exceeded')

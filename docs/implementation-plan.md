@@ -89,7 +89,10 @@ patch discount requires compatible complete paired coverage and pre-restore
 layout validation. The independent [paired-byte bugfix](../artifacts/paired-byte-qualification/report.md)
 removes the former 12 MiB projected-pair and 192 MiB retained-root qualification
 ceilings, with finite native evidence, not a reopened milestone.
-Independent source-byte, pixel, body, context and queue guards remain.
+Independent source-byte, fresh-pixel, body, context and queue guards remain.
+The post-completion [historical-image aggregate bugfix](../artifacts/historical-image-aggregate-admission/report.md)
+removes cumulative covered-history pixel charging in the checkout, with focused
+isolated native evidence only; it does not promote Production or reopen phases.
 The [cached-image admission report](../artifacts/cached-image-admission/report.md)
 establishes twelve screenshot occurrences without overrides, not an image-count
 ceiling or 600-occurrence simultaneous model execution.

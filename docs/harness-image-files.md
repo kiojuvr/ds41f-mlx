@@ -146,7 +146,7 @@ checks expiry immediately. Request-held snapshots may outlive that sweep.
 | Actual Messages JSON wire bytes | Unchanged 16 MiB |
 | Files-mode image occurrences | 600 including inline images and repeated IDs; independent of the 128 distinct storage slots |
 | Resolved encoded image bytes | 64 MiB aggregate; counted per occurrence before base64 expansion |
-| Resolved source pixels | 16,777,216 all-history physical guard, counting repeated images; downstream preparation also includes inline images |
+| Fresh source pixels | 16,777,216 after verified paired coverage; no cumulative covered-history pixel charge during resolution (isolated-qualified source fix, not yet promoted) |
 
 `create_app(files_limits=FileLimits(file_bytes=..., count=..., storage_bytes=...))`
 can **lower only** the first three storage ceilings; no new CLI/environment or
@@ -159,22 +159,27 @@ occurrence/encoded budgets before allocating base64 copies; at most 64 MiB encod
 bytes become approximately 86 MiB base64 plus bounded JSON/native-parser copies.
 This is not a zero-cost memory path or expanded model capacity.
 
-After resolution, the existing shared Vision path still enforces **16 MiB/image,
-4,194,304 pixels/image, processor-planned aspect ratios, 1014 expanded positions/image,
-36,864 all-history ViT patches**, encoded residency, terminal-text, context expansion
-and output reservation. Historical occurrences still undergo complete decoding
-validation and identity accounting. Only fresh spans invoke Vision after paired
-restoration; that does not exempt cached history from physical admission.
-Fresh-only admission remains unqualified pending queue/restore/capture residency
-evidence. Missing/changed/partial historical pairs reject, not replay. Files does
-not allocate model KV on upload or resolution.
+After resolution, the shared Vision path still enforces **16 MiB/image,
+4,194,304 pixels/image, processor-planned aspect ratios, 1014 expanded positions/image**,
+encoded residency, terminal-text, context expansion and output reservation.
+Historical occurrences still undergo complete sequential decoding validation and
+identity accounting, but decoded buffers are not queued. **16,777,216 source
+pixels / 36,864 ViT patches** bound actual fresh work after validated paired
+coverage; historical wire flags only defer early charges, not execution admission.
+Conditional aggregate-patch discount still requires complete compatible historical
+coverage and supported pair layouts. Existing independent Messages reconstruction
+rules are unchanged; no new replay/recovery path is added. Files does not allocate
+model KV on upload or resolution. The [20-occurrence source correction](../artifacts/historical-image-aggregate-admission/report.md)
+has isolated native evidence; Production was deliberately not modified.
 
 Harness rc.2's default 600 occurrences / 128 MiB raw / 20 MiB base64-image budgets
 are request policies, not these physical storage/transport limits. Full-envelope
 compatibility remains **PARTIAL**. Runtime 400 is `INVALID_REQUEST`, not
 `IMAGE_OFFLOAD_REQUIRED`: it does not cause the official image-offload plugin to
 log a projection or retry. Offload/summary compaction can invalidate the canonical
-prefix; no automatic paired reconstruction is implemented. See the
+prefix. Existing independent Messages C=0 / whole-image-safe C>0 reconstruction
+is described by [current capabilities](capabilities.md#bounded-inline-images);
+this pixel fix does not extend its rules. See the historical
 [assessment](../artifacts/harness-image-capacity/report.md).
 
 ## Identity, cache and compatibility exclusions
@@ -182,9 +187,11 @@ prefix; no automatic paired reconstruction is implemented. See the
 The existing encoded-byte SHA-256/span/grid identity and paired cache remain
 authoritative. Same bytes at the same occurrence produce the same Recipe tokens
 and image identities for inline input, a file reference and a replacement ID.
-A live file **does not** restore missing historical Target/DSpark paired state:
-cache misses/eviction/edits retain explicit historical-image rejection; no silent
-re-encoding/replay is allowed. File lifetime and paired-KV lifetime are independent.
+A live file **does not** restore missing historical Target/DSpark paired state.
+Independent Messages reconstruction, where already supported, must charge every
+uncovered image fresh and fit both fresh budgets; exact logical Chat lease loss
+still fails closed. No fabricated hit, partial-image restore or new replay path
+is introduced. File lifetime and paired-KV lifetime are independent.
 
 **Unsupported:** list/pagination, metadata retrieval, content/download endpoints,
 OpenAI `purpose`/Files variants, arbitrary documents, remote URLs, persistent IDs,

@@ -41,7 +41,7 @@ def test_aggregate_preparation_rejection(monkeypatch, budget, limit, reason):
 
 def test_actual_aggregate_pixel_and_patch_budgets(monkeypatch):
     monkeypatch.setattr(processing, 'image_patch_array', forbidden)
-    # Five maximum-sized sources exceed the retained four-image pixel budget,
+    # Five maximum-sized fresh sources exceed the fresh pixel budget,
     # while count alone is no longer an admission rule.
     with pytest.raises(ValueError, match='aggregate decoded pixel budget'):
         prepare([source(size=(2048, 2048))] * 5, ordinary=True)
@@ -81,7 +81,7 @@ def test_actual_expansion_output_checkpoint_and_text_limits(tmp_path):
     assert context_envelope(tmp_path, multimodal=True, ordinary=True) == 2_097_152
     capability = vision_capacity(tmp_path)
     assert capability['max_images'] == 600
-    assert capability['pixel_patch_budget_scope'] == 'all_history_pixels; fresh_patches_with_complete_pair'
+    assert capability['pixel_patch_budget_scope'] == 'fresh_pixels_and_patches_with_complete_pair'
     assert capability['historical_discount_qualified'] is True
     assert capability['historical_patch_discount']['supported_pair_layout_required'] is True
     assert capability['historical_patch_discount']['complete_historical_coverage_required'] is True

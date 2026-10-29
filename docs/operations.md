@@ -50,6 +50,12 @@ output, queue and paired-cache limits remain independent. See
 [capability limits](capabilities.md#bounded-inline-images) and the
 [compatibility assessment](../artifacts/harness-image-capacity/report.md).
 
+The separate [historical-image aggregate source fix](../artifacts/historical-image-aggregate-admission/report.md)
+is isolated-native-qualified but **not installed/promoted** by that task.
+It changes the checkout's pixel budget to actual fresh work after verified paired
+coverage; the existing Production installation still has the all-history pixel
+preparation guard. Do not infer installed behavior from checkout capability docs.
+
 Do not expect a Runtime 400 to cause Harness offload. Official rc.2 offload is
 triggered by its adapter's `IMAGE_OFFLOAD_REQUIRED`, not arbitrary HTTP errors.
 Offload or automatic summary compaction changes canonical tokens. The promoted

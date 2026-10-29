@@ -47,7 +47,7 @@ def vision_capacity(checkpoint: Path):
                 max_image_tokens=MAX_IMAGE_TOKENS,
                 max_request_image_bytes=MAX_REQUEST_IMAGE_BYTES,
                 max_request_pixels=MAX_REQUEST_PIXELS, max_request_patches=MAX_REQUEST_PATCHES,
-                pixel_patch_budget_scope='all_history_pixels; fresh_patches_with_complete_pair',
+                pixel_patch_budget_scope='fresh_pixels_and_patches_with_complete_pair',
                 historical_discount_qualified=True,
                 historical_patch_discount=dict(numerical_profile='flash-1017-pre-woa-fp8-v1',
                     supported_pair_layout_required=True,

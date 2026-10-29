@@ -1,0 +1,222 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+__ test_twentieth_occurrence_validates_sequentially_without_retaining_pixels ___
+
+args = (b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x03p\x00\x00\x03 \x08\x02\x00\x00\x00\xed\x06\x17w\x00\x00\x0e\xadIDATx...9\xa0\x04\x00 \x11\x94\x00\x00$\x82\x12\x00\x80DP\x02\x00\xb0\x8a\x1f\x83]\x0f;\x9a|co\x00\x00\x00\x00IEND\xaeB`\x82',)
+kwargs = {'remaining_pixels': 525628}
+
+    def validated(*args, **kwargs):
+        assert not any(r() is not None for r in refs)
+        calls.append(True)
+>       return original_validate(*args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_historical_image_aggregate.py:40: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x03p\x00\x00\x03 \x08\x02\x00\x00\x00\xed\x06\x17w\x00\x00\x0e\xadIDATx\...x89\xa0\x04\x00 \x11\x94\x00\x00$\x82\x12\x00\x80DP\x02\x00\xb0\x8a\x1f\x83]\x0f;\x9a|co\x00\x00\x00\x00IEND\xaeB`\x82'
+media_type = None, remaining_pixels = 525628
+
+    def validate_encoded_image(data: bytes, media_type: str | None = None, *, remaining_pixels: int | None = None) -> dict:
+        """CPU validation shared by manual and acquired images; never transforms bytes.
+    
+        Expanded positions and full-conversation capacity remain prepare/admission
+        authority. Verify the complete file, not merely its header dimensions.
+        """
+        from PIL import Image
+        if not isinstance(data, bytes) or not 0 < len(data) <= MAX_IMAGE_BYTES:
+            raise ImageConstraintError('empty or oversized image bytes')
+        magic = ('image/png' if data.startswith(b'\x89PNG\r\n\x1a\n') else
+                 'image/jpeg' if data.startswith(b'\xff\xd8\xff') else
+                 'image/webp' if data.startswith(b'RIFF') and data[8:12] == b'WEBP' else None)
+        if magic is None or media_type is not None and media_type.split(';', 1)[0].strip().lower() != magic:
+            raise ValueError('image MIME/magic mismatch or unsupported format')
+        with warnings.catch_warnings():
+            warnings.simplefilter('error', Image.DecompressionBombWarning)
+            with Image.open(BytesIO(data)) as image:
+                if image.format not in ('PNG', 'JPEG', 'WEBP'):
+                    raise ValueError('unsupported image format')
+                if getattr(image, 'n_frames', 1) != 1:
+                    raise ImageConstraintError('animated image outside the qualified single-frame Vision envelope')
+                if not 0 < image.width * image.height <= MAX_PIXELS:
+                    raise ImageConstraintError(f'image pixel limit {MAX_PIXELS} exceeded ({image.width}x{image.height})')
+                if remaining_pixels is not None and image.width * image.height > remaining_pixels:
+>                   raise ImageConstraintError('aggregate decoded pixel budget exceeded')
+E                   ds41f_mlx.runtime.multimodal.ImageConstraintError: aggregate decoded pixel budget exceeded
+
+ds41f_mlx/runtime/multimodal.py:208: ImageConstraintError
+
+The above exception was the direct cause of the following exception:
+
+incident_images = [b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x02\xb6\x00\x00\x02\xba\x08\x06\x00\x00\x00\xcc\xc1\x1f\x97\x00\x00\r\x...\x01E\x14P\x01E\x14P\x01E\x14P\x01E\x14P\x01E\x14P\x01E\x14P\x01E\x14P\x01E\x14P\x01E\x14P\x01E\x14P\x07\xff\xd9', ...]
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x110258b00>
+
+    def test_twentieth_occurrence_validates_sequentially_without_retaining_pixels(incident_images, monkeypatch):
+        assert sum(w*h for w,h in SIZES[:-1]) == 16251588
+        assert sum(w*h for w,h in SIZES) == 16955588 > mm.MAX_REQUEST_PIXELS
+        refs, calls = [], []
+        original_open, original_validate = Image.open, mm.validate_encoded_image
+        def opened(*args, **kwargs):
+            image = original_open(*args, **kwargs)
+            refs.append(weakref.ref(image))
+            return image
+        def validated(*args, **kwargs):
+            assert not any(r() is not None for r in refs)
+            calls.append(True)
+            return original_validate(*args, **kwargs)
+        monkeypatch.setattr(Image, 'open', opened)
+        monkeypatch.setattr(mm, 'validate_encoded_image', validated)
+>       inp = history(incident_images)
+              ^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_historical_image_aggregate.py:43: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_historical_image_aggregate.py:23: in history
+    return mm.prepare_multimodal([7]+[cfg.image_token_id]*len(images)+[8, 9],
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+token_ids = [7, 129264, 129264, 129264, 129264, 129264, ...]
+sources = <list_iterator object at 0x1102b3d00>
+config = ModelConfig(max_batch_size=4, max_seq_len=1048576, temperature=1, dtype='fp8', expert_dtype='fp4', vocab_size=129280, ...yer_ids=(), dspark_markov_rank=256, dspark_n_routed_experts=0, dspark_n_activated_experts=0, model_type='deepseek_v41')
+ordinary = True, historical = (True, True, True, True, True, True, ...)
+
+    def prepare_multimodal(token_ids: list[int], sources: list[Any], config: Any, *, ordinary: bool = False,
+                           historical: tuple[bool, ...] = ()) -> MultimodalInput:
+        """Fully validate sources and plan geometry, without normalized patch arrays."""
+        from ds41f_mlx.model_execution.processing import plan_image_grid, image_token_kinds
+        if not config.vision_enabled:
+            raise ValueError('checkpoint has no vision encoder')
+        if not sources or (not ordinary and len(sources) > MAX_IMAGES):
+            raise ValueError(f'inline image count must be 1..{MAX_IMAGES}' if not ordinary else 'inline images required')
+        if ordinary and len(sources) > MAX_REQUEST_IMAGES:
+            raise ValueError('image occurrence budget exceeded (600)')
+        if token_ids.count(config.image_token_id) != len(sources):
+            raise ValueError('image placeholder/source count mismatch')
+        expanded, spans, encoded = [], [], {}
+        total_bytes = total_pixels = total_patches = expansion = 0
+        if historical and (not ordinary or len(historical) != len(sources)):
+            raise ValueError('invalid historical image origins')
+        origins = iter(historical or (False,) * len(sources))
+        # Bound expansion before allocation; output reservation is checked by serving.
+        context = config.max_seq_len if ordinary else MAX_MULTIMODAL_CONTEXT
+        if len(token_ids) > context:
+            raise ValueError('expanded multimodal context exceeds context envelope')
+        sources = iter(sources)
+        for token in token_ids:
+            if token != config.image_token_id:
+                expanded.append(token)
+                continue
+            data = image_bytes(next(sources))
+            is_historical = next(origins)
+            total_bytes += len(data)
+            if total_bytes > MAX_REQUEST_IMAGE_BYTES:
+                raise ValueError('aggregate encoded image byte budget exceeded')
+            try:
+                # Retain full container/pixel validation even on a later cache hit.
+                # Decoded pixels are transient here; no resize/normalization/patching.
+                metadata = validate_encoded_image(data, remaining_pixels=MAX_REQUEST_PIXELS-total_pixels)
+                total_pixels += metadata['width'] * metadata['height']
+                nh, nw, height, width = plan_image_grid(metadata['width'], metadata['height'], config)
+                h, w = height // config.vision_patch_size, width // config.vision_patch_size
+                kinds = image_token_kinds(nh, nw)
+                if len(kinds) > MAX_IMAGE_TOKENS:
+                    raise ValueError('expanded image exceeds qualified token envelope')
+                # Deferral is not a cache hit. Scheduler must still prove complete
+                # paired coverage and the bounded physical envelope before cloning.
+                total_patches += 0 if is_historical else h * w
+                if total_patches > MAX_REQUEST_PATCHES:
+                    raise ValueError('aggregate image patch budget exceeded')
+                # Include all as-yet unexpanded tokens in the lower bound.
+                expansion += len(kinds) - 1
+                if len(token_ids) + expansion > context:
+                    raise ValueError('expanded multimodal context exceeds context envelope')
+            except Exception as exc:
+>               raise ValueError(f'invalid image: {exc}') from exc
+E               ValueError: invalid image: aggregate decoded pixel budget exceeded
+
+ds41f_mlx/runtime/multimodal.py:269: ValueError
+______ test_file_inline_and_mixed_twenty_image_preparation_are_identical _______
+
+http = (<starlette.testclient.TestClient object at 0x128140590>, <ds41f_mlx.serving.image_files.ImageFiles object at 0x114200980>, [])
+incident_images = [b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x02\xb6\x00\x00\x02\xba\x08\x06\x00\x00\x00\xcc\xc1\x1f\x97\x00\x00\r\x...\x01E\x14P\x01E\x14P\x01E\x14P\x01E\x14P\x01E\x14P\x01E\x14P\x01E\x14P\x01E\x14P\x01E\x14P\x01E\x14P\x07\xff\xd9', ...]
+
+    def test_file_inline_and_mixed_twenty_image_preparation_are_identical(http, incident_images):
+        # Reuse the real HTTP/Recipe fixture, not a second parser or source adapter.
+        from test_image_files import body, inline, ref, upload
+        client, _, prepared = http
+        keys = [upload(client, data=data, mime='image/jpeg' if i in (2,5,6,7,8,13,14,17) else 'image/png')['id']
+                for i, data in enumerate(incident_images)]
+        for mode in ('file', 'inline', 'mixed'):
+            blocks = []
+            for i, data in enumerate(incident_images):
+                block = ref(keys[i]) if mode == 'file' or mode == 'mixed' and i % 2 else inline(data)
+                if block['source']['type'] == 'base64' and i in (2,5,6,7,8,13,14,17):
+                    block['source']['media_type'] = 'image/jpeg'
+                blocks.append(block)
+            b = body(blocks)
+            b['messages'] += [dict(role='assistant', content='OK'), dict(role='user', content='continue')]
+            r = client.post('/v1/messages', json=b)
+>           assert r.status_code == 200, r.text
+E           AssertionError: {"error":{"type":"invalid_request_error","code":"invalid_file_request","message":"aggregate image budget exceeded","param":null}}
+E           assert 400 == 200
+E            +  where 400 = <Response [400 Bad Request]>.status_code
+
+tests/test_historical_image_aggregate.py:182: AssertionError
+=============================== warnings summary ===============================
+../ds41f-step4ar1-tests/lib/python3.13/site-packages/fastapi/testclient.py:1
+  /private/tmp/ds41f-step4ar1-tests/lib/python3.13/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_historical_image_aggregate.py::test_file_inline_and_mixed_twenty_image_preparation_are_identical
+  /private/tmp/ds41f-historical-pixel-baseline/ds41f_mlx/serving/server.py:289: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event('startup')
+
+tests/test_historical_image_aggregate.py::test_file_inline_and_mixed_twenty_image_preparation_are_identical
+tests/test_historical_image_aggregate.py::test_file_inline_and_mixed_twenty_image_preparation_are_identical
+tests/test_historical_image_aggregate.py::test_file_inline_and_mixed_twenty_image_preparation_are_identical
+tests/test_historical_image_aggregate.py::test_file_inline_and_mixed_twenty_image_preparation_are_identical
+  /private/tmp/ds41f-step4ar1-tests/lib/python3.13/site-packages/fastapi/applications.py:4744: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    return self.router.on_event(event_type)  # ty: ignore[deprecated]
+
+tests/test_historical_image_aggregate.py::test_file_inline_and_mixed_twenty_image_preparation_are_identical
+  /private/tmp/ds41f-historical-pixel-baseline/ds41f_mlx/serving/server.py:293: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event('shutdown')
+
+tests/test_historical_image_aggregate.py::test_file_inline_and_mixed_twenty_image_preparation_are_identical
+  /private/tmp/ds41f-historical-pixel-baseline/ds41f_mlx/serving/server.py:303: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event('startup')
+
+tests/test_historical_image_aggregate.py::test_file_inline_and_mixed_twenty_image_preparation_are_identical
+  /private/tmp/ds41f-historical-pixel-baseline/ds41f_mlx/serving/server.py:307: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event('shutdown')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_historical_image_aggregate.py::test_twentieth_occurrence_validates_sequentially_without_retaining_pixels
+FAILED tests/test_historical_image_aggregate.py::test_file_inline_and_mixed_twenty_image_preparation_are_identical
+2 failed, 8 deselected, 9 warnings in 36.87s

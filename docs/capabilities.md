@@ -180,9 +180,16 @@ Per-image format/detail, planned geometry, 16 MiB, 4,194,304 pixels and 1014 exp
 bounds remain. Ordinary requests admit at most **600 image occurrences**, matching
 Harness rc.2's default request count, with an independent **64 MiB encoded-byte
 residency** ceiling. Every occurrence is fully validated and identity-accounted.
-The **16,777,216 source-pixel** guard still charges every occurrence, cached or
-fresh. The **36,864 planned ViT-patch** limit always bounds fresh encoder work.
-For Flash-1017 only, historical patches may be deferred until paired lookup:
+The **16,777,216 source-pixel** and **36,864 planned ViT-patch** budgets bound
+fresh work at the verified paired frontier (or genuine miss), not cumulative
+covered history. Every source still receives full per-image validation/decoding,
+one at a time; queued sources remain encoded bytes, not decoded images. Wire age
+can defer early work charges but cannot authorize a cache hit or bypass the actual
+fresh-work checks. The [historical-image aggregate fix](../artifacts/historical-image-aggregate-admission/report.md)
+passed isolated native continuation with 20 occurrences / 16,955,588 source pixels;
+**this source fix has not been installed in Production**. Existing byte, occurrence,
+body, context and cache limits are unchanged. For Flash-1017 only, historical
+patches beyond the aggregate patch threshold may be deferred until paired lookup:
 complete historical coverage, unchanged identities and supported packed-array
 layouts must pass **before restoration**. The independent
 [paired-byte bugfix](../artifacts/paired-byte-qualification/report.md) removes the

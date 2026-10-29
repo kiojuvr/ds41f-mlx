@@ -14,7 +14,7 @@ from time import time
 from uuid import uuid4
 
 from ds41f_mlx.runtime.multimodal import (
-    MAX_IMAGE_BYTES, MAX_REQUEST_IMAGE_BYTES, MAX_REQUEST_IMAGES, MAX_REQUEST_PIXELS,
+    MAX_IMAGE_BYTES, MAX_REQUEST_IMAGE_BYTES, MAX_REQUEST_IMAGES,
     validate_encoded_image,
 )
 
@@ -228,10 +228,10 @@ def resolve_messages(payload, store):
         original['max_tokens'] = 1
     d.MessagesRequest(json.dumps(original).encode())  # original structure, not a repaired request
     # JSON owns this request-local tree; no shared mutable objects are published.
-    count = encoded = pixels = 0
+    count = encoded = 0
 
     def visit(content, *, allowed, nested=False):
-        nonlocal count, encoded, pixels
+        nonlocal count, encoded
         if not isinstance(content, list):
             return
         for block in content:
@@ -253,12 +253,12 @@ def resolve_messages(payload, store):
                         raise FileError('file image in unsupported location or schema')
                     image = store.snapshot(source['file_id'])
                     encoded += len(image.data)
-                    pixels += image.pixels
-                    # Physical all-history guards remain independent of Harness
-                    # request budgets and actual fresh encoder work.
-                    # Check BEFORE allocating the base64 request-local copy.
-                    if encoded > MAX_REQUEST_IMAGE_BYTES or pixels > MAX_REQUEST_PIXELS:
-                        raise FileError('aggregate image budget exceeded')
+                    # Bound transport residency BEFORE the base64 copy. There
+                    # is no paired frontier here: full per-image validation is
+                    # retained, but fresh pixel/patch work belongs to admission
+                    # after verified paired lookup, not cumulative wire history.
+                    if encoded > MAX_REQUEST_IMAGE_BYTES:
+                        raise FileError('aggregate encoded image byte budget exceeded')
                     block['source'] = dict(type='base64', media_type=image.mime,
                                            data=base64.b64encode(image.data).decode('ascii'))
                 elif source.get('type') == 'base64':

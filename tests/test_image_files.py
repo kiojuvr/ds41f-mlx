@@ -249,7 +249,8 @@ def test_resolution_budget_and_unrelated_extensions(http):
     # 600 is a request count budget, not a physical execution guarantee.
     assert MAX_OCCURRENCES == 600
     assert client.post('/v1/messages', json=body([ref(key)] * MAX_OCCURRENCES)).status_code == 400
-    # Pre-materialization aggregate pixel budget counts repeat occurrences.
+    # Resolution no longer sums historical pixels. These are all fresh, so
+    # ordinary preparation still rejects their aggregate fresh pixel workload.
     out = BytesIO()
     Image.new('RGB', (2048, 2048)).save(out, format='PNG')
     large = upload(client, data=out.getvalue())['id']

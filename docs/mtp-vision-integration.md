@@ -113,9 +113,12 @@ The original delta below used the OFF four-image / 8192-position bound.
 Ordinary MTP now admits actual expanded prompt + output reservation up to checkpoint
 context, without OFF's four-image cap (ordinary occurrence ceiling: 600). Per-image limits remain 16 MiB, 4,194,304 pixels,
 1014 expanded tokens, inline PNG/JPEG/WebP, aspect 1:2..2:1 and high/auto detail.
-Aggregate preparation is bounded by 64 MiB encoded bytes and 16,777,216 source
-pixels, including cached inputs. Fresh work is bounded by 36,864 planned ViT
-patches. Flash-1017 historical patches may be deferred only after complete
+Aggregate encoded residency is bounded by 64 MiB, including cached inputs.
+Per-image validation/decoding remains sequential and fully checked. Fresh work
+is bounded by 16,777,216 source pixels and 36,864 planned ViT patches at the
+validated paired frontier; historical wire age alone never grants this discount.
+The [historical-image aggregate correction](../artifacts/historical-image-aggregate-admission/report.md)
+is isolated-native-qualified source behavior, not a Production promotion. Flash-1017 historical patches may be deferred only after complete
 compatible paired coverage and supported-layout validation before restoration.
 See [current capability bounds](capabilities.md#bounded-inline-images) and the
 [narrow physical qualification](../artifacts/cached-image-admission/report.md).
