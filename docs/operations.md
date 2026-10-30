@@ -29,8 +29,12 @@ and are not production launch instructions.
 
 Ordinary image admission distinguishes Harness's 600 request occurrences from
 fresh Vision work. Every image is still fully validated and charged against the
-unchanged source-byte and per-image pixel guards; aggregate pixel/patch budgets
-charge actual fresh work at the verified paired frontier. Flash-1017 can omit genuinely paired-cached
+unchanged source-byte and per-image pixel guards; installed Production aggregate
+pixel/patch budgets charge actual fresh work at the verified paired frontier.
+Current source removes only ordinary Flash-1017's aggregate source-pixel rejection,
+retaining sequential per-image bounds and the fresh-patch guard. This
+[scoped correction](../artifacts/fresh-vision-soft-caps/report.md) is not installed
+in Production. Flash-1017 can omit genuinely paired-cached
 historical patches from the fresh-work charge only with complete compatible
 paired coverage and supported physical layouts. The independent
 [paired-byte bugfix](../artifacts/paired-byte-qualification/report.md) removes the

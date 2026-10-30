@@ -188,9 +188,15 @@ independent of that Processor-defined position limit. Retired nonordinary/OFF
 preparation/restore retains its separate 1014-position qualification guard. Ordinary requests admit at most **600 image occurrences**, matching
 Harness rc.2's default request count, with an independent **64 MiB encoded-byte
 residency** ceiling. Every occurrence is fully validated and identity-accounted.
-The **16,777,216 source-pixel** and **36,864 planned ViT-patch** budgets bound
-fresh work at the verified paired frontier (or genuine miss), not cumulative
-covered history. Every source still receives full per-image validation/decoding,
+The **36,864 planned ViT-patch** budget bounds fresh work at the verified
+paired frontier (or genuine miss), not cumulative covered history. Current source
+removes the aggregate **16,777,216 source-pixel** rejection for ordinary Flash-1017:
+validated CPU decoding/normalization is sequential, not cumulative residency.
+Per-image pixels remain bounded. The patch guard remains pending an actual
+embedding/prefill coexistence resource replacement; it is not an intrinsic
+Processor limit. See the [scoped pixel correction and patch decision](../artifacts/fresh-vision-soft-caps/report.md).
+This source-only correction is **not installed in Production**; other profiles
+retain their aggregate pixel policy. Every source still receives full per-image validation/decoding,
 one at a time; queued sources remain encoded bytes, not decoded images. Wire age
 can defer early work charges but cannot authorize a cache hit or bypass the actual
 fresh-work checks. The [historical-image aggregate fix](../artifacts/historical-image-aggregate-admission/report.md)

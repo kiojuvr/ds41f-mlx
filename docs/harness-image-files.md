@@ -146,7 +146,7 @@ checks expiry immediately. Request-held snapshots may outlive that sweep.
 | Actual Messages JSON wire bytes | Unchanged 16 MiB |
 | Files-mode image occurrences | 600 including inline images and repeated IDs; independent of persistent storage admission |
 | Resolved encoded image bytes | 64 MiB aggregate; counted per occurrence before base64 expansion |
-| Fresh source pixels | 16,777,216 after verified paired coverage; no cumulative covered-history pixel charge during resolution (bounded Production acceptance linked below) |
+| Fresh source pixels | Current ordinary Flash-1017 source: no aggregate source-pixel rejection; sequential 4,194,304-pixel/image validation remains. Installed Production: 16,777,216 aggregate fresh pixels |
 
 `create_app(files_limits=FileLimits(file_bytes=..., count=..., storage_bytes=...))`
 can lower the per-file/retained-allocation ceilings and optionally impose a positive
@@ -176,9 +176,13 @@ has isolated native 1016/1024-position evidence and subsequent
 through HTTP Files/Messages. The installed ordinary per-image ceiling now comes
 from Processor configuration, not the historical 1014 qualification.
 Historical occurrences still undergo complete sequential decoding validation and
-identity accounting, but decoded buffers are not queued. **16,777,216 source
-pixels / 36,864 ViT patches** bound actual fresh work after validated paired
-coverage; historical wire flags only defer early charges, not execution admission.
+identity accounting, but decoded buffers are not queued. **36,864 ViT patches**
+bound actual fresh work after validated paired coverage; historical wire flags
+only defer early charges, not execution admission. Current ordinary Flash-1017
+source removes the aggregate 16,777,216 source-pixel rejection because decoded
+CPU buffers are sequential; per-image pixel bounds remain. This
+[scoped source correction](../artifacts/fresh-vision-soft-caps/report.md) is not
+installed in Production and does not change Files or HTTP byte policies.
 Conditional aggregate-patch discount still requires complete compatible historical
 coverage and supported pair layouts. Existing independent Messages reconstruction
 rules are unchanged; no new replay/recovery path is added. Files does not allocate

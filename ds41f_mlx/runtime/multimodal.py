@@ -52,6 +52,8 @@ class MultimodalInput:
     # and geometry remain available to publication and reconstruction.
     _sources: dict[int, bytes] = field(repr=False, compare=False)
     _config: Any = field(repr=False, compare=False)
+    # Internal admitted-profile selection, never a wire age/cache-hit exemption.
+    sequential_pixel_validation: bool = False
 
     def release_sources(self) -> None:
         self._sources.clear()
@@ -71,7 +73,7 @@ class MultimodalInput:
         if frontier < 0 or any(s.start < frontier < s.start + s.length for s in self.spans):
             raise ValueError('committed frontier intersects an image span')
         fresh = [s for s in self.spans if s.start >= frontier]
-        if sum(s.source_pixels for s in fresh) > MAX_REQUEST_PIXELS:
+        if not self.sequential_pixel_validation and sum(s.source_pixels for s in fresh) > MAX_REQUEST_PIXELS:
             raise ValueError('aggregate decoded pixel budget exceeded (fresh Vision workload)')
         if sum(s.grid[0] * s.grid[1] for s in fresh) > MAX_REQUEST_PATCHES:
             raise ValueError('aggregate image patch budget exceeded (fresh Vision workload)')
@@ -230,6 +232,10 @@ def prepare_multimodal(token_ids: list[int], sources: list[Any], config: Any, *,
         raise ValueError('image placeholder/source count mismatch')
     expanded, spans, encoded = [], [], {}
     total_bytes = fresh_pixels = total_patches = expansion = 0
+    sequential_pixels = False
+    if ordinary:
+        from ds41f_mlx.execution_identity import numerical_profile
+        sequential_pixels = numerical_profile() == 'flash-1017-pre-woa-fp8-v1'
     if historical and (not ordinary or len(historical) != len(sources)):
         raise ValueError('invalid historical image origins')
     origins = iter(historical or (False,) * len(sources))
@@ -250,11 +256,12 @@ def prepare_multimodal(token_ids: list[int], sources: list[Any], config: Any, *,
             raise ValueError('aggregate encoded image byte budget exceeded')
         try:
             # Fully validate/decode one source at a time, even on a later hit;
-            # only encoded bytes/metadata survive. Wire age defers an early
-            # charge, not actual admission: validate_workload uses the verified
-            # paired frontier (or genuine miss) before any native start.
+            # only encoded bytes/metadata survive. Ordinary Flash-1017 source
+            # pixels are not cumulative residency: per-image decode protection
+            # stays intact. Patch/output residency admission still uses the
+            # verified paired frontier, never wire age as proof of a cache hit.
             metadata = validate_encoded_image(data, remaining_pixels=(
-                None if is_historical else MAX_REQUEST_PIXELS-fresh_pixels))
+                None if sequential_pixels or is_historical else MAX_REQUEST_PIXELS-fresh_pixels))
             if not is_historical:
                 fresh_pixels += metadata['width'] * metadata['height']
             nh, nw, height, width = plan_image_grid(metadata['width'], metadata['height'], config)
@@ -282,4 +289,5 @@ def prepare_multimodal(token_ids: list[int], sources: list[Any], config: Any, *,
         raise ValueError('expanded multimodal context exceeds qualified envelope')
     if expanded[-1] == config.image_token_id:
         raise ValueError('held-out terminal must be a text token')
-    return MultimodalInput(tuple(expanded), tuple(spans), encoded, config)
+    return MultimodalInput(tuple(expanded), tuple(spans), encoded, config,
+                           sequential_pixel_validation=sequential_pixels)

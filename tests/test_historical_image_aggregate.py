@@ -45,7 +45,7 @@ def test_twentieth_occurrence_validates_sequentially_without_retaining_pixels(in
     assert not any(r() is not None for r in refs)
     assert sum(s.source_pixels for s in inp.spans) == 16955588
     assert all(isinstance(v, bytes) for v in inp._sources.values())
-    with pytest.raises(ValueError, match='pixel budget'):
+    with pytest.raises(ValueError, match='patch budget'):
         inp.validate_workload(0)  # historical flags did not grant an executable hit
     inp.release_sources()
 
@@ -91,20 +91,29 @@ def test_twenty_images_use_actual_pair_or_fail_before_native(incident_images, mo
     authority.clear()
 
 
-def test_pixel_only_deferral_cannot_bypass_fresh_budget_on_real_miss():
-    # Four maximum originals plus one pixel exceed pixels, not planned patches.
+def test_above_former_pixels_real_miss_encodes_every_current_image():
+    import mlx.core as mx
     data = source(size=(2048, 2048)).data
-    inp = history([data]*4+[source(size=(1, 1)).data])
+    inp = history([data]*4+[source(size=(512, 512)).data])
+    assert sum(s.source_pixels for s in inp.spans) > mm.MAX_REQUEST_PIXELS
     assert sum(s.grid[0]*s.grid[1] for s in inp.spans) <= mm.MAX_REQUEST_PATCHES
     authority = pc.PairedCheckpointAuthority('identity', MX)
     scheduler, request = scheduler_request(inp, authority)
     request.prepared.protocol = 'messages'
-    starts, errors = [], []
-    scheduler.backend = NS(_start=lambda *a, **k: starts.append(True), request_max_tokens=lambda p: 16)
+    starts, encoded, errors = [], [], []
+    def encoder(pixels, h, w, kinds):
+        encoded.append((h, w))
+        return mx.zeros((len(kinds), 4))
+    def start(rec, *args, **kwargs):
+        starts.append(len(rec.canonical))
+        rows = inp.encode_new(NS(config=inp._config), len(rec.canonical), span_encoder=encoder)
+        assert [origin for origin, _ in rows.rows] == [s.start for s in inp.spans]
+        scheduler.batch_generator = object()
+        rec.owner = NS(uid=17, _bg=scheduler.batch_generator)
+    scheduler.backend = NS(_start=start, request_max_tokens=lambda p: 16)
     scheduler._retire = lambda req, *, error: errors.append(error)
     scheduler._schedule_waiting()
-    assert not starts and not request.native_started
-    assert len(errors) == 1 and 'fresh Vision workload' in str(errors[0])
+    assert starts == [0] and len(encoded) == 5 and not errors
     assert not inp._sources
     authority.clear()
 

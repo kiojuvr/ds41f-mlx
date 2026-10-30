@@ -121,8 +121,12 @@ qualifies this focused source correction; subsequent
 promotes it through HTTP Files/Messages without changing the execution seam.
 Aggregate encoded residency is bounded by 64 MiB, including cached inputs.
 Per-image validation/decoding remains sequential and fully checked. Fresh work
-is bounded by 16,777,216 source pixels and 36,864 planned ViT patches at the
-validated paired frontier; historical wire age alone never grants this discount.
+remains bounded by 36,864 planned ViT patches at the validated paired frontier;
+historical wire age alone never grants this discount. Current ordinary Flash-1017
+source removes the aggregate 16,777,216 source-pixel rejection, relying on existing
+sequential CPU buffer ownership and unchanged per-image limits. Production retains
+the earlier pixel policy; [scoped source acceptance and patch deferral](../artifacts/fresh-vision-soft-caps/report.md)
+do not qualify a general simultaneous-allocation or maximum-context guarantee.
 The [historical-image aggregate correction](../artifacts/historical-image-aggregate-admission/report.md)
 has isolated native evidence and subsequent
 [b2f7654 installed Production acceptance](../artifacts/production-multimodal-b2f7654/report.md). Flash-1017 historical patches may be deferred only after complete

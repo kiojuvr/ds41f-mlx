@@ -170,6 +170,17 @@ changed identities, missing bytes, budgets, exact logical leases and post-mutati
 burn remain guarded; no pair is discarded to force a cold miss.
 No historical tool or external effect is executed by prefill.
 
+**Source-only pixel admission correction:** ordinary Flash-1017 no longer sums
+source pixels as a rejection budget. Full per-image validation and normalization
+remain sequential and bounded; all genuinely uncovered images still encode at
+the actual validated frontier. The 36,864 fresh-patch guard and its complete-pair
+conditional historical-discount callback remain unchanged. Sparse output image
+embeddings coexist until P6 seals; sequential input processing does not make
+that output residency disappear. The wired-limit lease is not a host-memory
+reservation, and ordinary MTP bypasses generic Scheduler preflight memory checks.
+See [decision and focused acceptance](../artifacts/fresh-vision-soft-caps/report.md).
+Production and other numerical profiles retain their existing pixel policy.
+
 The [finite integrated Harness E2E](../artifacts/multimodal-runtime/phase4-e2e-native.md)
 exercises C=0 offload/compaction reconstruction and C=3394 whole-image-safe
 surviving-history/new-occurrence reconstruction through settled paired publication.

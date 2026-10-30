@@ -203,7 +203,7 @@ def test_anyres_real_limits_before_patch_allocation(monkeypatch,size,limit):
         prepare_multimodal([1,129264,2], [source(size=size)], config())
 
 
-@pytest.mark.parametrize('budget', ['bytes', 'aggregate_bytes', 'aggregate_pixels', 'patches'])
+@pytest.mark.parametrize('budget', ['bytes', 'aggregate_bytes', 'five_maximum_images', 'patches'])
 def test_anyres_resource_limits_still_precede_native_work(monkeypatch, budget):
     from ds41f_mlx.runtime.multimodal import MAX_IMAGE_BYTES
     def forbidden(*args, **kwargs):
@@ -217,9 +217,9 @@ def test_anyres_resource_limits_still_precede_native_work(monkeypatch, budget):
         data += b'\0' * (MAX_IMAGE_BYTES + (1 if budget == 'bytes' else -1) - len(data))
         sources = [SimpleNamespace(kind='bytes', data=data)] * (1 if budget == 'bytes' else 5)
         error = 'oversized image bytes' if budget == 'bytes' else 'aggregate encoded image byte'
-    elif budget == 'aggregate_pixels':
+    elif budget == 'five_maximum_images':
         sources = [source(size=(2048,2048))] * 5
-        error = 'aggregate decoded pixel'
+        error = 'aggregate image patch'  # sequential pixels no longer reject
     else:
         sources = [source(size=(1600,200))] * 24
         error = 'aggregate image patch'

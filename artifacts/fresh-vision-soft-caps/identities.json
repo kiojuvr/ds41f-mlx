@@ -1,0 +1,75 @@
+{
+  "head": "4429f7d83acf4d378e682bc6431bfa03d805db65",
+  "initial_status": "clean master",
+  "production_root": "/Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages",
+  "production_sha256": {
+    "ds41f_mlx/execution_manifest.json": "471c31466f99a1dcdaaa7254e54d4da30707a80ea8de82b54ca320899b93d604",
+    "ds41f_mlx/runtime/multimodal.py": "d2a360a8db590a52d2fa5b299b37f6cedab313672fac70255bc35e199461331b",
+    "ds41f_mlx/runtime/mtp_resources.py": "ea3b28a43a49f7c674d6b17d357501ec14b46cb6edd7a23ca913841d57aaef8a",
+    "ds41f_mlx/serving/production_mtp.py": "aa692bd2435061470699e393ec0f4c782a020bc56b7890b01ea9dbaddf6e03da",
+    "ds41f_mlx/serving/paired_checkpoint.py": "638f0e8978e119b467e252015df5ab8866f00f0b6d16fdb9a67677bf74d402ca",
+    "omlx/patches/deepseek_v41/model.py": "77c7012b5ce2aa757157b350eb38e1a3694c0b3fb7730ce1be2ac4fe99b43a24",
+    "omlx/patches/deepseek_v41/vision.py": "dcaf449e199cfa16ecb4b08c7b17c75d3f80ed46a7bab82a64cdd03db3264f05",
+    "omlx/scheduler.py": "c3cbf147d8f30965a5d503b8cee5cfd43050570c1876eff455155660a4ac928e"
+  },
+  "production_provenance": {
+    "native_build": {
+      "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05) (Homebrew)\n",
+      "cmake": "cmake version 4.3.3\n\nCMake suite maintained and supported by Kitware (kitware.com/cmake).\n",
+      "host_linked": false,
+      "opencv": "4.14.0\n",
+      "rustc": "rustc 1.98.1 (48a229cea 2026-09-01) (Homebrew)\nbinary: rustc\ncommit-hash: 48a229ceaefd4985c50990b14116b6d856af0985\ncommit-date: 2026-09-01\nhost: aarch64-apple-darwin\nrelease: 1.98.1\nLLVM version: 22.1.8\n",
+      "wheel_sha256": "11bda3355c2f48b99d04f6a2179b283add3f6d1218f34e4707bd5a29b304ab03",
+      "xcode": "Xcode 26.6\nBuild version 17F113\n"
+    },
+    "overlays": [
+      "compressed-growth",
+      "bit-exact-kernels",
+      "template-reuse",
+      "context-copy"
+    ],
+    "recipe_source": {
+      "archive": "recipe-02-source.tar.gz",
+      "patch": "docs/recipe-02-native-semantic-boundary.patch",
+      "revision": "93b0fd229cc9ffa6b1a8c63d42b0bf741bbec170"
+    },
+    "source_commit": "69689d514fc5acb2cbe229f8c863da1e0a855e4a"
+  },
+  "installed_versions": {
+    "ds41f_mlx-0.23.0.dist-info": [
+      "Name: ds41f-mlx",
+      "Version: 0.23.0"
+    ],
+    "deepseek_recipe-0.2.0.dist-info": [
+      "Name: deepseek-recipe",
+      "Version: 0.2.0"
+    ],
+    "mlx-0.32.2.dist-info": [
+      "Name: mlx",
+      "Version: 0.32.2"
+    ],
+    "python_multipart-0.0.32.dist-info": [
+      "Name: python-multipart",
+      "Version: 0.0.32"
+    ]
+  },
+  "upstream": {
+    "reviewed": "9bd9cf243fc53ef9afbf8f04d391d989117d6ab9",
+    "current_head": "553741557a57df44a46fb3ab72b6aafeaf945337",
+    "source_sha256": {
+      "deepinfer/shared_memory.py": "1aff9ee8f589c59e9b982707fe518bc4a8722814f971f741631d07d8a1319ce0",
+      "deepinfer/ve/multimodal_processor.py": "f6b0e03a9138eddead7adfe424d4818a937c5ffbac2bff07d27dc96dd20d75cb",
+      "deepinfer/ve/prepare_tensor_input_vl.py": "37ac02d70519622eddcf6209530519546a92571be0e6276019ebe7e2cf4ea84a",
+      "deepinfer/ve/schema.py": "6c2a481bb6ebb51df61968a619835e6a840db90fcf723ed4817f2451c6925485",
+      "deepinfer/worker/base.py": "40e6ca29aebd9d475eaad4b86326783f76dba2b73feaa51d86a200b7704a05ed",
+      "deepinfer/engine/llm_engine.py": "a636d60ca5711f6b7c21e68370c3bd9c2de6fc3f4439a7429ca4f572f0edeebe",
+      "deepinfer/engine/profile_server.py": "3225a073cbde24d598df2a9bff195574ba6d98bc9fe4a1b0c0a338fcecc54afa",
+      "deepinfer/ve/processor/image_processor.py": "8b8a0a021795b6648ac372ccc7e6ca935ffb71d5d92313c9b6fcd4833761ba21",
+      "deepinfer/ve/processor/mm_processor.py": "f4cf3c1136fad6c49398b8a108f70aca2321f5777c03646be1261d2aac4a790d",
+      "deepinfer/model_executor/models/deepseek_vl.py": "6eda92aa4a0b51b92ab95feb3e3c0714b15499a8a5783280ce6e1c86251b3e51",
+      "deepinfer/model_executor/models/vision_encoder/vl_aligner.py": "aee2eb1b94bb298680aacc0a9e5431cdee635e3ca6dbd7144befa6df4cb5b561"
+    }
+  },
+  "production_final_recheck": "all initially recorded relevant hashes unchanged",
+  "candidate_wheel_sha256": "1d1f5297ee5c077dd61b3db08d789e51a53e3f933ba693f940a6768825f2b600"
+}

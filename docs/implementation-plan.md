@@ -89,7 +89,14 @@ patch discount requires compatible complete paired coverage and pre-restore
 layout validation. The independent [paired-byte bugfix](../artifacts/paired-byte-qualification/report.md)
 removes the former 12 MiB projected-pair and 192 MiB retained-root qualification
 ceilings, with finite native evidence, not a reopened milestone.
-Independent source-byte, fresh-pixel, body, context and queue guards remain.
+Independent source-byte, body, context and queue guards remain. The
+[source-only fresh-Vision correction](../artifacts/fresh-vision-soft-caps/report.md)
+removes ordinary Flash-1017's aggregate source-pixel rejection because CPU image
+buffers are sequential. The fresh-patch guard and conditional historical-patch
+admission remain; cumulative patch work is not itself a simultaneous-allocation
+measurement, and this MTP path has no equivalent of upstream's chunked Vision
+resource admission. No replacement resource framework or Production promotion is
+introduced.
 The post-completion [historical-image aggregate bugfix](../artifacts/historical-image-aggregate-admission/report.md)
 removes cumulative covered-history pixel charging, with focused isolated native
 evidence and a separately authorized [b2f7654 Production installation](../artifacts/production-multimodal-b2f7654/report.md).

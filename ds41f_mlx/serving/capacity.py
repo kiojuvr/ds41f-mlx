@@ -43,13 +43,18 @@ def vision_capacity(checkpoint: Path):
     )
     from ds41f_mlx.model_execution.config import ModelConfig
     model_config = ModelConfig.from_dict(json.loads((checkpoint / 'config.json').read_text()))
+    from ds41f_mlx.execution_identity import numerical_profile
+    sequential_pixels = numerical_profile() == 'flash-1017-pre-woa-fp8-v1'
     return dict(implemented_total_tokens=context_envelope(checkpoint, multimodal=True, ordinary=True),
                 output_reservation_required=True, max_images=MAX_REQUEST_IMAGES,
                 max_image_bytes=MAX_IMAGE_BYTES, max_image_pixels=MAX_PIXELS,
                 max_image_tokens=model_config.vision_max_n_token,
                 max_request_image_bytes=MAX_REQUEST_IMAGE_BYTES,
-                max_request_pixels=MAX_REQUEST_PIXELS, max_request_patches=MAX_REQUEST_PATCHES,
-                pixel_patch_budget_scope='fresh_pixels_and_patches_with_complete_pair',
+                max_request_pixels=None if sequential_pixels else MAX_REQUEST_PIXELS,
+                source_pixel_validation='sequential_per_image' if sequential_pixels else 'aggregate_fresh',
+                max_request_patches=MAX_REQUEST_PATCHES,
+                pixel_patch_budget_scope=('fresh_patches_with_complete_pair' if sequential_pixels
+                                          else 'fresh_pixels_and_patches_with_complete_pair'),
                 historical_discount_qualified=True,
                 historical_patch_discount=dict(numerical_profile='flash-1017-pre-woa-fp8-v1',
                     supported_pair_layout_required=True,

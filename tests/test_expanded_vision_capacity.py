@@ -29,7 +29,6 @@ def test_expansion_and_off_contract(monkeypatch):
 
 @pytest.mark.parametrize('budget,limit,reason', [
     ('MAX_REQUEST_IMAGE_BYTES', 1, 'byte budget'),
-    ('MAX_REQUEST_PIXELS', 400*300, 'pixel budget'),
     ('MAX_REQUEST_PATCHES', 1, 'patch budget'),
 ])
 def test_aggregate_preparation_rejection(monkeypatch, budget, limit, reason):
@@ -41,9 +40,15 @@ def test_aggregate_preparation_rejection(monkeypatch, budget, limit, reason):
 
 def test_actual_aggregate_pixel_and_patch_budgets(monkeypatch):
     monkeypatch.setattr(processing, 'image_patch_array', forbidden)
-    # Five maximum-sized fresh sources exceed the fresh pixel budget,
-    # while count alone is no longer an admission rule.
-    with pytest.raises(ValueError, match='aggregate decoded pixel budget'):
+    # Cumulative source pixels are not concurrent decoded residency. Four
+    # maximum originals plus a smaller image cross the former pixel threshold
+    # while staying inside the independently retained patch/output guard.
+    inp = prepare([source(size=(2048, 2048))] * 4 + [source(size=(512, 512))], ordinary=True)
+    assert sum(s.source_pixels for s in inp.spans) > mm.MAX_REQUEST_PIXELS
+    assert sum(s.grid[0]*s.grid[1] for s in inp.spans) <= mm.MAX_REQUEST_PATCHES
+    inp.validate_workload(0)
+    inp.release_sources()
+    with pytest.raises(ValueError, match='aggregate image patch budget'):
         prepare([source(size=(2048, 2048))] * 5, ordinary=True)
     # Small originals still incur the checkpoint minimum resize/patch work.
     with pytest.raises(ValueError, match='aggregate image patch budget'):
@@ -81,7 +86,9 @@ def test_actual_expansion_output_checkpoint_and_text_limits(tmp_path):
     assert context_envelope(tmp_path, multimodal=True, ordinary=True) == 2_097_152
     capability = vision_capacity(tmp_path)
     assert capability['max_images'] == 600
-    assert capability['pixel_patch_budget_scope'] == 'fresh_pixels_and_patches_with_complete_pair'
+    assert capability['pixel_patch_budget_scope'] == 'fresh_patches_with_complete_pair'
+    assert capability['max_request_pixels'] is None
+    assert capability['source_pixel_validation'] == 'sequential_per_image'
     assert capability['historical_discount_qualified'] is True
     assert capability['historical_patch_discount']['supported_pair_layout_required'] is True
     assert capability['historical_patch_discount']['complete_historical_coverage_required'] is True

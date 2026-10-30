@@ -30,12 +30,12 @@ def test_historical_work_defers_not_cold_work_bytes_or_off(monkeypatch):
         mm.prepare_multimodal([7, cfg.image_token_id, 8], sources[:1], cfg, historical=(True,))
     monkeypatch.setattr(mm, 'MAX_REQUEST_PIXELS', 1)
     deferred = history()
-    with pytest.raises(ValueError, match='pixel budget'):
+    with pytest.raises(ValueError, match='patch budget'):
         deferred.validate_workload(0)
     deferred.validate_prefix(len(deferred.token_ids)-2, deferred.identities())
     deferred.validate_workload(len(deferred.token_ids)-2)
     deferred.release_sources()
-    with pytest.raises(ValueError, match='pixel budget'):
+    with pytest.raises(ValueError, match='patch budget'):
         mm.prepare_multimodal(ids, sources, cfg, ordinary=True)
     monkeypatch.setattr(mm, 'MAX_REQUEST_IMAGE_BYTES', 1)
     with pytest.raises(ValueError, match='byte budget'):
