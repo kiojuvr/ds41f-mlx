@@ -1,0 +1,94 @@
+{
+  "source": [
+    2600,
+    2000
+  ],
+  "encoded_bytes": 20262,
+  "source_core_nominal_bytes": 20800000,
+  "rgb_core_nominal_bytes": 20800000,
+  "note": "Pillow RGB core uses 4 bytes/pixel; RSS/tracemalloc are observations, not a reservation or complete allocation trace",
+  "grid": [
+    80,
+    105
+  ],
+  "expanded_rows": 974,
+  "patch_shape": [
+    8400,
+    3,
+    14,
+    14
+  ],
+  "patch_bytes": 19756800,
+  "events": [
+    {
+      "stage": "baseline_after_fixture",
+      "rss_bytes": 72073216,
+      "maxrss_bytes": 72073216,
+      "python_numpy_traced_bytes": [
+        2914,
+        72301
+      ],
+      "rgb_object_live": false
+    },
+    {
+      "stage": "source_loaded_before_rgb",
+      "rss_bytes": 72138752,
+      "maxrss_bytes": 72138752,
+      "python_numpy_traced_bytes": [
+        9347,
+        78829
+      ],
+      "rgb_object_live": false
+    },
+    {
+      "stage": "full_source_and_rgb_live",
+      "rss_bytes": 93028352,
+      "maxrss_bytes": 93028352,
+      "python_numpy_traced_bytes": [
+        10778,
+        80181
+      ],
+      "rgb_object_live": true
+    },
+    {
+      "stage": "source_rgb_and_resized_live",
+      "rss_bytes": 111296512,
+      "maxrss_bytes": 111296512,
+      "python_numpy_traced_bytes": [
+        12545,
+        81932
+      ],
+      "rgb_object_live": true
+    },
+    {
+      "stage": "before_normalization_source_still_live",
+      "rss_bytes": 111312896,
+      "maxrss_bytes": 111312896,
+      "python_numpy_traced_bytes": [
+        12589,
+        81952
+      ],
+      "rgb_object_live": false
+    },
+    {
+      "stage": "patches_returned_source_still_live",
+      "rss_bytes": 155451392,
+      "maxrss_bytes": 155451392,
+      "python_numpy_traced_bytes": [
+        19777052,
+        39543625
+      ],
+      "rgb_object_live": false
+    },
+    {
+      "stage": "all_cpu_inputs_released",
+      "rss_bytes": 155451392,
+      "maxrss_bytes": 155451392,
+      "python_numpy_traced_bytes": [
+        17731,
+        39543625
+      ],
+      "rgb_object_live": false
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "source": [
+    512,
+    512
+  ],
+  "encoded_bytes": 1097,
+  "source_core_nominal_bytes": 1048576,
+  "rgb_core_nominal_bytes": 1048576,
+  "note": "Pillow RGB core uses 4 bytes/pixel; RSS/tracemalloc are observations, not a reservation or complete allocation trace",
+  "grid": [
+    39,
+    39
+  ],
+  "expanded_rows": 184,
+  "patch_shape": [
+    1521,
+    3,
+    14,
+    14
+  ],
+  "patch_bytes": 3577392,
+  "events": [
+    {
+      "stage": "baseline_after_fixture",
+      "rss_bytes": 52084736,
+      "maxrss_bytes": 52084736,
+      "python_numpy_traced_bytes": [
+        2855,
+        72301
+      ],
+      "rgb_object_live": false
+    },
+    {
+      "stage": "source_loaded_before_rgb",
+      "rss_bytes": 52133888,
+      "maxrss_bytes": 52133888,
+      "python_numpy_traced_bytes": [
+        9351,
+        78770
+      ],
+      "rgb_object_live": false
+    },
+    {
+      "stage": "full_source_and_rgb_live",
+      "rss_bytes": 52920320,
+      "maxrss_bytes": 52920320,
+      "python_numpy_traced_bytes": [
+        10782,
+        80185
+      ],
+      "rgb_object_live": true
+    },
+    {
+      "stage": "source_rgb_and_resized_live",
+      "rss_bytes": 55345152,
+      "maxrss_bytes": 55345152,
+      "python_numpy_traced_bytes": [
+        12437,
+        81800
+      ],
+      "rgb_object_live": true
+    },
+    {
+      "stage": "before_normalization_source_still_live",
+      "rss_bytes": 55345152,
+      "maxrss_bytes": 55345152,
+      "python_numpy_traced_bytes": [
+        12588,
+        81951
+      ],
+      "rgb_object_live": false
+    },
+    {
+      "stage": "patches_returned_source_still_live",
+      "rss_bytes": 62603264,
+      "maxrss_bytes": 62603264,
+      "python_numpy_traced_bytes": [
+        3591307,
+        7172168
+      ],
+      "rgb_object_live": false
+    },
+    {
+      "stage": "all_cpu_inputs_released",
+      "rss_bytes": 62603264,
+      "maxrss_bytes": 62603264,
+      "python_numpy_traced_bytes": [
+        11474,
+        7172168
+      ],
+      "rgb_object_live": false
+    }
+  ]
+}
