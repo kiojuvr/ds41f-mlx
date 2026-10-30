@@ -56,7 +56,7 @@ as untrusted and enforce permissions. Accepting text does not add raw-token exec
 | Strict JSON object, UTF-8, unique keys, finite numbers | Ambiguity/security rejection before conversion |
 | Model alias | Fixed admitted model, not protocol grammar |
 | Sampling normalization/validation | `generation-policy-v1`; unsupported or invalid controls reject, not silent Scheduler defaults |
-| Converted image sources | Existing bounded inline preparation/expansion; ordinary Messages file IDs resolve first through the [bounded Files layer](harness-image-files.md); remote/path URLs reject without fetching; paired hashes bind image identity; historical misses reject without replay |
+| Converted image sources | Existing bounded inline preparation/expansion; ordinary Messages file IDs resolve first through the [bounded Files layer](harness-image-files.md); remote/path URLs reject without fetching; paired hashes bind image identity; independent Messages may reconstruct at a genuine C=0 miss or whole-image-safe C>0 pair with available sources and normal fresh-work admission; logical Chat lease loss and other historical-coverage refusals do not fall back to reconstruction (see [paired restore rules](mtp-production-serving.md#paired-capture-and-restore)) |
 | Actual encoded prompt/output reservation | Checkpoint range and ordinary total/output capability; [capacity](capabilities.md#capacity-resource-policy-and-defaults) |
 | Retained reasoning/tools/history | Session continuity, not a universal stateless grammar rule |
 

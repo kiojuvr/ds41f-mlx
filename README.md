@@ -74,8 +74,8 @@ The following specifications describe the **ordinary default MTP path**:
 These are **capability ceilings, not throughput or maximum-workload guarantees**.
 Output state grows with executed tokens, not the requested output ceiling; EOS,
 tool calls and cancellation may end generation much earlier. Image limits also
-include **16 MiB encoded bytes and 4M source pixels per image**, aspect ratio
-**1:2–2:1**, and high/default/auto detail. See the
+include **16 MiB encoded bytes and 4M source pixels per image**,
+Processor-planned geometry (no fixed aspect-ratio guard), and high/default/auto detail. See the
 [complete profile and resource matrix](docs/capabilities.md) for admission,
 retention and image-continuation rules.
 

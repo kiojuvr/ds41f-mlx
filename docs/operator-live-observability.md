@@ -140,9 +140,14 @@ never determine execution admission/settlement.
 ## Snapshot: `ds41f.live.v1`
 
 Root: schema, sampled wall/monotonic times, lifecycle state, endpoint, current
-request, requests, active/queued counts, last request and cache summary.
+request, requests, active/queued counts, last request, bounded `failures` and cache summary.
 Lifecycle is STARTING/LOADING/READY/STOPPING/FAILED; TUI derives BUSY and discovery
-STOPPED/CONFLICT, not a new native state machine.
+STOPPED/CONFLICT, not a new native state machine. Readiness/fatal projection reads
+the same backend model/fatal fields as `/health`; a recoverable pre-native request
+rejection finishes ERROR while Runtime stays READY. Actual backend fatal state
+projects FAILED, not every request error. Startup/shutdown states remain explicit.
+Ordinary `/health` exposes `fatal_error: "backend_fatal"` on fatal failure, not
+exception text.
 
 Request: opaque generated ID, received/started wall/monotonic times, current phase,
 phase-start times, last progress, accumulated completed-phase durations and metrics.
@@ -169,6 +174,38 @@ need not equal projection durations; boundary/worker overhead differs. TTFT reta
 handler-entry-to-first-canonical definition; request elapsed begins at earlier
 HTTP boundary arrival including preparation-lease wait. Do not sum nested timers.
 Idle means no waiting server request; it predicts no external client continuation.
+
+### Request failure diagnostics
+
+Local `/ds41f/status` retains at most **128** scalar failure records in `failures`,
+separately from current requests and the last completion. Each carries HTTP
+`request_id`, `scheduler_request_id` where available, `stage`, `exception_type`,
+`category`, safe first-party `source` (module/function/line), `native_started`,
+`canonical_settled`, `cache_published`, `runtime_fatal`, `secondary` and timestamp.
+Request records also carry scheduler correlation where available.
+
+Stages distinguish preparation/admission, cache lookup/paired restore, historical
+image/Vision preparation, native start/execution, settlement/publication,
+delivery/cancellation/cleanup and unexpected failures. Only allowlisted reasons
+(`context_capacity_exhausted`, `body_limit`, `body_timeout`, `preparation_busy`)
+become categories; other failures are `unexpected_exception`, not an inferred
+root-cause diagnosis. Source follows explicit exception causes to the innermost
+first-party frame. Primary failures survive outer wrappers and retirement;
+secondary cleanup failures are separate records.
+
+Diagnostics shows LAST REQUEST FAILURE even after later successes. When idle
+after an errored request, a healthy dashboard shows LAST REQUEST FAILED while
+Runtime remains ready. Sanitized records also enter the existing bounded operator
+log ring; its truncation/eviction rules still apply. No exception strings/objects,
+tracebacks, locals, absolute paths, request content or attachments are retained
+in these diagnostics. Runtime exit loses them; capture local status/logs before
+shutdown when investigating. Collection is best-effort, not admission, settlement,
+retry or recovery authority, and adds no Messages response fields.
+
+[Installed diagnostic acceptance](../artifacts/request-failure-diagnostics/report.md)
+records bounded retention, privacy, primary/secondary failures, readiness
+consistency and scoped Production delivery; it does not establish the original
+Windows failure's root cause or qualify later payloads.
 
 ## Metric definitions / privacy
 
