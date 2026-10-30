@@ -1,0 +1,69 @@
+{
+  "checkout_head": "ca1f738c4f02586ac9cbd8c68cc08e93a1a4308c",
+  "initial_status": "clean master",
+  "production": {
+    "path": "/Volumes/SDXC-512/ds41f-1017",
+    "version": "0.23.0",
+    "provenance": {
+      "native_build": {
+        "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05) (Homebrew)\n",
+        "cmake": "cmake version 4.3.3\n\nCMake suite maintained and supported by Kitware (kitware.com/cmake).\n",
+        "host_linked": false,
+        "opencv": "4.14.0\n",
+        "rustc": "rustc 1.98.1 (48a229cea 2026-09-01) (Homebrew)\nbinary: rustc\ncommit-hash: 48a229ceaefd4985c50990b14116b6d856af0985\ncommit-date: 2026-09-01\nhost: aarch64-apple-darwin\nrelease: 1.98.1\nLLVM version: 22.1.8\n",
+        "wheel_sha256": "11bda3355c2f48b99d04f6a2179b283add3f6d1218f34e4707bd5a29b304ab03",
+        "xcode": "Xcode 26.6\nBuild version 17F113\n"
+      },
+      "overlays": [
+        "compressed-growth",
+        "bit-exact-kernels",
+        "template-reuse",
+        "context-copy"
+      ],
+      "recipe_source": {
+        "archive": "recipe-02-source.tar.gz",
+        "patch": "docs/recipe-02-native-semantic-boundary.patch",
+        "revision": "93b0fd229cc9ffa6b1a8c63d42b0bf741bbec170"
+      },
+      "source_commit": "69689d514fc5acb2cbe229f8c863da1e0a855e4a"
+    },
+    "manifest_sha256": "471c31466f99a1dcdaaa7254e54d4da30707a80ea8de82b54ca320899b93d604",
+    "source_sha256": {
+      "serving/image_files.py": "033f632df70f29d88358356f775dff3e62b783b89de198293dcdfba8e24f33f9",
+      "serving/mtp_public.py": "f7a668a1a4b0c5f1c88ef9fe89deca85e9c8232efa0f1cdd4a47fd482b091a31",
+      "serving/capacity.py": "56266b8d1be7b4d9b1c9c952d4fe3d7d1fe30463c6c69a9132436ca302eadcf9",
+      "serving/ordinary_admission.py": "09599c896cfa168820ef0ad157e973d25a167865e71ae7bd1920a842691e3f16",
+      "runtime/multimodal.py": "d2a360a8db590a52d2fa5b299b37f6cedab313672fac70255bc35e199461331b"
+    },
+    "recipe_native_sha256": "eae10c9494744ff2b32d60f3b5f44a66e1029fd32ebcd82868fb9082dc28f3d2"
+  },
+  "harness": {
+    "dsh": {
+      "version": "0.2.1-rc.2",
+      "bundle_sha256": null
+    },
+    "dsh-llm-deepseek": {
+      "version": "0.2.1-rc.2",
+      "bundle_sha256": "eba35025ed1eedda89c51f2da46a3a968f7be1d59719f2ceeadfc4518dff37d6"
+    },
+    "dsh-compaction-image-offload": {
+      "version": "0.2.1-rc.2",
+      "bundle_sha256": "6352066e8028a74374f0d6de42ebfeec5125100bb1a32ea98ff7a9fc9f58b940"
+    },
+    "dsh-compaction-basic": {
+      "version": "0.2.1-rc.2",
+      "bundle_sha256": "b7ac52f20a36430cf01a66b3a36f23a48ffdb22708d714dbe1fff541b5df4ec5"
+    }
+  },
+  "upstream": {
+    "harness_release": "687f282e8625c6b8d11ff58211a90524be2e4317",
+    "harness_remote_HEAD": "ce7073d51254c26cd63b22a60835b8f948deb447",
+    "deepinfer_production_architecture_reference": "8b16149741a4935e1dec8cea27853f273b374c5b",
+    "deepinfer_remote_HEAD": "553741557a57df44a46fb3ab72b6aafeaf945337"
+  },
+  "fetched_source_sha256": {
+    "files-soft-caps-harness-store.ts": "3a361dcc47ab661a89f8a44e65e607f8d4e56a073cfce9cde8e4121e43bd109e",
+    "files-soft-caps-pinned-engine.py": "a636d60ca5711f6b7c21e68370c3bd9c2de6fc3f4439a7429ca4f572f0edeebe",
+    "files-soft-caps-pinned-processor.py": "8b8a0a021795b6648ac372ccc7e6ca935ffb71d5d92313c9b6fcd4833761ba21"
+  }
+}

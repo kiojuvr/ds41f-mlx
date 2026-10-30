@@ -137,20 +137,27 @@ checks expiry immediately. Request-held snapshots may outlive that sweep.
 | Bound | Enforced default/ceiling |
 | --- | --- |
 | Encoded bytes per file | 16 MiB |
-| Retained files per deployment | 128 |
-| Aggregate retained encoded bytes | 64 MiB |
+| Retained files per deployment | No default count cap; optional positive operator count policy |
+| Aggregate retained Python allocations | 64 MiB, including encoded bytes, entry metadata and mapping allocation |
 | Concurrent uploads | 1; reuse the existing HTTP preparation lease, reject busy uploads rather than queue their bodies |
 | Multipart wire bytes | 16 MiB + 64 KiB (includes form overhead); enforced before buffering, including chunked bodies |
 | Multipart shape | 3 parts, 2 headers/part, 2048 bytes/header, 32 bytes/expiry field, 70-byte boundary |
 | HTTP body timeout | Existing 30 seconds; no new unbounded upload wait |
 | Actual Messages JSON wire bytes | Unchanged 16 MiB |
-| Files-mode image occurrences | 600 including inline images and repeated IDs; independent of the 128 distinct storage slots |
+| Files-mode image occurrences | 600 including inline images and repeated IDs; independent of persistent storage admission |
 | Resolved encoded image bytes | 64 MiB aggregate; counted per occurrence before base64 expansion |
 | Fresh source pixels | 16,777,216 after verified paired coverage; no cumulative covered-history pixel charge during resolution (bounded Production acceptance linked below) |
 
 `create_app(files_limits=FileLimits(file_bytes=..., count=..., storage_bytes=...))`
-can **lower only** the first three storage ceilings; no new CLI/environment or
-request-level limit override exists. Multipart ingress remains under its fixed
+can lower the per-file/retained-allocation ceilings and optionally impose a positive
+count policy (`count=None` by default); no CLI/environment or request-level override exists.
+The former independent 128-entry ceiling is removed in current source, not installed
+Production. Storage admission conservatively charges Python object sizes (shared
+scalars charged per entry), including the candidate mapping's actual resize allocation,
+before atomic publication. A bounded shallow mapping copy shares immutable image bytes;
+rejection publishes nothing. This is retained-object accounting, not process RSS or
+a global request/snapshot memory reservation. See the
+[scoped decision and acceptance](../artifacts/files-http-soft-caps/report.md). Multipart ingress remains under its fixed
 ceiling even with lower per-file configuration. Parsing uses the already pinned
 `python-multipart` dependency with bounded headers/parts and 64 KiB parser chunks.
 Buffering is bounded, not zero-copy: raw body, parser bytes and decoding have

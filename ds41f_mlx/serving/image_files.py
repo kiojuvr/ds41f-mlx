@@ -9,6 +9,7 @@ from datetime import datetime, timezone
 import base64
 import json
 import re
+from sys import getsizeof
 from threading import RLock
 from time import time
 from uuid import uuid4
@@ -20,6 +21,8 @@ from ds41f_mlx.runtime.multimodal import (
 
 UPLOAD_BODY_BYTES = MAX_IMAGE_BYTES + 64 * 1024
 MAX_OCCURRENCES = MAX_REQUEST_IMAGES
+# Persistent Python storage is independent of the per-request image budget.
+FILE_STORAGE_BYTES = 64 * 1024 * 1024
 
 
 class FileError(ValueError):
@@ -31,14 +34,16 @@ class FileError(ValueError):
 @dataclass(frozen=True)
 class FileLimits:
     file_bytes: int = MAX_IMAGE_BYTES
-    count: int = 128
-    storage_bytes: int = MAX_REQUEST_IMAGE_BYTES
+    count: int | None = None
+    storage_bytes: int = FILE_STORAGE_BYTES
 
     def __post_init__(self):
         for value, ceiling in ((self.file_bytes, MAX_IMAGE_BYTES),
-                               (self.count, 128), (self.storage_bytes, MAX_REQUEST_IMAGE_BYTES)):
+                               (self.storage_bytes, FILE_STORAGE_BYTES)):
             if type(value) is not int or not 0 < value <= ceiling:
                 raise ValueError('Files limits may only lower the deployment ceilings')
+        if self.count is not None and (type(self.count) is not int or self.count < 1):
+            raise ValueError('Files count policy must be a positive integer or None')
 
 
 @dataclass(frozen=True)
@@ -69,6 +74,15 @@ class ImageFiles:
         with self._lock:
             self._files.clear()
 
+    @staticmethod
+    def retained_bytes(files):
+        # Conservative Python allocation charge, not encoded payload alone.
+        # Charge shared scalar objects per entry as well; no deduplication credit.
+        return getsizeof(files) + sum(
+            getsizeof(key) + getsizeof(image) + getsizeof(vars(image))
+            + sum(getsizeof(value) for value in vars(image).values())
+            for key, image in files.items())
+
     def upload(self, body, content_type):
         # The HTTP boundary serializes uploads/preparation and bounds ingress
         # before buffering. This parser also stays bounded for direct callers.
@@ -95,12 +109,19 @@ class ImageFiles:
             raise FileError(f'invalid image: {exc}') from exc
         with self._lock:
             self.sweep()
-            if len(self._files) >= self.limits.count or sum(len(f.data) for f in self._files.values()) + len(data) > self.limits.storage_bytes:
+            if self.limits.count is not None and len(self._files) >= self.limits.count:
                 raise FileError('file storage quota exceeded', 429, 'file_storage_quota')
             created = int(self.clock())
             key = 'file_' + uuid4().hex
-            self._files[key] = StoredImage(data, mime, filename, created, created + int(seconds),
-                                            metadata['width'] * metadata['height'])
+            image = StoredImage(data, mime, filename, created, created + int(seconds),
+                                metadata['width'] * metadata['height'])
+            # One bounded shallow mapping copy includes actual dict allocation,
+            # including resize headroom, before atomic publication. Image bytes
+            # are immutable and shared, not copied. Failure retains no candidate.
+            candidate = self._files | {key: image}
+            if self.retained_bytes(candidate) > self.limits.storage_bytes:
+                raise FileError('file storage quota exceeded', 429, 'file_storage_quota')
+            self._files = candidate
         return dict(id=key, type='file', mime_type=mime, size_bytes=len(data),
                     created_at=datetime.fromtimestamp(created, timezone.utc).isoformat().replace('+00:00', 'Z'),
                     filename=filename)

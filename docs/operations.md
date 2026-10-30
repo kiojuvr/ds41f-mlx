@@ -46,8 +46,13 @@ execution. Neither this nor Harness's count reference promises arbitrary visual
 context or 600-image residency. Do not apply the older experiment's test override
 to any installed Runtime. That historical qualification did not change Production;
 the later Multimodal-Runtime promotion is recorded above.
-The 16 MiB JSON body, 64 MiB encoded request/storage, 128 distinct Files, context,
-output, queue and paired-cache limits remain independent. See
+The 16 MiB JSON body, 64 MiB encoded request residency, Files storage, context,
+output, queue and paired-cache limits remain independent. Current source removes
+only the default 128-entry Files ceiling and charges metadata/mapping allocations
+as well as encoded bytes to a separate 64 MiB retained-storage budget. Optional
+operator count policy remains. This [model-free source correction](../artifacts/files-http-soft-caps/report.md)
+is **not installed in Production**, which retains its earlier 128-ID/encoded-byte
+storage policy. See
 [capability limits](capabilities.md#bounded-inline-images) and the
 [compatibility assessment](../artifacts/harness-image-capacity/report.md).
 
@@ -92,7 +97,8 @@ rc.2 automatic pressure compaction is supported; `/compact` as task text is not
 a human-command dispatch mechanism.
 
 Keep one application/model lifetime per process and monitor physical reserve,
-pressure and swap. Files are process-local/expiry-bounded (128 IDs /64 MiB), not
+pressure and swap. Files are process-local/expiry-bounded (installed Production: 128 IDs /64 MiB;
+current source: 64 MiB retained allocations without a default count cap), not
 purged by offload; inline fallback must fit the smaller Runtime body limit.
 Unavailable attachment bytes require reattachment/operator action. Summaries can
 truncate or fail strict shrink without replacing history. Resource refusals are

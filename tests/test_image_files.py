@@ -150,6 +150,80 @@ def test_bounds_and_malformed_partial(http):
     assert not store._files
 
 
+def test_more_than_128_files_under_retained_memory_budget(http):
+    client, store, prepared = http
+    receipts = [upload(client) for _ in range(129)]
+    assert store.limits.count is None
+    assert len(store._files) == len({r['id'] for r in receipts}) == 129
+    assert store.retained_bytes(store._files) < store.limits.storage_bytes
+    first, last = receipts[0]['id'], receipts[-1]['id']
+    assert client.post('/v1/messages', json=body([ref(first), ref(last), ref(first)])).status_code == 200
+    identities = prepared[-1].multimodal.identities()
+    assert len(identities) == 3 and len({i['sha256'] for i in identities}) == 1
+    snapshot = store.snapshot(first)
+    for receipt in receipts:
+        assert client.delete('/v1/files/' + receipt['id']).status_code == 200
+    assert not store._files and snapshot.data == png()
+
+
+def test_retained_allocation_quota_is_atomic_and_reclaimable(http):
+    client, store, prepared = http
+    store.limits = FileLimits(storage_bytes=16 * 1024)
+    accepted = []
+    for _ in range(128):  # finite test; tiny images exhaust metadata budget first
+        previous = store._files
+        response = client.post('/v1/files', **form())
+        if response.status_code == 429:
+            assert response.json()['error']['code'] == 'file_storage_quota'
+            assert store._files is previous  # no publication, including resize
+            break
+        assert response.status_code == 200, response.text
+        accepted.append(response.json()['id'])
+        assert store.retained_bytes(store._files) <= store.limits.storage_bytes
+    else:
+        pytest.fail('retained allocation budget did not reject')
+    assert accepted and sum(len(f.data) for f in store._files.values()) < store.limits.storage_bytes
+    snapshots = [store.snapshot(key) for key in accepted]
+    for key in accepted:
+        assert client.delete('/v1/files/' + key).status_code == 200
+    key = upload(client)['id']
+    store.clock = lambda: 10**12
+    store.sweep()
+    assert not store._files
+    with pytest.raises(FileError):
+        store.snapshot(key)
+    assert all(s.data == png() for s in snapshots)
+    assert not prepared
+
+
+@pytest.mark.parametrize('cleanup', ['delete', 'expiry', 'clear'])
+def test_store_releases_entries_but_not_acquired_snapshots(http, cleanup):
+    import gc
+    import weakref
+    client, store, _ = http
+    key = upload(client)['id']
+    snapshot = store.snapshot(key)
+    weak = weakref.ref(snapshot)
+    if cleanup == 'delete':
+        client.delete('/v1/files/' + key)
+    elif cleanup == 'expiry':
+        store.clock = lambda: 10**12
+        store.sweep()
+    else:
+        store.clear()
+    assert not store._files and snapshot.data == png()
+    del snapshot
+    gc.collect()
+    assert weak() is None
+
+
+def test_count_is_optional_operator_policy_not_128_ceiling():
+    assert FileLimits(count=129).count == 129
+    for value in (0, -1, True, 1.5):
+        with pytest.raises(ValueError):
+            FileLimits(count=value)
+
+
 def test_inline_file_and_replacement_identity_and_origins(http):
     client, store, prepared = http
     a, b = upload(client), upload(client)
@@ -271,6 +345,33 @@ def test_concurrent_snapshot_and_delete(http):
     assert snapshot.data == png()
     with pytest.raises(FileError):
         store.snapshot(key)
+
+
+@pytest.mark.parametrize('path,content_type,limit', [
+    ('/v1/messages', b'application/json', 16 * 1024 * 1024),
+    ('/v1/files', b'multipart/form-data; boundary=x', 16 * 1024 * 1024 + 65536),
+])
+def test_chunked_ingress_stops_at_bound_and_releases_lease(http, path, content_type, limit):
+    client, store, prepared = http
+    scope = dict(type='http', asgi={'version': '3.0'}, http_version='1.1', method='POST',
+                 scheme='http', path=path, raw_path=path.encode(), root_path='',
+                 query_string=b'', headers=[(b'host', b'127.0.0.1:8000'),
+                     (b'content-type', content_type), (b'transfer-encoding', b'chunked')],
+                 client=('127.0.0.1', 1), server=('127.0.0.1', 8000))
+    sent, received = [], 0
+    async def run():
+        async def receive():
+            nonlocal received
+            received += 65536
+            assert received <= limit + 65536  # do not drain an unlimited stream
+            return {'type': 'http.request', 'body': b'x' * 65536, 'more_body': True}
+        async def send(event):
+            sent.append(event)
+        await client.app(scope, receive, send)
+    client.portal.call(run)
+    assert sent[0]['status'] == 413 and received == limit + 65536
+    assert not store._files and not prepared
+    upload(client)  # oversized-body unwinding released the preparation lease
 
 
 def test_disconnect_partial_upload_releases_lease(http):

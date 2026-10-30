@@ -225,9 +225,13 @@ promise. Intersecting image spans still reject; no earlier paired state is
 discarded to force a cold miss. Broader conditional-discount reconstruction
 retains complete historical-coverage and supported-paired-layout requirements.
 
-The existing **16 MiB entire JSON body**, **128 distinct stored Files / 64 MiB
-storage**, queue serialization, checkpoint context/output and paired-cache residency
-limits remain independent. These are not full compatibility with Harness's
+The existing **16 MiB entire JSON body**, **64 MiB retained Files allocation**,
+queue serialization, checkpoint context/output and paired-cache residency limits
+remain independent. Current source removes the default 128-entry Files ceiling,
+charging encoded bytes plus Python metadata/mapping allocations to the existing
+storage budget instead; optional operator count policy remains. This is a
+[source-only, model-free correction](../artifacts/files-http-soft-caps/report.md),
+not a Production installation. These are not full compatibility with Harness's
 **128 MiB raw Files / 20 MiB represented inline-image** budgets. In particular,
 Runtime 400 does **not** trigger official image offload. Official projection and
 compaction can change the prefix and invalidate the pair; surviving historical
