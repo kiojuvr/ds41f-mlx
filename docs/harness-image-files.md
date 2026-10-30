@@ -67,6 +67,31 @@ IDs are random server-issued UUID-based opaque tokens, not hashes, paths or
 filenames. Creation timestamps are actual UTC RFC3339 whole-second timestamps.
 Expiry is `created_at + requested seconds`; no `expires_at` response is required.
 
+### `GET /v1/files`
+
+Ordinary MTP returns non-expired metadata in stable upload-publication order,
+using the same file objects as upload. Supported query parameters only:
+`limit` (decimal 1..1000, default 1000) and `after_id` (an existing live ID,
+exclusive). Parameters may appear in either order, once each; malformed,
+duplicate, encoded or unsupported parameters return 400. Other routes still
+reject query strings. A page contains `data`, `first_id`, `last_id`, `has_more`;
+empty pages have null cursors and `has_more=false`.
+
+The existing lock covers expiry and page selection; at most 1000 metadata
+objects are built, without copying image bytes or adding an index. Stable stores
+can traverse beyond 1000 entries without skips/duplicates. Surviving cursors
+remain usable across changes; deleted/expired/unknown cursors return 400
+`invalid_file_cursor`. Pages are not a cross-request snapshot. The deployment's
+trusted single-operator boundary applies to listing as to deletion.
+
+The installed official Harness 0.2.1-rc.2 client classifies the existing 429
+`file_storage_quota`, lists pages of 1000, selects the oldest `dsh-` filenames,
+deletes up to its cleanup batch and retries upload once. Runtime does not select
+victims or retry. No owned candidates means the original error; insufficient
+reclamation means the one retry can still fail. Concurrent deletion or expiry
+can cause recovery to fail safely; no substitute image or hidden replay occurs.
+See [scoped model-free recovery evidence](../artifacts/files-http-soft-caps/quota-recovery/report.md).
+
 ### `DELETE /v1/files/{id}`
 
 No body or Content-Type is required. Success: HTTP 200 with exactly:
@@ -213,13 +238,13 @@ uncovered image fresh and fit both fresh budgets; exact logical Chat lease loss
 still fails closed. No fabricated hit, partial-image restore or new replay path
 is introduced. File lifetime and paired-KV lifetime are independent.
 
-**Unsupported:** list/pagination, metadata retrieval, content/download endpoints,
+**Unsupported:** individual metadata retrieval, content/download endpoints,
 OpenAI `purpose`/Files variants, arbitrary documents, remote URLs, persistent IDs,
-account emulation and general file management. In particular, upstream quota
-recovery that lists/reclaims oldest files is **not implemented**. Upload quota
-failure may cause Harness's existing bounded Files failure/inline fallback; this
-is not complete upstream quota handling. Operators can explicitly delete known
-IDs, wait for expiry, or restart (which also loses paired state).
+account emulation and general file management. Harness owns quota reclamation
+and bounded retry; Runtime provides no automatic eviction. Operators can also
+explicitly delete known IDs, wait for expiry, or restart (which loses paired state).
+Failed recovery may still use Harness's existing bounded failure/inline fallback;
+listing does not enlarge Runtime's image or transport limits.
 
 Supported Harness configuration requires native Messages/image modality, Runtime
 image bounds, stable/addition-only tools, and explicitly:

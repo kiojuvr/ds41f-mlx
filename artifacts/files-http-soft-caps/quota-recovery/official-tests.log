@@ -1,0 +1,157 @@
+...............{
+  "scenario": "default-quota",
+  "events": [
+    {
+      "method": "POST",
+      "path": "/v1/files",
+      "status": 429
+    },
+    {
+      "method": "GET",
+      "path": "/v1/files?limit=1000",
+      "status": 200
+    },
+    {
+      "method": "DELETE",
+      "path": "/v1/files/file_06985b18220a4403895366beb3de71cb",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/v1/files",
+      "status": 200
+    }
+  ],
+  "outcome": "PASS"
+}
+
+{"scenario": "default-quota", "retained_entries": 6, "retained_bytes": 62948565, "budget": 67108864}
+.{
+  "scenario": "multi-page-oldest",
+  "events": [
+    {
+      "method": "POST",
+      "path": "/v1/files",
+      "status": 429
+    },
+    {
+      "method": "GET",
+      "path": "/v1/files?limit=1000",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/v1/files?after_id=file_1b609a0e88964f8b92660bbf5ddc77ed&limit=1000",
+      "status": 200
+    },
+    {
+      "method": "DELETE",
+      "path": "/v1/files/file_c52151347d364501aacb09f7d3faa45b",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/v1/files",
+      "status": 200
+    }
+  ],
+  "outcome": "PASS"
+}
+
+{"scenario": "multi-page-oldest", "retained_entries": 1003, "retained_bytes": 612717, "budget": 612826}
+.{
+  "scenario": "none-owned",
+  "events": [
+    {
+      "method": "POST",
+      "path": "/v1/files",
+      "status": 429
+    },
+    {
+      "method": "GET",
+      "path": "/v1/files?limit=1000",
+      "status": 200
+    }
+  ],
+  "outcome": "PASS"
+}
+
+{"scenario": "none-owned", "retained_entries": 1, "retained_bytes": 768, "budget": 768}
+.{
+  "scenario": "insufficient",
+  "events": [
+    {
+      "method": "POST",
+      "path": "/v1/files",
+      "status": 429
+    },
+    {
+      "method": "GET",
+      "path": "/v1/files?limit=1000",
+      "status": 200
+    },
+    {
+      "method": "DELETE",
+      "path": "/v1/files/file_3656ecff9ebc470e966f512b35309253",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/v1/files",
+      "status": 429
+    }
+  ],
+  "outcome": "PASS"
+}
+
+{"scenario": "insufficient", "retained_entries": 1, "retained_bytes": 768, "budget": 1353}
+.{
+  "scenario": "cancel",
+  "events": [],
+  "outcome": "PASS"
+}
+
+{"scenario": "cancel", "retained_entries": 0, "retained_bytes": 64, "budget": 67108864}
+.{
+  "scenario": "cancel-list",
+  "events": [
+    {
+      "method": "POST",
+      "path": "/v1/files",
+      "status": 429
+    },
+    {
+      "method": "GET",
+      "path": "/v1/files?limit=1000",
+      "status": 200
+    }
+  ],
+  "outcome": "PASS"
+}
+
+{"scenario": "cancel-list", "retained_entries": 1, "retained_bytes": 770, "budget": 770}
+.{
+  "scenario": "delete-race",
+  "events": [
+    {
+      "method": "POST",
+      "path": "/v1/files",
+      "status": 429
+    },
+    {
+      "method": "GET",
+      "path": "/v1/files?limit=1000",
+      "status": 200
+    },
+    {
+      "method": "DELETE",
+      "path": "/v1/files/file_f7a32d4d2ec448bcb27644307ec9a1a1",
+      "status": 404
+    }
+  ],
+  "outcome": "PASS"
+}
+
+{"scenario": "delete-race", "retained_entries": 0, "retained_bytes": 184, "budget": 770}
+.
+22 passed, 177 warnings in 42.08s

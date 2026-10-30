@@ -332,7 +332,7 @@ def test_resolution_budget_and_unrelated_extensions(http):
     for extension in ({'dsh_session_log': {}}, {'unknown': True}):
         assert client.post('/v1/messages', json=body([ref(key)]) | extension).status_code == 400
     assert not prepared
-    assert client.get('/v1/files').status_code == 404
+    assert client.get('/v1/files').status_code == 200
     assert client.get('/v1/files/' + key).status_code == 404
 
 

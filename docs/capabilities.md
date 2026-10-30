@@ -28,15 +28,17 @@ Tool suffix delivery waits for canonical settlement; a `tool_use` stop reason or
 argument-end observation alone never authorizes effects. Production sessions
 remain **Chat-only**; Messages has no logical-session or persistence contract.
 
-Ordinary Messages additionally implements bounded image Files upload/delete and
+Ordinary Messages additionally implements bounded image Files upload/list/delete and
 user/tool-result file-ID resolution; see [Files API scope](harness-image-files.md).
 Model-free verification is supplemented by [Gate F0](../artifacts/harness-files/gate-f0-report.md):
 bounded real-model official Harness File-ID/nested-tool-result transport on macOS.
 This is **not general Files lifecycle, complete upstream compatibility or Windows
 execution qualification**. IDs/bytes are process-local, deployment-owned and
 expiry-bounded, with no persistent attachment storage contract. Files lifetime
-does not extend paired KV lifetime. List/retrieval/download and
-full upstream quota recovery are unsupported. Harness must explicitly set
+does not extend paired KV lifetime. Paginated listing enables the installed official
+Harness's oldest-owned-file quota reclamation and single upload retry; see the
+[scoped model-free qualification](../artifacts/files-http-soft-caps/quota-recovery/report.md).
+Individual retrieval/download remain unsupported. Harness must explicitly set
 `session-log-deepseek.enabled=false` and keep unsupported tool removal disabled.
 
 Messages intentionally rejects documents, URL/path image sources, server/

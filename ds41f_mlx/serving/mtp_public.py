@@ -137,19 +137,20 @@ class LocalBoundary:
         create = path == '/v1/sessions' and method == 'POST'
         chat = re.fullmatch(r'/v1/sessions/[^/]+/chat/completions', path) and method == 'POST'
         lifecycle = re.fullmatch(r'/v1/sessions/[^/]+', path) and path != '/v1/sessions/restore' and method in ('GET','DELETE')
+        file_list = self.ordinary and method == 'GET' and path == '/v1/files'
         file_upload = self.ordinary and method == 'POST' and path == '/v1/files'
         file_delete = self.ordinary and method == 'DELETE' and re.fullmatch(r'/v1/files/[^/]+', path)
         supported = create or chat or lifecycle or (method == 'GET' and path in ('/health','/v1/models'))
         if self.ordinary:
             session_control = method == 'POST' and re.fullmatch(r'/v1/sessions/[^/]+/(budget|cancel)', path)
-            supported = (file_upload or file_delete or (method == 'POST' and path in ('/v1/chat/completions', '/v1/messages')) or
+            supported = (file_list or file_upload or file_delete or (method == 'POST' and path in ('/v1/chat/completions', '/v1/messages')) or
                          (method == 'GET' and path in ('/health','/v1/models')) or
                          (self.production_sessions and (create or chat or lifecycle or session_control)))
         known = path in ('/v1/chat/completions','/v1/responses','/v1/messages','/v1/sessions/restore',
                          '/docs','/redoc','/openapi.json','/_ds41f/diagnostics') or re.fullmatch(r'/v1/sessions/[^/]+/(persist|responses|messages)', path)
         if not supported:
             return await deny(400 if known else 404, 'unsupported_capability' if known else 'not_found')
-        if scope.get('query_string'):
+        if scope.get('query_string') and not file_list:
             return await deny(400, 'unsupported_query')
         if values(b'content-encoding'):
             return await deny(400, 'json_uncompressed_required')

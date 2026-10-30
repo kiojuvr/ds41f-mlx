@@ -56,6 +56,24 @@ class StoredImage:
     pixels: int
 
 
+def listing_query(raw):
+    """Only the bounded ASCII pagination grammar used by the Files client."""
+    if len(raw) > 128:
+        raise FileError('invalid Files pagination')
+    values = {}
+    for part in raw.split(b'&') if raw else ():
+        if not re.fullmatch(rb'(?:after_id=file_[0-9a-f]{32}|limit=[0-9]{1,4})', part):
+            raise FileError('invalid Files pagination')
+        key, value = part.decode('ascii').split('=')
+        if key in values:
+            raise FileError('duplicate Files pagination parameter')
+        values[key] = value
+    limit = int(values.get('limit', '1000'))
+    if not 1 <= limit <= 1000:
+        raise FileError('Files limit must be from 1 through 1000')
+    return values.get('after_id'), limit
+
+
 class ImageFiles:
     def __init__(self, limits=None, *, clock=time):
         self.limits = limits or FileLimits()
@@ -122,9 +140,33 @@ class ImageFiles:
             if self.retained_bytes(candidate) > self.limits.storage_bytes:
                 raise FileError('file storage quota exceeded', 429, 'file_storage_quota')
             self._files = candidate
-        return dict(id=key, type='file', mime_type=mime, size_bytes=len(data),
-                    created_at=datetime.fromtimestamp(created, timezone.utc).isoformat().replace('+00:00', 'Z'),
-                    filename=filename)
+        return self.metadata(key, image)
+
+    @staticmethod
+    def metadata(key, image):
+        return dict(id=key, type='file', mime_type=image.mime, size_bytes=len(image.data),
+                    created_at=datetime.fromtimestamp(image.created, timezone.utc).isoformat().replace('+00:00', 'Z'),
+                    filename=image.filename)
+
+    def listing(self, query=b''):
+        after, limit = listing_query(query)
+        with self._lock:
+            self.sweep()
+            if after is not None and after not in self._files:
+                raise FileError('unknown or expired Files cursor', 400, 'invalid_file_cursor')
+            # Dict publication preserves insertion order. No full-store sort,
+            # metadata copy or second index; retain at most one page of metadata.
+            data, started, more = [], after is None, False
+            for key, image in self._files.items():
+                if not started:
+                    started = key == after
+                    continue
+                if len(data) == limit:
+                    more = True
+                    break
+                data.append(self.metadata(key, image))
+            return dict(data=data, first_id=data[0]['id'] if data else None,
+                        last_id=data[-1]['id'] if data else None, has_more=more)
 
     def snapshot(self, key):
         with self._lock:

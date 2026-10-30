@@ -277,6 +277,11 @@ def create_app(*, backend: DeepSeekRecipeRuntimeBackend | None = None, recipe_pa
             return JSONResponse(await run_in_threadpool(app.state.image_files.upload,
                 await request.body(), request.headers.get('content-type')))
 
+        @app.get('/v1/files')
+        async def list_images(request: Request):
+            return JSONResponse(await run_in_threadpool(app.state.image_files.listing,
+                request.scope.get('query_string', b'')))
+
         @app.delete('/v1/files/{file_id}')
         async def delete_image(file_id: str):
             return JSONResponse(app.state.image_files.delete(file_id))
