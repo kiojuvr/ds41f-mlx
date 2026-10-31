@@ -48,7 +48,6 @@ def test_worker_failure_diagnostics(monkeypatch, native, cleanup):
             return None
         kw['admit'](None)
     monkeypatch.setattr(s.checkpoints, 'acquire', acquire)
-    monkeypatch.setattr(execution_identity, 'numerical_profile', fail)
     def start(*a, **kw):
         calls.append('native')
         raise RuntimeError(SECRET)
@@ -81,7 +80,9 @@ def test_worker_failure_diagnostics(monkeypatch, native, cleanup):
     s.requests[r.request_id] = r
     try:
         app = create_app(profile='mtp-serving-v1', runtime_config=b.runtime_config, backend=b)
-        result = s.step()
+        with monkeypatch.context() as failure_injection:
+            failure_injection.setattr(execution_identity, 'numerical_profile', fail)
+            result = s.step()
         assert result.outputs[-1].finished and result.outputs[-1].error
         assert calls == ['lookup', 'native', 'retire'] if native else calls == ['lookup', 'retire']
         snap = p.snapshot()
@@ -106,6 +107,7 @@ def test_worker_failure_diagnostics(monkeypatch, native, cleanup):
             h = client.get('/health')
             assert h.status_code == (503 if native else 200)
             assert h.json()['status'] == ('unavailable' if native else 'ready')
+            assert SECRET not in h.text
         assert Dashboard(snap).state == ('FAILED' if native else 'READY')
         assert snap['last_request']['finish_reason'] == 'error'
         assert SECRET not in json.dumps(snap)
