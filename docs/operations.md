@@ -215,6 +215,18 @@ implement removal or qualify a full alpha.2 agent lifecycle. Keep Session-log
 upload disabled; neither the audit nor this source correction authorizes an
 installation or persistent Harness configuration change.
 
+The subsequent [isolated alpha.2 native E2E acceptance](../artifacts/harness-alpha2-e2e/report.md)
+uses the corrected source-delivered Recipe and real Flash-1017, with the official
+published 0.2.2-alpha.2 Web application/provider. Genuine all-deferred tools,
+Skills/catalog changes, browser-dispatched Goal/automatic-round completion and
+manual compaction, image offload/reacquisition and text cancellation/continuation
+pass the bounded workload. Its temporary profile, ports and installations are
+acceptance fixtures, not current service locations or instructions to migrate
+Production. Existing Production Recipe/native bytes remain unchanged;
+`tool_removal` and Session-log upload remain unsupported. Exact execution identities,
+configuration revisions, evidence and source-tag/binary-provenance limits belong
+to that report.
+
 Later [Gate F0](../artifacts/harness-files/gate-f0-report.md) demonstrated bounded
 real-model official File-ID/nested-tool-result transport on macOS. The
 [repaired Visual Loop](../artifacts/repaired-visual-loop/report.md) subsequently

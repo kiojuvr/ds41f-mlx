@@ -1,0 +1,15 @@
+import {chromium} from '/tmp/ds41f-alpha2-e2e/client/node_modules/playwright/index.mjs';
+import {writeFileSync,readFileSync} from 'node:fs';
+const out='/Volumes/SDXC-512/ds41f-mlx/artifacts/harness-alpha2-e2e';
+const browser=await chromium.launch({headless:true});
+const context=await browser.newContext({viewport:{width:1440,height:1100}});
+const page=await context.newPage();
+page.on('console',m=>console.log('browser',m.type(),m.text()));
+await page.goto(readFileSync(out+'/harness.log','utf8').match(/dsh web: (http[^\s]+)/)[1]);await page.waitForTimeout(3000);
+if(await page.getByRole('button',{name:'Continue',exact:true}).count())await page.getByRole('button',{name:'Continue',exact:true}).click();
+await page.waitForTimeout(1000);
+writeFileSync(out+'/browser-dom.json',JSON.stringify(await page.locator('input,textarea,[contenteditable],button').evaluateAll(es=>es.map(e=>({tag:e.tagName,role:e.getAttribute('role'),placeholder:e.getAttribute('placeholder'),aria:e.getAttribute('aria-label'),text:e.innerText?.slice(0,100)}))),null,2));
+writeFileSync(out+'/browser-text.txt',await page.locator('body').innerText());
+await page.screenshot({path:out+'/browser.png'});
+await context.storageState({path:'/tmp/ds41f-alpha2-e2e/browser-state.json'});
+await browser.close();

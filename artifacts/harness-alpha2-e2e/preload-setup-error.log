@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/Volumes/SDXC-512/ds41f-mlx/artifacts/harness-alpha2-e2e/runtime.py", line 93, in <module>
+    if __name__=='__main__': main()
+                             ~~~~^^
+  File "/Volumes/SDXC-512/ds41f-mlx/artifacts/harness-alpha2-e2e/runtime.py", line 31, in main
+    backend.dependency_identity = inspect(cfg, checkpoint=False)['identity_sha256']
+                                  ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/ds41f-alpha2-e2e/runtime/lib/python3.13/site-packages/ds41f_mlx/mtp_identity.py", line 214, in inspect
+    authority, compatibility = inspect_payload()
+                               ~~~~~~~~~~~~~~~^^
+  File "/private/tmp/ds41f-alpha2-e2e/runtime/lib/python3.13/site-packages/ds41f_mlx/execution_identity.py", line 173, in inspect_payload
+    check_installed_packages(authority, site)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/private/tmp/ds41f-alpha2-e2e/runtime/lib/python3.13/site-packages/ds41f_mlx/execution_identity.py", line 144, in check_installed_packages
+    raise ValueError(f'non-installed executable origin: {name}')
+ValueError: non-installed executable origin: transformers

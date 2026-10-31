@@ -1,0 +1,28 @@
+{"seq":0,"at":"2026-10-31T17:15:45.514Z","action":{"kind":"click","name":"Choose workspace"}}
+{"seq":1,"at":"2026-10-31T17:16:28.846Z","action":{"kind":"click","role":"menuitem","name":"Add workspace…"}}
+{"seq":2,"at":"2026-10-31T17:17:11.768Z","action":{"kind":"click","name":"Access mode, current: Workspace Write"}}
+{"seq":3,"at":"2026-10-31T17:17:21.459Z","action":{"kind":"click","role":"menuitemradio","name":"Read Only"}}
+{"seq":4,"at":"2026-10-31T17:18:08.997Z","action":{"kind":"click","role":"menuitem","name":"Read Only"}}
+{"seq":5,"at":"2026-10-31T17:19:03.787Z","action":{"kind":"click","name":"Access mode, current: Workspace Write"}}
+{"seq":6,"at":"2026-10-31T17:19:07.655Z","action":{"kind":"click","role":"menuitem","name":"Read Only"}}
+{"seq":7,"at":"2026-10-31T17:23:19.178Z","action":{"kind":"send","text":"Call baseline_receipt exactly once, then report the exact receipt it returns. Do not infer it or call other tools.","wait":20000}}
+{"seq":8,"at":"2026-10-31T17:24:10.860Z","action":{"kind":"send","text":"Call baseline_receipt exactly once, then report the exact receipt it returns. Do not infer it or call other tools.","wait":20000}}
+{"seq":9,"at":"2026-10-31T17:24:45.201Z","action":{"kind":"click","name":"Access mode, current: Workspace Write"}}
+{"seq":10,"at":"2026-10-31T17:24:49.115Z","action":{"kind":"click","role":"menuitem","name":"Read Only"}}
+{"seq":11,"at":"2026-10-31T17:24:53.230Z","action":{"kind":"send","text":"A new tool late_receipt is now available. Call late_receipt exactly once and report its exact returned receipt.","wait":15000}}
+{"seq":12,"at":"2026-10-31T17:25:19.913Z","action":{"kind":"send","text":"The baseline tool has been withdrawn. Using only the currently available tool late_receipt, read its receipt once more and quote it. Do not call baseline_receipt.","wait":15000}}
+{"seq":13,"at":"2026-10-31T17:26:05.067Z","action":{"kind":"click","name":"Plugins"}}
+{"seq":14,"at":"2026-10-31T17:27:17.294Z","action":{"kind":"text","text":"Call baseline_receipt exactly once, then","wait":5000}}
+{"seq":15,"at":"2026-10-31T17:27:35.021Z","action":{"kind":"send","text":"Continue after plugin reload: call late_receipt once and report its exact receipt. No other tool is needed.","wait":15000}}
+{"seq":16,"at":"2026-10-31T17:28:08.830Z","action":{"kind":"send","text":"Please apply /receipt to this reply.","wait":15000}}
+{"seq":17,"at":"2026-10-31T17:28:32.277Z","action":{"kind":"send","text":"Use the receipt skill for this turn. Load its current instructions with the skill tool first, then follow them. Do not rely on the earlier loaded copy.","wait":15000}}
+{"seq":18,"at":"2026-10-31T17:29:01.754Z","action":{"kind":"send","text":"The installed Skill catalog has changed. Load the currently offered replacement receipt skill using the skill tool, then follow its current instructions. Do not load the removed receipt skill.","wait":15000}}
+{"seq":19,"at":"2026-10-31T17:29:31.045Z","action":{"kind":"send","text":"Use read_image to inspect /tmp/ds41f-alpha2-e2e/workspace/image-A.png. Describe its shape, color, and printed identifier briefly. Remember this observation for a later comparison.","wait":20000}}
+{"seq":20,"at":"2026-10-31T17:30:01.296Z","action":{"kind":"send","text":"Now use read_image on /tmp/ds41f-alpha2-e2e/workspace/image-B.png. Briefly report its shape, color, and printed identifier, then compare it with your earlier A observation.","wait":20000}}
+{"seq":21,"at":"2026-10-31T17:30:31.123Z","action":{"kind":"command","text":"/compact","wait":25000}}
+{"seq":22,"at":"2026-10-31T17:31:31.944Z","action":{"kind":"snapshot","wait":500}}
+{"seq":23,"at":"2026-10-31T17:31:49.077Z","action":{"kind":"send","text":"After compaction, reacquire /tmp/ds41f-alpha2-e2e/workspace/image-A.png with read_image as a NEW read. Compare its actual pixels and printed identifier to the earlier A and B observations in the checkpoint. Be brief.","wait":22000}}
+{"seq":24,"at":"2026-10-31T17:32:31.435Z","action":{"kind":"command","text":"/goal In an automatic Goal round, read late_receipt exactly once, then mark this goal completed using update_goal and report its receipt. On the initial direct-human turn only, do not call tools or finish the goal: reply READY_FOR_GOAL_ROUND, leaving it active for automatic scheduling.","wait":30000}}
+{"seq":25,"at":"2026-10-31T17:33:36.918Z","action":{"kind":"send","text":"For a cancellable text-only check, do not call any tools. Enumerate integers from 1 through 2000, one integer per line, without abbreviations.","wait":600}}
+{"seq":26,"at":"2026-10-31T17:33:44.306Z","action":{"kind":"click","name":"Stop generating","wait":5000}}
+{"seq":27,"at":"2026-10-31T17:33:51.241Z","action":{"kind":"send","text":"The preceding text-only generation was intentionally stopped; do not resume it or call tools. Reply CANCEL_RECOVERY_OK only.","wait":10000}}

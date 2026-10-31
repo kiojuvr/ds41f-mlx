@@ -51,27 +51,38 @@ Harness `dsh_plugin_packages` is accepted and ignored. Prompt-based
 named selection is not constrained decoding. No Responses parity is added.
 The source-retained Recipe 0.2 native patch/wheel now supports nonempty all-deferred
 tool declarations: initial schemas remain empty and historical `tool_addition`
-blocks activate definitions at their existing canonical positions. This is verified
-at native conversion/encoding, exact-ID continuation, controlled HTTP/SSE and
-paired-token lookup boundaries, not a full dynamic Harness lifecycle. Installed
-Production retains the earlier all-deferred rejection; no promotion occurred.
-See the [focused correction report](../artifacts/harness-all-deferred/report.md).
+blocks activate definitions at their existing canonical positions. Native
+conversion/encoding, exact-ID continuation and paired-token lookup checks are
+recorded in the [focused correction report](../artifacts/harness-all-deferred/report.md).
+The subsequent [isolated alpha.2 E2E acceptance](../artifacts/harness-alpha2-e2e/report.md)
+also exercises genuine dynamic tool execution with all-deferred declarations.
+Installed Production retains the earlier all-deferred rejection; no promotion
+occurred.
 
 The [independent Harness 0.2.2-alpha.2 audit](../artifacts/harness-alpha2-compatibility/report.md)
 preserves exact source/installed identities and capability-specific evidence.
-Retained actual Harness executions used **0.2.1-rc.2**, not alpha.2. `addition-only`
-can deactivate tools by filtering declarations/history, but does not support the
-in-history removal protocol and may change canonical prompt identity. Removal-specific
-performance is unmeasured. Complete interactive Goal, manual compaction, Skill and
-dynamic plugin/MCP lifecycle acceptance remains incomplete; demonstrated automatic
-compaction is distinct from manual `/compact`. The subsequent
+Earlier retained actual Harness executions used **0.2.1-rc.2**. The later
+[alpha.2 acceptance](../artifacts/harness-alpha2-e2e/report.md) executes the official
+published **0.2.2-alpha.2** Web application and Native Messages provider against
+isolated corrected Runtime/Recipe and the real Flash-1017 model: 26 native requests,
+12 genuine exact-ID Tool Results, scoped plugin-registry changes, explicit/model
+Skills and catalog replacement, browser-dispatched `/goal` through automatic round
+completion, manual `/compact`, image offload/reacquisition and text cancellation
+with healthy continuation. This is bounded configuration/workflow acceptance, not
+universal alpha.2, Plugin-management, MCP, Goal or recovery qualification; official
+artifact identities and the source-tag/binary-provenance distinction are in the
+report. `addition-only` can deactivate tools by filtering declarations/history,
+but does not support in-history removal and may change canonical prompt identity.
+Removal-specific performance is unmeasured. Earlier automatic-compaction evidence
+retains its own scope; this alpha.2 sample exercises manual compaction. The earlier
 [authorized dynamic-tool implementation check](../artifacts/harness-dynamic-tools/report.md)
 is **BLOCKED** at the authoritative removal-encoding gate: current official Recipe
 still supplies no deactivation encoding. Its historical probes reproduced removal
 rejection and the independent all-deferred failure. The later focused correction
 fixes only all-deferred declarations in the source-retained native artifact and
 reuses the exact alpha.2 projection; `tool_removal` remains explicitly rejected.
-No new interactive, Plugin or full alpha.2 agent lifecycle acceptance is claimed.
+That correction alone did not establish interactive or agent lifecycle acceptance;
+the later E2E report above supplies the newly demonstrated bounded scope.
 
 ## Profiles
 
