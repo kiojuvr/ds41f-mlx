@@ -59,8 +59,12 @@ can deactivate tools by filtering declarations/history, but does not support the
 in-history removal protocol and may change canonical prompt identity. Removal-specific
 performance is unmeasured. Complete interactive Goal, manual compaction, Skill and
 dynamic plugin/MCP lifecycle acceptance remains incomplete; demonstrated automatic
-compaction is distinct from manual `/compact`. Recipe-aligned removal support and
-the all-deferred gap are investigation recommendations, not approved fixes.
+compaction is distinct from manual `/compact`. The subsequent
+[authorized dynamic-tool implementation check](../artifacts/harness-dynamic-tools/report.md)
+is **BLOCKED** at the authoritative removal-encoding gate: current official Recipe
+still supplies no deactivation encoding. Tagged projection/native-library probes
+reproduce both removal rejection and the independent all-deferred failure; neither
+gap is fixed, and no new interactive or Plugin lifecycle acceptance is claimed.
 
 ## Profiles
 

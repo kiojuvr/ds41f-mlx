@@ -1,0 +1,101 @@
+{
+  "addition-only": {
+    "messages": [
+      {
+        "id": "before",
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "before"
+          }
+        ]
+      },
+      {
+        "id": "swap",
+        "role": "developer",
+        "content": [
+          {
+            "type": "tool-addition",
+            "toolName": "fetch"
+          }
+        ]
+      },
+      {
+        "id": "after",
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "after"
+          }
+        ]
+      }
+    ],
+    "tools": [
+      {
+        "name": "fetch",
+        "description": "later addition",
+        "parameters": {
+          "type": "object"
+        },
+        "deferLoading": true
+      }
+    ]
+  },
+  "in-history": {
+    "messages": [
+      {
+        "id": "before",
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "before"
+          }
+        ]
+      },
+      {
+        "id": "swap",
+        "role": "developer",
+        "content": [
+          {
+            "type": "tool-addition",
+            "toolName": "fetch"
+          },
+          {
+            "type": "tool-removal",
+            "toolName": "search"
+          }
+        ]
+      },
+      {
+        "id": "after",
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "after"
+          }
+        ]
+      }
+    ],
+    "tools": [
+      {
+        "name": "search",
+        "description": "baseline",
+        "parameters": {
+          "type": "object"
+        }
+      },
+      {
+        "name": "fetch",
+        "description": "later addition",
+        "parameters": {
+          "type": "object"
+        },
+        "deferLoading": true
+      }
+    ]
+  }
+}

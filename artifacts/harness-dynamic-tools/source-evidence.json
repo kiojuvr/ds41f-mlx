@@ -1,0 +1,84 @@
+{
+  "recipe": {
+    "deepseek-recipe/src/protocol/anthropic/messages/request/schema.rs": {
+      "sha256": "699565374ab5d2292f2978eb5014eb4c91532728e4614af5ae869cd96954c4e0",
+      "excerpts": [
+        {
+          "start_line": 172,
+          "end_line": 203,
+          "text": "    ServerToolUse {\n        id: String,\n        name: String,\n        input: serde_json::Value,\n    },\n    ToolUse {\n        id: String,\n        name: String,\n        input: serde_json::Value,\n    },\n    ToolResult {\n        tool_use_id: String,\n        content: Option<MessagesToolResultContent>,\n        /// Accepted for compatibility; the result text is preserved either way.\n        is_error: Option<bool>,\n    },\n    /// A server tool result. Assistant messages only; dropped or rejected per\n    /// [`crate::request::ConversionOptions::messages_web_search`].\n    WebSearchToolResult {\n        tool_use_id: String,\n        content: serde_json::Value,\n    },\n    ToolAddition {\n        tool: MessagesToolReference,\n    },\n}\n\n#[derive(Debug, Deserialize)]\n#[serde(tag = \"type\", rename_all = \"snake_case\")]\npub enum MessagesToolReference {\n    ToolReference { name: String },\n}"
+        }
+      ]
+    },
+    "deepseek-recipe/src/protocol/anthropic/messages/request/convert.rs": {
+      "sha256": "7e3e440804acde6be1b34c293ec4797bc797a1e8f7db80f02aeae65184b24967",
+      "excerpts": [
+        {
+          "start_line": 188,
+          "end_line": 222,
+          "text": "                        .insert(tool.name.unwrap_or_else(|| \"web_search\".to_owned()));\n                    continue;\n                }\n                return Err(ConversionError::bad_request(format!(\n                    \"tools[{index}]: server tools are not supported\"\n                )));\n            }\n            MessagesTool::Client {\n                name,\n                description,\n                input_schema,\n                defer_loading,\n            } => {\n                validate_tool_name(&name, &format!(\"tools[{index}]\"))?;\n                tool_set.client_tools.push(ClientToolDeclaration {\n                    name,\n                    description,\n                    parameters: Some(input_schema),\n                    strict: None,\n                    defer_loading: model_version.supports_mid_conversation_system()\n                        && defer_loading == Some(true),\n                });\n            }\n        }\n    }\n    if !tool_set.client_tools.is_empty()\n        && tool_set.client_tools.iter().all(|tool| tool.defer_loading)\n    {\n        return Err(ConversionError::bad_request(\n            \"tools: at least one tool must have defer_loading=false. All tools cannot be deferred.\",\n        ));\n    }\n    Ok(tool_set)\n}\n"
+        },
+        {
+          "start_line": 734,
+          "end_line": 779,
+          "text": "    blocks: Vec<MessagesContentBlock>,\n    message_index: usize,\n    image_token: &str,\n    model_version: ModelVersion,\n    tool_by_name: &HashMap<&str, &ClientToolDeclaration>,\n    added_tools: &mut Vec<ToolDefinition>,\n) -> Result<(Prompt, Vec<ImageSource>), ConversionError> {\n    let message_path = format!(\"messages.{message_index}\");\n    let mut contents = Vec::new();\n    let mut image_sources = Vec::new();\n    for (block_index, block) in blocks.into_iter().enumerate() {\n        match block {\n            MessagesContentBlock::Text { .. }\n            | MessagesContentBlock::Image { .. }\n            | MessagesContentBlock::Document { .. } => {\n                let path = format!(\"{message_path}.content[{block_index}]\");\n                let block =\n                    block.into_block_content(&path, &message_path, image_token, model_version)?;\n                contents.push(block.content);\n                image_sources.extend(block.image_source);\n            }\n            MessagesContentBlock::ToolAddition { tool } => {\n                let MessagesToolReference::ToolReference { name } = tool;\n                let tool = tool_by_name.get(name.as_str()).ok_or_else(|| {\n                    ConversionError::bad_request(format!(\n                        \"messages.{message_index}.content.{block_index}: `tool_addition` references unknown \\\n                         tool '{name}'\"\n                    ))\n                })?;\n                added_tools.push(ToolDefinition::from(*tool));\n            }\n            MessagesContentBlock::Thinking { .. } => {\n                return Err(ConversionError::bad_request(format!(\n                    \"messages.{message_index}.content: thinking blocks may only be in `assistant` messages\"\n                )));\n            }\n            MessagesContentBlock::ToolUse { .. } | MessagesContentBlock::ServerToolUse { .. } => {\n                return Err(ConversionError::bad_request(format!(\n                    \"messages.{message_index}: `tool_use` blocks can only be in `assistant` messages\"\n                )));\n            }\n            MessagesContentBlock::ToolResult { .. } => {\n                return Err(ConversionError::bad_request(format!(\n                    \"messages.{message_index}: `tool_result` blocks can only be in `user` messages\"\n                )));\n            }"
+        }
+      ]
+    },
+    "deepseek-recipe-core/src/messages.rs": {
+      "sha256": "8800bd2c18c7e49cfe5f3a218129dd8f813621c2e4cc5d0d69cbf93ad0f6e66a",
+      "excerpts": [
+        {
+          "start_line": 8,
+          "end_line": 28,
+          "text": "/// except for explicit special tokens, such as the placeholders of a message's\n/// image sources. Assistant content, reasoning content, and latest reminder\n/// content are strings. Rendering inserts each grounding-token spelling found\n/// in assistant content or reasoning content as an explicit special token;\n/// all other text of these strings is plain text.\n#[derive(Debug, Clone, PartialEq, Eq)]\npub enum InputMessage {\n    System {\n        content: Prompt,\n        /// Image sources in the order of the placeholders in `content`.\n        image_sources: Vec<ImageSource>,\n        /// Tool definitions introduced by this message. V4.1 renders them after\n        /// the content; V4 ignores them.\n        tools: Option<Vec<ToolDefinition>>,\n    },\n    User {\n        content: Prompt,\n        /// Image sources in the order of the placeholders in `content`.\n        image_sources: Vec<ImageSource>,\n    },\n    Assistant {"
+        }
+      ]
+    },
+    "deepseek-recipe-encoding/src/v4/dsv41.rs": {
+      "sha256": "33f7b0e0c3dde66020a4746ffc6c35df8dd30933e653aaf9071c1beb21439a90",
+      "excerpts": [
+        {
+          "start_line": 68,
+          "end_line": 91,
+          "text": "\n    /// Render the tool prompt. Tool schemas are plain text.\n    fn render_tool_prompt(&self, tools: &[ToolDefinition]) -> Prompt {\n        let tools_json = tools\n            .iter()\n            .filter(|tool| !tool.defer_loading)\n            .map(|tool| stringify_python_style(&tool_definition_json(tool)))\n            .collect::<Vec<_>>()\n            .join(\"\\n\");\n        let mut prompt = tool_call_instructions(\n            self.components.special_tokens.as_ref(),\n            TOOL_CALLS_BLOCK_NAME,\n            TOOL_CALL_TAG_NAME,\n            TOOL_PARAMETER_TAG_NAME,\n        );\n        prompt.push_plain(tools_json);\n        prompt.push_plain(\n            \"\\n\\nYou MUST strictly follow the above defined tool name and parameter schemas to invoke tool calls.\\n\",\n        );\n        prompt\n    }\n\n    /// Render the DSML tool-call block of `tool_calls`.\n    fn render_tool_calls(&self, tool_calls: &[ToolCall]) -> Prompt {"
+        },
+        {
+          "start_line": 165,
+          "end_line": 182,
+          "text": "            }\n        };\n        match message {\n            InputMessage::System { content, tools, .. } => {\n                if index > 0 {\n                    prompt += prompt!(\"{}\", self.components.special(SpecialToken::System));\n                }\n                prompt += content;\n                if let Some(tools) = tools.as_ref().filter(|tools| !tools.is_empty()) {\n                    let schemas = tools\n                        .iter()\n                        .map(|tool| stringify_python_style(&tool_definition_json(tool)))\n                        .collect::<Vec<_>>()\n                        .join(\"\\n\");\n                    prompt.push_plain(format!(\"\\n\\n### Updated Tool Schemas\\n\\n{schemas}\"));\n                }\n            }\n            InputMessage::User { content, .. } => {"
+        }
+      ]
+    }
+  },
+  "harness": {
+    "packages/llm/llm-deepseek/src/serialize.ts": {
+      "sha256": "2a9f9ae77bde951bf9dec21ceec36d87dbeb74e4a9d3f784496f19b55ccbe0a1",
+      "excerpts": [
+        {
+          "start_line": 90,
+          "end_line": 99,
+          "text": "  for (const message of history) {\n    if (message.role === 'developer') {\n      const content = message.content.flatMap((block): WireBlock[] => {\n        switch (block.type) {\n          case 'text': return block.text.length === 0 ? [] : [{ type: 'text', text: block.text }]\n          case 'tool-addition': return [{ type: 'tool_addition', tool: { type: 'tool_reference', name: block.toolName } }]\n          case 'tool-removal': return [{ type: 'tool_removal', tool: { type: 'tool_reference', name: block.toolName } }]\n          default: return unsupported(`developer content ${block.type}`)\n        }\n      })"
+        }
+      ]
+    },
+    "packages/llm/llm/src/content.ts": {
+      "sha256": "e679f0972cef3f6301c4a9f321ee288ef0a63223ec51c093349c186cdc81ff35",
+      "excerpts": [
+        {
+          "start_line": 381,
+          "end_line": 409,
+          "text": "function toolDeclarations(\n  tools: readonly ToolSchema[] | undefined,\n  mode: ToolUpdate,\n  history: ToolHistory,\n): Map<string, ToolSchema> {\n  const declarations = new Map(history.tools.map(tool => [tool.name, tool]))\n  for (const update of history.updates) {\n    for (const tool of update.additions) {\n      if (!declarations.has(tool.name)) {\n        // Later additions activate these definitions at their recorded position.\n        declarations.set(tool.name, { ...tool, deferLoading: true })\n      }\n    }\n  }\n\n  switch (mode) {\n    case 'in-history':\n      // Removal blocks disable tools without discarding their historical definitions.\n      return declarations\n    case 'addition-only': {\n      // Without removal support, the declaration list must omit inactive tools.\n      const activeNames = new Set(tools?.map(tool => tool.name))\n      for (const name of declarations.keys()) {\n        if (!activeNames.has(name)) declarations.delete(name)\n      }\n      return declarations\n    }\n    /* v8 ignore next 2 -- closed-union exhaustiveness guard */\n    default:"
+        }
+      ]
+    }
+  },
+  "recipe_head": "935817c66f5d6e64838f419692545f06787e485f",
+  "recipe_changes_since_02": " docs/build-python-wheel.md | 335 +++++++++++++++++++++++++++++++++++++++++++++\n docs/development.md        |  92 +++----------\n 2 files changed, 352 insertions(+), 75 deletions(-)\n",
+  "removal_search": {
+    "deepseek-recipe/src": [],
+    "deepseek-recipe-core/src": [],
+    "deepseek-recipe-encoding/src": [],
+    "docs": []
+  }
+}
