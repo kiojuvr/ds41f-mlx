@@ -6,6 +6,16 @@ exists; [capabilities](capabilities.md) owns support/limits; [operations](operat
 owns deployment. Historical plans and receipts retain their original decisions,
 not present authorization or a required sequence of new milestones.
 
+## Soft-cap campaign closure
+
+**CLOSED** by user approval; [closeout decisions and evidence](../artifacts/soft-cap-campaign-closeout/report.md).
+No next soft-cap task is authorized. Future work on remaining caps requires a
+concrete production/client failure or a separately approved resource-architecture
+objective; a fixed numerical limit alone does not reopen this campaign. Resource
+admission redesign, official Harness compatibility expansion and Production
+promotion are separate decisions. Unrelated priorities remain unchanged; the user
+must independently select the next objective.
+
 ## Upstream-first architecture and compatibility policy
 
 **Follow official DeepSeek Harness, DeepSeek Recipe and DeepInfer architecture

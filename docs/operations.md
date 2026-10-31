@@ -56,7 +56,10 @@ only the default 128-entry Files ceiling and charges metadata/mapping allocation
 as well as encoded bytes to a separate 64 MiB retained-storage budget. Optional
 operator count policy remains. This [model-free source correction](../artifacts/files-http-soft-caps/report.md)
 is **not installed in Production**, which retains its earlier 128-ID/encoded-byte
-storage policy. See
+storage policy. Current source also adds [bounded official Harness quota recovery](../artifacts/files-http-soft-caps/quota-recovery/report.md)
+through listing, oldest-owned deletion and one upload retry. Installed Production
+has no collection listing, so that recovery is not available there; inline fallback
+still has to fit the ordinary body limit. See
 [capability limits](capabilities.md#bounded-inline-images) and the
 [compatibility assessment](../artifacts/harness-image-capacity/report.md).
 

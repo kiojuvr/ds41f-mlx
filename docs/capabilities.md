@@ -38,6 +38,8 @@ expiry-bounded, with no persistent attachment storage contract. Files lifetime
 does not extend paired KV lifetime. Paginated listing enables the installed official
 Harness's oldest-owned-file quota reclamation and single upload retry; see the
 [scoped model-free qualification](../artifacts/files-http-soft-caps/quota-recovery/report.md).
+This listing/recovery implementation is **source-only, not installed in Production**;
+installed Production retains the earlier upload/delete-only Files path.
 Individual retrieval/download remain unsupported. Harness must explicitly set
 `session-log-deepseek.enabled=false` and keep unsupported tool removal disabled.
 

@@ -40,6 +40,13 @@ original scope; current independent Messages reconstruction is governed by
 
 ## Supported operations
 
+The operations below describe current checkout source, not the installed
+Production payload. Bounded listing/quota recovery and retained-allocation
+accounting without a default count cap are **not installed in Production**;
+Production retains upload/delete, its earlier 128-ID/payload-byte storage policy
+and aggregate fresh-pixel guard. See [deployment status](operations.md#visual-session-capacity-and-recovery)
+and the [closed soft-cap campaign](../artifacts/soft-cap-campaign-closeout/report.md).
+
 ### `POST /v1/files`
 
 Uncompressed `multipart/form-data` with exactly these three fields (any order):
