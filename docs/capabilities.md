@@ -49,6 +49,18 @@ Harness `dsh_session_log`), tool removal, constrained output,
 thinking budgets, `tool_choice:any` and enforced serial selection.
 Harness `dsh_plugin_packages` is accepted and ignored. Prompt-based
 named selection is not constrained decoding. No Responses parity is added.
+Recipe also rejects nonempty tool declaration sets containing only deferred tools;
+this is a separate compatibility gap from tool removal.
+
+The [independent Harness 0.2.2-alpha.2 audit](../artifacts/harness-alpha2-compatibility/report.md)
+preserves exact source/installed identities and capability-specific evidence.
+Retained actual Harness executions used **0.2.1-rc.2**, not alpha.2. `addition-only`
+can deactivate tools by filtering declarations/history, but does not support the
+in-history removal protocol and may change canonical prompt identity. Removal-specific
+performance is unmeasured. Complete interactive Goal, manual compaction, Skill and
+dynamic plugin/MCP lifecycle acceptance remains incomplete; demonstrated automatic
+compaction is distinct from manual `/compact`. Recipe-aligned removal support and
+the all-deferred gap are investigation recommendations, not approved fixes.
 
 ## Profiles
 

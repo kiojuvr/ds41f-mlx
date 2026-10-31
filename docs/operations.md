@@ -203,6 +203,13 @@ Harness compatibility or deployment qualification. Original logs and independent
 observed historical persistent-installation acceptance are distinguished in the
 [development record](deepinfer-development.md).
 
+The [alpha.2 source compatibility audit](../artifacts/harness-alpha2-compatibility/report.md)
+does not replace this executed rc.2 baseline or authorize configuration changes.
+`addition-only` supports deactivation through declaration/history reprojection, not
+`tool_removal`; reuse is not guaranteed. Recipe also rejects nonempty all-deferred
+declaration sets. Keep Session-log upload disabled; the audit's recommendations
+are not an approved implementation or deployment plan.
+
 Later [Gate F0](../artifacts/harness-files/gate-f0-report.md) demonstrated bounded
 real-model official File-ID/nested-tool-result transport on macOS. The
 [repaired Visual Loop](../artifacts/repaired-visual-loop/report.md) subsequently

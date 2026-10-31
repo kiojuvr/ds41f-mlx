@@ -29,6 +29,11 @@ operation. No further development phase or campaign is selected.
 
 ## Retained evidence
 
+The [official Harness 0.2.2-alpha.2 Native Messages audit](../artifacts/harness-alpha2-compatibility/report.md)
+preserves source/installed identities, the compatibility matrix, dynamic-tool gaps
+and prior rc.2 execution evidence. It is source-scoped evidence and recommendations,
+not alpha.2 E2E acceptance, startup authority or an approved implementation plan.
+
 The [scoped release record](../release/scoped-local-20261015/release.json) binds
 historical installed packages and acceptance, including retired OFF assets. Those
 records, numerical specifications under `archive/validation/`, source attribution

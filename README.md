@@ -246,6 +246,33 @@ The **1,800,000 ms** idle timeout accommodates long local prefill without requir
 Runtime heartbeats. Preserve native tool IDs/results, in-history system updates
 and addition-only tool updates; tool removal is unsupported.
 
+### Native Messages compatibility assessment
+
+The [independent Harness 0.2.2-alpha.2 audit](artifacts/harness-alpha2-compatibility/report.md)
+examined official tag commit **`f3803c96974ad4a94195fb97e5c637e9c2a3afe3`** against
+Runtime source and installed Recipe 0.2.0 semantics. **Substantial, bounded
+compatibility—not full alpha.2 parity.** Retained actual Harness executions used
+**0.2.1-rc.2**; alpha.2 was not executed against the Runtime. The report distinguishes
+audited source from the older installed Runtime payload.
+
+| Native Messages capability | Evidence and limit |
+| --- | --- |
+| Text, ordinary client tools, exact-ID results and paired continuation | Implemented and demonstrated in bounded official Harness runs |
+| Visual workflows, image offload/reacquisition and automatic compaction | Demonstrated in the finite rc.2 workload; not unrestricted endurance |
+| Interactive `/goal`, manual `/compact`, Skills and changing plugin/MCP registries | Constituent wire support/source evidence; complete feature-specific E2E acceptance remains incomplete |
+| Dynamic tool additions | Recipe conversion/encoding verified model-free; changing Harness registry E2E remains unqualified |
+| In-history `tool_removal`; nonempty all-deferred declaration sets | Unsupported: removal semantics are absent; Recipe rejects all-deferred sets |
+
+`addition-only` deactivates tools by omitting inactive declarations and filtering
+historical updates; it does **not** implement `tool_removal` and can change canonical
+prompt prefixes. No removal-specific performance improvement has been measured.
+Recipe-owned removal support and the separate all-deferred incompatibility are
+**audit recommendations, not approved implementation work**; authoritative removal
+encoding must be established first. Harness retains Session/orchestration/tool
+execution ownership; disabling `dsh_session_log` does not remove the other gaps.
+This assessment covers only `deepseek-official` → `/v1/messages`, not the separate
+Chat Completions route below. See the report for the complete matrix and sources.
+
 ### Original Flash: OpenAI Chat Completions
 
 Use a separate custom route through **`@deepseek-ai/dsh-llm-pi-ai`**, not the
