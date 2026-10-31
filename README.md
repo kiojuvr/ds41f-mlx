@@ -47,12 +47,12 @@ built for correct long-lived local sessions on the M3 Ultra**. See
 
 - **Long-context text:** up to **1,048,576 total tokens**, within the checkpoint's
   range, with prompt and requested output sharing that budget.
-- **OpenAI-compatible Chat Completions:** JSON and streaming SSE, generic
-  client-side function tools, sampling and reasoning controls.
+- **Chat Completions and native Recipe 0.2 Messages:** JSON and streaming SSE,
+  generic client-side function tools, sampling and reasoning controls.
 - **Conversation reuse:** safe paired-prefix reuse across ordinary requests,
   edits and branches; optional logical conversations on the same scheduler.
-- **Bounded Vision:** inline images within the resource limits below—not
-  unrestricted multimodal inference.
+- **Bounded Vision:** inline images and process-local Messages Files within the
+  resource limits below—not unrestricted multimodal inference.
 - **Operator TUI:** Runtime control, readiness, diagnostics, metrics and logs.
 - **Single-operator access:** loopback by default; explicitly trusted-private-LAN
   Runtime access is supported.
@@ -248,30 +248,45 @@ and addition-only tool updates; tool removal is unsupported.
 
 ### Native Messages compatibility assessment
 
-The [independent Harness 0.2.2-alpha.2 audit](artifacts/harness-alpha2-compatibility/report.md)
-examined official tag commit **`f3803c96974ad4a94195fb97e5c637e9c2a3afe3`** against
-Runtime source and installed Recipe 0.2.0 semantics. **Substantial, bounded
-compatibility—not full alpha.2 parity.** Retained actual Harness executions used
-**0.2.1-rc.2**; alpha.2 was not executed against the Runtime. The report distinguishes
-audited source from the older installed Runtime payload.
+**Model-backed PASS for the tested alpha.2 configuration—not full feature parity.**
+The [isolated native E2E acceptance](artifacts/harness-alpha2-e2e/report.md) runs the
+actual official published **0.2.2-alpha.2 Web application**, `deepseek-official`
+provider, corrected Recipe and real Flash-1017: **26 native requests and 12 genuine
+exact-ID tool effects**, with canonical settlement and paired-state joins verified.
+It supplements the earlier [source compatibility audit](artifacts/harness-alpha2-compatibility/report.md)
+and rc.2 executions, rather than rewriting their historical scope.
+
+The exact source tag is **`dsh-v0.2.2-alpha.2`** /
+**`f3803c96974ad4a94195fb97e5c637e9c2a3afe3`**. Executed official npm artifacts are
+pinned separately; npm supplies no build Git SHA, so source-build byte equivalence
+is not claimed. This macOS acceptance does **not** qualify the Windows installer.
 
 | Native Messages capability | Evidence and limit |
 | --- | --- |
-| Text, ordinary client tools, exact-ID results and paired continuation | Implemented and demonstrated in bounded official Harness runs |
-| Visual workflows, image offload/reacquisition and automatic compaction | Demonstrated in the finite rc.2 workload; not unrestricted endurance |
-| Interactive `/goal`, manual `/compact`, Skills and changing plugin/MCP registries | Constituent wire support/source evidence; complete feature-specific E2E acceptance remains incomplete |
-| Dynamic tool additions | Recipe conversion/encoding verified model-free; changing Harness registry E2E remains unqualified |
-| In-history `tool_removal`; nonempty all-deferred declaration sets | Unsupported: removal semantics are absent; Recipe rejects all-deferred sets |
+| Text, client tools, exact-ID results and paired continuation | Demonstrated in bounded official rc.2 and alpha.2 runs |
+| Image offload/reacquisition and compaction | Finite rc.2 automatic-compaction workload; alpha.2 image offload, manual compaction and fresh reacquisition; not endurance qualification |
+| Browser `/goal` and manual `/compact` | Actual alpha.2 UI dispatch, one completed automatic Goal round and durable compaction followed by continuation |
+| Explicit/model Skills and catalog changes | Genuine alpha.2 Skill loading and catalog replacement demonstrated |
+| Dynamic tool additions/withdrawal and all-deferred declarations | Corrected source-retained Recipe supports all-deferred sets; genuine alpha.2 plugin-registry changes and ten all-deferred requests pass |
+| General Plugin management and MCP lifecycles | Not qualified by the representative test plugin |
+| In-history `tool_removal` | Unsupported; authoritative removal encoding is still required |
+
+The [all-deferred correction](artifacts/harness-all-deferred/report.md) is included
+in the source-retained Recipe patch/wheel, **not the existing Production
+installation**, which retains the earlier rejection. Alpha.2 acceptance used an
+isolated corrected installation; it is not Production promotion or an instruction
+to modify existing installations. Its Thinking OFF / output 1024 / one-image
+watermark configuration is recorded separately from the rc.2 baseline above.
 
 `addition-only` deactivates tools by omitting inactive declarations and filtering
 historical updates; it does **not** implement `tool_removal` and can change canonical
 prompt prefixes. No removal-specific performance improvement has been measured.
-Recipe-owned removal support and the separate all-deferred incompatibility are
-**audit recommendations, not approved implementation work**; authoritative removal
-encoding must be established first. Harness retains Session/orchestration/tool
-execution ownership; disabling `dsh_session_log` does not remove the other gaps.
-This assessment covers only `deepseek-official` → `/v1/messages`, not the separate
-Chat Completions route below. See the report for the complete matrix and sources.
+Harness retains Session/orchestration/tool execution ownership; Session-log upload
+remains disabled. Text-only cancellation and a healthy new request pass in alpha.2;
+general effectful-tool cancellation/recovery remains unqualified. This assessment
+covers only `deepseek-official` → `/v1/messages`, not the separate Chat Completions
+route below. See [capabilities](docs/capabilities.md) and the acceptance report for
+complete limits and exact execution identities.
 
 ### Original Flash: OpenAI Chat Completions
 
@@ -456,7 +471,8 @@ See [performance evidence](docs/performance.md) for measurement scope.
 - No MTP native persistence, restart recovery, transparent replay/resume or
   cross-backend KV portability. Logical conversations are not durable sessions.
 - Messages supports bounded inline base64 images and process-local image Files
-  upload/delete with File-ID resolution, not PDF/document ingestion, persistent
+  upload/list/delete with File-ID resolution in current source; existing Production
+  retains upload/delete only. This is not PDF/document ingestion, persistent
   attachment storage or full official Files lifecycle compatibility. The bounded
   macOS Files/Vision evidence above is not general Harness compatibility or
   long-term arbitrary-image continuity qualification.
