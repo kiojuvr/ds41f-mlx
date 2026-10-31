@@ -1,0 +1,86 @@
+{
+  "observations": [
+    {
+      "stage": "baseline",
+      "python_current": 216,
+      "python_peak": 262,
+      "rss_bytes": 227852288,
+      "process_peak_rss_bytes": 227852288,
+      "wire_bytes": 569,
+      "stored_bytes": 1048576
+    },
+    {
+      "stage": "resolved",
+      "python_current": 5638099,
+      "python_peak": 7046771,
+      "rss_bytes": 231047168,
+      "process_peak_rss_bytes": 231047168,
+      "logical_encoded_bytes": 4194304,
+      "distinct_base64_objects": 4,
+      "represented_base64_bytes": 5592416
+    },
+    {
+      "stage": "resolved_released",
+      "python_current": 42552,
+      "python_peak": 7046771,
+      "rss_bytes": 231047168,
+      "process_peak_rss_bytes": 231047168
+    },
+    {
+      "stage": "prepared",
+      "python_current": 4643822,
+      "python_peak": 16831465,
+      "rss_bytes": 299270144,
+      "process_peak_rss_bytes": 299270144,
+      "queued_source_bytes": 4194304,
+      "distinct_encoded_objects": 4,
+      "source_count": 4
+    },
+    {
+      "stage": "sources_released_but_prepared_retained",
+      "python_current": 449519,
+      "python_peak": 16831465,
+      "rss_bytes": 299270144,
+      "process_peak_rss_bytes": 299270144,
+      "queued_source_bytes": 0,
+      "retained_recipe_source_count": 4
+    },
+    {
+      "stage": "prepared_released",
+      "python_current": 422322,
+      "python_peak": 16831465,
+      "rss_bytes": 299270144,
+      "process_peak_rss_bytes": 299270144,
+      "prepared_collectible": true,
+      "multimodal_collectible": true
+    },
+    {
+      "stage": "before_rejection",
+      "python_current": 2521179,
+      "python_peak": 16831465,
+      "rss_bytes": 302678016,
+      "process_peak_rss_bytes": 302678016
+    },
+    {
+      "stage": "rejection_unwound",
+      "python_current": 2521771,
+      "python_peak": 94817648,
+      "rss_bytes": 383074304,
+      "process_peak_rss_bytes": 383090688,
+      "error": "aggregate encoded image byte budget exceeded"
+    },
+    {
+      "stage": "request_and_store_released",
+      "python_current": 424095,
+      "python_peak": 94817648,
+      "rss_bytes": 383074304,
+      "process_peak_rss_bytes": 383090688
+    }
+  ],
+  "notes": [
+    "tracemalloc excludes Rust Vec/String, Pillow/native, MLX and allocator arenas.",
+    "RSS is a sampled process resident set, not macOS physical footprint or a native-allocation counter.",
+    "ru_maxrss is a process high-water mark in bytes on macOS; not reset between stages.",
+    "No model loaded, no native inference, no global memory-budget or leak-free claim."
+  ]
+}

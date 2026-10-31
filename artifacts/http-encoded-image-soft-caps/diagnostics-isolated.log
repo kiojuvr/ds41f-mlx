@@ -1,0 +1,416 @@
+FFFF                                                                     [100%]
+=================================== FAILURES ===================================
+_________________ test_worker_failure_diagnostics[False-False] _________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1090ceea0>
+native = False, cleanup = False
+
+    @pytest.mark.parametrize('native,cleanup', [(False, False), (False, True), (True, False), (True, 'clear')])
+    def test_worker_failure_diagnostics(monkeypatch, native, cleanup):
+        from omlx.request import Request, SamplingParams
+        from ds41f_mlx.serving.production_mtp import ProductionScheduler, ProductionMTPBackend
+        from ds41f_mlx.serving.internal_mtp import QualificationSession
+        from ds41f_mlx.serving.paired_checkpoint import PairedCheckpointAuthority
+        from ds41f_mlx import execution_identity
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.server import create_app
+        from fastapi.testclient import TestClient
+    
+        p = Projection()
+        p.lifecycle('READY')
+        p.begin('http-id')
+        s = object.__new__(ProductionScheduler)
+        s.waiting, s.running, s.requests = deque(), {}, {}
+        s.request_id_to_uid, s.uid_to_request_id = {}, {}
+        s._pending_abort_ids, s._completed = set(), []
+        s.batch_generator = None
+        s.session_leases = {}
+        s.shutdown = lambda: None
+        s.total_prompt_tokens = s.total_completion_tokens = 0
+        s.checkpoints = PairedCheckpointAuthority('identity', NS(eval=lambda *a: None))
+        calls = []
+        def fail():
+            raise ValueError(SECRET)
+        def acquire(*a, **kw):
+            calls.append('lookup')
+            if native:
+                return None
+            kw['admit'](None)
+        monkeypatch.setattr(s.checkpoints, 'acquire', acquire)
+        monkeypatch.setattr(execution_identity, 'numerical_profile', fail)
+        def start(*a, **kw):
+            calls.append('native')
+            raise RuntimeError(SECRET)
+        def retire(rec):
+            calls.append('retire')
+            if cleanup is True:
+                raise LookupError(SECRET)
+        previous = dict(os.environ)
+        b = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+        b.dependency_identity = 'identity'
+        b.telemetry, b.scheduler, b._model = p, s, object()
+        monkeypatch.setattr(b, '_start', start)
+        monkeypatch.setattr(b, '_retire', retire)
+        s.backend = b
+        original_clear = s.checkpoints.clear
+        if cleanup == 'clear':
+            def bad_clear():
+                raise LookupError(SECRET)
+            monkeypatch.setattr(s.checkpoints, 'clear', bad_clear)
+        mm = NS(spans=[NS(grid=(100000, 100000))], release_sources=lambda: None)
+        r = Request(request_id='scheduler-id', prompt=[1, 2, 3], sampling_params=SamplingParams())
+        r.prompt_token_ids = [1, 2, 3]
+        r.execution = QualificationSession(r.request_id)
+        r.trace = dict(t0=perf_counter(), diagnostic_id='http-id')
+        r.prepared = NS(protocol='messages', multimodal=None if native else mm)
+        r.recipe_tokenizer = None
+        r.image_identities, r.native_started = (), False
+        r.prompt_checkpoint, r.delivery_cursor = None, 0
+        s.waiting.append(r)
+        s.requests[r.request_id] = r
+        try:
+            app = create_app(profile='mtp-serving-v1', runtime_config=b.runtime_config, backend=b)
+            result = s.step()
+            assert result.outputs[-1].finished and result.outputs[-1].error
+            assert calls == ['lookup', 'native', 'retire'] if native else calls == ['lookup', 'retire']
+            snap = p.snapshot()
+            f = snap['failures'][0]
+            assert f['request_id'] == 'http-id' and f['scheduler_request_id'] == 'scheduler-id'
+            assert f['stage'] == ('native_start' if native else 'admission')
+            assert f['source']['module'] == 'ds41f_mlx.serving.production_mtp'
+            assert f['source']['function'] == ('_schedule_waiting' if native else 'admit')
+            assert f['source']['line'] > 0
+            assert f['exception_type'] == ('RuntimeError' if native else 'ValueError')
+            assert f['native_started'] == f['runtime_fatal'] == native
+            assert not f['canonical_settled'] and not f['cache_published']
+            if cleanup:
+                assert snap['failures'][1]['secondary']
+                assert snap['failures'][1]['exception_type'] == 'LookupError'
+            assert not s.requests and not s.waiting and not s.running and not s.checkpoints._payloads
+            assert r.execution.cache is None and r.execution.owner is None
+            assert s.last_settlement.get('prompt_replay') is None
+            assert s.last_settlement.get('full_cache_repack') is None
+            monkeypatch.setattr(s.checkpoints, 'clear', original_clear)
+            with TestClient(app, base_url='http://127.0.0.1:8000') as client:
+                h = client.get('/health')
+>               assert h.status_code == (503 if native else 200)
+E               assert 400 == 200
+E                +  where 400 = <Response [400 Bad Request]>.status_code
+
+tests/test_request_failure_diagnostics.py:107: AssertionError
+------------------------------ Captured log call -------------------------------
+ERROR    ds41f.operator.runtime:observability.py:179 request failure {"request_id":"http-id","scheduler_request_id":"scheduler-id","stage":"admission","exception_type":"ValueError","category":"unexpected_exception","source":{"module":"ds41f_mlx.serving.production_mtp","function":"admit","line":76},"native_started":false,"canonical_settled":false,"cache_published":false,"runtime_fatal":false,"secondary":false,"timestamp":1793375899.131286}
+ERROR    ds41f.operator.runtime:observability.py:128 request finished id=http-id reason=error
+_________________ test_worker_failure_diagnostics[False-True] __________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1090cce90>
+native = False, cleanup = True
+
+    @pytest.mark.parametrize('native,cleanup', [(False, False), (False, True), (True, False), (True, 'clear')])
+    def test_worker_failure_diagnostics(monkeypatch, native, cleanup):
+        from omlx.request import Request, SamplingParams
+        from ds41f_mlx.serving.production_mtp import ProductionScheduler, ProductionMTPBackend
+        from ds41f_mlx.serving.internal_mtp import QualificationSession
+        from ds41f_mlx.serving.paired_checkpoint import PairedCheckpointAuthority
+        from ds41f_mlx import execution_identity
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.server import create_app
+        from fastapi.testclient import TestClient
+    
+        p = Projection()
+        p.lifecycle('READY')
+        p.begin('http-id')
+        s = object.__new__(ProductionScheduler)
+        s.waiting, s.running, s.requests = deque(), {}, {}
+        s.request_id_to_uid, s.uid_to_request_id = {}, {}
+        s._pending_abort_ids, s._completed = set(), []
+        s.batch_generator = None
+        s.session_leases = {}
+        s.shutdown = lambda: None
+        s.total_prompt_tokens = s.total_completion_tokens = 0
+        s.checkpoints = PairedCheckpointAuthority('identity', NS(eval=lambda *a: None))
+        calls = []
+        def fail():
+            raise ValueError(SECRET)
+        def acquire(*a, **kw):
+            calls.append('lookup')
+            if native:
+                return None
+            kw['admit'](None)
+        monkeypatch.setattr(s.checkpoints, 'acquire', acquire)
+        monkeypatch.setattr(execution_identity, 'numerical_profile', fail)
+        def start(*a, **kw):
+            calls.append('native')
+            raise RuntimeError(SECRET)
+        def retire(rec):
+            calls.append('retire')
+            if cleanup is True:
+                raise LookupError(SECRET)
+        previous = dict(os.environ)
+        b = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+        b.dependency_identity = 'identity'
+        b.telemetry, b.scheduler, b._model = p, s, object()
+        monkeypatch.setattr(b, '_start', start)
+        monkeypatch.setattr(b, '_retire', retire)
+        s.backend = b
+        original_clear = s.checkpoints.clear
+        if cleanup == 'clear':
+            def bad_clear():
+                raise LookupError(SECRET)
+            monkeypatch.setattr(s.checkpoints, 'clear', bad_clear)
+        mm = NS(spans=[NS(grid=(100000, 100000))], release_sources=lambda: None)
+        r = Request(request_id='scheduler-id', prompt=[1, 2, 3], sampling_params=SamplingParams())
+        r.prompt_token_ids = [1, 2, 3]
+        r.execution = QualificationSession(r.request_id)
+        r.trace = dict(t0=perf_counter(), diagnostic_id='http-id')
+        r.prepared = NS(protocol='messages', multimodal=None if native else mm)
+        r.recipe_tokenizer = None
+        r.image_identities, r.native_started = (), False
+        r.prompt_checkpoint, r.delivery_cursor = None, 0
+        s.waiting.append(r)
+        s.requests[r.request_id] = r
+        try:
+            app = create_app(profile='mtp-serving-v1', runtime_config=b.runtime_config, backend=b)
+            result = s.step()
+            assert result.outputs[-1].finished and result.outputs[-1].error
+            assert calls == ['lookup', 'native', 'retire'] if native else calls == ['lookup', 'retire']
+            snap = p.snapshot()
+            f = snap['failures'][0]
+            assert f['request_id'] == 'http-id' and f['scheduler_request_id'] == 'scheduler-id'
+            assert f['stage'] == ('native_start' if native else 'admission')
+            assert f['source']['module'] == 'ds41f_mlx.serving.production_mtp'
+            assert f['source']['function'] == ('_schedule_waiting' if native else 'admit')
+            assert f['source']['line'] > 0
+            assert f['exception_type'] == ('RuntimeError' if native else 'ValueError')
+            assert f['native_started'] == f['runtime_fatal'] == native
+            assert not f['canonical_settled'] and not f['cache_published']
+            if cleanup:
+                assert snap['failures'][1]['secondary']
+                assert snap['failures'][1]['exception_type'] == 'LookupError'
+            assert not s.requests and not s.waiting and not s.running and not s.checkpoints._payloads
+            assert r.execution.cache is None and r.execution.owner is None
+            assert s.last_settlement.get('prompt_replay') is None
+            assert s.last_settlement.get('full_cache_repack') is None
+            monkeypatch.setattr(s.checkpoints, 'clear', original_clear)
+            with TestClient(app, base_url='http://127.0.0.1:8000') as client:
+                h = client.get('/health')
+>               assert h.status_code == (503 if native else 200)
+E               assert 400 == 200
+E                +  where 400 = <Response [400 Bad Request]>.status_code
+
+tests/test_request_failure_diagnostics.py:107: AssertionError
+------------------------------ Captured log call -------------------------------
+ERROR    ds41f.operator.runtime:observability.py:179 request failure {"request_id":"http-id","scheduler_request_id":"scheduler-id","stage":"admission","exception_type":"ValueError","category":"unexpected_exception","source":{"module":"ds41f_mlx.serving.production_mtp","function":"admit","line":76},"native_started":false,"canonical_settled":false,"cache_published":false,"runtime_fatal":false,"secondary":false,"timestamp":1793375899.2197278}
+ERROR    ds41f.operator.runtime:observability.py:179 request failure {"request_id":"http-id","scheduler_request_id":"scheduler-id","stage":"cleanup","exception_type":"LookupError","category":"unexpected_exception","source":{"module":"ds41f_mlx.serving.production_mtp","function":"_retire","line":223},"native_started":false,"canonical_settled":false,"cache_published":false,"runtime_fatal":false,"secondary":true,"timestamp":1793375899.2198021}
+ERROR    ds41f.operator.runtime:observability.py:128 request finished id=http-id reason=error
+_________________ test_worker_failure_diagnostics[True-False] __________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1256c6e70>
+native = True, cleanup = False
+
+    @pytest.mark.parametrize('native,cleanup', [(False, False), (False, True), (True, False), (True, 'clear')])
+    def test_worker_failure_diagnostics(monkeypatch, native, cleanup):
+        from omlx.request import Request, SamplingParams
+        from ds41f_mlx.serving.production_mtp import ProductionScheduler, ProductionMTPBackend
+        from ds41f_mlx.serving.internal_mtp import QualificationSession
+        from ds41f_mlx.serving.paired_checkpoint import PairedCheckpointAuthority
+        from ds41f_mlx import execution_identity
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.server import create_app
+        from fastapi.testclient import TestClient
+    
+        p = Projection()
+        p.lifecycle('READY')
+        p.begin('http-id')
+        s = object.__new__(ProductionScheduler)
+        s.waiting, s.running, s.requests = deque(), {}, {}
+        s.request_id_to_uid, s.uid_to_request_id = {}, {}
+        s._pending_abort_ids, s._completed = set(), []
+        s.batch_generator = None
+        s.session_leases = {}
+        s.shutdown = lambda: None
+        s.total_prompt_tokens = s.total_completion_tokens = 0
+        s.checkpoints = PairedCheckpointAuthority('identity', NS(eval=lambda *a: None))
+        calls = []
+        def fail():
+            raise ValueError(SECRET)
+        def acquire(*a, **kw):
+            calls.append('lookup')
+            if native:
+                return None
+            kw['admit'](None)
+        monkeypatch.setattr(s.checkpoints, 'acquire', acquire)
+        monkeypatch.setattr(execution_identity, 'numerical_profile', fail)
+        def start(*a, **kw):
+            calls.append('native')
+            raise RuntimeError(SECRET)
+        def retire(rec):
+            calls.append('retire')
+            if cleanup is True:
+                raise LookupError(SECRET)
+        previous = dict(os.environ)
+        b = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+        b.dependency_identity = 'identity'
+        b.telemetry, b.scheduler, b._model = p, s, object()
+        monkeypatch.setattr(b, '_start', start)
+        monkeypatch.setattr(b, '_retire', retire)
+        s.backend = b
+        original_clear = s.checkpoints.clear
+        if cleanup == 'clear':
+            def bad_clear():
+                raise LookupError(SECRET)
+            monkeypatch.setattr(s.checkpoints, 'clear', bad_clear)
+        mm = NS(spans=[NS(grid=(100000, 100000))], release_sources=lambda: None)
+        r = Request(request_id='scheduler-id', prompt=[1, 2, 3], sampling_params=SamplingParams())
+        r.prompt_token_ids = [1, 2, 3]
+        r.execution = QualificationSession(r.request_id)
+        r.trace = dict(t0=perf_counter(), diagnostic_id='http-id')
+        r.prepared = NS(protocol='messages', multimodal=None if native else mm)
+        r.recipe_tokenizer = None
+        r.image_identities, r.native_started = (), False
+        r.prompt_checkpoint, r.delivery_cursor = None, 0
+        s.waiting.append(r)
+        s.requests[r.request_id] = r
+        try:
+            app = create_app(profile='mtp-serving-v1', runtime_config=b.runtime_config, backend=b)
+            result = s.step()
+            assert result.outputs[-1].finished and result.outputs[-1].error
+            assert calls == ['lookup', 'native', 'retire'] if native else calls == ['lookup', 'retire']
+            snap = p.snapshot()
+            f = snap['failures'][0]
+            assert f['request_id'] == 'http-id' and f['scheduler_request_id'] == 'scheduler-id'
+            assert f['stage'] == ('native_start' if native else 'admission')
+            assert f['source']['module'] == 'ds41f_mlx.serving.production_mtp'
+            assert f['source']['function'] == ('_schedule_waiting' if native else 'admit')
+            assert f['source']['line'] > 0
+            assert f['exception_type'] == ('RuntimeError' if native else 'ValueError')
+            assert f['native_started'] == f['runtime_fatal'] == native
+            assert not f['canonical_settled'] and not f['cache_published']
+            if cleanup:
+                assert snap['failures'][1]['secondary']
+                assert snap['failures'][1]['exception_type'] == 'LookupError'
+            assert not s.requests and not s.waiting and not s.running and not s.checkpoints._payloads
+            assert r.execution.cache is None and r.execution.owner is None
+            assert s.last_settlement.get('prompt_replay') is None
+            assert s.last_settlement.get('full_cache_repack') is None
+            monkeypatch.setattr(s.checkpoints, 'clear', original_clear)
+            with TestClient(app, base_url='http://127.0.0.1:8000') as client:
+                h = client.get('/health')
+>               assert h.status_code == (503 if native else 200)
+E               assert 400 == 503
+E                +  where 400 = <Response [400 Bad Request]>.status_code
+
+tests/test_request_failure_diagnostics.py:107: AssertionError
+------------------------------ Captured log call -------------------------------
+ERROR    ds41f.operator.runtime:observability.py:179 request failure {"request_id":"http-id","scheduler_request_id":"scheduler-id","stage":"native_start","exception_type":"RuntimeError","category":"unexpected_exception","source":{"module":"ds41f_mlx.serving.production_mtp","function":"_schedule_waiting","line":139},"native_started":true,"canonical_settled":false,"cache_published":false,"runtime_fatal":true,"secondary":false,"timestamp":1793375899.282824}
+ERROR    ds41f.operator.runtime:observability.py:128 request finished id=http-id reason=error
+ERROR    ds41f.operator.runtime:observability.py:47 lifecycle FAILED
+_________________ test_worker_failure_diagnostics[True-clear] __________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1256edd00>
+native = True, cleanup = 'clear'
+
+    @pytest.mark.parametrize('native,cleanup', [(False, False), (False, True), (True, False), (True, 'clear')])
+    def test_worker_failure_diagnostics(monkeypatch, native, cleanup):
+        from omlx.request import Request, SamplingParams
+        from ds41f_mlx.serving.production_mtp import ProductionScheduler, ProductionMTPBackend
+        from ds41f_mlx.serving.internal_mtp import QualificationSession
+        from ds41f_mlx.serving.paired_checkpoint import PairedCheckpointAuthority
+        from ds41f_mlx import execution_identity
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.server import create_app
+        from fastapi.testclient import TestClient
+    
+        p = Projection()
+        p.lifecycle('READY')
+        p.begin('http-id')
+        s = object.__new__(ProductionScheduler)
+        s.waiting, s.running, s.requests = deque(), {}, {}
+        s.request_id_to_uid, s.uid_to_request_id = {}, {}
+        s._pending_abort_ids, s._completed = set(), []
+        s.batch_generator = None
+        s.session_leases = {}
+        s.shutdown = lambda: None
+        s.total_prompt_tokens = s.total_completion_tokens = 0
+        s.checkpoints = PairedCheckpointAuthority('identity', NS(eval=lambda *a: None))
+        calls = []
+        def fail():
+            raise ValueError(SECRET)
+        def acquire(*a, **kw):
+            calls.append('lookup')
+            if native:
+                return None
+            kw['admit'](None)
+        monkeypatch.setattr(s.checkpoints, 'acquire', acquire)
+        monkeypatch.setattr(execution_identity, 'numerical_profile', fail)
+        def start(*a, **kw):
+            calls.append('native')
+            raise RuntimeError(SECRET)
+        def retire(rec):
+            calls.append('retire')
+            if cleanup is True:
+                raise LookupError(SECRET)
+        previous = dict(os.environ)
+        b = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+        b.dependency_identity = 'identity'
+        b.telemetry, b.scheduler, b._model = p, s, object()
+        monkeypatch.setattr(b, '_start', start)
+        monkeypatch.setattr(b, '_retire', retire)
+        s.backend = b
+        original_clear = s.checkpoints.clear
+        if cleanup == 'clear':
+            def bad_clear():
+                raise LookupError(SECRET)
+            monkeypatch.setattr(s.checkpoints, 'clear', bad_clear)
+        mm = NS(spans=[NS(grid=(100000, 100000))], release_sources=lambda: None)
+        r = Request(request_id='scheduler-id', prompt=[1, 2, 3], sampling_params=SamplingParams())
+        r.prompt_token_ids = [1, 2, 3]
+        r.execution = QualificationSession(r.request_id)
+        r.trace = dict(t0=perf_counter(), diagnostic_id='http-id')
+        r.prepared = NS(protocol='messages', multimodal=None if native else mm)
+        r.recipe_tokenizer = None
+        r.image_identities, r.native_started = (), False
+        r.prompt_checkpoint, r.delivery_cursor = None, 0
+        s.waiting.append(r)
+        s.requests[r.request_id] = r
+        try:
+            app = create_app(profile='mtp-serving-v1', runtime_config=b.runtime_config, backend=b)
+            result = s.step()
+            assert result.outputs[-1].finished and result.outputs[-1].error
+            assert calls == ['lookup', 'native', 'retire'] if native else calls == ['lookup', 'retire']
+            snap = p.snapshot()
+            f = snap['failures'][0]
+            assert f['request_id'] == 'http-id' and f['scheduler_request_id'] == 'scheduler-id'
+            assert f['stage'] == ('native_start' if native else 'admission')
+            assert f['source']['module'] == 'ds41f_mlx.serving.production_mtp'
+            assert f['source']['function'] == ('_schedule_waiting' if native else 'admit')
+            assert f['source']['line'] > 0
+            assert f['exception_type'] == ('RuntimeError' if native else 'ValueError')
+            assert f['native_started'] == f['runtime_fatal'] == native
+            assert not f['canonical_settled'] and not f['cache_published']
+            if cleanup:
+                assert snap['failures'][1]['secondary']
+                assert snap['failures'][1]['exception_type'] == 'LookupError'
+            assert not s.requests and not s.waiting and not s.running and not s.checkpoints._payloads
+            assert r.execution.cache is None and r.execution.owner is None
+            assert s.last_settlement.get('prompt_replay') is None
+            assert s.last_settlement.get('full_cache_repack') is None
+            monkeypatch.setattr(s.checkpoints, 'clear', original_clear)
+            with TestClient(app, base_url='http://127.0.0.1:8000') as client:
+                h = client.get('/health')
+>               assert h.status_code == (503 if native else 200)
+E               assert 400 == 503
+E                +  where 400 = <Response [400 Bad Request]>.status_code
+
+tests/test_request_failure_diagnostics.py:107: AssertionError
+------------------------------ Captured log call -------------------------------
+ERROR    ds41f.operator.runtime:observability.py:179 request failure {"request_id":"http-id","scheduler_request_id":"scheduler-id","stage":"native_start","exception_type":"RuntimeError","category":"unexpected_exception","source":{"module":"ds41f_mlx.serving.production_mtp","function":"_schedule_waiting","line":139},"native_started":true,"canonical_settled":false,"cache_published":false,"runtime_fatal":true,"secondary":false,"timestamp":1793375899.3457642}
+ERROR    ds41f.operator.runtime:observability.py:179 request failure {"request_id":"http-id","scheduler_request_id":"scheduler-id","stage":"cleanup","exception_type":"LookupError","category":"unexpected_exception","source":{"module":"ds41f_mlx.serving.production_mtp","function":"_retire","line":234},"native_started":true,"canonical_settled":false,"cache_published":false,"runtime_fatal":true,"secondary":true,"timestamp":1793375899.3458319}
+ERROR    ds41f.operator.runtime:observability.py:128 request finished id=http-id reason=error
+ERROR    ds41f.operator.runtime:observability.py:47 lifecycle FAILED
+=========================== short test summary info ============================
+FAILED tests/test_request_failure_diagnostics.py::test_worker_failure_diagnostics[False-False]
+FAILED tests/test_request_failure_diagnostics.py::test_worker_failure_diagnostics[False-True]
+FAILED tests/test_request_failure_diagnostics.py::test_worker_failure_diagnostics[True-False]
+FAILED tests/test_request_failure_diagnostics.py::test_worker_failure_diagnostics[True-clear]
+4 failed, 2 deselected, 33 warnings in 37.21s

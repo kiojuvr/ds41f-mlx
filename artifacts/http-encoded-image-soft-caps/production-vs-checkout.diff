@@ -1,0 +1,251 @@
+--- /Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/ds41f_mlx/serving/image_files.py	2026-10-29 18:11:41
++++ ds41f_mlx/serving/image_files.py	2026-10-30 23:20:56
+@@ -9,6 +9,7 @@
+ import base64
+ import json
+ import re
++from sys import getsizeof
+ from threading import RLock
+ from time import time
+ from uuid import uuid4
+@@ -20,6 +21,8 @@
+ 
+ UPLOAD_BODY_BYTES = MAX_IMAGE_BYTES + 64 * 1024
+ MAX_OCCURRENCES = MAX_REQUEST_IMAGES
++# Persistent Python storage is independent of the per-request image budget.
++FILE_STORAGE_BYTES = 64 * 1024 * 1024
+ 
+ 
+ class FileError(ValueError):
+@@ -31,14 +34,16 @@
+ @dataclass(frozen=True)
+ class FileLimits:
+     file_bytes: int = MAX_IMAGE_BYTES
+-    count: int = 128
+-    storage_bytes: int = MAX_REQUEST_IMAGE_BYTES
++    count: int | None = None
++    storage_bytes: int = FILE_STORAGE_BYTES
+ 
+     def __post_init__(self):
+         for value, ceiling in ((self.file_bytes, MAX_IMAGE_BYTES),
+-                               (self.count, 128), (self.storage_bytes, MAX_REQUEST_IMAGE_BYTES)):
++                               (self.storage_bytes, FILE_STORAGE_BYTES)):
+             if type(value) is not int or not 0 < value <= ceiling:
+                 raise ValueError('Files limits may only lower the deployment ceilings')
++        if self.count is not None and (type(self.count) is not int or self.count < 1):
++            raise ValueError('Files count policy must be a positive integer or None')
+ 
+ 
+ @dataclass(frozen=True)
+@@ -51,6 +56,24 @@
+     pixels: int
+ 
+ 
++def listing_query(raw):
++    """Only the bounded ASCII pagination grammar used by the Files client."""
++    if len(raw) > 128:
++        raise FileError('invalid Files pagination')
++    values = {}
++    for part in raw.split(b'&') if raw else ():
++        if not re.fullmatch(rb'(?:after_id=file_[0-9a-f]{32}|limit=[0-9]{1,4})', part):
++            raise FileError('invalid Files pagination')
++        key, value = part.decode('ascii').split('=')
++        if key in values:
++            raise FileError('duplicate Files pagination parameter')
++        values[key] = value
++    limit = int(values.get('limit', '1000'))
++    if not 1 <= limit <= 1000:
++        raise FileError('Files limit must be from 1 through 1000')
++    return values.get('after_id'), limit
++
++
+ class ImageFiles:
+     def __init__(self, limits=None, *, clock=time):
+         self.limits = limits or FileLimits()
+@@ -69,6 +92,15 @@
+         with self._lock:
+             self._files.clear()
+ 
++    @staticmethod
++    def retained_bytes(files):
++        # Conservative Python allocation charge, not encoded payload alone.
++        # Charge shared scalar objects per entry as well; no deduplication credit.
++        return getsizeof(files) + sum(
++            getsizeof(key) + getsizeof(image) + getsizeof(vars(image))
++            + sum(getsizeof(value) for value in vars(image).values())
++            for key, image in files.items())
++
+     def upload(self, body, content_type):
+         # The HTTP boundary serializes uploads/preparation and bounds ingress
+         # before buffering. This parser also stays bounded for direct callers.
+@@ -95,16 +127,47 @@
+             raise FileError(f'invalid image: {exc}') from exc
+         with self._lock:
+             self.sweep()
+-            if len(self._files) >= self.limits.count or sum(len(f.data) for f in self._files.values()) + len(data) > self.limits.storage_bytes:
++            if self.limits.count is not None and len(self._files) >= self.limits.count:
+                 raise FileError('file storage quota exceeded', 429, 'file_storage_quota')
+             created = int(self.clock())
+             key = 'file_' + uuid4().hex
+-            self._files[key] = StoredImage(data, mime, filename, created, created + int(seconds),
+-                                            metadata['width'] * metadata['height'])
+-        return dict(id=key, type='file', mime_type=mime, size_bytes=len(data),
+-                    created_at=datetime.fromtimestamp(created, timezone.utc).isoformat().replace('+00:00', 'Z'),
+-                    filename=filename)
++            image = StoredImage(data, mime, filename, created, created + int(seconds),
++                                metadata['width'] * metadata['height'])
++            # One bounded shallow mapping copy includes actual dict allocation,
++            # including resize headroom, before atomic publication. Image bytes
++            # are immutable and shared, not copied. Failure retains no candidate.
++            candidate = self._files | {key: image}
++            if self.retained_bytes(candidate) > self.limits.storage_bytes:
++                raise FileError('file storage quota exceeded', 429, 'file_storage_quota')
++            self._files = candidate
++        return self.metadata(key, image)
+ 
++    @staticmethod
++    def metadata(key, image):
++        return dict(id=key, type='file', mime_type=image.mime, size_bytes=len(image.data),
++                    created_at=datetime.fromtimestamp(image.created, timezone.utc).isoformat().replace('+00:00', 'Z'),
++                    filename=image.filename)
++
++    def listing(self, query=b''):
++        after, limit = listing_query(query)
++        with self._lock:
++            self.sweep()
++            if after is not None and after not in self._files:
++                raise FileError('unknown or expired Files cursor', 400, 'invalid_file_cursor')
++            # Dict publication preserves insertion order. No full-store sort,
++            # metadata copy or second index; retain at most one page of metadata.
++            data, started, more = [], after is None, False
++            for key, image in self._files.items():
++                if not started:
++                    started = key == after
++                    continue
++                if len(data) == limit:
++                    more = True
++                    break
++                data.append(self.metadata(key, image))
++            return dict(data=data, first_id=data[0]['id'] if data else None,
++                        last_id=data[-1]['id'] if data else None, has_more=more)
++
+     def snapshot(self, key):
+         with self._lock:
+             self.sweep()
+--- /Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/ds41f_mlx/serving/mtp_public.py	2026-10-29 18:11:41
++++ ds41f_mlx/serving/mtp_public.py	2026-10-30 23:20:59
+@@ -137,19 +137,20 @@
+         create = path == '/v1/sessions' and method == 'POST'
+         chat = re.fullmatch(r'/v1/sessions/[^/]+/chat/completions', path) and method == 'POST'
+         lifecycle = re.fullmatch(r'/v1/sessions/[^/]+', path) and path != '/v1/sessions/restore' and method in ('GET','DELETE')
++        file_list = self.ordinary and method == 'GET' and path == '/v1/files'
+         file_upload = self.ordinary and method == 'POST' and path == '/v1/files'
+         file_delete = self.ordinary and method == 'DELETE' and re.fullmatch(r'/v1/files/[^/]+', path)
+         supported = create or chat or lifecycle or (method == 'GET' and path in ('/health','/v1/models'))
+         if self.ordinary:
+             session_control = method == 'POST' and re.fullmatch(r'/v1/sessions/[^/]+/(budget|cancel)', path)
+-            supported = (file_upload or file_delete or (method == 'POST' and path in ('/v1/chat/completions', '/v1/messages')) or
++            supported = (file_list or file_upload or file_delete or (method == 'POST' and path in ('/v1/chat/completions', '/v1/messages')) or
+                          (method == 'GET' and path in ('/health','/v1/models')) or
+                          (self.production_sessions and (create or chat or lifecycle or session_control)))
+         known = path in ('/v1/chat/completions','/v1/responses','/v1/messages','/v1/sessions/restore',
+                          '/docs','/redoc','/openapi.json','/_ds41f/diagnostics') or re.fullmatch(r'/v1/sessions/[^/]+/(persist|responses|messages)', path)
+         if not supported:
+             return await deny(400 if known else 404, 'unsupported_capability' if known else 'not_found')
+-        if scope.get('query_string'):
++        if scope.get('query_string') and not file_list:
+             return await deny(400, 'unsupported_query')
+         if values(b'content-encoding'):
+             return await deny(400, 'json_uncompressed_required')
+--- /Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/ds41f_mlx/serving/server.py	2026-10-29 18:11:41
++++ ds41f_mlx/serving/server.py	2026-10-30 23:21:02
+@@ -277,6 +277,11 @@
+             return JSONResponse(await run_in_threadpool(app.state.image_files.upload,
+                 await request.body(), request.headers.get('content-type')))
+ 
++        @app.get('/v1/files')
++        async def list_images(request: Request):
++            return JSONResponse(await run_in_threadpool(app.state.image_files.listing,
++                request.scope.get('query_string', b'')))
++
+         @app.delete('/v1/files/{file_id}')
+         async def delete_image(file_id: str):
+             return JSONResponse(app.state.image_files.delete(file_id))
+--- /Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/ds41f_mlx/serving/capacity.py	2026-10-29 18:11:41
++++ ds41f_mlx/serving/capacity.py	2026-10-30 20:18:33
+@@ -43,13 +43,18 @@
+     )
+     from ds41f_mlx.model_execution.config import ModelConfig
+     model_config = ModelConfig.from_dict(json.loads((checkpoint / 'config.json').read_text()))
++    from ds41f_mlx.execution_identity import numerical_profile
++    sequential_pixels = numerical_profile() == 'flash-1017-pre-woa-fp8-v1'
+     return dict(implemented_total_tokens=context_envelope(checkpoint, multimodal=True, ordinary=True),
+                 output_reservation_required=True, max_images=MAX_REQUEST_IMAGES,
+                 max_image_bytes=MAX_IMAGE_BYTES, max_image_pixels=MAX_PIXELS,
+                 max_image_tokens=model_config.vision_max_n_token,
+                 max_request_image_bytes=MAX_REQUEST_IMAGE_BYTES,
+-                max_request_pixels=MAX_REQUEST_PIXELS, max_request_patches=MAX_REQUEST_PATCHES,
+-                pixel_patch_budget_scope='fresh_pixels_and_patches_with_complete_pair',
++                max_request_pixels=None if sequential_pixels else MAX_REQUEST_PIXELS,
++                source_pixel_validation='sequential_per_image' if sequential_pixels else 'aggregate_fresh',
++                max_request_patches=MAX_REQUEST_PATCHES,
++                pixel_patch_budget_scope=('fresh_patches_with_complete_pair' if sequential_pixels
++                                          else 'fresh_pixels_and_patches_with_complete_pair'),
+                 historical_discount_qualified=True,
+                 historical_patch_discount=dict(numerical_profile='flash-1017-pre-woa-fp8-v1',
+                     supported_pair_layout_required=True,
+--- /Volumes/SDXC-512/ds41f-1017/lib/python3.13/site-packages/ds41f_mlx/runtime/multimodal.py	2026-10-29 18:11:41
++++ ds41f_mlx/runtime/multimodal.py	2026-10-30 20:18:29
+@@ -52,6 +52,8 @@
+     # and geometry remain available to publication and reconstruction.
+     _sources: dict[int, bytes] = field(repr=False, compare=False)
+     _config: Any = field(repr=False, compare=False)
++    # Internal admitted-profile selection, never a wire age/cache-hit exemption.
++    sequential_pixel_validation: bool = False
+ 
+     def release_sources(self) -> None:
+         self._sources.clear()
+@@ -71,7 +73,7 @@
+         if frontier < 0 or any(s.start < frontier < s.start + s.length for s in self.spans):
+             raise ValueError('committed frontier intersects an image span')
+         fresh = [s for s in self.spans if s.start >= frontier]
+-        if sum(s.source_pixels for s in fresh) > MAX_REQUEST_PIXELS:
++        if not self.sequential_pixel_validation and sum(s.source_pixels for s in fresh) > MAX_REQUEST_PIXELS:
+             raise ValueError('aggregate decoded pixel budget exceeded (fresh Vision workload)')
+         if sum(s.grid[0] * s.grid[1] for s in fresh) > MAX_REQUEST_PATCHES:
+             raise ValueError('aggregate image patch budget exceeded (fresh Vision workload)')
+@@ -230,6 +232,10 @@
+         raise ValueError('image placeholder/source count mismatch')
+     expanded, spans, encoded = [], [], {}
+     total_bytes = fresh_pixels = total_patches = expansion = 0
++    sequential_pixels = False
++    if ordinary:
++        from ds41f_mlx.execution_identity import numerical_profile
++        sequential_pixels = numerical_profile() == 'flash-1017-pre-woa-fp8-v1'
+     if historical and (not ordinary or len(historical) != len(sources)):
+         raise ValueError('invalid historical image origins')
+     origins = iter(historical or (False,) * len(sources))
+@@ -250,11 +256,12 @@
+             raise ValueError('aggregate encoded image byte budget exceeded')
+         try:
+             # Fully validate/decode one source at a time, even on a later hit;
+-            # only encoded bytes/metadata survive. Wire age defers an early
+-            # charge, not actual admission: validate_workload uses the verified
+-            # paired frontier (or genuine miss) before any native start.
++            # only encoded bytes/metadata survive. Ordinary Flash-1017 source
++            # pixels are not cumulative residency: per-image decode protection
++            # stays intact. Patch/output residency admission still uses the
++            # verified paired frontier, never wire age as proof of a cache hit.
+             metadata = validate_encoded_image(data, remaining_pixels=(
+-                None if is_historical else MAX_REQUEST_PIXELS-fresh_pixels))
++                None if sequential_pixels or is_historical else MAX_REQUEST_PIXELS-fresh_pixels))
+             if not is_historical:
+                 fresh_pixels += metadata['width'] * metadata['height']
+             nh, nw, height, width = plan_image_grid(metadata['width'], metadata['height'], config)
+@@ -282,4 +289,5 @@
+         raise ValueError('expanded multimodal context exceeds qualified envelope')
+     if expanded[-1] == config.image_token_id:
+         raise ValueError('held-out terminal must be a text token')
+-    return MultimodalInput(tuple(expanded), tuple(spans), encoded, config)
++    return MultimodalInput(tuple(expanded), tuple(spans), encoded, config,
++                           sequential_pixel_validation=sequential_pixels)
