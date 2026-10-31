@@ -1,6 +1,6 @@
 {
   "artifact_provenance": {
-    "authority": "Recipe 0.2 native Chat and Messages exact auditwheel-repaired wheel; Python 3.13.15 isolated build",
+    "authority": "Recipe 0.2 native Chat and Messages, including all-deferred declarations; exact auditwheel-repaired wheel; Python 3.13.14 isolated build",
     "cargo_lock_sha256": "1af49e412b58b2caa3d4f7c47d41a1b95981345315ed3eff8639df7a521cf6dc",
     "command": "maturin build --locked --release --auditwheel repair -i python3.13 --manifest-path deepseek-recipe-python/Cargo.toml",
     "delta": "docs/recipe-02-native-semantic-boundary.patch",
@@ -16,12 +16,14 @@
     "target": "aarch64-apple-darwin / cp310-abi3 / macosx_11_0_arm64"
   },
   "build": {
+    "maturin": "1.16.0",
+    "python": "3.13.14 (abi3 wheel build; Runtime verification uses 3.13.15)",
     "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05) (Homebrew)\n",
     "cmake": "cmake version 4.3.3\n\nCMake suite maintained and supported by Kitware (kitware.com/cmake).\n",
     "host_linked": false,
     "opencv": "4.14.0\n",
     "rustc": "rustc 1.98.1 (48a229cea 2026-09-01) (Homebrew)\nbinary: rustc\ncommit-hash: 48a229ceaefd4985c50990b14116b6d856af0985\ncommit-date: 2026-09-01\nhost: aarch64-apple-darwin\nrelease: 1.98.1\nLLVM version: 22.1.8\n",
-    "wheel_sha256": "11bda3355c2f48b99d04f6a2179b283add3f6d1218f34e4707bd5a29b304ab03",
+    "wheel_sha256": "be5299f4649675ce2e6159a87bcc4a89c05bf24aa3b0bc7ba3f58d5124df38bb",
     "xcode": "Xcode 26.6\nBuild version 17F113\n"
   },
   "checkpoint": {
@@ -7878,7 +7880,7 @@
   "qualified_base": "1b1f867a3bb30a6a0f670c63e37b89fa4361413b",
   "recipe": {
     "__init__.py": "f2a557b12a820cb5e8063358d123c0fa14d50d185ef34d2b2729c4100bf68dd9",
-    "_native.abi3.so": "eae10c9494744ff2b32d60f3b5f44a66e1029fd32ebcd82868fb9082dc28f3d2",
+    "_native.abi3.so": "93cd81448772445ff2eedc6cb495602cf9e88c74122261d46934b1b2cdee9fe2",
     "_native.pyi": "f1462745bbdcb44456abed2ed1cdb8d8a15b012a3a59c66c4be7f448020a6d94",
     "py.typed": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
   },
@@ -8138,6 +8140,6 @@
   "schema": "ds41f.mtp.normal-local.v1",
   "wheel": {
     "file": "deepseek_recipe-0.2.0-cp310-abi3-macosx_11_0_arm64.whl",
-    "sha256": "11bda3355c2f48b99d04f6a2179b283add3f6d1218f34e4707bd5a29b304ab03"
+    "sha256": "be5299f4649675ce2e6159a87bcc4a89c05bf24aa3b0bc7ba3f58d5124df38bb"
   }
 }

@@ -31,8 +31,13 @@ for mode, projected in projection.items():
     except Exception as exc:
         row['error_type'] = type(exc).__name__
         row['error'] = str(exc)
-    assert 'error' in row, f'baseline behavior unexpectedly changed: {mode}'
-    if mode == 'addition-only':
+    if mode == 'addition-only' and '--expect-all-deferred' in sys.argv[2:]:
+        assert 'error' not in row, row
+        initial, activated = row['prompt'].split('### Updated Tool Schemas')
+        assert '### Available Tool Schemas' in initial
+        assert '"name": "fetch"' not in initial
+        assert '"name": "fetch"' in activated and '"name": "search"' not in row['prompt']
+    elif mode == 'addition-only':
         assert row.get('deserialized') and 'All tools cannot be deferred' in row['error']
     else:
         assert not row.get('deserialized') and 'tool_removal' in row['error']

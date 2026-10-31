@@ -49,8 +49,13 @@ Harness `dsh_session_log`), tool removal, constrained output,
 thinking budgets, `tool_choice:any` and enforced serial selection.
 Harness `dsh_plugin_packages` is accepted and ignored. Prompt-based
 named selection is not constrained decoding. No Responses parity is added.
-Recipe also rejects nonempty tool declaration sets containing only deferred tools;
-this is a separate compatibility gap from tool removal.
+The source-retained Recipe 0.2 native patch/wheel now supports nonempty all-deferred
+tool declarations: initial schemas remain empty and historical `tool_addition`
+blocks activate definitions at their existing canonical positions. This is verified
+at native conversion/encoding, exact-ID continuation, controlled HTTP/SSE and
+paired-token lookup boundaries, not a full dynamic Harness lifecycle. Installed
+Production retains the earlier all-deferred rejection; no promotion occurred.
+See the [focused correction report](../artifacts/harness-all-deferred/report.md).
 
 The [independent Harness 0.2.2-alpha.2 audit](../artifacts/harness-alpha2-compatibility/report.md)
 preserves exact source/installed identities and capability-specific evidence.
@@ -62,9 +67,11 @@ dynamic plugin/MCP lifecycle acceptance remains incomplete; demonstrated automat
 compaction is distinct from manual `/compact`. The subsequent
 [authorized dynamic-tool implementation check](../artifacts/harness-dynamic-tools/report.md)
 is **BLOCKED** at the authoritative removal-encoding gate: current official Recipe
-still supplies no deactivation encoding. Tagged projection/native-library probes
-reproduce both removal rejection and the independent all-deferred failure; neither
-gap is fixed, and no new interactive or Plugin lifecycle acceptance is claimed.
+still supplies no deactivation encoding. Its historical probes reproduced removal
+rejection and the independent all-deferred failure. The later focused correction
+fixes only all-deferred declarations in the source-retained native artifact and
+reuses the exact alpha.2 projection; `tool_removal` remains explicitly rejected.
+No new interactive, Plugin or full alpha.2 agent lifecycle acceptance is claimed.
 
 ## Profiles
 

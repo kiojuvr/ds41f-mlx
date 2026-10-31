@@ -1,0 +1,110 @@
+{
+  "python": "3.13.15 (main, Aug  5 2026, 12:25:43) [Clang 21.0.0 (clang-2100.1.1.101)]",
+  "executable": "/private/tmp/ds41f-all-deferred/runtime/bin/python",
+  "recipe_version": "0.2.0",
+  "native_sha256": "93cd81448772445ff2eedc6cb495602cf9e88c74122261d46934b1b2cdee9fe2",
+  "rows": [
+    {
+      "mode": "addition-only",
+      "fixture": {
+        "model": "deepseek-flash",
+        "max_tokens": 64,
+        "thinking": {
+          "type": "disabled"
+        },
+        "tools": [
+          {
+            "name": "fetch",
+            "description": "later addition",
+            "input_schema": {
+              "type": "object"
+            },
+            "defer_loading": true
+          }
+        ],
+        "messages": [
+          {
+            "role": "user",
+            "content": "before"
+          },
+          {
+            "role": "system",
+            "content": [
+              {
+                "type": "tool_addition",
+                "tool": {
+                  "type": "tool_reference",
+                  "name": "fetch"
+                }
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "content": "after"
+          }
+        ]
+      },
+      "deserialized": true,
+      "prompt": "<\uff5cbegin\u2581of\u2581sentence\uff5c><\uff5cSystem\uff5c>\n\n## Tools\n\nYou have access to a set of tools to help answer the user's question. You can invoke tools by writing a \"<\uff5cDSML\uff5c calls>\" block like the following:\n\n<\uff5cDSML\uff5c calls>\n<\uff5cDSML\uff5c invoke name=\"$TOOL_NAME\">\n<\uff5cDSML\uff5c parameter name=\"$PARAMETER_NAME\" string=\"true|false\">$PARAMETER_VALUE</\uff5cDSML\uff5c parameter>\n...\n</\uff5cDSML\uff5c invoke>\n<\uff5cDSML\uff5c invoke name=\"$TOOL_NAME2\">\n...\n</\uff5cDSML\uff5c invoke>\n</\uff5cDSML\uff5c calls>\n\nString parameters should be specified as is and set `string=\"true\"`. For all other types (numbers, booleans, arrays, objects), pass the value in JSON format and set `string=\"false\"`.\n\nIf thinking_mode is enabled (triggered by <think>), you MUST output your complete reasoning inside <think>...</think> BEFORE any tool calls or final response.\n\nOtherwise, output directly after </think> with tool calls or final response.\n\n### Available Tool Schemas\n\n\n\nYou MUST strictly follow the above defined tool name and parameter schemas to invoke tool calls.\n<\uff5cUser\uff5c>before<\uff5cSystem\uff5c>\n\n### Updated Tool Schemas\n\n{\"name\": \"fetch\", \"description\": \"later addition\", \"parameters\": {\"type\": \"object\"}}<\uff5cUser\uff5c>after<\uff5cAssistant\uff5c></think>"
+    },
+    {
+      "mode": "in-history",
+      "fixture": {
+        "model": "deepseek-flash",
+        "max_tokens": 64,
+        "thinking": {
+          "type": "disabled"
+        },
+        "tools": [
+          {
+            "name": "search",
+            "description": "baseline",
+            "input_schema": {
+              "type": "object"
+            }
+          },
+          {
+            "name": "fetch",
+            "description": "later addition",
+            "input_schema": {
+              "type": "object"
+            },
+            "defer_loading": true
+          }
+        ],
+        "messages": [
+          {
+            "role": "user",
+            "content": "before"
+          },
+          {
+            "role": "system",
+            "content": [
+              {
+                "type": "tool_addition",
+                "tool": {
+                  "type": "tool_reference",
+                  "name": "fetch"
+                }
+              },
+              {
+                "type": "tool_removal",
+                "tool": {
+                  "type": "tool_reference",
+                  "name": "search"
+                }
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "content": "after"
+          }
+        ]
+      },
+      "error_type": "ValueError",
+      "error": "invalid request body: unknown variant `tool_removal`, expected one of `text`, `image`, `document`, `thinking`, `server_tool_use`, `tool_use`, `tool_result`, `web_search_tool_result`, `tool_addition`"
+    }
+  ]
+}

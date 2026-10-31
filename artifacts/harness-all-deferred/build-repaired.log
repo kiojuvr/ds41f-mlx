@@ -1,0 +1,683 @@
+🍹 Building a mixed python/rust project
+🐍 Found CPython 3.13 at /tmp/ds41f-all-deferred/venv/bin/python
+🔗 Found pyo3 bindings with abi3-py3.10 support
+📡 Using build options features from pyproject.toml
+💻 Using `MACOSX_DEPLOYMENT_TARGET=11.0` for aarch64-apple-darwin by default
+   Compiling deepseek-recipe-python v0.2.0 (/private/tmp/ds41f-all-deferred/src/deepseek-recipe-python)
+    Finished `release` profile [optimized] target(s) in 7.87s
+🔗 External shared libraries to be copied into the wheel:
+  /private/tmp/ds41f-all-deferred/src/target/maturin/lib_native.dylib requires:
+    @rpath/libvtkDICOMParser-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkDICOMParser-9.7.9.7.dylib
+    /opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib => /opt/homebrew/Cellar/openssl@3/3.5.9/lib/libcrypto.3.dylib
+    @rpath/libopencv_phase_unwrapping.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_phase_unwrapping.4.14.0.dylib
+    /opt/homebrew/opt/suite-sparse/lib/libcholmod.5.dylib => /opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libcholmod.5.3.5.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_freetype.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_freetype.4.14.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_log_internal_message.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_message.2608.0.0.dylib
+    @rpath/libabsl_cord_internal.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_cord_internal.2608.0.0.dylib
+    /opt/homebrew/opt/suite-sparse/lib/libspqr.4.dylib => /opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libspqr.4.3.6.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkRenderingCore-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingCore-9.7.9.7.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_log_internal_proto.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_proto.2608.0.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_stitching.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_stitching.4.14.0.dylib
+    @rpath/libabsl_flags_config.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_config.2608.0.0.dylib
+    @rpath/libvtkParallelDIY-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkParallelDIY-9.7.9.7.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_videostab.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_videostab.4.14.0.dylib
+    /opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libavcodec.63.dylib => /opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libavcodec.63.1.102.dylib
+    /opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libavformat.63.dylib => /opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libavformat.63.1.102.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkIOExport-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOExport-9.7.9.7.dylib
+    @rpath/libabsl_random_internal_randen_hwaes.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_randen_hwaes.2608.0.0.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkRenderingSceneGraph-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingSceneGraph-9.7.9.7.dylib
+    @rpath/libopencv_core.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_core.4.14.0.dylib
+    @rpath/libabsl_crc_cord_state.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_crc_cord_state.2608.0.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_img_hash.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_img_hash.4.14.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_bioinspired.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_bioinspired.4.14.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_log_internal_globals.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_globals.2608.0.0.dylib
+    /opt/homebrew/opt/glib/lib/libglib-2.0.0.dylib => /opt/homebrew/Cellar/glib/2.90.0/lib/libglib-2.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_str_format_internal.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_str_format_internal.2608.0.0.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkIOXML-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOXML-9.7.9.7.dylib
+    @rpath/libabsl_demangle_internal.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_demangle_internal.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_strings_internal.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_strings_internal.2608.0.0.dylib
+    @rpath/libabsl_hash.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_hash.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_flags_reflection.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_reflection.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_log_severity.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_severity.2608.0.0.dylib
+    /opt/homebrew/opt/protobuf/lib/libutf8_validity.36.2.0.dylib => /opt/homebrew/Cellar/protobuf/36.2/lib/libutf8_validity.36.2.0.dylib
+    /opt/homebrew/opt/openjpeg/lib/libopenjp2.7.dylib => /opt/homebrew/Cellar/openjpeg/2.5.4/lib/libopenjp2.2.5.4.dylib
+    @rpath/libopencv_ml.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_ml.4.14.0.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkCommonExecutionModel-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonExecutionModel-9.7.9.7.dylib
+    @rpath/libvtkImagingSources-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkImagingSources-9.7.9.7.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkFiltersExtraction-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersExtraction-9.7.9.7.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkRenderingOpenGL2-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingOpenGL2-9.7.9.7.dylib
+    @rpath/libvtkRenderingSceneGraph-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingSceneGraph-9.7.9.7.dylib
+    @rpath/libabsl_cordz_handle.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_cordz_handle.2608.0.0.dylib
+    @rpath/libvtkCommonSystem-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonSystem-9.7.9.7.dylib
+    @rpath/libvtkRenderingUI-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingUI-9.7.9.7.dylib
+    @rpath/libvtkIOImage-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOImage-9.7.9.7.dylib
+    @rpath/libvtkCommonExecutionModel-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonExecutionModel-9.7.9.7.dylib
+    @rpath/libopencv_shape.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_shape.4.14.0.dylib
+    @rpath/libabsl_synchronization.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_synchronization.2608.0.0.dylib
+    @rpath/libabsl_flags_marshalling.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_marshalling.2608.0.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_videoio.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_videoio.4.14.0.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkFiltersCore-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersCore-9.7.9.7.dylib
+    /opt/homebrew/opt/openblas/lib/libopenblas.0.dylib => /opt/homebrew/Cellar/openblas/0.3.34/lib/libopenblasp-r0.3.34.dylib
+    @rpath/libabsl_vlog_config_internal.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_vlog_config_internal.2608.0.0.dylib
+    /opt/homebrew/opt/ffmpeg/lib/libavutil.61.dylib => /opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libavutil.61.1.102.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkIOImage-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOImage-9.7.9.7.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_stereo.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_stereo.4.14.0.dylib
+    /opt/homebrew/opt/pcre2/lib/libpcre2-8.0.dylib => /opt/homebrew/Cellar/pcre2/10.49/lib/libpcre2-8.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_gapi.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_gapi.4.14.0.dylib
+    /opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libswscale.10.dylib => /opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libswscale.10.1.102.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_superres.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_superres.4.14.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_decode_rust_punycode.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_decode_rust_punycode.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_log_initialize.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_initialize.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_demangle_rust.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_demangle_rust.2608.0.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_optflow.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_optflow.4.14.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_phase_unwrapping.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_phase_unwrapping.4.14.0.dylib
+    /opt/homebrew/opt/openexr/lib/libIlmThread-3_5.34.dylib => /opt/homebrew/Cellar/openexr/3.5.1/lib/libIlmThread-3_5.34.3.5.1.dylib
+    @rpath/libabsl_strings.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_strings.2608.0.0.dylib
+    @rpath/libabsl_log_internal_conditions.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_conditions.2608.0.0.dylib
+    /opt/homebrew/opt/libpng/lib/libpng16.16.dylib => /opt/homebrew/Cellar/libpng/1.6.58/lib/libpng16.16.dylib
+    @rpath/libcamd.3.dylib => /opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libcamd.3.3.5.dylib
+    /opt/homebrew/opt/libdeflate/lib/libdeflate.0.dylib => /opt/homebrew/Cellar/libdeflate/1.26/lib/libdeflate.0.dylib
+    /opt/homebrew/opt/ceres-solver/lib/libceres.4.dylib => /opt/homebrew/Cellar/ceres-solver/2.2.0_6/lib/libceres.2.2.0.dylib
+    /opt/homebrew/opt/tbb/lib/libtbb.12.dylib => /opt/homebrew/Cellar/tbb/2023.1.0/lib/libtbb.12.19.dylib
+    @rpath/libabsl_log_internal_fnmatch.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_fnmatch.2608.0.0.dylib
+    /opt/homebrew/opt/libtiff/lib/libtiff.6.dylib => /opt/homebrew/Cellar/libtiff/4.7.2/lib/libtiff.6.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_wechat_qrcode.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_wechat_qrcode.4.14.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_status.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_status.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_log_internal_log_sink_set.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_log_sink_set.2608.0.0.dylib
+    @rpath/libopencv_photo.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_photo.4.14.0.dylib
+    @rpath/libvtkfmt-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkfmt-9.7.9.7.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkCommonTransforms-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonTransforms-9.7.9.7.dylib
+    @rpath/libcholmod.5.dylib => /opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libcholmod.5.3.5.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_dnn_superres.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_dnn_superres.4.14.0.dylib
+    @rpath/libabsl_random_internal_randen_slow.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_randen_slow.2608.0.0.dylib
+    @rpath/libvtkscn-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkscn-9.7.9.7.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkInteractionStyle-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkInteractionStyle-9.7.9.7.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_log_internal_structured_proto.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_structured_proto.2608.0.0.dylib
+    @rpath/libabsl_crc32c.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_crc32c.2608.0.0.dylib
+    @rpath/libvtkkissfft-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkkissfft-9.7.9.7.dylib
+    @rpath/libsuitesparseconfig.7.dylib => /opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libsuitesparseconfig.7.14.1.dylib
+    @rpath/libabsl_log_internal_globals.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_globals.2608.0.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_photo.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_photo.4.14.0.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkCommonMath-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonMath-9.7.9.7.dylib
+    @rpath/libvtkFiltersSources-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersSources-9.7.9.7.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_random_internal_randen_hwaes_impl.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_randen_hwaes_impl.2608.0.0.dylib
+    /opt/homebrew/opt/graphite2/lib/libgraphite2.3.dylib => /opt/homebrew/Cellar/graphite2/1.3.15/lib/libgraphite2.3.3.1.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_signal.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_signal.4.14.0.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkRenderingLOD-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingLOD-9.7.9.7.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkRenderingUI-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingUI-9.7.9.7.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_mcc.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_mcc.4.14.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_core.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_core.4.14.0.dylib
+    /opt/homebrew/opt/ffmpeg/lib/libswscale.10.dylib => /opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libswscale.10.1.102.dylib
+    /opt/homebrew/opt/suite-sparse/lib/libcamd.3.dylib => /opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libcamd.3.3.5.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_calib3d.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_calib3d.4.14.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_hfs.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_hfs.4.14.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_ccalib.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_ccalib.4.14.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_flags_marshalling.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_marshalling.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_log_internal_check_op.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_check_op.2608.0.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_imgproc.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_imgproc.4.14.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_die_if_null.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_die_if_null.2608.0.0.dylib
+    @rpath/libabsl_flags_commandlineflag_internal.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_commandlineflag_internal.2608.0.0.dylib
+    /opt/homebrew/opt/vtk/lib/libvtktoken-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtktoken-9.7.9.7.dylib
+    /opt/homebrew/opt/opus/lib/libopus.0.dylib => /opt/homebrew/Cellar/opus/1.6.1/lib/libopus.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_cord_internal.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_cord_internal.2608.0.0.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkIOCellGrid-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOCellGrid-9.7.9.7.dylib
+    @rpath/libopencv_plot.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_plot.4.14.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_random_seed_gen_exception.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_seed_gen_exception.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_random_seed_sequences.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_seed_sequences.2608.0.0.dylib
+    @rpath/libvtkCommonComputationalGeometry-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonComputationalGeometry-9.7.9.7.dylib
+    @rpath/libabsl_flags_commandlineflag.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_commandlineflag.2608.0.0.dylib
+    /opt/homebrew/opt/vtk/lib/libvtksys-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtksys-9.7.9.7.dylib
+    @rpath/libabsl_status.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_status.2608.0.0.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkIOCore-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOCore-9.7.9.7.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_flags_private_handle_accessor.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_private_handle_accessor.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_log_internal_nullguard.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_nullguard.2608.0.0.dylib
+    @rpath/libabsl_log_internal_nullguard.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_nullguard.2608.0.0.dylib
+    @rpath/libvtkCommonDataModel-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonDataModel-9.7.9.7.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_time.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_time.2608.0.0.dylib
+    @rpath/libabsl_graphcycles_internal.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_graphcycles_internal.2608.0.0.dylib
+    @rpath/libabsl_strerror.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_strerror.2608.0.0.dylib
+    @rpath/libopencv_features2d.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_features2d.4.14.0.dylib
+    @rpath/libvtkFiltersReduction-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersReduction-9.7.9.7.dylib
+    @rpath/libvtkFiltersHybrid-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersHybrid-9.7.9.7.dylib
+    @rpath/libabsl_cordz_functions.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_cordz_functions.2608.0.0.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkFiltersCellGrid-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersCellGrid-9.7.9.7.dylib
+    @rpath/libvtkglad-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkglad-9.7.9.7.dylib
+    @rpath/libvtkRenderingHyperTreeGrid-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingHyperTreeGrid-9.7.9.7.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_leak_check.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_leak_check.2608.0.0.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkRenderingFreeType-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingFreeType-9.7.9.7.dylib
+    @rpath/libabsl_base_cpu_detect.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_base_cpu_detect.2608.0.0.dylib
+    @rpath/libvtkCommonColor-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonColor-9.7.9.7.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_symbolize.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_symbolize.2608.0.0.dylib
+    @rpath/libabsl_leak_check.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_leak_check.2608.0.0.dylib
+    /opt/homebrew/opt/xz/lib/liblzma.5.dylib => /opt/homebrew/Cellar/xz/5.8.4/lib/liblzma.5.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_log_internal_fnmatch.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_fnmatch.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_random_distributions.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_distributions.2608.0.0.dylib
+    @rpath/libamd.3.dylib => /opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libamd.3.3.4.dylib
+    @rpath/libvtkFiltersHyperTree-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersHyperTree-9.7.9.7.dylib
+    @rpath/libopencv_calib3d.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_calib3d.4.14.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_features2d.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_features2d.4.14.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_intensity_transform.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_intensity_transform.4.14.0.dylib
+    @rpath/libvtkIOXML-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOXML-9.7.9.7.dylib
+    @rpath/libabsl_log_internal_log_sink_set.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_log_sink_set.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_flags_internal.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_internal.2608.0.0.dylib
+    @rpath/libabsl_kernel_timeout_internal.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_kernel_timeout_internal.2608.0.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_shape.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_shape.4.14.0.dylib
+    @rpath/libabsl_random_internal_entropy_pool.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_entropy_pool.2608.0.0.dylib
+    @rpath/libopencv_video.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_video.4.14.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_video.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_video.4.14.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_flags_commandlineflag_internal.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_commandlineflag_internal.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_stacktrace.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_stacktrace.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_synchronization.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_synchronization.2608.0.0.dylib
+    @rpath/libvtktoken-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtktoken-9.7.9.7.dylib
+    @rpath/libvtkFiltersExtraction-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersExtraction-9.7.9.7.dylib
+    @rpath/libvtkCommonMisc-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonMisc-9.7.9.7.dylib
+    @rpath/libopencv_optflow.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_optflow.4.14.0.dylib
+    @rpath/libgcc_s.1.1.dylib => /opt/homebrew/Cellar/gcc/16.2.0/lib/gcc/current/libgcc_s.1.1.dylib
+    @rpath/libccolamd.3.dylib => /opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libccolamd.3.3.5.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_strings.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_strings.2608.0.0.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkFiltersGeneral-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersGeneral-9.7.9.7.dylib
+    @rpath/libabsl_utf8_for_code_point.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_utf8_for_code_point.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_int128.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_int128.2608.0.0.dylib
+    @rpath/libvtkIOLegacy-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOLegacy-9.7.9.7.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_structured_light.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_structured_light.4.14.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_saliency.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_saliency.4.14.0.dylib
+    @rpath/libabsl_flags_private_handle_accessor.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_private_handle_accessor.2608.0.0.dylib
+    @rpath/libabsl_log_internal_proto.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_proto.2608.0.0.dylib
+    @rpath/libopencv_videoio.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_videoio.4.14.0.dylib
+    @rpath/libquadmath.0.dylib => /opt/homebrew/Cellar/gcc/16.2.0/lib/gcc/current/libquadmath.0.dylib
+    /opt/homebrew/opt/openvino/lib/libopenvino.2640.dylib => /opt/homebrew/Cellar/openvino/2026.4.0_1/lib/libopenvino.2026.4.0.dylib
+    /opt/homebrew/opt/libvmaf/lib/libvmaf.3.dylib => /opt/homebrew/Cellar/libvmaf/3.2.1/lib/libvmaf.3.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_plot.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_plot.4.14.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_base.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_base.2608.0.0.dylib
+    @rpath/libvtkFiltersVerdict-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersVerdict-9.7.9.7.dylib
+    @rpath/libvtkRenderingVtkJS-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingVtkJS-9.7.9.7.dylib
+    /opt/homebrew/opt/metis/lib/libmetis.dylib => /opt/homebrew/Cellar/metis/5.1.0/lib/libmetis.dylib
+    @rpath/libopencv_viz.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_viz.4.14.0.dylib
+    @rpath/libabsl_raw_logging_internal.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_raw_logging_internal.2608.0.0.dylib
+    @rpath/libvtkImagingCore-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkImagingCore-9.7.9.7.dylib
+    @rpath/libabsl_spinlock_wait.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_spinlock_wait.2608.0.0.dylib
+    @rpath/libabsl_str_format_internal.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_str_format_internal.2608.0.0.dylib
+    @rpath/libopencv_flann.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_flann.4.14.0.dylib
+    /opt/homebrew/opt/ffmpeg/lib/libavformat.63.dylib => /opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libavformat.63.1.102.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_dpm.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_dpm.4.14.0.dylib
+    /opt/homebrew/opt/openexr/lib/libOpenEXR-3_5.34.dylib => /opt/homebrew/Cellar/openexr/3.5.1/lib/libOpenEXR-3_5.34.3.5.1.dylib
+    @rpath/libabsl_civil_time.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_civil_time.2608.0.0.dylib
+    @rpath/libabsl_source_location.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_source_location.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_cordz_functions.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_cordz_functions.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_random_internal_randen_hwaes.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_randen_hwaes.2608.0.0.dylib
+    @rpath/libabsl_cord.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_cord.2608.0.0.dylib
+    /opt/homebrew/opt/webp/lib/libwebpdemux.2.dylib => /opt/homebrew/Cellar/webp/1.6.0/lib/libwebpdemux.2.0.17.dylib
+    /opt/homebrew/opt/webp/lib/libwebpmux.3.dylib => /opt/homebrew/Cellar/webp/1.6.0/lib/libwebpmux.3.1.2.dylib
+    @rpath/libabsl_malloc_internal.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_malloc_internal.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_hashtablez_sampler.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_hashtablez_sampler.2608.0.0.dylib
+    @rpath/libvtkCommonTransforms-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonTransforms-9.7.9.7.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkRenderingLabel-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingLabel-9.7.9.7.dylib
+    /opt/homebrew/opt/suite-sparse/lib/libcolamd.3.dylib => /opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libcolamd.3.3.5.dylib
+    /opt/homebrew/opt/gettext/lib/libintl.8.dylib => /opt/homebrew/Cellar/gettext/1.0/lib/libintl.8.dylib
+    @rpath/libsharpyuv.0.dylib => /opt/homebrew/Cellar/webp/1.6.0/lib/libsharpyuv.0.1.2.dylib
+    @rpath/libvtkIOCellGrid-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOCellGrid-9.7.9.7.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkIOPLY-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOPLY-9.7.9.7.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_examine_stack.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_examine_stack.2608.0.0.dylib
+    /opt/homebrew/opt/openssl@3/lib/libssl.3.dylib => /opt/homebrew/Cellar/openssl@3/3.5.9/lib/libssl.3.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkFiltersSources-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersSources-9.7.9.7.dylib
+    /opt/homebrew/opt/libomp/lib/libomp.dylib => /opt/homebrew/Cellar/libomp/23.1.2/lib/libomp.dylib
+    @rpath/libabsl_crc_internal.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_crc_internal.2608.0.0.dylib
+    /opt/homebrew/opt/openexr/lib/libOpenEXRCore-3_5.34.dylib => /opt/homebrew/Cellar/openexr/3.5.1/lib/libOpenEXRCore-3_5.34.3.5.1.dylib
+    @rpath/libvtkFiltersGeometry-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersGeometry-9.7.9.7.dylib
+    @rpath/libabsl_log_internal_format.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_format.2608.0.0.dylib
+    /opt/homebrew/opt/tesseract/lib/libtesseract.5.dylib => /opt/homebrew/Cellar/tesseract/5.5.3/lib/libtesseract.5.dylib
+    @rpath/libvtkFiltersCellGrid-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersCellGrid-9.7.9.7.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkFiltersTexture-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersTexture-9.7.9.7.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_civil_time.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_civil_time.2608.0.0.dylib
+    /opt/homebrew/opt/openjph/lib/libopenjph.0.32.dylib => /opt/homebrew/Cellar/openjph/0.32.0/lib/libopenjph.0.32.0.dylib
+    @rpath/libabsl_hardening.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_hardening.2608.0.0.dylib
+    @rpath/libabsl_base.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_base.2608.0.0.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkkissfft-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkkissfft-9.7.9.7.dylib
+    /opt/homebrew/opt/imath/lib/libImath-3_2.30.dylib => /opt/homebrew/Cellar/imath/3.2.3/lib/libImath-3_2.30.3.2.3.dylib
+    @rpath/libabsl_throw_delegate.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_throw_delegate.2608.0.0.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkCommonCore-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonCore-9.7.9.7.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkCommonMisc-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonMisc-9.7.9.7.dylib
+    @rpath/libvtkCommonCache-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonCache-9.7.9.7.dylib
+    @rpath/libvtkIOXMLParser-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOXMLParser-9.7.9.7.dylib
+    @rpath/libabsl_exponential_biased.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_exponential_biased.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_statusor.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_statusor.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_spinlock_wait.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_spinlock_wait.2608.0.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_xobjdetect.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_xobjdetect.4.14.0.dylib
+    /opt/homebrew/opt/x264/lib/libx264.165.dylib => /opt/homebrew/Cellar/x264/r3222/lib/libx264.165.dylib
+    @rpath/libabsl_log_internal_message.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_message.2608.0.0.dylib
+    @rpath/libabsl_log_entry.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_entry.2608.0.0.dylib
+    @rpath/libabsl_tracing_internal.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_tracing_internal.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_flags_program_name.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_program_name.2608.0.0.dylib
+    @rpath/libvtkDomainsChemistry-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkDomainsChemistry-9.7.9.7.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_throw_delegate.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_throw_delegate.2608.0.0.dylib
+    /opt/homebrew/opt/gcc/lib/gcc/current/libquadmath.0.dylib => /opt/homebrew/Cellar/gcc/16.2.0/lib/gcc/current/libquadmath.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_cordz_info.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_cordz_info.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_flags_commandlineflag.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_commandlineflag.2608.0.0.dylib
+    /opt/homebrew/opt/protobuf/lib/libprotobuf.36.2.0.dylib => /opt/homebrew/Cellar/protobuf/36.2/lib/libprotobuf.36.2.0.dylib
+    @rpath/libvtkCommonMath-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonMath-9.7.9.7.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkglad-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkglad-9.7.9.7.dylib
+    @rpath/libvtkRenderingCore-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingCore-9.7.9.7.dylib
+    @rpath/libIlmThread-3_5.34.dylib => /opt/homebrew/Cellar/openexr/3.5.1/lib/libIlmThread-3_5.34.3.5.1.dylib
+    @rpath/libabsl_city.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_city.2608.0.0.dylib
+    /opt/homebrew/opt/lame/lib/libmp3lame.0.dylib => /opt/homebrew/Cellar/lame/4.0/lib/libmp3lame.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_xfeatures2d.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_xfeatures2d.4.14.0.dylib
+    @rpath/libabsl_int128.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_int128.2608.0.0.dylib
+    @rpath/libabsl_debugging_internal.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_debugging_internal.2608.0.0.dylib
+    @rpath/libabsl_log_internal_structured_proto.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_structured_proto.2608.0.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_viz.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_viz.4.14.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_random_internal_entropy_pool.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_entropy_pool.2608.0.0.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkx11-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkx11-9.7.9.7.dylib
+    /opt/homebrew/opt/jsoncpp/lib/libjsoncpp.27.dylib => /opt/homebrew/Cellar/jsoncpp/1.9.8/lib/libjsoncpp.27.dylib
+    @rpath/libopencv_text.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_text.4.14.0.dylib
+    /opt/homebrew/opt/mpg123/lib/libmpg123.0.dylib => /opt/homebrew/Cellar/mpg123/1.33.7/lib/libmpg123.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_tracking.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_tracking.4.14.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_crc_internal.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_crc_internal.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_log_entry.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_entry.2608.0.0.dylib
+    @rpath/libvtkx11-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkx11-9.7.9.7.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_sfm.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_sfm.4.14.0.dylib
+    /opt/homebrew/opt/suite-sparse/lib/libsuitesparseconfig.7.dylib => /opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libsuitesparseconfig.7.14.1.dylib
+    /opt/homebrew/opt/libb2/lib/libb2.1.dylib => /opt/homebrew/Cellar/libb2/0.98.1/lib/libb2.1.dylib
+    @rpath/libopencv_quality.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_quality.4.14.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_face.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_face.4.14.0.dylib
+    /opt/homebrew/opt/glog/lib/libglog.2.dylib => /opt/homebrew/Cellar/glog/0.7.1/lib/libglog.0.7.1.dylib
+    /opt/homebrew/opt/leptonica/lib/libleptonica.6.dylib => /opt/homebrew/Cellar/leptonica/1.87.0/lib/libleptonica.6.dylib
+    /opt/homebrew/opt/freetype/lib/libfreetype.6.dylib => /opt/homebrew/Cellar/freetype/2.14.3/lib/libfreetype.6.dylib
+    @rpath/libvtkFiltersModeling-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersModeling-9.7.9.7.dylib
+    /opt/homebrew/opt/gflags/lib/libgflags.2.3.dylib => /opt/homebrew/Cellar/gflags/2.3.1/lib/libgflags.2.3.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_rgbd.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_rgbd.4.14.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_bgsegm.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_bgsegm.4.14.0.dylib
+    @rpath/libIex-3_5.34.dylib => /opt/homebrew/Cellar/openexr/3.5.1/lib/libIex-3_5.34.3.5.1.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkCommonDataModel-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonDataModel-9.7.9.7.dylib
+    @rpath/libopencv_datasets.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_datasets.4.14.0.dylib
+    @rpath/libopencv_imgcodecs.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_imgcodecs.4.14.0.dylib
+    /opt/homebrew/opt/x265/lib/libx265.217.dylib => /opt/homebrew/Cellar/x265/4.3/lib/libx265.217.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_tracing_internal.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_tracing_internal.2608.0.0.dylib
+    @rpath/libutf8_validity.36.2.0.dylib => /opt/homebrew/Cellar/protobuf/36.2/lib/libutf8_validity.36.2.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_hardening.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_hardening.2608.0.0.dylib
+    @rpath/libvtkIOCore-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOCore-9.7.9.7.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_debugging_internal.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_debugging_internal.2608.0.0.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkIOGeometry-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOGeometry-9.7.9.7.dylib
+    @rpath/libabsl_random_internal_platform.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_platform.2608.0.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_objdetect.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_objdetect.4.14.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_cordz_handle.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_cordz_handle.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_source_location.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_source_location.2608.0.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_imgcodecs.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_imgcodecs.4.14.0.dylib
+    @rpath/libvtkverdict-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkverdict-9.7.9.7.dylib
+    /opt/homebrew/opt/svt-av1/lib/libSvtAv1Enc.4.dylib => /opt/homebrew/Cellar/svt-av1/4.2.0/lib/libSvtAv1Enc.4.2.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_random_internal_platform.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_platform.2608.0.0.dylib
+    /opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libswresample.7.dylib => /opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libswresample.7.1.102.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_exponential_biased.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_exponential_biased.2608.0.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_text.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_text.4.14.0.dylib
+    @rpath/libopencv_xfeatures2d.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_xfeatures2d.4.14.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_kernel_timeout_internal.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_kernel_timeout_internal.2608.0.0.dylib
+    @rpath/libabsl_log_globals.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_globals.2608.0.0.dylib
+    /opt/homebrew/Cellar/openssl@3/3.5.9/lib/libcrypto.3.dylib => /opt/homebrew/Cellar/openssl@3/3.5.9/lib/libcrypto.3.dylib
+    @rpath/libabsl_demangle_rust.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_demangle_rust.2608.0.0.dylib
+    @rpath/libabsl_random_internal_seed_material.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_seed_material.2608.0.0.dylib
+    /opt/homebrew/opt/openexr/lib/libIex-3_5.34.dylib => /opt/homebrew/Cellar/openexr/3.5.1/lib/libIex-3_5.34.3.5.1.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_flann.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_flann.4.14.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_highgui.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_highgui.4.14.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_reg.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_reg.4.14.0.dylib
+    @rpath/libvtkRenderingContext2D-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingContext2D-9.7.9.7.dylib
+    /opt/homebrew/opt/libarchive/lib/libarchive.13.dylib => /opt/homebrew/Cellar/libarchive/3.8.9/lib/libarchive.13.dylib
+    @rpath/libvtkRenderingFreeType-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingFreeType-9.7.9.7.dylib
+    @rpath/libabsl_hashtablez_sampler.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_hashtablez_sampler.2608.0.0.dylib
+    @rpath/libvtkParallelCore-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkParallelCore-9.7.9.7.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_line_descriptor.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_line_descriptor.4.14.0.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkRenderingContext2D-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingContext2D-9.7.9.7.dylib
+    @rpath/libabsl_symbolize.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_symbolize.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_log_sink.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_sink.2608.0.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_xphoto.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_xphoto.4.14.0.dylib
+    @rpath/libabsl_log_severity.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_severity.2608.0.0.dylib
+    @rpath/libabsl_cordz_info.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_cordz_info.2608.0.0.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkscn-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkscn-9.7.9.7.dylib
+    @rpath/libwebp.7.dylib => /opt/homebrew/Cellar/webp/1.6.0/lib/libwebp.7.2.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_time_zone.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_time_zone.2608.0.0.dylib
+    /opt/homebrew/opt/libvpx/lib/libvpx.12.dylib => /opt/homebrew/Cellar/libvpx/1.17.0/lib/libvpx.12.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkRenderingHyperTreeGrid-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingHyperTreeGrid-9.7.9.7.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_aruco.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_aruco.4.14.0.dylib
+    /opt/homebrew/opt/jpeg-turbo/lib/libjpeg.8.dylib => /opt/homebrew/Cellar/jpeg-turbo/3.2.0/lib/libjpeg.8.3.2.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_demangle_internal.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_demangle_internal.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_base_cpu_detect.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_base_cpu_detect.2608.0.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_rapid.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_rapid.4.14.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_fuzzy.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_fuzzy.4.14.0.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkImagingCore-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkImagingCore-9.7.9.7.dylib
+    @rpath/libOpenEXRCore-3_5.34.dylib => /opt/homebrew/Cellar/openexr/3.5.1/lib/libOpenEXRCore-3_5.34.3.5.1.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_crc_cord_state.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_crc_cord_state.2608.0.0.dylib
+    /opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libavutil.61.dylib => /opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libavutil.61.1.102.dylib
+    /opt/homebrew/opt/suite-sparse/lib/libamd.3.dylib => /opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libamd.3.3.4.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkRenderingVtkJS-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingVtkJS-9.7.9.7.dylib
+    /opt/homebrew/opt/lz4/lib/liblz4.1.dylib => /opt/homebrew/Cellar/lz4/1.10.0/lib/liblz4.1.10.0.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkIOLegacy-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOLegacy-9.7.9.7.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkIOXMLParser-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOXMLParser-9.7.9.7.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_random_internal_seed_material.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_seed_material.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_log_globals.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_globals.2608.0.0.dylib
+    @rpath/libabsl_flags_program_name.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_program_name.2608.0.0.dylib
+    /opt/homebrew/opt/gcc/lib/gcc/current/libgfortran.5.dylib => /opt/homebrew/Cellar/gcc/16.2.0/lib/gcc/current/libgfortran.5.dylib
+    @rpath/libopencv_tracking.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_tracking.4.14.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_log_internal_conditions.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_conditions.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_city.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_city.2608.0.0.dylib
+    @rpath/libopencv_objdetect.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_objdetect.4.14.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_ml.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_ml.4.14.0.dylib
+    /opt/homebrew/opt/vtk/lib/libvtkfmt-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkfmt-9.7.9.7.dylib
+    @rpath/libabsl_time.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_time.2608.0.0.dylib
+    @rpath/libabsl_decode_rust_punycode.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_decode_rust_punycode.2608.0.0.dylib
+    @rpath/libvtkloguru-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkloguru-9.7.9.7.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_log_internal_format.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_format.2608.0.0.dylib
+    /opt/homebrew/opt/webp/lib/libwebp.7.dylib => /opt/homebrew/Cellar/webp/1.6.0/lib/libwebp.7.2.0.dylib
+    @rpath/libvtkFiltersCore-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersCore-9.7.9.7.dylib
+    @rpath/libvtkIOGeometry-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOGeometry-9.7.9.7.dylib
+    @rpath/libabsl_random_seed_gen_exception.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_seed_gen_exception.2608.0.0.dylib
+    @rpath/libopencv_highgui.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_highgui.4.14.0.dylib
+    /opt/homebrew/opt/harfbuzz/lib/libharfbuzz.0.dylib => /opt/homebrew/Cellar/harfbuzz/14.5.0/lib/libharfbuzz.0.dylib
+    @rpath/libvtkCommonCore-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonCore-9.7.9.7.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_alphamat.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_alphamat.4.14.0.dylib
+    @rpath/libopencv_ximgproc.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_ximgproc.4.14.0.dylib
+    /opt/homebrew/opt/ffmpeg/lib/libavdevice.63.dylib => /opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libavdevice.63.1.102.dylib
+    @rpath/libabsl_random_internal_randen.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_randen.2608.0.0.dylib
+    /opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libavfilter.12.dylib => /opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libavfilter.12.1.102.dylib
+    @rpath/libopencv_imgproc.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_imgproc.4.14.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_datasets.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_datasets.4.14.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_graphcycles_internal.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_graphcycles_internal.2608.0.0.dylib
+    @rpath/libabsl_random_internal_randen_hwaes_impl.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_randen_hwaes_impl.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_random_internal_randen.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_randen.2608.0.0.dylib
+    /opt/homebrew/opt/zstd/lib/libzstd.1.dylib => /opt/homebrew/Cellar/zstd/1.5.7_1/lib/libzstd.1.5.7.dylib
+    @rpath/libopencv_dnn.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_dnn.4.14.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_ximgproc.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_ximgproc.4.14.0.dylib
+    @rpath/libvtkFiltersStatistics-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersStatistics-9.7.9.7.dylib
+    /opt/homebrew/opt/dav1d/lib/libdav1d.7.dylib => /opt/homebrew/Cellar/dav1d/1.5.4/lib/libdav1d.7.dylib
+    @rpath/libabsl_raw_hash_set.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_raw_hash_set.2608.0.0.dylib
+    @rpath/libvtksys-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtksys-9.7.9.7.dylib
+    @rpath/libcolamd.3.dylib => /opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libcolamd.3.3.5.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_crc32c.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_crc32c.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_strerror.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_strerror.2608.0.0.dylib
+    @rpath/libabsl_stacktrace.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_stacktrace.2608.0.0.dylib
+    @rpath/libabsl_time_zone.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_time_zone.2608.0.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_dnn.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_dnn.4.14.0.dylib
+    @rpath/libabsl_examine_stack.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_examine_stack.2608.0.0.dylib
+    /opt/homebrew/opt/pugixml/lib/libpugixml.1.dylib => /opt/homebrew/Cellar/pugixml/1.16/lib/libpugixml.1.16.dylib
+    @rpath/libvtkmetaio-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkmetaio-9.7.9.7.dylib
+    /opt/homebrew/opt/ffmpeg/lib/libavcodec.63.dylib => /opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libavcodec.63.1.102.dylib
+    /opt/homebrew/opt/giflib/lib/libgif.dylib => /opt/homebrew/Cellar/giflib/6.1.3/lib/libgif.7.2.0.dylib
+    @rpath/libvtkRenderingLabel-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingLabel-9.7.9.7.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_surface_matching.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_surface_matching.4.14.0.dylib
+    /opt/homebrew/opt/suite-sparse/lib/libccolamd.3.dylib => /opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libccolamd.3.3.5.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_quality.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_quality.4.14.0.dylib
+    /opt/homebrew/opt/opencv@4/lib/libopencv_dnn_objdetect.414.dylib => /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_dnn_objdetect.4.14.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_malloc_internal.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_malloc_internal.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_flags_config.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_config.2608.0.0.dylib
+    @rpath/libabsl_strings_internal.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_strings_internal.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_cord.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_cord.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_random_internal_randen_slow.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_randen_slow.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_raw_hash_set.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_raw_hash_set.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_hash.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_hash.2608.0.0.dylib
+    @rpath/libabsl_log_sink.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_sink.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_utf8_for_code_point.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_utf8_for_code_point.2608.0.0.dylib
+    @rpath/libvtkFiltersGeneral-9.7.1.dylib => /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersGeneral-9.7.9.7.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_raw_logging_internal.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_raw_logging_internal.2608.0.0.dylib
+    /opt/homebrew/opt/abseil/lib/libabsl_vlog_config_internal.2608.0.0.dylib => /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_vlog_config_internal.2608.0.0.dylib
+🖨  Copied external shared libraries to package deepseek_recipe.dylibs directory:
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_base.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_base_cpu_detect.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_city.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_civil_time.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_cord.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_cord_internal.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_cordz_functions.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_cordz_handle.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_cordz_info.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_crc32c.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_crc_cord_state.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_crc_internal.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_debugging_internal.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_decode_rust_punycode.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_demangle_internal.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_demangle_rust.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_die_if_null.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_examine_stack.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_exponential_biased.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_commandlineflag.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_commandlineflag_internal.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_config.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_internal.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_marshalling.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_private_handle_accessor.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_program_name.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_flags_reflection.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_graphcycles_internal.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_hardening.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_hash.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_hashtablez_sampler.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_int128.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_kernel_timeout_internal.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_leak_check.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_entry.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_globals.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_initialize.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_check_op.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_conditions.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_fnmatch.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_format.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_globals.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_log_sink_set.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_message.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_nullguard.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_proto.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_internal_structured_proto.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_severity.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_log_sink.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_malloc_internal.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_distributions.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_entropy_pool.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_platform.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_randen.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_randen_hwaes.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_randen_hwaes_impl.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_randen_slow.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_internal_seed_material.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_seed_gen_exception.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_random_seed_sequences.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_raw_hash_set.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_raw_logging_internal.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_source_location.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_spinlock_wait.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_stacktrace.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_status.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_statusor.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_str_format_internal.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_strerror.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_strings.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_strings_internal.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_symbolize.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_synchronization.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_throw_delegate.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_time.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_time_zone.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_tracing_internal.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_utf8_for_code_point.2608.0.0.dylib
+    /opt/homebrew/Cellar/abseil/20260817.0/lib/libabsl_vlog_config_internal.2608.0.0.dylib
+    /opt/homebrew/Cellar/ceres-solver/2.2.0_6/lib/libceres.2.2.0.dylib
+    /opt/homebrew/Cellar/dav1d/1.5.4/lib/libdav1d.7.dylib
+    /opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libavcodec.63.1.102.dylib
+    /opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libavdevice.63.1.102.dylib
+    /opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libavfilter.12.1.102.dylib
+    /opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libavformat.63.1.102.dylib
+    /opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libavutil.61.1.102.dylib
+    /opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libswresample.7.1.102.dylib
+    /opt/homebrew/Cellar/ffmpeg/9.0.2/lib/libswscale.10.1.102.dylib
+    /opt/homebrew/Cellar/freetype/2.14.3/lib/libfreetype.6.dylib
+    /opt/homebrew/Cellar/gcc/16.2.0/lib/gcc/current/libgcc_s.1.1.dylib
+    /opt/homebrew/Cellar/gcc/16.2.0/lib/gcc/current/libgfortran.5.dylib
+    /opt/homebrew/Cellar/gcc/16.2.0/lib/gcc/current/libquadmath.0.dylib
+    /opt/homebrew/Cellar/gettext/1.0/lib/libintl.8.dylib
+    /opt/homebrew/Cellar/gflags/2.3.1/lib/libgflags.2.3.0.dylib
+    /opt/homebrew/Cellar/giflib/6.1.3/lib/libgif.7.2.0.dylib
+    /opt/homebrew/Cellar/glib/2.90.0/lib/libglib-2.0.0.dylib
+    /opt/homebrew/Cellar/glog/0.7.1/lib/libglog.0.7.1.dylib
+    /opt/homebrew/Cellar/graphite2/1.3.15/lib/libgraphite2.3.3.1.dylib
+    /opt/homebrew/Cellar/harfbuzz/14.5.0/lib/libharfbuzz.0.dylib
+    /opt/homebrew/Cellar/imath/3.2.3/lib/libImath-3_2.30.3.2.3.dylib
+    /opt/homebrew/Cellar/jpeg-turbo/3.2.0/lib/libjpeg.8.3.2.dylib
+    /opt/homebrew/Cellar/jsoncpp/1.9.8/lib/libjsoncpp.27.dylib
+    /opt/homebrew/Cellar/lame/4.0/lib/libmp3lame.0.dylib
+    /opt/homebrew/Cellar/leptonica/1.87.0/lib/libleptonica.6.dylib
+    /opt/homebrew/Cellar/libarchive/3.8.9/lib/libarchive.13.dylib
+    /opt/homebrew/Cellar/libb2/0.98.1/lib/libb2.1.dylib
+    /opt/homebrew/Cellar/libdeflate/1.26/lib/libdeflate.0.dylib
+    /opt/homebrew/Cellar/libomp/23.1.2/lib/libomp.dylib
+    /opt/homebrew/Cellar/libpng/1.6.58/lib/libpng16.16.dylib
+    /opt/homebrew/Cellar/libtiff/4.7.2/lib/libtiff.6.dylib
+    /opt/homebrew/Cellar/libvmaf/3.2.1/lib/libvmaf.3.dylib
+    /opt/homebrew/Cellar/libvpx/1.17.0/lib/libvpx.12.dylib
+    /opt/homebrew/Cellar/lz4/1.10.0/lib/liblz4.1.10.0.dylib
+    /opt/homebrew/Cellar/metis/5.1.0/lib/libmetis.dylib
+    /opt/homebrew/Cellar/mpg123/1.33.7/lib/libmpg123.0.dylib
+    /opt/homebrew/Cellar/openblas/0.3.34/lib/libopenblasp-r0.3.34.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_alphamat.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_aruco.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_bgsegm.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_bioinspired.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_calib3d.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_ccalib.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_core.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_datasets.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_dnn.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_dnn_objdetect.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_dnn_superres.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_dpm.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_face.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_features2d.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_flann.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_freetype.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_fuzzy.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_gapi.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_hfs.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_highgui.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_img_hash.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_imgcodecs.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_imgproc.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_intensity_transform.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_line_descriptor.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_mcc.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_ml.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_objdetect.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_optflow.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_phase_unwrapping.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_photo.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_plot.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_quality.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_rapid.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_reg.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_rgbd.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_saliency.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_sfm.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_shape.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_signal.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_stereo.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_stitching.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_structured_light.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_superres.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_surface_matching.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_text.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_tracking.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_video.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_videoio.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_videostab.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_viz.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_wechat_qrcode.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_xfeatures2d.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_ximgproc.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_xobjdetect.4.14.0.dylib
+    /opt/homebrew/Cellar/opencv@4/4.14.0_10/lib/libopencv_xphoto.4.14.0.dylib
+    /opt/homebrew/Cellar/openexr/3.5.1/lib/libIex-3_5.34.3.5.1.dylib
+    /opt/homebrew/Cellar/openexr/3.5.1/lib/libIlmThread-3_5.34.3.5.1.dylib
+    /opt/homebrew/Cellar/openexr/3.5.1/lib/libOpenEXR-3_5.34.3.5.1.dylib
+    /opt/homebrew/Cellar/openexr/3.5.1/lib/libOpenEXRCore-3_5.34.3.5.1.dylib
+    /opt/homebrew/Cellar/openjpeg/2.5.4/lib/libopenjp2.2.5.4.dylib
+    /opt/homebrew/Cellar/openjph/0.32.0/lib/libopenjph.0.32.0.dylib
+    /opt/homebrew/Cellar/openssl@3/3.5.9/lib/libcrypto.3.dylib
+    /opt/homebrew/Cellar/openssl@3/3.5.9/lib/libssl.3.dylib
+    /opt/homebrew/Cellar/openvino/2026.4.0_1/lib/libopenvino.2026.4.0.dylib
+    /opt/homebrew/Cellar/opus/1.6.1/lib/libopus.0.dylib
+    /opt/homebrew/Cellar/pcre2/10.49/lib/libpcre2-8.0.dylib
+    /opt/homebrew/Cellar/protobuf/36.2/lib/libprotobuf.36.2.0.dylib
+    /opt/homebrew/Cellar/protobuf/36.2/lib/libutf8_validity.36.2.0.dylib
+    /opt/homebrew/Cellar/pugixml/1.16/lib/libpugixml.1.16.dylib
+    /opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libamd.3.3.4.dylib
+    /opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libcamd.3.3.5.dylib
+    /opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libccolamd.3.3.5.dylib
+    /opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libcholmod.5.3.5.dylib
+    /opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libcolamd.3.3.5.dylib
+    /opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libspqr.4.3.6.dylib
+    /opt/homebrew/Cellar/suite-sparse/7.14.1/lib/libsuitesparseconfig.7.14.1.dylib
+    /opt/homebrew/Cellar/svt-av1/4.2.0/lib/libSvtAv1Enc.4.2.0.dylib
+    /opt/homebrew/Cellar/tbb/2023.1.0/lib/libtbb.12.19.dylib
+    /opt/homebrew/Cellar/tesseract/5.5.3/lib/libtesseract.5.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonCache-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonColor-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonComputationalGeometry-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonCore-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonDataModel-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonExecutionModel-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonMath-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonMisc-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonSystem-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkCommonTransforms-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkDICOMParser-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkDomainsChemistry-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersCellGrid-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersCore-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersExtraction-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersGeneral-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersGeometry-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersHybrid-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersHyperTree-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersModeling-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersReduction-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersSources-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersStatistics-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersTexture-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkFiltersVerdict-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOCellGrid-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOCore-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOExport-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOGeometry-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOImage-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOLegacy-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOPLY-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOXML-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkIOXMLParser-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkImagingCore-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkImagingSources-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkInteractionStyle-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkParallelCore-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkParallelDIY-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingContext2D-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingCore-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingFreeType-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingHyperTreeGrid-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingLOD-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingLabel-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingOpenGL2-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingSceneGraph-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingUI-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkRenderingVtkJS-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkfmt-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkglad-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkkissfft-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkloguru-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkmetaio-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkscn-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtksys-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtktoken-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkverdict-9.7.9.7.dylib
+    /opt/homebrew/Cellar/vtk/9.7.0/lib/libvtkx11-9.7.9.7.dylib
+    /opt/homebrew/Cellar/webp/1.6.0/lib/libsharpyuv.0.1.2.dylib
+    /opt/homebrew/Cellar/webp/1.6.0/lib/libwebp.7.2.0.dylib
+    /opt/homebrew/Cellar/webp/1.6.0/lib/libwebpdemux.2.0.17.dylib
+    /opt/homebrew/Cellar/webp/1.6.0/lib/libwebpmux.3.1.2.dylib
+    /opt/homebrew/Cellar/x264/r3222/lib/libx264.165.dylib
+    /opt/homebrew/Cellar/x265/4.3/lib/libx265.217.dylib
+    /opt/homebrew/Cellar/xz/5.8.4/lib/liblzma.5.dylib
+    /opt/homebrew/Cellar/zstd/1.5.7_1/lib/libzstd.1.5.7.dylib
+📦 Built wheel for abi3 Python ≥ 3.10 to /tmp/ds41f-all-deferred/wheels/deepseek_recipe-0.2.0-cp310-abi3-macosx_11_0_arm64.whl

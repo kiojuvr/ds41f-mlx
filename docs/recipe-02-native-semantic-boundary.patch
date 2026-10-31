@@ -434,6 +434,51 @@ index 0000000..59700ae
 +    PyMessagesChunkGenerator,
 +    MessagesChunkGenerator
 +);
+diff --git a/deepseek-recipe-python/tests/test_all_deferred.py b/deepseek-recipe-python/tests/test_all_deferred.py
+new file mode 100644
+index 0000000..2c7fcd4
+--- /dev/null
++++ b/deepseek-recipe-python/tests/test_all_deferred.py
+@@ -0,0 +1,39 @@
++"""All-deferred Messages use the existing V4.1 empty-schema encoding."""
++import deepseek_recipe as d
++
++
++def test_all_deferred_canonical_encoding():
++    tools = [d.ToolDefinition(name=n, parameters={'type': 'object'}, defer_loading=True)
++             for n in ('first', 'second')]
++    body = dict(model='DeepSeek-V4.1-Flash', thinking={'type': 'disabled'},
++                tools=[dict(name=t.name, input_schema={'type': 'object'}, defer_loading=True)
++                       for t in tools],
++                messages=[dict(role='user', content='before'),
++                          dict(role='system', content=[
++                              dict(type='tool_addition', tool=dict(type='tool_reference', name=n))
++                              for n in ('second', 'first')]),
++                          dict(role='user', content='after')])
++    converted = d.MessagesRequest(body).convert(d.ConversionOptions(default_thinking_mode=False))
++    # Independent semantic-conversation oracle: existing encoder, no converter.
++    expected = d.Conversation(thinking_mode=False, tools=tools, messages=[
++        d.UserMessage('before'), d.SystemMessage('', tools=[tools[1], tools[0]]),
++        d.UserMessage('after')])
++    encoding = d.DeepseekV41Encoding()
++    actual = encoding.render_conversation(converted.conversation).prompt
++    assert actual == encoding.render_conversation(expected).prompt
++    initial, update = actual.split('### Updated Tool Schemas')
++    assert '### Available Tool Schemas' in initial
++    assert '"name": "first"' not in initial and '"name": "second"' not in initial
++    assert update.index('"name": "second"') < update.index('"name": "first"')
++    assert [t.name for t in converted.conversation.tools] == ['first', 'second']
++
++
++def test_all_deferred_without_activation():
++    body = dict(model='DeepSeek-V4.1-Flash', thinking={'type': 'disabled'},
++                tools=[dict(name='later', input_schema={'type': 'object'}, defer_loading=True)],
++                messages=[dict(role='user', content='before')])
++    converted = d.MessagesRequest(body).convert(d.ConversionOptions(default_thinking_mode=False))
++    prompt = d.DeepseekV41Encoding().render_conversation(converted.conversation).prompt
++    assert '### Available Tool Schemas' in prompt
++    assert '"name": "later"' not in prompt
++    assert '### Updated Tool Schemas' not in prompt
 diff --git a/deepseek-recipe-python/tests/test_messages_semantic_session.py b/deepseek-recipe-python/tests/test_messages_semantic_session.py
 new file mode 100644
 index 0000000..62f1e1e
@@ -855,6 +900,26 @@ index 0000000..a9d4d7b
 +        d.ChatCompletionSemanticSession(g, converted.parsing_options, tok)
 +    del s
 +    gc.collect()
+diff --git a/deepseek-recipe/src/protocol/anthropic/messages/request/convert.rs b/deepseek-recipe/src/protocol/anthropic/messages/request/convert.rs
+index d28748f..67e9db6 100644
+--- a/deepseek-recipe/src/protocol/anthropic/messages/request/convert.rs
++++ b/deepseek-recipe/src/protocol/anthropic/messages/request/convert.rs
+@@ -210,12 +210,8 @@ fn partition_tools(
+             }
+         }
+     }
+-    if !tool_set.client_tools.is_empty()
+-        && tool_set.client_tools.iter().all(|tool| tool.defer_loading)
+-    {
+-        return Err(ConversionError::bad_request(
+-            "tools: at least one tool must have defer_loading=false. All tools cannot be deferred.",
+-        ));
+-    }
++    // An empty initial schema set is valid: deferred definitions remain in
++    // declaration order and system tool_addition blocks render their schemas
++    // at the recorded history positions, even when no immediate tool remains.
+     Ok(tool_set)
+ }
 diff --git a/deepseek-recipe/src/protocol/anthropic/messages/response/chunk_generator.rs b/deepseek-recipe/src/protocol/anthropic/messages/response/chunk_generator.rs
 index b06f882..25be5e8 100644
 --- a/deepseek-recipe/src/protocol/anthropic/messages/response/chunk_generator.rs

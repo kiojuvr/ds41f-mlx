@@ -57,8 +57,13 @@ def test_plugin_inventory_still_counts_toward_body_limit():
         convert_messages(raw)
 
 
-def owner(thinking=False):
+def owner(thinking=False, deferred=False):
     body = payload(tools=[{'name': n, 'input_schema': {'type': 'object'}} for n in ('f', 'g')])
+    if deferred:
+        for tool in body['tools']:
+            tool['defer_loading'] = True
+        body['messages'].append(dict(role='system', content=[
+            dict(type='tool_addition', tool=dict(type='tool_reference', name=n)) for n in ('f', 'g')]))
     body['thinking']['type'] = 'enabled' if thinking else 'disabled'
     request = convert(body)
     tok = d.Tokenizer.from_file(str(TOKENIZER))
@@ -70,8 +75,9 @@ def owner(thinking=False):
 
 
 @pytest.mark.parametrize('thinking', [False, True])
-def test_exact_native_events_and_continuation(thinking):
-    tok, guard, body = owner(thinking)
+@pytest.mark.parametrize('deferred', [False, True])
+def test_exact_native_events_and_continuation(thinking, deferred):
+    tok, guard, body = owner(thinking, deferred)
     text = ('inspect</think>' if thinking else '') + 'intro ' + PREFIX + 'Tokyo🤭' + ARG_END
     feed(guard, encode(tok, text))
     assert len(guard.call_certificates) == 1 and not guard.tool_complete
@@ -430,7 +436,8 @@ def test_converted_image_frontier_at_real_paired_admission(monkeypatch, historic
 @pytest.mark.parametrize('inventory', [False, True])
 @pytest.mark.parametrize('stream', [False, True])
 @pytest.mark.parametrize('thinking', [False, True])
-def test_ordinary_http_native_transport(monkeypatch, stream, thinking, inventory):
+@pytest.mark.parametrize('deferred', [False, True])
+def test_ordinary_http_native_transport(monkeypatch, stream, thinking, inventory, deferred):
     # Real ingress/preparation/ordinary_response/pump/cleanup, controlled native
     # output only. No claim of checkpoint or numerical Scheduler execution.
     import os
@@ -469,6 +476,10 @@ def test_ordinary_http_native_transport(monkeypatch, stream, thinking, inventory
         app = create_app(profile='mtp-serving-v1', backend=backend, runtime_config=backend.runtime_config)
         with TestClient(app, base_url='http://127.0.0.1:8000') as client:
             body = payload(stream=stream)
+            if deferred:
+                body['tools'] = [{'name': 'f', 'input_schema': {'type': 'object'}, 'defer_loading': True}]
+                body['messages'].append(dict(role='system', content=[
+                    dict(type='tool_addition', tool=dict(type='tool_reference', name='f'))]))
             if inventory:
                 body['dsh_plugin_packages'] = {'packages': [{'name': 'example'}]}
             body['thinking']['type'] = 'enabled' if thinking else 'disabled'
