@@ -9,6 +9,12 @@ Installations are not migrated automatically. The explicitly authorized
 [Multimodal-Runtime promotion](../artifacts/multimodal-runtime/production-completion.md)
 updated only the existing Flash-1017 Runtime wheel, preserving the admitted
 dependency/native/checkpoint identities and a verified rollback snapshot.
+The later authorized master/corrected-Recipe promotion attempt was
+[rolled back after incomplete installed acceptance](../artifacts/production-harness-alpha2-promotion/report.md):
+all 413 prior Runtime/Recipe RECORD-owned members and original dependency state
+were restored and installed admission re-passed. Production retains execution
+identity `9c439d3fb9ad730996ecca821234bba1ce8817d7b46a2744e171c10a4d7d2ca2`;
+the corrected candidate's successful admission alone did not qualify promotion.
 
 `--checkpoint-variant flash|flash-1017` fixes one variant per newly built package
 (default: `flash-1017`). Its manifest binds the exact approved 48-shard inventory,

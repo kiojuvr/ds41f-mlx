@@ -1,0 +1,222 @@
+{
+  "messages": [
+    {
+      "case": "all-deferred-json-tool",
+      "request_id": "107d9d2893f94b3ab9b4a15bc3c141aa",
+      "request_received_at": 1793473559.649193,
+      "request_started_at": 1793473559.649193,
+      "request_started_mono": 761187.265629083,
+      "current_phase": "DONE",
+      "phase_started_at": 1793473561.179926,
+      "phase_started_mono": 761188.796357333,
+      "last_progress_at": 1793473561.179926,
+      "completed_phase_durations": {
+        "received_ms": 0.49820798449218273,
+        "encoding_ms": 10.54241694509983,
+        "queued_ms": 0.4081670194864273,
+        "cache_lookup_ms": 0.4387910012155771,
+        "suffix_append_ms": 988.1282921414822,
+        "checkpoint_capture_ms": 2.517291926778853,
+        "p5_handoff_ms": 49.00679097045213,
+        "decoding_ms": 473.0138749582693,
+        "settling_ms": 6.174416979774833
+      },
+      "metrics": {
+        "recipe_convert_s": 0.0002517090179026127,
+        "recipe_render_s": 2.5832909159362316e-05,
+        "recipe_encode_s": 0.0009371669730171561,
+        "request_prepare_s": 0.010560665978118777,
+        "prompt_tokens": 283,
+        "cached_tokens": 0,
+        "remaining_suffix_tokens": 283,
+        "generated": 16,
+        "decode_s": 0.42440466524567455,
+        "cache_lookup_s": 1.5416997484862804e-05,
+        "paired_restore_s": 0.0,
+        "prompt_checkpoint_capture_s": 0.002511375001631677,
+        "suffix_append_s": 0.9881270000478253,
+        "p5_handoff_s": 0.048983374959789217,
+        "prompt_replay": 0,
+        "full_cache_repack": 0,
+        "first_decode_call_s": 0.059624791028909385,
+        "first_native_decode_s": 0.059601415996439755,
+        "total_ttft_s": 1.1108182080788538,
+        "canonical_frontier": 299,
+        "aligned": true,
+        "accepted_drafts": 10,
+        "proposed_drafts": 11
+      },
+      "queue_entered_at": 1793473559.660234,
+      "queue_entered_mono": 761187.276669708,
+      "queue_reason": "scheduler_worker",
+      "scheduler_request_id": "a690ec3cab644804843cef80196bd2b2",
+      "native_started": true,
+      "first_token_at": 1793473560.7605069,
+      "last_token_at": 1793473561.127417,
+      "canonical_settled": true,
+      "cache_published": true,
+      "finish_reason": "tool_use",
+      "finished_at": 1793473561.179928,
+      "finished_mono": 761188.796358958
+    }
+  ],
+  "forced_stop": false,
+  "pid": 56614,
+  "initial_health": {
+    "status": "ready",
+    "profile": "mtp-serving-v1",
+    "process_alive": true,
+    "model_ready": true,
+    "fatal_error": null,
+    "generation_policy": {
+      "version": "generation-policy-v1",
+      "qualification": "real-model-qualified",
+      "execution_profiles": [
+        "mtp-serving-v1"
+      ],
+      "sampler_authority": "ds41f_mlx.sampling.make_sampler",
+      "defaults": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "top_k": 0,
+        "min_p": 0.0,
+        "repetition_penalty": 1.0,
+        "presence_penalty": 0.0,
+        "frequency_penalty": 0.0,
+        "seed": null
+      },
+      "scope": "request",
+      "parameters": {
+        "temperature": {
+          "minimum": 0,
+          "maximum": 2
+        },
+        "top_p": {
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        },
+        "top_k": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 129279
+        },
+        "min_p": {
+          "minimum": 0,
+          "maximum": 1
+        },
+        "repetition_penalty": {
+          "exclusiveMinimum": 0,
+          "context_tokens": 20
+        },
+        "presence_penalty": {
+          "minimum": -2,
+          "maximum": 2,
+          "context_tokens": 20
+        },
+        "frequency_penalty": {
+          "minimum": -2,
+          "maximum": 2,
+          "context_tokens": 20
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295,
+          "semantics": "best-effort"
+        }
+      },
+      "reasoning": {
+        "authority": "deepseek-recipe",
+        "scope": "session",
+        "stateless_scope": "request",
+        "default_thinking_mode": false,
+        "default_reasoning_effort": "none",
+        "efforts": [
+          "none",
+          "low",
+          "high",
+          "xhigh",
+          "max"
+        ],
+        "effective_efforts": [
+          "none",
+          "low",
+          "high",
+          "max"
+        ],
+        "compatibility_aliases": {
+          "xhigh": "high"
+        },
+        "effective_authority": "ds41f_mlx.serving.generation_policy.reasoning_policy",
+        "change": "reject",
+        "thinking_budget_tokens": false
+      },
+      "recipe_version": "0.2.0",
+      "effective_settings_authority": "Recipe ModelVersion.DeepseekV41Flash",
+      "recipe_resolution": {
+        "nonthinking_top_p": 1.0,
+        "thinking_temperature": 1.0,
+        "thinking_top_p_minimum": 0.95
+      },
+      "constrained_decoding": false,
+      "protocol_migration_qualification": "controlled-token boundary; real-model path unverified"
+    },
+    "capabilities": {
+      "stateful_chat": "production-sessions-v1",
+      "persist_restore": false,
+      "messages": "recipe-0.2-native",
+      "messages_sessions": false,
+      "messages_vision": "bounded-inline-and-files-v1",
+      "chat_vision": "bounded-inline-v1",
+      "vision_admission": {
+        "implemented_total_tokens": 1048576,
+        "output_reservation_required": true,
+        "max_images": 600,
+        "max_image_bytes": 16777216,
+        "max_image_pixels": 4194304,
+        "max_image_tokens": 1024,
+        "max_request_image_bytes": 67108864,
+        "max_request_pixels": null,
+        "source_pixel_validation": "sequential_per_image",
+        "max_request_patches": 36864,
+        "pixel_patch_budget_scope": "fresh_patches_with_complete_pair",
+        "historical_discount_qualified": true,
+        "historical_patch_discount": {
+          "numerical_profile": "flash-1017-pre-woa-fp8-v1",
+          "supported_pair_layout_required": true,
+          "complete_historical_coverage_required": true
+        },
+        "historical_images_require_paired_cache": true,
+        "expanded_capacity_model_execution": "unverified"
+      },
+      "max_live_sessions": 16,
+      "max_active_generations": 1,
+      "idle_retirement_seconds": 600
+    },
+    "chat_defaults": {
+      "temperature": 1.0,
+      "top_p": 0.95,
+      "top_k": 0,
+      "min_p": 0.0,
+      "repetition_penalty": 1.0,
+      "presence_penalty": 0.0,
+      "frequency_penalty": 0.0,
+      "seed": null,
+      "reasoning_effort": "none",
+      "max_tokens": "auto"
+    },
+    "dependency_identity": "1c2c5c385e9a5812880a9f5007a9b704edfecc6bf77b27d7a72c68dcabde1545",
+    "glm_profile": "native",
+    "queued_requests": 0,
+    "active_requests": 0,
+    "prefix_cache": null
+  },
+  "image_sha256": "e9c11c07932429606491d42a2f29e1322a492fb2515fc2f9bebf22fbc08a1fd1",
+  "status": "FAIL",
+  "failure": "Traceback (most recent call last):\n  File \"/Volumes/SDXC-512/ds41f-mlx/artifacts/production-harness-alpha2-promotion/acceptance.py\", line 81, in <module>\n    with urlopen(Request(BASE+'/v1/files',data=req.read(),headers={'Content-Type':req.headers['content-type']}),timeout=30) as r:\n         ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/urllib/request.py\", line 189, in urlopen\n    return opener.open(url, data, timeout)\n           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/urllib/request.py\", line 495, in open\n    response = meth(req, response)\n  File \"/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/urllib/request.py\", line 604, in http_response\n    response = self.parent.error(\n        'http', request, response, code, msg, hdrs)\n  File \"/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/urllib/request.py\", line 533, in error\n    return self._call_chain(*args)\n           ~~~~~~~~~~~~~~~~^^^^^^^\n  File \"/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/urllib/request.py\", line 466, in _call_chain\n    result = func(*args)\n  File \"/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/urllib/request.py\", line 613, in http_error_default\n    raise HTTPError(req.full_url, code, msg, hdrs, fp)\nurllib.error.HTTPError: HTTP Error 400: Bad Request\n",
+  "shutdown_response": {
+    "state": "STOPPING"
+  },
+  "exit_code": 0,
+  "unsafe": []
+}

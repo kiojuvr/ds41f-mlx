@@ -5,6 +5,11 @@ separate package-fixed installations with shared Recipe 0.2 Chat/Messages semant
 Flash-1017 has received the authorized in-place Multimodal-Runtime promotion;
 [completion and rollback](../artifacts/multimodal-runtime/production-completion.md)
 record its exact installed payload and acceptance.
+The authorized current-master/corrected-Recipe promotion attempt on 2026-11-01
+JST was **rolled back** after supplemental acceptance's malformed Files fixture
+returned HTTP 400. Both prior packages were restored byte-for-byte and installed
+admission passes; Runtime remains stopped. The prior 69689d5 payload and older
+Recipe remain Production. See the [attempt and verified restoration](../artifacts/production-harness-alpha2-promotion/report.md).
 Standard-OFF production startup, admission and provisioning are retired. Historical
 release receipts remain source-scoped evidence; the obsolete installations were
 removed during the approved 2026-10-22 cleanup, not migrated or requalified.

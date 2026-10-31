@@ -7,7 +7,10 @@ native Chat/Messages semantics. Select `--checkpoint-variant flash` or `flash-10
 (default) during provisioning; each installation has one fixed checkpoint and
 numerical identity. Flash-1017's existing Production installation has received the
 [Multimodal-Runtime promotion](artifacts/multimodal-runtime/production-completion.md);
-original Flash is unchanged.
+original Flash is unchanged. The later [current-master/corrected-Recipe promotion
+attempt](artifacts/production-harness-alpha2-promotion/report.md) was rolled back
+after incomplete installed acceptance; Production retains its prior payload and
+all-deferred restriction, with admission verified and Runtime stopped.
 
 `ds41f-mlx` is a native runtime targeting the **Mac Studio M3 Ultra with 512 GB
 unified memory**. It exists to combine model fidelity, correct long-context state

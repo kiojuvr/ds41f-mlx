@@ -56,8 +56,12 @@ conversion/encoding, exact-ID continuation and paired-token lookup checks are
 recorded in the [focused correction report](../artifacts/harness-all-deferred/report.md).
 The subsequent [isolated alpha.2 E2E acceptance](../artifacts/harness-alpha2-e2e/report.md)
 also exercises genuine dynamic tool execution with all-deferred declarations.
-Installed Production retains the earlier all-deferred rejection; no promotion
-occurred.
+Installed Production retains the earlier all-deferred rejection. The authorized
+master/corrected-Recipe promotion attempt was [rolled back](../artifacts/production-harness-alpha2-promotion/report.md)
+after a malformed Files acceptance fixture returned HTTP 400; original Runtime
+and Recipe state was restored and admitted. The attempted real all-deferred tool
+call passed, but installed continuation/Vision acceptance was incomplete, so it
+adds no Production support claim.
 
 The [independent Harness 0.2.2-alpha.2 audit](../artifacts/harness-alpha2-compatibility/report.md)
 preserves exact source/installed identities and capability-specific evidence.

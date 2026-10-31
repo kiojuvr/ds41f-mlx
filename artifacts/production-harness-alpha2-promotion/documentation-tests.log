@@ -1,0 +1,3178 @@
+EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                                         [100%]
+==================================== ERRORS ====================================
+_______________ ERROR at setup of test_actual_repository_closure _______________
+
+    @pytest.fixture(scope='session')
+    def installed_test_variant():
+        """Authenticate the disposable installed dependency closure, without model I/O.
+    
+        Source-tree numerical unit tests then use that package's immutable selection;
+        this is not admission of a checkpoint or a seal of mutable Python sources.
+        """
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import sysconfig
+        import ds41f_mlx
+        from ds41f_mlx.mtp_identity import checkpoint_variant
+        assert Path(ds41f_mlx.__file__).resolve().parent == Path(__file__).resolve().parents[1]/'ds41f_mlx'
+>       subprocess.run([sys.executable, '-I', '-c',
+                        'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                       check=True)
+
+tests/conftest.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],)
+kwargs = {}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()']' returned non-zero exit status 1.
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/subprocess.py:577: CalledProcessError
+---------------------------- Captured stderr setup -----------------------------
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'ds41f_mlx'
+_________ ERROR at setup of test_evidence_needs_no_exhaustive_registry _________
+
+    @pytest.fixture(scope='session')
+    def installed_test_variant():
+        """Authenticate the disposable installed dependency closure, without model I/O.
+    
+        Source-tree numerical unit tests then use that package's immutable selection;
+        this is not admission of a checkpoint or a seal of mutable Python sources.
+        """
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import sysconfig
+        import ds41f_mlx
+        from ds41f_mlx.mtp_identity import checkpoint_variant
+        assert Path(ds41f_mlx.__file__).resolve().parent == Path(__file__).resolve().parents[1]/'ds41f_mlx'
+>       subprocess.run([sys.executable, '-I', '-c',
+                        'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                       check=True)
+
+tests/conftest.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],)
+kwargs = {}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()']' returned non-zero exit status 1.
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/subprocess.py:577: CalledProcessError
+_ ERROR at setup of test_owner_registry_fail_closed[duplicate-duplicate current] _
+
+    @pytest.fixture(scope='session')
+    def installed_test_variant():
+        """Authenticate the disposable installed dependency closure, without model I/O.
+    
+        Source-tree numerical unit tests then use that package's immutable selection;
+        this is not admission of a checkpoint or a seal of mutable Python sources.
+        """
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import sysconfig
+        import ds41f_mlx
+        from ds41f_mlx.mtp_identity import checkpoint_variant
+        assert Path(ds41f_mlx.__file__).resolve().parent == Path(__file__).resolve().parents[1]/'ds41f_mlx'
+>       subprocess.run([sys.executable, '-I', '-c',
+                        'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                       check=True)
+
+tests/conftest.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],)
+kwargs = {}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()']' returned non-zero exit status 1.
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/subprocess.py:577: CalledProcessError
+_ ERROR at setup of test_owner_registry_fail_closed[missing-required CURRENT owner] _
+
+    @pytest.fixture(scope='session')
+    def installed_test_variant():
+        """Authenticate the disposable installed dependency closure, without model I/O.
+    
+        Source-tree numerical unit tests then use that package's immutable selection;
+        this is not admission of a checkpoint or a seal of mutable Python sources.
+        """
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import sysconfig
+        import ds41f_mlx
+        from ds41f_mlx.mtp_identity import checkpoint_variant
+        assert Path(ds41f_mlx.__file__).resolve().parent == Path(__file__).resolve().parents[1]/'ds41f_mlx'
+>       subprocess.run([sys.executable, '-I', '-c',
+                        'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                       check=True)
+
+tests/conftest.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],)
+kwargs = {}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()']' returned non-zero exit status 1.
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/subprocess.py:577: CalledProcessError
+____ ERROR at setup of test_owner_registry_fail_closed[stale-stale current] ____
+
+    @pytest.fixture(scope='session')
+    def installed_test_variant():
+        """Authenticate the disposable installed dependency closure, without model I/O.
+    
+        Source-tree numerical unit tests then use that package's immutable selection;
+        this is not admission of a checkpoint or a seal of mutable Python sources.
+        """
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import sysconfig
+        import ds41f_mlx
+        from ds41f_mlx.mtp_identity import checkpoint_variant
+        assert Path(ds41f_mlx.__file__).resolve().parent == Path(__file__).resolve().parents[1]/'ds41f_mlx'
+>       subprocess.run([sys.executable, '-I', '-c',
+                        'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                       check=True)
+
+tests/conftest.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],)
+kwargs = {}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()']' returned non-zero exit status 1.
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/subprocess.py:577: CalledProcessError
+_ ERROR at setup of test_owner_registry_fail_closed[escape-noncanonical owner] _
+
+    @pytest.fixture(scope='session')
+    def installed_test_variant():
+        """Authenticate the disposable installed dependency closure, without model I/O.
+    
+        Source-tree numerical unit tests then use that package's immutable selection;
+        this is not admission of a checkpoint or a seal of mutable Python sources.
+        """
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import sysconfig
+        import ds41f_mlx
+        from ds41f_mlx.mtp_identity import checkpoint_variant
+        assert Path(ds41f_mlx.__file__).resolve().parent == Path(__file__).resolve().parents[1]/'ds41f_mlx'
+>       subprocess.run([sys.executable, '-I', '-c',
+                        'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                       check=True)
+
+tests/conftest.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],)
+kwargs = {}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()']' returned non-zero exit status 1.
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/subprocess.py:577: CalledProcessError
+_ ERROR at setup of test_owner_registry_fail_closed[archive-archive cannot be CURRENT] _
+
+    @pytest.fixture(scope='session')
+    def installed_test_variant():
+        """Authenticate the disposable installed dependency closure, without model I/O.
+    
+        Source-tree numerical unit tests then use that package's immutable selection;
+        this is not admission of a checkpoint or a seal of mutable Python sources.
+        """
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import sysconfig
+        import ds41f_mlx
+        from ds41f_mlx.mtp_identity import checkpoint_variant
+        assert Path(ds41f_mlx.__file__).resolve().parent == Path(__file__).resolve().parents[1]/'ds41f_mlx'
+>       subprocess.run([sys.executable, '-I', '-c',
+                        'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                       check=True)
+
+tests/conftest.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],)
+kwargs = {}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()']' returned non-zero exit status 1.
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/subprocess.py:577: CalledProcessError
+_ ERROR at setup of test_owner_registry_fail_closed[default-source-scoped evidence] _
+
+    @pytest.fixture(scope='session')
+    def installed_test_variant():
+        """Authenticate the disposable installed dependency closure, without model I/O.
+    
+        Source-tree numerical unit tests then use that package's immutable selection;
+        this is not admission of a checkpoint or a seal of mutable Python sources.
+        """
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import sysconfig
+        import ds41f_mlx
+        from ds41f_mlx.mtp_identity import checkpoint_variant
+        assert Path(ds41f_mlx.__file__).resolve().parent == Path(__file__).resolve().parents[1]/'ds41f_mlx'
+>       subprocess.run([sys.executable, '-I', '-c',
+                        'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                       check=True)
+
+tests/conftest.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],)
+kwargs = {}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()']' returned non-zero exit status 1.
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/subprocess.py:577: CalledProcessError
+_ ERROR at setup of test_live_links_fail_closed[../../outside.md-escapes repository-docs/architecture.md] _
+
+    @pytest.fixture(scope='session')
+    def installed_test_variant():
+        """Authenticate the disposable installed dependency closure, without model I/O.
+    
+        Source-tree numerical unit tests then use that package's immutable selection;
+        this is not admission of a checkpoint or a seal of mutable Python sources.
+        """
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import sysconfig
+        import ds41f_mlx
+        from ds41f_mlx.mtp_identity import checkpoint_variant
+        assert Path(ds41f_mlx.__file__).resolve().parent == Path(__file__).resolve().parents[1]/'ds41f_mlx'
+>       subprocess.run([sys.executable, '-I', '-c',
+                        'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                       check=True)
+
+tests/conftest.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],)
+kwargs = {}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()']' returned non-zero exit status 1.
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/subprocess.py:577: CalledProcessError
+_ ERROR at setup of test_live_links_fail_closed[../../outside.md-escapes repository-docs/report.md] _
+
+    @pytest.fixture(scope='session')
+    def installed_test_variant():
+        """Authenticate the disposable installed dependency closure, without model I/O.
+    
+        Source-tree numerical unit tests then use that package's immutable selection;
+        this is not admission of a checkpoint or a seal of mutable Python sources.
+        """
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import sysconfig
+        import ds41f_mlx
+        from ds41f_mlx.mtp_identity import checkpoint_variant
+        assert Path(ds41f_mlx.__file__).resolve().parent == Path(__file__).resolve().parents[1]/'ds41f_mlx'
+>       subprocess.run([sys.executable, '-I', '-c',
+                        'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                       check=True)
+
+tests/conftest.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],)
+kwargs = {}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()']' returned non-zero exit status 1.
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/subprocess.py:577: CalledProcessError
+_ ERROR at setup of test_live_links_fail_closed[../../outside.md-escapes repository-tools/README.md] _
+
+    @pytest.fixture(scope='session')
+    def installed_test_variant():
+        """Authenticate the disposable installed dependency closure, without model I/O.
+    
+        Source-tree numerical unit tests then use that package's immutable selection;
+        this is not admission of a checkpoint or a seal of mutable Python sources.
+        """
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import sysconfig
+        import ds41f_mlx
+        from ds41f_mlx.mtp_identity import checkpoint_variant
+        assert Path(ds41f_mlx.__file__).resolve().parent == Path(__file__).resolve().parents[1]/'ds41f_mlx'
+>       subprocess.run([sys.executable, '-I', '-c',
+                        'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                       check=True)
+
+tests/conftest.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],)
+kwargs = {}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()']' returned non-zero exit status 1.
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/subprocess.py:577: CalledProcessError
+_ ERROR at setup of test_live_links_fail_closed[gone.md-broken markdown link-docs/architecture.md] _
+
+    @pytest.fixture(scope='session')
+    def installed_test_variant():
+        """Authenticate the disposable installed dependency closure, without model I/O.
+    
+        Source-tree numerical unit tests then use that package's immutable selection;
+        this is not admission of a checkpoint or a seal of mutable Python sources.
+        """
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import sysconfig
+        import ds41f_mlx
+        from ds41f_mlx.mtp_identity import checkpoint_variant
+        assert Path(ds41f_mlx.__file__).resolve().parent == Path(__file__).resolve().parents[1]/'ds41f_mlx'
+>       subprocess.run([sys.executable, '-I', '-c',
+                        'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                       check=True)
+
+tests/conftest.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],)
+kwargs = {}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()']' returned non-zero exit status 1.
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/subprocess.py:577: CalledProcessError
+_ ERROR at setup of test_live_links_fail_closed[gone.md-broken markdown link-docs/report.md] _
+
+    @pytest.fixture(scope='session')
+    def installed_test_variant():
+        """Authenticate the disposable installed dependency closure, without model I/O.
+    
+        Source-tree numerical unit tests then use that package's immutable selection;
+        this is not admission of a checkpoint or a seal of mutable Python sources.
+        """
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import sysconfig
+        import ds41f_mlx
+        from ds41f_mlx.mtp_identity import checkpoint_variant
+        assert Path(ds41f_mlx.__file__).resolve().parent == Path(__file__).resolve().parents[1]/'ds41f_mlx'
+>       subprocess.run([sys.executable, '-I', '-c',
+                        'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                       check=True)
+
+tests/conftest.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],)
+kwargs = {}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()']' returned non-zero exit status 1.
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/subprocess.py:577: CalledProcessError
+_ ERROR at setup of test_live_links_fail_closed[gone.md-broken markdown link-tools/README.md] _
+
+    @pytest.fixture(scope='session')
+    def installed_test_variant():
+        """Authenticate the disposable installed dependency closure, without model I/O.
+    
+        Source-tree numerical unit tests then use that package's immutable selection;
+        this is not admission of a checkpoint or a seal of mutable Python sources.
+        """
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import sysconfig
+        import ds41f_mlx
+        from ds41f_mlx.mtp_identity import checkpoint_variant
+        assert Path(ds41f_mlx.__file__).resolve().parent == Path(__file__).resolve().parents[1]/'ds41f_mlx'
+>       subprocess.run([sys.executable, '-I', '-c',
+                        'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                       check=True)
+
+tests/conftest.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],)
+kwargs = {}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()']' returned non-zero exit status 1.
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/subprocess.py:577: CalledProcessError
+_ ERROR at setup of test_live_links_fail_closed[../docs/architecture.md#gone-broken current-boundary anchor-docs/architecture.md] _
+
+    @pytest.fixture(scope='session')
+    def installed_test_variant():
+        """Authenticate the disposable installed dependency closure, without model I/O.
+    
+        Source-tree numerical unit tests then use that package's immutable selection;
+        this is not admission of a checkpoint or a seal of mutable Python sources.
+        """
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import sysconfig
+        import ds41f_mlx
+        from ds41f_mlx.mtp_identity import checkpoint_variant
+        assert Path(ds41f_mlx.__file__).resolve().parent == Path(__file__).resolve().parents[1]/'ds41f_mlx'
+>       subprocess.run([sys.executable, '-I', '-c',
+                        'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                       check=True)
+
+tests/conftest.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],)
+kwargs = {}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()']' returned non-zero exit status 1.
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/subprocess.py:577: CalledProcessError
+_ ERROR at setup of test_live_links_fail_closed[../docs/architecture.md#gone-broken current-boundary anchor-docs/report.md] _
+
+    @pytest.fixture(scope='session')
+    def installed_test_variant():
+        """Authenticate the disposable installed dependency closure, without model I/O.
+    
+        Source-tree numerical unit tests then use that package's immutable selection;
+        this is not admission of a checkpoint or a seal of mutable Python sources.
+        """
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import sysconfig
+        import ds41f_mlx
+        from ds41f_mlx.mtp_identity import checkpoint_variant
+        assert Path(ds41f_mlx.__file__).resolve().parent == Path(__file__).resolve().parents[1]/'ds41f_mlx'
+>       subprocess.run([sys.executable, '-I', '-c',
+                        'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                       check=True)
+
+tests/conftest.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],)
+kwargs = {}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()']' returned non-zero exit status 1.
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/subprocess.py:577: CalledProcessError
+_ ERROR at setup of test_live_links_fail_closed[../docs/architecture.md#gone-broken current-boundary anchor-tools/README.md] _
+
+    @pytest.fixture(scope='session')
+    def installed_test_variant():
+        """Authenticate the disposable installed dependency closure, without model I/O.
+    
+        Source-tree numerical unit tests then use that package's immutable selection;
+        this is not admission of a checkpoint or a seal of mutable Python sources.
+        """
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import sysconfig
+        import ds41f_mlx
+        from ds41f_mlx.mtp_identity import checkpoint_variant
+        assert Path(ds41f_mlx.__file__).resolve().parent == Path(__file__).resolve().parents[1]/'ds41f_mlx'
+>       subprocess.run([sys.executable, '-I', '-c',
+                        'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                       check=True)
+
+tests/conftest.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],)
+kwargs = {}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()']' returned non-zero exit status 1.
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/subprocess.py:577: CalledProcessError
+_ ERROR at setup of test_live_links_fail_closed[file:///outside.md-file URI bypasses-docs/architecture.md] _
+
+    @pytest.fixture(scope='session')
+    def installed_test_variant():
+        """Authenticate the disposable installed dependency closure, without model I/O.
+    
+        Source-tree numerical unit tests then use that package's immutable selection;
+        this is not admission of a checkpoint or a seal of mutable Python sources.
+        """
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import sysconfig
+        import ds41f_mlx
+        from ds41f_mlx.mtp_identity import checkpoint_variant
+        assert Path(ds41f_mlx.__file__).resolve().parent == Path(__file__).resolve().parents[1]/'ds41f_mlx'
+>       subprocess.run([sys.executable, '-I', '-c',
+                        'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                       check=True)
+
+tests/conftest.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],)
+kwargs = {}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()']' returned non-zero exit status 1.
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/subprocess.py:577: CalledProcessError
+_ ERROR at setup of test_live_links_fail_closed[file:///outside.md-file URI bypasses-docs/report.md] _
+
+    @pytest.fixture(scope='session')
+    def installed_test_variant():
+        """Authenticate the disposable installed dependency closure, without model I/O.
+    
+        Source-tree numerical unit tests then use that package's immutable selection;
+        this is not admission of a checkpoint or a seal of mutable Python sources.
+        """
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import sysconfig
+        import ds41f_mlx
+        from ds41f_mlx.mtp_identity import checkpoint_variant
+        assert Path(ds41f_mlx.__file__).resolve().parent == Path(__file__).resolve().parents[1]/'ds41f_mlx'
+>       subprocess.run([sys.executable, '-I', '-c',
+                        'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                       check=True)
+
+tests/conftest.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],)
+kwargs = {}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()']' returned non-zero exit status 1.
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/subprocess.py:577: CalledProcessError
+_ ERROR at setup of test_live_links_fail_closed[file:///outside.md-file URI bypasses-tools/README.md] _
+
+    @pytest.fixture(scope='session')
+    def installed_test_variant():
+        """Authenticate the disposable installed dependency closure, without model I/O.
+    
+        Source-tree numerical unit tests then use that package's immutable selection;
+        this is not admission of a checkpoint or a seal of mutable Python sources.
+        """
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import sysconfig
+        import ds41f_mlx
+        from ds41f_mlx.mtp_identity import checkpoint_variant
+        assert Path(ds41f_mlx.__file__).resolve().parent == Path(__file__).resolve().parents[1]/'ds41f_mlx'
+>       subprocess.run([sys.executable, '-I', '-c',
+                        'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                       check=True)
+
+tests/conftest.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],)
+kwargs = {}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()']' returned non-zero exit status 1.
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/subprocess.py:577: CalledProcessError
+____________ ERROR at setup of test_current_anchor_and_inert_patch _____________
+
+    @pytest.fixture(scope='session')
+    def installed_test_variant():
+        """Authenticate the disposable installed dependency closure, without model I/O.
+    
+        Source-tree numerical unit tests then use that package's immutable selection;
+        this is not admission of a checkpoint or a seal of mutable Python sources.
+        """
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import sysconfig
+        import ds41f_mlx
+        from ds41f_mlx.mtp_identity import checkpoint_variant
+        assert Path(ds41f_mlx.__file__).resolve().parent == Path(__file__).resolve().parents[1]/'ds41f_mlx'
+>       subprocess.run([sys.executable, '-I', '-c',
+                        'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                       check=True)
+
+tests/conftest.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],)
+kwargs = {}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()']' returned non-zero exit status 1.
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/subprocess.py:577: CalledProcessError
+_ ERROR at setup of test_unsupported_current_links_rejected[[Old][ref]\n\n[ref]: report.md] _
+
+    @pytest.fixture(scope='session')
+    def installed_test_variant():
+        """Authenticate the disposable installed dependency closure, without model I/O.
+    
+        Source-tree numerical unit tests then use that package's immutable selection;
+        this is not admission of a checkpoint or a seal of mutable Python sources.
+        """
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import sysconfig
+        import ds41f_mlx
+        from ds41f_mlx.mtp_identity import checkpoint_variant
+        assert Path(ds41f_mlx.__file__).resolve().parent == Path(__file__).resolve().parents[1]/'ds41f_mlx'
+>       subprocess.run([sys.executable, '-I', '-c',
+                        'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                       check=True)
+
+tests/conftest.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],)
+kwargs = {}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()']' returned non-zero exit status 1.
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/subprocess.py:577: CalledProcessError
+_ ERROR at setup of test_unsupported_current_links_rejected[<a href="report.md">Old</a>] _
+
+    @pytest.fixture(scope='session')
+    def installed_test_variant():
+        """Authenticate the disposable installed dependency closure, without model I/O.
+    
+        Source-tree numerical unit tests then use that package's immutable selection;
+        this is not admission of a checkpoint or a seal of mutable Python sources.
+        """
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import sysconfig
+        import ds41f_mlx
+        from ds41f_mlx.mtp_identity import checkpoint_variant
+        assert Path(ds41f_mlx.__file__).resolve().parent == Path(__file__).resolve().parents[1]/'ds41f_mlx'
+>       subprocess.run([sys.executable, '-I', '-c',
+                        'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                       check=True)
+
+tests/conftest.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],)
+kwargs = {}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()']' returned non-zero exit status 1.
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/subprocess.py:577: CalledProcessError
+_ ERROR at setup of test_unsupported_current_links_rejected[<area href="report.md">] _
+
+    @pytest.fixture(scope='session')
+    def installed_test_variant():
+        """Authenticate the disposable installed dependency closure, without model I/O.
+    
+        Source-tree numerical unit tests then use that package's immutable selection;
+        this is not admission of a checkpoint or a seal of mutable Python sources.
+        """
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import sysconfig
+        import ds41f_mlx
+        from ds41f_mlx.mtp_identity import checkpoint_variant
+        assert Path(ds41f_mlx.__file__).resolve().parent == Path(__file__).resolve().parents[1]/'ds41f_mlx'
+>       subprocess.run([sys.executable, '-I', '-c',
+                        'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                       check=True)
+
+tests/conftest.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],)
+kwargs = {}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()']' returned non-zero exit status 1.
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/subprocess.py:577: CalledProcessError
+_____________ ERROR at setup of test_symlink_owner_alias_rejected ______________
+
+    @pytest.fixture(scope='session')
+    def installed_test_variant():
+        """Authenticate the disposable installed dependency closure, without model I/O.
+    
+        Source-tree numerical unit tests then use that package's immutable selection;
+        this is not admission of a checkpoint or a seal of mutable Python sources.
+        """
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import sysconfig
+        import ds41f_mlx
+        from ds41f_mlx.mtp_identity import checkpoint_variant
+        assert Path(ds41f_mlx.__file__).resolve().parent == Path(__file__).resolve().parents[1]/'ds41f_mlx'
+>       subprocess.run([sys.executable, '-I', '-c',
+                        'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                       check=True)
+
+tests/conftest.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],)
+kwargs = {}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()']' returned non-zero exit status 1.
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/subprocess.py:577: CalledProcessError
+_______ ERROR at setup of test_live_old_repository_instruction_rejected ________
+
+    @pytest.fixture(scope='session')
+    def installed_test_variant():
+        """Authenticate the disposable installed dependency closure, without model I/O.
+    
+        Source-tree numerical unit tests then use that package's immutable selection;
+        this is not admission of a checkpoint or a seal of mutable Python sources.
+        """
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import sysconfig
+        import ds41f_mlx
+        from ds41f_mlx.mtp_identity import checkpoint_variant
+        assert Path(ds41f_mlx.__file__).resolve().parent == Path(__file__).resolve().parents[1]/'ds41f_mlx'
+>       subprocess.run([sys.executable, '-I', '-c',
+                        'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                       check=True)
+
+tests/conftest.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],)
+kwargs = {}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()']' returned non-zero exit status 1.
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/subprocess.py:577: CalledProcessError
+_______ ERROR at setup of test_retained_native_provenance_guards[origin] _______
+
+    @pytest.fixture(scope='session')
+    def installed_test_variant():
+        """Authenticate the disposable installed dependency closure, without model I/O.
+    
+        Source-tree numerical unit tests then use that package's immutable selection;
+        this is not admission of a checkpoint or a seal of mutable Python sources.
+        """
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import sysconfig
+        import ds41f_mlx
+        from ds41f_mlx.mtp_identity import checkpoint_variant
+        assert Path(ds41f_mlx.__file__).resolve().parent == Path(__file__).resolve().parents[1]/'ds41f_mlx'
+>       subprocess.run([sys.executable, '-I', '-c',
+                        'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                       check=True)
+
+tests/conftest.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],)
+kwargs = {}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()']' returned non-zero exit status 1.
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/subprocess.py:577: CalledProcessError
+_____ ERROR at setup of test_retained_native_provenance_guards[dependency] _____
+
+    @pytest.fixture(scope='session')
+    def installed_test_variant():
+        """Authenticate the disposable installed dependency closure, without model I/O.
+    
+        Source-tree numerical unit tests then use that package's immutable selection;
+        this is not admission of a checkpoint or a seal of mutable Python sources.
+        """
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import sysconfig
+        import ds41f_mlx
+        from ds41f_mlx.mtp_identity import checkpoint_variant
+        assert Path(ds41f_mlx.__file__).resolve().parent == Path(__file__).resolve().parents[1]/'ds41f_mlx'
+>       subprocess.run([sys.executable, '-I', '-c',
+                        'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                       check=True)
+
+tests/conftest.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],)
+kwargs = {}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()']' returned non-zero exit status 1.
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/subprocess.py:577: CalledProcessError
+_______ ERROR at setup of test_retained_native_provenance_guards[cmake] ________
+
+    @pytest.fixture(scope='session')
+    def installed_test_variant():
+        """Authenticate the disposable installed dependency closure, without model I/O.
+    
+        Source-tree numerical unit tests then use that package's immutable selection;
+        this is not admission of a checkpoint or a seal of mutable Python sources.
+        """
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import sysconfig
+        import ds41f_mlx
+        from ds41f_mlx.mtp_identity import checkpoint_variant
+        assert Path(ds41f_mlx.__file__).resolve().parent == Path(__file__).resolve().parents[1]/'ds41f_mlx'
+>       subprocess.run([sys.executable, '-I', '-c',
+                        'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                       check=True)
+
+tests/conftest.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],)
+kwargs = {}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()']' returned non-zero exit status 1.
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/subprocess.py:577: CalledProcessError
+_______ ERROR at setup of test_retained_native_provenance_guards[import] _______
+
+    @pytest.fixture(scope='session')
+    def installed_test_variant():
+        """Authenticate the disposable installed dependency closure, without model I/O.
+    
+        Source-tree numerical unit tests then use that package's immutable selection;
+        this is not admission of a checkpoint or a seal of mutable Python sources.
+        """
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import sysconfig
+        import ds41f_mlx
+        from ds41f_mlx.mtp_identity import checkpoint_variant
+        assert Path(ds41f_mlx.__file__).resolve().parent == Path(__file__).resolve().parents[1]/'ds41f_mlx'
+>       subprocess.run([sys.executable, '-I', '-c',
+                        'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                       check=True)
+
+tests/conftest.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],)
+kwargs = {}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()']' returned non-zero exit status 1.
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/subprocess.py:577: CalledProcessError
+___ ERROR at setup of test_retained_native_provenance_guards[reconciliation] ___
+
+    @pytest.fixture(scope='session')
+    def installed_test_variant():
+        """Authenticate the disposable installed dependency closure, without model I/O.
+    
+        Source-tree numerical unit tests then use that package's immutable selection;
+        this is not admission of a checkpoint or a seal of mutable Python sources.
+        """
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import sysconfig
+        import ds41f_mlx
+        from ds41f_mlx.mtp_identity import checkpoint_variant
+        assert Path(ds41f_mlx.__file__).resolve().parent == Path(__file__).resolve().parents[1]/'ds41f_mlx'
+>       subprocess.run([sys.executable, '-I', '-c',
+                        'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                       check=True)
+
+tests/conftest.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],)
+kwargs = {}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()']' returned non-zero exit status 1.
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/subprocess.py:577: CalledProcessError
+________ ERROR at setup of test_bundle_keeps_archived_packaging_reports ________
+
+    @pytest.fixture(scope='session')
+    def installed_test_variant():
+        """Authenticate the disposable installed dependency closure, without model I/O.
+    
+        Source-tree numerical unit tests then use that package's immutable selection;
+        this is not admission of a checkpoint or a seal of mutable Python sources.
+        """
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import sysconfig
+        import ds41f_mlx
+        from ds41f_mlx.mtp_identity import checkpoint_variant
+        assert Path(ds41f_mlx.__file__).resolve().parent == Path(__file__).resolve().parents[1]/'ds41f_mlx'
+>       subprocess.run([sys.executable, '-I', '-c',
+                        'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],
+                       check=True)
+
+tests/conftest.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()'],)
+kwargs = {}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Volumes/SDXC-512/ds41f-mlx/.venv/bin/python', '-I', '-c', 'from ds41f_mlx.execution_identity import inspect_payload; inspect_payload()']' returned non-zero exit status 1.
+
+/Users/kioju/.local/share/uv/python/cpython-3.13.14-macos-aarch64-none/lib/python3.13/subprocess.py:577: CalledProcessError
+=========================== short test summary info ============================
+ERROR tests/test_documentation_authority.py::test_actual_repository_closure
+ERROR tests/test_documentation_authority.py::test_evidence_needs_no_exhaustive_registry
+ERROR tests/test_documentation_authority.py::test_owner_registry_fail_closed[duplicate-duplicate current]
+ERROR tests/test_documentation_authority.py::test_owner_registry_fail_closed[missing-required CURRENT owner]
+ERROR tests/test_documentation_authority.py::test_owner_registry_fail_closed[stale-stale current]
+ERROR tests/test_documentation_authority.py::test_owner_registry_fail_closed[escape-noncanonical owner]
+ERROR tests/test_documentation_authority.py::test_owner_registry_fail_closed[archive-archive cannot be CURRENT]
+ERROR tests/test_documentation_authority.py::test_owner_registry_fail_closed[default-source-scoped evidence]
+ERROR tests/test_documentation_authority.py::test_live_links_fail_closed[../../outside.md-escapes repository-docs/architecture.md]
+ERROR tests/test_documentation_authority.py::test_live_links_fail_closed[../../outside.md-escapes repository-docs/report.md]
+ERROR tests/test_documentation_authority.py::test_live_links_fail_closed[../../outside.md-escapes repository-tools/README.md]
+ERROR tests/test_documentation_authority.py::test_live_links_fail_closed[gone.md-broken markdown link-docs/architecture.md]
+ERROR tests/test_documentation_authority.py::test_live_links_fail_closed[gone.md-broken markdown link-docs/report.md]
+ERROR tests/test_documentation_authority.py::test_live_links_fail_closed[gone.md-broken markdown link-tools/README.md]
+ERROR tests/test_documentation_authority.py::test_live_links_fail_closed[../docs/architecture.md#gone-broken current-boundary anchor-docs/architecture.md]
+ERROR tests/test_documentation_authority.py::test_live_links_fail_closed[../docs/architecture.md#gone-broken current-boundary anchor-docs/report.md]
+ERROR tests/test_documentation_authority.py::test_live_links_fail_closed[../docs/architecture.md#gone-broken current-boundary anchor-tools/README.md]
+ERROR tests/test_documentation_authority.py::test_live_links_fail_closed[file:///outside.md-file URI bypasses-docs/architecture.md]
+ERROR tests/test_documentation_authority.py::test_live_links_fail_closed[file:///outside.md-file URI bypasses-docs/report.md]
+ERROR tests/test_documentation_authority.py::test_live_links_fail_closed[file:///outside.md-file URI bypasses-tools/README.md]
+ERROR tests/test_documentation_authority.py::test_current_anchor_and_inert_patch
+ERROR tests/test_documentation_authority.py::test_unsupported_current_links_rejected[[Old][ref]\n\n[ref]: report.md]
+ERROR tests/test_documentation_authority.py::test_unsupported_current_links_rejected[<a href="report.md">Old</a>]
+ERROR tests/test_documentation_authority.py::test_unsupported_current_links_rejected[<area href="report.md">]
+ERROR tests/test_documentation_authority.py::test_symlink_owner_alias_rejected
+ERROR tests/test_documentation_authority.py::test_live_old_repository_instruction_rejected
+ERROR tests/test_documentation_authority.py::test_retained_native_provenance_guards[origin]
+ERROR tests/test_documentation_authority.py::test_retained_native_provenance_guards[dependency]
+ERROR tests/test_documentation_authority.py::test_retained_native_provenance_guards[cmake]
+ERROR tests/test_documentation_authority.py::test_retained_native_provenance_guards[import]
+ERROR tests/test_documentation_authority.py::test_retained_native_provenance_guards[reconciliation]
+ERROR tests/test_build_release_docs.py::test_bundle_keeps_archived_packaging_reports
+32 errors in 0.37s
