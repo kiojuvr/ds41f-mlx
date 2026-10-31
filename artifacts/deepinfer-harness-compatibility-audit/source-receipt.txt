@@ -1,0 +1,30 @@
+Observed UTC: 2026-10-31T18:38:01Z
+2392fcda9288104c458d0040fa98a7b732693db8
+https://github.com/deepseek-ai/DeepInfer
+553741557a57df44a46fb3ab72b6aafeaf945337
+67d7df235844e4494f179b3d9f0b46523be4b40c
+553741557a57df44a46fb3ab72b6aafeaf945337 fix: validate boolean environment variables with strict parsing (#218)
+diff --git a/deepinfer/environ.py b/deepinfer/environ.py
+index 332064a..e3a55bb 100644
+--- a/deepinfer/environ.py
++++ b/deepinfer/environ.py
+@@ -7,10 +7,17 @@ from datetime import timedelta
+ from typing import Any
+
+ DEFAULT_PREFILL_MAX_SUM_SEQLEN_K = 2**30
++_FALSE = {"0", "", "false"}
++_TRUE = {"1", "true"}
+
+
+ def _bool(v: str | None, default: str = "0") -> bool:
+-    return (v if v is not None else default) not in ("0", "", "false", "False")
++    value = (v if v is not None else default).lower()
++    if value in _FALSE:
++        return False
++    if value in _TRUE:
++        return True
++    raise ValueError("expected one of '0', '1', 'false', 'true' (case-insensitive)")
+
+
+ def _int(v: str | None, default: int = 0) -> int:
+028c9331b0c48161d623ed4c611cdb40f93fbefde96f46fa6242d35215324d82  /tmp/ds41f-dynamic-tools.6nw6uE/harness.tar.gz
