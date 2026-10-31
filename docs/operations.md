@@ -206,9 +206,14 @@ observed historical persistent-installation acceptance are distinguished in the
 The [alpha.2 source compatibility audit](../artifacts/harness-alpha2-compatibility/report.md)
 does not replace this executed rc.2 baseline or authorize configuration changes.
 `addition-only` supports deactivation through declaration/history reprojection, not
-`tool_removal`; reuse is not guaranteed. Recipe also rejects nonempty all-deferred
-declaration sets. Keep Session-log upload disabled; the audit's recommendations
-are not an approved implementation or deployment plan.
+`tool_removal`; reuse is not guaranteed. The existing Production Recipe still
+rejects nonempty all-deferred declaration sets. The later
+[all-deferred correction](../artifacts/harness-all-deferred/report.md) fixes that
+restriction in the source-retained native patch/wheel only, with focused native
+and Runtime verification; it has not been promoted to Production. It does not
+implement removal or qualify a full alpha.2 agent lifecycle. Keep Session-log
+upload disabled; neither the audit nor this source correction authorizes an
+installation or persistent Harness configuration change.
 
 Later [Gate F0](../artifacts/harness-files/gate-f0-report.md) demonstrated bounded
 real-model official File-ID/nested-tool-result transport on macOS. The

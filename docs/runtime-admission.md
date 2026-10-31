@@ -38,6 +38,16 @@ Build/source commit and wheel SHA are provenance, not equality with today's chec
 persistent installation; [development evidence](deepinfer-development.md) records
 installed identity and acceptance without broad release qualification.
 
+The source-retained Recipe 0.2 wheel was subsequently rebuilt for the
+[all-deferred Messages correction](../artifacts/harness-all-deferred/report.md)
+at `018e16a`. `third_party/mtp/normal-local.json` binds its updated native/wheel
+identities; newly constructed packages use those exact resources. Focused
+isolated installed admission and Runtime tests passed, but the existing
+Production installation retains the earlier Recipe native bytes and all-deferred
+rejection. This is not a Production promotion or an automatic migration; the
+older installed hashes in historical receipts remain valid for those executions.
+`tool_removal` remains unsupported.
+
 ## Trust boundary
 
 The release publisher and local operator are trusted. Deployment packages and

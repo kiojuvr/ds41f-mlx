@@ -1386,8 +1386,10 @@ patch SHA gates were restored.
 - Early test runs exposed fixture issues, not numerical failures: copied tests
   lacked explicit checkpoint configuration and used a checkout-relative tool
   fixture path; Scheduler fakes omitted the now-required protocol; an older
-  capacity fake lacked Recipe's `resolve_max_tokens`; all-deferred tools correctly
-  failed native admission. Fixtures were corrected without weakening production
+  capacity fake lacked Recipe's `resolve_max_tokens`; all-deferred tools failed
+  native admission under that historical Recipe guard (subsequently corrected in
+  the [source-retained native artifact](../artifacts/harness-all-deferred/report.md),
+  not in Production). Fixtures were corrected without weakening production
   checks. An image-reservation test initially changed the outer config rather
   than checkpoint `text_config`; the corrected actual-expansion test passes.
 
@@ -1604,3 +1606,32 @@ files). All checkpoint file identities still matched their verified pre-run cach
 Raw receipts, numerical observations, rejected inspections, test logs and wheel
 identities are retained in [bounded integration evidence](../artifacts/unified-mtp/summary.json).
 Existing installations are not migrated; master integration review is separate.
+
+## All-deferred Native Messages source correction
+
+Local implementation commit **`018e16a`** retains the official Recipe 0.2.0 source
+base and consolidated native patch architecture, removing only the aggregate
+all-deferred declaration guard. The existing V4.1 encoder already supports an
+empty initial schema set and historical `tool_addition` rendering. The retained
+wheel and `normal-local.json` now bind the rebuilt native payload; prior wheel
+and installed-native hashes above describe their historical executions, not the
+current source-delivered artifact.
+
+The [completion report](../artifacts/harness-all-deferred/report.md) binds exact
+source/build/execution identities and focused evidence: the pinned official
+Harness alpha.2 projection now converts, canonical prompt/token comparisons pass,
+and 54 native Rust, 67 native Python, 112 affected Runtime and 37 paired/tool
+regression tests pass. Controlled HTTP/SSE and exact-ID continuation are verified;
+no model inference or full alpha.2 agent lifecycle was run. Runtime implementation
+sources, admission/settlement/cache policy and Production installations are
+unchanged. `tool_removal` remains explicitly unsupported; Production promotion
+requires separate approval.
+
+The documentation follow-up reconciles operations and installed-admission owners
+with this source-only correction, preserving historical receipt hashes and the
+Production restriction. Repository self-containment passed (35 current owners,
+153 Markdown files, 664 live links); documentation-authority tests passed
+**31/31** in the admitted isolated Python 3.13.15 Runtime environment, and
+`git diff --check` passed. The development `.venv` could not run those tests
+because its installed-payload setup failed admission; no guard was bypassed.
+README and Production files were not changed.
