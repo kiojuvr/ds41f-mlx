@@ -76,6 +76,10 @@ without relabelling them as current success.
 - Separate OFF image core: [multimodal qualification](multimodal-production-qualification.md).
 - Ordinary MTP state/transport/tools: [serving account](mtp-production-serving.md);
   logical outcome protocol: [production sessions](production-sessions.md).
+- Official Harness Native Messages integration: [alpha.2 model-backed acceptance](../artifacts/harness-alpha2-e2e/report.md)
+  covers its isolated configuration, real tools/Skills/commands/images and canonical
+  settlement. Published npm execution identities are distinct from source-build
+  equivalence; this is not universal compatibility or Production promotion.
 - Sampling/application controls: [generation core evidence](generation-policy-investigation.md)
   and frontend acceptance (Git `c1d1f716:docs/generation-policy-frontends.md`).
 - Owned oracle: [Reference R1](reference-release-r1.md). Historical milestones,

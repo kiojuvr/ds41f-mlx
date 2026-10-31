@@ -240,8 +240,14 @@ recorded in [operations](operations.md#deepinfer-daily-operation-and-harness) an
 the [development record](deepinfer-development.md). Historical Recipe/Messages
 investigation deferrals are not current blockers; broader release qualification,
 general Harness images/Files lifecycle, cancellation and dynamic tool updates are
-not implied; later bounded Files/Vision evidence is scoped above.
-The original-Flash release assessment below retains its own source/payload scope.
+not implied. The later [official alpha.2 native E2E acceptance](../artifacts/harness-alpha2-e2e/report.md)
+now establishes bounded real-model all-deferred tool/plugin changes, Skills/catalog
+updates, browser-dispatched Goal/automatic-round completion and manual compaction,
+image offload/reacquisition and text cancellation/continuation. It uses isolated
+corrected Recipe/Runtime, not the older Production native. This does not reopen a
+compatibility campaign or authorize promotion; `tool_removal` remains deferred.
+Earlier bounded Files/Vision evidence is scoped above. The original-Flash release
+assessment below retains its own source/payload scope.
 
 The bundled Browser Chat/Chat Server and application Vision/PDF workflows are
 retired. The existing TUI is solely a Runtime operator console; no Web launch

@@ -1622,7 +1622,8 @@ source/build/execution identities and focused evidence: the pinned official
 Harness alpha.2 projection now converts, canonical prompt/token comparisons pass,
 and 54 native Rust, 67 native Python, 112 affected Runtime and 37 paired/tool
 regression tests pass. Controlled HTTP/SSE and exact-ID continuation are verified;
-no model inference or full alpha.2 agent lifecycle was run. Runtime implementation
+in that correction task, no model inference or full alpha.2 agent lifecycle was
+run. Runtime implementation
 sources, admission/settlement/cache policy and Production installations are
 unchanged. `tool_removal` remains explicitly unsupported; Production promotion
 requires separate approval.
@@ -1635,3 +1636,30 @@ Production restriction. Repository self-containment passed (35 current owners,
 `git diff --check` passed. The development `.venv` could not run those tests
 because its installed-payload setup failed admission; no guard was bypassed.
 README and Production files were not changed.
+
+## Official Harness alpha.2 — isolated native E2E acceptance
+
+Acceptance commit **`c9636b4`**, built from Runtime source **`2798732`**, adds the
+[consolidated model-backed report](../artifacts/harness-alpha2-e2e/report.md).
+The official published **0.2.2-alpha.2** Web application and `deepseek-official`
+Native Messages provider ran against a fresh isolated native-GLM Flash-1017
+installation with the corrected retained Recipe. Exact npm artifacts and the
+verified source tag are recorded separately; npm supplies no build Git SHA, so
+source-build byte equivalence is not claimed.
+
+The bounded workload **passes**: 26 native requests, 12 genuine exact-ID tool
+effects, ten all-deferred requests, scoped tool-plugin availability changes and
+Session restore, explicit/model Skills and catalog replacement, browser-dispatched
+`/goal` through one completed automatic round, manual `/compact`, image
+offload/reacquisition, and text cancellation followed by a healthy new request.
+Read-only evidence joins actual wire data, canonical tokens, compatible complete
+Target/DSpark pairs and native settlement; all normal responses complete, while
+the intentional cancellation retains only a canonical wire prefix. Persisted
+Session bytes match 207 passive events plus one official restore sentinel.
+
+This is acceptance of the recorded configuration/workflows, not universal alpha.2,
+MCP/Plugin-management, cancellation or numerical qualification. No product
+implementation or official Harness source was modified. Production retains its
+older native Recipe and all-deferred restriction; `tool_removal` remains explicitly
+unsupported. Processes were retired and ports released. README, persistent user
+configuration and Production were unchanged; promotion remains a separate decision.

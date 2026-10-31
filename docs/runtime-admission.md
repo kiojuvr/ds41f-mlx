@@ -48,6 +48,13 @@ rejection. This is not a Production promotion or an automatic migration; the
 older installed hashes in historical receipts remain valid for those executions.
 `tool_removal` remains unsupported.
 
+The later [alpha.2 native E2E acceptance](../artifacts/harness-alpha2-e2e/report.md)
+uses a newly built non-editable Runtime package and that corrected Recipe artifact.
+Installed admission, source matching and full checkpoint-byte verification precede
+its real-model workflows. This establishes scoped isolated execution, not an
+upgrade of existing Production, a new admission policy or source-build equivalence
+for the separately identified official npm Harness artifacts.
+
 ## Trust boundary
 
 The release publisher and local operator are trusted. Deployment packages and
