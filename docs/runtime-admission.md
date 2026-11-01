@@ -9,12 +9,14 @@ Installations are not migrated automatically. The explicitly authorized
 [Multimodal-Runtime promotion](../artifacts/multimodal-runtime/production-completion.md)
 updated only the existing Flash-1017 Runtime wheel, preserving the admitted
 dependency/native/checkpoint identities and a verified rollback snapshot.
-The later authorized master/corrected-Recipe promotion attempt was
-[rolled back after incomplete installed acceptance](../artifacts/production-harness-alpha2-promotion/report.md):
-all 413 prior Runtime/Recipe RECORD-owned members and original dependency state
-were restored and installed admission re-passed. Production retains execution
-identity `9c439d3fb9ad730996ecca821234bba1ce8817d7b46a2744e171c10a4d7d2ca2`;
-the corrected candidate's successful admission alone did not qualify promotion.
+The first master/corrected-Recipe attempt was [rolled back](../artifacts/production-harness-alpha2-promotion/report.md).
+The authorized [2026-11-01 retry](../artifacts/production-harness-alpha2-retry/report.md)
+now **passes installed Production acceptance**, reusing the verified `87fc245`
+Runtime wheel (unchanged executable inputs on master `6603fef`) and explicitly
+installing corrected Recipe 0.2.0. Production execution identity is
+`1c2c5c385e9a5812880a9f5007a9b704edfecc6bf77b27d7a72c68dcabde1545`.
+The verified 413-member prior Runtime/Recipe rollback remains available; no other
+dependency, GLM or checkpoint assets changed.
 
 `--checkpoint-variant flash|flash-1017` fixes one variant per newly built package
 (default: `flash-1017`). Its manifest binds the exact approved 48-shard inventory,
@@ -48,10 +50,12 @@ The source-retained Recipe 0.2 wheel was subsequently rebuilt for the
 [all-deferred Messages correction](../artifacts/harness-all-deferred/report.md)
 at `018e16a`. `third_party/mtp/normal-local.json` binds its updated native/wheel
 identities; newly constructed packages use those exact resources. Focused
-isolated installed admission and Runtime tests passed, but the existing
-Production installation retains the earlier Recipe native bytes and all-deferred
-rejection. This is not a Production promotion or an automatic migration; the
-older installed hashes in historical receipts remain valid for those executions.
+isolated installed admission and Runtime tests passed. The authorized retry has
+now explicitly installed that artifact in Flash-1017 Production: native SHA256
+`93cd81448772445ff2eedc6cb495602cf9e88c74122261d46934b1b2cdee9fe2`, wheel SHA256
+`be5299f4649675ce2e6159a87bcc4a89c05bf24aa3b0bc7ba3f58d5124df38bb`.
+This was not an automatic dependency update; older installed hashes in historical
+receipts remain valid for their original executions.
 `tool_removal` remains unsupported.
 
 The later [alpha.2 native E2E acceptance](../artifacts/harness-alpha2-e2e/report.md)

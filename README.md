@@ -7,10 +7,10 @@ native Chat/Messages semantics. Select `--checkpoint-variant flash` or `flash-10
 (default) during provisioning; each installation has one fixed checkpoint and
 numerical identity. Flash-1017's existing Production installation has received the
 [Multimodal-Runtime promotion](artifacts/multimodal-runtime/production-completion.md);
-original Flash is unchanged. The later [current-master/corrected-Recipe promotion
-attempt](artifacts/production-harness-alpha2-promotion/report.md) was rolled back
-after incomplete installed acceptance; Production retains its prior payload and
-all-deferred restriction, with admission verified and Runtime stopped.
+original Flash is unchanged. The later [corrected-Recipe Production retry](artifacts/production-harness-alpha2-retry/report.md)
+passed installed admission and bounded real-model all-deferred, Files/Vision and
+paired continuation acceptance. The acceptance Runtime was gracefully stopped;
+verified prior-package rollback remains available.
 
 `ds41f-mlx` is a native runtime targeting the **Mac Studio M3 Ultra with 512 GB
 unified memory**. It exists to combine model fidelity, correct long-context state
@@ -275,10 +275,10 @@ is not claimed. This macOS acceptance does **not** qualify the Windows installer
 | In-history `tool_removal` | Unsupported; authoritative removal encoding is still required |
 
 The [all-deferred correction](artifacts/harness-all-deferred/report.md) is included
-in the source-retained Recipe patch/wheel, **not the existing Production
-installation**, which retains the earlier rejection. Alpha.2 acceptance used an
-isolated corrected installation; it is not Production promotion or an instruction
-to modify existing installations. Its Thinking OFF / output 1024 / one-image
+in the retained Recipe patch/wheel and now explicitly installed in Flash-1017
+Production by the [authorized retry](artifacts/production-harness-alpha2-retry/report.md).
+The earlier alpha.2 acceptance retains its isolated execution identity and scope;
+it was not repeated or relabeled as Production acceptance. Its Thinking OFF / output 1024 / one-image
 watermark configuration is recorded separately from the rc.2 baseline above.
 
 `addition-only` deactivates tools by omitting inactive declarations and filtering
@@ -474,8 +474,8 @@ See [performance evidence](docs/performance.md) for measurement scope.
 - No MTP native persistence, restart recovery, transparent replay/resume or
   cross-backend KV portability. Logical conversations are not durable sessions.
 - Messages supports bounded inline base64 images and process-local image Files
-  upload/list/delete with File-ID resolution in current source; existing Production
-  retains upload/delete only. This is not PDF/document ingestion, persistent
+  upload/list/delete with File-ID resolution in current source and promoted
+  Flash-1017 Production. This is not PDF/document ingestion, persistent
   attachment storage or full official Files lifecycle compatibility. The bounded
   macOS Files/Vision evidence above is not general Harness compatibility or
   long-term arbitrary-image continuity qualification.

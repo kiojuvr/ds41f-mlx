@@ -5,11 +5,13 @@ separate package-fixed installations with shared Recipe 0.2 Chat/Messages semant
 Flash-1017 has received the authorized in-place Multimodal-Runtime promotion;
 [completion and rollback](../artifacts/multimodal-runtime/production-completion.md)
 record its exact installed payload and acceptance.
-The authorized current-master/corrected-Recipe promotion attempt on 2026-11-01
-JST was **rolled back** after supplemental acceptance's malformed Files fixture
-returned HTTP 400. Both prior packages were restored byte-for-byte and installed
-admission passes; Runtime remains stopped. The prior 69689d5 payload and older
-Recipe remain Production. See the [attempt and verified restoration](../artifacts/production-harness-alpha2-promotion/report.md).
+The [first corrected-Recipe promotion attempt](../artifacts/production-harness-alpha2-promotion/report.md)
+was rolled back after a malformed acceptance fixture. The authorized
+[2026-11-01 retry](../artifacts/production-harness-alpha2-retry/report.md) **passed**:
+Production now runs the retained `87fc245` Runtime delivery (executable inputs
+unchanged on master `6603fef`) and corrected Recipe 0.2.0 native bytes. Installed
+admission and bounded real-model acceptance pass; the acceptance Runtime was
+gracefully stopped. The verified dual-package rollback remains available.
 Standard-OFF production startup, admission and provisioning are retired. Historical
 release receipts remain source-scoped evidence; the obsolete installations were
 removed during the approved 2026-10-22 cleanup, not migrated or requalified.
@@ -34,12 +36,12 @@ and are not production launch instructions.
 
 Ordinary image admission distinguishes Harness's 600 request occurrences from
 fresh Vision work. Every image is still fully validated and charged against the
-unchanged source-byte and per-image pixel guards; installed Production aggregate
-pixel/patch budgets charge actual fresh work at the verified paired frontier.
-Current source removes only ordinary Flash-1017's aggregate source-pixel rejection,
-retaining sequential per-image bounds and the fresh-patch guard. This
-[scoped correction](../artifacts/fresh-vision-soft-caps/report.md) is not installed
-in Production. Flash-1017 can omit genuinely paired-cached
+unchanged source-byte and per-image pixel guards; Production's patch budget
+charges actual fresh work at the verified paired frontier. The promoted delivery
+removes only ordinary Flash-1017's aggregate source-pixel rejection, retaining
+sequential per-image bounds and the fresh-patch guard. This
+[scoped correction](../artifacts/fresh-vision-soft-caps/report.md) is now installed
+in Flash-1017 Production. Flash-1017 can omit genuinely paired-cached
 historical patches from the fresh-work charge only with complete compatible
 paired coverage and supported physical layouts. The independent
 [paired-byte bugfix](../artifacts/paired-byte-qualification/report.md) removes the
@@ -59,12 +61,12 @@ The 16 MiB JSON body, 64 MiB encoded request residency, Files storage, context,
 output, queue and paired-cache limits remain independent. Current source removes
 only the default 128-entry Files ceiling and charges metadata/mapping allocations
 as well as encoded bytes to a separate 64 MiB retained-storage budget. Optional
-operator count policy remains. This [model-free source correction](../artifacts/files-http-soft-caps/report.md)
-is **not installed in Production**, which retains its earlier 128-ID/encoded-byte
-storage policy. Current source also adds [bounded official Harness quota recovery](../artifacts/files-http-soft-caps/quota-recovery/report.md)
-through listing, oldest-owned deletion and one upload retry. Installed Production
-has no collection listing, so that recovery is not available there; inline fallback
-still has to fit the ordinary body limit. See
+operator count policy remains. This [originally model-free correction](../artifacts/files-http-soft-caps/report.md)
+is now installed in Production, including collection listing. The client-side
+[bounded official Harness quota recovery](../artifacts/files-http-soft-caps/quota-recovery/report.md)
+uses listing, oldest-owned deletion and one upload retry; the retry promotion
+checks upload/list/delete and File-ID Vision, not a new Harness quota campaign.
+Inline fallback still has to fit the ordinary body limit. See
 [capability limits](capabilities.md#bounded-inline-images) and the
 [compatibility assessment](../artifacts/harness-image-capacity/report.md).
 
@@ -109,8 +111,8 @@ rc.2 automatic pressure compaction is supported; `/compact` as task text is not
 a human-command dispatch mechanism.
 
 Keep one application/model lifetime per process and monitor physical reserve,
-pressure and swap. Files are process-local/expiry-bounded (installed Production: 128 IDs /64 MiB;
-current source: 64 MiB retained allocations without a default count cap), not
+pressure and swap. Files are process-local/expiry-bounded (installed Production:
+64 MiB retained allocations without a default count cap), not
 purged by offload; inline fallback must fit the smaller Runtime body limit.
 Unavailable attachment bytes require reattachment/operator action. Summaries can
 truncate or fail strict shrink without replacing history. Resource refusals are
@@ -132,7 +134,8 @@ installed Runtime environments for `master` are:
 | Original Flash (`flash`) | `/Volumes/SDXC-512/ds41f-0910` | Retained unchanged; 2026-10-22 cleanup snapshot only |
 | Flash-1017 (`flash-1017`) | `/Volumes/SDXC-512/ds41f-1017` | Promoted in place; installed acceptance passed; acceptance process gracefully retired |
 
-Flash-1017's 2026-10-28 admission/acceptance is bound by the completion record;
+Flash-1017's current installed admission/acceptance is bound by the
+[corrected-Recipe retry record](../artifacts/production-harness-alpha2-retry/report.md);
 original Flash's older snapshot is **not fresh admission or qualification**.
 Do not reprovision either existing environment. The Flash-1017 build directory
 `/Volumes/SDXC-512/ds41f-1017-build` was removed; original Flash retains only
@@ -211,14 +214,13 @@ observed historical persistent-installation acceptance are distinguished in the
 The [alpha.2 source compatibility audit](../artifacts/harness-alpha2-compatibility/report.md)
 does not replace this executed rc.2 baseline or authorize configuration changes.
 `addition-only` supports deactivation through declaration/history reprojection, not
-`tool_removal`; reuse is not guaranteed. The existing Production Recipe still
-rejects nonempty all-deferred declaration sets. The later
-[all-deferred correction](../artifacts/harness-all-deferred/report.md) fixes that
-restriction in the source-retained native patch/wheel only, with focused native
-and Runtime verification; it has not been promoted to Production. It does not
-implement removal or qualify a full alpha.2 agent lifecycle. Keep Session-log
-upload disabled; neither the audit nor this source correction authorizes an
-installation or persistent Harness configuration change.
+`tool_removal`; reuse is not guaranteed. The
+[all-deferred correction](../artifacts/harness-all-deferred/report.md) is now
+installed in Production, with real all-deferred exact-ID continuation and
+Files/Vision JSON/SSE acceptance in the [authorized retry](../artifacts/production-harness-alpha2-retry/report.md).
+It does not implement removal or expand alpha.2 qualification beyond the separate
+bounded evidence. Keep Session-log upload disabled; no persistent Harness
+configuration was changed.
 
 The subsequent [isolated alpha.2 native E2E acceptance](../artifacts/harness-alpha2-e2e/report.md)
 uses the corrected source-delivered Recipe and real Flash-1017, with the official
@@ -227,8 +229,9 @@ Skills/catalog changes, browser-dispatched Goal/automatic-round completion and
 manual compaction, image offload/reacquisition and text cancellation/continuation
 pass the bounded workload. Its temporary profile, ports and installations are
 acceptance fixtures, not current service locations or instructions to migrate
-Production. Existing Production Recipe/native bytes remain unchanged;
-`tool_removal` and Session-log upload remain unsupported. Exact execution identities,
+Production. The later authorized retry promotes the same corrected Recipe bytes,
+without repeating or relabeling that isolated E2E. `tool_removal` and Session-log
+upload remain unsupported. Exact execution identities,
 configuration revisions, evidence and source-tag/binary-provenance limits belong
 to that report.
 

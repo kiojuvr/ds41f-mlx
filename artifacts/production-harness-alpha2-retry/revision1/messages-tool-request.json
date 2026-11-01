@@ -1,0 +1,46 @@
+{
+  "model": "deepseek-flash",
+  "max_tokens": 96,
+  "temperature": 0,
+  "thinking": {
+    "type": "disabled"
+  },
+  "tools": [
+    {
+      "name": "read_image",
+      "description": "Read the synthetic red circle test image.",
+      "input_schema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "defer_loading": true
+    }
+  ],
+  "messages": [
+    {
+      "role": "user",
+      "content": "Prepare the synthetic fixture."
+    },
+    {
+      "role": "system",
+      "content": [
+        {
+          "type": "tool_addition",
+          "tool": {
+            "type": "tool_reference",
+            "name": "read_image"
+          }
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": "Call read_image exactly once with no arguments."
+    }
+  ],
+  "tool_choice": {
+    "type": "tool",
+    "name": "read_image"
+  }
+}

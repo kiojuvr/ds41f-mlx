@@ -38,8 +38,10 @@ expiry-bounded, with no persistent attachment storage contract. Files lifetime
 does not extend paired KV lifetime. Paginated listing enables the installed official
 Harness's oldest-owned-file quota reclamation and single upload retry; see the
 [scoped model-free qualification](../artifacts/files-http-soft-caps/quota-recovery/report.md).
-This listing/recovery implementation is **source-only, not installed in Production**;
-installed Production retains the earlier upload/delete-only Files path.
+Collection listing is now installed in Flash-1017 Production; the
+[authorized retry](../artifacts/production-harness-alpha2-retry/report.md) verifies
+upload/list/delete and actual File-ID Vision continuation. It does not repeat the
+separate client quota-recovery campaign or change persistent Harness configuration.
 Individual retrieval/download remain unsupported. Harness must explicitly set
 `session-log-deepseek.enabled=false` and keep unsupported tool removal disabled.
 
@@ -56,12 +58,12 @@ conversion/encoding, exact-ID continuation and paired-token lookup checks are
 recorded in the [focused correction report](../artifacts/harness-all-deferred/report.md).
 The subsequent [isolated alpha.2 E2E acceptance](../artifacts/harness-alpha2-e2e/report.md)
 also exercises genuine dynamic tool execution with all-deferred declarations.
-Installed Production retains the earlier all-deferred rejection. The authorized
-master/corrected-Recipe promotion attempt was [rolled back](../artifacts/production-harness-alpha2-promotion/report.md)
-after a malformed Files acceptance fixture returned HTTP 400; original Runtime
-and Recipe state was restored and admitted. The attempted real all-deferred tool
-call passed, but installed continuation/Vision acceptance was incomplete, so it
-adds no Production support claim.
+Flash-1017 Production now loads the corrected Recipe after the
+[successful authorized retry](../artifacts/production-harness-alpha2-retry/report.md):
+real all-deferred Tool Call/exact-ID Result, native Messages SSE, Files/Vision
+reconstruction and paired cached continuation pass. The
+[earlier failed attempt](../artifacts/production-harness-alpha2-promotion/report.md)
+remains historical evidence; no `tool_removal` support is added.
 
 The [independent Harness 0.2.2-alpha.2 audit](../artifacts/harness-alpha2-compatibility/report.md)
 preserves exact source/installed identities and capability-specific evidence.
@@ -237,8 +239,9 @@ validated CPU decoding/normalization is sequential, not cumulative residency.
 Per-image pixels remain bounded. The patch guard remains pending an actual
 embedding/prefill coexistence resource replacement; it is not an intrinsic
 Processor limit. See the [scoped pixel correction and patch decision](../artifacts/fresh-vision-soft-caps/report.md).
-This source-only correction is **not installed in Production**; other profiles
-retain their aggregate pixel policy. Every source still receives full per-image validation/decoding,
+This correction is now installed in Flash-1017 Production by the
+[authorized retry](../artifacts/production-harness-alpha2-retry/report.md); other
+profiles retain their aggregate pixel policy. Every source still receives full per-image validation/decoding,
 one at a time; queued sources remain encoded bytes, not decoded images. Wire age
 can defer early work charges but cannot authorize a cache hit or bypass the actual
 fresh-work checks. The [historical-image aggregate fix](../artifacts/historical-image-aggregate-admission/report.md)
@@ -277,9 +280,9 @@ The existing **16 MiB entire JSON body**, **64 MiB retained Files allocation**,
 queue serialization, checkpoint context/output and paired-cache residency limits
 remain independent. Current source removes the default 128-entry Files ceiling,
 charging encoded bytes plus Python metadata/mapping allocations to the existing
-storage budget instead; optional operator count policy remains. This is a
-[source-only, model-free correction](../artifacts/files-http-soft-caps/report.md),
-not a Production installation. These are not full compatibility with Harness's
+storage budget instead; optional operator count policy remains. This
+[originally model-free correction](../artifacts/files-http-soft-caps/report.md)
+is now installed by the [Production retry](../artifacts/production-harness-alpha2-retry/report.md). These are not full compatibility with Harness's
 **128 MiB raw Files / 20 MiB represented inline-image** budgets. In particular,
 Runtime 400 does **not** trigger official image offload. Official projection and
 compaction can change the prefix and invalidate the pair; surviving historical
