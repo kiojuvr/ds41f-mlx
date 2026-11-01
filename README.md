@@ -201,11 +201,16 @@ port 8000 to the public Internet. See [operations](docs/operations.md) and
 
 ### Flash-1017: native DeepSeek Messages
 
-For **DeepSeek Harness 0.2.1-rc.2 (Windows installer)**, use
-provider **`deepseek-official`**, adapter **`@deepseek-ai/dsh-llm-deepseek-api-key`**,
-and model **`deepseek-flash`**. Its base URL has **no `/v1`** (unlike generic
-OpenAI-compatible clients). Merge these entries into the existing profile's
-`cordis.patch.yml`; do **not** replace the whole profile or discard other entries:
+The primary target is **DeepSeek Harness 0.2.2-alpha.2**; earlier **0.2.1-rc.2**
+results retain their own scope. Use provider **`deepseek-official`**, adapter
+**`@deepseek-ai/dsh-llm-deepseek-api-key`**, and model **`deepseek-flash`**.
+Its base URL has **no `/v1`** (unlike generic OpenAI-compatible clients).
+
+This is a **profile patch, not a standalone configuration or an exact acceptance
+reproduction**. Merge by entry ID into an existing official Harness profile's
+`cordis.patch.yml`; retain its plugin composition, presets and other entries.
+The profile must already load the named provider, default-model and Session-log
+plugins. The patch selects the local route and explicitly chooses Thinking OFF:
 
 ```yaml
 - id: llm-deepseek
@@ -214,16 +219,18 @@ OpenAI-compatible clients). Merge these entries into the existing profile's
     baseURL: http://mac-studio:8000
     apiKeyEnv: DS41F_LOCAL_API_KEY
     thinking: disabled
-    reasoningEffort: off
-    maxTokens: 1200
-    streamIdleTimeoutMs: 1800000
+    reasoningEffort: 'off'
     models:
       - id: deepseek-flash
         inputModalities: [text, image]
-        contextWindow: 1048576
-        maxTokens: 1200
         systemPromptUpdate: in-history
         toolUpdate: addition-only
+- id: agent-default-model
+  name: '@deepseek-ai/dsh-agent-default-model'
+  config:
+    provider: deepseek-official
+    model: deepseek-flash
+    reasoningEffort: 'off'
 - id: session-log-deepseek
   name: '@deepseek-ai/dsh-session-log-deepseek'
   config:
@@ -238,19 +245,39 @@ setting above): Runtime intentionally rejects `dsh_session_log`. Keep
 **`plugin-package-inventory-deepseek` enabled** by default; Runtime accepts and
 ignores `dsh_plugin_packages`.
 
-This conservative baseline uses **Thinking OFF / output 1200**, matching the
-integrated macOS qualification, not Windows qualification. Configure the official
-image-count/offload and automatic-compaction policy from
-[operations](docs/operations.md#visual-session-capacity-and-recovery): count 3,
-quantum 1, pressure 8192, retention 1024, summary cap 2048, generic retries zero.
-The full executed configuration is linked there; no custom Harness is required.
-Other supported efforts **`low`, `high`, `max`** require removing `thinking: disabled`.
-Higher reasoning and **32,768 output** remain optional workload recommendations,
-**not settings that inherited the integrated multimodal qualification**; prompt
-plus reserved output must fit.
-The **1,800,000 ms** idle timeout accommodates long local prefill without requiring
-Runtime heartbeats. Preserve native tool IDs/results, in-history system updates
-and addition-only tool updates; tool removal is unsupported.
+**Compatibility requirements:** use the native Messages route and an admitted
+model ID, disable Session-log upload, preserve native tool IDs/results and use
+`addition-only` rather than unsupported in-history tool removal. Advertise image
+input for image tools. The `models` list replaces the provider catalog, not a
+per-ID merge; this single-model list avoids offering unsupported upstream IDs.
+Runtime accepts `deepseek-flash`, `deepseek-v41-flash` and `deepseek-v4.1-flash`;
+these are aliases for the provisioned checkpoint, not checkpoint selectors.
+
+**Reasoning is a client choice, not a Thinking-OFF compatibility requirement.**
+The provider rejects `thinking: disabled` combined with non-`off` effort, including
+an effort supplied by `agent-default-model` or the selected Session/model.
+Request-level effort takes precedence over the provider default. For OFF, align
+those selections with `off` (as above) or remove conflicting overrides. For
+`low`, `high` or `max`, remove `thinking: disabled` and align the provider,
+agent-default-model and Session selections. Thinking ON is implemented but does
+not inherit the bounded Thinking-OFF Harness acceptance.
+
+**Acceptance configurations are separate:** rc.2 integrated macOS acceptance used
+output **1200**, image count **3**, quantum **1**, compaction pressure **8192**,
+retention **1024**, summary cap **2048** and generic retries **zero**; see the
+[executed configuration](docs/operations.md#visual-session-capacity-and-recovery).
+Alpha.2 used output **1024**, route context **32768** and a one-image watermark to
+exercise offload; its [overlay and composed profiles](artifacts/harness-alpha2-e2e/report.md#2-isolation-configuration-and-actual-client)
+record the fixture-specific presets and command plugins. Neither set is a
+recommended production limit. **No custom Harness is required**, as demonstrated
+by these official-Harness runs; neither qualifies the Windows installer.
+
+Output/context reservations, image/offload policy, compaction, retries and timeouts
+remain user-configurable within existing Runtime admission; omitted fields above
+retain Harness/profile defaults, not newly qualified values. Prompt plus reserved
+output must fit. The installed [SSE heartbeat fix](artifacts/production-sse-heartbeat/report.md)
+addresses the diagnosed idle timeout; an extended client timeout is not a protocol
+requirement or a guarantee against absolute deadlines/network failures.
 
 ### Native Messages compatibility assessment
 
@@ -282,13 +309,15 @@ in the retained Recipe patch/wheel and now explicitly installed in Flash-1017
 Production by the [authorized retry](artifacts/production-harness-alpha2-retry/report.md).
 The earlier alpha.2 acceptance retains its isolated execution identity and scope;
 it was not repeated or relabeled as Production acceptance. Its Thinking OFF / output 1024 / one-image
-watermark configuration is recorded separately from the rc.2 baseline above.
+watermark configuration is recorded separately from the historical rc.2 configuration.
 
 `addition-only` deactivates tools by omitting inactive declarations and filtering
 historical updates; it does **not** implement `tool_removal` and can change canonical
 prompt prefixes. No removal-specific performance improvement has been measured.
 Harness retains Session/orchestration/tool execution ownership; Session-log upload
-remains disabled. Text-only cancellation and a healthy new request pass in alpha.2;
+remains disabled. This loses server-side event ingestion/acceptance watermarks,
+not Harness's local Session persistence, Goal state or compaction. Text-only
+cancellation and a healthy new request pass in alpha.2;
 general effectful-tool cancellation/recovery remains unqualified. This assessment
 covers only `deepseek-official` → `/v1/messages`, not the separate Chat Completions
 route below. See [capabilities](docs/capabilities.md) and the acceptance report for
@@ -300,8 +329,12 @@ Use a separate custom route through **`@deepseek-ai/dsh-llm-pi-ai`**, not the
 Flash-1017 `deepseek-official` configuration. Select **OpenAI Chat Completions**
 (`openai-completions`), **not Anthropic Messages**, with **`/v1`** in the base URL.
 Use an alias advertised by the selected Runtime's `/v1/models`; replace the example
-model ID below if needed. Merge this provider into the existing `llm-pi-ai` entry's
-`providers` map without removing other providers, then select `ds41f-local`:
+model ID below if needed. This is also a **patch**, dependent on an existing
+profile that loads `llm-pi-ai`, not a standalone profile or alpha.2 Native Messages
+acceptance configuration. Merge this provider into that entry's `providers` map
+without removing other providers, then select `ds41f-local` and its model.
+The context/output values shown are adjustable client declarations, not required
+compatibility values or production recommendations:
 
 ```yaml
 - id: llm-pi-ai
@@ -344,8 +377,10 @@ screenshots transferred through Files; the eighth was not executed by the model.
 Independent final visual evaluation improved **4/9 → 8/9**, with a remaining
 **29px grid discrepancy**. Overall qualification is **PARTIAL**: request 28 failed
 before inference at conditional paired-byte admission, with the exact byte
-subcondition unrecorded. Long-term arbitrary-image continuity, full official
-Files/document lifecycle compatibility, persistent Files storage, PDF ingestion,
+subcondition unrecorded. Those qualification-era byte ceilings were later
+removed by the [paired-byte bugfix](artifacts/paired-byte-qualification/report.md);
+this does not retroactively complete that historical loop. Long-term arbitrary-image
+continuity, full official Files/document lifecycle compatibility, persistent Files storage, PDF ingestion,
 Chromium inside Seatbelt and Windows image workflows are not qualified.
 Runtime supports **bounded inline Vision for both variants**. Server-side
 tools, unsupported Messages extensions, multi-active inference and restart-persistent

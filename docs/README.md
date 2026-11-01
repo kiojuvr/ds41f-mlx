@@ -33,6 +33,10 @@ The [official Harness 0.2.2-alpha.2 Native Messages audit](../artifacts/harness-
 preserves source/installed identities, the compatibility matrix, dynamic-tool gaps
 and prior rc.2 execution evidence. It is source-scoped evidence and recommendations,
 not alpha.2 E2E acceptance, startup authority or an approved implementation plan.
+The later [official alpha.2 Web acceptance](../artifacts/harness-alpha2-e2e/report.md)
+supplies bounded model-backed evidence for tools, Skills, `/goal`, manual
+`/compact`, Files/images and text cancellation. [Capabilities](capabilities.md)
+consolidates current status without rewriting the audit's historical findings.
 
 The [scoped release record](../release/scoped-local-20261015/release.json) binds
 historical installed packages and acceptance, including retired OFF assets. Those

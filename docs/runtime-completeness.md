@@ -1,8 +1,8 @@
 # DeepSeek-V4.1-Flash runtime closure and release boundary
 
-## DeepInfer current installed boundary
+## DeepInfer historical acceptance boundary
 
-Current DeepInfer selects official Flash-1017, Recipe 0.2 native Chat Completions
+The historical DeepInfer acceptance selected official Flash-1017, Recipe 0.2 native Chat Completions
 and Messages, with the existing MTP Scheduler/Target/DSpark/PagedCache settlement
 owners and native GLM. Direct official Harness text/read-only-file/result
 continuation has passed; a separate persistent installation has bounded admission
@@ -10,9 +10,15 @@ and Chat/Messages acceptance. [Operations](operations.md#deepinfer-daily-operati
 owns paths/configuration; [development evidence](deepinfer-development.md) keeps
 these scopes distinct. Production sessions remain Chat-only. Inline Messages
 Vision is implemented but real Harness image/Files workflows, cancellation and
-dynamic tool updates were not exercised. No expanded/max-capacity or release
-qualification follows. Browser Chat/Chat Server are retired; TUI is solely a
-Runtime operator console. No replacement Harness is bundled and successful
+dynamic tool updates were not exercised **in that original acceptance**. Later
+[official alpha.2 acceptance](../artifacts/harness-alpha2-e2e/report.md) demonstrates
+bounded macOS Files/images, dynamic addition-only tools, Skills, browser `/goal`
+and `/compact`, and text-only cancellation/continuation. It does not qualify
+Windows, general Plugin/MCP lifecycles or effectful-tool recovery; `tool_removal`
+and `dsh_session_log` remain unsupported. [Current capabilities](capabilities.md)
+own the consolidated status and later installed evidence. No expanded/max-capacity
+or release qualification follows. Browser Chat/Chat Server are retired; TUI is
+solely a Runtime operator console. No replacement Harness is bundled and successful
 inference is not comprehensive Agent/Harness compatibility.
 
 The original-Flash assessment and installed publication identities below are

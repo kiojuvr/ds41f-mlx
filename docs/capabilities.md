@@ -43,7 +43,9 @@ Collection listing is now installed in Flash-1017 Production; the
 upload/list/delete and actual File-ID Vision continuation. It does not repeat the
 separate client quota-recovery campaign or change persistent Harness configuration.
 Individual retrieval/download remain unsupported. Harness must explicitly set
-`session-log-deepseek.enabled=false` and keep unsupported tool removal disabled.
+`session-log-deepseek.enabled=false` and keep unsupported tool removal disabled
+(`addition-only`). Disabling upload loses server-side event ingestion/acceptance
+watermarks, not Harness's local Session persistence, Goal state or compaction.
 
 Messages intentionally rejects documents, URL/path image sources, server/
 web-search tools/results, tool-reference results, unknown extensions (including
@@ -80,7 +82,13 @@ artifact identities and the source-tag/binary-provenance distinction are in the
 report. `addition-only` can deactivate tools by filtering declarations/history,
 but does not support in-history removal and may change canonical prompt identity.
 Removal-specific performance is unmeasured. Earlier automatic-compaction evidence
-retains its own scope; this alpha.2 sample exercises manual compaction. The earlier
+retains its own scope; this alpha.2 sample exercises manual compaction. The
+[README profile patches](../README.md#using-deepseek-harness) distinguish protocol
+requirements from these bounded acceptance settings and adjustable client policy.
+Thinking OFF is the tested envelope, not a protocol requirement; non-`off` effort
+must not conflict with provider `thinking: disabled`, including agent-default-model
+or Session overrides. Other reasoning configurations are not thereby incompatible,
+but do not inherit this Harness E2E qualification. The earlier
 [authorized dynamic-tool implementation check](../artifacts/harness-dynamic-tools/report.md)
 is **BLOCKED** at the authoritative removal-encoding gate: current official Recipe
 still supplies no deactivation encoding. Its historical probes reproduced removal
@@ -374,7 +382,11 @@ and [original image qualification](multimodal-production-qualification.md).
   rejected before inference at conditional paired-byte fallback. Which guard
   failed—12 MiB projected pair or 192 MiB retained roots—was not recorded. Its
   unarchived in-memory rejection trace is an evidence-retention gap, not demonstrated
-  paired numerical corruption. This does not qualify eight-image execution,
+  paired numerical corruption. The later [paired-byte bugfix](../artifacts/paired-byte-qualification/report.md)
+  removed both qualification-era ceilings and diagnosed the separate Windows
+  incident at that combined guard; its original exceeding operand also remains
+  unknown. Neither correction retroactively completes this loop or qualifies
+  Windows Harness workflows. This does not qualify eight-image execution,
   long-term arbitrary-image continuity or general Files/document lifecycle.
   Current checkpoint-specific setup and later Windows observations are in
   [Using DeepSeek Harness](../README.md#using-deepseek-harness).

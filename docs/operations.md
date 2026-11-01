@@ -102,15 +102,21 @@ This is current-projection execution, not historical tool replay or uncertain
 request retry. Logical Chat leases and broader conditional-discount refusals
 remain unchanged.
 
-The integrated **Thinking OFF** policy is the
+The historical integrated **Thinking OFF acceptance configuration** is the
 [executed Harness configuration](../artifacts/multimodal-runtime/phase4-e2e-evidence/effective-configuration.json):
 Harness 0.2.1-rc.2, `deepseek-official` / native Messages, image count **3**,
 quantum **1**, automatic pressure **8192**, retention **1024**, summary cap **2048**,
 ordinary output **1200**, generic provider retries **0**, session-log upload off
-and addition-only tools. Use current sources whose aggregate reconstruction work
-fits **36,864 patches**; count three alone does not ensure this. Other recommended
-reasoning/output settings have not inherited integrated qualification. Headless
-rc.2 automatic pressure compaction is supported; `/compact` as task text is not
+and addition-only tools. The numeric bounds and retry choice are bounded rc.2
+test choices, **not required or recommended production limits**; Session-log
+disablement and avoiding removal are compatibility requirements. Output, image/offload, compaction and retry policy
+remain client decisions within Runtime admission. Use current sources whose
+aggregate reconstruction work fits **36,864 patches**; count three alone does not
+ensure this. Other reasoning/output settings have not inherited integrated
+qualification. See the [README profile patches](../README.md#using-deepseek-harness)
+for route requirements, base-profile dependencies and provider/agent reasoning
+conflict handling; the separate alpha.2 acceptance below used different bounds.
+Headless rc.2 automatic pressure compaction is supported; `/compact` as task text is not
 a human-command dispatch mechanism.
 
 Keep one application/model lifetime per process and monitor physical reserve,
@@ -202,8 +208,9 @@ with model **`deepseek-flash`**, without an adapter. Its `llm-deepseek` config u
 key satisfies the client; it does not add Runtime authentication.
 
 Disable unsupported **`dsh_session_log`** upload through the Harness UI
-(`session-log-deepseek.config.enabled: false`). **`dsh_plugin_packages`** is
-accepted and ignored. Do not send tool
+(`session-log-deepseek.config.enabled: false`). This disables server-side event
+ingestion/acceptance watermarks, not local Harness Session persistence, Goals or
+compaction. **`dsh_plugin_packages`** is accepted and ignored. Do not send tool
 removals; keep `addition-only`. The accepted run enabled only read-only filesystem
 reads (`tool-fs`: read true; readImage/write/edit false), disabled other effectful
 tools, and used Harness read-only permission/sandbox presets. Files/image transport
