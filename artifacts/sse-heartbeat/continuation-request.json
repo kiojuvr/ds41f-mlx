@@ -1,0 +1,55 @@
+{
+  "model": "deepseek-flash",
+  "stream": true,
+  "max_tokens": 256,
+  "thinking": {
+    "type": "disabled"
+  },
+  "system": "Call report_value exactly once with value 7. After its tool result, reply only ACK and do not call any more tools.",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Report value 7 now."
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "tool_use",
+          "id": "call_00_MczIkMd5LV5n9QbNQmkP9071",
+          "name": "report_value",
+          "input": {
+            "value": 7
+          }
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "tool_result",
+          "tool_use_id": "call_00_MczIkMd5LV5n9QbNQmkP9071",
+          "content": "Recorded value 7."
+        }
+      ]
+    }
+  ],
+  "tools": [
+    {
+      "name": "report_value",
+      "description": "Record the integer requested by the user.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "model": "deepseek-flash",
+  "stream": true,
+  "max_tokens": 256,
+  "thinking": {
+    "type": "disabled"
+  },
+  "system": "Call report_value exactly once with value 7. After its tool result, reply only ACK and do not call any more tools.",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Report value 7 now."
+    }
+  ],
+  "tools": [
+    {
+      "name": "report_value",
+      "description": "Record the integer requested by the user.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+    }
+  ]
+}

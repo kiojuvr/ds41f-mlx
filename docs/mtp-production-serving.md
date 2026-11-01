@@ -32,6 +32,27 @@ canonical settlement. Capability exclusions and direct Harness acceptance scope
 are in [capabilities](capabilities.md#deepinfer-current-implementation) and
 [operations](operations.md#deepinfer-daily-operation-and-harness).
 
+### SSE transport liveness
+
+Ordinary streaming responses (Messages and the shared Chat Completions broker,
+including logical Chat sessions) send `: keepalive\n\n` SSE comments after
+15 seconds without HTTP body output. The timer measures **wire silence**, not
+internal queue activity: empty outputs during withheld Tool Call generation do
+not postpone it. The same response iterator sends comments while the shielded
+native worker performs prefill or generation. Comments are not Recipe events,
+assistant content, tool authority or canonical/cache state. Tool suffixes still
+wait for canonical settlement; JSON responses contain no heartbeats.
+
+Heartbeats stop when the broker observes terminal completion/error or the HTTP
+iterator is closed on disconnect/cancellation. No heartbeat is sent after the
+terminal output's `message_stop`. Sending follows normal HTTP backpressure; no
+heartbeat producer or extra queue runs ahead of the consumer. This applies once
+the SSE response is admitted and open: request upload, validation/encoding and
+executor admission before HTTP headers retain their existing HTTP error/status
+behavior. It is not a total request-duration deadline extension, nor protection
+against arbitrary proxy buffering, a blocked event loop or every client timeout.
+See [focused wire and native acceptance](../artifacts/sse-heartbeat/report.md).
+
 Use the installed MTP package with [current execution admission](runtime-admission.md).
 Current startup instructions and environment paths live in operations; for example:
 

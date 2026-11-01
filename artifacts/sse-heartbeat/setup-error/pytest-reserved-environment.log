@@ -1,0 +1,1423 @@
+EEEEEE...........................................................FFFFFFF [ 53%]
+FFFFFFFFF...........................FFFFFF..............FFFF..           [100%]
+==================================== ERRORS ====================================
+_____ ERROR at setup of test_wire_silence_tool_gate_semantics_and_exact_id _____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10aaa3ce0>
+
+    @pytest.fixture
+    def transport(monkeypatch):
+        monkeypatch.setattr(production_mtp, 'SSE_HEARTBEAT_INTERVAL', INTERVAL)
+>       backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_sse_heartbeat.py:57: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = None, port = None, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+>           raise ValueError(f'unqualified profile environment settings: {unknown}')
+E           ValueError: unqualified profile environment settings: ['DS41F_HEARTBEAT_WIRE_EVIDENCE']
+
+ds41f_mlx/mtp_identity.py:164: ValueError
+_____ ERROR at setup of test_without_heartbeat_same_silence_read_times_out _____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10aaa3490>
+
+    @pytest.fixture
+    def transport(monkeypatch):
+        monkeypatch.setattr(production_mtp, 'SSE_HEARTBEAT_INTERVAL', INTERVAL)
+>       backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_sse_heartbeat.py:57: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = None, port = None, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+>           raise ValueError(f'unqualified profile environment settings: {unknown}')
+E           ValueError: unqualified profile environment settings: ['DS41F_HEARTBEAT_WIRE_EVIDENCE']
+
+ds41f_mlx/mtp_identity.py:164: ValueError
+_ ERROR at setup of test_disconnect_stops_heartbeat_and_cleans_native_owner[False] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x16fdb4710>
+
+    @pytest.fixture
+    def transport(monkeypatch):
+        monkeypatch.setattr(production_mtp, 'SSE_HEARTBEAT_INTERVAL', INTERVAL)
+>       backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_sse_heartbeat.py:57: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = None, port = None, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+>           raise ValueError(f'unqualified profile environment settings: {unknown}')
+E           ValueError: unqualified profile environment settings: ['DS41F_HEARTBEAT_WIRE_EVIDENCE']
+
+ds41f_mlx/mtp_identity.py:164: ValueError
+_ ERROR at setup of test_disconnect_stops_heartbeat_and_cleans_native_owner[True] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x17010a030>
+
+    @pytest.fixture
+    def transport(monkeypatch):
+        monkeypatch.setattr(production_mtp, 'SSE_HEARTBEAT_INTERVAL', INTERVAL)
+>       backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_sse_heartbeat.py:57: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = None, port = None, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+>           raise ValueError(f'unqualified profile environment settings: {unknown}')
+E           ValueError: unqualified profile environment settings: ['DS41F_HEARTBEAT_WIRE_EVIDENCE']
+
+ds41f_mlx/mtp_identity.py:164: ValueError
+_ ERROR at setup of test_terminal_error_closes_wire_without_tool_or_message_stop _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x17010ae00>
+
+    @pytest.fixture
+    def transport(monkeypatch):
+        monkeypatch.setattr(production_mtp, 'SSE_HEARTBEAT_INTERVAL', INTERVAL)
+>       backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_sse_heartbeat.py:57: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = None, port = None, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+>           raise ValueError(f'unqualified profile environment settings: {unknown}')
+E           ValueError: unqualified profile environment settings: ['DS41F_HEARTBEAT_WIRE_EVIDENCE']
+
+ds41f_mlx/mtp_identity.py:164: ValueError
+____________ ERROR at setup of test_json_never_contains_heartbeats _____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x16fd96b50>
+
+    @pytest.fixture
+    def transport(monkeypatch):
+        monkeypatch.setattr(production_mtp, 'SSE_HEARTBEAT_INTERVAL', INTERVAL)
+>       backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_sse_heartbeat.py:57: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = None, port = None, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+>           raise ValueError(f'unqualified profile environment settings: {unknown}')
+E           ValueError: unqualified profile environment settings: ['DS41F_HEARTBEAT_WIRE_EVIDENCE']
+
+ds41f_mlx/mtp_identity.py:164: ValueError
+=================================== FAILURES ===================================
+_________ test_ordinary_http_native_transport[False-False-False-False] _________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x170057c40>
+stream = False, thinking = False, inventory = False, deferred = False
+
+    @pytest.mark.parametrize('inventory', [False, True])
+    @pytest.mark.parametrize('stream', [False, True])
+    @pytest.mark.parametrize('thinking', [False, True])
+    @pytest.mark.parametrize('deferred', [False, True])
+    def test_ordinary_http_native_transport(monkeypatch, stream, thinking, inventory, deferred):
+        # Real ingress/preparation/ordinary_response/pump/cleanup, controlled native
+        # output only. No claim of checkpoint or numerical Scheduler execution.
+        import os
+        from types import SimpleNamespace as NS
+        from fastapi.testclient import TestClient
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+        from ds41f_mlx.serving.server import create_app
+        previous = dict(os.environ)
+>       backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_recipe02_messages_serving.py:450: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = None, port = None, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+>           raise ValueError(f'unqualified profile environment settings: {unknown}')
+E           ValueError: unqualified profile environment settings: ['DS41F_HEARTBEAT_WIRE_EVIDENCE']
+
+ds41f_mlx/mtp_identity.py:164: ValueError
+_________ test_ordinary_http_native_transport[False-False-False-True] __________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x16fe1fd90>
+stream = False, thinking = False, inventory = True, deferred = False
+
+    @pytest.mark.parametrize('inventory', [False, True])
+    @pytest.mark.parametrize('stream', [False, True])
+    @pytest.mark.parametrize('thinking', [False, True])
+    @pytest.mark.parametrize('deferred', [False, True])
+    def test_ordinary_http_native_transport(monkeypatch, stream, thinking, inventory, deferred):
+        # Real ingress/preparation/ordinary_response/pump/cleanup, controlled native
+        # output only. No claim of checkpoint or numerical Scheduler execution.
+        import os
+        from types import SimpleNamespace as NS
+        from fastapi.testclient import TestClient
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+        from ds41f_mlx.serving.server import create_app
+        previous = dict(os.environ)
+>       backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_recipe02_messages_serving.py:450: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = None, port = None, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+>           raise ValueError(f'unqualified profile environment settings: {unknown}')
+E           ValueError: unqualified profile environment settings: ['DS41F_HEARTBEAT_WIRE_EVIDENCE']
+
+ds41f_mlx/mtp_identity.py:164: ValueError
+_________ test_ordinary_http_native_transport[False-False-True-False] __________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x16fe1eeb0>
+stream = True, thinking = False, inventory = False, deferred = False
+
+    @pytest.mark.parametrize('inventory', [False, True])
+    @pytest.mark.parametrize('stream', [False, True])
+    @pytest.mark.parametrize('thinking', [False, True])
+    @pytest.mark.parametrize('deferred', [False, True])
+    def test_ordinary_http_native_transport(monkeypatch, stream, thinking, inventory, deferred):
+        # Real ingress/preparation/ordinary_response/pump/cleanup, controlled native
+        # output only. No claim of checkpoint or numerical Scheduler execution.
+        import os
+        from types import SimpleNamespace as NS
+        from fastapi.testclient import TestClient
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+        from ds41f_mlx.serving.server import create_app
+        previous = dict(os.environ)
+>       backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_recipe02_messages_serving.py:450: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = None, port = None, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+>           raise ValueError(f'unqualified profile environment settings: {unknown}')
+E           ValueError: unqualified profile environment settings: ['DS41F_HEARTBEAT_WIRE_EVIDENCE']
+
+ds41f_mlx/mtp_identity.py:164: ValueError
+__________ test_ordinary_http_native_transport[False-False-True-True] __________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x16fe1fcb0>
+stream = True, thinking = False, inventory = True, deferred = False
+
+    @pytest.mark.parametrize('inventory', [False, True])
+    @pytest.mark.parametrize('stream', [False, True])
+    @pytest.mark.parametrize('thinking', [False, True])
+    @pytest.mark.parametrize('deferred', [False, True])
+    def test_ordinary_http_native_transport(monkeypatch, stream, thinking, inventory, deferred):
+        # Real ingress/preparation/ordinary_response/pump/cleanup, controlled native
+        # output only. No claim of checkpoint or numerical Scheduler execution.
+        import os
+        from types import SimpleNamespace as NS
+        from fastapi.testclient import TestClient
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+        from ds41f_mlx.serving.server import create_app
+        previous = dict(os.environ)
+>       backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_recipe02_messages_serving.py:450: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = None, port = None, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+>           raise ValueError(f'unqualified profile environment settings: {unknown}')
+E           ValueError: unqualified profile environment settings: ['DS41F_HEARTBEAT_WIRE_EVIDENCE']
+
+ds41f_mlx/mtp_identity.py:164: ValueError
+_________ test_ordinary_http_native_transport[False-True-False-False] __________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x16fe1f9a0>
+stream = False, thinking = True, inventory = False, deferred = False
+
+    @pytest.mark.parametrize('inventory', [False, True])
+    @pytest.mark.parametrize('stream', [False, True])
+    @pytest.mark.parametrize('thinking', [False, True])
+    @pytest.mark.parametrize('deferred', [False, True])
+    def test_ordinary_http_native_transport(monkeypatch, stream, thinking, inventory, deferred):
+        # Real ingress/preparation/ordinary_response/pump/cleanup, controlled native
+        # output only. No claim of checkpoint or numerical Scheduler execution.
+        import os
+        from types import SimpleNamespace as NS
+        from fastapi.testclient import TestClient
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+        from ds41f_mlx.serving.server import create_app
+        previous = dict(os.environ)
+>       backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_recipe02_messages_serving.py:450: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = None, port = None, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+>           raise ValueError(f'unqualified profile environment settings: {unknown}')
+E           ValueError: unqualified profile environment settings: ['DS41F_HEARTBEAT_WIRE_EVIDENCE']
+
+ds41f_mlx/mtp_identity.py:164: ValueError
+__________ test_ordinary_http_native_transport[False-True-False-True] __________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x16fe1fb60>
+stream = False, thinking = True, inventory = True, deferred = False
+
+    @pytest.mark.parametrize('inventory', [False, True])
+    @pytest.mark.parametrize('stream', [False, True])
+    @pytest.mark.parametrize('thinking', [False, True])
+    @pytest.mark.parametrize('deferred', [False, True])
+    def test_ordinary_http_native_transport(monkeypatch, stream, thinking, inventory, deferred):
+        # Real ingress/preparation/ordinary_response/pump/cleanup, controlled native
+        # output only. No claim of checkpoint or numerical Scheduler execution.
+        import os
+        from types import SimpleNamespace as NS
+        from fastapi.testclient import TestClient
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+        from ds41f_mlx.serving.server import create_app
+        previous = dict(os.environ)
+>       backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_recipe02_messages_serving.py:450: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = None, port = None, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+>           raise ValueError(f'unqualified profile environment settings: {unknown}')
+E           ValueError: unqualified profile environment settings: ['DS41F_HEARTBEAT_WIRE_EVIDENCE']
+
+ds41f_mlx/mtp_identity.py:164: ValueError
+__________ test_ordinary_http_native_transport[False-True-True-False] __________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x16fe1f000>
+stream = True, thinking = True, inventory = False, deferred = False
+
+    @pytest.mark.parametrize('inventory', [False, True])
+    @pytest.mark.parametrize('stream', [False, True])
+    @pytest.mark.parametrize('thinking', [False, True])
+    @pytest.mark.parametrize('deferred', [False, True])
+    def test_ordinary_http_native_transport(monkeypatch, stream, thinking, inventory, deferred):
+        # Real ingress/preparation/ordinary_response/pump/cleanup, controlled native
+        # output only. No claim of checkpoint or numerical Scheduler execution.
+        import os
+        from types import SimpleNamespace as NS
+        from fastapi.testclient import TestClient
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+        from ds41f_mlx.serving.server import create_app
+        previous = dict(os.environ)
+>       backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_recipe02_messages_serving.py:450: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = None, port = None, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+>           raise ValueError(f'unqualified profile environment settings: {unknown}')
+E           ValueError: unqualified profile environment settings: ['DS41F_HEARTBEAT_WIRE_EVIDENCE']
+
+ds41f_mlx/mtp_identity.py:164: ValueError
+__________ test_ordinary_http_native_transport[False-True-True-True] ___________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x16fe1d860>
+stream = True, thinking = True, inventory = True, deferred = False
+
+    @pytest.mark.parametrize('inventory', [False, True])
+    @pytest.mark.parametrize('stream', [False, True])
+    @pytest.mark.parametrize('thinking', [False, True])
+    @pytest.mark.parametrize('deferred', [False, True])
+    def test_ordinary_http_native_transport(monkeypatch, stream, thinking, inventory, deferred):
+        # Real ingress/preparation/ordinary_response/pump/cleanup, controlled native
+        # output only. No claim of checkpoint or numerical Scheduler execution.
+        import os
+        from types import SimpleNamespace as NS
+        from fastapi.testclient import TestClient
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+        from ds41f_mlx.serving.server import create_app
+        previous = dict(os.environ)
+>       backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_recipe02_messages_serving.py:450: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = None, port = None, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+>           raise ValueError(f'unqualified profile environment settings: {unknown}')
+E           ValueError: unqualified profile environment settings: ['DS41F_HEARTBEAT_WIRE_EVIDENCE']
+
+ds41f_mlx/mtp_identity.py:164: ValueError
+_________ test_ordinary_http_native_transport[True-False-False-False] __________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x16fe1db00>
+stream = False, thinking = False, inventory = False, deferred = True
+
+    @pytest.mark.parametrize('inventory', [False, True])
+    @pytest.mark.parametrize('stream', [False, True])
+    @pytest.mark.parametrize('thinking', [False, True])
+    @pytest.mark.parametrize('deferred', [False, True])
+    def test_ordinary_http_native_transport(monkeypatch, stream, thinking, inventory, deferred):
+        # Real ingress/preparation/ordinary_response/pump/cleanup, controlled native
+        # output only. No claim of checkpoint or numerical Scheduler execution.
+        import os
+        from types import SimpleNamespace as NS
+        from fastapi.testclient import TestClient
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+        from ds41f_mlx.serving.server import create_app
+        previous = dict(os.environ)
+>       backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_recipe02_messages_serving.py:450: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = None, port = None, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+>           raise ValueError(f'unqualified profile environment settings: {unknown}')
+E           ValueError: unqualified profile environment settings: ['DS41F_HEARTBEAT_WIRE_EVIDENCE']
+
+ds41f_mlx/mtp_identity.py:164: ValueError
+__________ test_ordinary_http_native_transport[True-False-False-True] __________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x16fe1dc50>
+stream = False, thinking = False, inventory = True, deferred = True
+
+    @pytest.mark.parametrize('inventory', [False, True])
+    @pytest.mark.parametrize('stream', [False, True])
+    @pytest.mark.parametrize('thinking', [False, True])
+    @pytest.mark.parametrize('deferred', [False, True])
+    def test_ordinary_http_native_transport(monkeypatch, stream, thinking, inventory, deferred):
+        # Real ingress/preparation/ordinary_response/pump/cleanup, controlled native
+        # output only. No claim of checkpoint or numerical Scheduler execution.
+        import os
+        from types import SimpleNamespace as NS
+        from fastapi.testclient import TestClient
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+        from ds41f_mlx.serving.server import create_app
+        previous = dict(os.environ)
+>       backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_recipe02_messages_serving.py:450: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = None, port = None, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+>           raise ValueError(f'unqualified profile environment settings: {unknown}')
+E           ValueError: unqualified profile environment settings: ['DS41F_HEARTBEAT_WIRE_EVIDENCE']
+
+ds41f_mlx/mtp_identity.py:164: ValueError
+__________ test_ordinary_http_native_transport[True-False-True-False] __________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x16fe1f000>
+stream = True, thinking = False, inventory = False, deferred = True
+
+    @pytest.mark.parametrize('inventory', [False, True])
+    @pytest.mark.parametrize('stream', [False, True])
+    @pytest.mark.parametrize('thinking', [False, True])
+    @pytest.mark.parametrize('deferred', [False, True])
+    def test_ordinary_http_native_transport(monkeypatch, stream, thinking, inventory, deferred):
+        # Real ingress/preparation/ordinary_response/pump/cleanup, controlled native
+        # output only. No claim of checkpoint or numerical Scheduler execution.
+        import os
+        from types import SimpleNamespace as NS
+        from fastapi.testclient import TestClient
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+        from ds41f_mlx.serving.server import create_app
+        previous = dict(os.environ)
+>       backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_recipe02_messages_serving.py:450: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = None, port = None, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+>           raise ValueError(f'unqualified profile environment settings: {unknown}')
+E           ValueError: unqualified profile environment settings: ['DS41F_HEARTBEAT_WIRE_EVIDENCE']
+
+ds41f_mlx/mtp_identity.py:164: ValueError
+__________ test_ordinary_http_native_transport[True-False-True-True] ___________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x16fe1dd30>
+stream = True, thinking = False, inventory = True, deferred = True
+
+    @pytest.mark.parametrize('inventory', [False, True])
+    @pytest.mark.parametrize('stream', [False, True])
+    @pytest.mark.parametrize('thinking', [False, True])
+    @pytest.mark.parametrize('deferred', [False, True])
+    def test_ordinary_http_native_transport(monkeypatch, stream, thinking, inventory, deferred):
+        # Real ingress/preparation/ordinary_response/pump/cleanup, controlled native
+        # output only. No claim of checkpoint or numerical Scheduler execution.
+        import os
+        from types import SimpleNamespace as NS
+        from fastapi.testclient import TestClient
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+        from ds41f_mlx.serving.server import create_app
+        previous = dict(os.environ)
+>       backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_recipe02_messages_serving.py:450: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = None, port = None, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+>           raise ValueError(f'unqualified profile environment settings: {unknown}')
+E           ValueError: unqualified profile environment settings: ['DS41F_HEARTBEAT_WIRE_EVIDENCE']
+
+ds41f_mlx/mtp_identity.py:164: ValueError
+__________ test_ordinary_http_native_transport[True-True-False-False] __________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x16fe1df60>
+stream = False, thinking = True, inventory = False, deferred = True
+
+    @pytest.mark.parametrize('inventory', [False, True])
+    @pytest.mark.parametrize('stream', [False, True])
+    @pytest.mark.parametrize('thinking', [False, True])
+    @pytest.mark.parametrize('deferred', [False, True])
+    def test_ordinary_http_native_transport(monkeypatch, stream, thinking, inventory, deferred):
+        # Real ingress/preparation/ordinary_response/pump/cleanup, controlled native
+        # output only. No claim of checkpoint or numerical Scheduler execution.
+        import os
+        from types import SimpleNamespace as NS
+        from fastapi.testclient import TestClient
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+        from ds41f_mlx.serving.server import create_app
+        previous = dict(os.environ)
+>       backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_recipe02_messages_serving.py:450: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = None, port = None, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+>           raise ValueError(f'unqualified profile environment settings: {unknown}')
+E           ValueError: unqualified profile environment settings: ['DS41F_HEARTBEAT_WIRE_EVIDENCE']
+
+ds41f_mlx/mtp_identity.py:164: ValueError
+__________ test_ordinary_http_native_transport[True-True-False-True] ___________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x16fe1e190>
+stream = False, thinking = True, inventory = True, deferred = True
+
+    @pytest.mark.parametrize('inventory', [False, True])
+    @pytest.mark.parametrize('stream', [False, True])
+    @pytest.mark.parametrize('thinking', [False, True])
+    @pytest.mark.parametrize('deferred', [False, True])
+    def test_ordinary_http_native_transport(monkeypatch, stream, thinking, inventory, deferred):
+        # Real ingress/preparation/ordinary_response/pump/cleanup, controlled native
+        # output only. No claim of checkpoint or numerical Scheduler execution.
+        import os
+        from types import SimpleNamespace as NS
+        from fastapi.testclient import TestClient
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+        from ds41f_mlx.serving.server import create_app
+        previous = dict(os.environ)
+>       backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_recipe02_messages_serving.py:450: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = None, port = None, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+>           raise ValueError(f'unqualified profile environment settings: {unknown}')
+E           ValueError: unqualified profile environment settings: ['DS41F_HEARTBEAT_WIRE_EVIDENCE']
+
+ds41f_mlx/mtp_identity.py:164: ValueError
+__________ test_ordinary_http_native_transport[True-True-True-False] ___________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x16fe1e3c0>
+stream = True, thinking = True, inventory = False, deferred = True
+
+    @pytest.mark.parametrize('inventory', [False, True])
+    @pytest.mark.parametrize('stream', [False, True])
+    @pytest.mark.parametrize('thinking', [False, True])
+    @pytest.mark.parametrize('deferred', [False, True])
+    def test_ordinary_http_native_transport(monkeypatch, stream, thinking, inventory, deferred):
+        # Real ingress/preparation/ordinary_response/pump/cleanup, controlled native
+        # output only. No claim of checkpoint or numerical Scheduler execution.
+        import os
+        from types import SimpleNamespace as NS
+        from fastapi.testclient import TestClient
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+        from ds41f_mlx.serving.server import create_app
+        previous = dict(os.environ)
+>       backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_recipe02_messages_serving.py:450: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = None, port = None, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+>           raise ValueError(f'unqualified profile environment settings: {unknown}')
+E           ValueError: unqualified profile environment settings: ['DS41F_HEARTBEAT_WIRE_EVIDENCE']
+
+ds41f_mlx/mtp_identity.py:164: ValueError
+___________ test_ordinary_http_native_transport[True-True-True-True] ___________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x16fe1e5f0>
+stream = True, thinking = True, inventory = True, deferred = True
+
+    @pytest.mark.parametrize('inventory', [False, True])
+    @pytest.mark.parametrize('stream', [False, True])
+    @pytest.mark.parametrize('thinking', [False, True])
+    @pytest.mark.parametrize('deferred', [False, True])
+    def test_ordinary_http_native_transport(monkeypatch, stream, thinking, inventory, deferred):
+        # Real ingress/preparation/ordinary_response/pump/cleanup, controlled native
+        # output only. No claim of checkpoint or numerical Scheduler execution.
+        import os
+        from types import SimpleNamespace as NS
+        from fastapi.testclient import TestClient
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+        from ds41f_mlx.serving.server import create_app
+        previous = dict(os.environ)
+>       backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_recipe02_messages_serving.py:450: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = None, port = None, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+>           raise ValueError(f'unqualified profile environment settings: {unknown}')
+E           ValueError: unqualified profile environment settings: ['DS41F_HEARTBEAT_WIRE_EVIDENCE']
+
+ds41f_mlx/mtp_identity.py:164: ValueError
+__ test_health_generation_policy_advertises_only_supported_execution_profile ___
+
+    def test_health_generation_policy_advertises_only_supported_execution_profile():
+        pytest.importorskip('mlx.core')
+        pytest.importorskip('omlx')
+        import os
+        from fastapi.testclient import TestClient
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+        from ds41f_mlx.serving.server import create_app
+        previous = dict(os.environ)
+>       backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_production_mtp.py:257: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = None, port = None, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+>           raise ValueError(f'unqualified profile environment settings: {unknown}')
+E           ValueError: unqualified profile environment settings: ['DS41F_HEARTBEAT_WIRE_EVIDENCE']
+
+ds41f_mlx/mtp_identity.py:164: ValueError
+_ test_ordinary_http_recipe_route_has_no_compulsory_public_session[127.0.0.1-127.0.0.1:8000] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1701ed550>
+host = '127.0.0.1', authority = '127.0.0.1:8000'
+
+    @pytest.mark.parametrize('host,authority', [
+        ('127.0.0.1', '127.0.0.1:8000'),
+        ('0.0.0.0', '192.168.68.56:8000'),
+        ('192.168.68.56', 'mac-studio.local:8000'),
+        ('::', '[fd12::56]:8000'),
+    ])
+    def test_ordinary_http_recipe_route_has_no_compulsory_public_session(monkeypatch, host, authority):
+        pytest.importorskip('mlx.core')
+        pytest.importorskip('omlx')
+        import os
+        from fastapi.testclient import TestClient
+        from fastapi.responses import JSONResponse
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+        from ds41f_mlx.serving.server import create_app
+        previous = dict(os.environ)
+>       backend = ProductionMTPBackend(runtime_config=config(host, profile='mtp-serving-v1'))
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_production_mtp.py:288: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = '127.0.0.1', port = None, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+>           raise ValueError(f'unqualified profile environment settings: {unknown}')
+E           ValueError: unqualified profile environment settings: ['DS41F_HEARTBEAT_WIRE_EVIDENCE']
+
+ds41f_mlx/mtp_identity.py:164: ValueError
+_ test_ordinary_http_recipe_route_has_no_compulsory_public_session[0.0.0.0-192.168.68.56:8000] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1701ed5c0>
+host = '0.0.0.0', authority = '192.168.68.56:8000'
+
+    @pytest.mark.parametrize('host,authority', [
+        ('127.0.0.1', '127.0.0.1:8000'),
+        ('0.0.0.0', '192.168.68.56:8000'),
+        ('192.168.68.56', 'mac-studio.local:8000'),
+        ('::', '[fd12::56]:8000'),
+    ])
+    def test_ordinary_http_recipe_route_has_no_compulsory_public_session(monkeypatch, host, authority):
+        pytest.importorskip('mlx.core')
+        pytest.importorskip('omlx')
+        import os
+        from fastapi.testclient import TestClient
+        from fastapi.responses import JSONResponse
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+        from ds41f_mlx.serving.server import create_app
+        previous = dict(os.environ)
+>       backend = ProductionMTPBackend(runtime_config=config(host, profile='mtp-serving-v1'))
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_production_mtp.py:288: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = '0.0.0.0', port = None, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+>           raise ValueError(f'unqualified profile environment settings: {unknown}')
+E           ValueError: unqualified profile environment settings: ['DS41F_HEARTBEAT_WIRE_EVIDENCE']
+
+ds41f_mlx/mtp_identity.py:164: ValueError
+_ test_ordinary_http_recipe_route_has_no_compulsory_public_session[192.168.68.56-mac-studio.local:8000] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1701ed470>
+host = '192.168.68.56', authority = 'mac-studio.local:8000'
+
+    @pytest.mark.parametrize('host,authority', [
+        ('127.0.0.1', '127.0.0.1:8000'),
+        ('0.0.0.0', '192.168.68.56:8000'),
+        ('192.168.68.56', 'mac-studio.local:8000'),
+        ('::', '[fd12::56]:8000'),
+    ])
+    def test_ordinary_http_recipe_route_has_no_compulsory_public_session(monkeypatch, host, authority):
+        pytest.importorskip('mlx.core')
+        pytest.importorskip('omlx')
+        import os
+        from fastapi.testclient import TestClient
+        from fastapi.responses import JSONResponse
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+        from ds41f_mlx.serving.server import create_app
+        previous = dict(os.environ)
+>       backend = ProductionMTPBackend(runtime_config=config(host, profile='mtp-serving-v1'))
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_production_mtp.py:288: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = '192.168.68.56', port = None, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+>           raise ValueError(f'unqualified profile environment settings: {unknown}')
+E           ValueError: unqualified profile environment settings: ['DS41F_HEARTBEAT_WIRE_EVIDENCE']
+
+ds41f_mlx/mtp_identity.py:164: ValueError
+_ test_ordinary_http_recipe_route_has_no_compulsory_public_session[::-[fd12::56]:8000] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1701ed630>
+host = '::', authority = '[fd12::56]:8000'
+
+    @pytest.mark.parametrize('host,authority', [
+        ('127.0.0.1', '127.0.0.1:8000'),
+        ('0.0.0.0', '192.168.68.56:8000'),
+        ('192.168.68.56', 'mac-studio.local:8000'),
+        ('::', '[fd12::56]:8000'),
+    ])
+    def test_ordinary_http_recipe_route_has_no_compulsory_public_session(monkeypatch, host, authority):
+        pytest.importorskip('mlx.core')
+        pytest.importorskip('omlx')
+        import os
+        from fastapi.testclient import TestClient
+        from fastapi.responses import JSONResponse
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+        from ds41f_mlx.serving.server import create_app
+        previous = dict(os.environ)
+>       backend = ProductionMTPBackend(runtime_config=config(host, profile='mtp-serving-v1'))
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_production_mtp.py:288: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = '::', port = None, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+>           raise ValueError(f'unqualified profile environment settings: {unknown}')
+E           ValueError: unqualified profile environment settings: ['DS41F_HEARTBEAT_WIRE_EVIDENCE']
+
+ds41f_mlx/mtp_identity.py:164: ValueError
+_ test_json_delivery_stops_disconnect_probe_even_when_probe_consumes_cancellation _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1701edcc0>
+
+    def test_json_delivery_stops_disconnect_probe_even_when_probe_consumes_cancellation(monkeypatch):
+        pytest.importorskip('mlx.core')
+        pytest.importorskip('omlx')
+        import asyncio
+        import sys
+        import time
+        from pathlib import Path
+        from ds41f_mlx.serving.production_mtp import ProductionMTPBackend
+        async def run():
+            from ds41f_mlx.mtp_identity import config
+            backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+            scheduler = SimpleNamespace(requests={})
+            def enqueue(prepared, tokenizer, rid):
+                scheduler.requests[rid] = True
+            def step():
+                time.sleep(.03)
+                rid = next(iter(scheduler.requests))
+                scheduler.requests.clear()
+                return SimpleNamespace(outputs=[SimpleNamespace(request_id=rid, finished=True, error=None,
+                    recipe_events=(), recipe_response={'choices': []})])
+            scheduler.step = step
+            backend.scheduler = scheduler
+            monkeypatch.setattr(backend, '_enqueue', enqueue)
+            class Probe:
+                async def is_disconnected(self):
+                    try:
+                        await asyncio.sleep(.1)
+                    except asyncio.CancelledError:
+                        pass  # Models Starlette's inner cancelling AnyIO scope.
+                    return False
+            prepared = SimpleNamespace(protocol='chat_completions', image_sources=None, token_ids=[1,2,3],
+                                       stream=False, inference_options=SimpleNamespace(max_tokens=16))
+            try:
+                response = await asyncio.wait_for(backend.ordinary_response(prepared, tokenizer=None, http_request=Probe()), 2)
+                assert response.body == b'{"choices":[]}'
+                assert not backend._deliveries and not backend._settled
+            finally:
+                backend.close()
+>       asyncio.run(run())
+
+tests/test_production_mtp.py:423: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:196: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:119: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py:726: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests/test_production_mtp.py:395: in run
+    backend = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = None, port = None, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+>           raise ValueError(f'unqualified profile environment settings: {unknown}')
+E           ValueError: unqualified profile environment settings: ['DS41F_HEARTBEAT_WIRE_EVIDENCE']
+
+ds41f_mlx/mtp_identity.py:164: ValueError
+_________________ test_worker_failure_diagnostics[False-False] _________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x170275080>
+native = False, cleanup = False
+
+    @pytest.mark.parametrize('native,cleanup', [(False, False), (False, True), (True, False), (True, 'clear')])
+    def test_worker_failure_diagnostics(monkeypatch, native, cleanup):
+        from omlx.request import Request, SamplingParams
+        from ds41f_mlx.serving.production_mtp import ProductionScheduler, ProductionMTPBackend
+        from ds41f_mlx.serving.internal_mtp import QualificationSession
+        from ds41f_mlx.serving.paired_checkpoint import PairedCheckpointAuthority
+        from ds41f_mlx import execution_identity
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.server import create_app
+        from fastapi.testclient import TestClient
+    
+        p = Projection()
+        p.lifecycle('READY')
+        p.begin('http-id')
+        s = object.__new__(ProductionScheduler)
+        s.waiting, s.running, s.requests = deque(), {}, {}
+        s.request_id_to_uid, s.uid_to_request_id = {}, {}
+        s._pending_abort_ids, s._completed = set(), []
+        s.batch_generator = None
+        s.session_leases = {}
+        s.shutdown = lambda: None
+        s.total_prompt_tokens = s.total_completion_tokens = 0
+        s.checkpoints = PairedCheckpointAuthority('identity', NS(eval=lambda *a: None))
+        calls = []
+        def fail():
+            raise ValueError(SECRET)
+        def acquire(*a, **kw):
+            calls.append('lookup')
+            if native:
+                return None
+            kw['admit'](None)
+        monkeypatch.setattr(s.checkpoints, 'acquire', acquire)
+        def start(*a, **kw):
+            calls.append('native')
+            raise RuntimeError(SECRET)
+        def retire(rec):
+            calls.append('retire')
+            if cleanup is True:
+                raise LookupError(SECRET)
+        previous = dict(os.environ)
+>       b = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_request_failure_diagnostics.py:59: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = None, port = None, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+>           raise ValueError(f'unqualified profile environment settings: {unknown}')
+E           ValueError: unqualified profile environment settings: ['DS41F_HEARTBEAT_WIRE_EVIDENCE']
+
+ds41f_mlx/mtp_identity.py:164: ValueError
+_________________ test_worker_failure_diagnostics[False-True] __________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x170276190>
+native = False, cleanup = True
+
+    @pytest.mark.parametrize('native,cleanup', [(False, False), (False, True), (True, False), (True, 'clear')])
+    def test_worker_failure_diagnostics(monkeypatch, native, cleanup):
+        from omlx.request import Request, SamplingParams
+        from ds41f_mlx.serving.production_mtp import ProductionScheduler, ProductionMTPBackend
+        from ds41f_mlx.serving.internal_mtp import QualificationSession
+        from ds41f_mlx.serving.paired_checkpoint import PairedCheckpointAuthority
+        from ds41f_mlx import execution_identity
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.server import create_app
+        from fastapi.testclient import TestClient
+    
+        p = Projection()
+        p.lifecycle('READY')
+        p.begin('http-id')
+        s = object.__new__(ProductionScheduler)
+        s.waiting, s.running, s.requests = deque(), {}, {}
+        s.request_id_to_uid, s.uid_to_request_id = {}, {}
+        s._pending_abort_ids, s._completed = set(), []
+        s.batch_generator = None
+        s.session_leases = {}
+        s.shutdown = lambda: None
+        s.total_prompt_tokens = s.total_completion_tokens = 0
+        s.checkpoints = PairedCheckpointAuthority('identity', NS(eval=lambda *a: None))
+        calls = []
+        def fail():
+            raise ValueError(SECRET)
+        def acquire(*a, **kw):
+            calls.append('lookup')
+            if native:
+                return None
+            kw['admit'](None)
+        monkeypatch.setattr(s.checkpoints, 'acquire', acquire)
+        def start(*a, **kw):
+            calls.append('native')
+            raise RuntimeError(SECRET)
+        def retire(rec):
+            calls.append('retire')
+            if cleanup is True:
+                raise LookupError(SECRET)
+        previous = dict(os.environ)
+>       b = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_request_failure_diagnostics.py:59: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = None, port = None, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+>           raise ValueError(f'unqualified profile environment settings: {unknown}')
+E           ValueError: unqualified profile environment settings: ['DS41F_HEARTBEAT_WIRE_EVIDENCE']
+
+ds41f_mlx/mtp_identity.py:164: ValueError
+_________________ test_worker_failure_diagnostics[True-False] __________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1702763c0>
+native = True, cleanup = False
+
+    @pytest.mark.parametrize('native,cleanup', [(False, False), (False, True), (True, False), (True, 'clear')])
+    def test_worker_failure_diagnostics(monkeypatch, native, cleanup):
+        from omlx.request import Request, SamplingParams
+        from ds41f_mlx.serving.production_mtp import ProductionScheduler, ProductionMTPBackend
+        from ds41f_mlx.serving.internal_mtp import QualificationSession
+        from ds41f_mlx.serving.paired_checkpoint import PairedCheckpointAuthority
+        from ds41f_mlx import execution_identity
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.server import create_app
+        from fastapi.testclient import TestClient
+    
+        p = Projection()
+        p.lifecycle('READY')
+        p.begin('http-id')
+        s = object.__new__(ProductionScheduler)
+        s.waiting, s.running, s.requests = deque(), {}, {}
+        s.request_id_to_uid, s.uid_to_request_id = {}, {}
+        s._pending_abort_ids, s._completed = set(), []
+        s.batch_generator = None
+        s.session_leases = {}
+        s.shutdown = lambda: None
+        s.total_prompt_tokens = s.total_completion_tokens = 0
+        s.checkpoints = PairedCheckpointAuthority('identity', NS(eval=lambda *a: None))
+        calls = []
+        def fail():
+            raise ValueError(SECRET)
+        def acquire(*a, **kw):
+            calls.append('lookup')
+            if native:
+                return None
+            kw['admit'](None)
+        monkeypatch.setattr(s.checkpoints, 'acquire', acquire)
+        def start(*a, **kw):
+            calls.append('native')
+            raise RuntimeError(SECRET)
+        def retire(rec):
+            calls.append('retire')
+            if cleanup is True:
+                raise LookupError(SECRET)
+        previous = dict(os.environ)
+>       b = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_request_failure_diagnostics.py:59: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = None, port = None, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+>           raise ValueError(f'unqualified profile environment settings: {unknown}')
+E           ValueError: unqualified profile environment settings: ['DS41F_HEARTBEAT_WIRE_EVIDENCE']
+
+ds41f_mlx/mtp_identity.py:164: ValueError
+_________________ test_worker_failure_diagnostics[True-clear] __________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x170274f30>
+native = True, cleanup = 'clear'
+
+    @pytest.mark.parametrize('native,cleanup', [(False, False), (False, True), (True, False), (True, 'clear')])
+    def test_worker_failure_diagnostics(monkeypatch, native, cleanup):
+        from omlx.request import Request, SamplingParams
+        from ds41f_mlx.serving.production_mtp import ProductionScheduler, ProductionMTPBackend
+        from ds41f_mlx.serving.internal_mtp import QualificationSession
+        from ds41f_mlx.serving.paired_checkpoint import PairedCheckpointAuthority
+        from ds41f_mlx import execution_identity
+        from ds41f_mlx.mtp_identity import config
+        from ds41f_mlx.serving.server import create_app
+        from fastapi.testclient import TestClient
+    
+        p = Projection()
+        p.lifecycle('READY')
+        p.begin('http-id')
+        s = object.__new__(ProductionScheduler)
+        s.waiting, s.running, s.requests = deque(), {}, {}
+        s.request_id_to_uid, s.uid_to_request_id = {}, {}
+        s._pending_abort_ids, s._completed = set(), []
+        s.batch_generator = None
+        s.session_leases = {}
+        s.shutdown = lambda: None
+        s.total_prompt_tokens = s.total_completion_tokens = 0
+        s.checkpoints = PairedCheckpointAuthority('identity', NS(eval=lambda *a: None))
+        calls = []
+        def fail():
+            raise ValueError(SECRET)
+        def acquire(*a, **kw):
+            calls.append('lookup')
+            if native:
+                return None
+            kw['admit'](None)
+        monkeypatch.setattr(s.checkpoints, 'acquire', acquire)
+        def start(*a, **kw):
+            calls.append('native')
+            raise RuntimeError(SECRET)
+        def retire(rec):
+            calls.append('retire')
+            if cleanup is True:
+                raise LookupError(SECRET)
+        previous = dict(os.environ)
+>       b = ProductionMTPBackend(runtime_config=config(profile='mtp-serving-v1'))
+                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_request_failure_diagnostics.py:59: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = None, port = None, profile = 'mtp-serving-v1'
+
+    def config(host=None, port=None, *, profile=PROFILE):
+        if profile not in (PROFILE, 'mtp-serving-v1'):
+            raise ValueError('unknown MTP profile')
+        allowed = {'DS41F_CHECKPOINT','DS41F_KV_ROOT','DS41F_HOST','DS41F_PORT',
+                   'DS41F_MAX_LIVE_SESSIONS','DS41F_TRACE_HISTORY_LIMIT',
+                   'DS41F_ENABLE_DIAGNOSTIC_ENDPOINTS','DS41F_MODEL_ID',
+                   'DS41F_DEFAULT_REASONING_EFFORT'}
+        unknown = sorted(k for k in os.environ if
+            (k.startswith('DS41F_') and k not in allowed) or k.startswith(('OMLX_','UVICORN_','DYLD_')))
+        if unknown:
+>           raise ValueError(f'unqualified profile environment settings: {unknown}')
+E           ValueError: unqualified profile environment settings: ['DS41F_HEARTBEAT_WIRE_EVIDENCE']
+
+ds41f_mlx/mtp_identity.py:164: ValueError
+=============================== warnings summary ===============================
+tests/test_recipe02_messages_serving.py::test_ordinary_http_native_transport[False-False-False-False]
+  /private/tmp/ds41f-sse-heartbeat-env/lib/python3.13/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_recipe02_messages_serving.py::test_ordinary_http_native_transport[False-False-False-False]
+FAILED tests/test_recipe02_messages_serving.py::test_ordinary_http_native_transport[False-False-False-True]
+FAILED tests/test_recipe02_messages_serving.py::test_ordinary_http_native_transport[False-False-True-False]
+FAILED tests/test_recipe02_messages_serving.py::test_ordinary_http_native_transport[False-False-True-True]
+FAILED tests/test_recipe02_messages_serving.py::test_ordinary_http_native_transport[False-True-False-False]
+FAILED tests/test_recipe02_messages_serving.py::test_ordinary_http_native_transport[False-True-False-True]
+FAILED tests/test_recipe02_messages_serving.py::test_ordinary_http_native_transport[False-True-True-False]
+FAILED tests/test_recipe02_messages_serving.py::test_ordinary_http_native_transport[False-True-True-True]
+FAILED tests/test_recipe02_messages_serving.py::test_ordinary_http_native_transport[True-False-False-False]
+FAILED tests/test_recipe02_messages_serving.py::test_ordinary_http_native_transport[True-False-False-True]
+FAILED tests/test_recipe02_messages_serving.py::test_ordinary_http_native_transport[True-False-True-False]
+FAILED tests/test_recipe02_messages_serving.py::test_ordinary_http_native_transport[True-False-True-True]
+FAILED tests/test_recipe02_messages_serving.py::test_ordinary_http_native_transport[True-True-False-False]
+FAILED tests/test_recipe02_messages_serving.py::test_ordinary_http_native_transport[True-True-False-True]
+FAILED tests/test_recipe02_messages_serving.py::test_ordinary_http_native_transport[True-True-True-False]
+FAILED tests/test_recipe02_messages_serving.py::test_ordinary_http_native_transport[True-True-True-True]
+FAILED tests/test_production_mtp.py::test_health_generation_policy_advertises_only_supported_execution_profile
+FAILED tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[127.0.0.1-127.0.0.1:8000]
+FAILED tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[0.0.0.0-192.168.68.56:8000]
+FAILED tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[192.168.68.56-mac-studio.local:8000]
+FAILED tests/test_production_mtp.py::test_ordinary_http_recipe_route_has_no_compulsory_public_session[::-[fd12::56]:8000]
+FAILED tests/test_production_mtp.py::test_json_delivery_stops_disconnect_probe_even_when_probe_consumes_cancellation
+FAILED tests/test_request_failure_diagnostics.py::test_worker_failure_diagnostics[False-False]
+FAILED tests/test_request_failure_diagnostics.py::test_worker_failure_diagnostics[False-True]
+FAILED tests/test_request_failure_diagnostics.py::test_worker_failure_diagnostics[True-False]
+FAILED tests/test_request_failure_diagnostics.py::test_worker_failure_diagnostics[True-clear]
+ERROR tests/test_sse_heartbeat.py::test_wire_silence_tool_gate_semantics_and_exact_id
+ERROR tests/test_sse_heartbeat.py::test_without_heartbeat_same_silence_read_times_out
+ERROR tests/test_sse_heartbeat.py::test_disconnect_stops_heartbeat_and_cleans_native_owner[False]
+ERROR tests/test_sse_heartbeat.py::test_disconnect_stops_heartbeat_and_cleans_native_owner[True]
+ERROR tests/test_sse_heartbeat.py::test_terminal_error_closes_wire_without_tool_or_message_stop
+ERROR tests/test_sse_heartbeat.py::test_json_never_contains_heartbeats - Valu...
+26 failed, 102 passed, 1 warning, 6 errors in 46.05s
