@@ -16,7 +16,7 @@ retired. Historical acceptance does not qualify either variant at later HEAD.
 | Numerical fidelity | [Correctness](correctness.md), [attention](attention.md), [HC/MoE](moe-hc.md), [Engram](engram.md), [prefill/P5](production-mlx-prefill-substrate.md) |
 | Attribution and reproducibility | [Provenance](provenance.md), [third-party sources](../third_party/mtp/README.md), [reference R1](reference-release-r1.md) |
 | Verification and release | [Source test baseline](verification.md), [qualification](qualification.md), [release review](release-qualification.md), [reference/promotion strategy](reference-release-and-promotion-strategy.md) |
-| Measurements | [Public benchmark](public-performance.md), [performance interpretation](performance.md) |
+| Measurements | [oMLX External Benchmark](../artifacts/omlx-external-benchmark/report.md), [performance interpretation](performance.md) |
 | Development boundaries | [Implementation decisions](implementation-plan.md), [Runtime strategy](runtime-strategy.md), [scaffold roles](scaffold-classification.md) |
 
 The [Multimodal Runtime plan](multimodal-runtime-plan.md)

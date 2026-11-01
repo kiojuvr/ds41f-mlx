@@ -5,13 +5,20 @@ It is not a benchmark diary, a second capability matrix or an installed-deployme
 SLA. [Capabilities](capabilities.md) owns support/limits; [architecture](architecture.md)
 owns selected topology; [qualification](qualification.md) explains proof scope.
 
-## Current public practical-performance benchmark
+## Current public benchmark
 
-The [2026-10-16 ordinary MTP benchmark](public-performance.md) measures the current
-native default on M3 Ultra / 512 GB: 8K, 32K and 256K cold prompts plus three
-consecutive **~256K retained paired-prefix continuations**, all generating 256
-tokens under ordinary stochastic defaults. It owns the README's current table,
-exact fresh installed-wheel identity, raw receipts and timer definitions. Its
+The README's current figures use the [oMLX External Benchmark](../artifacts/omlx-external-benchmark/report.md)
+against Flash-1017 Production: single requests, `code_python`, approximate 1K–200K
+prompt targets, 128 requested generation tokens, temperature 0 and reasoning none.
+External TTFT includes HTTP/delivery overhead; processing throughput is a TTFT-based
+estimate, not native prefill throughput. Generation uses the official external
+first-to-last-content span; MTP acceptance is not measured.
+
+The earlier [2026-10-16 ordinary MTP benchmark](public-performance.md) records the
+then-current native default on M3 Ultra / 512 GB: 8K, 32K and 256K cold prompts plus
+three consecutive **~256K retained paired-prefix continuations**, all generating
+256 tokens under ordinary stochastic defaults. Its installed-wheel identity,
+raw receipts and native timer definitions describe that earlier publication. Its
 [matched historical-gap diagnosis](public-performance.md#historical-gap-diagnosis-expected--explained)
 adds synchronized P6 execution rates and reproduces the exact historical rewrite
 on both current and reconstructed historical wheels: **43.8 vs 44.0 tok/s** with

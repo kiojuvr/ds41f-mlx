@@ -467,42 +467,37 @@ requires its dedicated session/fence client; its bounds do not apply to ordinary
 
 ## Measured performance
 
-**Mac Studio M3 Ultra / 512 GB**, official **DeepSeek-V4.1-Flash** (original), native GLM,
-ordinary **`mtp-serving-v1` with MTP enabled**; installed package
-from `7c5c42c`, measured 2026-10-16. The four benchmark cases generated **256 tokens** using
-ordinary sampling defaults (temperature 1.0, top-p 0.95), reasoning `none`.
-[Benchmark receipt, exact wheel/commands and raw results](docs/public-performance.md).
+**Benchmark: oMLX External Benchmark**, measured 2026-11-01 using unmodified
+[jundot/omlx](https://github.com/jundot/omlx) benchmark/client functions at
+[`17fce1d939f65a3cb92616862710c3007ea32b95`](https://github.com/jundot/omlx/tree/17fce1d939f65a3cb92616862710c3007ea32b95).
+**Mac Studio M3 Ultra / 512 GB**, actual **DeepSeek-V4.1-Flash-1017** checkpoint;
+Production `ds41f-mlx==0.23.0` from `960036e9`, **`mtp-serving-v1`, native GLM,
+paired MTP, corrected Recipe 0.2.0**.
 
-| Context (actual prompt tokens) | State | Prefill³ (P6 execution) | TTFT¹ | Decode² | MTP acceptance |
-| ---: | --- | ---: | ---: | ---: | ---: |
-| 8K (8,178) | cold | 8.9 s / 921 tok/s | 19.8 s | 24.5 tok/s | 53% |
-| 32K (32,764) | cold | 33.3 s / 983 tok/s | 39.0 s | 24.1 tok/s | 55% |
-| 256K (262,132) | cold | 315.5 s / 831 tok/s | 321.5 s | 20.4 tok/s | 54% |
-| **~256K (262,429–263,023)** | **paired continuation** | **40 new tokens / 0.25 s** | **0.84 s** | **20.8 tok/s** | **54%** |
+Single requests over loopback Chat Completions, `code_python`, **128 requested
+generation tokens**, **temperature 0**, reasoning **none** (effective top-p 1.0).
+Official quick warmup: target 32 prompt tokens / 8 generation tokens. Model already
+loaded; fresh UUID-prefixed prompts, no cache flush or batch tests.
+[Raw measurements, commands, identities and limitations](artifacts/omlx-external-benchmark/report.md).
 
-¹ Handler entry to first canonical generated token in the ordinary production
-HTTP app, measured in-process; not client-network/SSE latency. Cold means no
-compatible conversation cache, with model already loaded. ² Generated tokens /
-accumulated decode-call time; excludes preparation, prefix restore, prefill/P5 and
-settlement. Cold rows are single runs; continuation values are per-metric medians
-of **three consecutive turns**. Acceptance is accepted / verified draft tokens.
-³ Separate synchronized diagnostic pass, same wheel/prompts: P6 transaction
-execution processes prompt-minus-one tokens (one terminal token goes to P5).
-Excludes DSpark ring completion, checkpoint capture and P5; not total prefill
-latency or context / TTFT. Continuation prefill timing is one incremental continuation.
-The [receipt](docs/public-performance.md#authoritative-prefill-execution-added-diagnostic-pass)
-records both execution-only and inclusive prefill/P5 intervals.
+| Target prompt | Actual prompt / completion tokens | TTFT (s) | Processing estimate (tok/s) | Generation (tok/s) | End-to-end (s) |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 1K | 1,161 / 128 | 2.901 | 400.1 | 29.5 | 7.247 |
+| 4K | 4,514 / 128 | 9.925 | 454.8 | 28.9 | 14.362 |
+| 8K | 8,307 / 128 | 17.625 | 471.3 | 28.6 | 22.103 |
+| 16K | 15,916 / 128 | 23.059 | 690.2 | 29.0 | 27.469 |
+| 32K | 31,032 / 128 | 38.497 | 806.1 | 29.7 | 42.801 |
+| 64K | 61,935 / 128 | 74.786 | 828.2 | 28.2 | 79.330 |
+| 128K | 121,763 / 128 | 155.107 | 785.0 | 24.7 | 160.284 |
+| 200K | 184,990 / 128 | 245.073 | 754.8 | 24.1 | 250.387 |
 
-**MTP decode throughput is workload-dependent because speculative acceptance
-depends on the generated trajectory.** The paired-continuation row illustrates
-long-running session reuse, not cold-prefill performance: each turn added **41
-prompt tokens**, with median prefill/P5 of **0.55 s** and total request time of
-**13.3 s**. Prefix reuse still includes recipe preparation and suffix work.
-
-These measurements are specific to the stated checkpoint, package, hardware and
-workload, not universal throughput guarantees or an SLA. The **1,048,576-token
-capacity ceiling does not imply latency comparable to the 256K benchmark**.
-See [performance evidence](docs/performance.md) for measurement scope.
+Targets are approximate (200K = 200,000; other K labels are powers of two).
+Streamed usage reported **0 cached tokens** for every trial; all ended with
+`finish_reason=length`. **External TTFT includes HTTP/delivery overhead**;
+processing is **actual prompt tokens / TTFT**, not native prefill throughput.
+Generation is **completion tokens / first-to-last-content span**, per upstream;
+SSE heartbeats are not content. **MTP acceptance is not measured.** These are
+single observations, not an SLA or a latency guarantee at the context ceiling.
 
 ## Current limitations
 

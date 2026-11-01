@@ -1,6 +1,11 @@
 # Ordinary MTP public benchmark — 2026-10-16
 
-Small canonical practical-performance receipt for the current ordinary default
+Historical native-execution receipt, superseded for README publication by the
+[oMLX External Benchmark](../artifacts/omlx-external-benchmark/report.md).
+References below to README columns/medians describe the earlier publication,
+not the current external measurements.
+
+Small canonical practical-performance receipt for the then-current ordinary default
 `mtp-serving-v1` implementation. **Original baseline: PASS, six real-model
 requests**, preserved unchanged. The follow-up below adds synchronized prefill
 measurements and matched historical-condition controls: **EXPECTED / EXPLAINED**.
