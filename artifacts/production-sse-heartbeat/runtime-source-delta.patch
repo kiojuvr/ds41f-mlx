@@ -1,0 +1,43 @@
+diff --git a/ds41f_mlx/serving/production_mtp.py b/ds41f_mlx/serving/production_mtp.py
+index 2f0acda..d5da073 100644
+--- a/ds41f_mlx/serving/production_mtp.py
++++ b/ds41f_mlx/serving/production_mtp.py
+@@ -21,6 +21,9 @@ from ds41f_mlx.observability import phase, metrics, failure
+ 
+ logger = logging.getLogger('ds41f.operator.settlement')
+ 
++# HTTP transport liveness only; never a Recipe event or inference deadline.
++SSE_HEARTBEAT_INTERVAL = 15.0
++
+ 
+ class ProductionScheduler(Scheduler):
+     def __init__(self, backend):
+@@ -603,9 +606,19 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
+                     raise
+         async def chunks():
+             nonlocal completed
++            # Native stepping runs on the shielded worker. Time only HTTP silence,
++            # not queue activity: withheld tool suffixes produce empty outputs.
++            loop = asyncio.get_running_loop()
++            deadline = loop.time() + SSE_HEARTBEAT_INTERVAL
+             try:
+                 while True:
+-                    output = await queue.get()
++                    try:
++                        async with asyncio.timeout_at(deadline):
++                            output = await queue.get()
++                    except TimeoutError:
++                        yield ': keepalive\n\n'
++                        deadline = loop.time() + SSE_HEARTBEAT_INTERVAL
++                        continue
+                     if output.error:
+                         completed = output.finished
+                         raise RuntimeError(output.error)
+@@ -616,6 +629,7 @@ class ProductionMTPBackend(InternalMTPQualificationBackend):
+                         else:
+                             name = None
+                         yield sse_frame(name, event)
++                        deadline = loop.time() + SSE_HEARTBEAT_INTERVAL
+                     if output.finished:
+                         completed = True
+                         from deepseek_recipe import ChatCompletionResponse, MessagesResponse

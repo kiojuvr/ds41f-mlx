@@ -8,10 +8,13 @@ record its exact installed payload and acceptance.
 The [first corrected-Recipe promotion attempt](../artifacts/production-harness-alpha2-promotion/report.md)
 was rolled back after a malformed acceptance fixture. The authorized
 [2026-11-01 retry](../artifacts/production-harness-alpha2-retry/report.md) **passed**:
-Production now runs the retained `87fc245` Runtime delivery (executable inputs
-unchanged on master `6603fef`) and corrected Recipe 0.2.0 native bytes. Installed
-admission and bounded real-model acceptance pass; the acceptance Runtime was
-gracefully stopped. The verified dual-package rollback remains available.
+It installed the retained `87fc245` Runtime and corrected Recipe 0.2.0. The later
+[authorized SSE heartbeat promotion](../artifacts/production-sse-heartbeat/report.md)
+now installs Runtime source **`960036e9`** in the same Production environment,
+without changing Recipe, native GLM, checkpoint, dependencies or client settings.
+Installed admission, actual HTTP keepalive and bounded real-model exact-ID/paired
+continuation pass; the acceptance Runtime was gracefully stopped. A new verified
+Runtime-only rollback retains the corrected Recipe; prior rollbacks are unchanged.
 Standard-OFF production startup, admission and provisioning are retired. Historical
 release receipts remain source-scoped evidence; the obsolete installations were
 removed during the approved 2026-10-22 cleanup, not migrated or requalified.
@@ -135,7 +138,8 @@ installed Runtime environments for `master` are:
 | Flash-1017 (`flash-1017`) | `/Volumes/SDXC-512/ds41f-1017` | Promoted in place; installed acceptance passed; acceptance process gracefully retired |
 
 Flash-1017's current installed admission/acceptance is bound by the
-[corrected-Recipe retry record](../artifacts/production-harness-alpha2-retry/report.md);
+[Runtime-only heartbeat promotion](../artifacts/production-sse-heartbeat/report.md),
+following the [corrected-Recipe retry](../artifacts/production-harness-alpha2-retry/report.md);
 original Flash's older snapshot is **not fresh admission or qualification**.
 Do not reprovision either existing environment. The Flash-1017 build directory
 `/Volumes/SDXC-512/ds41f-1017-build` was removed; original Flash retains only
@@ -221,6 +225,14 @@ Files/Vision JSON/SSE acceptance in the [authorized retry](../artifacts/producti
 It does not implement removal or expand alpha.2 qualification beyond the separate
 bounded evidence. Keep Session-log upload disabled; no persistent Harness
 configuration was changed.
+
+Production's later Runtime-only heartbeat update emits standard SSE comments
+(`: keepalive`) after 15 seconds of open-response wire silence, including native
+prefill and withheld tool generation. Comments carry no tool authority and do not
+change Recipe events or settlement. This prevents the verified inactivity failure,
+not arbitrary absolute-duration deadlines or proxy/network failures. The existing
+client timeout configuration remains unchanged. See the
+[installed wire evidence and rollback](../artifacts/production-sse-heartbeat/report.md).
 
 The subsequent [isolated alpha.2 native E2E acceptance](../artifacts/harness-alpha2-e2e/report.md)
 uses the corrected source-delivered Recipe and real Flash-1017, with the official

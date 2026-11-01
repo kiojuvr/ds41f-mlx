@@ -9,8 +9,11 @@ numerical identity. Flash-1017's existing Production installation has received t
 [Multimodal-Runtime promotion](artifacts/multimodal-runtime/production-completion.md);
 original Flash is unchanged. The later [corrected-Recipe Production retry](artifacts/production-harness-alpha2-retry/report.md)
 passed installed admission and bounded real-model all-deferred, Files/Vision and
-paired continuation acceptance. The acceptance Runtime was gracefully stopped;
-verified prior-package rollback remains available.
+paired continuation acceptance. The later authorized
+[Runtime-only SSE heartbeat promotion](artifacts/production-sse-heartbeat/report.md)
+installs source `960036e9` without changing Recipe, native GLM, checkpoint or client
+settings. Actual keepalive and exact-ID paired continuation pass. The acceptance
+Runtime was gracefully stopped; verified prior-package rollback remains available.
 
 `ds41f-mlx` is a native runtime targeting the **Mac Studio M3 Ultra with 512 GB
 unified memory**. It exists to combine model fidelity, correct long-context state

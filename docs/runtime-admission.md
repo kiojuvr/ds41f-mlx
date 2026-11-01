@@ -11,12 +11,18 @@ updated only the existing Flash-1017 Runtime wheel, preserving the admitted
 dependency/native/checkpoint identities and a verified rollback snapshot.
 The first master/corrected-Recipe attempt was [rolled back](../artifacts/production-harness-alpha2-promotion/report.md).
 The authorized [2026-11-01 retry](../artifacts/production-harness-alpha2-retry/report.md)
-now **passes installed Production acceptance**, reusing the verified `87fc245`
+**passed installed Production acceptance**, reusing the verified `87fc245`
 Runtime wheel (unchanged executable inputs on master `6603fef`) and explicitly
-installing corrected Recipe 0.2.0. Production execution identity is
-`1c2c5c385e9a5812880a9f5007a9b704edfecc6bf77b27d7a72c68dcabde1545`.
-The verified 413-member prior Runtime/Recipe rollback remains available; no other
-dependency, GLM or checkpoint assets changed.
+installing corrected Recipe 0.2.0. The subsequent authorized
+[Runtime-only SSE heartbeat promotion](../artifacts/production-sse-heartbeat/report.md)
+now installs clean source **`960036e9`**, retaining those corrected Recipe bytes,
+native GLM, dependency locks and official checkpoint. Production execution identity
+remains `1c2c5c385e9a5812880a9f5007a9b704edfecc6bf77b27d7a72c68dcabde1545`:
+transport Python/provenance changes do not enter the native/semantic/paired
+identity; the exact new wheel and source are recorded separately. Installed
+admission and real HTTP/native acceptance pass. A new 136-member Runtime-only
+rollback preserves the corrected Recipe; the earlier 413-member dual-package
+rollback and all other previous archives remain unchanged.
 
 `--checkpoint-variant flash|flash-1017` fixes one variant per newly built package
 (default: `flash-1017`). Its manifest binds the exact approved 48-shard inventory,
